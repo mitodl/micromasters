@@ -17,7 +17,7 @@ from factory.fuzzy import (
 )
 import faker
 
-from profiles.models import Profile
+from profiles.models import Profile, Education
 
 
 FAKE = faker.Factory.create()
@@ -81,3 +81,22 @@ class ProfileFactory(DjangoModelFactory):
 
     class Meta:  # pylint: disable=missing-docstring
         model = Profile
+
+
+class EducationFactory(DjangoModelFactory):
+    """
+    A factory for Education
+    """
+    profile = SubFactory(ProfileFactory)
+
+    degree_name = FuzzyChoice(
+        [choice[0] for choice in Education.DEGREE_CHOICES]
+    )
+    graduation_date = FuzzyDate(date(2000, 1, 1))
+    subject = FuzzyText()
+    school_name = FuzzyText()
+    school_city = FuzzyText()
+    school_country = FuzzyText()
+
+    class Meta:  # pylint: disable=missing-docstring
+        model = Education

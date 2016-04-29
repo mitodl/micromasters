@@ -43,7 +43,7 @@ class ProfileSerializer(ModelSerializer):
                     education_id = education.get("id")
                     if education_id is not None:
                         try:
-                            education_instance = Education.objects.get(profile_id=instance.id, id=education_id)
+                            education_instance = Education.objects.get(profile_id=profile_id, id=education_id)
                         except Education.DoesNotExist:
                             raise ValidationError("Education {} does not exist".format(education_id))
                     else:
