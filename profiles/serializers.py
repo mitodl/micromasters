@@ -1,13 +1,16 @@
 """
 Serializers for user profiles
 """
-from rest_framework.serializers import ModelSerializer, SerializerMethodField, Field
+from django.db import transaction
+from rest_framework.exceptions import ValidationError
+from rest_framework.serializers import ModelSerializer, SerializerMethodField, IntegerField
 
 from profiles.models import Profile, Education
 
 
 class EducationSerializer(ModelSerializer):
-    id = Field()
+    id = IntegerField(required=False)  # override the read_only flag so we can edit it
+
     class Meta:
         model = Education
         fields = ('id', 'degree_name', 'graduation_date', 'subject', 'school_name', 'school_city', 'school_country')
@@ -25,15 +28,34 @@ class ProfileSerializer(ModelSerializer):
         return obj.pretty_printed_student_id
 
     def update(self, instance, validated_data):
-        for attr, value in validated_data.items():
-            if attr == 'education':
-                for education in value:
-                    instance, created = Education.objects.update_or_create(id=education.id, **education)
-            else:
-                setattr(instance, attr, value)
-        instance.save()
+        with transaction.atomic():
+            for attr, value in validated_data.items():
+                if attr == 'education':
+                    continue
+                else:
+                    setattr(instance, attr, value)
+            instance.save()
 
-        return instance
+            profile_id = instance.id
+            if 'education' in validated_data:
+                saved_education_ids = set()
+                for education in validated_data['education']:
+                    education_id = education.get("id")
+                    if education_id is not None:
+                        try:
+                            education_instance = Education.objects.get(profile_id=instance.id, id=education_id)
+                        except Education.DoesNotExist:
+                            raise ValidationError("Education {} does not exist".format(education_id))
+                    else:
+                        education_instance = None
+                    education_serializer = EducationSerializer(instance=education_instance, data=education)
+                    education_serializer.is_valid(raise_exception=True)
+                    education_serializer.save(profile_id=profile_id)
+                    saved_education_ids.add(education_serializer.instance.id)
+
+                Education.objects.filter(profile_id=instance.id).exclude(id__in=saved_education_ids).delete()
+
+            return instance
 
 
 
@@ -41,7 +63,7 @@ class ProfileSerializer(ModelSerializer):
         model = Profile
         fields = (
             'filled_out',
-            'account_privacy',
+b            'account_privacy',
             'email_optin',
             'first_name',
             'last_name',
