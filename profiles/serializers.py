@@ -63,7 +63,7 @@ class ProfileSerializer(ModelSerializer):
         model = Profile
         fields = (
             'filled_out',
-b            'account_privacy',
+            'account_privacy',
             'email_optin',
             'first_name',
             'last_name',
