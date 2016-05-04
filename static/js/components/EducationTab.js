@@ -1,6 +1,9 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import Button from 'react-mdl/lib/Button';
+import dialogPolyfill from 'dialog-polyfill';
+
 import ProfileTab from "../util/ProfileTab";
 import { boundEducationSelectField,
   boundEducationMonthField, boundEducationYearField,
@@ -37,6 +40,15 @@ class EducationTab extends ProfileTab {
     this.handleCloseDialog = this.handleCloseDialog.bind(this);
 
   }
+
+  componentDidMount() {
+    // Use dialog polyfill to allow dialog usage on browsers other than Chrome and Opera (as of early 2016)
+    const node = ReactDOM.findDOMNode(this);
+    for (let dialog of node.querySelectorAll("dialog")) {
+      dialogPolyfill.registerDialog(dialog);
+    }
+  }
+
   openNewEducationForm(level, index){
     const { dispatch, profile, updateProfile } = this.props;
     let new_index = index;
