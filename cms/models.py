@@ -5,10 +5,10 @@ import json
 
 from django.conf import settings
 from django.db import models
+from modelcluster.fields import ParentalKey
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, MultiFieldPanel
+from wagtail.wagtailcore.models import Orderable, Page
 from wagtail.wagtailimages.models import Image
-from wagtail.wagtailcore.models import Page
-from wagtail.wagtailcore.fields import RichTextField
-from wagtail.wagtailadmin.edit_handlers import FieldPanel
 
 from courses.models import Program
 from ui.views import get_bundle_url
@@ -50,14 +50,34 @@ class HomePage(Page):
         return context
 
 
-class ProgramPage(Page):
-    """
-    CMS page representing the department e.g. Biology
-    """
-    description = RichTextField(blank=True)
-    program = models.OneToOneField('courses.Program', null=True, on_delete=models.SET_NULL)
+# class ProgramPage(Page):
+#     """
+#     CMS page representing the department e.g. Biology
+#     """
+#     description = RichTextField(blank=True)
+#     program = models.OneToOneField('courses.Program',
+#                                    null=True,
+#                                    on_delete=models.SET_NULL)
 
-    content_panels = Page.content_panels + [
-        FieldPanel('description', classname="full"),
-        FieldPanel('program'),
+#     content_panels = Page.content_panels + [
+#         FieldPanel('description', classname="full"),
+#         FieldPanel('program'),
+#         InlinePanel('FAQs', label='Frequently Asked Questions')
+#     ]
+
+
+class FrequentlyAskedQuestion(Orderable):
+    page = ParentalKey(Program, related_name='FAQs')
+    question = models.TextField()
+    answer = models.TextField()
+
+    panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('question'),
+                FieldPanel('answer')
+            ],
+            heading='Frequently Asked Questions',
+            classname='collapsible'
+        )
     ]

@@ -5,41 +5,65 @@ from datetime import datetime
 
 import pytz
 from django.db import models
+from modelcluster.fields import ParentalKey
+from wagtail.wagtailcore.fields import RichTextField
+from wagtail.wagtailcore.models import Page, Orderable
+from wagtail.wagtailadmin.edit_handlers import (FieldPanel, MultiFieldPanel,
+                                                InlinePanel)
+from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 
 
-class Program(models.Model):
+class Program(Page):
     """
     A degree someone can pursue, e.g. "Supply Chain Management"
     """
-    title = models.CharField(max_length=255)
-    live = models.BooleanField(default=False)
-    description = models.TextField(blank=True, null=True)
+    # title = models.CharField(max_length=255)
+    # live = models.BooleanField(default=False)
+    description = RichTextField(blank=True, null=True)
+
+    content_panels = Page.content_panels + [
+        FieldPanel('description', classname="full"),
+        InlinePanel('FAQs', label='Frequently Asked Questions'),
+        InlinePanel('Courses', label='Program Courses')
+    ]
 
     def __str__(self):
         return self.title
 
 
-class Course(models.Model):
+class Course(Orderable):
     """
     A logical representation of a course, such as "Supply Chain Management
     101". This won't have associated dates or any specific information about a
     given course instance (aka course run), but rather only the things that are
     general across multiple course runs.
     """
-    program = models.ForeignKey(Program)
-    position_in_program = models.PositiveSmallIntegerField(null=True)
+    program = ParentalKey(Program, related_name='Courses')
+    # program = models.ForeignKey(Program)
+    # position_in_program = models.PositiveSmallIntegerField(null=True)
 
     # These fields will likely make their way into the CMS at some point.
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, default='')
     thumbnail = models.ImageField(null=True, blank=True)
-    description = models.TextField(blank=True, null=True)
+    description = RichTextField(blank=True, null=True)
     prerequisites = models.TextField(blank=True, null=True)
+
+    content_panels = Page.content_panels + [
+        MultiFieldPanel(
+            [
+                FieldPanel('title'),
+                FieldPanel('description'),
+                FieldPanel('prerequisites'),
+                ImageChooserPanel('thumbnail'),
+            ]
+        )
+    ]
 
     def __str__(self):
         return self.title
 
     class Meta:
-        unique_together = ('program', 'position_in_program',)
+        unique_together = ('program', 'sort_order',)
 
     def get_next_run(self):
         """
