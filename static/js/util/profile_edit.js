@@ -14,11 +14,17 @@ import { DATE_FORMAT } from '../constants';
 // this expects that the `updateProfile` and `profile` props are passed
 // in to whatever component it is used in.
 
-// bind to this.boundTextField in the constructor of a form component
-// to update text fields when editing the profile
-// we pass in a keyset looking like this:
-//
-// ["top-level-key", index, "nested_object_key"] or just ["top_level_key"]
+/**
+ * bind to this.boundTextField in the constructor of a form component
+ * to update text fields when editing the profile
+ * we pass in a keyset looking like this:
+ *
+ * ["top-level-key", index, "nested_object_key"] or just ["top_level_key"]
+ *
+ * @param keySet {String[]} Path to the field
+ * @param label {String} Label for the field
+ * @returns {ReactElement}
+ */
 export function boundTextField(keySet, label) {
   const {
     profile,
@@ -40,9 +46,16 @@ export function boundTextField(keySet, label) {
   );
 }
 
-// bind this to this.boundSelectField in the constructor of a form component
-// to update select fields
-// pass in the name (used as placeholder), key for profile, and the options.
+/**
+ * bind this to this.boundSelectField in the constructor of a form component
+ * to update select fields
+ * pass in the name (used as placeholder), key for profile, and the options.
+ *
+ * @param keySet {String[]} Path to the field
+ * @param label {String} Label for the field
+ * @param options {Object[]} A list of options for the select field
+ * @returns {ReactElement}
+ */
 export function boundSelectField(keySet, label, options) {
   const {
     profile,
@@ -65,9 +78,16 @@ export function boundSelectField(keySet, label, options) {
 }
 
 
-// bind this to this.boundStateSelectField in the constructor of a form component
-// to update select fields
-// pass in the name (used as placeholder), key for profile, and the options.
+/**
+ * Bind this to this.boundStateSelectField in the constructor of a form component
+ * to update select fields
+ * pass in the name (used as placeholder), key for profile, and the options.
+ *
+ * @param stateKeySet {String[]} Path to the state field
+ * @param countryKeySet {String[]} Path to the country field
+ * @param label {String} The label of the field
+ * @returns {ReactElement}
+ */
 export function boundStateSelectField(stateKeySet, countryKeySet, label) {
   const {
     updateProfile,
@@ -99,9 +119,15 @@ export function boundStateSelectField(stateKeySet, countryKeySet, label) {
   </div>;
 }
 
-// bind this to this.boundDateField in the constructor of a form component
-// to update date fields
-// pass in the name (used as placeholder), key for profile.
+/**
+ * bind this to this.boundDateField in the constructor of a form component
+ * to update date fields
+ * pass in the name (used as placeholder), key for profile.
+ *
+ * @param keySet {String[]} Path to look up and set a field
+ * @param label {String} Label for the field
+ * @returns {ReactElement}
+ */
 export function boundDateField(keySet, label) {
   const {
     profile,
@@ -126,86 +152,122 @@ export function boundDateField(keySet, label) {
     <span className="validation-error-text">{_.get(errors, keySet)}</span>
   </div>;
 }
-export function boundMonthField(keySet, label) {
-  const {updateProfile, errors, profile} = this.props;
-  let onChange = month => {
-    let clone = _.cloneDeep(profile);
 
-    let current_value = _.get(clone, keySet);
-        // format as ISO-8601
-    let date_value;
-    if(!month){
-      date_value = "";
-    }else if (current_value){
-      date_value = moment(current_value).set('month', month.value);
-    } else {
-      date_value = moment().set('date', 1).set('month', month.value);
+/**
+ * Validate a month number
+ * @param {String} string The input string
+ * @returns {Number|undefined} The valid month or undefined if not valid
+ */
+export function validateMonth(string) {
+  let month = parseInt(string, 10);
+  if (isNaN(month)) {
+    return undefined;
+  }
+  if (month < 1 || month > 12) {
+    return undefined;
+  }
+  return month;
+}
+
+/**
+ * Validate a year
+ * @param {String} string The input string
+ * @returns {Number|undefined} The valid year or undefined if not valid
+ */
+export function validateYear(string) {
+  let year = parseInt(string, 10);
+  if (isNaN(year)) {
+    return undefined;
+  }
+  if (year < 1 || year > 9999) {
+    // fit into YYYY format
+    return undefined;
+  }
+  return year;
+}
+
+
+/**
+ * bind this to this.boundMonthYearField in the constructor of a form component
+ * to update date fields
+ * pass in the name (used as placeholder), key for profile.
+ *
+ * @param keySet {String[]} Path to look up and set a field
+ * @param label {String} Label for the field
+ * @returns {ReactElement}
+ */
+export function boundMonthYearField(keySet, label) {
+  const {
+    profile,
+    errors,
+    updateProfile,
+  } = this.props;
+
+  let getDate = () => _.get(profile, keySet) ? moment(_.get(profile, keySet), "YYYY-MM-DD") : null;
+
+  let setNewDate = (month, year) => {
+    month = validateMonth(month);
+    year = validateYear(year);
+
+    let date = getDate();
+    let clone = _.cloneDeep(profile);
+    // format as ISO-8601
+    if (date === null) {
+      date = moment();
     }
-    if(date_value.isValid()){
-      _.set(clone, keySet, date_value.format(DATE_FORMAT));
-    }
+    // use first day of the month which will exist on any month
+    date.set('date', 1);
+    date.set('month', month);
+    date.set('year', year);
+
+    _.set(clone, keySet, date.format("YYYY-MM-DD"));
     updateProfile(clone);
   };
-  let month = _.get(profile, keySet)? moment(_.get(profile, keySet), DATE_FORMAT).month() : "";
-  const month_options = [
-    { value: 0, label: 'January'},
-    { value: 1, label: 'February'},
-    { value: 2, label: 'March'},
-    { value: 3, label: 'April'},
-    { value: 4, label: 'May'},
-    { value: 5, label: 'June'},
-    { value: 6, label: 'July'},
-    { value: 7, label: 'August'},
-    { value: 8, label: 'September'},
-    { value: 9, label: 'October'},
-    { value: 10, label: 'November'},
-    {value: 11, label: 'December'}
-  ];
 
-  return <div>
-    <Select
-      options={month_options}
-      clearable={false}
-      value={month}
-      placeholder={label}
-      onChange={onChange}
+  let clearDate = () => {
+    let clone = _.cloneDeep(profile);
+    _.set(clone, keySet, null);
+    updateProfile(clone);
+  };
+
+  let date = getDate();
+
+  return <div className="month-year-field">
+    <label>{label}</label> <TextField
+      className="month-field"
+      floatingLabel
+      label="MM"
+      value={date ? (date.month() + 1) : ""}
+      onChange={e => setNewDate(e.target.value, undefined)}
+    /> <span className="slash">/</span> <TextField
+      floatingLabel
+      className="year-field"
+      label="YYYY"
+      value={date ? date.year() : ""}
+      onChange={e => setNewDate(undefined, e.target.value)}
     />
+
     <span className="validation-error-text">{_.get(errors, keySet)}</span>
+    <button
+      className="glyphicon glyphicon-remove"
+      onClick={clearDate}
+      style={{
+        border: "none",
+        background: "none"
+      }}
+    />
   </div>;
 }
 
-export function boundYearField(keySet, label) {
-  const {updateProfile, errors, profile} = this.props;
-  let onChange = e => {
-    let clone = _.cloneDeep(profile);
-    let current_value = _.get(clone, keySet);
-    let year = e.target.value;
-    // format as ISO-8601
-    let date_value = '';
-    if (year) {
-      if (current_value) {
-        date_value = moment(current_value).set('year', year);
-      } else {
-        date_value = moment().set('date', 1).set('year', year);
-      }
-      if (date_value.isValid()) {
-        _.set(clone, keySet, date_value.format(DATE_FORMAT));
-      }
-      updateProfile(clone);
-    }
-  };
-  let year = _.get(profile, keySet) ? moment(_.get(profile, keySet), DATE_FORMAT).year() : "";
-  return <div>
-    <TextField
-      label={label}
-      value={year}
-      onChange={onChange}/>
-    <span className="validation-error-text">{_.get(errors, keySet)}</span></div>;
-}
 
-// bind to this.saveAndContinue.bind(this, '/next/url')
-// pass an option callback if you need nested validation
-// (see EmploymentTab for an example)
+/**
+ * Bind to this.saveAndContinue.bind(this, '/next/url')
+ * pass an option callback if you need nested validation
+ * (see EmploymentTab for an example)
+ *
+ * @param next {String} URL to redirect to after successful validation
+ * @param nestedValidationCallback {func} If present, a function to retrieve validation fields
+ */
 export function saveAndContinue(next, nestedValidationCallback) {
   const {
     saveProfile,
@@ -226,12 +288,15 @@ export function saveAndContinue(next, nestedValidationCallback) {
   });
 }
 
-// allows editing an array of objects stored in the profile
-// params:
-//    arrayName: key the array is stored under on the profile
-//    blankEntry: an object with the requisite fields, with undefined, "", or null values
-//    formCallBank: a function that takes an index (into the object array) and draws
-//      ui (using boundTextField and so on) to edit an object in the array
+/**
+ * Allows editing an array of objects stored in the profile
+ * 
+ * @param arrayName {String} key the array is stored under on the profile
+ * @param blankEntry {Object} an object with the requisite fields, with undefined, "", or null values
+ * @param formCallback {func} a function that takes an index (into the object array) and draws
+ * ui (using boundTextField and so on) to edit an object in the array
+ * @returns {ReactElement}
+ */
 export function editProfileObjectArray (arrayName, blankEntry, formCallback) {
   const { updateProfile, profile } = this.props;
   if ( profile.hasOwnProperty(arrayName) && !_.isEmpty(profile[arrayName]) ) {

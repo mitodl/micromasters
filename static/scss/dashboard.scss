@@ -144,4 +144,20 @@
     line-height: 2.5;
   }
 
+  .month-year-field {
+    display: flex;
+    align-items: center;
+    label {
+      padding-right: 20px;
+    }
+    .slash {
+      padding: 0 .5em;
+    }
+    .month-field {
+      width: 2em;
+    }
+    .year-field {
+      width: 4em;
+    }
+  }
 }
