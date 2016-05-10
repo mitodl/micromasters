@@ -88,10 +88,10 @@ class EmploymentTab extends ProfileTab {
           {this.boundSelectField(keySet('country'), 'Country', this.countryOptions)}
         </Cell>
         <Cell col={12}>
-          {this.boundDateField(keySet('start_date'), 'Start Date')}
+          {this.boundMonthYearField(keySet('start_date'), 'Start Date')}
         </Cell>
         <Cell col={12}>
-          {this.boundDateField(keySet('end_date'), 'End Date')}
+          {this.boundMonthYearField(keySet('end_date'), 'End Date')}
         </Cell>
       </Grid>
     );
