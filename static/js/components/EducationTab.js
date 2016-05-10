@@ -9,6 +9,9 @@ import {
   saveAndContinue
 } from '../util/profile_edit';
 import {
+  doDialogPolyfill
+} from '../util/util';
+import {
   toggleEducationLevel,
   openEducationForm,
   closeEducationForm,
@@ -71,6 +74,10 @@ class EducationTab extends ProfileTab {
     return requiredFields.concat(
       ...profile.education.map((v, i) => nestedFields(i))
     );
+  }
+
+  componentDidMount() {
+    doDialogPolyfill.call(this);
   }
 
   openNewEducationForm(level, index) {
