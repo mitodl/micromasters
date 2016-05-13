@@ -68,7 +68,6 @@ export function boundTextField(keySet, label) {
  */
 export function boundSelectField(keySet, label, options) {
   const {
-    profile,
     errors,
     updateProfile,
   } = this.props;
@@ -83,7 +82,7 @@ export function boundSelectField(keySet, label, options) {
   };
 
   let onNewRequest = (optionOrString, index) => {
-    let clone = _.cloneDeep(profile);
+    let clone = _.cloneDeep(this.props.profile);
     let toStore;
     if (index === -1) {
       // enter was pressed and optionOrString is a string
@@ -108,17 +107,17 @@ export function boundSelectField(keySet, label, options) {
     updateProfile(clone);
   };
 
-  let selectedValue = _.get(profile, keySet);
+  let selectedValue = _.get(this.props.profile, keySet);
   let selectedOption = options.find(option => option.value === selectedValue);
   let onUpdateInput = searchText => {
-    let clone = _.cloneDeep(profile);
+    let clone = _.cloneDeep(this.props.profile);
     _.set(clone, editKeySet, searchText);
     updateProfile(clone);
   };
   let onBlur = () => {
     // clear the edit value when we lose focus. In its place we will display
     // the selected option label if one is selected, or an empty string
-    let clone = _.cloneDeep(profile);
+    let clone = _.cloneDeep(this.props.profile);
     _.set(clone, editKeySet, undefined);
     updateProfile(clone);
   };
@@ -129,7 +128,7 @@ export function boundSelectField(keySet, label, options) {
   });
 
   let searchText;
-  let editText = _.get(profile, editKeySet);
+  let editText = _.get(this.props.profile, editKeySet);
   if (editText !== undefined) {
     searchText = editText;
   } else if (selectedOption) {
@@ -234,7 +233,6 @@ export function boundDateField(keySet, label) {
  */
 export function boundMonthYearField(keySet, label) {
   const {
-    profile,
     errors,
     updateProfile,
   } = this.props;
@@ -245,7 +243,7 @@ export function boundMonthYearField(keySet, label) {
 
   // Get the moment object from the state, or null if not available
   let getDate = () => {
-    let formattedDate = _.get(profile, keySet);
+    let formattedDate = _.get(this.props.profile, keySet);
 
     if (formattedDate !== undefined && formattedDate !== null) {
       return moment(formattedDate, DATE_FORMAT);
@@ -256,7 +254,7 @@ export function boundMonthYearField(keySet, label) {
   // Get a tuple { month, year } which contains the values being edited in the textbox
   // values may be strings or numbers. Otherwise return empty object.
   let getMonthYear = () => {
-    let monthYear = _.get(profile, editKeySet, {});
+    let monthYear = _.get(this.props.profile, editKeySet, {});
 
     if (_.isEmpty(monthYear)) {
       let date = getDate();
@@ -275,7 +273,7 @@ export function boundMonthYearField(keySet, label) {
   // representation instead in a temporary edit value and store null in place of the
   // date format.
   let setNewDate = (month, year) => {
-    let clone = _.cloneDeep(profile);
+    let clone = _.cloneDeep(this.props.profile);
 
     let monthYear = getMonthYear();
     // Update monthYear with the typed text. Typically only month or year will

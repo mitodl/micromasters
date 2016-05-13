@@ -193,6 +193,13 @@ describe('Profile Editing utility functions', () => {
 
       assert.equal(that.props.profile.gender_edit, "update input text");
     });
+
+    it("can call onNewRequest and onFocus without colliding into each other", () => {
+      selectField.props.onNewRequest('other', -1);
+      selectField.props.onBlur();
+
+      assert.equal(that.props.profile.gender, 'o');
+    });
   });
 
   describe("Bound state select field", () => {
@@ -358,8 +365,6 @@ describe('Profile Editing utility functions', () => {
     
     it("updates the formatted date if month and year are valid", () => {
       monthTextField.props.onChange({target: {value: "12"}});
-      [labelField, __, monthTextField, __, yearTextField, errorSpan] = renderMonthYearField();
-
       yearTextField.props.onChange({target: {value: "2077"}});
 
       assert.equal(that.props.profile.date_of_birth, "2077-12-01");
@@ -368,7 +373,6 @@ describe('Profile Editing utility functions', () => {
 
     it("stores text in date_of_birth_edit if it's not a valid date", () => {
       that.props.profile.date_of_birth = "2066-02-28";
-      [labelField, __, monthTextField, __, yearTextField, errorSpan] = renderMonthYearField();
       monthTextField.props.onChange({target: {value: "13"}});
       [labelField, __, monthTextField, __, yearTextField, errorSpan] = renderMonthYearField();
 
