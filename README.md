@@ -5,23 +5,27 @@ Portal for learners and course teams to access MITx Micromasters programs
 
 Although you can run Micromasters locally with a default sqlite database after
 installing the ``requirements.txt`` file, the recommended way is to 
-use [Docker](https://www.docker.io). Install Docker, then install 
-``docker-compose`` and run the app: 
+use [Docker](https://www.docker.io).
 
-    pip install docker-compose 
-    docker-compose up
 
 ### (OSX only) Create your docker machine:
 
-    docker-machine create default
-    docker-machine start default
-    docker-machine env default
-    eval "$(docker-machine env default)"
+If you are using OS X you will need to run Docker inside of a VM. Install docker-machine then run:
 
-These commands create a Docker container named ``default``, start the
+    docker-machine create mm
+    docker-machine start mm
+    docker-machine env mm
+    eval "$(docker-machine env mm)"
+
+These commands create a Docker container named ``mm``, start the
 container, and configure environment variables to facilitate communication
 with the ``edX`` instance.
 
+### Start Docker
+Install Docker, then install ``docker-compose`` and run the app: 
+
+    pip install docker-compose 
+    docker-compose up
 
 This will set up a near production-ready containerized development 
 environment that runs migrations, with the Django development server 
@@ -36,12 +40,11 @@ or to create root user:
     docker-compose run web python manage.py createsuperuser
 
 
-## For OS X Development
+## OS X setup
 
-Due to issues using Docker in OSX, development is more efficient if you
-install [docker-osx-dev](https://github.com/brikis98/docker-osx-dev).
-docker-osx-dev synchronizes host file-system changes with the Docker
-container. If you have [``homebrew``](http://brew.sh/) installed, you can 
+Due to file notification issues using Docker in OSX, the webpack watcher requires a program
+to sync file changes. Install [docker-osx-dev](https://github.com/brikis98/docker-osx-dev) which
+runs rsync to sync the file changes. If you have [``homebrew``](http://brew.sh/) installed, you can 
 install ``docker-osx-dev`` by typing ``make`` in the root of the Micromasters
 project directory. The make file will install or update Docker using Homebrew
 and go on to install ``docker-osx-dev``.
@@ -49,9 +52,9 @@ and go on to install ``docker-osx-dev``.
 Subsequently, before you run the application with ``docker-compose up``, 
 you would run:
   
-    docker-osx-dev -m default -s ./ --ignore-file '.rsync-ignore'
+    docker-osx-dev -m mm -s ./ --ignore-file '.rsync-ignore'
 
-(Assuming your Docker VM is called ``default``, and your current working
+(Assuming your Docker VM is called ``mm``, and your current working
 directory is the root of the ``micromasters`` source directory).
 
 This starts a process that monitors the file system for changes. On startup
