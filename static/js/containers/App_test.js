@@ -16,7 +16,7 @@ import {
 import { USER_PROFILE_RESPONSE } from '../constants';
 import IntegrationTestHelper from '../util/integration_test_helper';
 
-describe('App', () => {
+describe('App', function() {
   let listenForActions, renderComponent, helper;
   let dialogActions;
 
