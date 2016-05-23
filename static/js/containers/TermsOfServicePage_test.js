@@ -11,7 +11,7 @@ import { USER_PROFILE_RESPONSE } from '../constants';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import * as api from '../util/api';
 
-describe("TermsOfService", () => {
+describe("TermsOfService", function() {
   let listenForActions, renderComponent, helper;
   beforeEach(() => {
     helper = new IntegrationTestHelper();

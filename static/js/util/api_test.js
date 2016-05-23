@@ -17,8 +17,6 @@ import {
 } from '../constants';
 
 describe('api', function() {
-  this.timeout(5000);  // eslint-disable-line no-invalid-this
-
   let sandbox;
   let savedWindowLocation;
   beforeEach(() => {

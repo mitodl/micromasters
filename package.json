@@ -66,6 +66,6 @@
     "lint": "node ./node_modules/eslint/bin/eslint.js ./static/js",
     "test": "node ./node_modules/mocha/bin/_mocha --compilers js:babel-register --require static/js/global_init.js 'static/**/*/*_test.js'",
     "singleTest": "node ./node_modules/mocha/bin/_mocha --compilers js:babel-register --require static/js/global_init.js $1",
-    "coverage": "node ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- --compilers js:babel-register --require static/js/global_init.js 'static/**/*/*_test.js'"
+    "coverage": "node ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- --timeout 30000 --compilers js:babel-register --require static/js/global_init.js 'static/**/*/*_test.js'"
   }
 }

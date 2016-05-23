@@ -9,7 +9,7 @@ import CourseList from './CourseList';
 import * as util from '../util/util';
 import { STATUS_PASSED, DASHBOARD_RESPONSE } from '../constants';
 
-describe("CourseList", () => {
+describe("CourseList", function() {
   let sandbox;
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
