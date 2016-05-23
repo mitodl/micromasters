@@ -118,7 +118,7 @@ class EmploymentTab extends ProfileTab {
           {this.boundTextField(keySet('company_name'), 'Company Name')}
         </Cell>
         <Cell col={4}>
-          {this.boundSelectField(keySet('country'), 'Country', this.countryOptions)}
+          {this.boundCountrySelectField(keySet('state_or_territory'), keySet('country'), 'Country')}
         </Cell>
         <Cell col={4}>
           {this.boundStateSelectField(keySet('state_or_territory'), keySet('country'), 'State or Territory')}

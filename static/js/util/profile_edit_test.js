@@ -11,6 +11,7 @@ import {
   boundDateField,
   boundSelectField,
   boundStateSelectField,
+  boundCountrySelectField,
   boundMonthYearField,
 } from './profile_edit';
 import { DATE_FORMAT } from '../constants';
@@ -243,6 +244,92 @@ describe('Profile Editing utility functions', () => {
       options = _.sortBy(options, 'label');
 
       assert(boundSelectFieldSpy.calledWith(stateKey, placeholder, options));
+    });
+  });
+
+  describe("Bound country select field", () => {
+    let sandbox, boundSelectFieldSpy, countryOptions;
+    beforeEach(() => {
+      sandbox = sinon.sandbox.create();
+
+      boundSelectFieldSpy = sandbox.spy(profileEdit, 'boundSelectField');
+
+      countryOptions = Object.keys(iso3166.data).map(code => ({
+        value: code,
+        label: iso3166.data[code]['name']
+      }));
+      countryOptions = _.sortBy(countryOptions, 'label');
+    });
+
+    afterEach(() => {
+      sandbox.restore();
+    });
+
+    it('shows a list of countries', () => {
+      const country = null;
+      const state = null;
+      let profile = Object.assign({}, USER_PROFILE_RESPONSE, {
+        country_key: country,
+        state_key: state
+      });
+
+      let updateProfile = newProfile => {
+        profile = newProfile;
+      };
+
+      let countrySelectField = boundCountrySelectField.bind({
+        props: {
+          profile,
+          updateProfile
+        },
+        countryOptions
+      });
+
+      let stateKeySet = ["state_key"];
+      let countryKeySet = ["country_key"];
+      let label = "LABEL";
+      countrySelectField(stateKeySet, countryKeySet, label);
+
+      let call = boundSelectFieldSpy.getCall(0);
+      assert.deepEqual(call.args[0], countryKeySet);
+      assert.deepEqual(call.args[1], label);
+      assert.deepEqual(call.args[2], countryOptions);
+
+      let onChange = call.args[3];
+      assert(_.isFunction(onChange));
+
+      onChange("change");
+      assert.deepEqual(profile, "change");
+    });
+
+    it('clears the state state when the country changes', () => {
+      const country = 'US';
+      const state = 'US-MA';
+      let profile = Object.assign({}, USER_PROFILE_RESPONSE, {
+        country_key: country,
+        state_key: state
+      });
+
+      let updateProfile = newProfile => {
+        profile = newProfile
+      };
+
+      let countrySelectField = boundCountrySelectField.bind({
+        props: {
+          profile,
+          updateProfile
+        },
+        countryOptions
+      });
+
+      let stateKeySet = ["state_key"];
+      let countryKeySet = ["country_key"];
+      let label = "LABEL";
+      let field = countrySelectField(stateKeySet, countryKeySet, label);
+      field.props.onNewRequest('Ghana', -1);
+
+      assert.equal(profile.country_key, "GH");
+      assert.equal(profile.state_key, null);
     });
   });
 
