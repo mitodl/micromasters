@@ -120,9 +120,11 @@ export function boundTextField(keySet, label) {
  * @param keySet {String[]} Path to the field
  * @param label {String} Label for the field
  * @param options {Object[]} A list of options for the select field
+ * @param onChange {func} Handler which is called when the state changes or is cleared.
+ * Takes the updated profile as argument
  * @returns {ReactElement}
  */
-export function boundSelectField(keySet, label, options) {
+export function boundSelectField(keySet, label, options, onChange) {
   const {
     profile,
     errors,
@@ -162,6 +164,9 @@ export function boundSelectField(keySet, label, options) {
     _.set(clone, editKeySet, undefined);
 
     updateProfile(clone);
+    if (onChange !== undefined) {
+      onChange(clone);
+    }
   };
 
   let selectedValue = _.get(profile, keySet);
@@ -222,7 +227,6 @@ import { boundSelectField as mockedBoundSelectField } from './profile_edit';
 /**
  * Bind this to this.boundStateSelectField in the constructor of a form component
  * to update select fields
- * pass in the name (used as placeholder), key for profile, and the options.
  *
  * @param stateKeySet {String[]} Path to the state field
  * @param countryKeySet {String[]} Path to the country field
@@ -244,6 +248,30 @@ export function boundStateSelectField(stateKeySet, countryKeySet, label) {
   }
 
   return mockedBoundSelectField.call(this, stateKeySet, label, options);
+}
+
+/**
+ * Bind this to this.boundCountrySelectField in the constructor of a form component
+ * to update select fields
+ *
+ * @param stateKeySet {String[]} Path to the state field
+ * @param countryKeySet {String[]} Path to the country field
+ * @param label {String} The label of the field
+ * @returns {ReactElement}
+ */
+export function boundCountrySelectField(stateKeySet, countryKeySet, label) {
+  const {
+    updateProfile,
+  } = this.props;
+
+  const onChange = newProfile => {
+    // clear state field when country field changes
+    let clone = _.cloneDeep(newProfile);
+    _.set(clone, stateKeySet, null);
+    updateProfile(clone);
+  };
+
+  return mockedBoundSelectField.call(this, countryKeySet, label, this.countryOptions, onChange);
 }
 
 /**
