@@ -1,6 +1,4 @@
 // Define globals we would usually get from Django
-import entries from 'object.entries';
-
 global.SETTINGS = {
   isAuthenticated: true,
   name: "full name",
@@ -13,7 +11,3 @@ require('jsdom-global')();
 
 // required for interacting with react-mdl components
 require('react-mdl/extra/material.js');
-
-if (!Object.entries) {
-  entries.shim();
-}

@@ -8,7 +8,6 @@ import striptags from 'striptags';
 import _ from 'lodash';
 
 import PersonalTab from '../components/PersonalTab';
-import EducationTab from '../components/EducationTab';
 import EmploymentTab from '../components/EmploymentTab';
 import PrivacyTab from '../components/PrivacyTab';
 
@@ -272,60 +271,44 @@ complete profile consists of:
     `currently employed == 'yes'`
 */
 export function validateProfileComplete(profile) {
-  let errors = {};
   let reqFields = [];
 
   // check personal tab
-  errors = validateProfile(
-    profile,
-    PersonalTab.defaultProps.requiredFields,
-    PersonalTab.defaultProps.validationMessages
-  );
-
-  if (!_.isEqual(errors, {})) {
-    return [false, '/profile/personal', errors];
+  reqFields = reqFields.concat(...PersonalTab.defaultProps.requiredFields);
+  let errors = validateProfile(profile, reqFields, {});
+  if ( !_.isEqual(errors, {}) ) {
+    return ([false, {
+      url: "/profile/personal",
+      title: "Personal Info",
+      text: "Please complete your personal information.",
+    }]);
   }
 
   // check professional tab
-  if (_.isArray(profile.work_history) && !_.isEmpty(profile.work_history)) {
+  if ( _.isArray(profile.work_history) && !_.isEmpty(profile.work_history) ) {
     reqFields = EmploymentTab.validation(profile, reqFields);
-    errors = validateProfile(
-      profile,
-      reqFields,
-      EmploymentTab.defaultProps.validationMessages
-    );
-
-    if (!_.isEqual(errors, {})) {
-      return [false, '/profile/professional', errors];
-    }
   }
-
-  // check education tab
-  if (_.isArray(profile.education) && !_.isEmpty(profile.education)) {
-    reqFields = EducationTab.validation(profile, reqFields);
-    errors = validateProfile(
-      profile,
-      reqFields,
-      EducationTab.defaultProps.validationMessages
-    );
-
-    if (!_.isEqual(errors, {})) {
-      return [false, '/profile/education', errors];
-    }
+  errors = validateProfile(profile, reqFields, {});
+  if ( !_.isEqual(errors, {}) ) {
+    return ([false, {
+      url: "/profile/professional",
+      title: "Professional Info",
+      text: "Please complete your work history information.",
+    }]);
   }
 
   // check privacy tab
-  errors = validateProfile(
-    profile,
-    PrivacyTab.defaultProps.requiredFields,
-    PrivacyTab.defaultProps.validationMessages
-  );
-
-  if (!_.isEqual(errors, {})) {
-    return [false, '/profile/privacy', errors];
+  reqFields = reqFields.concat(...PrivacyTab.defaultProps.requiredFields);
+  errors = validateProfile(profile, reqFields, {});
+  if ( !_.isEqual(errors, {}) ) {
+    return ([false, {
+      url: "/profile/privacy",
+      title: "Privacy Settings",
+      text: "Please complete the privacy settings.",
+    }]);
   }
 
-  return [true, null, null];
+  return [true, {}];
 }
 
 /**

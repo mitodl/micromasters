@@ -66,8 +66,7 @@ export const USER_PROFILE_RESPONSE = {
     "school_city": "Cambridge",
     "school_state_or_territory": "US-MA",
     "school_country": "US"
-  }],
-  "edx_level_of_education": null
+  }]
 };
 
 export const STATUS_PASSED = 'passed';

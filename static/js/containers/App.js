@@ -1,6 +1,8 @@
 /* global SETTINGS: false */
 import React from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
+import Dialog from 'material-ui/Dialog';
 
 import Header from '../components/Header';
 import {
@@ -9,10 +11,13 @@ import {
   clearProfile,
   fetchDashboard,
   clearDashboard,
-  startProfileEdit,
-  updateProfileValidation,
 } from '../actions/index';
-import { clearUI } from '../actions/ui';
+import {
+  clearUI,
+  updateDialogText,
+  updateDialogTitle,
+  setDialogVisibility,
+} from '../actions/ui';
 import { validateProfileComplete } from '../util/util';
 
 const TERMS_OF_SERVICE_REGEX = /\/terms_of_service\/?/;
@@ -99,19 +104,51 @@ class App extends React.Component {
       location: { pathname },
       dispatch,
     } = this.props;
-    const [ complete, url, errors] = validateProfileComplete(profile);
+    let [ complete, info ] = validateProfileComplete(profile);
     if (
       userProfile.getStatus === FETCH_SUCCESS &&
       profile.agreed_to_terms_of_service &&
       !PROFILE_REGEX.test(pathname) &&
       !complete
     ) {
-      dispatch(startProfileEdit(SETTINGS.username));
-      dispatch(updateProfileValidation(SETTINGS.username, errors));
+      const { url, title, text } = info;
+      dispatch(updateDialogText(text));
+      dispatch(updateDialogTitle(title));
+      dispatch(setDialogVisibility(true));
       this.context.router.push(url);
     }
   }
-  
+
+  dialogHelper () {
+    const { ui, dispatch } = this.props;
+    let visible = _.get(ui, ['dialog', 'visible'], false);
+    let text = _.get(ui, ['dialog', 'text']);
+    let title = _.get(ui, ['dialog', 'title']);
+    let close = () => dispatch(setDialogVisibility(false));
+    let actions = [
+      <div
+        role='button'
+        key="close"
+        onClick={close}
+        className="mdl-button mdl-js-button"
+      >
+        close
+      </div>
+    ];
+    return (
+      <Dialog
+        open={visible}
+        onRequestClose={close}
+        title={title}
+        actions={actions}
+        autoScrollBodyContent={true}
+        className="dashboard-dialog"
+      >
+        {text !== undefined ? text : ""}
+      </Dialog>
+    );
+  }
+
   render() {
     const { children, location: { pathname } } = this.props;
 
@@ -123,6 +160,7 @@ class App extends React.Component {
     return (
       <div className="app-media layout-boxed">
         <Header empty={empty} />
+        {this.dialogHelper()}
         <div className="main-content">
           {children}
         </div>
