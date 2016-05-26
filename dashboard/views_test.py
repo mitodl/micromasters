@@ -14,9 +14,9 @@ from django.core.urlresolvers import reverse
 from requests.exceptions import HTTPError
 from rest_framework import status
 from rest_framework.test import APITestCase
-
 from edx_api.enrollments.models import Enrollments
 
+from backends.edxorg import EdxOrgOAuth2
 from courses.factories import (
     ProgramFactory,
     CourseFactory,
@@ -38,8 +38,8 @@ class DashboardTest(APITestCase):
         cls.user = UserFactory.create()
         # create a social auth for the user
         cls.user.social_auth.create(
-            provider='edxorg',
-            uid=cls.user.username,
+            provider=EdxOrgOAuth2.name,
+            uid="{}_edx".format(cls.user.username),
             extra_data='{"access_token": "fooooootoken"}'
         )
 
@@ -188,8 +188,8 @@ class DashboardTokensTest(APITestCase):
         cls.user = UserFactory.create()
         # create a social auth for the user
         cls.user.social_auth.create(
-            provider='edxorg',
-            uid=cls.user.username,
+            provider=EdxOrgOAuth2.name,
+            uid="{}_edx".format(cls.user.username),
             extra_data='{"access_token": "fooooootoken", "refresh_token": "baaaarrefresh"}'
         )
 
@@ -205,7 +205,7 @@ class DashboardTokensTest(APITestCase):
 
     def update_social_extra_data(self, data):
         """Helper function to update the python social auth extra data"""
-        social_user = self.user.social_auth.get(provider='edxorg')
+        social_user = self.user.social_auth.get(provider=EdxOrgOAuth2.name)
         social_user.extra_data.update(data)
         social_user.save()
 

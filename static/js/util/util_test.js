@@ -25,6 +25,7 @@ import {
   validateDay,
   generateNewEducation,
   generateNewWorkHistory,
+  getPreferredName,
 } from '../util/util';
 import PersonalTab from '../components/PersonalTab';
 import EmploymentTab from '../components/EmploymentTab';
@@ -592,6 +593,32 @@ describe('utility functions', () => {
         `${SETTINGS.edx_base_url}static/images/profiles/default_120.png`,
         makeProfileImageUrl({})
       );
+    });
+  });
+
+  describe('getPreferredName', () => {
+    let settingsBackup;
+    beforeEach(() => {
+      settingsBackup = Object.assign({}, SETTINGS);
+    });
+
+    afterEach(() => {
+      Object.assign(SETTINGS, settingsBackup);
+    });
+
+    it('shows profile.preferred_name', () => {
+      assert.equal('profile preferred name', getPreferredName({
+        preferred_name: 'profile preferred name'
+      }));
+    });
+
+    it('uses SETTINGS.name if profile.preferred_name is not available', () => {
+      assert.equal(SETTINGS.name, getPreferredName({}));
+    });
+
+    it('uses SETTINGS.username if SETTINGS.name and profile.preferred_name are not available', () => {
+      SETTINGS.name = '';
+      assert.equal(SETTINGS.username, getPreferredName({}));
     });
   });
 });

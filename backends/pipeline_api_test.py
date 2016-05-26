@@ -52,6 +52,13 @@ class EdxPipelineApiTest(TestCase):
         Set up class
         """
         self.user = UserFactory()
+        self.user.social_auth.create(
+            provider='not_edx',
+        )
+        self.user.social_auth.create(
+            provider=edxorg.EdxOrgOAuth2.name,
+            uid="{}_edx".format(self.user.username),
+        )
         self.user_profile = Profile.objects.get(user=self.user)
 
         self.mocked_edx_profile = {
@@ -75,7 +82,7 @@ class EdxPipelineApiTest(TestCase):
                 'image_url_small': 'https://edx.org/small.jpg'
             },
             'requires_parental_consent': False,
-            'username': self.user.username,
+            'username': self.user.social_auth.get(provider=edxorg.EdxOrgOAuth2.name).uid,
             'year_of_birth': 1986,
             "work_history": [
                 {
@@ -157,7 +164,9 @@ class EdxPipelineApiTest(TestCase):
         mocked_get_json.assert_called_once_with(
             urljoin(
                 edxorg.EdxOrgOAuth2.EDXORG_BASE_URL,
-                '/api/user/v1/accounts/{0}'.format(self.user.username)
+                '/api/user/v1/accounts/{0}'.format(
+                    self.user.social_auth.get(provider=edxorg.EdxOrgOAuth2.name).uid
+                )
             ),
             headers={'Authorization': 'Bearer foo_token'}
         )

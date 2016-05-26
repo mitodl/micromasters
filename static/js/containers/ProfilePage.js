@@ -20,6 +20,7 @@ import {
   setEducationDegreeLevel,
   setEducationDegreeInclusions,
 } from '../actions/ui';
+import { getPreferredName } from '../util/util';
 import Jumbotron from '../components/Jumbotron';
 
 class ProfilePage extends React.Component {
@@ -148,7 +149,7 @@ class ProfilePage extends React.Component {
       })
     ));
 
-    let text = `Welcome ${profile.preferred_name || SETTINGS.name}, let's
+    let text = `Welcome ${getPreferredName(profile)}, let's
     complete your enrollment to MIT MicroMaster’s.`;
 
     return <div className="card">

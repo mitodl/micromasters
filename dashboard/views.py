@@ -55,7 +55,8 @@ class UserDashboard(APIView):
         enrollments = edx_client.enrollments.get_student_enrollments()
         # get a certificates client for the student
         certificates = edx_client.certificates.get_student_certificates(
-            request.user.username, enrollments.get_enrolled_course_ids())
+            user_social.uid, enrollments.get_enrolled_course_ids()
+        )
 
         response_data = []
         for program in Program.objects.filter(live=True):

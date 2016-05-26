@@ -19,7 +19,7 @@ class ProfileViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
     # pylint: disable=too-many-return-statements
 
     permission_classes = (CanEditIfOwner, )
-    lookup_field = 'user__username'
+    lookup_field = 'user__social_auth__uid'
     lookup_url_kwarg = 'user'
     queryset = Profile.objects.all()
 

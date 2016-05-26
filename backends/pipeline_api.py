@@ -5,6 +5,7 @@ import logging
 from datetime import datetime
 from urllib.parse import urljoin
 
+from backends.edxorg import EdxOrgOAuth2
 from profiles.models import Profile
 from profiles.util import split_name
 
@@ -28,7 +29,7 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):  
 
     # this function is completely skipped if the backend is not edx or
     # the user has not created now
-    if backend.name != 'edxorg' or not is_new:
+    if backend.name != EdxOrgOAuth2.name or not is_new:
         return
 
     access_token = response.get('access_token')
@@ -45,8 +46,9 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):  
         log.error('No profile found for the user %s', user.username)
         return
 
+    username = user.social_auth.get(provider=EdxOrgOAuth2.name).uid
     user_profile_edx = backend.get_json(
-        urljoin(backend.EDXORG_BASE_URL, '/api/user/v1/accounts/{0}'.format(user.username)),
+        urljoin(backend.EDXORG_BASE_URL, '/api/user/v1/accounts/{0}'.format(username)),
         headers={
             "Authorization": "Bearer {}".format(access_token),
         }

@@ -8,6 +8,7 @@ from factory.django import mute_signals
 from rest_framework.fields import DateTimeField
 from rest_framework.exceptions import ValidationError
 
+from backends.edxorg import EdxOrgOAuth2
 from profiles.factories import (
     EmploymentFactory,
     EducationFactory,
@@ -37,13 +38,25 @@ class ProfileTests(TestCase):
     Tests for profile serializers
     """
 
+    def create_profile(self):
+        """
+        Create a profile and social auth
+        """
+        with mute_signals(post_save):
+            profile = ProfileFactory.create()
+            profile.user.social_auth.create(
+                provider=EdxOrgOAuth2.name,
+                uid="{}_edx".format(profile.user.username)
+            )
+            return profile
+
     def test_full(self):  # pylint: disable=no-self-use
         """
         Test full serializer
         """
-        profile = ProfileFactory.build()
+        profile = self.create_profile()
         assert ProfileSerializer().to_representation(profile) == {
-            'username': profile.user.username,
+            'username': profile.user.social_auth.get(provider=EdxOrgOAuth2.name).uid,
             'first_name': profile.first_name,
             'filled_out': profile.filled_out,
             'agreed_to_terms_of_service': profile.agreed_to_terms_of_service,
@@ -80,9 +93,9 @@ class ProfileTests(TestCase):
         """
         Test limited serializer
         """
-        profile = ProfileFactory.build()
+        profile = self.create_profile()
         assert ProfileLimitedSerializer().to_representation(profile) == {
-            'username': profile.user.username,
+            'username': profile.user.social_auth.get(provider=EdxOrgOAuth2.name).uid,
             'first_name': profile.first_name,
             'last_name': profile.last_name,
             'preferred_name': profile.preferred_name,
@@ -112,9 +125,9 @@ class ProfileTests(TestCase):
         """
         Test private serializer
         """
-        profile = ProfileFactory.build()
+        profile = self.create_profile()
         assert ProfilePrivateSerializer().to_representation(profile) == {
-            'username': profile.user.username,
+            'username': profile.user.social_auth.get(provider=EdxOrgOAuth2.name).uid,
             'account_privacy': profile.account_privacy,
             'has_profile_image': profile.has_profile_image,
             'profile_url_full': format_gravatar_url(profile.user.email, GravatarImgSize.FULL),

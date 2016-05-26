@@ -13,6 +13,7 @@ from rest_framework.status import (
     HTTP_405_METHOD_NOT_ALLOWED,
 )
 
+from backends.edxorg import EdxOrgOAuth2
 from profiles.factories import ProfileFactory, UserFactory
 from profiles.models import Profile
 from profiles.permissions import CanEditIfOwner
@@ -37,11 +38,21 @@ class ProfileTests(TestCase):
 
         with mute_signals(post_save):
             self.user1 = UserFactory.create()
-        self.url1 = reverse('profile-detail', kwargs={'user': self.user1.username})
+            username = "{}_edx".format(self.user1.username)
+            self.user1.social_auth.create(
+                provider=EdxOrgOAuth2.name,
+                uid=username
+            )
+        self.url1 = reverse('profile-detail', kwargs={'user': username})
 
         with mute_signals(post_save):
             self.user2 = UserFactory.create()
-        self.url2 = reverse('profile-detail', kwargs={'user': self.user2.username})
+            username = "{}_edx".format(self.user2.username)
+            self.user2.social_auth.create(
+                provider=EdxOrgOAuth2.name,
+                uid=username
+            )
+        self.url2 = reverse('profile-detail', kwargs={'user': username})
 
     def test_viewset(self):
         """
@@ -195,7 +206,12 @@ class ProfileTests(TestCase):
             ProfileFactory.create(user=self.user1)
         self.client.force_login(self.user1)
 
-        new_profile = ProfileFactory.build()
+        with mute_signals(post_save):
+            new_profile = ProfileFactory.create()
+        new_profile.user.social_auth.create(
+            provider=EdxOrgOAuth2.name,
+            uid="{}_edx".format(new_profile.user.username)
+        )
         patch_data = ProfileSerializer().to_representation(new_profile)
 
         resp = self.client.patch(self.url1, content_type="application/json", data=json.dumps(patch_data))

@@ -12,6 +12,7 @@ from django.test import TestCase
 from requests.exceptions import HTTPError
 
 from backends import utils
+from backends.edxorg import EdxOrgOAuth2
 from profiles.factories import UserFactory
 
 # pylint: disable=protected-access
@@ -27,8 +28,8 @@ class RefreshTest(TestCase):
         cls.user = UserFactory.create()
         # create a social auth for the user
         cls.user.social_auth.create(
-            provider='edxorg',
-            uid=cls.user.username,
+            provider=EdxOrgOAuth2.name,
+            uid="{}_edx".format(cls.user.username),
             extra_data='{"access_token": "fooooootoken", "refresh_token": "baaaarrefresh"}'
         )
 
@@ -38,7 +39,7 @@ class RefreshTest(TestCase):
 
     def update_social_extra_data(self, data):
         """Helper function to update the python social auth extra data"""
-        social_user = self.user.social_auth.get(provider='edxorg')
+        social_user = self.user.social_auth.get(provider=EdxOrgOAuth2.name)
         social_user.extra_data.update(data)
         social_user.save()
         return social_user
@@ -57,7 +58,7 @@ class RefreshTest(TestCase):
     @patch('backends.edxorg.EdxOrgOAuth2.refresh_token', autospec=True)
     def test_refresh_no_extradata(self, mock_refresh):
         """The refresh needs to be called because there is not valid timestamps"""
-        social_user = self.user.social_auth.get(provider='edxorg')
+        social_user = self.user.social_auth.get(provider=EdxOrgOAuth2.name)
         social_user.extra_data = {"access_token": "fooooootoken", "refresh_token": "baaaarrefresh"}
         social_user.save()
         utils.refresh_user_token(social_user)
@@ -85,7 +86,7 @@ class RefreshTest(TestCase):
             raise error
 
         mock_refresh.side_effect = raise_http_error
-        social_user = self.user.social_auth.get(provider='edxorg')
+        social_user = self.user.social_auth.get(provider=EdxOrgOAuth2.name)
         with self.assertRaises(utils.InvalidCredentialStored):
             utils._send_refresh_request(social_user)
 
@@ -100,7 +101,7 @@ class RefreshTest(TestCase):
             raise error
 
         mock_refresh.side_effect = raise_http_error
-        social_user = self.user.social_auth.get(provider='edxorg')
+        social_user = self.user.social_auth.get(provider=EdxOrgOAuth2.name)
         with self.assertRaises(utils.InvalidCredentialStored):
             utils._send_refresh_request(social_user)
 
@@ -115,6 +116,6 @@ class RefreshTest(TestCase):
             raise error
 
         mock_refresh.side_effect = raise_http_error
-        social_user = self.user.social_auth.get(provider='edxorg')
+        social_user = self.user.social_auth.get(provider=EdxOrgOAuth2.name)
         with self.assertRaises(HTTPError):
             utils._send_refresh_request(social_user)

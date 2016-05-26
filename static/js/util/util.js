@@ -415,3 +415,12 @@ export function makeProfileImageUrl(profile) {
 
   return imageUrl;
 }
+
+/**
+ * Returns the preferred name or else the username
+ * @param profile {Object} The user profile
+ * @returns {string}
+ */
+export function getPreferredName(profile) {
+  return profile.preferred_name || SETTINGS.name || SETTINGS.username;
+}
