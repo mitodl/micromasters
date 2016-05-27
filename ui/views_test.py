@@ -86,9 +86,9 @@ class TestViews(TestCase):
             js_settings = json.loads(response.context['js_settings_json'])
             assert js_settings['gaTrackingID'] == ga_tracking_id
 
-    def test_index_context_logged_in(self):
+    def test_index_context_logged_in_social_auth(self):
         """
-        Assert context values when logged in
+        Assert context values when logged in as social auth user
         """
         user = self.create_and_login_user()
         ga_tracking_id = FuzzyText().fuzz()
@@ -98,6 +98,25 @@ class TestViews(TestCase):
             response = self.client.get('/')
             assert response.context['authenticated'] is True
             assert response.context['username'] == user.social_auth.get(provider=EdxOrgOAuth2.name).uid
+            assert response.context['title'] == HomePage.objects.first().title
+            js_settings = json.loads(response.context['js_settings_json'])
+            assert js_settings['gaTrackingID'] == ga_tracking_id
+
+    def test_index_context_logged_in_staff(self):
+        """
+        Assert context values when logged in as staff
+        """
+        with mute_signals(post_save):
+            profile = ProfileFactory.create()
+            self.client.force_login(profile.user)
+
+        ga_tracking_id = FuzzyText().fuzz()
+        with self.settings(
+            GA_TRACKING_ID=ga_tracking_id,
+        ):
+            response = self.client.get('/')
+            assert response.context['authenticated'] is True
+            assert response.context['username'] is None
             assert response.context['title'] == HomePage.objects.first().title
             js_settings = json.loads(response.context['js_settings_json'])
             assert js_settings['gaTrackingID'] == ga_tracking_id

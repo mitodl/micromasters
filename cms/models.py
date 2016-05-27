@@ -38,7 +38,9 @@ class HomePage(Page):
 
         username = None
         if not request.user.is_anonymous():
-            username = request.user.social_auth.get(provider=EdxOrgOAuth2.name).uid
+            social_auths = request.user.social_auth.filter(provider=EdxOrgOAuth2.name)
+            if social_auths.exists():
+                username = social_auths.first().uid
         context = super(HomePage, self).get_context(request)
 
         context["programs"] = Program.objects.filter(live=True)
