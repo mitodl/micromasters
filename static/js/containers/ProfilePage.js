@@ -1,8 +1,6 @@
 /* global SETTINGS */
 import React from 'react';
 import { connect } from 'react-redux';
-import Tabs from 'react-mdl/lib/Tabs/Tabs';
-import Tab from 'react-mdl/lib/Tabs/Tab';
 
 import {
   startProfileEdit,
@@ -22,6 +20,7 @@ import {
 } from '../actions/ui';
 import { getPreferredName } from '../util/util';
 import Jumbotron from '../components/Jumbotron';
+import { makeProfileProgressDisplay } from '../util/util';
 
 class ProfilePage extends React.Component {
   static propTypes = {
@@ -101,16 +100,6 @@ class ProfilePage extends React.Component {
     });
   }
 
-  makeTabs () {
-    return this.props.route.childRoutes.map( (route) => (
-      <Tab
-        key={route.path}
-        onClick={() => this.context.router.push(`/profile/${route.path}`)} >
-        {route.path}
-      </Tab>
-    ));
-  }
-
   activeTab () {
     return this.props.route.childRoutes.findIndex( (route) => (
       route.path === this.props.location.pathname.split("/")[2]
@@ -155,9 +144,9 @@ class ProfilePage extends React.Component {
     return <div className="card">
       <Jumbotron profile={profile} text={text}>
         <div className="card-copy">
-          <Tabs activeTab={this.activeTab()}>
-            {this.makeTabs()}
-          </Tabs>
+          <div style={{textAlign: "center"}}>
+            {makeProfileProgressDisplay(this.activeTab())}
+          </div>
           <section>
             {this.props.children && childrenWithProps}
           </section>

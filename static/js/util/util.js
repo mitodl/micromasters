@@ -207,6 +207,117 @@ export function makeRunStatusDisplay(run) {
   }
 }
 
+export function makeProfileProgressDisplay(active) {
+  const width = 750, height = 100, radius = 20, paddingX = 40, paddingY = 5;
+  const tabNames = ["Personal", "Education", "Professional", "Profile Privacy"];
+  const numCircles = tabNames.length;
+
+  // width from first circle edge left to the last circle edge right
+  const circlesWidth = width - (paddingX * 2 + radius * 2);
+  // x distance between two circle centers
+  const circleDistance = Math.floor(circlesWidth / (numCircles - 1));
+  const textY = (height - (radius * 2)) / 2 + radius * 2;
+  const circleY = radius + paddingY;
+
+  const greenFill = "#00964e", greenLine = "#7dcba7";
+  const greyStroke = "#ececec", lightGreyText = "#b7b7b7", darkGreyText = "#888888";
+  const greyFill = "#eeeeee", greyCircle = "#dddddd";
+  const colors = {
+    completed: {
+      fill: greenFill,
+      stroke: "white",
+      circleText: "white",
+      text: greenFill,
+      line: greenLine
+    },
+    current: {
+      fill: "white",
+      stroke: greyStroke,
+      circleText: "black",
+      text: "black",
+      line: greyStroke
+    },
+    future: {
+      fill: greyFill,
+      stroke: greyCircle,
+      circleText: darkGreyText,
+      text: lightGreyText,
+      line: greyStroke
+    }
+  };
+
+  const elements = [];
+
+  for (let i = 0; i < numCircles; ++i) {
+    let colorScheme;
+    if (i < active) {
+      colorScheme = colors.completed;
+    } else if (i === active) {
+      colorScheme = colors.current;
+    } else {
+      colorScheme = colors.future;
+    }
+
+    const circleX = paddingX + radius + circleDistance * i;
+    const nextCircleX = paddingX + radius + circleDistance * (i + 1);
+    elements.push(
+      <circle
+        key={`circle_${i}`}
+        cx={circleX}
+        cy={circleY}
+        r={radius}
+        stroke={colorScheme.stroke}
+        fill={colorScheme.fill}
+      />,
+      <text
+        key={`text_${i}`}
+        x={circleX}
+        y={textY}
+        textAnchor="middle"
+        style={{
+          fill: colorScheme.text,
+          fontWeight: 700,
+          fontSize: "12pt"
+        }}
+      >
+        {tabNames[i]}
+      </text>,
+      <text
+        key={`circletext_${i}`}
+        x={circleX}
+        y={circleY}
+        textAnchor="middle"
+        dominantBaseline="middle"
+        style={{
+          fill: colorScheme.circleText,
+          fontWeight: 700,
+          fontSize: "12pt"
+        }}
+      >
+        {i + 1}
+      </text>
+    );
+    if (i !== numCircles - 1) {
+      elements.push(
+        <line
+          key={`line_${i}`}
+          x1={circleX + radius}
+          x2={nextCircleX - radius}
+          y1={circleY}
+          y2={circleY}
+          stroke={colorScheme.line}
+          strokeWidth={2}
+        />
+      );
+    }
+  }
+
+  return <svg style={{width: width, height: height}}>
+    <desc>Profile progress: {tabNames[active]}</desc>
+    {elements}
+  </svg>;
+}
+
 /* eslint-disable camelcase */
 /**
  * Validates the profile

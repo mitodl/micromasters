@@ -26,6 +26,7 @@ import {
   generateNewEducation,
   generateNewWorkHistory,
   getPreferredName,
+  makeProfileProgressDisplay,
 } from '../util/util';
 import PersonalTab from '../components/PersonalTab';
 import EmploymentTab from '../components/EmploymentTab';
@@ -619,6 +620,31 @@ describe('utility functions', () => {
     it('uses SETTINGS.username if SETTINGS.name and profile.preferred_name are not available', () => {
       SETTINGS.name = '';
       assert.equal(SETTINGS.username, getPreferredName({}));
+    });
+  });
+
+  describe('makeProfileProgressDisplay', () => {
+    it('renders the right active display', () => {
+      let expected = ["Personal", "Education", "Professional", "Profile Privacy"];
+
+      for (let i = 0; i < expected.length; ++i) {
+        let svg = makeProfileProgressDisplay(i);
+        let desc = svg.props.children[0];
+        assert.equal(desc.props.children.join(""), `Profile progress: ${expected[i]}`);
+
+        for (let child of svg.props.children) {
+          if (child.key === `circle_${i}`) {
+            // the white circle should be the currently selected one
+            assert.equal(child.props.fill, "white");
+          }
+          if (child.key === `circletext_${i}`) {
+            assert.equal(child.props.children, `${i + 1}`);
+          }
+          if (child.key === `text_${i}`) {
+            assert.equal(child.props.children, expected[i]);
+          }
+        }
+      }
     });
   });
 });
