@@ -1,5 +1,7 @@
 import _ from 'lodash';
 
+import { HIGH_SCHOOL } from '../constants';
+
 let handleNestedValidation = (profile, keys, nestedKey) => {
   let nestedFields = index => (
     keys.map(key => [nestedKey, index, key])
@@ -71,6 +73,10 @@ export function educationValidation(profile) {
   ];
   if ( !_.isEmpty(profile.education) ) {
     let requiredFields = handleNestedValidation(profile, nestedKeys, 'education');
+    requiredFields = requiredFields.filter(([, index, key]) =>
+      // don't require field of study for high school students
+      !(key === 'field_of_study' && _.get(profile, ['education', index, 'degree_name']) === HIGH_SCHOOL)
+    );
     return checkFieldPresence(profile, requiredFields, messages);
   } else {
     return {};

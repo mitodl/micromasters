@@ -7,7 +7,10 @@ import {
   employmentValidation,
   privacyValidation,
 } from './validation';
-import { USER_PROFILE_RESPONSE } from '../constants';
+import {
+  USER_PROFILE_RESPONSE,
+  HIGH_SCHOOL,
+} from '../constants';
 
 describe('Profile validation functions', () => {
   describe('Personal validation', () => {
@@ -37,6 +40,13 @@ describe('Profile validation functions', () => {
     it('should return an empty object if no education present', () => {
       let clone = _.cloneDeep(USER_PROFILE_RESPONSE);
       clone.education = undefined;
+      assert.deepEqual({}, educationValidation(clone));
+    });
+
+    it('should not validate field_of_study for high school students', () => {
+      let clone = _.cloneDeep(USER_PROFILE_RESPONSE);
+      clone.education[0].degree_name = HIGH_SCHOOL;
+      clone.education[0].field_of_study = "";
       assert.deepEqual({}, educationValidation(clone));
     });
   });
