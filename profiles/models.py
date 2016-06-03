@@ -182,7 +182,7 @@ class Education(models.Model):
     profile = models.ForeignKey(Profile, related_name='education')
     degree_name = models.CharField(max_length=30, choices=DEGREE_CHOICES)
     graduation_date = models.DateField()
-    field_of_study = models.TextField()
+    field_of_study = models.TextField(blank=True, null=True)
     online_degree = models.BooleanField(default=False)
     school_name = models.TextField()
     school_city = models.TextField()
