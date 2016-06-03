@@ -17,3 +17,8 @@ require('jsdom-global')();
 
 // required for interacting with react-mdl components
 require('react-mdl/extra/material.js');
+
+// rethrow all unhandled promise errors
+process.on('unhandledRejection', reason => {
+  throw reason;
+});
