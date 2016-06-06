@@ -49,6 +49,18 @@ describe('Profile validation functions', () => {
       clone.education[0].field_of_study = "";
       assert.deepEqual({}, educationValidation(clone));
     });
+
+    it('should show all fields which are required', () => {
+      let clone = _.cloneDeep(USER_PROFILE_RESPONSE);
+      clone.education[0].school_name = '';
+      clone.education[0].school_city = '';
+      assert.deepEqual({
+        education: [{
+          school_name: 'School name is required',
+          school_city: 'City is required'
+        }]
+      }, educationValidation(clone));
+    });
   });
 
   describe('Employment validation', () => {
@@ -67,6 +79,18 @@ describe('Profile validation functions', () => {
       let clone = _.cloneDeep(USER_PROFILE_RESPONSE);
       clone.work_history = undefined;
       assert.deepEqual({}, employmentValidation(clone));
+    });
+
+    it('should show all fields which are required', () => {
+      let clone = _.cloneDeep(USER_PROFILE_RESPONSE);
+      clone.work_history[0].company_name = '';
+      clone.work_history[0].city = '';
+      assert.deepEqual({
+        work_history: [{
+          city: 'City is required',
+          company_name: 'Company Name is required'
+        }]
+      }, employmentValidation(clone));
     });
   });
 

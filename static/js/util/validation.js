@@ -10,12 +10,15 @@ let handleNestedValidation = (profile, keys, nestedKey) => {
 };
 
 let checkFieldPresence = (profile, requiredFields, messages) => {
-  return Object.assign({}, ...requiredFields.map( keySet => {
+  let errors = {};
+
+  for (let keySet of requiredFields) {
     let val = _.get(profile, keySet);
     if (_.isUndefined(val) || _.isNull(val) || val === "" ) {
-      return _.set({}, keySet,  `${messages[keySet.slice(-1)[0]]} is required`);
+      _.set(errors, keySet,  `${messages[keySet.slice(-1)[0]]} is required`);
     }
-  }));
+  }
+  return errors;
 };
 
 export function personalValidation(profile) {
