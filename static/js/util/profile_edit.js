@@ -438,7 +438,7 @@ export function boundDateField(keySet, label, omitDay) {
 }
 
 /**
-   * Saves the profile and returns a promise, taking an optional function
+ * Saves the profile and returns a promise, taking an optional function
  * to retrieve keys for validation of nested fields (e.g. profile.work_history)
  *
  * @param isLastStep {bool} If true, this is the last tab in the profile

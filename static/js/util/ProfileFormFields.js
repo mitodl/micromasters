@@ -8,13 +8,11 @@ import {
   boundCountrySelectField,
   boundStateSelectField,
   boundRadioGroupField,
-  saveProfileStep,
 } from './profile_edit';
 import { HIGH_SCHOOL, ASSOCIATE, BACHELORS, MASTERS, DOCTORATE } from '../constants';
 import LANGUAGE_CODES from '../language_codes';
 import INDUSTRIES from '../industries';
 import iso3166 from 'iso-3166-2';
-import Button from 'react-mdl/lib/Button';
 
 export default class ProfileFormFields extends React.Component {
   constructor(props) {
@@ -64,41 +62,6 @@ export default class ProfileFormFields extends React.Component {
       label: industry
     }));
   }
-
-  stepBack = () => {
-    this.context.router.push(this.prevUrl);
-  };
-
-  saveAndContinue = () => {
-    saveProfileStep.call(this, this.isLastTab).then(() => {
-      this.context.router.push(this.nextUrl);
-    });
-  };
-
-  progressControls = () => {
-    let prevButton, nextButton;
-    if(this.prevUrl) {
-      prevButton = <Button
-        raised
-        className="progress-button previous"
-        onClick={this.stepBack}>
-        <span>Previous</span>
-      </Button>;
-    }
-    if(this.nextUrl) {
-      nextButton = <Button
-        raised
-        colored
-        className="progress-button next"
-        onClick={this.saveAndContinue}>
-        <span>{this.isLastTab ? "I'm Done!" : "Save and Continue"}</span>
-      </Button>;
-    }
-    return <div>
-        {prevButton}
-        {nextButton}
-      </div>;
-  };
 
   static contextTypes = {
     router: React.PropTypes.object.isRequired

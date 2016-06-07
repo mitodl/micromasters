@@ -1,13 +1,10 @@
 import React from 'react';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 
+import ProfileProgressControls from './ProfileProgressControls';
 import ProfileFormFields from '../util/ProfileFormFields';
 
 class PrivacyTab extends ProfileFormFields {
-  prevUrl = "/profile/professional";
-  nextUrl = "/dashboard";
-  isLastTab = true;
-
   static propTypes = {
     profile:        React.PropTypes.object,
     saveProfile:    React.PropTypes.func,
@@ -15,6 +12,7 @@ class PrivacyTab extends ProfileFormFields {
   };
 
   render() {
+    const { saveProfile, profile } = this.props;
     return (
       <div>
         <Grid className="profile-splash">
@@ -29,7 +27,13 @@ class PrivacyTab extends ProfileFormFields {
             { this.boundRadioGroupField(['account_privacy'], '', this.privacyOptions) } <br />
           </Cell>
           <Cell col={12}>
-            {this.progressControls()}
+            <ProfileProgressControls
+              prevUrl="/profile/professional"
+              nextUrl="/dashboard"
+              isLastTab={true}
+              saveProfile={saveProfile}
+              profile={profile}
+            />
           </Cell>
         </Grid>
       </div>

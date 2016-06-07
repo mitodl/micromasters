@@ -124,7 +124,6 @@ export function privacyValidation(profile) {
   return checkFieldPresence(profile, requiredFields, messages);
 }
 
-/* eslint-disable camelcase */
 /**
  * Validates the profile
  *
@@ -141,13 +140,13 @@ export function validateProfile(profile) {
   );
 }
 
-/* eslint-enable camelcase */
 /*
 check that the profile is complete. we make the assumption that a
 complete profile consists of:
   - a valid personal tab
-  - an entry for 'currently employed', and a work history entry if
-    `currently employed == 'yes'`
+  - one or more education items, for the education types the user has marked
+  - one or more work items if the user has marked any work history
+  - a valid privacy level
 */
 export function validateProfileComplete(profile) {
   let errors = {};

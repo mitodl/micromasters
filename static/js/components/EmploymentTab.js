@@ -2,13 +2,16 @@ import React from 'react';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 
 import EmploymentForm from './EmploymentForm';
-import ProfileFormFields from '../util/ProfileFormFields';
+import ProfileProgressControls from './ProfileProgressControls';
 
-class EmploymentTab extends ProfileFormFields {
-  prevUrl = "/profile/education";
-  nextUrl = "/profile/privacy";
+class EmploymentTab extends React.Component {
+  static propTypes = {
+    saveProfile: React.PropTypes.func,
+    profile: React.PropTypes.object
+  };
 
   render () {
+    const { saveProfile, profile } = this.props;
     return (
       <div>
         <Grid className="profile-splash">
@@ -24,7 +27,12 @@ class EmploymentTab extends ProfileFormFields {
           <Cell col={1}></Cell>
           <Cell col={1}></Cell>
           <Cell col={10}>
-            {this.progressControls()}
+            <ProfileProgressControls
+              prevUrl="/profile/education"
+              nextUrl="/profile/privacy"
+              saveProfile={saveProfile}
+              profile={profile}
+            />
           </Cell>
           <Cell col={1}></Cell>
         </Grid>
