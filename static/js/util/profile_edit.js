@@ -439,13 +439,15 @@ export function boundDateField(keySet, label, omitDay) {
 }
 
 /**
- * Saves the profile and returns a promise, taking an optional function
- * to retrieve keys for validation of nested fields (e.g. profile.work_history)
+ * Validates the profile then PATCHes the profile if validation succeeded.
  *
+ * @param validator {func} The function used to validate profile
  * @param isLastStep {bool} If true, this is the last tab in the profile
+ * @returns {Promise} A promise which resolves with the new profile if validation and PATCH succeeded,
+ * or rejects if either failed
  */
-export function saveProfileStep(isLastStep=false) {
-  const { saveProfile, profile } = this.props;
+export function saveProfileStep(validator, isLastStep=false) {
+  const { saveProfile, profile, ui } = this.props;
   let clone = Object.assign({}, profile, {
     filled_out: profile.filled_out || isLastStep
   });
@@ -453,5 +455,5 @@ export function saveProfileStep(isLastStep=false) {
     // user has also seen email consent message at this point
     clone.email_optin = true;
   }
-  return saveProfile(clone);
+  return saveProfile(validator, clone, ui);
 }

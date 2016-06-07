@@ -1,10 +1,11 @@
 /* global SETTINGS: false */
 import React from 'react';
+import _ from 'lodash';
 
 import {
   startProfileEdit,
   updateProfile,
-  validateProfile,
+  updateProfileValidation,
   clearProfileEdit,
   fetchUserProfile,
   saveProfile,
@@ -121,7 +122,7 @@ class ProfileFormContainer extends React.Component {
     dispatch(setEducationDegreeInclusions(inclusions));
   }
 
-  saveProfile(isEdit, profile) {
+  saveProfile(isEdit, validator, profile, ui) {
     const { dispatch } = this.props;
     const username = SETTINGS.username;
 
@@ -129,11 +130,15 @@ class ProfileFormContainer extends React.Component {
       // Validation errors will only show up if we start the edit
       dispatch(startProfileEdit(username));
     }
-    return dispatch(validateProfile(username, profile)).then(() => {
+    let errors = validator(profile, ui);
+    dispatch(updateProfileValidation(username, errors));
+    if (_.isEmpty(errors)) {
       return dispatch(saveProfile(username, profile)).then(() => {
         dispatch(clearProfileEdit(username));
       });
-    });
+    } else {
+      return Promise.reject(errors);
+    }
   }
 
   childrenWithProps = profileFromStore => {

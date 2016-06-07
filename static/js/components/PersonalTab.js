@@ -3,6 +3,7 @@ import Grid, { Cell } from 'react-mdl/lib/Grid';
 
 import PersonalForm from './PersonalForm';
 import ProfileProgressControls from './ProfileProgressControls';
+import { personalValidation } from '../util/validation';
 
 class PersonalTab extends React.Component {
   static propTypes = {
@@ -10,10 +11,11 @@ class PersonalTab extends React.Component {
     errors:         React.PropTypes.object,
     saveProfile:    React.PropTypes.func,
     updateProfile:  React.PropTypes.func,
+    ui:             React.PropTypes.object
   };
 
   render() {
-    const { saveProfile, profile } = this.props;
+    const { saveProfile, profile, ui } = this.props;
     return <div>
       <Grid className="profile-splash">
         <Cell col={12}>
@@ -33,6 +35,8 @@ class PersonalTab extends React.Component {
             nextUrl="/profile/education"
             profile={profile}
             saveProfile={saveProfile}
+            ui={ui}
+            validator={personalValidation}
           />
         </Cell>
         <Cell col={1} />

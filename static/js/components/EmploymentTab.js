@@ -3,15 +3,21 @@ import Grid, { Cell } from 'react-mdl/lib/Grid';
 
 import EmploymentForm from './EmploymentForm';
 import ProfileProgressControls from './ProfileProgressControls';
+import {
+  employmentValidation,
+  employmentUiValidation,
+  combineValidators,
+} from '../util/validation';
 
 class EmploymentTab extends React.Component {
   static propTypes = {
     saveProfile: React.PropTypes.func,
-    profile: React.PropTypes.object
+    profile: React.PropTypes.object,
+    ui: React.PropTypes.object
   };
 
   render () {
-    const { saveProfile, profile } = this.props;
+    const { saveProfile, profile, ui } = this.props;
     return (
       <div>
         <Grid className="profile-splash">
@@ -32,6 +38,8 @@ class EmploymentTab extends React.Component {
               nextUrl="/profile/privacy"
               saveProfile={saveProfile}
               profile={profile}
+              ui={ui}
+              validator={combineValidators(employmentValidation, employmentUiValidation)}
             />
           </Cell>
           <Cell col={1}></Cell>

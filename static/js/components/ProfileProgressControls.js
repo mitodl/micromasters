@@ -9,7 +9,9 @@ export default class ProfileProgressControls extends React.Component {
     prevUrl: React.PropTypes.string,
     isLastTab: React.PropTypes.bool,
     saveProfile: React.PropTypes.func.isRequired,
-    profile: React.PropTypes.object.isRequired
+    profile: React.PropTypes.object.isRequired,
+    ui: React.PropTypes.object.isRequired,
+    validator: React.PropTypes.func.isRequired
   };
 
   stepBack = () => {
@@ -18,8 +20,8 @@ export default class ProfileProgressControls extends React.Component {
   };
 
   saveAndContinue = () => {
-    const { nextUrl, isLastTab } = this.props;
-    saveProfileStep.call(this, isLastTab).then(() => {
+    const { nextUrl, isLastTab, validator } = this.props;
+    saveProfileStep.call(this, validator, isLastTab).then(() => {
       this.context.router.push(nextUrl);
     });
   };

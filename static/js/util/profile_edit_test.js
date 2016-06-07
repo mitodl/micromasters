@@ -38,7 +38,8 @@ describe('Profile Editing utility functions', () => {
           "date_field": "Date field is required",
           "account_privacy": "Account privacy is required"
         },
-        updateProfile: change
+        updateProfile: change,
+        ui: {}
       }
     };
     sandbox = sinon.sandbox.create();
@@ -673,7 +674,8 @@ describe('Profile Editing utility functions', () => {
     });
 
     it('saves with finalStep as true', () => {
-      let ret = saveProfileStep.call(that, true);
+      let func = () => null;
+      let ret = saveProfileStep.call(that, func, true);
 
       let clone = Object.assign({}, that.props.profile, {
         filled_out: true,
@@ -681,7 +683,9 @@ describe('Profile Editing utility functions', () => {
       });
 
       assert.ok(that.props.saveProfile.calledWith(
+        func,
         clone,
+        that.props.ui,
       ));
       assert.equal(ret, saveProfileReturnValue);
     });

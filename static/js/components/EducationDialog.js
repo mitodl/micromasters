@@ -5,7 +5,7 @@ import Dialog from 'material-ui/Dialog';
 
 import { HIGH_SCHOOL } from '../constants';
 import ProfileFormFields from '../util/ProfileFormFields';
-import { saveProfileStep } from '../util/profile_edit';
+import { educationValidation } from '../util/validation';
 
 export default class EducationDialog extends ProfileFormFields {
   constructor(props) {
@@ -36,7 +36,8 @@ export default class EducationDialog extends ProfileFormFields {
   };
 
   saveEducationForm = () => {
-    saveProfileStep.call(this).then(() => {
+    const { saveProfile, profile, ui } = this.props;
+    saveProfile(educationValidation, profile, ui).then(() => {
       this.clearEducationEdit();
     });
   };

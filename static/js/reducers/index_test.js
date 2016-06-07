@@ -1,6 +1,4 @@
 /* global SETTINGS: false */
-import _ from 'lodash';
-
 import {
   fetchUserProfile,
   receiveGetUserProfileSuccess,
@@ -8,7 +6,6 @@ import {
   saveProfile,
   updateProfile,
   updateProfileValidation,
-  validateProfile,
   startProfileEdit,
   clearProfileEdit,
   REQUEST_GET_USER_PROFILE,
@@ -192,62 +189,50 @@ describe('reducers', () => {
       store.dispatch(startProfileEdit('jane'));
 
       dispatchThen(
-        validateProfile('jane', USER_PROFILE_RESPONSE),
+        updateProfileValidation('jane', {}),
         [UPDATE_PROFILE_VALIDATION]
       ).then(profileState => {
         assert.deepEqual(profileState['jane'].edit.errors, {});
-
-        // also assert that it returns a resolved promise
-        store.dispatch(validateProfile('jane', USER_PROFILE_RESPONSE)).then(() => {
-          done();
-        });
+        done();
       });
     });
 
     it('should validate an existing profile with validation errors', done => {
-      let profileWithError = Object.assign({}, USER_PROFILE_RESPONSE, {
-        first_name: ''
-      });
-
       // populate a profile
       store.dispatch(receiveGetUserProfileSuccess('jane', USER_PROFILE_RESPONSE));
       store.dispatch(startProfileEdit('jane'));
+      let errors = {
+        first_name: "Given name is required"
+      };
       dispatchThen(
-        validateProfile('jane',profileWithError),
+        updateProfileValidation('jane', errors),
         [UPDATE_PROFILE_VALIDATION]
       ).then(profileState => {
-        assert.deepEqual(profileState['jane'].edit.errors, {
-          first_name: 'Given name is required'
-        });
+        assert.deepEqual(profileState['jane'].edit.errors, errors);
 
-        // also assert that it returns a rejected promise
-        store.dispatch(validateProfile('jane', profileWithError)).catch(() => {
-          done();
-        });
+        done();
       });
     });
 
     it('should validate a profile with nested objects and errors', done => {
-      let profileWithError = _.cloneDeep(USER_PROFILE_RESPONSE);
-      profileWithError.work_history[0].position = undefined;
+      let errors = {
+        work_history: [
+          {
+            position: 'Position is required'
+          }
+        ]
+      };
 
       // populate a profile
       store.dispatch(receiveGetUserProfileSuccess('jane', USER_PROFILE_RESPONSE));
       store.dispatch(startProfileEdit('jane'));
       dispatchThen(
-        validateProfile('jane', profileWithError),
+        updateProfileValidation('jane', errors),
         [UPDATE_PROFILE_VALIDATION]
       ).then(profileState => {
-        assert.deepEqual(profileState['jane'].edit.errors, {
-          work_history: [
-            {position: 'Position is required'}
-          ]
-        });
+        assert.deepEqual(profileState['jane'].edit.errors, errors);
 
-        // also assert that it returns a rejected promise
-        store.dispatch(validateProfile('jane', profileWithError)).catch(() => {
-          done();
-        });
+        done();
       });
     });
 

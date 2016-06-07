@@ -10,8 +10,8 @@ import IconButton from 'react-mdl/lib/IconButton';
 import _ from 'lodash';
 import moment from 'moment';
 
-import { saveProfileStep } from '../util/profile_edit';
 import { generateNewWorkHistory, userPrivilegeCheck } from '../util/util';
+import { employmentValidation } from '../util/validation';
 import ProfileFormFields from '../util/ProfileFormFields';
 import ConfirmDeletion from './ConfirmDeletion';
 
@@ -24,7 +24,8 @@ class EmploymentForm extends ProfileFormFields {
   }
 
   saveWorkHistoryEntry = () => {
-    saveProfileStep.call(this).then(() => {
+    const { saveProfile, profile, ui } = this.props;
+    saveProfile(employmentValidation, profile, ui).then(() => {
       this.closeWorkDialog();
     });
   }
@@ -56,10 +57,10 @@ class EmploymentForm extends ProfileFormFields {
   }
 
   deleteWorkHistoryEntry = () => {
-    const { saveProfile, profile, deletionIndex } = this.props;
+    const { saveProfile, profile, ui, deletionIndex } = this.props;
     let clone = _.cloneDeep(profile);
     clone['work_history'].splice(deletionIndex, 1);
-    saveProfile(clone);
+    saveProfile(employmentValidation, clone, ui);
   }
 
   editWorkHistoryForm () {
@@ -180,12 +181,13 @@ class EmploymentForm extends ProfileFormFields {
   }
 
   render () {
-    const { 
+    const {
       ui: {
         workHistoryEdit,
         workDialogVisibility,
         showWorkDeleteDialog,
-      }
+      },
+      errors,
     } = this.props;
     const actions = [
       <Button
@@ -238,6 +240,13 @@ class EmploymentForm extends ProfileFormFields {
             </Cell>
           </Grid>
           {this.renderWorkHistory()}
+          <Grid className="profile-tab-grid">
+            <Cell col={12}>
+              <span className="validation-error-text-large">
+                {errors.work_history_required}
+              </span>
+            </Cell>
+          </Grid>
         </Card>
       </div>
     );

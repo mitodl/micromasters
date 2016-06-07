@@ -1,5 +1,7 @@
 import _ from 'lodash';
+
 import { generateNewEducation } from "../util/util";
+import { educationValidation } from '../util/validation';
 
 export function openEditEducationForm(index) {
   const {
@@ -37,10 +39,10 @@ export function openNewEducationForm(level, index) {
 }
 
 export function deleteEducationEntry () {
-  const { saveProfile, profile, deletionIndex } = this.props;
+  const { saveProfile, profile, ui, deletionIndex } = this.props;
   let clone = _.cloneDeep(profile);
   clone['education'].splice(deletionIndex, 1);
-  saveProfile(clone);
+  saveProfile(educationValidation, clone, ui);
 }
 
 

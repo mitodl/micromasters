@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import { filterPositiveInt } from './util';
-import { HIGH_SCHOOL } from '../constants';
+import { HIGH_SCHOOL, EDUCATION_LEVELS } from '../constants';
 
 let handleNestedValidation = (profile, keys, nestedKey) => {
   let nestedFields = index => (
@@ -75,7 +75,7 @@ export function educationValidation(profile) {
     'school_state_or_territory',
     'school_country'
   ];
-  if ( !_.isEmpty(profile.education) ) {
+  if (!_.isEmpty(profile.education)) {
     let requiredFields = handleNestedValidation(profile, nestedKeys, 'education');
     requiredFields = requiredFields.filter(([, index, key]) =>
       // don't require field of study for high school students
@@ -85,6 +85,23 @@ export function educationValidation(profile) {
   } else {
     return {};
   }
+}
+
+export function educationUiValidation(profile, ui) {
+  if (profile.education === undefined) {
+    profile = Object.assign({}, profile, {
+      education: []
+    });
+  }
+
+  let errors = {};
+  for (let {value, label} of EDUCATION_LEVELS) {
+    let items = profile.education.filter(education => education.degree_name === value);
+    if (ui.educationDegreeInclusions[value] && items.length === 0) {
+      errors[`education_${value}_required`] = `${label} is required if switch is set`;
+    }
+  }
+  return errors;
 }
 
 export function employmentValidation(profile) {
@@ -106,9 +123,19 @@ export function employmentValidation(profile) {
     'country',
     'state_or_territory',
   ];
-  if ( !_.isEmpty(profile.work_history) ) {
+  if (!_.isEmpty(profile.work_history)) {
     let requiredFields = handleNestedValidation(profile, nestedKeys, 'work_history');
     return checkFieldPresence(profile, requiredFields, messages);
+  } else {
+    return {};
+  }
+}
+
+export function employmentUiValidation(profile, ui) {
+  if (ui.workHistoryEdit && _.isEmpty(profile.work_history)) {
+    return {
+      work_history_required: "Work history is required if switch is set"
+    };
   } else {
     return {};
   }
@@ -122,22 +149,6 @@ export function privacyValidation(profile) {
     'account_privacy': 'Privacy level'
   };
   return checkFieldPresence(profile, requiredFields, messages);
-}
-
-/**
- * Validates the profile
- *
- * @param {Object} profile The user profile
- * @returns {Object} Validation errors or an empty object if no errors
- */
-export function validateProfile(profile) {
-  return Object.assign(
-    {},
-    personalValidation(profile),
-    educationValidation(profile),
-    employmentValidation(profile),
-    privacyValidation(profile),
-  );
 }
 
 /*
@@ -230,4 +241,15 @@ export function validateYear(string) {
     return undefined;
   }
   return year;
+}
+
+/**
+ * Returns a function which merges the results of the given functions on a set of arguments
+ * @param validators {Array} A list of validator functions taking (profile, ui)
+ * @returns {function()} A function taking (profile, ui) which combines the outputs of the validators
+ */
+export function combineValidators(...validators) {
+  return (...args) => _.merge({}, ...validators.map(
+    validator => validator(...args)
+  ));
 }
