@@ -179,6 +179,6 @@ Tests should be run in the Docker container, not the host machine. They can be r
     # run the JS tests without coverage report
     docker-compose run watch npm test
     # run a single JS test file
-    docker-compose run watch npm run-script singleTest /path/to/test.js
+    docker-compose run watch npm test /path/to/test.js
     # Run the JS linter
     docker-compose run watch npm run-script lint
