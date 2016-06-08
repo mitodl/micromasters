@@ -1,3 +1,4 @@
+/* global SETTINGS: false */
 import {
   CLEAR_UI,
   UPDATE_DIALOG_TEXT,
@@ -33,11 +34,20 @@ import {
   setShowWorkDeleteDialog,
   setDeletionIndex,
 } from '../actions/ui';
+import { receiveGetUserProfileSuccess } from '../actions';
 import { INITIAL_UI_STATE } from '../reducers/ui';
-import { HIGH_SCHOOL, ASSOCIATE, BACHELORS, MASTERS, DOCTORATE } from '../constants';
+import {
+  HIGH_SCHOOL,
+  ASSOCIATE,
+  BACHELORS,
+  MASTERS,
+  DOCTORATE,
+  USER_PROFILE_RESPONSE,
+} from '../constants';
+import rootReducer from '../reducers';
+import * as util from '../util/util';
 
 import configureTestStore from 'redux-asserts';
-import rootReducer from '../reducers';
 import assert from 'assert';
 import sinon from 'sinon';
 
@@ -148,14 +158,40 @@ describe('ui reducers', () => {
         assert.deepEqual(state.educationDegreeLevel, '');
         assert.deepEqual(
           state.educationDegreeInclusions, {
-            [HIGH_SCHOOL]: true,
-            [ASSOCIATE]: true,
-            [BACHELORS]: true,
+            [HIGH_SCHOOL]: false,
+            [ASSOCIATE]: false,
+            [BACHELORS]: false,
             [MASTERS]: false,
             [DOCTORATE]: false,
           });
         done();
       });
+    });
+
+    it('has gets inclusions from the profile API, only if the username matches', () => {
+      const inclusions = {
+        [HIGH_SCHOOL]: false,
+        [ASSOCIATE]: false,
+        [BACHELORS]: false,
+        [MASTERS]: true,
+        [DOCTORATE]: false,
+      };
+
+      let calculateDegreeInclusionsStub = sandbox.stub(util, 'calculateDegreeInclusions');
+      calculateDegreeInclusionsStub.returns(inclusions);
+
+      store.dispatch(receiveGetUserProfileSuccess(SETTINGS.username, USER_PROFILE_RESPONSE));
+      assert(calculateDegreeInclusionsStub.calledWith(USER_PROFILE_RESPONSE));
+      assert.deepEqual(
+        store.getState().ui.educationDegreeInclusions,
+        inclusions
+      );
+    });
+
+    it("does not use inclusions from the API if username isn't SETTINGS.username", () => {
+      let calculateDegreeInclusionsStub = sandbox.stub(util, 'calculateDegreeInclusions');
+      store.dispatch(receiveGetUserProfileSuccess("other username", USER_PROFILE_RESPONSE));
+      assert(!calculateDegreeInclusionsStub.called);
     });
 
     it('should let you set education dialog visibility', done => {

@@ -237,3 +237,12 @@ export const ISO_8601_FORMAT = 'YYYY-MM-DD';
 export const DASHBOARD_COURSE_HEIGHT = 70;
 export const TERMS_CARD_ROW_HEIGHT = 70;
 export const DASHBOARD_RUN_HEIGHT = 40;
+
+// NOTE: this is in order of attainment
+export const EDUCATION_LEVELS = [
+  {value: HIGH_SCHOOL, label: "High school"},
+  {value: ASSOCIATE, label: 'Associate degree'},
+  {value: BACHELORS, label: "Bachelor's degree"},
+  {value: MASTERS, label: "Master's or professional degree"},
+  {value: DOCTORATE, label: "Doctorate"}
+];

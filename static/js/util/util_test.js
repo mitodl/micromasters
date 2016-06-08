@@ -10,7 +10,17 @@ import {
   getPreferredName,
   makeProfileProgressDisplay,
   userPrivilegeCheck,
+  calculateDegreeInclusions,
 } from '../util/util';
+import {
+  EDUCATION_LEVELS,
+  USER_PROFILE_RESPONSE,
+  HIGH_SCHOOL,
+  ASSOCIATE,
+  BACHELORS,
+  DOCTORATE,
+  MASTERS,
+} from '../constants';
 
 /* eslint-disable camelcase */
 describe('utility functions', () => {
@@ -153,6 +163,58 @@ describe('utility functions', () => {
       let privilegedCallback = () => "vim";
       let unprivilegedString = "emacs";
       assert.equal(userPrivilegeCheck(profile, privilegedCallback, unprivilegedString), "emacs");
+    });
+  });
+
+  describe('calculateDegreeInclusions', () => {
+    for (const { value: outerValue, label } of EDUCATION_LEVELS) {
+      it(`turns on all switches before and including ${label}`, () => {
+        let copy = {};
+        let found = false;
+        for (const { value: innerValue } of EDUCATION_LEVELS) {
+          copy[innerValue] = !found;
+          if (innerValue === outerValue) {
+            found = true;
+          }
+        }
+
+        let clone = Object.assign({}, USER_PROFILE_RESPONSE, {
+          edx_level_of_education: outerValue,
+          education: []
+        });
+        assert.deepEqual(copy, calculateDegreeInclusions(clone));
+      });
+    }
+
+    it('turns on all switches if there is no edx_level_of_education', () => {
+      let defaults = {};
+      for (const { value } of EDUCATION_LEVELS) {
+        defaults[value] = true;
+      }
+
+      let clone = Object.assign({}, USER_PROFILE_RESPONSE, {
+        edx_level_of_education: null,
+        education: []
+      });
+      assert.deepEqual(defaults, calculateDegreeInclusions(clone));
+    });
+
+    it('turns on the switch if there is at least one education of that level', () => {
+      let clone = Object.assign({}, USER_PROFILE_RESPONSE, {
+        edx_level_of_education: HIGH_SCHOOL,
+        education: [{
+          degree_name: HIGH_SCHOOL
+        }, {
+          degree_name: DOCTORATE
+        }]
+      });
+      assert.deepEqual(calculateDegreeInclusions(clone), {
+        [HIGH_SCHOOL]: true,
+        [DOCTORATE]: true,
+        [BACHELORS]: false,
+        [MASTERS]: false,
+        [ASSOCIATE]: false
+      });
     });
   });
 });

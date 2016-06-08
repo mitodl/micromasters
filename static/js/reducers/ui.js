@@ -1,3 +1,5 @@
+/* global SETTINGS: false */
+import { RECEIVE_GET_USER_PROFILE_SUCCESS } from '../actions';
 import {
   CLEAR_UI,
   UPDATE_DIALOG_TEXT,
@@ -22,6 +24,7 @@ import {
   SET_DELETION_INDEX,
 } from '../actions/ui';
 import { HIGH_SCHOOL, ASSOCIATE, BACHELORS, MASTERS, DOCTORATE } from '../constants';
+import { calculateDegreeInclusions } from '../util/util';
 
 export const INITIAL_UI_STATE = {
   workHistoryEdit:            true,
@@ -30,10 +33,10 @@ export const INITIAL_UI_STATE = {
   educationDialogVisibility:  false,
   educationDialogIndex:       null,
   educationDegreeLevel:       '',
-  educationDegreeInclusions:  {
-    [HIGH_SCHOOL]: true,
-    [ASSOCIATE]: true,
-    [BACHELORS]: true,
+  educationDegreeInclusions: {
+    [HIGH_SCHOOL]: false,
+    [ASSOCIATE]: false,
+    [BACHELORS]: false,
     [MASTERS]: false,
     [DOCTORATE]: false,
   },
@@ -125,6 +128,15 @@ export const ui = (state = INITIAL_UI_STATE, action) => {
     return Object.assign({}, state, {
       deletionIndex: action.payload
     });
+  }
+  case RECEIVE_GET_USER_PROFILE_SUCCESS: {
+    const { profile, username } = action.payload;
+    if (SETTINGS.username === username) {
+      return Object.assign({}, state, {
+        educationDegreeInclusions: calculateDegreeInclusions(profile)
+      });
+    }
+    return state;
   }
   default:
     return state;

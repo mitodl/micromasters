@@ -5,6 +5,8 @@ import ga from 'react-ga';
 import striptags from 'striptags';
 import _ from 'lodash';
 
+import { EDUCATION_LEVELS } from '../constants';
+
 export function sendGoogleAnalyticsEvent(category, action, label, value) {
   let event = {
     category: category,
@@ -220,4 +222,24 @@ export function makeProfileImageUrl(profile) {
  */
 export function getPreferredName(profile) {
   return profile.preferred_name || SETTINGS.name || SETTINGS.username;
+}
+
+export function calculateDegreeInclusions(profile) {
+  let highestLevelFound = false;
+  let inclusions = {};
+  for (const { value } of EDUCATION_LEVELS) {
+    inclusions[value] = highestLevelFound ? false : true;
+    if (value === profile.edx_level_of_education) {
+      // every level after this point is higher than the user has attained according to edx
+      highestLevelFound = true;
+    }
+  }
+
+  // turn on all switches where the user has data
+  for (const { value } of EDUCATION_LEVELS) {
+    if (profile.education.filter(education => education.degree_name === value).length > 0) {
+      inclusions[value] = true;
+    }
+  }
+  return inclusions;
 }

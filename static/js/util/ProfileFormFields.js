@@ -9,7 +9,7 @@ import {
   boundStateSelectField,
   boundRadioGroupField,
 } from './profile_edit';
-import { HIGH_SCHOOL, ASSOCIATE, BACHELORS, MASTERS, DOCTORATE } from '../constants';
+import { EDUCATION_LEVELS } from '../constants';
 import LANGUAGE_CODES from '../language_codes';
 import INDUSTRIES from '../industries';
 import iso3166 from 'iso-3166-2';
@@ -50,13 +50,7 @@ export default class ProfileFormFields extends React.Component {
       { value: 'private', label: 'Private', helper: `Your MicroMaster’s profile will only 
         be visible to MIT faculty and staff.` }
     ];
-    this.educationLevelOptions = [
-      {value: HIGH_SCHOOL, label: "High school"},
-      {value: ASSOCIATE, label: 'Associate degree'},
-      {value: BACHELORS, label: "Bachelor's degree"},
-      {value: MASTERS, label: "Master's or professional degree"},
-      {value: DOCTORATE, label: "Doctorate"}
-    ];
+    this.educationLevelOptions = EDUCATION_LEVELS;
     this.industryOptions = INDUSTRIES.map(industry => ({
       value: industry,
       label: industry
