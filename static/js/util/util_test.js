@@ -102,17 +102,26 @@ describe('utility functions', () => {
         let desc = svg.props.children[0];
         assert.equal(desc.props.children.join(""), `Profile progress: ${expected[i]}`);
 
-        for (let child of svg.props.children) {
+        let foundCircle = false, foundCircleText = false, foundText = false;
+        for (let child of svg.props.children[1]) {
           if (child.key === `circle_${i}`) {
             // the white circle should be the currently selected one
             assert.equal(child.props.fill, "white");
+            foundCircle = true;
           }
           if (child.key === `circletext_${i}`) {
             assert.equal(child.props.children, `${i + 1}`);
+            foundCircleText = true;
           }
           if (child.key === `text_${i}`) {
             assert.equal(child.props.children, expected[i]);
+            foundText = true;
           }
+        }
+        if (!foundCircle || !foundCircleText || !foundText) {
+          assert(false,
+            `Unable to find one of circle: ${foundCircle} circleText: ${foundCircleText} text: ${foundText}`
+          );
         }
       }
     });
