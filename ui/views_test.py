@@ -61,6 +61,29 @@ class TestViews(TestCase):
             status_code=200
         )
 
+    def test_program_link(self):
+        """Verify that program links are present in home page if ProgramPage is set"""
+        program = ProgramFactory.create(live=True)
+        program_page = ProgramPage(program=program, title="Test Program")
+
+        response = self.client.get('/')
+        self.assertNotContains(
+            response,
+            program_page.url,
+            status_code=200
+        )
+
+        homepage = HomePage.objects.first()
+        homepage.add_child(instance=program_page)
+        program_page.save_revision().publish()
+
+        response = self.client.get('/')
+        self.assertContains(
+            response,
+            program_page.url,
+            status_code=200
+        )
+
     def test_login_button(self):
         """Verify that we see a login button if not logged in"""
         response = self.client.get('/')

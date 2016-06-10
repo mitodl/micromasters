@@ -69,6 +69,9 @@
 
               {% for program in programs %}
               <li class="col-sm-6">
+                {% if program.programpage %}
+                  <a href="{{ program.programpage.url }}" class="program-link">
+                {% endif %}
                 <div class="media-item">
                   <div class="media-top">
                     <div class="image-wrap">
@@ -76,13 +79,7 @@
                     </div>
                   </div>
                   <div class="info-wrap">
-                    {% if program.programpage %}
-                    <a href="{{ program.programpage.url }}">
-                      <div class="title">{{ program }}</div>
-                    </a>
-                    {% else %}
                     <div class="title">{{ program }}</div>
-                    {% endif %}
                     <div class="description">
                       {% if program.description %}
                       {{ program.description }}
@@ -99,6 +96,9 @@
                     </div>
                   </div>
                 </div>
+                {% if program.programpage %}
+                  </a>
+                {% endif %}
               </li>
               {% endfor %}
               <li class="col-sm-6">
