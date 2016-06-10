@@ -36,7 +36,7 @@ export const USER_PROFILE_RESPONSE = {
     "position": "Software Developer",
     "industry": "Education",
     "start_date": "1982-02-02",
-    "end_date": "7654-03-21"
+    "end_date": "1982-03-21"
   }, {
     "id": 2,
     "city": "New York",
@@ -45,8 +45,8 @@ export const USER_PROFILE_RESPONSE = {
     "company_name": "Planet Express",
     "position": "Delivery",
     "industry": "Shipping",
-    "start_date": "3000-01-01",
-    "end_date": "4000-01-01"
+    "start_date": "1999-03-28",
+    "end_date": "2013-09-04"
   }],
   "education": [{
     "id": 1,

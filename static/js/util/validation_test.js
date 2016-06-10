@@ -1,6 +1,7 @@
 import assert from 'assert';
 import _ from 'lodash';
 import sinon from 'sinon';
+import moment from 'moment';
 
 import {
   personalValidation,
@@ -53,7 +54,6 @@ describe('Profile validation functions', () => {
         ['country'],
         ['birth_city'],
         ['birth_country'],
-        ['date_of_birth'],
       ];
 
       let profile = {};
@@ -73,6 +73,16 @@ describe('Profile validation functions', () => {
       profile.first_name = 0;
       let errors = personalValidation(profile);
       assert.deepEqual({}, errors);
+    });
+
+    it('should error if date of birth is in the future', () => {
+      let profile = Object.assign({}, USER_PROFILE_RESPONSE, {
+        date_of_birth: "2077-01-01"
+      });
+      let errors = {
+        date_of_birth: "Please enter a valid date of birth"
+      };
+      assert.deepEqual(personalValidation(profile), errors);
     });
   });
 
@@ -177,6 +187,75 @@ describe('Profile validation functions', () => {
         work_history_required: `Work history is required if switch is set`
       });
     });
+
+    it('should reject end date before start date', () => {
+      let errors = {
+        work_history: {
+          1: {
+            end_date: "End date cannot be before start date"
+          }
+        }
+      };
+      let profile = _.cloneDeep(USER_PROFILE_RESPONSE);
+      profile.work_history[1].end_date = moment(profile.work_history[1].start_date).subtract(1, 'months');
+      assert.deepEqual(errors, employmentValidation(profile));
+    });
+
+    it('should not error if end_date is blank', () => {
+      let profile = _.cloneDeep(USER_PROFILE_RESPONSE);
+      profile.work_history[1].end_date = null;
+      assert.deepEqual({}, employmentValidation(profile));
+    });
+
+
+    for (let field of ['year', 'month']) {
+      let errors = {
+        work_history: {
+          1: {
+            end_date: "Please enter a valid end date or leave it blank"
+          }
+        }
+      };
+
+      it(`should error if end_date has an edit value in ${field}`, () => {
+        let profile = _.cloneDeep(USER_PROFILE_RESPONSE);
+        profile.work_history[1].end_date = null;
+        profile.work_history[1].end_date_edit = Object.assign({
+          year: "",
+          month: ""
+        }, {
+          [field]: "field"
+        });
+        assert.deepEqual(errors, employmentValidation(profile));
+      });
+    }
+
+    it(`should error if end_date has a number in year`, () => {
+      let errors = {
+        work_history: {
+          1: {
+            end_date: "Please enter a valid end date or leave it blank"
+          }
+        }
+      };
+      let profile = _.cloneDeep(USER_PROFILE_RESPONSE);
+      profile.work_history[1].end_date = null;
+      profile.work_history[1].end_date_edit = {
+        year: 1943,
+        month: ""
+      };
+      assert.deepEqual(errors, employmentValidation(profile));
+    });
+
+    it('should not error if end_date has an edit value which is blank', () => {
+      let profile = _.cloneDeep(USER_PROFILE_RESPONSE);
+      profile.work_history[1].end_date = null;
+      profile.work_history[1].end_date_edit = {
+        year: "",
+        month: ""
+      };
+      assert.deepEqual({}, employmentValidation(profile));
+    });
   });
 
   describe('Privacy validation', () => {
@@ -210,8 +289,8 @@ describe('Profile validation functions', () => {
         'birth_city': 'City',
         'birth_state_or_territory': 'State or Territory',
         'birth_country': "Country",
-        'date_of_birth': "Date of birth"
       }).map(([k,v]) => ({[k]: `${v} is required`})));
+      errors.date_of_birth = "Please enter a valid date of birth";
       const expectation = [false, "/profile/personal", errors];
       assert.deepEqual(validateProfileComplete(profile), expectation);
     });
@@ -267,17 +346,16 @@ describe('Profile validation functions', () => {
 
   describe('validateYear', () => {
     it('handles years starting with 0 without treating as octal', () => {
-      assert.equal(999, validateYear("0999"));
+      assert.equal(1999, validateYear("01999"));
     });
     it('converts strings to numbers', () => {
-      assert.equal(3, validateYear("3"));
+      assert.equal(1943, validateYear("1943"));
     });
     it('returns undefined for invalid years', () => {
       assert.equal(undefined, validateYear("-3"));
       assert.equal(undefined, validateYear("0"));
-      assert.equal(1, validateYear("1"));
-      assert.equal(9999, validateYear("9999"));
-      assert.equal(undefined, validateYear("10000"));
+      assert.equal(undefined, validateYear("1799"));
+      assert.equal(undefined, validateYear("2100"));
     });
     it('returns undefined if the text is not an integer number', () => {
       assert.equal(undefined, validateYear(""));

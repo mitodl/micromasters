@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import moment from 'moment';
 
 import { filterPositiveInt } from './util';
 import { HIGH_SCHOOL, EDUCATION_LEVELS } from '../constants';
@@ -10,13 +11,15 @@ let handleNestedValidation = (profile, keys, nestedKey) => {
   return _.flatten(profile[nestedKey].map((v, i) => nestedFields(i)));
 };
 
+let isNilOrEmptyString = val => _.isNil(val) || val === "";
+
 let checkFieldPresence = (profile, requiredFields, messages) => {
   let errors = {};
 
   for (let keySet of requiredFields) {
     let val = _.get(profile, keySet);
-    if (_.isUndefined(val) || _.isNull(val) || val === "" ) {
-      _.set(errors, keySet,  `${messages[keySet.slice(-1)[0]]} is required`);
+    if (isNilOrEmptyString(val)) {
+      _.set(errors, keySet,  messages[keySet.slice(-1)[0]]);
     }
   }
   return errors;
@@ -38,32 +41,37 @@ export function personalValidation(profile) {
     ['date_of_birth'],
   ];
   let validationMessages = {
-    'first_name': "Given name",
-    'last_name': "Family name",
-    'preferred_name': "Preferred name",
-    'gender': "Gender",
-    'preferred_language': "Preferred language",
-    'city': "City",
-    'state_or_territory': 'State or Territory',
-    'country': "Country",
-    'birth_city': 'City',
-    'birth_state_or_territory': 'State or Territory',
-    'birth_country': "Country",
-    'date_of_birth': "Date of birth"
+    'first_name': "Given name is required",
+    'last_name': "Family name is required",
+    'preferred_name': "Preferred name is required",
+    'gender': "Gender is required",
+    'preferred_language': "Preferred language is required",
+    'city': "City is required",
+    'state_or_territory': 'State or Territory is required',
+    'country': "Country is required",
+    'birth_city': 'City is required',
+    'birth_state_or_territory': 'State or Territory is required',
+    'birth_country': "Country is required",
+    'date_of_birth': 'Please enter a valid date of birth'
   };
-  return checkFieldPresence(profile, requiredFields, validationMessages);
+  let errors = checkFieldPresence(profile, requiredFields, validationMessages);
+  if (!moment(profile.date_of_birth).isBefore(moment(), 'day')) {
+    // birthdays must be before today
+    errors.date_of_birth = validationMessages.date_of_birth;
+  }
+  return errors;
 }
 
 export function educationValidation(profile) {
   let messages = {
-    'degree_name': 'Degree level',
-    'graduation_date': 'Graduation Date',
-    'field_of_study': 'Field of study',
-    'online_degree': 'Online Degree',
-    'school_name': 'School name',
-    'school_city': 'City',
-    'school_state_or_territory': 'State',
-    'school_country': 'Country'
+    'degree_name': 'Degree level is required',
+    'graduation_date': 'Please enter a valid graduation date',
+    'field_of_study': 'Field of study is required',
+    'online_degree': 'Online Degree is required',
+    'school_name': 'School name is required',
+    'school_city': 'City is required',
+    'school_state_or_territory': 'State is required',
+    'school_country': 'Country is required'
   };
   let nestedKeys = [
     'degree_name',
@@ -106,13 +114,13 @@ export function educationUiValidation(profile, ui) {
 
 export function employmentValidation(profile) {
   let messages = {
-    'position': 'Position',
-    'industry': 'Industry',
-    'company_name': 'Company Name',
-    'start_date': 'Start Date',
-    'city': 'City',
-    'country': 'Country',
-    'state_or_territory': 'State or Territory',
+    'position': 'Position is required',
+    'industry': 'Industry is required',
+    'company_name': 'Company Name is required',
+    'start_date': 'Please enter a valid start date',
+    'city': 'City is required',
+    'country': 'Country is required',
+    'state_or_territory': 'State or Territory is required',
   };
   let nestedKeys = [
     'position',
@@ -125,7 +133,23 @@ export function employmentValidation(profile) {
   ];
   if (!_.isEmpty(profile.work_history)) {
     let requiredFields = handleNestedValidation(profile, nestedKeys, 'work_history');
-    return checkFieldPresence(profile, requiredFields, messages);
+    let errors = checkFieldPresence(profile, requiredFields, messages);
+
+    for (let [index, workHistory] of Object.entries(profile.work_history)) {
+      if (!isNilOrEmptyString(workHistory.end_date) &&
+        moment(workHistory.end_date).isBefore(workHistory.start_date, 'month')) {
+        _.set(errors, ['work_history', index, 'end_date'], "End date cannot be before start date");
+      }
+      let editIsEmpty = _.isEmpty(workHistory.end_date_edit) || (
+        isNilOrEmptyString(workHistory.end_date_edit.year) &&
+        isNilOrEmptyString(workHistory.end_date_edit.month)
+      );
+      if (isNilOrEmptyString(workHistory.end_date) && !editIsEmpty) {
+        _.set(errors, ['work_history', index, 'end_date'], "Please enter a valid end date or leave it blank");
+      }
+    }
+
+    return errors;
   } else {
     return {};
   }
@@ -146,7 +170,7 @@ export function privacyValidation(profile) {
     ['account_privacy']
   ];
   let messages = {
-    'account_privacy': 'Privacy level'
+    'account_privacy': 'Privacy level is required'
   };
   return checkFieldPresence(profile, requiredFields, messages);
 }
@@ -236,7 +260,7 @@ export function validateYear(string) {
   if (year === undefined) {
     return undefined;
   }
-  if (year < 1 || year > 9999) {
+  if (year < 1800 || year >= 2100) {
     // fit into YYYY format
     return undefined;
   }
