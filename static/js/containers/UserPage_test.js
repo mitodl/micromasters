@@ -1,7 +1,7 @@
 /* global SETTINGS: false */
 import '../global_init';
 import TestUtils from 'react-addons-test-utils';
-import assert from 'assert';
+import { assert } from 'chai';
 import _ from 'lodash';
 
 import { 
@@ -65,19 +65,18 @@ describe("UserPage", () => {
           getElementsByClassName('delete-button')[0];
       };
 
-      it('shows the education component', done => {
-        renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
+      it('shows the education component', () => {
+        return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
           let title = div.getElementsByClassName('profile-card-title')[1];
           assert.equal(title.textContent, 'Education');
-          done();
         });
       });
 
-      it('should confirm deletion and let you cancel', done => {
-        renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
+      it('should confirm deletion and let you cancel', () => {
+        return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
           let button = deleteButton(div);
 
-          listenForActions([
+          return listenForActions([
             SET_DELETION_INDEX,
             SET_SHOW_EDUCATION_DELETE_DIALOG,
             SET_SHOW_EDUCATION_DELETE_DIALOG,
@@ -88,14 +87,12 @@ describe("UserPage", () => {
             let dialog = openDialog();
             let cancelButton = dialog.getElementsByClassName('cancel-button')[0];
             TestUtils.Simulate.click(cancelButton);
-          }).then(() => {
-            done();
           });
         });
       });
 
-      it('should confirm deletion and let you continue', done => {
-        renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
+      it('should confirm deletion and let you continue', () => {
+        return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
           let updatedProfile = _.cloneDeep(USER_PROFILE_RESPONSE);
           updatedProfile.username = SETTINGS.username;
           updatedProfile.education.splice(0,1);
@@ -107,7 +104,7 @@ describe("UserPage", () => {
 
           let button = deleteButton(div);
 
-          listenForActions([
+          return listenForActions([
             SET_DELETION_INDEX,
             SET_SHOW_EDUCATION_DELETE_DIALOG,
             START_PROFILE_EDIT,
@@ -122,37 +119,33 @@ describe("UserPage", () => {
             let dialog = openDialog();
             button = dialog.getElementsByClassName('delete-button')[0];
             TestUtils.Simulate.click(button);
-          }).then(() => {
-            done();
           });
         });
       });
 
-      it('should let you edit an education entry', done => {
-        renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
+      it('should let you edit an education entry', () => {
+        return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
 
           let editButton = div.getElementsByClassName('profile-tab-card')[1].
             getElementsByClassName('profile-row-icons')[0].
             getElementsByClassName('mdl-button')[0];
 
-          listenForActions([
+          return listenForActions([
             SET_EDUCATION_DIALOG_INDEX,
             SET_EDUCATION_DIALOG_VISIBILITY,
             SET_EDUCATION_DEGREE_LEVEL,
           ], () => {
             TestUtils.Simulate.click(editButton);
-          }).then(() => {
-            done();
           });
         });
       });
 
-      it('should let you add an education entry', done => {
-        renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
+      it('should let you add an education entry', () => {
+        return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
           let addButton = div.getElementsByClassName('profile-tab-card')[1].
             getElementsByClassName('profile-add-button')[0];
 
-          listenForActions([
+          return listenForActions([
             START_PROFILE_EDIT,
             UPDATE_PROFILE,
             SET_EDUCATION_DIALOG_INDEX,
@@ -163,8 +156,6 @@ describe("UserPage", () => {
             addButton = div.getElementsByClassName('add-education-menu')[0].
               getElementsByTagName('li')[0];
             TestUtils.Simulate.click(addButton);
-          }).then(() => {
-            done();
           });
         });
       });
@@ -177,19 +168,18 @@ describe("UserPage", () => {
           getElementsByClassName('mdl-button')[1];
       };
 
-      it('shows the employment history component', done => {
-        renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
+      it('shows the employment history component', () => {
+        return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
           let title = div.getElementsByClassName('profile-card-title')[0];
           assert.equal(title.textContent, 'Employment');
-          done();
         });
       });
 
-      it('should confirm deletion and let you cancel', done => {
-        renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
+      it('should confirm deletion and let you cancel', () => {
+        return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
           let button = deleteButton(div);
 
-          listenForActions([
+          return listenForActions([
             SET_DELETION_INDEX,
             SET_SHOW_WORK_DELETE_DIALOG,
             SET_SHOW_WORK_DELETE_DIALOG,
@@ -200,14 +190,12 @@ describe("UserPage", () => {
             let dialog = openDialog();
             let cancelButton = dialog.getElementsByClassName('cancel-button')[0];
             TestUtils.Simulate.click(cancelButton);
-          }).then(() => {
-            done();
           });
         });
       });
 
-      it('should confirm deletion and let you continue', done => {
-        renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
+      it('should confirm deletion and let you continue', () => {
+        return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
           let updatedProfile = _.cloneDeep(USER_PROFILE_RESPONSE);
           updatedProfile.username = SETTINGS.username;
           updatedProfile.work_history.splice(0,1);
@@ -221,7 +209,7 @@ describe("UserPage", () => {
             getElementsByClassName('profile-row-icons')[0].
             getElementsByClassName('mdl-button')[1];
 
-          listenForActions([
+          return listenForActions([
             SET_DELETION_INDEX,
             SET_SHOW_WORK_DELETE_DIALOG,
             START_PROFILE_EDIT,
@@ -236,70 +224,61 @@ describe("UserPage", () => {
             let dialog = openDialog();
             let button = dialog.getElementsByClassName('delete-button')[0];
             TestUtils.Simulate.click(button);
-          }).then(() => {
-            done();
           });
         });
       });
 
-      it('should let you edit a work history entry', done => {
-        renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
+      it('should let you edit a work history entry', () => {
+        return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
 
           let editButton = div.getElementsByClassName('profile-tab-card')[0].
             getElementsByClassName('profile-row-icons')[0].
             getElementsByClassName('mdl-button')[0];
 
-          listenForActions([
+          return listenForActions([
             SET_WORK_DIALOG_INDEX,
             SET_WORK_DIALOG_VISIBILITY
           ], () => {
             TestUtils.Simulate.click(editButton);
-          }).then(() => {
-            done();
           });
         });
       });
 
-      it('should let you add a work history entry', done => {
+      it('should let you add a work history entry', () => {
         renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
           let editButton = div.getElementsByClassName('profile-tab-card')[0].
             getElementsByClassName('profile-add-button')[0];
 
-          listenForActions([
+          return listenForActions([
             START_PROFILE_EDIT,
             UPDATE_PROFILE,
             SET_WORK_DIALOG_INDEX,
             SET_WORK_DIALOG_VISIBILITY
           ], () => {
             TestUtils.Simulate.click(editButton);
-          }).then(() => {
-            done();
           });
         });
       });
     });
 
     describe('Personal Info', () => {
-      it('should show name and location', done => {
-        renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
+      it('should show name and location', () => {
+        return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
           let name = div.getElementsByClassName('users-name')[0].textContent;
           assert.deepEqual(name, USER_PROFILE_RESPONSE.preferred_name);
 
           let location = div.getElementsByClassName('users-location')[0].textContent;
 
           assert.deepEqual(location, `${USER_PROFILE_RESPONSE.city}, `);
-          done();
         });
       });
 
-      it('should let you edit personal info', done => {
-        renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
+      it('should let you edit personal info', () => {
+        return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
           let personalButton = div.getElementsByClassName('material-icons')[0];
 
-          listenForActions([SET_USER_PAGE_DIALOG_VISIBILITY], () => {
+          return listenForActions([SET_USER_PAGE_DIALOG_VISIBILITY], () => {
             TestUtils.Simulate.click(personalButton);
-          }).then(() => {
-            done();
           });
         });
       });
@@ -324,7 +303,7 @@ describe("UserPage", () => {
     });
 
     it('should hide all edit, delete icons', () => {
-      renderComponent(`/users/${SETTINGS.username}`, userActions).then(() => {
+      return renderComponent(`/users/${SETTINGS.username}`, userActions).then(() => {
         let icons = [...document.getElementsByClassName('mdl-button--icons')];
         assert.deepEqual(icons, []);
       });

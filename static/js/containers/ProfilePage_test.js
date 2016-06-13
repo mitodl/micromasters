@@ -1,6 +1,6 @@
 /* global SETTINGS: false */
 import TestUtils from 'react-addons-test-utils';
-import assert from 'assert';
+import { assert } from 'chai';
 
 import {
   REQUEST_PATCH_USER_PROFILE,
@@ -73,7 +73,7 @@ describe("ProfilePage", function() {
   it('navigates backward when Previous button is clicked', () => {
     let firstPage = pageUrlStubs[0];
     let secondPage = pageUrlStubs[1];
-    renderComponent(secondPage).then(([, div]) => {
+    return renderComponent(secondPage).then(([, div]) => {
       let button = div.querySelector(prevButtonSelector);
       assert.equal(helper.currentLocation.pathname, secondPage);
       TestUtils.Simulate.click(button);
@@ -81,8 +81,8 @@ describe("ProfilePage", function() {
     });
   });
 
-  it(`marks email_optin and filled_out when saving ${lastPage}`, done => {
-    renderComponent(lastPage).then(([, div]) => {
+  it(`marks email_optin and filled_out when saving ${lastPage}`, () => {
+    return renderComponent(lastPage).then(([, div]) => {
       // close all switches and remove all education so we don't get validation errors
       let receivedProfile = Object.assign({}, USER_PROFILE_RESPONSE, {
         education: []
@@ -97,14 +97,12 @@ describe("ProfilePage", function() {
         filled_out: true
       });
 
-      confirmSaveButtonBehavior(updatedProfile, {button: button}).then(() => {
-        done();
-      });
+      return confirmSaveButtonBehavior(updatedProfile, {button: button});
     });
   });
 
-  it("validates education switches on the education page", done => {
-    renderComponent('/profile/education').then(([, div]) => {
+  it("validates education switches on the education page", () => {
+    return renderComponent('/profile/education').then(([, div]) => {
       // close all switches and remove all education so we don't get validation errors
       let receivedProfile = Object.assign({}, USER_PROFILE_RESPONSE, {
         education: []
@@ -124,17 +122,16 @@ describe("ProfilePage", function() {
         filled_out: true
       });
 
-      confirmSaveButtonBehavior(updatedProfile, {button: button}, true).then(state => {
+      return confirmSaveButtonBehavior(updatedProfile, {button: button}, true).then(state => {
         assert.deepEqual(state.profiles[SETTINGS.username].edit.errors, {
           [`education_${HIGH_SCHOOL}_required`]: `High school is required if switch is set`
         });
-        done();
       });
     });
   });
 
-  it(`validates employment switches when saving the employment page`, done => {
-    renderComponent('/profile/professional').then(([, div]) => {
+  it(`validates employment switches when saving the employment page`, () => {
+    return renderComponent('/profile/professional').then(([, div]) => {
       // close all switches and remove all education so we don't get validation errors
       let receivedProfile = Object.assign({}, USER_PROFILE_RESPONSE, {
         work_history: []
@@ -149,17 +146,16 @@ describe("ProfilePage", function() {
         filled_out: true
       });
 
-      confirmSaveButtonBehavior(updatedProfile, {button: button}, true).then(state => {
+      return confirmSaveButtonBehavior(updatedProfile, {button: button}, true).then(state => {
         assert.deepEqual(state.profiles[SETTINGS.username].edit.errors, {
           work_history_required: "Work history is required if switch is set"
         });
-        done();
       });
     });
   });
 
-  it(`validates education and employment switches when saving the ${lastPage}`, done => {
-    renderComponent(lastPage).then(([, div]) => {
+  it(`validates education and employment switches when saving the ${lastPage}`, () => {
+    return renderComponent(lastPage).then(([, div]) => {
       // close all switches and remove all education so we don't get validation errors
       let receivedProfile = Object.assign({}, USER_PROFILE_RESPONSE, {
         education: [],
@@ -178,30 +174,27 @@ describe("ProfilePage", function() {
         filled_out: true
       });
 
-      confirmSaveButtonBehavior(updatedProfile, {button: button}, true).then(state => {
+      return confirmSaveButtonBehavior(updatedProfile, {button: button}, true).then(state => {
         assert.deepEqual(state.profiles[SETTINGS.username].edit.errors, {
           [`education_${HIGH_SCHOOL}_required`]: `High school is required if switch is set`,
           work_history_required: "Work history is required if switch is set"
         });
-        done();
       });
     });
   });
 
   for (let pageUrlStub of pageUrlStubs.slice(0,3)) {
     for (let filledOutValue of [true, false]) {
-      it(`respects the current value (${filledOutValue}) when saving on ${pageUrlStub}`, done => {
+      it(`respects the current value (${filledOutValue}) when saving on ${pageUrlStub}`, () => {
         let updatedProfile = Object.assign({}, USER_PROFILE_RESPONSE, {
           filled_out: filledOutValue,
           education: []
         });
         helper.profileGetStub.returns(Promise.resolve(updatedProfile));
-        renderComponent(pageUrlStub).then(([, div]) => {
+        return renderComponent(pageUrlStub).then(([, div]) => {
           // close all switches
           helper.store.dispatch(setEducationDegreeInclusions(noInclusions));
-          confirmSaveButtonBehavior(updatedProfile, {div: div}).then(() => {
-            done();
-          });
+          return confirmSaveButtonBehavior(updatedProfile, {div: div});
         });
       });
     }

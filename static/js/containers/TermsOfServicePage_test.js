@@ -1,7 +1,7 @@
 /* global SETTINGS: false */
 import '../global_init';
 import TestUtils from 'react-addons-test-utils';
-import assert from 'assert';
+import { assert } from 'chai';
 
 import {
   REQUEST_PATCH_USER_PROFILE,
@@ -24,34 +24,30 @@ describe("TermsOfService", () => {
     helper.cleanup();
   });
 
-  it("requires terms of service if user hasn't already agreed to it", done => {
+  it("requires terms of service if user hasn't already agreed to it", () => {
     let response = Object.assign({}, USER_PROFILE_RESPONSE, {
       agreed_to_terms_of_service: false
     });
     helper.profileGetStub.returns(Promise.resolve(response));
 
-    renderComponent("/dashboard").then(() => {
+    return renderComponent("/dashboard").then(() => {
       assert.equal(helper.currentLocation.pathname, "/terms_of_service");
-
-      done();
     });
   });
 
-  it("requires terms of service if user hasn't already agreed to it even if profile is not complete", done => {
+  it("requires terms of service if user hasn't already agreed to it even if profile is not complete", () => {
     let response = Object.assign({}, USER_PROFILE_RESPONSE, {
       agreed_to_terms_of_service: false,
       filled_out: false
     });
     helper.profileGetStub.returns(Promise.resolve(response));
 
-    renderComponent("/dashboard").then(() => {
+    return renderComponent("/dashboard").then(() => {
       assert.equal(helper.currentLocation.pathname, "/terms_of_service");
-
-      done();
     });
   });
 
-  it("agrees to terms of service", done => {
+  it("agrees to terms of service", () => {
     let profileActions = [
       REQUEST_PATCH_USER_PROFILE,
       RECEIVE_PATCH_USER_PROFILE_SUCCESS
@@ -68,27 +64,24 @@ describe("TermsOfService", () => {
     profilePatchStub.throws("Invalid arguments");
     profilePatchStub.withArgs(SETTINGS.username, updatedProfile).returns(Promise.resolve(updatedProfile));
 
-    renderComponent("/terms_of_service").then(([component]) => {
-      listenForActions(profileActions, () => {
+    return renderComponent("/terms_of_service").then(([component]) => {
+      return listenForActions(profileActions, () => {
         let button = component.querySelector(".btn-success");
 
         TestUtils.Simulate.click(button);
-      }).then(() => {
-        done();
       });
     });
   });
 
-  it("clicks Cancel on terms of service page", done => {
+  it("clicks Cancel on terms of service page", () => {
     let response = Object.assign({}, USER_PROFILE_RESPONSE, {
       agreed_to_terms_of_service: false
     });
     helper.profileGetStub.returns(Promise.resolve(response));
 
-    renderComponent("/terms_of_service").then(([component]) => {
+    return renderComponent("/terms_of_service").then(([component]) => {
       let cancelLink = component.querySelector(".btn-danger");
       assert.equal(cancelLink.href, "/logout");
-      done();
     });
   });
 });

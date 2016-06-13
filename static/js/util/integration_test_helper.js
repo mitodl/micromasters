@@ -46,27 +46,25 @@ class IntegrationTestHelper {
   }
 
   renderComponent(url = "/", extraTypesToAssert = []) {
-    return new Promise(resolve => {
-      let expectedTypes = [
-        REQUEST_DASHBOARD,
-        RECEIVE_DASHBOARD_SUCCESS,
-        REQUEST_GET_USER_PROFILE,
-        RECEIVE_GET_USER_PROFILE_SUCCESS
-      ];
+    let expectedTypes = [
+      REQUEST_DASHBOARD,
+      RECEIVE_DASHBOARD_SUCCESS,
+      REQUEST_GET_USER_PROFILE,
+      RECEIVE_GET_USER_PROFILE_SUCCESS
+    ];
 
-      expectedTypes.push(...extraTypesToAssert);
-      let component, div;
+    expectedTypes.push(...extraTypesToAssert);
+    let component, div;
 
-      this.listenForActions(expectedTypes, () => {
-        this.browserHistory.push(url);
-        div = document.createElement("div");
-        component = ReactDOM.render(
-          makeDashboardRoutes(this.browserHistory, this.store, () => null),
-          div
-        );
-      }).then(() => {
-        resolve([component, div]);
-      });
+    return this.listenForActions(expectedTypes, () => {
+      this.browserHistory.push(url);
+      div = document.createElement("div");
+      component = ReactDOM.render(
+        makeDashboardRoutes(this.browserHistory, this.store, () => null),
+        div
+      );
+    }).then(() => {
+      return Promise.resolve([component, div]);
     });
   }
 }

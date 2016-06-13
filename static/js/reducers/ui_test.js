@@ -48,7 +48,7 @@ import rootReducer from '../reducers';
 import * as util from '../util/util';
 
 import configureTestStore from 'redux-asserts';
-import assert from 'assert';
+import { assert } from 'chai';
 import sinon from 'sinon';
 
 describe('ui reducers', () => {
@@ -67,92 +67,84 @@ describe('ui reducers', () => {
     dispatchThen = null;
   });
 
-  it('should clear the ui', done => {
-    dispatchThen(clearUI(), [CLEAR_UI]).then(state => {
-      assert.deepEqual(state, INITIAL_UI_STATE);
-      done();
-    });
+  it('should clear the ui', () => {
+    return assert.eventually.deepEqual(
+      dispatchThen(clearUI(), [CLEAR_UI]),
+      INITIAL_UI_STATE
+    );
   });
 
   describe('dialog reducers', () => {
-    it('should set a dialog title', done => {
-      dispatchThen(updateDialogTitle('A title'), [UPDATE_DIALOG_TITLE]).then(state => {
+    it('should set a dialog title', () => {
+      return dispatchThen(updateDialogTitle('A title'), [UPDATE_DIALOG_TITLE]).then(state => {
         assert.equal(state.dialog.title, 'A title');
-        done();
       });
     });
 
-    it('should set dialog text', done => {
-      dispatchThen(updateDialogText('Some Text'), [UPDATE_DIALOG_TEXT]).then(state => {
+    it('should set dialog text', () => {
+      return dispatchThen(updateDialogText('Some Text'), [UPDATE_DIALOG_TEXT]).then(state => {
         assert.equal(state.dialog.text, 'Some Text');
-        done();
       });
     });
 
-    it('should set dialog visibility', done => {
-      dispatchThen(setDialogVisibility(true), [SET_DIALOG_VISIBILITY]).then(state => {
+    it('should set dialog visibility', () => {
+      return dispatchThen(setDialogVisibility(true), [SET_DIALOG_VISIBILITY]).then(state => {
         assert.equal(state.dialog.visible, true);
-        done();
       });
     });
   });
 
   describe('work_history reducers', () => {
-    it('should set the work history dialog visibility', done => {
-      dispatchThen(setWorkDialogVisibility(true), [SET_WORK_DIALOG_VISIBILITY]).then(state => {
+    it('should set the work history dialog visibility', () => {
+      return dispatchThen(setWorkDialogVisibility(true), [SET_WORK_DIALOG_VISIBILITY]).then(state => {
         assert.equal(state.workDialogVisibility, true);
 
-        dispatchThen(setWorkDialogVisibility(false), [SET_WORK_DIALOG_VISIBILITY]).then(state => {
+        return dispatchThen(setWorkDialogVisibility(false), [SET_WORK_DIALOG_VISIBILITY]).then(state => {
           assert.equal(state.workDialogVisibility, false);
-          done();
         });
       });
     });
 
-    it('should set work history edit', done => {
-      dispatchThen(setWorkHistoryEdit(true), [SET_WORK_HISTORY_EDIT]).then(state => {
+    it('should set work history edit', () => {
+      return dispatchThen(setWorkHistoryEdit(true), [SET_WORK_HISTORY_EDIT]).then(state => {
         assert.equal(state.workHistoryEdit, true);
 
-        dispatchThen(setWorkHistoryEdit(false), [SET_WORK_HISTORY_EDIT]).then(state => {
+        return dispatchThen(setWorkHistoryEdit(false), [SET_WORK_HISTORY_EDIT]).then(state => {
           assert.equal(state.workHistoryEdit, false);
-          done();
         });
       });
     });
 
-    it('should set a work history dialog index', done => {
-      dispatchThen(setWorkDialogIndex(2), [SET_WORK_DIALOG_INDEX]).then(state => {
+    it('should set a work history dialog index', () => {
+      return dispatchThen(setWorkDialogIndex(2), [SET_WORK_DIALOG_INDEX]).then(state => {
         assert.equal(state.workDialogIndex, 2);
 
-        dispatchThen(setWorkDialogIndex(5), [SET_WORK_DIALOG_INDEX]).then(state => {
+        return dispatchThen(setWorkDialogIndex(5), [SET_WORK_DIALOG_INDEX]).then(state => {
           assert.equal(state.workDialogIndex, 5);
-          done();
         });
       });
     });
   });
 
   describe('dashboard expander', () => {
-    it('has an empty default state', done => {
-      dispatchThen({type: "undefined"}, []).then(state => {
+    it('has an empty default state', () => {
+      return dispatchThen({type: "undefined"}, []).then(state => {
         assert.deepEqual(state.dashboardExpander, {});
-        done();
       });
     });
 
-    it('toggles a course expander', done => {
-      dispatchThen(toggleDashboardExpander(3, true), [TOGGLE_DASHBOARD_EXPANDER]).then(state => {
+    it('toggles a course expander', () => {
+      return dispatchThen(toggleDashboardExpander(3, true), [TOGGLE_DASHBOARD_EXPANDER]).then(state => {
         assert.deepEqual(state.dashboardExpander, {
           3: true
         });
-        done();
       });
     });
   });
 
   describe('education reducers', () => {
-    it('has a default state', done => {
-      dispatchThen({type: "undefined"}, []).then(state => {
+    it('has a default state', () => {
+      return dispatchThen({type: "undefined"}, []).then(state => {
         assert.deepEqual(state.educationDialogVisibility, false);
         assert.deepEqual(state.educationDialogIndex, null);
         assert.deepEqual(state.educationDegreeLevel, '');
@@ -164,7 +156,6 @@ describe('ui reducers', () => {
             [MASTERS]: false,
             [DOCTORATE]: false,
           });
-        done();
       });
     });
 
@@ -194,28 +185,25 @@ describe('ui reducers', () => {
       assert(!calculateDegreeInclusionsStub.called);
     });
 
-    it('should let you set education dialog visibility', done => {
-      dispatchThen(setEducationDialogVisibility(true), [SET_EDUCATION_DIALOG_VISIBILITY]).then(state => {
+    it('should let you set education dialog visibility', () => {
+      return dispatchThen(setEducationDialogVisibility(true), [SET_EDUCATION_DIALOG_VISIBILITY]).then(state => {
         assert.deepEqual(state.educationDialogVisibility, true);
-        done();
       });
     });
 
-    it('should let you set education degree level', done => {
-      dispatchThen(setEducationDegreeLevel('foobar'), [SET_EDUCATION_DEGREE_LEVEL]).then(state => {
+    it('should let you set education degree level', () => {
+      return dispatchThen(setEducationDegreeLevel('foobar'), [SET_EDUCATION_DEGREE_LEVEL]).then(state => {
         assert.deepEqual(state.educationDegreeLevel, 'foobar');
-        done();
       });
     });
 
-    it('should let you set education dialog index', done => {
-      dispatchThen(setEducationDialogIndex(3), [SET_EDUCATION_DIALOG_INDEX]).then(state => {
+    it('should let you set education dialog index', () => {
+      return dispatchThen(setEducationDialogIndex(3), [SET_EDUCATION_DIALOG_INDEX]).then(state => {
         assert.deepEqual(state.educationDialogIndex, 3);
-        done();
       });
     });
 
-    it('should let you set degree inclusions', done => {
+    it('should let you set degree inclusions', () => {
       let newInclusions = {
         [HIGH_SCHOOL]: true,
         [ASSOCIATE]: false,
@@ -223,19 +211,20 @@ describe('ui reducers', () => {
         [MASTERS]: true,
         [DOCTORATE]: true,
       };
-      dispatchThen(setEducationDegreeInclusions(newInclusions), [SET_EDUCATION_DEGREE_INCLUSIONS]).then(state => {
+      return dispatchThen(
+        setEducationDegreeInclusions(newInclusions),
+        [SET_EDUCATION_DEGREE_INCLUSIONS]
+      ).then(state => {
         assert.deepEqual(state.educationDegreeInclusions, newInclusions);
-        done();
       });
     });
   });
 
   describe('user page', () => {
     [true, false].forEach(bool => {
-      it(`should let you set the user page dialog visibility to ${bool}`, done => {
-        dispatchThen(setUserPageDialogVisibility(bool), [SET_USER_PAGE_DIALOG_VISIBILITY]).then(state => {
+      it(`should let you set the user page dialog visibility to ${bool}`, () => {
+        return dispatchThen(setUserPageDialogVisibility(bool), [SET_USER_PAGE_DIALOG_VISIBILITY]).then(state => {
           assert.deepEqual(state.userPageDialogVisibility, bool);
-          done();
         });
       });
     });
@@ -243,27 +232,24 @@ describe('ui reducers', () => {
 
   describe('confirm delete dialog', () => {
     [true, false].forEach( bool => {
-      it(`should let you set to show the education delete dialog to ${bool}`, done => {
-        dispatchThen(setShowEducationDeleteDialog(bool), [SET_SHOW_EDUCATION_DELETE_DIALOG]).then(state => {
+      it(`should let you set to show the education delete dialog to ${bool}`, () => {
+        return dispatchThen(setShowEducationDeleteDialog(bool), [SET_SHOW_EDUCATION_DELETE_DIALOG]).then(state => {
           assert.deepEqual(state.showEducationDeleteDialog, bool);
-          done();
         });
       });
     });
 
     [true, false].forEach( bool => {
-      it(`should let you set to show the work delete dialog to ${bool}`, done => {
-        dispatchThen(setShowWorkDeleteDialog(bool), [SET_SHOW_WORK_DELETE_DIALOG]).then(state => {
+      it(`should let you set to show the work delete dialog to ${bool}`, () => {
+        return dispatchThen(setShowWorkDeleteDialog(bool), [SET_SHOW_WORK_DELETE_DIALOG]).then(state => {
           assert.deepEqual(state.showWorkDeleteDialog, bool);
-          done();
         });
       });
     });
 
-    it('should let you set a deletion index', done => {
-      dispatchThen(setDeletionIndex(3), [SET_DELETION_INDEX]).then(state => {
+    it('should let you set a deletion index', () => {
+      return dispatchThen(setDeletionIndex(3), [SET_DELETION_INDEX]).then(state => {
         assert.deepEqual(state.deletionIndex, 3);
-        done();
       });
     });
   });

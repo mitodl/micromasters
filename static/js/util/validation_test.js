@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { assert } from 'chai';
 import _ from 'lodash';
 import sinon from 'sinon';
 import moment from 'moment';
@@ -190,11 +190,11 @@ describe('Profile validation functions', () => {
 
     it('should reject end date before start date', () => {
       let errors = {
-        work_history: {
-          1: {
+        work_history: [, // eslint-disable-line no-sparse-arrays
+          {
             end_date: "End date cannot be before start date"
           }
-        }
+        ]
       };
       let profile = _.cloneDeep(USER_PROFILE_RESPONSE);
       profile.work_history[1].end_date = moment(profile.work_history[1].start_date).subtract(1, 'months');
@@ -210,11 +210,11 @@ describe('Profile validation functions', () => {
 
     for (let field of ['year', 'month']) {
       let errors = {
-        work_history: {
-          1: {
+        work_history: [, // eslint-disable-line no-sparse-arrays
+          {
             end_date: "Please enter a valid end date or leave it blank"
           }
-        }
+        ]
       };
 
       it(`should error if end_date has an edit value in ${field}`, () => {
@@ -232,11 +232,11 @@ describe('Profile validation functions', () => {
 
     it(`should error if end_date has a number in year`, () => {
       let errors = {
-        work_history: {
-          1: {
+        work_history: [, // eslint-disable-line no-sparse-arrays
+          {
             end_date: "Please enter a valid end date or leave it blank"
           }
-        }
+        ]
       };
       let profile = _.cloneDeep(USER_PROFILE_RESPONSE);
       profile.work_history[1].end_date = null;

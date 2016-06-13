@@ -1,5 +1,5 @@
 import React from 'react';
-import assert from 'assert';
+import { assert } from 'chai';
 import iso3166 from 'iso-3166-2';
 import _ from 'lodash';
 import MenuItem from 'material-ui/MenuItem';
@@ -572,9 +572,9 @@ describe('Profile Editing utility functions', () => {
 
       assert.deepEqual(that.props.profile.date_of_birth, null);
       assert.deepEqual(that.props.profile.date_of_birth_edit, {
-        day: "28",
+        day: 28,
         month: "13",
-        year: "2066"
+        year: 2066
       });
     });
 
@@ -635,8 +635,8 @@ describe('Profile Editing utility functions', () => {
       assert.deepEqual(that.props.profile.date_of_birth, null);
       assert.deepEqual(that.props.profile.date_of_birth_edit, {
         day: "",
-        month: "2",
-        year: "2066"
+        month: 2,
+        year: 2066
       });
     });
 
@@ -646,9 +646,9 @@ describe('Profile Editing utility functions', () => {
       monthTextField.props.onChange({target: {value: ""}});
       assert.deepEqual(that.props.profile.date_of_birth, null);
       assert.deepEqual(that.props.profile.date_of_birth_edit, {
-        day: "28",
+        day: 28,
         month: "",
-        year: "2066"
+        year: 2066
       });
     });
 
@@ -658,8 +658,8 @@ describe('Profile Editing utility functions', () => {
       yearTextField.props.onChange({target: {value: ""}});
       assert.deepEqual(that.props.profile.date_of_birth, null);
       assert.deepEqual(that.props.profile.date_of_birth_edit, {
-        day: "28",
-        month: "2",
+        day: 28,
+        month: 2,
         year: ""
       });
     });

@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { assert } from 'chai';
 import fetchMock from 'fetch-mock/src/server';
 import sinon from 'sinon';
 
@@ -46,72 +46,66 @@ describe('api', function() {
       fetchStub = sandbox.stub(api, 'fetchJSONWithCSRF');
     });
 
-    it('gets user profile', done => {
+    it('gets user profile', () => {
       fetchStub.returns(Promise.resolve(USER_PROFILE_RESPONSE));
-      getUserProfile('jane').then(receivedUserProfile => {
+      return getUserProfile('jane').then(receivedUserProfile => {
         assert.ok(fetchStub.calledWith('/api/v0/profiles/jane/'));
         assert.deepEqual(receivedUserProfile, USER_PROFILE_RESPONSE);
-        done();
       });
     });
 
-    it('fails to get user profile', done => {
+    it('fails to get user profile', () => {
       fetchStub.returns(Promise.reject());
 
-      getUserProfile('jane').catch(() => {
+      return assert.isRejected(getUserProfile('jane')).then(() => {
         assert.ok(fetchStub.calledWith('/api/v0/profiles/jane/'));
-        done();
       });
     });
 
-    it('patches a user profile', done => {
+    it('patches a user profile', () => {
       fetchStub.returns(Promise.resolve(USER_PROFILE_RESPONSE));
       fetchMock.mock('/api/v0/profiles/jane/', (url, opts) => {
         assert.deepEqual(JSON.parse(opts.body), USER_PROFILE_RESPONSE);
         return { status: 200 };
       });
-      patchUserProfile('jane', USER_PROFILE_RESPONSE).then(returnedProfile => {
+      return patchUserProfile('jane', USER_PROFILE_RESPONSE).then(returnedProfile => {
         assert.ok(fetchStub.calledWith('/api/v0/profiles/jane/', {
           method: 'PATCH',
           body: JSON.stringify(USER_PROFILE_RESPONSE)
         }));
         assert.deepEqual(returnedProfile, USER_PROFILE_RESPONSE);
-        done();
       });
     });
 
-    it('fails to patch a user profile', done => {
+    it('fails to patch a user profile', () => {
       fetchStub.returns(Promise.reject());
-      patchUserProfile('jane', USER_PROFILE_RESPONSE).catch(() => {
+      return assert.isRejected(patchUserProfile('jane', USER_PROFILE_RESPONSE)).then(() => {
         assert.ok(fetchStub.calledWith('/api/v0/profiles/jane/', {
           method: 'PATCH',
           body: JSON.stringify(USER_PROFILE_RESPONSE)
         }));
-        done();
       });
     });
 
-    it('gets the dashboard', done => {
+    it('gets the dashboard', () => {
       fetchStub.returns(Promise.resolve(DASHBOARD_RESPONSE));
-      getDashboard().then(dashboard => {
+      return getDashboard().then(dashboard => {
         assert.ok(fetchStub.calledWith('/api/v0/dashboard/', {}, true));
         assert.deepEqual(dashboard, DASHBOARD_RESPONSE);
-        done();
       });
     });
 
-    it('fails to get the dashboard', done => {
+    it('fails to get the dashboard', () => {
       fetchStub.returns(Promise.reject());
 
-      getDashboard().catch(() => {
+      return assert.isRejected(getDashboard()).then(() => {
         assert.ok(fetchStub.calledWith('/api/v0/dashboard/', {}, true));
-        done();
       });
     });
   });
 
   describe('fetchJSONWithCSRF', () => {
-    it('fetches and populates appropriate headers for JSON', done => {
+    it('fetches and populates appropriate headers for JSON', () => {
       document.cookie = "csrftoken=asdf";
       let expectedJSON = { data: true };
 
@@ -129,35 +123,30 @@ describe('api', function() {
         return {status: 200};
       });
 
-      fetchJSONWithCSRF('/url', {
+      return fetchJSONWithCSRF('/url', {
         method: 'PATCH',
         body: JSON.stringify(expectedJSON)
-      }).then(() => {
-        done();
       });
     });
 
     for (let statusCode of [199, 300, 400, 500, 100]) {
-      it(`rejects the promise if the status code is ${statusCode}`, done => {
+      it(`rejects the promise if the status code is ${statusCode}`, () => {
         fetchMock.mock('/url', () => {
           return { status: statusCode };
         });
 
-        fetchJSONWithCSRF('/url').catch(() => {
-          done();
-        });
+        return assert.isRejected(fetchJSONWithCSRF('/url'));
       });
     }
 
     for (let statusCode of [400, 401]) {
-      it(`redirects to login if we set loginOnError and status = ${statusCode}`, done => {
+      it(`redirects to login if we set loginOnError and status = ${statusCode}`, () => {
         fetchMock.mock('/url', () => {
           return {status: 400};
         });
 
-        fetchJSONWithCSRF('/url', {}, true).catch(() => {
+        return assert.isRejected(fetchJSONWithCSRF('/url', {}, true)).then(() => {
           assert.equal(savedWindowLocation, '/login/edxorg/');
-          done();
         });
       });
     }

@@ -165,14 +165,19 @@
       "resolved": "https://registry.npmjs.org/asn1/-/asn1-0.2.3.tgz"
     },
     "assert": {
-      "version": "1.4.0",
+      "version": "1.4.1",
       "from": "assert@>=1.1.1 <2.0.0",
-      "resolved": "https://registry.npmjs.org/assert/-/assert-1.4.0.tgz"
+      "resolved": "https://registry.npmjs.org/assert/-/assert-1.4.1.tgz"
     },
     "assert-plus": {
       "version": "0.2.0",
       "from": "assert-plus@>=0.2.0 <0.3.0",
       "resolved": "https://registry.npmjs.org/assert-plus/-/assert-plus-0.2.0.tgz"
+    },
+    "assertion-error": {
+      "version": "1.0.2",
+      "from": "assertion-error@>=1.0.1 <2.0.0",
+      "resolved": "https://registry.npmjs.org/assertion-error/-/assertion-error-1.0.2.tgz"
     },
     "async": {
       "version": "1.5.2",
@@ -757,6 +762,16 @@
       "from": "center-align@>=0.1.1 <0.2.0",
       "resolved": "https://registry.npmjs.org/center-align/-/center-align-0.1.3.tgz"
     },
+    "chai": {
+      "version": "3.5.0",
+      "from": "chai@latest",
+      "resolved": "https://registry.npmjs.org/chai/-/chai-3.5.0.tgz"
+    },
+    "chai-as-promised": {
+      "version": "5.3.0",
+      "from": "chai-as-promised@latest",
+      "resolved": "https://registry.npmjs.org/chai-as-promised/-/chai-as-promised-5.3.0.tgz"
+    },
     "chalk": {
       "version": "1.1.3",
       "from": "chalk@>=1.1.0 <2.0.0",
@@ -1015,6 +1030,18 @@
       "version": "1.2.0",
       "from": "decamelize@>=1.1.2 <2.0.0",
       "resolved": "https://registry.npmjs.org/decamelize/-/decamelize-1.2.0.tgz"
+    },
+    "deep-eql": {
+      "version": "0.1.3",
+      "from": "deep-eql@>=0.1.3 <0.2.0",
+      "resolved": "https://registry.npmjs.org/deep-eql/-/deep-eql-0.1.3.tgz",
+      "dependencies": {
+        "type-detect": {
+          "version": "0.1.1",
+          "from": "type-detect@0.1.1",
+          "resolved": "https://registry.npmjs.org/type-detect/-/type-detect-0.1.1.tgz"
+        }
+      }
     },
     "deep-equal": {
       "version": "1.0.1",
@@ -3004,9 +3031,9 @@
       "resolved": "https://registry.npmjs.org/private/-/private-0.1.6.tgz"
     },
     "process": {
-      "version": "0.11.3",
+      "version": "0.11.4",
       "from": "process@>=0.11.0 <0.12.0",
-      "resolved": "https://registry.npmjs.org/process/-/process-0.11.3.tgz"
+      "resolved": "https://registry.npmjs.org/process/-/process-0.11.4.tgz"
     },
     "process-nextick-args": {
       "version": "1.0.7",
@@ -3614,7 +3641,7 @@
         },
         "readable-stream": {
           "version": "1.1.14",
-          "from": "readable-stream@>=1.0.27-1 <2.0.0",
+          "from": "readable-stream@^1.0.27-1",
           "resolved": "https://registry.npmjs.org/readable-stream/-/readable-stream-1.1.14.tgz"
         }
       }
@@ -3773,6 +3800,11 @@
       "version": "0.3.2",
       "from": "type-check@>=0.3.2 <0.4.0",
       "resolved": "https://registry.npmjs.org/type-check/-/type-check-0.3.2.tgz"
+    },
+    "type-detect": {
+      "version": "1.0.0",
+      "from": "type-detect@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/type-detect/-/type-detect-1.0.0.tgz"
     },
     "type-is": {
       "version": "1.6.13",

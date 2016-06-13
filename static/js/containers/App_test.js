@@ -2,7 +2,7 @@
 import '../global_init';
 
 import ReactDOM from 'react-dom';
-import assert from 'assert';
+import { assert } from 'chai';
 import _ from 'lodash';
 
 import {
@@ -35,72 +35,65 @@ describe('App', () => {
     helper.cleanup();
   });
 
-  it('clears profile, ui, and dashboard after unmounting', done => {
-    renderComponent("/dashboard").then(([, div]) => {
-      listenForActions([CLEAR_DASHBOARD, CLEAR_PROFILE, CLEAR_UI], () => {
+  it('clears profile, ui, and dashboard after unmounting', () => {
+    return renderComponent("/dashboard").then(([, div]) => {
+      return listenForActions([CLEAR_DASHBOARD, CLEAR_PROFILE, CLEAR_UI], () => {
         ReactDOM.unmountComponentAtNode(div);
-      }).then(() => {
-        done();
       });
     });
   });
 
   describe('profile completeness', () => {
-    it('redirects to /profile if profile is not complete', done => {
+    it('redirects to /profile if profile is not complete', () => {
       let response = Object.assign({}, USER_PROFILE_RESPONSE, {
         first_name: undefined
       });
       helper.profileGetStub.returns(Promise.resolve(response));
 
-      renderComponent("/dashboard", editProfileActions).then(() => {
+      return renderComponent("/dashboard", editProfileActions).then(() => {
         assert.equal(helper.currentLocation.pathname, "/profile/personal");
-        done();
       });
     });
 
-    it('redirects to /profile if profile is not filled out', done => {
+    it('redirects to /profile if profile is not filled out', () => {
       let response = Object.assign({}, USER_PROFILE_RESPONSE, {
         filled_out: false
       });
       helper.profileGetStub.returns(Promise.resolve(response));
 
-      renderComponent("/dashboard").then(() => {
+      return renderComponent("/dashboard").then(() => {
         assert.equal(helper.currentLocation.pathname, "/profile/personal");
-        done();
       });
     });
 
-    it('redirects to /profile/professional if a field is missing there', done => {
+    it('redirects to /profile/professional if a field is missing there', () => {
       let profile = _.cloneDeep(USER_PROFILE_RESPONSE);
       profile.work_history[1].city = "";
 
       helper.profileGetStub.returns(Promise.resolve(profile));
-      renderComponent("/dashboard", editProfileActions).then(() => {
+      return renderComponent("/dashboard", editProfileActions).then(() => {
         assert.equal(helper.currentLocation.pathname, "/profile/professional");
-        done();
       });
     });
 
-    it('redirects to /profile/privacy if a field is missing there', done => {
+    it('redirects to /profile/privacy if a field is missing there', () => {
       let response = Object.assign({}, USER_PROFILE_RESPONSE, {
         account_privacy: ''
       });
       helper.profileGetStub.returns(Promise.resolve(response));
 
-      renderComponent("/dashboard", editProfileActions).then(() => {
+      return renderComponent("/dashboard", editProfileActions).then(() => {
         assert.equal(helper.currentLocation.pathname, "/profile/privacy");
-        done();
       });
     });
 
-    it('redirects to /profile/education if a field is missing there', done => {
+    it('redirects to /profile/education if a field is missing there', () => {
       let response = _.cloneDeep(USER_PROFILE_RESPONSE);
       response.education[0].school_name = '';
       helper.profileGetStub.returns(Promise.resolve(response));
 
-      renderComponent("/dashboard", editProfileActions).then(() => {
+      return renderComponent("/dashboard", editProfileActions).then(() => {
         assert.equal(helper.currentLocation.pathname, "/profile/education");
-        done();
       });
     });
   });

@@ -1,5 +1,5 @@
 /* global SETTINGS: false */
-import assert from 'assert';
+import { assert } from 'chai';
 import React from 'react';
 
 import {
