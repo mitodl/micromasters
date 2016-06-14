@@ -1,7 +1,7 @@
  /* global SETTINGS: false */
 import moment from 'moment';
 import React from 'react';
-import Button from 'react-mdl/lib/Button';
+import Button from 'react-bootstrap/lib/Button';
 
 import {
   STATUS_PASSED,
