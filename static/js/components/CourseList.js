@@ -62,7 +62,7 @@ class CourseList extends React.Component {
           };
           expanderSpan = <span
             onClick={toggleExpander}
-            className={`glyphicon glyphicon-chevron-${expander[course.id] ? 'up' : 'down'}`}
+            className={`glyphicon glyphicon-chevron-${expander[course.id] ? 'down' : 'up'}`}
             style={{cursor: "pointer"}}
           />;
         }
