@@ -98,106 +98,224 @@ export const DASHBOARD_RESPONSE = [
             "position": 1,
             "title": "Gio Test Course #15",
             "course_id": "course-v1:odl+GIO101+CR-FALL15",
-            "status": "not-passed",
-            "id": 199
+            "status": STATUS_NOT_PASSED,
+            "id": 1
           },
           {
             "position": 2,
             "title": "Gio Test Course #14",
             "course_id": "course-v1:odl+GIO101+FALL14",
-            "status": "not-passed",
-            "id": 399
+            "status": STATUS_NOT_PASSED,
+            "id": 2
           },
           {
             "certificate_url": "www.google.com",
             "title": "Gio Test Course #13",
-            "status": "passed",
+            "status": STATUS_PASSED,
             "position": 3,
             "grade": "0.66",
             "course_id": "course-v1:odl+GIO101+FALL13",
-            "id": 299
+            "id": 3
           }
         ],
         "position_in_program": 0,
-        "title": "Gio Course",
-        "status": "not-offered",
+        "title": "Gio Course - failed, no status text",
+        "status": STATUS_NOT_OFFERED,
         "description": "",
-        "id": 199
+        "id": 1
       },
       {
         "prerequisites": "",
         "runs": [],
         "position_in_program": 1,
         "title": "8.MechCx Advanced Introductory Classical Mechanics",
-        "status": "not-offered",
+        "status": STATUS_NOT_OFFERED,
         "description": "",
-        "id": 299
+        "id": 2
       },
       {
         "prerequisites": "",
         "runs": [],
         "position_in_program": 2,
         "title": "EDX Demo course",
-        "status": "not-offered",
+        "status": STATUS_NOT_OFFERED,
         "description": "",
-        "id": 399
+        "id": 3
       },
       {
         "prerequisites": "",
         "runs": [],
         "position_in_program": 3,
         "title": "Peter Course",
-        "status": "not-offered",
+        "status": STATUS_NOT_OFFERED,
         "description": "",
-        "id": 499
+        "id": 4
       }
     ],
-    "id": 799
+    "id": 3
   },
   {
     "courses": [
       {
-        "id": 3,
+        "id": 5,
         "status": STATUS_OFFERED_NOT_ENROLLED,
         "position_in_program": 1,
-        "title": "Supply Chain and Logistics Fundamentals",
+        "title": "Supply Chain and Logistics Fundamentals - enroll button",
         "runs": [
           {
-            "course_id": null,
-            "id": 3,
+            "course_id": "course-v1:supply+chain",
+            "id": 4,
             "status": STATUS_OFFERED_NOT_ENROLLED,
             "fuzzy_enrollment_start_date": null,
             "title": "Supply Chain Design",
-            "enrollment_start_date": "2016-03-04T01:00:00Z"
+            "enrollment_start_date": "2016-03-04T01:00:00Z",
+            "position": 0
           }
         ],
         "description": null,
         "prerequisites": null
       },
       {
-        "id": 4,
+        "id": 6,
         "status": STATUS_PASSED,
-        "position_in_program": 0,
-        "title": "Demo course",
+        "position_in_program": 5,
+        "title": "Passed course - status text is 88%",
         "runs": [
           {
             "certificate_url": "www.google.com",
             "course_id": "course-v1:edX+DemoX+Demo_Course",
-            "id": 4,
+            "id": 5,
             "status": STATUS_PASSED,
             "title": "Demo course",
-            "grade": "0.88"
+            "grade": "0.88",
+            "position": 0
           }
         ],
         "description": "The demo course",
         "prerequisites": ""
       },
       {
-        "id": 5,
+        "id": 7,
         "status": STATUS_NOT_OFFERED,
         "position_in_program": 2,
-        "title": "Empty course",
+        "title": "Empty course - no status text",
         "runs": [
+        ],
+        "description": null,
+        "prerequisites": null
+      },
+      {
+        "id": 8,
+        "status": STATUS_ENROLLED_NOT_VERIFIED,
+        "position_in_program": 3,
+        "title": "Not verified course - upgrade to verified button",
+        "runs": [
+          {
+            "id": 7,
+            "status": STATUS_ENROLLED_NOT_VERIFIED,
+            "title": "Not verified run",
+            "verification_date": "2200-01-01T03:00:00Z",
+            "course_id": "not-verified",
+            "position": 0
+          }
+        ],
+        "description": null,
+        "prerequisites": null
+      },
+      {
+        "id": 10,
+        "status": STATUS_OFFERED_NOT_ENROLLED,
+        "position_in_program": 4,
+        "title": "Enrollment starting course - status text says Enrollment starting",
+        "runs": [
+          {
+            "course_id": "course-v1:supply+chain",
+            "id": 8,
+            "status": STATUS_OFFERED_NOT_ENROLLED,
+            "fuzzy_enrollment_start_date": null,
+            "title": "Enrollment starting run",
+            "enrollment_start_date": "2106-03-04T01:00:00Z",
+            "position": 0
+          }
+        ],
+        "description": null,
+        "prerequisites": null
+      },
+      {
+        "id": 12,
+        "status": STATUS_PASSED,
+        "title": "Passed course missing grade - no status text",
+        "position_in_program": 6,
+        "runs": [
+          {
+            "certificate_url": "www.google.com",
+            "title": "Passed run missing grade",
+            "status": STATUS_PASSED,
+            "position": 0,
+            "course_id": "course_id",
+            "id": 10
+          }
+        ]
+      },
+      {
+        "id": 13,
+        "status": STATUS_ENROLLED_NOT_VERIFIED,
+        "title": "Enrolled, no verification date - no status text",
+        "position_in_program": 7,
+        "runs": [
+          {
+            "title": "Enrolled no verification date",
+            "status": STATUS_ENROLLED_NOT_VERIFIED,
+            "position": 0,
+            "course_id": "course_id",
+            "id": 11
+          }
+        ]
+      },
+      {
+        "id": 14,
+        "position_in_program": 8,
+        "title": "enrolled not verified, verification date passed - no status text",
+        "status": STATUS_ENROLLED_NOT_VERIFIED,
+        "runs": [
+          {
+            "position": 0,
+            "id": 12,
+            "status": STATUS_ENROLLED_NOT_VERIFIED,
+            "title": "enrolled not verified, verification date passed",
+            "verification_date": "2000-01-01"
+          }
+        ]
+      },
+      {
+        "id": 15,
+        "position_in_program": 9,
+        "title": "verified not completed, course starts in future - status text is Course starting",
+        "status": STATUS_VERIFIED_NOT_COMPLETED,
+        "runs": [
+          {
+            "id": 13,
+            "status": STATUS_VERIFIED_NOT_COMPLETED,
+            "course_start_date": "8765-03-21",
+            "title": "First run",
+            "position": 0
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "status": STATUS_OFFERED_NOT_ENROLLED,
+        "position_in_program": 0,
+        "title": "Fuzzy enrollment starting course - First in program, status text is soonish",
+        "runs": [
+          {
+            "course_id": "course-v1:supply+chain",
+            "id": 9,
+            "status": STATUS_OFFERED_NOT_ENROLLED,
+            "fuzzy_enrollment_start_date": "soonish",
+            "title": "Fuzzy enrollment starting run",
+            "position": 0
+          }
         ],
         "description": null,
         "prerequisites": null
@@ -205,30 +323,32 @@ export const DASHBOARD_RESPONSE = [
     ],
     "title": "Master Program",
     "description": null,
-    "id": 1
+    "id": 4
   },
   {
     "title": "Last program",
     "description": "The last program",
     "courses": [
       {
-        "id": 4,
+        "id": 9,
         "status": STATUS_VERIFIED_NOT_COMPLETED,
         "position_in_program": 0,
-        "title": "Course for last program",
+        "title": "Course for last program, no grade - in progress, status text is 0%",
         "runs": [
           {
             "course_id": "course-v1:edX+DemoX+Demo_Course",
-            "id": 4,
+            "id": 6,
             "status": STATUS_VERIFIED_NOT_COMPLETED,
-            "title": "Course run for last program"
+            "title": "Course run for last program",
+            "position": 0,
+            "course_start_date": "2016-01-01",
           }
         ],
         "description": "Course for Last program",
         "prerequisites": ""
       },
     ],
-    "id": 3
+    "id": 5
   },
 ];
 

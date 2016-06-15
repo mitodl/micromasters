@@ -67,7 +67,10 @@ export function makeCourseStatusDisplay(course: Object, now: moment = moment()):
 
     let verificationDate = moment(firstRun.verification_date);
     if (verificationDate.isAfter(now, 'day')) {
-      return <Button bsStyle="success" href={courseUpgradeUrl} target="_blank">UPGRADE TO VERIFIED</Button>;
+      return <Button bsStyle="success" href={courseUpgradeUrl} target="_blank">
+        UPGRADE TO VERIFIED
+        <span className="sr-only"> for {firstRun.title}</span>
+      </Button>;
     } else {
       // User cannot verify anymore
       return "";
@@ -84,7 +87,10 @@ export function makeCourseStatusDisplay(course: Object, now: moment = moment()):
     } else {
       if (firstRun.course_id) {
         let courseInfoUrl = `${SETTINGS.edx_base_url}/courses/${firstRun.course_id}/about`;
-        return <Button bsStyle="success" href={courseInfoUrl} target="_blank">ENROLL</Button>;
+        return <Button bsStyle="success" href={courseInfoUrl} target="_blank">
+          ENROLL
+          <span className="sr-only"> in {firstRun.title}</span>
+        </Button>;
       } else {
         return "";
       }

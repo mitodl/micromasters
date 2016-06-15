@@ -62,9 +62,13 @@ class CourseList extends React.Component {
           };
           expanderSpan = <span
             onClick={toggleExpander}
-            className={`glyphicon glyphicon-chevron-${expander[course.id] ? 'up' : 'down'}`}
+            className={`glyphicon glyphicon-menu-${expander[course.id] ? 'up' : 'down'}`}
             style={{cursor: "pointer"}}
-          />;
+          >
+            <span className="sr-only">
+              Click here to show or hide course runs
+            </span>
+          </span>;
         }
 
         let height = DASHBOARD_COURSE_HEIGHT + courseRuns.length * DASHBOARD_RUN_HEIGHT;

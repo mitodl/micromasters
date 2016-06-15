@@ -111,10 +111,11 @@ describe('courseList functions', () => {
         renderCourseStatusDisplay({
           status: STATUS_ENROLLED_NOT_VERIFIED,
           runs: [{
-            verification_date: tomorrow
-          }]
+            verification_date: tomorrow,
+            title: "Run title"
+          }],
         }, moment(today)),
-        "UPGRADE TO VERIFIED"
+        "UPGRADE TO VERIFIED for Run title"
       );
     });
 
@@ -160,10 +161,11 @@ describe('courseList functions', () => {
           status: STATUS_OFFERED_NOT_ENROLLED,
           runs: [{
             course_id: edxCourseKey,
-            enrollment_start_date: today
+            enrollment_start_date: today,
+            title: "Run title"
           }]
         }, moment(today)),
-        "ENROLL"
+        "ENROLL in Run title"
       );
     });
 
@@ -173,10 +175,11 @@ describe('courseList functions', () => {
           status: STATUS_OFFERED_NOT_ENROLLED,
           runs: [{
             course_id: edxCourseKey,
-            enrollment_start_date: yesterday
+            enrollment_start_date: yesterday,
+            title: "Run title"
           }]
         }, moment(today)),
-        "ENROLL"
+        "ENROLL in Run title"
       );
     });
     it("is an offered course with valid enrollment date and no edx_course_key", () => {
