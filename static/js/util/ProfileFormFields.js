@@ -33,11 +33,11 @@ export default class ProfileFormFields extends React.Component {
     }));
     this.languageOptions = _.sortBy(languageOptions, 'label');
     this.privacyOptions = [
-      { value: 'public', label: 'Public to the world', helper: `Your MicroMaster’s profile will be 
+      { value: 'public', label: 'Public to the world', helper: `Your MicroMasters profile will be 
         visible to all website visitors.` },
-      { value: 'public_to_mm', label: "Public to other MicroMaster’s students", helper: `Your profile will be 
-        visible to other MicroMaster’s learners, and to MIT faculty and staff.` },
-      { value: 'private', label: 'Private', helper: `Your MicroMaster’s profile will only 
+      { value: 'public_to_mm', label: "Public to other MicroMasters students", helper: `Your profile will be 
+        visible to other MicroMasters learners, and to MIT faculty and staff.` },
+      { value: 'private', label: 'Private', helper: `Your MicroMasters profile will only 
         be visible to MIT faculty and staff.` }
     ];
     this.educationLevelOptions = EDUCATION_LEVELS;

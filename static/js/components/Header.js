@@ -21,7 +21,7 @@ class Header extends React.Component {
         <Navbar.Header>
           <Navbar.Brand>
             <a href="/">
-              <img src="/static/images/logo-micromasters@2x.png" width="215" height="40" alt="MIT MicroMaster’s" />
+              <img src="/static/images/logo-micromasters@2x.png" width="215" height="40" alt="MIT MicroMasters" />
             </a>
           </Navbar.Brand>
           {content}

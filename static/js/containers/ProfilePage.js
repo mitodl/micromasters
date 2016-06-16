@@ -24,7 +24,7 @@ class ProfilePage extends ProfileFormContainer {
     }
 
     let text = `Welcome ${getPreferredName(profile.profile)}, let's
-    complete your enrollment to MIT MicroMaster’s.`;
+    complete your enrollment to MIT MicroMasters.`;
 
     let childrenWithProps = this.childrenWithProps(profile);
     return <div className="card">

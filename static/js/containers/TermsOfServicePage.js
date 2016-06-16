@@ -50,7 +50,7 @@ class TermsOfServicePage extends React.Component {
               </div>
               <div className="terms-of-service-content">
                 <p>
-                  Welcome to the MITx MicroMaster’s website (the “Site”).  By accessing this Site, users agree to be
+                  Welcome to the MITx MicroMasters website (the “Site”).  By accessing this Site, users agree to be
                   bound by the following terms and conditions which MIT may revise at any time.  Users are encouraged
                   to visit this page periodically to review current terms and conditions, as your continued use of this
                   Site signifies your agreement to these term and conditions.  If you do not understand or do not agree
@@ -59,8 +59,8 @@ class TermsOfServicePage extends React.Component {
                 <ol>
                   <li>
                     Your use of this Site is entirely voluntary.  This Site is designed to assist and facilitate your
-                    successful attainment of the MITx MicroMaster’s credential, but use of this Site is not required
-                    in order to participate in the MITx MicroMaster’s program. These terms and conditions govern
+                    successful attainment of the MITx MicroMaster's credential, but use of this Site is not required
+                    in order to participate in the MITx MicroMasters program. These terms and conditions govern
                     your use of this Site alone. When enrolled in specific MITx courses, all users must adhere to
                     the edX terms of service, including its Honor Code, which are available
                     at <a href="https://www.edx.org/edx-terms-service"
@@ -77,7 +77,7 @@ class TermsOfServicePage extends React.Component {
                     employment background; and (3) your participation and progress in MITx courses and your online
                     education.  Among other things, MIT may use the personally identifiable information that you
                     provide to respond to your questions; provide you the specific courses and/or services you select;
-                    send you updates about courses and information, including specifically the MITx MicroMaster’s
+                    send you updates about courses and information, including specifically the MITx MicroMasters
                     program and information about MIT events; send you information about Site maintenance or updates;
                     and for all appropriate MIT administrative and research purposes. Except as set forth herein or
                     as specifically agreed to by you, MIT will not disclose any personally identifiable information

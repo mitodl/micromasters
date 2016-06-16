@@ -7,7 +7,7 @@ class Footer extends React.Component {
          <div className="container container-footer">
             <div className="row">
                <div className="col-md-8">
-                  <img src="/static/images/mit-logo-ltgray-white@72x38.svg" alt="MicroMaster’s" />
+                  <img src="/static/images/mit-logo-ltgray-white@72x38.svg" alt="MicroMasters" />
                   <div className="footer-links">
                       <a href="https://www.edx.org/" target="_blank">edX</a>
                       <a href="https://odl.mit.edu/" target="_blank">Office of Digital Learning</a>
