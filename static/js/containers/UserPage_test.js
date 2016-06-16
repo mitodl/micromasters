@@ -32,7 +32,9 @@ import IntegrationTestHelper from '../util/integration_test_helper';
 import * as api from '../util/api';
 import { USER_PROFILE_RESPONSE } from '../constants';
 
-describe("UserPage", () => {
+describe("UserPage", function() {
+  this.timeout(5000);
+
   let listenForActions, renderComponent, helper, patchUserProfileStub;
   let userActions = [RECEIVE_GET_USER_PROFILE_SUCCESS, REQUEST_GET_USER_PROFILE];
 
