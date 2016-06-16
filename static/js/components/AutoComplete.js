@@ -4,7 +4,7 @@ import React, {Component, PropTypes} from 'react';
 import ReactDOM from 'react-dom';
 import keycode from 'keycode';
 import TextField from 'material-ui/TextField';
-import Menu from 'material-ui/Menu';
+import Menu from './Menu';
 import MenuItem from 'material-ui/MenuItem';
 import Divider from 'material-ui/Divider';
 import Popover from 'material-ui/Popover/Popover';
@@ -31,6 +31,7 @@ function getStyles(props, context, state) {
     },
     innerDiv: {
       overflow: 'hidden',
+      color: 'black'
     },
   };
 
@@ -71,12 +72,8 @@ class AutoComplete extends Component {
     errorText: PropTypes.node,
     /**
      * Callback function used to filter the auto complete.
-     *
-     * @param {string} searchText The text to search for within `dataSource`.
-     * @param {string} key `dataSource` element, or `text` property on that element if it's not a string.
-     * @returns {boolean} `true` indicates the auto complete list will include `key` when the input is `searchText`.
      */
-    filter: PropTypes.func,
+    filter: PropTypes.func.isRequired,
     /**
      * The content to use for adding floating label element.
      */
@@ -106,6 +103,7 @@ class AutoComplete extends Component {
      * Props to be passed to menu.
      */
     menuProps: PropTypes.object,
+    menuHeight: PropTypes.number.isRequired,
     /**
      * Override style for menu.
      */
@@ -260,12 +258,26 @@ class AutoComplete extends Component {
     event.preventDefault();
   };
 
-  handleItemTouchTap = (event, child) => {
-    const dataSource = this.props.dataSource;
+  getFilteredDataSource = () => {
+    const { dataSource, searchText } = this.props;
+    const filter = this.getFilter();
+    return dataSource.filter(option => filter(searchText, option.label, option));
+  };
 
-    const index = parseInt(child.key, 10);
+  getFilter = () => {
+    const { filter } = this.props;
+    if (this.state.skipFilter) {
+      return AutoComplete.noFilter;
+    } else {
+      return filter;
+    }
+  };
+
+  handleItemTouchTap = (event, child, index) => {
+    const dataSource = this.getFilteredDataSource();
+
     const chosenRequest = dataSource[index];
-    const searchText = typeof chosenRequest === 'string' ? chosenRequest : chosenRequest.text;
+    const searchText = chosenRequest.label;
 
     this.props.onNewRequest(chosenRequest, index);
 
@@ -376,6 +388,19 @@ class AutoComplete extends Component {
     this.refs.searchTextField.focus();
   }
 
+  renderMenuItem = option => {
+    const { disableFocusRipple } = this.props;
+    const styles = getStyles(this.props, this.context, this.state);
+
+    return <MenuItem
+      key={option.value}
+      primaryText={option.label}
+      value={option.value}
+      disableFocusRipple={disableFocusRipple}
+      innerDivStyle={styles.innerDiv}
+    />;
+  };
+
   render() {
     const {
       anchorOrigin,
@@ -385,15 +410,16 @@ class AutoComplete extends Component {
       floatingLabelText,
       hintText,
       fullWidth,
+      menuHeight,
       menuStyle,
       menuProps,
       listStyle,
       targetOrigin,
-      disableFocusRipple,
+      disableFocusRipple, // eslint-disable-line no-unused-vars
       triggerUpdateOnFocus, // eslint-disable-line no-unused-vars
       openOnFocus, // eslint-disable-line no-unused-vars
       maxSearchResults,
-      dataSource,
+      dataSource, // eslint-disable-line no-unused-vars
       ...other,
     } = this.props;
 
@@ -407,64 +433,10 @@ class AutoComplete extends Component {
     const {prepareStyles} = this.context.muiTheme;
     const styles = getStyles(this.props, this.context, this.state);
 
-    const requestsList = [];
-    let filter = this.props.filter;
-    if (this.state.skipFilter) {
-      filter = AutoComplete.noFilter;
+    let requestsList = this.getFilteredDataSource();
+    if (maxSearchResults > 0) {
+      requestsList = requestsList.slice(0, maxSearchResults);
     }
-
-    dataSource.every((item, index) => {
-      switch (typeof item) {
-        case 'string':
-          if (filter(searchText, item, item)) {
-            requestsList.push({
-              text: item,
-              value: (
-                <MenuItem
-                  innerDivStyle={styles.innerDiv}
-                  value={item}
-                  primaryText={item}
-                  disableFocusRipple={disableFocusRipple}
-                  key={index}
-                />),
-            });
-          }
-          break;
-
-        case 'object':
-          if (item && typeof item.text === 'string') {
-            if (filter(searchText, item.text, item)) {
-              if (item.value.type && (item.value.type.muiName === MenuItem.muiName ||
-                 item.value.type.muiName === Divider.muiName)) {
-                requestsList.push({
-                  text: item.text,
-                  value: React.cloneElement(item.value, {
-                    key: index,
-                    disableFocusRipple: this.props.disableFocusRipple,
-                  }),
-                });
-              } else {
-                requestsList.push({
-                  text: item.text,
-                  value: (
-                    <MenuItem
-                      innerDivStyle={styles.innerDiv}
-                      primaryText={item.value}
-                      disableFocusRipple={disableFocusRipple}
-                      key={index}
-                    />),
-                });
-              }
-            }
-          }
-          break;
-
-        default:
-          // Do nothing
-      }
-
-      return !(maxSearchResults && maxSearchResults > 0 && requestsList.length === maxSearchResults);
-    });
 
     this.requestsList = requestsList;
 
@@ -472,19 +444,19 @@ class AutoComplete extends Component {
       <Menu
         {...menuProps}
         ref="menu"
-        autoWidth={false}
+        autoWidth={true}
         disableAutoFocus={focusTextField}
         onEscKeyDown={this.handleEscKeyDown}
         initiallyKeyboardFocused={true}
         onItemTouchTap={this.handleItemTouchTap}
         onMouseDown={this.handleMouseDown}
         style={Object.assign(styles.menu, menuStyle)}
+        menuHeight={menuHeight}
         listStyle={Object.assign(styles.list, listStyle)}
-      >
-        {requestsList.map((i) => i.value)}
-      </Menu>
+        requestsList={requestsList}
+        renderItem={this.renderMenuItem}
+      />
     );
-
     return (
       <div style={prepareStyles(Object.assign(styles.root, style))} >
         <TextField

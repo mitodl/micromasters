@@ -21,6 +21,9 @@ if (!Object.entries) {
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 
+// react-virtualized requirement
+import 'style!css!react-virtualized/styles.css';
+
 const store = configureStore();
 
 let debug = SETTINGS.reactGaDebug === "true";

@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import _ from 'lodash';
-import MenuItem from 'material-ui/MenuItem';
 import AutoComplete from '../AutoComplete';
 import type { Option } from '../../flow/generalTypes';
 
@@ -64,15 +63,11 @@ export default class SelectField extends React.Component {
 
   static defaultProps = {
     autocompleteStyleProps: {
+      menuHeight: 300,
       menuStyle: {maxHeight: 300},
       fullWidth: true
     }
   };
-
-  convertOption: Function = (option: Option): Object => ({
-    text: option.label,
-    value: <MenuItem key={option.value} primaryText={option.label} value={option.value}/>
-  });
 
   createEditKeySet: Function = (): string[] => {
     const { keySet } = this.props;
@@ -124,7 +119,7 @@ export default class SelectField extends React.Component {
       }
     } else {
       // user selected an item in the menu
-      toStore = _.get(optionOrString, ['value', 'props', 'value']);
+      toStore = optionOrString.value;
     }
 
     if (toStore !== undefined) {
@@ -150,7 +145,7 @@ export default class SelectField extends React.Component {
       animated: false,
       menuCloseDelay: 0,
       filter: this.autocompleteFilter,
-      dataSource: options.map(this.convertOption),
+      dataSource: options,
       floatingLabelText: label,
       onNewRequest: this.onNewRequest,
       onUpdateInput: this.onUpdateInput,

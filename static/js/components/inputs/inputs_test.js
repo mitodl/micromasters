@@ -6,7 +6,6 @@ import TestUtils from 'react-addons-test-utils';
 
 import { USER_PROFILE_RESPONSE } from '../../constants';
 import iso3166 from 'iso-3166-2';
-import MenuItem from 'material-ui/MenuItem';
 
 import SelectField from './SelectField';
 import CountrySelectField from './CountrySelectField';
@@ -100,9 +99,7 @@ describe('Profile inputs', () => {
       for (let i = 0; i < genderOptions.length; i++) {
         let item = selectField.props.dataSource[i];
         let option = genderOptions[i];
-        assert.equal(option.label, item.text);
-        assert.equal(option.label, item.value.props.primaryText);
-        assert.equal(option.value, item.value.props.value);
+        assert.deepEqual(option, item);
       }
       assert.equal(selectField.props.floatingLabelText, 'Gender');
       assert.equal(selectField.props.searchText, "");
@@ -123,7 +120,7 @@ describe('Profile inputs', () => {
       let option = genderOptions[1];
       selectField.props.onNewRequest({
         text: option.label,
-        value: <MenuItem primaryText={option.label} value={option.value}/>
+        value: option.value
       }, 0);
       assert.equal(inputProps.profile.gender, 'f');
     });
