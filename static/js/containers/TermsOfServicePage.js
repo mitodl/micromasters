@@ -59,7 +59,7 @@ class TermsOfServicePage extends React.Component {
                 <ol>
                   <li>
                     Your use of this Site is entirely voluntary.  This Site is designed to assist and facilitate your
-                    successful attainment of the MITx MicroMaster's credential, but use of this Site is not required
+                    successful attainment of the MITx MicroMasters credential, but use of this Site is not required
                     in order to participate in the MITx MicroMasters program. These terms and conditions govern
                     your use of this Site alone. When enrolled in specific MITx courses, all users must adhere to
                     the edX terms of service, including its Honor Code, which are available
