@@ -15,7 +15,7 @@
   <nav class="navbar navbar-default" role="navigation">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="javascript:void(0)"><img src="/static/images/logo-micromasters.png" width="215" height="40" alt="MIT MicroMasters" /></a>
+        <a class="navbar-brand" href="javascript:void(0)"><img src="{% static 'images/logo-micromasters.png' %}" width="215" height="40" alt="MIT MicroMasters" /></a>
         <div class="nav-utility pull-right">
           {% if authenticated %}
           <a class="btn btn-danger" href="/logout">
@@ -46,7 +46,7 @@
         <div class="banner-wrapper-content">
           <h1>
             <div class="banner-image">
-              <img src="static/images/logo-mit-verylg@2x.png" alt="MIT" />
+              <img src="{% static 'images/logo-mit-verylg@2x.png' %}" alt="MIT" />
             </div>
             {{ title }}
           </h1>
@@ -75,7 +75,7 @@
                 <div class="media-item">
                   <div class="media-top">
                     <div class="image-wrap">
-                      <img class="image" src="static/images/course-1.png" alt="course image for {{program}}"> 
+                      <img class="image" src="{% static 'images/course-1.png' %}" alt="course image for {{program}}" height="135" width="377">
                     </div>
                   </div>
                   <div class="info-wrap">

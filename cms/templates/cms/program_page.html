@@ -19,9 +19,10 @@
             <div class="container-fluid">
               <div class="navbar-header">
                 <a class="navbar-brand" href="javascript:void(0)"><img
-                        src="/static/images/logo-mit-micromasters-whitered.png"
+                        src="{% static 'images/logo-mit-micromasters-whitered.png' %}"
                         width="215" height="40"
-                        alt="MIT Micromasters"/></a>
+                        alt="MIT Micromasters"/>
+                </a>
                 <div class="nav-utility pull-right">
                   {% if authenticated %}
                     <a class="btn btn-danger" href="/logout">
