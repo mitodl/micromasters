@@ -30,7 +30,7 @@ import {
 } from '../util/util';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import * as api from '../util/api';
-import { USER_PROFILE_RESPONSE } from '../constants';
+import { USER_PROFILE_RESPONSE, HIGH_SCHOOL } from '../constants';
 
 describe("UserPage", function() {
   this.timeout(5000);
@@ -158,13 +158,23 @@ describe("UserPage", function() {
             getElementsByClassName('profile-add-button')[0];
 
           let updatedProfile = _.cloneDeep(USER_PROFILE_RESPONSE);
-          let entry = generateNewEducation();
-          entry.graduation_date = "1999-12-01";
-          entry.school_name = "A School";
-          entry.school_country = "AF";
-          entry.school_state_or_territory = "AF-BAL";
-          entry.school_city = "FoobarVille";
-          updatedProfile.work_history.push(entry);
+          updatedProfile.username = SETTINGS.username;
+          let entry = Object.assign({}, generateNewEducation(HIGH_SCHOOL), {
+            graduation_date: "1999-12-01",
+            graduation_date_edit: {
+              year: '1999',
+              month: '12',
+              day: undefined
+            },
+            degree_name_edit: undefined,
+            school_name: "A School",
+            school_country: "AF",
+            school_country_edit: undefined,
+            school_state_or_territory: "AF-BAL",
+            school_state_or_territory_edit: undefined,
+            school_city: "FoobarVille"
+          });
+          updatedProfile.education.push(entry);
 
           patchUserProfileStub.throws("Invalid arguments");
           patchUserProfileStub.withArgs(SETTINGS.username, updatedProfile).returns(
@@ -178,6 +188,7 @@ describe("UserPage", function() {
             SET_EDUCATION_DEGREE_LEVEL,
             UPDATE_PROFILE_VALIDATION,
             REQUEST_PATCH_USER_PROFILE,
+            RECEIVE_PATCH_USER_PROFILE_SUCCESS
           ];
           for (let i = 0; i < 12; i++) {
             expectedActions.push(UPDATE_PROFILE);
@@ -297,15 +308,30 @@ describe("UserPage", function() {
             getElementsByClassName('profile-add-button')[0];
 
           let updatedProfile = _.cloneDeep(USER_PROFILE_RESPONSE);
-          let entry = generateNewWorkHistory();
-          entry.position = "Assistant Foobar";
-          entry.industry = "Accounting";
-          entry.company_name = "FoobarCorp";
-          entry.start_date = "2001-12-01";
-          entry.end_date = "2002-01-01";
-          entry.city = "FoobarVille";
-          entry.country = "AF";
-          entry.state_or_territory = "AF-BAL";
+          updatedProfile.username = SETTINGS.username;
+          let entry = Object.assign({}, generateNewWorkHistory(), {
+            position: "Assistant Foobar",
+            industry: "Accounting",
+            industry_edit: undefined,
+            company_name: "FoobarCorp",
+            start_date: "2001-12-01",
+            start_date_edit: {
+              year: "2001",
+              month: "12",
+              day: undefined
+            },
+            end_date: "2002-01-01",
+            end_date_edit: {
+              year: "2002",
+              month: "01",
+              day: undefined
+            },
+            city: "FoobarVille",
+            country: "AF",
+            country_edit: undefined,
+            state_or_territory: "AF-BAL",
+            state_or_territory_edit: undefined,
+          });
           updatedProfile.work_history.push(entry);
 
           patchUserProfileStub.throws("Invalid arguments");
@@ -320,6 +346,7 @@ describe("UserPage", function() {
             SET_WORK_DIALOG_VISIBILITY,
             UPDATE_PROFILE_VALIDATION,
             REQUEST_PATCH_USER_PROFILE,
+            RECEIVE_PATCH_USER_PROFILE_SUCCESS
           ];
           for (let i = 0; i < 14; i++) {
             expectedActions.push(UPDATE_PROFILE);
