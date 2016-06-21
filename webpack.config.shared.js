@@ -3,8 +3,8 @@ var webpack = require("webpack");
 
 module.exports = {
   entry: {
-    'dashboard': './static/js/dashboard',
-    'public': './static/js/public',
+    'dashboard': ['babel-polyfill', './static/js/dashboard'],
+    'public': ['babel-polyfill', './static/js/public'],
     'style': './static/js/style',
     'style_public': './static/js/style_public',
   },
