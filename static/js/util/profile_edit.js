@@ -147,6 +147,7 @@ export function boundDateField(keySet: string[], label: string, omitDay: boolean
 
   // Get an object { day, month, year } which contains the values being edited in the textbox
   // values may be strings or numbers. Otherwise return empty object.
+  let pad = (toPad, length) => _.padStart(String(toPad), length, '0');
   let getEditObject = () => {
     let edit = _.get(profile, editKeySet, {});
 
@@ -154,9 +155,9 @@ export function boundDateField(keySet: string[], label: string, omitDay: boolean
       let date = getDate();
       if (date !== null && date.isValid()) {
         return {
-          month: date.month() + 1,
+          month: pad(date.month() + 1, 2),
           year: date.year(),
-          day: date.date()
+          day: pad(date.date(), 2),
         };
       }
     }
@@ -179,15 +180,20 @@ export function boundDateField(keySet: string[], label: string, omitDay: boolean
       month: month !== undefined ? month : edit.month,
       day: day !== undefined ? day : edit.day
     });
-    
+
     // these functions return undefined if a month, day, or year is invalid, and converts the value to a number
     // except if the input value is an empty string, in which case an empty string is returned
     let validatedDay = 1;
     if (!omitDay) {
       validatedDay = validateDay(newEdit.day);
+      newEdit.day = validatedDay === undefined ? '' : String(validatedDay);
     }
+
     let validatedMonth = validateMonth(newEdit.month);
+    newEdit.month = validatedMonth === undefined ? '' : String(validatedMonth);
+
     let validatedYear = validateYear(newEdit.year);
+    newEdit.year = validatedYear === undefined ? '' : String(validatedYear);
 
     // keep text up to date
     _.set(clone, editKeySet, newEdit);
@@ -196,8 +202,9 @@ export function boundDateField(keySet: string[], label: string, omitDay: boolean
       // store the edit value and make the formatted date undefined so it doesn't pass validation
       _.set(clone, keySet, null);
     } else {
-      let momentDate = moment(`${validatedYear}-${validatedMonth}-${validatedDay}`, ISO_8601_FORMAT);
-      if (!momentDate.isValid()) {
+      let formattedYear = _.padStart(String(validatedYear), 4, '0');
+      let momentDate = moment(`${formattedYear}-${validatedMonth}-${validatedDay}`, ISO_8601_FORMAT);
+      if (!momentDate.isValid() || momentDate.isBefore(moment("1800", "YYYY"))) {
         // date is invalid according to moment.js so make the formatted date undefined so it
         // doesn't pass validation
         _.set(clone, keySet, null);

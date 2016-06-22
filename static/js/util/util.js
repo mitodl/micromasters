@@ -185,9 +185,12 @@ export function generateNewWorkHistory(): WorkHistoryEntry {
 /**
  * Converts string to int using base 10. Stricter in what is accepted than parseInt
  */
-export const filterPositiveInt = (value: ?string): number|void => {
+export const filterPositiveInt = (value: ?string|number): number|void => {
   if (value === null || value === undefined) {
     return undefined;
+  }
+  if ( typeof value === 'number') {
+    return value;
   }
   if(/^[0-9]+$/.test(value)) {
     return Number(value);
@@ -249,6 +252,6 @@ export function calculateDegreeInclusions(profile: Profile) {
 /**
  * Calls an array of functions in series with a given argument and returns an array of the results
  */
-export function callFunctionArray(functionArray, arg) {
+export function callFunctionArray(functionArray: Function[], arg: any): any[] {
   return functionArray.map((func) => func(arg));
 }

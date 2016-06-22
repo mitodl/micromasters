@@ -246,28 +246,49 @@ export function validateProfileComplete(profile: Profile): ProfileComplete {
 /**
  * Validate a day of month
  */
-export function validateDay(string: string): ?number {
-  let date = filterPositiveInt(string);
+export function validateDay(input: string): ?number {
+  let sanitized = sanitizeDate(input, 2);
+  let date = filterPositiveInt(sanitized);
   if (date === undefined) {
     return undefined;
   }
   // More complicated cases like Feb 29 are handled in moment.js isValid
-  if (date < 1 || date > 31) {
-    return undefined;
+  if (date > 31) {
+    return 31;
   }
   return date;
 }
 
 /**
+ * Removes non-numeric characters and truncates output string
+ */
+export function sanitizeDate(input: string|number, length: number): string {
+  if ( typeof input === 'string' ) {
+    let out = input.replace(/[^\d]+/g, '');
+    if ( out.match(/^0+/) ) {
+      if ( out.length <= length ) {
+        return out.slice(0, length);
+      } else {
+        return out.replace(/^0+/, "").slice(0, length);
+      }
+    } else {
+      return out.slice(0, length);
+    }
+  } else {
+    return String(input).slice(0, length);
+  }
+}
+/**
  * Validate a month number
  */
-export function validateMonth(string: ?string): ?number {
-  let month = filterPositiveInt(string);
+export function validateMonth(input: string|number): number|void {
+  let sanitized = sanitizeDate(input, 2);
+  let month = filterPositiveInt(sanitized);
   if (month === undefined) {
     return undefined;
   }
-  if (month < 1 || month > 12) {
-    return undefined;
+  if (month > 12) {
+    return 12;
   }
   return month;
 }
@@ -275,14 +296,23 @@ export function validateMonth(string: ?string): ?number {
 /**
  * Validate a year string is an integer and fits into YYYY
  */
-export function validateYear(string: string): ?number {
-  let year = filterPositiveInt(string);
+export function validateYear(input: string|number|null): ?number {
+  if ( input === null ) {
+    return undefined;
+  }
+  let sanitized = sanitizeDate(input, 4);
+  let year = filterPositiveInt(sanitized);
   if (year === undefined) {
     return undefined;
   }
-  if (year < 1800 || year >= 2100) {
-    // fit into YYYY format
-    return undefined;
+  if ( year < 1800 ) {
+    if ( String(year).length < 4 ) {
+      return year;
+    }
+    return 1800;
+  }
+  if ( year >= 2100) {
+    return 2100;
   }
   return year;
 }
