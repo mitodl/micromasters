@@ -79,7 +79,13 @@
                 <div class="media-item">
                   <div class="media-top">
                     <div class="image-wrap">
-                      <img class="image" src="{% static 'images/course-1.png' %}" alt="course image for {{program}}" height="135" width="377">
+                      {% if program.programpage and program.programpage.thumbnail_image %}
+                      {% image program.programpage.thumbnail_image fill-378x225 as thumbnail_image %}
+                      <img class="image" src="{{ thumbnail_image.url }}" alt="course image for {{program}}"
+                           width="{{ thumbnail_image.width }}" height="{{ thumbnail_image.height }}" />
+                      {% else %}
+                      <img class="image" src="{% static 'images/course-thumbnail.png' %}" alt="course image for {{program}}" width="378" height="225" />
+                      {% endif %}
                     </div>
                   </div>
                   <div class="info-wrap">

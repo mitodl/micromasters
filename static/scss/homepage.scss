@@ -197,9 +197,12 @@ body.app-media {
 .app-media .media-list {
   padding-bottom: 25px;
 }
-.app-media .media-list .image-wrap > .image {
-  width:100%;
-  max-width: 100%;
+.app-media .media-list .image-wrap {
+  // edX course images are 378x225
+  > .image {
+    width: 100%;
+    height: auto;
+  }
 }
 .app-media .media-list .media-item-actions {
   display: none;

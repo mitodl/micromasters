@@ -10,6 +10,8 @@ from factory.django import mute_signals
 from factory.fuzzy import FuzzyText
 from mock import patch, Mock
 from rest_framework import status
+from wagtail.wagtailimages.models import Image
+from wagtail.wagtailimages.tests.utils import get_test_image_file
 
 from cms.models import HomePage, ProgramPage
 from courses.models import Program
@@ -303,6 +305,37 @@ class TestProgramPage(ViewsTests):
         self.create_and_login_user()
         response = self.client.get(self.program_page.url)
         self.assertContains(response, 'Sign out')
+
+    def test_program_thumbnail_default(self):
+        """Verify that a default thumbnail shows up for a live program"""
+        self.create_and_login_user()
+
+        default_image = 'images/course-thumbnail.png'
+        # the default image should not show up if no program is live
+        program = self.program_page.program
+        program.live = False
+        program.save()
+        resp = self.client.get('/')
+        self.assertNotContains(resp, default_image)
+
+        # default image should show up if a program is live and no thumbnail image was set
+        program.live = True
+        program.save()
+        resp = self.client.get('/')
+        self.assertContains(resp, default_image)
+
+    def test_program_thumbnail(self):
+        """Verify that a thumbnail shows up if specified for a ProgramPage"""
+        self.create_and_login_user()
+
+        image = Image.objects.create(title='Test image',
+                                     file=get_test_image_file())
+
+        self.program_page.thumbnail_image = image
+        self.program_page.save()
+
+        resp = self.client.get('/')
+        self.assertContains(resp, image.get_rendition('fill-378x225').url)
 
 
 class TestUsersPage(ViewsTests):

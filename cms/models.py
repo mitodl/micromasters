@@ -78,9 +78,18 @@ class ProgramPage(Page):
     contact_us = RichTextField(blank=True)
     title_over_image = RichTextField(blank=True)
 
+    thumbnail_image = models.ForeignKey(
+        Image,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+
     content_panels = Page.content_panels + [
         FieldPanel('description', classname="full"),
         FieldPanel('program'),
+        FieldPanel('thumbnail_image'),
         FieldPanel('external_program_page_url'),
         FieldPanel('background_image'),
         FieldPanel('contact_us'),
