@@ -370,9 +370,16 @@ class AutoComplete extends Component {
       });
     }
 
+    let skipFilter = this.props.showOptionsWhenBlank;
+    // We want to open the popup with all results if available, else
+    // if the popup is already open we want to filter as usual
+    if (this.state.searchText !== '' && this.state.searchText !== undefined && this.state.open) {
+      skipFilter = false;
+    }
+
     this.setState({
       focusTextField: true,
-      skipFilter: this.props.showOptionsWhenBlank
+      skipFilter: skipFilter
     });
 
     if (this.props.onFocus) {
