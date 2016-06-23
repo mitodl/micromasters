@@ -24,25 +24,32 @@ class LoginButton extends React.Component {
       {getPreferredName(profile)}
     </span>;
 
-    return (
-      <LinkContainer to={{ pathname: '/dashboard' }} active={false}>
-        <SplitButton
-          title={title}
-          bsStyle="danger"
-          id="logout-button">
-          <LinkContainer to={{ pathname: '/settings' }} active={false}>
-            <MenuItem>
-              Settings
+    if (SETTINGS.authenticated) {
+      return (
+        <LinkContainer to={{ pathname: '/dashboard' }} active={false}>
+          <SplitButton
+            title={title}
+            bsStyle="danger"
+            id="logout-button">
+            <LinkContainer to={{ pathname: '/settings' }} active={false}>
+              <MenuItem>
+                Settings
+              </MenuItem>
+            </LinkContainer>
+            <MenuItem
+              href="/logout"
+              eventKey="logout">
+              Logout
             </MenuItem>
-          </LinkContainer>
-          <MenuItem
-            href="/logout"
-            eventKey="logout">
-            Logout
-          </MenuItem>
-        </SplitButton>
-      </LinkContainer>
-    );
+          </SplitButton>
+        </LinkContainer>
+      );
+    } else {
+      return <div className="pull-right">
+        <span>Get Started Today!</span>
+        <a className="btn btn-danger" href="/login/edxorg/">Sign in with edX.org</a>
+      </div>;
+    }
   }
 }
 

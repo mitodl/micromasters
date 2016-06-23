@@ -5,9 +5,10 @@ import json
 
 from django.db.models.signals import post_save
 from django.test import TestCase
-from django.test.client import Client
+from django.core.urlresolvers import reverse
 from factory.django import mute_signals
 from factory.fuzzy import FuzzyText
+from mock import patch, Mock
 from rest_framework import status
 
 from cms.models import HomePage, ProgramPage
@@ -18,15 +19,10 @@ from profiles.factories import ProfileFactory
 from ui.urls import DASHBOARD_URL
 
 
-class TestViews(TestCase):
+class ViewsTests(TestCase):
     """
     Test that the views work as expected.
     """
-    def setUp(self):
-        """Common test setup"""
-        super(TestViews, self).setUp()
-        self.client = Client()
-
     def create_and_login_user(self):
         """
         Create and login a user
@@ -45,6 +41,12 @@ class TestViews(TestCase):
         )
         self.client.force_login(profile.user)
         return profile.user
+
+
+class TestHomePage(ViewsTests):
+    """
+    Tests for home page
+    """
 
     def test_program_liveness(self):
         """Verify only 'live' program visible on homepage"""
@@ -146,6 +148,11 @@ class TestViews(TestCase):
             js_settings = json.loads(response.context['js_settings_json'])
             assert js_settings['gaTrackingID'] == ga_tracking_id
 
+
+class DashboardTests(ViewsTests):
+    """
+    Tests for dashboard views
+    """
     def test_dashboard_settings(self):
         """
         Assert settings we pass to dashboard
@@ -192,28 +199,11 @@ class TestViews(TestCase):
             status_code=200
         )
 
-    def test_webpack_url(self):
-        """Verify that webpack bundle src shows up in production"""
-        for debug, expected_url in [
-                (True, "foo_server:0000/style.js"),
-                (False, "bundles/style.js")
-        ]:
-            with self.settings(
-                DEBUG=debug,
-                USE_WEBPACK_DEV_SERVER=True,
-                WEBPACK_DEV_SERVER_HOST='foo_server',
-                WEBPACK_DEV_SERVER_PORT='0000',
-            ):
-                response = self.client.get('/')
-                self.assertContains(
-                    response,
-                    expected_url,
-                    status_code=200
-                )
 
-                js_settings = json.loads(response.context['js_settings_json'])
-                assert js_settings['host'] == 'foo_server'
-
+class HandlerTests(ViewsTests):
+    """
+    Tests for 404 and 500 handlers
+    """
     def test_404_error_context_logged_in(self):
         """
         Assert context values for 404 error page when logged in
@@ -276,37 +266,17 @@ class TestViews(TestCase):
         assert response.context['name'] == ""
 
 
-class TestProgramPage(TestCase):
+class TestProgramPage(ViewsTests):
     """
     Test that the ProgramPage view work as expected.
     """
     def setUp(self):
-        self.client = Client()
         homepage = HomePage.objects.first()
         program = Program(title="Test Program Title", live=True)
         program.save()
         self.program_page = ProgramPage(program=program, title="Test Program")
         homepage.add_child(instance=self.program_page)
         self.program_page.save_revision().publish()
-
-    def create_and_login_user(self):
-        """
-        Create and login a user
-        """
-        with mute_signals(post_save):
-            profile = ProfileFactory.create(
-                agreed_to_terms_of_service=True,
-                filled_out=True,
-            )
-        profile.user.social_auth.create(
-            provider='not_edx',
-        )
-        profile.user.social_auth.create(
-            provider=EdxOrgOAuth2.name,
-            uid="{}_edx".format(profile.user.username),
-        )
-        self.client.force_login(profile.user)
-        return profile.user
 
     def test_program_page_context_anonymous(self):
         """
@@ -333,3 +303,103 @@ class TestProgramPage(TestCase):
         self.create_and_login_user()
         response = self.client.get(self.program_page.url)
         self.assertContains(response, 'Sign out')
+
+
+class TestUsersPage(ViewsTests):
+    """
+    Tests for user page
+    """
+
+    def test_users_logged_in(self):
+        """
+        Assert settings we pass to dashboard
+        """
+        user = self.create_and_login_user()
+        username = user.social_auth.get(provider=EdxOrgOAuth2.name).uid
+
+        ga_tracking_id = FuzzyText().fuzz()
+        react_ga_debug = FuzzyText().fuzz()
+        edx_base_url = FuzzyText().fuzz()
+        host = FuzzyText().fuzz()
+        with self.settings(
+            GA_TRACKING_ID=ga_tracking_id,
+            REACT_GA_DEBUG=react_ga_debug,
+            EDXORG_BASE_URL=edx_base_url,
+            WEBPACK_DEV_SERVER_HOST=host
+        ):
+            # Mock has_permission so we don't worry about testing permissions here
+            has_permission = Mock(return_value=True)
+            with patch('profiles.permissions.CanSeeIfNotPrivate.has_permission', has_permission):
+                resp = self.client.get(reverse('ui-users', kwargs={'user': username}))
+                assert resp.status_code == 200
+                js_settings = json.loads(resp.context['js_settings_json'])
+                assert js_settings == {
+                    'gaTrackingID': ga_tracking_id,
+                    'reactGaDebug': react_ga_debug,
+                    'authenticated': True,
+                    'name': user.profile.preferred_name,
+                    'username': username,
+                    'host': host,
+                    'edx_base_url': edx_base_url
+                }
+                assert has_permission.called
+
+    def test_users_anonymous(self):
+        """
+        Assert settings we pass to dashboard
+        """
+        user = self.create_and_login_user()
+        self.client.logout()
+        username = user.social_auth.get(provider=EdxOrgOAuth2.name).uid
+
+        ga_tracking_id = FuzzyText().fuzz()
+        react_ga_debug = FuzzyText().fuzz()
+        edx_base_url = FuzzyText().fuzz()
+        host = FuzzyText().fuzz()
+        with self.settings(
+            GA_TRACKING_ID=ga_tracking_id,
+            REACT_GA_DEBUG=react_ga_debug,
+            EDXORG_BASE_URL=edx_base_url,
+            WEBPACK_DEV_SERVER_HOST=host
+        ):
+            # Mock has_permission so we don't worry about testing permissions here
+            has_permission = Mock(return_value=True)
+            with patch('profiles.permissions.CanSeeIfNotPrivate.has_permission', has_permission):
+                resp = self.client.get(reverse('ui-users', kwargs={'user': username}))
+                assert resp.status_code == 200
+                js_settings = json.loads(resp.context['js_settings_json'])
+                assert js_settings == {
+                    'gaTrackingID': ga_tracking_id,
+                    'reactGaDebug': react_ga_debug,
+                    'authenticated': False,
+                    'name': "",
+                    'username': None,
+                    'host': host,
+                    'edx_base_url': edx_base_url
+                }
+                assert has_permission.called
+
+    def test_users_404(self):
+        """
+        Assert that if we look at a user we don't have permission to see, we get a 404
+        """
+        resp = self.client.get(
+            reverse('ui-users', kwargs={'user': 'missing'})
+        )
+        assert resp.status_code == 404
+
+    def test_users_index_logged_in(self):
+        """
+        Assert that a logged in user gets a 200 going to /users/
+        """
+        self.create_and_login_user()
+        resp = self.client.get(reverse('ui-users'))
+        # We don't actually direct here, that happens via react-router
+        assert resp.status_code == 200
+
+    def test_users_index_anonymous(self):
+        """
+        Assert that an anonymous user gets a 404 going to /users/
+        """
+        resp = self.client.get(reverse('ui-users'))
+        assert resp.status_code == 404

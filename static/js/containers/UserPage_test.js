@@ -108,6 +108,13 @@ describe("UserPage", function() {
       helper.cleanup();
     });
 
+    it('should have a logout button', () => {
+      return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
+        let button = div.querySelector("#logout-button");
+        assert.ok(button);
+      });
+    });
+
     describe("Education History", () => {
       let deleteButton = div => {
         return div.getElementsByClassName('profile-tab-card')[1].
@@ -502,29 +509,59 @@ describe("UserPage", function() {
         });
       });
     });
+
+    it("should show all edit, delete icons for an authenticated user's own page" , () => {
+      return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
+        let count = div.getElementsByClassName('mdl-button--icon').length;
+        assert.equal(count,
+          1 + USER_PROFILE_RESPONSE.work_history.length * 2 + USER_PROFILE_RESPONSE.education.length * 2
+        );
+      });
+    });
+
+    it("should not show any edit, delete icons for other user pages" , () => {
+      let otherProfile = Object.assign({}, USER_PROFILE_RESPONSE, {
+        username: 'other'
+      });
+      helper.profileGetStub.withArgs('other').returns(Promise.resolve(otherProfile));
+      return renderComponent(`/users/other`, userActions).then(([, div]) => {
+        let count = div.getElementsByClassName('mdl-button--icon').length;
+        assert.equal(count, 0);
+      });
+    });
   });
 
   describe("Unauthenticated user page", () => {
+    let settingsBackup;
+
     beforeEach(() => {
       helper = new IntegrationTestHelper();
       listenForActions = helper.listenForActions.bind(helper);
-      renderComponent = helper.renderComponent.bind(helper);    
-      patchUserProfileStub = helper.sandbox.stub(api, 'patchUserProfile');
+      renderComponent = helper.renderComponent.bind(helper);
       helper.profileGetStub.
         withArgs(SETTINGS.username).
-        returns (
-        Promise.resolve(Object.assign({}, USER_PROFILE_RESPONSE))
-      );
+        returns(Promise.resolve(USER_PROFILE_RESPONSE));
+      settingsBackup = SETTINGS;
+      SETTINGS = Object.assign({}, SETTINGS, {
+        authenticated: false
+      });
     });
 
     afterEach(() => {
       helper.cleanup();
+      SETTINGS = settingsBackup;
     });
 
     it('should hide all edit, delete icons', () => {
-      return renderComponent(`/users/${SETTINGS.username}`, userActions).then(() => {
-        let icons = [...document.getElementsByClassName('mdl-button--icons')];
-        assert.deepEqual(icons, []);
+      return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
+        assert.equal(0, div.getElementsByClassName('mdl-button--icon').length);
+      });
+    });
+
+    it('should show sign in button with valid link', () => {
+      return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
+        let button = div.querySelector("a[href='/login/edxorg/']");
+        assert.equal(button.textContent.trim(), "Sign in with edX.org");
       });
     });
   });
