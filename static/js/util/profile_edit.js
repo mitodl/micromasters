@@ -227,7 +227,7 @@ export function boundDateField(keySet: string[], label: string, omitDay: boolean
     />;
   }
 
-  return <div style={{paddingBottom: "20px"}}>
+  return <div>
     <TextField
       floatingLabelText={label}
       floatingLabelFixed={true}
