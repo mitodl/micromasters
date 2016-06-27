@@ -357,3 +357,8 @@ c.validation-wrapper {
     }
   }
 }
+
+// IE: make x's disappear for input items
+input::-ms-clear {
+    display: none;
+}
