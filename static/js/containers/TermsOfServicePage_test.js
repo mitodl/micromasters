@@ -10,6 +10,7 @@ import {
 import { USER_PROFILE_RESPONSE } from '../constants';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import * as api from '../util/api';
+import * as util from '../util/util';
 
 describe("TermsOfService", () => {
   let listenForActions, renderComponent, helper;
@@ -22,6 +23,20 @@ describe("TermsOfService", () => {
 
   afterEach(() => {
     helper.cleanup();
+  });
+
+  it("sees their username in the terms of service", () => {
+    const username = 'fake_username';
+    let getPreferredNameStub = helper.sandbox.stub(util, 'getPreferredName');
+    getPreferredNameStub.returns("fake_username");
+    return renderComponent("/terms_of_service").then(([, div]) => {
+      assert(getPreferredNameStub.called, "getPreferredName wasn't called");
+
+      assert(
+        div.textContent.includes(`Welcome ${username}, let's complete your enrollment to MIT MicroMasters.`),
+        "Couldn't find text"
+      );
+    });
   });
 
   it("requires terms of service if user hasn't already agreed to it", () => {

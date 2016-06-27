@@ -7,6 +7,7 @@ import Jumbotron from '../components/Jumbotron';
 
 import { saveProfile, FETCH_SUCCESS } from '../actions';
 import { TERMS_CARD_ROW_HEIGHT } from '../constants';
+import { getPreferredName } from '../util/util';
 
 class TermsOfServicePage extends React.Component {
   static propTypes = {
@@ -35,10 +36,11 @@ class TermsOfServicePage extends React.Component {
 
   render() {
     const { userProfile: { profile } } = this.props;
-    let preferredName = profile.preferredName || SETTINGS.name;
+    let preferredName = getPreferredName(profile);
+    let text = `Welcome ${preferredName}, let's complete your enrollment to MIT MicroMasters.`;
 
     return (
-      <Jumbotron profile={profile} text={preferredName}>
+      <Jumbotron profile={profile} text={text}>
         <div className="card-copy terms-of-service-main">
           <div className="program">
             <div className="terms-card-header">
