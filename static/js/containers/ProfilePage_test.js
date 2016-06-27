@@ -357,7 +357,8 @@ describe("ProfilePage", function() {
 
       return confirmSaveButtonBehavior(updatedProfile, {button: button}, true).then(state => {
         assert.deepEqual(state.profiles[SETTINGS.username].edit.errors, {
-          [`education_${HIGH_SCHOOL}_required`]: `High school is required if switch is on. Please add a degree or switch it off.`
+          [`education_${HIGH_SCHOOL}_required`]:
+            `High school is required if switch is on. Please add a degree or switch it off.`
         });
       });
     });

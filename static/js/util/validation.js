@@ -121,7 +121,8 @@ export function educationUiValidation(profile: Profile, ui: UIState): Validation
   for (let {value, label} of EDUCATION_LEVELS) {
     let items = profile.education.filter(education => education.degree_name === value);
     if (ui.educationDegreeInclusions[value] && items.length === 0) {
-      errors[`education_${value}_required`] = `${label} is required if switch is on. Please add a degree or switch it off.`;
+      errors[`education_${value}_required`] =
+        `${label} is required if switch is on. Please add a degree or switch it off.`;
     }
   }
   return errors;

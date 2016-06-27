@@ -137,7 +137,8 @@ describe('Profile validation functions', () => {
       let errors = educationUiValidation(profile, ui);
       let highSchoolLabel = EDUCATION_LEVELS.find(education => education.value === HIGH_SCHOOL).label;
       assert.deepEqual(errors, {
-        [`education_${HIGH_SCHOOL}_required`]: `${highSchoolLabel} is required if switch is on. Please add a degree or switch it off.`
+        [`education_${HIGH_SCHOOL}_required`]:
+          `${highSchoolLabel} is required if switch is on. Please add a degree or switch it off.`
       });
     });
   });
