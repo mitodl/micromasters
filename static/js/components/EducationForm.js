@@ -197,7 +197,7 @@ class EducationForm extends ProfileFormFields {
           </Cell>
         </Grid>
         {this.renderEducationLevel(level)}
-        <Grid className="profile-tab-grid">
+        <Grid className="profile-tab-card-grid">
           <Cell col={12}>
             <span className="validation-error-text-large">
               {errors[`education_${level.value}_required`]}

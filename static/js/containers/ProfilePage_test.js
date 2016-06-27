@@ -357,7 +357,7 @@ describe("ProfilePage", function() {
 
       return confirmSaveButtonBehavior(updatedProfile, {button: button}, true).then(state => {
         assert.deepEqual(state.profiles[SETTINGS.username].edit.errors, {
-          [`education_${HIGH_SCHOOL}_required`]: `High school is required if switch is set`
+          [`education_${HIGH_SCHOOL}_required`]: `High school is required if switch is on. Please add a degree or switch it off.`
         });
       });
     });
@@ -381,7 +381,7 @@ describe("ProfilePage", function() {
 
       return confirmSaveButtonBehavior(updatedProfile, {button: button}, true).then(state => {
         assert.deepEqual(state.profiles[SETTINGS.username].edit.errors, {
-          work_history_required: "Work history is required if switch is set"
+          work_history_required: "Work history is required if switch is on. Please add work history or switch it off."
         });
       });
     });

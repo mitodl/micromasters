@@ -283,7 +283,7 @@ class EmploymentForm extends ProfileFormFields {
             </Cell>
           </Grid>
           {this.renderWorkHistory()}
-          <Grid className="profile-tab-grid">
+          <Grid className="profile-tab-card-grid">
             <Cell col={12}>
               <span className="validation-error-text-large">
                 {errors.work_history_required}
