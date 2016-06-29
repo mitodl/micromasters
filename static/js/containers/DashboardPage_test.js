@@ -11,7 +11,7 @@ import {
 } from '../actions';
 import {
   DASHBOARD_RESPONSE,
-  DASHBOARD_RESPONSE_ERROR,
+  ERROR_RESPONSE,
 } from '../constants';
 import IntegrationTestHelper from '../util/integration_test_helper';
 
@@ -47,28 +47,28 @@ describe('DashboardPage', () => {
     errorString = errorString.replace(/\s\s+/g, ' ');
 
     it('error from the backend triggers error message in dashboard', () => {
-      helper.dashboardStub.returns(Promise.reject(DASHBOARD_RESPONSE_ERROR));
+      helper.dashboardStub.returns(Promise.reject(ERROR_RESPONSE));
 
       return renderComponent("/dashboard", dashboardErrorActions, false).then(([, div]) => {
         let message = div.getElementsByClassName('alert-message')[0];
         assert(message.textContent.indexOf(errorString) > -1);
-        assert(message.textContent.indexOf(DASHBOARD_RESPONSE_ERROR.error_code) > -1);
+        assert(message.textContent.indexOf(ERROR_RESPONSE.error_code) > -1);
         assert(message.textContent.indexOf("Additional info:") > -1);
-        assert(message.textContent.indexOf(DASHBOARD_RESPONSE_ERROR.user_message) > -1);
+        assert(message.textContent.indexOf(ERROR_RESPONSE.user_message) > -1);
       });
     });
 
     it('the error from the backend does not need to be complete', () => {
-      let response = _.cloneDeep(DASHBOARD_RESPONSE_ERROR);
+      let response = _.cloneDeep(ERROR_RESPONSE);
       delete response.user_message;
       helper.dashboardStub.returns(Promise.reject(response));
 
       return renderComponent("/dashboard", dashboardErrorActions, false).then(([, div]) => {
         let message = div.getElementsByClassName('alert-message')[0];
         assert(message.textContent.indexOf(errorString) > -1);
-        assert(message.textContent.indexOf(DASHBOARD_RESPONSE_ERROR.error_code) > -1);
+        assert(message.textContent.indexOf(ERROR_RESPONSE.error_code) > -1);
         assert.equal(message.textContent.indexOf("Additional info:"), -1);
-        assert.equal(message.textContent.indexOf(DASHBOARD_RESPONSE_ERROR.user_message), -1);
+        assert.equal(message.textContent.indexOf(ERROR_RESPONSE.user_message), -1);
       });
     });
 
@@ -78,9 +78,9 @@ describe('DashboardPage', () => {
       return renderComponent("/dashboard", dashboardErrorActions, false).then(([, div]) => {
         let message = div.getElementsByClassName('alert-message')[0];
         assert(message.textContent.indexOf(errorString) > -1);
-        assert.equal(message.textContent.indexOf(DASHBOARD_RESPONSE_ERROR.error_code), -1);
+        assert.equal(message.textContent.indexOf(ERROR_RESPONSE.error_code), -1);
         assert.equal(message.textContent.indexOf("Additional info:"), -1);
-        assert.equal(message.textContent.indexOf(DASHBOARD_RESPONSE_ERROR.user_message), -1);
+        assert.equal(message.textContent.indexOf(ERROR_RESPONSE.user_message), -1);
       });
     });
 

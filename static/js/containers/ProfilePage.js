@@ -2,10 +2,15 @@
 /* global SETTINGS */
 import React from 'react';
 import { connect } from 'react-redux';
+import Loader from 'react-loader';
 
-import { getPreferredName } from '../util/util';
+import {
+  getPreferredName,
+  makeProfileProgressDisplay,
+} from '../util/util';
+import { FETCH_PROCESSING } from '../actions';
 import Jumbotron from '../components/Jumbotron';
-import { makeProfileProgressDisplay } from '../util/util';
+import ErrorMessage from '../components/ErrorMessage';
 import ProfileFormContainer from './ProfileFormContainer';
 import PersonalTab from '../components/PersonalTab';
 import EmploymentTab from '../components/EmploymentTab';
@@ -15,7 +20,7 @@ import {
   PERSONAL_STEP,
   EDUCATION_STEP,
   EMPLOYMENT_STEP,
-  PRIVACY_STEP
+  PRIVACY_STEP,
 } from '../constants';
 
 class ProfilePage extends ProfileFormContainer {
@@ -56,9 +61,10 @@ class ProfilePage extends ProfileFormContainer {
 
   render() {
     const { profiles } = this.props;
+    const profileInfo = profiles[SETTINGS.username];
     let props, text, profile;
     let [prev, next] = this.stepTransitions();
-    props = Object.assign({}, this.profileProps(profiles[SETTINGS.username]), {
+    props = Object.assign({}, this.profileProps(profileInfo), {
       prevStep: prev,
       nextStep: next
     });
@@ -66,17 +72,32 @@ class ProfilePage extends ProfileFormContainer {
     text = `Welcome ${getPreferredName(profile)}, let's
       complete your enrollment to MIT MicroMasters.`;
 
-    return <div className="card">
-      <Jumbotron profile={profile} text={text}>
-        <div className="card-copy">
-          <div style={{textAlign: "center"}}>
-            {makeProfileProgressDisplay(this.currentStep())}
+    let loaded, content, errorMessage;
+    if (profileInfo !== undefined) {
+      loaded = profileInfo.getStatus !== FETCH_PROCESSING;
+      if (profileInfo.errorInfo !== undefined) {
+        errorMessage = <ErrorMessage errorInfo={profileInfo.errorInfo} />;
+      } else {
+        content = <Jumbotron profile={profile} text={text}>
+          <div className="card-copy">
+            <div style={{textAlign: "center"}}>
+              {makeProfileProgressDisplay(this.currentStep())}
+            </div>
+            <section>
+              {this.currentComponent(props)}
+            </section>
           </div>
-          <section>
-            {this.currentComponent(props)}
-          </section>
-        </div>
-      </Jumbotron>
+        </Jumbotron>;
+      }
+    } else {
+      loaded = false;
+    }
+
+    return <div className="card">
+      <Loader loaded={loaded}>
+        {errorMessage}
+        {content}
+      </Loader>
     </div>;
   }
 }

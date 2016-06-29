@@ -61,7 +61,8 @@ export const profiles = (state: ProfileState = INITIAL_PROFILES_STATE, action: A
     });
   case RECEIVE_GET_USER_PROFILE_FAILURE:
     return patchProfile({
-      getStatus: FETCH_FAILURE
+      getStatus: FETCH_FAILURE,
+      errorInfo: action.payload.errorInfo
     });
   case CLEAR_PROFILE: {
     let clone = Object.assign({}, state);

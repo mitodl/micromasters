@@ -4,8 +4,11 @@ import { assert } from 'chai';
 import _ from 'lodash';
 
 import {
+  REQUEST_GET_USER_PROFILE,
+  RECEIVE_GET_USER_PROFILE_FAILURE,
   REQUEST_PATCH_USER_PROFILE,
   RECEIVE_PATCH_USER_PROFILE_SUCCESS,
+  RECEIVE_DASHBOARD_SUCCESS,
   START_PROFILE_EDIT,
   UPDATE_PROFILE_VALIDATION,
   CLEAR_PROFILE_EDIT,
@@ -25,6 +28,7 @@ import {
 } from '../actions/ui';
 import {
   USER_PROFILE_RESPONSE,
+  ERROR_RESPONSE,
   EDUCATION_LEVELS,
   ASSOCIATE,
   DOCTORATE,
@@ -447,4 +451,41 @@ describe("ProfilePage", function() {
       });
     }
   }
+
+  it('shows a spinner when profile get is processing', () => {
+    return renderComponent('/profile').then(([, div]) => {
+      assert.notOk(div.querySelector(".spinner"), "Found spinner but no fetch in progress");
+      helper.store.dispatch({
+        type: REQUEST_GET_USER_PROFILE,
+        payload: {
+          username: SETTINGS.username
+        }
+      });
+
+      assert(div.querySelector(".spinner"), "Unable to find spinner");
+    });
+  });
+
+  it('shows an error when profile get has errored', () => {
+    return renderComponent('/profile').then(([, div]) => {
+      assert.notOk(div.querySelector(".spinner"), "Found spinner but no fetch in progress");
+      helper.store.dispatch({
+        type: REQUEST_GET_USER_PROFILE,
+        payload: {
+          username: SETTINGS.username
+        }
+      });
+
+      assert(div.querySelector(".spinner"), "Unable to find spinner");
+    });
+  });
+
+  it('renders errors when there is an error receiving the profile', () => {
+    helper.profileGetStub.returns(Promise.reject(ERROR_RESPONSE));
+
+    const types = [RECEIVE_DASHBOARD_SUCCESS, RECEIVE_GET_USER_PROFILE_FAILURE];
+    return renderComponent("/profile", types, false).then(([, div]) => {
+      assert(div.getElementsByClassName('alert-message').length > 0, 'no alert message found');
+    });
+  });
 });

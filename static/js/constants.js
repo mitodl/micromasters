@@ -352,7 +352,7 @@ export const DASHBOARD_RESPONSE = [
   },
 ];
 
-export const DASHBOARD_RESPONSE_ERROR = {
+export const ERROR_RESPONSE = {
   "errorStatusCode": 500,
   "error_code": "AB123",
   "user_message": "custom error message for the user."

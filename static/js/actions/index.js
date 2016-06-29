@@ -29,9 +29,9 @@ export const receiveGetUserProfileSuccess = (username, profile) => ({
   payload: { profile, username }
 });
 
-const receiveGetUserProfileFailure = username => ({
+const receiveGetUserProfileFailure = (username, errorInfo) => ({
   type: RECEIVE_GET_USER_PROFILE_FAILURE,
-  payload: { username }
+  payload: { username, errorInfo }
 });
 
 export const clearProfile = username => ({
@@ -89,8 +89,8 @@ export function fetchUserProfile(username) {
     dispatch(requestGetUserProfile(username));
     return api.getUserProfile(username).
       then(json => dispatch(receiveGetUserProfileSuccess(username, json))).
-      catch(() => {
-        dispatch(receiveGetUserProfileFailure(username));
+      catch(error => {
+        dispatch(receiveGetUserProfileFailure(username, error));
         // the exception is assumed handled and will not be propagated
       });
   };
