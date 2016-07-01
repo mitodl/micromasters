@@ -47,7 +47,7 @@ class StatusTest(TestCase):
         """test for CourseRunUserStatus"""
         ustat = api.CourseRunUserStatus(
             status='status',
-            course_run='run',
+            course_run=MagicMock(),
             enrollment_for_course='enroll'
         )
         assert ustat.status == 'status'

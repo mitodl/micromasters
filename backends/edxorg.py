@@ -14,7 +14,7 @@ class EdxOrgOAuth2(BaseOAuth2):
     """
     name = 'edxorg'
     ID_KEY = 'edx_id'
-    REQUEST_TOKEN_URL = None
+    REQUEST_TOKEN_URL = None  # type: str
     EDXORG_BASE_URL = settings.EDXORG_BASE_URL
 
     # Settings for Django OAUTH toolkit

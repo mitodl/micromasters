@@ -202,7 +202,7 @@ class EdxPipelineApiTest(TestCase):
         If language_proficiencies is missing or invalid, we should not set
         preferred_language. We already test the success case in test_update_profile
         """
-        for proficiencies in ([], {}, [{}], None):
+        for proficiencies in ([], {}, [{}], None):  # type: ignore
             mocked_content = dict(self.mocked_edx_profile)
             mocked_content['language_proficiencies'] = proficiencies
             mocked_get_json.return_value = mocked_content
