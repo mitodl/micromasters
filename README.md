@@ -191,6 +191,36 @@ You should now be able to do the following:
 1. Click "Sign in with edX.org" and sign in by authorizing an edX client. If you're
  running edX locally, this will be the client you created in the steps above.
 
+## Wagtail CMS (Content Management System)
+
+The CMS can be found at `/cms/`. Use the CMS to manage the content of the program pages and, by extension, the home 
+page.  
+
+#### Adding a new MicroMaters program
+
+1. Login to the cms with an admin account. If you don't have one, you can use the superuser account created earlier.
+
+2. Click on the `Explorer` menu in the left nav to find the home page (labelled "MIT credentials are...")
+
+3. Click on `+ Add Child Page`
+
+4. Choose Program Page. Complete the form. Don't forget to save. 
+
+#### Adding CMS users
+
+1. Don't create new users from the CMS. Ask users to log in and fill out a MicroMasters profile first.  
+
+2. Login to the cms with an existing account. If you don't have one, you can use the superuser account created earlier.
+
+3. From the Settings menu in the left nav, choose users.
+
+4. You can use the search box to locate users who already exist. If the user already exists, click on the username and 
+skip to step 5.
+
+5. Click on the Roles tab. 
+
+6. Check the box for the editors group. This will allow the user to view and edit all pages in the CMS. 
+
 ## Running Commands and Testing
 
 As shown above, manage commands can be executed on the Docker-contained
