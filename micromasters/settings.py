@@ -18,7 +18,7 @@ import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
 import yaml
 
-VERSION = "0.11.0"
+VERSION = "0.12.0"
 
 CONFIG_PATHS = [
     os.environ.get('MICROMASTERS_CONFIG', ''),
