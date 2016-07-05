@@ -3,6 +3,7 @@ Serializers for user profiles
 """
 
 from django.db import transaction
+from typing import Any, Dict, List
 
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import (
@@ -23,7 +24,7 @@ from profiles.util import (
 )
 
 
-def update_work_history(work_history_list, profile_id):
+def update_work_history(work_history_list: List[Dict[str, Any]], profile_id: int) -> None:
     """
     Update employment history for given profile id.
 
@@ -51,7 +52,7 @@ def update_work_history(work_history_list, profile_id):
     Employment.objects.filter(profile_id=profile_id).exclude(id__in=saved_work_history_ids).delete()
 
 
-def update_education(education_list, profile_id):
+def update_education(education_list: List[Dict[str, Any]], profile_id: int) -> None:
     """
     Update education for given profile id.
 
