@@ -18,7 +18,7 @@ import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
 import yaml
 
-VERSION = "0.11.0"
+VERSION = "0.12.0"
 
 CONFIG_PATHS = [
     os.environ.get('MICROMASTERS_CONFIG', ''),
@@ -370,7 +370,7 @@ GA_TRACKING_ID = get_var("GA_TRACKING_ID", "")
 REACT_GA_DEBUG = get_var("REACT_GA_DEBUG", False)
 
 # Wagtail
-WAGTAIL_SITE_NAME = "MIT MicroMaster’s"
+WAGTAIL_SITE_NAME = "MIT MicroMasters"
 MEDIA_ROOT = get_var('MEDIA_ROOT', '/tmp/')
 MEDIA_URL = '/media/'
 MICROMASTERS_USE_S3 = get_var('MICROMASTERS_USE_S3', False)

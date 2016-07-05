@@ -75,6 +75,7 @@ class CourseRun(models.Model):
     start_date = models.DateTimeField(blank=True, null=True)
     enrollment_end = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
+    upgrade_deadline = models.DateTimeField(blank=True, null=True)
     fuzzy_start_date = models.CharField(
         max_length=255, blank=True, null=True,
         help_text="If you don't know when your course will run exactly, "
@@ -114,3 +115,12 @@ class CourseRun(models.Model):
         if not self.start_date:
             return False
         return self.start_date > datetime.now(pytz.utc)
+
+    @property
+    def is_upgradable(self):
+        """
+        Checks if the course can be upgraded
+        A null value means that the upgrade window is always open
+        """
+        return (self.upgrade_deadline is None or
+                (self.upgrade_deadline > datetime.now(pytz.utc)))

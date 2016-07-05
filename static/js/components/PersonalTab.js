@@ -5,23 +5,26 @@ import Grid, { Cell } from 'react-mdl/lib/Grid';
 import PersonalForm from './PersonalForm';
 import ProfileProgressControls from './ProfileProgressControls';
 import { personalValidation } from '../util/validation';
+import type { Profile, BoundSaveProfile, ValidationErrors } from '../flow/profileTypes';
+import type { UIState } from '../reducers/ui';
 
 class PersonalTab extends React.Component {
-  static propTypes = {
-    profile:        React.PropTypes.object,
-    errors:         React.PropTypes.object,
-    saveProfile:    React.PropTypes.func,
-    updateProfile:  React.PropTypes.func,
-    ui:             React.PropTypes.object
+  props: {
+    profile:        Profile,
+    errors:         ValidationErrors,
+    saveProfile:    BoundSaveProfile,
+    updateProfile:  () => void,
+    ui:             UIState,
+    nextStep:       () => void,
+    prevStep:       () => void,
   };
 
   render() {
-    const { saveProfile, profile, ui } = this.props;
     return <div>
       <Grid className="profile-splash">
         <Cell col={12}>
-          Please tell us more about yourself so you can participate in the MicroMaster’s
-          community and qualify for your MicroMaster’s credential.
+          Please tell us more about yourself so you can participate in the MicroMasters
+          community and qualify for your MicroMasters credential.
         </Cell>
       </Grid>
       <Grid className="profile-tab-grid">
@@ -33,10 +36,9 @@ class PersonalTab extends React.Component {
         <Cell col={1} />
         <Cell col={10}>
           <ProfileProgressControls
-            nextUrl="/profile/education"
-            profile={profile}
-            saveProfile={saveProfile}
-            ui={ui}
+            {...this.props}
+            nextBtnLabel="Save and Continue"
+            isLastTab={false}
             validator={personalValidation}
           />
         </Cell>

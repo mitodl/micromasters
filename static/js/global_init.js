@@ -1,6 +1,6 @@
 // Define globals we would usually get from Django
 global.SETTINGS = {
-  isAuthenticated: true,
+  authenticated: true,
   name: "full name",
   username: "jane",
   edx_base_url: "/edx/"

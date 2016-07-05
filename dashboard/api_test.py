@@ -112,7 +112,9 @@ class CourseMixin(TestCase):
         super(CourseMixin, self).setUp()
         self.now = datetime.now(pytz.utc)
 
-    def create_run(self, course=None, start=None, end=None, enr_start=None, enr_end=None, edx_key=None, title="Title"):
+    def create_run(self, course=None, start=None, end=None,
+                   enr_start=None, enr_end=None, edx_key=None, title="Title",
+                   upgrade_deadline=None):
         """helper function to create course runs"""
         # pylint: disable=too-many-arguments
         run = CourseRunFactory.create(
@@ -122,6 +124,7 @@ class CourseMixin(TestCase):
             end_date=end,
             enrollment_start=enr_start,
             enrollment_end=enr_end,
+            upgrade_deadline=upgrade_deadline,
         )
         if edx_key is not None:
             run.edx_course_key = edx_key
@@ -133,13 +136,13 @@ class FormatRunTest(CourseMixin):
     """Tests for the format_courserun_for_dashboard function"""
 
     def test_format_run_no_run(self):
-        """Test for format_courserun_for_dashboard"""
+        """Test for format_courserun_for_dashboard if there is no run"""
         self.assertIsNone(
             api.format_courserun_for_dashboard(None, api.CourseStatus.PASSED)
         )
 
     def test_format_run(self):
-        """Test for format_courserun_for_dashboard"""
+        """Test for format_courserun_for_dashboard with passed run and position"""
         crun = self.create_run(
             start=self.now+timedelta(weeks=52),
             end=self.now+timedelta(weeks=62),
@@ -252,15 +255,15 @@ class CourseRunTest(CourseMixin):
             cls.enrollments_json = json.loads(file_obj.read())
 
         cls.enrollments = Enrollments(cls.enrollments_json)
+        cls.now = datetime.now(pytz.utc)
 
     def test_status_for_run_not_enrolled(self):
-        """test for get_status_for_courserun"""
-        now = datetime.now(pytz.utc)
+        """test for get_status_for_courserun for course without enrollment"""
         crun = self.create_run(
-            start=now+timedelta(weeks=52),
-            end=now+timedelta(weeks=62),
-            enr_start=now+timedelta(weeks=40),
-            enr_end=now+timedelta(weeks=50),
+            start=self.now+timedelta(weeks=52),
+            end=self.now+timedelta(weeks=62),
+            enr_start=self.now+timedelta(weeks=40),
+            enr_end=self.now+timedelta(weeks=50),
             edx_key='foo_edx_key'
         )
         run_status = api.get_status_for_courserun(crun, self.enrollments)
@@ -270,14 +273,13 @@ class CourseRunTest(CourseMixin):
         assert run_status.enrollment_for_course is None
 
     def test_verified_grade(self):
-        """test for get_status_for_courserun"""
-        now = datetime.now(pytz.utc)
+        """test for get_status_for_courserun for an enrolled and verified current course"""
         # create a run that is current
         crun = self.create_run(
-            start=now-timedelta(weeks=1),
-            end=now+timedelta(weeks=2),
-            enr_start=now-timedelta(weeks=10),
-            enr_end=now+timedelta(weeks=1),
+            start=self.now-timedelta(weeks=1),
+            end=self.now+timedelta(weeks=2),
+            enr_start=self.now-timedelta(weeks=10),
+            enr_end=self.now+timedelta(weeks=1),
             edx_key="course-v1:edX+DemoX+Demo_Course"
         )
         run_status = api.get_status_for_courserun(crun, self.enrollments)
@@ -287,14 +289,13 @@ class CourseRunTest(CourseMixin):
                 self.enrollments.get_enrollment_for_course("course-v1:edX+DemoX+Demo_Course"))
 
     def test_verified_read_cert(self):
-        """test for get_status_for_courserun"""
-        now = datetime.now(pytz.utc)
+        """test for get_status_for_courserun for a finished course"""
         # create a run that is past
         crun = self.create_run(
-            start=now-timedelta(weeks=52),
-            end=now-timedelta(weeks=45),
-            enr_start=now-timedelta(weeks=62),
-            enr_end=now-timedelta(weeks=53),
+            start=self.now-timedelta(weeks=52),
+            end=self.now-timedelta(weeks=45),
+            enr_start=self.now-timedelta(weeks=62),
+            enr_end=self.now-timedelta(weeks=53),
             edx_key="course-v1:edX+DemoX+Demo_Course"
         )
         run_status = api.get_status_for_courserun(crun, self.enrollments)
@@ -304,14 +305,13 @@ class CourseRunTest(CourseMixin):
                 self.enrollments.get_enrollment_for_course("course-v1:edX+DemoX+Demo_Course"))
 
     def test_verified_read_will_attend(self):
-        """test for get_status_for_courserun"""
-        now = datetime.now(pytz.utc)
+        """test for get_status_for_courserun for an enrolled and verified future course"""
         # create a run that is future
         crun = self.create_run(
-            start=now+timedelta(weeks=52),
-            end=now+timedelta(weeks=62),
-            enr_start=now+timedelta(weeks=40),
-            enr_end=now+timedelta(weeks=50),
+            start=self.now+timedelta(weeks=52),
+            end=self.now+timedelta(weeks=62),
+            enr_start=self.now+timedelta(weeks=40),
+            enr_end=self.now+timedelta(weeks=50),
             edx_key="course-v1:edX+DemoX+Demo_Course"
         )
         run_status = api.get_status_for_courserun(crun, self.enrollments)
@@ -321,22 +321,21 @@ class CourseRunTest(CourseMixin):
                 self.enrollments.get_enrollment_for_course("course-v1:edX+DemoX+Demo_Course"))
 
     def test_not_verified_upgrade(self):
-        """test for get_status_for_courserun"""
-        now = datetime.now(pytz.utc)
+        """test for get_status_for_courserun for present and future course with audit enrollment"""
         # create a run that is future
         future_run = self.create_run(
-            start=now+timedelta(weeks=52),
-            end=now+timedelta(weeks=62),
-            enr_start=now+timedelta(weeks=40),
-            enr_end=now+timedelta(weeks=50),
+            start=self.now+timedelta(weeks=52),
+            end=self.now+timedelta(weeks=62),
+            enr_start=self.now+timedelta(weeks=40),
+            enr_end=self.now+timedelta(weeks=50),
             edx_key="course-v1:MITx+8.MechCX+2014_T1"
         )
         # create a run that is current
         current_run = self.create_run(
-            start=now-timedelta(weeks=1),
-            end=now+timedelta(weeks=2),
-            enr_start=now-timedelta(weeks=10),
-            enr_end=now+timedelta(weeks=1),
+            start=self.now-timedelta(weeks=1),
+            end=self.now+timedelta(weeks=2),
+            enr_start=self.now-timedelta(weeks=10),
+            enr_end=self.now+timedelta(weeks=1),
             edx_key="course-v1:MITx+8.MechCX+2014_T1"
         )
         run_status = api.get_status_for_courserun(future_run, self.enrollments)
@@ -350,15 +349,40 @@ class CourseRunTest(CourseMixin):
         assert (run_status.enrollment_for_course ==
                 self.enrollments.get_enrollment_for_course("course-v1:MITx+8.MechCX+2014_T1"))
 
+    def test_not_verified_upgradable(self):
+        """test for get_status_for_courserun with check if course can be upgraded to verified"""
+        # create a run that is current with upgrade deadline None
+        current_run = self.create_run(
+            start=self.now-timedelta(weeks=1),
+            end=self.now+timedelta(weeks=2),
+            enr_start=self.now-timedelta(weeks=10),
+            enr_end=self.now+timedelta(weeks=1),
+            upgrade_deadline=None,
+            edx_key="course-v1:MITx+8.MechCX+2014_T1"
+        )
+        run_status = api.get_status_for_courserun(current_run, self.enrollments)
+        assert run_status.status == api.CourseRunStatus.UPGRADE
+
+        # modify the run to have an upgrade deadline in the future
+        current_run.upgrade_deadline = self.now+timedelta(weeks=1)
+        current_run.save()
+        run_status = api.get_status_for_courserun(current_run, self.enrollments)
+        assert run_status.status == api.CourseRunStatus.UPGRADE
+
+        # modify the run to have an upgrade deadline in the past
+        current_run.upgrade_deadline = self.now-timedelta(weeks=1)
+        current_run.save()
+        run_status = api.get_status_for_courserun(current_run, self.enrollments)
+        assert run_status.status == api.CourseRunStatus.NOT_PASSED
+
     def test_not_verified_not_passed(self):
-        """test for get_status_for_courserun"""
-        now = datetime.now(pytz.utc)
+        """test for get_status_for_courserun for course not upgraded to verified but that is past"""
         # create a run that is past
         crun = self.create_run(
-            start=now-timedelta(weeks=52),
-            end=now-timedelta(weeks=45),
-            enr_start=now-timedelta(weeks=62),
-            enr_end=now-timedelta(weeks=53),
+            start=self.now-timedelta(weeks=52),
+            end=self.now-timedelta(weeks=45),
+            enr_start=self.now-timedelta(weeks=62),
+            enr_end=self.now-timedelta(weeks=53),
             edx_key="course-v1:MITx+8.MechCX+2014_T1"
         )
         run_status = api.get_status_for_courserun(crun, self.enrollments)
@@ -455,7 +479,7 @@ class InfoCourseTest(CourseMixin):
 
     @patch('dashboard.api.format_courserun_for_dashboard', autospec=True)
     def test_info_no_runs(self, mock_format):
-        """test for get_info_for_course"""
+        """test for get_info_for_course for course with no runs"""
         self.assert_course_equal(
             self.course_noruns,
             api.CourseStatus.NOT_OFFERED,
@@ -465,7 +489,7 @@ class InfoCourseTest(CourseMixin):
 
     @patch('dashboard.api.format_courserun_for_dashboard', autospec=True)
     def test_info_not_enrolled_offered(self, mock_format):
-        """test for get_info_for_course"""
+        """test for get_info_for_course for course with with an offered run"""
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
@@ -483,7 +507,7 @@ class InfoCourseTest(CourseMixin):
 
     @patch('dashboard.api.format_courserun_for_dashboard', autospec=True)
     def test_info_not_passed_offered(self, mock_format):
-        """test for get_info_for_course"""
+        """test for get_info_for_course for course with a run not passed and another offered"""
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
@@ -503,7 +527,7 @@ class InfoCourseTest(CourseMixin):
 
     @patch('dashboard.api.format_courserun_for_dashboard', autospec=True)
     def test_info_not_enrolled_not_passed_not_offered(self, mock_format):
-        """test for get_info_for_course"""
+        """test for get_info_for_course for course with run not passed and nothing offered"""
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
@@ -520,7 +544,7 @@ class InfoCourseTest(CourseMixin):
 
     @patch('dashboard.api.format_courserun_for_dashboard', autospec=True)
     def test_info_grade(self, mock_format):
-        """test for get_info_for_course"""
+        """test for get_info_for_course for course with a course current and another not passed"""
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
@@ -598,7 +622,7 @@ class InfoCourseTest(CourseMixin):
 
     @patch('dashboard.api.format_courserun_for_dashboard', autospec=True)
     def test_info_will_attend(self, mock_format):
-        """test for get_info_for_course"""
+        """test for get_info_for_course for course with enrolled run that will happen in the future"""
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
@@ -614,7 +638,7 @@ class InfoCourseTest(CourseMixin):
 
     @patch('dashboard.api.format_courserun_for_dashboard', autospec=True)
     def test_info_upgrade(self, mock_format):
-        """test for get_info_for_course"""
+        """test for get_info_for_course for course with a run that needs to be upgraded"""
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
@@ -630,7 +654,10 @@ class InfoCourseTest(CourseMixin):
 
     @patch('dashboard.api.format_courserun_for_dashboard', autospec=True)
     def test_info_default_should_not_happen(self, mock_format):
-        """test for get_info_for_course"""
+        """
+        test for get_info_for_course for course with a run with an
+        unespected state but that can be offered
+        """
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,

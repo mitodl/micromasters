@@ -9,16 +9,25 @@ import type {
 } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
 import { filterPositiveInt } from './util';
-import { HIGH_SCHOOL, EDUCATION_LEVELS } from '../constants';
+import {
+  HIGH_SCHOOL,
+  EDUCATION_LEVELS,
+  PERSONAL_STEP,
+  EDUCATION_STEP,
+  EMPLOYMENT_STEP,
+  PRIVACY_STEP,
+} from '../constants';
 
-let handleNestedValidation = (profile, keys, nestedKey) => {
+let handleNestedValidation = (profile: Profile, keys, nestedKey: string) => {
   let nestedFields = index => (
     keys.map(key => [nestedKey, index, key])
   );
   return _.flatten(profile[nestedKey].map((v, i) => nestedFields(i)));
 };
 
-let isNilOrEmptyString = val => _.isNil(val) || val === "";
+let isNilOrEmptyString = (val: any): boolean => (
+  val === null || val === undefined || val === ""
+);
 
 let checkFieldPresence = (profile, requiredFields, messages: any): ValidationErrors => {
   let errors = {};
@@ -113,10 +122,14 @@ export function educationUiValidation(profile: Profile, ui: UIState): Validation
   }
 
   let errors = {};
+  if ( profile.education === undefined ) {
+    return errors;
+  }
   for (let {value, label} of EDUCATION_LEVELS) {
     let items = profile.education.filter(education => education.degree_name === value);
     if (ui.educationDegreeInclusions[value] && items.length === 0) {
-      errors[`education_${value}_required`] = `${label} is required if switch is set`;
+      errors[`education_${value}_required`] =
+        `${label} is required if switch is on. Please add a degree or switch it off.`;
     }
   }
   return errors;
@@ -146,20 +159,20 @@ export function employmentValidation(profile: Profile): ValidationErrors {
     let requiredFields = handleNestedValidation(profile, nestedKeys, 'work_history');
     let errors = checkFieldPresence(profile, requiredFields, messages);
 
-    for (let entry: WorkEntry of Object.entries(profile.work_history)) {
-      let [index, workHistory] = entry;
-      if (!isNilOrEmptyString(workHistory.end_date) &&
+    profile.work_history.forEach((workHistory, index) => {
+      if (!isNilOrEmptyString(workHistory.end_date) && workHistory.end_date !== undefined &&
         moment(workHistory.end_date).isBefore(workHistory.start_date, 'month')) {
-        _.set(errors, ['work_history', index, 'end_date'], "End date cannot be before start date");
+        _.set(errors, ['work_history', String(index), 'end_date'], "End date cannot be before start date");
       }
       let editIsEmpty = _.isEmpty(workHistory.end_date_edit) || (
+        workHistory.end_date_edit !== undefined &&
         isNilOrEmptyString(workHistory.end_date_edit.year) &&
-        isNilOrEmptyString(workHistory.end_date_edit.month)
+          isNilOrEmptyString(workHistory.end_date_edit.month)
       );
       if (isNilOrEmptyString(workHistory.end_date) && !editIsEmpty) {
-        _.set(errors, ['work_history', index, 'end_date'], "Please enter a valid end date or leave it blank");
+        _.set(errors, ['work_history', String(index), 'end_date'], "Please enter a valid end date or leave it blank");
       }
-    }
+    });
 
     return errors;
   } else {
@@ -170,7 +183,7 @@ export function employmentValidation(profile: Profile): ValidationErrors {
 export function employmentUiValidation(profile: Profile, ui: UIState): ValidationErrors {
   if (ui.workHistoryEdit && _.isEmpty(profile.work_history)) {
     return {
-      work_history_required: "Work history is required if switch is set"
+      work_history_required: "Work history is required if switch is on. Please add work history or switch it off."
     };
   } else {
     return {};
@@ -195,21 +208,21 @@ complete profile consists of:
   - one or more work items if the user has marked any work history
   - a valid privacy level
 */
-export type ProfileComplete = [boolean, ?string, ?ValidationErrors];
+export type ProfileComplete = [boolean, string|null, ?ValidationErrors];
 export function validateProfileComplete(profile: Profile): ProfileComplete {
   let errors = {};
 
   // check personal tab
   errors = personalValidation(profile);
   if (!_.isEqual(errors, {})) {
-    return [false, '/profile/personal', errors];
+    return [false, PERSONAL_STEP, errors];
   }
 
   // check professional tab
   if (_.isArray(profile.work_history) && !_.isEmpty(profile.work_history)) {
     errors = employmentValidation(profile);
     if (!_.isEqual(errors, {})) {
-      return [false, '/profile/professional', errors];
+      return [false, EMPLOYMENT_STEP, errors];
     }
   }
 
@@ -217,14 +230,14 @@ export function validateProfileComplete(profile: Profile): ProfileComplete {
   if (_.isArray(profile.education) && !_.isEmpty(profile.education)) {
     errors = educationValidation(profile);
     if (!_.isEqual(errors, {})) {
-      return [false, '/profile/education', errors];
+      return [false, EDUCATION_STEP, errors];
     }
   }
 
   // check privacy tab
   errors = privacyValidation(profile);
   if (!_.isEqual(errors, {})) {
-    return [false, '/profile/privacy', errors];
+    return [false, PRIVACY_STEP, errors];
   }
 
   return [true, null, null];
@@ -233,28 +246,49 @@ export function validateProfileComplete(profile: Profile): ProfileComplete {
 /**
  * Validate a day of month
  */
-export function validateDay(string: string): ?number {
-  let date = filterPositiveInt(string);
+export function validateDay(input: string): ?number {
+  let sanitized = sanitizeDate(input, 2);
+  let date = filterPositiveInt(sanitized);
   if (date === undefined) {
     return undefined;
   }
   // More complicated cases like Feb 29 are handled in moment.js isValid
-  if (date < 1 || date > 31) {
-    return undefined;
+  if (date > 31) {
+    return 31;
   }
   return date;
 }
 
 /**
+ * Removes non-numeric characters and truncates output string
+ */
+export function sanitizeDate(input: string|number, length: number): string {
+  if ( typeof input === 'string' ) {
+    let out = input.replace(/[^\d]+/g, '');
+    if ( out.match(/^0+/) ) {
+      if ( out.length <= length ) {
+        return out.slice(0, length);
+      } else {
+        return out.replace(/^0+/, "").slice(0, length);
+      }
+    } else {
+      return out.slice(0, length);
+    }
+  } else {
+    return String(input).slice(0, length);
+  }
+}
+/**
  * Validate a month number
  */
-export function validateMonth(string: string): ?number {
-  let month = filterPositiveInt(string);
+export function validateMonth(input: string|number): number|void {
+  let sanitized = sanitizeDate(input, 2);
+  let month = filterPositiveInt(sanitized);
   if (month === undefined) {
     return undefined;
   }
-  if (month < 1 || month > 12) {
-    return undefined;
+  if (month > 12) {
+    return 12;
   }
   return month;
 }
@@ -262,14 +296,23 @@ export function validateMonth(string: string): ?number {
 /**
  * Validate a year string is an integer and fits into YYYY
  */
-export function validateYear(string: string): ?number {
-  let year = filterPositiveInt(string);
+export function validateYear(input: string|number|null): ?number {
+  if ( input === null ) {
+    return undefined;
+  }
+  let sanitized = sanitizeDate(input, 4);
+  let year = filterPositiveInt(sanitized);
   if (year === undefined) {
     return undefined;
   }
-  if (year < 1800 || year >= 2100) {
-    // fit into YYYY format
-    return undefined;
+  if ( year < 1800 ) {
+    if ( String(year).length < 4 ) {
+      return year;
+    }
+    return 1800;
+  }
+  if ( year >= 2100) {
+    return 2100;
   }
   return year;
 }
@@ -277,8 +320,8 @@ export function validateYear(string: string): ?number {
 /**
  * Returns a function which merges the results of the given functions on a set of arguments
  */
-export function combineValidators(...validators: Array<UIValidator|Validator>): UIValidator|Validator {
-  return (...args: Array<Profile|UIState>) => _.merge({}, ...validators.map(
+export function combineValidators(...validators: Array<Function>): Function {
+  return (...args) => _.merge({}, ...validators.map(
     validator => validator(...args)
   ));
 }

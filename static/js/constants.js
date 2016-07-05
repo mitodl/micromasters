@@ -214,7 +214,6 @@ export const DASHBOARD_RESPONSE = [
             "id": 7,
             "status": STATUS_ENROLLED_NOT_VERIFIED,
             "title": "Not verified run",
-            "verification_date": "2200-01-01T03:00:00Z",
             "course_id": "not-verified",
             "position": 0
           }
@@ -254,36 +253,6 @@ export const DASHBOARD_RESPONSE = [
             "position": 0,
             "course_id": "course_id",
             "id": 10
-          }
-        ]
-      },
-      {
-        "id": 13,
-        "status": STATUS_ENROLLED_NOT_VERIFIED,
-        "title": "Enrolled, no verification date - no status text",
-        "position_in_program": 7,
-        "runs": [
-          {
-            "title": "Enrolled no verification date",
-            "status": STATUS_ENROLLED_NOT_VERIFIED,
-            "position": 0,
-            "course_id": "course_id",
-            "id": 11
-          }
-        ]
-      },
-      {
-        "id": 14,
-        "position_in_program": 8,
-        "title": "enrolled not verified, verification date passed - no status text",
-        "status": STATUS_ENROLLED_NOT_VERIFIED,
-        "runs": [
-          {
-            "position": 0,
-            "id": 12,
-            "status": STATUS_ENROLLED_NOT_VERIFIED,
-            "title": "enrolled not verified, verification date passed",
-            "verification_date": "2000-01-01"
           }
         ]
       },
@@ -352,7 +321,7 @@ export const DASHBOARD_RESPONSE = [
   },
 ];
 
-export const DASHBOARD_RESPONSE_ERROR = {
+export const ERROR_RESPONSE = {
   "errorStatusCode": 500,
   "error_code": "AB123",
   "user_message": "custom error message for the user."
@@ -372,3 +341,17 @@ export const EDUCATION_LEVELS = [
   {value: MASTERS, label: "Master's or professional degree"},
   {value: DOCTORATE, label: "Doctorate"}
 ];
+
+export const PERSONAL_STEP = 'personal';
+export const EMPLOYMENT_STEP = 'employment';
+export const EDUCATION_STEP = 'education';
+export const PRIVACY_STEP = 'privacy';
+
+export const PROFILE_STEP_LABELS = new Map([
+  [PERSONAL_STEP, "Personal"],
+  [EDUCATION_STEP, "Education"],
+  [EMPLOYMENT_STEP, "Professional"],
+  [PRIVACY_STEP, "Profile Privacy"]
+]);
+
+export const DEFAULT_OPTION_LIMIT_COUNT = 10;

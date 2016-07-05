@@ -25,7 +25,19 @@ function asPercent(number) {
 /**
  * Determine React elements for the UI given a course status
  */
-export function makeCourseStatusDisplay(course: Object, now: moment = moment()): string|React$Element {
+export type Course = {
+  runs: Array<CourseRun>;
+  status?: string;
+};
+export type CourseRun = {
+  grade?: number|null;
+  course_id?: number|string;
+  title?: string;
+  fuzzy_enrollment_start_date?: string;
+  status?: string;
+  enrollment_start_date?: string;
+};
+export function makeCourseStatusDisplay(course: Course, now: moment = moment()): string|React$Element {
   let firstRun = {};
   if (course.runs.length > 0) {
     firstRun = course.runs[0];
@@ -58,26 +70,14 @@ export function makeCourseStatusDisplay(course: Object, now: moment = moment()):
     </span>;
   }
   case STATUS_ENROLLED_NOT_VERIFIED: {
-    if (!firstRun.verification_date) {
-      // Invalid case, API should always send a valid verification date
-      return "";
-    }
-
     let courseUpgradeUrl = `${SETTINGS.edx_base_url}/course_modes/choose/${firstRun.course_id}/`;
-
-    let verificationDate = moment(firstRun.verification_date);
-    if (verificationDate.isAfter(now, 'day')) {
-      return <Button bsStyle="success" href={courseUpgradeUrl} target="_blank">
-        UPGRADE TO VERIFIED
-        <span className="sr-only"> for {firstRun.title}</span>
-      </Button>;
-    } else {
-      // User cannot verify anymore
-      return "";
-    }
+    return <Button bsStyle="success" href={courseUpgradeUrl} target="_blank">
+      UPGRADE TO VERIFIED
+      <span className="sr-only"> for {firstRun.title}</span>
+    </Button>;
   }
   case STATUS_OFFERED_NOT_ENROLLED: {
-    if (!firstRun.enrollment_start_date) {
+    if (!firstRun.enrollment_start_date && firstRun.fuzzy_enrollment_start_date !== undefined ) {
       return firstRun.fuzzy_enrollment_start_date;
     }
 
@@ -105,7 +105,7 @@ export function makeCourseStatusDisplay(course: Object, now: moment = moment()):
 /**
  * Display status for a course run
  */
-export function makeRunStatusDisplay(run: Object): string {
+export function makeRunStatusDisplay(run: CourseRun): string {
   switch (run.status) {
   case STATUS_PASSED:
     return "Passed";
@@ -118,13 +118,8 @@ export function makeRunStatusDisplay(run: Object): string {
 
 /**
  * Determine progress React element for the UI given a course
- * @param {object} course A course coming from the dashboard
- * @param {bool} isFirst If false, draw a line up to the previous course
- * @param {bool} isLast If false, draw a line down to the next course
- * @param {Number} numRuns The number of course runs to draw a line past
- * @returns {ReactElement} Some React element or string to display for course status
  */
-export function makeCourseProgressDisplay(course: Object, isFirst: boolean, isLast: boolean, numRuns: number) {
+export function makeCourseProgressDisplay(course: Course, isFirst: boolean|void, isLast: boolean|void, numRuns: number) { // eslint-disable-line max-len
   let outerRadius = 10, innerRadius = 8, width = 30;
   let totalHeight = DASHBOARD_COURSE_HEIGHT + numRuns * DASHBOARD_RUN_HEIGHT;
   let centerX = width/2, centerY = DASHBOARD_COURSE_HEIGHT/2;

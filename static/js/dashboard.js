@@ -8,8 +8,8 @@ import { browserHistory } from 'react-router';
 import { makeDashboardRoutes } from './dashboard_routes';
 
 // requirements for react-mdl which uses a modified version of material-design-lite
-import 'style!css!react-mdl/extra/material.css';
 import 'react-mdl/extra/material.js';
+import 'style!css!react-mdl/extra/material.css';
 
 // Object.entries polyfill
 import entries from 'object.entries';
@@ -20,6 +20,9 @@ if (!Object.entries) {
 // material-ui requirement
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
+
+// react-virtualized requirement
+import 'style!css!react-virtualized/styles.css';
 
 const store = configureStore();
 

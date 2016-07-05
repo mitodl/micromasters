@@ -84,11 +84,16 @@ describe('reducers', () => {
     });
 
     it('should fail to fetch user profile', () => {
-      getUserProfileStub.returns(Promise.reject());
+      let errorInfo = {
+        errorStatusCode: 404,
+        detail: "not found"
+      };
+      getUserProfileStub.returns(Promise.reject(errorInfo));
 
       return dispatchThen(fetchUserProfile('jane'), [REQUEST_GET_USER_PROFILE, RECEIVE_GET_USER_PROFILE_FAILURE]).
       then(profileState => {
         assert.equal(profileState['jane'].getStatus, FETCH_FAILURE);
+        assert.deepEqual(profileState['jane'].errorInfo, errorInfo);
         assert.ok(getUserProfileStub.calledWith('jane'));
       });
     });
@@ -111,13 +116,15 @@ describe('reducers', () => {
     });
 
     it("should fail to patch the profile", () => {
-      patchUserProfileStub.returns(Promise.reject());
+      let errorInfo = {errorStatusCode: 500};
+      patchUserProfileStub.returns(Promise.reject(errorInfo));
 
       return dispatchThen(
         saveProfile('jane', USER_PROFILE_RESPONSE),
         [REQUEST_PATCH_USER_PROFILE, RECEIVE_PATCH_USER_PROFILE_FAILURE]
       ).then(profileState => {
         assert.equal(profileState['jane'].patchStatus, FETCH_FAILURE);
+        assert.deepEqual(profileState['jane'].errorInfo, errorInfo);
         assert.ok(patchUserProfileStub.calledWith('jane', USER_PROFILE_RESPONSE));
       });
     });

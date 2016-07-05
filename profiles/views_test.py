@@ -11,6 +11,7 @@ from django.test import TestCase
 from factory.django import mute_signals
 from rest_framework.status import (
     HTTP_405_METHOD_NOT_ALLOWED,
+    HTTP_404_NOT_FOUND
 )
 
 from backends.edxorg import EdxOrgOAuth2
@@ -19,7 +20,6 @@ from profiles.models import Profile
 from profiles.permissions import CanEditIfOwner
 from profiles.serializers import (
     ProfileLimitedSerializer,
-    ProfilePrivateSerializer,
     ProfileSerializer,
 )
 from profiles.views import ProfileViewSet
@@ -73,7 +73,7 @@ class ProfileTests(TestCase):
         Make sure check_object_permissions is called at some point so the permissions work correctly
         """
         with mute_signals(post_save):
-            ProfileFactory.create(user=self.user1)
+            ProfileFactory.create(user=self.user1, account_privacy=Profile.PUBLIC)
         self.client.force_login(self.user1)
 
         with patch.object(ProfileViewSet, 'check_object_permissions', autospec=True) as check_object_permissions:
@@ -128,21 +128,21 @@ class ProfileTests(TestCase):
         An anonymous user gets user's public_to_mm profile.
         """
         with mute_signals(post_save):
-            profile = ProfileFactory.create(user=self.user2, account_privacy=Profile.PUBLIC_TO_MM)
+            ProfileFactory.create(user=self.user2, account_privacy=Profile.PUBLIC_TO_MM)
         self.client.logout()
         resp = self.client.get(self.url2)
-        assert resp.json() == ProfilePrivateSerializer().to_representation(profile)
+        assert resp.status_code == HTTP_404_NOT_FOUND
 
     def test_mm_user_get_public_to_mm_profile(self):
         """
         An unverified mm user gets user's public_to_mm profile.
         """
         with mute_signals(post_save):
-            profile = ProfileFactory.create(user=self.user2, account_privacy=Profile.PUBLIC_TO_MM)
+            ProfileFactory.create(user=self.user2, account_privacy=Profile.PUBLIC_TO_MM)
             ProfileFactory.create(user=self.user1, verified_micromaster_user=False)
         self.client.force_login(self.user1)
         resp = self.client.get(self.url2)
-        assert resp.json() == ProfilePrivateSerializer().to_representation(profile)
+        assert resp.status_code == HTTP_404_NOT_FOUND
 
     def test_vermm_user_get_public_to_mm_profile(self):
         """
@@ -160,43 +160,43 @@ class ProfileTests(TestCase):
         An anonymous user gets user's private profile
         """
         with mute_signals(post_save):
-            profile = ProfileFactory.create(user=self.user2, account_privacy=Profile.PRIVATE)
+            ProfileFactory.create(user=self.user2, account_privacy=Profile.PRIVATE)
         self.client.logout()
         resp = self.client.get(self.url2)
-        assert resp.json() == ProfilePrivateSerializer().to_representation(profile)
+        assert resp.status_code == HTTP_404_NOT_FOUND
 
     def test_mm_user_get_private_profile(self):
         """
         An unverified mm user gets user's private profile
         """
         with mute_signals(post_save):
-            profile = ProfileFactory.create(user=self.user2, account_privacy=Profile.PRIVATE)
+            ProfileFactory.create(user=self.user2, account_privacy=Profile.PRIVATE)
             ProfileFactory.create(user=self.user1, verified_micromaster_user=False)
         self.client.force_login(self.user1)
         resp = self.client.get(self.url2)
-        assert resp.json() == ProfilePrivateSerializer().to_representation(profile)
+        assert resp.status_code == HTTP_404_NOT_FOUND
 
     def test_vermm_user_get_private_profile(self):
         """
         A verified mm user gets user's private profile
         """
         with mute_signals(post_save):
-            profile = ProfileFactory.create(user=self.user2, account_privacy=Profile.PRIVATE)
+            ProfileFactory.create(user=self.user2, account_privacy=Profile.PRIVATE)
             ProfileFactory.create(user=self.user1, verified_micromaster_user=True)
         self.client.force_login(self.user1)
         resp = self.client.get(self.url2)
-        assert resp.json() == ProfilePrivateSerializer().to_representation(profile)
+        assert resp.status_code == HTTP_404_NOT_FOUND
 
     def test_weird_privacy_get_private_profile(self):
         """
         If a user profile has a weird profile setting, it defaults to private
         """
         with mute_signals(post_save):
-            profile = ProfileFactory.create(user=self.user2, account_privacy='weird_setting')
+            ProfileFactory.create(user=self.user2, account_privacy='weird_setting')
             ProfileFactory.create(user=self.user1, verified_micromaster_user=True)
         self.client.force_login(self.user1)
         resp = self.client.get(self.url2)
-        assert resp.json() == ProfilePrivateSerializer().to_representation(profile)
+        assert resp.status_code == HTTP_404_NOT_FOUND
 
     def test_patch_own_profile(self):
         """

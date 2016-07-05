@@ -1,6 +1,62 @@
 Release Notes
 =============
 
+Version 0.12.0
+--------------
+
+- Added ErrorMessage to UserPage
+- Changed dateFields to disallow non-numerical input (#641)
+- Added deadline for upgrade
+- Removed some (now) useless cases in constants
+- FAQ collapsed by default
+- Added spinner and error message for profile page (#661)
+- Added user page link to dropdown
+- Changed field of study select to match anywhere in string w/ highlighted text
+- Removed routing from profile flow
+- added docstring
+- fixed MORE unit tests
+- fixed js test
+- refactored error page code and fixed unit tests
+- nevermind. tabs changed to spaces in base_error.html
+- changed base_error.html to match tab/space style, which is apparently mixed
+- Added user page link to dropdown
+- Added thumbnail to wagtail CMS (#625)
+- Redirected to 404 if user goes to a missing user page (#629)
+- Added spinner for dashboard (#646)
+- Removed x&#39;s from text fields (#642)
+- Tests fixed
+- Removed upgrade logic from the frontend
+- Changed the label of settings button
+- Added settings page
+- Added link to home page on program page logo (#645)
+- Added text to JumboTron for terms of service (#644)
+- Updated validation text (#643)
+- Added resumeOrder to education entries
+- Updated edx-api-client requirement
+- Removed padding from date field (#631)
+- Removed UI validators from PrivacyTab validator callback
+- Raised 404 exception when user wants to access someones profile whose privacy mode is set tp private
+- Fixed filtering text to remain if textbox clicked (#628)
+- Made FieldsOfStudySelectField wider
+- Added new types for Course, CourseRun, added flow to many files
+- Added react-virtualized to AutoComplete (#568)
+- Fixed style regression (#624)
+- Link opens in the same page
+- Added possibility to link external program pages
+- Added custom 500 page
+- Added &#39;confirm delete all entries&#39; when closing switches
+- Sorted employment entries in resume order
+- Updated documentation to reflect edX changes
+- First working version
+- Removed apostrophe from MicroMaster&#39;s (#560)
+- Updated to redux-asserts 0.0.8 and fixed related test failures (#616)
+- Fixed bug with preferred name not updating on Jumbotron
+- Added babel-polyfill to support IE11 (#611)
+- Swapped courses and faq in program page
+- Upgraded to wagtail 1.5.2
+- Fixed spinner positioning (#563)
+- Bumped django version
+
 Version 0.11.0
 --------------
 

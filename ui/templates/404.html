@@ -1,0 +1,20 @@
+{% extends "base_error.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "MIT MicroMasters" %}{% endblock %}
+
+{% block error_header %}
+PAGE NOT FOUND
+{% endblock %}
+
+{% block error_content %}
+<div id="page-not-found">
+	<p>The page you requested is unavailable. Please check the URL and try again.</p>
+	<p>Maybe you were looking for one of these pages:</p>
+	<ul>
+		<li><a href="/">Home page</a></li>
+	</ul>
+	<p>If you think there is a problem, please send an email to
+	<a href="mailto:mitx-support@mit.edu">mitx-support@mit.edu</a></p>
+</div>
+{% endblock %}

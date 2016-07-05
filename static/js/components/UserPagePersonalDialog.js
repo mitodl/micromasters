@@ -5,14 +5,16 @@ import Button from 'react-mdl/lib/Button';
 
 import { personalValidation } from '../util/validation';
 import PersonalForm from './PersonalForm';
+import type { Profile, BoundSaveProfile } from '../flow/profileTypes';
+import type { UIState } from '../reducers/ui';
 
 export default class UserPagePersonalDialog extends React.Component {
-  static propTypes = {
-    setUserPageDialogVisibility:  React.PropTypes.func,
-    ui:                           React.PropTypes.object,
-    profile:                      React.PropTypes.object,
-    saveProfile:                  React.PropTypes.func,
-    clearProfileEdit:             React.PropTypes.func,
+  props: {
+    setUserPageDialogVisibility:  () => void,
+    ui:                           UIState,
+    profile:                      Profile,
+    saveProfile:                  BoundSaveProfile,
+    clearProfileEdit:             () => void,
   };
 
   closePersonalDialog: Function = (): void => {
@@ -49,6 +51,7 @@ export default class UserPagePersonalDialog extends React.Component {
 
     return (
       <Dialog
+        className="personal-dialog"
         open={userPageDialogVisibility}
         onRequestClose={this.closePersonalDialog}
         actions={actions}

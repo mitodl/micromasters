@@ -25,7 +25,7 @@ import {
 } from '../actions';
 import { ui } from './ui';
 import type { Action } from '../flow/generalTypes';
-import type { Profile } from '../flow/profileTypes';
+import type { ProfileGetResult } from '../flow/profileTypes';
 
 export const INITIAL_PROFILES_STATE = {};
 type ProfileState = {};
@@ -41,12 +41,12 @@ export const profiles = (state: ProfileState = INITIAL_PROFILES_STATE, action: A
     return clone;
   };
 
-  let getProfile = (): Profile => {
+  let getProfile = (): ProfileGetResult|void => {
     if (state[action.payload.username] !== undefined) {
       return state[action.payload.username];
     }
-    return {};
   };
+  let profile;
 
   switch (action.type) {
   case REQUEST_GET_USER_PROFILE:
@@ -60,7 +60,8 @@ export const profiles = (state: ProfileState = INITIAL_PROFILES_STATE, action: A
     });
   case RECEIVE_GET_USER_PROFILE_FAILURE:
     return patchProfile({
-      getStatus: FETCH_FAILURE
+      getStatus: FETCH_FAILURE,
+      errorInfo: action.payload.errorInfo
     });
   case CLEAR_PROFILE: {
     let clone = Object.assign({}, state);
@@ -68,23 +69,25 @@ export const profiles = (state: ProfileState = INITIAL_PROFILES_STATE, action: A
     return clone;
   }
   case UPDATE_PROFILE:
-    if (getProfile().edit === undefined) {
+    profile = getProfile();
+    if (profile === undefined || profile.edit === undefined) {
       // caller must have dispatched START_PROFILE_EDIT successfully first
       return state;
     }
     return patchProfile({
-      edit: Object.assign({}, getProfile().edit, {
+      edit: Object.assign({}, profile.edit, {
         profile: action.payload.profile
       })
     });
   case START_PROFILE_EDIT:
-    if (getProfile().getStatus !== FETCH_SUCCESS) {
+    profile = getProfile();
+    if (profile === undefined || profile.getStatus !== FETCH_SUCCESS) {
       // ignore attempts to edit if we don't have a valid profile to edit yet
       return state;
     }
     return patchProfile({
       edit: {
-        profile: getProfile().profile,
+        profile: profile.profile,
         errors: {}
       }
     });
@@ -103,18 +106,21 @@ export const profiles = (state: ProfileState = INITIAL_PROFILES_STATE, action: A
     });
   case RECEIVE_PATCH_USER_PROFILE_FAILURE:
     return patchProfile({
-      patchStatus: FETCH_FAILURE
+      patchStatus: FETCH_FAILURE,
+      errorInfo: action.payload.errorInfo
     });
   case UPDATE_PROFILE_VALIDATION:
-    if (getProfile().edit === undefined) {
+    profile = getProfile();
+    if (profile === undefined || profile.edit === undefined) {
       // caller must have dispatched START_PROFILE_EDIT successfully first
       return state;
+    } else {
+      return patchProfile({
+        edit: Object.assign({}, profile.edit, {
+          errors: action.payload.errors
+        })
+      });
     }
-    return patchProfile({
-      edit: Object.assign({}, getProfile().edit, {
-        errors: action.payload.errors
-      })
-    });
   default:
     return state;
   }

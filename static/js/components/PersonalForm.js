@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import SelectField from './inputs/SelectField';
@@ -5,13 +6,18 @@ import CountrySelectField from './inputs/CountrySelectField';
 import StateSelectField from './inputs/StateSelectField';
 
 import ProfileFormFields from '../util/ProfileFormFields';
+import type {
+  Profile,
+  BoundSaveProfile,
+  ValidationErrors
+} from '../flow/profileTypes';
 
 export default class PersonalForm extends ProfileFormFields {
-  static propTypes = {
-    profile:        React.PropTypes.object,
-    errors:         React.PropTypes.object,
-    saveProfile:    React.PropTypes.func,
-    updateProfile:  React.PropTypes.func,
+  props: {
+    profile:        Profile,
+    errors:         ValidationErrors,
+    saveProfile:    BoundSaveProfile,
+    updateProfile:  () => void,
   };
 
   render() {

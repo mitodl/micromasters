@@ -2,6 +2,11 @@
 import React from 'react';
 import _ from 'lodash';
 import SelectField from './SelectField';
+import {
+  caseInsensitiveFilter,
+  showLimitedOptions,
+  highlightMatchedOptionText
+} from '../utils/AutoCompleteSettings';
 import FIELDS_OF_STUDY from '../../fields_of_study';
 
 let fieldOfStudyOptions = _.map(FIELDS_OF_STUDY, (name, code) => ({
@@ -11,24 +16,26 @@ let fieldOfStudyOptions = _.map(FIELDS_OF_STUDY, (name, code) => ({
 
 export default class FieldsOfStudySelectField extends React.Component {
   static propTypes = {
-    resultLimit: React.PropTypes.number
+    maxSearchResults: React.PropTypes.number
   };
 
   static defaultProps = {
-    resultLimit: 10
+    maxSearchResults: 10
   };
 
   static autocompleteStyleProps = {
-    menuStyle: {maxHeight: 300, width: 600},
+    menuStyle: {maxHeight: 300},
+    menuHeight: 300,
     listStyle: {width: '100%'},
-    fullWidth: false
+    fullWidth: true
   };
 
   render() {
     return <SelectField
       options={fieldOfStudyOptions}
-      resultLimit={this.props.resultLimit}
       autocompleteStyleProps={FieldsOfStudySelectField.autocompleteStyleProps}
+      autocompleteBehaviors={[showLimitedOptions, highlightMatchedOptionText]}
+      filter={caseInsensitiveFilter}
       {...this.props}
     />;
   }

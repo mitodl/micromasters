@@ -88,3 +88,4 @@ codekit-config.json
 staticfiles/
 
 .venv
+release-notes-checklist

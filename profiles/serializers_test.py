@@ -23,7 +23,6 @@ from profiles.serializers import (
     EducationSerializer,
     EmploymentSerializer,
     ProfileLimitedSerializer,
-    ProfilePrivateSerializer,
     ProfileSerializer,
 )
 from profiles.util import (
@@ -119,21 +118,6 @@ class ProfileTests(TestCase):
                 EmploymentSerializer().to_representation(work_history) for work_history in
                 profile.work_history.all()
             ]
-        }
-
-    def test_private(self):  # pylint: disable=no-self-use
-        """
-        Test private serializer
-        """
-        profile = self.create_profile()
-        assert ProfilePrivateSerializer().to_representation(profile) == {
-            'username': profile.user.social_auth.get(provider=EdxOrgOAuth2.name).uid,
-            'account_privacy': profile.account_privacy,
-            'has_profile_image': profile.has_profile_image,
-            'profile_url_full': format_gravatar_url(profile.user.email, GravatarImgSize.FULL),
-            'profile_url_large': format_gravatar_url(profile.user.email, GravatarImgSize.LARGE),
-            'profile_url_medium': format_gravatar_url(profile.user.email, GravatarImgSize.MEDIUM),
-            'profile_url_small': format_gravatar_url(profile.user.email, GravatarImgSize.SMALL),
         }
 
     def test_add_education(self):

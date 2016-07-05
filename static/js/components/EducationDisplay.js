@@ -19,6 +19,7 @@ import {
 } from '../util/editEducation';
 import { userPrivilegeCheck } from '../util/util';
 import { HIGH_SCHOOL } from '../constants';
+import { educationEntriesByDate } from '../util/sorting';
 import type { EducationEntry } from '../flow/profileTypes';
 
 export default class EducationDisplay extends ProfileFormFields {
@@ -44,7 +45,7 @@ export default class EducationDisplay extends ProfileFormFields {
     let deleteEntry = () => this.openEducationDeleteDialog(index);
     let editEntry = () => this.openEditEducationForm(index);
     let validationAlert = () => {
-      if (_.get(errors, ['education', index])) {
+      if (_.get(errors, ['education', String(index)])) {
         return <IconButton name="error" onClick={editEntry} />;
       }
     };
@@ -77,7 +78,8 @@ export default class EducationDisplay extends ProfileFormFields {
     const { profile, profile: { education }} = this.props;
     let rows = [];
     if (education !== undefined) {
-      rows = education.map( (entry, index) => this.educationRow(entry, index));
+      let sorted = educationEntriesByDate(education);
+      rows = sorted.map( ([index, entry]) => this.educationRow(entry, index));
     }
     userPrivilegeCheck(profile, () => {
       rows.push(
@@ -100,9 +102,10 @@ export default class EducationDisplay extends ProfileFormFields {
     return (
       <div>
         <ConfirmDeletion
-          deleteEntry={this.deleteEducationEntry}
+          deleteFunc={this.deleteEducationEntry}
           open={showEducationDeleteDialog}
           close={this.closeConfirmDeleteDialog}
+          confirmText="Delete this entry?"
         />
         <EducationDialog {...this.props} showLevelForm={true} />
         <Card shadow={1} className="profile-tab-card" id="education-card">

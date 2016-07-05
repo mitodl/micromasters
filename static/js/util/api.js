@@ -1,9 +1,11 @@
+// @flow
 /* global SETTINGS:false, fetch: false */
 // For mocking purposes we need to use 'fetch' defined as a global instead of importing as a local.
 import 'isomorphic-fetch';
 import _ from 'lodash';
+import type { Profile } from '../flow/profileTypes';
 
-export function getCookie(name) {
+export function getCookie(name: string): string|null {
   let cookieValue = null;
 
   if (document.cookie && document.cookie !== '') {
@@ -22,7 +24,7 @@ export function getCookie(name) {
   return cookieValue;
 }
 
-export function csrfSafeMethod(method) {
+export function csrfSafeMethod(method: string): boolean {
   // these HTTP methods do not require CSRF protection
   return /^(GET|HEAD|OPTIONS|TRACE)$/.test(method);
 }
@@ -34,13 +36,8 @@ export function csrfSafeMethod(method) {
  *  - handle CSRF
  *  - non 2xx status codes will reject the promise returned
  *  - response JSON is returned in place of response
- *
- * @param {string} input URL of fetch
- * @param {Object} init Settings to pass to fetch
- * @param {bool} loginOnError force login on http errors
- * @returns {Promise} The promise with JSON of the response
  */
-export function fetchJSONWithCSRF(input, init, loginOnError) {
+export function fetchJSONWithCSRF(input: string, init: Object|void, loginOnError: ?boolean): Promise {
   if (init === undefined) {
     init = {};
   }
@@ -107,11 +104,11 @@ export function fetchJSONWithCSRF(input, init, loginOnError) {
 
 // import to allow mocking in tests
 import { fetchJSONWithCSRF as mockableFetchJSONWithCSRF } from './api';
-export function getUserProfile(username) {
+export function getUserProfile(username: string) {
   return mockableFetchJSONWithCSRF(`/api/v0/profiles/${username}/`);
 }
 
-export function patchUserProfile(username, profile) {
+export function patchUserProfile(username: string, profile: Profile) {
   return mockableFetchJSONWithCSRF(`/api/v0/profiles/${username}/`, {
     method: 'PATCH',
     body: JSON.stringify(profile)

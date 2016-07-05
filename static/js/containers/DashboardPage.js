@@ -1,16 +1,24 @@
+// @flow
 /* global SETTINGS: false */
 import React from 'react';
 import { connect } from 'react-redux';
+import Loader from 'react-loader';
+
+import { FETCH_PROCESSING } from '../actions';
+import type { Dispatch } from 'redux';
+
 import Jumbotron from '../components/Jumbotron';
 import CourseList from '../components/CourseList';
 import ErrorMessage from '../components/ErrorMessage';
+import { getPreferredName } from '../util/util';
+import type { Profile } from '../flow/profileTypes';
 
 class DashboardPage extends React.Component {
-  static propTypes = {
-    profile:    React.PropTypes.object.isRequired,
-    dashboard:  React.PropTypes.object.isRequired,
-    dispatch:   React.PropTypes.func.isRequired,
-    expander: React.PropTypes.object.isRequired,
+  props: {
+    profile:    {profile: Profile},
+    dashboard:  Object,
+    dispatch:   Dispatch,
+    expander:   Object,
   };
 
   render() {
@@ -20,7 +28,8 @@ class DashboardPage extends React.Component {
       dispatch,
       profile: { profile },
     } = this.props;
-    let preferredName = profile.preferredName || SETTINGS.name;
+    const loaded = dashboard.fetchStatus !== FETCH_PROCESSING;
+    let preferredName = getPreferredName(profile);
     let errorMessage;
     let dashboardContent;
     // if there are no errors coming from the backend, simply show the dashboard
@@ -38,10 +47,10 @@ class DashboardPage extends React.Component {
     }
     return (
       <Jumbotron profile={profile} text={preferredName}>
-        <div>
+        <Loader loaded={loaded}>
           {errorMessage}
           {dashboardContent}
-        </div>
+        </Loader>
       </Jumbotron>
     );
   }

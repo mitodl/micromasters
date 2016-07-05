@@ -227,22 +227,3 @@ class ProfileLimitedSerializer(ProfileBaseSerializer):
             'edx_level_of_education',
             'education'
         )
-
-
-class ProfilePrivateSerializer(ProfileBaseSerializer):
-    """
-    Serializer for Profile objects, limited to fields that other users are
-    allowed to see if a profile is marked private.
-    """
-
-    class Meta:  # pylint: disable=missing-docstring
-        model = Profile
-        fields = (
-            'username',
-            'account_privacy',
-            'has_profile_image',
-            'profile_url_full',
-            'profile_url_large',
-            'profile_url_medium',
-            'profile_url_small',
-        )

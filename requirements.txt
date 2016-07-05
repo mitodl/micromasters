@@ -1,4 +1,4 @@
-Django==1.9.6
+Django==1.9.7
 PyYAML==3.11
 boto==2.39.0
 dj-database-url==0.3.0
@@ -18,5 +18,5 @@ static3==0.5.1
 tox==2.3.1
 uwsgi==2.0.12
 Pillow==3.1.1
-wagtail==1.4.3
-edx-api-client==0.2.0
+wagtail==1.5.2
+edx-api-client==0.2.1

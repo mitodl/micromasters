@@ -18,10 +18,11 @@
           <nav class="navbar navbar-default" role="navigation">
             <div class="container-fluid">
               <div class="navbar-header">
-                <a class="navbar-brand" href="javascript:void(0)"><img
-                        src="/static/images/logo-mit-micromasters-whitered.png"
+                <a class="navbar-brand" href="/"><img
+                        src="{% static 'images/logo-mit-micromasters-whitered.png' %}"
                         width="215" height="40"
-                        alt="MIT Micromasters"/></a>
+                        alt="MIT Micromasters"/>
+                </a>
                 <div class="nav-utility pull-right">
                   {% if authenticated %}
                     <a class="btn btn-danger" href="/logout">
@@ -65,11 +66,11 @@
               <a href="#home" aria-controls="home" role="tab" data-toggle="tab">Program Home</a>
             </li>
             <li role="presentation">
-              <a href="#faqs" aria-controls="faqs" role="tab" data-toggle="tab">Frequently Asked
-                Questions</a>
+              <a href="#courses" aria-controls="courses" role="tab" data-toggle="tab">Courses</a>
             </li>
             <li role="presentation">
-              <a href="#courses" aria-controls="courses" role="tab" data-toggle="tab">Courses</a>
+              <a href="#faqs" aria-controls="faqs" role="tab" data-toggle="tab">Frequently Asked
+                Questions</a>
             </li>
           </ul>
 
@@ -109,42 +110,7 @@
 
 
             </div>
-            <div role="tabpanel" class="tab-pane fade in" id="faqs">
 
-              <div class="panel-body">
-                <div class="row">
-                  <div class="col-md-10">
-                    <h3>You have questions and we have answers</h3>
-                    <div class="panel-group panel-group-continuous" id="exampleAccordionContinuous"
-                         aria-multiselectable="true" role="tablist">
-                      {% for faq in page.faqs.all %}
-                        <div class="panel">
-                          <div class="panel-heading" id="exampleHeadingContinuousOne"
-                               role="tab">
-                            <a class="panel-title"
-                               data-parent="#exampleAccordionContinuous"
-                               data-toggle="collapse"
-                               href="#faqs-{{ forloop.counter }}"
-                               aria-controls="exampleCollapseContinuousOne"
-                               aria-expanded="true">
-                              {{ faq.question }}
-                            </a>
-                          </div>
-                          <div class="panel-collapse collapse in"
-                               id="faqs-{{ forloop.counter }}"
-                               aria-labelledby="exampleHeadingContinuousOne"
-                               role="tabpanel">
-                            <div class="panel-body">
-                              {{ faq.answer }}
-                            </div>
-                          </div>
-                        </div>
-                      {% endfor %}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
             <div role="tabpanel" class="tab-pane fade in" id="courses">
               <div class="panel-body">
                 <div class="row">
@@ -179,11 +145,48 @@
                 </div>
               </div>
             </div>
+
+            <div role="tabpanel" class="tab-pane fade in" id="faqs">
+              <div class="panel-body">
+                <div class="row">
+                  <div class="col-md-10">
+                    <h3>You have questions and we have answers</h3>
+                    <div class="panel-group panel-group-continuous" id="exampleAccordionContinuous"
+                         aria-multiselectable="true" role="tablist">
+                      {% for faq in page.faqs.all %}
+                        <div class="panel">
+                          <div class="panel-heading" id="exampleHeadingContinuousOne"
+                               role="tab">
+                            <a class="panel-title"
+                               data-parent="#exampleAccordionContinuous"
+                               data-toggle="collapse"
+                               href="#faqs-{{ forloop.counter }}"
+                               aria-controls="exampleCollapseContinuousOne"
+                               aria-expanded="true">
+                              {{ faq.question }}
+                            </a>
+                          </div>
+                          <div class="panel-collapse collapse"
+                               id="faqs-{{ forloop.counter }}"
+                               aria-labelledby="exampleHeadingContinuousOne"
+                               role="tabpanel">
+                            <div class="panel-body">
+                              {{ faq.answer }}
+                            </div>
+                          </div>
+                        </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
     </div>
-    {% include "cms/footer.html" %}
+    {% include "footer.html" %}
 
     <div class="modal fade modal-fade-in-scale-up" id="modal-about" aria-hidden="true" aria-labelledby="modal-about"
          role="dialog" tabindex="-1">
@@ -198,7 +201,7 @@
           <div class="modal-body">
             <h2>Micromasters is a new credential</h2>
             <p>
-              MIT has created a new credential for online learners: the “MicroMaster’s,” which will be
+              MIT has created a new credential for online learners: the “MicroMasters,” which will be
               granted by MITx (MIT’s online learning initiative) to students who do exceptionally well in
               a given set of graduate-level online courses and do well in a subsequent exam. The
               credential will first be available to students who register for the SCM program’s online
@@ -214,7 +217,7 @@
             <p>
               Use your edX.org account to enroll in a Micromasters program and share your grades and
               progress with MIT. When you complete all the requirements and earn a Micromasters
-              credential, you can use it to apply for a Masters degree at MIT.
+              credential, you can use it to apply for a Master’s degree at MIT.
             </p>
           </div>
           <!--

@@ -16,6 +16,9 @@ import {
   SET_SHOW_EDUCATION_DELETE_DIALOG,
   SET_SHOW_WORK_DELETE_DIALOG,
   SET_DELETION_INDEX,
+  SET_SHOW_WORK_DELETE_ALL_DIALOG,
+  SET_SHOW_EDUCATION_DELETE_ALL_DIALOG,
+  SET_PROFILE_STEP,
 
   clearUI,
   updateDialogText,
@@ -33,6 +36,9 @@ import {
   setShowEducationDeleteDialog,
   setShowWorkDeleteDialog,
   setDeletionIndex,
+  setShowWorkDeleteAllDialog,
+  setShowEducationDeleteAllDialog,
+  setProfileStep,
 } from '../actions/ui';
 import { receiveGetUserProfileSuccess } from '../actions';
 import { INITIAL_UI_STATE } from '../reducers/ui';
@@ -43,6 +49,7 @@ import {
   MASTERS,
   DOCTORATE,
   USER_PROFILE_RESPONSE,
+  PROFILE_STEP_LABELS,
 } from '../constants';
 import rootReducer from '../reducers';
 import * as util from '../util/util';
@@ -250,6 +257,31 @@ describe('ui reducers', () => {
     it('should let you set a deletion index', () => {
       return dispatchThen(setDeletionIndex(3), [SET_DELETION_INDEX]).then(state => {
         assert.deepEqual(state.deletionIndex, 3);
+      });
+    });
+  });
+
+  describe('confirm delete all dialog', () => {
+    [
+      [setShowEducationDeleteAllDialog, SET_SHOW_EDUCATION_DELETE_ALL_DIALOG, s => s.showEducationDeleteAllDialog],
+      [setShowWorkDeleteAllDialog, SET_SHOW_WORK_DELETE_ALL_DIALOG, s => s.showWorkDeleteAllDialog],
+    ].forEach( ([actionCreator, action, accessor]) => {
+      [true, false].forEach( bool => {
+        it(`should let you ${action} to ${bool}`, () => {
+          return dispatchThen(actionCreator(bool), [action]).then(state => {
+            assert.deepEqual(accessor(state), bool);
+          });
+        });
+      });
+    });
+  });
+
+  describe("profile step", () => {
+    PROFILE_STEP_LABELS.forEach((label, step) =>{
+      it(`should let you set the profile step to ${label}`, () => {
+        return dispatchThen(setProfileStep(step), [SET_PROFILE_STEP]).then(state => {
+          assert.deepEqual(state.profileStep, step);
+        });
       });
     });
   });

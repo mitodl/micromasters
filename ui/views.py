@@ -5,12 +5,18 @@ import json
 import logging
 
 from django.conf import settings
-from django.contrib.staticfiles.templatetags.staticfiles import static
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.views.generic import View
+from django.shortcuts import (
+    render,
+    Http404,
+)
+from django.utils.decorators import method_decorator
 
 from backends.edxorg import EdxOrgOAuth2
 from micromasters.utils import webpack_dev_server_host, webpack_dev_server_url
+from profiles.permissions import CanSeeIfNotPrivate
 from ui.decorators import (
     require_mandatory_urls,
 )
@@ -31,31 +37,104 @@ def get_bundle_url(request, bundle_name):
         return static("bundles/{bundle}".format(bundle=bundle_name))
 
 
-@require_mandatory_urls
-@login_required()
-def dashboard(request, *args):  # pylint: disable=unused-argument
+class ReactView(View):  # pylint: disable=unused-argument
     """
-    The app dashboard view
+    Abstract view for templates using React
     """
-    name = ""
-    if not request.user.is_anonymous():
-        name = request.user.profile.preferred_name
+    def get(self, request, *args, **kwargs):
+        """
+        Handle GET requests to templates using React
+        """
+        username = None
+        name = ""
+        if not request.user.is_anonymous():
+            name = request.user.profile.preferred_name
+            social_auths = request.user.social_auth.filter(
+                provider=EdxOrgOAuth2.name)
+            if social_auths.exists():
+                username = social_auths.first().uid
 
-    js_settings = {
-        "gaTrackingID": settings.GA_TRACKING_ID,
-        "reactGaDebug": settings.REACT_GA_DEBUG,
-        "authenticated": not request.user.is_anonymous(),
-        "name": name,
-        "username": request.user.social_auth.get(provider=EdxOrgOAuth2.name).uid,
-        "host": webpack_dev_server_host(request),
-        "edx_base_url": settings.EDXORG_BASE_URL
-    }
+        js_settings = {
+            "gaTrackingID": settings.GA_TRACKING_ID,
+            "reactGaDebug": settings.REACT_GA_DEBUG,
+            "authenticated": not request.user.is_anonymous(),
+            "name": name,
+            "username": username,
+            "host": webpack_dev_server_host(request),
+            "edx_base_url": settings.EDXORG_BASE_URL
+        }
 
-    return render(
-        request, "dashboard.html",
+        return render(
+            request,
+            "dashboard.html",
+            context={
+                "style_src": get_bundle_url(request, "style.js"),
+                "dashboard_src": get_bundle_url(request, "dashboard.js"),
+                "js_settings_json": json.dumps(js_settings),
+            }
+        )
+
+
+@method_decorator(require_mandatory_urls, name='dispatch')
+@method_decorator(login_required, name='dispatch')
+class DashboardView(ReactView):
+    """
+    Wrapper for dashboard view which asserts certain logged in requirements
+    """
+
+
+class UsersView(ReactView):
+    """
+    View for users pages. This gets handled by the dashboard view like all other
+    React handled views, but we also want to return a 404 if the user does not exist.
+    """
+    def get(self, request, *args, **kwargs):
+        """
+        Handle GET requests
+        """
+        user = kwargs.pop('user')
+        if user is not None:
+            if not CanSeeIfNotPrivate().has_permission(request, self):
+                raise Http404
+        elif request.user.is_anonymous():
+            # /users/ redirects to logged in user's page, but user is not logged in here
+            raise Http404
+
+        return super(UsersView, self).get(request, *args, **kwargs)
+
+
+def standard_error_page(request, status_code, template_filename):
+    """
+    Returns an error page with a given template filename and provides necessary context variables
+    """
+    name = request.user.profile.preferred_name if not request.user.is_anonymous() else ""
+    authenticated = not request.user.is_anonymous()
+    username = None if not authenticated else request.user.social_auth.get(provider=EdxOrgOAuth2.name).uid
+    response = render(
+        request,
+        template_filename,
         context={
             "style_src": get_bundle_url(request, "style.js"),
             "dashboard_src": get_bundle_url(request, "dashboard.js"),
-            "js_settings_json": json.dumps(js_settings),
+            "js_settings_json": "{}",
+            "authenticated": authenticated,
+            "name": name,
+            "username": username
         }
     )
+    response.status_code = status_code
+    return response
+
+
+def page_404(request):
+    """
+    Overridden handler for the 404 error pages.
+    """
+    return standard_error_page(request, 404, "404.html")
+
+
+def page_500(request):
+    """
+    Overridden handler for the 404 error pages.
+    """
+    return standard_error_page(request, 500, "500.html")

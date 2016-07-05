@@ -23,8 +23,19 @@ import {
   SET_SHOW_EDUCATION_DELETE_DIALOG,
   SET_SHOW_WORK_DELETE_DIALOG,
   SET_DELETION_INDEX,
+  SET_SHOW_WORK_DELETE_ALL_DIALOG,
+  SET_SHOW_EDUCATION_DELETE_ALL_DIALOG,
+
+  SET_PROFILE_STEP,
 } from '../actions/ui';
-import { HIGH_SCHOOL, ASSOCIATE, BACHELORS, MASTERS, DOCTORATE } from '../constants';
+import {
+  HIGH_SCHOOL,
+  ASSOCIATE,
+  BACHELORS,
+  MASTERS,
+  DOCTORATE,
+  PERSONAL_STEP,
+} from '../constants';
 import { calculateDegreeInclusions } from '../util/util';
 import type { Action } from '../flow/generalTypes';
 
@@ -35,12 +46,15 @@ export type UIState = {
   educationDialogVisibility:  boolean;
   educationDialogIndex:       ?number;
   educationDegreeLevel:       string;
-  educationDegreeInclusions: {};
+  educationDegreeInclusions: {[key: string]: boolean};
   userPageDialogVisibility: boolean;
   showWorkDeleteDialog: boolean;
   showEducationDeleteDialog: boolean;
   deletionIndex: ?number;
   dialog: {};
+  showWorkDeleteAllDialog: boolean;
+  showEducationDeleteAllDialog: boolean;
+  profileStep: string;
 };
 
 export const INITIAL_UI_STATE: UIState = {
@@ -62,6 +76,9 @@ export const INITIAL_UI_STATE: UIState = {
   showEducationDeleteDialog: false,
   deletionIndex: null,
   dialog: {},
+  showWorkDeleteAllDialog: false,
+  showEducationDeleteAllDialog: false,
+  profileStep: PERSONAL_STEP,
 };
 
 export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
@@ -155,6 +172,21 @@ export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
       });
     }
     return state;
+  }
+  case SET_SHOW_WORK_DELETE_ALL_DIALOG: {
+    return Object.assign({}, state, {
+      showWorkDeleteAllDialog: action.payload
+    });
+  }
+  case SET_SHOW_EDUCATION_DELETE_ALL_DIALOG: {
+    return Object.assign({}, state, {
+      showEducationDeleteAllDialog: action.payload
+    });
+  }
+  case SET_PROFILE_STEP: {
+    return Object.assign({}, state, {
+      profileStep: action.payload
+    });
   }
   default:
     return state;

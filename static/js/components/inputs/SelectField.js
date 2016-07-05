@@ -1,78 +1,41 @@
 // @flow
 import React from 'react';
 import _ from 'lodash';
-import MenuItem from 'material-ui/MenuItem';
 import AutoComplete from '../AutoComplete';
+import { defaultFilter, showAllOptions } from '../utils/AutoCompleteSettings';
+import { callFunctionArray } from '../../util/util';
 import type { Option } from '../../flow/generalTypes';
 
-
-const caseInsensitivePrefixFilter: Function = (searchText: string, key: string): boolean => {
-  let index = key.toLowerCase().indexOf(searchText.toLowerCase());
-  return index === 0;
-};
-
-const showAllOptionSettings: Function = (): Object => {
-  return {
-    autocompleteFilter: caseInsensitivePrefixFilter,
-    focusBehaviorProps: {
-      openOnFocus: true
-    }
-  };
-};
-
-const showLimitedOptionSettings: Function = (optionDisplayProps: Object): Object => {
-  return {
-    autocompleteFilter: (searchText, key) => {
-      return searchText !== '' ? caseInsensitivePrefixFilter(searchText, key) : false;
-    },
-    focusBehaviorProps: {
-      openOnFocus: false,
-      showOptionsWhenBlank: false,
-      maxSearchResults: optionDisplayProps.resultLimit
-    }
-  };
-};
-
-export default class SelectField extends React.Component {
+class SelectField extends React.Component {
   constructor(props: Object) {
     super(props);
-    const { resultLimit } = this.props;
     this.editKeySet = this.createEditKeySet();
-
-    // Set some inter-related option display properties on this component
-    let optionDisplayProps = { resultLimit: resultLimit };
-    let optionDisplaySettingsFunc = resultLimit ? showLimitedOptionSettings : showAllOptionSettings;
-    _.assignIn(this, optionDisplaySettingsFunc(optionDisplayProps));
   }
 
   // type declarations
   editKeySet: string[];
-  autocompleteFilter: Function;
-  focusBehaviorProps: Object;
 
   static propTypes = {
     profile:                  React.PropTypes.object.isRequired,
     autocompleteStyleProps:   React.PropTypes.object,
+    autocompleteBehaviors:    React.PropTypes.array,
     errors:                   React.PropTypes.object,
     label:                    React.PropTypes.node,
     onChange:                 React.PropTypes.func,
     updateProfile:            React.PropTypes.func,
-    resultLimit:              React.PropTypes.number,
+    maxSearchResults:         React.PropTypes.number,
     keySet:                   React.PropTypes.array,
     options:                  React.PropTypes.array
   };
 
   static defaultProps = {
     autocompleteStyleProps: {
+      menuHeight: 300,
       menuStyle: {maxHeight: 300},
       fullWidth: true
-    }
+    },
+    autocompleteBehaviors: [showAllOptions]
   };
-
-  convertOption: Function = (option: Option): Object => ({
-    text: option.label,
-    value: <MenuItem key={option.value} primaryText={option.label} value={option.value}/>
-  });
 
   createEditKeySet: Function = (): string[] => {
     const { keySet } = this.props;
@@ -115,16 +78,19 @@ export default class SelectField extends React.Component {
     if (index === -1) {
       // enter was pressed and optionOrString is a string
       // select first item in dropdown if any are present
-      let filteredOptionValues = options.
-        map(option => option.label).
-        filter(this.autocompleteFilter.bind(this, optionOrString));
-      if (filteredOptionValues.length > 0) {
-        let option = options.find(option => option.label === filteredOptionValues[0]);
-        toStore = option.value;
+      let autocompleteProps = this.getAutocompleteProps();
+      let filterFunction = _.has(autocompleteProps, 'filter') ?
+        autocompleteProps.filter :
+        defaultFilter;
+      let firstMatchingOption = options.find((option) => filterFunction(optionOrString, option.label));
+      if (firstMatchingOption) {
+        toStore = firstMatchingOption.value;
       }
     } else {
       // user selected an item in the menu
-      toStore = _.get(optionOrString, ['value', 'props', 'value']);
+      if ( typeof optionOrString !== 'string' ) {
+        toStore = optionOrString.value;
+      }
     }
 
     if (toStore !== undefined) {
@@ -138,25 +104,28 @@ export default class SelectField extends React.Component {
     }
   };
 
-  autocompleteProps: Function = (): Object => {
+  getAutocompleteProps: Function = (): Object => {
     const {
+      autocompleteBehaviors,
+      autocompleteStyleProps,
       label,
       options,
       keySet,
       errors
     } = this.props;
+    // Call the autocompleteBehaviors array in series and combine their results into a single object to pass as props
+    let autocompleteProps = Object.assign({}, ...callFunctionArray(autocompleteBehaviors, this.props));
     return Object.assign({}, {
       ref: "autocomplete",
       animated: false,
       menuCloseDelay: 0,
-      filter: this.autocompleteFilter,
-      dataSource: options.map(this.convertOption),
+      dataSource: options,
       floatingLabelText: label,
       onNewRequest: this.onNewRequest,
       onUpdateInput: this.onUpdateInput,
       onBlur: this.onBlur,
       errorText: _.get(errors, keySet)
-    }, this.props.autocompleteStyleProps, this.focusBehaviorProps);
+    }, autocompleteStyleProps, autocompleteProps);
   };
 
   getSearchText: Function = (): string => {
@@ -184,8 +153,10 @@ export default class SelectField extends React.Component {
     return (
       <AutoComplete
         searchText={this.getSearchText()}
-        {...this.autocompleteProps()}
+        {...this.getAutocompleteProps()}
       />
     );
   }
 }
+
+export default SelectField;

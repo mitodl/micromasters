@@ -11,6 +11,7 @@ import {
   makeProfileProgressDisplay,
   userPrivilegeCheck,
   calculateDegreeInclusions,
+  callFunctionArray,
 } from '../util/util';
 import {
   EDUCATION_LEVELS,
@@ -20,6 +21,7 @@ import {
   BACHELORS,
   DOCTORATE,
   MASTERS,
+  PROFILE_STEP_LABELS,
 } from '../constants';
 
 /* eslint-disable camelcase */
@@ -106,12 +108,13 @@ describe('utility functions', () => {
 
   describe('makeProfileProgressDisplay', () => {
     it('renders the right active display', () => {
-      let expected = ["Personal", "Education", "Professional", "Profile Privacy"];
+      let keys = [...PROFILE_STEP_LABELS.keys()];
+      PROFILE_STEP_LABELS.forEach((label, step) => {
+        let i = keys.findIndex(k => k === step);
 
-      for (let i = 0; i < expected.length; ++i) {
-        let svg = makeProfileProgressDisplay(i);
+        let svg = makeProfileProgressDisplay(step);
         let desc = svg.props.children[0];
-        assert.equal(desc.props.children.join(""), `Profile progress: ${expected[i]}`);
+        assert.equal(desc.props.children.join(""), `Profile progress: ${label}`);
 
         let foundCircle = false, foundCircleText = false, foundText = false;
         for (let child of svg.props.children[1]) {
@@ -125,7 +128,7 @@ describe('utility functions', () => {
             foundCircleText = true;
           }
           if (child.key === `text_${i}`) {
-            assert.equal(child.props.children, expected[i]);
+            assert.equal(child.props.children, label);
             foundText = true;
           }
         }
@@ -134,7 +137,7 @@ describe('utility functions', () => {
             `Unable to find one of circle: ${foundCircle} circleText: ${foundCircleText} text: ${foundText}`
           );
         }
-      }
+      });
     });
   });
 
@@ -215,6 +218,25 @@ describe('utility functions', () => {
         [MASTERS]: false,
         [ASSOCIATE]: false
       });
+    });
+  });
+
+  describe('callFunctionArray', () => {
+    it('should take an array of functions, call them in series with given args, and return list of results', () => {
+      let testFunctionA = (arg) => (`testFunctionA ${arg}`),
+        testFunctionB = (arg) => (`testFunctionB ${arg}`),
+        arg = 'arg';
+      let testFunctionArray = [
+        testFunctionA,
+        testFunctionA,
+        testFunctionB
+      ];
+      let results = callFunctionArray(testFunctionArray, arg);
+      assert.deepEqual(results, [
+        'testFunctionA arg',
+        'testFunctionA arg',
+        'testFunctionB arg'
+      ]);
     });
   });
 });

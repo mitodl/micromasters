@@ -12,6 +12,10 @@ import {
   UPDATE_PROFILE_VALIDATION,
   REQUEST_PATCH_USER_PROFILE,
   RECEIVE_PATCH_USER_PROFILE_SUCCESS,
+  RECEIVE_GET_USER_PROFILE_FAILURE,
+  RECEIVE_PATCH_USER_PROFILE_FAILURE,
+  RECEIVE_DASHBOARD_SUCCESS,
+  CLEAR_PROFILE_EDIT,
 } from '../actions';
 import {
   SET_WORK_DIALOG_VISIBILITY,
@@ -30,7 +34,8 @@ import {
 } from '../util/util';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import * as api from '../util/api';
-import { USER_PROFILE_RESPONSE } from '../constants';
+import { USER_PROFILE_RESPONSE, HIGH_SCHOOL, DOCTORATE } from '../constants';
+import { workEntriesByDate, educationEntriesByDate } from '../util/sorting';
 
 describe("UserPage", function() {
   this.timeout(5000);
@@ -48,6 +53,42 @@ describe("UserPage", function() {
     return [...document.getElementsByClassName('deletion-confirmation')].find(dialog => (
       dialog.style["left"] === "0px"
     ));
+  };
+
+  const confirmResumeOrder = (
+    editButton,
+    profileProperty,
+    sortFunc,
+    editActions,
+    dialogIndexProperty
+  ) => {
+    let state = helper.store.getState();
+    let sorted = sortFunc(state.profiles[SETTINGS.username].profile[profileProperty]);
+
+    // sorted entries should not equal unsorted entries
+    assert.notDeepEqual(
+      state.profiles[SETTINGS.username].profile[profileProperty],
+      sorted.map(([,entry]) => entry)
+    );
+
+    return listenForActions(editActions, () => {
+      TestUtils.Simulate.click(editButton);
+    }).then(() => {
+      state = helper.store.getState();
+      let stateIndex = state.ui[dialogIndexProperty];
+      let [sortIndex, sortEntry] = sorted[0];
+      // the dialog index dispatched to the store should be the same index
+      // as the index (into the unsorted list) of the first element in our sorted list
+      // since we clicked on the first entry in the UI
+      assert.equal(stateIndex, sortIndex);
+      // this index should not be equal to 0, since the first element in the sorted list
+      // should not be the first item in the unsorted list
+      assert.notEqual(stateIndex, 0);
+      // the entry the index in the state points to should be the same element
+      // in the unsorted array that we have in the sorted array
+      let entries = state.profiles[SETTINGS.username].profile[profileProperty];
+      assert.deepEqual(sortEntry, entries[stateIndex]);
+    });
   };
 
   describe ("Authenticated user page", () => {
@@ -71,16 +112,131 @@ describe("UserPage", function() {
       helper.cleanup();
     });
 
+    describe('error handling', () => {
+      let errorString = `Sorry, we were unable to load the data necessary
+      to process your request. Please reload the page.`;
+      errorString = errorString.replace(/\s\s+/g, ' ');
+
+      let contactExpectation = `If the error persists, please contact 
+      mitx-support@mit.edu specifying this entire error message.`;
+      contactExpectation = contactExpectation.replace(/\s\s+/g, ' ');
+
+      const confirmErrorMessage = (div, expectedMessageText) => {
+        let alert = div.querySelector('.alert-message');
+        let messages = alert.getElementsByTagName('p');
+        assert.deepEqual(messages[0].textContent, expectedMessageText[0]);
+        assert.deepEqual(messages[1].textContent, expectedMessageText[1]);
+        assert.deepEqual(messages[2].textContent, contactExpectation);
+      };
+
+      it('should show an error for profile GET', () => {
+        let fourOhFour = {
+          errorStatusCode: 404,
+          detail: "some error messsage"
+        };
+        helper.profileGetStub.
+          withArgs(SETTINGS.username).
+          returns(Promise.reject(fourOhFour));
+        let actions = [
+          REQUEST_GET_USER_PROFILE,
+          RECEIVE_DASHBOARD_SUCCESS,
+          RECEIVE_GET_USER_PROFILE_FAILURE,
+        ];
+        return renderComponent(`/users/${SETTINGS.username}`, actions, false).then(([, div]) => {
+          confirmErrorMessage(div, [
+            `404 ${errorString}`,
+            `Additional info: ${fourOhFour.detail}`
+          ]);
+        });
+      });
+
+      it('should show an error for profile PATCH', () => {
+        patchUserProfileStub.returns(Promise.reject({errorStatusCode: 500}));
+        let userPageActions = [
+          REQUEST_GET_USER_PROFILE,
+          RECEIVE_DASHBOARD_SUCCESS,
+          RECEIVE_GET_USER_PROFILE_SUCCESS,
+          RECEIVE_GET_USER_PROFILE_SUCCESS,
+        ];
+        return renderComponent(`/users/${SETTINGS.username}`, userPageActions, false).then(([, div]) => {
+          let editButton = div.querySelector('.mdl-card').querySelector('.mdl-button--icon');
+          listenForActions([
+            SET_USER_PAGE_DIALOG_VISIBILITY,
+            START_PROFILE_EDIT,
+            UPDATE_PROFILE_VALIDATION,
+            REQUEST_PATCH_USER_PROFILE,
+            RECEIVE_PATCH_USER_PROFILE_FAILURE,
+            CLEAR_PROFILE_EDIT,
+            SET_USER_PAGE_DIALOG_VISIBILITY,
+            CLEAR_PROFILE_EDIT,
+          ], () => {
+            TestUtils.Simulate.click(editButton);
+            let dialog = document.querySelector('.personal-dialog');
+            let save = dialog.querySelector('.save-button');
+            TestUtils.Simulate.click(save);
+          }).then(() => {
+            confirmErrorMessage(div, [`500 ${errorString}`, '']);
+          });
+        });
+      });
+    });
+
+    it('should have a logout button', () => {
+      return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
+        let button = div.querySelector("#logout-link");
+        assert.ok(button);
+      });
+    });
+
     describe("Education History", () => {
       let deleteButton = div => {
         return div.getElementsByClassName('profile-tab-card')[1].
           getElementsByClassName('delete-button')[0];
       };
 
+      beforeEach(() => {
+        let userProfile = Object.assign({}, USER_PROFILE_RESPONSE, {
+          username: SETTINGS.username
+        });
+        userProfile.education.push({
+          "id": 3,
+          "degree_name": DOCTORATE,
+          "graduation_date": "2015-12-01",
+          "field_of_study": "Philosophy",
+          "school_name": "Harvard",
+          "school_city": "Cambridge",
+          "school_state_or_territory": "US-MA",
+          "school_country": "US",
+          "online_degree": false
+        });
+        helper.profileGetStub.
+          withArgs(SETTINGS.username).
+          returns(Promise.resolve(userProfile));
+      });
+
       it('shows the education component', () => {
         return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
           let title = div.getElementsByClassName('profile-card-title')[1];
           assert.equal(title.textContent, 'Education');
+        });
+      });
+
+      it('should show the entries in resume order', () => {
+        return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
+          let editButton = div.querySelector('#education-card').
+            querySelector('.edit-button');
+
+          return confirmResumeOrder(
+            editButton,
+            'education',
+            educationEntriesByDate,
+            [
+              SET_EDUCATION_DIALOG_INDEX,
+              SET_EDUCATION_DIALOG_VISIBILITY,
+              SET_EDUCATION_DEGREE_LEVEL,
+            ],
+            'educationDialogIndex'
+          );
         });
       });
 
@@ -158,13 +314,23 @@ describe("UserPage", function() {
             getElementsByClassName('profile-add-button')[0];
 
           let updatedProfile = _.cloneDeep(USER_PROFILE_RESPONSE);
-          let entry = generateNewEducation();
-          entry.graduation_date = "1999-12-01";
-          entry.school_name = "A School";
-          entry.school_country = "AF";
-          entry.school_state_or_territory = "AF-BAL";
-          entry.school_city = "FoobarVille";
-          updatedProfile.work_history.push(entry);
+          updatedProfile.username = SETTINGS.username;
+          let entry = Object.assign({}, generateNewEducation(HIGH_SCHOOL), {
+            graduation_date: "1999-12-01",
+            graduation_date_edit: {
+              year: '1999',
+              month: '12',
+              day: undefined
+            },
+            degree_name_edit: undefined,
+            school_name: "A School",
+            school_country: "AF",
+            school_country_edit: undefined,
+            school_state_or_territory: "AF-BAL",
+            school_state_or_territory_edit: undefined,
+            school_city: "FoobarVille"
+          });
+          updatedProfile.education.push(entry);
 
           patchUserProfileStub.throws("Invalid arguments");
           patchUserProfileStub.withArgs(SETTINGS.username, updatedProfile).returns(
@@ -178,6 +344,7 @@ describe("UserPage", function() {
             SET_EDUCATION_DEGREE_LEVEL,
             UPDATE_PROFILE_VALIDATION,
             REQUEST_PATCH_USER_PROFILE,
+            RECEIVE_PATCH_USER_PROFILE_SUCCESS
           ];
           for (let i = 0; i < 12; i++) {
             expectedActions.push(UPDATE_PROFILE);
@@ -193,9 +360,9 @@ describe("UserPage", function() {
             modifyTextField(inputs[0], "High School");
 
             // fill out graduation date, school name
-            modifyTextField(inputs[1], "12");
-            modifyTextField(inputs[2], "1999");
-            modifyTextField(inputs[3], "A School");
+            modifyTextField(inputs[1], "A School");
+            modifyTextField(inputs[2], "12");
+            modifyTextField(inputs[3], "1999");
 
             // set country, state, and city
             modifyTextField(inputs[4], "Afghanistan");
@@ -219,6 +386,25 @@ describe("UserPage", function() {
         return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
           let title = div.getElementsByClassName('profile-card-title')[0];
           assert.equal(title.textContent, 'Employment');
+        });
+      });
+
+      it('should show the entries in resume order', () => {
+        return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
+          let editButton = div.getElementsByClassName('profile-tab-card')[0].
+            getElementsByClassName('profile-row-icons')[0].
+            getElementsByClassName('mdl-button')[0];
+
+          return confirmResumeOrder(
+            editButton,
+            'work_history',
+            workEntriesByDate,
+            [
+              SET_WORK_DIALOG_INDEX,
+              SET_WORK_DIALOG_VISIBILITY
+            ],
+            'workDialogIndex'
+          );
         });
       });
 
@@ -297,15 +483,30 @@ describe("UserPage", function() {
             getElementsByClassName('profile-add-button')[0];
 
           let updatedProfile = _.cloneDeep(USER_PROFILE_RESPONSE);
-          let entry = generateNewWorkHistory();
-          entry.position = "Assistant Foobar";
-          entry.industry = "Accounting";
-          entry.company_name = "FoobarCorp";
-          entry.start_date = "2001-12-01";
-          entry.end_date = "2002-01-01";
-          entry.city = "FoobarVille";
-          entry.country = "AF";
-          entry.state_or_territory = "AF-BAL";
+          updatedProfile.username = SETTINGS.username;
+          let entry = Object.assign({}, generateNewWorkHistory(), {
+            position: "Assistant Foobar",
+            industry: "Accounting",
+            industry_edit: undefined,
+            company_name: "FoobarCorp",
+            start_date: "2001-12-01",
+            start_date_edit: {
+              year: "2001",
+              month: "12",
+              day: undefined
+            },
+            end_date: "2002-01-01",
+            end_date_edit: {
+              year: "2002",
+              month: "1",
+              day: undefined
+            },
+            city: "FoobarVille",
+            country: "AF",
+            country_edit: undefined,
+            state_or_territory: "AF-BAL",
+            state_or_territory_edit: undefined,
+          });
           updatedProfile.work_history.push(entry);
 
           patchUserProfileStub.throws("Invalid arguments");
@@ -320,6 +521,7 @@ describe("UserPage", function() {
             SET_WORK_DIALOG_VISIBILITY,
             UPDATE_PROFILE_VALIDATION,
             REQUEST_PATCH_USER_PROFILE,
+            RECEIVE_PATCH_USER_PROFILE_SUCCESS
           ];
           for (let i = 0; i < 14; i++) {
             expectedActions.push(UPDATE_PROFILE);
@@ -380,29 +582,59 @@ describe("UserPage", function() {
         });
       });
     });
+
+    it("should show all edit, delete icons for an authenticated user's own page" , () => {
+      return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
+        let count = div.getElementsByClassName('mdl-button--icon').length;
+        assert.equal(count,
+          1 + USER_PROFILE_RESPONSE.work_history.length * 2 + USER_PROFILE_RESPONSE.education.length * 2
+        );
+      });
+    });
+
+    it("should not show any edit, delete icons for other user pages" , () => {
+      let otherProfile = Object.assign({}, USER_PROFILE_RESPONSE, {
+        username: 'other'
+      });
+      helper.profileGetStub.withArgs('other').returns(Promise.resolve(otherProfile));
+      return renderComponent(`/users/other`, userActions).then(([, div]) => {
+        let count = div.getElementsByClassName('mdl-button--icon').length;
+        assert.equal(count, 0);
+      });
+    });
   });
 
   describe("Unauthenticated user page", () => {
+    let settingsBackup;
+
     beforeEach(() => {
       helper = new IntegrationTestHelper();
       listenForActions = helper.listenForActions.bind(helper);
-      renderComponent = helper.renderComponent.bind(helper);    
-      patchUserProfileStub = helper.sandbox.stub(api, 'patchUserProfile');
+      renderComponent = helper.renderComponent.bind(helper);
       helper.profileGetStub.
         withArgs(SETTINGS.username).
-        returns (
-        Promise.resolve(Object.assign({}, USER_PROFILE_RESPONSE))
-      );
+        returns(Promise.resolve(USER_PROFILE_RESPONSE));
+      settingsBackup = SETTINGS;
+      SETTINGS = Object.assign({}, SETTINGS, {
+        authenticated: false
+      });
     });
 
     afterEach(() => {
       helper.cleanup();
+      SETTINGS = settingsBackup;
     });
 
     it('should hide all edit, delete icons', () => {
-      return renderComponent(`/users/${SETTINGS.username}`, userActions).then(() => {
-        let icons = [...document.getElementsByClassName('mdl-button--icons')];
-        assert.deepEqual(icons, []);
+      return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
+        assert.equal(0, div.getElementsByClassName('mdl-button--icon').length);
+      });
+    });
+
+    it('should show sign in button with valid link', () => {
+      return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
+        let button = div.querySelector("a[href='/login/edxorg/']");
+        assert.equal(button.textContent.trim(), "Sign in with edX.org");
       });
     });
   });

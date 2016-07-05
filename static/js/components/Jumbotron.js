@@ -1,14 +1,16 @@
+// @flow
 /* global SETTINGS: false */
 import React from 'react';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 
 import { makeProfileImageUrl } from '../util/util';
+import type { Profile } from '../flow/profileTypes';
 
 class Jumbotron extends React.Component {
-  static propTypes = {
-    profile:      React.PropTypes.object.isRequired,
-    text:         React.PropTypes.string.isRequired,
-    children:     React.PropTypes.object.isRequired,
+  props: {
+    profile:      Profile,
+    text:         string,
+    children?:    React$Element[],
   };
 
   render() {

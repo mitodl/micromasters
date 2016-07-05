@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block body_class %}template-programpage{% endblock %}
+
+{% block title %}{% trans "MIT MicroMasters" %}{% endblock %}
+
+{% block extrahead %}
+<script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+    integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="app-media layout-boxed">
+
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a href="/" class="navbar-brand" href="javascript:void(0)"><img src="/static/images/logo-micromasters@2x.png" width="215" height="40" alt="MIT MicroMasters" /></a>
+        <div class="nav-utility pull-right">
+            {% if authenticated %}
+            <div class="dropdown btn-group">
+              <a class="btn btn-danger" href="/dashboard"><span>{{ name }}</span></a>
+              <button aria-label="logout_label" id="user-menu" role="button" class="dropdown-toggle btn btn-danger"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" type="button">
+                <span><span class="caret"></span></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="user-menu">
+                <li role="presentation" class=""><a role="menuitem" href="/users/{{ username }}" tabindex="-1">Profile</a></li>
+                <li role="presentation" class=""><a role="menuitem" href="/settings" tabindex="-1">Settings</a></li>
+                <li role="presentation" class=""><a role="menuitem" href="/logout" tabindex="-1">Logout</a></li>
+              </ul>
+            </div>
+            {% else %}
+            <span>Get Started Today!</span>
+            <a class="btn btn-danger" href="{% url 'social:begin' 'edxorg' %}">
+              Sign in with edX.org
+            </a>
+            {% endif %}
+        </div>
+        {% if authenticated %}
+        <ul class="nav navbar-toolbar navbar-left">
+          <li class="active">
+            <a href="/dashboard">Dashboard</a>
+          </li>
+        </ul>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+<div class="main-content">
+  <div class="card">
+
+     <div>
+       <div class="card-header">
+        {% block error_header %}
+        {% endblock %}
+       </div>
+       <div class="card-copy">
+         {% block error_content %}
+         {% endblock %}
+       </div>
+     </div>
+   </div>
+ </div>
+
+  {% include "footer.html" %}
+</div>
+{% endblock %}

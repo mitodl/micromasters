@@ -1,3 +1,4 @@
+// @flow
 /* global SETTINGS: false */
 import React from 'react';
 import { connect } from 'react-redux';
@@ -5,14 +6,17 @@ import Loader from 'react-loader';
 
 import { FETCH_PROCESSING, clearProfile } from '../actions';
 import ProfileFormContainer from './ProfileFormContainer';
+import ErrorMessage from '../components/ErrorMessage';
 
 class UserPage extends ProfileFormContainer {
   componentDidMount() {
-    this.fetchProfile();
+    const { params: { username } } = this.props;
+    this.fetchProfile(username);
   }
 
   componentDidUpdate() {
-    this.fetchProfile();
+    const { params: { username } } = this.props;
+    this.fetchProfile(username);
   }
 
   componentWillUnmount() {
@@ -32,10 +36,9 @@ class UserPage extends ProfileFormContainer {
       profile = profiles[username];
       loaded = profiles[username].getStatus !== FETCH_PROCESSING;
     }
-
-    let childrenWithProps = this.childrenWithProps(profile);
+    const { errorInfo } = profile;
     return <Loader loaded={loaded}>
-      { childrenWithProps }
+      {errorInfo && loaded ? <ErrorMessage errorInfo={errorInfo} /> : this.childrenWithProps(profile)}
     </Loader>;
   }
 }

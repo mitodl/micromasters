@@ -2,9 +2,15 @@
 // adapted from https://github.com/callemall/material-ui/blob/8e80a35e8d2cdb410c3727333e8518cadc08783b/src/AutoComplete/AutoComplete.js
 import React, {Component, PropTypes} from 'react';
 import ReactDOM from 'react-dom';
+import _ from 'lodash';
 import keycode from 'keycode';
+import { 
+  defaultFilter, 
+  defaultMenuItemRender,
+  noFilter
+} from './utils/AutoCompleteSettings';
 import TextField from 'material-ui/TextField';
-import Menu from 'material-ui/Menu';
+import Menu from './Menu';
 import MenuItem from 'material-ui/MenuItem';
 import Divider from 'material-ui/Divider';
 import Popover from 'material-ui/Popover/Popover';
@@ -31,6 +37,7 @@ function getStyles(props, context, state) {
     },
     innerDiv: {
       overflow: 'hidden',
+      color: 'black'
     },
   };
 
@@ -71,12 +78,8 @@ class AutoComplete extends Component {
     errorText: PropTypes.node,
     /**
      * Callback function used to filter the auto complete.
-     *
-     * @param {string} searchText The text to search for within `dataSource`.
-     * @param {string} key `dataSource` element, or `text` property on that element if it's not a string.
-     * @returns {boolean} `true` indicates the auto complete list will include `key` when the input is `searchText`.
      */
-    filter: PropTypes.func,
+    filter: PropTypes.func.isRequired,
     /**
      * The content to use for adding floating label element.
      */
@@ -106,10 +109,15 @@ class AutoComplete extends Component {
      * Props to be passed to menu.
      */
     menuProps: PropTypes.object,
+    menuHeight: PropTypes.number.isRequired,
     /**
      * Override style for menu.
      */
     menuStyle: PropTypes.object,
+    /**
+     * Function to use to render MenuItems
+     */
+    menuItemRenderer: PropTypes.func,
     /**
      * Callback function that is fired when the `TextField` loses focus.
      *
@@ -179,7 +187,8 @@ class AutoComplete extends Component {
     },
     animated: true,
     disableFocusRipple: true,
-    filter: (searchText, key) => searchText !== '' && key.indexOf(searchText) !== -1,
+    filter: defaultFilter,
+    menuItemRenderer: defaultMenuItemRender,
     fullWidth: false,
     open: false,
     openOnFocus: false,
@@ -233,6 +242,11 @@ class AutoComplete extends Component {
     });
   }
 
+  menuShouldShow(searchText) {
+    searchText = (searchText === undefined) ? this.state.searchText : searchText;
+    return this.props.showOptionsWhenBlank || searchText !== '';
+  }
+
   handleRequestClose = () => {
     // Only take into account the Popover clickAway when we are
     // not focusing the TextField.
@@ -260,12 +274,26 @@ class AutoComplete extends Component {
     event.preventDefault();
   };
 
-  handleItemTouchTap = (event, child) => {
-    const dataSource = this.props.dataSource;
+  getFilteredDataSource = () => {
+    const { dataSource, searchText } = this.props;
+    const filter = this.getFilter();
+    return dataSource.filter(option => filter(searchText, option.label, option));
+  };
 
-    const index = parseInt(child.key, 10);
+  getFilter = () => {
+    const { filter } = this.props;
+    if (this.state.skipFilter) {
+      return noFilter;
+    } else {
+      return filter;
+    }
+  };
+
+  handleItemTouchTap = (event, child, index) => {
+    const dataSource = this.getFilteredDataSource();
+
     const chosenRequest = dataSource[index];
-    const searchText = typeof chosenRequest === 'string' ? chosenRequest : chosenRequest.text;
+    const searchText = chosenRequest.label;
 
     this.props.onNewRequest(chosenRequest, index);
 
@@ -288,12 +316,11 @@ class AutoComplete extends Component {
   };
 
   handleKeyDown = (event) => {
+    const { searchText } = this.state;
     if (this.props.onKeyDown) this.props.onKeyDown(event);
-
     switch (keycode(event)) {
       case 'enter': {
         this.close();
-        const searchText = this.state.searchText;
         if (searchText !== '') {
           this.props.onNewRequest(searchText, -1);
         }
@@ -302,10 +329,9 @@ class AutoComplete extends Component {
       case 'esc':
         this.close();
         break;
-
       case 'down':
         event.preventDefault();
-        if (this.props.showOptionsWhenBlank || this.state.searchText !== '') {
+        if (this.menuShouldShow(searchText)) {
           this.setState({
             open: true,
             focusTextField: false,
@@ -314,7 +340,6 @@ class AutoComplete extends Component {
           });
         }
         break;
-
       default:
         this.setState({ skipFilter: false });
         break;
@@ -329,10 +354,9 @@ class AutoComplete extends Component {
     if (searchText === this.state.searchText) {
       return;
     }
-
     this.setState({
       searchText: searchText,
-      open: true,
+      open: this.menuShouldShow(searchText),
       anchorEl: ReactDOM.findDOMNode(this.refs.searchTextField),
     }, () => {
       this.props.onUpdateInput(searchText, this.props.dataSource);
@@ -358,15 +382,35 @@ class AutoComplete extends Component {
       });
     }
 
+    let skipFilter = this.props.showOptionsWhenBlank;
+    // We want to open the popup with all results if available, else
+    // if the popup is already open we want to filter as usual
+    if (this.state.searchText !== '' && this.state.searchText !== undefined && this.state.open) {
+      skipFilter = false;
+    }
+
     this.setState({
       focusTextField: true,
-      skipFilter: this.props.showOptionsWhenBlank
+      skipFilter: skipFilter
     });
 
     if (this.props.onFocus) {
       this.props.onFocus(event);
     }
   };
+
+  getMenuItemSettings() {
+    const { disableFocusRipple } = this.props;
+    const { searchText } = this.state;
+    const styles = getStyles(this.props, this.context, this.state);
+    return {
+      props: {
+        disableFocusRipple: disableFocusRipple,
+        innerDivStyle: styles.innerDiv
+      },
+      searchText: searchText
+    };
+  }
 
   blur() {
     this.refs.searchTextField.blur();
@@ -385,15 +429,17 @@ class AutoComplete extends Component {
       floatingLabelText,
       hintText,
       fullWidth,
+      menuHeight,
       menuStyle,
       menuProps,
+      menuItemRenderer,
       listStyle,
       targetOrigin,
-      disableFocusRipple,
+      disableFocusRipple, // eslint-disable-line no-unused-vars
       triggerUpdateOnFocus, // eslint-disable-line no-unused-vars
       openOnFocus, // eslint-disable-line no-unused-vars
       maxSearchResults,
-      dataSource,
+      dataSource, // eslint-disable-line no-unused-vars
       ...other,
     } = this.props;
 
@@ -407,84 +453,33 @@ class AutoComplete extends Component {
     const {prepareStyles} = this.context.muiTheme;
     const styles = getStyles(this.props, this.context, this.state);
 
-    const requestsList = [];
-    let filter = this.props.filter;
-    if (this.state.skipFilter) {
-      filter = AutoComplete.noFilter;
+    let requestsList = this.getFilteredDataSource();
+    if (maxSearchResults > 0) {
+      requestsList = requestsList.slice(0, maxSearchResults);
     }
 
-    dataSource.every((item, index) => {
-      switch (typeof item) {
-        case 'string':
-          if (filter(searchText, item, item)) {
-            requestsList.push({
-              text: item,
-              value: (
-                <MenuItem
-                  innerDivStyle={styles.innerDiv}
-                  value={item}
-                  primaryText={item}
-                  disableFocusRipple={disableFocusRipple}
-                  key={index}
-                />),
-            });
-          }
-          break;
-
-        case 'object':
-          if (item && typeof item.text === 'string') {
-            if (filter(searchText, item.text, item)) {
-              if (item.value.type && (item.value.type.muiName === MenuItem.muiName ||
-                 item.value.type.muiName === Divider.muiName)) {
-                requestsList.push({
-                  text: item.text,
-                  value: React.cloneElement(item.value, {
-                    key: index,
-                    disableFocusRipple: this.props.disableFocusRipple,
-                  }),
-                });
-              } else {
-                requestsList.push({
-                  text: item.text,
-                  value: (
-                    <MenuItem
-                      innerDivStyle={styles.innerDiv}
-                      primaryText={item.value}
-                      disableFocusRipple={disableFocusRipple}
-                      key={index}
-                    />),
-                });
-              }
-            }
-          }
-          break;
-
-        default:
-          // Do nothing
-      }
-
-      return !(maxSearchResults && maxSearchResults > 0 && requestsList.length === maxSearchResults);
-    });
-
-    this.requestsList = requestsList;
+    // 'renderItem' in Material-UI's Menu is only passed an option object when it is called downstream.
+    // This line prepares that 'renderItem' function ahead of time with some values that all MenuItems need and can't
+    // be determined by the option object alone.
+    let preparedMenuItemRenderer = _.partial(menuItemRenderer, this.getMenuItemSettings());
 
     const menu = open && requestsList.length > 0 && (
       <Menu
         {...menuProps}
         ref="menu"
-        autoWidth={false}
+        autoWidth={true}
         disableAutoFocus={focusTextField}
         onEscKeyDown={this.handleEscKeyDown}
         initiallyKeyboardFocused={true}
         onItemTouchTap={this.handleItemTouchTap}
         onMouseDown={this.handleMouseDown}
         style={Object.assign(styles.menu, menuStyle)}
+        menuHeight={menuHeight}
         listStyle={Object.assign(styles.list, listStyle)}
-      >
-        {requestsList.map((i) => i.value)}
-      </Menu>
+        requestsList={requestsList}
+        renderItem={preparedMenuItemRenderer}
+      />
     );
-
     return (
       <div style={prepareStyles(Object.assign(styles.root, style))} >
         <TextField
@@ -519,60 +514,6 @@ class AutoComplete extends Component {
     );
   }
 }
-
-AutoComplete.levenshteinDistance = (searchText, key) => {
-  const current = [];
-  let prev;
-  let value;
-
-  for (let i = 0; i <= key.length; i++) {
-    for (let j = 0; j <= searchText.length; j++) {
-      if (i && j) {
-        if (searchText.charAt(j - 1) === key.charAt(i - 1)) value = prev;
-        else value = Math.min(current[j], current[j - 1], prev) + 1;
-      } else {
-        value = i + j;
-      }
-      prev = current[j];
-      current[j] = value;
-    }
-  }
-  return current.pop();
-};
-
-AutoComplete.noFilter = () => true;
-
-AutoComplete.defaultFilter = AutoComplete.caseSensitiveFilter = (searchText, key) => {
-  return searchText !== '' && key.indexOf(searchText) !== -1;
-};
-
-AutoComplete.caseInsensitiveFilter = (searchText, key) => {
-  return key.toLowerCase().indexOf(searchText.toLowerCase()) !== -1;
-};
-
-AutoComplete.levenshteinDistanceFilter = (distanceLessThan) => {
-  if (distanceLessThan === undefined) {
-    return AutoComplete.levenshteinDistance;
-  } else if (typeof distanceLessThan !== 'number') {
-    throw 'Error: AutoComplete.levenshteinDistanceFilter is a filter generator, not a filter!';
-  }
-
-  return (s, k) => AutoComplete.levenshteinDistance(s, k) < distanceLessThan;
-};
-
-AutoComplete.fuzzyFilter = (searchText, key) => {
-  const compareString = key.toLowerCase();
-  searchText = searchText.toLowerCase();
-
-  let searchTextIndex = 0;
-  for (let index = 0; index < key.length; index++) {
-    if (compareString[index] === searchText[searchTextIndex]) {
-      searchTextIndex += 1;
-    }
-  }
-
-  return searchTextIndex === searchText.length;
-};
 
 AutoComplete.Item = MenuItem;
 AutoComplete.Divider = Divider;

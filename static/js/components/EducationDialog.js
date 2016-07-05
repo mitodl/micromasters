@@ -62,7 +62,7 @@ export default class EducationDialog extends ProfileFormFields {
 
     let fieldOfStudy = () => {
       if (educationDegreeLevel !== HIGH_SCHOOL) { 
-        return <Cell col={6}>
+        return <Cell col={12}>
             <FieldsOfStudySelectField
               keySet={keySet('field_of_study')}
               label='Field of Study'
@@ -71,9 +71,6 @@ export default class EducationDialog extends ProfileFormFields {
           </Cell>;
       }
     };
-    let highSchoolPadding = () => (
-      educationDegreeLevel === HIGH_SCHOOL ? <Cell col={6} /> : undefined
-    );
     let levelForm = () => {
       if ( showLevelForm ) {
         return <Cell col={12}>
@@ -93,14 +90,11 @@ export default class EducationDialog extends ProfileFormFields {
       </Cell>
       { levelForm() }
       { fieldOfStudy() }
-      <Cell col={6}>
-        {this.boundDateField(keySet('graduation_date'), 'Graduation Date', true)}
-      </Cell>
-      { highSchoolPadding() }
-      <Cell col={6}>
+      <Cell col={7}>
         {this.boundTextField(keySet('school_name'), 'School Name')}
       </Cell>
-      <Cell col={6}>
+      <Cell col={5}>
+        {this.boundDateField(keySet('graduation_date'), 'Graduation Date', true)}
       </Cell>
       <Cell col={4}>
         <CountrySelectField

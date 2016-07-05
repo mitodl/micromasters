@@ -12,6 +12,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import { generateNewWorkHistory, userPrivilegeCheck } from '../util/util';
+import { workEntriesByDate } from '../util/sorting';
 import { employmentValidation } from '../util/validation';
 import ProfileFormFields from '../util/ProfileFormFields';
 import ConfirmDeletion from './ConfirmDeletion';
@@ -28,9 +29,13 @@ class EmploymentForm extends ProfileFormFields {
     });
   };
 
-  toggleWorkHistoryEdit: Function = (): void => {
-    const { ui, setWorkHistoryEdit } = this.props;
-    setWorkHistoryEdit(!ui.workHistoryEdit);
+  changeSwitchState: Function = (): void => {
+    const { ui, setWorkHistoryEdit, profile, setShowWorkDeleteAllDialog } = this.props;
+    if ( _.isEmpty(profile.work_history) ) {
+      setWorkHistoryEdit(!ui.workHistoryEdit);
+    } else {
+      setShowWorkDeleteAllDialog(true);
+    }
   };
 
   closeWorkDialog: Function = (): void => {
@@ -59,6 +64,19 @@ class EmploymentForm extends ProfileFormFields {
     let clone = _.cloneDeep(profile);
     clone['work_history'].splice(deletionIndex, 1);
     saveProfile(employmentValidation, clone, ui);
+  };
+
+  deleteAllWorkHistoryEntries: Function = (): void => {
+    const { saveProfile, profile, ui, setWorkHistoryEdit } = this.props;
+    let clone = _.cloneDeep(profile);
+    clone['work_history'] = [];
+    saveProfile(employmentValidation, clone, ui);
+    setWorkHistoryEdit(false);
+  };
+
+  closeConfirmDeleteAllDialog: Function = (): void => {
+    const { setShowWorkDeleteAllDialog } = this.props;
+    setShowWorkDeleteAllDialog(false);
   };
 
   editWorkHistoryForm(): React$Element {
@@ -115,14 +133,15 @@ class EmploymentForm extends ProfileFormFields {
     );
   }
 
-  renderWorkHistory(): ?React$Element[] {
+  renderWorkHistory(): Array<React$Element|void>|void {
     const { ui, profile, profile: { work_history } } = this.props;
     if ( ui.workHistoryEdit === true ) {
       let workHistoryRows = [];
       if ( !_.isUndefined(work_history) ) {
-        workHistoryRows = Object.entries(work_history).filter(([,entry]: [string, WorkHistoryEntry]) =>
-          entry.id !== undefined
-        ).map(([i, entry]) => this.jobRow(entry, i));
+        let sorted = workEntriesByDate(work_history);
+        workHistoryRows = sorted.map(([index, entry]) => (
+          entry.id === undefined ? undefined : this.jobRow(entry, index)
+        ));
       }
       userPrivilegeCheck(profile, () => {
         workHistoryRows.push(
@@ -139,7 +158,7 @@ class EmploymentForm extends ProfileFormFields {
     }
   }
 
-  jobRow (position: WorkHistoryEntry, index: string) {
+  jobRow (position: WorkHistoryEntry, index: number) {
     const {
       setWorkDialogVisibility,
       setWorkDialogIndex,
@@ -151,7 +170,7 @@ class EmploymentForm extends ProfileFormFields {
       setWorkDialogVisibility(true);
     };
     let validationAlert = () => {
-      if (_.get(errors, ['work_history', index])) {
+      if (_.get(errors, ['work_history', String(index)])) {
         return <IconButton name="error" onClick={editCallback} />;
       }
     };
@@ -191,6 +210,7 @@ class EmploymentForm extends ProfileFormFields {
         workHistoryEdit,
         workDialogVisibility,
         showWorkDeleteDialog,
+        showWorkDeleteAllDialog,
       },
       errors,
       showSwitch,
@@ -218,7 +238,7 @@ class EmploymentForm extends ProfileFormFields {
             <Switch
               ripple
               id="profile-tab-professional-switch"
-              onChange={this.toggleWorkHistoryEdit}
+              onChange={this.changeSwitchState}
               checked={workHistoryEdit}>
             </Switch>
           </div>
@@ -232,9 +252,16 @@ class EmploymentForm extends ProfileFormFields {
     return (
       <div>
         <ConfirmDeletion
-          deleteEntry={this.deleteWorkHistoryEntry}
+          deleteFunc={this.deleteWorkHistoryEntry}
           open={showWorkDeleteDialog}
           close={this.closeConfirmDeleteDialog}
+          confirmText="Delete this entry?"
+        />
+        <ConfirmDeletion
+          deleteFunc={this.deleteAllWorkHistoryEntries}
+          open={showWorkDeleteAllDialog}
+          close={this.closeConfirmDeleteAllDialog}
+          confirmText="Delete all work history entries?"
         />
         <Dialog
           open={workDialogVisibility}
@@ -256,7 +283,7 @@ class EmploymentForm extends ProfileFormFields {
             </Cell>
           </Grid>
           {this.renderWorkHistory()}
-          <Grid className="profile-tab-grid">
+          <Grid className="profile-tab-card-grid">
             <Cell col={12}>
               <span className="validation-error-text-large">
                 {errors.work_history_required}

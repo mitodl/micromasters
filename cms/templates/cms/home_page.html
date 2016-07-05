@@ -6,7 +6,7 @@
 {% wagtailuserbar %}
 {% block body_class %}template-programpage{% endblock %}
 
-{% block title %}{% trans "MIT MicroMaster’s" %}{% endblock %}
+{% block title %}{% trans "MIT MicroMasters" %}{% endblock %}
 
 {% block content %}
 
@@ -15,7 +15,7 @@
   <nav class="navbar navbar-default" role="navigation">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="javascript:void(0)"><img src="/static/images/logo-micromasters@2x.png" width="215" height="40" alt="MIT MicroMaster’s" /></a>
+        <a class="navbar-brand" href="javascript:void(0)"><img src="{% static 'images/logo-micromasters.png' %}" width="215" height="40" alt="MIT MicroMasters" /></a>
         <div class="nav-utility pull-right">
           {% if authenticated %}
           <a class="btn btn-danger" href="/logout">
@@ -46,7 +46,7 @@
         <div class="banner-wrapper-content">
           <h1>
             <div class="banner-image">
-              <img src="static/images/logo-mit-verylg@2x.png" alt="MIT" />
+              <img src="{% static 'images/logo-mit-verylg@2x.png' %}" alt="MIT" />
             </div>
             {{ title }}
           </h1>
@@ -56,26 +56,36 @@
       <div class="row sub-banner">
         <div class="col-md-12">
           <div class="sub-banner-content">
-            MIT has created a new credential for online learners: the MicroMaster’s, which will be granted by <a href="https://www.edx.org/school/mitx" target="_blank">MITx</a> to students who do exceptionally well in a given set of graduate-level online courses and do well in a subsequent exam. <a href="javascript:void()" data-target="#modal-about" data-toggle="modal">Learn more</a>.
+            MIT has created a new credential for online learners: the MicroMasters, which will be granted by <a href="https://www.edx.org/school/mitx" target="_blank">MITx</a> to students who do exceptionally well in a given set of graduate-level online courses and do well in a subsequent exam. <a href="javascript:void()" data-target="#modal-about" data-toggle="modal">Learn more</a>.
           </div>
         </div>
       </div>
 
       <div class="panel panel-main-content">
         <div class="panel-body">
-          <h3>MicroMaster’s</h3>
+          <h3>MicroMasters</h3>
           <div class="media-list is-grid padding-bottom-50">
             <ul class="blocks list-unstyled" data-plugin="animateList" data-child=">li">
 
               {% for program in programs %}
               <li class="col-sm-6">
                 {% if program.programpage %}
-                  <a href="{{ program.programpage.url }}" class="program-link">
+                	{% if program.programpage.external_program_page_url %}
+                	<a href="{{ program.programpage.external_program_page_url }}" class="program-link">
+                	{% else %}
+                  	<a href="{{ program.programpage.url }}" class="program-link">
+                  	{% endif %}
                 {% endif %}
                 <div class="media-item">
                   <div class="media-top">
                     <div class="image-wrap">
-                      <img class="image" src="static/images/course-1.png" alt="course image for {{program}}"> 
+                      {% if program.programpage and program.programpage.thumbnail_image %}
+                      {% image program.programpage.thumbnail_image fill-378x225 as thumbnail_image %}
+                      <img class="image" src="{{ thumbnail_image.url }}" alt="course image for {{program}}"
+                           width="{{ thumbnail_image.width }}" height="{{ thumbnail_image.height }}" />
+                      {% else %}
+                      <img class="image" src="{% static 'images/course-thumbnail.png' %}" alt="course image for {{program}}" width="378" height="225" />
+                      {% endif %}
                     </div>
                   </div>
                   <div class="info-wrap">
@@ -106,16 +116,16 @@
                   <br/><br/><br/>
                   <div class="container">
                     <div class="col-sm-12 title-coming-soon text-center">
-                      MIT has plans to bring more MicroMaster’s programs to motivated learners like you.
+                      MIT has plans to bring more MicroMasters programs to motivated learners like you.
                       Please sign up for our <a href="#" data-toggle="modal"
                       data-target="#subscribeAlert">mailing list</a>
-                      to hear about new MicroMaster’s programs.
-                      Also, don't hesitate to let us know about what MicroMaster’s you’d like to see.
+                      to hear about new MicroMasters programs.
+                      Also, don't hesitate to let us know about what MicroMasters you’d like to see.
                     </div>
                     <div class="row">
                       <div class="col-sm-12">
                         <button class="btn btn-danger button-subscribe-alerts center-block"  data-toggle="modal"
-                       data-target="#subscribeAlert">Yes, tell me when MicroMaster’s are available</button>
+                       data-target="#subscribeAlert">Yes, tell me when MicroMasters are available</button>
                       </div>
                     </div>
                   </div>
@@ -128,7 +138,7 @@
     </section>
   </div>
 
-  {% include "cms/footer.html" %}
+  {% include "footer.html" %}
 
   <div class="modal fade modal-fade-in-scale-up" id="modal-about" aria-hidden="true" aria-labelledby="modal-about"
                                                                                      role="dialog" tabindex="-1">
@@ -138,20 +148,19 @@
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">×</span>
           </button>
-          <!-- <h4 class="modal-title">About MicroMaster’s</h4> -->
         </div>
         <div class="modal-body">
-          <h2>MicroMaster’s is a new credential</h2>
+          <h2>MicroMasters is a new credential</h2>
           <p>
-          MIT has created a new credential for online learners: the “MicroMaster’s,” which will be granted by MITx (MIT’s online learning initiative) to students who do exceptionally well in a given set of graduate-level online courses and do well in a subsequent exam. The credential will first be available to students who register for the SCM program’s online courses.
+          MIT has created a new credential for online learners: the “MicroMasters,” which will be granted by MITx (MIT’s online learning initiative) to students who do exceptionally well in a given set of graduate-level online courses and do well in a subsequent exam. The credential will first be available to students who register for the SCM program’s online courses.
           </p>
-          <h3>Join the MIT MicroMaster’s community</h3>
+          <h3>Join the MIT MicroMasters community</h3>
           <p>
-          MicroMaster’s aren't just about courseware. Part of the the MIT experience is interacting with other exceptional students like yourself. Fill out your profile on this site and build professional relationships with like-minded learners.
+          MicroMasters aren't just about courseware. Part of the the MIT experience is interacting with other exceptional students like yourself. Fill out your profile on this site and build professional relationships with like-minded learners.
           </p>
-          <h3>MicroMaster’s courses are delivered through edX.org</h3>
+          <h3>MicroMasters courses are delivered through edX.org</h3>
           <p>
-          Use your edX.org account to enroll in a MicroMaster’s program and share your grades and progress with MIT. When you complete all the requirements and earn a MicroMaster’s credential, you can use it to apply for a Masters degree at MIT.
+          Use your edX.org account to enroll in a MicroMasters program and share your grades and progress with MIT. When you complete all the requirements and earn a MicroMasters credential, you can use it to apply for a Master’s degree at MIT.
           </p>
         </div>
       </div>

@@ -6,12 +6,12 @@ import TestUtils from 'react-addons-test-utils';
 
 import { USER_PROFILE_RESPONSE } from '../../constants';
 import iso3166 from 'iso-3166-2';
-import MenuItem from 'material-ui/MenuItem';
 
 import SelectField from './SelectField';
 import CountrySelectField from './CountrySelectField';
 import StateSelectField from './StateSelectField';
 import FieldsOfStudySelectField from './FieldsOfStudySelectField';
+import { showAllOptions, showLimitedOptions } from '../utils/AutoCompleteSettings';
 import FIELDS_OF_STUDY from '../../fields_of_study';
 
 describe('Profile inputs', () => {
@@ -34,6 +34,10 @@ describe('Profile inputs', () => {
     );
     return renderer.getRenderOutput();
   };
+
+  const renderTestSelectField = () => {
+    return renderTestComponent(SelectField, inputProps);
+  };
   
   describe('Select field', () => {
     let selectField;
@@ -42,36 +46,36 @@ describe('Profile inputs', () => {
       {value: 'f', label: 'Female'},
       {value: 'o', label: 'Other/Prefer not to say'}
     ];
-    let extendedOptions = [
+    let letterOptions = [
       {value: 'a', label: 'Option 1'},
       {value: 'b', label: 'Option 2'},
       {value: 'c', label: 'Option 3'},
       {value: 'd', label: 'Option 4'},
-      {value: 'e', label: 'Option 5'}
+      {value: 'e', label: 'Option 5'},
+      {value: 'f', label: 'Option 6'},
+      {value: 'g', label: 'Option 7'},
+      {value: 'h', label: 'Option 8'},
+      {value: 'i', label: 'Option 9'},
+      {value: 'j', label: 'Option 10'},
+      {value: 'k', label: 'Option 11'}
     ];
 
     let renderGenderSelectField = () => {
-      let selectProps = Object.assign({},
-        inputProps,
-        {
-          keySet: ['gender'],
-          label: "Gender",
-          options: genderOptions
-        }
-      );
-      return renderTestComponent(SelectField, selectProps);
+      Object.assign(inputProps, {
+        keySet: ['gender'],
+        label: "Gender",
+        options: genderOptions
+      });
+      return renderTestSelectField();
     };
     
-    let renderExtendedSelectField = () => {
-      let selectProps = Object.assign({},
-        inputProps,
-        {
-          keySet: ['extended'],
-          label: "Extended",
-          options: extendedOptions
-        }
-      );
-      return renderTestComponent(SelectField, selectProps);
+    let renderLetterSelectField = () => {
+      Object.assign(inputProps, {
+        keySet: ['test'],
+        label: "Test",
+        options: letterOptions
+      });
+      return renderTestSelectField();
     };
 
     beforeEach(() => {
@@ -100,9 +104,7 @@ describe('Profile inputs', () => {
       for (let i = 0; i < genderOptions.length; i++) {
         let item = selectField.props.dataSource[i];
         let option = genderOptions[i];
-        assert.equal(option.label, item.text);
-        assert.equal(option.label, item.value.props.primaryText);
-        assert.equal(option.value, item.value.props.value);
+        assert.deepEqual(option, item);
       }
       assert.equal(selectField.props.floatingLabelText, 'Gender');
       assert.equal(selectField.props.searchText, "");
@@ -123,7 +125,7 @@ describe('Profile inputs', () => {
       let option = genderOptions[1];
       selectField.props.onNewRequest({
         text: option.label,
-        value: <MenuItem primaryText={option.label} value={option.value}/>
+        value: option.value
       }, 0);
       assert.equal(inputProps.profile.gender, 'f');
     });
@@ -170,10 +172,35 @@ describe('Profile inputs', () => {
       assert.equal(selectField.props.searchText, text);
     });
 
-    it('behaves appropriately with a limit on autocomplete results', () => {
-      inputProps.resultLimit = 3;
-      selectField = renderExtendedSelectField();
+    it('takes an array of autocomplete behaviors and calculates a set of props based on it', () => {
+      let behaviorFunc1 = (props) => ({
+          prop1: props.testProp,
+          prop2: props.testProp
+        }),
+        behaviorFunc2 = (props) => ({
+          prop3: props.testProp
+        });
+      inputProps.testProp = 'testProp';
+      inputProps.autocompleteBehaviors = [behaviorFunc1, behaviorFunc2];
+      selectField = renderLetterSelectField();
+      assert.equal(selectField.props.prop1, 'testProp');
+      assert.equal(selectField.props.prop2, 'testProp');
+      assert.equal(selectField.props.prop3, 'testProp');
+    });
+
+    it('behaves appropriately with no limit on autocomplete results shown', () => {
+      inputProps.autocompleteBehaviors = [showAllOptions];
+      selectField = renderLetterSelectField();
+      assert.isOk(selectField.props.openOnFocus);
+      assert.isOk(selectField.props.showOptionsWhenBlank);
+    });
+
+    it('behaves appropriately with a limit on autocomplete results shown', () => {
+      inputProps.autocompleteBehaviors = [showLimitedOptions];
+      selectField = renderLetterSelectField();
       assert.isNotOk(selectField.props.openOnFocus);
+      assert.isNotOk(selectField.props.showOptionsWhenBlank);
+      assert.isNumber(selectField.props.maxSearchResults);
     });
   });
 

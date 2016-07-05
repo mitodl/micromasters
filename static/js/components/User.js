@@ -10,12 +10,16 @@ import EmploymentForm from './EmploymentForm';
 import EducationDisplay from './EducationDisplay';
 import UserPagePersonalDialog from './UserPagePersonalDialog.js';
 import { userPrivilegeCheck } from '../util/util';
+import type { Profile, BoundSaveProfile } from '../flow/profileTypes';
+import type { UIState } from '../reducers/ui';
 
 export default class User extends React.Component {
-  static propTypes = {
-    profile:                      React.PropTypes.object,
-    setUserPageDialogVisibility:  React.PropTypes.func,
-    ui:                           React.PropTypes.object,
+  props: {
+    profile:                      Profile,
+    setUserPageDialogVisibility:  () => void,
+    ui:                           UIState,
+    clearProfileEdit:             () => void,
+    saveProfile:                  BoundSaveProfile,
   };
 
   toggleShowPersonalDialog: Function = (): void => {

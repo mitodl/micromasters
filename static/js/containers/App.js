@@ -1,6 +1,8 @@
+// @flow
 /* global SETTINGS: false */
 import React from 'react';
 import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -13,20 +15,23 @@ import {
   startProfileEdit,
   updateProfileValidation,
 } from '../actions/index';
-import { clearUI } from '../actions/ui';
+import { clearUI, setProfileStep } from '../actions/ui';
 import { validateProfileComplete } from '../util/validation';
+import type { Profile } from '../flow/profileTypes';
+import type { UIState } from '../reducers/ui';
 
 const TERMS_OF_SERVICE_REGEX = /\/terms_of_service\/?/;
 const PROFILE_REGEX = /^\/profile\/?[a-z]?/;
 
 class App extends React.Component {
-  static propTypes = {
-    children:     React.PropTypes.object.isRequired,
-    userProfile:  React.PropTypes.object.isRequired,
-    dashboard:    React.PropTypes.object.isRequired,
-    dispatch:     React.PropTypes.func.isRequired,
-    history:      React.PropTypes.object.isRequired,
-    ui:           React.PropTypes.object.isRequired,
+  props: {
+    children:     React$Element[],
+    userProfile:  {profile: Profile, getStatus: string},
+    location:     Object,
+    dispatch:     Dispatch,
+    dashboard:    Object,
+    history:      Object,
+    ui:           UIState,
   };
 
   static contextTypes = {
@@ -100,7 +105,7 @@ class App extends React.Component {
       location: { pathname },
       dispatch,
     } = this.props;
-    const [ complete, url, errors] = validateProfileComplete(profile);
+    const [ complete, step, errors] = validateProfileComplete(profile);
     if (
       userProfile.getStatus === FETCH_SUCCESS &&
       profile.agreed_to_terms_of_service &&
@@ -109,10 +114,13 @@ class App extends React.Component {
     ) {
       dispatch(startProfileEdit(SETTINGS.username));
       dispatch(updateProfileValidation(SETTINGS.username, errors));
-      this.context.router.push(url);
+      if ( step !== null ) {
+        dispatch(setProfileStep(step));
+      }
+      this.context.router.push('/profile');
     }
   }
-  
+
   render() {
     const { children, location: { pathname } } = this.props;
 

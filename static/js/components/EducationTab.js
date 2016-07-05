@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 
@@ -8,16 +9,19 @@ import {
   educationValidation,
   combineValidators,
 } from '../util/validation';
+import type { Profile, BoundSaveProfile } from '../flow/profileTypes';
+import type { UIState } from '../reducers/ui';
 
 class EducationTab extends React.Component {
-  static propTypes = {
-    saveProfile: React.PropTypes.func,
-    profile: React.PropTypes.object,
-    ui: React.PropTypes.object
+  props: {
+    nextStep:     () => void,
+    prevStep:     () => void,
+    profile:      Profile,
+    ui:           UIState,
+    saveProfile:  BoundSaveProfile,
   };
-  
+
   render() {
-    const { saveProfile, profile, ui } = this.props;
     return <div>
       <Grid className="profile-splash">
         <Cell col={12}>
@@ -33,11 +37,9 @@ class EducationTab extends React.Component {
         <Cell col={1} />
         <Cell col={10}>
           <ProfileProgressControls
-            prevUrl="/profile/personal"
-            nextUrl="/profile/professional"
-            saveProfile={saveProfile}
-            profile={profile}
-            ui={ui}
+            {...this.props}
+            nextBtnLabel="Save and Continue"
+            isLastTab={false}
             validator={combineValidators(educationValidation, educationUiValidation)}
           />
         </Cell>

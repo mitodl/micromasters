@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import IconButton from 'react-mdl/lib/IconButton';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
@@ -16,43 +17,56 @@ import {
   openNewEducationForm,
   deleteEducationEntry,
 } from '../util/editEducation';
+import { educationValidation } from '../util/validation';
+import { educationEntriesByDate } from '../util/sorting';
+import type { Option } from '../flow/generalTypes';
+import type {
+  EducationEntry,
+  Profile,
+  ValidationErrors,
+  BoundSaveProfile,
+} from '../flow/profileTypes';
+import type { UIState } from '../reducers/ui';
 
 class EducationForm extends ProfileFormFields {
-  static propTypes = {
-    profile:                        React.PropTypes.object,
-    ui:                             React.PropTypes.object,
-    updateProfile:                  React.PropTypes.func,
-    clearProfileEdit:               React.PropTypes.func,
-    errors:                         React.PropTypes.object,
-    setEducationDialogVisibility:   React.PropTypes.func,
-    setEducationDialogIndex:        React.PropTypes.func,
-    setEducationDegreeLevel:        React.PropTypes.func,
-    setEducationDegreeInclusions:   React.PropTypes.func,
+  props: {
+    profile:                          Profile,
+    ui:                               UIState;
+    updateProfile:                    () => void,
+    saveProfile:                      BoundSaveProfile,
+    clearProfileEdit:                 () => void,
+    errors:                           ValidationErrors,
+    setEducationDialogVisibility:     () => void,
+    setEducationDialogIndex:          () => void,
+    setEducationDegreeLevel:          () => void,
+    setEducationDegreeInclusions:     () => void,
+    setShowEducationDeleteAllDialog:  (bool: boolean) => void,
   };
 
-  openEditEducationForm = index => {
+  openEditEducationForm: Function = (index: number): void => {
     openEditEducationForm.call(this, index);
   };
 
-  openNewEducationForm = (level, index) => {
+  openNewEducationForm: Function = (level: string, index: number): void => {
     openNewEducationForm.call(this, level, index);
   };
 
-  deleteEducationEntry = () => {
+  deleteEducationEntry: Function = (): void => {
     deleteEducationEntry.call(this);
   };
 
-  renderEducationLevel(level){
+  renderEducationLevel(level: Option): Array<React$Element|void>|void {
     const {
       ui: { educationDegreeInclusions },
       profile: { education },
     } = this.props;
     if (educationDegreeInclusions[level.value]) {
-      let rows = [];
+      let rows: Array<React$Element|void> = [];
       if (education !== undefined) {
-        rows = Object.entries(education).
-          filter(([, education]) => education.degree_name === level.value).
-          map(([index, education]) => this.educationRow(education, index));
+        let sorted = educationEntriesByDate(education);
+        rows = sorted.filter(([,entry]) => (
+          entry.degree_name === level.value
+        )).map(([index, entry]) => this.educationRow(entry, index));
       }
       rows.push(
         <FABButton
@@ -68,7 +82,7 @@ class EducationForm extends ProfileFormFields {
     }
   }
 
-  educationRow = (education, index) => {
+  educationRow: Function = (education: EducationEntry, index: number) => {
     const { errors } = this.props;
     if (!('id' in education)) {
       // don't show new educations, wait until we saved on the server before showing them
@@ -78,7 +92,7 @@ class EducationForm extends ProfileFormFields {
     let deleteEntry = () => this.openEducationDeleteDialog(index);
     let editEntry = () => this.openEditEducationForm(index);
     let validationAlert = () => {
-      if (_.get(errors, ['education', index])) {
+      if (_.get(errors, ['education', String(index)])) {
         return <IconButton name="error" onClick={editEntry} />;
       }
     };
@@ -98,14 +112,51 @@ class EducationForm extends ProfileFormFields {
     </Grid>;
   };
 
-  handleSwitchClick(level){
+  closeDeleteAllEducationDialog: Function = (): void => {
+    const {
+      setEducationDegreeLevel,
+      setShowEducationDeleteAllDialog,
+    } = this.props;
+    setEducationDegreeLevel('');
+    setShowEducationDeleteAllDialog(false);
+  };
+
+  deleteAllEducationEntriesForLevel: Function = (): void => {
+    const {
+      profile,
+      saveProfile,
+      ui,
+      ui: { educationDegreeLevel, educationDegreeInclusions },
+      setEducationDegreeInclusions,
+    } = this.props;
+    let clone = _.cloneDeep(profile);
+    clone.education = clone.education.filter(entry => (
+      entry.degree_name !== educationDegreeLevel
+    ));
+    let newState = Object.assign({}, educationDegreeInclusions, {
+      [educationDegreeLevel]: false
+    });
+    setEducationDegreeInclusions(newState);
+    saveProfile(educationValidation, clone, ui);
+  };
+
+  handleSwitchClick(level: string): void {
     const {
       ui: { educationDegreeInclusions },
       setEducationDegreeInclusions,
+      setEducationDegreeLevel,
+      setShowEducationDeleteAllDialog,
+      profile: { education },
     } = this.props;
-    let newState = Object.assign({}, educationDegreeInclusions);
-    newState[level] = !educationDegreeInclusions[level];
-    setEducationDegreeInclusions(newState);
+    if ( !education.find(entry => entry.degree_name === level) ) {
+      let newState = Object.assign({}, educationDegreeInclusions, {
+        [level]: !educationDegreeInclusions[level]
+      });
+      setEducationDegreeInclusions(newState);
+    } else {
+      setEducationDegreeLevel(level);
+      setShowEducationDeleteAllDialog(true);
+    }
   }
 
   render() {
@@ -115,6 +166,8 @@ class EducationForm extends ProfileFormFields {
       ui: {
         educationDegreeInclusions,
         showEducationDeleteDialog,
+        showEducationDeleteAllDialog,
+        educationDegreeLevel,
       }
     } = this.props;
 
@@ -138,13 +191,14 @@ class EducationForm extends ProfileFormFields {
           <Cell col={7} />
           <Cell col={1}>
             <Switch
+              id={`profile-tab-education-switch-${level.value}`}
               onChange={()=>{this.handleSwitchClick(level.value);}}
               checked={educationDegreeInclusions[level.value]}
             />
           </Cell>
         </Grid>
         {this.renderEducationLevel(level)}
-        <Grid className="profile-tab-grid">
+        <Grid className="profile-tab-card-grid">
           <Cell col={12}>
             <span className="validation-error-text-large">
               {errors[`education_${level.value}_required`]}
@@ -153,12 +207,27 @@ class EducationForm extends ProfileFormFields {
         </Grid>
       </Card>
     ));
+    let levelLabel;
+    if ( educationDegreeLevel !== "" ) {
+      levelLabel = this.educationLevelOptions.find(level => (
+        level.value === educationDegreeLevel
+      )).label;
+    } else {
+      levelLabel = "";
+    }
     return (
       <div>
         <ConfirmDeletion
-          deleteEntry={this.deleteEducationEntry}
+          deleteFunc={this.deleteEducationEntry}
           open={showEducationDeleteDialog}
           close={this.closeConfirmDeleteDialog}
+          confirmText="Delete this entry?"
+        />
+        <ConfirmDeletion
+          deleteFunc={this.deleteAllEducationEntriesForLevel}
+          open={showEducationDeleteAllDialog}
+          close={this.closeDeleteAllEducationDialog}
+          confirmText={`Delete all ${levelLabel} entries?`}
         />
         <EducationDialog {...this.props} showLevelForm={false} />
         {levelsGrid}

@@ -6,7 +6,10 @@ import ga from 'react-ga';
 import striptags from 'striptags';
 import _ from 'lodash';
 
-import { EDUCATION_LEVELS } from '../constants';
+import {
+  EDUCATION_LEVELS,
+  PROFILE_STEP_LABELS
+} from '../constants';
 import type {
   Profile,
   EducationEntry,
@@ -33,10 +36,9 @@ export function userPrivilegeCheck (profile: Profile, privileged: any, unPrivile
   }
 }
 
-export function makeProfileProgressDisplay(active: number) {
+export function makeProfileProgressDisplay(active: string) {
   const width = 750, height = 100, radius = 20, paddingX = 40, paddingY = 5;
-  const tabNames = ["Personal", "Education", "Professional", "Profile Privacy"];
-  const numCircles = tabNames.length;
+  const numCircles = PROFILE_STEP_LABELS.size;
 
   // width from first circle edge left to the last circle edge right
   const circlesWidth = width - (paddingX * 2 + radius * 2);
@@ -74,11 +76,12 @@ export function makeProfileProgressDisplay(active: number) {
 
   const elements = [];
 
-  for (let i = 0; i < numCircles; ++i) {
+  let activeTab = [...PROFILE_STEP_LABELS.keys()].findIndex(k => k === active);
+  [...PROFILE_STEP_LABELS.entries()].forEach(([, label], i) => {
     let colorScheme;
-    if (i < active) {
+    if (i < activeTab) {
       colorScheme = colors.completed;
-    } else if (i === active) {
+    } else if (i === activeTab) {
       colorScheme = colors.current;
     } else {
       colorScheme = colors.future;
@@ -106,7 +109,7 @@ export function makeProfileProgressDisplay(active: number) {
           fontSize: "12pt"
         }}
       >
-        {tabNames[i]}
+        {label}
       </text>,
       <text
         key={`circletext_${i}`}
@@ -136,10 +139,10 @@ export function makeProfileProgressDisplay(active: number) {
         />
       );
     }
-  }
+  });
 
   return <svg style={{width: width, height: height}}>
-    <desc>Profile progress: {tabNames[active]}</desc>
+    <desc>Profile progress: {PROFILE_STEP_LABELS.get(active)}</desc>
     {elements}
   </svg>;
 }
@@ -182,7 +185,13 @@ export function generateNewWorkHistory(): WorkHistoryEntry {
 /**
  * Converts string to int using base 10. Stricter in what is accepted than parseInt
  */
-export const filterPositiveInt = (value: string): number|void => {
+export const filterPositiveInt = (value: ?string|number): number|void => {
+  if (value === null || value === undefined) {
+    return undefined;
+  }
+  if ( typeof value === 'number') {
+    return value;
+  }
   if(/^[0-9]+$/.test(value)) {
     return Number(value);
   }
@@ -202,11 +211,11 @@ export function makeStrippedHtml(textOrElement: any): string {
   }
 }
 
-export function makeProfileImageUrl(profile: Profile) {
+export function makeProfileImageUrl(profile: Profile): string {
   let imageUrl = `${SETTINGS.edx_base_url}/static/images/profiles/default_120.png`.
   //replacing multiple "/" with a single forward slash, excluding the ones following the colon
     replace(/([^:]\/)\/+/g, "$1");
-  if (profile.profile_url_large) {
+  if (profile !== undefined && profile.profile_url_large) {
     imageUrl = profile.profile_url_large;
   }
 
@@ -238,4 +247,11 @@ export function calculateDegreeInclusions(profile: Profile) {
     }
   }
   return inclusions;
+}
+
+/**
+ * Calls an array of functions in series with a given argument and returns an array of the results
+ */
+export function callFunctionArray<T,R>(functionArray: Array<(t: T) => R>, arg: T): R[] {
+  return functionArray.map((func) => func(arg));
 }

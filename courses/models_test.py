@@ -36,7 +36,8 @@ class CourseModelsMixin(TestCase):
         super(CourseModelsMixin, self).setUp()
         self.now = datetime.now(pytz.utc)
 
-    def create_run(self, course=None, start=None, end=None, enr_start=None, enr_end=None):
+    def create_run(self, course=None, start=None, end=None,
+                   enr_start=None, enr_end=None, upgrade_deadline=None):
         """helper function to create course runs"""
         # pylint: disable=too-many-arguments
         return CourseRunFactory.create(
@@ -46,6 +47,7 @@ class CourseModelsMixin(TestCase):
             end_date=end,
             enrollment_start=enr_start,
             enrollment_end=enr_end,
+            upgrade_deadline=upgrade_deadline,
         )
 
 
@@ -340,3 +342,21 @@ class CourseRunTests(CourseModelsMixin):
             start=self.now-timedelta(weeks=2)
         )
         assert course_run.is_future is False
+
+    def test_is_upgradable(self):
+        """Test for is_upgradable property"""
+        # with no upgrade_deadline
+        course_run = self.create_run()
+        assert course_run.is_upgradable is True
+
+        # with upgrade_deadline in the future
+        course_run = self.create_run(
+            upgrade_deadline=self.now+timedelta(weeks=2)
+        )
+        assert course_run.is_upgradable is True
+
+        # with upgrade_deadline in the past
+        course_run = self.create_run(
+            upgrade_deadline=self.now-timedelta(weeks=2)
+        )
+        assert course_run.is_upgradable is False

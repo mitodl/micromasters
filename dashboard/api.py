@@ -315,9 +315,9 @@ def get_status_for_courserun(course_run, user_enrollments):
         elif course_run.is_future:
             status = CourseRunStatus.WILL_ATTEND
     else:
-        if course_run.is_current or course_run.is_future:
+        if (course_run.is_current or course_run.is_future) and course_run.is_upgradable:
             status = CourseRunStatus.UPGRADE
-        elif course_run.is_past:
+        else:
             status = CourseRunStatus.NOT_PASSED
     return CourseRunUserStatus(
         status=status,

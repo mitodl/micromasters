@@ -1,5 +1,6 @@
+// @flow
 import React from 'react';
-import LoginButton from '../containers/LoginButton';
+import UserMenu from '../containers/UserMenu';
 import { Navbar } from 'react-bootstrap';
 
 class Header extends React.Component {
@@ -12,7 +13,7 @@ class Header extends React.Component {
     let content;
     if (!empty) {
       content = <div className="nav-utility pull-right">
-          <LoginButton />
+          <UserMenu />
         </div>;
     }
 
@@ -21,7 +22,7 @@ class Header extends React.Component {
         <Navbar.Header>
           <Navbar.Brand>
             <a href="/">
-              <img src="/static/images/logo-micromasters@2x.png" width="215" height="40" alt="MIT MicroMaster’s" />
+              <img src="/static/images/logo-micromasters.png" width="215" height="40" alt="MIT MicroMasters" />
             </a>
           </Navbar.Brand>
           {content}
