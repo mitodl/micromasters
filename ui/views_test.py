@@ -17,6 +17,7 @@ from cms.models import HomePage, ProgramPage
 from courses.models import Program
 from courses.factories import ProgramFactory
 from backends.edxorg import EdxOrgOAuth2
+from profiles.api import get_social_username
 from profiles.factories import ProfileFactory
 from ui.urls import DASHBOARD_URL
 
@@ -127,7 +128,7 @@ class TestHomePage(ViewsTests):
         ):
             response = self.client.get('/')
             assert response.context['authenticated'] is True
-            assert response.context['username'] == user.social_auth.get(provider=EdxOrgOAuth2.name).uid
+            assert response.context['username'] == get_social_username(user)
             assert response.context['title'] == HomePage.objects.first().title
             js_settings = json.loads(response.context['js_settings_json'])
             assert js_settings['gaTrackingID'] == ga_tracking_id
@@ -180,7 +181,7 @@ class DashboardTests(ViewsTests):
                 'reactGaDebug': react_ga_debug,
                 'authenticated': True,
                 'name': user.profile.preferred_name,
-                'username': user.social_auth.get(provider=EdxOrgOAuth2.name).uid,
+                'username': get_social_username(user),
                 'host': host,
                 'edx_base_url': edx_base_url
             }
@@ -351,7 +352,7 @@ class TestUsersPage(ViewsTests):
         """
         profile = self.create_and_login_user()
         user = profile.user
-        username = user.social_auth.get(provider=EdxOrgOAuth2.name).uid
+        username = get_social_username(user)
 
         ga_tracking_id = FuzzyText().fuzz()
         react_ga_debug = FuzzyText().fuzz()
@@ -387,7 +388,7 @@ class TestUsersPage(ViewsTests):
         profile = self.create_and_login_user()
         user = profile.user
         self.client.logout()
-        username = user.social_auth.get(provider=EdxOrgOAuth2.name).uid
+        username = get_social_username(user)
 
         ga_tracking_id = FuzzyText().fuzz()
         react_ga_debug = FuzzyText().fuzz()

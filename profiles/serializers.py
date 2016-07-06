@@ -11,7 +11,7 @@ from rest_framework.serializers import (
     SerializerMethodField
 )
 
-from backends.edxorg import EdxOrgOAuth2
+from profiles.api import get_social_username
 from profiles.models import (
     Education,
     Employment,
@@ -125,7 +125,7 @@ class ProfileBaseSerializer(ModelSerializer):
 
     def get_username(self, obj):  # pylint: disable=no-self-use
         """Getter for the username field"""
-        return obj.user.social_auth.get(provider=EdxOrgOAuth2.name).uid
+        return get_social_username(obj.user)
 
     def get_profile_url_full(self, obj):  # pylint: disable=no-self-use
         """Getter for the profile full image url"""
