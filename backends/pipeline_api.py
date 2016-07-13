@@ -3,7 +3,11 @@ APIs for extending the python social auth pipeline
 """
 import logging
 from datetime import datetime
+from typing import Any, Dict
 from urllib.parse import urljoin
+
+from django.contrib.auth.models import User
+from social.backends.oauth import BaseOAuth2
 
 from backends.edxorg import EdxOrgOAuth2
 from profiles.api import get_social_username
@@ -13,7 +17,7 @@ from profiles.util import split_name
 log = logging.getLogger(__name__)
 
 
-def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):   # pylint: disable=unused-argument
+def update_profile_from_edx(backend: BaseOAuth2, user: User, response: Dict[str, Any], is_new: bool, *args, **kwargs) -> None:   # pylint: disable=unused-argument
     """
     Gets profile information from EDX and saves them in the user profile
 
@@ -82,7 +86,7 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):  
     )
 
 
-def update_from_linkedin(backend, user, response, *args, **kwargs):   # pylint: disable=unused-argument
+def update_from_linkedin(backend: BaseOAuth2, user: User, response: Dict[str, Any], *args, **kwargs) -> None:   # pylint: disable=unused-argument
     """
     Gets profile information from LinkedIn and save it in the user profile
 
@@ -113,7 +117,7 @@ def update_from_linkedin(backend, user, response, *args, **kwargs):   # pylint: 
     user_profile.save()
 
 
-def set_last_update(details, *args, **kwargs):  # pylint: disable=unused-argument
+def set_last_update(details: Dict[str, Any], *args, **kwargs) -> Dict[str, Any]:  # pylint: disable=unused-argument
     """
     Pipeline function to add extra information about when the social auth
     profile has been updated.

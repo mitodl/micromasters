@@ -9,6 +9,7 @@ from rest_framework import (
     permissions,
 )
 from rest_framework.views import APIView
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from edx_api.client import EdxApi
@@ -34,7 +35,7 @@ class UserDashboard(APIView):
     authentication_classes = (authentication.SessionAuthentication, )
     permission_classes = (permissions.IsAuthenticated, )
 
-    def get(self, request, *args, **kargs):  # pylint: disable=unused-argument, no-self-use
+    def get(self, request: Request, *args, **kargs) -> Response:  # pylint: disable=unused-argument, no-self-use
         """
         Returns information needed to display the user dashboard for a program.
         """

@@ -3,10 +3,17 @@ Apis for the dashboard
 """
 import datetime
 import logging
+from typing import Any, Dict, List
 
 import pytz
+from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
+from edx_api.certificates import Certificate, Certificates
+from edx_api.enrollments import Enrollments
+from edx_api.enrollments.models import Enrollment
+
+from courses.models import Course, CourseRun, Program
 
 log = logging.getLogger(__name__)
 
@@ -25,13 +32,13 @@ class CourseStatus():
     OFFERED = 'offered-not-enrolled'
 
     @classmethod
-    def all_statuses(cls):
+    def all_statuses(cls) -> List[str]:
         """Helper to get all the statuses"""
         return [cls.PASSED, cls.NOT_PASSED, cls.CURRENT_GRADE,
                 cls.UPGRADE, cls.NOT_OFFERED, cls.OFFERED]
 
 
-class CourseRunStatus():
+class CourseRunStatus:
     """
     Possible statuses for a course run for a user
     """
@@ -43,7 +50,7 @@ class CourseRunStatus():
     NOT_PASSED = 'not-passed'
 
 
-class CourseFormatConditionalFields():
+class CourseFormatConditionalFields:
     """
     The formatting of a course run is dependent
     on the CourseStatus status passed on the function.
@@ -74,7 +81,7 @@ class CourseFormatConditionalFields():
     }
 
     @classmethod
-    def get_assoc_field(cls, course_status):
+    def get_assoc_field(cls, course_status: str) -> List[Dict[str, str]]:
         """
         Method to get from the ASSOCIATED_FIELDS dict
         """
@@ -84,16 +91,16 @@ class CourseFormatConditionalFields():
         return cls.ASSOCIATED_FIELDS.get(course_status, [])
 
 
-class CourseRunUserStatus():
+class CourseRunUserStatus:
     """
     Representation of a course run status for a specific user
     """
-    def __init__(self, status, course_run=None, enrollment_for_course=None):
+    def __init__(self, status: str, course_run: CourseRun=None, enrollment_for_course: Enrollment=None) -> None:
         self.status = status
         self.course_run = course_run
         self.enrollment_for_course = enrollment_for_course
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<CourseRunUserStatus for course {course} status {status} at {address}>".format(
             status=self.status,
             course=self.course_run.title if self.course_run is not None else '"None"',
@@ -101,7 +108,7 @@ class CourseRunUserStatus():
         )
 
 
-def get_info_for_program(program, user, enrollments, certificates):
+def get_info_for_program(program: Program, user: User, enrollments: Enrollments, certificates: Certificates) -> Dict[str, Any]:
     """
     Helper function that formats a program with all the courses and runs
 
@@ -129,7 +136,7 @@ def get_info_for_program(program, user, enrollments, certificates):
     return data
 
 
-def get_info_for_course(user, course, user_enrollments, user_certificates):
+def get_info_for_course(user: User, course: Course, user_enrollments: Enrollments, user_certificates: Certificates) -> Dict[str, Any]:
     """
     Checks the status of a course given the status of all its runs
 
@@ -292,7 +299,7 @@ def get_info_for_course(user, course, user_enrollments, user_certificates):
     return course_data
 
 
-def get_status_for_courserun(course_run, user_enrollments):
+def get_status_for_courserun(course_run: CourseRun, user_enrollments: Enrollments) -> CourseRunUserStatus:
     """
     Checks the status of a course run for a user given her enrollments
 
@@ -326,7 +333,7 @@ def get_status_for_courserun(course_run, user_enrollments):
     )
 
 
-def format_courserun_for_dashboard(course_run, status_for_user, certificate=None, position=1):
+def format_courserun_for_dashboard(course_run: CourseRun, status_for_user: str, certificate: Certificate=None, position: int=1) -> Dict[str, Any]:
     """
     Helper function that formats a course run adding informations to the fields coming from the DB
 
@@ -340,7 +347,7 @@ def format_courserun_for_dashboard(course_run, status_for_user, certificate=None
         dict: a dictionary containing information about the course
     """
     if course_run is None:
-        return
+        return None
     formatted_run = {
         'id': course_run.id,
         'course_id': course_run.edx_course_key,
