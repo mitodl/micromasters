@@ -14,6 +14,7 @@ import ast
 import os
 import platform
 
+from celery.schedules import crontab
 import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
 import yaml
@@ -415,6 +416,14 @@ CELERY_RESULT_BACKEND = get_var(
 CELERY_ALWAYS_EAGER = get_var("CELERY_ALWAYS_EAGER", True)
 CELERY_EAGER_PROPAGATES_EXCEPTIONS = get_var(
     "CELERY_EAGER_PROPAGATES_EXCEPTIONS", True)
+CELERYBEAT_SCHEDULE = {
+    'batch-update-user-data-every-6-hrs': {
+        'task': 'dashboard.tasks.batch_update_user_data',
+        'schedule': crontab(minute=0, hour='*/6')
+    },
+}
+
+CELERY_TIMEZONE = 'UTC'
 
 # Elasticsearch
 ELASTICSEARCH_URL = get_var("ELASTICSEARCH_URL", None)

@@ -246,6 +246,8 @@ Tests should be run in the Docker container, not the host machine. They can be r
     ./test_suite.sh
     # Run Python tests only
     docker-compose run web tox
+    # Single file test
+    docker-compose run web tox -- -x /path/to/test.py
     # Run the JS tests with coverage report
     docker-compose run watch npm run-script coverage
     # run the JS tests without coverage report

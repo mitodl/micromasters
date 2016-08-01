@@ -60,7 +60,7 @@ celery:
   command: >
     /bin/bash -c '
     sleep 3;
-    celery -A micromasters worker -l debug'
+    celery -A micromasters worker -B -l debug'
   volumes_from:
     - web
   environment:
