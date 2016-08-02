@@ -9,6 +9,7 @@ from factory.django import mute_signals
 from factory.fuzzy import FuzzyText
 from mock import patch, Mock
 from rest_framework import status
+from rolepermissions.shortcuts import available_perm_status
 from wagtail.wagtailimages.models import Image
 from wagtail.wagtailimages.tests.utils import get_test_image_file
 
@@ -18,6 +19,7 @@ from courses.factories import ProgramFactory
 from backends.edxorg import EdxOrgOAuth2
 from profiles.api import get_social_username
 from profiles.factories import ProfileFactory
+from roles.models import Role
 from search.base import ESTestCase
 from ui.urls import DASHBOARD_URL
 
@@ -183,8 +185,32 @@ class DashboardTests(ViewsTests):
                 'name': user.profile.preferred_name,
                 'username': get_social_username(user),
                 'host': host,
-                'edx_base_url': edx_base_url
+                'edx_base_url': edx_base_url,
+                'roles': []
             }
+
+    def test_roles_setting(self):
+        """
+        Assert SETTINGS when a user has roles assigned to them
+        """
+        profile = self.create_and_login_user()
+
+        for role in Role.ASSIGNABLE_ROLES:
+            Role.objects.create(
+                program=ProgramFactory.create(),
+                user=profile.user,
+                role=role,
+            )
+
+        resp = self.client.get(DASHBOARD_URL)
+        js_settings = json.loads(resp.context['js_settings_json'])
+        assert js_settings['roles'] == [
+            {
+                'program': role.program.id,
+                'role': role.role,
+                'permissions': [key for key, value in available_perm_status(profile.user).items()],
+            } for role in profile.user.role_set.all()
+        ]
 
     def test_unauthenticated_user_redirect(self):
         """Verify that an unauthenticated user can't visit '/dashboard'"""
@@ -378,7 +404,8 @@ class TestUsersPage(ViewsTests):
                     'name': user.profile.preferred_name,
                     'username': username,
                     'host': host,
-                    'edx_base_url': edx_base_url
+                    'edx_base_url': edx_base_url,
+                    'roles': [],
                 }
                 assert has_permission.called
 
@@ -414,7 +441,8 @@ class TestUsersPage(ViewsTests):
                     'name': "",
                     'username': None,
                     'host': host,
-                    'edx_base_url': edx_base_url
+                    'edx_base_url': edx_base_url,
+                    'roles': [],
                 }
                 assert has_permission.called
 
