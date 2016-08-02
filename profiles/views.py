@@ -5,6 +5,10 @@ from rest_framework.mixins import (
 )
 from rest_framework.viewsets import GenericViewSet
 
+from roles.roles import (
+    Instructor,
+    Staff,
+)
 from profiles.models import Profile
 from profiles.serializers import (
     ProfileSerializer,
@@ -26,6 +30,7 @@ class ProfileViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
     queryset = Profile.objects.all()
 
     # possible serializers
+    serializer_class_staff = ProfileSerializer
     serializer_class_owner = ProfileSerializer
     serializer_class_limited = ProfileLimitedSerializer
 
@@ -38,6 +43,12 @@ class ProfileViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
         # Owner of the profile
         if self.request.user == profile.user:
             return self.serializer_class_owner
+        # Staff or instructor is looking at profile
+        elif not self.request.user.is_anonymous() and self.request.user.role_set.filter(
+                role__in=(Staff.ROLE_ID, Instructor.ROLE_ID),
+                program__programenrollment__user__profile=profile,
+        ).exists():
+            return self.serializer_class_staff
         # Profile is public
         elif profile.account_privacy == Profile.PUBLIC:
             return self.serializer_class_limited

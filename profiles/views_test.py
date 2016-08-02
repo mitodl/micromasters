@@ -14,14 +14,24 @@ from rest_framework.status import (
 )
 
 from backends.edxorg import EdxOrgOAuth2
+from courses.factories import ProgramFactory
+from dashboard.models import ProgramEnrollment
 from profiles.factories import ProfileFactory, UserFactory
 from profiles.models import Profile
-from profiles.permissions import CanEditIfOwner
+from profiles.permissions import (
+    CanEditIfOwner,
+    CanSeeIfNotPrivate,
+)
 from profiles.serializers import (
     ProfileLimitedSerializer,
     ProfileSerializer,
 )
 from profiles.views import ProfileViewSet
+from roles.models import Role
+from roles.roles import (
+    Instructor,
+    Staff,
+)
 from search.base import ESTestCase
 
 
@@ -65,8 +75,7 @@ class ProfileTests(ESTestCase):
         """
         Assert that we set permissions correctly
         """
-        # Users can only edit their own profile
-        assert CanEditIfOwner in ProfileViewSet.permission_classes
+        assert set(ProfileViewSet.permission_classes) == {CanEditIfOwner, CanSeeIfNotPrivate}
 
     def test_check_object_permissions(self):
         """
@@ -237,3 +246,49 @@ class ProfileTests(ESTestCase):
             ProfileFactory.create(user=self.user1)
         self.client.force_login(self.user1)
         assert self.client.post(self.url1).status_code == HTTP_405_METHOD_NOT_ALLOWED
+
+    def test_instructor_sees_entire_profile(self):
+        """
+        An instructor should be able to see the entire profile despite the account privacy
+        """
+        with mute_signals(post_save):
+            profile = ProfileFactory.create(user=self.user2, account_privacy=Profile.PRIVATE)
+            ProfileFactory.create(user=self.user1, verified_micromaster_user=False)
+
+        program = ProgramFactory.create()
+        ProgramEnrollment.objects.create(
+            program=program,
+            user=profile.user,
+        )
+        Role.objects.create(
+            program=program,
+            role=Instructor.ROLE_ID,
+            user=self.user1,
+        )
+
+        self.client.force_login(self.user1)
+        resp = self.client.get(self.url2)
+        assert resp.json() == ProfileSerializer().to_representation(profile)
+
+    def test_staff_sees_entire_profile(self):
+        """
+        Staff should be able to see the entire profile despite the account privacy
+        """
+        with mute_signals(post_save):
+            profile = ProfileFactory.create(user=self.user2, account_privacy=Profile.PRIVATE)
+            ProfileFactory.create(user=self.user1, verified_micromaster_user=False)
+
+        program = ProgramFactory.create()
+        ProgramEnrollment.objects.create(
+            program=program,
+            user=profile.user,
+        )
+        Role.objects.create(
+            program=program,
+            role=Staff.ROLE_ID,
+            user=self.user1,
+        )
+
+        self.client.force_login(self.user1)
+        resp = self.client.get(self.url2)
+        assert resp.json() == ProfileSerializer().to_representation(profile)

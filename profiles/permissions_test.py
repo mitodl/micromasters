@@ -7,6 +7,8 @@ from django.db.models.signals import post_save
 from factory.django import mute_signals
 
 from backends.edxorg import EdxOrgOAuth2
+from courses.factories import ProgramFactory
+from dashboard.models import ProgramEnrollment
 from profiles.factories import (
     ProfileFactory,
     UserFactory,
@@ -15,6 +17,11 @@ from profiles.models import Profile
 from profiles.permissions import (
     CanEditIfOwner,
     CanSeeIfNotPrivate,
+)
+from roles.models import Role
+from roles.roles import (
+    Instructor,
+    Staff,
 )
 from search.base import ESTestCase
 
@@ -103,9 +110,9 @@ class CanSeeIfNotPrivateTests(ESTestCase):
         with self.assertRaises(Http404):
             perm.has_permission(request, view)
 
-    def test_cant_view_if_anonymous_user(self):
+    def test_cant_view_public_to_mm_if_anonymous_user(self):
         """
-        Anonymous are not supposed to view public_to_mm profiles.
+        Anonymous are not supposed to view public_to_mm or private profiles.
         """
         perm = CanSeeIfNotPrivate()
         with mute_signals(post_save):
@@ -116,6 +123,33 @@ class CanSeeIfNotPrivateTests(ESTestCase):
 
         with self.assertRaises(Http404):
             perm.has_permission(request, view)
+
+    def test_cant_view_private_mm_if_anonymous_user(self):
+        """
+        Anonymous are not supposed to view private profiles.
+        """
+        perm = CanSeeIfNotPrivate()
+        with mute_signals(post_save):
+            ProfileFactory.create(user=self.profile_user, account_privacy=Profile.PRIVATE)
+
+        request = Mock(user=Mock(is_anonymous=Mock(return_value=True)))
+        view = Mock(kwargs={'user': self.profile_user_id})
+
+        with self.assertRaises(Http404):
+            perm.has_permission(request, view)
+
+    def test_cant_view_public_if_anonymous_user(self):
+        """
+        Anonymous are not supposed to view private profiles.
+        """
+        perm = CanSeeIfNotPrivate()
+        with mute_signals(post_save):
+            ProfileFactory.create(user=self.profile_user, account_privacy=Profile.PUBLIC)
+
+        request = Mock(user=Mock(is_anonymous=Mock(return_value=True)))
+        view = Mock(kwargs={'user': self.profile_user_id})
+
+        assert perm.has_permission(request, view) is True
 
     def test_cant_view_if_non_verified_mm_user(self):
         """
@@ -187,3 +221,77 @@ class CanSeeIfNotPrivateTests(ESTestCase):
         request = Mock(user=verified_user)
         view = Mock(kwargs={'user': self.profile_user_id})
         assert perm.has_permission(request, view) is True
+
+    def test_staff_can_see_profile(self):
+        """
+        Staff can see private profile of user with same program
+        """
+        # Create a private profile for profile user
+        ProfileFactory.create(
+            user=self.profile_user,
+            verified_micromaster_user=False,
+            account_privacy=Profile.PRIVATE,
+        )
+
+        # Assign profile user to a program
+        program = ProgramFactory.create()
+        ProgramEnrollment.objects.create(
+            program=program,
+            user=self.profile_user,
+        )
+
+        # Make self.other_user a staff of that program
+        role = Role.objects.create(
+            user=self.other_user,
+            program=program,
+            role=Staff.ROLE_ID,
+        )
+
+        perm = CanSeeIfNotPrivate()
+        request = Mock(user=self.other_user)
+        view = Mock(kwargs={'user': self.profile_user_id})
+
+        assert perm.has_permission(request, view) is True
+
+        # Change role.program and assert that user no longer has permission to see private profile
+        role.program = ProgramFactory.create()
+        role.save()
+        with self.assertRaises(Http404):
+            perm.has_permission(request, view)
+
+    def test_instructor_can_see_profile(self):
+        """
+        Instructors can see private profile of user with same program
+        """
+        # Create a private profile for profile user
+        ProfileFactory.create(
+            user=self.profile_user,
+            verified_micromaster_user=False,
+            account_privacy=Profile.PRIVATE,
+        )
+
+        # Assign profile user to a program
+        program = ProgramFactory.create()
+        ProgramEnrollment.objects.create(
+            program=program,
+            user=self.profile_user,
+        )
+
+        # Make self.other_user an instructor of that program
+        role = Role.objects.create(
+            user=self.other_user,
+            program=program,
+            role=Instructor.ROLE_ID,
+        )
+
+        perm = CanSeeIfNotPrivate()
+        request = Mock(user=self.other_user)
+        view = Mock(kwargs={'user': self.profile_user_id})
+
+        assert perm.has_permission(request, view) is True
+
+        # Change role.program and assert that user no longer has permission to see private profile
+        role.program = ProgramFactory.create()
+        role.save()
+        with self.assertRaises(Http404):
+            perm.has_permission(request, view)

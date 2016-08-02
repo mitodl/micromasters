@@ -8,6 +8,10 @@ from rest_framework.permissions import (
     SAFE_METHODS,
 )
 
+from roles.roles import (
+    Instructor,
+    Staff,
+)
 from profiles.models import Profile
 
 
@@ -40,6 +44,13 @@ class CanSeeIfNotPrivate(BasePermission):
         profile = get_object_or_404(Profile, user__social_auth__uid=view.kwargs['user'])
 
         if request.user == profile.user:
+            return True
+
+        # If viewer is instructor or staff in the program, skip this check
+        if not request.user.is_anonymous() and request.user.role_set.filter(
+                role__in=(Staff.ROLE_ID, Instructor.ROLE_ID),
+                program__programenrollment__user__profile=profile,
+        ).exists():
             return True
 
         # private profiles
