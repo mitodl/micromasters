@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   SearchkitComponent,
+  HierarchicalMenuFilter,
   Hits,
   NoHits,
   SelectedFilters,
@@ -10,12 +11,25 @@ import {
 } from 'searchkit';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import Card from 'react-mdl/lib/Card/Card';
+import iso3166 from 'iso-3166-2';
 
 import LearnerResult from './search/LearnerResult';
 import CountryRefinementOption from './search/CountryRefinementOption';
 import FilterVisibilityToggle from './search/FilterVisibilityToggle';
 import HitsCount from './search/HitsCount';
 import type { Option } from '../flow/generalTypes';
+
+let makeSearchkitTranslations: () => Object = () => {
+  let translations = {};
+  for (let code of Object.keys(iso3166.data)) {
+    translations[code] = iso3166.data[code].name;
+    for (let stateCode of Object.keys(iso3166.data[code].sub)) {
+      translations[stateCode] = iso3166.data[code].sub[stateCode].name;
+    }
+  }
+
+  return translations;
+};
 
 export default class LearnerSearch extends SearchkitComponent {
   props: {
@@ -28,12 +42,7 @@ export default class LearnerSearch extends SearchkitComponent {
     { value: 'dob', label: "Sort: dob" },
   ];
 
-  profileFieldOptions: Function = (): Object => ({
-    type: 'nested',
-    options: {
-      path: 'profile'
-    }
-  });
+  searchkitTranslations: Object = makeSearchkitTranslations();
 
   render () {
     return (
@@ -43,13 +52,12 @@ export default class LearnerSearch extends SearchkitComponent {
             <Card className="fullwidth">
               <FilterVisibilityToggle
                 {...this.props}
-                filterName="birth-country"
+                filterName="birth-location"
               >
                 <RefinementListFilter
-                  id="country"
-                  title="Country of Birth"
+                  id="birth_location"
+                  title="Place of Birth"
                   field="profile.birth_country"
-                  fieldOptions={this.profileFieldOptions()}
                   itemComponent={CountryRefinementOption}
                 />
               </FilterVisibilityToggle>
@@ -57,12 +65,11 @@ export default class LearnerSearch extends SearchkitComponent {
                 {...this.props}
                 filterName="residence-country"
               >
-                <RefinementListFilter
+                <HierarchicalMenuFilter
+                  fields={["profile.country", "profile.state_or_territory"]}
+                  title="Current Location"
                   id="country"
-                  title="Country of Residence"
-                  field="profile.country"
-                  fieldOptions={this.profileFieldOptions()}
-                  itemComponent={CountryRefinementOption}
+                  translations={this.searchkitTranslations}
                 />
               </FilterVisibilityToggle>
             </Card>

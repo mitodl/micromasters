@@ -43,6 +43,26 @@
       }
     }
 
+    .sk-hierarchical-menu-list {
+      .sk-hierarchical-menu-list__header {
+        margin: 15px;
+        font-size: 17px;
+      }
+
+      .sk-hierarchical-menu-list__root {
+        margin-left: 25px;
+        margin-right: 40px;
+        .sk-hierarchical-menu-option {
+          >div {
+            justify-content: space-between;
+          }
+          .sk-hierarchical-menu-option__text {
+            margin-right: 15px;
+          }
+        }
+      }
+    }
+
     .filter-visibility-toggle.closed {
       i.closed {
         transform: rotate(0.75turn);
@@ -52,7 +72,7 @@
         -o-transform: rotate(0.75turn);
       }
 
-      .sk-panel__content {
+      .sk-panel__content, .sk-hierarchical-menu-list__root {
         display: none;
       }
     }

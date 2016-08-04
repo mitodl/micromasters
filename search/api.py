@@ -207,7 +207,7 @@ def program_enrolled_user_mapping():
     mapping = Mapping(USER_DOC_TYPE)
     mapping.field("id", "long")
     mapping.field("user_id", "long")
-    mapping.field("profile", "nested", properties={
+    mapping.field("profile", "object", properties={
         'account_privacy': NOT_ANALYZED_STRING_TYPE,
         'agreed_to_terms_of_service': BOOL_TYPE,
         'birth_city': NOT_ANALYZED_STRING_TYPE,
@@ -252,7 +252,7 @@ def program_enrolled_user_mapping():
             'state_or_territory': NOT_ANALYZED_STRING_TYPE,
         }},
     })
-    mapping.field("program", "nested", properties={
+    mapping.field("program", "object", properties={
         'id': LONG_TYPE,
         'grade_average': LONG_TYPE,
         'enrollments': {'type': 'nested', 'properties': {
