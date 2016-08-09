@@ -11,8 +11,6 @@ import {
   SET_WORK_DIALOG_VISIBILITY,
   SET_WORK_DIALOG_INDEX,
 
-  TOGGLE_DASHBOARD_EXPANDER,
-
   SET_EDUCATION_DIALOG_VISIBILITY,
   SET_EDUCATION_DIALOG_INDEX,
   SET_EDUCATION_DEGREE_LEVEL,
@@ -46,7 +44,6 @@ import type { Action } from '../flow/reduxTypes';
 export type UIState = {
   workHistoryEdit:              boolean;
   workDialogVisibility:         boolean;
-  dashboardExpander:            {};
   educationDialogVisibility:    boolean;
   educationDialogIndex:         number;
   educationDegreeLevel:         string;
@@ -68,7 +65,6 @@ export type UIState = {
 export const INITIAL_UI_STATE: UIState = {
   workHistoryEdit:            true,
   workDialogVisibility:       false,
-  dashboardExpander:          {},
   educationDialogVisibility:  false,
   educationDialogIndex:       -1,
   educationDegreeLevel:       '',
@@ -149,13 +145,6 @@ export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
     });
   case CLEAR_UI:
     return INITIAL_UI_STATE;
-  case TOGGLE_DASHBOARD_EXPANDER: {
-    let clone = Object.assign({}, state.dashboardExpander);
-    clone[action.payload.courseId] = action.payload.newValue;
-    return Object.assign({}, state, {
-      dashboardExpander: clone
-    });
-  }
   case SET_USER_PAGE_DIALOG_VISIBILITY: {
     return Object.assign({}, state, {
       userPageDialogVisibility: action.payload

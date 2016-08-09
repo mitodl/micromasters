@@ -65,3 +65,16 @@ body {
   height: 300px;
   width: 100%;
 }
+
+// hides elements so that they're visible only to screenreaders
+// from bootstrap.css
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}

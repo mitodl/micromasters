@@ -75,78 +75,123 @@ c.validation-wrapper {
   }
 }
 
-.course-list {
-  border: 1px solid grey;
-  margin: 10px 0;
-
-  .mdl-grid {
-    padding: 0 !important;
+.dashboard {
+  .card-image {
+    height: auto;
+    width: 125px;
+    border-radius: 50%;
   }
 
-  .course-list-row {
-    border-bottom: 1px solid lightgray;
-    margin: 0px;
+  .mdl-card {
+    padding: 20px;
+    margin: 25px 0;
+    min-height: 150px;
+    width: 100%;
+
+    .mdl-card__title-text {
+      font-weight: 500;
+      font-size: 15pt;
+    }
   }
-  .course-list-row:last-child {
-    border-bottom: 0px;
-  }
 
-  .course-list-center {
-    display: flex;
+  .dashboard-user-card {
+    flex-direction: row;
 
-    .course-title {
-      align-self: center;
-      padding-left: 20px;
-    }
+    .dashboard-user-card-text {
+      width: 100%;
 
-    .course-status {
-      align-self: center;
-    }
+      .mdl-card__supporting-text {
+        color: $medgrey;
+      }
 
-    .course-progress {
-      margin-top: 0 !important;
-      margin-bottom: 0 !important;
-    }
-
-    &.course-list-header {
-      .course-progress {
-        align-self: center;
+      .mdl-card__title {
+        padding-bottom: 0 !important;
       }
     }
-
   }
 
-  .course-run-title {
-    padding-left: 30px;
-  }
+  .course-list {
+    padding: 20px 0 0 0;
 
-  .course-run-status {
-    text-align: right;
-  }
-
-  li {
-    display: block;
-  }
-
-  .course-list-header {
-    background-color: #eff5f7;
-    font-weight: bold;
-    font-size: larger;
-
-    .course-progress {
-      font-weight: normal;
-      font-size: small;
+    .mdl-card__title {
+      // align with course-row below which includes an extra 8px of grid cell padding
+      padding-left: 28px;
     }
-  }
 
-  .course-list-body {
-    .course-status {
-      text-align: right;
+    .course-row {
+      width: 100%;
+      font-size: 11pt;
+      min-height: 125px;
+      align-items: center;
+      padding: 0 20px;
+
+      border-bottom: 1px solid $lightgrey;
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .course-description {
+        .course-description-title {
+          font-weight: 500;
+        }
+
+        .course-description-result {
+          font-style: italic;
+          font-weight: 400;
+          font-size: 10pt;
+          color: $darkgrey;
+        }
+
+        .course-description-enrolled {
+          color: $darkgrey;
+          padding-left: 5px;
+        }
+      }
+
+      .course-grade {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .course-grade-percent {
+          font-weight: 500;
+        }
+        .course-grade-description {
+          font-weight: 400;
+          color: $medlightgrey;
+        }
+      }
+
+      .course-action {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+
+        .course-action-action {
+          .material-icons {
+            color: $mm-brand-fg;
+            font-size: 28pt;
+          }
+
+          .dashboard-button {
+            background-color: $dashboard-button-teal;
+            color: white;
+            box-shadow: none;
+            text-decoration: none;
+
+            &[disabled] {
+              background-color: adjust-color($dashboard-button-teal, $alpha: -0.5);
+            }
+          }
+        }
+
+        .course-action-description {
+          color: $darkgrey;
+          font-size: 10pt;
+        }
+      }
     }
-  }
-
-  .course-progress {
-    text-align: center;
   }
 }
 

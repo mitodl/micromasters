@@ -1,6 +1,7 @@
 // @flow
 import React from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
+import { Card, CardTitle } from 'react-mdl/lib/Card';
+import Button from 'react-mdl/lib/Button';
 
 export default class ProgressWidget extends React.Component {
   props: {
@@ -64,23 +65,21 @@ export default class ProgressWidget extends React.Component {
     const { actual, total } = this.props;
 
     return (
-      <div className="progress-widget">
-        <p className="text heading-text">Progress</p>
+      <Card className="progress-widget" shadow={0}>
+        <CardTitle className="progress-title">Progress</CardTitle>
         <div className="circular-progress-widget">
           {this.circularProgressWidget(80, 9, actual, total)}
         </div>
-        <p className="text text-course-complete">Courses complete</p>
-        <p className="text heading-paragraph">
+        <p className="text-course-complete">Courses complete</p>
+        <p className="heading-paragraph">
           On completion, you can apply for <br/>
           the Masters Degree Program</p>
         <div className="apply-master-btn">
-           <RaisedButton
-             disabledBackgroundColor="#8ee0b0"
-             disabledLabelColor="#25b346"
-             label="Apply for Masters"
-             disabled={true} />
+           <Button disabled className="mm-button-action progress-button">
+             Apply for Masters
+           </Button>
         </div>
-      </div>
+      </Card>
     );
   }
 }

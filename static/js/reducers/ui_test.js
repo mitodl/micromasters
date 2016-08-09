@@ -7,7 +7,6 @@ import {
   SET_WORK_HISTORY_EDIT,
   SET_WORK_DIALOG_VISIBILITY,
   SET_WORK_DIALOG_INDEX,
-  TOGGLE_DASHBOARD_EXPANDER,
   SET_EDUCATION_DIALOG_VISIBILITY,
   SET_EDUCATION_DIALOG_INDEX,
   SET_EDUCATION_DEGREE_LEVEL,
@@ -30,7 +29,6 @@ import {
   setWorkHistoryEdit,
   setWorkDialogVisibility,
   setWorkDialogIndex,
-  toggleDashboardExpander,
   setEducationDialogVisibility,
   setEducationDialogIndex,
   setEducationDegreeLevel,
@@ -134,22 +132,6 @@ describe('ui reducers', () => {
 
         return dispatchThen(setWorkDialogIndex(5), [SET_WORK_DIALOG_INDEX]).then(state => {
           assert.equal(state.workDialogIndex, 5);
-        });
-      });
-    });
-  });
-
-  describe('dashboard expander', () => {
-    it('has an empty default state', () => {
-      return dispatchThen({type: "undefined"}, []).then(state => {
-        assert.deepEqual(state.dashboardExpander, {});
-      });
-    });
-
-    it('toggles a course expander', () => {
-      return dispatchThen(toggleDashboardExpander(3, true), [TOGGLE_DASHBOARD_EXPANDER]).then(state => {
-        assert.deepEqual(state.dashboardExpander, {
-          3: true
         });
       });
     });

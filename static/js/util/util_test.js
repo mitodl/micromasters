@@ -14,6 +14,7 @@ import {
   callFunctionArray,
   getLocation,
   validationErrorSelector,
+  asPercent,
 } from '../util/util';
 import {
   EDUCATION_LEVELS,
@@ -333,6 +334,25 @@ describe('utility functions', () => {
       let errors = {};
       let keySet = ['bar'];
       assert.equal(validationErrorSelector(errors, keySet), "");
+    });
+  });
+
+  describe('asPercent', () => {
+    it("returns an empty string for null or undefined", () => {
+      assert.equal(asPercent(undefined), "");
+      assert.equal(asPercent(null), "");
+    });
+
+    it("handles NaN, - and + inf", () => {
+      assert.equal(asPercent(Infinity), "");
+      assert.equal(asPercent(-Infinity), "");
+      assert.equal(asPercent(NaN), "");
+    });
+
+    it("formats valid numbers", () => {
+      assert.equal(asPercent(1234.567), "123457%");
+      assert.equal(asPercent(-.34), "-34%");
+      assert.equal(asPercent(.129), "13%");
     });
   });
 });

@@ -9,46 +9,47 @@
     stroke: white;
   }
   .circular-progress-widget-txt {
-    font-family: 'Roboto', sans-serif;
-    font-size: 50px;
+    font-size: 40pt;
     fill: white;
   }
 }
 
 .progress-widget {
   background-color: $mm-brand-bg !important;
-  width: 450px;
-  display: block;
-  padding: 1px;
+  color: white;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  align-content: space-between;
+  font-size: 16pt;
 
-  .text {
-    font-family: 'Roboto', sans-serif;
-    color: white;
-    font-size: medium;
-    text-align: center;
+  .progress-title {
+    padding: 0;
+    align-self: flex-start;
 
-    &.text-course-complete {
-      font-size: 22px;
-      margin-top: 26px;
-    }
-    &.heading-text {
-      margin: 20px 0 0 25px;
-      text-align: left;
-      font-size: 23px;
-      font-weight: 500;
-      text-align: left;
-      display: block;
-    }
-    &.heading-paragraph {
-      font-style: italic;
+    .mdl-card__title-text {
+      font-size: 13pt;
+      color: white;
+      font-weight: 400;
     }
   }
-  .circular-progress-widget {
-    margin-top: 15px auto;
+
+  p {
+    padding: 10px 0;
+    margin: 0;
+  }
+
+  .heading-paragraph {
+    font-style: italic;
     text-align: center;
   }
-  .apply-master-btn {
-    margin: 15px auto 20px auto;
-    text-align: center;
+  .text-course-complete {
+    font-size: 16pt;
+  }
+  .progress-button {
+    color: $mm-brand-bg !important;
+    background-color: $progress-button-background !important;
+    text-transform: uppercase !important;
+    box-shadow: none;
   }
 }

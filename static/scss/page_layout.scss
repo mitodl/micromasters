@@ -5,4 +5,21 @@
     max-width: 750px;
     margin: 50px auto;
   }
+
+  .double-column {
+    display: flex;
+    flex-direction: row;
+    max-width: 1000px;
+    margin: 50px auto;
+
+    .first-column {
+      width: 65%;
+      margin: 0 15px;
+    }
+
+    .second-column {
+      width: 35%;
+      margin: 0 15px;
+    }
+  }
 }

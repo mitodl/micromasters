@@ -6,6 +6,7 @@ import ga from 'react-ga';
 import striptags from 'striptags';
 import _ from 'lodash';
 import iso3166 from 'iso-3166-2';
+import urljoin from 'url-join';
 
 import {
   EDUCATION_LEVELS,
@@ -214,9 +215,7 @@ export function makeStrippedHtml(textOrElement: any): string {
 }
 
 export function makeProfileImageUrl(profile: Profile): string {
-  let imageUrl = `${SETTINGS.edx_base_url}/static/images/profiles/default_120.png`.
-  //replacing multiple "/" with a single forward slash, excluding the ones following the colon
-    replace(/([^:]\/)\/+/g, "$1");
+  let imageUrl = urljoin(SETTINGS.edx_base_url, 'static/images/profiles/default_120.png');
   if (profile !== undefined && profile.profile_url_large) {
     imageUrl = profile.profile_url_large;
   }
@@ -290,4 +289,16 @@ export function callFunctionArray<R: any, F: (a: any) => R>(functionArray: Array
  */
 export function validationErrorSelector(errors: ValidationErrors, keySet: string[]) {
   return _.get(errors, keySet) ? "invalid-input" : "";
+}
+
+/**
+ * Formats a number between 0 and 1 as a percent, eg "57%"
+ */
+export function asPercent(number: number): string {
+  if (number === undefined || number === null) {
+    return "";
+  } else if (!isFinite(number)) {
+    return "";
+  }
+  return `${Math.round(number * 100)}%`;
 }
