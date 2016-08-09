@@ -373,3 +373,52 @@ c.validation-wrapper {
 input::-ms-clear {
     display: none;
 }
+
+// Progress Widget
+.circular-progress-widget {
+    fill: none;
+    .circular-progress-widget-bg {
+        stroke: #39C268;
+    }
+    .circular-progress-widget-fg {
+        transition: stroke-dashoffset .5s ease-in-out;
+        stroke: white;
+    }
+    .circular-progress-widget-txt {
+        font-family: sans-serif;
+        font-size: 50px;
+        fill: white;
+        transform: translate(0 50%);
+    }
+}
+
+.progress-widget {
+    background-color: $micromasters-brand-bg !important;
+    width: 500px;
+    position: relative;
+    .text {
+      font-family: sans-serif;
+      color: white;
+      font-size: medium;
+      &.text-course-complete {
+        font-size: 22px;
+        margin-top: 10px;
+      }
+      &.heading-text {
+        margin-top: 16px;
+        text-align: center;
+        font-size: 23px;
+      }
+       &.heading-paragraph {
+          font-style: italic;
+       }
+    }
+    .circular-progress-widget {
+        margin-top: 15px auto;
+        text-align: center;
+    }
+    .apply-master-btn {
+        margin: 15px auto;
+        text-align: center;
+    }
+}
