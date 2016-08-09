@@ -11,6 +11,7 @@ from wagtail.wagtailcore import urls as wagtail_urls
 from courses.views import ProgramViewSet, CourseRunViewSet
 from dashboard.views import UserDashboard
 from profiles.views import ProfileViewSet
+from search.views import ElasticProxyView
 
 router = routers.DefaultRouter()
 router.register(r'programs', ProgramViewSet)
@@ -23,6 +24,7 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/v0/', include(router.urls)),
     url(r'^api/v0/dashboard/$', UserDashboard.as_view(), name='dashboard_api'),
+    url(r'^api/v0/search/(?P<elastic_url>.*)', ElasticProxyView.as_view(), name='search_api'),
     url(r'^status/', include('server_status.urls')),
 
     # Wagtail
