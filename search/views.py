@@ -8,6 +8,7 @@ from django.conf import settings
 from elasticsearch_dsl import Search, Q
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -24,7 +25,13 @@ class ElasticProxyView(APIView):
     """
     Elasticsearch proxy needed to enforce authentication and permissions
     """
-    authentication_classes = (IsAuthenticated, )
+    authentication_classes = (SessionAuthentication, )
+    permission_classes = (IsAuthenticated, )
+
+    def dispatch(self, request, *args, **kwargs):
+        # import pdb
+        # pdb.set_trace()
+        return APIView.dispatch(self, request, *args, **kwargs)
 
     def _search_elasicsearch(self, request):
         """
