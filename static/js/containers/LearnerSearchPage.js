@@ -12,6 +12,7 @@ import type { Dispatch } from 'redux';
 import LearnerSearch from '../components/LearnerSearch';
 import { setSearchFilterVisibility } from '../actions/ui';
 import type { UIState } from '../reducers/ui';
+import { getCookie } from '../util/api';
 
 class LearnerSearchPage extends React.Component {
   props: {
@@ -33,7 +34,11 @@ class LearnerSearchPage extends React.Component {
   };
 
   render () {
-    let searchKit = new SearchkitManager(SETTINGS.search_url);
+    let searchKit = new SearchkitManager(SETTINGS.search_url, {
+      httpHeaders: {
+        'X-CSRFToken': getCookie('csrftoken')
+      }
+    });
     return (
       <SearchkitProvider searchkit={searchKit}>
         <LearnerSearch
