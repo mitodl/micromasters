@@ -6,8 +6,21 @@ import CircularProgressWidget from './progress/CircularProgressWidget';
 
 export default class ProgressWidget extends React.Component {
 
+  static propTypes = {
+    actual:       React.PropTypes.number,
+    total:        React.PropTypes.number,
+    disabled:     React.PropTypes.bool
+  };
+
+  // this is temporary, we can remove it once it is integrate into learners dashboard
+  static defaultProps = {
+    actual:      3,
+    total:       5,
+  };
+
   render() {
     let applyForMSBtnLabel = 'Apply for Masters';
+    const { actual, total } = this.props;
 
     return (
       <div className="progress-widget">
@@ -18,7 +31,7 @@ export default class ProgressWidget extends React.Component {
               <div className="row center-block">
                 <div className="col-md-12">
                   <div className="circular-progress-widget">
-                      <CircularProgressWidget actual={2} total={5} />
+                      <CircularProgressWidget actual={actual} total={total} />
                   </div>
                   <p className="text text-course-complete text-center">Courses complete</p>
                   <p className="text heading-paragraph text-center">
