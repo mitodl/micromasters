@@ -376,49 +376,50 @@ input::-ms-clear {
 
 // Progress Widget
 .circular-progress-widget {
-    fill: none;
-    .circular-progress-widget-bg {
-        stroke: #39C268;
-    }
-    .circular-progress-widget-fg {
-        transition: stroke-dashoffset .5s ease-in-out;
-        stroke: white;
-    }
-    .circular-progress-widget-txt {
-        font-family: sans-serif;
-        font-size: 50px;
-        fill: white;
-        transform: translate(0 50%);
-    }
+  fill: none;
+  .circular-progress-widget-bg {
+    stroke: #39C268;
+  }
+  .circular-progress-widget-fg {
+    transition: stroke-dashoffset .5s ease-in-out;
+    stroke: white;
+  }
+  .circular-progress-widget-txt {
+    font-family: 'Roboto', sans-serif;
+    font-size: 50px;
+    fill: white;
+  }
 }
 
 .progress-widget {
-    background-color: $micromasters-brand-bg !important;
-    width: 500px;
-    position: relative;
-    .text {
-      font-family: sans-serif;
-      color: white;
-      font-size: medium;
-      &.text-course-complete {
-        font-size: 22px;
-        margin-top: 10px;
-      }
-      &.heading-text {
-        margin-top: 16px;
-        text-align: center;
-        font-size: 23px;
-      }
-       &.heading-paragraph {
-          font-style: italic;
-       }
+  background-color: $micromasters-brand-bg !important;
+  width: 450px;
+  position: relative;
+  .text {
+    font-family: 'Roboto', sans-serif;
+    color: white;
+    font-size: medium;
+
+    &.text-course-complete {
+      font-size: 22px;
+      margin-top: 26px;
     }
-    .circular-progress-widget {
-        margin-top: 15px auto;
-        text-align: center;
+    &.heading-text {
+      margin: 26px 0 0 16px;
+      text-align: center;
+      font-size: 23px;
+      font-weight: 500;
     }
-    .apply-master-btn {
-        margin: 15px auto;
-        text-align: center;
+    &.heading-paragraph {
+      font-style: italic;
     }
+  }
+  .circular-progress-widget {
+    margin-top: 15px auto;
+    text-align: center;
+  }
+  .apply-master-btn {
+    margin: 15px auto 30px auto;
+    text-align: center;
+  }
 }

@@ -15,7 +15,6 @@ import {
   DASHBOARD_COURSE_HEIGHT,
   DASHBOARD_RUN_HEIGHT,
 } from '../constants';
-import ProgressWidget from './ProgressWidget'
 
 class CourseList extends React.Component {
   static propTypes = {
@@ -126,8 +125,6 @@ class CourseList extends React.Component {
               before you can apply for the <strong>{program.title}</strong> Master’s Degree.</p>
             <RaisedButton label={applyForMSBtnLabel} disabled={true} labelStyle={btnStyle} />
           </div>
-          <ProgressWidget />
-
         </div>
       );
     });

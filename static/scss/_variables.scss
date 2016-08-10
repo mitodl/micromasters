@@ -18,3 +18,8 @@ $block-padding: 20px;
 $page-padding: 40px;
 $progress-widget-bg-color: #ddd;
 $progress-widget-fg-color: #2ecc40;
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('https://fonts.googleapis.com/css?family=Roboto:500,500italic,700');
+}
