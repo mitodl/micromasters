@@ -1,4 +1,17 @@
 # Set Ruby as the language so it doesn't download the pip things. Instead, let docker do that.
+
+sudo: required
+services:
+  - docker
+
+env:
+  COMPOSE_VERSION: 1.4.2
+
+before_install:
+ - curl -L https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+ - chmod +x docker-compose
+ - sudo mv docker-compose /usr/local/bin
+
 language: ruby
 cache: bundler
 script:
@@ -7,5 +20,3 @@ script:
   - docker-compose -f travis-docker-compose.yml run watch npm run-script coverage
   - docker-compose -f travis-docker-compose.yml run watch npm run-script lint
   - docker-compose -f travis-docker-compose.yml run watch ./webpack_if_prod.sh
-services:
-  - docker
