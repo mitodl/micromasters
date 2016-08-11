@@ -20,24 +20,20 @@ export default class ProgressWidget extends React.Component {
 
     return (
       <div className="progress-widget">
-        <div className="row-progress-widget">
-          <p className="text heading-text">Progress</p>
+        <p className="text heading-text">Progress</p>
+        <div className="circular-progress-widget">
+          {this.circularProgressWidget(80, 9, actual, total)}
         </div>
-        <div className="row-progress-widget">
-          <div className="circular-progress-widget">
-            {this.circularProgressWidget(80, 9, actual, total)}
-          </div>
-          <p className="text text-course-complete">Courses complete</p>
-          <p className="text heading-paragraph">
-            On completion, you can apply for <br/>
-            the Masters Degress Program</p>
-          <div className="apply-master-btn">
-             <RaisedButton
-               disabledBackgroundColor="#8ee0b0"
-               disabledLabelColor="#25b346"
-               label="Apply for Masters"
-               disabled={true} />
-          </div>
+        <p className="text text-course-complete">Courses complete</p>
+        <p className="text heading-paragraph">
+          On completion, you can apply for <br/>
+          the Masters Degress Program</p>
+        <div className="apply-master-btn">
+           <RaisedButton
+             disabledBackgroundColor="#8ee0b0"
+             disabledLabelColor="#25b346"
+             label="Apply for Masters"
+             disabled={true} />
         </div>
       </div>
     );

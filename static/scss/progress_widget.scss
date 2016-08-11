@@ -2,7 +2,7 @@
 .circular-progress-widget {
   fill: none;
   .circular-progress-widget-bg {
-    stroke: #39C268;
+    stroke: $progress-widget-bg-stroke !important;
   }
   .circular-progress-widget-fg {
     transition: stroke-dashoffset .5s ease-in-out;
@@ -18,18 +18,9 @@
 .progress-widget {
   background-color: $mm-brand-bg !important;
   width: 450px;
-  position: relative;
-  display: -webkit-flex; /* Safari */
-  display: flex;
-  -webkit-flex-direction: column;
-  flex-direction: column;
+  display: block;
+  padding: 1px;
 
-  .row-progress-widget {
-    -webkit-flex: 1;  /* Safari 6.1+ */
-    -ms-flex: 1;  /* IE 10 */
-    flex: 1;
-    display: block;
-  }
   .text {
     font-family: 'Roboto', sans-serif;
     color: white;
@@ -41,11 +32,12 @@
       margin-top: 26px;
     }
     &.heading-text {
-      margin: 26px 0 0 16px;
+      margin: 20px 0 0 25px;
       text-align: left;
       font-size: 23px;
       font-weight: 500;
       text-align: left;
+      display: block;
     }
     &.heading-paragraph {
       font-style: italic;
@@ -56,7 +48,7 @@
     text-align: center;
   }
   .apply-master-btn {
-    margin: 15px auto 30px auto;
+    margin: 15px auto 20px auto;
     text-align: center;
   }
 }
