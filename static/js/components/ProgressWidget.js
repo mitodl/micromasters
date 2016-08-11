@@ -3,7 +3,6 @@ import React from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
 
 export default class ProgressWidget extends React.Component {
-
   props: {
     actual: number,
     total:  number
@@ -15,36 +14,12 @@ export default class ProgressWidget extends React.Component {
     total:  5
   };
 
-  render() {
-    const { actual, total } = this.props;
-
-    return (
-      <div className="progress-widget">
-        <p className="text heading-text">Progress</p>
-        <div className="circular-progress-widget">
-          {this.circularProgressWidget(80, 9, actual, total)}
-        </div>
-        <p className="text text-course-complete">Courses complete</p>
-        <p className="text heading-paragraph">
-          On completion, you can apply for <br/>
-          the Masters Degress Program</p>
-        <div className="apply-master-btn">
-           <RaisedButton
-             disabledBackgroundColor="#8ee0b0"
-             disabledLabelColor="#25b346"
-             label="Apply for Masters"
-             disabled={true} />
-        </div>
-      </div>
-    );
-  }
-
   circularProgressWidget: Function = (
     radius: number,
     strokeWidth: number,
     actual: number,
     total: number
-  ): void => {
+  ): React$Element<*> => {
     const radiusForMeasures = radius - strokeWidth / 2;
     const width = radius * 2;
     const height = radius * 2;
@@ -82,6 +57,30 @@ export default class ProgressWidget extends React.Component {
           {`${actual}/${total}`}
         </text>
       </svg>
+    );
+  }
+
+  render() {
+    const { actual, total } = this.props;
+
+    return (
+      <div className="progress-widget">
+        <p className="text heading-text">Progress</p>
+        <div className="circular-progress-widget">
+          {this.circularProgressWidget(80, 9, actual, total)}
+        </div>
+        <p className="text text-course-complete">Courses complete</p>
+        <p className="text heading-paragraph">
+          On completion, you can apply for <br/>
+          the Masters Degree Program</p>
+        <div className="apply-master-btn">
+           <RaisedButton
+             disabledBackgroundColor="#8ee0b0"
+             disabledLabelColor="#25b346"
+             label="Apply for Masters"
+             disabled={true} />
+        </div>
+      </div>
     );
   }
 }
