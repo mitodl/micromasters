@@ -26,4 +26,12 @@ describe('DashboardPage', () => {
       assert(div.querySelector(".spinner"), "Unable to find spinner");
     });
   });
+
+  it('has all the cards we expect', () => {
+    return renderComponent('/dashboard').then(([, div]) => {
+      assert(div.querySelector(".dashboard-user-card"), "Unable to find user card");
+      assert(div.querySelector(".course-list"), "Unable to find course listing card");
+      assert(div.querySelector(".progress-widget"), "Unable to find progress card");
+    });
+  });
 });
