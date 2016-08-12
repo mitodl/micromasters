@@ -19,6 +19,26 @@ export default class CourseAction extends React.Component {
     now: Object,
   };
 
+  makeActionButton = (text, run, disabled, url) => {
+    let linkProps;
+    if (!disabled) {
+      linkProps = {
+        target: "_blank",
+        href: url,
+      };
+    }
+    return <span>
+      <Button
+        className="mm-button-action dashboard-button"
+        disabled={disabled}
+        {...linkProps}
+      >
+        {text}
+      </Button>
+      <span className="sr-only"> in {run.title}</span>
+    </span>
+  };
+
   render() {
     const { course, now } = this.props;
     let firstRun = {};
@@ -34,15 +54,7 @@ export default class CourseAction extends React.Component {
       break;
     case STATUS_ENROLLED_NOT_VERIFIED: {
       let courseUpgradeUrl = urljoin(SETTINGS.edx_base_url, '/course_modes/choose/', firstRun.course_id);
-      action = <span>
-        <Button
-          className="mm-button-action dashboard-button"
-          href={courseUpgradeUrl}
-          target="_blank">
-          Upgrade
-        </Button>
-        <span className="sr-only"> for {firstRun.title}</span>
-      </span>;
+      action = this.makeActionButton("Upgrade", firstRun, false, courseUpgradeUrl);
       break;
     }
     case STATUS_OFFERED_NOT_ENROLLED: {
@@ -59,24 +71,8 @@ export default class CourseAction extends React.Component {
         }
       }
 
-      let linkProps;
-      if (!disabled) {
-        let courseInfoUrl = urljoin(SETTINGS.edx_base_url, '/courses/', firstRun.course_id, 'about');
-        linkProps = {
-          target: "_blank",
-          href: courseInfoUrl,
-        };
-      }
-      action = <span>
-        <Button
-          className="mm-button-action dashboard-button"
-          disabled={disabled}
-          {...linkProps}
-        >
-          Enroll
-        </Button>
-        <span className="sr-only"> in {firstRun.title}</span>
-      </span>;
+      let courseInfoUrl = urljoin(SETTINGS.edx_base_url, '/courses/', firstRun.course_id, 'about');
+      action = this.makeActionButton("Enroll", firstRun, disabled, courseInfoUrl);
       break;
     }
     }
