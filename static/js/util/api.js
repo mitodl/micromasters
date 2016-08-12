@@ -115,6 +115,8 @@ export function patchUserProfile(username: string, profile: Profile) {
   });
 }
 
+import { DASHBOARD_RESPONSE } from '../constants';
 export function getDashboard() {
-  return mockableFetchJSONWithCSRF('/api/v0/dashboard/', {}, true);
+  return Promise.resolve(DASHBOARD_RESPONSE);
+  //return mockableFetchJSONWithCSRF('/api/v0/dashboard/', {}, true);
 }

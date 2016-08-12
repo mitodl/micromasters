@@ -28,28 +28,30 @@ class DashboardPage extends React.Component {
     let errorMessage;
     let dashboardContent;
     // if there are no errors coming from the backend, simply show the dashboard
-    if (dashboard.errorInfo === undefined){
-      // For now we are showing only the first program in list
-      let program = dashboard.programs[0];
-      if (program !== undefined) {
-        dashboardContent = (
-          <div className="double-column">
-            <div className="first-column">
-              <DashboardUserCard profile={profile} program={program}/>
-              <CourseListCard program={program}/>
-            </div>
-            <div className="second-column">
-              <ProgressWidget />
-              <Card shadow={0}>
-                <CardTitle>Learners Near Me</CardTitle>
-              </Card>
-              <Card shadow={0}>
-                <CardTitle>Histogram</CardTitle>
-              </Card>
-            </div>
+    if (dashboard.errorInfo === undefined && dashboard.programs.length > 0){
+      // For now show all programs available. We should restrict this to one program later on.
+      let cards = dashboard.programs.map(program => (
+        <CourseListCard program={program} key={program.id} />
+      ));
+      // HACK: We need a program to show the title of
+      let firstProgram = dashboard.programs[0];
+      dashboardContent = (
+        <div className="double-column">
+          <div className="first-column">
+            <DashboardUserCard profile={profile} program={firstProgram}/>
+            {cards}
           </div>
-        );
-      }
+          <div className="second-column">
+            <ProgressWidget />
+            <Card shadow={0}>
+              <CardTitle>Learners Near Me</CardTitle>
+            </Card>
+            <Card shadow={0}>
+              <CardTitle>Histogram</CardTitle>
+            </Card>
+          </div>
+        </div>
+      );
     } else {
       errorMessage = <ErrorMessage errorInfo={dashboard.errorInfo} />;
     }
