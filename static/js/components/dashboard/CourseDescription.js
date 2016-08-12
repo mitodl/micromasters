@@ -27,19 +27,23 @@ export default class CourseDescription extends React.Component {
       firstRun = course.runs[0];
     }
 
-    if (course.status === STATUS_PASSED) {
+    switch (course.status) {
+    case STATUS_PASSED:
       text = "Complete!";
-    } else if (course.status === STATUS_ENROLLED_NOT_VERIFIED) {
+      break;
+    case STATUS_ENROLLED_NOT_VERIFIED:
       text = <span>
         You need to upgrade to the Verified course to get MicroMasters credit
         <IconButton name="help" colored/>
       </span>;
       enrolled = "(enrolled)";
-    } else if (course.status === STATUS_NOT_OFFERED) {
+      break;
+    case STATUS_NOT_OFFERED:
       if (firstRun.status === STATUS_NOT_PASSED) {
         text = 'You failed this course';
       }
-    } else if (course.status === STATUS_VERIFIED_NOT_COMPLETED) {
+      break;
+    case STATUS_VERIFIED_NOT_COMPLETED:
       if (firstRun.course_start_date) {
         let courseStartDate = moment(firstRun.course_start_date);
         if (courseStartDate.isAfter(now, 'day')) {
@@ -47,6 +51,7 @@ export default class CourseDescription extends React.Component {
           text = `Begins ${formattedDate}`;
         }
       }
+      break;
     }
 
     return <div className="course-description">

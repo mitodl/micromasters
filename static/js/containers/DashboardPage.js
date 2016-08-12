@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import Loader from 'react-loader';
 import { Card, CardTitle } from 'react-mdl/lib/Card';
 
-import { STATUS_PASSED } from '../constants';
 import { FETCH_PROCESSING } from '../actions';
 import CourseListCard from '../components/dashboard/CourseListCard';
 import DashboardUserCard from '../components/dashboard/DashboardUserCard';

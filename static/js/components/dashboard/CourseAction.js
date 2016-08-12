@@ -28,17 +28,24 @@ export default class CourseAction extends React.Component {
 
     let action = "", description = "";
 
-    if (course.status === STATUS_PASSED) {
+    switch (course.status) {
+    case STATUS_PASSED:
       action = <i className="material-icons">done</i>;
-    } else if (course.status === STATUS_ENROLLED_NOT_VERIFIED) {
+      break;
+    case STATUS_ENROLLED_NOT_VERIFIED: {
       let courseUpgradeUrl = urljoin(SETTINGS.edx_base_url, '/course_modes/choose/', firstRun.course_id);
       action = <span>
-        <Button className="mm-button-action dashboard-button" href={courseUpgradeUrl} target="_blank">
+        <Button
+          className="mm-button-action dashboard-button"
+          href={courseUpgradeUrl}
+          target="_blank">
           Upgrade
         </Button>
         <span className="sr-only"> for {firstRun.title}</span>
       </span>;
-    } else if (course.status === STATUS_OFFERED_NOT_ENROLLED) {
+      break;
+    }
+    case STATUS_OFFERED_NOT_ENROLLED: {
       let disabled = false;
       if (!firstRun.enrollment_start_date && firstRun.fuzzy_enrollment_start_date) {
         disabled = true;
@@ -70,6 +77,8 @@ export default class CourseAction extends React.Component {
         </Button>
         <span className="sr-only"> in {firstRun.title}</span>
       </span>;
+      break;
+    }
     }
 
     return <div className="course-action">

@@ -27,12 +27,17 @@ export default class CourseGrade extends React.Component {
     let description = null;
 
     if (firstRun.grade !== undefined) {
-      if (course.status === STATUS_PASSED || course.status === STATUS_NOT_PASSED) {
+      switch (course.status) {
+      case STATUS_PASSED:
+      case STATUS_NOT_PASSED:
         percent = asPercent(firstRun.grade);
         description = 'Grade';
-      } else if (course.status === STATUS_ENROLLED_NOT_VERIFIED || course.status === STATUS_VERIFIED_NOT_COMPLETED) {
+        break;
+      case STATUS_ENROLLED_NOT_VERIFIED:
+      case STATUS_VERIFIED_NOT_COMPLETED:
         percent = asPercent(firstRun.grade);
         description = 'Current grade';
+        break;
       }
     }
 
