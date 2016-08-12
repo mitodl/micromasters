@@ -215,6 +215,14 @@ export const STATUS_ENROLLED_NOT_VERIFIED = "enrolled-not-verified";
 export const STATUS_OFFERED_NOT_ENROLLED = "offered-not-enrolled";
 export const STATUS_NOT_OFFERED = 'not-offered';
 
+export const ALL_COURSE_STATUSES = [
+  STATUS_NOT_OFFERED,
+  STATUS_PASSED,
+  STATUS_OFFERED_NOT_ENROLLED,
+  STATUS_ENROLLED_NOT_VERIFIED,
+  STATUS_VERIFIED_NOT_COMPLETED,
+];
+
 export const DASHBOARD_RESPONSE = [
   {
     "title": "Empty program",
