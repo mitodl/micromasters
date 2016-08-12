@@ -36,7 +36,7 @@ export default class CourseAction extends React.Component {
         {text}
       </Button>
       <span className="sr-only"> in {run.title}</span>
-    </span>
+    </span>;
   };
 
   render() {
