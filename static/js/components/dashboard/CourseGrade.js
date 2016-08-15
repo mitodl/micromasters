@@ -29,7 +29,6 @@ export default class CourseGrade extends React.Component {
     if (firstRun.grade !== undefined) {
       switch (course.status) {
       case STATUS_PASSED:
-      case STATUS_NOT_PASSED:
         percent = asPercent(firstRun.grade);
         description = 'Grade';
         break;
