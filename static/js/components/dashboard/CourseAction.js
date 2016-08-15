@@ -5,7 +5,7 @@ import Button from 'react-mdl/lib/Button';
 import moment from 'moment';
 import urljoin from 'url-join';
 
-import type { Course } from '../../flow/programTypes';
+import type { Course, CourseRun } from '../../flow/programTypes';
 import {
   STATUS_PASSED,
   STATUS_ENROLLED_NOT_VERIFIED,
@@ -19,7 +19,7 @@ export default class CourseAction extends React.Component {
     now: moment$Moment,
   };
 
-  makeActionButton = (text, run, disabled, url) => {
+  makeActionButton = (text: string, run: CourseRun, disabled: boolean, url: ?string) => {
     let linkProps;
     if (!disabled) {
       linkProps = {

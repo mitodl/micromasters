@@ -3,6 +3,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import moment from 'moment';
 import { assert } from 'chai';
+import type { Course, Program } from '../../flow/programTypes';
 
 import CourseDescription from './CourseDescription';
 import {
@@ -18,7 +19,7 @@ import {
 } from '../../constants';
 
 
-export let findCourse = courseSelector => {
+export function findCourse(courseSelector: (course: Course, program: Program) => boolean): Course {
   for (let program of DASHBOARD_RESPONSE) {
     for (let course of program.courses) {
       if (courseSelector(course, program)) {
