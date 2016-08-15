@@ -1,3 +1,4 @@
+/* global SETTINGS: false */
 export const HIGH_SCHOOL = 'hs';
 export const ASSOCIATE = 'a';
 export const BACHELORS = 'b';
@@ -141,13 +142,14 @@ export const ELASTICSEARCH_RESPONSE = {
 };
 
 export const USER_PROFILE_RESPONSE = {
+  "username": SETTINGS.username,
   "filled_out": true,
   "agreed_to_terms_of_service": true,
   "account_privacy": "all_users",
   "email_optin": false,
   "first_name": "Jane",
   "last_name": "Garris",
-  "preferred_name": "Jane Garris",
+  "preferred_name": "Jane",
   "country": "US",
   "state_or_territory": "MA",
   "city": "Cambridge",
