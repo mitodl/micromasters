@@ -5,18 +5,11 @@ import moment from 'moment';
 import { assert } from 'chai';
 import _ from 'lodash';
 
-import CourseListCard from './CourseListCard';
-import CourseRow from './CourseRow';
 import CourseGrade from './CourseGrade';
 import {
-  DASHBOARD_RESPONSE,
-  DASHBOARD_FORMAT,
   STATUS_PASSED,
-  STATUS_NOT_PASSED,
-  STATUS_OFFERED_NOT_ENROLLED,
   STATUS_ENROLLED_NOT_VERIFIED,
   STATUS_VERIFIED_NOT_COMPLETED,
-  STATUS_NOT_OFFERED,
   ALL_COURSE_STATUSES,
 } from '../../constants';
 

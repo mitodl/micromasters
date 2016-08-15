@@ -1,3 +1,4 @@
+/* global SETTINGS: false */
 // @flow
 import React from 'react';
 import { shallow } from 'enzyme';
@@ -6,11 +7,8 @@ import { assert } from 'chai';
 import Button from 'react-mdl/lib/Button';
 import urljoin from 'url-join';
 
-import CourseListCard from './CourseListCard';
-import CourseRow from './CourseRow';
 import CourseAction from './CourseAction';
 import {
-  DASHBOARD_RESPONSE,
   DASHBOARD_FORMAT,
   STATUS_PASSED,
   STATUS_NOT_PASSED,
@@ -18,7 +16,6 @@ import {
   STATUS_ENROLLED_NOT_VERIFIED,
   STATUS_VERIFIED_NOT_COMPLETED,
   STATUS_NOT_OFFERED,
-  ALL_COURSE_STATUSES,
 } from '../../constants';
 import { findCourse } from './CourseDescription_test';
 

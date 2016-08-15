@@ -1,13 +1,10 @@
 // @flow
 import React from 'react';
 import { shallow } from 'enzyme';
-import moment from 'moment';
 import { assert } from 'chai';
-import { CardTitle, CardText } from 'react-mdl/lib/Card';
+import { CardTitle } from 'react-mdl/lib/Card';
 import Link from 'react-router/lib/Link';
 
-import CourseListCard from './CourseListCard';
-import CourseRow from './CourseRow';
 import ProfileImage from '../ProfileImage';
 import { DASHBOARD_RESPONSE, USER_PROFILE_RESPONSE } from '../../constants';
 import DashboardUserCard from './DashboardUserCard';

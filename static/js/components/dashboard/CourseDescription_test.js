@@ -4,8 +4,6 @@ import { shallow } from 'enzyme';
 import moment from 'moment';
 import { assert } from 'chai';
 
-import CourseListCard from './CourseListCard';
-import CourseRow from './CourseRow';
 import CourseDescription from './CourseDescription';
 import {
   DASHBOARD_RESPONSE,
@@ -18,7 +16,6 @@ import {
   STATUS_NOT_OFFERED,
   ALL_COURSE_STATUSES,
 } from '../../constants';
-import type { Course } from '../../flow/programTypes';
 
 
 export let findCourse = courseSelector => {

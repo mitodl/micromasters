@@ -5,7 +5,6 @@ import { Course } from '../../flow/programTypes';
 import { asPercent } from '../../util/util';
 import {
   STATUS_PASSED,
-  STATUS_NOT_PASSED,
   STATUS_ENROLLED_NOT_VERIFIED,
   STATUS_VERIFIED_NOT_COMPLETED,
 } from '../../constants';
