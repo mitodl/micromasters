@@ -28,7 +28,7 @@ export function findCourse(courseSelector: (course: Course, program: Program) =>
     }
   }
   throw "Unable to find course";
-};
+}
 
 describe('CourseDescription', () => {
   const now = moment();
