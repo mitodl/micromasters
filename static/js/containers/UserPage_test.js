@@ -713,7 +713,9 @@ describe("UserPage", function() {
         returns(Promise.resolve(USER_PROFILE_RESPONSE));
       settingsBackup = SETTINGS;
       SETTINGS = Object.assign({}, SETTINGS, {
-        authenticated: false
+        authenticated: false,
+        username: null,
+        name: ""
       });
     });
 
