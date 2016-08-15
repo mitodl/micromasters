@@ -20,19 +20,20 @@ import {
 } from '../../constants';
 import type { Course } from '../../flow/programTypes';
 
-describe('CourseDescription', () => {
-  const now = moment();
 
-  let findCourse = courseSelector => {
-    for (let program of DASHBOARD_RESPONSE) {
-      for (let course of program.courses) {
-        if (courseSelector(course, program)) {
-          return course;
-        }
+export let findCourse = courseSelector => {
+  for (let program of DASHBOARD_RESPONSE) {
+    for (let course of program.courses) {
+      if (courseSelector(course, program)) {
+        return course;
       }
     }
-    throw "Unable to find course";
-  };
+  }
+  throw "Unable to find course";
+};
+
+describe('CourseDescription', () => {
+  const now = moment();
 
   it('shows the course title', () => {
     for (let status of ALL_COURSE_STATUSES) {
