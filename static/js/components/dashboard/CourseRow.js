@@ -10,7 +10,7 @@ import type { Course } from '../../flow/programTypes';
 export default class CourseRow extends React.Component {
   props: {
     course: Course,
-    now: Object
+    now: moment$Moment,
   };
 
   render() {

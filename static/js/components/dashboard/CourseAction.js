@@ -5,7 +5,7 @@ import Button from 'react-mdl/lib/Button';
 import moment from 'moment';
 import urljoin from 'url-join';
 
-import { Course } from '../../flow/programTypes';
+import type { Course } from '../../flow/programTypes';
 import {
   STATUS_PASSED,
   STATUS_ENROLLED_NOT_VERIFIED,
@@ -16,7 +16,7 @@ import {
 export default class CourseAction extends React.Component {
   props: {
     course: Course,
-    now: Object,
+    now: moment$Moment,
   };
 
   makeActionButton = (text, run, disabled, url) => {

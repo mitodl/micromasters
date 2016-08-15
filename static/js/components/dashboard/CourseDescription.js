@@ -3,7 +3,7 @@ import React from 'react';
 import moment from 'moment';
 import IconButton from 'react-mdl/lib/IconButton';
 
-import { Course, CourseRun } from '../../flow/programTypes';
+import type { Course, CourseRun } from '../../flow/programTypes';
 import {
   STATUS_NOT_OFFERED,
   STATUS_PASSED,
@@ -16,7 +16,7 @@ import {
 export default class CourseDescription extends React.Component {
   props: {
     course: Course,
-    now: Object,
+    now: moment$Moment,
   };
 
   render() {

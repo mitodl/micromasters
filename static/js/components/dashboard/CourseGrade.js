@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 
-import { Course } from '../../flow/programTypes';
+import type { Course } from '../../flow/programTypes';
 import { asPercent } from '../../util/util';
 import {
   STATUS_PASSED,
@@ -12,7 +12,7 @@ import {
 export default class CourseGrade extends React.Component {
   props: {
     course: Course,
-    now: Object,
+    now: moment$Moment,
   };
 
   render() {
