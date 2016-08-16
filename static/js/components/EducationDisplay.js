@@ -59,20 +59,28 @@ export default class EducationDisplay extends ProfileFormFields {
         <IconButton className="delete-button" name="delete" onClick={deleteEntry} />
       </div>
     );
+    let basicInfoClasses = () => {
+      if (index == 0) {
+        return "basic-info basic-info-full-width";
+      }
+      return "basic-info basic-info-full-width basic-info-border-bottom";
+    };
     return (
       <Cell col={12} className="profile-form-row" key={index}>
-        <div className="basic-info">
+        <div className={basicInfoClasses()}>
           <div className="profile-row-name">
-            <span className="school-type">
+            <div className="school-type">
               { degree }
-            </span><br/>
+            </div><br/>
             { entry.school_name }
           </div>
+        </div>
+        <div className={`${basicInfoClasses()} education-top-spacing`}>
           <div className="profile-row-date-range">
             {`${dateFormat(entry.graduation_date)}`}
           </div>
+          { userPrivilegeCheck(profile, icons, () => <Cell col={2} />) }
         </div>
-        { userPrivilegeCheck(profile, icons, () => <Cell col={2} />) }
       </Cell>
     );
   };
@@ -114,10 +122,10 @@ export default class EducationDisplay extends ProfileFormFields {
           showLevelForm={true}
           validator={educationValidation}
         />
-        <Card shadow={1} className="profile-form" id="education-card">
+        <Card shadow={1} className="profile-form profile-form-center-card" id="education-card">
           <Grid className="profile-form-grid">
             <Cell col={12} className="profile-form-row profile-card-header">
-              <span>
+              <span className="profile-form-card-header">
                 Education
               </span>
             </Cell>

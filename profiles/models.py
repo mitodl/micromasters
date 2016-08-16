@@ -161,6 +161,11 @@ class Profile(models.Model):
         """pretty prints the student id for easy display"""
         return "MMM{0:06}".format(self.student_id) if self.student_id else ""
 
+    @property
+    def email(self):
+        """pretty prints the student id for easy display"""
+        return self.user.email
+
 
 class Education(models.Model):
     """

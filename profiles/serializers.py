@@ -214,6 +214,7 @@ class ProfileSerializer(ProfileBaseSerializer):
             'agreed_to_terms_of_service',
             'account_privacy',
             'email_optin',
+            'email',
             'first_name',
             'last_name',
             'preferred_name',

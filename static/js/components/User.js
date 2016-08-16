@@ -9,6 +9,7 @@ import ProfileImage from './ProfileImage';
 import EmploymentForm from './EmploymentForm';
 import EducationDisplay from './EducationDisplay';
 import UserPagePersonalDialog from './UserPagePersonalDialog.js';
+import UserInfoCard from './UserInfoCard';
 import { userPrivilegeCheck } from '../util/util';
 import { employmentValidation } from '../util/validation';
 import type { Profile, SaveProfileFunc } from '../flow/profileTypes';
@@ -42,35 +43,13 @@ export default class User extends React.Component {
       }
     };
 
-    return <div className="card">
+    return <div>
       <UserPagePersonalDialog {...this.props} />
-      <Grid className="card-user">
-        <Cell col={5} />
-        <Cell col={2} className="card-image-box user-page-image">
-          <ProfileImage profile={profile} />
-        </Cell>
-      </Grid>
-      <Card shadow={0} style={{width: "100%"}}>
-        <h3 className="users-name" style={{marginTop: 50}}>
-          { profile.preferred_name }
-        </h3>
-
-        <span className="users-location">
-          { profile.city }, { getStateName() }
-        </span>
-        <CardMenu>
-          {userPrivilegeCheck(profile, () => <IconButton name="edit" onClick={this.toggleShowPersonalDialog}/>)}
-        </CardMenu>
-      </Card>
-
-      <Grid className="user-cards-grid">
-        <Cell col={6}>
-          <EmploymentForm {...this.props} showSwitch={false} validator={employmentValidation} />
-        </Cell>
-        <Cell col={6}>
-          <EducationDisplay {...this.props} />
-        </Cell>
-      </Grid>
+      <div className="card-copy">
+        <UserInfoCard profile={profile} />
+        <EmploymentForm {...this.props} showSwitch={false} validator={employmentValidation} />
+        <EducationDisplay {...this.props} />
+      </div>
     </div>;
   }
 }

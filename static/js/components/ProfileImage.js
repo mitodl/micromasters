@@ -11,14 +11,34 @@ export default class ProfileImage extends React.Component {
   };
 
   render () {
-    const { profile } = this.props;
+    const { profile, editable } = this.props;
     const imageUrl = makeProfileImageUrl(profile);
-    return (
+
+    let img = (
       <img
         src={imageUrl}
         alt={`Profile image for ${getPreferredName(profile, false)}`}
         className="card-image"
       />
     );
+    if (editable) {
+      img = (
+        <div className="avatar">
+          <img
+            src={imageUrl}
+            alt={`Profile image for ${getPreferredName(profile, false)}`}
+            className="card-image"
+          />
+          <span className="img">
+            <img
+              src='/static/images/camera.png'
+              alt="Camera image for"
+            />
+          </span>
+        </div>
+      )
+    }
+
+    return img;
   }
 }

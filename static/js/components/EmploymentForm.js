@@ -182,7 +182,7 @@ class EmploymentForm extends ProfileFormFields {
       if ( !_.isUndefined(work_history) ) {
         let sorted = workEntriesByDate(work_history);
         workHistoryRows = sorted.map(([index, entry]) => (
-          entry.id === undefined ? undefined : this.jobRow(entry, index)
+          entry.id === undefined ? undefined : this.jobRow(entry, index, work_history.length)
         ));
       }
       userPrivilegeCheck(profile, () => {
@@ -201,7 +201,7 @@ class EmploymentForm extends ProfileFormFields {
     }
   }
 
-  jobRow (position: WorkHistoryEntry, index: number) {
+  jobRow (position: WorkHistoryEntry, index: number, workHistorySize: number) {
     const {
       setWorkDialogVisibility,
       setWorkDialogIndex,
@@ -234,17 +234,25 @@ class EmploymentForm extends ProfileFormFields {
       () => <div />
       );
     };
+    let basicInfoClasses = () => {
+      if (index < workHistorySize - 1) {
+        return "basic-info basic-info-full-width basic-info-border-bottom";
+      }
+      return "basic-info basic-info-full-width ";
+    };
     return (
       <Cell col={12} className="profile-form-row" key={index}>
-        <div className="basic-info">
+        <div className={basicInfoClasses()}>
           <div className="profile-row-name">
             {`${position.company_name}, ${position.position}`}
           </div>
+        </div>
+        <div className={`${basicInfoClasses()} employment-top-spacing`}>
           <div className="profile-row-date-range">
             {`${dateFormat(position.start_date)} - ${endDateText()}`}
           </div>
+          { userPrivilegeCheck(profile, icons, () => <Cell col={2} />) }
         </div>
-        { icons() }
       </Cell>
     );
   }
@@ -315,10 +323,10 @@ class EmploymentForm extends ProfileFormFields {
         >
           {this.editWorkHistoryForm()}
         </Dialog>
-        <Card shadow={1} className={`profile-form ${cardClass()}`}>
+        <Card shadow={1} className={`profile-form profile-form-center-card ${cardClass()}`}>
           <Grid className="profile-form-grid">
             <Cell col={12} className="profile-form-row profile-card-header">
-              <span>
+              <span className="profile-form-card-header">
                 Employment
               </span>
               { workSwitch() }

@@ -1,3 +1,21 @@
+.avatar {
+  position: relative;
+  span.img{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.3);
+    position: absolute;
+    top: 0;
+    right: 6px;
+    text-align: center;
+    line-height: 28px;
+    img{
+      width: 18px;
+      height: auto;
+    }
+  }
+}
 .profile-form {
   min-height: 0 !important;
   width: 94% !important;
@@ -5,6 +23,38 @@
   font-size: 16px !important;
   margin: 12px auto 15px;
   padding: 15px 25px;
+
+  .card-image {
+    height: auto;
+    width: 125px;
+    border-radius: 50%;
+    margin-left: 15px;
+  }
+  &.profile-form-center-card {
+    width: 40% !important;
+    margin: 10px auto 30px auto;
+    &.profile-form-center-card-transparent {
+      background-color: transparent;
+      box-shadow: 0;
+    }
+    .profile-title {
+      margin-top: 18px;
+      font-size: 25px;
+      color: black;
+    }
+    .profile-company-name {
+      font-size: 19px;
+      color: #98989A;
+      padding: 10px 0;
+    }
+    .profile-email {
+      color: #0E52CE;
+      font-size: 19px;
+    }
+    .email-icon {
+      margin-right: 8px;
+    }
+  }
 
   i.material-icons {
     color: $mm-brand-blue;
@@ -50,6 +100,12 @@
     width: 100%;
     padding: 0;
 
+    .profile-form-card-header {
+      font-weight: 600;
+    }
+    &.profile-form-grid-transparent {
+      box-shadow: 0;
+    }
     .profile-form-row, .profile-form-row > .basic-info {
       display: flex;
       flex-direction: row;
@@ -58,16 +114,55 @@
     }
     .profile-form-row > .basic-info {
       width: 50%;
+      &.basic-info-full-width {
+        width: 100%;
+        padding: 20px 0;
+      }
+      &.basic-info-border-bottom {
+        border-bottom: 2px #E2E2E2 solid;
+        margin-right: 10px;
+        &.education-top-spacing {
+          margin-top: 17px;
+        }
+        &.employment-top-spacing {
+          margin-top: -11px;
+        }
+      }
       .school-type {
-        font-size: 12px;
-        font-weight: 400;
-        text-transform: lowercase;
+        margin-bottom: -10px;
+        font-size: 16px;
+        font-weight: 600;
+        text-transform: capitalize;
+      }
+      .profile-row-name {
+        font-size: 16px;
+        color: #404040;
+      }
+      .profile-row-date-range {
+        font-size: 16px;
+        font-weight: 300;
+        color: #b7b7b7;
+      }
+      .profile-row-new-line {
+        display: block;
+        width: 100%;
       }
     }
 
     .profile-card-header {
       > span {
-        font-size: 18px;
+        font-size: 22px;
+      }
+    }
+    .profile-card-header-controls {
+      text-align: right;
+      float: right;
+      display: inline;
+      > a {
+        color: #1B7AE3;
+        font-size: 19px;
+        font-weight: 400;
+        cursor: pointer
       }
     }
   }
