@@ -100,6 +100,14 @@ c.validation-wrapper {
     .dashboard-user-card-text {
       width: 100%;
 
+      .dashboard-user-card-text-id, .dashboard-user-card-text-program {
+        display: block;
+      }
+
+      .dashboard-user-card-text-id {
+        padding-bottom: 10px;
+      }
+
       .mdl-card__supporting-text {
         color: $medgrey;
       }
