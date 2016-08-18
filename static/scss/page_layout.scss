@@ -7,14 +7,14 @@ $border-box-sizing: true !global;
 
   .single-column {
     max-width: 750px;
-    margin: 50px auto;
+    margin: 0 auto;
   }
 
   .double-column {
     display: flex;
     flex-direction: row;
     max-width: 1000px;
-    margin: 50px auto;
+    margin: 0 auto;
 
     .first-column {
       width: 65%;
