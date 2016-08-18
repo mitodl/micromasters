@@ -89,3 +89,5 @@ staticfiles/
 
 .venv
 release-notes-checklist
+
+static/scss/material.css
