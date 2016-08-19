@@ -108,6 +108,7 @@ INSTALLED_APPS = (
     'cms',
     'courses',
     'dashboard',
+    'ecommerce',
     'profiles',
     'roles',
     'search',
