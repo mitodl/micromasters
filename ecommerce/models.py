@@ -1,9 +1,10 @@
 """
 Models for storing ecommerce data
 """
-
+from django.db import transaction
 from django.db.models import Model
 from django.db.models.fields import (
+    BooleanField,
     CharField,
     DateTimeField,
     DecimalField,
@@ -12,6 +13,9 @@ from django.db.models.fields import (
 from django.db.models.fields.related import (
     ForeignKey,
 )
+
+from courses.models import CourseRun
+from ecommerce.exceptions import EcommerceModelException
 
 
 class Order(Model):
@@ -45,3 +49,28 @@ class Line(Model):
 
     created_at = DateTimeField(auto_now_add=True)
     modified_at = DateTimeField(auto_now=True)
+
+
+class CoursePrice(Model):
+    """
+    Information about a course run's price and other ecommerce info
+    """
+    course_run = ForeignKey(CourseRun)
+    price = DecimalField(decimal_places=2, max_digits=20)
+    is_valid = BooleanField(default=False)
+
+    created_at = DateTimeField(auto_now_add=True)
+    modified_at = DateTimeField(auto_now=True)
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        """
+        Override save to make sure is_valid is only set per one CourseRun
+        """
+        if self.is_valid and CoursePrice.objects.filter(
+                course_run=self.course_run,
+                is_valid=True
+        ).exclude(id=self.id).exists():
+            raise EcommerceModelException("Cannot have two CoursePrice objects for same CourseRun marked is_valid")
+
+        super(CoursePrice, self).save(*args, **kwargs)
