@@ -3,6 +3,7 @@ import { assert } from 'chai';
 import React from 'react';
 import { Just } from 'sanctuary';
 import R from 'ramda';
+import _ from 'lodash';
 
 import {
   makeStrippedHtml,
@@ -18,6 +19,7 @@ import {
   validationErrorSelector,
   asPercent,
   getEmployer,
+  createForm,
 } from '../util/util';
 import {
   EDUCATION_LEVELS,
@@ -28,6 +30,7 @@ import {
   DOCTORATE,
   MASTERS,
   PROFILE_STEP_LABELS,
+  CHECKOUT_RESPONSE,
 } from '../constants';
 import { assertMaybeEquality, assertIsNothing } from './sanctuary_test';
 
@@ -377,6 +380,25 @@ describe('utility functions', () => {
       assert.equal(asPercent(1234.567), "123457%");
       assert.equal(asPercent(-.34), "-34%");
       assert.equal(asPercent(.129), "13%");
+    });
+  });
+
+  describe('createForm', () => {
+    it('creates a form with hidden values corresponding to the payload', () => {
+      const { url, payload } = CHECKOUT_RESPONSE;
+      const form = createForm(url, payload);
+
+      let clone = _.clone(payload);
+      for (let hidden of form.querySelectorAll("input[type=hidden]")) {
+        const key = hidden.getAttribute('name');
+        const value = hidden.getAttribute('value');
+        assert.equal(clone[key], value);
+        delete clone[key];
+      }
+      // all keys exhausted
+      assert.deepEqual(clone, {});
+      assert.equal(form.getAttribute("action"), url);
+      assert.equal(form.getAttribute("method"), "post");
     });
   });
 });

@@ -49,3 +49,12 @@ class CoursePriceTests(TestCase):
         """
         CoursePriceFactory.create(is_valid=True)
         CoursePriceFactory.create(is_valid=True)
+
+    def test_str(self):  # pylint: disable=no-self-use
+        """
+        Test output of __str__
+        """
+        course_price = CoursePriceFactory.create()
+        assert str(course_price) == "CoursePrice for {}, price={}, is_valid={}".format(
+            course_price.course_run, course_price.price, course_price.is_valid
+        )

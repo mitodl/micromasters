@@ -4,8 +4,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import moment from 'moment';
 import { assert } from 'chai';
-import Button from 'react-mdl/lib/Button';
-import urljoin from 'url-join';
+import sinon from 'sinon';
 
 import CourseAction from './CourseAction';
 import {
@@ -21,10 +20,26 @@ import { findCourse } from './CourseDescription_test';
 
 describe('CourseAction', () => {
   const now = moment();
+  let sandbox, checkoutStub;
+
+  beforeEach(() => {
+    sandbox = sinon.sandbox.create();
+    checkoutStub = sandbox.stub();
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
+  let assertCheckoutButton = (buttonProps, courseId) => {
+    buttonProps.onClick();
+    assert.equal(checkoutStub.callCount, 1);
+    assert.deepEqual(checkoutStub.args[0], [courseId]);
+  };
 
   it('shows a check mark for a passed course', () => {
     let course = findCourse(course => course.status === STATUS_PASSED);
-    const wrapper = shallow(<CourseAction course={course} now={now}/>);
+    const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
     assert.equal(wrapper.find(".material-icons").text(), 'done');
   });
 
@@ -33,30 +48,28 @@ describe('CourseAction', () => {
       course.status === STATUS_NOT_OFFERED &&
       course.runs[0].status === STATUS_NOT_PASSED
     ));
-    const wrapper = shallow(<CourseAction course={course} now={now}/>);
+    const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
     assert.equal(wrapper.text(), '');
   });
 
   it('shows nothing for a verified course', () => {
     let course = findCourse(course => course.status === STATUS_VERIFIED_NOT_COMPLETED);
-    const wrapper = shallow(<CourseAction course={course} now={now}/>);
+    const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
     assert.equal(wrapper.text(), '');
   });
 
   it('shows an upgrade button if user is not verified but is enrolled', () => {
     let course = findCourse(course => course.status === STATUS_ENROLLED_NOT_VERIFIED);
-    const wrapper = shallow(<CourseAction course={course} now={now}/>);
+    const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
     let buttonContainer = wrapper.find(".course-action-action");
     let description = wrapper.find(".course-action-description");
-    let buttonProps = buttonContainer.find(Button).props();
+    let buttonProps = buttonContainer.find("button").props();
     let firstRun = course.runs[0];
-    let courseUpgradeUrl = urljoin(SETTINGS.edx_base_url, '/course_modes/choose/', firstRun.course_id);
 
-    assert.equal(buttonContainer.find(Button).children().text(), "Upgrade");
     assert(!buttonProps.disabled);
-    assert.equal(buttonProps.href, courseUpgradeUrl);
-    assert.equal(buttonContainer.text(), `<Button /> in ${firstRun.title}`);
+    assert.equal(buttonContainer.text(), `Upgrade in ${firstRun.title}`);
     assert.equal(description.text(), "");
+    assertCheckoutButton(buttonProps, firstRun.course_id);
   });
 
   it('shows a disabled enroll button if user is not enrolled and there is no enrollment date', () => {
@@ -65,16 +78,14 @@ describe('CourseAction', () => {
       course.status === STATUS_OFFERED_NOT_ENROLLED &&
       course.runs[0].enrollment_start_date === undefined
     ));
-    const wrapper = shallow(<CourseAction course={course} now={now}/>);
+    const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
     let buttonContainer = wrapper.find(".course-action-action");
     let description = wrapper.find(".course-action-description");
-    let buttonProps = buttonContainer.find(Button).props();
+    let buttonProps = buttonContainer.find("button").props();
     let firstRun = course.runs[0];
 
-    assert.equal(buttonContainer.find(Button).children().text(), "Enroll");
     assert(buttonProps.disabled);
-    assert.equal(buttonProps.href, undefined);
-    assert.equal(buttonContainer.text(), `<Button /> in ${firstRun.title}`);
+    assert.equal(buttonContainer.text(), `Enroll in ${firstRun.title}`);
     assert.equal(description.text(), `Enrollment begins ${firstRun.fuzzy_enrollment_start_date}`);
   });
 
@@ -86,15 +97,13 @@ describe('CourseAction', () => {
     ));
     let firstRun = course.runs[0];
     let yesterday = moment(firstRun.enrollment_start_date).add(-1, 'days');
-    const wrapper = shallow(<CourseAction course={course} now={yesterday}/>);
+    const wrapper = shallow(<CourseAction course={course} now={yesterday} checkout={checkoutStub}/>);
     let buttonContainer = wrapper.find(".course-action-action");
     let description = wrapper.find(".course-action-description");
-    let buttonProps = buttonContainer.find(Button).props();
+    let buttonProps = buttonContainer.find("button").props();
 
-    assert.equal(buttonContainer.find(Button).children().text(), "Enroll");
     assert(buttonProps.disabled);
-    assert.equal(buttonProps.href, undefined);
-    assert.equal(buttonContainer.text(), `<Button /> in ${firstRun.title}`);
+    assert.equal(buttonContainer.text(), `Enroll in ${firstRun.title}`);
     let formattedDate = moment(firstRun.enrollment_start_date).format(DASHBOARD_FORMAT);
     assert.equal(description.text(), `Enrollment begins ${formattedDate}`);
   });
@@ -106,17 +115,15 @@ describe('CourseAction', () => {
     ));
     let firstRun = course.runs[0];
     let today = moment(firstRun.enrollment_start_date);
-    const wrapper = shallow(<CourseAction course={course} now={today}/>);
+    const wrapper = shallow(<CourseAction course={course} now={today} checkout={checkoutStub}/>);
     let buttonContainer = wrapper.find(".course-action-action");
     let description = wrapper.find(".course-action-description");
-    let buttonProps = buttonContainer.find(Button).props();
-    let url = urljoin(SETTINGS.edx_base_url, '/courses/', firstRun.course_id, 'about');
+    let buttonProps = buttonContainer.find("button").props();
 
-    assert.equal(buttonContainer.find(Button).children().text(), "Enroll");
     assert(!buttonProps.disabled);
-    assert.equal(buttonProps.href, url);
-    assert.equal(buttonContainer.text(), `<Button /> in ${firstRun.title}`);
+    assert.equal(buttonContainer.text(), `Enroll in ${firstRun.title}`);
     assert.equal(description.text(), ``);
+    assertCheckoutButton(buttonProps, firstRun.course_id);
   });
 
   it('shows an enroll button if user is not enrolled and enrollment started already', () => {
@@ -126,17 +133,15 @@ describe('CourseAction', () => {
     ));
     let firstRun = course.runs[0];
     let tomorrow = moment(firstRun.enrollment_start_date).add(1, 'days');
-    const wrapper = shallow(<CourseAction course={course} now={tomorrow}/>);
+    const wrapper = shallow(<CourseAction course={course} now={tomorrow} checkout={checkoutStub}/>);
     let buttonContainer = wrapper.find(".course-action-action");
     let description = wrapper.find(".course-action-description");
-    let buttonProps = buttonContainer.find(Button).props();
-    let url = urljoin(SETTINGS.edx_base_url, '/courses/', firstRun.course_id, 'about');
+    let buttonProps = buttonContainer.find("button").props();
 
-    assert.equal(buttonContainer.find(Button).children().text(), "Enroll");
     assert(!buttonProps.disabled);
-    assert.equal(buttonProps.href, url);
-    assert.equal(buttonContainer.text(), `<Button /> in ${firstRun.title}`);
+    assert.equal(buttonContainer.text(), `Enroll in ${firstRun.title}`);
     assert.equal(description.text(), ``);
+    assertCheckoutButton(buttonProps, firstRun.course_id);
   });
 
   it('is not an offered course and user has not failed', () => {
@@ -144,7 +149,7 @@ describe('CourseAction', () => {
       course.status === STATUS_NOT_OFFERED &&
       course.runs.length === 0
     ));
-    const wrapper = shallow(<CourseAction course={course} now={now}/>);
+    const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
     let buttonContainer = wrapper.find(".course-action-action");
     let description = wrapper.find(".course-action-description");
 

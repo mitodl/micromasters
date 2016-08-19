@@ -1,6 +1,7 @@
 """
 Models for storing ecommerce data
 """
+from django.contrib.auth.models import User
 from django.db import transaction
 from django.db.models import Model
 from django.db.models.fields import (
@@ -27,6 +28,7 @@ class Order(Model):
 
     STATUSES = [CREATED, FULFILLED]
 
+    user = ForeignKey(User)
     status = CharField(
         choices=[(status, status) for status in STATUSES],
         default=CREATED,
@@ -74,3 +76,7 @@ class CoursePrice(Model):
             raise EcommerceModelException("Cannot have two CoursePrice objects for same CourseRun marked is_valid")
 
         super(CoursePrice, self).save(*args, **kwargs)
+
+    def __str__(self):
+        """Description for CoursePrice"""
+        return "CoursePrice for {}, price={}, is_valid={}".format(self.course_run, self.price, self.is_valid)

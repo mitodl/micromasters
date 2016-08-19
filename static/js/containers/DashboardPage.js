@@ -1,11 +1,13 @@
 // @flow
 /* global SETTINGS: false */
 import React from 'react';
+import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import Loader from 'react-loader';
 import { Card, CardTitle } from 'react-mdl/lib/Card';
 
-import { FETCH_PROCESSING } from '../actions';
+import { FETCH_PROCESSING, checkout } from '../actions';
+import { createForm } from '../util/util';
 import CourseListCard from '../components/dashboard/CourseListCard';
 import DashboardUserCard from '../components/dashboard/DashboardUserCard';
 import ErrorMessage from '../components/ErrorMessage';
@@ -16,6 +18,20 @@ class DashboardPage extends React.Component {
   props: {
     profile:    {profile: Profile},
     dashboard:  Object,
+    dispatch:   Dispatch,
+  };
+
+  dispatchCheckout = (courseId: string) => {
+    const { dispatch } = this.props;
+
+    return dispatch(checkout(courseId)).then(result => {
+      const { payload, url } = result;
+
+      const form = createForm(url, payload);
+      const body = document.querySelector("body");
+      body.appendChild(form);
+      form.submit();
+    });
   };
 
   render() {
@@ -30,7 +46,7 @@ class DashboardPage extends React.Component {
     if (dashboard.errorInfo === undefined && dashboard.programs.length > 0){
       // For now show all programs available. We should restrict this to one program later on.
       let cards = dashboard.programs.map(program => (
-        <CourseListCard program={program} key={program.id} />
+        <CourseListCard program={program} key={program.id} checkout={this.dispatchCheckout} />
       ));
       // HACK: We need a program to show the title of
       let firstProgram = dashboard.programs[0];

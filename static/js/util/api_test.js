@@ -9,11 +9,13 @@ import {
   getCookie,
   fetchJSONWithCSRF,
   csrfSafeMethod,
+  checkout,
 } from './api';
 import * as api from './api';
 import {
-  USER_PROFILE_RESPONSE,
+  CHECKOUT_RESPONSE,
   DASHBOARD_RESPONSE,
+  USER_PROFILE_RESPONSE,
 } from '../constants';
 
 describe('api', function() {
@@ -100,6 +102,32 @@ describe('api', function() {
 
       return assert.isRejected(getDashboard()).then(() => {
         assert.ok(fetchStub.calledWith('/api/v0/dashboard/', {}, true));
+      });
+    });
+
+    it('posts to checkout', () => {
+      fetchStub.returns(Promise.resolve(CHECKOUT_RESPONSE));
+      fetchMock.mock('/api/v0/checkout/', (url, opts) => {
+        assert.deepEqual(JSON.parse(opts.body), CHECKOUT_RESPONSE);
+        return { status: 200 };
+      });
+      return checkout('course_id').then(checkoutInfo => {
+        assert.ok(fetchStub.calledWith('/api/v0/checkout/', {
+          method: 'POST',
+          body: JSON.stringify({course_id: 'course_id'})
+        }));
+        assert.deepEqual(checkoutInfo, CHECKOUT_RESPONSE);
+      });
+    });
+
+    it('fails to post to checkout', () => {
+      fetchStub.returns(Promise.reject());
+
+      return assert.isRejected(checkout('course_id')).then(() => {
+        assert.ok(fetchStub.calledWith('/api/v0/checkout/', {
+          method: 'POST',
+          body: JSON.stringify({course_id: 'course_id'})
+        }));
       });
     });
   });

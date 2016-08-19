@@ -1,9 +1,7 @@
 /* global SETTINGS: false */
 // @flow
 import React from 'react';
-import Button from 'react-mdl/lib/Button';
 import moment from 'moment';
-import urljoin from 'url-join';
 
 import type { Course, CourseRun } from '../../flow/programTypes';
 import {
@@ -15,26 +13,27 @@ import {
 
 export default class CourseAction extends React.Component {
   props: {
+    checkout: Function,
     course: Course,
     now: moment$Moment,
   };
 
-  makeActionButton = (text: string, run: CourseRun, disabled: boolean, url: ?string) => {
-    let linkProps;
+  makeEnrollButton = (text: string, run: CourseRun, disabled: boolean) => {
+    const { checkout } = this.props;
+    let onClick;
     if (!disabled) {
-      linkProps = {
-        target: "_blank",
-        href: url,
+      onClick = () => {
+        checkout(run.course_id);
       };
     }
     return <span>
-      <Button
+      <button
         className="mm-button-action dashboard-button"
         disabled={disabled}
-        {...linkProps}
+        onClick={onClick}
       >
         {text}
-      </Button>
+      </button>
       <span className="sr-only"> in {run.title}</span>
     </span>;
   };
@@ -53,8 +52,7 @@ export default class CourseAction extends React.Component {
       action = <i className="material-icons">done</i>;
       break;
     case STATUS_ENROLLED_NOT_VERIFIED: {
-      let courseUpgradeUrl = urljoin(SETTINGS.edx_base_url, '/course_modes/choose/', firstRun.course_id);
-      action = this.makeActionButton("Upgrade", firstRun, false, courseUpgradeUrl);
+      action = this.makeEnrollButton("Upgrade", firstRun, false);
       break;
     }
     case STATUS_OFFERED_NOT_ENROLLED: {
@@ -71,8 +69,7 @@ export default class CourseAction extends React.Component {
         }
       }
 
-      let courseInfoUrl = urljoin(SETTINGS.edx_base_url, '/courses/', firstRun.course_id, 'about');
-      action = this.makeActionButton("Enroll", firstRun, disabled, courseInfoUrl);
+      action = this.makeEnrollButton("Enroll", firstRun, disabled);
       break;
     }
     }

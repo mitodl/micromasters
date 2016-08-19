@@ -27,6 +27,11 @@ import {
   RECEIVE_DASHBOARD_FAILURE,
   CLEAR_DASHBOARD,
 
+  checkout,
+  REQUEST_CHECKOUT,
+  RECEIVE_CHECKOUT_SUCCESS,
+  RECEIVE_CHECKOUT_FAILURE,
+
   FETCH_FAILURE,
   FETCH_SUCCESS
 } from '../actions/index';
@@ -34,6 +39,7 @@ import * as api from '../util/api';
 import {
   DASHBOARD_RESPONSE,
   USER_PROFILE_RESPONSE,
+  CHECKOUT_RESPONSE,
 } from '../constants';
 import configureTestStore from 'redux-asserts';
 import rootReducer, { INITIAL_PROFILES_STATE } from '../reducers';
@@ -276,6 +282,41 @@ describe('reducers', () => {
 
       return dispatchThen(fetchDashboard(), [REQUEST_DASHBOARD, RECEIVE_DASHBOARD_FAILURE]).then(dashboardState => {
         assert.equal(dashboardState.fetchStatus, FETCH_FAILURE);
+      });
+    });
+  });
+
+  describe('checkout reducers', () => {
+    let checkoutStub;
+
+    beforeEach(() => {
+      dispatchThen = store.createDispatchThen(state => state.checkout);
+      checkoutStub = sandbox.stub(api, 'checkout');
+    });
+
+    it('should have an empty default state', () => {
+      return dispatchThen({type: 'unknown'}, ['unknown']).then(state => {
+        assert.deepEqual(state, {});
+      });
+    });
+
+    it('should POST a checkout successfully', () => {
+      checkoutStub.returns(Promise.resolve(CHECKOUT_RESPONSE));
+
+      return dispatchThen(checkout('course_id'), [REQUEST_CHECKOUT, RECEIVE_CHECKOUT_SUCCESS]).then(checkoutState => {
+        assert.equal(checkoutState.fetchStatus, FETCH_SUCCESS);
+        assert.equal(checkoutStub.callCount, 1);
+        assert.deepEqual(checkoutStub.args[0], ['course_id']);
+      });
+    });
+
+    it('should fail to checkout if API call fails', () => {
+      checkoutStub.returns(Promise.reject());
+
+      return dispatchThen(checkout('course_id'), [REQUEST_CHECKOUT, RECEIVE_CHECKOUT_FAILURE]).then(checkoutState => {
+        assert.equal(checkoutState.fetchStatus, FETCH_FAILURE);
+        assert.equal(checkoutStub.callCount, 1);
+        assert.deepEqual(checkoutStub.args[0], ['course_id']);
       });
     });
   });

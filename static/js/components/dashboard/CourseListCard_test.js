@@ -13,19 +13,21 @@ describe('CourseListCard', () => {
     const program = DASHBOARD_RESPONSE[1];
     assert(program.courses.length > 0);
     let now = moment();
-    const wrapper = shallow(<CourseListCard program={program} now={now} />);
+    const checkout = () => null;
+    const wrapper = shallow(<CourseListCard program={program} now={now} checkout={checkout} />);
     assert.equal(wrapper.find(CourseRow).length, program.courses.length);
     wrapper.find(CourseRow).forEach((courseRow, i) => {
       const props = courseRow.props();
-      assert(props.now === now);
-      assert(props.course === program.courses[i]);
+      assert.equal(props.now, now);
+      assert.equal(props.course, program.courses[i]);
+      assert.equal(props.checkout, checkout);
     });
   });
 
   it("fills in now if it's missing in the props", () => {
     const program = DASHBOARD_RESPONSE[1];
     assert(program.courses.length > 0);
-    const wrapper = shallow(<CourseListCard program={program} />);
+    const wrapper = shallow(<CourseListCard program={program} checkout={() => null} />);
     let nows = wrapper.find(CourseRow).map(courseRow => courseRow.props().now);
     assert(nows.length > 0);
     for (let now of nows) {

@@ -9,12 +9,13 @@ import type { Course } from '../../flow/programTypes';
 
 export default class CourseRow extends React.Component {
   props: {
+    checkout: Function,
     course: Course,
     now: moment$Moment,
   };
 
   render() {
-    const { course, now } = this.props;
+    const { course, now, checkout } = this.props;
 
     return <Grid className="course-row">
       <Cell col={6}>
@@ -24,7 +25,7 @@ export default class CourseRow extends React.Component {
         <CourseGrade course={course} now={now} />
       </Cell>
       <Cell col={3}>
-        <CourseAction course={course} now={now} />
+        <CourseAction course={course} now={now} checkout={checkout} />
       </Cell>
     </Grid>;
   }

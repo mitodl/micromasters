@@ -19,6 +19,10 @@ import {
   RECEIVE_DASHBOARD_FAILURE,
   CLEAR_DASHBOARD,
 
+  REQUEST_CHECKOUT,
+  RECEIVE_CHECKOUT_SUCCESS,
+  RECEIVE_CHECKOUT_FAILURE,
+
   FETCH_FAILURE,
   FETCH_PROCESSING,
   FETCH_SUCCESS,
@@ -155,10 +159,32 @@ export const dashboard = (state: DashboardState = INITIAL_DASHBOARD_STATE, actio
   }
 };
 
+type CheckoutState = {};
+const INITIAL_CHECKOUT_STATE = {};
+export const checkout = (state: CheckoutState = INITIAL_CHECKOUT_STATE, action: Action) => {
+  switch (action.type) {
+  case REQUEST_CHECKOUT:
+    return Object.assign({}, state, {
+      fetchStatus: FETCH_PROCESSING
+    });
+  case RECEIVE_CHECKOUT_SUCCESS:
+    return Object.assign({}, state, {
+      fetchStatus: FETCH_SUCCESS
+    });
+  case RECEIVE_CHECKOUT_FAILURE:
+    return Object.assign({}, state, {
+      fetchStatus: FETCH_FAILURE
+    });
+  default:
+    return state;
+  }
+};
+
 
 export default combineReducers({
   profiles,
   dashboard,
   ui,
   email,
+  checkout,
 });

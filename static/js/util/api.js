@@ -3,7 +3,8 @@
 // For mocking purposes we need to use 'fetch' defined as a global instead of importing as a local.
 import 'isomorphic-fetch';
 import _ from 'lodash';
-import type { Profile } from '../flow/profileTypes';
+import type { Profile, ProfileGetResult, ProfilePatchResult } from '../flow/profileTypes';
+import type { CheckoutResponse } from '../flow/checkoutTypes';
 
 export function getCookie(name: string): string|null {
   let cookieValue = null;
@@ -104,11 +105,11 @@ export function fetchJSONWithCSRF(input: string, init: Object|void, loginOnError
 
 // import to allow mocking in tests
 import { fetchJSONWithCSRF as mockableFetchJSONWithCSRF } from './api';
-export function getUserProfile(username: string) {
+export function getUserProfile(username: string): Promise<ProfileGetResult> {
   return mockableFetchJSONWithCSRF(`/api/v0/profiles/${username}/`);
 }
 
-export function patchUserProfile(username: string, profile: Profile) {
+export function patchUserProfile(username: string, profile: Profile): Promise<ProfilePatchResult> {
   return mockableFetchJSONWithCSRF(`/api/v0/profiles/${username}/`, {
     method: 'PATCH',
     body: JSON.stringify(profile)
@@ -117,4 +118,13 @@ export function patchUserProfile(username: string, profile: Profile) {
 
 export function getDashboard() {
   return mockableFetchJSONWithCSRF('/api/v0/dashboard/', {}, true);
+}
+
+export function checkout(courseId: string): Promise<CheckoutResponse> {
+  return mockableFetchJSONWithCSRF('/api/v0/checkout/', {
+    method: 'POST',
+    body: JSON.stringify({
+      course_id: courseId
+    })
+  });
 }

@@ -68,6 +68,8 @@ export type ProfileGetResult = {
   edit?: {errors: ValidationErrors, profile: Profile},
 };
 
+export type ProfilePatchResult = ProfileGetResult;
+
 export type SaveProfileFunc = (validator: Validator|UIValidator, profile: Profile, ui: UIState) => Promise<Profile>;
 export type UpdateProfileFunc = (profile: Profile, validator: Validator|UIValidator) => void;
 

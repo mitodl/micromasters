@@ -2,7 +2,12 @@
 import type { Dispatch } from 'redux';
 
 import * as api from '../util/api';
-import type { ProfileGetResult, Profile, ValidationErrors } from '../flow/profileTypes';
+import type {
+  APIErrorInfo,
+  ProfileGetResult,
+  Profile,
+  ValidationErrors,
+} from '../flow/profileTypes';
 import type { Action, Dispatcher } from '../flow/reduxTypes';
 
 // constants for fetch status (these are not action types)
@@ -24,7 +29,7 @@ export const receiveGetUserProfileSuccess = (username: string, profile: ProfileG
 });
 
 export const RECEIVE_GET_USER_PROFILE_FAILURE = 'RECEIVE_GET_USER_PROFILE_FAILURE';
-const receiveGetUserProfileFailure = (username: string, errorInfo: string): Action => ({
+const receiveGetUserProfileFailure = (username: string, errorInfo: APIErrorInfo): Action => ({
   type: RECEIVE_GET_USER_PROFILE_FAILURE,
   payload: { username, errorInfo }
 });
@@ -66,7 +71,7 @@ const receivePatchUserProfileSuccess = (username: string, profile: ProfileGetRes
 });
 
 export const RECEIVE_PATCH_USER_PROFILE_FAILURE = 'RECEIVE_PATCH_USER_PROFILE_FAILURE';
-const receivePatchUserProfileFailure = (username, errorInfo): Action => ({
+const receivePatchUserProfileFailure = (username: string, errorInfo: APIErrorInfo): Action => ({
   type: RECEIVE_PATCH_USER_PROFILE_FAILURE,
   payload: { username, errorInfo }
 });
@@ -112,7 +117,7 @@ export const receiveDashboardSuccess = (programs: Object[]): Action => ({
 });
 
 export const RECEIVE_DASHBOARD_FAILURE = 'RECEIVE_DASHBOARD_FAILURE';
-export const receiveDashboardFailure = (errorInfo: string): Action => ({
+export const receiveDashboardFailure = (errorInfo: APIErrorInfo): Action => ({
   type: RECEIVE_DASHBOARD_FAILURE,
   payload: { errorInfo }
 });
@@ -131,3 +136,34 @@ export function fetchDashboard(): Dispatcher {
       });
   };
 }
+
+export const REQUEST_CHECKOUT = 'REQUEST_CHECKOUT';
+export const requestCheckout = (courseId: string) => ({
+  type: REQUEST_CHECKOUT,
+  payload: { courseId }
+});
+
+export function checkout(courseId: string): Dispatcher {
+  return (dispatch: Dispatch) => {
+    dispatch(requestCheckout(courseId));
+    return api.checkout(courseId).
+      then(response => {
+        const {url, payload} = response;
+        dispatch(receiveCheckoutSuccess(url, payload));
+        return Promise.resolve(response);
+      }).catch(error => {
+        dispatch(receiveCheckoutFailure(error));
+      });
+  };
+}
+
+export const RECEIVE_CHECKOUT_SUCCESS = 'RECEIVE_CHECKOUT_SUCCESS';
+export const receiveCheckoutSuccess = (url: string, payload: Object): Action => ({
+  type: RECEIVE_CHECKOUT_SUCCESS,
+  payload: { url, payload }
+});
+export const RECEIVE_CHECKOUT_FAILURE = 'RECEIVE_CHECKOUT_FAILURE';
+export const receiveCheckoutFailure = (errorInfo: APIErrorInfo): Action => ({
+  type: RECEIVE_CHECKOUT_FAILURE,
+  payload: { errorInfo }
+});

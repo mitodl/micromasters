@@ -12,14 +12,22 @@ import { DASHBOARD_RESPONSE } from '../../constants';
 
 describe('CourseRow', () => {
   it('forwards the appropriate props', () => {
-    let course = DASHBOARD_RESPONSE[1].courses[0];
-    let now = moment();
-    let wrapper = shallow(<CourseRow course={course} now={now} />);
-    for (let componentType of [CourseAction, CourseDescription, CourseGrade]) {
-      assert.deepEqual(wrapper.find(componentType).props(), {
-        now,
-        course,
-      });
-    }
+    const course = DASHBOARD_RESPONSE[1].courses[0];
+    const now = moment();
+    const checkout = () => null;
+    const wrapper = shallow(<CourseRow course={course} now={now} checkout={checkout} />);
+    assert.deepEqual(wrapper.find(CourseAction).props(), {
+      now,
+      course,
+      checkout,
+    });
+    assert.deepEqual(wrapper.find(CourseDescription).props(), {
+      now,
+      course,
+    });
+    assert.deepEqual(wrapper.find(CourseGrade).props(), {
+      now,
+      course,
+    });
   });
 });
