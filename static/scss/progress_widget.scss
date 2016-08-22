@@ -1,5 +1,6 @@
 // Progress Widget
 .circular-progress-widget {
+  margin-bottom: 8px;
   fill: none;
   .circular-progress-widget-bg {
     stroke: $progress-widget-bg-stroke !important;
@@ -9,8 +10,9 @@
     stroke: white;
   }
   .circular-progress-widget-txt {
-    font-size: 40pt;
+    font-size: 33pt;
     fill: white;
+    font-weight: 300;
   }
 }
 
@@ -35,16 +37,20 @@
   }
 
   p {
-    padding: 10px 0;
-    margin: 0;
+    padding: 0;
+    margin: 0 0 13px;
+    
   }
 
   .heading-paragraph {
-    font-style: italic;
+    font-size: 15px;
+    color: rgba(255,255,255,.9);
     text-align: center;
+    margin-bottom: 18px;
   }
   .text-course-complete {
     font-size: 16pt;
+    font-weight: 300;
   }
   .progress-button {
     color: $mm-brand-bg !important;
