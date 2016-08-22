@@ -76,8 +76,10 @@ c.validation-wrapper {
 .dashboard {
   .card-image {
     height: auto;
-    width: 125px;
+    width: 112px;
     border-radius: 50%;
+    border: 1px solid #eee;
+    border-color: rgba(0,0,0,.15);
   }
 
 
@@ -86,6 +88,7 @@ c.validation-wrapper {
     flex-direction: row;
 
     .dashboard-user-card-text {
+
       width: 100%;
 
       .dashboard-user-card-text-id, .dashboard-user-card-text-program {
@@ -97,11 +100,18 @@ c.validation-wrapper {
       }
 
       .mdl-card__supporting-text {
+        padding: 0 0 16px 16px;
         color: $medgrey;
       }
 
       .mdl-card__title {
         padding-bottom: 0 !important;
+        padding: 10px 0 0 16px;
+
+        .mdl-card__title-text {
+          font-size: 22px;
+          font-weight: 400;
+        }
       }
     }
   }
@@ -171,10 +181,11 @@ c.validation-wrapper {
           }
 
           .dashboard-button {
-            background-color: $dashboard-button-teal;
+            background-color: $mm-brand-bg;
             color: white;
             box-shadow: none;
             text-decoration: none;
+            border-radius: 2px;
 
             &[disabled] {
               background-color: adjust-color($dashboard-button-teal, $alpha: -0.5);

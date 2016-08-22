@@ -4,6 +4,7 @@ $border-box-sizing: true !global;
 
 .page-content {
   width: 100%;
+  padding: 27px 0 35px;
 
   .single-column {
     max-width: 750px;
@@ -13,17 +14,18 @@ $border-box-sizing: true !global;
   .double-column {
     display: flex;
     flex-direction: row;
+    width: 96%;
     max-width: 1000px;
     margin: 0 auto;
 
     .first-column {
       width: 65%;
-      margin: 0 15px;
+      margin: 0 11px;
     }
 
     .second-column {
       width: 35%;
-      margin: 0 15px;
+      margin: 0 11px;
     }
   }
 }

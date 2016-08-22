@@ -6,6 +6,11 @@
   background-color: $mm-brand-bg !important;
 }
 
+.mdl-layout__tab {
+  font-weight: 400;
+}
+
+
 .mdl-layout__tab-bar-container * {
   background-color: $mm-brand-bg !important;
 }
@@ -40,6 +45,7 @@
     border-right-color: whte;
     border-top-color: white;
     outline-color: white;
+    a:hover, a:focus {text-decoration: none;}
   }
 
   a.mdl-layout__tab.is-active::after {

@@ -1,6 +1,6 @@
 .user-menu {
   border-radius: 50px;
-  background-color: $mm-brand-fg;
+  background-color: rgba(0,0,0,.15);;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -20,27 +20,34 @@
   .user-menu-dropdown.open {
     display: flex;
     flex-direction: column;
-    background-color: white;
+    background-color: rgba(0,0,0,.73);
     position: absolute;
     width: 80%;
     top: 100%;
     left: 10%;
-    border-radius: 3px;
+    border-radius: 2px;
     box-shadow: 0 0 10px grey;
+    z-index: 100;
   }
 
   .user-menu-dropdown > a {
-    margin: 5px 10px;
-    color: $font-black;
-    opacity: .87;
+    margin: 6px 13px;
+    color: rgba(255,255,255,.8);
+    font-weight: 300;
+  }
+
+  .user-menu-dropdown > a:hover {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 400;
   }
 
   .user-menu-dropdown > a:first-child {
-    margin-top: 8px;
+    margin-top: 12px;
   }
 
   .user-menu-dropdown > a:last-child {
-    margin-bottom: 8px;
+    margin-bottom: 15px;
   }
 }
 
