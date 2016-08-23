@@ -347,9 +347,9 @@ c.validation-wrapper {
 }
 
 .profile-radio-group-label {
-  color: grey;
-  font-weight: 700;
-  font-size: 9pt;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.498039);
+  margin-bottom: 10px;
 }
 
 .radio-label {
@@ -415,6 +415,7 @@ c.validation-wrapper {
   .profile-radio-button {
     width: unset !important;
     display: inline-block !important;
+    margin-right: 8px;
     label {
       width: unset !important;
     }

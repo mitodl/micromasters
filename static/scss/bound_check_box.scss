@@ -13,9 +13,12 @@
     }
 
     .label {
-      font-weight: 500;
+      font-weight: 300;
       font-size: 14px;
-      color: $font-black;
+      color: $medlightgrey;
+      position: relative;
+      top: 3px;
+      margin-left:6px;
 
       a {
         cursor: pointer;

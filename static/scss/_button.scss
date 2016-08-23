@@ -14,21 +14,23 @@
   color: $mm-brand-blue;
   font-size: 16px;
   font-weight: 600;
-  cursor: pointer
+  cursor: pointer;
 }
 
 .mm-button-action {
   border-radius: 2px;
   border: 0;
-  padding: 0 15px;
+  padding: 10px 15px;
   min-width: 120px;
   text-transform: uppercase;
   font-weight: 400;
+  font-size: 13px;
 }
 
 .mm-button-action.main-action {
   background-color: $mm-brand-bg;
   color: white;
+  padding: 10px 15px;
 }
 
 .dialog-button {

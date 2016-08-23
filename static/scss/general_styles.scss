@@ -30,9 +30,11 @@ body {
   }
 
 
-.mdl-shadow--2dp {box-shadow: none;}
+.mdl-shadow--2dp, .mdl-shadow--3dp {box-shadow: none;}
 
-  p {line-height: 1.5em;}
+p {line-height: 1.5em;}
+
+a {color: $link-text;}
 
 
 
