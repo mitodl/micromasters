@@ -155,14 +155,13 @@ export default class LearnerSearch extends SearchkitComponent {
             <Card className="fullwidth">
               <Grid className="search-header">
                 <Cell col={6} className="result-info">
-                  <div
-                    role="button"
+                  <button
                     id="email-selected"
-                    className="mm-button"
+                    className="mm-button minor-action"
                     onClick={() => openEmailComposer(this.searchkit)}
                   >
                     Email Selected
-                  </div>
+                  </button>
                   <HitsStats component={HitsCount} />
                 </Cell>
                 <Cell col={2}></Cell>

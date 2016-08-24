@@ -53,30 +53,25 @@ export function makeProfileProgressDisplay(active: string) {
   const textY = (height - (radius * 2)) / 2 + radius * 2;
   const circleY = radius + paddingY;
 
-  const greenFill = "#30BB5C", darkGreyFill = "#626262";
-  const greyStroke = "#ececec", lightGreyText = "#b7b7b7", darkGreyText = "#888888";
-  const greyFill = "#eeeeee", greyCircle = "#dddddd";
+  const lightGreyText = "#888";
   const colors = {
     completed: {
-      fill: darkGreyFill,
-      stroke: "white",
+      fill: "#626262",
       circleText: "white",
       text: lightGreyText,
-      fontWeight: 300,
+      fontWeight: 400,
     },
     current: {
-      fill: greenFill,
-      stroke: greyStroke,
+      fill: "#30BB5C",
       circleText: "white",
       text: "black",
       fontWeight: 700,
     },
     future: {
-      fill: greyFill,
-      stroke: greyCircle,
-      circleText: darkGreyText,
+      fill: "#f5f5f5",
+      circleText: "#888888",
       text: lightGreyText,
-      fontWeight: 700,
+      fontWeight: 400,
     }
   };
 
@@ -134,7 +129,6 @@ export function makeProfileProgressDisplay(active: string) {
         cx={circleX}
         cy={circleY}
         r={radius}
-        stroke={colorScheme.stroke}
         fill={colorScheme.fill}
       />,
       <text

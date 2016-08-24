@@ -6,7 +6,6 @@ body {
   line-height: 1.4em;
   }
 
-
  .mdl-card {
     padding: 20px 24px 30px;
     margin: 0 0 22px 0;
@@ -14,12 +13,10 @@ body {
     width: 100%;
     border-radius: 1px;
 
-	.mdl-card__title {
-	padding: 0;
-	margin: 0 0 20px;
-
-
-	}
+    .mdl-card__title {
+      padding: 0;
+	    margin: 0 0 20px;
+	   }
 
     .mdl-card__title-text {
       font-weight: 500;
@@ -29,12 +26,17 @@ body {
     }
   }
 
+.mdl-shadow--2dp, .mdl-shadow--3dp {
+  box-shadow: none; 
+  }
 
-.mdl-shadow--2dp, .mdl-shadow--3dp {box-shadow: none;}
+p {
+  line-height: 1.5em;
+  }
 
-p {line-height: 1.5em;}
-
-a {color: $link-text;}
+a {
+  color: $link-text;
+  }
 
 
 

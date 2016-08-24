@@ -27,6 +27,7 @@ export default class LearnerResult extends React.Component {
           <span>
             { getPreferredName(profile) }
           </span>
+          <UserChip profile={profile} />
         </Cell>
         <Cell col={2} className="centered">
           <span>
@@ -40,7 +41,6 @@ export default class LearnerResult extends React.Component {
           <span className="hint">Program Avg. Grade</span>
         </Cell>
         <Cell col={4} />
-        <UserChip profile={profile} />
       </Grid>
     );
   }
