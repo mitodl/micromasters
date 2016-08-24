@@ -1,5 +1,5 @@
-import ReactDOM from 'react-dom';
 import React from 'react';
+import { mount } from 'enzyme';
 import configureTestStore from 'redux-asserts';
 import sinon from 'sinon';
 import { createMemoryHistory } from 'react-router';
@@ -62,19 +62,21 @@ class IntegrationTestHelper {
     }
     expectedTypes.push(...extraTypesToAssert);
 
-    let component, div;
+    let wrapper, div;
 
     return this.listenForActions(expectedTypes, () => {
       this.browserHistory.push(url);
       div = document.createElement("div");
-      component = ReactDOM.render(
+      wrapper = mount(
         <div>
           { makeDashboardRoutes(this.browserHistory, this.store, () => null) }
         </div>,
-        div
+        {
+          attachTo: div
+        }
       );
     }).then(() => {
-      return Promise.resolve([component, div]);
+      return Promise.resolve([wrapper, div]);
     });
   }
 }
