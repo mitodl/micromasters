@@ -20,8 +20,13 @@ from ecommerce.api import (
     generate_cybersource_sa_payload,
     generate_cybersource_sa_signature,
     get_purchasable_course_run,
+    get_new_order_by_reference_number,
     ISO_8601_FORMAT,
     make_reference_id,
+)
+from ecommerce.exceptions import (
+    EcommerceException,
+    ParseException,
 )
 from ecommerce.factories import CoursePriceFactory
 from ecommerce.models import Order
@@ -127,20 +132,11 @@ CYBERSOURCE_REFERENCE_PREFIX = 'prefix'
     CYBERSOURCE_ACCESS_KEY=CYBERSOURCE_ACCESS_KEY,
     CYBERSOURCE_PROFILE_ID=CYBERSOURCE_PROFILE_ID,
     CYBERSOURCE_SECURITY_KEY=CYBERSOURCE_SECURITY_KEY,
-    CYBERSOURCE_REFERENCE_PREFIX=CYBERSOURCE_REFERENCE_PREFIX,
 )
 class CybersourceTests(ESTestCase):
     """
     Tests for generate_cybersource_sa_payload and generate_cybersource_sa_signature
     """
-    def test_make_reference_id(self):
-        """
-        make_reference_id should concatenate the reference prefix and the order id
-        """
-        course_run, user = create_purchasable_course_run()
-        order = create_unfulfilled_order(course_run.edx_course_key, user)
-        assert "MM-{}-{}".format(CYBERSOURCE_REFERENCE_PREFIX, order.id) == make_reference_id(order)
-
     def test_valid_signature(self):
         """
         Signature is made up of a ordered key value list signed using HMAC 256 with a security key
@@ -199,3 +195,64 @@ class CybersourceTests(ESTestCase):
             'transaction_uuid': transaction_uuid,
             'unsigned_field_names': '',
         }
+
+
+@override_settings(CYBERSOURCE_REFERENCE_PREFIX=CYBERSOURCE_REFERENCE_PREFIX)
+class ReferenceNumberTests(ESTestCase):
+    """
+    Tests for get_order_by_reference_number and make_reference_id
+    """
+
+    def test_make_reference_id(self):
+        """
+        make_reference_id should concatenate the reference prefix and the order id
+        """
+        course_run, user = create_purchasable_course_run()
+        order = create_unfulfilled_order(course_run.edx_course_key, user)
+        assert "MM-{}-{}".format(CYBERSOURCE_REFERENCE_PREFIX, order.id) == make_reference_id(order)
+
+    def test_get_new_order_by_reference_number(self):
+        """
+        get_new_order_by_reference_number returns an Order with status created
+        """
+        course_run, user = create_purchasable_course_run()
+        order = create_unfulfilled_order(course_run.edx_course_key, user)
+        same_order = get_new_order_by_reference_number(make_reference_id(order))
+        assert same_order.id == order.id
+
+    def test_parse(self):
+        """
+        Test parse errors are handled well
+        """
+        with self.assertRaises(ParseException) as ex:
+            get_new_order_by_reference_number("XYZ-1-3")
+        assert ex.exception.args[0] == "Reference number must start with MM-"
+
+        with self.assertRaises(ParseException) as ex:
+            get_new_order_by_reference_number("MM-no_dashes_here")
+        assert ex.exception.args[0] == "Unable to find order number in reference number"
+
+        with self.assertRaises(ParseException) as ex:
+            get_new_order_by_reference_number("MM-something-NaN")
+        assert ex.exception.args[0] == "Unable to parse order number"
+
+        with self.assertRaises(ParseException) as ex:
+            get_new_order_by_reference_number("MM-not_matching-3")
+        assert ex.exception.args[0] == "CyberSource prefix doesn't match"
+
+    def test_status(self):
+        """
+        get_order_by_reference_number should only get orders with status=CREATED
+        """
+        course_run, user = create_purchasable_course_run()
+        order = create_unfulfilled_order(course_run.edx_course_key, user)
+
+        for status in Order.STATUSES:
+            if status == Order.CREATED:
+                continue
+            order.status = status
+            order.save()
+
+            with self.assertRaises(EcommerceException) as ex:
+                get_new_order_by_reference_number(make_reference_id(order))
+            assert ex.exception.args[0] == "Order {} is expected to have status 'created'".format(order.id)
