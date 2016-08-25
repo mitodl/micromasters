@@ -51,8 +51,8 @@ describe("ProfilePage", function() {
     EMPLOYMENT_STEP,
     PRIVACY_STEP,
   ];
-  let prevButtonSelector = '.mm-button-action.prev';
-  let nextButtonSelector = '.mm-button-action.next';
+  let prevButtonSelector = '.mm-button.prev';
+  let nextButtonSelector = '.mm-button.next';
   let noInclusions = {};
   for (const { value } of EDUCATION_LEVELS) {
     noInclusions[value] = false;

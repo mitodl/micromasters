@@ -18,7 +18,7 @@ import { USER_PROFILE_RESPONSE } from '../constants';
 
 describe("SettingsPage", function() {
   this.timeout(5000);
-  let nextButtonSelector = '.mm-button-action.main-action';
+  let nextButtonSelector = '.mm-button.main-action';
   let listenForActions, renderComponent, helper, patchUserProfileStub;
   let userActions = [START_PROFILE_EDIT];
 
