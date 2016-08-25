@@ -20,10 +20,10 @@ export default class LearnerResult extends React.Component {
     const { result: { _source: { profile, program } } } = this.props;
     return (
       <Grid className="search-grid learner-result">
-        <Cell col={2}>
+        <Cell col={1}>
           <ProfileImage profile={profile} />
         </Cell>
-        <Cell col={2} className="learner-name centered">
+        <Cell col={3} className="learner-name centered">
           <span>
             { getPreferredName(profile) }
           </span>
