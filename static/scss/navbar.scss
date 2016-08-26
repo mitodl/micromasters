@@ -10,7 +10,6 @@
   font-weight: 400;
 }
 
-
 .mdl-layout__tab-bar-container * {
   background-color: $mm-brand-bg !important;
 }
@@ -47,7 +46,7 @@
     outline-color: white;
     a:hover, a:focus {
       text-decoration: none;
-      }
+    }
   }
 
   a.mdl-layout__tab.is-active::after {
