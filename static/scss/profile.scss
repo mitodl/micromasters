@@ -33,10 +33,7 @@
   &.profile-form-center-card {
     width: 40% !important;
     margin: 10px auto 30px auto;
-    &.profile-form-center-card-transparent {
-      background-color: transparent;
-      box-shadow: 0;
-    }
+
     .profile-title {
       margin-top: 18px;
       font-size: 25px;
@@ -103,8 +100,9 @@
     .profile-form-card-header {
       font-weight: 600;
     }
-    &.profile-form-grid-transparent {
-      box-shadow: 0;
+    .edit-profile-holder {
+      width: 100%;
+      text-align: right;
     }
     .profile-form-row, .profile-form-row > .basic-info {
       display: flex;

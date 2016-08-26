@@ -3,15 +3,20 @@ import React from 'react';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import { Card, CardTitle, CardText } from 'react-mdl/lib/Card';
 import Link from 'react-router/lib/Link';
+import IconButton from 'react-mdl/lib/IconButton';
 
 import ProfileImage from './ProfileImage';
-import { getPreferredName } from '../util/util';
+import {
+  getPreferredName,
+  userPrivilegeCheck
+} from '../util/util';
 import type { Profile } from '../flow/profileTypes';
 import type { Program } from '../flow/programTypes';
 
 export default class UserInfoCard extends React.Component {
   props: {
-    profile: Profile
+    profile: Profile,
+    toggleShowPersonalDialog: () => void
   };
 
   getCurrentWorkPlace: Function = (profile: Profile): string => {
@@ -26,15 +31,18 @@ export default class UserInfoCard extends React.Component {
   }
 
   render() {
-    const { profile } = this.props;
+    const { profile, toggleShowPersonalDialog } = this.props;
 
     return (
-      <div className="profile-form profile-form-center-card profile-form-center-card-transparent">
-        <Grid className="profile-form-grid profile-form-grid-transparent">
-          <Cell col={3}>
+      <Card shadow={1} className="profile-form profile-form-center-card dashboard-user-card">
+        <Grid className="profile-form-grid">
+          <Cell col={12} className="edit-profile-holder">
+            {userPrivilegeCheck(profile, () => <IconButton name="edit" onClick={toggleShowPersonalDialog}/>)}
+          </Cell>
+          <Cell col={4}>
             <ProfileImage profile={profile} editable={true} />
           </Cell>
-          <Cell col={9}>
+          <Cell col={8}>
             <div className="profile-title">{getPreferredName(profile)}</div>
             <div className="profile-company-name">{this.getCurrentWorkPlace(profile)}</div>
             <div className="profile-email">
@@ -43,7 +51,7 @@ export default class UserInfoCard extends React.Component {
             </div>
           </Cell>
         </Grid>
-      </div>
+      </Card>
     );
   }
 }

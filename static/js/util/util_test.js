@@ -85,7 +85,7 @@ describe('utility functions', () => {
     
     it('uses a default profile image if not available, removing duplicate slashes', () => {
       assert.equal(
-        `${SETTINGS.edx_base_url}static/images/profiles/default_120.png`,
+        '/static/images/default_120.png',
         makeProfileImageUrl({})
       );
     });

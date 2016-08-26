@@ -6,7 +6,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import sinon from 'sinon';
 
-import { 
+import {
   RECEIVE_GET_USER_PROFILE_SUCCESS,
   REQUEST_GET_USER_PROFILE,
   START_PROFILE_EDIT,
@@ -32,6 +32,7 @@ import {
 import {
   generateNewEducation,
   generateNewWorkHistory,
+  getPreferredName
 } from '../util/util';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import * as api from '../util/api';
@@ -642,12 +643,8 @@ describe("UserPage", function() {
     describe('Personal Info', () => {
       it('should show name and location', () => {
         return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
-          let name = div.getElementsByClassName('users-name')[0].textContent;
-          assert.deepEqual(name, USER_PROFILE_RESPONSE.preferred_name);
-
-          let location = div.getElementsByClassName('users-location')[0].textContent;
-
-          assert.deepEqual(location, `${USER_PROFILE_RESPONSE.city}, `);
+          let name = div.getElementsByClassName('profile-title')[0].textContent;
+          assert.deepEqual(name, getPreferredName(USER_PROFILE_RESPONSE));
         });
       });
 
