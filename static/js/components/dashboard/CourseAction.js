@@ -28,7 +28,7 @@ export default class CourseAction extends React.Component {
     }
     return <span>
       <button
-        className="mm-button-action dashboard-button"
+        className="dashboard-button"
         disabled={disabled}
         onClick={onClick}
       >
