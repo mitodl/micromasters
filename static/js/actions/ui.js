@@ -22,7 +22,7 @@ export const setDialogVisibility = (bool: boolean): Action => (
 
 // work history actions
 export const SET_WORK_HISTORY_EDIT = 'SET_WORK_HISTORY_EDIT';
-export const setWorkHistoryEdit = (bool: boolean): Dispatcher => {
+export const setWorkHistoryEdit = (bool: boolean): Dispatcher<null> => {
   return dispatch => {
     dispatch({ type: SET_WORK_HISTORY_EDIT, payload: bool});
     return Promise.resolve();
@@ -63,7 +63,7 @@ export const setEducationDegreeLevel = (level: string): Action => (
 );
 
 export const SET_EDUCATION_DEGREE_INCLUSIONS = 'SET_EDUCATION_DEGREE_INCLUSIONS';
-export const setEducationDegreeInclusions = (degreeInclusions: Object): Dispatcher => {
+export const setEducationDegreeInclusions = (degreeInclusions: Object): Dispatcher<null> => {
   return dispatch => {
     dispatch({ type: SET_EDUCATION_DEGREE_INCLUSIONS, payload: degreeInclusions });
     return Promise.resolve();

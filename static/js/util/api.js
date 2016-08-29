@@ -5,6 +5,7 @@ import 'isomorphic-fetch';
 import _ from 'lodash';
 import type { Profile, ProfileGetResult, ProfilePatchResult } from '../flow/profileTypes';
 import type { CheckoutResponse } from '../flow/checkoutTypes';
+import type { Dashboard } from '../flow/dashboardTypes';
 
 export function getCookie(name: string): string|null {
   let cookieValue = null;
@@ -116,7 +117,7 @@ export function patchUserProfile(username: string, profile: Profile): Promise<Pr
   });
 }
 
-export function getDashboard() {
+export function getDashboard(): Promise<Dashboard> {
   return mockableFetchJSONWithCSRF('/api/v0/dashboard/', {}, true);
 }
 

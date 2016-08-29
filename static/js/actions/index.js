@@ -2,6 +2,7 @@
 import type { Dispatch } from 'redux';
 
 import * as api from '../util/api';
+import type { CheckoutResponse } from '../flow/checkoutTypes';
 import type {
   APIErrorInfo,
   ProfileGetResult,
@@ -9,6 +10,7 @@ import type {
   ValidationErrors,
 } from '../flow/profileTypes';
 import type { Action, Dispatcher } from '../flow/reduxTypes';
+import type { Dashboard } from '../flow/dashboardTypes';
 
 // constants for fetch status (these are not action types)
 export const FETCH_FAILURE = 'FETCH_FAILURE';
@@ -76,7 +78,7 @@ const receivePatchUserProfileFailure = (username: string, errorInfo: APIErrorInf
   payload: { username, errorInfo }
 });
 
-export const saveProfile = (username: string, profile: Profile): Dispatcher => {
+export const saveProfile = (username: string, profile: Profile): Dispatcher<Profile> => {
   return (dispatch: Dispatch) => {
     dispatch(requestPatchUserProfile(username));
     return api.patchUserProfile(username, profile).
@@ -94,7 +96,7 @@ export const updateProfileValidation = (username: string, errors: ValidationErro
   payload: { errors, username }
 });
 
-export function fetchUserProfile(username: string): Dispatcher {
+export function fetchUserProfile(username: string): Dispatcher<Profile> {
   return (dispatch: Dispatch) => {
     dispatch(requestGetUserProfile(username));
     return api.getUserProfile(username).
@@ -125,7 +127,7 @@ export const receiveDashboardFailure = (errorInfo: APIErrorInfo): Action => ({
 export const CLEAR_DASHBOARD = 'CLEAR_DASHBOARD';
 export const clearDashboard = () => ({ type: CLEAR_DASHBOARD });
 
-export function fetchDashboard(): Dispatcher {
+export function fetchDashboard(): Dispatcher<Dashboard> {
   return (dispatch: Dispatch) => {
     dispatch(requestDashboard());
     return api.getDashboard().
@@ -143,7 +145,7 @@ export const requestCheckout = (courseId: string) => ({
   payload: { courseId }
 });
 
-export function checkout(courseId: string): Dispatcher {
+export function checkout(courseId: string): Dispatcher<CheckoutResponse> {
   return (dispatch: Dispatch) => {
     dispatch(requestCheckout(courseId));
     return api.checkout(courseId).
