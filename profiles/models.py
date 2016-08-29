@@ -163,7 +163,7 @@ class Profile(models.Model):
 
     @property
     def email(self):
-        """pretty prints the student id for easy display"""
+        """email of user"""
         return self.user.email
 
 

@@ -6,7 +6,6 @@ import ga from 'react-ga';
 import striptags from 'striptags';
 import _ from 'lodash';
 import iso3166 from 'iso-3166-2';
-import urljoin from 'url-join';
 import { Maybe, Just, Nothing } from 'sanctuary';
 
 import {

@@ -59,15 +59,9 @@ export default class EducationDisplay extends ProfileFormFields {
         <IconButton className="delete-button" name="delete" onClick={deleteEntry} />
       </div>
     );
-    let basicInfoClasses = () => {
-      if (index == 0) {
-        return "basic-info basic-info-full-width";
-      }
-      return "basic-info basic-info-full-width basic-info-border-bottom";
-    };
     return (
       <Cell col={12} className="profile-form-row" key={index}>
-        <div className={basicInfoClasses()}>
+        <div className="basic-info full-width border-bottom">
           <div className="profile-row-name">
             <div className="school-type">
               { degree }
@@ -75,7 +69,7 @@ export default class EducationDisplay extends ProfileFormFields {
             { entry.school_name }
           </div>
         </div>
-        <div className={`${basicInfoClasses()} education-top-spacing`}>
+        <div className="basic-info full-width border-bottom education-top-spacing">
           <div className="profile-row-date-range">
             {`${dateFormat(entry.graduation_date)}`}
           </div>

@@ -71,6 +71,7 @@ class ProfileTests(ESTestCase):
             'last_name': profile.last_name,
             'preferred_name': profile.preferred_name,
             'email_optin': profile.email_optin,
+            'email': profile.email,
             'gender': profile.gender,
             'date_of_birth': DateTimeField().to_representation(profile.date_of_birth),
             'account_privacy': profile.account_privacy,

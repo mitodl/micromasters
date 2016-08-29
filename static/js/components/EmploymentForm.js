@@ -182,7 +182,7 @@ class EmploymentForm extends ProfileFormFields {
       if ( !_.isUndefined(work_history) ) {
         let sorted = workEntriesByDate(work_history);
         workHistoryRows = sorted.map(([index, entry]) => (
-          entry.id === undefined ? undefined : this.jobRow(entry, index, work_history.length)
+          entry.id === undefined ? undefined : this.jobRow(entry, index)
         ));
       }
       userPrivilegeCheck(profile, () => {
@@ -201,7 +201,7 @@ class EmploymentForm extends ProfileFormFields {
     }
   }
 
-  jobRow (position: WorkHistoryEntry, index: number, workHistorySize: number) {
+  jobRow (position: WorkHistoryEntry, index: number) {
     const {
       setWorkDialogVisibility,
       setWorkDialogIndex,
@@ -234,20 +234,14 @@ class EmploymentForm extends ProfileFormFields {
       () => <div />
       );
     };
-    let basicInfoClasses = () => {
-      if (index < workHistorySize - 1) {
-        return "basic-info basic-info-full-width basic-info-border-bottom";
-      }
-      return "basic-info basic-info-full-width ";
-    };
     return (
       <Cell col={12} className="profile-form-row" key={index}>
-        <div className={basicInfoClasses()}>
+        <div className="basic-info full-width border-bottom">
           <div className="profile-row-name">
             {`${position.company_name}, ${position.position}`}
           </div>
         </div>
-        <div className={`${basicInfoClasses()} employment-top-spacing`}>
+        <div className="basic-info full-width border-bottom employment-top-spacing">
           <div className="profile-row-date-range">
             {`${dateFormat(position.start_date)} - ${endDateText()}`}
           </div>

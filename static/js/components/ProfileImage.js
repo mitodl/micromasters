@@ -7,7 +7,8 @@ import type { Profile } from '../flow/profileTypes';
 
 export default class ProfileImage extends React.Component {
   props: {
-    profile: Profile
+    profile: Profile,
+    editable: boolean
   };
 
   render () {
@@ -36,7 +37,7 @@ export default class ProfileImage extends React.Component {
             />
           </span>
         </div>
-      )
+      );
     }
 
     return img;

@@ -1,17 +1,16 @@
 // @flow
 import React from 'react';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
-import { Card, CardTitle, CardText } from 'react-mdl/lib/Card';
-import Link from 'react-router/lib/Link';
+import { Card } from 'react-mdl/lib/Card';
 import IconButton from 'react-mdl/lib/IconButton';
 
 import ProfileImage from './ProfileImage';
 import {
+  getEmployer,
   getPreferredName,
   userPrivilegeCheck
 } from '../util/util';
 import type { Profile } from '../flow/profileTypes';
-import type { Program } from '../flow/programTypes';
 
 export default class UserInfoCard extends React.Component {
   props: {
@@ -20,14 +19,11 @@ export default class UserInfoCard extends React.Component {
   };
 
   getCurrentWorkPlace: Function = (profile: Profile): string => {
-    let company_name = "";
-    for (let work_history of profile.work_history) {
-      if (work_history.end_date === null) {
-        company_name = work_history.company_name;
-        break;
-      }
+    let companyName = "";
+    if (!getEmployer(profile).isNothing) {
+      companyName = getEmployer(profile).value;
     }
-    return company_name;
+    return companyName;
   }
 
   render() {

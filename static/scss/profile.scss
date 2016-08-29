@@ -1,17 +1,17 @@
 .avatar {
   position: relative;
   span.img{
-    width: 30px;
-    height: 30px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(0, 0, 0, 0.5);
     position: absolute;
     top: 0;
-    right: 6px;
+    right: 10px;
     text-align: center;
-    line-height: 28px;
+    line-height: 35px;
     img{
-      width: 18px;
+      width: 22px;
       height: auto;
     }
   }
@@ -50,6 +50,8 @@
     }
     .email-icon {
       margin-right: 8px;
+      width: 28px;
+      height: 28px;
     }
   }
 
@@ -112,11 +114,11 @@
     }
     .profile-form-row > .basic-info {
       width: 50%;
-      &.basic-info-full-width {
+      &.full-width {
         width: 100%;
         padding: 20px 0;
       }
-      &.basic-info-border-bottom {
+      &.border-bottom {
         border-bottom: 2px #E2E2E2 solid;
         margin-right: 10px;
         &.education-top-spacing {
@@ -150,17 +152,6 @@
     .profile-card-header {
       > span {
         font-size: 22px;
-      }
-    }
-    .profile-card-header-controls {
-      text-align: right;
-      float: right;
-      display: inline;
-      > a {
-        color: #1B7AE3;
-        font-size: 19px;
-        font-weight: 400;
-        cursor: pointer
       }
     }
   }
