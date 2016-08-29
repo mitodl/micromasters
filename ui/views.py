@@ -7,6 +7,7 @@ import logging
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.core.urlresolvers import reverse
 from django.views.generic import View
 from django.shortcuts import (
     render,
@@ -69,7 +70,7 @@ class ReactView(View):  # pylint: disable=unused-argument
             "host": webpack_dev_server_host(request),
             "edx_base_url": settings.EDXORG_BASE_URL,
             "roles": roles,
-            "search_url": settings.CLIENT_ELASTICSEARCH_URL,
+            "search_url": reverse('search_api', kwargs={"elastic_url": ""}),
         }
 
         return render(

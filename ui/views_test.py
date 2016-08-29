@@ -175,7 +175,6 @@ class DashboardTests(ViewsTests):
             REACT_GA_DEBUG=react_ga_debug,
             EDXORG_BASE_URL=edx_base_url,
             WEBPACK_DEV_SERVER_HOST=host,
-            CLIENT_ELASTICSEARCH_URL="http://localhost:9200",
         ):
             resp = self.client.get(DASHBOARD_URL)
             js_settings = json.loads(resp.context['js_settings_json'])
@@ -188,7 +187,7 @@ class DashboardTests(ViewsTests):
                 'host': host,
                 'edx_base_url': edx_base_url,
                 'roles': [],
-                'search_url': 'http://localhost:9200',
+                'search_url': reverse('search_api', kwargs={"elastic_url": ""}),
             }
 
     def test_roles_setting(self):
@@ -392,7 +391,6 @@ class TestUsersPage(ViewsTests):
             REACT_GA_DEBUG=react_ga_debug,
             EDXORG_BASE_URL=edx_base_url,
             WEBPACK_DEV_SERVER_HOST=host,
-            CLIENT_ELASTICSEARCH_URL="http://localhost:9200",
         ):
             # Mock has_permission so we don't worry about testing permissions here
             has_permission = Mock(return_value=True)
@@ -409,7 +407,7 @@ class TestUsersPage(ViewsTests):
                     'host': host,
                     'edx_base_url': edx_base_url,
                     'roles': [],
-                    'search_url': 'http://localhost:9200',
+                    'search_url': reverse('search_api', kwargs={"elastic_url": ""}),
                 }
                 assert has_permission.called
 
@@ -431,7 +429,6 @@ class TestUsersPage(ViewsTests):
             REACT_GA_DEBUG=react_ga_debug,
             EDXORG_BASE_URL=edx_base_url,
             WEBPACK_DEV_SERVER_HOST=host,
-            CLIENT_ELASTICSEARCH_URL="http://localhost:9200",
         ):
             # Mock has_permission so we don't worry about testing permissions here
             has_permission = Mock(return_value=True)
@@ -448,7 +445,7 @@ class TestUsersPage(ViewsTests):
                     'host': host,
                     'edx_base_url': edx_base_url,
                     'roles': [],
-                    'search_url': 'http://localhost:9200'
+                    'search_url': reverse('search_api', kwargs={"elastic_url": ""})
                 }
                 assert has_permission.called
 
