@@ -233,7 +233,7 @@ export function makeStrippedHtml(textOrElement: any): string {
 }
 
 export function makeProfileImageUrl(profile: Profile): string {
-  let imageUrl = '/static/images/default_120.png';
+  let imageUrl = '/static/images/avatar_default.png';
   if (profile !== undefined && profile.profile_url_large) {
     imageUrl = profile.profile_url_large;
   }

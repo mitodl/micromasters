@@ -1,21 +1,3 @@
-.avatar {
-  position: relative;
-  span.img{
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.5);
-    position: absolute;
-    top: 0;
-    right: 10px;
-    text-align: center;
-    line-height: 35px;
-    img{
-      width: 22px;
-      height: auto;
-    }
-  }
-}
 .profile-form {
   min-height: 0 !important;
   width: 94% !important;
@@ -29,30 +11,6 @@
     width: 125px;
     border-radius: 50%;
     margin-left: 15px;
-  }
-  &.profile-form-center-card {
-    width: 40% !important;
-    margin: 10px auto 30px auto;
-
-    .profile-title {
-      margin-top: 18px;
-      font-size: 25px;
-      color: black;
-    }
-    .profile-company-name {
-      font-size: 19px;
-      color: #98989A;
-      padding: 10px 0;
-    }
-    .profile-email {
-      color: #0E52CE;
-      font-size: 19px;
-    }
-    .email-icon {
-      margin-right: 8px;
-      width: 28px;
-      height: 28px;
-    }
   }
 
   i.material-icons {
@@ -101,10 +59,7 @@
 
     .profile-form-card-header {
       font-weight: 600;
-    }
-    .edit-profile-holder {
-      width: 100%;
-      text-align: right;
+      margin-top: 15px;
     }
     .profile-form-row, .profile-form-row > .basic-info {
       display: flex;
@@ -150,8 +105,9 @@
     }
 
     .profile-card-header {
-      > span {
-        font-size: 22px;
+      .title {
+        font-weight: 600;
+        font-size: 18px;
       }
     }
   }

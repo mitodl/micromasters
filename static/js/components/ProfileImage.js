@@ -1,6 +1,7 @@
 // @flow
 /* global SETTINGS: false */
 import React from 'react';
+import Icon from 'react-mdl/lib/Icon';
 
 import { makeProfileImageUrl, getPreferredName } from '../util/util';
 import type { Profile } from '../flow/profileTypes';
@@ -18,32 +19,19 @@ export default class ProfileImage extends React.Component {
   render () {
     const { profile, editable } = this.props;
     const imageUrl = makeProfileImageUrl(profile);
-
-    let img = (
-      <img
-        src={imageUrl}
-        alt={`Profile image for ${getPreferredName(profile, false)}`}
-        className="card-image"
-      />
+    const cameraIcon = editable => (
+      editable ? <span className="img"><Icon name="camera" /></span> : null
     );
-    if (editable) {
-      img = (
-        <div className="avatar">
-          <img
-            src={imageUrl}
-            alt={`Profile image for ${getPreferredName(profile, false)}`}
-            className="card-image"
-          />
-          <span className="img">
-            <img
-              src='/static/images/camera.png'
-              alt="Camera image for"
-            />
-          </span>
-        </div>
-      );
-    }
 
-    return img;
+    return (
+      <div className="avatar">
+        <img
+          src={imageUrl}
+          alt={`Profile image for ${getPreferredName(profile, false)}`}
+          className="card-image"
+        />
+        { cameraIcon(editable) }
+      </div>
+    );
   }
 }

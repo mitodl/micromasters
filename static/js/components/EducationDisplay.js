@@ -116,10 +116,10 @@ export default class EducationDisplay extends ProfileFormFields {
           showLevelForm={true}
           validator={educationValidation}
         />
-        <Card shadow={1} className="profile-form profile-form-center-card" id="education-card">
+        <Card shadow={1} className="profile-form" id="education-card">
           <Grid className="profile-form-grid">
             <Cell col={12} className="profile-form-row profile-card-header">
-              <span className="profile-form-card-header">
+              <span className="profile-form-card-header title">
                 Education
               </span>
             </Cell>
