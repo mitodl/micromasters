@@ -1,7 +1,6 @@
 """
 Serializers for user profiles
 """
-
 from django.db import transaction
 
 from rest_framework.exceptions import ValidationError
@@ -96,6 +95,38 @@ class EmploymentSerializer(ModelSerializer):
         )
 
 
+def set_fields_to_required(serializer, ignore_fields=None):
+    """
+    Iterate through fields in serializer and set all to required except ignore_fields
+
+    Args:
+        serializer (rest_framework.serializers.Serializer):
+            A serializer
+        ignore_fields (list of str):
+            If not none, a list of field names to skip
+    Returns:
+        None
+    """
+    if ignore_fields is None:
+        ignore_fields = []
+    for field in serializer.fields.values():
+        if field.field_name not in ignore_fields:
+            field.required = True
+            field.allow_null = False
+            field.allow_blank = False
+
+
+class EmploymentFilledOutSerializer(EmploymentSerializer):
+    """Serializer for Employment objects in filled out Profiles"""
+
+    def __init__(self, *args, **kwargs):
+        """
+        Update serializer_field_mapping to use fields setting required=True
+        """
+        set_fields_to_required(self, ['end_date'])
+        super(EmploymentFilledOutSerializer, self).__init__(*args, **kwargs)
+
+
 class EducationSerializer(ModelSerializer):
     """Serializer for Education objects"""
     id = IntegerField(required=False)  # override the read_only flag so we can edit it
@@ -112,6 +143,17 @@ class EducationSerializer(ModelSerializer):
             'school_city',
             'school_state_or_territory',
             'school_country')
+
+
+class EducationFilledOutSerializer(EducationSerializer):
+    """Serializer for Education objects in filled out Profiles"""
+
+    def __init__(self, *args, **kwargs):
+        """
+        Update serializer_field_mapping to use fields setting required=True
+        """
+        set_fields_to_required(self, ['field_of_study'])
+        super(EducationFilledOutSerializer, self).__init__(*args, **kwargs)
 
 
 class ProfileBaseSerializer(ModelSerializer):
@@ -226,3 +268,28 @@ class ProfileLimitedSerializer(ProfileBaseSerializer):
             'edx_level_of_education',
             'education'
         )
+
+
+class ProfileFilledOutSerializer(ProfileSerializer):
+    """Serializer for Profile objects which require filled_out = True"""
+    work_history = EmploymentFilledOutSerializer(many=True)
+    education = EducationFilledOutSerializer(many=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Update serializer_field_mapping to use fields setting required=True
+        """
+        set_fields_to_required(self)
+        super(ProfileFilledOutSerializer, self).__init__(*args, **kwargs)
+
+    def validate(self, attrs):
+        """
+        Assert that filled_out can't be turned off and that agreed_to_terms_of_service is true
+        """
+        if 'filled_out' in attrs and not attrs['filled_out']:
+            raise ValidationError("filled_out cannot be set to false")
+
+        if 'agreed_to_terms_of_service' in attrs and not attrs['agreed_to_terms_of_service']:
+            raise ValidationError("agreed_to_terms_of_service cannot be set to false")
+
+        return super(ProfileFilledOutSerializer, self).validate(attrs)

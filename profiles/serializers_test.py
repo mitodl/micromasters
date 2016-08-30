@@ -1,10 +1,17 @@
 """
 Tests for profile serializers
 """
+from copy import deepcopy
 
 from django.db.models.signals import post_save
 from factory.django import mute_signals
-from rest_framework.fields import DateTimeField
+from rest_framework.fields import (
+    CharField,
+    DateTimeField,
+    ReadOnlyField,
+    SerializerMethodField,
+)
+from rest_framework.serializers import ListSerializer
 from rest_framework.exceptions import ValidationError
 
 from backends.edxorg import EdxOrgOAuth2
@@ -24,6 +31,7 @@ from profiles.serializers import (
     EmploymentSerializer,
     ProfileLimitedSerializer,
     ProfileSerializer,
+    ProfileFilledOutSerializer,
 )
 from profiles.util import (
     GravatarImgSize,
@@ -303,3 +311,116 @@ class ProfileTests(ESTestCase):
 
         # Other profile is unaffected
         assert employment3.profile.work_history.count() == 1
+
+
+class ProfileFilledOutTests(ESTestCase):
+    """Tests for validating filled out profiles"""
+
+    @classmethod
+    def setUpTestData(cls):
+        """
+        Create a profile and social auth
+        """
+        with mute_signals(post_save):
+            cls.profile = ProfileFactory.create(
+                filled_out=True,
+                agreed_to_terms_of_service=True,
+            )
+        EmploymentFactory.create(profile=cls.profile)
+        EducationFactory.create(profile=cls.profile)
+        cls.profile.user.social_auth.create(
+            provider=EdxOrgOAuth2.name,
+            uid="{}_edx".format(cls.profile.user.username)
+        )
+
+    def setUp(self):
+        """
+        Create a profile and social auth
+        """
+        serializer = ProfileFilledOutSerializer(self.profile)
+        self.data = serializer.to_representation(self.profile)
+
+    def assert_required_fields(self, field_names, parent_getter, field_parent_getter):
+        """
+        Helper function to assert required fields
+        """
+        for key in field_names:
+            field = field_parent_getter(ProfileFilledOutSerializer().fields)[key]
+            # skip fields that are generated, read only, or that tie to other serializers which are tested elsewhere
+            if isinstance(field, (ListSerializer, SerializerMethodField, ReadOnlyField)):
+                continue
+
+            clone = deepcopy(self.data)
+            parent_getter(clone)[key] = None
+            with self.assertRaises(ValidationError) as ex:
+                ProfileFilledOutSerializer(data=clone).is_valid(raise_exception=True)
+            assert parent_getter(ex.exception.args[0]) == {key: ['This field may not be null.']}
+
+            if isinstance(field, CharField):
+                # test blank string too
+                parent_getter(clone)[key] = ""
+                with self.assertRaises(ValidationError) as ex:
+                    ProfileFilledOutSerializer(data=clone).is_valid(raise_exception=True)
+                assert parent_getter(ex.exception.args[0]) == {key: ['This field may not be blank.']}
+
+    def test_success(self):
+        """
+        Test a successful validation
+        """
+        ProfileFilledOutSerializer(data=self.data).is_valid(raise_exception=True)
+
+    def test_filled_out_false(self):
+        """
+        filled_out cannot be set to false
+        """
+        self.data['filled_out'] = False
+        with self.assertRaises(ValidationError) as ex:
+            ProfileFilledOutSerializer(data=self.data).is_valid(raise_exception=True)
+        assert ex.exception.args[0] == {'non_field_errors': ['filled_out cannot be set to false']}
+
+    def test_agreed_to_terms_of_service_false(self):
+        """
+        agreed_to_terms_of_service cannot be set to false
+        """
+        self.data['agreed_to_terms_of_service'] = False
+        with self.assertRaises(ValidationError) as ex:
+            ProfileFilledOutSerializer(data=self.data).is_valid(raise_exception=True)
+        assert ex.exception.args[0] == {'non_field_errors': ['agreed_to_terms_of_service cannot be set to false']}
+
+    def test_required_fields(self):
+        """
+        All fields are required after a profile is marked filled_out
+        """
+        keys = set(ProfileFilledOutSerializer.Meta.fields)
+        self.assert_required_fields(keys, lambda profile: profile, lambda profile: profile)
+
+    def test_work_history(self):
+        """
+        All fields are required after a profile is marked filled_out
+        """
+        # end date may be null for work history
+        keys = set(EmploymentSerializer.Meta.fields) - {'end_date'}
+        self.assert_required_fields(
+            keys,
+            lambda profile: profile['work_history'][0],
+            lambda profile: profile['work_history'].child,
+        )
+
+    def test_work_history_end_date(self):
+        """
+        Make sure end_date can be set to null on filled out profiles
+        """
+        self.data['work_history'][0]['end_date'] = None
+        # No exception should be raised by the next line
+        ProfileFilledOutSerializer(data=self.data).is_valid(raise_exception=True)
+
+    def test_education(self):
+        """
+        All fields are required after a profile is marked filled_out
+        """
+        keys = set(EducationSerializer.Meta.fields) - {'field_of_study'}
+        self.assert_required_fields(
+            keys,
+            lambda profile: profile['education'][0],
+            lambda profile: profile['education'].child,
+        )
