@@ -45,6 +45,7 @@ export type Profile = {
   education: EducationEntry[];
   work_history: WorkHistoryEntry[];
   getStatus: string;
+  email: string;
   date_of_birth: string;
   edx_level_of_education: string;
   username: string;

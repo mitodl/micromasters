@@ -11,6 +11,10 @@ export default class ProfileImage extends React.Component {
     editable: boolean
   };
 
+  static defaultProps = {
+    editable: false
+  };
+
   render () {
     const { profile, editable } = this.props;
     const imageUrl = makeProfileImageUrl(profile);

@@ -42,7 +42,7 @@ import ValidationAlert from '../components/ValidationAlert';
 import { modifyTextField } from '../util/test_utils';
 
 describe("UserPage", function() {
-  this.timeout(5000);
+  this.timeout(12000);
 
   let listenForActions, renderComponent, helper, patchUserProfileStub;
   let userActions = [RECEIVE_GET_USER_PROFILE_SUCCESS, REQUEST_GET_USER_PROFILE];
@@ -271,7 +271,7 @@ describe("UserPage", function() {
 
     describe("Education History", () => {
       let deleteButton = div => {
-        return div.getElementsByClassName('profile-form')[1].
+        return div.getElementsByClassName('profile-form')[2].
           getElementsByClassName('delete-button')[0];
       };
 
@@ -375,7 +375,7 @@ describe("UserPage", function() {
       it('should let you edit an education entry', () => {
         return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
 
-          let editButton = div.getElementsByClassName('profile-form')[1].
+          let editButton = div.getElementsByClassName('profile-form')[2].
             getElementsByClassName('profile-row-icons')[0].
             getElementsByClassName('mdl-button')[0];
 
@@ -391,7 +391,7 @@ describe("UserPage", function() {
 
       it('should let you add an education entry', () => {
         return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
-          let addButton = div.getElementsByClassName('profile-form')[1].
+          let addButton = div.getElementsByClassName('profile-form')[2].
             querySelector('.mm-minor-action');
 
           let updatedProfile = _.cloneDeep(USER_PROFILE_RESPONSE);
@@ -458,7 +458,7 @@ describe("UserPage", function() {
 
     describe("Employment History", () => {
       let deleteButton = div => {
-        return div.getElementsByClassName('profile-form')[0].
+        return div.getElementsByClassName('profile-form')[1].
           getElementsByClassName('profile-row-icons')[0].
           getElementsByClassName('mdl-button')[1];
       };
@@ -472,7 +472,7 @@ describe("UserPage", function() {
 
       it('should show the entries in resume order', () => {
         return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
-          let editButton = div.getElementsByClassName('profile-form')[0].
+          let editButton = div.getElementsByClassName('profile-form')[1].
             getElementsByClassName('profile-row-icons')[0].
             getElementsByClassName('mdl-button')[0];
 
@@ -519,7 +519,7 @@ describe("UserPage", function() {
             Promise.resolve(updatedProfile)
           );
 
-          let deleteButton = div.getElementsByClassName('profile-form')[0].
+          let deleteButton = div.getElementsByClassName('profile-form')[1].
             getElementsByClassName('profile-row-icons')[0].
             getElementsByClassName('mdl-button')[1];
 
@@ -545,7 +545,7 @@ describe("UserPage", function() {
       it('should let you edit a work history entry', () => {
         return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
 
-          let editButton = div.getElementsByClassName('profile-form')[0].
+          let editButton = div.getElementsByClassName('profile-form')[1].
             getElementsByClassName('profile-row-icons')[0].
             getElementsByClassName('mdl-button')[0];
 
@@ -560,7 +560,7 @@ describe("UserPage", function() {
 
       it('should let you add a work history entry', () => {
         return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
-          let addButton = div.getElementsByClassName('profile-form')[0].querySelector('.mm-minor-action');
+          let addButton = div.getElementsByClassName('profile-form')[1].querySelector('.mm-minor-action');
 
           let updatedProfile = _.cloneDeep(USER_PROFILE_RESPONSE);
           updatedProfile.username = SETTINGS.username;
