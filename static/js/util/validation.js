@@ -55,8 +55,7 @@ export function personalValidation(profile: Profile): ValidationErrors {
     ['city'],
     ['state_or_territory'],
     ['country'],
-    ['birth_city'],
-    ['birth_state_or_territory'],
+    ['nationality'],
     ['birth_country'],
     ['date_of_birth'],
   ];
@@ -69,9 +68,8 @@ export function personalValidation(profile: Profile): ValidationErrors {
     'city': "City is required",
     'state_or_territory': 'State or Territory is required',
     'country': "Country is required",
-    'birth_city': 'City is required',
-    'birth_state_or_territory': 'State or Territory is required',
     'birth_country': "Country is required",
+    'nationality': "Nationality is required",
     'date_of_birth': 'Please enter a valid date of birth'
   };
   let errors = checkFieldPresence(profile, requiredFields, validationMessages);

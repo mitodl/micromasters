@@ -4,9 +4,9 @@
         "edx_name": "Elaine",
         "email": "elaine.caldwell@example.com",
         "filled_out": true,
-        "birth_city": "Boston",
         "date_of_birth": "1975-07-06",
         "birth_country": "US",
+        "nationality": "US",
         "email_optin": true,
         "education": [
             {
@@ -90,7 +90,6 @@
         "has_profile_image": false,
         "country": "US",
         "first_name": "Elaine",
-        "birth_state_or_territory": "US-WY",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -113,9 +112,9 @@
         "edx_name": "Sonia",
         "email": "sonia.rodriguez@example.com",
         "filled_out": true,
-        "birth_city": "Riverside",
         "date_of_birth": "1980-02-28",
         "birth_country": "US",
+        "nationality": "US",
         "email_optin": true,
         "education": [
             {
@@ -189,7 +188,6 @@
         "has_profile_image": false,
         "country": "US",
         "first_name": "Sonia",
-        "birth_state_or_territory": "US-WY",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -208,7 +206,6 @@
         ]
     },
     {
-        "birth_city": "Shelby",
         "state_or_territory": "US-NC",
         "edx_name": "Samantha",
         "email": "samantha.austin@example.com",
@@ -218,13 +215,13 @@
         "gender": "f",
         "last_name": "Austin",
         "birth_country": "US",
+        "nationality": "US",
         "country": "US",
         "account_privacy": "private",
         "preferred_name": "Samantha",
         "has_profile_image": false,
         "city": "Shelby",
         "first_name": "Samantha",
-        "birth_state_or_territory": "US-NC",
         "work_history": [
             {
                 "company_name": "Berkshire Hathaway",
@@ -285,9 +282,9 @@
         "edx_name": "Marilyn",
         "email": "marilyn.turner@example.com",
         "filled_out": true,
-        "birth_city": "The Colony",
         "date_of_birth": "1991-06-16",
         "birth_country": "US",
+        "nationality": "US",
         "email_optin": true,
         "education": [
             {
@@ -351,7 +348,6 @@
         "has_profile_image": false,
         "country": "US",
         "first_name": "Marilyn",
-        "birth_state_or_territory": "US-PA",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -374,9 +370,9 @@
         "edx_name": "Terri",
         "email": "terri.pena@example.com",
         "filled_out": true,
-        "birth_city": "High Point",
         "date_of_birth": "1994-08-08",
         "birth_country": "US",
+        "nationality": "US",
         "email_optin": true,
         "education": [
             {
@@ -450,7 +446,6 @@
         "has_profile_image": false,
         "country": "CA",
         "first_name": "Terri",
-        "birth_state_or_territory": "US-MO",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -466,9 +461,9 @@
         "edx_name": "Judith",
         "email": "judith.peck@example.com",
         "filled_out": true,
-        "birth_city": "Little Rock",
         "date_of_birth": "1983-10-01",
         "birth_country": "US",
+        "nationality": "US",
         "email_optin": true,
         "education": [
             {
@@ -533,7 +528,6 @@
         "has_profile_image": false,
         "country": "US",
         "first_name": "Judith",
-        "birth_state_or_territory": "US-NV",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -549,9 +543,9 @@
         "edx_name": "Susan",
         "email": "susan.moreno@example.com",
         "filled_out": true,
-        "birth_city": "Tucson",
         "date_of_birth": "1974-09-08",
         "birth_country": "US",
+        "nationality": "US",
         "email_optin": true,
         "education": [
             {
@@ -616,7 +610,6 @@
         "has_profile_image": false,
         "country": "US",
         "first_name": "Susan",
-        "birth_state_or_territory": "US-AR",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -632,9 +625,9 @@
         "edx_name": "Evelyn",
         "email": "evelyn.pena@example.com",
         "filled_out": true,
-        "birth_city": "Midland",
         "date_of_birth": "1971-05-09",
         "birth_country": "US",
+        "nationality": "US",
         "email_optin": true,
         "education": [
             {
@@ -709,7 +702,6 @@
         "has_profile_image": false,
         "country": "US",
         "first_name": "Evelyn",
-        "birth_state_or_territory": "US-AR",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -725,9 +717,9 @@
         "edx_name": "Joann",
         "email": "joann.walker@example.com",
         "filled_out": true,
-        "birth_city": "Akron",
         "date_of_birth": "1970-06-26",
         "birth_country": "US",
+        "nationality": "US",
         "email_optin": true,
         "education": [
             {
@@ -811,7 +803,6 @@
         "has_profile_image": false,
         "country": "US",
         "first_name": "Joann",
-        "birth_state_or_territory": "US-NV",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -834,9 +825,9 @@
         "edx_name": "Stella",
         "email": "stella.morris@example.com",
         "filled_out": true,
-        "birth_city": "Lancaster",
         "date_of_birth": "1993-09-27",
         "birth_country": "US",
+        "nationality": "US",
         "email_optin": true,
         "education": [
             {
@@ -910,7 +901,6 @@
         "has_profile_image": false,
         "country": "US",
         "first_name": "Stella",
-        "birth_state_or_territory": "US-VA",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -933,9 +923,9 @@
         "edx_name": "Randy",
         "email": "randy.rice@example.com",
         "filled_out": true,
-        "birth_city": "Everett",
         "date_of_birth": "1994-08-08",
         "birth_country": "US",
+        "nationality": "US",
         "email_optin": true,
         "education": [
             {
@@ -999,7 +989,6 @@
         "has_profile_image": false,
         "country": "US",
         "first_name": "Randy",
-        "birth_state_or_territory": "US-NJ",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -1022,9 +1011,9 @@
         "edx_name": "Ted",
         "email": "ted.sullivan@example.com",
         "filled_out": true,
-        "birth_city": "Forney",
         "date_of_birth": "1986-08-08",
         "birth_country": "US",
+        "nationality": "US",
         "email_optin": true,
         "education": [
             {
@@ -1099,7 +1088,6 @@
         "has_profile_image": false,
         "country": "ES",
         "first_name": "Ted",
-        "birth_state_or_territory": "US-AK",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -1115,9 +1103,9 @@
         "edx_name": "Eric",
         "email": "eric.ryan@example.com",
         "filled_out": true,
-        "birth_city": "New York",
         "date_of_birth": "1977-08-03",
         "birth_country": "US",
+        "nationality": "US",
         "email_optin": true,
         "education": [
             {
@@ -1182,7 +1170,6 @@
         "has_profile_image": false,
         "country": "US",
         "first_name": "Eric",
-        "birth_state_or_territory": "US-MN",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -1198,9 +1185,9 @@
         "edx_name": "Ruben",
         "email": "ruben.hunter@example.com",
         "filled_out": true,
-        "birth_city": "Temecula",
         "date_of_birth": "1998-08-08",
         "birth_country": "US",
+        "nationality": "US",
         "email_optin": true,
         "education": [
             {
@@ -1264,7 +1251,6 @@
         "has_profile_image": false,
         "country": "US",
         "first_name": "Ruben",
-        "birth_state_or_territory": "US-AR",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -1287,9 +1273,9 @@
         "edx_name": "William",
         "email": "william.peterson@example.com",
         "filled_out": true,
-        "birth_city": "Norfolk",
         "date_of_birth": "1988-04-25",
         "birth_country": "US",
+        "nationality": "US",
         "email_optin": true,
         "education": [
             {
@@ -1363,7 +1349,6 @@
         "has_profile_image": false,
         "country": "US",
         "first_name": "William",
-        "birth_state_or_territory": "US-AR",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -1386,9 +1371,9 @@
         "edx_name": "Flenn",
         "email": "flenn.james@example.com",
         "filled_out": true,
-        "birth_city": "Wilmington",
         "date_of_birth": "1994-08-08",
         "birth_country": "US",
+        "nationality": "US",
         "email_optin": true,
         "education": [
             {
@@ -1452,7 +1437,6 @@
         "has_profile_image": false,
         "country": "US",
         "first_name": "Flenn",
-        "birth_state_or_territory": "US-WV",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -1475,9 +1459,9 @@
         "edx_name": "Isaiah",
         "email": "isaiah.rice@example.com",
         "filled_out": true,
-        "birth_city": "Salt Lake City",
         "date_of_birth": "1978-06-03",
         "birth_country": "US",
+        "nationality": "US",
         "email_optin": true,
         "education": [
             {
@@ -1551,7 +1535,6 @@
         "has_profile_image": false,
         "country": "US",
         "first_name": "Isaiah",
-        "birth_state_or_territory": "US-WI",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -1574,9 +1557,9 @@
         "edx_name": "Randall",
         "email": "randall.perry@example.com",
         "filled_out": true,
-        "birth_city": "Mesquite",
         "date_of_birth": "1985-07-02",
         "birth_country": "US",
+        "nationality": "US",
         "email_optin": true,
         "education": [
             {
@@ -1659,7 +1642,6 @@
         "has_profile_image": false,
         "country": "US",
         "first_name": "Randall",
-        "birth_state_or_territory": "US-OR",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -1689,9 +1671,9 @@
         "edx_name": "Joshua",
         "email": "joshua.lowe@example.com",
         "filled_out": true,
-        "birth_city": "Roanoke",
         "date_of_birth": "1981-01-27",
         "birth_country": "US",
+        "nationality": "US",
         "email_optin": true,
         "education": [
             {
@@ -1775,7 +1757,6 @@
         "has_profile_image": false,
         "country": "US",
         "first_name": "Joshua",
-        "birth_state_or_territory": "US-ME",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -1798,9 +1779,9 @@
         "edx_name": "Guy",
         "email": "guy.scott@example.com",
         "filled_out": true,
-        "birth_city": "Orlando",
         "date_of_birth": "1979-05-08",
         "birth_country": "US",
+        "nationality": "US",
         "email_optin": true,
         "education": [
             {
@@ -1874,7 +1855,6 @@
         "has_profile_image": false,
         "country": "US",
         "first_name": "Guy",
-        "birth_state_or_territory": "US-IN",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -1897,9 +1877,9 @@
         "edx_name": "Lea",
         "email": "lea.park@example.com",
         "filled_out": true,
-        "birth_city": "Glenwood",
         "date_of_birth": "1972-07-15",
         "birth_country": "CA",
+        "nationality": "CA",
         "email_optin": true,
         "education": [
             {
@@ -1964,7 +1944,6 @@
         "has_profile_image": false,
         "country": "CA",
         "first_name": "Lea",
-        "birth_state_or_territory": "CA-NB",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -1980,9 +1959,9 @@
         "edx_name": "Rose",
         "email": "rose.li@example.com",
         "filled_out": true,
-        "birth_city": "Springfield",
         "date_of_birth": "1986-08-08",
         "birth_country": "CA",
+        "nationality": "CA",
         "email_optin": true,
         "education": [
             {
@@ -2056,7 +2035,6 @@
         "has_profile_image": false,
         "country": "CA",
         "first_name": "Rose",
-        "birth_state_or_territory": "CA-NL",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -2079,9 +2057,9 @@
         "edx_name": "Sophie",
         "email": "sophie.sirko@example.com",
         "filled_out": true,
-        "birth_city": "Summerside",
         "date_of_birth": "1982-07-27",
         "birth_country": "CA",
+        "nationality": "CA",
         "email_optin": true,
         "education": [
             {
@@ -2146,7 +2124,6 @@
         "has_profile_image": false,
         "country": "CA",
         "first_name": "Sophie",
-        "birth_state_or_territory": "CA-ON",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -2162,9 +2139,9 @@
         "edx_name": "Rose",
         "email": "rose.liu@example.com",
         "filled_out": true,
-        "birth_city": "Alma",
         "date_of_birth": "1998-08-08",
         "birth_country": "CA",
+        "nationality": "CA",
         "email_optin": true,
         "education": [
             {
@@ -2228,7 +2205,6 @@
         "has_profile_image": false,
         "country": "CA",
         "first_name": "Rose",
-        "birth_state_or_territory": "CA-NL",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -2251,9 +2227,9 @@
         "edx_name": "Sophia",
         "email": "sophia.c\u00f4t\u00e9@example.com",
         "filled_out": true,
-        "birth_city": "Clinton",
         "date_of_birth": "1982-10-23",
         "birth_country": "CA",
+        "nationality": "CA",
         "email_optin": true,
         "education": [
             {
@@ -2337,7 +2313,6 @@
         "has_profile_image": false,
         "country": "CA",
         "first_name": "Sophia",
-        "birth_state_or_territory": "CA-BC",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -2360,9 +2335,9 @@
         "edx_name": "Emma",
         "email": "emma.mitchell@example.com",
         "filled_out": true,
-        "birth_city": "Sherbrooke",
         "date_of_birth": "1986-08-08",
         "birth_country": "CA",
+        "nationality": "CA",
         "email_optin": true,
         "education": [
             {
@@ -2446,7 +2421,6 @@
         "has_profile_image": false,
         "country": "CA",
         "first_name": "Emma",
-        "birth_state_or_territory": "CA-QC",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -2462,9 +2436,9 @@
         "edx_name": "Emma",
         "email": "emma.sirko@example.com",
         "filled_out": true,
-        "birth_city": "Princeton",
         "date_of_birth": "1986-08-08",
         "birth_country": "CA",
+        "nationality": "CA",
         "email_optin": true,
         "education": [
             {
@@ -2548,7 +2522,6 @@
         "has_profile_image": false,
         "country": "CA",
         "first_name": "Emma",
-        "birth_state_or_territory": "CA-NU",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -2564,9 +2537,9 @@
         "edx_name": "Jade",
         "email": "jade.liu@example.com",
         "filled_out": true,
-        "birth_city": "St. Antoine",
         "date_of_birth": "1986-08-08",
         "birth_country": "CA",
+        "nationality": "CA",
         "email_optin": true,
         "education": [
             {
@@ -2649,7 +2622,6 @@
         "has_profile_image": false,
         "country": "CA",
         "first_name": "Jade",
-        "birth_state_or_territory": "CA-ON",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -2679,9 +2651,9 @@
         "edx_name": "Victoria",
         "email": "victoria.ambrose@example.com",
         "filled_out": true,
-        "birth_city": "Vanier",
         "date_of_birth": "1998-08-08",
         "birth_country": "CA",
+        "nationality": "CA",
         "email_optin": true,
         "education": [
             {
@@ -2745,7 +2717,6 @@
         "has_profile_image": false,
         "country": "CA",
         "first_name": "Victoria",
-        "birth_state_or_territory": "CA-NT",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -2768,9 +2739,9 @@
         "edx_name": "Camille",
         "email": "camille.jones@example.com",
         "filled_out": true,
-        "birth_city": "Inverness",
         "date_of_birth": "1994-08-08",
         "birth_country": "CA",
+        "nationality": "CA",
         "email_optin": true,
         "education": [
             {
@@ -2834,7 +2805,6 @@
         "has_profile_image": false,
         "country": "US",
         "first_name": "Camille",
-        "birth_state_or_territory": "CA-NB",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -2857,9 +2827,9 @@
         "edx_name": "Louis",
         "email": "louis.lo@example.com",
         "filled_out": true,
-        "birth_city": "Lafontaine",
         "date_of_birth": "1996-09-28",
         "birth_country": "CA",
+        "nationality": "CA",
         "email_optin": true,
         "education": [
             {
@@ -2913,7 +2883,6 @@
         "has_profile_image": false,
         "country": "CA",
         "first_name": "Louis",
-        "birth_state_or_territory": "CA-BC",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -2936,9 +2905,9 @@
         "edx_name": "Mason",
         "email": "mason.liu@example.com",
         "filled_out": true,
-        "birth_city": "Sidney",
         "date_of_birth": "1992-01-29",
         "birth_country": "CA",
+        "nationality": "CA",
         "email_optin": true,
         "education": [
             {
@@ -3012,7 +2981,6 @@
         "has_profile_image": false,
         "country": "CA",
         "first_name": "Mason",
-        "birth_state_or_territory": "CA-SK",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -3028,9 +2996,9 @@
         "edx_name": "William",
         "email": "william.gill@example.com",
         "filled_out": true,
-        "birth_city": "Trout Lake",
         "date_of_birth": "1981-12-29",
         "birth_country": "CA",
+        "nationality": "CA",
         "email_optin": true,
         "education": [
             {
@@ -3104,7 +3072,6 @@
         "has_profile_image": false,
         "country": "CA",
         "first_name": "William",
-        "birth_state_or_territory": "CA-PE",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -3120,9 +3087,9 @@
         "edx_name": "Lucas",
         "email": "lucas.pelletier@example.com",
         "filled_out": true,
-        "birth_city": "Havelock",
         "date_of_birth": "1994-08-08",
         "birth_country": "CA",
+        "nationality": "CA",
         "email_optin": true,
         "education": [
             {
@@ -3177,7 +3144,6 @@
         "has_profile_image": false,
         "country": "CA",
         "first_name": "Lucas",
-        "birth_state_or_territory": "CA-NL",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -3189,7 +3155,6 @@
         ]
     },
     {
-        "birth_city": "Shelbourne",
         "state_or_territory": "CA-AB",
         "edx_name": "Xavier",
         "email": "xavier.campbell@example.com",
@@ -3199,13 +3164,13 @@
         "gender": "m",
         "last_name": "Campbell",
         "birth_country": "CA",
+        "nationality": "CA",
         "country": "CA",
         "account_privacy": "private",
         "preferred_name": "Xavier",
         "has_profile_image": false,
         "city": "Shelbourne",
         "first_name": "Xavier",
-        "birth_state_or_territory": "CA-AB",
         "work_history": [
             {
                 "company_name": "Toyota",
@@ -3266,9 +3231,9 @@
         "edx_name": "Nathan",
         "email": "nathan.knight@example.com",
         "filled_out": true,
-        "birth_city": "Delisle",
         "date_of_birth": "1991-10-09",
         "birth_country": "CA",
+        "nationality": "CA",
         "email_optin": true,
         "education": [
             {
@@ -3341,7 +3306,6 @@
         "has_profile_image": false,
         "country": "CA",
         "first_name": "Nathan",
-        "birth_state_or_territory": "CA-MB",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -3371,9 +3335,9 @@
         "edx_name": "Zachary",
         "email": "zachary.wilson@example.com",
         "filled_out": true,
-        "birth_city": "Sherbrooke",
         "date_of_birth": "1987-12-07",
         "birth_country": "CA",
+        "nationality": "CA",
         "email_optin": true,
         "education": [
             {
@@ -3447,7 +3411,6 @@
         "has_profile_image": false,
         "country": "CA",
         "first_name": "Zachary",
-        "birth_state_or_territory": "CA-BC",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -3463,9 +3426,9 @@
         "edx_name": "Ryder",
         "email": "ryder.slawa@example.com",
         "filled_out": true,
-        "birth_city": "Flatrock",
         "date_of_birth": "1975-10-25",
         "birth_country": "CA",
+        "nationality": "CA",
         "email_optin": true,
         "education": [
             {
@@ -3540,7 +3503,6 @@
         "has_profile_image": false,
         "country": "CA",
         "first_name": "Ryder",
-        "birth_state_or_territory": "CA-NT",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -3556,9 +3518,9 @@
         "edx_name": "Felix",
         "email": "felix.roy@example.com",
         "filled_out": true,
-        "birth_city": "Hampton",
         "date_of_birth": "1998-08-08",
         "birth_country": "CA",
+        "nationality": "CA",
         "email_optin": true,
         "education": [
             {
@@ -3622,7 +3584,6 @@
         "has_profile_image": false,
         "country": "CA",
         "first_name": "Felix",
-        "birth_state_or_territory": "CA-ON",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -3641,7 +3602,6 @@
         ]
     },
     {
-        "birth_city": "Westport",
         "state_or_territory": "CA-AB",
         "edx_name": "Etienne",
         "email": "etienne.andersen@example.com",
@@ -3651,13 +3611,13 @@
         "gender": "m",
         "last_name": "Andersen",
         "birth_country": "CA",
+        "nationality": "CA",
         "country": "CA",
         "account_privacy": "private",
         "preferred_name": "Etienne",
         "has_profile_image": false,
         "city": "Westport",
         "first_name": "Etienne",
-        "birth_state_or_territory": "CA-AB",
         "work_history": [
             {
                 "company_name": "Google",
@@ -3698,9 +3658,9 @@
         "edx_name": "Ana",
         "email": "ana.cabrera@example.com",
         "filled_out": true,
-        "birth_city": "La Coru\u00f1a",
         "date_of_birth": "1989-06-24",
         "birth_country": "ES",
+        "nationality": "ES",
         "email_optin": true,
         "education": [
             {
@@ -3755,7 +3715,6 @@
         "has_profile_image": false,
         "country": "CA",
         "first_name": "Ana",
-        "birth_state_or_territory": "ES-CM",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -3771,9 +3730,9 @@
         "edx_name": "Gema",
         "email": "gema.rubio@example.com",
         "filled_out": true,
-        "birth_city": "Alcobendas",
         "date_of_birth": "1994-08-08",
         "birth_country": "ES",
+        "nationality": "ES",
         "email_optin": true,
         "education": [
             {
@@ -3856,7 +3815,6 @@
         "has_profile_image": false,
         "country": "ES",
         "first_name": "Gema",
-        "birth_state_or_territory": "ES-CB",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -3886,9 +3844,9 @@
         "edx_name": "Carla",
         "email": "carla.bravo@example.com",
         "filled_out": true,
-        "birth_city": "San Sebasti\u00e1n",
         "date_of_birth": "1989-09-07",
         "birth_country": "ES",
+        "nationality": "ES",
         "email_optin": true,
         "education": [
             {
@@ -3962,7 +3920,6 @@
         "has_profile_image": false,
         "country": "ES",
         "first_name": "Carla",
-        "birth_state_or_territory": "ES-CB",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -3985,9 +3942,9 @@
         "edx_name": "Clara",
         "email": "clara.gutierrez@example.com",
         "filled_out": true,
-        "birth_city": "Gand\u00eda",
         "date_of_birth": "1986-08-08",
         "birth_country": "ES",
+        "nationality": "ES",
         "email_optin": true,
         "education": [
             {
@@ -4061,7 +4018,6 @@
         "has_profile_image": false,
         "country": "ES",
         "first_name": "Clara",
-        "birth_state_or_territory": "ES-PV",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -4084,9 +4040,9 @@
         "edx_name": "Blanca",
         "email": "blanca.rojas@example.com",
         "filled_out": true,
-        "birth_city": "La Palma",
         "date_of_birth": "1994-08-08",
         "birth_country": "ES",
+        "nationality": "ES",
         "email_optin": true,
         "education": [
             {
@@ -4150,7 +4106,6 @@
         "has_profile_image": false,
         "country": "ES",
         "first_name": "Blanca",
-        "birth_state_or_territory": "ES-PV",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -4173,9 +4128,9 @@
         "edx_name": "Carmen",
         "email": "carmen.carrasco@example.com",
         "filled_out": true,
-        "birth_city": "La Coru\u00f1a",
         "date_of_birth": "1971-08-21",
         "birth_country": "ES",
+        "nationality": "ES",
         "email_optin": true,
         "education": [
             {
@@ -4240,7 +4195,6 @@
         "has_profile_image": false,
         "country": "ES",
         "first_name": "Carmen",
-        "birth_state_or_territory": "ES-AN",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -4256,9 +4210,9 @@
         "edx_name": "Patricia",
         "email": "patricia.delgado@example.com",
         "filled_out": true,
-        "birth_city": "Pozuelo De Alarc\u00f3n",
         "date_of_birth": "1998-08-08",
         "birth_country": "ES",
+        "nationality": "ES",
         "email_optin": true,
         "education": [
             {
@@ -4321,7 +4275,6 @@
         "has_profile_image": false,
         "country": "ES",
         "first_name": "Patricia",
-        "birth_state_or_territory": "ES-CT",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -4351,9 +4304,9 @@
         "edx_name": "Concepcion",
         "email": "concepcion.pascual@example.com",
         "filled_out": true,
-        "birth_city": "Albacete",
         "date_of_birth": "1994-08-08",
         "birth_country": "ES",
+        "nationality": "ES",
         "email_optin": true,
         "education": [
             {
@@ -4427,7 +4380,6 @@
         "has_profile_image": false,
         "country": "ES",
         "first_name": "Concepcion",
-        "birth_state_or_territory": "ES-CB",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -4450,9 +4402,9 @@
         "edx_name": "Vicenta",
         "email": "vicenta.aguilar@example.com",
         "filled_out": true,
-        "birth_city": "Gand\u00eda",
         "date_of_birth": "1998-08-08",
         "birth_country": "ES",
+        "nationality": "ES",
         "email_optin": true,
         "education": [
             {
@@ -4515,7 +4467,6 @@
         "has_profile_image": false,
         "country": "ES",
         "first_name": "Vicenta",
-        "birth_state_or_territory": "ES-PV",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -4541,7 +4492,6 @@
         ]
     },
     {
-        "birth_city": "San Sebasti\u00e1n De Los Reyes",
         "state_or_territory": "ES-MD",
         "edx_name": "Margarita",
         "email": "margarita.santos@example.com",
@@ -4551,13 +4501,13 @@
         "gender": "f",
         "last_name": "Santos",
         "birth_country": "ES",
+        "nationality": "ES",
         "country": "ES",
         "account_privacy": "private",
         "preferred_name": "Margarita",
         "has_profile_image": false,
         "city": "San Sebasti\u00e1n De Los Reyes",
         "first_name": "Margarita",
-        "birth_state_or_territory": "ES-MD",
         "work_history": [
             {
                 "company_name": "Berkshire Hathaway",
@@ -4608,9 +4558,9 @@
         "edx_name": "Fernando",
         "email": "fernando.lopez@example.com",
         "filled_out": true,
-        "birth_city": "M\u00e1laga",
         "date_of_birth": "1991-10-24",
         "birth_country": "ES",
+        "nationality": "ES",
         "email_optin": true,
         "education": [
             {
@@ -4674,7 +4624,6 @@
         "has_profile_image": false,
         "country": "ES",
         "first_name": "Fernando",
-        "birth_state_or_territory": "ES-CT",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -4697,9 +4646,9 @@
         "edx_name": "Lucas",
         "email": "lucas.cortes@example.com",
         "filled_out": true,
-        "birth_city": "Fuenlabrada",
         "date_of_birth": "1994-08-08",
         "birth_country": "ES",
+        "nationality": "ES",
         "email_optin": true,
         "education": [
             {
@@ -4763,7 +4712,6 @@
         "has_profile_image": false,
         "country": "ES",
         "first_name": "Lucas",
-        "birth_state_or_territory": "ES-PV",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -4786,9 +4734,9 @@
         "edx_name": "Oscar",
         "email": "oscar.santiago@example.com",
         "filled_out": true,
-        "birth_city": "Valencia",
         "date_of_birth": "1980-08-29",
         "birth_country": "ES",
+        "nationality": "ES",
         "email_optin": true,
         "education": [
             {
@@ -4862,7 +4810,6 @@
         "has_profile_image": false,
         "country": "ES",
         "first_name": "Oscar",
-        "birth_state_or_territory": "ES-CN",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -4885,9 +4832,9 @@
         "edx_name": "Alvaro",
         "email": "alvaro.santana@example.com",
         "filled_out": true,
-        "birth_city": "Torrevieja",
         "date_of_birth": "1984-12-04",
         "birth_country": "ES",
+        "nationality": "ES",
         "email_optin": true,
         "education": [
             {
@@ -4951,16 +4898,15 @@
         "has_profile_image": false,
         "country": "CA",
         "first_name": "Alvaro",
-        "birth_state_or_territory": "ES-AN"
     },
     {
         "state_or_territory": "US-PA",
         "edx_name": "Hugo",
         "email": "hugo.suarez@example.com",
         "filled_out": true,
-        "birth_city": "M\u00e1laga",
         "date_of_birth": "1975-07-30",
         "birth_country": "ES",
+        "nationality": "ES",
         "email_optin": true,
         "education": [
             {
@@ -5025,7 +4971,6 @@
         "has_profile_image": false,
         "country": "US",
         "first_name": "Hugo",
-        "birth_state_or_territory": "ES-RI",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -5037,7 +4982,6 @@
         ]
     },
     {
-        "birth_city": "La Coru\u00f1a",
         "state_or_territory": "ES-CB",
         "edx_name": "Joaquin",
         "email": "joaquin.navarro@example.com",
@@ -5047,13 +4991,13 @@
         "gender": "m",
         "last_name": "Navarro",
         "birth_country": "ES",
+        "nationality": "ES",
         "country": "ES",
         "account_privacy": "private",
         "preferred_name": "Joaquin",
         "has_profile_image": false,
         "city": "La Coru\u00f1a",
         "first_name": "Joaquin",
-        "birth_state_or_territory": "ES-CB",
         "work_history": [
             {
                 "company_name": "Toyota",
@@ -5094,9 +5038,9 @@
         "edx_name": "Pedro",
         "email": "pedro.suarez@example.com",
         "filled_out": true,
-        "birth_city": "Logro\u00f1o",
         "date_of_birth": "1978-01-15",
         "birth_country": "ES",
+        "nationality": "ES",
         "email_optin": true,
         "education": [
             {
@@ -5170,7 +5114,6 @@
         "has_profile_image": false,
         "country": "ES",
         "first_name": "Pedro",
-        "birth_state_or_territory": "ES-RI",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -5193,9 +5136,9 @@
         "edx_name": "Lucas",
         "email": "lucas.roman@example.com",
         "filled_out": true,
-        "birth_city": "Alcobendas",
         "date_of_birth": "1971-03-13",
         "birth_country": "ES",
+        "nationality": "ES",
         "email_optin": true,
         "education": [
             {
@@ -5269,7 +5212,6 @@
         "has_profile_image": false,
         "country": "ES",
         "first_name": "Lucas",
-        "birth_state_or_territory": "ES-CT",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -5292,9 +5234,9 @@
         "edx_name": "Ismael",
         "email": "ismael.reyes@example.com",
         "filled_out": true,
-        "birth_city": "Murcia",
         "date_of_birth": "1986-08-08",
         "birth_country": "ES",
+        "nationality": "ES",
         "email_optin": true,
         "education": [
             {
@@ -5378,7 +5320,6 @@
         "has_profile_image": false,
         "country": "ES",
         "first_name": "Ismael",
-        "birth_state_or_territory": "ES-AS",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",
@@ -5401,9 +5342,9 @@
         "edx_name": "Alejandro",
         "email": "alejandro.gallego@example.com",
         "filled_out": true,
-        "birth_city": "Hospitalet De Llobregat",
         "date_of_birth": "1987-03-29",
         "birth_country": "ES",
+        "nationality": "ES",
         "email_optin": true,
         "education": [
             {
@@ -5477,7 +5418,6 @@
         "has_profile_image": false,
         "country": "ES",
         "first_name": "Alejandro",
-        "birth_state_or_territory": "ES-MC",
         "certificates": [
             {
                 "download_url": "http://www.example.com/",

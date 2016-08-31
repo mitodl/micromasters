@@ -113,13 +113,8 @@ class Profile(models.Model):
         null=True,
     )
 
-    birth_city = models.TextField(blank=True, null=True)
     birth_country = models.TextField(blank=True, null=True)
-    birth_state_or_territory = models.CharField(
-        max_length=255,
-        blank=True,
-        null=True,
-    )
+    nationality = models.TextField(blank=True, null=True)
 
     has_profile_image = models.BooleanField(default=False)
 

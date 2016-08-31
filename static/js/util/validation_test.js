@@ -55,8 +55,8 @@ describe('Profile validation functions', () => {
         ['preferred_language'],
         ['city'],
         ['country'],
-        ['birth_city'],
         ['birth_country'],
+        ['nationality'],
       ];
 
       let profile = {};
@@ -265,8 +265,7 @@ describe('Profile validation functions', () => {
         'city': "City",
         'state_or_territory': 'State or Territory',
         'country': "Country",
-        'birth_city': 'City',
-        'birth_state_or_territory': 'State or Territory',
+        'nationality': "Nationality",
         'birth_country': "Country",
       }).map(([k,v]) => ({[k]: `${v} is required`})));
       errors.agreed_to_terms_of_service = 'You must agree to the terms of service to continue';

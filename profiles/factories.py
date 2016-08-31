@@ -57,9 +57,8 @@ class ProfileFactory(DjangoModelFactory):
     country = FuzzyText(suffix="land")
     state_or_territory = FuzzyText(suffix=" state")
 
-    birth_city = FuzzyText(suffix=" city")
     birth_country = FuzzyText(suffix="land")
-    birth_state_or_territory = FuzzyText(suffix=" state")
+    nationality = FuzzyText(prefix="Person of ")
 
     has_profile_image = FuzzyAttribute(FAKE.boolean)
     edx_requires_parental_consent = FuzzyAttribute(FAKE.boolean)

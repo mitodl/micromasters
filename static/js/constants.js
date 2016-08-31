@@ -36,8 +36,7 @@ export const ELASTICSEARCH_RESPONSE = {
             "state_or_territory": "AF-BDS",
             "city": "Kabul",
             "birth_country": "AF",
-            "birth_state_or_territory": "AF-BDS",
-            "birth_city": "Kabul",
+            "nationality": "US",
             "has_profile_image": false,
             "profile_url_full": "https://www.gravatar.com/avatar/3149fb060c93eaff7bd33583e209b5df?r=PG&s=800&d=https%3A%2F%2Fs3.amazonaws.com%2Fodl-micromasters-production%2Favatar_default.png", // eslint-disable-line max-len
             "profile_url_large": "https://www.gravatar.com/avatar/3149fb060c93eaff7bd33583e209b5df?r=PG&s=500&d=https%3A%2F%2Fs3.amazonaws.com%2Fodl-micromasters-production%2Favatar_default.png", // eslint-disable-line max-len
@@ -154,8 +153,7 @@ export const USER_PROFILE_RESPONSE = {
   "state_or_territory": "MA",
   "city": "Cambridge",
   "birth_country": "US",
-  "birth_state_or_territory": "MA",
-  "birth_city": "Cambridge",
+  "nationality": "DE",
   "has_profile_image": true,
   "profile_url_full": "http://192.168.33.10:8000/static/images/profiles/default_500.png",
   "profile_url_large": "http://192.168.33.10:8000/static/images/profiles/default_120.png",
