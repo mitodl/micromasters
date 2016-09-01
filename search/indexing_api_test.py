@@ -281,7 +281,7 @@ class SerializerTests(ESTestCase):
         for course_run in course_runs:
             CachedCertificateFactory.create(user=profile.user, course_run=course_run)
             CachedEnrollmentFactory.create(user=profile.user, course_run=course_run)
-        program_enrollment = ProgramEnrollment.objects.get(user=profile.user, program=program)
+        program_enrollment = ProgramEnrollment.objects.create(user=profile.user, program=program)
 
         assert serialize_program_enrolled_user(program_enrollment) == {
             '_id': program_enrollment.id,

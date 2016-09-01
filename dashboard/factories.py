@@ -67,18 +67,12 @@ class ProgramEnrollmentFactory(DjangoModelFactory):
     def create(cls, **kwargs):
         """
         Overrides default ProgramEnrollment object creation for the factory.
-
-        ProgramEnrollments should only exist if there is a CachedEnrollment associated with
-        the given User and Program. Instead of creating a new record with the factory, we
-        will create the necessary objects to trigger its creation.
         """
         user = kwargs.get('user', UserFactory.create())
         program = kwargs.get('program', ProgramFactory.create())
         course = CourseFactory.create(program=program)
         course_run = CourseRunFactory.create(course=course)
         CachedEnrollmentFactory.create(user=user, course_run=course_run)
-        # CachedCertificate isn't strictly necessary to create a ProgramEnrollment. This is here for test convenience.
         CachedCertificateFactory.create(user=user, course_run=course_run)
-        # Signal from the creation of a CachedEnrollment should have created a ProgramEnrollment
-        program_enrollment = ProgramEnrollment.objects.get(user=user, program=program)
+        program_enrollment = ProgramEnrollment.objects.create(user=user, program=program)
         return program_enrollment

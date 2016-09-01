@@ -56,7 +56,7 @@ class UserProgramSerializerTests(TestCase):
                     data={'grade': certificate_grades[i]}
                 )
             )
-        cls.program_enrollment = ProgramEnrollment.objects.get(user=profile.user, program=program)
+        cls.program_enrollment = ProgramEnrollment.objects.create(user=profile.user, program=program)
 
     def test_full_program_user_serialization(self):
         """
