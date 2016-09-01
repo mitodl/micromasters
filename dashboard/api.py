@@ -381,7 +381,7 @@ def format_courserun_for_dashboard(course_run, status_for_user, certificate=None
         # TODO: here goes the logic to pull the current grade  # pylint: disable=fixme
         pass
 
-    if status_for_user == CourseStatus.OFFERED:
+    if status_for_user == CourseStatus.OFFERED or status_for_user == CourseStatus.UPGRADE:
         try:
             course_price = CoursePrice.objects.get(course_run=course_run, is_valid=True)
             formatted_run['price'] = course_price.price
