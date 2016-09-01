@@ -29,7 +29,11 @@ export const sendEmailSuccess = actionCreatorGenerator(SEND_EMAIL_SUCCESS);
 export const SEND_EMAIL_FAILURE = 'SEND_EMAIL_FAILURE';
 export const sendEmailFailure = actionCreatorGenerator(SEND_EMAIL_FAILURE);
 
-export function sendSearchResultMail(subject: string, body: string, searchRequest: Object): Dispatcher<EmailSendResponse> {
+export function sendSearchResultMail(
+  subject: string,
+  body: string,
+  searchRequest: Object
+): Dispatcher<EmailSendResponse> {
   return (dispatch: Dispatch) => {
     dispatch(initiateSendEmail());
     return api.sendSearchResultMail(subject, body, searchRequest).
