@@ -14,6 +14,7 @@ from django.db import transaction
 from django.db.models import Q
 import pytz
 
+from ecommerce.models import CoursePrice
 from courses.models import CourseRun
 from dashboard import models
 from profiles.api import get_social_username
@@ -379,6 +380,14 @@ def format_courserun_for_dashboard(course_run, status_for_user, certificate=None
     if status_for_user == CourseStatus.CURRENT_GRADE:
         # TODO: here goes the logic to pull the current grade  # pylint: disable=fixme
         pass
+
+    if status_for_user == CourseStatus.OFFERED:
+        try:
+            course_price = CoursePrice.objects.get(course_run=course_run, is_valid=True)
+            formatted_run['price'] = course_price.price
+        except CoursePrice.DoesNotExist:
+            pass
+
     return formatted_run
 
 
