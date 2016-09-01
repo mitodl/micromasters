@@ -25,7 +25,7 @@ export default class CourseRow extends React.Component {
       firstRun = course.runs[0];
       if (course.status === STATUS_OFFERED_NOT_ENROLLED) {
         if (firstRun.price) {
-          price = <span className="course-price-percent">{firstRun.price}$</span>;
+          price = <span className="course-price-percent">${firstRun.price}</span>;
         } else {
           price = <span className="course-price-percent">Free</span>;
         }
