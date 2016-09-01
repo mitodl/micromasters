@@ -151,26 +151,12 @@ c.validation-wrapper {
         }
       }
 
-      .course-grade {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-        .course-grade-percent {
-          font-weight: 500;
-        }
-        .course-grade-description {
-          font-weight: 400;
-          color: $medlightgrey;
-        }
-      }
-
       .course-price {
         display: flex;
         flex-direction: column;
         align-items: center;
 
-        .course-price {
+        .course-price-display {
           font-weight: 500;
         }
         .course-enrollment-description {

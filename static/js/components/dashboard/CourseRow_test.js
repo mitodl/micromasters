@@ -7,7 +7,7 @@ import { assert } from 'chai';
 import CourseRow from './CourseRow';
 import CourseAction from './CourseAction';
 import CourseDescription from './CourseDescription';
-import CourseGrade from './CourseGrade';
+import CoursePrice from './CoursePrice';
 import { DASHBOARD_RESPONSE } from '../../constants';
 
 describe('CourseRow', () => {
@@ -25,8 +25,7 @@ describe('CourseRow', () => {
       now,
       course,
     });
-    assert.deepEqual(wrapper.find(CourseGrade).props(), {
-      now,
+    assert.deepEqual(wrapper.find(CoursePrice).props(), {
       course,
     });
   });

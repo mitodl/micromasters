@@ -21,6 +21,7 @@ from dashboard import (
     api,
     models,
 )
+from ecommerce.factories import CoursePriceFactory
 from profiles.factories import UserFactory
 from search.base import ESTestCase
 
@@ -143,6 +144,69 @@ class FormatRunTest(CourseTests):
         """Test for format_courserun_for_dashboard if there is no run"""
         self.assertIsNone(
             api.format_courserun_for_dashboard(None, api.CourseStatus.PASSED)
+        )
+
+    def test_price_in_course_run(self):
+        """Assert that price appears in course run for offered and upgrade."""
+        crun = self.create_run()
+        CoursePriceFactory.create(course_run=crun, is_valid=True, price=50)
+
+        self.assertEqual(
+            api.format_courserun_for_dashboard(crun, api.CourseStatus.OFFERED),
+            {
+                'title': crun.title,
+                'status': api.CourseStatus.OFFERED,
+                'id': crun.pk,
+                'course_id': crun.edx_course_key,
+                'enrollment_start_date': crun.enrollment_start,
+                'fuzzy_enrollment_start_date': crun.fuzzy_enrollment_start_date,
+                'position': 1,
+                'price': 50.0
+            }
+        )
+        self.assertEqual(
+            api.format_courserun_for_dashboard(crun, api.CourseStatus.UPGRADE),
+            {
+                'title': crun.title,
+                'status': api.CourseStatus.UPGRADE,
+                'id': crun.pk,
+                'course_id': crun.edx_course_key,
+                'position': 1,
+                'price': 50.0
+            }
+        )
+        self.assertNotEqual(
+            api.format_courserun_for_dashboard(crun, api.CourseStatus.PASSED),
+            {
+                'title': crun.title,
+                'status': api.CourseStatus.PASSED,
+                'id': crun.pk,
+                'course_id': crun.edx_course_key,
+                'position': 1,
+                'price': 50.0
+            }
+        )
+        self.assertNotEqual(
+            api.format_courserun_for_dashboard(crun, api.CourseStatus.NOT_PASSED),
+            {
+                'title': crun.title,
+                'status': api.CourseStatus.NOT_PASSED,
+                'id': crun.pk,
+                'course_id': crun.edx_course_key,
+                'position': 1,
+                'price': 50.0
+            }
+        )
+        self.assertNotEqual(
+            api.format_courserun_for_dashboard(crun, api.CourseStatus.CURRENT_GRADE),
+            {
+                'title': crun.title,
+                'status': api.CourseStatus.CURRENT_GRADE,
+                'id': crun.pk,
+                'course_id': crun.edx_course_key,
+                'position': 1,
+                'price': 50.0
+            }
         )
 
     def test_format_run(self):

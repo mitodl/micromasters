@@ -317,7 +317,8 @@ export const DASHBOARD_RESPONSE = [
             "fuzzy_enrollment_start_date": null,
             "title": "Supply Chain Design",
             "enrollment_start_date": "2016-03-04T01:00:00Z",
-            "position": 0
+            "position": 0,
+            "price": 50.00
           }
         ],
         "description": null,
@@ -363,7 +364,8 @@ export const DASHBOARD_RESPONSE = [
             "status": STATUS_ENROLLED_NOT_VERIFIED,
             "title": "Not verified run",
             "course_id": "not-verified",
-            "position": 0
+            "position": 0,
+            "price": 50.00
           }
         ],
         "description": null,
@@ -382,7 +384,8 @@ export const DASHBOARD_RESPONSE = [
             "fuzzy_enrollment_start_date": null,
             "title": "Enrollment starting run",
             "enrollment_start_date": "2106-03-04T01:00:00Z",
-            "position": 0
+            "position": 0,
+            "price": 30.00
           }
         ],
         "description": null,
@@ -431,7 +434,8 @@ export const DASHBOARD_RESPONSE = [
             "status": STATUS_OFFERED_NOT_ENROLLED,
             "fuzzy_enrollment_start_date": "soonish",
             "title": "Fuzzy enrollment starting run",
-            "position": 0
+            "position": 0,
+            "price": 40.00
           }
         ],
         "description": null,

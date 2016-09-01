@@ -20,6 +20,7 @@ import {
   asPercent,
   getEmployer,
   createForm,
+  formatPrice,
 } from '../util/util';
 import {
   EDUCATION_LEVELS,
@@ -399,6 +400,12 @@ describe('utility functions', () => {
       assert.deepEqual(clone, {});
       assert.equal(form.getAttribute("action"), url);
       assert.equal(form.getAttribute("method"), "post");
+    });
+  });
+
+  describe('formatPrice', () => {
+    it('format price', () => {
+      assert.equal(formatPrice(20), "$20");
     });
   });
 });

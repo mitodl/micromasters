@@ -358,3 +358,10 @@ export function createForm(url: string, payload: CheckoutPayload): HTMLFormEleme
   }
   return form;
 }
+
+/**
+ * Formats course price.
+ */
+export function formatPrice(price: string): string {
+  return `$${price}`;
+}
