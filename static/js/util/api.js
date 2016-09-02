@@ -6,6 +6,7 @@ import _ from 'lodash';
 import type { Profile, ProfileGetResult, ProfilePatchResult } from '../flow/profileTypes';
 import type { CheckoutResponse } from '../flow/checkoutTypes';
 import type { Dashboard } from '../flow/dashboardTypes';
+import type { ProgramEnrollment, ProgramEnrollments } from '../flow/enrollmentTypes';
 import type { EmailSendResponse } from '../flow/emailTypes';
 
 export function getCookie(name: string): string|null {
@@ -138,6 +139,19 @@ export function sendSearchResultMail(subject: string, body: string, searchReques
       email_subject: subject,
       email_body: body,
       searchRequest: searchRequest
+    })
+  });
+}
+
+export function getProgramEnrollments(): Promise<ProgramEnrollments> {
+  return mockableFetchJSONWithCSRF('/api/v0/enrolledprograms/', {}, true);
+}
+
+export function addProgramEnrollment(programId: number): Promise<ProgramEnrollment> {
+  return mockableFetchJSONWithCSRF('/api/v0/enrolledprograms/', {
+    method: 'POST',
+    body: JSON.stringify({
+      program_id: programId
     })
   });
 }

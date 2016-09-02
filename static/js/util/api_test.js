@@ -10,13 +10,16 @@ import {
   fetchJSONWithCSRF,
   csrfSafeMethod,
   checkout,
-  sendSearchResultMail
+  sendSearchResultMail,
+  getProgramEnrollments,
+  addProgramEnrollment,
 } from './api';
 import * as api from './api';
 import {
   CHECKOUT_RESPONSE,
   DASHBOARD_RESPONSE,
   USER_PROFILE_RESPONSE,
+  PROGRAM_ENROLLMENTS,
 } from '../constants';
 
 describe('api', function() {
@@ -157,6 +160,52 @@ describe('api', function() {
       it('returns a rejected Promise when a POST to send email fails', () => {
         fetchStub.returns(Promise.reject());
         return assert.isRejected(sendSearchResultMail('subject', 'body', searchRequest));
+      });
+    });
+
+    describe('for program enrollments', () => {
+      it('fetches program enrollments successfully', () => {
+        fetchStub.returns(Promise.resolve(PROGRAM_ENROLLMENTS));
+        return getProgramEnrollments().then(enrollments => {
+          assert.ok(fetchStub.calledWith('/api/v0/enrolledprograms/', {}, true));
+          assert.deepEqual(enrollments, PROGRAM_ENROLLMENTS);
+        });
+      });
+
+      it('fails to fetch program enrollments', () => {
+        fetchStub.returns(Promise.reject());
+
+        return assert.isRejected(getProgramEnrollments()).then(() => {
+          assert.ok(fetchStub.calledWith('/api/v0/enrolledprograms/', {}, true));
+        });
+      });
+
+      it('adds a program enrollment successfully', () => {
+        let enrollment = PROGRAM_ENROLLMENTS[0];
+        fetchStub.returns(Promise.resolve(enrollment));
+        fetchMock.mock('/api/v0/enrolledprograms/', (url, opts) => {
+          assert.deepEqual(JSON.parse(opts.body), enrollment);
+          return { status: 200 };
+        });
+        return addProgramEnrollment(enrollment.id).then(enrollmentResponse => {
+          assert.ok(fetchStub.calledWith('/api/v0/enrolledprograms/', {
+            method: 'POST',
+            body: JSON.stringify({program_id: enrollment.id})
+          }));
+          assert.deepEqual(enrollmentResponse, enrollment);
+        });
+      });
+
+      it('fails to add a program enrollment', () => {
+        fetchStub.returns(Promise.reject());
+        let enrollment = PROGRAM_ENROLLMENTS[0];
+
+        return assert.isRejected(addProgramEnrollment(enrollment.id)).then(() => {
+          assert.ok(fetchStub.calledWith('/api/v0/enrolledprograms/', {
+            method: 'POST',
+            body: JSON.stringify({program_id: enrollment.id})
+          }));
+        });
       });
     });
   });

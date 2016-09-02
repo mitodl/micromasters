@@ -17,6 +17,7 @@ import {
   RECEIVE_PATCH_USER_PROFILE_FAILURE,
   CLEAR_PROFILE_EDIT,
 } from '../actions';
+import { RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS } from '../actions/enrollments';
 import {
   DASHBOARD_RESPONSE,
   ERROR_RESPONSE,
@@ -88,7 +89,8 @@ describe("ErrorInfo", () => {
 
       dashboardErrorActions = [
         RECEIVE_DASHBOARD_FAILURE,
-        RECEIVE_GET_USER_PROFILE_SUCCESS
+        RECEIVE_GET_USER_PROFILE_SUCCESS,
+        RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
       ];
 
       helper.profileGetStub.
@@ -152,6 +154,7 @@ describe("ErrorInfo", () => {
         const types = [
           RECEIVE_DASHBOARD_SUCCESS,
           RECEIVE_GET_USER_PROFILE_FAILURE,
+          RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
         ];
         return renderComponent("/profile", types, false).then(([, div]) => {
           confirmErrorMessage(
@@ -175,6 +178,7 @@ describe("ErrorInfo", () => {
         let actions = [
           REQUEST_GET_USER_PROFILE,
           RECEIVE_DASHBOARD_SUCCESS,
+          RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
           RECEIVE_GET_USER_PROFILE_FAILURE,
         ];
         return renderComponent(`/users/${SETTINGS.username}`, actions, false).then(([, div]) => {

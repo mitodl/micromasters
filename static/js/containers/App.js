@@ -15,8 +15,14 @@ import {
   startProfileEdit,
   updateProfileValidation,
 } from '../actions/index';
+import {
+  clearEnrollments,
+  fetchProgramEnrollments,
+} from '../actions/enrollments';
 import { clearUI, setProfileStep } from '../actions/ui';
 import { validateProfileComplete } from '../util/validation';
+import type { Dashboard } from '../flow/dashboardTypes';
+import type { ProgramEnrollments } from '../flow/enrollmentTypes';
 import type { Profile } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
 
@@ -28,7 +34,8 @@ class App extends React.Component {
     userProfile:  {profile: Profile, getStatus: string},
     location:     Object,
     dispatch:     Dispatch,
-    dashboard:    Object,
+    dashboard:    Dashboard,
+    enrollments:  ProgramEnrollments,
     history:      Object,
     ui:           UIState,
   };
@@ -40,6 +47,7 @@ class App extends React.Component {
   componentDidMount() {
     this.fetchUserProfile(SETTINGS.username);
     this.fetchDashboard();
+    this.fetchEnrollments();
     this.requireProfileFilledOut();
     this.requireCompleteProfile();
   }
@@ -47,6 +55,7 @@ class App extends React.Component {
   componentDidUpdate() {
     this.fetchUserProfile(SETTINGS.username);
     this.fetchDashboard();
+    this.fetchEnrollments();
     this.requireProfileFilledOut();
     this.requireCompleteProfile();
   }
@@ -56,6 +65,7 @@ class App extends React.Component {
     dispatch(clearProfile(SETTINGS.username));
     dispatch(clearDashboard());
     dispatch(clearUI());
+    dispatch(clearEnrollments());
   }
 
   fetchUserProfile(username) {
@@ -69,6 +79,13 @@ class App extends React.Component {
     const { dashboard, dispatch } = this.props;
     if (dashboard.fetchStatus === undefined) {
       dispatch(fetchDashboard());
+    }
+  }
+
+  fetchEnrollments() {
+    const { enrollments, dispatch } = this.props;
+    if (enrollments.getStatus === undefined) {
+      dispatch(fetchProgramEnrollments());
     }
   }
 
@@ -143,6 +160,7 @@ const mapStateToProps = (state) => {
     userProfile:  profile,
     dashboard:    state.dashboard,
     ui:           state.ui,
+    enrollments:  state.enrollments,
   };
 };
 

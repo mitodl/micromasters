@@ -1,12 +1,10 @@
 // @flow
 import type { Dispatch } from 'redux';
+
 import type { Dispatcher } from '../flow/reduxTypes';
 import type { EmailSendResponse } from '../flow/emailTypes';
 import * as api from '../util/api';
-
-export const actionCreatorGenerator = (type: string) => (
-  (args: any) => args === undefined ? { type: type } : { type: type, payload: args }
-);
+import { actionCreatorGenerator } from './util';
 
 export const START_EMAIL_EDIT = 'START_EMAIL_EDIT';
 export const startEmailEdit = actionCreatorGenerator(START_EMAIL_EDIT);

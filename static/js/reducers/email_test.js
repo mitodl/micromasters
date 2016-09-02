@@ -1,3 +1,4 @@
+// @flow
 import configureTestStore from 'redux-asserts';
 
 import { FETCH_SUCCESS, FETCH_FAILURE } from '../actions';
@@ -34,8 +35,6 @@ describe('email reducers', () => {
 
   afterEach(() => {
     sandbox.restore();
-    store = null;
-    dispatchThen = null;
   });
 
   let query = { query: "Hi, I'm a query!" };

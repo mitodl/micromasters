@@ -14,3 +14,9 @@ export type Settings = {
   edx_base_url: string;
 };
 
+export type APIErrorInfo = {
+  error_code?: string,
+  user_message?: string,
+  detail?: string,
+  errorStatusCode: number,
+};

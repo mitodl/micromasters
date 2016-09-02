@@ -525,3 +525,14 @@ export const CHECKOUT_RESPONSE = {
   "url": "https://testsecureacceptance.cybersource.com/pay"
 };
 /* eslint-enable max-len */
+
+export const PROGRAM_ENROLLMENTS = [
+  {
+    id: DASHBOARD_RESPONSE[1].id,
+    title: DASHBOARD_RESPONSE[1].title
+  },
+  {
+    id: DASHBOARD_RESPONSE[2].id,
+    title: DASHBOARD_RESPONSE[2].title
+  },
+];

@@ -1,6 +1,7 @@
 // @flow
 import type { Validator, UIValidator } from '../util/validation';
 import type { UIState } from '../reducers/ui';
+import type { APIErrorInfo } from './generalTypes';
 
 export type EducationEntry = {
   id?: ?number;
@@ -72,10 +73,3 @@ export type ProfilePatchResult = ProfileGetResult;
 
 export type SaveProfileFunc = (validator: Validator|UIValidator, profile: Profile, ui: UIState) => Promise<Profile>;
 export type UpdateProfileFunc = (profile: Profile, validator: Validator|UIValidator) => void;
-
-export type APIErrorInfo = {
-  error_code?: string,
-  user_message?: string,
-  detail?: string,
-  errorStatusCode: number,
-};

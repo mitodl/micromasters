@@ -12,6 +12,9 @@ import {
   UPDATE_PROFILE_VALIDATION,
 } from '../actions';
 import {
+  CLEAR_ENROLLMENTS,
+} from '../actions/enrollments';
+import {
   CLEAR_UI,
   SET_PROFILE_STEP,
 } from '../actions/ui';
@@ -43,9 +46,9 @@ describe('App', () => {
     helper.cleanup();
   });
 
-  it('clears profile, ui, and dashboard after unmounting', () => {
+  it('clears profile, ui, enrollments, and dashboard after unmounting', () => {
     return renderComponent("/dashboard").then(([, div]) => {
-      return listenForActions([CLEAR_DASHBOARD, CLEAR_PROFILE, CLEAR_UI], () => {
+      return listenForActions([CLEAR_DASHBOARD, CLEAR_PROFILE, CLEAR_UI, CLEAR_ENROLLMENTS], () => {
         ReactDOM.unmountComponentAtNode(div);
       });
     });

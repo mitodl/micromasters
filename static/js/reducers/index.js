@@ -29,6 +29,7 @@ import {
 } from '../actions';
 import { ui } from './ui';
 import { email } from './email';
+import { enrollments } from './enrollments';
 import type { Action } from '../flow/reduxTypes';
 import type { ProfileGetResult } from '../flow/profileTypes';
 
@@ -187,4 +188,5 @@ export default combineReducers({
   ui,
   email,
   checkout,
+  enrollments,
 });

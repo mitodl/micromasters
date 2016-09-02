@@ -3,8 +3,8 @@ import type { Dispatch } from 'redux';
 
 import * as api from '../util/api';
 import type { CheckoutResponse } from '../flow/checkoutTypes';
+import type { APIErrorInfo } from '../flow/generalTypes';
 import type {
-  APIErrorInfo,
   ProfileGetResult,
   Profile,
   ValidationErrors,

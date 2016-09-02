@@ -2,7 +2,7 @@
 import React from 'react';
 import Alert from 'react-bootstrap/lib/Alert';
 
-import type { APIErrorInfo } from '../flow/profileTypes';
+import type { APIErrorInfo } from '../flow/generalTypes';
 
 export default class ErrorMessage extends React.Component {
   props: {
