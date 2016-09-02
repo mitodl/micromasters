@@ -31,27 +31,13 @@ describe('CoursePrice', () => {
     assert.equal(wrapper.find(".course-price-display").text(), "$50");
   });
 
-  it('shows price of course with status passed', () => {
-    let course = findCourse(course => course.status === STATUS_PASSED);
-    assert.isNotOk(course.runs[0].price);
+  for (let status of [STATUS_PASSED, STATUS_NOT_OFFERED, STATUS_VERIFIED_NOT_COMPLETED]) {
+    it(`doesn't show the price of course with status ${status}`, () => {
+      let course = findCourse(course => course.status === status);
+      assert.isNotOk(course.runs[0].price);
 
-    const wrapper = shallow(<CoursePrice course={course}/>);
-    assert.isNaN(wrapper.find(".course-price-display"));
-  });
-
-  it('shows price of course with status not-offered', () => {
-    let course = findCourse(course => course.status === STATUS_NOT_OFFERED);
-    assert.isNotOk(course.runs[0].price);
-
-    const wrapper = shallow(<CoursePrice course={course}/>);
-    assert.isNaN(wrapper.find(".course-price-display"));
-  });
-
-  it('shows price of course with status verified-not-completed', () => {
-    let course = findCourse(course => course.status === STATUS_VERIFIED_NOT_COMPLETED);
-    assert.isNotOk(course.runs[0].price);
-
-    const wrapper = shallow(<CoursePrice course={course}/>);
-    assert.isNaN(wrapper.find(".course-price-display"));
-  });
+      const wrapper = shallow(<CoursePrice course={course} />);
+      assert.equal(wrapper.find(".course-price-display").length, 0);
+    });
+  }
 });
