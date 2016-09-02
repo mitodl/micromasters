@@ -290,7 +290,7 @@ class ProfilePATCHTests(ProfileBaseTests):
         for key, value in patch_data.items():
             field = ProfileSerializer().fields[key]
 
-            if isinstance(field, (ListSerializer, SerializerMethodField, ReadOnlyField)):
+            if isinstance(field, (ListSerializer, SerializerMethodField, ReadOnlyField)) or field.read_only is True:
                 # these fields are readonly
                 continue
             elif isinstance(field, DateField):
