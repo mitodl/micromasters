@@ -21,7 +21,6 @@ describe('CoursePrice', () => {
 
     const wrapper = shallow(<CoursePrice course={course}/>);
     assert.equal(wrapper.find(".course-price-display").text(), "$50");
-    assert.equal(wrapper.find(".course-enrollment-description").text(), "Enrollment open");
   });
 
   it('shows price of course with status enrolled-not-verified', () => {
@@ -30,7 +29,6 @@ describe('CoursePrice', () => {
 
     const wrapper = shallow(<CoursePrice course={course}/>);
     assert.equal(wrapper.find(".course-price-display").text(), "$50");
-    assert.equal(wrapper.find(".course-enrollment-description").text(), "Enrollment open");
   });
 
   it('shows price of course with status passed', () => {
@@ -39,7 +37,6 @@ describe('CoursePrice', () => {
 
     const wrapper = shallow(<CoursePrice course={course}/>);
     assert.isNaN(wrapper.find(".course-price-display"));
-    assert.isNaN(wrapper.find(".course-enrollment-description"));
   });
 
   it('shows price of course with status not-offered', () => {
@@ -48,7 +45,6 @@ describe('CoursePrice', () => {
 
     const wrapper = shallow(<CoursePrice course={course}/>);
     assert.isNaN(wrapper.find(".course-price-display"));
-    assert.isNaN(wrapper.find(".course-enrollment-description"));
   });
 
   it('shows price of course with status verified-not-completed', () => {
@@ -57,6 +53,5 @@ describe('CoursePrice', () => {
 
     const wrapper = shallow(<CoursePrice course={course}/>);
     assert.isNaN(wrapper.find(".course-price-display"));
-    assert.isNaN(wrapper.find(".course-enrollment-description"));
   });
 });
