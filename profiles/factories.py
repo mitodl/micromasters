@@ -64,7 +64,7 @@ class ProfileFactory(DjangoModelFactory):
     edx_requires_parental_consent = FuzzyAttribute(FAKE.boolean)
     date_of_birth = FuzzyDate(date(1850, 1, 1))
     edx_level_of_education = FuzzyChoice(
-        [choice[0] for choice in [None, Profile.LEVEL_OF_EDUCATION_CHOICES]]
+        [None] + [choice[0] for choice in Profile.LEVEL_OF_EDUCATION_CHOICES]
     )
     edx_goals = FuzzyText()
     preferred_language = FuzzyText(suffix=" language")
