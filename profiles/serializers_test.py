@@ -349,6 +349,8 @@ class ProfileFilledOutTests(ESTestCase):
             # skip fields that are generated, read only, or that tie to other serializers which are tested elsewhere
             if isinstance(field, (ListSerializer, SerializerMethodField, ReadOnlyField)):
                 continue
+            elif field.read_only is True:
+                continue
 
             clone = deepcopy(self.data)
             parent_getter(clone)[key] = None
