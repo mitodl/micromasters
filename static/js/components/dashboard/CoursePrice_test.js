@@ -8,7 +8,8 @@ import {
   STATUS_PASSED,
   STATUS_ENROLLED_NOT_VERIFIED,
   STATUS_VERIFIED_NOT_COMPLETED,
-  STATUS_OFFERED_NOT_ENROLLED
+  STATUS_OFFERED_NOT_ENROLLED,
+  STATUS_NOT_OFFERED
 } from '../../constants';
 
 import { findCourse } from './CourseDescription_test';
@@ -34,6 +35,15 @@ describe('CoursePrice', () => {
 
   it('shows price of course with status passed', () => {
     let course = findCourse(course => course.status === STATUS_PASSED);
+    assert.isNotOk(course.runs[0].price);
+
+    const wrapper = shallow(<CoursePrice course={course}/>);
+    assert.isNaN(wrapper.find(".course-price-display"));
+    assert.isNaN(wrapper.find(".course-enrollment-description"));
+  });
+
+  it('shows price of course with status not-offered', () => {
+    let course = findCourse(course => course.status === STATUS_NOT_OFFERED);
     assert.isNotOk(course.runs[0].price);
 
     const wrapper = shallow(<CoursePrice course={course}/>);

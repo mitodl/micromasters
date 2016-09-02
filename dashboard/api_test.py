@@ -209,6 +209,18 @@ class FormatRunTest(CourseTests):
             }
         )
 
+        self.assertNotEqual(
+            api.format_courserun_for_dashboard(crun, api.CourseStatus.NOT_OFFERED),
+            {
+                'title': crun.title,
+                'status': api.CourseStatus.CURRENT_GRADE,
+                'id': crun.pk,
+                'course_id': crun.edx_course_key,
+                'position': 1,
+                'price': 50.0
+            }
+        )
+
     def test_format_run(self):
         """Test for format_courserun_for_dashboard with passed run and position"""
         crun = self.create_run(
