@@ -149,9 +149,17 @@ class FormatRunTest(CourseTests):
     def test_price_in_course_run(self):
         """Assert that price appears in course run for offered and upgrade."""
         crun = self.create_run()
-        CoursePriceFactory.create(course_run=crun, is_valid=True, price=50)
-        self.assertIn('price', api.format_courserun_for_dashboard(crun, api.CourseStatus.OFFERED))
-        self.assertIn('price', api.format_courserun_for_dashboard(crun, api.CourseStatus.UPGRADE))
+        course_price = 50
+        CoursePriceFactory.create(course_run=crun, is_valid=True, price=course_price)
+
+        format_courserun_offered_course = api.format_courserun_for_dashboard(crun, api.CourseStatus.OFFERED)
+        self.assertIn('price', format_courserun_offered_course)
+        self.assertEqual(format_courserun_offered_course['price'], course_price)
+
+        format_courserun_no_verified_course = api.format_courserun_for_dashboard(crun, api.CourseStatus.UPGRADE)
+        self.assertIn('price', format_courserun_no_verified_course)
+        self.assertEqual(format_courserun_no_verified_course['price'], course_price)
+
         self.assertNotIn('price', api.format_courserun_for_dashboard(crun, api.CourseStatus.PASSED))
         self.assertNotIn('price', api.format_courserun_for_dashboard(crun, api.CourseStatus.NOT_PASSED))
         self.assertNotIn('price', api.format_courserun_for_dashboard(crun, api.CourseStatus.CURRENT_GRADE))
