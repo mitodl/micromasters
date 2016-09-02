@@ -30,7 +30,7 @@ describe('CoursePrice', () => {
 
     const wrapper = shallow(<CoursePrice course={course}/>);
     assert.equal(wrapper.find(".course-price-display").text(), "$50");
-    assert.isNaN(wrapper.find(".course-enrollment-description"));
+    assert.equal(wrapper.find(".course-enrollment-description").text(), "Enrollment open");
   });
 
   it('shows price of course with status passed', () => {

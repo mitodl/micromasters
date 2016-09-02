@@ -25,10 +25,7 @@ export default class CoursePrice extends React.Component {
         if (firstRun.price) {
           price = <span className="course-price-display">{formatPrice(firstRun.price)}</span>;
         }
-
-        if (course.status === STATUS_OFFERED_NOT_ENROLLED) {
-          enrollmentStatus = <span className="course-enrollment-description">Enrollment open</span>;
-        }
+        enrollmentStatus = <span className="course-enrollment-description">Enrollment open</span>;
       }
     }
 
