@@ -7,6 +7,7 @@ import {
   receiveAddProgramEnrollmentSuccess,
   receiveAddProgramEnrollmentFailure,
   clearEnrollments,
+  setCurrentProgramEnrollment,
 
   REQUEST_GET_PROGRAM_ENROLLMENTS,
   RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
@@ -15,6 +16,7 @@ import {
   RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
   RECEIVE_ADD_PROGRAM_ENROLLMENT_FAILURE,
   CLEAR_ENROLLMENTS,
+  SET_CURRENT_PROGRAM_ENROLLMENT,
 } from './enrollments';
 import { assertCreatedActionHelper } from './util';
 
@@ -28,6 +30,7 @@ describe('enrollment actions', () => {
       [receiveAddProgramEnrollmentSuccess, RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS],
       [receiveAddProgramEnrollmentFailure, RECEIVE_ADD_PROGRAM_ENROLLMENT_FAILURE],
       [clearEnrollments, CLEAR_ENROLLMENTS],
+      [setCurrentProgramEnrollment, SET_CURRENT_PROGRAM_ENROLLMENT],
     ].forEach(assertCreatedActionHelper);
   });
 });

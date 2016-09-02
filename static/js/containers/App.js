@@ -4,10 +4,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
+import ErrorMessage from '../components/ErrorMessage';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import {
   FETCH_SUCCESS,
+  FETCH_FAILURE,
   fetchDashboard,
   clearDashboard,
 } from '../actions';
@@ -20,26 +22,36 @@ import {
 import {
   clearEnrollments,
   fetchProgramEnrollments,
+  setCurrentProgramEnrollment,
 } from '../actions/enrollments';
+import {
+  setProgramSelectorOpen,
+  setEnrollDialogVisibility,
+  setEnrollSelectedProgram,
+} from '../actions/ui';
 import { clearUI, setProfileStep } from '../actions/ui';
 import { validateProfileComplete } from '../util/validation';
-import type { Dashboard } from '../flow/dashboardTypes';
-import type { ProgramEnrollments } from '../flow/enrollmentTypes';
-import type { Profile } from '../flow/profileTypes';
+import type { DashboardState } from '../flow/dashboardTypes';
+import type {
+  ProgramEnrollment,
+  ProgramEnrollmentsState,
+} from '../flow/enrollmentTypes';
+import type { ProfileGetResult } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
 
 const PROFILE_REGEX = /^\/profile\/?[a-z]?/;
 
 class App extends React.Component {
   props: {
-    children:     React$Element<*>[],
-    userProfile:  {profile: Profile, getStatus: string},
-    location:     Object,
-    dispatch:     Dispatch,
-    dashboard:    Dashboard,
-    enrollments:  ProgramEnrollments,
-    history:      Object,
-    ui:           UIState,
+    children:                 React$Element<*>[],
+    userProfile:              ProfileGetResult,
+    location:                 Object,
+    currentProgramEnrollment: ProgramEnrollment,
+    dispatch:                 Dispatch,
+    dashboard:                DashboardState,
+    enrollments:              ProgramEnrollmentsState,
+    history:                  Object,
+    ui:                       UIState,
   };
 
   static contextTypes = {
@@ -124,8 +136,40 @@ class App extends React.Component {
     }
   }
 
+  setEnrollDialogVisibility = (visibility: boolean): void => {
+    const { dispatch } = this.props;
+    dispatch(setEnrollDialogVisibility(visibility));
+  };
+
+  setEnrollSelectedProgram = (programId: number): void => {
+    const { dispatch } = this.props;
+    dispatch(setEnrollSelectedProgram(programId));
+  };
+
+  setCurrentProgramEnrollment = (enrollment: ProgramEnrollment): void => {
+    const { dispatch } = this.props;
+    dispatch(setCurrentProgramEnrollment(enrollment));
+  };
+
+  setProgramSelectorOpen = (open: boolean): void => {
+    const { dispatch } = this.props;
+    console.log("open", open, setProgramSelectorOpen);
+    dispatch(setProgramSelectorOpen(open));
+  };
+
   render() {
-    const { children, location: { pathname } } = this.props;
+    const {
+      currentProgramEnrollment,
+      enrollments,
+      ui: {
+        programSelectorOpen,
+        enrollDialogVisibility,
+        enrollSelectedProgram,
+      },
+      location: { pathname },
+      dashboard,
+    } = this.props;
+    let { children } = this.props;
     const { router } = this.context;
 
     let empty = false;
@@ -134,19 +178,31 @@ class App extends React.Component {
     }
     let pushUrl = url => router.push(url);
 
-    return (
-      <div id="app">
-        <Navbar
-          empty={empty}
-          changeUrl={pushUrl}
-          pathname={pathname}
-        />
-        <div className="page-content">
-          { children }
-        </div>
-        <Footer />
+    if (enrollments.getStatus === FETCH_FAILURE) {
+      children = <ErrorMessage errorInfo={enrollments.getErrorInfo} />;
+      empty = true;
+    }
+    return <div id="app">
+      <Navbar
+        changeUrl={pushUrl}
+        currentProgramEnrollment={currentProgramEnrollment}
+        dashboard={dashboard}
+        empty={empty}
+        enrollDialogVisibility={enrollDialogVisibility}
+        enrollSelectedProgram={enrollSelectedProgram}
+        enrollments={enrollments}
+        pathname={pathname}
+        programSelectorOpen={programSelectorOpen}
+        setCurrentProgramEnrollment={this.setCurrentProgramEnrollment}
+        setProgramSelectorOpen={this.setProgramSelectorOpen}
+        setEnrollDialogVisibility={this.setEnrollDialogVisibility}
+        setEnrollSelectedProgram={this.setEnrollSelectedProgram}
+      />
+      <div className="page-content">
+        { children }
       </div>
-    );
+      <Footer />
+    </div>;
   }
 }
 
@@ -158,10 +214,11 @@ const mapStateToProps = (state) => {
     profile = state.profiles[SETTINGS.username];
   }
   return {
-    userProfile:  profile,
-    dashboard:    state.dashboard,
-    ui:           state.ui,
-    enrollments:  state.enrollments,
+    userProfile:              profile,
+    dashboard:                state.dashboard,
+    ui:                       state.ui,
+    currentProgramEnrollment: state.currentProgramEnrollment,
+    enrollments:              state.enrollments,
   };
 };
 

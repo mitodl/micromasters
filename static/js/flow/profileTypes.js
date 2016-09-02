@@ -63,7 +63,7 @@ export type Profiles = {
 };
 
 export type ProfileGetResult = {
-  profile?: Profile,
+  profile: Profile,
   errorInfo?: APIErrorInfo,
   getStatus: string,
   edit?: {errors: ValidationErrors, profile: Profile},

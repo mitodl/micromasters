@@ -12,13 +12,16 @@ import CourseListCard from '../components/dashboard/CourseListCard';
 import DashboardUserCard from '../components/dashboard/DashboardUserCard';
 import ErrorMessage from '../components/ErrorMessage';
 import ProgressWidget from '../components/ProgressWidget';
-import type { Profile } from '../flow/profileTypes';
+import type { DashboardState } from '../flow/dashboardTypes';
+import type { ProgramEnrollment } from '../flow/enrollmentTypes';
+import type { ProfileGetResult } from '../flow/profileTypes';
 
 class DashboardPage extends React.Component {
   props: {
-    profile:    {profile: Profile},
-    dashboard:  Object,
-    dispatch:   Dispatch,
+    profile:                  ProfileGetResult,
+    currentProgramEnrollment: ProgramEnrollment,
+    dashboard:                DashboardState,
+    dispatch:                 Dispatch,
   };
 
   dispatchCheckout = (courseId: string) => {
@@ -38,23 +41,30 @@ class DashboardPage extends React.Component {
     const {
       dashboard,
       profile: { profile },
+      currentProgramEnrollment,
     } = this.props;
     const loaded = dashboard.fetchStatus !== FETCH_PROCESSING;
     let errorMessage;
     let dashboardContent;
     // if there are no errors coming from the backend, simply show the dashboard
-    if (dashboard.errorInfo === undefined && dashboard.programs.length > 0){
-      // For now show all programs available. We should restrict this to one program later on.
-      let cards = dashboard.programs.map(program => (
-        <CourseListCard program={program} key={program.id} checkout={this.dispatchCheckout} />
-      ));
-      // HACK: We need a program to show the title of
-      let firstProgram = dashboard.programs[0];
+    let program;
+    if (currentProgramEnrollment !== null) {
+      program = dashboard.programs.find(program => program.id === currentProgramEnrollment.id);
+    }
+    if (dashboard.errorInfo !== undefined) {
+      errorMessage = <ErrorMessage errorInfo={dashboard.errorInfo}/>;
+    } else if (program === null || program === undefined) {
+      errorMessage = <ErrorMessage errorInfo={{user_message: "No program enrollment is available."}} />;
+    } else {
       dashboardContent = (
         <div className="double-column">
           <div className="first-column">
-            <DashboardUserCard profile={profile} program={firstProgram}/>
-            {cards}
+            <DashboardUserCard profile={profile} program={program}/>
+            <CourseListCard
+              program={program}
+              key={program.id}
+              checkout={this.dispatchCheckout}
+            />
           </div>
           <div className="second-column">
             <ProgressWidget />
@@ -67,8 +77,6 @@ class DashboardPage extends React.Component {
           </div>
         </div>
       );
-    } else {
-      errorMessage = <ErrorMessage errorInfo={dashboard.errorInfo} />;
     }
     return (
       <div className="dashboard">
@@ -92,6 +100,7 @@ const mapStateToProps = (state) => {
   return {
     profile: profile,
     dashboard: state.dashboard,
+    currentProgramEnrollment: state.currentProgramEnrollment,
   };
 };
 

@@ -3,8 +3,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
+  BoolMust,
+  FilteredQuery,
   SearchkitManager,
   SearchkitProvider,
+  TermQuery,
 } from 'searchkit';
 import _ from 'lodash';
 import type { Dispatch } from 'redux';
@@ -22,13 +25,15 @@ import {
 import { emailValidation } from '../util/validation';
 import type { UIState } from '../reducers/ui';
 import type { EmailState } from '../flow/emailTypes';
+import type { ProgramEnrollment } from '../flow/enrollmentTypes';
 import { getCookie } from '../util/api';
 
 class LearnerSearchPage extends React.Component {
   props: {
-    ui:       UIState,
-    email:    EmailState,
-    dispatch: Dispatch,
+    currentProgramEnrollment: ProgramEnrollment,
+    dispatch:                 Dispatch,
+    email:                    EmailState,
+    ui:                       UIState,
   };
 
   checkFilterVisibility: Function = (filterName: string): boolean => {
@@ -88,6 +93,7 @@ class LearnerSearchPage extends React.Component {
   render () {
     const {
       ui: { emailDialogVisibility },
+      currentProgramEnrollment,
       email
     } = this.props;
 
@@ -95,6 +101,16 @@ class LearnerSearchPage extends React.Component {
       httpHeaders: {
         'X-CSRFToken': getCookie('csrftoken')
       }
+    });
+    searchKit.addDefaultQuery(query => {
+      if (currentProgramEnrollment === null) {
+        return query;
+      }
+      return query.addQuery(FilteredQuery({
+        filter: BoolMust([
+          TermQuery("program.id", currentProgramEnrollment.id)
+        ])
+      }));
     });
     return (
       <div>
@@ -117,8 +133,9 @@ class LearnerSearchPage extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    ui:     state.ui,
-    email:  state.email,
+    ui:                       state.ui,
+    email:                    state.email,
+    currentProgramEnrollment: state.currentProgramEnrollment,
   };
 };
 

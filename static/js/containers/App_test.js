@@ -1,10 +1,14 @@
 /* global document: false, window: false */
 import '../global_init';
 
+import React from 'react';
 import ReactDOM from 'react-dom';
 import { assert } from 'chai';
+import { shallow } from 'enzyme';
 import _ from 'lodash';
 
+import App from './App';
+import Navbar from '../components/Navbar';
 import { CLEAR_DASHBOARD } from '../actions';
 import {
   CLEAR_PROFILE,
@@ -14,10 +18,12 @@ import {
 import {
   CLEAR_ENROLLMENTS,
 } from '../actions/enrollments';
+import * as enrollmentActions from '../actions/enrollments';
 import {
   CLEAR_UI,
   SET_PROFILE_STEP,
 } from '../actions/ui';
+import * as uiActions from '../actions/ui';
 import {
   USER_PROFILE_RESPONSE,
   PERSONAL_STEP,
@@ -112,6 +118,53 @@ describe('App', () => {
       return renderComponent("/dashboard", editProfileActions).then(() => {
         assert.equal(helper.currentLocation.pathname, "/profile");
         assert.equal(checkStep(), EDUCATION_STEP);
+      });
+    });
+  });
+
+  describe('enrollments', () => {
+    const fakeAction = {type: "fake"};
+    it('shows an error message if the enrollments GET fetch fails', () => {
+
+    });
+
+    it('setEnrollDialogVisibility dispatches the value to the action with the same name', () => {
+      return renderComponent("/dashboard").then(([wrapper]) => {
+        let props = wrapper.find(Navbar).props();
+        let stub = helper.sandbox.stub(uiActions, 'setEnrollDialogVisibility');
+        stub.returns({type: "fake"});
+        props.setEnrollDialogVisibility("value");
+        assert(stub.calledWith("value"));
+      });
+    });
+
+    it('setEnrollSelectedProgram dispatches the value to the action with the same name', () => {
+      return renderComponent("/dashboard").then(([wrapper]) => {
+        let props = wrapper.find(Navbar).props();
+        let stub = helper.sandbox.stub(uiActions, 'setEnrollSelectedProgram');
+        stub.returns({type: "fake"});
+        props.setEnrollSelectedProgram("value");
+        assert(stub.calledWith("value"));
+      });
+    });
+
+    it('setCurrentProgramEnrollment dispatches the value to the action with the same name', () => {
+      return renderComponent("/dashboard").then(([wrapper]) => {
+        let props = wrapper.find(Navbar).props();
+        let stub = helper.sandbox.stub(enrollmentActions, 'setCurrentProgramEnrollment');
+        stub.returns({type: "fake"});
+        props.setCurrentProgramEnrollment("value");
+        assert(stub.calledWith("value"));
+      });
+    });
+
+    it('setProgramSelectorOpen dispatches the value to the action with the same name', () => {
+      return renderComponent("/dashboard").then(([wrapper]) => {
+        let props = wrapper.find(Navbar).props();
+        let stub = helper.sandbox.stub(uiActions, 'setProgramSelectorOpen');
+        stub.returns({type: "fake"});
+        props.setProgramSelectorOpen("value");
+        assert(stub.calledWith("value"));
       });
     });
   });

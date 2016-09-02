@@ -18,5 +18,5 @@ export type APIErrorInfo = {
   error_code?: string,
   user_message?: string,
   detail?: string,
-  errorStatusCode: number,
+  errorStatusCode?: number,
 };

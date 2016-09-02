@@ -54,3 +54,6 @@ export const addProgramEnrollment = (programId: number): Dispatcher<ProgramEnrol
 
 export const CLEAR_ENROLLMENTS = 'CLEAR_ENROLLMENTS';
 export const clearEnrollments = createAction(CLEAR_ENROLLMENTS);
+
+export const SET_CURRENT_PROGRAM_ENROLLMENT = 'SET_CURRENT_PROGRAM_ENROLLMENT';
+export const setCurrentProgramEnrollment = createAction(SET_CURRENT_PROGRAM_ENROLLMENT);

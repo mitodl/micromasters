@@ -30,13 +30,19 @@ import {
 } from '../actions';
 import { ui } from './ui';
 import { email } from './email';
-import { enrollments } from './enrollments';
+import {
+  currentProgramEnrollment,
+  enrollments,
+} from './enrollments';
+import type { DashboardState } from '../flow/dashboardTypes';
 import type { Action } from '../flow/reduxTypes';
-import type { ProfileGetResult } from '../flow/profileTypes';
+import type {
+  ProfileGetResult,
+  Profiles,
+} from '../flow/profileTypes';
 
 export const INITIAL_PROFILES_STATE = {};
-type ProfileState = {};
-export const profiles = (state: ProfileState = INITIAL_PROFILES_STATE, action: Action) => {
+export const profiles = (state: Profiles = INITIAL_PROFILES_STATE, action: Action) => {
   let patchProfile = newProfile => {
     let clone = Object.assign({}, state);
     let username = action.payload.username;
@@ -133,8 +139,7 @@ export const profiles = (state: ProfileState = INITIAL_PROFILES_STATE, action: A
   }
 };
 
-type DashboardState = {programs: any[]};
-const INITIAL_DASHBOARD_STATE: any = {
+const INITIAL_DASHBOARD_STATE: DashboardState = {
   programs: []
 };
 
@@ -190,4 +195,5 @@ export default combineReducers({
   email,
   checkout,
   enrollments,
+  currentProgramEnrollment,
 });
