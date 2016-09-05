@@ -88,7 +88,7 @@ export default class EducationDisplay extends ProfileFormFields {
     }
     userPrivilegeCheck(profile, () => {
       rows.push(
-        <Cell col={12} className="profile-form-row" key={"I'm unique!"}>
+        <Cell col={12} className="profile-form-add-row" key={"I'm unique!"}>
           <a
             className="mm-minor-action"
             onClick={() => this.openNewEducationForm(HIGH_SCHOOL, null)}
@@ -119,7 +119,7 @@ export default class EducationDisplay extends ProfileFormFields {
         <Card shadow={1} className="profile-form" id="education-card">
           <Grid className="profile-form-grid">
             <Cell col={12} className="profile-form-row profile-card-header">
-              <span className="profile-form-card-header title">
+              <span className="title">
                 Education
               </span>
             </Cell>

@@ -57,21 +57,31 @@
     width: 100%;
     padding: 0;
 
-    .profile-form-card-header {
+    .title {
       font-weight: 600;
       margin-top: 15px;
     }
-    .profile-form-row, .profile-form-row > .basic-info {
+    .profile-form-row, .profile-form-add-row, .profile-form-row > .basic-info {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
     }
+    .profile-form-row {
+      &:nth-last-child(2) {
+        .border-bottom {
+          border-bottom:none!important;
+        }
+      }
+    }
+    .profile-form-add-row {
+      margin-bottom: 17px;
+    }
     .profile-form-row > .basic-info {
       width: 50%;
       &.full-width {
         width: 100%;
-        padding: 20px 0;
+        padding: 12px 0;
       }
       &.border-bottom {
         border-bottom: 2px #E2E2E2 solid;
@@ -110,6 +120,7 @@
         font-size: 18px;
       }
     }
+
   }
 
   .bound-check-box {

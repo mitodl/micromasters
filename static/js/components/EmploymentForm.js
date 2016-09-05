@@ -187,7 +187,7 @@ class EmploymentForm extends ProfileFormFields {
       }
       userPrivilegeCheck(profile, () => {
         workHistoryRows.push(
-        <Cell col={12} className="profile-form-row" key={"I'm unique!"}>
+        <Cell col={12} className="profile-form-add-row" key={"I'm unique!"}>
           <a
             className="mm-minor-action"
             onClick={this.addWorkHistoryEntry}
@@ -320,7 +320,7 @@ class EmploymentForm extends ProfileFormFields {
         <Card shadow={1} className={`profile-form ${cardClass()}`}>
           <Grid className="profile-form-grid">
             <Cell col={12} className="profile-form-row profile-card-header">
-              <span className="profile-form-card-header title">
+              <span className="title">
                 Employment
               </span>
               { workSwitch() }

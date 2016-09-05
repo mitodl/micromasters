@@ -120,7 +120,7 @@ describe("UserPage", function() {
 
     describe("validation", () => {
       const inputs = dialog => [...dialog.getElementsByTagName('input')];
-      const getEditPersonalButton = div => div.querySelector('.page-content .material-icons');
+      const getEditPersonalButton = div => div.querySelector('.edit-profile-holder .mdl-button');
       const getDialog = () => document.querySelector('.personal-dialog');
       const getSave = () => getDialog().querySelector('.save-button');
 
@@ -650,11 +650,23 @@ describe("UserPage", function() {
 
       it('should let you edit personal info', () => {
         return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
-          let personalButton = div.querySelector('.page-content').
-            getElementsByClassName('material-icons')[0];
+          let personalButton = div.querySelector('.edit-profile-holder').
+            getElementsByClassName('mdl-button')[0];
 
           return listenForActions([SET_USER_PAGE_DIALOG_VISIBILITY], () => {
             TestUtils.Simulate.click(personalButton);
+          });
+        });
+      });
+
+      it('should not show the terms of service checkbox', () => {
+        return renderComponent(`/users/${SETTINGS.username}`, userActions).then(([, div]) => {
+          let personalButton = div.querySelector('.edit-profile-holder').
+            getElementsByClassName('mdl-button')[0];
+
+          return listenForActions([SET_USER_PAGE_DIALOG_VISIBILITY], () => {
+            TestUtils.Simulate.click(personalButton);
+            assert.isNull(document.querySelector('.tos-checkbox'));
           });
         });
       });
