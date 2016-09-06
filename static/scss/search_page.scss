@@ -1,6 +1,15 @@
 @import "../../node_modules/searchkit/theming/components";
 
 .learners-search {
+  width: 97%;
+  margin: 0 auto;
+  max-width: 1400px;
+
+  .mdl-grid {padding: 0;
+    .mdl-cell {
+      margin: 0 8px;
+    }
+  }
   .centered {
     display: flex;
     flex-direction: row;
@@ -23,36 +32,42 @@
   .search-sidebar {
     display: flex;
     flex-direction: column;
-    background-color: $fg-grey;
-
+    background-color: $bg-light-gray;
+    
+    .mdl-card {
+      padding: 10px;
+      background-color: $bg-light-gray;
+    }
     .sk-panel {
       .sk-panel__header {
-        margin: 15px;
-        font-size: 17px;
+        margin: 15px 5px;
+        font-size: 15px;
       }
 
       .sk-panel__content {
         .sk-item-list > div {
-          justify-content: space-between;
-          margin-left: 25px;
-          margin-right: 40px;
+          align-items: stretch;
+          margin-left: 10px;
+          margin-right: 10px;
         }
+        .sk-item-list-option__text {
+          margin-left: 10px;
+        }
+        .sk-item-list-option__count {
 
-        .sk-item-list-option > * {
-          flex: none;
         }
       }
     }
 
     .sk-hierarchical-menu-list {
       .sk-hierarchical-menu-list__header {
-        margin: 15px;
-        font-size: 17px;
+        margin: 15px 5px;
+        font-size: 15px;
       }
 
       .sk-hierarchical-menu-list__root {
-        margin-left: 25px;
-        margin-right: 40px;
+        margin-left: 6px;
+        margin-right: 0;
         .sk-hierarchical-menu-option {
           >div {
             justify-content: space-between;
@@ -65,6 +80,7 @@
     }
 
     .filter-visibility-toggle.closed {
+      margin-bottom: 0px;
       i.closed {
         transform: rotate(0.75turn);
         -webkit-transform: rotate(0.75turn);
@@ -81,6 +97,7 @@
     .filter-visibility-toggle {
       display: flex;
       flex-direction: row;
+      margin-bottom: 10px;
 
       i {
         cursor: pointer;
@@ -112,16 +129,11 @@
     }
   }
 
-  .search-sidebar * {
-    background-color: $fg-grey;
-  }
-
   .search-header {
     min-height: 100px;
     padding-left: 5px;
-    padding-top: 5px;
     padding-bottom: 0;
-    border-bottom: 2px solid $border-color;
+    border-bottom: 1px solid $border-color;
     margin: 0;
 
     > * {
@@ -137,21 +149,36 @@
       .sk-pagination-navigation {
         display: flex;
         align-items: center;
+        margin-left: 10px;
+
+        .sk-toggle {
+          max-height: none;
+        }
 
         .sk-toggle-option {
-          height: 33px;
+          background: #f5f5f5;
+          padding: 5px 12px;
         }
       }
 
       .sk-pagination-navigation * {
-        background-color: $fg-grey;
-        font-size: 16px;
+        font-size: 14px;
         font-weight: normal;
+        color: rgba(0,0,0,0.8);
       }
+    }
+    .sk-selected-filters {
+      margin-left: -8px;
     }
 
     .sk-selected-filters-option {
-      background-color: $search-filter;
+      background-color: $bg-light-blue;
+      padding: 8px 13px;
+
+      .sk-selected-filters-option__remove-action {
+        border-left: none;
+        padding: 0;
+      }
     }
 
     .sk-selected-filters-option > div {
@@ -159,10 +186,19 @@
       font-weight: 300;
     }
 
+    .sk-reset-filters {
+      color: $link-text;
+      font-size: 14px;
+    }
+
+    .sk-reset-filters.is-disabled {
+      color: $font-gray-disabled;
+    }
+
     .mdl-cell {
-      margin-top: 2px;
-      margin-bottom: 2px;
-      padding: 5px 0;
+      margin-top: 0;
+      margin-bottom: 0;
+      padding: 0;
     }
 
     .result-info {
@@ -172,9 +208,11 @@
 
     .result-info > span {
       white-space: nowrap;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 400;
       padding-left: 15px;
+      font-style: italic; 
+      color: $font-gray;
     }
 
     .learner-actions {
@@ -206,8 +244,8 @@
     }
 
     .learner-result {
-      padding: 10px 0;
-      font-size: 12px;
+      padding: 13px 0;
+      font-size: 14px;
       position: relative;
 
       img {
@@ -215,8 +253,13 @@
       }
 
       .learner-name {
-        font-weight: 600;
-        font-size: 14px;
+        font-weight: 500;
+        font-size: 16px;
+      }
+
+      .learner-location {
+        color: $font-gray;
+        ont-size: 14px;
       }
 
       .learner-grade span {
@@ -231,11 +274,13 @@
         .percent {
           font-size: 22px;
           font-weight: 600;
+          margin-bottom: 4px;
         }
 
         .hint {
-          font-size: 10px;
-          font-weight: 300;
+          font-size: 14px;
+          font-weight: 400;
+          color: $font-gray;
         }
       }
 
@@ -252,7 +297,8 @@
   }
 
   select, option {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: normal;
+    color: rgba(0,0,0,0.8);
   }
 }

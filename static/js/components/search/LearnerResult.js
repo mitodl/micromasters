@@ -29,18 +29,18 @@ export default class LearnerResult extends React.Component {
           </span>
           <UserChip profile={profile} />
         </Cell>
-        <Cell col={2} className="centered">
+        <Cell col={4} className="centered learner-location">
           <span>
             { getLocation(profile) }
           </span>
         </Cell>
-        <Cell col={2} className="learner-grade">
+        <Cell col={3} className="learner-grade">
           <span className="percent">
             { LearnerResult.hasGrade(program) ? `${program.grade_average}%` : '-' }
           </span>
           <span className="hint">Program Avg. Grade</span>
         </Cell>
-        <Cell col={4} />
+        <Cell col={1} />
       </Grid>
     );
   }
