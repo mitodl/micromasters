@@ -31,11 +31,9 @@ export default class User extends React.Component {
 
     return <div className="single-column">
       <UserPagePersonalDialog {...this.props} />
-      <div>
-        <UserInfoCard profile={profile} toggleShowPersonalDialog={this.toggleShowPersonalDialog} />
-        <EmploymentForm {...this.props} showSwitch={false} validator={employmentValidation} />
-        <EducationDisplay {...this.props} />
-      </div>
+      <UserInfoCard profile={profile} toggleShowPersonalDialog={this.toggleShowPersonalDialog} />
+      <EmploymentForm {...this.props} showSwitch={false} validator={employmentValidation} />
+      <EducationDisplay {...this.props} />
     </div>;
   }
 }

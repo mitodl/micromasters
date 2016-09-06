@@ -236,12 +236,12 @@ class EmploymentForm extends ProfileFormFields {
     };
     return (
       <Cell col={12} className="profile-form-row" key={index}>
-        <div className="basic-info full-width border-bottom">
+        <div className="profile-form-col">
           <div className="profile-row-name">
             {`${position.company_name}, ${position.position}`}
           </div>
         </div>
-        <div className="basic-info full-width border-bottom employment-top-spacing">
+        <div className="profile-form-col employment-top-spacing">
           <div className="profile-row-date-range">
             {`${dateFormat(position.start_date)} - ${endDateText()}`}
           </div>

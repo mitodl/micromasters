@@ -42,7 +42,7 @@ import ValidationAlert from '../components/ValidationAlert';
 import { modifyTextField } from '../util/test_utils';
 
 describe("UserPage", function() {
-  this.timeout(12000);
+  this.timeout(5000);
 
   let listenForActions, renderComponent, helper, patchUserProfileStub;
   let userActions = [RECEIVE_GET_USER_PROFILE_SUCCESS, REQUEST_GET_USER_PROFILE];

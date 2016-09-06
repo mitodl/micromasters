@@ -61,15 +61,13 @@ export default class EducationDisplay extends ProfileFormFields {
     );
     return (
       <Cell col={12} className="profile-form-row" key={index}>
-        <div className="basic-info full-width border-bottom">
+        <div className="profile-form-col">
           <div className="profile-row-name">
-            <div className="school-type">
-              { degree }
-            </div><br/>
-            { entry.school_name }
+            <div className="school-type">{ degree }</div>
+            <div className="school-name">{ entry.school_name }</div>
           </div>
         </div>
-        <div className="basic-info full-width border-bottom education-top-spacing">
+        <div className="profile-form-col education-top-spacing">
           <div className="profile-row-date-range">
             {`${dateFormat(entry.graduation_date)}`}
           </div>

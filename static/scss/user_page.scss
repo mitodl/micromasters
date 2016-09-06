@@ -8,9 +8,9 @@
       background-color: rgba(0, 0, 0, 0.3);
       position: absolute;
       top: 0;
-      right: 32px;
+      right: 17px;
       text-align: center;
-      line-height: 42px;
+      line-height: 35px;
       img{
         width: 22px;
         height: auto;
@@ -19,7 +19,7 @@
   }
   .profile-title {
     margin-top: 19px;
-    font-size: 28px;
+    font-size: 25px;
     color: black;
     font-weight: 500;
   }
@@ -42,5 +42,15 @@
   .edit-profile-holder {
     width: 100%;
     text-align: right;
+  }
+  .user-form-grid {
+    display: flex;
+    flex-direction: row;
+    .column {
+      display: flex;
+      flex-direction: column;
+      width: 250% !important;
+      margin-left: 15px;
+    }
   }
 }
