@@ -5,7 +5,9 @@
   margin: 0 auto;
   max-width: 1400px;
 
-  .mdl-grid {padding: 0;
+  .mdl-grid {
+    padding: 0;
+
     .mdl-cell {
       margin: 0 8px;
     }
@@ -38,6 +40,7 @@
       padding: 10px;
       background-color: $bg-light-gray;
     }
+
     .sk-panel {
       .sk-panel__header {
         margin: 15px 5px;
@@ -50,11 +53,9 @@
           margin-left: 10px;
           margin-right: 10px;
         }
+
         .sk-item-list-option__text {
           margin-left: 10px;
-        }
-        .sk-item-list-option__count {
-
         }
       }
     }
@@ -68,10 +69,12 @@
       .sk-hierarchical-menu-list__root {
         margin-left: 6px;
         margin-right: 0;
+
         .sk-hierarchical-menu-option {
           >div {
             justify-content: space-between;
           }
+
           .sk-hierarchical-menu-option__text {
             margin-right: 15px;
           }
@@ -81,6 +84,7 @@
 
     .filter-visibility-toggle.closed {
       margin-bottom: 0px;
+
       i.closed {
         transform: rotate(0.75turn);
         -webkit-transform: rotate(0.75turn);
@@ -158,6 +162,7 @@
         .sk-toggle-option {
           background: #f5f5f5;
           padding: 5px 12px;
+          border-color: $border-color;
         }
       }
 
@@ -167,6 +172,7 @@
         color: rgba(0,0,0,0.8);
       }
     }
+
     .sk-selected-filters {
       margin-left: -8px;
     }
@@ -294,6 +300,7 @@
 .sk-select {
   > select {
     background-color: $fg-grey;
+    border-color: $border-color;
   }
 
   select, option {
