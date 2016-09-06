@@ -118,6 +118,19 @@ class ProgramEnrollmentTests(ESTestCase, APITestCase):
         for enr in resp.data:
             assert enr.get('id') in expected_enrollments_ids
 
+    def test_not_live_enrollments(self):
+        """Programs which are not live are hidden from the list"""
+        program = ProgramFactory.create(live=False)
+        ProgramEnrollment.objects.create(user=self.user1, program=program)
+        resp = self.client.get(self.url)
+        assert resp.status_code == status.HTTP_200_OK
+        assert len(resp.data) == 2
+        expected_enrollments_ids = [
+            program.pk for program in (self.program1, self.program2,)
+        ]
+        for enr in resp.data:
+            assert enr.get('id') in expected_enrollments_ids
+
     def test_create_no_program_id(self):
         """Missing mandatory program_id parameter"""
         self.assert_program_enrollments_count()

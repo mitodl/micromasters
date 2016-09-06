@@ -58,7 +58,7 @@ class ProgramEnrollmentListView(ListCreateAPIView):
         """
         Filter programs by the user enrollment
         """
-        queryset = Program.objects.filter(programenrollment__user=self.request.user)
+        queryset = Program.objects.filter(programenrollment__user=self.request.user, live=True)
         return queryset.order_by('title')
 
     @transaction.atomic
