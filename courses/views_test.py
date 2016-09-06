@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from courses.factories import ProgramFactory, CourseFactory
+from courses.factories import ProgramFactory, CourseRunFactory
 from dashboard.factories import ProgramEnrollmentFactory
 from dashboard.models import ProgramEnrollment
 from profiles.factories import UserFactory
@@ -18,18 +18,18 @@ class ProgramTests(ESTestCase):
         """Live programs should show up"""
         prog = ProgramFactory.create(live=True)
 
-        resp = self.client.get(reverse('programs-list'))
+        resp = self.client.get(reverse('program-list'))
 
-        assert len(resp.json) == 1
-        assert prog.title == resp.json[0]['title']
+        assert len(resp.json()) == 1
+        assert prog.title == resp.json()[0]['title']
 
     def test_doesnt_list_unlive_programs(self):
         """Not-live programs should NOT show up"""
         ProgramFactory.create(live=False)
 
-        resp = self.client.get(reverse('programs-list'))
+        resp = self.client.get(reverse('program-list'))
 
-        assert len(resp.json) == 0
+        assert len(resp.json()) == 0
 
 
 class CourseTests(ESTestCase):
@@ -38,22 +38,22 @@ class CourseTests(ESTestCase):
         """
         If the course belongs to a live program, show it.
         """
-        course = CourseFactory.create(program__live=True)
+        course = CourseRunFactory.create(course__program__live=True)
 
-        resp = self.client.get(reverse('course-list'))
+        resp = self.client.get(reverse('courserun-list'))
 
-        assert len(resp.json) == 1
-        assert resp.json[0]['id'] == course.id
+        assert len(resp.json()) == 1
+        assert resp.json()[0]['id'] == course.id
 
     def test_doesnt_list_courses_from_unlive_programs(self):
         """
         If the course belongs to a non-live program, hide it.
         """
-        CourseFactory.create(program__live=False)
+        CourseRunFactory.create(course__program__live=False)
 
-        resp = self.client.get(reverse('course-list'))
+        resp = self.client.get(reverse('courserun-list'))
 
-        assert len(resp.json) == 0
+        assert len(resp.json()) == 0
 
 
 class ProgramEnrollmentTests(ESTestCase, APITestCase):
