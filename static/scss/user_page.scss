@@ -54,16 +54,4 @@
     width: 100%;
     text-align: right;
   }
-
-  .user-form-grid {
-    display: flex;
-    flex-direction: row;
-
-    .column {
-      display: flex;
-      flex-direction: column;
-      width: 250% !important;
-      margin-left: 15px;
-    }
-  }
 }

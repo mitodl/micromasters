@@ -24,9 +24,9 @@ export default class UserInfoCard extends React.Component {
 
     return (
       <Card shadow={1} className="profile-form user-page">
-        <div className="user-form-grid">
+        <div className="profile-form-row">
           <ProfileImage profile={profile} editable={true} />
-          <div className="column">
+          <div className="col user-info">
             <div className="profile-title">{getPreferredName(profile)}</div>
             <div className="profile-company-name">{mstr(getEmployer(profile))}</div>
             <div>

@@ -235,17 +235,17 @@ class EmploymentForm extends ProfileFormFields {
       );
     };
     return (
-      <Cell col={12} className="profile-form-row" key={index}>
-        <div className="col">
+      <Cell col={12} className="profile-form-row row-padding" key={index}>
+        <div className="col user-credentials">
           <div className="profile-row-name">
             {`${position.company_name}, ${position.position}`}
           </div>
         </div>
-        <div className="col employment">
+        <div className="col user-credentials">
           <div className="profile-row-date-range">
             {`${dateFormat(position.start_date)} - ${endDateText()}`}
           </div>
-          { userPrivilegeCheck(profile, icons, () => <Cell col={2} />) }
+          { userPrivilegeCheck(profile, icons, () => <div />) }
         </div>
       </Cell>
     );

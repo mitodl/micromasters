@@ -62,42 +62,60 @@
       margin-top: 15px;
     }
 
-    .profile-form-row, .profile-form-row > .col {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .profile-form-row {
-      &:nth-last-child(2) {
-        .col {
-          border-bottom: none !important;
-        }
+    .profile-card-header {
+      .title {
+        font-weight: 600;
+        font-size: 18px;
       }
+    }
+  }
+
+  .profile-form-row {
+    display: flex;
+    flex-direction: row;
+
+    &.row-padding {
+      padding: 13px 0 0;
+      margin: 0 ;
     }
 
     &.add {
       margin-bottom: 17px;
     }
 
-    .profile-form-row > .col {
-      width: 50%;
-      border-bottom: 1px #E2E2E2 solid;
-      margin-right: 10px;
-      padding: 15px 0;
+    &:nth-last-child(2) {
+      .user-credentials {
+        border-bottom: none !important;
+      }
+    }
 
-      &.education {
-        margin-top: 17px;
+    .col {
+      &.user-credentials {
+        width: 50%;
+        border-bottom: 1px #E2E2E2 solid;
+        margin-right: 10px;
+        vertical-align: middle;
+        padding-bottom: 13px;
+
+        &.row-padding {
+          padding-top: 30px;
+        }
       }
 
-      &.employment {
-        margin-top: -12px;
+      &.user-info {
+        width: 250% !important;
+        margin-left: 15px;
+      }
+
+      .profile-row-icons {
+        text-align: right;
+        color: #898989;
       }
 
       .profile-row-name {
         font-size: 16px;
         color: #404040;
+        padding: 12px;
 
         .school-type {
           font-weight: 600;
@@ -113,6 +131,9 @@
         font-size: 16px;
         font-weight: 300;
         color: #b7b7b7;
+        float: left;
+        position: relative;
+        margin-top: 7px;
       }
 
       .profile-row-new-line {
@@ -120,14 +141,6 @@
         width: 100%;
       }
     }
-
-    .profile-card-header {
-      .title {
-        font-weight: 600;
-        font-size: 18px;
-      }
-    }
-
   }
 
   .bound-check-box {

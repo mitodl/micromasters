@@ -60,18 +60,18 @@ export default class EducationDisplay extends ProfileFormFields {
       </div>
     );
     return (
-      <Cell col={12} className="profile-form-row" key={index}>
-        <div className="col">
+      <Cell col={12} className="profile-form-row row-padding" key={index}>
+        <div className="col user-credentials">
           <div className="profile-row-name">
             <div className="school-type">{ degree }</div>
             <div className="school-name">{ entry.school_name }</div>
           </div>
         </div>
-        <div className="col education">
+        <div className="col user-credentials row-padding">
           <div className="profile-row-date-range">
             {`${dateFormat(entry.graduation_date)}`}
           </div>
-          { userPrivilegeCheck(profile, icons, () => <Cell col={2} />) }
+          { userPrivilegeCheck(profile, icons, () => <div />) }
         </div>
       </Cell>
     );
