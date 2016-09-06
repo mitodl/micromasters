@@ -1,6 +1,7 @@
 .user-page {
   .avatar {
     position: relative;
+
     span.img{
       width: 38px;
       height: 38px;
@@ -10,42 +11,54 @@
       top: 0;
       right: 17px;
       text-align: center;
-      line-height: 35px;
+      line-height: 50px;
+
       img{
         width: 22px;
         height: auto;
       }
+
+      i.material-icons {
+        color: white;
+      }
     }
   }
+
   .profile-title {
     margin-top: 19px;
     font-size: 25px;
     color: black;
     font-weight: 500;
   }
+
   .profile-company-name {
     font-size: 18px;
     color: #98989A;
     padding: 15px 0;
   }
+
   .profile-email {
     color: #0E52CE;
     font-size: 18px;
     margin-left: -5px;
   }
+
   .email-icon {
     margin-right: 8px;
     width: 28px;
     height: 28px;
     vertical-align: middle;
   }
+
   .edit-profile-holder {
     width: 100%;
     text-align: right;
   }
+
   .user-form-grid {
     display: flex;
     flex-direction: row;
+
     .column {
       display: flex;
       flex-direction: column;

@@ -61,49 +61,60 @@
       font-weight: 600;
       margin-top: 15px;
     }
-    .profile-form-row, .profile-form-add-row, .profile-form-row > .profile-form-col {
+
+    .profile-form-row, .profile-form-row > .col {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
     }
+
     .profile-form-row {
       &:nth-last-child(2) {
-        .profile-form-col {
+        .col {
           border-bottom: none !important;
         }
       }
     }
-    .profile-form-add-row {
+
+    &.add {
       margin-bottom: 17px;
     }
-    .profile-form-row > .profile-form-col {
+
+    .profile-form-row > .col {
       width: 50%;
       border-bottom: 1px #E2E2E2 solid;
       margin-right: 10px;
       padding: 15px 0;
-      &.education-top-spacing {
+
+      &.education {
         margin-top: 17px;
       }
-      &.employment-top-spacing {
+
+      &.employment {
         margin-top: -12px;
       }
+
       .profile-row-name {
         font-size: 16px;
         color: #404040;
+
         .school-type {
           font-weight: 600;
           text-transform: capitalize;
         }
+
         .school-name {
           margin-top: 10px;
         }
       }
+
       .profile-row-date-range {
         font-size: 16px;
         font-weight: 300;
         color: #b7b7b7;
       }
+
       .profile-row-new-line {
         display: block;
         width: 100%;

@@ -61,13 +61,13 @@ export default class EducationDisplay extends ProfileFormFields {
     );
     return (
       <Cell col={12} className="profile-form-row" key={index}>
-        <div className="profile-form-col">
+        <div className="col">
           <div className="profile-row-name">
             <div className="school-type">{ degree }</div>
             <div className="school-name">{ entry.school_name }</div>
           </div>
         </div>
-        <div className="profile-form-col education-top-spacing">
+        <div className="col education">
           <div className="profile-row-date-range">
             {`${dateFormat(entry.graduation_date)}`}
           </div>
@@ -86,7 +86,7 @@ export default class EducationDisplay extends ProfileFormFields {
     }
     userPrivilegeCheck(profile, () => {
       rows.push(
-        <Cell col={12} className="profile-form-add-row" key={"I'm unique!"}>
+        <Cell col={12} className="profile-form-row add" key={"I'm unique!"}>
           <a
             className="mm-minor-action"
             onClick={() => this.openNewEducationForm(HIGH_SCHOOL, null)}
