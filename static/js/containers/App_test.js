@@ -1,13 +1,10 @@
 /* global document: false, window: false */
 import '../global_init';
 
-import React from 'react';
 import ReactDOM from 'react-dom';
 import { assert } from 'chai';
-import { shallow } from 'enzyme';
 import _ from 'lodash';
 
-import ErrorMessage from '../components/ErrorMessage';
 import Navbar from '../components/Navbar';
 import { CLEAR_DASHBOARD } from '../actions';
 import {
