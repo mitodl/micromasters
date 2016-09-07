@@ -147,10 +147,6 @@ $option_padding: 10px;
         cursor: pointer;
         height: $program_selector_height;
         width: 100%;
-
-        .invisible {
-          visibility: hidden;
-        }
       }
 
       .selected-option {
