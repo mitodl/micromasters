@@ -1,4 +1,3 @@
-// @flow
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
 import _ from 'lodash';
