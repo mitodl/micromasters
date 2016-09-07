@@ -17,6 +17,7 @@ import Grid, { Cell } from 'react-mdl/lib/Grid';
 import Card from 'react-mdl/lib/Card/Card';
 import iso3166 from 'iso-3166-2';
 
+import ProgramFilter from './ProgramFilter';
 import LearnerResult from './search/LearnerResult';
 import CountryRefinementOption from './search/CountryRefinementOption';
 import FilterVisibilityToggle from './search/FilterVisibilityToggle';
@@ -24,6 +25,7 @@ import HitsCount from './search/HitsCount';
 import EmailCompositionDialog from './EmailCompositionDialog';
 import type { Option } from '../flow/generalTypes';
 import type { Email } from '../flow/emailTypes';
+import type { ProgramEnrollment } from '../flow/enrollmentTypes';
 
 let makeSearchkitTranslations: () => Object = () => {
   let translations = {};
@@ -74,15 +76,16 @@ const sortOptions = [
 
 export default class LearnerSearch extends SearchkitComponent {
   props: {
-    checkFilterVisibility:  (s: string) => boolean,
-    setFilterVisibility:    (s: string, v: boolean) => void,
-    openEmailComposer:      () => void,
-    emailDialogVisibility:  boolean,
-    closeEmailDialog:       () => void,
-    updateEmailEdit:        (o: Object) => void,
-    sendEmail:              () => void,
-    email:                  Email,
-    children:               React$Element<*>[],
+    checkFilterVisibility:    (s: string) => boolean,
+    setFilterVisibility:      (s: string, v: boolean) => void,
+    openEmailComposer:        () => void,
+    emailDialogVisibility:    boolean,
+    closeEmailDialog:         () => void,
+    updateEmailEdit:          (o: Object) => void,
+    sendEmail:                () => void,
+    email:                    Email,
+    children:                 React$Element<*>[],
+    currentProgramEnrollment: ProgramEnrollment,
   };
 
   dropdownOptions: Option[] = [
@@ -100,9 +103,13 @@ export default class LearnerSearch extends SearchkitComponent {
       sendEmail,
       email,
       openEmailComposer,
+      currentProgramEnrollment,
     } = this.props;
     return (
       <div className="learners-search">
+        <ProgramFilter
+          currentProgramEnrollment={currentProgramEnrollment}
+        />
         <EmailCompositionDialog
           open={emailDialogVisibility}
           closeEmailDialog={closeEmailDialog}

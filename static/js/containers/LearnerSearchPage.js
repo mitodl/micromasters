@@ -3,11 +3,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  BoolMust,
-  FilteredQuery,
   SearchkitManager,
   SearchkitProvider,
-  TermQuery,
 } from 'searchkit';
 import _ from 'lodash';
 import type { Dispatch } from 'redux';
@@ -27,6 +24,12 @@ import type { UIState } from '../reducers/ui';
 import type { EmailState } from '../flow/emailTypes';
 import type { ProgramEnrollment } from '../flow/enrollmentTypes';
 import { getCookie } from '../util/api';
+
+const searchKit = new SearchkitManager(SETTINGS.search_url, {
+  httpHeaders: {
+    'X-CSRFToken': getCookie('csrftoken')
+  }
+});
 
 class LearnerSearchPage extends React.Component {
   props: {
@@ -97,22 +100,6 @@ class LearnerSearchPage extends React.Component {
       email
     } = this.props;
 
-    let searchKit = new SearchkitManager(SETTINGS.search_url, {
-      httpHeaders: {
-        'X-CSRFToken': getCookie('csrftoken')
-      }
-    });
-    searchKit.addDefaultQuery(query => {
-      //console.log("currentProgramEnrollment", currentProgramEnrollment);
-      if (currentProgramEnrollment === null) {
-        return query;
-      }
-      return query.addQuery(FilteredQuery({
-        filter: BoolMust([
-          TermQuery("program.id", currentProgramEnrollment.id)
-        ])
-      }));
-    });
     return (
       <div>
         <SearchkitProvider searchkit={searchKit}>
@@ -125,6 +112,7 @@ class LearnerSearchPage extends React.Component {
             updateEmailEdit={this.updateEmailEdit}
             sendEmail={this.closeEmailComposeAndSend}
             email={email}
+            currentProgramEnrollment={currentProgramEnrollment}
           />
         </SearchkitProvider>
       </div>
