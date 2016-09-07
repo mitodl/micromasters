@@ -7,16 +7,21 @@ import { assert } from 'chai';
 import { shallow } from 'enzyme';
 import _ from 'lodash';
 
-import App from './App';
+import ErrorMessage from '../components/ErrorMessage';
 import Navbar from '../components/Navbar';
 import { CLEAR_DASHBOARD } from '../actions';
 import {
+  RECEIVE_DASHBOARD_SUCCESS,
+} from '../actions';
+import {
+  RECEIVE_GET_USER_PROFILE_SUCCESS,
   CLEAR_PROFILE,
   START_PROFILE_EDIT,
   UPDATE_PROFILE_VALIDATION,
 } from '../actions/profile';
 import {
   CLEAR_ENROLLMENTS,
+  RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE,
 } from '../actions/enrollments';
 import * as enrollmentActions from '../actions/enrollments';
 import {
@@ -123,9 +128,17 @@ describe('App', () => {
   });
 
   describe('enrollments', () => {
-    const fakeAction = {type: "fake"};
     it('shows an error message if the enrollments GET fetch fails', () => {
-
+      helper.enrollmentsGetStub.returns(Promise.reject());
+      let types = [
+        RECEIVE_DASHBOARD_SUCCESS,
+        RECEIVE_GET_USER_PROFILE_SUCCESS,
+        RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE,
+      ];
+      return renderComponent("/dashboard", types, false).then(([wrapper]) => {
+        let text = wrapper.find('.page-content').text();
+        assert(text.includes("Sorry, we were unable to load the data"));
+      });
     });
 
     it('setEnrollDialogVisibility dispatches the value to the action with the same name', () => {
