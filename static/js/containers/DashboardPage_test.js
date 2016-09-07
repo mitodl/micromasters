@@ -32,10 +32,10 @@ describe('DashboardPage', () => {
   });
 
   it('has all the cards we expect', () => {
-    return renderComponent('/dashboard').then(([, div]) => {
-      assert(div.querySelector(".dashboard-user-card"), "Unable to find user card");
-      assert(div.querySelector(".course-list"), "Unable to find course listing card");
-      assert(div.querySelector(".progress-widget"), "Unable to find progress card");
+    return renderComponent('/dashboard').then(([wrapper]) => {
+      assert.equal(wrapper.find(".dashboard-user-card").length, 1);
+      assert.equal(wrapper.find(".course-list").length, 1);
+      assert.equal(wrapper.find(".progress-widget").length, 1);
     });
   });
 
@@ -67,4 +67,6 @@ describe('DashboardPage', () => {
       });
     });
   });
+
+
 });

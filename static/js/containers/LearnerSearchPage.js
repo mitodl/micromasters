@@ -103,6 +103,7 @@ class LearnerSearchPage extends React.Component {
       }
     });
     searchKit.addDefaultQuery(query => {
+      //console.log("currentProgramEnrollment", currentProgramEnrollment);
       if (currentProgramEnrollment === null) {
         return query;
       }

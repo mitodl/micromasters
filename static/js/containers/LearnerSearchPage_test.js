@@ -31,4 +31,24 @@ describe('LearnerSearchPage', function () {
       assert.deepEqual(request.method, "POST");
     });
   });
+
+  it('filters by program id for current enrollment', () => {
+    return renderComponent('/learners').then(() => {
+      assert(!_.isEmpty(server.requests));
+      let request = server.requests[0];
+      console.log(JSON.parse(request.requestBody));
+      throw "";
+    });
+  });
+
+  it("doesn't filter by program id for current enrollment if it's not set to anything", () => {
+
+    return renderComponent('/learners').then(() => {
+      console.log(helper.store.getState());
+      assert(!_.isEmpty(server.requests));
+      let request = server.requests[0];
+      console.log(request.requestBody);
+      throw "";
+    });
+  });
 });
