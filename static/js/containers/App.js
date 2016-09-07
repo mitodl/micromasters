@@ -153,7 +153,6 @@ class App extends React.Component {
 
   setProgramSelectorOpen = (open: boolean): void => {
     const { dispatch } = this.props;
-    console.log("open", open, setProgramSelectorOpen);
     dispatch(setProgramSelectorOpen(open));
   };
 

@@ -83,7 +83,7 @@ export default class ProgramSelector extends React.Component {
     let enrollOption;
     if (unenrolledPrograms.length > 0) {
       enrollOption = <div
-        className="option"
+        className="option enroll-new-program"
         key="enroll-new-program"
         onClick={() => this.showNewEnrollmentDialog()}
       >
