@@ -1,4 +1,4 @@
-import React from 'react';
+// @flow
 import {
   AnonymousAccessor,
   BoolMust,
@@ -12,8 +12,6 @@ export default class ProgramFilter extends SearchkitComponent {
   defineAccessor() {
     return new AnonymousAccessor(query => {
       const { currentProgramEnrollment } = this.props;
-      console.trace();
-      console.log("accessor", currentProgramEnrollment);
       if (currentProgramEnrollment === null) {
         return query;
       }
