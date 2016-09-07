@@ -71,9 +71,6 @@ class DashboardPage extends React.Component {
             <Card shadow={0}>
               <CardTitle>Learners Near Me</CardTitle>
             </Card>
-            <Card shadow={0}>
-              <CardTitle>Histogram</CardTitle>
-            </Card>
           </div>
         </div>
       );

@@ -163,12 +163,10 @@ class App extends React.Component {
     } = this.props;
     let { children } = this.props;
     const { router } = this.context;
-
     let empty = false;
     if (PROFILE_REGEX.test(pathname)) {
       empty = true;
     }
-    let pushUrl = url => router.push(url);
 
     if (enrollments.getStatus === FETCH_FAILURE) {
       children = <ErrorMessage errorInfo={enrollments.getErrorInfo} />;
