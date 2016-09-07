@@ -123,4 +123,20 @@ describe('ProgramSelector', () => {
     wrapper.find(".enroll-new-program").simulate('click');
     assert(setEnrollDialogVisibility.calledWith(true), 'setEnrollDialogVisibility not called with true');
   });
+
+  it("switches to a new current enrollment when a new option is clicked", () => {
+    let setCurrentProgramEnrollment = sandbox.stub();
+    let setProgramSelectorOpen = sandbox.stub();
+
+    let wrapper = renderProgramSelector({
+      setCurrentProgramEnrollment,
+      setProgramSelectorOpen,
+    });
+    let option = wrapper.find(".option").first();
+    let newSelectedEnrollment = enrollments.find(enrollment => enrollment.title === option.text());
+    option.simulate('click');
+
+    assert(setCurrentProgramEnrollment.calledWith(newSelectedEnrollment));
+    assert(setProgramSelectorOpen.calledWith(false));
+  });
 });
