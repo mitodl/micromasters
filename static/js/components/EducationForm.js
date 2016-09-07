@@ -109,7 +109,7 @@ class EducationForm extends ProfileFormFields {
             {`${dateFormat(education.graduation_date)}`}
           </div>
         </div>
-        <div className="profile-row-icons">
+        <div className="profile-row-icons row-width">
           {validationAlert()}
           <IconButton className="edit-button" name="edit" onClick={editEntry} />
           <IconButton className="delete-button" name="delete" onClick={deleteEntry} />

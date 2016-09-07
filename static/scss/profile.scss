@@ -32,6 +32,9 @@
     flex-direction: row;
     color: $lightgrey !important;
     text-transform: uppercase;
+    position: absolute;
+    right: 0;
+    padding-right: 41px;
 
     div:first-child {
       margin-right: 15px;
@@ -63,7 +66,9 @@
     }
 
     .profile-card-header {
-      .title {
+      justify-content: space-between;
+
+      .title, span {
         font-weight: 600;
         font-size: 18px;
       }
@@ -73,6 +78,13 @@
   .profile-form-row {
     display: flex;
     flex-direction: row;
+
+    .basic-info {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      width: 50%;
+    }
 
     &.row-padding {
       padding: 13px 0 0;
@@ -86,6 +98,18 @@
     &:nth-last-child(2) {
       .user-credentials {
         border-bottom: none !important;
+      }
+    }
+
+    .profile-row-icons {
+      text-align: right;
+      color: #898989;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+
+      &.row-width {
+        width: 50%;
       }
     }
 
@@ -105,11 +129,6 @@
       &.user-info {
         width: 250% !important;
         margin-left: 15px;
-      }
-
-      .profile-row-icons {
-        text-align: right;
-        color: #898989;
       }
 
       .profile-row-name {
