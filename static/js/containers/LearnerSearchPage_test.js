@@ -2,6 +2,7 @@
 // import TestUtils from 'react-addons-test-utils';
 import { assert } from 'chai';
 import _ from 'lodash';
+import { SearchkitManager } from 'searchkit';
 
 import IntegrationTestHelper from '../util/integration_test_helper';
 import {
@@ -44,7 +45,7 @@ describe('LearnerSearchPage', function () {
     return renderComponent('/learners').then(() => {
       let request = server.requests[server.requests.length - 1];
       let body = JSON.parse(request.requestBody);
-      assert.deepEqual(body.filter.bool.must[0].term['program.id'], PROGRAM_ENROLLMENTS[0].id);
+      assert.deepEqual(body.filter.term['program.id'], PROGRAM_ENROLLMENTS[0].id);
     });
   });
 
@@ -54,7 +55,7 @@ describe('LearnerSearchPage', function () {
     return renderComponent('/learners').then(() => {
       let request = server.requests[server.requests.length - 1];
       let body = JSON.parse(request.requestBody);
-      assert.equal(body.filter, undefined);
+      assert.deepEqual(body.filter, undefined);
     });
   });
 
@@ -71,8 +72,7 @@ describe('LearnerSearchPage', function () {
             assert.equal(server.requests.length, searchCount + 1);
             let lastRequest = server.requests[server.requests.length - 1];
             let body = JSON.parse(lastRequest.requestBody);
-            console.log(JSON.stringify(body.filter.bool.must, null, 4));
-            assert.equal(body.filter.bool.must[0].term['program.id'], PROGRAM_ENROLLMENTS[1].id);
+            assert.equal(body.filter.term['program.id'], PROGRAM_ENROLLMENTS[1].id);
             resolve();
           }, 300);
         });

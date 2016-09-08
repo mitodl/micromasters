@@ -50,7 +50,8 @@ class IntegrationTestHelper {
     this.browserHistory.listen(url => {
       this.currentLocation = url;
     });
-    this.sandbox.stub(history, 'createHistory', createMemoryHistory);
+    //this.sandbox.stub(history, 'createHistory', createMemoryHistory);
+
   }
 
   cleanup() {
