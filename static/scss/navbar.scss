@@ -16,7 +16,6 @@
 
 .micromasters-nav {
   box-shadow: none !important;
-  height: 112px;
 
   a.micromasters-title {
     text-decoration: none;
@@ -41,37 +40,6 @@
 
   .micromasters-header {
     justify-content: space-between;
-  }
-
-  a.mdl-layout__tab.is-active {
-    color: #fff;
-  }
-
-  a.mdl-layout__tab:hover {
-    border-bottom-color: white;
-    border-left-color: white;
-    border-right-color: whte;
-    border-top-color: white;
-    color: white;
-    outline-color: white;
-    text-decoration: none;
-
-    a:hover, a:focus {
-      text-decoration: none;
-    }
-  }
-
-  a.mdl-layout__tab.is-active::after {
-    height: 2px;
-    width: 100%;
-    display: block;
-    content: " ";
-    bottom: 0;
-    left: 0;
-    position: absolute;
-    background: #fff;
-    animation: border-expand .2s cubic-bezier(.4,0,.4,1) .01s alternate forwards;
-    transition: all 1s cubic-bezier(.4,0,1,1);
   }
 }
 
@@ -164,4 +132,9 @@ $header_font_color: white;
 .navbar-collapse .btn {
   margin: 26px 0 0 0;
   float:right;
+}
+
+.mdl-layout-title > a {
+  color: white;
+  text-decoration: none;
 }

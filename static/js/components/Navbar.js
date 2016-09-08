@@ -57,7 +57,9 @@ export default class Navbar extends React.Component {
                 <img src="/static/images/mit-logo-transparent.svg" alt="MIT" />
               </Link>
               <span className="mdl-layout-title">
-                MicroMasters
+                <Link to='/dashboard/'>
+                  MicroMasters
+                </Link>
               </span>
               <ProgramSelector
                 currentProgramEnrollment={currentProgramEnrollment}
