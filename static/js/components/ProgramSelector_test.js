@@ -2,7 +2,7 @@ import { assert } from 'chai';
 import { shallow } from 'enzyme';
 import _ from 'lodash';
 import React from 'react';
-import { ReactPageClick } from 'react-page-click';
+import Select from 'react-select';
 import sinon from 'sinon';
 
 import ProgramSelector from './ProgramSelector';
@@ -51,18 +51,25 @@ describe('ProgramSelector', () => {
 
   it("renders the currently selected enrollment first, then all other enrollments", () => {
     let wrapper = renderProgramSelector();
-    assert.equal(wrapper.find(".selected-option").text(), `${selectedEnrollment.title} arrow_drop_down`);
+    let selectProps = wrapper.find(Select).props();
 
     let sortedEnrollments = _.sortBy(enrollments, 'title');
     // make sure we are testing sorting meaningfully
     assert.notDeepEqual(sortedEnrollments, enrollments);
-    let text = wrapper.find(".option").map(item => item.text());
+
+    let options = selectProps['options'];
     // include 'Enroll in a new program' which comes at the end if user can enroll in a new program
     let expectedEnrollments = sortedEnrollments.
       filter(enrollment => enrollment.id !== selectedEnrollment.id).
-      map(enrollment => enrollment.title).
-      concat("Enroll in a new program");
-    assert.deepEqual(text, expectedEnrollments);
+      map(enrollment => ({
+        label: enrollment.title,
+        value: enrollment.id,
+      })).
+      concat({
+        label: "Enroll in a new program",
+        value: "enroll",
+      });
+    assert.deepEqual(options, expectedEnrollments);
   });
 
   it("does not render the 'Enroll in a new program' option if there is not at least one available program", () => {
@@ -72,13 +79,20 @@ describe('ProgramSelector', () => {
         programEnrollments: allEnrollments
       }
     });
+    let selectProps = wrapper.find(Select).props();
     let sortedEnrollments = _.sortBy(allEnrollments, 'title');
     // make sure we are testing sorting meaningfully
-    assert.notDeepEqual(sortedEnrollments, allEnrollments);
-    let text = wrapper.find(".option").map(item => item.text());
-    let expectedEnrollments = sortedEnrollments.filter(enrollment => enrollment.id !== selectedEnrollment.id).
-      map(enrollment => enrollment.title);
-    assert.deepEqual(text, expectedEnrollments);
+    assert.notDeepEqual(sortedEnrollments, enrollments);
+
+    let options = selectProps['options'];
+    // include 'Enroll in a new program' which comes at the end if user can enroll in a new program
+    let expectedEnrollments = sortedEnrollments.
+      filter(enrollment => enrollment.id !== selectedEnrollment.id).
+      map(enrollment => ({
+        label: enrollment.title,
+        value: enrollment.id,
+      }));
+    assert.deepEqual(options, expectedEnrollments);
   });
 
   it("shows the enrollment dialog when the 'Enroll in a new program' option is clicked", () => {
@@ -86,7 +100,8 @@ describe('ProgramSelector', () => {
     let wrapper = renderProgramSelector({
       setEnrollDialogVisibility,
     });
-    wrapper.find(".enroll-new-program").simulate('click');
+    let onChange = wrapper.find(Select).props()['onChange'];
+    onChange({value: 'enroll'});
     assert(setEnrollDialogVisibility.calledWith(true), 'setEnrollDialogVisibility not called with true');
   });
 
@@ -96,10 +111,9 @@ describe('ProgramSelector', () => {
     let wrapper = renderProgramSelector({
       setCurrentProgramEnrollment,
     });
-    let option = wrapper.find(".option").first();
-    let newSelectedEnrollment = enrollments.find(enrollment => enrollment.title === option.text());
-    option.simulate('click');
-
+    let onChange = wrapper.find(Select).props()['onChange'];
+    let newSelectedEnrollment = enrollments[0];
+    onChange({value: newSelectedEnrollment.id});
     assert(setCurrentProgramEnrollment.calledWith(newSelectedEnrollment));
   });
 });
