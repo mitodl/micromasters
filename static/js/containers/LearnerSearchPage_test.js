@@ -39,7 +39,7 @@ describe('LearnerSearchPage', function () {
     return renderComponent('/learners').then(() => {
       let request = server.requests[server.requests.length - 1];
       let body = JSON.parse(request.requestBody);
-      assert.deepEqual(body.filter.term['program.id'], PROGRAM_ENROLLMENTS[0].id);
+      assert.deepEqual(body.filter.bool.must[0].term['program.id'], PROGRAM_ENROLLMENTS[0].id);
     });
   });
 
@@ -47,9 +47,7 @@ describe('LearnerSearchPage', function () {
     helper.enrollmentsGetStub.returns(Promise.resolve([]));
 
     return renderComponent('/learners').then(() => {
-      let request = server.requests[server.requests.length - 1];
-      let body = JSON.parse(request.requestBody);
-      assert.deepEqual(body.filter, undefined);
+      assert.equal(server.requests.length, 0);
     });
   });
 });
