@@ -21,11 +21,9 @@ export default class Navbar extends React.Component {
     enrollments:                 ProgramEnrollmentsState,
     enrollDialogVisibility:      boolean,
     enrollSelectedProgram:       ?number,
-    programSelectorOpen:         boolean,
     setCurrentProgramEnrollment: (enrollment: ProgramEnrollment) => void,
     setEnrollDialogVisibility:   (open: boolean) => void,
     setEnrollSelectedProgram:    (programId: number) => void,
-    setProgramSelectorOpen:      (open: boolean) => void,
   };
 
   makeTabs: Function = (): React$Element<*>[] => {
@@ -56,11 +54,9 @@ export default class Navbar extends React.Component {
       enrollSelectedProgram,
       enrollments,
       pathname,
-      programSelectorOpen,
       setCurrentProgramEnrollment,
       setEnrollDialogVisibility,
       setEnrollSelectedProgram,
-      setProgramSelectorOpen,
     } = this.props;
     const onChange = tabId => {
       let path = this.tabs[tabId].path;
@@ -81,9 +77,7 @@ export default class Navbar extends React.Component {
                 enrollDialogVisibility={enrollDialogVisibility}
                 enrollSelectedProgram={enrollSelectedProgram}
                 enrollments={enrollments}
-                programSelectorOpen={programSelectorOpen}
                 setCurrentProgramEnrollment={setCurrentProgramEnrollment}
-                setProgramSelectorOpen={setProgramSelectorOpen}
                 setEnrollDialogVisibility={setEnrollDialogVisibility}
                 setEnrollSelectedProgram={setEnrollSelectedProgram}
               />

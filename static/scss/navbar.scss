@@ -111,48 +111,38 @@
 }
 
 $program_selector_border: #87ddae;
-// matching height of user-menu
-$program_selector_height: 40px;
-$option_padding: 10px;
+$header_font_color: white;
 .program-selector {
   margin-left: 30px;
   font-size: 16px;
   padding-right: 30px;
   padding-left: 10px;
+  width: 300px;
 
-  .select-container {
-    // select-container has relative position but select has absolute position
-    height: $program_selector_height;
-    .select {
-      background-color: $mm-brand-bg;
-      border: 1px solid $program_selector_border;
-      border-radius: 5px;
-      position: absolute;
+  .Select-control {
+    border: 1px solid $program_selector_border !important;
+    box-shadow: none !important;
+    cursor: pointer;
+  }
 
-      .select-dropdown {
-        display: none;
-      }
-
-      .select-dropdown.open {
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-        z-index: 2;
-      }
-
-      .option, .selected-option {
-        display: flex;
-        align-items: center;
-        padding: $option_padding;
-        cursor: pointer;
-        height: $program_selector_height;
-        width: 100%;
-      }
-
-      .selected-option {
-        font-weight: 500;
-      }
-    }
+  .Select-menu-outer,.Select-control,.Select-value-label,.Select-menu-outer,.Select-option {
+    background-color: $mm-brand-bg !important;
+  }
+  .Select-menu-outer,.Select-control,.Select-value-label,.Select-placeholder,.Select-option {
+    color: $header_font_color !important;
+  }
+  .Select-arrow {
+    border-color: $header_font_color transparent transparent !important;
+  }
+  .Select-option {
+    border: none !important;
+  }
+  .Select-menu-outer {
+    box-shadow: none;
+    border-top: none;
+    border-left: 1px solid $program_selector_border;
+    border-right: 1px solid $program_selector_border;
+    border-bottom: 1px solid $program_selector_border;
   }
 }
 

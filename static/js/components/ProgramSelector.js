@@ -1,13 +1,17 @@
 // @flow
 import React from 'react';
 import _ from 'lodash';
-import { ReactPageClick } from 'react-page-click';
+import Select from 'react-select';
+import 'style!css!react-select/dist/react-select.css';
 
 import type { DashboardState } from '../flow/dashboardTypes';
 import type {
   ProgramEnrollment,
   ProgramEnrollmentsState,
 } from '../flow/enrollmentTypes';
+import type { ReactSelectOption } from '../flow/generalTypes';
+
+const ENROLL_SENTINEL = 'enroll';
 
 export default class ProgramSelector extends React.Component {
   props: {
@@ -16,33 +20,28 @@ export default class ProgramSelector extends React.Component {
     enrollDialogVisibility:      boolean,
     enrollSelectedProgram:       ?number,
     dashboard:                   DashboardState,
-    programSelectorOpen:         boolean,
     setCurrentProgramEnrollment: (enrollment: ProgramEnrollment) => void,
     setEnrollDialogVisibility:   (open: boolean) => void,
     setEnrollSelectedProgram:    (programId: number) => void,
-    setProgramSelectorOpen:      (open: boolean) => void,
   };
 
-  handleOpenSelect = () => {
-    const { programSelectorOpen, setProgramSelectorOpen } = this.props;
-    setProgramSelectorOpen(!programSelectorOpen);
-  };
-
-  selectEnrollment = (enrollment: ProgramEnrollment): void => {
-    const { setCurrentProgramEnrollment, setProgramSelectorOpen } = this.props;
-    setCurrentProgramEnrollment(enrollment);
-    setProgramSelectorOpen(false);
-  };
-
-  showNewEnrollmentDialog = () => {
-    let { setEnrollDialogVisibility } = this.props;
-    setEnrollDialogVisibility(true);
+  selectEnrollment = (option: ReactSelectOption): void => {
+    const {
+      enrollments: { programEnrollments },
+      setCurrentProgramEnrollment,
+      setEnrollDialogVisibility,
+    } = this.props;
+    if (option.value === ENROLL_SENTINEL) {
+      setEnrollDialogVisibility(true);
+    } else {
+      let selected = programEnrollments.find(enrollment => enrollment.id === option.value);
+      setCurrentProgramEnrollment(selected);
+    }
   };
 
   render() {
     let {
       enrollments: { programEnrollments },
-      programSelectorOpen,
       dashboard: { programs },
     } = this.props;
     let { currentProgramEnrollment } = this.props;
@@ -58,54 +57,30 @@ export default class ProgramSelector extends React.Component {
 
     let selected = programEnrollments.find(enrollment => enrollment.id === currentId);
     let unselected = programEnrollments.filter(enrollment => enrollment.id !== currentId);
-    let options = unselected.map(enrollment => (
-      <div
-        className="option"
-        key={enrollment.id}
-        onClick={() => this.selectEnrollment(enrollment)}
-      >
-        {enrollment.title}
-      </div>
-    ));
+    let options = unselected.map(enrollment => ({
+      value: enrollment.id,
+      label: enrollment.title,
+    }));
 
     let enrollmentLookup = new Map(programEnrollments.map(enrollment => [enrollment.id, null]));
     let unenrolledPrograms = programs.filter(program => !enrollmentLookup.has(program.id));
     unenrolledPrograms = _.sortBy(unenrolledPrograms, 'title');
 
-    let enrollOption;
     if (unenrolledPrograms.length > 0) {
-      enrollOption = <div
-        className="option enroll-new-program"
-        key="enroll-new-program"
-        onClick={() => this.showNewEnrollmentDialog()}
-      >
-        Enroll in a new program
-      </div>;
+      options.push({label: "Enroll in a new program", value: ENROLL_SENTINEL});
     }
 
-    let select = <div className="select-container">
-      <div className="select">
-        <div className="selected-option" onClick={this.handleOpenSelect}>
-          {selected.title} <i className="material-icons">arrow_drop_down</i>
-        </div>
-        <div className={`select-dropdown ${programSelectorOpen ? 'open' : ''}`}>
-          {options}
-          {enrollOption}
-        </div>
-      </div>
-    </div>;
-
-    let inner;
-    if (programSelectorOpen) {
-      inner = <ReactPageClick notify={this.handleOpenSelect}>
-        {select}
-      </ReactPageClick>;
-    } else {
-      inner = select;
-    }
+    let select = <Select
+      options={options}
+      onChange={this.selectEnrollment}
+      searchable={false}
+      placeholder={selected ? selected.title : ""}
+      clearable={false}
+      tabSelectsValue={false}
+    />;
 
     return <div className="program-selector">
-      {inner}
+      {select}
     </div>;
   }
 }

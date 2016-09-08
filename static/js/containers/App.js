@@ -25,7 +25,6 @@ import {
   setCurrentProgramEnrollment,
 } from '../actions/enrollments';
 import {
-  setProgramSelectorOpen,
   setEnrollDialogVisibility,
   setEnrollSelectedProgram,
 } from '../actions/ui';
@@ -151,17 +150,11 @@ class App extends React.Component {
     dispatch(setCurrentProgramEnrollment(enrollment));
   };
 
-  setProgramSelectorOpen = (open: boolean): void => {
-    const { dispatch } = this.props;
-    dispatch(setProgramSelectorOpen(open));
-  };
-
   render() {
     const {
       currentProgramEnrollment,
       enrollments,
       ui: {
-        programSelectorOpen,
         enrollDialogVisibility,
         enrollSelectedProgram,
       },
@@ -191,9 +184,7 @@ class App extends React.Component {
         enrollSelectedProgram={enrollSelectedProgram}
         enrollments={enrollments}
         pathname={pathname}
-        programSelectorOpen={programSelectorOpen}
         setCurrentProgramEnrollment={this.setCurrentProgramEnrollment}
-        setProgramSelectorOpen={this.setProgramSelectorOpen}
         setEnrollDialogVisibility={this.setEnrollDialogVisibility}
         setEnrollSelectedProgram={this.setEnrollSelectedProgram}
       />

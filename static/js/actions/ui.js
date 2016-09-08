@@ -82,9 +82,6 @@ export const setSearchFilterVisibility = createAction(SET_SEARCH_FILTER_VISIBILI
 export const SET_EMAIL_DIALOG_VISIBILITY = 'SET_EMAIL_DIALOG_VISIBILITY';
 export const setEmailDialogVisibility = createAction(SET_EMAIL_DIALOG_VISIBILITY);
 
-export const SET_PROGRAM_SELECTOR_OPEN = 'SET_PROGRAM_SELECTOR_OPEN';
-export const setProgramSelectorOpen = createAction(SET_PROGRAM_SELECTOR_OPEN);
-
 export const SET_ENROLL_DIALOG_VISIBILITY = 'SET_ENROLL_DIALOG_VISIBILITY';
 export const setEnrollDialogVisibility = createAction(SET_ENROLL_DIALOG_VISIBILITY);
 

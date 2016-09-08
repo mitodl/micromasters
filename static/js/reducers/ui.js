@@ -30,7 +30,6 @@ import {
 
   SET_EMAIL_DIALOG_VISIBILITY,
 
-  SET_PROGRAM_SELECTOR_OPEN,
   SET_ENROLL_DIALOG_VISIBILITY,
   SET_ENROLL_SELECTED_PROGRAM,
 } from '../actions/ui';
@@ -65,7 +64,6 @@ export type UIState = {
   searchFilterVisibility:       {[s: string]: boolean};
   tosDialogVisibility:          boolean;
   emailDialogVisibility:        boolean;
-  programSelectorOpen:          boolean;
   enrollDialogVisibility:       boolean;
   enrollSelectedProgram:       ?number;
 };
@@ -96,7 +94,6 @@ export const INITIAL_UI_STATE: UIState = {
   searchFilterVisibility: {},
   tosDialogVisibility: false,
   emailDialogVisibility: false,
-  programSelectorOpen: false,
   enrollDialogVisibility: false,
   enrollSelectedProgram: null,
 };
@@ -214,11 +211,6 @@ export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
   case SET_EMAIL_DIALOG_VISIBILITY: {
     return Object.assign({}, state, {
       emailDialogVisibility: action.payload
-    });
-  }
-  case SET_PROGRAM_SELECTOR_OPEN: {
-    return Object.assign({}, state, {
-      programSelectorOpen: action.payload
     });
   }
   case SET_ENROLL_SELECTED_PROGRAM: {

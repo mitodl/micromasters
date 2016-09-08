@@ -49,27 +49,6 @@ describe('ProgramSelector', () => {
     assert.equal(wrapper.find("div").children().length, 0);
   });
 
-  it("renders within a ReactPageClick element if the program selector is open", () => {
-    let setProgramSelectorOpen = sandbox.stub();
-    let wrapper = renderProgramSelector({
-      programSelectorOpen: true,
-      setProgramSelectorOpen
-    });
-    let pageClick = wrapper.find(ReactPageClick);
-
-    // also check that the notify prop will close the selector
-    let notify = pageClick.props().notify;
-    notify();
-    assert(setProgramSelectorOpen.calledWith(false));
-  });
-
-  it("renders no ReactPageClick element if the program selector is not open", () => {
-    let wrapper = renderProgramSelector({
-      programSelectorOpen: false,
-    });
-    assert(wrapper.find(ReactPageClick).length === 0, "ReactPageClick should not be present");
-  });
-
   it("renders the currently selected enrollment first, then all other enrollments", () => {
     let wrapper = renderProgramSelector();
     assert.equal(wrapper.find(".selected-option").text(), `${selectedEnrollment.title} arrow_drop_down`);
@@ -102,18 +81,6 @@ describe('ProgramSelector', () => {
     assert.deepEqual(text, expectedEnrollments);
   });
 
-  for (let value of [true, false]) {
-    it(`sets the dropdown open value to ${!value}`, () => {
-      let setProgramSelectorOpen = sandbox.stub();
-      let wrapper = renderProgramSelector({
-        setProgramSelectorOpen,
-        programSelectorOpen: value
-      });
-      wrapper.find(".selected-option").simulate('click');
-      assert(setProgramSelectorOpen.calledWith(!value), `setProgramSelectorOpen not called with ${!value}`);
-    });
-  }
-
   it("shows the enrollment dialog when the 'Enroll in a new program' option is clicked", () => {
     let setEnrollDialogVisibility = sandbox.stub();
     let wrapper = renderProgramSelector({
@@ -125,17 +92,14 @@ describe('ProgramSelector', () => {
 
   it("switches to a new current enrollment when a new option is clicked", () => {
     let setCurrentProgramEnrollment = sandbox.stub();
-    let setProgramSelectorOpen = sandbox.stub();
 
     let wrapper = renderProgramSelector({
       setCurrentProgramEnrollment,
-      setProgramSelectorOpen,
     });
     let option = wrapper.find(".option").first();
     let newSelectedEnrollment = enrollments.find(enrollment => enrollment.title === option.text());
     option.simulate('click');
 
     assert(setCurrentProgramEnrollment.calledWith(newSelectedEnrollment));
-    assert(setProgramSelectorOpen.calledWith(false));
   });
 });

@@ -21,7 +21,6 @@ import {
   SET_USER_MENU_OPEN,
   SET_SEARCH_FILTER_VISIBILITY,
   SET_EMAIL_DIALOG_VISIBILITY,
-  SET_PROGRAM_SELECTOR_OPEN,
   SET_ENROLL_DIALOG_VISIBILITY,
   SET_ENROLL_SELECTED_PROGRAM,
 
@@ -46,7 +45,6 @@ import {
   setUserMenuOpen,
   setSearchFilterVisibility,
   setEmailDialogVisibility,
-  setProgramSelectorOpen,
   setEnrollDialogVisibility,
   setEnrollSelectedProgram,
 } from '../actions/ui';
@@ -333,20 +331,6 @@ describe('ui reducers', () => {
   });
 
   describe('Enrollment', () => {
-    describe('program selector', () => {
-      it('should have a false default value', () => {
-        assert.equal(store.getState().ui.programSelectorOpen, false);
-      });
-
-      it('should let you toggle the program selector visibility', () => {
-        return dispatchThen(setProgramSelectorOpen("value"), [
-          SET_PROGRAM_SELECTOR_OPEN
-        ]).then(state => {
-          assert.equal(state.programSelectorOpen, "value");
-        });
-      });
-    });
-
     describe('enrollment dialog visibility', () => {
       it('should have a false default value', () => {
         assert.equal(store.getState().ui.enrollDialogVisibility, false);

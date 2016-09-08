@@ -20,3 +20,10 @@ export type APIErrorInfo = {
   detail?: string,
   errorStatusCode?: number,
 };
+
+
+export type ReactSelectOption = {
+  label: string,
+  value: any,
+  disabled?: boolean,
+}

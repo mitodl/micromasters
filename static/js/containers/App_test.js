@@ -167,15 +167,5 @@ describe('App', () => {
         assert(stub.calledWith("value"));
       });
     });
-
-    it('setProgramSelectorOpen dispatches the value to the action with the same name', () => {
-      return renderComponent("/dashboard").then(([wrapper]) => {
-        let props = wrapper.find(Navbar).props();
-        let stub = helper.sandbox.stub(uiActions, 'setProgramSelectorOpen');
-        stub.returns({type: "fake"});
-        props.setProgramSelectorOpen("value");
-        assert(stub.calledWith("value"));
-      });
-    });
   });
 });
