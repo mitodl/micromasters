@@ -144,6 +144,9 @@ $header_font_color: white;
     border-right: 1px solid $program_selector_border;
     border-bottom: 1px solid $program_selector_border;
   }
+  .Select-placeholder {
+    font-weight: 500;
+  }
 }
 
 .site-menu {
