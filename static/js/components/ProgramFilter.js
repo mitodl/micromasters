@@ -5,6 +5,7 @@ import {
   FilteredQuery,
   TermQuery,
   SearchkitComponent,
+  FilterBasedAccessor,
 } from 'searchkit';
 import _ from 'lodash';
 
@@ -29,7 +30,7 @@ export default class ProgramFilter extends SearchkitComponent {
     const [prevProps] = args;
     if (!_.isEqual(prevProps.currentProgramEnrollment, this.props.currentProgramEnrollment)) {
       // (╯°□°)╯︵ ┻━┻
-      this.context.searchkit.performSearch();
+      this.context.searchkit.reloadSearch();
     }
   }
 

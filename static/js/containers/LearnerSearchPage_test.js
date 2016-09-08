@@ -58,25 +58,4 @@ describe('LearnerSearchPage', function () {
       assert.deepEqual(body.filter, undefined);
     });
   });
-
-  it("refreshes the search when the current enrollment is updated", () => {
-    return renderComponent('/learners').then(() => {
-      let searchCount = server.requests.length;
-
-      return helper.dispatchThen(
-        setCurrentProgramEnrollment(PROGRAM_ENROLLMENTS[1]),
-        [SET_CURRENT_PROGRAM_ENROLLMENT]
-      ).then(() => {
-        return new Promise(resolve => {
-          setTimeout(() => {
-            assert.equal(server.requests.length, searchCount + 1);
-            let lastRequest = server.requests[server.requests.length - 1];
-            let body = JSON.parse(lastRequest.requestBody);
-            assert.equal(body.filter.term['program.id'], PROGRAM_ENROLLMENTS[1].id);
-            resolve();
-          }, 300);
-        });
-      });
-    });
-  });
 });
