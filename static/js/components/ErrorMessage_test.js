@@ -240,5 +240,16 @@ describe("ErrorMessage", () => {
         });
       });
     });
+
+    describe('learners page', () => {
+      it('shows an error if there is no matching current program enrollment', () => {
+        helper.enrollmentsGetStub.returns(Promise.resolve([]));
+
+        return renderComponent("/learners").then(([wrapper]) => {
+          let message = wrapper.find('.page-content').text();
+          assert(message.includes("Additional info: No program enrollment is available."));
+        });
+      });
+    });
   });
 });

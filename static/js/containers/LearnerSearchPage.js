@@ -10,6 +10,7 @@ import _ from 'lodash';
 import type { Dispatch } from 'redux';
 import R from 'ramda';
 
+import ErrorMessage from '../components/ErrorMessage';
 import LearnerSearch from '../components/LearnerSearch';
 import { setSearchFilterVisibility, setEmailDialogVisibility } from '../actions/ui';
 import {
@@ -99,6 +100,10 @@ class LearnerSearchPage extends React.Component {
       currentProgramEnrollment,
       email
     } = this.props;
+
+    if (_.isNil(currentProgramEnrollment)) {
+      return <ErrorMessage errorInfo={{user_message: "No program enrollment is available."}} />;
+    }
 
     return (
       <div>
