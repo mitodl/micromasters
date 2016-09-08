@@ -118,8 +118,16 @@
         background-color: $histogramgrey;
       }
 
-      .rc-slider-step {
+      .sk-range-histogram__bar {
+        background-color: $mm-brand-bg;
+      }
+
+      .is-out-of-bounds {
         background-color: $medgrey;
+      }
+
+      .rc-slider-step {
+        background-color: #d0d0d0;
       }
 
       .rc-slider-handle {
