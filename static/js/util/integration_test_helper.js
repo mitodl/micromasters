@@ -3,7 +3,6 @@ import { mount } from 'enzyme';
 import configureTestStore from 'redux-asserts';
 import sinon from 'sinon';
 import { createMemoryHistory } from 'react-router';
-import * as history from 'history';
 
 import * as api from '../util/api';
 import {

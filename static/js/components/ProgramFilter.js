@@ -1,11 +1,8 @@
 // @flow
 import {
   AnonymousAccessor,
-  BoolMust,
-  FilteredQuery,
   TermQuery,
   SearchkitComponent,
-  FilterBasedAccessor,
 } from 'searchkit';
 import _ from 'lodash';
 

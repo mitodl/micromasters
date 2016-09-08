@@ -2,18 +2,12 @@
 // import TestUtils from 'react-addons-test-utils';
 import { assert } from 'chai';
 import _ from 'lodash';
-import { SearchkitManager } from 'searchkit';
 
 import IntegrationTestHelper from '../util/integration_test_helper';
 import {
   PROGRAM_ENROLLMENTS,
   ELASTICSEARCH_RESPONSE,
 } from '../constants';
-import {
-  setCurrentProgramEnrollment,
-
-  SET_CURRENT_PROGRAM_ENROLLMENT,
-} from '../actions/enrollments';
 
 describe('LearnerSearchPage', function () {
   let renderComponent, helper, server;
