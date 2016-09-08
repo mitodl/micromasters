@@ -9,28 +9,27 @@ import {
 import _ from 'lodash';
 
 export default class ProgramFilter extends SearchkitComponent {
+  accessor = new AnonymousAccessor(query => {
+    const { currentProgramEnrollment } = this.props;
+    if (currentProgramEnrollment === null) {
+      return query;
+    }
+    return query.addFilter("program.id", TermQuery("program.id", currentProgramEnrollment.id));
+  });
+
+
   defineAccessor() {
-    return new AnonymousAccessor(query => {
-      const { currentProgramEnrollment } = this.props;
-      if (currentProgramEnrollment === null) {
-        return query;
-      }
-      return query.addQuery(FilteredQuery({
-        filter: BoolMust([
-          TermQuery("program.id", currentProgramEnrollment.id)
-        ])
-      }));
-    });
+    return this.accessor;
   }
 
   componentDidUpdate(...args) {
-    if (super.componentWillUpdate) {
-      super.componentWillUpdate(...args);
+    if (super.componentDidUpdate) {
+      super.componentDidUpdate(...args);
     }
     const [prevProps] = args;
     if (!_.isEqual(prevProps.currentProgramEnrollment, this.props.currentProgramEnrollment)) {
-      // searchkit  (╯°□°)╯︵ ┻━┻
-      this.context.searchkit.reloadSearch();
+      // (╯°□°)╯︵ ┻━┻
+      this.context.searchkit.performSearch();
     }
   }
 
