@@ -1,24 +1,23 @@
 .mdl-card.user-chip {
   min-height: 0;
-  width: 315px;
+  width: 345px;
   position: absolute;
   display: none;
-  //flex-direction: row;
-  //justify-content: space-between;
-  //align-items: center;
   top: 10%;
   left: 200px;
-  padding: 15px;
+  padding: 12px 24px;
+  box-shadow: 2px 3px 15px 0px rgba(0, 0, 0, 0.27);
+  border-radius: 0;
 
   .profile-info {
-    margin-left: 25px;
+    float: left;
     display: flex;
     flex-direction: column;
 
     .name {
       font-size: 19px;
-      font-weight: 400;
-      margin-bottom: 5px;
+      font-weight: 500;
+      margin: 8px 0 5px;
     }
 
     a, .employer {
@@ -28,7 +27,7 @@
     .employer {
       font-weight: 400;
       color: $font-gray;
-      margin: 0 0 5px 2px;
+      margin: 0 0 15px 2px;
     }
 
     a {
@@ -53,12 +52,14 @@
   }
 
   .avatar {
-    width: 43px;
-    float: left;
-    margin-right: 15px;
+    width: 93px;
+    float: right;
 
     img {
       border-radius: 50px;
+      width: 100%;
+      height: auto !important;
+      border: 1px solid rgba(0, 0, 0, 0.15);
       }
   }
 

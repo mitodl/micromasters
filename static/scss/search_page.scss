@@ -249,7 +249,7 @@
     }
 
     .learner-result {
-      padding: 13px 0;
+      padding: 11px 0;
       font-size: 14px;
       position: relative;
 
@@ -259,7 +259,7 @@
 
       .learner-name {
         font-weight: 500;
-        font-size: 16px;
+        font-size: 15px;
       }
 
       .learner-location {
@@ -278,13 +278,13 @@
         justify-content: center;
 
         .percent {
-          font-size: 22px;
+          font-size: 19px;
           font-weight: 500;
           margin-bottom: 4px;
         }
 
         .hint {
-          font-size: 14px;
+          font-size: 12px;
           font-weight: 300;
           color: $font-gray;
         }
