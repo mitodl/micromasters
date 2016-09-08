@@ -46,7 +46,7 @@ class Navbar extends React.Component {
             <div className="micromasters-title">
               <img src="/static/images/mit-logo-transparent.svg" alt="MIT" />
               <span className="mdl-layout-title">
-                MicroMasters Portal
+                MicroMasters
               </span>
             </div>
             { this.userMenu() }

@@ -2,12 +2,14 @@
 
 //font colors
 $font-black: rgba(0,0,0,.87);
-$font-gray: rgba(0,0,0,.5);
+$font-gray: #909090;
 $font-gray-disabled: rgba(0,0,0,.2);
 $link-text: #0074e1;
 
 //background colors
-$page-background: #e1e1e1;
+$mm-brand-bg: #30bb5c;  // alt #2188e3 b13843 16b379 a41e34
+$mm-brand-bg-dark: #30bb5c;  // alt #3884c7 b5424c 36af82 b53f53
+$page-background: #efefef; 
 $bg-light-green: #ccf0e5;
 $bg-light-blue: #D2E4F9;
 $bg-light-gray: #fbfbfb;
@@ -19,20 +21,19 @@ $medgrey: #a1a1a1;
 $lightgrey: #eee;
 $fg-grey: #F5F5F5;
 $histogramgrey: #C6C6C6;
-$mm-brand-bg: #30BB5C;
 $mm-brand-fg: #2BA853;
 $mm-brand-blue: #1B7AE3;
 $help-icon-blue: #1976e5;
 $dashboard-button-teal: #30bcd6;
-$border-color: #dcdcdc;
+$border-color: #e4e4e4;
 $search-filter: #D2E4F9;
 $validation-red: #f44336;
 
 // other
 $block-padding: 20px;
 $page-padding: 40px;
-$progress-widget-bg-stroke: #39C268;
-$progress-button-background: #8ee0b0;
+$progress-widget-bg-stroke: rgba(255,255,255,0.1);
+$progress-button-background: #ffffff;
 
 @font-face {
   font-family: 'Roboto';

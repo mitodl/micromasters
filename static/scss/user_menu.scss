@@ -1,16 +1,18 @@
 .user-menu {
   border-radius: 50px;
-  background-color: rgba(0,0,0,.15);;
+  background-color: rgba(0,0,0,.06);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 40px;
+  height: 35px;
   position: relative;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 300;
 
   img {
-    height: 40px;
-    border-radius: 50px;
+    height: 35px;
+    border-radius: 18px;
   }
 
   .user-menu-dropdown {
@@ -22,7 +24,7 @@
     flex-direction: column;
     background-color: rgba(0,0,0,.73);
     position: absolute;
-    width: 80%;
+    width: 100%;
     top: 100%;
     left: 10%;
     border-radius: 2px;

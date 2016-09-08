@@ -7,7 +7,7 @@
 }
 
 .mdl-layout__tab {
-  font-weight: 400;
+  font-weight: 300;
 }
 
 .mdl-layout__tab-bar-container * {
@@ -16,6 +16,7 @@
 
 .micromasters-nav {
   box-shadow: none !important;
+  height: 112px;
 
   a.micromasters-title {
     text-decoration: none;
@@ -27,6 +28,11 @@
     flex-direction: row;
     align-items: center;
 
+    span.mdl-layout-title {
+      font-size: 18px;
+      font-weight: 200;
+    }
+
     img {
       height: 30px;
       margin-right: 25px;
@@ -36,7 +42,6 @@
   .micromasters-header {
     justify-content: space-between;
   }
-  height: 112px;
 
   a.mdl-layout__tab.is-active {
     color: #fff;
@@ -49,6 +54,7 @@
     border-right-color: whte;
     border-top-color: white;
     outline-color: white;
+    text-decoration: none;
     a:hover, a:focus {
       text-decoration: none;
     }

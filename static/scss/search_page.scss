@@ -34,7 +34,7 @@
   .search-sidebar {
     display: flex;
     flex-direction: column;
-    background-color: $bg-light-gray;
+    background-color: none;
     
     .mdl-card {
       padding: 10px;
@@ -215,9 +215,8 @@
     .result-info > span {
       white-space: nowrap;
       font-size: 15px;
-      font-weight: 400;
+      font-weight: 300;
       padding-left: 15px;
-      font-style: italic; 
       color: $font-gray;
     }
 
@@ -265,7 +264,8 @@
 
       .learner-location {
         color: $font-gray;
-        ont-size: 14px;
+        font-size: 14px;
+        font-weight: 300;
       }
 
       .learner-grade span {
@@ -279,19 +279,19 @@
 
         .percent {
           font-size: 22px;
-          font-weight: 600;
+          font-weight: 500;
           margin-bottom: 4px;
         }
 
         .hint {
           font-size: 14px;
-          font-weight: 400;
+          font-weight: 300;
           color: $font-gray;
         }
       }
 
       .mdl-cell .card-image {
-        height: 35px;
+        height: 43px;
       }
     }
   }

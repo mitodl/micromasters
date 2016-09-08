@@ -17,13 +17,14 @@
 }
 
 .progress-widget {
-  background-color: $mm-brand-bg !important;
+  background-color: $mm-brand-bg-dark !important;
   color: white;
   display: flex;
   align-items: center;
   flex-direction: column;
   align-content: space-between;
   font-size: 16pt;
+  padding: 20px 24px 44px;
 
   .progress-title {
     padding: 0;

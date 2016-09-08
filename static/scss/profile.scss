@@ -1,16 +1,14 @@
 .profile-form {
   min-height: 0 !important;
-  width: 94% !important;
   font-weight: 400 !important;
   font-size: 16px !important;
-  margin: 12px auto 15px;
-  padding: 15px 25px;
 
   .card-image {
     height: auto;
-    width: 125px;
     border-radius: 50%;
     margin-left: 15px;
+    width: 112px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
   }
 
   i.material-icons {
@@ -58,15 +56,15 @@
     padding: 0;
 
     .title {
-      font-weight: 600;
-      margin-top: 15px;
+      font-weight: 500;
+      margin-top: 0;
     }
 
     .profile-card-header {
       justify-content: space-between;
 
       .title, span {
-        font-weight: 600;
+        font-weight: 500;
         font-size: 18px;
       }
     }
@@ -125,13 +123,13 @@
 
       &.user-info {
         width: 250% !important;
-        margin-left: 15px;
+        margin-left: 23px;
       }
 
       .profile-row-name {
         font-size: 16px;
-        color: #404040;
-        padding: 12px;
+        color: $font-black;
+        padding: 12px 9px;
 
         .school-type {
           font-weight: 600;
@@ -146,7 +144,7 @@
       .profile-row-date-range {
         font-size: 16px;
         font-weight: 300;
-        color: #b7b7b7;
+        color: $font-gray;
         float: left;
         position: relative;
         margin-top: 7px;

@@ -87,23 +87,27 @@ c.validation-wrapper {
 
     .dashboard-user-card-text {
       width: 100%;
+      padding: 10px 0 0 28px;
 
       .dashboard-user-card-text-id, .dashboard-user-card-text-program {
         display: block;
       }
 
       .dashboard-user-card-text-id {
-        padding-bottom: 10px;
+        padding-bottom: 13px;
       }
 
       .mdl-card__supporting-text {
-        padding: 0 0 16px 16px;
-        color: $medgrey;
+        padding: 0;
+        color: $font-gray;
+        font-size: 15px;
+        font-weight: 400;
       }
 
       .mdl-card__title {
         padding-bottom: 0 !important;
-        padding: 10px 0 0 16px;
+        padding: 0;
+        margin: 0 0 12px;
 
         .mdl-card__title-text {
           font-size: 22px;

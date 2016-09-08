@@ -35,8 +35,12 @@
 .mm-minor-action {
   color: $link-text;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
+}
+
+.disabled {
+    opacity: 0.3;
 }
 
 .dialog-button {

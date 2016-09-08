@@ -113,7 +113,7 @@ export default class LearnerSearch extends SearchkitComponent {
         />
         <Grid className="search-grid">
           <Cell col={3} className="search-sidebar">
-            <Card className="fullwidth">
+            <Card className="fullwidth" shadow={1}>
               <FilterVisibilityToggle
                 {...this.props}
                 filterName="birth-location"
@@ -152,7 +152,7 @@ export default class LearnerSearch extends SearchkitComponent {
             </Card>
           </Cell>
           <Cell col={9}>
-            <Card className="fullwidth">
+            <Card className="fullwidth" shadow={1}>
               <Grid className="search-header">
                 <Cell col={6} className="result-info">
                   <button

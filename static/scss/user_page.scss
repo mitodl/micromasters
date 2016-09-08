@@ -3,15 +3,15 @@
     position: relative;
 
     span.img{
-      width: 38px;
-      height: 38px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       background-color: rgba(0, 0, 0, 0.3);
       position: absolute;
       top: 0;
-      right: 17px;
+      right: -2px;
       text-align: center;
-      line-height: 50px;
+      line-height: 46px;
 
       img{
         width: 22px;
@@ -20,15 +20,16 @@
 
       i.material-icons {
         color: white;
+        font-size: 22px;
       }
     }
   }
 
   .profile-title {
     margin-top: 19px;
-    font-size: 25px;
-    color: black;
-    font-weight: 500;
+    font-size: 23px;
+    color: $font-black;
+    font-weight: 400;
   }
 
   .profile-company-name {
@@ -39,7 +40,7 @@
 
   .profile-email {
     color: #0E52CE;
-    font-size: 18px;
+    font-size: 17px;
     margin-left: -5px;
   }
 

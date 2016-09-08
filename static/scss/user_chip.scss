@@ -1,14 +1,14 @@
 .mdl-card.user-chip {
   min-height: 0;
-  height: 120px;
-  width: 330px;
+  width: 315px;
   position: absolute;
   display: none;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  top: 50%;
+  //flex-direction: row;
+  //justify-content: space-between;
+  //align-items: center;
+  top: 10%;
   left: 200px;
+  padding: 15px;
 
   .profile-info {
     margin-left: 25px;
@@ -16,41 +16,56 @@
     flex-direction: column;
 
     .name {
-      font-size: 18px;
-      font-weight: 600;
+      font-size: 19px;
+      font-weight: 400;
+      margin-bottom: 5px;
     }
 
     a, .employer {
-      font-size: 14px;
+      font-size: 15px;
     }
 
     .employer {
-      font-weight: 300;
+      font-weight: 400;
+      color: $font-gray;
+      margin: 0 0 5px 2px;
     }
 
     a {
-      display: flex;
-      align-items: center;
+      margin-left: 2px;
     }
 
     a:hover {
-      text-decoration: none;
+      text-decoration: none !important;
+      color: #0074e1;
     }
 
     a:hover > span {
       text-decoration: underline;
     }
+
+    a.mm-minor-action {
+      i {
+        margin-right: 6px;
+        font-size: 28px;
+      }
+    }
   }
 
-  img {
-    height: 100px;
-    border-radius: 50px;
-    margin-right: 25px;
+  .avatar {
+    width: 43px;
+    float: left;
+    margin-right: 15px;
+
+    img {
+      border-radius: 50px;
+      }
   }
+
 }
 
 .learner-result > .learner-name:hover {
   .mdl-card.user-chip {
-    display: flex;
+    display: block;
   }
 }
