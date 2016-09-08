@@ -23,14 +23,6 @@ export default class ProgramSelector extends React.Component {
     setProgramSelectorOpen:      (open: boolean) => void,
   };
 
-  handleProgramChange = (event: any): void => {
-    const { enrollments, setCurrentProgramEnrollment } = this.props;
-    const value = parseInt(event.target.value);
-
-    const enrollment = enrollments.programEnrollments.find(enrollment => enrollment.id === value);
-    setCurrentProgramEnrollment(enrollment);
-  };
-
   handleOpenSelect = () => {
     const { programSelectorOpen, setProgramSelectorOpen } = this.props;
     setProgramSelectorOpen(!programSelectorOpen);
