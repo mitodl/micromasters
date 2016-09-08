@@ -4,5 +4,8 @@ import 'style!css!react-mdl/extra/material.css';
 // react-virtualized requirement
 import 'style!css!react-virtualized/styles.css';
 
+// react-select styles
+import 'style!css!react-select/dist/react-select.css';
+
 // This should come last to override other styles
 import '../scss/layout.scss';

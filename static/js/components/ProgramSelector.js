@@ -2,7 +2,6 @@
 import React from 'react';
 import _ from 'lodash';
 import Select from 'react-select';
-import 'style!css!react-select/dist/react-select.css';
 
 import type { DashboardState } from '../flow/dashboardTypes';
 import type {
