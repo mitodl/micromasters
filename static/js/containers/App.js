@@ -1,12 +1,15 @@
 // @flow
 /* global SETTINGS: false */
 import React from 'react';
+import Icon from 'react-mdl/lib/Icon';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
+import _ from 'lodash';
 
 import ErrorMessage from '../components/ErrorMessage';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import Toast from '../components/Toast';
 import {
   FETCH_SUCCESS,
   FETCH_FAILURE,
@@ -20,12 +23,15 @@ import {
   updateProfileValidation,
 } from '../actions/profile';
 import {
+  addProgramEnrollment,
   clearEnrollments,
   fetchProgramEnrollments,
   setCurrentProgramEnrollment,
 } from '../actions/enrollments';
 import {
+  setEnrollDialogError,
   setEnrollDialogVisibility,
+  setEnrollMessage,
   setEnrollSelectedProgram,
 } from '../actions/ui';
 import { clearUI, setProfileStep } from '../actions/ui';
@@ -135,6 +141,16 @@ class App extends React.Component {
     }
   }
 
+  addProgramEnrollment = (programId: number): void => {
+    const { dispatch } = this.props;
+    dispatch(addProgramEnrollment(programId));
+  };
+
+  setEnrollDialogError = (error: string): void => {
+    const { dispatch } = this.props;
+    dispatch(setEnrollDialogError(error));
+  };
+
   setEnrollDialogVisibility = (visibility: boolean): void => {
     const { dispatch } = this.props;
     dispatch(setEnrollDialogVisibility(visibility));
@@ -150,12 +166,19 @@ class App extends React.Component {
     dispatch(setCurrentProgramEnrollment(enrollment));
   };
 
+  clearMessage = (): void => {
+    const { dispatch } = this.props;
+    dispatch(setEnrollMessage(null));
+  };
+
   render() {
     const {
       currentProgramEnrollment,
       enrollments,
       ui: {
+        enrollDialogError,
         enrollDialogVisibility,
+        enrollMessage,
         enrollSelectedProgram,
       },
       location: { pathname },
@@ -171,18 +194,43 @@ class App extends React.Component {
       children = <ErrorMessage errorInfo={enrollments.getErrorInfo} />;
       empty = true;
     }
+
+    let open = false;
+    let message;
+    if (!_.isNil(enrollMessage)) {
+      open = true;
+
+      let icon;
+      if (enrollments.postStatus === FETCH_FAILURE) {
+        icon = <Icon name="error" key="icon "/>;
+      } else if (enrollments.postStatus === FETCH_SUCCESS) {
+        icon = <Icon name="done" key="icon" />;
+      }
+      message = [
+        icon,
+        " ",
+        enrollMessage,
+      ];
+    }
+
     return <div id="app">
       <Navbar
+        addProgramEnrollment={this.addProgramEnrollment}
         currentProgramEnrollment={currentProgramEnrollment}
         dashboard={dashboard}
         empty={empty}
+        enrollDialogError={enrollDialogError}
         enrollDialogVisibility={enrollDialogVisibility}
         enrollSelectedProgram={enrollSelectedProgram}
         enrollments={enrollments}
         setCurrentProgramEnrollment={this.setCurrentProgramEnrollment}
+        setEnrollDialogError={this.setEnrollDialogError}
         setEnrollDialogVisibility={this.setEnrollDialogVisibility}
         setEnrollSelectedProgram={this.setEnrollSelectedProgram}
       />
+      <Toast onTimeout={this.clearMessage} open={open}>
+        {message}
+      </Toast>
       <div className="page-content">
         { children }
       </div>

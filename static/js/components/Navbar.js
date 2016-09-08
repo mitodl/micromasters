@@ -13,14 +13,17 @@ import UserMenu from '../containers/UserMenu';
 
 export default class Navbar extends React.Component {
   props: {
+    addProgramEnrollment:        (programId: number) => void,
     empty:                       boolean,
     children?:                   React$Element<*>[],
     currentProgramEnrollment:    ProgramEnrollment,
     dashboard:                   DashboardState,
     enrollments:                 ProgramEnrollmentsState,
+    enrollDialogError:           ?string,
     enrollDialogVisibility:      boolean,
     enrollSelectedProgram:       ?number,
     setCurrentProgramEnrollment: (enrollment: ProgramEnrollment) => void,
+    setEnrollDialogError:        (error: string) => void,
     setEnrollDialogVisibility:   (open: boolean) => void,
     setEnrollSelectedProgram:    (programId: number) => void,
   };
@@ -32,12 +35,15 @@ export default class Navbar extends React.Component {
 
   render () {
     const {
+      addProgramEnrollment,
       currentProgramEnrollment,
       dashboard,
+      enrollDialogError,
       enrollDialogVisibility,
       enrollSelectedProgram,
       enrollments,
       setCurrentProgramEnrollment,
+      setEnrollDialogError,
       setEnrollDialogVisibility,
       setEnrollSelectedProgram,
     } = this.props;
@@ -56,12 +62,15 @@ export default class Navbar extends React.Component {
                 </Link>
               </span>
               <ProgramSelector
+                addProgramEnrollment={addProgramEnrollment}
                 currentProgramEnrollment={currentProgramEnrollment}
                 dashboard={dashboard}
+                enrollDialogError={enrollDialogError}
                 enrollDialogVisibility={enrollDialogVisibility}
                 enrollSelectedProgram={enrollSelectedProgram}
                 enrollments={enrollments}
                 setCurrentProgramEnrollment={setCurrentProgramEnrollment}
+                setEnrollDialogError={setEnrollDialogError}
                 setEnrollDialogVisibility={setEnrollDialogVisibility}
                 setEnrollSelectedProgram={setEnrollSelectedProgram}
               />

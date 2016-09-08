@@ -66,6 +66,8 @@ export const currentProgramEnrollment = (state: any = null, action: Action) => {
       state = action.payload[0];
     }
     return state;
+  case RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS:
+    return action.payload;
   default:
     return state;
   }

@@ -462,6 +462,31 @@ c.validation-wrapper {
   }
 }
 
+.toast {
+  display: none;
+  align-items: center;
+  flex-direction: row;
+  position: absolute;
+  background-color: $black-transparent;
+  color: #c5c5c5;
+  margin: 0 auto;
+  width: 500px;
+  padding: 20px;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  font-size: 16px;
+
+  &.open {
+    display: flex;
+  }
+
+  .material-icons {
+    padding: 10px;
+    font-size: 40px;
+  }
+}
+
 // IE: make x's disappear for input items
 input::-ms-clear {
   display: none;

@@ -19,7 +19,9 @@ import {
   SET_USER_MENU_OPEN,
   SET_SEARCH_FILTER_VISIBILITY,
   SET_EMAIL_DIALOG_VISIBILITY,
+  SET_ENROLL_DIALOG_ERROR,
   SET_ENROLL_DIALOG_VISIBILITY,
+  SET_ENROLL_MESSAGE,
   SET_ENROLL_SELECTED_PROGRAM,
 
   clearUI,
@@ -41,7 +43,9 @@ import {
   setUserMenuOpen,
   setSearchFilterVisibility,
   setEmailDialogVisibility,
+  setEnrollDialogError,
   setEnrollDialogVisibility,
+  setEnrollMessage,
   setEnrollSelectedProgram,
 } from '../actions/ui';
 import { INITIAL_UI_STATE } from '../reducers/ui';
@@ -266,6 +270,34 @@ describe('ui reducers', () => {
   });
 
   describe('Enrollment', () => {
+    describe('enrollment dialog error', () => {
+      it('should have a null default value', () => {
+        assert.equal(store.getState().ui.enrollDialogError, null);
+      });
+
+      it('should let you set the dialog error', () => {
+        return dispatchThen(setEnrollDialogError("value"), [
+          SET_ENROLL_DIALOG_ERROR
+        ]).then(state => {
+          assert.equal(state.enrollDialogError, "value");
+        });
+      });
+    });
+
+    describe('enrollment success/failure message', () => {
+      it('should have a null default value', () => {
+        assert.equal(store.getState().ui.enrollMessage, null);
+      });
+
+      it('should let you toggle the program selector visibility', () => {
+        return dispatchThen(setEnrollMessage("value"), [
+          SET_ENROLL_DIALOG_VISIBILITY
+        ]).then(state => {
+          assert.equal(state.enrollMessage, "value");
+        });
+      });
+    });
+
     describe('enrollment dialog visibility', () => {
       it('should have a false default value', () => {
         assert.equal(store.getState().ui.enrollDialogVisibility, false);

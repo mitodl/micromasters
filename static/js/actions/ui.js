@@ -74,8 +74,14 @@ export const setSearchFilterVisibility = createAction(SET_SEARCH_FILTER_VISIBILI
 export const SET_EMAIL_DIALOG_VISIBILITY = 'SET_EMAIL_DIALOG_VISIBILITY';
 export const setEmailDialogVisibility = createAction(SET_EMAIL_DIALOG_VISIBILITY);
 
+export const SET_ENROLL_DIALOG_ERROR = 'SET_ENROLL_DIALOG_ERROR';
+export const setEnrollDialogError = createAction(SET_ENROLL_DIALOG_ERROR);
+
 export const SET_ENROLL_DIALOG_VISIBILITY = 'SET_ENROLL_DIALOG_VISIBILITY';
 export const setEnrollDialogVisibility = createAction(SET_ENROLL_DIALOG_VISIBILITY);
+
+export const SET_ENROLL_MESSAGE = 'SET_ENROLL_MESSAGE';
+export const setEnrollMessage = createAction(SET_ENROLL_MESSAGE);
 
 export const SET_ENROLL_SELECTED_PROGRAM = 'SET_ENROLL_SELECTED_PROGRAM';
 export const setEnrollSelectedProgram = createAction(SET_ENROLL_SELECTED_PROGRAM);

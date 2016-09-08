@@ -2,6 +2,7 @@
 import type { Dispatch } from 'redux';
 import { createAction } from 'redux-actions';
 
+import { setEnrollMessage } from '../actions/ui';
 import type { Dispatcher } from '../flow/reduxTypes';
 import type {
   ProgramEnrollment,
@@ -44,9 +45,13 @@ export const addProgramEnrollment = (programId: number): Dispatcher<ProgramEnrol
   return (dispatch: Dispatch) => {
     dispatch(requestAddProgramEnrollment(programId));
     return api.addProgramEnrollment(programId).
-      then(enrollment => dispatch(receiveAddProgramEnrollmentSuccess(enrollment))).
+      then(enrollment => {
+        dispatch(receiveAddProgramEnrollmentSuccess(enrollment));
+        dispatch(setEnrollMessage(`You are now enrolled in the ${enrollment.title} MicroMasters`));
+      }).
       catch(error => {
         dispatch(receiveAddProgramEnrollmentFailure(error));
+        dispatch(setEnrollMessage(`There was an error during enrollment`));
         // the exception is assumed handled and will not be propagated
       });
   };
