@@ -97,12 +97,18 @@ describe('ProgramSelector', () => {
 
   it("shows the enrollment dialog when the 'Enroll in a new program' option is clicked", () => {
     let setEnrollDialogVisibility = sandbox.stub();
+    let setEnrollDialogError = sandbox.stub();
+    let setEnrollSelectedProgram = sandbox.stub();
     let wrapper = renderProgramSelector({
+      setEnrollDialogError,
       setEnrollDialogVisibility,
+      setEnrollSelectedProgram,
     });
     let onChange = wrapper.find(Select).props()['onChange'];
     onChange({value: 'enroll'});
-    assert(setEnrollDialogVisibility.calledWith(true), 'setEnrollDialogVisibility not called with true');
+    assert(setEnrollDialogVisibility.calledWith(true));
+    assert(setEnrollDialogError.calledWith(null));
+    assert(setEnrollSelectedProgram.calledWith(null));
   });
 
   it("switches to a new current enrollment when a new option is clicked", () => {

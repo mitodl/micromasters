@@ -6,6 +6,9 @@ import {
   FETCH_SUCCESS,
   FETCH_FAILURE,
 } from '../actions';
+import {
+  SET_ENROLL_MESSAGE,
+} from '../actions/ui';
 import { PROGRAM_ENROLLMENTS } from '../constants';
 import {
   addProgramEnrollment,
@@ -92,14 +95,20 @@ describe('enrollments', () => {
       addProgramEnrollmentStub.returns(Promise.resolve(newEnrollment));
       store.dispatch(receiveGetProgramEnrollmentsSuccess(PROGRAM_ENROLLMENTS));
 
-      return dispatchThen(
-        addProgramEnrollment(newEnrollment.id),
-        [REQUEST_ADD_PROGRAM_ENROLLMENT, RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS]
-      ).then(enrollmentsState => {
+      return dispatchThen(addProgramEnrollment(newEnrollment.id), [
+        REQUEST_ADD_PROGRAM_ENROLLMENT,
+        RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
+        SET_ENROLL_MESSAGE,
+      ]).then(enrollmentsState => {
         assert.equal(enrollmentsState.postStatus, FETCH_SUCCESS);
         assert.deepEqual(enrollmentsState.programEnrollments, PROGRAM_ENROLLMENTS.concat(newEnrollment));
         assert.equal(addProgramEnrollmentStub.callCount, 1);
         assert.deepEqual(addProgramEnrollmentStub.args[0], [newEnrollment.id]);
+
+        assert.equal(
+          store.getState().ui.enrollMessage,
+          `You are now enrolled in the ${newEnrollment.title} MicroMasters`
+        );
       });
     });
 
@@ -107,15 +116,18 @@ describe('enrollments', () => {
       addProgramEnrollmentStub.returns(Promise.reject("addError"));
       store.dispatch(receiveGetProgramEnrollmentsSuccess(PROGRAM_ENROLLMENTS));
 
-      return dispatchThen(
-        addProgramEnrollment(newEnrollment.id),
-        [REQUEST_ADD_PROGRAM_ENROLLMENT, RECEIVE_ADD_PROGRAM_ENROLLMENT_FAILURE]
-      ).then(enrollmentsState => {
+      return dispatchThen(addProgramEnrollment(newEnrollment.id), [
+        REQUEST_ADD_PROGRAM_ENROLLMENT,
+        RECEIVE_ADD_PROGRAM_ENROLLMENT_FAILURE,
+        SET_ENROLL_MESSAGE,
+      ]).then(enrollmentsState => {
         assert.equal(enrollmentsState.postStatus, FETCH_FAILURE);
         assert.equal(enrollmentsState.postErrorInfo, "addError");
         assert.deepEqual(enrollmentsState.programEnrollments, PROGRAM_ENROLLMENTS);
         assert.equal(addProgramEnrollmentStub.callCount, 1);
         assert.deepEqual(addProgramEnrollmentStub.args[0], [newEnrollment.id]);
+
+        assert.equal(store.getState().ui.enrollMessage, "There was an error during enrollment");
       });
     });
 

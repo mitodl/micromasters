@@ -305,7 +305,7 @@ describe('ui reducers', () => {
 
       it('should let you toggle the program selector visibility', () => {
         return dispatchThen(setEnrollMessage("value"), [
-          SET_ENROLL_DIALOG_VISIBILITY
+          SET_ENROLL_MESSAGE
         ]).then(state => {
           assert.equal(state.enrollMessage, "value");
         });
