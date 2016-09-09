@@ -38,36 +38,50 @@ export default class ProgramSelector extends React.Component {
     }
   };
 
-  render() {
-    let {
+  makeOptions = () => {
+    const {
       currentProgramEnrollment,
       enrollments: { programEnrollments },
       dashboard: { programs },
     } = this.props;
+
     let currentId;
     if (currentProgramEnrollment !== null) {
       currentId = currentProgramEnrollment.id;
     }
 
-    programEnrollments = _.sortBy(programEnrollments, 'title');
-    if (programEnrollments.length === 0) {
+    const sortedProgramEnrollments = _.sortBy(programEnrollments, 'title');
+    if (sortedProgramEnrollments.length === 0) {
       return <div className="program-selector" />;
     }
 
-    let selected = programEnrollments.find(enrollment => enrollment.id === currentId);
-    let unselected = programEnrollments.filter(enrollment => enrollment.id !== currentId);
+    let unselected = sortedProgramEnrollments.filter(enrollment => enrollment.id !== currentId);
     let options = unselected.map(enrollment => ({
       value: enrollment.id,
       label: enrollment.title,
     }));
 
-    let enrollmentLookup = new Map(programEnrollments.map(enrollment => [enrollment.id, null]));
+    let enrollmentLookup = new Map(sortedProgramEnrollments.map(enrollment => [enrollment.id, null]));
     let unenrolledPrograms = programs.filter(program => !enrollmentLookup.has(program.id));
     unenrolledPrograms = _.sortBy(unenrolledPrograms, 'title');
 
     if (unenrolledPrograms.length > 0) {
       options.push({label: "Enroll in a new program", value: ENROLL_SENTINEL});
     }
+  };
+
+  render() {
+    let {
+      enrollments: { programEnrollments },
+      currentProgramEnrollment,
+    } = this.props;
+    let currentId;
+    if (currentProgramEnrollment !== null) {
+      currentId = currentProgramEnrollment.id;
+    }
+
+    let selected = programEnrollments.find(enrollment => enrollment.id === currentId);
+    let options = this.makeOptions();
 
     return <div className="program-selector">
       <Select
