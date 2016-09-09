@@ -3,7 +3,11 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import moment from 'moment';
 import { assert } from 'chai';
-import type { Course, Program } from '../../flow/programTypes';
+import type {
+  Course,
+  CourseRun,
+  Program
+} from '../../flow/programTypes';
 
 import CourseDescription from './CourseDescription';
 import {
@@ -11,7 +15,6 @@ import {
   DASHBOARD_FORMAT,
   STATUS_PASSED,
   STATUS_NOT_PASSED,
-  STATUS_OFFERED_NOT_ENROLLED,
   STATUS_ENROLLED_NOT_VERIFIED,
   STATUS_VERIFIED_NOT_COMPLETED,
   STATUS_NOT_OFFERED,
@@ -31,80 +34,58 @@ export function findCourse(courseSelector: (course: Course, program: Program) =>
 }
 
 describe('CourseDescription', () => {
-  const now = moment();
+  const statuses = [
+    STATUS_PASSED,
+    STATUS_NOT_OFFERED,
+    STATUS_VERIFIED_NOT_COMPLETED,
+    STATUS_ENROLLED_NOT_VERIFIED
+  ];
 
   it('shows the course title', () => {
     for (let status of ALL_COURSE_STATUSES) {
       let course = findCourse(course => course.status === status);
-      const wrapper = shallow(<CourseDescription course={course} now={now}/>);
+      const wrapper = shallow(<CourseDescription course={course}/>);
       assert(course.title.length > 0);
       assert.equal(wrapper.find(".course-description-title").text(), course.title);
     }
   });
 
-  it('shows (enrolled) only for enrolled courses', () => {
-    for (let status of ALL_COURSE_STATUSES) {
-      let enrolledCourse = findCourse(course => course.status === status);
-      const wrapper = shallow(<CourseDescription course={enrolledCourse} now={now} />);
-      let text = wrapper.find(".course-description-enrolled").text();
-      if (status === STATUS_ENROLLED_NOT_VERIFIED) {
-        assert.equal(text, "(enrolled)");
-      } else {
-        assert.equal(text, "");
+  for (let status of statuses) {
+    it(`does show date with status ${status}`, () => {
+      let course = findCourse(course => course.status === status);
+      const wrapper = shallow(<CourseDescription course={course} />);
+      let firstRun: CourseRun = {};
+
+      if (course.runs.length > 0) {
+        firstRun = course.runs[0];
       }
-    }
-  });
 
-  it('shows failure text for failed courses', () => {
-    let failedCourse = findCourse(course => (
-      course.status === STATUS_NOT_OFFERED &&
-      course.runs[0].status === STATUS_NOT_PASSED
-    ));
-    const wrapper = shallow(<CourseDescription course={failedCourse} now={now} />);
-    assert.equal(wrapper.find(".course-description-result").text(), "You failed this course");
-  });
-
-  it('shows upgrade instructions for enrolled but not verified courses', () => {
-    let course = findCourse(course => course.status === STATUS_ENROLLED_NOT_VERIFIED);
-    const wrapper = shallow(<CourseDescription course={course} now={now} />);
-    assert.equal(
-      wrapper.find(".course-description-result").text(),
-      "You need to upgrade to the Verified course to get MicroMasters credit<IconButton />"
-    );
-  });
-
-  it('shows Complete for passed courses', () => {
-    let course = findCourse(course => course.status === STATUS_PASSED);
-    const wrapper = shallow(<CourseDescription course={course} now={now} />);
-    assert.equal(wrapper.find(".course-description-result").text(), "Complete!");
-  });
-
-  it('shows nothing for offered courses', () => {
-    let course = findCourse(course => course.status === STATUS_OFFERED_NOT_ENROLLED);
-    const wrapper = shallow(<CourseDescription course={course} now={now}/>);
-    assert.equal(wrapper.find(".course-description-result").text(), "");
-  });
-
-  it('shows Begins ... for verified courses when course start date is in future', () => {
-    let course = findCourse(course => course.status === STATUS_VERIFIED_NOT_COMPLETED);
-    let courseStart = moment(course.runs[0].course_start_date);
-    let yesterday = moment(courseStart).add(-1, 'days');
-    const wrapper = shallow(<CourseDescription course={course} now={yesterday}/>);
-    let formattedDate = courseStart.format(DASHBOARD_FORMAT);
-    assert.equal(wrapper.find(".course-description-result").text(), `Begins ${formattedDate}`);
-  });
-
-  it('shows nothing for verified courses when course start date is today or passed', () => {
-    let course = findCourse(course => course.status === STATUS_VERIFIED_NOT_COMPLETED);
-    let courseStart = moment(course.runs[0].course_start_date);
-    let tomorrow = moment(courseStart).add(1, 'days');
-
-    // course starts today
-    let wrapper = shallow(<CourseDescription course={course} now={courseStart}/>);
-    assert.equal(wrapper.find(".course-description-result").text(), "");
-
-    // course started yesterday
-    wrapper = shallow(<CourseDescription course={course} now={tomorrow} />);
-    assert.equal(wrapper.find(".course-description-result").text(), "");
-  });
+      switch (course.status) {
+      case STATUS_PASSED:
+        if (firstRun.course_end_date) {
+          let courseEndDate = moment(firstRun.course_end_date);
+          let formattedDate = courseEndDate.format(DASHBOARD_FORMAT);
+          assert.equal(wrapper.find(".course-description-result").text(), `Ended: ${formattedDate}`);
+        }
+        break;
+      case STATUS_NOT_OFFERED:
+        if (firstRun.status === STATUS_NOT_PASSED && firstRun.course_end_date) {
+          let courseEndDate = moment(firstRun.course_end_date);
+          let formattedDate = courseEndDate.format(DASHBOARD_FORMAT);
+          assert.equal(wrapper.find(".course-description-result").text(), `Ended: ${formattedDate}`);
+        } else if (course.status === STATUS_NOT_OFFERED && firstRun && firstRun.status !== STATUS_NOT_PASSED) {
+          assert.equal(wrapper.find(".course-description-result").text(), `Coming ${firstRun.fuzzy_start_date}`);
+        }
+        break;
+      case STATUS_ENROLLED_NOT_VERIFIED:
+      case STATUS_VERIFIED_NOT_COMPLETED:
+        if (firstRun.course_start_date) {
+          let courseStartDate = moment(firstRun.course_start_date);
+          let formattedDate = courseStartDate.format(DASHBOARD_FORMAT);
+          assert.equal(wrapper.find(".course-description-result").text(), `Start date: ${formattedDate}`);
+        }
+        break;
+      }
+    });
+  }
 });

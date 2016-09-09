@@ -246,14 +246,20 @@ export const DASHBOARD_RESPONSE = [
             "title": "Gio Test Course #15",
             "course_id": "course-v1:odl+GIO101+CR-FALL15",
             "status": STATUS_NOT_PASSED,
-            "id": 1
+            "id": 1,
+            "course_start_date": "2016-09-22T11:48:27Z",
+            "fuzzy_start_date": "Fall 2016",
+            "course_end_date": "2016-09-09T10:20:10Z"
           },
           {
             "position": 2,
             "title": "Gio Test Course #14",
             "course_id": "course-v1:odl+GIO101+FALL14",
             "status": STATUS_NOT_PASSED,
-            "id": 2
+            "id": 2,
+            "course_start_date": "2016-08-22T11:48:27Z",
+            "fuzzy_start_date": "Fall 2017",
+            "course_end_date": "2016-09-09T10:20:10Z",
           },
           {
             "certificate_url": "www.google.com",
@@ -262,7 +268,10 @@ export const DASHBOARD_RESPONSE = [
             "position": 3,
             "grade": "0.66",
             "course_id": "course-v1:odl+GIO101+FALL13",
-            "id": 3
+            "id": 3,
+            "course_start_date": "2016-08-22T11:48:27Z",
+            "fuzzy_start_date": "Fall 2017",
+            "course_end_date": "2016-09-09T10:20:10Z",
           }
         ],
         "position_in_program": 0,
@@ -317,7 +326,10 @@ export const DASHBOARD_RESPONSE = [
             "title": "Supply Chain Design",
             "enrollment_start_date": "2016-03-04T01:00:00Z",
             "position": 0,
-            "price": 50.00
+            "price": 50.00,
+            "course_start_date": "2016-08-22T11:48:27Z",
+            "fuzzy_start_date": "Fall 2017",
+            "course_end_date": "2016-09-09T10:20:10Z",
           }
         ],
         "description": null,
@@ -336,7 +348,10 @@ export const DASHBOARD_RESPONSE = [
             "status": STATUS_PASSED,
             "title": "Demo course",
             "grade": "0.88",
-            "position": 0
+            "position": 0,
+            "course_start_date": "2016-08-22T11:48:27Z",
+            "fuzzy_start_date": "Fall 2017",
+            "course_end_date": "2016-09-09T10:20:10Z",
           }
         ],
         "description": "The demo course",
@@ -364,7 +379,10 @@ export const DASHBOARD_RESPONSE = [
             "title": "Not verified run",
             "course_id": "not-verified",
             "position": 0,
-            "price": 50.00
+            "price": 50.00,
+            "course_start_date": "2016-08-22T11:48:27Z",
+            "fuzzy_start_date": "Fall 2017",
+            "course_end_date": "2016-09-09T10:20:10Z",
           }
         ],
         "description": null,
@@ -384,7 +402,10 @@ export const DASHBOARD_RESPONSE = [
             "title": "Enrollment starting run",
             "enrollment_start_date": "2106-03-04T01:00:00Z",
             "position": 0,
-            "price": 30.00
+            "price": 30.00,
+            "course_start_date": "2016-08-22T11:48:27Z",
+            "fuzzy_start_date": "Fall 2017",
+            "course_end_date": "2016-09-09T10:20:10Z",
           }
         ],
         "description": null,
@@ -402,7 +423,10 @@ export const DASHBOARD_RESPONSE = [
             "status": STATUS_PASSED,
             "position": 0,
             "course_id": "course_id",
-            "id": 10
+            "id": 10,
+            "course_start_date": "2016-08-22T11:48:27Z",
+            "fuzzy_start_date": "Fall 2017",
+            "course_end_date": "2016-09-09T10:20:10Z",
           }
         ]
       },
@@ -417,7 +441,9 @@ export const DASHBOARD_RESPONSE = [
             "status": STATUS_VERIFIED_NOT_COMPLETED,
             "course_start_date": "8765-03-21",
             "title": "First run",
-            "position": 0
+            "position": 0,
+            "fuzzy_start_date": "Fall 2017",
+            "course_end_date": "2016-09-09T10:20:10Z",
           }
         ]
       },
@@ -434,7 +460,10 @@ export const DASHBOARD_RESPONSE = [
             "fuzzy_enrollment_start_date": "soonish",
             "title": "Fuzzy enrollment starting run",
             "position": 0,
-            "price": 40.00
+            "price": 40.00,
+            "course_start_date": "2016-08-22T11:48:27Z",
+            "fuzzy_start_date": "Fall 2017",
+            "course_end_date": "2016-09-09T10:20:10Z",
           }
         ],
         "description": null,
@@ -462,6 +491,8 @@ export const DASHBOARD_RESPONSE = [
             "title": "Course run for last program",
             "position": 0,
             "course_start_date": "2016-01-01",
+            "fuzzy_start_date": "Fall 2017",
+            "course_end_date": "2016-09-09T10:20:10Z",
           }
         ],
         "description": "Course for Last program",

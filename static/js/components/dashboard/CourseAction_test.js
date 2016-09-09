@@ -63,11 +63,13 @@ describe('CourseAction', () => {
     const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
     let buttonContainer = wrapper.find(".course-action-action");
     let description = wrapper.find(".course-action-description");
-    let buttonProps = buttonContainer.find("button").props();
+    let buttonProps = buttonContainer.find(".dashboard-button").props();
+    let spanText = buttonContainer.find(".sr-only").text();
+    let buttonText = buttonContainer.find(".dashboard-button").children().text();
     let firstRun = course.runs[0];
 
     assert(!buttonProps.disabled);
-    assert.equal(buttonContainer.text(), `Upgrade in ${firstRun.title}`);
+    assert.equal(`${buttonText}${spanText}`, `Upgrade in ${firstRun.title}`);
     assert.equal(description.text(), "");
     assertCheckoutButton(buttonProps, firstRun.course_id);
   });
@@ -81,11 +83,13 @@ describe('CourseAction', () => {
     const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
     let buttonContainer = wrapper.find(".course-action-action");
     let description = wrapper.find(".course-action-description");
-    let buttonProps = buttonContainer.find("button").props();
+    let buttonProps = buttonContainer.find(".dashboard-button").props();
+    let spanText = buttonContainer.find(".sr-only").text();
+    let buttonText = buttonContainer.find(".dashboard-button").children().text();
     let firstRun = course.runs[0];
 
     assert(buttonProps.disabled);
-    assert.equal(buttonContainer.text(), `Enroll in ${firstRun.title}`);
+    assert.equal(`${buttonText}${spanText}`, `Enroll in ${firstRun.title}`);
     assert.equal(description.text(), `Enrollment begins ${firstRun.fuzzy_enrollment_start_date}`);
   });
 
@@ -100,10 +104,12 @@ describe('CourseAction', () => {
     const wrapper = shallow(<CourseAction course={course} now={yesterday} checkout={checkoutStub}/>);
     let buttonContainer = wrapper.find(".course-action-action");
     let description = wrapper.find(".course-action-description");
-    let buttonProps = buttonContainer.find("button").props();
+    let buttonProps = buttonContainer.find(".dashboard-button").props();
+    let spanText = buttonContainer.find(".sr-only").text();
+    let buttonText = buttonContainer.find(".dashboard-button").children().text();
 
     assert(buttonProps.disabled);
-    assert.equal(buttonContainer.text(), `Enroll in ${firstRun.title}`);
+    assert.equal(`${buttonText}${spanText}`, `Enroll in ${firstRun.title}`);
     let formattedDate = moment(firstRun.enrollment_start_date).format(DASHBOARD_FORMAT);
     assert.equal(description.text(), `Enrollment begins ${formattedDate}`);
   });
@@ -118,10 +124,12 @@ describe('CourseAction', () => {
     const wrapper = shallow(<CourseAction course={course} now={today} checkout={checkoutStub}/>);
     let buttonContainer = wrapper.find(".course-action-action");
     let description = wrapper.find(".course-action-description");
-    let buttonProps = buttonContainer.find("button").props();
+    let buttonProps = buttonContainer.find(".dashboard-button").props();
+    let spanText = buttonContainer.find(".sr-only").text();
+    let buttonText = buttonContainer.find(".dashboard-button").children().text();
 
     assert(!buttonProps.disabled);
-    assert.equal(buttonContainer.text(), `Enroll in ${firstRun.title}`);
+    assert.equal(`${buttonText}${spanText}`, `Enroll in ${firstRun.title}`);
     assert.equal(description.text(), ``);
     assertCheckoutButton(buttonProps, firstRun.course_id);
   });
@@ -136,10 +144,12 @@ describe('CourseAction', () => {
     const wrapper = shallow(<CourseAction course={course} now={tomorrow} checkout={checkoutStub}/>);
     let buttonContainer = wrapper.find(".course-action-action");
     let description = wrapper.find(".course-action-description");
-    let buttonProps = buttonContainer.find("button").props();
+    let buttonProps = buttonContainer.find(".dashboard-button").props();
+    let spanText = buttonContainer.find(".sr-only").text();
+    let buttonText = buttonContainer.find(".dashboard-button").children().text();
 
     assert(!buttonProps.disabled);
-    assert.equal(buttonContainer.text(), `Enroll in ${firstRun.title}`);
+    assert.equal(`${buttonText}${spanText}`, `Enroll in ${firstRun.title}`);
     assert.equal(description.text(), ``);
     assertCheckoutButton(buttonProps, firstRun.course_id);
   });

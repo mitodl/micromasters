@@ -22,19 +22,27 @@ export default class CourseAction extends React.Component {
   makeEnrollButton = (text: string, run: CourseRun, disabled: boolean) => {
     const { checkout } = this.props;
     let onClick;
+    let button;
+
     if (!disabled) {
       onClick = () => {
         checkout(run.course_id);
       };
+      button = (
+        <Button type='button' className="dashboard-button" onClick={onClick}>
+          {text}
+        </Button>
+      );
+    } else {
+      button = (
+        <Button disabled type='button' className="dashboard-button">
+          {text}
+        </Button>
+      );
     }
+
     return <span>
-      <Button
-        className="dashboard-button"
-        disabled={disabled}
-        onClick={onClick}
-      >
-        {text}
-      </Button>
+      {button}
       <span className="sr-only"> in {run.title}</span>
     </span>;
   };

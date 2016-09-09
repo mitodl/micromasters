@@ -1,5 +1,6 @@
 // @flow
 import React from 'react';
+import _ from 'lodash';
 import moment from 'moment';
 
 import type { Course, CourseRun } from '../../flow/programTypes';
@@ -14,11 +15,10 @@ import {
 
 export default class CourseDescription extends React.Component {
   props: {
-    course: Course,
-    now: moment$Moment,
+    course: Course
   };
 
-  courseDate(label: string, date: Date): string {
+  courseDate(label: string, date: moment$Moment): string {
     let formattedDate = date.format(DASHBOARD_FORMAT);
     return `${label}: ${formattedDate}`;
   }
@@ -32,19 +32,17 @@ export default class CourseDescription extends React.Component {
 
     switch (courseStatus) {
     case STATUS_PASSED:
-      if (firstRun.end_date) {
-        let courseEndDate = moment(firstRun.end_date);
+      if (firstRun.course_end_date) {
+        let courseEndDate = moment(firstRun.course_end_date);
         text = this.courseDate('Ended', courseEndDate);
       }
       break;
     case STATUS_NOT_OFFERED:
-      if (firstRun.status === STATUS_NOT_PASSED && firstRun.end_date) {
-       let courseEndDate = moment(firstRun.end_date);
-        if (courseEndDate.isAfter(now, 'day')) {
-          text = this.courseDate('Ended', courseEndDate);
-        }
+      if (firstRun.status === STATUS_NOT_PASSED && firstRun.course_end_date) {
+        let courseEndDate = moment(firstRun.course_end_date);
+        text = this.courseDate('Ended', courseEndDate);
       } else if (!_.isNil(firstRun.fuzzy_start_date)) {
-        text = `Comming ${firstRun.fuzzy_start_date}`;
+        text = `Coming ${firstRun.fuzzy_start_date}`;
       }
       break;
     case STATUS_ENROLLED_NOT_VERIFIED:
@@ -65,7 +63,7 @@ export default class CourseDescription extends React.Component {
   }
 
   render() {
-    const { course, now } = this.props;
+    const { course } = this.props;
     let enrolled = "";
     let firstRun: CourseRun = {};
 

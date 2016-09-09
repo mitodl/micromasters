@@ -188,7 +188,7 @@ c.validation-wrapper {
           }
 
           .dashboard-button {
-            background-color: $mm-brand-bg;
+            background-color: $mm-brand-bg !important;
             color: white;
             text-align: center;
             font-size: small;
@@ -196,7 +196,7 @@ c.validation-wrapper {
             font-weight: 400;
 
             &[disabled] {
-              background-color: adjust-color($dashboard-button-teal, $alpha: -0.5);
+              background-color: adjust-color($dashboard-button-teal, $alpha: -0.5) !important;
             }
           }
         }

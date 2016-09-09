@@ -19,7 +19,7 @@ export default class CourseRow extends React.Component {
 
     return <Grid className="course-row">
       <Cell col={6}>
-        <CourseDescription course={course} now={now} />
+        <CourseDescription course={course} />
       </Cell>
       <Cell col={3}>
         <CoursePrice course={course} now={now} />

@@ -23,7 +23,7 @@ export default class CoursePrice extends React.Component {
     now: moment$Moment,
   };
 
-  help(course: Course, now: moment$Moment, firstRun: CourseRun): React$Element<*> {
+  renderTooltip(course: Course, now: moment$Moment, firstRun: CourseRun): React$Element<*> {
     let text = "";
 
     switch (course.status) {
@@ -52,10 +52,10 @@ export default class CoursePrice extends React.Component {
       <div>
         <span className="tooltip-link"
           data-tip
-          data-for='why-we-ask-this'>
+          data-for='course-detail'>
           <IconButton name="help" className="help"/>
         </span>
-        <ReactTooltip id="why-we-ask-this" effect="solid" event="click" globalEventOff="click">
+        <ReactTooltip id="course-detail" effect="solid" event="click" globalEventOff="click">
           {text}
         </ReactTooltip>
       </div>
@@ -77,7 +77,7 @@ export default class CoursePrice extends React.Component {
     }
 
     return <div className="course-price">
-      {price} {this.help(course, now, firstRun)}
+      {price} {this.renderTooltip(course, now, firstRun)}
     </div>;
   }
 }
