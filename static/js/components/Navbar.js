@@ -3,8 +3,6 @@ import React from 'react';
 import { Link } from 'react-router';
 import { Header, HeaderRow } from 'react-mdl';
 
-import UserMenu from '../containers/UserMenu';
-
 import type { DashboardState } from '../flow/dashboardTypes';
 import type {
   ProgramEnrollment,
@@ -17,8 +15,6 @@ export default class Navbar extends React.Component {
   props: {
     empty:                       boolean,
     children?:                   React$Element<*>[],
-    pathname:                    string,
-    changeUrl:                   (i: number) => void,
     currentProgramEnrollment:    ProgramEnrollment,
     dashboard:                   DashboardState,
     enrollments:                 ProgramEnrollmentsState,
@@ -36,13 +32,11 @@ export default class Navbar extends React.Component {
 
   render () {
     const {
-      changeUrl,
       currentProgramEnrollment,
       dashboard,
       enrollDialogVisibility,
       enrollSelectedProgram,
       enrollments,
-      pathname,
       setCurrentProgramEnrollment,
       setEnrollDialogVisibility,
       setEnrollSelectedProgram,
