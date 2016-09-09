@@ -57,6 +57,11 @@
 
         .sk-item-list-option__text {
           margin-left: 10px;
+          color: m#666;
+        }
+
+        .sk-item-list-option__count {
+          color: $font-gray;
         }
       }
     }
@@ -188,26 +193,31 @@
 
     .sk-selected-filters-option {
       background-color: $bg-light-blue;
-      padding: 8px 13px;
+      padding: 6px 10px;
+      font-size: 13px;
 
       .sk-selected-filters-option__remove-action {
         border-left: none;
         padding: 0;
+        font-weight: 300;
       }
     }
 
     .sk-selected-filters-option > div {
-      color: black;
-      font-weight: 300;
+      color: rgba(0,0,0,.7);
     }
 
     .sk-reset-filters {
       color: $link-text;
       font-size: 14px;
+      font-weight: 300;
+      padding: 4px;
+      position: relative;
+      bottom: 5px;
     }
 
     .sk-reset-filters.is-disabled {
-      color: $font-gray-disabled;
+      color: rgba(0,0,0,0);
     }
 
     .mdl-cell {
