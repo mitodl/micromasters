@@ -181,6 +181,9 @@ class FormatRunTest(CourseTests):
                 'id': crun.pk,
                 'course_id': crun.edx_course_key,
                 'position': 1,
+                'course_start_date': crun.start_date,
+                'course_end_date': crun.end_date,
+                'fuzzy_start_date': crun.fuzzy_start_date
             }
         )
 
@@ -193,6 +196,9 @@ class FormatRunTest(CourseTests):
                 'id': crun.pk,
                 'course_id': crun.edx_course_key,
                 'position': 56,
+                'course_start_date': crun.start_date,
+                'course_end_date': crun.end_date,
+                'fuzzy_start_date': crun.fuzzy_start_date
             }
         )
 
@@ -214,6 +220,9 @@ class FormatRunTest(CourseTests):
                 'enrollment_start_date': crun.enrollment_start,
                 'fuzzy_enrollment_start_date': crun.fuzzy_enrollment_start_date,
                 'position': 1,
+                'course_start_date': crun.start_date,
+                'course_end_date': crun.end_date,
+                'fuzzy_start_date': crun.fuzzy_start_date
             }
         )
 
@@ -239,6 +248,9 @@ class FormatRunTest(CourseTests):
                 'id': crun.pk,
                 'course_id': crun.edx_course_key,
                 'position': 1,
+                'course_start_date': crun.start_date,
+                'course_end_date': crun.end_date,
+                'fuzzy_start_date': crun.fuzzy_start_date
             }
         )
 
@@ -264,6 +276,9 @@ class FormatRunTest(CourseTests):
                 'grade': cert.grade,
                 'certificate_url': cert.download_url,
                 'position': 1,
+                'course_start_date': crun.start_date,
+                'course_end_date': crun.end_date,
+                'fuzzy_start_date': crun.fuzzy_start_date
             }
         )
 
