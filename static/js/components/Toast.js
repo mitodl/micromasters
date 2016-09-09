@@ -1,10 +1,8 @@
-// @flow
 import React from 'react';
 
 export default class Toast extends React.Component {
   props: {
     open: boolean,
-    children: React.Element<*>,
     timeout: number,
     onTimeout: () => void,
   };
@@ -21,7 +19,7 @@ export default class Toast extends React.Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: Object) {
     const { onTimeout, timeout } = this.props;
     if (!prevProps.open && this.props.open && onTimeout) {
       setTimeout(onTimeout, timeout);

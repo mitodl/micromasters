@@ -16,9 +16,9 @@ export default class NewEnrollmentDialog extends React.Component {
     enrollDialogError:           ?string,
     enrollDialogVisibility:      boolean,
     enrollSelectedProgram:       ?number,
-    setEnrollDialogError:        (error: string) => void,
+    setEnrollDialogError:        (error: ?string) => void,
     setEnrollDialogVisibility:   (open: boolean) => void,
-    setEnrollSelectedProgram:    (programId: number) => void,
+    setEnrollSelectedProgram:    (programId: ?number) => void,
   };
 
   closeDialog = () => {

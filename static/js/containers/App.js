@@ -146,7 +146,7 @@ class App extends React.Component {
     dispatch(addProgramEnrollment(programId));
   };
 
-  setEnrollDialogError = (error: string): void => {
+  setEnrollDialogError = (error: ?string): void => {
     const { dispatch } = this.props;
     dispatch(setEnrollDialogError(error));
   };
@@ -156,7 +156,7 @@ class App extends React.Component {
     dispatch(setEnrollDialogVisibility(visibility));
   };
 
-  setEnrollSelectedProgram = (programId: number): void => {
+  setEnrollSelectedProgram = (programId: ?number): void => {
     const { dispatch } = this.props;
     dispatch(setEnrollSelectedProgram(programId));
   };

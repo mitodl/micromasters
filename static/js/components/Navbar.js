@@ -23,9 +23,9 @@ export default class Navbar extends React.Component {
     enrollDialogVisibility:      boolean,
     enrollSelectedProgram:       ?number,
     setCurrentProgramEnrollment: (enrollment: ProgramEnrollment) => void,
-    setEnrollDialogError:        (error: string) => void,
+    setEnrollDialogError:        (error: ?string) => void,
     setEnrollDialogVisibility:   (open: boolean) => void,
-    setEnrollSelectedProgram:    (programId: number) => void,
+    setEnrollSelectedProgram:    (programId: ?number) => void,
   };
 
   userMenu: Function = (): void|React$Element<*> => {

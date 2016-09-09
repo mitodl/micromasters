@@ -23,9 +23,9 @@ export default class ProgramSelector extends React.Component {
     enrollSelectedProgram:       ?number,
     dashboard:                   DashboardState,
     setCurrentProgramEnrollment: (enrollment: ProgramEnrollment) => void,
-    setEnrollDialogError:        (error: string) => void,
+    setEnrollDialogError:        (error: ?string) => void,
     setEnrollDialogVisibility:   (open: boolean) => void,
-    setEnrollSelectedProgram:    (programId: number) => void,
+    setEnrollSelectedProgram:    (programId: ?number) => void,
   };
 
   selectEnrollment = (option: Option): void => {
