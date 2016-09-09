@@ -1,8 +1,9 @@
 // @flow
 
 export type Option = {
-  value: string;
-  label: string;
+  value:     string;
+  label:     string;
+  disabled?: boolean;
 };
 export type Settings = {
   gaTrackingID: string;
@@ -20,10 +21,3 @@ export type APIErrorInfo = {
   detail?: string,
   errorStatusCode?: number,
 };
-
-
-export type ReactSelectOption = {
-  label: string,
-  value: any,
-  disabled?: boolean,
-}

@@ -8,7 +8,7 @@ import type {
   ProgramEnrollment,
   ProgramEnrollmentsState,
 } from '../flow/enrollmentTypes';
-import type { ReactSelectOption } from '../flow/generalTypes';
+import type { Option } from '../flow/generalTypes';
 
 const ENROLL_SENTINEL = 'enroll';
 
@@ -24,7 +24,7 @@ export default class ProgramSelector extends React.Component {
     setEnrollSelectedProgram:    (programId: number) => void,
   };
 
-  selectEnrollment = (option: ReactSelectOption): void => {
+  selectEnrollment = (option: Option): void => {
     const {
       enrollments: { programEnrollments },
       setCurrentProgramEnrollment,
