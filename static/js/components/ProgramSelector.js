@@ -40,10 +40,10 @@ export default class ProgramSelector extends React.Component {
 
   render() {
     let {
+      currentProgramEnrollment,
       enrollments: { programEnrollments },
       dashboard: { programs },
     } = this.props;
-    let { currentProgramEnrollment } = this.props;
     let currentId;
     if (currentProgramEnrollment !== null) {
       currentId = currentProgramEnrollment.id;
