@@ -68,6 +68,7 @@ export default class ProgramSelector extends React.Component {
     if (unenrolledPrograms.length > 0) {
       options.push({label: "Enroll in a new program", value: ENROLL_SENTINEL});
     }
+    return options;
   };
 
   render() {
