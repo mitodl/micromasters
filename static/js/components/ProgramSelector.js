@@ -69,17 +69,15 @@ export default class ProgramSelector extends React.Component {
       options.push({label: "Enroll in a new program", value: ENROLL_SENTINEL});
     }
 
-    let select = <Select
-      options={options}
-      onChange={this.selectEnrollment}
-      searchable={false}
-      placeholder={selected ? selected.title : ""}
-      clearable={false}
-      tabSelectsValue={false}
-    />;
-
     return <div className="program-selector">
-      {select}
+      <Select
+        options={options}
+        onChange={this.selectEnrollment}
+        searchable={false}
+        placeholder={selected ? selected.title : ""}
+        clearable={false}
+        tabSelectsValue={false}
+      />
     </div>;
   }
 }
