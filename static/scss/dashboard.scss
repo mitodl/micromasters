@@ -134,7 +134,7 @@ c.validation-wrapper {
     .course-row {
       width: 100%;
       font-size: 11pt;
-      min-height: 125px;
+      min-height: 100px;
       align-items: center;
       padding: 0 20px;
       border-bottom: 1px solid $lightgrey;
@@ -149,10 +149,10 @@ c.validation-wrapper {
         }
 
         .course-description-result {
-          font-style: italic;
           font-weight: 400;
           font-size: 10pt;
           color: $darkgrey;
+          padding: 10px 0;
         }
 
         .course-description-enrolled {
@@ -163,8 +163,12 @@ c.validation-wrapper {
 
       .course-price {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
+
+        .help {
+          color: rgba(0, 0, 0, 0.4);
+        }
 
         .course-price-display {
           font-weight: 500;
@@ -186,9 +190,10 @@ c.validation-wrapper {
           .dashboard-button {
             background-color: $mm-brand-bg;
             color: white;
-            box-shadow: none;
-            text-decoration: none;
-            border-radius: 2px;
+            text-align: center;
+            font-size: small;
+            min-height: 40px;
+            font-weight: 400;
 
             &[disabled] {
               background-color: adjust-color($dashboard-button-teal, $alpha: -0.5);

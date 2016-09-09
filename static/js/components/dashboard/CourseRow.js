@@ -22,7 +22,7 @@ export default class CourseRow extends React.Component {
         <CourseDescription course={course} now={now} />
       </Cell>
       <Cell col={3}>
-        <CoursePrice course={course}/>
+        <CoursePrice course={course} now={now} />
       </Cell>
       <Cell col={3}>
         <CourseAction course={course} now={now} checkout={checkout} />

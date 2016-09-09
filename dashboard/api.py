@@ -361,6 +361,9 @@ def format_courserun_for_dashboard(course_run, status_for_user, certificate=None
         'title': course_run.title,
         'status': status_for_user,
         'position': position,
+        'course_start_date': course_run.start_date,
+        'course_end_date': course_run.end_date,
+        'fuzzy_start_date': course_run.fuzzy_start_date
     }
 
     # check if there are extra fields to pull in

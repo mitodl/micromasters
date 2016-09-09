@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import moment from 'moment';
-import IconButton from 'react-mdl/lib/IconButton';
 
 import type { Course, CourseRun } from '../../flow/programTypes';
 import {
@@ -19,39 +18,59 @@ export default class CourseDescription extends React.Component {
     now: moment$Moment,
   };
 
-  render() {
-    const { course, now } = this.props;
-    let text = "", enrolled = "";
-    let firstRun: CourseRun = {};
-    if (course.runs.length > 0) {
-      firstRun = course.runs[0];
+  courseDate(label: string, date: Date): string {
+    let formattedDate = date.format(DASHBOARD_FORMAT);
+    return `${label}: ${formattedDate}`;
+  }
+
+  courseDateMessage(courseStatus: string, firstRun: CourseRun): string {
+    if (!firstRun) {
+      return '';
     }
 
-    switch (course.status) {
+    let text = "";
+
+    switch (courseStatus) {
     case STATUS_PASSED:
-      text = "Complete!";
-      break;
-    case STATUS_ENROLLED_NOT_VERIFIED:
-      text = <span>
-        You need to upgrade to the Verified course to get MicroMasters credit
-        <IconButton name="help" colored/>
-      </span>;
-      enrolled = "(enrolled)";
+      if (firstRun.end_date) {
+        let courseEndDate = moment(firstRun.end_date);
+        text = this.courseDate('Ended', courseEndDate);
+      }
       break;
     case STATUS_NOT_OFFERED:
-      if (firstRun.status === STATUS_NOT_PASSED) {
-        text = 'You failed this course';
+      if (firstRun.status === STATUS_NOT_PASSED && firstRun.end_date) {
+       let courseEndDate = moment(firstRun.end_date);
+        if (courseEndDate.isAfter(now, 'day')) {
+          text = this.courseDate('Ended', courseEndDate);
+        }
+      } else if (!_.isNil(firstRun.fuzzy_start_date)) {
+        text = `Comming ${firstRun.fuzzy_start_date}`;
+      }
+      break;
+    case STATUS_ENROLLED_NOT_VERIFIED:
+      if (firstRun.course_start_date) {
+        let courseStartDate = moment(firstRun.course_start_date);
+        text = this.courseDate('Start date', courseStartDate);
       }
       break;
     case STATUS_VERIFIED_NOT_COMPLETED:
       if (firstRun.course_start_date) {
         let courseStartDate = moment(firstRun.course_start_date);
-        if (courseStartDate.isAfter(now, 'day')) {
-          let formattedDate = courseStartDate.format(DASHBOARD_FORMAT);
-          text = `Begins ${formattedDate}`;
-        }
+        text = this.courseDate('Start date', courseStartDate);
       }
       break;
+    }
+
+    return text;
+  }
+
+  render() {
+    const { course, now } = this.props;
+    let enrolled = "";
+    let firstRun: CourseRun = {};
+
+    if (course.runs.length > 0) {
+      firstRun = course.runs[0];
     }
 
     return <div className="course-description">
@@ -61,7 +80,7 @@ export default class CourseDescription extends React.Component {
         {enrolled}
       </span><br />
       <span className="course-description-result">
-        {text}
+        {this.courseDateMessage(course.status, firstRun)}
       </span>
     </div>;
   }

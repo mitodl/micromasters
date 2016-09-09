@@ -2,6 +2,7 @@
 // @flow
 import React from 'react';
 import moment from 'moment';
+import Button from 'react-mdl/lib/Button';
 
 import type { Course, CourseRun } from '../../flow/programTypes';
 import {
@@ -27,13 +28,13 @@ export default class CourseAction extends React.Component {
       };
     }
     return <span>
-      <button
+      <Button
         className="dashboard-button"
         disabled={disabled}
         onClick={onClick}
       >
         {text}
-      </button>
+      </Button>
       <span className="sr-only"> in {run.title}</span>
     </span>;
   };
