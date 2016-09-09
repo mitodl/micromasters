@@ -143,6 +143,7 @@ $header_font_color: white;
     border-left: 1px solid $program_selector_border;
     border-right: 1px solid $program_selector_border;
     border-bottom: 1px solid $program_selector_border;
+    z-index: 2;
   }
   .Select-placeholder {
     font-weight: 500;
