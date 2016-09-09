@@ -23,8 +23,9 @@ export default class CoursePrice extends React.Component {
     now: moment$Moment,
   };
 
-  renderTooltip(course: Course, now: moment$Moment, firstRun: CourseRun): React$Element<*> {
+  renderTooltip(course: Course, now: moment$Moment, firstRun: CourseRun): React$Element<*>|void {
     let text = "";
+    let tooltip;
 
     switch (course.status) {
     case STATUS_PASSED:
@@ -48,18 +49,23 @@ export default class CoursePrice extends React.Component {
       }
       break;
     }
-    return (
-      <div>
-        <span className="tooltip-link"
-          data-tip
-          data-for='course-detail'>
-          <IconButton name="help" className="help"/>
-        </span>
-        <ReactTooltip id="course-detail" effect="solid" event="click" globalEventOff="click">
-          {text}
-        </ReactTooltip>
-      </div>
-    );
+
+    if (text) {
+      tooltip = (
+        <div>
+          <span className="tooltip-link"
+            data-tip
+            data-for='course-detail'>
+            <IconButton name="help" className="help"/>
+          </span>
+          <ReactTooltip id="course-detail" effect="solid" event="click" globalEventOff="click">
+            {text}
+          </ReactTooltip>
+        </div>
+      );
+    }
+
+    return tooltip;
   }
 
   render() {
