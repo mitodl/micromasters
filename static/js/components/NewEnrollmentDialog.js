@@ -58,7 +58,7 @@ export default class NewEnrollmentDialog extends React.Component {
       >
         Enroll
       </Button>,
-    ]
+    ];
   };
 
   handleEnrollSelectedProgram = (event, index, value) => {

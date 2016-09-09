@@ -270,6 +270,20 @@ describe('ui reducers', () => {
   });
 
   describe('Enrollment', () => {
+    describe('enrollment message', () => {
+      it('should have a null default value', () => {
+        assert.equal(store.getState().ui.enrollMessage, null);
+      });
+
+      it('should let you set the message', () => {
+        return dispatchThen(setEnrollMessage("value"), [
+          SET_ENROLL_MESSAGE
+        ]).then(state => {
+          assert.equal(state.enrollMessage, "value");
+        });
+      });
+    });
+
     describe('enrollment dialog error', () => {
       it('should have a null default value', () => {
         assert.equal(store.getState().ui.enrollDialogError, null);
