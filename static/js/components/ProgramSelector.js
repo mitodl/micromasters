@@ -38,7 +38,7 @@ export default class ProgramSelector extends React.Component {
     }
   };
 
-  makeOptions = () => {
+  makeOptions = (): Array<Option> => {
     const {
       currentProgramEnrollment,
       enrollments: { programEnrollments },
@@ -51,9 +51,6 @@ export default class ProgramSelector extends React.Component {
     }
 
     const sortedProgramEnrollments = _.sortBy(programEnrollments, 'title');
-    if (sortedProgramEnrollments.length === 0) {
-      return <div className="program-selector" />;
-    }
 
     let unselected = sortedProgramEnrollments.filter(enrollment => enrollment.id !== currentId);
     let options = unselected.map(enrollment => ({
@@ -84,15 +81,19 @@ export default class ProgramSelector extends React.Component {
     let selected = programEnrollments.find(enrollment => enrollment.id === currentId);
     let options = this.makeOptions();
 
-    return <div className="program-selector">
-      <Select
-        options={options}
-        onChange={this.selectEnrollment}
-        searchable={false}
-        placeholder={selected ? selected.title : ""}
-        clearable={false}
-        tabSelectsValue={false}
-      />
-    </div>;
+    if (programEnrollments.length === 0) {
+      return <div className="program-selector" />;
+    } else {
+      return <div className="program-selector">
+        <Select
+          options={options}
+          onChange={this.selectEnrollment}
+          searchable={false}
+          placeholder={selected ? selected.title : ""}
+          clearable={false}
+          tabSelectsValue={false}
+        />
+      </div>;
+    }
   }
 }
