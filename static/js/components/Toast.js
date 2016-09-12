@@ -2,6 +2,7 @@ import React from 'react';
 
 export default class Toast extends React.Component {
   props: {
+    children: any,
     open: boolean,
     timeout: number,
     onTimeout: () => void,

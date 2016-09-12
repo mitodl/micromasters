@@ -48,12 +48,11 @@ describe('ui reducers', () => {
 
   afterEach(() => {
     sandbox.restore();
-
-    store = null;
-    dispatchThen = null;
   });
 
-  const assertReducerResultState = (action: Action, stateLookup: (ui: UIState) => any, defaultValue: any): void => {
+  const assertReducerResultState = (
+    action: () => Action, stateLookup: (ui: UIState) => any, defaultValue: any
+  ): void => {
     assert.deepEqual(defaultValue, stateLookup(store.getState().ui));
     for (let value of [true, null, false, 0, 3, 'x', {'a': 'b'}, {}, [3, 4, 5], [], '']) {
       let expected = value;
@@ -108,13 +107,6 @@ describe('ui reducers', () => {
   });
 
   describe('education reducers', () => {
-    it('has a default state', () => {
-      let state = store.getState().ui;
-      assert.deepEqual(state.educationDialogVisibility, false);
-      assert.deepEqual(state.educationDialogIndex, -1);
-      assert.deepEqual(state.educationDegreeLevel, '');
-    });
-
     it('should let you set education dialog visibility', () => {
       assertReducerResultState(setEducationDialogVisibility, ui => ui.educationDialogVisibility, false);
     });

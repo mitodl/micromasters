@@ -1,4 +1,3 @@
-// @flow
 /* global SETTINGS: false */
 import React from 'react';
 import type { Dispatch } from 'redux';

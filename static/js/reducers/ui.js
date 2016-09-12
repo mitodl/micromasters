@@ -36,6 +36,11 @@ import {
 import { PERSONAL_STEP } from '../constants';
 import type { Action } from '../flow/reduxTypes';
 
+export type UIDialog = {
+  title?: string;
+  text?: string;
+  visible?: boolean;
+};
 export type UIState = {
   workHistoryEdit:              boolean;
   workDialogVisibility:         boolean;
@@ -47,7 +52,7 @@ export type UIState = {
   showWorkDeleteDialog:         boolean;
   showEducationDeleteDialog:    boolean;
   deletionIndex:                ?number;
-  dialog:                       {};
+  dialog:                       UIDialog;
   showWorkDeleteAllDialog:      boolean;
   showEducationDeleteAllDialog: boolean;
   profileStep:                  string;
