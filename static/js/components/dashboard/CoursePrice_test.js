@@ -2,7 +2,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import { assert } from 'chai';
-import moment from 'moment';
 
 import CoursePrice from './CoursePrice';
 import {
@@ -16,13 +15,11 @@ import {
 import { findCourse } from './CourseDescription_test';
 
 describe('CoursePrice', () => {
-  const now = moment();
-
   it('shows price of course with status offered-not-enrolled', () => {
     let course = findCourse(course => course.status === STATUS_OFFERED_NOT_ENROLLED);
     assert.equal(course.runs[0].price, 50.00);
 
-    const wrapper = shallow(<CoursePrice course={course} now={now} />);
+    const wrapper = shallow(<CoursePrice course={course}/>);
     assert.equal(wrapper.find(".course-price-display").text(), "$50");
   });
 
@@ -30,7 +27,7 @@ describe('CoursePrice', () => {
     let course = findCourse(course => course.status === STATUS_ENROLLED_NOT_VERIFIED);
     assert.equal(course.runs[0].price, 50.00);
 
-    const wrapper = shallow(<CoursePrice course={course} now={now} />);
+    const wrapper = shallow(<CoursePrice course={course}  />);
     assert.equal(wrapper.find(".course-price-display").text(), "$50");
   });
 
@@ -39,8 +36,16 @@ describe('CoursePrice', () => {
       let course = findCourse(course => course.status === status);
       assert.isNotOk(course.runs[0].price);
 
-      const wrapper = shallow(<CoursePrice course={course} now={now} />);
+      const wrapper = shallow(<CoursePrice course={course} />);
       assert.equal(wrapper.find(".course-price-display").length, 0);
     });
   }
+
+  it('tooltip display for status enrolled-not-verified', () => {
+    let course = findCourse(course => course.status === STATUS_ENROLLED_NOT_VERIFIED);
+    const wrapper = shallow(<CoursePrice course={course} />);
+    let tooltip = wrapper.find(".help");
+    assert.equal(tooltip.length, 1);
+  });
+
 });

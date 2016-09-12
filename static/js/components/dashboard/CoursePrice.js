@@ -3,51 +3,25 @@ import React from 'react';
 import _ from 'lodash';
 import ReactTooltip from 'react-tooltip';
 import IconButton from 'react-mdl/lib/IconButton';
-import moment from 'moment';
 
-import type { Course, CourseRun } from '../../flow/programTypes';
+import type { Course } from '../../flow/programTypes';
 import {
-  STATUS_NOT_OFFERED,
-  STATUS_PASSED,
-  STATUS_NOT_PASSED,
   STATUS_ENROLLED_NOT_VERIFIED,
-  STATUS_VERIFIED_NOT_COMPLETED,
   STATUS_OFFERED_NOT_ENROLLED,
-  DASHBOARD_FORMAT,
 } from '../../constants';
 import { formatPrice } from '../../util/util';
 
 export default class CoursePrice extends React.Component {
   props: {
-    course: Course,
-    now: moment$Moment,
+    course: Course
   };
 
-  renderTooltip(course: Course, now: moment$Moment, firstRun: CourseRun): React$Element<*>|void {
+  renderTooltip(course: Course): React$Element<*>|void {
     let text = "";
     let tooltip;
 
-    switch (course.status) {
-    case STATUS_PASSED:
-      text = "Complete!";
-      break;
-    case STATUS_ENROLLED_NOT_VERIFIED:
-      text = "You need to upgrade to the Verified course to get MicroMasters credit";
-      break;
-    case STATUS_NOT_OFFERED:
-      if (firstRun.status === STATUS_NOT_PASSED) {
-        text = 'You failed this course';
-      }
-      break;
-    case STATUS_VERIFIED_NOT_COMPLETED:
-      if (firstRun.course_start_date) {
-        let courseStartDate = moment(firstRun.course_start_date);
-        if (courseStartDate.isAfter(now, 'day')) {
-          let formattedDate = courseStartDate.format(DASHBOARD_FORMAT);
-          text = `Begins ${formattedDate}`;
-        }
-      }
-      break;
+    if (course.status === STATUS_ENROLLED_NOT_VERIFIED) {
+      text = "You need to enroll in the Verified Course to get MicroMasters credit.";
     }
 
     if (text) {
@@ -58,7 +32,8 @@ export default class CoursePrice extends React.Component {
             data-for='course-detail'>
             <IconButton name="help" className="help"/>
           </span>
-          <ReactTooltip id="course-detail" effect="solid" event="click" globalEventOff="click">
+          <ReactTooltip id="course-detail" effect="solid"
+            event="click" globalEventOff="click" className="tooltip">
             {text}
           </ReactTooltip>
         </div>
@@ -69,7 +44,7 @@ export default class CoursePrice extends React.Component {
   }
 
   render() {
-    const { course, now } = this.props;
+    const { course } = this.props;
     let firstRun = {};
     let price = null;
 
@@ -83,7 +58,7 @@ export default class CoursePrice extends React.Component {
     }
 
     return <div className="course-price">
-      {price} {this.renderTooltip(course, now, firstRun)}
+      {price} {this.renderTooltip(course)}
     </div>;
   }
 }
