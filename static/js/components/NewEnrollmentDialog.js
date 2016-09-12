@@ -61,7 +61,7 @@ export default class NewEnrollmentDialog extends React.Component {
     ];
   };
 
-  handleEnrollSelectedProgram = (event, index, value) => {
+  handleSelectedProgramChange = (event, index, value) => {
     const { setEnrollSelectedProgram } = this.props;
     setEnrollSelectedProgram(value);
   };
@@ -91,7 +91,7 @@ export default class NewEnrollmentDialog extends React.Component {
     >
       <SelectField
         value={enrollSelectedProgram}
-        onChange={this.handleEnrollSelectedProgram}
+        onChange={this.handleSelectedProgramChange}
         floatingLabelText="Select Program"
         errorText={enrollDialogError}
       >
