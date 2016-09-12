@@ -10,6 +10,7 @@ import {
   STATUS_NOT_PASSED,
   STATUS_ENROLLED_NOT_VERIFIED,
   STATUS_VERIFIED_NOT_COMPLETED,
+  STATUS_OFFERED_NOT_ENROLLED,
   DASHBOARD_FORMAT,
 } from '../../constants';
 
@@ -46,12 +47,8 @@ export default class CourseDescription extends React.Component {
       }
       break;
     case STATUS_ENROLLED_NOT_VERIFIED:
-      if (firstRun.course_start_date) {
-        let courseStartDate = moment(firstRun.course_start_date);
-        text = this.courseDate('Start date', courseStartDate);
-      }
-      break;
     case STATUS_VERIFIED_NOT_COMPLETED:
+    case STATUS_OFFERED_NOT_ENROLLED:
       if (firstRun.course_start_date) {
         let courseStartDate = moment(firstRun.course_start_date);
         text = this.courseDate('Start date', courseStartDate);

@@ -14,6 +14,10 @@ export type CourseRun = {
   fuzzy_enrollment_start_date?: string;
   status?: string;
   enrollment_start_date?: string;
+  fuzzy_start_date?: string;
+  course_start_date?: string;
+  course_end_date?: string;
+  price?: number;
 };
 
 export type UserProgram = {

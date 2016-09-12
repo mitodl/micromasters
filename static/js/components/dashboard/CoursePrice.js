@@ -4,7 +4,10 @@ import _ from 'lodash';
 import ReactTooltip from 'react-tooltip';
 import IconButton from 'react-mdl/lib/IconButton';
 
-import type { Course } from '../../flow/programTypes';
+import type {
+  Course,
+  CourseRun
+} from '../../flow/programTypes';
 import {
   STATUS_ENROLLED_NOT_VERIFIED,
   STATUS_OFFERED_NOT_ENROLLED,
@@ -16,13 +19,8 @@ export default class CoursePrice extends React.Component {
     course: Course
   };
 
-  renderTooltip(course: Course): React$Element<*>|void {
-    let text = "";
+  renderTooltip(text: string): React$Element<*>|void {
     let tooltip;
-
-    if (course.status === STATUS_ENROLLED_NOT_VERIFIED) {
-      text = "You need to enroll in the Verified Course to get MicroMasters credit.";
-    }
 
     if (text) {
       tooltip = (
@@ -43,22 +41,54 @@ export default class CoursePrice extends React.Component {
     return tooltip;
   }
 
+  courseTooltipText(courseStatus: string): string {
+    let text = "";
+
+    if (courseStatus === STATUS_ENROLLED_NOT_VERIFIED) {
+      text = "You need to enroll in the Verified Course to get MicroMasters credit.";
+    }
+
+    return text;
+  }
+
+  coursePrice(firstRun: CourseRun, courseStatus: string): string {
+    let price = "";
+    let courseHasPrice = (
+      !_.isNil(firstRun.price) &&
+      (courseStatus === STATUS_OFFERED_NOT_ENROLLED || courseStatus === STATUS_ENROLLED_NOT_VERIFIED)
+    );
+
+    if (courseHasPrice) {
+      price = formatPrice(firstRun.price);
+    }
+
+    return price;
+  }
+
   render() {
     const { course } = this.props;
     let firstRun = {};
-    let price = null;
+    let priceDisplay;
+    let tooltipDisplay;
+    const text = this.courseTooltipText(course.status);
 
     if (course.runs.length > 0) {
       firstRun = course.runs[0];
-      if (course.status === STATUS_OFFERED_NOT_ENROLLED || course.status === STATUS_ENROLLED_NOT_VERIFIED) {
-        if (!_.isNil(firstRun.price)) {
-          price = <span className="course-price-display">{formatPrice(firstRun.price)}</span>;
-        }
-      }
+    }
+    const price = this.coursePrice(firstRun, course.status);
+
+    if (price) {
+      priceDisplay = <span className="course-price-display">{price}</span>;
     }
 
-    return <div className="course-price">
-      {price} {this.renderTooltip(course)}
-    </div>;
+    if (text) {
+      tooltipDisplay = this.renderTooltip(text);
+    }
+
+    return (
+      <div className="course-price">
+        {priceDisplay} {tooltipDisplay}
+      </div>
+    );
   }
 }

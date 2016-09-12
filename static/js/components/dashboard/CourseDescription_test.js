@@ -1,11 +1,11 @@
 // @flow
 import React from 'react';
+import _ from 'lodash';
 import { shallow } from 'enzyme';
 import moment from 'moment';
 import { assert } from 'chai';
 import type {
   Course,
-  CourseRun,
   Program
 } from '../../flow/programTypes';
 
@@ -17,6 +17,7 @@ import {
   STATUS_NOT_PASSED,
   STATUS_ENROLLED_NOT_VERIFIED,
   STATUS_VERIFIED_NOT_COMPLETED,
+  STATUS_OFFERED_NOT_ENROLLED,
   STATUS_NOT_OFFERED,
   ALL_COURSE_STATUSES,
 } from '../../constants';
@@ -34,58 +35,102 @@ export function findCourse(courseSelector: (course: Course, program: Program) =>
 }
 
 describe('CourseDescription', () => {
-  const statuses = [
-    STATUS_PASSED,
-    STATUS_NOT_OFFERED,
-    STATUS_VERIFIED_NOT_COMPLETED,
-    STATUS_ENROLLED_NOT_VERIFIED
-  ];
+  let createCourseRun = (status: string, courseEndDate: string, courseStartDate: string) => {
+    return Object.assign({
+      "position": 1,
+      "title": "title",
+      "course_id": "course-v1:odl+GIO101+FALL14",
+      "status": status,
+      "id": 1,
+      "fuzzy_start_date": "Fall 2017",
+      "course_end_date": courseEndDate,
+      "course_start_date": courseStartDate
+    });
+  };
 
   it('shows the course title', () => {
     for (let status of ALL_COURSE_STATUSES) {
       let course = findCourse(course => course.status === status);
       const wrapper = shallow(<CourseDescription course={course}/>);
+
       assert(course.title.length > 0);
       assert.equal(wrapper.find(".course-description-title").text(), course.title);
     }
   });
 
-  for (let status of statuses) {
-    it(`does show date with status ${status}`, () => {
-      let course = findCourse(course => course.status === status);
-      const wrapper = shallow(<CourseDescription course={course} />);
-      let firstRun: CourseRun = {};
+  it(`does show date with status passed`, () => {
+    let course = _.cloneDeep(findCourse(course => course.status === STATUS_PASSED));
+    course.runs = [
+      createCourseRun(STATUS_PASSED, '2016-10-09T10:20:10Z', '2016-10-01T10:20:10Z')
+    ];
+    const wrapper = shallow(<CourseDescription course={course} />);
+    let firstRun = course.runs[0];
+    let courseEndDate = moment(firstRun.course_end_date);
+    let formattedDate = courseEndDate.format(DASHBOARD_FORMAT);
 
-      if (course.runs.length > 0) {
-        firstRun = course.runs[0];
-      }
+    assert.equal(wrapper.find(".course-description-result").text(), `Ended: ${formattedDate}`);
+  });
 
-      switch (course.status) {
-      case STATUS_PASSED:
-        if (firstRun.course_end_date) {
-          let courseEndDate = moment(firstRun.course_end_date);
-          let formattedDate = courseEndDate.format(DASHBOARD_FORMAT);
-          assert.equal(wrapper.find(".course-description-result").text(), `Ended: ${formattedDate}`);
-        }
-        break;
-      case STATUS_NOT_OFFERED:
-        if (firstRun.status === STATUS_NOT_PASSED && firstRun.course_end_date) {
-          let courseEndDate = moment(firstRun.course_end_date);
-          let formattedDate = courseEndDate.format(DASHBOARD_FORMAT);
-          assert.equal(wrapper.find(".course-description-result").text(), `Ended: ${formattedDate}`);
-        } else if (course.status === STATUS_NOT_OFFERED && firstRun && firstRun.status !== STATUS_NOT_PASSED) {
-          assert.equal(wrapper.find(".course-description-result").text(), `Coming ${firstRun.fuzzy_start_date}`);
-        }
-        break;
-      case STATUS_ENROLLED_NOT_VERIFIED:
-      case STATUS_VERIFIED_NOT_COMPLETED:
-        if (firstRun.course_start_date) {
-          let courseStartDate = moment(firstRun.course_start_date);
-          let formattedDate = courseStartDate.format(DASHBOARD_FORMAT);
-          assert.equal(wrapper.find(".course-description-result").text(), `Start date: ${formattedDate}`);
-        }
-        break;
-      }
-    });
-  }
+  it(`does show date with status not-offered and firstRun status not-passed`, () => {
+    let course = _.cloneDeep(findCourse(course => course.status === STATUS_NOT_OFFERED));
+    course.runs = [
+      createCourseRun(STATUS_NOT_PASSED, '2016-10-09T10:20:10Z', '2016-10-01T10:20:10Z')
+    ];
+    const wrapper = shallow(<CourseDescription course={course} />);
+    let firstRun = course.runs[0];
+    let courseEndDate = moment(firstRun.course_end_date);
+    let formattedDate = courseEndDate.format(DASHBOARD_FORMAT);
+
+    assert.equal(wrapper.find(".course-description-result").text(), `Ended: ${formattedDate}`);
+  });
+
+  it(`does show date with status not-offered and firstRun status not-offered`, () => {
+    let course = _.cloneDeep(findCourse(course => course.status === STATUS_NOT_OFFERED));
+    course.runs = [
+      createCourseRun(STATUS_NOT_OFFERED, '2016-10-09T10:20:10Z', '2016-10-01T10:20:10Z')
+    ];
+    const wrapper = shallow(<CourseDescription course={course} />);
+    let firstRun = course.runs[0];
+
+    assert.equal(wrapper.find(".course-description-result").text(), `Coming ${firstRun.fuzzy_start_date}`);
+  });
+
+  it(`does show date with status verified-not-completed`, () => {
+    let course = _.cloneDeep(findCourse(course => course.status === STATUS_VERIFIED_NOT_COMPLETED));
+    course.runs = [
+      createCourseRun(STATUS_VERIFIED_NOT_COMPLETED, '2016-10-09T10:20:10Z', '2016-10-01T10:20:10Z')
+    ];
+    const wrapper = shallow(<CourseDescription course={course} />);
+    let firstRun = course.runs[0];
+    let courseStartDate = moment(firstRun.course_start_date);
+    let formattedDate = courseStartDate.format(DASHBOARD_FORMAT);
+
+    assert.equal(wrapper.find(".course-description-result").text(), `Start date: ${formattedDate}`);
+  });
+
+  it(`does show date with status enrolled-not-verified`, () => {
+    let course = _.cloneDeep(findCourse(course => course.status === STATUS_ENROLLED_NOT_VERIFIED));
+    course.runs = [
+      createCourseRun(STATUS_ENROLLED_NOT_VERIFIED, '2016-10-09T10:20:10Z', '2016-10-01T10:20:10Z')
+    ];
+    const wrapper = shallow(<CourseDescription course={course} />);
+    let firstRun = course.runs[0];
+    let courseStartDate = moment(firstRun.course_start_date);
+    let formattedDate = courseStartDate.format(DASHBOARD_FORMAT);
+
+    assert.equal(wrapper.find(".course-description-result").text(), `Start date: ${formattedDate}`);
+  });
+
+  it(`does show date with status offered-not-enrolled`, () => {
+    let course = _.cloneDeep(findCourse(course => course.status === STATUS_OFFERED_NOT_ENROLLED));
+    course.runs = [
+      createCourseRun(STATUS_OFFERED_NOT_ENROLLED, '2016-10-09T10:20:10Z', '2016-10-01T10:20:10Z')
+    ];
+    const wrapper = shallow(<CourseDescription course={course} />);
+    let firstRun = course.runs[0];
+    let courseStartDate = moment(firstRun.course_start_date);
+    let formattedDate = courseStartDate.format(DASHBOARD_FORMAT);
+
+    assert.equal(wrapper.find(".course-description-result").text(), `Start date: ${formattedDate}`);
+  });
 });
