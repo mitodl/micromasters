@@ -54,7 +54,7 @@ export default class ProgramSelector extends React.Component {
     } = this.props;
 
     let currentId;
-    if (currentProgramEnrollment !== null) {
+    if (!_.isNil(currentProgramEnrollment)) {
       currentId = currentProgramEnrollment.id;
     }
 
@@ -91,7 +91,7 @@ export default class ProgramSelector extends React.Component {
       setEnrollSelectedProgram,
     } = this.props;
     let currentId;
-    if (currentProgramEnrollment !== null) {
+    if (!_.isNil(currentProgramEnrollment)) {
       currentId = currentProgramEnrollment.id;
     }
 

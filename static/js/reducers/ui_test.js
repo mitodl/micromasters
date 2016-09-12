@@ -1,28 +1,7 @@
+// @flow
 /* global SETTINGS: false */
 import {
-  CLEAR_UI,
-  UPDATE_DIALOG_TEXT,
-  UPDATE_DIALOG_TITLE,
-  SET_DIALOG_VISIBILITY,
   SET_WORK_HISTORY_EDIT,
-  SET_WORK_DIALOG_VISIBILITY,
-  SET_WORK_DIALOG_INDEX,
-  SET_EDUCATION_DIALOG_VISIBILITY,
-  SET_EDUCATION_DIALOG_INDEX,
-  SET_EDUCATION_DEGREE_LEVEL,
-  SET_USER_PAGE_DIALOG_VISIBILITY,
-  SET_SHOW_EDUCATION_DELETE_DIALOG,
-  SET_SHOW_WORK_DELETE_DIALOG,
-  SET_DELETION_INDEX,
-  SET_SHOW_WORK_DELETE_ALL_DIALOG,
-  SET_PROFILE_STEP,
-  SET_USER_MENU_OPEN,
-  SET_SEARCH_FILTER_VISIBILITY,
-  SET_EMAIL_DIALOG_VISIBILITY,
-  SET_ENROLL_DIALOG_ERROR,
-  SET_ENROLL_DIALOG_VISIBILITY,
-  SET_ENROLL_MESSAGE,
-  SET_ENROLL_SELECTED_PROGRAM,
 
   clearUI,
   updateDialogText,
@@ -49,8 +28,10 @@ import {
   setEnrollSelectedProgram,
 } from '../actions/ui';
 import { INITIAL_UI_STATE } from '../reducers/ui';
-import { PROFILE_STEP_LABELS } from '../constants';
+import type { UIState } from '../reducers/ui';
+import { PERSONAL_STEP } from '../constants';
 import rootReducer from '../reducers';
+import type { Action } from '../flow/reduxTypes';
 
 import configureTestStore from 'redux-asserts';
 import { assert } from 'chai';
@@ -72,45 +53,46 @@ describe('ui reducers', () => {
     dispatchThen = null;
   });
 
+  const assertReducerResultState = (action: Action, stateLookup: (ui: UIState) => any, defaultValue: any): void => {
+    assert.deepEqual(defaultValue, stateLookup(store.getState().ui));
+    for (let value of [true, null, false, 0, 3, 'x', {'a': 'b'}, {}, [3, 4, 5], [], '']) {
+      let expected = value;
+      if (value === null) {
+        // redux-actions converts this to undefined
+        expected = undefined;
+      }
+      store.dispatch(action(value));
+      assert.deepEqual(expected, stateLookup(store.getState().ui));
+    }
+  };
+
   it('should clear the ui', () => {
-    return assert.eventually.deepEqual(
-      dispatchThen(clearUI(), [CLEAR_UI]),
-      INITIAL_UI_STATE
-    );
+    store.dispatch(clearUI());
+    assert.deepEqual(store.getState().ui, INITIAL_UI_STATE);
   });
 
   describe('dialog reducers', () => {
     it('should set a dialog title', () => {
-      return dispatchThen(updateDialogTitle('A title'), [UPDATE_DIALOG_TITLE]).then(state => {
-        assert.equal(state.dialog.title, 'A title');
-      });
+      assertReducerResultState(updateDialogTitle, ui => ui.dialog.title, undefined);
     });
 
     it('should set dialog text', () => {
-      return dispatchThen(updateDialogText('Some Text'), [UPDATE_DIALOG_TEXT]).then(state => {
-        assert.equal(state.dialog.text, 'Some Text');
-      });
+      assertReducerResultState(updateDialogText, ui => ui.dialog.text, undefined);
     });
 
     it('should set dialog visibility', () => {
-      return dispatchThen(setDialogVisibility(true), [SET_DIALOG_VISIBILITY]).then(state => {
-        assert.equal(state.dialog.visible, true);
-      });
+      assertReducerResultState(setDialogVisibility, ui => ui.dialog.visible, undefined);
     });
   });
 
   describe('work_history reducers', () => {
     it('should set the work history dialog visibility', () => {
-      return dispatchThen(setWorkDialogVisibility(true), [SET_WORK_DIALOG_VISIBILITY]).then(state => {
-        assert.equal(state.workDialogVisibility, true);
-
-        return dispatchThen(setWorkDialogVisibility(false), [SET_WORK_DIALOG_VISIBILITY]).then(state => {
-          assert.equal(state.workDialogVisibility, false);
-        });
-      });
+      assertReducerResultState(setWorkDialogVisibility, ui => ui.workDialogVisibility, false);
     });
 
     it('should set work history edit', () => {
+      assert.equal(store.getState().ui.workHistoryEdit, true);
+
       return dispatchThen(setWorkHistoryEdit(true), [SET_WORK_HISTORY_EDIT]).then(state => {
         assert.equal(state.workHistoryEdit, true);
 
@@ -121,223 +103,96 @@ describe('ui reducers', () => {
     });
 
     it('should set a work history dialog index', () => {
-      return dispatchThen(setWorkDialogIndex(2), [SET_WORK_DIALOG_INDEX]).then(state => {
-        assert.equal(state.workDialogIndex, 2);
-
-        return dispatchThen(setWorkDialogIndex(5), [SET_WORK_DIALOG_INDEX]).then(state => {
-          assert.equal(state.workDialogIndex, 5);
-        });
-      });
+      assertReducerResultState(setWorkDialogIndex, ui => ui.workDialogIndex, null);
     });
   });
 
   describe('education reducers', () => {
     it('has a default state', () => {
-      return dispatchThen({type: "undefined"}, []).then(state => {
-        assert.deepEqual(state.educationDialogVisibility, false);
-        assert.deepEqual(state.educationDialogIndex, -1);
-        assert.deepEqual(state.educationDegreeLevel, '');
-      });
+      let state = store.getState().ui;
+      assert.deepEqual(state.educationDialogVisibility, false);
+      assert.deepEqual(state.educationDialogIndex, -1);
+      assert.deepEqual(state.educationDegreeLevel, '');
     });
 
     it('should let you set education dialog visibility', () => {
-      return dispatchThen(setEducationDialogVisibility(true), [SET_EDUCATION_DIALOG_VISIBILITY]).then(state => {
-        assert.deepEqual(state.educationDialogVisibility, true);
-      });
+      assertReducerResultState(setEducationDialogVisibility, ui => ui.educationDialogVisibility, false);
     });
 
     it('should let you set education degree level', () => {
-      return dispatchThen(setEducationDegreeLevel('foobar'), [SET_EDUCATION_DEGREE_LEVEL]).then(state => {
-        assert.deepEqual(state.educationDegreeLevel, 'foobar');
-      });
+      assertReducerResultState(setEducationDegreeLevel, ui => ui.educationDegreeLevel, '');
     });
 
     it('should let you set education dialog index', () => {
-      return dispatchThen(setEducationDialogIndex(3), [SET_EDUCATION_DIALOG_INDEX]).then(state => {
-        assert.deepEqual(state.educationDialogIndex, 3);
-      });
+      assertReducerResultState(setEducationDialogIndex, ui => ui.educationDialogIndex, -1);
     });
   });
 
   describe('user page', () => {
-    [true, false].forEach(bool => {
-      it(`should let you set the user page dialog visibility to ${bool}`, () => {
-        return dispatchThen(setUserPageDialogVisibility(bool), [SET_USER_PAGE_DIALOG_VISIBILITY]).then(state => {
-          assert.deepEqual(state.userPageDialogVisibility, bool);
-        });
-      });
+    it(`should let you set the user page dialog visibility`, () => {
+      assertReducerResultState(setUserPageDialogVisibility, ui => ui.userPageDialogVisibility, false);
     });
   });
 
   describe('confirm delete dialog', () => {
-    [true, false].forEach( bool => {
-      it(`should let you set to show the education delete dialog to ${bool}`, () => {
-        return dispatchThen(setShowEducationDeleteDialog(bool), [SET_SHOW_EDUCATION_DELETE_DIALOG]).then(state => {
-          assert.deepEqual(state.showEducationDeleteDialog, bool);
-        });
-      });
+    it('should let you set to show the education delete dialog', () => {
+      assertReducerResultState(setShowEducationDeleteDialog, ui => ui.showEducationDeleteDialog, false);
     });
 
-    [true, false].forEach( bool => {
-      it(`should let you set to show the work delete dialog to ${bool}`, () => {
-        return dispatchThen(setShowWorkDeleteDialog(bool), [SET_SHOW_WORK_DELETE_DIALOG]).then(state => {
-          assert.deepEqual(state.showWorkDeleteDialog, bool);
-        });
-      });
+    it(`should let you set to show the work delete dialog`, () => {
+      assertReducerResultState(setShowWorkDeleteDialog, ui => ui.showWorkDeleteDialog, false);
     });
 
     it('should let you set a deletion index', () => {
-      return dispatchThen(setDeletionIndex(3), [SET_DELETION_INDEX]).then(state => {
-        assert.deepEqual(state.deletionIndex, 3);
-      });
+      assertReducerResultState(setDeletionIndex, ui => ui.deletionIndex, null);
     });
   });
 
   describe('confirm delete all dialog', () => {
-    let actionCreator = setShowWorkDeleteAllDialog,
-      action = SET_SHOW_WORK_DELETE_ALL_DIALOG,
-      accessor = s => s.showWorkDeleteAllDialog;
-
-    [true, false].forEach( bool => {
-      it(`should let you ${action} to ${bool}`, () => {
-        return dispatchThen(actionCreator(bool), [action]).then(state => {
-          assert.deepEqual(accessor(state), bool);
-        });
-      });
+    it(`should let you show work history delete all dialog`, () => {
+      assertReducerResultState(setShowWorkDeleteAllDialog, ui => ui.showWorkDeleteAllDialog, false);
     });
   });
 
   describe("profile step", () => {
-    PROFILE_STEP_LABELS.forEach((label, step) => {
-      it(`should let you set the profile step to ${label}`, () => {
-        return dispatchThen(setProfileStep(step), [SET_PROFILE_STEP]).then(state => {
-          assert.deepEqual(state.profileStep, step);
-        });
-      });
+    it(`should let you set the profile step`, () => {
+      assertReducerResultState(setProfileStep, ui => ui.profileStep, PERSONAL_STEP);
     });
   });
 
   describe("user menu", () => {
-    [true, false].forEach(bool => {
-      it(`should let you set the user menu open state to ${bool}`, () => {
-        return dispatchThen(setUserMenuOpen(bool), [SET_USER_MENU_OPEN]).then(state => {
-          assert.deepEqual(state.userMenuOpen, bool);
-        });
-      });
+    it('should let you set the user menu open state', () => {
+      assertReducerResultState(setUserMenuOpen, ui => ui.userMenuOpen, false);
     });
   });
 
   describe('search filter visibility', () => {
-    let filterName = 'my_filter';
-
-    [true, false].forEach(bool => {
-      let visibility = {[filterName]: bool};
-      it(`should let you set a new filter to ${bool}`, () => {
-        return dispatchThen(setSearchFilterVisibility(visibility), [
-          SET_SEARCH_FILTER_VISIBILITY
-        ]).then(state => {
-          assert.deepEqual(state.searchFilterVisibility, visibility);
-        });
-      });
-
-      it(`should let you change an existing filter from ${bool} to ${!bool}`, () => {
-        store.dispatch(setSearchFilterVisibility(visibility));
-        assert.deepEqual(
-          store.getState().ui.searchFilterVisibility,
-          visibility
-        );
-
-        let newVisibility = {[filterName]: !bool};
-        return dispatchThen(setSearchFilterVisibility(newVisibility), [
-          SET_SEARCH_FILTER_VISIBILITY
-        ]).then(state => {
-          assert.deepEqual(state.searchFilterVisibility, newVisibility);
-        });
-      });
+    it('should let you set the search filter visibility', () => {
+      assertReducerResultState(setSearchFilterVisibility, ui => ui.searchFilterVisibility, {});
     });
   });
 
   describe('Email dialog visibility', () => {
-    [true, false].forEach(bool => {
-      it(`should let you set email dialog visibility to ${bool}`, () => {
-        return dispatchThen(setEmailDialogVisibility(bool), [
-          SET_EMAIL_DIALOG_VISIBILITY
-        ]).then(state => {
-          assert.equal(state.emailDialogVisibility, bool);
-        });
-      });
+    it(`should let you set email dialog visibility`, () => {
+      assertReducerResultState(setEmailDialogVisibility, ui => ui.emailDialogVisibility, false);
     });
   });
 
   describe('Enrollment', () => {
-    describe('enrollment message', () => {
-      it('should have a null default value', () => {
-        assert.equal(store.getState().ui.enrollMessage, null);
-      });
-
-      it('should let you set the message', () => {
-        return dispatchThen(setEnrollMessage("value"), [
-          SET_ENROLL_MESSAGE
-        ]).then(state => {
-          assert.equal(state.enrollMessage, "value");
-        });
-      });
+    it('sets the enrollment message', () => {
+      assertReducerResultState(setEnrollMessage, ui => ui.enrollMessage, null);
     });
 
-    describe('enrollment dialog error', () => {
-      it('should have a null default value', () => {
-        assert.equal(store.getState().ui.enrollDialogError, null);
-      });
-
-      it('should let you set the dialog error', () => {
-        return dispatchThen(setEnrollDialogError("value"), [
-          SET_ENROLL_DIALOG_ERROR
-        ]).then(state => {
-          assert.equal(state.enrollDialogError, "value");
-        });
-      });
+    it('sets the enrollment dialog error', () => {
+      assertReducerResultState(setEnrollDialogError, ui => ui.enrollDialogError, null);
     });
 
-    describe('enrollment success/failure message', () => {
-      it('should have a null default value', () => {
-        assert.equal(store.getState().ui.enrollMessage, null);
-      });
-
-      it('should let you toggle the program selector visibility', () => {
-        return dispatchThen(setEnrollMessage("value"), [
-          SET_ENROLL_MESSAGE
-        ]).then(state => {
-          assert.equal(state.enrollMessage, "value");
-        });
-      });
+    it('sets the enrollment dialog visibility', () => {
+      assertReducerResultState(setEnrollDialogVisibility, ui => ui.enrollDialogVisibility, false);
     });
 
-    describe('enrollment dialog visibility', () => {
-      it('should have a false default value', () => {
-        assert.equal(store.getState().ui.enrollDialogVisibility, false);
-      });
-
-      it('should let you toggle the program selector visibility', () => {
-        return dispatchThen(setEnrollDialogVisibility("value"), [
-          SET_ENROLL_DIALOG_VISIBILITY
-        ]).then(state => {
-          assert.equal(state.enrollDialogVisibility, "value");
-        });
-      });
-    });
-
-    describe('enrollment dialog currently selected program', () => {
-      it('should have no default value', () => {
-        assert.equal(store.getState().ui.enrollSelectedProgram, undefined);
-      });
-
-      it('should let you toggle the program selector visibility', () => {
-        return dispatchThen(setEnrollSelectedProgram("value"), [
-          SET_ENROLL_SELECTED_PROGRAM
-        ]).then(state => {
-          assert.equal(state.enrollSelectedProgram, "value");
-        });
-      });
+    it('sets the enrollment dialog currently selected program', () => {
+      assertReducerResultState(setEnrollSelectedProgram, ui => ui.enrollSelectedProgram, null);
     });
   });
 });

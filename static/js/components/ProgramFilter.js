@@ -15,7 +15,7 @@ export default class ProgramFilter extends SearchkitComponent {
 
   _accessor = new AnonymousAccessor(query => {
     const { currentProgramEnrollment } = this.props;
-    if (currentProgramEnrollment === null) {
+    if (_.isNil(currentProgramEnrollment)) {
       return query;
     }
     return query.addFilter("program_filter", TermQuery("program.id", currentProgramEnrollment.id));
