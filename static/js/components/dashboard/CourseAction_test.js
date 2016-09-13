@@ -58,18 +58,26 @@ describe('CourseAction', () => {
     assert.equal(wrapper.text(), '');
   });
 
+  [STATUS_OFFERED_NOT_ENROLLED, STATUS_ENROLLED_NOT_VERIFIED].forEach((status) => {
+    it(`shows the enroll button followed by course title when status is ${status}`, () => {
+      let course = findCourse(course => course.status === status);
+      let firstRun = course.runs[0];
+      const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
+      let buttonContainer = wrapper.find(".course-action-action");
+
+      assert.include(buttonContainer.text(), `<Button /> in ${firstRun.title}`);
+    });
+  });
+
   it('shows an upgrade button if user is not verified but is enrolled', () => {
     let course = findCourse(course => course.status === STATUS_ENROLLED_NOT_VERIFIED);
     const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
     let buttonContainer = wrapper.find(".course-action-action");
-    let spanText = buttonContainer.find(".sr-only").text();
     let button = buttonContainer.find(".dashboard-button");
-    let buttonText = button.children().text();
     let description = wrapper.find(".course-action-description");
     let firstRun = course.runs[0];
 
     assert.isUndefined(button.props().disabled);
-    assert.equal(`${buttonText}${spanText}`, `Upgrade in ${firstRun.title}`);
     assert.equal(description.text(), "");
     assertCheckoutButton(button, firstRun.course_id);
   });
@@ -82,14 +90,11 @@ describe('CourseAction', () => {
     ));
     const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
     let buttonContainer = wrapper.find(".course-action-action");
-    let spanText = buttonContainer.find(".sr-only").text();
     let button = buttonContainer.find(".dashboard-button");
-    let buttonText = button.children().text();
     let description = wrapper.find(".course-action-description");
     let firstRun = course.runs[0];
 
     assert.isTrue(button.props().disabled);
-    assert.equal(`${buttonText}${spanText}`, `Enroll in ${firstRun.title}`);
     assert.equal(description.text(), `Enrollment begins ${firstRun.fuzzy_enrollment_start_date}`);
   });
 
@@ -103,13 +108,10 @@ describe('CourseAction', () => {
     let yesterday = moment(firstRun.enrollment_start_date).add(-1, 'days');
     const wrapper = shallow(<CourseAction course={course} now={yesterday} checkout={checkoutStub}/>);
     let buttonContainer = wrapper.find(".course-action-action");
-    let spanText = buttonContainer.find(".sr-only").text();
     let button = buttonContainer.find(".dashboard-button");
-    let buttonText = button.children().text();
     let description = wrapper.find(".course-action-description");
 
     assert.isTrue(button.props().disabled);
-    assert.equal(`${buttonText}${spanText}`, `Enroll in ${firstRun.title}`);
     let formattedDate = moment(firstRun.enrollment_start_date).format(DASHBOARD_FORMAT);
     assert.equal(description.text(), `Enrollment begins ${formattedDate}`);
   });
@@ -123,13 +125,10 @@ describe('CourseAction', () => {
     let today = moment(firstRun.enrollment_start_date);
     const wrapper = shallow(<CourseAction course={course} now={today} checkout={checkoutStub}/>);
     let buttonContainer = wrapper.find(".course-action-action");
-    let spanText = buttonContainer.find(".sr-only").text();
     let button = buttonContainer.find(".dashboard-button");
-    let buttonText = button.children().text();
     let description = wrapper.find(".course-action-description");
 
     assert.isUndefined(button.props().disabled);
-    assert.equal(`${buttonText}${spanText}`, `Enroll in ${firstRun.title}`);
     assert.equal(description.text(), ``);
     assertCheckoutButton(button, firstRun.course_id);
   });
@@ -143,13 +142,10 @@ describe('CourseAction', () => {
     let tomorrow = moment(firstRun.enrollment_start_date).add(1, 'days');
     const wrapper = shallow(<CourseAction course={course} now={tomorrow} checkout={checkoutStub}/>);
     let buttonContainer = wrapper.find(".course-action-action");
-    let spanText = buttonContainer.find(".sr-only").text();
     let button = buttonContainer.find(".dashboard-button");
-    let buttonText = button.children().text();
     let description = wrapper.find(".course-action-description");
 
     assert.isUndefined(button.props().disabled);
-    assert.equal(`${buttonText}${spanText}`, `Enroll in ${firstRun.title}`);
     assert.equal(description.text(), ``);
     assertCheckoutButton(button, firstRun.course_id);
   });
