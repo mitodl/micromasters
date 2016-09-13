@@ -66,19 +66,28 @@ class ProgramPage(Page):
     """
     CMS page representing the department e.g. Biology
     """
-    description = RichTextField(blank=True)
-    program = models.OneToOneField('courses.Program', null=True, on_delete=models.SET_NULL)
+    description = RichTextField(
+        blank=True,
+        help_text='The description shown on the program page'
+    )
+    program = models.OneToOneField(
+        'courses.Program',
+        null=True,
+        on_delete=models.SET_NULL,
+        help_text='The program for this page',
+    )
     external_program_page_url = models.URLField(
         blank=True,
         null=True,
-        help_text="Use this field to directly link an external web page for this program."
+        help_text="If this field is set the program page link on the home page will go to this URL."
     )
     background_image = models.ForeignKey(
         Image,
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+'
+        related_name='+',
+        help_text='The hero image on the program page'
     )
     contact_us = RichTextField(blank=True)
     title_over_image = RichTextField(blank=True)
@@ -88,7 +97,11 @@ class ProgramPage(Page):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name='+'
+        related_name='+',
+        help_text=(
+            'Thumbnail size must be at least 690x530 pixels. '
+            'Thumbnails are cropped down to this size, preserving aspect ratio.'
+        ),
     )
 
     content_panels = Page.content_panels + [

@@ -80,7 +80,7 @@
                   <div class="media-top">
                     <div class="image-wrap">
                       {% if program.programpage and program.programpage.thumbnail_image %}
-                      {% image program.programpage.thumbnail_image fill-378x225 as thumbnail_image %}
+                      {% image program.programpage.thumbnail_image fill-690x530 as thumbnail_image %}
                       <img class="image" src="{{ thumbnail_image.url }}" alt="course image for {{program}}"
                            width="{{ thumbnail_image.width }}" height="{{ thumbnail_image.height }}" />
                       {% else %}
