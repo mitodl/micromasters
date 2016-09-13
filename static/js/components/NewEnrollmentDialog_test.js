@@ -1,21 +1,15 @@
 // @flow
 import React from 'react';
 import { assert } from 'chai';
-import MenuItem from 'material-ui/MenuItem'
+import MenuItem from 'material-ui/MenuItem';
 import _ from 'lodash';
 import { shallow } from 'enzyme';
 import Dialog from 'material-ui/Dialog';
 import SelectField from 'material-ui/SelectField';
-import Button from 'react-mdl/lib/Button';
 
 import {
 } from '../actions/enrollments';
 import * as enrollmentActions from '../actions/enrollments';
-import {
-  SET_ENROLL_DIALOG_ERROR,
-  SET_ENROLL_DIALOG_VISIBILITY,
-  SET_ENROLL_SELECTED_PROGRAM,
-} from '../actions/ui';
 import * as uiActions from '../actions/ui';
 
 import {
