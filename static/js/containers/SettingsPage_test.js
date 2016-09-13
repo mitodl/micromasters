@@ -67,10 +67,13 @@ describe("SettingsPage", function() {
 
     it('shows the privacy form', () => {
       return renderComponent("/settings", userActions).then(([, div]) => {
-        let question = div.getElementsByClassName('privacy-form-heading')[0];
+        let pageHeading = div.getElementsByClassName('privacy-form-heading')[0];
+        assert.equal(pageHeading.textContent, 'Settings');
+
+        let question = div.getElementsByClassName('privacy-form-heading')[1];
         assert.equal(question.textContent, 'Who can see your profile?');
 
-        let emailPrefHeading = div.getElementsByClassName('privacy-form-heading')[1];
+        let emailPrefHeading = div.getElementsByClassName('privacy-form-heading')[2];
         assert.equal(emailPrefHeading.textContent, 'Email Preferences');
       });
     });
