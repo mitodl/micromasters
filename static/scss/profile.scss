@@ -37,6 +37,8 @@
   }
 
   .profile-radio-switch, .profile-radio-group {
+    font-size: 14px;
+
     svg:last-child {
       fill: $mm-brand-blue !important;
     }
@@ -163,6 +165,11 @@
   }
 }
 
+.privacy-form-heading {
+  font-size: 20px;
+  font-weight: 500;
+  margin-top: 0;
+}
 
 // for the Why we ask this tooltip
 // TODO: where should this go?
