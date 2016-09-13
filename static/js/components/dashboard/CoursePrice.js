@@ -20,49 +20,39 @@ export default class CoursePrice extends React.Component {
   };
 
   renderTooltip(text: string): React$Element<*>|void {
-    let tooltip;
-
-    if (text) {
-      tooltip = (
-        <div>
-          <span className="tooltip-link"
-            data-tip
-            data-for='course-detail'>
-            <IconButton name="help" className="help"/>
-          </span>
-          <ReactTooltip id="course-detail" effect="solid"
-            event="click" globalEventOff="click" className="tooltip">
-            {text}
-          </ReactTooltip>
-        </div>
-      );
-    }
-
-    return tooltip;
+    return (
+      <div>
+        <span className="tooltip-link"
+          data-tip
+          data-for='course-detail'>
+          <IconButton name="help" className="help"/>
+        </span>
+        <ReactTooltip id="course-detail" effect="solid"
+          event="click" globalEventOff="click" className="tooltip">
+          {text}
+        </ReactTooltip>
+      </div>
+    );
   }
 
   courseTooltipText(courseStatus: string): string {
-    let text = "";
-
     if (courseStatus === STATUS_ENROLLED_NOT_VERIFIED) {
-      text = "You need to enroll in the Verified Course to get MicroMasters credit.";
+      return "You need to enroll in the Verified Course to get MicroMasters credit.";
     }
-
-    return text;
+    return '';
   }
 
   coursePrice(firstRun: CourseRun, courseStatus: string): string {
-    let price = "";
     let courseHasPrice = (
       !_.isNil(firstRun.price) &&
       (courseStatus === STATUS_OFFERED_NOT_ENROLLED || courseStatus === STATUS_ENROLLED_NOT_VERIFIED)
     );
 
     if (courseHasPrice) {
-      price = formatPrice(firstRun.price);
+      return formatPrice(firstRun.price);
     }
 
-    return price;
+    return '';
   }
 
   render() {

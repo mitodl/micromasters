@@ -61,7 +61,6 @@ export default class CourseDescription extends React.Component {
 
   render() {
     const { course } = this.props;
-    let enrolled = "";
     let firstRun: CourseRun = {};
 
     if (course.runs.length > 0) {
@@ -71,9 +70,7 @@ export default class CourseDescription extends React.Component {
     return <div className="course-description">
       <span className="course-description-title">
         {course.title}
-      </span> <span className="course-description-enrolled">
-        {enrolled}
-      </span><br />
+      </span> <br />
       <span className="course-description-result">
         {this.courseDateMessage(course.status, firstRun)}
       </span>
