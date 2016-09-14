@@ -216,11 +216,10 @@ export const STATUS_NOT_PASSED = 'not-passed';
 export const STATUS_VERIFIED = 'verified';
 export const STATUS_ENROLLED = "enrolled";
 export const STATUS_OFFERED = "offered";
-export const STATUS_NOT_OFFERED = 'not-offered';
 
 export const ALL_COURSE_STATUSES = [
-  STATUS_NOT_OFFERED,
   STATUS_PASSED,
+  STATUS_NOT_PASSED,
   STATUS_OFFERED,
   STATUS_ENROLLED,
   STATUS_VERIFIED,
@@ -276,7 +275,6 @@ export const DASHBOARD_RESPONSE = [
         ],
         "position_in_program": 0,
         "title": "Gio Course - failed, no grade",
-        "status": STATUS_NOT_OFFERED,
         "description": "",
         "id": 1
       },
@@ -285,7 +283,6 @@ export const DASHBOARD_RESPONSE = [
         "runs": [],
         "position_in_program": 1,
         "title": "8.MechCx Advanced Introductory Classical Mechanics",
-        "status": STATUS_NOT_OFFERED,
         "description": "",
         "id": 2
       },
@@ -294,7 +291,6 @@ export const DASHBOARD_RESPONSE = [
         "runs": [],
         "position_in_program": 2,
         "title": "EDX Demo course",
-        "status": STATUS_NOT_OFFERED,
         "description": "",
         "id": 3
       },
@@ -303,7 +299,6 @@ export const DASHBOARD_RESPONSE = [
         "runs": [],
         "position_in_program": 3,
         "title": "Peter Course",
-        "status": STATUS_NOT_OFFERED,
         "description": "",
         "id": 4
       }
@@ -314,7 +309,6 @@ export const DASHBOARD_RESPONSE = [
     "courses": [
       {
         "id": 5,
-        "status": STATUS_OFFERED,
         "position_in_program": 1,
         "title": "Supply Chain and Logistics Fundamentals - enroll button",
         "runs": [
@@ -337,7 +331,6 @@ export const DASHBOARD_RESPONSE = [
       },
       {
         "id": 6,
-        "status": STATUS_PASSED,
         "position_in_program": 5,
         "title": "Passed course - check mark, grade is 88%",
         "runs": [
@@ -359,7 +352,6 @@ export const DASHBOARD_RESPONSE = [
       },
       {
         "id": 7,
-        "status": STATUS_NOT_OFFERED,
         "position_in_program": 2,
         "title": "Empty course - no status text",
         "runs": [
@@ -369,7 +361,6 @@ export const DASHBOARD_RESPONSE = [
       },
       {
         "id": 8,
-        "status": STATUS_ENROLLED,
         "position_in_program": 3,
         "title": "Not verified course - upgrade button",
         "runs": [
@@ -390,7 +381,6 @@ export const DASHBOARD_RESPONSE = [
       },
       {
         "id": 10,
-        "status": STATUS_OFFERED,
         "position_in_program": 4,
         "title": "Enrollment starting course - disabled enroll button, text says Enrollment begins 3/3/2106",
         "runs": [
@@ -413,7 +403,6 @@ export const DASHBOARD_RESPONSE = [
       },
       {
         "id": 12,
-        "status": STATUS_PASSED,
         "title": "Passed course missing grade - check mark, no grade",
         "position_in_program": 6,
         "runs": [
@@ -434,7 +423,6 @@ export const DASHBOARD_RESPONSE = [
         "id": 15,
         "position_in_program": 9,
         "title": "verified not completed, course starts in future - action text is Course starting",
-        "status": STATUS_VERIFIED,
         "runs": [
           {
             "id": 13,
@@ -449,7 +437,6 @@ export const DASHBOARD_RESPONSE = [
       },
       {
         "id": 11,
-        "status": STATUS_OFFERED,
         "position_in_program": 0,
         "title": "Fuzzy enrollment starting course - First in program, action text is enrollment begins soonish",
         "runs": [
@@ -480,7 +467,6 @@ export const DASHBOARD_RESPONSE = [
     "courses": [
       {
         "id": 9,
-        "status": STATUS_VERIFIED,
         "position_in_program": 0,
         "title": "Course for last program in progress - no grade, action or description",
         "runs": [
