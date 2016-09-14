@@ -31,7 +31,7 @@ export default class LearnerResult extends React.Component {
         </Cell>
         <Cell col={4} className="centered learner-location">
           <span>
-            { getLocation(profile) }
+            { getLocation(profile, false) }
           </span>
         </Cell>
         <Cell col={3} className="learner-grade">

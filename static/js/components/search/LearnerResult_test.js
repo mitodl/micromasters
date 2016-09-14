@@ -29,7 +29,6 @@ describe('LearnerResult', () => {
   it("should include the user's location", () => {
     let result = renderLearnerResult(elasticHit);
     assert.include(result, USER_PROFILE_RESPONSE.city);
-    assert.include(result, USER_PROFILE_RESPONSE.state_or_territory);
     assert.include(result, USER_PROFILE_RESPONSE.country);
   });
 

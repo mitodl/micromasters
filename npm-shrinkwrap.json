@@ -64,11 +64,6 @@
       "from": "amdefine@>=0.0.4",
       "resolved": "https://registry.npmjs.org/amdefine/-/amdefine-1.0.0.tgz"
     },
-    "animate.css": {
-      "version": "3.5.2",
-      "from": "animate.css@latest",
-      "resolved": "https://registry.npmjs.org/animate.css/-/animate.css-3.5.2.tgz"
-    },
     "ansi-escapes": {
       "version": "1.4.0",
       "from": "ansi-escapes@>=1.1.0 <2.0.0",
@@ -4106,6 +4101,11 @@
       "from": "react-select@latest",
       "resolved": "https://registry.npmjs.org/react-select/-/react-select-1.0.0-rc.1.tgz"
     },
+    "react-sticky": {
+      "version": "5.0.5",
+      "from": "react-sticky@latest",
+      "resolved": "https://registry.npmjs.org/react-sticky/-/react-sticky-5.0.5.tgz"
+    },
     "react-tap-event-plugin": {
       "version": "1.0.0",
       "from": "react-tap-event-plugin@1.0.0",
@@ -5268,11 +5268,6 @@
       "version": "1.0.0",
       "from": "wordwrap@>=1.0.0 <1.1.0",
       "resolved": "https://registry.npmjs.org/wordwrap/-/wordwrap-1.0.0.tgz"
-    },
-    "wowjs": {
-      "version": "1.1.3",
-      "from": "wowjs@1.1.3",
-      "resolved": "https://registry.npmjs.org/wowjs/-/wowjs-1.1.3.tgz"
     },
     "wrap-ansi": {
       "version": "2.0.0",

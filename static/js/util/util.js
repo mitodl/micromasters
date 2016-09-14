@@ -266,12 +266,16 @@ export function getPreferredName(profile: Profile, last: boolean = true): string
 /**
  * returns the users location
  */
-export function getLocation(profile: Profile): string {
+export function getLocation(profile: Profile, showState: boolean = true): string {
   let { country, state_or_territory, city } = profile;
   let subCountryLocation, countryLocation;
   if ( country === 'US' ) {
     let state = state_or_territory.replace(/^\D{2}-/, '');
-    subCountryLocation = `${city}, ${state}`;
+    if (showState) {
+      subCountryLocation = `${city}, ${state}`;
+    } else {
+      subCountryLocation = city;
+    }
     countryLocation = 'US';
   } else {
     subCountryLocation = city;

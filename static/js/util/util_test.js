@@ -188,6 +188,8 @@ describe('utility functions', () => {
         city: 'Portland'
       };
       assert.equal(getLocation(us), 'Portland, ME, US');
+      // assert hide state
+      assert.equal(getLocation(us, false), 'Portland, US');
     });
   });
 
