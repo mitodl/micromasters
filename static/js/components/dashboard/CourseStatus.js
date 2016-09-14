@@ -13,7 +13,7 @@ import {
 import { formatPrice } from '../../util/util';
 import { courseListToolTip } from './util';
 
-export default class CoursePrice extends React.Component {
+export default class CourseStatus extends React.Component {
   props: {
     course: Course
   };
@@ -43,18 +43,18 @@ export default class CoursePrice extends React.Component {
     const price = this.coursePrice(firstRun);
 
     if (price) {
-      priceDisplay = <span className="course-price-display">{price}</span>;
+      priceDisplay = <span className="price">{price}</span>;
     }
 
     if (firstRun.status === STATUS_ENROLLED) {
       tooltipDisplay = courseListToolTip(
         "You need to enroll in the Verified Course to get MicroMasters credit.",
-        'course-detail',
+        `course-detail${course.id}`,
       );
     }
 
     return (
-      <div className="course-price">
+      <div className="course-status">
         {priceDisplay} {tooltipDisplay}
       </div>
     );

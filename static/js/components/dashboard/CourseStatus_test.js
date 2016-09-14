@@ -3,7 +3,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import { assert } from 'chai';
 
-import CoursePrice from './CoursePrice';
+import CourseStatus from './CourseStatus';
 import {
   STATUS_PASSED,
   STATUS_ENROLLED,
@@ -14,7 +14,7 @@ import {
 
 import { findCourse } from './CourseDescription_test';
 
-describe('CoursePrice', () => {
+describe('CourseStatus', () => {
   it('shows price of course with status offered', () => {
     let course = findCourse(course => (
       course.runs.length > 0 &&
@@ -22,8 +22,8 @@ describe('CoursePrice', () => {
     ));
     assert.equal(course.runs[0].price, 50.00);
 
-    const wrapper = shallow(<CoursePrice course={course}/>);
-    assert.equal(wrapper.find(".course-price-display").text(), "$50");
+    const wrapper = shallow(<CourseStatus course={course}/>);
+    assert.equal(wrapper.find(".price").text(), "$50");
   });
 
   it('shows price of course with status enrolled', () => {
@@ -33,8 +33,8 @@ describe('CoursePrice', () => {
     ));
     assert.equal(course.runs[0].price, 50.00);
 
-    const wrapper = shallow(<CoursePrice course={course}/>);
-    assert.equal(wrapper.find(".course-price-display").text(), "$50");
+    const wrapper = shallow(<CourseStatus course={course}/>);
+    assert.equal(wrapper.find(".price").text(), "$50");
   });
 
   for (let status of [STATUS_PASSED, STATUS_NOT_PASSED, STATUS_VERIFIED]) {
@@ -45,8 +45,8 @@ describe('CoursePrice', () => {
       ));
       assert.isNotOk(course.runs[0].price);
 
-      const wrapper = shallow(<CoursePrice course={course}/>);
-      assert.equal(wrapper.find(".course-price-display").length, 0);
+      const wrapper = shallow(<CourseStatus course={course}/>);
+      assert.equal(wrapper.find(".price").length, 0);
     });
   }
 
@@ -55,7 +55,7 @@ describe('CoursePrice', () => {
       course.runs.length > 0 &&
       course.runs[0].status === STATUS_ENROLLED
     ));
-    const wrapper = shallow(<CoursePrice course={course}/>);
+    const wrapper = shallow(<CourseStatus course={course}/>);
     let tooltip = wrapper.find(".help");
     assert.equal(tooltip.length, 1);
   });
@@ -66,7 +66,7 @@ describe('CoursePrice', () => {
         course.runs.length > 0 &&
         course.runs[0].status === status
       ));
-      const wrapper = shallow(<CoursePrice course={course}/>);
+      const wrapper = shallow(<CourseStatus course={course}/>);
       let tooltip = wrapper.find(".help");
       assert.equal(tooltip.length, 0);
     });
@@ -74,7 +74,7 @@ describe('CoursePrice', () => {
 
   it("doesn't show anything if there are no runs", () => {
     let course = findCourse(course => course.runs.length === 0);
-    const wrapper = shallow(<CoursePrice course={course}/>);
+    const wrapper = shallow(<CourseStatus course={course}/>);
     assert.equal(wrapper.text().trim(), "");
   });
 });

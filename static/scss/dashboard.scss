@@ -195,7 +195,7 @@ c.validation-wrapper {
         }
       }
 
-      .course-price {
+      .course-status {
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -204,7 +204,7 @@ c.validation-wrapper {
           color: rgba(0, 0, 0, 0.4);
         }
 
-        .course-price-display {
+        .price {
           font-weight: 500;
         }
       }
