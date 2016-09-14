@@ -8,9 +8,9 @@ import {
   STATUS_NOT_OFFERED,
   STATUS_PASSED,
   STATUS_NOT_PASSED,
-  STATUS_ENROLLED_NOT_VERIFIED,
-  STATUS_VERIFIED_NOT_COMPLETED,
-  STATUS_OFFERED_NOT_ENROLLED,
+  STATUS_ENROLLED,
+  STATUS_VERIFIED,
+  STATUS_OFFERED,
   DASHBOARD_FORMAT,
 } from '../../constants';
 
@@ -46,9 +46,9 @@ export default class CourseDescription extends React.Component {
         text = `Coming ${firstRun.fuzzy_start_date}`;
       }
       break;
-    case STATUS_ENROLLED_NOT_VERIFIED:
-    case STATUS_VERIFIED_NOT_COMPLETED:
-    case STATUS_OFFERED_NOT_ENROLLED:
+    case STATUS_ENROLLED:
+    case STATUS_VERIFIED:
+    case STATUS_OFFERED:
       if (firstRun.course_start_date) {
         let courseStartDate = moment(firstRun.course_start_date);
         text = this.courseDate('Start date', courseStartDate);

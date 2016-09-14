@@ -33,10 +33,10 @@ class CourseStatus:
     """
     PASSED = 'passed'
     NOT_PASSED = 'not-passed'
-    CURRENT_GRADE = 'verified-not-completed'
-    UPGRADE = 'enrolled-not-verified'
+    CURRENT_GRADE = 'verified'
+    UPGRADE = 'enrolled'
     NOT_OFFERED = 'not-offered'
-    OFFERED = 'offered-not-enrolled'
+    OFFERED = 'offered'
 
     @classmethod
     def all_statuses(cls):

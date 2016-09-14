@@ -213,17 +213,17 @@ export const USER_PROGRAM_RESPONSE = {
 
 export const STATUS_PASSED = 'passed';
 export const STATUS_NOT_PASSED = 'not-passed';
-export const STATUS_VERIFIED_NOT_COMPLETED = 'verified-not-completed';
-export const STATUS_ENROLLED_NOT_VERIFIED = "enrolled-not-verified";
-export const STATUS_OFFERED_NOT_ENROLLED = "offered-not-enrolled";
+export const STATUS_VERIFIED = 'verified';
+export const STATUS_ENROLLED = "enrolled";
+export const STATUS_OFFERED = "offered";
 export const STATUS_NOT_OFFERED = 'not-offered';
 
 export const ALL_COURSE_STATUSES = [
   STATUS_NOT_OFFERED,
   STATUS_PASSED,
-  STATUS_OFFERED_NOT_ENROLLED,
-  STATUS_ENROLLED_NOT_VERIFIED,
-  STATUS_VERIFIED_NOT_COMPLETED,
+  STATUS_OFFERED,
+  STATUS_ENROLLED,
+  STATUS_VERIFIED,
 ];
 
 export const DASHBOARD_RESPONSE = [
@@ -314,14 +314,14 @@ export const DASHBOARD_RESPONSE = [
     "courses": [
       {
         "id": 5,
-        "status": STATUS_OFFERED_NOT_ENROLLED,
+        "status": STATUS_OFFERED,
         "position_in_program": 1,
         "title": "Supply Chain and Logistics Fundamentals - enroll button",
         "runs": [
           {
             "course_id": "course-v1:supply+chain",
             "id": 4,
-            "status": STATUS_OFFERED_NOT_ENROLLED,
+            "status": STATUS_OFFERED,
             "fuzzy_enrollment_start_date": null,
             "title": "Supply Chain Design",
             "enrollment_start_date": "2016-03-04T01:00:00Z",
@@ -369,13 +369,13 @@ export const DASHBOARD_RESPONSE = [
       },
       {
         "id": 8,
-        "status": STATUS_ENROLLED_NOT_VERIFIED,
+        "status": STATUS_ENROLLED,
         "position_in_program": 3,
         "title": "Not verified course - upgrade button",
         "runs": [
           {
             "id": 7,
-            "status": STATUS_ENROLLED_NOT_VERIFIED,
+            "status": STATUS_ENROLLED,
             "title": "Not verified run",
             "course_id": "not-verified",
             "position": 0,
@@ -390,14 +390,14 @@ export const DASHBOARD_RESPONSE = [
       },
       {
         "id": 10,
-        "status": STATUS_OFFERED_NOT_ENROLLED,
+        "status": STATUS_OFFERED,
         "position_in_program": 4,
         "title": "Enrollment starting course - disabled enroll button, text says Enrollment begins 3/3/2106",
         "runs": [
           {
             "course_id": "course-v1:supply+chain",
             "id": 8,
-            "status": STATUS_OFFERED_NOT_ENROLLED,
+            "status": STATUS_OFFERED,
             "fuzzy_enrollment_start_date": null,
             "title": "Enrollment starting run",
             "enrollment_start_date": "2106-03-04T01:00:00Z",
@@ -434,11 +434,11 @@ export const DASHBOARD_RESPONSE = [
         "id": 15,
         "position_in_program": 9,
         "title": "verified not completed, course starts in future - action text is Course starting",
-        "status": STATUS_VERIFIED_NOT_COMPLETED,
+        "status": STATUS_VERIFIED,
         "runs": [
           {
             "id": 13,
-            "status": STATUS_VERIFIED_NOT_COMPLETED,
+            "status": STATUS_VERIFIED,
             "course_start_date": "8765-03-21",
             "title": "First run",
             "position": 0,
@@ -449,14 +449,14 @@ export const DASHBOARD_RESPONSE = [
       },
       {
         "id": 11,
-        "status": STATUS_OFFERED_NOT_ENROLLED,
+        "status": STATUS_OFFERED,
         "position_in_program": 0,
         "title": "Fuzzy enrollment starting course - First in program, action text is enrollment begins soonish",
         "runs": [
           {
             "course_id": "course-v1:supply+chain",
             "id": 9,
-            "status": STATUS_OFFERED_NOT_ENROLLED,
+            "status": STATUS_OFFERED,
             "fuzzy_enrollment_start_date": "soonish",
             "title": "Fuzzy enrollment starting run",
             "position": 0,
@@ -480,14 +480,14 @@ export const DASHBOARD_RESPONSE = [
     "courses": [
       {
         "id": 9,
-        "status": STATUS_VERIFIED_NOT_COMPLETED,
+        "status": STATUS_VERIFIED,
         "position_in_program": 0,
         "title": "Course for last program in progress - no grade, action or description",
         "runs": [
           {
             "course_id": "course-v1:edX+DemoX+Demo_Course",
             "id": 6,
-            "status": STATUS_VERIFIED_NOT_COMPLETED,
+            "status": STATUS_VERIFIED,
             "title": "Course run for last program",
             "position": 0,
             "course_start_date": "2016-01-01",

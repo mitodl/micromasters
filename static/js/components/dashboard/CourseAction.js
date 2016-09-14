@@ -7,8 +7,8 @@ import Button from 'react-mdl/lib/Button';
 import type { Course, CourseRun } from '../../flow/programTypes';
 import {
   STATUS_PASSED,
-  STATUS_ENROLLED_NOT_VERIFIED,
-  STATUS_OFFERED_NOT_ENROLLED,
+  STATUS_ENROLLED,
+  STATUS_OFFERED,
   DASHBOARD_FORMAT,
 } from '../../constants';
 
@@ -54,11 +54,11 @@ export default class CourseAction extends React.Component {
     case STATUS_PASSED:
       action = <i className="material-icons">done</i>;
       break;
-    case STATUS_ENROLLED_NOT_VERIFIED: {
+    case STATUS_ENROLLED: {
       action = this.makeEnrollButton("Upgrade", firstRun, false);
       break;
     }
-    case STATUS_OFFERED_NOT_ENROLLED: {
+    case STATUS_OFFERED: {
       let disabled = false;
       if (!firstRun.enrollment_start_date && firstRun.fuzzy_enrollment_start_date) {
         disabled = true;

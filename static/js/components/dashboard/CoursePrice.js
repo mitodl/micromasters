@@ -9,8 +9,8 @@ import type {
   CourseRun
 } from '../../flow/programTypes';
 import {
-  STATUS_ENROLLED_NOT_VERIFIED,
-  STATUS_OFFERED_NOT_ENROLLED,
+  STATUS_ENROLLED,
+  STATUS_OFFERED,
 } from '../../constants';
 import { formatPrice } from '../../util/util';
 
@@ -36,7 +36,7 @@ export default class CoursePrice extends React.Component {
   }
 
   courseTooltipText(courseStatus: string): string {
-    if (courseStatus === STATUS_ENROLLED_NOT_VERIFIED) {
+    if (courseStatus === STATUS_ENROLLED) {
       return "You need to enroll in the Verified Course to get MicroMasters credit.";
     }
     return '';
@@ -45,7 +45,7 @@ export default class CoursePrice extends React.Component {
   coursePrice(firstRun: CourseRun, courseStatus: string): string {
     let courseHasPrice = (
       !_.isNil(firstRun.price) &&
-      (courseStatus === STATUS_OFFERED_NOT_ENROLLED || courseStatus === STATUS_ENROLLED_NOT_VERIFIED)
+      (courseStatus === STATUS_OFFERED || courseStatus === STATUS_ENROLLED)
     );
 
     if (courseHasPrice) {

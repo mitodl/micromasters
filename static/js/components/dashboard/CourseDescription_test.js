@@ -15,9 +15,9 @@ import {
   DASHBOARD_FORMAT,
   STATUS_PASSED,
   STATUS_NOT_PASSED,
-  STATUS_ENROLLED_NOT_VERIFIED,
-  STATUS_VERIFIED_NOT_COMPLETED,
-  STATUS_OFFERED_NOT_ENROLLED,
+  STATUS_ENROLLED,
+  STATUS_VERIFIED,
+  STATUS_OFFERED,
   STATUS_NOT_OFFERED,
   ALL_COURSE_STATUSES,
 } from '../../constants';
@@ -90,8 +90,8 @@ describe('CourseDescription', () => {
   });
 
   it(`does show date with status verified-not-completed`, () => {
-    let course = _.cloneDeep(findCourse(course => course.status === STATUS_VERIFIED_NOT_COMPLETED));
-    course.runs = [ createCourseRun(STATUS_VERIFIED_NOT_COMPLETED) ];
+    let course = _.cloneDeep(findCourse(course => course.status === STATUS_VERIFIED));
+    course.runs = [ createCourseRun(STATUS_VERIFIED) ];
     const wrapper = shallow(<CourseDescription course={course} />);
     let firstRun = course.runs[0];
     let courseStartDate = moment(firstRun.course_start_date);
@@ -101,8 +101,8 @@ describe('CourseDescription', () => {
   });
 
   it(`does show date with status enrolled-not-verified`, () => {
-    let course = _.cloneDeep(findCourse(course => course.status === STATUS_ENROLLED_NOT_VERIFIED));
-    course.runs = [ createCourseRun(STATUS_ENROLLED_NOT_VERIFIED) ];
+    let course = _.cloneDeep(findCourse(course => course.status === STATUS_ENROLLED));
+    course.runs = [ createCourseRun(STATUS_ENROLLED) ];
     const wrapper = shallow(<CourseDescription course={course} />);
     let firstRun = course.runs[0];
     let courseStartDate = moment(firstRun.course_start_date);
@@ -112,8 +112,8 @@ describe('CourseDescription', () => {
   });
 
   it(`does show date with status offered-not-enrolled`, () => {
-    let course = _.cloneDeep(findCourse(course => course.status === STATUS_OFFERED_NOT_ENROLLED));
-    course.runs = [ createCourseRun(STATUS_OFFERED_NOT_ENROLLED) ];
+    let course = _.cloneDeep(findCourse(course => course.status === STATUS_OFFERED));
+    course.runs = [ createCourseRun(STATUS_OFFERED) ];
     const wrapper = shallow(<CourseDescription course={course} />);
     let firstRun = course.runs[0];
     let courseStartDate = moment(firstRun.course_start_date);
