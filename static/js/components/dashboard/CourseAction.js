@@ -84,7 +84,6 @@ export default class CourseAction extends React.Component {
     default: {
       // there are no runs
       action = this.makeEnrollButton("Enroll", firstRun, true);
-      break;
     }
     }
 
