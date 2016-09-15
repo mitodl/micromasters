@@ -142,11 +142,11 @@ def get_info_for_program(program, enrollments, certificates):
     return data
 
 
-def _add_run(course_data, next_run, status, certificate=None):
+def _add_run(course_data, run, status, certificate=None):
     """Helper function to add a course run to the status dictionary"""
     course_data['runs'].append(
         format_courserun_for_dashboard(
-            next_run,
+            run,
             status,
             certificate=certificate,
             position=len(course_data['runs']) + 1
