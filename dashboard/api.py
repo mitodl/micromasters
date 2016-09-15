@@ -142,6 +142,18 @@ def get_info_for_program(program, enrollments, certificates):
     return data
 
 
+def _add_run(course_data, next_run, status, certificate=None):
+    """Helper function to add a course run to the status dictionary"""
+    course_data['runs'].append(
+        format_courserun_for_dashboard(
+            next_run,
+            status,
+            certificate=certificate,
+            position=len(course_data['runs']) + 1
+        )
+    )
+
+
 def get_info_for_course(course, user_enrollments, user_certificates):
     """
     Checks the status of a course given the status of all its runs
@@ -182,29 +194,18 @@ def get_info_for_course(course, user_enrollments, user_certificates):
     # remove the picked run_status from the list
     run_statuses.remove(run_status)
 
-    def add_run(next_run, status, certificate=None):
-        """Helper function to add a course run to the status dictionary"""
-        course_data['runs'].append(
-            format_courserun_for_dashboard(
-                next_run,
-                status,
-                certificate=certificate,
-                position=len(course_data['runs']) + 1
-            )
-        )
-
     if run_status.status == CourseRunStatus.NOT_ENROLLED:
         next_run = course.get_next_run()
         if next_run is not None:
-            add_run(next_run, CourseStatus.OFFERED)
+            _add_run(course_data, next_run, CourseStatus.OFFERED)
     elif run_status.status == CourseRunStatus.NOT_PASSED:
         next_run = course.get_next_run()
         if next_run is not None:
-            add_run(next_run, CourseStatus.OFFERED)
+            _add_run(course_data, next_run, CourseStatus.OFFERED)
         if next_run is None or run_status.course_run.pk != next_run.pk:
-            add_run(run_status.course_run, CourseStatus.NOT_PASSED)
+            _add_run(course_data, run_status.course_run, CourseStatus.NOT_PASSED)
     elif run_status.status == CourseRunStatus.GRADE:
-        add_run(run_status.course_run, CourseStatus.CURRENT_GRADE)
+        _add_run(course_data, run_status.course_run, CourseStatus.CURRENT_GRADE)
     # check if we need to check the certificate
     elif run_status.status == CourseRunStatus.READ_CERT:
         # if there is no certificate for the user, the user never passed
@@ -212,18 +213,18 @@ def get_info_for_course(course, user_enrollments, user_certificates):
         if not user_certificates.has_verified_cert(run_status.course_run.edx_course_key):
             next_run = course.get_next_run()
             if next_run is not None:
-                add_run(next_run, CourseStatus.OFFERED)
+                _add_run(course_data, next_run, CourseStatus.OFFERED)
             # add the run of the status anyway if the next run is different from the one just added
             if next_run is None or run_status.course_run.pk != next_run.pk:
-                add_run(run_status.course_run, CourseStatus.NOT_PASSED)
+                _add_run(course_data, run_status.course_run, CourseStatus.NOT_PASSED)
         else:
             # pull the verified certificate for course
             cert = user_certificates.get_verified_cert(run_status.course_run.edx_course_key)
-            add_run(run_status.course_run, CourseStatus.PASSED, certificate=cert)
+            _add_run(course_data, run_status.course_run, CourseStatus.PASSED, certificate=cert)
     elif run_status.status == CourseRunStatus.WILL_ATTEND:
-        add_run(run_status.course_run, CourseStatus.CURRENT_GRADE)
+        _add_run(course_data, run_status.course_run, CourseStatus.CURRENT_GRADE)
     elif run_status.status == CourseRunStatus.UPGRADE:
-        add_run(run_status.course_run, CourseStatus.UPGRADE)
+        _add_run(course_data, run_status.course_run, CourseStatus.UPGRADE)
 
     # add all the other runs with status != NOT_ENROLLED
     # the first one (or two in some cases) has been added with the logic before
@@ -233,10 +234,10 @@ def get_info_for_course(course, user_enrollments, user_certificates):
                     user_certificates.has_verified_cert(run_status.course_run.edx_course_key)):
                 # in this case the user might have passed the course also in the past
                 cert = user_certificates.get_verified_cert(run_status.course_run.edx_course_key)
-                add_run(run_status.course_run, CourseStatus.PASSED, certificate=cert)
+                _add_run(course_data, run_status.course_run, CourseStatus.PASSED, certificate=cert)
             else:
                 # any other status means that the student never passed the course run
-                add_run(run_status.course_run, CourseStatus.NOT_PASSED)
+                _add_run(course_data, run_status.course_run, CourseStatus.NOT_PASSED)
 
     return course_data
 
