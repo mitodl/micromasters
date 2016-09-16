@@ -359,7 +359,7 @@ class TestProgramPage(ViewsTests):
         self.program_page.save()
 
         resp = self.client.get('/')
-        self.assertContains(resp, image.get_rendition('fill-345x265').url)
+        self.assertContains(resp, image.get_rendition('fill-690x530').url)
 
 
 class TestUsersPage(ViewsTests):

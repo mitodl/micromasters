@@ -8,7 +8,7 @@
     margin: 10px auto;
 
     img {
-      height: 35px;
+      height: 38px;
     }
 
     img:first-child {
@@ -17,22 +17,25 @@
   }
 
   span {
-    font-size: 13px;
-    margin: 15px 0;
+    font-size: 15px;
+    margin: 25px 0;
     font-weight: 300;
+    color: #555;
+    line-height: 1.5em;
   }
 
   .program-select {
-    font-weight: 500;
-    font-size: 15px;
-    margin-bottom: 20px;
+    font-weight: 400;
+    font-size: 16px;
+    margin-bottom: 28px;
   }
 
   .terms-of-service-text {
-    font-size: 11px;
-    max-width: 80%;
-    margin: 20px auto;
+    font-size: 12px;
+    max-width: 96%;
+    margin: 28px auto 0;
     font-weight: 300;
-    line-height: 14px;
+    line-height: 1.4em;
+    color: #616161;
   }
 }

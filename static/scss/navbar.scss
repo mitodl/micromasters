@@ -16,6 +16,7 @@
 
 .micromasters-nav {
   box-shadow: none !important;
+  min-height: 80px;
 
   a.micromasters-title {
     text-decoration: none;
@@ -40,11 +41,12 @@
 
   .micromasters-header {
     justify-content: space-between;
+    height: 75px;
   }
 }
 
 .navbar {
-  min-height:85px;
+  min-height:80px;
   margin-bottom:0;
 }
 
@@ -79,7 +81,7 @@
   margin-right:10px;
 }
 
-$program_selector_border: #87ddae;
+$program_selector_border: rgba(255,255,255,.4);
 $header_font_color: white;
 
 .program-selector {
@@ -121,7 +123,7 @@ $header_font_color: white;
   }
 
   .Select-placeholder {
-    font-weight: 500;
+    font-weight: 300;
   }
 }
 
@@ -137,4 +139,5 @@ $header_font_color: white;
 .mdl-layout-title > a {
   color: white;
   text-decoration: none;
+  font-weight: 300;
 }
