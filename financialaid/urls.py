@@ -10,7 +10,5 @@ from financialaid.views import ReviewFinancialAidView
 urlpatterns = [
     url(r'^review/(?P<program_id>[\d]+)/?$', ReviewFinancialAidView.as_view(), name='review_financial_aid'),
     url(r'^review/(?P<program_id>[\d]+)/(?P<status>[\w-]+)/?$', ReviewFinancialAidView.as_view(),
-        name='review_financial_aid'),
-    url(r'^review/(?P<program_id>[\d]+)/(?P<status>[\w-]+)/(?P<sort_field>[\w-]+)?$', ReviewFinancialAidView.as_view(),
-        name='review_financial_aid'),
+        name='review_financial_aid')
 ]

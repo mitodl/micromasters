@@ -10,7 +10,7 @@ from django.views.generic import ListView
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import CreateAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated
-from rolepermissions.verifications import has_permission
+from rolepermissions.verifications import has_permission, has_object_permission
 
 from courses.models import CourseRun, Program
 from ecommerce.models import CoursePrice
@@ -29,9 +29,9 @@ class IncomeValidationView(CreateAPIView):
     authentication_classes = (SessionAuthentication, )
     permission_classes = (IsAuthenticated, )
 
-    def get_queryset(self):
+    def get_queryset(self):  # pragma: no cover
         """
-        Used for returning the view, which hasn't been defined yet.
+        Allows the DRF helper pages to load - not available in production
         """
         return None
 
@@ -82,7 +82,8 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         """
         Validate user permissions (Analogous to permissions_classes for DRF)
         """
-        return has_permission(self.request.user, Permissions.CAN_EDIT_FINANCIAL_AID)
+        self.program = get_object_or_404(Program, id=self.kwargs.get("program_id", None))
+        return has_object_permission(Permissions.CAN_EDIT_FINANCIAL_AID, self.request.user, self.program)
 
     def get_context_data(self, **kwargs):
         """
@@ -169,35 +170,29 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         """
         Gets queryset for ListView to return to view
         """
-        # Get requested program
-        self.program = get_object_or_404(Program, id=self.kwargs.get("program_id", None))
+        # Filter by program (self.program set in test_func())
         financial_aids = FinancialAid.objects.filter(tier_program__program=self.program)
 
-        # Get requested status
+        # Filter by status
         self.selected_status = self.kwargs.get("status", None)
         if self.selected_status is None or self.selected_status not in FinancialAidStatus.ALL_STATUSES:
             self.selected_status = FinancialAidStatus.PENDING_MANUAL_APPROVAL
         financial_aids = financial_aids.filter(status=self.selected_status)
 
-        # Get requested sort parameter
-        self.sort_field = self.kwargs.get("sort_field", self.default_sort_field)
+        # Sort by field
+        self.sort_field = self.request.GET.get("sort_by", self.default_sort_field)
         if self.sort_field.startswith("-"):
             self.sort_field = self.sort_field[1:]
             # Defined above: self.sort_direction = ""
             self.sort_direction = "-"
+        if self.sort_field not in self.sort_fields:
+            self.sort_field = self.default_sort_field
+            self.sort_direction = ""
         financial_aids = financial_aids.order_by(
             "{sort_direction}{sort_field}".format(
                 sort_direction=self.sort_direction,
                 sort_field=self.sort_field_mappings.get(self.sort_field, self.sort_field)
             )
         )
-        course_price = CoursePrice.objects.filter(
-            is_valid=True,
-            course_run__in=CourseRun.objects.filter(CourseRun.get_active_enrollment_queryset())
-        ).first()
-        financial_aids = financial_aids.annotate(
-            # This will raise a 500 if there is no course_price available, though this
-            # should not happen unless the courses/etc aren't set up correctly
-            adjusted_price=course_price.price - F("tier_program__discount_amount")
-        )
+
         return financial_aids

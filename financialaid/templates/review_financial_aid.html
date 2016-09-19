@@ -15,7 +15,7 @@
           <strong>Sort by: </strong>
           <div class="btn-group">
           {% for field in sort_field_info %}
-            <a href="{% url 'review_financial_aid' program_id=current_program_id status=selected_status sort_field=field.sort_field %}"
+            <a href="{% url 'review_financial_aid' program_id=current_program_id status=selected_status %}?sort_by={{ field.sort_field }}"
                class="btn btn-default btn-sm">
               {{ field.display }}
               {% if field.direction_display == "" %}&#9650;{% endif %}
