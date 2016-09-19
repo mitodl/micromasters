@@ -4,16 +4,19 @@ Views for financialaid
 import json
 
 from django.conf import settings
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db.models import F
 from django.views.generic import ListView
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated
+from rolepermissions.verifications import has_permission
 
 from courses.models import CourseRun, Program
 from ecommerce.models import CoursePrice
 from financialaid.models import FinancialAid, FinancialAidStatus, TierProgram
-from financialaid.serializers import FinancialAidSerializer
+from financialaid.serializers import IncomeValidationSerializer
+from roles.roles import Permissions
 from ui.views import get_bundle_url
 
 
@@ -22,7 +25,7 @@ class IncomeValidationView(CreateAPIView):
     View for income validation API. Takes income and currency, then determines whether review
     is necessary, and if not, sets the appropriate tier for personalized pricing.
     """
-    serializer_class = FinancialAidSerializer
+    serializer_class = IncomeValidationSerializer
     authentication_classes = (SessionAuthentication, )
     permission_classes = (IsAuthenticated, )
 
@@ -33,7 +36,7 @@ class IncomeValidationView(CreateAPIView):
         return None
 
 
-class ReviewFinancialAidView(ListView):
+class ReviewFinancialAidView(UserPassesTestMixin, ListView):
     """
     View for reviewing financial aid requests.
     Note: In the future, it may be worth factoring out the code for sorting into its own subclass of ListView
@@ -41,6 +44,8 @@ class ReviewFinancialAidView(ListView):
     paginate_by = 10
     context_object_name = "financial_aid_objects"
     template_name = "review_financial_aid.html"
+    # If user doesn't pass test_func, raises exception instead of redirecting to login url
+    raise_exception = True
     # Used to modify queryset and in context
     selected_status = None
     # Used for sorting
@@ -73,6 +78,12 @@ class ReviewFinancialAidView(ListView):
     }
     default_sort_field = "first_name"
 
+    def test_func(self):
+        """
+        Validate user permissions (Analogous to permissions_classes for DRF)
+        """
+        return has_permission(self.request.user, Permissions.CAN_EDIT_FINANCIAL_AID)
+
     def get_context_data(self, **kwargs):
         """
         Gets context for view
@@ -81,6 +92,7 @@ class ReviewFinancialAidView(ListView):
 
         # Constants required in view
         context["selected_status"] = self.selected_status
+        context["current_program_id"] = self.program.id
         # Note: This implementation of retrieving a course price is a naive lookup that assumes
         # all course runs and courses will be the same price for the foreseeable future,
         # irrespective of the program. Therefore we can just take the price from any currently
@@ -157,11 +169,15 @@ class ReviewFinancialAidView(ListView):
         """
         Gets queryset for ListView to return to view
         """
+        # Get requested program
+        self.program = get_object_or_404(Program, id=self.kwargs.get("program_id", None))
+        financial_aids = FinancialAid.objects.filter(tier_program__program=self.program)
+
         # Get requested status
         self.selected_status = self.kwargs.get("status", None)
         if self.selected_status is None or self.selected_status not in FinancialAidStatus.ALL_STATUSES:
             self.selected_status = FinancialAidStatus.PENDING_MANUAL_APPROVAL
-        financial_aids = FinancialAid.objects.filter(status=self.selected_status)
+        financial_aids = financial_aids.filter(status=self.selected_status)
 
         # Get requested sort parameter
         self.sort_field = self.kwargs.get("sort_field", self.default_sort_field)

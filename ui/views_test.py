@@ -209,7 +209,7 @@ class DashboardTests(ViewsTests):
             {
                 'program': role.program.id,
                 'role': role.role,
-                'permissions': [key for key, value in available_perm_status(profile.user).items()],
+                'permissions': [key for key, value in available_perm_status(profile.user).items() if value is True],
             } for role in profile.user.role_set.all()
         ]
 

@@ -14,7 +14,7 @@ from financialaid.api import determine_tier_program, determine_auto_approval
 from financialaid.models import FinancialAid, FinancialAidStatus
 
 
-class FinancialAidSerializer(serializers.Serializer):
+class IncomeValidationSerializer(serializers.Serializer):
     """
     Serializer for Financial Aid objects
     """

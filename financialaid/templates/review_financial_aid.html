@@ -15,7 +15,7 @@
           <strong>Sort by: </strong>
           <div class="btn-group">
           {% for field in sort_field_info %}
-            <a href="{% url 'review_financial_aid' status=selected_status sort_field=field.sort_field %}"
+            <a href="{% url 'review_financial_aid' program_id=current_program_id status=selected_status sort_field=field.sort_field %}"
                class="btn btn-default btn-sm">
               {{ field.display }}
               {% if field.direction_display == "" %}&#9650;{% endif %}
@@ -29,7 +29,7 @@
         <div>
           <select class="form-control" onchange="location = this.options[this.selectedIndex].value;">
           {% for status, message in financial_aid_statuses %}
-            <option value="{% url 'review_financial_aid' status=status %}"
+            <option value="{% url 'review_financial_aid' program_id=current_program_id status=status %}"
                     {% if selected_status == status %}selected{% endif %}>
               {{ message }}
             </option>
