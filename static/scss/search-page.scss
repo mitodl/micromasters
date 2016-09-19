@@ -147,6 +147,10 @@
     }
   }
 
+  .mm-filters:empty {
+    display: none !important;
+  }
+
   .search-header {
     min-height: 100px;
     padding-left: 5px;

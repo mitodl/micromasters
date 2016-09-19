@@ -186,7 +186,7 @@ export default class LearnerSearch extends SearchkitComponent {
                     <SortingSelector options={sortOptions} listComponent={CustomSortingSelect} />
                     <Pagination showText={false} listComponent={CustomPaginationDisplay} />
                   </Cell>
-                  <Cell col={12}>
+                  <Cell col={12} className="mm-filters">
                     <SelectedFilters />
                     <ResetFilters component={CustomResetFiltersDisplay}/>
                   </Cell>
