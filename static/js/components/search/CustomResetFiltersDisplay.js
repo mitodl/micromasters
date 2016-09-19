@@ -18,15 +18,18 @@ export default class CustomResetFiltersDisplay extends ResetFiltersDisplay {
     let clearFilterLink;
 
     if (hasFilters) {
-      return (
-        <div>
-          <FastClick handler={resetFilters}>
-            <div className={bemBlock().state({disabled:!hasFilters})}>
-              <div className={bemBlock("reset")}>{clearAllLabel}</div>
-            </div>
-          </FastClick>
-        </div>
+      clearFilterLink = (
+        <FastClick handler={resetFilters}>
+					<div className={bemBlock().state({disabled:!hasFilters})}>
+						<div className={bemBlock("reset")}>{clearAllLabel}</div>
+					</div>
+				</FastClick>
       );
     }
+    return (
+      <div>
+        {clearFilterLink}
+      </div>
+    );
   }
 }
