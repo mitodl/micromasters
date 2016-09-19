@@ -15,7 +15,6 @@ require("./public/components/raty.js");
 
 // mailchimp requirements
 require("ajaxchimp");
-require('imports?this=>window!wowjs');
 
 // make the thing work
 (function(document, window, $) {
@@ -46,10 +45,6 @@ $(document).ready(function() {
   alturaMaxima();
   $(window).bind('resize', alturaMaxima);
 });
-
-/* Wow animation  */
-let wow = new WOW({ mobile: false });
-wow.init();
 
 /* Bootstrap Internet Explorer 10 in Windows 8 and Windows Phone 8 FIX */
 if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
