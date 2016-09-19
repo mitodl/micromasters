@@ -30,4 +30,5 @@ def determine_auto_approval(financial_aid):
         boolean: True if auto-approved, False if not
     """
     income_threshold = COUNTRY_INCOME_THRESHOLDS.get(financial_aid.country_of_income, DEFAULT_INCOME_THRESHOLD)
-    return financial_aid.income_usd > income_threshold or financial_aid.income_usd == 0
+    # The income_threshold == 0 is because in all cases BUT threshold == 0, it's strictly > instead of >=
+    return financial_aid.income_usd > income_threshold or income_threshold == 0

@@ -71,6 +71,11 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
             country_of_income="US"
         )
         assert not determine_auto_approval(financial_aid)
+        financial_aid = FinancialAidFactory.create(
+            income_usd=0,
+            country_of_income="US"
+        )
+        assert not determine_auto_approval(financial_aid)
 
         # Assumes MX threshold is 50000
         assert COUNTRY_INCOME_THRESHOLDS["MX"] == 50000
