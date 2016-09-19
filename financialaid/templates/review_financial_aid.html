@@ -10,8 +10,8 @@
     <div class="single-column" style="max-width: 1000px;">
       <p><h4>Financial Aid Submissions</h4></p>
       <div class="mdl-card">
+        <!-- Sorting buttons -->
         <div>
-          {{ tier_programs | get_attribute:"1"}}
           <strong>Sort by: </strong>
           <div class="btn-group">
           {% for field in sort_field_info %}
@@ -24,6 +24,8 @@
           {% endfor %}
           </div>
         </div>
+        <!-- /Sorting buttons -->
+        <!-- Filters -->
         <div>
           <select class="form-control" onchange="location = this.options[this.selectedIndex].value;">
           {% for status, message in financial_aid_statuses %}
@@ -34,6 +36,8 @@
           {% endfor %}
           </select>​
         </div>
+        <!-- /Filters -->
+        <!-- Pagination buttons -->
         <div>
           <span class="step-links">
           {% if page_obj.has_previous %}
@@ -50,6 +54,7 @@
           <br>
           <span class="current">Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
         </div>
+        <!-- /Pagination buttons -->
         
         <table class="table">
           <thead>
@@ -78,21 +83,16 @@
               </td>
               <td>
                 <select class="form-control">
-                  <option value="{{ financial_aid.tier_program.discount_amount }}">
-                    ${{ financial_aid.adjusted_price }}
-                  </option>
-                </select>
-                <select class="form-control" onchange="location = this.options[this.selectedIndex].value;">
-                {% for status, message in financial_aid_statuses %}
-                  <option value="{% url 'review_financial_aid' status=status %}"
-                          {% if selected_status == status %}selected{% endif %}>
-                    {{ message }}
+                {% for tier_program in tier_programs|get_attribute:financial_aid.tier_program.program_id %}
+                  <option value="{{ tier_program.discount_amount }}"
+                          {% if tier_program == financial_aid.tier_program %}selected{% endif %}>
+                    ${{ course_price|subtract:tier_program.discount_amount }}
                   </option>
                 {% endfor %}
-                </select>​
+                </select>
               </td>
               <td>${{ financial_aid.income_usd }}</td>
-              <td><a href="#">View Documents (#)</a></td>
+              <td>View Documents (disabled)</td>
               <td>
                 <button class="btn btn-default">
                   <span class="glyphicon glyphicon-ok" style="color: #0074e1"></span>

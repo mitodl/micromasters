@@ -78,7 +78,32 @@ class ReviewFinancialAidView(ListView):
         Gets context for view
         """
         context = super().get_context_data(**kwargs)
+
+        # Constants required in view
         context["selected_status"] = self.selected_status
+        # Note: This implementation of retrieving a course price is a naive lookup that assumes
+        # all course runs and courses will be the same price for the foreseeable future,
+        # irrespective of the program. Therefore we can just take the price from any currently
+        # enroll-able course run.
+        course_price = CoursePrice.objects.filter(
+            is_valid=True,
+            course_run__in=CourseRun.objects.filter(CourseRun.get_active_enrollment_queryset())
+        ).first()
+        context["course_price"] = course_price.price
+
+        # Get program ids and associated tier programs
+        program_ids = Program.objects.filter(
+            live=True,
+            financial_aid_availability=True
+        ).values_list(
+            "id",
+            flat=True
+        )
+        context["tier_programs"] = {
+            program_id: TierProgram.objects.filter(program_id=program_id).order_by("discount_amount")
+            for program_id in program_ids
+        }
+
         # Create ordered list of (financial aid status, financial message)
         messages = FinancialAidStatus.STATUS_MESSAGES_DICT
         message_order = (
@@ -91,18 +116,6 @@ class ReviewFinancialAidView(ListView):
             (status, "Show: {message}".format(message=messages[status]))
             for status in message_order
         )
-        # Get program ids and associated tier programs
-        program_ids = Program.objects.filter(
-            live=True,
-            financial_aid_availability=True
-        ).values_list(
-            "id",
-            flat=True
-        )
-        context["tier_programs"] = {
-            str(program_id): TierProgram.objects.filter(program_id=program_id)
-            for program_id in program_ids
-        }
 
         # Get sort field information
         sort_link_order = (
@@ -127,6 +140,7 @@ class ReviewFinancialAidView(ListView):
             }
             for field in sort_link_order
         )
+
         # Required for styling
         context["style_src"] = get_bundle_url(self.request, "style.js")
         context["dashboard_src"] = get_bundle_url(self.request, "dashboard.js")
@@ -147,22 +161,7 @@ class ReviewFinancialAidView(ListView):
         self.selected_status = self.kwargs.get("status", None)
         if self.selected_status is None or self.selected_status not in FinancialAidStatus.ALL_STATUSES:
             self.selected_status = FinancialAidStatus.PENDING_MANUAL_APPROVAL
-        financial_aids = FinancialAid.objects.filter()  # status=self.selected_status)
-
-        # Annotate with adjusted price
-        # Note: This implementation of retrieving a course price is a naive lookup that assumes
-        # all course runs and courses will be the same price for the foreseeable future,
-        # irrespective of the program. Therefore we can just take the price from any currently
-        # enroll-able course run.
-        course_price = CoursePrice.objects.filter(
-            is_valid=True,
-            course_run__in=CourseRun.objects.filter(CourseRun.get_active_enrollment_queryset())
-        ).first()
-        financial_aids = financial_aids.annotate(
-            # This will raise a 500 if there is no course_price available, though this
-            # should not happen unless the courses/etc aren't set up correctly
-            adjusted_price=course_price.price - F("tier_program__discount_amount")
-        )
+        financial_aids = FinancialAid.objects.filter(status=self.selected_status)
 
         # Get requested sort parameter
         self.sort_field = self.kwargs.get("sort_field", self.default_sort_field)
@@ -176,5 +175,13 @@ class ReviewFinancialAidView(ListView):
                 sort_field=self.sort_field_mappings.get(self.sort_field, self.sort_field)
             )
         )
-
+        course_price = CoursePrice.objects.filter(
+            is_valid=True,
+            course_run__in=CourseRun.objects.filter(CourseRun.get_active_enrollment_queryset())
+        ).first()
+        financial_aids = financial_aids.annotate(
+            # This will raise a 500 if there is no course_price available, though this
+            # should not happen unless the courses/etc aren't set up correctly
+            adjusted_price=course_price.price - F("tier_program__discount_amount")
+        )
         return financial_aids
