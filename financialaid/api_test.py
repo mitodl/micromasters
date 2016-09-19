@@ -46,7 +46,6 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
         Tests determine_tier_program()
         """
         assert determine_tier_program(self.program, 0) == self.tiers["0k"]
-        assert determine_tier_program(self.program, 0) != self.tiers["15k"]
         assert determine_tier_program(self.program, 1000) == self.tiers["0k"]
         assert determine_tier_program(self.program, 15000) == self.tiers["15k"]
         assert determine_tier_program(self.program, 23500) == self.tiers["15k"]
@@ -69,6 +68,11 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
         assert determine_auto_approval(financial_aid) is True
         financial_aid = FinancialAidFactory.create(
             income_usd=1000,
+            country_of_income="US"
+        )
+        assert not determine_auto_approval(financial_aid)
+        financial_aid = FinancialAidFactory.create(
+            income_usd=0,
             country_of_income="US"
         )
         assert not determine_auto_approval(financial_aid)
