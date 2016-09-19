@@ -15,7 +15,7 @@ require("./public/components/raty.js");
 
 // mailchimp requirements
 require("ajaxchimp");
-require('imports?this=>window!wowjs');
+var WOW = require('wow.js');
 
 // make the thing work
 (function(document, window, $) {
