@@ -10,9 +10,9 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 
-from courses.models import CourseRun
+from courses.models import CourseRun, Program
 from ecommerce.models import CoursePrice
-from financialaid.models import FinancialAid, FinancialAidStatus
+from financialaid.models import FinancialAid, FinancialAidStatus, TierProgram
 from financialaid.serializers import FinancialAidSerializer
 from ui.views import get_bundle_url
 
@@ -91,6 +91,19 @@ class ReviewFinancialAidView(ListView):
             (status, "Show: {message}".format(message=messages[status]))
             for status in message_order
         )
+        # Get program ids and associated tier programs
+        program_ids = Program.objects.filter(
+            live=True,
+            financial_aid_availability=True
+        ).values_list(
+            "id",
+            flat=True
+        )
+        context["tier_programs"] = {
+            str(program_id): TierProgram.objects.filter(program_id=program_id)
+            for program_id in program_ids
+        }
+
         # Get sort field information
         sort_link_order = (
             "first_name",

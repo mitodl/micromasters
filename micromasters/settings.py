@@ -115,6 +115,9 @@ INSTALLED_APPS = (
     'roles',
     'search',
     'ui',
+
+    # template tags
+    "financialaid.templatetags.financial_aid_tags",
 )
 
 MIDDLEWARE_CLASSES = (
