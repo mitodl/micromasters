@@ -62,11 +62,9 @@
               <th></th>
               <th>Name/Location</th>
               <th>Adjusted Cost</th>
-              <th>Reported Income</th>
-              <th>Income Verification</th>
-              <th>Accept</th>
-              <th>Reject</th>
-              <th>Email</th>
+              <th>Income/Yr.</th>
+              <th>Date Calculated</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -92,18 +90,14 @@
                 </select>
               </td>
               <td>${{ financial_aid.income_usd }}</td>
-              <td>View Documents (disabled)</td>
+              <td>{{ financial_aid.created_on|date:"SHORT_DATE_FORMAT" }}</td>
               <td>
                 <button class="btn btn-default">
                   <span class="glyphicon glyphicon-ok" style="color: #0074e1"></span>
                 </button>
-              </td>
-              <td>
                 <button class="btn btn-default">
                   <span class="glyphicon glyphicon-remove" style="color: #0074e1"></span>
                 </button>
-              </td>
-              <td>
                 <button class="btn btn-default" onclick="alert('Send email to {{ financial_aid.user.email }}')">
                   <span class="glyphicon glyphicon-envelope" style="color: #0074e1"></span>
                 </button>

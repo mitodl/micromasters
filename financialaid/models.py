@@ -1,7 +1,6 @@
 """
 Models for the Financial Aid App
 """
-
 from django.contrib.auth.models import User
 from django.db import (
     models,
@@ -15,7 +14,28 @@ from courses.models import (
 )
 
 
-class Tier(models.Model):
+class TimeStampedModel(models.Model):
+    """
+    Base model for create/update timestamps
+    """
+    created_on = models.DateTimeField(auto_now_add=True)  # UTC
+    updated_on = models.DateTimeField(auto_now=True)  # UTC
+
+    def update(self, **kwargs):
+        """
+        Automatically update updated_on timestamp
+        """
+        update_fields = {"updated_on"}
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+            update_fields.add(k)
+        self.save(update_fields=update_fields)
+
+    class Meta:
+        abstract = True
+
+
+class Tier(TimeStampedModel):
     """
     The possible tiers to be used
     """
@@ -23,7 +43,7 @@ class Tier(models.Model):
     description = models.TextField()
 
 
-class TierProgram(models.Model):
+class TierProgram(TimeStampedModel):
     """
     The tiers for discounted pricing assigned to a program
     """
@@ -67,7 +87,7 @@ class FinancialAidStatus:
     }
 
 
-class FinancialAid(models.Model):
+class FinancialAid(TimeStampedModel):
     """
     An application for financial aid/personal pricing
     """
@@ -86,28 +106,7 @@ class FinancialAid(models.Model):
     date_exchange_rate = models.DateTimeField(null=True)
 
 
-class Coupon(models.Model):
-    """
-    Coupons stored to be used by the users who are approved to use financial aid
-    """
-    course_run = models.ForeignKey(CourseRun, null=False)
-    code = models.CharField(null=False, max_length=50)
-    url = models.TextField()
-    sku = models.CharField(null=False, max_length=50)
-    user = models.ForeignKey(User, null=True)
-    financial_aid = models.ForeignKey(FinancialAid, null=True)
-
-
-class Document(models.Model):
-    """
-    Documents to attach to a financial aid application
-    """
-    financial_aid = models.ForeignKey(FinancialAid, null=True)
-    name = models.TextField()
-    url = models.FileField()
-
-
-class FinancialAidAudit(models.Model):
+class FinancialAidAudit(TimeStampedModel):
     """
     Audit table for the Financial Aid
     """

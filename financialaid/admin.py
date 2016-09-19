@@ -5,23 +5,11 @@ Admin views for Financial Aid app
 from django.contrib import admin
 
 from financialaid.models import (
-    Coupon,
-    Document,
     FinancialAid,
     FinancialAidAudit,
     TierProgram,
     Tier,
 )
-
-
-class CouponAdmin(admin.ModelAdmin):
-    """Admin for Coupon"""
-    model = Coupon
-
-
-class DocumentAdmin(admin.ModelAdmin):
-    """Admin for Document"""
-    model = Document
 
 
 class FinancialAidAdmin(admin.ModelAdmin):
@@ -49,8 +37,6 @@ class TierAdmin(admin.ModelAdmin):
     """Admin for Tier"""
     model = Tier
 
-admin.site.register(Coupon, CouponAdmin)
-admin.site.register(Document, DocumentAdmin)
 admin.site.register(FinancialAid, FinancialAidAdmin)
 admin.site.register(FinancialAidAudit, FinancialAidAuditAdmin)
 admin.site.register(TierProgram, TierProgramAdmin)
