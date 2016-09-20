@@ -5,6 +5,7 @@ import json
 
 from django.conf import settings
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.db.models import F
 from django.views.generic import ListView
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import (
@@ -109,28 +110,6 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         # Constants required in view
         context["selected_status"] = self.selected_status
         context["current_program_id"] = self.program.id
-        # Note: This implementation of retrieving a course price is a naive lookup that assumes
-        # all course runs and courses will be the same price for the foreseeable future,
-        # irrespective of the program. Therefore we can just take the price from any currently
-        # enroll-able course run.
-        course_price = CoursePrice.objects.filter(
-            is_valid=True,
-            course_run__in=CourseRun.objects.filter(CourseRun.get_active_enrollment_queryset())
-        ).first()
-        context["course_price"] = course_price.price
-
-        # Get program ids and associated tier programs
-        program_ids = Program.objects.filter(
-            live=True,
-            financial_aid_availability=True
-        ).values_list(
-            "id",
-            flat=True
-        )
-        context["tier_programs"] = {
-            program_id: TierProgram.objects.filter(program_id=program_id).order_by("discount_amount")
-            for program_id in program_ids
-        }
 
         # Create ordered list of (financial aid status, financial message)
         messages = FinancialAidStatus.STATUS_MESSAGES_DICT
@@ -185,8 +164,16 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         """
         Gets queryset for ListView to return to view
         """
+        # Filter by availability
+        financial_aids = FinancialAid.objects.filter(
+            tier_program__program__live=True,
+            tier_program__program__financial_aid_availability=True
+        )
+
         # Filter by program (self.program set in test_func())
-        financial_aids = FinancialAid.objects.filter(tier_program__program=self.program)
+        financial_aids = financial_aids.filter(
+            tier_program__program=self.program,
+        )
 
         # Filter by status
         self.selected_status = self.kwargs.get("status", None)
@@ -209,6 +196,43 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
                 sort_field=self.sort_field_mappings.get(self.sort_field, self.sort_field)
             )
         )
+
+        # Add adjusted cost and TierPrograms valid for selection for each FinancialAid object
+        # Note: iterating through this queryset, if large, can be very costly in terms of memory/time,
+        # but it is done here to simplify the templates.
+        # Get program ids and associated tier programs
+        program_ids = Program.objects.filter(
+            live=True,
+            financial_aid_availability=True
+        ).values_list(
+            "id",
+            flat=True
+        )
+        # Get course price to calculate adjusted cost
+        # Note: This implementation of retrieving a course price is a naive lookup that assumes
+        # all course runs and courses will be the same price for the foreseeable future,
+        # irrespective of the program. Therefore we can just take the price from any currently
+        # enroll-able course run.
+        course_price = CoursePrice.objects.filter(
+            is_valid=True,
+            course_run__in=CourseRun.objects.filter(
+                course__program_id=self.program.id
+            ).filter(
+                CourseRun.get_active_enrollment_queryset()
+            )
+        ).first()
+        tier_programs = {
+            program_id: TierProgram.objects.filter(
+                program_id=program_id
+            ).order_by(
+                "discount_amount"
+            ).annotate(
+                adjusted_cost=course_price.price - F("discount_amount")
+            )
+            for program_id in program_ids
+        }
+        for fa in financial_aids:
+            fa.tier_programs = tier_programs.get(fa.tier_program.program_id, None)
 
         return financial_aids
 
