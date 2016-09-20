@@ -23,7 +23,6 @@ import {
   HIGH_SCHOOL,
   PERSONAL_STEP,
   EMPLOYMENT_STEP,
-  PRIVACY_STEP,
 } from '../constants';
 import { assertMaybeEquality, assertIsNothing } from './sanctuary_test';
 
@@ -42,7 +41,7 @@ describe('Profile validation functions', () => {
     });
 
     it('should return an appropriate error if a field is missing', () => {
-      let clone = Object.assign({}, USER_PROFILE_RESPONSE);
+      let clone = _.cloneDeep(USER_PROFILE_RESPONSE);
       clone.first_name = '';
       assert.deepEqual({first_name: "Given name is required"}, personalValidation(clone));
     });
@@ -80,7 +79,7 @@ describe('Profile validation functions', () => {
     });
 
     it('should error if date of birth is in the future', () => {
-      let profile = Object.assign({}, USER_PROFILE_RESPONSE, {
+      let profile = Object.assign(_.cloneDeep(USER_PROFILE_RESPONSE), {
         date_of_birth: "2077-01-01"
       });
       let errors = {
@@ -228,18 +227,6 @@ describe('Profile validation functions', () => {
     });
   });
 
-  describe('Privacy validation', () => {
-    it('should return an empty object when all fields are present', () => {
-      assert.deepEqual({}, privacyValidation(USER_PROFILE_RESPONSE));
-    });
-
-    it('should return an appropriate error if a field is missing', () => {
-      let clone = Object.assign({}, USER_PROFILE_RESPONSE, {account_privacy: ''});
-      let expectation = {account_privacy: 'Privacy level is required'};
-      assert.deepEqual(expectation, privacyValidation(clone));
-    });
-  });
-
   describe('validateProfileComplete', () => {
     let profile;
     beforeEach(() => {
@@ -266,9 +253,9 @@ describe('Profile validation functions', () => {
 
     it('should return appropriate fields when a field is missing', () => {
       profile = _.cloneDeep(USER_PROFILE_RESPONSE);
-      profile['account_privacy'] = '';
-      let expectation = [false, PRIVACY_STEP, {
-        account_privacy: 'Privacy level is required'
+      profile['first_name'] = '';
+      let expectation = [false, PERSONAL_STEP, {
+        first_name: 'Given name is required'
       }];
       assert.deepEqual(validateProfileComplete(profile), expectation);
     });
@@ -476,7 +463,19 @@ describe('Profile validation functions', () => {
   });
 });
 
-describe("email validation", () => {
+describe('Privacy validation', () => {
+  it('should return an empty object when all fields are present', () => {
+    assert.deepEqual({}, privacyValidation(USER_PROFILE_RESPONSE));
+  });
+
+  it('should return an appropriate error if a field is missing', () => {
+    let clone = Object.assign(_.cloneDeep(USER_PROFILE_RESPONSE), {account_privacy: ''});
+    let expectation = {account_privacy: 'Privacy level is required'};
+    assert.deepEqual(expectation, privacyValidation(clone));
+  });
+});
+
+describe('Email validation', () => {
   let email = {
     subject: 'a great email',
     body: 'hi, how are you?'

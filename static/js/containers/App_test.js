@@ -38,7 +38,6 @@ import {
   PERSONAL_STEP,
   EDUCATION_STEP,
   EMPLOYMENT_STEP,
-  PRIVACY_STEP,
 } from '../constants';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import * as api from '../util/api';
@@ -74,7 +73,7 @@ describe('App', () => {
     let checkStep = () => helper.store.getState().ui.profileStep;
 
     it('redirects to /profile if profile is not complete', () => {
-      let response = Object.assign({}, USER_PROFILE_RESPONSE, {
+      let response = Object.assign(_.cloneDeep(USER_PROFILE_RESPONSE), {
         first_name: undefined
       });
       helper.profileGetStub.returns(Promise.resolve(response));
@@ -86,7 +85,7 @@ describe('App', () => {
     });
 
     it('redirects to /profile if profile is not filled out', () => {
-      let response = Object.assign({}, USER_PROFILE_RESPONSE, {
+      let response = Object.assign(_.cloneDeep(USER_PROFILE_RESPONSE), {
         filled_out: false
       });
       helper.profileGetStub.returns(Promise.resolve(response));
@@ -105,18 +104,6 @@ describe('App', () => {
       return renderComponent("/dashboard", editProfileActions).then(() => {
         assert.equal(helper.currentLocation.pathname, "/profile");
         assert.equal(checkStep(), EMPLOYMENT_STEP);
-      });
-    });
-
-    it('redirects to /profile and goes to the privacy step if a field is missing there', () => {
-      let response = Object.assign({}, USER_PROFILE_RESPONSE, {
-        account_privacy: ''
-      });
-      helper.profileGetStub.returns(Promise.resolve(response));
-
-      return renderComponent("/dashboard", editProfileActions).then(() => {
-        assert.equal(helper.currentLocation.pathname, "/profile");
-        assert.equal(checkStep(), PRIVACY_STEP);
       });
     });
 

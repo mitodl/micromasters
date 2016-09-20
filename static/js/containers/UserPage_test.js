@@ -271,7 +271,7 @@ describe("UserPage", function() {
       };
 
       beforeEach(() => {
-        userProfile = Object.assign({}, _.cloneDeep(USER_PROFILE_RESPONSE), {
+        userProfile = Object.assign(_.cloneDeep(USER_PROFILE_RESPONSE), {
           username: SETTINGS.username
         });
         userProfile.education.push({

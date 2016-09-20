@@ -3,7 +3,7 @@ import React from 'react';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 
 import CourseAction from './CourseAction';
-import CoursePrice from './CoursePrice';
+import CourseStatus from './CourseStatus';
 import CourseDescription from './CourseDescription';
 import type { Course } from '../../flow/programTypes';
 
@@ -22,7 +22,7 @@ export default class CourseRow extends React.Component {
         <CourseDescription course={course} />
       </Cell>
       <Cell col={3}>
-        <CoursePrice course={course}/>
+        <CourseStatus course={course}/>
       </Cell>
       <Cell col={3}>
         <CourseAction course={course} now={now} checkout={checkout} />

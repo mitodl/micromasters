@@ -9,20 +9,13 @@ import {
   RECEIVE_PATCH_USER_PROFILE_SUCCESS,
   START_PROFILE_EDIT,
   UPDATE_PROFILE_VALIDATION,
-  CLEAR_PROFILE_EDIT,
-
-  receiveGetUserProfileSuccess,
 } from '../actions/profile';
-import {
-  setWorkHistoryEdit,
-  setProfileStep,
-} from '../actions/ui';
+import { setProfileStep } from '../actions/ui';
 import {
   USER_PROFILE_RESPONSE,
   PERSONAL_STEP,
   EDUCATION_STEP,
   EMPLOYMENT_STEP,
-  PRIVACY_STEP,
 } from '../constants';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import * as api from '../util/api';
@@ -36,7 +29,6 @@ describe("ProfilePage", function() {
     PERSONAL_STEP,
     EDUCATION_STEP,
     EMPLOYMENT_STEP,
-    PRIVACY_STEP,
   ];
   let prevButtonSelector = '.mm-button.prev';
   let nextButtonSelector = '.mm-button.next';
@@ -123,61 +115,7 @@ describe("ProfilePage", function() {
     });
   });
 
-  it(`marks email_optin and filled_out when saving on privacy`, () => {
-    setStep(PRIVACY_STEP);
-    return renderComponent('/profile').then(([, div]) => {
-      // close all switches and remove all education so we don't get validation errors
-      let receivedProfile = Object.assign({}, USER_PROFILE_RESPONSE, {
-        education: [],
-        email_optin: true,
-      });
-      helper.store.dispatch(receiveGetUserProfileSuccess(SETTINGS.username, receivedProfile));
-
-      let button = div.querySelector(nextButtonSelector);
-      assert(button.innerHTML.includes("I'm Done!"));
-      let updatedProfile = Object.assign({}, receivedProfile, {
-        email_optin: true,
-        filled_out: true
-      });
-
-      return confirmSaveButtonBehavior(updatedProfile, {button: button});
-    });
-  });
-
-  it('does not validate education and employment switches when saving the privacy page', () => {
-    setStep(PRIVACY_STEP);
-    return renderComponent('/profile').then(([, div]) => {
-      // close all switches and remove all education so we don't get validation errors
-      let receivedProfile = Object.assign({}, USER_PROFILE_RESPONSE, {
-        education: [],
-        work_history: [],
-        email_optin: true,
-      });
-      helper.store.dispatch(receiveGetUserProfileSuccess(SETTINGS.username, receivedProfile));
-      helper.store.dispatch(setWorkHistoryEdit(true));
-
-      let button = div.querySelector(nextButtonSelector);
-      assert(button.innerHTML.includes("I'm Done!"));
-      let updatedProfile = Object.assign({}, receivedProfile, {
-        email_optin: true,
-        filled_out: true
-      });
-
-      let actions = [
-        START_PROFILE_EDIT,
-        UPDATE_PROFILE_VALIDATION,
-        REQUEST_PATCH_USER_PROFILE,
-        RECEIVE_PATCH_USER_PROFILE_SUCCESS,
-        CLEAR_PROFILE_EDIT,
-      ];
-
-      return confirmSaveButtonBehavior(updatedProfile, {button: button}, true, actions).then(state => {
-        assert.deepEqual(state.profiles[SETTINGS.username].profile.edit, undefined);
-      });
-    });
-  });
-
-  for (let step of profileSteps.slice(0,3)) {
+  for (let step of profileSteps.slice(0,2)) {
     for (let filledOutValue of [true, false]) {
       it(`respects the current value (${filledOutValue}) when saving on ${step}`, () => {
         setStep(step);

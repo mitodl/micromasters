@@ -12,13 +12,11 @@ import ErrorMessage from '../components/ErrorMessage';
 import ProfileFormContainer from './ProfileFormContainer';
 import PersonalTab from '../components/PersonalTab';
 import EmploymentTab from '../components/EmploymentTab';
-import PrivacyTab from '../components/PrivacyTab';
 import EducationTab from '../components/EducationTab';
 import {
   PERSONAL_STEP,
   EDUCATION_STEP,
   EMPLOYMENT_STEP,
-  PRIVACY_STEP,
 } from '../constants';
 import { createActionHelper } from '../util/redux';
 import type { Profile } from '../flow/profileTypes';
@@ -37,10 +35,8 @@ class ProfilePage extends ProfileFormContainer {
     case EDUCATION_STEP:
       return [createStepFunc(PERSONAL_STEP), createStepFunc(EMPLOYMENT_STEP)];
     case EMPLOYMENT_STEP:
-      return [createStepFunc(EDUCATION_STEP), createStepFunc(PRIVACY_STEP)];
-    case PRIVACY_STEP:
       return [
-        createStepFunc(EMPLOYMENT_STEP),
+        createStepFunc(EDUCATION_STEP),
         () => this.context.router.push('/dashboard')
       ];
     default:
@@ -54,8 +50,6 @@ class ProfilePage extends ProfileFormContainer {
       return <EducationTab {...props} />;
     case EMPLOYMENT_STEP:
       return <EmploymentTab {...props} />;
-    case PRIVACY_STEP:
-      return <PrivacyTab {...props} />;
     default:
       return <PersonalTab {...props} />;
     }

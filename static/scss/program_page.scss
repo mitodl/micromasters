@@ -1,102 +1,130 @@
-/* Programs */
+.program-page {
+  padding: 0;
 
-.banner-sub {
-  background-image:none; /* reset */
-  margin-top:18px;
-  border-bottom:1px solid #fff;
-}
+  .hero-image {
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    color: white;
+    text-align: center;
+    background-size: cover;
 
-.banner-program-1 {
-  background-size: cover;
-}
+    .title {
+      font-size: 36px;
+      margin-bottom: 25px;
+      max-width: 700px;
+    }
 
-.banner-sub nav {
-  background-color:transparent;
-  box-shadow:none!important;
-}
+    .description {
+      max-width: 650px;
+      margin-bottom: 25px;
 
-.banner-sub .banner-wrapper-content h1 {
-  text-align: center;
-  font-weight:100;
-}
+      * {
+        font-size: 30px;
+        font-weight: 300;
+      }
+    }
 
-.banner-sub .banner-wrapper-content h1 span {
-  color:#f8e71c;
-  font-weight: 700;
-}
+    button {
+      margin-bottom: 20px;
+      margin-right: 0;
+    }
 
-.nav-programs {
-  text-transform: uppercase;
-}
+    .log-in {
+      margin-bottom: 120px;
+      font-size: 16px;
 
-.nav-programs li a {
-  color:#699aae;
-}
+      a {
+        color: white;
+        border-bottom: 1px solid white;
+      }
+    }
+  }
 
-.nav-programs li.active a, .nav-programs li.active a:focus, .nav-programs li a:focus {
-  color:#000;
-}
+  .mdl-tabs {
+    .tab-container {
+      width: 96%;
+      max-width: 1000px;
+    }
 
+    .mdl-tabs__panel {
+      margin-bottom: 50px;
+    }
+  }
 
-.tab-content-programs {
-  padding-bottom:50px;
-}
+  .info-box, .powered-by {
+    margin: 16px;
+  }
 
-/* common */
+  .info-box {
+    padding: 30px;
+    background-color: $medgrey;
 
-.panel-body {
-  font-size:18px;
-  color:#4a4a4a;
-  line-height: 1.9em;
-}
+    > *:not(:last-child) {
+      margin-bottom: 15px;
+    }
 
-blockquote {
-  font-family:Georgia, Times, Serif;
-  font-style:italic;
-  color:#999;
-  font-weight:100;
-  border:0;
-  padding:14px 40px 14px 40px;
-}
+    > .title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+  }
 
-blockquote:before {
-  content:'“';
-  font-family:Georgia, Times, Serif;
-  font-weight:700;
-  font-size:30px;
-  margin-left:-18px;
-  color:rgba(174,72,75,.24);
-}
+  .course-info {
+    .course-details {
+      .title {
+        font-weight: 600;
+      }
 
-.quote-author {
-  color:#ae484b;
-  text-align: right;
-  font-family:Roboto, sans-serif;
-  font-style: normal;
-  font-weight: 700;
-}
+      .description {
+        color: $font-gray;
+      }
+    }
+  }
 
-.panel-body h4 {
-  text-transform: uppercase;
-  color:#000;
-  font-weight: 700;
-}
+  .contact-info {
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+    }
+  }
 
-.sidebar-content {
-  background: url(/static/images/bg-tile-1.png);
-  padding:20px 20px 40px 20px;
-  border:1px solid #eee;
-  border-left:4px solid #eee;
-}
+  .powered-by {
+    padding: 20px;
 
-.sidebar-content p {
-  margin:0 0 5px 0;
-  padding:0;
-}
+    > *:not(:last-child) {
+      margin-right: 12px;
+    }
 
-.panel-body h5 {
-  color:#c64a5a;
-  text-transform: uppercase;
-  font-weight: 700;
-  margin:20px 0 10px 0;
+    img {
+      height: 25px;
+      margin-bottom: 5px;
+    }
+
+  }
+
+  .faqs {
+    margin-top: 20px;
+
+    > *:not(:last-child) {
+      border-bottom: 2px solid $medgrey;
+    }
+
+    * {
+      font-size: 16px;
+    }
+
+    .faq {
+      .question {
+        font-weight: 600;
+        margin: 25px 0;
+      }
+    }
+
+    .faq:last-child {
+      margin-bottom: 100px;
+    }
+  }
 }

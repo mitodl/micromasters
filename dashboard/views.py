@@ -60,5 +60,5 @@ class UserDashboard(APIView):
 
         response_data = []
         for program in Program.objects.filter(live=True):
-            response_data.append(get_info_for_program(program, request.user, enrollments, certificates))
+            response_data.append(get_info_for_program(program, enrollments, certificates))
         return Response(response_data)

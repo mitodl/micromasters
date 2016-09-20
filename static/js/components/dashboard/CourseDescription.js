@@ -5,7 +5,6 @@ import moment from 'moment';
 
 import type { Course, CourseRun } from '../../flow/programTypes';
 import {
-  STATUS_NOT_OFFERED,
   STATUS_PASSED,
   STATUS_NOT_PASSED,
   STATUS_ENROLLED,
@@ -24,26 +23,20 @@ export default class CourseDescription extends React.Component {
     return `${label}: ${formattedDate}`;
   }
 
-  courseDateMessage(courseStatus: string, firstRun: CourseRun): string {
-    if (!firstRun) {
-      return '';
-    }
-
-    let text = "";
-
-    switch (courseStatus) {
+  courseDateMessage = (firstRun: CourseRun): any => {
+    switch (firstRun.status) {
     case STATUS_PASSED:
       if (firstRun.course_end_date) {
         let courseEndDate = moment(firstRun.course_end_date);
-        text = this.courseDate('Ended', courseEndDate);
+        return this.courseDate('Ended', courseEndDate);
       }
       break;
-    case STATUS_NOT_OFFERED:
-      if (firstRun.status === STATUS_NOT_PASSED && firstRun.course_end_date) {
+    case STATUS_NOT_PASSED:
+      if (firstRun.course_end_date) {
         let courseEndDate = moment(firstRun.course_end_date);
-        text = this.courseDate('Ended', courseEndDate);
+        return this.courseDate('Ended', courseEndDate);
       } else if (!_.isNil(firstRun.fuzzy_start_date)) {
-        text = `Coming ${firstRun.fuzzy_start_date}`;
+        return `Coming ${firstRun.fuzzy_start_date}`;
       }
       break;
     case STATUS_ENROLLED:
@@ -51,13 +44,16 @@ export default class CourseDescription extends React.Component {
     case STATUS_OFFERED:
       if (firstRun.course_start_date) {
         let courseStartDate = moment(firstRun.course_start_date);
-        text = this.courseDate('Start date', courseStartDate);
+        return this.courseDate('Start date', courseStartDate);
       }
       break;
+    default:
+      // no runs in this course
+      return <span className="no-runs">Coming soon...</span>;
     }
 
-    return text;
-  }
+    return '';
+  };
 
   render() {
     const { course } = this.props;
@@ -72,7 +68,7 @@ export default class CourseDescription extends React.Component {
         {course.title}
       </span> <br />
       <span className="course-description-result">
-        {this.courseDateMessage(course.status, firstRun)}
+        {this.courseDateMessage(firstRun)}
       </span>
     </div>;
   }

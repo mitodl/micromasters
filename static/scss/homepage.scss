@@ -2,17 +2,52 @@ body.app-media {
   padding-top:0;
   font-size:14px;
 }
+.nav-header{
+  background-color: $mm-brand-bg;
+
+  border-radius:0;
+  span{
+    color: white;
+  }
+  a{
+    color: white;
+    text-decoration: underline;
+  }
+  a.btn-login {
+    text-decoration: none;
+  }
+  .header-dashboard-link {
+    float: right;
+    margin: 33px 40px 0 0;
+    a {
+      font-weight: 400;
+      font-size: 22px;
+    }
+  }
+}
+.white-button{
+  color: $mm-brand-bg !important;
+  border-color: white;
+  background-color: white;
+}
+
+.header-page-name{
+  display:inline-block;
+  color:white;
+  font-size: 25px;
+  margin:35px 20px 0 0;
+}
+
 
 .banner-wrapper {
-  background:#222 0 0 url(/static/images/mit-dome@2x.png) no-repeat;
+  background:#222 0 0 url(/static/images/hero1.jpg) no-repeat;
   margin:0 auto;
   width:100%;
   min-height:660px;
   padding:0;
   background-size:cover;
   position: relative;
-  border-bottom:3px solid #A51C31;
-  border-radius: 3px 3px 0 0;
+  border-bottom:1px solid lightgrey;
 }
 
 .banner-wrapper-content {
@@ -20,12 +55,12 @@ body.app-media {
   padding:0 50px;
   text-align: center;
 
-  h1 {
+  h3 {
     font-weight:700;
-    text-align: left;
     line-height: 1.4em;
     color:#fff;
-    padding:150px 50px 0 50px;
+    padding:150px 150px 0 150px;
+    margin-top: 0;
   }
 
   .btn-learn-more {
@@ -63,15 +98,97 @@ body.app-media {
   top: 0;
   z-index: 1510;
 }
-.sub-banner-content {
-  background:url(/static/images/small_steps.png);
-  padding:50px 60px;
+.sub-banner-section{
+  background-color: lightgrey;
+  padding:20px 0 70px;
+  text-align: center;
+}
+.sub-banner-text {
+  width:800px;
+  text-align:left;
+  margin:20px auto;
   color:#000;
-  font-size:30px;
+  font-size:25px;
   font-weight:200;
   line-height: 44px;
-  border-bottom:1px solid #ddd;
 }
+.sub-banner-logos{
+  img{
+    margin-left: 20px;
+  }
+}
+.sub-banner-logos-text{
+  vertical-align: bottom;
+  display:inline-block;
+}
+
+.current-programs-section {
+  margin: 0;
+  padding: 40px 0 70px;
+  background-color: $mm-brand-bg;
+  h3 {
+    padding-left: 15px;
+    color: white
+  }
+}
+
+.program-thumbnail-description{
+  padding: 20px 0 30px 15px;
+  p{
+    color:white;
+    font-weight: 200;
+  }
+  a{
+    color:white;
+  }
+}
+
+.program-thumbnail-image-wrap {
+  width: 345px;
+  background-color: black;
+  .num-courses {
+    position: absolute;
+    top: 230px;
+    left: 35px;
+    font-size: .9em;
+    color: white
+  }
+  .program-title {
+    position: absolute;
+    top: 210px;
+    left: 35px;
+    color: white;
+  }
+  img{
+    -webkit-mask-image: -webkit-gradient(linear, left top, left bottom,
+            color-stop(0%, rgba(0, 0, 0, 1)), color-stop(64%, rgba(0, 0, 0, 1)),
+            color-stop(82%, rgba(0, 0, 0, 0.3)), color-stop(100%, rgba(0, 0, 0, 0.3)));
+  }
+}
+.dummy-program-thumbnail{
+  background-color: white;
+  width:345px;
+  height: 265px;
+  text-align: center;
+  padding: 50px 30px;
+  h3{
+    color: $mm-brand-bg;
+  }
+}
+
+.reasons-section{
+  background-color: white;
+  text-align: center;
+  padding: 40px;
+  margin: 0;
+  h3 {
+    color: white;
+  }
+  .reasons-images-wrap {
+    height: 120px;
+  }
+}
+
 
 
 .nav-utility {
@@ -102,12 +219,6 @@ body.app-media {
 .btn-danger:active {
   background:#000 !important;
   border-color:#000 !important;
-}
-
-
-.btn-success {
-  line-height: 1.57142857;
-  background-color: #46be8a;
 }
 
 .panel-page-content {
@@ -230,27 +341,12 @@ body.app-media {
     }
   }
 }
-.app-media .media-list.is-grid .media-item:hover {
-  background-color: #fff;
-  border-color: #54c08a;
-  box-shadow:0 1px 2px rgba(43,59,93,.12),0 0 13px rgba(43,59,93,.12);
-}
 
 .app-media .media-list.is-grid .media-item:active {
   background-color: #fff;
   border-color: #62a8ea;
   box-shadow:0 1px 2px rgba(43,59,93,.12),0 0 13px rgba(43,59,93,.12);
 }
-
-.info-wrap {
-  padding:0 10px 10px 10px;
-}
-
-/*
-.app-media .media-list.is-grid .media-item .overlay-tile-back {
-  background: rgba(66,85,99,0);
-}
-*/
 
 .media-top {
   min-height:135px;
@@ -452,11 +548,11 @@ body.app-media {
 }
 
 .media-footer {
-  border-top:1px solid #eee;
-  margin:0 -10px;
-  padding:10px 0 0 10px;
+  position: absolute;
+  top:180px;
+  left: 35px;
   font-size:.9em;
-  overflow: hidden;
+  color: white
 }
 
 .media-footer .widget-metas {

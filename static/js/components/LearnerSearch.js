@@ -129,6 +129,7 @@ export default class LearnerSearch extends SearchkitComponent {
                   id="birth_location"
                   title="Place of Birth"
                   field="profile.birth_country"
+                  operator="OR"
                   itemComponent={CountryRefinementOption}
                 />
               </FilterVisibilityToggle>
@@ -171,7 +172,7 @@ export default class LearnerSearch extends SearchkitComponent {
                   </button>
                   <HitsStats component={HitsCount} />
                 </Cell>
-                <Cell col={2}></Cell>
+                <Cell col={2} />
                 <Cell col={4} className="pagination-sort">
                   <SortingSelector options={sortOptions} />
                   <Pagination />

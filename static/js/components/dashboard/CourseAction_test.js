@@ -14,7 +14,6 @@ import {
   STATUS_OFFERED,
   STATUS_ENROLLED,
   STATUS_VERIFIED,
-  STATUS_NOT_OFFERED,
 } from '../../constants';
 import { findCourse } from './CourseDescription_test';
 
@@ -38,14 +37,17 @@ describe('CourseAction', () => {
   };
 
   it('shows a check mark for a passed course', () => {
-    let course = findCourse(course => course.status === STATUS_PASSED);
+    let course = findCourse(course => (
+      course.runs.length > 0 &&
+      course.runs[0].status === STATUS_PASSED
+    ));
     const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
     assert.equal(wrapper.find(".material-icons").text(), 'done');
   });
 
   it('shows nothing for a failed course', () => {
     let course = findCourse(course => (
-      course.status === STATUS_NOT_OFFERED &&
+      course.runs.length > 0 &&
       course.runs[0].status === STATUS_NOT_PASSED
     ));
     const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
@@ -53,14 +55,20 @@ describe('CourseAction', () => {
   });
 
   it('shows nothing for a verified course', () => {
-    let course = findCourse(course => course.status === STATUS_VERIFIED);
+    let course = findCourse(course => (
+      course.runs.length > 0 &&
+      course.runs[0].status === STATUS_VERIFIED
+    ));
     const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
     assert.equal(wrapper.text(), '');
   });
 
   [STATUS_OFFERED, STATUS_ENROLLED].forEach((status) => {
     it(`shows the enroll button followed by course title when status is ${status}`, () => {
-      let course = findCourse(course => course.status === status);
+      let course = findCourse(course => (
+        course.runs.length > 0 &&
+        course.runs[0].status === status
+      ));
       let firstRun = course.runs[0];
       const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
       let buttonContainer = wrapper.find(".course-action-action");
@@ -70,7 +78,10 @@ describe('CourseAction', () => {
   });
 
   it('shows an upgrade button if user is not verified but is enrolled', () => {
-    let course = findCourse(course => course.status === STATUS_ENROLLED);
+    let course = findCourse(course => (
+      course.runs.length > 0 &&
+      course.runs[0].status === STATUS_ENROLLED
+    ));
     const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
     let buttonContainer = wrapper.find(".course-action-action");
     let button = buttonContainer.find(".dashboard-button");
@@ -87,7 +98,8 @@ describe('CourseAction', () => {
   it('shows a disabled enroll button if user is not enrolled and there is no enrollment date', () => {
     // there should also be text below the button
     let course = findCourse(course => (
-      course.status === STATUS_OFFERED &&
+      course.runs.length > 0 &&
+      course.runs[0].status === STATUS_OFFERED &&
       course.runs[0].enrollment_start_date === undefined
     ));
     const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
@@ -105,7 +117,8 @@ describe('CourseAction', () => {
   it('shows a disabled enroll button if user is not enrolled and enrollment starts in future', () => {
     // there should also be text below the button
     let course = findCourse(course => (
-      course.status === STATUS_OFFERED &&
+      course.runs.length > 0 &&
+      course.runs[0].status === STATUS_OFFERED &&
       course.runs[0].enrollment_start_date !== undefined
     ));
     let firstRun = course.runs[0];
@@ -124,7 +137,8 @@ describe('CourseAction', () => {
 
   it('shows an enroll button if user is not enrolled and enrollment starts today', () => {
     let course = findCourse(course => (
-      course.status === STATUS_OFFERED &&
+      course.runs.length > 0 &&
+      course.runs[0].status === STATUS_OFFERED &&
       course.runs[0].enrollment_start_date !== undefined
     ));
     let firstRun = course.runs[0];
@@ -143,7 +157,8 @@ describe('CourseAction', () => {
 
   it('shows an enroll button if user is not enrolled and enrollment started already', () => {
     let course = findCourse(course => (
-      course.status === STATUS_OFFERED &&
+      course.runs.length > 0 &&
+      course.runs[0].status === STATUS_OFFERED &&
       course.runs[0].enrollment_start_date !== undefined
     ));
     let firstRun = course.runs[0];
@@ -162,14 +177,16 @@ describe('CourseAction', () => {
 
   it('is not an offered course and user has not failed', () => {
     let course = findCourse(course => (
-      course.status === STATUS_NOT_OFFERED &&
       course.runs.length === 0
     ));
     const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
     let buttonContainer = wrapper.find(".course-action-action");
     let description = wrapper.find(".course-action-description");
+    let button = buttonContainer.find(".dashboard-button");
+    let buttonText = button.children().text();
 
-    assert.equal(buttonContainer.text(), '');
+    assert(button.props().disabled);
+    assert.equal(buttonText, 'Enroll');
     assert.equal(description.text(), '');
   });
 });

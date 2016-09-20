@@ -6,8 +6,10 @@ import Button from 'react-mdl/lib/Button';
 
 import type { Course, CourseRun } from '../../flow/programTypes';
 import {
+  STATUS_NOT_PASSED,
   STATUS_PASSED,
   STATUS_ENROLLED,
+  STATUS_VERIFIED,
   STATUS_OFFERED,
   DASHBOARD_FORMAT,
 } from '../../constants';
@@ -43,14 +45,14 @@ export default class CourseAction extends React.Component {
 
   render() {
     const { course, now } = this.props;
-    let firstRun = {};
+    let firstRun: CourseRun = {};
     if (course.runs.length > 0) {
       firstRun = course.runs[0];
     }
 
     let action = "", description = "";
 
-    switch (course.status) {
+    switch (firstRun.status) {
     case STATUS_PASSED:
       action = <i className="material-icons">done</i>;
       break;
@@ -74,6 +76,14 @@ export default class CourseAction extends React.Component {
 
       action = this.makeEnrollButton("Enroll", firstRun, disabled);
       break;
+    }
+    case STATUS_NOT_PASSED:
+    case STATUS_VERIFIED:
+      // do nothing;
+      break;
+    default: {
+      // there are no runs
+      action = this.makeEnrollButton("Enroll", firstRun, true);
     }
     }
 

@@ -13,22 +13,15 @@ import {
 import { formatPrice } from '../../util/util';
 import { courseListToolTip } from './util';
 
-export default class CoursePrice extends React.Component {
+export default class CourseStatus extends React.Component {
   props: {
     course: Course
   };
 
-  courseTooltipText(courseStatus: string): string {
-    if (courseStatus === STATUS_ENROLLED) {
-      return "You need to enroll in the Verified Course to get MicroMasters credit.";
-    }
-    return '';
-  }
-
-  coursePrice(firstRun: CourseRun, courseStatus: string): string {
+  coursePrice(firstRun: CourseRun): string {
     let courseHasPrice = (
       !_.isNil(firstRun.price) &&
-      (courseStatus === STATUS_OFFERED || courseStatus === STATUS_ENROLLED)
+      (firstRun.status === STATUS_OFFERED || firstRun.status === STATUS_ENROLLED)
     );
 
     if (courseHasPrice) {
@@ -40,26 +33,28 @@ export default class CoursePrice extends React.Component {
 
   render() {
     const { course } = this.props;
-    let firstRun = {};
+    let firstRun: CourseRun = {};
     let priceDisplay;
     let tooltipDisplay;
-    const text = this.courseTooltipText(course.status);
 
     if (course.runs.length > 0) {
       firstRun = course.runs[0];
     }
-    const price = this.coursePrice(firstRun, course.status);
+    const price = this.coursePrice(firstRun);
 
     if (price) {
-      priceDisplay = <span className="course-price-display">{price}</span>;
+      priceDisplay = <span className="price">{price}</span>;
     }
 
-    if (text) {
-      tooltipDisplay = courseListToolTip(text, 'course-detail');
+    if (firstRun.status === STATUS_ENROLLED) {
+      tooltipDisplay = courseListToolTip(
+        "You need to enroll in the Verified Course to get MicroMasters credit.",
+        `course-detail${course.id}`,
+      );
     }
 
     return (
-      <div className="course-price">
+      <div className="course-status">
         {priceDisplay} {tooltipDisplay}
       </div>
     );

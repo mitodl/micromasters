@@ -15,7 +15,6 @@ import {
   PERSONAL_STEP,
   EDUCATION_STEP,
   EMPLOYMENT_STEP,
-  PRIVACY_STEP,
 } from '../constants';
 import { S } from './sanctuary';
 const { Maybe, Nothing } = S;
@@ -213,12 +212,6 @@ export function validateProfileComplete(profile: Profile): ProfileComplete {
     if (!_.isEqual(errors, {})) {
       return [false, EDUCATION_STEP, errors];
     }
-  }
-
-  // check privacy tab
-  errors = privacyValidation(profile);
-  if (!_.isEqual(errors, {})) {
-    return [false, PRIVACY_STEP, errors];
   }
 
   return [true, null, {}];

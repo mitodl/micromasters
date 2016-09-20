@@ -145,7 +145,7 @@ class DashboardTest(APITestCase):
             assert 'courses' in program
             assert len(program['courses']) == 2
             for course in program['courses']:
-                assert course['status'] == CourseStatus.NOT_OFFERED
+                assert len(course['runs']) == 0
 
     @patch('backends.utils.refresh_user_token', autospec=True)
     def test_with_runs(self, mocked_refresh):
@@ -176,7 +176,6 @@ class DashboardTest(APITestCase):
             assert 'courses' in program
             assert len(program['courses']) == 2
             for course_data in program['courses']:
-                assert 'status' in course_data
                 assert 'runs' in course_data
                 if len(course_data['runs']) == 1:
                     assert 'course_id' in course_data['runs'][0]

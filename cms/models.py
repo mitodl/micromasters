@@ -70,6 +70,12 @@ class ProgramPage(Page):
         blank=True,
         help_text='The description shown on the program page'
     )
+    faculty_description = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        help_text='The text to be shown as an introduction in the Faculty section'
+    )
     program = models.OneToOneField(
         'courses.Program',
         null=True,
@@ -81,6 +87,16 @@ class ProgramPage(Page):
         null=True,
         help_text="If this field is set the program page link on the home page will go to this URL."
     )
+    program_home_page_url = models.URLField(
+        blank=True,
+        null=True,
+        help_text="A url for an external homepage. There will be a link to this url from the program page."
+    )
+    program_contact_email = models.EmailField(
+        blank=True,
+        null=True,
+        help_text="A contact email for the program."
+    )
     background_image = models.ForeignKey(
         Image,
         null=True,
@@ -89,7 +105,6 @@ class ProgramPage(Page):
         related_name='+',
         help_text='The hero image on the program page'
     )
-    contact_us = RichTextField(blank=True)
     title_over_image = RichTextField(blank=True)
 
     thumbnail_image = models.ForeignKey(
@@ -109,10 +124,13 @@ class ProgramPage(Page):
         FieldPanel('program'),
         FieldPanel('thumbnail_image'),
         FieldPanel('external_program_page_url'),
+        FieldPanel('program_home_page_url'),
+        FieldPanel('program_contact_email'),
         FieldPanel('background_image'),
-        FieldPanel('contact_us'),
         FieldPanel('title_over_image'),
+        FieldPanel('faculty_description'),
         InlinePanel('courses', label='Program Courses'),
+        InlinePanel('faculty_members', label='Faculty'),
         InlinePanel('faqs', label='Frequently Asked Questions'),
     ]
 
@@ -150,6 +168,34 @@ class ProgramCourse(Orderable):
         MultiFieldPanel(
             [
                 FieldPanel('title'),
+            ]
+        )
+    ]
+
+
+class ProgramFaculty(Orderable):
+    """
+    Faculty for the program
+    """
+    program_page = ParentalKey(ProgramPage, related_name='faculty_members')
+    name = models.CharField(max_length=255, help_text='Full name of the faculty member')
+    title = models.CharField(max_length=20, blank=True)
+    short_bio = models.CharField(max_length=200, blank=True)
+    image = models.ForeignKey(
+        Image,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        help_text='Image for the faculty member'
+    )
+    content_panels = Page.content_panels + [
+        MultiFieldPanel(
+            [
+                FieldPanel('name'),
+                FieldPanel('title'),
+                FieldPanel('short_bio'),
+                FieldPanel('image'),
             ]
         )
     ]

@@ -18,6 +18,9 @@ from financialaid.models import FinancialAid, FinancialAidStatus, TierProgram
 from financialaid.serializers import IncomeValidationSerializer
 from roles.roles import Permissions
 from ui.views import get_bundle_url
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.generics import CreateAPIView
+from rest_framework.permissions import IsAuthenticated
 
 
 class IncomeValidationView(CreateAPIView):

@@ -95,7 +95,7 @@ class TestHomePage(ViewsTests):
     def test_login_button(self):
         """Verify that we see a login button if not logged in"""
         response = self.client.get('/')
-        self.assertContains(response, "Sign in with edX.org")
+        self.assertContains(response, "SIGN UP")
 
     def test_sign_out_button(self):
         """Verify that we see a sign out button if logged in"""
@@ -196,12 +196,11 @@ class DashboardTests(ViewsTests):
         """
         profile = self.create_and_login_user()
 
-        for role in Role.ASSIGNABLE_ROLES:
-            Role.objects.create(
-                program=ProgramFactory.create(),
-                user=profile.user,
-                role=role,
-            )
+        Role.objects.create(
+            program=ProgramFactory.create(),
+            user=profile.user,
+            role=Role.DEFAULT_ROLE,
+        )
 
         resp = self.client.get(DASHBOARD_URL)
         js_settings = json.loads(resp.context['js_settings_json'])
@@ -327,15 +326,9 @@ class TestProgramPage(ViewsTests):
             assert js_settings['gaTrackingID'] == ga_tracking_id
 
     def test_login_button(self):
-        """Verify that we see a login button if not logged in"""
+        """Verify that we see a login button"""
         response = self.client.get(self.program_page.url)
-        self.assertContains(response, "Sign in with edX.org")
-
-    def test_sign_out_button(self):
-        """Verify that we see a sign out button if logged in"""
-        self.create_and_login_user()
-        response = self.client.get(self.program_page.url)
-        self.assertContains(response, 'Sign out')
+        self.assertContains(response, "Sign Up Now")
 
     def test_program_thumbnail_default(self):
         """Verify that a default thumbnail shows up for a live program"""
@@ -366,7 +359,7 @@ class TestProgramPage(ViewsTests):
         self.program_page.save()
 
         resp = self.client.get('/')
-        self.assertContains(resp, image.get_rendition('fill-690x530').url)
+        self.assertContains(resp, image.get_rendition('fill-345x265').url)
 
 
 class TestUsersPage(ViewsTests):

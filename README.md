@@ -87,9 +87,10 @@ need to use Django admin for the next step anyway.
 
 #### 4) Add an OAuth client
 
-Run Django admin (see "In Django admin" section from step 2), navigate to the
-Django OAuth Toolkit section (/admin/oauth2_provider/), and add a
-new Application. Fill in the values as follows:
+Run Django admin (see "In Django admin" section from step 2),
+login as the "staff" user (email is "staff@example.com", password is "edx"),
+navigate to the Django OAuth Toolkit section (/admin/oauth2_provider/),
+and add a new Application. Fill in the values as follows:
 
 - **User**: Use the lookup (magnifying glass) to find your superuser
 - **Redirect uris**: The URL where MicroMaster’s will be running, followed by "/complete/edxorg/".
@@ -103,7 +104,7 @@ new Application. Fill in the values as follows:
 
 #### 5) Copy relevant values to use in the MicroMasters .env file
 
-The MicroMasters codebase contains a ``.env.sample`` file which will be used as
+The MicroMasters codebase contains a ``.env.example`` file which will be used as
 a template to create your ``.env`` file. For MicroMasters to work, it needs 3 values:
 
 - ``EDXORG_BASE_URL``
@@ -140,9 +141,9 @@ properly"_, simply run ``cd /edx/app/edxapp/edx-platform`` and re-run the comman
 
 #### 1) Create your ``.env`` file
 
-This file should be copied from the sample in the codebase:
+This file should be copied from the example in the codebase:
 
-    cp .env.sample .env
+    cp .env.example .env
 
 Set the ``EDXORG_BASE_URL``, ``EDXORG_CLIENT_ID``, and ``EDXORG_CLIENT_SECRET``
 variables in the ``.env`` file appropriately.
@@ -175,7 +176,12 @@ Run this command:
 
 You will also need to run this command whenever ``requirements.txt`` or ``test_requirements.txt`` change.
 
-#### 4) Create an Elasticsearch index
+#### 4) Create database tables
+To do this, run this command:
+
+    docker-compose run web ./manage.py migrate
+
+#### 5) Create an Elasticsearch index
 To do this, run this command:
 
     docker-compose run web ./manage.py recreate_index
@@ -184,7 +190,7 @@ This is required to initialize the Elasticsearch index and mappings. This comman
 to be run when the Elasticsearch container is first created. It may also be run afterwards to clear and recreate
 existing indexes, and to reindex relevant documents.
 
-#### 5) Run the container
+#### 6) Run the container
 
 Start Django, PostgreSQL, and other related services:
 

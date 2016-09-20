@@ -15,7 +15,6 @@ require("./public/components/raty.js");
 
 // mailchimp requirements
 require("ajaxchimp");
-require('imports?this=>window!wowjs');
 
 // make the thing work
 (function(document, window, $) {
@@ -47,10 +46,6 @@ $(document).ready(function() {
   $(window).bind('resize', alturaMaxima);
 });
 
-/* Wow animation  */
-let wow = new WOW({ mobile: false });
-wow.init();
-
 /* Bootstrap Internet Explorer 10 in Windows 8 and Windows Phone 8 FIX */
 if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
   var msViewportStyle = document.createElement('style');
@@ -68,7 +63,7 @@ if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
 $('.mailchimp').ajaxChimp({
   callback: mailchimpCallback,
   //Replace this with your own mailchimp post URL. Don't remove the "". Just paste the url inside "".
-  url: "http://facebook.us6.list-manage.com/subscribe/post?u=ad81d725159c1f322a0c54837&amp;id=008aee5e78"
+  url: "//facebook.us6.list-manage.com/subscribe/post?u=ad81d725159c1f322a0c54837&amp;id=008aee5e78"
 });
 
 function mailchimpCallback(resp) {

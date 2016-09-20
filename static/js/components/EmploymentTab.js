@@ -3,7 +3,12 @@ import React from 'react';
 
 import EmploymentForm from './EmploymentForm';
 import ProfileProgressControls from './ProfileProgressControls';
-import { employmentValidation } from '../util/validation';
+import {
+  combineValidators,
+  personalValidation,
+  educationValidation,
+  employmentValidation,
+} from '../util/validation';
 import type { Profile, SaveProfileFunc } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
 
@@ -22,9 +27,15 @@ class EmploymentTab extends React.Component {
         <EmploymentForm {...this.props} showSwitch={true} validator={employmentValidation} />
         <ProfileProgressControls
           {...this.props}
-          nextBtnLabel="Next"
-          isLastTab={false}
-          validator={employmentValidation}
+          nextBtnLabel="I'm Done!"
+          isLastTab={true}
+          validator={
+            combineValidators(
+              personalValidation,
+              educationValidation,
+              employmentValidation
+            )
+          }
         />
       </div>
     );
