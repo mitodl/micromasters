@@ -247,9 +247,7 @@ class ReferenceNumberTests(ESTestCase):
         course_run, user = create_purchasable_course_run()
         order = create_unfulfilled_order(course_run.edx_course_key, user)
 
-        for status in Order.STATUSES:
-            if status == Order.CREATED:
-                continue
+        for status in (status for status in Order.STATUSES if status != Order.CREATED):
             order.status = status
             order.save()
 
