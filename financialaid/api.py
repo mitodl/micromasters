@@ -2,6 +2,7 @@
 API helper functions for financialaid
 """
 from financialaid.constants import COUNTRY_INCOME_THRESHOLDS, DEFAULT_INCOME_THRESHOLD
+from financialaid.models import TierProgram
 
 
 def determine_tier_program(program, income):
@@ -32,3 +33,10 @@ def determine_auto_approval(financial_aid):
     income_threshold = COUNTRY_INCOME_THRESHOLDS.get(financial_aid.country_of_income, DEFAULT_INCOME_THRESHOLD)
     # The income_threshold == 0 is because in all cases BUT threshold == 0, it's strictly > instead of >=
     return financial_aid.income_usd > income_threshold or income_threshold == 0
+
+def get_highest_tier_program(program_id):
+    highest_tier_program = TierProgram.objects.filter(
+        program_id=program_id
+    ).order_by(
+        "-income_threshold"
+    ).first()

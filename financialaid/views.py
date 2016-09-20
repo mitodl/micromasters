@@ -9,8 +9,10 @@ from django.views.generic import ListView
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import (
     CreateAPIView,
-    get_object_or_404
+    get_object_or_404,
+    GenericAPIView
 )
+from rest_framework.mixins import UpdateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rolepermissions.verifications import has_object_permission
 
@@ -21,7 +23,10 @@ from financialaid.models import (
     FinancialAidStatus,
     TierProgram
 )
-from financialaid.serializers import IncomeValidationSerializer
+from financialaid.serializers import (
+    IncomeValidationSerializer,
+    FinancialAidActionSerializer
+)
 from roles.roles import Permissions
 from ui.views import get_bundle_url
 
@@ -203,3 +208,17 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         )
 
         return financial_aids
+
+class FinancialAidActionView(UpdateModelMixin, GenericAPIView):
+    """
+    View for rejecting and approving financial aid requests
+    """
+    serializer_class = FinancialAidActionSerializer
+    permission_classes = (IsAuthenticated, )
+
+    def post(self):
+        serializer = self.serializer_class()
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+    # define authentication classes

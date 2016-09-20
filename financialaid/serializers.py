@@ -6,17 +6,30 @@ import datetime
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from rest_framework.fields import IntegerField, FloatField, CharField
+from rest_framework.fields import (
+    CharField,
+    ChoiceField,
+    FloatField,
+    IntegerField
+)
 
 from courses.models import Program
 from dashboard.models import ProgramEnrollment
-from financialaid.api import determine_tier_program, determine_auto_approval
-from financialaid.models import FinancialAid, FinancialAidStatus
+from financialaid.api import (
+    determine_auto_approval,
+    determine_tier_program,
+    get_highest_tier_program
+)
+from financialaid.models import (
+    FinancialAid,
+    FinancialAidStatus,
+    TierProgram
+)
 
 
 class IncomeValidationSerializer(serializers.Serializer):
     """
-    Serializer for Financial Aid objects
+    Serializer for Financial Aid objects to validate income
     """
     original_income = FloatField(min_value=0)
     original_currency = CharField()
@@ -61,3 +74,47 @@ class IncomeValidationSerializer(serializers.Serializer):
         # Add auditing here
 
         return financial_aid
+
+class FinancialAidActionSerializer(serializers.Serializer):
+    """
+    Serializer for financial aid status
+    """
+    financial_aid_id = IntegerField()
+    financial_aid_action = ChoiceField(
+        choices=[FinancialAidStatus.REJECTED, FinancialAidStatus.APPROVED]
+    )
+    financial_aid_tier_program_id = IntegerField()
+
+    def validate(self, data):
+        """
+        Validators for this serializer
+        """
+        data["financial_aid"] = get_object_or_404(
+            FinancialAid, pk=data["financial_aid_id"]
+        )
+        data["financial_aid_tier_program"] = get_object_or_404(
+            TierProgram,
+            pk=data["financial_aid_tier_program_id"],
+            program=data["financialaid"].tier_program.program_id
+        )
+        return data
+
+    def save(self):
+        """
+        Save method for this serializer
+        """
+        financial_aid = self.validated_data["financial_aid"]
+        tier_program = self.validated_data["financial_aid_tier_program"]
+        financial_aid.status = self.validated_data["financial_aid_action"]
+        if financial_aid.status == FinancialAidStatus.APPROVED:
+            financial_aid.tier_program = tier_program
+        elif financial_aid.status == FinancialAidStatus.REJECTED:
+            program_id = financial_aid.tier_program.program_id
+            financial_aid.tier_program = get_highest_tier_program(program_id)
+        financial_aid.save()
+
+        # add auditing here
+
+        return financial_aid
+
+
