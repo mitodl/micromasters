@@ -13,9 +13,9 @@
   {% image page.background_image fill-1310x613 as background_image %}
   <div class="hero-image" style="background-image: url({{ background_image.url }})">
     <!-- big image, and sign-up links, etc -->
-    <div class="title">
+    <h1 class="title">
       {{ page.title }} MicroMasters
-    </div>
+    </h1>
     <div class="description">
       {{ page.title_over_image|richtext }}
     </div>
@@ -23,7 +23,7 @@
       Sign Up Now
     </button>
     <div class="log-in">
-      Already a Member? 
+      Already a Member?
       <a href="/login/edxorg">
         Log In
       </a>
@@ -47,9 +47,9 @@
         </div>
         <div class="second-column">
           <div class="info-box course-info">
-            <div class="title">
+            <h3 class="title">
               Courses
-            </div>
+            </h3>
             {% for course, status in courses_info.items %}
             <div class="course-details">
               <div class="title">
@@ -62,9 +62,9 @@
             {% endfor %}
           </div>
           <div class="info-box contact-info">
-            <div class="title">
+            <h3 class="title">
               More Info
-            </div>
+            </h3>
             <div class="contact-links">
               {% if page.program_home_page_url %}
               <a target="_blank" href="{{ page.program_home_page_url }}">
@@ -102,6 +102,11 @@
         {% endfor %}
       </div>
     </div>
+  </div>
+
+  <div class="faculty">
+    <h3 class="title">Faculty</h3>
+    <div class="description">Lorem ipsum lorem ipsum.</div>
   </div>
 
   {% include "footer.html" %}
