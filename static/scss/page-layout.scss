@@ -9,6 +9,11 @@ $border-box-sizing: true !global;
     margin: 0 auto;
   }
 
+  .single-column-wide {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
   .double-column {
     display: flex;
     flex-direction: row;

@@ -9,6 +9,7 @@ module.exports = {
   entry: {
     'dashboard': ['babel-polyfill', './static/js/dashboard'],
     'signup_dialog': './static/js/signup_dialog',
+    'faculty_carousel': './static/js/faculty_carousel',
     'public': ['babel-polyfill', './static/js/public'],
     'style': './static/js/style',
     'style_public': './static/js/style_public',

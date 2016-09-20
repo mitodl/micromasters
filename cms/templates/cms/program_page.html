@@ -104,13 +104,30 @@
     </div>
   </div>
 
-  <div class="faculty">
-    <h3 class="title">Faculty</h3>
-    <div class="description">Lorem ipsum lorem ipsum.</div>
-    <div id="faculty-carousel" class="single-column">
-      <!-- React-Slick carousel component injected here -->
+  {% if page.faculty_members.count > 0 %}
+    <div class="faculty-section">
+      <h3 class="title">Faculty</h3>
+      {% if page.faculty_description|length > 0 %}
+        <p class="description">{{ page.faculty_description }}</p>
+      {% endif %}
+      <div id="faculty-carousel" class="single-column-wide">
+        <!-- React-Slick carousel component injected here -->
+        <ul>
+          {% for faculty in page.faculty_members.all %}
+          <li>
+            {% image faculty.image max-400x300 as faculty_photo %}
+            <img class="faculty-photo" src="{{ faculty_photo.url }}" />
+            <p class="faculty-name">{{ faculty.name }}</p>
+            {% if faculty.title|length > 0 %}
+              <p class="faculty-title">{{ faculty.title }}</p>
+            {% endif %}
+            <p class="faculty-bio">{{ faculty.short_bio }}</p>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
-  </div>
+  {% endif %}
 
   {% include "footer.html" %}
 </div>
@@ -118,5 +135,6 @@
   <!-- signup dialog React component injected here -->
 </div>
 <script type="text/javascript" src="{{ signup_dialog_src }}"></script>
+<script type="text/javascript" src="{{ faculty_carousel_src }}"></script>
 <script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
 {% endblock %}

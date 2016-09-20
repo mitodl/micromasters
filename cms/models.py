@@ -158,6 +158,7 @@ class ProgramPage(Page):
         context["style_public_src"] = get_bundle_url(request, "style_public.js")
         context["authenticated"] = not request.user.is_anonymous()
         context["signup_dialog_src"] = get_bundle_url(request, "signup_dialog.js")
+        context["faculty_carousel_src"] = get_bundle_url(request, "faculty_carousel.js")
         context["username"] = username
         context["js_settings_json"] = json.dumps(js_settings)
         context["title"] = self.title
