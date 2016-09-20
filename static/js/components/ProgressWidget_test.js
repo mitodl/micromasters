@@ -32,8 +32,10 @@ describe('ProgressWidget', () => {
     ));
     const wrapper = shallow(<ProgressWidget program={program}/>);
     const totalCourses = program.courses.length;
-    const passedCourses = program.courses.find(course => course.status === STATUS_PASSED);
-    const totalPassedCourses = passedCourses ? passedCourses.length : 0;
+    const passedCourses = program.courses.filter(
+      course => course.runs.length > 0 && course.runs[0].status === STATUS_PASSED
+    );
+    const totalPassedCourses = passedCourses.length;
 
     assert.equal(wrapper.find(".progress-title").children().text(), "Progress");
     assert.equal(wrapper.find(".text-course-complete").children().text(), "Courses complete");

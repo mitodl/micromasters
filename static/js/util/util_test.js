@@ -421,8 +421,10 @@ describe('utility functions', () => {
       ));
       const programInfoActual = programCourseInfo(program);
       const totalCoursesExpected = program.courses.length;
-      const passedCourses = program.courses.find(course => course.status === STATUS_PASSED);
-      const totalPassedCoursesExpected = passedCourses ? passedCourses.length : 0;
+      const passedCourses = program.courses.filter(
+        course => course.runs.length > 0 && course.runs[0].status === STATUS_PASSED
+      );
+      const totalPassedCoursesExpected = passedCourses.length;
 
       assert.deepEqual(programInfoActual, {
         totalPassedCourses: totalPassedCoursesExpected,
