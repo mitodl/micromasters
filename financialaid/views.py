@@ -179,9 +179,6 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
             is_valid=True,
             course_run__course__program=self.program
         ).first()
-        # ).filter( TODO
-        #     CourseRun.get_active_enrollment_queryset()
-        # ).first()
         if course_price_object is None:
             # If course price is not set, we can't meaningfully display any financial aid requests
             return []
