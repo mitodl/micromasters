@@ -22,7 +22,9 @@ class TimeStampedModel(models.Model):
 
     def update(self, **kwargs):
         """
-        Automatically update updated_on timestamp
+        Automatically update updated_on timestamp when .update(). This is because .update()
+        does not go through .save(), thus will not auto_now, because it happens on the
+        database level without loading objects into memory.
         """
         update_fields = {"updated_on"}
         for k, v in kwargs.items():

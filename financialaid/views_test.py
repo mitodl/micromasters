@@ -9,12 +9,7 @@ from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save
 
 from factory.django import mute_signals
-from rest_framework.status import (
-    HTTP_200_OK,
-    HTTP_201_CREATED,
-    HTTP_400_BAD_REQUEST,
-    HTTP_403_FORBIDDEN
-)
+from rest_framework import status
 from rest_framework.test import APIClient
 
 from courses.factories import (
@@ -52,7 +47,8 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         )
         # Role for self.staff_user_profile2.user
         cls.program2 = ProgramFactory.create(
-            financial_aid_availability=True
+            financial_aid_availability=True,
+            live=True
         )
         Role.objects.create(
             user=cls.staff_user_profile2.user,
@@ -76,6 +72,13 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         )
         cls.income_validation_url = reverse("financialaid_api")
         cls.review_url = reverse("review_financial_aid", kwargs={"program_id": cls.program.id})
+        cls.review_url_with_filter = reverse(
+            "review_financial_aid",
+            kwargs={
+                "program_id": cls.program.id,
+                "status": FinancialAidStatus.AUTO_APPROVED
+            }
+        )
 
     def setUp(self):
         super().setUp()
@@ -92,7 +95,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         """
         assert FinancialAid.objects.count() == 0
         resp = self.client.post(self.income_validation_url, self.data, format='json')
-        assert resp.status_code == HTTP_201_CREATED
+        assert resp.status_code == status.HTTP_201_CREATED
         assert FinancialAid.objects.count() == 1
         financial_aid = FinancialAid.objects.first()
         assert financial_aid.tier_program == self.tiers["50k"]
@@ -105,7 +108,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         assert FinancialAid.objects.count() == 0
         self.data["original_income"] = 200000
         resp = self.client.post(self.income_validation_url, self.data, format='json')
-        assert resp.status_code == HTTP_201_CREATED
+        assert resp.status_code == status.HTTP_201_CREATED
         assert FinancialAid.objects.count() == 1
         financial_aid = FinancialAid.objects.first()
         assert financial_aid.tier_program == self.tiers["100k"]
@@ -118,7 +121,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         for key_to_not_send in ["original_currency", "program_id", "original_income"]:
             data = {key: value for key, value in self.data.items() if key != key_to_not_send}
             resp = self.client.post(self.income_validation_url, data)
-            assert resp.status_code == HTTP_400_BAD_REQUEST
+            assert resp.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_income_validation_no_financial_aid_availability(self):
         """
@@ -127,7 +130,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         self.program.financial_aid_availability = False
         self.program.save()
         resp = self.client.post(self.income_validation_url, self.data)
-        assert resp.status_code == HTTP_400_BAD_REQUEST
+        assert resp.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_income_validation_user_not_enrolled(self):
         """
@@ -136,7 +139,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         self.program_enrollment.user = self.profile2.user
         self.program_enrollment.save()
         resp = self.client.post(self.income_validation_url, self.data)
-        assert resp.status_code == HTTP_400_BAD_REQUEST
+        assert resp.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_income_validation_currency_not_usd(self):
         """
@@ -144,27 +147,56 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         """
         self.data["original_currency"] = "NOTUSD"
         resp = self.client.post(self.income_validation_url, self.data)
-        assert resp.status_code == HTTP_400_BAD_REQUEST
+        assert resp.status_code == status.HTTP_400_BAD_REQUEST
 
-    def test_review_financial_aid_view_not_allowed(self):
+    def test_review_financial_aid_view_not_allowed_user(self):
         """
-        Tests ReviewFinancialAidView that are not allowed
+        Tests ReviewFinancialAidView that are not allowed for a user
         """
         # Not allowed for default logged-in user
         resp = self.client.get(self.review_url)
-        assert resp.status_code == HTTP_403_FORBIDDEN
+        assert resp.status_code == status.HTTP_403_FORBIDDEN
         # Not allowed for staff of different program
         self.client.force_login(self.staff_user_profile2.user)
         resp = self.client.get(self.review_url)
-        assert resp.status_code == HTTP_403_FORBIDDEN
+        assert resp.status_code == status.HTTP_403_FORBIDDEN
         # Not allowed for instructors
         self.client.force_login(self.instructor_user_profile.user)
         resp = self.client.get(self.review_url)
-        assert resp.status_code == HTTP_403_FORBIDDEN
+        assert resp.status_code == status.HTTP_403_FORBIDDEN
         # Not allowed for not-logged-in user
         self.client.logout()
         resp = self.client.get(self.review_url)
-        assert resp.status_code == HTTP_403_FORBIDDEN
+        assert resp.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_review_financial_aid_view_not_allowed_program(self):
+        """
+        Tests ReviewFinancialAidView that are not allowed for the program
+        """
+        self.client.force_login(self.staff_user_profile.user)
+        # Not allowed for financial_aid_availability == False
+        self.program.financial_aid_availability = False
+        self.program.save()
+        resp = self.client.get(self.review_url)
+        assert resp.status_code == status.HTTP_404_NOT_FOUND
+        # Not allowed for live == False
+        self.program.financial_aid_availability = True
+        self.program.live = False
+        self.program.save()
+        resp = self.client.get(self.review_url)
+        assert resp.status_code == status.HTTP_404_NOT_FOUND
+        # Reset program
+        self.program.live = True
+        self.program.save()
+        # No valid course_price will return 200, but empty queryset
+        self.course_price.is_valid = False
+        self.course_price.save()
+        resp = self.client.get(self.review_url)
+        assert resp.status_code == status.HTTP_200_OK
+        assert resp.context_data["financial_aid_objects"] == []
+        # Reset course price
+        self.course_price.is_valid = True
+        self.course_price.save()
 
     def test_review_financial_aid_view_allowed(self):
         """
@@ -173,29 +205,34 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         # Allowed for staff of program
         self.client.force_login(self.staff_user_profile.user)
         resp = self.client.get(self.review_url)
-        assert resp.status_code == HTTP_200_OK
+        assert resp.status_code == status.HTTP_200_OK
+
+    def test_review_financial_aid_view_with_filter_and_sorting(self):
+        """
+        Tests ReviewFinancialAidView with filters and sorting
+        """
+        self.client.force_login(self.staff_user_profile.user)
         # Should work a filter
-        url_with_filter = reverse(
-            "review_financial_aid",
-            kwargs={
-                "program_id": self.program.id,
-                "status": FinancialAidStatus.AUTO_APPROVED
-            }
-        )
-        resp = self.client.get(url_with_filter)
-        assert resp.status_code == HTTP_200_OK
+        resp = self.client.get(self.review_url_with_filter)
+        assert resp.status_code == status.HTTP_200_OK
         # Should work with sorting
         url_with_sorting = "{url}?sort_by=-last_name".format(url=self.review_url)
         resp = self.client.get(url_with_sorting)
-        assert resp.status_code == HTTP_200_OK
+        assert resp.status_code == status.HTTP_200_OK
         # Should work a filter and sorting
-        url_with_filter_and_sorting = "{url}?sort_by=-last_name".format(url=url_with_filter)
+        url_with_filter_and_sorting = "{url}?sort_by=-last_name".format(url=self.review_url_with_filter)
         resp = self.client.get(url_with_filter_and_sorting)
-        assert resp.status_code == HTTP_200_OK
+        assert resp.status_code == status.HTTP_200_OK
+
+    def test_review_financial_aid_view_with_invalid_filter_and_sorting(self):
+        """
+        Tests that ReviewFinancialAidView does not break with invalid filters and sorting
+        """
+        self.client.force_login(self.staff_user_profile.user)
         # Shouldn't break with invalid sort field
-        url_with_filter_and_sorting = "{url}?sort_by=-askjdf".format(url=url_with_filter)
+        url_with_filter_and_sorting = "{url}?sort_by=-askjdf".format(url=self.review_url_with_filter)
         resp = self.client.get(url_with_filter_and_sorting)
-        assert resp.status_code == HTTP_200_OK
+        assert resp.status_code == status.HTTP_200_OK
         # Shouldn't break with invalid filter field
         url_with_bad_filter = reverse(
             "review_financial_aid",
@@ -205,8 +242,8 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
             }
         )
         resp = self.client.get(url_with_bad_filter)
-        assert resp.status_code == HTTP_200_OK
+        assert resp.status_code == status.HTTP_200_OK
         # Shouldn't break with invalid filter and sort fields
         url_with_bad_filter_and_bad_sorting = "{url}?sort_by=-askjdf".format(url=url_with_bad_filter)
         resp = self.client.get(url_with_bad_filter_and_bad_sorting)
-        assert resp.status_code == HTTP_200_OK
+        assert resp.status_code == status.HTTP_200_OK
