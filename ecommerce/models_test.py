@@ -2,7 +2,10 @@
 Tests for ecommerce models
 """
 
-from django.test import TestCase
+from django.test import (
+    TestCase,
+    override_settings,
+)
 
 from ecommerce.exceptions import EcommerceModelException
 from ecommerce.factories import (
@@ -13,6 +16,7 @@ from ecommerce.factories import (
 
 
 # pylint: disable=no-self-use
+@override_settings(CYBERSOURCE_SECURITY_KEY='fake')
 class OrderTests(TestCase):
     """
     Tests for Order, Line, and Receipt
