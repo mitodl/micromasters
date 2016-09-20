@@ -21,7 +21,10 @@ from financialaid.views import (
 )
 from profiles.views import ProfileViewSet
 from search.views import ElasticProxyView
-from mail.views import MailView
+from mail.views import (
+    FinancialAidMailView,
+    SearchResultMailView
+)
 
 router = routers.DefaultRouter()
 router.register(r'programs', ProgramViewSet)
@@ -37,9 +40,10 @@ urlpatterns = [
     url(r'^api/v0/search/(?P<elastic_url>.*)', ElasticProxyView.as_view(), name='search_api'),
     url(r'^api/v0/checkout/$', CheckoutView.as_view(), name='checkout'),
     url(r'^api/v0/enrolledprograms/$', ProgramEnrollmentListView.as_view(), name='user_program_enrollments'),
-    url(r'^api/v0/mail/$', MailView.as_view(), name='mail_api'),
-    url(r'^api/v0/financialaid/$', IncomeValidationView.as_view(), name='financialaid_request'),
-    url(r'^api/v0/financialaidaction/$', FinancialAidActionView.as_view(), name='financialaid_action'),
+    url(r'^api/v0/search_result_mail/$', SearchResultMailView.as_view(), name='search_result_mail_api'),
+    url(r'^api/v0/financial_aid_mail/$', FinancialAidMailView.as_view(), name='financial_aid_mail_api'),
+    url(r'^api/v0/financial_aid_request/$', IncomeValidationView.as_view(), name='financial_aid_request'),
+    url(r'^api/v0/financial_aid_action/$', FinancialAidActionView.as_view(), name='financial_aid_action'),
     url(r'^status/', include('server_status.urls')),
     url(r'^financial_aid/', include('financialaid.urls')),
     # Wagtail
