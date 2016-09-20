@@ -74,14 +74,11 @@ class OrderFulfillmentView(APIView):
         try:
             if request.data['decision'] != 'ACCEPT':
                 # This may happen if the user clicks 'Cancel Order'
-
                 order.status = Order.FAILED
-                order.save()
             else:
                 # Do the verified enrollment with edX here
-
                 order.status = Order.FULFILLED
-                order.save()
+            order.save()
         except:
             order.status = Order.FAILED
             order.save()
