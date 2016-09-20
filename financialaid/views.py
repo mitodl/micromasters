@@ -14,6 +14,8 @@ from rest_framework.generics import (
 )
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.status import HTTP_200_OK
 from rolepermissions.verifications import has_object_permission
 
 from courses.models import Program, CourseRun
@@ -23,6 +25,7 @@ from financialaid.models import (
     FinancialAidStatus,
     TierProgram
 )
+from financialaid.permissions import UserCanEditFinancialAid
 from financialaid.serializers import (
     IncomeValidationSerializer,
     FinancialAidActionSerializer
@@ -209,16 +212,26 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
 
         return financial_aids
 
+
 class FinancialAidActionView(UpdateModelMixin, GenericAPIView):
     """
     View for rejecting and approving financial aid requests
     """
     serializer_class = FinancialAidActionSerializer
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, UserCanEditFinancialAid, )
 
-    def post(self):
-        serializer = self.serializer_class()
+    def post(self, request, *args, **kwargs):
+        """
+        Post request for FinancialAidActionView
+        """
+        serializer = self.serializer_class(data=request.POST)
         serializer.is_valid(raise_exception=True)
+        self.check_object_permissions(
+            self.request,
+            serializer.validated_data["financial_aid"].tier_program.program_id
+        )
         self.perform_update(serializer)
-
-    # define authentication classes
+        return Response(
+            status=HTTP_200_OK,
+            data={}
+        )

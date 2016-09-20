@@ -15,7 +15,10 @@ from courses.views import (
 )
 from dashboard.views import UserDashboard
 from ecommerce.views import CheckoutView
-from financialaid.views import IncomeValidationView
+from financialaid.views import (
+    IncomeValidationView,
+    FinancialAidActionView
+)
 from profiles.views import ProfileViewSet
 from search.views import ElasticProxyView
 from mail.views import MailView
@@ -35,7 +38,8 @@ urlpatterns = [
     url(r'^api/v0/checkout/$', CheckoutView.as_view(), name='checkout'),
     url(r'^api/v0/enrolledprograms/$', ProgramEnrollmentListView.as_view(), name='user_program_enrollments'),
     url(r'^api/v0/mail/$', MailView.as_view(), name='mail_api'),
-    url(r'^api/v0/financialaid/$', IncomeValidationView.as_view(), name='financialaid_api'),
+    url(r'^api/v0/financialaid/$', IncomeValidationView.as_view(), name='financialaid_request'),
+    url(r'^api/v0/financialaidaction/$', FinancialAidActionView.as_view(), name='financialaid_action'),
     url(r'^status/', include('server_status.urls')),
     url(r'^financial_aid/', include('financialaid.urls')),
     # Wagtail

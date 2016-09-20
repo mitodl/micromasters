@@ -67,7 +67,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
             course_run=cls.course_run,
             is_valid=True
         )
-        cls.income_validation_url = reverse("financialaid_api")
+        cls.income_validation_url = reverse("financialaid_request")
         cls.review_url = reverse("review_financial_aid", kwargs={"program_id": cls.program.id})
 
     def setUp(self):

@@ -34,9 +34,18 @@ def determine_auto_approval(financial_aid):
     # The income_threshold == 0 is because in all cases BUT threshold == 0, it's strictly > instead of >=
     return financial_aid.income_usd > income_threshold or income_threshold == 0
 
+
 def get_highest_tier_program(program_id):
+    """
+    Takes a program_id and returns the highest tier program for that program
+    Args:
+        program_id: the id of the program object
+    Returns:
+        highest_tier_program: the highest tier program associated with the program object
+    """
     highest_tier_program = TierProgram.objects.filter(
         program_id=program_id
     ).order_by(
         "-income_threshold"
     ).first()
+    return highest_tier_program

@@ -75,6 +75,7 @@ class IncomeValidationSerializer(serializers.Serializer):
 
         return financial_aid
 
+
 class FinancialAidActionSerializer(serializers.Serializer):
     """
     Serializer for financial aid status
@@ -90,13 +91,15 @@ class FinancialAidActionSerializer(serializers.Serializer):
         Validators for this serializer
         """
         data["financial_aid"] = get_object_or_404(
-            FinancialAid, pk=data["financial_aid_id"]
+            FinancialAid, id=data["financial_aid_id"]
         )
-        data["financial_aid_tier_program"] = get_object_or_404(
-            TierProgram,
-            pk=data["financial_aid_tier_program_id"],
-            program=data["financialaid"].tier_program.program_id
-        )
+        try:
+            data["financial_aid_tier_program"] = TierProgram.objects.get(
+                id=data["financial_aid_tier_program_id"],
+                program=data["financial_aid"].tier_program.program_id
+            )
+        except TierProgram.DoesNotExist:
+            raise ValidationError("Financial Aid Tier does not exist for this program.")
         return data
 
     def save(self):
@@ -116,5 +119,3 @@ class FinancialAidActionSerializer(serializers.Serializer):
         # add auditing here
 
         return financial_aid
-
-
