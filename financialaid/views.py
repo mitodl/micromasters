@@ -28,8 +28,8 @@ from financialaid.models import (
 )
 from financialaid.permissions import UserCanEditFinancialAid
 from financialaid.serializers import (
-    IncomeValidationSerializer,
-    FinancialAidActionSerializer
+    FinancialAidActionSerializer,
+    IncomeValidationSerializer
 )
 from roles.roles import Permissions
 from ui.views import get_bundle_url
@@ -242,7 +242,7 @@ class FinancialAidActionView(UpdateModelMixin, GenericAPIView):
     View for rejecting and approving financial aid requests
     """
     serializer_class = FinancialAidActionSerializer
-    permission_classes = (IsAuthenticated, UserCanEditFinancialAid, )
+    permission_classes = (IsAuthenticated, UserCanEditFinancialAid)
 
     def post(self, request, *args, **kwargs):
         """

@@ -12,7 +12,7 @@ def determine_tier_program(program, income):
         program (Program): the Program to determine a TierProgram for
         income (numeric): the income of the User
     Returns:
-        TierProgram: the TierProgram for the Program given the User's income
+        (TierProgram): the TierProgram for the Program given the User's income
     """
     # To determine the tier for a user, find the set of every tier whose income threshold is
     # less than or equal to the income of the user. The highest tier out of that set will
@@ -28,24 +28,19 @@ def determine_auto_approval(financial_aid):
     Args:
         financial_aid (FinancialAid): the financial aid object to determine auto-approval
     Returns:
-        boolean: True if auto-approved, False if not
+        (boolean): True if auto-approved, False if not
     """
     income_threshold = COUNTRY_INCOME_THRESHOLDS.get(financial_aid.country_of_income, DEFAULT_INCOME_THRESHOLD)
     # The income_threshold == 0 is because in all cases BUT threshold == 0, it's strictly > instead of >=
     return financial_aid.income_usd > income_threshold or income_threshold == 0
 
 
-def get_highest_tier_program(program_id):
+def get_no_discount_tier_program(program):
     """
-    Takes a program_id and returns the highest tier program for that program
+    Takes a program_id and returns the no discount TierProgram for that Program
     Args:
-        program_id: the id of the program object
+        program (Program): the id of the Program object
     Returns:
-        highest_tier_program: the highest tier program associated with the program object
+        (TierProgram): the no discount TierProgram program associated with the Program
     """
-    highest_tier_program = TierProgram.objects.filter(
-        program_id=program_id
-    ).order_by(
-        "-income_threshold"
-    ).first()
-    return highest_tier_program
+    return TierProgram.objects.get(program=program, discount_amount=0)

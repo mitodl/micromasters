@@ -18,7 +18,7 @@ from dashboard.models import ProgramEnrollment
 from financialaid.api import (
     determine_auto_approval,
     determine_tier_program,
-    get_highest_tier_program
+    get_no_discount_tier_program
 )
 from financialaid.models import (
     FinancialAid,
@@ -81,10 +81,8 @@ class FinancialAidActionSerializer(serializers.Serializer):
     Serializer for financial aid status
     """
     financial_aid_id = IntegerField()
-    financial_aid_action = ChoiceField(
-        choices=[FinancialAidStatus.REJECTED, FinancialAidStatus.APPROVED]
-    )
-    financial_aid_tier_program_id = IntegerField()
+    action = ChoiceField(choices=[FinancialAidStatus.REJECTED, FinancialAidStatus.APPROVED])
+    tier_program_id = IntegerField()
 
     def validate(self, data):
         """
@@ -94,8 +92,8 @@ class FinancialAidActionSerializer(serializers.Serializer):
             FinancialAid, id=data["financial_aid_id"]
         )
         try:
-            data["financial_aid_tier_program"] = TierProgram.objects.get(
-                id=data["financial_aid_tier_program_id"],
+            data["tier_program"] = TierProgram.objects.get(
+                id=data["tier_program_id"],
                 program=data["financial_aid"].tier_program.program_id
             )
         except TierProgram.DoesNotExist:
@@ -107,13 +105,12 @@ class FinancialAidActionSerializer(serializers.Serializer):
         Save method for this serializer
         """
         financial_aid = self.validated_data["financial_aid"]
-        tier_program = self.validated_data["financial_aid_tier_program"]
-        financial_aid.status = self.validated_data["financial_aid_action"]
+        tier_program = self.validated_data["tier_program"]
+        financial_aid.status = self.validated_data["action"]
         if financial_aid.status == FinancialAidStatus.APPROVED:
             financial_aid.tier_program = tier_program
         elif financial_aid.status == FinancialAidStatus.REJECTED:
-            program_id = financial_aid.tier_program.program_id
-            financial_aid.tier_program = get_highest_tier_program(program_id)
+            financial_aid.tier_program = get_no_discount_tier_program(financial_aid.tier_program.program_id)
         financial_aid.save()
 
         # add auditing here
