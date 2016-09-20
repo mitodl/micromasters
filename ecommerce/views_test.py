@@ -120,13 +120,18 @@ class OrderFulfillmentViewTests(ESTestCase):
 
     def test_missing_fields(self):
         """
-        If CyberSource POSTs with fields missing, we should at least save it in a receipt
+        If CyberSource POSTs with fields missing, we should at least save it in a receipt.
+        It is very unlikely for Cybersource to POST invalid data but it also provides a way to test
+        that we save a Receipt in the event of an error.
         """
         data = {}
         for _ in range(5):
             data[FAKE.text()] = FAKE.text()
         with patch('ecommerce.views.IsSignedByCyberSource.has_permission', return_value=True):
             try:
+                # Missing fields from Cybersource POST will cause the KeyError.
+                # In this test we just care that we saved the data in Receipt for later
+                # analysis.
                 self.client.post(reverse('order-fulfillment'), data=data)
             except KeyError:
                 pass
