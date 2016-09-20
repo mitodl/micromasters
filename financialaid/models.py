@@ -9,7 +9,6 @@ from django.db import (
 from jsonfield import JSONField
 
 from courses.models import (
-    CourseRun,
     Program,
 )
 

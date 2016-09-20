@@ -5,22 +5,25 @@ import json
 
 from django.conf import settings
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.db.models import F
 from django.views.generic import ListView
 from rest_framework.authentication import SessionAuthentication
-from rest_framework.generics import CreateAPIView, get_object_or_404
+from rest_framework.generics import (
+    CreateAPIView,
+    get_object_or_404
+)
 from rest_framework.permissions import IsAuthenticated
-from rolepermissions.verifications import has_permission, has_object_permission
+from rolepermissions.verifications import has_object_permission
 
-from courses.models import CourseRun, Program
+from courses.models import Program, CourseRun
 from ecommerce.models import CoursePrice
-from financialaid.models import FinancialAid, FinancialAidStatus, TierProgram
+from financialaid.models import (
+    FinancialAid,
+    FinancialAidStatus,
+    TierProgram
+)
 from financialaid.serializers import IncomeValidationSerializer
 from roles.roles import Permissions
 from ui.views import get_bundle_url
-from rest_framework.authentication import SessionAuthentication
-from rest_framework.generics import CreateAPIView
-from rest_framework.permissions import IsAuthenticated
 
 
 class IncomeValidationView(CreateAPIView):
@@ -51,6 +54,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
     raise_exception = True
     # Used to modify queryset and in context
     selected_status = None
+    program = None
     # Used for sorting
     sort_field = None
     sort_direction = ""
