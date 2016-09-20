@@ -17,11 +17,17 @@ from rest_framework.status import (
 )
 from rest_framework.test import APIClient
 
-from courses.factories import CourseRunFactory, ProgramFactory
+from courses.factories import (
+    CourseRunFactory,
+    ProgramFactory
+)
 from ecommerce.factories import CoursePriceFactory
 from financialaid.api_test import FinancialAidBaseTestCase
-from financialaid.models import FinancialAid, FinancialAidStatus
-from profiles.factories import ProfileFactory, UserFactory
+from financialaid.models import (
+    FinancialAid,
+    FinancialAidStatus
+)
+from profiles.factories import ProfileFactory
 from roles.models import Role
 from roles.roles import Staff, Instructor
 
@@ -35,33 +41,34 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         super().setUpTestData()
         with mute_signals(post_save):
             cls.profile2 = ProfileFactory.create()
-            cls.staff_user = UserFactory.create()
-            cls.staff_user2 = UserFactory.create()
-            cls.instructor_user = UserFactory.create()
+            cls.staff_user_profile = ProfileFactory.create()
+            cls.staff_user_profile2 = ProfileFactory.create()
+            cls.instructor_user_profile = ProfileFactory.create()
         # Role for self.staff_user
         Role.objects.create(
-            user=cls.staff_user,
+            user=cls.staff_user_profile.user,
             program=cls.program,
             role=Staff.ROLE_ID,
         )
-        # Role for self.staff_user2
+        # Role for self.staff_user_profile2.user
         cls.program2 = ProgramFactory.create(
             financial_aid_availability=True
         )
         Role.objects.create(
-            user=cls.staff_user2,
+            user=cls.staff_user_profile2.user,
             program=cls.program2,
             role=Staff.ROLE_ID
         )
         # Role for self.instructor
         Role.objects.create(
-            user=cls.instructor_user,
+            user=cls.instructor_user_profile.user,
             program=cls.program,
             role=Instructor.ROLE_ID
         )
         # Other items
         cls.course_run = CourseRunFactory.create(
-            enrollment_end=datetime.utcnow() + timedelta(hours=1)
+            enrollment_end=datetime.utcnow() + timedelta(hours=1),
+            program=cls.program
         )
         cls.course_price = CoursePriceFactory.create(
             course_run=cls.course_run,
@@ -147,11 +154,11 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         resp = self.client.get(self.review_url)
         assert resp.status_code == HTTP_403_FORBIDDEN
         # Not allowed for staff of different program
-        self.client.force_login(self.staff_user2)
+        self.client.force_login(self.staff_user_profile2.user)
         resp = self.client.get(self.review_url)
         assert resp.status_code == HTTP_403_FORBIDDEN
         # Not allowed for instructors
-        self.client.force_login(self.instructor_user)
+        self.client.force_login(self.instructor_user_profile.user)
         resp = self.client.get(self.review_url)
         assert resp.status_code == HTTP_403_FORBIDDEN
         # Not allowed for not-logged-in user
@@ -164,7 +171,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         Tests ReviewFinancialAidView that are allowed
         """
         # Allowed for staff of program
-        self.client.force_login(self.staff_user)
+        self.client.force_login(self.staff_user_profile.user)
         resp = self.client.get(self.review_url)
         assert resp.status_code == HTTP_200_OK
         # Should work a filter

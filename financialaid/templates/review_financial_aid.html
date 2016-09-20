@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% load i18n static %}
-{% load financial_aid_tags %}
 
 {% block title %}{% trans "Review Financial Aid" %}{% endblock %}
 
@@ -81,10 +80,10 @@
               </td>
               <td>
                 <select class="form-control">
-                {% for tier_program in tier_programs|get_attribute:financial_aid.tier_program.program_id %}
-                  <option value="{{ tier_program.discount_amount }}"
+                {% for tier_program in financial_aid.tier_programs %}
+                  <option value="{{ tier_program.id }}"
                           {% if tier_program == financial_aid.tier_program %}selected{% endif %}>
-                    ${{ course_price|subtract:tier_program.discount_amount }}
+                    ${{ tier_program.adjusted_cost }}
                   </option>
                 {% endfor %}
                 </select>
