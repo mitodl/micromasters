@@ -10,6 +10,7 @@ import { S } from './sanctuary';
 const { Maybe, Just, Nothing } = S;
 
 import {
+  STATUS_PASSED,
   EDUCATION_LEVELS,
   PROFILE_STEP_LABELS
 } from '../constants';
@@ -19,6 +20,10 @@ import type {
   WorkHistoryEntry,
   ValidationErrors,
 } from '../flow/profileTypes';
+import type {
+  Program,
+  Course
+} from '../flow/programTypes';
 import { workEntriesByDate } from './sorting';
 import type { CheckoutPayload } from '../flow/checkoutTypes';
 
@@ -364,4 +369,24 @@ export function createForm(url: string, payload: CheckoutPayload): HTMLFormEleme
  */
 export function formatPrice(price: string): string {
   return `$${price}`;
+}
+
+/**
+ * Returns total courses and passed courses in program.
+ */
+export function programCourseInfo(program: Program): Object {
+  let totalCourses = 0;
+  let totalPassedCourses = 0;
+  let passedCourses: Course;
+
+  if (program.courses) {
+    totalCourses = program.courses.length;
+    passedCourses = program.courses.find(course => course.status === STATUS_PASSED);
+    totalPassedCourses = passedCourses ? passedCourses.length : 0;
+  }
+
+  return {
+    'totalPassedCourses': totalPassedCourses,
+    'totalCourses': totalCourses
+  };
 }
