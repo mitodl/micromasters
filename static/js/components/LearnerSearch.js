@@ -23,7 +23,6 @@ import LearnerResult from './search/LearnerResult';
 import CountryRefinementOption from './search/CountryRefinementOption';
 import CustomPaginationDisplay from './search/CustomPaginationDisplay';
 import CustomResetFiltersDisplay from './search/CustomResetFiltersDisplay';
-
 import CustomSortingSelect from './search/CustomSortingSelect';
 import FilterVisibilityToggle from './search/FilterVisibilityToggle';
 import HitsCount from './search/HitsCount';

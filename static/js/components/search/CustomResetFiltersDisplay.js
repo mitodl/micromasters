@@ -14,7 +14,12 @@ export default class CustomResetFiltersDisplay extends ResetFiltersDisplay {
   };
 
   render(){
-    const {bemBlock, hasFilters, resetFilters, clearAllLabel} = this.props;
+    const {
+      bemBlock,
+      hasFilters,
+      resetFilters,
+      clearAllLabel
+    } = this.props;
 
     if (hasFilters) {
       return (

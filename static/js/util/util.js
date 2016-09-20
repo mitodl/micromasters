@@ -271,11 +271,7 @@ export function getLocation(profile: Profile, showState: boolean = true): string
   let subCountryLocation, countryLocation;
   if ( country === 'US' ) {
     let state = state_or_territory.replace(/^\D{2}-/, '');
-    if (showState) {
-      subCountryLocation = `${city}, ${state}`;
-    } else {
-      subCountryLocation = city;
-    }
+    subCountryLocation = showState ? `${city}, ${state}` : city;
     countryLocation = 'US';
   } else {
     subCountryLocation = city;

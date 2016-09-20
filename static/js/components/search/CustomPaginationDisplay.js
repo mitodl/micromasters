@@ -22,14 +22,22 @@ export default class CustomPaginationDisplay extends React.Component {
 
     if (!disabled) {
       optionsPrev = (
-        <div className="sk-toggle-option sk-toggle__item sk-pagination-option"
-          data-qa="option" data-key="previous" onClick={this.onClick.bind(null, toggleItem)}>
+        <div
+          className="sk-toggle-option sk-toggle__item sk-pagination-option"
+          data-qa="option"
+          data-key="previous"
+          onClick={this.onClick.bind(null, toggleItem)}
+        >
           <Icon name="navigate_before" data-key="previous" />
         </div>
       );
       optionsNext = (
-        <div className="sk-toggle-option sk-toggle__item sk-pagination-option"
-          data-qa="option" data-key="next" onClick={this.onClick.bind(null, toggleItem)}>
+        <div
+          className="sk-toggle-option sk-toggle__item sk-pagination-option"
+          data-qa="option"
+          data-key="next"
+          onClick={this.onClick.bind(null, toggleItem)}
+        >
           <Icon name="navigate_next" data-key="next" />
         </div>
       );

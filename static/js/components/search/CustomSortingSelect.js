@@ -15,6 +15,20 @@ export default class CustomSortingSelect extends Select {
     ReactDOM.findDOMNode(sortSelectField).dispatchEvent(event);
   }
 
+  optionText(
+    label: string,
+    showCount: number,
+    docCount: number,
+    countFormatter: Function,
+  ): string {
+    let text = label;
+
+    if (showCount && docCount !== undefined) {
+      text += ` (${countFormatter(docCount)})`;
+    }
+    return text;
+  }
+
   render() {
     const {
       mod, className, items, disabled, showCount, translate, countFormatter
@@ -29,15 +43,14 @@ export default class CustomSortingSelect extends Select {
         </span>
         <select onChange={this.onChange} value={this.getSelectedValue()} ref="sortSelectField">
           {_.map(items, ({key, label, title, disabled, docCount}) => {
-            let text = translate(label || title || key);
-
-            if (showCount && docCount !== undefined) {
-              text += ` (${countFormatter(docCount)})`;
-            }
-
             return (
               <option key={key} value={key} disabled={disabled}>
-                {text}
+                {this.optionText(
+                  translate(label || title || key),
+                  showCount,
+                  docCount,
+                  countFormatter
+                )}
               </option>
             );
           })};
