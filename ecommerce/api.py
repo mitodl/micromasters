@@ -28,6 +28,7 @@ from profiles.api import get_social_username
 
 ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 log = logging.getLogger(__name__)
+_REFERENCE_NUMBER_PREFIX = 'MM-'
 
 
 def get_purchasable_course_run(course_key, user):
@@ -165,7 +166,7 @@ def make_reference_id(order):
         str:
             A reference number for use with CyberSource to keep track of orders
     """
-    return "MM-{}-{}".format(settings.CYBERSOURCE_REFERENCE_PREFIX, order.id)
+    return "{}{}-{}".format(_REFERENCE_NUMBER_PREFIX, settings.CYBERSOURCE_REFERENCE_PREFIX, order.id)
 
 
 def get_new_order_by_reference_number(reference_number):
@@ -180,9 +181,9 @@ def get_new_order_by_reference_number(reference_number):
         Order:
             An order
     """
-    if not reference_number.startswith("MM-"):
-        raise ParseException("Reference number must start with MM-")
-    reference_number = reference_number[len("MM-"):]
+    if not reference_number.startswith(_REFERENCE_NUMBER_PREFIX):
+        raise ParseException("Reference number must start with {}".format(_REFERENCE_NUMBER_PREFIX))
+    reference_number = reference_number[len(_REFERENCE_NUMBER_PREFIX):]
 
     try:
         order_id_pos = reference_number.rindex('-')
