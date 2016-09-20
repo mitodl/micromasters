@@ -24,7 +24,7 @@ export default class ProgressWidget extends React.Component {
     const height = radius * 2;
     const viewBox = `0 0 ${width} ${height}`;
     const dashArray = radiusForMeasures * Math.PI * 2;
-    const dashOffset = dashArray - dashArray * totalPassedCourses / totalCourses;
+    const dashOffset = dashArray - dashArray * totalPassedCourses / (totalCourses || 1);
 
     return (
       <svg className="circular-progress-widget"
