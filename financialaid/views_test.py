@@ -154,6 +154,10 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         self.client.force_login(self.instructor_user)
         resp = self.client.get(self.review_url)
         assert resp.status_code == HTTP_403_FORBIDDEN
+        # Not allowed for not-logged-in user
+        self.client.logout()
+        resp = self.client.get(self.review_url)
+        assert resp.status_code == HTTP_403_FORBIDDEN
 
     def test_review_financial_aid_view_allowed(self):
         """
