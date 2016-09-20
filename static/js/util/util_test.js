@@ -34,10 +34,9 @@ import {
   MASTERS,
   PROFILE_STEP_LABELS,
   CHECKOUT_RESPONSE,
-  STATUS_PASSED
 } from '../constants';
 import { assertMaybeEquality, assertIsNothing } from './sanctuary_test';
-import { findProgram } from '../components/ProgressWidget_test';
+import { program } from '../components/ProgressWidget_test';
 
 /* eslint-disable camelcase */
 describe('utility functions', () => {
@@ -415,20 +414,11 @@ describe('utility functions', () => {
 
   describe('programCourseInfo', () => {
     it('assert program info', () => {
-      let program = findProgram(course => (
-        course.runs.length > 0 &&
-        course.runs[0].status === STATUS_PASSED
-      ));
       const programInfoActual = programCourseInfo(program);
-      const totalCoursesExpected = program.courses.length;
-      const passedCourses = program.courses.filter(
-        course => course.runs.length > 0 && course.runs[0].status === STATUS_PASSED
-      );
-      const totalPassedCoursesExpected = passedCourses.length;
 
       assert.deepEqual(programInfoActual, {
-        totalPassedCourses: totalPassedCoursesExpected,
-        totalCourses: totalCoursesExpected
+        totalPassedCourses: 1,
+        totalCourses: 3
       });
     });
   });
