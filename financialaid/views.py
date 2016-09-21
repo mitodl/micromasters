@@ -19,7 +19,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
 from rolepermissions.verifications import has_object_permission
 
-from courses.models import Program, CourseRun
+from courses.models import Program
 from ecommerce.models import CoursePrice
 from financialaid.models import (
     FinancialAid,
@@ -56,7 +56,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
     View for reviewing financial aid requests.
     Note: In the future, it may be worth factoring out the code for sorting into its own subclass of ListView
     """
-    paginate_by = 10
+    paginate_by = 2
     context_object_name = "financial_aid_objects"
     template_name = "review_financial_aid.html"
     # If user doesn't pass test_func, raises exception instead of redirecting to login url
@@ -64,6 +64,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
     # Used to modify queryset and in context
     selected_status = None
     program = None
+    course_price = None
     # Used for sorting
     sort_field = None
     sort_direction = ""
@@ -89,7 +90,6 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         "first_name": "user__profile__first_name",
         "last_name": "user__profile__last_name",
         "location": "user__profile__city",
-        "adjusted_cost": "adjusted_price",
         "reported_income": "income_usd",
     }
     default_sort_field = "first_name"
@@ -98,7 +98,12 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         """
         Validate user permissions (Analogous to permissions_classes for DRF)
         """
-        self.program = get_object_or_404(Program, id=self.kwargs.get("program_id", None))
+        self.program = get_object_or_404(
+            Program,
+            id=self.kwargs["program_id"],  # pylint: disable=unsubscriptable-object
+            live=True,
+            financial_aid_availability=True
+        )
         return has_object_permission(Permissions.CAN_EDIT_FINANCIAL_AID, self.request.user, self.program)
 
     def get_context_data(self, **kwargs):
@@ -109,7 +114,18 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
 
         # Constants required in view
         context["selected_status"] = self.selected_status
+        context["current_sort_field"] = "{sort_direction}{sort_field}".format(
+            sort_direction=self.sort_direction,
+            sort_field=self.sort_field
+        )
         context["current_program_id"] = self.program.id
+        context["tier_programs"] = TierProgram.objects.filter(
+            program_id=context["current_program_id"]
+        ).order_by(
+            "discount_amount"
+        ).annotate(
+            adjusted_cost=self.course_price - F("discount_amount")
+        )
 
         # Create ordered list of (financial aid status, financial message)
         messages = FinancialAidStatus.STATUS_MESSAGES_DICT
@@ -164,15 +180,24 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         """
         Gets queryset for ListView to return to view
         """
-        # Filter by availability
-        financial_aids = FinancialAid.objects.filter(
-            tier_program__program__live=True,
-            tier_program__program__financial_aid_availability=True
-        )
+        # Get course price to calculate adjusted cost - we put this first so that we can return
+        # an empty queryset if no valid CoursePrice is found.
+        # Note: This implementation of retrieving a course price is a naive lookup that assumes
+        # all course runs and courses will be the same price for the foreseeable future.
+        # Therefore we can just take the price from any currently enroll-able course run.
+        course_price_object = CoursePrice.objects.filter(
+            is_valid=True,
+            course_run__course__program=self.program
+        ).first()
+        if course_price_object is None:
+            # If course price is not set, we can't meaningfully display any financial aid requests
+            return []
+        else:
+            self.course_price = course_price_object.price
 
         # Filter by program (self.program set in test_func())
-        financial_aids = financial_aids.filter(
-            tier_program__program=self.program,
+        financial_aids = FinancialAid.objects.filter(
+            tier_program__program=self.program
         )
 
         # Filter by status
@@ -180,6 +205,9 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         if self.selected_status is None or self.selected_status not in FinancialAidStatus.ALL_STATUSES:
             self.selected_status = FinancialAidStatus.PENDING_MANUAL_APPROVAL
         financial_aids = financial_aids.filter(status=self.selected_status)
+
+        # Annotate with adjusted cost
+        financial_aids = financial_aids.annotate(adjusted_cost=self.course_price - F("tier_program__discount_amount"))
 
         # Sort by field
         self.sort_field = self.request.GET.get("sort_by", self.default_sort_field)
@@ -196,43 +224,6 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
                 sort_field=self.sort_field_mappings.get(self.sort_field, self.sort_field)
             )
         )
-
-        # Add adjusted cost and TierPrograms valid for selection for each FinancialAid object
-        # Note: iterating through this queryset, if large, can be very costly in terms of memory/time,
-        # but it is done here to simplify the templates.
-        # Get program ids and associated tier programs
-        program_ids = Program.objects.filter(
-            live=True,
-            financial_aid_availability=True
-        ).values_list(
-            "id",
-            flat=True
-        )
-        # Get course price to calculate adjusted cost
-        # Note: This implementation of retrieving a course price is a naive lookup that assumes
-        # all course runs and courses will be the same price for the foreseeable future,
-        # irrespective of the program. Therefore we can just take the price from any currently
-        # enroll-able course run.
-        course_price = CoursePrice.objects.filter(
-            is_valid=True,
-            course_run__in=CourseRun.objects.filter(
-                course__program_id=self.program.id
-            ).filter(
-                CourseRun.get_active_enrollment_queryset()
-            )
-        ).first()
-        tier_programs = {
-            program_id: TierProgram.objects.filter(
-                program_id=program_id
-            ).order_by(
-                "discount_amount"
-            ).annotate(
-                adjusted_cost=course_price.price - F("discount_amount")
-            )
-            for program_id in program_ids
-        }
-        for fa in financial_aids:
-            fa.tier_programs = tier_programs.get(fa.tier_program.program_id, None)
 
         return financial_aids
 

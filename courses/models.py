@@ -133,9 +133,3 @@ class CourseRun(models.Model):
             # the enrollment end date is simply greater than now
             models.Q(enrollment_end__gte=now)
         )
-
-    def get_course_price(self):
-        """
-        Returns the current active CoursePrice object attached to this course run.
-        """
-        return self.courseprice_set.get(is_valid=True)

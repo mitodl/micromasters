@@ -22,7 +22,8 @@ class FinancialAidBaseTestCase(ESTestCase):
         with mute_signals(post_save):
             cls.profile = ProfileFactory.create()
         cls.program = ProgramFactory.create(
-            financial_aid_availability=True
+            financial_aid_availability=True,
+            live=True
         )
         cls.tiers = {
             "0k": TierProgramFactory.create(program=cls.program, income_threshold=0, current=True),
