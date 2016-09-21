@@ -8,6 +8,7 @@ describe('constants', () => {
     let programIds : Set<number> = new Set();
     let courseIds : Set<number> = new Set();
     let runIds : Set<number> = new Set();
+    let courseKeys : Set<string> = new Set();
     for (let program of DASHBOARD_RESPONSE) {
       assert(!_.isNil(program.id), 'Missing program id');
       assert(!programIds.has(program.id), `Duplicate program id ${program.id}`);
@@ -33,6 +34,9 @@ describe('constants', () => {
           assert(!_.isNil(run.position), `Missing position for run ${run.id}`);
           assert(!positionInCourse.has(run.position), `Duplicate position for run ${run.id}`);
           positionInCourse.add(run.position);
+          assert(run.course_id, `Missing course_id for run ${run.id}`);
+          assert(!courseKeys.has(run.course_id), `Duplicate course key ${run.course_id}`);
+          courseKeys.add(run.course_id);
         }
       }
     }

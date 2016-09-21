@@ -2,6 +2,7 @@
 import logging
 
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
@@ -40,7 +41,8 @@ class CheckoutView(APIView):
             raise ValidationError("Missing course_id")
 
         order = create_unfulfilled_order(course_id, request.user)
-        payload = generate_cybersource_sa_payload(order)
+        dashboard_url = request.build_absolute_uri('/dashboard/')
+        payload = generate_cybersource_sa_payload(order, dashboard_url)
 
         return Response({
             'payload': payload,

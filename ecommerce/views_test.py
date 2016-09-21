@@ -7,7 +7,9 @@ from mock import (
 )
 
 from django.core.urlresolvers import reverse
+from django.db.models.signals import post_save
 from django.test import override_settings
+from factory.django import mute_signals
 import faker
 import rest_framework.status as status
 
@@ -20,7 +22,10 @@ from ecommerce.models import (
     Order,
     Receipt,
 )
-from profiles.factories import UserFactory
+from profiles.factories import (
+    ProfileFactory,
+    UserFactory,
+)
 from search.base import ESTestCase
 
 
@@ -85,7 +90,15 @@ class CheckoutViewTests(ESTestCase):
         assert create_mock.call_count == 1
         assert create_mock.call_args[0] == (course_key, user)
         assert generate_mock.call_count == 1
-        assert generate_mock.call_args[0] == (order, )
+        assert generate_mock.call_args[0] == (order, 'http://testserver/dashboard/')
+
+    def test_post_redirects(self):
+        """Test that POST redirects to same URL"""
+        with mute_signals(post_save):
+            profile = ProfileFactory.create(agreed_to_terms_of_service=True, filled_out=True)
+        self.client.force_login(profile.user)
+        resp = self.client.post("/dashboard/", follow=True)
+        assert resp.redirect_chain == [('http://testserver/dashboard/', 302)]
 
 
 @override_settings(CYBERSOURCE_REFERENCE_PREFIX=CYBERSOURCE_REFERENCE_PREFIX)

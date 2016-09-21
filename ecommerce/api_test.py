@@ -9,6 +9,7 @@ from mock import (
     MagicMock,
     patch,
 )
+from urllib.parse import quote_plus
 
 from django.http.response import Http404
 from django.test import override_settings
@@ -173,11 +174,12 @@ class CybersourceTests(ESTestCase):
         with patch('ecommerce.api.get_social_username', autospec=True, return_value=username):
             with patch('ecommerce.api.datetime', autospec=True, utcnow=MagicMock(return_value=now)):
                 with patch('ecommerce.api.uuid.uuid4', autospec=True, return_value=MagicMock(hex=transaction_uuid)):
-                    payload = generate_cybersource_sa_payload(order)
+                    payload = generate_cybersource_sa_payload(order, 'dashboard_url')
         signature = payload.pop('signature')
         assert generate_cybersource_sa_signature(payload) == signature
         signed_field_names = payload['signed_field_names'].split(',')
         assert signed_field_names == sorted(payload.keys())
+        quoted_course_key = quote_plus(course_run.edx_course_key)
 
         assert payload == {
             'access_key': CYBERSOURCE_ACCESS_KEY,
@@ -185,8 +187,8 @@ class CybersourceTests(ESTestCase):
             'consumer_id': username,
             'currency': 'USD',
             'locale': 'en-us',
-            'override_custom_cancel_page': 'https://micromasters.mit.edu?cancel',
-            'override_custom_receipt_page': "https://micromasters.mit.edu?receipt",
+            'override_custom_cancel_page': 'dashboard_url?status=cancel&course_key={}'.format(quoted_course_key),
+            'override_custom_receipt_page': "dashboard_url?status=receipt&course_key={}".format(quoted_course_key),
             'reference_number': make_reference_id(order),
             'profile_id': CYBERSOURCE_PROFILE_ID,
             'signed_date_time': now.strftime(ISO_8601_FORMAT),

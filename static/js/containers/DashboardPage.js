@@ -6,7 +6,16 @@ import Loader from 'react-loader';
 import { Card, CardTitle } from 'react-mdl/lib/Card';
 import _ from 'lodash';
 
-import { FETCH_PROCESSING, checkout } from '../actions';
+import {
+  FETCH_SUCCESS,
+  FETCH_PROCESSING,
+  checkout,
+} from '../actions';
+import {
+  TOAST_SUCCESS,
+  TOAST_FAILURE,
+} from '../constants';
+import { setToastMessage } from '../actions/ui';
 import { createForm } from '../util/util';
 import CourseListCard from '../components/dashboard/CourseListCard';
 import DashboardUserCard from '../components/dashboard/DashboardUserCard';
@@ -17,11 +26,59 @@ import type { ProgramEnrollment } from '../flow/enrollmentTypes';
 import type { ProfileGetResult } from '../flow/profileTypes';
 
 class DashboardPage extends React.Component {
+  static contextTypes = {
+    router:   React.PropTypes.object.isRequired
+  };
+
   props: {
     profile:                  ProfileGetResult,
     currentProgramEnrollment: ProgramEnrollment,
     dashboard:                DashboardState,
     dispatch:                 Dispatch,
+  };
+
+  componentDidMount() {
+    this.handleOrderStatus();
+  }
+
+  componentDidUpdate() {
+    this.handleOrderStatus();
+  }
+
+  handleOrderStatus = () => {
+    const { dispatch, dashboard, location: { query } } = this.props;
+
+    if (dashboard.fetchStatus !== FETCH_SUCCESS) {
+      // wait until we have access to the dashboard
+      return;
+    }
+
+    let courseKey = query.course_key;
+    if (query.status === 'receipt') {
+      let course = {};
+      for (let program of dashboard.programs) {
+        for (let courseInProgram of program.courses) {
+          for (let courseRun of courseInProgram.runs) {
+            if (courseRun.course_id === courseKey) {
+              course = courseInProgram;
+            }
+          }
+        }
+      }
+
+      dispatch(setToastMessage({
+        title: 'Order Complete!',
+        message: `You are now enrolled in ${course.title}`,
+        icon: TOAST_SUCCESS,
+      }));
+      this.context.router.push('/dashboard/');
+    } else if (query.status === 'cancel') {
+      dispatch(setToastMessage({
+        message: 'Order was cancelled',
+        icon: TOAST_FAILURE,
+      }));
+      this.context.router.push('/dashboard/');
+    }
   };
 
   dispatchCheckout = (courseId: string) => {

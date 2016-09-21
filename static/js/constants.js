@@ -385,7 +385,7 @@ export const DASHBOARD_RESPONSE = [
         "title": "Enrollment starting course - disabled enroll button, text says Enrollment begins 3/3/2106",
         "runs": [
           {
-            "course_id": "course-v1:supply+chain",
+            "course_id": "course-v1:supply+chain2",
             "id": 8,
             "status": STATUS_OFFERED,
             "fuzzy_enrollment_start_date": null,
@@ -432,6 +432,7 @@ export const DASHBOARD_RESPONSE = [
             "position": 0,
             "fuzzy_start_date": "Fall 2017",
             "course_end_date": "2016-09-09T10:20:10Z",
+            "course_id": "verified",
           }
         ]
       },
@@ -441,7 +442,7 @@ export const DASHBOARD_RESPONSE = [
         "title": "Fuzzy enrollment starting course - First in program, action text is enrollment begins soonish",
         "runs": [
           {
-            "course_id": "course-v1:supply+chain",
+            "course_id": "course-v1:supply+chain3",
             "id": 9,
             "status": STATUS_OFFERED,
             "fuzzy_enrollment_start_date": "soonish",
@@ -471,7 +472,7 @@ export const DASHBOARD_RESPONSE = [
         "title": "Course for last program in progress - no grade, action or description",
         "runs": [
           {
-            "course_id": "course-v1:edX+DemoX+Demo_Course",
+            "course_id": "course-v1:edX+DemoX+Demo_Course2",
             "id": 6,
             "status": STATUS_VERIFIED,
             "title": "Course run for last program",

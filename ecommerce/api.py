@@ -6,6 +6,7 @@ from datetime import datetime
 import hashlib
 import hmac
 import logging
+from urllib.parse import quote_plus
 import uuid
 
 from django.conf import settings
@@ -120,26 +121,39 @@ def generate_cybersource_sa_signature(payload):
     return b64encode(digest).decode('utf-8')
 
 
-def generate_cybersource_sa_payload(order):
+def generate_cybersource_sa_payload(order, dashboard_url):
     """
     Generates a payload dict to send to CyberSource for Secure Acceptance
 
     Args:
         order (Order): An order
+        dashboard_url: (str): The absolute url for the dashboard
     Returns:
         dict: the payload to send to CyberSource via Secure Acceptance
     """
     # http://apps.cybersource.com/library/documentation/dev_guides/Secure_Acceptance_WM/Secure_Acceptance_WM.pdf
     # Section: API Fields
+
+    # Course key is used only to show the confirmation message to the user
+    course_key = ""
+    line = order.line_set.first()
+    if line is not None:
+        course_key = line.course_key
+
     payload = {
         'access_key': settings.CYBERSOURCE_ACCESS_KEY,
         'amount': str(order.total_price_paid),
         'consumer_id': get_social_username(order.user),
         'currency': 'USD',
         'locale': 'en-us',
-        # TODO
-        'override_custom_cancel_page': 'https://micromasters.mit.edu?cancel',
-        'override_custom_receipt_page': "https://micromasters.mit.edu?receipt",
+        'override_custom_cancel_page': "{}?status=cancel&course_key={}".format(
+            dashboard_url,
+            quote_plus(course_key),
+        ),
+        'override_custom_receipt_page': "{}?status=receipt&course_key={}".format(
+            dashboard_url,
+            quote_plus(course_key),
+        ),
         'reference_number': make_reference_id(order),
         'profile_id': settings.CYBERSOURCE_PROFILE_ID,
         'signed_date_time': datetime.utcnow().strftime(ISO_8601_FORMAT),
