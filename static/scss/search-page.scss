@@ -192,11 +192,11 @@
         &.sk-toggle-height {
           text-align: center;
           vertical-align: middle;
-          max-height: 30px !important;
+          height: 30px !important;
         }
 
         .sk-pagination-option * {
-          font-size: 20px;
+          font-size: 21px;
           font-weight: 400;
           padding: 0 0 !important;
         }
@@ -333,12 +333,12 @@
   flex-flow: row;
   border-radius: 3px;
   border: 1px solid #e4e4e4;
-  max-height: 30px !important;
+  height: 35px !important;
 
   > select {
     background-color: $fg-grey;
     border: 0;
-    padding: 6px 30px 6px 0;
+    padding: 5px 30px 5px 0;
   }
 
   .label-before-selected {
