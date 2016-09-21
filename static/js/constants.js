@@ -554,3 +554,6 @@ export const PROGRAM_ENROLLMENTS = [
 ];
 
 export const SEARCH_FILTER_DEFAULT_VISIBILITY = true;
+
+export const TOAST_SUCCESS = 'success';
+export const TOAST_FAILURE = 'failure';
