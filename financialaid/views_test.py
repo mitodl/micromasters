@@ -18,6 +18,7 @@ from courses.factories import (
 )
 from ecommerce.factories import CoursePriceFactory
 from financialaid.api_test import FinancialAidBaseTestCase
+from financialaid.factories import FinancialAidFactory
 from financialaid.models import (
     FinancialAid,
     FinancialAidStatus
@@ -98,7 +99,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         assert resp.status_code == status.HTTP_201_CREATED
         assert FinancialAid.objects.count() == 1
         financial_aid = FinancialAid.objects.first()
-        assert financial_aid.tier_program == self.tiers["50k"]
+        assert financial_aid.tier_program == self.tier_programs["50k"]
         assert financial_aid.status == FinancialAidStatus.PENDING_DOCS
 
     def test_income_validation_auto_approved(self):
@@ -111,7 +112,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         assert resp.status_code == status.HTTP_201_CREATED
         assert FinancialAid.objects.count() == 1
         financial_aid = FinancialAid.objects.first()
-        assert financial_aid.tier_program == self.tiers["100k"]
+        assert financial_aid.tier_program == self.tier_programs["100k"]
         assert financial_aid.status == FinancialAidStatus.AUTO_APPROVED
 
     def test_income_validation_missing_args(self):
@@ -211,18 +212,39 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         """
         Tests ReviewFinancialAidView with filters and sorting
         """
+        FinancialAidFactory.create(tier_program=self.tier_programs["0k"], status=FinancialAidStatus.AUTO_APPROVED)
+        FinancialAidFactory.create(tier_program=self.tier_programs["0k"], status=FinancialAidStatus.APPROVED)
+        FinancialAidFactory.create(tier_program=self.tier_programs["0k"], status=FinancialAidStatus.REJECTED)
         self.client.force_login(self.staff_user_profile.user)
         # Should work a filter
         resp = self.client.get(self.review_url_with_filter)
         assert resp.status_code == status.HTTP_200_OK
+        resp_obj_id_list = resp.context_data["financial_aid_objects"].values_list("id", flat=True)
+        expected_obj_id_list = FinancialAid.objects.filter(
+            tier_program__program_id=self.program.id,
+            status=FinancialAidStatus.AUTO_APPROVED
+        ).order_by("user__profile__first_name").values_list("id", flat=True)  # Default sort field
+        self.assertListEqual(list(resp_obj_id_list), list(expected_obj_id_list))
         # Should work with sorting
         url_with_sorting = "{url}?sort_by=-last_name".format(url=self.review_url)
         resp = self.client.get(url_with_sorting)
         assert resp.status_code == status.HTTP_200_OK
+        resp_obj_id_list = resp.context_data["financial_aid_objects"].values_list("id", flat=True)
+        expected_obj_id_list = FinancialAid.objects.filter(
+            tier_program__program_id=self.program.id,
+            status=FinancialAidStatus.PENDING_MANUAL_APPROVAL  # Default filter field
+        ).order_by("-user__profile__last_name").values_list("id", flat=True)
+        self.assertListEqual(list(resp_obj_id_list), list(expected_obj_id_list))
         # Should work a filter and sorting
         url_with_filter_and_sorting = "{url}?sort_by=-last_name".format(url=self.review_url_with_filter)
         resp = self.client.get(url_with_filter_and_sorting)
         assert resp.status_code == status.HTTP_200_OK
+        resp_obj_id_list = resp.context_data["financial_aid_objects"].values_list("id", flat=True)
+        expected_obj_id_list = FinancialAid.objects.filter(
+            tier_program__program_id=self.program.id,
+            status=FinancialAidStatus.AUTO_APPROVED
+        ).order_by("-user__profile__last_name").values_list("id", flat=True)  # Default sort field
+        self.assertListEqual(list(resp_obj_id_list), list(expected_obj_id_list))
 
     def test_review_financial_aid_view_with_invalid_filter_and_sorting(self):
         """

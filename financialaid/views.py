@@ -48,7 +48,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
     View for reviewing financial aid requests.
     Note: In the future, it may be worth factoring out the code for sorting into its own subclass of ListView
     """
-    paginate_by = 2
+    paginate_by = 50
     context_object_name = "financial_aid_objects"
     template_name = "review_financial_aid.html"
     # If user doesn't pass test_func, raises exception instead of redirecting to login url

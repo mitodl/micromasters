@@ -44,14 +44,14 @@
               &lt;
             </a>
           {% else %}
-            <button class="btn btn-default disabled"><</button>
+            <button class="btn btn-default disabled">&lt;</button>
           {% endif %}
           {% if page_obj.has_next %}
             <a href="?page={{ page_obj.next_page_number }}&sort_by={{ current_sort_field }}" class="btn btn-default">
               &gt;
             </a>
           {% else %}
-            <button class="btn btn-default disabled">></button>
+            <button class="btn btn-default disabled">&gt;></button>
           {% endif %}
           </span>
           <br>
