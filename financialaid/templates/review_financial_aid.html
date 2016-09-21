@@ -40,12 +40,16 @@
         <div>
           <span class="step-links">
           {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-default"><</a>
+            <a href="?page={{ page_obj.previous_page_number }}&sort_by={{ current_sort_field }}" class="btn btn-default">
+              &lt;
+            </a>
           {% else %}
             <button class="btn btn-default disabled"><</button>
           {% endif %}
           {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-default">></a>
+            <a href="?page={{ page_obj.next_page_number }}&sort_by={{ current_sort_field }}" class="btn btn-default">
+              &gt;
+            </a>
           {% else %}
             <button class="btn btn-default disabled">></button>
           {% endif %}
@@ -70,7 +74,7 @@
           {% for financial_aid in financial_aid_objects %}
             <tr>
               <td>
-                  <img src="https://s3.amazonaws.com/odl-micromasters-production/avatar_default.png"
+                  <img src="{% static 'images/avatar_default.png' %}"
                        style="height: 35px; border-radius: 18px; border: 1px solid rgba(180, 180, 180, 0.5)">
               </td>
               <td>

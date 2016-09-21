@@ -48,7 +48,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
     View for reviewing financial aid requests.
     Note: In the future, it may be worth factoring out the code for sorting into its own subclass of ListView
     """
-    paginate_by = 10
+    paginate_by = 2
     context_object_name = "financial_aid_objects"
     template_name = "review_financial_aid.html"
     # If user doesn't pass test_func, raises exception instead of redirecting to login url
@@ -82,7 +82,6 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         "first_name": "user__profile__first_name",
         "last_name": "user__profile__last_name",
         "location": "user__profile__city",
-        "adjusted_cost": "adjusted_price",
         "reported_income": "income_usd",
     }
     default_sort_field = "first_name"
@@ -93,7 +92,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         """
         self.program = get_object_or_404(
             Program,
-            id=self.kwargs.get("program_id", None),
+            id=self.kwargs["program_id"],  # pylint: disable=unsubscriptable-object
             live=True,
             financial_aid_availability=True
         )
@@ -107,6 +106,10 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
 
         # Constants required in view
         context["selected_status"] = self.selected_status
+        context["current_sort_field"] = "{sort_direction}{sort_field}".format(
+            sort_direction=self.sort_direction,
+            sort_field=self.sort_field
+        )
         context["current_program_id"] = self.program.id
         context["tier_programs"] = TierProgram.objects.filter(
             program_id=context["current_program_id"]
@@ -172,9 +175,8 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         # Get course price to calculate adjusted cost - we put this first so that we can return
         # an empty queryset if no valid CoursePrice is found.
         # Note: This implementation of retrieving a course price is a naive lookup that assumes
-        # all course runs and courses will be the same price for the foreseeable future,
-        # irrespective of the program. Therefore we can just take the price from any currently
-        # enroll-able course run.
+        # all course runs and courses will be the same price for the foreseeable future.
+        # Therefore we can just take the price from any currently enroll-able course run.
         course_price_object = CoursePrice.objects.filter(
             is_valid=True,
             course_run__course__program=self.program
@@ -185,10 +187,8 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         else:
             self.course_price = course_price_object.price
 
-        # Filter by availability and program (self.program set in test_func())
+        # Filter by program (self.program set in test_func())
         financial_aids = FinancialAid.objects.filter(
-            tier_program__program__live=True,
-            tier_program__program__financial_aid_availability=True,
             tier_program__program=self.program
         )
 
@@ -197,6 +197,9 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         if self.selected_status is None or self.selected_status not in FinancialAidStatus.ALL_STATUSES:
             self.selected_status = FinancialAidStatus.PENDING_MANUAL_APPROVAL
         financial_aids = financial_aids.filter(status=self.selected_status)
+
+        # Annotate with adjusted cost
+        financial_aids = financial_aids.annotate(adjusted_cost=self.course_price - F("tier_program__discount_amount"))
 
         # Sort by field
         self.sort_field = self.request.GET.get("sort_by", self.default_sort_field)
