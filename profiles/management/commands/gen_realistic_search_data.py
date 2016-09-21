@@ -4,9 +4,10 @@ Generates a set of realistic users/programs to help us test search functionality
 from datetime import datetime, timedelta
 from django.core.management import BaseCommand
 from django.contrib.auth.models import User
+from profiles.api import get_social_username
 from profiles.models import Employment, Education
 from courses.models import Program, Course, CourseRun
-from dashboard.models import CachedCertificate, CachedEnrollment
+from dashboard.models import ProgramEnrollment, CachedCertificate, CachedEnrollment
 from roles.models import Role
 from roles.roles import Staff
 from micromasters.utils import load_json_from_file
@@ -115,7 +116,7 @@ class CertificateDeserializer(CachedModelDeserializer):
 
     @classmethod
     def _fill_in_missing_data(cls, data, user, course_run):
-        data['username'] = user.username
+        data['username'] = get_social_username(user)
         return data
 
 
@@ -133,7 +134,7 @@ class EnrollmentDeserializer(CachedModelDeserializer):
 
     @classmethod
     def _fill_in_missing_data(cls, data, user, course_run):
-        data['user'] = user.username
+        data['user'] = get_social_username(user)
         data['course_details'].update({
             'course_start': course_run.start_date.isoformat(),
             'course_end': course_run.end_date.isoformat(),
@@ -173,6 +174,9 @@ def deserialize_user_data(user_data, course_runs):
                 for data in user_data[cached_model_deserializer.data_key]
             ]
             unaccounted_course_runs = set(course_runs) - set(accounted_course_runs)
+            # Add a ProgramEnrollment for this user/program combination if it doesn't exist yet
+            program = accounted_course_runs[0].course.program
+            ProgramEnrollment.objects.get_or_create(user=user, program=program)
         else:
             unaccounted_course_runs = course_runs
         # For each course run that didn't have associated cached edX data (for Enrollments, Certificates, etc),
@@ -264,6 +268,7 @@ class Command(BaseCommand):
         """
         staff_user = User.objects.get(username=username)
         for program in programs:
+            ProgramEnrollment.objects.create(user=staff_user, program=program)
             Role.objects.create(user=staff_user, program=program, role=Staff.ROLE_ID)
 
     def handle(self, *args, **options):
@@ -286,5 +291,7 @@ class Command(BaseCommand):
         if fake_programs and options.get('staff_user'):
             self.assign_staff_user_to_programs(options['staff_user'], fake_programs)
             self.stdout.write(
-                "Added 'staff' role for user '{}' to {} programs".format(options['staff_user'], len(fake_programs))
+                "Added enrollment and 'staff' role for user '{}' to {} programs".format(
+                    options['staff_user'], len(fake_programs)
+                )
             )

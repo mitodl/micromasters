@@ -21,3 +21,8 @@ export type APIErrorInfo = {
   detail?: string,
   errorStatusCode?: number,
 };
+
+export type ToastMessage = {
+  message: string,
+  icon?: string,
+};

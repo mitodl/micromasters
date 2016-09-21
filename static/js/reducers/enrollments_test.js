@@ -7,9 +7,13 @@ import {
   FETCH_FAILURE,
 } from '../actions';
 import {
-  SET_ENROLL_MESSAGE,
+  SET_TOAST_MESSAGE,
 } from '../actions/ui';
-import { PROGRAM_ENROLLMENTS } from '../constants';
+import {
+  PROGRAM_ENROLLMENTS,
+  TOAST_SUCCESS,
+  TOAST_FAILURE,
+} from '../constants';
 import {
   addProgramEnrollment,
   fetchProgramEnrollments,
@@ -98,16 +102,19 @@ describe('enrollments', () => {
       return dispatchThen(addProgramEnrollment(newEnrollment.id), [
         REQUEST_ADD_PROGRAM_ENROLLMENT,
         RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
-        SET_ENROLL_MESSAGE,
+        SET_TOAST_MESSAGE,
       ]).then(enrollmentsState => {
         assert.equal(enrollmentsState.postStatus, FETCH_SUCCESS);
         assert.deepEqual(enrollmentsState.programEnrollments, PROGRAM_ENROLLMENTS.concat(newEnrollment));
         assert.equal(addProgramEnrollmentStub.callCount, 1);
         assert.deepEqual(addProgramEnrollmentStub.args[0], [newEnrollment.id]);
 
-        assert.equal(
-          store.getState().ui.enrollMessage,
-          `You are now enrolled in the ${newEnrollment.title} MicroMasters`
+        assert.deepEqual(
+          store.getState().ui.toastMessage,
+          {
+            message: `You are now enrolled in the ${newEnrollment.title} MicroMasters`,
+            icon: TOAST_SUCCESS,
+          }
         );
       });
     });
@@ -119,7 +126,7 @@ describe('enrollments', () => {
       return dispatchThen(addProgramEnrollment(newEnrollment.id), [
         REQUEST_ADD_PROGRAM_ENROLLMENT,
         RECEIVE_ADD_PROGRAM_ENROLLMENT_FAILURE,
-        SET_ENROLL_MESSAGE,
+        SET_TOAST_MESSAGE,
       ]).then(enrollmentsState => {
         assert.equal(enrollmentsState.postStatus, FETCH_FAILURE);
         assert.equal(enrollmentsState.postErrorInfo, "addError");
@@ -127,7 +134,12 @@ describe('enrollments', () => {
         assert.equal(addProgramEnrollmentStub.callCount, 1);
         assert.deepEqual(addProgramEnrollmentStub.args[0], [newEnrollment.id]);
 
-        assert.equal(store.getState().ui.enrollMessage, "There was an error during enrollment");
+        assert.deepEqual(
+          store.getState().ui.toastMessage,
+          {
+            message: "There was an error during enrollment",
+            icon: TOAST_FAILURE,
+          });
       });
     });
 

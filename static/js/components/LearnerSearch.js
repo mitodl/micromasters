@@ -16,10 +16,14 @@ import {
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import Card from 'react-mdl/lib/Card/Card';
 import iso3166 from 'iso-3166-2';
+import { StickyContainer, Sticky } from 'react-sticky';
 
 import ProgramFilter from './ProgramFilter';
 import LearnerResult from './search/LearnerResult';
 import CountryRefinementOption from './search/CountryRefinementOption';
+import CustomPaginationDisplay from './search/CustomPaginationDisplay';
+import CustomResetFiltersDisplay from './search/CustomResetFiltersDisplay';
+import CustomSortingSelect from './search/CustomSortingSelect';
 import FilterVisibilityToggle from './search/FilterVisibilityToggle';
 import HitsCount from './search/HitsCount';
 import EmailCompositionDialog from './EmailCompositionDialog';
@@ -105,6 +109,7 @@ export default class LearnerSearch extends SearchkitComponent {
       openEmailComposer,
       currentProgramEnrollment,
     } = this.props;
+
     return (
       <div className="learners-search">
         <ProgramFilter
@@ -118,79 +123,82 @@ export default class LearnerSearch extends SearchkitComponent {
           sendEmail={sendEmail}
           searchkit={this.searchkit}
         />
-        <Grid className="search-grid">
-          <Cell col={3} className="search-sidebar">
-            <Card className="fullwidth" shadow={1}>
-              <FilterVisibilityToggle
-                {...this.props}
-                filterName="birth-location"
-              >
-                <RefinementListFilter
-                  id="birth_location"
-                  title="Place of Birth"
-                  field="profile.birth_country"
-                  operator="OR"
-                  itemComponent={CountryRefinementOption}
-                />
-              </FilterVisibilityToggle>
-              <FilterVisibilityToggle
-                {...this.props}
-                filterName="residence-country"
-              >
-                <HierarchicalMenuFilter
-                  fields={["profile.country", "profile.state_or_territory"]}
-                  title="Current Location"
-                  id="country"
-                  translations={this.searchkitTranslations}
-                />
-              </FilterVisibilityToggle>
-              <FilterVisibilityToggle
-                {...this.props}
-                filterName="grade-average"
-              >
-                <RangeFilter
-                  field="program.grade_average"
-                  id="grade-average"
-                  min={0}
-                  max={100}
-                  showHistogram={true}
-                  title="Program Avg. Grade"
-                />
-              </FilterVisibilityToggle>
-            </Card>
-          </Cell>
-          <Cell col={9}>
-            <Card className="fullwidth" shadow={1}>
-              <Grid className="search-header">
-                <Cell col={6} className="result-info">
-                  <button
-                    id="email-selected"
-                    className="mm-button minor-action"
-                    onClick={() => openEmailComposer(this.searchkit)}
+        <StickyContainer>
+          <Grid className="search-grid">
+            <Cell col={3} className="search-sidebar">
+              <Sticky>
+                <Card className="fullwidth" shadow={1}>
+                  <FilterVisibilityToggle
+                    {...this.props}
+                    filterName="birth-location"
                   >
-                    Email Selected
-                  </button>
-                  <HitsStats component={HitsCount} />
-                </Cell>
-                <Cell col={2} />
-                <Cell col={4} className="pagination-sort">
-                  <SortingSelector options={sortOptions} />
-                  <Pagination />
-                </Cell>
-                <Cell col={12}>
-                  <SelectedFilters />
-                  <ResetFilters />
-                </Cell>
-              </Grid>
-              <Hits 
-                className="learner-results"
-                hitsPerPage={50}
-                itemComponent={LearnerResult}
-              />
-              <NoHits />
-            </Card>
-          </Cell>
-        </Grid>
+                    <RefinementListFilter
+                      id="birth_location"
+                      title="Country of Birth"
+                      field="profile.birth_country"
+                      operator="OR"
+                      itemComponent={CountryRefinementOption}
+                    />
+                  </FilterVisibilityToggle>
+                  <FilterVisibilityToggle
+                    {...this.props}
+                    filterName="residence-country"
+                  >
+                    <HierarchicalMenuFilter
+                      fields={["profile.country", "profile.state_or_territory"]}
+                      title="Current Residence"
+                      id="country"
+                      translations={this.searchkitTranslations}
+                    />
+                  </FilterVisibilityToggle>
+                  <FilterVisibilityToggle
+                    {...this.props}
+                    filterName="grade-average"
+                  >
+                    <RangeFilter
+                      field="program.grade_average"
+                      id="grade-average"
+                      min={0}
+                      max={100}
+                      showHistogram={true}
+                      title="Program Avg. Grade"
+                    />
+                  </FilterVisibilityToggle>
+                </Card>
+              </Sticky>
+            </Cell>
+            <Cell col={9}>
+              <Card className="fullwidth" shadow={1}>
+                <Grid className="search-header">
+                  <Cell col={6} className="result-info">
+                    <button
+                      id="email-selected"
+                      className="mm-button minor-action"
+                      onClick={() => openEmailComposer(this.searchkit)}
+                    >
+                      Email These Learners
+                    </button>
+                    <HitsStats component={HitsCount} />
+                  </Cell>
+                  <Cell col={2} />
+                  <Cell col={4} className="pagination-sort">
+                    <SortingSelector options={sortOptions} listComponent={CustomSortingSelect} />
+                    <Pagination showText={false} listComponent={CustomPaginationDisplay} />
+                  </Cell>
+                  <Cell col={12} className="mm-filters">
+                    <SelectedFilters />
+                    <ResetFilters component={CustomResetFiltersDisplay}/>
+                  </Cell>
+                </Grid>
+                <Hits
+                  className="learner-results"
+                  hitsPerPage={50}
+                  itemComponent={LearnerResult} />
+                <NoHits />
+              </Card>
+            </Cell>
+          </Grid>
+        </StickyContainer>
       </div>
     );
   }

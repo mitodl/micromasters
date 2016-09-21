@@ -147,6 +147,10 @@
     }
   }
 
+  .mm-filters:empty {
+    display: none !important;
+  }
+
   .search-header {
     min-height: 100px;
     padding-left: 5px;
@@ -184,6 +188,18 @@
         font-size: 14px;
         font-weight: normal;
         color: rgba(0,0,0,0.8);
+
+        &.sk-toggle-height {
+          text-align: center;
+          vertical-align: middle;
+          height: 30px !important;
+        }
+
+        .sk-pagination-option * {
+          font-size: 21px;
+          font-weight: 400;
+          padding: 0 0 !important;
+        }
       }
     }
 
@@ -214,10 +230,6 @@
       padding: 4px;
       position: relative;
       bottom: 5px;
-    }
-
-    .sk-reset-filters.is-disabled {
-      color: rgba(0,0,0,0);
     }
 
     .mdl-cell {
@@ -317,9 +329,26 @@
 }
 
 .sk-select {
+  display: flex;
+  flex-flow: row;
+  border-radius: 3px;
+  border: 1px solid #e4e4e4;
+  height: 35px !important;
+
   > select {
     background-color: $fg-grey;
-    border-color: $border-color;
+    border: 0;
+    padding: 5px 30px 5px 0;
+  }
+
+  .label-before-selected {
+    width: 70px;
+    background-color: $fg-grey;
+    margin-right: -13px;
+    padding: 5px 0 5px 5px;
+    font-size: 14px;
+    font-weight: normal;
+    color: rgba(0,0,0,0.8);
   }
 
   select, option {

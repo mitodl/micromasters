@@ -14,7 +14,10 @@ from courses.views import (
     ProgramViewSet,
 )
 from dashboard.views import UserDashboard
-from ecommerce.views import CheckoutView
+from ecommerce.views import (
+    CheckoutView,
+    OrderFulfillmentView,
+)
 from financialaid.views import (
     IncomeValidationView,
     FinancialAidActionView
@@ -44,6 +47,7 @@ urlpatterns = [
     url(r'^api/v0/financial_aid_mail/$', FinancialAidMailView.as_view(), name='financial_aid_mail_api'),
     url(r'^api/v0/financial_aid_request/$', IncomeValidationView.as_view(), name='financial_aid_request'),
     url(r'^api/v0/financial_aid_action/$', FinancialAidActionView.as_view(), name='financial_aid_action'),
+    url(r'^api/v0/order_fulfillment/$', OrderFulfillmentView.as_view(), name='order-fulfillment'),
     url(r'^status/', include('server_status.urls')),
     url(r'^financial_aid/', include('financialaid.urls')),
     # Wagtail

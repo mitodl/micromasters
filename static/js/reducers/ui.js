@@ -30,10 +30,11 @@ import {
 
   SET_ENROLL_DIALOG_ERROR,
   SET_ENROLL_DIALOG_VISIBILITY,
-  SET_ENROLL_MESSAGE,
+  SET_TOAST_MESSAGE,
   SET_ENROLL_SELECTED_PROGRAM,
 } from '../actions/ui';
 import { PERSONAL_STEP } from '../constants';
+import type { ToastMessage } from '../flow/generalTypes';
 import type { Action } from '../flow/reduxTypes';
 
 export type UIDialog = {
@@ -62,7 +63,7 @@ export type UIState = {
   emailDialogVisibility:        boolean;
   enrollDialogError:            ?string;
   enrollDialogVisibility:       boolean;
-  enrollMessage:                ?string;
+  toastMessage:                 ?ToastMessage;
   enrollSelectedProgram:        ?number;
 };
 
@@ -87,7 +88,7 @@ export const INITIAL_UI_STATE: UIState = {
   emailDialogVisibility: false,
   enrollDialogError: null,
   enrollDialogVisibility: false,
-  enrollMessage: null,
+  toastMessage: null,
   enrollSelectedProgram: null,
 };
 
@@ -196,9 +197,9 @@ export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
       enrollDialogError: action.payload
     });
   }
-  case SET_ENROLL_MESSAGE: {
+  case SET_TOAST_MESSAGE: {
     return Object.assign({}, state, {
-      enrollMessage: action.payload
+      toastMessage: action.payload
     });
   }
   case SET_ENROLL_SELECTED_PROGRAM: {

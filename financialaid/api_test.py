@@ -37,7 +37,7 @@ class FinancialAidBaseTestCase(ESTestCase):
             financial_aid_availability=True,
             live=True
         )
-        cls.tiers = {
+        cls.tier_programs = {
             "0k": TierProgramFactory.create(program=cls.program, income_threshold=0, current=True),
             "15k": TierProgramFactory.create(program=cls.program, income_threshold=15000, current=True),
             "50k": TierProgramFactory.create(program=cls.program, income_threshold=50000, current=True),
@@ -85,15 +85,15 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
         """
         Tests determine_tier_program()
         """
-        assert determine_tier_program(self.program, 0) == self.tiers["0k"]
-        assert determine_tier_program(self.program, 1000) == self.tiers["0k"]
-        assert determine_tier_program(self.program, 15000) == self.tiers["15k"]
-        assert determine_tier_program(self.program, 23500) == self.tiers["15k"]
-        assert determine_tier_program(self.program, 50000) == self.tiers["50k"]
-        assert determine_tier_program(self.program, 72800) == self.tiers["50k"]
-        assert determine_tier_program(self.program, 100000) == self.tiers["100k"]
-        assert determine_tier_program(self.program, 34938234) == self.tiers["100k"]
-        assert determine_tier_program(self.program, 34938234) != self.tiers["150k_not_current"]
+        assert determine_tier_program(self.program, 0) == self.tier_programs["0k"]
+        assert determine_tier_program(self.program, 1000) == self.tier_programs["0k"]
+        assert determine_tier_program(self.program, 15000) == self.tier_programs["15k"]
+        assert determine_tier_program(self.program, 23500) == self.tier_programs["15k"]
+        assert determine_tier_program(self.program, 50000) == self.tier_programs["50k"]
+        assert determine_tier_program(self.program, 72800) == self.tier_programs["50k"]
+        assert determine_tier_program(self.program, 100000) == self.tier_programs["100k"]
+        assert determine_tier_program(self.program, 34938234) == self.tier_programs["100k"]
+        assert determine_tier_program(self.program, 34938234) != self.tier_programs["150k_not_current"]
 
     def test_determine_auto_approval(self):  # pylint: disable=no-self-use
         """

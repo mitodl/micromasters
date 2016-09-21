@@ -64,7 +64,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         assert resp.status_code == status.HTTP_201_CREATED
         assert FinancialAid.objects.count() == 1
         financial_aid = FinancialAid.objects.first()
-        assert financial_aid.tier_program == self.tiers["50k"]
+        assert financial_aid.tier_program == self.tier_programs["50k"]
         assert financial_aid.status == FinancialAidStatus.PENDING_DOCS
 
     def test_income_validation_auto_approved(self):
@@ -77,7 +77,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         assert resp.status_code == status.HTTP_201_CREATED
         assert FinancialAid.objects.count() == 1
         financial_aid = FinancialAid.objects.first()
-        assert financial_aid.tier_program == self.tiers["100k"]
+        assert financial_aid.tier_program == self.tier_programs["100k"]
         assert financial_aid.status == FinancialAidStatus.AUTO_APPROVED
 
     def test_income_validation_missing_args(self):
@@ -177,18 +177,39 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         """
         Tests ReviewFinancialAidView with filters and sorting
         """
+        FinancialAidFactory.create(tier_program=self.tier_programs["0k"], status=FinancialAidStatus.AUTO_APPROVED)
+        FinancialAidFactory.create(tier_program=self.tier_programs["0k"], status=FinancialAidStatus.APPROVED)
+        FinancialAidFactory.create(tier_program=self.tier_programs["0k"], status=FinancialAidStatus.REJECTED)
         self.client.force_login(self.staff_user_profile.user)
         # Should work a filter
         resp = self.client.get(self.review_url_with_filter)
         assert resp.status_code == status.HTTP_200_OK
+        resp_obj_id_list = resp.context_data["financial_aid_objects"].values_list("id", flat=True)
+        expected_obj_id_list = FinancialAid.objects.filter(
+            tier_program__program_id=self.program.id,
+            status=FinancialAidStatus.AUTO_APPROVED
+        ).order_by("user__profile__first_name").values_list("id", flat=True)  # Default sort field
+        self.assertListEqual(list(resp_obj_id_list), list(expected_obj_id_list))
         # Should work with sorting
         url_with_sorting = "{url}?sort_by=-last_name".format(url=self.review_url)
         resp = self.client.get(url_with_sorting)
         assert resp.status_code == status.HTTP_200_OK
+        resp_obj_id_list = resp.context_data["financial_aid_objects"].values_list("id", flat=True)
+        expected_obj_id_list = FinancialAid.objects.filter(
+            tier_program__program_id=self.program.id,
+            status=FinancialAidStatus.PENDING_MANUAL_APPROVAL  # Default filter field
+        ).order_by("-user__profile__last_name").values_list("id", flat=True)
+        self.assertListEqual(list(resp_obj_id_list), list(expected_obj_id_list))
         # Should work a filter and sorting
         url_with_filter_and_sorting = "{url}?sort_by=-last_name".format(url=self.review_url_with_filter)
         resp = self.client.get(url_with_filter_and_sorting)
         assert resp.status_code == status.HTTP_200_OK
+        resp_obj_id_list = resp.context_data["financial_aid_objects"].values_list("id", flat=True)
+        expected_obj_id_list = FinancialAid.objects.filter(
+            tier_program__program_id=self.program.id,
+            status=FinancialAidStatus.AUTO_APPROVED
+        ).order_by("-user__profile__last_name").values_list("id", flat=True)  # Default sort field
+        self.assertListEqual(list(resp_obj_id_list), list(expected_obj_id_list))
 
     def test_review_financial_aid_view_with_invalid_filter_and_sorting(self):
         """
@@ -225,7 +246,7 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         # Other items
         cls.financialaid = FinancialAidFactory.create(
             user=cls.profile.user,
-            tier_program=cls.tiers["15k"],
+            tier_program=cls.tier_programs["15k"],
             status=FinancialAidStatus.PENDING_MANUAL_APPROVAL
         )
         cls.action_url = reverse("financial_aid_action")
@@ -268,17 +289,17 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         resp = self.client.post(self.action_url, data=self.financial_review_data)
         assert resp.status_code == status.HTTP_200_OK
         financialaid = FinancialAid.objects.get(id=self.financialaid.id)
-        assert financialaid.tier_program == self.tiers["15k"]
+        assert financialaid.tier_program == self.tier_programs["15k"]
         assert financialaid.status == FinancialAidStatus.APPROVED
         # Application is approved for a different tier program
         financialaid.status = FinancialAidStatus.PENDING_MANUAL_APPROVAL
         financialaid.save()
-        self.financial_review_data["tier_program_id"] = self.tiers["50k"].id
+        self.financial_review_data["tier_program_id"] = self.tier_programs["50k"].id
         resp = self.client.post(self.action_url, data=self.financial_review_data)
         # Re-retrieve financialaid object
         financialaid = FinancialAid.objects.get(id=self.financialaid.id)
         assert resp.status_code == status.HTTP_200_OK
-        assert financialaid.tier_program == self.tiers["50k"]
+        assert financialaid.tier_program == self.tier_programs["50k"]
         assert financialaid.status == FinancialAidStatus.APPROVED
 
     def test_financial_aid_action_view_with_rejection(self):
@@ -290,7 +311,7 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         resp = self.client.post(self.action_url, data=self.financial_review_data)
         assert resp.status_code == status.HTTP_200_OK
         financialaid = FinancialAid.objects.get(id=self.financialaid.id)
-        assert financialaid.tier_program == self.tiers["100k"]
+        assert financialaid.tier_program == self.tier_programs["100k"]
         assert financialaid.status == FinancialAidStatus.REJECTED
 
     def test_financial_aid_action_view_with_invalid_data(self):
@@ -304,6 +325,6 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         assert resp.status_code == status.HTTP_400_BAD_REQUEST
         # Invalid tier
         self.financial_review_data["action"] = FinancialAidStatus.APPROVED
-        self.financial_review_data["tier_program_id"] = self.tiers["150k_not_current"]
+        self.financial_review_data["tier_program_id"] = self.tier_programs["150k_not_current"]
         resp = self.client.post(self.action_url, data=self.financial_review_data)
         assert resp.status_code == status.HTTP_400_BAD_REQUEST

@@ -10,6 +10,7 @@ import { S } from './sanctuary';
 const { Maybe, Just, Nothing } = S;
 
 import {
+  STATUS_PASSED,
   EDUCATION_LEVELS,
   PROFILE_STEP_LABELS
 } from '../constants';
@@ -19,6 +20,10 @@ import type {
   WorkHistoryEntry,
   ValidationErrors,
 } from '../flow/profileTypes';
+import type {
+  Program,
+  Course
+} from '../flow/programTypes';
 import { workEntriesByDate } from './sorting';
 import type { CheckoutPayload } from '../flow/checkoutTypes';
 
@@ -261,12 +266,12 @@ export function getPreferredName(profile: Profile, last: boolean = true): string
 /**
  * returns the users location
  */
-export function getLocation(profile: Profile): string {
+export function getLocation(profile: Profile, showState: boolean = true): string {
   let { country, state_or_territory, city } = profile;
   let subCountryLocation, countryLocation;
   if ( country === 'US' ) {
     let state = state_or_territory.replace(/^\D{2}-/, '');
-    subCountryLocation = `${city}, ${state}`;
+    subCountryLocation = showState ? `${city}, ${state}` : city;
     countryLocation = 'US';
   } else {
     subCountryLocation = city;
@@ -364,4 +369,26 @@ export function createForm(url: string, payload: CheckoutPayload): HTMLFormEleme
  */
 export function formatPrice(price: string): string {
   return `$${price}`;
+}
+
+/**
+ * Returns total courses and passed courses in program.
+ */
+export function programCourseInfo(program: Program): Object {
+  let totalCourses = 0;
+  let totalPassedCourses = 0;
+  let passedCourses: Course;
+
+  if (program.courses) {
+    totalCourses = program.courses.length;
+    passedCourses = program.courses.filter(
+      course => course.runs.length > 0 && course.runs[0].status === STATUS_PASSED
+    );
+    totalPassedCourses = passedCourses.length;
+  }
+
+  return {
+    'totalPassedCourses': totalPassedCourses,
+    'totalCourses': totalCourses
+  };
 }

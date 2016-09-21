@@ -67,7 +67,7 @@ class DashboardPage extends React.Component {
             />
           </div>
           <div className="second-column">
-            <ProgressWidget />
+            <ProgressWidget program={program} />
             <Card shadow={0}>
               <CardTitle>Learners Near Me</CardTitle>
             </Card>
