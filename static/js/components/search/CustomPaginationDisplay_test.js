@@ -13,6 +13,10 @@ describe('CustomPaginationDisplay', () => {
     toggleItem: toggleItemStub
   };
 
+  afterEach(() => {
+    toggleItemStub.reset();
+  });
+
   it('renders custom pagination buttons', () => {
     const wrapper = shallow(<CustomPaginationDisplay {...props}/>);
     const previousOption = wrapper.find('[data-key="previous"]');

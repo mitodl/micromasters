@@ -24,7 +24,7 @@ describe('CustomResetFiltersDisplay', () => {
     assert.equal(wrapper.children().children().text(), 'Clear all filters');
   });
 
-  it('assert reset filter link does not render', () => {
+  it('reset filter link does not render when hasFilters is false', () => {
     let noFilterProps = _.clone(props);
     noFilterProps.hasFilters = false;
     const wrapper = shallow(<CustomResetFiltersDisplay {...noFilterProps}/>);

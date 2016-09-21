@@ -32,7 +32,6 @@ export default class CustomResetFiltersDisplay extends ResetFiltersDisplay {
         </div>
       );
     }
-
     return null;
   }
 }

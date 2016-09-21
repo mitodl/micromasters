@@ -7,7 +7,6 @@ import block from 'bem-cn';
 import type { Event } from '../../flow/eventType';
 
 export default class CustomSortingSelect extends Select {
-
   showDropdown(sortSelectField: string, clickEvent: Event): void {
     clickEvent.preventDefault();
     let event: Event = document.createEvent('MouseEvents');
@@ -16,15 +15,15 @@ export default class CustomSortingSelect extends Select {
   }
 
   optionText(
-    label: string,
+    translate: Function,
     showCount: number,
-    docCount: number,
     countFormatter: Function,
+    item: Object
   ): string {
-    let text = label;
+    let text = translate(item.label || item.title || item.key);
 
-    if (showCount && docCount !== undefined) {
-      text += ` (${countFormatter(docCount)})`;
+    if (showCount && item.docCount !== undefined) {
+      text += ` (${countFormatter(item.docCount)})`;
     }
     return text;
   }
@@ -42,15 +41,10 @@ export default class CustomSortingSelect extends Select {
           Sort by:
         </span>
         <select onChange={this.onChange} value={this.getSelectedValue()} ref="sortSelectField">
-          {_.map(items, ({key, label, title, disabled, docCount}) => {
+          {_.map(items, (item) => {
             return (
-              <option key={key} value={key} disabled={disabled}>
-                {this.optionText(
-                  translate(label || title || key),
-                  showCount,
-                  docCount,
-                  countFormatter
-                )}
+              <option key={item.key} value={item.key} disabled={item.disabled}>
+                {this.optionText(translate, showCount, countFormatter, item)}
               </option>
             );
           })};
