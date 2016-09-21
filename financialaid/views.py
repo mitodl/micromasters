@@ -29,8 +29,8 @@ from financialaid.models import (
 from financialaid.permissions import UserCanEditFinancialAid
 from financialaid.serializers import (
     FinancialAidActionSerializer,
-    IncomeValidationSerializer
-)
+    IncomeValidationSerializer,
+    GetLearnerPriceForCourseSerializer)
 from roles.roles import Permissions
 from ui.views import get_bundle_url
 
@@ -233,6 +233,30 @@ class FinancialAidActionView(UpdateModelMixin, GenericAPIView):
     View for rejecting and approving financial aid requests
     """
     serializer_class = FinancialAidActionSerializer
+    permission_classes = (IsAuthenticated, UserCanEditFinancialAid)
+
+    def post(self, request, *args, **kwargs):
+        """
+        Post request for FinancialAidActionView
+        """
+        serializer = self.serializer_class(data=request.POST)
+        serializer.is_valid(raise_exception=True)
+        self.check_object_permissions(
+            self.request,
+            serializer.validated_data["financial_aid"].tier_program.program_id
+        )
+        self.perform_update(serializer)
+        return Response(
+            status=HTTP_200_OK,
+            data={}
+        )
+
+
+class GetLearnerPriceForCourseView(GenericAPIView):
+    """
+    View for retrieving a leaner's price for a course run
+    """
+    serializer_class = GetLearnerPriceForCourseSerializer
     permission_classes = (IsAuthenticated, UserCanEditFinancialAid)
 
     def post(self, request, *args, **kwargs):
