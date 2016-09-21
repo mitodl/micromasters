@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Select } from 'searchkit';
-import _ from 'lodash';
 import block from 'bem-cn';
 
 import type { Event } from '../../flow/eventType';
@@ -14,23 +13,33 @@ export default class CustomSortingSelect extends Select {
     ReactDOM.findDOMNode(sortSelectField).dispatchEvent(event);
   }
 
-  optionText(
+  renderOptions(
     translate: Function,
     showCount: number,
     countFormatter: Function,
-    item: Object
-  ): string {
-    let text = translate(item.label || item.title || item.key);
+    items: Array<Object>
+  ): Array<React$Element<*>> {
+    return items.map(item => {
+      let text = translate(item.label || item.title || item.key);
+      if (showCount && item.docCount !== undefined) {
+        text += ` (${countFormatter(item.docCount)})`;
+      }
 
-    if (showCount && item.docCount !== undefined) {
-      text += ` (${countFormatter(item.docCount)})`;
-    }
-    return text;
+      return <option key={item.key} value={item.key} disable={item.disabled}>
+        { text }
+      </option>;
+    });
   }
 
   render() {
     const {
-      mod, className, items, disabled, showCount, translate, countFormatter
+      mod,
+      className,
+      items,
+      disabled,
+      showCount,
+      translate,
+      countFormatter
     } = this.props;
     const bemBlocks = { container: block(mod) };
 
@@ -41,13 +50,7 @@ export default class CustomSortingSelect extends Select {
           Sort by:
         </span>
         <select onChange={this.onChange} value={this.getSelectedValue()} ref="sortSelectField">
-          {_.map(items, (item) => {
-            return (
-              <option key={item.key} value={item.key} disabled={item.disabled}>
-                {this.optionText(translate, showCount, countFormatter, item)}
-              </option>
-            );
-          })};
+          {this.renderOptions(translate, showCount, countFormatter, items)}
         </select>
       </div>
     );
