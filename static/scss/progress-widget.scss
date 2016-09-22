@@ -10,6 +10,8 @@
   .circular-progress-widget-fg {
     transition: stroke-dashoffset .5s ease-in-out;
     stroke: white;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
   }
 
   .circular-progress-widget-txt {
