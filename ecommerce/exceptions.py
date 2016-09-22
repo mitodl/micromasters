@@ -11,7 +11,7 @@ class EcommerceException(Exception):
 
 class EcommerceEdxApiException(Exception):
     """
-    Exception regarding edx
+    Exception regarding edx_api_client
     """
 
 
