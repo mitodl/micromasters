@@ -111,10 +111,3 @@ class FinancialAidActionSerializer(serializers.Serializer):
         # add auditing here
 
         return self.instance
-
-
-class GetLearnerPriceForCourseSerializer(serializers.Serializer):
-    """
-    Serializer for retrieving learner price for course
-    """
-    user_id = IntegerField()

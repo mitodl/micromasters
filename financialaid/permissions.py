@@ -23,3 +23,22 @@ class UserCanEditFinancialAid(BasePermission):
             (boolean)
         """
         return has_object_permission(Permissions.CAN_EDIT_FINANCIAL_AID, request.user, obj.tier_program.program)
+
+
+class UserCanViewLearnerCoursePrice(BasePermission):
+    """
+    Only those with Permissions.CAN_EDIT_FINANCIAL_AID or who are accessing their own course price
+    are permitted.
+    """
+    def has_object_permission(self, request, view, obj):
+        """
+        Returns True if the user can view learner's course price
+        Args:
+            request (Request): DRF request object
+            view (View): DRF view object
+            obj (Program): Program object
+        Returns:
+            (boolean)
+        """
+        return (obj.user == request.user
+                or has_object_permission(Permissions.CAN_EDIT_FINANCIAL_AID, request.user, obj))

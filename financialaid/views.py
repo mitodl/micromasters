@@ -5,28 +5,34 @@ import json
 
 from django.conf import settings
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.models import User
 from django.db.models import F
 from django.views.generic import ListView
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import (
     CreateAPIView,
     get_object_or_404,
-    UpdateAPIView, RetrieveAPIView)
+    UpdateAPIView
+)
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rolepermissions.verifications import has_object_permission
 
 from courses.models import Program
+from dashboard.models import ProgramEnrollment
 from ecommerce.models import CoursePrice
 from financialaid.models import (
     FinancialAid,
     FinancialAidStatus,
     TierProgram
 )
-from financialaid.permissions import UserCanEditFinancialAid
+from financialaid.permissions import UserCanEditFinancialAid, UserCanViewLearnerCoursePrice
 from financialaid.serializers import (
     FinancialAidActionSerializer,
-    IncomeValidationSerializer,
-    GetLearnerPriceForCourseSerializer)
+    IncomeValidationSerializer
+)
 from roles.roles import Permissions
 from ui.views import get_bundle_url
 
@@ -241,9 +247,45 @@ class FinancialAidActionView(UpdateAPIView):
         return self.put(request, *args, **kwargs)
 
 
-class GetLearnerPriceForCourseView(RetrieveAPIView):
+class GetLearnerPriceForCourseView(APIView):
     """
     View for retrieving a leaner's price for a course run
     """
-    serializer_class = GetLearnerPriceForCourseSerializer
-    permission_classes = (IsAuthenticated, UserCanEditFinancialAid)
+    authentication_classes = (SessionAuthentication, )
+    permission_classes = (IsAuthenticated, UserCanViewLearnerCoursePrice)
+
+    def get(self, request, *args, **kwargs):
+        """
+        Get request for GetLearnerPriceForCourseView
+        """
+        learner = get_object_or_404(User, id=self.kwargs["user_id"])
+        program = get_object_or_404(Program, id=self.kwargs["program_id"], live=True)
+        # Validate that learner is enrolled in program
+        try:
+            ProgramEnrollment.objects.get(user=learner, program=program)
+        except ProgramEnrollment.DoesNotExist:
+            raise ValidationError("Learner not enrolled in this program.")
+        course_price = program.get_course_price()
+        has_financial_aid_request = False
+        financial_aid_adjustment = False
+        try:
+            # Check to see if learner has a financial aid request
+            financial_aid = FinancialAid.objects.get(
+                user=learner,
+                tier_program__program=program,
+                tier_program__program__financial_aid_availability=True
+            )
+            has_financial_aid_request = True
+            if financial_aid.status == FinancialAidStatus.APPROVED:
+                # If the financial aid request is approved, adjust course price
+                course_price = course_price - financial_aid.tier_program.discount_amount
+                financial_aid_adjustment = True
+        except FinancialAid.DoesNotExist:
+            pass
+        return Response(
+            data={
+                "course_price": course_price,
+                "has_financial_aid_request": has_financial_aid_request,
+                "financial_aid_adjustment": financial_aid_adjustment
+            }
+        )
