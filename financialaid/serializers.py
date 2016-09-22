@@ -1,5 +1,5 @@
 """
-Serializers from financialaid
+Serializers from financial aid
 """
 import datetime
 
@@ -20,16 +20,25 @@ from financialaid.api import (
     determine_tier_program,
     get_no_discount_tier_program
 )
+from financialaid.constants import (
+    FINANCIAL_AID_APPROVAL_MESSAGE_BODY,
+    FINANCIAL_AID_APPROVAL_SUBJECT_TEXT,
+    FINANCIAL_AID_REJECTION_MESSAGE_BODY,
+    FINANCIAL_AID_REJECTION_SUBJECT_TEXT,
+    FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT,
+    FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY
+)
 from financialaid.models import (
     FinancialAid,
     FinancialAidStatus,
     TierProgram
 )
+from mail.views import FinancialAidMailView
 
 
-class IncomeValidationSerializer(serializers.Serializer):
+class FinancialAidRequestSerializer(serializers.Serializer):
     """
-    Serializer for Financial Aid objects to validate income
+    Serializer for financial aid requests
     """
     original_income = FloatField(min_value=0)
     original_currency = CharField()
@@ -78,15 +87,33 @@ class IncomeValidationSerializer(serializers.Serializer):
 
 class FinancialAidActionSerializer(serializers.Serializer):
     """
-    Serializer for financial aid status
+    Serializer for financial aid actions
     """
-    action = ChoiceField(choices=[FinancialAidStatus.REJECTED, FinancialAidStatus.APPROVED], write_only=True)
+    action = ChoiceField(
+        choices=[
+            FinancialAidStatus.REJECTED,
+            FinancialAidStatus.APPROVED,
+            FinancialAidStatus.PENDING_MANUAL_APPROVAL
+        ],
+        write_only=True
+    )
     tier_program_id = IntegerField(write_only=True)
 
     def validate(self, data):
         """
         Validators for this serializer
         """
+        # Check that the previous financial aid status allows for the new status
+        if (data['action'] == FinancialAidStatus.REJECTED
+                and self.instance.status != FinancialAidStatus.PENDING_MANUAL_APPROVAL):
+            raise ValidationError("Cannot reject application that is not pending manual approval.")
+        if (data['action'] == FinancialAidStatus.APPROVED
+                and self.instance.status != FinancialAidStatus.PENDING_MANUAL_APPROVAL):
+            raise ValidationError("Cannot approve application that is not pending manual approval.")
+        if (data['action'] == FinancialAidStatus.PENDING_MANUAL_APPROVAL
+                and self.instance.status != FinancialAidStatus.PENDING_DOCS):
+            raise ValidationError("Cannot mark documents as received for application not pending docs.")
+        # Check tier program exists
         try:
             data["tier_program"] = TierProgram.objects.get(
                 id=data["tier_program_id"],
@@ -104,10 +131,27 @@ class FinancialAidActionSerializer(serializers.Serializer):
         self.instance.status = self.validated_data["action"]
         if self.instance.status == FinancialAidStatus.APPROVED:
             self.instance.tier_program = tier_program
+            email_data = {
+                'email_subject': FINANCIAL_AID_APPROVAL_SUBJECT_TEXT,
+                'email_body': FINANCIAL_AID_APPROVAL_MESSAGE_BODY,
+                'email_recipient': self.instance.user.email
+            }
         elif self.instance.status == FinancialAidStatus.REJECTED:
             self.instance.tier_program = get_no_discount_tier_program(self.instance.tier_program.program_id)
+            email_data = {
+                'email_subject': FINANCIAL_AID_REJECTION_SUBJECT_TEXT,
+                'email_body': FINANCIAL_AID_REJECTION_MESSAGE_BODY,
+                'email_recipient': self.instance.user.email
+            }
+        elif self.instance.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL:
+            email_data = {
+                'email_subject': FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT,
+                'email_body': FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY,
+                'email_recipient': self.instance.user.email
+            }
         self.instance.save()
-
+        # Send email notification
+        FinancialAidMailView().post(self.context['request'], **email_data)
         # add auditing here
 
         return self.instance

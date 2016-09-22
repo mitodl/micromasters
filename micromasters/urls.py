@@ -19,7 +19,7 @@ from ecommerce.views import (
     OrderFulfillmentView,
 )
 from financialaid.views import (
-    IncomeValidationView,
+    FinancialAidRequestView,
     FinancialAidActionView,
     GetLearnerPriceForCourseView
 )
@@ -46,7 +46,7 @@ urlpatterns = [
     url(r'^api/v0/enrolledprograms/$', ProgramEnrollmentListView.as_view(), name='user_program_enrollments'),
     url(r'^api/v0/search_result_mail/$', SearchResultMailView.as_view(), name='search_result_mail_api'),
     url(r'^api/v0/financial_aid_mail/$', FinancialAidMailView.as_view(), name='financial_aid_mail_api'),
-    url(r'^api/v0/financial_aid_request/$', IncomeValidationView.as_view(), name='financial_aid_request'),
+    url(r'^api/v0/financial_aid_request/$', FinancialAidRequestView.as_view(), name='financial_aid_request'),
     url(r'^api/v0/financial_aid_action/(?P<financial_aid_id>[\d]+)/$', FinancialAidActionView.as_view(),
         name='financial_aid_action'),
     url(r'^api/v0/financial_aid_course_price/(?P<user_id>[\d]+)/(?P<program_id>[\d]+)/$',

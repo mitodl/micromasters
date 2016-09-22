@@ -31,18 +31,18 @@ from financialaid.models import (
 from financialaid.permissions import UserCanEditFinancialAid, UserCanViewLearnerCoursePrice
 from financialaid.serializers import (
     FinancialAidActionSerializer,
-    IncomeValidationSerializer
+    FinancialAidRequestSerializer
 )
 from roles.roles import Permissions
 from ui.views import get_bundle_url
 
 
-class IncomeValidationView(CreateAPIView):
+class FinancialAidRequestView(CreateAPIView):
     """
-    View for income validation API. Takes income and currency, then determines whether review
+    View for financial aid request API. Takes income, currency, and program, then determines whether review
     is necessary, and if not, sets the appropriate tier for personalized pricing.
     """
-    serializer_class = IncomeValidationSerializer
+    serializer_class = FinancialAidRequestSerializer
     authentication_classes = (SessionAuthentication, )
     permission_classes = (IsAuthenticated, )
 
@@ -182,21 +182,6 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         """
         Gets queryset for ListView to return to view
         """
-        # Get course price to calculate adjusted cost - we put this first so that we can return
-        # an empty queryset if no valid CoursePrice is found.
-        # Note: This implementation of retrieving a course price is a naive lookup that assumes
-        # all course runs and courses will be the same price for the foreseeable future.
-        # Therefore we can just take the price from any currently enroll-able course run.
-        course_price_object = CoursePrice.objects.filter(
-            is_valid=True,
-            course_run__course__program=self.program
-        ).first()
-        if course_price_object is None:
-            # If course price is not set, we can't meaningfully display any financial aid requests
-            return []
-        else:
-            self.course_price = course_price_object.price
-
         # Filter by program (self.program set in test_func())
         financial_aids = FinancialAid.objects.filter(
             tier_program__program=self.program
@@ -209,6 +194,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         financial_aids = financial_aids.filter(status=self.selected_status)
 
         # Annotate with adjusted cost
+        self.course_price = self.program.get_course_price()
         financial_aids = financial_aids.annotate(adjusted_cost=self.course_price - F("tier_program__discount_amount"))
 
         # Sort by field
