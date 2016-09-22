@@ -260,6 +260,7 @@ class GetLearnerPriceForCourseView(APIView):
         """
         learner = get_object_or_404(User, id=self.kwargs["user_id"])
         program = get_object_or_404(Program, id=self.kwargs["program_id"], live=True)
+        self.check_object_permissions(request, {"learner": learner, "program": program})
         # Validate that learner is enrolled in program
         try:
             ProgramEnrollment.objects.get(user=learner, program=program)

@@ -1,11 +1,13 @@
 """
 Tests for financialaid api
 """
+from datetime import datetime, timedelta
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 
-from courses.factories import ProgramFactory
+from courses.factories import ProgramFactory, CourseRunFactory
 from dashboard.models import ProgramEnrollment
+from ecommerce.factories import CoursePriceFactory
 from financialaid.api import (
     determine_tier_program,
     determine_auto_approval
@@ -36,6 +38,14 @@ class FinancialAidBaseTestCase(ESTestCase):
         cls.program = ProgramFactory.create(
             financial_aid_availability=True,
             live=True
+        )
+        cls.course_run = CourseRunFactory.create(
+            enrollment_end=datetime.utcnow() + timedelta(hours=1),
+            program=cls.program
+        )
+        cls.course_price = CoursePriceFactory.create(
+            course_run=cls.course_run,
+            is_valid=True
         )
         cls.tier_programs = {
             "0k": TierProgramFactory.create(program=cls.program, income_threshold=0, current=True),

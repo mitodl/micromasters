@@ -1,23 +1,21 @@
 """
 Tests for financialaid view
 """
-from datetime import (
-    datetime,
-    timedelta
-)
 from django.core.urlresolvers import reverse
+from django.db.models.signals import post_save
+from factory.django import mute_signals
 
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from courses.factories import CourseRunFactory
-from ecommerce.factories import CoursePriceFactory
+from dashboard.models import ProgramEnrollment
 from financialaid.api_test import FinancialAidBaseTestCase
 from financialaid.factories import FinancialAidFactory
 from financialaid.models import (
     FinancialAid,
     FinancialAidStatus
 )
+from profiles.factories import ProfileFactory
 
 
 class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
@@ -27,14 +25,6 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        cls.course_run = CourseRunFactory.create(
-            enrollment_end=datetime.utcnow() + timedelta(hours=1),
-            program=cls.program
-        )
-        cls.course_price = CoursePriceFactory.create(
-            course_run=cls.course_run,
-            is_valid=True
-        )
         cls.income_validation_url = reverse("financial_aid_request")
         cls.review_url = reverse("review_financial_aid", kwargs={"program_id": cls.program.id})
         cls.review_url_with_filter = reverse(
@@ -327,3 +317,131 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         self.financial_review_data["tier_program_id"] = self.tier_programs["150k_not_current"]
         resp = self.client.post(self.action_url, data=self.financial_review_data)
         assert resp.status_code == status.HTTP_400_BAD_REQUEST
+
+
+class GetLearnerPriceForCourseTests(FinancialAidBaseTestCase, APIClient):
+    """
+    Tests for financialaid views
+    """
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        with mute_signals(post_save):
+            cls.enrolled_profile = ProfileFactory.create()
+            cls.enrolled_profile2 = ProfileFactory.create()
+            cls.enrolled_profile3 = ProfileFactory.create()
+        ProgramEnrollment.objects.create(
+            user=cls.enrolled_profile.user,
+            program=cls.program
+        )
+        ProgramEnrollment.objects.create(
+            user=cls.enrolled_profile2.user,
+            program=cls.program
+        )
+        ProgramEnrollment.objects.create(
+            user=cls.enrolled_profile3.user,
+            program=cls.program
+        )
+        cls.financialaid_approved = FinancialAidFactory.create(
+            user=cls.enrolled_profile.user,
+            tier_program=cls.tier_programs["15k"],
+            status=FinancialAidStatus.APPROVED
+        )
+        cls.financialaid_pending = FinancialAidFactory.create(
+            user=cls.enrolled_profile2.user,
+            tier_program=cls.tier_programs["15k"],
+            status=FinancialAidStatus.PENDING_MANUAL_APPROVAL
+        )
+        cls.url_user1 = reverse(
+            "financial_aid_course_price",
+            kwargs={
+                "user_id": cls.enrolled_profile.user.id,
+                "program_id": cls.program.id
+            }
+        )
+        cls.url_user2 = reverse(
+            "financial_aid_course_price",
+            kwargs={
+                "user_id": cls.enrolled_profile2.user.id,
+                "program_id": cls.program.id
+            }
+        )
+        cls.url_user3 = reverse(
+            "financial_aid_course_price",
+            kwargs={
+                "user_id": cls.enrolled_profile3.user.id,
+                "program_id": cls.program.id
+            }
+        )
+        cls.url_not_enrolled_user = reverse(
+            "financial_aid_course_price",
+            kwargs={
+                "user_id": cls.profile2.user.id,
+                "program_id": cls.program.id
+            }
+        )
+
+    def test_get_learner_price_for_course_not_allowed(self):
+        """
+        Tests ReviewFinancialAidView that are not allowed
+        """
+        # Not allowed if not logged in
+        resp = self.client.get(self.url_user1)
+        assert resp.status_code == status.HTTP_403_FORBIDDEN
+        # Not allowed if not staff and not your own
+        self.client.force_login(self.enrolled_profile.user)
+        resp = self.client.get(self.url_user2)
+        assert resp.status_code == status.HTTP_403_FORBIDDEN
+        # Not allowed for instructors
+        self.client.force_login(self.instructor_user_profile.user)
+        resp = self.client.get(self.url_user2)
+        assert resp.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_get_learner_price_for_course_allowed(self):
+        """
+        Tests ReviewFinancialAidView for users who are allowed to access it
+        """
+        # Can view own information
+        self.client.force_login(self.enrolled_profile.user)
+        resp = self.client.get(self.url_user1)
+        assert resp.status_code == status.HTTP_200_OK
+        # Bad request if not enrolled
+        self.client.force_login(self.staff_user_profile.user)
+        resp = self.client.get(self.url_not_enrolled_user)
+        assert resp.status_code == status.HTTP_400_BAD_REQUEST
+        # Enrolled and has approved financial aid
+        resp = self.client.get(self.url_user1)
+        assert resp.status_code == status.HTTP_200_OK
+        expected_response = {
+            "has_financial_aid_request": True,
+            "course_price": self.course_price.price - self.financialaid_approved.tier_program.discount_amount,
+            "financial_aid_adjustment": True
+        }
+        self.assertDictEqual(resp.data, expected_response)
+        # Enrolled and has pending financial aid
+        resp = self.client.get(self.url_user2)
+        assert resp.status_code == status.HTTP_200_OK
+        expected_response = {
+            "has_financial_aid_request": True,
+            "course_price": self.course_price.price,
+            "financial_aid_adjustment": False
+        }
+        self.assertDictEqual(resp.data, expected_response)
+        # Enrolled and has pending financial aid
+        resp = self.client.get(self.url_user2)
+        assert resp.status_code == status.HTTP_200_OK
+        expected_response = {
+            "has_financial_aid_request": True,
+            "course_price": self.course_price.price,
+            "financial_aid_adjustment": False
+        }
+        self.assertDictEqual(resp.data, expected_response)
+        # Enrolled and has no financial aid
+        resp = self.client.get(self.url_user3)
+        assert resp.status_code == status.HTTP_200_OK
+        expected_response = {
+            "has_financial_aid_request": False,
+            "course_price": self.course_price.price,
+            "financial_aid_adjustment": False
+        }
+        self.assertDictEqual(resp.data, expected_response)
