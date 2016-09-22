@@ -244,7 +244,7 @@ def enroll_user(order):
         course_key = line.course_key
         try:
             enrollments[course_key] = enrollments_client.create_audit_student_enrollment(course_key)
-        except Exception as ex:
+        except Exception as ex:  # pylint: disable=broad-except
             log.error(
                 "Error creating audit enrollment for course key %s for user %s",
                 course_key,

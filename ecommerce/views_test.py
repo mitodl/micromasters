@@ -120,16 +120,18 @@ class OrderFulfillmentViewTests(ESTestCase):
         data['req_reference_number'] = make_reference_id(order)
         data['decision'] = 'ACCEPT'
 
-        with patch('ecommerce.views.IsSignedByCyberSource.has_permission', return_value=True):
+        with patch('ecommerce.views.IsSignedByCyberSource.has_permission', return_value=True), patch(
+            'ecommerce.views.enroll_user'
+        ) as enroll_user:
             resp = self.client.post(reverse('order-fulfillment'), data=data)
 
         assert len(resp.content) == 0
         assert resp.status_code == status.HTTP_200_OK
         order.refresh_from_db()
-
         assert order.status == Order.FULFILLED
         assert order.receipt_set.count() == 1
         assert order.receipt_set.first().data == data
+        enroll_user.assert_called_with(order)
 
     def test_missing_fields(self):
         """
