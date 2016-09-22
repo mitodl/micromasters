@@ -24,7 +24,9 @@ from financialaid.constants import (
     FINANCIAL_AID_APPROVAL_MESSAGE_BODY,
     FINANCIAL_AID_APPROVAL_SUBJECT_TEXT,
     FINANCIAL_AID_REJECTION_MESSAGE_BODY,
-    FINANCIAL_AID_REJECTION_SUBJECT_TEXT
+    FINANCIAL_AID_REJECTION_SUBJECT_TEXT,
+    FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT,
+    FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY
 )
 from financialaid.models import (
     FinancialAid,
@@ -87,13 +89,27 @@ class FinancialAidActionSerializer(serializers.Serializer):
     """
     Serializer for financial aid actions
     """
-    action = ChoiceField(choices=[FinancialAidStatus.REJECTED, FinancialAidStatus.APPROVED], write_only=True)
+    action = ChoiceField(
+        choices=[
+            FinancialAidStatus.REJECTED,
+            FinancialAidStatus.APPROVED,
+            FinancialAidStatus.PENDING_MANUAL_APPROVAL
+        ],
+        write_only=True
+    )
     tier_program_id = IntegerField(write_only=True)
 
     def validate(self, data):
         """
         Validators for this serializer
         """
+        # Check that the previous financial aid status allows for the new status
+        if (self.instance.status != FinancialAidStatus.PENDING_MANUAL_APPROVAL
+                and data['action'] in [FinancialAidStatus.REJECTED, FinancialAidStatus.APPROVED]):
+            raise ValidationError("Cannot change application status to %s." % data['action'])
+        if (data['action'] == FinancialAidStatus.PENDING_MANUAL_APPROVAL
+                and self.instance.status != FinancialAidStatus.PENDING_DOCS):
+            raise ValidationError("Cannot accept documents for an application with this status.")
         try:
             data["tier_program"] = TierProgram.objects.get(
                 id=data["tier_program_id"],
@@ -121,6 +137,12 @@ class FinancialAidActionSerializer(serializers.Serializer):
             email_data = {
                 'email_subject': FINANCIAL_AID_REJECTION_SUBJECT_TEXT,
                 'email_body': FINANCIAL_AID_REJECTION_MESSAGE_BODY,
+                'email_recipient': self.instance.user.email
+            }
+        elif self.instance.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL:
+            email_data = {
+                'email_subject': FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT,
+                'email_body': FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY,
                 'email_recipient': self.instance.user.email
             }
         self.instance.save()

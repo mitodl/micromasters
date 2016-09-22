@@ -231,5 +231,10 @@ FINANCIAL_AID_REJECTION_MESSAGE_BODY = """Your application for financial aid has
 Please log on to your account for more details.
 Sympathy,
 MIT Micromasters"""
+FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY = """Your financial aid documents have been received.
+Please log on to your account for more details.
+Sympathy,
+MIT Micromasters"""
 FINANCIAL_AID_APPROVAL_SUBJECT_TEXT = "Financial Aid Status Update"
 FINANCIAL_AID_REJECTION_SUBJECT_TEXT = "Financial Aid Status Update"
+FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT = "Financial Aid Documents Received"
