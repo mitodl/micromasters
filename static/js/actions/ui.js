@@ -80,8 +80,8 @@ export const setEnrollDialogError = createAction(SET_ENROLL_DIALOG_ERROR);
 export const SET_ENROLL_DIALOG_VISIBILITY = 'SET_ENROLL_DIALOG_VISIBILITY';
 export const setEnrollDialogVisibility = createAction(SET_ENROLL_DIALOG_VISIBILITY);
 
-export const SET_ENROLL_MESSAGE = 'SET_ENROLL_MESSAGE';
-export const setEnrollMessage = createAction(SET_ENROLL_MESSAGE);
+export const SET_TOAST_MESSAGE = 'SET_TOAST_MESSAGE';
+export const setToastMessage = createAction(SET_TOAST_MESSAGE);
 
 export const SET_ENROLL_SELECTED_PROGRAM = 'SET_ENROLL_SELECTED_PROGRAM';
 export const setEnrollSelectedProgram = createAction(SET_ENROLL_SELECTED_PROGRAM);

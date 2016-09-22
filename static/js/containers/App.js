@@ -4,8 +4,11 @@ import React from 'react';
 import Icon from 'react-mdl/lib/Icon';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
-import _ from 'lodash';
 
+import {
+  TOAST_SUCCESS,
+  TOAST_FAILURE,
+} from '../constants';
 import ErrorMessage from '../components/ErrorMessage';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -32,7 +35,7 @@ import {
 import {
   setEnrollDialogError,
   setEnrollDialogVisibility,
-  setEnrollMessage,
+  setToastMessage,
   setEnrollSelectedProgram,
 } from '../actions/ui';
 import {
@@ -200,7 +203,7 @@ class App extends React.Component {
 
   clearMessage = (): void => {
     const { dispatch } = this.props;
-    dispatch(setEnrollMessage(null));
+    dispatch(setToastMessage(null));
   };
 
   render() {
@@ -210,7 +213,7 @@ class App extends React.Component {
       ui: {
         enrollDialogError,
         enrollDialogVisibility,
-        enrollMessage,
+        toastMessage,
         enrollSelectedProgram,
       },
       location: { pathname },
@@ -229,19 +232,19 @@ class App extends React.Component {
 
     let open = false;
     let message;
-    if (!_.isNil(enrollMessage)) {
+    if (toastMessage) {
       open = true;
 
-      let icon;
-      if (enrollments.postStatus === FETCH_FAILURE) {
+      let icon = "";
+      if (toastMessage.icon === TOAST_FAILURE) {
         icon = <Icon name="error" key="icon "/>;
-      } else if (enrollments.postStatus === FETCH_SUCCESS) {
+      } else if (toastMessage.icon === TOAST_SUCCESS) {
         icon = <Icon name="done" key="icon" />;
       }
       message = [
         icon,
         " ",
-        enrollMessage,
+        toastMessage.message,
       ];
     }
 

@@ -22,6 +22,7 @@ import {
   getEmployer,
   createForm,
   formatPrice,
+  programCourseInfo,
 } from '../util/util';
 import {
   EDUCATION_LEVELS,
@@ -35,6 +36,7 @@ import {
   CHECKOUT_RESPONSE,
 } from '../constants';
 import { assertMaybeEquality, assertIsNothing } from './sanctuary_test';
+import { program } from '../components/ProgressWidget_test';
 
 /* eslint-disable camelcase */
 describe('utility functions', () => {
@@ -186,6 +188,8 @@ describe('utility functions', () => {
         city: 'Portland'
       };
       assert.equal(getLocation(us), 'Portland, ME, US');
+      // assert hide state
+      assert.equal(getLocation(us, false), 'Portland, US');
     });
   });
 
@@ -407,6 +411,17 @@ describe('utility functions', () => {
   describe('formatPrice', () => {
     it('format price', () => {
       assert.equal(formatPrice(20), "$20");
+    });
+  });
+
+  describe('programCourseInfo', () => {
+    it('assert program info', () => {
+      const programInfoActual = programCourseInfo(program);
+
+      assert.deepEqual(programInfoActual, {
+        totalPassedCourses: 1,
+        totalCourses: 3
+      });
     });
   });
 });

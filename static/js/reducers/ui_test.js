@@ -23,7 +23,7 @@ import {
   setEmailDialogVisibility,
   setEnrollDialogError,
   setEnrollDialogVisibility,
-  setEnrollMessage,
+  setToastMessage,
   setEnrollSelectedProgram,
 } from '../actions/ui';
 import { INITIAL_UI_STATE } from '../reducers/ui';
@@ -165,7 +165,7 @@ describe('ui reducers', () => {
 
   describe('Enrollment', () => {
     it('sets the enrollment message', () => {
-      assertReducerResultState(setEnrollMessage, ui => ui.enrollMessage, null);
+      assertReducerResultState(setToastMessage, ui => ui.toastMessage, null);
     });
 
     it('sets the enrollment dialog error', () => {

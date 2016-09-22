@@ -14,6 +14,7 @@ from django.db.models.fields import (
 from django.db.models.fields.related import (
     ForeignKey,
 )
+from jsonfield.fields import JSONField
 
 from courses.models import CourseRun
 from ecommerce.exceptions import EcommerceModelException
@@ -24,9 +25,10 @@ class Order(Model):
     An order made
     """
     FULFILLED = 'fulfilled'
+    FAILED = 'failed'
     CREATED = 'created'
 
-    STATUSES = [CREATED, FULFILLED]
+    STATUSES = [CREATED, FULFILLED, FAILED]
 
     user = ForeignKey(User)
     status = CharField(
@@ -38,6 +40,10 @@ class Order(Model):
     created_at = DateTimeField(auto_now_add=True)
     modified_at = DateTimeField(auto_now=True)
     total_price_paid = DecimalField(decimal_places=2, max_digits=20)
+
+    def __str__(self):
+        """Description for Order"""
+        return "Order {}, status={} for user={}".format(self.id, self.status, self.user)
 
 
 class Line(Model):
@@ -51,6 +57,28 @@ class Line(Model):
 
     created_at = DateTimeField(auto_now_add=True)
     modified_at = DateTimeField(auto_now=True)
+
+    def __str__(self):
+        """Description for Line"""
+        return "Line for order {}, course_key={}, price={}".format(self.order.id, self.course_key, self.price)
+
+
+class Receipt(Model):
+    """
+    The contents of the message from CyberSource about an Order fulfillment or cancellation
+    """
+    order = ForeignKey(Order, null=True)
+    data = JSONField()
+
+    created_at = DateTimeField(auto_now_add=True)
+    modified_at = DateTimeField(auto_now=True)
+
+    def __str__(self):
+        """Description of Receipt"""
+        if self.order:
+            return "Receipt for order {}".format(self.order.id)
+        else:
+            return "Receipt with no attached order"
 
 
 class CoursePrice(Model):

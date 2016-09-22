@@ -15,6 +15,10 @@ from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 
 from courses.models import CourseRun
+from ecommerce.exceptions import (
+    EcommerceException,
+    ParseException,
+)
 from ecommerce.models import (
     Line,
     Order,
@@ -24,6 +28,7 @@ from profiles.api import get_social_username
 
 ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 log = logging.getLogger(__name__)
+_REFERENCE_NUMBER_PREFIX = 'MM-'
 
 
 def get_purchasable_course_run(course_key, user):
@@ -161,4 +166,41 @@ def make_reference_id(order):
         str:
             A reference number for use with CyberSource to keep track of orders
     """
-    return "MM-{}-{}".format(settings.CYBERSOURCE_REFERENCE_PREFIX, order.id)
+    return "{}{}-{}".format(_REFERENCE_NUMBER_PREFIX, settings.CYBERSOURCE_REFERENCE_PREFIX, order.id)
+
+
+def get_new_order_by_reference_number(reference_number):
+    """
+    Parse a reference number received from CyberSource and lookup the corresponding Order. If the Order
+    is already fulfilled an EcommerceException is raised.
+
+    Args:
+        reference_number (str):
+            A string which contains the order id and the instance which generated it
+    Returns:
+        Order:
+            An order
+    """
+    if not reference_number.startswith(_REFERENCE_NUMBER_PREFIX):
+        raise ParseException("Reference number must start with {}".format(_REFERENCE_NUMBER_PREFIX))
+    reference_number = reference_number[len(_REFERENCE_NUMBER_PREFIX):]
+
+    try:
+        order_id_pos = reference_number.rindex('-')
+    except ValueError:
+        raise ParseException("Unable to find order number in reference number")
+
+    try:
+        order_id = int(reference_number[order_id_pos + 1:])
+    except ValueError:
+        raise ParseException("Unable to parse order number")
+
+    prefix = reference_number[:order_id_pos]
+    if prefix != settings.CYBERSOURCE_REFERENCE_PREFIX:
+        log.error("CyberSource prefix doesn't match: %s != %s", prefix, settings.CYBERSOURCE_REFERENCE_PREFIX)
+        raise ParseException("CyberSource prefix doesn't match")
+
+    try:
+        return Order.objects.get(id=order_id, status=Order.CREATED)
+    except Order.DoesNotExist:
+        raise EcommerceException("Order {} is expected to have status 'created'".format(order_id))

@@ -6,10 +6,18 @@ from factory.django import mute_signals
 
 from courses.factories import ProgramFactory
 from dashboard.models import ProgramEnrollment
-from financialaid.api import determine_tier_program, determine_auto_approval
+from financialaid.api import (
+    determine_tier_program,
+    determine_auto_approval
+)
 from financialaid.constants import COUNTRY_INCOME_THRESHOLDS
-from financialaid.factories import TierProgramFactory, FinancialAidFactory
+from financialaid.factories import (
+    TierProgramFactory,
+    FinancialAidFactory
+)
 from profiles.factories import ProfileFactory
+from roles.models import Role
+from roles.roles import Staff, Instructor
 from search.base import ESTestCase
 
 
@@ -21,20 +29,51 @@ class FinancialAidBaseTestCase(ESTestCase):
     def setUpTestData(cls):
         with mute_signals(post_save):
             cls.profile = ProfileFactory.create()
+            cls.profile2 = ProfileFactory.create()
+            cls.staff_user_profile = ProfileFactory.create()
+            cls.staff_user_profile2 = ProfileFactory.create()
+            cls.instructor_user_profile = ProfileFactory.create()
         cls.program = ProgramFactory.create(
             financial_aid_availability=True,
             live=True
         )
-        cls.tiers = {
+        cls.tier_programs = {
             "0k": TierProgramFactory.create(program=cls.program, income_threshold=0, current=True),
             "15k": TierProgramFactory.create(program=cls.program, income_threshold=15000, current=True),
             "50k": TierProgramFactory.create(program=cls.program, income_threshold=50000, current=True),
-            "100k": TierProgramFactory.create(program=cls.program, income_threshold=100000, current=True),
+            "100k": TierProgramFactory.create(
+                program=cls.program,
+                income_threshold=100000,
+                current=True,
+                discount_amount=0
+            ),
             "150k_not_current": TierProgramFactory.create(program=cls.program, income_threshold=150000, current=False)
         }
         cls.program_enrollment = ProgramEnrollment.objects.create(
             user=cls.profile.user,
             program=cls.program
+        )
+        # Role for self.staff_user
+        Role.objects.create(
+            user=cls.staff_user_profile.user,
+            program=cls.program,
+            role=Staff.ROLE_ID,
+        )
+        # Role for self.staff_user_profile2.user
+        cls.program2 = ProgramFactory.create(
+            financial_aid_availability=True,
+            live=True
+        )
+        Role.objects.create(
+            user=cls.staff_user_profile2.user,
+            program=cls.program2,
+            role=Staff.ROLE_ID
+        )
+        # Role for self.instructor
+        Role.objects.create(
+            user=cls.instructor_user_profile.user,
+            program=cls.program,
+            role=Instructor.ROLE_ID
         )
 
 
@@ -46,15 +85,15 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
         """
         Tests determine_tier_program()
         """
-        assert determine_tier_program(self.program, 0) == self.tiers["0k"]
-        assert determine_tier_program(self.program, 1000) == self.tiers["0k"]
-        assert determine_tier_program(self.program, 15000) == self.tiers["15k"]
-        assert determine_tier_program(self.program, 23500) == self.tiers["15k"]
-        assert determine_tier_program(self.program, 50000) == self.tiers["50k"]
-        assert determine_tier_program(self.program, 72800) == self.tiers["50k"]
-        assert determine_tier_program(self.program, 100000) == self.tiers["100k"]
-        assert determine_tier_program(self.program, 34938234) == self.tiers["100k"]
-        assert determine_tier_program(self.program, 34938234) != self.tiers["150k_not_current"]
+        assert determine_tier_program(self.program, 0) == self.tier_programs["0k"]
+        assert determine_tier_program(self.program, 1000) == self.tier_programs["0k"]
+        assert determine_tier_program(self.program, 15000) == self.tier_programs["15k"]
+        assert determine_tier_program(self.program, 23500) == self.tier_programs["15k"]
+        assert determine_tier_program(self.program, 50000) == self.tier_programs["50k"]
+        assert determine_tier_program(self.program, 72800) == self.tier_programs["50k"]
+        assert determine_tier_program(self.program, 100000) == self.tier_programs["100k"]
+        assert determine_tier_program(self.program, 34938234) == self.tier_programs["100k"]
+        assert determine_tier_program(self.program, 34938234) != self.tier_programs["150k_not_current"]
 
     def test_determine_auto_approval(self):  # pylint: disable=no-self-use
         """

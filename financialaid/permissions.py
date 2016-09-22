@@ -1,7 +1,6 @@
 """
 Permission classes for financial aid views
 """
-
 from rolepermissions.verifications import has_object_permission
 from rest_framework.permissions import BasePermission
 
@@ -16,9 +15,11 @@ class UserCanEditFinancialAid(BasePermission):
     def has_object_permission(self, request, view, obj):
         """
         Returns True if the user has the can_edit_financial_aid permission for a program.
+        Args:
+            request (Request): DRF request object
+            view (View): DRF view object
+            obj (FinancialAid): FinancialAid object
+        Returns:
+            (boolean)
         """
-        return has_object_permission(
-            Permissions.CAN_EDIT_FINANCIAL_AID,
-            request.user,
-            obj
-        )
+        return has_object_permission(Permissions.CAN_EDIT_FINANCIAL_AID, request.user, obj.tier_program.program)

@@ -80,21 +80,17 @@ class FinancialAidActionSerializer(serializers.Serializer):
     """
     Serializer for financial aid status
     """
-    financial_aid_id = IntegerField()
-    action = ChoiceField(choices=[FinancialAidStatus.REJECTED, FinancialAidStatus.APPROVED])
-    tier_program_id = IntegerField()
+    action = ChoiceField(choices=[FinancialAidStatus.REJECTED, FinancialAidStatus.APPROVED], write_only=True)
+    tier_program_id = IntegerField(write_only=True)
 
     def validate(self, data):
         """
         Validators for this serializer
         """
-        data["financial_aid"] = get_object_or_404(
-            FinancialAid, id=data["financial_aid_id"]
-        )
         try:
             data["tier_program"] = TierProgram.objects.get(
                 id=data["tier_program_id"],
-                program=data["financial_aid"].tier_program.program_id
+                program=self.instance.tier_program.program_id
             )
         except TierProgram.DoesNotExist:
             raise ValidationError("Financial Aid Tier does not exist for this program.")
@@ -104,57 +100,21 @@ class FinancialAidActionSerializer(serializers.Serializer):
         """
         Save method for this serializer
         """
-        financial_aid = self.validated_data["financial_aid"]
         tier_program = self.validated_data["tier_program"]
-        financial_aid.status = self.validated_data["action"]
-        if financial_aid.status == FinancialAidStatus.APPROVED:
-            financial_aid.tier_program = tier_program
-        elif financial_aid.status == FinancialAidStatus.REJECTED:
-            financial_aid.tier_program = get_no_discount_tier_program(financial_aid.tier_program.program_id)
-        financial_aid.save()
+        self.instance.status = self.validated_data["action"]
+        if self.instance.status == FinancialAidStatus.APPROVED:
+            self.instance.tier_program = tier_program
+        elif self.instance.status == FinancialAidStatus.REJECTED:
+            self.instance.tier_program = get_no_discount_tier_program(self.instance.tier_program.program_id)
+        self.instance.save()
 
         # add auditing here
 
-        return financial_aid
+        return self.instance
 
 
 class GetLearnerPriceForCourseSerializer(serializers.Serializer):
     """
-    Serializer for financial aid status
+    Serializer for retrieving learner price for course
     """
     user_id = IntegerField()
-    action = ChoiceField(choices=[FinancialAidStatus.REJECTED, FinancialAidStatus.APPROVED])
-    tier_program_id = IntegerField()
-
-    def validate(self, data):
-        """
-        Validators for this serializer
-        """
-        data["financial_aid"] = get_object_or_404(
-            FinancialAid, id=data["financial_aid_id"]
-        )
-        try:
-            data["tier_program"] = TierProgram.objects.get(
-                id=data["tier_program_id"],
-                program=data["financial_aid"].tier_program.program_id
-            )
-        except TierProgram.DoesNotExist:
-            raise ValidationError("Financial Aid Tier does not exist for this program.")
-        return data
-
-    def save(self):
-        """
-        Save method for this serializer
-        """
-        financial_aid = self.validated_data["financial_aid"]
-        tier_program = self.validated_data["tier_program"]
-        financial_aid.status = self.validated_data["action"]
-        if financial_aid.status == FinancialAidStatus.APPROVED:
-            financial_aid.tier_program = tier_program
-        elif financial_aid.status == FinancialAidStatus.REJECTED:
-            financial_aid.tier_program = get_no_discount_tier_program(financial_aid.tier_program.program_id)
-        financial_aid.save()
-
-        # add auditing here
-
-        return financial_aid

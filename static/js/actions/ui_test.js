@@ -18,7 +18,7 @@ import {
   SET_EMAIL_DIALOG_VISIBILITY,
   SET_ENROLL_DIALOG_ERROR,
   SET_ENROLL_DIALOG_VISIBILITY,
-  SET_ENROLL_MESSAGE,
+  SET_TOAST_MESSAGE,
   SET_ENROLL_SELECTED_PROGRAM,
 
   clearUI,
@@ -40,7 +40,7 @@ import {
   setEmailDialogVisibility,
   setEnrollDialogError,
   setEnrollDialogVisibility,
-  setEnrollMessage,
+  setToastMessage,
   setEnrollSelectedProgram,
 } from '../actions/ui';
 import { assertCreatedActionHelper } from './util';
@@ -67,7 +67,7 @@ describe('generated UI action helpers', () => {
       [setEmailDialogVisibility, SET_EMAIL_DIALOG_VISIBILITY],
       [setEnrollDialogError, SET_ENROLL_DIALOG_ERROR],
       [setEnrollDialogVisibility, SET_ENROLL_DIALOG_VISIBILITY],
-      [setEnrollMessage, SET_ENROLL_MESSAGE],
+      [setToastMessage, SET_TOAST_MESSAGE],
       [setEnrollSelectedProgram, SET_ENROLL_SELECTED_PROGRAM],
     ].forEach(assertCreatedActionHelper);
   });
