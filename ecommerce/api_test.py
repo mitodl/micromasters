@@ -13,8 +13,8 @@ from mock import (
 )
 from django.http.response import Http404
 from django.test import override_settings
-from edx_api.enrollments import Enrollment
 from rest_framework.exceptions import ValidationError
+from edx_api.enrollments import Enrollment
 
 from backends.pipeline_api import EdxOrgOAuth2
 from courses.factories import CourseRunFactory
@@ -30,6 +30,7 @@ from ecommerce.api import (
     make_reference_id,
 )
 from ecommerce.exceptions import (
+    EcommerceEdxApiException,
     EcommerceException,
     ParseException,
 )
@@ -304,6 +305,7 @@ class EnrollUserTests(ESTestCase):
         with patch('ecommerce.api.EdxApi', return_value=edx_api_mock):
             enroll_user(self.order)
 
+        assert len(create_audit_mock.call_args_list) == self.order.line_set.count()
         for i, line in enumerate(self.order.line_set.all()):
             assert create_audit_mock.call_args_list[i][0] == (line.course_key, )
         assert CachedEnrollment.objects.count() == self.order.line_set.count()
@@ -319,3 +321,30 @@ class EnrollUserTests(ESTestCase):
         """
         Test that an exception is raised containing a list of exceptions of the failed enrollments
         """
+        fake_enrollment = Enrollment({"some": "text"})
+
+        def create_audit(course_key):
+            """Fail for first course key"""
+            if course_key == self.line1.course_key:
+                raise Exception("fatal error {}".format(course_key))
+            return fake_enrollment
+
+        create_audit_mock = MagicMock(side_effect=create_audit)
+        enrollments_mock = MagicMock(create_audit_student_enrollment=create_audit_mock)
+        edx_api_mock = MagicMock(enrollments=enrollments_mock)
+        with patch('ecommerce.api.EdxApi', return_value=edx_api_mock):
+            with self.assertRaises(EcommerceEdxApiException) as ex:
+                enroll_user(self.order)
+            assert len(ex.exception.args[0]) == 1
+            assert ex.exception.args[0][0].args[0] == 'fatal error {}'.format(self.line1.course_key)
+
+        assert len(create_audit_mock.call_args_list) == self.order.line_set.count()
+        for i, line in enumerate(self.order.line_set.all()):
+            assert create_audit_mock.call_args_list[i][0] == (line.course_key, )
+
+        assert CachedEnrollment.objects.count() == 1
+        enrollment = CachedEnrollment.objects.get(
+            user=self.order.user,
+            course_run__edx_course_key=self.line2.course_key,
+        )
+        assert enrollment.data == fake_enrollment.json

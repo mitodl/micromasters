@@ -155,6 +155,16 @@ class OrderFulfillmentViewTests(ESTestCase):
         assert Receipt.objects.count() == 1
         assert Receipt.objects.first().data == data
 
+    def test_failed_enroll(self):
+        """
+        If we fail to enroll in edX, the order status should be failed
+        """
+        with patch('ecommerce.views.enroll_user', side_effect=KeyError):
+            self.client.post(reverse('order-fulfillment'))
+
+        assert Order.objects.count() == 1
+        assert Order.objects.first().status == Order.FAILED
+
     def test_not_accept(self):
         """
         If the decision is not ACCEPT then the order should be marked as failed
