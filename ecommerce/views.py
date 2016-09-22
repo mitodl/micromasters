@@ -106,7 +106,7 @@ class OrderFulfillmentView(APIView):
 
                 now = datetime.datetime.now(pytz.UTC)
                 for course_key, enrollment in enrollments.items():
-                    update_cached_enrollment(request.user, enrollment, course_key, now)
+                    update_cached_enrollment(order.user, enrollment, course_key, now)
 
                 if len(exceptions) > 0:
                     raise EcommerceEdxApiException(exceptions)
