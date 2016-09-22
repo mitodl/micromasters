@@ -7,11 +7,11 @@ class FacultyTile extends React.Component {
   render() {
     let nameStr;
     if (this.props.title) {
-      nameStr = this.props.name + ", " + this.props.title
+      nameStr = `${this.props.name}, ${this.props.title}`
     } else {
       nameStr = this.props.name
     }
-    let style = {'backgroundImage': 'url('+this.props.imageUrl+')'};
+    let style = {"backgroundImage": `url(${this.props.imageUrl})`};
     return (
       <div className="faculty-tile" style={style}>
         <h4>{nameStr}</h4>

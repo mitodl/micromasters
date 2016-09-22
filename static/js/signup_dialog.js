@@ -40,4 +40,3 @@ ReactDOM.render(
     </MuiThemeProvider>,
   dialogDiv
 );
-
