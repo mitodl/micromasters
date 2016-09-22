@@ -104,12 +104,16 @@ class FinancialAidActionSerializer(serializers.Serializer):
         Validators for this serializer
         """
         # Check that the previous financial aid status allows for the new status
-        if (self.instance.status != FinancialAidStatus.PENDING_MANUAL_APPROVAL
-                and data['action'] in [FinancialAidStatus.REJECTED, FinancialAidStatus.APPROVED]):
-            raise ValidationError("Cannot change application status to %s." % data['action'])
+        if (data['action'] == FinancialAidStatus.REJECTED
+                and self.instance.status != FinancialAidStatus.PENDING_MANUAL_APPROVAL):
+            raise ValidationError("Cannot reject application that is not pending manual approval.")
+        if (data['action'] == FinancialAidStatus.APPROVED
+                and self.instance.status != FinancialAidStatus.PENDING_MANUAL_APPROVAL):
+            raise ValidationError("Cannot approve application that is not pending manual approval.")
         if (data['action'] == FinancialAidStatus.PENDING_MANUAL_APPROVAL
                 and self.instance.status != FinancialAidStatus.PENDING_DOCS):
-            raise ValidationError("Cannot accept documents for an application with this status.")
+            raise ValidationError("Cannot mark documents as received for application not pending docs.")
+        # Check tier program exists
         try:
             data["tier_program"] = TierProgram.objects.get(
                 id=data["tier_program_id"],
