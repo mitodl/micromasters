@@ -4,12 +4,18 @@ import Slider from 'react-slick';
 
 
 class FacultyTile extends React.Component {
+  props: {
+    name:     string,
+    title:    string,
+    imageUrl: string,
+    bio:      string,
+  }
   render() {
     let nameStr;
     if (this.props.title) {
-      nameStr = `${this.props.name}, ${this.props.title}`
+      nameStr = `${this.props.name}, ${this.props.title}`;
     } else {
-      nameStr = this.props.name
+      nameStr = this.props.name;
     }
     let style = {"backgroundImage": `url(${this.props.imageUrl})`};
     return (
@@ -17,12 +23,15 @@ class FacultyTile extends React.Component {
         <h4>{nameStr}</h4>
         <p>{this.props.bio}</p>
       </div>
-    )
+    );
   }
 }
 
 
 class FacultyCarousel extends React.Component {
+  props: {
+    faculty:  array,
+  }
   render() {
     let settings = {
       dots: true,
@@ -37,7 +46,7 @@ class FacultyCarousel extends React.Component {
       // react-slick only works with <div>s, not React components,
       // so wrap the FacultyTile component in a meaningless <div>
       <div key={index}><FacultyTile {...faculty} /></div>
-    )
+    );
     return (
       <Slider {...settings}>
         {tiles}
@@ -52,7 +61,7 @@ let map = (...fnargs) => {
   let args = [].slice.call(fnargs, 0);
   let ctx = args.shift();
   return [].map.apply(ctx, args);
-}
+};
 
 
 // map over the <li> nodes to get faculty information
@@ -68,7 +77,7 @@ let faculty = map(carouselDiv.querySelectorAll("li"), (li) => {
     if (el) {
       data[attr] = el.textContent;
     }
-  })
+  });
   return data;
 });
 
@@ -77,4 +86,4 @@ let faculty = map(carouselDiv.querySelectorAll("li"), (li) => {
 ReactDOM.render(
   <FacultyCarousel faculty={faculty} />,
   carouselDiv
-)
+);
