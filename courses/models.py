@@ -23,7 +23,7 @@ class Program(models.Model):
     def get_course_price(self):
         """
         Returns a decimal course price attached to this program.
-        
+
         Note: This implementation of retrieving a course price is a naive lookup that assumes
         all course runs and courses will be the same price for the foreseeable future.
         Therefore we can just take the price from any currently enroll-able course run.

@@ -22,7 +22,6 @@ from rolepermissions.verifications import has_object_permission
 
 from courses.models import Program
 from dashboard.models import ProgramEnrollment
-from ecommerce.models import CoursePrice
 from financialaid.models import (
     FinancialAid,
     FinancialAidStatus,
