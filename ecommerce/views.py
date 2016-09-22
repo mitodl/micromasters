@@ -87,7 +87,7 @@ class OrderFulfillmentView(APIView):
                 # Do the verified enrollment with edX here
                 order.status = Order.FULFILLED
 
-                user_social = request.user.social_auth.get(provider=EdxOrgOAuth2.name)
+                user_social = order.user.social_auth.get(provider=EdxOrgOAuth2.name)
                 enrollments_client = EdxApi(user_social.extra_data, settings.EDXORG_BASE_URL).enrollments
 
                 exceptions = []
@@ -100,7 +100,7 @@ class OrderFulfillmentView(APIView):
                         log.error(
                             "Error creating audit enrollment for course key %s for user %s",
                             course_key,
-                            get_social_username(request.user),
+                            get_social_username(order.user),
                         )
                         exceptions.append(ex)
 
