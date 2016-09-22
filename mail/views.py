@@ -68,9 +68,9 @@ class FinancialAidMailView(APIView):
         Post request to send emails to an individual learner
         """
         try:
-            subject = request.data.get('email_subject', kwargs['email_subject'])
-            body = request.data.get('email_body', kwargs['email_body'])
-            recipient = request.data.get('email_recipient', kwargs['email_recipient'])
+            subject = request.data.get('email_subject') or kwargs['email_subject']
+            body = request.data.get('email_body') or kwargs['email_body']
+            recipient = request.data.get('email_recipient') or kwargs['email_recipient']
         except KeyError:
             return HttpResponseBadRequest()
         mailgun_response = MailgunClient.send_individual_email(
