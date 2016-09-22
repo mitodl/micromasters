@@ -20,11 +20,18 @@ from financialaid.api import (
     determine_tier_program,
     get_no_discount_tier_program
 )
+from financialaid.constants import (
+    FINANCIAL_AID_APPROVAL_MESSAGE_BODY,
+    FINANCIAL_AID_APPROVAL_SUBJECT_TEXT,
+    FINANCIAL_AID_REJECTION_MESSAGE_BODY,
+    FINANCIAL_AID_REJECTION_SUBJECT_TEXT
+)
 from financialaid.models import (
     FinancialAid,
     FinancialAidStatus,
     TierProgram
 )
+from mail.views import FinancialAidMailView
 
 
 class IncomeValidationSerializer(serializers.Serializer):
@@ -104,10 +111,21 @@ class FinancialAidActionSerializer(serializers.Serializer):
         self.instance.status = self.validated_data["action"]
         if self.instance.status == FinancialAidStatus.APPROVED:
             self.instance.tier_program = tier_program
+            email_data = {
+                'email_subject': FINANCIAL_AID_APPROVAL_SUBJECT_TEXT,
+                'email_body': FINANCIAL_AID_APPROVAL_MESSAGE_BODY,
+                'email_recipient': self.instance.user.email
+            }
         elif self.instance.status == FinancialAidStatus.REJECTED:
             self.instance.tier_program = get_no_discount_tier_program(self.instance.tier_program.program_id)
+            email_data = {
+                'email_subject': FINANCIAL_AID_REJECTION_SUBJECT_TEXT,
+                'email_body': FINANCIAL_AID_REJECTION_MESSAGE_BODY,
+                'email_recipient': self.instance.user.email
+            }
         self.instance.save()
-
+        # Send email notification
+        FinancialAidMailView().post(self.context['request'], **email_data)
         # add auditing here
 
         return self.instance

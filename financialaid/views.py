@@ -11,7 +11,8 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import (
     CreateAPIView,
     get_object_or_404,
-    UpdateAPIView)
+    UpdateAPIView
+)
 from rest_framework.permissions import IsAuthenticated
 from rolepermissions.verifications import has_object_permission
 

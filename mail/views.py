@@ -3,6 +3,7 @@ Views for email REST APIs
 """
 import logging
 
+from django.http import HttpResponseBadRequest
 from rest_framework import (
     authentication,
     permissions,
@@ -66,10 +67,16 @@ class FinancialAidMailView(APIView):
         """
         Post request to send emails to an individual learner
         """
+        try:
+            subject = request.data.get('email_subject', kwargs['email_subject'])
+            body = request.data.get('email_body', kwargs['email_body'])
+            recipient = request.data.get('email_recipient', kwargs['email_recipient'])
+        except KeyError:
+            return HttpResponseBadRequest()
         mailgun_response = MailgunClient.send_individual_email(
-            subject=request.data['email_subject'],
-            body=request.data['email_body'],
-            recipient=request.data['email_recipient']
+            subject=subject,
+            body=body,
+            recipient=recipient
         )
         return Response(
             status=status.HTTP_200_OK,

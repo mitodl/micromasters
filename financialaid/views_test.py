@@ -5,19 +5,29 @@ from datetime import (
     datetime,
     timedelta
 )
+from unittest.mock import Mock, patch
+
 from django.core.urlresolvers import reverse
 
 from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.test import APIClient
 
 from courses.factories import CourseRunFactory
 from ecommerce.factories import CoursePriceFactory
 from financialaid.api_test import FinancialAidBaseTestCase
+from financialaid.constants import (
+    FINANCIAL_AID_REJECTION_SUBJECT_TEXT,
+    FINANCIAL_AID_REJECTION_MESSAGE_BODY,
+    FINANCIAL_AID_APPROVAL_SUBJECT_TEXT,
+    FINANCIAL_AID_APPROVAL_MESSAGE_BODY
+)
 from financialaid.factories import FinancialAidFactory
 from financialaid.models import (
     FinancialAid,
     FinancialAidStatus
 )
+from mail.views_test import mocked_json
 
 
 class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
@@ -235,6 +245,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         assert resp.status_code == status.HTTP_200_OK
 
 
+@patch('mail.views.MailgunClient')  # pylint: disable=missing-docstring
 class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
     """
     Tests for financialaid views
@@ -259,7 +270,7 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
             "tier_program_id": self.financialaid.tier_program.id
         }
 
-    def test_financial_aid_action_view_not_allowed(self):
+    def test_financial_aid_action_view_not_allowed(self, *args):  # pylint: disable=unused-argument
         """
         Tests FinancialAidActionView that are not allowed
         """
@@ -279,10 +290,15 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         resp = self.client.post(self.action_url, data=self.financial_review_data)
         assert resp.status_code == status.HTTP_403_FORBIDDEN
 
-    def test_financial_aid_action_view_with_approval(self):
+    def test_financial_aid_action_view_with_approval(self, mock_mailgun_client):
         """
         Tests FinancialAidActionView when application is approved
         """
+        mock_mailgun_client.send_individual_email.return_value = Mock(
+            spec=Response,
+            status_code=status.HTTP_200_OK,
+            json=mocked_json()
+        )
         # Application is approved for the tier program in the financial aid object
         self.client.force_login(self.staff_user_profile.user)
         resp = self.client.post(self.action_url, data=self.financial_review_data)
@@ -290,6 +306,11 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         financialaid = FinancialAid.objects.get(id=self.financialaid.id)
         assert financialaid.tier_program == self.tier_programs["15k"]
         assert financialaid.status == FinancialAidStatus.APPROVED
+        assert mock_mailgun_client.send_individual_email.called
+        _, called_kwargs = mock_mailgun_client.send_individual_email.call_args
+        assert called_kwargs['subject'] == FINANCIAL_AID_APPROVAL_SUBJECT_TEXT
+        assert called_kwargs['body'] == FINANCIAL_AID_APPROVAL_MESSAGE_BODY
+        assert called_kwargs['recipient'] == self.profile.user.email
         # Application is approved for a different tier program
         financialaid.status = FinancialAidStatus.PENDING_MANUAL_APPROVAL
         financialaid.save()
@@ -300,11 +321,21 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         assert resp.status_code == status.HTTP_200_OK
         assert financialaid.tier_program == self.tier_programs["50k"]
         assert financialaid.status == FinancialAidStatus.APPROVED
+        assert mock_mailgun_client.send_individual_email.called
+        _, called_kwargs = mock_mailgun_client.send_individual_email.call_args
+        assert called_kwargs['subject'] == FINANCIAL_AID_APPROVAL_SUBJECT_TEXT
+        assert called_kwargs['body'] == FINANCIAL_AID_APPROVAL_MESSAGE_BODY
+        assert called_kwargs['recipient'] == self.profile.user.email
 
-    def test_financial_aid_action_view_with_rejection(self):
+    def test_financial_aid_action_view_with_rejection(self, mock_mailgun_client):
         """
         Tests FinancialAidActionView when application is rejected
         """
+        mock_mailgun_client.send_individual_email.return_value = Mock(
+            spec=Response,
+            status_code=status.HTTP_200_OK,
+            json=mocked_json()
+        )
         self.financial_review_data["action"] = FinancialAidStatus.REJECTED
         self.client.force_login(self.staff_user_profile.user)
         resp = self.client.post(self.action_url, data=self.financial_review_data)
@@ -312,8 +343,13 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         financialaid = FinancialAid.objects.get(id=self.financialaid.id)
         assert financialaid.tier_program == self.tier_programs["100k"]
         assert financialaid.status == FinancialAidStatus.REJECTED
+        assert mock_mailgun_client.send_individual_email.called
+        _, called_kwargs = mock_mailgun_client.send_individual_email.call_args
+        assert called_kwargs['subject'] == FINANCIAL_AID_REJECTION_SUBJECT_TEXT
+        assert called_kwargs['body'] == FINANCIAL_AID_REJECTION_MESSAGE_BODY
+        assert called_kwargs['recipient'] == self.profile.user.email
 
-    def test_financial_aid_action_view_with_invalid_data(self):
+    def test_financial_aid_action_view_with_invalid_data(self, *args):  # pylint: disable=unused-argument
         """
         Tests FinancialAidActionView when invalid data is posted
         """
