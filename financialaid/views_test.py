@@ -36,7 +36,6 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
             is_valid=True
         )
         cls.income_validation_url = reverse("financial_aid_request")
-        cls.action_url = reverse("financial_aid_action")
         cls.review_url = reverse("review_financial_aid", kwargs={"program_id": cls.program.id})
         cls.review_url_with_filter = reverse(
             "review_financial_aid",
@@ -249,7 +248,7 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
             tier_program=cls.tier_programs["15k"],
             status=FinancialAidStatus.PENDING_MANUAL_APPROVAL
         )
-        cls.action_url = reverse("financial_aid_action")
+        cls.action_url = reverse("financial_aid_action", kwargs={"financial_aid_id": cls.financialaid.id})
 
     def setUp(self):
         super().setUp()
