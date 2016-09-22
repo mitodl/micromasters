@@ -1,5 +1,5 @@
 """
-Serializers from financialaid
+Serializers from financial aid
 """
 import datetime
 
@@ -34,9 +34,9 @@ from financialaid.models import (
 from mail.views import FinancialAidMailView
 
 
-class IncomeValidationSerializer(serializers.Serializer):
+class FinancialAidRequestSerializer(serializers.Serializer):
     """
-    Serializer for Financial Aid objects to validate income
+    Serializer for financial aid requests
     """
     original_income = FloatField(min_value=0)
     original_currency = CharField()
@@ -85,7 +85,7 @@ class IncomeValidationSerializer(serializers.Serializer):
 
 class FinancialAidActionSerializer(serializers.Serializer):
     """
-    Serializer for financial aid status
+    Serializer for financial aid actions
     """
     action = ChoiceField(choices=[FinancialAidStatus.REJECTED, FinancialAidStatus.APPROVED], write_only=True)
     tier_program_id = IntegerField(write_only=True)

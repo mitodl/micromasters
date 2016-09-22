@@ -45,7 +45,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
             course_run=cls.course_run,
             is_valid=True
         )
-        cls.income_validation_url = reverse("financial_aid_request")
+        cls.financial_aid_request_url = reverse("financial_aid_request")
         cls.review_url = reverse("review_financial_aid", kwargs={"program_id": cls.program.id})
         cls.review_url_with_filter = reverse(
             "review_financial_aid",
@@ -66,10 +66,10 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
 
     def test_income_validation_not_auto_approved(self):
         """
-        Tests IncomeValidationView post endpoint for not-auto-approval
+        Tests FinancialAidRequestView post endpoint for not-auto-approval
         """
         assert FinancialAid.objects.count() == 0
-        resp = self.client.post(self.income_validation_url, self.income_data, format='json')
+        resp = self.client.post(self.financial_aid_request_url, self.income_data, format='json')
         assert resp.status_code == status.HTTP_201_CREATED
         assert FinancialAid.objects.count() == 1
         financial_aid = FinancialAid.objects.first()
@@ -78,11 +78,11 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
 
     def test_income_validation_auto_approved(self):
         """
-        Tests IncomeValidationView post endpoint for auto-approval
+        Tests FinancialAidRequestView post endpoint for auto-approval
         """
         assert FinancialAid.objects.count() == 0
         self.income_data["original_income"] = 200000
-        resp = self.client.post(self.income_validation_url, self.income_data, format='json')
+        resp = self.client.post(self.financial_aid_request_url, self.income_data, format='json')
         assert resp.status_code == status.HTTP_201_CREATED
         assert FinancialAid.objects.count() == 1
         financial_aid = FinancialAid.objects.first()
@@ -91,37 +91,37 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
 
     def test_income_validation_missing_args(self):
         """
-        Tests IncomeValidationView post with missing args
+        Tests FinancialAidRequestView post with missing args
         """
         for key_to_not_send in ["original_currency", "program_id", "original_income"]:
             data = {key: value for key, value in self.income_data.items() if key != key_to_not_send}
-            resp = self.client.post(self.income_validation_url, data)
+            resp = self.client.post(self.financial_aid_request_url, data)
             assert resp.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_income_validation_no_financial_aid_availability(self):
         """
-        Tests IncomeValidationView post when financial aid not available for program
+        Tests FinancialAidRequestView post when financial aid not available for program
         """
         self.program.financial_aid_availability = False
         self.program.save()
-        resp = self.client.post(self.income_validation_url, self.income_data)
+        resp = self.client.post(self.financial_aid_request_url, self.income_data)
         assert resp.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_income_validation_user_not_enrolled(self):
         """
-        Tests IncomeValidationView post when User not enrolled in program
+        Tests FinancialAidRequestView post when User not enrolled in program
         """
         self.program_enrollment.user = self.profile2.user
         self.program_enrollment.save()
-        resp = self.client.post(self.income_validation_url, self.income_data)
+        resp = self.client.post(self.financial_aid_request_url, self.income_data)
         assert resp.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_income_validation_currency_not_usd(self):
         """
-        Tests IncomeValidationView post; only takes USD
+        Tests FinancialAidRequestView post; only takes USD
         """
         self.income_data["original_currency"] = "NOTUSD"
-        resp = self.client.post(self.income_validation_url, self.income_data)
+        resp = self.client.post(self.financial_aid_request_url, self.income_data)
         assert resp.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_review_financial_aid_view_not_allowed_user(self):

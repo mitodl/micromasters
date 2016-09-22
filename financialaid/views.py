@@ -26,18 +26,18 @@ from financialaid.models import (
 from financialaid.permissions import UserCanEditFinancialAid
 from financialaid.serializers import (
     FinancialAidActionSerializer,
-    IncomeValidationSerializer
+    FinancialAidRequestSerializer
 )
 from roles.roles import Permissions
 from ui.views import get_bundle_url
 
 
-class IncomeValidationView(CreateAPIView):
+class FinancialAidRequestView(CreateAPIView):
     """
-    View for income validation API. Takes income and currency, then determines whether review
+    View for financial aid request API. Takes income, currency, and program, then determines whether review
     is necessary, and if not, sets the appropriate tier for personalized pricing.
     """
-    serializer_class = IncomeValidationSerializer
+    serializer_class = FinancialAidRequestSerializer
     authentication_classes = (SessionAuthentication, )
     permission_classes = (IsAuthenticated, )
 
