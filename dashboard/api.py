@@ -336,6 +336,38 @@ def format_courserun_for_dashboard(course_run, status_for_user, certificate=None
     return formatted_run
 
 
+def update_cached_enrollment(user, enrollment, course_id, now):
+    """
+    Updates the cached enrollment based on an Enrollment object
+
+    Args:
+        user (User): A user
+        enrollment (Enrollment):
+            An Enrollment object from edx_api_client
+        course_id (str): A course key
+        now (datetime.datetime): The datetime value used as now
+
+    Returns:
+        None
+    """
+    # get the certificate data or None
+    # None means we will cache the fact that the student
+    # does not have an enrollment for the given course
+    enrollment_data = enrollment.json if enrollment is not None else None
+    course_run = CourseRun.objects.get(edx_course_key=course_id)
+    updated_values = {
+        'user': user,
+        'course_run': course_run,
+        'data': enrollment_data,
+        'last_request': now,
+    }
+    models.CachedEnrollment.objects.update_or_create(
+        user=user,
+        course_run=course_run,
+        defaults=updated_values
+    )
+
+
 def _check_if_refresh(user, cached_model, refresh_delta):
     """
     Helper function to check if cached data in a model need to be refreshed.
@@ -398,22 +430,7 @@ def get_student_enrollments(user, edx_client):
     with transaction.atomic():
         for course_id in course_ids:
             enrollment = enrollments.get_enrollment_for_course(course_id)
-            # get the certificate data or None
-            # None means we will cache the fact that the student
-            # does not have an enrollment for the given course
-            enrollment_data = enrollment.json if enrollment is not None else None
-            course_run = CourseRun.objects.get(edx_course_key=course_id)
-            updated_values = {
-                'user': user,
-                'course_run': course_run,
-                'data': enrollment_data,
-                'last_request': now,
-            }
-            models.CachedEnrollment.objects.update_or_create(
-                user=user,
-                course_run=course_run,
-                defaults=updated_values
-            )
+            update_cached_enrollment(user, enrollment, course_id, now)
 
     return enrollments
 

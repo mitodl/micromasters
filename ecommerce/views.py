@@ -1,23 +1,30 @@
 """Views from ecommerce"""
+import datetime
 import logging
 
 from django.conf import settings
+from edx_api.client import EdxApi
+import pytz
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+from backends.edxorg import EdxOrgOAuth2
+from dashboard.api import update_cached_enrollment
 from ecommerce.api import (
     create_unfulfilled_order,
     generate_cybersource_sa_payload,
     get_new_order_by_reference_number,
 )
+from ecommerce.exceptions import EcommerceEdxApiException
 from ecommerce.models import (
     Order,
     Receipt,
 )
 from ecommerce.permissions import IsSignedByCyberSource
+from profiles.api import get_social_username
 
 log = logging.getLogger(__name__)
 
@@ -79,6 +86,31 @@ class OrderFulfillmentView(APIView):
             else:
                 # Do the verified enrollment with edX here
                 order.status = Order.FULFILLED
+
+                user_social = request.user.social_auth.get(provider=EdxOrgOAuth2.name)
+                enrollments_client = EdxApi(user_social.extra_data, settings.EDXORG_BASE_URL).enrollments
+
+                exceptions = []
+                enrollments = {}
+                for line in order.line_set.all():
+                    course_key = line.course_key
+                    try:
+                        enrollments[course_key] = enrollments_client.create_audit_student_enrollment(course_key)
+                    except Exception as ex:
+                        log.error(
+                            "Error creating audit enrollment for course key %s for user %s",
+                            course_key,
+                            get_social_username(request.user),
+                        )
+                        exceptions.append(ex)
+
+                now = datetime.datetime.now(pytz.UTC)
+                for course_key, enrollment in enrollments.items():
+                    update_cached_enrollment(request.user, enrollment, course_key, now)
+
+                if len(exceptions) > 0:
+                    raise EcommerceEdxApiException(exceptions)
+
             order.save()
         except:
             order.status = Order.FAILED

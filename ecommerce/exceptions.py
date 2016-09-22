@@ -9,6 +9,12 @@ class EcommerceException(Exception):
     """
 
 
+class EcommerceEdxApiException(Exception):
+    """
+    Exception regarding edx
+    """
+
+
 class EcommerceModelException(Exception):
     """
     Exception regarding ecommerce models
