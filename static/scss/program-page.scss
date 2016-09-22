@@ -194,5 +194,28 @@
         margin-bottom: 10px;
       }
     }
+
+    .slick-prev {
+      left: -40px;
+    }
+    .slick-next {
+      right: -30px;
+    }
+
+    .slick-arrow:before, .slick-dots li button:before {
+      font-size: 30px;
+    }
+
+    .slick-dots li {
+      margin: 0 10px;
+
+      button:before {
+        color: $font-gray-light;
+      }
+
+      &.slick-active button:before {
+        color: #ffffff;
+      }
+    }
   }
 }

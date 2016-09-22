@@ -26,6 +26,7 @@ class FacultyCarousel extends React.Component {
   render() {
     let settings = {
       dots: true,
+      dotsClass: "slick-dots",
       infinite: false,
       speed: 500,
       slidesToShow: 2.2,
