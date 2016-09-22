@@ -2,7 +2,6 @@
 import logging
 
 from django.conf import settings
-from django.core.urlresolvers import reverse
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
