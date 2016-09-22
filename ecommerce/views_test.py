@@ -159,8 +159,21 @@ class OrderFulfillmentViewTests(ESTestCase):
         """
         If we fail to enroll in edX, the order status should be failed
         """
-        with patch('ecommerce.views.enroll_user', side_effect=KeyError):
-            self.client.post(reverse('order-fulfillment'))
+        course_run, user = create_purchasable_course_run()
+        order = create_unfulfilled_order(course_run.edx_course_key, user)
+
+        data = {}
+        for _ in range(5):
+            data[FAKE.text()] = FAKE.text()
+
+        data['req_reference_number'] = make_reference_id(order)
+        data['decision'] = 'ACCEPT'
+
+        with patch('ecommerce.views.IsSignedByCyberSource.has_permission', return_value=True), patch(
+            'ecommerce.views.enroll_user', side_effect=KeyError
+        ):
+            with self.assertRaises(KeyError):
+                self.client.post(reverse('order-fulfillment'), data=data)
 
         assert Order.objects.count() == 1
         assert Order.objects.first().status == Order.FAILED
