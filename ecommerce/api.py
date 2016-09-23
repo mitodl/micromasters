@@ -239,11 +239,11 @@ def enroll_user_on_success(order):
     enrollments_client = EdxApi(user_social.extra_data, settings.EDXORG_BASE_URL).enrollments
 
     exceptions = []
-    enrollments = {}
+    enrollments = []
     for line in order.line_set.all():
         course_key = line.course_key
         try:
-            enrollments[course_key] = enrollments_client.create_audit_student_enrollment(course_key)
+            enrollments.append(enrollments_client.create_audit_student_enrollment(course_key))
         except Exception as ex:  # pylint: disable=broad-except
             log.error(
                 "Error creating audit enrollment for course key %s for user %s",
