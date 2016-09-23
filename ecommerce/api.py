@@ -256,5 +256,5 @@ def enroll_user(order):
     for enrollment in enrollments():
         update_cached_enrollment(order.user, enrollment, now)
 
-    if len(exceptions) > 0:
+    if exceptions:
         raise EcommerceEdxApiException(exceptions)
