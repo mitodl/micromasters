@@ -297,9 +297,11 @@ class EnrollUserTests(ESTestCase):
         Test that an enrollment is made for each course key attached to the order
         and that the CachedEnrollments are produced.
         """
-        fake_enrollment = Enrollment({"some": "text"})
+        def create_audit(course_key):
+            """Helper function to create a fake enrollment"""
+            return Enrollment({"course_details": {"course_id": "id"}})
 
-        create_audit_mock = MagicMock(return_value=fake_enrollment)
+        create_audit_mock = MagicMock(side_effect=create_audit)
         enrollments_mock = MagicMock(create_audit_student_enrollment=create_audit_mock)
         edx_api_mock = MagicMock(enrollments=enrollments_mock)
         with patch('ecommerce.api.EdxApi', return_value=edx_api_mock):
@@ -315,19 +317,17 @@ class EnrollUserTests(ESTestCase):
                 user=self.order.user,
                 course_run__edx_course_key=line.course_key,
             )
-            assert enrollment.data == fake_enrollment.json
+            assert enrollment.data == create_audit(line.course_key).json
 
     def test_failed(self):
         """
         Test that an exception is raised containing a list of exceptions of the failed enrollments
         """
-        fake_enrollment = Enrollment({"some": "text"})
-
         def create_audit(course_key):
             """Fail for first course key"""
             if course_key == self.line1.course_key:
                 raise Exception("fatal error {}".format(course_key))
-            return fake_enrollment
+            return Enrollment({"course_details": {"course_id": "id"}})
 
         create_audit_mock = MagicMock(side_effect=create_audit)
         enrollments_mock = MagicMock(create_audit_student_enrollment=create_audit_mock)
@@ -347,4 +347,4 @@ class EnrollUserTests(ESTestCase):
             user=self.order.user,
             course_run__edx_course_key=self.line2.course_key,
         )
-        assert enrollment.data == fake_enrollment.json
+        assert enrollment.data == create_audit(self.line1.course_key).json
