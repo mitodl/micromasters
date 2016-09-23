@@ -299,7 +299,7 @@ class EnrollUserTests(ESTestCase):
         """
         def create_audit(course_key):
             """Helper function to create a fake enrollment"""
-            return Enrollment({"course_details": {"course_id": "id"}})
+            return Enrollment({"course_details": {"course_id": course_key}})
 
         create_audit_mock = MagicMock(side_effect=create_audit)
         enrollments_mock = MagicMock(create_audit_student_enrollment=create_audit_mock)
@@ -327,7 +327,7 @@ class EnrollUserTests(ESTestCase):
             """Fail for first course key"""
             if course_key == self.line1.course_key:
                 raise Exception("fatal error {}".format(course_key))
-            return Enrollment({"course_details": {"course_id": "id"}})
+            return Enrollment({"course_details": {"course_id": course_key}})
 
         create_audit_mock = MagicMock(side_effect=create_audit)
         enrollments_mock = MagicMock(create_audit_student_enrollment=create_audit_mock)
