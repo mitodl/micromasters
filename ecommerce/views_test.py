@@ -121,7 +121,7 @@ class OrderFulfillmentViewTests(ESTestCase):
         data['decision'] = 'ACCEPT'
 
         with patch('ecommerce.views.IsSignedByCyberSource.has_permission', return_value=True), patch(
-            'ecommerce.views.enroll_user'
+            'ecommerce.views.enroll_user_on_success'
         ) as enroll_user:
             resp = self.client.post(reverse('order-fulfillment'), data=data)
 
@@ -170,7 +170,7 @@ class OrderFulfillmentViewTests(ESTestCase):
         data['decision'] = 'ACCEPT'
 
         with patch('ecommerce.views.IsSignedByCyberSource.has_permission', return_value=True), patch(
-            'ecommerce.views.enroll_user', side_effect=KeyError
+            'ecommerce.views.enroll_user_on_success', side_effect=KeyError
         ):
             with self.assertRaises(KeyError):
                 self.client.post(reverse('order-fulfillment'), data=data)
