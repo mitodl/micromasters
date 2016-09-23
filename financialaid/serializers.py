@@ -33,7 +33,7 @@ from financialaid.models import (
     FinancialAidStatus,
     TierProgram
 )
-from mail.views import FinancialAidMailView
+from mail.api import MailgunClient
 
 
 class FinancialAidRequestSerializer(serializers.Serializer):
@@ -133,27 +133,25 @@ class FinancialAidActionSerializer(serializers.Serializer):
         if self.instance.status == FinancialAidStatus.APPROVED:
             self.instance.tier_program = tier_program
             email_data = {
-                "email_subject": FINANCIAL_AID_APPROVAL_SUBJECT_TEXT,
-                "email_body": FINANCIAL_AID_APPROVAL_MESSAGE_BODY,
-                "email_recipient": self.instance.user.email
+                "subject": FINANCIAL_AID_APPROVAL_SUBJECT_TEXT,
+                "body": FINANCIAL_AID_APPROVAL_MESSAGE_BODY,
+                "recipient": self.instance.user.email
             }
         elif self.instance.status == FinancialAidStatus.REJECTED:
             self.instance.tier_program = get_no_discount_tier_program(self.instance.tier_program.program_id)
             email_data = {
-                "email_subject": FINANCIAL_AID_REJECTION_SUBJECT_TEXT,
-                "email_body": FINANCIAL_AID_REJECTION_MESSAGE_BODY,
-                "email_recipient": self.instance.user.email
+                "subject": FINANCIAL_AID_REJECTION_SUBJECT_TEXT,
+                "body": FINANCIAL_AID_REJECTION_MESSAGE_BODY,
+                "recipient": self.instance.user.email
             }
         elif self.instance.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL:
             email_data = {
-                "email_subject": FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT,
-                "email_body": FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY,
-                "email_recipient": self.instance.user.email
+                "subject": FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT,
+                "body": FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY,
+                "recipient": self.instance.user.email
             }
-        else:
-            raise Exception("Error in ")
         self.instance.save()
         # Send email notification
-        FinancialAidMailView().post(self.context["request"], **email_data)
+        MailgunClient.send_financial_aid_email(**email_data)
 
         return self.instance

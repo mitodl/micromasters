@@ -35,12 +35,12 @@ def determine_auto_approval(financial_aid):
     return financial_aid.income_usd > income_threshold or income_threshold == 0
 
 
-def get_no_discount_tier_program(program):
+def get_no_discount_tier_program(program_id):
     """
     Takes a program_id and returns the no discount TierProgram for that Program
     Args:
-        program (Program): the id of the Program object
+        program_id (int): the id of the Program object
     Returns:
         TierProgram: the no discount TierProgram program associated with the Program
     """
-    return TierProgram.objects.get(program=program, discount_amount=0)
+    return TierProgram.objects.get(program_id=program_id, current=True, discount_amount=0)

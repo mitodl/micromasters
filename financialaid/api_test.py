@@ -1,6 +1,8 @@
 """
-Tests for financialaid api
+Tests for financial aid api
 """
+import json
+
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 
@@ -23,7 +25,7 @@ from search.base import ESTestCase
 
 class FinancialAidBaseTestCase(ESTestCase):
     """
-    Base test case for financialaid test setup
+    Base test case for financial aid test setup
     """
     @classmethod
     def setUpTestData(cls):
@@ -75,6 +77,26 @@ class FinancialAidBaseTestCase(ESTestCase):
             program=cls.program,
             role=Instructor.ROLE_ID
         )
+
+    @staticmethod
+    def assert_http_status(method, url, status, data=None, content_type="application/json", **kwargs):
+        """
+        Helper method for asserting an HTTP status. Returns the response for further tests if needed.
+        Args:
+            method (method): which http method to use (e.g. self.client.put)
+            url (str): url for request
+            status (int): http status code
+            data (dict): data for request
+            content_type (str): content_type for request
+            **kwargs: any additional kwargs to pass into method
+        Returns:
+            rest_framework.response.Response
+        """
+        if data is not None:
+            kwargs["data"] = json.dumps(data)
+        resp = method(url, content_type=content_type, **kwargs)
+        assert resp.status_code == status
+        return resp
 
 
 class FinancialAidAPITests(FinancialAidBaseTestCase):
