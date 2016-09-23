@@ -336,6 +336,7 @@ def format_courserun_for_dashboard(course_run, status_for_user, certificate=None
     return formatted_run
 
 
+@transaction.atomic
 def update_cached_enrollment(user, enrollment, course_id, now):
     """
     Updates the cached enrollment based on an Enrollment object
