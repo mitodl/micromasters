@@ -239,11 +239,11 @@ def enroll_user(order):
     enrollments_client = EdxApi(user_social.extra_data, settings.EDXORG_BASE_URL).enrollments
 
     exceptions = []
-    enrollments = {}
+    enrollments = []
     for line in order.line_set.all():
         course_key = line.course_key
         try:
-            enrollments[course_key] = enrollments_client.create_audit_student_enrollment(course_key)
+            enrollments.append(enrollments_client.create_audit_student_enrollment(course_key))
         except Exception as ex:  # pylint: disable=broad-except
             log.error(
                 "Error creating audit enrollment for course key %s for user %s",
@@ -253,8 +253,8 @@ def enroll_user(order):
             exceptions.append(ex)
 
     now = datetime.now(pytz.UTC)
-    for course_key, enrollment in enrollments.items():
-        update_cached_enrollment(order.user, enrollment, course_key, now)
+    for enrollment in enrollments():
+        update_cached_enrollment(order.user, enrollment, now)
 
     if len(exceptions) > 0:
         raise EcommerceEdxApiException(exceptions)
