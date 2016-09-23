@@ -134,8 +134,8 @@ class FinancialAid(TimestampedModel):
         Override save to make sure only one FinancialAid object exists for a User and the associated Program
         """
         if self.__class__.objects.filter(
-            user=self.user,
-            tier_program__program=self.tier_program.program
+                user=self.user,
+                tier_program__program=self.tier_program.program
         ).exclude(id=self.id).exists():
             raise Exception("Cannot have multiple FinancialAid objects for the same User and Program.")
         super().save(*args, **kwargs)
