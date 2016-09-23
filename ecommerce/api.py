@@ -253,7 +253,7 @@ def enroll_user_on_success(order):
             exceptions.append(ex)
 
     now = datetime.now(pytz.UTC)
-    for enrollment in enrollments():
+    for enrollment in enrollments:
         update_cached_enrollment(order.user, enrollment, now)
 
     if exceptions:
