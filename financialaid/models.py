@@ -3,6 +3,7 @@ Models for the Financial Aid App
 """
 import datetime
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import (
     models,
     transaction,
@@ -137,7 +138,7 @@ class FinancialAid(TimestampedModel):
                 user=self.user,
                 tier_program__program=self.tier_program.program
         ).exclude(id=self.id).exists():
-            raise Exception("Cannot have multiple FinancialAid objects for the same User and Program.")
+            raise ValidationError("Cannot have multiple FinancialAid objects for the same User and Program.")
         super().save(*args, **kwargs)
 
 
