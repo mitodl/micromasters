@@ -225,7 +225,7 @@ def get_new_order_by_reference_number(reference_number):
         raise EcommerceException("Order {} is expected to have status 'created'".format(order_id))
 
 
-def enroll_user(order):
+def enroll_user_on_success(order):
     """
     Enroll user after they made a successful purchase.
 

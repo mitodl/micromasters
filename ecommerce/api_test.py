@@ -21,7 +21,7 @@ from courses.factories import CourseRunFactory
 from dashboard.models import CachedEnrollment
 from ecommerce.api import (
     create_unfulfilled_order,
-    enroll_user,
+    enroll_user_on_success,
     generate_cybersource_sa_payload,
     generate_cybersource_sa_signature,
     get_purchasable_course_run,
@@ -303,7 +303,7 @@ class EnrollUserTests(ESTestCase):
         enrollments_mock = MagicMock(create_audit_student_enrollment=create_audit_mock)
         edx_api_mock = MagicMock(enrollments=enrollments_mock)
         with patch('ecommerce.api.EdxApi', return_value=edx_api_mock):
-            enroll_user(self.order)
+            enroll_user_on_success(self.order)
 
         assert len(create_audit_mock.call_args_list) == self.order.line_set.count()
         for i, line in enumerate(self.order.line_set.all()):
@@ -334,7 +334,7 @@ class EnrollUserTests(ESTestCase):
         edx_api_mock = MagicMock(enrollments=enrollments_mock)
         with patch('ecommerce.api.EdxApi', return_value=edx_api_mock):
             with self.assertRaises(EcommerceEdxApiException) as ex:
-                enroll_user(self.order)
+                enroll_user_on_success(self.order)
             assert len(ex.exception.args[0]) == 1
             assert ex.exception.args[0][0].args[0] == 'fatal error {}'.format(self.line1.course_key)
 

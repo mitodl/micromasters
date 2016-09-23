@@ -10,7 +10,7 @@ from rest_framework.response import Response
 
 from ecommerce.api import (
     create_unfulfilled_order,
-    enroll_user,
+    enroll_user_on_success,
     generate_cybersource_sa_payload,
     get_new_order_by_reference_number,
 )
@@ -80,7 +80,7 @@ class OrderFulfillmentView(APIView):
             else:
                 # Do the verified enrollment with edX here
                 order.status = Order.FULFILLED
-                enroll_user(order)
+                enroll_user_on_success(order)
             order.save()
         except:
             order.status = Order.FAILED
