@@ -234,9 +234,3 @@ class FinancialAidActionView(UpdateAPIView):
     lookup_field = "id"
     lookup_url_kwarg = "financial_aid_id"
     queryset = FinancialAid.objects.all()
-
-    def post(self, request, *args, **kwargs):
-        """
-        Post request for FinancialAidActionView
-        """
-        return self.put(request, *args, **kwargs)

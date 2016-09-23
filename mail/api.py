@@ -119,7 +119,7 @@ class MailgunClient:
             body (str): email body
             recipient (str): email recipient
         Returns:
-            (requests.Response): response from Mailgun
+            requests.Response: response from Mailgun
         """
         # Since .send_batch() returns a list, we need to return the first in the list
         responses = cls.send_batch(subject, body, [recipient])

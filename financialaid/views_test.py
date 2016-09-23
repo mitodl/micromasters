@@ -1,6 +1,8 @@
 """
 Tests for financialaid view
 """
+import json
+
 from datetime import (
     datetime,
     timedelta
@@ -8,7 +10,6 @@ from datetime import (
 from unittest.mock import Mock, patch
 
 from django.core.urlresolvers import reverse
-
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.test import APIClient
@@ -24,7 +25,7 @@ from financialaid.constants import (
     FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT,
     FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY
 )
-from financialaid.factories import FinancialAidFactory
+from financialaid.factories import FinancialAidFactory, TierProgramFactory
 from financialaid.models import (
     FinancialAid,
     FinancialAidStatus
@@ -71,7 +72,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         Tests FinancialAidRequestView post endpoint for not-auto-approval
         """
         assert FinancialAid.objects.count() == 0
-        resp = self.client.post(self.financial_aid_request_url, self.income_data, format='json')
+        resp = self.client.post(self.financial_aid_request_url, self.income_data, format="json")
         assert resp.status_code == status.HTTP_201_CREATED
         assert FinancialAid.objects.count() == 1
         financial_aid = FinancialAid.objects.first()
@@ -84,7 +85,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         """
         assert FinancialAid.objects.count() == 0
         self.income_data["original_income"] = 200000
-        resp = self.client.post(self.financial_aid_request_url, self.income_data, format='json')
+        resp = self.client.post(self.financial_aid_request_url, self.income_data, format="json")
         assert resp.status_code == status.HTTP_201_CREATED
         assert FinancialAid.objects.count() == 1
         financial_aid = FinancialAid.objects.first()
@@ -247,7 +248,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         assert resp.status_code == status.HTTP_200_OK
 
 
-@patch('mail.views.MailgunClient')  # pylint: disable=missing-docstring
+@patch("mail.views.MailgunClient")  # pylint: disable=missing-docstring
 class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
     """
     Tests for financialaid views
@@ -255,7 +256,6 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        # Other items
         cls.financialaid = FinancialAidFactory.create(
             user=cls.profile.user,
             tier_program=cls.tier_programs["15k"],
@@ -272,27 +272,139 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
             "tier_program_id": self.financialaid.tier_program.id
         }
 
-    def test_financial_aid_action_view_not_allowed(self, *args):  # pylint: disable=unused-argument
+    def test_not_allowed(self, *args):  # pylint: disable=unused-argument
         """
         Tests FinancialAidActionView that are not allowed
         """
         # Not allowed for default logged-in user
-        resp = self.client.post(self.action_url, data=self.financial_review_data)
+        resp = self.client.put(
+            self.action_url,
+            data=json.dumps(self.financial_review_data),
+            content_type="application/json"
+        )
         assert resp.status_code == status.HTTP_403_FORBIDDEN
         # Not allowed for staff of different program
         self.client.force_login(self.staff_user_profile2.user)
-        resp = self.client.post(self.action_url, data=self.financial_review_data)
+        resp = self.client.put(
+            self.action_url,
+            data=json.dumps(self.financial_review_data),
+            content_type="application/json"
+        )
         assert resp.status_code == status.HTTP_403_FORBIDDEN
         # Not allowed for instructors (regardless of program)
         self.client.force_login(self.instructor_user_profile.user)
-        resp = self.client.post(self.action_url, data=self.financial_review_data)
+        resp = self.client.put(
+            self.action_url,
+            data=json.dumps(self.financial_review_data),
+            content_type="application/json"
+        )
         assert resp.status_code == status.HTTP_403_FORBIDDEN
         # Not allowed for logged-out user
         self.client.logout()
-        resp = self.client.post(self.action_url, data=self.financial_review_data)
+        resp = self.client.put(
+            self.action_url,
+            data=json.dumps(self.financial_review_data),
+            content_type="application/json"
+        )
         assert resp.status_code == status.HTTP_403_FORBIDDEN
 
-    def test_financial_aid_action_view_with_approval(self, mock_mailgun_client):
+    def test_invalid_action(self, *args):  # pylint: disable=unused-argument
+        """
+        Tests FinancialAidActionView when invalid action is posted
+        """
+        # Invalid action
+        self.client.force_login(self.staff_user_profile.user)
+        self.financial_review_data["action"] = FinancialAidStatus.PENDING_DOCS
+        resp = self.client.put(
+            self.action_url,
+            data=json.dumps(self.financial_review_data),
+            content_type="application/json"
+        )
+        assert resp.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_invalid_tier_program(self, *args):  # pylint: disable=unused-argument
+        """
+        Tests FinancialAidActionView when invalid tier_program is posted
+        """
+        # Not current
+        self.client.force_login(self.staff_user_profile.user)
+        self.financial_review_data["action"] = FinancialAidStatus.APPROVED
+        self.financial_review_data["tier_program_id"] = self.tier_programs["150k_not_current"].id
+        resp = self.client.put(
+            self.action_url,
+            data=json.dumps(self.financial_review_data),
+            content_type="application/json"
+        )
+        assert resp.status_code == status.HTTP_400_BAD_REQUEST
+        # Not part of the same program
+        new_tier_program = TierProgramFactory.create()  # Will be part of a different program
+        self.financial_review_data["tier_program_id"] = new_tier_program.id
+        resp = self.client.put(
+            self.action_url,
+            data=json.dumps(self.financial_review_data),
+            content_type="application/json"
+        )
+        assert resp.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_reject_invalid_status(self, *args):  # pylint: disable=unused-argument
+        """
+        Tests FinancialAidActionView when trying to reject a FinancialAid that isn't pending manual approval
+        """
+        # FinancialAid object that cannot be rejected
+        self.client.force_login(self.staff_user_profile.user)
+        self.financialaid.status = FinancialAidStatus.PENDING_DOCS
+        self.financialaid.save()
+        self.financial_review_data["action"] = FinancialAidStatus.REJECTED
+        self.financial_review_data["tier_program_id"] = self.tier_programs["15k"].id
+        resp = self.client.put(
+            self.action_url,
+            data=json.dumps(self.financial_review_data),
+            content_type="application/json"
+        )
+        assert resp.status_code == status.HTTP_400_BAD_REQUEST
+        # Reset FinancialAid object
+        self.financialaid.status = FinancialAidStatus.PENDING_MANUAL_APPROVAL
+        self.financialaid.save()
+
+    def test_approve_invalid_status(self, *args):  # pylint: disable=unused-argument
+        """
+        Tests FinancialAidActionView when trying to approve a FinancialAid that isn't pending manual approval
+        """
+        # FinancialAid object that cannot be approved
+        self.client.force_login(self.staff_user_profile.user)
+        self.financialaid.status = FinancialAidStatus.PENDING_DOCS
+        self.financialaid.save()
+        self.financial_review_data["action"] = FinancialAidStatus.APPROVED
+        resp = self.client.put(
+            self.action_url,
+            data=json.dumps(self.financial_review_data),
+            content_type="application/json"
+        )
+        assert resp.status_code == status.HTTP_400_BAD_REQUEST
+        # Reset FinancialAid object
+        self.financialaid.status = FinancialAidStatus.PENDING_MANUAL_APPROVAL
+        self.financialaid.save()
+
+    def test_mark_documents_received_invalid_status(self, *args):  # pylint: disable=unused-argument
+        """
+        Tests FinancialAidActionView when trying to approve a FinancialAid that isn't pending docs
+        """
+        # FinancialAid object whose documents cannot received
+        self.client.force_login(self.staff_user_profile.user)
+        self.financialaid.status = FinancialAidStatus.REJECTED
+        self.financialaid.save()
+        self.financial_review_data["action"] = FinancialAidStatus.PENDING_MANUAL_APPROVAL
+        resp = self.client.put(
+            self.action_url,
+            data=json.dumps(self.financial_review_data),
+            content_type="application/json"
+        )
+        assert resp.status_code == status.HTTP_400_BAD_REQUEST
+        # Reset FinancialAid object
+        self.financialaid.status = FinancialAidStatus.PENDING_MANUAL_APPROVAL
+        self.financialaid.save()
+
+    def test_approval(self, mock_mailgun_client):
         """
         Tests FinancialAidActionView when application is approved
         """
@@ -301,35 +413,55 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
             status_code=status.HTTP_200_OK,
             json=mocked_json()
         )
-        # Application is approved for the tier program in the financial aid object
         self.client.force_login(self.staff_user_profile.user)
-        resp = self.client.post(self.action_url, data=self.financial_review_data)
+        # Application is approved for the tier program in the financial aid object
+        resp = self.client.put(
+            self.action_url,
+            data=json.dumps(self.financial_review_data),
+            content_type="application/json"
+        )
         assert resp.status_code == status.HTTP_200_OK
         financialaid = FinancialAid.objects.get(id=self.financialaid.id)
         assert financialaid.tier_program == self.tier_programs["15k"]
         assert financialaid.status == FinancialAidStatus.APPROVED
         assert mock_mailgun_client.send_individual_email.called
         _, called_kwargs = mock_mailgun_client.send_individual_email.call_args
-        assert called_kwargs['subject'] == FINANCIAL_AID_APPROVAL_SUBJECT_TEXT
-        assert called_kwargs['body'] == FINANCIAL_AID_APPROVAL_MESSAGE_BODY
-        assert called_kwargs['recipient'] == self.profile.user.email
+        assert called_kwargs["subject"] == FINANCIAL_AID_APPROVAL_SUBJECT_TEXT
+        assert called_kwargs["body"] == FINANCIAL_AID_APPROVAL_MESSAGE_BODY
+        assert called_kwargs["recipient"] == self.profile.user.email
+
+    def test_approval_different_tier_program(self, mock_mailgun_client):
+        """
+        Tests FinancialAidActionView when application is approved for a different tier program
+        """
+        mock_mailgun_client.send_individual_email.return_value = Mock(
+            spec=Response,
+            status_code=status.HTTP_200_OK,
+            json=mocked_json()
+        )
+        self.client.force_login(self.staff_user_profile.user)
         # Application is approved for a different tier program
-        financialaid.status = FinancialAidStatus.PENDING_MANUAL_APPROVAL
-        financialaid.save()
         self.financial_review_data["tier_program_id"] = self.tier_programs["50k"].id
-        resp = self.client.post(self.action_url, data=self.financial_review_data)
+        resp = self.client.put(
+            self.action_url,
+            data=json.dumps(self.financial_review_data),
+            content_type="application/json"
+        )
+        from pprint import pprint
+        pprint(resp.data)
+        pprint(vars(resp))
         # Re-retrieve financialaid object
-        financialaid = FinancialAid.objects.get(id=self.financialaid.id)
         assert resp.status_code == status.HTTP_200_OK
+        financialaid = FinancialAid.objects.get(id=self.financialaid.id)
         assert financialaid.tier_program == self.tier_programs["50k"]
         assert financialaid.status == FinancialAidStatus.APPROVED
         assert mock_mailgun_client.send_individual_email.called
         _, called_kwargs = mock_mailgun_client.send_individual_email.call_args
-        assert called_kwargs['subject'] == FINANCIAL_AID_APPROVAL_SUBJECT_TEXT
-        assert called_kwargs['body'] == FINANCIAL_AID_APPROVAL_MESSAGE_BODY
-        assert called_kwargs['recipient'] == self.profile.user.email
+        assert called_kwargs["subject"] == FINANCIAL_AID_APPROVAL_SUBJECT_TEXT
+        assert called_kwargs["body"] == FINANCIAL_AID_APPROVAL_MESSAGE_BODY
+        assert called_kwargs["recipient"] == self.profile.user.email
 
-    def test_financial_aid_action_view_with_rejection(self, mock_mailgun_client):
+    def test_rejection(self, mock_mailgun_client):
         """
         Tests FinancialAidActionView when application is rejected
         """
@@ -340,50 +472,22 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         )
         self.financial_review_data["action"] = FinancialAidStatus.REJECTED
         self.client.force_login(self.staff_user_profile.user)
-        resp = self.client.post(self.action_url, data=self.financial_review_data)
+        resp = self.client.put(
+            self.action_url,
+            data=json.dumps(self.financial_review_data),
+            content_type="application/json"
+        )
         assert resp.status_code == status.HTTP_200_OK
         financialaid = FinancialAid.objects.get(id=self.financialaid.id)
         assert financialaid.tier_program == self.tier_programs["100k"]
         assert financialaid.status == FinancialAidStatus.REJECTED
         assert mock_mailgun_client.send_individual_email.called
         _, called_kwargs = mock_mailgun_client.send_individual_email.call_args
-        assert called_kwargs['subject'] == FINANCIAL_AID_REJECTION_SUBJECT_TEXT
-        assert called_kwargs['body'] == FINANCIAL_AID_REJECTION_MESSAGE_BODY
-        assert called_kwargs['recipient'] == self.profile.user.email
+        assert called_kwargs["subject"] == FINANCIAL_AID_REJECTION_SUBJECT_TEXT
+        assert called_kwargs["body"] == FINANCIAL_AID_REJECTION_MESSAGE_BODY
+        assert called_kwargs["recipient"] == self.profile.user.email
 
-    def test_financial_aid_action_view_with_invalid_data(self, *args):  # pylint: disable=unused-argument
-        """
-        Tests FinancialAidActionView when invalid data is posted
-        """
-        # Invalid action
-        self.financial_review_data["action"] = FinancialAidStatus.PENDING_DOCS
-        self.client.force_login(self.staff_user_profile.user)
-        resp = self.client.post(self.action_url, data=self.financial_review_data)
-        assert resp.status_code == status.HTTP_400_BAD_REQUEST
-        # Invalid tier
-        self.financial_review_data["action"] = FinancialAidStatus.APPROVED
-        self.financial_review_data["tier_program_id"] = self.tier_programs["150k_not_current"]
-        resp = self.client.post(self.action_url, data=self.financial_review_data)
-        assert resp.status_code == status.HTTP_400_BAD_REQUEST
-        # FinancialAid object that cannot be rejected
-        self.financialaid.status = FinancialAidStatus.PENDING_DOCS
-        self.financialaid.save()
-        self.financial_review_data["action"] = FinancialAidStatus.REJECTED
-        self.financial_review_data["tier_program_id"] = self.tier_programs["15k"]
-        resp = self.client.post(self.action_url, data=self.financial_review_data)
-        assert resp.status_code == status.HTTP_400_BAD_REQUEST
-        # FinancialAid object that cannot be approved
-        self.financial_review_data["action"] = FinancialAidStatus.APPROVED
-        resp = self.client.post(self.action_url, data=self.financial_review_data)
-        assert resp.status_code == status.HTTP_400_BAD_REQUEST
-        # FinancialAid object whose documents cannot received
-        self.financialaid.status = FinancialAidStatus.REJECTED
-        self.financialaid.save()
-        self.financial_review_data["action"] = FinancialAidStatus.PENDING_MANUAL_APPROVAL
-        resp = self.client.post(self.action_url, data=self.financial_review_data)
-        assert resp.status_code == status.HTTP_400_BAD_REQUEST
-
-    def test_financial_aid_action_view_documents(self, mock_mailgun_client):  # pylint: disable=unused-argument
+    def test_mark_documents_received(self, mock_mailgun_client):
         """
         Tests FinancialAidActionView when documents are checked as received
         """
@@ -398,7 +502,11 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         # Set action to pending manual approval
         self.financial_review_data["action"] = FinancialAidStatus.PENDING_MANUAL_APPROVAL
         self.client.force_login(self.staff_user_profile.user)
-        resp = self.client.post(self.action_url, data=self.financial_review_data)
+        resp = self.client.put(
+            self.action_url,
+            data=json.dumps(self.financial_review_data),
+            content_type="application/json"
+        )
         assert resp.status_code == status.HTTP_200_OK
         financialaid = FinancialAid.objects.get(id=self.financialaid.id)
         # Check that the tier does not change:
@@ -406,6 +514,9 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         assert financialaid.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL
         assert mock_mailgun_client.send_individual_email.called
         _, called_kwargs = mock_mailgun_client.send_individual_email.call_args
-        assert called_kwargs['subject'] == FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT
-        assert called_kwargs['body'] == FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY
-        assert called_kwargs['recipient'] == self.profile.user.email
+        assert called_kwargs["subject"] == FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT
+        assert called_kwargs["body"] == FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY
+        assert called_kwargs["recipient"] == self.profile.user.email
+        # Reset FinancialAid object
+        self.financialaid.status = FinancialAidStatus.PENDING_MANUAL_APPROVAL
+        self.financialaid.save()
