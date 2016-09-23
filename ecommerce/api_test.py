@@ -347,4 +347,4 @@ class EnrollUserTests(ESTestCase):
             user=self.order.user,
             course_run__edx_course_key=self.line2.course_key,
         )
-        assert enrollment.data == create_audit(self.line1.course_key).json
+        assert enrollment.data == create_audit(self.line2.course_key).json
