@@ -337,7 +337,7 @@ def format_courserun_for_dashboard(course_run, status_for_user, certificate=None
 
 
 @transaction.atomic
-def update_cached_enrollment(user, enrollment, now):
+def update_cached_enrollment(user, enrollment, course_id, now):
     """
     Updates the cached enrollment based on an Enrollment object
 
@@ -345,6 +345,7 @@ def update_cached_enrollment(user, enrollment, now):
         user (User): A user
         enrollment (Enrollment):
             An Enrollment object from edx_api_client
+        course_id (str): A course key
         now (datetime.datetime): The datetime value used as now
 
     Returns:
@@ -354,7 +355,7 @@ def update_cached_enrollment(user, enrollment, now):
     # None means we will cache the fact that the student
     # does not have an enrollment for the given course
     enrollment_data = enrollment.json if enrollment is not None else None
-    course_run = CourseRun.objects.get(edx_course_key=enrollment.course_id)
+    course_run = CourseRun.objects.get(edx_course_key=course_id)
     updated_values = {
         'user': user,
         'course_run': course_run,
@@ -430,7 +431,7 @@ def get_student_enrollments(user, edx_client):
     with transaction.atomic():
         for course_id in course_ids:
             enrollment = enrollments.get_enrollment_for_course(course_id)
-            update_cached_enrollment(user, enrollment, now)
+            update_cached_enrollment(user, enrollment, course_id, now)
 
     return enrollments
 
