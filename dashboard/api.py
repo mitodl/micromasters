@@ -350,7 +350,7 @@ def update_cached_enrollment(user, enrollment, now):
     Returns:
         None
     """
-    # get the certificate data or None
+    # get the enrollment data or None
     # None means we will cache the fact that the student
     # does not have an enrollment for the given course
     enrollment_data = enrollment.json if enrollment is not None else None
