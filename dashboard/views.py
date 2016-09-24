@@ -20,7 +20,7 @@ from courses.models import (
     Program,
 )
 from dashboard.api import (
-    get_info_for_program,
+    get_formatted_program,
     get_student_certificates,
     get_student_current_grades,
     get_student_enrollments,
@@ -63,5 +63,5 @@ class UserDashboard(APIView):
 
         response_data = []
         for program in Program.objects.filter(live=True):
-            response_data.append(get_info_for_program(program, enrollments, certificates))
+            response_data.append(get_formatted_program(program, enrollments, certificates))
         return Response(response_data)

@@ -14,8 +14,8 @@ import {
   DASHBOARD_FORMAT,
   STATUS_PASSED,
   STATUS_NOT_PASSED,
-  STATUS_ENROLLED,
-  STATUS_VERIFIED,
+  STATUS_CAN_UPGRADE,
+  STATUS_CURRENTLY_ENROLLED,
   STATUS_OFFERED,
   ALL_COURSE_STATUSES,
 } from '../../constants';
@@ -84,7 +84,7 @@ describe('CourseDescription', () => {
   it(`does show date with status verified`, () => {
     let course = findCourse(course => (
       course.runs.length > 0 &&
-      course.runs[0].status === STATUS_VERIFIED
+      course.runs[0].status === STATUS_CURRENTLY_ENROLLED
     ));
     const wrapper = shallow(<CourseDescription course={course} />);
     let firstRun = course.runs[0];
@@ -97,7 +97,7 @@ describe('CourseDescription', () => {
   it(`does show date with status enrolled`, () => {
     let course = findCourse(course => (
       course.runs.length > 0 &&
-      course.runs[0].status === STATUS_ENROLLED
+      course.runs[0].status === STATUS_CAN_UPGRADE
     ));
     const wrapper = shallow(<CourseDescription course={course} />);
     let firstRun = course.runs[0];

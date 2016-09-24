@@ -32,33 +32,23 @@ REFRESH_GRADES_CACHE_HOURS = 1
 REFRESH_ENROLLMENT_CACHE_MINUTES = 5
 
 
-class CourseStatus:
+class RunStatus:
     """
-    Possible statuses for a course for a user. These are the course run statuses used in the dashboard API.
+    Possible statuses for a course run for a user
     """
+    CURRENTLY_ENROLLED = 'currently-enrolled'
     PASSED = 'passed'
+    WILL_ATTEND = 'will-attend'
+    CAN_UPGRADE = 'can-upgrade'
     NOT_PASSED = 'not-passed'
-    CURRENT_GRADE = 'verified'
-    UPGRADE = 'enrolled'
+    NOT_ACTIONABLE = 'not-actionable'
     OFFERED = 'offered'
 
     @classmethod
     def all_statuses(cls):
-        """Helper to get all the statuses"""
-        return [cls.PASSED, cls.NOT_PASSED, cls.CURRENT_GRADE,
-                cls.UPGRADE, cls.OFFERED]
-
-
-class CourseRunStatus:
-    """
-    Possible statuses for a course run for a user. These are used internally.
-    """
-    NOT_ENROLLED = 'not-enrolled'
-    GRADE = 'grade'
-    READ_CERT = 'read-cert'
-    WILL_ATTEND = 'will-attend'
-    UPGRADE = 'upgrade'
-    NOT_PASSED = 'not-passed'
+        """Helper to get all status values"""
+        return {cls.CURRENTLY_ENROLLED, cls.PASSED, cls.WILL_ATTEND, cls.CAN_UPGRADE,
+                cls.NOT_PASSED, cls.NOT_ACTIONABLE, cls.OFFERED}
 
 
 class CourseFormatConditionalFields:
@@ -73,7 +63,7 @@ class CourseFormatConditionalFields:
     to a course run and the new name they need to have.
     """
     ASSOCIATED_FIELDS = {
-        CourseStatus.OFFERED: [
+        RunStatus.OFFERED: [
             {
                 'course_run_field': 'enrollment_start',
                 'format_field': 'enrollment_start_date'
@@ -83,7 +73,7 @@ class CourseFormatConditionalFields:
                 'format_field': 'fuzzy_enrollment_start_date'
             },
         ],
-        CourseStatus.CURRENT_GRADE: [
+        RunStatus.CURRENTLY_ENROLLED: [
             {
                 'course_run_field': 'start_date',
                 'format_field': 'course_start_date'
@@ -96,20 +86,19 @@ class CourseFormatConditionalFields:
         """
         Method to get from the ASSOCIATED_FIELDS dict
         """
-        if course_status not in CourseStatus.all_statuses():
-            raise ImproperlyConfigured(
-                '{} not defined in Courses.api.CourseStatus'.format(course_status))
+        if course_status not in RunStatus.all_statuses():
+            raise ImproperlyConfigured('{} not defined in Courses.api.CourseStatus'.format(course_status))
         return cls.ASSOCIATED_FIELDS.get(course_status, [])
 
 
-class CourseRunUserStatus:
+class UserCourseRun:
     """
-    Representation of a course run status for a specific user
+    Representation of a course run for a specific user
     """
-    def __init__(self, status, course_run=None, enrollment_for_course=None):
-        self.status = status
+    def __init__(self, course_run, status, certificate=None):
         self.course_run = course_run
-        self.enrollment_for_course = enrollment_for_course
+        self.status = status
+        self.certificate = certificate
 
     def __repr__(self):
         return "<CourseRunUserStatus for course {course} status {status} at {address}>".format(
@@ -119,7 +108,7 @@ class CourseRunUserStatus:
         )
 
 
-def get_info_for_program(program, enrollments, certificates):
+def get_formatted_program(program, enrollments, certificates):
     """
     Helper function that formats a program with all the courses and runs
 
@@ -141,25 +130,13 @@ def get_info_for_program(program, enrollments, certificates):
     }
     for course in program.course_set.all():
         data['courses'].append(
-            get_info_for_course(course, enrollments, certificates)
+            get_formatted_course(course, enrollments, certificates)
         )
     data['courses'].sort(key=lambda x: x['position_in_program'])
     return data
 
 
-def _add_run(course_data, run, status, certificate=None):
-    """Helper function to add a course run to the status dictionary"""
-    course_data['runs'].append(
-        format_courserun_for_dashboard(
-            run,
-            status,
-            certificate=certificate,
-            position=len(course_data['runs']) + 1
-        )
-    )
-
-
-def get_info_for_course(course, user_enrollments, user_certificates):
+def get_formatted_course(course, user_enrollments, user_certificates):
     """
     Checks the status of a course given the status of all its runs
 
@@ -172,7 +149,6 @@ def get_info_for_course(course, user_enrollments, user_certificates):
         dict: dictionary representing the course status for the user
     """
     # pylint: disable=too-many-statements
-    # data about the course to be returned anyway
     course_data = {
         "id": course.pk,
         "title": course.title,
@@ -184,110 +160,138 @@ def get_info_for_course(course, user_enrollments, user_certificates):
     with transaction.atomic():
         if not course.courserun_set.count():
             return course_data
-        # get all the run statuses
-        run_statuses = [get_status_for_courserun(course_run, user_enrollments)
-                        for course_run in course.courserun_set.all()]
-    # sort them by end date
-    run_statuses.sort(key=lambda x: x.course_run.end_date or
-                      datetime.datetime(datetime.MAXYEAR, 1, 1, tzinfo=pytz.utc), reverse=True)
-    # pick the first `not enrolled` or the first
-    for run_status in run_statuses:
-        if run_status.status != CourseRunStatus.NOT_ENROLLED:
-            break
-    else:
-        run_status = run_statuses[0]
-    # remove the picked run_status from the list
-    run_statuses.remove(run_status)
-
-    if run_status.status == CourseRunStatus.NOT_ENROLLED:
-        next_run = course.get_next_run()
-        if next_run is not None:
-            _add_run(course_data, next_run, CourseStatus.OFFERED)
-    elif run_status.status == CourseRunStatus.NOT_PASSED:
-        next_run = course.get_next_run()
-        if next_run is not None:
-            _add_run(course_data, next_run, CourseStatus.OFFERED)
-        if next_run is None or run_status.course_run.pk != next_run.pk:
-            _add_run(course_data, run_status.course_run, CourseStatus.NOT_PASSED)
-    elif run_status.status == CourseRunStatus.GRADE:
-        _add_run(course_data, run_status.course_run, CourseStatus.CURRENT_GRADE)
-    # check if we need to check the certificate
-    elif run_status.status == CourseRunStatus.READ_CERT:
-        # if there is no certificate for the user, the user never passed
-        # the course, so she needs to enroll in the next one
-        if not user_certificates.has_verified_cert(run_status.course_run.edx_course_key):
-            next_run = course.get_next_run()
-            if next_run is not None:
-                _add_run(course_data, next_run, CourseStatus.OFFERED)
-            # add the run of the status anyway if the next run is different from the one just added
-            if next_run is None or run_status.course_run.pk != next_run.pk:
-                _add_run(course_data, run_status.course_run, CourseStatus.NOT_PASSED)
-        else:
-            # pull the verified certificate for course
-            cert = user_certificates.get_verified_cert(run_status.course_run.edx_course_key)
-            _add_run(course_data, run_status.course_run, CourseStatus.PASSED, certificate=cert)
-    elif run_status.status == CourseRunStatus.WILL_ATTEND:
-        _add_run(course_data, run_status.course_run, CourseStatus.CURRENT_GRADE)
-    elif run_status.status == CourseRunStatus.UPGRADE:
-        _add_run(course_data, run_status.course_run, CourseStatus.UPGRADE)
-
-    # add all the other runs with status != NOT_ENROLLED
-    # the first one (or two in some cases) has been added with the logic before
-    for run_status in run_statuses:
-        if run_status.status != CourseRunStatus.NOT_ENROLLED:
-            if (run_status.status == CourseRunStatus.READ_CERT and
-                    user_certificates.has_verified_cert(run_status.course_run.edx_course_key)):
-                # in this case the user might have passed the course also in the past
-                cert = user_certificates.get_verified_cert(run_status.course_run.edx_course_key)
-                _add_run(course_data, run_status.course_run, CourseStatus.PASSED, certificate=cert)
-            else:
-                # any other status means that the student never passed the course run
-                _add_run(course_data, run_status.course_run, CourseStatus.NOT_PASSED)
-
+        enrolled_course_runs = get_sorted_enrolled_course_runs(course, user_enrollments)
+    runs_for_response = get_user_course_runs_for_response(
+        course,
+        enrolled_course_runs,
+        user_enrollments,
+        user_certificates
+    )
+    formatted_course_runs = [
+        format_courserun_for_dashboard(
+            user_course_run.course_run,
+            user_course_run.status,
+            certificate=user_course_run.certificate,
+            position=i+1
+        )
+        for i, user_course_run in enumerate(runs_for_response)
+    ]
+    course_data['runs'] = formatted_course_runs
     return course_data
 
 
-def get_status_for_courserun(course_run, user_enrollments):
+def get_sorted_enrolled_course_runs(course, user_enrollments):
     """
-    Checks the status of a course run for a user given her enrollments
+    Gets a sorted list of course runs that the user has enrolled in
+
+    Args:
+        course (Course): a course object
+        user_enrollments (Enrollments): the user enrollments object
+
+    Returns:
+        list(CourseRun): sorted list of enrolled course runs
+    """
+    user_enrollments = user_enrollments or Enrollments({})
+    enrolled_edx_course_ids = user_enrollments.get_enrolled_course_ids()
+    enrolled_run_query = course.courserun_set.filter(edx_course_key__in=enrolled_edx_course_ids)
+    if not len(enrolled_edx_course_ids) or not enrolled_run_query.count():
+        return []
+    # Sort course runs by descending end_date, with null end_dates sorted before all others
+    return sorted(
+        enrolled_run_query.all(),
+        key=lambda course_run: course_run.end_date or datetime.datetime(datetime.MAXYEAR, 1, 1, tzinfo=pytz.utc),
+        reverse=True
+    )
+
+
+def get_user_course_runs_for_response(course, enrolled_course_runs, user_enrollments, user_certificates):
+    """
+    Gets all course runs with additional information (status, etc.) that will be returned in the
+    API response
+
+    Args:
+        course (Course): a course object
+        enrolled_course_runs (list(CourseRun)): an iterable of enrolled course runs
+        user_enrollments (Enrollments): the user enrollments object
+        user_certificates (Certificates): the user certificates object
+
+    Returns:
+        list(UserCourseRun): list of UserCourseRun objects
+    """
+    if not len(enrolled_course_runs):
+        next_run = course.get_next_run()
+        if next_run is not None:
+            return [UserCourseRun(next_run, RunStatus.OFFERED)]
+    runs = []
+    latest_course_run = enrolled_course_runs.pop(0)
+    status = get_course_run_status(latest_course_run, user_enrollments, user_certificates)
+    if status in {RunStatus.CURRENTLY_ENROLLED, RunStatus.CAN_UPGRADE}:
+        runs.append(UserCourseRun(latest_course_run, status))
+    elif status == RunStatus.WILL_ATTEND:
+        runs.append(UserCourseRun(latest_course_run, RunStatus.CURRENTLY_ENROLLED))
+    elif status == RunStatus.PASSED:
+        # pull the verified certificate for course
+        cert = user_certificates.get_verified_cert(latest_course_run.edx_course_key)
+        runs.append(UserCourseRun(latest_course_run, RunStatus.PASSED, certificate=cert))
+    elif status in {RunStatus.NOT_ACTIONABLE, RunStatus.NOT_PASSED}:
+        next_run = course.get_next_run()
+        if next_run is not None:
+            runs.append(UserCourseRun(next_run, RunStatus.OFFERED))
+        if next_run is None or latest_course_run.pk != next_run.pk:
+            runs.append(UserCourseRun(latest_course_run, RunStatus.NOT_PASSED))
+
+    # add all the other enrolled runs
+    for course_run in enrolled_course_runs:
+        status = get_course_run_status(course_run, user_enrollments, user_certificates)
+        if status == RunStatus.PASSED:
+            # in this case the user might have passed the course also in the past
+            cert = user_certificates.get_verified_cert(course_run.edx_course_key)
+            runs.append(UserCourseRun(course_run, RunStatus.PASSED, certificate=cert))
+        else:
+            # any other status means that the student never passed the course run
+            runs.append(UserCourseRun(course_run, RunStatus.NOT_PASSED))
+    return runs
+
+
+def get_course_run_status(course_run, user_enrollments, user_certificates):
+    """
+    Decides what status a course run is in
 
     Args:
         course_run (CourseRun): a course run
-        user_enrollments (Enrollments): the user enrollments
+        user_enrollments (Enrollments): the user enrollments object
+        user_certificates (Certificates): the user certificates object
 
     Returns:
-        CourseRunUserStatus: an object representing the run status for the user
+        string: a status
     """
-    if not user_enrollments.is_enrolled_in(course_run.edx_course_key):
-        return CourseRunUserStatus(CourseRunStatus.NOT_ENROLLED, course_run)
     course_enrollment = user_enrollments.get_enrollment_for_course(course_run.edx_course_key)
     status = None
     if course_enrollment.is_verified:
         if course_run.is_current:
-            status = CourseRunStatus.GRADE
+            status = RunStatus.CURRENTLY_ENROLLED
         elif course_run.is_past:
-            status = CourseRunStatus.READ_CERT
+            if user_certificates.has_verified_cert(course_run.edx_course_key):
+                status = RunStatus.PASSED
+            else:
+                status = RunStatus.NOT_PASSED
         elif course_run.is_future:
-            status = CourseRunStatus.WILL_ATTEND
+            status = RunStatus.WILL_ATTEND
     else:
         if (course_run.is_current or course_run.is_future) and course_run.is_upgradable:
-            status = CourseRunStatus.UPGRADE
+            status = RunStatus.CAN_UPGRADE
         else:
-            status = CourseRunStatus.NOT_PASSED
-    return CourseRunUserStatus(
-        status=status,
-        course_run=course_run,
-        enrollment_for_course=course_enrollment
-    )
+            status = RunStatus.NOT_ACTIONABLE
+    return status
 
 
-def format_courserun_for_dashboard(course_run, status_for_user, certificate=None, position=1):
+def format_courserun_for_dashboard(course_run, status, certificate=None, position=1):
     """
     Helper function that formats a course run adding informations to the fields coming from the DB
 
     Args:
         course_run (CourseRun): a course run
-        status_for_user (str): a string representing the status of a course for the user
+        status (str): a string representing the status of a course run for the user
         certificate (Certificate): an object representing the
             certificate of the user for this run
         position (int): The position of the course run within the list
@@ -295,13 +299,11 @@ def format_courserun_for_dashboard(course_run, status_for_user, certificate=None
     Returns:
         dict: a dictionary containing information about the course
     """
-    if course_run is None:
-        return
     formatted_run = {
         'id': course_run.id,
         'course_id': course_run.edx_course_key,
         'title': course_run.title,
-        'status': status_for_user,
+        'status': status,
         'position': position,
         'course_start_date': course_run.start_date,
         'course_end_date': course_run.end_date,
@@ -309,11 +311,11 @@ def format_courserun_for_dashboard(course_run, status_for_user, certificate=None
     }
 
     # check if there are extra fields to pull in
-    extra_fields = CourseFormatConditionalFields.get_assoc_field(status_for_user)
+    extra_fields = CourseFormatConditionalFields.get_assoc_field(status)
     for extra_field in extra_fields:
         formatted_run[extra_field['format_field']] = getattr(course_run, extra_field['course_run_field'])
 
-    if status_for_user == CourseStatus.PASSED:
+    if status == RunStatus.PASSED:
         if certificate is not None:
             # if the status is passed, pull the grade and the certificate url
             formatted_run['grade'] = certificate.grade
@@ -322,11 +324,11 @@ def format_courserun_for_dashboard(course_run, status_for_user, certificate=None
             # this should never happen, but just in case
             log.error('A valid certificate was expected')
 
-    if status_for_user == CourseStatus.CURRENT_GRADE:
+    if status == RunStatus.CURRENTLY_ENROLLED:
         # TODO: here goes the logic to pull the current grade  # pylint: disable=fixme
         pass
 
-    if status_for_user == CourseStatus.OFFERED or status_for_user == CourseStatus.UPGRADE:
+    if status == RunStatus.OFFERED or status == RunStatus.CAN_UPGRADE:
         try:
             course_price = CoursePrice.objects.get(course_run=course_run, is_valid=True)
             formatted_run['price'] = course_price.price

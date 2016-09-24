@@ -8,8 +8,8 @@ import type { Course, CourseRun } from '../../flow/programTypes';
 import {
   STATUS_NOT_PASSED,
   STATUS_PASSED,
-  STATUS_ENROLLED,
-  STATUS_VERIFIED,
+  STATUS_CAN_UPGRADE,
+  STATUS_CURRENTLY_ENROLLED,
   STATUS_OFFERED,
   DASHBOARD_FORMAT,
 } from '../../constants';
@@ -56,7 +56,7 @@ export default class CourseAction extends React.Component {
     case STATUS_PASSED:
       action = <i className="material-icons">done</i>;
       break;
-    case STATUS_ENROLLED: {
+    case STATUS_CAN_UPGRADE: {
       action = this.makeEnrollButton("Upgrade", firstRun, false);
       break;
     }
@@ -78,7 +78,7 @@ export default class CourseAction extends React.Component {
       break;
     }
     case STATUS_NOT_PASSED:
-    case STATUS_VERIFIED:
+    case STATUS_CURRENTLY_ENROLLED:
       // do nothing;
       break;
     default: {
