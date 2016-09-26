@@ -188,10 +188,24 @@
       background-repeat: no-repeat;
       background-position: top left;
       text-align: left;
+      position: relative;
 
       h4 {
         margin-top: 0;
         margin-bottom: 10px;
+      }
+
+      img {
+        max-width: 400px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1
+      }
+
+      h4, p {
+        position: relative;
+        z-index: 2;
       }
     }
 

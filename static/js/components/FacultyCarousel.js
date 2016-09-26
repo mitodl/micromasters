@@ -5,24 +5,29 @@ import Slider from 'react-slick';
 
 class FacultyTile extends React.Component {
   props: {
-    name:     string,
-    title:    string,
-    imageUrl: string,
-    bio:      string,
+    name:      string,
+    title:     string,
+    short_bio: string,
+    image:     Object,
   }
   render() {
-    const { name, title, bio, imageUrl } = this.props;
-    let nameStr;
+    const { name, title, short_bio, image } = this.props;
+    let nameStr, imageTag;
     if (title) {
       nameStr = `${name}, ${title}`;
     } else {
       nameStr = name;
     }
-    let style = {"backgroundImage": `url(${imageUrl})`};
+    if ( image && image.file ) {
+      imageTag = <img src={image.file} />;
+    } else {
+      imageTag = null;
+    }
     return (
-      <div className="faculty-tile" style={style}>
+      <div className="faculty-tile">
         <h4>{nameStr}</h4>
-        <p>{bio}</p>
+        {imageTag}
+        <p>{short_bio}</p>
       </div>
     );
   }

@@ -112,19 +112,6 @@
       {% endif %}
       <div id="faculty-carousel" class="single-column-wide">
         <!-- React-Slick carousel component injected here -->
-        <ul>
-          {% for faculty in page.faculty_members.all %}
-          <li>
-            {% image faculty.image max-400x300 as faculty_photo %}
-            <img class="faculty-photo" src="{{ faculty_photo.url }}" />
-            <p class="faculty-name">{{ faculty.name }}</p>
-            {% if faculty.title|length > 0 %}
-              <p class="faculty-title">{{ faculty.title }}</p>
-            {% endif %}
-            <p class="faculty-bio">{{ faculty.short_bio }}</p>
-          </li>
-          {% endfor %}
-        </ul>
       </div>
     </div>
   {% endif %}
