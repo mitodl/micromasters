@@ -314,8 +314,8 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
             FinancialAidStatus.APPROVED,
             FinancialAidStatus.REJECTED
         ]
-        for status in statuses_to_test:
-            self.financialaid.status = status
+        for financial_aid_status in statuses_to_test:
+            self.financialaid.status = financial_aid_status
             self.financialaid.save()
             self.assert_http_status(self.client.put, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
 
@@ -332,8 +332,8 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
             FinancialAidStatus.APPROVED,
             FinancialAidStatus.REJECTED
         ]
-        for status in statuses_to_test:
-            self.financialaid.status = status
+        for financial_aid_status in statuses_to_test:
+            self.financialaid.status = financial_aid_status
             self.financialaid.save()
             self.assert_http_status(self.client.put, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
 
