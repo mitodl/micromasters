@@ -307,21 +307,17 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         """
         # FinancialAid object that cannot be approved
         self.data["action"] = FinancialAidStatus.APPROVED
-        self.financialaid.status = FinancialAidStatus.CREATED
-        self.financialaid.save()
-        self.assert_http_status(self.client.put, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
-        self.financialaid.status = FinancialAidStatus.AUTO_APPROVED
-        self.financialaid.save()
-        self.assert_http_status(self.client.put, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
-        self.financialaid.status = FinancialAidStatus.PENDING_DOCS
-        self.financialaid.save()
-        self.assert_http_status(self.client.put, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
-        self.financialaid.status = FinancialAidStatus.APPROVED
-        self.financialaid.save()
-        self.assert_http_status(self.client.put, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
-        self.financialaid.status = FinancialAidStatus.REJECTED
-        self.financialaid.save()
-        self.assert_http_status(self.client.put, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
+        statuses_to_test = [
+            FinancialAidStatus.CREATED,
+            FinancialAidStatus.AUTO_APPROVED,
+            FinancialAidStatus.PENDING_DOCS,
+            FinancialAidStatus.APPROVED,
+            FinancialAidStatus.REJECTED
+        ]
+        for status in statuses_to_test:
+            self.financialaid.status = status
+            self.financialaid.save()
+            self.assert_http_status(self.client.put, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
 
     def test_mark_documents_received_invalid_status(self, *args):  # pylint: disable=unused-argument
         """
@@ -329,21 +325,17 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         """
         # FinancialAid object whose documents cannot received
         self.data["action"] = FinancialAidStatus.PENDING_MANUAL_APPROVAL
-        self.financialaid.status = FinancialAidStatus.CREATED
-        self.financialaid.save()
-        self.assert_http_status(self.client.put, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
-        self.financialaid.status = FinancialAidStatus.AUTO_APPROVED
-        self.financialaid.save()
-        self.assert_http_status(self.client.put, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
-        self.financialaid.status = FinancialAidStatus.PENDING_MANUAL_APPROVAL
-        self.financialaid.save()
-        self.assert_http_status(self.client.put, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
-        self.financialaid.status = FinancialAidStatus.APPROVED
-        self.financialaid.save()
-        self.assert_http_status(self.client.put, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
-        self.financialaid.status = FinancialAidStatus.REJECTED
-        self.financialaid.save()
-        self.assert_http_status(self.client.put, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
+        statuses_to_test = [
+            FinancialAidStatus.CREATED,
+            FinancialAidStatus.AUTO_APPROVED,
+            FinancialAidStatus.PENDING_MANUAL_APPROVAL,
+            FinancialAidStatus.APPROVED,
+            FinancialAidStatus.REJECTED
+        ]
+        for status in statuses_to_test:
+            self.financialaid.status = status
+            self.financialaid.save()
+            self.assert_http_status(self.client.put, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
 
     def test_approval(self, mock_mailgun_client):
         """

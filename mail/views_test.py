@@ -35,7 +35,6 @@ class MailViewsTests(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.search_result_mail_url = reverse('search_result_mail_api')
-        cls.financial_aid_mail_url = reverse('financial_aid_mail_api')
         cls.program = ProgramFactory.create(live=True)
         # create a user with a role for one program
         with mute_signals(post_save):
