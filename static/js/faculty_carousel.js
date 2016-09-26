@@ -1,4 +1,5 @@
 // @flow
+/* global SETTINGS:false */
 import FacultyCarousel from './components/FacultyCarousel';
 import React from 'react';
 import ReactDOM from 'react-dom';

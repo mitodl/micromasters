@@ -3,9 +3,9 @@ import factory
 from factory.django import DjangoModelFactory
 import faker
 
+from wagtail.wagtailimages.models import Image
 from cms.models import ProgramPage, ProgramFaculty
 from courses.factories import ProgramFactory
-from wagtail.wagtailimages.models import Image
 
 
 FAKE = faker.Factory.create()

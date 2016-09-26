@@ -12,6 +12,7 @@ class FacultyTile extends React.Component {
   }
   render() {
     const { name, title, short_bio, image } = this.props;
+    const shortBio = short_bio;  // eslint-disable-line camelcase
     let nameStr, imageTag;
     if (title) {
       nameStr = `${name}, ${title}`;
@@ -27,7 +28,7 @@ class FacultyTile extends React.Component {
       <div className="faculty-tile">
         <h4>{nameStr}</h4>
         {imageTag}
-        <p>{short_bio}</p>
+        <p>{shortBio}</p>
       </div>
     );
   }

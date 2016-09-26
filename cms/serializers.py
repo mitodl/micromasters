@@ -1,3 +1,6 @@
+"""
+Serializers for Wagtail-related models
+"""
 from rest_framework import serializers
 from wagtail.wagtailimages.models import Image
 from cms.models import ProgramPage, ProgramFaculty
