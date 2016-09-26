@@ -19,7 +19,11 @@ export default class FacultyTile extends React.Component {
       nameStr = name;
     }
     if ( image && image.file ) {
-      imageTag = <img src={image.file} alt={image.alt} />;
+      if (image.sizes && image.sizes.medium && image.sizes.medium.file) {
+        imageTag = <img src={image.sizes.medium.file} alt={image.alt} />;
+      } else {
+        imageTag = <img src={image.file} alt={image.alt} />;
+      }
     } else {
       imageTag = null;
     }
