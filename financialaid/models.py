@@ -3,6 +3,7 @@ Models for the Financial Aid App
 """
 import datetime
 from django.contrib.auth.models import User
+from django.core import serializers
 from django.db import (
     models,
     transaction,
@@ -129,26 +130,26 @@ class FinancialAid(TimestampedModel):
     date_exchange_rate = models.DateTimeField(null=True)
 
     @transaction.atomic
-    def save(self, *args, **kwargs):  # acting_user=None
+    def save_and_log(self, acting_user, *args, **kwargs):
         """
-        Override the save to add an audit object every time a financial aid object is
-        created or edited.
+        Saves the object and creates an audit object.
         """
-        #     if acting_user is None:
-        #         raise ValidationError("Saving financial aid model requires acting user for auditing.")
-        #     financialaid_before = FinancialAid.objects.get(id=self.id)
-        #     FinancialAidAudit.objects.create(
-        #         user=acting_user,
-        #         data_before=serializers.serialize('json', [financialaid_before, ]),
-        #         data_after=serializers.serialize('json', [self, ])
-        #     )
-        return super(FinancialAid, self).save(*args, **kwargs)
+        financialaid_before = FinancialAid.objects.get(id=self.id)
+        self.save(*args, **kwargs)
+        self.refresh_from_db()
+        FinancialAidAudit.objects.create(
+            acting_user=acting_user,
+            financial_aid=self,
+            data_before=serializers.serialize("json", [financialaid_before, ]),
+            data_after=serializers.serialize("json", [self, ])
+        )
 
 
 class FinancialAidAudit(TimestampedModel):
     """
     Audit table for the Financial Aid
     """
-    user = models.ForeignKey(User, null=False)
+    acting_user = models.ForeignKey(User, null=False)
+    financial_aid = models.ForeignKey(FinancialAid, null=True, on_delete=models.SET_NULL)
     data_before = JSONField(blank=True, null=False)
     data_after = JSONField(blank=True, null=False)

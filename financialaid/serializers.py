@@ -56,8 +56,6 @@ class IncomeValidationSerializer(serializers.Serializer):
             financial_aid.status = FinancialAidStatus.AUTO_APPROVED
         else:
             financial_aid.status = FinancialAidStatus.PENDING_DOCS
-        financial_aid.save()
-
-        # Add auditing here
+        financial_aid.save_and_log(user)
 
         return financial_aid

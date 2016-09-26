@@ -21,8 +21,8 @@ from financialaid.api_test import FinancialAidBaseTestCase
 from financialaid.factories import FinancialAidFactory
 from financialaid.models import (
     FinancialAid,
-    FinancialAidStatus
-)
+    FinancialAidStatus,
+    FinancialAidAudit)
 from profiles.factories import ProfileFactory
 from roles.models import Role
 from roles.roles import Staff, Instructor
@@ -95,9 +95,11 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         Tests IncomeValidationView post endpoint for not-auto-approval
         """
         assert FinancialAid.objects.count() == 0
+        assert FinancialAidAudit.objects.count() == 0
         resp = self.client.post(self.income_validation_url, self.data, format='json')
         assert resp.status_code == status.HTTP_201_CREATED
         assert FinancialAid.objects.count() == 1
+        assert FinancialAidAudit.objects.count() == 1
         financial_aid = FinancialAid.objects.first()
         assert financial_aid.tier_program == self.tier_programs["50k"]
         assert financial_aid.status == FinancialAidStatus.PENDING_DOCS
@@ -107,10 +109,12 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         Tests IncomeValidationView post endpoint for auto-approval
         """
         assert FinancialAid.objects.count() == 0
+        assert FinancialAidAudit.objects.count() == 0
         self.data["original_income"] = 200000
         resp = self.client.post(self.income_validation_url, self.data, format='json')
         assert resp.status_code == status.HTTP_201_CREATED
         assert FinancialAid.objects.count() == 1
+        assert FinancialAidAudit.objects.count() == 1
         financial_aid = FinancialAid.objects.first()
         assert financial_aid.tier_program == self.tier_programs["100k"]
         assert financial_aid.status == FinancialAidStatus.AUTO_APPROVED
