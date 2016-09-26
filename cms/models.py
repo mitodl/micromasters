@@ -204,7 +204,7 @@ class ProgramFaculty(Orderable):
         blank=True,
         on_delete=models.SET_NULL,
         related_name='+',
-        help_text='Image for the faculty member'
+        help_text='Image for the faculty member. Should be 500px by 385px.'
     )
     content_panels = Page.content_panels + [
         MultiFieldPanel(
