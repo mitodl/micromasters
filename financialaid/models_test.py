@@ -30,12 +30,13 @@ class FinancialAidModelsTests(ESTestCase):
         Tests that FinancialAid objects are unique per User and Program
         """
         financial_aid = FinancialAidFactory.create()
-        try:
-            # Test creation of FinancialAid that isn't unique_together with "user" and "tier_program__program"
-            FinancialAidFactory.create(user=financial_aid.user)
-            FinancialAidFactory.create(tier_program=financial_aid.tier_program)
-        except ValidationError:
-            self.fail("Creation of FinancialAid objects should have been successful")
+        # Test creation of FinancialAid that isn't unique_together with "user" and "tier_program__program"
+        FinancialAidFactory.create(user=financial_aid.user)
+        FinancialAidFactory.create(tier_program=financial_aid.tier_program)
+        # Test updating the original FinancialAid doesn't raise ValidationError
+        financial_aid.income_usd = 100
+        financial_aid.save()
+        # Test creation should fail for FinancialAid already existing with the same "user" and "tier_program__program"
         with self.assertRaises(ValidationError):
             FinancialAidFactory.create(
                 user=financial_aid.user,

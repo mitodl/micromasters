@@ -134,7 +134,7 @@ class FinancialAid(TimestampedModel):
         """
         Override save to make sure only one FinancialAid object exists for a User and the associated Program
         """
-        if self.__class__.objects.filter(
+        if FinancialAid.objects.filter(
                 user=self.user,
                 tier_program__program=self.tier_program.program
         ).exclude(id=self.id).exists():
