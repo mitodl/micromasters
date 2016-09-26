@@ -20,7 +20,7 @@ class UserCanEditFinancialAid(BasePermission):
             view (View): DRF view object
             obj (FinancialAid): FinancialAid object
         Returns:
-            boolean)
+            boolean
         """
         return has_object_permission(Permissions.CAN_EDIT_FINANCIAL_AID, request.user, obj.tier_program.program)
 
