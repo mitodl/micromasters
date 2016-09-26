@@ -5,6 +5,7 @@ from rest_framework import serializers
 from wagtail.wagtailimages.models import Image, Rendition
 from cms.models import ProgramPage, ProgramFaculty
 
+
 class RenditionSerializer(serializers.ModelSerializer):
     """Serializer for Wagtail Rendition objects."""
     class Meta:
