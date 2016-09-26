@@ -5,9 +5,11 @@ from cms.models import ProgramPage, ProgramFaculty
 
 class ImageSerializer(serializers.ModelSerializer):
     "Serializer for Wagtail Image objects."
+    alt = serializers.CharField(source="default_alt_text")
+
     class Meta:  # pylint: disable=missing-docstring
         model = Image
-        fields = ("title", "file", "width", "height", "created_at", "file_size")
+        fields = ("title", "alt", "file", "width", "height", "created_at", "file_size")
 
 
 class ProgramSerializer(serializers.ModelSerializer):

@@ -19,7 +19,7 @@ class FacultyTile extends React.Component {
       nameStr = name;
     }
     if ( image && image.file ) {
-      imageTag = <img src={image.file} />;
+      imageTag = <img src={image.file} alt={image.alt} />;
     } else {
       imageTag = null;
     }
