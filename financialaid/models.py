@@ -2,14 +2,15 @@
 Models for the Financial Aid App
 """
 import datetime
+
 from django.contrib.auth.models import User
 from django.core import serializers
+from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.db import (
     models,
     transaction,
 )
-from jsonfield import JSONField
 
 from courses.models import (
     Program,

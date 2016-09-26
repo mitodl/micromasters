@@ -2,6 +2,7 @@
 Models for storing ecommerce data
 """
 from django.contrib.auth.models import User
+from django.contrib.postgres.fields import JSONField
 from django.db import transaction
 from django.db.models import Model
 from django.db.models.fields import (
@@ -14,7 +15,6 @@ from django.db.models.fields import (
 from django.db.models.fields.related import (
     ForeignKey,
 )
-from jsonfield.fields import JSONField
 
 from courses.models import CourseRun
 from ecommerce.exceptions import EcommerceModelException
