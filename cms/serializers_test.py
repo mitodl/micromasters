@@ -18,4 +18,7 @@ class WagtailSerializerTests(ESTestCase):
         faculty = FacultyFactory.create()
         result = FacultySerializer().to_representation(faculty)
         assert result['name'] == faculty.name
+        assert result['title'] == faculty.title
         assert result['short_bio'] == faculty.short_bio
+        assert result['image']['title'] == faculty.image.title
+        assert result['image']['file'] == faculty.image.file.url
