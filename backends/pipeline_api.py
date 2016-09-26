@@ -3,8 +3,9 @@ APIs for extending the python social auth pipeline
 """
 import logging
 from datetime import datetime
-from rolepermissions.verifications import has_role
 from urllib.parse import urljoin
+
+from rolepermissions.verifications import has_role
 
 from backends.edxorg import EdxOrgOAuth2
 from profiles.api import get_social_username
