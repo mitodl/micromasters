@@ -25,6 +25,11 @@ def programs_for_sign_up(programs):
     """formats program info for the signup dialogs"""
     return [ProgramSerializer().to_representation(p) for p in programs]
 
+def faculty_for_carousel(faculty):
+    """formats faculty info for the carousel"""
+    from cms.serializers import FacultySerializer
+    return [FacultySerializer().to_representation(f) for f in faculty]
+
 
 class HomePage(Page):
     """
@@ -143,6 +148,7 @@ class ProgramPage(Page):
             "host": webpack_dev_server_host(request),
             "programId": self.program.id,
             "programs": programs_for_sign_up(programs),
+            "faculty": faculty_for_carousel(self.faculty_members.all()),
         }
         username = get_social_username(request.user)
         context = super(ProgramPage, self).get_context(request)
