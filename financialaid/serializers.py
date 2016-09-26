@@ -3,7 +3,6 @@ Serializers from financialaid
 """
 import datetime
 
-from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -18,7 +17,8 @@ from financialaid.api import (
 )
 from financialaid.models import (
     FinancialAid,
-    FinancialAidStatus
+    FinancialAidStatus,
+    CurrencyExchangeRate
 )
 
 
@@ -50,7 +50,7 @@ class IncomeValidationSerializer(serializers.Serializer):
                 self.validated_data["original_income"],
                 self.validated_data["original_currency"]
             )
-        except ObjectDoesNotExist:
+        except CurrencyExchangeRate.DoesNotExist:
             raise ValidationError("Currency not currently supported.")
         user = self.context["request"].user
         tier_program = determine_tier_program(self.validated_data["program"], self.validated_data["original_income"])
