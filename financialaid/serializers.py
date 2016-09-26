@@ -3,6 +3,7 @@ Serializers from financialaid
 """
 import datetime
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -10,8 +11,15 @@ from rest_framework.fields import IntegerField, FloatField, CharField
 
 from courses.models import Program
 from dashboard.models import ProgramEnrollment
-from financialaid.api import determine_tier_program, determine_auto_approval
-from financialaid.models import FinancialAid, FinancialAidStatus
+from financialaid.api import (
+    determine_tier_program,
+    determine_auto_approval,
+    determine_income_usd
+)
+from financialaid.models import (
+    FinancialAid,
+    FinancialAidStatus
+)
 
 
 class IncomeValidationSerializer(serializers.Serializer):
@@ -37,8 +45,13 @@ class IncomeValidationSerializer(serializers.Serializer):
         """
         Override save method
         """
-        if self.validated_data["original_currency"] != "USD":
-            raise ValidationError("Only USD supported currently")
+        try:
+            income_usd = determine_income_usd(
+                self.validated_data["original_income"],
+                self.validated_data["original_currency"]
+            )
+        except ObjectDoesNotExist:
+            raise ValidationError("Currency not currently supported.")
         user = self.context["request"].user
         tier_program = determine_tier_program(self.validated_data["program"], self.validated_data["original_income"])
 
@@ -47,7 +60,7 @@ class IncomeValidationSerializer(serializers.Serializer):
             original_currency=self.validated_data["original_currency"],
             tier_program=tier_program,
             user=user,
-            income_usd=self.validated_data["original_income"],
+            income_usd=income_usd,
             country_of_income=user.profile.country,
             date_exchange_rate=datetime.datetime.now()
         )

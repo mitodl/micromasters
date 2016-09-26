@@ -138,3 +138,11 @@ class FinancialAidAudit(TimestampedModel):
     data_before = JSONField(blank=True, null=False)
     data_after = JSONField(blank=True, null=False)
     date = models.DateTimeField(null=False)
+
+
+class CurrencyExchangeRate(TimestampedModel):
+    """
+    Table of currency exchange rates
+    """
+    currency_code = models.CharField(null=False, max_length=3)
+    exchange_rate = models.FloatField(null=False)

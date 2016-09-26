@@ -2,6 +2,7 @@
 API helper functions for financialaid
 """
 from financialaid.constants import COUNTRY_INCOME_THRESHOLDS, DEFAULT_INCOME_THRESHOLD
+from financialaid.models import CurrencyExchangeRate
 
 
 def determine_tier_program(program, income):
@@ -32,3 +33,22 @@ def determine_auto_approval(financial_aid):
     income_threshold = COUNTRY_INCOME_THRESHOLDS.get(financial_aid.country_of_income, DEFAULT_INCOME_THRESHOLD)
     # The income_threshold == 0 is because in all cases BUT threshold == 0, it's strictly > instead of >=
     return financial_aid.income_usd > income_threshold or income_threshold == 0
+
+
+def determine_income_usd(original_income, original_currency):
+    """
+    Take original income and original currency and converts income from the original currency
+    to USD.
+    Args:
+        original_income: original income, in original currency (for a FinancialAid object)
+        original_currency: original currency, a three-letter code
+    Returns:
+        income_usd: the original income converted to US dollars
+    """
+    if original_currency == "USD":
+        return original_income
+    else:
+        exchange_rate_object = CurrencyExchangeRate.objects.get(currency_code=original_currency)
+        exchange_rate = exchange_rate_object.exchange_rate
+        income_usd = original_income/exchange_rate
+        return income_usd
