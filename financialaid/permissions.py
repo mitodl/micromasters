@@ -20,7 +20,7 @@ class UserCanEditFinancialAid(BasePermission):
             view (View): DRF view object
             obj (FinancialAid): FinancialAid object
         Returns:
-            (boolean)
+            boolean)
         """
         return has_object_permission(Permissions.CAN_EDIT_FINANCIAL_AID, request.user, obj.tier_program.program)
 
@@ -38,7 +38,7 @@ class UserCanViewLearnerCoursePrice(BasePermission):
             view (View): DRF view object
             obj_dict (dict): {"program": Program object, "learner": User object}
         Returns:
-            (boolean)
+            boolean
         """
         return (obj_dict["learner"] == request.user
                 or has_object_permission(Permissions.CAN_EDIT_FINANCIAL_AID, request.user, obj_dict["program"]))

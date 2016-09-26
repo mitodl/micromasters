@@ -12,8 +12,8 @@ import {
   STATUS_PASSED,
   STATUS_NOT_PASSED,
   STATUS_OFFERED,
-  STATUS_ENROLLED,
-  STATUS_VERIFIED,
+  STATUS_CAN_UPGRADE,
+  STATUS_CURRENTLY_ENROLLED,
 } from '../../constants';
 import { findCourse } from './CourseDescription_test';
 
@@ -57,13 +57,13 @@ describe('CourseAction', () => {
   it('shows nothing for a verified course', () => {
     let course = findCourse(course => (
       course.runs.length > 0 &&
-      course.runs[0].status === STATUS_VERIFIED
+      course.runs[0].status === STATUS_CURRENTLY_ENROLLED
     ));
     const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
     assert.equal(wrapper.text(), '');
   });
 
-  [STATUS_OFFERED, STATUS_ENROLLED].forEach((status) => {
+  [STATUS_OFFERED, STATUS_CAN_UPGRADE].forEach((status) => {
     it(`shows the enroll button followed by course title when status is ${status}`, () => {
       let course = findCourse(course => (
         course.runs.length > 0 &&
@@ -80,7 +80,7 @@ describe('CourseAction', () => {
   it('shows an upgrade button if user is not verified but is enrolled', () => {
     let course = findCourse(course => (
       course.runs.length > 0 &&
-      course.runs[0].status === STATUS_ENROLLED
+      course.runs[0].status === STATUS_CAN_UPGRADE
     ));
     const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
     let buttonContainer = wrapper.find(".course-action-action");

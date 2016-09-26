@@ -6,8 +6,8 @@ import { assert } from 'chai';
 import CourseStatus from './CourseStatus';
 import {
   STATUS_PASSED,
-  STATUS_ENROLLED,
-  STATUS_VERIFIED,
+  STATUS_CAN_UPGRADE,
+  STATUS_CURRENTLY_ENROLLED,
   STATUS_OFFERED,
   STATUS_NOT_PASSED,
 } from '../../constants';
@@ -29,7 +29,7 @@ describe('CourseStatus', () => {
   it('shows price of course with status enrolled', () => {
     let course = findCourse(course => (
       course.runs.length > 0 &&
-      course.runs[0].status === STATUS_ENROLLED
+      course.runs[0].status === STATUS_CAN_UPGRADE
     ));
     assert.equal(course.runs[0].price, 50.00);
 
@@ -37,7 +37,7 @@ describe('CourseStatus', () => {
     assert.equal(wrapper.find(".price").text(), "$50");
   });
 
-  for (let status of [STATUS_PASSED, STATUS_NOT_PASSED, STATUS_VERIFIED]) {
+  for (let status of [STATUS_PASSED, STATUS_NOT_PASSED, STATUS_CURRENTLY_ENROLLED]) {
     it(`doesn't show the price of course with status ${status}`, () => {
       let course = findCourse(course => (
         course.runs.length > 0 &&
@@ -53,14 +53,14 @@ describe('CourseStatus', () => {
   it('shows the tooltip for status enrolled', () => {
     let course = findCourse(course => (
       course.runs.length > 0 &&
-      course.runs[0].status === STATUS_ENROLLED
+      course.runs[0].status === STATUS_CAN_UPGRADE
     ));
     const wrapper = shallow(<CourseStatus course={course}/>);
     let tooltip = wrapper.find(".help");
     assert.equal(tooltip.length, 1);
   });
 
-  for (let status of [STATUS_OFFERED, STATUS_VERIFIED, STATUS_NOT_PASSED, STATUS_PASSED]) {
+  for (let status of [STATUS_OFFERED, STATUS_CURRENTLY_ENROLLED, STATUS_NOT_PASSED, STATUS_PASSED]) {
     it(`doesn't show any tooltip for status ${status}`, () => {
       let course = findCourse(course => (
         course.runs.length > 0 &&

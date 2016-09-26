@@ -26,7 +26,7 @@ describe('redux helpers', () => {
     });
 
     it('should return a function that calls dispatch', () => {
-      helper();
+      helper(null);
       assert(dispatch.called);
     });
 

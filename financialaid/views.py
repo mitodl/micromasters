@@ -27,7 +27,10 @@ from financialaid.models import (
     FinancialAidStatus,
     TierProgram
 )
-from financialaid.permissions import UserCanEditFinancialAid, UserCanViewLearnerCoursePrice
+from financialaid.permissions import (
+    UserCanEditFinancialAid,
+    UserCanViewLearnerCoursePrice
+)
 from financialaid.serializers import (
     FinancialAidActionSerializer,
     FinancialAidRequestSerializer
@@ -224,12 +227,6 @@ class FinancialAidActionView(UpdateAPIView):
     lookup_field = "id"
     lookup_url_kwarg = "financial_aid_id"
     queryset = FinancialAid.objects.all()
-
-    def post(self, request, *args, **kwargs):
-        """
-        Post request for FinancialAidActionView
-        """
-        return self.put(request, *args, **kwargs)
 
 
 class GetLearnerPriceForCourseView(APIView):

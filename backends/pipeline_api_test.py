@@ -37,6 +37,8 @@ class EdxPipelineApiTest(ESTestCase):
                          'agreed_to_terms_of_service', 'verified_micromaster_user',):
                 # booleans
                 assert getattr(profile, key) is False
+            elif key == 'image':
+                assert not getattr(profile, key), "Image field should be empty"
             else:
                 assert getattr(profile, key) is None
 

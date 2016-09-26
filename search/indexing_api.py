@@ -43,10 +43,10 @@ def get_conn(verify=True):
 
     do_verify = False
     if _CONN is None:
-        headers = None
-        if settings.ELASTICSEARCH_X_API_KEY is not None:
-            headers = {'X-Api-Key': settings.ELASTICSEARCH_X_API_KEY}
-        _CONN = connections.create_connection(hosts=[settings.ELASTICSEARCH_URL], headers=headers)
+        http_auth = None
+        if settings.ELASTICSEARCH_HTTP_AUTH is not None:
+            http_auth = settings.ELASTICSEARCH_HTTP_AUTH
+        _CONN = connections.create_connection(hosts=[settings.ELASTICSEARCH_URL], http_auth=http_auth)
         # Verify connection on first connect if verify=True.
         do_verify = verify
 

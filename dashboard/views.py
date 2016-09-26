@@ -22,6 +22,7 @@ from courses.models import (
 from dashboard.api import (
     get_info_for_program,
     get_student_certificates,
+    get_student_current_grades,
     get_student_enrollments,
 )
 
@@ -53,10 +54,12 @@ class UserDashboard(APIView):
 
         # create an instance of the client to query edX
         edx_client = EdxApi(user_social.extra_data, settings.EDXORG_BASE_URL)
-        # get an enrollments client for the student
+        # get enrollments for the student
         enrollments = get_student_enrollments(request.user, edx_client)
-        # get a certificates client for the student
+        # get certificates for the student
         certificates = get_student_certificates(request.user, edx_client)
+        # get current_grades for the student
+        current_grades = get_student_current_grades(request.user, edx_client)  # pylint: disable=unused-variable
 
         response_data = []
         for program in Program.objects.filter(live=True):

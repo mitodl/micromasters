@@ -50,13 +50,13 @@
             <div class="title">
               Courses
             </div>
-            {% for course in page.program.course_set.all %}
+            {% for course, status in courses_info.items %}
             <div class="course-details">
               <div class="title">
                 {{ course.title }}
               </div>
               <div class="description">
-                {{ course.description|richtext }}
+                {{ status }}
               </div>
             </div>
             {% endfor %}

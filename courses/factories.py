@@ -47,7 +47,8 @@ class CourseRunFactory(DjangoModelFactory):
     """Factory for CourseRuns"""
     title = fuzzy.FuzzyText(prefix="CourseRun ")
     course = factory.SubFactory(CourseFactory)
-    edx_course_key = fuzzy.FuzzyText()
+    # Try to make sure we escape this correctly
+    edx_course_key = fuzzy.FuzzyText(prefix="course:/()+&/")
     enrollment_start = fuzzy.FuzzyDateTime(datetime(1980, 1, 1, tzinfo=pytz.utc))
     start_date = fuzzy.FuzzyDateTime(datetime(1980, 1, 1, tzinfo=pytz.utc))
     enrollment_end = fuzzy.FuzzyDateTime(datetime(1980, 1, 1, tzinfo=pytz.utc))

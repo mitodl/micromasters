@@ -10,7 +10,7 @@ import type { Dispatch } from 'redux';
 import { getPreferredName } from '../util/util';
 import { createActionHelper } from '../util/redux';
 import { setUserMenuOpen } from '../actions/ui';
-import ProfileImage from '../components/ProfileImage';
+import ProfileImage from '../containers/ProfileImage';
 import type { Profile } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
 

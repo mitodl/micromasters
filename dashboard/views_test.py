@@ -180,9 +180,9 @@ class DashboardTest(APITestCase):
                 if len(course_data['runs']) == 1:
                     assert 'course_id' in course_data['runs'][0]
                     if course_data['runs'][0]['course_id'] == "course-v1:edX+DemoX+Demo_Course":
-                        assert course_data['runs'][0]['status'] == CourseStatus.CURRENT_GRADE
+                        assert course_data['runs'][0]['status'] == CourseStatus.CURRENTLY_ENROLLED
                     if course_data['runs'][0]['course_id'] == "course-v1:MITx+8.MechCX+2014_T1":
-                        assert course_data['runs'][0]['status'] == CourseStatus.UPGRADE
+                        assert course_data['runs'][0]['status'] == CourseStatus.CAN_UPGRADE
 
     @patch('backends.utils.refresh_user_token', autospec=True)
     def test_certificates_enrollments(self, mocked_refresh):

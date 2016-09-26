@@ -32,6 +32,8 @@ import {
   SET_ENROLL_DIALOG_VISIBILITY,
   SET_TOAST_MESSAGE,
   SET_ENROLL_SELECTED_PROGRAM,
+
+  SET_PHOTO_DIALOG_VISIBILITY,
 } from '../actions/ui';
 import { PERSONAL_STEP } from '../constants';
 import type { ToastMessage } from '../flow/generalTypes';
@@ -65,6 +67,7 @@ export type UIState = {
   enrollDialogVisibility:       boolean;
   toastMessage:                 ?ToastMessage;
   enrollSelectedProgram:        ?number;
+  photoDialogVisibility:        boolean;
 };
 
 export const INITIAL_UI_STATE: UIState = {
@@ -90,6 +93,7 @@ export const INITIAL_UI_STATE: UIState = {
   enrollDialogVisibility: false,
   toastMessage: null,
   enrollSelectedProgram: null,
+  photoDialogVisibility: false,
 };
 
 export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
@@ -212,6 +216,8 @@ export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
       enrollDialogVisibility: action.payload
     });
   }
+  case SET_PHOTO_DIALOG_VISIBILITY:
+    return { ...state, photoDialogVisibility: action.payload };
   default:
     return state;
   }

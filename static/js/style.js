@@ -4,6 +4,8 @@ import 'style!css!react-mdl/extra/material.css';
 // react-virtualized requirement
 import 'style!css!react-virtualized/styles.css';
 
+import 'style!css!cropperjs/dist/cropper.css';
+
 // react-select styles
 import 'style!css!react-select/dist/react-select.css';
 

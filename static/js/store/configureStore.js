@@ -69,7 +69,7 @@ export default function configureStore(initialState: ?Object) {
   return store;
 }
 
-export const configureMainTestStore = (reducer: Reducer<*>) => {
+export const configureMainTestStore = (reducer: Reducer<*,*>) => {
   const persistence = persistState(
     storage([ 'currentProgramEnrollment', 'signupDialog' ]), 'redux'
   );

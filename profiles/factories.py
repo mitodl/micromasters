@@ -6,7 +6,10 @@ from factory import (
     Sequence,
     SubFactory,
 )
-from factory.django import DjangoModelFactory
+from factory.django import (
+    DjangoModelFactory,
+    ImageField
+)
 from factory.fuzzy import (
     FuzzyAttribute,
     FuzzyChoice,
@@ -75,6 +78,8 @@ class ProfileFactory(DjangoModelFactory):
     edx_mailing_address = FuzzyText()
     date_joined_micromasters = FuzzyDateTime(datetime(1850, 1, 1, tzinfo=timezone.utc))
     student_id = FuzzyInteger(1, 1000)
+
+    image = ImageField()
 
     class Meta:  # pylint: disable=missing-docstring
         model = Profile

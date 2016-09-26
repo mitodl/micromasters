@@ -24,5 +24,6 @@ export type APIErrorInfo = {
 
 export type ToastMessage = {
   message: string,
+  title?: string,
   icon?: string,
 };

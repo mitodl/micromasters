@@ -8,11 +8,13 @@ import {
   getDashboard,
   getCookie,
   fetchJSONWithCSRF,
+  fetchWithCSRF,
   csrfSafeMethod,
   checkout,
   sendSearchResultMail,
   getProgramEnrollments,
   addProgramEnrollment,
+  updateProfileImage,
 } from './api';
 import * as api from './api';
 import {
@@ -47,35 +49,37 @@ describe('api', function() {
   });
 
   describe('REST functions', () => {
+    let fetchJSONStub;
     let fetchStub;
     beforeEach(() => {
-      fetchStub = sandbox.stub(api, 'fetchJSONWithCSRF');
+      fetchJSONStub = sandbox.stub(api, 'fetchJSONWithCSRF');
+      fetchStub = sandbox.stub(api, 'fetchWithCSRF');
     });
 
     it('gets user profile', () => {
-      fetchStub.returns(Promise.resolve(USER_PROFILE_RESPONSE));
+      fetchJSONStub.returns(Promise.resolve(USER_PROFILE_RESPONSE));
       return getUserProfile('jane').then(receivedUserProfile => {
-        assert.ok(fetchStub.calledWith('/api/v0/profiles/jane/'));
+        assert.ok(fetchJSONStub.calledWith('/api/v0/profiles/jane/'));
         assert.deepEqual(receivedUserProfile, USER_PROFILE_RESPONSE);
       });
     });
 
     it('fails to get user profile', () => {
-      fetchStub.returns(Promise.reject());
+      fetchJSONStub.returns(Promise.reject());
 
       return assert.isRejected(getUserProfile('jane')).then(() => {
-        assert.ok(fetchStub.calledWith('/api/v0/profiles/jane/'));
+        assert.ok(fetchJSONStub.calledWith('/api/v0/profiles/jane/'));
       });
     });
 
     it('patches a user profile', () => {
-      fetchStub.returns(Promise.resolve(USER_PROFILE_RESPONSE));
+      fetchJSONStub.returns(Promise.resolve(USER_PROFILE_RESPONSE));
       fetchMock.mock('/api/v0/profiles/jane/', (url, opts) => {
         assert.deepEqual(JSON.parse(opts.body), USER_PROFILE_RESPONSE);
         return { status: 200 };
       });
       return patchUserProfile('jane', USER_PROFILE_RESPONSE).then(returnedProfile => {
-        assert.ok(fetchStub.calledWith('/api/v0/profiles/jane/', {
+        assert.ok(fetchJSONStub.calledWith('/api/v0/profiles/jane/', {
           method: 'PATCH',
           body: JSON.stringify(USER_PROFILE_RESPONSE)
         }));
@@ -84,39 +88,72 @@ describe('api', function() {
     });
 
     it('fails to patch a user profile', () => {
-      fetchStub.returns(Promise.reject());
+      fetchJSONStub.returns(Promise.reject());
       return assert.isRejected(patchUserProfile('jane', USER_PROFILE_RESPONSE)).then(() => {
-        assert.ok(fetchStub.calledWith('/api/v0/profiles/jane/', {
+        assert.ok(fetchJSONStub.calledWith('/api/v0/profiles/jane/', {
           method: 'PATCH',
           body: JSON.stringify(USER_PROFILE_RESPONSE)
         }));
       });
     });
 
+    describe('updating profile image', () => {
+      const checkArgs = () => {
+        let [url, obj] = fetchStub.args[0];
+        assert.equal(url, '/api/v0/profiles/jane/');
+        assert.equal(obj.method, 'PATCH');
+        let img = obj.body.get('image');
+        assert.equal(img.name, 'a file name');
+        assert.equal(img.constructor.name, 'File');
+      };
+
+      it('updates a user profile image', () => {
+        let blob = new Blob;
+        let formData = new FormData;
+        formData.append('image', blob, 'a file name');
+        fetchStub.returns(Promise.resolve('good response'));
+        fetchMock.mock('/api/v0/profiles/jane/', () => {
+          return { status: 200 };
+        });
+        return updateProfileImage('jane', blob, 'a file name').then(res => {
+          assert.equal(res, 'good response');
+          checkArgs();
+        });
+      });
+
+      it('fails to update a user profile image', () => {
+        let blob = new Blob;
+        fetchStub.returns(Promise.reject());
+        return assert.isRejected(updateProfileImage('jane', blob, 'a file name')).then(() => {
+          checkArgs();
+        });
+      });
+    });
+
     it('gets the dashboard', () => {
-      fetchStub.returns(Promise.resolve(DASHBOARD_RESPONSE));
+      fetchJSONStub.returns(Promise.resolve(DASHBOARD_RESPONSE));
       return getDashboard().then(dashboard => {
-        assert.ok(fetchStub.calledWith('/api/v0/dashboard/', {}, true));
+        assert.ok(fetchJSONStub.calledWith('/api/v0/dashboard/', {}, true));
         assert.deepEqual(dashboard, DASHBOARD_RESPONSE);
       });
     });
 
     it('fails to get the dashboard', () => {
-      fetchStub.returns(Promise.reject());
+      fetchJSONStub.returns(Promise.reject());
 
       return assert.isRejected(getDashboard()).then(() => {
-        assert.ok(fetchStub.calledWith('/api/v0/dashboard/', {}, true));
+        assert.ok(fetchJSONStub.calledWith('/api/v0/dashboard/', {}, true));
       });
     });
 
     it('posts to checkout', () => {
-      fetchStub.returns(Promise.resolve(CHECKOUT_RESPONSE));
+      fetchJSONStub.returns(Promise.resolve(CHECKOUT_RESPONSE));
       fetchMock.mock('/api/v0/checkout/', (url, opts) => {
         assert.deepEqual(JSON.parse(opts.body), CHECKOUT_RESPONSE);
         return { status: 200 };
       });
       return checkout('course_id').then(checkoutInfo => {
-        assert.ok(fetchStub.calledWith('/api/v0/checkout/', {
+        assert.ok(fetchJSONStub.calledWith('/api/v0/checkout/', {
           method: 'POST',
           body: JSON.stringify({course_id: 'course_id'})
         }));
@@ -125,10 +162,10 @@ describe('api', function() {
     });
 
     it('fails to post to checkout', () => {
-      fetchStub.returns(Promise.reject());
+      fetchJSONStub.returns(Promise.reject());
 
       return assert.isRejected(checkout('course_id')).then(() => {
-        assert.ok(fetchStub.calledWith('/api/v0/checkout/', {
+        assert.ok(fetchJSONStub.calledWith('/api/v0/checkout/', {
           method: 'POST',
           body: JSON.stringify({course_id: 'course_id'})
         }));
@@ -140,12 +177,12 @@ describe('api', function() {
       let searchRequest = {size: 50};
 
       it('returns expected values when a POST to send email succeeds', () => {
-        fetchStub.returns(Promise.resolve(MAIL_RESPONSE));
+        fetchJSONStub.returns(Promise.resolve(MAIL_RESPONSE));
         fetchMock.mock('/api/v0/mail/', (url, opts) => {  // eslint-disable-line no-unused-vars
           return {status: 200};
         });
         return sendSearchResultMail('subject', 'body', searchRequest).then(mailResp => {
-          assert.ok(fetchStub.calledWith('/api/v0/mail/', {
+          assert.ok(fetchJSONStub.calledWith('/api/v0/mail/', {
             method: 'POST',
             body: JSON.stringify({
               email_subject: 'subject',
@@ -158,37 +195,37 @@ describe('api', function() {
       });
 
       it('returns a rejected Promise when a POST to send email fails', () => {
-        fetchStub.returns(Promise.reject());
+        fetchJSONStub.returns(Promise.reject());
         return assert.isRejected(sendSearchResultMail('subject', 'body', searchRequest));
       });
     });
 
     describe('for program enrollments', () => {
       it('fetches program enrollments successfully', () => {
-        fetchStub.returns(Promise.resolve(PROGRAM_ENROLLMENTS));
+        fetchJSONStub.returns(Promise.resolve(PROGRAM_ENROLLMENTS));
         return getProgramEnrollments().then(enrollments => {
-          assert.ok(fetchStub.calledWith('/api/v0/enrolledprograms/', {}, true));
+          assert.ok(fetchJSONStub.calledWith('/api/v0/enrolledprograms/', {}, true));
           assert.deepEqual(enrollments, PROGRAM_ENROLLMENTS);
         });
       });
 
       it('fails to fetch program enrollments', () => {
-        fetchStub.returns(Promise.reject());
+        fetchJSONStub.returns(Promise.reject());
 
         return assert.isRejected(getProgramEnrollments()).then(() => {
-          assert.ok(fetchStub.calledWith('/api/v0/enrolledprograms/', {}, true));
+          assert.ok(fetchJSONStub.calledWith('/api/v0/enrolledprograms/', {}, true));
         });
       });
 
       it('adds a program enrollment successfully', () => {
         let enrollment = PROGRAM_ENROLLMENTS[0];
-        fetchStub.returns(Promise.resolve(enrollment));
+        fetchJSONStub.returns(Promise.resolve(enrollment));
         fetchMock.mock('/api/v0/enrolledprograms/', (url, opts) => {
           assert.deepEqual(JSON.parse(opts.body), enrollment);
           return { status: 200 };
         });
         return addProgramEnrollment(enrollment.id).then(enrollmentResponse => {
-          assert.ok(fetchStub.calledWith('/api/v0/enrolledprograms/', {
+          assert.ok(fetchJSONStub.calledWith('/api/v0/enrolledprograms/', {
             method: 'POST',
             body: JSON.stringify({program_id: enrollment.id})
           }));
@@ -197,17 +234,49 @@ describe('api', function() {
       });
 
       it('fails to add a program enrollment', () => {
-        fetchStub.returns(Promise.reject());
+        fetchJSONStub.returns(Promise.reject());
         let enrollment = PROGRAM_ENROLLMENTS[0];
 
         return assert.isRejected(addProgramEnrollment(enrollment.id)).then(() => {
-          assert.ok(fetchStub.calledWith('/api/v0/enrolledprograms/', {
+          assert.ok(fetchJSONStub.calledWith('/api/v0/enrolledprograms/', {
             method: 'POST',
             body: JSON.stringify({program_id: enrollment.id})
           }));
         });
       });
     });
+  });
+
+  describe('fetchWithCSRF', () => {
+    it('fetches and populates appropirate headers', () => {
+      document.cookie = "csrftoken=asdf";
+      let body = "body";
+
+      fetchMock.mock('/url', (url, opts) => {
+        assert.deepEqual(opts, {
+          credentials: "same-origin",
+          headers: {
+            "X-CSRFToken": "asdf"
+          },
+          body: body,
+          method: 'GET'
+        });
+
+        return fetchWithCSRF('/url', {
+          body: body
+        });
+      });
+    });
+
+    for (let statusCode of [199, 300, 400, 500, 100]) {
+      it(`rejects the promise if the status code is ${statusCode}`, () => {
+        fetchMock.mock('/url', () => {
+          return { status: statusCode };
+        });
+
+        return assert.isRejected(fetchWithCSRF('/url'));
+      });
+    }
   });
 
   describe('fetchJSONWithCSRF', () => {

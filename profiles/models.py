@@ -117,6 +117,7 @@ class Profile(models.Model):
     nationality = models.TextField(blank=True, null=True)
 
     has_profile_image = models.BooleanField(default=False)
+    image = models.ImageField(upload_to='profile', null=True)
 
     edx_requires_parental_consent = models.NullBooleanField()
     date_of_birth = models.DateField(blank=True, null=True)

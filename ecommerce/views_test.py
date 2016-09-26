@@ -7,7 +7,9 @@ from mock import (
 )
 
 from django.core.urlresolvers import reverse
+from django.db.models.signals import post_save
 from django.test import override_settings
+from factory.django import mute_signals
 import faker
 import rest_framework.status as status
 
@@ -20,7 +22,10 @@ from ecommerce.models import (
     Order,
     Receipt,
 )
-from profiles.factories import UserFactory
+from profiles.factories import (
+    ProfileFactory,
+    UserFactory,
+)
 from search.base import ESTestCase
 
 
@@ -85,7 +90,15 @@ class CheckoutViewTests(ESTestCase):
         assert create_mock.call_count == 1
         assert create_mock.call_args[0] == (course_key, user)
         assert generate_mock.call_count == 1
-        assert generate_mock.call_args[0] == (order, )
+        assert generate_mock.call_args[0] == (order, 'http://testserver/dashboard/')
+
+    def test_post_redirects(self):
+        """Test that POST redirects to same URL"""
+        with mute_signals(post_save):
+            profile = ProfileFactory.create(agreed_to_terms_of_service=True, filled_out=True)
+        self.client.force_login(profile.user)
+        resp = self.client.post("/dashboard/", follow=True)
+        assert resp.redirect_chain == [('http://testserver/dashboard/', 302)]
 
 
 @override_settings(CYBERSOURCE_REFERENCE_PREFIX=CYBERSOURCE_REFERENCE_PREFIX)
@@ -107,16 +120,18 @@ class OrderFulfillmentViewTests(ESTestCase):
         data['req_reference_number'] = make_reference_id(order)
         data['decision'] = 'ACCEPT'
 
-        with patch('ecommerce.views.IsSignedByCyberSource.has_permission', return_value=True):
+        with patch('ecommerce.views.IsSignedByCyberSource.has_permission', return_value=True), patch(
+            'ecommerce.views.enroll_user_on_success'
+        ) as enroll_user:
             resp = self.client.post(reverse('order-fulfillment'), data=data)
 
         assert len(resp.content) == 0
         assert resp.status_code == status.HTTP_200_OK
         order.refresh_from_db()
-
         assert order.status == Order.FULFILLED
         assert order.receipt_set.count() == 1
         assert order.receipt_set.first().data == data
+        enroll_user.assert_called_with(order)
 
     def test_missing_fields(self):
         """
@@ -139,6 +154,29 @@ class OrderFulfillmentViewTests(ESTestCase):
         assert Order.objects.count() == 0
         assert Receipt.objects.count() == 1
         assert Receipt.objects.first().data == data
+
+    def test_failed_enroll(self):
+        """
+        If we fail to enroll in edX, the order status should be failed
+        """
+        course_run, user = create_purchasable_course_run()
+        order = create_unfulfilled_order(course_run.edx_course_key, user)
+
+        data = {}
+        for _ in range(5):
+            data[FAKE.text()] = FAKE.text()
+
+        data['req_reference_number'] = make_reference_id(order)
+        data['decision'] = 'ACCEPT'
+
+        with patch('ecommerce.views.IsSignedByCyberSource.has_permission', return_value=True), patch(
+            'ecommerce.views.enroll_user_on_success', side_effect=KeyError
+        ):
+            with self.assertRaises(KeyError):
+                self.client.post(reverse('order-fulfillment'), data=data)
+
+        assert Order.objects.count() == 1
+        assert Order.objects.first().status == Order.FAILED
 
     def test_not_accept(self):
         """

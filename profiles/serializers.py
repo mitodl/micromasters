@@ -7,7 +7,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import (
     IntegerField,
     ModelSerializer,
-    SerializerMethodField
+    SerializerMethodField,
 )
 
 from profiles.api import get_social_username
@@ -234,7 +234,8 @@ class ProfileSerializer(ProfileBaseSerializer):
             'pretty_printed_student_id',
             'work_history',
             'edx_level_of_education',
-            'education'
+            'education',
+            'image',
         )
         read_only_fields = ('edx_level_of_education', 'agreed_to_terms_of_service',)
 
