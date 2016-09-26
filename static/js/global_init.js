@@ -1,10 +1,12 @@
 // Define globals we would usually get from Django
-global.SETTINGS = {
+const settings = {
   authenticated: true,
   name: "full name",
   username: "jane",
-  edx_base_url: "/edx/"
+  edx_base_url: "/edx/",
+  roles: []
 };
+global.SETTINGS = Object.assign({}, settings);
 
 // polyfill for Object.entries
 import entries from 'object.entries';
@@ -15,9 +17,10 @@ if (!Object.entries) {
 // Make sure window and document are available for testing
 require('jsdom-global')();
 
-// cleanup document after each test run
+// cleanup after each test run
 afterEach(function (){
   document.body.innerHTML = '';
+  global.SETTINGS = Object.assign({}, settings);
 });
 
 // required for interacting with react-mdl components

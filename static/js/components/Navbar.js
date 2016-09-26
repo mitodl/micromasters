@@ -1,4 +1,5 @@
 // @flow
+/* global SETTINGS: false */
 import React from 'react';
 import { Link } from 'react-router';
 import { Header, HeaderRow } from 'react-mdl';
@@ -48,16 +49,21 @@ export default class Navbar extends React.Component {
       setEnrollSelectedProgram,
     } = this.props;
 
+    let link = '/dashboard';
+    if (SETTINGS.roles.find(role => role.role === 'staff' || role.role === 'instructor')) {
+      link = '/learners';
+    }
+
     return (
       <div className="micromasters-navbar">
         <Header className="micromasters-nav">
           <HeaderRow className="micromasters-header">
             <div className="micromasters-title">
-              <Link to='/dashboard/'>
+              <Link to={link}>
                 <img src="/static/images/mit-logo-transparent.svg" alt="MIT" />
               </Link>
               <span className="mdl-layout-title">
-                <Link to='/dashboard/'>
+                <Link to={link}>
                   MicroMasters
                 </Link>
               </span>
