@@ -7,7 +7,7 @@ from cms.models import ProgramPage, ProgramFaculty
 
 
 class ImageSerializer(serializers.ModelSerializer):
-    "Serializer for Wagtail Image objects."
+    """Serializer for Wagtail Image objects."""
     alt = serializers.CharField(source="default_alt_text")
 
     class Meta:  # pylint: disable=missing-docstring
@@ -16,14 +16,14 @@ class ImageSerializer(serializers.ModelSerializer):
 
 
 class ProgramSerializer(serializers.ModelSerializer):
-    "Serializer for ProgramPage objects."
+    """Serializer for ProgramPage objects."""
     class Meta:
         model = ProgramPage
         fields = ('description', 'faculty_description')
 
 
 class FacultySerializer(serializers.ModelSerializer):
-    "Serializer for ProgramFaculty objects."
+    """Serializer for ProgramFaculty objects."""
     image = ImageSerializer(read_only=True)
 
     class Meta:  # pylint: disable=missing-docstring
