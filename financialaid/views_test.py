@@ -1,17 +1,16 @@
 """
 Tests for financialaid view
 """
-from unittest.mock import Mock, patch
-
 from datetime import (
     datetime,
     timedelta
 )
-from django.db.models.signals import post_save
-from factory.django import mute_signals
+from unittest.mock import Mock, patch
 
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
+from django.db.models.signals import post_save
+from factory.django import mute_signals
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.test import APIClient

@@ -40,5 +40,5 @@ class UserCanViewLearnerCoursePrice(BasePermission):
         Returns:
             boolean
         """
-        return (obj_dict["learner"] == request.user
-                or has_object_permission(Permissions.CAN_EDIT_FINANCIAL_AID, request.user, obj_dict["program"]))
+        return (obj_dict["learner"] == request.user or
+                has_object_permission(Permissions.CAN_EDIT_FINANCIAL_AID, request.user, obj_dict["program"]))
