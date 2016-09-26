@@ -7,8 +7,14 @@ import CourseAction from '../components/dashboard/CourseAction';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import { REQUEST_DASHBOARD } from '../actions';
 import * as actions from '../actions';
+import { SET_TOAST_MESSAGE } from '../actions/ui';
 import * as util from '../util/util';
-import { CHECKOUT_RESPONSE } from '../constants';
+import {
+  CHECKOUT_RESPONSE,
+  TOAST_FAILURE,
+  TOAST_SUCCESS,
+} from '../constants';
+import { findCourse } from '../components/dashboard/CourseDescription_test';
 
 describe('DashboardPage', () => {
   let renderComponent, helper;
@@ -64,6 +70,28 @@ describe('DashboardPage', () => {
         assert(document.body.querySelector(".fake-form"), 'fake form not found in body');
         assert.equal(submitStub.callCount, 1);
         assert.deepEqual(submitStub.args[0], []);
+      });
+    });
+  });
+
+  it('shows the order status toast when the query param is set for a cancellation', () => {
+    return renderComponent('/dashboard?status=cancel', [SET_TOAST_MESSAGE]).then(() => {
+      assert.deepEqual(helper.store.getState().ui.toastMessage, {
+        message: "Order was cancelled",
+        icon: TOAST_FAILURE
+      });
+    });
+  });
+
+  it('shows the order status toast when the query param is set for a success', () => {
+    let course = findCourse(course => course.runs.length > 0);
+    let run = course.runs[0];
+    let encodedKey = encodeURIComponent(run.course_id);
+    return renderComponent(`/dashboard?status=receipt&course_key=${encodedKey}`, [SET_TOAST_MESSAGE]).then(() => {
+      assert.deepEqual(helper.store.getState().ui.toastMessage, {
+        title: "Order Complete!",
+        message: `You are now enrolled in ${course.title}`,
+        icon: TOAST_SUCCESS
       });
     });
   });

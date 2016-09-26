@@ -18,10 +18,16 @@ from ecommerce.views import (
     CheckoutView,
     OrderFulfillmentView,
 )
-from financialaid.views import IncomeValidationView
+from financialaid.views import (
+    FinancialAidRequestView,
+    FinancialAidActionView
+)
 from profiles.views import ProfileViewSet
 from search.views import ElasticProxyView
-from mail.views import MailView
+from mail.views import (
+    FinancialAidMailView,
+    SearchResultMailView
+)
 
 router = routers.DefaultRouter()
 router.register(r'programs', ProgramViewSet)
@@ -37,8 +43,11 @@ urlpatterns = [
     url(r'^api/v0/search/(?P<elastic_url>.*)', ElasticProxyView.as_view(), name='search_api'),
     url(r'^api/v0/checkout/$', CheckoutView.as_view(), name='checkout'),
     url(r'^api/v0/enrolledprograms/$', ProgramEnrollmentListView.as_view(), name='user_program_enrollments'),
-    url(r'^api/v0/mail/$', MailView.as_view(), name='mail_api'),
-    url(r'^api/v0/financialaid/$', IncomeValidationView.as_view(), name='financialaid_api'),
+    url(r'^api/v0/mail/$', SearchResultMailView.as_view(), name='search_result_mail_api'),
+    url(r'^api/v0/financial_aid_mail/$', FinancialAidMailView.as_view(), name='financial_aid_mail_api'),
+    url(r'^api/v0/financial_aid_request/$', FinancialAidRequestView.as_view(), name='financial_aid_request'),
+    url(r'^api/v0/financial_aid_action/(?P<financial_aid_id>[\d]+)/$', FinancialAidActionView.as_view(),
+        name='financial_aid_action'),
     url(r'^api/v0/order_fulfillment/$', OrderFulfillmentView.as_view(), name='order-fulfillment'),
     url(r'^status/', include('server_status.urls')),
     url(r'^financial_aid/', include('financialaid.urls')),

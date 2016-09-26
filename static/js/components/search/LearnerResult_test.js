@@ -2,19 +2,40 @@
 /* global SETTINGS: false */
 import React from 'react';
 import R from 'ramda';
+import { Provider } from 'react-redux';
 import { assert } from 'chai';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
 import LearnerResult from './LearnerResult';
+import { configureMainTestStore } from '../../store/configureStore';
 import { makeStrippedHtml } from '../../util/util';
 import {
   USER_PROFILE_RESPONSE,
   USER_PROGRAM_RESPONSE
 } from '../../constants';
+import rootReducer from '../../reducers';
+import { localStorageMock } from '../../util/test_utils';
 
 describe('LearnerResult', () => {
+  let store;
+
   let renderLearnerResult = props => (
-    makeStrippedHtml(<LearnerResult {...props} />)
+    makeStrippedHtml(
+      <MuiThemeProvider muiTheme={getMuiTheme()}>
+        <Provider store={store}>
+          <LearnerResult {...props} />
+        </Provider>
+      </MuiThemeProvider>
+    )
   );
+
+  beforeEach(() => {
+    if ( window.localStorage === undefined ) {
+      window.localStorage = localStorageMock();
+    }
+    store = configureMainTestStore(rootReducer);
+  });
 
   let elasticHit = {
     result: { _source: { profile: USER_PROFILE_RESPONSE, program: USER_PROGRAM_RESPONSE } }

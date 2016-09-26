@@ -222,3 +222,16 @@ COUNTRY_INCOME_THRESHOLDS = {
     "UG": 0,
     "ZW": 0
 }
+
+FINANCIAL_AID_APPROVAL_MESSAGE_BODY = """Your application for financial aid has been approved!\n\n
+Please log on to your account for more details.\n\n
+MIT Micromasters"""
+FINANCIAL_AID_REJECTION_MESSAGE_BODY = """Your application for financial aid has been rejected.\n\n
+Please log on to your account for more details.\n\n
+MIT Micromasters"""
+FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY = """Your financial aid documents have been received.\n\n
+Please log on to your account for more details.\n\n
+MIT Micromasters"""
+FINANCIAL_AID_APPROVAL_SUBJECT_TEXT = "Financial Aid Status Update"
+FINANCIAL_AID_REJECTION_SUBJECT_TEXT = "Financial Aid Status Update"
+FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT = "Financial Aid Documents Received"

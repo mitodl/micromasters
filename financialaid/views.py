@@ -10,7 +10,8 @@ from django.views.generic import ListView
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import (
     CreateAPIView,
-    get_object_or_404
+    get_object_or_404,
+    UpdateAPIView
 )
 from rest_framework.permissions import IsAuthenticated
 from rolepermissions.verifications import has_object_permission
@@ -22,17 +23,21 @@ from financialaid.models import (
     FinancialAidStatus,
     TierProgram
 )
-from financialaid.serializers import IncomeValidationSerializer
+from financialaid.permissions import UserCanEditFinancialAid
+from financialaid.serializers import (
+    FinancialAidActionSerializer,
+    FinancialAidRequestSerializer
+)
 from roles.roles import Permissions
 from ui.views import get_bundle_url
 
 
-class IncomeValidationView(CreateAPIView):
+class FinancialAidRequestView(CreateAPIView):
     """
-    View for income validation API. Takes income and currency, then determines whether review
+    View for financial aid request API. Takes income, currency, and program, then determines whether review
     is necessary, and if not, sets the appropriate tier for personalized pricing.
     """
-    serializer_class = IncomeValidationSerializer
+    serializer_class = FinancialAidRequestSerializer
     authentication_classes = (SessionAuthentication, )
     permission_classes = (IsAuthenticated, )
 
@@ -218,3 +223,14 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         )
 
         return financial_aids
+
+
+class FinancialAidActionView(UpdateAPIView):
+    """
+    View for rejecting and approving financial aid requests
+    """
+    serializer_class = FinancialAidActionSerializer
+    permission_classes = (IsAuthenticated, UserCanEditFinancialAid)
+    lookup_field = "id"
+    lookup_url_kwarg = "financial_aid_id"
+    queryset = FinancialAid.objects.all()

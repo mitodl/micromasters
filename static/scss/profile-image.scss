@@ -1,0 +1,29 @@
+.avatar {
+  position: relative;
+
+  i {
+    cursor: pointer
+  }
+
+  span.img {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.3);
+    position: absolute;
+    top: 0;
+    right: -2px;
+    text-align: center;
+    line-height: 46px;
+
+    img {
+      width: 22px;
+      height: auto;
+    }
+
+    i.material-icons {
+      color: white;
+      font-size: 22px;
+    }
+  }
+}

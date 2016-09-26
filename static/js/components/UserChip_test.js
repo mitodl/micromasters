@@ -6,7 +6,7 @@ import { USER_PROFILE_RESPONSE } from '../constants';
 import R from 'ramda';
 import UserChip from './UserChip';
 import { getPreferredName } from '../util/util';
-import ProfileImage from './ProfileImage';
+import ProfileImage from '../containers/ProfileImage';
 
 describe('UserChip', () => {
   let clone;

@@ -25,6 +25,7 @@ import {
   setEnrollDialogVisibility,
   setToastMessage,
   setEnrollSelectedProgram,
+  setPhotoDialogVisibility,
 } from '../actions/ui';
 import { INITIAL_UI_STATE } from '../reducers/ui';
 import type { UIState } from '../reducers/ui';
@@ -160,6 +161,12 @@ describe('ui reducers', () => {
   describe('Email dialog visibility', () => {
     it(`should let you set email dialog visibility`, () => {
       assertReducerResultState(setEmailDialogVisibility, ui => ui.emailDialogVisibility, false);
+    });
+  });
+
+  describe('Photo dialog visibility', () => {
+    it(`should let you set photo dialog visibility`, () => {
+      assertReducerResultState(setPhotoDialogVisibility, ui => ui.photoDialogVisibility, false);
     });
   });
 

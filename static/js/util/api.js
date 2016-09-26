@@ -2,7 +2,8 @@
 /* global SETTINGS:false, fetch: false */
 // For mocking purposes we need to use 'fetch' defined as a global instead of importing as a local.
 import 'isomorphic-fetch';
-import _ from 'lodash';
+import R from 'ramda';
+
 import type { Profile, ProfileGetResult, ProfilePatchResult } from '../flow/profileTypes';
 import type { CheckoutResponse } from '../flow/checkoutTypes';
 import type { Dashboard } from '../flow/dashboardTypes';
@@ -33,6 +34,49 @@ export function csrfSafeMethod(method: string): boolean {
   return /^(GET|HEAD|OPTIONS|TRACE)$/.test(method);
 }
 
+const headers = R.merge({ headers: {} });
+
+const method = R.merge({ method: 'GET' });
+
+const credentials = R.merge({ credentials: 'same-origin' });
+
+const setWith = R.curry((path, valFunc, obj) => (
+  R.set(path, valFunc(), obj)
+));
+
+const csrfToken = R.unless(
+  R.compose(csrfSafeMethod, R.prop('method')),
+  setWith(
+    R.lensPath(['headers', 'X-CSRFToken']),
+    () => getCookie('csrftoken')
+  )
+);
+
+const jsonHeaders = R.merge({ headers: {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}});
+
+const formatRequest = R.compose(
+  csrfToken, credentials, method, headers
+);
+
+const formatJSONRequest = R.compose(formatRequest, jsonHeaders);
+
+export function fetchWithCSRF(path: string, init: Object = {}): Promise<*> {
+  return fetch(path, formatRequest(init)).then(response => {
+    let text = response.text();
+
+    if (response.status < 200 || response.status >= 300) {
+      return text.then(text => {
+        return Promise.reject([text, response.status]);
+      });
+    }
+
+    return text;
+  });
+}
+
 /**
  * Calls to fetch but does a few other things:
  *  - turn cookies on for this domain
@@ -41,28 +85,8 @@ export function csrfSafeMethod(method: string): boolean {
  *  - non 2xx status codes will reject the promise returned
  *  - response JSON is returned in place of response
  */
-export function fetchJSONWithCSRF(input: string, init: Object|void, loginOnError: ?boolean): Promise<*> {
-  if (init === undefined) {
-    init = {};
-  }
-  if (loginOnError === undefined) {
-    loginOnError = false;
-  }
-  init.headers = init.headers || {};
-  _.defaults(init.headers, {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
-  });
-
-  let method = init.method || 'GET';
-
-  if (!csrfSafeMethod(method)) {
-    init.headers['X-CSRFToken'] = getCookie('csrftoken');
-  }
-  // turn on cookies for this domain
-  init.credentials = 'same-origin';
-
-  return fetch(input, init).then(response => {
+export function fetchJSONWithCSRF(input: string, init: Object = {}, loginOnError: boolean = false): Promise<*> {
+  return fetch(input, formatJSONRequest(init)).then(response => {
     // Not using response.json() here since it doesn't handle empty responses
     // Also note that text is a promise here, not a string
     let text = response.text();
@@ -107,12 +131,16 @@ export function fetchJSONWithCSRF(input: string, init: Object|void, loginOnError
 }
 
 // import to allow mocking in tests
-import { fetchJSONWithCSRF as mockableFetchJSONWithCSRF } from './api';
+import {
+  fetchJSONWithCSRF as mockableFetchJSONWithCSRF,
+  fetchWithCSRF as mockableFetchWithCSRF
+} from './api';
 export function getUserProfile(username: string): Promise<ProfileGetResult> {
   return mockableFetchJSONWithCSRF(`/api/v0/profiles/${username}/`);
 }
 
 export function patchUserProfile(username: string, profile: Profile): Promise<ProfilePatchResult> {
+  delete profile['image'];
   return mockableFetchJSONWithCSRF(`/api/v0/profiles/${username}/`, {
     method: 'PATCH',
     body: JSON.stringify(profile)
@@ -153,5 +181,17 @@ export function addProgramEnrollment(programId: number): Promise<ProgramEnrollme
     body: JSON.stringify({
       program_id: programId
     })
+  });
+}
+
+export function updateProfileImage(username: string, image: Blob, name: string): Promise<string> {
+  let formData = new FormData();
+  formData.append('image', image, name);
+  return mockableFetchWithCSRF(`/api/v0/profiles/${username}/`, {
+    headers: {
+      'Accept': 'text/html',
+    },
+    method: 'PATCH',
+    body: formData
   });
 }

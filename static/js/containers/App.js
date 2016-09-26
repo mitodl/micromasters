@@ -231,21 +231,17 @@ class App extends React.Component {
     }
 
     let open = false;
-    let message;
+    let message, title, icon;
     if (toastMessage) {
       open = true;
 
-      let icon = "";
       if (toastMessage.icon === TOAST_FAILURE) {
         icon = <Icon name="error" key="icon "/>;
       } else if (toastMessage.icon === TOAST_SUCCESS) {
         icon = <Icon name="done" key="icon" />;
       }
-      message = [
-        icon,
-        " ",
-        toastMessage.message,
-      ];
+      title = toastMessage.title;
+      message = toastMessage.message;
     }
 
     return <div id="app">
@@ -264,7 +260,11 @@ class App extends React.Component {
         setEnrollSelectedProgram={this.setEnrollSelectedProgram}
       />
       <Toast onTimeout={this.clearMessage} open={open}>
-        {message}
+        {icon}
+        <div className="body">
+          <span className="title">{title}</span>
+          <span className="message">{message}</span>
+        </div>
       </Toast>
       <div className="page-content">
         { children }

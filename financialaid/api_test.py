@@ -1,26 +1,40 @@
 """
-Tests for financialaid api
+Tests for financial aid api
 """
+import json
+
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 
 from courses.factories import ProgramFactory
 from dashboard.models import ProgramEnrollment
-from financialaid.api import determine_tier_program, determine_auto_approval
+from financialaid.api import (
+    determine_tier_program,
+    determine_auto_approval
+)
 from financialaid.constants import COUNTRY_INCOME_THRESHOLDS
-from financialaid.factories import TierProgramFactory, FinancialAidFactory
+from financialaid.factories import (
+    TierProgramFactory,
+    FinancialAidFactory
+)
 from profiles.factories import ProfileFactory
+from roles.models import Role
+from roles.roles import Staff, Instructor
 from search.base import ESTestCase
 
 
 class FinancialAidBaseTestCase(ESTestCase):
     """
-    Base test case for financialaid test setup
+    Base test case for financial aid test setup
     """
     @classmethod
     def setUpTestData(cls):
         with mute_signals(post_save):
             cls.profile = ProfileFactory.create()
+            cls.profile2 = ProfileFactory.create()
+            cls.staff_user_profile = ProfileFactory.create()
+            cls.staff_user_profile2 = ProfileFactory.create()
+            cls.instructor_user_profile = ProfileFactory.create()
         cls.program = ProgramFactory.create(
             financial_aid_availability=True,
             live=True
@@ -29,13 +43,60 @@ class FinancialAidBaseTestCase(ESTestCase):
             "0k": TierProgramFactory.create(program=cls.program, income_threshold=0, current=True),
             "15k": TierProgramFactory.create(program=cls.program, income_threshold=15000, current=True),
             "50k": TierProgramFactory.create(program=cls.program, income_threshold=50000, current=True),
-            "100k": TierProgramFactory.create(program=cls.program, income_threshold=100000, current=True),
+            "100k": TierProgramFactory.create(
+                program=cls.program,
+                income_threshold=100000,
+                current=True,
+                discount_amount=0
+            ),
             "150k_not_current": TierProgramFactory.create(program=cls.program, income_threshold=150000, current=False)
         }
         cls.program_enrollment = ProgramEnrollment.objects.create(
             user=cls.profile.user,
             program=cls.program
         )
+        # Role for self.staff_user
+        Role.objects.create(
+            user=cls.staff_user_profile.user,
+            program=cls.program,
+            role=Staff.ROLE_ID,
+        )
+        # Role for self.staff_user_profile2.user
+        cls.program2 = ProgramFactory.create(
+            financial_aid_availability=True,
+            live=True
+        )
+        Role.objects.create(
+            user=cls.staff_user_profile2.user,
+            program=cls.program2,
+            role=Staff.ROLE_ID
+        )
+        # Role for self.instructor
+        Role.objects.create(
+            user=cls.instructor_user_profile.user,
+            program=cls.program,
+            role=Instructor.ROLE_ID
+        )
+
+    @staticmethod
+    def assert_http_status(method, url, status, data=None, content_type="application/json", **kwargs):
+        """
+        Helper method for asserting an HTTP status. Returns the response for further tests if needed.
+        Args:
+            method (method): which http method to use (e.g. self.client.put)
+            url (str): url for request
+            status (int): http status code
+            data (dict): data for request
+            content_type (str): content_type for request
+            **kwargs: any additional kwargs to pass into method
+        Returns:
+            rest_framework.response.Response
+        """
+        if data is not None:
+            kwargs["data"] = json.dumps(data)
+        resp = method(url, content_type=content_type, **kwargs)
+        assert resp.status_code == status
+        return resp
 
 
 class FinancialAidAPITests(FinancialAidBaseTestCase):

@@ -4,6 +4,7 @@ Models for the Financial Aid App
 import datetime
 from django.contrib.auth.models import User
 from django.core import serializers
+from django.core.exceptions import ValidationError
 from django.db import (
     models,
     transaction,
@@ -128,6 +129,17 @@ class FinancialAid(TimestampedModel):
     original_currency = models.CharField(null=True, max_length=10)
     country_of_income = models.CharField(null=True, max_length=100)
     date_exchange_rate = models.DateTimeField(null=True)
+
+    def save(self, *args, **kwargs):
+        """
+        Override save to make sure only one FinancialAid object exists for a User and the associated Program
+        """
+        if FinancialAid.objects.filter(
+                user=self.user,
+                tier_program__program=self.tier_program.program
+        ).exclude(id=self.id).exists():
+            raise ValidationError("Cannot have multiple FinancialAid objects for the same User and Program.")
+        super().save(*args, **kwargs)
 
     @transaction.atomic
     def save_and_log(self, acting_user, *args, **kwargs):

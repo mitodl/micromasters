@@ -3,6 +3,7 @@ Page models for the CMS
 """
 import json
 
+from collections import OrderedDict
 from django.conf import settings
 from django.db import models
 from modelcluster.fields import ParentalKey
@@ -17,6 +18,7 @@ from courses.serializers import ProgramSerializer
 from micromasters.utils import webpack_dev_server_host
 from profiles.api import get_social_username
 from ui.views import get_bundle_url
+from cms.api import get_course_enrollment_text
 
 
 def programs_for_sign_up(programs):
@@ -145,6 +147,12 @@ class ProgramPage(Page):
         username = get_social_username(request.user)
         context = super(ProgramPage, self).get_context(request)
 
+        courses_info = OrderedDict()
+        for course in self.program.course_set.all().order_by(
+                'position_in_program'
+        ):
+            courses_info[course] = get_course_enrollment_text(course)
+
         context["style_src"] = get_bundle_url(request, "style.js")
         context["public_src"] = get_bundle_url(request, "public.js")
         context["style_public_src"] = get_bundle_url(request, "style_public.js")
@@ -153,6 +161,7 @@ class ProgramPage(Page):
         context["username"] = username
         context["js_settings_json"] = json.dumps(js_settings)
         context["title"] = self.title
+        context["courses_info"] = courses_info
 
         return context
 

@@ -11,6 +11,7 @@ from django.core.exceptions import ImproperlyConfigured
 
 from edx_api.certificates.models import Certificate, Certificates
 from edx_api.enrollments.models import Enrollments
+from edx_api.grades.models import CurrentGrade, CurrentGrades
 
 from courses.factories import (
     CourseFactory,
@@ -34,7 +35,7 @@ class StatusTest(ESTestCase):
     # pylint: disable= no-self-use
     def test_course_status(self):
         """test for CourseStatus"""
-        for attr in ('PASSED', 'NOT_PASSED', 'CURRENT_GRADE', 'UPGRADE', 'OFFERED',):
+        for attr in ('PASSED', 'NOT_PASSED', 'CURRENTLY_ENROLLED', 'CAN_UPGRADE', 'OFFERED',):
             assert hasattr(api.CourseStatus, attr)
 
     def test_course_status_all_statuses(self):
@@ -45,7 +46,7 @@ class StatusTest(ESTestCase):
 
     def test_course_run_status(self):
         """test for CourseRunStatus"""
-        for attr in ('NOT_ENROLLED', 'GRADE', 'READ_CERT', 'WILL_ATTEND', 'UPGRADE', 'NOT_PASSED'):
+        for attr in ('NOT_ENROLLED', 'CURRENTLY_ENROLLED', 'READ_CERT', 'WILL_ATTEND', 'CAN_UPGRADE', 'NOT_PASSED'):
             assert hasattr(api.CourseRunStatus, attr)
 
     def test_course_run_user_status(self):
@@ -156,13 +157,13 @@ class FormatRunTest(CourseTests):
         self.assertIn('price', format_courserun_offered_course)
         self.assertEqual(format_courserun_offered_course['price'], course_price)
 
-        format_courserun_no_verified_course = api.format_courserun_for_dashboard(crun, api.CourseStatus.UPGRADE)
+        format_courserun_no_verified_course = api.format_courserun_for_dashboard(crun, api.CourseStatus.CAN_UPGRADE)
         self.assertIn('price', format_courserun_no_verified_course)
         self.assertEqual(format_courserun_no_verified_course['price'], course_price)
 
         self.assertNotIn('price', api.format_courserun_for_dashboard(crun, api.CourseStatus.PASSED))
         self.assertNotIn('price', api.format_courserun_for_dashboard(crun, api.CourseStatus.NOT_PASSED))
-        self.assertNotIn('price', api.format_courserun_for_dashboard(crun, api.CourseStatus.CURRENT_GRADE))
+        self.assertNotIn('price', api.format_courserun_for_dashboard(crun, api.CourseStatus.CURRENTLY_ENROLLED))
 
     def test_format_run(self):
         """Test for format_courserun_for_dashboard with passed run and position"""
@@ -321,7 +322,7 @@ class CourseRunTest(CourseTests):
             edx_key="course-v1:edX+DemoX+Demo_Course"
         )
         run_status = api.get_status_for_courserun(crun, self.enrollments)
-        assert run_status.status == api.CourseRunStatus.GRADE
+        assert run_status.status == api.CourseRunStatus.CURRENTLY_ENROLLED
         assert run_status.course_run == crun
         assert (run_status.enrollment_for_course ==
                 self.enrollments.get_enrollment_for_course("course-v1:edX+DemoX+Demo_Course"))
@@ -377,12 +378,12 @@ class CourseRunTest(CourseTests):
             edx_key="course-v1:MITx+8.MechCX+2014_T1"
         )
         run_status = api.get_status_for_courserun(future_run, self.enrollments)
-        assert run_status.status == api.CourseRunStatus.UPGRADE
+        assert run_status.status == api.CourseRunStatus.CAN_UPGRADE
         assert run_status.course_run == future_run
         assert (run_status.enrollment_for_course ==
                 self.enrollments.get_enrollment_for_course("course-v1:MITx+8.MechCX+2014_T1"))
         run_status = api.get_status_for_courserun(current_run, self.enrollments)
-        assert run_status.status == api.CourseRunStatus.UPGRADE
+        assert run_status.status == api.CourseRunStatus.CAN_UPGRADE
         assert run_status.course_run == current_run
         assert (run_status.enrollment_for_course ==
                 self.enrollments.get_enrollment_for_course("course-v1:MITx+8.MechCX+2014_T1"))
@@ -399,13 +400,13 @@ class CourseRunTest(CourseTests):
             edx_key="course-v1:MITx+8.MechCX+2014_T1"
         )
         run_status = api.get_status_for_courserun(current_run, self.enrollments)
-        assert run_status.status == api.CourseRunStatus.UPGRADE
+        assert run_status.status == api.CourseRunStatus.CAN_UPGRADE
 
         # modify the run to have an upgrade deadline in the future
         current_run.upgrade_deadline = self.now+timedelta(weeks=1)
         current_run.save()
         run_status = api.get_status_for_courserun(current_run, self.enrollments)
-        assert run_status.status == api.CourseRunStatus.UPGRADE
+        assert run_status.status == api.CourseRunStatus.CAN_UPGRADE
 
         # modify the run to have an upgrade deadline in the past
         current_run.upgrade_deadline = self.now-timedelta(weeks=1)
@@ -582,13 +583,13 @@ class InfoCourseTest(CourseTests):
             'dashboard.api.get_status_for_courserun',
             autospec=True,
             side_effect=self.get_mock_run_status_func(
-                api.CourseRunStatus.GRADE, self.course_run, api.CourseRunStatus.NOT_PASSED),
+                api.CourseRunStatus.CURRENTLY_ENROLLED, self.course_run, api.CourseRunStatus.NOT_PASSED),
         ):
             self.assert_course_equal(
                 self.course,
                 api.get_info_for_course(self.course, None, None)
             )
-        mock_format.assert_any_call(self.course_run, api.CourseStatus.CURRENT_GRADE, None, position=1)
+        mock_format.assert_any_call(self.course_run, api.CourseStatus.CURRENTLY_ENROLLED, None, position=1)
         mock_format.assert_any_call(self.course_run_ver, api.CourseStatus.NOT_PASSED, None, position=2)
 
     @patch('dashboard.api.format_courserun_for_dashboard', autospec=True)
@@ -662,7 +663,7 @@ class InfoCourseTest(CourseTests):
                 self.course,
                 api.get_info_for_course(self.course, None, None)
             )
-        mock_format.assert_called_once_with(self.course_run, api.CourseStatus.CURRENT_GRADE, None, position=1)
+        mock_format.assert_called_once_with(self.course_run, api.CourseStatus.CURRENTLY_ENROLLED, None, position=1)
 
     @patch('dashboard.api.format_courserun_for_dashboard', autospec=True)
     def test_info_upgrade(self, mock_format):
@@ -671,13 +672,13 @@ class InfoCourseTest(CourseTests):
             'dashboard.api.get_status_for_courserun',
             autospec=True,
             side_effect=self.get_mock_run_status_func(
-                api.CourseRunStatus.UPGRADE, self.course_run, api.CourseRunStatus.NOT_ENROLLED),
+                api.CourseRunStatus.CAN_UPGRADE, self.course_run, api.CourseRunStatus.NOT_ENROLLED),
         ):
             self.assert_course_equal(
                 self.course,
                 api.get_info_for_course(self.course, None, None)
             )
-        mock_format.assert_called_once_with(self.course_run, api.CourseStatus.UPGRADE, None, position=1)
+        mock_format.assert_called_once_with(self.course_run, api.CourseStatus.CAN_UPGRADE, None, position=1)
 
     @patch('dashboard.api.format_courserun_for_dashboard', autospec=True)
     def test_info_default_should_not_happen(self, mock_format):
@@ -1064,7 +1065,7 @@ class CachedCertificatesTests(ESTestCase):
         )
 
 
-class EnrollmentsTests(ESTestCase):
+class CachedEnrollmentsTests(ESTestCase):
     """Tests get_student_enrollments"""
 
     @classmethod
@@ -1231,7 +1232,7 @@ class EnrollmentsTests(ESTestCase):
             list(set(self.all_course_run_ids).difference(set(course_ids)))
         )
 
-    def test_update_gio(self):
+    def test_update(self):
         """
         Ensure that we replace existing data.
         """
@@ -1279,6 +1280,231 @@ class EnrollmentsTests(ESTestCase):
         assert mocked_get_student_enrollments.call_count == 1
         self.assert_enrollments_in_db(now, course_ids, updated_enrollments)
         self.assert_null_entry_for_certs_in_db(
+            now,
+            list(set(self.all_course_run_ids).difference(set(course_ids)))
+        )
+
+
+class CachedCurrentGradesTests(ESTestCase):
+    """Tests get_student_current_grades"""
+
+    @classmethod
+    def setUpTestData(cls):
+        """
+        Set up current grades
+        """
+        with open(os.path.join(os.path.dirname(__file__),
+                               'fixtures/current_grades.json')) as file_obj:
+            grades_json = json.loads(file_obj.read())
+
+        cls.current_grades = CurrentGrades([CurrentGrade(grade_json) for grade_json in grades_json])
+        all_runs = []
+        cls.all_course_run_ids = []
+        for cur_grade in cls.current_grades.all_current_grades:
+            all_runs.append(CourseRunFactory.create(edx_course_key=cur_grade.course_id))
+            cls.all_course_run_ids.append(cur_grade.course_id)
+        # add an extra course_run not coming from certificates
+        fake_course_id = 'foo+cert+key'
+        all_runs.append(CourseRunFactory.create(edx_course_key=fake_course_id))
+        cls.all_course_run_ids.append(fake_course_id)
+
+        for run in all_runs:
+            run.course.program.live = True
+            run.course.program.save()
+
+        cls.user = UserFactory.create()
+
+    def assert_in_db(self, expected_timestamp, course_ids, current_grades=None):
+        """
+        Check that self.current_grades matches what's in the database
+        """
+        if current_grades is None:
+            current_grades = self.current_grades
+
+        one_minute_before = expected_timestamp - timedelta(minutes=1)
+        one_minute_after = expected_timestamp + timedelta(minutes=1)
+
+        current_grades_list = models.CachedCurrentGrade.objects.filter(
+            user=self.user,
+            course_run__edx_course_key__in=course_ids,
+        ).exclude(data__isnull=True)
+        assert current_grades_list.count() == len(course_ids)
+        for current_grade_obj in current_grades_list:
+            assert one_minute_before < current_grade_obj.last_request < one_minute_after
+            current_grade = current_grades.get_current_grade(current_grade_obj.course_run.edx_course_key)
+            assert current_grade.json == current_grade_obj.data
+
+    def assert_null_entry_in_db(self, expected_timestamp, course_ids):
+        """
+        Checks that the entry in the cache is null for the given course IDs.
+        """
+        one_minute_before = expected_timestamp - timedelta(minutes=1)
+        one_minute_after = expected_timestamp + timedelta(minutes=1)
+
+        current_grades_list = models.CachedCurrentGrade.objects.filter(
+            user=self.user,
+            course_run__edx_course_key__in=course_ids,
+            data__isnull=True,
+        )
+        assert current_grades_list.count() == len(course_ids)
+        for current_grade_obj in current_grades_list:
+            assert one_minute_before < current_grade_obj.last_request < one_minute_after
+
+    def test_new(self):
+        """
+        Get new student current grades from edX
+        """
+        mocked_get_student_curgrade = MagicMock(
+            return_value=self.current_grades
+        )
+        edx_client = MagicMock(
+            current_grades=MagicMock(
+                get_student_current_grades=mocked_get_student_curgrade
+            )
+        )
+
+        username = 'fake_username'
+        course_ids = list(self.current_grades.all_course_ids)
+        with patch('dashboard.api.get_social_username', autospec=True, return_value=username):
+            ret = api.get_student_current_grades(self.user, edx_client)
+        # Test that the current grades object returned by the edx_api function is exactly the same
+        # object as what our function tests
+        assert ret is self.current_grades
+        assert mocked_get_student_curgrade.call_args[0] == (username, self.all_course_run_ids)
+        now = datetime.now(tz=pytz.utc)
+        self.assert_in_db(now, course_ids)
+        # assert that all the course run that not have a verified
+        # certificate have a null entry in the cache DB
+        self.assert_null_entry_in_db(
+            now,
+            list(set(self.all_course_run_ids).difference(set(course_ids)))
+        )
+
+    def test_cached(self):
+        """
+        If our copy of the current grades data is in the database, don't fetch from edX
+        """
+        now = datetime.now(tz=pytz.utc)
+        four_minutes_ago = now - timedelta(minutes=4)
+
+        mocked_get_student_curgrade = MagicMock(
+            return_value=self.current_grades
+        )
+        edx_client = MagicMock(
+            current_grades=MagicMock(
+                get_student_current_grades=mocked_get_student_curgrade
+            )
+        )
+
+        course_ids = list(self.current_grades.all_course_ids)
+
+        # Call get_student_current_grades once to populate database
+        api.get_student_current_grades(self.user, edx_client)
+        self.assert_in_db(now, course_ids)
+        self.assert_null_entry_in_db(
+            now,
+            list(set(self.all_course_run_ids).difference(set(course_ids)))
+        )
+
+        models.CachedCurrentGrade.objects.filter(user=self.user).update(last_request=four_minutes_ago)
+
+        # Assert that this second call doesn't update the database
+        assert mocked_get_student_curgrade.call_count == 1
+        api.get_student_current_grades(self.user, edx_client)
+        assert mocked_get_student_curgrade.call_count == 1
+        self.assert_in_db(four_minutes_ago, course_ids)
+        self.assert_null_entry_in_db(
+            four_minutes_ago,
+            list(set(self.all_course_run_ids).difference(set(course_ids)))
+        )
+
+    def test_expired(self):
+        """
+        If our copy of the current grades data is expired, fetch from edX again
+        """
+        now = datetime.now(tz=pytz.utc)
+        one_hour_1_min_ago = now - timedelta(minutes=1, hours=1)
+
+        mocked_get_student_curgrade = MagicMock(
+            return_value=self.current_grades
+        )
+        edx_client = MagicMock(
+            current_grades=MagicMock(
+                get_student_current_grades=mocked_get_student_curgrade
+            )
+        )
+
+        course_ids = list(self.current_grades.all_course_ids)
+
+        # Call get_student_enrollments once to populate database
+        api.get_student_current_grades(self.user, edx_client)
+        self.assert_in_db(now, course_ids)
+        self.assert_null_entry_in_db(
+            now,
+            list(set(self.all_course_run_ids).difference(set(course_ids)))
+        )
+
+        models.CachedCurrentGrade.objects.filter(user=self.user).update(last_request=one_hour_1_min_ago)
+
+        # Assert that this second call updates the database
+        assert mocked_get_student_curgrade.call_count == 1
+        api.get_student_current_grades(self.user, edx_client)
+        assert mocked_get_student_curgrade.call_count == 2
+        self.assert_in_db(now, course_ids)
+        self.assert_null_entry_in_db(
+            now,
+            list(set(self.all_course_run_ids).difference(set(course_ids)))
+        )
+
+    def test_update(self):
+        """
+        Ensure that we replace existing data.
+        """
+        now = datetime.now(tz=pytz.utc)
+        one_hour_1_min_ago = now - timedelta(minutes=1, hours=1)
+
+        mocked_get_student_curgrade = MagicMock(
+            return_value=self.current_grades
+        )
+        edx_client = MagicMock(
+            current_grades=MagicMock(
+                get_student_current_grades=mocked_get_student_curgrade
+            )
+        )
+
+        course_ids = list(self.current_grades.all_course_ids)
+
+        # Call get_student_enrollments once to populate database
+        api.get_student_current_grades(self.user, edx_client)
+        self.assert_in_db(now, course_ids)
+        self.assert_null_entry_in_db(
+            now,
+            list(set(self.all_course_run_ids).difference(set(course_ids)))
+        )
+
+        models.CachedCurrentGrade.objects.filter(user=self.user).update(last_request=one_hour_1_min_ago)
+
+        # update current grade
+        first_current_grade = list(self.current_grades.all_current_grades)[0]
+        grade_data = dict(first_current_grade.json)
+        grade_data['letter_grade'] = 'Passsss'
+        updated_grades = CurrentGrades([CurrentGrade(grade_data)])
+        course_ids = [grade_data['course_key']]
+
+        # Get enrollments
+        mocked_get_student_curgrade = MagicMock(
+            return_value=updated_grades
+        )
+        edx_client = MagicMock(
+            current_grades=MagicMock(
+                get_student_current_grades=mocked_get_student_curgrade
+            )
+        )
+
+        api.get_student_current_grades(self.user, edx_client)
+        assert mocked_get_student_curgrade.call_count == 1
+        self.assert_in_db(now, course_ids, updated_grades)
+        self.assert_null_entry_in_db(
             now,
             list(set(self.all_course_run_ids).difference(set(course_ids)))
         )

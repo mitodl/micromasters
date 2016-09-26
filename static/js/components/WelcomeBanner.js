@@ -2,7 +2,7 @@
 /* global SETTINGS: false */
 import React from 'react';
 
-import ProfileImage from './ProfileImage';
+import ProfileImage from '../containers/ProfileImage';
 import { getPreferredName } from '../util/util';
 import type { Profile } from '../flow/profileTypes';
 
@@ -17,7 +17,7 @@ export default class WelcomeBanner extends React.Component {
     const { profile } = this.props;
     return (
       <div className="welcome-banner">
-        <ProfileImage profile={profile} />
+        <ProfileImage profile={profile} editable={true} />
         <div className="banner-text">
           Hi
           <span className="bold">

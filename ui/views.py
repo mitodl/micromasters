@@ -8,8 +8,10 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from django.shortcuts import (
+    redirect,
     render,
     Http404,
 )
@@ -83,9 +85,14 @@ class ReactView(View):  # pylint: disable=unused-argument
             }
         )
 
+    def post(self, request, *args, **kwargs):
+        """Redirect to GET. This assumes there's never any good reason to POST to these views."""
+        return redirect(request.build_absolute_uri())
+
 
 @method_decorator(require_mandatory_urls, name='dispatch')
 @method_decorator(login_required, name='dispatch')
+@method_decorator(csrf_exempt, name='dispatch')
 class DashboardView(ReactView):
     """
     Wrapper for dashboard view which asserts certain logged in requirements

@@ -4,7 +4,7 @@ import { Card } from 'react-mdl/lib/Card';
 import Icon from 'react-mdl/lib/Icon';
 import IconButton from 'react-mdl/lib/IconButton';
 
-import ProfileImage from './ProfileImage';
+import ProfileImage from '../containers/ProfileImage';
 import {
   getEmployer,
   getPreferredName,

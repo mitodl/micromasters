@@ -343,6 +343,49 @@ class CourseRunTests(CourseModelTests):
         )
         assert course_run.is_future is False
 
+    def test_is_future_enrollment_open(self):
+        """Test for is_future_enrollment_open property"""
+        # with no start date
+        course_run = self.create_run()
+        assert course_run.is_future_enrollment_open is False
+
+        # with start in the future, no enrollment_start
+        course_run = self.create_run(
+            start=self.now + timedelta(weeks=2)
+        )
+        assert course_run.is_future_enrollment_open is False
+
+        # enrollment_start in the past, no enrollment_end
+        course_run = self.create_run(
+            start=self.now + timedelta(weeks=2),
+            enr_start=self.now - timedelta(weeks=3),
+            enr_end=None
+        )
+        assert course_run.is_future_enrollment_open is True
+
+        # enrollment_start in the past, enrollment_end in the past
+        course_run = self.create_run(
+            start=self.now + timedelta(weeks=2),
+            enr_start=self.now - timedelta(weeks=3),
+            enr_end=self.now - timedelta(weeks=1)
+        )
+        assert course_run.is_future_enrollment_open is False
+
+        # enrollment_start in the past, enrollment_end in the future
+        course_run = self.create_run(
+            start=self.now + timedelta(weeks=2),
+            enr_start=self.now - timedelta(weeks=3),
+            enr_end=self.now + timedelta(weeks=3)
+        )
+        assert course_run.is_future_enrollment_open is True
+
+        # enrollment_start in the future
+        course_run = self.create_run(
+            start=self.now + timedelta(weeks=2),
+            enr_start=self.now + timedelta(weeks=1)
+        )
+        assert course_run.is_future_enrollment_open is False
+
     def test_is_upgradable(self):
         """Test for is_upgradable property"""
         # with no upgrade_deadline

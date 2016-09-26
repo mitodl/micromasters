@@ -42,6 +42,12 @@ from roles.roles import (
 from search.base import ESTestCase
 
 
+def format_image_expectation(profile):
+    """formats a profile image to match what will be in JSON"""
+    profile["image"] = "http://testserver{}".format(profile["image"])
+    return profile
+
+
 class ProfileBaseTests(ESTestCase):
     """
     Tests for profile views
@@ -107,7 +113,9 @@ class ProfileGETTests(ProfileBaseTests):
             profile = ProfileFactory.create(user=self.user1)
         self.client.force_login(self.user1)
         resp = self.client.get(self.url1)
-        assert resp.json() == ProfileSerializer().to_representation(profile)
+        assert resp.json() == format_image_expectation(
+            ProfileSerializer().to_representation(profile)
+        )
 
     def test_anonym_user_get_public_profile(self):
         """
@@ -237,7 +245,9 @@ class ProfileGETTests(ProfileBaseTests):
 
         self.client.force_login(self.user1)
         resp = self.client.get(self.url2)
-        assert resp.json() == ProfileSerializer().to_representation(profile)
+        assert resp.json() == format_image_expectation(
+            ProfileSerializer().to_representation(profile)
+        )
 
     def test_staff_sees_entire_profile(self):
         """
@@ -260,7 +270,9 @@ class ProfileGETTests(ProfileBaseTests):
 
         self.client.force_login(self.user1)
         resp = self.client.get(self.url2)
-        assert resp.json() == ProfileSerializer().to_representation(profile)
+        assert resp.json() == format_image_expectation(
+            ProfileSerializer().to_representation(profile)
+        )
 
 
 class ProfilePATCHTests(ProfileBaseTests):
@@ -282,6 +294,7 @@ class ProfilePATCHTests(ProfileBaseTests):
             uid="{}_edx".format(new_profile.user.username)
         )
         patch_data = ProfileSerializer().to_representation(new_profile)
+        del patch_data['image']
 
         resp = self.client.patch(self.url1, content_type="application/json", data=json.dumps(patch_data))
         assert resp.status_code == 200

@@ -54,6 +54,15 @@ class Course(models.Model):
         next_run_set = next_run_set.order_by('start_date')
         return next_run_set[0]
 
+    def get_promised_run(self):
+        """
+        Get a run that does not have start_date,
+        only fuzzy_start_date
+        """
+        return self.courserun_set.filter(
+            models.Q(start_date=None) & models.Q(fuzzy_start_date__isnull=False)
+        ).first()
+
 
 class CourseRun(models.Model):
     """
@@ -107,6 +116,22 @@ class CourseRun(models.Model):
         if not self.start_date:
             return False
         return self.start_date > datetime.now(pytz.utc)
+
+    @property
+    def is_future_enrollment_open(self):
+        """
+        Checks if the course will run in the future and
+        enrollment is currently open
+        """
+        if self.is_future:
+            if self.enrollment_start:
+                now = datetime.now(pytz.utc)
+                if self.enrollment_end:
+                    return self.enrollment_start <= now <= self.enrollment_end
+                else:
+                    return self.enrollment_start <= now
+
+        return False
 
     @property
     def is_upgradable(self):

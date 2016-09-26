@@ -2,7 +2,7 @@
 import React from 'react';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import _ from 'lodash';
-import ProfileImage from '../ProfileImage';
+import ProfileImage from '../../containers/ProfileImage';
 import UserChip from '../UserChip';
 import { getPreferredName, getLocation } from '../../util/util';
 import type { SearchResult } from '../../flow/searchTypes';

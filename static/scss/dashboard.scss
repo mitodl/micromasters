@@ -511,6 +511,15 @@ c.validation-wrapper {
     padding: 10px;
     font-size: 40px;
   }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .title {
+    font-size: 18px;
+  }
 }
 
 // IE: make x's disappear for input items

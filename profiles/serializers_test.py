@@ -94,7 +94,8 @@ class ProfileTests(ESTestCase):
             'work_history': [
                 EmploymentSerializer().to_representation(work_history) for work_history in
                 profile.work_history.all()
-            ]
+            ],
+            'image': profile.image.url
         }
 
     def test_limited(self):  # pylint: disable=no-self-use
@@ -354,6 +355,7 @@ class ProfileFilledOutTests(ESTestCase):
                 continue
 
             clone = deepcopy(self.data)
+            clone["image"] = self.profile.image
             parent_getter(clone)[key] = None
             with self.assertRaises(ValidationError) as ex:
                 ProfileFilledOutSerializer(data=clone).is_valid(raise_exception=True)
@@ -370,6 +372,7 @@ class ProfileFilledOutTests(ESTestCase):
         """
         Test a successful validation
         """
+        self.data["image"] = self.profile.image
         ProfileFilledOutSerializer(data=self.data).is_valid(raise_exception=True)
 
     def test_filled_out_false(self):
@@ -377,6 +380,7 @@ class ProfileFilledOutTests(ESTestCase):
         filled_out cannot be set to false
         """
         self.data['filled_out'] = False
+        self.data['image'] = self.profile.image
         with self.assertRaises(ValidationError) as ex:
             ProfileFilledOutSerializer(data=self.data).is_valid(raise_exception=True)
         assert ex.exception.args[0] == {'non_field_errors': ['filled_out cannot be set to false']}
@@ -405,6 +409,7 @@ class ProfileFilledOutTests(ESTestCase):
         Make sure end_date can be set to null on filled out profiles
         """
         self.data['work_history'][0]['end_date'] = None
+        self.data['image'] = self.profile.image
         # No exception should be raised by the next line
         ProfileFilledOutSerializer(data=self.data).is_valid(raise_exception=True)
 
