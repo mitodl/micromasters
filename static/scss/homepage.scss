@@ -87,7 +87,7 @@ body.app-media {
 
 .centered-content {
   width: 97%;
-  max-width: 1300px;
+  max-width: 1150px;
   min-width: 800px;
   margin: 0 auto;
 }
@@ -100,6 +100,7 @@ body.app-media {
   padding:0;
   background-size:cover;
   position: relative;
+  height: 65%;
   
   .banner-wrapper-content {
     margin: 0 auto;
@@ -150,13 +151,15 @@ body.app-media {
   text-align: center;
 }
 .sub-banner-text {
-  width:800px;
   text-align:left;
   margin: 0 auto;
   color:#000;
   font-size:25px;
   font-weight:200;
   line-height: 44px;
+  width: 81%;
+  max-width:1000px;
+
 
   h4 {
     font-size: 23px;
@@ -203,7 +206,7 @@ body.app-media {
   .col-md-12 {
     width: 97%;
     margin: 0 auto;
-    max-width: 1300px;
+    max-width: 1250px;
     min-width: 800px;
     float: none;
 

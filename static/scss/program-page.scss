@@ -1,19 +1,25 @@
 .program-page {
   padding: 0;
+  background: #fff;
+
+  .double-column {
+    width: 89%;
+    }
 
   .hero-image {
     height: 600px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: flex-start;
     color: white;
     text-align: center;
     background-size: cover;
+    padding-top: 210px;
 
     .title {
       font-size: 36px;
-      margin-bottom: 25px;
+      margin-bottom: 31px;
       max-width: 700px;
     }
 
@@ -22,23 +28,31 @@
       margin-bottom: 25px;
 
       * {
-        font-size: 30px;
+        font-size: 23px;
         font-weight: 300;
+        line-height: 1.3em;
+        color: rgba(255,255,255,.8);
       }
     }
 
     button {
       margin-bottom: 20px;
       margin-right: 0;
+      font-size: 16px;
+      font-weight: 300;
+      padding: 14px 53px;
     }
 
     .log-in {
-      margin-bottom: 120px;
       font-size: 16px;
+      font-weight: 300;
+      color: rgba(255,255,255,.8);
 
       a {
         color: white;
         border-bottom: 1px solid white;
+        font-size: 18px;
+        margin-left: 5px;
       }
     }
   }
@@ -47,6 +61,25 @@
     .tab-container {
       width: 96%;
       max-width: 1000px;
+
+      a:focus, a:hover {
+        text-decoration: none;
+      }
+    }
+
+    .is-upgraded:after, .is-active:after {
+    height: 3px !important;
+    background: $mm-brand-bg !important;
+    }
+
+    .mdl-tabs__tab-bar {
+      margin-bottom: 40px;
+      height: 57px;
+    }
+
+    .mdl-tabs__tab {
+      height: 56px;
+      line-height: 55px;
     }
 
     .mdl-tabs__panel {
@@ -55,15 +88,15 @@
   }
 
   .info-box, .powered-by {
-    margin: 16px;
+    margin: 0 0 23px 15px;;
   }
 
   .info-box {
     padding: 30px;
-    background-color: $medgrey;
+    background-color: $bg-med-gray;
 
     > *:not(:last-child) {
-      margin-bottom: 15px;
+      margin-bottom: 22px;
     }
 
     > .title {
@@ -76,10 +109,13 @@
     .course-details {
       .title {
         font-weight: 600;
+        font-size: 16px;
+        margin: 0 0 6px 0;
       }
 
       .description {
         color: $font-gray;
+        font-size: 15px;
       }
     }
   }
@@ -105,21 +141,28 @@
 
   }
 
+  #faq-panel, #about-panel{
+    p {
+    font-size: 16px;
+    color: rgba(0,0,0,.7);
+    margin-bottom: 23px;
+    }
+  }
+
   .faqs {
     margin-top: 20px;
-
-    > *:not(:last-child) {
-      border-bottom: 2px solid $medgrey;
-    }
 
     * {
       font-size: 16px;
     }
 
     .faq {
+      padding: 20px 0;
+
       .question {
-        font-weight: 600;
-        margin: 25px 0;
+        font-weight: 500;
+        font-size: 18px;
+        margin: 0 0 25px 0;
       }
     }
 
