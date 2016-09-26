@@ -15,11 +15,23 @@ export default class ProfileProgressControls extends React.Component {
     profile:      Profile,
     ui:           UIState,
     saveProfile:  SaveProfileFunc,
+    programIdForEnrollment: ?number,
+    addProgramEnrollment: Function,
   };
 
   saveAndContinue: Function = (): void => {
-    const { nextStep, isLastTab, validator } = this.props;
+    const {
+      nextStep,
+      isLastTab,
+      validator,
+      programIdForEnrollment,
+      addProgramEnrollment
+    } = this.props;
+
     saveProfileStep.call(this, validator, isLastTab).then(() => {
+      if (programIdForEnrollment && addProgramEnrollment) {
+        addProgramEnrollment(programIdForEnrollment);
+      }
       nextStep();
     });
   };

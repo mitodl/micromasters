@@ -26,22 +26,27 @@ import {
   setShowWorkDeleteDialog,
   setDeletionIndex,
 } from '../actions/ui';
+import { setProgram } from '../actions/ui';
 import { createSimpleActionHelpers, createAsyncActionHelpers } from '../util/redux';
 import type { ActionHelpers, AsyncActionHelpers } from '../util/redux';
 import type { Validator, UIValidator } from '../util/validation';
 import type { Profile, Profiles, ProfileGetResult } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
+import type { DashboardState } from '../flow/dashboardTypes';
+import type { Program } from '../flow/programTypes';
+import { addProgramEnrollment } from '../actions/enrollments';
 
 type UpdateProfile = (isEdit: boolean, profile: Profile, validator: Validator|UIValidator) => void;
 
 class ProfileFormContainer extends React.Component {
   props: {
-    profiles:   Profiles,
-    children:   React$Element<*>[],
-    dispatch:   Dispatch,
-    history:    Object,
-    ui:         UIState,
-    params:     {[k: string]: string},
+    profiles:    Profiles,
+    children:    React$Element<*>[],
+    dispatch:    Dispatch,
+    history:     Object,
+    ui:          UIState,
+    params:      {[k: string]: string},
+    dashboard:   DashboardState
   };
 
   static contextTypes = {
@@ -52,6 +57,7 @@ class ProfileFormContainer extends React.Component {
     return {
       profiles: state.profiles,
       ui: state.ui,
+      dashboard: state.dashboard,
     };
   };
 
@@ -110,6 +116,16 @@ class ProfileFormContainer extends React.Component {
     }
   }
 
+  setProgram = (program: Program): void => {
+    const { dispatch } = this.props;
+    dispatch(setProgram(program));
+  }
+
+  addProgramEnrollment = (programId: number): void => {
+    const { dispatch } = this.props;
+    dispatch(addProgramEnrollment(programId));
+  };
+
   simpleActionHelpers: Function = (): ActionHelpers => {
     const { dispatch } = this.props;
     return createSimpleActionHelpers(dispatch, [
@@ -136,7 +152,11 @@ class ProfileFormContainer extends React.Component {
   };
 
   profileProps: Function = (profileFromStore: ProfileGetResult) => {
-    let { ui } = this.props;
+    let {
+      ui,
+      dashboard,
+      dispatch,
+    } = this.props;
     let errors, isEdit, profile;
 
     if ( profileFromStore === undefined ) {
@@ -159,6 +179,10 @@ class ProfileFormContainer extends React.Component {
       profile: profile,
       errors: errors,
       ui: ui,
+      dispatch: dispatch,
+      dashboard: dashboard,
+      setProgram: this.setProgram,
+      addProgramEnrollment: this.addProgramEnrollment,
       updateProfile: this.updateProfile.bind(this, isEdit),
       saveProfile: this.saveProfile.bind(this, isEdit),
       fetchProfile: this.fetchProfile,

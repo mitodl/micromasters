@@ -49,6 +49,17 @@ let checkFieldPresence = (profile, requiredFields, messages: any) => {
 export type Validator = (a: Profile) => ValidationErrors;
 export type UIValidator = (a: Profile, b: UIState) => ValidationErrors;
 
+export function programValidation(_: Profile, ui: UIState): ValidationErrors {
+  let { selectedProgram } = ui;
+  let errors = {};
+
+  if (!selectedProgram) {
+    errors.program = 'Please select a valid program';
+  }
+
+  return errors;
+}
+
 export function personalValidation(profile: Profile): ValidationErrors {
   let requiredFields = [
     ['first_name'],

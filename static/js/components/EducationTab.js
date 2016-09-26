@@ -14,6 +14,7 @@ class EducationTab extends React.Component {
     profile:      Profile,
     ui:           UIState,
     saveProfile:  SaveProfileFunc,
+    addProgramEnrollment: Function,
   };
 
   render() {
@@ -24,6 +25,7 @@ class EducationTab extends React.Component {
           {...this.props}
           nextBtnLabel="Next"
           isLastTab={false}
+          programIdForEnrollment={null}
           validator={educationValidation}
         />
       </div>

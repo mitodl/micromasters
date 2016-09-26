@@ -19,6 +19,7 @@ class EmploymentTab extends React.Component {
     ui:           UIState,
     nextStep:     () => void,
     prevStep:     () => void,
+    addProgramEnrollment: Function,
   };
 
   render () {
@@ -29,6 +30,7 @@ class EmploymentTab extends React.Component {
           {...this.props}
           nextBtnLabel="I'm Done!"
           isLastTab={true}
+          programIdForEnrollment={null}
           validator={
             combineValidators(
               personalValidation,
