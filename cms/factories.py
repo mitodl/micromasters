@@ -1,22 +1,19 @@
 """Factories for making test data"""
-from datetime import datetime
-import pytz
-
 import factory
-from factory import fuzzy
 from factory.django import DjangoModelFactory
 import faker
 
 from cms.models import ProgramPage, ProgramFaculty
-from wagtail.wagtailimages.models import Image
 from courses.factories import ProgramFactory
+from wagtail.wagtailimages.models import Image
 
 
 FAKE = faker.Factory.create()
 
 
 class ImageFactory(DjangoModelFactory):
-    class Meta:
+    "Factory for Wagtail images"
+    class Meta:  # pylint: disable=missing-docstring
         model = Image
 
     file = factory.LazyAttribute(lambda x: FAKE.uri_path())
@@ -27,10 +24,10 @@ class ImageFactory(DjangoModelFactory):
 
 class ProgramPageFactory(DjangoModelFactory):
     "Factory for ProgramPage"
-    class Meta:
+    class Meta:  # pylint: disable=missing-docstring
         model = ProgramPage
 
-    path = '/'  # factory.LazyAttribute(lambda x: FAKE.uri_path())
+    path = '/'
     depth = 1
     title = factory.LazyAttribute(lambda x: FAKE.sentence(nb_words=4))
 

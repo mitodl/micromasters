@@ -25,6 +25,7 @@ def programs_for_sign_up(programs):
     """formats program info for the signup dialogs"""
     return [ProgramSerializer().to_representation(p) for p in programs]
 
+
 def faculty_for_carousel(faculty):
     """formats faculty info for the carousel"""
     from cms.serializers import FacultySerializer
