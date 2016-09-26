@@ -12,7 +12,7 @@ FAKE = faker.Factory.create()
 
 
 class ImageFactory(DjangoModelFactory):
-    "Factory for Wagtail images"
+    """Factory for Wagtail images"""
     class Meta:  # pylint: disable=missing-docstring
         model = Image
 
@@ -23,7 +23,7 @@ class ImageFactory(DjangoModelFactory):
 
 
 class ProgramPageFactory(DjangoModelFactory):
-    "Factory for ProgramPage"
+    """Factory for ProgramPage"""
     class Meta:  # pylint: disable=missing-docstring
         model = ProgramPage
 
@@ -35,7 +35,7 @@ class ProgramPageFactory(DjangoModelFactory):
 
 
 class FacultyFactory(DjangoModelFactory):
-    "Factory for program faculty"
+    """Factory for program faculty"""
     class Meta:  # pylint: disable=missing-docstring
         model = ProgramFaculty
 

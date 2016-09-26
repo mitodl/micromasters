@@ -6,12 +6,17 @@ from wagtail.wagtailimages.models import Image, Rendition
 from cms.models import ProgramPage, ProgramFaculty
 
 class RenditionSerializer(serializers.ModelSerializer):
+    """Serializer for Wagtail Rendition objects."""
     class Meta:
         model = Rendition
         fields = ("file", "width", "height")
 
 
 class ImageRenditionsField(serializers.RelatedField):
+    """
+    Field to output serialized versions of three sizes of an image:
+    small (100px), medium (500px), and large (1000px).
+    """
     def to_representation(self, image):
         serializer = RenditionSerializer()
         small = image.get_rendition('max-100x100')
