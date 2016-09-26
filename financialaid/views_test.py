@@ -1,10 +1,6 @@
 """
 Tests for financialaid view
 """
-from datetime import (
-    datetime,
-    timedelta
-)
 from unittest.mock import Mock, patch
 
 from django.core.exceptions import ImproperlyConfigured
@@ -15,9 +11,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
-from courses.factories import CourseRunFactory
 from dashboard.models import ProgramEnrollment
-from ecommerce.factories import CoursePriceFactory
 from financialaid.api_test import FinancialAidBaseTestCase
 from financialaid.constants import (
     FINANCIAL_AID_REJECTION_SUBJECT_TEXT,
@@ -46,14 +40,6 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        cls.course_run = CourseRunFactory.create(
-            enrollment_end=datetime.utcnow() + timedelta(hours=1),
-            program=cls.program
-        )
-        cls.course_price = CoursePriceFactory.create(
-            course_run=cls.course_run,
-            is_valid=True
-        )
         cls.request_url = reverse("financial_aid_request")
         cls.review_url = reverse("review_financial_aid", kwargs={"program_id": cls.program.id})
         cls.review_url_with_filter = reverse(
