@@ -14,7 +14,6 @@ from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFie
 
 
 from courses.models import Program
-from courses.serializers import ProgramSerializer
 from micromasters.utils import webpack_dev_server_host
 from profiles.api import get_social_username
 from ui.views import get_bundle_url
