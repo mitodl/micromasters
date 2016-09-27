@@ -16,7 +16,6 @@ import Toast from '../components/Toast';
 import {
   FETCH_SUCCESS,
   FETCH_FAILURE,
-  FETCH_PROCESSING,
   fetchDashboard,
   clearDashboard,
 } from '../actions';
@@ -27,6 +26,7 @@ import {
   updateProfileValidation,
 } from '../actions/profile';
 import {
+  addProgramEnrollment,
   clearEnrollments,
   fetchProgramEnrollments,
   setCurrentProgramEnrollment,
@@ -37,10 +37,6 @@ import {
   setToastMessage,
   setEnrollSelectedProgram,
 } from '../actions/ui';
-import {
-  setProgram,
-  setDialogVisibility,
-} from '../actions/signup_dialog';
 import { clearUI, setProfileStep } from '../actions/ui';
 import { validateProfileComplete } from '../util/validation';
 import type { DashboardState } from '../flow/dashboardTypes';
@@ -50,7 +46,6 @@ import type {
 } from '../flow/enrollmentTypes';
 import type { ProfileGetResult } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
-import { filterPositiveInt } from '../util/util';
 
 const PROFILE_REGEX = /^\/profile\/?[a-z]?/;
 
