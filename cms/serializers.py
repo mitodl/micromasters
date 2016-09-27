@@ -20,9 +20,9 @@ class ImageRenditionsField(serializers.RelatedField):
     """
     def to_representation(self, image):
         serializer = RenditionSerializer()
-        small = image.get_rendition('max-100x100')
-        medium = image.get_rendition('max-500x500')
-        large = image.get_rendition('max-1000x1000')
+        small = image.get_rendition('fill-100x100')
+        medium = image.get_rendition('fill-500x500')
+        large = image.get_rendition('fill-1000x1000')
         return {
             "small": serializer.to_representation(small),
             "medium": serializer.to_representation(medium),
