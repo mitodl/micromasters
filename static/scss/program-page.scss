@@ -68,8 +68,8 @@
     }
 
     .is-upgraded:after, .is-active:after {
-    height: 3px !important;
-    background: $mm-brand-bg !important;
+      height: 3px !important;
+      background: $mm-brand-bg !important;
     }
 
     .mdl-tabs__tab-bar {
@@ -141,11 +141,11 @@
 
   }
 
-  #faq-panel, #about-panel{
+  #faq-panel, #about-panel {
     p {
-    font-size: 16px;
-    color: rgba(0,0,0,.7);
-    margin-bottom: 23px;
+      font-size: 16px;
+      color: rgba(0,0,0,.7);
+      margin-bottom: 23px;
     }
   }
 
