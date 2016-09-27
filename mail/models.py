@@ -13,7 +13,7 @@ class FinancialAidEmailAudit(TimestampedModel):
     """
     acting_user = models.ForeignKey(User, null=False)
     financial_aid = models.ForeignKey(FinancialAid, null=True, on_delete=models.SET_NULL)
-    to_email = models.CharField(null=False, max_length=250)
-    from_email = models.CharField(null=False, max_length=250)
-    email_subject = models.CharField(null=False, max_length=250)
-    email_body = models.TextField(null=False)
+    to_email = models.TextField(null=False)
+    from_email = models.TextField(null=False)
+    email_subject = models.TextField(null=False, blank=True)
+    email_body = models.TextField(null=False, blank=True)

@@ -38,11 +38,12 @@ class MailgunClient:
             requests.Response: HTTP response
         """
         mailgun_url = '{}/{}'.format(settings.MAILGUN_URL, endpoint)
-        params.update(cls.get_base_params())
+        email_params = params.copy()
+        email_params.update(cls.get_base_params())
         return request_func(
             mailgun_url,
             auth=cls._basic_auth_credentials,
-            data=dict(**params)
+            data=email_params
         )
 
     @classmethod
