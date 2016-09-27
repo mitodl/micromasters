@@ -140,6 +140,10 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
     """
     Tests for financialaid api backend
     """
+    def setUp(self):
+        super().setUp()
+        self.program.refresh_from_db()
+
     def test_determine_tier_program(self):
         """
         Tests determine_tier_program()
@@ -222,55 +226,65 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
         # 100k tier program is the one with no discount
         assert get_no_discount_tier_program(self.program.id).id == self.tier_programs["100k"].id
 
-    def test_get_course_price_for_learner(self):
+    def test_get_course_price_for_learner_with_approved_financial_aid(self):
         """
-        Tests get_course_price_for_learner()
+        Tests get_course_price_for_learner() who has approved financial aid
         """
-        # Enrolled and has approved financial aid
         expected_response = {
-            "has_financial_aid_request": True,
             "course_price": self.course_price.price - self.financialaid_approved.tier_program.discount_amount,
             "financial_aid_adjustment": True,
-            "financial_aid_availability": True
+            "financial_aid_availability": True,
+            "has_financial_aid_request": True
         }
         self.assertDictEqual(
             get_course_price_for_learner(self.enrolled_profile.user, self.program),
             expected_response
         )
-        # Enrolled and has pending financial aid
+
+    def test_get_course_price_for_learner_with_pending_financial_aid(self):
+        """
+        Tests get_course_price_for_learner() who has pending financial aid
+        """
         expected_response = {
-            "has_financial_aid_request": True,
             "course_price": self.course_price.price,
             "financial_aid_adjustment": False,
-            "financial_aid_availability": True
+            "financial_aid_availability": True,
+            "has_financial_aid_request": True
         }
         self.assertDictEqual(
             get_course_price_for_learner(self.enrolled_profile2.user, self.program),
             expected_response
         )
+
+    def test_get_course_price_for_learner_with_no_financial_aid_request(self):
+        """
+        Tests get_course_price_for_learner() who has pending financial aid request
+        """
         # Enrolled and has no financial aid
         expected_response = {
-            "has_financial_aid_request": False,
             "course_price": self.course_price.price,
             "financial_aid_adjustment": False,
-            "financial_aid_availability": True
+            "financial_aid_availability": True,
+            "has_financial_aid_request": False
         }
         self.assertDictEqual(
             get_course_price_for_learner(self.enrolled_profile3.user, self.program),
             expected_response
         )
-        # Enrolled but program has no financial aid availability
+
+    def test_get_course_price_for_learner_in_no_financial_aid_program(self):
+        """
+        Tests get_course_price_for_learner() for a program without financial aid
+        """
         self.program.financial_aid_availability = False
         self.program.save()
         expected_response = {
-            "has_financial_aid_request": False,
             "course_price": self.course_price.price,
             "financial_aid_adjustment": False,
-            "financial_aid_availability": False
+            "financial_aid_availability": False,
+            "has_financial_aid_request": False
         }
         self.assertDictEqual(
             get_course_price_for_learner(self.enrolled_profile3.user, self.program),
             expected_response
         )
-        self.program.financial_aid_availability = True
-        self.program.save()

@@ -430,6 +430,10 @@ class GetLearnerPriceForCourseTests(FinancialAidBaseTestCase, APIClient):
         super().setUpTestData()
         cls.course_price_url = reverse("financial_aid_course_price", kwargs={"program_id": cls.program.id})
 
+    def setUp(self):
+        super().setUp()
+        self.program.refresh_from_db()
+
     def test_get_learner_price_for_course_not_allowed(self):
         """
         Tests ReviewFinancialAidView that are not allowed
@@ -441,14 +445,12 @@ class GetLearnerPriceForCourseTests(FinancialAidBaseTestCase, APIClient):
         self.client.force_login(self.profile2.user)
         self.assert_http_status(self.client.get, self.course_price_url, status.HTTP_400_BAD_REQUEST)
 
-    def test_get_learner_price_for_course_allowed(self):
+    def test_get_learner_price_for_enrolled_with_financial_aid(self):
         """
-        Tests ReviewFinancialAidView for users who are allowed to access it
+        Tests ReviewFinancialAidView for enrolled user who has approved financial aid
         """
-        # Enrolled user
         self.client.force_login(self.enrolled_profile.user)
         resp = self.assert_http_status(self.client.get, self.course_price_url, status.HTTP_200_OK)
-        # Enrolled and has approved financial aid
         expected_response = {
             "has_financial_aid_request": True,
             "course_price": self.course_price.price - self.financialaid_approved.tier_program.discount_amount,
@@ -456,7 +458,11 @@ class GetLearnerPriceForCourseTests(FinancialAidBaseTestCase, APIClient):
             "financial_aid_availability": True
         }
         self.assertDictEqual(resp.data, expected_response)
-        # Enrolled and has pending financial aid
+
+    def test_get_learner_price_for_enrolled_with_pending_financial_aid(self):
+        """
+        Tests ReviewFinancialAidView for enrolled user who has pending financial aid
+        """
         self.client.force_login(self.enrolled_profile2.user)
         resp = self.assert_http_status(self.client.get, self.course_price_url, status.HTTP_200_OK)
         expected_response = {
@@ -466,7 +472,11 @@ class GetLearnerPriceForCourseTests(FinancialAidBaseTestCase, APIClient):
             "financial_aid_availability": True
         }
         self.assertDictEqual(resp.data, expected_response)
-        # Enrolled and has no financial aid
+
+    def test_get_learner_price_for_enrolled_with_no_financial_aid_requested(self):
+        """
+        Tests ReviewFinancialAidView for enrolled user who has no financial aid request
+        """
         self.client.force_login(self.enrolled_profile3.user)
         resp = self.assert_http_status(self.client.get, self.course_price_url, status.HTTP_200_OK)
         expected_response = {
@@ -476,7 +486,12 @@ class GetLearnerPriceForCourseTests(FinancialAidBaseTestCase, APIClient):
             "financial_aid_availability": True
         }
         self.assertDictEqual(resp.data, expected_response)
-        # Enrolled but program has no financial aid availability
+
+    def test_get_learner_price_for_enrolled_but_no_financial_aid_availability(self):
+        """
+        Tests ReviewFinancialAidView for enrolled user in program without financial aid
+        """
+        self.client.force_login(self.enrolled_profile3.user)
         self.program.financial_aid_availability = False
         self.program.save()
         resp = self.assert_http_status(self.client.get, self.course_price_url, status.HTTP_200_OK)
@@ -487,5 +502,3 @@ class GetLearnerPriceForCourseTests(FinancialAidBaseTestCase, APIClient):
             "financial_aid_availability": False
         }
         self.assertDictEqual(resp.data, expected_response)
-        self.program.financial_aid_availability = True
-        self.program.save()
