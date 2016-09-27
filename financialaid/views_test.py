@@ -5,13 +5,10 @@ from unittest.mock import Mock, patch
 
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
-from django.db.models.signals import post_save
-from factory.django import mute_signals
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
-from dashboard.models import ProgramEnrollment
 from financialaid.api_test import FinancialAidBaseTestCase
 from financialaid.constants import (
     FINANCIAL_AID_REJECTION_SUBJECT_TEXT,
@@ -30,7 +27,6 @@ from financialaid.models import (
     FinancialAidStatus
 )
 from mail.views_test import mocked_json
-from profiles.factories import ProfileFactory
 
 
 class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
@@ -49,6 +45,8 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
                 "status": FinancialAidStatus.AUTO_APPROVED
             }
         )
+        # This class of tests requires no FinancialAid objects already exist
+        FinancialAid.objects.all().delete()
 
     def setUp(self):
         super().setUp()
@@ -430,32 +428,6 @@ class GetLearnerPriceForCourseTests(FinancialAidBaseTestCase, APIClient):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        with mute_signals(post_save):
-            cls.enrolled_profile = ProfileFactory.create()
-            cls.enrolled_profile2 = ProfileFactory.create()
-            cls.enrolled_profile3 = ProfileFactory.create()
-        ProgramEnrollment.objects.create(
-            user=cls.enrolled_profile.user,
-            program=cls.program
-        )
-        ProgramEnrollment.objects.create(
-            user=cls.enrolled_profile2.user,
-            program=cls.program
-        )
-        ProgramEnrollment.objects.create(
-            user=cls.enrolled_profile3.user,
-            program=cls.program
-        )
-        cls.financialaid_approved = FinancialAidFactory.create(
-            user=cls.enrolled_profile.user,
-            tier_program=cls.tier_programs["15k"],
-            status=FinancialAidStatus.APPROVED
-        )
-        cls.financialaid_pending = FinancialAidFactory.create(
-            user=cls.enrolled_profile2.user,
-            tier_program=cls.tier_programs["15k"],
-            status=FinancialAidStatus.PENDING_MANUAL_APPROVAL
-        )
         cls.course_price_url = reverse("financial_aid_course_price", kwargs={"program_id": cls.program.id})
 
     def test_get_learner_price_for_course_not_allowed(self):
@@ -480,7 +452,8 @@ class GetLearnerPriceForCourseTests(FinancialAidBaseTestCase, APIClient):
         expected_response = {
             "has_financial_aid_request": True,
             "course_price": self.course_price.price - self.financialaid_approved.tier_program.discount_amount,
-            "financial_aid_adjustment": True
+            "financial_aid_adjustment": True,
+            "financial_aid_availability": True
         }
         self.assertDictEqual(resp.data, expected_response)
         # Enrolled and has pending financial aid
@@ -489,7 +462,8 @@ class GetLearnerPriceForCourseTests(FinancialAidBaseTestCase, APIClient):
         expected_response = {
             "has_financial_aid_request": True,
             "course_price": self.course_price.price,
-            "financial_aid_adjustment": False
+            "financial_aid_adjustment": False,
+            "financial_aid_availability": True
         }
         self.assertDictEqual(resp.data, expected_response)
         # Enrolled and has no financial aid
@@ -498,6 +472,20 @@ class GetLearnerPriceForCourseTests(FinancialAidBaseTestCase, APIClient):
         expected_response = {
             "has_financial_aid_request": False,
             "course_price": self.course_price.price,
-            "financial_aid_adjustment": False
+            "financial_aid_adjustment": False,
+            "financial_aid_availability": True
         }
         self.assertDictEqual(resp.data, expected_response)
+        # Enrolled but program has no financial aid availability
+        self.program.financial_aid_availability = False
+        self.program.save()
+        resp = self.assert_http_status(self.client.get, self.course_price_url, status.HTTP_200_OK)
+        expected_response = {
+            "has_financial_aid_request": False,
+            "course_price": self.course_price.price,
+            "financial_aid_adjustment": False,
+            "financial_aid_availability": False
+        }
+        self.assertDictEqual(resp.data, expected_response)
+        self.program.financial_aid_availability = True
+        self.program.save()

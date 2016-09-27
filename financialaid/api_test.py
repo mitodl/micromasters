@@ -12,13 +12,14 @@ from dashboard.models import ProgramEnrollment
 from ecommerce.factories import CoursePriceFactory
 from financialaid.api import (
     determine_tier_program,
-    determine_auto_approval
-)
+    determine_auto_approval,
+    get_no_discount_tier_program, get_course_price_for_learner)
 from financialaid.constants import COUNTRY_INCOME_THRESHOLDS
 from financialaid.factories import (
     TierProgramFactory,
     FinancialAidFactory
 )
+from financialaid.models import FinancialAidStatus
 from profiles.factories import ProfileFactory
 from roles.models import Role
 from roles.roles import Staff, Instructor
@@ -37,6 +38,9 @@ class FinancialAidBaseTestCase(ESTestCase):
             cls.staff_user_profile = ProfileFactory.create()
             cls.staff_user_profile2 = ProfileFactory.create()
             cls.instructor_user_profile = ProfileFactory.create()
+            cls.enrolled_profile = ProfileFactory.create()
+            cls.enrolled_profile2 = ProfileFactory.create()
+            cls.enrolled_profile3 = ProfileFactory.create()
         cls.program = ProgramFactory.create(
             financial_aid_availability=True,
             live=True
@@ -86,6 +90,29 @@ class FinancialAidBaseTestCase(ESTestCase):
             user=cls.instructor_user_profile.user,
             program=cls.program,
             role=Instructor.ROLE_ID
+        )
+        # Program enrollments for course price
+        ProgramEnrollment.objects.create(
+            user=cls.enrolled_profile.user,
+            program=cls.program
+        )
+        ProgramEnrollment.objects.create(
+            user=cls.enrolled_profile2.user,
+            program=cls.program
+        )
+        ProgramEnrollment.objects.create(
+            user=cls.enrolled_profile3.user,
+            program=cls.program
+        )
+        cls.financialaid_approved = FinancialAidFactory.create(
+            user=cls.enrolled_profile.user,
+            tier_program=cls.tier_programs["15k"],
+            status=FinancialAidStatus.APPROVED
+        )
+        cls.financialaid_pending = FinancialAidFactory.create(
+            user=cls.enrolled_profile2.user,
+            tier_program=cls.tier_programs["15k"],
+            status=FinancialAidStatus.PENDING_MANUAL_APPROVAL
         )
 
     @staticmethod
@@ -187,3 +214,63 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
             country_of_income="KP"
         )
         assert determine_auto_approval(financial_aid) is True
+
+    def test_get_no_discount_tier_program(self):
+        """
+        Tests get_no_discount_tier_program()
+        """
+        # 100k tier program is the one with no discount
+        assert get_no_discount_tier_program(self.program.id).id == self.tier_programs["100k"].id
+
+    def test_get_course_price_for_learner(self):
+        """
+        Tests get_course_price_for_learner()
+        """
+        # Enrolled and has approved financial aid
+        expected_response = {
+            "has_financial_aid_request": True,
+            "course_price": self.course_price.price - self.financialaid_approved.tier_program.discount_amount,
+            "financial_aid_adjustment": True,
+            "financial_aid_availability": True
+        }
+        self.assertDictEqual(
+            get_course_price_for_learner(self.enrolled_profile.user, self.program),
+            expected_response
+        )
+        # Enrolled and has pending financial aid
+        expected_response = {
+            "has_financial_aid_request": True,
+            "course_price": self.course_price.price,
+            "financial_aid_adjustment": False,
+            "financial_aid_availability": True
+        }
+        self.assertDictEqual(
+            get_course_price_for_learner(self.enrolled_profile2.user, self.program),
+            expected_response
+        )
+        # Enrolled and has no financial aid
+        expected_response = {
+            "has_financial_aid_request": False,
+            "course_price": self.course_price.price,
+            "financial_aid_adjustment": False,
+            "financial_aid_availability": True
+        }
+        self.assertDictEqual(
+            get_course_price_for_learner(self.enrolled_profile3.user, self.program),
+            expected_response
+        )
+        # Enrolled but program has no financial aid availability
+        self.program.financial_aid_availability = False
+        self.program.save()
+        expected_response = {
+            "has_financial_aid_request": False,
+            "course_price": self.course_price.price,
+            "financial_aid_adjustment": False,
+            "financial_aid_availability": False
+        }
+        self.assertDictEqual(
+            get_course_price_for_learner(self.enrolled_profile3.user, self.program),
+            expected_response
+        )
+        self.program.financial_aid_availability = True
+        self.program.save()
