@@ -1,16 +1,15 @@
 """Factories for making test data"""
+from contextlib import contextmanager
+import os.path
+import shutil
+import tempfile
+
 import factory
 from factory.django import DjangoModelFactory
 import faker
-from io import BytesIO
-from contextlib import contextmanager
-import tempfile
-import shutil
-import os.path
-
-import mock
-from willow.image import Image as WillowImage
 from wagtail.wagtailimages.models import Image
+from willow.image import Image as WillowImage
+
 from cms.models import ProgramPage, ProgramFaculty
 from courses.factories import ProgramFactory
 
@@ -29,7 +28,10 @@ class ImageFactory(DjangoModelFactory):
     height = factory.LazyAttribute(lambda x: FAKE.pyint())
 
     @factory.post_generation
-    def fake_willow_image(self, create, extracted, **kwargs):
+    def fake_willow_image(self, create, extracted, **kwargs):  # pylint: disable=unused-argument
+        """
+        Build a fake implementation of the `get_willow_image()` method
+        """
         image_dir = tempfile.mkdtemp()
         origin_image_path = os.path.join(
             os.path.dirname(os.path.dirname(__file__)), "test_resources", "stata_center.jpg",
@@ -39,10 +41,10 @@ class ImageFactory(DjangoModelFactory):
         fake_image = WillowImage.open(open(fake_image_path, "rb"))
 
         @contextmanager
-        def get_fake_willow():
+        def get_fake_willow():  # pylint: disable=missing-docstring
             yield fake_image
 
-        self.get_willow_image = get_fake_willow
+        self.get_willow_image = get_fake_willow  # pylint: disable=attribute-defined-outside-init
         return self
 
 
