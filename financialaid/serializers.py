@@ -15,10 +15,10 @@ from financialaid.api import (
     determine_auto_approval,
     determine_income_usd
 )
+from financialaid.exceptions import NotSupportedException
 from financialaid.models import (
     FinancialAid,
     FinancialAidStatus,
-    CurrencyExchangeRate
 )
 
 
@@ -50,8 +50,8 @@ class IncomeValidationSerializer(serializers.Serializer):
                 self.validated_data["original_income"],
                 self.validated_data["original_currency"]
             )
-        except CurrencyExchangeRate.DoesNotExist:
-            raise ValidationError("Currency not currently supported.")
+        except NotSupportedException:
+            raise ValidationError("Currency not supported")
         user = self.context["request"].user
         tier_program = determine_tier_program(self.validated_data["program"], self.validated_data["original_income"])
 

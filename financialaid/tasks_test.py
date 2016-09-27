@@ -42,16 +42,16 @@ class TasksTest(TestCase):
         }
 
     @override_settings(CELERY_ALWAYS_EAGER=True)
-    def test_celery_task_works(self, *args):  # pylint: disable=unused-argument
+    def test_celery_task_works(self, mocked_request):  # pylint: disable=unused-argument
         """
         Assert task schedule using celery beat.
         """
         self.assertTrue(update_currency_exchange_rates.delay())
 
     @override_settings(CELERY_ALWAYS_EAGER=True)
-    def test_update_currency_exchange_rates(self, mocked_request):
+    def test_update_and_add_currency_exchange_rates(self, mocked_request):
         """
-        Assert currency exchange rates are actually updated
+        Assert currency exchange rates are updated and added
         """
         mocked_request.return_value.json.return_value = self.data
         assert CurrencyExchangeRate.objects.count() == 2
@@ -63,3 +63,16 @@ class TasksTest(TestCase):
         assert currency.exchange_rate == 2
         currency = CurrencyExchangeRate.objects.get(currency_code="PQR")
         assert currency.exchange_rate == 0.4
+
+    @override_settings(CELERY_ALWAYS_EAGER=True)
+    def test_delete_currency_exchange_rate(self, mocked_request):
+        """
+        Assert currency exchange rates not in latest rate list are deleted
+        """
+        self.data["rates"] = {"DEF": "1.9"}
+        mocked_request.return_value.json.return_value = self.data
+        assert CurrencyExchangeRate.objects.count() == 2
+        update_currency_exchange_rates.apply(args=()).get()
+        assert CurrencyExchangeRate.objects.count() == 1
+        currency = CurrencyExchangeRate.objects.get(currency_code="DEF")
+        assert currency.exchange_rate == 1.9

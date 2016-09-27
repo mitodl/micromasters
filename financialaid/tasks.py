@@ -12,7 +12,7 @@ from micromasters.celery import async
 def update_currency_exchange_rates():
     """
     Updates all CurrencyExchangeRate objects to reflect latest exchange rates from
-    Open Exchange Rates API.
+    Open Exchange Rates API (https://openexchangerates.org/).
     """
     url = "{url}latest.json?app_id={app_id}".format(
         url=settings.OPEN_EXCHANGE_RATES_URL,
@@ -20,13 +20,11 @@ def update_currency_exchange_rates():
     )
     resp = requests.get(url).json()
     latest_rates = resp["rates"]
-
-    # Need to check country list against supported currencies
-
-    for key in latest_rates:
-        try:
-            currency_exchange_rate = CurrencyExchangeRate.objects.get(currency_code=key)
-            currency_exchange_rate.exchange_rate = latest_rates[key]
+    for currency_exchange_rate in CurrencyExchangeRate.objects.all():
+        if currency_exchange_rate.currency_code in latest_rates:
+            currency_exchange_rate.exchange_rate = latest_rates.pop(currency_exchange_rate.currency_code)
             currency_exchange_rate.save()
-        except CurrencyExchangeRate.DoesNotExist:
-            CurrencyExchangeRate.objects.create(currency_code=key, exchange_rate=latest_rates[key])
+        else:
+            currency_exchange_rate.delete()
+    for key in latest_rates:
+        CurrencyExchangeRate.objects.create(currency_code=key, exchange_rate=latest_rates[key])
