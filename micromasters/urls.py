@@ -49,7 +49,7 @@ urlpatterns = [
     url(r'^api/v0/financial_aid_request/$', FinancialAidRequestView.as_view(), name='financial_aid_request'),
     url(r'^api/v0/financial_aid_action/(?P<financial_aid_id>[\d]+)/$', FinancialAidActionView.as_view(),
         name='financial_aid_action'),
-    url(r'^api/v0/financial_aid_course_price/(?P<user_id>[\d]+)/(?P<program_id>[\d]+)/$',
+    url(r'^api/v0/financial_aid_course_price/(?P<program_id>[\d]+)/$',
         GetLearnerPriceForCourseView.as_view(), name='financial_aid_course_price'),
     url(r'^api/v0/order_fulfillment/$', OrderFulfillmentView.as_view(), name='order-fulfillment'),
     url(r'^status/', include('server_status.urls')),

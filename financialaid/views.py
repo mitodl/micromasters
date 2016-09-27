@@ -5,7 +5,6 @@ import json
 
 from django.conf import settings
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.contrib.auth.models import User
 from django.db.models import F
 from django.views.generic import ListView
 from rest_framework.authentication import SessionAuthentication
@@ -27,10 +26,7 @@ from financialaid.models import (
     FinancialAidStatus,
     TierProgram
 )
-from financialaid.permissions import (
-    UserCanEditFinancialAid,
-    UserCanViewLearnerCoursePrice
-)
+from financialaid.permissions import UserCanEditFinancialAid
 from financialaid.serializers import (
     FinancialAidActionSerializer,
     FinancialAidRequestSerializer
@@ -234,37 +230,41 @@ class GetLearnerPriceForCourseView(APIView):
     View for retrieving a leaner's price for a course run
     """
     authentication_classes = (SessionAuthentication, )
-    permission_classes = (IsAuthenticated, UserCanViewLearnerCoursePrice)
+    permission_classes = (IsAuthenticated, )
 
     def get(self, request, *args, **kwargs):
         """
         Get request for GetLearnerPriceForCourseView
         """
-        learner = get_object_or_404(User, id=self.kwargs["user_id"])
-        program = get_object_or_404(Program, id=self.kwargs["program_id"], live=True)
-        self.check_object_permissions(request, {"learner": learner, "program": program})
+        learner = request.user
+        program = get_object_or_404(
+            Program,
+            id=self.kwargs["program_id"],
+            live=True,
+            financial_aid_availability=True
+        )
         # Validate that learner is enrolled in program
         try:
             ProgramEnrollment.objects.get(user=learner, program=program)
         except ProgramEnrollment.DoesNotExist:
             raise ValidationError("Learner not enrolled in this program.")
         course_price = program.get_course_price()
+
+        # Check to see if learner has a financial aid request
         has_financial_aid_request = False
         financial_aid_adjustment = False
-        try:
-            # Check to see if learner has a financial aid request
-            financial_aid = FinancialAid.objects.get(
-                user=learner,
-                tier_program__program=program,
-                tier_program__program__financial_aid_availability=True
-            )
+        financial_aid_queryset = FinancialAid.objects.filter(
+            user=learner,
+            tier_program__program=program
+        )
+        if financial_aid_queryset.exists():
             has_financial_aid_request = True
+            # FinancialAid.save() only allows one object per (user, tier_program__program) pair
+            financial_aid = financial_aid_queryset.first()
             if financial_aid.status == FinancialAidStatus.APPROVED:
                 # If the financial aid request is approved, adjust course price
                 course_price = course_price - financial_aid.tier_program.discount_amount
                 financial_aid_adjustment = True
-        except FinancialAid.DoesNotExist:
-            pass
         return Response(
             data={
                 "course_price": course_price,

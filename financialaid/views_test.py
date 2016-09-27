@@ -456,66 +456,27 @@ class GetLearnerPriceForCourseTests(FinancialAidBaseTestCase, APIClient):
             tier_program=cls.tier_programs["15k"],
             status=FinancialAidStatus.PENDING_MANUAL_APPROVAL
         )
-        cls.url_user1 = reverse(
-            "financial_aid_course_price",
-            kwargs={
-                "user_id": cls.enrolled_profile.user.id,
-                "program_id": cls.program.id
-            }
-        )
-        cls.url_user2 = reverse(
-            "financial_aid_course_price",
-            kwargs={
-                "user_id": cls.enrolled_profile2.user.id,
-                "program_id": cls.program.id
-            }
-        )
-        cls.url_user3 = reverse(
-            "financial_aid_course_price",
-            kwargs={
-                "user_id": cls.enrolled_profile3.user.id,
-                "program_id": cls.program.id
-            }
-        )
-        cls.url_not_enrolled_user = reverse(
-            "financial_aid_course_price",
-            kwargs={
-                "user_id": cls.profile2.user.id,
-                "program_id": cls.program.id
-            }
-        )
+        cls.course_price_url = reverse("financial_aid_course_price", kwargs={"program_id": cls.program.id})
 
     def test_get_learner_price_for_course_not_allowed(self):
         """
         Tests ReviewFinancialAidView that are not allowed
         """
         # Not allowed if not logged in
-        resp = self.client.get(self.url_user1)
+        resp = self.client.get(self.course_price_url)
         assert resp.status_code == status.HTTP_403_FORBIDDEN
-        # Not allowed if not staff and not your own
-        self.client.force_login(self.enrolled_profile.user)
-        resp = self.client.get(self.url_user2)
-        assert resp.status_code == status.HTTP_403_FORBIDDEN
-        # Not allowed for instructors
-        self.client.force_login(self.instructor_user_profile.user)
-        resp = self.client.get(self.url_user2)
-        assert resp.status_code == status.HTTP_403_FORBIDDEN
+        # Bad request if not enrolled
+        self.client.force_login(self.profile2.user)
+        self.assert_http_status(self.client.get, self.course_price_url, status.HTTP_400_BAD_REQUEST)
 
     def test_get_learner_price_for_course_allowed(self):
         """
         Tests ReviewFinancialAidView for users who are allowed to access it
         """
-        # Can view own information
+        # Enrolled user
         self.client.force_login(self.enrolled_profile.user)
-        resp = self.client.get(self.url_user1)
-        assert resp.status_code == status.HTTP_200_OK
-        # Bad request if not enrolled
-        self.client.force_login(self.staff_user_profile.user)
-        resp = self.client.get(self.url_not_enrolled_user)
-        assert resp.status_code == status.HTTP_400_BAD_REQUEST
+        resp = self.assert_http_status(self.client.get, self.course_price_url, status.HTTP_200_OK)
         # Enrolled and has approved financial aid
-        resp = self.client.get(self.url_user1)
-        assert resp.status_code == status.HTTP_200_OK
         expected_response = {
             "has_financial_aid_request": True,
             "course_price": self.course_price.price - self.financialaid_approved.tier_program.discount_amount,
@@ -523,17 +484,8 @@ class GetLearnerPriceForCourseTests(FinancialAidBaseTestCase, APIClient):
         }
         self.assertDictEqual(resp.data, expected_response)
         # Enrolled and has pending financial aid
-        resp = self.client.get(self.url_user2)
-        assert resp.status_code == status.HTTP_200_OK
-        expected_response = {
-            "has_financial_aid_request": True,
-            "course_price": self.course_price.price,
-            "financial_aid_adjustment": False
-        }
-        self.assertDictEqual(resp.data, expected_response)
-        # Enrolled and has pending financial aid
-        resp = self.client.get(self.url_user2)
-        assert resp.status_code == status.HTTP_200_OK
+        self.client.force_login(self.enrolled_profile2.user)
+        resp = self.assert_http_status(self.client.get, self.course_price_url, status.HTTP_200_OK)
         expected_response = {
             "has_financial_aid_request": True,
             "course_price": self.course_price.price,
@@ -541,8 +493,8 @@ class GetLearnerPriceForCourseTests(FinancialAidBaseTestCase, APIClient):
         }
         self.assertDictEqual(resp.data, expected_response)
         # Enrolled and has no financial aid
-        resp = self.client.get(self.url_user3)
-        assert resp.status_code == status.HTTP_200_OK
+        self.client.force_login(self.enrolled_profile3.user)
+        resp = self.assert_http_status(self.client.get, self.course_price_url, status.HTTP_200_OK)
         expected_response = {
             "has_financial_aid_request": False,
             "course_price": self.course_price.price,
