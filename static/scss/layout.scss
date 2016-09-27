@@ -69,6 +69,10 @@
   width: 100%;
 }
 
+.upper-case {
+  text-transform: uppercase;
+}
+
 // hides elements so that they're visible only to screenreaders
 // from bootstrap.css
 .sr-only {

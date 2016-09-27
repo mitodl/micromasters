@@ -67,8 +67,8 @@
             </div>
             <div class="sub-banner-logos">
               <div class="sub-banner-logos-text">Powered by</div>
-              <img width="100px" src="{% static 'images/edx_logo.png' %}">
-              <img width="150px" src="{% static 'images/micromasters_logo.png' %}">
+              <img width="100px" src="{% static 'images/edx_logo.png' %}" alt="edX">
+              <img width="150px" src="{% static 'images/micromasters_logo.png' %}" alt="MIT MicroMasters">
 
             </div>
           </div>
@@ -81,26 +81,26 @@
         <h3>Why should I enroll?</h3>
         <div class="col-md-4">
           <div class="reasons-images-wrap">
-             <img height="100px" src="{% static 'images/online.png' %}">
+             <img height="100px" src="{% static 'images/online.png' %}" alt="">
           </div>
 
-          <h5>ONLINE LEARNING</h5>
+          <h5 class="upper-case">Online Learning</h5>
           <p>Take graduate-level courses remotely, from anywhere, and meet other students from around the world.</p>
         </div>
         <div class="col-md-4 ">
           <div class="reasons-images-wrap">
-            <img height="90px" src="{% static 'images/blended.png' %}">
+            <img height="90px" src="{% static 'images/blended.png' %}" alt="">
           </div>
 
-          <h5>BLENDED MASTERS</h5>
+          <h5 class="upper-case">Blended Masters</h5>
           <p>The MicroMasters credential is the first step to earning a Blended Masters degree from MIT.</p>
 
         </div>
         <div class="col-md-4">
           <div class="reasons-images-wrap">
-            <img height="100px" src="{% static 'images/cost.png' %}">
+            <img height="100px" src="{% static 'images/cost.png' %}" alt="">
           </div>
-           <h5>COST SAVINGS</h5>
+           <h5 class="upper-case">Cost Savings</h5>
           <p>A Blended Masters costs 50% less than a traditional masters for the same degree.</p>
         </div>
         </div>
@@ -131,11 +131,13 @@
                       <div class="program-bottom-info">
                       <div class="program-title">{{ program.programpage.title }}</div>
                       <div class="num-courses">
-                        {% if program.course_set.count == 1 %}
-                          <span class="meta-courses">{{ program.course_set.count }} course</span>
-                        {% else %}
-                          <span class="meta-courses">{{ program.course_set.count }} courses</span>
-                        {% endif %}
+                        <span class="meta-courses">
+                          {% blocktrans count counter=program.course_set.count %}
+                            {{ counter }} course
+                          {% plural %}
+                            {{ counter }} courses
+                          {% endblocktrans %}
+                        </span>
                       </div>
                       </div>
                     </div>
@@ -144,11 +146,7 @@
                   </a>
                 {% endif %}
                 <div class="program-thumbnail-description">
-                  {% if program.description %}
-                    <p>{{ program.description }}</p>
-                  {% else %}
-                    <p>No description available for this program.</p>
-                  {% endif %}
+                  <p>{{ program.description|default:"No description available for this program." }}</p>
 
                   {% if program.programpage %}
                     {% if program.programpage.external_program_page_url %}
@@ -168,7 +166,7 @@
             <div class="program-thumbnail-description">
               <p>MIT plans to bring more MicroMasters programs to motivated learners like you.
                 Sign up for our mailing list to hear about new MicroMasters programs.</p>
-              <a href="#" data-toggle="modal" class="btn mailing-list" data-target="#subscribeAlert">SIGN UP FOR MAILING LIST</a>
+              <a href="#" data-toggle="modal" class="btn mailing-list upper-case" data-target="#subscribeAlert">Sign up for mailing list</a>
             </div>
           </div>
 
