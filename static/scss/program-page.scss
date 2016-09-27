@@ -104,6 +104,7 @@
       font-size: 18px;
       font-weight: 600;
       margin-top: 0;
+      line-height: 1.4em;
     }
   }
 
@@ -178,12 +179,26 @@
     color: #ffffff;
     background-color: #0c0c0c;
     text-align: center;
-    padding-top: 20px;
+    padding: 40px 0 140px;
+
+    h3 {
+      margin: 0 0 13px;
+      font-weight: 300;
+      font-size: 28px;
+      color: white;
+    }
+
+    p.description {
+      font-size: 16px;
+      font-weight: 300;
+      color: rgba(255,255,255,.8);
+      margin: 0 0 25px 0;
+    }
 
     .faculty-tile {
       width: 500px;
       height: 385px;
-      padding: 180px 40px 20px 40px;
+      padding: 250px 22px 20px 26px;
       color: #ffffff;
       background-repeat: no-repeat;
       background-position: top left;
@@ -193,6 +208,16 @@
       h4 {
         margin-top: 0;
         margin-bottom: 10px;
+        font-size: 23px;
+        font-weight: 300;
+        color: rgba(255,255,255,1);
+      }
+
+      p {
+        font-size: 16px;
+        line-height: 1.4em;
+        font-weight: 300;
+        color: rgba(255,255,255,.7);
       }
 
       img {
@@ -219,6 +244,10 @@
 
     .slick-arrow:before, .slick-dots li button:before {
       font-size: 30px;
+    }
+    
+    .slick-dots {
+      bottom: -65px;
     }
 
     .slick-dots li {
