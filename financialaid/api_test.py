@@ -6,9 +6,14 @@ from factory.django import mute_signals
 
 from courses.factories import ProgramFactory
 from dashboard.models import ProgramEnrollment
-from financialaid.api import determine_tier_program, determine_auto_approval
+from financialaid.api import (
+    determine_tier_program,
+    determine_auto_approval,
+    determine_income_usd
+)
 from financialaid.constants import COUNTRY_INCOME_THRESHOLDS
 from financialaid.factories import TierProgramFactory, FinancialAidFactory
+from financialaid.models import CurrencyExchangeRate
 from profiles.factories import ProfileFactory
 from search.base import ESTestCase
 
@@ -35,6 +40,10 @@ class FinancialAidBaseTestCase(ESTestCase):
         cls.program_enrollment = ProgramEnrollment.objects.create(
             user=cls.profile.user,
             program=cls.program
+        )
+        CurrencyExchangeRate.objects.create(
+            currency_code="GHI",
+            exchange_rate=1.5
         )
 
 
@@ -116,3 +125,12 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
             country_of_income="KP"
         )
         assert determine_auto_approval(financial_aid) is True
+
+    def test_determine_income_usd(self):  # pylint: disable=no-self-use
+        """
+        Tests determine_income_usd()
+        """
+        # original income is in US dollars
+        assert determine_income_usd(5000, "USD") == 5000
+        # original income is in ABC currency
+        assert determine_income_usd(3000, "GHI") == 2000

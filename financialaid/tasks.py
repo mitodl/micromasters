@@ -18,8 +18,8 @@ def update_currency_exchange_rates():
         url=settings.OPEN_EXCHANGE_RATES_URL,
         app_id=settings.OPEN_EXCHANGE_RATES_APP_ID
     )
-    resp = requests.get(url)
-    latest_rates = resp.json()["rates"]
+    resp = requests.get(url).json()
+    latest_rates = resp["rates"]
 
     # Need to check country list against supported currencies
 
