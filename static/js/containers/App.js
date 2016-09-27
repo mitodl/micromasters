@@ -27,7 +27,6 @@ import {
   updateProfileValidation,
 } from '../actions/profile';
 import {
-  addProgramEnrollment,
   clearEnrollments,
   fetchProgramEnrollments,
   setCurrentProgramEnrollment,
@@ -79,7 +78,6 @@ class App extends React.Component {
     this.fetchEnrollments();
     this.requireProfileFilledOut();
     this.requireCompleteProfile();
-    this.updateProgramEnrollments();
   }
 
   componentDidMount() {
@@ -116,30 +114,6 @@ class App extends React.Component {
     const { enrollments, dispatch } = this.props;
     if (enrollments.getStatus === undefined) {
       dispatch(fetchProgramEnrollments());
-    }
-  }
-
-  updateProgramEnrollments() {
-    const { enrollments, dispatch, signupDialog: { program } } = this.props;
-    const cleanup = () => {
-      dispatch(setProgram(null));
-      dispatch(setDialogVisibility(null));
-    };
-    if (
-      program &&
-      enrollments.getStatus === FETCH_SUCCESS &&
-      enrollments.postStatus !== FETCH_PROCESSING &&
-      enrollments.postStatus !== FETCH_FAILURE
-    ) {
-      let programId = filterPositiveInt(program);
-      if ( programId && !enrollments.programEnrollments.find(e => e.id === programId) ) {
-        dispatch(addProgramEnrollment(programId)).catch(e => {
-          if ( e.errorStatusCode !== 404 ) {
-            console.error("adding program enrollment failed for program: ", programId); // eslint-disable-line no-console, max-len
-          }
-        });
-      }
-      cleanup();
     }
   }
 
