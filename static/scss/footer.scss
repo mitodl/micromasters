@@ -17,7 +17,7 @@ footer {
   }
 
   .footer-links {
-    margin:24px 0;
+    margin: 24px 0;
 
     a {
       display:inline-block;
@@ -26,15 +26,20 @@ footer {
     }
   }
 
+  .footer-address, .footer-copy {
+    margin-bottom: 24px;
+  }
+
   .footer-cta {
     padding:0 0 60px 0;
 
     .btn-primary {
+      display: block;
       background:#4c8399 !important;
       border-color:#4c8399 !important;
 
       color:#fff;
-      min-width:200px;
+      width: 100%;
 
       &:hover {
         background:transparent !important;

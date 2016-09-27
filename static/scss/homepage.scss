@@ -18,7 +18,7 @@ body.app-media {
     color: white;
     text-decoration: underline;
   }
-  
+
   a.btn-login {
     text-decoration: none;
   }
@@ -43,7 +43,7 @@ body.app-media {
 }
 
 .navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
-    margin-left: 0; 
+    margin-left: 0;
     img {
       width: 66px;
       }
@@ -57,7 +57,7 @@ body.app-media {
     padding: 10px 23px !important;
     font-size: 15px;
   }
-  
+
   .navbar-brand {
     padding: 19px 20px;
   }
@@ -88,12 +88,11 @@ body.app-media {
 .centered-content {
   width: 97%;
   max-width: 1150px;
-  min-width: 800px;
   margin: 0 auto;
 }
 
 .banner-wrapper {
-  background:#222 0 0 url(/static/images/lp_hero2.jpg) no-repeat;
+  background:#222 center center url(/static/images/lp_hero2.jpg) no-repeat;
   margin:0 auto;
   width:100%;
   min-height:620px;
@@ -101,17 +100,17 @@ body.app-media {
   background-size:cover;
   position: relative;
   height: 65%;
-  
+
   .banner-wrapper-content {
     margin: 0 auto;
     padding: 190px 15% 0;
     text-align: center;
-  
+
     h1, h2 {
       color: #ffffff;
       margin: 0 0 20px;
     }
-  
+
     h1 {
       font-size: 35px;
       font-weight: 400;
@@ -132,7 +131,7 @@ body.app-media {
       border-radius: 4px;
       font-weight: 300;
     }
-    
+
     .sign-in-button {
       font-weight: 300;
       margin-left: 10px;
@@ -169,10 +168,11 @@ body.app-media {
   }
   p {
     font-size: 16px;
-    font-weight: 400; 
+    font-weight: 400;
     color: rgba(0,0,0,.6);
   }
 }
+
 .sub-banner-logos{
   margin-top: 56px;
 
@@ -180,13 +180,18 @@ body.app-media {
     margin-left: 20px;
   }
 }
+
 .sub-banner-logos-text{
   vertical-align: bottom;
   display:inline-block;
 }
 
+.enroll-reason {
+  margin-bottom: 20px;
+}
+
 .reasons-section, .current-programs-section {
-  padding: 70px 0 92px;
+  padding: 70px 0;
   margin: 0;
   text-align: center;
 
@@ -200,14 +205,14 @@ body.app-media {
 
 .current-programs-section {
   margin: 0;
-  padding: 76px 0 110px;
+  // padding: 76px 0 110px;
   background-color: #151515;
-  
+
   .col-md-12 {
     width: 97%;
     margin: 0 auto;
     max-width: 1250px;
-    min-width: 800px;
+    // min-width: 800px;
     float: none;
 
     .col-md-4 {
@@ -217,7 +222,7 @@ body.app-media {
 
   .program-thumbnail-description{
     padding: 20px 10px 30px 15px;
-  
+
     p{
       color: rgba(255,255,255,0.76);
       font-weight: 300;
@@ -230,7 +235,7 @@ body.app-media {
       background: #cccccc;
       color: #333333;
     }
-  
+
     a{
       color: $mm-brand-bg;
     }
@@ -303,7 +308,18 @@ body.app-media {
     color: white;
   }
   .reasons-images-wrap {
-    height: 120px;
+    width: 300px;
+    margin: 0 auto;
+
+    @media (min-width: 992px) {
+      height: 200px;
+    }
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      margin: auto auto;
+    }
   }
 }
 
@@ -480,7 +496,7 @@ body.app-media {
 }
 
 .media-top img {
-  border-radius:2px 2px 0 0 !important; 
+  border-radius:2px 2px 0 0 !important;
 }
 
 .app-media .media-list.is-grid .media-item .media-top .overlay-tile-back {
@@ -511,7 +527,7 @@ body.app-media {
 }
 
 .app-media .media-list.is-grid .media-item:hover .overlay-tile-back .image-wrap {
-  
+
 }
 
 .app-media .media-list.is-grid .media-item.active {
