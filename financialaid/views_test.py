@@ -72,8 +72,6 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         """
         assert FinancialAid.objects.count() == 0
         assert FinancialAidAudit.objects.count() == 0
-        resp = self.client.post(self.income_validation_url, self.data, format='json')
-        assert resp.status_code == status.HTTP_201_CREATED
         self.assert_http_status(self.client.post, self.request_url, status.HTTP_201_CREATED, data=self.data)
         assert FinancialAid.objects.count() == 1
         assert FinancialAidAudit.objects.count() == 1
@@ -361,9 +359,10 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         assert self.financialaid.status == FinancialAidStatus.APPROVED
         assert mock_mailgun_client.send_financial_aid_email.called
         _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
+        assert called_kwargs["acting_user"] == self.staff_user_profile.user
+        assert called_kwargs["financial_aid"] == self.financialaid
         assert called_kwargs["subject"] == FINANCIAL_AID_APPROVAL_SUBJECT_TEXT
         assert called_kwargs["body"] == FINANCIAL_AID_APPROVAL_MESSAGE_BODY
-        assert called_kwargs["recipient"] == self.profile.user.email
 
     def test_approval_different_tier_program(self, mock_mailgun_client):
         """
@@ -384,9 +383,10 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         assert self.financialaid.status == FinancialAidStatus.APPROVED
         assert mock_mailgun_client.send_financial_aid_email.called
         _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
+        assert called_kwargs["acting_user"] == self.staff_user_profile.user
+        assert called_kwargs["financial_aid"] == self.financialaid
         assert called_kwargs["subject"] == FINANCIAL_AID_APPROVAL_SUBJECT_TEXT
         assert called_kwargs["body"] == FINANCIAL_AID_APPROVAL_MESSAGE_BODY
-        assert called_kwargs["recipient"] == self.profile.user.email
 
     def test_rejection(self, mock_mailgun_client):
         """
@@ -406,9 +406,10 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         assert self.financialaid.status == FinancialAidStatus.REJECTED
         assert mock_mailgun_client.send_financial_aid_email.called
         _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
+        assert called_kwargs["acting_user"] == self.staff_user_profile.user
+        assert called_kwargs["financial_aid"] == self.financialaid
         assert called_kwargs["subject"] == FINANCIAL_AID_REJECTION_SUBJECT_TEXT
         assert called_kwargs["body"] == FINANCIAL_AID_REJECTION_MESSAGE_BODY
-        assert called_kwargs["recipient"] == self.profile.user.email
 
     def test_mark_documents_received(self, mock_mailgun_client):
         """
@@ -432,6 +433,7 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         assert self.financialaid.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL
         assert mock_mailgun_client.send_financial_aid_email.called
         _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
+        assert called_kwargs["acting_user"] == self.staff_user_profile.user
+        assert called_kwargs["financial_aid"] == self.financialaid
         assert called_kwargs["subject"] == FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT
         assert called_kwargs["body"] == FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY
-        assert called_kwargs["recipient"] == self.profile.user.email

@@ -13,6 +13,7 @@ from rest_framework.status import (
 )
 from factory.django import mute_signals
 
+from financialaid.factories import FinancialAidFactory, TierProgramFactory
 from profiles.factories import ProfileFactory
 from courses.factories import ProgramFactory
 from roles.models import Role
@@ -114,28 +115,33 @@ class FinancialAidMailViewsTests(APITestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        cls.financial_aid_mail_url = reverse('financial_aid_mail_api')
         # create a user with a role for one program
         with mute_signals(post_save):
             staff_profile = ProfileFactory.create()
-            cls.staff = staff_profile.user
+            cls.staff_user = staff_profile.user
         cls.program = ProgramFactory.create(live=True)
         Role.objects.create(
-            user=cls.staff,
+            user=cls.staff_user,
             program=cls.program,
             role=Staff.ROLE_ID
+        )
+        cls.financial_aid = FinancialAidFactory.create(
+            tier_program=TierProgramFactory.create(program=cls.program)
+        )
+        cls.financial_aid_mail_url = reverse(
+            'financial_aid_mail_api',
+            kwargs={'financial_aid_id': cls.financial_aid.id}
         )
         cls.request_data = {
             'email_subject': 'email subject',
             'email_body': 'email body',
-            'email_recipient': 'a@example.com'
         }
 
     def test_send_financial_aid_view(self, mock_mailgun_client):
         """
         Test that the FinancialAidMailView will accept and return expected values
         """
-        self.client.force_login(self.staff)
+        self.client.force_login(self.staff_user)
         mock_mailgun_client.send_financial_aid_email.return_value = Mock(
             spec=Response,
             status_code=HTTP_200_OK,
@@ -149,6 +155,7 @@ class FinancialAidMailViewsTests(APITestCase):
         assert resp_post.status_code == HTTP_200_OK
         assert mock_mailgun_client.send_financial_aid_email.called
         _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
+        assert called_kwargs['acting_user'] == self.staff_user
+        assert called_kwargs['financial_aid'] == self.financial_aid
         assert called_kwargs['subject'] == self.request_data['email_subject']
         assert called_kwargs['body'] == self.request_data['email_body']
-        assert called_kwargs['recipient'] == 'a@example.com'
