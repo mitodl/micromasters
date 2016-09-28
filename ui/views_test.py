@@ -95,7 +95,7 @@ class TestHomePage(ViewsTests):
     def test_login_button(self):
         """Verify that we see a login button if not logged in"""
         response = self.client.get('/')
-        self.assertContains(response, "SIGN UP")
+        self.assertContains(response, "Sign up")
 
     def test_sign_out_button(self):
         """Verify that we see a sign out button if logged in"""
