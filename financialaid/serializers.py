@@ -161,10 +161,6 @@ class DocumentsSentSerializer(serializers.ModelSerializer):
     """
     Serializer for indicating financial documents have been sent
     """
-    class Meta:
-        model = FinancialAid
-        fields = ('date_documents_sent', )
-
     def validate(self, data):
         """
         Validate method for this serializer
@@ -183,3 +179,7 @@ class DocumentsSentSerializer(serializers.ModelSerializer):
         self.instance.date_documents_sent = self.validated_data["date_documents_sent"]
         self.instance.save()
         return self.instance
+
+    class Meta:
+        model = FinancialAid
+        fields = ("date_documents_sent", )

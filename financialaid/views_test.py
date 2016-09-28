@@ -2,8 +2,8 @@
 Tests for financialaid view
 """
 from unittest.mock import Mock, patch
-
 import datetime
+
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from rest_framework import status
@@ -395,9 +395,9 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         assert called_kwargs["body"] == FINANCIAL_AID_REJECTION_MESSAGE_BODY
         assert called_kwargs["recipient"] == self.profile.user.email
 
-    def test_mark_documents_received(self, mock_mailgun_client):
+    def test_mark_documents_received_pending_docs(self, mock_mailgun_client):
         """
-        Tests FinancialAidActionView when documents are checked as received
+        Tests FinancialAidActionView when documents are checked as received from PENDING_DOCS
         """
         mock_mailgun_client.send_financial_aid_email.return_value = Mock(
             spec=Response,
@@ -420,13 +420,32 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         assert called_kwargs["subject"] == FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT
         assert called_kwargs["body"] == FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY
         assert called_kwargs["recipient"] == self.profile.user.email
-        # Set action to pending manual approval from docs-sent
+
+    def test_mark_documents_received_docs_sent(self, mock_mailgun_client):
+        """
+        Tests FinancialAidActionView when documents are checked as received from DOCS_SENT
+        """
+        mock_mailgun_client.send_financial_aid_email.return_value = Mock(
+            spec=Response,
+            status_code=status.HTTP_200_OK,
+            json=mocked_json()
+        )
+        # Set status to docs sent
+        assert self.financialaid.tier_program == self.tier_programs["15k"]
         self.financialaid.status = FinancialAidStatus.DOCS_SENT
         self.financialaid.save()
+        self.data["action"] = FinancialAidStatus.PENDING_MANUAL_APPROVAL
+        # Set action to pending manual approval from pending-docs
         self.assert_http_status(self.client.put, self.action_url, status.HTTP_200_OK, data=self.data)
         self.financialaid.refresh_from_db()
+        # Check that the tier does not change:
         assert self.financialaid.tier_program == self.tier_programs["15k"]
         assert self.financialaid.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL
+        assert mock_mailgun_client.send_financial_aid_email.called
+        _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
+        assert called_kwargs["subject"] == FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT
+        assert called_kwargs["body"] == FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY
+        assert called_kwargs["recipient"] == self.profile.user.email
 
 
 class GetLearnerPriceForCourseTests(FinancialAidBaseTestCase, APIClient):
@@ -437,6 +456,11 @@ class GetLearnerPriceForCourseTests(FinancialAidBaseTestCase, APIClient):
     def setUpTestData(cls):
         super().setUpTestData()
         cls.course_price_url = reverse("financial_aid_course_price", kwargs={"program_id": cls.program.id})
+        cls.financialaid_approved = FinancialAidFactory.create(
+            user=cls.enrolled_profile.user,
+            tier_program=cls.tier_programs["15k"],
+            status=FinancialAidStatus.APPROVED
+        )
 
     def setUp(self):
         super().setUp()
@@ -519,19 +543,18 @@ class DocumentsSentViewTests(FinancialAidBaseTestCase, APIClient):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-
-    def setUp(self):
-        super().setUp()
-        self.client.force_login(self.profile.user)
-        self.docs_sent_url = reverse(
-            "financial_aid_documents_sent",
-            kwargs={"financial_aid_id": self.financialaid_pending.id}
+        cls.financialaid_pending_docs = FinancialAidFactory.create(
+            user=cls.enrolled_profile2.user,
+            tier_program=cls.tier_programs["15k"],
+            status=FinancialAidStatus.PENDING_DOCS
         )
-        self.financialaid_pending.status = FinancialAidStatus.PENDING_DOCS
-        self.financialaid_pending.save()
-        self.data = {
-            "financial_aid_id": self.financialaid_pending.id,
-            "date_documents_sent": datetime.datetime(2016, 9, 25).strftime('%Y-%m-%d')
+        cls.docs_sent_url = reverse(
+            "financial_aid_documents_sent",
+            kwargs={"financial_aid_id": cls.financialaid_pending_docs.id}
+        )
+        cls.data = {
+            "financial_aid_id": cls.financialaid_pending_docs.id,
+            "date_documents_sent": datetime.datetime(2016, 9, 25).strftime("%Y-%m-%d")
         }
 
     def test_learner_can_indicate_documents_sent(self):
@@ -540,9 +563,9 @@ class DocumentsSentViewTests(FinancialAidBaseTestCase, APIClient):
         """
         self.client.force_login(self.enrolled_profile2.user)
         self.assert_http_status(self.client.put, self.docs_sent_url, status.HTTP_200_OK, data=self.data)
-        self.financialaid_pending.refresh_from_db()
-        assert self.financialaid_pending.status == FinancialAidStatus.DOCS_SENT
-        assert self.financialaid_pending.date_documents_sent == datetime.date(2016, 9, 25)
+        self.financialaid_pending_docs.refresh_from_db()
+        assert self.financialaid_pending_docs.status == FinancialAidStatus.DOCS_SENT
+        assert self.financialaid_pending_docs.date_documents_sent == datetime.date(2016, 9, 25)
 
     def test_user_does_not_have_permission_to_indicate_documents_sent(self):
         """
@@ -571,7 +594,7 @@ class DocumentsSentViewTests(FinancialAidBaseTestCase, APIClient):
             FinancialAidStatus.REJECTED
         ]
         for financial_aid_status in statuses_to_test:
-            self.financialaid_pending.status = financial_aid_status
-            self.financialaid_pending.save()
+            self.financialaid_pending_docs.status = financial_aid_status
+            self.financialaid_pending_docs.save()
             self.client.force_login(self.enrolled_profile2.user)
             self.assert_http_status(self.client.put, self.docs_sent_url, status.HTTP_400_BAD_REQUEST, data=self.data)
