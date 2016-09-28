@@ -1101,6 +1101,12 @@ blocks,
 .rating-lg .icon {
   font-size: 18px;
 }
+.subscription-form legend, .subscription-form label {
+  font-size: 14px;
+  font-weight: 300;
+  color: #333;
+  border: 0;
+}
 .subscription-result {
   display: none;
   font-weight: 700;

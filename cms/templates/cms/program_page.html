@@ -20,8 +20,7 @@
     <div class="description">
       {{ page.title_over_image|richtext }}
     </div>
-    {% if authenticated %}
-    {% else %}   
+    {% if not authenticated %}
     <button class="mm-button main-action open-signup-dialog">
       Sign Up Now
     </button>
@@ -31,7 +30,7 @@
         Log In
       </a>
     </div>
-    {% endif %} 
+    {% endif %}
   </div>
   <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
     <div class="mdl-tabs__tab-bar">
