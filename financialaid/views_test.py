@@ -3,6 +3,7 @@ Tests for financialaid view
 """
 from unittest.mock import Mock, patch
 
+import datetime
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from rest_framework import status
@@ -408,7 +409,7 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         self.financialaid.status = FinancialAidStatus.PENDING_DOCS
         self.financialaid.save()
         self.data["action"] = FinancialAidStatus.PENDING_MANUAL_APPROVAL
-        # Set action to pending manual approval
+        # Set action to pending manual approval from pending-docs
         self.assert_http_status(self.client.put, self.action_url, status.HTTP_200_OK, data=self.data)
         self.financialaid.refresh_from_db()
         # Check that the tier does not change:
@@ -419,6 +420,13 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         assert called_kwargs["subject"] == FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT
         assert called_kwargs["body"] == FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY
         assert called_kwargs["recipient"] == self.profile.user.email
+        # Set action to pending manual approval from docs-sent
+        self.financialaid.status = FinancialAidStatus.DOCS_SENT
+        self.financialaid.save()
+        self.assert_http_status(self.client.put, self.action_url, status.HTTP_200_OK, data=self.data)
+        self.financialaid.refresh_from_db()
+        assert self.financialaid.tier_program == self.tier_programs["15k"]
+        assert self.financialaid.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL
 
 
 class GetLearnerPriceForCourseTests(FinancialAidBaseTestCase, APIClient):
@@ -502,3 +510,68 @@ class GetLearnerPriceForCourseTests(FinancialAidBaseTestCase, APIClient):
             "financial_aid_availability": False
         }
         self.assertDictEqual(resp.data, expected_response)
+
+
+class DocumentsSentViewTests(FinancialAidBaseTestCase, APIClient):
+    """
+    Tests for DocumentsSentView
+    """
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+
+    def setUp(self):
+        super().setUp()
+        self.client.force_login(self.profile.user)
+        self.docs_sent_url = reverse(
+            "financial_aid_documents_sent",
+            kwargs={"financial_aid_id": self.financialaid_pending.id}
+        )
+        self.financialaid_pending.status = FinancialAidStatus.PENDING_DOCS
+        self.financialaid_pending.save()
+        self.data = {
+            "financial_aid_id": self.financialaid_pending.id,
+            "date_documents_sent": datetime.datetime(2016, 9, 25).strftime('%Y-%m-%d')
+        }
+
+    def test_learner_can_indicate_documents_sent(self):
+        """
+        Tests DocumentSentView for user editing their own financial aid document status
+        """
+        self.client.force_login(self.enrolled_profile2.user)
+        self.assert_http_status(self.client.put, self.docs_sent_url, status.HTTP_200_OK, data=self.data)
+        self.financialaid_pending.refresh_from_db()
+        assert self.financialaid_pending.status == FinancialAidStatus.DOCS_SENT
+        assert self.financialaid_pending.date_documents_sent == datetime.date(2016, 9, 25)
+
+    def test_user_does_not_have_permission_to_indicate_documents_sent(self):
+        """
+        Tests DocumentSentView for user without permission to edit document status
+        """
+        unpermitted_users_to_test = [
+            self.enrolled_profile.user,
+            self.instructor_user_profile.user,
+            self.staff_user_profile.user,
+            self.profile.user
+        ]
+        for unpermitted_user in unpermitted_users_to_test:
+            self.client.force_login(unpermitted_user)
+            self.assert_http_status(self.client.put, self.docs_sent_url, status.HTTP_403_FORBIDDEN, data=self.data)
+
+    def test_correct_status_change_on_indicating_documents_sent(self):
+        """
+        Tests DocumentSentView to ensure status change is always pending-docs to docs-sent
+        """
+        statuses_to_test = [
+            FinancialAidStatus.CREATED,
+            FinancialAidStatus.AUTO_APPROVED,
+            FinancialAidStatus.DOCS_SENT,
+            FinancialAidStatus.PENDING_MANUAL_APPROVAL,
+            FinancialAidStatus.APPROVED,
+            FinancialAidStatus.REJECTED
+        ]
+        for financial_aid_status in statuses_to_test:
+            self.financialaid_pending.status = financial_aid_status
+            self.financialaid_pending.save()
+            self.client.force_login(self.enrolled_profile2.user)
+            self.assert_http_status(self.client.put, self.docs_sent_url, status.HTTP_400_BAD_REQUEST, data=self.data)

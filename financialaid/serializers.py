@@ -111,7 +111,7 @@ class FinancialAidActionSerializer(serializers.Serializer):
                 self.instance.status != FinancialAidStatus.PENDING_MANUAL_APPROVAL):
             raise ValidationError("Cannot approve application that is not pending manual approval.")
         if (data['action'] == FinancialAidStatus.PENDING_MANUAL_APPROVAL and
-                self.instance.status != FinancialAidStatus.PENDING_DOCS):
+                self.instance.status not in [FinancialAidStatus.PENDING_DOCS, FinancialAidStatus.DOCS_SENT]):
             raise ValidationError("Cannot mark documents as received for application not pending docs.")
         # Check tier program exists
         try:
@@ -154,4 +154,32 @@ class FinancialAidActionSerializer(serializers.Serializer):
         # Send email notification
         MailgunClient.send_financial_aid_email(**email_data)
 
+        return self.instance
+
+
+class DocumentsSentSerializer(serializers.ModelSerializer):
+    """
+    Serializer for indicating financial documents have been sent
+    """
+    class Meta:
+        model = FinancialAid
+        fields = ('date_documents_sent', )
+
+    def validate(self, data):
+        """
+        Validate method for this serializer
+        """
+        if self.instance.status != FinancialAidStatus.PENDING_DOCS:
+            raise ValidationError(
+                "Cannot indicate documents sent for an application that is not pending documents"
+            )
+        return data
+
+    def save(self):
+        """
+        Save method for this serializer
+        """
+        self.instance.status = FinancialAidStatus.DOCS_SENT
+        self.instance.date_documents_sent = self.validated_data["date_documents_sent"]
+        self.instance.save()
         return self.instance

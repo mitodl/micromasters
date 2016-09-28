@@ -25,10 +25,14 @@ from financialaid.models import (
     FinancialAidStatus,
     TierProgram
 )
-from financialaid.permissions import UserCanEditFinancialAid
+from financialaid.permissions import (
+    UserCanEditFinancialAid,
+    UserCanIndicateDocumentsSent
+)
 from financialaid.serializers import (
     FinancialAidActionSerializer,
-    FinancialAidRequestSerializer
+    FinancialAidRequestSerializer,
+    DocumentsSentSerializer
 )
 from roles.roles import Permissions
 from ui.views import get_bundle_url
@@ -219,6 +223,18 @@ class FinancialAidActionView(UpdateAPIView):
     """
     serializer_class = FinancialAidActionSerializer
     permission_classes = (IsAuthenticated, UserCanEditFinancialAid)
+    lookup_field = "id"
+    lookup_url_kwarg = "financial_aid_id"
+    queryset = FinancialAid.objects.all()
+
+
+class DocumentsSentView(UpdateAPIView):
+    """
+    View for learners to indicate that they have sent financial aid documents
+    """
+    serializer_class = DocumentsSentSerializer
+    authentication_classes = (SessionAuthentication, )
+    permission_classes = (IsAuthenticated, UserCanIndicateDocumentsSent)
     lookup_field = "id"
     lookup_url_kwarg = "financial_aid_id"
     queryset = FinancialAid.objects.all()
