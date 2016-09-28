@@ -101,7 +101,7 @@ class TestHomePage(ViewsTests):
         """Verify that we see a sign out button if logged in"""
         self.create_and_login_user()
         response = self.client.get('/')
-        self.assertContains(response, 'Sign out')
+        self.assertContains(response, 'Sign Out')
 
     def test_index_context_anonymous(self):
         """
