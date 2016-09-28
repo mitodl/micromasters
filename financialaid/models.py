@@ -72,7 +72,7 @@ class TierProgram(TimestampedModel):
     The tiers for discounted pricing assigned to a program
     """
     program = models.ForeignKey(Program, null=False, related_name="tier_programs")
-    tier = models.ForeignKey(Tier, null=False)
+    tier = models.ForeignKey(Tier, null=False, related_name="tier_programs")
     discount_amount = models.IntegerField(null=False)
     current = models.BooleanField(null=False, default=False)
     income_threshold = models.IntegerField(null=False)
