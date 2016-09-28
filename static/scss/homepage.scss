@@ -275,10 +275,11 @@ body.app-media {
     padding: 20px 10px 30px 15px;
 
     p{
-      color: rgba(255,255,255,0.76);
+      color: rgba(255,255,255,0.6);
       font-weight: 300;
       font-size: 16px;
       margin: 0 0 13px;
+      line-height: 1.4em;
     }
 
     .mailing-list {
@@ -342,7 +343,7 @@ body.app-media {
   background-color: $mm-brand-bg-dark;
 
   .col-md-4 {
-    padding: 0 25px;
+    padding: 0 35px;
   }
 
   h4, h5, p {
@@ -362,14 +363,13 @@ body.app-media {
     width: 300px;
     margin: 0 auto;
 
-    @media (min-width: 992px) {
-      height: 200px;
+    @media (max-width: 479px) {
+      width: 200px;
     }
 
     img {
-      max-width: 100%;
-      max-height: 100%;
       margin: auto auto;
+      width: 150px;
     }
   }
 }
