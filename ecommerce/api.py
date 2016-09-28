@@ -98,7 +98,7 @@ def create_unfulfilled_order(course_id, user):
     price = price_dict['course_price']
     if price <= 0:
         log.warning(
-            "Price to be charged for course run {} for user {} is less than or equal to zero: %s",
+            "Price to be charged for course run %s for user %s is less than or equal to zero: %s",
             course_id,
             get_social_username(user),
             price,
