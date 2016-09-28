@@ -1,10 +1,12 @@
 // @flow
+import type { Dispatch } from 'redux';
+import R from 'ramda';
+
 import type {
   ActionCreator,
   AsyncActionHelper,
   AsyncActionCreator
 } from '../flow/reduxTypes';
-import type { Dispatch } from 'redux';
 
 /**
 * takes an actionCreator and dispatch and returns a function that
@@ -18,12 +20,14 @@ export function createActionHelper(dispatch: Dispatch, actionCreator: Function):
  * returns an array of simple (synchronous) action helpers when passed the
  * dispatch function and an array of synchronous action creators
  */
-export type ActionHelpers = Array<{[k: string]: (...args: any) => void}>;
+export type ActionHelpers = {[k: string]: (...args: any) => void};
 export type ActionManifest = Array<[string, ActionCreator]>;
 export function createSimpleActionHelpers(dispatch: Dispatch, actionList: ActionManifest): ActionHelpers {
-  return actionList.map(([name, actionCreator]) => (
-    { [name]: createActionHelper(dispatch, actionCreator) }
-  ));
+  return R.fromPairs(
+    actionList.map(([name, actionCreator]) => (
+        [name, createActionHelper(dispatch, actionCreator)]
+    ))
+  );
 }
 
 /*

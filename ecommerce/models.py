@@ -2,6 +2,7 @@
 Models for storing ecommerce data
 """
 from django.contrib.auth.models import User
+from django.contrib.postgres.fields import JSONField
 from django.db import transaction
 from django.db.models import Model
 from django.db.models.fields import (
@@ -14,7 +15,6 @@ from django.db.models.fields import (
 from django.db.models.fields.related import (
     ForeignKey,
 )
-from jsonfield.fields import JSONField
 
 from courses.models import CourseRun
 from ecommerce.exceptions import EcommerceModelException
@@ -22,7 +22,7 @@ from ecommerce.exceptions import EcommerceModelException
 
 class Order(Model):
     """
-    An order made
+    An order for financial aid programs
     """
     FULFILLED = 'fulfilled'
     FAILED = 'failed'
@@ -48,7 +48,7 @@ class Order(Model):
 
 class Line(Model):
     """
-    A line in an order
+    A line in an order. This contains information about a specific item to be purchased.
     """
     course_key = TextField()
     order = ForeignKey(Order)

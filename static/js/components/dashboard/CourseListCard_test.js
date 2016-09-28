@@ -15,7 +15,14 @@ describe('CourseListCard', () => {
     assert(program.courses.length > 0);
     let now = moment();
     const checkout = () => null;
-    const wrapper = shallow(<CourseListCard program={program} now={now} checkout={checkout} />);
+    const wrapper = shallow(
+      <CourseListCard
+        program={program}
+        now={now}
+        checkout={checkout}
+        openFinancialAidCalculator={() => undefined}
+      />
+    );
     assert.equal(wrapper.find(CourseRow).length, program.courses.length);
     wrapper.find(CourseRow).forEach((courseRow, i) => {
       const props = courseRow.props();
@@ -28,7 +35,9 @@ describe('CourseListCard', () => {
   it("fills in now if it's missing in the props", () => {
     const program = DASHBOARD_RESPONSE[1];
     assert(program.courses.length > 0);
-    const wrapper = shallow(<CourseListCard program={program} checkout={() => null} />);
+    const wrapper = shallow(
+      <CourseListCard program={program} checkout={() => null} openFinancialAidCalculator={() => undefined} />
+    );
     let nows = wrapper.find(CourseRow).map(courseRow => courseRow.props().now);
     assert(nows.length > 0);
     for (let now of nows) {
@@ -40,14 +49,18 @@ describe('CourseListCard', () => {
   it("doesn't show the personalized pricing box for programs without it", () => {
     const program = _.cloneDeep(DASHBOARD_RESPONSE[1]);
     program.financial_aid_availability = false;
-    const wrapper = shallow(<CourseListCard program={program} checkout={() => null} />);
+    const wrapper = shallow(
+      <CourseListCard program={program} checkout={() => null} openFinancialAidCalculator={() => undefined} />
+    );
     assert.equal(wrapper.find('.personalized-pricing').length, 0);
   });
 
   it("shows the personalized pricing box for programs that have it", () => {
     const program = _.cloneDeep(DASHBOARD_RESPONSE[1]);
     program.financial_aid_availability = true;
-    const wrapper = shallow(<CourseListCard program={program} checkout={() => null} />);
+    const wrapper = shallow(
+      <CourseListCard program={program} checkout={() => null} openFinancialAidCalculator={() => undefined} />
+    );
     assert.equal(wrapper.find('.personalized-pricing').length, 1);
   });
 });

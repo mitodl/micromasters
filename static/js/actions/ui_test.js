@@ -21,6 +21,7 @@ import {
   SET_TOAST_MESSAGE,
   SET_ENROLL_SELECTED_PROGRAM,
   SET_PHOTO_DIALOG_VISIBILITY,
+  SET_CALCULATOR_DIALOG_VISIBILITY,
 
   clearUI,
   updateDialogText,
@@ -44,6 +45,7 @@ import {
   setToastMessage,
   setEnrollSelectedProgram,
   setPhotoDialogVisibility,
+  setCalculatorDialogVisibility,
 } from '../actions/ui';
 import { assertCreatedActionHelper } from './util';
 
@@ -72,6 +74,7 @@ describe('generated UI action helpers', () => {
       [setToastMessage, SET_TOAST_MESSAGE],
       [setEnrollSelectedProgram, SET_ENROLL_SELECTED_PROGRAM],
       [setPhotoDialogVisibility, SET_PHOTO_DIALOG_VISIBILITY],
+      [setCalculatorDialogVisibility, SET_CALCULATOR_DIALOG_VISIBILITY],
     ].forEach(assertCreatedActionHelper);
   });
 });

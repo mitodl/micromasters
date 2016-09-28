@@ -17,12 +17,27 @@ export default class FacultyCarousel extends React.Component {
       slidesToShow: 2.2,
       slidesToScroll: 1,
       adaptiveHeight: false,
-      responsive: [{
-        breakpoint: 992,
-        settings: {
-          slidesToShow: 1.5,
+      responsive: [
+        {
+          breakpoint: 600,
+          settings: 'unslick',
+        }, {
+          breakpoint: 800,
+          settings: {
+            slidesToShow: 1.2,
+          }
+        }, {
+          breakpoint: 1000,
+          settings: {
+            slidesToShow: 1.5,
+          }
+        }, {
+          breakpoint: 1200,
+          settings: {
+            slidesToShow: 2,
+          }
         }
-      }]
+      ]
     };
     const tiles = this.props.faculty.map((faculty, index) =>
       // react-slick only works with <div>s, not React components,

@@ -8,9 +8,11 @@ from rest_framework import (
     permissions,
     status,
 )
+from rest_framework.generics import GenericAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+from financialaid.models import FinancialAid
 from financialaid.permissions import UserCanEditFinancialAid
 from search.api import (
     prepare_and_execute_search,
@@ -55,20 +57,25 @@ class SearchResultMailView(APIView):
         )
 
 
-class FinancialAidMailView(APIView):
+class FinancialAidMailView(GenericAPIView):
     """
     View for sending financial aid emails to individual learners
     """
     authentication_classes = (authentication.SessionAuthentication, )
     permission_classes = (permissions.IsAuthenticated, UserCanMessageLearnersPermission, UserCanEditFinancialAid)
+    lookup_field = "id"
+    lookup_url_kwarg = "financial_aid_id"
+    queryset = FinancialAid.objects.all()
 
     def post(self, request, *args, **kwargs):
         """
         Post request to send emails to an individual learner
         """
+        financial_aid = self.get_object()
         mailgun_response = MailgunClient.send_financial_aid_email(
+            acting_user=request.user,
+            financial_aid=financial_aid,
             subject=request.data['email_subject'],
-            body=request.data['email_body'],
-            recipient=request.data['email_recipient']
+            body=request.data['email_body']
         )
         return Response(data=mailgun_response.json(), status=mailgun_response.status_code)

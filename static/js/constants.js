@@ -521,7 +521,7 @@ export const PROFILE_STEP_LABELS = new Map([
 export const DEFAULT_OPTION_LIMIT_COUNT = 10;
 
 /* eslint-disable max-len */
-export const CHECKOUT_RESPONSE = {
+export const CHECKOUT_RESPONSE_CYBERSOURCE = {
   "payload": {
     "access_key": "access_key",
     "amount": "123.45",
@@ -539,7 +539,13 @@ export const CHECKOUT_RESPONSE = {
     "transaction_uuid": "uuid",
     "unsigned_field_names": ""
   },
-  "url": "https://testsecureacceptance.cybersource.com/pay"
+  "url": "https://testsecureacceptance.cybersource.com/pay",
+  "method": "POST"
+};
+export const CHECKOUT_RESPONSE_EDX = {
+  "payload": {},
+  "url": "http://edx.org",
+  "method": "GET"
 };
 /* eslint-enable max-len */
 

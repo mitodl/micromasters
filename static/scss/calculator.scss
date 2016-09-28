@@ -1,0 +1,68 @@
+.financial-aid-calculator {
+  div {
+    border-top: none !important;
+  }
+
+  .mm-button {
+    padding-top: 1px;
+  }
+
+  .validation-message {
+    font-size: 12px;
+    color: $validation-red;
+  }
+
+  h3 {
+    border-bottom: none !important;
+    padding: 40px 40px 20px !important;
+  }
+
+  .financial-aid-calculator-body {
+    padding: 0 40px 20px !important;
+  }
+
+  .salary-input, .salary-input > div {
+    display:  flex;
+  }
+
+  .salary-input {
+    background-color: $lightgrey;
+    padding: 30px;
+    margin-top: 25px;
+    flex-direction: row;
+    justify-content: space-between;
+
+    > div {
+      flex-direction: column;
+      width: 48%;
+
+      > .title {
+        font-weight: 600;
+      }
+    }
+  }
+
+  .checkbox {
+    padding: 15px;
+    font-size: 14px;
+    line-height: 10px;
+    font-weight: 300;
+  }
+
+  .checkbox-alert {
+    margin-left: 38px;
+    margin-top: 7px;
+  }
+
+  .actions {
+    width: 100%;
+    padding: 0 20px 20px 40px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .buttons {
+      display: flex;
+    }
+  }
+}

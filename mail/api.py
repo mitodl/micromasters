@@ -3,9 +3,12 @@ Provides functions for sending and retrieving data about in-app email
 """
 import json
 from itertools import islice
-
 import requests
+
 from django.conf import settings
+from rest_framework.status import HTTP_200_OK
+
+from mail.models import FinancialAidEmailAudit
 
 
 class MailgunClient:
@@ -13,7 +16,13 @@ class MailgunClient:
     Provides functions for communicating with the Mailgun REST API.
     """
     _basic_auth_credentials = ('api', settings.MAILGUN_KEY)
-    _base_params = {'from': settings.MAILGUN_FROM_EMAIL}
+
+    @staticmethod
+    def get_base_params():
+        """
+        Base params for Mailgun request. This a method instead of an attribute to allow for overrides.
+        """
+        return {'from': settings.MAILGUN_FROM_EMAIL}
 
     @classmethod
     def _mailgun_request(cls, request_func, endpoint, params):
@@ -29,12 +38,12 @@ class MailgunClient:
             requests.Response: HTTP response
         """
         mailgun_url = '{}/{}'.format(settings.MAILGUN_URL, endpoint)
-        emails_params = {'from': settings.MAILGUN_FROM_EMAIL}
-        emails_params.update(**params)
+        email_params = params.copy()
+        email_params.update(cls.get_base_params())
         return request_func(
             mailgun_url,
-            auth=('api', settings.MAILGUN_KEY),
-            data=dict(**emails_params)
+            auth=cls._basic_auth_credentials,
+            data=email_params
         )
 
     @classmethod
@@ -126,15 +135,26 @@ class MailgunClient:
         return responses[0]
 
     @classmethod
-    def send_financial_aid_email(cls, subject, body, recipient):
+    def send_financial_aid_email(cls, acting_user, financial_aid, subject, body):
         """
         Sends a text email to a single recipient, specifically as part of the financial aid workflow. This bundles
         saving an audit trail for emails sent (to be implemented).
         Args:
+            acting_user (User): the user who is initiating this request, for auditing purposes
+            financial_aid (FinancialAid): the FinancialAid object this pertains to (recipient is pulled from here)
             subject (str): email subject
             body (str): email body
-            recipient (str): email recipient
         Returns:
             requests.Response: response from Mailgun
         """
-        return cls.send_individual_email(subject, body, recipient)
+        response = cls.send_individual_email(subject, body, financial_aid.user.email)
+        if response.status_code == HTTP_200_OK:
+            FinancialAidEmailAudit.objects.create(
+                acting_user=acting_user,
+                financial_aid=financial_aid,
+                to_email=financial_aid.user.email,
+                from_email=cls.get_base_params()['from'],
+                email_subject=subject,
+                email_body=body
+            )
+        return response
