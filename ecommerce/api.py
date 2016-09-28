@@ -10,6 +10,7 @@ from urllib.parse import quote_plus
 import uuid
 
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 from django.http.response import Http404
 from django.shortcuts import get_object_or_404
@@ -29,6 +30,7 @@ from ecommerce.models import (
     Line,
     Order,
 )
+from financialaid.api import get_course_price_for_learner
 from profiles.api import get_social_username
 
 
@@ -39,7 +41,9 @@ _REFERENCE_NUMBER_PREFIX = 'MM-'
 
 def get_purchasable_course_run(course_key, user):
     """
-    Gets a course run, or raises Http404 if not purchasable
+    Gets a course run, or raises Http404 if not purchasable. To be purchasable a course run
+    must not already be purchased, must be part of a live program, must be part of a program
+    with financial aid, and must have a valid price.
 
     Args:
         course_key (str):
@@ -55,6 +59,7 @@ def get_purchasable_course_run(course_key, user):
             CourseRun,
             edx_course_key=course_key,
             course__program__live=True,
+            course__program__financial_aid_availability=True,
             courseprice__is_valid=True,
         )
     except Http404:
@@ -88,7 +93,18 @@ def create_unfulfilled_order(course_id, user):
         Order: A newly created Order for the CourseRun with the given course_id
     """
     course_run = get_purchasable_course_run(course_id, user)
-    price = course_run.courseprice_set.get(is_valid=True).price
+
+    price_dict = get_course_price_for_learner(user, course_run.course.program)
+    price = price_dict['course_price']
+    if price <= 0:
+        log.warning(
+            "Price to be charged for course run {} for user {} is less than or equal to zero: %s",
+            course_id,
+            get_social_username(user),
+            price,
+        )
+        raise ImproperlyConfigured("Price to be charged is less than or equal to zero")
+
     order = Order.objects.create(
         status=Order.CREATED,
         total_price_paid=price,
