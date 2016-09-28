@@ -65,7 +65,7 @@
   .mdl-tabs {
     .tab-container {
       width: 96%;
-      max-width: 1000px;
+      max-width: 1150px;
 
       a:focus, a:hover {
         text-decoration: none;
@@ -149,6 +149,11 @@
   }
 
   #faq-panel, #about-panel {
+    .mdl-grid {
+      width: 94%;
+      margin: 0 auto;
+      max-width: 1150px;
+    }
     p {
       font-size: 16px;
       color: rgba(0,0,0,.7);
@@ -199,16 +204,25 @@
       margin: 0 0 25px 0;
     }
 
+    #faculty-carousel {
+      max-width: 1300px;
+      width: 90%;
+      margin: 0 auto;
+    }
+
     .faculty-tile {
-      max-width: 500px;
+      // max-width: 500px;
       height: 385px;
       padding: 250px 22px 20px 26px;
       margin: 0 auto;
       color: #ffffff;
-      background-repeat: no-repeat;
-      background-position: top left;
+      // background-repeat: no-repeat;
+      // background-position: top left;
       text-align: left;
       position: relative;
+      width: 96%;
+      margin: 0 auto;
+
 
       h4 {
         margin-top: 0;

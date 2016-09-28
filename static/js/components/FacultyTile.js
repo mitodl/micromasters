@@ -29,8 +29,8 @@ export default class FacultyTile extends React.Component {
     }
     return (
       <div className="faculty-tile">
-        <h4>{nameStr}</h4>
         {imageTag}
+        <h4>{nameStr}</h4>
         <p>{shortBio}</p>
       </div>
     );
