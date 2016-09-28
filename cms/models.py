@@ -26,6 +26,12 @@ def programs_for_sign_up(programs):
     return [ProgramSerializer().to_representation(p) for p in programs]
 
 
+def faculty_for_carousel(faculty):
+    """formats faculty info for the carousel"""
+    from cms.serializers import FacultySerializer
+    return [FacultySerializer().to_representation(f) for f in faculty]
+
+
 class HomePage(Page):
     """
     CMS page representing the homepage.
@@ -143,6 +149,7 @@ class ProgramPage(Page):
             "host": webpack_dev_server_host(request),
             "programId": self.program.id,
             "programs": programs_for_sign_up(programs),
+            "faculty": faculty_for_carousel(self.faculty_members.all()),
         }
         username = get_social_username(request.user)
         context = super(ProgramPage, self).get_context(request)
@@ -158,6 +165,7 @@ class ProgramPage(Page):
         context["style_public_src"] = get_bundle_url(request, "style_public.js")
         context["authenticated"] = not request.user.is_anonymous()
         context["signup_dialog_src"] = get_bundle_url(request, "signup_dialog.js")
+        context["faculty_carousel_src"] = get_bundle_url(request, "faculty_carousel.js")
         context["username"] = username
         context["js_settings_json"] = json.dumps(js_settings)
         context["title"] = self.title
@@ -196,7 +204,7 @@ class ProgramFaculty(Orderable):
         blank=True,
         on_delete=models.SET_NULL,
         related_name='+',
-        help_text='Image for the faculty member'
+        help_text='Image for the faculty member. Should be 500px by 385px.'
     )
     content_panels = Page.content_panels + [
         MultiFieldPanel(

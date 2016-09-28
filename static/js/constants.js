@@ -213,16 +213,16 @@ export const USER_PROGRAM_RESPONSE = {
 
 export const STATUS_PASSED = 'passed';
 export const STATUS_NOT_PASSED = 'not-passed';
-export const STATUS_VERIFIED = 'verified';
-export const STATUS_ENROLLED = "enrolled";
-export const STATUS_OFFERED = "offered";
+export const STATUS_CURRENTLY_ENROLLED = 'currently-enrolled';
+export const STATUS_CAN_UPGRADE = 'can-upgrade';
+export const STATUS_OFFERED = 'offered';
 
 export const ALL_COURSE_STATUSES = [
   STATUS_PASSED,
   STATUS_NOT_PASSED,
   STATUS_OFFERED,
-  STATUS_ENROLLED,
-  STATUS_VERIFIED,
+  STATUS_CAN_UPGRADE,
+  STATUS_CURRENTLY_ENROLLED,
 ];
 
 export const DASHBOARD_RESPONSE = [
@@ -366,7 +366,7 @@ export const DASHBOARD_RESPONSE = [
         "runs": [
           {
             "id": 7,
-            "status": STATUS_ENROLLED,
+            "status": STATUS_CAN_UPGRADE,
             "title": "Not verified run",
             "course_id": "not-verified",
             "position": 0,
@@ -426,7 +426,7 @@ export const DASHBOARD_RESPONSE = [
         "runs": [
           {
             "id": 13,
-            "status": STATUS_VERIFIED,
+            "status": STATUS_CURRENTLY_ENROLLED,
             "course_start_date": "8765-03-21",
             "title": "First run",
             "position": 0,
@@ -474,7 +474,7 @@ export const DASHBOARD_RESPONSE = [
           {
             "course_id": "course-v1:edX+DemoX+Demo_Course2",
             "id": 6,
-            "status": STATUS_VERIFIED,
+            "status": STATUS_CURRENTLY_ENROLLED,
             "title": "Course run for last program",
             "position": 0,
             "course_start_date": "2016-01-01",

@@ -8,10 +8,16 @@ import mock
 
 from backends import pipeline_api, edxorg
 from backends.pipeline_api import update_from_linkedin
+from courses.factories import ProgramFactory
 from profiles.api import get_social_username
 from profiles.models import Profile
 from profiles.factories import UserFactory
 from profiles.util import split_name
+from roles.models import (
+    Instructor,
+    Role,
+    Staff,
+)
 from search.base import ESTestCase
 
 
@@ -122,7 +128,7 @@ class EdxPipelineApiTest(ESTestCase):
         """
         self.check_empty_profile(self.user_profile)
         pipeline_api.update_profile_from_edx(
-            edxorg.EdxOrgOAuth2, self.user, {'access_token': 'foo'}, False)
+            edxorg.EdxOrgOAuth2(strategy=mock.Mock()), self.user, {'access_token': 'foo'}, False)
 
         self.user_profile.refresh_from_db()
         self.check_empty_profile(self.user_profile)
@@ -134,7 +140,7 @@ class EdxPipelineApiTest(ESTestCase):
         self.check_empty_profile(self.user_profile)
 
         pipeline_api.update_profile_from_edx(
-            edxorg.EdxOrgOAuth2, self.user, {'access_token': ''}, True)
+            edxorg.EdxOrgOAuth2(strategy=mock.Mock()), self.user, {'access_token': ''}, True)
 
         self.user_profile.refresh_from_db()
         self.check_empty_profile(self.user_profile)
@@ -150,7 +156,7 @@ class EdxPipelineApiTest(ESTestCase):
 
         # just checking that nothing raises an exception
         pipeline_api.update_profile_from_edx(
-            edxorg.EdxOrgOAuth2, self.user, {'access_token': 'foo_token'}, True)
+            edxorg.EdxOrgOAuth2(strategy=mock.Mock()), self.user, {'access_token': 'foo_token'}, True)
 
         # verify that a profile has not been created
         with self.assertRaises(Profile.DoesNotExist):
@@ -164,7 +170,7 @@ class EdxPipelineApiTest(ESTestCase):
         mocked_content = self.mocked_edx_profile
         mocked_get_json.return_value = mocked_content
         pipeline_api.update_profile_from_edx(
-            edxorg.EdxOrgOAuth2, self.user, {'access_token': 'foo_token'}, True)
+            edxorg.EdxOrgOAuth2(strategy=mock.Mock()), self.user, {'access_token': 'foo_token'}, True)
         mocked_get_json.assert_called_once_with(
             urljoin(
                 edxorg.EdxOrgOAuth2.EDXORG_BASE_URL,
@@ -209,11 +215,33 @@ class EdxPipelineApiTest(ESTestCase):
             mocked_content['language_proficiencies'] = proficiencies
             mocked_get_json.return_value = mocked_content
             pipeline_api.update_profile_from_edx(
-                edxorg.EdxOrgOAuth2, self.user, {'access_token': 'foo_token'}, True)
+                edxorg.EdxOrgOAuth2(strategy=mock.Mock()), self.user, {'access_token': 'foo_token'}, True)
 
             self.user_profile.refresh_from_db()
             assert self.user_profile.preferred_language is None
             assert self.user_profile.edx_language_proficiencies == proficiencies
+
+    def test_login_redirect_dashboard(self):
+        """
+        A student should be directed to /dashboard
+        """
+        student = UserFactory.create()
+        session_set = mock.Mock()
+        backend = edxorg.EdxOrgOAuth2(strategy=mock.Mock(session_set=session_set))
+        pipeline_api.update_profile_from_edx(backend, student, {}, False)
+        session_set.assert_called_with('next', '/dashboard')
+
+    def test_login_redirect_learners(self):
+        """
+        Staff or instructors should be directed to /learners
+        """
+        for role in [Staff.ROLE_ID, Instructor.ROLE_ID]:
+            user = UserFactory.create()
+            Role.objects.create(user=user, role=role, program=ProgramFactory.create())
+            session_set = mock.Mock()
+            backend = edxorg.EdxOrgOAuth2(strategy=mock.Mock(session_set=session_set))
+            pipeline_api.update_profile_from_edx(backend, user, {}, False)
+            session_set.assert_called_with('next', '/learners')
 
 
 class LinkedInPipelineTests(ESTestCase):

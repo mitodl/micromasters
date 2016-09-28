@@ -34,7 +34,7 @@ def mocked_json(return_data=None):
 class MailViewsTests(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.mail_url = reverse('mail_api')
+        cls.search_result_mail_url = reverse('search_result_mail_api')
         cls.program = ProgramFactory.create(live=True)
         # create a user with a role for one program
         with mute_signals(post_save):
@@ -57,14 +57,14 @@ class MailViewsTests(APITestCase):
 
     def test_send_view(self, mock_mailgun_client, mock_prepare_exec_search):
         """
-        Test that the email send view will accept and return expected values
+        Test that the SearchResultMailView will accept and return expected values
         """
         email_results = ['a@example.com', 'b@example.com']
         mock_prepare_exec_search.return_value = email_results
         mock_mailgun_client.send_batch.return_value = [
             Mock(spec=Response, status_code=HTTP_200_OK, json=mocked_json())
         ]
-        resp_post = self.client.post(self.mail_url, data=self.request_data, format='json')
+        resp_post = self.client.post(self.search_result_mail_url, data=self.request_data, format='json')
         assert resp_post.status_code == HTTP_200_OK
         assert mock_prepare_exec_search.called
         assert mock_mailgun_client.send_batch.called
@@ -75,7 +75,7 @@ class MailViewsTests(APITestCase):
 
     def test_view_response(self, mock_mailgun_client, mock_prepare_exec_search):
         """
-        Test the structure of the response returned by the view
+        Test the structure of the response returned by the SearchResultMailView
         """
         email_results = ['a@example.com', 'b@example.com']
         mock_prepare_exec_search.return_value = email_results
@@ -83,7 +83,7 @@ class MailViewsTests(APITestCase):
             Mock(spec=Response, status_code=HTTP_200_OK, json=mocked_json()),
             Mock(spec=Response, status_code=HTTP_400_BAD_REQUEST, json=mocked_json()),
         ]
-        resp_post = self.client.post(self.mail_url, data=self.request_data, format='json')
+        resp_post = self.client.post(self.search_result_mail_url, data=self.request_data, format='json')
         assert resp_post.status_code == HTTP_200_OK
         assert len(resp_post.data.keys()) == 2
         for num in range(2):
@@ -97,10 +97,58 @@ class MailViewsTests(APITestCase):
     def test_no_program_user_response(self, *args):  # pylint: disable=unused-argument
         """
         Test that a 403 will be returned when a user with inadequate permissions attempts
-        to send an email through the email send view
+        to send an email through the SearchResultMailView
         """
         with mute_signals(post_save):
             no_permissions_profile = ProfileFactory.create()
         self.client.force_login(no_permissions_profile.user)
-        resp_post = self.client.post(self.mail_url, data=self.request_data, format='json')
+        resp_post = self.client.post(self.search_result_mail_url, data=self.request_data, format='json')
         assert resp_post.status_code == HTTP_403_FORBIDDEN
+
+
+@patch('mail.views.MailgunClient')
+class FinancialAidMailViewsTests(APITestCase):
+    """
+    Tests for FinancialAidMailViews
+    """
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.financial_aid_mail_url = reverse('financial_aid_mail_api')
+        # create a user with a role for one program
+        with mute_signals(post_save):
+            staff_profile = ProfileFactory.create()
+            cls.staff = staff_profile.user
+        cls.program = ProgramFactory.create(live=True)
+        Role.objects.create(
+            user=cls.staff,
+            program=cls.program,
+            role=Staff.ROLE_ID
+        )
+        cls.request_data = {
+            'email_subject': 'email subject',
+            'email_body': 'email body',
+            'email_recipient': 'a@example.com'
+        }
+
+    def test_send_financial_aid_view(self, mock_mailgun_client):
+        """
+        Test that the FinancialAidMailView will accept and return expected values
+        """
+        self.client.force_login(self.staff)
+        mock_mailgun_client.send_financial_aid_email.return_value = Mock(
+            spec=Response,
+            status_code=HTTP_200_OK,
+            json=mocked_json()
+        )
+        resp_post = self.client.post(
+            self.financial_aid_mail_url,
+            data=self.request_data,
+            format='json'
+        )
+        assert resp_post.status_code == HTTP_200_OK
+        assert mock_mailgun_client.send_financial_aid_email.called
+        _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
+        assert called_kwargs['subject'] == self.request_data['email_subject']
+        assert called_kwargs['body'] == self.request_data['email_body']
+        assert called_kwargs['recipient'] == 'a@example.com'

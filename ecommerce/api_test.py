@@ -14,10 +14,14 @@ from mock import (
 from django.http.response import Http404
 from django.test import override_settings
 from rest_framework.exceptions import ValidationError
+from edx_api.enrollments import Enrollment
 
+from backends.pipeline_api import EdxOrgOAuth2
 from courses.factories import CourseRunFactory
+from dashboard.models import CachedEnrollment
 from ecommerce.api import (
     create_unfulfilled_order,
+    enroll_user_on_success,
     generate_cybersource_sa_payload,
     generate_cybersource_sa_signature,
     get_purchasable_course_run,
@@ -26,10 +30,15 @@ from ecommerce.api import (
     make_reference_id,
 )
 from ecommerce.exceptions import (
+    EcommerceEdxApiException,
     EcommerceException,
     ParseException,
 )
-from ecommerce.factories import CoursePriceFactory
+from ecommerce.factories import (
+    CoursePriceFactory,
+    LineFactory,
+    OrderFactory,
+)
 from ecommerce.models import Order
 from profiles.factories import UserFactory
 from search.base import ESTestCase
@@ -256,3 +265,86 @@ class ReferenceNumberTests(ESTestCase):
             with self.assertRaises(EcommerceException) as ex:
                 get_new_order_by_reference_number(make_reference_id(order))
             assert ex.exception.args[0] == "Order {} is expected to have status 'created'".format(order.id)
+
+
+class EnrollUserTests(ESTestCase):
+    """
+    Tests for enroll_user
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+
+        cls.user = UserFactory()
+        cls.user.social_auth.create(
+            provider='not_edx',
+        )
+        cls.user.social_auth.create(
+            provider=EdxOrgOAuth2.name,
+            uid="{}_edx".format(cls.user.username),
+        )
+        cls.order = OrderFactory.create(status=Order.CREATED, user=cls.user)
+        cls.line1 = LineFactory.create(order=cls.order)
+        cls.line2 = LineFactory.create(order=cls.order)
+        cls.course_run1 = CourseRunFactory.create(edx_course_key=cls.line1.course_key)
+        CoursePriceFactory.create(course_run=cls.course_run1, is_valid=True)
+        cls.course_run2 = CourseRunFactory.create(edx_course_key=cls.line2.course_key)
+        CoursePriceFactory.create(course_run=cls.course_run2, is_valid=True)
+
+    def test_enroll(self):
+        """
+        Test that an enrollment is made for each course key attached to the order
+        and that the CachedEnrollments are produced.
+        """
+        def create_audit(course_key):
+            """Helper function to create a fake enrollment"""
+            return Enrollment({"course_details": {"course_id": course_key}})
+
+        create_audit_mock = MagicMock(side_effect=create_audit)
+        enrollments_mock = MagicMock(create_audit_student_enrollment=create_audit_mock)
+        edx_api_mock = MagicMock(enrollments=enrollments_mock)
+        with patch('ecommerce.api.EdxApi', return_value=edx_api_mock):
+            enroll_user_on_success(self.order)
+
+        assert len(create_audit_mock.call_args_list) == self.order.line_set.count()
+        for i, line in enumerate(self.order.line_set.all()):
+            assert create_audit_mock.call_args_list[i][0] == (line.course_key, )
+        assert CachedEnrollment.objects.count() == self.order.line_set.count()
+
+        for line in self.order.line_set.all():
+            enrollment = CachedEnrollment.objects.get(
+                user=self.order.user,
+                course_run__edx_course_key=line.course_key,
+            )
+            assert enrollment.data == create_audit(line.course_key).json
+
+    def test_failed(self):
+        """
+        Test that an exception is raised containing a list of exceptions of the failed enrollments
+        """
+        def create_audit(course_key):
+            """Fail for first course key"""
+            if course_key == self.line1.course_key:
+                raise Exception("fatal error {}".format(course_key))
+            return Enrollment({"course_details": {"course_id": course_key}})
+
+        create_audit_mock = MagicMock(side_effect=create_audit)
+        enrollments_mock = MagicMock(create_audit_student_enrollment=create_audit_mock)
+        edx_api_mock = MagicMock(enrollments=enrollments_mock)
+        with patch('ecommerce.api.EdxApi', return_value=edx_api_mock):
+            with self.assertRaises(EcommerceEdxApiException) as ex:
+                enroll_user_on_success(self.order)
+            assert len(ex.exception.args[0]) == 1
+            assert ex.exception.args[0][0].args[0] == 'fatal error {}'.format(self.line1.course_key)
+
+        assert len(create_audit_mock.call_args_list) == self.order.line_set.count()
+        for i, line in enumerate(self.order.line_set.all()):
+            assert create_audit_mock.call_args_list[i][0] == (line.course_key, )
+
+        assert CachedEnrollment.objects.count() == 1
+        enrollment = CachedEnrollment.objects.get(
+            user=self.order.user,
+            course_run__edx_course_key=self.line2.course_key,
+        )
+        assert enrollment.data == create_audit(self.line2.course_key).json

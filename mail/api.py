@@ -109,3 +109,32 @@ class MailgunClient:
             chunk = list(islice(recipients, chunk_size))
 
         return responses
+
+    @classmethod
+    def send_individual_email(cls, subject, body, recipient):
+        """
+        Sends a text email to a single recipient.
+        Args:
+            subject (str): email subject
+            body (str): email body
+            recipient (str): email recipient
+        Returns:
+            requests.Response: response from Mailgun
+        """
+        # Since .send_batch() returns a list, we need to return the first in the list
+        responses = cls.send_batch(subject, body, [recipient])
+        return responses[0]
+
+    @classmethod
+    def send_financial_aid_email(cls, subject, body, recipient):
+        """
+        Sends a text email to a single recipient, specifically as part of the financial aid workflow. This bundles
+        saving an audit trail for emails sent (to be implemented).
+        Args:
+            subject (str): email subject
+            body (str): email body
+            recipient (str): email recipient
+        Returns:
+            requests.Response: response from Mailgun
+        """
+        return cls.send_individual_email(subject, body, recipient)

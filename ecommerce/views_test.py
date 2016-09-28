@@ -120,16 +120,18 @@ class OrderFulfillmentViewTests(ESTestCase):
         data['req_reference_number'] = make_reference_id(order)
         data['decision'] = 'ACCEPT'
 
-        with patch('ecommerce.views.IsSignedByCyberSource.has_permission', return_value=True):
+        with patch('ecommerce.views.IsSignedByCyberSource.has_permission', return_value=True), patch(
+            'ecommerce.views.enroll_user_on_success'
+        ) as enroll_user:
             resp = self.client.post(reverse('order-fulfillment'), data=data)
 
         assert len(resp.content) == 0
         assert resp.status_code == status.HTTP_200_OK
         order.refresh_from_db()
-
         assert order.status == Order.FULFILLED
         assert order.receipt_set.count() == 1
         assert order.receipt_set.first().data == data
+        enroll_user.assert_called_with(order)
 
     def test_missing_fields(self):
         """
@@ -152,6 +154,29 @@ class OrderFulfillmentViewTests(ESTestCase):
         assert Order.objects.count() == 0
         assert Receipt.objects.count() == 1
         assert Receipt.objects.first().data == data
+
+    def test_failed_enroll(self):
+        """
+        If we fail to enroll in edX, the order status should be failed
+        """
+        course_run, user = create_purchasable_course_run()
+        order = create_unfulfilled_order(course_run.edx_course_key, user)
+
+        data = {}
+        for _ in range(5):
+            data[FAKE.text()] = FAKE.text()
+
+        data['req_reference_number'] = make_reference_id(order)
+        data['decision'] = 'ACCEPT'
+
+        with patch('ecommerce.views.IsSignedByCyberSource.has_permission', return_value=True), patch(
+            'ecommerce.views.enroll_user_on_success', side_effect=KeyError
+        ):
+            with self.assertRaises(KeyError):
+                self.client.post(reverse('order-fulfillment'), data=data)
+
+        assert Order.objects.count() == 1
+        assert Order.objects.first().status == Order.FAILED
 
     def test_not_accept(self):
         """

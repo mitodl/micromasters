@@ -8,6 +8,9 @@ import 'style!css!cropperjs/dist/cropper.css';
 
 // react-select styles
 import 'style!css!react-select/dist/react-select.css';
+// react-slick styles
+import 'style!css!slick-carousel/slick/slick.css';
+import 'style!css!slick-carousel/slick/slick-theme.css';
 
 // This should come last to override other styles
 import '../scss/layout.scss';

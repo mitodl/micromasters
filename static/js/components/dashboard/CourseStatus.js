@@ -7,7 +7,7 @@ import type {
   CourseRun
 } from '../../flow/programTypes';
 import {
-  STATUS_ENROLLED,
+  STATUS_CAN_UPGRADE,
   STATUS_OFFERED,
 } from '../../constants';
 import { formatPrice } from '../../util/util';
@@ -21,7 +21,7 @@ export default class CourseStatus extends React.Component {
   coursePrice(firstRun: CourseRun): string {
     let courseHasPrice = (
       !_.isNil(firstRun.price) &&
-      (firstRun.status === STATUS_OFFERED || firstRun.status === STATUS_ENROLLED)
+      (firstRun.status === STATUS_OFFERED || firstRun.status === STATUS_CAN_UPGRADE)
     );
 
     if (courseHasPrice) {
@@ -46,7 +46,7 @@ export default class CourseStatus extends React.Component {
       priceDisplay = <span className="price">{price}</span>;
     }
 
-    if (firstRun.status === STATUS_ENROLLED) {
+    if (firstRun.status === STATUS_CAN_UPGRADE) {
       tooltipDisplay = courseListToolTip(
         "You need to enroll in the Verified Course to get MicroMasters credit.",
         `course-detail${course.id}`,

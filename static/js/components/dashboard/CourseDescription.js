@@ -7,8 +7,8 @@ import type { Course, CourseRun } from '../../flow/programTypes';
 import {
   STATUS_PASSED,
   STATUS_NOT_PASSED,
-  STATUS_ENROLLED,
-  STATUS_VERIFIED,
+  STATUS_CAN_UPGRADE,
+  STATUS_CURRENTLY_ENROLLED,
   STATUS_OFFERED,
   DASHBOARD_FORMAT,
 } from '../../constants';
@@ -39,8 +39,8 @@ export default class CourseDescription extends React.Component {
         return `Coming ${firstRun.fuzzy_start_date}`;
       }
       break;
-    case STATUS_ENROLLED:
-    case STATUS_VERIFIED:
+    case STATUS_CAN_UPGRADE:
+    case STATUS_CURRENTLY_ENROLLED:
     case STATUS_OFFERED:
       if (firstRun.course_start_date) {
         let courseStartDate = moment(firstRun.course_start_date);

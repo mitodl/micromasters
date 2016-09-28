@@ -13,10 +13,15 @@ from django.conf import settings
 from django.db import transaction
 from django.http.response import Http404
 from django.shortcuts import get_object_or_404
+from edx_api.client import EdxApi
+import pytz
 from rest_framework.exceptions import ValidationError
 
+from backends.edxorg import EdxOrgOAuth2
 from courses.models import CourseRun
+from dashboard.api import update_cached_enrollment
 from ecommerce.exceptions import (
+    EcommerceEdxApiException,
     EcommerceException,
     ParseException,
 )
@@ -218,3 +223,38 @@ def get_new_order_by_reference_number(reference_number):
         return Order.objects.get(id=order_id, status=Order.CREATED)
     except Order.DoesNotExist:
         raise EcommerceException("Order {} is expected to have status 'created'".format(order_id))
+
+
+def enroll_user_on_success(order):
+    """
+    Enroll user after they made a successful purchase.
+
+    Args:
+        order (Order): An order to be fulfilled
+
+    Returns:
+         None
+    """
+    user_social = order.user.social_auth.get(provider=EdxOrgOAuth2.name)
+    enrollments_client = EdxApi(user_social.extra_data, settings.EDXORG_BASE_URL).enrollments
+
+    exceptions = []
+    enrollments = []
+    for line in order.line_set.all():
+        course_key = line.course_key
+        try:
+            enrollments.append(enrollments_client.create_audit_student_enrollment(course_key))
+        except Exception as ex:  # pylint: disable=broad-except
+            log.error(
+                "Error creating audit enrollment for course key %s for user %s",
+                course_key,
+                get_social_username(order.user),
+            )
+            exceptions.append(ex)
+
+    now = datetime.now(pytz.UTC)
+    for enrollment in enrollments:
+        update_cached_enrollment(order.user, enrollment, enrollment.course_id, now)
+
+    if exceptions:
+        raise EcommerceEdxApiException(exceptions)

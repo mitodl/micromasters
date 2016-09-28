@@ -35,7 +35,7 @@ class StatusTest(ESTestCase):
     # pylint: disable= no-self-use
     def test_course_status(self):
         """test for CourseStatus"""
-        for attr in ('PASSED', 'NOT_PASSED', 'CURRENT_GRADE', 'UPGRADE', 'OFFERED',):
+        for attr in ('PASSED', 'NOT_PASSED', 'CURRENTLY_ENROLLED', 'CAN_UPGRADE', 'OFFERED',):
             assert hasattr(api.CourseStatus, attr)
 
     def test_course_status_all_statuses(self):
@@ -46,7 +46,7 @@ class StatusTest(ESTestCase):
 
     def test_course_run_status(self):
         """test for CourseRunStatus"""
-        for attr in ('NOT_ENROLLED', 'GRADE', 'READ_CERT', 'WILL_ATTEND', 'UPGRADE', 'NOT_PASSED'):
+        for attr in ('NOT_ENROLLED', 'CURRENTLY_ENROLLED', 'READ_CERT', 'WILL_ATTEND', 'CAN_UPGRADE', 'NOT_PASSED'):
             assert hasattr(api.CourseRunStatus, attr)
 
     def test_course_run_user_status(self):
@@ -157,13 +157,13 @@ class FormatRunTest(CourseTests):
         self.assertIn('price', format_courserun_offered_course)
         self.assertEqual(format_courserun_offered_course['price'], course_price)
 
-        format_courserun_no_verified_course = api.format_courserun_for_dashboard(crun, api.CourseStatus.UPGRADE)
+        format_courserun_no_verified_course = api.format_courserun_for_dashboard(crun, api.CourseStatus.CAN_UPGRADE)
         self.assertIn('price', format_courserun_no_verified_course)
         self.assertEqual(format_courserun_no_verified_course['price'], course_price)
 
         self.assertNotIn('price', api.format_courserun_for_dashboard(crun, api.CourseStatus.PASSED))
         self.assertNotIn('price', api.format_courserun_for_dashboard(crun, api.CourseStatus.NOT_PASSED))
-        self.assertNotIn('price', api.format_courserun_for_dashboard(crun, api.CourseStatus.CURRENT_GRADE))
+        self.assertNotIn('price', api.format_courserun_for_dashboard(crun, api.CourseStatus.CURRENTLY_ENROLLED))
 
     def test_format_run(self):
         """Test for format_courserun_for_dashboard with passed run and position"""
@@ -322,7 +322,7 @@ class CourseRunTest(CourseTests):
             edx_key="course-v1:edX+DemoX+Demo_Course"
         )
         run_status = api.get_status_for_courserun(crun, self.enrollments)
-        assert run_status.status == api.CourseRunStatus.GRADE
+        assert run_status.status == api.CourseRunStatus.CURRENTLY_ENROLLED
         assert run_status.course_run == crun
         assert (run_status.enrollment_for_course ==
                 self.enrollments.get_enrollment_for_course("course-v1:edX+DemoX+Demo_Course"))
@@ -378,12 +378,12 @@ class CourseRunTest(CourseTests):
             edx_key="course-v1:MITx+8.MechCX+2014_T1"
         )
         run_status = api.get_status_for_courserun(future_run, self.enrollments)
-        assert run_status.status == api.CourseRunStatus.UPGRADE
+        assert run_status.status == api.CourseRunStatus.CAN_UPGRADE
         assert run_status.course_run == future_run
         assert (run_status.enrollment_for_course ==
                 self.enrollments.get_enrollment_for_course("course-v1:MITx+8.MechCX+2014_T1"))
         run_status = api.get_status_for_courserun(current_run, self.enrollments)
-        assert run_status.status == api.CourseRunStatus.UPGRADE
+        assert run_status.status == api.CourseRunStatus.CAN_UPGRADE
         assert run_status.course_run == current_run
         assert (run_status.enrollment_for_course ==
                 self.enrollments.get_enrollment_for_course("course-v1:MITx+8.MechCX+2014_T1"))
@@ -400,13 +400,13 @@ class CourseRunTest(CourseTests):
             edx_key="course-v1:MITx+8.MechCX+2014_T1"
         )
         run_status = api.get_status_for_courserun(current_run, self.enrollments)
-        assert run_status.status == api.CourseRunStatus.UPGRADE
+        assert run_status.status == api.CourseRunStatus.CAN_UPGRADE
 
         # modify the run to have an upgrade deadline in the future
         current_run.upgrade_deadline = self.now+timedelta(weeks=1)
         current_run.save()
         run_status = api.get_status_for_courserun(current_run, self.enrollments)
-        assert run_status.status == api.CourseRunStatus.UPGRADE
+        assert run_status.status == api.CourseRunStatus.CAN_UPGRADE
 
         # modify the run to have an upgrade deadline in the past
         current_run.upgrade_deadline = self.now-timedelta(weeks=1)
@@ -583,13 +583,13 @@ class InfoCourseTest(CourseTests):
             'dashboard.api.get_status_for_courserun',
             autospec=True,
             side_effect=self.get_mock_run_status_func(
-                api.CourseRunStatus.GRADE, self.course_run, api.CourseRunStatus.NOT_PASSED),
+                api.CourseRunStatus.CURRENTLY_ENROLLED, self.course_run, api.CourseRunStatus.NOT_PASSED),
         ):
             self.assert_course_equal(
                 self.course,
                 api.get_info_for_course(self.course, None, None)
             )
-        mock_format.assert_any_call(self.course_run, api.CourseStatus.CURRENT_GRADE, None, position=1)
+        mock_format.assert_any_call(self.course_run, api.CourseStatus.CURRENTLY_ENROLLED, None, position=1)
         mock_format.assert_any_call(self.course_run_ver, api.CourseStatus.NOT_PASSED, None, position=2)
 
     @patch('dashboard.api.format_courserun_for_dashboard', autospec=True)
@@ -663,7 +663,7 @@ class InfoCourseTest(CourseTests):
                 self.course,
                 api.get_info_for_course(self.course, None, None)
             )
-        mock_format.assert_called_once_with(self.course_run, api.CourseStatus.CURRENT_GRADE, None, position=1)
+        mock_format.assert_called_once_with(self.course_run, api.CourseStatus.CURRENTLY_ENROLLED, None, position=1)
 
     @patch('dashboard.api.format_courserun_for_dashboard', autospec=True)
     def test_info_upgrade(self, mock_format):
@@ -672,13 +672,13 @@ class InfoCourseTest(CourseTests):
             'dashboard.api.get_status_for_courserun',
             autospec=True,
             side_effect=self.get_mock_run_status_func(
-                api.CourseRunStatus.UPGRADE, self.course_run, api.CourseRunStatus.NOT_ENROLLED),
+                api.CourseRunStatus.CAN_UPGRADE, self.course_run, api.CourseRunStatus.NOT_ENROLLED),
         ):
             self.assert_course_equal(
                 self.course,
                 api.get_info_for_course(self.course, None, None)
             )
-        mock_format.assert_called_once_with(self.course_run, api.CourseStatus.UPGRADE, None, position=1)
+        mock_format.assert_called_once_with(self.course_run, api.CourseStatus.CAN_UPGRADE, None, position=1)
 
     @patch('dashboard.api.format_courserun_for_dashboard', autospec=True)
     def test_info_default_should_not_happen(self, mock_format):

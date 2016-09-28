@@ -4,6 +4,7 @@ Models for course structure
 from datetime import datetime
 
 import pytz
+from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 
 
@@ -18,6 +19,24 @@ class Program(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_course_price(self):
+        """
+        Returns a decimal course price attached to this program.
+
+        Note: This implementation of retrieving a course price is a naive lookup that assumes
+        all course runs in a single program will be the same price for the foreseeable future.
+        Therefore we can just take the price from any currently enroll-able course run.
+        """
+        from ecommerce.models import CoursePrice
+        course_price_object = CoursePrice.objects.filter(
+            is_valid=True,
+            course_run__course__program=self
+        ).first()
+        if course_price_object is None:
+            # If no CoursePrice is valid for this program, can't meaningfully return any value
+            raise ImproperlyConfigured("No course price available for this program.")
+        return course_price_object.price
 
 
 class Course(models.Model):
