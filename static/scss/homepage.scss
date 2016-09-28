@@ -1,5 +1,13 @@
-#home-page {
-  background: #fff;
+#home_page, #program_page {
+  background: #2b2b2b;
+
+  .centered_container {
+    max-width: 1500px;
+    margin: 0 auto;
+    -webkit-box-shadow: 0px 0px 32px 0px rgba(0,0,0,0.3);
+    -moz-box-shadow: 0px 0px 32px 0px rgba(0,0,0,0.3);
+    box-shadow: 0px 0px 32px 0px rgba(0,0,0,0.3);
+  }
 }
 
 body.app-media {
@@ -152,6 +160,11 @@ body.app-media {
   }
 }
 
+.sub-banner {
+  .col-md-12 {
+    padding: 0;
+  }
+}
 .sub-banner-section{
   background-color: #ffffff;
   padding:53px 0 93px;

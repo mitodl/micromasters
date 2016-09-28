@@ -11,6 +11,8 @@
 
 {% block body_class %}template-programpage{% endblock %}
 {% block content %}
+<div id="program_page">
+<div class="centered_container">
 {% include "header.html" %}
 <div class="page-content program-page">
   {% image page.background_image fill-1310x613 as background_image %}
@@ -131,3 +133,5 @@
 <script type="text/javascript" src="{{ faculty_carousel_src }}"></script>
 <script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
 {% endblock %}
+</div>
+</div>
