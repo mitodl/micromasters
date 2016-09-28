@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('financialaid', '0004_modified_financial_aid_audit'),
+        ('financialaid', '0005_modified_financial_aid_audit'),
     ]
 
     operations = [

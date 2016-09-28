@@ -104,6 +104,16 @@ class FinancialAidBaseTestCase(ESTestCase):
             user=cls.enrolled_profile3.user,
             program=cls.program
         )
+        cls.financialaid_approved = FinancialAidFactory.create(
+            user=cls.enrolled_profile.user,
+            tier_program=cls.tier_programs["15k"],
+            status=FinancialAidStatus.APPROVED
+        )
+        cls.financialaid_pending = FinancialAidFactory.create(
+            user=cls.enrolled_profile2.user,
+            tier_program=cls.tier_programs["15k"],
+            status=FinancialAidStatus.PENDING_MANUAL_APPROVAL
+        )
 
     @staticmethod
     def assert_http_status(method, url, status, data=None, content_type="application/json", **kwargs):

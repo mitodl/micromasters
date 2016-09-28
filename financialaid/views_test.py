@@ -425,9 +425,10 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         assert self.financialaid.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL
         assert mock_mailgun_client.send_financial_aid_email.called
         _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
+        assert called_kwargs["acting_user"] == self.staff_user_profile.user
+        assert called_kwargs["financial_aid"] == self.financialaid
         assert called_kwargs["subject"] == FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT
         assert called_kwargs["body"] == FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY
-        assert called_kwargs["recipient"] == self.profile.user.email
 
     def test_mark_documents_received_docs_sent(self, mock_mailgun_client):
         """
@@ -465,11 +466,6 @@ class GetLearnerPriceForCourseTests(FinancialAidBaseTestCase, APIClient):
     def setUpTestData(cls):
         super().setUpTestData()
         cls.course_price_url = reverse("financial_aid_course_price", kwargs={"program_id": cls.program.id})
-        cls.financialaid_approved = FinancialAidFactory.create(
-            user=cls.enrolled_profile.user,
-            tier_program=cls.tier_programs["15k"],
-            status=FinancialAidStatus.APPROVED
-        )
 
     def setUp(self):
         super().setUp()
@@ -553,7 +549,7 @@ class DocumentsSentViewTests(FinancialAidBaseTestCase, APIClient):
     def setUpTestData(cls):
         super().setUpTestData()
         cls.financialaid_pending_docs = FinancialAidFactory.create(
-            user=cls.enrolled_profile2.user,
+            user=cls.enrolled_profile3.user,
             tier_program=cls.tier_programs["15k"],
             status=FinancialAidStatus.PENDING_DOCS
         )
@@ -570,7 +566,7 @@ class DocumentsSentViewTests(FinancialAidBaseTestCase, APIClient):
         """
         Tests DocumentSentView for user editing their own financial aid document status
         """
-        self.client.force_login(self.enrolled_profile2.user)
+        self.client.force_login(self.enrolled_profile3.user)
         self.assert_http_status(self.client.put, self.docs_sent_url, status.HTTP_200_OK, data=self.data)
         self.financialaid_pending_docs.refresh_from_db()
         assert self.financialaid_pending_docs.status == FinancialAidStatus.DOCS_SENT
@@ -605,5 +601,5 @@ class DocumentsSentViewTests(FinancialAidBaseTestCase, APIClient):
         for financial_aid_status in statuses_to_test:
             self.financialaid_pending_docs.status = financial_aid_status
             self.financialaid_pending_docs.save()
-            self.client.force_login(self.enrolled_profile2.user)
+            self.client.force_login(self.enrolled_profile3.user)
             self.assert_http_status(self.client.put, self.docs_sent_url, status.HTTP_400_BAD_REQUEST, data=self.data)
