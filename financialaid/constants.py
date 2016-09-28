@@ -3,6 +3,17 @@ Constants for financialaid
 """
 
 
+class FinancialAidJustification:
+    """
+    Justifications for financial aid decisions
+    """
+    NOT_NOTARIZED = "Docs not notarized"
+    INSUFFICIENT = "Insufficient docs"
+    INCOME_INACCURATE = "Inaccurate income reported"
+
+    ALL_JUSTIFICATIONS = [NOT_NOTARIZED, INSUFFICIENT, INCOME_INACCURATE]
+
+
 DEFAULT_INCOME_THRESHOLD = 100000
 COUNTRY_INCOME_THRESHOLDS = {
     "AD": 100000,

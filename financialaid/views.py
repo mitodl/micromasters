@@ -20,6 +20,7 @@ from rolepermissions.verifications import has_object_permission
 
 from courses.models import Program
 from financialaid.api import get_course_price_for_learner
+from financialaid.constants import FinancialAidJustification
 from financialaid.models import (
     FinancialAid,
     FinancialAidStatus,
@@ -69,8 +70,14 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
     sort_direction = ""
     sort_field_info = None
     sort_fields = {
+        "adjusted_cost": {
+            "display": "Adjusted Cost"
+        },
         "first_name": {
             "display": "First Name"
+        },
+        "date_calculated": {
+            "display": "Date Calculated"
         },
         "last_name": {
             "display": "Last Name"
@@ -78,14 +85,12 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         "location": {
             "display": "Location"
         },
-        "adjusted_cost": {
-            "display": "Adjusted Cost"
-        },
         "reported_income": {
             "display": "Reported Income"
         },
     }
     sort_field_mappings = {
+        "date_calculated": "created_on",
         "first_name": "user__profile__first_name",
         "last_name": "user__profile__last_name",
         "location": "user__profile__city",
@@ -125,6 +130,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         ).annotate(
             adjusted_cost=self.course_price - F("discount_amount")
         )
+        context["justifications"] = FinancialAidJustification.ALL_JUSTIFICATIONS
 
         # Create ordered list of (financial aid status, financial message)
         messages = FinancialAidStatus.STATUS_MESSAGES_DICT
@@ -144,8 +150,9 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
             "first_name",
             "last_name",
             "location",
-            "adjusted_cost",
             "reported_income",
+            "date_calculated",
+            "adjusted_cost",
         )
         new_sort_direction = "" if self.sort_direction == "-" else "-"
         context["sort_field_info"] = (

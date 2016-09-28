@@ -3,84 +3,165 @@
 
 {% block title %}{% trans "Review Financial Aid" %}{% endblock %}
 
+{% block extrahead %}
+<style>
+   .btn {
+     height: 34px;
+     padding: 8px 18px;
+   }
+</style>
+{% endblock %}
+
 {% block content %}
   {% include "header.html" %}
   <div class="page-content">
     <div class="single-column" style="max-width: 1000px;">
-      <p><h4>Financial Aid Submissions</h4></p>
-      <div class="mdl-card">
+      <div class="blocks-sm-2">
+        <li>
+          <h4 style="margin-top: 0;">Financial Aid Submissions</h4>
+        </li>
+        <!-- Filters -->
+        <li>
+          <div class="pull-right">
+            <select class="form-control" onchange="location = this.options[this.selectedIndex].value;">
+            {% for status, message in financial_aid_statuses %}
+              <option value="{% url 'review_financial_aid' program_id=current_program_id status=status %}"
+                      {% if selected_status == status %}selected{% endif %}>
+                {{ message }}
+              </option>
+            {% endfor %}
+            </select>
+          </div>
+        </li>
+        <!-- /Filters -->
+      </div>
+
+      <div style="background-color: #ffffff; font-size: 14px; padding: 20px;">
+        <ul class="blocks-sm-3">
+          <!-- Search bar -->
+          <li>
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Search">
+              <span class="input-group-btn">
+                <button class="btn btn-default" onclick="alert('Sorry, search is not yet available.')">
+                  <span class="glyphicon glyphicon-search"></span>
+                </button>
+              </span>
+            </div>
+          </li>
+          <!-- /Search bar -->
+          <!-- Currency selection -->
+          <li style="padding-top: 7px;">
+            <div class="radio-inline">
+              <label>
+                <input type="radio" name="currency-selector" id="currency-selector-usd"
+                       onclick="$('.income-usd').show(); $('.income-local').hide();" checked>
+                USD
+              </label>
+            </div>
+            <div class="radio-inline">
+              <label>
+                <input type="radio" name="currency-selector" id="currency-selector-original"
+                       onclick="$('.income-usd').hide(); $('.income-local').show();">
+                Local Currency
+              </label>
+            </div>
+          </li>
+          <!-- /Currency selection -->
+          <!-- Pagination buttons -->
+          <li>
+            <div class="pull-right">
+              <span style="color: #999999; margin-right: 12px; position: relative; top: 2px;">
+                Page {{ page_obj.number }} of {{ paginator.num_pages }}
+              </span>
+              <span>
+              {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}&sort_by={{ current_sort_field }}"
+                   class="btn btn-default" style="padding: 8px 10px 8px 12px;">
+                  <span class="glyphicon glyphicon-chevron-left" style="color: #000000;"></span>
+                </a>
+              {% else %}
+                <button class="btn btn-default disabled" style="padding: 8px 10px 8px 12px;">
+                  <span class="glyphicon glyphicon-chevron-left" style="color: #000000;"></span>
+                </button>
+              {% endif %}
+              {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&sort_by={{ current_sort_field }}"
+                   class="btn btn-default" style="padding: 8px 12px 8px 10px;">
+                  <span class="glyphicon glyphicon-chevron-right" style="color: #000000;"></span>
+                </a>
+              {% else %}
+                <button class="btn btn-default disabled" style="padding: 8px 12px 8px 10px;">
+                  <span class="glyphicon glyphicon-chevron-right" style="color: #000000;"></span>
+                </button>
+              {% endif %}
+              </span>
+            </div>
+          </li>
+          <!-- /Pagination buttons -->
+        </ul>
         <!-- Sorting buttons -->
-        <div>
-          <strong>Sort by: </strong>
+        <div style="margin-bottom: 12px;">
+          <span style="font-weight: bold; margin-right: 12px;">Sort by:</span>
           <div class="btn-group">
           {% for field in sort_field_info %}
             <a href="{% url 'review_financial_aid' program_id=current_program_id status=selected_status %}?sort_by={{ field.sort_field }}"
                class="btn btn-default btn-sm">
               {{ field.display }}
-              {% if field.direction_display == "" %}&#9650;{% endif %}
-              {% if field.direction_display == "-" %}&#9660;{% endif %}
+              {% if field.direction_display == "" %}
+              <span class="glyphicon glyphicon-triangle-top"></span>
+              {% endif %}
+              {% if field.direction_display == "-" %}
+              <span class="glyphicon glyphicon-triangle-bottom"></span>
+              {% endif %}
             </a>
           {% endfor %}
           </div>
         </div>
         <!-- /Sorting buttons -->
-        <!-- Filters -->
-        <div>
-          <select class="form-control" onchange="location = this.options[this.selectedIndex].value;">
-          {% for status, message in financial_aid_statuses %}
-            <option value="{% url 'review_financial_aid' program_id=current_program_id status=status %}"
-                    {% if selected_status == status %}selected{% endif %}>
-              {{ message }}
-            </option>
-          {% endfor %}
-          </select>​
-        </div>
-        <!-- /Filters -->
-        <!-- Pagination buttons -->
-        <div>
-          <span class="step-links">
-          {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}&sort_by={{ current_sort_field }}" class="btn btn-default">
-              &lt;
-            </a>
-          {% else %}
-            <button class="btn btn-default disabled">&lt;</button>
-          {% endif %}
-          {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}&sort_by={{ current_sort_field }}" class="btn btn-default">
-              &gt;
-            </a>
-          {% else %}
-            <button class="btn btn-default disabled">&gt;></button>
-          {% endif %}
-          </span>
-          <br>
-          <span class="current">Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
-        </div>
-        <!-- /Pagination buttons -->
         
         <table class="table">
           <thead>
-            <tr>
-              <th></th>
-              <th>Name/Location</th>
-              <th>Adjusted Cost</th>
-              <th>Income/Yr.</th>
-              <th>Date Calculated</th>
-              <th></th>
+            <tr style="color: #999999;">
+              <th style="font-weight: normal;"></th>
+              <th style="font-weight: normal;">Name/Location</th>
+              <th style="font-weight: normal;">Income/Yr.</th>
+              <th style="font-weight: normal;">Date Calculated</th>
+              <th style="font-weight: normal;">Docs Received</th>
+              <th style="font-weight: normal; min-width: 100px;">Adjusted Cost</th>
+              <th style="font-weight: normal;">Justification</th>
+              <th colspan="2" style="font-weight: normal;"></th>
             </tr>
           </thead>
           <tbody>
           {% for financial_aid in financial_aid_objects %}
             <tr>
               <td>
-                  <img src="{% static 'images/avatar_default.png' %}"
-                       style="height: 35px; border-radius: 18px; border: 1px solid rgba(180, 180, 180, 0.5)">
+                {% if financial_aid.user.profile.image %}
+                <img src="{{ financial_aid.user.profile.image }}"
+                {% else %}
+                <img src="{% static 'images/avatar_default.png' %}"
+                {% endif %}
+                     style="height: 35px; border-radius: 18px; border: 1px solid rgba(180, 180, 180, 0.5)">
               </td>
-              <td>
+              <td style="white-space: nowrap">
                 <b>{{ financial_aid.user.profile.first_name }} {{ financial_aid.user.profile.last_name }}</b>
                 <br>
                 <small>{{ financial_aid.user.profile.city }}, {{ financial_aid.user.profile.country }}</small>
+              </td>
+              <td style="white-space: nowrap">
+                <span class="income-usd"><b>$</b>{{ financial_aid.income_usd|floatformat:0 }}</span>
+                <span class="income-local" style="display: none;">
+                  <b>$</b>{{ financial_aid.original_income|floatformat:0 }} <b>{{ financial_aid.original_currency }}</b>
+                </span>
+              </td>
+              <td>{{ financial_aid.created_on|date:"SHORT_DATE_FORMAT" }}</td>
+              <td>
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox">
+                  </label>
+                </div>
               </td>
               <td>
                 <select class="form-control">
@@ -92,17 +173,25 @@
                 {% endfor %}
                 </select>
               </td>
-              <td>${{ financial_aid.income_usd }}</td>
-              <td>{{ financial_aid.created_on|date:"SHORT_DATE_FORMAT" }}</td>
+              </td>
               <td>
-                <button class="btn btn-default">
-                  <span class="glyphicon glyphicon-ok" style="color: #0074e1"></span>
+                <select class="form-control">
+                {% for justification in justifications %}
+                  <option value="{{ justification }}">
+                    {{ justification }}
+                  </option>
+                {% endfor %}
+                </select>
+              </td>
+              <td>
+                <button class="btn btn-default" style="color: #0074e1;">
+                  Save
                 </button>
-                <button class="btn btn-default">
-                  <span class="glyphicon glyphicon-remove" style="color: #0074e1"></span>
-                </button>
-                <button class="btn btn-default" onclick="alert('Send email to {{ financial_aid.user.email }}')">
-                  <span class="glyphicon glyphicon-envelope" style="color: #0074e1"></span>
+              </td>
+              <td>
+                <button class="btn btn-default" style="color: #0074e1;"
+                        onclick="alert('Send email to {{ financial_aid.user.email }}')">
+                  <span class="glyphicon glyphicon-envelope"></span>
                 </button>
               </td>
             </tr>
@@ -113,4 +202,5 @@
     </div>
   </div>
   {% include "footer.html" %}
+  <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
 {% endblock %}
