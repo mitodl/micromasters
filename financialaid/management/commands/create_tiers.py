@@ -49,12 +49,12 @@ class Command(BaseCommand):
         programs_with_tiers_created = 0
         for program in programs:
             # Create TierPrograms
-            number_remaining = int(options["tiers"]) - program.tier_programs.count()
-            if number_remaining <= 0:
+            tiers_to_create_count = int(options["tiers"]) - program.tier_programs.count()
+            if tiers_to_create_count <= 0:
                 # Program already has or has more than the specified number of TierPrograms to create
                 continue
             programs_with_tiers_created += 1
-            for _ in range(number_remaining):
+            for _ in range(tiers_to_create_count):
                 TierProgramFactory.create(
                     program=program
                 )
