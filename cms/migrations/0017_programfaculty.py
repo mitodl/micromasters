@@ -9,8 +9,6 @@ import modelcluster.fields
 
 class Migration(migrations.Migration):
 
-    replaces = [('cms', '0017_programfaculty'), ('cms', '0018_auto_20160919_1524')]
-
     dependencies = [
         ('cms', '0016_remove_programpage_contact_us'),
         ('wagtailimages', '0013_make_rendition_upload_callable'),
