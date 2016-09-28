@@ -14,10 +14,12 @@ from rest_framework.generics import (
     UpdateAPIView
 )
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rolepermissions.verifications import has_object_permission
 
 from courses.models import Program
-from ecommerce.models import CoursePrice
+from financialaid.api import get_course_price_for_learner
 from financialaid.models import (
     FinancialAid,
     FinancialAidStatus,
@@ -177,21 +179,6 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         """
         Gets queryset for ListView to return to view
         """
-        # Get course price to calculate adjusted cost - we put this first so that we can return
-        # an empty queryset if no valid CoursePrice is found.
-        # Note: This implementation of retrieving a course price is a naive lookup that assumes
-        # all course runs and courses will be the same price for the foreseeable future.
-        # Therefore we can just take the price from any currently enroll-able course run.
-        course_price_object = CoursePrice.objects.filter(
-            is_valid=True,
-            course_run__course__program=self.program
-        ).first()
-        if course_price_object is None:
-            # If course price is not set, we can't meaningfully display any financial aid requests
-            return []
-        else:
-            self.course_price = course_price_object.price
-
         # Filter by program (self.program set in test_func())
         financial_aids = FinancialAid.objects.filter(
             tier_program__program=self.program
@@ -204,6 +191,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         financial_aids = financial_aids.filter(status=self.selected_status)
 
         # Annotate with adjusted cost
+        self.course_price = self.program.get_course_price()
         financial_aids = financial_aids.annotate(adjusted_cost=self.course_price - F("tier_program__discount_amount"))
 
         # Sort by field
@@ -234,3 +222,25 @@ class FinancialAidActionView(UpdateAPIView):
     lookup_field = "id"
     lookup_url_kwarg = "financial_aid_id"
     queryset = FinancialAid.objects.all()
+
+
+class GetLearnerPriceForCourseView(APIView):
+    """
+    View for retrieving a leaner's price for a course run
+    """
+    authentication_classes = (SessionAuthentication, )
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, *args, **kwargs):
+        """
+        Get request for GetLearnerPriceForCourseView
+        """
+        learner = request.user
+        program = get_object_or_404(
+            Program,
+            id=self.kwargs["program_id"],
+            live=True
+        )
+        return Response(
+            data=get_course_price_for_learner(learner, program)
+        )

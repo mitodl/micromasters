@@ -1,8 +1,18 @@
 """
 API helper functions for financialaid
 """
-from financialaid.constants import COUNTRY_INCOME_THRESHOLDS, DEFAULT_INCOME_THRESHOLD
-from financialaid.models import TierProgram
+from rest_framework.exceptions import ValidationError
+
+from dashboard.models import ProgramEnrollment
+from financialaid.constants import (
+    COUNTRY_INCOME_THRESHOLDS,
+    DEFAULT_INCOME_THRESHOLD
+)
+from financialaid.models import (
+    FinancialAid,
+    FinancialAidStatus,
+    TierProgram
+)
 
 
 def determine_tier_program(program, income):
@@ -44,3 +54,52 @@ def get_no_discount_tier_program(program_id):
         TierProgram: the no discount TierProgram program associated with the Program
     """
     return TierProgram.objects.get(program_id=program_id, current=True, discount_amount=0)
+
+
+def get_course_price_for_learner(learner, program):
+    """
+    Returns dictionary of information about the course price for a learner. Raises DRF ValidationError
+    if learner is not enrolled in this course.
+    Args:
+        learner (User): the learner whose price we're retrieving
+        program (Program): the program whose price we're retrieving
+    Returns:
+        dict: {
+            "course_price": float - the course price
+            "financial_aid_adjustment": bool - if financial aid is approved and has been applied to this course price,
+            "financial_aid_availability": bool - Program.financial_aid_availability,
+            "has_financial_aid_request": bool - if has a financial aid request
+        }
+    """
+    # Validate that learner is enrolled in program
+    try:
+        ProgramEnrollment.objects.get(user=learner, program=program)
+    except ProgramEnrollment.DoesNotExist:
+        raise ValidationError("Learner not enrolled in this program.")
+
+    has_financial_aid_request = False
+    financial_aid_adjustment = False
+    financial_aid_availability = False
+    course_price = program.get_course_price()
+
+    if program.financial_aid_availability is True:
+        financial_aid_availability = True
+        # Check to see if learner has a financial aid request
+        financial_aid_queryset = FinancialAid.objects.filter(
+            user=learner,
+            tier_program__program=program
+        )
+        if financial_aid_queryset.exists():
+            has_financial_aid_request = True
+            # FinancialAid.save() only allows one object per (user, tier_program__program) pair
+            financial_aid = financial_aid_queryset.first()
+            if financial_aid.status == FinancialAidStatus.APPROVED:
+                # If the financial aid request is approved, adjust course price
+                course_price = course_price - financial_aid.tier_program.discount_amount
+                financial_aid_adjustment = True
+    return {
+        "course_price": course_price,
+        "financial_aid_adjustment": financial_aid_adjustment,
+        "financial_aid_availability": financial_aid_availability,
+        "has_financial_aid_request": has_financial_aid_request
+    }

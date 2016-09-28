@@ -5,10 +5,16 @@ import logging
 from datetime import datetime
 from urllib.parse import urljoin
 
+from rolepermissions.verifications import has_role
+
 from backends.edxorg import EdxOrgOAuth2
 from profiles.api import get_social_username
 from profiles.models import Profile
 from profiles.util import split_name
+from roles.models import (
+    Instructor,
+    Staff,
+)
 
 log = logging.getLogger(__name__)
 
@@ -30,7 +36,15 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):  
 
     # this function is completely skipped if the backend is not edx or
     # the user has not created now
-    if backend.name != EdxOrgOAuth2.name or not is_new:
+    if backend.name != EdxOrgOAuth2.name:
+        return
+
+    if has_role(user, [Staff.ROLE_ID, Instructor.ROLE_ID]):
+        backend.strategy.session_set('next', '/learners')
+    else:
+        backend.strategy.session_set('next', '/dashboard')
+
+    if not is_new:
         return
 
     access_token = response.get('access_token')

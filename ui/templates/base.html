@@ -16,6 +16,8 @@
     {% endif %}
     <script type="text/javascript" src="{{ style_src }}"></script>
     <title>{% block title %}{% endblock %}</title>
+    <meta name="description" content="{% block description%}{% endblock %}">
+    <meta name="keywords" content="{% block keywords%}{% endblock %}">
     {% block extrahead %}
     {% endblock %}
     <!-- Google Analytics -->

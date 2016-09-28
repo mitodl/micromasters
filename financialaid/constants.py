@@ -223,6 +223,7 @@ COUNTRY_INCOME_THRESHOLDS = {
     "ZW": 0
 }
 
+
 FINANCIAL_AID_APPROVAL_MESSAGE_BODY = """Your application for financial aid has been approved!\n\n
 Please log on to your account for more details.\n\n
 MIT Micromasters"""

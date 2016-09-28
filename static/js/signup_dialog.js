@@ -22,10 +22,8 @@ const dialogDiv = document.querySelector('#signup-dialog');
 const openDialog = () => store.dispatch(setDialogVisibility(true));
 
 // find the DOM element and attach openDialog to onClick
-const signInButton = document.querySelector('.open-signup-dialog');
-
-if ( signInButton ) {
-  signInButton.onclick = openDialog;
+for (let signUpButton of document.querySelectorAll('.open-signup-dialog')) {
+  signUpButton.onclick = openDialog;
 }
 
 if ( typeof SETTINGS.programId === 'number' ) {
