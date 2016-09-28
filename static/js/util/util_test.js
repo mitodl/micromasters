@@ -99,14 +99,14 @@ describe('utility functions', () => {
     beforeEach(() => {
       profile = {
         username: 'jane_username',
-        preferred_name: 'jane_preferred',
+        preferred_name: 'jane preferred',
         first_name: 'jane',
         last_name: 'doe',
       };
     });
 
     it('prefers to show the preferred name', () => {
-      assert.equal('jane_preferred doe', getPreferredName(profile));
+      assert.equal('jane preferred', getPreferredName(profile));
     });
 
     it('uses first_name if preferred_name is not available', () => {
@@ -122,7 +122,7 @@ describe('utility functions', () => {
 
     it('shows the last name by default', () => {
       assert.equal('First Last', getPreferredName({
-        preferred_name: 'First',
+        first_name: 'First',
         last_name: 'Last'
       }));
     });

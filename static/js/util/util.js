@@ -252,7 +252,7 @@ export function makeProfileImageUrl(profile: Profile): string {
  */
 export function getPreferredName(profile: Profile, last: boolean = true): string {
   let first = profile.preferred_name || profile.first_name || profile.username;
-  return last && profile.last_name ? `${first} ${profile.last_name}` : first;
+  return last && profile.last_name && !profile.preferred_name ? `${first} ${profile.last_name}` : first;
 }
 
 /**
