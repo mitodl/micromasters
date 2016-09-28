@@ -84,12 +84,21 @@ body.app-media {
 
     div.members-login {
       display: inline-block;
-      margin-right:28px;
-      font-size: 16px;
-      font-weight: 300;
-      color: #fff;
-    }
+      margin-right: 19px;
 
+      a.ghost {
+        border: 2px solid rgba(255,255,255,.5);
+        border-radius: 4px;
+        color: rgba(255,255,255,.8);
+        padding: 9px 23px !important;
+        font-size: 15px;
+        font-weight: 300;
+      }
+      a.ghost:hover, a.ghost:focus, a.ghost.focus {
+        color: white;
+        border-color: white;
+      }
+    }
   }
 }
 
@@ -167,8 +176,7 @@ body.app-media {
   width: 81%;
   max-width:1000px;
 
-
-  h4 {
+  h3 {
     font-size: 23px;
     margin: 0 0 30px;
     font-weight: 400;
@@ -182,16 +190,23 @@ body.app-media {
 }
 
 .sub-banner-logos{
-  margin-top: 56px;
+  margin-top: 26px;
 
   img{
-    margin-left: 20px;
+    margin-left: 5px;
+    width: 78px;
+    position: relative;
+    top: -8px;
   }
 }
 
-.sub-banner-logos-text{
+.sub-banner-logos-text {
   vertical-align: bottom;
-  display:inline-block;
+  font-size: 16px;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .enroll-reason {
