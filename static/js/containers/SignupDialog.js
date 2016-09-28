@@ -4,6 +4,8 @@ import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import { connect } from 'react-redux';
 
+import { createSimpleActionHelpers } from '../util/redux';
+
 import {
   setDialogVisibility,
 } from '../actions/signup_dialog';
@@ -49,8 +51,8 @@ const mapStateToProps = state => ({
   open: state.signupDialog.dialogVisibility,
 });
 
-const mapDispatchToProps = dispatch => ({
-  setDialogVisibility: visible => dispatch(setDialogVisibility(visible)),
-});
+const mapDispatchToProps = dispatch => createSimpleActionHelpers(dispatch, [
+  ['setDialogVisibility', setDialogVisibility],
+]);
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignupDialog);
