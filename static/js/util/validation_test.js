@@ -15,8 +15,9 @@ import {
   validateMonth,
   validateYear,
   combineValidators,
-  sanitizeDate,
+  sanitizeNumberString,
   emailValidation,
+  validateFinancialAid,
 } from './validation';
 import {
   USER_PROFILE_RESPONSE,
@@ -274,7 +275,7 @@ describe('Profile validation functions', () => {
     });
   });
 
-  describe('sanitizeDate', () => {
+  describe('sanitizeNumberString', () => {
     describe('string input', () => {
       it('should remove any non-numerical characters', () => {
         [
@@ -284,7 +285,7 @@ describe('Profile validation functions', () => {
           ['A(*@$%!@#$100', 2, '10'],
           ['eggplant 1X00 hey', 10, '100']
         ].forEach(([input, length, expectation]) => {
-          assert.deepEqual(sanitizeDate(input, length), expectation);
+          assert.deepEqual(sanitizeNumberString(input, length), expectation);
         });
       });
 
@@ -297,22 +298,22 @@ describe('Profile validation functions', () => {
           ['TESTS', 25, ''],
           ['1991', 0, '']
         ].forEach(([input, length, expectation]) => {
-          assert.deepEqual(sanitizeDate(input, length), expectation);
+          assert.deepEqual(sanitizeNumberString(input, length), expectation);
         });
       });
 
       it('should leave leading zeros when under the length', () => {
-        assert.equal(sanitizeDate('09', 2), '09');
+        assert.equal(sanitizeNumberString('09', 2), '09');
       });
 
       it('should remove leading zeros when over the length', () => {
-        assert.equal(sanitizeDate('01999', 4), '1999');
+        assert.equal(sanitizeNumberString('01999', 4), '1999');
       });
     });
 
     describe('numerical input', () => {
       it('should return a string', () => {
-        assert.deepEqual(sanitizeDate(3, 1), '3');
+        assert.deepEqual(sanitizeNumberString(3, 1), '3');
       });
 
       it('should trim a number down to the correct number of places', () => {
@@ -321,7 +322,7 @@ describe('Profile validation functions', () => {
           [1999, 2, '19'],
           [112341234, 1, '1']
         ].forEach(([input, length, expectation]) => {
-          assert.deepEqual(sanitizeDate(input, length), expectation);
+          assert.deepEqual(sanitizeNumberString(input, length), expectation);
         });
       });
     });
@@ -504,5 +505,41 @@ describe('Email validation', () => {
   it('should return no errors if all fields are filled out', () => {
     let errors = emailValidation(email);
     assert.deepEqual(errors, {});
+  });
+});
+
+describe('financial aid validation', () => {
+  let financialAid;
+
+  beforeEach(() => {
+    financialAid = {
+      income: '1000000',
+      currency: 'JPY',
+      checkBox: true
+    };
+  });
+
+  it('should complain if income is empty', () => {
+    financialAid.income = undefined;
+    let errors = validateFinancialAid(financialAid);
+    assert.deepEqual(errors, {
+      income: 'Income is required'
+    });
+  });
+
+  it('should complain if currency is empty', () => {
+    financialAid.currency = undefined;
+    let errors = validateFinancialAid(financialAid);
+    assert.deepEqual(errors, {
+      currency: 'Please select a currency'
+    });
+  });
+
+  it('should complain if the checkBox is false', () => {
+    financialAid.checkBox = false;
+    let errors = validateFinancialAid(financialAid);
+    assert.deepEqual(errors, {
+      checkBox: 'You must agree to these terms'
+    });
   });
 });

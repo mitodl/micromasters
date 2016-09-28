@@ -22,6 +22,7 @@ class SelectField extends React.Component {
   editKeySet: string[];
 
   props: {
+    id?:                      string,
     profile:                  Profile,
     autocompleteStyleProps:   Object,
     autocompleteBehaviors:    Array<any>,
@@ -159,9 +160,10 @@ class SelectField extends React.Component {
   };
   
   render() {
-    const { errors, keySet } = this.props;
+    const { errors, keySet, id } = this.props;
     return (
       <AutoComplete
+        id={id}
         className={validationErrorSelector(errors, keySet)}
         searchText={this.getSearchText()}
         {...this.getAutocompleteProps()}

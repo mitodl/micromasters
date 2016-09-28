@@ -195,3 +195,14 @@ export function updateProfileImage(username: string, image: Blob, name: string):
     body: formData
   });
 }
+
+export function addFinancialAid(income: number, currency: string, programId: number): Promise<*> {
+  return mockableFetchJSONWithCSRF('/api/v0/financial_aid_request/', {
+    method: 'POST',
+    body: JSON.stringify({
+      original_income: income,
+      original_currency: currency,
+      program_id: programId
+    })
+  });
+}

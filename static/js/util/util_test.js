@@ -33,7 +33,7 @@ import {
   DOCTORATE,
   MASTERS,
   PROFILE_STEP_LABELS,
-  CHECKOUT_RESPONSE,
+  CHECKOUT_RESPONSE_CYBERSOURCE,
 } from '../constants';
 import { assertMaybeEquality, assertIsNothing } from './sanctuary_test';
 import { program } from '../components/ProgressWidget_test';
@@ -391,7 +391,7 @@ describe('utility functions', () => {
 
   describe('createForm', () => {
     it('creates a form with hidden values corresponding to the payload', () => {
-      const { url, payload } = CHECKOUT_RESPONSE;
+      const { url, payload } = CHECKOUT_RESPONSE_CYBERSOURCE;
       const form = createForm(url, payload);
 
       let clone = _.clone(payload);

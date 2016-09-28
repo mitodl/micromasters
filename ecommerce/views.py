@@ -1,13 +1,16 @@
 """Views from ecommerce"""
 import logging
+from urllib.parse import urljoin
 
 from django.conf import settings
+from django.shortcuts import get_object_or_404
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+from courses.models import CourseRun
 from ecommerce.api import (
     create_unfulfilled_order,
     enroll_user_on_success,
@@ -33,20 +36,37 @@ class CheckoutView(APIView):
 
     def post(self, request, *args, **kwargs):
         """
-        Creates a new unfulfilled Order and returns information used to submit to CyberSource
+        If the course run is part of a financial aid program, create a new unfulfilled Order
+        and return information used to submit to CyberSource.
+
+        If the program does not have financial aid, this will return a URL to let the user
+        pay for the course on edX.
         """
         try:
             course_id = request.data['course_id']
         except KeyError:
             raise ValidationError("Missing course_id")
 
-        order = create_unfulfilled_order(course_id, request.user)
-        dashboard_url = request.build_absolute_uri('/dashboard/')
-        payload = generate_cybersource_sa_payload(order, dashboard_url)
+        course_run = get_object_or_404(
+            CourseRun,
+            course__program__live=True,
+            edx_course_key=course_id,
+        )
+        if course_run.course.program.financial_aid_availability:
+            order = create_unfulfilled_order(course_id, request.user)
+            dashboard_url = request.build_absolute_uri('/dashboard/')
+            payload = generate_cybersource_sa_payload(order, dashboard_url)
+            url = settings.CYBERSOURCE_SECURE_ACCEPTANCE_URL
+            method = 'POST'
+        else:
+            payload = {}
+            url = urljoin(settings.EDXORG_BASE_URL, '/course_modes/choose/{}/'.format(course_id))
+            method = 'GET'
 
         return Response({
             'payload': payload,
-            'url': settings.CYBERSOURCE_SECURE_ACCEPTANCE_URL,
+            'url': url,
+            'method': method,
         })
 
 

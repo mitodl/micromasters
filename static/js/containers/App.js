@@ -16,7 +16,6 @@ import Toast from '../components/Toast';
 import {
   FETCH_SUCCESS,
   FETCH_FAILURE,
-  FETCH_PROCESSING,
   fetchDashboard,
   clearDashboard,
 } from '../actions';
@@ -38,10 +37,6 @@ import {
   setToastMessage,
   setEnrollSelectedProgram,
 } from '../actions/ui';
-import {
-  setProgram,
-  setDialogVisibility,
-} from '../actions/signup_dialog';
 import { clearUI, setProfileStep } from '../actions/ui';
 import { validateProfileComplete } from '../util/validation';
 import type { DashboardState } from '../flow/dashboardTypes';
@@ -51,7 +46,6 @@ import type {
 } from '../flow/enrollmentTypes';
 import type { ProfileGetResult } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
-import { filterPositiveInt } from '../util/util';
 
 const PROFILE_REGEX = /^\/profile\/?[a-z]?/;
 
@@ -79,7 +73,6 @@ class App extends React.Component {
     this.fetchEnrollments();
     this.requireProfileFilledOut();
     this.requireCompleteProfile();
-    this.updateProgramEnrollments();
   }
 
   componentDidMount() {
@@ -116,30 +109,6 @@ class App extends React.Component {
     const { enrollments, dispatch } = this.props;
     if (enrollments.getStatus === undefined) {
       dispatch(fetchProgramEnrollments());
-    }
-  }
-
-  updateProgramEnrollments() {
-    const { enrollments, dispatch, signupDialog: { program } } = this.props;
-    const cleanup = () => {
-      dispatch(setProgram(null));
-      dispatch(setDialogVisibility(null));
-    };
-    if (
-      program &&
-      enrollments.getStatus === FETCH_SUCCESS &&
-      enrollments.postStatus !== FETCH_PROCESSING &&
-      enrollments.postStatus !== FETCH_FAILURE
-    ) {
-      let programId = filterPositiveInt(program);
-      if ( programId && !enrollments.programEnrollments.find(e => e.id === programId) ) {
-        dispatch(addProgramEnrollment(programId)).catch(e => {
-          if ( e.errorStatusCode !== 404 ) {
-            console.error("adding program enrollment failed for program: ", programId); // eslint-disable-line no-console, max-len
-          }
-        });
-      }
-      cleanup();
     }
   }
 

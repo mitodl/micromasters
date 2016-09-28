@@ -2,9 +2,10 @@
 Models for user profile
 """
 from django.contrib.auth.models import User
+from django.contrib.postgres.fields import JSONField
 from django.db import models, transaction
 from django.db.models import Max
-from jsonfield import JSONField
+
 
 DOCTORATE = 'p'
 MASTERS = 'm'

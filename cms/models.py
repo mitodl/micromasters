@@ -14,16 +14,10 @@ from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFie
 
 
 from courses.models import Program
-from courses.serializers import ProgramSerializer
 from micromasters.utils import webpack_dev_server_host
 from profiles.api import get_social_username
 from ui.views import get_bundle_url
 from cms.api import get_course_enrollment_text
-
-
-def programs_for_sign_up(programs):
-    """formats program info for the signup dialogs"""
-    return [ProgramSerializer().to_representation(p) for p in programs]
 
 
 def faculty_for_carousel(faculty):
@@ -51,7 +45,6 @@ class HomePage(Page):
         js_settings = {
             "gaTrackingID": settings.GA_TRACKING_ID,
             "host": webpack_dev_server_host(request),
-            "programs": programs_for_sign_up(programs),
         }
 
         username = get_social_username(request.user)
@@ -143,12 +136,10 @@ class ProgramPage(Page):
     ]
 
     def get_context(self, request):
-        programs = Program.objects.filter(live=True)
         js_settings = {
             "gaTrackingID": settings.GA_TRACKING_ID,
             "host": webpack_dev_server_host(request),
             "programId": self.program.id,
-            "programs": programs_for_sign_up(programs),
             "faculty": faculty_for_carousel(self.faculty_members.all()),
         }
         username = get_social_username(request.user)

@@ -95,13 +95,13 @@ class TestHomePage(ViewsTests):
     def test_login_button(self):
         """Verify that we see a login button if not logged in"""
         response = self.client.get('/')
-        self.assertContains(response, "SIGN UP")
+        self.assertContains(response, "Sign Up")
 
     def test_sign_out_button(self):
         """Verify that we see a sign out button if logged in"""
         self.create_and_login_user()
         response = self.client.get('/')
-        self.assertContains(response, 'Sign out')
+        self.assertContains(response, 'Sign Out')
 
     def test_index_context_anonymous(self):
         """

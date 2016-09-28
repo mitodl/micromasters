@@ -1166,6 +1166,11 @@
       "from": "cssstyle@>=0.2.34 <0.3.0",
       "resolved": "https://registry.npmjs.org/cssstyle/-/cssstyle-0.2.36.tgz"
     },
+    "currency-codes": {
+      "version": "1.1.2",
+      "from": "currency-codes@latest",
+      "resolved": "https://registry.npmjs.org/currency-codes/-/currency-codes-1.1.2.tgz"
+    },
     "currently-unhandled": {
       "version": "0.4.1",
       "from": "currently-unhandled@>=0.4.1 <0.5.0",
@@ -1883,6 +1888,11 @@
       "version": "1.0.0",
       "from": "first-chunk-stream@>=1.0.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/first-chunk-stream/-/first-chunk-stream-1.0.0.tgz"
+    },
+    "first-match": {
+      "version": "0.0.1",
+      "from": "first-match@>=0.0.1 <0.1.0",
+      "resolved": "https://registry.npmjs.org/first-match/-/first-match-0.0.1.tgz"
     },
     "flat-cache": {
       "version": "1.0.10",
@@ -3394,6 +3404,11 @@
       "version": "1.0.1",
       "from": "nth-check@>=1.0.1 <1.1.0",
       "resolved": "https://registry.npmjs.org/nth-check/-/nth-check-1.0.1.tgz"
+    },
+    "nub": {
+      "version": "0.0.0",
+      "from": "nub@>=0.0.0 <0.1.0",
+      "resolved": "https://registry.npmjs.org/nub/-/nub-0.0.0.tgz"
     },
     "num2fraction": {
       "version": "1.2.2",

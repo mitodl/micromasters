@@ -17,6 +17,10 @@
     background-size: cover;
     padding-top: 210px;
 
+    @media (max-width: 479px) {
+      height: auto;
+    }
+
     .title {
       font-size: 36px;
       margin-top: 0;
@@ -61,7 +65,7 @@
   .mdl-tabs {
     .tab-container {
       width: 96%;
-      max-width: 1000px;
+      max-width: 1150px;
 
       a:focus, a:hover {
         text-decoration: none;
@@ -84,12 +88,13 @@
     }
 
     .mdl-tabs__panel {
-      margin-bottom: 50px;
+      margin-bottom: 40px;
     }
   }
 
   .info-box, .powered-by {
-    margin: 0 0 23px 15px;;
+    margin: 0 0 23px 15px;
+
   }
 
   .info-box {
@@ -104,6 +109,7 @@
       font-size: 18px;
       font-weight: 600;
       margin-top: 0;
+      line-height: 1.4em;
     }
   }
 
@@ -132,18 +138,31 @@
   .powered-by {
     padding: 20px;
 
+    p {
+      display: inline-block;
+      font-size: 16px;
+      font-weight: 400;
+      color: rgba(0, 0, 0, 0.6) !important;
+    }
+
     > *:not(:last-child) {
       margin-right: 7px;
     }
 
     img {
       height: 30px;
-      margin-bottom: 5px;
+      margin-bottom: 9px;
     }
 
   }
 
   #faq-panel, #about-panel {
+    .mdl-grid {
+      width: 94%;
+      margin: 0 auto;
+      max-width: 1150px;
+    }
+
     p {
       font-size: 16px;
       color: rgba(0,0,0,.7);
@@ -178,25 +197,56 @@
     color: #ffffff;
     background-color: #0c0c0c;
     text-align: center;
-    padding-top: 20px;
+    padding: 40px 0 140px;
+
+    h3 {
+      margin: 0 0 13px;
+      font-weight: 300;
+      font-size: 28px;
+      color: white;
+    }
+
+    p.description {
+      font-size: 16px;
+      font-weight: 300;
+      color: rgba(255,255,255,.8);
+      margin: 0 0 25px 0;
+    }
+
+    #faculty-carousel {
+      max-width: 1300px;
+      width: 90%;
+      margin: 0 auto;
+    }
 
     .faculty-tile {
-      width: 500px;
       height: 385px;
-      padding: 180px 40px 20px 40px;
+      padding: 250px 22px 20px 26px;
+      margin: 0 auto;
       color: #ffffff;
-      background-repeat: no-repeat;
-      background-position: top left;
       text-align: left;
       position: relative;
+      width: 96%;
+      margin: 0 auto;
+
 
       h4 {
         margin-top: 0;
         margin-bottom: 10px;
+        font-size: 23px;
+        font-weight: 300;
+        color: rgba(255,255,255,1);
+      }
+
+      p {
+        font-size: 16px;
+        line-height: 1.4em;
+        font-weight: 300;
+        color: rgba(255,255,255,.7);
       }
 
       img {
-        max-width: 500px;
+        width: 100%;
         position: absolute;
         top: 0;
         left: 0;
@@ -219,6 +269,10 @@
 
     .slick-arrow:before, .slick-dots li button:before {
       font-size: 30px;
+    }
+
+    .slick-dots {
+      bottom: -65px;
     }
 
     .slick-dots li {
