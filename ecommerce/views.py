@@ -16,7 +16,6 @@ from ecommerce.api import (
     enroll_user_on_success,
     generate_cybersource_sa_payload,
     get_new_order_by_reference_number,
-    get_purchasable_course_run,
 )
 from ecommerce.models import (
     Order,
