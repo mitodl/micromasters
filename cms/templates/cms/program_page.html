@@ -23,10 +23,10 @@
       {{ page.title_over_image|richtext }}
     </div>
     {% if not authenticated %}
-    <button class="mm-button main-action open-signup-dialog">
+    <button class="mm-button main-action open-signup-dialog mdl-cell--hide-phone">
       Sign Up Now
     </button>
-    <div class="log-in">
+    <div class="log-in mdl-cell--hide-phone">
       Already a Member?
       <a href="/login/edxorg">
         Log In
@@ -46,11 +46,11 @@
       </div>
     </div>
     <div class="mdl-tabs__panel is-active" id="about-panel">
-      <div class="double-column">
-        <div class="first-column">
+      <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--8-col">
           {{ page.description|richtext }}
         </div>
-        <div class="second-column">
+        <div class="mdl-cell mdl-cell--4-col">
           <div class="info-box course-info">
             <h3 class="title">
               Courses
@@ -110,12 +110,14 @@
   </div>
 
   {% if page.faculty_members.count > 0 %}
-    <div class="faculty-section">
-      <h3 class="title">Faculty</h3>
-      {% if page.faculty_description|length > 0 %}
-        <p class="description">{{ page.faculty_description }}</p>
-      {% endif %}
-      <div id="faculty-carousel" class="single-column-wide">
+    <div class="faculty-section mdl-grid mdl-grid--no-spacing">
+      <div class="mdl-cell mdl-cell--12-col">
+        <h3 class="title">Faculty</h3>
+        {% if page.faculty_description|length > 0 %}
+          <p class="description">{{ page.faculty_description }}</p>
+        {% endif %}
+      </div>
+      <div id="faculty-carousel" class="mdl-cell--12-col">
         <!-- React-Slick carousel component injected here -->
       </div>
     </div>

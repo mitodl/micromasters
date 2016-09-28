@@ -17,6 +17,10 @@
     background-size: cover;
     padding-top: 210px;
 
+    @media (max-width: 479px) {
+      height: auto;
+    }
+
     .title {
       font-size: 36px;
       margin-top: 0;
@@ -196,9 +200,10 @@
     }
 
     .faculty-tile {
-      width: 500px;
+      max-width: 500px;
       height: 385px;
       padding: 250px 22px 20px 26px;
+      margin: 0 auto;
       color: #ffffff;
       background-repeat: no-repeat;
       background-position: top left;
@@ -221,7 +226,7 @@
       }
 
       img {
-        max-width: 500px;
+        width: 100%;
         position: absolute;
         top: 0;
         left: 0;
