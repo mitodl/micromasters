@@ -3,13 +3,13 @@
 }
 
 body.app-media {
-  padding-top:0;
-  font-size:14px;
+  padding-top: 0;
+  font-size: 14px;
 }
 
 .nav-header {
   background-color: $mm-brand-bg;
-  border-radius:0;
+  border-radius: 0;
   span{
     color: white;
   }
@@ -117,6 +117,7 @@ body.app-media {
   padding: 0;
   background-size: cover;
   position: relative;
+  height: 620px;
   height: 94vh;
 
   .banner-wrapper-content {
@@ -130,7 +131,7 @@ body.app-media {
     }
 
     h1 {
-      @media (min-width: 1000px) {
+      @media (min-width: 1200px) {
       font-size: 3.5vw;
       }
       font-size: 40px;
@@ -139,7 +140,7 @@ body.app-media {
     }
 
     h2 {
-      @media (min-width: 1000px) {
+      @media (min-width: 1200px) {
       font-size: 2.6vw;
       }
       font-size: 25px;
@@ -186,14 +187,18 @@ body.app-media {
 
   h3 {
     font-size: 25px;
+    @media (min-width: 1200px) {
     font-size: 2.9vh;
+    }
     margin: 0 0 30px;
     font-weight: 400;
     color: rgba(0,0,0,.87);
   }
   p {
     font-size: 16px;
+    @media (min-width: 1200px) {
     font-size: 1.6vh;
+    }
     font-weight: 400;
     color: rgba(0,0,0,.6);
   }
@@ -213,7 +218,9 @@ body.app-media {
 .sub-banner-logos-text {
   vertical-align: bottom;
   font-size: 16px;
+  @media (min-width: 1200px) {
   font-size: 1.6vh;
+  }
   display: inline-block;
   font-size: 16px;
   font-weight: 400;
