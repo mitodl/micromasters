@@ -1,9 +1,10 @@
 """
 Test for financialaid celery tasks
 """
-from django.conf import settings
 from urllib.parse import quote_plus
 
+
+from django.conf import settings
 from django.test import (
     override_settings,
     TestCase

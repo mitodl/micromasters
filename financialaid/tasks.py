@@ -1,8 +1,9 @@
 """
 Periodic task that updates currency exchange rates.
 """
-import requests
 from urllib.parse import quote_plus
+
+import requests
 
 from django.conf import settings
 

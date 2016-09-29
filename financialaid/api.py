@@ -134,15 +134,16 @@ def update_currency_exchange_rate(latest_rates):
     """
     Updates all CurrencyExchangeRate objects based on the latest rates.
     Args:
-        latest_rates (dict): latest exchange rates from Open Exchange Rates API 
+        latest_rates (dict): latest exchange rates from Open Exchange Rates API
     Returns:
         None
     """
+    rates = latest_rates.copy()  # So we don't modify the passed parameter
     for currency_exchange_rate in CurrencyExchangeRate.objects.all():
-        if currency_exchange_rate.currency_code in latest_rates:
-            currency_exchange_rate.exchange_rate = latest_rates.pop(currency_exchange_rate.currency_code)
+        if currency_exchange_rate.currency_code in rates:
+            currency_exchange_rate.exchange_rate = rates.pop(currency_exchange_rate.currency_code)
             currency_exchange_rate.save()
         else:
             currency_exchange_rate.delete()
-    for key in latest_rates:
-        CurrencyExchangeRate.objects.create(currency_code=key, exchange_rate=latest_rates[key])
+    for key in rates:
+        CurrencyExchangeRate.objects.create(currency_code=key, exchange_rate=rates[key])
