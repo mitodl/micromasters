@@ -164,6 +164,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
             "edx_base_url": settings.EDXORG_BASE_URL,
         }
         context["js_settings_json"] = json.dumps(js_settings)
+        context["authenticated"] = not self.request.user.is_anonymous()
         return context
 
     def get_queryset(self):
