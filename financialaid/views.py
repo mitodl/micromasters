@@ -24,6 +24,7 @@ from financialaid.constants import (
     FinancialAidJustification,
     FinancialAidStatus
 )
+from financialaid.forms import FinancialAidEmailForm
 from financialaid.models import (
     FinancialAid,
     TierProgram
@@ -134,6 +135,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         )
         context["justifications"] = FinancialAidJustification.ALL_JUSTIFICATIONS
         context["statuses"] = FinancialAidStatus
+        context["email_form"] = FinancialAidEmailForm()
 
         # Create ordered list of (financial aid status, financial message)
         messages = FinancialAidStatus.STATUS_MESSAGES_DICT

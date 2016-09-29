@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n static %}
+{% load i18n static bootstrap_tags %}
 
 {% block title %}{% trans "Review Financial Aid" %}{% endblock %}
 
@@ -122,6 +122,12 @@
         
         <!-- Messages -->
         <div id="messages"></div>
+        <!-- Message template -->
+        <div id="message-template" class="alert alert-dismissible" style="display: none;">
+          <button class="close" data-dismiss="alert"><span>&times;</span></button>
+          <span></span>
+        </div>
+        <!-- /Message template -->
         <!-- /Messages -->
         
         <table class="table">
@@ -139,6 +145,7 @@
           </thead>
           <tbody>
           {% for financial_aid in financial_aid_objects %}
+            <!-- Financial aid application information -->
             <tr id="application-row-{{ financial_aid.id }}" class="alert-dismissable">
               <!-- Profile picture -->
               <td>
@@ -206,18 +213,29 @@
               <!-- Actions -->
               <td>
                 <button class="btn btn-default" style="color: #0074e1;"
-                        onclick="submitApproval({{ financial_aid.id }}, '{% url 'financial_aid_action' financial_aid_id=financial_aid.id %}')">
+                        onclick="submitApproval({{ financial_aid.id }}, '{% url 'financial_aid_action' financial_aid_id=financial_aid.id %}');">
                   Save
                 </button>
               </td>
               <td>
                 <button class="btn btn-default" style="color: #0074e1;"
-                        onclick="alert('Send email to {{ financial_aid.user.email }}')">
+                        onclick="$('#application-email-row-{{ financial_aid.id }}').toggle();">
                   <span class="glyphicon glyphicon-envelope"></span>
                 </button>
               </td>
               <!-- /Actions -->
             </tr>
+            <!-- /Financial aid application information -->
+            <!-- Financial aid application email form -->
+            <tr id="application-email-row-{{ financial_aid.id }}" style="display: none;">
+              <td colspan="9">
+                <form action="{% url 'financial_aid_mail_api' %}" method="post" class="form-horizontal">
+                  {{ email_form|as_bootstrap_horizontal:"col-sm-3" }}
+                </form>
+                <br>
+              </td>
+            </tr>
+            <!-- /Financial aid application email form -->
           {% endfor %}
           </tbody>
         </table>
@@ -225,15 +243,6 @@
     </div>
   </div>
 
-  <!-- Templates -->
-  <!-- Alert message -->
-  <div id="message-template" class="alert alert-dismissible">
-    <button class="close" data-dismiss="alert"><span>&times;</span></button>
-    <span></span>
-  </div>
-  <!-- /Alert message -->
-  <!-- /Templates -->
-  
   {% include "footer.html" %}
   <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -266,13 +275,18 @@
           },
           "success": function() {
             displayMessage("Successfully approved " + name + "'s financial aid application.", "success");
-            $("#application-row-" + financial_aid_id).remove();
+            $("#application-row-" + financial_aid_id + ", #application-email-row-" + financial_aid_id).remove();
           },
           "error": function(result) {
             displayMessage("Error: " + result.responseText + " on " + name + "'s financial aid application.", "danger");
           }
         });
       }
+    }
+
+
+    function openSendEmailModal() {
+      $("#email-template")
     }
 
     /**
@@ -286,6 +300,7 @@
       // Populate template
       template.addClass("alert-" + type).children("span").text(message);
       $("#messages").append(template);
+      template.slideDown();
     }
 
   </script>

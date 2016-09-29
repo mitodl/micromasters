@@ -103,6 +103,7 @@ INSTALLED_APPS = (
 
     # other third party APPS
     'rolepermissions',
+    'django_forms_bootstrap',
 
     # Our INSTALLED_APPS
     'backends',
