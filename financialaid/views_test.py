@@ -64,7 +64,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         self.data = {
             "original_currency": "USD",
             "program_id": self.program.id,
-            "original_income": 80000
+            "original_income": 70000
         }
 
     def test_income_validation_not_auto_approved(self):
@@ -92,7 +92,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         assert FinancialAid.objects.count() == 1
         assert FinancialAidAudit.objects.count() == 1
         financial_aid = FinancialAid.objects.first()
-        assert financial_aid.tier_program == self.tier_programs["100k"]
+        assert financial_aid.tier_program == self.tier_programs["75k"]
         assert financial_aid.status == FinancialAidStatus.AUTO_APPROVED
         assert financial_aid.income_usd == self.data["original_income"]
 
@@ -265,7 +265,7 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         super().setUp()
         self.financialaid = FinancialAidFactory.create(
             user=self.profile.user,
-            tier_program=self.tier_programs["15k"],
+            tier_program=self.tier_programs["25k"],
             status=FinancialAidStatus.PENDING_MANUAL_APPROVAL
         )
         self.action_url = reverse("financial_aid_action", kwargs={"financial_aid_id": self.financialaid.id})
@@ -309,7 +309,7 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         self.client.force_login(self.staff_user_profile.user)
         self.data["action"] = FinancialAidStatus.APPROVED
         # Not current tier
-        self.data["tier_program_id"] = self.tier_programs["150k_not_current"].id
+        self.data["tier_program_id"] = self.tier_programs["100k_not_current"].id
         self.assert_http_status(self.client.put, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
         # Not part of the same program
         self.data["tier_program_id"] = TierProgramFactory.create().id  # Will be part of a different program
@@ -374,7 +374,7 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         self.assert_http_status(self.client.put, self.action_url, status.HTTP_200_OK, data=self.data)
         # Application is approved for the tier program in the financial aid object
         self.financialaid.refresh_from_db()
-        assert self.financialaid.tier_program == self.tier_programs["15k"]
+        assert self.financialaid.tier_program == self.tier_programs["25k"]
         assert self.financialaid.status == FinancialAidStatus.APPROVED
         assert mock_mailgun_client.send_financial_aid_email.called
         _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
@@ -416,12 +416,12 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
             status_code=status.HTTP_200_OK,
             json=mocked_json()
         )
-        assert self.financialaid.tier_program != self.tier_programs["100k"]
+        assert self.financialaid.tier_program != self.tier_programs["75k"]
         assert self.financialaid.status != FinancialAidStatus.REJECTED
         self.data["action"] = FinancialAidStatus.REJECTED
         self.assert_http_status(self.client.put, self.action_url, status.HTTP_200_OK, data=self.data)
         self.financialaid.refresh_from_db()
-        assert self.financialaid.tier_program == self.tier_programs["100k"]
+        assert self.financialaid.tier_program == self.tier_programs["75k"]
         assert self.financialaid.status == FinancialAidStatus.REJECTED
         assert mock_mailgun_client.send_financial_aid_email.called
         _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
@@ -440,7 +440,7 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
             json=mocked_json()
         )
         # Set status to pending docs
-        assert self.financialaid.tier_program == self.tier_programs["15k"]
+        assert self.financialaid.tier_program == self.tier_programs["25k"]
         self.financialaid.status = FinancialAidStatus.PENDING_DOCS
         self.financialaid.save()
         self.data["action"] = FinancialAidStatus.PENDING_MANUAL_APPROVAL
@@ -448,7 +448,7 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         self.assert_http_status(self.client.put, self.action_url, status.HTTP_200_OK, data=self.data)
         self.financialaid.refresh_from_db()
         # Check that the tier does not change:
-        assert self.financialaid.tier_program == self.tier_programs["15k"]
+        assert self.financialaid.tier_program == self.tier_programs["25k"]
         assert self.financialaid.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL
         assert mock_mailgun_client.send_financial_aid_email.called
         _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
