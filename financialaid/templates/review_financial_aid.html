@@ -111,6 +111,7 @@
         <!-- /Message template -->
         <!-- /Messages -->
         
+        <!-- Financial aid application table -->
         <table class="table">
           <thead>
             <tr style="color: #999999;">
@@ -124,12 +125,18 @@
               <th style="font-weight: normal;">
                 {% include "common/sort_links.html" with field=sort_fields.date_calculated %}
               </th>
+              {% if selected_status == statuses.PENDING_DOCS %}
               <th style="font-weight: normal;">Docs Received</th>
+              {% endif %}
               <th style="font-weight: normal; min-width: 104px;">
                 {% include "common/sort_links.html" with field=sort_fields.adjusted_cost %}
               </th>
+              {% if selected_status != statuses.AUTO_APPROVED and selected_status != statuses.PENDING_DOCS %}
               <th style="font-weight: normal;">Justification</th>
+              {% endif %}
+              {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
               <th colspan="2"></th>
+              {% endif %}
             </tr>
           </thead>
           <tbody>
@@ -167,6 +174,7 @@
               <td>{{ financial_aid.created_on|date:"SHORT_DATE_FORMAT" }}</td>
               <!-- /Date calculated -->
               <!-- Docs received -->
+              {% if selected_status == statuses.PENDING_DOCS %}
               <td>
                 <div class="checkbox">
                   <label>
@@ -174,9 +182,11 @@
                   </label>
                 </div>
               </td>
+              {% endif %}
               <!-- /Docs received -->
               <!-- Adjusted cost -->
               <td>
+                {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
                 <select id="tier-program-id-{{ financial_aid.id }}" class="form-control">
                 {% for tier_program in tier_programs %}
                   <option value="{{ tier_program.id }}"
@@ -185,10 +195,15 @@
                   </option>
                 {% endfor %}
                 </select>
+                {% else %}
+                <input type="text" class="form-control" value="${{ financial_aid.adjusted_cost }}" disabled>
+                {% endif %}
               </td>
               <!-- /Adjusted cost -->
               <!-- Justification -->
+              {% if selected_status != statuses.AUTO_APPROVED and selected_status != statuses.PENDING_DOCS %}
               <td>
+                {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
                 <select id="justification-{{ financial_aid.id }}" class="form-control">
                   <option value="">--</option>
                 {% for justification in justifications %}
@@ -197,9 +212,15 @@
                   </option>
                 {% endfor %}
                 </select>
+                {% else %}
+                <input type="text" class="form-control"
+                       value="{{ financial_aid.justification|default_if_none:'--' }}" disabled>
+                {% endif %}
               </td>
+              {% endif %}
               <!-- /Justification -->
               <!-- Actions -->
+              {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
               <td>
                 <button class="btn btn-default" style="color: #0074e1;"
                         onclick="submitApproval({{ financial_aid.id }}, '{% url 'financial_aid_action' financial_aid_id=financial_aid.id %}');">
@@ -212,6 +233,7 @@
                   <span class="glyphicon glyphicon-envelope"></span>
                 </button>
               </td>
+              {% endif %}
               <!-- /Actions -->
             </tr>
             <!-- /Financial aid application information -->
@@ -230,6 +252,7 @@
           {% endfor %}
           </tbody>
         </table>
+        <!-- /Financial aid application table -->
       </div>
     </div>
   </div>

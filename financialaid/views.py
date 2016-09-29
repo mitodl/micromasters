@@ -112,6 +112,9 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
 
         # Constants required in view
         context["selected_status"] = self.selected_status
+        context["statuses"] = FinancialAidStatus
+        context["justifications"] = FinancialAidJustification.ALL_JUSTIFICATIONS
+        context["email_serializer"] = FinancialAidMailSerializer()
         context["current_sort_field"] = "{sort_direction}{sort_field}".format(
             sort_direction=self.sort_direction,
             sort_field=self.sort_field
@@ -124,9 +127,6 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         ).annotate(
             adjusted_cost=self.course_price - F("discount_amount")
         )
-        context["justifications"] = FinancialAidJustification.ALL_JUSTIFICATIONS
-        context["statuses"] = FinancialAidStatus
-        context["email_serializer"] = FinancialAidMailSerializer()
 
         # Create ordered list of (financial aid status, financial message)
         messages = FinancialAidStatus.STATUS_MESSAGES_DICT
