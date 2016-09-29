@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('financialaid', '0006_switch_jsonfield'),
+        ('financialaid', '0005_switch_jsonfield'),
     ]
 
     operations = [

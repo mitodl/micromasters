@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('financialaid', '0003_added_timestamps'),
+        ('financialaid', '0006_update_tierprogram'),
     ]
 
     operations = [

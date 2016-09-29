@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('financialaid', '0004_currencyexchangerate'),
+        ('financialaid', '0003_added_timestamps'),
     ]
 
     operations = [
