@@ -75,10 +75,6 @@ class FinancialAidBaseTestCase(ESTestCase):
             user=cls.profile.user,
             program=cls.program
         )
-        CurrencyExchangeRate.objects.create(
-            currency_code="GHI",
-            exchange_rate=1.5
-        )
         # Role for self.staff_user
         Role.objects.create(
             user=cls.staff_user_profile.user,
@@ -150,6 +146,14 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
     """
     Tests for financialaid api backend
     """
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        CurrencyExchangeRate.objects.create(
+            currency_code="GHI",
+            exchange_rate=1.5
+        )
+
     def setUp(self):
         super().setUp()
         self.program.refresh_from_db()

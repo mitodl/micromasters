@@ -52,10 +52,10 @@ def determine_income_usd(original_income, original_currency):
     Take original income and original currency and converts income from the original currency
     to USD.
     Args:
-        original_income: original income, in original currency (for a FinancialAid object)
-        original_currency: original currency, a three-letter code
+        original_income (numeric): original income, in original currency (for a FinancialAid object)
+        original_currency (str): original currency, a three-letter code
     Returns:
-        income_usd: the original income converted to US dollars
+        (float): the original income converted to US dollars
     """
     if original_currency == "USD":
         return original_income
@@ -64,7 +64,7 @@ def determine_income_usd(original_income, original_currency):
     except CurrencyExchangeRate.DoesNotExist:
         raise NotSupportedException("Currency not supported")
     exchange_rate = exchange_rate_object.exchange_rate
-    income_usd = original_income/exchange_rate
+    income_usd = original_income / exchange_rate
     return income_usd
 
 
