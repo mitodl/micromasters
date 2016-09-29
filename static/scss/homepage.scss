@@ -7,98 +7,111 @@ body.app-media {
   font-size: 14px;
 }
 
-.nav-header {
+.navbar {
   background-color: $mm-brand-bg;
   border-radius: 0;
-  span{
-    color: white;
-  }
+  height: auto;
+  min-height: 0;
+  padding: 14px 22px 14px 28px;
 
-  a {
-    color: white;
-    text-decoration: underline;
-  }
+  .navbar-header {
+    padding: 0;
+    .pull-left {
+          @media (max-width: 580px) {
+            float: left;
+          }
+          .brand-logo {
+            float: left;
+            margin-right: 15px;
+            img {
+              width: 66px;
+              }
+          }
 
-  a.btn-login {
-    text-decoration: none;
-  }
+          .divider-large {
+            width: 14px;
+            height: 37px;
+            margin: 0 15px 0 0;
+            border-left: 1px solid rgba(255, 255, 255, 0.5);
+            float: left;
+          }
 
-  .header-dashboard-link {
-    float: right;
-    background: rgba(0,0,0, 0.1);
-    margin: 15px 40px 0 0;
-    padding: 14px 40px;
-
-    a {
-    font-weight: 400;
-    font-size: 16px;
-    color: #fff;
-    text-decoration: none;
+          .header-page-name {
+            display: inline-block;
+            color:white;
+            font-size: 19px;
+            margin: 0 20px 0 0;
+            font-weight: 300;
+            float: left;
+            position: relative;
+            bottom: 2px;
+          }
     }
 
-    a:hover {
-      text-decoration: underline;
-      }
-  }
-}
+    .pull-right {
+          color: #000;
+          @media (max-width: 580px) {
+            float: left !important;
+            display: block;
+            margin: 20px auto 4px;
+            width: 100%;
+          }
 
-.navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
-    margin-left: 0;
-    img {
-      width: 66px;
-      }
-    }
+          a.btn-login {
+            color: $mm-brand-bg !important;
+            border-color: white;
+            background-color: white;
+            padding: 10px 23px !important;
+            font-size: 15px;
+            text-decoration: none;
+            @media (max-width: 580px) {
+              width: 47%;
+            }
+          }
 
-.navbar {
-  min-height: 74px;
-  .white-button {
-    color: $mm-brand-bg !important;
-    border-color: white;
-    background-color: white;
-    padding: 10px 23px !important;
-    font-size: 15px;
-  }
+          a.members-login {
+            display: inline-block;
+            margin-right: 19px;
+            border: 2px solid rgba(255,255,255,.5);
+            border-radius: 4px;
+            color: rgba(255,255,255,.8);
+            padding: 9px 23px !important;
+            font-size: 15px;
+            font-weight: 300;
+            @media (max-width: 580px) {
+              width: 47%;
+              margin-right: 5%;
+              border-width: 1px;
+            }
+          }
 
-  .navbar-brand {
-    padding: 16px 20px;
-  }
+          a.members-login:hover, a.members-login:focus, a.members-login.focus {
+            color: white;
+            border-color: white;
+          }
 
-  .header-page-name {
-    display:inline-block;
-    color:white;
-    font-size: 19px;
-    margin: 14px 20px 0 10px;
-    font-weight: 300;
-  }
+          a.header-dashboard-link {
+            display: inline-block;
+            background: rgba(0,0,0, 0.1);
+            margin: 0 15px 0 0;
+            padding: 13px 31px;
+            font-weight: 400;
+            font-size: 16px;
+            color: #fff;
+            text-decoration: none;
+            position: relative;
+            top: 2px;
+            @media (max-width: 580px) {
+              text-align: center;
+              padding: 13px 0;
+              width: 48%;
+              margin-right: 4%;
+            }
+          }
 
-  .divider-large {
-    width: 14px;
-    height: 37px;
-    margin: 18px 0 0 0;
-    border-left: 1px solid rgba(255, 255, 255, 0.5);
-    float: left;
-  }
-
-  .nav-utility {
-    margin-top: 14px;
-    color: #000;
-
-    div.members-login {
-      display: inline-block;
-      margin-right: 19px;
-
-      a.ghost {
-        border: 2px solid rgba(255,255,255,.5);
-        border-radius: 4px;
-        color: rgba(255,255,255,.8);
-        padding: 9px 23px !important;
-        font-size: 15px;
-        font-weight: 300;
-      }
-      a.ghost:hover, a.ghost:focus, a.ghost.focus {
-        color: white;
-        border-color: white;
-      }
+          a.header-dashboard-link:hover {
+            text-decoration: underline;
+          }
     }
   }
 }
@@ -119,11 +132,18 @@ body.app-media {
   position: relative;
   height: 620px;
   height: 94vh;
+  @media (max-width: 580px) {
+    height: 460px;
+    min-height: 0;
+  }
 
   .banner-wrapper-content {
     margin: 0 auto;
     padding: 41vh 5% 0;
     text-align: center;
+    @media (max-width: 580px) {
+      padding: 120px 10% 0;
+    }
 
     h1, h2 {
       color: #ffffff;
@@ -131,23 +151,32 @@ body.app-media {
     }
 
     h1 {
-      @media (min-width: 1200px) {
-      font-size: 3.5vw;
-      }
       font-size: 40px;
       font-weight: 400;
       margin: 0 0 1vh 0;
+      @media (min-width: 1200px) {
+        font-size: 3.5vw;
+      }
+      @media (max-width: 580px) {
+        font-size: 30px;
+        line-height: 1.15;
+        margin-bottom: 35px;
+      }
     }
 
     h2 {
-      @media (min-width: 1200px) {
-      font-size: 2.6vw;
-      }
       font-size: 25px;
       font-weight: 300;
       line-height: 1.4em;
       color: rgba(255,255,255,.9);
       padding: 0;
+      @media (min-width: 1200px) {
+        font-size: 2.6vw;
+      }
+      @media (max-width: 580px) {
+        font-size: 23px;
+        line-height: 1.15;
+      }
     }
 
     .btn-learn-more {
@@ -188,7 +217,7 @@ body.app-media {
   h3 {
     font-size: 25px;
     @media (min-width: 1200px) {
-    font-size: 2.9vh;
+    font-size: 1.9vw;
     }
     margin: 0 0 30px;
     font-weight: 400;
@@ -197,7 +226,7 @@ body.app-media {
   p {
     font-size: 16px;
     @media (min-width: 1200px) {
-    font-size: 1.6vh;
+    font-size: 1.2vw;
     }
     font-weight: 400;
     color: rgba(0,0,0,.6);
@@ -218,13 +247,18 @@ body.app-media {
 .sub-banner-logos-text {
   vertical-align: bottom;
   font-size: 16px;
-  @media (min-width: 1200px) {
-  font-size: 1.6vh;
-  }
   display: inline-block;
   font-size: 16px;
   font-weight: 400;
   color: rgba(0, 0, 0, 0.6);
+  @media (min-width: 1200px) {
+    font-size: 1.2vw;
+  }
+  @media (max-width: 580px) {
+    display: block;
+    line-height: 1.4em;
+    margin-bottom: 20px;
+  }
 }
 
 .enroll-reason {
@@ -250,18 +284,29 @@ body.app-media {
 .quote-section {
   background: #fff;
   padding: 120px 0 150px;
+  @media (max-width: 580px) {
+    padding: 80px 0 80px;
+  }
   .centered-content {
     width: 71%;
     max-width: 1150px;
     margin: 0 auto;
     text-align: left;
+    @media (max-width: 580px) {
+      text-align: center;
+    }
     img.reif {
       float: left;
+      @media (max-width: 580px) {
+        float: none;
+        margin: 0 auto;
+      }
       width: 170px;
       margin-right: 70px;
       position: relative;
       bottom: 15px;
     }
+
     h2 {
       color: #08b940;
       font-size: 30px;
@@ -269,10 +314,17 @@ body.app-media {
       font-family: helvetica;
       font-weight: 300;
       line-height: 1.4em;
+      @media (max-width: 580px) {
+        font-size: 20px;
+      }
     }
+
     p {
       color: #08b940;
       font-size: 24px;
+      @media (max-width: 580px) {
+        font-size: 20px;
+      }
     }
   }
 }
@@ -295,11 +347,17 @@ body.app-media {
 
     .col-md-4 {
       text-align: left;
+      @media (max-width: 580px) {
+        margin-bottom: 40px;
+      }
     }
   }
 
   .program-thumbnail-description{
     padding: 20px 10px 30px 15px;
+    @media (max-width: 580px) {
+        padding: 20px 3px 30px;
+      }
 
     p{
       color: rgba(255,255,255,0.6);
@@ -370,9 +428,10 @@ body.app-media {
 
   .col-md-4 {
     padding: 0 3%;
-    @media (min-width: 500px) {
-    width: 33.33333333%;
-    float: left;
+    @media (max-width: 580px) {
+      padding: 0 13%;
+      width: 100%;
+      float: left;
     }
   }
 
@@ -860,7 +919,7 @@ body.app-media {
   vertical-align: middle;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 580px) {
   .app-media .is-list .info-wrap {
     display: block !important;
     padding-left: 60px;

@@ -1,27 +1,22 @@
-  <nav class="navbar navbar-default nav-header" role="navigation">
-    <div class="container-fluid">
+  <nav class="navbar" role="navigation">
       <div class="navbar-header">
-        <a class="navbar-brand" href="http://www.mit.edu" target="_blank"><img src="/static/images/mit-logo-transparent.svg"  height="40" alt="MIT Home Page" /></a>
-        <div class="divider-large">&nbsp;</div>
-        <div class="header-page-name"><a href="/"><img src="/static/images/micromasters_logo_white.png"  height="40" alt="MIT MicroMasters" /></a></div>
-        <div class="nav-utility pull-right">
+        <div class="pull-left">
+          <a class="brand-logo" href="http://www.mit.edu" target="_blank"><img src="/static/images/mit-logo-transparent.svg"  height="40" alt="MIT Home Page" /></a>
+          <div class="divider-large">&nbsp;</div>
+          <div class="header-page-name"><a href="/"><img src="/static/images/micromasters_logo_white.png"  height="40" alt="MIT MicroMasters" /></a></div>
+          </div>
+        <div class="pull-right">
           {% if authenticated %}
+          <a class="header-dashboard-link" href="/dashboard">My Dashboard</a>
           <a class="btn btn-login white-button upper-case" href="/logout">
             Sign Out
           </a>
           {% else %}
-          <div class="members-login"><a class="btn ghost upper-case" href="{% url 'social:begin' 'edxorg' %}">Log In</a></div>
+          <a class="members-login btn ghost upper-case" href="{% url 'social:begin' 'edxorg' %}">Log In</a>
           <a class="btn btn-login white-button open-signup-dialog upper-case">
-            Sign Up
+          Sign Up
           </a>
           {% endif %}
         </div>
-        {% if authenticated %}
-          <div class="header-dashboard-link">
-            <a href="/dashboard">My Dashboard</a>
-          </div>
-
-        {% endif %}
       </div>
-    </div>
   </nav>
