@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n static bootstrap_tags %}
+{% load i18n static rest_framework %}
 
 {% block title %}{% trans "Review Financial Aid" %}{% endblock %}
 
@@ -230,7 +230,7 @@
             <tr id="application-email-row-{{ financial_aid.id }}" style="display: none;">
               <td colspan="9">
                 <form action="{% url 'financial_aid_mail_api' %}" method="post" class="form-horizontal">
-                  {{ email_form|as_bootstrap_horizontal:"col-sm-3" }}
+                  {% render_form email_serializer template_pack="rest_framework/horizontal" %}
                 </form>
                 <br>
               </td>

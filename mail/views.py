@@ -8,16 +8,19 @@ from rest_framework import (
     permissions,
     status,
 )
+from rest_framework.generics import GenericAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+from financialaid.models import FinancialAid
 from financialaid.permissions import UserCanEditFinancialAid
+from mail.api import MailgunClient
+from mail.permissions import UserCanMessageLearnersPermission
+from mail.serializers import FinancialAidMailSerializer
 from search.api import (
     prepare_and_execute_search,
     get_all_query_matching_emails
 )
-from mail.api import MailgunClient
-from mail.permissions import UserCanMessageLearnersPermission
 
 
 log = logging.getLogger(__name__)
@@ -55,20 +58,27 @@ class SearchResultMailView(APIView):
         )
 
 
-class FinancialAidMailView(APIView):
+class FinancialAidMailView(GenericAPIView):
     """
     View for sending financial aid emails to individual learners
     """
+    serializer_class = FinancialAidMailSerializer
     authentication_classes = (authentication.SessionAuthentication, )
     permission_classes = (permissions.IsAuthenticated, UserCanMessageLearnersPermission, UserCanEditFinancialAid)
+    lookup_field = "id"
+    lookup_url_kwarg = "financial_aid_id"
+    queryset = FinancialAid.objects.all()
 
     def post(self, request, *args, **kwargs):
         """
         Post request to send emails to an individual learner
         """
+        financial_aid = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         mailgun_response = MailgunClient.send_financial_aid_email(
-            subject=request.data['email_subject'],
-            body=request.data['email_body'],
-            recipient=request.data['email_recipient']
+            subject=serializer.data['email_subject'],
+            body=serializer.data['email_body'],
+            recipient=financial_aid.user.email
         )
         return Response(data=mailgun_response.json(), status=mailgun_response.status_code)

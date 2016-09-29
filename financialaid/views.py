@@ -24,7 +24,6 @@ from financialaid.constants import (
     FinancialAidJustification,
     FinancialAidStatus
 )
-from financialaid.forms import FinancialAidEmailForm
 from financialaid.models import (
     FinancialAid,
     TierProgram
@@ -34,6 +33,7 @@ from financialaid.serializers import (
     FinancialAidActionSerializer,
     FinancialAidRequestSerializer
 )
+from mail.serializers import FinancialAidMailSerializer
 from roles.roles import Permissions
 from ui.views import get_bundle_url
 
@@ -135,7 +135,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         )
         context["justifications"] = FinancialAidJustification.ALL_JUSTIFICATIONS
         context["statuses"] = FinancialAidStatus
-        context["email_form"] = FinancialAidEmailForm()
+        context["email_serializer"] = FinancialAidMailSerializer()
 
         # Create ordered list of (financial aid status, financial message)
         messages = FinancialAidStatus.STATUS_MESSAGES_DICT
