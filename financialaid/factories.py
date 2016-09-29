@@ -16,9 +16,9 @@ import faker
 from pytz import UTC
 
 from courses.factories import ProgramFactory
+from financialaid.constants import FinancialAidStatus
 from financialaid.models import (
     FinancialAid,
-    FinancialAidStatus,
     Tier,
     TierProgram
 )

@@ -6,11 +6,11 @@ from rest_framework.exceptions import ValidationError
 from dashboard.models import ProgramEnrollment
 from financialaid.constants import (
     COUNTRY_INCOME_THRESHOLDS,
-    DEFAULT_INCOME_THRESHOLD
+    DEFAULT_INCOME_THRESHOLD,
+    FinancialAidStatus
 )
 from financialaid.models import (
     FinancialAid,
-    FinancialAidStatus,
     TierProgram
 )
 

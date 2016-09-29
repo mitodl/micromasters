@@ -20,10 +20,12 @@ from rolepermissions.verifications import has_object_permission
 
 from courses.models import Program
 from financialaid.api import get_course_price_for_learner
-from financialaid.constants import FinancialAidJustification
+from financialaid.constants import (
+    FinancialAidJustification,
+    FinancialAidStatus
+)
 from financialaid.models import (
     FinancialAid,
-    FinancialAidStatus,
     TierProgram
 )
 from financialaid.permissions import UserCanEditFinancialAid

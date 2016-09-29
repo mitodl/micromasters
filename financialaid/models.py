@@ -13,6 +13,7 @@ from jsonfield import JSONField
 from courses.models import (
     Program,
 )
+from financialaid.constants import FinancialAidStatus
 
 
 class TimestampedModelQuerySet(models.query.QuerySet):
@@ -91,26 +92,6 @@ class TierProgram(TimestampedModel):
         return super(TierProgram, self).save(*args, **kwargs)
 
 
-class FinancialAidStatus:
-    """Statuses for the Financial Aid model"""
-    CREATED = 'created'
-    AUTO_APPROVED = 'auto-approved'
-    PENDING_DOCS = 'pending-docs'
-    PENDING_MANUAL_APPROVAL = 'pending-manual-approval'
-    APPROVED = 'approved'
-    REJECTED = 'rejected'
-
-    ALL_STATUSES = [CREATED, APPROVED, AUTO_APPROVED, REJECTED, PENDING_DOCS, PENDING_MANUAL_APPROVAL]
-    STATUS_MESSAGES_DICT = {
-        CREATED: "Created Applications",
-        AUTO_APPROVED: "Auto-approved Applications",
-        PENDING_DOCS: "Incomplete Applications",
-        PENDING_MANUAL_APPROVAL: "Pending Applications",
-        APPROVED: "Approved Applications",
-        REJECTED: "Rejected Applications",
-    }
-
-
 class FinancialAid(TimestampedModel):
     """
     An application for financial aid/personal pricing
@@ -132,6 +113,7 @@ class FinancialAid(TimestampedModel):
     original_currency = models.CharField(null=True, max_length=10)
     country_of_income = models.CharField(null=True, max_length=100)
     date_exchange_rate = models.DateTimeField(null=True)
+    justification = models.TextField(null=True)
 
     @transaction.atomic
     def save(self, *args, **kwargs):

@@ -136,6 +136,7 @@
           <tbody>
           {% for financial_aid in financial_aid_objects %}
             <tr>
+              <!-- Profile picture -->
               <td>
                 {% if financial_aid.user.profile.image %}
                 <img src="{{ financial_aid.user.profile.image }}"
@@ -144,18 +145,26 @@
                 {% endif %}
                      style="height: 35px; border-radius: 18px; border: 1px solid rgba(180, 180, 180, 0.5)">
               </td>
+              <!-- /Profile picture -->
+              <!-- Name/location -->
               <td style="white-space: nowrap">
                 <b>{{ financial_aid.user.profile.first_name }} {{ financial_aid.user.profile.last_name }}</b>
                 <br>
                 <small>{{ financial_aid.user.profile.city }}, {{ financial_aid.user.profile.country }}</small>
               </td>
+              <!-- /Name/location -->
+              <!-- Income -->
               <td style="white-space: nowrap">
                 <span class="income-usd"><b>$</b>{{ financial_aid.income_usd|floatformat:0 }}</span>
                 <span class="income-local" style="display: none;">
                   <b>$</b>{{ financial_aid.original_income|floatformat:0 }} <b>{{ financial_aid.original_currency }}</b>
                 </span>
               </td>
+              <!-- /Income -->
+              <!-- Date calculated -->
               <td>{{ financial_aid.created_on|date:"SHORT_DATE_FORMAT" }}</td>
+              <!-- /Date calculated -->
+              <!-- Docs received -->
               <td>
                 <div class="checkbox">
                   <label>
@@ -163,6 +172,8 @@
                   </label>
                 </div>
               </td>
+              <!-- /Docs received -->
+              <!-- Adjusted cost -->
               <td>
                 <select class="form-control">
                 {% for tier_program in tier_programs %}
@@ -173,7 +184,8 @@
                 {% endfor %}
                 </select>
               </td>
-              </td>
+              <!-- /Adjusted cost -->
+              <!-- Justification -->
               <td>
                 <select class="form-control">
                 {% for justification in justifications %}
@@ -183,6 +195,8 @@
                 {% endfor %}
                 </select>
               </td>
+              <!-- /Justification -->
+              <!-- Actions -->
               <td>
                 <button class="btn btn-default" style="color: #0074e1;">
                   Save
@@ -194,6 +208,7 @@
                   <span class="glyphicon glyphicon-envelope"></span>
                 </button>
               </td>
+              <!-- /Actions -->
             </tr>
           {% endfor %}
           </tbody>

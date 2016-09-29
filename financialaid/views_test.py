@@ -14,16 +14,15 @@ from financialaid.constants import (
     FINANCIAL_AID_APPROVAL_SUBJECT_TEXT,
     FINANCIAL_AID_APPROVAL_MESSAGE_BODY,
     FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT,
-    FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY
+    FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY,
+    FinancialAidJustification,
+    FinancialAidStatus
 )
 from financialaid.factories import (
     FinancialAidFactory,
     TierProgramFactory
 )
-from financialaid.models import (
-    FinancialAid,
-    FinancialAidStatus
-)
+from financialaid.models import FinancialAid
 from mail.views_test import mocked_json
 
 
@@ -227,19 +226,24 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
     """
     Tests for financialaid views
     """
-    def setUp(self):
-        super().setUp()
-        self.financialaid = FinancialAidFactory.create(
-            user=self.profile.user,
-            tier_program=self.tier_programs["15k"],
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.financialaid = FinancialAidFactory.create(
+            user=cls.profile.user,
+            tier_program=cls.tier_programs["15k"],
             status=FinancialAidStatus.PENDING_MANUAL_APPROVAL
         )
-        self.action_url = reverse("financial_aid_action", kwargs={"financial_aid_id": self.financialaid.id})
+        cls.action_url = reverse("financial_aid_action", kwargs={"financial_aid_id": cls.financialaid.id})
+
+    def setUp(self):
+        super().setUp()
+        self.financialaid.refresh_from_db()
         self.client.force_login(self.staff_user_profile.user)
         self.data = {
-            "financial_aid_id": self.financialaid.id,
             "action": FinancialAidStatus.APPROVED,
-            "tier_program_id": self.financialaid.tier_program.id
+            "tier_program_id": self.financialaid.tier_program.id,
+            "justification": FinancialAidJustification.NOT_NOTARIZED
         }
 
     def test_not_allowed(self, *args):  # pylint: disable=unused-argument
@@ -264,7 +268,6 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         Tests FinancialAidActionView when invalid action is posted
         """
         # Invalid action
-        self.client.force_login(self.staff_user_profile.user)
         self.data["action"] = FinancialAidStatus.PENDING_DOCS
         self.assert_http_status(self.client.put, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
 
@@ -272,7 +275,6 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         """
         Tests FinancialAidActionView when invalid tier_program is posted
         """
-        self.client.force_login(self.staff_user_profile.user)
         self.data["action"] = FinancialAidStatus.APPROVED
         # Not current tier
         self.data["tier_program_id"] = self.tier_programs["150k_not_current"].id
@@ -294,6 +296,7 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
     def test_approve_invalid_status(self, *args):  # pylint: disable=unused-argument
         """
         Tests FinancialAidActionView when trying to approve a FinancialAid that isn't pending manual approval
+        or docs sent
         """
         # FinancialAid object that cannot be approved
         self.data["action"] = FinancialAidStatus.APPROVED
@@ -309,6 +312,14 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
             self.financialaid.status = financial_aid_status
             self.financialaid.save()
             self.assert_http_status(self.client.put, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
+
+    def test_approve_invalid_justification(self, *args):  # pylint: disable=unused-argument
+        """
+        Tests FinancialAidActionView when trying to approve a FinancialAid with an invalid justification
+        """
+        # FinancialAid object that cannot be approved
+        self.data["justification"] = "somerandomstring"
+        self.assert_http_status(self.client.put, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
 
     def test_mark_documents_received_invalid_status(self, *args):  # pylint: disable=unused-argument
         """
@@ -339,11 +350,13 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
             json=mocked_json()
         )
         assert self.financialaid.status != FinancialAidStatus.APPROVED
+        assert self.financialaid.justification != FinancialAidJustification.NOT_NOTARIZED
         self.assert_http_status(self.client.put, self.action_url, status.HTTP_200_OK, data=self.data)
         # Application is approved for the tier program in the financial aid object
         self.financialaid.refresh_from_db()
         assert self.financialaid.tier_program == self.tier_programs["15k"]
         assert self.financialaid.status == FinancialAidStatus.APPROVED
+        assert self.financialaid.justification == FinancialAidJustification.NOT_NOTARIZED
         assert mock_mailgun_client.send_financial_aid_email.called
         _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
         assert called_kwargs["subject"] == FINANCIAL_AID_APPROVAL_SUBJECT_TEXT

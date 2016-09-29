@@ -14,12 +14,14 @@ from financialaid.api import (
     determine_tier_program,
     determine_auto_approval,
     get_no_discount_tier_program, get_course_price_for_learner)
-from financialaid.constants import COUNTRY_INCOME_THRESHOLDS
+from financialaid.constants import (
+    COUNTRY_INCOME_THRESHOLDS,
+    FinancialAidStatus
+)
 from financialaid.factories import (
     TierProgramFactory,
     FinancialAidFactory
 )
-from financialaid.models import FinancialAidStatus
 from profiles.factories import ProfileFactory
 from roles.models import Role
 from roles.roles import Staff, Instructor

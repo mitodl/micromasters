@@ -26,11 +26,12 @@ from financialaid.constants import (
     FINANCIAL_AID_REJECTION_MESSAGE_BODY,
     FINANCIAL_AID_REJECTION_SUBJECT_TEXT,
     FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT,
-    FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY
+    FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY,
+    FinancialAidJustification,
+    FinancialAidStatus
 )
 from financialaid.models import (
     FinancialAid,
-    FinancialAidStatus,
     TierProgram
 )
 from mail.api import MailgunClient
@@ -102,21 +103,30 @@ class FinancialAidActionSerializer(serializers.Serializer):
         write_only=True
     )
     tier_program_id = IntegerField(write_only=True)
+    justification = ChoiceField(
+        choices=FinancialAidJustification.ALL_JUSTIFICATIONS,
+        required=False,
+        default=None,
+        write_only=True
+    )
 
     def validate(self, data):
         """
         Validators for this serializer
         """
         # Check that the previous financial aid status allows for the new status
-        if (data['action'] == FinancialAidStatus.REJECTED and
+        if (data["action"] == FinancialAidStatus.REJECTED and
                 self.instance.status != FinancialAidStatus.PENDING_MANUAL_APPROVAL):
             raise ValidationError("Cannot reject application that is not pending manual approval.")
-        if (data['action'] == FinancialAidStatus.APPROVED and
+        if (data["action"] == FinancialAidStatus.APPROVED and
                 self.instance.status != FinancialAidStatus.PENDING_MANUAL_APPROVAL):
             raise ValidationError("Cannot approve application that is not pending manual approval.")
-        if (data['action'] == FinancialAidStatus.PENDING_MANUAL_APPROVAL and
+        if (data["action"] == FinancialAidStatus.PENDING_MANUAL_APPROVAL and
                 self.instance.status != FinancialAidStatus.PENDING_DOCS):
             raise ValidationError("Cannot mark documents as received for application not pending docs.")
+        if (data["action"] != FinancialAidStatus.PENDING_MANUAL_APPROVAL and
+                data["justification"] is None):
+            raise ValidationError("Cannot save application without a justification.")
         # Check tier program exists
         try:
             data["tier_program"] = TierProgram.objects.get(
@@ -132,10 +142,10 @@ class FinancialAidActionSerializer(serializers.Serializer):
         """
         Save method for this serializer
         """
-        tier_program = self.validated_data["tier_program"]
         self.instance.status = self.validated_data["action"]
         if self.instance.status == FinancialAidStatus.APPROVED:
-            self.instance.tier_program = tier_program
+            self.instance.tier_program = self.validated_data["tier_program"]
+            self.instance.justification = self.validated_data["justification"]
             email_data = {
                 "subject": FINANCIAL_AID_APPROVAL_SUBJECT_TEXT,
                 "body": FINANCIAL_AID_APPROVAL_MESSAGE_BODY,
@@ -143,12 +153,14 @@ class FinancialAidActionSerializer(serializers.Serializer):
             }
         elif self.instance.status == FinancialAidStatus.REJECTED:
             self.instance.tier_program = get_no_discount_tier_program(self.instance.tier_program.program_id)
+            self.instance.justification = self.validated_data["justification"]
             email_data = {
                 "subject": FINANCIAL_AID_REJECTION_SUBJECT_TEXT,
                 "body": FINANCIAL_AID_REJECTION_MESSAGE_BODY,
                 "recipient": self.instance.user.email
             }
         elif self.instance.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL:
+            # Doesn't assign tier_program or justification, only marks documents as received
             email_data = {
                 "subject": FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT,
                 "body": FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY,
