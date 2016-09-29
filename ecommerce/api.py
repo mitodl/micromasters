@@ -31,6 +31,7 @@ from ecommerce.models import (
     Order,
 )
 from financialaid.api import get_course_price_for_learner
+from financialaid.models import FinancialAid
 from profiles.api import get_social_username
 
 
@@ -43,7 +44,7 @@ def get_purchasable_course_run(course_key, user):
     """
     Gets a course run, or raises Http404 if not purchasable. To be purchasable a course run
     must not already be purchased, must be part of a live program, must be part of a program
-    with financial aid, and must have a valid price.
+    with financial aid enabled, with a financial aid object, and must have a valid price.
 
     Args:
         course_key (str):
@@ -65,6 +66,13 @@ def get_purchasable_course_run(course_key, user):
     except Http404:
         log.warning("Course run %s is not purchasable", course_key)
         raise
+
+    if not FinancialAid.objects.filter(
+        tier_program__current=True,
+        tier_program__program__course__course_run=course_run,
+    ).exists():
+        log.warning("Course run %s has no attached financial aid")
+        raise ValidationError("Course run {} does not have an attached financial aid application".format(course_key))
 
     # Make sure it's not already purchased
     if Line.objects.filter(
