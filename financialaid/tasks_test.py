@@ -1,16 +1,13 @@
 """
 Test for financialaid celery tasks
 """
-from urllib.parse import quote_plus
-
-
-from django.conf import settings
 from django.test import (
     override_settings,
     TestCase
 )
 from mock import patch
 
+from financialaid.constants import CURRENCY_EXCHANGE_RATE_API_REQUEST_URL
 from financialaid.models import CurrencyExchangeRate
 from financialaid.tasks import sync_currency_exchange_rates
 
@@ -54,12 +51,7 @@ class TasksTest(TestCase):
         assert CurrencyExchangeRate.objects.count() == 2
         sync_currency_exchange_rates.apply(args=()).get()
         called_args, _ = mocked_request.call_args
-        assert called_args[0] == quote_plus(
-            "{url}latest.json?app_id={app_id}".format(
-                url=settings.OPEN_EXCHANGE_RATES_URL,
-                app_id=settings.OPEN_EXCHANGE_RATES_APP_ID
-            )
-        )
+        assert called_args[0] == CURRENCY_EXCHANGE_RATE_API_REQUEST_URL
         assert CurrencyExchangeRate.objects.count() == 3
         currency = CurrencyExchangeRate.objects.get(currency_code="MNO")
         assert currency.exchange_rate == 1.7
@@ -77,6 +69,8 @@ class TasksTest(TestCase):
         mocked_request.return_value.json.return_value = self.data
         assert CurrencyExchangeRate.objects.count() == 2
         sync_currency_exchange_rates.apply(args=()).get()
+        called_args, _ = mocked_request.call_args
+        assert called_args[0] == CURRENCY_EXCHANGE_RATE_API_REQUEST_URL
         assert CurrencyExchangeRate.objects.count() == 1
         currency = CurrencyExchangeRate.objects.get(currency_code="DEF")
         assert currency.exchange_rate == 1.9
