@@ -136,7 +136,7 @@ class PurchasableTests(ESTestCase):
         course_run, user = create_purchasable_course_run()
         price_obj = course_run.courseprice_set.get(is_valid=True)
 
-        for invalid_price in (0, -1.23):
+        for invalid_price in (0, -1.23,):
             price_obj.price = invalid_price
             price_obj.save()
 
