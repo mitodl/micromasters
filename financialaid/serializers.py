@@ -156,7 +156,7 @@ class FinancialAidActionSerializer(serializers.Serializer):
         return self.instance
 
 
-class DocumentsSentSerializer(serializers.ModelSerializer):
+class FinancialAidSerializer(serializers.ModelSerializer):
     """
     Serializer for indicating financial documents have been sent
     """

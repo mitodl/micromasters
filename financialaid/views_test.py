@@ -541,9 +541,9 @@ class GetLearnerPriceForCourseTests(FinancialAidBaseTestCase, APIClient):
         self.assertDictEqual(resp.data, expected_response)
 
 
-class DocumentsSentViewTests(FinancialAidBaseTestCase, APIClient):
+class FinancialAidDetailViewTests(FinancialAidBaseTestCase, APIClient):
     """
-    Tests for DocumentsSentView
+    Tests for FinancialAidDetailView
     """
     @classmethod
     def setUpTestData(cls):
@@ -554,7 +554,7 @@ class DocumentsSentViewTests(FinancialAidBaseTestCase, APIClient):
             status=FinancialAidStatus.PENDING_DOCS
         )
         cls.docs_sent_url = reverse(
-            "financial_aid_documents_sent",
+            "financial_aid",
             kwargs={"financial_aid_id": cls.financialaid_pending_docs.id}
         )
         cls.data = {

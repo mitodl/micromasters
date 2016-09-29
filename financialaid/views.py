@@ -32,7 +32,7 @@ from financialaid.permissions import (
 from financialaid.serializers import (
     FinancialAidActionSerializer,
     FinancialAidRequestSerializer,
-    DocumentsSentSerializer
+    FinancialAidSerializer
 )
 from roles.roles import Permissions
 from ui.views import get_bundle_url
@@ -228,11 +228,11 @@ class FinancialAidActionView(UpdateAPIView):
     queryset = FinancialAid.objects.all()
 
 
-class DocumentsSentView(UpdateAPIView):
+class FinancialAidDetailView(UpdateAPIView):
     """
     View for learners to indicate that they have sent financial aid documents
     """
-    serializer_class = DocumentsSentSerializer
+    serializer_class = FinancialAidSerializer
     authentication_classes = (SessionAuthentication, )
     permission_classes = (IsAuthenticated, UserCanIndicateDocumentsSent)
     lookup_field = "id"
