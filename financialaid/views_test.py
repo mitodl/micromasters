@@ -520,12 +520,11 @@ class LearnerSkipsFinancialAid(FinancialAidBaseTestCase, APIClient):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
+        cls.skip_url = reverse("financial_aid_skip", kwargs={"program_id": cls.program.id})
 
     def setUp(self):
         super().setUp()
         self.program.refresh_from_db()
-        self.data = {"program_id": self.program.id}
-        self.skip_url = reverse("financial_aid_skip", kwargs=self.data)
 
     def test_skipped_financialaid_object_created(self):
         """
@@ -535,7 +534,7 @@ class LearnerSkipsFinancialAid(FinancialAidBaseTestCase, APIClient):
         assert FinancialAidAudit.objects.count() == 0
         # Check number of financial aid objects (two are created at test setup)
         assert FinancialAid.objects.count() == 2
-        self.assert_http_status(self.client.put, self.skip_url, status.HTTP_200_OK, data=self.data)
+        self.assert_http_status(self.client.put, self.skip_url, status.HTTP_200_OK)
         assert FinancialAid.objects.count() == 3
         financialaid = FinancialAid.objects.get(user=self.enrolled_profile3.user, tier_program__program=self.program)
         assert financialaid.tier_program == self.tier_programs["100k"]
@@ -551,7 +550,7 @@ class LearnerSkipsFinancialAid(FinancialAidBaseTestCase, APIClient):
         assert FinancialAidAudit.objects.count() == 0
         # Check number of financial aid objects (two are created at test setup)
         assert FinancialAid.objects.count() == 2
-        self.assert_http_status(self.client.put, self.skip_url, status.HTTP_200_OK, data=self.data)
+        self.assert_http_status(self.client.put, self.skip_url, status.HTTP_200_OK)
         assert FinancialAid.objects.count() == 2
         self.financialaid_pending.refresh_from_db()
         assert self.financialaid_pending.tier_program == self.tier_programs["100k"]
@@ -573,7 +572,7 @@ class LearnerSkipsFinancialAid(FinancialAidBaseTestCase, APIClient):
         for unpermitted_status in unpermitted_statuses:
             self.financialaid_pending.status = unpermitted_status
             self.financialaid_pending.save()
-            self.assert_http_status(self.client.put, self.skip_url, status.HTTP_400_BAD_REQUEST, data=self.data)
+            self.assert_http_status(self.client.put, self.skip_url, status.HTTP_400_BAD_REQUEST)
 
     def test_financialaid_object_cannot_be_skipped_if_aid_not_available(self):
         """
@@ -583,13 +582,12 @@ class LearnerSkipsFinancialAid(FinancialAidBaseTestCase, APIClient):
         self.client.force_login(self.enrolled_profile3.user)
         self.program.financial_aid_availability = False
         self.program.save()
-        self.assert_http_status(self.client.put, self.skip_url, status.HTTP_400_BAD_REQUEST, data=self.data)
+        self.assert_http_status(self.client.put, self.skip_url, status.HTTP_400_BAD_REQUEST)
 
     def test_financialaid_object_cannot_be_skipped_if_not_enrolled_in_program(self):
         """
         Tests that a FinancialAid object cannot be skipped if the user is not enrolled in program
         """
         self.client.force_login(self.enrolled_profile3.user)
-        self.data = {"program_id": self.program2.id}
-        self.skip_url = reverse("financial_aid_skip", kwargs=self.data)
-        self.assert_http_status(self.client.put, self.skip_url, status.HTTP_400_BAD_REQUEST, data=self.data)
+        url = reverse("financial_aid_skip", kwargs={"program_id": self.program2.id})
+        self.assert_http_status(self.client.put, url, status.HTTP_400_BAD_REQUEST)
