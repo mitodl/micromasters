@@ -83,6 +83,28 @@ class FinancialAidRequestSerializer(serializers.Serializer):
         return financial_aid
 
 
+class FinancialAidSkipSerializer(serializers.Serializer):
+    """
+    Serializer for skipping financial aid
+    """
+    def validate(self, data):
+        """
+        Validators for this serializer
+        """
+        statuses = [FinancialAidStatus.APPROVED, FinancialAidStatus.AUTO_APPROVED, FinancialAidStatus.REJECTED]
+        if self.instance.status in statuses:
+            raise ValidationError("Financial aid cannot be skipped once it has been approved or rejected.")
+        return data
+
+    def save(self):
+        """
+        Save method for serializer
+        """
+        self.instance.status = FinancialAidStatus.SKIPPED
+        self.instance.tier_program = get_no_discount_tier_program(self.instance.tier_program.program.id)
+        self.instance.save()
+
+
 class FinancialAidActionSerializer(serializers.Serializer):
     """
     Serializer for financial aid actions

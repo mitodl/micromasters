@@ -21,8 +21,8 @@ from ecommerce.views import (
 from financialaid.views import (
     FinancialAidRequestView,
     FinancialAidActionView,
-    GetLearnerPriceForCourseView
-)
+    GetLearnerPriceForCourseView,
+    FinancialAidSkipView)
 from profiles.views import ProfileViewSet
 from search.views import ElasticProxyView
 from mail.views import (
@@ -52,6 +52,8 @@ urlpatterns = [
         name='financial_aid_action'),
     url(r'^api/v0/financial_aid_course_price/(?P<program_id>[\d]+)/$',
         GetLearnerPriceForCourseView.as_view(), name='financial_aid_course_price'),
+    url(r'^api/v0/financial_aid_skip/(?P<program_id>[\d]+)/$',
+        FinancialAidSkipView.as_view(), name='financial_aid_skip'),
     url(r'^api/v0/order_fulfillment/$', OrderFulfillmentView.as_view(), name='order-fulfillment'),
     url(r'^status/', include('server_status.urls')),
     url(r'^financial_aid/', include('financialaid.urls')),

@@ -8,6 +8,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db.models import F
 from django.views.generic import ListView
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import (
     CreateAPIView,
     get_object_or_404,
@@ -19,7 +20,8 @@ from rest_framework.views import APIView
 from rolepermissions.verifications import has_object_permission
 
 from courses.models import Program
-from financialaid.api import get_course_price_for_learner
+from dashboard.models import ProgramEnrollment
+from financialaid.api import get_course_price_for_learner, get_no_discount_tier_program
 from financialaid.models import (
     FinancialAid,
     FinancialAidStatus,
@@ -28,7 +30,8 @@ from financialaid.models import (
 from financialaid.permissions import UserCanEditFinancialAid
 from financialaid.serializers import (
     FinancialAidActionSerializer,
-    FinancialAidRequestSerializer
+    FinancialAidRequestSerializer,
+    FinancialAidSkipSerializer
 )
 from roles.roles import Permissions
 from ui.views import get_bundle_url
@@ -48,6 +51,35 @@ class FinancialAidRequestView(CreateAPIView):
         Allows the DRF helper pages to load - not available in production
         """
         return None
+
+
+class FinancialAidSkipView(UpdateAPIView):
+    """
+    View for financial aid skip API. Takes user and program, then determines whether a financial
+    aid object exists, and then either creates or updates a financial aid object to reflect
+    the user skipping financial aid.
+    """
+    serializer_class = FinancialAidSkipSerializer
+    authentication_classes = (SessionAuthentication, )
+    permission_classes = (IsAuthenticated, )
+
+    def get_object(self):  # pragma: no cover
+        """
+        Overrides get_object in case financialaid object does not exist, as the learner may skip
+        financial aid either after starting the process or in lieu of applying
+        """
+        program = get_object_or_404(Program, id=self.kwargs["program_id"])
+        if not program.financial_aid_availability:
+            raise ValidationError("Financial aid not available for this program.")
+        if not ProgramEnrollment.objects.filter(program=program.id, user=self.request.user).exists():
+            raise ValidationError("User not in program.")
+        tier_program = get_no_discount_tier_program(program.id)
+        financialaid, _ = FinancialAid.objects.get_or_create(
+            user=self.request.user,
+            tier_program__program=program,
+            defaults={"tier_program": tier_program}
+        )
+        return financialaid
 
 
 class ReviewFinancialAidView(UserPassesTestMixin, ListView):
