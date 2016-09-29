@@ -564,7 +564,7 @@ class FinancialAidDetailViewTests(FinancialAidBaseTestCase, APIClient):
 
     def test_learner_can_indicate_documents_sent(self):
         """
-        Tests DocumentSentView for user editing their own financial aid document status
+        Tests FinancialAidDetailView for user editing their own financial aid document status
         """
         self.client.force_login(self.enrolled_profile3.user)
         self.assert_http_status(self.client.put, self.docs_sent_url, status.HTTP_200_OK, data=self.data)
@@ -574,7 +574,7 @@ class FinancialAidDetailViewTests(FinancialAidBaseTestCase, APIClient):
 
     def test_user_does_not_have_permission_to_indicate_documents_sent(self):
         """
-        Tests DocumentSentView for user without permission to edit document status
+        Tests FinancialAidDetailView for user without permission to edit document status
         """
         unpermitted_users_to_test = [
             self.enrolled_profile.user,
@@ -588,7 +588,7 @@ class FinancialAidDetailViewTests(FinancialAidBaseTestCase, APIClient):
 
     def test_correct_status_change_on_indicating_documents_sent(self):
         """
-        Tests DocumentSentView to ensure status change is always pending-docs to docs-sent
+        Tests FinancialAidDetailView to ensure status change is always pending-docs to docs-sent
         """
         statuses_to_test = [
             FinancialAidStatus.CREATED,

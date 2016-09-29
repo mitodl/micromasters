@@ -27,7 +27,7 @@ from financialaid.models import (
 )
 from financialaid.permissions import (
     UserCanEditFinancialAid,
-    UserCanIndicateDocumentsSent
+    FinancialAidUserMatchesLoggedInUser
 )
 from financialaid.serializers import (
     FinancialAidActionSerializer,
@@ -230,11 +230,11 @@ class FinancialAidActionView(UpdateAPIView):
 
 class FinancialAidDetailView(UpdateAPIView):
     """
-    View for learners to indicate that they have sent financial aid documents
+    View for updating a FinancialAid record
     """
     serializer_class = FinancialAidSerializer
     authentication_classes = (SessionAuthentication, )
-    permission_classes = (IsAuthenticated, UserCanIndicateDocumentsSent)
+    permission_classes = (IsAuthenticated, FinancialAidUserMatchesLoggedInUser)
     lookup_field = "id"
     lookup_url_kwarg = "financial_aid_id"
     queryset = FinancialAid.objects.all()

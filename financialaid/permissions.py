@@ -25,13 +25,13 @@ class UserCanEditFinancialAid(BasePermission):
         return has_object_permission(Permissions.CAN_EDIT_FINANCIAL_AID, request.user, obj.tier_program.program)
 
 
-class UserCanIndicateDocumentsSent(BasePermission):
+class FinancialAidUserMatchesLoggedInUser(BasePermission):
     """
-    Allow a user to indicate that financial aid documents have been sent.
+    Returns True if accessing own FinancialAid object
     """
     def has_object_permission(self, request, view, obj):
         """
-        Returns True if the user has the permission to indicate financial documents sent.
+        Returns True if the FinancialAid.user matches the logged in user
         Args:
             request (Request): DRF request object
             view (View): DRF view object
