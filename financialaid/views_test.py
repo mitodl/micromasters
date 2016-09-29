@@ -531,6 +531,7 @@ class LearnerSkipsFinancialAid(FinancialAidBaseTestCase, APIClient):
         """
         Tests that a FinancialAid object with the status "skipped" is created.
         """
+        assert FinancialAidAudit.objects.count() == 0
         self.client.force_login(self.enrolled_profile3.user)
         assert FinancialAid.objects.count() == 2
         self.assert_http_status(self.client.put, self.skip_url, status.HTTP_200_OK, data=self.data)
@@ -538,11 +539,14 @@ class LearnerSkipsFinancialAid(FinancialAidBaseTestCase, APIClient):
         financialaid = FinancialAid.objects.get(user=self.enrolled_profile3.user)
         assert financialaid.tier_program == self.tier_programs["100k"]
         assert financialaid.status == FinancialAidStatus.SKIPPED
+        # Check logging
+        assert FinancialAidAudit.objects.count() == 1
 
     def test_skipped_financialaid_object_updated(self):
         """
         Tests that an existing FinancialAid object is updated to have the status "skipped"
         """
+        assert FinancialAidAudit.objects.count() == 0
         self.client.force_login(self.enrolled_profile2.user)
         assert FinancialAid.objects.count() == 2
         self.assert_http_status(self.client.put, self.skip_url, status.HTTP_200_OK, data=self.data)
@@ -550,6 +554,8 @@ class LearnerSkipsFinancialAid(FinancialAidBaseTestCase, APIClient):
         self.financialaid_pending.refresh_from_db()
         assert self.financialaid_pending.tier_program == self.tier_programs["100k"]
         assert self.financialaid_pending.status == FinancialAidStatus.SKIPPED
+        # Check logging
+        assert FinancialAidAudit.objects.count() == 1
 
     def test_financialaid_object_cannot_be_skipped_if_approved_or_rejected(self):
         """

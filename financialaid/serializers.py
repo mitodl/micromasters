@@ -102,7 +102,7 @@ class FinancialAidSkipSerializer(serializers.Serializer):
         """
         self.instance.status = FinancialAidStatus.SKIPPED
         self.instance.tier_program = get_no_discount_tier_program(self.instance.tier_program.program.id)
-        self.instance.save()
+        self.instance.save_and_log(self.context["request"].user)
 
 
 class FinancialAidActionSerializer(serializers.Serializer):
