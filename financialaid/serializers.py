@@ -115,6 +115,9 @@ class FinancialAidActionSerializer(serializers.Serializer):
         Validators for this serializer
         """
         # Check that the previous financial aid status allows for the new status
+        if (data["action"] != FinancialAidStatus.PENDING_MANUAL_APPROVAL and
+                data["justification"] is None):
+            raise ValidationError({"justification": "This field is required."})
         if (data["action"] == FinancialAidStatus.REJECTED and
                 self.instance.status != FinancialAidStatus.PENDING_MANUAL_APPROVAL):
             raise ValidationError("Cannot reject application that is not pending manual approval.")
@@ -124,9 +127,6 @@ class FinancialAidActionSerializer(serializers.Serializer):
         if (data["action"] == FinancialAidStatus.PENDING_MANUAL_APPROVAL and
                 self.instance.status != FinancialAidStatus.PENDING_DOCS):
             raise ValidationError("Cannot mark documents as received for application not pending docs.")
-        if (data["action"] != FinancialAidStatus.PENDING_MANUAL_APPROVAL and
-                data["justification"] is None):
-            raise ValidationError("Cannot save application without a justification.")
         # Check tier program exists
         try:
             data["tier_program"] = TierProgram.objects.get(

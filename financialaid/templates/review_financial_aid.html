@@ -54,14 +54,14 @@
           <li style="padding-top: 7px;">
             <div class="radio-inline">
               <label>
-                <input type="radio" name="currency-selector" id="currency-selector-usd"
+                <input type="radio" id="currency-selector-usd"
                        onclick="$('.income-usd').show(); $('.income-local').hide();" checked>
                 USD
               </label>
             </div>
             <div class="radio-inline">
               <label>
-                <input type="radio" name="currency-selector" id="currency-selector-original"
+                <input type="radio" id="currency-selector-original"
                        onclick="$('.income-usd').hide(); $('.income-local').show();">
                 Local Currency
               </label>
@@ -148,7 +148,9 @@
               <!-- /Profile picture -->
               <!-- Name/location -->
               <td style="white-space: nowrap">
-                <b>{{ financial_aid.user.profile.first_name }} {{ financial_aid.user.profile.last_name }}</b>
+                <span id="full-name-{{ financial_aid.id }}">
+                  <b>{{ financial_aid.user.profile.first_name }} {{ financial_aid.user.profile.last_name }}</b>
+                </span>
                 <br>
                 <small>{{ financial_aid.user.profile.city }}, {{ financial_aid.user.profile.country }}</small>
               </td>
@@ -175,7 +177,7 @@
               <!-- /Docs received -->
               <!-- Adjusted cost -->
               <td>
-                <select class="form-control">
+                <select id="tier-program-id-{{ financial_aid.id }}" class="form-control">
                 {% for tier_program in tier_programs %}
                   <option value="{{ tier_program.id }}"
                           {% if tier_program == financial_aid.tier_program %}selected{% endif %}>
@@ -187,7 +189,8 @@
               <!-- /Adjusted cost -->
               <!-- Justification -->
               <td>
-                <select class="form-control">
+                <select id="justification-{{ financial_aid.id }}" class="form-control">
+                  <option value="">--</option>
                 {% for justification in justifications %}
                   <option value="{{ justification }}">
                     {{ justification }}
@@ -198,7 +201,8 @@
               <!-- /Justification -->
               <!-- Actions -->
               <td>
-                <button class="btn btn-default" style="color: #0074e1;">
+                <button class="btn btn-default" style="color: #0074e1;"
+                        onclick="submitApproval({{ financial_aid.id }}, '{% url 'financial_aid_action' financial_aid_id=financial_aid.id %}')">
                   Save
                 </button>
               </td>
@@ -218,4 +222,40 @@
   </div>
   {% include "footer.html" %}
   <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+  <script>
+    var CSRF_TOKEN = "{{ csrf_token }}";
+    /**
+     * Submits a financial aid application approval
+     * 
+     * @param financial_aid_id {number} Financial aid application id
+     * @param url {string} URL to submit request to
+     */
+    function submitApproval(financial_aid_id, url) {
+      var name = $("#full-name-" + financial_aid_id).text().trim();
+      if (confirm("Click OK to approve " + name + "'s financial aid application.")) {
+        var action = "{{ statuses.APPROVED }}";
+        var justification = $("#justification-" + financial_aid_id).val();
+        var tier_program_id = $("#tier-program-id-" + financial_aid_id).val();
+        $.ajax({
+          "url": url,
+          "type": "PUT",
+          "headers": {
+            "X-CSRFToken": CSRF_TOKEN
+          },
+          "data": {
+            "action": action,
+            "justification": justification,
+            "tier_program_id": tier_program_id
+          },
+          "success": function(result) {
+            console.log("success");
+            console.log(result);
+          },
+          "error": function(result) {
+            alert(result.responseText);
+          }
+        });
+      }
+    }
+  </script>
 {% endblock %}

@@ -133,6 +133,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
             adjusted_cost=self.course_price - F("discount_amount")
         )
         context["justifications"] = FinancialAidJustification.ALL_JUSTIFICATIONS
+        context["statuses"] = FinancialAidStatus
 
         # Create ordered list of (financial aid status, financial message)
         messages = FinancialAidStatus.STATUS_MESSAGES_DICT
