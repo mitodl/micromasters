@@ -44,6 +44,7 @@ from ecommerce.factories import (
     OrderFactory,
 )
 from ecommerce.models import Order
+from financialaid.factories import FinancialAidFactory
 from profiles.factories import UserFactory
 from search.base import ESTestCase
 
@@ -56,6 +57,10 @@ def create_purchasable_course_run():
     course_run = CourseRunFactory.create(
         course__program__live=True,
         course__program__financial_aid_availability=True,
+    )
+    FinancialAidFactory.create(
+        tier_program__current=True,
+        tier_program__program=course_run.course.program,
     )
     CoursePriceFactory.create(course_run=course_run, is_valid=True)
     user = UserFactory.create()
@@ -88,9 +93,25 @@ class PurchasableTests(ESTestCase):
         with self.assertRaises(Http404):
             get_purchasable_course_run(course_run.edx_course_key, user)
 
-    def test_no_financial_aid(self):
+    def test_no_current_financial_aid(self):
         """
-        Purchasable course runs must have financial aid
+        Purchasable course runs must have financial aid available
+        """
+        course_run, user = create_purchasable_course_run()
+        program = course_run.course.program
+        tier_program = program.tier_programs.first()
+        tier_program.current = False
+        tier_program.save()
+
+        with self.assertRaises(ValidationError) as ex:
+            get_purchasable_course_run(course_run.edx_course_key, user)
+        assert ex.exception.args[0] == (
+            "Course run {} does not have an attached financial aid application".format(course_run.edx_course_key)
+        )
+
+    def test_financial_aid_not_available(self):
+        """
+        Purchasable course runs must have financial aid available
         """
         course_run, user = create_purchasable_course_run()
         program = course_run.course.program
