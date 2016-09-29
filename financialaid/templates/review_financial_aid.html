@@ -100,25 +100,6 @@
           </li>
           <!-- /Pagination buttons -->
         </ul>
-        <!-- Sorting buttons -->
-        <div style="margin-bottom: 12px;">
-          <span style="font-weight: bold; margin-right: 12px;">Sort by:</span>
-          <div class="btn-group">
-          {% for field in sort_field_info %}
-            <a href="{% url 'review_financial_aid' program_id=current_program_id status=selected_status %}?sort_by={{ field.sort_field }}"
-               class="btn btn-default btn-sm">
-              {{ field.display }}
-              {% if field.direction_display == "" %}
-              <span class="glyphicon glyphicon-triangle-top"></span>
-              {% endif %}
-              {% if field.direction_display == "-" %}
-              <span class="glyphicon glyphicon-triangle-bottom"></span>
-              {% endif %}
-            </a>
-          {% endfor %}
-          </div>
-        </div>
-        <!-- /Sorting buttons -->
         
         <!-- Messages -->
         <div id="messages"></div>
@@ -133,14 +114,22 @@
         <table class="table">
           <thead>
             <tr style="color: #999999;">
-              <th style="font-weight: normal;"></th>
-              <th style="font-weight: normal;">Name/Location</th>
-              <th style="font-weight: normal;">Income/Yr.</th>
-              <th style="font-weight: normal;">Date Calculated</th>
+              <th></th>
+              <th style="font-weight: normal;">
+                {% include "common/sort_links.html" with field=sort_fields.last_name %}
+              </th>
+              <th style="font-weight: normal;">
+                {% include "common/sort_links.html" with field=sort_fields.reported_income %}
+              </th>
+              <th style="font-weight: normal;">
+                {% include "common/sort_links.html" with field=sort_fields.date_calculated %}
+              </th>
               <th style="font-weight: normal;">Docs Received</th>
-              <th style="font-weight: normal; min-width: 100px;">Adjusted Cost</th>
+              <th style="font-weight: normal; min-width: 104px;">
+                {% include "common/sort_links.html" with field=sort_fields.adjusted_cost %}
+              </th>
               <th style="font-weight: normal;">Justification</th>
-              <th colspan="2" style="font-weight: normal;"></th>
+              <th colspan="2"></th>
             </tr>
           </thead>
           <tbody>
@@ -232,7 +221,7 @@
                 <form id="email-form-{{ financial_aid.id }}" class="email-form form-horizontal">
                   {% render_form email_serializer template_pack="rest_framework/horizontal" %}
                 </form>
-                <button class="btn btn-primary"
+                <button class="btn btn-primary pull-right"
                         onclick="submitEmail({{ financial_aid.id }}, '{% url 'financial_aid_mail_api' financial_aid_id=financial_aid.id %}');">Send Email</button>
                 <br>
               </td>
@@ -244,14 +233,14 @@
       </div>
     </div>
   </div>
-
+  
   {% include "footer.html" %}
   <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script>
-
+    
     var CSRF_TOKEN = "{{ csrf_token }}";
-
+    
     /**
      * Submits a financial aid application approval
      * 
@@ -286,7 +275,7 @@
       }
     }
     
-
+    
     /**
      * Submits a financial aid email request
      * 
@@ -319,8 +308,8 @@
         });
       }
     }
-
-
+    
+    
     /**
      * Displays a dismissible alert message.
      * 
@@ -334,6 +323,6 @@
       $("#messages").append(template);
       template.slideDown();
     }
-
+    
   </script>
 {% endblock %}

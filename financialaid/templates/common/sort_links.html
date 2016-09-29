@@ -1,0 +1,10 @@
+<a href="{% url 'review_financial_aid' program_id=current_program_id status=selected_status %}?sort_by={{ field.sort_field }}"
+   style="color: rgba(0, 116, 225, 0.72); font-weight: normal; text-decoration: none;">
+  {{ field.display }}
+  {% if field.direction_display == "" %}
+  <span class="glyphicon glyphicon-triangle-top"></span>
+  {% endif %}
+  {% if field.direction_display == "-" %}
+  <span class="glyphicon glyphicon-triangle-bottom"></span>
+  {% endif %}
+</a>

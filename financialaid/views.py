@@ -71,35 +71,26 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
     # Used for sorting
     sort_field = None
     sort_direction = ""
-    sort_field_info = None
     sort_fields = {
         "adjusted_cost": {
             "display": "Adjusted Cost"
-        },
-        "first_name": {
-            "display": "First Name"
         },
         "date_calculated": {
             "display": "Date Calculated"
         },
         "last_name": {
-            "display": "Last Name"
-        },
-        "location": {
-            "display": "Location"
+            "display": "Name/Location"
         },
         "reported_income": {
-            "display": "Reported Income"
+            "display": "Income/Yr."
         },
     }
     sort_field_mappings = {
         "date_calculated": "created_on",
-        "first_name": "user__profile__first_name",
         "last_name": "user__profile__last_name",
-        "location": "user__profile__city",
         "reported_income": "income_usd",
     }
-    default_sort_field = "first_name"
+    default_sort_field = "last_name"
 
     def test_func(self):
         """
@@ -151,29 +142,17 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         )
 
         # Get sort field information
-        sort_link_order = (
-            "first_name",
-            "last_name",
-            "location",
-            "reported_income",
-            "date_calculated",
-            "adjusted_cost",
-        )
         new_sort_direction = "" if self.sort_direction == "-" else "-"
-        context["sort_field_info"] = (
-            {
-                # For appending the sort_by get param on url
-                "sort_field": "{sort_direction}{sort_field}".format(
-                    # If this field is our current sort field, we want to toggle the sort direction, else default ""
-                    sort_direction=new_sort_direction if field == self.sort_field else "",
-                    sort_field=field
-                ),
-                # If this field is the current sort field, we want to indicate the current sort direction
-                "direction_display": self.sort_direction if field == self.sort_field else None,
-                "display": self.sort_fields[field]["display"]
-            }
-            for field in sort_link_order
-        )
+        for field, field_dict in self.sort_fields.items():
+            # For appending the sort_by get param on url
+            field_dict["sort_field"] = "{sort_direction}{sort_field}".format(
+                # If this field is our current sort field, we want to toggle the sort direction, else default ""
+                sort_direction=new_sort_direction if field == self.sort_field else "",
+                sort_field=field
+            )
+            # If this field is the current sort field, we want to indicate the current sort direction
+            field_dict["direction_display"] = self.sort_direction if field == self.sort_field else None
+        context["sort_fields"] = self.sort_fields
 
         # Required for styling
         context["style_src"] = get_bundle_url(self.request, "style.js")
