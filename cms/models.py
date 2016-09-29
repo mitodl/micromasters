@@ -34,15 +34,7 @@ class HomePage(Page):
     """
     CMS page representing the homepage.
     """
-    title_background = models.ForeignKey(
-        Image,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-    content_panels = Page.content_panels + [
-        FieldPanel('title_background')
-    ]
+    content_panels = []
 
     def get_context(self, request):
         programs = Program.objects.filter(live=True)
