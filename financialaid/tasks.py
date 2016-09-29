@@ -17,11 +17,9 @@ def sync_currency_exchange_rates():
     Updates all CurrencyExchangeRate objects to reflect latest exchange rates from
     Open Exchange Rates API (https://openexchangerates.org/).
     """
-    url = quote_plus(
-        "{url}latest.json?app_id={app_id}".format(
-            url=settings.OPEN_EXCHANGE_RATES_URL,
-            app_id=settings.OPEN_EXCHANGE_RATES_APP_ID
-        )
+    url = "{url}latest.json?app_id={app_id}".format(
+        url=settings.OPEN_EXCHANGE_RATES_URL,
+        app_id=quote_plus(settings.OPEN_EXCHANGE_RATES_APP_ID)
     )
     resp = requests.get(url).json()
     latest_rates = resp["rates"]
