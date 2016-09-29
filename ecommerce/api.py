@@ -68,8 +68,8 @@ def get_purchasable_course_run(course_key, user):
         raise
 
     if not FinancialAid.objects.filter(
-        tier_program__current=True,
-        tier_program__program__course__courserun=course_run,
+            tier_program__current=True,
+            tier_program__program__course__courserun=course_run,
     ).exists():
         log.warning("Course run %s has no attached financial aid")
         raise ValidationError("Course run {} does not have an attached financial aid application".format(course_key))
