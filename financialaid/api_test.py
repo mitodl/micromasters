@@ -15,8 +15,8 @@ from financialaid.api import (
     determine_tier_program,
     determine_income_usd,
     get_course_price_for_learner,
-    get_no_discount_tier_program
-)
+    get_no_discount_tier_program,
+    update_currency_exchange_rate)
 from financialaid.constants import COUNTRY_INCOME_THRESHOLDS
 from financialaid.factories import (
     TierProgramFactory,
@@ -311,3 +311,34 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
             get_course_price_for_learner(self.enrolled_profile3.user, self.program),
             expected_response
         )
+
+
+class ExchangeRateAPITests(ESTestCase):
+    """
+    Tests for financial aid exchange rate api backend
+    """
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        CurrencyExchangeRate.objects.create(
+            currency_code="ABC",
+            exchange_rate=1.5
+        )
+        CurrencyExchangeRate.objects.create(
+            currency_code="DEF",
+            exchange_rate=1.5
+        )
+
+    def test_update_currency_exchange_rate(self):
+        """
+        Tests updated_currency_exchange_rate()
+        """
+        latest_rates = {
+            "ABC": 12.3,
+            "GHI": 7.89
+        }
+        update_currency_exchange_rate(latest_rates)
+        assert CurrencyExchangeRate.objects.get(currency_code="ABC").exchange_rate == latest_rates["ABC"]
+        with self.assertRaises(CurrencyExchangeRate.DoesNotExist):
+            CurrencyExchangeRate.objects.get(currency_code="DEF")
+        assert CurrencyExchangeRate.objects.get(currency_code="GHI").exchange_rate == latest_rates["GHI"]

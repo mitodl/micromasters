@@ -1,6 +1,7 @@
 """
 API helper functions for financialaid
 """
+from django.db import transaction
 from rest_framework.exceptions import ValidationError
 
 from dashboard.models import ProgramEnrollment
@@ -126,3 +127,22 @@ def get_course_price_for_learner(learner, program):
         "financial_aid_availability": financial_aid_availability,
         "has_financial_aid_request": has_financial_aid_request
     }
+
+
+@transaction.atomic
+def update_currency_exchange_rate(latest_rates):
+    """
+    Updates all CurrencyExchangeRate objects based on the latest rates.
+    Args:
+        latest_rates (dict): latest exchange rates from Open Exchange Rates API 
+    Returns:
+        None
+    """
+    for currency_exchange_rate in CurrencyExchangeRate.objects.all():
+        if currency_exchange_rate.currency_code in latest_rates:
+            currency_exchange_rate.exchange_rate = latest_rates.pop(currency_exchange_rate.currency_code)
+            currency_exchange_rate.save()
+        else:
+            currency_exchange_rate.delete()
+    for key in latest_rates:
+        CurrencyExchangeRate.objects.create(currency_code=key, exchange_rate=latest_rates[key])
