@@ -55,7 +55,7 @@ def determine_income_usd(original_income, original_currency):
         original_income (numeric): original income, in original currency (for a FinancialAid object)
         original_currency (str): original currency, a three-letter code
     Returns:
-        (float): the original income converted to US dollars
+        float: the original income converted to US dollars
     """
     if original_currency == "USD":
         return original_income
