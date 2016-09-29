@@ -229,9 +229,11 @@
             <!-- Financial aid application email form -->
             <tr id="application-email-row-{{ financial_aid.id }}" style="display: none;">
               <td colspan="9">
-                <form action="{% url 'financial_aid_mail_api' %}" method="post" class="form-horizontal">
+                <form id="email-form-{{ financial_aid.id }}" class="email-form form-horizontal">
                   {% render_form email_serializer template_pack="rest_framework/horizontal" %}
                 </form>
+                <button class="btn btn-primary"
+                        onclick="submitEmail({{ financial_aid.id }}, '{% url 'financial_aid_mail_api' financial_aid_id=financial_aid.id %}');">Send Email</button>
                 <br>
               </td>
             </tr>
@@ -283,11 +285,41 @@
         });
       }
     }
+    
 
-
-    function openSendEmailModal() {
-      $("#email-template")
+    /**
+     * Submits a financial aid email request
+     * 
+     * @param financial_aid_id {number} Financial aid application id
+     * @param url {string} URL to submit request to
+     */
+    function submitEmail(financial_aid_id, url) {
+      var name = $("#full-name-" + financial_aid_id).text().trim();
+      if (confirm("Click OK to send email to " + name)) {
+        var email_subject = $("#email-form-" + financial_aid_id + " [name='email_subject']").val();
+        var email_body = $("#email-form-" + financial_aid_id + " [name='email_body']").val();
+        $.ajax({
+          "url": url,
+          "type": "POST",
+          "headers": {
+            "X-CSRFToken": CSRF_TOKEN
+          },
+          "data": {
+            "email_subject": email_subject,
+            "email_body": email_body
+          },
+          "success": function() {
+            displayMessage("Successfully sent email to " + name, "success");
+            $("#email-form-" + financial_aid_id).trigger("reset");
+            $("#application-email-row-" + financial_aid_id).hide();
+          },
+          "error": function(result) {
+            displayMessage("Error in sending email to " + name + ": " + result.responseText, "danger");
+          }
+        });
+      }
     }
+
 
     /**
      * Displays a dismissible alert message.
@@ -298,7 +330,7 @@
     function displayMessage(message, type) {
       var template = $("#message-template").clone();
       // Populate template
-      template.addClass("alert-" + type).children("span").text(message);
+      template.removeAttr("id").addClass("alert-" + type).children("span").text(message);
       $("#messages").append(template);
       template.slideDown();
     }
