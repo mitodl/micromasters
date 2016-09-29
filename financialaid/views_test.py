@@ -25,8 +25,9 @@ from financialaid.factories import (
 )
 from financialaid.models import (
     FinancialAid,
+    FinancialAidAudit,
     FinancialAidStatus,
-    FinancialAidAudit
+    CurrencyExchangeRate
 )
 from mail.views_test import mocked_json
 
@@ -46,6 +47,14 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
                 "program_id": cls.program.id,
                 "status": FinancialAidStatus.AUTO_APPROVED
             }
+        )
+        CurrencyExchangeRate.objects.create(
+            currency_code="ABC",
+            exchange_rate=1.5
+        )
+        CurrencyExchangeRate.objects.create(
+            currency_code="XYZ",
+            exchange_rate=0.76
         )
         # This class of tests requires no FinancialAid objects already exist
         FinancialAid.objects.all().delete()
@@ -71,6 +80,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         financial_aid = FinancialAid.objects.first()
         assert financial_aid.tier_program == self.tier_programs["50k"]
         assert financial_aid.status == FinancialAidStatus.PENDING_DOCS
+        assert financial_aid.income_usd == self.data["original_income"]
 
     def test_income_validation_auto_approved(self):
         """
@@ -85,6 +95,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         financial_aid = FinancialAid.objects.first()
         assert financial_aid.tier_program == self.tier_programs["100k"]
         assert financial_aid.status == FinancialAidStatus.AUTO_APPROVED
+        assert financial_aid.income_usd == self.data["original_income"]
 
     def test_income_validation_missing_args(self):
         """
@@ -118,10 +129,27 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
 
     def test_income_validation_currency_not_usd(self):
         """
-        Tests FinancialAidRequestView post; only takes USD
+        Tests IncomeValidationView post with a currency that is not USD
         """
-        self.data["original_currency"] = "NOTUSD"
-        self.assert_http_status(self.client.post, self.request_url, status.HTTP_400_BAD_REQUEST, data=self.data)
+        self.data["original_currency"] = "ABC"
+        assert FinancialAid.objects.count() == 0
+        resp = self.client.post(self.request_url, self.data, format='json')
+        assert resp.status_code == status.HTTP_201_CREATED
+        assert FinancialAid.objects.count() == 1
+        financial_aid = FinancialAid.objects.first()
+        exchange_rate = CurrencyExchangeRate.objects.get(currency_code="ABC").exchange_rate
+        assert financial_aid.tier_program == self.tier_programs["50k"]
+        assert financial_aid.status == FinancialAidStatus.PENDING_DOCS
+        self.assertAlmostEqual(financial_aid.income_usd, self.data["original_income"] / exchange_rate)
+
+    def test_income_validation_currency_not_supported(self):
+        """
+        Tests IncomeValidationView post with a currency not supported
+        """
+        self.data["original_currency"] = "DEF"
+        assert FinancialAid.objects.count() == 0
+        resp = self.client.post(self.request_url, self.data, format='json')
+        assert resp.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_review_financial_aid_view_not_allowed_user(self):
         """

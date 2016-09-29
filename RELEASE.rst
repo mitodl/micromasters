@@ -1,6 +1,129 @@
 Release Notes
 =============
 
+Version 0.14.0
+--------------
+
+- Style changes for the home page (#1056)
+- Bumped edx-api-client requirement to latest version
+- Fixed rotation of progress widget circle (#1088)
+- Updated Elasticsearch to use HTTP Basic Auth
+- Refactored Toast component (#1084)
+- Implemented backbone for review financial aid page (#1071)
+- Fixed learners layout (#1026)
+- Added order fulfillment API for CyberSource (#913)
+- Made progress widget get values from respective program (#1072)
+- Standardize on dash separators for Sass
+- Realistic user fixes for social username and program enrollments
+- Financial Aid: creating new requests (#1053)
+- Updated section numbering
+- Improvements to installation process documentation
+- Added faculty CMS models
+- Removed wow.js (#1062)
+- Deleted Jumbotron
+- Implemented redesign of program page
+- Set &quot;Place of Birth&quot; facet to accept multiple values
+- Only one role per User can be assigned
+- Fix mailchimp signup bug
+- Set search facets to be open by default
+- addressing comments
+- Renamed CoursePrice to CourseStatus (#1037)
+- Removed course status (#1033)
+- Changed Homepage design
+- Removed privacy page from signup flow
+- Changed travis.yml around a little
+- Implemented &#39;personalized pricing&#39; box on dashboard
+- Renamed dashboard API statuses (#1028)
+- Added Financial Aid basic models
+- Updated UX for work history page of the signup flow
+- Sending one email per recipient
+- Updated CMS help text, updated thumbnail size (#1016)
+- Fixed course display on dashboard (#997)
+- Added signup dialog to homepage and program pages
+- Added a style sheet for responsive layout (#1001)
+- Fixed settings page styling (#1014)
+- Disabled SanctuaryJS run-time type checking in production
+- Added enrollment dialog (#1000)
+- Refactored dashboard page (#993)
+- Installed sass-lint and started configuring
+- Added elastisearch auth
+- Added program selector menu (#976)
+- Updated UX for education signup screen
+- Various css changes to colors, fonts, margins (#995)
+- Style changes for user page (#864)
+- Made Css changes to the user search page (#982)
+- Fixed improper JSON formatting
+- Removed TOS checkbox and validation from signup page
+- Filtered out programs which are not live from program enrollments API (#979)
+- Fixed course tests (#978)
+- Added course price in listing (#960)
+- Made edx_level_of_education read only (#972)
+- Fixed key name for search request API param
+- Rewrote actions to use &#39;redux-actions&#39;
+- Added code to get and add program enrollments (#968)
+- Removed signals creating or deleting a ProgramEnrollment (#964)
+- Added some server side verification for profiles (#956)
+- Added nationality, removed birth city and state (#961)
+- Split long line into multiple lines (#962)
+- Hooked up front end to mail API endpoint
+- Added test case to mock out elasticsearch (#902)
+- Switched Heroku to Python 3.5 (#959)
+- Added API endpoint to send text email to a list of recipients
+- Comments on PR
+- Added link to ToS page
+- Small comment change
+- Fixed linting
+- Added tests
+- Added POST support for program enrollments
+- fixed linting
+- Added tests
+- Changed docstring
+- Added REST API for user enrolled programs
+- Added celerybeat-schedule to gitignore
+- Added new ToS page
+- Added background task that run every 6 hours and update all MM users data from edx-platform (#771)
+- Removed CLIENT_ELASTICSEARCH_URL environment variable (#947)
+- Fixed react warnings, added check to error on React warnings (#942)
+- Added generic type to Dispatcher (#945)
+- Added validation for the email composition dialog
+- Made some basic css changes (#887)
+- Celery now loads the environment in Docker
+- Removed switch validation from profile flow
+- Added API to create an order and a button to purchase via CyberSource (#897)
+- Removed &#39;new group from selected&#39; button
+- Switched to use enzyme in IntegrationTestHelper (#911)
+- Added functionality for composing emails on the LearnerSearch page
+- Updated node version in heroku (#907)
+- Implemented a sort dropdown menu for the Learners search
+- Added CoursePrice model (#895)
+- Implemented new design for the profile progress widget
+- Added ecommerce models (#894)
+- Made LearnerResult avatars round
+- Added program grade filter and histogram to UI
+- Fixed program and social username creation in realistic search data generation
+- Moved material-design-lite CSS import before our CSS imports (#886)
+- Added program grade to search result UI
+- Set the cursor to &#39;pointer&#39; on the filter visibility toggle
+- Added &#39;clear all filters&#39; to learner search
+- Added UserChip to search results
+- Fixed CSS for dashboard user card (#868)
+- Fixed webpack hot-reload config
+- Implemented redesign of dashboard page (#836)
+- installed flow v0.30.0
+- fixed JS console error (&#39;key&#39; prop required)
+- Passed onRequestClose callback to ToS Dialog
+- Added TermsOfServiceDialog to Profile flow
+- Added security and tests to the Search Rest API
+- Fix CSRF handling
+- Added Search REST API
+- Added widget for progress (#817)
+- Added program grade to ES index to support filtering by grade
+- Replaced filtering with hierarchical filtering (#815)
+- Implemented new profile form design
+- Updated realistic user data to include users with different current country and birth country
+- Changed indexing structure and logic to use a user&#39;s program enrollments
+- Enforced permissions on profiles REST API (#790)
+
 Version 0.13.0
 --------------
 

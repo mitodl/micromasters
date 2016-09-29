@@ -95,78 +95,48 @@ describe('utility functions', () => {
   });
 
   describe('getPreferredName', () => {
-    let settingsBackup;
+    let profile;
     beforeEach(() => {
-      settingsBackup = Object.assign({}, SETTINGS);
+      profile = {
+        username: 'jane_username',
+        preferred_name: 'jane preferred',
+        first_name: 'jane',
+        last_name: 'doe',
+      };
     });
 
-    afterEach(() => {
-      Object.assign(SETTINGS, settingsBackup);
+    it('prefers to show the preferred name', () => {
+      assert.equal('jane preferred', getPreferredName(profile));
     });
 
-    describe('profile is logged-in users profile', () => {
-      let profile;
-
-      beforeEach(() => {
-        profile = {
-          username: SETTINGS.username,
-        };
-      });
-
-      it('shows profile.preferred_name', () => {
-        profile.preferred_name = 'profile preferred name';
-        assert.equal('profile preferred name', getPreferredName(profile));
-      });
-
-      it('uses SETTINGS.name if profile.preferred_name is not available', () => {
-        assert.equal(SETTINGS.name, getPreferredName(profile));
-      });
-
-      it('uses SETTINGS.username if SETTINGS.name and profile.preferred_name are not available', () => {
-        SETTINGS.name = '';
-        assert.equal(SETTINGS.username, getPreferredName(profile));
-      });
-
+    it('uses first_name if preferred_name is not available', () => {
+      profile.preferred_name = undefined;
+      assert.equal('jane doe', getPreferredName(profile));
     });
 
-    describe("profile is not logged-in user's profile", () => {
-      let profile;
-      beforeEach(() => {
-        profile = {
-          first_name: "First",
-          username: "not_the_same"
-        };
-      });
-
-      it('uses preferred_name if it is available', () => {
-        profile.preferred_name = 'PREFERENCE';
-        assert.equal(getPreferredName(profile), 'PREFERENCE');
-      });
-
-      it('falls back to first_name if there is no prefered name', () => {
-        assert.equal(getPreferredName(profile), "First");
-      });
+    it('uses the username if first_name and preferred_name are not available', () => {
+      profile.preferred_name = undefined;
+      profile.first_name = undefined;
+      assert.equal('jane_username doe', getPreferredName(profile));
     });
 
-    describe('last name behavior', () => {
-      it('shows the last name by default', () => {
-        assert.equal('First Last', getPreferredName({
-          preferred_name: 'First',
-          last_name: 'Last'
-        }));
-      });
+    it('shows the last name by default', () => {
+      assert.equal('First Last', getPreferredName({
+        first_name: 'First',
+        last_name: 'Last'
+      }));
+    });
 
-      it('does not show the last name if `last === false`', () => {
-        assert.equal('First', getPreferredName({
-          preferred_name: 'First',
-          last_name: 'Last',
-        }, false));
-      });
+    it('does not show the last name if `last === false`', () => {
+      assert.equal('First', getPreferredName({
+        preferred_name: 'First',
+        last_name: 'Last',
+      }, false));
+    });
 
-      [true, false].forEach(bool => {
-        it(`shows just the first name if 'last === ${bool}' and 'profile.last_name === undefined'`, () => {
-          assert.equal('First', getPreferredName({preferred_name: 'First'}, bool));
-        });
+    [true, false].forEach(bool => {
+      it(`shows just the first name if 'last === ${bool}' and 'profile.last_name === undefined'`, () => {
+        assert.equal('First', getPreferredName({preferred_name: 'First'}, bool));
       });
     });
   });

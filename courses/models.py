@@ -35,7 +35,7 @@ class Program(models.Model):
         ).first()
         if course_price_object is None:
             # If no CoursePrice is valid for this program, can't meaningfully return any value
-            raise ImproperlyConfigured("No course price available for this program.")
+            raise ImproperlyConfigured('No course price available for program "{}".'.format(self.title))
         return course_price_object.price
 
 
@@ -90,7 +90,7 @@ class CourseRun(models.Model):
       rather a specific instance of that course being taught.
     """
     title = models.CharField(max_length=255)
-    edx_course_key = models.CharField(max_length=255, blank=True, null=True)
+    edx_course_key = models.CharField(max_length=255, blank=True, null=True, db_index=True)
     enrollment_start = models.DateTimeField(blank=True, null=True)
     start_date = models.DateTimeField(blank=True, null=True)
     enrollment_end = models.DateTimeField(blank=True, null=True)

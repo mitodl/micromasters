@@ -18,7 +18,6 @@ from django.db import transaction
 from django.db.models import Q
 import pytz
 
-from ecommerce.models import CoursePrice
 from courses.models import CourseRun
 from dashboard import models
 from profiles.api import get_social_username
@@ -55,7 +54,7 @@ class CourseRunStatus:
     """
     NOT_ENROLLED = 'not-enrolled'
     CURRENTLY_ENROLLED = 'currently-enrolled'
-    READ_CERT = 'read-cert'
+    CHECK_IF_PASSED = 'check-if-passed'
     WILL_ATTEND = 'will-attend'
     CAN_UPGRADE = 'can-upgrade'
     NOT_PASSED = 'not-passed'
@@ -83,10 +82,10 @@ class CourseFormatConditionalFields:
                 'format_field': 'fuzzy_enrollment_start_date'
             },
         ],
-        CourseStatus.CURRENTLY_ENROLLED: [
+        CourseStatus.CAN_UPGRADE: [
             {
-                'course_run_field': 'start_date',
-                'format_field': 'course_start_date'
+                'course_run_field': 'upgrade_deadline',
+                'format_field': 'course_upgrade_deadline'
             },
         ]
     }
@@ -106,10 +105,9 @@ class CourseRunUserStatus:
     """
     Representation of a course run status for a specific user
     """
-    def __init__(self, status, course_run=None, enrollment_for_course=None):
+    def __init__(self, status, course_run=None):
         self.status = status
         self.course_run = course_run
-        self.enrollment_for_course = enrollment_for_course
 
     def __repr__(self):
         return "<CourseRunUserStatus for course {course} status {status} at {address}>".format(
@@ -119,59 +117,52 @@ class CourseRunUserStatus:
         )
 
 
-def get_info_for_program(program, enrollments, certificates):
+def get_info_for_program(mmtrack):
     """
     Helper function that formats a program with all the courses and runs
 
     Args:
-        program (Program): a program
-        enrollments (Enrollments): the user enrollments object
-        certificates (Certificates): the user certificates objects
+        mmtrack (dashboard.utils.MMTrack): a instance of all user information about a program
 
     Returns:
         dict: a dictionary containing information about the program
     """
     # basic data for the program
     data = {
-        "id": program.pk,
-        "description": program.description,
-        "title": program.title,
-        "financial_aid_availability": program.financial_aid_availability,
-        "courses": []
+        "id": mmtrack.program.pk,
+        "description": mmtrack.program.description,
+        "title": mmtrack.program.title,
+        "financial_aid_availability": mmtrack.financial_aid_available,
+        "courses": [],
     }
-    for course in program.course_set.all():
+    if mmtrack.financial_aid_available:
+        data["financial_aid_user_info"] = {
+            "has_user_applied": mmtrack.financial_aid_applied,
+            "application_status": mmtrack.financial_aid_status,
+            "min_possible_cost": mmtrack.financial_aid_min_price,
+            "max_possible_cost": mmtrack.financial_aid_max_price,
+        }
+    for course in mmtrack.program.course_set.all():
         data['courses'].append(
-            get_info_for_course(course, enrollments, certificates)
+            get_info_for_course(course, mmtrack)
         )
     data['courses'].sort(key=lambda x: x['position_in_program'])
     return data
 
 
-def _add_run(course_data, run, status, certificate=None):
-    """Helper function to add a course run to the status dictionary"""
-    course_data['runs'].append(
-        format_courserun_for_dashboard(
-            run,
-            status,
-            certificate=certificate,
-            position=len(course_data['runs']) + 1
-        )
-    )
-
-
-def get_info_for_course(course, user_enrollments, user_certificates):
+def get_info_for_course(course, mmtrack):
     """
     Checks the status of a course given the status of all its runs
 
     Args:
         course (Course): a course object
-        user_enrollments (Enrollments): the user enrollments object
-        user_certificates (Certificates): the user certificates objects
+        mmtrack (dashboard.utils.MMTrack): a instance of all user information about a program
 
     Returns:
         dict: dictionary representing the course status for the user
     """
     # pylint: disable=too-many-statements
+
     # data about the course to be returned anyway
     course_data = {
         "id": course.pk,
@@ -181,11 +172,23 @@ def get_info_for_course(course, user_enrollments, user_certificates):
         "prerequisites": course.prerequisites,
         "runs": [],
     }
+
+    def _add_run(run, mmtrack_, status):
+        """Helper function to add a course run to the status dictionary"""
+        course_data['runs'].append(
+            format_courserun_for_dashboard(
+                run,
+                status,
+                mmtrack=mmtrack_,
+                position=len(course_data['runs']) + 1
+            )
+        )
+
     with transaction.atomic():
         if not course.courserun_set.count():
             return course_data
         # get all the run statuses
-        run_statuses = [get_status_for_courserun(course_run, user_enrollments)
+        run_statuses = [get_status_for_courserun(course_run, mmtrack)
                         for course_run in course.courserun_set.all()]
     # sort them by end date
     run_statuses.sort(key=lambda x: x.course_run.end_date or
@@ -202,71 +205,66 @@ def get_info_for_course(course, user_enrollments, user_certificates):
     if run_status.status == CourseRunStatus.NOT_ENROLLED:
         next_run = course.get_next_run()
         if next_run is not None:
-            _add_run(course_data, next_run, CourseStatus.OFFERED)
+            _add_run(next_run, mmtrack, CourseStatus.OFFERED)
     elif run_status.status == CourseRunStatus.NOT_PASSED:
         next_run = course.get_next_run()
         if next_run is not None:
-            _add_run(course_data, next_run, CourseStatus.OFFERED)
+            _add_run(next_run, mmtrack, CourseStatus.OFFERED)
         if next_run is None or run_status.course_run.pk != next_run.pk:
-            _add_run(course_data, run_status.course_run, CourseStatus.NOT_PASSED)
+            _add_run(run_status.course_run, mmtrack, CourseStatus.NOT_PASSED)
     elif run_status.status == CourseRunStatus.CURRENTLY_ENROLLED:
-        _add_run(course_data, run_status.course_run, CourseStatus.CURRENTLY_ENROLLED)
+        _add_run(run_status.course_run, mmtrack, CourseStatus.CURRENTLY_ENROLLED)
     # check if we need to check the certificate
-    elif run_status.status == CourseRunStatus.READ_CERT:
-        # if there is no certificate for the user, the user never passed
-        # the course, so she needs to enroll in the next one
-        if not user_certificates.has_verified_cert(run_status.course_run.edx_course_key):
+    elif run_status.status == CourseRunStatus.CHECK_IF_PASSED:
+        # if the user never passed the course she needs to enroll in the next one
+        if not mmtrack.has_passed_course(run_status.course_run.edx_course_key):
             next_run = course.get_next_run()
             if next_run is not None:
-                _add_run(course_data, next_run, CourseStatus.OFFERED)
+                _add_run(next_run, mmtrack, CourseStatus.OFFERED)
             # add the run of the status anyway if the next run is different from the one just added
             if next_run is None or run_status.course_run.pk != next_run.pk:
-                _add_run(course_data, run_status.course_run, CourseStatus.NOT_PASSED)
+                _add_run(run_status.course_run, mmtrack, CourseStatus.NOT_PASSED)
         else:
-            # pull the verified certificate for course
-            cert = user_certificates.get_verified_cert(run_status.course_run.edx_course_key)
-            _add_run(course_data, run_status.course_run, CourseStatus.PASSED, certificate=cert)
+            _add_run(run_status.course_run, mmtrack, CourseStatus.PASSED)
     elif run_status.status == CourseRunStatus.WILL_ATTEND:
-        _add_run(course_data, run_status.course_run, CourseStatus.CURRENTLY_ENROLLED)
+        _add_run(run_status.course_run, mmtrack, CourseStatus.CURRENTLY_ENROLLED)
     elif run_status.status == CourseRunStatus.CAN_UPGRADE:
-        _add_run(course_data, run_status.course_run, CourseStatus.CAN_UPGRADE)
+        _add_run(run_status.course_run, mmtrack, CourseStatus.CAN_UPGRADE)
 
     # add all the other runs with status != NOT_ENROLLED
     # the first one (or two in some cases) has been added with the logic before
     for run_status in run_statuses:
         if run_status.status != CourseRunStatus.NOT_ENROLLED:
-            if (run_status.status == CourseRunStatus.READ_CERT and
-                    user_certificates.has_verified_cert(run_status.course_run.edx_course_key)):
+            if (run_status.status == CourseRunStatus.CHECK_IF_PASSED and
+                    mmtrack.has_passed_course(run_status.course_run.edx_course_key)):
                 # in this case the user might have passed the course also in the past
-                cert = user_certificates.get_verified_cert(run_status.course_run.edx_course_key)
-                _add_run(course_data, run_status.course_run, CourseStatus.PASSED, certificate=cert)
+                _add_run(run_status.course_run, mmtrack, CourseStatus.PASSED)
             else:
                 # any other status means that the student never passed the course run
-                _add_run(course_data, run_status.course_run, CourseStatus.NOT_PASSED)
+                _add_run(run_status.course_run, mmtrack, CourseStatus.NOT_PASSED)
 
     return course_data
 
 
-def get_status_for_courserun(course_run, user_enrollments):
+def get_status_for_courserun(course_run, mmtrack):
     """
     Checks the status of a course run for a user given her enrollments
 
     Args:
         course_run (CourseRun): a course run
-        user_enrollments (Enrollments): the user enrollments
+        mmtrack (dashboard.utils.MMTrack): a instance of all user information about a program
 
     Returns:
         CourseRunUserStatus: an object representing the run status for the user
     """
-    if not user_enrollments.is_enrolled_in(course_run.edx_course_key):
+    if not mmtrack.is_enrolled(course_run.edx_course_key):
         return CourseRunUserStatus(CourseRunStatus.NOT_ENROLLED, course_run)
-    course_enrollment = user_enrollments.get_enrollment_for_course(course_run.edx_course_key)
     status = None
-    if course_enrollment.is_verified:
+    if mmtrack.is_enrolled_mmtrack(course_run.edx_course_key):
         if course_run.is_current:
             status = CourseRunStatus.CURRENTLY_ENROLLED
         elif course_run.is_past:
-            status = CourseRunStatus.READ_CERT
+            status = CourseRunStatus.CHECK_IF_PASSED
         elif course_run.is_future:
             status = CourseRunStatus.WILL_ATTEND
     else:
@@ -276,20 +274,18 @@ def get_status_for_courserun(course_run, user_enrollments):
             status = CourseRunStatus.NOT_PASSED
     return CourseRunUserStatus(
         status=status,
-        course_run=course_run,
-        enrollment_for_course=course_enrollment
+        course_run=course_run
     )
 
 
-def format_courserun_for_dashboard(course_run, status_for_user, certificate=None, position=1):
+def format_courserun_for_dashboard(course_run, status_for_user, mmtrack, position=1):
     """
     Helper function that formats a course run adding informations to the fields coming from the DB
 
     Args:
         course_run (CourseRun): a course run
         status_for_user (str): a string representing the status of a course for the user
-        certificate (Certificate): an object representing the
-            certificate of the user for this run
+        mmtrack (dashboard.utils.MMTrack): a instance of all user information about a program
         position (int): The position of the course run within the list
 
     Returns:
@@ -314,24 +310,13 @@ def format_courserun_for_dashboard(course_run, status_for_user, certificate=None
         formatted_run[extra_field['format_field']] = getattr(course_run, extra_field['course_run_field'])
 
     if status_for_user == CourseStatus.PASSED:
-        if certificate is not None:
-            # if the status is passed, pull the grade and the certificate url
-            formatted_run['grade'] = certificate.grade
-            formatted_run['certificate_url'] = certificate.download_url
-        else:
-            # this should never happen, but just in case
-            log.error('A valid certificate was expected')
-
-    if status_for_user == CourseStatus.CURRENTLY_ENROLLED:
-        # TODO: here goes the logic to pull the current grade  # pylint: disable=fixme
-        pass
-
-    if status_for_user == CourseStatus.OFFERED or status_for_user == CourseStatus.CAN_UPGRADE:
-        try:
-            course_price = CoursePrice.objects.get(course_run=course_run, is_valid=True)
-            formatted_run['price'] = course_price.price
-        except CoursePrice.DoesNotExist:
-            pass
+        formatted_run['final_grade'] = mmtrack.get_final_grade(course_run.edx_course_key)
+    # if the course is not passed the final grade is the current grade
+    elif status_for_user == CourseStatus.NOT_PASSED:
+        formatted_run['final_grade'] = mmtrack.get_current_grade(course_run.edx_course_key)
+    # any other status but "offered" should have the current grade
+    elif status_for_user != CourseStatus.OFFERED:
+        formatted_run['current_grade'] = mmtrack.get_current_grade(course_run.edx_course_key)
 
     return formatted_run
 

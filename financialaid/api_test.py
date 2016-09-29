@@ -11,15 +11,21 @@ from courses.factories import ProgramFactory, CourseRunFactory
 from dashboard.models import ProgramEnrollment
 from ecommerce.factories import CoursePriceFactory
 from financialaid.api import (
-    determine_tier_program,
     determine_auto_approval,
-    get_no_discount_tier_program, get_course_price_for_learner)
+    determine_tier_program,
+    determine_income_usd,
+    get_course_price_for_learner,
+    get_no_discount_tier_program,
+    update_currency_exchange_rate)
 from financialaid.constants import COUNTRY_INCOME_THRESHOLDS
 from financialaid.factories import (
     TierProgramFactory,
     FinancialAidFactory
 )
-from financialaid.models import FinancialAidStatus
+from financialaid.models import (
+    CurrencyExchangeRate,
+    FinancialAidStatus
+)
 from profiles.factories import ProfileFactory
 from roles.models import Role
 from roles.roles import Staff, Instructor
@@ -140,6 +146,14 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
     """
     Tests for financialaid api backend
     """
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        CurrencyExchangeRate.objects.create(
+            currency_code="GHI",
+            exchange_rate=1.5
+        )
+
     def setUp(self):
         super().setUp()
         self.program.refresh_from_db()
@@ -219,6 +233,15 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
         )
         assert determine_auto_approval(financial_aid) is True
 
+    def test_determine_income_usd(self):  # pylint: disable=no-self-use
+        """
+        Tests determine_income_usd()
+        """
+        # original income is in USD
+        assert determine_income_usd(5000, "USD") == 5000
+        # original income is in GHI currency
+        assert determine_income_usd(3000, "GHI") == 2000
+
     def test_get_no_discount_tier_program(self):
         """
         Tests get_no_discount_tier_program()
@@ -288,3 +311,34 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
             get_course_price_for_learner(self.enrolled_profile3.user, self.program),
             expected_response
         )
+
+
+class ExchangeRateAPITests(ESTestCase):
+    """
+    Tests for financial aid exchange rate api backend
+    """
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        CurrencyExchangeRate.objects.create(
+            currency_code="ABC",
+            exchange_rate=1.5
+        )
+        CurrencyExchangeRate.objects.create(
+            currency_code="DEF",
+            exchange_rate=1.5
+        )
+
+    def test_update_currency_exchange_rate(self):
+        """
+        Tests updated_currency_exchange_rate()
+        """
+        latest_rates = {
+            "ABC": 12.3,
+            "GHI": 7.89
+        }
+        update_currency_exchange_rate(latest_rates)
+        assert CurrencyExchangeRate.objects.get(currency_code="ABC").exchange_rate == latest_rates["ABC"]
+        with self.assertRaises(CurrencyExchangeRate.DoesNotExist):
+            CurrencyExchangeRate.objects.get(currency_code="DEF")
+        assert CurrencyExchangeRate.objects.get(currency_code="GHI").exchange_rate == latest_rates["GHI"]

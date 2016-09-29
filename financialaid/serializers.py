@@ -18,6 +18,7 @@ from dashboard.models import ProgramEnrollment
 from financialaid.api import (
     determine_auto_approval,
     determine_tier_program,
+    determine_income_usd,
     get_no_discount_tier_program
 )
 from financialaid.constants import (
@@ -28,6 +29,7 @@ from financialaid.constants import (
     FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT,
     FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY
 )
+from financialaid.exceptions import NotSupportedException
 from financialaid.models import (
     FinancialAid,
     FinancialAidStatus,
@@ -59,8 +61,13 @@ class FinancialAidRequestSerializer(serializers.Serializer):
         """
         Override save method
         """
-        if self.validated_data["original_currency"] != "USD":
-            raise ValidationError("Only USD supported currently")
+        try:
+            income_usd = determine_income_usd(
+                self.validated_data["original_income"],
+                self.validated_data["original_currency"]
+            )
+        except NotSupportedException:
+            raise ValidationError("Currency not supported")
         user = self.context["request"].user
         tier_program = determine_tier_program(self.validated_data["program"], self.validated_data["original_income"])
 
@@ -69,7 +76,7 @@ class FinancialAidRequestSerializer(serializers.Serializer):
             original_currency=self.validated_data["original_currency"],
             tier_program=tier_program,
             user=user,
-            income_usd=self.validated_data["original_income"],
+            income_usd=income_usd,
             country_of_income=user.profile.country,
             date_exchange_rate=datetime.datetime.now()
         )

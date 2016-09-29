@@ -1,7 +1,15 @@
 """
 Constants for financialaid
 """
+from urllib.parse import quote_plus
 
+from django.conf import settings
+
+
+CURRENCY_EXCHANGE_RATE_API_REQUEST_URL = "{url}latest.json?app_id={app_id}".format(
+    url=settings.OPEN_EXCHANGE_RATES_URL,
+    app_id=quote_plus(settings.OPEN_EXCHANGE_RATES_APP_ID)
+)
 
 DEFAULT_INCOME_THRESHOLD = 100000
 COUNTRY_INCOME_THRESHOLDS = {

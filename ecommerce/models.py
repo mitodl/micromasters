@@ -35,6 +35,7 @@ class Order(Model):
         choices=[(status, status) for status in STATUSES],
         default=CREATED,
         max_length=30,
+        db_index=True,
     )
 
     created_at = DateTimeField(auto_now_add=True)
@@ -50,7 +51,7 @@ class Line(Model):
     """
     A line in an order. This contains information about a specific item to be purchased.
     """
-    course_key = TextField()
+    course_key = TextField(db_index=True)
     order = ForeignKey(Order)
     price = DecimalField(decimal_places=2, max_digits=20)
     description = TextField(blank=True, null=True)
