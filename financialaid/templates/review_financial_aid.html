@@ -120,6 +120,10 @@
         </div>
         <!-- /Sorting buttons -->
         
+        <!-- Messages -->
+        <div id="messages"></div>
+        <!-- /Messages -->
+        
         <table class="table">
           <thead>
             <tr style="color: #999999;">
@@ -135,7 +139,7 @@
           </thead>
           <tbody>
           {% for financial_aid in financial_aid_objects %}
-            <tr>
+            <tr id="application-row-{{ financial_aid.id }}" class="alert-dismissable">
               <!-- Profile picture -->
               <td>
                 {% if financial_aid.user.profile.image %}
@@ -220,10 +224,23 @@
       </div>
     </div>
   </div>
+
+  <!-- Templates -->
+  <!-- Alert message -->
+  <div id="message-template" class="alert alert-dismissible">
+    <button class="close" data-dismiss="alert"><span>&times;</span></button>
+    <span></span>
+  </div>
+  <!-- /Alert message -->
+  <!-- /Templates -->
+  
   {% include "footer.html" %}
   <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script>
+
     var CSRF_TOKEN = "{{ csrf_token }}";
+
     /**
      * Submits a financial aid application approval
      * 
@@ -247,15 +264,29 @@
             "justification": justification,
             "tier_program_id": tier_program_id
           },
-          "success": function(result) {
-            console.log("success");
-            console.log(result);
+          "success": function() {
+            displayMessage("Successfully approved " + name + "'s financial aid application.", "success");
+            $("#application-row-" + financial_aid_id).remove();
           },
           "error": function(result) {
-            alert(result.responseText);
+            displayMessage("Error: " + result.responseText + " on " + name + "'s financial aid application.", "danger");
           }
         });
       }
     }
+
+    /**
+     * Displays a dismissible alert message.
+     * 
+     * @param message {string} Message to display
+     * @param type {string} Type of Bootstrap alert
+     */
+    function displayMessage(message, type) {
+      var template = $("#message-template").clone();
+      // Populate template
+      template.addClass("alert-" + type).children("span").text(message);
+      $("#messages").append(template);
+    }
+
   </script>
 {% endblock %}
