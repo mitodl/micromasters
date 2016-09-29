@@ -110,7 +110,7 @@ class FinancialAidActionSerializer(serializers.Serializer):
             raise ValidationError("Cannot approve application that is not pending manual approval.")
         if (data['action'] == FinancialAidStatus.PENDING_MANUAL_APPROVAL and
                 self.instance.status not in [FinancialAidStatus.PENDING_DOCS, FinancialAidStatus.DOCS_SENT]):
-            raise ValidationError("Cannot mark documents as received for application not pending docs.")
+            raise ValidationError("Cannot mark documents as received for an application awaiting docs.")
         # Check tier program exists
         try:
             data["tier_program"] = TierProgram.objects.get(
