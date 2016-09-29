@@ -139,7 +139,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         exchange_rate = CurrencyExchangeRate.objects.get(currency_code="ABC").exchange_rate
         assert financial_aid.tier_program == self.tier_programs["50k"]
         assert financial_aid.status == FinancialAidStatus.PENDING_DOCS
-        assert round(financial_aid.income_usd, 5) == round(self.data["original_income"]/exchange_rate, 5)
+        self.assertAlmostEqual(financial_aid.income_usd, self.data["original_income"] / exchange_rate)
 
     def test_income_validation_currency_not_supported(self):
         """

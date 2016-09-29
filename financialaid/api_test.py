@@ -237,9 +237,9 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
         """
         Tests determine_income_usd()
         """
-        # original income is in US dollars
+        # original income is in USD
         assert determine_income_usd(5000, "USD") == 5000
-        # original income is in ABC currency
+        # original income is in GHI currency
         assert determine_income_usd(3000, "GHI") == 2000
 
     def test_get_no_discount_tier_program(self):
