@@ -11,7 +11,7 @@ from micromasters.celery import async
 
 
 @async.task
-def update_currency_exchange_rates():
+def sync_currency_exchange_rates():
     """
     Updates all CurrencyExchangeRate objects to reflect latest exchange rates from
     Open Exchange Rates API (https://openexchangerates.org/).

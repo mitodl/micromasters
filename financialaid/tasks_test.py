@@ -1,6 +1,9 @@
 """
 Test for financialaid celery tasks
 """
+from django.conf import settings
+from urllib.parse import quote_plus
+
 from django.test import (
     override_settings,
     TestCase
@@ -8,7 +11,7 @@ from django.test import (
 from mock import patch
 
 from financialaid.models import CurrencyExchangeRate
-from financialaid.tasks import update_currency_exchange_rates
+from financialaid.tasks import sync_currency_exchange_rates
 
 
 @patch('financialaid.tasks.requests.get')
@@ -42,20 +45,20 @@ class TasksTest(TestCase):
         }
 
     @override_settings(CELERY_ALWAYS_EAGER=True)
-    def test_celery_task_works(self, mocked_request):  # pylint: disable=unused-argument
-        """
-        Assert task schedule using celery beat.
-        """
-        self.assertTrue(update_currency_exchange_rates.delay())
-
-    @override_settings(CELERY_ALWAYS_EAGER=True)
     def test_update_and_add_currency_exchange_rates(self, mocked_request):
         """
         Assert currency exchange rates are updated and added
         """
         mocked_request.return_value.json.return_value = self.data
         assert CurrencyExchangeRate.objects.count() == 2
-        update_currency_exchange_rates.apply(args=()).get()
+        sync_currency_exchange_rates.apply(args=()).get()
+        called_args, _ = mocked_request.call_args
+        assert called_args[0] == quote_plus(
+            "{url}latest.json?app_id={app_id}".format(
+                url=settings.OPEN_EXCHANGE_RATES_URL,
+                app_id=settings.OPEN_EXCHANGE_RATES_APP_ID
+            )
+        )
         assert CurrencyExchangeRate.objects.count() == 3
         currency = CurrencyExchangeRate.objects.get(currency_code="MNO")
         assert currency.exchange_rate == 1.7
@@ -72,7 +75,7 @@ class TasksTest(TestCase):
         self.data["rates"] = {"DEF": "1.9"}
         mocked_request.return_value.json.return_value = self.data
         assert CurrencyExchangeRate.objects.count() == 2
-        update_currency_exchange_rates.apply(args=()).get()
+        sync_currency_exchange_rates.apply(args=()).get()
         assert CurrencyExchangeRate.objects.count() == 1
         currency = CurrencyExchangeRate.objects.get(currency_code="DEF")
         assert currency.exchange_rate == 1.9
