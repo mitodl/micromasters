@@ -135,10 +135,10 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         # Create ordered list of (financial aid status, financial message)
         messages = FinancialAidStatus.STATUS_MESSAGES_DICT
         message_order = (
+            FinancialAidStatus.PENDING_DOCS,
             FinancialAidStatus.PENDING_MANUAL_APPROVAL,
-            FinancialAidStatus.APPROVED,
-            FinancialAidStatus.REJECTED,
-            FinancialAidStatus.AUTO_APPROVED
+            FinancialAidStatus.AUTO_APPROVED,
+            FinancialAidStatus.APPROVED
         )
         context["financial_aid_statuses"] = (
             (status, "Show: {message}".format(message=messages[status]))
