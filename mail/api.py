@@ -174,14 +174,14 @@ class MailgunClient:
 def generate_financial_aid_email(financial_aid):
     """
     Generates the email subject and body for a FinancialAid status update. Accepted statuses are
-    FinancialAidStatus.APPROVED (application is approved) and FinancialAidStatus.PENDING_MANUAL_APPROVAL
-    (documents have been received).
+    FinancialAidStatus.APPROVED/FinancialAidStatus.REJECTED (the same email is sent for both statuses)
+    and FinancialAidStatus.PENDING_MANUAL_APPROVAL (documents have been received).
     Args:
         financial_aid (FinancialAid): The FinancialAid object in question
     Returns:
         dict: {"subject": (str), "body": (str)}
     """
-    if financial_aid.status == FinancialAidStatus.APPROVED:
+    if financial_aid.status in [FinancialAidStatus.APPROVED, FinancialAidStatus.REJECTED]:
         program_enrollment = ProgramEnrollment.objects.get(
             user=financial_aid.user,
             program=financial_aid.tier_program.program
