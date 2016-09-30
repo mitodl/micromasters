@@ -7,11 +7,13 @@ class FinancialAidJustification:
     """
     Justifications for financial aid decisions
     """
+    OKAY = "Documents in order"
     NOT_NOTARIZED = "Docs not notarized"
     INSUFFICIENT = "Insufficient docs"
     INCOME_INACCURATE = "Inaccurate income reported"
+    COUNTRY_INACCURATE = "Inaccurate country reported"
 
-    ALL_JUSTIFICATIONS = [NOT_NOTARIZED, INSUFFICIENT, INCOME_INACCURATE]
+    ALL_JUSTIFICATIONS = [OKAY, NOT_NOTARIZED, INSUFFICIENT, INCOME_INACCURATE, COUNTRY_INACCURATE]
 
 
 class FinancialAidStatus:
@@ -25,12 +27,12 @@ class FinancialAidStatus:
 
     ALL_STATUSES = [CREATED, APPROVED, AUTO_APPROVED, REJECTED, PENDING_DOCS, PENDING_MANUAL_APPROVAL]
     STATUS_MESSAGES_DICT = {
-        CREATED: "Created Applications",
-        AUTO_APPROVED: "Auto-approved Applications",
-        PENDING_DOCS: "Pending Documentation Applications",
-        PENDING_MANUAL_APPROVAL: "Pending Manual Approval Applications",
-        APPROVED: "Approved Applications",
-        REJECTED: "Rejected Applications",
+        CREATED: "Created",
+        AUTO_APPROVED: "Auto-approved",
+        PENDING_DOCS: "Pending Documentation",
+        PENDING_MANUAL_APPROVAL: "Pending Manual Approval",
+        APPROVED: "Approved",
+        REJECTED: "Rejected"
     }
 
 
