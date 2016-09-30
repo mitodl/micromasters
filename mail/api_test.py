@@ -138,7 +138,10 @@ class FinancialAidMailAPITests(TestCase):
             cls.staff_user_profile = ProfileFactory.create()
         cls.financial_aid = FinancialAidFactory.create()
 
-    @override_settings(MAILGUN_FROM_EMAIL='mailgun_from_email@example.com', MAILGUN_RECIPIENT_OVERRIDE=None)
+    @override_settings(
+        MAILGUN_FROM_EMAIL='mailgun_from_email@example.com',
+        MAILGUN_RECIPIENT_OVERRIDE=None
+    )
     def test_financial_aid_email(self, mock_post):
         """
         Test that MailgunClient.send_financial_aid_email() sends an individual message
@@ -174,7 +177,10 @@ class FinancialAidMailAPITests(TestCase):
         assert audit.email_subject == 'email subject'
         assert audit.email_body == 'email body'
 
-    @override_settings(MAILGUN_FROM_EMAIL='mailgun_from_email@example.com', MAILGUN_RECIPIENT_OVERRIDE=None)
+    @override_settings(
+        MAILGUN_FROM_EMAIL='mailgun_from_email@example.com',
+        MAILGUN_RECIPIENT_OVERRIDE=None
+    )
     def test_financial_aid_email_with_blank_subject_and_body(self, mock_post):
         """
         Test that MailgunClient.send_financial_aid_email() sends an individual message

@@ -6,6 +6,7 @@ import {
   getUserProfile,
   patchUserProfile,
   getDashboard,
+  getCoursePrices,
   getCookie,
   fetchJSONWithCSRF,
   fetchWithCSRF,
@@ -21,6 +22,7 @@ import * as api from './api';
 import {
   CHECKOUT_RESPONSE,
   DASHBOARD_RESPONSE,
+  COURSE_PRICES_RESPONSE,
   USER_PROFILE_RESPONSE,
   PROGRAM_ENROLLMENTS,
 } from '../constants';
@@ -144,6 +146,14 @@ describe('api', function() {
 
       return assert.isRejected(getDashboard()).then(() => {
         assert.ok(fetchJSONStub.calledWith('/api/v0/dashboard/', {}, true));
+      });
+    });
+
+    it('gets course prices', () => {
+      fetchJSONStub.returns(Promise.resolve(COURSE_PRICES_RESPONSE));
+      return getCoursePrices().then(coursePrices => {
+        assert.ok(fetchJSONStub.calledWith(`/api/v0/course_prices/`, {}));
+        assert.deepEqual(coursePrices, COURSE_PRICES_RESPONSE);
       });
     });
 

@@ -2,9 +2,6 @@
 API helper functions for financialaid
 """
 from django.db import transaction
-from rest_framework.exceptions import ValidationError
-
-from dashboard.models import ProgramEnrollment
 from financialaid.constants import (
     COUNTRY_INCOME_THRESHOLDS,
     DEFAULT_INCOME_THRESHOLD
@@ -80,13 +77,13 @@ def get_no_discount_tier_program(program_id):
     return TierProgram.objects.get(program_id=program_id, current=True, discount_amount=0)
 
 
-def get_course_price_for_learner(learner, program):
+def get_formatted_course_price(program_enrollment):
     """
-    Returns dictionary of information about the course price for a learner. Raises DRF ValidationError
-    if learner is not enrolled in this course.
+    Returns dictionary of information about the course price for a learner.
+
     Args:
-        learner (User): the learner whose price we're retrieving
-        program (Program): the program whose price we're retrieving
+        program_enrollment (ProgramEnrollment): program enrollment record for the learner
+            whose price we're retrieving
     Returns:
         dict: {
             "course_price": float - the course price
@@ -95,11 +92,8 @@ def get_course_price_for_learner(learner, program):
             "has_financial_aid_request": bool - if has a financial aid request
         }
     """
-    # Validate that learner is enrolled in program
-    try:
-        ProgramEnrollment.objects.get(user=learner, program=program)
-    except ProgramEnrollment.DoesNotExist:
-        raise ValidationError("Learner not enrolled in this program.")
+    user = program_enrollment.user
+    program = program_enrollment.program
 
     has_financial_aid_request = False
     financial_aid_adjustment = False
@@ -110,7 +104,7 @@ def get_course_price_for_learner(learner, program):
         financial_aid_availability = True
         # Check to see if learner has a financial aid request
         financial_aid_queryset = FinancialAid.objects.filter(
-            user=learner,
+            user=user,
             tier_program__program=program
         )
         if financial_aid_queryset.exists():
@@ -122,6 +116,7 @@ def get_course_price_for_learner(learner, program):
                 course_price = course_price - financial_aid.tier_program.discount_amount
                 financial_aid_adjustment = True
     return {
+        "program_id": program.id,
         "course_price": course_price,
         "financial_aid_adjustment": financial_aid_adjustment,
         "financial_aid_availability": financial_aid_availability,

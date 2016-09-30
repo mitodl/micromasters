@@ -24,6 +24,11 @@ import {
   RECEIVE_CHECKOUT_SUCCESS,
   RECEIVE_CHECKOUT_FAILURE,
 
+  REQUEST_COURSE_PRICES,
+  RECEIVE_COURSE_PRICES_SUCCESS,
+  RECEIVE_COURSE_PRICES_FAILURE,
+  CLEAR_COURSE_PRICES,
+
   FETCH_FAILURE,
   FETCH_PROCESSING,
   FETCH_SUCCESS,
@@ -34,7 +39,7 @@ import {
   currentProgramEnrollment,
   enrollments,
 } from './enrollments';
-import type { DashboardState } from '../flow/dashboardTypes';
+import type { DashboardState, CoursePricesState } from '../flow/dashboardTypes';
 import type { Action } from '../flow/reduxTypes';
 import type {
   ProfileGetResult,
@@ -190,6 +195,31 @@ export const checkout = (state: CheckoutState = INITIAL_CHECKOUT_STATE, action: 
   }
 };
 
+const INITIAL_COURSE_PRICES_STATE: CoursePricesState = {
+  coursePrices: []
+};
+export const coursePrices = (state: CoursePricesState = INITIAL_COURSE_PRICES_STATE, action: Action) => {
+  switch (action.type) {
+  case REQUEST_COURSE_PRICES:
+    return Object.assign({}, state, {
+      fetchStatus: FETCH_PROCESSING
+    });
+  case RECEIVE_COURSE_PRICES_SUCCESS:
+    return Object.assign({}, state, {
+      fetchStatus: FETCH_SUCCESS,
+      coursePrices: action.payload
+    });
+  case RECEIVE_COURSE_PRICES_FAILURE:
+    return Object.assign({}, state, {
+      fetchStatus: FETCH_FAILURE,
+      errorInfo: action.payload
+    });
+  case CLEAR_COURSE_PRICES:
+    return INITIAL_COURSE_PRICES_STATE;
+  default:
+    return state;
+  }
+};
 
 export default combineReducers({
   profiles,
@@ -197,6 +227,7 @@ export default combineReducers({
   ui,
   email,
   checkout,
+  coursePrices,
   enrollments,
   currentProgramEnrollment,
   signupDialog,

@@ -18,6 +18,8 @@ import {
   FETCH_FAILURE,
   fetchDashboard,
   clearDashboard,
+  fetchCoursePrices,
+  clearCoursePrices,
 } from '../actions';
 import {
   fetchUserProfile,
@@ -39,7 +41,7 @@ import {
 } from '../actions/ui';
 import { clearUI, setProfileStep } from '../actions/ui';
 import { validateProfileComplete } from '../util/validation';
-import type { DashboardState } from '../flow/dashboardTypes';
+import type { DashboardState, CoursePricesState } from '../flow/dashboardTypes';
 import type {
   ProgramEnrollment,
   ProgramEnrollmentsState,
@@ -57,6 +59,7 @@ class App extends React.Component {
     currentProgramEnrollment: ProgramEnrollment,
     dispatch:                 Dispatch,
     dashboard:                DashboardState,
+    coursePrices:             CoursePricesState,
     enrollments:              ProgramEnrollmentsState,
     history:                  Object,
     ui:                       UIState,
@@ -70,6 +73,7 @@ class App extends React.Component {
   updateRequirements() {
     this.fetchUserProfile(SETTINGS.username);
     this.fetchDashboard();
+    this.fetchCoursePrices();
     this.fetchEnrollments();
     this.requireProfileFilledOut();
     this.requireCompleteProfile();
@@ -87,6 +91,7 @@ class App extends React.Component {
     const { dispatch } = this.props;
     dispatch(clearProfile(SETTINGS.username));
     dispatch(clearDashboard());
+    dispatch(clearCoursePrices());
     dispatch(clearUI());
     dispatch(clearEnrollments());
   }
@@ -102,6 +107,13 @@ class App extends React.Component {
     const { dashboard, dispatch } = this.props;
     if (dashboard.fetchStatus === undefined) {
       dispatch(fetchDashboard());
+    }
+  }
+
+  fetchCoursePrices() {
+    const { coursePrices, dispatch } = this.props;
+    if (coursePrices.fetchStatus === undefined) {
+      dispatch(fetchCoursePrices());
     }
   }
 
@@ -253,6 +265,7 @@ const mapStateToProps = (state) => {
   return {
     userProfile:              profile,
     dashboard:                state.dashboard,
+    coursePrices:             state.coursePrices,
     ui:                       state.ui,
     currentProgramEnrollment: state.currentProgramEnrollment,
     enrollments:              state.enrollments,

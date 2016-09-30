@@ -5,6 +5,49 @@ export const BACHELORS = 'b';
 export const MASTERS = 'm';
 export const DOCTORATE = 'p';
 
+export const ISO_8601_FORMAT = 'YYYY-MM-DD';
+export const DASHBOARD_FORMAT = 'M/D/Y';
+
+// NOTE: this is in order of attainment
+export const EDUCATION_LEVELS = [
+  {value: HIGH_SCHOOL, label: "High school"},
+  {value: ASSOCIATE, label: 'Associate degree'},
+  {value: BACHELORS, label: "Bachelor's degree"},
+  {value: MASTERS, label: "Master's or professional degree"},
+  {value: DOCTORATE, label: "Doctorate"}
+];
+
+export const PERSONAL_STEP = 'personal';
+export const EMPLOYMENT_STEP = 'employment';
+export const EDUCATION_STEP = 'education';
+
+export const PROFILE_STEP_LABELS = new Map([
+  [PERSONAL_STEP, "Personal"],
+  [EDUCATION_STEP, "Education"],
+  [EMPLOYMENT_STEP, "Professional"]
+]);
+
+export const DEFAULT_OPTION_LIMIT_COUNT = 10;
+
+export const SEARCH_FILTER_DEFAULT_VISIBILITY = true;
+
+export const STATUS_PASSED = 'passed';
+export const STATUS_NOT_PASSED = 'not-passed';
+export const STATUS_CURRENTLY_ENROLLED = 'currently-enrolled';
+export const STATUS_CAN_UPGRADE = 'can-upgrade';
+export const STATUS_OFFERED = 'offered';
+
+export const ALL_COURSE_STATUSES = [
+  STATUS_PASSED,
+  STATUS_NOT_PASSED,
+  STATUS_OFFERED,
+  STATUS_CAN_UPGRADE,
+  STATUS_CURRENTLY_ENROLLED,
+];
+
+export const TOAST_SUCCESS = 'success';
+export const TOAST_FAILURE = 'failure';
+
 export const ELASTICSEARCH_RESPONSE = {
   "took": 22,
   "timed_out": false,
@@ -210,20 +253,6 @@ export const USER_PROFILE_RESPONSE = {
 export const USER_PROGRAM_RESPONSE = {
   "grade_average": 83
 };
-
-export const STATUS_PASSED = 'passed';
-export const STATUS_NOT_PASSED = 'not-passed';
-export const STATUS_CURRENTLY_ENROLLED = 'currently-enrolled';
-export const STATUS_CAN_UPGRADE = 'can-upgrade';
-export const STATUS_OFFERED = 'offered';
-
-export const ALL_COURSE_STATUSES = [
-  STATUS_PASSED,
-  STATUS_NOT_PASSED,
-  STATUS_OFFERED,
-  STATUS_CAN_UPGRADE,
-  STATUS_CURRENTLY_ENROLLED,
-];
 
 export const DASHBOARD_RESPONSE = [
   {
@@ -490,35 +519,30 @@ export const DASHBOARD_RESPONSE = [
   },
 ];
 
+export const PROGRAM_ENROLLMENTS = [
+  {
+    id: DASHBOARD_RESPONSE[1].id,
+    title: DASHBOARD_RESPONSE[1].title
+  },
+  {
+    id: DASHBOARD_RESPONSE[2].id,
+    title: DASHBOARD_RESPONSE[2].title
+  },
+];
+
+export const COURSE_PRICES_RESPONSE = [{
+  program_id: DASHBOARD_RESPONSE[1].id,
+  course_price: 100.00,
+  financial_aid_adjustment: false,
+  financial_aid_availability: true,
+  has_financial_aid_request: false
+}];
+
 export const ERROR_RESPONSE = {
   "errorStatusCode": 500,
   "error_code": "AB123",
   "user_message": "custom error message for the user."
 };
-
-export const ISO_8601_FORMAT = 'YYYY-MM-DD';
-export const DASHBOARD_FORMAT = 'M/D/Y';
-
-// NOTE: this is in order of attainment
-export const EDUCATION_LEVELS = [
-  {value: HIGH_SCHOOL, label: "High school"},
-  {value: ASSOCIATE, label: 'Associate degree'},
-  {value: BACHELORS, label: "Bachelor's degree"},
-  {value: MASTERS, label: "Master's or professional degree"},
-  {value: DOCTORATE, label: "Doctorate"}
-];
-
-export const PERSONAL_STEP = 'personal';
-export const EMPLOYMENT_STEP = 'employment';
-export const EDUCATION_STEP = 'education';
-
-export const PROFILE_STEP_LABELS = new Map([
-  [PERSONAL_STEP, "Personal"],
-  [EDUCATION_STEP, "Education"],
-  [EMPLOYMENT_STEP, "Professional"]
-]);
-
-export const DEFAULT_OPTION_LIMIT_COUNT = 10;
 
 /* eslint-disable max-len */
 export const CHECKOUT_RESPONSE_CYBERSOURCE = {
@@ -548,19 +572,3 @@ export const CHECKOUT_RESPONSE_EDX = {
   "method": "GET"
 };
 /* eslint-enable max-len */
-
-export const PROGRAM_ENROLLMENTS = [
-  {
-    id: DASHBOARD_RESPONSE[1].id,
-    title: DASHBOARD_RESPONSE[1].title
-  },
-  {
-    id: DASHBOARD_RESPONSE[2].id,
-    title: DASHBOARD_RESPONSE[2].title
-  },
-];
-
-export const SEARCH_FILTER_DEFAULT_VISIBILITY = true;
-
-export const TOAST_SUCCESS = 'success';
-export const TOAST_FAILURE = 'failure';

@@ -7,6 +7,7 @@ import _ from 'lodash';
 import {
   RECEIVE_DASHBOARD_FAILURE,
   RECEIVE_DASHBOARD_SUCCESS,
+  RECEIVE_COURSE_PRICES_SUCCESS,
 } from '../actions';
 import { SET_USER_PAGE_DIALOG_VISIBILITY } from '../actions/ui';
 import {
@@ -91,6 +92,7 @@ describe("ErrorMessage", () => {
 
       dashboardErrorActions = [
         RECEIVE_DASHBOARD_FAILURE,
+        RECEIVE_COURSE_PRICES_SUCCESS,
         RECEIVE_GET_USER_PROFILE_SUCCESS,
         RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
       ];
@@ -173,6 +175,7 @@ describe("ErrorMessage", () => {
 
         const types = [
           RECEIVE_DASHBOARD_SUCCESS,
+          RECEIVE_COURSE_PRICES_SUCCESS,
           RECEIVE_GET_USER_PROFILE_FAILURE,
           RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
         ];
@@ -198,6 +201,7 @@ describe("ErrorMessage", () => {
         let actions = [
           REQUEST_GET_USER_PROFILE,
           RECEIVE_DASHBOARD_SUCCESS,
+          RECEIVE_COURSE_PRICES_SUCCESS,
           RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
           RECEIVE_GET_USER_PROFILE_FAILURE,
         ];
@@ -215,6 +219,7 @@ describe("ErrorMessage", () => {
         let userPageActions = [
           REQUEST_GET_USER_PROFILE,
           RECEIVE_DASHBOARD_SUCCESS,
+          RECEIVE_COURSE_PRICES_SUCCESS,
           RECEIVE_GET_USER_PROFILE_SUCCESS,
           RECEIVE_GET_USER_PROFILE_SUCCESS,
         ];
