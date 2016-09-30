@@ -98,13 +98,8 @@ class FinancialAidSkipSerializer(serializers.Serializer):
         """
         Validators for this serializer
         """
-        unpermitted_statuses = [
-            FinancialAidStatus.APPROVED,
-            FinancialAidStatus.AUTO_APPROVED,
-            FinancialAidStatus.REJECTED
-        ]
-        if self.instance.status in unpermitted_statuses:
-            raise ValidationError("Financial aid cannot be skipped once it has been approved or rejected.")
+        if self.instance.status in TERMINAL_STATUSES:
+            raise ValidationError("Financial aid cannot be skipped once it has been approved, rejected, or skipped.")
         return data
 
     def save(self):

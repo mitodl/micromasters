@@ -312,7 +312,7 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         self.client.force_login(self.staff_user_profile.user)
         self.data["action"] = FinancialAidStatus.APPROVED
         # Not current tier
-        self.data["tier_program_id"] = self.tier_programs["100k_not_current"].id
+        self.data["tier_program_id"] = self.tier_programs["75k_not_current"].id
         self.assert_http_status(self.client.put, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
         # Not part of the same program
         self.data["tier_program_id"] = TierProgramFactory.create().id  # Will be part of a different program
@@ -572,7 +572,7 @@ class LearnerSkipsFinancialAid(FinancialAidBaseTestCase, APIClient):
         self.assert_http_status(self.client.put, self.skip_url, status.HTTP_200_OK)
         assert FinancialAid.objects.count() == 3
         financialaid = FinancialAid.objects.get(user=self.enrolled_profile3.user, tier_program__program=self.program)
-        assert financialaid.tier_program == self.tier_programs["100k"]
+        assert financialaid.tier_program == self.tier_programs["75k"]
         assert financialaid.status == FinancialAidStatus.SKIPPED
         # Check logging
         assert FinancialAidAudit.objects.count() == 1
@@ -588,7 +588,7 @@ class LearnerSkipsFinancialAid(FinancialAidBaseTestCase, APIClient):
         self.assert_http_status(self.client.put, self.skip_url, status.HTTP_200_OK)
         assert FinancialAid.objects.count() == 2
         self.financialaid_pending.refresh_from_db()
-        assert self.financialaid_pending.tier_program == self.tier_programs["100k"]
+        assert self.financialaid_pending.tier_program == self.tier_programs["75k"]
         assert self.financialaid_pending.status == FinancialAidStatus.SKIPPED
         # Check logging
         assert FinancialAidAudit.objects.count() == 1

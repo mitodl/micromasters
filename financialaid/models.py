@@ -116,7 +116,7 @@ class FinancialAidStatus:
         PENDING_MANUAL_APPROVAL,
         SKIPPED
     ]
-    TERMINAL_STATUSES = [APPROVED, AUTO_APPROVED, REJECTED]
+    TERMINAL_STATUSES = [APPROVED, AUTO_APPROVED, REJECTED, SKIPPED]
     STATUS_MESSAGES_DICT = {
         CREATED: "Created Applications",
         AUTO_APPROVED: "Auto-approved Applications",

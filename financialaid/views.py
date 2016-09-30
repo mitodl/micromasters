@@ -66,7 +66,7 @@ class FinancialAidSkipView(UpdateAPIView):
     authentication_classes = (SessionAuthentication, )
     permission_classes = (IsAuthenticated, )
 
-    def get_object(self):  # pragma: no cover
+    def get_object(self):
         """
         Overrides get_object in case financialaid object does not exist, as the learner may skip
         financial aid either after starting the process or in lieu of applying

@@ -71,7 +71,7 @@ class FinancialAidBaseTestCase(ESTestCase):
                 current=True,
                 discount_amount=0
             ),
-            "100k_not_current": TierProgramFactory.create(program=cls.program, income_threshold=100000, current=False)
+            "75k_not_current": TierProgramFactory.create(program=cls.program, income_threshold=75000, current=False)
         }
         cls.program_enrollment = ProgramEnrollment.objects.create(
             user=cls.profile.user,
@@ -180,7 +180,7 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
         assert determine_tier_program(self.program, 72800) == self.tier_programs["50k"]
         assert determine_tier_program(self.program, 75000) == self.tier_programs["75k"]
         assert determine_tier_program(self.program, 34938234) == self.tier_programs["75k"]
-        assert determine_tier_program(self.program, 34938234) != self.tier_programs["100k_not_current"]
+        assert determine_tier_program(self.program, 34938234) != self.tier_programs["75k_not_current"]
 
     def test_determine_auto_approval(self):  # pylint: disable=no-self-use
         """
