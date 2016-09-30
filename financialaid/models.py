@@ -136,7 +136,6 @@ class FinancialAid(TimestampedModel):
     original_currency = models.CharField(null=True, max_length=10)
     country_of_income = models.CharField(null=True, max_length=100)
     date_exchange_rate = models.DateTimeField(null=True)
-    date_documents_sent = models.DateField(null=True)
 
     def save(self, *args, **kwargs):
         """
