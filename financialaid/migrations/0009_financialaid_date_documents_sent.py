@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='financialaid',
             name='date_documents_sent',
-            field=models.DateField(default=None, null=True),
+            field=models.DateField(null=True),
         ),
     ]
