@@ -13,14 +13,6 @@ from rest_framework.test import APIClient
 from courses.factories import CourseRunFactory
 from ecommerce.factories import CoursePriceFactory
 from financialaid.api_test import FinancialAidBaseTestCase
-from financialaid.constants import (
-    FINANCIAL_AID_REJECTION_SUBJECT_TEXT,
-    FINANCIAL_AID_REJECTION_MESSAGE_BODY,
-    FINANCIAL_AID_APPROVAL_SUBJECT_TEXT,
-    FINANCIAL_AID_APPROVAL_MESSAGE_BODY,
-    FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT,
-    FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY
-)
 from financialaid.factories import (
     FinancialAidFactory,
     TierProgramFactory
@@ -31,6 +23,7 @@ from financialaid.models import (
     FinancialAidStatus,
     CurrencyExchangeRate
 )
+from mail.api import generate_financial_aid_email
 from mail.views_test import mocked_json
 
 
@@ -383,8 +376,9 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
         assert called_kwargs["acting_user"] == self.staff_user_profile.user
         assert called_kwargs["financial_aid"] == self.financialaid
-        assert called_kwargs["subject"] == FINANCIAL_AID_APPROVAL_SUBJECT_TEXT
-        assert called_kwargs["body"] == FINANCIAL_AID_APPROVAL_MESSAGE_BODY
+        financial_aid_email = generate_financial_aid_email(self.financialaid)
+        assert called_kwargs["subject"] == financial_aid_email["subject"]
+        assert called_kwargs["body"] == financial_aid_email["body"]
 
     def test_approval_different_tier_program(self, mock_mailgun_client):
         """
@@ -407,8 +401,9 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
         assert called_kwargs["acting_user"] == self.staff_user_profile.user
         assert called_kwargs["financial_aid"] == self.financialaid
-        assert called_kwargs["subject"] == FINANCIAL_AID_APPROVAL_SUBJECT_TEXT
-        assert called_kwargs["body"] == FINANCIAL_AID_APPROVAL_MESSAGE_BODY
+        financial_aid_email = generate_financial_aid_email(self.financialaid)
+        assert called_kwargs["subject"] == financial_aid_email["subject"]
+        assert called_kwargs["body"] == financial_aid_email["body"]
 
     def test_rejection(self, mock_mailgun_client):
         """
@@ -430,8 +425,9 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
         assert called_kwargs["acting_user"] == self.staff_user_profile.user
         assert called_kwargs["financial_aid"] == self.financialaid
-        assert called_kwargs["subject"] == FINANCIAL_AID_REJECTION_SUBJECT_TEXT
-        assert called_kwargs["body"] == FINANCIAL_AID_REJECTION_MESSAGE_BODY
+        financial_aid_email = generate_financial_aid_email(self.financialaid)
+        assert called_kwargs["subject"] == financial_aid_email["subject"]
+        assert called_kwargs["body"] == financial_aid_email["body"]
 
     def test_mark_documents_received(self, mock_mailgun_client):
         """
@@ -457,8 +453,9 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
         assert called_kwargs["acting_user"] == self.staff_user_profile.user
         assert called_kwargs["financial_aid"] == self.financialaid
-        assert called_kwargs["subject"] == FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT
-        assert called_kwargs["body"] == FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY
+        financial_aid_email = generate_financial_aid_email(self.financialaid)
+        assert called_kwargs["subject"] == financial_aid_email["subject"]
+        assert called_kwargs["body"] == financial_aid_email["body"]
 
 
 class CoursePriceDetailViewTests(FinancialAidBaseTestCase, APIClient):
