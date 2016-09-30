@@ -572,3 +572,10 @@ export const CHECKOUT_RESPONSE_EDX = {
   "method": "GET"
 };
 /* eslint-enable max-len */
+
+export const FA_STATUS_CREATED = 'created';
+export const FA_STATUS_AUTO_APPROVED = 'auto-approved';
+export const FA_STATUS_PENDING_DOCS = 'pending-docs';
+export const FA_STATUS_PENDING_MANUAL_APPROVAL = 'pending-manual-approval';
+export const FA_STATUS_APPROVED = 'approved';
+export const FA_STATUS_REJECTED = 'rejected';

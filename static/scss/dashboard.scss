@@ -123,6 +123,35 @@ c.validation-wrapper {
     }
   }
 
+  .financial-aid-box {
+    background-color: #e8faec;
+    padding: 20px;
+    margin: 0;
+  }
+
+  .document-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    height: 24px !important;
+    button {
+      height: 24px;
+      margin-left: 20px;
+      top: 10px;
+    }
+  }
+
+  .documents-sent {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    i {
+      font-size: 36pt;
+    }
+  }
+
   .course-list {
     padding: 20px 0 0 0;
 

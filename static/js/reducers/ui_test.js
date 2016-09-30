@@ -27,6 +27,7 @@ import {
   setEnrollSelectedProgram,
   setPhotoDialogVisibility,
   setCalculatorDialogVisibility,
+  setDocumentDate,
 } from '../actions/ui';
 import { INITIAL_UI_STATE } from '../reducers/ui';
 import type { UIState } from '../reducers/ui';
@@ -192,6 +193,12 @@ describe('ui reducers', () => {
   describe('Calculator visibility', () => {
     it('should let you set calculator visibility', () => {
       assertReducerResultState(setCalculatorDialogVisibility, ui => ui.calculatorDialogVisibility, false);
+    });
+  });
+
+  describe('Document date', () => {
+    it('should let you set the document date', () => {
+      assertReducerResultState(setDocumentDate, ui => ui.documentDate, {});
     });
   });
 });

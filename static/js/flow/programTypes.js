@@ -1,7 +1,15 @@
+export type FinancialAidUserInfo = {
+  application_status: string;
+  has_user_applied: boolean;
+  max_possible_cost: number;
+  min_possible_cost: number;
+};
+
 export type Program = {
   courses: Array<Course>;
   id: number;
   financial_aid_availability: boolean;
+  financial_aid_user_info?: FinancialAidUserInfo;
 };
 export type Course = {
   runs: Array<CourseRun>;
