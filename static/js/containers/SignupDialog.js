@@ -36,7 +36,7 @@ const SignupDialog = ({
         <img src="/static/images/mit_logo_grey_red.png" />
       </div>
       <span>
-        The MIT MicroMasters program is powered by edX.
+        All MITx MicroMasters courses are delivered on edX.
         To sign up for a MIT MicroMasters program you need an edX account.
       </span>
 
