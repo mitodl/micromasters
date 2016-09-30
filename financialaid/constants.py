@@ -231,16 +231,24 @@ COUNTRY_INCOME_THRESHOLDS = {
     "ZW": 0
 }
 
+FINANCIAL_AID_DOCUMENTS_RECEIVED_SUBJECT = "Documents received for {program_name} MicroMasters"
+FINANCIAL_AID_APPROVAL_SUBJECT = "Your personalized course price for {program_name} MicroMasters"
 
-FINANCIAL_AID_APPROVAL_MESSAGE_BODY = """Your application for financial aid has been approved!\n\n
-Please log on to your account for more details.\n\n
-MIT Micromasters"""
-FINANCIAL_AID_REJECTION_MESSAGE_BODY = """Your application for financial aid has been rejected.\n\n
-Please log on to your account for more details.\n\n
-MIT Micromasters"""
-FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY = """Your financial aid documents have been received.\n\n
-Please log on to your account for more details.\n\n
-MIT Micromasters"""
-FINANCIAL_AID_APPROVAL_SUBJECT_TEXT = "Financial Aid Status Update"
-FINANCIAL_AID_REJECTION_SUBJECT_TEXT = "Financial Aid Status Update"
-FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT = "Financial Aid Documents Received"
+FINANCIAL_AID_EMAIL_BODY = (
+    "Dear {first_name},\n\n"
+    "{message}\n\n"
+    "Thank you,\n"
+    "The {program_name} MicroMasters team"
+)
+
+FINANCIAL_AID_DOCUMENTS_RECEIVED_MESSAGE = (
+    "We have received your documents verifying your income. We will review them as soon as possible, "
+    "after which we will send an e-mail confirming your personalized course price. We encourage you "
+    "to enroll now and pay later, when a decision has been reached."
+)
+FINANCIAL_AID_APPROVAL_MESSAGE = (
+    "After reviewing your income documentation, the {program_name} MicroMasters team has determined "
+    "that your personalized course price is {price}.\n\n"
+    "You can pay for MicroMasters courses through the MIT MicroMasters portal "
+    "(https://micromasters.mit.edu/dashboard). All coursework will be conducted on edx.org."
+)

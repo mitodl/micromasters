@@ -1,13 +1,24 @@
 """
 Provides functions for sending and retrieving data about in-app email
 """
-import json
 from itertools import islice
+import json
 import requests
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from rest_framework.status import HTTP_200_OK
 
+from dashboard.models import ProgramEnrollment
+from financialaid.api import get_formatted_course_price
+from financialaid.constants import (
+    FINANCIAL_AID_APPROVAL_SUBJECT,
+    FINANCIAL_AID_APPROVAL_MESSAGE,
+    FINANCIAL_AID_DOCUMENTS_RECEIVED_MESSAGE,
+    FINANCIAL_AID_DOCUMENTS_RECEIVED_SUBJECT,
+    FINANCIAL_AID_EMAIL_BODY
+)
+from financialaid.models import FinancialAidStatus
 from mail.models import FinancialAidEmailAudit
 
 
@@ -158,3 +169,37 @@ class MailgunClient:
                 email_body=body
             )
         return response
+
+
+def generate_financial_aid_email(financial_aid):
+    """
+    Generates the email subject and body for a FinancialAid status update. Accepted statuses are
+    FinancialAidStatus.APPROVED (application is approved) and FinancialAidStatus.PENDING_MANUAL_APPROVAL
+    (documents have been received).
+    Args:
+        financial_aid (FinancialAid): The FinancialAid object in question
+    Returns:
+        dict: {"subject": (str), "body": (str)}
+    """
+    if financial_aid.status == FinancialAidStatus.APPROVED:
+        program_enrollment = ProgramEnrollment.objects.get(
+            user=financial_aid.user,
+            program=financial_aid.tier_program.program
+        )
+        message = FINANCIAL_AID_APPROVAL_MESSAGE.format(
+            program_name=financial_aid.tier_program.program.title,
+            price=get_formatted_course_price(program_enrollment)["course_price"]
+        )
+        subject = FINANCIAL_AID_APPROVAL_SUBJECT
+    elif financial_aid.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL:
+        message = FINANCIAL_AID_DOCUMENTS_RECEIVED_MESSAGE
+        subject = FINANCIAL_AID_DOCUMENTS_RECEIVED_SUBJECT
+    else:
+        raise ValidationError("Invalid status on FinancialAid for generate_financial_aid_email()")
+    subject = subject.format(program_name=financial_aid.tier_program.program.title)
+    body = FINANCIAL_AID_EMAIL_BODY.format(
+        first_name=financial_aid.user.profile.first_name,
+        message=message,
+        program_name=financial_aid.tier_program.program.title
+    )
+    return {"subject": subject, "body": body}

@@ -12,8 +12,14 @@ from factory.django import mute_signals
 from requests import Response
 from rest_framework.status import HTTP_200_OK
 
+from dashboard.models import ProgramEnrollment
+from ecommerce.factories import CoursePriceFactory
+from financialaid.api import get_formatted_course_price
+from financialaid.constants import FINANCIAL_AID_APPROVAL_SUBJECT, FINANCIAL_AID_EMAIL_BODY, \
+    FINANCIAL_AID_APPROVAL_MESSAGE, FINANCIAL_AID_DOCUMENTS_RECEIVED_SUBJECT, FINANCIAL_AID_DOCUMENTS_RECEIVED_MESSAGE
 from financialaid.factories import FinancialAidFactory
-from mail.api import MailgunClient
+from financialaid.models import FinancialAidStatus
+from mail.api import MailgunClient, generate_financial_aid_email
 from mail.models import FinancialAidEmailAudit
 from mail.views_test import mocked_json
 from profiles.factories import ProfileFactory
@@ -136,7 +142,20 @@ class FinancialAidMailAPITests(TestCase):
     def setUpTestData(cls):
         with mute_signals(post_save):
             cls.staff_user_profile = ProfileFactory.create()
+        cls.course_price = CoursePriceFactory.create(
+            is_valid=True
+        )
         cls.financial_aid = FinancialAidFactory.create()
+        cls.tier_program = cls.financial_aid.tier_program
+        cls.tier_program.program = cls.course_price.course_run.course.program
+        cls.tier_program.save()
+        cls.program_enrollment = ProgramEnrollment.objects.create(
+            user=cls.financial_aid.user,
+            program=cls.tier_program.program
+        )
+
+    def setUp(self):
+        self.financial_aid.refresh_from_db()
 
     @override_settings(
         MAILGUN_FROM_EMAIL='mailgun_from_email@example.com',
@@ -216,3 +235,38 @@ class FinancialAidMailAPITests(TestCase):
         assert audit.from_email == settings.MAILGUN_FROM_EMAIL
         assert audit.email_subject == ''
         assert audit.email_body == ''
+
+    def test_generate_financial_aid_email_approved(self, mock_post):  # pylint: disable=unused-argument
+        """
+        Tests generate_financial_aid_email() with status APPROVED
+        """
+        self.financial_aid.status = FinancialAidStatus.APPROVED
+        self.financial_aid.save()
+        email_dict = generate_financial_aid_email(self.financial_aid)
+        assert email_dict["subject"] == FINANCIAL_AID_APPROVAL_SUBJECT.format(
+            program_name=self.financial_aid.tier_program.program.title
+        )
+        assert email_dict["body"] == FINANCIAL_AID_EMAIL_BODY.format(
+            first_name=self.financial_aid.user.profile.first_name,
+            message=FINANCIAL_AID_APPROVAL_MESSAGE.format(
+                program_name=self.financial_aid.tier_program.program.title,
+                price=get_formatted_course_price(self.program_enrollment)["course_price"]
+            ),
+            program_name=self.financial_aid.tier_program.program.title
+        )
+
+    def test_generate_financial_aid_email_docs_sent(self, mock_post):  # pylint: disable=unused-argument
+        """
+        Tests generate_financial_aid_email() with status PENDING_MANUAL_APPROVAL
+        """
+        self.financial_aid.status = FinancialAidStatus.PENDING_MANUAL_APPROVAL
+        self.financial_aid.save()
+        email_dict = generate_financial_aid_email(self.financial_aid)
+        assert email_dict["subject"] == FINANCIAL_AID_DOCUMENTS_RECEIVED_SUBJECT.format(
+            program_name=self.financial_aid.tier_program.program.title
+        )
+        assert email_dict["body"] == FINANCIAL_AID_EMAIL_BODY.format(
+            first_name=self.financial_aid.user.profile.first_name,
+            message=FINANCIAL_AID_DOCUMENTS_RECEIVED_MESSAGE,
+            program_name=self.financial_aid.tier_program.program.title
+        )
