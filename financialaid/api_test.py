@@ -63,15 +63,15 @@ class FinancialAidBaseTestCase(ESTestCase):
         )
         cls.tier_programs = {
             "0k": TierProgramFactory.create(program=cls.program, income_threshold=0, current=True),
-            "15k": TierProgramFactory.create(program=cls.program, income_threshold=15000, current=True),
+            "25k": TierProgramFactory.create(program=cls.program, income_threshold=25000, current=True),
             "50k": TierProgramFactory.create(program=cls.program, income_threshold=50000, current=True),
-            "100k": TierProgramFactory.create(
+            "75k": TierProgramFactory.create(
                 program=cls.program,
-                income_threshold=100000,
+                income_threshold=75000,
                 current=True,
                 discount_amount=0
             ),
-            "150k_not_current": TierProgramFactory.create(program=cls.program, income_threshold=150000, current=False)
+            "75k_not_current": TierProgramFactory.create(program=cls.program, income_threshold=75000, current=False)
         }
         cls.program_enrollment = ProgramEnrollment.objects.create(
             user=cls.profile.user,
@@ -122,12 +122,12 @@ class FinancialAidBaseTestCase(ESTestCase):
         )
         cls.financialaid_approved = FinancialAidFactory.create(
             user=cls.enrolled_profile.user,
-            tier_program=cls.tier_programs["15k"],
+            tier_program=cls.tier_programs["25k"],
             status=FinancialAidStatus.APPROVED
         )
         cls.financialaid_pending = FinancialAidFactory.create(
             user=cls.enrolled_profile2.user,
-            tier_program=cls.tier_programs["15k"],
+            tier_program=cls.tier_programs["25k"],
             status=FinancialAidStatus.PENDING_MANUAL_APPROVAL
         )
 
@@ -174,20 +174,20 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
         """
         assert determine_tier_program(self.program, 0) == self.tier_programs["0k"]
         assert determine_tier_program(self.program, 1000) == self.tier_programs["0k"]
-        assert determine_tier_program(self.program, 15000) == self.tier_programs["15k"]
-        assert determine_tier_program(self.program, 23500) == self.tier_programs["15k"]
+        assert determine_tier_program(self.program, 25000) == self.tier_programs["25k"]
+        assert determine_tier_program(self.program, 27500) == self.tier_programs["25k"]
         assert determine_tier_program(self.program, 50000) == self.tier_programs["50k"]
         assert determine_tier_program(self.program, 72800) == self.tier_programs["50k"]
-        assert determine_tier_program(self.program, 100000) == self.tier_programs["100k"]
-        assert determine_tier_program(self.program, 34938234) == self.tier_programs["100k"]
-        assert determine_tier_program(self.program, 34938234) != self.tier_programs["150k_not_current"]
+        assert determine_tier_program(self.program, 75000) == self.tier_programs["75k"]
+        assert determine_tier_program(self.program, 34938234) == self.tier_programs["75k"]
+        assert determine_tier_program(self.program, 34938234) != self.tier_programs["75k_not_current"]
 
     def test_determine_auto_approval(self):  # pylint: disable=no-self-use
         """
         Tests determine_auto_approval()
         """
-        # Assumes US threshold is 100000
-        assert COUNTRY_INCOME_THRESHOLDS["US"] == 100000
+        # Assumes US threshold is 75000
+        assert COUNTRY_INCOME_THRESHOLDS["US"] == 75000
         financial_aid = FinancialAidFactory.create(
             income_usd=150000,
             country_of_income="US"
@@ -217,10 +217,10 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
         )
         assert not determine_auto_approval(financial_aid)
 
-        # Assumes IN threshold is 15000
-        assert COUNTRY_INCOME_THRESHOLDS["IN"] == 15000
+        # Assumes IN threshold is 25000
+        assert COUNTRY_INCOME_THRESHOLDS["IN"] == 25000
         financial_aid = FinancialAidFactory.create(
-            income_usd=20000,
+            income_usd=30000,
             country_of_income="IN"
         )
         assert determine_auto_approval(financial_aid) is True
@@ -256,8 +256,8 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
         """
         Tests get_no_discount_tier_program()
         """
-        # 100k tier program is the one with no discount
-        assert get_no_discount_tier_program(self.program.id).id == self.tier_programs["100k"].id
+        # 75k tier program is the one with no discount
+        assert get_no_discount_tier_program(self.program.id).id == self.tier_programs["75k"].id
 
 
 class CoursePriceAPITests(FinancialAidBaseTestCase):
