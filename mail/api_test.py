@@ -15,8 +15,13 @@ from rest_framework.status import HTTP_200_OK
 from dashboard.models import ProgramEnrollment
 from ecommerce.factories import CoursePriceFactory
 from financialaid.api import get_formatted_course_price
-from financialaid.constants import FINANCIAL_AID_APPROVAL_SUBJECT, FINANCIAL_AID_EMAIL_BODY, \
-    FINANCIAL_AID_APPROVAL_MESSAGE, FINANCIAL_AID_DOCUMENTS_RECEIVED_SUBJECT, FINANCIAL_AID_DOCUMENTS_RECEIVED_MESSAGE
+from financialaid.constants import (
+    FINANCIAL_AID_APPROVAL_MESSAGE,
+    FINANCIAL_AID_APPROVAL_SUBJECT,
+    FINANCIAL_AID_DOCUMENTS_RECEIVED_SUBJECT,
+    FINANCIAL_AID_DOCUMENTS_RECEIVED_MESSAGE,
+    FINANCIAL_AID_EMAIL_BODY
+)
 from financialaid.factories import FinancialAidFactory
 from financialaid.models import FinancialAidStatus
 from mail.api import MailgunClient, generate_financial_aid_email
