@@ -178,6 +178,17 @@ class PurchasableTests(ESTestCase):
         with self.assertRaises(Http404):
             get_purchasable_course_run(course_run.edx_course_key, user)
 
+    def test_no_program_enrollment(self):
+        """
+        For a user to purchase a course run they must already be enrolled in the program
+        """
+        course_run, user = create_purchasable_course_run()
+        ProgramEnrollment.objects.filter(program=course_run.course.program, user=user).delete()
+        try:
+            create_unfulfilled_order(course_run.edx_course_key, user)
+        except Http404:
+            pass
+
     def test_already_purchased(self):
         """
         Purchasable course runs must not be already purchased
@@ -230,7 +241,7 @@ class PurchasableTests(ESTestCase):
             autospec=True,
             return_value=course_run,
         ) as get_purchasable, patch(
-            'ecommerce.api.get_course_price_for_learner',
+            'ecommerce.api.get_formatted_course_price',
             autospec=True,
             return_value=price_dict,
         ) as get_price:

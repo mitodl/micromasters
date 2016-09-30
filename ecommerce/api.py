@@ -21,6 +21,7 @@ from rest_framework.exceptions import ValidationError
 from backends.edxorg import EdxOrgOAuth2
 from courses.models import CourseRun
 from dashboard.api import update_cached_enrollment
+from dashboard.models import ProgramEnrollment
 from ecommerce.exceptions import (
     EcommerceEdxApiException,
     EcommerceException,
@@ -30,7 +31,7 @@ from ecommerce.models import (
     Line,
     Order,
 )
-from financialaid.api import get_course_price_for_learner
+from financialaid.api import get_formatted_course_price
 from financialaid.models import (
     FinancialAid,
     FinancialAidStatus,
@@ -108,8 +109,8 @@ def create_unfulfilled_order(course_id, user):
         Order: A newly created Order for the CourseRun with the given course_id
     """
     course_run = get_purchasable_course_run(course_id, user)
-
-    price_dict = get_course_price_for_learner(user, course_run.course.program)
+    enrollment = get_object_or_404(ProgramEnrollment, program=course_run.course.program, user=user)
+    price_dict = get_formatted_course_price(enrollment)
     price = price_dict['course_price']
     if price <= 0:
         log.warning(
