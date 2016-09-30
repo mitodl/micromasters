@@ -249,7 +249,9 @@ class PurchasableTests(ESTestCase):
         assert get_purchasable.call_count == 1
         assert get_purchasable.call_args[0] == (course_run.edx_course_key, user)
         assert get_price.call_count == 1
-        assert get_price.call_args[0] == (user, course_run.course.program)
+        assert get_price.call_args[0] == (
+            ProgramEnrollment.objects.get(user=user, program=course_run.course.program),
+        )
 
         assert Order.objects.count() == 1
         assert order.status == Order.CREATED
