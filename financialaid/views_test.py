@@ -5,6 +5,7 @@ from unittest.mock import Mock, patch
 
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.test import APIClient
@@ -169,10 +170,8 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         """
         FinancialAidFactory.create(tier_program=self.tier_programs["0k"], status=FinancialAidStatus.AUTO_APPROVED)
         FinancialAidFactory.create(tier_program=self.tier_programs["0k"], status=FinancialAidStatus.APPROVED)
-        # Temporary removal of rejected status
-        # FinancialAidFactory.create(tier_program=self.tier_programs["0k"], status=FinancialAidStatus.REJECTED)
         self.client.force_login(self.staff_user_profile.user)
-        # Should work a filter
+        # Should work with a filter
         resp = self.assert_http_status(self.client.get, self.review_url_with_filter, status.HTTP_200_OK)
         resp_obj_id_list = resp.context_data["financial_aid_objects"].values_list("id", flat=True)
         expected_obj_id_list = FinancialAid.objects.filter(
@@ -189,7 +188,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
             status=FinancialAidStatus.PENDING_MANUAL_APPROVAL  # Default filter field
         ).order_by("-user__profile__last_name").values_list("id", flat=True)
         self.assertListEqual(list(resp_obj_id_list), list(expected_obj_id_list))
-        # Should work a filter and sorting
+        # Should work with a filter and sorting
         url_with_filter_and_sorting = "{url}?sort_by=-last_name".format(url=self.review_url_with_filter)
         resp = self.assert_http_status(self.client.get, url_with_filter_and_sorting, status.HTTP_200_OK)
         resp_obj_id_list = resp.context_data["financial_aid_objects"].values_list("id", flat=True)
@@ -219,6 +218,28 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         # Shouldn't break with invalid filter and sort fields
         url_with_bad_filter_and_bad_sorting = "{url}?sort_by=-askjdf".format(url=url_with_bad_filter)
         self.assert_http_status(self.client.get, url_with_bad_filter_and_bad_sorting, status.HTTP_200_OK)
+
+    def test_review_financial_aid_view_with_search(self):
+        """
+        Tests that ReviewFinancialAidView returns the expected results with search
+        """
+        FinancialAidFactory.create(tier_program=self.tier_programs["0k"], status=FinancialAidStatus.AUTO_APPROVED)
+        FinancialAidFactory.create(tier_program=self.tier_programs["0k"], status=FinancialAidStatus.APPROVED)
+        self.client.force_login(self.staff_user_profile.user)
+        # Works with search and filter
+        search_query = self.financialaid_approved.user.profile.first_name
+        search_url = "{path}?search_query={search_query}".format(
+            path=self.review_url_with_filter,
+            search_query=search_query
+        )
+        resp = self.assert_http_status(self.client.get, search_url, status.HTTP_200_OK)
+        resp_obj_id_list = resp.context_data["financial_aid_objects"].values_list("id", flat=True)
+        expected_obj_id_list = FinancialAid.objects.filter(
+            Q(user__profile__first_name__icontains=search_query) | Q(user__profile__last_name__icontains=search_query),
+            tier_program__program_id=self.program.id,
+            status=FinancialAidStatus.AUTO_APPROVED
+        ).order_by("user__profile__first_name").values_list("id", flat=True)  # Default sort field
+        self.assertListEqual(list(resp_obj_id_list), list(expected_obj_id_list))
 
 
 @patch("financialaid.serializers.MailgunClient")  # pylint: disable=missing-docstring

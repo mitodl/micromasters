@@ -1,4 +1,4 @@
-<a href="{% url 'review_financial_aid' program_id=current_program_id status=selected_status %}?sort_by={{ field.sort_field }}"
+<a href="{{ request.path }}?sort_by={{ field.sort_field }}"
    style="color: rgba(0, 116, 225, 0.72); font-weight: normal; text-decoration: none;">
   {{ field.display }}
   {% if field.direction_display == "" %}

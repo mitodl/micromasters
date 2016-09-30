@@ -2,10 +2,11 @@
 Views for financialaid
 """
 import json
+from functools import reduce
 
 from django.conf import settings
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.db.models import F
+from django.db.models import F, Q
 from django.views.generic import ListView
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import (
@@ -65,6 +66,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
     # If user doesn't pass test_func, raises exception instead of redirecting to login url
     raise_exception = True
     # Used to modify queryset and in context
+    search_query = None
     selected_status = None
     program = None
     course_price = None
@@ -127,6 +129,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         ).annotate(
             adjusted_cost=self.course_price - F("discount_amount")
         )
+        context["search_query"] = self.search_query
 
         # Create ordered list of (financial aid status, financial message)
         messages = FinancialAidStatus.STATUS_MESSAGES_DICT
@@ -181,6 +184,20 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         if self.selected_status is None or self.selected_status not in FinancialAidStatus.ALL_STATUSES:
             self.selected_status = FinancialAidStatus.PENDING_MANUAL_APPROVAL
         financial_aids = financial_aids.filter(status=self.selected_status)
+
+        # Filter by search query
+        self.search_query = self.request.GET.get("search_query", "")
+        search_query = reduce(
+            lambda q, term: (
+                q |
+                Q(user__profile__first_name__icontains=term) |
+                Q(user__profile__last_name__icontains=term)
+            ),
+            self.search_query.split(),
+            Q()
+        )
+        if search_query:
+            financial_aids = financial_aids.filter(search_query)
 
         # Annotate with adjusted cost
         self.course_price = self.program.get_course_price()

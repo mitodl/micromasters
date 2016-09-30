@@ -41,9 +41,10 @@
           <!-- Search bar -->
           <li>
             <div class="input-group">
-              <input type="text" class="form-control" placeholder="Search">
+              <input type="text" id="search-query" class="form-control" placeholder="Search" value="{{ search_query }}"
+                     onkeydown="if (event.keyCode == 13) { initiateSearch(); }">
               <span class="input-group-btn">
-                <button class="btn btn-default" onclick="alert('Sorry, search is not yet available.')">
+                <button class="btn btn-default" onclick="initiateSearch();">
                   <span class="glyphicon glyphicon-search"></span>
                 </button>
               </span>
@@ -310,8 +311,8 @@
     function submitEmail(financial_aid_id, url) {
       var name = $("#full-name-" + financial_aid_id).text().trim();
       if (confirm("Click OK to send email to " + name)) {
-        var email_subject = $("#email-form-" + financial_aid_id + " [name='email_subject']").val();
-        var email_body = $("#email-form-" + financial_aid_id + " [name='email_body']").val();
+        var emailSubject = $("#email-form-" + financial_aid_id + " [name='email_subject']").val();
+        var emailBody = $("#email-form-" + financial_aid_id + " [name='email_body']").val();
         $.ajax({
           "url": url,
           "type": "POST",
@@ -319,8 +320,8 @@
             "X-CSRFToken": CSRF_TOKEN
           },
           "data": {
-            "email_subject": email_subject,
-            "email_body": email_body
+            "email_subject": emailSubject,
+            "email_body": emailBody
           },
           "success": function() {
             displayMessage("Successfully sent email to " + name, "success");
@@ -349,5 +350,14 @@
       template.slideDown();
     }
     
+    
+    /**
+     * Redirects to initiate search
+     * 
+     */
+    function initiateSearch() {
+      var searchQuery = $("#search-query").val();
+      location = "{{ request.path }}?sort_by={{ current_sort_field }}&search_query=" + searchQuery;
+    }
   </script>
 {% endblock %}
