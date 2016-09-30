@@ -54,14 +54,14 @@
           <li style="padding-top: 7px;">
             <div class="radio-inline">
               <label>
-                <input type="radio" id="currency-selector-usd"
+                <input type="radio" name="currency-selection" id="currency-selector-usd"
                        onclick="$('.income-usd').show(); $('.income-local').hide();" checked>
                 USD
               </label>
             </div>
             <div class="radio-inline">
               <label>
-                <input type="radio" id="currency-selector-original"
+                <input type="radio" name="currency-selection" id="currency-selector-original"
                        onclick="$('.income-usd').hide(); $('.income-local').show();">
                 Local Currency
               </label>
@@ -134,8 +134,8 @@
               {% if selected_status != statuses.AUTO_APPROVED and selected_status != statuses.PENDING_DOCS %}
               <th style="font-weight: normal;">Justification</th>
               {% endif %}
-              {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
-              <th colspan="2"></th>
+              {% if selected_status == statuses.PENDING_MANUAL_APPROVAL or selected_status == statuses.PENDING_DOCS %}
+              <th></th>
               {% endif %}
             </tr>
           </thead>
@@ -220,14 +220,14 @@
               {% endif %}
               <!-- /Justification -->
               <!-- Actions -->
-              {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
-              <td>
+              {% if selected_status == statuses.PENDING_MANUAL_APPROVAL or selected_status == statuses.PENDING_DOCS %}
+              <td style="white-space: nowrap;">
+                {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
                 <button class="btn btn-default" style="color: #0074e1;"
                         onclick="submitApproval({{ financial_aid.id }}, '{% url 'financial_aid_action' financial_aid_id=financial_aid.id %}');">
                   Save
                 </button>
-              </td>
-              <td>
+                {% endif %}
                 <button class="btn btn-default" style="color: #0074e1;"
                         onclick="$('#application-email-row-{{ financial_aid.id }}').toggle();">
                   <span class="glyphicon glyphicon-envelope"></span>
@@ -238,8 +238,9 @@
             </tr>
             <!-- /Financial aid application information -->
             <!-- Financial aid application email form -->
+            {% if selected_status == statuses.PENDING_MANUAL_APPROVAL or selected_status == statuses.PENDING_DOCS %}
             <tr id="application-email-row-{{ financial_aid.id }}" style="display: none;">
-              <td colspan="9">
+              <td colspan="9" style="border-top: 0;">
                 <form id="email-form-{{ financial_aid.id }}" class="email-form form-horizontal">
                   {% render_form email_serializer template_pack="rest_framework/horizontal" %}
                 </form>
@@ -248,6 +249,7 @@
                 <br>
               </td>
             </tr>
+            {% endif %}
             <!-- /Financial aid application email form -->
           {% endfor %}
           </tbody>
