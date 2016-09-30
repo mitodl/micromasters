@@ -646,7 +646,8 @@ class LearnerSkipsFinancialAid(FinancialAidBaseTestCase, APIClient):
         """
         Tests that methods other than PUT/PATCH are not allowed for skipping financial aid
         """
-        self.assert_http_status(self.client.get, self.skip_url, status.HTTP_405_METHOD_NOT_ALLOWED)
+        # GET is not 405 because of settings.REST_FRAMEWORK
+        self.assert_http_status(self.client.get, self.skip_url, status.HTTP_403_FORBIDDEN)
         self.assert_http_status(self.client.post, self.skip_url, status.HTTP_405_METHOD_NOT_ALLOWED)
         self.assert_http_status(self.client.head, self.skip_url, status.HTTP_405_METHOD_NOT_ALLOWED)
         self.assert_http_status(self.client.delete, self.skip_url, status.HTTP_405_METHOD_NOT_ALLOWED)
