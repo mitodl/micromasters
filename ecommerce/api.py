@@ -31,7 +31,10 @@ from ecommerce.models import (
     Order,
 )
 from financialaid.api import get_course_price_for_learner
-from financialaid.models import FinancialAid
+from financialaid.models import (
+    FinancialAid,
+    FinancialAidStatus,
+)
 from profiles.api import get_social_username
 
 
@@ -70,9 +73,13 @@ def get_purchasable_course_run(course_key, user):
     if not FinancialAid.objects.filter(
             tier_program__current=True,
             tier_program__program__course__courserun=course_run,
+            user=user,
+            status__in=FinancialAidStatus.TERMINAL_STATUSES,
     ).exists():
-        log.warning("Course run %s has no attached financial aid")
-        raise ValidationError("Course run {} does not have an attached financial aid application".format(course_key))
+        log.warning("Course run %s has no attached financial aid for user %s", course_key, get_social_username(user))
+        raise ValidationError(
+            "Course run {} does not have a current attached financial aid application".format(course_key)
+        )
 
     # Make sure it's not already purchased
     if Line.objects.filter(

@@ -107,6 +107,7 @@ class FinancialAidStatus:
     REJECTED = 'rejected'
 
     ALL_STATUSES = [CREATED, APPROVED, AUTO_APPROVED, REJECTED, PENDING_DOCS, PENDING_MANUAL_APPROVAL]
+    TERMINAL_STATUSES = [APPROVED, AUTO_APPROVED, REJECTED]
     STATUS_MESSAGES_DICT = {
         CREATED: "Created Applications",
         AUTO_APPROVED: "Auto-approved Applications",

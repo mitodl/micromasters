@@ -45,6 +45,7 @@ from ecommerce.factories import (
 )
 from ecommerce.models import Order
 from financialaid.factories import FinancialAidFactory
+from financialaid.models import FinancialAidStatus
 from profiles.factories import UserFactory
 from search.base import ESTestCase
 
@@ -58,12 +59,15 @@ def create_purchasable_course_run():
         course__program__live=True,
         course__program__financial_aid_availability=True,
     )
+    price = CoursePriceFactory.create(course_run=course_run, is_valid=True)
+    user = UserFactory.create()
     FinancialAidFactory.create(
         tier_program__current=True,
         tier_program__program=course_run.course.program,
+        tier_program__discount_amount=price.price/2,
+        user=user,
+        status=FinancialAidStatus.APPROVED,
     )
-    CoursePriceFactory.create(course_run=course_run, is_valid=True)
-    user = UserFactory.create()
     ProgramEnrollment.objects.create(user=user, program=course_run.course.program)
     return course_run, user
 
@@ -106,8 +110,49 @@ class PurchasableTests(ESTestCase):
         with self.assertRaises(ValidationError) as ex:
             get_purchasable_course_run(course_run.edx_course_key, user)
         assert ex.exception.args[0] == (
-            "Course run {} does not have an attached financial aid application".format(course_run.edx_course_key)
+            "Course run {} does not have a current attached financial aid application".format(
+                course_run.edx_course_key
+            )
         )
+
+    def test_financial_aid_for_user(self):
+        """
+        Purchasable course runs must have a financial aid attached for the given user
+        """
+        course_run, user = create_purchasable_course_run()
+        program = course_run.course.program
+        tier_program = program.tier_programs.first()
+        financial_aid = tier_program.financialaid_set.first()
+        financial_aid.user = UserFactory.create()
+        financial_aid.save()
+
+        with self.assertRaises(ValidationError) as ex:
+            get_purchasable_course_run(course_run.edx_course_key, user)
+        assert ex.exception.args[0] == (
+            "Course run {} does not have a current attached financial aid application".format(
+                course_run.edx_course_key
+            )
+        )
+
+    def test_financial_aid_terminal_status(self):
+        """
+        FinancialAid must have a status which allows purchase to happen
+        """
+        course_run, user = create_purchasable_course_run()
+        program = course_run.course.program
+        tier_program = program.tier_programs.first()
+        financial_aid = tier_program.financialaid_set.first()
+        for status in set(FinancialAidStatus.ALL_STATUSES).difference(set(FinancialAidStatus.TERMINAL_STATUSES)):
+            financial_aid.status = status
+            financial_aid.save()
+
+            with self.assertRaises(ValidationError) as ex:
+                get_purchasable_course_run(course_run.edx_course_key, user)
+            assert ex.exception.args[0] == (
+                "Course run {} does not have a current attached financial aid application".format(
+                    course_run.edx_course_key
+                )
+            )
 
     def test_financial_aid_not_available(self):
         """
