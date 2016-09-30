@@ -6,3 +6,16 @@ export type DashboardState = {
   programs:     Dashboard,
   fetchStatus?: string,
 };
+
+export type CoursePrice = {
+  program_id: number,
+  course_price: number,
+  financial_aid_adjustment: boolean,
+  financial_aid_availability: boolean,
+  has_financial_aid_request: boolean
+};
+export type CoursePrices = Array<CoursePrice>;
+export type CoursePricesState = {
+  coursePrices: CoursePrices,
+  fetchStatus?: string,
+}

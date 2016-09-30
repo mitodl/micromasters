@@ -19,7 +19,7 @@ import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
 import yaml
 
-VERSION = "0.13.0"
+VERSION = "0.14.0"
 
 CONFIG_PATHS = [
     os.environ.get('MICROMASTERS_CONFIG', ''),
@@ -430,6 +430,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'dashboard.tasks.batch_update_user_data',
         'schedule': crontab(minute=0, hour='*/6')
     },
+    'update-currency-exchange-rates-every-24-hrs': {
+        'task': 'financialaid.tasks.update_currency_exchange_rates',
+        'schedule': crontab(minute=0, hour='3')
+    },
 }
 
 CELERY_TIMEZONE = 'UTC'
@@ -449,3 +453,7 @@ CYBERSOURCE_TRANSACTION_KEY = get_var("CYBERSOURCE_TRANSACTION_KEY", None)
 CYBERSOURCE_SECURE_ACCEPTANCE_URL = get_var("CYBERSOURCE_SECURE_ACCEPTANCE_URL", None)
 CYBERSOURCE_PROFILE_ID = get_var("CYBERSOURCE_PROFILE_ID", None)
 CYBERSOURCE_REFERENCE_PREFIX = get_var("CYBERSOURCE_REFERENCE_PREFIX", None)
+
+# Open Exchange Rates
+OPEN_EXCHANGE_RATES_URL = get_var("OPEN_EXCHANGE_RATES_URL", None)
+OPEN_EXCHANGE_RATES_APP_ID = get_var("OPEN_EXCHANGE_RATES_APP_ID", "")

@@ -6,9 +6,11 @@ import { assert } from 'chai';
 import _ from 'lodash';
 
 import Navbar from '../components/Navbar';
-import { CLEAR_DASHBOARD } from '../actions';
 import {
+  CLEAR_DASHBOARD,
+  CLEAR_COURSE_PRICES,
   RECEIVE_DASHBOARD_SUCCESS,
+  RECEIVE_COURSE_PRICES_SUCCESS,
 } from '../actions';
 import {
   RECEIVE_GET_USER_PROFILE_SUCCESS,
@@ -55,7 +57,13 @@ describe('App', () => {
 
   it('clears profile, ui, enrollments, and dashboard after unmounting', () => {
     return renderComponent("/dashboard").then(([, div]) => {
-      return listenForActions([CLEAR_DASHBOARD, CLEAR_PROFILE, CLEAR_UI, CLEAR_ENROLLMENTS], () => {
+      return listenForActions([
+        CLEAR_DASHBOARD,
+        CLEAR_COURSE_PRICES,
+        CLEAR_PROFILE,
+        CLEAR_UI,
+        CLEAR_ENROLLMENTS
+      ], () => {
         ReactDOM.unmountComponentAtNode(div);
       });
     });
@@ -115,6 +123,7 @@ describe('App', () => {
       helper.enrollmentsGetStub.returns(Promise.reject());
       let types = [
         RECEIVE_DASHBOARD_SUCCESS,
+        RECEIVE_COURSE_PRICES_SUCCESS,
         RECEIVE_GET_USER_PROFILE_SUCCESS,
         RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE,
       ];

@@ -88,12 +88,16 @@ class DashboardPage extends React.Component {
     const { dispatch } = this.props;
 
     return dispatch(checkout(courseId)).then(result => {
-      const { payload, url } = result;
+      const { payload, url, method } = result;
 
-      const form = createForm(url, payload);
-      const body = document.querySelector("body");
-      body.appendChild(form);
-      form.submit();
+      if (method === 'POST') {
+        const form = createForm(url, payload);
+        const body = document.querySelector("body");
+        body.appendChild(form);
+        form.submit();
+      } else {
+        window.location = url;
+      }
     });
   };
 

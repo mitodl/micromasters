@@ -1,18 +1,18 @@
 """
 Tests for ecommerce views
 """
-from mock import (
-    MagicMock,
-    patch,
-)
-
 from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save
 from django.test import override_settings
 from factory.django import mute_signals
 import faker
+from mock import (
+    MagicMock,
+    patch,
+)
 import rest_framework.status as status
 
+from courses.factories import CourseRunFactory
 from ecommerce.api import (
     create_unfulfilled_order,
     make_reference_id,
@@ -56,16 +56,43 @@ class CheckoutViewTests(ESTestCase):
         assert resp.status_code == status.HTTP_400_BAD_REQUEST
         assert resp.json() == ['Missing course_id']
 
+    def test_not_live_program(self):
+        """
+        An order is created using create_unfulfilled_order and a payload
+        is generated using generate_cybersource_sa_payload
+        """
+        user = UserFactory.create()
+        self.client.force_login(user)
+        course_run = CourseRunFactory.create(
+            course__program__live=False,
+            course__program__financial_aid_availability=True,
+        )
+
+        resp = self.client.post(reverse('checkout'), {'course_id': course_run.edx_course_key}, format='json')
+        assert resp.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_missing_course(self):
+        """
+        A 404 should be returned if the course does not exist
+        """
+        user = UserFactory.create()
+        self.client.force_login(user)
+        resp = self.client.post(reverse('checkout'), {'course_id': 'missing'}, format='json')
+        assert resp.status_code == status.HTTP_404_NOT_FOUND
+
     @override_settings(CYBERSOURCE_SECURE_ACCEPTANCE_URL=CYBERSOURCE_SECURE_ACCEPTANCE_URL)
     def test_creates_order(self):
         """
         An order is created using create_unfulfilled_order and a payload
         is generated using generate_cybersource_sa_payload
         """
-        course_key = 'course_key'
-
         user = UserFactory.create()
         self.client.force_login(user)
+
+        course_run = CourseRunFactory.create(
+            course__program__live=True,
+            course__program__financial_aid_availability=True,
+        )
         order = MagicMock()
         payload = {
             'a': 'payload'
@@ -79,18 +106,40 @@ class CheckoutViewTests(ESTestCase):
             autospec=True,
             return_value=payload,
         ) as generate_mock:
-            resp = self.client.post(reverse('checkout'), {'course_id': course_key}, format='json')
+            resp = self.client.post(reverse('checkout'), {'course_id': course_run.edx_course_key}, format='json')
 
         assert resp.status_code == status.HTTP_200_OK
         assert resp.json() == {
             'payload': payload,
             'url': CYBERSOURCE_SECURE_ACCEPTANCE_URL,
+            'method': 'POST',
         }
 
         assert create_mock.call_count == 1
-        assert create_mock.call_args[0] == (course_key, user)
+        assert create_mock.call_args[0] == (course_run.edx_course_key, user)
         assert generate_mock.call_count == 1
         assert generate_mock.call_args[0] == (order, 'http://testserver/dashboard/')
+
+    @override_settings(EDXORG_BASE_URL='http://edx_base')
+    def test_provides_edx_link(self):
+        """If the program doesn't have financial aid, the checkout API should provide a link to go to edX"""
+        user = UserFactory.create()
+        self.client.force_login(user)
+
+        course_run = CourseRunFactory.create(
+            course__program__live=True,
+            course__program__financial_aid_availability=False,
+        )
+        resp = self.client.post(reverse('checkout'), {'course_id': course_run.edx_course_key}, format='json')
+        assert resp.status_code == status.HTTP_200_OK
+        assert resp.json() == {
+            'payload': {},
+            'url': 'http://edx_base/course_modes/choose/{}/'.format(course_run.edx_course_key),
+            'method': 'GET',
+        }
+
+        # We should only create Order objects for a Cybersource checkout
+        assert Order.objects.count() == 0
 
     def test_post_redirects(self):
         """Test that POST redirects to same URL"""

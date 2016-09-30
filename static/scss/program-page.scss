@@ -88,12 +88,13 @@
     }
 
     .mdl-tabs__panel {
-      margin-bottom: 50px;
+      margin-bottom: 40px;
     }
   }
 
   .info-box, .powered-by {
-    margin: 0 0 23px 15px;;
+    margin: 0 0 23px 15px;
+
   }
 
   .info-box {
@@ -137,13 +138,20 @@
   .powered-by {
     padding: 20px;
 
+    p {
+      display: inline-block;
+      font-size: 16px;
+      font-weight: 400;
+      color: rgba(0, 0, 0, 0.6) !important;
+    }
+
     > *:not(:last-child) {
       margin-right: 7px;
     }
 
     img {
       height: 30px;
-      margin-bottom: 5px;
+      margin-bottom: 9px;
     }
 
   }

@@ -251,16 +251,8 @@ export function makeProfileImageUrl(profile: Profile): string {
  * Returns the preferred name or else the username
  */
 export function getPreferredName(profile: Profile, last: boolean = true): string {
-  let first;
-  if ( profile.username === SETTINGS.username ) {
-    first = profile.preferred_name || SETTINGS.name || SETTINGS.username;
-  } else {
-    first = profile.preferred_name || profile.first_name;
-  }
-  if ( last ) {
-    return profile.last_name ? `${first} ${profile.last_name}` : first;
-  }
-  return first;
+  let first = profile.preferred_name || profile.first_name || profile.username;
+  return last && profile.last_name && !profile.preferred_name ? `${first} ${profile.last_name}` : first;
 }
 
 /**

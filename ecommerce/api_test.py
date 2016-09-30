@@ -7,18 +7,22 @@ import hashlib
 import hmac
 from urllib.parse import quote_plus
 
+from django.core.exceptions import ImproperlyConfigured
+from django.http.response import Http404
+from django.test import override_settings
 from mock import (
     MagicMock,
     patch,
 )
-from django.http.response import Http404
-from django.test import override_settings
 from rest_framework.exceptions import ValidationError
 from edx_api.enrollments import Enrollment
 
 from backends.pipeline_api import EdxOrgOAuth2
 from courses.factories import CourseRunFactory
-from dashboard.models import CachedEnrollment
+from dashboard.models import (
+    CachedEnrollment,
+    ProgramEnrollment,
+)
 from ecommerce.api import (
     create_unfulfilled_order,
     enroll_user_on_success,
@@ -40,6 +44,8 @@ from ecommerce.factories import (
     OrderFactory,
 )
 from ecommerce.models import Order
+from financialaid.factories import FinancialAidFactory
+from financialaid.models import FinancialAidStatus
 from profiles.factories import UserFactory
 from search.base import ESTestCase
 
@@ -49,20 +55,32 @@ def create_purchasable_course_run():
     """
     Creates a purchasable course run and an associated user
     """
-    course_run = CourseRunFactory.create(course__program__live=True)
-    CoursePriceFactory.create(course_run=course_run, is_valid=True)
+    course_run = CourseRunFactory.create(
+        course__program__live=True,
+        course__program__financial_aid_availability=True,
+    )
+    price = CoursePriceFactory.create(course_run=course_run, is_valid=True)
     user = UserFactory.create()
+    FinancialAidFactory.create(
+        tier_program__current=True,
+        tier_program__program=course_run.course.program,
+        tier_program__discount_amount=price.price/2,
+        user=user,
+        status=FinancialAidStatus.APPROVED,
+    )
+    ProgramEnrollment.objects.create(user=user, program=course_run.course.program)
     return course_run, user
 
 
 class PurchasableTests(ESTestCase):
     """
-    Tests for get_purchasable_courses and create_unfilfilled_order
+    Tests for get_purchasable_courses and create_unfulfilled_order
     """
 
     def test_success(self):
         """
-        A course run which is live, and has a price, was not already purchased, and should be purchasable
+        A course run which is live, has financial aid,
+        has a price, and was not already purchased, should be purchasable
         """
         course_run, user = create_purchasable_course_run()
         assert get_purchasable_course_run(course_run.edx_course_key, user) == course_run
@@ -79,6 +97,75 @@ class PurchasableTests(ESTestCase):
         with self.assertRaises(Http404):
             get_purchasable_course_run(course_run.edx_course_key, user)
 
+    def test_no_current_financial_aid(self):
+        """
+        Purchasable course runs must have financial aid available
+        """
+        course_run, user = create_purchasable_course_run()
+        program = course_run.course.program
+        tier_program = program.tier_programs.first()
+        tier_program.current = False
+        tier_program.save()
+
+        with self.assertRaises(ValidationError) as ex:
+            get_purchasable_course_run(course_run.edx_course_key, user)
+        assert ex.exception.args[0] == (
+            "Course run {} does not have a current attached financial aid application".format(
+                course_run.edx_course_key
+            )
+        )
+
+    def test_financial_aid_for_user(self):
+        """
+        Purchasable course runs must have a financial aid attached for the given user
+        """
+        course_run, user = create_purchasable_course_run()
+        program = course_run.course.program
+        tier_program = program.tier_programs.first()
+        financial_aid = tier_program.financialaid_set.first()
+        financial_aid.user = UserFactory.create()
+        financial_aid.save()
+
+        with self.assertRaises(ValidationError) as ex:
+            get_purchasable_course_run(course_run.edx_course_key, user)
+        assert ex.exception.args[0] == (
+            "Course run {} does not have a current attached financial aid application".format(
+                course_run.edx_course_key
+            )
+        )
+
+    def test_financial_aid_terminal_status(self):
+        """
+        FinancialAid must have a status which allows purchase to happen
+        """
+        course_run, user = create_purchasable_course_run()
+        program = course_run.course.program
+        tier_program = program.tier_programs.first()
+        financial_aid = tier_program.financialaid_set.first()
+        for status in set(FinancialAidStatus.ALL_STATUSES).difference(set(FinancialAidStatus.TERMINAL_STATUSES)):
+            financial_aid.status = status
+            financial_aid.save()
+
+            with self.assertRaises(ValidationError) as ex:
+                get_purchasable_course_run(course_run.edx_course_key, user)
+            assert ex.exception.args[0] == (
+                "Course run {} does not have a current attached financial aid application".format(
+                    course_run.edx_course_key
+                )
+            )
+
+    def test_financial_aid_not_available(self):
+        """
+        Purchasable course runs must have financial aid available
+        """
+        course_run, user = create_purchasable_course_run()
+        program = course_run.course.program
+        program.financial_aid_availability = False
+        program.save()
+
+        with self.assertRaises(Http404):
+            get_purchasable_course_run(course_run.edx_course_key, user)
+
     def test_no_valid_price(self):
         """
         Purchasable course runs must have a valid price
@@ -90,6 +177,17 @@ class PurchasableTests(ESTestCase):
 
         with self.assertRaises(Http404):
             get_purchasable_course_run(course_run.edx_course_key, user)
+
+    def test_no_program_enrollment(self):
+        """
+        For a user to purchase a course run they must already be enrolled in the program
+        """
+        course_run, user = create_purchasable_course_run()
+        ProgramEnrollment.objects.filter(program=course_run.course.program, user=user).delete()
+        try:
+            create_unfulfilled_order(course_run.edx_course_key, user)
+        except Http404:
+            pass
 
     def test_already_purchased(self):
         """
@@ -108,28 +206,63 @@ class PurchasableTests(ESTestCase):
 
         assert ex.exception.args[0] == 'Course run {} is already purchased'.format(course_run.edx_course_key)
 
+    def test_less_or_equal_to_zero(self):
+        """
+        An order may not have a negative or zero price
+        """
+        course_run, user = create_purchasable_course_run()
+        price_obj = course_run.courseprice_set.get(is_valid=True)
+
+        for invalid_price in (0, -1.23,):
+            price_obj.price = invalid_price
+            price_obj.save()
+
+            with patch('ecommerce.api.get_purchasable_course_run', autospec=True, return_value=course_run) as mocked:
+                with self.assertRaises(ImproperlyConfigured) as ex:
+                    create_unfulfilled_order(course_run.edx_course_key, user)
+                assert ex.exception.args[0] == "Price to be charged is less than or equal to zero"
+            assert mocked.call_count == 1
+            assert mocked.call_args[0] == (course_run.edx_course_key, user)
+
+            assert Order.objects.count() == 0
+
     def test_create_order(self):
         """
         Create Order from a purchasable course
         """
         course_run, user = create_purchasable_course_run()
-        price = course_run.courseprice_set.get(is_valid=True).price
+        discounted_price = round(course_run.courseprice_set.get(is_valid=True).price/2, 2)
+        price_dict = {
+            "course_price": discounted_price
+        }
 
-        with patch('ecommerce.api.get_purchasable_course_run', autospec=True, return_value=course_run) as mocked:
+        with patch(
+            'ecommerce.api.get_purchasable_course_run',
+            autospec=True,
+            return_value=course_run,
+        ) as get_purchasable, patch(
+            'ecommerce.api.get_formatted_course_price',
+            autospec=True,
+            return_value=price_dict,
+        ) as get_price:
             order = create_unfulfilled_order(course_run.edx_course_key, user)
-        assert mocked.call_count == 1
-        assert mocked.call_args[0] == (course_run.edx_course_key, user)
+        assert get_purchasable.call_count == 1
+        assert get_purchasable.call_args[0] == (course_run.edx_course_key, user)
+        assert get_price.call_count == 1
+        assert get_price.call_args[0] == (
+            ProgramEnrollment.objects.get(user=user, program=course_run.course.program),
+        )
 
         assert Order.objects.count() == 1
         assert order.status == Order.CREATED
-        assert order.total_price_paid == price
+        assert order.total_price_paid == discounted_price
         assert order.user == user
 
         assert order.line_set.count() == 1
         line = order.line_set.first()
         assert line.course_key == course_run.edx_course_key
         assert line.description == 'Seat for {}'.format(course_run.title)
-        assert line.price == price
+        assert line.price == discounted_price
 
 
 CYBERSOURCE_ACCESS_KEY = 'access'

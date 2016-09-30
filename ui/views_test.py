@@ -95,13 +95,13 @@ class TestHomePage(ViewsTests):
     def test_login_button(self):
         """Verify that we see a login button if not logged in"""
         response = self.client.get('/')
-        self.assertContains(response, "Sign up")
+        self.assertContains(response, "Sign Up")
 
     def test_sign_out_button(self):
         """Verify that we see a sign out button if logged in"""
         self.create_and_login_user()
         response = self.client.get('/')
-        self.assertContains(response, 'Sign out')
+        self.assertContains(response, 'Sign Out')
 
     def test_index_context_anonymous(self):
         """
@@ -182,7 +182,6 @@ class DashboardTests(ViewsTests):
                 'gaTrackingID': ga_tracking_id,
                 'reactGaDebug': react_ga_debug,
                 'authenticated': True,
-                'name': user.profile.preferred_name,
                 'username': get_social_username(user),
                 'host': host,
                 'edx_base_url': edx_base_url,
@@ -415,7 +414,6 @@ class TestUsersPage(ViewsTests):
                     'gaTrackingID': ga_tracking_id,
                     'reactGaDebug': react_ga_debug,
                     'authenticated': True,
-                    'name': user.profile.preferred_name,
                     'username': username,
                     'host': host,
                     'edx_base_url': edx_base_url,
@@ -453,7 +451,6 @@ class TestUsersPage(ViewsTests):
                     'gaTrackingID': ga_tracking_id,
                     'reactGaDebug': react_ga_debug,
                     'authenticated': False,
-                    'name': "",
                     'username': None,
                     'host': host,
                     'edx_base_url': edx_base_url,

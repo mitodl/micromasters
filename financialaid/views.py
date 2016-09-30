@@ -21,7 +21,10 @@ from rolepermissions.verifications import has_object_permission
 
 from courses.models import Program
 from dashboard.models import ProgramEnrollment
-from financialaid.api import get_course_price_for_learner, get_no_discount_tier_program
+from financialaid.api import (
+    get_formatted_course_price,
+    get_no_discount_tier_program
+)
 from financialaid.models import (
     FinancialAid,
     FinancialAidStatus,
@@ -256,23 +259,48 @@ class FinancialAidActionView(UpdateAPIView):
     queryset = FinancialAid.objects.all()
 
 
-class GetLearnerPriceForCourseView(APIView):
+class CoursePriceListView(APIView):
     """
-    View for retrieving a leaner's price for a course run
+    View for retrieving a learner's price for course runs in all enrolled programs
+    """
+    authentication_classes = (SessionAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        """
+        GET handler
+        """
+        user = request.user
+        program_enrollments = (
+            ProgramEnrollment.objects
+            .select_related('user', 'program')
+            .filter(user=user, program__live=True).all()
+        )
+        formatted_course_prices = []
+        for program_enrollment in program_enrollments:
+            response_dict = get_formatted_course_price(program_enrollment)
+            formatted_course_prices.append(response_dict)
+        return Response(data=formatted_course_prices)
+
+
+class CoursePriceDetailView(APIView):
+    """
+    View for retrieving a learner's price for a course run
     """
     authentication_classes = (SessionAuthentication, )
     permission_classes = (IsAuthenticated, )
 
     def get(self, request, *args, **kwargs):
         """
-        Get request for GetLearnerPriceForCourseView
+        GET handler
         """
-        learner = request.user
-        program = get_object_or_404(
-            Program,
-            id=self.kwargs["program_id"],
-            live=True
+        user = request.user
+        program_enrollment = get_object_or_404(
+            ProgramEnrollment,
+            user=user,
+            program__id=self.kwargs["program_id"],
+            program__live=True
         )
         return Response(
-            data=get_course_price_for_learner(learner, program)
+            data=get_formatted_course_price(program_enrollment)
         )

@@ -16,15 +16,14 @@ from edx_api.client import EdxApi
 from backends import utils
 from backends.edxorg import EdxOrgOAuth2
 
-from courses.models import (
-    Program,
-)
 from dashboard.api import (
     get_info_for_program,
     get_student_certificates,
     get_student_current_grades,
     get_student_enrollments,
 )
+from dashboard.models import ProgramEnrollment
+from dashboard.utils import MMTrack
 
 
 log = logging.getLogger(__name__)
@@ -39,7 +38,8 @@ class UserDashboard(APIView):
 
     def get(self, request, *args, **kargs):  # pylint: disable=unused-argument, no-self-use
         """
-        Returns information needed to display the user dashboard for a program.
+        Returns information needed to display the user
+        dashboard for all the programs the user is enrolled in.
         """
 
         # get the credentials for the current user for edX
@@ -59,9 +59,16 @@ class UserDashboard(APIView):
         # get certificates for the student
         certificates = get_student_certificates(request.user, edx_client)
         # get current_grades for the student
-        current_grades = get_student_current_grades(request.user, edx_client)  # pylint: disable=unused-variable
+        current_grades = get_student_current_grades(request.user, edx_client)
 
         response_data = []
-        for program in Program.objects.filter(live=True):
-            response_data.append(get_info_for_program(program, enrollments, certificates))
+        for program_enrollment in ProgramEnrollment.objects.filter(user=request.user, program__live=True):
+            mmtrack_info = MMTrack(
+                request.user,
+                program_enrollment.program,
+                enrollments,
+                current_grades,
+                certificates
+            )
+            response_data.append(get_info_for_program(mmtrack_info))
         return Response(response_data)

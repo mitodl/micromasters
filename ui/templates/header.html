@@ -6,15 +6,13 @@
         <div class="header-page-name"><a href="/"><img src="/static/images/micromasters_logo_white.png"  height="40" alt="MIT MicroMasters" /></a></div>
         <div class="nav-utility pull-right">
           {% if authenticated %}
-          <a class="btn btn-login white-button" href="/logout">
-            Sign out
+          <a class="btn btn-login white-button upper-case" href="/logout">
+            Sign Out
           </a>
           {% else %}
-          <div class="members-login">
-            <a href="{% url 'social:begin' 'edxorg' %}">Log In</a>
-          </div>
+          <div class="members-login"><a class="btn ghost upper-case" href="{% url 'social:begin' 'edxorg' %}">Log In</a></div>
           <a class="btn btn-login white-button open-signup-dialog upper-case">
-            Sign up
+            Sign Up
           </a>
           {% endif %}
         </div>

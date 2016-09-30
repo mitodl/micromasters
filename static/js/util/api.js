@@ -206,3 +206,7 @@ export function addFinancialAid(income: number, currency: string, programId: num
     })
   });
 }
+
+export function getCoursePrices(): Promise<*> {
+  return mockableFetchJSONWithCSRF('/api/v0/course_prices/', {});
+}

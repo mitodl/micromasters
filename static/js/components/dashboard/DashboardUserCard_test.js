@@ -16,7 +16,7 @@ describe('DashboardUserCard', () => {
     let wrapper = shallow(<DashboardUserCard profile={profile} program={program} />);
     assert.equal(wrapper.find(".dashboard-user-card-image").find(ProfileImage).props().profile, profile);
     let textContainer = wrapper.find(".dashboard-user-card-text");
-    assert.equal(textContainer.find(CardTitle).children().text(), "Jane Garris");
+    assert.equal(textContainer.find(CardTitle).children().text(), "Jane");
 
     assert.equal(textContainer.find(".dashboard-user-card-text-program").text(), program.title);
     assert.equal(

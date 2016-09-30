@@ -44,7 +44,6 @@ describe('LearnerResult', () => {
   it("should include the user's name", () => {
     let result = renderLearnerResult(elasticHit);
     assert.include(result, USER_PROFILE_RESPONSE.preferred_name);
-    assert.include(result, USER_PROFILE_RESPONSE.last_name);
   });
 
   it("should include the user's location", () => {
