@@ -43,6 +43,14 @@ const SignupDialog = ({
       <a className="mm-button signup" href="/login/edxorg">
         Continue with edX
       </a>
+      <div className="terms-of-service-text">
+        By clicking "Continue with edX" I certify that I agree with <a href="/terms_of_service" target="_blank">
+          MIT MicroMasters Terms of Service.
+        </a> Read our <a
+          href="http://web.mit.edu/referencepubs/nondiscrimination/index.html"
+          target="_blank"
+        >Nondiscrimination Policy.</a>
+      </div>
     </div>
   </Dialog>;
 };
