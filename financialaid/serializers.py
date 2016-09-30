@@ -143,7 +143,7 @@ class FinancialAidActionSerializer(serializers.Serializer):
         MailgunClient.send_financial_aid_email(
             acting_user=self.context["request"].user,
             financial_aid=self.instance,
-            **generate_financial_aid_email(self.instance, self.instance.status)
+            **generate_financial_aid_email(self.instance)
         )
 
         return self.instance
