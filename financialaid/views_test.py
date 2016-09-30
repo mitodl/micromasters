@@ -11,6 +11,8 @@ from rest_framework.response import Response
 from rest_framework.test import APIClient
 
 from courses.factories import CourseRunFactory
+from courses.models import Program
+from dashboard.models import ProgramEnrollment
 from ecommerce.factories import CoursePriceFactory
 from financialaid.api_test import FinancialAidBaseTestCase
 from financialaid.constants import (
@@ -624,8 +626,30 @@ class LearnerSkipsFinancialAid(FinancialAidBaseTestCase, APIClient):
         Tests that a FinancialAid object cannot be skipped if the user is not enrolled in program
         """
         self.client.force_login(self.enrolled_profile3.user)
+        with self.assertRaises(ProgramEnrollment.DoesNotExist):
+            ProgramEnrollment.objects.get(user=self.enrolled_profile3.user, program=self.program2)
         url = reverse("financial_aid_skip", kwargs={"program_id": self.program2.id})
         self.assert_http_status(self.client.put, url, status.HTTP_400_BAD_REQUEST)
+
+    def test_financialaid_object_cannot_be_skipped_for_nonexisting_program(self):
+        """
+        Tests that a FinancialAid object cannot be skipped if that program doesn't exist
+        """
+        self.client.force_login(self.enrolled_profile3.user)
+        valid_program_ids = Program.objects.all().values_list("id", flat=True)
+        invalid_program_id = 8675305
+        assert invalid_program_id not in valid_program_ids
+        url = reverse("financial_aid_skip", kwargs={"program_id": invalid_program_id})
+        self.assert_http_status(self.client.put, url, status.HTTP_404_NOT_FOUND)
+
+    def test_skip_financial_aid_only_put_allowed(self):
+        """
+        Tests that methods other than PUT/PATCH are not allowed for skipping financial aid
+        """
+        self.assert_http_status(self.client.get, self.skip_url, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assert_http_status(self.client.post, self.skip_url, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assert_http_status(self.client.head, self.skip_url, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assert_http_status(self.client.delete, self.skip_url, status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class CoursePriceListViewTests(FinancialAidBaseTestCase, APIClient):

@@ -98,7 +98,7 @@ class FinancialAidSkipSerializer(serializers.Serializer):
         """
         Validators for this serializer
         """
-        if self.instance.status in TERMINAL_STATUSES:
+        if self.instance.status in FinancialAidStatus.TERMINAL_STATUSES:
             raise ValidationError("Financial aid cannot be skipped once it has been approved, rejected, or skipped.")
         return data
 
