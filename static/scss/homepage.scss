@@ -200,7 +200,7 @@ body.app-media {
 }
 
 .sub-banner {
-  background: $bg-med-gray;
+  background: #e4e4e4;
 }
 
 .sub-banner-section{
@@ -272,7 +272,7 @@ body.app-media {
 }
 
 .reasons-section, .current-programs-section {
-  padding: 7vw 0 8vw;
+  padding: 6vw 0 8vw;
   margin: 0;
   text-align: center;
   .centered-content {
@@ -346,7 +346,7 @@ body.app-media {
 
 .current-programs-section {
   margin: 0;
-  background-color: #151515;
+  background-color: #1d1d1d;
 
   .col-md-12 {
     width: 97%;
@@ -379,10 +379,6 @@ body.app-media {
       margin-top: 12px;
       background: #cccccc;
       color: #333333;
-    }
-
-    a{
-      color: #289fdc;
     }
   }
 
@@ -433,7 +429,7 @@ body.app-media {
 }
 
 .reasons-section {
-  background-color: $mm-brand-bg-dark;
+  background-color: $mm-brand-bg;
 
   .col-md-4 {
     padding: 0 3%;

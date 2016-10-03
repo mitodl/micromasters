@@ -163,7 +163,7 @@ export function boundCheckbox(keySet: string[], label: string|React$Element<*>):
   };
 
   const style = {
-    'backgroundColor': '#30BB5C'
+    'backgroundColor': '#A31F34'
   };
 
   return (
