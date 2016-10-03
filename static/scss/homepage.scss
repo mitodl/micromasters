@@ -123,7 +123,7 @@ body.app-media {
 }
 
 .banner-wrapper {
-  background: #222 center top url(/static/images/lp_hero2.jpg) no-repeat;
+  background: #222 center top url(/static/images/lp_hero3.jpg) no-repeat;
   margin: 0 auto;
   width: 100%;
   min-height: 620px;
@@ -199,8 +199,11 @@ body.app-media {
   }
 }
 
+.sub-banner {
+  background: $bg-med-gray;
+}
+
 .sub-banner-section{
-  background-color: #ffffff;
   padding: 7vw 0 8vw;
   text-align: center;
 }
@@ -311,7 +314,7 @@ body.app-media {
     }
 
     h2 {
-      color: #08b940;
+      color: $font-gray;
       font-size: 30px;
       font-style: italic;
       font-family: helvetica;
@@ -323,7 +326,7 @@ body.app-media {
     }
 
     p {
-      color: #08b940;
+      color: $font-gray;
       font-size: 24px;
       @media (max-width: 580px) {
         font-size: 20px;
