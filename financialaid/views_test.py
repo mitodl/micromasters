@@ -686,19 +686,13 @@ class LearnerSkipsFinancialAid(FinancialAidBaseTestCase, APIClient):
         # Check logging
         assert FinancialAidAudit.objects.count() == 1
 
-    def test_financialaid_object_cannot_be_skipped_if_approved_or_rejected(self):
+    def test_financialaid_object_cannot_be_skipped_if_already_terminal_status(self):
         """
-        Tests that an existing FinancialAid object that has already been approved or rejected
-        cannot be skipped.
+        Tests that an existing FinancialAid object that has already reached a terminal status cannot be skipped.
         """
         self.client.force_login(self.enrolled_profile2.user)
-        unpermitted_statuses = [
-            FinancialAidStatus.APPROVED,
-            FinancialAidStatus.AUTO_APPROVED,
-            FinancialAidStatus.REJECTED
-        ]
-        for unpermitted_status in unpermitted_statuses:
-            self.financialaid_pending.status = unpermitted_status
+        for status in FinancialAidStatus.TERMINAL_STATUSES:
+            self.financialaid_pending.status = status
             self.financialaid_pending.save()
             self.assert_http_status(self.client.put, self.skip_url, status.HTTP_400_BAD_REQUEST)
 
