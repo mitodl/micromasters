@@ -1281,10 +1281,7 @@ blocks,
   margin-top: 14px;
 }
 
-.btn {
-  border-radius: 0;
-
-  &.mailchimp-btn {
-    margin-left: 20px;
-  }
+.mailchimp-btn {
+  display: inline-flex !important;
+  margin-right: 10px !important;
 }
