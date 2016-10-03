@@ -35,7 +35,7 @@ import {
 
   SET_PHOTO_DIALOG_VISIBILITY,
   SET_CALCULATOR_DIALOG_VISIBILITY,
-  SET_DOCUMENT_DATE,
+  SET_DOCUMENT_SENT_DATE,
 } from '../actions/ui';
 import { PERSONAL_STEP } from '../constants';
 import type { ToastMessage } from '../flow/generalTypes';
@@ -226,7 +226,7 @@ export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
     return { ...state, photoDialogVisibility: action.payload };
   case SET_CALCULATOR_DIALOG_VISIBILITY:
     return { ...state, calculatorDialogVisibility: action.payload };
-  case SET_DOCUMENT_DATE:
+  case SET_DOCUMENT_SENT_DATE:
     return { ...state, documentSentDate: action.payload };
   default:
     return state;
