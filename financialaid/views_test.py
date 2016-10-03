@@ -1,8 +1,8 @@
 """
 Tests for financialaid view
 """
-from unittest.mock import Mock, patch
 import datetime
+from unittest.mock import Mock, patch
 
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
@@ -691,8 +691,8 @@ class LearnerSkipsFinancialAid(FinancialAidBaseTestCase, APIClient):
         Tests that an existing FinancialAid object that has already reached a terminal status cannot be skipped.
         """
         self.client.force_login(self.enrolled_profile2.user)
-        for status in FinancialAidStatus.TERMINAL_STATUSES:
-            self.financialaid_pending.status = status
+        for financial_aid_status in FinancialAidStatus.TERMINAL_STATUSES:
+            self.financialaid_pending.status = financial_aid_status
             self.financialaid_pending.save()
             self.assert_http_status(self.client.put, self.skip_url, status.HTTP_400_BAD_REQUEST)
 
