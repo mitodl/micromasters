@@ -59,13 +59,13 @@
         </a>
       </div>
     </div>
-    <div class="mdl-grid">
+    <div class="mdl-grid tabs-content">
       <div class="mdl-cell mdl-cell--8-col">
         <div class="mdl-tabs__panel is-active" id="about-panel">
           {{ page.description|richtext }}
         </div>
         <div class="mdl-tabs__panel" id="faq-panel">
-          <div class="single-column faqs">
+          <div class="faqs">
             {% for faq in page.faqs.all %}
             <div class="faq">
               <div class="question">

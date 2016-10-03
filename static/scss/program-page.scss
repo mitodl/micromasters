@@ -86,7 +86,7 @@
     }
 
     .mdl-tabs__tab-bar {
-      margin-bottom: 40px;
+      margin-bottom: 30px;
       height: 57px;
     }
 
@@ -161,15 +161,12 @@
       height: 30px;
       margin-bottom: 9px;
     }
-
   }
 
-  #faq-panel, #about-panel {
-    .mdl-grid {
-      width: 94%;
-      margin: 0 auto;
-      max-width: 1150px;
-    }
+  .tabs-content {
+    width: 94%;
+    margin: 0 auto;
+    max-width: 1150px;
 
     p {
       font-size: 16px;
@@ -181,8 +178,7 @@
   .faqs {
     margin-top: 20px;
     @media (max-width: 580px) {
-      width: 85%;
-      margin: 58px auto;
+      margin: 18px auto;
     }
 
     * {
@@ -190,17 +186,13 @@
     }
 
     .faq {
-      padding: 20px 15px 20px 0;
+      padding: 0 15px 23px 0;
 
       .question {
         font-weight: 500;
         font-size: 18px;
         margin: 0 0 25px 0;
       }
-    }
-
-    .faq:last-child {
-      margin-bottom: 100px;
     }
   }
 
