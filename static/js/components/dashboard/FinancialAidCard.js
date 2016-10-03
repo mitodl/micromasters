@@ -27,20 +27,20 @@ export default class FinancialAidCard extends React.Component {
     program: Program,
     coursePrice: CoursePrice,
     openFinancialAidCalculator: () => void,
-    documentDate: Object,
-    setDocumentDate: Function,
+    documentSentDate: Object,
+    setDocumentSentDate: Function,
   };
 
   documentStatus() {
     const {
-      setDocumentDate,
-      documentDate,
+      setDocumentSentDate,
+      documentSentDate,
     } = this.props;
     const { application_status: applicationStatus } = this.props.program.financial_aid_user_info;
 
     let errors = {};
-    if (documentDate.edit !== undefined) {
-      errors = documentDate.edit.errors;
+    if (documentSentDate.edit !== undefined) {
+      errors = documentSentDate.edit.errors;
     }
 
     switch (applicationStatus) {
@@ -59,8 +59,8 @@ export default class FinancialAidCard extends React.Component {
         </Grid>
         <div className="document-row">
           <DateField
-            data={documentDate}
-            updateHandler={setDocumentDate}
+            data={documentSentDate}
+            updateHandler={setDocumentSentDate}
             keySet={['date']}
             errors={errors}
             label=""

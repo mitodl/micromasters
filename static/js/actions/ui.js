@@ -92,5 +92,5 @@ export const setPhotoDialogVisibility = createAction(SET_PHOTO_DIALOG_VISIBILITY
 export const SET_CALCULATOR_DIALOG_VISIBILITY = 'SET_CALCULATOR_DIALOG_VISIBILITY';
 export const setCalculatorDialogVisibility = createAction(SET_CALCULATOR_DIALOG_VISIBILITY);
 
-export const SET_DOCUMENT_DATE = 'SET_DOCUMENT_DATE';
-export const setDocumentDate = createAction(SET_DOCUMENT_DATE);
+export const SET_DOCUMENT_SENT_DATE = 'SET_DOCUMENT_SENT_DATE';
+export const setDocumentSentDate = createAction(SET_DOCUMENT_SENT_DATE);

@@ -22,7 +22,7 @@ import {
   SET_ENROLL_SELECTED_PROGRAM,
   SET_PHOTO_DIALOG_VISIBILITY,
   SET_CALCULATOR_DIALOG_VISIBILITY,
-  SET_DOCUMENT_DATE,
+  SET_DOCUMENT_SENT_DATE,
 
   clearUI,
   updateDialogText,
@@ -47,7 +47,7 @@ import {
   setEnrollSelectedProgram,
   setPhotoDialogVisibility,
   setCalculatorDialogVisibility,
-  setDocumentDate,
+  setDocumentSentDate,
 } from '../actions/ui';
 import { assertCreatedActionHelper } from './util';
 
@@ -77,7 +77,7 @@ describe('generated UI action helpers', () => {
       [setEnrollSelectedProgram, SET_ENROLL_SELECTED_PROGRAM],
       [setPhotoDialogVisibility, SET_PHOTO_DIALOG_VISIBILITY],
       [setCalculatorDialogVisibility, SET_CALCULATOR_DIALOG_VISIBILITY],
-      [setDocumentDate, SET_DOCUMENT_DATE],
+      [setDocumentSentDate, SET_DOCUMENT_SENT_DATE],
     ].forEach(assertCreatedActionHelper);
   });
 });

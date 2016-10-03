@@ -24,7 +24,7 @@ import ErrorMessage from '../components/ErrorMessage';
 import ProgressWidget from '../components/ProgressWidget';
 import {
   setCalculatorDialogVisibility,
-  setDocumentDate,
+  setDocumentSentDate,
 } from '../actions/ui';
 import { startCalculatorEdit } from '../actions/financial_aid';
 import type { UIState } from '../reducers/ui';
@@ -114,9 +114,9 @@ class DashboardPage extends React.Component {
     dispatch(startCalculatorEdit(currentProgramEnrollment.id));
   };
 
-  setDocumentDate = newDate => {
+  setDocumentSentDate = newDate => {
     const { dispatch } = this.props;
-    dispatch(setDocumentDate(newDate));
+    dispatch(setDocumentSentDate(newDate));
   };
 
   render() {
@@ -124,7 +124,7 @@ class DashboardPage extends React.Component {
       coursePrices,
       dashboard,
       profile: { profile },
-      ui: { documentDate },
+      ui: { documentSentDate },
       currentProgramEnrollment,
     } = this.props;
     const loaded = dashboard.fetchStatus !== FETCH_PROCESSING;
@@ -151,8 +151,8 @@ class DashboardPage extends React.Component {
               program={program}
               coursePrice={coursePrice}
               openFinancialAidCalculator={this.openFinancialAidCalculator}
-              documentDate={documentDate}
-              setDocumentDate={this.setDocumentDate}
+              documentSentDate={documentSentDate}
+              setDocumentSentDate={this.setDocumentSentDate}
             />
             <CourseListCard
               program={program}

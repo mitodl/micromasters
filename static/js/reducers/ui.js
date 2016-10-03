@@ -71,7 +71,7 @@ export type UIState = {
   enrollSelectedProgram:        ?number;
   photoDialogVisibility:        boolean;
   calculatorDialogVisibility:   boolean;
-  documentDate: Object;
+  documentSentDate: Object;
 };
 
 export const INITIAL_UI_STATE: UIState = {
@@ -99,7 +99,7 @@ export const INITIAL_UI_STATE: UIState = {
   enrollSelectedProgram: null,
   photoDialogVisibility: false,
   calculatorDialogVisibility: false,
-  documentDate: {},
+  documentSentDate: {},
 };
 
 export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
@@ -227,7 +227,7 @@ export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
   case SET_CALCULATOR_DIALOG_VISIBILITY:
     return { ...state, calculatorDialogVisibility: action.payload };
   case SET_DOCUMENT_DATE:
-    return { ...state, documentDate: action.payload };
+    return { ...state, documentSentDate: action.payload };
   default:
     return state;
   }
