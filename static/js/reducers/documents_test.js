@@ -1,15 +1,17 @@
 // @flow
 /* global SETTINGS: false */
+import configureTestStore from 'redux-asserts';
+import { assert } from 'chai';
+import sinon from 'sinon';
+import moment from 'moment';
+
+import { ISO_8601_FORMAT } from '../constants';
 import {
   setDocumentSentDate,
 } from '../actions/documents';
 import type { DocumentsState } from '../reducers/documents';
 import rootReducer from '../reducers';
 import type { Action } from '../flow/reduxTypes';
-
-import configureTestStore from 'redux-asserts';
-import { assert } from 'chai';
-import sinon from 'sinon';
 
 describe('documents reducers', () => {
   let sandbox, store;
@@ -40,7 +42,8 @@ describe('documents reducers', () => {
 
   describe('Document date', () => {
     it('should let you set the document date', () => {
-      assertReducerResultState(setDocumentSentDate, documents => documents.documentSentDate, {});
+      let todayFormat = moment().format(ISO_8601_FORMAT);
+      assertReducerResultState(setDocumentSentDate, documents => documents.documentSentDate, todayFormat);
     });
   });
 });
