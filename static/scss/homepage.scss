@@ -65,7 +65,7 @@ body.app-media {
             font-size: 15px;
             text-decoration: none;
             @media (max-width: 580px) {
-              width: 47%;
+              width: 45%;
             }
           }
 
@@ -142,7 +142,7 @@ body.app-media {
     padding: 41vh 5% 0;
     text-align: center;
     @media (max-width: 580px) {
-      padding: 120px 10% 0;
+      padding: 120px 8% 0;
     }
 
     h1, h2 {
@@ -213,6 +213,9 @@ body.app-media {
   line-height: 44px;
   width: 81%;
   max-width:1000px;
+  @media (max-width: 580px) {
+    width: 90%;
+  }
 
   h3 {
     font-size: 25px;
@@ -332,6 +335,9 @@ body.app-media {
 .current-programs-section {
   h3 {
     margin: 0 0 70px;
+    @media (max-width: 580px) {
+      margin: 0 0 40px;
+    }
   }
 }
 
@@ -429,7 +435,7 @@ body.app-media {
   .col-md-4 {
     padding: 0 3%;
     @media (max-width: 580px) {
-      padding: 0 13%;
+      padding: 0 9%;
       width: 100%;
       float: left;
     }
