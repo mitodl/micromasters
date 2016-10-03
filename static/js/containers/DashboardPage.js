@@ -22,10 +22,8 @@ import DashboardUserCard from '../components/dashboard/DashboardUserCard';
 import FinancialAidCard from '../components/dashboard/FinancialAidCard';
 import ErrorMessage from '../components/ErrorMessage';
 import ProgressWidget from '../components/ProgressWidget';
-import {
-  setCalculatorDialogVisibility,
-  setDocumentSentDate,
-} from '../actions/ui';
+import { setCalculatorDialogVisibility } from '../actions/ui';
+import { setDocumentSentDate } from '../actions/documents';
 import { startCalculatorEdit } from '../actions/financial_aid';
 import type { UIState } from '../reducers/ui';
 import type { CoursePricesState, DashboardState } from '../flow/dashboardTypes';
@@ -45,6 +43,7 @@ class DashboardPage extends React.Component {
     dispatch:                 Dispatch,
     setCalculatorVisibility:  (b: boolean) => void,
     ui:                       UIState,
+    documents:                DocumentsState,
   };
 
   componentDidMount() {
@@ -124,7 +123,7 @@ class DashboardPage extends React.Component {
       coursePrices,
       dashboard,
       profile: { profile },
-      ui: { documentSentDate },
+      documents: { documentSentDate },
       currentProgramEnrollment,
     } = this.props;
     const loaded = dashboard.fetchStatus !== FETCH_PROCESSING;
@@ -199,6 +198,7 @@ const mapStateToProps = (state) => {
     dashboard: state.dashboard,
     currentProgramEnrollment: state.currentProgramEnrollment,
     ui: state.ui,
+    documents: state.documents,
   };
 };
 
