@@ -94,11 +94,11 @@ class DashboardTest(APITestCase):
 
         assert res.status_code == status.HTTP_200_OK
         data = res.data
-        assert len(data) == 2
-        program_ids = [data[0]['id'], data[1]['id'], ]
+        assert len(data) == 3
+        program_ids = [data[0]['id'], data[1]['id'], data[2]['id'], ]
         assert self.program_1.pk in program_ids
         assert self.program_3.pk in program_ids
-        assert self.program_2.pk not in program_ids
+        assert self.program_2.pk in program_ids
         assert self.program_no_live.pk not in program_ids
 
 

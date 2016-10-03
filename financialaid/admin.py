@@ -31,11 +31,13 @@ class FinancialAidAuditAdmin(admin.ModelAdmin):
 class TierProgramAdmin(admin.ModelAdmin):
     """Admin for TierProgram"""
     model = TierProgram
+    list_display = ('tier', 'program', 'discount_amount', 'income_threshold', 'current')
 
 
 class TierAdmin(admin.ModelAdmin):
     """Admin for Tier"""
     model = Tier
+    list_display = ('name', 'description')
 
 admin.site.register(FinancialAid, FinancialAidAdmin)
 admin.site.register(FinancialAidAudit, FinancialAidAuditAdmin)

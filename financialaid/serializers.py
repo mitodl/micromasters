@@ -85,6 +85,28 @@ class FinancialAidRequestSerializer(serializers.Serializer):
         return financial_aid
 
 
+class FinancialAidSkipSerializer(serializers.Serializer):
+    """
+    Serializer for skipping financial aid
+    """
+    def validate(self, data):
+        """
+        Validators for this serializer
+        """
+        if self.instance.status in FinancialAidStatus.TERMINAL_STATUSES:
+            raise ValidationError("Financial aid cannot be skipped once it has been approved, rejected, or skipped.")
+        return data
+
+    def save(self):
+        """
+        Updates and logs status change of FinancialAid object to "skipped"
+        """
+        self.instance.status = FinancialAidStatus.SKIPPED
+        self.instance.tier_program = get_no_discount_tier_program(self.instance.tier_program.program.id)
+        self.instance.save_and_log(self.context["request"].user)
+        return self.instance
+
+
 class FinancialAidActionSerializer(serializers.Serializer):
     """
     Serializer for financial aid actions
@@ -111,8 +133,8 @@ class FinancialAidActionSerializer(serializers.Serializer):
                 self.instance.status != FinancialAidStatus.PENDING_MANUAL_APPROVAL):
             raise ValidationError("Cannot approve application that is not pending manual approval.")
         if (data['action'] == FinancialAidStatus.PENDING_MANUAL_APPROVAL and
-                self.instance.status != FinancialAidStatus.PENDING_DOCS):
-            raise ValidationError("Cannot mark documents as received for application not pending docs.")
+                self.instance.status not in [FinancialAidStatus.PENDING_DOCS, FinancialAidStatus.DOCS_SENT]):
+            raise ValidationError("Cannot mark documents as received for an application awaiting docs.")
         # Check tier program exists
         try:
             data["tier_program"] = TierProgram.objects.get(
@@ -148,3 +170,31 @@ class FinancialAidActionSerializer(serializers.Serializer):
         )
 
         return self.instance
+
+
+class FinancialAidSerializer(serializers.ModelSerializer):
+    """
+    Serializer for indicating financial documents have been sent
+    """
+    def validate(self, data):
+        """
+        Validate method for this serializer
+        """
+        if self.instance.status != FinancialAidStatus.PENDING_DOCS:
+            raise ValidationError(
+                "Cannot indicate documents sent for an application that is not pending documents"
+            )
+        return data
+
+    def save(self):
+        """
+        Save method for this serializer
+        """
+        self.instance.status = FinancialAidStatus.DOCS_SENT
+        self.instance.date_documents_sent = self.validated_data["date_documents_sent"]
+        self.instance.save()
+        return self.instance
+
+    class Meta:
+        model = FinancialAid
+        fields = ("date_documents_sent", )

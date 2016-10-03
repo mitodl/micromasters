@@ -785,6 +785,7 @@ class InfoProgramTest(ESTestCase):
             'financial_aid_status': 'WHO-KNOWS',
             'financial_aid_min_price': 123,
             'financial_aid_max_price': 456,
+            'financial_aid_date_documents_sent': datetime.now(pytz.utc) - timedelta(hours=12)
         }
         self.mmtrack.configure_mock(**kwargs)
         mock_info_course.return_value = {'position_in_program': 1}
@@ -802,6 +803,7 @@ class InfoProgramTest(ESTestCase):
                 "application_status": kwargs['financial_aid_status'],
                 "min_possible_cost": kwargs['financial_aid_min_price'],
                 "max_possible_cost": kwargs['financial_aid_max_price'],
+                "date_documents_sent": kwargs['financial_aid_date_documents_sent'],
             }
         }
         self.assertEqual(res, expected_data)

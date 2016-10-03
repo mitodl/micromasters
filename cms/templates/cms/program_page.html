@@ -59,65 +59,65 @@
         </a>
       </div>
     </div>
-    <div class="mdl-tabs__panel is-active" id="about-panel">
-      <div class="mdl-grid">
-        <div class="mdl-cell mdl-cell--8-col">
+    <div class="mdl-grid">
+      <div class="mdl-cell mdl-cell--8-col">
+        <div class="mdl-tabs__panel is-active" id="about-panel">
           {{ page.description|richtext }}
         </div>
-        <div class="mdl-cell mdl-cell--4-col">
-          <div class="info-box course-info">
-            <h3 class="title">
-              Courses
-            </h3>
-            {% for course, status in courses_info.items %}
-            <div class="course-details">
-              <div class="title">
-                {{ course.title }}
+        <div class="mdl-tabs__panel" id="faq-panel">
+          <div class="single-column faqs">
+            {% for faq in page.faqs.all %}
+            <div class="faq">
+              <div class="question">
+                {{ faq.question }}
               </div>
-              <div class="description">
-                {{ status }}
+              <div class="answer">
+                {{ faq.answer|richtext }}
               </div>
             </div>
             {% endfor %}
           </div>
-          <div class="info-box contact-info">
-            <h3 class="title">
-              More Info
-            </h3>
-            <div class="contact-links">
-              {% if page.program_home_page_url %}
-              <a target="_blank" href="{{ page.program_home_page_url }}">
-                {{ page.title }} Home Page
-              </a>
-              {% endif %}
-              {% if page.program_contact_email %}
-              <a href="mailto:{{ page.program_contact_email }}">
-                Contact us: {{ page.program_contact_email }}
-              </a>
-              {% endif %}
-            </div>
-          </div>
-          <div class="powered-by">
-            <p>
-              Courses delivered on
-            </p>
-            <img src="/static/images/edx_logo.png" alt="edX" />
-          </div>
         </div>
       </div>
-    </div>
-    <div class="mdl-tabs__panel" id="faq-panel">
-      <div class="single-column faqs">
-        {% for faq in page.faqs.all %}
-        <div class="faq">
-          <div class="question">
-            {{ faq.question }}
+      <div class="mdl-cell mdl-cell--4-col">
+        <div class="info-box course-info">
+          <h3 class="title">
+            Courses
+          </h3>
+          {% for course, status in courses_info.items %}
+          <div class="course-details">
+            <div class="title">
+              {{ course.title }}
+            </div>
+            <div class="description">
+              {{ status }}
+            </div>
           </div>
-          <div class="answer">
-            {{ faq.answer|richtext }}
+          {% endfor %}
+        </div>
+        <div class="info-box contact-info">
+          <h3 class="title">
+            More Info
+          </h3>
+          <div class="contact-links">
+            {% if page.program_home_page_url %}
+            <a target="_blank" href="{{ page.program_home_page_url }}">
+              {{ page.title }} Home Page
+            </a>
+            {% endif %}
+            {% if page.program_contact_email %}
+            <a href="mailto:{{ page.program_contact_email }}">
+              Contact us: {{ page.program_contact_email }}
+            </a>
+            {% endif %}
           </div>
         </div>
-        {% endfor %}
+        <div class="powered-by">
+          <p>
+            Courses delivered on
+          </p>
+          <img src="/static/images/edx_logo.png" alt="edX" />
+        </div>
       </div>
     </div>
   </div>

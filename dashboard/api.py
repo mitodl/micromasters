@@ -141,6 +141,7 @@ def get_info_for_program(mmtrack):
             "application_status": mmtrack.financial_aid_status,
             "min_possible_cost": mmtrack.financial_aid_min_price,
             "max_possible_cost": mmtrack.financial_aid_max_price,
+            "date_documents_sent": mmtrack.financial_aid_date_documents_sent,
         }
     for course in mmtrack.program.course_set.all():
         data['courses'].append(
