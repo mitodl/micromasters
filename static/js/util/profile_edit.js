@@ -140,7 +140,7 @@ export function boundDateField(keySet: string[], label: string, omitDay: boolean
   return <DateField
     data={profile}
     errors={errors}
-    update={updateProfile}
+    updateHandler={updateProfile}
     validator={validator}
     keySet={keySet}
     label={label}

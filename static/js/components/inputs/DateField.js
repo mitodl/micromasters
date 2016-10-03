@@ -19,7 +19,7 @@ export default class DateField extends React.Component {
   props: {
     data: Object,
     errors: Object,
-    update: Function,
+    updateHandler: Function,
     validator: Function,
     keySet: Array<string>,
     label: string,
@@ -30,7 +30,7 @@ export default class DateField extends React.Component {
     const {
       data,
       errors,
-      update,
+      updateHandler,
       validator,
       keySet,
       label,
@@ -122,7 +122,7 @@ export default class DateField extends React.Component {
       } else {
         _.set(clone, keySet, validatedDate.value.format(ISO_8601_FORMAT));
       }
-      update(clone, validator);
+      updateHandler(clone, validator);
     };
 
     let edit = getEditObject();
