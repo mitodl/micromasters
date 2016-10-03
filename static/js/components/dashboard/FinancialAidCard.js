@@ -31,7 +31,7 @@ export default class FinancialAidCard extends React.Component {
     setDocumentSentDate: Function,
   };
 
-  documentStatus() {
+  renderDocumentStatus() {
     const {
       setDocumentSentDate,
       documentSentDate,
@@ -165,7 +165,7 @@ export default class FinancialAidCard extends React.Component {
         </Grid>
 
         <hr />
-        {this.documentStatus()}
+        {this.renderDocumentStatus()}
       </div>;
     // FA_STATUS_CREATED should not be seen here
     default:
