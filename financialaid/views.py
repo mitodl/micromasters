@@ -30,10 +30,14 @@ from financialaid.models import (
     FinancialAidStatus,
     TierProgram
 )
-from financialaid.permissions import UserCanEditFinancialAid
+from financialaid.permissions import (
+    UserCanEditFinancialAid,
+    FinancialAidUserMatchesLoggedInUser
+)
 from financialaid.serializers import (
     FinancialAidActionSerializer,
     FinancialAidRequestSerializer,
+    FinancialAidSerializer,
     FinancialAidSkipSerializer
 )
 from roles.roles import Permissions
@@ -254,6 +258,18 @@ class FinancialAidActionView(UpdateAPIView):
     """
     serializer_class = FinancialAidActionSerializer
     permission_classes = (IsAuthenticated, UserCanEditFinancialAid)
+    lookup_field = "id"
+    lookup_url_kwarg = "financial_aid_id"
+    queryset = FinancialAid.objects.all()
+
+
+class FinancialAidDetailView(UpdateAPIView):
+    """
+    View for updating a FinancialAid record
+    """
+    serializer_class = FinancialAidSerializer
+    authentication_classes = (SessionAuthentication, )
+    permission_classes = (IsAuthenticated, FinancialAidUserMatchesLoggedInUser)
     lookup_field = "id"
     lookup_url_kwarg = "financial_aid_id"
     queryset = FinancialAid.objects.all()

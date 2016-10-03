@@ -102,6 +102,7 @@ class FinancialAidStatus:
     CREATED = 'created'
     AUTO_APPROVED = 'auto-approved'
     PENDING_DOCS = 'pending-docs'
+    DOCS_SENT = 'docs-sent'
     PENDING_MANUAL_APPROVAL = 'pending-manual-approval'
     APPROVED = 'approved'
     REJECTED = 'rejected'
@@ -113,6 +114,7 @@ class FinancialAidStatus:
         AUTO_APPROVED,
         REJECTED,
         PENDING_DOCS,
+        DOCS_SENT,
         PENDING_MANUAL_APPROVAL,
         SKIPPED
     ]
@@ -121,6 +123,7 @@ class FinancialAidStatus:
         CREATED: "Created Applications",
         AUTO_APPROVED: "Auto-approved Applications",
         PENDING_DOCS: "Incomplete Applications",
+        DOCS_SENT: "Incomplete Applications (Documents Sent)",
         PENDING_MANUAL_APPROVAL: "Pending Applications",
         APPROVED: "Approved Applications",
         REJECTED: "Rejected Applications",
@@ -144,6 +147,7 @@ class FinancialAid(TimestampedModel):
     original_currency = models.CharField(null=True, max_length=10)
     country_of_income = models.CharField(null=True, max_length=100)
     date_exchange_rate = models.DateTimeField(null=True)
+    date_documents_sent = models.DateField(null=True)
 
     def save(self, *args, **kwargs):
         """

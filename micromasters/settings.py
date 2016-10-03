@@ -264,7 +264,8 @@ STATICFILES_DIRS = (
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    ]
+    ],
+    'EXCEPTION_HANDLER': 'micromasters.utils.custom_exception_handler'
 }
 
 # Request files from the webpack dev server

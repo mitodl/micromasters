@@ -2,7 +2,7 @@
 Tests for financialaid view
 """
 from unittest.mock import Mock, patch
-from datetime import datetime, timedelta
+import datetime
 
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
@@ -435,9 +435,9 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         assert called_kwargs["subject"] == FINANCIAL_AID_REJECTION_SUBJECT_TEXT
         assert called_kwargs["body"] == FINANCIAL_AID_REJECTION_MESSAGE_BODY
 
-    def test_mark_documents_received(self, mock_mailgun_client):
+    def test_mark_documents_received_pending_docs(self, mock_mailgun_client):
         """
-        Tests FinancialAidActionView when documents are checked as received
+        Tests FinancialAidActionView when documents are checked as received from PENDING_DOCS
         """
         mock_mailgun_client.send_financial_aid_email.return_value = Mock(
             spec=Response,
@@ -449,7 +449,7 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         self.financialaid.status = FinancialAidStatus.PENDING_DOCS
         self.financialaid.save()
         self.data["action"] = FinancialAidStatus.PENDING_MANUAL_APPROVAL
-        # Set action to pending manual approval
+        # Set action to pending manual approval from pending-docs
         self.assert_http_status(self.client.put, self.action_url, status.HTTP_200_OK, data=self.data)
         self.financialaid.refresh_from_db()
         # Check that the tier does not change:
@@ -461,6 +461,97 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         assert called_kwargs["financial_aid"] == self.financialaid
         assert called_kwargs["subject"] == FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT
         assert called_kwargs["body"] == FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY
+
+    def test_mark_documents_received_docs_sent(self, mock_mailgun_client):
+        """
+        Tests FinancialAidActionView when documents are checked as received from DOCS_SENT
+        """
+        mock_mailgun_client.send_financial_aid_email.return_value = Mock(
+            spec=Response,
+            status_code=status.HTTP_200_OK,
+            json=mocked_json()
+        )
+        # Set status to docs sent
+        assert self.financialaid.tier_program == self.tier_programs["25k"]
+        self.financialaid.status = FinancialAidStatus.DOCS_SENT
+        self.financialaid.save()
+        self.data["action"] = FinancialAidStatus.PENDING_MANUAL_APPROVAL
+        # Set action to pending manual approval from pending-docs
+        self.assert_http_status(self.client.put, self.action_url, status.HTTP_200_OK, data=self.data)
+        self.financialaid.refresh_from_db()
+        # Check that the tier does not change:
+        assert self.financialaid.tier_program == self.tier_programs["25k"]
+        assert self.financialaid.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL
+        assert mock_mailgun_client.send_financial_aid_email.called
+        _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
+        assert called_kwargs["acting_user"] == self.staff_user_profile.user
+        assert called_kwargs["financial_aid"] == self.financialaid
+        assert called_kwargs["subject"] == FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT
+        assert called_kwargs["body"] == FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY
+
+
+class FinancialAidDetailViewTests(FinancialAidBaseTestCase, APIClient):
+    """
+    Tests for FinancialAidDetailView
+    """
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.financialaid_pending_docs = FinancialAidFactory.create(
+            user=cls.enrolled_profile3.user,
+            tier_program=cls.tier_programs["25k"],
+            status=FinancialAidStatus.PENDING_DOCS
+        )
+        cls.docs_sent_url = reverse(
+            "financial_aid",
+            kwargs={"financial_aid_id": cls.financialaid_pending_docs.id}
+        )
+        cls.data = {
+            "financial_aid_id": cls.financialaid_pending_docs.id,
+            "date_documents_sent": datetime.datetime(2016, 9, 25).strftime("%Y-%m-%d")
+        }
+
+    def test_learner_can_indicate_documents_sent(self):
+        """
+        Tests FinancialAidDetailView for user editing their own financial aid document status
+        """
+        self.client.force_login(self.enrolled_profile3.user)
+        self.assert_http_status(self.client.put, self.docs_sent_url, status.HTTP_200_OK, data=self.data)
+        self.financialaid_pending_docs.refresh_from_db()
+        assert self.financialaid_pending_docs.status == FinancialAidStatus.DOCS_SENT
+        assert self.financialaid_pending_docs.date_documents_sent == datetime.date(2016, 9, 25)
+
+    def test_user_does_not_have_permission_to_indicate_documents_sent(self):
+        """
+        Tests FinancialAidDetailView for user without permission to edit document status
+        """
+        unpermitted_users_to_test = [
+            self.enrolled_profile.user,
+            self.instructor_user_profile.user,
+            self.staff_user_profile.user,
+            self.profile.user
+        ]
+        for unpermitted_user in unpermitted_users_to_test:
+            self.client.force_login(unpermitted_user)
+            self.assert_http_status(self.client.put, self.docs_sent_url, status.HTTP_403_FORBIDDEN, data=self.data)
+
+    def test_correct_status_change_on_indicating_documents_sent(self):
+        """
+        Tests FinancialAidDetailView to ensure status change is always pending-docs to docs-sent
+        """
+        statuses_to_test = [
+            FinancialAidStatus.CREATED,
+            FinancialAidStatus.AUTO_APPROVED,
+            FinancialAidStatus.DOCS_SENT,
+            FinancialAidStatus.PENDING_MANUAL_APPROVAL,
+            FinancialAidStatus.APPROVED,
+            FinancialAidStatus.REJECTED
+        ]
+        for financial_aid_status in statuses_to_test:
+            self.financialaid_pending_docs.status = financial_aid_status
+            self.financialaid_pending_docs.save()
+            self.client.force_login(self.enrolled_profile3.user)
+            self.assert_http_status(self.client.put, self.docs_sent_url, status.HTTP_400_BAD_REQUEST, data=self.data)
 
 
 class CoursePriceDetailViewTests(FinancialAidBaseTestCase, APIClient):
@@ -663,7 +754,7 @@ class CoursePriceListViewTests(FinancialAidBaseTestCase, APIClient):
         super().setUpTestData()
         cls.course_price_url = reverse("course_price_list")
         cls.course_run2 = CourseRunFactory.create(
-            enrollment_end=datetime.utcnow() + timedelta(hours=1),
+            enrollment_end=datetime.datetime.utcnow() + datetime.timedelta(hours=1),
             program=cls.program2
         )
         cls.course_price2 = CoursePriceFactory.create(
