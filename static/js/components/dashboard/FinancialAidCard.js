@@ -56,7 +56,7 @@ export default class FinancialAidCard extends React.Component {
         <div className="document-row">
           <DateField
             data={documentDate}
-            update={setDocumentDate}
+            updateHandler={setDocumentDate}
             keySet={['date']}
             errors={errors}
             label=""
