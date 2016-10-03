@@ -4,10 +4,14 @@ import Button from 'react-mdl/lib/Button';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import { Card, CardTitle } from 'react-mdl/lib/Card';
 import Icon from 'react-mdl/lib/Icon';
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
 
-import DateField from '../inputs/DateField';
 import type { CoursePrice } from '../../flow/dashboardTypes';
 import type { Program } from '../../flow/programTypes';
+import type {
+  DocumentsState,
+} from '../../reducers/documents';
 import { courseListToolTip } from './util';
 import { formatPrice } from '../../util/util';
 import {
@@ -18,6 +22,8 @@ import {
   FA_STATUS_REJECTED,
   FA_STATUS_DOCS_SENT,
   FA_STATUS_SKIPPED,
+  DASHBOARD_FORMAT,
+  ISO_8601_FORMAT,
 } from '../../constants';
 
 const price = price => <span className="price">{ formatPrice(price) }</span>;
@@ -27,29 +33,42 @@ export default class FinancialAidCard extends React.Component {
     program: Program,
     coursePrice: CoursePrice,
     openFinancialAidCalculator: () => void,
-    documentSentDate: Object,
-    setDocumentSentDate: Function,
     skipFinancialAid: (p: number) => void,
+    documents: DocumentsState,
+    setDocumentSentDate: (sentDate: string) => void,
+    updateDocumentSentDate: (financialAidId: number, sentDate: string) => Promise<*>,
+  };
+
+  submitDocuments = (): void => {
+    const {
+      fetchDashboard,
+      program,
+      documents,
+      updateDocumentSentDate,
+    } = this.props;
+    const financialAidId = program.financial_aid_user_info.id;
+
+    updateDocumentSentDate(financialAidId, documents.documentSentDate).then(() => {
+      fetchDashboard();
+    });
   };
 
   renderDocumentStatus() {
     const {
       setDocumentSentDate,
-      documentSentDate,
+      documents,
     } = this.props;
-    const { application_status: applicationStatus } = this.props.program.financial_aid_user_info;
-
-    let errors = {};
-    if (documentSentDate.edit !== undefined) {
-      errors = documentSentDate.edit.errors;
-    }
+    const {
+      application_status: applicationStatus,
+      date_documents_sent: dateDocumentsSent,
+    } = this.props.program.financial_aid_user_info;
 
     switch (applicationStatus) {
     case FA_STATUS_PENDING_MANUAL_APPROVAL:
     case FA_STATUS_DOCS_SENT:
       return <div className="documents-sent">
         <Icon name="done" key="icon" />
-        Documents mailed on mm/dd/yyyy. We will review your documents as soon as possible.
+        Documents mailed on {moment(dateDocumentsSent).format(DASHBOARD_FORMAT)}. We will review your documents as soon as possible.
       </div>;
     case FA_STATUS_PENDING_DOCS:
       return <div>
@@ -58,20 +77,17 @@ export default class FinancialAidCard extends React.Component {
             Please tell us the date you sent the documents
           </Cell>
         </Grid>
-        <div className="document-row">
-          <DateField
-            data={documentSentDate}
-            updateHandler={setDocumentSentDate}
-            keySet={['date']}
-            errors={errors}
-            label=""
-            omitDay={false}
-            validator={() => null}
-          />
-          <Button className="dashboard-button">
-            Submit
-          </Button>
-        </div>
+        <Grid className="document-row">
+          <Cell col={12}>
+            <DatePicker
+              selected={moment(documents.documentSentDate)}
+              onChange={(obj) => setDocumentSentDate(obj.format(ISO_8601_FORMAT))}
+            />
+            <Button className="dashboard-button" onClick={this.submitDocuments}>
+              Submit
+            </Button>
+          </Cell>
+        </Grid>
       </div>;
     default:
       // should not get here

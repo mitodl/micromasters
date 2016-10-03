@@ -1,8 +1,10 @@
 export type FinancialAidUserInfo = {
   application_status: string;
+  date_documents_sent: ?string;
   has_user_applied: boolean;
   max_possible_cost: number;
   min_possible_cost: number;
+  id: number;
 };
 
 export type Program = {

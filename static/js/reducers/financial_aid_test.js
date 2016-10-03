@@ -100,13 +100,15 @@ describe('financial aid reducers', () => {
 
   it('should let you add financial aid', () => {
     addFinancialAidStub.returns(Promise.resolve());
-    store.dispatch(startCalculatorEdit(1));
-    return dispatchThen(addFinancialAid(100000, 'USD', 1), [
+    let income = 100000;
+    let currency = 'USD';
+    let programId = 1;
+    return dispatchThen(addFinancialAid(income, currency, programId), [
       REQUEST_ADD_FINANCIAL_AID,
       RECEIVE_ADD_FINANCIAL_AID_SUCCESS,
     ]).then(state => {
       let expectation = Object.assign({}, FINANCIAL_AID_EDIT, {
-        programId: 1,
+        programId: programId,
         fetchStatus: FETCH_SUCCESS
       });
       assert.deepEqual(state, expectation);
@@ -115,16 +117,19 @@ describe('financial aid reducers', () => {
 
   it('should fail to add a financial aid', () => {
     addFinancialAidStub.returns(Promise.reject());
-    store.dispatch(startCalculatorEdit(1));
-    return dispatchThen(addFinancialAid(100000, 'USD', 1), [
+    let income = 100000;
+    let currency = 'USD';
+    let programId = 1;
+    return dispatchThen(addFinancialAid(income, currency, programId), [
       REQUEST_ADD_FINANCIAL_AID,
       RECEIVE_ADD_FINANCIAL_AID_FAILURE,
     ]).then(state => {
       let expectation = Object.assign({}, FINANCIAL_AID_EDIT, {
-        programId: 1,
+        programId: programId,
         fetchStatus: FETCH_FAILURE
       });
       assert.deepEqual(state, expectation);
+      assert.ok(addFinancialAidStub.calledWith(income, currency, programId));
     });
   });
 

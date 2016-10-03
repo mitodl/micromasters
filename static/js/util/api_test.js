@@ -18,10 +18,11 @@ import {
   updateProfileImage,
   addFinancialAid,
   skipFinancialAid,
+  updateDocumentSentDate,
 } from './api';
 import * as api from './api';
 import {
-  CHECKOUT_RESPONSE,
+  CHECKOUT_RESPONSE_CYBERSOURCE,
   DASHBOARD_RESPONSE,
   COURSE_PRICES_RESPONSE,
   USER_PROFILE_RESPONSE,
@@ -159,9 +160,9 @@ describe('api', function() {
     });
 
     it('posts to checkout', () => {
-      fetchJSONStub.returns(Promise.resolve(CHECKOUT_RESPONSE));
+      fetchJSONStub.returns(Promise.resolve(CHECKOUT_RESPONSE_CYBERSOURCE));
       fetchMock.mock('/api/v0/checkout/', (url, opts) => {
-        assert.deepEqual(JSON.parse(opts.body), CHECKOUT_RESPONSE);
+        assert.deepEqual(JSON.parse(opts.body), CHECKOUT_RESPONSE_CYBERSOURCE);
         return { status: 200 };
       });
       return checkout('course_id').then(checkoutInfo => {
@@ -169,7 +170,7 @@ describe('api', function() {
           method: 'POST',
           body: JSON.stringify({course_id: 'course_id'})
         }));
-        assert.deepEqual(checkoutInfo, CHECKOUT_RESPONSE);
+        assert.deepEqual(checkoutInfo, CHECKOUT_RESPONSE_CYBERSOURCE);
       });
     });
 
@@ -319,6 +320,43 @@ describe('api', function() {
         return assert.isRejected(skipFinancialAid(programId)).then(() => {
           assert.ok(fetchJSONStub.calledWith('/api/v0/financial_aid_skip/2/', {
             method: 'PATCH'
+          }));
+        });
+      });
+    });
+
+    describe('for updating document sent date', () => {
+      it('add updates the document sent date', () => {
+        let financialAidId = 123;
+        let sentDate = "2012-12-12";
+        fetchJSONStub.returns(Promise.resolve());
+
+        fetchMock.mock(`/api/v0/financial_aid/${financialAidId}/`, () => {
+          return { status: 200 };
+        });
+
+        return updateDocumentSentDate(financialAidId, sentDate).then(() => {
+          assert.ok(fetchJSONStub.calledWith(`/api/v0/financial_aid/${financialAidId}/`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+              date_documents_sent: sentDate
+            })
+          }));
+        });
+      });
+
+      it('fails to update the document sent date', () => {
+        fetchJSONStub.returns(Promise.reject());
+
+        let financialAidId = 123;
+        let sentDate = "2012-12-12";
+
+        return assert.isRejected(updateDocumentSentDate(financialAidId, sentDate)).then(() => {
+          assert.ok(fetchJSONStub.calledWith(`/api/v0/financial_aid/${financialAidId}/`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+              date_documents_sent: sentDate
+            })
           }));
         });
       });

@@ -216,3 +216,11 @@ export function skipFinancialAid(programId: number): Promise<*> {
     method: 'PATCH',
   });
 }
+export function updateDocumentSentDate(financialAidId: number, sentDate: string): Promise<*> {
+  return mockableFetchJSONWithCSRF(`/api/v0/financial_aid/${financialAidId}/`, {
+    method: 'PATCH',
+    body: JSON.stringify({
+      date_documents_sent: sentDate,
+    })
+  });
+}

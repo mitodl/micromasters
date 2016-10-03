@@ -52,6 +52,7 @@
     "react-addons-test-utils": "~15.1.0",
     "react-bootstrap": "0.29.3",
     "react-cropper": "^0.9.4",
+    "react-datepicker": "^0.29.0",
     "react-dom": "~15.1.0",
     "react-dropzone": "^3.6.0",
     "react-ga": "1.4.1",
