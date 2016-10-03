@@ -3,11 +3,11 @@ Test cases for email API
 """
 import json
 import string
-
-from django.core.exceptions import ValidationError
 from unittest.mock import Mock, patch
 
+
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from django.test import TestCase, override_settings
 from factory.django import mute_signals
@@ -290,4 +290,4 @@ class FinancialAidMailAPITests(TestCase):
         for status in invalid_statuses:
             self.financial_aid.status = status
             self.financial_aid.save()
-            self.assertRaises(ValidationError, generate_financial_aid_email)
+            self.assertRaises(ValidationError, generate_financial_aid_email, self.financial_aid)
