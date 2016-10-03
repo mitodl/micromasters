@@ -78,39 +78,41 @@ export default class FinancialAidCard extends React.Component {
     }
   }
 
-  inner() {
+  renderInitialAidPrompt() {
+    const {
+      program,
+      openFinancialAidCalculator,
+    } = this.props;
+    const {
+      min_possible_cost: minPossibleCost,
+      max_possible_cost: maxPossibleCost,
+    } = program.financial_aid_user_info;
+
+    return <div className="personalized-pricing">
+      <div className="heading">
+        How much does it cost?
+        { courseListToolTip('filler-text', 'course-price') }
+      </div>
+      <div className="explanation">
+        Courses cost varies between {price(minPossibleCost)} and {price(maxPossibleCost)} (full
+        price), depending on your income and ability to pay.
+      </div>
+      <button
+        className="mm-button dashboard-button"
+        onClick={openFinancialAidCalculator}
+      >
+        Calculate your cost
+      </button>
+    </div>;
+  }
+
+  renderAidApplicationStatus() {
     const {
       program,
       coursePrice,
-      openFinancialAidCalculator,
     } = this.props;
 
-    const {
-      has_user_applied: hasUserApplied,
-      min_possible_cost: minPossibleCost,
-      max_possible_cost: maxPossibleCost,
-      application_status: applicationStatus,
-    } = program.financial_aid_user_info;
-    if (!hasUserApplied) {
-      return <div className="personalized-pricing">
-        <div className="heading">
-          How much does it cost?
-          { courseListToolTip('filler-text', 'course-price') }
-        </div>
-        <div className="explanation">
-          Courses cost varies between {price(minPossibleCost)} and {price(maxPossibleCost)} (full
-          price), depending on your income and ability to pay.
-        </div>
-        <button
-          className="mm-button dashboard-button"
-          onClick={openFinancialAidCalculator}
-        >
-          Calculate your cost
-        </button>
-      </div>;
-    }
-
-    switch (applicationStatus) {
+    switch (program.financial_aid_user_info.application_status) {
     case FA_STATUS_APPROVED:
     case FA_STATUS_AUTO_APPROVED:
     case FA_STATUS_REJECTED:
@@ -172,10 +174,19 @@ export default class FinancialAidCard extends React.Component {
   }
 
   render() {
+    const { program } = this.props;
+
+    let contents;
+    if (!program.financial_aid_user_info.has_user_applied) {
+      contents = this.renderInitialAidPrompt();
+    } else {
+      contents = this.renderAidApplicationStatus();
+    }
+
     return <Card shadow={0}>
       <CardTitle>Pricing Based on Income</CardTitle>
       <div>
-        {this.inner()}
+        {contents}
       </div>
     </Card>;
   }
