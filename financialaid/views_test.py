@@ -483,8 +483,9 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
         assert called_kwargs["acting_user"] == self.staff_user_profile.user
         assert called_kwargs["financial_aid"] == self.financialaid
-        assert called_kwargs["subject"] == FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT
-        assert called_kwargs["body"] == FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY
+        financial_aid_email = generate_financial_aid_email(self.financialaid)
+        assert called_kwargs["subject"] == financial_aid_email["subject"]
+        assert called_kwargs["body"] == financial_aid_email["body"]
 
 
 class FinancialAidDetailViewTests(FinancialAidBaseTestCase, APIClient):
