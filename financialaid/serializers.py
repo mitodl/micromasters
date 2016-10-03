@@ -136,6 +136,7 @@ class FinancialAidActionSerializer(serializers.Serializer):
             # Not currently a valid status to save as
             self.instance.tier_program = get_no_discount_tier_program(self.instance.tier_program.program_id)
         elif self.instance.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL:
+            # This is intentionally left blank for clarity that this is a valid status for .save()
             pass
         self.instance.save()
 

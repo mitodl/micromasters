@@ -190,13 +190,12 @@ def generate_financial_aid_email(financial_aid):
             program_name=financial_aid.tier_program.program.title,
             price=get_formatted_course_price(program_enrollment)["course_price"]
         )
-        subject = FINANCIAL_AID_APPROVAL_SUBJECT
+        subject = FINANCIAL_AID_APPROVAL_SUBJECT.format(program_name=financial_aid.tier_program.program.title)
     elif financial_aid.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL:
         message = FINANCIAL_AID_DOCUMENTS_RECEIVED_MESSAGE
-        subject = FINANCIAL_AID_DOCUMENTS_RECEIVED_SUBJECT
+        subject = FINANCIAL_AID_DOCUMENTS_RECEIVED_SUBJECT.format(program_name=financial_aid.tier_program.program.title)
     else:
         raise ValidationError("Invalid status on FinancialAid for generate_financial_aid_email()")
-    subject = subject.format(program_name=financial_aid.tier_program.program.title)
     body = FINANCIAL_AID_EMAIL_BODY.format(
         first_name=financial_aid.user.profile.first_name,
         message=message,

@@ -3,6 +3,8 @@ Test cases for email API
 """
 import json
 import string
+
+from django.core.exceptions import ValidationError
 from unittest.mock import Mock, patch
 
 from django.conf import settings
@@ -275,3 +277,17 @@ class FinancialAidMailAPITests(TestCase):
             message=FINANCIAL_AID_DOCUMENTS_RECEIVED_MESSAGE,
             program_name=self.financial_aid.tier_program.program.title
         )
+
+    def test_generate_financial_aid_email_invalid_statuses(self, mock_post):  # pylint: disable=unused-argument
+        """
+        Tests generate_financial_aid_email() with invalid statuses raises django ValidationError
+        """
+        invalid_statuses = [
+            FinancialAidStatus.AUTO_APPROVED,
+            FinancialAidStatus.CREATED,
+            FinancialAidStatus.PENDING_DOCS
+        ]
+        for status in invalid_statuses:
+            self.financial_aid.status = status
+            self.financial_aid.save()
+            self.assertRaises(ValidationError, generate_financial_aid_email)
