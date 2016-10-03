@@ -15,14 +15,13 @@ from edx_api.client import EdxApi
 
 from backends import utils
 from backends.edxorg import EdxOrgOAuth2
-
+from courses.models import Program
 from dashboard.api import (
     get_info_for_program,
     get_student_certificates,
     get_student_current_grades,
     get_student_enrollments,
 )
-from dashboard.models import ProgramEnrollment
 from dashboard.utils import MMTrack
 
 
@@ -62,10 +61,10 @@ class UserDashboard(APIView):
         current_grades = get_student_current_grades(request.user, edx_client)
 
         response_data = []
-        for program_enrollment in ProgramEnrollment.objects.filter(user=request.user, program__live=True):
+        for program in Program.objects.filter(live=True):
             mmtrack_info = MMTrack(
                 request.user,
-                program_enrollment.program,
+                program,
                 enrollments,
                 current_grades,
                 certificates
