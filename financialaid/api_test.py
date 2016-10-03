@@ -4,6 +4,7 @@ Tests for financial aid api
 import json
 
 from datetime import datetime, timedelta
+from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 
@@ -258,6 +259,9 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
         """
         # 75k tier program is the one with no discount
         assert get_no_discount_tier_program(self.program.id).id == self.tier_programs["75k"].id
+        with self.assertRaises(ImproperlyConfigured):
+            # No tier programs have been created for self.program2
+            assert get_no_discount_tier_program(self.program2.id)
 
 
 class CoursePriceAPITests(FinancialAidBaseTestCase):
