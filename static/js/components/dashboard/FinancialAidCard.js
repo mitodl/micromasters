@@ -16,6 +16,8 @@ import {
   FA_STATUS_PENDING_DOCS,
   FA_STATUS_PENDING_MANUAL_APPROVAL,
   FA_STATUS_REJECTED,
+  FA_STATUS_DOCS_SENT,
+  FA_STATUS_SKIPPED,
 } from '../../constants';
 
 const price = price => <span className="price">{ formatPrice(price) }</span>;
@@ -41,12 +43,14 @@ export default class FinancialAidCard extends React.Component {
       errors = documentDate.edit.errors;
     }
 
-    if (applicationStatus === FA_STATUS_PENDING_MANUAL_APPROVAL) {
+    switch (applicationStatus) {
+    case FA_STATUS_PENDING_MANUAL_APPROVAL:
+    case FA_STATUS_DOCS_SENT:
       return <div className="documents-sent">
         <Icon name="done" key="icon" />
         Documents mailed on mm/dd/yyyy. We will review your documents as soon as possible.
       </div>;
-    } else if (applicationStatus === FA_STATUS_PENDING_DOCS) {
+    case FA_STATUS_PENDING_DOCS:
       return <div>
         <Grid>
           <Cell col={12}>
@@ -68,9 +72,10 @@ export default class FinancialAidCard extends React.Component {
           </Button>
         </div>
       </div>;
+    default:
+      // should not get here
+      return null;
     }
-
-    return null;
   }
 
   inner() {
@@ -112,12 +117,14 @@ export default class FinancialAidCard extends React.Component {
     case FA_STATUS_APPROVED:
     case FA_STATUS_AUTO_APPROVED:
     case FA_STATUS_REJECTED:
+    case FA_STATUS_SKIPPED:
       return <Grid className="financial-aid-box">
         <Cell col={12}>
           Your cost is <b>{price(coursePrice.course_price)} per course</b>.
         </Cell>
       </Grid>;
     case FA_STATUS_PENDING_MANUAL_APPROVAL:
+    case FA_STATUS_DOCS_SENT:
     case FA_STATUS_PENDING_DOCS:
       return <div>
         <Grid>
