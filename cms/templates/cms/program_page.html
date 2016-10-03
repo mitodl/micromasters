@@ -8,6 +8,20 @@
 {% block description %}{% if page.program.description %}{{ page.program.description }}{% endif %}{% endblock %}
 {% block keywords %}micromasters, MIT, {{ page.program.title }}, online masters, online courses, MOOC{% endblock %}
 
+{% block social %}
+  <meta property="og:site:name" content="{{ page.title }} MicroMasters">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  <meta property="og:title" content="{{ page.title }} MicroMasters">
+  <meta property="og:description" content="{% if page.program.description %}{{ page.program.description }}{% endif %}">
+  <meta property="og:image" content="{{ page.background_image.file.url|safe }}">
+  <meta property="og:image:secure_url" content="{{ page.background_image.file.url|safe }}">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="{{ page.background_image.width }}">
+  <meta property="og:image:height" content="{{ page.background_image.height }}">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="@MITxonedX">
+{% endblock %}
 
 {% block body_class %}template-programpage{% endblock %}
 {% block content %}
@@ -22,18 +36,17 @@
     <div class="description">
       {{ page.title_over_image|richtext }}
     </div>
-    {% if authenticated %}
-    {% else %}   
-    <button class="mm-button main-action open-signup-dialog">
+    {% if not authenticated %}
+    <button class="mm-button main-action open-signup-dialog mdl-cell--hide-phone">
       Sign Up Now
     </button>
-    <div class="log-in">
+    <div class="log-in mdl-cell--hide-phone">
       Already a Member?
       <a href="/login/edxorg">
         Log In
       </a>
     </div>
-    {% endif %} 
+    {% endif %}
   </div>
   <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
     <div class="mdl-tabs__tab-bar">
@@ -47,11 +60,11 @@
       </div>
     </div>
     <div class="mdl-tabs__panel is-active" id="about-panel">
-      <div class="double-column">
-        <div class="first-column">
+      <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--8-col">
           {{ page.description|richtext }}
         </div>
-        <div class="second-column">
+        <div class="mdl-cell mdl-cell--4-col">
           <div class="info-box course-info">
             <h3 class="title">
               Courses
@@ -85,11 +98,10 @@
             </div>
           </div>
           <div class="powered-by">
-            <span>
-              Powered by
-            </span>
+            <p>
+              Courses delivered on
+            </p>
             <img src="/static/images/edx_logo.png" alt="edX" />
-            <img src="/static/images/micromasters_logo.png" alt="MIT MicroMasters" />
           </div>
         </div>
       </div>
@@ -111,12 +123,14 @@
   </div>
 
   {% if page.faculty_members.count > 0 %}
-    <div class="faculty-section">
-      <h3 class="title">Faculty</h3>
-      {% if page.faculty_description|length > 0 %}
-        <p class="description">{{ page.faculty_description }}</p>
-      {% endif %}
-      <div id="faculty-carousel" class="single-column-wide">
+    <div class="faculty-section mdl-grid mdl-grid--no-spacing">
+      <div class="mdl-cell mdl-cell--12-col">
+        <h3 class="title">Faculty</h3>
+        {% if page.faculty_description|length > 0 %}
+          <p class="description">{{ page.faculty_description }}</p>
+        {% endif %}
+      </div>
+      <div id="faculty-carousel" class="mdl-cell--12-col">
         <!-- React-Slick carousel component injected here -->
       </div>
     </div>

@@ -77,8 +77,9 @@ class FinancialAidMailView(GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         mailgun_response = MailgunClient.send_financial_aid_email(
-            subject=serializer.data['email_subject'],
             body=serializer.data['email_body'],
-            recipient=financial_aid.user.email
+            acting_user=request.user,
+            subject=serializer.data['email_subject'],
+            financial_aid=financial_aid
         )
         return Response(data=mailgun_response.json(), status=mailgun_response.status_code)

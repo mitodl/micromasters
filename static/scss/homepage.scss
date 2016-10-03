@@ -82,14 +82,23 @@ body.app-media {
     margin-top:16px;
     color:#000;
 
-    div.already-member {
+    div.members-login {
       display: inline-block;
-      margin-right:28px;
-      font-size: 16px;
-      font-weight: 300;
-      color: #fff;
-    }
+      margin-right: 19px;
 
+      a.ghost {
+        border: 2px solid rgba(255,255,255,.5);
+        border-radius: 4px;
+        color: rgba(255,255,255,.8);
+        padding: 9px 23px !important;
+        font-size: 15px;
+        font-weight: 300;
+      }
+      a.ghost:hover, a.ghost:focus, a.ghost.focus {
+        color: white;
+        border-color: white;
+      }
+    }
   }
 }
 
@@ -167,8 +176,7 @@ body.app-media {
   width: 81%;
   max-width:1000px;
 
-
-  h4 {
+  h3 {
     font-size: 23px;
     margin: 0 0 30px;
     font-weight: 400;
@@ -182,16 +190,23 @@ body.app-media {
 }
 
 .sub-banner-logos{
-  margin-top: 56px;
+  margin-top: 26px;
 
   img{
-    margin-left: 20px;
+    margin-left: 5px;
+    width: 78px;
+    position: relative;
+    top: -8px;
   }
 }
 
-.sub-banner-logos-text{
+.sub-banner-logos-text {
   vertical-align: bottom;
-  display:inline-block;
+  font-size: 16px;
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .enroll-reason {
@@ -208,6 +223,36 @@ body.app-media {
     font-weight: 300;
     font-size: 23px;
     color: white;
+  }
+}
+
+.quote-section {
+  background: #fff;
+  padding: 120px 0 150px;
+  .centered-content {
+    width: 71%;
+    max-width: 1150px;
+    margin: 0 auto;
+    text-align: left;
+    img.reif {
+      float: left;
+      width: 170px;
+      margin-right: 70px;
+      position: relative;
+      bottom: 15px;
+    }
+    h2 {
+      color: #08b940;
+      font-size: 30px;
+      font-style: italic;
+      font-family: helvetica;
+      font-weight: 300;
+      line-height: 1.4em;
+    }
+    p {
+      color: #08b940;
+      font-size: 24px;
+    }
   }
 }
 
@@ -1100,6 +1145,12 @@ blocks,
 }
 .rating-lg .icon {
   font-size: 18px;
+}
+.subscription-form legend, .subscription-form label {
+  font-size: 14px;
+  font-weight: 300;
+  color: #333;
+  border: 0;
 }
 .subscription-result {
   display: none;

@@ -23,3 +23,20 @@ class UserCanEditFinancialAid(BasePermission):
             boolean
         """
         return has_object_permission(Permissions.CAN_EDIT_FINANCIAL_AID, request.user, obj.tier_program.program)
+
+
+class FinancialAidUserMatchesLoggedInUser(BasePermission):
+    """
+    Returns True if accessing own FinancialAid object
+    """
+    def has_object_permission(self, request, view, obj):
+        """
+        Returns True if the FinancialAid.user matches the logged in user
+        Args:
+            request (Request): DRF request object
+            view (View): DRF view object
+            obj (FinancialAid): FinancialAid object
+        Returns:
+            boolean
+        """
+        return obj.user == request.user

@@ -6,6 +6,7 @@ import {
   getUserProfile,
   patchUserProfile,
   getDashboard,
+  getCoursePrices,
   getCookie,
   fetchJSONWithCSRF,
   fetchWithCSRF,
@@ -15,11 +16,13 @@ import {
   getProgramEnrollments,
   addProgramEnrollment,
   updateProfileImage,
+  addFinancialAid,
 } from './api';
 import * as api from './api';
 import {
   CHECKOUT_RESPONSE,
   DASHBOARD_RESPONSE,
+  COURSE_PRICES_RESPONSE,
   USER_PROFILE_RESPONSE,
   PROGRAM_ENROLLMENTS,
 } from '../constants';
@@ -146,6 +149,14 @@ describe('api', function() {
       });
     });
 
+    it('gets course prices', () => {
+      fetchJSONStub.returns(Promise.resolve(COURSE_PRICES_RESPONSE));
+      return getCoursePrices().then(coursePrices => {
+        assert.ok(fetchJSONStub.calledWith(`/api/v0/course_prices/`, {}));
+        assert.deepEqual(coursePrices, COURSE_PRICES_RESPONSE);
+      });
+    });
+
     it('posts to checkout', () => {
       fetchJSONStub.returns(Promise.resolve(CHECKOUT_RESPONSE));
       fetchMock.mock('/api/v0/checkout/', (url, opts) => {
@@ -241,6 +252,45 @@ describe('api', function() {
           assert.ok(fetchJSONStub.calledWith('/api/v0/enrolledprograms/', {
             method: 'POST',
             body: JSON.stringify({program_id: enrollment.id})
+          }));
+        });
+      });
+    });
+
+    describe('for adding financial aid', () => {
+      it('add financial aid successfully', () => {
+        let programId = PROGRAM_ENROLLMENTS[0].id;
+        fetchJSONStub.returns(Promise.resolve());
+
+        fetchMock.mock('/api/v0/financial_aid_request', () => {
+          return { status: 200 };
+        });
+
+        return addFinancialAid(10000, 'USD', programId).then(() => {
+          assert.ok(fetchJSONStub.calledWith('/api/v0/financial_aid_request/', {
+            method: 'POST',
+            body: JSON.stringify({
+              original_income: 10000,
+              original_currency: 'USD',
+              program_id: 3
+            })
+          }));
+        });
+      });
+
+      it('fails to add financial aid', () => {
+        fetchJSONStub.returns(Promise.reject());
+
+        let programId = PROGRAM_ENROLLMENTS[0].id;
+
+        return assert.isRejected(addFinancialAid(10000, 'USD', programId)).then(() => {
+          assert.ok(fetchJSONStub.calledWith('/api/v0/financial_aid_request/', {
+            method: 'POST',
+            body: JSON.stringify({
+              original_income: 10000,
+              original_currency: 'USD',
+              program_id: 3
+            })
           }));
         });
       });

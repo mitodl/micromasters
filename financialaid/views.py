@@ -20,19 +20,24 @@ from rest_framework.views import APIView
 from rolepermissions.verifications import has_object_permission
 
 from courses.models import Program
-from financialaid.api import get_course_price_for_learner
+from dashboard.models import ProgramEnrollment
 from financialaid.constants import (
     FinancialAidJustification,
     FinancialAidStatus
 )
+from financialaid.api import get_formatted_course_price
 from financialaid.models import (
     FinancialAid,
     TierProgram
 )
-from financialaid.permissions import UserCanEditFinancialAid
+from financialaid.permissions import (
+    UserCanEditFinancialAid,
+    FinancialAidUserMatchesLoggedInUser
+)
 from financialaid.serializers import (
     FinancialAidActionSerializer,
-    FinancialAidRequestSerializer
+    FinancialAidRequestSerializer,
+    FinancialAidSerializer
 )
 from mail.serializers import FinancialAidMailSerializer
 from roles.roles import Permissions
@@ -233,23 +238,60 @@ class FinancialAidActionView(UpdateAPIView):
     queryset = FinancialAid.objects.all()
 
 
-class GetLearnerPriceForCourseView(APIView):
+class FinancialAidDetailView(UpdateAPIView):
     """
-    View for retrieving a leaner's price for a course run
+    View for updating a FinancialAid record
+    """
+    serializer_class = FinancialAidSerializer
+    authentication_classes = (SessionAuthentication, )
+    permission_classes = (IsAuthenticated, FinancialAidUserMatchesLoggedInUser)
+    lookup_field = "id"
+    lookup_url_kwarg = "financial_aid_id"
+    queryset = FinancialAid.objects.all()
+
+
+class CoursePriceListView(APIView):
+    """
+    View for retrieving a learner's price for course runs in all enrolled programs
+    """
+    authentication_classes = (SessionAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        """
+        GET handler
+        """
+        user = request.user
+        program_enrollments = (
+            ProgramEnrollment.objects
+            .select_related('user', 'program')
+            .filter(user=user, program__live=True).all()
+        )
+        formatted_course_prices = []
+        for program_enrollment in program_enrollments:
+            response_dict = get_formatted_course_price(program_enrollment)
+            formatted_course_prices.append(response_dict)
+        return Response(data=formatted_course_prices)
+
+
+class CoursePriceDetailView(APIView):
+    """
+    View for retrieving a learner's price for a course run
     """
     authentication_classes = (SessionAuthentication, )
     permission_classes = (IsAuthenticated, )
 
     def get(self, request, *args, **kwargs):
         """
-        Get request for GetLearnerPriceForCourseView
+        GET handler
         """
-        learner = request.user
-        program = get_object_or_404(
-            Program,
-            id=self.kwargs["program_id"],
-            live=True
+        user = request.user
+        program_enrollment = get_object_or_404(
+            ProgramEnrollment,
+            user=user,
+            program__id=self.kwargs["program_id"],
+            program__live=True
         )
         return Response(
-            data=get_course_price_for_learner(learner, program)
+            data=get_formatted_course_price(program_enrollment)
         )

@@ -1,7 +1,8 @@
 [
 	{
 		"course_key": "course-v1:edX+DemoX+Demo_Course",
-		"passed": true, "percent": 0.97,
+		"passed": true,
+		"percent": 0.77,
 		"letter_grade": "Pass",
 		"username": "staff"
 	},
@@ -9,6 +10,13 @@
 		"course_key": "course-v1:MITx+8.MechCX+2014_T1",
 		"passed": false,
 		"percent": 0.03,
+		"letter_grade": null,
+		"username": "staff"
+	},
+	{
+		"course_key": "course-v1:odl+FOO101+CR-FALL15",
+		"passed": true,
+		"percent": 0.69,
 		"letter_grade": null,
 		"username": "staff"
 	}

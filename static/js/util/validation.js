@@ -9,6 +9,10 @@ import type {
 } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
 import type { Email } from '../flow/emailTypes';
+import type {
+  FinancialAidState,
+  FinancialAidValidation,
+} from '../reducers/financial_aid';
 import { filterPositiveInt } from './util';
 import {
   HIGH_SCHOOL,
@@ -30,7 +34,7 @@ let isNilOrEmptyString = (val: any): boolean => (
   val === null || val === undefined || val === ""
 );
 
-let checkFieldPresence = (profile, requiredFields, messages: any): ValidationErrors => {
+let checkFieldPresence = (profile, requiredFields, messages: any) => {
   let errors = {};
 
   for (let keySet of requiredFields) {
@@ -221,7 +225,7 @@ export function validateProfileComplete(profile: Profile): ProfileComplete {
  * Validate a day of month
  */
 export function validateDay(input: string): Maybe<number> {
-  let sanitized = sanitizeDate(input, 2);
+  let sanitized = sanitizeNumberString(input, 2);
   let date = filterPositiveInt(sanitized);
   if (date === undefined) {
     return Nothing();
@@ -236,7 +240,7 @@ export function validateDay(input: string): Maybe<number> {
 /**
  * Removes non-numeric characters and truncates output string
  */
-export function sanitizeDate(input: string|number, length: number): string {
+export function sanitizeNumberString(input: string|number, length: number): string {
   if ( typeof input === 'string' ) {
     let out = input.replace(/[^\d]+/g, '');
     if ( out.match(/^0+/) ) {
@@ -256,7 +260,7 @@ export function sanitizeDate(input: string|number, length: number): string {
  * Validate a month number
  */
 export function validateMonth(input: string|number): Maybe<number> {
-  let sanitized = sanitizeDate(input, 2);
+  let sanitized = sanitizeNumberString(input, 2);
   let month = filterPositiveInt(sanitized);
   if (month === undefined) {
     return Nothing();
@@ -274,7 +278,7 @@ export function validateYear(input: string|number|null): Maybe<number> {
   if ( input === null ) {
     return Nothing();
   }
-  let sanitized = sanitizeDate(input, 4);
+  let sanitized = sanitizeNumberString(input, 4);
   let year = filterPositiveInt(sanitized);
   if (year === undefined) {
     return Nothing();
@@ -298,4 +302,17 @@ export function combineValidators(...validators: Array<Function>): Function {
   return (...args) => _.merge({}, ...validators.map(
     validator => validator(...args)
   ));
+}
+
+export function validateFinancialAid(edit: FinancialAidState): FinancialAidValidation {
+  let messages = {
+    'income': 'Income is required',
+    'currency': 'Please select a currency',
+  };
+  let required = Object.keys(messages).map(k => [k]);
+  let errors: FinancialAidValidation = checkFieldPresence(edit, required, messages);
+  if ( !edit.checkBox ) {
+    errors['checkBox'] = 'You must agree to these terms';
+  }
+  return errors;
 }

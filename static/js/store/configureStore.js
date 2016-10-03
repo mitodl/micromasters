@@ -7,12 +7,10 @@ import persistState, { mergePersistedState }  from 'redux-localstorage';
 import filter from 'redux-localstorage-filter';
 import adapter from 'redux-localstorage/lib/adapters/localStorage';
 import configureTestStore from 'redux-asserts';
-import { combineReducers } from 'redux';
 import type { Reducer } from 'redux';
 
 import rootReducer from '../reducers';
 import {
-  signupDialog,
   INITIAL_SIGNUP_STATE
 } from '../reducers/signup_dialog';
 
@@ -46,7 +44,7 @@ const createPersistentTestStore = persistence => compose(
 
 export default function configureStore(initialState: ?Object) {
   const persistence = persistState(
-    storage([ 'currentProgramEnrollment', 'signupDialog' ]), 'redux'
+    storage([ 'currentProgramEnrollment' ]), 'redux'
   );
 
   const reducer = compose(
@@ -71,7 +69,7 @@ export default function configureStore(initialState: ?Object) {
 
 export const configureMainTestStore = (reducer: Reducer<*,*>) => {
   const persistence = persistState(
-    storage([ 'currentProgramEnrollment', 'signupDialog' ]), 'redux'
+    storage([ 'currentProgramEnrollment' ]), 'redux'
   );
 
   return createPersistentTestStore(persistence)(
@@ -80,21 +78,9 @@ export const configureMainTestStore = (reducer: Reducer<*,*>) => {
 };
 
 export const signupDialogStore = (test: boolean = false) => {
-  const persistence = persistState(
-    storage([ 'signupDialog' ]), 'redux'
-  );
-
-  const reducer = compose(
-    mergePersistedState()
-  )(combineReducers({ signupDialog }));
-
   if ( test ) {
-    return createPersistentTestStore(persistence)(
-      reducer, { signupDialog: INITIAL_SIGNUP_STATE }
-    );
+    return configureTestStore({ signupDialog: INITIAL_SIGNUP_STATE });
   } else {
-    return createPersistentStore(persistence)(
-      reducer, { signupDialog: INITIAL_SIGNUP_STATE }
-    );
+    return configureStore({ signupDialog: INITIAL_SIGNUP_STATE });
   }
 };

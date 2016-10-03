@@ -3,13 +3,12 @@ Models for dashboard
 """
 
 from django.contrib.auth.models import User
+from django.contrib.postgres.fields import JSONField
 from django.db.models import (
     DateTimeField,
     ForeignKey,
     Model,
 )
-from jsonfield import JSONField
-
 from courses.models import CourseRun, Program
 
 

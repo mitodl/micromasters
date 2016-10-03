@@ -59,7 +59,9 @@ def gen_fake_receipt_data(order=None):
     """
     Helper function to generate a fake signed piece of data
     """
-    data = FAKE.pydict()
+    data = {}
+    for _ in range(10):
+        data[FAKE.text()] = FAKE.text()
     keys = sorted(data.keys())
     data['signed_field_names'] = ",".join(keys)
     data['unsigned_field_names'] = ''

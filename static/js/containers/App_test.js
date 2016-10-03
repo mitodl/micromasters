@@ -6,9 +6,11 @@ import { assert } from 'chai';
 import _ from 'lodash';
 
 import Navbar from '../components/Navbar';
-import { CLEAR_DASHBOARD } from '../actions';
 import {
+  CLEAR_DASHBOARD,
+  CLEAR_COURSE_PRICES,
   RECEIVE_DASHBOARD_SUCCESS,
+  RECEIVE_COURSE_PRICES_SUCCESS,
 } from '../actions';
 import {
   RECEIVE_GET_USER_PROFILE_SUCCESS,
@@ -19,14 +21,7 @@ import {
 import {
   CLEAR_ENROLLMENTS,
   RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE,
-  REQUEST_ADD_PROGRAM_ENROLLMENT,
-  RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
-  RECEIVE_ADD_PROGRAM_ENROLLMENT_FAILURE,
 } from '../actions/enrollments';
-import {
-  SET_DIALOG_VISIBILITY,
-  SET_PROGRAM
-} from '../actions/signup_dialog';
 import * as enrollmentActions from '../actions/enrollments';
 import {
   CLEAR_UI,
@@ -40,8 +35,6 @@ import {
   EMPLOYMENT_STEP,
 } from '../constants';
 import IntegrationTestHelper from '../util/integration_test_helper';
-import * as api from '../util/api';
-import { localStorageMock } from '../util/test_utils';
 
 describe('App', () => {
   let listenForActions, renderComponent, helper;
@@ -64,7 +57,13 @@ describe('App', () => {
 
   it('clears profile, ui, enrollments, and dashboard after unmounting', () => {
     return renderComponent("/dashboard").then(([, div]) => {
-      return listenForActions([CLEAR_DASHBOARD, CLEAR_PROFILE, CLEAR_UI, CLEAR_ENROLLMENTS], () => {
+      return listenForActions([
+        CLEAR_DASHBOARD,
+        CLEAR_COURSE_PRICES,
+        CLEAR_PROFILE,
+        CLEAR_UI,
+        CLEAR_ENROLLMENTS
+      ], () => {
         ReactDOM.unmountComponentAtNode(div);
       });
     });
@@ -124,6 +123,7 @@ describe('App', () => {
       helper.enrollmentsGetStub.returns(Promise.reject());
       let types = [
         RECEIVE_DASHBOARD_SUCCESS,
+        RECEIVE_COURSE_PRICES_SUCCESS,
         RECEIVE_GET_USER_PROFILE_SUCCESS,
         RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE,
       ];
@@ -160,135 +160,6 @@ describe('App', () => {
         stub.returns({type: "fake"});
         props.setCurrentProgramEnrollment("value");
         assert(stub.calledWith("value"));
-      });
-    });
-  });
-});
-
-describe('App test', () => {
-  // need different beforeEach functions to handle program enrollment tests
-  let setLocalStorage = id => {
-    window.localStorage.setItem("redux", 
-      JSON.stringify({ signupDialog: { program: id }})
-    );
-  };
-
-  let renderComponent, helper, addProgramEnrollmentStub;
-
-  const setup = () => {
-    helper = new IntegrationTestHelper();
-    renderComponent = helper.renderComponent.bind(helper);
-    addProgramEnrollmentStub = helper.sandbox.stub(api, 'addProgramEnrollment');
-  };
-
-  afterEach(() => {
-    helper.cleanup();
-  });
-
-  describe('adding new program enrollments', () => {
-    let newEnrollment = [{id: 2, title: 'A new program'}];
-
-    beforeEach(() => {
-      window.localStorage = localStorageMock();
-      setLocalStorage(2);
-      setup();
-      addProgramEnrollmentStub.returns(Promise.resolve(newEnrollment));
-    });
-
-    it('should call the API if a program ID is present', () => {
-      return renderComponent('/dashboard', [
-        REQUEST_ADD_PROGRAM_ENROLLMENT,
-        RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
-        SET_DIALOG_VISIBILITY,
-        SET_PROGRAM,
-      ]).then(() => {
-        assert(addProgramEnrollmentStub.calledWith(2), "API should be called");
-      });
-    });
-
-    it('should retrieve the program id from localStorage', () => {
-      return renderComponent('/dashboard', [
-        REQUEST_ADD_PROGRAM_ENROLLMENT,
-        RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
-        SET_DIALOG_VISIBILITY,
-        SET_PROGRAM,
-      ]).then(() => {
-        assert(
-          window.localStorage.getItem.calledWith("redux"),
-          "getItem should be called to pull state out of localStorage"
-        );
-      });
-    });
-
-    it('should delete the program id from localStorage if there is no API error', () => {
-      return renderComponent('/dashboard', [
-        REQUEST_ADD_PROGRAM_ENROLLMENT,
-        RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
-        SET_DIALOG_VISIBILITY,
-        SET_PROGRAM,
-      ]).then(() => {
-        assert(
-          window.localStorage.setItem.calledWith("redux"),
-          "setItem should be called to update the storage"
-        );
-        let storeState = JSON.parse(window.localStorage.getItem('redux'));
-        assert.deepEqual(storeState.signupDialog, {});
-      });
-    });
-
-    it('should delete the program id if the API returns a 404', () => {
-      addProgramEnrollmentStub.returns(Promise.reject({errorStatusCode: 404}));
-
-      return renderComponent('/dashboard', [
-        REQUEST_ADD_PROGRAM_ENROLLMENT,
-        RECEIVE_ADD_PROGRAM_ENROLLMENT_FAILURE,
-        SET_DIALOG_VISIBILITY,
-        SET_PROGRAM,
-      ]).then(() => {
-        assert(
-          window.localStorage.setItem.calledWith("redux"),
-          "setItem should be called to remove 'programId'"
-        );
-        let storeState = JSON.parse(window.localStorage.getItem('redux'));
-        assert.deepEqual(storeState.signupDialog, {});
-      });
-    });
-
-    describe('error handling', () => {
-      let cStub;
-      beforeEach(() => {
-        cStub = helper.sandbox.stub(console, 'error');
-      });
-
-      afterEach(() => {
-        cStub.restore();
-      });
-
-      it('should log an error if the API returns a different error', () => {
-        addProgramEnrollmentStub.returns(Promise.reject({errorStatusCode: 500}));
-
-        return renderComponent('/dashboard', [
-          REQUEST_ADD_PROGRAM_ENROLLMENT,
-          RECEIVE_ADD_PROGRAM_ENROLLMENT_FAILURE,
-          SET_DIALOG_VISIBILITY,
-          SET_PROGRAM,
-        ]).then(() => {
-          assert(console.error.calledWith( // eslint-disable-line no-console
-            "adding program enrollment failed for program: ", 2
-          ), "should be called with correct arguments");
-        });
-      });
-    });
-  });
-
-  describe('not adding a new program enrollment', () => {
-    beforeEach(() => {
-      setup();
-    });
-
-    it('should not call the API if there is no program ID in localStorage', () => {
-      return renderComponent('/dashboard').then(() => {
-        assert(addProgramEnrollmentStub.notCalled, "API should not have been called");
       });
     });
   });

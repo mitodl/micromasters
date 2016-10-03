@@ -8,14 +8,15 @@ import R from 'ramda';
 import type { Program } from '../../flow/programTypes';
 import CourseRow from './CourseRow';
 import { courseListToolTip } from './util';
+import FinancialAidCalculator from '../../containers/FinancialAidCalculator';
 
-const ifPersonalizedPricing = R.curry((func, program) => (
-  program.financial_aid_availability ? func(program) : null
+const ifPersonalizedPricing = R.curry((func, program, callback) => (
+  program.financial_aid_availability ? func(callback) : null
 ));
 
 const price = price => <span className="price">{ price }</span>;
 
-const coursePriceRange = ifPersonalizedPricing(() => (
+const coursePriceRange = ifPersonalizedPricing(openDialog => (
   <div className="personalized-pricing">
     <div className="heading">
       How much does it cost?
@@ -27,6 +28,7 @@ const coursePriceRange = ifPersonalizedPricing(() => (
     </div>
     <button
       className="mm-button dashboard-button"
+      onClick={openDialog}
     >
       Calculate your cost
     </button>
@@ -36,13 +38,19 @@ const coursePriceRange = ifPersonalizedPricing(() => (
 
 export default class CourseListCard extends React.Component {
   props: {
-    checkout: Function,
-    program: Program,
-    now?: Object,
+    checkout:                   Function,
+    program:                    Program,
+    now?:                       Object,
+    openFinancialAidCalculator: () => void,
   };
 
   render() {
-    let { program, now, checkout } = this.props;
+    let {
+      program,
+      now,
+      checkout,
+      openFinancialAidCalculator,
+    } = this.props;
     if (now === undefined) {
       now = moment();
     }
@@ -53,8 +61,9 @@ export default class CourseListCard extends React.Component {
     );
 
     return <Card shadow={0} className="course-list">
+      <FinancialAidCalculator />
       <CardTitle>Your Courses</CardTitle>
-      { coursePriceRange(program) }
+      { coursePriceRange(program, openFinancialAidCalculator) }
       {courseRows}
     </Card>;
   }

@@ -22,7 +22,7 @@ from dashboard import (
     api,
     models,
 )
-from ecommerce.factories import CoursePriceFactory
+from dashboard.utils import MMTrack
 from profiles.factories import UserFactory
 from search.base import ESTestCase
 
@@ -46,7 +46,8 @@ class StatusTest(ESTestCase):
 
     def test_course_run_status(self):
         """test for CourseRunStatus"""
-        for attr in ('NOT_ENROLLED', 'CURRENTLY_ENROLLED', 'READ_CERT', 'WILL_ATTEND', 'CAN_UPGRADE', 'NOT_PASSED'):
+        for attr in ('NOT_ENROLLED', 'CURRENTLY_ENROLLED', 'CHECK_IF_PASSED',
+                     'WILL_ATTEND', 'CAN_UPGRADE', 'NOT_PASSED'):
             assert hasattr(api.CourseRunStatus, attr)
 
     def test_course_run_user_status(self):
@@ -54,11 +55,9 @@ class StatusTest(ESTestCase):
         ustat = api.CourseRunUserStatus(
             status='status',
             course_run='run',
-            enrollment_for_course='enroll'
         )
         assert ustat.status == 'status'
         assert ustat.course_run == 'run'
-        assert ustat.enrollment_for_course == 'enroll'
 
     def test_course_run_user_status_repr(self):
         """test for CourseRunUserStatus __repr__"""
@@ -67,7 +66,6 @@ class StatusTest(ESTestCase):
         ustat = api.CourseRunUserStatus(
             status='status',
             course_run=mock_run,
-            enrollment_for_course='enroll'
         )
         reps_str_start = '<CourseRunUserStatus for course {course} status {status} at '.format(
             course=ustat.course_run.title,
@@ -106,17 +104,12 @@ class CourseTests(ESTestCase):
     def setUpTestData(cls):
         super(CourseTests, cls).setUpTestData()
         cls.course = CourseFactory.create(title="Title")
-
-        with open(os.path.join(os.path.dirname(__file__),
-                               'fixtures/certificates.json')) as file_obj:
-            cls.certificates_json = json.loads(file_obj.read())
-
-        cls.certificates = Certificates(
-            [Certificate(cert_json) for cert_json in cls.certificates_json])
+        cls.user = UserFactory.create()
 
     def setUp(self):
         super(CourseTests, self).setUp()
         self.now = datetime.now(pytz.utc)
+        self.mmtrack = MagicMock(wraps=MMTrack)
 
     def create_run(self, course=None, start=None, end=None,
                    enr_start=None, enr_end=None, edx_key=None, title="Title",
@@ -144,62 +137,66 @@ class FormatRunTest(CourseTests):
     def test_format_run_no_run(self):
         """Test for format_courserun_for_dashboard if there is no run"""
         self.assertIsNone(
-            api.format_courserun_for_dashboard(None, api.CourseStatus.PASSED)
+            api.format_courserun_for_dashboard(None, api.CourseStatus.PASSED, self.mmtrack)
         )
 
-    def test_price_in_course_run(self):
-        """Assert that price appears in course run for offered and upgrade."""
-        crun = self.create_run()
-        course_price = 50
-        CoursePriceFactory.create(course_run=crun, is_valid=True, price=course_price)
-
-        format_courserun_offered_course = api.format_courserun_for_dashboard(crun, api.CourseStatus.OFFERED)
-        self.assertIn('price', format_courserun_offered_course)
-        self.assertEqual(format_courserun_offered_course['price'], course_price)
-
-        format_courserun_no_verified_course = api.format_courserun_for_dashboard(crun, api.CourseStatus.CAN_UPGRADE)
-        self.assertIn('price', format_courserun_no_verified_course)
-        self.assertEqual(format_courserun_no_verified_course['price'], course_price)
-
-        self.assertNotIn('price', api.format_courserun_for_dashboard(crun, api.CourseStatus.PASSED))
-        self.assertNotIn('price', api.format_courserun_for_dashboard(crun, api.CourseStatus.NOT_PASSED))
-        self.assertNotIn('price', api.format_courserun_for_dashboard(crun, api.CourseStatus.CURRENTLY_ENROLLED))
-
     def test_format_run(self):
-        """Test for format_courserun_for_dashboard with passed run and position"""
+        """Test for format_courserun_for_dashboard"""
+        self.mmtrack.configure_mock(**{
+            'get_final_grade.return_value': 99.99,
+            'get_current_grade.return_value': 33.33,
+        })
         crun = self.create_run(
             start=self.now+timedelta(weeks=52),
             end=self.now+timedelta(weeks=62),
             enr_start=self.now+timedelta(weeks=40),
             enr_end=self.now+timedelta(weeks=50),
         )
+
+        expected_ret_data = {
+            'title': crun.title,
+            'status': api.CourseStatus.PASSED,
+            'id': crun.pk,
+            'course_id': crun.edx_course_key,
+            'position': 1,
+            'course_start_date': crun.start_date,
+            'course_end_date': crun.end_date,
+            'fuzzy_start_date': crun.fuzzy_start_date,
+            'final_grade': 99.99,
+        }
+
         self.assertEqual(
-            api.format_courserun_for_dashboard(crun, api.CourseStatus.PASSED),
-            {
-                'title': crun.title,
-                'status': api.CourseStatus.PASSED,
-                'id': crun.pk,
-                'course_id': crun.edx_course_key,
-                'position': 1,
-                'course_start_date': crun.start_date,
-                'course_end_date': crun.end_date,
-                'fuzzy_start_date': crun.fuzzy_start_date
-            }
+            api.format_courserun_for_dashboard(crun, api.CourseStatus.PASSED, self.mmtrack),
+            expected_ret_data
         )
 
         # with different position
+        expected_ret_data['position'] = 56
         self.assertEqual(
-            api.format_courserun_for_dashboard(crun, api.CourseStatus.PASSED, position=56),
-            {
-                'title': crun.title,
-                'status': api.CourseStatus.PASSED,
-                'id': crun.pk,
-                'course_id': crun.edx_course_key,
-                'position': 56,
-                'course_start_date': crun.start_date,
-                'course_end_date': crun.end_date,
-                'fuzzy_start_date': crun.fuzzy_start_date
-            }
+            api.format_courserun_for_dashboard(crun, api.CourseStatus.PASSED, self.mmtrack, position=56),
+            expected_ret_data
+        )
+
+        # with not passed
+        expected_ret_data.update({
+            'status': api.CourseStatus.NOT_PASSED,
+            'position': 1,
+            'final_grade': 33.33,
+        })
+        self.assertEqual(
+            api.format_courserun_for_dashboard(crun, api.CourseStatus.NOT_PASSED, self.mmtrack),
+            expected_ret_data
+        )
+
+        # with currently enrolled
+        expected_ret_data.update({
+            'status': api.CourseStatus.CURRENTLY_ENROLLED,
+            'current_grade': 33.33
+        })
+        del expected_ret_data['final_grade']
+        self.assertEqual(
+            api.format_courserun_for_dashboard(crun, api.CourseStatus.CURRENTLY_ENROLLED, self.mmtrack),
+            expected_ret_data
         )
 
     def test_format_run_conditional(self):
@@ -211,7 +208,7 @@ class FormatRunTest(CourseTests):
             enr_end=self.now+timedelta(weeks=50),
         )
         self.assertEqual(
-            api.format_courserun_for_dashboard(crun, api.CourseStatus.OFFERED),
+            api.format_courserun_for_dashboard(crun, api.CourseStatus.OFFERED, self.mmtrack),
             {
                 'title': crun.title,
                 'status': api.CourseStatus.OFFERED,
@@ -228,59 +225,7 @@ class FormatRunTest(CourseTests):
 
         # test that a weird status raises here
         with self.assertRaises(ImproperlyConfigured):
-            api.format_courserun_for_dashboard(crun, 'foo_status')
-
-    def test_format_run_no_certificate(self):
-        """Test for format_courserun_for_dashboard with status PASSED and no certificate"""
-        crun = self.create_run(
-            edx_key="course-v1:edX+DemoX+Demo_Course",
-            start=self.now+timedelta(weeks=52),
-            end=self.now+timedelta(weeks=62),
-            enr_start=self.now+timedelta(weeks=40),
-            enr_end=self.now+timedelta(weeks=50),
-        )
-        self.assertEqual(
-            api.format_courserun_for_dashboard(
-                crun, api.CourseStatus.PASSED, certificate=None),
-            {
-                'title': crun.title,
-                'status': api.CourseStatus.PASSED,
-                'id': crun.pk,
-                'course_id': crun.edx_course_key,
-                'position': 1,
-                'course_start_date': crun.start_date,
-                'course_end_date': crun.end_date,
-                'fuzzy_start_date': crun.fuzzy_start_date
-            }
-        )
-
-    def test_format_run_certificate(self):
-        """Test for format_courserun_for_dashboard with status PASSED and certificate"""
-        crun = self.create_run(
-            edx_key="course-v1:edX+DemoX+Demo_Course",
-            start=self.now+timedelta(weeks=52),
-            end=self.now+timedelta(weeks=62),
-            enr_start=self.now+timedelta(weeks=40),
-            enr_end=self.now+timedelta(weeks=50),
-        )
-        cert = self.certificates.get_verified_cert("course-v1:edX+DemoX+Demo_Course")
-        assert cert is not None
-        self.assertEqual(
-            api.format_courserun_for_dashboard(
-                crun, api.CourseStatus.PASSED, certificate=cert),
-            {
-                'title': crun.title,
-                'status': api.CourseStatus.PASSED,
-                'id': crun.pk,
-                'course_id': crun.edx_course_key,
-                'grade': cert.grade,
-                'certificate_url': cert.download_url,
-                'position': 1,
-                'course_start_date': crun.start_date,
-                'course_end_date': crun.end_date,
-                'fuzzy_start_date': crun.fuzzy_start_date
-            }
-        )
+            api.format_courserun_for_dashboard(crun, 'foo_status', self.mmtrack)
 
 
 class CourseRunTest(CourseTests):
@@ -289,15 +234,11 @@ class CourseRunTest(CourseTests):
     @classmethod
     def setUpTestData(cls):
         super(CourseRunTest, cls).setUpTestData()
-        with open(os.path.join(os.path.dirname(__file__),
-                               'fixtures/user_enrollments.json')) as file_obj:
-            cls.enrollments_json = json.loads(file_obj.read())
-
-        cls.enrollments = Enrollments(cls.enrollments_json)
         cls.now = datetime.now(pytz.utc)
 
     def test_status_for_run_not_enrolled(self):
         """test for get_status_for_courserun for course without enrollment"""
+        self.mmtrack.configure_mock(**{'is_enrolled.return_value': False})
         crun = self.create_run(
             start=self.now+timedelta(weeks=52),
             end=self.now+timedelta(weeks=62),
@@ -305,14 +246,14 @@ class CourseRunTest(CourseTests):
             enr_end=self.now+timedelta(weeks=50),
             edx_key='foo_edx_key'
         )
-        run_status = api.get_status_for_courserun(crun, self.enrollments)
+        run_status = api.get_status_for_courserun(crun, self.mmtrack)
         assert isinstance(run_status, api.CourseRunUserStatus)
         assert run_status.status == api.CourseRunStatus.NOT_ENROLLED
         assert run_status.course_run == crun
-        assert run_status.enrollment_for_course is None
 
-    def test_verified_grade(self):
-        """test for get_status_for_courserun for an enrolled and verified current course"""
+    def test_currently_mmtrack_enrolled(self):
+        """test for get_status_for_courserun for an enrolled and paid current course"""
+        self.mmtrack.configure_mock(**{'is_enrolled.return_value': True, 'is_enrolled_mmtrack.return_value': True})
         # create a run that is current
         crun = self.create_run(
             start=self.now-timedelta(weeks=1),
@@ -321,14 +262,13 @@ class CourseRunTest(CourseTests):
             enr_end=self.now+timedelta(weeks=1),
             edx_key="course-v1:edX+DemoX+Demo_Course"
         )
-        run_status = api.get_status_for_courserun(crun, self.enrollments)
+        run_status = api.get_status_for_courserun(crun, self.mmtrack)
         assert run_status.status == api.CourseRunStatus.CURRENTLY_ENROLLED
         assert run_status.course_run == crun
-        assert (run_status.enrollment_for_course ==
-                self.enrollments.get_enrollment_for_course("course-v1:edX+DemoX+Demo_Course"))
 
-    def test_verified_read_cert(self):
+    def test_check_if_passed(self):
         """test for get_status_for_courserun for a finished course"""
+        self.mmtrack.configure_mock(**{'is_enrolled.return_value': True, 'is_enrolled_mmtrack.return_value': True})
         # create a run that is past
         crun = self.create_run(
             start=self.now-timedelta(weeks=52),
@@ -337,14 +277,13 @@ class CourseRunTest(CourseTests):
             enr_end=self.now-timedelta(weeks=53),
             edx_key="course-v1:edX+DemoX+Demo_Course"
         )
-        run_status = api.get_status_for_courserun(crun, self.enrollments)
-        assert run_status.status == api.CourseRunStatus.READ_CERT
+        run_status = api.get_status_for_courserun(crun, self.mmtrack)
+        assert run_status.status == api.CourseRunStatus.CHECK_IF_PASSED
         assert run_status.course_run == crun
-        assert (run_status.enrollment_for_course ==
-                self.enrollments.get_enrollment_for_course("course-v1:edX+DemoX+Demo_Course"))
 
-    def test_verified_read_will_attend(self):
-        """test for get_status_for_courserun for an enrolled and verified future course"""
+    def test_read_will_attend(self):
+        """test for get_status_for_courserun for an enrolled and paid future course"""
+        self.mmtrack.configure_mock(**{'is_enrolled.return_value': True, 'is_enrolled_mmtrack.return_value': True})
         # create a run that is future
         crun = self.create_run(
             start=self.now+timedelta(weeks=52),
@@ -353,14 +292,13 @@ class CourseRunTest(CourseTests):
             enr_end=self.now+timedelta(weeks=50),
             edx_key="course-v1:edX+DemoX+Demo_Course"
         )
-        run_status = api.get_status_for_courserun(crun, self.enrollments)
+        run_status = api.get_status_for_courserun(crun, self.mmtrack)
         assert run_status.status == api.CourseRunStatus.WILL_ATTEND
         assert run_status.course_run == crun
-        assert (run_status.enrollment_for_course ==
-                self.enrollments.get_enrollment_for_course("course-v1:edX+DemoX+Demo_Course"))
 
-    def test_not_verified_upgrade(self):
+    def test_enrolled_not_paid_course(self):
         """test for get_status_for_courserun for present and future course with audit enrollment"""
+        self.mmtrack.configure_mock(**{'is_enrolled.return_value': True, 'is_enrolled_mmtrack.return_value': False})
         # create a run that is future
         future_run = self.create_run(
             start=self.now+timedelta(weeks=52),
@@ -377,19 +315,16 @@ class CourseRunTest(CourseTests):
             enr_end=self.now+timedelta(weeks=1),
             edx_key="course-v1:MITx+8.MechCX+2014_T1"
         )
-        run_status = api.get_status_for_courserun(future_run, self.enrollments)
+        run_status = api.get_status_for_courserun(future_run, self.mmtrack)
         assert run_status.status == api.CourseRunStatus.CAN_UPGRADE
         assert run_status.course_run == future_run
-        assert (run_status.enrollment_for_course ==
-                self.enrollments.get_enrollment_for_course("course-v1:MITx+8.MechCX+2014_T1"))
-        run_status = api.get_status_for_courserun(current_run, self.enrollments)
+        run_status = api.get_status_for_courserun(current_run, self.mmtrack)
         assert run_status.status == api.CourseRunStatus.CAN_UPGRADE
         assert run_status.course_run == current_run
-        assert (run_status.enrollment_for_course ==
-                self.enrollments.get_enrollment_for_course("course-v1:MITx+8.MechCX+2014_T1"))
 
-    def test_not_verified_upgradable(self):
-        """test for get_status_for_courserun with check if course can be upgraded to verified"""
+    def test_enrolled_upgradable(self):
+        """test for get_status_for_courserun with check if course can be upgraded to paid"""
+        self.mmtrack.configure_mock(**{'is_enrolled.return_value': True, 'is_enrolled_mmtrack.return_value': False})
         # create a run that is current with upgrade deadline None
         current_run = self.create_run(
             start=self.now-timedelta(weeks=1),
@@ -399,23 +334,24 @@ class CourseRunTest(CourseTests):
             upgrade_deadline=None,
             edx_key="course-v1:MITx+8.MechCX+2014_T1"
         )
-        run_status = api.get_status_for_courserun(current_run, self.enrollments)
+        run_status = api.get_status_for_courserun(current_run, self.mmtrack)
         assert run_status.status == api.CourseRunStatus.CAN_UPGRADE
 
         # modify the run to have an upgrade deadline in the future
         current_run.upgrade_deadline = self.now+timedelta(weeks=1)
         current_run.save()
-        run_status = api.get_status_for_courserun(current_run, self.enrollments)
+        run_status = api.get_status_for_courserun(current_run, self.mmtrack)
         assert run_status.status == api.CourseRunStatus.CAN_UPGRADE
 
         # modify the run to have an upgrade deadline in the past
         current_run.upgrade_deadline = self.now-timedelta(weeks=1)
         current_run.save()
-        run_status = api.get_status_for_courserun(current_run, self.enrollments)
+        run_status = api.get_status_for_courserun(current_run, self.mmtrack)
         assert run_status.status == api.CourseRunStatus.NOT_PASSED
 
-    def test_not_verified_not_passed(self):
-        """test for get_status_for_courserun for course not upgraded to verified but that is past"""
+    def test_not_paid_not_passed(self):
+        """test for get_status_for_courserun for course not paid but that is past"""
+        self.mmtrack.configure_mock(**{'is_enrolled.return_value': True, 'is_enrolled_mmtrack.return_value': False})
         # create a run that is past
         crun = self.create_run(
             start=self.now-timedelta(weeks=52),
@@ -424,11 +360,9 @@ class CourseRunTest(CourseTests):
             enr_end=self.now-timedelta(weeks=53),
             edx_key="course-v1:MITx+8.MechCX+2014_T1"
         )
-        run_status = api.get_status_for_courserun(crun, self.enrollments)
+        run_status = api.get_status_for_courserun(crun, self.mmtrack)
         assert run_status.status == api.CourseRunStatus.NOT_PASSED
         assert run_status.course_run == crun
-        assert (run_status.enrollment_for_course ==
-                self.enrollments.get_enrollment_for_course("course-v1:MITx+8.MechCX+2014_T1"))
 
 
 class InfoCourseTest(CourseTests):
@@ -520,7 +454,7 @@ class InfoCourseTest(CourseTests):
         """test for get_info_for_course for course with no runs"""
         self.assert_course_equal(
             self.course_noruns,
-            api.get_info_for_course(self.course_noruns, None, None)
+            api.get_info_for_course(self.course_noruns, None)
         )
         assert mock_format.called is False
 
@@ -537,7 +471,7 @@ class InfoCourseTest(CourseTests):
         ):
             self.assert_course_equal(
                 self.course,
-                api.get_info_for_course(self.course, None, None)
+                api.get_info_for_course(self.course, None)
             )
         mock_format.assert_called_once_with(self.course_run, api.CourseStatus.OFFERED, None, position=1)
 
@@ -552,7 +486,7 @@ class InfoCourseTest(CourseTests):
         ):
             self.assert_course_equal(
                 self.course,
-                api.get_info_for_course(self.course, None, None)
+                api.get_info_for_course(self.course, None)
             )
         # the mock object has been called 2 times
         # one for the course that is current run
@@ -571,7 +505,7 @@ class InfoCourseTest(CourseTests):
         ), patch('courses.models.Course.get_next_run', autospec=True, return_value=None):
             self.assert_course_equal(
                 self.course,
-                api.get_info_for_course(self.course, None, None)
+                api.get_info_for_course(self.course, None)
             )
         mock_format.assert_any_call(self.course_run, api.CourseStatus.NOT_PASSED, None, position=1)
         mock_format.assert_any_call(self.course_run_ver, api.CourseStatus.NOT_PASSED, None, position=2)
@@ -587,66 +521,71 @@ class InfoCourseTest(CourseTests):
         ):
             self.assert_course_equal(
                 self.course,
-                api.get_info_for_course(self.course, None, None)
+                api.get_info_for_course(self.course, None)
             )
         mock_format.assert_any_call(self.course_run, api.CourseStatus.CURRENTLY_ENROLLED, None, position=1)
         mock_format.assert_any_call(self.course_run_ver, api.CourseStatus.NOT_PASSED, None, position=2)
 
     @patch('dashboard.api.format_courserun_for_dashboard', autospec=True)
-    def test_info_read_cert_no_verified_cert(self, mock_format):
+    def test_info_check_but_not_passed(self, mock_format):
         """
-        test for get_info_for_course in case there is not verified certificate for the course
+        test for get_info_for_course in case a check if the course has been passed is required
         """
+        self.mmtrack.configure_mock(**{'has_passed_course.return_value': False})
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
             side_effect=self.get_mock_run_status_func(
-                api.CourseRunStatus.READ_CERT, self.course_run, api.CourseRunStatus.NOT_PASSED),
+                api.CourseRunStatus.CHECK_IF_PASSED, self.course_run, api.CourseRunStatus.NOT_PASSED),
         ):
             self.assert_course_equal(
                 self.course,
-                api.get_info_for_course(self.course, None, self.certificates)
+                api.get_info_for_course(self.course, self.mmtrack)
             )
-        mock_format.assert_any_call(self.course_run, api.CourseStatus.OFFERED, None, position=1)
-        mock_format.assert_any_call(self.course_run_ver, api.CourseStatus.NOT_PASSED, None, position=2)
+        mock_format.assert_any_call(self.course_run, api.CourseStatus.OFFERED, self.mmtrack, position=1)
+        mock_format.assert_any_call(self.course_run_ver, api.CourseStatus.NOT_PASSED, self.mmtrack, position=2)
 
     @patch('dashboard.api.format_courserun_for_dashboard', autospec=True)
-    def test_info_read_cert_no_verified_cert_no_next(self, mock_format):
+    def test_info_check_but_not_passed_no_next(self, mock_format):
         """
-        test for get_info_for_course in case there is not verified certificate for the course
-        and there is no next run
+        test for get_info_for_course in case a check if the course has been passed
+        is required for the course, the course has not been passed and there is no next run
         """
+        self.mmtrack.configure_mock(**{'has_passed_course.return_value': False})
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
             side_effect=self.get_mock_run_status_func(
-                api.CourseRunStatus.READ_CERT, self.course_run_past, api.CourseRunStatus.NOT_ENROLLED),
+                api.CourseRunStatus.CHECK_IF_PASSED, self.course_run_past, api.CourseRunStatus.NOT_ENROLLED),
         ):
             self.assert_course_equal(
                 self.course_no_next_run,
-                api.get_info_for_course(self.course_no_next_run, None, self.certificates)
+                api.get_info_for_course(self.course_no_next_run, self.mmtrack)
             )
-        mock_format.assert_called_once_with(self.course_run_past, api.CourseStatus.NOT_PASSED, None, position=1)
+        mock_format.assert_called_once_with(
+            self.course_run_past, api.CourseStatus.NOT_PASSED, self.mmtrack, position=1)
 
     @patch('dashboard.api.format_courserun_for_dashboard', autospec=True)
-    def test_info_read_cert_with_ver_cert(self, mock_format):
+    def test_info_check_passed(self, mock_format):
         """
-        test for get_info_for_course in case there is a certificate for the course
+        test for get_info_for_course in case a check if the course has been passed
+        is required for the course and the course has been passed
         """
+        self.mmtrack.configure_mock(**{'has_passed_course.return_value': True})
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
             side_effect=self.get_mock_run_status_func(
-                api.CourseRunStatus.READ_CERT, self.course_run_ver, api.CourseRunStatus.NOT_ENROLLED),
+                api.CourseRunStatus.CHECK_IF_PASSED, self.course_run_ver, api.CourseRunStatus.NOT_ENROLLED),
         ):
             self.assert_course_equal(
                 self.course,
-                api.get_info_for_course(self.course, None, self.certificates)
+                api.get_info_for_course(self.course, self.mmtrack)
             )
         mock_format.assert_called_once_with(
             self.course_run_ver,
             api.CourseStatus.PASSED,
-            self.certificates.get_verified_cert(self.course_run_ver.edx_course_key),
+            self.mmtrack,
             position=1
         )
 
@@ -661,7 +600,7 @@ class InfoCourseTest(CourseTests):
         ):
             self.assert_course_equal(
                 self.course,
-                api.get_info_for_course(self.course, None, None)
+                api.get_info_for_course(self.course, None)
             )
         mock_format.assert_called_once_with(self.course_run, api.CourseStatus.CURRENTLY_ENROLLED, None, position=1)
 
@@ -676,7 +615,7 @@ class InfoCourseTest(CourseTests):
         ):
             self.assert_course_equal(
                 self.course,
-                api.get_info_for_course(self.course, None, None)
+                api.get_info_for_course(self.course, None)
             )
         mock_format.assert_called_once_with(self.course_run, api.CourseStatus.CAN_UPGRADE, None, position=1)
 
@@ -694,7 +633,7 @@ class InfoCourseTest(CourseTests):
         ):
             self.assert_course_equal(
                 self.course,
-                api.get_info_for_course(self.course, None, None)
+                api.get_info_for_course(self.course, None)
             )
         assert mock_format.call_count == 0
 
@@ -709,30 +648,31 @@ class InfoCourseTest(CourseTests):
         ):
             self.assert_course_equal(
                 self.course_no_next_run,
-                api.get_info_for_course(self.course_no_next_run, None, None)
+                api.get_info_for_course(self.course_no_next_run, None)
             )
         assert mock_format.call_count == 0
 
     @patch('dashboard.api.format_courserun_for_dashboard', autospec=True)
     def test_info_read_cert_for_all_no_next(self, mock_format):
         """
-        test for get_info_for_course in case the less recent course has a read cert status
+        test for get_info_for_course in case the less recent course is flagged to be checked if passed
         """
+        self.mmtrack.configure_mock(**{'has_passed_course.return_value': True})
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
             side_effect=self.get_mock_run_status_func(
-                api.CourseRunStatus.NOT_PASSED, self.course_run_past, api.CourseRunStatus.READ_CERT),
+                api.CourseRunStatus.NOT_PASSED, self.course_run_past, api.CourseRunStatus.CHECK_IF_PASSED),
         ):
             self.assert_course_equal(
                 self.course_no_next_run,
-                api.get_info_for_course(self.course_no_next_run, None, self.certificates)
+                api.get_info_for_course(self.course_no_next_run, self.mmtrack)
             )
-        mock_format.assert_any_call(self.course_run_past, api.CourseStatus.NOT_PASSED, None, position=1)
+        mock_format.assert_any_call(self.course_run_past, api.CourseStatus.NOT_PASSED, self.mmtrack, position=1)
         mock_format.assert_any_call(
             self.course_run_past_ver,
             api.CourseStatus.PASSED,
-            self.certificates.get_verified_cert(self.course_run_past_ver.edx_course_key),
+            self.mmtrack,
             position=2
         )
 
@@ -768,7 +708,7 @@ class InfoCourseTest(CourseTests):
         ):
             self.assert_course_equal(
                 run1.course,
-                api.get_info_for_course(run1.course, None, None)
+                api.get_info_for_course(run1.course, None)
             )
         mock_format.assert_called_once_with(run1, api.CourseStatus.OFFERED, None, position=1)
 
@@ -793,36 +733,76 @@ class InfoProgramTest(ESTestCase):
                 )
             )
 
+    def setUp(self):
+        super().setUp()
+        self.mmtrack = MagicMock(wraps=MMTrack)
+
     @patch('dashboard.api.get_info_for_course', autospec=True)
     def test_program(self, mock_info_course):
         """Test happy path"""
+        self.mmtrack.configure_mock(**{
+            'program': self.program,
+            'financial_aid_available': False
+        })
         mock_info_course.return_value = {'position_in_program': 1}
-        res = api.get_info_for_program(
-            self.program, {'enrollments': None}, {'certificates': None})
+        res = api.get_info_for_program(self.mmtrack)
         for course in self.courses:
-            mock_info_course.assert_any_call(
-                course, {'enrollments': None}, {'certificates': None})
+            mock_info_course.assert_any_call(course, self.mmtrack)
         expected_data = {
             "id": self.program.pk,
             "description": self.program.description,
             "title": self.program.title,
             "courses": [{'position_in_program': 1}, {'position_in_program': 1}],
-            "financial_aid_availability": self.program.financial_aid_availability,
+            "financial_aid_availability": False,
         }
         self.assertEqual(res, expected_data)
 
     @patch('dashboard.api.get_info_for_course', autospec=True)
     def test_program_no_courses(self, mock_info_course):
         """Test program with no courses"""
-        res = api.get_info_for_program(
-            self.program_no_courses, {'enrollments': None}, {'certificates': None})
+        self.mmtrack.configure_mock(**{
+            'program': self.program_no_courses,
+            'financial_aid_available': False
+        })
+        res = api.get_info_for_program(self.mmtrack)
         assert mock_info_course.called is False
         expected_data = {
             "id": self.program_no_courses.pk,
             "description": self.program_no_courses.description,
             "title": self.program_no_courses.title,
             "courses": [],
-            "financial_aid_availability": self.program.financial_aid_availability,
+            "financial_aid_availability": False,
+        }
+        self.assertEqual(res, expected_data)
+
+    @patch('dashboard.api.get_info_for_course', autospec=True)
+    def test_program_financial_aid(self, mock_info_course):
+        """Test happy path"""
+        kwargs = {
+            'program': self.program,
+            'financial_aid_available': True,
+            'financial_aid_applied': True,
+            'financial_aid_status': 'WHO-KNOWS',
+            'financial_aid_min_price': 123,
+            'financial_aid_max_price': 456,
+        }
+        self.mmtrack.configure_mock(**kwargs)
+        mock_info_course.return_value = {'position_in_program': 1}
+        res = api.get_info_for_program(self.mmtrack)
+        for course in self.courses:
+            mock_info_course.assert_any_call(course, self.mmtrack)
+        expected_data = {
+            "id": self.program.pk,
+            "description": self.program.description,
+            "title": self.program.title,
+            "courses": [{'position_in_program': 1}, {'position_in_program': 1}],
+            "financial_aid_availability": kwargs['financial_aid_available'],
+            "financial_aid_user_info": {
+                "has_user_applied": kwargs['financial_aid_applied'],
+                "application_status": kwargs['financial_aid_status'],
+                "min_possible_cost": kwargs['financial_aid_min_price'],
+                "max_possible_cost": kwargs['financial_aid_max_price'],
+            }
         }
         self.assertEqual(res, expected_data)
 

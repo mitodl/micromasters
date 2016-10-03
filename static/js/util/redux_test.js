@@ -48,14 +48,14 @@ describe('redux helpers', () => {
       actions = createSimpleActionHelpers(dispatch, actionList);
     });
 
-    it('should return an array of objects containing functions', () => {
-      assert.isArray(actions);
-      let [ { actionCreator } ] = actions;
+    it('should return an object containing functions', () => {
+      assert.isObject(actions);
+      let actionCreator = actions.actionCreator;
       assert.isFunction(actionCreator);
     });
 
     it('the functions returned should call dispatch with arguments', () => {
-      let [ { actionCreator } ] = actions;
+      let actionCreator = actions.actionCreator;
       actionCreator(3);
       assert(dispatch.calledWith({
         type: MY_ACTION, payload: 3

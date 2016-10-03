@@ -155,15 +155,16 @@ class ProfileFormContainer extends React.Component {
       }
     }
 
-    return Object.assign({}, {
+    return {
       profile: profile,
       errors: errors,
       ui: ui,
       updateProfile: this.updateProfile.bind(this, isEdit),
       saveProfile: this.saveProfile.bind(this, isEdit),
       fetchProfile: this.fetchProfile,
-    }, ...this.simpleActionHelpers(), ...this.asyncActionHelpers()
-    );
+      ...this.simpleActionHelpers(),
+      ...this.asyncActionHelpers()
+    };
   };
 
   childrenWithProps: Function = (profileFromStore: ProfileGetResult) => {
