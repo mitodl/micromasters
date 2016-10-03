@@ -84,9 +84,6 @@ export default class FinancialAidCard extends React.Component {
       coursePrice,
       openFinancialAidCalculator,
     } = this.props;
-    if (!program.financial_aid_availability) {
-      return null;
-    }
 
     const {
       has_user_applied: hasUserApplied,

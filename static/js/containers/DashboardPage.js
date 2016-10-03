@@ -143,17 +143,22 @@ class DashboardPage extends React.Component {
     } else if (_.isNil(program) || _.isNil(coursePrice)) {
       errorMessage = <ErrorMessage errorInfo={{user_message: "No program enrollment is available."}} />;
     } else {
+      let financialAidCard;
+      if (program.financial_aid_availability) {
+        financialAidCard = <FinancialAidCard
+          program={program}
+          coursePrice={coursePrice}
+          openFinancialAidCalculator={this.openFinancialAidCalculator}
+          documentSentDate={documentSentDate}
+          setDocumentSentDate={this.setDocumentSentDate}
+        />;
+      }
+
       dashboardContent = (
         <div className="double-column">
           <div className="first-column">
             <DashboardUserCard profile={profile} program={program}/>
-            <FinancialAidCard
-              program={program}
-              coursePrice={coursePrice}
-              openFinancialAidCalculator={this.openFinancialAidCalculator}
-              documentSentDate={documentSentDate}
-              setDocumentSentDate={this.setDocumentSentDate}
-            />
+            {financialAidCard}
             <CourseListCard
               program={program}
               key={program.id}
