@@ -43,7 +43,7 @@ describe('documents reducers', () => {
   describe('Document date', () => {
     it('should let you set the document date', () => {
       let todayFormat = moment().format(ISO_8601_FORMAT);
-      assertReducerResultState(setDocumentSentDate, documents => documents.documentSentDate, todayFormat);
+      assertReducerResultState(setDocumentSentDate, documents => documents.documentSentDate, { date: todayFormat });
     });
   });
 });
