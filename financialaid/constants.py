@@ -45,10 +45,10 @@ class FinancialAidStatus:
     STATUS_MESSAGES_DICT = {
         APPROVED: "Approved",
         AUTO_APPROVED: "Auto-Approved",
-        CREATED: "Created",
-        DOCS_SENT: "Documentation Sent",
-        PENDING_DOCS: "Pending Documentation",
-        PENDING_MANUAL_APPROVAL: "Pending Manual Approval",
+        CREATED: "--",
+        DOCS_SENT: "Documents Sent by User",
+        PENDING_DOCS: "Started Applications",
+        PENDING_MANUAL_APPROVAL: "Pending Approval (Documents Received)",
         REJECTED: "Rejected",
         SKIPPED: "Skipped"
     }

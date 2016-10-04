@@ -129,7 +129,6 @@ class FinancialAidActionSerializer(serializers.Serializer):
     tier_program_id = IntegerField(write_only=True)
     justification = ChoiceField(
         choices=FinancialAidJustification.ALL_JUSTIFICATIONS,
-        required=False,
         default=None,
         write_only=True
     )
@@ -138,28 +137,32 @@ class FinancialAidActionSerializer(serializers.Serializer):
         """
         Validators for this serializer
         """
-        # Check that the previous financial aid status allows for the new status
-        if (data["action"] != FinancialAidStatus.PENDING_MANUAL_APPROVAL and
-                data["justification"] is None):
-            raise ValidationError({"justification": "This field is required."})
-        if (data["action"] == FinancialAidStatus.REJECTED and
-                self.instance.status != FinancialAidStatus.PENDING_MANUAL_APPROVAL):
-            raise ValidationError("Cannot reject application that is not pending manual approval.")
-        if (data["action"] == FinancialAidStatus.APPROVED and
-                self.instance.status != FinancialAidStatus.PENDING_MANUAL_APPROVAL):
-            raise ValidationError("Cannot approve application that is not pending manual approval.")
-        if (data['action'] == FinancialAidStatus.PENDING_MANUAL_APPROVAL and
-                self.instance.status not in [FinancialAidStatus.PENDING_DOCS, FinancialAidStatus.DOCS_SENT]):
-            raise ValidationError("Cannot mark documents as received for an application awaiting docs.")
-        # Check tier program exists
-        try:
-            data["tier_program"] = TierProgram.objects.get(
-                id=data["tier_program_id"],
-                program_id=self.instance.tier_program.program_id,
-                current=True
-            )
-        except TierProgram.DoesNotExist:
-            raise ValidationError("Financial Aid Tier does not exist for this program.")
+        # Required field
+        if data.get("action", None) is None:
+            raise ValidationError({"action": "This field is required."})
+        # For approving and rejecting
+        if data["action"] in [FinancialAidStatus.APPROVED, FinancialAidStatus.REJECTED]:
+            # Required fields
+            if data.get("tier_program_id", None) is None:
+                raise ValidationError({"tier_program_id": "This field is required."})
+            if data.get("justification", None) is None:
+                raise ValidationError({"justification": "This field is required."})
+            # Required instance status
+            if self.instance.status != FinancialAidStatus.PENDING_MANUAL_APPROVAL:
+                raise ValidationError("Cannot approve or reject application that is not pending manual approval.")
+            # Check tier program exists
+            try:
+                data["tier_program"] = TierProgram.objects.get(
+                    id=data["tier_program_id"],
+                    program_id=self.instance.tier_program.program_id,
+                    current=True
+                )
+            except TierProgram.DoesNotExist:
+                raise ValidationError({"tier_program_id": "Financial Aid Tier does not exist for this program."})
+        # For marking documents received
+        if data["action"] == FinancialAidStatus.PENDING_MANUAL_APPROVAL:
+            if self.instance.status not in [FinancialAidStatus.PENDING_DOCS, FinancialAidStatus.DOCS_SENT]:
+                raise ValidationError("Cannot mark documents as received for an application not awaiting docs.")
         return data
 
     def save(self):

@@ -126,17 +126,14 @@
               <th style="font-weight: normal;">
                 {% include "common/sort_links.html" with field=sort_fields.date_calculated %}
               </th>
-              {% if selected_status == statuses.PENDING_DOCS %}
-              <th style="font-weight: normal;">Docs Received</th>
-              {% endif %}
               <th style="font-weight: normal; min-width: 104px;">
                 {% include "common/sort_links.html" with field=sort_fields.adjusted_cost %}
               </th>
-              {% if selected_status != statuses.AUTO_APPROVED and selected_status != statuses.PENDING_DOCS %}
+              {% if selected_status == statuses.APPROVED or selected_status == statuses.REJECTED %}
               <th style="font-weight: normal;">Justification</th>
               {% endif %}
-              {% if selected_status == statuses.PENDING_MANUAL_APPROVAL or selected_status == statuses.PENDING_DOCS %}
-              <th></th>
+              {% if selected_status == statuses.PENDING_MANUAL_APPROVAL or selected_status == statuses.PENDING_DOCS or selected_status == statuses.DOCS_SENT %}
+              <th style="font-weight: normal;">Actions</th>
               {% endif %}
             </tr>
           </thead>
@@ -174,17 +171,6 @@
               <!-- Date calculated -->
               <td>{{ financial_aid.created_on|date:"SHORT_DATE_FORMAT" }}</td>
               <!-- /Date calculated -->
-              <!-- Docs received -->
-              {% if selected_status == statuses.PENDING_DOCS %}
-              <td>
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox">
-                  </label>
-                </div>
-              </td>
-              {% endif %}
-              <!-- /Docs received -->
               <!-- Adjusted cost -->
               <td>
                 {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
@@ -202,7 +188,7 @@
               </td>
               <!-- /Adjusted cost -->
               <!-- Justification -->
-              {% if selected_status != statuses.AUTO_APPROVED and selected_status != statuses.PENDING_DOCS %}
+              {% if selected_status == statuses.APPROVED or selected_status == statuses.REJECTED %}
               <td>
                 {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
                 <select id="justification-{{ financial_aid.id }}" class="form-control">
@@ -221,14 +207,24 @@
               {% endif %}
               <!-- /Justification -->
               <!-- Actions -->
-              {% if selected_status == statuses.PENDING_MANUAL_APPROVAL or selected_status == statuses.PENDING_DOCS %}
+              {% if selected_status == statuses.PENDING_MANUAL_APPROVAL or selected_status == statuses.PENDING_DOCS or selected_status == statuses.DOCS_SENT %}
               <td style="white-space: nowrap;">
+                <!-- Mark docs as received -->
+                {% if selected_status == statuses.PENDING_DOCS or selected_status == statuses.DOCS_SENT %}
+                <button class="btn btn-default" style="color: #0074e1; padding-top: 7px;"
+                       onclick="submitDocsReceived({{ financial_aid.id }}, '{% url 'financial_aid_action' financial_aid_id=financial_aid.id %}')">
+                  Mark Docs Received
+                </button>
+                {% endif %}
+                <!-- /Mark docs as received -->
+                <!-- Submit approval -->
                 {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
-                <button class="btn btn-default" style="color: #0074e1;"
+                <button class="btn btn-default" style="color: #0074e1; padding-top: 7px;"
                         onclick="submitApproval({{ financial_aid.id }}, '{% url 'financial_aid_action' financial_aid_id=financial_aid.id %}');">
                   Save
                 </button>
                 {% endif %}
+                <!-- /Submit approval -->
                 <button class="btn btn-default" style="color: #0074e1;"
                         onclick="$('#application-email-row-{{ financial_aid.id }}').toggle();">
                   <span class="glyphicon glyphicon-envelope"></span>
@@ -239,14 +235,14 @@
             </tr>
             <!-- /Financial aid application information -->
             <!-- Financial aid application email form -->
-            {% if selected_status == statuses.PENDING_MANUAL_APPROVAL or selected_status == statuses.PENDING_DOCS %}
+            {% if selected_status == statuses.PENDING_MANUAL_APPROVAL or selected_status == statuses.PENDING_DOCS or selected_status == statuses.DOCS_SENT %}
             <tr id="application-email-row-{{ financial_aid.id }}" style="display: none;">
               <td colspan="9" style="border-top: 0;">
                 <form id="email-form-{{ financial_aid.id }}" class="email-form form-horizontal">
                   {% render_form email_serializer template_pack="rest_framework/horizontal" %}
                 </form>
                 <button class="btn btn-primary pull-right"
-                        onclick="submitEmail({{ financial_aid.id }}, '{% url 'financial_aid_mail_api' financial_aid_id=financial_aid.id %}');">Send Email</button>
+                        onclick="sendEmail({{ financial_aid.id }}, '{% url 'financial_aid_mail_api' financial_aid_id=financial_aid.id %}');">Send Email</button>
                 <br>
               </td>
             </tr>
@@ -267,6 +263,43 @@
     
     var CSRF_TOKEN = "{{ csrf_token }}";
     
+    {% if selected_status == statuses.PENDING_DOCS or selected_status == statuses.DOCS_SENT %}
+    /**
+     * Marks documents as received for a financial aid application
+     * 
+     * @param financial_aid_id {number} Financial aid application id
+     * @param url {string} URL to submit request to
+     */
+    function submitDocsReceived(financial_aid_id, url) {
+      var name = $("#full-name-" + financial_aid_id).text().trim();
+      if (confirm("Click OK to mark documents as received for " + name + "'s financial aid application.")) {
+        var action = "{{ statuses.PENDING_MANUAL_APPROVAL }}";
+        $.ajax({
+          "url": url,
+          "type": "PATCH",
+          "headers": {
+            "X-CSRFToken": CSRF_TOKEN
+          },
+          "data": {
+            "action": action
+          },
+          "success": function() {
+            displayMessage(
+              "Successfully marked documents as received for " + name + "'s financial aid application.",
+              "success"
+            );
+            $("#application-row-" + financial_aid_id + ", #application-email-row-" + financial_aid_id).remove();
+          },
+          "error": function(result) {
+            displayMessage("Error: " + result.responseText + " on " + name + "'s financial aid application.", "danger");
+          }
+        });
+      }
+    }
+    {% endif %}
+    
+    
+    {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
     /**
      * Submits a financial aid application approval
      * 
@@ -281,7 +314,7 @@
         var tier_program_id = $("#tier-program-id-" + financial_aid_id).val();
         $.ajax({
           "url": url,
-          "type": "PUT",
+          "type": "PATCH",
           "headers": {
             "X-CSRFToken": CSRF_TOKEN
           },
@@ -300,15 +333,17 @@
         });
       }
     }
+    {% endif %}
     
     
+    {% if selected_status == statuses.PENDING_DOCS or selected_status == statuses.DOCS_SENT or selected_status == statuses.PENDING_MANUAL_APPROVAL %}
     /**
      * Submits a financial aid email request
      * 
      * @param financial_aid_id {number} Financial aid application id
      * @param url {string} URL to submit request to
      */
-    function submitEmail(financial_aid_id, url) {
+    function sendEmail(financial_aid_id, url) {
       var name = $("#full-name-" + financial_aid_id).text().trim();
       if (confirm("Click OK to send email to " + name)) {
         var emailSubject = $("#email-form-" + financial_aid_id + " [name='email_subject']").val();
@@ -334,6 +369,7 @@
         });
       }
     }
+    {% endif %}
     
     
     /**

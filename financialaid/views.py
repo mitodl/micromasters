@@ -109,6 +109,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
     selected_status = None
     program = None
     course_price = None
+    default_status = FinancialAidStatus.PENDING_MANUAL_APPROVAL
     # Used for sorting
     sort_field = None
     sort_direction = ""
@@ -173,10 +174,12 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         # Create ordered list of (financial aid status, financial message)
         messages = FinancialAidStatus.STATUS_MESSAGES_DICT
         message_order = (
-            FinancialAidStatus.PENDING_DOCS,
-            FinancialAidStatus.PENDING_MANUAL_APPROVAL,
             FinancialAidStatus.AUTO_APPROVED,
-            FinancialAidStatus.APPROVED
+            FinancialAidStatus.PENDING_DOCS,
+            FinancialAidStatus.DOCS_SENT,
+            FinancialAidStatus.PENDING_MANUAL_APPROVAL,
+            FinancialAidStatus.APPROVED,
+            FinancialAidStatus.SKIPPED
         )
         context["financial_aid_statuses"] = (
             (status, "Show: {message}".format(message=messages[status]))
@@ -221,7 +224,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         # Filter by status
         self.selected_status = self.kwargs.get("status", None)
         if self.selected_status is None or self.selected_status not in FinancialAidStatus.ALL_STATUSES:
-            self.selected_status = FinancialAidStatus.PENDING_MANUAL_APPROVAL
+            self.selected_status = self.default_status
         financial_aids = financial_aids.filter(status=self.selected_status)
 
         # Filter by search query
