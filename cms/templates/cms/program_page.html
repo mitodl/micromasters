@@ -84,13 +84,16 @@
           <h3 class="title">
             Courses
           </h3>
-          {% for course, status in courses_info.items %}
+          {% for course, status, url in courses_info %}
           <div class="course-details">
             <div class="title">
-              {{ course.title }}
+              <a href="{{ url }}">{{ course.title }}</a>
+            </div>
+            <div class="description enrollment_dates">
+              {{ status }}
             </div>
             <div class="description">
-              {{ status }}
+              {{ course.description }}
             </div>
           </div>
           {% endfor %}
