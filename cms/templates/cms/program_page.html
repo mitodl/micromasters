@@ -87,7 +87,11 @@
           {% for course, status, url in courses_info %}
           <div class="course-details">
             <div class="title">
-              <a href="{{ url }}">{{ course.title }}</a>
+              {% if url %}
+                <a href="{{ url }}">{{ course.title }}</a>
+              {% else %}
+                {{ course.title }}
+              {% endif %}
             </div>
             <div class="description enrollment_dates">
               {{ status }}

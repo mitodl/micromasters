@@ -1,15 +1,17 @@
 """
 Tests for the program page api functions
 """
+import urllib.parse
 from datetime import datetime, timedelta
 import pytz
+from django.conf import settings
 
 from search.base import ESTestCase
 from courses.factories import (
     CourseFactory,
     CourseRunFactory,
 )
-from cms.api import get_course_enrollment_text
+from cms.api import get_course_enrollment_text, get_course_url
 
 
 # pylint: disable=no-self-use
@@ -114,3 +116,35 @@ class CourseEnrollmentInfoTest(ESTestCase):
             enrollment_end=self.now - timedelta(weeks=1),
         )
         assert get_course_enrollment_text(course) == 'Not available'
+
+
+class CoursePageURLTest(ESTestCase):
+    """ Test for get_course_url """
+
+    @classmethod
+    def setUpTestData(cls):
+        super(CoursePageURLTest, cls).setUpTestData()
+        now = datetime.now(pytz.utc)
+        cls.course = CourseFactory.create(title="Title")
+        cls.course_run = CourseRunFactory.create(
+            course=cls.course,
+            start_date=now - timedelta(weeks=1),
+            end_date=now + timedelta(weeks=10),
+            enrollment_start=now - timedelta(weeks=1),
+            enrollment_end=now + timedelta(weeks=10),
+        )
+
+    def test_course_edx_course_key(self):
+        """ Test course with an existing edx_course_key """
+
+        page_url = urllib.parse.urljoin(
+            settings.EDXORG_BASE_URL,
+            'courses/{}/about'.format(self.course_run.edx_course_key)
+        )
+        assert get_course_url(self.course) == page_url
+
+    def test_course_no_course_key(self):
+        """ Test course with no edx_course_key """
+        self.course_run.edx_course_key = None
+        self.course_run.save()
+        assert get_course_url(self.course) == ""
