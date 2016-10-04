@@ -2,16 +2,18 @@
 Page models for the CMS
 """
 import json
+import itertools
 
 from django.conf import settings
 from django.db import models
+from modelcluster.models import ClusterableModel
 from modelcluster.fields import ParentalKey
+from rolepermissions.verifications import has_role
 from wagtail.wagtailimages.models import Image
 from wagtail.wagtailcore.models import Page, Orderable
 from wagtail.wagtailcore.fields import RichTextField
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel
-from rolepermissions.verifications import has_role
-
+from wagtail.wagtailsnippets.models import register_snippet
 
 from courses.models import Program
 from micromasters.utils import webpack_dev_server_host
@@ -169,6 +171,29 @@ class ProgramPage(Page):
 
         return context
 
+    @property
+    def has_categorized_faq(self):
+        """
+        Returns True if the FAQ should be displayed with categories,
+        False otherwise.
+        """
+        return FAQCategory.objects.filter(faqs__program_page=self).exists()
+
+    @property
+    def categorized_faqs(self):
+        """
+        Generator for pairs of (category, [faqs, in, category]).
+        Final item is a pair of (None, [uncategorized, faqs]).
+        """
+        query = self.faqs.order_by("category", "sort_order").all()
+        generator = itertools.groupby(query, key=lambda faq: faq.category)
+        # It would be great if we could just return this generator and be done,
+        # but Django Templates doesn't play well with itertools.groupby:
+        # see http://stackoverflow.com/questions/6906593/itertools-groupby-in-a-django-template
+        # So unfortunately, we have to exhaust the generator and convert to a
+        # list before returning.
+        return [(grouper, list(values)) for grouper, values in generator]
+
 
 class ProgramCourse(Orderable):
     """
@@ -214,11 +239,34 @@ class ProgramFaculty(Orderable):
     ]
 
 
+@register_snippet
+class FAQCategory(ClusterableModel):
+    """
+    Categories for frequently asked questions. Each question can be in
+    only one category.
+    """
+    name = models.CharField(max_length=255)
+
+    panels = [
+        FieldPanel('name'),
+    ]
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = "FAQ Category"
+        verbose_name_plural = "FAQ Categories"
+
+    def __str__(self):
+        return self.name
+
+
 class FrequentlyAskedQuestion(Orderable):
     """
     FAQs for the program
     """
     program_page = ParentalKey(ProgramPage, related_name='faqs')
+    category = ParentalKey(FAQCategory, related_name='faqs',
+                           null=True, blank=True)
     question = models.TextField()
     answer = RichTextField()
 
