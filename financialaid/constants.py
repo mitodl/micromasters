@@ -5,6 +5,7 @@ from urllib.parse import quote_plus
 
 from django.conf import settings
 
+
 class FinancialAidJustification:
     """
     Justifications for financial aid decisions
@@ -27,6 +28,7 @@ class FinancialAidStatus:
     PENDING_DOCS = 'pending-docs'
     PENDING_MANUAL_APPROVAL = 'pending-manual-approval'
     REJECTED = 'rejected'
+    SKIPPED = 'skipped'
 
     ALL_STATUSES = [
         APPROVED,
@@ -35,9 +37,10 @@ class FinancialAidStatus:
         DOCS_SENT,
         PENDING_DOCS,
         PENDING_MANUAL_APPROVAL,
-        REJECTED
+        REJECTED,
+        SKIPPED
     ]
-    TERMINAL_STATUSES = [APPROVED, AUTO_APPROVED, REJECTED]
+    TERMINAL_STATUSES = [APPROVED, AUTO_APPROVED, REJECTED, SKIPPED]
 
     STATUS_MESSAGES_DICT = {
         APPROVED: "Approved",
@@ -46,7 +49,8 @@ class FinancialAidStatus:
         DOCS_SENT: "Documentation Sent",
         PENDING_DOCS: "Pending Documentation",
         PENDING_MANUAL_APPROVAL: "Pending Manual Approval",
-        REJECTED: "Rejected"
+        REJECTED: "Rejected",
+        SKIPPED: "Skipped"
     }
 
 
@@ -66,6 +70,28 @@ FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT = "Financial Aid Documents Received"
 CURRENCY_EXCHANGE_RATE_API_REQUEST_URL = "{url}latest.json?app_id={app_id}".format(
     url=settings.OPEN_EXCHANGE_RATES_URL,
     app_id=quote_plus(settings.OPEN_EXCHANGE_RATES_APP_ID)
+)
+
+FINANCIAL_AID_DOCUMENTS_RECEIVED_SUBJECT = "Documents received for {program_name} MicroMasters"
+FINANCIAL_AID_APPROVAL_SUBJECT = "Your personalized course price for {program_name} MicroMasters"
+
+FINANCIAL_AID_EMAIL_BODY = (
+    "Dear {first_name},\n\n"
+    "{message}\n\n"
+    "Thank you,\n"
+    "The {program_name} MicroMasters team"
+)
+
+FINANCIAL_AID_DOCUMENTS_RECEIVED_MESSAGE = (
+    "We have received your documents verifying your income. We will review them as soon as possible, "
+    "after which we will send an e-mail confirming your personalized course price. We encourage you "
+    "to enroll now and pay later, when a decision has been reached."
+)
+FINANCIAL_AID_APPROVAL_MESSAGE = (
+    "After reviewing your income documentation, the {program_name} MicroMasters team has determined "
+    "that your personalized course price is {price}.\n\n"
+    "You can pay for MicroMasters courses through the MIT MicroMasters portal "
+    "(https://micromasters.mit.edu/dashboard). All coursework will be conducted on edx.org."
 )
 
 DEFAULT_INCOME_THRESHOLD = 75000

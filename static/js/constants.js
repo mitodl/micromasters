@@ -45,6 +45,16 @@ export const ALL_COURSE_STATUSES = [
   STATUS_CURRENTLY_ENROLLED,
 ];
 
+// financial aid statuses
+export const FA_STATUS_CREATED = 'created';
+export const FA_STATUS_AUTO_APPROVED = 'auto-approved';
+export const FA_STATUS_PENDING_DOCS = 'pending-docs';
+export const FA_STATUS_PENDING_MANUAL_APPROVAL = 'pending-manual-approval';
+export const FA_STATUS_APPROVED = 'approved';
+export const FA_STATUS_REJECTED = 'rejected';
+export const FA_STATUS_DOCS_SENT = 'docs-sent';
+export const FA_STATUS_SKIPPED = 'skipped';
+
 export const TOAST_SUCCESS = 'success';
 export const TOAST_FAILURE = 'failure';
 

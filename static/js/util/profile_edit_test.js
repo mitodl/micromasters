@@ -1,6 +1,6 @@
-import React from 'react';
 import { assert } from 'chai';
 import sinon from 'sinon';
+import { shallow } from 'enzyme';
 
 import {
   boundTextField,
@@ -119,14 +119,14 @@ describe('Profile Editing utility functions', () => {
     let dateField, dayTextField, monthTextField, yearTextField;
     let validateYearSpy, validateMonthSpy, validateDaySpy;
     let renderDateField = (...args) => {
-      dateField = boundDateField.call(
+      dateField = shallow(boundDateField.call(
         that,
         ["date_of_birth"],
         "Date of birth",
         ...args
-      );
+      ));
 
-      return dateField.props.children.filter(React.isValidElement);
+      return dateField.children().map(wrapper => wrapper.get(0));
     };
 
     beforeEach(() => {

@@ -54,13 +54,4 @@ describe('CourseListCard', () => {
     );
     assert.equal(wrapper.find('.personalized-pricing').length, 0);
   });
-
-  it("shows the personalized pricing box for programs that have it", () => {
-    const program = _.cloneDeep(DASHBOARD_RESPONSE[1]);
-    program.financial_aid_availability = true;
-    const wrapper = shallow(
-      <CourseListCard program={program} checkout={() => null} openFinancialAidCalculator={() => undefined} />
-    );
-    assert.equal(wrapper.find('.personalized-pricing').length, 1);
-  });
 });

@@ -1,6 +1,9 @@
 /* eslint-disable no-unused-vars, no-undef, no-var */
 __webpack_public_path__ = `http://${SETTINGS.host}:8078/`;  // eslint-disable-line no-undef, camelcase
 
+// responsive sharing buttons
+require("rrssb/js/rrssb.js");
+
 require("bootstrap");
 
 // jquery things
@@ -96,3 +99,60 @@ $("input[name=MMERGE2]").click(function() {
     $("#mce-MMERGE4").show();
   }
 });
+
+/**
+ * Set social media sharing links
+ */
+jQuery(document).ready(function ($) {
+  var description = 'MicroMasters is a ' +
+    'new digital credential for online learners. The MicroMasters ' +
+    'credential will be granted to learners who complete an ' +
+    'integrated set of graduate-level online courses. With the MicroMasters ' +
+    "credentials, learners can apply for an accelerated master's degree " +
+    "program on campus, at MIT or other top universities.";
+
+  $('.rrssb-buttons').rrssb({
+    // required:
+    title: 'MIT MicroMasters',
+    url: CURRENT_PAGE_URL,
+
+    // optional:
+    description: description,
+    emailBody: description + CURRENT_PAGE_URL
+  });
+});
+
+/**
+ * Set url hash if hash provided in the url,
+ * or set hash based on the active panel
+ */
+$(function(){
+  $('.mdl-tabs__tab').click(function(){
+    document.location.hash = $(this).attr('href');
+  });
+  if (document.location.hash){
+    setPanelActive(document.location.hash);
+  } else {
+    location.hash = $('.mdl-tabs__tab.is-active').attr('href');
+  }
+});
+
+$(window).on('hashchange', function () {
+  if (location.hash) {
+    setPanelActive(location.hash);
+  }
+});
+
+/**
+ *  Given a valid hash, set the corresponding panel active.
+ */
+function setPanelActive(hash){
+  var $panel = $(hash);
+  if ($panel.length > 0) {
+    $(".mdl-tabs__panel, .mdl-tabs__tab").removeClass('is-active');
+    $panel.addClass('is-active');
+    $(`a.mdl-tabs__tab[href="${hash}"]`).addClass('is-active');
+  } else {
+    location.hash = $('.mdl-tabs__tab.is-active').attr('href');
+  }
+}

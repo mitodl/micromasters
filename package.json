@@ -75,6 +75,7 @@
     "redux-localstorage-filter": "^0.1.1",
     "redux-logger": "2.6.1",
     "redux-thunk": "2.0.1",
+    "rrssb": "^1.10.0",
     "sanctuary": "^0.11.1",
     "sass-lint": "^1.9.1",
     "sass-loader": "3.2.0",

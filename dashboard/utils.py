@@ -29,9 +29,10 @@ class MMTrack:
     financial_aid_available = None
     financial_aid_applied = None
     financial_aid_status = None
-    financial_aid = None
+    financial_aid_id = None
     financial_aid_min_price = None
     financial_aid_max_price = None
+    financial_aid_date_documents_sent = None
 
     def __init__(self, user, program, enrollments, current_grades, certificates):
         """
@@ -63,8 +64,12 @@ class MMTrack:
                     Q(user=user) & Q(tier_program__program=program))
                 self.financial_aid_applied = financial_aid_qset.exists()
                 if self.financial_aid_applied:
-                    self.financial_aid = financial_aid_qset.first()
-                    self.financial_aid_status = self.financial_aid.status
+                    financial_aid = financial_aid_qset.first()
+                    self.financial_aid_status = financial_aid.status
+                    # set the sent document date
+                    self.financial_aid_date_documents_sent = financial_aid.date_documents_sent
+                    # and the financial aid ID
+                    self.financial_aid_id = financial_aid.id
 
                 # set the price range for the program
                 self.financial_aid_min_price, self.financial_aid_max_price = self._get_program_fa_prices()

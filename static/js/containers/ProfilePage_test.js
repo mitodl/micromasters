@@ -126,6 +126,9 @@ describe("ProfilePage", function() {
         helper.profileGetStub.returns(Promise.resolve(updatedProfile));
         return renderComponent('/profile').then(([, div]) => {
           // close all switches
+          if (`${step}` === 'personal') {
+            return confirmSaveButtonBehavior(updatedProfile, {div: div}, true);
+          }
           return confirmSaveButtonBehavior(updatedProfile, {div: div});
         });
       });
@@ -143,6 +146,12 @@ describe("ProfilePage", function() {
       });
 
       assert(div.querySelector(".spinner"), "Unable to find spinner");
+    });
+  });
+
+  it('select program display on personal tab', () => {
+    return renderComponent('/profile').then(([, div]) => {
+      assert(div.querySelector(".program-select"), "Unable to find select program dropdown");
     });
   });
 });

@@ -779,12 +779,14 @@ class InfoProgramTest(ESTestCase):
     def test_program_financial_aid(self, mock_info_course):
         """Test happy path"""
         kwargs = {
+            'financial_aid_id': 1122334455,
             'program': self.program,
             'financial_aid_available': True,
             'financial_aid_applied': True,
             'financial_aid_status': 'WHO-KNOWS',
             'financial_aid_min_price': 123,
             'financial_aid_max_price': 456,
+            'financial_aid_date_documents_sent': datetime.now(pytz.utc) - timedelta(hours=12)
         }
         self.mmtrack.configure_mock(**kwargs)
         mock_info_course.return_value = {'position_in_program': 1}
@@ -798,10 +800,12 @@ class InfoProgramTest(ESTestCase):
             "courses": [{'position_in_program': 1}, {'position_in_program': 1}],
             "financial_aid_availability": kwargs['financial_aid_available'],
             "financial_aid_user_info": {
+                "id": kwargs['financial_aid_id'],
                 "has_user_applied": kwargs['financial_aid_applied'],
                 "application_status": kwargs['financial_aid_status'],
                 "min_possible_cost": kwargs['financial_aid_min_price'],
                 "max_possible_cost": kwargs['financial_aid_max_price'],
+                "date_documents_sent": kwargs['financial_aid_date_documents_sent'],
             }
         }
         self.assertEqual(res, expected_data)

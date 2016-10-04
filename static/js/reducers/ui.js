@@ -39,6 +39,8 @@ import {
 import { PERSONAL_STEP } from '../constants';
 import type { ToastMessage } from '../flow/generalTypes';
 import type { Action } from '../flow/reduxTypes';
+import { SET_PROGRAM } from '../actions/ui';
+import type { Program } from '../flow/programTypes';
 
 export type UIDialog = {
   title?: string;
@@ -70,6 +72,8 @@ export type UIState = {
   enrollSelectedProgram:        ?number;
   photoDialogVisibility:        boolean;
   calculatorDialogVisibility:   boolean;
+  documentSentDate:             Object;
+  selectedProgram:              Program;
 };
 
 export const INITIAL_UI_STATE: UIState = {
@@ -97,6 +101,8 @@ export const INITIAL_UI_STATE: UIState = {
   enrollSelectedProgram: null,
   photoDialogVisibility: false,
   calculatorDialogVisibility: false,
+  documentSentDate: {},
+  selectedProgram: null,
 };
 
 export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
@@ -124,6 +130,10 @@ export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
         state.dialog,
         { visible: action.payload }
       )
+    });
+  case SET_PROGRAM:
+    return Object.assign({}, state, {
+      selectedProgram: action.payload
     });
   case SET_WORK_HISTORY_EDIT:
     return Object.assign({}, state, {

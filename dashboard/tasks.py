@@ -9,7 +9,7 @@ from celery import group
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.cache import cache
-
+from django.db.models import Q
 from edx_api.client import EdxApi
 from social.apps.django_app.default.models import UserSocialAuth
 
@@ -17,6 +17,7 @@ from backends import utils
 from backends.edxorg import EdxOrgOAuth2
 from dashboard.models import (
     CachedCertificate,
+    CachedCurrentGrade,
     CachedEnrollment,
 )
 from dashboard import api
@@ -68,18 +69,30 @@ def batch_update_user_data():
         return cache.delete(lock_id)
 
     if acquire_lock():
-        enrolled_students = CachedEnrollment.objects.filter(
-            last_request__lt=datetime.utcnow() - timedelta(hours=MAX_HRS_MAIN_TASK)
-        ).values_list('user', flat=True)
+        refresh_time_limit = datetime.utcnow() - timedelta(hours=MAX_HRS_MAIN_TASK)
 
-        certificated_students = CachedCertificate.objects.filter(
-            last_request__lt=datetime.utcnow() - timedelta(hours=MAX_HRS_MAIN_TASK)
-        ).values_list('user', flat=True)
+        users_expired_enroll = CachedEnrollment.objects.filter(
+            last_request__lt=refresh_time_limit
+        ).values_list('user', flat=True).distinct()
 
-        students = list(set(enrolled_students) | set(certificated_students))
+        users_expired_certs = CachedCertificate.objects.filter(
+            last_request__lt=refresh_time_limit
+        ).values_list('user', flat=True).distinct()
+
+        users_expired_grades = CachedCurrentGrade.objects.filter(
+            last_request__lt=refresh_time_limit
+        ).values_list('user', flat=True).distinct()
+
+        users_expired_cache = set(users_expired_enroll) | set(users_expired_certs) | set(users_expired_grades)
+
+        users_not_in_cache = User.objects.exclude(
+            Q(id__in=users_expired_cache)
+        ).values_list('id', flat=True)
+
+        users_to_refresh = list(set(users_expired_cache) | set(users_not_in_cache))
 
         job = group(
-            batch_update_user_data_subtasks.s(list_students) for list_students in chunks(students)
+            batch_update_user_data_subtasks.s(list_users) for list_users in chunks(users_to_refresh)
         )
         result = job.apply_async()
         result.ready()
@@ -117,11 +130,13 @@ def batch_update_user_data_subtasks(students):
 
                 edx_client = EdxApi(user_social.extra_data, settings.EDXORG_BASE_URL)
 
-                # get an enrollments client for the student
+                # get an enrollments client object for the student
                 api.get_student_enrollments(user, edx_client)
-
-                # get a certificates client for the student
+                # get a certificates client object for the student
                 api.get_student_certificates(user, edx_client)
+                # get a current grades client object for the student
+                api.get_student_current_grades(user, edx_client)
+
         except Exception as e:
             log.exception(
                 "Unable to refresh token for student_id %d, error is %s",

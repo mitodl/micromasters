@@ -13,6 +13,10 @@ import {
   updateCalculatorValidation,
 } from '../actions/financial_aid';
 import { setCalculatorDialogVisibility } from '../actions/ui';
+import {
+  fetchCoursePrices,
+  fetchDashboard,
+} from '../actions';
 import { createSimpleActionHelpers } from '../util/redux';
 import SelectField from '../components/inputs/SelectField';
 import { currencyOptions } from '../util/currency';
@@ -180,6 +184,10 @@ const saveFinancialAid = R.curry((dispatch, current) => {
     dispatch(addFinancialAid(income, currency, programId)).then(() => {
       dispatch(clearCalculatorEdit());
       dispatch(setCalculatorDialogVisibility(false));
+
+      // refresh dashboard and prices to get the updated financial aid state
+      dispatch(fetchCoursePrices());
+      dispatch(fetchDashboard());
     });
   }
 });

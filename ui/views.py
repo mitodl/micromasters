@@ -149,6 +149,7 @@ def terms_of_service(request):
         context={
             "style_src": get_bundle_url(request, "style.js"),
             "js_settings_json": "{}",
+            "signup_dialog_src": get_bundle_url(request, "signup_dialog.js"),
         }
     )
 

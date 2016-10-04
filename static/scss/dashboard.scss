@@ -123,38 +123,67 @@ c.validation-wrapper {
     }
   }
 
-  .course-list {
-    padding: 20px 0 0 0;
+  .financial-aid-box {
+    background-color: #e8faec;
+    padding: 20px;
+    margin: 0;
+  }
 
-    .personalized-pricing {
-      margin: 0 25px 10px 25px;
-      padding: 30px;
-      background-color: $lightgrey;
+  .document-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 24px !important;
 
-      .heading, .explanation {
-        margin-bottom: 17px;
-      }
+    button {
+      height: 24px;
+      margin-left: 20px;
+      top: 10px;
+    }
+  }
 
-      .heading {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
+  .documents-sent {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 
-        i {
-          color: $font-gray-light;
-          font-size: 20px;
-        }
-      }
+    i {
+      font-size: 36pt;
+    }
+  }
 
-      .explanation {
-        font-size: 14px;
-        font-weight: 300;
+  .personalized-pricing {
+    margin: 0 25px 10px 25px;
+    padding: 30px;
+    background-color: $lightgrey;
 
-        .price {
-          font-weight: 600;
-        }
+    .heading, .explanation {
+      margin-bottom: 17px;
+    }
+
+    .heading {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      i {
+        color: $font-gray-light;
+        font-size: 20px;
       }
     }
+
+    .explanation {
+      font-size: 14px;
+      font-weight: 300;
+
+      .price {
+        font-weight: 600;
+      }
+    }
+  }
+
+  .course-list {
+    padding: 20px 0 0 0;
 
     .mdl-card__title {
       // align with course-row below which includes an extra 8px of grid cell padding

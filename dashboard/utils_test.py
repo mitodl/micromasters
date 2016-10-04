@@ -127,9 +127,10 @@ class MMTrackTest(TestCase):
         assert mmtrack.paid_course_ids == []
         assert mmtrack.financial_aid_applied is None
         assert mmtrack.financial_aid_status is None
-        assert mmtrack.financial_aid is None
+        assert mmtrack.financial_aid_id is None
         assert mmtrack.financial_aid_min_price is None
         assert mmtrack.financial_aid_max_price is None
+        assert mmtrack.financial_aid_date_documents_sent is None
 
     def test_init_financial_aid_track(self):
         """
@@ -153,9 +154,10 @@ class MMTrackTest(TestCase):
         assert mmtrack.paid_course_ids == []
         assert mmtrack.financial_aid_applied is False
         assert mmtrack.financial_aid_status is None
-        assert mmtrack.financial_aid is None
+        assert mmtrack.financial_aid_id is None
         assert mmtrack.financial_aid_min_price == 250
         assert mmtrack.financial_aid_max_price == 1000
+        assert mmtrack.financial_aid_date_documents_sent is None
 
     def test_init_financial_aid_with_application(self):
         """
@@ -176,9 +178,36 @@ class MMTrackTest(TestCase):
 
         assert mmtrack.financial_aid_applied is True
         assert mmtrack.financial_aid_status == fin_aid.status
-        assert mmtrack.financial_aid == fin_aid
+        assert mmtrack.financial_aid_id == fin_aid.id
         assert mmtrack.financial_aid_min_price == 250
         assert mmtrack.financial_aid_max_price == 1000
+        assert mmtrack.financial_aid_date_documents_sent is None
+
+    def test_init_financial_aid_with_documents_sent(self):
+        """
+        Sub case of test_init_financial_aid_with_application
+        where the user set a date for the financial aid documents sent
+        """
+        # create a financial aid application
+        fin_aid = FinancialAidFactory.create(
+            user=self.user,
+            tier_program=self.min_tier_program,
+            date_documents_sent=self.now,
+        )
+        mmtrack = MMTrack(
+            user=self.user,
+            program=self.program_financial_aid,
+            enrollments=self.enrollments,
+            current_grades=self.current_grades,
+            certificates=self.certificates
+        )
+
+        assert mmtrack.financial_aid_applied is True
+        assert mmtrack.financial_aid_status == fin_aid.status
+        assert mmtrack.financial_aid_id == fin_aid.id
+        assert mmtrack.financial_aid_min_price == 250
+        assert mmtrack.financial_aid_max_price == 1000
+        assert mmtrack.financial_aid_date_documents_sent == self.now.date()
 
     def test_course_price_mandatory(self):
         """

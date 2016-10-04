@@ -22,12 +22,6 @@ from financialaid.api import (
     get_no_discount_tier_program
 )
 from financialaid.constants import (
-    FINANCIAL_AID_APPROVAL_MESSAGE_BODY,
-    FINANCIAL_AID_APPROVAL_SUBJECT_TEXT,
-    FINANCIAL_AID_REJECTION_MESSAGE_BODY,
-    FINANCIAL_AID_REJECTION_SUBJECT_TEXT,
-    FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT,
-    FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY,
     FinancialAidJustification,
     FinancialAidStatus
 )
@@ -36,7 +30,10 @@ from financialaid.models import (
     FinancialAid,
     TierProgram
 )
-from mail.api import MailgunClient
+from mail.api import (
+    MailgunClient,
+    generate_financial_aid_email
+)
 
 
 class FinancialAidRequestSerializer(serializers.Serializer):
@@ -89,6 +86,28 @@ class FinancialAidRequestSerializer(serializers.Serializer):
         financial_aid.save_and_log(user)
 
         return financial_aid
+
+
+class FinancialAidSkipSerializer(serializers.Serializer):
+    """
+    Serializer for skipping financial aid
+    """
+    def validate(self, data):
+        """
+        Validators for this serializer
+        """
+        if self.instance.status in FinancialAidStatus.TERMINAL_STATUSES:
+            raise ValidationError("Financial aid cannot be skipped once it has been approved, rejected, or skipped.")
+        return data
+
+    def save(self):
+        """
+        Updates and logs status change of FinancialAid object to "skipped"
+        """
+        self.instance.status = FinancialAidStatus.SKIPPED
+        self.instance.tier_program = get_no_discount_tier_program(self.instance.tier_program.program.id)
+        self.instance.save_and_log(self.context["request"].user)
+        return self.instance
 
 
 class FinancialAidActionSerializer(serializers.Serializer):
@@ -148,33 +167,24 @@ class FinancialAidActionSerializer(serializers.Serializer):
         Save method for this serializer
         """
         self.instance.status = self.validated_data["action"]
-        email_data = {
-            "acting_user": self.context["request"].user,
-            "financial_aid": self.instance
-        }
         if self.instance.status == FinancialAidStatus.APPROVED:
             self.instance.tier_program = self.validated_data["tier_program"]
             self.instance.justification = self.validated_data["justification"]
-            email_data.update({
-                "subject": FINANCIAL_AID_APPROVAL_SUBJECT_TEXT,
-                "body": FINANCIAL_AID_APPROVAL_MESSAGE_BODY
-            })
         elif self.instance.status == FinancialAidStatus.REJECTED:
+            # Not currently a valid status to save as
             self.instance.tier_program = get_no_discount_tier_program(self.instance.tier_program.program_id)
             self.instance.justification = self.validated_data["justification"]
-            email_data.update({
-                "subject": FINANCIAL_AID_REJECTION_SUBJECT_TEXT,
-                "body": FINANCIAL_AID_REJECTION_MESSAGE_BODY
-            })
         elif self.instance.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL:
-            # Doesn't assign tier_program or justification, only marks documents as received
-            email_data.update({
-                "subject": FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT,
-                "body": FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY
-            })
+            # This is intentionally left blank for clarity that this is a valid status for .save()
+            pass
         self.instance.save()
+
         # Send email notification
-        MailgunClient.send_financial_aid_email(**email_data)
+        MailgunClient.send_financial_aid_email(
+            acting_user=self.context["request"].user,
+            financial_aid=self.instance,
+            **generate_financial_aid_email(self.instance)
+        )
 
         return self.instance
 

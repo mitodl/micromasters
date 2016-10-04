@@ -49,14 +49,17 @@ class TasksTest(TestCase):
         self.assertTrue(batch_update_user_data.delay())
 
     @override_settings(CELERY_ALWAYS_EAGER=True)
+    @patch('dashboard.api.get_student_current_grades', autospec=True)
     @patch('dashboard.api.get_student_enrollments', autospec=True)
     @patch('dashboard.api.get_student_certificates', autospec=True)
     @patch('backends.utils.refresh_user_token', autospec=True)
-    def test_student_enrollments_called_task(self, mocked_refresh, mocked_get_enrollments, mocked_get_certificates):
+    def test_student_enrollments_called_task(
+            self, mocked_refresh, mocked_get_enrollments, mocked_get_certificates, mocked_get_current_grades):
         """
         Assert get_student_enrollments is actually called
         """
         batch_update_user_data_subtasks.s(self.students).apply(args=()).get()
         assert mocked_get_enrollments.called
         assert mocked_get_certificates.called
+        assert mocked_get_current_grades.called
         assert mocked_refresh.called

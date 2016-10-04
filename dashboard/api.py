@@ -137,10 +137,12 @@ def get_info_for_program(mmtrack):
     }
     if mmtrack.financial_aid_available:
         data["financial_aid_user_info"] = {
+            "id": mmtrack.financial_aid_id,
             "has_user_applied": mmtrack.financial_aid_applied,
             "application_status": mmtrack.financial_aid_status,
             "min_possible_cost": mmtrack.financial_aid_min_price,
             "max_possible_cost": mmtrack.financial_aid_max_price,
+            "date_documents_sent": mmtrack.financial_aid_date_documents_sent,
         }
     for course in mmtrack.program.course_set.all():
         data['courses'].append(

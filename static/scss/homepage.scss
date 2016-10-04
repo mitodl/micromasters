@@ -3,101 +3,115 @@
 }
 
 body.app-media {
-  padding-top:0;
-  font-size:14px;
+  padding-top: 0;
+  font-size: 14px;
 }
-
-.nav-header {
-  background-color: $mm-brand-bg;
-  border-radius:0;
-  span{
-    color: white;
-  }
-
-  a {
-    color: white;
-    text-decoration: underline;
-  }
-
-  a.btn-login {
-    text-decoration: none;
-  }
-
-  .header-dashboard-link {
-    float: right;
-    background: rgba(0,0,0, 0.1);
-    margin: 15px 40px 0 0;
-    padding: 14px 40px;
-
-    a {
-    font-weight: 400;
-    font-size: 16px;
-    color: #fff;
-    text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-      }
-  }
-}
-
-.navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
-    margin-left: 0;
-    img {
-      width: 66px;
-      }
-    }
 
 .navbar {
-  .white-button {
-    color: $mm-brand-bg !important;
-    border-color: white;
-    background-color: white;
-    padding: 10px 23px !important;
-    font-size: 15px;
-  }
+  background-color: $mm-brand-bg;
+  border-radius: 0;
+  height: auto;
+  min-height: 0;
+  padding: 14px 22px 14px 28px;
 
-  .navbar-brand {
-    padding: 19px 20px;
-  }
+  .navbar-header {
+    padding: 0;
+    .pull-left {
+          @media (max-width: 580px) {
+            float: left;
+          }
+          .brand-logo {
+            float: left;
+            margin-right: 15px;
+            img {
+              width: 66px;
+              }
+          }
 
-  .header-page-name {
-    display:inline-block;
-    color:white;
-    font-size: 19px;
-    margin: 16px 20px 0 10px;
-    font-weight: 300;
-  }
+          .divider-large {
+            width: 14px;
+            height: 37px;
+            margin: 0 15px 0 0;
+            border-left: 1px solid rgba(255, 255, 255, 0.5);
+            float: left;
+          }
 
-  .divider-large {
-    width: 14px;
-    height: 37px;
-    margin: 20px 0 0 0;
-    border-left: 1px solid rgba(255, 255, 255, 0.5);
-    float: left;
-  }
+          .header-page-name {
+            display: inline-block;
+            color:white;
+            font-size: 19px;
+            margin: 0 20px 0 0;
+            font-weight: 300;
+            float: left;
+            position: relative;
+            bottom: 2px;
+          }
+    }
 
-  .nav-utility {
-    margin-top:16px;
-    color:#000;
+    .pull-right {
+          color: #000;
+          @media (max-width: 580px) {
+            float: left !important;
+            display: block;
+            margin: 20px auto 4px;
+            width: 100%;
+          }
 
-    div.members-login {
-      display: inline-block;
-      margin-right: 19px;
+          a.btn-login {
+            color: $mm-brand-bg !important;
+            border-color: white;
+            background-color: white;
+            padding: 10px 23px !important;
+            font-size: 15px;
+            text-decoration: none;
+            @media (max-width: 580px) {
+              width: 45%;
+            }
+          }
 
-      a.ghost {
-        border: 2px solid rgba(255,255,255,.5);
-        border-radius: 4px;
-        color: rgba(255,255,255,.8);
-        padding: 9px 23px !important;
-        font-size: 15px;
-        font-weight: 300;
-      }
-      a.ghost:hover, a.ghost:focus, a.ghost.focus {
-        color: white;
-        border-color: white;
-      }
+          a.members-login {
+            display: inline-block;
+            margin-right: 19px;
+            border: 2px solid rgba(255,255,255,.5);
+            border-radius: 4px;
+            color: rgba(255,255,255,.8);
+            padding: 9px 23px !important;
+            font-size: 15px;
+            font-weight: 300;
+            @media (max-width: 580px) {
+              width: 47%;
+              margin-right: 5%;
+              border-width: 1px;
+            }
+          }
+
+          a.members-login:hover, a.members-login:focus, a.members-login.focus {
+            color: white;
+            border-color: white;
+          }
+
+          a.header-dashboard-link {
+            display: inline-block;
+            background: rgba(0,0,0, 0.1);
+            margin: 0 15px 0 0;
+            padding: 13px 31px;
+            font-weight: 400;
+            font-size: 16px;
+            color: #fff;
+            text-decoration: none;
+            position: relative;
+            top: 2px;
+            @media (max-width: 580px) {
+              text-align: center;
+              padding: 13px 0;
+              width: 48%;
+              margin-right: 4%;
+            }
+          }
+
+          a.header-dashboard-link:hover {
+            text-decoration: underline;
+          }
     }
   }
 }
@@ -109,19 +123,27 @@ body.app-media {
 }
 
 .banner-wrapper {
-  background:#222 center top url(/static/images/lp_hero2.jpg) no-repeat;
-  margin:0 auto;
-  width:100%;
-  min-height:620px;
-  padding:0;
-  background-size:cover;
+  background: #222 center top url(/static/images/lp_hero2.jpg) no-repeat;
+  margin: 0 auto;
+  width: 100%;
+  min-height: 620px;
+  padding: 0;
+  background-size: cover;
   position: relative;
-  height: 65%;
+  height: 620px;
+  height: 94vh;
+  @media (max-width: 580px) {
+    height: 460px;
+    min-height: 0;
+  }
 
   .banner-wrapper-content {
     margin: 0 auto;
-    padding: 190px 15% 0;
+    padding: 41vh 5% 0;
     text-align: center;
+    @media (max-width: 580px) {
+      padding: 120px 8% 0;
+    }
 
     h1, h2 {
       color: #ffffff;
@@ -129,16 +151,32 @@ body.app-media {
     }
 
     h1 {
-      font-size: 35px;
+      font-size: 40px;
       font-weight: 400;
+      margin: 0 0 1vh 0;
+      @media (min-width: 1200px) {
+        font-size: 3.5vw;
+      }
+      @media (max-width: 580px) {
+        font-size: 30px;
+        line-height: 1.15;
+        margin-bottom: 35px;
+      }
     }
 
     h2 {
-      font-size: 26px;
-      font-weight:300;
+      font-size: 25px;
+      font-weight: 300;
       line-height: 1.4em;
-      color:#fff;
-      padding:0;
+      color: rgba(255,255,255,.9);
+      padding: 0;
+      @media (min-width: 1200px) {
+        font-size: 2.6vw;
+      }
+      @media (max-width: 580px) {
+        font-size: 23px;
+        line-height: 1.15;
+      }
     }
 
     .btn-learn-more {
@@ -163,7 +201,7 @@ body.app-media {
 
 .sub-banner-section{
   background-color: #ffffff;
-  padding:53px 0 93px;
+  padding: 7vw 0 8vw;
   text-align: center;
 }
 .sub-banner-text {
@@ -175,15 +213,24 @@ body.app-media {
   line-height: 44px;
   width: 81%;
   max-width:1000px;
+  @media (max-width: 580px) {
+    width: 90%;
+  }
 
   h3 {
-    font-size: 23px;
+    font-size: 25px;
+    @media (min-width: 1200px) {
+    font-size: 1.9vw;
+    }
     margin: 0 0 30px;
     font-weight: 400;
     color: rgba(0,0,0,.87);
   }
   p {
     font-size: 16px;
+    @media (min-width: 1200px) {
+    font-size: 1.2vw;
+    }
     font-weight: 400;
     color: rgba(0,0,0,.6);
   }
@@ -207,6 +254,14 @@ body.app-media {
   font-size: 16px;
   font-weight: 400;
   color: rgba(0, 0, 0, 0.6);
+  @media (min-width: 1200px) {
+    font-size: 1.2vw;
+  }
+  @media (max-width: 580px) {
+    display: block;
+    line-height: 1.4em;
+    margin-bottom: 20px;
+  }
 }
 
 .enroll-reason {
@@ -214,14 +269,17 @@ body.app-media {
 }
 
 .reasons-section, .current-programs-section {
-  padding: 70px 0;
+  padding: 7vw 0 8vw;
   margin: 0;
   text-align: center;
+  .centered-content {
+    max-width: 1360px;
+  }
 
   h3 {
     margin: 0 0 40px;
     font-weight: 300;
-    font-size: 23px;
+    font-size: 25px;
     color: white;
   }
 }
@@ -229,18 +287,29 @@ body.app-media {
 .quote-section {
   background: #fff;
   padding: 120px 0 150px;
+  @media (max-width: 580px) {
+    padding: 80px 0 80px;
+  }
   .centered-content {
     width: 71%;
     max-width: 1150px;
     margin: 0 auto;
     text-align: left;
+    @media (max-width: 580px) {
+      text-align: center;
+    }
     img.reif {
       float: left;
+      @media (max-width: 580px) {
+        float: none;
+        margin: 0 auto;
+      }
       width: 170px;
       margin-right: 70px;
       position: relative;
       bottom: 15px;
     }
+
     h2 {
       color: #08b940;
       font-size: 30px;
@@ -248,10 +317,26 @@ body.app-media {
       font-family: helvetica;
       font-weight: 300;
       line-height: 1.4em;
+      @media (max-width: 580px) {
+        font-size: 20px;
+      }
     }
+
     p {
       color: #08b940;
       font-size: 24px;
+      @media (max-width: 580px) {
+        font-size: 20px;
+      }
+    }
+  }
+}
+
+.current-programs-section {
+  h3 {
+    margin: 0 0 70px;
+    @media (max-width: 580px) {
+      margin: 0 0 40px;
     }
   }
 }
@@ -263,21 +348,27 @@ body.app-media {
   .col-md-12 {
     width: 97%;
     margin: 0 auto;
-    max-width: 1250px;
+    max-width: 1360px;
     float: none;
 
     .col-md-4 {
       text-align: left;
+      @media (max-width: 580px) {
+        margin-bottom: 40px;
+      }
     }
   }
 
   .program-thumbnail-description{
     padding: 20px 10px 30px 15px;
+    @media (max-width: 580px) {
+        padding: 20px 3px 30px;
+      }
 
     p{
-      color: rgba(255,255,255,0.76);
+      color: rgba(255,255,255,0.6);
       font-weight: 300;
-      font-size: 16px;
+      font-size: 15px;
       margin: 0 0 13px;
     }
 
@@ -288,7 +379,7 @@ body.app-media {
     }
 
     a{
-      color: $mm-brand-bg;
+      color: #289fdc;
     }
   }
 
@@ -302,7 +393,7 @@ body.app-media {
       width: 100%;
       height: 88px;
       position: absolute;
-      bottom: 0;
+      bottom: -1px;
       padding: 25px 22px;
       background: -moz-linear-gradient(top,  rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%); /* FF3.6-15 */
       background: -webkit-linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(0,0,0,1) 100%); /* Chrome10-25,Safari5.1-6 */
@@ -342,7 +433,12 @@ body.app-media {
   background-color: $mm-brand-bg-dark;
 
   .col-md-4 {
-    padding: 0 25px;
+    padding: 0 3%;
+    @media (max-width: 580px) {
+      padding: 0 9%;
+      width: 100%;
+      float: left;
+    }
   }
 
   h4, h5, p {
@@ -359,17 +455,13 @@ body.app-media {
     color: white;
   }
   .reasons-images-wrap {
-    width: 300px;
+    max-width: 300px;
     margin: 0 auto;
-
-    @media (min-width: 992px) {
-      height: 200px;
-    }
+    width: 100%;
 
     img {
-      max-width: 100%;
-      max-height: 100%;
       margin: auto auto;
+      width: 150px;
     }
   }
 }
@@ -833,7 +925,7 @@ body.app-media {
   vertical-align: middle;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 580px) {
   .app-media .is-list .info-wrap {
     display: block !important;
     padding-left: 60px;

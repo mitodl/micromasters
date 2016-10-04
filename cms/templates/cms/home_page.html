@@ -19,7 +19,7 @@
 {% block social %}
   <meta property="og:site:name" content="MIT MicroMasters">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://micromasters.mit.edu/">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
   <meta property="og:title" content="MIT MicroMasters">
   <meta property="og:description" content="MicroMasters is a
     new digital credential for online learners. The MicroMasters
@@ -28,7 +28,6 @@
     credentials, learners can apply for an accelerated master's degree
     program on campus, at MIT or other top universities.">
   <meta property="og:image" content="{{ request.build_absolute_uri }}static/images/lp_hero2.jpg">
-  <meta property="og:image:secure_url" content="{{ request.build_absolute_uri }}static/images/lp_hero2.jpg">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="948">
   <meta property="og:image:height" content="630">
@@ -38,10 +37,10 @@
 
 {% block content %}
 
-
+<div id="home-page">
 {% include "header.html" %}
 
-  <div class="main-content-wrapper" id="home-page">
+  <div class="main-content-wrapper">
     <section class="main-content">
 
       <div class="banner-wrapper">
@@ -306,3 +305,5 @@
 <script type="text/javascript" src="{{ public_src }}"></script>
 <script type="text/javascript" src="{{ signup_dialog_src }}"></script>
 {% endblock %}
+
+</a>div>

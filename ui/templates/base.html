@@ -9,6 +9,7 @@
     <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" />
     <script type="text/javascript">
     var SETTINGS = {{ js_settings_json|safe }};
+    var CURRENT_PAGE_URL = '{{ request.build_absolute_uri }}';
     </script>
     {% if style_public_src %}
     <script type="text/javascript" src="{{ style_public_src }}"></script>

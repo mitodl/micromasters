@@ -16,6 +16,10 @@ footer {
     }
   }
 
+  .social-buttons-list {
+    margin-bottom: 60px;
+  }
+
   .footer-links {
     margin: 24px 0;
 
@@ -28,6 +32,19 @@ footer {
 
   .footer-address, .footer-copy {
     margin-bottom: 24px;
+    display: block;
+  }
+
+  .footer-button {
+    display: inline-block;
+    vertical-align: middle;
+    width: 40%;
+    min-width: 150px;
+
+    a {
+      width: 80%;
+      float: right;
+    }
   }
 
   .footer-cta {

@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('financialaid', '0009_added_choice_to_financialaid_status'),
+        ('financialaid', '0010_add_skipped'),
     ]
 
     operations = [
