@@ -103,6 +103,7 @@ describe('financial aid reducers', () => {
     let income = 100000;
     let currency = 'USD';
     let programId = 1;
+    store.dispatch(startCalculatorEdit(programId));
     return dispatchThen(addFinancialAid(income, currency, programId), [
       REQUEST_ADD_FINANCIAL_AID,
       RECEIVE_ADD_FINANCIAL_AID_SUCCESS,
@@ -120,6 +121,7 @@ describe('financial aid reducers', () => {
     let income = 100000;
     let currency = 'USD';
     let programId = 1;
+    store.dispatch(startCalculatorEdit(programId));
     return dispatchThen(addFinancialAid(income, currency, programId), [
       REQUEST_ADD_FINANCIAL_AID,
       RECEIVE_ADD_FINANCIAL_AID_FAILURE,
