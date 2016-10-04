@@ -126,6 +126,9 @@ describe("ProfilePage", function() {
         helper.profileGetStub.returns(Promise.resolve(updatedProfile));
         return renderComponent('/profile').then(([, div]) => {
           // close all switches
+          if (`${step}` === 'personal') {
+            return confirmSaveButtonBehavior(updatedProfile, {div: div}, true);
+          }
           return confirmSaveButtonBehavior(updatedProfile, {div: div});
         });
       });
