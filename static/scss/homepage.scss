@@ -139,7 +139,7 @@ body.app-media {
 
   .banner-wrapper-content {
     margin: 0 auto;
-    padding: 41vh 5% 0;
+    padding: 35vh 11% 0;
     text-align: center;
     @media (max-width: 580px) {
       padding: 120px 8% 0;
@@ -151,31 +151,29 @@ body.app-media {
     }
 
     h1 {
-      font-size: 40px;
+      font-size: 48px;
       font-weight: 400;
-      margin: 0 0 1vh 0;
+      margin: 0 0 2vh 0;
       @media (min-width: 1200px) {
-        font-size: 3.2vw;
+        font-size: 4vw;
       }
       @media (max-width: 580px) {
-        font-size: 30px;
-        line-height: 1.15;
+        font-size: 31px;
         margin-bottom: 35px;
       }
     }
 
     h2 {
-      font-size: 25px;
+      font-size: 24px;
       font-weight: 300;
       line-height: 1.4em;
       color: rgba(255,255,255,.9);
       padding: 0;
       @media (min-width: 1200px) {
-        font-size: 2.6vw;
+        font-size: 2.1vw;
       }
       @media (max-width: 580px) {
-        font-size: 23px;
-        line-height: 1.15;
+        font-size: 17px;
       }
     }
 
@@ -204,7 +202,7 @@ body.app-media {
 }
 
 .sub-banner-section{
-  padding: 7vw 0 8vw;
+  padding: 7vw 0 9vw;
   text-align: center;
 }
 .sub-banner-text {
@@ -230,9 +228,11 @@ body.app-media {
     color: rgba(0,0,0,.87);
   }
   p {
-    font-size: 16px;
+    font-size: 17px;
+    margin: 0 0 26px 0;
     @media (min-width: 1200px) {
-    font-size: 1.2vw;
+    font-size: 1.3vw;
+    margin: 0 0 2vw 0;
     }
     font-weight: 400;
     color: rgba(0,0,0,.6);
@@ -293,14 +293,15 @@ body.app-media {
   @media (max-width: 580px) {
     padding: 80px 0 80px;
   }
-  .centered-content {
+  .quote {
     width: 71%;
     max-width: 1150px;
-    margin: 0 auto;
+    margin: 0 auto 0;
     text-align: left;
     @media (max-width: 580px) {
       text-align: center;
     }
+
     img.reif {
       float: left;
       @media (max-width: 580px) {
@@ -315,7 +316,7 @@ body.app-media {
 
     h2 {
       color: $font-gray;
-      font-size: 30px;
+      font-size: 24px;
       font-style: italic;
       font-family: helvetica;
       font-weight: 300;
@@ -327,11 +328,17 @@ body.app-media {
 
     p {
       color: $font-gray;
-      font-size: 24px;
+      font-size: 22px;
       @media (max-width: 580px) {
         font-size: 20px;
       }
     }
+  }
+  .quote:not(:last-child) {
+    margin-bottom: 100px;
+  }
+  .quote:after {
+    clear: both;
   }
 }
 
