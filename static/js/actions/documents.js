@@ -29,6 +29,6 @@ export const updateDocumentSentDate = (financialAidId: number, dateSent: string)
         dispatch(receiveUpdateDocumentSentDateFailure());
         return Promise.reject();
       }
-    )
-  }
+    );
+  };
 };
