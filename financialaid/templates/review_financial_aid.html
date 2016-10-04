@@ -126,6 +126,11 @@
               <th style="font-weight: normal;">
                 {% include "common/sort_links.html" with field=sort_fields.date_calculated %}
               </th>
+              {% if selected_status == statuses.DOCS_SENT %}
+              <th style="font-weight: normal;">
+                {% include "common/sort_links.html" with field=sort_fields.date_documents_sent %}
+              </th>
+              {% endif %}
               <th style="font-weight: normal; min-width: 104px;">
                 {% include "common/sort_links.html" with field=sort_fields.adjusted_cost %}
               </th>
@@ -171,6 +176,11 @@
               <!-- Date calculated -->
               <td>{{ financial_aid.created_on|date:"SHORT_DATE_FORMAT" }}</td>
               <!-- /Date calculated -->
+              <!-- Date docs sent -->
+              {% if selected_status == statuses.DOCS_SENT %}
+              <td>{{ financial_aid.date_documents_sent|date:"SHORT_DATE_FORMAT" }}</td>
+              {% endif %}
+              <!-- /Date docs sent -->
               <!-- Adjusted cost -->
               <td>
                 {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}

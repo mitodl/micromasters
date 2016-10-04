@@ -126,6 +126,9 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         "reported_income": {
             "display": "Income/Yr."
         },
+        "date_documents_sent": {
+            "display": "Date Docs Sent"
+        }
     }
     sort_field_mappings = {
         "date_calculated": "created_on",
