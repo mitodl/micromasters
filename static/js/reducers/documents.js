@@ -20,7 +20,7 @@ import {
 
 export type DocumentsState = {
   fetchStatus?: string,
-  documentSentDate?: string,
+  documentSentDate: string,
 };
 
 export const INITIAL_DOCUMENTS_STATE: DocumentsState = {

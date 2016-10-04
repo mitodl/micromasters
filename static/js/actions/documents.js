@@ -1,6 +1,9 @@
 // @flow
 import { createAction } from 'redux-actions';
+import type { Dispatch } from 'redux';
+
 import * as api from '../util/api';
+import type { Dispatcher } from '../flow/reduxTypes';
 
 export const SET_DOCUMENT_SENT_DATE = 'SET_DOCUMENT_SENT_DATE';
 export const setDocumentSentDate = createAction(SET_DOCUMENT_SENT_DATE);
