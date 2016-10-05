@@ -138,14 +138,14 @@ class FinancialAidActionSerializer(serializers.Serializer):
         Validators for this serializer
         """
         # Required field
-        if data.get("action", None) is None:
+        if data.get("action") is None:
             raise ValidationError({"action": "This field is required."})
         # For approving and rejecting
         if data["action"] in [FinancialAidStatus.APPROVED, FinancialAidStatus.REJECTED]:
             # Required fields
-            if data.get("tier_program_id", None) is None:
+            if data.get("tier_program_id") is None:
                 raise ValidationError({"tier_program_id": "This field is required."})
-            if data.get("justification", None) is None:
+            if data.get("justification") is None:
                 raise ValidationError({"justification": "This field is required."})
             # Required instance status
             if self.instance.status != FinancialAidStatus.PENDING_MANUAL_APPROVAL:

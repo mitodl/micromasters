@@ -42,9 +42,9 @@
           <li>
             <div class="input-group">
               <input type="text" id="search-query" class="form-control" placeholder="Search" value="{{ search_query }}"
-                     onkeydown="if (event.keyCode == 13) { initiateSearch(); }">
+                     onkeydown="if (event.keyCode == 13) { financialAidReview.initiateSearch(); }">
               <span class="input-group-btn">
-                <button class="btn btn-default" onclick="initiateSearch();">
+                <button class="btn btn-default" onclick="financialAidReview.initiateSearch();">
                   <span class="glyphicon glyphicon-search"></span>
                 </button>
               </span>
@@ -56,14 +56,14 @@
             <div class="radio-inline">
               <label>
                 <input type="radio" name="currency-selection" id="currency-selector-usd"
-                       onclick="$('.income-usd').show(); $('.income-local').hide();" checked>
+                       onclick="financialAidReview.toggleCurrency('USD');" checked>
                 USD
               </label>
             </div>
             <div class="radio-inline">
               <label>
                 <input type="radio" name="currency-selection" id="currency-selector-original"
-                       onclick="$('.income-usd').hide(); $('.income-local').show();">
+                       onclick="financialAidReview.toggleCurrency('local');">
                 Local Currency
               </label>
             </div>
@@ -134,7 +134,7 @@
               <th style="font-weight: normal; min-width: 104px;">
                 {% include "common/sort_links.html" with field=sort_fields.adjusted_cost %}
               </th>
-              {% if selected_status == statuses.APPROVED or selected_status == statuses.REJECTED %}
+              {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
               <th style="font-weight: normal;">Justification</th>
               {% endif %}
               {% if selected_status == statuses.PENDING_MANUAL_APPROVAL or selected_status == statuses.PENDING_DOCS or selected_status == statuses.DOCS_SENT %}
@@ -169,7 +169,7 @@
               <td style="white-space: nowrap">
                 <span class="income-usd"><b>$</b>{{ financial_aid.income_usd|floatformat:0 }}</span>
                 <span class="income-local" style="display: none;">
-                  <b>$</b>{{ financial_aid.original_income|floatformat:0 }} <b>{{ financial_aid.original_currency }}</b>
+                  {{ financial_aid.original_income|floatformat:0 }} <b>{{ financial_aid.original_currency }}</b>
                 </span>
               </td>
               <!-- /Income -->
@@ -198,7 +198,7 @@
               </td>
               <!-- /Adjusted cost -->
               <!-- Justification -->
-              {% if selected_status == statuses.APPROVED or selected_status == statuses.REJECTED %}
+              {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
               <td>
                 {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
                 <select id="justification-{{ financial_aid.id }}" class="form-control">
@@ -222,7 +222,7 @@
                 <!-- Mark docs as received -->
                 {% if selected_status == statuses.PENDING_DOCS or selected_status == statuses.DOCS_SENT %}
                 <button class="btn btn-default" style="color: #0074e1; padding-top: 7px;"
-                       onclick="submitDocsReceived({{ financial_aid.id }}, '{% url 'financial_aid_action' financial_aid_id=financial_aid.id %}')">
+                       onclick="financialAidReview.submitDocsReceived({{ financial_aid.id }}, '{% url 'financial_aid_action' financial_aid_id=financial_aid.id %}')">
                   Mark Docs Received
                 </button>
                 {% endif %}
@@ -230,13 +230,13 @@
                 <!-- Submit approval -->
                 {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
                 <button class="btn btn-default" style="color: #0074e1; padding-top: 7px;"
-                        onclick="submitApproval({{ financial_aid.id }}, '{% url 'financial_aid_action' financial_aid_id=financial_aid.id %}');">
+                        onclick="financialAidReview.submitApproval({{ financial_aid.id }}, '{% url 'financial_aid_action' financial_aid_id=financial_aid.id %}');">
                   Save
                 </button>
                 {% endif %}
                 <!-- /Submit approval -->
                 <button class="btn btn-default" style="color: #0074e1;"
-                        onclick="$('#application-email-row-{{ financial_aid.id }}').toggle();">
+                        onclick="financialAidReview.toggleEmailDisplay('{{ financial_aid.id }}');">
                   <span class="glyphicon glyphicon-envelope"></span>
                 </button>
               </td>
@@ -252,7 +252,7 @@
                   {% render_form email_serializer template_pack="rest_framework/horizontal" %}
                 </form>
                 <button class="btn btn-primary pull-right"
-                        onclick="sendEmail({{ financial_aid.id }}, '{% url 'financial_aid_mail_api' financial_aid_id=financial_aid.id %}');">Send Email</button>
+                        onclick="financialAidReview.sendEmail({{ financial_aid.id }}, '{% url 'financial_aid_mail_api' financial_aid_id=financial_aid.id %}');">Send Email</button>
                 <br>
               </td>
             </tr>
@@ -269,141 +269,6 @@
   {% include "footer.html" %}
   <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <script>
-    
-    var CSRF_TOKEN = "{{ csrf_token }}";
-    
-    {% if selected_status == statuses.PENDING_DOCS or selected_status == statuses.DOCS_SENT %}
-    /**
-     * Marks documents as received for a financial aid application
-     * 
-     * @param financial_aid_id {number} Financial aid application id
-     * @param url {string} URL to submit request to
-     */
-    function submitDocsReceived(financial_aid_id, url) {
-      var name = $("#full-name-" + financial_aid_id).text().trim();
-      if (confirm("Click OK to mark documents as received for " + name + "'s financial aid application.")) {
-        var action = "{{ statuses.PENDING_MANUAL_APPROVAL }}";
-        $.ajax({
-          "url": url,
-          "type": "PATCH",
-          "headers": {
-            "X-CSRFToken": CSRF_TOKEN
-          },
-          "data": {
-            "action": action
-          },
-          "success": function() {
-            displayMessage(
-              "Successfully marked documents as received for " + name + "'s financial aid application.",
-              "success"
-            );
-            $("#application-row-" + financial_aid_id + ", #application-email-row-" + financial_aid_id).remove();
-          },
-          "error": function(result) {
-            displayMessage("Error: " + result.responseText + " on " + name + "'s financial aid application.", "danger");
-          }
-        });
-      }
-    }
-    {% endif %}
-    
-    
-    {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
-    /**
-     * Submits a financial aid application approval
-     * 
-     * @param financial_aid_id {number} Financial aid application id
-     * @param url {string} URL to submit request to
-     */
-    function submitApproval(financial_aid_id, url) {
-      var name = $("#full-name-" + financial_aid_id).text().trim();
-      if (confirm("Click OK to approve " + name + "'s financial aid application.")) {
-        var action = "{{ statuses.APPROVED }}";
-        var justification = $("#justification-" + financial_aid_id).val();
-        var tier_program_id = $("#tier-program-id-" + financial_aid_id).val();
-        $.ajax({
-          "url": url,
-          "type": "PATCH",
-          "headers": {
-            "X-CSRFToken": CSRF_TOKEN
-          },
-          "data": {
-            "action": action,
-            "justification": justification,
-            "tier_program_id": tier_program_id
-          },
-          "success": function() {
-            displayMessage("Successfully approved " + name + "'s financial aid application.", "success");
-            $("#application-row-" + financial_aid_id + ", #application-email-row-" + financial_aid_id).remove();
-          },
-          "error": function(result) {
-            displayMessage("Error: " + result.responseText + " on " + name + "'s financial aid application.", "danger");
-          }
-        });
-      }
-    }
-    {% endif %}
-    
-    
-    {% if selected_status == statuses.PENDING_DOCS or selected_status == statuses.DOCS_SENT or selected_status == statuses.PENDING_MANUAL_APPROVAL %}
-    /**
-     * Submits a financial aid email request
-     * 
-     * @param financial_aid_id {number} Financial aid application id
-     * @param url {string} URL to submit request to
-     */
-    function sendEmail(financial_aid_id, url) {
-      var name = $("#full-name-" + financial_aid_id).text().trim();
-      if (confirm("Click OK to send email to " + name)) {
-        var emailSubject = $("#email-form-" + financial_aid_id + " [name='email_subject']").val();
-        var emailBody = $("#email-form-" + financial_aid_id + " [name='email_body']").val();
-        $.ajax({
-          "url": url,
-          "type": "POST",
-          "headers": {
-            "X-CSRFToken": CSRF_TOKEN
-          },
-          "data": {
-            "email_subject": emailSubject,
-            "email_body": emailBody
-          },
-          "success": function() {
-            displayMessage("Successfully sent email to " + name, "success");
-            $("#email-form-" + financial_aid_id).trigger("reset");
-            $("#application-email-row-" + financial_aid_id).hide();
-          },
-          "error": function(result) {
-            displayMessage("Error in sending email to " + name + ": " + result.responseText, "danger");
-          }
-        });
-      }
-    }
-    {% endif %}
-    
-    
-    /**
-     * Displays a dismissible alert message.
-     * 
-     * @param message {string} Message to display
-     * @param type {string} Type of Bootstrap alert
-     */
-    function displayMessage(message, type) {
-      var template = $("#message-template").clone();
-      // Populate template
-      template.removeAttr("id").addClass("alert-" + type).children("span").text(message);
-      $("#messages").append(template);
-      template.slideDown();
-    }
-    
-    
-    /**
-     * Redirects to initiate search
-     * 
-     */
-    function initiateSearch() {
-      var searchQuery = $("#search-query").val();
-      location = "{{ request.path }}?sort_by={{ current_sort_field }}&search_query=" + searchQuery;
-    }
-  </script>
+  <script>window.CSRF_TOKEN = "{{ csrf_token }}";</script>
+  <script src="{% static 'js/financial_aid_review.js' %}"></script>
 {% endblock %}
