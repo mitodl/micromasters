@@ -584,9 +584,8 @@ class CoursePriceDetailViewTests(FinancialAidBaseTestCase, APIClient):
         resp = self.assert_http_status(self.client.get, self.course_price_url, status.HTTP_200_OK)
         expected_response = {
             "program_id": self.program.id,
-            "has_financial_aid_request": True,
             "price": self.course_price.price - self.financialaid_approved.tier_program.discount_amount,
-            "financial_aid_adjustment": True,
+            "has_financial_aid_request": True,
             "financial_aid_availability": True
         }
         self.assertDictEqual(resp.data, expected_response)
@@ -599,9 +598,8 @@ class CoursePriceDetailViewTests(FinancialAidBaseTestCase, APIClient):
         resp = self.assert_http_status(self.client.get, self.course_price_url, status.HTTP_200_OK)
         expected_response = {
             "program_id": self.program.id,
+            "price": self.course_price.price - self.financialaid_pending.tier_program.discount_amount,
             "has_financial_aid_request": True,
-            "price": self.course_price.price,
-            "financial_aid_adjustment": False,
             "financial_aid_availability": True
         }
         self.assertDictEqual(resp.data, expected_response)
@@ -614,9 +612,8 @@ class CoursePriceDetailViewTests(FinancialAidBaseTestCase, APIClient):
         resp = self.assert_http_status(self.client.get, self.course_price_url, status.HTTP_200_OK)
         expected_response = {
             "program_id": self.program.id,
-            "has_financial_aid_request": False,
             "price": self.course_price.price,
-            "financial_aid_adjustment": False,
+            "has_financial_aid_request": False,
             "financial_aid_availability": True
         }
         self.assertDictEqual(resp.data, expected_response)
@@ -631,9 +628,8 @@ class CoursePriceDetailViewTests(FinancialAidBaseTestCase, APIClient):
         resp = self.assert_http_status(self.client.get, self.course_price_url, status.HTTP_200_OK)
         expected_response = {
             "program_id": self.program.id,
-            "has_financial_aid_request": False,
             "price": self.course_price.price,
-            "financial_aid_adjustment": False,
+            "has_financial_aid_request": False,
             "financial_aid_availability": False
         }
         self.assertDictEqual(resp.data, expected_response)
