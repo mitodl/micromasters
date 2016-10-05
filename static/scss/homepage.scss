@@ -12,7 +12,7 @@ body.app-media {
   border-radius: 0;
   height: auto;
   min-height: 0;
-  padding: 14px 22px 14px 28px;
+  padding: 12px 22px 12px 33px;
 
   .navbar-header {
     padding: 0;
@@ -24,14 +24,14 @@ body.app-media {
             float: left;
             margin-right: 15px;
             img {
-              width: 66px;
+              width: 60px;
               }
           }
 
           .divider-large {
             width: 14px;
-            height: 37px;
-            margin: 0 15px 0 0;
+            height: 34px;
+            margin: 4px 15px 0 0;
             border-left: 1px solid rgba(255, 255, 255, 0.5);
             float: left;
           }
@@ -45,6 +45,9 @@ body.app-media {
             float: left;
             position: relative;
             bottom: 2px;
+            img.micromasters_logo {
+              width: 120px;
+            }
           }
     }
 
@@ -92,9 +95,9 @@ body.app-media {
 
           a.header-dashboard-link {
             display: inline-block;
-            background: rgba(0,0,0, 0.1);
+            background: rgba(0,0,0, 0.14);
             margin: 0 15px 0 0;
-            padding: 13px 31px;
+            padding: 12px 25px;
             font-weight: 400;
             font-size: 16px;
             color: #fff;
@@ -139,8 +142,12 @@ body.app-media {
 
   .banner-wrapper-content {
     margin: 0 auto;
-    padding: 41vh 5% 0;
+    padding: 40px;
     text-align: center;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: $brand-overlay;
     @media (max-width: 580px) {
       padding: 120px 8% 0;
     }
@@ -199,68 +206,72 @@ body.app-media {
   }
 }
 
-.sub-banner-section{
+.sub-banner {
   background-color: #ffffff;
-  padding: 7vw 0 8vw;
-  text-align: center;
-}
-.sub-banner-text {
-  text-align:left;
-  margin: 0 auto;
-  color:#000;
-  font-size:25px;
-  font-weight:200;
-  line-height: 44px;
-  width: 81%;
-  max-width:1000px;
-  @media (max-width: 580px) {
-    width: 90%;
-  }
 
-  h3 {
-    font-size: 25px;
-    @media (min-width: 1200px) {
-    font-size: 1.9vw;
+  .sub-banner-section{
+    padding: 7vw 0 8vw;
+    text-align: center;
+
+    .sub-banner-text {
+      text-align:left;
+      margin: 0 auto;
+      color:#000;
+      font-size:25px;
+      font-weight:200;
+      line-height: 44px;
+      width: 81%;
+      max-width:1000px;
+      @media (max-width: 580px) {
+        width: 90%;
+      }
+
+      h3 {
+        font-size: 25px;
+        @media (min-width: 1200px) {
+        font-size: 1.9vw;
+        }
+        margin: 0 0 30px;
+        font-weight: 400;
+        color: rgba(0,0,0,.87);
+      }
+
+      p {
+        font-size: 16px;
+        @media (min-width: 1200px) {
+        font-size: 1.2vw;
+        }
+        font-weight: 400;
+        color: rgba(0,0,0,.6);
+      }
+
+      .sub-banner-logos{
+        margin-top: 26px;
+        img{
+        margin-left: 5px;
+        width: 78px;
+        position: relative;
+        top: -8px;
+        }
+
+        .sub-banner-logos-text {
+          vertical-align: bottom;
+          font-size: 16px;
+          display: inline-block;
+          font-size: 16px;
+          font-weight: 400;
+          color: rgba(0, 0, 0, 0.6);
+          @media (min-width: 1200px) {
+            font-size: 1.2vw;
+          }
+          @media (max-width: 580px) {
+            display: block;
+            line-height: 1.4em;
+            margin-bottom: 20px;
+          }
+        }
+      }
     }
-    margin: 0 0 30px;
-    font-weight: 400;
-    color: rgba(0,0,0,.87);
-  }
-  p {
-    font-size: 16px;
-    @media (min-width: 1200px) {
-    font-size: 1.2vw;
-    }
-    font-weight: 400;
-    color: rgba(0,0,0,.6);
-  }
-}
-
-.sub-banner-logos{
-  margin-top: 26px;
-
-  img{
-    margin-left: 5px;
-    width: 78px;
-    position: relative;
-    top: -8px;
-  }
-}
-
-.sub-banner-logos-text {
-  vertical-align: bottom;
-  font-size: 16px;
-  display: inline-block;
-  font-size: 16px;
-  font-weight: 400;
-  color: rgba(0, 0, 0, 0.6);
-  @media (min-width: 1200px) {
-    font-size: 1.2vw;
-  }
-  @media (max-width: 580px) {
-    display: block;
-    line-height: 1.4em;
-    margin-bottom: 20px;
   }
 }
 
@@ -311,7 +322,7 @@ body.app-media {
     }
 
     h2 {
-      color: #08b940;
+      color: $font-gray-light;
       font-size: 30px;
       font-style: italic;
       font-family: helvetica;
@@ -323,7 +334,7 @@ body.app-media {
     }
 
     p {
-      color: #08b940;
+      color: $font-gray-light;
       font-size: 24px;
       @media (max-width: 580px) {
         font-size: 20px;
@@ -430,7 +441,7 @@ body.app-media {
 }
 
 .reasons-section {
-  background-color: $mm-brand-bg-dark;
+  background-color: $mm-brand-bg;
 
   .col-md-4 {
     padding: 0 3%;

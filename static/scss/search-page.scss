@@ -37,6 +37,10 @@
     flex-direction: column;
     background-color: none;
 
+    div.sticky {
+      top: 10px !important;
+    }
+
     .mdl-card {
       padding: 10px;
       background-color: $bg-light-gray;
@@ -125,7 +129,7 @@
       }
 
       .sk-range-histogram__bar {
-        background-color: $mm-brand-bg;
+        background-color: $blue-button;
       }
 
       .is-out-of-bounds {

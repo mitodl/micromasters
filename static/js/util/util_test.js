@@ -63,7 +63,7 @@ describe('utility functions', () => {
       });
     });
   });
-  
+
   describe('generateNewEducation', () => {
     it('generates a new education object', () => {
       let level = 'level';
@@ -85,7 +85,7 @@ describe('utility functions', () => {
       let url = "/url";
       assert.equal(url, makeProfileImageUrl({ image: url }));
     });
-    
+
     it('uses a default profile image if not available, removing duplicate slashes', () => {
       assert.equal(
         '/static/images/avatar_default.png',
@@ -198,7 +198,7 @@ describe('utility functions', () => {
         for (let child of svg.props.children[1]) {
           if (child.key === `circle_${i}`) {
             // the green circle should be the currently selected one
-            assert.equal(child.props.fill, "#30BB5C");
+            assert.equal(child.props.fill, "#a31f34");
             foundCircle = true;
           }
           if (child.key === `circletext_${i}`) {
