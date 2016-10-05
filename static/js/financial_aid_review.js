@@ -3,6 +3,7 @@ var financialAidReview = function() {
   "use strict";
   
   var CSRF_TOKEN = window.CSRF_TOKEN;
+  var BASE_PATH = window.BASE_PATH;
   
   /**
    * Marks documents as received for a financial aid application
@@ -109,11 +110,13 @@ var financialAidReview = function() {
    */
   function initiateSearch() {
     var searchQuery = $("#search-query").val();
-    location = "{{ request.path }}?sort_by={{ current_sort_field }}&search_query=" + searchQuery;
+    location = BASE_PATH + searchQuery;
   }
   
   /**
    * Toggles currency display
+   * 
+   * @param currency {int} The currency to display
    */
   function toggleCurrency(currency) {
     if (currency === "USD") {
@@ -127,6 +130,8 @@ var financialAidReview = function() {
   
   /**
    * Toggles email display
+   * 
+   * @param financialAidId {str} FinancialAid.id to toggle
    */
   function toggleEmailDisplay(financialAidId) {
     $("#application-email-row-" + financialAidId).toggle();
