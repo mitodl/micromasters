@@ -49,9 +49,7 @@ export default class FinancialAidCard extends React.Component {
     } = this.props;
     const financialAidId = program.financial_aid_user_info.id;
 
-    updateDocumentSentDate(financialAidId, documents.documentSentDate).then(() => {
-      fetchDashboard();
-    });
+    updateDocumentSentDate(financialAidId, documents.documentSentDate).then(fetchDashboard);
   };
 
   renderDocumentStatus() {
