@@ -54,19 +54,6 @@ class FinancialAidStatus:
     }
 
 
-FINANCIAL_AID_APPROVAL_MESSAGE_BODY = """Your application for financial aid has been approved!\n\n
-Please log on to your account for more details.\n\n
-MIT Micromasters"""
-FINANCIAL_AID_REJECTION_MESSAGE_BODY = """Your application for financial aid has been rejected.\n\n
-Please log on to your account for more details.\n\n
-MIT Micromasters"""
-FINANCIAL_AID_DOCUMENTS_MESSAGE_BODY = """Your financial aid documents have been received.\n\n
-Please log on to your account for more details.\n\n
-MIT Micromasters"""
-FINANCIAL_AID_APPROVAL_SUBJECT_TEXT = "Financial Aid Status Update"
-FINANCIAL_AID_REJECTION_SUBJECT_TEXT = "Financial Aid Status Update"
-FINANCIAL_AID_DOCUMENTS_SUBJECT_TEXT = "Financial Aid Documents Received"
-
 CURRENCY_EXCHANGE_RATE_API_REQUEST_URL = "{url}latest.json?app_id={app_id}".format(
     url=settings.OPEN_EXCHANGE_RATES_URL,
     app_id=quote_plus(settings.OPEN_EXCHANGE_RATES_APP_ID)
