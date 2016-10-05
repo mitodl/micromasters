@@ -20,6 +20,7 @@ class FinancialAidAdmin(admin.ModelAdmin):
 class FinancialAidAuditAdmin(admin.ModelAdmin):
     """Admin for FinancialAidAudit"""
     model = FinancialAidAudit
+    readonly_fields = ["acting_user", "financial_aid", "data_before", "data_after"]
 
     def has_add_permission(self, *args, **kwargs):  # pylint: disable=unused-argument
         return False
