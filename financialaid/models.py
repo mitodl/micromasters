@@ -155,9 +155,9 @@ class FinancialAid(TimestampedModel):
         """
         ret = model_to_dict(self)
         if self.date_exchange_rate is not None:
-            ret["date_exchange_rate"] = str(ret["date_exchange_rate"])
+            ret["date_exchange_rate"] = ret["date_exchange_rate"].isoformat()
         if self.date_documents_sent is not None:
-            ret["date_documents_sent"] = str(ret["date_documents_sent"])
+            ret["date_documents_sent"] = ret["date_documents_sent"].isoformat()
         return ret
 
     def save(self, *args, **kwargs):
