@@ -2,6 +2,7 @@
 Page models for the CMS
 """
 import json
+import itertools
 
 from django.conf import settings
 from django.db import models
@@ -163,6 +164,28 @@ class ProgramPage(Page):
 
         return context
 
+    @property
+    def has_categorized_faq(self):
+        """
+        Returns True if the FAQ should be displayed with categories,
+        False otherwise.
+        """
+        return any(faq.category for faq in self.faqs.all())
+
+    @property
+    def categorized_faqs(self):
+        """
+        Generator for pairs of (category, [faqs, in, category]).
+        """
+        query = self.faqs.all()
+        generator = itertools.groupby(query, key=lambda faq: faq.category)
+        # It would be great if we could just return this generator and be done,
+        # but Django Templates doesn't play well with itertools.groupby:
+        # see http://stackoverflow.com/questions/6906593/itertools-groupby-in-a-django-template
+        # So unfortunately, we have to exhaust the generator and convert to a
+        # list before returning.
+        return [(grouper, list(values)) for grouper, values in generator]
+
 
 class ProgramCourse(Orderable):
     """
@@ -213,6 +236,10 @@ class FrequentlyAskedQuestion(Orderable):
     FAQs for the program
     """
     program_page = ParentalKey(ProgramPage, related_name='faqs')
+    category = models.CharField(
+        max_length=255, blank=True,
+        help_text='Category for question. Questions with the same '
+                  'category will be grouped together when displayed.')
     question = models.TextField()
     answer = RichTextField()
 
