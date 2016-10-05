@@ -149,7 +149,7 @@ body.app-media {
     width: 100%;
     background: $brand-overlay;
     @media (max-width: 580px) {
-      padding: 120px 8% 0;
+      padding: 20px 8%;
     }
 
     h1, h2 {
@@ -165,9 +165,9 @@ body.app-media {
         font-size: 3.5vw;
       }
       @media (max-width: 580px) {
-        font-size: 30px;
+        font-size: 25px;
         line-height: 1.15;
-        margin-bottom: 35px;
+        margin-bottom: 0;
       }
     }
 
@@ -183,6 +183,7 @@ body.app-media {
       @media (max-width: 580px) {
         font-size: 23px;
         line-height: 1.15;
+        display: none;
       }
     }
 
@@ -297,18 +298,22 @@ body.app-media {
 
 .quote-section {
   background: #fff;
-  padding: 120px 0 150px;
+  padding: 50px 0 67px;
   @media (max-width: 580px) {
     padding: 80px 0 80px;
   }
-  .centered-content {
+
+  .quote {
     width: 71%;
     max-width: 1150px;
     margin: 0 auto;
+    padding: 50px 0;
     text-align: left;
+    border-bottom: 1px dashed #c5c5c5;
     @media (max-width: 580px) {
       text-align: center;
     }
+
     img.reif {
       float: left;
       @media (max-width: 580px) {
@@ -317,13 +322,11 @@ body.app-media {
       }
       width: 170px;
       margin-right: 70px;
-      position: relative;
-      bottom: 15px;
     }
 
     h2 {
-      color: $font-gray-light;
-      font-size: 30px;
+      color: $font-gray;
+      font-size: 24px;
       font-style: italic;
       font-family: helvetica;
       font-weight: 300;
@@ -334,12 +337,20 @@ body.app-media {
     }
 
     p {
-      color: $font-gray-light;
-      font-size: 24px;
+      color: $font-gray;
+      font-size: 22px;
       @media (max-width: 580px) {
         font-size: 20px;
       }
     }
+  }
+
+  .quote:after {
+    clear: both;
+  }
+
+  .quote:last-child {
+    border-bottom: none;
   }
 }
 
