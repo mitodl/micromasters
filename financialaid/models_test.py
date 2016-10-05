@@ -1,9 +1,6 @@
 """
 Tests for financialaid models
 """
-import json
-
-from django.core import serializers
 from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from factory.django import mute_signals
@@ -64,7 +61,7 @@ class FinancialAidModelsTests(ESTestCase):
             profile = ProfileFactory.create()
         acting_user = profile.user
         financial_aid = FinancialAidFactory.create()
-        original_before_json = json.loads(serializers.serialize("json", [financial_aid, ]))[0]["fields"]
+        original_before_json = financial_aid.to_dict()
         # Make sure audit object is created
         assert FinancialAidAudit.objects.count() == 0
         financial_aid.status = FinancialAidStatus.AUTO_APPROVED
@@ -72,10 +69,10 @@ class FinancialAidModelsTests(ESTestCase):
         assert FinancialAidAudit.objects.count() == 1
         # Make sure the before and after data are correct
         financial_aid.refresh_from_db()
-        original_after_json = json.loads(serializers.serialize("json", [financial_aid, ]))[0]["fields"]
+        original_after_json = financial_aid.to_dict()
         financial_aid_audit = FinancialAidAudit.objects.first()
-        before_json = json.loads(financial_aid_audit.data_before)[0]["fields"]
-        after_json = json.loads(financial_aid_audit.data_after)[0]["fields"]
+        before_json = financial_aid_audit.data_before
+        after_json = financial_aid_audit.data_after
         for field, value in before_json.items():
             # Data before
             if isinstance(value, float):
@@ -90,3 +87,25 @@ class FinancialAidModelsTests(ESTestCase):
                 self.assertAlmostEqual(value, original_after_json[field])
             else:
                 assert value == original_after_json[field]
+
+    def test_to_dict(self):
+        """
+        Tests that to_dict() function on FinancialAid
+        """
+        financial_aid = FinancialAidFactory.create()
+        financial_aid_dict = financial_aid.to_dict()
+        assert financial_aid_dict["user"] == financial_aid.user.id
+        assert financial_aid_dict["tier_program"] == financial_aid.tier_program.id
+        assert financial_aid_dict["status"] == financial_aid.status
+        assert financial_aid_dict["original_currency"] == financial_aid.original_currency
+        assert financial_aid_dict["country_of_income"] == financial_aid.country_of_income
+        self.assertAlmostEqual(financial_aid_dict["income_usd"], financial_aid.income_usd)
+        self.assertAlmostEqual(financial_aid_dict["original_income"], financial_aid.original_income)
+        if financial_aid.date_exchange_rate is None:
+            assert financial_aid_dict["date_exchange_rate"] == financial_aid.date_exchange_rate
+        else:
+            assert financial_aid_dict["date_exchange_rate"] == str(financial_aid.date_exchange_rate)
+        if financial_aid.date_documents_sent is None:
+            assert financial_aid_dict["date_documents_sent"] == financial_aid.date_documents_sent
+        else:
+            assert financial_aid_dict["date_documents_sent"] == str(financial_aid.date_documents_sent)

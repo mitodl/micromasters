@@ -4,13 +4,13 @@ Models for the Financial Aid App
 import datetime
 
 from django.contrib.auth.models import User
-from django.core import serializers
 from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.db import (
     models,
     transaction,
 )
+from django.forms.models import model_to_dict
 
 from courses.models import Program
 
@@ -149,6 +149,14 @@ class FinancialAid(TimestampedModel):
     date_exchange_rate = models.DateTimeField(null=True)
     date_documents_sent = models.DateField(null=True)
 
+    def to_dict(self):
+        """
+        Get the model_to_dict of self
+        """
+        ret = model_to_dict(self)
+        ret["date_exchange_rate"] = str(ret["date_exchange_rate"])
+        return ret
+
     def save(self, *args, **kwargs):
         """
         Override save to make sure only one FinancialAid object exists for a User and the associated Program
@@ -171,8 +179,8 @@ class FinancialAid(TimestampedModel):
         FinancialAidAudit.objects.create(
             acting_user=acting_user,
             financial_aid=self,
-            data_before=serializers.serialize("json", [financialaid_before, ]),
-            data_after=serializers.serialize("json", [self, ])
+            data_before=financialaid_before.to_dict(),
+            data_after=self.to_dict()
         )
 
 
