@@ -58,11 +58,13 @@ export default class FinancialAidCard extends React.Component {
     const {
       setDocumentSentDate,
       documents,
+      program: {
+        financial_aid_user_info: {
+          application_status: applicationStatus,
+          date_documents_sent: dateDocumentsSent,
+        }
+      }
     } = this.props;
-    const {
-      application_status: applicationStatus,
-      date_documents_sent: dateDocumentsSent,
-    } = this.props.program.financial_aid_user_info;
 
     switch (applicationStatus) {
     case FA_STATUS_PENDING_MANUAL_APPROVAL:
