@@ -1,4 +1,4 @@
-/* eslint-disable  no-undef, max-len, no-var, prefer-template */
+/* eslint-disable no-undef, max-len, no-var, prefer-template, no-unused-vars */
 var financialAidReview = function() {
   "use strict";
   
@@ -48,7 +48,7 @@ var financialAidReview = function() {
     if (confirm("Click OK to approve " + name + "'s financial aid application.")) {
       var action = "{{ statuses.APPROVED }}";
       var justification = $("#justification-" + financialAidId).val();
-      var tier_program_id = $("#tier-program-id-" + financialAidId).val();
+      var tierProgramId = $("#tier-program-id-" + financialAidId).val();
       $.ajax({
         "url": url,
         "type": "PATCH",
@@ -58,7 +58,7 @@ var financialAidReview = function() {
         "data": {
           "action": action,
           "justification": justification,
-          "tier_program_id": tier_program_id
+          "tier_program_id": tierProgramId
         },
         "success": function() {
           displayMessage("Successfully approved " + name + "'s financial aid application.", "success");
