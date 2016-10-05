@@ -97,7 +97,7 @@ describe("FinancialAidCard", () => {
       it(`shows the cost if the status is ${status}`, () => {
         let program = programWithStatus(status);
         let wrapper = renderCard({ program });
-        let expectedPrice = `$${COURSE_PRICES_RESPONSE[0].course_price}`;
+        let expectedPrice = `$${COURSE_PRICES_RESPONSE[0].price}`;
         assert.equal(wrapper.find(".price").map(node => node.text()), expectedPrice);
       });
     }
