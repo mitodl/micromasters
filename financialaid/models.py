@@ -106,11 +106,7 @@ class FinancialAid(TimestampedModel):
     tier_program = models.ForeignKey(TierProgram, null=False)
     status = models.CharField(
         null=False,
-        choices=[
-            (status, status) for status in FinancialAidStatus.ALL_STATUSES
-            # The rejected status has been temporarily disabled as a valid status for FinancialAid
-            if status != FinancialAidStatus.REJECTED
-        ],
+        choices=[(status, status) for status in FinancialAidStatus.ALL_STATUSES],
         default=FinancialAidStatus.CREATED,
         max_length=30,
     )

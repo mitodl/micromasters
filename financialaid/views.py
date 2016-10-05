@@ -182,6 +182,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
             FinancialAidStatus.DOCS_SENT,
             FinancialAidStatus.PENDING_MANUAL_APPROVAL,
             FinancialAidStatus.APPROVED,
+            FinancialAidStatus.REJECTED,
             FinancialAidStatus.SKIPPED
         )
         context["financial_aid_statuses"] = (

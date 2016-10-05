@@ -207,6 +207,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         """
         FinancialAidFactory.create(tier_program=self.tier_programs["0k"], status=FinancialAidStatus.AUTO_APPROVED)
         FinancialAidFactory.create(tier_program=self.tier_programs["0k"], status=FinancialAidStatus.APPROVED)
+        FinancialAidFactory.create(tier_program=self.tier_programs["0k"], status=FinancialAidStatus.REJECTED)
         self.client.force_login(self.staff_user_profile.user)
         # Should work with a filter
         resp = self.assert_http_status(self.client.get, self.review_url_with_filter, status.HTTP_200_OK)
@@ -363,8 +364,7 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
             FinancialAidStatus.AUTO_APPROVED,
             FinancialAidStatus.PENDING_DOCS,
             FinancialAidStatus.APPROVED,
-            # Temporary removal of rejected status
-            # FinancialAidStatus.REJECTED
+            FinancialAidStatus.REJECTED
         ]
         for financial_aid_status in statuses_to_test:
             self.financialaid.status = financial_aid_status
@@ -389,8 +389,7 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
             FinancialAidStatus.AUTO_APPROVED,
             FinancialAidStatus.PENDING_MANUAL_APPROVAL,
             FinancialAidStatus.APPROVED,
-            # Temporary removal of rejected status
-            # FinancialAidStatus.REJECTED
+            FinancialAidStatus.REJECTED
         ]
         for financial_aid_status in statuses_to_test:
             self.financialaid.status = financial_aid_status
@@ -452,30 +451,29 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         assert called_kwargs["subject"] == financial_aid_email["subject"]
         assert called_kwargs["body"] == financial_aid_email["body"]
 
-    # Temporary removal of rejected status
-    # def test_rejection(self, mock_mailgun_client):
-    #     """
-    #     Tests FinancialAidActionView when application is rejected
-    #     """
-    #     mock_mailgun_client.send_financial_aid_email.return_value = Mock(
-    #         spec=Response,
-    #         status_code=status.HTTP_200_OK,
-    #         json=mocked_json()
-    #     )
-    #     assert self.financialaid.tier_program != self.tier_programs["75k"]
-    #     assert self.financialaid.status != FinancialAidStatus.REJECTED
-    #     self.data["action"] = FinancialAidStatus.REJECTED
-    #     self.assert_http_status(self.client.patch, self.action_url, status.HTTP_200_OK, data=self.data)
-    #     self.financialaid.refresh_from_db()
-    #     assert self.financialaid.tier_program == self.tier_programs["75k"]
-    #     assert self.financialaid.status == FinancialAidStatus.REJECTED
-    #     assert mock_mailgun_client.send_financial_aid_email.called
-    #     _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
-    #     assert called_kwargs["acting_user"] == self.staff_user_profile.user
-    #     assert called_kwargs["financial_aid"] == self.financialaid
-    #     financial_aid_email = generate_financial_aid_email(self.financialaid)
-    #     assert called_kwargs["subject"] == financial_aid_email["subject"]
-    #     assert called_kwargs["body"] == financial_aid_email["body"]
+    def test_rejection(self, mock_mailgun_client):
+        """
+        Tests FinancialAidActionView when application is rejected
+        """
+        mock_mailgun_client.send_financial_aid_email.return_value = Mock(
+            spec=Response,
+            status_code=status.HTTP_200_OK,
+            json=mocked_json()
+        )
+        assert self.financialaid.tier_program != self.tier_programs["75k"]
+        assert self.financialaid.status != FinancialAidStatus.REJECTED
+        self.data["action"] = FinancialAidStatus.REJECTED
+        self.assert_http_status(self.client.patch, self.action_url, status.HTTP_200_OK, data=self.data)
+        self.financialaid.refresh_from_db()
+        assert self.financialaid.tier_program == self.tier_programs["75k"]
+        assert self.financialaid.status == FinancialAidStatus.REJECTED
+        assert mock_mailgun_client.send_financial_aid_email.called
+        _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
+        assert called_kwargs["acting_user"] == self.staff_user_profile.user
+        assert called_kwargs["financial_aid"] == self.financialaid
+        financial_aid_email = generate_financial_aid_email(self.financialaid)
+        assert called_kwargs["subject"] == financial_aid_email["subject"]
+        assert called_kwargs["body"] == financial_aid_email["body"]
 
     def test_mark_documents_received_pending_docs(self, mock_mailgun_client):
         """

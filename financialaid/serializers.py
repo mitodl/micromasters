@@ -113,14 +113,10 @@ class FinancialAidSkipSerializer(serializers.Serializer):
 class FinancialAidActionSerializer(serializers.Serializer):
     """
     Serializer for financial aid actions
-
-    Note: FinancialAidStatus.REJECTED has been temporarily disabled as a valid status for FinancialAid objects. While
-    the functions/code that handle this case have been left intact, this option has been disabled by removing the
-    status from the choices for "action" on this serializer as well as from the valid choices on the database model.
     """
     action = ChoiceField(
         choices=[
-            # FinancialAidStatus.REJECTED,
+            FinancialAidStatus.REJECTED,
             FinancialAidStatus.APPROVED,
             FinancialAidStatus.PENDING_MANUAL_APPROVAL
         ],
