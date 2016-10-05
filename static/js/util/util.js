@@ -67,13 +67,13 @@ export function makeProfileProgressDisplay(active: string) {
       fontWeight: 400,
     },
     current: {
-      fill: "#30BB5C",
+      fill: "#626262",
       circleText: "white",
       text: "black",
       fontWeight: 700,
     },
     future: {
-      fill: "#f5f5f5",
+      fill: "#ffffff",
       circleText: "#888888",
       text: lightGreyText,
       fontWeight: 400,
@@ -161,8 +161,8 @@ export function makeProfileProgressDisplay(active: string) {
           x2={nextCircleX - radius}
           y1={circleY}
           y2={circleY}
-          stroke={"#ececec"}
-          strokeWidth={2}
+          stroke={"#999999"}
+          strokeWidth={1}
         />
       );
     }
@@ -176,7 +176,7 @@ export function makeProfileProgressDisplay(active: string) {
 
 /* eslint-disable camelcase */
 /**
- * Generate new education object 
+ * Generate new education object
  */
 export function generateNewEducation(level: string): EducationEntry {
   return {
