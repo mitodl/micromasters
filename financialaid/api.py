@@ -11,7 +11,6 @@ from financialaid.exceptions import NotSupportedException
 from financialaid.models import (
     CurrencyExchangeRate,
     FinancialAid,
-    FinancialAidStatus,
     TierProgram
 )
 
@@ -84,7 +83,7 @@ def get_no_discount_tier_program(program_id):
 def get_formatted_course_price(program_enrollment):
     """
     Returns dictionary of information about the course price for a learner.
-    
+
     Note: "price" will always include discounts from financial aid applications, even if the
     application's status is not yet approved.
 
