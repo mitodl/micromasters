@@ -40,7 +40,7 @@ import * as api from '../util/api';
 import {
   DASHBOARD_RESPONSE,
   USER_PROFILE_RESPONSE,
-  CHECKOUT_RESPONSE_CYBERSOURCE,
+  CYBERSOURCE_CHECKOUT_RESPONSE,
 } from '../constants';
 import configureTestStore from 'redux-asserts';
 import rootReducer, { INITIAL_PROFILES_STATE } from '../reducers';
@@ -302,7 +302,7 @@ describe('reducers', () => {
     });
 
     it('should POST a checkout successfully', () => {
-      checkoutStub.returns(Promise.resolve(CHECKOUT_RESPONSE_CYBERSOURCE));
+      checkoutStub.returns(Promise.resolve(CYBERSOURCE_CHECKOUT_RESPONSE));
 
       return dispatchThen(checkout('course_id'), [REQUEST_CHECKOUT, RECEIVE_CHECKOUT_SUCCESS]).then(checkoutState => {
         assert.equal(checkoutState.fetchStatus, FETCH_SUCCESS);

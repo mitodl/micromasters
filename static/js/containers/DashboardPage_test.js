@@ -10,8 +10,8 @@ import * as actions from '../actions';
 import { SET_TOAST_MESSAGE } from '../actions/ui';
 import * as util from '../util/util';
 import {
-  CHECKOUT_RESPONSE_CYBERSOURCE,
-  CHECKOUT_RESPONSE_EDX,
+  CYBERSOURCE_CHECKOUT_RESPONSE,
+  EDX_CHECKOUT_RESPONSE,
   TOAST_FAILURE,
   TOAST_SUCCESS,
 } from '../constants';
@@ -58,7 +58,7 @@ describe('DashboardPage', () => {
     });
 
     it('redirects to edX when the checkout API tells us to', () => {
-      let promise = Promise.resolve(CHECKOUT_RESPONSE_EDX);
+      let promise = Promise.resolve(EDX_CHECKOUT_RESPONSE);
       let checkoutStub = helper.sandbox.stub(actions, 'checkout').returns(() => promise);
 
       return renderComponent('/dashboard').then(([wrapper]) => {
@@ -68,13 +68,13 @@ describe('DashboardPage', () => {
         assert.deepEqual(checkoutStub.args[0], ['course_id']);
 
         return promise.then(() => {
-          assert.equal(savedWindowLocation, CHECKOUT_RESPONSE_EDX.url);
+          assert.equal(savedWindowLocation, EDX_CHECKOUT_RESPONSE.url);
         });
       });
     });
 
     it('constructs a form to be sent to Cybersource and submits it', () => {
-      let promise = Promise.resolve(CHECKOUT_RESPONSE_CYBERSOURCE);
+      let promise = Promise.resolve(CYBERSOURCE_CHECKOUT_RESPONSE);
       let checkoutStub = helper.sandbox.stub(actions, 'checkout').returns(() => promise);
       let submitStub = helper.sandbox.stub();
       let fakeForm = document.createElement("form");
@@ -89,7 +89,7 @@ describe('DashboardPage', () => {
         assert.deepEqual(checkoutStub.args[0], ['course_id']);
 
         return promise.then(() => {
-          const {url, payload} = CHECKOUT_RESPONSE_CYBERSOURCE;
+          const {url, payload} = CYBERSOURCE_CHECKOUT_RESPONSE;
           assert.equal(createFormStub.callCount, 1);
           assert.deepEqual(createFormStub.args[0], [url, payload]);
 

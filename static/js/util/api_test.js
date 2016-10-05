@@ -22,7 +22,7 @@ import {
 } from './api';
 import * as api from './api';
 import {
-  CHECKOUT_RESPONSE_CYBERSOURCE,
+  CYBERSOURCE_CHECKOUT_RESPONSE,
   DASHBOARD_RESPONSE,
   COURSE_PRICES_RESPONSE,
   USER_PROFILE_RESPONSE,
@@ -160,9 +160,9 @@ describe('api', function() {
     });
 
     it('posts to checkout', () => {
-      fetchJSONStub.returns(Promise.resolve(CHECKOUT_RESPONSE_CYBERSOURCE));
+      fetchJSONStub.returns(Promise.resolve(CYBERSOURCE_CHECKOUT_RESPONSE));
       fetchMock.mock('/api/v0/checkout/', (url, opts) => {
-        assert.deepEqual(JSON.parse(opts.body), CHECKOUT_RESPONSE_CYBERSOURCE);
+        assert.deepEqual(JSON.parse(opts.body), CYBERSOURCE_CHECKOUT_RESPONSE);
         return { status: 200 };
       });
       return checkout('course_id').then(checkoutInfo => {
@@ -170,7 +170,7 @@ describe('api', function() {
           method: 'POST',
           body: JSON.stringify({course_id: 'course_id'})
         }));
-        assert.deepEqual(checkoutInfo, CHECKOUT_RESPONSE_CYBERSOURCE);
+        assert.deepEqual(checkoutInfo, CYBERSOURCE_CHECKOUT_RESPONSE);
       });
     });
 

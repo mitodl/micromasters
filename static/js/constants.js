@@ -579,7 +579,7 @@ export const ERROR_RESPONSE = {
 };
 
 /* eslint-disable max-len */
-export const CHECKOUT_RESPONSE_CYBERSOURCE = {
+export const CYBERSOURCE_CHECKOUT_RESPONSE = {
   "payload": {
     "access_key": "access_key",
     "amount": "123.45",
@@ -600,7 +600,7 @@ export const CHECKOUT_RESPONSE_CYBERSOURCE = {
   "url": "https://testsecureacceptance.cybersource.com/pay",
   "method": "POST"
 };
-export const CHECKOUT_RESPONSE_EDX = {
+export const EDX_CHECKOUT_RESPONSE = {
   "payload": {},
   "url": "http://edx.org",
   "method": "GET"
