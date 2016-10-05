@@ -181,7 +181,7 @@ def generate_financial_aid_email(financial_aid):
     Returns:
         dict: {"subject": (str), "body": (str)}
     """
-    if financial_aid.status in [FinancialAidStatus.APPROVED, FinancialAidStatus.REJECTED]:
+    if financial_aid.status == FinancialAidStatus.APPROVED:
         program_enrollment = ProgramEnrollment.objects.get(
             user=financial_aid.user,
             program=financial_aid.tier_program.program

@@ -94,7 +94,7 @@ class FinancialAidSkipSerializer(serializers.Serializer):
         Validators for this serializer
         """
         if self.instance.status in FinancialAidStatus.TERMINAL_STATUSES:
-            raise ValidationError("Financial aid cannot be skipped once it has been approved, rejected, or skipped.")
+            raise ValidationError("Financial aid cannot be skipped once it has been approved or skipped.")
         return data
 
     def save(self):
@@ -113,7 +113,6 @@ class FinancialAidActionSerializer(serializers.Serializer):
     """
     action = ChoiceField(
         choices=[
-            FinancialAidStatus.REJECTED,
             FinancialAidStatus.APPROVED,
             FinancialAidStatus.PENDING_MANUAL_APPROVAL
         ],
@@ -126,9 +125,6 @@ class FinancialAidActionSerializer(serializers.Serializer):
         Validators for this serializer
         """
         # Check that the previous financial aid status allows for the new status
-        if (data['action'] == FinancialAidStatus.REJECTED and
-                self.instance.status != FinancialAidStatus.PENDING_MANUAL_APPROVAL):
-            raise ValidationError("Cannot reject application that is not pending manual approval.")
         if (data['action'] == FinancialAidStatus.APPROVED and
                 self.instance.status != FinancialAidStatus.PENDING_MANUAL_APPROVAL):
             raise ValidationError("Cannot approve application that is not pending manual approval.")
@@ -154,9 +150,6 @@ class FinancialAidActionSerializer(serializers.Serializer):
         self.instance.status = self.validated_data["action"]
         if self.instance.status == FinancialAidStatus.APPROVED:
             self.instance.tier_program = self.validated_data["tier_program"]
-        elif self.instance.status == FinancialAidStatus.REJECTED:
-            # Not currently a valid status to save as
-            self.instance.tier_program = get_no_discount_tier_program(self.instance.tier_program.program_id)
         elif self.instance.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL:
             # This is intentionally left blank for clarity that this is a valid status for .save()
             pass

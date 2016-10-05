@@ -17,7 +17,6 @@ import {
   FA_STATUS_DOCS_SENT,
   FA_STATUS_PENDING_MANUAL_APPROVAL,
   FA_STATUS_APPROVED,
-  FA_STATUS_REJECTED,
   FA_STATUS_SKIPPED,
 } from '../../constants';
 
@@ -93,7 +92,7 @@ describe("FinancialAidCard", () => {
   });
 
   describe('applied', () => {
-    for (let status of [FA_STATUS_APPROVED, FA_STATUS_AUTO_APPROVED, FA_STATUS_SKIPPED, FA_STATUS_REJECTED]) {
+    for (let status of [FA_STATUS_APPROVED, FA_STATUS_AUTO_APPROVED, FA_STATUS_SKIPPED]) {
       it(`shows the cost if the status is ${status}`, () => {
         let program = programWithStatus(status);
         let wrapper = renderCard({ program });

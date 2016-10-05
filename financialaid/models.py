@@ -105,20 +105,18 @@ class FinancialAidStatus:
     DOCS_SENT = 'docs-sent'
     PENDING_MANUAL_APPROVAL = 'pending-manual-approval'
     APPROVED = 'approved'
-    REJECTED = 'rejected'
     SKIPPED = 'skipped'
 
     ALL_STATUSES = [
         CREATED,
         APPROVED,
         AUTO_APPROVED,
-        REJECTED,
         PENDING_DOCS,
         DOCS_SENT,
         PENDING_MANUAL_APPROVAL,
         SKIPPED
     ]
-    TERMINAL_STATUSES = [APPROVED, AUTO_APPROVED, REJECTED, SKIPPED]
+    TERMINAL_STATUSES = [APPROVED, AUTO_APPROVED, SKIPPED]
     STATUS_MESSAGES_DICT = {
         CREATED: "Created Applications",
         AUTO_APPROVED: "Auto-approved Applications",
@@ -126,7 +124,6 @@ class FinancialAidStatus:
         DOCS_SENT: "Incomplete Applications (Documents Sent)",
         PENDING_MANUAL_APPROVAL: "Pending Applications",
         APPROVED: "Approved Applications",
-        REJECTED: "Rejected Applications",
     }
 
 
