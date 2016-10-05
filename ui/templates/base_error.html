@@ -42,7 +42,11 @@
         {% if authenticated %}
         <ul class="nav navbar-toolbar navbar-left">
           <li class="active">
-            <a href="/dashboard">Dashboard</a>
+            {% if is_staff %}
+              <a href="/learners">Dashboard</a>
+            {% else %}
+              <a href="/dashboard">Dashboard</a>
+            {% endif %}
           </li>
         </ul>
         {% endif %}
