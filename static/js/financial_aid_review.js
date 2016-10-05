@@ -7,11 +7,11 @@ var financialAidReview = function() {
   /**
    * Marks documents as received for a financial aid application
    * 
-   * @param financial_aid_id {number} Financial aid application id
+   * @param financialAidId {number} Financial aid application id
    * @param url {string} URL to submit request to
    */
-  function submitDocsReceived(financial_aid_id, url) {
-    var name = $("#full-name-" + financial_aid_id).text().trim();
+  function submitDocsReceived(financialAidId, url) {
+    var name = $("#full-name-" + financialAidId).text().trim();
     if (confirm("Click OK to mark documents as received for " + name + "'s financial aid application.")) {
       var action = "{{ statuses.PENDING_MANUAL_APPROVAL }}";
       $.ajax({
@@ -28,7 +28,7 @@ var financialAidReview = function() {
             "Successfully marked documents as received for " + name + "'s financial aid application.",
             "success"
           );
-          $("#application-row-" + financial_aid_id + ", #application-email-row-" + financial_aid_id).remove();
+          $("#application-row-" + financialAidId + ", #application-email-row-" + financialAidId).remove();
         },
         "error": function(result) {
           displayMessage("Error: " + result.responseText + " on " + name + "'s financial aid application.", "danger");
@@ -40,15 +40,15 @@ var financialAidReview = function() {
   /**
    * Submits a financial aid application approval
    * 
-   * @param financial_aid_id {number} Financial aid application id
+   * @param financialAidId {number} Financial aid application id
    * @param url {string} URL to submit request to
    */
-  function submitApproval(financial_aid_id, url) {
-    var name = $("#full-name-" + financial_aid_id).text().trim();
+  function submitApproval(financialAidId, url) {
+    var name = $("#full-name-" + financialAidId).text().trim();
     if (confirm("Click OK to approve " + name + "'s financial aid application.")) {
       var action = "{{ statuses.APPROVED }}";
-      var justification = $("#justification-" + financial_aid_id).val();
-      var tier_program_id = $("#tier-program-id-" + financial_aid_id).val();
+      var justification = $("#justification-" + financialAidId).val();
+      var tier_program_id = $("#tier-program-id-" + financialAidId).val();
       $.ajax({
         "url": url,
         "type": "PATCH",
@@ -62,7 +62,7 @@ var financialAidReview = function() {
         },
         "success": function() {
           displayMessage("Successfully approved " + name + "'s financial aid application.", "success");
-          $("#application-row-" + financial_aid_id + ", #application-email-row-" + financial_aid_id).remove();
+          $("#application-row-" + financialAidId + ", #application-email-row-" + financialAidId).remove();
         },
         "error": function(result) {
           displayMessage("Error: " + result.responseText + " on " + name + "'s financial aid application.", "danger");
@@ -74,14 +74,14 @@ var financialAidReview = function() {
   /**
    * Submits a financial aid email request
    * 
-   * @param financial_aid_id {number} Financial aid application id
+   * @param financialAidId {number} Financial aid application id
    * @param url {string} URL to submit request to
    */
-  function sendEmail(financial_aid_id, url) {
-    var name = $("#full-name-" + financial_aid_id).text().trim();
+  function sendEmail(financialAidId, url) {
+    var name = $("#full-name-" + financialAidId).text().trim();
     if (confirm("Click OK to send email to " + name)) {
-      var emailSubject = $("#email-form-" + financial_aid_id + " [name='email_subject']").val();
-      var emailBody = $("#email-form-" + financial_aid_id + " [name='email_body']").val();
+      var emailSubject = $("#email-form-" + financialAidId + " [name='email_subject']").val();
+      var emailBody = $("#email-form-" + financialAidId + " [name='email_body']").val();
       $.ajax({
         "url": url,
         "type": "POST",
@@ -94,8 +94,8 @@ var financialAidReview = function() {
         },
         "success": function() {
           displayMessage("Successfully sent email to " + name, "success");
-          $("#email-form-" + financial_aid_id).trigger("reset");
-          $("#application-email-row-" + financial_aid_id).hide();
+          $("#email-form-" + financialAidId).trigger("reset");
+          $("#application-email-row-" + financialAidId).hide();
         },
         "error": function(result) {
           displayMessage("Error in sending email to " + name + ": " + result.responseText, "danger");
@@ -116,7 +116,7 @@ var financialAidReview = function() {
    * Toggles currency display
    */
   function toggleCurrency(currency) {
-    if (currency == "USD") {
+    if (currency === "USD") {
       $(".income-usd").show();
       $(".income-local").hide();
     } else {
@@ -153,6 +153,6 @@ var financialAidReview = function() {
     initiateSearch: initiateSearch,
     toggleCurrency: toggleCurrency,
     toggleEmailDisplay: toggleEmailDisplay
-  }
+  };
   
 }();
