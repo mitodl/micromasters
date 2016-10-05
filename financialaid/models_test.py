@@ -1,6 +1,7 @@
 """
 Tests for financialaid models
 """
+import datetime
 from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from factory.django import mute_signals
@@ -90,22 +91,37 @@ class FinancialAidModelsTests(ESTestCase):
 
     def test_to_dict(self):
         """
-        Tests that to_dict() function on FinancialAid
+        Tests the to_dict() function on FinancialAid
         """
-        financial_aid = FinancialAidFactory.create()
+        financial_aid = FinancialAidFactory.create(date_documents_sent=datetime.datetime.now())
         financial_aid_dict = financial_aid.to_dict()
+        audit_key_list = [
+            "user",
+            "tier_program",
+            "status",
+            "original_currency",
+            "country_of_income",
+            "date_exchange_rate",
+            "date_documents_sent",
+            "income_usd",
+            "original_income"
+        ]
+        assert set(financial_aid_dict.keys()).issuperset(set(audit_key_list))
         assert financial_aid_dict["user"] == financial_aid.user.id
         assert financial_aid_dict["tier_program"] == financial_aid.tier_program.id
         assert financial_aid_dict["status"] == financial_aid.status
         assert financial_aid_dict["original_currency"] == financial_aid.original_currency
         assert financial_aid_dict["country_of_income"] == financial_aid.country_of_income
+        assert financial_aid_dict["date_exchange_rate"] == str(financial_aid.date_exchange_rate)
+        assert financial_aid_dict["date_documents_sent"] == str(financial_aid.date_documents_sent)
         self.assertAlmostEqual(financial_aid_dict["income_usd"], financial_aid.income_usd)
         self.assertAlmostEqual(financial_aid_dict["original_income"], financial_aid.original_income)
-        if financial_aid.date_exchange_rate is None:
-            assert financial_aid_dict["date_exchange_rate"] == financial_aid.date_exchange_rate
-        else:
-            assert financial_aid_dict["date_exchange_rate"] == str(financial_aid.date_exchange_rate)
-        if financial_aid.date_documents_sent is None:
-            assert financial_aid_dict["date_documents_sent"] == financial_aid.date_documents_sent
-        else:
-            assert financial_aid_dict["date_documents_sent"] == str(financial_aid.date_documents_sent)
+
+    def test_to_dict_with_null_values(self):  # pylint: disable=no-self-use
+        """
+        Tests the to_dict() function on FinancialAid with none-values in date fields
+        """
+        financial_aid = FinancialAidFactory.create(date_exchange_rate=None, date_documents_sent=None)
+        financial_aid_dict = financial_aid.to_dict()
+        assert financial_aid_dict["date_exchange_rate"] == financial_aid.date_exchange_rate
+        assert financial_aid_dict["date_documents_sent"] == financial_aid.date_documents_sent
