@@ -36,6 +36,8 @@ export const addFinancialAid = (income: number, currency: string, programId: num
     return api.addFinancialAid(income, currency, programId).then(
       () => {
         dispatch(receiveAddFinancialAidSuccess());
+        dispatch(fetchCoursePrices());
+        dispatch(fetchDashboard());
         return Promise.resolve();
       },
       () => {

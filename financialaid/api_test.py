@@ -183,6 +183,15 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
         assert determine_tier_program(self.program, 34938234) == self.tier_programs["75k"]
         assert determine_tier_program(self.program, 34938234) != self.tier_programs["75k_not_current"]
 
+    def test_determine_tier_program_improper_setup(self):
+        """
+        Tests that determine_tier_program() raises ImproperlyConfigured if no $0-discount TierProgram
+        has been created and income supplied is too low.
+        """
+        program = ProgramFactory.create()
+        with self.assertRaises(ImproperlyConfigured):
+            determine_tier_program(program, 0)
+
     def test_determine_auto_approval(self):  # pylint: disable=no-self-use
         """
         Tests determine_auto_approval()
@@ -280,7 +289,6 @@ class CoursePriceAPITests(FinancialAidBaseTestCase):
         expected_response = {
             "program_id": enrollment.program.id,
             "price": self.course_price.price - self.financialaid_approved.tier_program.discount_amount,
-            "financial_aid_adjustment": True,
             "financial_aid_availability": True,
             "has_financial_aid_request": True
         }
@@ -296,8 +304,7 @@ class CoursePriceAPITests(FinancialAidBaseTestCase):
         enrollment = self.program_enrollment_ep2
         expected_response = {
             "program_id": enrollment.program.id,
-            "price": self.course_price.price,
-            "financial_aid_adjustment": False,
+            "price": self.course_price.price - self.financialaid_approved.tier_program.discount_amount,
             "financial_aid_availability": True,
             "has_financial_aid_request": True
         }
@@ -315,7 +322,6 @@ class CoursePriceAPITests(FinancialAidBaseTestCase):
         expected_response = {
             "program_id": enrollment.program.id,
             "price": self.course_price.price,
-            "financial_aid_adjustment": False,
             "financial_aid_availability": True,
             "has_financial_aid_request": False
         }
@@ -334,7 +340,6 @@ class CoursePriceAPITests(FinancialAidBaseTestCase):
         expected_response = {
             "program_id": enrollment.program.id,
             "price": self.course_price.price,
-            "financial_aid_adjustment": False,
             "financial_aid_availability": False,
             "has_financial_aid_request": False
         }

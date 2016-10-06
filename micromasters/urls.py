@@ -13,7 +13,10 @@ from courses.views import (
     ProgramEnrollmentListView,
     ProgramViewSet,
 )
-from dashboard.views import UserDashboard
+from dashboard.views import (
+    UserCourseEnrollment,
+    UserDashboard,
+)
 from ecommerce.views import (
     CheckoutView,
     OrderFulfillmentView,
@@ -47,6 +50,7 @@ urlpatterns = [
     url(r'^api/v0/search/(?P<elastic_url>.*)', ElasticProxyView.as_view(), name='search_api'),
     url(r'^api/v0/checkout/$', CheckoutView.as_view(), name='checkout'),
     url(r'^api/v0/enrolledprograms/$', ProgramEnrollmentListView.as_view(), name='user_program_enrollments'),
+    url(r'^api/v0/course_enrollments/$', UserCourseEnrollment.as_view(), name='user_course_enrollments'),
     url(r'^api/v0/mail/$', SearchResultMailView.as_view(), name='search_result_mail_api'),
     url(r'^api/v0/financial_aid_mail/(?P<financial_aid_id>[\d]+)/$', FinancialAidMailView.as_view(),
         name='financial_aid_mail_api'),

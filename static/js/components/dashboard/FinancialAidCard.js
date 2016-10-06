@@ -38,7 +38,6 @@ export default class FinancialAidCard extends React.Component {
     documents:                      DocumentsState,
     setDocumentSentDate:            (sentDate: string) => void,
     updateDocumentSentDate:         (financialAidId: number, sentDate: string) => Promise<*>,
-    fetchDashboard:                 () => void,
     setConfirmSkipDialogVisibility: (b: boolean) => void,
     ui:                             UIState,
     skipFinancialAid:               () => void,
@@ -46,14 +45,13 @@ export default class FinancialAidCard extends React.Component {
 
   submitDocuments = (): void => {
     const {
-      fetchDashboard,
       program,
       documents,
       updateDocumentSentDate,
     } = this.props;
     const financialAidId = program.financial_aid_user_info.id;
 
-    updateDocumentSentDate(financialAidId, documents.documentSentDate).then(fetchDashboard);
+    updateDocumentSentDate(financialAidId, documents.documentSentDate);
   };
 
   renderDocumentStatus() {

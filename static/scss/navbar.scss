@@ -42,6 +42,10 @@
   .micromasters-header {
     justify-content: space-between;
     height: 75px;
+    padding: 0 40px 0 40px;
+    @media screen and (max-width: 1024px) {
+      padding: 0 40px 0 40px;
+    }
   }
 }
 

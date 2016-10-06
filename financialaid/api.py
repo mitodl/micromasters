@@ -35,6 +35,13 @@ def determine_tier_program(program, income):
     # be the tier assigned to the user.
     tier_programs_set = program.tier_programs.filter(current=True, income_threshold__lte=income)
     tier_program = tier_programs_set.order_by("-income_threshold").first()
+    if tier_program is None:
+        message = (
+            "$0-income-threshold TierProgram has not yet been configured for Program "
+            "with id {program_id}.".format(program_id=program.id)
+        )
+        log.error(message)
+        raise ImproperlyConfigured(message)
     return tier_program
 
 
@@ -83,22 +90,27 @@ def get_no_discount_tier_program(program_id):
     try:
         return TierProgram.objects.get(program_id=program_id, current=True, discount_amount=0)
     except TierProgram.DoesNotExist:
-        log.error("No discount TierProgram has not yet been configured for Program with id %s.", program_id)
-        raise ImproperlyConfigured(
-            "No discount TierProgram has not yet been configured for Program with id {}.".format(program_id))
+        message = "No-discount TierProgram has not yet been configured for Program with id {program_id}.".format(
+            program_id=program_id
+        )
+        log.error(message)
+        raise ImproperlyConfigured(message)
 
 
 def get_formatted_course_price(program_enrollment):
     """
     Returns dictionary of information about the course price for a learner.
 
+    Note: "price" will always include discounts from financial aid applications, even if the
+    application's status is not yet approved.
+
     Args:
         program_enrollment (ProgramEnrollment): program enrollment record for the learner
             whose price we're retrieving
     Returns:
         dict: {
-            "price": float - the course price
-            "financial_aid_adjustment": bool - if financial aid is approved and has been applied to this course price,
+            "program_id": int - the Program's id
+            "price": float - the course price minus any discounts (whether or not it's approved)
             "financial_aid_availability": bool - Program.financial_aid_availability,
             "has_financial_aid_request": bool - if has a financial aid request
         }
@@ -107,7 +119,6 @@ def get_formatted_course_price(program_enrollment):
     program = program_enrollment.program
 
     has_financial_aid_request = False
-    financial_aid_adjustment = False
     financial_aid_availability = False
     course_price = program.get_course_price()
 
@@ -122,14 +133,10 @@ def get_formatted_course_price(program_enrollment):
             has_financial_aid_request = True
             # FinancialAid.save() only allows one object per (user, tier_program__program) pair
             financial_aid = financial_aid_queryset.first()
-            if financial_aid.status == FinancialAidStatus.APPROVED:
-                # If the financial aid request is approved, adjust course price
-                course_price = course_price - financial_aid.tier_program.discount_amount
-                financial_aid_adjustment = True
+            course_price = course_price - financial_aid.tier_program.discount_amount
     return {
         "program_id": program.id,
         "price": course_price,
-        "financial_aid_adjustment": financial_aid_adjustment,
         "financial_aid_availability": financial_aid_availability,
         "has_financial_aid_request": has_financial_aid_request
     }

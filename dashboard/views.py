@@ -2,16 +2,19 @@
 Views for dashboard REST APIs
 """
 import logging
+from datetime import datetime
 
+import pytz
 from django.conf import settings
+from edx_api.client import EdxApi
 from rest_framework import (
     authentication,
     permissions,
+    status,
 )
+from rest_framework.exceptions import ValidationError
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
-from edx_api.client import EdxApi
 
 from backends import utils
 from backends.edxorg import EdxOrgOAuth2
@@ -21,8 +24,10 @@ from dashboard.api import (
     get_student_certificates,
     get_student_current_grades,
     get_student_enrollments,
+    update_cached_enrollment,
 )
 from dashboard.utils import MMTrack
+from profiles.api import get_social_username
 
 
 log = logging.getLogger(__name__)
@@ -71,3 +76,52 @@ class UserDashboard(APIView):
             )
             response_data.append(get_info_for_program(mmtrack_info))
         return Response(response_data)
+
+
+class UserCourseEnrollment(APIView):
+    """
+    Create an audit enrollment for the user in a given course run identified by course_id.
+    """
+    authentication_classes = (authentication.SessionAuthentication, )
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request):  # pylint: disable=no-self-use
+        """
+        Audit enrolls the user in a course in edx
+        """
+        course_id = request.data.get('course_id')
+        if course_id is None:
+            raise ValidationError('course id missing in the request')
+        # get the credentials for the current user for edX
+        user_social = request.user.social_auth.get(provider=EdxOrgOAuth2.name)
+        try:
+            utils.refresh_user_token(user_social)
+        except utils.InvalidCredentialStored as exc:
+            log.error(
+                "Error while refreshing credentials for user %s",
+                get_social_username(request.user),
+            )
+            return Response(
+                status=exc.http_status_code,
+                data={'error': str(exc)}
+            )
+
+        # create an instance of the client to query edX
+        edx_client = EdxApi(user_social.extra_data, settings.EDXORG_BASE_URL)
+
+        try:
+            enrollment = edx_client.enrollments.create_audit_student_enrollment(course_id)
+        except Exception as exc:  # pylint: disable=broad-except
+            log.error(
+                "Error creating audit enrollment for course key %s for user %s",
+                course_id,
+                get_social_username(request.user),
+            )
+            return Response(
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                data={'error': str(exc)}
+            )
+        update_cached_enrollment(request.user, enrollment, enrollment.course_id, datetime.now(pytz.UTC))
+        return Response(
+            data=enrollment.json
+        )

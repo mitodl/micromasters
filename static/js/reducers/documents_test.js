@@ -17,6 +17,7 @@ import {
   RECEIVE_UPDATE_DOCUMENT_SENT_DATE_FAILURE,
   updateDocumentSentDate,
 } from '../actions/documents';
+import * as actions from '../actions';
 import type { DocumentsState } from '../reducers/documents';
 import rootReducer from '../reducers';
 import * as api from '../util/api';
@@ -58,10 +59,14 @@ describe('documents reducers', () => {
   });
 
   describe('API functions', () => {
-    let updateDocumentSentDateStub;
+    let updateDocumentSentDateStub, fetchCoursePricesStub, fetchDashboardStub;
 
     beforeEach(() => {
       updateDocumentSentDateStub = sandbox.stub(api, 'updateDocumentSentDate');
+      fetchCoursePricesStub = sandbox.stub(actions, 'fetchCoursePrices');
+      fetchCoursePricesStub.returns({type: "fake"});
+      fetchDashboardStub = sandbox.stub(actions, 'fetchDashboard');
+      fetchDashboardStub.returns({type: "fake"});
     });
 
     it('should let you update the date documents were sent', () => {
@@ -74,6 +79,8 @@ describe('documents reducers', () => {
       ]).then(state => {
         assert.ok(updateDocumentSentDateStub.calledWith(programId, sentDate));
         assert.deepEqual(state.fetchStatus, FETCH_SUCCESS);
+        assert.ok(fetchCoursePricesStub.calledWith());
+        assert.ok(fetchDashboardStub.calledWith());
       });
     });
 
@@ -87,6 +94,8 @@ describe('documents reducers', () => {
       ]).then(state => {
         assert.ok(updateDocumentSentDateStub.calledWith(programId, sentDate));
         assert.deepEqual(state.fetchStatus, FETCH_FAILURE);
+        assert.notOk(fetchCoursePricesStub.calledWith());
+        assert.notOk(fetchDashboardStub.calledWith());
       });
     });
   });

@@ -15,12 +15,12 @@
   cursor: pointer;
 
   &.main-action {
-    background-color: $mm-brand-bg;
+    background-color: $blue-button;
     color: white;
   }
 
   &.signup {
-    background-color: $mm-brand-bg;
+    background-color: $blue-button;
     color: white;
     text-transform: none;
     display: block;
@@ -53,7 +53,7 @@
 }
 
 .dashboard-button {
-  background-color: $mm-brand-bg;
+  background-color: $blue-button;
   color: white;
   text-align: center;
   font-size: small;
@@ -61,7 +61,7 @@
   font-weight: 400;
 
   &[disabled] {
-    background-color: adjust-color($dashboard-button-teal, $alpha: -0.5);
+    background-color: adjust-color($blue-button, $alpha: -0.5);
   }
 }
 
@@ -79,13 +79,13 @@
   }
 
   &.save-button {
-    background-color: $dashboard-button-teal;
+    background-color: $blue-button;
     color: white;
     margin: 0 15px 15px 5px;
   }
 
   &.enroll-button {
-    background-color: $dashboard-button-green;
+    background-color: $blue-button;
     color: white;
     margin: 0 15px 15px 5px;
   }

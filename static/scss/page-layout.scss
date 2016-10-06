@@ -5,8 +5,9 @@ $border-box-sizing: true !global;
   padding: 27px 0 65px;
 
   .single-column {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
+    width: 96%;
   }
 
   .single-column-wide {
@@ -18,7 +19,7 @@ $border-box-sizing: true !global;
     display: flex;
     flex-direction: row;
     width: 96%;
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 0 auto;
 
     .first-column {

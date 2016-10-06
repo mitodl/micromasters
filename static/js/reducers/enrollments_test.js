@@ -31,6 +31,7 @@ import {
   SET_CURRENT_PROGRAM_ENROLLMENT,
 } from '../actions/enrollments';
 import * as api from '../util/api';
+import * as actions from '../actions';
 import rootReducer from '../reducers';
 
 describe('enrollments', () => {
@@ -53,9 +54,14 @@ describe('enrollments', () => {
   };
 
   describe('enrollments reducer', () => {
-    let dispatchThen;
+    let dispatchThen, fetchCoursePricesStub, fetchDashboardStub;
     beforeEach(() => {
       dispatchThen = store.createDispatchThen(state => state.enrollments);
+
+      fetchCoursePricesStub = sandbox.stub(actions, 'fetchCoursePrices');
+      fetchCoursePricesStub.returns({type: "fake"});
+      fetchDashboardStub = sandbox.stub(actions, 'fetchDashboard');
+      fetchDashboardStub.returns({type: "fake"});
     });
 
     it('should have an empty default state', () => {
@@ -108,6 +114,8 @@ describe('enrollments', () => {
         assert.deepEqual(enrollmentsState.programEnrollments, PROGRAM_ENROLLMENTS.concat(newEnrollment));
         assert.equal(addProgramEnrollmentStub.callCount, 1);
         assert.deepEqual(addProgramEnrollmentStub.args[0], [newEnrollment.id]);
+        assert.ok(fetchCoursePricesStub.calledWith());
+        assert.ok(fetchDashboardStub.calledWith());
 
         assert.deepEqual(
           store.getState().ui.toastMessage,
@@ -133,13 +141,16 @@ describe('enrollments', () => {
         assert.deepEqual(enrollmentsState.programEnrollments, PROGRAM_ENROLLMENTS);
         assert.equal(addProgramEnrollmentStub.callCount, 1);
         assert.deepEqual(addProgramEnrollmentStub.args[0], [newEnrollment.id]);
+        assert.notOk(fetchCoursePricesStub.calledWith());
+        assert.notOk(fetchDashboardStub.calledWith());
 
         assert.deepEqual(
           store.getState().ui.toastMessage,
           {
             message: "There was an error during enrollment",
             icon: TOAST_FAILURE,
-          });
+          }
+        );
       });
     });
 

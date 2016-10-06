@@ -16,7 +16,7 @@ body {
   margin: 0 0 20px 0;
   min-height: 150px;
   width: 100%;
-  border-radius: 2px;
+  border-radius: 0;
 
   .mdl-card__title {
     padding: 0;
@@ -36,7 +36,7 @@ body {
 }
 
 .mdl-shadow--2dp, .mdl-shadow--3dp {
-  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.19);
+  box-shadow: none;
 }
 
 p {

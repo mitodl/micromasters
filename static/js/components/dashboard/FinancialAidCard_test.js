@@ -152,21 +152,15 @@ describe("FinancialAidCard", () => {
         assert.ok(setDocumentSentDate.calledWith("1999-01-01"));
       });
 
-      it('sends the document date', done => {
+      it('sends the document date', () => {
         let program = programWithStatus(FA_STATUS_PENDING_DOCS);
 
         let updateDocumentSentDate = sandbox.stub();
-        let fetchDashboard = () => {
-          // should be the last thing executed
-          done();
-        };
         updateDocumentSentDate.returns(Promise.resolve());
-        let wrapper = renderCard({ program, updateDocumentSentDate, fetchDashboard });
+        let wrapper = renderCard({ program, updateDocumentSentDate });
 
         wrapper.find(".dashboard-button").simulate('click');
         assert(updateDocumentSentDate.calledWith(123, '2011-11-11'));
-
-        // the test is also waiting for fetchDashboard to execute
       });
 
       for (let status of [FA_STATUS_DOCS_SENT, FA_STATUS_PENDING_MANUAL_APPROVAL]) {

@@ -25,7 +25,6 @@ import DashboardUserCard from '../components/dashboard/DashboardUserCard';
 import FinancialAidCard from '../components/dashboard/FinancialAidCard';
 import ErrorMessage from '../components/ErrorMessage';
 import ProgressWidget from '../components/ProgressWidget';
-import { fetchDashboard } from '../actions';
 import { setCalculatorDialogVisibility } from '../actions/ui';
 import {
   setDocumentSentDate,
@@ -141,11 +140,6 @@ class DashboardPage extends React.Component {
     dispatch(setConfirmSkipDialogVisibility(bool));
   };
 
-  fetchDashboard = (): void => {
-    const { dispatch } = this.props;
-    dispatch(fetchDashboard());
-  };
-
   updateDocumentSentDate = (financialAidId: number, sentDate: string): Promise<*> => {
     const { dispatch } = this.props;
     return dispatch(updateDocumentSentDate(financialAidId, sentDate));
@@ -186,7 +180,6 @@ class DashboardPage extends React.Component {
           setDocumentSentDate={this.setDocumentSentDate}
           skipFinancialAid={this.skipFinancialAid}
           updateDocumentSentDate={this.updateDocumentSentDate}
-          fetchDashboard={this.fetchDashboard}
           setConfirmSkipDialogVisibility={this.setConfirmSkipDialogVisibility}
           ui={ui}
         />;

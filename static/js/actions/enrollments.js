@@ -6,6 +6,10 @@ import {
   TOAST_SUCCESS,
   TOAST_FAILURE,
 } from '../constants';
+import {
+  fetchCoursePrices,
+  fetchDashboard,
+} from './';
 import { setToastMessage } from '../actions/ui';
 import type { Dispatcher } from '../flow/reduxTypes';
 import type {
@@ -55,6 +59,8 @@ export const addProgramEnrollment = (programId: number): Dispatcher<ProgramEnrol
           message: `You are now enrolled in the ${enrollment.title} MicroMasters`,
           icon: TOAST_SUCCESS
         }));
+        dispatch(fetchDashboard());
+        dispatch(fetchCoursePrices());
       }).
       catch(error => {
         dispatch(receiveAddProgramEnrollmentFailure(error));

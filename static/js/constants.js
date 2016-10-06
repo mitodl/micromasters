@@ -560,13 +560,11 @@ export const FINANCIAL_AID_PARTIAL_RESPONSE = {
 export const COURSE_PRICES_RESPONSE = [{
   program_id: DASHBOARD_RESPONSE[1].id,
   price: 100.00,
-  financial_aid_adjustment: false,
   financial_aid_availability: false,
   has_financial_aid_request: false
 }, {
   program_id: DASHBOARD_RESPONSE[2].id,
   price: 200.00,
-  financial_aid_adjustment: false,
   financial_aid_availability: false,
   has_financial_aid_request: false
 }];
