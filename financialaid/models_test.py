@@ -101,6 +101,7 @@ class FinancialAidModelsTests(ESTestCase):
             "date_exchange_rate",
             "id",
             "income_usd",
+            "justification",
             "original_currency",
             "original_income",
             "status",
