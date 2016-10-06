@@ -302,6 +302,17 @@ class CybersourceTests(ESTestCase):
 
         assert b64encode(digest).decode('utf-8') == signature
 
+    def test_invalid_signature(self):
+        """
+        Tests that generate_cybersource_sa_signature() returns "" if 'signed_field_names' is not passed
+        """
+        payload = {
+            'x': 'y',
+            'abc': 'def',
+            'key': 'value',
+        }
+        assert generate_cybersource_sa_signature(payload) == ""
+
     def test_signed_payload(self):
         """
         A valid payload should be signed appropriately

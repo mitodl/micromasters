@@ -146,7 +146,10 @@ def generate_cybersource_sa_signature(payload):
     """
     # This is documented in certain CyberSource sample applications:
     # http://apps.cybersource.com/library/documentation/dev_guides/Secure_Acceptance_SOP/html/wwhelp/wwhimpl/js/html/wwhelp.htm#href=creating_profile.05.6.html
-    keys = payload['signed_field_names'].split(',')
+    signed_field_names = payload.get('signed_field_names', None)
+    if signed_field_names is None:
+        return ''
+    keys = signed_field_names.split(',')
     message = ','.join('{}={}'.format(key, payload[key]) for key in keys)
 
     digest = hmac.new(
