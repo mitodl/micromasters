@@ -11,10 +11,9 @@ var financialAidReview = function() {
    * @param financialAidId {number} Financial aid application id
    * @param url {string} URL to submit request to
    */
-  function submitDocsReceived(financialAidId, url) {
+  function submitDocsReceived(financialAidId, url, action) {
     var name = $("#full-name-" + financialAidId).text().trim();
     if (confirm("Click OK to mark documents as received for " + name + "'s financial aid application.")) {
-      var action = "{{ statuses.PENDING_MANUAL_APPROVAL }}";
       $.ajax({
         "url": url,
         "type": "PATCH",
@@ -44,10 +43,9 @@ var financialAidReview = function() {
    * @param financialAidId {number} Financial aid application id
    * @param url {string} URL to submit request to
    */
-  function submitApproval(financialAidId, url) {
+  function submitApproval(financialAidId, url, action) {
     var name = $("#full-name-" + financialAidId).text().trim();
     if (confirm("Click OK to approve " + name + "'s financial aid application.")) {
-      var action = "{{ statuses.APPROVED }}";
       var justification = $("#justification-" + financialAidId).val();
       var tierProgramId = $("#tier-program-id-" + financialAidId).val();
       $.ajax({
