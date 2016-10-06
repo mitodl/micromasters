@@ -214,7 +214,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         expected_obj_id_list = FinancialAid.objects.filter(
             tier_program__program_id=self.program.id,
             status=FinancialAidStatus.AUTO_APPROVED
-        ).order_by("user__profile__first_name").values_list("id", flat=True)  # Default sort field
+        ).order_by("user__profile__last_name").values_list("id", flat=True)  # Default sort field
         self.assertListEqual(list(resp_obj_id_list), list(expected_obj_id_list))
         # Should work with sorting
         url_with_sorting = "{url}?sort_by=-last_name".format(url=self.review_url)
