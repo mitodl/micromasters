@@ -19,7 +19,6 @@ import {
   FA_STATUS_AUTO_APPROVED,
   FA_STATUS_PENDING_DOCS,
   FA_STATUS_PENDING_MANUAL_APPROVAL,
-  FA_STATUS_REJECTED,
   FA_STATUS_DOCS_SENT,
   FA_STATUS_SKIPPED,
   DASHBOARD_FORMAT,
@@ -146,7 +145,6 @@ export default class FinancialAidCard extends React.Component {
     switch (program.financial_aid_user_info.application_status) {
     case FA_STATUS_APPROVED:
     case FA_STATUS_AUTO_APPROVED:
-    case FA_STATUS_REJECTED:
     case FA_STATUS_SKIPPED:
       return <Grid className="financial-aid-box">
         <Cell col={12}>

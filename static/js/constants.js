@@ -52,7 +52,6 @@ export const FA_STATUS_DOCS_SENT = 'docs-sent';
 export const FA_STATUS_PENDING_MANUAL_APPROVAL = 'pending-manual-approval';
 export const FA_STATUS_APPROVED = 'approved';
 export const FA_STATUS_AUTO_APPROVED = 'auto-approved';
-export const FA_STATUS_REJECTED = 'rejected';
 export const FA_STATUS_SKIPPED = 'skipped';
 
 export const FA_PENDING_STATUSES = [

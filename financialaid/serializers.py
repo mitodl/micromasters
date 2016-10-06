@@ -97,7 +97,7 @@ class FinancialAidSkipSerializer(serializers.Serializer):
         Validators for this serializer
         """
         if self.instance.status in FinancialAidStatus.TERMINAL_STATUSES:
-            raise ValidationError("Financial aid cannot be skipped once it has been approved, rejected, or skipped.")
+            raise ValidationError("Financial aid cannot be skipped once it has been approved or skipped.")
         return data
 
     def save(self):
@@ -116,7 +116,6 @@ class FinancialAidActionSerializer(serializers.Serializer):
     """
     action = ChoiceField(
         choices=[
-            FinancialAidStatus.REJECTED,
             FinancialAidStatus.APPROVED,
             FinancialAidStatus.PENDING_MANUAL_APPROVAL
         ],
@@ -136,8 +135,8 @@ class FinancialAidActionSerializer(serializers.Serializer):
         # Required field
         if data.get("action") is None:
             raise ValidationError({"action": "This field is required."})
-        # For approving and rejecting
-        if data["action"] in [FinancialAidStatus.APPROVED, FinancialAidStatus.REJECTED]:
+        # For approving
+        if data["action"] == FinancialAidStatus.APPROVED:
             # Required fields
             if data.get("tier_program_id") is None:
                 raise ValidationError({"tier_program_id": "This field is required."})
@@ -145,7 +144,7 @@ class FinancialAidActionSerializer(serializers.Serializer):
                 raise ValidationError({"justification": "This field is required."})
             # Required instance status
             if self.instance.status != FinancialAidStatus.PENDING_MANUAL_APPROVAL:
-                raise ValidationError("Cannot approve or reject application that is not pending manual approval.")
+                raise ValidationError("Cannot approve an application that is not pending manual approval.")
             # Check tier program exists
             try:
                 data["tier_program"] = TierProgram.objects.get(
@@ -168,10 +167,6 @@ class FinancialAidActionSerializer(serializers.Serializer):
         self.instance.status = self.validated_data["action"]
         if self.instance.status == FinancialAidStatus.APPROVED:
             self.instance.tier_program = self.validated_data["tier_program"]
-            self.instance.justification = self.validated_data["justification"]
-        elif self.instance.status == FinancialAidStatus.REJECTED:
-            # Not currently a valid status to save as
-            self.instance.tier_program = get_no_discount_tier_program(self.instance.tier_program.program_id)
             self.instance.justification = self.validated_data["justification"]
         elif self.instance.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL:
             # This is intentionally left blank for clarity that this is a valid status for .save()

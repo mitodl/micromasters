@@ -17,12 +17,17 @@ from django.shortcuts import (
 )
 from django.utils.decorators import method_decorator
 from rolepermissions.shortcuts import available_perm_status
+from rolepermissions.verifications import has_role
 
 from micromasters.utils import webpack_dev_server_host, webpack_dev_server_url
 from profiles.api import get_social_username
 from profiles.permissions import CanSeeIfNotPrivate
 from ui.decorators import (
     require_mandatory_urls,
+)
+from roles.models import (
+    Instructor,
+    Staff,
 )
 
 log = logging.getLogger(__name__)
@@ -132,7 +137,8 @@ def standard_error_page(request, status_code, template_filename):
             "js_settings_json": "{}",
             "authenticated": authenticated,
             "name": name,
-            "username": username
+            "username": username,
+            "is_staff": has_role(request.user, [Staff.ROLE_ID, Instructor.ROLE_ID])
         }
     )
     response.status_code = status_code
