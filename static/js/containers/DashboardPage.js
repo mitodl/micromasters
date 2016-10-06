@@ -15,20 +15,31 @@ import {
   TOAST_SUCCESS,
   TOAST_FAILURE,
 } from '../constants';
-import { setToastMessage } from '../actions/ui';
+import {
+  setToastMessage,
+  setConfirmSkipDialogVisibility,
+} from '../actions/ui';
 import { createForm } from '../util/util';
 import CourseListCard from '../components/dashboard/CourseListCard';
 import DashboardUserCard from '../components/dashboard/DashboardUserCard';
 import FinancialAidCard from '../components/dashboard/FinancialAidCard';
 import ErrorMessage from '../components/ErrorMessage';
 import ProgressWidget from '../components/ProgressWidget';
+import { fetchDashboard } from '../actions';
 import { setCalculatorDialogVisibility } from '../actions/ui';
-import { setDocumentSentDate } from '../actions/documents';
+import {
+  setDocumentSentDate,
+  updateDocumentSentDate,
+} from '../actions/documents';
 import { startCalculatorEdit } from '../actions/financial_aid';
 import type { UIState } from '../reducers/ui';
+import type {
+  DocumentsState,
+} from '../reducers/documents';
 import type { CoursePricesState, DashboardState } from '../flow/dashboardTypes';
 import type { ProgramEnrollment } from '../flow/enrollmentTypes';
 import type { ProfileGetResult } from '../flow/profileTypes';
+import { skipFinancialAid } from '../actions/financial_aid';
 
 class DashboardPage extends React.Component {
   static contextTypes = {
@@ -36,10 +47,10 @@ class DashboardPage extends React.Component {
   };
 
   props: {
-    coursePrices:             CoursePricesState,
     profile:                  ProfileGetResult,
     currentProgramEnrollment: ProgramEnrollment,
     dashboard:                DashboardState,
+    prices:                   CoursePricesState,
     dispatch:                 Dispatch,
     setCalculatorVisibility:  (b: boolean) => void,
     ui:                       UIState,
@@ -113,32 +124,55 @@ class DashboardPage extends React.Component {
     dispatch(startCalculatorEdit(currentProgramEnrollment.id));
   };
 
-  setDocumentSentDate = newDate => {
+  setDocumentSentDate = (newDate: string): void => {
     const { dispatch } = this.props;
     dispatch(setDocumentSentDate(newDate));
   };
 
+  skipFinancialAid = programId => {
+    const { dispatch } = this.props;
+    dispatch(skipFinancialAid(programId)).then(() => {
+      this.setConfirmSkipDialogVisibility(false);
+    });
+  };
+
+  setConfirmSkipDialogVisibility = bool => {
+    const { dispatch } = this.props;
+    dispatch(setConfirmSkipDialogVisibility(bool));
+  };
+
+  fetchDashboard = (): void => {
+    const { dispatch } = this.props;
+    dispatch(fetchDashboard());
+  };
+
+  updateDocumentSentDate = (financialAidId: number, sentDate: string): Promise<*> => {
+    const { dispatch } = this.props;
+    return dispatch(updateDocumentSentDate(financialAidId, sentDate));
+  };
+
   render() {
     const {
-      coursePrices,
       dashboard,
+      prices,
       profile: { profile },
-      documents: { documentSentDate },
+      documents,
       currentProgramEnrollment,
+      ui,
     } = this.props;
-    const loaded = dashboard.fetchStatus !== FETCH_PROCESSING;
+    const loaded = dashboard.fetchStatus !== FETCH_PROCESSING && prices.fetchStatus !== FETCH_PROCESSING;
     let errorMessage;
     let dashboardContent;
     // if there are no errors coming from the backend, simply show the dashboard
     let program, coursePrice;
     if (!_.isNil(currentProgramEnrollment)) {
       program = dashboard.programs.find(program => program.id === currentProgramEnrollment.id);
-      coursePrice = coursePrices.coursePrices.find(prices => prices.program_id === currentProgramEnrollment.id);
+      coursePrice = prices.coursePrices.find(coursePrice => coursePrice.program_id === currentProgramEnrollment.id);
     }
     if (dashboard.errorInfo !== undefined) {
       errorMessage = <ErrorMessage errorInfo={dashboard.errorInfo}/>;
-    } else if (coursePrices.errorInfo !== undefined) {
-      errorMessage = <ErrorMessage errorInfo={coursePrices.errorInfo} />;
+    } else if (prices.errorInfo !== undefined) {
+      errorMessage = <ErrorMessage errorInfo={prices.errorInfo} />;
     } else if (_.isNil(program) || _.isNil(coursePrice)) {
       errorMessage = <ErrorMessage errorInfo={{user_message: "No program enrollment is available."}} />;
     } else {
@@ -148,8 +182,13 @@ class DashboardPage extends React.Component {
           program={program}
           coursePrice={coursePrice}
           openFinancialAidCalculator={this.openFinancialAidCalculator}
-          documentSentDate={documentSentDate}
+          documents={documents}
           setDocumentSentDate={this.setDocumentSentDate}
+          skipFinancialAid={this.skipFinancialAid}
+          updateDocumentSentDate={this.updateDocumentSentDate}
+          fetchDashboard={this.fetchDashboard}
+          setConfirmSkipDialogVisibility={this.setConfirmSkipDialogVisibility}
+          ui={ui}
         />;
       }
 
@@ -160,8 +199,10 @@ class DashboardPage extends React.Component {
             {financialAidCard}
             <CourseListCard
               program={program}
+              coursePrice={coursePrice}
               key={program.id}
               checkout={this.dispatchCheckout}
+              openFinancialAidCalculator={this.openFinancialAidCalculator}
             />
           </div>
           <div className="second-column">
@@ -194,8 +235,8 @@ const mapStateToProps = (state) => {
 
   return {
     profile: profile,
-    coursePrices: state.coursePrices,
     dashboard: state.dashboard,
+    prices: state.prices,
     currentProgramEnrollment: state.currentProgramEnrollment,
     ui: state.ui,
     documents: state.documents,

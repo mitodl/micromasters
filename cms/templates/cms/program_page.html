@@ -21,6 +21,9 @@
   <meta property="og:image:height" content="{{ page.background_image.height }}">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@MITxonedX">
+  <meta itemprop="name" content="{{ page.title }} MicroMasters">
+  <meta itemprop="description" content="{% if page.program.description %}{{ page.program.description }}{% endif %}">
+  <meta itemprop="image" content="{{ page.background_image.file.url|safe }}">
 {% endblock %}
 
 {% block body_class %}template-programpage{% endblock %}
@@ -84,13 +87,20 @@
           <h3 class="title">
             Courses
           </h3>
-          {% for course, status in courses_info.items %}
+          {% for course, status, url in courses_info %}
           <div class="course-details">
             <div class="title">
-              {{ course.title }}
+              {% if url %}
+                <a href="{{ url }}">{{ course.title }}</a>
+              {% else %}
+                {{ course.title }}
+              {% endif %}
+            </div>
+            <div class="description enrollment_dates">
+              {{ status }}
             </div>
             <div class="description">
-              {{ status }}
+              {{ course.description }}
             </div>
           </div>
           {% endfor %}

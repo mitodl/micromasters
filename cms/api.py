@@ -3,6 +3,9 @@
 apis for program page
 """
 
+import urllib.parse
+from django.conf import settings
+
 
 def get_course_enrollment_text(course):
     """
@@ -35,3 +38,16 @@ def get_course_enrollment_text(course):
             text = 'Coming ' + course_run.fuzzy_start_date
 
     return text
+
+
+def get_course_url(course):
+    """
+    Construct the course page url
+    """
+    course_run = course.get_next_run()
+    if course_run:
+        course_key = course_run.edx_course_key
+        if course_key:
+            url = settings.EDXORG_BASE_URL
+            return urllib.parse.urljoin(url, 'courses/{}/about'.format(course_key))
+    return ""

@@ -6,7 +6,10 @@ import {
   UPDATE_CALCULATOR_VALIDATION,
   REQUEST_ADD_FINANCIAL_AID,
   RECEIVE_ADD_FINANCIAL_AID_SUCCESS,
-  RECEIVE_ADD_FINANCIAL_AID_FAILURE
+  RECEIVE_ADD_FINANCIAL_AID_FAILURE,
+  REQUEST_SKIP_FINANCIAL_AID,
+  RECEIVE_SKIP_FINANCIAL_AID_FAILURE,
+  RECEIVE_SKIP_FINANCIAL_AID_SUCCESS,
 } from '../actions/financial_aid';
 import {
   FETCH_FAILURE,
@@ -56,6 +59,12 @@ export const financialAid = (state: FinancialAidState = INITIAL_FINANCIAL_AID_ST
   case RECEIVE_ADD_FINANCIAL_AID_SUCCESS:
     return { ...state, fetchStatus: FETCH_SUCCESS };
   case RECEIVE_ADD_FINANCIAL_AID_FAILURE:
+    return { ...state, fetchStatus: FETCH_FAILURE };
+  case REQUEST_SKIP_FINANCIAL_AID:
+    return { ...state, fetchStatus: FETCH_PROCESSING };
+  case RECEIVE_SKIP_FINANCIAL_AID_SUCCESS:
+    return { ...state, fetchStatus: FETCH_SUCCESS };
+  case RECEIVE_SKIP_FINANCIAL_AID_FAILURE:
     return { ...state, fetchStatus: FETCH_FAILURE };
   default:
     return state;

@@ -111,7 +111,7 @@ def create_unfulfilled_order(course_id, user):
     course_run = get_purchasable_course_run(course_id, user)
     enrollment = get_object_or_404(ProgramEnrollment, program=course_run.course.program, user=user)
     price_dict = get_formatted_course_price(enrollment)
-    price = price_dict['course_price']
+    price = price_dict['price']
     if price <= 0:
         log.warning(
             "Price to be charged for course run %s for user %s is less than or equal to zero: %s",

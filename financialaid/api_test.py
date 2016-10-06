@@ -279,7 +279,7 @@ class CoursePriceAPITests(FinancialAidBaseTestCase):
         enrollment = self.program_enrollment_ep1
         expected_response = {
             "program_id": enrollment.program.id,
-            "course_price": self.course_price.price - self.financialaid_approved.tier_program.discount_amount,
+            "price": self.course_price.price - self.financialaid_approved.tier_program.discount_amount,
             "financial_aid_adjustment": True,
             "financial_aid_availability": True,
             "has_financial_aid_request": True
@@ -296,7 +296,7 @@ class CoursePriceAPITests(FinancialAidBaseTestCase):
         enrollment = self.program_enrollment_ep2
         expected_response = {
             "program_id": enrollment.program.id,
-            "course_price": self.course_price.price,
+            "price": self.course_price.price,
             "financial_aid_adjustment": False,
             "financial_aid_availability": True,
             "has_financial_aid_request": True
@@ -314,7 +314,7 @@ class CoursePriceAPITests(FinancialAidBaseTestCase):
         # Enrolled and has no financial aid
         expected_response = {
             "program_id": enrollment.program.id,
-            "course_price": self.course_price.price,
+            "price": self.course_price.price,
             "financial_aid_adjustment": False,
             "financial_aid_availability": True,
             "has_financial_aid_request": False
@@ -333,7 +333,7 @@ class CoursePriceAPITests(FinancialAidBaseTestCase):
         self.program.save()
         expected_response = {
             "program_id": enrollment.program.id,
-            "course_price": self.course_price.price,
+            "price": self.course_price.price,
             "financial_aid_adjustment": False,
             "financial_aid_availability": False,
             "has_financial_aid_request": False

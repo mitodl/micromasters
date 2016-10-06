@@ -637,7 +637,7 @@ class CoursePriceDetailViewTests(FinancialAidBaseTestCase, APIClient):
         expected_response = {
             "program_id": self.program.id,
             "has_financial_aid_request": True,
-            "course_price": self.course_price.price - self.financialaid_approved.tier_program.discount_amount,
+            "price": self.course_price.price - self.financialaid_approved.tier_program.discount_amount,
             "financial_aid_adjustment": True,
             "financial_aid_availability": True
         }
@@ -652,7 +652,7 @@ class CoursePriceDetailViewTests(FinancialAidBaseTestCase, APIClient):
         expected_response = {
             "program_id": self.program.id,
             "has_financial_aid_request": True,
-            "course_price": self.course_price.price,
+            "price": self.course_price.price,
             "financial_aid_adjustment": False,
             "financial_aid_availability": True
         }
@@ -667,7 +667,7 @@ class CoursePriceDetailViewTests(FinancialAidBaseTestCase, APIClient):
         expected_response = {
             "program_id": self.program.id,
             "has_financial_aid_request": False,
-            "course_price": self.course_price.price,
+            "price": self.course_price.price,
             "financial_aid_adjustment": False,
             "financial_aid_availability": True
         }
@@ -684,7 +684,7 @@ class CoursePriceDetailViewTests(FinancialAidBaseTestCase, APIClient):
         expected_response = {
             "program_id": self.program.id,
             "has_financial_aid_request": False,
-            "course_price": self.course_price.price,
+            "price": self.course_price.price,
             "financial_aid_adjustment": False,
             "financial_aid_availability": False
         }

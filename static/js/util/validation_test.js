@@ -508,7 +508,7 @@ describe('Email validation', () => {
   });
 });
 
-describe('financial aid validation', () => {
+describe('Financial aid validation', () => {
   let financialAid;
 
   beforeEach(() => {

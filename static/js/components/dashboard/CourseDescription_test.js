@@ -3,14 +3,10 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import moment from 'moment';
 import { assert } from 'chai';
-import type {
-  Course,
-  Program
-} from '../../flow/programTypes';
 
 import CourseDescription from './CourseDescription';
+import { findCourse } from '../../util/test_utils';
 import {
-  DASHBOARD_RESPONSE,
   DASHBOARD_FORMAT,
   STATUS_PASSED,
   STATUS_NOT_PASSED,
@@ -19,18 +15,6 @@ import {
   STATUS_OFFERED,
   ALL_COURSE_STATUSES,
 } from '../../constants';
-
-
-export function findCourse(courseSelector: (course: Course, program: Program) => boolean): Course {
-  for (let program of DASHBOARD_RESPONSE) {
-    for (let course of program.courses) {
-      if (courseSelector(course, program)) {
-        return course;
-      }
-    }
-  }
-  throw "Unable to find course";
-}
 
 describe('CourseDescription', () => {
   it('shows the course title', () => {

@@ -199,7 +199,7 @@ export const checkout = (state: CheckoutState = INITIAL_CHECKOUT_STATE, action: 
 const INITIAL_COURSE_PRICES_STATE: CoursePricesState = {
   coursePrices: []
 };
-export const coursePrices = (state: CoursePricesState = INITIAL_COURSE_PRICES_STATE, action: Action) => {
+export const prices = (state: CoursePricesState = INITIAL_COURSE_PRICES_STATE, action: Action) => {
   switch (action.type) {
   case REQUEST_COURSE_PRICES:
     return Object.assign({}, state, {
@@ -228,7 +228,7 @@ export default combineReducers({
   ui,
   email,
   checkout,
-  coursePrices,
+  prices,
   enrollments,
   currentProgramEnrollment,
   signupDialog,

@@ -133,12 +133,9 @@ c.validation-wrapper {
     display: flex;
     flex-direction: row;
     align-items: center;
-    height: 24px !important;
 
     button {
-      height: 24px;
       margin-left: 20px;
-      top: 10px;
     }
   }
 
@@ -178,6 +175,16 @@ c.validation-wrapper {
 
       .price {
         font-weight: 600;
+      }
+    }
+
+    .pricing-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .full-price {
+        cursor: pointer;
       }
     }
   }
@@ -245,6 +252,8 @@ c.validation-wrapper {
         text-align: center;
 
         .course-action-action {
+          padding-bottom: 3px;
+
           .material-icons {
             color: $mm-brand-fg;
             font-size: 28pt;
@@ -254,6 +263,11 @@ c.validation-wrapper {
         .course-action-description {
           color: $darkgrey;
           font-size: 10pt;
+        }
+
+        .mdl-button[disabled] {
+          background-color: $lightgrey;
+          color: #ffffff;
         }
       }
     }

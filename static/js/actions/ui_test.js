@@ -23,6 +23,7 @@ import {
   SET_PHOTO_DIALOG_VISIBILITY,
   SET_CALCULATOR_DIALOG_VISIBILITY,
   SET_PROGRAM,
+  SET_CONFIRM_SKIP_DIALOG_VISIBILITY,
 
   clearUI,
   updateDialogText,
@@ -48,6 +49,7 @@ import {
   setPhotoDialogVisibility,
   setCalculatorDialogVisibility,
   setProgram,
+  setConfirmSkipDialogVisibility,
 } from '../actions/ui';
 import { assertCreatedActionHelper } from './util';
 
@@ -78,6 +80,7 @@ describe('generated UI action helpers', () => {
       [setPhotoDialogVisibility, SET_PHOTO_DIALOG_VISIBILITY],
       [setCalculatorDialogVisibility, SET_CALCULATOR_DIALOG_VISIBILITY],
       [setProgram, SET_PROGRAM],
+      [setConfirmSkipDialogVisibility, SET_CONFIRM_SKIP_DIALOG_VISIBILITY],
     ].forEach(assertCreatedActionHelper);
   });
 });

@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,400i,500,700" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
     {% load static %}
-    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" />
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" />
     <script type="text/javascript">
     var SETTINGS = {{ js_settings_json|safe }};
     var CURRENT_PAGE_URL = '{{ request.build_absolute_uri }}';
@@ -17,7 +18,7 @@
     {% endif %}
     <script type="text/javascript" src="{{ style_src }}"></script>
     <title>{% block title %}{% endblock %}</title>
-    <meta name="description" content="{% block description%}{% endblock %}">
+    <meta name="description" content="{% block description %}{% endblock %}">
     <meta name="keywords" content="{% block keywords%}{% endblock %}">
     {% block social %}{% endblock %}
     {% block extrahead %}

@@ -5,34 +5,67 @@ import { shallow } from 'enzyme';
 import moment from 'moment';
 import { assert } from 'chai';
 import sinon from 'sinon';
+import _ from 'lodash';
 
 import CourseAction from './CourseAction';
 import {
   DASHBOARD_FORMAT,
+  COURSE_PRICES_RESPONSE,
+  FINANCIAL_AID_PARTIAL_RESPONSE,
   STATUS_PASSED,
   STATUS_NOT_PASSED,
   STATUS_OFFERED,
   STATUS_CAN_UPGRADE,
   STATUS_CURRENTLY_ENROLLED,
+  FA_PENDING_STATUSES,
+  FA_STATUS_SKIPPED
 } from '../../constants';
-import { findCourse } from './CourseDescription_test';
+import { findCourse, findAndCloneCourse } from '../../util/test_utils';
 
 describe('CourseAction', () => {
   const now = moment();
-  let sandbox, checkoutStub;
+  let sandbox, checkoutStub, coursePrice, defaultParams, defaultParamsNow;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     checkoutStub = sandbox.stub();
+    coursePrice = COURSE_PRICES_RESPONSE[1];
+    defaultParams = {
+      checkout: checkoutStub,
+      coursePrice: coursePrice,
+      hasFinancialAid: false,
+      financialAid: {}
+    };
+    defaultParamsNow = Object.assign({}, defaultParams, { now: now });
   });
 
   afterEach(() => {
     sandbox.restore();
   });
 
+  let getElements = (renderedComponent) => {
+    let buttonContainer = renderedComponent.find(".course-action-action");
+    let button = buttonContainer.find(".dashboard-button");
+    let buttonText;
+    if (!_.isNil(button) && button.children().length > 0) {
+      buttonText = button.children().text();
+    }
+    let description = renderedComponent.find(".course-action-description");
+    return {
+      buttonContainer: buttonContainer,
+      button: button,
+      buttonText: buttonText,
+      description: description
+    };
+  };
+
+  let alterFirstRun = (course, overrideObject) => {
+    course.runs[0] = Object.assign({}, course.runs[0], overrideObject);
+  };
+
   let assertCheckoutButton = (button, courseId) => {
     button.simulate('click');
-    assert.equal(checkoutStub.callCount, 1);
+    assert.isAbove(checkoutStub.callCount, 0);
     assert.deepEqual(checkoutStub.args[0], [courseId]);
   };
 
@@ -41,7 +74,7 @@ describe('CourseAction', () => {
       course.runs.length > 0 &&
       course.runs[0].status === STATUS_PASSED
     ));
-    const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
+    const wrapper = shallow(<CourseAction course={course} {...defaultParamsNow} />);
     assert.equal(wrapper.find(".material-icons").text(), 'done');
   });
 
@@ -50,7 +83,7 @@ describe('CourseAction', () => {
       course.runs.length > 0 &&
       course.runs[0].status === STATUS_NOT_PASSED
     ));
-    const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
+    const wrapper = shallow(<CourseAction course={course} {...defaultParamsNow} />);
     assert.equal(wrapper.text(), '');
   });
 
@@ -59,21 +92,44 @@ describe('CourseAction', () => {
       course.runs.length > 0 &&
       course.runs[0].status === STATUS_CURRENTLY_ENROLLED
     ));
-    const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
+    const wrapper = shallow(<CourseAction course={course} {...defaultParamsNow} />);
     assert.equal(wrapper.text(), '');
   });
 
-  [STATUS_OFFERED, STATUS_CAN_UPGRADE].forEach((status) => {
-    it(`shows the enroll button followed by course title when status is ${status}`, () => {
-      let course = findCourse(course => (
-        course.runs.length > 0 &&
-        course.runs[0].status === status
-      ));
-      let firstRun = course.runs[0];
-      const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
-      let buttonContainer = wrapper.find(".course-action-action");
+  it('shows a button to enroll and pay, and a link to enroll and pay later', () => {
+    let course = findCourse(course => (
+      course.runs.length > 0 &&
+      course.runs[0].status === STATUS_OFFERED
+    ));
+    const wrapper = shallow(<CourseAction course={course} {...defaultParamsNow} />);
+    let firstRun = course.runs[0];
+    let elements = getElements(wrapper);
 
-      assert.include(buttonContainer.text(), `<Button /> in ${firstRun.title}`);
+    assert.isUndefined(elements.button.props().disabled);
+    assert.include(elements.buttonText, 'Pay Now');
+    assert.equal(elements.description.text(), 'Enroll and pay later');
+    assertCheckoutButton(elements.button, firstRun.course_id);
+  });
+
+  it('shows an enroll button if user is not enrolled and enrollment starts today or earlier', () => {
+    let course = findAndCloneCourse(course => (
+      course.runs.length > 0 &&
+      course.runs[0].status === STATUS_OFFERED &&
+      course.runs[0].enrollment_start_date !== undefined
+    ));
+    let nowString = now.toISOString();
+    let pastString = moment(now).add(-10, 'days').toISOString();
+
+    [nowString, pastString].forEach(dateString => {
+      alterFirstRun(course, {enrollment_start_date: dateString});
+      const wrapper = shallow(<CourseAction course={course} {...defaultParamsNow} />);
+      let firstRun = course.runs[0];
+      let elements = getElements(wrapper);
+
+      assert.isUndefined(elements.button.props().disabled);
+      assert.include(elements.buttonText, 'Pay Now');
+      assert.equal(elements.description.text(), 'Enroll and pay later');
+      assertCheckoutButton(elements.button, firstRun.course_id);
     });
   });
 
@@ -82,111 +138,115 @@ describe('CourseAction', () => {
       course.runs.length > 0 &&
       course.runs[0].status === STATUS_CAN_UPGRADE
     ));
-    const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
-    let buttonContainer = wrapper.find(".course-action-action");
-    let button = buttonContainer.find(".dashboard-button");
-    let buttonText = button.children().text();
-    let description = wrapper.find(".course-action-description");
+    const wrapper = shallow(<CourseAction course={course} {...defaultParamsNow} />);
     let firstRun = course.runs[0];
+    let elements = getElements(wrapper);
+    let formattedUpgradeDate = moment(firstRun.course_upgrade_deadline).format(DASHBOARD_FORMAT);
 
-    assert.isUndefined(button.props().disabled);
-    assert.equal(buttonText, 'Upgrade');
-    assert.equal(description.text(), "");
-    assertCheckoutButton(button, firstRun.course_id);
+    assert.isUndefined(elements.button.props().disabled);
+    assert.include(elements.buttonText, 'Pay Now');
+    assert.equal(elements.description.text(), `Payment due: ${formattedUpgradeDate}`);
+    assertCheckoutButton(elements.button, firstRun.course_id);
   });
 
-  it('shows a disabled enroll button if user is not enrolled and there is no enrollment date', () => {
-    // there should also be text below the button
-    let course = findCourse(course => (
+  it('shows a message if a user is not enrolled and the course has a future enrollment start date', () => {
+    let course = findAndCloneCourse(course => (
+      course.runs.length > 0 &&
+      course.runs[0].status === STATUS_OFFERED
+    ));
+    let enrollmentStartDate = moment(now).add(10, 'days').toISOString();
+    alterFirstRun(course, {enrollment_start_date: enrollmentStartDate});
+    const wrapper = shallow(<CourseAction course={course} {...defaultParamsNow} />);
+    let firstRun = course.runs[0];
+    let elements = getElements(wrapper);
+
+    assert.include(elements.buttonContainer.text(), '');
+    let formattedDate = moment(firstRun.enrollment_start_date).format(DASHBOARD_FORMAT);
+    assert.equal(elements.description.text(), `Enrollment begins ${formattedDate}`);
+  });
+
+  it('shows a message if a user is not enrolled and the course has a fuzzy enrollment date', () => {
+    let course = findAndCloneCourse(course => (
       course.runs.length > 0 &&
       course.runs[0].status === STATUS_OFFERED &&
       course.runs[0].enrollment_start_date === undefined
     ));
-    const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
-    let buttonContainer = wrapper.find(".course-action-action");
-    let button = buttonContainer.find(".dashboard-button");
-    let buttonText = button.children().text();
-    let description = wrapper.find(".course-action-description");
-    let firstRun = course.runs[0];
+    alterFirstRun(course, {fuzzy_enrollment_start_date: 'whenever'});
+    const wrapper = shallow(<CourseAction course={course} {...defaultParamsNow} />);
+    let elements = getElements(wrapper);
 
-    assert.isTrue(button.props().disabled);
-    assert.equal(buttonText, 'Enroll');
-    assert.equal(description.text(), `Enrollment begins ${firstRun.fuzzy_enrollment_start_date}`);
+    assert.include(elements.buttonContainer.text(), '');
+    assert.equal(elements.description.text(), 'Enrollment begins whenever');
   });
 
-  it('shows a disabled enroll button if user is not enrolled and enrollment starts in future', () => {
-    // there should also be text below the button
-    let course = findCourse(course => (
-      course.runs.length > 0 &&
-      course.runs[0].status === STATUS_OFFERED &&
-      course.runs[0].enrollment_start_date !== undefined
-    ));
-    let firstRun = course.runs[0];
-    let yesterday = moment(firstRun.enrollment_start_date).add(-1, 'days');
-    const wrapper = shallow(<CourseAction course={course} now={yesterday} checkout={checkoutStub}/>);
-    let buttonContainer = wrapper.find(".course-action-action");
-    let button = buttonContainer.find(".dashboard-button");
-    let buttonText = button.children().text();
-    let description = wrapper.find(".course-action-description");
+  describe('with financial aid', () => {
+    let course, aidParams;
 
-    assert.isTrue(button.props().disabled);
-    assert.equal(buttonText, 'Enroll');
-    let formattedDate = moment(firstRun.enrollment_start_date).format(DASHBOARD_FORMAT);
-    assert.equal(description.text(), `Enrollment begins ${formattedDate}`);
-  });
+    beforeEach(() => {
+      course = findAndCloneCourse(course => (
+        course.runs.length > 0 &&
+        course.runs[0].status === STATUS_OFFERED
+      ));
+      aidParams = Object.assign({}, {
+        financialAid: _.cloneDeep(FINANCIAL_AID_PARTIAL_RESPONSE),
+        hasFinancialAid: true
+      });
+    });
 
-  it('shows an enroll button if user is not enrolled and enrollment starts today', () => {
-    let course = findCourse(course => (
-      course.runs.length > 0 &&
-      course.runs[0].status === STATUS_OFFERED &&
-      course.runs[0].enrollment_start_date !== undefined
-    ));
-    let firstRun = course.runs[0];
-    let today = moment(firstRun.enrollment_start_date);
-    const wrapper = shallow(<CourseAction course={course} now={today} checkout={checkoutStub}/>);
-    let buttonContainer = wrapper.find(".course-action-action");
-    let button = buttonContainer.find(".dashboard-button");
-    let buttonText = button.children().text();
-    let description = wrapper.find(".course-action-description");
+    it('indicates that a user must calculate the course price', () => {
+      alterFirstRun(course, {
+        enrollment_start_date: now.toISOString(),
+      });
+      aidParams.financialAid.has_user_applied = false;
 
-    assert.isUndefined(button.props().disabled);
-    assert.equal(buttonText, 'Enroll');
-    assert.equal(description.text(), ``);
-    assertCheckoutButton(button, firstRun.course_id);
-  });
+      let params = Object.assign({}, defaultParamsNow, aidParams);
+      const wrapper = shallow(
+        <CourseAction course={course} {...params} />
+      );
+      let elements = getElements(wrapper);
 
-  it('shows an enroll button if user is not enrolled and enrollment started already', () => {
-    let course = findCourse(course => (
-      course.runs.length > 0 &&
-      course.runs[0].status === STATUS_OFFERED &&
-      course.runs[0].enrollment_start_date !== undefined
-    ));
-    let firstRun = course.runs[0];
-    let tomorrow = moment(firstRun.enrollment_start_date).add(1, 'days');
-    const wrapper = shallow(<CourseAction course={course} now={tomorrow} checkout={checkoutStub}/>);
-    let buttonContainer = wrapper.find(".course-action-action");
-    let button = buttonContainer.find(".dashboard-button");
-    let buttonText = button.children().text();
-    let description = wrapper.find(".course-action-description");
+      assert.isUndefined(elements.button.props().disabled);
+      assert.equal(elements.buttonText, 'Calculate Cost');
+      assert.equal(elements.description.text(), 'Enroll and pay later');
+    });
 
-    assert.isUndefined(button.props().disabled);
-    assert.equal(buttonText, 'Enroll');
-    assert.equal(description.text(), ``);
-    assertCheckoutButton(button, firstRun.course_id);
-  });
+    it('shows an enroll/pay button if a user has skipped financial aid', () => {
+      alterFirstRun(course, {
+        enrollment_start_date: now.toISOString(),
+      });
+      aidParams.financialAid.has_user_applied = false;
+      aidParams.financialAid.application_status = FA_STATUS_SKIPPED;
 
-  it('is not an offered course and user has not failed', () => {
-    let course = findCourse(course => (
-      course.runs.length === 0
-    ));
-    const wrapper = shallow(<CourseAction course={course} now={now} checkout={checkoutStub}/>);
-    let buttonContainer = wrapper.find(".course-action-action");
-    let description = wrapper.find(".course-action-description");
-    let button = buttonContainer.find(".dashboard-button");
-    let buttonText = button.children().text();
+      let params = Object.assign({}, defaultParamsNow, aidParams);
+      const wrapper = shallow(
+        <CourseAction course={course} {...params} />
+      );
+      let elements = getElements(wrapper);
 
-    assert(button.props().disabled);
-    assert.equal(buttonText, 'Enroll');
-    assert.equal(description.text(), '');
+      assert.isUndefined(elements.button.props().disabled);
+      assert.include(elements.buttonText, 'Pay Now');
+      assert.equal(elements.description.text(), 'Enroll and pay later');
+    });
+
+    it('shows a disabled enroll/pay button if a user is pending approval', () => {
+      alterFirstRun(course, {
+        enrollment_start_date: now.toISOString(),
+      });
+      aidParams.financialAid.has_user_applied = true;
+
+      FA_PENDING_STATUSES.forEach(pendingStatus => {
+        aidParams.financialAid.application_status = pendingStatus;
+
+        let params = Object.assign({}, defaultParamsNow, aidParams);
+        const wrapper = shallow(
+          <CourseAction course={course} {...params} />
+        );
+        let elements = getElements(wrapper);
+
+        assert.isTrue(elements.button.props().disabled);
+        assert.include(elements.buttonText, 'Pay Now');
+        assert.equal(elements.description.text(), 'Enroll and pay later');
+      });
+    });
   });
 });

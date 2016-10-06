@@ -47,13 +47,20 @@ export const ALL_COURSE_STATUSES = [
 
 // financial aid statuses
 export const FA_STATUS_CREATED = 'created';
-export const FA_STATUS_AUTO_APPROVED = 'auto-approved';
 export const FA_STATUS_PENDING_DOCS = 'pending-docs';
+export const FA_STATUS_DOCS_SENT = 'docs-sent';
 export const FA_STATUS_PENDING_MANUAL_APPROVAL = 'pending-manual-approval';
 export const FA_STATUS_APPROVED = 'approved';
+export const FA_STATUS_AUTO_APPROVED = 'auto-approved';
 export const FA_STATUS_REJECTED = 'rejected';
-export const FA_STATUS_DOCS_SENT = 'docs-sent';
 export const FA_STATUS_SKIPPED = 'skipped';
+
+export const FA_PENDING_STATUSES = [
+  FA_STATUS_PENDING_DOCS,
+  FA_STATUS_DOCS_SENT,
+  FA_STATUS_PENDING_MANUAL_APPROVAL
+];
+export const FA_APPROVED_STATUSES = [FA_STATUS_APPROVED, FA_STATUS_AUTO_APPROVED];
 
 export const TOAST_SUCCESS = 'success';
 export const TOAST_FAILURE = 'failure';
@@ -342,6 +349,7 @@ export const DASHBOARD_RESPONSE = [
         "id": 4
       }
     ],
+    "financial_aid_availability": false,
     "id": 3
   },
   {
@@ -413,6 +421,7 @@ export const DASHBOARD_RESPONSE = [
             "course_start_date": "2016-08-22T11:48:27Z",
             "fuzzy_start_date": "Fall 2017",
             "course_end_date": "2016-09-09T10:20:10Z",
+            "course_upgrade_deadline": "2016-08-20T11:48:27Z",
           }
         ],
         "description": null,
@@ -499,6 +508,7 @@ export const DASHBOARD_RESPONSE = [
     ],
     "title": "Master Program",
     "description": null,
+    "financial_aid_availability": false,
     "id": 4
   },
   {
@@ -525,6 +535,7 @@ export const DASHBOARD_RESPONSE = [
         "prerequisites": ""
       },
     ],
+    "financial_aid_availability": false,
     "id": 5
   },
 ];
@@ -540,11 +551,24 @@ export const PROGRAM_ENROLLMENTS = [
   },
 ];
 
+export const FINANCIAL_AID_PARTIAL_RESPONSE = {
+  application_status: null,
+  has_user_applied: false,
+  max_possible_cost: 1000,
+  min_possible_cost: 1000
+};
+
 export const COURSE_PRICES_RESPONSE = [{
   program_id: DASHBOARD_RESPONSE[1].id,
-  course_price: 100.00,
+  price: 100.00,
   financial_aid_adjustment: false,
-  financial_aid_availability: true,
+  financial_aid_availability: false,
+  has_financial_aid_request: false
+}, {
+  program_id: DASHBOARD_RESPONSE[2].id,
+  price: 200.00,
+  financial_aid_adjustment: false,
+  financial_aid_availability: false,
   has_financial_aid_request: false
 }];
 
@@ -555,7 +579,7 @@ export const ERROR_RESPONSE = {
 };
 
 /* eslint-disable max-len */
-export const CHECKOUT_RESPONSE_CYBERSOURCE = {
+export const CYBERSOURCE_CHECKOUT_RESPONSE = {
   "payload": {
     "access_key": "access_key",
     "amount": "123.45",
@@ -576,7 +600,7 @@ export const CHECKOUT_RESPONSE_CYBERSOURCE = {
   "url": "https://testsecureacceptance.cybersource.com/pay",
   "method": "POST"
 };
-export const CHECKOUT_RESPONSE_EDX = {
+export const EDX_CHECKOUT_RESPONSE = {
   "payload": {},
   "url": "http://edx.org",
   "method": "GET"

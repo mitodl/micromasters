@@ -4,6 +4,10 @@ import { createAction } from 'redux-actions';
 
 import type { Dispatcher } from '../flow/reduxTypes';
 import * as api from '../util/api';
+import {
+  fetchCoursePrices,
+  fetchDashboard,
+} from '.';
 
 export const START_CALCULATOR_EDIT = 'START_CALCULATOR_EDIT';
 export const startCalculatorEdit = createAction(START_CALCULATOR_EDIT);
@@ -37,6 +41,31 @@ export const addFinancialAid = (income: number, currency: string, programId: num
       () => {
         dispatch(receiveAddFinancialAidFailure());
         return Promise.reject();
+      });
+  };
+};
+
+export const REQUEST_SKIP_FINANCIAL_AID = 'REQUEST_SKIP_FINANCIAL_AID';
+export const requestSkipFinancialAid = createAction(REQUEST_SKIP_FINANCIAL_AID);
+
+export const RECEIVE_SKIP_FINANCIAL_AID_SUCCESS = 'RECEIVE_SKIP_FINANCIAL_AID_SUCCESS';
+export const receiveSkipFinancialAidSuccess = createAction(RECEIVE_SKIP_FINANCIAL_AID_SUCCESS);
+
+export const RECEIVE_SKIP_FINANCIAL_AID_FAILURE = 'RECEIVE_SKIP_FINANCIAL_AID_FAILURE';
+export const receiveSkipFinancialAidFailure = createAction(RECEIVE_SKIP_FINANCIAL_AID_FAILURE);
+
+export const skipFinancialAid = (programId: number): Dispatcher<*> => {
+  return (dispatch: Dispatch) => {
+    dispatch(requestSkipFinancialAid());
+    return api.skipFinancialAid(programId).then(
+      () => {
+        dispatch(receiveSkipFinancialAidSuccess());
+        dispatch(fetchCoursePrices());
+        dispatch(fetchDashboard());
+        return Promise.resolve();
+      },
+      () => {
+        dispatch(receiveSkipFinancialAidFailure());
       });
   };
 };

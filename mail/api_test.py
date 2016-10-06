@@ -257,7 +257,7 @@ class FinancialAidMailAPITests(TestCase):
             first_name=self.financial_aid.user.profile.first_name,
             message=FINANCIAL_AID_APPROVAL_MESSAGE.format(
                 program_name=self.financial_aid.tier_program.program.title,
-                price=get_formatted_course_price(self.program_enrollment)["course_price"]
+                price=get_formatted_course_price(self.program_enrollment)["price"]
             ),
             program_name=self.financial_aid.tier_program.program.title
         )

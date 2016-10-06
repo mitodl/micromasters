@@ -18,6 +18,10 @@ import {
   RECEIVE_ADD_FINANCIAL_AID_SUCCESS,
   RECEIVE_ADD_FINANCIAL_AID_FAILURE,
   addFinancialAid,
+  REQUEST_SKIP_FINANCIAL_AID,
+  RECEIVE_SKIP_FINANCIAL_AID_FAILURE,
+  RECEIVE_SKIP_FINANCIAL_AID_SUCCESS,
+  skipFinancialAid,
 } from '../actions/financial_aid';
 import {
   FETCH_FAILURE,
@@ -34,7 +38,7 @@ import * as api from '../util/api';
 
 describe('financial aid reducers', () => {
   let sandbox, store, dispatchThen;
-  let addFinancialAidStub;
+  let addFinancialAidStub, skipFinancialAidStub;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -42,6 +46,7 @@ describe('financial aid reducers', () => {
     dispatchThen = store.createDispatchThen(state => state.financialAid);
     store.dispatch(setCurrentProgramEnrollment(1));
     addFinancialAidStub = sandbox.stub(api, 'addFinancialAid');
+    skipFinancialAidStub = sandbox.stub(api, 'skipFinancialAid');
   });
 
   afterEach(() => {
@@ -95,13 +100,16 @@ describe('financial aid reducers', () => {
 
   it('should let you add financial aid', () => {
     addFinancialAidStub.returns(Promise.resolve());
-    store.dispatch(startCalculatorEdit(1));
-    return dispatchThen(addFinancialAid(100000, 'USD', 1), [
+    let income = 100000;
+    let currency = 'USD';
+    let programId = 1;
+    store.dispatch(startCalculatorEdit(programId));
+    return dispatchThen(addFinancialAid(income, currency, programId), [
       REQUEST_ADD_FINANCIAL_AID,
       RECEIVE_ADD_FINANCIAL_AID_SUCCESS,
     ]).then(state => {
       let expectation = Object.assign({}, FINANCIAL_AID_EDIT, {
-        programId: 1,
+        programId: programId,
         fetchStatus: FETCH_SUCCESS
       });
       assert.deepEqual(state, expectation);
@@ -110,16 +118,46 @@ describe('financial aid reducers', () => {
 
   it('should fail to add a financial aid', () => {
     addFinancialAidStub.returns(Promise.reject());
-    store.dispatch(startCalculatorEdit(1));
-    return dispatchThen(addFinancialAid(100000, 'USD', 1), [
+    let income = 100000;
+    let currency = 'USD';
+    let programId = 1;
+    store.dispatch(startCalculatorEdit(programId));
+    return dispatchThen(addFinancialAid(income, currency, programId), [
       REQUEST_ADD_FINANCIAL_AID,
       RECEIVE_ADD_FINANCIAL_AID_FAILURE,
     ]).then(state => {
       let expectation = Object.assign({}, FINANCIAL_AID_EDIT, {
-        programId: 1,
+        programId: programId,
         fetchStatus: FETCH_FAILURE
       });
       assert.deepEqual(state, expectation);
+      assert.ok(addFinancialAidStub.calledWith(income, currency, programId));
+    });
+  });
+
+  it('should let you skip financial aid', () => {
+    skipFinancialAidStub.returns(Promise.resolve());
+    return dispatchThen(skipFinancialAid(2), [
+      REQUEST_SKIP_FINANCIAL_AID,
+      RECEIVE_SKIP_FINANCIAL_AID_SUCCESS
+    ]).then(state => {
+      assert.deepEqual(state, {
+        fetchStatus: FETCH_SUCCESS
+      });
+      assert.ok(skipFinancialAidStub.calledWith(2));
+    });
+  });
+
+  it('should fail to skip financial aid', () => {
+    skipFinancialAidStub.returns(Promise.reject());
+    return dispatchThen(skipFinancialAid(2), [
+      REQUEST_SKIP_FINANCIAL_AID,
+      RECEIVE_SKIP_FINANCIAL_AID_FAILURE
+    ]).then(state => {
+      assert.deepEqual(state, {
+        fetchStatus: FETCH_FAILURE
+      });
+      assert.ok(skipFinancialAidStub.calledWith(2));
     });
   });
 });

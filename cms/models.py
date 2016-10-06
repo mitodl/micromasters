@@ -3,7 +3,6 @@ Page models for the CMS
 """
 import json
 
-from collections import OrderedDict
 from django.conf import settings
 from django.db import models
 from modelcluster.fields import ParentalKey
@@ -17,7 +16,7 @@ from courses.models import Program
 from micromasters.utils import webpack_dev_server_host
 from profiles.api import get_social_username
 from ui.views import get_bundle_url
-from cms.api import get_course_enrollment_text
+from cms.api import get_course_enrollment_text, get_course_url
 
 
 def faculty_for_carousel(faculty):
@@ -145,11 +144,11 @@ class ProgramPage(Page):
         username = get_social_username(request.user)
         context = super(ProgramPage, self).get_context(request)
 
-        courses_info = OrderedDict()
+        courses_info = []
         for course in self.program.course_set.all().order_by(
                 'position_in_program'
         ):
-            courses_info[course] = get_course_enrollment_text(course)
+            courses_info.append((course, get_course_enrollment_text(course), get_course_url(course)))
 
         context["style_src"] = get_bundle_url(request, "style.js")
         context["public_src"] = get_bundle_url(request, "public.js")

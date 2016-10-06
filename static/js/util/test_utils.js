@@ -1,6 +1,28 @@
 import TestUtils from 'react-addons-test-utils';
 import { assert } from 'chai';
 import sinon from 'sinon';
+import _ from 'lodash';
+
+import { DASHBOARD_RESPONSE } from '../constants';
+import type {
+  Course,
+  Program
+} from '../../flow/programTypes';
+
+export function findCourse(courseSelector: (course: Course, program: Program) => boolean): Course {
+  for (let program of DASHBOARD_RESPONSE) {
+    for (let course of program.courses) {
+      if (courseSelector(course, program)) {
+        return course;
+      }
+    }
+  }
+  throw "Unable to find course";
+}
+
+export function findAndCloneCourse(courseSelector: (course: Course, program: Program) => boolean): Course {
+  return _.cloneDeep(findCourse(courseSelector));
+}
 
 export const modifyTextField = (field, text) => {
   field.value = text;

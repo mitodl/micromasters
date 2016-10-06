@@ -9,7 +9,7 @@ export type DashboardState = {
 
 export type CoursePrice = {
   program_id: number,
-  course_price: number,
+  price: number,
   financial_aid_adjustment: boolean,
   financial_aid_availability: boolean,
   has_financial_aid_request: boolean

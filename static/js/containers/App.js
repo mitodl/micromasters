@@ -59,7 +59,7 @@ class App extends React.Component {
     currentProgramEnrollment: ProgramEnrollment,
     dispatch:                 Dispatch,
     dashboard:                DashboardState,
-    coursePrices:             CoursePricesState,
+    prices:                   CoursePricesState,
     enrollments:              ProgramEnrollmentsState,
     history:                  Object,
     ui:                       UIState,
@@ -111,8 +111,8 @@ class App extends React.Component {
   }
 
   fetchCoursePrices() {
-    const { coursePrices, dispatch } = this.props;
-    if (coursePrices.fetchStatus === undefined) {
+    const { prices, dispatch } = this.props;
+    if (prices.fetchStatus === undefined) {
       dispatch(fetchCoursePrices());
     }
   }
@@ -198,7 +198,7 @@ class App extends React.Component {
         enrollSelectedProgram,
       },
       location: { pathname },
-      dashboard,
+      dashboard
     } = this.props;
     let { children } = this.props;
     let empty = false;
@@ -265,7 +265,7 @@ const mapStateToProps = (state) => {
   return {
     userProfile:              profile,
     dashboard:                state.dashboard,
-    coursePrices:             state.coursePrices,
+    prices:                   state.prices,
     ui:                       state.ui,
     currentProgramEnrollment: state.currentProgramEnrollment,
     enrollments:              state.enrollments,

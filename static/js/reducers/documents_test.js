@@ -7,18 +7,28 @@ import moment from 'moment';
 
 import { ISO_8601_FORMAT } from '../constants';
 import {
+  FETCH_SUCCESS,
+  FETCH_FAILURE,
+} from '../actions';
+import {
   setDocumentSentDate,
+  REQUEST_UPDATE_DOCUMENT_SENT_DATE,
+  RECEIVE_UPDATE_DOCUMENT_SENT_DATE_SUCCESS,
+  RECEIVE_UPDATE_DOCUMENT_SENT_DATE_FAILURE,
+  updateDocumentSentDate,
 } from '../actions/documents';
 import type { DocumentsState } from '../reducers/documents';
 import rootReducer from '../reducers';
+import * as api from '../util/api';
 import type { Action } from '../flow/reduxTypes';
 
 describe('documents reducers', () => {
-  let sandbox, store;
+  let sandbox, store, dispatchThen;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     store = configureTestStore(rootReducer);
+    dispatchThen = store.createDispatchThen(state => state.documents);
   });
 
   afterEach(() => {
@@ -40,10 +50,44 @@ describe('documents reducers', () => {
     }
   };
 
-  describe('Document date', () => {
+  describe('UI', () => {
     it('should let you set the document date', () => {
       let todayFormat = moment().format(ISO_8601_FORMAT);
-      assertReducerResultState(setDocumentSentDate, documents => documents.documentSentDate, { date: todayFormat });
+      assertReducerResultState(setDocumentSentDate, documents => documents.documentSentDate, todayFormat);
+    });
+  });
+
+  describe('API functions', () => {
+    let updateDocumentSentDateStub;
+
+    beforeEach(() => {
+      updateDocumentSentDateStub = sandbox.stub(api, 'updateDocumentSentDate');
+    });
+
+    it('should let you update the date documents were sent', () => {
+      updateDocumentSentDateStub.returns(Promise.resolve());
+      let programId = 12;
+      let sentDate = '2012-12-12';
+      return dispatchThen(updateDocumentSentDate(programId, sentDate), [
+        REQUEST_UPDATE_DOCUMENT_SENT_DATE,
+        RECEIVE_UPDATE_DOCUMENT_SENT_DATE_SUCCESS,
+      ]).then(state => {
+        assert.ok(updateDocumentSentDateStub.calledWith(programId, sentDate));
+        assert.deepEqual(state.fetchStatus, FETCH_SUCCESS);
+      });
+    });
+
+    it('should fail to update documents sent', () => {
+      updateDocumentSentDateStub.returns(Promise.reject());
+      let programId = 12;
+      let sentDate = '2012-12-12';
+      return dispatchThen(updateDocumentSentDate(programId, sentDate), [
+        REQUEST_UPDATE_DOCUMENT_SENT_DATE,
+        RECEIVE_UPDATE_DOCUMENT_SENT_DATE_FAILURE,
+      ]).then(state => {
+        assert.ok(updateDocumentSentDateStub.calledWith(programId, sentDate));
+        assert.deepEqual(state.fetchStatus, FETCH_FAILURE);
+      });
     });
   });
 });

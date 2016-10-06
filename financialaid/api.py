@@ -90,7 +90,7 @@ def get_formatted_course_price(program_enrollment):
             whose price we're retrieving
     Returns:
         dict: {
-            "course_price": float - the course price
+            "price": float - the course price
             "financial_aid_adjustment": bool - if financial aid is approved and has been applied to this course price,
             "financial_aid_availability": bool - Program.financial_aid_availability,
             "has_financial_aid_request": bool - if has a financial aid request
@@ -121,7 +121,7 @@ def get_formatted_course_price(program_enrollment):
                 financial_aid_adjustment = True
     return {
         "program_id": program.id,
-        "course_price": course_price,
+        "price": course_price,
         "financial_aid_adjustment": financial_aid_adjustment,
         "financial_aid_availability": financial_aid_availability,
         "has_financial_aid_request": has_financial_aid_request

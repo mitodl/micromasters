@@ -233,7 +233,7 @@ class PurchasableTests(ESTestCase):
         course_run, user = create_purchasable_course_run()
         discounted_price = round(course_run.courseprice_set.get(is_valid=True).price/2, 2)
         price_dict = {
-            "course_price": discounted_price
+            "price": discounted_price
         }
 
         with patch(

@@ -5,22 +5,26 @@ import _ from 'lodash';
 import { Card, CardTitle } from 'react-mdl/lib/Card';
 
 import type { Program } from '../../flow/programTypes';
+import type { CoursePrice } from '../../flow/dashboardTypes';
 import CourseRow from './CourseRow';
 import FinancialAidCalculator from '../../containers/FinancialAidCalculator';
 
-
 export default class CourseListCard extends React.Component {
   props: {
-    checkout:                   Function,
-    program:                    Program,
-    now?:                       Object,
+    checkout:                     Function,
+    program:                      Program,
+    coursePrice:                  CoursePrice,
+    openFinancialAidCalculator?:  () => void,
+    now?:                         Object,
   };
 
   render() {
     let {
       program,
+      coursePrice,
       now,
       checkout,
+      openFinancialAidCalculator,
     } = this.props;
     if (now === undefined) {
       now = moment();
@@ -28,13 +32,22 @@ export default class CourseListCard extends React.Component {
 
     let sortedCourses = _.orderBy(program.courses, 'position_in_program');
     let courseRows = sortedCourses.map(course =>
-      <CourseRow course={course} now={now} key={course.id} checkout={checkout} />
+      <CourseRow
+        hasFinancialAid={program.financial_aid_availability}
+        financialAid={program.financial_aid_user_info}
+        course={course}
+        coursePrice={coursePrice}
+        key={course.id}
+        checkout={checkout}
+        openFinancialAidCalculator={openFinancialAidCalculator}
+        now={now}
+      />
     );
 
     return <Card shadow={0} className="course-list">
       <FinancialAidCalculator />
       <CardTitle>Required Courses</CardTitle>
-      {courseRows}
+      { courseRows }
     </Card>;
   }
 }

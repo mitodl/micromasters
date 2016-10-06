@@ -188,7 +188,7 @@ def generate_financial_aid_email(financial_aid):
         )
         message = FINANCIAL_AID_APPROVAL_MESSAGE.format(
             program_name=financial_aid.tier_program.program.title,
-            price=get_formatted_course_price(program_enrollment)["course_price"]
+            price=get_formatted_course_price(program_enrollment)["price"]
         )
         subject = FINANCIAL_AID_APPROVAL_SUBJECT.format(program_name=financial_aid.tier_program.program.title)
     elif financial_aid.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL:

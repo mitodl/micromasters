@@ -36,13 +36,21 @@ const SignupDialog = ({
         <img src="/static/images/mit_logo_grey_red.png" />
       </div>
       <span>
-        The MIT MicroMasters program is powered by edX.
+        All MITx MicroMasters courses are delivered on edX.
         To sign up for a MIT MicroMasters program you need an edX account.
       </span>
 
       <a className="mm-button signup" href="/login/edxorg">
         Continue with edX
       </a>
+      <div className="terms-of-service-text">
+        By clicking "Continue with edX" I certify that I agree with <a href="/terms_of_service" target="_blank">
+          MIT MicroMasters Terms of Service.
+        </a> Read our <a
+          href="http://web.mit.edu/referencepubs/nondiscrimination/index.html"
+          target="_blank"
+        >Nondiscrimination Policy.</a>
+      </div>
     </div>
   </Dialog>;
 };
