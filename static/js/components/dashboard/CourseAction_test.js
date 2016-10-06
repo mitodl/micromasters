@@ -69,13 +69,13 @@ describe('CourseAction', () => {
     assert.deepEqual(checkoutStub.args[0], [courseId]);
   };
 
-  it('shows a check mark for a passed course', () => {
+  it('shows passed for a passed course', () => {
     let course = findCourse(course => (
       course.runs.length > 0 &&
       course.runs[0].status === STATUS_PASSED
     ));
     const wrapper = shallow(<CourseAction course={course} {...defaultParamsNow} />);
-    assert.equal(wrapper.find(".material-icons").text(), 'done');
+    assert.equal(wrapper.find(".passed").text(), 'Passed');
   });
 
   it('shows nothing for a failed course', () => {

@@ -269,6 +269,11 @@ c.validation-wrapper {
           background-color: $lightgrey;
           color: #ffffff;
         }
+
+        .passed {
+          background-color: #e0f5e6;
+          padding: 5px 10px;
+        }
       }
     }
   }
