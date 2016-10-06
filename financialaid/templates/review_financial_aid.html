@@ -134,7 +134,7 @@
               <th style="font-weight: normal; min-width: 104px;">
                 {% include "common/sort_links.html" with field=sort_fields.adjusted_cost %}
               </th>
-              {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
+              {% if selected_status == statuses.PENDING_MANUAL_APPROVAL or selected_status == statuses.APPROVED %}
               <th style="font-weight: normal;">Justification</th>
               {% endif %}
               {% if selected_status == statuses.PENDING_MANUAL_APPROVAL or selected_status == statuses.PENDING_DOCS or selected_status == statuses.DOCS_SENT %}
@@ -198,7 +198,7 @@
               </td>
               <!-- /Adjusted cost -->
               <!-- Justification -->
-              {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
+              {% if selected_status == statuses.PENDING_MANUAL_APPROVAL or selected_status == statuses.APPROVED %}
               <td>
                 {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
                 <select id="justification-{{ financial_aid.id }}" class="form-control">
