@@ -12,43 +12,47 @@ body.app-media {
   border-radius: 0;
   height: auto;
   min-height: 0;
-  padding: 12px 22px 12px 33px;
+  padding: 12px 27px 12px 33px;
 
   .navbar-header {
     padding: 0;
+
     .pull-left {
-          @media (max-width: 580px) {
-            float: left;
-          }
-          .brand-logo {
-            float: left;
-            margin-right: 15px;
-            img {
-              width: 60px;
-              }
-          }
+      position: relative;
+      top: 2px;
+      @media (max-width: 580px) {
+        float: left;
+      }
 
-          .divider-large {
-            width: 14px;
-            height: 34px;
-            margin: 4px 15px 0 0;
-            border-left: 1px solid rgba(255, 255, 255, 0.5);
-            float: left;
-          }
+      .brand-logo {
+        float: left;
+        margin-right: 15px;
+        img {
+          width: 60px;
+        }
+      }
 
-          .header-page-name {
-            display: inline-block;
-            color:white;
-            font-size: 19px;
-            margin: 0 20px 0 0;
-            font-weight: 300;
-            float: left;
-            position: relative;
-            bottom: 2px;
-            img.micromasters_logo {
-              width: 120px;
-            }
-          }
+      .divider-large {
+        width: 14px;
+        height: 34px;
+        margin: 4px 15px 0 0;
+        border-left: 1px solid rgba(255, 255, 255, 0.5);
+        float: left;
+      }
+
+      .header-page-name {
+        display: inline-block;
+        color:white;
+        font-size: 19px;
+        margin: 0 20px 0 0;
+        font-weight: 300;
+        float: left;
+        position: relative;
+        bottom: 2px;
+        img.micromasters_logo {
+          width: 120px;
+        }
+      }
     }
 
     .pull-right {
@@ -126,7 +130,7 @@ body.app-media {
 }
 
 .banner-wrapper {
-  background: #222 center top url(/static/images/lp_hero2.jpg) no-repeat;
+  background: #222 left center url(/static/images/lp_hero2.jpg) no-repeat;
   margin: 0 auto;
   width: 100%;
   min-height: 620px;
@@ -208,7 +212,7 @@ body.app-media {
 }
 
 .sub-banner {
-  background-color: #ffffff;
+  background-color: #e6e6e6;
 
   .sub-banner-section{
     padding: 7vw 0 8vw;
