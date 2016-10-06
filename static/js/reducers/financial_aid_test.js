@@ -28,6 +28,7 @@ import {
   FETCH_PROCESSING,
   FETCH_SUCCESS,
 } from '../actions';
+import * as actions from '../actions';
 import { setCurrentProgramEnrollment } from '../actions/enrollments';
 import {
   FINANCIAL_AID_EDIT,
@@ -39,6 +40,7 @@ import * as api from '../util/api';
 describe('financial aid reducers', () => {
   let sandbox, store, dispatchThen;
   let addFinancialAidStub, skipFinancialAidStub;
+  let fetchDashboardStub, fetchCoursePricesStub;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -47,6 +49,10 @@ describe('financial aid reducers', () => {
     store.dispatch(setCurrentProgramEnrollment(1));
     addFinancialAidStub = sandbox.stub(api, 'addFinancialAid');
     skipFinancialAidStub = sandbox.stub(api, 'skipFinancialAid');
+    fetchDashboardStub = sandbox.stub(actions, 'fetchDashboard');
+    fetchDashboardStub.returns({type: "fake"});
+    fetchCoursePricesStub = sandbox.stub(actions, 'fetchCoursePrices');
+    fetchCoursePricesStub.returns({type: "fake"});
   });
 
   afterEach(() => {
@@ -113,6 +119,8 @@ describe('financial aid reducers', () => {
         fetchStatus: FETCH_SUCCESS
       });
       assert.deepEqual(state, expectation);
+      assert.ok(fetchCoursePricesStub.calledWith());
+      assert.ok(fetchDashboardStub.calledWith());
     });
   });
 
@@ -132,6 +140,8 @@ describe('financial aid reducers', () => {
       });
       assert.deepEqual(state, expectation);
       assert.ok(addFinancialAidStub.calledWith(income, currency, programId));
+      assert.notOk(fetchCoursePricesStub.calledWith());
+      assert.notOk(fetchDashboardStub.calledWith());
     });
   });
 
@@ -145,6 +155,8 @@ describe('financial aid reducers', () => {
         fetchStatus: FETCH_SUCCESS
       });
       assert.ok(skipFinancialAidStub.calledWith(2));
+      assert.ok(fetchCoursePricesStub.calledWith());
+      assert.ok(fetchDashboardStub.calledWith());
     });
   });
 
@@ -158,6 +170,8 @@ describe('financial aid reducers', () => {
         fetchStatus: FETCH_FAILURE
       });
       assert.ok(skipFinancialAidStub.calledWith(2));
+      assert.notOk(fetchCoursePricesStub.calledWith());
+      assert.notOk(fetchDashboardStub.calledWith());
     });
   });
 });
