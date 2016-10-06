@@ -205,8 +205,8 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         """
         Tests ReviewFinancialAidView with filters and sorting
         """
-        FinancialAidFactory.create(tier_program=self.tier_programs["0k"], status=FinancialAidStatus.AUTO_APPROVED)
-        FinancialAidFactory.create(tier_program=self.tier_programs["0k"], status=FinancialAidStatus.APPROVED)
+        for _ in range(100):
+            FinancialAidFactory.create(tier_program=self.tier_programs["0k"])
         self.client.force_login(self.staff_user_profile.user)
         # Should work with a filter
         resp = self.assert_http_status(self.client.get, self.review_url_with_filter, status.HTTP_200_OK)
@@ -260,8 +260,8 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         """
         Tests that ReviewFinancialAidView returns the expected results with search
         """
-        FinancialAidFactory.create(tier_program=self.tier_programs["0k"], status=FinancialAidStatus.AUTO_APPROVED)
-        FinancialAidFactory.create(tier_program=self.tier_programs["0k"], status=FinancialAidStatus.APPROVED)
+        for _ in range(100):
+            FinancialAidFactory.create(tier_program=self.tier_programs["0k"])
         self.client.force_login(self.staff_user_profile.user)
         # Works with search and filter
         search_query = self.financialaid_approved.user.profile.first_name
@@ -275,7 +275,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
             Q(user__profile__first_name__icontains=search_query) | Q(user__profile__last_name__icontains=search_query),
             tier_program__program_id=self.program.id,
             status=FinancialAidStatus.AUTO_APPROVED
-        ).order_by("user__profile__first_name").values_list("id", flat=True)  # Default sort field
+        ).order_by("user__profile__last_name").values_list("id", flat=True)  # Default sort field
         self.assertListEqual(list(resp_obj_id_list), list(expected_obj_id_list))
 
 
@@ -325,7 +325,9 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         """
         Tests FinancialAidActionView when invalid action is posted
         """
-        # Invalid action
+        # No action
+        self.assert_http_status(self.client.patch, self.action_url, status.HTTP_400_BAD_REQUEST)
+        # Invalid actions
         invalid_statuses = [
             status for status in FinancialAidStatus.ALL_STATUSES
             if status not in [FinancialAidStatus.APPROVED, FinancialAidStatus.PENDING_MANUAL_APPROVAL]
@@ -348,6 +350,9 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         self.assert_http_status(self.client.patch, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
         # Not part of the same program
         self.data["tier_program_id"] = TierProgramFactory.create().id  # Will be part of a different program
+        self.assert_http_status(self.client.patch, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
+        # No tier program
+        self.data.pop("tier_program_id")
         self.assert_http_status(self.client.patch, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
 
     def test_approve_invalid_status(self, *args):  # pylint: disable=unused-argument
