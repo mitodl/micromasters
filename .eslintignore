@@ -1,0 +1,3 @@
+# Ignore minified libraries
+static/js/financial_aid/bootstrap.min.js
+static/js/financial_aid/jquery-2.2.0.min.js
