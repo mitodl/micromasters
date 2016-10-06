@@ -130,7 +130,7 @@ body.app-media {
 }
 
 .banner-wrapper {
-  background: #222 left center url(/static/images/lp_hero2.jpg) no-repeat;
+  background: #222 center center url(/static/images/lp_hero.jpg) no-repeat;
   margin: 0 auto;
   width: 100%;
   min-height: 620px;
@@ -166,7 +166,7 @@ body.app-media {
       font-weight: 400;
       margin: 0 0 1vh 0;
       @media (min-width: 1200px) {
-        font-size: 3.5vw;
+        font-size: 3.2vw;
       }
       @media (max-width: 580px) {
         font-size: 25px;
@@ -182,11 +182,9 @@ body.app-media {
       color: rgba(255,255,255,.9);
       padding: 0;
       @media (min-width: 1200px) {
-        font-size: 2.6vw;
+        font-size: 2.2vw;
       }
       @media (max-width: 580px) {
-        font-size: 23px;
-        line-height: 1.15;
         display: none;
       }
     }
@@ -304,7 +302,7 @@ body.app-media {
   background: #fff;
   padding: 50px 0 67px;
   @media (max-width: 580px) {
-    padding: 80px 0 80px;
+    padding: 45px 0;
   }
 
   .quote {
@@ -316,9 +314,10 @@ body.app-media {
     border-bottom: 1px dashed #c5c5c5;
     @media (max-width: 580px) {
       text-align: center;
+      width: 87%;
     }
 
-    img.reif {
+    img.person {
       float: left;
       @media (max-width: 580px) {
         float: none;
@@ -336,7 +335,7 @@ body.app-media {
       font-weight: 300;
       line-height: 1.4em;
       @media (max-width: 580px) {
-        font-size: 20px;
+        font-size: 19px;
       }
     }
 
@@ -344,7 +343,7 @@ body.app-media {
       color: $font-gray;
       font-size: 22px;
       @media (max-width: 580px) {
-        font-size: 20px;
+        font-size: 19px;
       }
     }
   }
