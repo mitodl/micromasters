@@ -16,6 +16,12 @@ class FinancialAidAdmin(admin.ModelAdmin):
     """Admin for FinancialAid"""
     model = FinancialAid
 
+    def save_model(self, request, obj, form, change):
+        """
+        Saves object and logs change to object
+        """
+        obj.save_and_log(request.user)
+
 
 class FinancialAidAuditAdmin(admin.ModelAdmin):
     """Admin for FinancialAidAudit"""
