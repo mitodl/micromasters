@@ -203,7 +203,6 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         """
         FinancialAidFactory.create(tier_program=self.tier_programs["0k"], status=FinancialAidStatus.AUTO_APPROVED)
         FinancialAidFactory.create(tier_program=self.tier_programs["0k"], status=FinancialAidStatus.APPROVED)
-        FinancialAidFactory.create(tier_program=self.tier_programs["0k"], status=FinancialAidStatus.REJECTED)
         self.client.force_login(self.staff_user_profile.user)
         # Should work a filter
         resp = self.assert_http_status(self.client.get, self.review_url_with_filter, status.HTTP_200_OK)
@@ -313,16 +312,6 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         self.data["tier_program_id"] = TierProgramFactory.create().id  # Will be part of a different program
         self.assert_http_status(self.client.put, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
 
-    def test_reject_invalid_status(self, *args):  # pylint: disable=unused-argument
-        """
-        Tests FinancialAidActionView when trying to reject a FinancialAid that isn't pending manual approval
-        """
-        # FinancialAid object that cannot be rejected
-        self.financialaid.status = FinancialAidStatus.PENDING_DOCS
-        self.financialaid.save()
-        self.data["action"] = FinancialAidStatus.REJECTED
-        self.assert_http_status(self.client.put, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
-
     def test_approve_invalid_status(self, *args):  # pylint: disable=unused-argument
         """
         Tests FinancialAidActionView when trying to approve a FinancialAid that isn't pending manual approval
@@ -333,8 +322,7 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
             FinancialAidStatus.CREATED,
             FinancialAidStatus.AUTO_APPROVED,
             FinancialAidStatus.PENDING_DOCS,
-            FinancialAidStatus.APPROVED,
-            FinancialAidStatus.REJECTED
+            FinancialAidStatus.APPROVED
         ]
         for financial_aid_status in statuses_to_test:
             self.financialaid.status = financial_aid_status
@@ -351,8 +339,7 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
             FinancialAidStatus.CREATED,
             FinancialAidStatus.AUTO_APPROVED,
             FinancialAidStatus.PENDING_MANUAL_APPROVAL,
-            FinancialAidStatus.APPROVED,
-            FinancialAidStatus.REJECTED
+            FinancialAidStatus.APPROVED
         ]
         for financial_aid_status in statuses_to_test:
             self.financialaid.status = financial_aid_status
@@ -399,30 +386,6 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         self.financialaid.refresh_from_db()
         assert self.financialaid.tier_program == self.tier_programs["50k"]
         assert self.financialaid.status == FinancialAidStatus.APPROVED
-        assert mock_mailgun_client.send_financial_aid_email.called
-        _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
-        assert called_kwargs["acting_user"] == self.staff_user_profile.user
-        assert called_kwargs["financial_aid"] == self.financialaid
-        financial_aid_email = generate_financial_aid_email(self.financialaid)
-        assert called_kwargs["subject"] == financial_aid_email["subject"]
-        assert called_kwargs["body"] == financial_aid_email["body"]
-
-    def test_rejection(self, mock_mailgun_client):
-        """
-        Tests FinancialAidActionView when application is rejected
-        """
-        mock_mailgun_client.send_financial_aid_email.return_value = Mock(
-            spec=Response,
-            status_code=status.HTTP_200_OK,
-            json=mocked_json()
-        )
-        assert self.financialaid.tier_program != self.tier_programs["75k"]
-        assert self.financialaid.status != FinancialAidStatus.REJECTED
-        self.data["action"] = FinancialAidStatus.REJECTED
-        self.assert_http_status(self.client.put, self.action_url, status.HTTP_200_OK, data=self.data)
-        self.financialaid.refresh_from_db()
-        assert self.financialaid.tier_program == self.tier_programs["75k"]
-        assert self.financialaid.status == FinancialAidStatus.REJECTED
         assert mock_mailgun_client.send_financial_aid_email.called
         _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
         assert called_kwargs["acting_user"] == self.staff_user_profile.user
@@ -542,8 +505,7 @@ class FinancialAidDetailViewTests(FinancialAidBaseTestCase, APIClient):
             FinancialAidStatus.AUTO_APPROVED,
             FinancialAidStatus.DOCS_SENT,
             FinancialAidStatus.PENDING_MANUAL_APPROVAL,
-            FinancialAidStatus.APPROVED,
-            FinancialAidStatus.REJECTED
+            FinancialAidStatus.APPROVED
         ]
         for financial_aid_status in statuses_to_test:
             self.financialaid_pending_docs.status = financial_aid_status

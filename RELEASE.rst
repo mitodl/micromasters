@@ -1,6 +1,76 @@
 Release Notes
 =============
 
+Version 0.15.0
+--------------
+
+- Add course description and page link (#1209)
+- Added configurable basicauth to uWSGI
+- Improve social links with Google+ (#1208)
+- Added pre-enroll dashboard course states
+- Set unique URL for tabs in program page
+- Added batch refresh of current grades
+- centered the tabs on the program page and added max-width (#1206)
+- Added missing migration (#1215)
+- Fixed terms of service signup and login buttons (#1183)
+- Added select progam to profile tab (#1117)
+- Implemented UI for financial aid states (#1185)
+- Rh/responsive style tweaks (#1169)
+- Add social sharing buttons to public pages
+- Exposed the financial aid obj ID in dashboard API
+- Implemented email templates for financial aid status change emails (#1188)
+- Extracted DateField from boundDateField (#1186)
+- Implemented API for learners to skip financial aid and pay full price (#1175)
+- Exposed financial aid documents flag on MMTrack
+- Removed filter on program enrollments in dashboard API (#1194)
+- Implemented API endpoint for submitting date documents were sent (#1162)
+- more useful fields in admin list views (#1178)
+- Leave Courses on FAQs page
+- Custom exception handler
+- Implemented personal pricing for ecommerce (#1159)
+- changes to income cutoffs (15-&gt;25, 100-&gt;75) and associated tests (#1174)
+- updated django to 1.9.10 (#1176)
+- Added course price API call to front end
+- Implemented abstraction for MM Track
+- Fixed some mail tests that were failing in case of environment variable set
+- Currency Conversion (#1146)
+- Added photo of reif
+- slight text change
+- added reif quote
+- refactor getPreferredName (#1156)
+- Update home_page.html (#1164)
+- Refactored checkout API to work with non-financial aid programs (#1145)
+- Several Small Style changes (#1158)
+- Switch to Django JSONField (#1124)
+- Removed &#39;Are you a member?&#39;
+- Responsive program page (#1152)
+- Update homepage text
+- Add social meta tags
+- Added financial aid calculator
+- Financial Aid Auditing (#1138)
+- Added management command for creating Tiers/TierPrograms (#1147)
+- More accessibility improvements (#1148)
+- Removed program enrollment from dialog (#1128)
+- Tweaks to the style of the faculty carousel (#1139)
+- Financial Aid: Implemented endpoint for retrieving a learner&#39;s course price (#1099)
+- Responsive home page (#1143)
+- Add description, keywords meta tags, title text
+- Fix signup button
+- Changed the header with Micromasters logo, and so that home and program page use the same partial file for the navbar html
+- Accessibility improvements (#1133)
+- Used fill rule to crop faculty images (#1136)
+- Faculty carousel (#1079)
+- Rh/even more tweaks gio (#1129)
+- Set default staff page to learner search (#1126)
+- Financial Aid: Implemented review page backend actions (#1096)
+- Overrode save method on FinancialAid to ensure uniqueness between Use… (#1104)
+- Implemented enrollment after course purchase (#1092)
+- Changed names and values for course statuses
+- Added support for current grades fetching and caching
+- Display courses with enrollment status on ProgramPage
+- Added profile image to profile API and to frontend
+- Added order receipt and cancellation UI (#1085)
+
 Version 0.14.0
 --------------
 

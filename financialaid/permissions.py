@@ -9,7 +9,7 @@ from roles.roles import Permissions
 
 class UserCanEditFinancialAid(BasePermission):
     """
-    Allow the user if she has the permission to approve, reject, or edit someone's
+    Allow the user if she has the permission to approve or edit someone's
     financial aid application.
     """
     def has_object_permission(self, request, view, obj):

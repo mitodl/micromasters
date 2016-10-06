@@ -27,6 +27,7 @@ import {
   setEnrollSelectedProgram,
   setPhotoDialogVisibility,
   setCalculatorDialogVisibility,
+  setConfirmSkipDialogVisibility,
 } from '../actions/ui';
 import { INITIAL_UI_STATE } from '../reducers/ui';
 import type { UIState } from '../reducers/ui';
@@ -192,6 +193,12 @@ describe('ui reducers', () => {
   describe('Calculator visibility', () => {
     it('should let you set calculator visibility', () => {
       assertReducerResultState(setCalculatorDialogVisibility, ui => ui.calculatorDialogVisibility, false);
+    });
+  });
+
+  describe('Skip dialog visibility', () => {
+    it('should let you set skip dialog visibility', () => {
+      assertReducerResultState(setConfirmSkipDialogVisibility, ui => ui.skipDialogVisibility, false);
     });
   });
 });

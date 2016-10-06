@@ -94,3 +94,6 @@ export const setCalculatorDialogVisibility = createAction(SET_CALCULATOR_DIALOG_
 
 export const SET_PROGRAM = 'SET_PROGRAM';
 export const setProgram = createAction(SET_PROGRAM);
+
+export const SET_CONFIRM_SKIP_DIALOG_VISIBILITY = 'SET_CONFIRM_SKIP_DIALOG_VISIBILITY';
+export const setConfirmSkipDialogVisibility = createAction(SET_CONFIRM_SKIP_DIALOG_VISIBILITY);

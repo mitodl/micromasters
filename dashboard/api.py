@@ -96,6 +96,7 @@ class CourseFormatConditionalFields:
         Method to get from the ASSOCIATED_FIELDS dict
         """
         if course_status not in CourseStatus.all_statuses():
+            log.error('%s not defined in Courses.api.CourseStatus', course_status)
             raise ImproperlyConfigured(
                 '{} not defined in Courses.api.CourseStatus'.format(course_status))
         return cls.ASSOCIATED_FIELDS.get(course_status, [])

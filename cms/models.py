@@ -10,6 +10,7 @@ from wagtail.wagtailimages.models import Image
 from wagtail.wagtailcore.models import Page, Orderable
 from wagtail.wagtailcore.fields import RichTextField
 from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel
+from rolepermissions.verifications import has_role
 
 
 from courses.models import Program
@@ -17,6 +18,10 @@ from micromasters.utils import webpack_dev_server_host
 from profiles.api import get_social_username
 from ui.views import get_bundle_url
 from cms.api import get_course_enrollment_text, get_course_url
+from roles.models import (
+    Instructor,
+    Staff,
+)
 
 
 def faculty_for_carousel(faculty):
@@ -55,6 +60,7 @@ class HomePage(Page):
         context["style_public_src"] = get_bundle_url(request, "style_public.js")
         context["signup_dialog_src"] = get_bundle_url(request, "signup_dialog.js")
         context["authenticated"] = not request.user.is_anonymous()
+        context["is_staff"] = has_role(request.user, [Staff.ROLE_ID, Instructor.ROLE_ID])
         context["username"] = username
         context["js_settings_json"] = json.dumps(js_settings)
         context["title"] = self.title

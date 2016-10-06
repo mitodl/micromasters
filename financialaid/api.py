@@ -1,6 +1,8 @@
 """
 API helper functions for financialaid
 """
+import logging
+
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 from financialaid.constants import (
@@ -14,6 +16,9 @@ from financialaid.models import (
     FinancialAidStatus,
     TierProgram
 )
+
+
+log = logging.getLogger(__name__)
 
 
 def determine_tier_program(program, income):
@@ -31,7 +36,12 @@ def determine_tier_program(program, income):
     tier_programs_set = program.tier_programs.filter(current=True, income_threshold__lte=income)
     tier_program = tier_programs_set.order_by("-income_threshold").first()
     if tier_program is None:
-        raise ImproperlyConfigured("The $0-income-threshold TierProgram has not yet been configured for this Program.")
+        message = (
+            "$0-income-threshold TierProgram has not yet been configured for Program "
+            "with id {program_id}.".format(program_id=program.id)
+        )
+        log.error(message)
+        raise ImproperlyConfigured(message)
     return tier_program
 
 
@@ -80,7 +90,11 @@ def get_no_discount_tier_program(program_id):
     try:
         return TierProgram.objects.get(program_id=program_id, current=True, discount_amount=0)
     except TierProgram.DoesNotExist:
-        raise ImproperlyConfigured("The no-discount TierProgram has not yet been configured for this Program.")
+        message = "No-discount TierProgram has not yet been configured for Program with id {program_id}.".format(
+            program_id=program_id
+        )
+        log.error(message)
+        raise ImproperlyConfigured(message)
 
 
 def get_formatted_course_price(program_enrollment):

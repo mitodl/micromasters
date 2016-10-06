@@ -1265,3 +1265,23 @@ blocks,
   }
 }
 
+.flat-field {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  padding: 10px 4px;
+  width: 100%;
+  height: 100%;
+  font-size: 15px;
+  border: 0;
+  border-bottom: 1px solid grey;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  background-color: rgba(0, 0, 0, 0);
+  color: rgba(0, 0, 0, 0.870588);
+  box-sizing: border-box;
+  margin-top: 14px;
+}
+
+.mailchimp-btn {
+  display: inline-flex !important;
+  margin-right: 10px !important;
+}

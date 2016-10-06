@@ -15,7 +15,10 @@ import {
   TOAST_SUCCESS,
   TOAST_FAILURE,
 } from '../constants';
-import { setToastMessage } from '../actions/ui';
+import {
+  setToastMessage,
+  setConfirmSkipDialogVisibility,
+} from '../actions/ui';
 import { createForm } from '../util/util';
 import CourseListCard from '../components/dashboard/CourseListCard';
 import DashboardUserCard from '../components/dashboard/DashboardUserCard';
@@ -128,8 +131,15 @@ class DashboardPage extends React.Component {
 
   skipFinancialAid = programId => {
     const { dispatch } = this.props;
-    dispatch(skipFinancialAid(programId));
-  }
+    dispatch(skipFinancialAid(programId)).then(() => {
+      this.setConfirmSkipDialogVisibility(false);
+    });
+  };
+
+  setConfirmSkipDialogVisibility = bool => {
+    const { dispatch } = this.props;
+    dispatch(setConfirmSkipDialogVisibility(bool));
+  };
 
   fetchDashboard = (): void => {
     const { dispatch } = this.props;
@@ -148,6 +158,7 @@ class DashboardPage extends React.Component {
       profile: { profile },
       documents,
       currentProgramEnrollment,
+      ui,
     } = this.props;
     const loaded = dashboard.fetchStatus !== FETCH_PROCESSING && prices.fetchStatus !== FETCH_PROCESSING;
     let errorMessage;
@@ -176,6 +187,8 @@ class DashboardPage extends React.Component {
           skipFinancialAid={this.skipFinancialAid}
           updateDocumentSentDate={this.updateDocumentSentDate}
           fetchDashboard={this.fetchDashboard}
+          setConfirmSkipDialogVisibility={this.setConfirmSkipDialogVisibility}
+          ui={ui}
         />;
       }
 

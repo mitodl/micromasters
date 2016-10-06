@@ -35,6 +35,7 @@ import {
 
   SET_PHOTO_DIALOG_VISIBILITY,
   SET_CALCULATOR_DIALOG_VISIBILITY,
+  SET_CONFIRM_SKIP_DIALOG_VISIBILITY,
 } from '../actions/ui';
 import { PERSONAL_STEP } from '../constants';
 import type { ToastMessage } from '../flow/generalTypes';
@@ -74,6 +75,7 @@ export type UIState = {
   calculatorDialogVisibility:   boolean;
   documentSentDate:             Object;
   selectedProgram:              Program;
+  skipDialogVisibility:         boolean;
 };
 
 export const INITIAL_UI_STATE: UIState = {
@@ -103,6 +105,7 @@ export const INITIAL_UI_STATE: UIState = {
   calculatorDialogVisibility: false,
   documentSentDate: {},
   selectedProgram: null,
+  skipDialogVisibility: false,
 };
 
 export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
@@ -233,6 +236,8 @@ export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
     return { ...state, photoDialogVisibility: action.payload };
   case SET_CALCULATOR_DIALOG_VISIBILITY:
     return { ...state, calculatorDialogVisibility: action.payload };
+  case SET_CONFIRM_SKIP_DIALOG_VISIBILITY:
+    return { ...state, skipDialogVisibility: action.payload };
   default:
     return state;
   }

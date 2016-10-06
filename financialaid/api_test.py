@@ -183,6 +183,15 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
         assert determine_tier_program(self.program, 34938234) == self.tier_programs["75k"]
         assert determine_tier_program(self.program, 34938234) != self.tier_programs["75k_not_current"]
 
+    def test_determine_tier_program_improper_setup(self):
+        """
+        Tests that determine_tier_program() raises ImproperlyConfigured if no $0-discount TierProgram
+        has been created and income supplied is too low.
+        """
+        program = ProgramFactory.create()
+        with self.assertRaises(ImproperlyConfigured):
+            determine_tier_program(program, 0)
+
     def test_determine_auto_approval(self):  # pylint: disable=no-self-use
         """
         Tests determine_auto_approval()

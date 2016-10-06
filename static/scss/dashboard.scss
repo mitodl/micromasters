@@ -182,6 +182,10 @@ c.validation-wrapper {
       display: flex;
       align-items: center;
       justify-content: space-between;
+
+      .full-price {
+        cursor: pointer;
+      }
     }
   }
 

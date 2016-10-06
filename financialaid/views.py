@@ -170,7 +170,6 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         message_order = (
             FinancialAidStatus.PENDING_MANUAL_APPROVAL,
             FinancialAidStatus.APPROVED,
-            FinancialAidStatus.REJECTED,
             FinancialAidStatus.AUTO_APPROVED
         )
         context["financial_aid_statuses"] = (
@@ -254,7 +253,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
 
 class FinancialAidActionView(UpdateAPIView):
     """
-    View for rejecting and approving financial aid requests
+    View for modifying financial aid request statuses as a Staff user
     """
     serializer_class = FinancialAidActionSerializer
     permission_classes = (IsAuthenticated, UserCanEditFinancialAid)
