@@ -6,6 +6,7 @@ import json
 from datetime import datetime, timedelta
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_save
+from django.test import TestCase
 from factory.django import mute_signals
 
 from courses.factories import ProgramFactory, CourseRunFactory
@@ -31,10 +32,9 @@ from financialaid.models import CurrencyExchangeRate
 from profiles.factories import ProfileFactory
 from roles.models import Role
 from roles.roles import Staff, Instructor
-from search.base import ESTestCase
 
 
-class FinancialAidBaseTestCase(ESTestCase):
+class FinancialAidBaseTestCase(TestCase):
     """
     Base test case for financial aid test setup
     """
@@ -344,7 +344,7 @@ class CoursePriceAPITests(FinancialAidBaseTestCase):
         )
 
 
-class ExchangeRateAPITests(ESTestCase):
+class ExchangeRateAPITests(TestCase):
     """
     Tests for financial aid exchange rate api backend
     """

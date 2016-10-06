@@ -326,8 +326,17 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         Tests FinancialAidActionView when invalid action is posted
         """
         # Invalid action
-        self.data["action"] = FinancialAidStatus.PENDING_DOCS
-        self.assert_http_status(self.client.patch, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
+        invalid_statuses = [
+            status for status in FinancialAidStatus.ALL_STATUSES
+            if status not in [FinancialAidStatus.APPROVED, FinancialAidStatus.PENDING_MANUAL_APPROVAL]
+        ]
+        for invalid_status in invalid_statuses:
+            self.assert_http_status(
+                self.client.patch,
+                self.action_url,
+                status.HTTP_400_BAD_REQUEST,
+                data={"action": invalid_status}
+            )
 
     def test_invalid_tier_program(self, *args):  # pylint: disable=unused-argument
         """
@@ -349,10 +358,8 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         # FinancialAid object that cannot be approved
         self.data["action"] = FinancialAidStatus.APPROVED
         statuses_to_test = [
-            FinancialAidStatus.CREATED,
-            FinancialAidStatus.AUTO_APPROVED,
-            FinancialAidStatus.PENDING_DOCS,
-            FinancialAidStatus.APPROVED
+            status for status in FinancialAidStatus.ALL_STATUSES
+            if status != FinancialAidStatus.PENDING_MANUAL_APPROVAL
         ]
         for financial_aid_status in statuses_to_test:
             self.financialaid.status = financial_aid_status
@@ -366,6 +373,9 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         # FinancialAid object that cannot be approved
         self.data["justification"] = "somerandomstring"
         self.assert_http_status(self.client.patch, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
+        # No justification
+        self.data.pop("justification")
+        self.assert_http_status(self.client.patch, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
 
     def test_mark_documents_received_invalid_status(self, *args):  # pylint: disable=unused-argument
         """
@@ -373,10 +383,8 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         """
         # FinancialAid object whose documents cannot received
         statuses_to_test = [
-            FinancialAidStatus.CREATED,
-            FinancialAidStatus.AUTO_APPROVED,
-            FinancialAidStatus.PENDING_MANUAL_APPROVAL,
-            FinancialAidStatus.APPROVED
+            status for status in FinancialAidStatus.ALL_STATUSES
+            if status not in [FinancialAidStatus.PENDING_DOCS, FinancialAidStatus.DOCS_SENT]
         ]
         for financial_aid_status in statuses_to_test:
             self.financialaid.status = financial_aid_status
