@@ -160,14 +160,14 @@ def terms_of_service(request):
     )
 
 
-def page_404(request):
+def page_404(request, *args, **kwargs):
     """
     Overridden handler for the 404 error pages.
     """
     return standard_error_page(request, 404, "404.html")
 
 
-def page_500(request):
+def page_500(request, *args, **kwargs):
     """
     Overridden handler for the 404 error pages.
     """
