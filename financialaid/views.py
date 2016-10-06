@@ -166,7 +166,8 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         )
         context["current_program_id"] = self.program.id
         context["tier_programs"] = TierProgram.objects.filter(
-            program_id=context["current_program_id"]
+            program_id=context["current_program_id"],
+            current=True
         ).order_by(
             "discount_amount"
         ).annotate(

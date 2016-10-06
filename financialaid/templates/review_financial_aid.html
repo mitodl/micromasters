@@ -265,13 +265,12 @@
       </div>
     </div>
   </div>
-  
   {% include "footer.html" %}
-  <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script>
     window.CSRF_TOKEN = "{{ csrf_token }}";
     window.BASE_PATH = "{{ request.path }}?sort_by={{ current_sort_field }}&search_query="
   </script>
-  <script src="{% static 'js/financial_aid_review.js' %}"></script>
+  <script src="{% static 'js/financial_aid/jquery-2.2.0.min.js' %}"></script>
+  <script src="{% static 'js/financial_aid/bootstrap.min.js' %}"></script>
+  <script src="{% static 'js/financial_aid/functions.js' %}"></script>
 {% endblock %}
