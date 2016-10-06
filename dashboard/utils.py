@@ -1,14 +1,18 @@
 """
 Utility functions and classes for the dashboard
 """
+import logging
+
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 from django.db.models import Max, Min, Q
 
-
 from courses.models import CourseRun
 from ecommerce.models import Line
 from financialaid.models import FinancialAid, TierProgram
+
+
+log = logging.getLogger(__name__)
 
 
 class MMTrack:
@@ -89,6 +93,7 @@ class MMTrack:
         program_tiers_qset = TierProgram.objects.filter(
             Q(program=self.program) & Q(current=True)).order_by('discount_amount')
         if not program_tiers_qset.exists():
+            log.error('The program "%s" needs at least one tier configured', self.program.title)
             raise ImproperlyConfigured(
                 'The program "{}" needs at least one tier configured'.format(self.program.title))
         min_discount = program_tiers_qset.aggregate(
@@ -166,6 +171,7 @@ class MMTrack:
                 # this should never happen, but just in case
                 return False
             if course_run.end_date is None:
+                log.error('Missing "end_date" for course run %s', course_id)
                 raise ImproperlyConfigured('Missing "end_date" for course run {}'.format(course_id))
             return cur_grade.passed and course_run.is_past
 

@@ -1,11 +1,15 @@
 """
 Models for course structure
 """
+import logging
 from datetime import datetime
 
 import pytz
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
+
+
+log = logging.getLogger(__name__)
 
 
 class Program(models.Model):
@@ -34,6 +38,7 @@ class Program(models.Model):
             course_run__course__program=self
         ).first()
         if course_price_object is None:
+            log.error('No course price available for program "%s"', self.title)
             # If no CoursePrice is valid for this program, can't meaningfully return any value
             raise ImproperlyConfigured('No course price available for program "{}".'.format(self.title))
         return course_price_object.price
