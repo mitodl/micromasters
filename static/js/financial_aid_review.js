@@ -10,6 +10,7 @@ var financialAidReview = function() {
    * 
    * @param financialAidId {number} Financial aid application id
    * @param url {string} URL to submit request to
+   * @param action {string} FinancialAidStatus to send in request
    */
   function submitDocsReceived(financialAidId, url, action) {
     var name = $("#full-name-" + financialAidId).text().trim();
@@ -42,6 +43,7 @@ var financialAidReview = function() {
    * 
    * @param financialAidId {number} Financial aid application id
    * @param url {string} URL to submit request to
+   * @param action {string} FinancialAidStatus to send in request
    */
   function submitApproval(financialAidId, url, action) {
     var name = $("#full-name-" + financialAidId).text().trim();
