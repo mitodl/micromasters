@@ -30,7 +30,10 @@ import {
   setDocumentSentDate,
   updateDocumentSentDate,
 } from '../actions/documents';
-import { startCalculatorEdit } from '../actions/financial_aid';
+import {
+  startCalculatorEdit,
+  updateCalculatorEdit,
+} from '../actions/financial_aid';
 import type { UIState } from '../reducers/ui';
 import type {
   DocumentsState,
@@ -39,6 +42,7 @@ import type { CoursePricesState, DashboardState } from '../flow/dashboardTypes';
 import type { ProgramEnrollment } from '../flow/enrollmentTypes';
 import type { ProfileGetResult } from '../flow/profileTypes';
 import { skipFinancialAid } from '../actions/financial_aid';
+import { currencyForCountry } from '../util/currency';
 
 class DashboardPage extends React.Component {
   static contextTypes = {
@@ -118,9 +122,17 @@ class DashboardPage extends React.Component {
   };
 
   openFinancialAidCalculator = () => {
-    const { dispatch, currentProgramEnrollment } = this.props;
-    dispatch(setCalculatorDialogVisibility(true));
+    const {
+      dispatch,
+      currentProgramEnrollment,
+      profile: { profile: { country } }
+    } = this.props;
     dispatch(startCalculatorEdit(currentProgramEnrollment.id));
+    if ( country ) {
+      let currencyPrediction = currencyForCountry(country);
+      dispatch(updateCalculatorEdit({ currency: currencyPrediction }));
+    }
+    dispatch(setCalculatorDialogVisibility(true));
   };
 
   setDocumentSentDate = (newDate: string): void => {
