@@ -37,6 +37,7 @@
     "iso-3166-2": "0.4.0",
     "isomorphic-fetch": "2.2.1",
     "istanbul": "1.0.0-alpha.2",
+    "jquery": "^2.2.0",
     "jsdom": "8.5.0",
     "jsdom-global": "1.7.0",
     "keycode": "2.1.1",
