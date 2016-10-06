@@ -1,6 +1,7 @@
 // @flow
 import cc from 'currency-codes';
 import R from 'ramda';
+import iso3166 from 'iso-3166-2';
 
 const codeToOption = code => (
   { value: code, label: cc.code(code).currency }
@@ -15,3 +16,11 @@ const codesToOptions = R.compose(
 );
 
 export const currencyOptions = codesToOptions(cc.codes());
+
+const codeToCountryName = code => iso3166.country(code).name;
+
+const countryNameToCurrency = name => cc.country(name)[0].code;
+
+export const currencyForCountry = R.compose(
+  countryNameToCurrency, R.toLower, codeToCountryName
+);
