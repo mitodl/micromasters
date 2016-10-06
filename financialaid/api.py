@@ -7,8 +7,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 from financialaid.constants import (
     COUNTRY_INCOME_THRESHOLDS,
-    DEFAULT_INCOME_THRESHOLD,
-    FinancialAidStatus
+    DEFAULT_INCOME_THRESHOLD
 )
 from financialaid.exceptions import NotSupportedException
 from financialaid.models import (
