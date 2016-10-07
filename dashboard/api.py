@@ -357,13 +357,14 @@ def update_cached_enrollment(user, enrollment, course_id, now):
     )
 
 
-def _check_if_refresh(user, cached_model, refresh_delta):
+def _check_if_refresh(user, cached_model, refresh_delta, limit_to_courses=None):
     """
     Helper function to check if cached data in a model need to be refreshed.
     Args:
         user (django.contrib.auth.models.User): A user
         cached_model (dashboard.models.CachedEdxInfoModel): a model containing cached data
         refresh_delta (datetime.datetime): time limit for refresh the data
+        limit_to_courses (list): a list of course ids to limit the check
 
     Returns:
         tuple: a tuple containing:
@@ -374,6 +375,9 @@ def _check_if_refresh(user, cached_model, refresh_delta):
     course_ids = CourseRun.objects.filter(course__program__live=True).exclude(
         Q(edx_course_key__isnull=True) | Q(edx_course_key__exact='')
     ).values_list("edx_course_key", flat=True)
+
+    if limit_to_courses is not None:
+        course_ids = course_ids.filter(edx_course_key__in=limit_to_courses)
 
     model_queryset = cached_model.objects.filter(
         user=user,
@@ -499,8 +503,10 @@ def get_student_current_grades(user, edx_client):
     refresh_delta = now - datetime.timedelta(hours=REFRESH_GRADES_CACHE_HOURS)
 
     with transaction.atomic():
+        enrolled_courses = models.CachedEnrollment.objects.filter(user=user).exclude(data=None).values_list(
+            "course_run__edx_course_key", flat=True)
         is_data_fresh, grades_queryset, course_ids = _check_if_refresh(
-            user, models.CachedCurrentGrade, refresh_delta)
+            user, models.CachedCurrentGrade, refresh_delta, enrolled_courses)
         if is_data_fresh:
             # everything is cached: return the objects but exclude the not existing certs
             return CurrentGrades([
@@ -514,11 +520,15 @@ def get_student_current_grades(user, edx_client):
     # This must be done atomically so the database is not half modified at any point. It's still possible to fetch
     # from edX twice though.
     with transaction.atomic():
-        for course_id in course_ids:
+        # update all the course ids and not only the enrolled ones
+        all_mm_course_ids = CourseRun.objects.filter(course__program__live=True).exclude(
+            Q(edx_course_key__isnull=True) | Q(edx_course_key__exact='')
+        ).values_list("edx_course_key", flat=True)
+        for course_id in all_mm_course_ids:
             current_grade = current_grades.get_current_grade(course_id)
-            # get the certificate data or None
+            # get the current grade data or None
             # None means we will cache the fact that the student
-            # does not have a certificate for the given course
+            # does not have a current grade for the given course
             grade_data = current_grade.json if current_grade is not None else None
             course_run = CourseRun.objects.get(edx_course_key=course_id)
             updated_values = {

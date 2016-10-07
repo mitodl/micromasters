@@ -130,11 +130,13 @@ def batch_update_user_data_subtasks(students):
 
                 edx_client = EdxApi(user_social.extra_data, settings.EDXORG_BASE_URL)
 
-                # get an enrollments client object for the student
+                # refresh enrollments for the student
                 api.get_student_enrollments(user, edx_client)
-                # get a certificates client object for the student
+                # refresh certificates for the student
                 api.get_student_certificates(user, edx_client)
-                # get a current grades client object for the student
+                # refresh current grades for the student
+                # the grades should be refreshed always after the enrollments
+                # or else some grades may not get fetched
                 api.get_student_current_grades(user, edx_client)
 
         except Exception as e:

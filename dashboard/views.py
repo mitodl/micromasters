@@ -63,6 +63,8 @@ class UserDashboard(APIView):
         # get certificates for the student
         certificates = get_student_certificates(request.user, edx_client)
         # get current_grades for the student
+        # the grades should be refreshed always after the enrollments
+        # or else some grades may not get fetched
         current_grades = get_student_current_grades(request.user, edx_client)
 
         response_data = []

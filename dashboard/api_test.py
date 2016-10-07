@@ -1277,6 +1277,8 @@ class CachedCurrentGradesTests(ESTestCase):
         """
         Set up current grades
         """
+        cls.user = UserFactory.create()
+
         with open(os.path.join(os.path.dirname(__file__),
                                'fixtures/current_grades.json')) as file_obj:
             grades_json = json.loads(file_obj.read())
@@ -1284,9 +1286,19 @@ class CachedCurrentGradesTests(ESTestCase):
         cls.current_grades = CurrentGrades([CurrentGrade(grade_json) for grade_json in grades_json])
         all_runs = []
         cls.all_course_run_ids = []
+        cls.all_enrolled_run_ids = []
         for cur_grade in cls.current_grades.all_current_grades:
-            all_runs.append(CourseRunFactory.create(edx_course_key=cur_grade.course_id))
+            course_run = CourseRunFactory.create(edx_course_key=cur_grade.course_id)
+            all_runs.append(course_run)
+            # create a cached enrollment for each run
+            models.CachedEnrollment.objects.create(
+                user=cls.user,
+                course_run=course_run,
+                data={'foo': 'bar'},
+                last_request=datetime.now(tz=pytz.utc)
+            )
             cls.all_course_run_ids.append(cur_grade.course_id)
+            cls.all_enrolled_run_ids.append(cur_grade.course_id)
         # add an extra course_run not coming from certificates
         fake_course_id = 'foo+cert+key'
         all_runs.append(CourseRunFactory.create(edx_course_key=fake_course_id))
@@ -1295,8 +1307,6 @@ class CachedCurrentGradesTests(ESTestCase):
         for run in all_runs:
             run.course.program.live = True
             run.course.program.save()
-
-        cls.user = UserFactory.create()
 
     def assert_in_db(self, expected_timestamp, course_ids, current_grades=None):
         """
@@ -1354,7 +1364,9 @@ class CachedCurrentGradesTests(ESTestCase):
         # Test that the current grades object returned by the edx_api function is exactly the same
         # object as what our function tests
         assert ret is self.current_grades
-        assert mocked_get_student_curgrade.call_args[0] == (username, self.all_course_run_ids)
+        call_args = mocked_get_student_curgrade.call_args[0]
+        call_args = (call_args[0], sorted(call_args[1]))
+        assert call_args == (username, sorted(self.all_enrolled_run_ids))
         now = datetime.now(tz=pytz.utc)
         self.assert_in_db(now, course_ids)
         # assert that all the course run that not have a verified

@@ -1,4 +1,7 @@
 __webpack_public_path__ = `http://${SETTINGS.host}:8078/`;  // eslint-disable-line no-undef, camelcase
+// bootstrap
+import 'style!css!bootstrap/dist/css/bootstrap.min.css';
+
 // react-mdl material-design-lite file
 import 'style!css!react-mdl/extra/material.css';
 // react-virtualized requirement

@@ -104,7 +104,9 @@ export default class CourseAction extends React.Component {
 
     switch (firstRun.status) {
     case STATUS_PASSED:
-      action = <i className="material-icons">done</i>;
+      action = <div className="passed" key="1">
+        Passed
+      </div>;
       break;
     case STATUS_CAN_UPGRADE: {
       let formattedUpgradeDate = moment(firstRun.course_upgrade_deadline).format(DASHBOARD_FORMAT);

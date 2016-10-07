@@ -3360,9 +3360,9 @@
       "resolved": "https://registry.npmjs.org/jodid25519/-/jodid25519-1.0.2.tgz"
     },
     "jquery": {
-      "version": "3.1.1",
-      "from": "jquery@>=1.7.2",
-      "resolved": "https://registry.npmjs.org/jquery/-/jquery-3.1.1.tgz"
+      "version": "2.2.0",
+      "from": "jquery@2.2.0",
+      "resolved": "https://registry.npmjs.org/jquery/-/jquery-2.2.0.tgz"
     },
     "js-base64": {
       "version": "2.1.9",

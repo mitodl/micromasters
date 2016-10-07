@@ -1,6 +1,28 @@
 Release Notes
 =============
 
+Version 0.16.0
+--------------
+
+- Updated financial aid review page frontend (#1161)
+- Zagaran/financialaidadminlogging (#1263)
+- Added ImproperlyConfigured (#1256)
+- Fetch course prices and dashboard after every relevant change on the server (#1271)
+- Fixed course price API output (#1255)
+- Home Page, Program page and App with MIT Brand colors (#1246)
+- Added Rest API to audit enroll a user in a course
+- makes fields read_only in django admin for financialaidaudit objects (#1258)
+- fixes FinancialAidAudit JSONfields (#1244)
+- Added ZenDesk help button on MM (#1211)
+- Removed rejected status (#1253)
+- Fixed Style of mailchimp form (#1166)
+- Updated my dashboard link (#1233)
+- Added confirmation dialog for skipping financial aid
+- Added log.error for every ImproperlyConfigured exception raised
+- Implemented document sent date (#1207)
+- Added &#39;skip financial aid&#39; feature
+- Add back terms of service link in dialog, and change Log in link to act the same as signup (#1182)
+
 Version 0.15.0
 --------------
 

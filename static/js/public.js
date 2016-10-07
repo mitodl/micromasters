@@ -2,22 +2,22 @@
 __webpack_public_path__ = `http://${SETTINGS.host}:8078/`;  // eslint-disable-line no-undef, camelcase
 
 // responsive sharing buttons
-require("rrssb/js/rrssb.js");
+import "rrssb/js/rrssb.js";
 
-require("bootstrap");
+import "bootstrap";
 
 // jquery things
-require("./public/jquery.raty.js");
+import "./public/jquery.raty.js";
 
 // other code
-require("./public/core.js");
-require("./public/site.js");
+import "./public/core.js";
+import "./public/site.js";
 
 // jquery components
-require("./public/components/raty.js");
+import "./public/components/raty.js";
 
 // mailchimp requirements
-require("ajaxchimp");
+import "ajaxchimp";
 
 // make the thing work
 (function(document, window, $) {
