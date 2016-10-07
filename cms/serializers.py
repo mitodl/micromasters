@@ -18,7 +18,7 @@ class FacultyImageSerializer(serializers.ModelSerializer):
     alt = serializers.CharField(source="default_alt_text")
     rendition = serializers.SerializerMethodField()
 
-    def get_rendition(self, image):
+    def get_rendition(self, image):  # pylint: disable=no-self-use
         """Serialize a rendition for the faculty image"""
         return RenditionSerializer().to_representation(image.get_rendition('fill-500x385'))
 
