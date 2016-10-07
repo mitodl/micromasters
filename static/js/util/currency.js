@@ -29,10 +29,10 @@ const codeToOption = code => (
 
 const labelSort = R.sortBy(R.compose(R.toLower, R.prop('label')));
 
-const excludeUnusedCodes = R.reject(R.flip(R.contains)(excludedCurrencyCodes));
+const invalidCurrency = R.flip(R.contains)(excludedCurrencyCodes);
 
 const codesToOptions = R.compose(
-  labelSort, R.map(codeToOption), excludeUnusedCodes
+  labelSort, R.map(codeToOption), R.reject(invalidCurrency)
 );
 
 export const currencyOptions = codesToOptions(cc.codes());
@@ -45,9 +45,7 @@ const currencyToCode = currency => (
   currency.length === 0 ? '' : currency[0].code
 );
 
-const excludeSingleCode = code => (
-  R.contains(code, excludedCurrencyCodes) ? '' : code
-);
+const excludeSingleCode = code => invalidCurrency(code) ? '' : code;
 
 export const currencyForCountry = R.compose(
   excludeSingleCode, currencyToCode, countryNameToCurrency, R.toLower, codeToCountryName
