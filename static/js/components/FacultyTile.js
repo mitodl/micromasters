@@ -30,11 +30,9 @@ export default class FacultyTile extends React.Component {
       nameStr = name;
     }
 
-    let imageTag = <img src={file} alt={alt} width={width} height={height} />;
-
     return (
       <div className="faculty-tile">
-        {imageTag}
+        <img src={file} alt={alt} width={width} height={height} />
         <h4>{nameStr}</h4>
         <p>{shortBio}</p>
       </div>
