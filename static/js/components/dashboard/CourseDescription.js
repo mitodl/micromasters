@@ -1,3 +1,4 @@
+/* global SETTINGS: false */
 // @flow
 import React from 'react';
 import _ from 'lodash';
@@ -55,6 +56,30 @@ export default class CourseDescription extends React.Component {
     return '';
   };
 
+  renderViewCourseLink = (courseRun: CourseRun): React$Element<*>|void => {
+    let edxLink = `${SETTINGS.edx_base_url}/courses/${courseRun.course_id}`;
+
+    switch (courseRun.status) {
+    case STATUS_PASSED:
+    case STATUS_NOT_PASSED:
+    case STATUS_CAN_UPGRADE:
+    case STATUS_CURRENTLY_ENROLLED:
+      return (
+        <span>
+          <a href={edxLink} target="_blank" className="mm-minor-action link-view-on-edx">
+            - View on edX
+          </a>
+        </span>
+      );
+    }
+  }
+
+  renderCourseTitle = (title: string): React$Element<*> => (
+    <span className="course-description-title">
+      {title}
+    </span>
+  );
+
   render() {
     const { course } = this.props;
     let firstRun: CourseRun = {};
@@ -64,9 +89,8 @@ export default class CourseDescription extends React.Component {
     }
 
     return <div className="course-description">
-      <span className="course-description-title">
-        {course.title}
-      </span> <br />
+      {this.renderCourseTitle(course.title)} {this.renderViewCourseLink(firstRun)}
+      <br />
       <span className="course-description-result">
         {this.courseDateMessage(firstRun)}
       </span>

@@ -51,37 +51,36 @@
     </div>
     {% endif %}
   </div>
-  <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+    <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
     <div class="mdl-tabs__tab-bar">
       <div class="tab-container">
-        <a href="#about-panel" class="mdl-tabs__tab is-active">
+        <a href="{{ page.url }}"
+           class="tab-link {% if active_tab == 'about' %}active-tab{% endif %}">
           About the Program
         </a>
-        <a href="#faq-panel" class="mdl-tabs__tab">
-          Frequently Asked Questions
-        </a>
+        {% for child in page.get_children %}
+          <a href="{{ child.url }}"
+             class="tab-link {% if child.title == active_tab %}active-tab{% endif %}">
+            {{ child.title }}
+          </a>
+        {% endfor %}
       </div>
     </div>
     <div class="mdl-grid tabs-content">
       <div class="mdl-cell mdl-cell--8-col">
-        <div class="mdl-tabs__panel is-active" id="about-panel">
+      {% if active_tab == 'about' %}
+        <div class="panel-content">
           {{ page.description|richtext }}
         </div>
-        <div class="mdl-tabs__panel" id="faq-panel">
-          <div class="faqs">
-            {% for faq in page.faqs.all %}
-            <div class="faq">
-              <div class="question">
-                {{ faq.question }}
-              </div>
-              <div class="answer">
-                {{ faq.answer|richtext }}
-              </div>
-            </div>
-            {% endfor %}
-          </div>
+      {% else %}
+        <div class="panel-content">
+        {% block panel %}
+
+        {% endblock %}
         </div>
+      {% endif %}
       </div>
+
       <div class="mdl-cell mdl-cell--4-col">
         <div class="info-box course-info">
           <h3 class="title">

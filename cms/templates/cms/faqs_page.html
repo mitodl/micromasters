@@ -1,0 +1,21 @@
+{% extends "cms/program_page.html" %}
+{% load wagtailcore_tags %}
+
+{% block social %}
+{% endblock %}
+
+{% block panel %}
+  <div class="faqs">
+    {% for faq in faqpage.faqs.all %}
+    <div class="faq">
+      <div class="question">
+        {{ faq.question }}
+      </div>
+      <div class="answer">
+        {{ faq.answer|richtext }}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+{% endblock %}

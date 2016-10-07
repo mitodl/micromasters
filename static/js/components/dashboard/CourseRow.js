@@ -31,10 +31,10 @@ export default class CourseRow extends React.Component {
     } = this.props;
 
     return <Grid className="course-row">
-      <Cell col={5}>
+      <Cell col={6}>
         <CourseDescription course={course} />
       </Cell>
-      <Cell col={3}>
+      <Cell col={2}>
         <CourseStatus course={course}/>
       </Cell>
       <Cell col={4}>

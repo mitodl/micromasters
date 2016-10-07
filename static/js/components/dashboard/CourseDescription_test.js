@@ -30,6 +30,26 @@ describe('CourseDescription', () => {
     }
   });
 
+  for (let status of ALL_COURSE_STATUSES) {
+    it('shows the view on edX link if appropriate', () => {
+      let course = findCourse(course => (
+        course.runs.length > 0 &&
+        course.runs[0].status === status
+      ));
+      const wrapper = shallow(<CourseDescription course={course}/>);
+      switch (status) {
+      case STATUS_PASSED:
+      case STATUS_NOT_PASSED:
+      case STATUS_CAN_UPGRADE:
+      case STATUS_CURRENTLY_ENROLLED:
+        assert.equal(wrapper.find(".link-view-on-edx").text(), '- View on edX');
+        break;
+      default:
+        assert.equal(wrapper.find(".link-view-on-edx").length, 0);
+      }
+    });
+  }
+
   it(`does show date with status passed`, () => {
     let course = findCourse(course => (
       course.runs.length > 0 &&

@@ -78,6 +78,21 @@
       a:focus, a:hover {
         text-decoration: none;
       }
+
+      a.tab-link {
+        padding: 0 24px;
+        float: left;
+        height: 56px;
+        line-height: 55px;
+        text-transform: uppercase;
+        color: rgba(0,0,0,.54);
+
+      }
+
+      a.active-tab {
+        color: rgba(0,0,0,.87);
+        border-bottom: 3px solid $mm-brand-bg;
+      }
     }
 
     .is-upgraded:after, .is-active:after {
@@ -90,12 +105,7 @@
       height: 57px;
     }
 
-    .mdl-tabs__tab {
-      height: 56px;
-      line-height: 55px;
-    }
-
-    .mdl-tabs__panel {
+    .panel-content {
       margin-bottom: 40px;
     }
   }

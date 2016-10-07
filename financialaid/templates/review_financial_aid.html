@@ -22,7 +22,8 @@
         </li>
         <!-- Filters -->
         <li>
-          <div class="pull-right">
+          <div class="pull-right input-group">
+            <span class="input-group-addon" style="padding-top: 8px;">Show:</span>
             <select class="form-control" onchange="location = this.options[this.selectedIndex].value;">
             {% for status, message in financial_aid_statuses %}
               <option value="{% url 'review_financial_aid' program_id=current_program_id status=status %}"
@@ -113,157 +114,159 @@
         <!-- /Messages -->
         
         <!-- Financial aid application table -->
-        <table class="table">
-          <thead>
-            <tr style="color: #999999;">
-              <th></th>
-              <th style="font-weight: normal;">
-                {% include "common/sort_links.html" with field=sort_fields.last_name %}
-              </th>
-              <th style="font-weight: normal;">
-                {% include "common/sort_links.html" with field=sort_fields.reported_income %}
-              </th>
-              <th style="font-weight: normal;">
-                {% include "common/sort_links.html" with field=sort_fields.date_calculated %}
-              </th>
-              {% if selected_status == statuses.DOCS_SENT %}
-              <th style="font-weight: normal;">
-                {% include "common/sort_links.html" with field=sort_fields.date_documents_sent %}
-              </th>
-              {% endif %}
-              <th style="font-weight: normal; min-width: 104px;">
-                {% include "common/sort_links.html" with field=sort_fields.adjusted_cost %}
-              </th>
-              {% if selected_status == statuses.PENDING_MANUAL_APPROVAL or selected_status == statuses.APPROVED %}
-              <th style="font-weight: normal;">Justification</th>
-              {% endif %}
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr style="color: #999999;">
+                <th></th>
+                <th style="font-weight: normal;">
+                  {% include "common/sort_links.html" with field=sort_fields.last_name %}
+                </th>
+                <th style="font-weight: normal;">
+                  {% include "common/sort_links.html" with field=sort_fields.reported_income %}
+                </th>
+                <th style="font-weight: normal;">
+                  {% include "common/sort_links.html" with field=sort_fields.date_calculated %}
+                </th>
+                {% if selected_status == statuses.DOCS_SENT %}
+                <th style="font-weight: normal;">
+                  {% include "common/sort_links.html" with field=sort_fields.date_documents_sent %}
+                </th>
+                {% endif %}
+                <th style="font-weight: normal; min-width: 104px;">
+                  {% include "common/sort_links.html" with field=sort_fields.adjusted_cost %}
+                </th>
+                {% if selected_status == statuses.PENDING_MANUAL_APPROVAL or selected_status == statuses.APPROVED %}
+                <th style="font-weight: normal;">Justification</th>
+                {% endif %}
+                {% if selected_status == statuses.PENDING_MANUAL_APPROVAL or selected_status == statuses.PENDING_DOCS or selected_status == statuses.DOCS_SENT %}
+                <th style="font-weight: normal;">Actions</th>
+                {% endif %}
+              </tr>
+            </thead>
+            <tbody>
+            {% for financial_aid in financial_aid_objects %}
+              <!-- Financial aid application information -->
+              <tr id="application-row-{{ financial_aid.id }}" class="alert-dismissable">
+                <!-- Profile picture -->
+                <td>
+                  {% if financial_aid.user.profile.image %}
+                  <img src="{{ financial_aid.user.profile.image.url }}"
+                  {% else %}
+                  <img src="{% static 'images/avatar_default.png' %}"
+                  {% endif %}
+                       style="height: 35px; border-radius: 18px; border: 1px solid rgba(180, 180, 180, 0.5)">
+                </td>
+                <!-- /Profile picture -->
+                <!-- Name/location -->
+                <td style="white-space: nowrap">
+                  <span id="full-name-{{ financial_aid.id }}">
+                    <b>{{ financial_aid.user.profile.first_name }} {{ financial_aid.user.profile.last_name }}</b>
+                  </span>
+                  <br>
+                  <small>
+                    {{ financial_aid.user.profile.city }},
+                    <span class="country-code">{{ financial_aid.user.profile.country }}</span>
+                  </small>
+                </td>
+                <!-- /Name/location -->
+                <!-- Income -->
+                <td style="white-space: nowrap">
+                  <span class="income-usd"><b>$</b>{{ financial_aid.income_usd|floatformat:0 }}</span>
+                  <span class="income-local" style="display: none;">
+                    {{ financial_aid.original_income|floatformat:0 }} <b>{{ financial_aid.original_currency }}</b>
+                  </span>
+                </td>
+                <!-- /Income -->
+                <!-- Date calculated -->
+                <td>{{ financial_aid.created_on|date:"SHORT_DATE_FORMAT" }}</td>
+                <!-- /Date calculated -->
+                <!-- Date docs sent -->
+                {% if selected_status == statuses.DOCS_SENT %}
+                <td>{{ financial_aid.date_documents_sent|date:"SHORT_DATE_FORMAT" }}</td>
+                {% endif %}
+                <!-- /Date docs sent -->
+                <!-- Adjusted cost -->
+                <td>
+                  {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
+                  <select id="tier-program-id-{{ financial_aid.id }}" class="form-control">
+                  {% for tier_program in tier_programs %}
+                    <option value="{{ tier_program.id }}"
+                            {% if tier_program == financial_aid.tier_program %}selected{% endif %}>
+                      ${{ tier_program.adjusted_cost }}
+                    </option>
+                  {% endfor %}
+                  </select>
+                  {% else %}
+                  <input type="text" class="form-control" value="${{ financial_aid.adjusted_cost }}" disabled>
+                  {% endif %}
+                </td>
+                <!-- /Adjusted cost -->
+                <!-- Justification -->
+                {% if selected_status == statuses.PENDING_MANUAL_APPROVAL or selected_status == statuses.APPROVED %}
+                <td>
+                  {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
+                  <select id="justification-{{ financial_aid.id }}" class="form-control">
+                    <option value="">--</option>
+                  {% for justification in justifications %}
+                    <option value="{{ justification }}">
+                      {{ justification }}
+                    </option>
+                  {% endfor %}
+                  </select>
+                  {% else %}
+                  <input type="text" class="form-control"
+                         value="{{ financial_aid.justification|default_if_none:'--' }}" disabled>
+                  {% endif %}
+                </td>
+                {% endif %}
+                <!-- /Justification -->
+                <!-- Actions -->
+                {% if selected_status == statuses.PENDING_MANUAL_APPROVAL or selected_status == statuses.PENDING_DOCS or selected_status == statuses.DOCS_SENT %}
+                <td style="white-space: nowrap;">
+                  <!-- Mark docs as received -->
+                  {% if selected_status == statuses.PENDING_DOCS or selected_status == statuses.DOCS_SENT %}
+                  <button class="btn btn-default" style="color: #0074e1; padding-top: 7px;"
+                         onclick="financialAidReview.submitDocsReceived({{ financial_aid.id }}, '{% url 'financial_aid_action' financial_aid_id=financial_aid.id %}', '{{ statuses.PENDING_MANUAL_APPROVAL }}');">
+                    Mark Docs Received
+                  </button>
+                  {% endif %}
+                  <!-- /Mark docs as received -->
+                  <!-- Submit approval -->
+                  {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
+                  <button class="btn btn-default" style="color: #0074e1; padding-top: 7px;"
+                          onclick="financialAidReview.submitApproval({{ financial_aid.id }}, '{% url 'financial_aid_action' financial_aid_id=financial_aid.id %}', '{{ statuses.APPROVED }}');">
+                    Save
+                  </button>
+                  {% endif %}
+                  <!-- /Submit approval -->
+                  <button class="btn btn-default" style="color: #0074e1;"
+                          onclick="financialAidReview.toggleEmailDisplay('{{ financial_aid.id }}');">
+                    <span class="glyphicon glyphicon-envelope"></span>
+                  </button>
+                </td>
+                {% endif %}
+                <!-- /Actions -->
+              </tr>
+              <!-- /Financial aid application information -->
+              <!-- Financial aid application email form -->
               {% if selected_status == statuses.PENDING_MANUAL_APPROVAL or selected_status == statuses.PENDING_DOCS or selected_status == statuses.DOCS_SENT %}
-              <th style="font-weight: normal;">Actions</th>
+              <tr id="application-email-row-{{ financial_aid.id }}" style="display: none;">
+                <td colspan="9" style="border-top: 0;">
+                  <form id="email-form-{{ financial_aid.id }}" class="email-form form-horizontal">
+                    {% render_form email_serializer template_pack="rest_framework/horizontal" %}
+                  </form>
+                  <button class="btn btn-primary pull-right"
+                          onclick="financialAidReview.sendEmail({{ financial_aid.id }}, '{% url 'financial_aid_mail_api' financial_aid_id=financial_aid.id %}');">Send Email</button>
+                  <br>
+                </td>
+              </tr>
               {% endif %}
-            </tr>
-          </thead>
-          <tbody>
-          {% for financial_aid in financial_aid_objects %}
-            <!-- Financial aid application information -->
-            <tr id="application-row-{{ financial_aid.id }}" class="alert-dismissable">
-              <!-- Profile picture -->
-              <td>
-                {% if financial_aid.user.profile.image %}
-                <img src="{{ financial_aid.user.profile.image }}"
-                {% else %}
-                <img src="{% static 'images/avatar_default.png' %}"
-                {% endif %}
-                     style="height: 35px; border-radius: 18px; border: 1px solid rgba(180, 180, 180, 0.5)">
-              </td>
-              <!-- /Profile picture -->
-              <!-- Name/location -->
-              <td style="white-space: nowrap">
-                <span id="full-name-{{ financial_aid.id }}">
-                  <b>{{ financial_aid.user.profile.first_name }} {{ financial_aid.user.profile.last_name }}</b>
-                </span>
-                <br>
-                <small>
-                  {{ financial_aid.user.profile.city }},
-                  <span class="country-code">{{ financial_aid.user.profile.country }}</span>
-                </small>
-              </td>
-              <!-- /Name/location -->
-              <!-- Income -->
-              <td style="white-space: nowrap">
-                <span class="income-usd"><b>$</b>{{ financial_aid.income_usd|floatformat:0 }}</span>
-                <span class="income-local" style="display: none;">
-                  {{ financial_aid.original_income|floatformat:0 }} <b>{{ financial_aid.original_currency }}</b>
-                </span>
-              </td>
-              <!-- /Income -->
-              <!-- Date calculated -->
-              <td>{{ financial_aid.created_on|date:"SHORT_DATE_FORMAT" }}</td>
-              <!-- /Date calculated -->
-              <!-- Date docs sent -->
-              {% if selected_status == statuses.DOCS_SENT %}
-              <td>{{ financial_aid.date_documents_sent|date:"SHORT_DATE_FORMAT" }}</td>
-              {% endif %}
-              <!-- /Date docs sent -->
-              <!-- Adjusted cost -->
-              <td>
-                {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
-                <select id="tier-program-id-{{ financial_aid.id }}" class="form-control">
-                {% for tier_program in tier_programs %}
-                  <option value="{{ tier_program.id }}"
-                          {% if tier_program == financial_aid.tier_program %}selected{% endif %}>
-                    ${{ tier_program.adjusted_cost }}
-                  </option>
-                {% endfor %}
-                </select>
-                {% else %}
-                <input type="text" class="form-control" value="${{ financial_aid.adjusted_cost }}" disabled>
-                {% endif %}
-              </td>
-              <!-- /Adjusted cost -->
-              <!-- Justification -->
-              {% if selected_status == statuses.PENDING_MANUAL_APPROVAL or selected_status == statuses.APPROVED %}
-              <td>
-                {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
-                <select id="justification-{{ financial_aid.id }}" class="form-control">
-                  <option value="">--</option>
-                {% for justification in justifications %}
-                  <option value="{{ justification }}">
-                    {{ justification }}
-                  </option>
-                {% endfor %}
-                </select>
-                {% else %}
-                <input type="text" class="form-control"
-                       value="{{ financial_aid.justification|default_if_none:'--' }}" disabled>
-                {% endif %}
-              </td>
-              {% endif %}
-              <!-- /Justification -->
-              <!-- Actions -->
-              {% if selected_status == statuses.PENDING_MANUAL_APPROVAL or selected_status == statuses.PENDING_DOCS or selected_status == statuses.DOCS_SENT %}
-              <td style="white-space: nowrap;">
-                <!-- Mark docs as received -->
-                {% if selected_status == statuses.PENDING_DOCS or selected_status == statuses.DOCS_SENT %}
-                <button class="btn btn-default" style="color: #0074e1; padding-top: 7px;"
-                       onclick="financialAidReview.submitDocsReceived({{ financial_aid.id }}, '{% url 'financial_aid_action' financial_aid_id=financial_aid.id %}', '{{ statuses.PENDING_MANUAL_APPROVAL }}');">
-                  Mark Docs Received
-                </button>
-                {% endif %}
-                <!-- /Mark docs as received -->
-                <!-- Submit approval -->
-                {% if selected_status == statuses.PENDING_MANUAL_APPROVAL %}
-                <button class="btn btn-default" style="color: #0074e1; padding-top: 7px;"
-                        onclick="financialAidReview.submitApproval({{ financial_aid.id }}, '{% url 'financial_aid_action' financial_aid_id=financial_aid.id %}', '{{ statuses.APPROVED }}');">
-                  Save
-                </button>
-                {% endif %}
-                <!-- /Submit approval -->
-                <button class="btn btn-default" style="color: #0074e1;"
-                        onclick="financialAidReview.toggleEmailDisplay('{{ financial_aid.id }}');">
-                  <span class="glyphicon glyphicon-envelope"></span>
-                </button>
-              </td>
-              {% endif %}
-              <!-- /Actions -->
-            </tr>
-            <!-- /Financial aid application information -->
-            <!-- Financial aid application email form -->
-            {% if selected_status == statuses.PENDING_MANUAL_APPROVAL or selected_status == statuses.PENDING_DOCS or selected_status == statuses.DOCS_SENT %}
-            <tr id="application-email-row-{{ financial_aid.id }}" style="display: none;">
-              <td colspan="9" style="border-top: 0;">
-                <form id="email-form-{{ financial_aid.id }}" class="email-form form-horizontal">
-                  {% render_form email_serializer template_pack="rest_framework/horizontal" %}
-                </form>
-                <button class="btn btn-primary pull-right"
-                        onclick="financialAidReview.sendEmail({{ financial_aid.id }}, '{% url 'financial_aid_mail_api' financial_aid_id=financial_aid.id %}');">Send Email</button>
-                <br>
-              </td>
-            </tr>
-            {% endif %}
-            <!-- /Financial aid application email form -->
-          {% endfor %}
-          </tbody>
-        </table>
+              <!-- /Financial aid application email form -->
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
         <!-- /Financial aid application table -->
       </div>
     </div>

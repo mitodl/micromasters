@@ -60,6 +60,26 @@ class HomePage(Page):
         return context
 
 
+class FaqsPage(Page):
+    """
+    CMS page for questions
+    """
+    content_panels = Page.content_panels + [
+        InlinePanel('faqs', label='Frequently Asked Questions'),
+    ]
+    parent_page_types = ['ProgramPage']
+
+    def parent_page(self):
+        """ Get the parent ProgramPage"""
+        return ProgramPage.objects.ancestor_of(self).first()
+
+    def get_context(self, request):
+        context = get_program_page_context(self.parent_page(), request)
+        context['faqpage'] = self
+        context['active_tab'] = self.title
+        return context
+
+
 class ProgramPage(Page):
     """
     CMS page representing the department e.g. Biology
@@ -116,7 +136,7 @@ class ProgramPage(Page):
             'Thumbnails are cropped down to this size, preserving aspect ratio.'
         ),
     )
-
+    subpage_types = ['FaqsPage']
     content_panels = Page.content_panels + [
         FieldPanel('description', classname="full"),
         FieldPanel('program'),
@@ -129,37 +149,47 @@ class ProgramPage(Page):
         FieldPanel('faculty_description'),
         InlinePanel('courses', label='Program Courses'),
         InlinePanel('faculty_members', label='Faculty'),
-        InlinePanel('faqs', label='Frequently Asked Questions'),
     ]
 
     def get_context(self, request):
-        js_settings = {
-            "gaTrackingID": settings.GA_TRACKING_ID,
-            "host": webpack_dev_server_host(request),
-            "programId": self.program.id,
-            "faculty": faculty_for_carousel(self.faculty_members.all()),
-        }
-        username = get_social_username(request.user)
-        context = super(ProgramPage, self).get_context(request)
-
-        courses_info = []
-        for course in self.program.course_set.all().order_by(
-                'position_in_program'
-        ):
-            courses_info.append((course, get_course_enrollment_text(course), get_course_url(course)))
-
-        context["style_src"] = get_bundle_url(request, "style.js")
-        context["public_src"] = get_bundle_url(request, "public.js")
-        context["style_public_src"] = get_bundle_url(request, "style_public.js")
-        context["authenticated"] = not request.user.is_anonymous()
-        context["signup_dialog_src"] = get_bundle_url(request, "signup_dialog.js")
-        context["faculty_carousel_src"] = get_bundle_url(request, "faculty_carousel.js")
-        context["username"] = username
-        context["js_settings_json"] = json.dumps(js_settings)
-        context["title"] = self.title
-        context["courses_info"] = courses_info
-
+        context = get_program_page_context(self, request)
+        context['active_tab'] = 'about'
         return context
+
+
+def get_program_page_context(programpage, request):
+    """ Get context for the program page"""
+    js_settings = {
+        "gaTrackingID": settings.GA_TRACKING_ID,
+        "host": webpack_dev_server_host(request),
+        "programId": programpage.program.id,
+        "faculty": faculty_for_carousel(programpage.faculty_members.all()),
+    }
+    username = get_social_username(request.user)
+    context = super(ProgramPage, programpage).get_context(request)
+
+    courses_info = []
+    for course in programpage.program.course_set.all().order_by(
+            'position_in_program'
+    ):
+        courses_info.append(
+            (course,
+             get_course_enrollment_text(course),
+             get_course_url(course))
+        )
+
+    context["style_src"] = get_bundle_url(request, "style.js")
+    context["public_src"] = get_bundle_url(request, "public.js")
+    context["style_public_src"] = get_bundle_url(request, "style_public.js")
+    context["authenticated"] = not request.user.is_anonymous()
+    context["signup_dialog_src"] = get_bundle_url(request, "signup_dialog.js")
+    context["faculty_carousel_src"] = get_bundle_url(request, "faculty_carousel.js")
+    context["username"] = username
+    context["js_settings_json"] = json.dumps(js_settings)
+    context["title"] = programpage.title
+    context["courses_info"] = courses_info
+
+    return context
 
 
 class ProgramCourse(Orderable):
@@ -210,7 +240,7 @@ class FrequentlyAskedQuestion(Orderable):
     """
     FAQs for the program
     """
-    program_page = ParentalKey(ProgramPage, related_name='faqs')
+    faqs_page = ParentalKey(FaqsPage, related_name='faqs', null=True)
     question = models.TextField()
     answer = RichTextField()
 
