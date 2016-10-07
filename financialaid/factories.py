@@ -21,8 +21,8 @@ from financialaid.constants import FinancialAidStatus
 from financialaid.models import (
     FinancialAid,
     Tier,
-    TierProgram
-)
+    TierProgram,
+    CountryIncomeThreshold)
 from profiles.factories import ProfileFactory
 
 FAKE = faker.Factory.create()
@@ -80,3 +80,14 @@ class FinancialAidFactory(DjangoModelFactory):
 
     class Meta:  # pylint: disable=missing-docstring
         model = FinancialAid
+
+
+class CountryIncomeThresholdFactory(DjangoModelFactory):
+    """
+    Factory for CountryIncomeThreshold
+    """
+    country_code = FuzzyText(length=2)
+    income_threshold = FuzzyInteger(low=0, high=12345)
+
+    class Meta:  # pylint: disable=missing-docstring
+        model = CountryIncomeThreshold

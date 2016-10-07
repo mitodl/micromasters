@@ -66,7 +66,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         self.data = {
             "original_currency": "USD",
             "program_id": self.program.id,
-            "original_income": 70000
+            "original_income": self.country_income_threshold_50000.income_threshold-1  # Not auto-approved
         }
 
     def test_income_validation_not_auto_approved(self):
@@ -89,7 +89,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         """
         assert FinancialAid.objects.count() == 0
         assert FinancialAidAudit.objects.count() == 0
-        self.data["original_income"] = 200000
+        self.data["original_income"] = self.country_income_threshold_0.income_threshold+1
         self.assert_http_status(self.client.post, self.request_url, status.HTTP_201_CREATED, data=self.data)
         assert FinancialAid.objects.count() == 1
         assert FinancialAidAudit.objects.count() == 1

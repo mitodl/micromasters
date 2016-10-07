@@ -172,3 +172,11 @@ class CurrencyExchangeRate(TimestampedModel):
     """
     currency_code = models.CharField(null=False, max_length=3)
     exchange_rate = models.FloatField(null=False)  # how much foreign currency is per 1 USD
+
+
+class CountryIncomeThreshold(TimestampedModel):
+    """
+    Table of country income thresholds for financial aid auto approval
+    """
+    country_code = models.CharField(null=False, max_length=2)
+    income_threshold = models.IntegerField(null=False)
