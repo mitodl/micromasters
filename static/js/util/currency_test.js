@@ -1,8 +1,20 @@
 import { assert } from 'chai';
 
-import { currencyForCountry } from './currency';
+import {
+  currencyForCountry,
+  excludedCurrencyCodes,
+  currencyOptions,
+} from './currency';
 
 describe('currency', () => {
+  describe('currencyOptions', () => {
+    it('shouldnt include any options in the excluded list', () => {
+      excludedCurrencyCodes.forEach(code => {
+        assert.isUndefined(currencyOptions.find(option => option.value === code));
+      });
+    });
+  });
+
   describe('currencyForCountry', () => {
     it('should return a valid currency code for a country', () => {
       [
@@ -23,6 +35,19 @@ describe('currency', () => {
 
     it('should return an empty string if a country does not have a currency listing', () => {
       assert.equal('', currencyForCountry('PS'));
+    });
+
+    it('should return an empty string if a country is in the excluded list', () => {
+      [
+        'Uruguay',
+        'Bolivia',
+        'Switzerland',
+        'Colombia',
+        'Mexico',
+        'South Sudan',
+      ].forEach(country => {
+        assert.equal('', currencyForCountry(country));
+      });
     });
   });
 });
