@@ -176,7 +176,6 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         context["search_query"] = self.search_query
 
         # Create ordered list of (financial aid status, financial message)
-        messages = FinancialAidStatus.STATUS_MESSAGES_DICT
         message_order = (
             FinancialAidStatus.AUTO_APPROVED,
             FinancialAidStatus.PENDING_DOCS,
@@ -186,7 +185,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
             FinancialAidStatus.SKIPPED
         )
         context["financial_aid_statuses"] = (
-            (status, "Show: {message}".format(message=messages[status]))
+            (status, FinancialAidStatus.STATUS_MESSAGES_DICT[status])
             for status in message_order
         )
 
