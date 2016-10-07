@@ -8,10 +8,11 @@ from django.db import transaction
 from financialaid.constants import DEFAULT_INCOME_THRESHOLD
 from financialaid.exceptions import NotSupportedException
 from financialaid.models import (
+    CountryIncomeThreshold,
     CurrencyExchangeRate,
     FinancialAid,
-    TierProgram,
-    CountryIncomeThreshold)
+    TierProgram
+)
 
 
 log = logging.getLogger(__name__)

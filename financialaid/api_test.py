@@ -22,9 +22,9 @@ from financialaid.api import (
 )
 from financialaid.constants import FinancialAidStatus
 from financialaid.factories import (
-    TierProgramFactory,
+    CountryIncomeThresholdFactory,
     FinancialAidFactory,
-    CountryIncomeThresholdFactory
+    TierProgramFactory
 )
 from financialaid.models import CurrencyExchangeRate
 from profiles.factories import ProfileFactory

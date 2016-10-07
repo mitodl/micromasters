@@ -19,10 +19,11 @@ from pytz import UTC
 from courses.factories import ProgramFactory
 from financialaid.constants import FinancialAidStatus
 from financialaid.models import (
+    CountryIncomeThreshold,
     FinancialAid,
     Tier,
-    TierProgram,
-    CountryIncomeThreshold)
+    TierProgram
+)
 from profiles.factories import ProfileFactory
 
 FAKE = faker.Factory.create()
