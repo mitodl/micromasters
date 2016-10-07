@@ -10,6 +10,7 @@ module.exports = {
     'dashboard': ['babel-polyfill', './static/js/dashboard'],
     'signup_dialog': './static/js/signup_dialog',
     'faculty_carousel': './static/js/faculty_carousel',
+    'financial_aid': './static/js/financial_aid/functions',
     'public': ['babel-polyfill', './static/js/public'],
     'style': './static/js/style',
     'style_public': './static/js/style_public',
