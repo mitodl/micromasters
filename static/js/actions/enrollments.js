@@ -78,3 +78,27 @@ export const clearEnrollments = createAction(CLEAR_ENROLLMENTS);
 
 export const SET_CURRENT_PROGRAM_ENROLLMENT = 'SET_CURRENT_PROGRAM_ENROLLMENT';
 export const setCurrentProgramEnrollment = createAction(SET_CURRENT_PROGRAM_ENROLLMENT);
+
+export const REQUEST_ADD_COURSE_ENROLLMENT = 'REQUEST_ADD_COURSE_ENROLLMENT';
+export const requestAddCourseEnrollment = createAction(REQUEST_ADD_COURSE_ENROLLMENT);
+
+export const RECEIVE_ADD_COURSE_ENROLLMENT_SUCCESS = 'RECEIVE_ADD_COURSE_ENROLLMENT_SUCCESS';
+export const receiveAddCourseEnrollmentSuccess = createAction(RECEIVE_ADD_COURSE_ENROLLMENT_SUCCESS);
+
+export const RECEIVE_ADD_COURSE_ENROLLMENT_FAILURE = 'RECEIVE_ADD_COURSE_ENROLLMENT_FAILURE';
+export const receiveAddCourseEnrollmentFailure = createAction(RECEIVE_ADD_COURSE_ENROLLMENT_FAILURE);
+
+export const addCourseEnrollment = (courseId: string): Dispatcher<*> => {
+  return (dispatch: Dispatch) => {
+    dispatch(requestAddCourseEnrollment(courseId));
+    return api.addCourseEnrollment(courseId).
+      then(() => {
+        dispatch(receiveAddCourseEnrollmentSuccess());
+        dispatch(fetchDashboard());
+        dispatch(fetchCoursePrices());
+      }).
+      catch(() => {
+        dispatch(receiveAddCourseEnrollmentFailure());
+      });
+  };
+};

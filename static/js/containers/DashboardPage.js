@@ -15,6 +15,7 @@ import {
   TOAST_SUCCESS,
   TOAST_FAILURE,
 } from '../constants';
+import { addCourseEnrollment } from '../actions/enrollments';
 import {
   setToastMessage,
   setConfirmSkipDialogVisibility,
@@ -157,6 +158,11 @@ class DashboardPage extends React.Component {
     return dispatch(updateDocumentSentDate(financialAidId, sentDate));
   };
 
+  addCourseEnrollment = (courseId: string): void => {
+    const { dispatch } = this.props;
+    return dispatch(addCourseEnrollment(courseId));
+  };
+
   render() {
     const {
       dashboard,
@@ -208,6 +214,7 @@ class DashboardPage extends React.Component {
               key={program.id}
               checkout={this.dispatchCheckout}
               openFinancialAidCalculator={this.openFinancialAidCalculator}
+              addCourseEnrollment={this.addCourseEnrollment}
             />
           </div>
           <div className="second-column">

@@ -31,6 +31,7 @@ export default class CourseAction extends React.Component {
     hasFinancialAid: boolean,
     openFinancialAidCalculator?: () => void,
     now: moment$Moment,
+    addCourseEnrollment: (courseId: string) => void
   };
 
   statusDescriptionClasses = {
@@ -112,11 +113,17 @@ export default class CourseAction extends React.Component {
 
   renderStatusDescription = this.renderDescription('boxed description');
 
-  renderPayLaterLink: Function = (): React$Element<*> => (
-    <div key="2">
-      <a href="#">Enroll and pay later</a>
-    </div>
-  );
+  handleAddCourseEnrollment = (event: Event, run: CourseRun): void => {
+    const { addCourseEnrollment } = this.props;
+    event.preventDefault();
+    addCourseEnrollment(run.course_id);
+  };
+
+  renderPayLaterLink(run: CourseRun): React$Element<*> {
+    return (
+      <a href="#" onClick={e => this.handleAddCourseEnrollment(e, run)}>Enroll and pay later</a>
+    );
+  }
 
   renderContents(run: CourseRun) {
     const { now } = this.props;
@@ -147,7 +154,7 @@ export default class CourseAction extends React.Component {
       let enrollmentStartDate = run.enrollment_start_date ? moment(run.enrollment_start_date) : null;
       if (this.isCurrentlyEnrollable(enrollmentStartDate)) {
         action = this.renderEnrollButton(run);
-        description = this.renderPayLaterLink();
+        description = this.renderPayLaterLink(run);
       } else {
         if (enrollmentStartDate) {
           let formattedEnrollDate = enrollmentStartDate.format(DASHBOARD_FORMAT);

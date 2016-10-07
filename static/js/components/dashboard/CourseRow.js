@@ -17,6 +17,7 @@ export default class CourseRow extends React.Component {
     hasFinancialAid: boolean,
     openFinancialAidCalculator: () => void,
     now: moment$Moment,
+    addCourseEnrollment: (courseId: string) => void,
   };
 
   render() {
@@ -27,7 +28,8 @@ export default class CourseRow extends React.Component {
       hasFinancialAid,
       checkout,
       openFinancialAidCalculator,
-      now
+      now,
+      addCourseEnrollment,
     } = this.props;
 
     return <Grid className="course-row">
@@ -46,6 +48,7 @@ export default class CourseRow extends React.Component {
           checkout={checkout}
           openFinancialAidCalculator={openFinancialAidCalculator}
           now={now}
+          addCourseEnrollment={addCourseEnrollment}
         />
       </Cell>
     </Grid>;
