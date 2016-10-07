@@ -151,7 +151,7 @@
                 <!-- Profile picture -->
                 <td>
                   {% if financial_aid.user.profile.image %}
-                  <img src="{{ financial_aid.user.profile.image }}"
+                  <img src="{{ financial_aid.user.profile.image.url }}"
                   {% else %}
                   <img src="{% static 'images/avatar_default.png' %}"
                   {% endif %}
