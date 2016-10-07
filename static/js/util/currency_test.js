@@ -37,14 +37,11 @@ describe('currency', () => {
       assert.equal('', currencyForCountry('PS'));
     });
 
-    it('should return an empty string if a country is in the excluded list', () => {
+    it('should return an empty string if a countrys currency is in the excluded list', () => {
       [
-        'Uruguay',
-        'Bolivia',
-        'Switzerland',
-        'Colombia',
-        'Mexico',
-        'South Sudan',
+        'UY',
+        'CH',
+        'SS',
       ].forEach(country => {
         assert.equal('', currencyForCountry(country));
       });
