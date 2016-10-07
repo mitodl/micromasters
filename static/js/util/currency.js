@@ -19,10 +19,12 @@ export const currencyOptions = codesToOptions(cc.codes());
 
 const codeToCountryName = code => iso3166.country(code).name || '';
 
-const countryNameToCurrency = name => (
-  name === '' ? '' : cc.country(name)[0].code
+const countryNameToCurrency = name => cc.country(name);
+
+const currencyToCode = currency => (
+  currency.length === 0 ? '' : currency[0].code
 );
 
 export const currencyForCountry = R.compose(
-  countryNameToCurrency, R.toLower, codeToCountryName
+  currencyToCode, countryNameToCurrency, R.toLower, codeToCountryName
 );

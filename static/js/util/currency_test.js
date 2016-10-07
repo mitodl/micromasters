@@ -20,5 +20,9 @@ describe('currency', () => {
     it('should return an empty string if you give it nonsense', () => {
       assert.equal('', currencyForCountry('asdfasdf'));
     });
+
+    it('should return an empty string if a country does not have a currency listing', () => {
+      assert.equal('', currencyForCountry('PS'));
+    });
   });
 });
