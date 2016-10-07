@@ -39,8 +39,6 @@ export const currencyOptions = codesToOptions(cc.codes());
 
 const codeToCountryName = code => iso3166.country(code).name || '';
 
-const countryNameToCurrency = name => cc.country(name);
-
 const currencyToCode = currency => (
   currency.length === 0 ? '' : currency[0].code
 );
@@ -48,5 +46,5 @@ const currencyToCode = currency => (
 const excludeSingleCode = code => invalidCurrency(code) ? '' : code;
 
 export const currencyForCountry = R.compose(
-  excludeSingleCode, currencyToCode, countryNameToCurrency, R.toLower, codeToCountryName
+  excludeSingleCode, currencyToCode, cc.country, R.toLower, codeToCountryName
 );
