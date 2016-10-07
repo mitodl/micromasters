@@ -5,8 +5,6 @@ require("bootstrap");
 
 import { codeToCountryName } from "../util/currency";
 
-window.codeToCountryName = codeToCountryName;
-
 /* Wrapper for all of the functions used by the financial aid review page */
 window.financialAidReview = (function(window, document, $) {
   "use strict";
