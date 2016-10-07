@@ -69,16 +69,32 @@
         </div>
         <div class="mdl-tabs__panel" id="faq-panel">
           <div class="faqs">
-            {% for faq in page.faqs.all %}
-            <div class="faq">
-              <div class="question">
-                {{ faq.question }}
+            {% if page.has_categorized_faq %}
+              {% for category, faqs in page.categorized_faqs %}
+                <h2>{{ category.name|default:"Uncategorized" }}</h2>
+                {% for faq in faqs %}
+                  <div class="faq">
+                    <div class="question">
+                      {{ faq.question }}
+                    </div>
+                    <div class="answer">
+                      {{ faq.answer|richtext }}
+                    </div>
+                  </div>
+                {% endfor %}
+              {% endfor %}
+            {% else %}
+              {% for faq in page.faqs.all %}
+              <div class="faq">
+                <div class="question">
+                  {{ faq.question }}
+                </div>
+                <div class="answer">
+                  {{ faq.answer|richtext }}
+                </div>
               </div>
-              <div class="answer">
-                {{ faq.answer|richtext }}
-              </div>
-            </div>
-            {% endfor %}
+              {% endfor %}
+            {% endif %}
           </div>
         </div>
       </div>
