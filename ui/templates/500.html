@@ -18,3 +18,14 @@ INTERNAL SERVER ERROR
 		frameborder="0" allowfullscreen></iframe>
 </div>
 {% endblock %}
+
+{% if request.sentry.id %}
+<script>
+ Raven.showReportDialog({
+     eventId: '{{ request.sentry.id }}',
+
+     // use the public DSN (dont include your secret!)
+     dsn: '{% sentry_public_dsn %}'
+ });
+</script>
+{% endif %}

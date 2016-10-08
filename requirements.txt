@@ -20,6 +20,7 @@ psycopg2==2.6
 python-dateutil==2.5.2
 python-social-auth==0.2.14
 PyYAML==3.11
+raven==5.24.3
 redis==2.10.5
 requests==2.9.1
 static3==0.5.1

@@ -6,11 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,400i,500,700" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    {% load raven %}
     <link rel="icon" href="{% static 'images/favicon.ico' %}" />
     <script type="text/javascript">
     var SETTINGS = {{ js_settings_json|safe }};
     var CURRENT_PAGE_URL = '{{ request.build_absolute_uri }}';
     </script>
+    <script type="text/javascript" src="{{ sentry_client }}"></script>
     {% if style_public_src %}
     <script type="text/javascript" src="{{ style_public_src }}"></script>
     {% endif %}
@@ -45,4 +47,3 @@
     {% endblock %}
   </body>
 </html>
-

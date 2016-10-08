@@ -6,22 +6,20 @@ import json
 from django.conf import settings
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.wagtailimages.models import Image
-from wagtail.wagtailcore.models import Page, Orderable
-from wagtail.wagtailcore.fields import RichTextField
-from wagtail.wagtailadmin.edit_handlers import FieldPanel, InlinePanel, MultiFieldPanel
+from raven.contrib.django.raven_compat.models import client as sentry
 from rolepermissions.verifications import has_role
+from wagtail.wagtailadmin.edit_handlers import (FieldPanel, InlinePanel,
+                                                MultiFieldPanel)
+from wagtail.wagtailcore.fields import RichTextField
+from wagtail.wagtailcore.models import Orderable, Page
+from wagtail.wagtailimages.models import Image
 
-
+from cms.api import get_course_enrollment_text, get_course_url
 from courses.models import Program
 from micromasters.utils import webpack_dev_server_host
 from profiles.api import get_social_username
+from roles.models import Instructor, Staff
 from ui.views import get_bundle_url
-from cms.api import get_course_enrollment_text, get_course_url
-from roles.models import (
-    Instructor,
-    Staff,
-)
 
 
 def faculty_for_carousel(faculty):
@@ -41,6 +39,9 @@ class HomePage(Page):
         js_settings = {
             "gaTrackingID": settings.GA_TRACKING_ID,
             "host": webpack_dev_server_host(request),
+            "environment": settings.ENVIRONMENT,
+            "sentry_dsn": sentry.get_public_dsn(),
+            "release_version": settings.VERSION
         }
 
         username = get_social_username(request.user)
@@ -56,6 +57,7 @@ class HomePage(Page):
         context["username"] = username
         context["js_settings_json"] = json.dumps(js_settings)
         context["title"] = self.title
+        context["sentry_client"] = get_bundle_url(request, "sentry_client.js")
         context["tracking_id"] = ""
 
         return context
@@ -165,6 +167,9 @@ def get_program_page_context(programpage, request):
         "host": webpack_dev_server_host(request),
         "programId": programpage.program.id,
         "faculty": faculty_for_carousel(programpage.faculty_members.all()),
+        "environment": settings.ENVIRONMENT,
+        "sentry_dsn": sentry.get_public_dsn(),
+        "release_version": settings.VERSION
     }
     username = get_social_username(request.user)
     context = super(ProgramPage, programpage).get_context(request)
@@ -190,6 +195,7 @@ def get_program_page_context(programpage, request):
     context["js_settings_json"] = json.dumps(js_settings)
     context["title"] = programpage.title
     context["courses_info"] = courses_info
+    context["sentry_client"] = get_bundle_url(request, "sentry_client.js")
     context["tracking_id"] = programpage.program.ga_tracking_id
 
     return context

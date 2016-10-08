@@ -8,27 +8,19 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.core.urlresolvers import reverse
+from django.shortcuts import Http404, redirect, render
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
-from django.shortcuts import (
-    redirect,
-    render,
-    Http404,
-)
-from django.utils.decorators import method_decorator
+from raven.contrib.django.raven_compat.models import client as sentry
 from rolepermissions.shortcuts import available_perm_status
 from rolepermissions.verifications import has_role
 
 from micromasters.utils import webpack_dev_server_host, webpack_dev_server_url
 from profiles.api import get_social_username
 from profiles.permissions import CanSeeIfNotPrivate
-from ui.decorators import (
-    require_mandatory_urls,
-)
-from roles.models import (
-    Instructor,
-    Staff,
-)
+from roles.models import Instructor, Staff
+from ui.decorators import require_mandatory_urls
 
 log = logging.getLogger(__name__)
 
@@ -74,6 +66,9 @@ class ReactView(View):  # pylint: disable=unused-argument
             "host": webpack_dev_server_host(request),
             "edx_base_url": settings.EDXORG_BASE_URL,
             "roles": roles,
+            "release_version": settings.VERSION,
+            "environment": settings.ENVIRONMENT,
+            "sentry_dsn": sentry.get_public_dsn(),
             "search_url": reverse('search_api', kwargs={"elastic_url": ""}),
             "support_email": settings.EMAIL_SUPPORT,
         }
@@ -82,6 +77,7 @@ class ReactView(View):  # pylint: disable=unused-argument
             request,
             "dashboard.html",
             context={
+                "sentry_client": get_bundle_url(request, "sentry_client.js"),
                 "zendesk_widget": get_bundle_url(request, "js/zendesk_widget.js"),
                 "style_src": get_bundle_url(request, "style.js"),
                 "dashboard_src": get_bundle_url(request, "dashboard.js"),
@@ -137,12 +133,19 @@ def standard_error_page(request, status_code, template_filename):
             "zendesk_widget": get_bundle_url(request, "js/zendesk_widget.js"),
             "style_src": get_bundle_url(request, "style.js"),
             "dashboard_src": get_bundle_url(request, "dashboard.js"),
-            "js_settings_json": "{}",
+            "sentry_client": get_bundle_url(request, "sentry_client.js"),
+            "js_settings_json": json.dumps({
+                "environment": settings.ENVIRONMENT,
+                "sentry_dsn": sentry.get_public_dsn()
+            }),
             "authenticated": authenticated,
             "name": name,
             "username": username,
             "is_staff": has_role(request.user, [Staff.ROLE_ID, Instructor.ROLE_ID]),
             "support_email": settings.EMAIL_SUPPORT,
+            "environment": settings.ENVIRONMENT,
+            "sentry_dsn": sentry.get_public_dsn(),
+            "release_version": settings.VERSION,
         }
     )
     response.status_code = status_code

@@ -21,12 +21,6 @@
     "css-loader": "0.23.1",
     "currency-codes": "^1.1.2",
     "enzyme": "^2.4.1",
-    "eslint": "^2.13.1",
-    "eslint-config-defaults": "9.0.0",
-    "eslint-plugin-babel": "^3.3.0",
-    "eslint-plugin-flow-vars": "^0.4.0",
-    "eslint-plugin-flowtype": "^2.3.0",
-    "eslint-plugin-react": "5.0.1",
     "fetch-mock": "4.4.0",
     "file-loader": "0.8.5",
     "flow-bin": "^0.30.0",
@@ -36,18 +30,17 @@
     "imports-loader": "^0.6.5",
     "iso-3166-2": "0.4.0",
     "isomorphic-fetch": "2.2.1",
-    "istanbul": "1.0.0-alpha.2",
     "jquery": "^2.2.0",
     "jsdom": "8.5.0",
     "jsdom-global": "1.7.0",
     "keycode": "2.1.1",
     "lodash": "4.11.2",
     "material-ui": "0.15.0",
-    "mocha": "2.4.5",
     "moment": "2.13.0",
     "node-sass": "3.7.0",
     "object.entries": "1.0.3",
     "ramda": "^0.22.1",
+    "raven-js": "^3.7.0",
     "react": "~15.1.0",
     "react-addons-shallow-compare": "^15.1.0",
     "react-addons-test-utils": "~15.1.0",
@@ -89,8 +82,7 @@
     "url-join": "^1.1.0",
     "url-loader": "0.5.7",
     "warning": "2.1.0",
-    "webpack": "1.13.0",
-    "webpack-dev-server": "1.14.1"
+    "webpack": "1.13.0"
   },
   "engines": {
     "node": "6.2.0"
@@ -100,7 +92,20 @@
     "lint": "node ./node_modules/eslint/bin/eslint.js ./static/js",
     "scss_lint": "node ./node_modules/sass-lint/bin/sass-lint.js --verbose --no-exit",
     "test": "./js_test.sh",
-    "coverage": "node ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- --compilers js:babel-register static/js/global_init.js 'static/**/*/*_test.js'",
+    "coverage": "node ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha --report lcovonly -- --compilers js:babel-register static/js/global_init.js 'static/**/*/*_test.js' && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "flow": "flow check"
+  },
+  "devDependencies": {
+    "eslint": "^2.13.1",
+    "eslint-config-defaults": "9.0.0",
+    "eslint-plugin-babel": "^3.3.0",
+    "eslint-plugin-flow-vars": "^0.4.0",
+    "eslint-plugin-flowtype": "^2.3.0",
+    "eslint-plugin-react": "5.0.1",
+    "istanbul": "1.0.0-alpha.2",
+    "coveralls": "^2.11.14",
+    "mocha": "2.4.5",
+    "mocha-lcov-reporter": "^1.2.0",
+    "webpack-dev-server": "1.14.1"
   }
 }
