@@ -15,6 +15,7 @@ from courses.factories import CourseRunFactory
 from courses.models import Program
 from dashboard.models import ProgramEnrollment
 from ecommerce.factories import CoursePriceFactory
+from financialaid.api import determine_tier_program
 from financialaid.api_test import FinancialAidBaseTestCase
 from financialaid.constants import (
     FinancialAidJustification,
@@ -79,7 +80,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         assert FinancialAid.objects.count() == 1
         assert FinancialAidAudit.objects.count() == 1
         financial_aid = FinancialAid.objects.first()
-        assert financial_aid.tier_program == self.tier_programs["50k"]
+        assert financial_aid.tier_program == determine_tier_program(self.program, self.data["original_income"])
         assert financial_aid.status == FinancialAidStatus.PENDING_DOCS
         assert financial_aid.income_usd == self.data["original_income"]
 
@@ -94,7 +95,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         assert FinancialAid.objects.count() == 1
         assert FinancialAidAudit.objects.count() == 1
         financial_aid = FinancialAid.objects.first()
-        assert financial_aid.tier_program == self.tier_programs["75k"]
+        assert financial_aid.tier_program == determine_tier_program(self.program, self.data["original_income"])
         assert financial_aid.status == FinancialAidStatus.AUTO_APPROVED
         assert financial_aid.income_usd == self.data["original_income"]
 
@@ -139,7 +140,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         assert FinancialAid.objects.count() == 1
         financial_aid = FinancialAid.objects.first()
         exchange_rate = CurrencyExchangeRate.objects.get(currency_code="ABC").exchange_rate
-        assert financial_aid.tier_program == self.tier_programs["50k"]
+        assert financial_aid.tier_program == determine_tier_program(self.program, self.data["original_income"])
         assert financial_aid.status == FinancialAidStatus.PENDING_DOCS
         self.assertAlmostEqual(financial_aid.income_usd, self.data["original_income"] / exchange_rate)
 
