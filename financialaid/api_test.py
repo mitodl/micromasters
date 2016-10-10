@@ -8,6 +8,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_save
 from django.test import TestCase
 from factory.django import mute_signals
+from factory.fuzzy import FuzzyText
 
 from courses.factories import ProgramFactory, CourseRunFactory
 from dashboard.models import ProgramEnrollment
@@ -39,7 +40,9 @@ class FinancialAidBaseTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         with mute_signals(post_save):
-            cls.profile = ProfileFactory.create()
+            cls.profile = ProfileFactory.create(
+                country=FuzzyText(length=2)
+            )
             cls.profile2 = ProfileFactory.create()
             cls.staff_user_profile = ProfileFactory.create()
             cls.staff_user_profile2 = ProfileFactory.create()
@@ -130,8 +133,13 @@ class FinancialAidBaseTestCase(TestCase):
             status=FinancialAidStatus.PENDING_MANUAL_APPROVAL
         )
         # Country income thresholds
-        cls.country_income_threshold_0 = CountryIncomeThresholdFactory.create(income_threshold=0)
-        cls.country_income_threshold_50000 = CountryIncomeThresholdFactory.create(income_threshold=50000)
+        cls.country_income_threshold_0 = CountryIncomeThresholdFactory.create(
+            income_threshold=0
+        )
+        cls.country_income_threshold_50000 = CountryIncomeThresholdFactory.create(
+            country_code=cls.profile.country,
+            income_threshold=50000
+        )
 
     @staticmethod
     def assert_http_status(method, url, status, data=None, content_type="application/json", **kwargs):
