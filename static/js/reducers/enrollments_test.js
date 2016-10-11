@@ -177,7 +177,7 @@ describe('enrollments', () => {
         REQUEST_ADD_COURSE_ENROLLMENT,
         RECEIVE_ADD_COURSE_ENROLLMENT_SUCCESS,
       ]).then(state => {
-        assert.equal(state.coursePostStatus, FETCH_SUCCESS);
+        assert.equal(state.courseEnrollAddStatus, FETCH_SUCCESS);
         assert.isTrue(addCourseEnrollmentStub.calledWith(courseKey));
         assert.isTrue(fetchCoursePricesStub.calledWith());
         assert.isTrue(fetchDashboardStub.calledWith());
@@ -192,7 +192,7 @@ describe('enrollments', () => {
         REQUEST_ADD_COURSE_ENROLLMENT,
         RECEIVE_ADD_COURSE_ENROLLMENT_FAILURE,
       ]).then(state => {
-        assert.equal(state.coursePostStatus, FETCH_FAILURE);
+        assert.equal(state.courseEnrollAddStatus, FETCH_FAILURE);
         assert.isTrue(addCourseEnrollmentStub.calledWith(courseKey));
         assert.isFalse(fetchCoursePricesStub.calledWith());
         assert.isFalse(fetchDashboardStub.calledWith());

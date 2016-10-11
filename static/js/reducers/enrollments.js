@@ -49,11 +49,11 @@ export const enrollments = (state: ProgramEnrollmentsState = INITIAL_ENROLLMENTS
   case CLEAR_ENROLLMENTS:
     return INITIAL_ENROLLMENTS_STATE;
   case REQUEST_ADD_COURSE_ENROLLMENT:
-    return { ...state, coursePostStatus: FETCH_PROCESSING };
+    return { ...state, courseEnrollAddStatus: FETCH_PROCESSING };
   case RECEIVE_ADD_COURSE_ENROLLMENT_SUCCESS:
-    return { ...state, coursePostStatus: FETCH_SUCCESS };
+    return { ...state, courseEnrollAddStatus: FETCH_SUCCESS };
   case RECEIVE_ADD_COURSE_ENROLLMENT_FAILURE:
-    return { ...state, coursePostStatus: FETCH_FAILURE };
+    return { ...state, courseEnrollAddStatus: FETCH_FAILURE };
   default:
     return state;
   }
