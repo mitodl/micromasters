@@ -34,6 +34,7 @@ class GenerateExchangeRatesTest(TestCase):
         Assert currency exchange rates are created using management command
         """
         mocked_request.return_value.json.return_value = self.data
+        mocked_request.return_value.status_code = 200
         assert CurrencyExchangeRate.objects.count() == 0
         self.command.handle("generate_exchange_rates")
         called_args, _ = mocked_request.call_args
