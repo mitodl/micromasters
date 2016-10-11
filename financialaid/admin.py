@@ -16,6 +16,9 @@ class FinancialAidAdmin(admin.ModelAdmin):
     """Admin for FinancialAid"""
     model = FinancialAid
 
+    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument
+        return False
+
     def save_model(self, request, obj, form, change):
         """
         Saves object and logs change to object
