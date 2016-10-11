@@ -15,6 +15,7 @@ export type Program = {
 };
 export type Course = {
   runs: Array<CourseRun>;
+  title: string;
   id: number;
 };
 export type CourseRun = {

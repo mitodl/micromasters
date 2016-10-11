@@ -2,18 +2,32 @@
 import '../global_init';
 
 import { assert } from 'chai';
+import moment from 'moment';
 
 import CourseAction from '../components/dashboard/CourseAction';
 import IntegrationTestHelper from '../util/integration_test_helper';
-import { REQUEST_DASHBOARD } from '../actions';
+import {
+  REQUEST_DASHBOARD,
+  UPDATE_COURSE_STATUS,
+  receiveDashboardSuccess,
+} from '../actions';
 import * as actions from '../actions';
-import { SET_TOAST_MESSAGE } from '../actions/ui';
+import {
+  SET_TOAST_MESSAGE,
+} from '../actions/ui';
+import { findCourseRun } from '../util/util';
 import * as util from '../util/util';
 import {
   CYBERSOURCE_CHECKOUT_RESPONSE,
   EDX_CHECKOUT_RESPONSE,
   TOAST_FAILURE,
   TOAST_SUCCESS,
+
+  STATUS_CURRENTLY_ENROLLED,
+  STATUS_PENDING_ENROLLMENT,
+  STATUS_OFFERED,
+
+  DASHBOARD_RESPONSE,
 } from '../constants';
 import { findCourse } from '../util/test_utils';
 
@@ -32,7 +46,7 @@ describe('DashboardPage', () => {
   it('shows a spinner when dashboard get is processing', () => {
     return renderComponent('/dashboard').then(([, div]) => {
       assert.notOk(div.querySelector(".spinner"), "Found spinner but no fetch in progress");
-      helper.store.dispatch({ type: REQUEST_DASHBOARD });
+      helper.store.dispatch({ type: REQUEST_DASHBOARD, payload: { noSpinner: false } });
 
       assert(div.querySelector(".spinner"), "Unable to find spinner");
     });
@@ -101,24 +115,100 @@ describe('DashboardPage', () => {
     });
   });
 
-  it('shows the order status toast when the query param is set for a cancellation', () => {
-    return renderComponent('/dashboard?status=cancel', [SET_TOAST_MESSAGE]).then(() => {
-      assert.deepEqual(helper.store.getState().ui.toastMessage, {
-        message: "Order was cancelled",
-        icon: TOAST_FAILURE
+  describe('order receipt and cancellation pages', () => {
+    it('shows the order status toast when the query param is set for a cancellation', () => {
+      return renderComponent('/dashboard?status=cancel', [SET_TOAST_MESSAGE]).then(() => {
+        assert.deepEqual(helper.store.getState().ui.toastMessage, {
+          message: "Order was cancelled",
+          icon: TOAST_FAILURE
+        });
       });
     });
-  });
 
-  it('shows the order status toast when the query param is set for a success', () => {
-    let course = findCourse(course => course.runs.length > 0);
-    let run = course.runs[0];
-    let encodedKey = encodeURIComponent(run.course_id);
-    return renderComponent(`/dashboard?status=receipt&course_key=${encodedKey}`, [SET_TOAST_MESSAGE]).then(() => {
-      assert.deepEqual(helper.store.getState().ui.toastMessage, {
-        title: "Order Complete!",
-        message: `You are now enrolled in ${course.title}`,
-        icon: TOAST_SUCCESS
+    it('shows the order status toast when the query param is set for a success', () => {
+      let course = findCourse(course =>
+        course.runs.length > 0 &&
+        course.runs[0].status === STATUS_CURRENTLY_ENROLLED
+      );
+      let run = course.runs[0];
+      let encodedKey = encodeURIComponent(run.course_id);
+      return renderComponent(`/dashboard?status=receipt&course_key=${encodedKey}`, [SET_TOAST_MESSAGE]).then(() => {
+        assert.deepEqual(helper.store.getState().ui.toastMessage, {
+          title: "Order Complete!",
+          message: `You are now enrolled in ${course.title}`,
+          icon: TOAST_SUCCESS
+        });
+      });
+    });
+
+    it('sets the course run to have a pending status', () => {
+      let course = findCourse(course =>
+        course.runs.length > 0 &&
+        course.runs[0].status === STATUS_OFFERED
+      );
+      let run = course.runs[0];
+      let encodedKey = encodeURIComponent(run.course_id);
+      return renderComponent(`/dashboard?status=receipt&course_key=${encodedKey}`, [
+        UPDATE_COURSE_STATUS
+      ]).then(() => {
+        let [ courseRun ] = findCourseRun(
+          helper.store.getState().dashboard.programs,
+          _run => _run.course_id === run.course_id
+        );
+        assert.equal(run.course_id, courseRun.course_id);
+        assert.equal(courseRun.status, STATUS_PENDING_ENROLLMENT);
+      });
+    });
+
+    describe('fake timer tests', function() {
+      let clock;
+      beforeEach(() => {
+        clock = helper.sandbox.useFakeTimers(moment('2016-09-01').valueOf());
+      });
+
+      it('refetches the dashboard after 3 seconds if 30 seconds has not passed', () => {
+        let course = findCourse(course =>
+          course.runs.length > 0 &&
+          course.runs[0].status === STATUS_OFFERED
+        );
+        let run = course.runs[0];
+        let encodedKey = encodeURIComponent(run.course_id);
+        return renderComponent(`/dashboard?status=receipt&course_key=${encodedKey}`, [
+          UPDATE_COURSE_STATUS
+        ]).then(() => {
+          let fetchDashboardStub = helper.sandbox.stub(actions, 'fetchDashboard').returns(() => ({
+            type: 'fake'
+          }));
+          clock.tick(3501);
+          assert(fetchDashboardStub.calledWith(true), 'expected fetchDashboard called');
+        });
+      });
+
+      it('shows an error message if more than 30 seconds have passed', () => {
+        let course = findCourse(course =>
+          course.runs.length > 0 &&
+          course.runs[0].status === STATUS_OFFERED
+        );
+        let run = course.runs[0];
+        let encodedKey = encodeURIComponent(run.course_id);
+        return renderComponent(`/dashboard?status=receipt&course_key=${encodedKey}`, [
+          UPDATE_COURSE_STATUS
+        ]).then(() => {
+          let millis = 35001;
+          while (millis > 0) {
+            let tick = 3001;
+            millis -= 3001;
+            clock.tick(tick);
+
+            // hacky workaround, otherwise the component doesn't seem to update like it does
+            // on the browser ¯\_(ツ)_/¯
+            helper.store.dispatch(receiveDashboardSuccess(DASHBOARD_RESPONSE));
+          }
+          assert.deepEqual(helper.store.getState().ui.toastMessage, {
+            message: `Order was not processed`,
+            icon: TOAST_FAILURE
+          });
+        });
       });
     });
   });

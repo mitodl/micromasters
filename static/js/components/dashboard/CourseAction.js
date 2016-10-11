@@ -3,8 +3,8 @@
 import React from 'react';
 import moment from 'moment';
 import Button from 'react-mdl/lib/Button';
+import Spinner from 'react-mdl/lib/Spinner';
 import R from 'ramda';
-
 import _ from 'lodash';
 
 import type { Course, CourseRun, FinancialAidUserInfo } from '../../flow/programTypes';
@@ -16,6 +16,7 @@ import {
   STATUS_CURRENTLY_ENROLLED,
   STATUS_WILL_ATTEND,
   STATUS_OFFERED,
+  STATUS_PENDING_ENROLLMENT,
   DASHBOARD_FORMAT,
   FA_PENDING_STATUSES,
   FA_STATUS_SKIPPED
@@ -88,6 +89,14 @@ export default class CourseAction extends React.Component {
           checkout(run.course_id);
         };
       }
+    }
+
+    if (run.status === STATUS_PENDING_ENROLLMENT) {
+      buttonProps.disabled = true;
+
+      text = <div className="spinner-container">
+        <Spinner singleColor />
+      </div>;
     }
 
     return (
@@ -168,6 +177,9 @@ export default class CourseAction extends React.Component {
     case STATUS_NOT_PASSED:
       // do nothing;
       break;
+    case STATUS_PENDING_ENROLLMENT:
+      action = this.renderEnrollButton(run);
+      description = this.renderTextDescription('Processing...');
     }
 
     return _.compact([action, description]);

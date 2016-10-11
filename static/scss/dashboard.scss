@@ -290,6 +290,22 @@ c.validation-wrapper {
           background-color: $lightgrey;
           color: #ffffff;
         }
+
+        .spinner-container {
+          width: 130px;
+          height: 20px !important;
+          line-height: 20px !important;
+
+          .mdl-spinner {
+            height: 20px !important;
+            line-height: 20px !important;
+            width: 20px !important;
+          }
+
+          .mdl-spinner__layer {
+            border-color: #aaaaaa !important;
+          }
+        }
       }
     }
   }

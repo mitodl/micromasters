@@ -2,6 +2,7 @@
 import TestUtils from 'react-addons-test-utils';
 import { assert } from 'chai';
 import _ from 'lodash';
+import sinon from 'sinon';
 
 import {
   REQUEST_GET_USER_PROFILE,
@@ -24,6 +25,8 @@ import { activeDialog } from '../util/test_utils';
 describe("ProfilePage", function() {
   this.timeout(5000);  // eslint-disable-line no-invalid-this
 
+  let clock;
+
   let listenForActions, renderComponent, helper, patchUserProfileStub;
   let profileSteps = [
     PERSONAL_STEP,
@@ -40,10 +43,12 @@ describe("ProfilePage", function() {
     listenForActions = helper.listenForActions.bind(helper);
     renderComponent = helper.renderComponent.bind(helper);
     patchUserProfileStub = helper.sandbox.stub(api, 'patchUserProfile');
+    clock = sinon.useFakeTimers();
   });
 
   afterEach(() => {
     helper.cleanup();
+    clock.restore();
   });
 
   let confirmSaveButtonBehavior = (updatedProfile, pageElements, validationFailure=false, actions = []) => {

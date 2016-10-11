@@ -4,22 +4,31 @@ import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import Loader from 'react-loader';
 import _ from 'lodash';
+import moment from 'moment';
 
 import {
   FETCH_SUCCESS,
   FETCH_PROCESSING,
   checkout,
+  updateCourseStatus,
+  fetchDashboard,
 } from '../actions';
 import {
   TOAST_SUCCESS,
   TOAST_FAILURE,
+  STATUS_OFFERED,
+  STATUS_CAN_UPGRADE,
+  STATUS_PENDING_ENROLLMENT,
+  STATUS_NOT_PASSED,
+  STATUS_PASSED,
+  STATUS_CURRENTLY_ENROLLED,
 } from '../constants';
 import { addCourseEnrollment } from '../actions/enrollments';
 import {
   setToastMessage,
   setConfirmSkipDialogVisibility,
 } from '../actions/ui';
-import { createForm } from '../util/util';
+import { createForm, findCourseRun } from '../util/util';
 import CourseListCard from '../components/dashboard/CourseListCard';
 import DashboardUserCard from '../components/dashboard/DashboardUserCard';
 import FinancialAidCard from '../components/dashboard/FinancialAidCard';
@@ -41,6 +50,7 @@ import type {
 import type { CoursePricesState, DashboardState } from '../flow/dashboardTypes';
 import type { ProgramEnrollment } from '../flow/enrollmentTypes';
 import type { ProfileGetResult } from '../flow/profileTypes';
+import type { Course, CourseRun } from '../flow/programTypes';
 import { skipFinancialAid } from '../actions/financial_aid';
 import { currencyForCountry } from '../util/currency';
 
@@ -58,18 +68,63 @@ class DashboardPage extends React.Component {
     setCalculatorVisibility:  (b: boolean) => void,
     ui:                       UIState,
     documents:                DocumentsState,
+    fetchDashboard:           () => void,
   };
 
   componentDidMount() {
     this.handleOrderStatus();
+
+    this.componentMountTime = moment();
+    this.hasOrderReceiptTimeout = false;
   }
 
   componentDidUpdate() {
     this.handleOrderStatus();
   }
 
+  handleOrderSuccess = (course: Course): void => {
+    const { dispatch } = this.props;
+    dispatch(setToastMessage({
+      title: 'Order Complete!',
+      message: `You are now enrolled in ${course.title}`,
+      icon: TOAST_SUCCESS,
+    }));
+    this.context.router.push('/dashboard/');
+  };
+
+  handleOrderCancellation = (): void => {
+    const { dispatch } = this.props;
+    dispatch(setToastMessage({
+      message: 'Order was cancelled',
+      icon: TOAST_FAILURE,
+    }));
+    this.context.router.push('/dashboard/');
+  };
+
+  handleOrderPending = (run: CourseRun): void => {
+    const { dispatch } = this.props;
+    dispatch(updateCourseStatus(run.course_id, STATUS_PENDING_ENROLLMENT));
+
+    if (!this.hasOrderReceiptTimeout) {
+      setTimeout(() => {
+        this.hasOrderReceiptTimeout = false;
+        let deadline = moment(this.componentMountTime).add(30, 'seconds');
+        let now = moment();
+        if (now.isBefore(deadline)) {
+          dispatch(fetchDashboard(true));
+        } else {
+          dispatch(setToastMessage({
+            message: 'Order was not processed',
+            icon: TOAST_FAILURE,
+          }));
+        }
+      }, 3000);
+      this.hasOrderReceiptTimeout = true;
+    }
+  };
+
   handleOrderStatus = () => {
-    const { dispatch, dashboard, location: { query } } = this.props;
+    const { dashboard, location: { query } } = this.props;
 
     if (dashboard.fetchStatus !== FETCH_SUCCESS) {
       // wait until we have access to the dashboard
@@ -78,29 +133,24 @@ class DashboardPage extends React.Component {
 
     let courseKey = query.course_key;
     if (query.status === 'receipt') {
-      let course = {};
-      for (let program of dashboard.programs) {
-        for (let courseInProgram of program.courses) {
-          for (let courseRun of courseInProgram.runs) {
-            if (courseRun.course_id === courseKey) {
-              course = courseInProgram;
-            }
-          }
-        }
+      const [courseRun, course] = findCourseRun(dashboard.programs, run => run.course_id === courseKey);
+      switch (courseRun.status) {
+      case STATUS_CAN_UPGRADE:
+      case STATUS_OFFERED:
+        // user is directed to the order receipt page but order is not yet fulfilled
+        this.handleOrderPending(courseRun);
+        break;
+      case STATUS_NOT_PASSED:
+      case STATUS_PASSED:
+      case STATUS_CURRENTLY_ENROLLED:
+        this.handleOrderSuccess(course);
+        break;
+      default:
+        // do nothing, a timeout was set to check back later
+        break;
       }
-
-      dispatch(setToastMessage({
-        title: 'Order Complete!',
-        message: `You are now enrolled in ${course.title}`,
-        icon: TOAST_SUCCESS,
-      }));
-      this.context.router.push('/dashboard/');
     } else if (query.status === 'cancel') {
-      dispatch(setToastMessage({
-        message: 'Order was cancelled',
-        icon: TOAST_FAILURE,
-      }));
-      this.context.router.push('/dashboard/');
+      this.handleOrderCancellation();
     }
   };
 

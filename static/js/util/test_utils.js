@@ -3,6 +3,7 @@ import { assert } from 'chai';
 import sinon from 'sinon';
 import _ from 'lodash';
 
+import { findCourseRun } from '../util/util';
 import { DASHBOARD_RESPONSE } from '../constants';
 import type {
   Course,
@@ -10,12 +11,12 @@ import type {
 } from '../../flow/programTypes';
 
 export function findCourse(courseSelector: (course: Course, program: Program) => boolean): Course {
-  for (let program of DASHBOARD_RESPONSE) {
-    for (let course of program.courses) {
-      if (courseSelector(course, program)) {
-        return course;
-      }
-    }
+  let [, course, ] = findCourseRun(
+    DASHBOARD_RESPONSE,
+    (courseRun, _course, program) => courseSelector(_course, program)
+  );
+  if (!_.isEmpty(course)) {
+    return course;
   }
   throw "Unable to find course";
 }

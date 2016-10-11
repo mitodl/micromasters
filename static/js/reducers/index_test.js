@@ -27,11 +27,14 @@ import {
   RECEIVE_DASHBOARD_SUCCESS,
   RECEIVE_DASHBOARD_FAILURE,
   CLEAR_DASHBOARD,
-
+  receiveDashboardSuccess,
   checkout,
   REQUEST_CHECKOUT,
   RECEIVE_CHECKOUT_SUCCESS,
   RECEIVE_CHECKOUT_FAILURE,
+
+  updateCourseStatus,
+  UPDATE_COURSE_STATUS,
 
   FETCH_FAILURE,
   FETCH_SUCCESS
@@ -41,6 +44,7 @@ import {
   DASHBOARD_RESPONSE,
   USER_PROFILE_RESPONSE,
   CYBERSOURCE_CHECKOUT_RESPONSE,
+  STATUS_NOT_PASSED,
 } from '../constants';
 import configureTestStore from 'redux-asserts';
 import rootReducer, { INITIAL_PROFILES_STATE } from '../reducers';
@@ -283,6 +287,18 @@ describe('reducers', () => {
 
       return dispatchThen(fetchDashboard(), [REQUEST_DASHBOARD, RECEIVE_DASHBOARD_FAILURE]).then(dashboardState => {
         assert.equal(dashboardState.fetchStatus, FETCH_FAILURE);
+      });
+    });
+
+    it("should update a course run's status", () => {
+      store.dispatch(receiveDashboardSuccess(DASHBOARD_RESPONSE));
+
+      let getRun = programs => programs[1].courses[0].runs[0];
+
+      let run = getRun(DASHBOARD_RESPONSE);
+      assert.equal(run.status, STATUS_NOT_PASSED);
+      return dispatchThen(updateCourseStatus(run.course_id, 'new_status'), [UPDATE_COURSE_STATUS]).then(state => {
+        assert.equal(getRun(state.programs).status, 'new_status');
       });
     });
   });

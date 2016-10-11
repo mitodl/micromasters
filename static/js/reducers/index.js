@@ -1,6 +1,8 @@
 // @flow
 /* global SETTINGS: false */
 import { combineReducers } from 'redux';
+import _ from 'lodash';
+
 import {
   REQUEST_GET_USER_PROFILE,
   RECEIVE_GET_USER_PROFILE_SUCCESS,
@@ -28,6 +30,7 @@ import {
   RECEIVE_COURSE_PRICES_SUCCESS,
   RECEIVE_COURSE_PRICES_FAILURE,
   CLEAR_COURSE_PRICES,
+  UPDATE_COURSE_STATUS,
 
   FETCH_FAILURE,
   FETCH_PROCESSING,
@@ -155,9 +158,13 @@ const INITIAL_DASHBOARD_STATE: DashboardState = {
 export const dashboard = (state: DashboardState = INITIAL_DASHBOARD_STATE, action: Action) => {
   switch (action.type) {
   case REQUEST_DASHBOARD:
-    return Object.assign({}, state, {
-      fetchStatus: FETCH_PROCESSING
-    });
+    if (action.payload.noSpinner) {
+      return state;
+    } else {
+      return Object.assign({}, state, {
+        fetchStatus: FETCH_PROCESSING
+      });
+    }
   case RECEIVE_DASHBOARD_SUCCESS:
     return Object.assign({}, state, {
       fetchStatus: FETCH_SUCCESS,
@@ -168,6 +175,20 @@ export const dashboard = (state: DashboardState = INITIAL_DASHBOARD_STATE, actio
       fetchStatus: FETCH_FAILURE,
       errorInfo: action.payload.errorInfo
     });
+  case UPDATE_COURSE_STATUS: {
+    const { courseId, status } = action.payload;
+    let programs = _.cloneDeep(state.programs);
+    for (let program of programs) {
+      for (let course of program.courses) {
+        for (let courseRun of course.runs) {
+          if (courseRun.course_id === courseId) {
+            courseRun.status = status;
+          }
+        }
+      }
+    }
+    return Object.assign({}, state, { programs });
+  }
   case CLEAR_DASHBOARD:
     return INITIAL_DASHBOARD_STATE;
   default:
@@ -175,7 +196,9 @@ export const dashboard = (state: DashboardState = INITIAL_DASHBOARD_STATE, actio
   }
 };
 
-type CheckoutState = {};
+type CheckoutState = {
+  fetchStatus?: string,
+};
 const INITIAL_CHECKOUT_STATE = {};
 export const checkout = (state: CheckoutState = INITIAL_CHECKOUT_STATE, action: Action) => {
   switch (action.type) {

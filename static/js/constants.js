@@ -38,6 +38,9 @@ export const STATUS_WILL_ATTEND = 'will-attend';
 export const STATUS_CAN_UPGRADE = 'can-upgrade';
 export const STATUS_OFFERED = 'offered';
 
+// note: this status is not sent from the server
+export const STATUS_PENDING_ENROLLMENT = 'pending-enrollment';
+
 export const ALL_COURSE_STATUSES = [
   STATUS_PASSED,
   STATUS_NOT_PASSED,
@@ -45,6 +48,7 @@ export const ALL_COURSE_STATUSES = [
   STATUS_CAN_UPGRADE,
   STATUS_CURRENTLY_ENROLLED,
   STATUS_WILL_ATTEND,
+  STATUS_PENDING_ENROLLMENT,
 ];
 
 // financial aid statuses

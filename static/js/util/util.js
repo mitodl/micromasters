@@ -22,7 +22,8 @@ import type {
 } from '../flow/profileTypes';
 import type {
   Program,
-  Course
+  Course,
+  CourseRun,
 } from '../flow/programTypes';
 import { workEntriesByDate } from './sorting';
 import type { CheckoutPayload } from '../flow/checkoutTypes';
@@ -383,4 +384,20 @@ export function programCourseInfo(program: Program): Object {
     'totalPassedCourses': totalPassedCourses,
     'totalCourses': totalCourses
   };
+}
+
+export function findCourseRun(
+  programs: Array<Program>,
+  selector: (courseRun: CourseRun, course: Course, program: Program) => boolean,
+): [CourseRun, Course, Program] {
+  for (let program of programs) {
+    for (let course of program.courses) {
+      for (let courseRun of course.runs) {
+        if (selector(courseRun, course, program)) {
+          return [courseRun, course, program];
+        }
+      }
+    }
+  }
+  return [{}, {}, {}];
 }

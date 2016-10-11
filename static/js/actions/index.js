@@ -15,7 +15,10 @@ export const FETCH_PROCESSING = 'FETCH_PROCESSING';
 
 // dashboard list actions
 export const REQUEST_DASHBOARD = 'REQUEST_DASHBOARD';
-const requestDashboard = () => ({ type: REQUEST_DASHBOARD });
+export const requestDashboard = (noSpinner: boolean) => ({
+  type: REQUEST_DASHBOARD,
+  payload: { noSpinner }
+});
 
 export const RECEIVE_DASHBOARD_SUCCESS = 'RECEIVE_DASHBOARD_SUCCESS';
 export const receiveDashboardSuccess = (programs: Object[]): Action => ({
@@ -32,9 +35,9 @@ export const receiveDashboardFailure = (errorInfo: APIErrorInfo): Action => ({
 export const CLEAR_DASHBOARD = 'CLEAR_DASHBOARD';
 export const clearDashboard = () => ({ type: CLEAR_DASHBOARD });
 
-export function fetchDashboard(): Dispatcher<Dashboard> {
+export function fetchDashboard(noSpinner: boolean = false): Dispatcher<Dashboard> {
   return (dispatch: Dispatch) => {
-    dispatch(requestDashboard());
+    dispatch(requestDashboard(noSpinner));
     return api.getDashboard().
       then(dashboard => dispatch(receiveDashboardSuccess(dashboard))).
       catch(error => {
@@ -43,6 +46,11 @@ export function fetchDashboard(): Dispatcher<Dashboard> {
       });
   };
 }
+
+export const UPDATE_COURSE_STATUS = 'UPDATE_COURSE_STATUS';
+export const updateCourseStatus = createAction(UPDATE_COURSE_STATUS, (courseId, status) => ({
+  courseId, status
+}));
 
 export const REQUEST_CHECKOUT = 'REQUEST_CHECKOUT';
 export const requestCheckout = (courseId: string) => ({
@@ -77,13 +85,13 @@ export const receiveCheckoutFailure = (errorInfo: APIErrorInfo): Action => ({
 
 // course price actions
 export const REQUEST_COURSE_PRICES = 'REQUEST_COURSE_PRICES';
-const requestCoursePrices = createAction(REQUEST_COURSE_PRICES);
+export const requestCoursePrices = createAction(REQUEST_COURSE_PRICES);
 
 export const RECEIVE_COURSE_PRICES_SUCCESS = 'RECEIVE_COURSE_PRICES_SUCCESS';
-const receiveCoursePricesSuccess = createAction(RECEIVE_COURSE_PRICES_SUCCESS);
+export const receiveCoursePricesSuccess = createAction(RECEIVE_COURSE_PRICES_SUCCESS);
 
 export const RECEIVE_COURSE_PRICES_FAILURE = 'RECEIVE_COURSE_PRICES_FAILURE';
-const receiveCoursePricesFailure = createAction(RECEIVE_COURSE_PRICES_FAILURE);
+export const receiveCoursePricesFailure = createAction(RECEIVE_COURSE_PRICES_FAILURE);
 
 export const CLEAR_COURSE_PRICES = 'CLEAR_COURSE_PRICES';
 export const clearCoursePrices = createAction(CLEAR_COURSE_PRICES);

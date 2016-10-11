@@ -18,6 +18,7 @@ import {
   STATUS_CAN_UPGRADE,
   STATUS_CURRENTLY_ENROLLED,
   STATUS_WILL_ATTEND,
+  STATUS_PENDING_ENROLLMENT,
   FA_PENDING_STATUSES,
   FA_STATUS_SKIPPED
 } from '../../constants';
@@ -188,7 +189,7 @@ describe('CourseAction', () => {
   });
 
   it('shows a countdown message if the user is enrolled and the course starts in the future', () => {
-    let course = findCourse(course => (
+    let course = findAndCloneCourse(course => (
       course.runs.length > 0 &&
       course.runs[0].status === STATUS_WILL_ATTEND
     ));
@@ -198,6 +199,19 @@ describe('CourseAction', () => {
     let elements = getElements(wrapper);
 
     assert.include(elements.descriptionText, 'Course starts in 10 days');
+  });
+
+  it('shows a pending disabled button if the user has status pending-enrollment', () => {
+    let course = findAndCloneCourse(course => (
+      course.runs.length > 0 &&
+      course.runs[0].status === STATUS_OFFERED
+    ));
+    alterFirstRun(course, {status: STATUS_PENDING_ENROLLMENT});
+    const wrapper = shallow(<CourseAction course={course} {...defaultParamsNow} />);
+
+    assert.equal(wrapper.text(), "<Button />Processing...");
+    assert.isTrue(wrapper.find("Button").props()['disabled']);
+    assert.equal(wrapper.find("Spinner").length, 1);
   });
 
   describe('with financial aid', () => {

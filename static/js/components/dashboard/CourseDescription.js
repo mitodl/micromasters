@@ -12,6 +12,7 @@ import {
   STATUS_CURRENTLY_ENROLLED,
   STATUS_OFFERED,
   STATUS_WILL_ATTEND,
+  STATUS_PENDING_ENROLLMENT,
   DASHBOARD_FORMAT,
 } from '../../constants';
 
@@ -44,6 +45,7 @@ export default class CourseDescription extends React.Component {
     case STATUS_CURRENTLY_ENROLLED:
     case STATUS_WILL_ATTEND:
     case STATUS_OFFERED:
+    case STATUS_PENDING_ENROLLMENT:
       if (run.course_start_date) {
         dateMessage = this.renderCourseDateMessage('Start date', run.course_start_date);
       } else if (!_.isNil(run.fuzzy_start_date)) {
