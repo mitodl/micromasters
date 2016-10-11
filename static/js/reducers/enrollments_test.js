@@ -178,9 +178,9 @@ describe('enrollments', () => {
         RECEIVE_ADD_COURSE_ENROLLMENT_SUCCESS,
       ]).then(state => {
         assert.equal(state.coursePostStatus, FETCH_SUCCESS);
-        assert.ok(addCourseEnrollmentStub.calledWith(courseKey));
-        assert.ok(fetchCoursePricesStub.calledWith());
-        assert.ok(fetchDashboardStub.calledWith());
+        assert.isTrue(addCourseEnrollmentStub.calledWith(courseKey));
+        assert.isTrue(fetchCoursePricesStub.calledWith());
+        assert.isTrue(fetchDashboardStub.calledWith());
       });
     });
 
@@ -193,9 +193,9 @@ describe('enrollments', () => {
         RECEIVE_ADD_COURSE_ENROLLMENT_FAILURE,
       ]).then(state => {
         assert.equal(state.coursePostStatus, FETCH_FAILURE);
-        assert.ok(addCourseEnrollmentStub.calledWith(courseKey));
-        assert.notOk(fetchCoursePricesStub.calledWith());
-        assert.notOk(fetchDashboardStub.calledWith());
+        assert.isTrue(addCourseEnrollmentStub.calledWith(courseKey));
+        assert.isFalse(fetchCoursePricesStub.calledWith());
+        assert.isFalse(fetchDashboardStub.calledWith());
       });
     });
   });
