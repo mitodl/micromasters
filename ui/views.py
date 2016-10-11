@@ -75,6 +75,7 @@ class ReactView(View):  # pylint: disable=unused-argument
             "edx_base_url": settings.EDXORG_BASE_URL,
             "roles": roles,
             "search_url": reverse('search_api', kwargs={"elastic_url": ""}),
+            "support_email": settings.EMAIL_SUPPORT,
         }
 
         return render(
@@ -140,7 +141,8 @@ def standard_error_page(request, status_code, template_filename):
             "authenticated": authenticated,
             "name": name,
             "username": username,
-            "is_staff": has_role(request.user, [Staff.ROLE_ID, Instructor.ROLE_ID])
+            "is_staff": has_role(request.user, [Staff.ROLE_ID, Instructor.ROLE_ID]),
+            "support_email": settings.EMAIL_SUPPORT,
         }
     )
     response.status_code = status_code

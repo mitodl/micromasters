@@ -37,7 +37,7 @@ describe("ErrorMessage", () => {
   errorString = errorString.replace(/\s\s+/g, ' ');
 
   let contactExpectation = `If the error persists, please contact
-      mitx-support@mit.edu specifying this entire error message.`;
+      ${SETTINGS.support_email} specifying this entire error message.`;
   contactExpectation = contactExpectation.replace(/\s\s+/g, ' ');
 
   describe('unit tests', () => {

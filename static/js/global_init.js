@@ -4,7 +4,8 @@ const settings = {
   name: "full name",
   username: "jane",
   edx_base_url: "/edx/",
-  roles: []
+  roles: [],
+  support_email: "a_real_email@example.com"
 };
 global.SETTINGS = Object.assign({}, settings);
 
