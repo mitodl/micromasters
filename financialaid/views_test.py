@@ -18,6 +18,7 @@ from ecommerce.factories import CoursePriceFactory
 from financialaid.api import determine_tier_program, determine_income_usd
 from financialaid.api_test import FinancialAidBaseTestCase
 from financialaid.constants import (
+    DEFAULT_INCOME_THRESHOLD,
     FinancialAidJustification,
     FinancialAidStatus
 )
@@ -153,8 +154,10 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         """
         Tests IncomeValidationView post with a currency that is not USD with exchange rate less than 1
         """
-        self.data["original_currency"] = self.currency_xyz.currency_code
         assert FinancialAid.objects.count() == 0
+        self.data["original_currency"] = self.currency_xyz.currency_code
+        # Set original income so that it's greater than the income threshold for auto approval
+        self.data["original_income"] = (DEFAULT_INCOME_THRESHOLD / self.currency_xyz.exchange_rate) + 1
         resp = self.client.post(self.request_url, self.data, format="json")
         assert resp.status_code == status.HTTP_201_CREATED
         assert FinancialAid.objects.count() == 1

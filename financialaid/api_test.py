@@ -41,7 +41,9 @@ class FinancialAidBaseTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         with mute_signals(post_save):
-            cls.profile = ProfileFactory.create()
+            cls.profile = ProfileFactory.create(
+                country="US"
+            )
             cls.profile2 = ProfileFactory.create()
             cls.staff_user_profile = ProfileFactory.create()
             cls.staff_user_profile2 = ProfileFactory.create()
