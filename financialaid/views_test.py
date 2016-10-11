@@ -18,7 +18,6 @@ from ecommerce.factories import CoursePriceFactory
 from financialaid.api import determine_tier_program, determine_income_usd
 from financialaid.api_test import FinancialAidBaseTestCase
 from financialaid.constants import (
-    DEFAULT_INCOME_THRESHOLD,
     FinancialAidJustification,
     FinancialAidStatus
 )
