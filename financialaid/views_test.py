@@ -134,7 +134,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
 
     def test_income_validation_currency_not_usd_gto(self):
         """
-        Tests IncomeValidationView post with a currency that is not USD with exchange rate greater than 1
+        Tests FinancialAidRequestView post with a currency that is not USD with exchange rate greater than 1
         """
         self.data["original_currency"] = self.currency_abc.currency_code
         assert FinancialAid.objects.count() == 0
@@ -144,7 +144,6 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
         financial_aid = FinancialAid.objects.first()
         income_usd = determine_income_usd(self.data["original_income"], self.data["original_currency"])
         assert financial_aid.tier_program == determine_tier_program(self.program, income_usd)
-        assert financial_aid.status == FinancialAidStatus.PENDING_DOCS
         self.assertAlmostEqual(
             financial_aid.income_usd,
             self.data["original_income"] / self.currency_abc.exchange_rate
@@ -152,19 +151,16 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
 
     def test_income_validation_currency_not_usd_lto(self):
         """
-        Tests IncomeValidationView post with a currency that is not USD with exchange rate less than 1
+        Tests FinancialAidRequestView post with a currency that is not USD with exchange rate less than 1
         """
         assert FinancialAid.objects.count() == 0
         self.data["original_currency"] = self.currency_xyz.currency_code
-        # Set original income so that it's greater than the income threshold for auto approval
-        self.data["original_income"] = (DEFAULT_INCOME_THRESHOLD / self.currency_xyz.exchange_rate) + 1
         resp = self.client.post(self.request_url, self.data, format="json")
         assert resp.status_code == status.HTTP_201_CREATED
         assert FinancialAid.objects.count() == 1
         financial_aid = FinancialAid.objects.first()
         income_usd = determine_income_usd(self.data["original_income"], self.data["original_currency"])
         assert financial_aid.tier_program == determine_tier_program(self.program, income_usd)
-        assert financial_aid.status == FinancialAidStatus.PENDING_DOCS
         self.assertAlmostEqual(
             financial_aid.income_usd,
             self.data["original_income"] / self.currency_xyz.exchange_rate
@@ -172,7 +168,7 @@ class FinancialAidViewTests(FinancialAidBaseTestCase, APIClient):
 
     def test_income_validation_currency_not_supported(self):
         """
-        Tests IncomeValidationView post with a currency not supported
+        Tests FinancialAidRequestView post with a currency not supported
         """
         self.data["original_currency"] = "DEF"
         assert FinancialAid.objects.count() == 0
