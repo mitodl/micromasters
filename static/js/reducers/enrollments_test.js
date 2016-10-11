@@ -181,7 +181,7 @@ describe('enrollments', () => {
         assert.ok(addCourseEnrollmentStub.calledWith(courseKey));
         assert.ok(fetchCoursePricesStub.calledWith());
         assert.ok(fetchDashboardStub.calledWith());
-      })
+      });
     });
 
     it('should fail to add a course enrollment', () => {
@@ -196,7 +196,7 @@ describe('enrollments', () => {
         assert.ok(addCourseEnrollmentStub.calledWith(courseKey));
         assert.notOk(fetchCoursePricesStub.calledWith());
         assert.notOk(fetchDashboardStub.calledWith());
-      })
+      });
     });
   });
 
