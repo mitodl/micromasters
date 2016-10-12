@@ -8,6 +8,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_save
 from django.test import TestCase
 from factory.django import mute_signals
+from factory.fuzzy import FuzzyText
 
 from courses.factories import ProgramFactory, CourseRunFactory
 from dashboard.models import ProgramEnrollment
@@ -39,7 +40,9 @@ class FinancialAidBaseTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         with mute_signals(post_save):
-            cls.profile = ProfileFactory.create()
+            cls.profile = ProfileFactory.create(
+                country=FuzzyText(length=2)
+            )
             cls.profile2 = ProfileFactory.create()
             cls.staff_user_profile = ProfileFactory.create()
             cls.staff_user_profile2 = ProfileFactory.create()
