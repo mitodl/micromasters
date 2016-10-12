@@ -121,7 +121,7 @@ export default class CourseAction extends React.Component {
 
   renderPayLaterLink(run: CourseRun): React$Element<*> {
     return (
-      <a href="#" onClick={e => this.handleAddCourseEnrollment(e, run)}>Enroll and pay later</a>
+      <a href="#" onClick={e => this.handleAddCourseEnrollment(e, run)} key="2">Enroll and pay later</a>
     );
   }
 
