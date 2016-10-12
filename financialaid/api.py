@@ -55,14 +55,11 @@ def determine_auto_approval(financial_aid):
         country_income_threshold = CountryIncomeThreshold.objects.get(country_code=financial_aid.country_of_income)
         income_threshold = country_income_threshold.income_threshold
     except CountryIncomeThreshold.DoesNotExist:
-        message = (
-            "Country code {country_code} does not exist in CountryIncomeThreshold for financial "
-            "aid id {financial_aid_id}"
-        ).format(
-            country_code=financial_aid.country_of_income,
-            financial_aid_id=financial_aid.id
+        log.error(
+            "Country code %s does not exist in CountryIncomeThreshold for financial aid id %s",
+            financial_aid.country_of_income,
+            financial_aid.id
         )
-        log.error(message)
         income_threshold = DEFAULT_INCOME_THRESHOLD
     # The income_threshold == 0 is because in all cases BUT threshold == 0, it's strictly > instead of >=
     return financial_aid.income_usd > income_threshold or income_threshold == 0
