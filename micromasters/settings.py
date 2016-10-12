@@ -19,7 +19,6 @@ import yaml
 from celery.schedules import crontab
 from django.core.exceptions import ImproperlyConfigured
 
-import raven
 
 VERSION = "0.16.0"
 
@@ -391,7 +390,8 @@ LOGGING = {
 }
 
 # Sentry
-ENVIRONMENT = os.environ.get('MICROMASTERS_ENVIRONMENT', 'dev')
+ENVIRONMENT = get_var('MICROMASTERS_ENVIRONMENT', 'dev')
+SENTRY_CLIENT = 'raven.contrib.django.raven_compat.DjangoClient'
 RAVEN_CONFIG = {
     'dsn': get_var('SENTRY_DSN', ''),
     'environment': ENVIRONMENT,

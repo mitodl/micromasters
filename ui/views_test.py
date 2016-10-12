@@ -178,6 +178,8 @@ class DashboardTests(ViewsTests):
             EDXORG_BASE_URL=edx_base_url,
             WEBPACK_DEV_SERVER_HOST=host,
             EMAIL_SUPPORT=email_support,
+            VERSION='0.0.1',
+            RAVEN_CONFIG={'dsn': ''}
         ):
             resp = self.client.get(DASHBOARD_URL)
             js_settings = json.loads(resp.context['js_settings_json'])
@@ -191,6 +193,9 @@ class DashboardTests(ViewsTests):
                 'roles': [],
                 'search_url': reverse('search_api', kwargs={"elastic_url": ""}),
                 'support_email': email_support,
+                'environment': 'dev',
+                'release_version': '0.0.1',
+                'sentry_dsn': None
             }
 
     def test_roles_setting(self):
@@ -414,6 +419,8 @@ class TestUsersPage(ViewsTests):
             EDXORG_BASE_URL=edx_base_url,
             WEBPACK_DEV_SERVER_HOST=host,
             EMAIL_SUPPORT=email_support,
+            VERSION='0.0.1',
+            RAVEN_CONFIG={'dsn': ''}
         ):
             # Mock has_permission so we don't worry about testing permissions here
             has_permission = Mock(return_value=True)
@@ -431,6 +438,9 @@ class TestUsersPage(ViewsTests):
                     'roles': [],
                     'search_url': reverse('search_api', kwargs={"elastic_url": ""}),
                     'support_email': email_support,
+                    'environment': 'dev',
+                    'release_version': '0.0.1',
+                    'sentry_dsn': None
                 }
                 assert has_permission.called
 
@@ -454,6 +464,8 @@ class TestUsersPage(ViewsTests):
             EDXORG_BASE_URL=edx_base_url,
             WEBPACK_DEV_SERVER_HOST=host,
             EMAIL_SUPPORT=email_support,
+            VERSION='0.0.1',
+            RAVEN_CONFIG={'dsn': ''}
         ):
             # Mock has_permission so we don't worry about testing permissions here
             has_permission = Mock(return_value=True)
@@ -471,6 +483,9 @@ class TestUsersPage(ViewsTests):
                     'roles': [],
                     'search_url': reverse('search_api', kwargs={"elastic_url": ""}),
                     'support_email': email_support,
+                    'environment': 'dev',
+                    'release_version': '0.0.1',
+                    'sentry_dsn': None
                 }
                 assert has_permission.called
 
@@ -511,4 +526,4 @@ class TestTermsOfService(ViewsTests):
         """
         response = self.client.get(TERMS_OF_SERVICE_URL)
         js_settings = json.loads(response.context['js_settings_json'])
-        assert js_settings == {}
+        assert {'environment', 'release_version', 'sentry_dsn'}.issubset(set(js_settings.keys()))

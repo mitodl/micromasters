@@ -135,6 +135,7 @@ def standard_error_page(request, status_code, template_filename):
             "dashboard_src": get_bundle_url(request, "dashboard.js"),
             "sentry_client": get_bundle_url(request, "sentry_client.js"),
             "js_settings_json": json.dumps({
+                "release_version": settings.VERSION,
                 "environment": settings.ENVIRONMENT,
                 "sentry_dsn": sentry.get_public_dsn()
             }),
@@ -143,9 +144,7 @@ def standard_error_page(request, status_code, template_filename):
             "username": username,
             "is_staff": has_role(request.user, [Staff.ROLE_ID, Instructor.ROLE_ID]),
             "support_email": settings.EMAIL_SUPPORT,
-            "environment": settings.ENVIRONMENT,
             "sentry_dsn": sentry.get_public_dsn(),
-            "release_version": settings.VERSION,
         }
     )
     response.status_code = status_code
@@ -162,7 +161,12 @@ def terms_of_service(request):
         context={
             "zendesk_widget": get_bundle_url(request, "js/zendesk_widget.js"),
             "style_src": get_bundle_url(request, "style.js"),
-            "js_settings_json": "{}",
+            "sentry_client": get_bundle_url(request, "sentry_client.js"),
+            "js_settings_json": json.dumps({
+                "release_version": settings.VERSION,
+                "environment": settings.ENVIRONMENT,
+                "sentry_dsn": sentry.get_public_dsn()
+            }),
             "signup_dialog_src": get_bundle_url(request, "signup_dialog.js"),
         }
     )

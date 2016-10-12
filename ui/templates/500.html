@@ -25,7 +25,7 @@ INTERNAL SERVER ERROR
      eventId: '{{ request.sentry.id }}',
 
      // use the public DSN (dont include your secret!)
-     dsn: '{% sentry_public_dsn %}'
+     dsn: '{{ sentry_public_dsn }}'
  });
 </script>
 {% endif %}
