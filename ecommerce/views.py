@@ -4,7 +4,7 @@ from urllib.parse import urljoin
 
 from django.conf import settings
 from django.shortcuts import get_object_or_404
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -31,7 +31,10 @@ class CheckoutView(APIView):
     View for checkout API. This creates an Order in our system and provides a dictionary to
     send to Cybersource
     """
-    authentication_classes = (SessionAuthentication, )
+    authentication_classes = (
+        SessionAuthentication,
+        TokenAuthentication,
+    )
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):

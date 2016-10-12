@@ -29,7 +29,7 @@ export default class DashboardUserCard extends React.Component {
           <span className="dashboard-user-card-text-id">MicroMasters ID: {profile.pretty_printed_student_id}</span>
 
           <Link
-            to={`/users/${profile.username}`}
+            to={`/learner/${profile.username}`}
             className="mm-minor-action">
             View Profile
           </Link>

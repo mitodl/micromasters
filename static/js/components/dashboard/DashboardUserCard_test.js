@@ -25,7 +25,7 @@ describe('DashboardUserCard', () => {
     );
     let link = textContainer.find(Link);
     assert.deepEqual(link.children().text(), 'View Profile');
-    assert.deepEqual(link.props().to, `/users/${profile.username}`);
+    assert.deepEqual(link.props().to, `/learner/${profile.username}`);
   });
 
   it('shows no title if no program is present', () => {

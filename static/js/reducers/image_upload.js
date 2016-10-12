@@ -3,6 +3,7 @@ import {
   START_PHOTO_EDIT,
   CLEAR_PHOTO_EDIT,
   UPDATE_PHOTO_EDIT,
+  SET_PHOTO_ERROR,
   REQUEST_PATCH_USER_PHOTO,
   RECEIVE_PATCH_USER_PHOTO_FAILURE,
   RECEIVE_PATCH_USER_PHOTO_SUCCESS,
@@ -16,12 +17,14 @@ import type { Action } from '../flow/reduxTypes';
 
 export const INITIAL_IMAGE_UPLOAD_STATE = {
   edit: null,
+  error: null,
   photo: null,
   patchStatus: null,
 };
 
 export type ImageUploadState = {
   edit: ?Blob,
+  error: ?string,
   photo: ?File,
   patchStatus: ?string
 }
@@ -32,11 +35,14 @@ export const imageUpload = (state: ImageUploadState = INITIAL_IMAGE_UPLOAD_STATE
     return { ...state,
       photo: action.payload,
       edit: null,
+      error: null,
     };
   case CLEAR_PHOTO_EDIT:
     return INITIAL_IMAGE_UPLOAD_STATE;
   case UPDATE_PHOTO_EDIT:
     return { ...state, edit: action.payload };
+  case SET_PHOTO_ERROR:
+    return { ...state, error: action.payload };
   case REQUEST_PATCH_USER_PHOTO:
     return { ...state, patchStatus: FETCH_PROCESSING };
   case RECEIVE_PATCH_USER_PHOTO_SUCCESS:

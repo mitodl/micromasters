@@ -6,7 +6,7 @@ import logging
 
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -22,7 +22,10 @@ class ElasticProxyView(APIView):
     """
     Elasticsearch proxy needed to enforce authentication and permissions
     """
-    authentication_classes = (SessionAuthentication, )
+    authentication_classes = (
+        SessionAuthentication,
+        TokenAuthentication,
+    )
     permission_classes = (IsAuthenticated, UserCanSearchPermission, )
 
     def _execute_search_from_request(self, request):  # pylint: disable=no-self-use

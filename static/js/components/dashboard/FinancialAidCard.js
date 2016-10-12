@@ -138,6 +138,7 @@ export default class FinancialAidCard extends React.Component {
     const {
       program,
       coursePrice,
+      setConfirmSkipDialogVisibility,
     } = this.props;
 
     switch (program.financial_aid_user_info.application_status) {
@@ -154,18 +155,20 @@ export default class FinancialAidCard extends React.Component {
     case FA_STATUS_PENDING_DOCS:
       return <div>
         <Grid>
-          <Cell col={12}>
-            Your cost is {price(coursePrice.price)} per course.
+          <Cell col={12} className="price-explanation">
+            <div>
+              Your cost is {price(coursePrice.price)} per course.
+            </div>
+            <a className="full-price" onClick={() => setConfirmSkipDialogVisibility(true)}>
+              Skip this and Pay Full Price
+            </a>
           </Cell>
         </Grid>
 
         <Grid className="financial-aid-box">
           <Cell col={12}>
-            Before you can pay, you need to verify your income by mailing or faxing one
-            of the following documents:
-            <ul>
-              <li>A notarized document verifying income</li>
-            </ul>
+            Before you can pay, you need to verify your income. Please mail or fax an
+            English-translated and notarized income tax or income statement document.
           </Cell>
         </Grid>
 
@@ -182,12 +185,12 @@ export default class FinancialAidCard extends React.Component {
         <Grid>
           <Cell col={1} />
           <Cell col={5}>
-            MIT, Economics Department<br />
+            DEDP MicroMasters<br />
             100 Main Street<br />
             Cambridge, MA 02139
           </Cell>
           <Cell col={6}>
-            001 (999) 999-9999
+            1 (617) 715-5799
           </Cell>
         </Grid>
 

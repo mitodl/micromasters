@@ -37,7 +37,7 @@ const codesToOptions = R.compose(
 
 export const currencyOptions = codesToOptions(cc.codes());
 
-const codeToCountryName = code => iso3166.country(code).name || '';
+export const codeToCountryName = (code: string) => iso3166.country(code).name || '';
 
 const currencyToCode = currency => (
   currency.length === 0 ? '' : currency[0].code

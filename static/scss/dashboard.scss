@@ -129,6 +129,15 @@ c.validation-wrapper {
     margin: 0;
   }
 
+  .price-explanation {
+    display: flex;
+    justify-content: space-between;
+
+    a {
+      cursor: pointer;
+    }
+  }
+
   .document-row {
     display: flex;
     flex-direction: row;
@@ -210,38 +219,39 @@ c.validation-wrapper {
       }
 
       .course-description {
-        .course-description-title {
+        .course-title {
           font-weight: 500;
         }
 
-        .course-description-result {
+        .details {
           font-weight: 400;
           font-size: 10pt;
           color: $darkgrey;
           padding: 10px 0;
 
+          span {
+            display: block;
+          }
+
           .no-runs {
             color: black;
           }
         }
-
-        .course-description-enrolled {
-          color: $darkgrey;
-          padding-left: 5px;
-        }
       }
 
-      .course-status {
+      .course-grade {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         align-items: center;
 
-        .help {
-          color: rgba(0, 0, 0, 0.4);
+        .number {
+          font-size: 18pt;
+          font-weight: 500;
         }
 
-        .price {
-          font-weight: 500;
+        .caption {
+          color: $darkgrey;
+          font-size: 9pt;
         }
       }
 
@@ -251,28 +261,34 @@ c.validation-wrapper {
         align-items: center;
         text-align: center;
 
-        .course-action-action {
-          padding-bottom: 3px;
-
-          .material-icons {
-            color: $mm-brand-fg;
-            font-size: 28pt;
-          }
+        .mdl-button {
+          display: flex;
+          margin-bottom: 3px;
         }
 
-        .course-action-description {
+        .description {
           color: $darkgrey;
           font-size: 10pt;
+        }
+
+        .boxed.description {
+          background-color: $fg-grey;
+          border-radius: 5px;
+          padding: 10px;
+          font-size: 12pt;
+
+          &.passed {
+            background-color: #e0f5e6;
+          }
+
+          &.not-passed {
+            background-color: #fce4e2;
+          }
         }
 
         .mdl-button[disabled] {
           background-color: $lightgrey;
           color: #ffffff;
-        }
-
-        .passed {
-          background-color: #e0f5e6;
-          padding: 5px 10px;
         }
       }
     }
@@ -573,8 +589,4 @@ c.validation-wrapper {
 // IE: make x's disappear for input items
 input::-ms-clear {
   display: none;
-}
-
-.link-view-on-edx {
-  font-size: 10pt !important;
 }

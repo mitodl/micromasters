@@ -37,7 +37,10 @@ class UserDashboard(APIView):
     """
     Class based view for user dashboard view.
     """
-    authentication_classes = (authentication.SessionAuthentication, )
+    authentication_classes = (
+        authentication.SessionAuthentication,
+        authentication.TokenAuthentication,
+    )
     permission_classes = (permissions.IsAuthenticated, )
 
     def get(self, request, *args, **kargs):  # pylint: disable=unused-argument, no-self-use
@@ -84,7 +87,10 @@ class UserCourseEnrollment(APIView):
     """
     Create an audit enrollment for the user in a given course run identified by course_id.
     """
-    authentication_classes = (authentication.SessionAuthentication, )
+    authentication_classes = (
+        authentication.SessionAuthentication,
+        authentication.TokenAuthentication,
+    )
     permission_classes = (permissions.IsAuthenticated, )
 
     def post(self, request):  # pylint: disable=no-self-use

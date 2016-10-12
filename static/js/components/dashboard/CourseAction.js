@@ -3,6 +3,9 @@
 import React from 'react';
 import moment from 'moment';
 import Button from 'react-mdl/lib/Button';
+import R from 'ramda';
+
+import _ from 'lodash';
 
 import type { Course, CourseRun, FinancialAidUserInfo } from '../../flow/programTypes';
 import type { CoursePrice } from '../../flow/dashboardTypes';
@@ -11,6 +14,7 @@ import {
   STATUS_PASSED,
   STATUS_CAN_UPGRADE,
   STATUS_CURRENTLY_ENROLLED,
+  STATUS_WILL_ATTEND,
   STATUS_OFFERED,
   DASHBOARD_FORMAT,
   FA_PENDING_STATUSES,
@@ -27,6 +31,12 @@ export default class CourseAction extends React.Component {
     hasFinancialAid: boolean,
     openFinancialAidCalculator?: () => void,
     now: moment$Moment,
+    addCourseEnrollment: (courseId: string) => void
+  };
+
+  statusDescriptionClasses = {
+    [STATUS_PASSED]: 'passed',
+    [STATUS_NOT_PASSED]: 'not-passed'
   };
 
   getCoursePrice(): string {
@@ -81,16 +91,86 @@ export default class CourseAction extends React.Component {
     }
 
     return (
-      <Button className="dashboard-button" {...buttonProps}>
+      <Button className="dashboard-button" key="1" {...buttonProps}>
         {text}
       </Button>
     );
   }
 
-  renderPayLaterLink(): React$Element<*> {
+  renderDescription = R.curry(
+    (className: string, runStatus: ?string, text: string): React$Element<*>|null => {
+      let classDefinition = className;
+      if (runStatus && this.statusDescriptionClasses[runStatus]) {
+        classDefinition = `${classDefinition} ${this.statusDescriptionClasses[runStatus]}`;
+      }
+      return text.length > 0 ? <div className={classDefinition} key="2">{text}</div> : null;
+    }
+  );
+
+  renderTextDescription = this.renderDescription('description', null);
+
+  renderBoxedDescription = this.renderDescription('boxed description', null);
+
+  renderStatusDescription = this.renderDescription('boxed description');
+
+  handleAddCourseEnrollment = (event: Event, run: CourseRun): void => {
+    const { addCourseEnrollment } = this.props;
+    event.preventDefault();
+    addCourseEnrollment(run.course_id);
+  };
+
+  renderPayLaterLink(run: CourseRun): React$Element<*> {
     return (
-      <a href="#">Enroll and pay later</a>
+      <a href="#" onClick={e => this.handleAddCourseEnrollment(e, run)}>Enroll and pay later</a>
     );
+  }
+
+  renderContents(run: CourseRun) {
+    const { now } = this.props;
+
+    let action, description;
+
+    switch (run.status) {
+    case STATUS_PASSED:
+      description = this.renderStatusDescription(run.status, 'Passed');
+      break;
+    case STATUS_CURRENTLY_ENROLLED: {
+      description = this.renderBoxedDescription('In Progress');
+      break;
+    }
+    case STATUS_WILL_ATTEND: {
+      let startDate = moment(run.course_start_date);
+      let daysUntilStart = startDate.diff(now, 'days');
+      description = this.renderBoxedDescription(`Course starts in ${daysUntilStart} days`);
+      break;
+    }
+    case STATUS_CAN_UPGRADE: {
+      let formattedUpgradeDate = moment(run.course_upgrade_deadline).format(DASHBOARD_FORMAT);
+      action = this.renderEnrollButton(run);
+      description = this.renderTextDescription(`Payment due: ${formattedUpgradeDate}`);
+      break;
+    }
+    case STATUS_OFFERED: {
+      let enrollmentStartDate = run.enrollment_start_date ? moment(run.enrollment_start_date) : null;
+      if (this.isCurrentlyEnrollable(enrollmentStartDate)) {
+        action = this.renderEnrollButton(run);
+        description = this.renderPayLaterLink(run);
+      } else {
+        if (enrollmentStartDate) {
+          let formattedEnrollDate = enrollmentStartDate.format(DASHBOARD_FORMAT);
+          description = this.renderTextDescription(`Enrollment begins ${formattedEnrollDate}`);
+        } else if (run.fuzzy_enrollment_start_date) {
+          description = this.renderTextDescription(`Enrollment begins ${run.fuzzy_enrollment_start_date}`);
+        }
+      }
+      break;
+    }
+    case STATUS_NOT_PASSED:
+      // do nothing;
+      break;
+    }
+
+    return _.compact([action, description]);
   }
 
   render() {
@@ -100,44 +180,8 @@ export default class CourseAction extends React.Component {
       firstRun = course.runs[0];
     }
 
-    let action = "", description = "";
-
-    switch (firstRun.status) {
-    case STATUS_PASSED:
-      action = <div className="passed" key="1">
-        Passed
-      </div>;
-      break;
-    case STATUS_CAN_UPGRADE: {
-      let formattedUpgradeDate = moment(firstRun.course_upgrade_deadline).format(DASHBOARD_FORMAT);
-      action = this.renderEnrollButton(firstRun);
-      description = `Payment due: ${formattedUpgradeDate}`;
-      break;
-    }
-    case STATUS_OFFERED: {
-      let enrollmentStartDate = firstRun.enrollment_start_date ? moment(firstRun.enrollment_start_date) : null;
-      if (this.isCurrentlyEnrollable(enrollmentStartDate)) {
-        action = this.renderEnrollButton(firstRun);
-        description = this.renderPayLaterLink();
-      } else {
-        if (enrollmentStartDate) {
-          let formattedEnrollDate = enrollmentStartDate.format(DASHBOARD_FORMAT);
-          description = `Enrollment begins ${formattedEnrollDate}`;
-        } else if (firstRun.fuzzy_enrollment_start_date) {
-          description = `Enrollment begins ${firstRun.fuzzy_enrollment_start_date}`;
-        }
-      }
-      break;
-    }
-    case STATUS_NOT_PASSED:
-    case STATUS_CURRENTLY_ENROLLED:
-      // do nothing;
-      break;
-    }
-
     return <div className="course-action">
-      <span className="course-action-action">{action}</span>
-      <span className="course-action-description">{description}</span>
+      { this.renderContents(firstRun) }
     </div>;
   }
 }

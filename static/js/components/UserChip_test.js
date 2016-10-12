@@ -38,7 +38,7 @@ describe('UserChip', () => {
   it('should link to the profile', () => {
     let chip = renderChip(clone);
     let url = chip.find('a').props().href;
-    assert.equal(url, `/users/${clone.username}`);
+    assert.equal(url, `/learner/${clone.username}`);
   });
 
   it('should include the profile image', () => {

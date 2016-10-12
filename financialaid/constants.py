@@ -73,7 +73,7 @@ FINANCIAL_AID_DOCUMENTS_RECEIVED_MESSAGE = (
 )
 FINANCIAL_AID_APPROVAL_MESSAGE = (
     "After reviewing your income documentation, the {program_name} MicroMasters team has determined "
-    "that your personalized course price is {price}.\n\n"
+    "that your personalized course price is ${price}.\n\n"
     "You can pay for MicroMasters courses through the MIT MicroMasters portal "
     "(https://micromasters.mit.edu/dashboard). All coursework will be conducted on edx.org."
 )

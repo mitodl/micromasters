@@ -178,6 +178,7 @@ def get_program_page_context(programpage, request):
              get_course_url(course))
         )
 
+    context["zendesk_widget"] = get_bundle_url(request, "js/zendesk_widget.js")
     context["style_src"] = get_bundle_url(request, "style.js")
     context["public_src"] = get_bundle_url(request, "public.js")
     context["style_public_src"] = get_bundle_url(request, "style_public.js")

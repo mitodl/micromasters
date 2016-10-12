@@ -164,7 +164,10 @@
                     <b>{{ financial_aid.user.profile.first_name }} {{ financial_aid.user.profile.last_name }}</b>
                   </span>
                   <br>
-                  <small>{{ financial_aid.user.profile.city }}, {{ financial_aid.user.profile.country }}</small>
+                  <small>
+                    {{ financial_aid.user.profile.city }},
+                    <span class="country-code">{{ financial_aid.user.profile.country }}</span>
+                  </small>
                 </td>
                 <!-- /Name/location -->
                 <!-- Income -->
@@ -273,7 +276,5 @@
     window.CSRF_TOKEN = "{{ csrf_token }}";
     window.BASE_PATH = "{{ request.path }}?sort_by={{ current_sort_field }}&search_query="
   </script>
-  <script src="{% static 'js/financial_aid/jquery-2.2.0.min.js' %}"></script>
-  <script src="{% static 'js/financial_aid/bootstrap.min.js' %}"></script>
-  <script src="{% static 'js/financial_aid/functions.js' %}"></script>
+  <script src="{{ financial_aid_src }}"></script>
 {% endblock %}

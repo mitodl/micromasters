@@ -17,7 +17,7 @@ const UserChip = ({ profile }: {profile: Profile}): React$Element<*> => (
       <span className="employer">
         { mstr(getEmployer(profile)) }
       </span>
-      <a href={`/users/${profile.username}`} className="mm-minor-action">
+      <a href={`/learner/${profile.username}`} className="mm-minor-action">
         <Icon name="person" />
         <span>View profile</span>
       </a>

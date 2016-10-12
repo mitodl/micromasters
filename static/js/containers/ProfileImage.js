@@ -15,6 +15,7 @@ import {
   startPhotoEdit,
   clearPhotoEdit,
   updatePhotoEdit,
+  setPhotoError,
   updateUserPhoto,
 } from '../actions/image_upload';
 import { fetchUserProfile } from '../actions/profile';
@@ -34,6 +35,7 @@ class ProfileImage extends React.Component {
     updatePhotoEdit:      (b: Blob) => void,
     startPhotoEdit:       (p: File) => void,
     photoDialogOpen:      boolean,
+    setPhotoError:        (s: string) => void,
   };
 
   static defaultProps = {
@@ -102,6 +104,7 @@ const mapDispatchToProps = dispatch => ({
   startPhotoEdit: createActionHelper(dispatch, startPhotoEdit),
   clearPhotoEdit: createActionHelper(dispatch, clearPhotoEdit),
   updatePhotoEdit: createActionHelper(dispatch, updatePhotoEdit),
+  setPhotoError:  createActionHelper(dispatch, setPhotoError),
   dispatch: dispatch,
 });
 

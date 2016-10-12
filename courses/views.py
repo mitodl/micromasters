@@ -4,7 +4,7 @@ from rest_framework import (
     viewsets,
     status,
 )
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.exceptions import (
     APIException,
     NotFound,
@@ -33,12 +33,26 @@ class ResourceConflict(APIException):
 
 class ProgramViewSet(viewsets.ReadOnlyModelViewSet):
     """API for the Program collection"""
+    authentication_classes = (
+        SessionAuthentication,
+        TokenAuthentication,
+    )
+    permission_classes = (
+        IsAuthenticated,
+    )
     queryset = Program.objects.filter(live=True)
     serializer_class = ProgramSerializer
 
 
 class CourseRunViewSet(viewsets.ReadOnlyModelViewSet):
     """API for the Program collection"""
+    authentication_classes = (
+        SessionAuthentication,
+        TokenAuthentication,
+    )
+    permission_classes = (
+        IsAuthenticated,
+    )
     queryset = CourseRun.objects.filter(course__program__live=True)
     serializer_class = CourseRunSerializer
 
@@ -49,6 +63,7 @@ class ProgramEnrollmentListView(ListCreateAPIView):
     serializer_class = ProgramSerializer
     authentication_classes = (
         SessionAuthentication,
+        TokenAuthentication,
     )
     permission_classes = (
         IsAuthenticated,

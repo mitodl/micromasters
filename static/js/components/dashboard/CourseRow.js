@@ -3,7 +3,7 @@ import React from 'react';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 
 import CourseAction from './CourseAction';
-import CourseStatus from './CourseStatus';
+import CourseGrade from './CourseGrade';
 import CourseDescription from './CourseDescription';
 import type { Course, FinancialAidUserInfo } from '../../flow/programTypes';
 import type { CoursePrice } from '../../flow/dashboardTypes';
@@ -17,6 +17,7 @@ export default class CourseRow extends React.Component {
     hasFinancialAid: boolean,
     openFinancialAidCalculator: () => void,
     now: moment$Moment,
+    addCourseEnrollment: (courseId: string) => void,
   };
 
   render() {
@@ -27,7 +28,8 @@ export default class CourseRow extends React.Component {
       hasFinancialAid,
       checkout,
       openFinancialAidCalculator,
-      now
+      now,
+      addCourseEnrollment,
     } = this.props;
 
     return <Grid className="course-row">
@@ -35,7 +37,7 @@ export default class CourseRow extends React.Component {
         <CourseDescription course={course} />
       </Cell>
       <Cell col={2}>
-        <CourseStatus course={course}/>
+        <CourseGrade course={course}/>
       </Cell>
       <Cell col={4}>
         <CourseAction
@@ -46,6 +48,7 @@ export default class CourseRow extends React.Component {
           checkout={checkout}
           openFinancialAidCalculator={openFinancialAidCalculator}
           now={now}
+          addCourseEnrollment={addCourseEnrollment}
         />
       </Cell>
     </Grid>;

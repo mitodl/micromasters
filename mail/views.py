@@ -30,7 +30,10 @@ class SearchResultMailView(APIView):
     """
     View class that authenticates and handles HTTP requests to mail API URLs
     """
-    authentication_classes = (authentication.SessionAuthentication, )
+    authentication_classes = (
+        authentication.SessionAuthentication,
+        authentication.TokenAuthentication,
+    )
     permission_classes = (permissions.IsAuthenticated, UserCanMessageLearnersPermission, )
 
     def post(self, request, *args, **kargs):  # pylint: disable=unused-argument, no-self-use
@@ -63,7 +66,10 @@ class FinancialAidMailView(GenericAPIView):
     View for sending financial aid emails to individual learners
     """
     serializer_class = FinancialAidMailSerializer
-    authentication_classes = (authentication.SessionAuthentication, )
+    authentication_classes = (
+        authentication.SessionAuthentication,
+        authentication.TokenAuthentication,
+    )
     permission_classes = (permissions.IsAuthenticated, UserCanMessageLearnersPermission, UserCanEditFinancialAid)
     lookup_field = "id"
     lookup_url_kwarg = "financial_aid_id"

@@ -5,6 +5,8 @@ import {
   CLEAR_PHOTO_EDIT,
   updatePhotoEdit,
   UPDATE_PHOTO_EDIT,
+  setPhotoError,
+  SET_PHOTO_ERROR,
   requestPatchUserPhoto,
   REQUEST_PATCH_USER_PHOTO,
   RECEIVE_PATCH_USER_PHOTO_FAILURE,
@@ -46,10 +48,34 @@ describe('image upload reducer', () => {
     });
   });
 
+  it('should let you set an error', () => {
+    return dispatchThen(setPhotoError('an error'), [SET_PHOTO_ERROR]).then(state => {
+      assert.deepEqual(state, {
+        edit: null,
+        error: 'an error',
+        photo: null,
+        patchStatus: null
+      });
+    });
+  });
+
   it('should start editing a photo', () => {
     return dispatchThen(startPhotoEdit('a photo'), [START_PHOTO_EDIT]).then(state => {
       assert.deepEqual(state, {
         edit: null,
+        error: null,
+        photo: 'a photo',
+        patchStatus: null
+      });
+    });
+  });
+
+  it('should clear any errors when beginning to edit', () => {
+    store.dispatch(setPhotoError('an error'));
+    return dispatchThen(startPhotoEdit('a photo'), [START_PHOTO_EDIT]).then(state => {
+      assert.deepEqual(state, {
+        edit: null,
+        error: null,
         photo: 'a photo',
         patchStatus: null
       });
@@ -64,6 +90,7 @@ describe('image upload reducer', () => {
     return dispatchThen(updatePhotoEdit(second), [UPDATE_PHOTO_EDIT]).then(state => {
       assert.deepEqual(state, {
         edit: second,
+        error: null,
         photo: first,
         patchStatus: null
       });
@@ -75,6 +102,7 @@ describe('image upload reducer', () => {
     return dispatchThen(clearPhotoEdit(), [CLEAR_PHOTO_EDIT]).then(state => {
       assert.deepEqual(state, {
         edit: null,
+        error: null,
         photo: null,
         patchStatus: null
       });
@@ -94,6 +122,7 @@ describe('image upload reducer', () => {
       ]).then(state => {
         assert.deepEqual(state, {
           edit: null,
+          error: null,
           photo: null,
           patchStatus: FETCH_SUCCESS
         });
@@ -109,6 +138,7 @@ describe('image upload reducer', () => {
       ]).then(state => {
         assert.deepEqual(state, {
           edit: null,
+          error: null,
           photo: null,
           patchStatus: FETCH_FAILURE
         });
@@ -121,6 +151,7 @@ describe('image upload reducer', () => {
       return dispatchThen(requestPatchUserPhoto(), [REQUEST_PATCH_USER_PHOTO]).then(state => {
         assert.deepEqual(state, {
           edit: null,
+          error: null,
           photo: photo,
           patchStatus: FETCH_PROCESSING
         });

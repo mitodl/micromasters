@@ -1,4 +1,5 @@
 // @flow
+/* global SETTINGS: false */
 import React from 'react';
 import Alert from 'react-bootstrap/lib/Alert';
 
@@ -39,6 +40,8 @@ export default class ErrorMessage extends React.Component {
       return '';
     };
 
+    let email = SETTINGS.support_email;
+
     return (
       <div className="alert-message">
         <Alert bsStyle="danger">
@@ -46,8 +49,8 @@ export default class ErrorMessage extends React.Component {
           process your request. Please reload the page.</p>
           <p>{ userMessageStr() }</p>
           <p>
-            If the error persists, please contact <a href="mailto:mitx-support@mit.edu">
-            mitx-support@mit.edu</a> specifying
+            If the error persists, please contact <a href={`mailto:${email}`}>
+            {email}</a> specifying
             this entire error message.
           </p>
         </Alert>

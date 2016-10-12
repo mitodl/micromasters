@@ -1,9 +1,25 @@
 /* eslint-disable no-undef, max-len, no-var, prefer-template, no-unused-vars */
-var financialAidReview = function() {
+global.jQuery = require('jquery');
+
+require("bootstrap");
+
+import { codeToCountryName } from "../util/currency";
+
+/* Wrapper for all of the functions used by the financial aid review page */
+window.financialAidReview = (function(window, document, $) {
   "use strict";
   
   var CSRF_TOKEN = window.CSRF_TOKEN;
   var BASE_PATH = window.BASE_PATH;
+
+  /**
+   * Converts country codes to country names when the DOM is safe for manipulation
+   */
+  $(document).ready(function() {
+    $(".country-code").each(function() {
+      $(this).text(codeToCountryName($(this).text()));
+    });
+  });
   
   /**
    * Marks documents as received for a financial aid application
@@ -160,4 +176,4 @@ var financialAidReview = function() {
     toggleEmailDisplay: toggleEmailDisplay
   };
   
-}();
+})(window, document, jQuery);

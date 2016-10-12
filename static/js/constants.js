@@ -34,6 +34,7 @@ export const SEARCH_FILTER_DEFAULT_VISIBILITY = true;
 export const STATUS_PASSED = 'passed';
 export const STATUS_NOT_PASSED = 'not-passed';
 export const STATUS_CURRENTLY_ENROLLED = 'currently-enrolled';
+export const STATUS_WILL_ATTEND = 'will-attend';
 export const STATUS_CAN_UPGRADE = 'can-upgrade';
 export const STATUS_OFFERED = 'offered';
 
@@ -43,6 +44,7 @@ export const ALL_COURSE_STATUSES = [
   STATUS_OFFERED,
   STATUS_CAN_UPGRADE,
   STATUS_CURRENTLY_ENROLLED,
+  STATUS_WILL_ATTEND,
 ];
 
 // financial aid statuses
@@ -473,7 +475,7 @@ export const DASHBOARD_RESPONSE = [
         "runs": [
           {
             "id": 13,
-            "status": STATUS_CURRENTLY_ENROLLED,
+            "status": STATUS_WILL_ATTEND,
             "course_start_date": "8765-03-21",
             "title": "First run",
             "position": 0,

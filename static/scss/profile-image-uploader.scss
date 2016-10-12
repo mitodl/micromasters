@@ -3,6 +3,12 @@
     border-bottom: none !important;
   }
 
+  .img-error {
+    color: $validation-red;
+    font-size: 14px;
+    text-align: center;
+  }
+
   .photo-dropzone {
     background-color: $fg-grey;
     border-radius: 7px;

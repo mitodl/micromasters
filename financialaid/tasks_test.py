@@ -8,6 +8,7 @@ from django.test import (
 from mock import patch
 
 from financialaid.constants import CURRENCY_EXCHANGE_RATE_API_REQUEST_URL
+from financialaid.exceptions import ExceededAPICallsException, UnexpectedAPIErrorException
 from financialaid.models import CurrencyExchangeRate
 from financialaid.tasks import sync_currency_exchange_rates
 
@@ -48,6 +49,7 @@ class TasksTest(TestCase):
         Assert currency exchange rates are updated and added
         """
         mocked_request.return_value.json.return_value = self.data
+        mocked_request.return_value.status_code = 200
         assert CurrencyExchangeRate.objects.count() == 2
         sync_currency_exchange_rates.apply(args=()).get()
         called_args, _ = mocked_request.call_args
@@ -67,6 +69,7 @@ class TasksTest(TestCase):
         """
         self.data["rates"] = {"DEF": "1.9"}
         mocked_request.return_value.json.return_value = self.data
+        mocked_request.return_value.status_code = 200
         assert CurrencyExchangeRate.objects.count() == 2
         sync_currency_exchange_rates.apply(args=()).get()
         called_args, _ = mocked_request.call_args
@@ -74,3 +77,27 @@ class TasksTest(TestCase):
         assert CurrencyExchangeRate.objects.count() == 1
         currency = CurrencyExchangeRate.objects.get(currency_code="DEF")
         assert currency.exchange_rate == 1.9
+
+    @override_settings(CELERY_ALWAYS_EAGER=True)
+    def test_exchange_rate_unexpected_api_error(self, mocked_request):
+        """
+        Test that the Unexpected API Error Exception is raised for an exception from
+        Open Exchange Rates API
+        """
+        mocked_request.return_value.status_code = 401
+        mocked_request.return_value.json.return_value = {"description": "Invalid App ID"}
+        with self.assertRaises(UnexpectedAPIErrorException) as context:
+            sync_currency_exchange_rates.apply(args=()).get()
+        assert str(context.exception) == "Invalid App ID"
+
+    @override_settings(CELERY_ALWAYS_EAGER=True)
+    def test_exchange_rate_exceeded_api_calls(self, mocked_request):
+        """
+        Test that the Exceeded API Calls Exception is raised when the maximum number of monthly
+        API calls to Open Exchange Rates is exceeded
+        """
+        mocked_request.return_value.status_code = 429
+        mocked_request.return_value.json.return_value = {"description": "Too many calls"}
+        with self.assertRaises(ExceededAPICallsException) as context:
+            sync_currency_exchange_rates.apply(args=()).get()
+        assert str(context.exception) == "Too many calls"

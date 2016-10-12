@@ -36,7 +36,7 @@ class UserMenu extends React.Component {
     const { profile, ui: { userMenuOpen } } = this.props;
     return (
       <div className={`user-menu-dropdown ${userMenuOpen ? "open" : ""}`}>
-        <Link to={`/users/${profile.username}`}>
+        <Link to={`/learner/${profile.username}`}>
           View Profile
         </Link>
         <Link to="/settings">

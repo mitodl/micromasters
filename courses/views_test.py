@@ -14,6 +14,15 @@ from search.base import ESTestCase
 
 class ProgramTests(ESTestCase):
     """Tests for the Program API"""
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.user = UserFactory.create()
+
+    def setUp(self):
+        super().setUp()
+        self.client.force_login(self.user)
+
     def test_lists_live_programs(self):
         """Live programs should show up"""
         prog = ProgramFactory.create(live=True)
@@ -34,6 +43,15 @@ class ProgramTests(ESTestCase):
 
 class CourseTests(ESTestCase):
     """Tests for the Course API"""
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.user = UserFactory.create()
+
+    def setUp(self):
+        super().setUp()
+        self.client.force_login(self.user)
+
     def test_list_course_if_program_live(self):
         """
         If the course belongs to a live program, show it.

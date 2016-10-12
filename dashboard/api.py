@@ -38,6 +38,7 @@ class CourseStatus:
     PASSED = 'passed'
     NOT_PASSED = 'not-passed'
     CURRENTLY_ENROLLED = 'currently-enrolled'
+    WILL_ATTEND = 'will-attend'
     CAN_UPGRADE = 'can-upgrade'
     OFFERED = 'offered'
 
@@ -45,7 +46,7 @@ class CourseStatus:
     def all_statuses(cls):
         """Helper to get all the statuses"""
         return [cls.PASSED, cls.NOT_PASSED, cls.CURRENTLY_ENROLLED,
-                cls.CAN_UPGRADE, cls.OFFERED]
+                cls.CAN_UPGRADE, cls.OFFERED, cls.WILL_ATTEND]
 
 
 class CourseRunStatus:
@@ -230,7 +231,7 @@ def get_info_for_course(course, mmtrack):
         else:
             _add_run(run_status.course_run, mmtrack, CourseStatus.PASSED)
     elif run_status.status == CourseRunStatus.WILL_ATTEND:
-        _add_run(run_status.course_run, mmtrack, CourseStatus.CURRENTLY_ENROLLED)
+        _add_run(run_status.course_run, mmtrack, CourseStatus.WILL_ATTEND)
     elif run_status.status == CourseRunStatus.CAN_UPGRADE:
         _add_run(run_status.course_run, mmtrack, CourseStatus.CAN_UPGRADE)
 

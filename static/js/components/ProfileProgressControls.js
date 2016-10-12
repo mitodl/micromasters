@@ -56,8 +56,8 @@ export default class ProfileProgressControls extends React.Component {
       </button>;
     }
     return <div className="profile-progress-controls">
-      {nextButton}
       {prevButton}
+      {nextButton}
     </div>;
   }
 

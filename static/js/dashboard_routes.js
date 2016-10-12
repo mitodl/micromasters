@@ -31,7 +31,7 @@ export function makeDashboardRoutes(browserHistory: Object, store: Object, onRou
             <Route path="dashboard" component={DashboardPage} />
             <Route path="profile" component={ProfilePage} />
             <Route path="/settings" component={SettingsPage}  />
-            <Route path="/users" component={UserPage} >
+            <Route path="/learner" component={UserPage} >
               <IndexRedirect to={`${SETTINGS.username}`} />
               <Route path=":username" component={User} />
             </Route>

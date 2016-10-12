@@ -10,17 +10,21 @@ import type { ImageUploadState } from '../reducers/image_upload';
 
 const onDrop = R.curry((startPhotoEdit, files) => startPhotoEdit(...files));
 
-const dropZone = onDrop => (
+const dropZone = (startPhotoEdit, setPhotoError) => (
   <Dropzone
-    onDrop={onDrop}
+    onDrop={onDrop(startPhotoEdit)}
     className="photo-active-item photo-dropzone"
     activeClassName="photo-active-item photo-dropzone active"
+    accept="image/*"
+    onDropRejected={() => setPhotoError('Please select a valid photo')}
   >
     <div>
       Drag a photo here or click to select a photo.
     </div>
   </Dropzone>
 );
+
+const imageError = err => <div className="img-error">{err}</div>;
 
 type ImageUploadProps = {
   photoDialogOpen:      boolean;
@@ -30,6 +34,7 @@ type ImageUploadProps = {
   imageUpload:          ImageUploadState;
   updateUserPhoto:      (i: string) => Promise<string>,
   updatePhotoEdit:      (b: Blob) => void;
+  setPhotoError:        (s: string) => void;
 };
 
 const ProfileImageUploader = ({
@@ -38,8 +43,9 @@ const ProfileImageUploader = ({
   startPhotoEdit,
   clearPhotoEdit,
   updatePhotoEdit,
-  imageUpload: { photo },
+  imageUpload: { photo, error },
   updateUserPhoto,
+  setPhotoError,
 }: ImageUploadProps) => (
   <Dialog
     open = {photoDialogOpen}
@@ -68,7 +74,8 @@ const ProfileImageUploader = ({
       </Button>
     ]}
   >
-    { photo ? <CropperWrapper {...{updatePhotoEdit, photo}} /> : dropZone(onDrop(startPhotoEdit)) }
+    { photo ? <CropperWrapper {...{updatePhotoEdit, photo}} /> : dropZone(startPhotoEdit, setPhotoError) }
+    { imageError(error) }
   </Dialog>
 );
 

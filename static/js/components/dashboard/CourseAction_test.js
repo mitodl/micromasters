@@ -17,6 +17,7 @@ import {
   STATUS_OFFERED,
   STATUS_CAN_UPGRADE,
   STATUS_CURRENTLY_ENROLLED,
+  STATUS_WILL_ATTEND,
   FA_PENDING_STATUSES,
   FA_STATUS_SKIPPED
 } from '../../constants';
@@ -44,18 +45,20 @@ describe('CourseAction', () => {
   });
 
   let getElements = (renderedComponent) => {
-    let buttonContainer = renderedComponent.find(".course-action-action");
-    let button = buttonContainer.find(".dashboard-button");
+    let button = renderedComponent.find(".dashboard-button");
     let buttonText;
-    if (!_.isNil(button) && button.children().length > 0) {
+    if (button.length > 0 && button.children().length > 0) {
       buttonText = button.children().text();
     }
-    let description = renderedComponent.find(".course-action-description");
+    let description = renderedComponent.find(".description");
+    let descriptionText = description.length === 1 ? description.text() : undefined;
+    let link = renderedComponent.find("a");
+    let linkText = link.length === 1 ? link.text() : undefined;
     return {
-      buttonContainer: buttonContainer,
       button: button,
       buttonText: buttonText,
-      description: description
+      descriptionText: descriptionText,
+      linkText: linkText
     };
   };
 
@@ -87,13 +90,15 @@ describe('CourseAction', () => {
     assert.equal(wrapper.text(), '');
   });
 
-  it('shows nothing for a verified course', () => {
+  it('shows a message for a verified course', () => {
     let course = findCourse(course => (
       course.runs.length > 0 &&
       course.runs[0].status === STATUS_CURRENTLY_ENROLLED
     ));
     const wrapper = shallow(<CourseAction course={course} {...defaultParamsNow} />);
-    assert.equal(wrapper.text(), '');
+    let elements = getElements(wrapper);
+
+    assert.equal(elements.descriptionText, 'In Progress');
   });
 
   it('shows a button to enroll and pay, and a link to enroll and pay later', () => {
@@ -107,7 +112,7 @@ describe('CourseAction', () => {
 
     assert.isUndefined(elements.button.props().disabled);
     assert.include(elements.buttonText, 'Pay Now');
-    assert.equal(elements.description.text(), 'Enroll and pay later');
+    assert.equal(elements.linkText, 'Enroll and pay later');
     assertCheckoutButton(elements.button, firstRun.course_id);
   });
 
@@ -128,7 +133,7 @@ describe('CourseAction', () => {
 
       assert.isUndefined(elements.button.props().disabled);
       assert.include(elements.buttonText, 'Pay Now');
-      assert.equal(elements.description.text(), 'Enroll and pay later');
+      assert.equal(elements.linkText, 'Enroll and pay later');
       assertCheckoutButton(elements.button, firstRun.course_id);
     });
   });
@@ -145,7 +150,7 @@ describe('CourseAction', () => {
 
     assert.isUndefined(elements.button.props().disabled);
     assert.include(elements.buttonText, 'Pay Now');
-    assert.equal(elements.description.text(), `Payment due: ${formattedUpgradeDate}`);
+    assert.equal(elements.descriptionText, `Payment due: ${formattedUpgradeDate}`);
     assertCheckoutButton(elements.button, firstRun.course_id);
   });
 
@@ -160,23 +165,38 @@ describe('CourseAction', () => {
     let firstRun = course.runs[0];
     let elements = getElements(wrapper);
 
-    assert.include(elements.buttonContainer.text(), '');
+    assert.equal(elements.button.length, 0);
     let formattedDate = moment(firstRun.enrollment_start_date).format(DASHBOARD_FORMAT);
-    assert.equal(elements.description.text(), `Enrollment begins ${formattedDate}`);
+    assert.equal(elements.descriptionText, `Enrollment begins ${formattedDate}`);
   });
 
   it('shows a message if a user is not enrolled and the course has a fuzzy enrollment date', () => {
     let course = findAndCloneCourse(course => (
       course.runs.length > 0 &&
-      course.runs[0].status === STATUS_OFFERED &&
-      course.runs[0].enrollment_start_date === undefined
+      course.runs[0].status === STATUS_OFFERED
     ));
-    alterFirstRun(course, {fuzzy_enrollment_start_date: 'whenever'});
+    alterFirstRun(course, {
+      fuzzy_enrollment_start_date: 'whenever',
+      enrollment_start_date: null
+    });
     const wrapper = shallow(<CourseAction course={course} {...defaultParamsNow} />);
     let elements = getElements(wrapper);
 
-    assert.include(elements.buttonContainer.text(), '');
-    assert.equal(elements.description.text(), 'Enrollment begins whenever');
+    assert.equal(elements.button.length, 0);
+    assert.equal(elements.descriptionText, 'Enrollment begins whenever');
+  });
+
+  it('shows a countdown message if the user is enrolled and the course starts in the future', () => {
+    let course = findCourse(course => (
+      course.runs.length > 0 &&
+      course.runs[0].status === STATUS_WILL_ATTEND
+    ));
+    let startDate = moment(now).add(10, 'days').toISOString();
+    alterFirstRun(course, {course_start_date: startDate});
+    const wrapper = shallow(<CourseAction course={course} {...defaultParamsNow} />);
+    let elements = getElements(wrapper);
+
+    assert.include(elements.descriptionText, 'Course starts in 10 days');
   });
 
   describe('with financial aid', () => {
@@ -207,7 +227,7 @@ describe('CourseAction', () => {
 
       assert.isUndefined(elements.button.props().disabled);
       assert.equal(elements.buttonText, 'Calculate Cost');
-      assert.equal(elements.description.text(), 'Enroll and pay later');
+      assert.equal(elements.linkText, 'Enroll and pay later');
     });
 
     it('shows an enroll/pay button if a user has skipped financial aid', () => {
@@ -225,7 +245,7 @@ describe('CourseAction', () => {
 
       assert.isUndefined(elements.button.props().disabled);
       assert.include(elements.buttonText, 'Pay Now');
-      assert.equal(elements.description.text(), 'Enroll and pay later');
+      assert.equal(elements.linkText, 'Enroll and pay later');
     });
 
     it('shows a disabled enroll/pay button if a user is pending approval', () => {
@@ -245,7 +265,7 @@ describe('CourseAction', () => {
 
         assert.isTrue(elements.button.props().disabled);
         assert.include(elements.buttonText, 'Pay Now');
-        assert.equal(elements.description.text(), 'Enroll and pay later');
+        assert.equal(elements.linkText, 'Enroll and pay later');
       });
     });
   });

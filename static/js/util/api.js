@@ -224,3 +224,12 @@ export function updateDocumentSentDate(financialAidId: number, sentDate: string)
     })
   });
 }
+
+export function addCourseEnrollment(courseId: string) {
+  return mockableFetchJSONWithCSRF('/api/v0/course_enrollments/', {
+    method: 'POST',
+    body: JSON.stringify({
+      course_id: courseId,
+    })
+  });
+}

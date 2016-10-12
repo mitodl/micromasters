@@ -11,89 +11,86 @@ import {
   STATUS_CAN_UPGRADE,
   STATUS_CURRENTLY_ENROLLED,
   STATUS_OFFERED,
+  STATUS_WILL_ATTEND,
   DASHBOARD_FORMAT,
 } from '../../constants';
+
+const edxLinkBase = `${SETTINGS.edx_base_url}/courses/`;
 
 export default class CourseDescription extends React.Component {
   props: {
     course: Course
   };
 
-  courseDate(label: string, date: moment$Moment): string {
-    let formattedDate = date.format(DASHBOARD_FORMAT);
-    return `${label}: ${formattedDate}`;
+  needsEdxLink(run: CourseRun): boolean {
+    // Any status besides 'offered' implies that the user has at some point enrolled 
+    return run.status && run.status !== STATUS_OFFERED;
   }
 
-  courseDateMessage = (firstRun: CourseRun): any => {
-    switch (firstRun.status) {
+  renderCourseDateMessage(label: string, dateString: string): React$Element<*> {
+    let formattedDate = moment(dateString).format(DASHBOARD_FORMAT);
+    return <span key='1'>{label}: {formattedDate}</span>;
+  }
+
+  renderDetailContents(run: CourseRun) {
+    let dateMessage, additionalDetail;
+
+    switch (run.status) {
     case STATUS_PASSED:
-      if (firstRun.course_end_date) {
-        let courseEndDate = moment(firstRun.course_end_date);
-        return this.courseDate('Ended', courseEndDate);
-      }
-      break;
     case STATUS_NOT_PASSED:
-      if (firstRun.course_end_date) {
-        let courseEndDate = moment(firstRun.course_end_date);
-        return this.courseDate('Ended', courseEndDate);
-      } else if (!_.isNil(firstRun.fuzzy_start_date)) {
-        return `Coming ${firstRun.fuzzy_start_date}`;
-      }
+      dateMessage = this.renderCourseDateMessage('Ended', run.course_end_date);
       break;
     case STATUS_CAN_UPGRADE:
     case STATUS_CURRENTLY_ENROLLED:
+    case STATUS_WILL_ATTEND:
     case STATUS_OFFERED:
-      if (firstRun.course_start_date) {
-        let courseStartDate = moment(firstRun.course_start_date);
-        return this.courseDate('Start date', courseStartDate);
+      if (run.course_start_date) {
+        dateMessage = this.renderCourseDateMessage('Start date', run.course_start_date);
+      } else if (!_.isNil(run.fuzzy_start_date)) {
+        dateMessage = <span key='1'>Coming {run.fuzzy_start_date}</span>;
       }
       break;
-    default:
-      // no runs in this course
-      return <span className="no-runs">Coming soon...</span>;
     }
 
-    return '';
-  };
-
-  renderViewCourseLink = (courseRun: CourseRun): React$Element<*>|void => {
-    let edxLink = `${SETTINGS.edx_base_url}/courses/${courseRun.course_id}`;
-
-    switch (courseRun.status) {
-    case STATUS_PASSED:
-    case STATUS_NOT_PASSED:
-    case STATUS_CAN_UPGRADE:
-    case STATUS_CURRENTLY_ENROLLED:
-      return (
-        <span>
-          <a href={edxLink} target="_blank" className="mm-minor-action link-view-on-edx">
-            - View on edX
-          </a>
-        </span>
-      );
+    if (run.status === STATUS_CAN_UPGRADE) {
+      additionalDetail = <span key='2'>You are Auditing this Course.</span>;
     }
+
+    return _.compact([dateMessage, additionalDetail]);
   }
 
-  renderCourseTitle = (title: string): React$Element<*> => (
-    <span className="course-description-title">
-      {title}
-    </span>
+  renderViewCourseLink = (courseRun: CourseRun): React$Element<*>|void => (
+    <a href={`${edxLinkBase}${courseRun.course_id}`} target="_blank">
+      View on edX
+    </a>
   );
 
   render() {
     const { course } = this.props;
     let firstRun: CourseRun = {};
 
+    let detailContents;
     if (course.runs.length > 0) {
       firstRun = course.runs[0];
+      detailContents = this.renderDetailContents(firstRun);
+    } else {
+      detailContents = <span className="no-runs">No future courses are currently scheduled.</span>;
+    }
+
+    let title = course.title;
+    if(this.needsEdxLink(firstRun)) {
+      title = <span>{course.title} - {this.renderViewCourseLink(firstRun)}</span>;
+    } else {
+      title = <span>{course.title}</span>;
     }
 
     return <div className="course-description">
-      {this.renderCourseTitle(course.title)} {this.renderViewCourseLink(firstRun)}
-      <br />
-      <span className="course-description-result">
-        {this.courseDateMessage(firstRun)}
-      </span>
+      <div className="course-title">
+        {title}
+      </div>
+      <div className="details">
+        {detailContents}
+      </div>
     </div>;
   }
 }

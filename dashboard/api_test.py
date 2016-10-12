@@ -34,12 +34,13 @@ class StatusTest(ESTestCase):
     """
     # pylint: disable= no-self-use
     def test_course_status(self):
-        """test for CourseStatus"""
-        for attr in ('PASSED', 'NOT_PASSED', 'CURRENTLY_ENROLLED', 'CAN_UPGRADE', 'OFFERED',):
+        """test for CourseGrade"""
+        for attr in ('PASSED', 'NOT_PASSED', 'CURRENTLY_ENROLLED',
+                     'CAN_UPGRADE', 'OFFERED', 'WILL_ATTEND', ):
             assert hasattr(api.CourseStatus, attr)
 
     def test_course_status_all_statuses(self):
-        """test for CourseStatus.all_statuses"""
+        """test for CourseGrade.all_statuses"""
         all_constants = [value for name, value in vars(api.CourseStatus).items()
                          if not name.startswith('_') and isinstance(value, str)]
         assert sorted(all_constants) == sorted(api.CourseStatus.all_statuses())
@@ -602,7 +603,7 @@ class InfoCourseTest(CourseTests):
                 self.course,
                 api.get_info_for_course(self.course, None)
             )
-        mock_format.assert_called_once_with(self.course_run, api.CourseStatus.CURRENTLY_ENROLLED, None, position=1)
+        mock_format.assert_called_once_with(self.course_run, api.CourseStatus.WILL_ATTEND, None, position=1)
 
     @patch('dashboard.api.format_courserun_for_dashboard', autospec=True)
     def test_info_upgrade(self, mock_format):

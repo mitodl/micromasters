@@ -16,6 +16,7 @@ export default class CourseListCard extends React.Component {
     coursePrice:                  CoursePrice,
     openFinancialAidCalculator?:  () => void,
     now?:                         Object,
+    addCourseEnrollment:          (courseId: string) => void,
   };
 
   render() {
@@ -25,6 +26,7 @@ export default class CourseListCard extends React.Component {
       now,
       checkout,
       openFinancialAidCalculator,
+      addCourseEnrollment,
     } = this.props;
     if (now === undefined) {
       now = moment();
@@ -41,6 +43,7 @@ export default class CourseListCard extends React.Component {
         checkout={checkout}
         openFinancialAidCalculator={openFinancialAidCalculator}
         now={now}
+        addCourseEnrollment={addCourseEnrollment}
       />
     );
 

@@ -37,7 +37,7 @@ describe("ErrorMessage", () => {
   errorString = errorString.replace(/\s\s+/g, ' ');
 
   let contactExpectation = `If the error persists, please contact
-      mitx-support@mit.edu specifying this entire error message.`;
+      ${SETTINGS.support_email} specifying this entire error message.`;
   contactExpectation = contactExpectation.replace(/\s\s+/g, ' ');
 
   describe('unit tests', () => {
@@ -205,7 +205,7 @@ describe("ErrorMessage", () => {
           RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
           RECEIVE_GET_USER_PROFILE_FAILURE,
         ];
-        return renderComponent(`/users/${SETTINGS.username}`, actions, false).then(([, div]) => {
+        return renderComponent(`/learner/${SETTINGS.username}`, actions, false).then(([, div]) => {
           confirmErrorMessage(
             div,
             `404 ${errorString}`,
@@ -223,7 +223,7 @@ describe("ErrorMessage", () => {
           RECEIVE_GET_USER_PROFILE_SUCCESS,
           RECEIVE_GET_USER_PROFILE_SUCCESS,
         ];
-        return renderComponent(`/users/${SETTINGS.username}`, userPageActions, false).then(([, div]) => {
+        return renderComponent(`/learner/${SETTINGS.username}`, userPageActions, false).then(([, div]) => {
           let editButton = div.querySelector('.mdl-card').querySelector('.mdl-button--icon');
           listenForActions([
             SET_USER_PAGE_DIALOG_VISIBILITY,

@@ -19,6 +19,7 @@ import {
   addFinancialAid,
   skipFinancialAid,
   updateDocumentSentDate,
+  addCourseEnrollment,
 } from './api';
 import * as api from './api';
 import {
@@ -356,6 +357,34 @@ describe('api', function() {
             method: 'PATCH',
             body: JSON.stringify({
               date_documents_sent: sentDate
+            })
+          }));
+        });
+      });
+
+      it('adds a course enrollment', () => {
+        fetchJSONStub.returns(Promise.resolve());
+
+        let courseId = 'course_id';
+        return addCourseEnrollment(courseId).then(() => {
+          assert.ok(fetchJSONStub.calledWith('/api/v0/course_enrollments/', {
+            method: 'POST',
+            body: JSON.stringify({
+              course_id: courseId
+            })
+          }));
+        });
+      });
+
+      it('fails to add a course enrollment', () => {
+        fetchJSONStub.returns(Promise.reject());
+
+        let courseId = 'course_id';
+        return assert.isRejected(addCourseEnrollment(courseId)).then(() => {
+          assert.ok(fetchJSONStub.calledWith('/api/v0/course_enrollments/', {
+            method: 'POST',
+            body: JSON.stringify({
+              course_id: courseId
             })
           }));
         });
