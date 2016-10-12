@@ -177,7 +177,8 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
 
     def test_determine_tier_program(self):
         """
-        Tests determine_tier_program()
+        Tests determine_tier_program() assigning the correct tiers. This should assign the tier where the tier's
+        income threshold is equal to or less than income.
         """
         assert determine_tier_program(self.program, 0) == self.tier_programs["0k"]
         assert determine_tier_program(self.program, 1000) == self.tier_programs["0k"]
@@ -200,7 +201,8 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
 
     def test_determine_auto_approval(self):  # pylint: disable=no-self-use
         """
-        Tests determine_auto_approval()
+        Tests determine_auto_approval() assigning the correct auto-approval status. This should return True
+        if income is strictly greater than the threshold (or if the threshold is 0, which is inclusive of 0).
         """
         # Income threshold == 0
         assert self.country_income_threshold_0.income_threshold == 0
@@ -214,6 +216,7 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
             country_of_income=self.country_income_threshold_0.country_code
         )
         assert determine_auto_approval(financial_aid) is True
+
         # Income threshold greater than 0
         assert self.country_income_threshold_50000.income_threshold > 0
         financial_aid = FinancialAidFactory.create(
@@ -223,6 +226,11 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
         assert determine_auto_approval(financial_aid) is True
         financial_aid = FinancialAidFactory.create(
             income_usd=self.country_income_threshold_50000.income_threshold,
+            country_of_income=self.country_income_threshold_50000.country_code
+        )
+        assert determine_auto_approval(financial_aid) is not True  # Only auto-approved if > income threshold
+        financial_aid = FinancialAidFactory.create(
+            income_usd=self.country_income_threshold_50000.income_threshold-1,
             country_of_income=self.country_income_threshold_50000.country_code
         )
         assert determine_auto_approval(financial_aid) is not True  # Only auto-approved if > income threshold
