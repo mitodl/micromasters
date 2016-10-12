@@ -142,6 +142,7 @@ body.app-media {
   min-height: 620px;
   padding: 0;
   background-size: cover;
+  background-attachment: fixed;
   position: relative;
   height: 620px;
   height: 94vh;
@@ -149,6 +150,7 @@ body.app-media {
   @media (max-width: 580px) {
     height: 460px;
     min-height: 0;
+    background-attachment: scroll;
   }
 
   .banner-wrapper-content {
