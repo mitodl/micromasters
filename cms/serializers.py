@@ -13,32 +13,18 @@ class RenditionSerializer(serializers.ModelSerializer):
         fields = ("file", "width", "height")
 
 
-class ImageRenditionsField(serializers.RelatedField):
-    """
-    Field to output serialized versions of three sizes of an image:
-    small (100px), medium (500px), and large (1000px).
-    """
-    def to_representation(self, image):
-        serializer = RenditionSerializer()
-        small = image.get_rendition('fill-100x100')
-        medium = image.get_rendition('fill-500x500')
-        large = image.get_rendition('fill-1000x1000')
-        return {
-            "small": serializer.to_representation(small),
-            "medium": serializer.to_representation(medium),
-            "large": serializer.to_representation(large),
-        }
-
-
-class ImageSerializer(serializers.ModelSerializer):
-    """Serializer for Wagtail Image objects."""
+class FacultyImageSerializer(serializers.ModelSerializer):
+    """Serializer for faculty images."""
     alt = serializers.CharField(source="default_alt_text")
-    sizes = ImageRenditionsField(source='*', read_only=True)
+    rendition = serializers.SerializerMethodField()
+
+    def get_rendition(self, image):  # pylint: disable=no-self-use
+        """Serialize a rendition for the faculty image"""
+        return RenditionSerializer().to_representation(image.get_rendition('fill-500x385'))
 
     class Meta:  # pylint: disable=missing-docstring
         model = Image
-        fields = ("title", "alt", "file", "width", "height",
-                  "created_at", "file_size", "sizes")
+        fields = ('alt', 'rendition',)
 
 
 class ProgramSerializer(serializers.ModelSerializer):
@@ -50,7 +36,7 @@ class ProgramSerializer(serializers.ModelSerializer):
 
 class FacultySerializer(serializers.ModelSerializer):
     """Serializer for ProgramFaculty objects."""
-    image = ImageSerializer(read_only=True)
+    image = FacultyImageSerializer(read_only=True)
 
     class Meta:  # pylint: disable=missing-docstring
         model = ProgramFaculty

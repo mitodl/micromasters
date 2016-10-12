@@ -8,7 +8,6 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_save
 from django.test import TestCase
 from factory.django import mute_signals
-from factory.fuzzy import FuzzyText
 
 from courses.factories import ProgramFactory, CourseRunFactory
 from dashboard.models import ProgramEnrollment

@@ -244,7 +244,6 @@
     }
 
     .faculty-tile {
-      height: 385px;
       padding: 250px 22px 20px 26px;
       margin: 0 auto;
       color: #ffffff;
@@ -274,7 +273,6 @@
       }
 
       img {
-        width: 100%;
         position: absolute;
         top: 0;
         left: 0;
@@ -292,19 +290,24 @@
     }
 
     .slick-prev {
-      left: -40px;
+      left: -50px;
     }
 
     .slick-next {
-      right: -30px;
+      right: -50px;
     }
 
     .slick-dots li button:before {
       font-size: 20px;
     }
 
-    .slick-arrow:before {
-      font-size: 40px;
+    .slick-arrow {
+      height: 40px;
+      width: 40px;
+
+      &:before {
+        font-size: 40px;
+      }
     }
 
     .slick-dots {

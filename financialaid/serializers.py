@@ -67,7 +67,7 @@ class FinancialAidRequestSerializer(serializers.Serializer):
         except NotSupportedException:
             raise ValidationError("Currency not supported")
         user = self.context["request"].user
-        tier_program = determine_tier_program(self.validated_data["program"], self.validated_data["original_income"])
+        tier_program = determine_tier_program(self.validated_data["program"], income_usd)
 
         financial_aid = FinancialAid.objects.create(
             original_income=self.validated_data["original_income"],
