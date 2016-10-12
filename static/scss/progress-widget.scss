@@ -1,23 +1,32 @@
 // Progress Widget
 .circular-progress-widget {
   margin-bottom: 8px;
-  fill: none;
 
-  .circular-progress-widget-bg {
-    stroke: $progress-widget-bg-stroke !important;
-  }
+  svg {
+    fill: none;
+    padding: 4px;
 
-  .circular-progress-widget-fg {
-    transition: stroke-dashoffset .5s ease-in-out;
-    stroke: white;
-    transform: rotate(-90deg);
-    transform-origin: 50% 50%;
-  }
+    .dashed-circle {
+      stroke-opacity: 0.5;
+    }
 
-  .circular-progress-widget-txt {
-    font-size: 31pt;
-    fill: white;
-    font-weight: 200;
+    .circular-progress-widget-bg {
+      stroke: $progress-widget-bg-stroke !important;
+    }
+
+    .circular-progress-widget-fg {
+      transition: stroke-dashoffset .5s ease-in-out;
+      stroke: white;
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+      -moz-transform-origin: 40% 40%;
+    }
+
+    .circular-progress-widget-txt {
+      font-size: 31pt;
+      fill: white;
+      font-weight: 200;
+    }
   }
 }
 
