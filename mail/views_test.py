@@ -3,7 +3,6 @@ Tests for HTTP email API views
 """
 from unittest.mock import Mock, patch
 
-from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save
 from rest_framework import status
