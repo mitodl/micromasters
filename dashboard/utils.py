@@ -61,7 +61,7 @@ class MMTrack:
 
             if self.financial_aid_available:
                 self.paid_course_ids = list(Line.objects.filter(
-                    Q(order__status='fulfilled') & Q(course_key__in=self.course_ids)
+                    Q(order__status='fulfilled') & Q(course_key__in=self.course_ids) & Q(order__user=user)
                 ).values_list("course_key", flat=True))
 
                 financial_aid_qset = FinancialAid.objects.filter(

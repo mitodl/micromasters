@@ -159,6 +159,31 @@ class MMTrackTest(TestCase):
         assert mmtrack.financial_aid_max_price == 1000
         assert mmtrack.financial_aid_date_documents_sent is None
 
+    def test_fa_paid(self):
+        """
+        Test that for financial aid, mmtrack.paid_course_ids only apply to the user with a matching Order
+        """
+        key = "course-v1:odl+FOO101+CR-FALL15"
+        self.pay_for_fa_course(key)
+
+        mmtrack_paid = MMTrack(
+            user=self.user,
+            program=self.program_financial_aid,
+            enrollments=self.enrollments,
+            current_grades=self.current_grades,
+            certificates=self.certificates
+        )
+        assert mmtrack_paid.paid_course_ids == [key]
+
+        mmtrack = MMTrack(
+            user=UserFactory.create(),
+            program=self.program_financial_aid,
+            enrollments=self.enrollments,
+            current_grades=self.current_grades,
+            certificates=self.certificates
+        )
+        assert mmtrack.paid_course_ids == []
+
     def test_init_financial_aid_with_application(self):
         """
         Sub case of test_init_financial_aid_track where there is a financial aid application for the user
