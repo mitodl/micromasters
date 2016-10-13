@@ -43,7 +43,9 @@ import {
   startCalculatorEdit,
   updateCalculatorEdit,
 } from '../actions/financial_aid';
+import { setTimeoutActive } from '../actions/order_receipt';
 import type { UIState } from '../reducers/ui';
+import type { OrderReceiptState } from '../reducers/order_receipt';
 import type {
   DocumentsState,
 } from '../reducers/documents';
@@ -69,13 +71,11 @@ class DashboardPage extends React.Component {
     ui:                       UIState,
     documents:                DocumentsState,
     fetchDashboard:           () => void,
+    orderReceipt:             OrderReceiptState,
   };
 
   componentDidMount() {
     this.handleOrderStatus();
-
-    this.componentMountTime = moment();
-    this.hasOrderReceiptTimeout = false;
   }
 
   componentDidUpdate() {
@@ -105,10 +105,11 @@ class DashboardPage extends React.Component {
     const { dispatch } = this.props;
     dispatch(updateCourseStatus(run.course_id, STATUS_PENDING_ENROLLMENT));
 
-    if (!this.hasOrderReceiptTimeout) {
+    if (!this.props.orderReceipt.timeoutActive) {
       setTimeout(() => {
-        this.hasOrderReceiptTimeout = false;
-        let deadline = moment(this.componentMountTime).add(30, 'seconds');
+        const { orderReceipt } = this.props;
+        dispatch(setTimeoutActive(false));
+        let deadline = moment(orderReceipt.initialTime).add(30, 'seconds');
         let now = moment();
         if (now.isBefore(deadline)) {
           dispatch(fetchDashboard(true));
@@ -119,7 +120,7 @@ class DashboardPage extends React.Component {
           }));
         }
       }, 3000);
-      this.hasOrderReceiptTimeout = true;
+      dispatch(setTimeoutActive(true));
     }
   };
 
@@ -298,6 +299,7 @@ const mapStateToProps = (state) => {
     currentProgramEnrollment: state.currentProgramEnrollment,
     ui: state.ui,
     documents: state.documents,
+    orderReceipt: state.orderReceipt,
   };
 };
 

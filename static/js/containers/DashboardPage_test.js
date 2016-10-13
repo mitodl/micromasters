@@ -9,12 +9,15 @@ import IntegrationTestHelper from '../util/integration_test_helper';
 import {
   REQUEST_DASHBOARD,
   UPDATE_COURSE_STATUS,
-  receiveDashboardSuccess,
 } from '../actions';
 import * as actions from '../actions';
 import {
   SET_TOAST_MESSAGE,
 } from '../actions/ui';
+import {
+  SET_TIMEOUT_ACTIVE,
+  setInitialTime,
+} from '../actions/order_receipt';
 import { findCourseRun } from '../util/util';
 import * as util from '../util/util';
 import {
@@ -26,8 +29,6 @@ import {
   STATUS_CURRENTLY_ENROLLED,
   STATUS_PENDING_ENROLLMENT,
   STATUS_OFFERED,
-
-  DASHBOARD_RESPONSE,
 } from '../constants';
 import { findCourse } from '../util/test_utils';
 
@@ -149,7 +150,7 @@ describe('DashboardPage', () => {
       let run = course.runs[0];
       let encodedKey = encodeURIComponent(run.course_id);
       return renderComponent(`/dashboard?status=receipt&course_key=${encodedKey}`, [
-        UPDATE_COURSE_STATUS
+        UPDATE_COURSE_STATUS, SET_TIMEOUT_ACTIVE
       ]).then(() => {
         let [ courseRun ] = findCourseRun(
           helper.store.getState().dashboard.programs,
@@ -174,7 +175,7 @@ describe('DashboardPage', () => {
         let run = course.runs[0];
         let encodedKey = encodeURIComponent(run.course_id);
         return renderComponent(`/dashboard?status=receipt&course_key=${encodedKey}`, [
-          UPDATE_COURSE_STATUS
+          UPDATE_COURSE_STATUS, SET_TIMEOUT_ACTIVE
         ]).then(() => {
           let fetchDashboardStub = helper.sandbox.stub(actions, 'fetchDashboard').returns(() => ({
             type: 'fake'
@@ -192,18 +193,11 @@ describe('DashboardPage', () => {
         let run = course.runs[0];
         let encodedKey = encodeURIComponent(run.course_id);
         return renderComponent(`/dashboard?status=receipt&course_key=${encodedKey}`, [
-          UPDATE_COURSE_STATUS
+          UPDATE_COURSE_STATUS, SET_TIMEOUT_ACTIVE
         ]).then(() => {
-          let millis = 35001;
-          while (millis > 0) {
-            let tick = 3001;
-            millis -= 3001;
-            clock.tick(tick);
-
-            // hacky workaround, otherwise the component doesn't seem to update like it does
-            // on the browser ¯\_(ツ)_/¯
-            helper.store.dispatch(receiveDashboardSuccess(DASHBOARD_RESPONSE));
-          }
+          let future = moment().add(-35, 'seconds').toISOString();
+          helper.store.dispatch(setInitialTime(future));
+          clock.tick(3500);
           assert.deepEqual(helper.store.getState().ui.toastMessage, {
             message: `Order was not processed`,
             icon: TOAST_FAILURE

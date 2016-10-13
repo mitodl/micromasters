@@ -52,6 +52,7 @@ import { signupDialog } from './signup_dialog';
 import { imageUpload } from './image_upload';
 import { financialAid } from './financial_aid';
 import { documents } from './documents';
+import { orderReceipt } from './order_receipt';
 
 export const INITIAL_PROFILES_STATE = {};
 export const profiles = (state: Profiles = INITIAL_PROFILES_STATE, action: Action) => {
@@ -258,4 +259,5 @@ export default combineReducers({
   imageUpload,
   financialAid,
   documents,
+  orderReceipt,
 });
