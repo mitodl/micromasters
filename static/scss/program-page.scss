@@ -133,7 +133,12 @@
   }
 
   .course-info {
-    .course-details {
+    #program-course-list {
+      ol {
+        list-style: none;
+        padding: 0;
+      }
+
       .title {
         font-weight: 600;
         font-size: 16px;
@@ -145,11 +150,7 @@
         font-size: 15px;
       }
 
-      .course-description {
-        display: none;
-      }
-
-      .enrollment_dates {
+      .enrollment-dates {
         margin-bottom: 6px;
       }
     }
@@ -368,5 +369,25 @@
         margin: 0 0 23px 0;
       }
     }
+  }
+}
+
+.program-course-popover {
+  padding: 10px;
+
+  .title {
+    font-weight: 600;
+    font-size: 16px;
+    margin: 0 0 6px 0;
+  }
+
+  .description {
+    color: $font-gray;
+    font-size: 15px;
+    margin-bottom: 1em;
+  }
+
+  .edx-link {
+    display: block;
   }
 }

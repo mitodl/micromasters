@@ -86,23 +86,9 @@
           <h3 class="title">
             Courses
           </h3>
-          {% for course in courses %}
-          <div class="course-details">
-            <div class="title">
-              {% if course.url %}
-                <a href="{{ course.url }}">{{ course.title }}</a>
-              {% else %}
-                {{ course.title }}
-              {% endif %}
-            </div>
-            <div class="description enrollment_dates">
-              {{ course.enrollment_text }}
-            </div>
-            <div class="description course-description">
-              {{ course.description }}
-            </div>
+          <div id="program-course-list">
+            <!-- program course list component injected here -->
           </div>
-          {% endfor %}
         </div>
         <div class="info-box contact-info">
           <h3 class="title">
@@ -152,6 +138,7 @@
 </div>
 <script type="text/javascript" src="{{ signup_dialog_src }}"></script>
 <script type="text/javascript" src="{{ faculty_carousel_src }}"></script>
+<script type="text/javascript" src="{{ program_course_list_src }}"></script>
 <script type="text/javascript" src="{{ public_src }}"></script>
 <script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
 {% endblock %}
