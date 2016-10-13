@@ -17,6 +17,7 @@ class CountryIncomeThresholdAdmin(admin.ModelAdmin):
     """Admin for CountryIncomeThreshold"""
     model = CountryIncomeThreshold
     list_display = ('country_code', 'income_threshold')
+    ordering = ('country_code',)
 
 
 class FinancialAidAdmin(admin.ModelAdmin):
