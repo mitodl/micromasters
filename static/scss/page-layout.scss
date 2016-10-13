@@ -33,3 +33,7 @@ $border-box-sizing: true !global;
     }
   }
 }
+
+.main-content-wrapper, .page-content {
+  min-height: calc(100vh - 311px);
+}
