@@ -78,7 +78,7 @@ class ReactView(View):  # pylint: disable=unused-argument
             "dashboard.html",
             context={
                 "sentry_client": get_bundle_url(request, "sentry_client.js"),
-                "zendesk_widget": get_bundle_url(request, "js/zendesk_widget.js"),
+                "zendesk_widget": get_bundle_url(request, "zendesk_widget.js"),
                 "style_src": get_bundle_url(request, "style.js"),
                 "dashboard_src": get_bundle_url(request, "dashboard.js"),
                 "js_settings_json": json.dumps(js_settings),
@@ -130,7 +130,7 @@ def standard_error_page(request, status_code, template_filename):
         request,
         template_filename,
         context={
-            "zendesk_widget": get_bundle_url(request, "js/zendesk_widget.js"),
+            "zendesk_widget": get_bundle_url(request, "zendesk_widget.js"),
             "style_src": get_bundle_url(request, "style.js"),
             "dashboard_src": get_bundle_url(request, "dashboard.js"),
             "sentry_client": get_bundle_url(request, "sentry_client.js"),
@@ -159,7 +159,7 @@ def terms_of_service(request):
         request,
         "terms_of_service.html",
         context={
-            "zendesk_widget": get_bundle_url(request, "js/zendesk_widget.js"),
+            "zendesk_widget": get_bundle_url(request, "zendesk_widget.js"),
             "style_src": get_bundle_url(request, "style.js"),
             "sentry_client": get_bundle_url(request, "sentry_client.js"),
             "js_settings_json": json.dumps({

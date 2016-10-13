@@ -14,7 +14,8 @@ module.exports = {
     'public': ['babel-polyfill', './static/js/public'],
     'style': './static/js/style',
     'style_public': './static/js/style_public',
-    'sentry_client': './static/js/sentry_client.js'
+    'sentry_client': './static/js/sentry_client.js',
+    'zendesk_widget': './static/js/zendesk_widget.js',
   },
   output: {
     path: path.resolve('./static/bundles/'),

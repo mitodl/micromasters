@@ -211,7 +211,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         # Required for styling
         context["style_src"] = get_bundle_url(self.request, "style.js")
         context["dashboard_src"] = get_bundle_url(self.request, "dashboard.js")
-        context["zendesk_widget"] = get_bundle_url(self.request, "js/zendesk_widget.js")
+        context["zendesk_widget"] = get_bundle_url(self.request, "zendesk_widget.js")
         js_settings = {
             "gaTrackingID": settings.GA_TRACKING_ID,
             "reactGaDebug": settings.REACT_GA_DEBUG,
