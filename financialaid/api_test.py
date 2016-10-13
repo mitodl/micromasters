@@ -138,7 +138,7 @@ class FinancialAidBaseTestCase(TestCase):
         # Country income thresholds (these are already created via migrations, so just need to modify them)
         cls.country_income_threshold_50000, _ = CountryIncomeThreshold.objects.get_or_create(
             country_code=cls.profile.country,
-            default={
+            defaults={
                 "income_threshold": 50000
             }
         )
