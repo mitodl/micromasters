@@ -408,5 +408,12 @@ describe('utility functions', () => {
         [run, course, program],
       );
     });
+
+    it('returns an empty object for each if selector never matches', () => {
+      assert.deepEqual(
+        findCourseRun(DASHBOARD_RESPONSE, () => false),
+        [{}, {}, {}],
+      );
+    });
   });
 });
