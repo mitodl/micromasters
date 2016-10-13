@@ -409,10 +409,31 @@ describe('utility functions', () => {
       );
     });
 
+    it('finds courses with no course runs', () => {
+      let program = DASHBOARD_RESPONSE[1];
+      let course = program.courses[1];
+      assert.equal(course.runs.length, 0);
+
+      assert.deepEqual(
+        findCourseRun(DASHBOARD_RESPONSE, (_run, _course) => _course.runs.length === 0),
+        [null, course, program]
+      );
+    });
+
+    it('finds a program with no courses', () => {
+      let program = DASHBOARD_RESPONSE[0];
+      assert.equal(program.courses.length, 0);
+
+      assert.deepEqual(
+        findCourseRun(DASHBOARD_RESPONSE, (_run, _course, _program) => _program.courses.length === 0),
+        [null, null, program]
+      );
+    });
+
     it('returns an empty object for each if selector never matches', () => {
       assert.deepEqual(
         findCourseRun(DASHBOARD_RESPONSE, () => false),
-        [{}, {}, {}],
+        [null, null, null],
       );
     });
   });

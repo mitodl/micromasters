@@ -87,9 +87,7 @@ describe('CourseDescription', () => {
   });
 
   it('does not show anything when there are no runs for a course', () => {
-    let course = findCourse(course => (
-      course.runs.length === 0
-    ));
+    let course = findCourse(course => course.runs.length === 0);
     const wrapper = shallow(<CourseDescription course={course} />);
     let elements = getElements(wrapper);
 
