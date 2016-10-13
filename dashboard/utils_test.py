@@ -13,7 +13,7 @@ from edx_api.certificates.models import Certificate, Certificates
 from edx_api.grades.models import CurrentGrade, CurrentGrades
 from mock import patch
 
-from courses.factories import ProgramFactory, CourseRunFactory
+from courses.factories import ProgramFactory, CourseFactory, CourseRunFactory
 from dashboard.utils import MMTrack
 from ecommerce.factories import CoursePriceFactory, LineFactory, OrderFactory
 from ecommerce.models import Order
@@ -53,16 +53,18 @@ class MMTrackTest(TestCase):
         cls.program_financial_aid = ProgramFactory.create(live=True, financial_aid_availability=True)
 
         # create course runs for the normal program
+        course = CourseFactory.create(program=cls.program)
         for course_key in ["course-v1:edX+DemoX+Demo_Course", "course-v1:MITx+8.MechCX+2014_T1", '', None]:
             CourseRunFactory.create(
-                program=cls.program,
+                course=course,
                 edx_course_key=course_key
             )
         # and the program with financial aid
+        finaid_course = CourseFactory.create(program=cls.program_financial_aid)
         cls.now = datetime.now(pytz.utc)
         cls.end_date = cls.now - timedelta(weeks=45)
         cls.crun_fa = CourseRunFactory.create(
-            program=cls.program_financial_aid,
+            course=finaid_course,
             start_date=cls.now-timedelta(weeks=52),
             end_date=cls.end_date,
             enrollment_start=cls.now-timedelta(weeks=62),
@@ -71,7 +73,7 @@ class MMTrackTest(TestCase):
         )
         for course_key in ['', None]:
             CourseRunFactory.create(
-                program=cls.program_financial_aid,
+                course=finaid_course,
                 edx_course_key=course_key
             )
 
@@ -123,8 +125,10 @@ class MMTrackTest(TestCase):
         assert mmtrack.current_grades == self.current_grades
         assert mmtrack.certificates == self.certificates
         assert mmtrack.financial_aid_available == self.program.financial_aid_availability
-        assert mmtrack.course_ids == ["course-v1:edX+DemoX+Demo_Course", "course-v1:MITx+8.MechCX+2014_T1"]
-        assert mmtrack.paid_course_ids == []
+        assert mmtrack.course_ids == set(
+            ["course-v1:edX+DemoX+Demo_Course", "course-v1:MITx+8.MechCX+2014_T1"]
+        )
+        assert mmtrack.paid_course_ids == set()
         assert mmtrack.financial_aid_applied is None
         assert mmtrack.financial_aid_status is None
         assert mmtrack.financial_aid_id is None
@@ -150,8 +154,8 @@ class MMTrackTest(TestCase):
         assert mmtrack.current_grades == self.current_grades
         assert mmtrack.certificates == self.certificates
         assert mmtrack.financial_aid_available == self.program_financial_aid.financial_aid_availability
-        assert mmtrack.course_ids == ["course-v1:odl+FOO101+CR-FALL15"]
-        assert mmtrack.paid_course_ids == []
+        assert mmtrack.course_ids == set(["course-v1:odl+FOO101+CR-FALL15"])
+        assert mmtrack.paid_course_ids == set()
         assert mmtrack.financial_aid_applied is False
         assert mmtrack.financial_aid_status is None
         assert mmtrack.financial_aid_id is None
@@ -173,7 +177,7 @@ class MMTrackTest(TestCase):
             current_grades=self.current_grades,
             certificates=self.certificates
         )
-        assert mmtrack_paid.paid_course_ids == [key]
+        assert mmtrack_paid.paid_course_ids == set([key])
 
         mmtrack = MMTrack(
             user=UserFactory.create(),
@@ -182,7 +186,7 @@ class MMTrackTest(TestCase):
             current_grades=self.current_grades,
             certificates=self.certificates
         )
-        assert mmtrack.paid_course_ids == []
+        assert mmtrack.paid_course_ids == set()
 
     def test_init_financial_aid_with_application(self):
         """
@@ -258,9 +262,8 @@ class MMTrackTest(TestCase):
         Test that if financial aid is available for the program, at least one tier should be available.
         """
         program = ProgramFactory.create(live=True, financial_aid_availability=True)
-        crun_fa = CourseRunFactory.create(
-            program=program
-        )
+        course = CourseFactory.create(program=program)
+        crun_fa = CourseRunFactory.create(course=course)
         CoursePriceFactory.create(
             course_run=crun_fa,
             is_valid=True,

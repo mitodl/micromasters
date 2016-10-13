@@ -794,7 +794,7 @@ class CoursePriceListViewTests(FinancialAidBaseTestCase, APIClient):
         cls.course_price_url = reverse("course_price_list")
         cls.course_run2 = CourseRunFactory.create(
             enrollment_end=datetime.datetime.utcnow() + datetime.timedelta(hours=1),
-            program=cls.program2
+            course=cls.course2
         )
         cls.course_price2 = CoursePriceFactory.create(
             course_run=cls.course_run2,

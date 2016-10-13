@@ -3,10 +3,12 @@ Models for course structure
 """
 import logging
 from datetime import datetime
+import urllib.parse
 
 import pytz
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
+from django.conf import settings
 
 
 log = logging.getLogger(__name__)
@@ -87,6 +89,57 @@ class Course(models.Model):
         return self.courserun_set.filter(
             models.Q(start_date=None) & models.Q(fuzzy_start_date__isnull=False)
         ).first()
+
+    @property
+    def url(self):
+        """
+        Construct the course page url
+        """
+        course_run = self.get_next_run()
+        if not course_run:
+            return ""
+        if not course_run.edx_course_key:
+            return ""
+        return urllib.parse.urljoin(
+            settings.EDXORG_BASE_URL,
+            'courses/{key}/about'.format(key=course_run.edx_course_key)
+        )
+
+    @property
+    def enrollment_text(self):
+        """
+        Return text that contains start and enrollment
+        information about the course.
+        """
+        course_run = self.get_next_run()
+        if not course_run:
+            promised_run = self.get_promised_run()
+            if promised_run:
+                return "Coming " + promised_run.fuzzy_start_date
+            else:
+                return "Not available"
+
+        if course_run.is_current:
+            if course_run.enrollment_end:
+                end_text = 'Enrollment Ends {:%D}'.format(
+                    course_run.enrollment_end
+                )
+            else:
+                end_text = 'Enrollment Open'
+            return "Ongoing - {end}".format(end=end_text)
+        elif course_run.is_future:
+            if course_run.is_future_enrollment_open:
+                end_text = 'Enrollment Open'
+            elif course_run.enrollment_start:
+                end_text = 'Enrollment {:%m/%Y}'.format(
+                    course_run.enrollment_start
+                )
+            return "Starts {start:%D} - {end}".format(
+                start=course_run.start_date,
+                end=end_text,
+            )
+        else:
+            return "Not available"
 
 
 class CourseRun(models.Model):

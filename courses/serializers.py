@@ -3,7 +3,7 @@ Serializers for courses
 """
 from rest_framework import serializers
 
-from courses.models import CourseRun, Program
+from courses.models import Course, CourseRun, Program
 
 
 class ProgramSerializer(serializers.ModelSerializer):
@@ -11,6 +11,13 @@ class ProgramSerializer(serializers.ModelSerializer):
     class Meta:  # pylint: disable=missing-docstring
         model = Program
         fields = ('id', 'title',)
+
+
+class CourseSerializer(serializers.ModelSerializer):
+    """Serializer for Course objects"""
+    class Meta:  # pylint: disable=missing-docstring
+        model = Course
+        fields = ('id', 'title', 'description', 'url', 'enrollment_text')
 
 
 class CourseRunSerializer(serializers.ModelSerializer):

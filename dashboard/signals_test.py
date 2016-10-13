@@ -10,11 +10,10 @@ from django.test import (
 from factory.django import mute_signals
 from mock import patch
 
-from courses.factories import ProgramFactory
+from courses.factories import ProgramFactory, CourseFactory, CourseRunFactory
 from dashboard.factories import (
     CachedCertificateFactory,
     CachedEnrollmentFactory,
-    CourseRunFactory,
 )
 from dashboard.models import ProgramEnrollment
 from profiles.factories import ProfileFactory
@@ -33,6 +32,7 @@ class IndexingTests(TestCase):
         with mute_signals(post_save):
             cls.user = ProfileFactory.create().user
             cls.program = ProgramFactory.create()
+            cls.course = CourseFactory.create(program=cls.program)
 
 
 class ProgramEnrollmentTests(IndexingTests):
@@ -77,7 +77,7 @@ class CachedEnrollmentTests(IndexingTests):
 
         with mute_signals(post_save):
             cls.program_enrollment = ProgramEnrollment.objects.create(user=cls.user, program=cls.program)
-            cls.course_run = CourseRunFactory.create(program=cls.program)
+            cls.course_run = CourseRunFactory.create(course=cls.course)
             cls.separate_course_run = CourseRunFactory.create()
 
     def test_create_linked(self):
@@ -146,7 +146,7 @@ class CachedCertificateTests(IndexingTests):
 
         with mute_signals(post_save):
             cls.program_enrollment = ProgramEnrollment.objects.create(user=cls.user, program=cls.program)
-            cls.course_run = CourseRunFactory.create(program=cls.program)
+            cls.course_run = CourseRunFactory.create(course=cls.course)
             cls.separate_course_run = CourseRunFactory.create()
 
     def test_create_linked(self):

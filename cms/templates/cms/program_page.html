@@ -86,17 +86,17 @@
           <h3 class="title">
             Courses
           </h3>
-          {% for course, status, url in courses_info %}
+          {% for course in courses %}
           <div class="course-details">
             <div class="title">
-              {% if url %}
-                <a href="{{ url }}">{{ course.title }}</a>
+              {% if course.url %}
+                <a href="{{ course.url }}">{{ course.title }}</a>
               {% else %}
                 {{ course.title }}
               {% endif %}
             </div>
             <div class="description enrollment_dates">
-              {{ status }}
+              {{ course.enrollment_text }}
             </div>
             <div class="description course-description">
               {{ course.description }}

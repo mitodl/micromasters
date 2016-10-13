@@ -10,7 +10,7 @@ from django.test import TestCase
 from factory.django import mute_signals
 from factory.fuzzy import FuzzyText
 
-from courses.factories import ProgramFactory, CourseRunFactory
+from courses.factories import ProgramFactory, CourseFactory, CourseRunFactory
 from dashboard.models import ProgramEnrollment
 from ecommerce.factories import CoursePriceFactory
 from financialaid.api import (
@@ -57,9 +57,10 @@ class FinancialAidBaseTestCase(TestCase):
             financial_aid_availability=True,
             live=True
         )
+        cls.course = CourseFactory.create(program=cls.program)
         cls.course_run = CourseRunFactory.create(
             enrollment_end=datetime.utcnow() + timedelta(hours=1),
-            program=cls.program
+            course=cls.course
         )
         cls.course_price = CoursePriceFactory.create(
             course_run=cls.course_run,
@@ -92,6 +93,7 @@ class FinancialAidBaseTestCase(TestCase):
             financial_aid_availability=True,
             live=True
         )
+        cls.course2 = CourseFactory.create(program=cls.program2)
         Role.objects.create(
             user=cls.staff_user_profile2.user,
             program=cls.program2,

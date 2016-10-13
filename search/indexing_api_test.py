@@ -217,7 +217,8 @@ class IndexTests(ESTestCase):
         program_enrollment = ProgramEnrollmentFactory.create()
         for edx_cached_model_factory in [CachedCertificateFactory, CachedEnrollmentFactory]:
             assert es.search()['total'] == 1
-            course_run = CourseRunFactory.create(program=program_enrollment.program)
+            course = CourseFactory.create(program=program_enrollment.program)
+            course_run = CourseRunFactory.create(course=course)
             edx_cached_model_factory.create(user=program_enrollment.user, course_run=course_run)
             assert_search(es.search(), [program_enrollment])
 
@@ -228,7 +229,8 @@ class IndexTests(ESTestCase):
         program_enrollment = ProgramEnrollmentFactory.create()
         for edx_cached_model_factory in [CachedCertificateFactory, CachedEnrollmentFactory]:
             assert es.search()['total'] == 1
-            course_run = CourseRunFactory.create(program=program_enrollment.program)
+            course = CourseFactory.create(program=program_enrollment.program)
+            course_run = CourseRunFactory.create(course=course)
             edx_record = edx_cached_model_factory.create(user=program_enrollment.user, course_run=course_run)
             edx_record.data.update({'new': 'data'})
             edx_record.save()
@@ -240,7 +242,8 @@ class IndexTests(ESTestCase):
         """
         program_enrollment = ProgramEnrollmentFactory.create()
         for edx_cached_model_factory in [CachedCertificateFactory, CachedEnrollmentFactory]:
-            course_run = CourseRunFactory.create(program=program_enrollment.program)
+            course = CourseFactory.create(program=program_enrollment.program)
+            course_run = CourseRunFactory.create(course=course)
             edx_record = edx_cached_model_factory.create(user=program_enrollment.user, course_run=course_run)
             assert_search(es.search(), [program_enrollment])
             edx_record.delete()

@@ -28,8 +28,8 @@ class MMTrack:
     enrollments = None
     current_grades = None
     certificates = None
-    course_ids = []
-    paid_course_ids = []  # financial aid course ids for paid with the MM app
+    course_ids = set()
+    paid_course_ids = set()  # financial aid course ids for paid with the MM app
     financial_aid_available = None
     financial_aid_applied = None
     financial_aid_status = None
@@ -55,12 +55,12 @@ class MMTrack:
         self.financial_aid_available = program.financial_aid_availability
 
         with transaction.atomic():
-            self.course_ids = list(CourseRun.objects.filter(course__program=self.program).exclude(
+            self.course_ids = set(CourseRun.objects.filter(course__program=self.program).exclude(
                 Q(edx_course_key__isnull=True) | Q(edx_course_key__exact='')
             ).values_list("edx_course_key", flat=True))
 
             if self.financial_aid_available:
-                self.paid_course_ids = list(Line.objects.filter(
+                self.paid_course_ids = set(Line.objects.filter(
                     Q(order__status='fulfilled') & Q(course_key__in=self.course_ids) & Q(order__user=user)
                 ).values_list("course_key", flat=True))
 

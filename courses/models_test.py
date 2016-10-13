@@ -51,7 +51,7 @@ class CourseModelTests(ESTestCase):
         )
 
 
-class CourseTests(CourseModelTests):
+class CourseTests(CourseModelTests):  # pylint: disable=too-many-public-methods
     """Tests for Course model"""
 
     def test_to_string(self):
@@ -242,6 +242,90 @@ class CourseTests(CourseModelTests):
         next_run = self.course.get_next_run()
         assert isinstance(next_run, CourseRun)
         assert next_run.pk == course_run.pk
+
+    def test_future_course_enr_future(self):
+        """Test Course that starts in the future, enrollment in future"""
+        future_date = self.now + timedelta(weeks=1)
+        start_date = 'Starts {:%D} - '.format(future_date)
+        enr_start = 'Enrollment {:%m/%Y}'.format(future_date)
+        # create a run that starts soon, enrollment_start in the future
+        self.create_run(
+            start=future_date,
+            end=self.now + timedelta(weeks=10),
+            enr_start=future_date,
+            enr_end=self.now + timedelta(weeks=2),
+        )
+        assert self.course.enrollment_text == start_date + enr_start
+
+    def test_future_course_enr_open(self):
+        """Test course in the future, enrollment open"""
+        future_date = self.now + timedelta(weeks=1)
+        start_date = 'Starts {:%D} - Enrollment Open'.format(future_date)
+        # and a run is about to start and enrollment is open
+        self.create_run(
+            start=future_date,
+            end=self.now + timedelta(weeks=10),
+            enr_start=self.now - timedelta(weeks=1),
+            enr_end=self.now + timedelta(weeks=10),
+        )
+        assert self.course.enrollment_text == start_date
+
+    def test_future_course_no_enr_end(self):
+        """Test course in the future, enrollment_end is None"""
+        future_date = self.now + timedelta(weeks=1)
+        text = 'Starts {:%D} - Enrollment Open'.format(future_date)
+        self.create_run(
+            start=future_date,
+            end=self.now + timedelta(weeks=10),
+            enr_start=self.now - timedelta(weeks=1),
+        )
+        assert self.course.enrollment_text == text
+
+    def test_current_course(self):
+        """Test current course, enrollment ends soon"""
+        text = 'Ongoing - Enrollment Ends {:%D}'.format(
+            self.now + timedelta(weeks=10)
+        )
+        self.create_run(
+            start=self.now - timedelta(weeks=1),
+            end=self.now + timedelta(weeks=10),
+            enr_start=self.now - timedelta(weeks=1),
+            enr_end=self.now + timedelta(weeks=10),
+        )
+        assert self.course.enrollment_text == text
+
+    def test_current_course_no_enr_end(self):
+        """Test current course, enrollment open"""
+        self.create_run(
+            start=self.now - timedelta(weeks=1),
+            end=None,
+            enr_start=self.now - timedelta(weeks=1),
+            enr_end=None,
+        )
+        assert self.course.enrollment_text == 'Ongoing - Enrollment Open'
+
+    def test_course_fuzzy_start_date(self):
+        """Test course with promised course run"""
+        CourseRunFactory.create(
+            course=self.course,
+            fuzzy_start_date="Fall 2017",
+            start_date=None,
+            end_date=None,
+            enrollment_start=None,
+            enrollment_end=None,
+        )
+        assert self.course.enrollment_text == 'Coming Fall 2017'
+
+    def test_current_course_enr_closed(self):
+        """Test current course, enrollment closed"""
+
+        self.create_run(
+            start=self.now - timedelta(weeks=1),
+            end=self.now + timedelta(weeks=10),
+            enr_start=self.now - timedelta(weeks=2),
+            enr_end=self.now - timedelta(weeks=1),
+        )
+        assert self.course.enrollment_text == 'Not available'
 
 
 class CourseRunTests(CourseModelTests):

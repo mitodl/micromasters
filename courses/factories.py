@@ -1,5 +1,4 @@
 """Factories for making test data"""
-from datetime import datetime
 import pytz
 
 import factory
@@ -45,27 +44,38 @@ class CourseFactory(DjangoModelFactory):
 
 class CourseRunFactory(DjangoModelFactory):
     """Factory for CourseRuns"""
-    title = fuzzy.FuzzyText(prefix="CourseRun ")
+    title = factory.LazyAttribute(
+        lambda x: "CourseRun " + FAKE.sentence()
+    )
     course = factory.SubFactory(CourseFactory)
     # Try to make sure we escape this correctly
-    edx_course_key = fuzzy.FuzzyText(prefix="course:/()+&/")
-    enrollment_start = fuzzy.FuzzyDateTime(datetime(1980, 1, 1, tzinfo=pytz.utc))
-    start_date = fuzzy.FuzzyDateTime(datetime(1980, 1, 1, tzinfo=pytz.utc))
-    enrollment_end = fuzzy.FuzzyDateTime(datetime(1980, 1, 1, tzinfo=pytz.utc))
-    end_date = fuzzy.FuzzyDateTime(datetime(1980, 1, 1, tzinfo=pytz.utc))
-    fuzzy_start_date = fuzzy.FuzzyText(prefix="Starting ")
-    fuzzy_enrollment_start_date = fuzzy.FuzzyText(prefix="Enrollment starting ")
-    enrollment_url = fuzzy.FuzzyText(prefix="http://")
-    prerequisites = fuzzy.FuzzyText(prefix="CourseRun requires ")
+    edx_course_key = factory.LazyAttribute(
+        lambda x: "course:/()+&/" + FAKE.sentence()
+    )
+    enrollment_start = factory.LazyAttribute(
+        lambda x: FAKE.date_time_this_month(before_now=True, after_now=False, tzinfo=pytz.utc)
+    )
+    start_date = factory.LazyAttribute(
+        lambda x: FAKE.date_time_this_month(before_now=True, after_now=False, tzinfo=pytz.utc)
+    )
+    enrollment_end = factory.LazyAttribute(
+        lambda x: FAKE.date_time_this_month(before_now=False, after_now=True, tzinfo=pytz.utc)
+    )
+    end_date = factory.LazyAttribute(
+        lambda x: FAKE.date_time_this_year(before_now=False, after_now=True, tzinfo=pytz.utc)
+    )
+    fuzzy_start_date = factory.LazyAttribute(
+        lambda x: "Starting " + FAKE.sentence()
+    )
+    fuzzy_enrollment_start_date = factory.LazyAttribute(
+        lambda x: "Enrollment starting " + FAKE.sentence()
+    )
+    enrollment_url = factory.LazyAttribute(
+        lambda x: FAKE.url()
+    )
+    prerequisites = factory.LazyAttribute(
+        lambda x: FAKE.paragraph()
+    )
 
     class Meta:  # pylint: disable=missing-docstring
         model = CourseRun
-
-    @classmethod
-    def create(cls, **kwargs):
-        # If 'program' is provided, build a Course from it first
-        if 'program' in kwargs:
-            kwargs['course'] = CourseFactory.create(program=kwargs.pop('program'))
-        # Create the CourseRun as normal
-        attrs = cls.attributes(create=True, extra=kwargs)
-        return cls._generate(True, attrs)
