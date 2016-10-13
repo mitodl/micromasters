@@ -180,6 +180,7 @@ export default class CourseAction extends React.Component {
     case STATUS_PENDING_ENROLLMENT:
       action = this.renderEnrollButton(run);
       description = this.renderTextDescription('Processing...');
+      break;
     }
 
     return _.compact([action, description]);

@@ -202,11 +202,10 @@ describe('CourseAction', () => {
   });
 
   it('shows a pending disabled button if the user has status pending-enrollment', () => {
-    let course = findAndCloneCourse(course => (
+    let course = findCourse(course => (
       course.runs.length > 0 &&
-      course.runs[0].status === STATUS_OFFERED
+      course.runs[0].status === STATUS_PENDING_ENROLLMENT
     ));
-    alterFirstRun(course, {status: STATUS_PENDING_ENROLLMENT});
     const wrapper = shallow(<CourseAction course={course} {...defaultParamsNow} />);
 
     assert.equal(wrapper.text(), "<Button />Processing...");

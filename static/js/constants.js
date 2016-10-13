@@ -510,6 +510,23 @@ export const DASHBOARD_RESPONSE = [
         "description": null,
         "prerequisites": null
       },
+      {
+        "id": 16,
+        "position_in_program": 10,
+        "title": "Pending enrollment course",
+        "runs": [
+          {
+            "course_id": "course-v1:pending",
+            "id": 47,
+            "title": "Pending enrollment course run",
+            "position": 0,
+            "status": STATUS_PENDING_ENROLLMENT,
+            "course_start_date": "2018-08-22T11:48:27Z",
+            "course_end_date": "2018-09-09T10:20:10Z",
+            "enrollment_start_date": "2016-03-04T01:00:00Z",
+          }
+        ]
+      }
     ],
     "title": "Master Program",
     "description": null,
