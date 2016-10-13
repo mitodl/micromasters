@@ -135,14 +135,21 @@ class FinancialAidBaseTestCase(TestCase):
             tier_program=cls.tier_programs["25k"],
             status=FinancialAidStatus.PENDING_MANUAL_APPROVAL
         )
-        # Country income thresholds (these are already created via migrations - just need to load them)
-        cls.country_income_threshold_50000 = CountryIncomeThreshold.objects.filter(income_threshold=50000).first()
-        if cls.country_income_threshold_50000 is None:
-            cls.country_income_threshold_50000 = CountryIncomeThresholdFactory.create(income_threshold=50000)
-        cls.profile.country = cls.country_income_threshold_50000.country_code
-        cls.country_income_threshold_0 = CountryIncomeThreshold.objects.filter(income_threshold=0).first()
-        if cls.country_income_threshold_0 is None:
-            cls.country_income_threshold_0 = CountryIncomeThresholdFactory.create(income_threshold=0)
+        # Country income thresholds (these are already created via migrations, so just need to modify them)
+        cls.country_income_threshold_50000, _ = CountryIncomeThreshold.objects.get_or_create(
+            country_code=cls.profile.country,
+            default={
+                "income_threshold": 50000
+            }
+        )
+        if cls.country_income_threshold_50000.income_threshold != 50000:
+            cls.country_income_threshold_50000.income_threshold = 50000
+            cls.country_income_threshold_50000.save()
+        cls.country_income_threshold_0 = CountryIncomeThreshold.objects.exclude(
+            id=cls.country_income_threshold_50000.id
+        ).first()
+        cls.country_income_threshold_0.income_threshold = 0
+        cls.country_income_threshold_0.save()
 
     @staticmethod
     def assert_http_status(method, url, status, data=None, content_type="application/json", **kwargs):
