@@ -94,6 +94,14 @@ export default class NewEnrollmentDialog extends React.Component {
         onChange={this.handleSelectedProgramChange}
         floatingLabelText="Select Program"
         errorText={enrollDialogError}
+        fullWidth={true}
+        style={{
+          width: "500px"
+        }}
+        menuStyle={{
+          width: "500px",
+          overflow: "hidden"
+        }}
       >
         {options}
       </SelectField>
