@@ -74,7 +74,7 @@ class ProfilePage extends ProfileFormContainer {
       } else {
         content = <div>
           <WelcomeBanner profile={profile} text={text} />
-          <div style={{textAlign: "center"}}>
+          <div className="profile-pagination">
             {makeProfileProgressDisplay(this.currentStep())}
           </div>
           <section>

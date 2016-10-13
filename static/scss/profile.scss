@@ -1,3 +1,7 @@
+.profile-pagination {
+  text-align: center;
+}
+
 .profile-form {
   min-height: 0 !important;
   font-weight: 400 !important;
@@ -68,6 +72,11 @@
       .title, span {
         font-weight: 500;
         font-size: 18px;
+      }
+
+      span.question {
+        font-weight: 400;
+        font-size: 16px;
       }
     }
   }
@@ -184,16 +193,14 @@
 }
 
 .profile-form.collapsed {
-  height: 60px;
-  min-height: 0;
+  height: 100px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding-top: 10px;
+}
 
-  .profile-form-grid {
-    margin-top: 6px;
-  }
+.profile-form, .profile-form.collapsed {
+  padding: 20px 24px 20px;
 }
 
 .program-select {

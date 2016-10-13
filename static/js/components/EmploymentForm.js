@@ -216,7 +216,7 @@ class EmploymentForm extends ProfileFormFields {
 
   renderWorkQuestionForm () {
     return <Cell col={12} className="profile-form-row profile-card-header">
-      <span>
+      <span className="question">
         Do you want to add an employer?
       </span>
       { this.renderWorkRadioSwitch() }
