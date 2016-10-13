@@ -11,24 +11,60 @@ from django.db import migrations
 from financialaid.constants import DEFAULT_INCOME_THRESHOLD
 
 
+def get_country_income_thresholds_data():
+    """
+    Returns a list of dictionaries of data imported from financialaid/fixtures/country_income_threshold_data.json.
+    """
+    fixture_path = os.path.join(settings.BASE_DIR, "financialaid/fixtures/country_income_threshold_data.json")
+    with open(fixture_path, "r") as f:
+        country_data = json.loads(f.read())
+    return [
+        {
+            "country_code": country["fields"]["country_code"],
+            "income_threshold": DEFAULT_INCOME_THRESHOLD
+        }
+        for country in country_data
+    ]
+
+
 def load_country_income_thresholds(apps, schema_editor):
     """
-    Loads data from financialaid/fixtures/country_income_threshold_data.json into the database.
+    Loads data from get_country_income_thresholds_data() into the database.
 
     Note: Instead of simply using call_command("loaddata", "country_income_threshold_data") to load the fixture,
     this manually creates database objects from data in the fixture. This way we can set the correct created_on
     and updated_on timestamps as well as set the income_threshold to DEFAULT_INCOME_THRESHOLD should this value
-    change from the default income_treshold in the fixture.
+    change from the default income_threshold in the fixture.
     """
     CountryIncomeThreshold = apps.get_model("financialaid", "CountryIncomeThreshold")
-    fixture_path = os.path.join(settings.BASE_DIR, "financialaid/fixtures/country_income_threshold_data.json")
-    with open(fixture_path, "r") as f:
-        country_data = json.loads(f.read())
-    for country in country_data:
-        CountryIncomeThreshold.objects.create(
-            country_code=country["fields"]["country_code"],
-            income_threshold=DEFAULT_INCOME_THRESHOLD
+    for country in get_country_income_thresholds_data():
+        # Use get_or_create() since there could be existing objects (however unlikely)
+        CountryIncomeThreshold.objects.get_or_create(
+            country_code=country["country_code"],
+            defaults={
+                "income_threshold": country["income_threshold"]
+            }
         )
+
+
+def unload_country_income_thresholds(apps, schema_editor):
+    """
+    Unloads data in get_country_income_thresholds_data() from database.
+
+    Note: There is a possibility that there will be CountryIncomeThreshold objects that already exist before this
+    migration is run (albeit very unlikely), and there's no way to determine which objects were created during the
+    forward migration and which were originally there. This reverse migration will remove any object that matches both
+    country_code and income_threshold (since these will be recreated correctly if the migration is run again), but will
+    leave intact any that have different income_threshold for that country_code or have a country_code that doesn't
+    exist in get_country_income_thresholds_data() (since these will be be recreated if the migration is run again).
+    """
+    CountryIncomeThreshold = apps.get_model("financialaid", "CountryIncomeThreshold")
+    for country in get_country_income_thresholds_data():
+        try:
+            obj = CountryIncomeThreshold.objects.get(**country)
+        except CountryIncomeThreshold.DoesNotExist:
+            continue
+        obj.delete()
 
 
 class Migration(migrations.Migration):
@@ -38,5 +74,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(load_country_income_thresholds),
+        migrations.RunPython(load_country_income_thresholds, reverse_code=unload_country_income_thresholds),
     ]
