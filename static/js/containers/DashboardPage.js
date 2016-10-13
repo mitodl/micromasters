@@ -3,7 +3,6 @@ import React from 'react';
 import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import Loader from 'react-loader';
-import { Card, CardTitle } from 'react-mdl/lib/Card';
 import _ from 'lodash';
 
 import {
@@ -219,9 +218,6 @@ class DashboardPage extends React.Component {
           </div>
           <div className="second-column">
             <ProgressWidget program={program} />
-            <Card shadow={0}>
-              <CardTitle>Learners Near Me</CardTitle>
-            </Card>
           </div>
         </div>
       );
