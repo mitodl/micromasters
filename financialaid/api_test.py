@@ -133,7 +133,7 @@ class FinancialAidBaseTestCase(TestCase):
             user=cls.enrolled_profile2.user,
             tier_program=cls.tier_programs["25k"],
             status=FinancialAidStatus.PENDING_MANUAL_APPROVAL
-        )\
+        )
         # Country income thresholds (these are already created via migrations, so just need to modify them)
         cls.country_income_threshold_50000, _ = CountryIncomeThreshold.objects.get_or_create(
             country_code=cls.profile.country,
