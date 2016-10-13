@@ -155,6 +155,17 @@ class TestHomePage(ViewsTests):
             js_settings = json.loads(response.context['js_settings_json'])
             assert js_settings['gaTrackingID'] == ga_tracking_id
 
+    def test_program_order(self):
+        """
+        Assert that programs are output in id order
+        """
+        for i in range(10):
+            ProgramFactory.create(live=True, title="Program {}".format(i + 1))
+        response = self.client.get("/")
+        content = response.content.decode('utf-8')
+        indexes = [content.find("Program {}".format(i + 1)) for i in range(10)]
+        assert indexes == sorted(indexes)
+
 
 class DashboardTests(ViewsTests):
     """

@@ -36,7 +36,7 @@ class HomePage(Page):
     subpage_types = ['ProgramPage']
 
     def get_context(self, request):
-        programs = Program.objects.filter(live=True)
+        programs = Program.objects.filter(live=True).order_by("id")
         js_settings = {
             "gaTrackingID": settings.GA_TRACKING_ID,
             "host": webpack_dev_server_host(request),
