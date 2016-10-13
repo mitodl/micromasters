@@ -18,3 +18,35 @@
     padding: 0 24px 0 24px;
   }
 }
+
+
+
+@media (max-width: 580px) {
+  body {
+    background-color: #dcdcdc;
+  }
+
+  .page-content {
+    padding: 10px 0 65px;
+
+    .double-column {
+      width: 100%;
+      display: block;
+
+      .first-column, .second-column {
+        width: auto;
+        display: block;
+        margin: 0 9px
+      }
+    }
+
+    .mdl-card {
+      margin: 0 0 10px 0;
+      border-radius: 2px;
+    }
+  }
+
+
+
+
+}
