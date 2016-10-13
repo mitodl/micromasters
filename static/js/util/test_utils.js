@@ -15,7 +15,7 @@ export function findCourse(courseSelector: (course: Course, program: Program) =>
     DASHBOARD_RESPONSE,
     (courseRun, _course, program) => courseSelector(_course, program)
   );
-  if (!_.isEmpty(course)) {
+  if (course !== null) {
     return course;
   }
   throw "Unable to find course";
