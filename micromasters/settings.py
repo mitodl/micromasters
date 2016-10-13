@@ -454,7 +454,7 @@ CELERYBEAT_SCHEDULE = {
         'schedule': crontab(minute=0, hour='*/6')
     },
     'update-currency-exchange-rates-every-24-hrs': {
-        'task': 'financialaid.tasks.update_currency_exchange_rates',
+        'task': 'financialaid.tasks.sync_currency_exchange_rates',
         'schedule': crontab(minute=0, hour='3')
     },
 }
