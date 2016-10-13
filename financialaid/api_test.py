@@ -134,7 +134,8 @@ class FinancialAidBaseTestCase(TestCase):
             tier_program=cls.tier_programs["25k"],
             status=FinancialAidStatus.PENDING_MANUAL_APPROVAL
         )
-        # Country income thresholds (these are already created via migrations, so just need to modify them)
+        # Country income thresholds (CountryIncomeThreshold objects already exist in the database, but since we
+        # use fuzzy generators for cls.profile.country, it may not exist yet)
         cls.country_income_threshold_50000, _ = CountryIncomeThreshold.objects.get_or_create(
             country_code=cls.profile.country,
             defaults={
