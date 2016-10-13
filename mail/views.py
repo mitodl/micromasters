@@ -17,6 +17,7 @@ from financialaid.permissions import UserCanEditFinancialAid
 from mail.api import MailgunClient
 from mail.permissions import UserCanMessageLearnersPermission
 from mail.serializers import FinancialAidMailSerializer
+from mail.utils import generate_mailgun_response_json
 from search.api import (
     prepare_and_execute_search,
     get_all_query_matching_emails
@@ -55,7 +56,7 @@ class SearchResultMailView(APIView):
             data={
                 "batch_{}".format(batch_num): {
                     "status_code": resp.status_code,
-                    "data": resp.json()
+                    "data": generate_mailgun_response_json(resp)
                 } for batch_num, resp in enumerate(mailgun_responses)
             }
         )
@@ -88,4 +89,4 @@ class FinancialAidMailView(GenericAPIView):
             subject=serializer.data['email_subject'],
             financial_aid=financial_aid
         )
-        return Response(data=mailgun_response.json(), status=mailgun_response.status_code)
+        return Response(data=generate_mailgun_response_json(mailgun_response), status=mailgun_response.status_code)

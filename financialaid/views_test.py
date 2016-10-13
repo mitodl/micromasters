@@ -30,7 +30,7 @@ from financialaid.models import (
     FinancialAidAudit,
     CurrencyExchangeRate
 )
-from mail.api import generate_financial_aid_email
+from mail.utils import generate_financial_aid_email
 from mail.views_test import mocked_json
 
 

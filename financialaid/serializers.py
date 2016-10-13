@@ -30,10 +30,8 @@ from financialaid.models import (
     FinancialAid,
     TierProgram
 )
-from mail.api import (
-    MailgunClient,
-    generate_financial_aid_email
-)
+from mail.api import MailgunClient
+from mail.utils import generate_financial_aid_email
 
 
 class FinancialAidRequestSerializer(serializers.Serializer):
