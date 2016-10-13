@@ -27,7 +27,10 @@ from financialaid.factories import (
     FinancialAidFactory,
     TierProgramFactory
 )
-from financialaid.models import CurrencyExchangeRate
+from financialaid.models import (
+    CountryIncomeThreshold,
+    CurrencyExchangeRate
+)
 from profiles.factories import ProfileFactory
 from roles.models import Role
 from roles.roles import Staff, Instructor
@@ -132,14 +135,14 @@ class FinancialAidBaseTestCase(TestCase):
             tier_program=cls.tier_programs["25k"],
             status=FinancialAidStatus.PENDING_MANUAL_APPROVAL
         )
-        # Country income thresholds
-        cls.country_income_threshold_0 = CountryIncomeThresholdFactory.create(
-            income_threshold=0
-        )
-        cls.country_income_threshold_50000 = CountryIncomeThresholdFactory.create(
-            country_code=cls.profile.country,
-            income_threshold=50000
-        )
+        # Country income thresholds (these are already created via migrations - just need to load them)
+        cls.country_income_threshold_50000 = CountryIncomeThreshold.objects.filter(income_threshold=50000).first()
+        if cls.country_income_threshold_50000 is None:
+            CountryIncomeThresholdFactory.create(income_threshold=50000)
+        cls.profile.country = cls.country_income_threshold_50000.country_code
+        cls.country_income_threshold_0 = CountryIncomeThreshold.objects.filter(income_threshold=0).first()
+        if cls.country_income_threshold_0 is None:
+            CountryIncomeThresholdFactory.create(income_threshold=0)
 
     @staticmethod
     def assert_http_status(method, url, status, data=None, content_type="application/json", **kwargs):

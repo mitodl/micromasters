@@ -178,5 +178,5 @@ class CountryIncomeThreshold(TimestampedModel):
     """
     Table of country income thresholds for financial aid auto approval
     """
-    country_code = models.CharField(null=False, max_length=2)
+    country_code = models.CharField(null=False, unique=True, max_length=2)
     income_threshold = models.IntegerField(null=False)
