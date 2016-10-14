@@ -75,8 +75,15 @@ def generate_mailgun_response_json(response):
     Returns:
         dict
     """
-    if response.status_code == status.HTTP_401_UNAUTHORIZED:
-        message = "Mailgun API keys not properly configured."
-        log.error(message)
-        raise ImproperlyConfigured(message)
-    return response.json()
+    try:
+        response_json = response.json()
+    except ValueError:  # Includes JSONDecodeError since it inherits from ValueError
+        if response.status_code == status.HTTP_401_UNAUTHORIZED:
+            message = "Mailgun API keys not properly configured."
+            log.error(message)
+            raise ImproperlyConfigured(message)
+        else:
+            response_json = {
+                "message": response.reason
+            }
+    return response_json
