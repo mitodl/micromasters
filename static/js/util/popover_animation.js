@@ -5,10 +5,8 @@ import propTypes from 'material-ui/utils/propTypes';
 
 
 function getStyles(props, context, state) {
-  const {targetOrigin} = props;
   const {open} = state;
   const {muiTheme} = context;
-  const horizontal = targetOrigin.horizontal.replace('middle', 'vertical');
 
   return {
     root: {

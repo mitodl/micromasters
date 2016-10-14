@@ -12,9 +12,11 @@ export default class CourseListItemWithPopover extends React.Component {
     url: string,
     enrollment_text: string,
   }
+
   state = {
     isOpen: false,
   }
+
   handleClick = (event) => {
     // This prevents ghost click.
     event.preventDefault();
@@ -24,11 +26,13 @@ export default class CourseListItemWithPopover extends React.Component {
       anchorEl: event.currentTarget,
     });
   }
+
   handleRequestClose = () => {
     this.setState({
       isOpen: false,
     });
   }
+
   render() {
     const {
       title,
@@ -41,14 +45,13 @@ export default class CourseListItemWithPopover extends React.Component {
       anchorEl
     } = this.state;
 
-    let titleEl, popoverLink;
-    if (url) {
-      titleEl = <a href={url}>{title}</a>;
-      popoverLink = <a className="edx-link" href={url}>View on edX</a>;
-    } else {
-      titleEl = title;
-      popoverLink = null;
-    }
+    const titleEl = (url) => (
+      url ? <a href={url}>{title}</a> : title
+    );
+    const popoverLink = (url) => (
+      url ? <a className="edx-link" href={url}>View on edX</a> : null
+    );
+
     // if there is no description, set a default
     const descriptionText = description || "No description available.";
 
@@ -69,7 +72,7 @@ export default class CourseListItemWithPopover extends React.Component {
     return (
       <li>
         <h4 className="title" onClick={this.handleClick}>
-          {titleEl}
+          {titleEl(url)}
         </h4>
         <Popover
           className="program-course-popover mdl-cell mdl-cell--4-col"
@@ -83,7 +86,7 @@ export default class CourseListItemWithPopover extends React.Component {
         >
           <h4 className="title">{title}</h4>
           <div className="description course-description">{descriptionText}</div>
-          {popoverLink}
+          {popoverLink(url)}
         </Popover>
         <div className="description enrollment-dates">
           {enrollmentText}

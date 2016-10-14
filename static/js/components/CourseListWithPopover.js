@@ -5,15 +5,19 @@ import CourseListItemWithPopover from './CourseListItemWithPopover';
 
 export default class CourseListWithPopover extends React.Component {
   props: {
-    courses: Array<Object>,
+    courses: Array<CourseListItemWithPopover>,
   }
+
   render() {
-    const courseDetails = this.props.courses.map((course, index) =>
-      <CourseListItemWithPopover key={index} {...course} />
-    );
+    const listItems = (courses) => {
+      return courses.map((course, index) =>
+        <CourseListItemWithPopover key={index} {...course} />
+      );
+    };
+
     return (
       <ol className="program-course-list">
-        {courseDetails}
+        {listItems(this.props.courses)}
       </ol>
     );
   }
