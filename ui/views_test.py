@@ -2,12 +2,14 @@
 Test end to end django views.
 """
 import json
+import re
 
 from django.db.models.signals import post_save
 from django.core.urlresolvers import reverse
 from django.test import override_settings
 from factory.django import mute_signals
 from factory.fuzzy import FuzzyText
+import html5lib
 from mock import patch, Mock
 from rest_framework import status
 from rolepermissions.shortcuts import available_perm_status
@@ -16,13 +18,33 @@ from wagtail.wagtailimages.tests.utils import get_test_image_file
 
 from cms.models import HomePage, ProgramPage
 from courses.models import Program
-from courses.factories import ProgramFactory
+from courses.factories import ProgramFactory, CourseFactory
 from backends.edxorg import EdxOrgOAuth2
 from profiles.api import get_social_username
 from profiles.factories import ProfileFactory
 from roles.models import Role
 from search.base import ESTestCase
 from ui.urls import DASHBOARD_URL, TERMS_OF_SERVICE_URL
+
+
+JS_SETTINGS_MARKER = re.compile(r"var SETTINGS *= *(?P<json>\{.*\});")
+
+
+def get_js_settings(response_text):
+    """
+    Given an HTML response body, parse out and return the `SETTINGS`
+    variable in the Javascript execution environment.
+    Note that this only returns the `SETTINGS` as they're originally defined
+    on the page -- any Javascript logic to modify the `SETTINGS` after they
+    are defined will not be applied.
+    """
+    parsed = html5lib.parse(response_text)
+    script_tags = parsed.findall(".//{http://www.w3.org/1999/xhtml}script")
+    for script_tag in script_tags:
+        match = JS_SETTINGS_MARKER.match(script_tag.text.strip())
+        if match:
+            return json.loads(match.group('json'))
+    return None  # couldn't find it
 
 
 class ViewsTests(ESTestCase):
@@ -373,6 +395,30 @@ class TestProgramPage(ViewsTests):
 
         resp = self.client.get('/')
         self.assertContains(resp, image.get_rendition('fill-690x530').url)
+
+    def test_course_listing(self):
+        """
+        Verify that courses are being serialized to JS in the correct order
+        """
+        # Create several courses in the program
+        courses = [
+            CourseFactory.create(
+                program=self.program_page.program,
+                position_in_program=i,
+            )
+            for i in range(5)
+        ]
+        # render the page
+        response = self.client.get(self.program_page.url)
+        js_settings = get_js_settings(response.content)
+        # check that the courses are in the response
+        self.assertIn("courses", js_settings)
+        self.assertEqual(len(js_settings["courses"]), 5)
+        # check that they're in the correct order
+        for course, js_course in zip(courses, js_settings["courses"]):
+            self.assertEqual(course.title, js_course["title"])
+            self.assertEqual(course.description, js_course["description"])
+            self.assertEqual(course.url, js_course["url"])
 
 
 class TestUsersPage(ViewsTests):
