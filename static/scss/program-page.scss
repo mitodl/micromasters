@@ -1,5 +1,5 @@
 .program-page {
-  padding: 0;
+  padding: 0 !important;
   background: #fff;
 
   .double-column {
@@ -74,6 +74,12 @@
     .tab-container {
       width: 96%;
       max-width: 1150px;
+      display: flex;
+      overflow-x: scroll;
+
+      a {
+        white-space: nowrap;
+      }
 
       a:focus, a:hover {
         text-decoration: none;
@@ -187,6 +193,25 @@
     margin: 0 auto;
     max-width: 1150px;
 
+    @media (max-width: 580px) {
+      padding: 0 23px;
+      width: 100%;
+
+      .mdl-cell--8-col, .mdl-cell--4-col {
+        width: 100%;
+
+        .panel-content {
+          margin-right: 0;
+
+          .faqs {
+            .faq {
+              padding: 0 0 17px 0;
+            }
+          }
+        }
+      }
+    }
+
     p {
       font-size: 17px;
       color: rgba(0,0,0,.7);
@@ -197,6 +222,7 @@
 
   .faqs {
     margin-top: 20px;
+
     @media (max-width: 580px) {
       margin: 18px auto;
     }
