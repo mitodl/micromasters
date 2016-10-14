@@ -89,4 +89,7 @@ class FinancialAidMailView(GenericAPIView):
             subject=serializer.data['email_subject'],
             financial_aid=financial_aid
         )
-        return Response(data=generate_mailgun_response_json(mailgun_response), status=mailgun_response.status_code)
+        return Response(
+            status=mailgun_response.status_code,
+            data=generate_mailgun_response_json(mailgun_response)
+        )
