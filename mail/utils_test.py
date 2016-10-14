@@ -113,14 +113,20 @@ class MailUtilsTests(TestCase):
         )
         with self.assertRaises(ImproperlyConfigured):
             generate_mailgun_response_json(response_401)
+
+    def test_generate_mailgun_response_json_with_failed_json_call(self):
+        """
+        Tests that generate_mailgun_response_json() returns without erroring if Response.json() call fails for
+        non 401 status code
+        """
         # Response.json() error
-        response_value_error = Mock(
+        response = Mock(
             spec=Response,
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             json=lambda: (_ for _ in []).throw(ValueError),  # To get .json() to throw ValueError
             reason="reason"
         )
         self.assertDictEqual(
-            generate_mailgun_response_json(response_value_error),
-            {"message": response_value_error.reason}
+            generate_mailgun_response_json(response),
+            {"message": response.reason}
         )
