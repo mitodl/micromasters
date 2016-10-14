@@ -99,15 +99,28 @@ class MailUtilsTests(TestCase):
         Tests that generate_mailgun_response_json() returns response.json() unless the status code is 401 in which
         case it should raise ImproperlyConfigured
         """
+        # Normal Response
         response = Mock(
             spec=Response,
             status_code=status.HTTP_200_OK,
             json=mocked_json()
         )
         assert generate_mailgun_response_json(response) == response.json()
+        # 401 error
         response_401 = Mock(
             spec=Response,
             status_code=status.HTTP_401_UNAUTHORIZED
         )
         with self.assertRaises(ImproperlyConfigured):
             generate_mailgun_response_json(response_401)
+        # Response.json() error
+        response_value_error = Mock(
+            spec=Response,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            json=lambda: (_ for _ in []).throw(ValueError),  # To get .json() to throw ValueError
+            reason="reason"
+        )
+        self.assertDictEqual(
+            generate_mailgun_response_json(response_value_error),
+            {"message": response_value_error.reason}
+        )
