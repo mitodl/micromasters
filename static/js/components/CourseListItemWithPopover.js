@@ -4,7 +4,7 @@ import Popover from 'material-ui/Popover';
 import PopoverNullAnimation from '../util/popover_animation';
 
 
-export default class ProgramCourse extends React.Component {
+export default class CourseListItemWithPopover extends React.Component {
   props: {
     id: number,
     title: string,

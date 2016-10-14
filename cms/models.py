@@ -199,7 +199,7 @@ def get_program_page_context(programpage, request):
     context["authenticated"] = not request.user.is_anonymous()
     context["signup_dialog_src"] = get_bundle_url(request, "signup_dialog.js")
     context["faculty_carousel_src"] = get_bundle_url(request, "faculty_carousel.js")
-    context["program_course_list_src"] = get_bundle_url(request, "program_course_list.js")
+    context["course_list_src"] = get_bundle_url(request, "course_list.js")
     context["username"] = username
     context["js_settings_json"] = json.dumps(js_settings)
     context["title"] = programpage.title
