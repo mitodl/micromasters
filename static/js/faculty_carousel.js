@@ -5,7 +5,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 const carouselDiv = document.querySelector('#faculty-carousel');
-ReactDOM.render(
-  <FacultyCarousel faculty={SETTINGS.faculty} />,
-  carouselDiv
-);
+if (carouselDiv !== null) {
+  ReactDOM.render(
+    <FacultyCarousel faculty={SETTINGS.faculty}/>,
+    carouselDiv
+  );
+}
