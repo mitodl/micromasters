@@ -3,54 +3,38 @@ import { assert } from 'chai';
 import sinon from 'sinon';
 import moment from 'moment';
 
-import { orderReceipt } from './order_receipt';
+import rootReducer from '../reducers';
 import {
   setInitialTime,
   setTimeoutActive,
-
-  SET_INITIAL_TIME,
-  SET_TIMEOUT_ACTIVE,
 } from '../actions/order_receipt';
+import { createAssertReducerResultState } from '../util/test_utils';
 
 describe('order receipt reducer', () => {
-  let sandbox, store, dispatchThen;
+  let sandbox, store, assertReducerResultState;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
-    store = configureTestStore(orderReceipt);
-    dispatchThen = store.createDispatchThen();
+
+    store = configureTestStore(rootReducer);
+    assertReducerResultState = createAssertReducerResultState(store, state => state.orderReceipt);
   });
 
   afterEach(() => {
     sandbox.restore();
 
     store = null;
-    dispatchThen = null;
   });
 
-  describe('dialog visibility', () => {
-    [true, false].forEach(bool => {
-      it(`should let you set timeoutActive to ${bool}`, () => {
-        return dispatchThen(setTimeoutActive(bool), [
-          SET_TIMEOUT_ACTIVE
-        ]).then(state => {
-          assert.equal(state.timeoutActive, bool);
-        });
-      });
-    });
+  it('should let you set timeoutActive', () => {
+    assertReducerResultState(setTimeoutActive, receipt => receipt.timeoutActive, false);
+  });
 
-    it('has an initial time', () => {
-      return dispatchThen({type: "fake"}, ['fake']).then(state => {
-        // value is already set to valid timestamp
-        assert(moment(state.initialTime).isValid());
-      });
-    });
+  it('should let you set the initial time, and the default is a valid time', () => {
+    let initialTime = store.getState().orderReceipt.initialTime;
+    assert(moment(initialTime).isValid());
 
-    it('should let you set the initial time', () => {
-      return dispatchThen(setInitialTime("time"), [SET_INITIAL_TIME]).then(state => {
-        assert.equal(state.initialTime, "time");
-      });
-    });
+    assertReducerResultState(setInitialTime, receipt => receipt.initialTime, initialTime);
   });
 });
 

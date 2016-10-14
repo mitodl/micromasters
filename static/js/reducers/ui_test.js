@@ -30,42 +30,27 @@ import {
   setConfirmSkipDialogVisibility,
 } from '../actions/ui';
 import { INITIAL_UI_STATE } from '../reducers/ui';
-import type { UIState } from '../reducers/ui';
 import { PERSONAL_STEP } from '../constants';
 import rootReducer from '../reducers';
-import type { Action } from '../flow/reduxTypes';
+import { createAssertReducerResultState } from '../util/test_utils';
 
 import configureTestStore from 'redux-asserts';
 import { assert } from 'chai';
 import sinon from 'sinon';
 
 describe('ui reducers', () => {
-  let sandbox, store, dispatchThen;
+  let sandbox, store, dispatchThen, assertReducerResultState;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     store = configureTestStore(rootReducer);
     dispatchThen = store.createDispatchThen(state => state.ui);
+    assertReducerResultState = createAssertReducerResultState(store, state => state.ui);
   });
 
   afterEach(() => {
     sandbox.restore();
   });
-
-  const assertReducerResultState = (
-    action: () => Action, stateLookup: (ui: UIState) => any, defaultValue: any
-  ): void => {
-    assert.deepEqual(defaultValue, stateLookup(store.getState().ui));
-    for (let value of [true, null, false, 0, 3, 'x', {'a': 'b'}, {}, [3, 4, 5], [], '']) {
-      let expected = value;
-      if (value === null) {
-        // redux-actions converts this to undefined
-        expected = undefined;
-      }
-      store.dispatch(action(value));
-      assert.deepEqual(expected, stateLookup(store.getState().ui));
-    }
-  };
 
   it('should clear the ui', () => {
     store.dispatch(clearUI());
