@@ -82,6 +82,7 @@ class ReactView(View):  # pylint: disable=unused-argument
                 "style_src": get_bundle_url(request, "style.js"),
                 "dashboard_src": get_bundle_url(request, "dashboard.js"),
                 "js_settings_json": json.dumps(js_settings),
+                "tracking_id": "",
             }
         )
 
@@ -169,6 +170,7 @@ def terms_of_service(request):
                 "sentry_dsn": sentry.get_public_dsn()
             }),
             "signup_dialog_src": get_bundle_url(request, "signup_dialog.js"),
+            "tracking_id": "",
         }
     )
 
