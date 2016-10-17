@@ -31,20 +31,20 @@ const SignupDialog = ({
   >
     <div className="signup-dialog">
       <div className="logos">
-        <img src="/static/images/edx_logo.png" />
-        <img src="/static/images/mit_logo_grey_red.png" />
+        <img className="edx_logo" src="/static/images/edx_logo.png" />
+        <img className="mitx_logo" src="/static/images/mitx_logo.png" />
       </div>
-      <span>
+      <p>
         All MITx MicroMasters courses are delivered on edX.
-        To sign up for a MIT MicroMasters program you need an edX account.
-      </span>
+        To sign up for a MITx MicroMasters program you need an edX account.
+      </p>
 
-      <a className="mm-button signup" href="/login/edxorg">
+      <a className="mdl-button signup-modal-button" href="/login/edxorg">
         Continue with edX
       </a>
       <div className="terms-of-service-text">
         By clicking "Continue with edX" I certify that I agree with <a href="/terms_of_service" target="_blank">
-          MIT MicroMasters Terms of Service.
+          MITx MicroMasters Terms of Service.
         </a> Read our <a
           href="http://web.mit.edu/referencepubs/nondiscrimination/index.html"
           target="_blank"

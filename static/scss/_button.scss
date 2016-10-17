@@ -1,36 +1,108 @@
-.mm-button {
-  background-color: #f1f1f1;
-  border-radius: 2px;
-  border: 0;
-  padding: 12px 35px;
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  vertical-align: middle;
-  white-space: nowrap;
-  text-transform: uppercase;
-  font-size: 16px;
-  font-weight: 400;
-  margin: 0 15px 0 0;
-  cursor: pointer;
+.mdl-button {
 
-  &.main-action {
-    background-color: $blue-button;
-    color: white;
+  font-weight: 400;
+
+  &.gray-button {
+    background: $gray-button-color;
+    color: #555;
   }
 
-  &.signup {
-    background-color: $blue-button;
-    color: white;
-    text-transform: none;
+  &.go-back {
+    margin-right: 20px;
+  }
+
+  &.next, &.go-back {
+    height: 43px;
+    line-height: 43px;
+    padding: 0 23px;
+  }
+
+  &.next {
+    background: $button-color;
+    color: #fff;
+  }
+
+  &.gray-button:hover, &.gray-button:focus, &.gray-button:active, &.gray-button:focus:not(:active) {
+    background: $gray-button-hover;
+    color: #555;
+    text-decoration: none;
+  }
+
+  &.hero-button {
+    background: $mm-brand-bg;
+    color: #fff;
+    height: 50px;
+    line-height: 50px;
+    padding: 0 50px;
+    margin: 0 0 20px 0;
+    font-size: 16px;
+    font-weight: 300;
+  }
+
+  &.hero-button:hover, &.hero-button:focus, &.hero-button:active, &.hero-button:focus:not(:active) {
+    background: $mm-brand-bg-dark;
+  }
+
+  &.signup-modal-button {
+    font-size: 15px;
+    background: $button-color;
+    color: #fff;
+    height: 50px;
+    line-height: 50px;
+  }
+
+  &.button-signup, &.button-login {
+    font-size: 15px;
+    text-decoration: none;
+    height: 44px;
+    line-height: 43px;
+  }
+
+  &.button-signup {
+    color: $mm-brand-bg !important;
+    background-color: white;
+  }
+
+  &.button-login {
+    margin-right: 19px;
+    border: 2px solid rgba(255,255,255,.5);
+    border-radius: 3px;
+    color: rgba(255,255,255,.8);
+    background: transparent;
+    line-height: 40px;
+    height: 45px;
+  }
+
+  &.button-login:hover, &.button-login:focus, &.button-login.focus, &.button-signup:hover, &.button-signup:focus, &.button-signup.focus {
+    background: white;
+    color: $mm-brand-bg !important;
+    border-color: white;
+  }
+
+  &.footer-button {
     display: block;
-    text-align: center;
-    padding: 15px 35px;
+    background: #386082 !important;
+    font-size: 14px;
+    color: white;
+    height: 42px;
+    line-height: 41px;
+  }
+
+  &.footer-button:hover {
+    background: #1d67a7 !important;
+  }
+
+  &.progress-button {
+    color: $mm-brand-bg !important;
+    background-color: $progress-button-background !important;
+    box-shadow: none;
+    height: 46px;
+    line-height: 46px;
   }
 
   &.minor-action {
     font-size: 12px;
-    padding: 7px 12px;
+    color: #333333;
     border: 1px solid #c7c7c7;
     background-image: -ms-linear-gradient(top, #f8f8f8   0%, #dedede   100%);
     background-image: -moz-linear-gradient(top, #f8f8f8   0%, #dedede   100%);
@@ -39,6 +111,51 @@
     background-image: -webkit-linear-gradient(top, #f8f8f8   0%, #dedede   100%);
     background-image: linear-gradient(to bottom, #f8f8f8   0%, #dedede   100%);
   }
+
+  &.minor-action:hover, &.minor-action:focus, &.minor-action:active, &.minor-action:focus:not(:active) {
+    color: #000;
+  }
+
+  &:hover, &:focus, &:active, &:focus:not(:active) {
+    background-color: $button-color-hover;
+    color: white;
+    text-decoration: none;
+  }
+}
+
+.mdl-button--icon {
+  border-radius: 50%;
+  font-size: 24px;
+  height: 32px;
+  margin-left: 0;
+  margin-right: 0;
+  min-width: 32px;
+  width: 32px;
+  padding: 0;
+  overflow: hidden;
+  color: inherit;
+  line-height: normal;
+  background: none;
+
+  &:hover, &:focus, &:active, &:focus:not(:active)  {
+    background: #eee;
+  }
+
+  i.material-icons {
+    position: static;
+    -webkit-transform: none;
+    transform: none;
+
+  }
+}
+
+.mdl-button:focus {
+  outline: 0 auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+
+.mdl-button:active {
+  background-color: $button-color;
 }
 
 .mm-minor-action {
@@ -49,43 +166,21 @@
 }
 
 .dashboard-button {
-  background-color: $blue-button;
+  font-size: 13px;
+  background: $button-color;
   color: white;
-  text-align: center;
-  font-size: small;
-  min-height: 40px;
-  font-weight: 400;
 
   &[disabled] {
-    background-color: adjust-color($blue-button, $alpha: -0.5);
+    background-color: adjust-color($button-color, $alpha: -0.5);
   }
 }
 
 .disabled {
   opacity: 0.3;
+  cursor: not-allowed;
 }
 
-.dialog-button {
-  padding: 0 25px;
 
-  &.cancel-button {
-    color: white;
-    background-color: $medgrey;
-    margin: 0 5px 15px 5px;
-  }
-
-  &.save-button {
-    background-color: $blue-button;
-    color: white;
-    margin: 0 15px 15px 5px;
-  }
-
-  &.enroll-button {
-    background-color: $blue-button;
-    color: white;
-    margin: 0 15px 15px 5px;
-  }
-}
 
 a.btn {
   text-decoration: none;

@@ -12,7 +12,7 @@ body.app-media {
   border-radius: 0;
   height: auto;
   min-height: 0;
-  padding: 12px 27px 12px 33px;
+  padding: 10px 27px 8px 33px;
 
   .navbar-header {
     padding: 0;
@@ -21,7 +21,7 @@ body.app-media {
       position: relative;
       top: 2px;
 
-      @media (max-width: 580px) {
+      @include breakpoint(phone) {
         float: left;
       }
 
@@ -44,12 +44,24 @@ body.app-media {
       .header-page-name {
         display: inline-block;
         color:white;
-        font-size: 19px;
+        font-size: 17px;
         margin: 0 20px 0 0;
         font-weight: 300;
         float: left;
         position: relative;
         bottom: 2px;
+
+        h2 {
+          font-size: 17px;
+          margin: 0;
+          padding: 0;
+          font-weight: 300;
+
+          a, a:hover {
+            color: white;
+            font-weight: 300;
+          }
+        }
 
         img.micromasters_logo {
           width: 120px;
@@ -60,46 +72,21 @@ body.app-media {
     .pull-right {
           color: #000;
 
-          @media (max-width: 580px) {
+          @include breakpoint(phone) {
             float: left !important;
             display: block;
             margin: 20px auto 4px;
             width: 100%;
-          }
 
-          a.btn-login {
-            color: $mm-brand-bg !important;
-            border-color: white;
-            background-color: white;
-            padding: 10px 23px !important;
-            font-size: 15px;
-            text-decoration: none;
-
-            @media (max-width: 580px) {
+            a.button-signup {
               width: 45%;
             }
-          }
 
-          a.members-login {
-            display: inline-block;
-            margin-right: 19px;
-            border: 2px solid rgba(255,255,255,.5);
-            border-radius: 4px;
-            color: rgba(255,255,255,.8);
-            padding: 9px 23px !important;
-            font-size: 15px;
-            font-weight: 300;
-
-            @media (max-width: 580px) {
+            a.button-login {
               width: 47%;
               margin-right: 5%;
               border-width: 1px;
             }
-          }
-
-          a.members-login:hover, a.members-login:focus, a.members-login.focus {
-            color: white;
-            border-color: white;
           }
 
           a.header-dashboard-link {
@@ -114,7 +101,7 @@ body.app-media {
             position: relative;
             top: 2px;
 
-            @media (max-width: 580px) {
+            @include breakpoint(phone) {
               text-align: center;
               padding: 13px 0;
               width: 48%;
@@ -147,7 +134,7 @@ body.app-media {
   height: 620px;
   height: 94vh;
 
-  @media (max-width: 580px) {
+  @include breakpoint(phone) {
     height: 460px;
     min-height: 0;
     background-attachment: scroll;
@@ -162,7 +149,7 @@ body.app-media {
     width: 100%;
     background: $brand-overlay;
 
-    @media (max-width: 580px) {
+    @include breakpoint(phone) {
       padding: 20px 8%;
     }
 
@@ -180,7 +167,7 @@ body.app-media {
         font-size: 3.2vw;
       }
 
-      @media (max-width: 580px) {
+      @include breakpoint(phone) {
         font-size: 25px;
         line-height: 1.15;
         margin-bottom: 0;
@@ -198,7 +185,7 @@ body.app-media {
         font-size: 2.2vw;
       }
 
-      @media (max-width: 580px) {
+      @include breakpoint(phone) {
         display: none;
       }
     }
@@ -224,7 +211,7 @@ body.app-media {
 }
 
 .sub-banner {
-  background-color: #e6e6e6;
+  background-color: #ffffff;
 
   .sub-banner-section{
     padding: 7vw 0 8vw;
@@ -240,7 +227,7 @@ body.app-media {
       width: 81%;
       max-width:1000px;
 
-      @media (max-width: 580px) {
+      @include breakpoint(phone) {
         width: 90%;
       }
 
@@ -256,12 +243,13 @@ body.app-media {
       }
 
       p {
-        font-size: 16px;
+        font-size: 18px;
         font-weight: 400;
         color: rgba(0,0,0,.6);
+        margin-bottom: 2.1em;
 
         @media (min-width: 1200px) {
-        font-size: 1.2vw;
+        font-size: 1.4vw;
         }
       }
 
@@ -270,24 +258,30 @@ body.app-media {
 
         img{
           margin-left: 5px;
+          margin-right: 9px;
           width: 78px;
           position: relative;
           top: -8px;
+          display: inline-block;
+        }
+
+        .micromasters-logo {
+          width: 119px;
+          top: -10px;
         }
 
         .sub-banner-logos-text {
           vertical-align: bottom;
-          font-size: 16px;
           display: inline-block;
-          font-size: 16px;
+          font-size: 18px;
           font-weight: 400;
           color: rgba(0, 0, 0, 0.6);
 
           @media (min-width: 1200px) {
-            font-size: 1.2vw;
+            font-size: 1.4vw;
           }
 
-          @media (max-width: 580px) {
+          @include breakpoint(phone) {
             display: block;
             line-height: 1.4em;
             margin-bottom: 20px;
@@ -323,7 +317,7 @@ body.app-media {
   background: #fff;
   padding: 50px 0 67px;
 
-  @media (max-width: 580px) {
+  @include breakpoint(phone) {
     padding: 45px 0;
   }
 
@@ -335,7 +329,7 @@ body.app-media {
     text-align: left;
     border-bottom: 1px dashed #c5c5c5;
 
-    @media (max-width: 580px) {
+    @include breakpoint(phone) {
       text-align: center;
       width: 87%;
     }
@@ -345,7 +339,7 @@ body.app-media {
       width: 170px;
       margin-right: 70px;
 
-      @media (max-width: 580px) {
+      @include breakpoint(phone) {
         float: none;
         margin: 0 auto;
       }
@@ -359,7 +353,9 @@ body.app-media {
       font-weight: 300;
       line-height: 1.4em;
 
-      @media (max-width: 580px) {
+      a {font-weight: 300;}
+
+      @include breakpoint(phone) {
         font-size: 19px;
       }
     }
@@ -368,7 +364,7 @@ body.app-media {
       color: $font-gray;
       font-size: 22px;
 
-      @media (max-width: 580px) {
+      @include breakpoint(phone) {
         font-size: 19px;
       }
     }
@@ -387,7 +383,7 @@ body.app-media {
   h3 {
     margin: 0 0 70px;
 
-    @media (max-width: 580px) {
+    @include breakpoint(phone) {
       margin: 0 0 40px;
     }
   }
@@ -406,7 +402,7 @@ body.app-media {
     .col-md-4 {
       text-align: left;
 
-      @media (max-width: 580px) {
+      @include breakpoint(phone) {
         margin-bottom: 40px;
       }
     }
@@ -415,7 +411,7 @@ body.app-media {
   .program-thumbnail-description{
     padding: 20px 10px 30px 15px;
 
-    @media (max-width: 580px) {
+    @include breakpoint(phone) {
         padding: 20px 3px 30px;
       }
 
@@ -426,10 +422,8 @@ body.app-media {
       margin: 0 0 13px;
     }
 
-    .mailing-list {
+    .mailing-list-button {
       margin-top: 12px;
-      background: #cccccc;
-      color: #333333;
     }
 
     a {
@@ -489,7 +483,7 @@ body.app-media {
   .col-md-4 {
     padding: 0 3%;
 
-    @media (max-width: 580px) {
+    @include breakpoint(phone) {
       padding: 0 9%;
       width: 100%;
       float: left;
@@ -521,7 +515,7 @@ body.app-media {
 
     img {
       margin: auto auto;
-      width: 150px;
+      width: 123px;
     }
   }
 }
@@ -1032,7 +1026,7 @@ body.app-media {
   vertical-align: middle;
 }
 
-@media (max-width: 580px) {
+@include breakpoint(phone) {
   .app-media .is-list .info-wrap {
     display: block !important;
     padding-left: 60px;

@@ -54,7 +54,7 @@ export default class UserPagePersonalDialog extends React.Component {
 
     return (
       <Dialog
-        className="personal-dialog"
+        className="dashboard-dialog personal-dialog"
         open={userPageDialogVisibility}
         onRequestClose={this.closePersonalDialog}
         actions={actions}

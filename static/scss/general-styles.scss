@@ -13,10 +13,10 @@ body {
 
 .mdl-card {
   padding: 20px 24px 30px;
-  margin: 0 0 20px 0;
+  margin: 0 0 18px 0;
   min-height: 150px;
   width: 100%;
-  border-radius: 0;
+  border-radius: 2px;
 
   .mdl-card__title {
     padding: 0;
@@ -25,7 +25,7 @@ body {
 
   .mdl-card__title-text {
     font-weight: 500;
-    font-size: 13pt;
+    font-size: 16px;
     font-weight: 500;
     color: $font-black;
   }
@@ -36,7 +36,7 @@ body {
 }
 
 .mdl-shadow--2dp, .mdl-shadow--3dp {
-  box-shadow: none;
+  box-shadow: 0px 1px 5px 0 rgba(0,0,0,0.16);
 }
 
 p {

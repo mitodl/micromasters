@@ -17,10 +17,10 @@
 {% block keywords %}micromasters, MIT, online masters, online courses, MOOC{% endblock %}
 
 {% block social %}
-  <meta property="og:site:name" content="MIT MicroMasters">
+  <meta property="og:site:name" content="MITx MicroMasters">
   <meta property="og:type" content="website">
   <meta property="og:url" content="{{ request.build_absolute_uri }}">
-  <meta property="og:title" content="MIT MicroMasters">
+  <meta property="og:title" content="MITx MicroMasters">
   <meta property="og:description" content="MicroMasters is a
     new digital credential for online learners. The MicroMasters
     credential will be granted to learners who complete an
@@ -33,7 +33,7 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:site" content="@MITxonedX">
-  <meta itemprop="name" content="MIT MicroMasters">
+  <meta itemprop="name" content="MITx MicroMasters">
   <meta itemprop="description" content="MicroMasters is a
     new digital credential for online learners. The MicroMasters
     credential will be granted to learners who complete an
@@ -66,15 +66,16 @@
         <div class="col-md-12 ">
           <div class="sub-banner-section">
             <div class="sub-banner-text">
-            <h3>What is MicroMasters Credential?</h3>
+            <h3>What is a MicroMasters Credential?</h3>
               <p>MicroMasters is a new digital credential for online learners. The MicroMasters credential
               will be granted to learners who complete an integrated set of graduate-level courses on edX.org
               and capstone exams. With the MicroMasters credentials, learners can apply for an accelerated
               master’s degree program on campus, at MIT or other top universities.
 </p>
               <div class="sub-banner-logos">
-                <div class="sub-banner-logos-text">All MIT MicroMasters courses are delivered on</div>
-                <img src="{% static 'images/edx_logo.png' %}" alt="edX">
+                <div class="sub-banner-logos-text">All MITx MicroMasters courses are delivered on</div>
+                <img src="{% static 'images/edx_logo.png' %}" alt="edX" class="edx-logo">
+                <img src="{% static 'images/micromasters_logo.png' %}" alt="MITx" class="micromasters-logo">
               </div>
             </div>
           </div>
@@ -124,14 +125,14 @@
           <img class="person" src="{% static 'images/sanjay1.png' %}" alt="">
           <h2 class="quote-text">"Inverted admissions has the potential to disrupt traditional modes of
           access to higher education... We’re democratizing access to a master’s program for learners worldwide."</h2>
-          <p class="quote_author">-- Sanjay Sarma, Vice President of Open Learning  </p>
+          <p class="quote_author">-- Sanjay Sarma, Vice President of Open Learning, MIT  </p>
         </div>
       </div>
 
       <div class="row current-programs-section">
         <div class="col-md-12">
           <div class="row">
-            <h3>Current MicroMasters Programs</h3>
+            <h3>Current MITx MicroMasters Programs</h3>
             {% for program in programs %}
               <div class="col-md-4">
                 {% if program.programpage %}
@@ -187,7 +188,7 @@
             </div>
             <div class="program-thumbnail-description">
               <p>MIT plans to bring more MicroMasters programs to motivated learners like you. Sign up for our mailing list to hear about new MicroMasters programs.</p>
-              <button data-toggle="modal" class="btn mailing-list upper-case" data-target="#subscribeAlert">Sign up for mailing list</button>
+              <button data-toggle="modal" class="mdl-button gray-button mailing-list-button" data-target="#subscribeAlert">Sign up for mailing list</button>
             </div>
           </div>
 
@@ -218,7 +219,7 @@
           (MIT’s online learning initiative) to students who do exceptionally well in a given set of graduate-level
           online courses and do well in a subsequent exam. The credential will first be available to students who register for the SCM program’s online courses.
           </p>
-          <h3>Join the MIT MicroMasters community</h3>
+          <h3>Join the MITx MicroMasters community</h3>
           <p>
           MicroMasters aren't just about courseware. Part of the the MIT experience is interacting with other exceptional
           students like yourself. Fill out your profile on this site and build professional relationships with like-minded learners.

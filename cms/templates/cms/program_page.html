@@ -40,7 +40,7 @@
       {{ page.title_over_image|richtext }}
     </div>
     {% if not authenticated %}
-    <button class="mm-button main-action open-signup-dialog mdl-cell--hide-phone">
+    <button class="mdl-button hero-button open-signup-dialog mdl-cell--hide-phone">
       Sign Up Now
     </button>
     <div class="log-in mdl-cell--hide-phone">
@@ -96,14 +96,18 @@
           </h3>
           <div class="contact-links">
             {% if page.program_home_page_url %}
+            <p>
             <a target="_blank" href="{{ page.program_home_page_url }}">
               {{ page.title }} Home Page
             </a>
+            </p>
             {% endif %}
             {% if page.program_contact_email %}
+            <p>
             <a href="mailto:{{ page.program_contact_email }}">
               Contact us: {{ page.program_contact_email }}
             </a>
+            </p>
             {% endif %}
           </div>
         </div>
@@ -120,7 +124,7 @@
   {% if page.faculty_members.count > 0 %}
     <div class="faculty-section mdl-grid mdl-grid--no-spacing">
       <div class="mdl-cell mdl-cell--12-col">
-        <h3 class="title">Faculty</h3>
+        <h3 class="title">Instructors</h3>
         {% if page.faculty_description|length > 0 %}
           <p class="description">{{ page.faculty_description }}</p>
         {% endif %}

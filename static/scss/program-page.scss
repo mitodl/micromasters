@@ -28,7 +28,7 @@
       margin-top: 0;
       margin-bottom: 31px;
       max-width: 700px;
-      @media (max-width: 580px) {
+      @include breakpoint(phone) {
         font-size: 31px;
       }
     }
@@ -39,21 +39,13 @@
 
       * {
         font-size: 23px;
-        @media (max-width: 580px) {
+        @include breakpoint(phone) {
           font-size: 18px;
         }
         font-weight: 300;
         line-height: 1.3em;
         color: rgba(255,255,255,.8);
       }
-    }
-
-    button {
-      margin-bottom: 20px;
-      margin-right: 0;
-      font-size: 16px;
-      font-weight: 300;
-      padding: 14px 53px;
     }
 
     .log-in {
@@ -178,6 +170,11 @@
     .contact-links {
       display: flex;
       flex-direction: column;
+
+      p {
+        font-size: 15px;
+        margin: 0 0 12px 0;
+      }
     }
   }
 
@@ -206,7 +203,7 @@
     margin: 0 auto;
     max-width: 1150px;
 
-    @media (max-width: 580px) {
+    @include breakpoint(phone) {
       padding: 0 23px;
       width: 100%;
 
@@ -236,7 +233,7 @@
   .faqs {
     margin-top: 20px;
 
-    @media (max-width: 580px) {
+    @include breakpoint(phone) {
       margin: 18px auto;
     }
 

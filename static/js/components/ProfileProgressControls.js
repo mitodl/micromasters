@@ -42,7 +42,7 @@ export default class ProfileProgressControls extends React.Component {
     let prevButton, nextButton;
     if(prevStep) {
       prevButton = <button
-        className="mm-button prev"
+        className="mdl-button gray-button go-back prev"
         onClick={prevStep}>
         <span>Go Back</span>
       </button>;
@@ -50,7 +50,7 @@ export default class ProfileProgressControls extends React.Component {
     if(nextStep) {
       nextButton = <button
         role="button"
-        className="mm-button main-action next"
+        className="mdl-button next"
         onClick={this.saveAndContinue}>
         <span>{nextBtnLabel}</span>
       </button>;

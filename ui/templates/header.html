@@ -3,7 +3,9 @@
         <div class="pull-left">
           <a class="brand-logo" href="http://www.mit.edu" target="_blank"><img src="/static/images/mit-logo-transparent.svg"  height="40" alt="MIT Home Page" /></a>
           <div class="divider-large">&nbsp;</div>
-          <div class="header-page-name"><a href="/"><img src="/static/images/micromasters_logo_white.png" class="micromasters_logo" alt="MIT MicroMasters" /></a></div>
+          <div class="header-page-name">
+          <h2><a href="/">MITx MicroMasters</a></h2>
+          </div>
           </div>
         <div class="pull-right">
           {% if authenticated %}
@@ -12,12 +14,12 @@
             {% else %}
               <a class="header-dashboard-link" href="/dashboard">My Dashboard</a>
             {% endif %}
-          <a class="btn btn-login white-button upper-case" href="/logout">
+          <a class="mdl-button button-signup" href="/logout">
             Sign Out
           </a>
           {% else %}
-          <a class="members-login btn ghost open-signup-dialog upper-case">Log In</a>
-          <a class="btn btn-login white-button open-signup-dialog upper-case">
+          <a class="mdl-button button-login open-signup-dialog">Log In</a>
+          <a class="mdl-button button-signup open-signup-dialog">
           Sign Up
           </a>
           {% endif %}

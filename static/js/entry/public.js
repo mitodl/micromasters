@@ -94,7 +94,7 @@ jQuery(document).ready(function ($) {
 
   $('.rrssb-buttons').rrssb({
     // required:
-    title: 'MIT MicroMasters',
+    title: 'MITx MicroMasters',
     url: CURRENT_PAGE_URL,
 
     // optional:

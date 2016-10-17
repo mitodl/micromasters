@@ -72,7 +72,7 @@ export default class EducationDialog extends ProfileFormFields {
     let keySet = (key) => ['education', educationDialogIndex, key];
 
     let fieldOfStudy = () => {
-      if (educationDegreeLevel !== HIGH_SCHOOL) { 
+      if (educationDegreeLevel !== HIGH_SCHOOL) {
         return <Cell col={12}>
             <FieldsOfStudySelectField
               keySet={keySet('field_of_study')}

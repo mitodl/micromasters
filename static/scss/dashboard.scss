@@ -156,7 +156,7 @@
   }
 
   .personalized-pricing {
-    margin: 0 25px 10px 25px;
+    margin: 0 5px 10px;
     padding: 30px;
     background-color: $lightgrey;
 
@@ -176,8 +176,8 @@
     }
 
     .explanation {
-      font-size: 14px;
-      font-weight: 300;
+      font-size: 15px;
+      font-weight: 400;
 
       .price {
         font-weight: 600;
@@ -191,6 +191,8 @@
 
       .full-price {
         cursor: pointer;
+        font-size: 15px;
+        font-weight: 400;
       }
     }
   }
@@ -210,9 +212,9 @@
     .course-row {
       width: 100%;
       font-size: 11pt;
-      min-height: 100px;
       align-items: center;
-      padding: 0 20px;
+      padding: 14px 20px;
+      border-bottom: 1px solid $lightgrey;
 
       &:last-child {
         border-bottom: none;
@@ -221,7 +223,7 @@
       .course-description {
         .course-title {
           font-weight: 500;
-          font-size: 16px;
+          font-size: 15px;
         }
 
         .details {
@@ -262,9 +264,14 @@
         align-items: center;
         text-align: center;
 
+        a.enroll-pay-later {
+          font-weight: 400;
+          font-size: 14px;
+        }
+
         .mdl-button {
           display: flex;
-          margin-bottom: 3px;
+          margin-bottom: 10px;
         }
 
         .description {
@@ -362,27 +369,6 @@
     text-align: center;
     color: #414141;
     font-weight: 400;
-  }
-}
-
-.mdl-button.progress-button {
-  text-transform: none;
-  font-size: 16px;
-  font-weight: 400;
-  height: 50px;
-  min-width: 200px;
-  margin-right: 5px;
-
-  span {
-    padding: 10px;
-  }
-
-  &.previous {
-    background: #f9f9f9 !important;
-  }
-
-  &.next {
-    background: #4c8399 !important;
   }
 }
 
@@ -490,27 +476,36 @@
   width: 700px;
   padding: 30px;
 
-  div {
-    border-top: 0 !important;
-  }
-
   h3 {
     border-bottom: 0 !important;
   }
 
   .mdl-button {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 25px;
+    font-size: 17px;
+    font-weight: 500;
+    margin: 6px 10px;
+    padding: 0 2px;
   }
 
   .cancel-button {
-    color: #b7b2b2;
+    background: none;
+    color: #9a9a9a;
   }
 
   .save-button {
     color: #0c92e0;
     margin-right: 20px;
+    background: none;
+  }
+
+  .save-button:hover {
+    background: none;
+    color: #0473b3;
+  }
+
+  .cancel-button:hover {
+    background: none;
+    color: #616161;
   }
 }
 

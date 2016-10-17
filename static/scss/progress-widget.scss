@@ -22,14 +22,14 @@
 }
 
 .progress-widget {
-  background-color: $mm-brand-bg-dark !important;
+  background-color: $mm-brand-bg !important;
   color: white;
   display: flex;
   align-items: center;
   flex-direction: column;
   align-content: space-between;
   font-size: 16pt;
-  padding: 20px 24px 44px;
+  padding: 20px 24px 44px !important;
 
   .progress-title {
     padding: 0;
@@ -51,7 +51,7 @@
     font-size: 15px;
     color: rgba(255,255,255,.9);
     text-align: center;
-    margin-bottom: 18px;
+    margin: 0 8% 24px;
   }
 
   .text-course-complete {
@@ -59,10 +59,4 @@
     font-weight: 300;
   }
 
-  .progress-button {
-    color: $mm-brand-bg !important;
-    background-color: $progress-button-background !important;
-    text-transform: uppercase !important;
-    box-shadow: none;
-  }
 }

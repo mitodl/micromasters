@@ -126,7 +126,12 @@ export default class CourseAction extends React.Component {
 
   renderPayLaterLink(run: CourseRun): React$Element<*> {
     return (
-      <a href="#" onClick={e => this.handleAddCourseEnrollment(e, run)} key="2">Enroll and pay later</a>
+      <a href="#"
+        className="enroll-pay-later"
+        onClick={e => this.handleAddCourseEnrollment(e, run)} key="2"
+      >
+        Enroll and pay later
+      </a>
     );
   }
 
@@ -155,7 +160,7 @@ export default class CourseAction extends React.Component {
     case STATUS_CAN_UPGRADE: {
       let date = moment(run.course_upgrade_deadline);
       action = this.renderEnrollButton(run);
-      let text = ifValidDate('', date => `Payment due: ${date.format(DASHBOARD_FORMAT)}`, date); 
+      let text = ifValidDate('', date => `Payment due: ${date.format(DASHBOARD_FORMAT)}`, date);
       description = this.renderTextDescription(text);
       break;
     }

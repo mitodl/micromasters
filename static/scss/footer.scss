@@ -28,11 +28,18 @@ footer {
     display: block;
   }
 
-  .footer-button {
+  .footer-cta {
     display: inline-block;
     vertical-align: middle;
-    width: 40%;
+    width: 100%;
     min-width: 150px;
+    padding: 0 0 60px 0;
+
+    @include breakpoint(phone) {
+      display: block;
+      margin: 20px 0;
+      width: 100%;
+    }
 
     &.non-marketing-pages {
       min-width: 300px;
@@ -40,11 +47,39 @@ footer {
     }
 
     a {
-      width: 80%;
+      width: 60%;
       float: right;
 
       &.no-float {
         float: none;
+      }
+
+      @include breakpoint(phone) {
+        float: none;
+        width: 100%;
+      }
+    }
+  }
+
+  .footer-cta-left {
+    padding: 0;
+    width: 40%;
+    display: inline-block;
+    vertical-align: middle;
+
+    @include breakpoint(phone) {
+      display: block;
+      margin: 20px 0;
+      width: 100%;
+    }
+
+    a {
+      width: 80%;
+      float: right;
+
+      @include breakpoint(phone) {
+        float: none;
+        width: 100%;
       }
     }
   }

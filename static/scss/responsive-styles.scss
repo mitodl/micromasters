@@ -22,7 +22,7 @@
 
 // MOBILE STYLES START HERE
 
-@media (max-width: 580px) {
+@include breakpoint(phone) {
 
   body {
     background-color: #dcdcdc;

@@ -123,7 +123,7 @@ export default class FinancialAidCard extends React.Component {
       </div>
       <div className="pricing-actions">
         <button
-          className="mm-button dashboard-button"
+          className="mdl-button dashboard-button"
           onClick={openFinancialAidCalculator}
         >
           Calculate your cost

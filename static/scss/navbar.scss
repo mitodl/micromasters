@@ -24,7 +24,7 @@
 
     &.open {
       transform: translate(100%);
-      box-shadow: 3px 0 10px $medlightgrey;
+      box-shadow: 3px 0 10px rgba(0,0,0,.2);
     }
 
     .profile-info {
@@ -39,6 +39,26 @@
 
       .program-selector {
         padding-right: 15px;
+        margin-top: 5px;
+
+        .Select-menu-outer,.Select-control,.Select-value-label,.Select-placeholder,.Select-option {
+          color: rgba(255,255,255,.7) !important;
+        }
+
+        .Select-placeholder {
+          padding-left: 0;
+        }
+
+        .Select-control {
+          border: none !important;
+          box-shadow: none !important;
+          cursor: pointer;
+        }
+
+        .Select-menu-outer {
+          border: none;
+        }
+
       }
 
       .name {
@@ -79,7 +99,7 @@
 
         i {
           color: $mm-brand-bg;
-          padding: 0 15px;
+          padding: 0 23px 0 15px
         }
       }
 
@@ -102,7 +122,7 @@
     box-shadow: none !important;
 
     @include breakpoint(desktop) {
-      min-height: 80px;
+      min-height: 50px;
     }
 
     @include breakpoint(mobile) {
@@ -120,7 +140,7 @@
       align-items: center;
 
       span.mdl-layout-title {
-        font-size: 18px;
+        font-size: 17px;
         font-weight: 200;
 
         &.profile-header {
@@ -152,7 +172,7 @@
 
     .micromasters-header {
       justify-content: space-between;
-      height: 75px;
+      height: 68px;
 
       @include breakpoint(desktop) {
         padding: 0 40px 0 40px;
@@ -206,7 +226,7 @@ $program_selector_border: rgba(255,255,255,.4);
 $header_font_color: white;
 
 .program-selector {
-  font-size: 16px;
+  font-size: 15px;
 
   @include breakpoint(desktop) {
     margin-left: 30px;

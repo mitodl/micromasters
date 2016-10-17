@@ -73,11 +73,9 @@ export default class ProgressWidget extends React.Component {
         <p className="heading-paragraph">
           On completion, you can apply for
           the Masters Degree Program</p>
-        <div className="apply-master-btn">
            <Button className="progress-button disabled">
              Apply for Masters
            </Button>
-        </div>
       </Card>
     );
   }

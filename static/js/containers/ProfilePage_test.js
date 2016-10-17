@@ -30,8 +30,8 @@ describe("ProfilePage", function() {
     EDUCATION_STEP,
     EMPLOYMENT_STEP,
   ];
-  let prevButtonSelector = '.mm-button.prev';
-  let nextButtonSelector = '.mm-button.next';
+  let prevButtonSelector = '.prev';
+  let nextButtonSelector = '.next';
 
   const setStep = step => helper.store.dispatch(setProfileStep(step));
 

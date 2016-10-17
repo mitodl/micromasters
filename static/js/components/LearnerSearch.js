@@ -173,7 +173,7 @@ export default class LearnerSearch extends SearchkitComponent {
                   <Cell col={6} className="result-info">
                     <button
                       id="email-selected"
-                      className="mm-button minor-action"
+                      className="mdl-button minor-action"
                       onClick={() => openEmailComposer(this.searchkit)}
                     >
                       Email These Learners
