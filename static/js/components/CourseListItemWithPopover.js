@@ -6,6 +6,7 @@ import PopoverNullAnimation from '../util/popover_animation';
 const titleEl = (title, url) => (
   url ? <a href={url}>{title}</a> : title
 );
+
 const popoverLink = (url) => (
   url ? <a className="edx-link" href={url}>View on edX</a> : null
 );
