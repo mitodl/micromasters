@@ -281,6 +281,18 @@ class CourseTests(CourseModelTests):  # pylint: disable=too-many-public-methods
         )
         assert self.course.enrollment_text == text
 
+    def test_future_course_no_enr(self):
+        """Test course in the future, no enrollment dates"""
+        future_date = self.now + timedelta(weeks=1)
+        expected_text = 'Starts {:%D}'.format(future_date)
+        self.create_run(
+            start=future_date,
+            end=self.now + timedelta(weeks=10),
+            enr_start=None,
+            enr_end=None,
+        )
+        assert self.course.enrollment_text == expected_text
+
     def test_current_course(self):
         """Test current course, enrollment ends soon"""
         text = 'Ongoing - Enrollment Ends {:%D}'.format(

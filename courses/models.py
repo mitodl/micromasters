@@ -129,12 +129,14 @@ class Course(models.Model):
             return "Ongoing - {end}".format(end=end_text)
         elif course_run.is_future:
             if course_run.is_future_enrollment_open:
-                end_text = 'Enrollment Open'
+                end_text = ' - Enrollment Open'
             elif course_run.enrollment_start:
-                end_text = 'Enrollment {:%m/%Y}'.format(
+                end_text = ' - Enrollment {:%m/%Y}'.format(
                     course_run.enrollment_start
                 )
-            return "Starts {start:%D} - {end}".format(
+            else:
+                end_text = ''
+            return "Starts {start:%D}{end}".format(
                 start=course_run.start_date,
                 end=end_text,
             )
