@@ -2,6 +2,11 @@
 import React from 'react';
 import CourseListItemWithPopover from './CourseListItemWithPopover';
 
+const listItems = (courses) => {
+  return courses.map((course, index) =>
+    <CourseListItemWithPopover key={index} {...course} />
+  );
+};
 
 export default class CourseListWithPopover extends React.Component {
   props: {
@@ -9,12 +14,6 @@ export default class CourseListWithPopover extends React.Component {
   }
 
   render() {
-    const listItems = (courses) => {
-      return courses.map((course, index) =>
-        <CourseListItemWithPopover key={index} {...course} />
-      );
-    };
-
     return (
       <ol className="program-course-list">
         {listItems(this.props.courses)}

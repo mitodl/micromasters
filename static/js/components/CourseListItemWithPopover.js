@@ -3,6 +3,12 @@ import React from 'react';
 import Popover from 'material-ui/Popover';
 import PopoverNullAnimation from '../util/popover_animation';
 
+const titleEl = (title, url) => (
+  url ? <a href={url}>{title}</a> : title
+);
+const popoverLink = (url) => (
+  url ? <a className="edx-link" href={url}>View on edX</a> : null
+);
 
 export default class CourseListItemWithPopover extends React.Component {
   props: {
@@ -45,13 +51,6 @@ export default class CourseListItemWithPopover extends React.Component {
       anchorEl
     } = this.state;
 
-    const titleEl = (url) => (
-      url ? <a href={url}>{title}</a> : title
-    );
-    const popoverLink = (url) => (
-      url ? <a className="edx-link" href={url}>View on edX</a> : null
-    );
-
     // if there is no description, set a default
     const descriptionText = description || "No description available.";
 
@@ -72,7 +71,7 @@ export default class CourseListItemWithPopover extends React.Component {
     return (
       <li>
         <h4 className="title" onClick={this.handleClick}>
-          {titleEl(url)}
+          {titleEl(title, url)}
         </h4>
         <Popover
           className="program-course-popover mdl-cell mdl-cell--4-col"
