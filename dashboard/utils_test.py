@@ -196,6 +196,7 @@ class MMTrackTest(TestCase):
         fin_aid = FinancialAidFactory.create(
             user=self.user,
             tier_program=self.min_tier_program,
+            date_documents_sent=None,
         )
         mmtrack = MMTrack(
             user=self.user,

@@ -10,10 +10,10 @@ from django.db import (
     models,
     transaction,
 )
-from django.forms.models import model_to_dict
 
 from courses.models import Program
 from financialaid.constants import FinancialAidStatus
+from micromasters.utils import serialize_model
 
 
 class TimestampedModelQuerySet(models.query.QuerySet):
@@ -118,17 +118,6 @@ class FinancialAid(TimestampedModel):
     date_documents_sent = models.DateField(null=True, blank=True)
     justification = models.TextField(null=True)
 
-    def to_dict(self):
-        """
-        Get the model_to_dict of self
-        """
-        ret = model_to_dict(self)
-        if self.date_exchange_rate is not None:
-            ret["date_exchange_rate"] = ret["date_exchange_rate"].isoformat()
-        if self.date_documents_sent is not None:
-            ret["date_documents_sent"] = ret["date_documents_sent"].isoformat()
-        return ret
-
     def save(self, *args, **kwargs):
         """
         Override save to make sure only one FinancialAid object exists for a User and the associated Program
@@ -151,8 +140,8 @@ class FinancialAid(TimestampedModel):
         FinancialAidAudit.objects.create(
             acting_user=acting_user,
             financial_aid=self,
-            data_before=financialaid_before.to_dict(),
-            data_after=self.to_dict()
+            data_before=serialize_model(financialaid_before),
+            data_after=serialize_model(self),
         )
 
 
