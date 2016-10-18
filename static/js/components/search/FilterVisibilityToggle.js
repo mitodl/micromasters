@@ -1,8 +1,10 @@
 // @flow
 import React from 'react';
+import _ from 'lodash';
+import { SearchkitComponent } from 'searchkit';
 import Icon from 'react-mdl/lib/Icon';
 
-export default class FilterVisibilityToggle extends React.Component {
+export default class FilterVisibilityToggle extends SearchkitComponent {
   props: {
     filterName:             string,
     checkFilterVisibility:  (filterName: string) => boolean,
@@ -15,13 +17,29 @@ export default class FilterVisibilityToggle extends React.Component {
     return checkFilterVisibility(filterName) ? "" : "closed";
   };
 
-  openStateIcon: Function = (): React$Element<*> => (
-    <Icon
+  isInResults: Function = (id: string): boolean => {
+    if (this.getResults()) {
+      const elmId = (id === "birth_location") ? "profile.birth_country3" : id;
+      const docCount = _.get(this.getResults(), ['aggregations', elmId, 'doc_count']);
+
+      if (docCount > 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  openStateIcon: Function = (children: React$Element<*>): React$Element<*>|null => {
+    if (this.getResults() === null || !this.isInResults(children.props.id)) {
+      return null;
+    }
+
+    return <Icon
       name="arrow_drop_down"
       onClick={this.toggleFilterVisibility}
       className={this.openClass()}
-    />
-  );
+    />;
+  }
 
   toggleFilterVisibility: Function = (): void => {
     const {
@@ -39,7 +57,7 @@ export default class FilterVisibilityToggle extends React.Component {
     const { children } = this.props;
     return (
       <div className={`filter-visibility-toggle ${this.openClass()}`}>
-        { this.openStateIcon() }
+        { this.openStateIcon(children) }
         { children }
       </div>
     );
