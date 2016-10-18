@@ -97,6 +97,30 @@ class CategorizedFaqsPage(Page):
     parent_page_types = ['FaqsPage']
 
 
+class GenericPage(Page):
+    """
+    CMS Page for custom tabs on the program page
+    """
+    content = RichTextField(
+        blank=True,
+        help_text='The content of this tab on the program page'
+    )
+    parent_page_types = ['ProgramPage']
+    content_panels = Page.content_panels + [
+        FieldPanel('content')
+    ]
+
+    def parent_page(self):
+        """ Get the parent ProgramPage"""
+        return ProgramPage.objects.ancestor_of(self).first()
+
+    def get_context(self, request):
+        context = get_program_page_context(self.parent_page(), request)
+        context['generic_page'] = self
+        context['active_tab'] = self.title
+        return context
+
+
 class ProgramPage(Page):
     """
     CMS page representing the department e.g. Biology
@@ -153,7 +177,7 @@ class ProgramPage(Page):
             'Thumbnails are cropped down to this size, preserving aspect ratio.'
         ),
     )
-    subpage_types = ['FaqsPage']
+    subpage_types = ['FaqsPage', 'GenericPage']
     content_panels = Page.content_panels + [
         FieldPanel('description', classname="full"),
         FieldPanel('program'),
