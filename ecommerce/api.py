@@ -176,6 +176,11 @@ def generate_cybersource_sa_payload(order, dashboard_url):
     line = order.line_set.first()
     if line is not None:
         course_key = line.course_key
+    course_run = CourseRun.objects.get(edx_course_key=course_key)
+
+    # NOTE: be careful about max length here, many (all?) string fields have a max
+    # length of 255. At the moment none of these fields should go over that, due to database
+    # constraints or other reasons
 
     payload = {
         'access_key': settings.CYBERSOURCE_ACCESS_KEY,
@@ -183,6 +188,13 @@ def generate_cybersource_sa_payload(order, dashboard_url):
         'consumer_id': get_social_username(order.user),
         'currency': 'USD',
         'locale': 'en-us',
+        'item_0_code': 'course',
+        'item_0_name': '{}'.format(course_run.title),
+        'item_0_quantity': 1,
+        'item_0_sku': '{}'.format(course_key),
+        'item_0_tax_amount': '0',
+        'item_0_unit_price': str(order.total_price_paid),
+        'line_item_count': 1,
         'override_custom_cancel_page': "{}?status=cancel&course_key={}".format(
             dashboard_url,
             quote_plus(course_key),
