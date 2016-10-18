@@ -20,6 +20,7 @@ from ecommerce.api import (
 from ecommerce.api_test import create_purchasable_course_run
 from ecommerce.models import (
     Order,
+    OrderAudit,
     Receipt,
 )
 from profiles.factories import (
@@ -161,6 +162,7 @@ class OrderFulfillmentViewTests(ESTestCase):
         """
         course_run, user = create_purchasable_course_run()
         order = create_unfulfilled_order(course_run.edx_course_key, user)
+        data_before = order.to_dict()
 
         data = {}
         for _ in range(5):
@@ -181,6 +183,12 @@ class OrderFulfillmentViewTests(ESTestCase):
         assert order.receipt_set.count() == 1
         assert order.receipt_set.first().data == data
         enroll_user.assert_called_with(order)
+
+        assert OrderAudit.objects.count() == 2
+        order_audit = OrderAudit.objects.last()
+        assert order_audit.order == order
+        assert order_audit.data_before == data_before
+        assert order_audit.data_after == order.to_dict()
 
     def test_missing_fields(self):
         """

@@ -11,8 +11,10 @@ from ecommerce.exceptions import EcommerceModelException
 from ecommerce.factories import (
     CoursePriceFactory,
     LineFactory,
+    OrderFactory,
     ReceiptFactory,
 )
+from micromasters.utils import serialize_model_object
 
 
 # pylint: disable=no-self-use
@@ -45,6 +47,17 @@ class OrderTests(TestCase):
         """Test Receipt.__str__ with no order"""
         receipt = ReceiptFactory.create(order=None)
         assert str(receipt) == "Receipt with no attached order"
+
+    def test_to_dict(self):
+        """
+        Test Order.to_dict()
+        """
+        order = OrderFactory.create()
+        lines = [LineFactory.create(order=order) for _ in range(5)]
+        data = order.to_dict()
+        lines_data = data.pop('lines')
+        assert serialize_model_object(order) == data
+        assert lines_data == [serialize_model_object(line) for line in lines]
 
 
 class CoursePriceTests(TestCase):

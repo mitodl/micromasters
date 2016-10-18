@@ -8,8 +8,10 @@ from ecommerce.models import (
     CoursePrice,
     Line,
     Order,
+    OrderAudit,
     Receipt,
 )
+from micromasters.utils import get_field_names
 
 
 class CoursePriceAdmin(admin.ModelAdmin):
@@ -21,7 +23,7 @@ class LineAdmin(admin.ModelAdmin):
     """Admin for Line"""
     model = Line
 
-    readonly_fields = Line._meta.get_all_field_names()  # pylint: disable=protected-access
+    readonly_fields = get_field_names(Line)
 
     def has_add_permission(self, request):
         return False
@@ -34,7 +36,26 @@ class OrderAdmin(admin.ModelAdmin):
     """Admin for Order"""
     model = Order
 
-    readonly_fields = Order._meta.get_all_field_names()  # pylint: disable=protected-access
+    readonly_fields = get_field_names(Order)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def save_model(self, request, obj, form, change):
+        """
+        Saves object and logs change to object
+        """
+        old_order = Order.objects.get(id=obj.id)
+        obj.save_and_log(request.user, old_order)
+
+
+class OrderAuditAdmin(admin.ModelAdmin):
+    """Admin for OrderAudit"""
+    model = OrderAudit
+    readonly_fields = get_field_names(OrderAudit)
 
     def has_add_permission(self, request):
         return False
@@ -46,7 +67,7 @@ class OrderAdmin(admin.ModelAdmin):
 class ReceiptAdmin(admin.ModelAdmin):
     """Admin for Receipt"""
     model = Receipt
-    readonly_fields = Receipt._meta.get_all_field_names()  # pylint: disable=protected-access
+    readonly_fields = get_field_names(Receipt)
 
     def has_add_permission(self, request):
         return False
@@ -58,4 +79,5 @@ class ReceiptAdmin(admin.ModelAdmin):
 admin.site.register(CoursePrice, CoursePriceAdmin)
 admin.site.register(Line, LineAdmin)
 admin.site.register(Order, OrderAdmin)
+admin.site.register(OrderAudit, OrderAuditAdmin)
 admin.site.register(Receipt, ReceiptAdmin)

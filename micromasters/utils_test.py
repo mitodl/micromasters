@@ -1,6 +1,7 @@
 """
 Tests for the utils module
 """
+import unittest
 
 from django.core.exceptions import ImproperlyConfigured
 from django.template import RequestContext
@@ -16,11 +17,13 @@ from ecommerce.factories import (
     CoursePriceFactory,
     ReceiptFactory,
 )
+from ecommerce.models import Order
 from financialaid.factories import (
     FinancialAidFactory,
 )
 from micromasters.utils import (
     custom_exception_handler,
+    get_field_names,
     serialize_model_object,
 )
 
@@ -123,4 +126,22 @@ class SerializerTests(TestCase):
             'is_valid': course_price.is_valid,
             'modified_at': format_as_iso8601(course_price.modified_at),
             'price': str(course_price.price),
+        }
+
+
+class FieldNamesTests(unittest.TestCase):
+    """
+    Tests for get_field_names
+    """
+
+    def test_get_field_names(self):
+        """
+        Assert that get_field_names does not include related fields
+        """
+        assert set(get_field_names(Order)) == {
+            'user',
+            'status',
+            'total_price_paid',
+            'created_at',
+            'modified_at',
         }

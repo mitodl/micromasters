@@ -11,6 +11,7 @@ from financialaid.models import (
     Tier,
     TierProgram
 )
+from micromasters.utils import get_field_names
 
 
 class CountryIncomeThresholdAdmin(admin.ModelAdmin):
@@ -37,9 +38,7 @@ class FinancialAidAdmin(admin.ModelAdmin):
 class FinancialAidAuditAdmin(admin.ModelAdmin):
     """Admin for FinancialAidAudit"""
     model = FinancialAidAudit
-    readonly_fields = [
-        f.name for f in FinancialAidAudit._meta.get_fields() if not f.auto_created  # pylint: disable=protected-access
-    ]
+    readonly_fields = get_field_names(FinancialAidAudit)
 
     def has_add_permission(self, *args, **kwargs):  # pylint: disable=unused-argument
         return False

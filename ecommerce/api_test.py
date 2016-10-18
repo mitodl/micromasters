@@ -43,7 +43,10 @@ from ecommerce.factories import (
     LineFactory,
     OrderFactory,
 )
-from ecommerce.models import Order
+from ecommerce.models import (
+    Order,
+    OrderAudit,
+)
 from financialaid.factories import FinancialAidFactory
 from financialaid.models import FinancialAidStatus
 from profiles.factories import UserFactory
@@ -263,6 +266,12 @@ class PurchasableTests(ESTestCase):
         assert line.course_key == course_run.edx_course_key
         assert line.description == 'Seat for {}'.format(course_run.title)
         assert line.price == discounted_price
+
+        assert OrderAudit.objects.count() == 1
+        order_audit = OrderAudit.objects.first()
+        assert order_audit.order == order
+        assert order_audit.data_before is None
+        assert order_audit.data_after == order.to_dict()
 
 
 CYBERSOURCE_ACCESS_KEY = 'access'

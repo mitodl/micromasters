@@ -4,15 +4,19 @@ Generates a set of realistic users/programs to help us test search functionality
 from datetime import datetime, timedelta
 from django.core.management import BaseCommand
 from django.contrib.auth.models import User
-from profiles.api import get_social_username
-from profiles.models import Employment, Education
+
+from backends.edxorg import EdxOrgOAuth2
 from courses.models import Program, Course, CourseRun
 from dashboard.models import ProgramEnrollment, CachedCertificate, CachedEnrollment
 from ecommerce.models import CoursePrice
+from micromasters.utils import (
+    get_field_names,
+    load_json_from_file,
+)
+from profiles.api import get_social_username
+from profiles.models import Employment, Education
 from roles.models import Role
 from roles.roles import Staff
-from micromasters.utils import load_json_from_file
-from backends.edxorg import EdxOrgOAuth2
 from search.indexing_api import recreate_index
 from seed_data.management.commands import (  # pylint: disable=import-error
     USER_DATA_PATH, PROGRAM_DATA_PATH,
@@ -34,19 +38,11 @@ def filter_dict_by_key_set(dict_to_filter, key_set):
     return {key: dict_to_filter[key] for key in dict_to_filter.keys() if key in key_set}
 
 
-def get_non_relation_field_names(model_cls):
-    """
-    Gets a set of field names from a model class that aren't relation fields
-    """
-    return set(field.name for field in model_cls._meta.get_fields()  # pylint: disable=protected-access
-               if not field.is_relation)
-
-
 def deserialize_model_data_on_object(model_obj, data, save=True):
     """
     Sets field values on an existing model object using some supplied data
     """
-    non_relation_field_names = get_non_relation_field_names(model_obj.__class__)
+    non_relation_field_names = get_field_names(model_obj.__class__)
     for k, v in filter_dict_by_key_set(data, non_relation_field_names).items():
         setattr(model_obj, k, v)
     if save:
@@ -58,7 +54,7 @@ def deserialize_model_data(model_cls, data, relational_data=None):
     """
     Creates a new instance of a model class and fills in field values using some supplied data
     """
-    non_relation_field_names = get_non_relation_field_names(model_cls)
+    non_relation_field_names = get_field_names(model_cls)
     model_data = filter_dict_by_key_set(data, non_relation_field_names)
     if relational_data:
         model_data.update(relational_data)

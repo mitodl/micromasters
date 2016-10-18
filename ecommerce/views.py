@@ -93,6 +93,7 @@ class OrderFulfillmentView(APIView):
         # Link the order with the receipt if we can parse it
         reference_number = request.data['req_reference_number']
         order = get_new_order_by_reference_number(reference_number)
+        old_order = Order.objects.get(id=order.id)
         receipt.order = order
         receipt.save()
 
@@ -104,10 +105,10 @@ class OrderFulfillmentView(APIView):
                 # Do the verified enrollment with edX here
                 order.status = Order.FULFILLED
                 enroll_user_on_success(order)
-            order.save()
+            order.save_and_log(None, old_order)
         except:
             order.status = Order.FAILED
-            order.save()
+            order.save_and_log(None, old_order)
             raise
 
         # The response does not matter to CyberSource

@@ -132,6 +132,7 @@ def create_unfulfilled_order(course_id, user):
         description='Seat for {}'.format(course_run.title),
         price=price,
     )
+    order.save_and_log(user, None)
     return order
 
 
