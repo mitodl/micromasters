@@ -1,6 +1,7 @@
 """
 Generates a set of realistic users/programs to help us test search functionality
 """
+from datetime import datetime, timedelta
 from django.core.management import BaseCommand
 from django.contrib.auth.models import User
 from profiles.api import get_social_username
@@ -15,8 +16,7 @@ from backends.edxorg import EdxOrgOAuth2
 from search.indexing_api import recreate_index
 from seed_data.management.commands import (  # pylint: disable=import-error
     USER_DATA_PATH, PROGRAM_DATA_PATH,
-    FAKE_USER_USERNAME_PREFIX, FAKE_PROGRAM_DESC_PREFIX,
-    CACHED_MODEL_LAST_REQUEST
+    FAKE_USER_USERNAME_PREFIX, FAKE_PROGRAM_DESC_PREFIX
 )
 
 
@@ -95,7 +95,7 @@ class CachedModelDeserializer:
             user=user,
             course_run=course_run,
             data=data,
-            last_request=CACHED_MODEL_LAST_REQUEST
+            last_request=datetime.now() + timedelta(days=365)
         )
         return course_run
 
@@ -183,7 +183,7 @@ def deserialize_user_data(user_data, course_runs):
             cached_model_deserializer.model_cls.objects.create(
                 user=user,
                 course_run=course_run,
-                last_request=CACHED_MODEL_LAST_REQUEST
+                last_request=datetime.now() + timedelta(days=365)
             )
     return user
 
