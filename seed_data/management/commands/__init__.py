@@ -1,3 +1,7 @@
+"""
+Globals for commands relating to seeding data into the database
+"""
+
 from datetime import datetime, timedelta
 
 USER_DATA_PATH = 'seed_data/management/users.json'

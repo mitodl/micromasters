@@ -7,7 +7,7 @@ from django.db.models.signals import post_delete
 from django.contrib.auth.models import User
 from courses.models import Program
 from dashboard.models import CachedEnrollment, CachedCertificate
-from seed_data.management.commands import (
+from seed_data.management.commands import (  # pylint: disable=import-error
     FAKE_USER_USERNAME_PREFIX, FAKE_PROGRAM_DESC_PREFIX,
 )
 
@@ -19,11 +19,13 @@ class Command(BaseCommand):
     help = "Delete seeded data from the database, for development purposes."
 
     def handle(self, *args, **options):
+        # pylint: disable=bad-continuation
         fake_program_ids = (
             Program.objects
-              .filter(description__startswith=FAKE_PROGRAM_DESC_PREFIX)
+              .filter(description__startswith=FAKE_PROGRAM_DESC_PREFIX)  # noqa
               .values_list('id', flat=True)
         )
+        # pylint: enable=bad-continuation
 
         with mute_signals(post_delete):
             for model_cls in [CachedEnrollment, CachedCertificate]:

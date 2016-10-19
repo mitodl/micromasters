@@ -13,7 +13,7 @@ from roles.roles import Staff
 from micromasters.utils import load_json_from_file
 from backends.edxorg import EdxOrgOAuth2
 from search.indexing_api import recreate_index
-from seed_data.management.commands import (
+from seed_data.management.commands import (  # pylint: disable=import-error
     USER_DATA_PATH, PROGRAM_DATA_PATH,
     FAKE_USER_USERNAME_PREFIX, FAKE_PROGRAM_DESC_PREFIX,
     CACHED_MODEL_LAST_REQUEST
