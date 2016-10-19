@@ -293,6 +293,7 @@ class Command(BaseCommand):
             fake_programs = Program.objects.filter(description__startswith=FAKE_PROGRAM_DESC_PREFIX).all()
             self.stdout.write("Seed data appears to already exist.")
         else:
+            recreate_index()
             fake_programs = deserialize_program_data_list(program_data_list)
             fake_course_runs = CourseRun.objects.filter(
                 course__program__description__contains=FAKE_PROGRAM_DESC_PREFIX
