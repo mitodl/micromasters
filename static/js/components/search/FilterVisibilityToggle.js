@@ -20,7 +20,7 @@ export default class FilterVisibilityToggle extends SearchkitComponent {
   isInResults: Function = (id: string): boolean => {
     if (this.getResults()) {
       const elmId = (id === "birth_location") ? "profile.birth_country3" : id;
-      const docCount = _.get(this.getResults(), ['aggregations', elmId, 'doc_count']) || 0;
+      const docCount = _.get(this.getResults(), ['aggregations', elmId, 'doc_count'], 0);
 
       if (docCount > 0) {
         return true;
@@ -30,7 +30,7 @@ export default class FilterVisibilityToggle extends SearchkitComponent {
   }
 
   openStateIcon: Function = (children: React$Element<*>): React$Element<*>|null => {
-    if (this.getResults() === null || !this.isInResults(children.props.id)) {
+    if (!this.isInResults(children.props.id)) {
       return null;
     }
 
