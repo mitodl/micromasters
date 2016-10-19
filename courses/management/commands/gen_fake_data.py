@@ -10,6 +10,7 @@ from courses.factories import (
     CourseRunFactory,
     ProgramFactory,
 )
+from ecommerce.factories import CoursePriceFactory
 
 
 class Command(BaseCommand):
@@ -40,6 +41,14 @@ class Command(BaseCommand):
             help='Maximum number of course-runs to generate (per course)',
         )
 
+        parser.add_argument(
+            '--no-prices',
+            dest='course_prices',
+            action='store_false',
+            default=True,
+            help="Don't create CoursePrice objects for the generated course-runs",
+        )
+
     def handle(self, *args, **options):
         record_count = 0
         for _ in range(int(options['programs'])):
@@ -53,6 +62,9 @@ class Command(BaseCommand):
                 course_runs_range = range(randint(1, int(options['course_runs'])))
                 for _ in course_runs_range:
                     record_count += 1
-                    CourseRunFactory.create(course=course)
+                    run = CourseRunFactory.create(course=course)
+                    if options['course_prices']:
+                        CoursePriceFactory.create(course_run=run)
+                        record_count += 1
 
         self.stdout.write("Wrote {} records.".format(record_count))

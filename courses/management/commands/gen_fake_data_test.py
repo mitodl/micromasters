@@ -10,6 +10,7 @@ from courses.models import (
     CourseRun,
     Program,
 )
+from ecommerce.models import CoursePrice
 from search.base import ESTestCase
 
 
@@ -29,8 +30,15 @@ class GenFakeDataTest(ESTestCase):
             programs_count = 2
             courses_count = 3
             course_runs_count = 4
-            command.handle(programs=programs_count, courses=courses_count, course_runs=course_runs_count)
+            command.handle(
+                programs=programs_count,
+                courses=courses_count,
+                course_runs=course_runs_count,
+                course_prices=True,
+            )
 
-            assert CourseRun.objects.count() == programs_count * courses_count * course_runs_count
+            total_course_runs = programs_count * courses_count * course_runs_count
+            assert CoursePrice.objects.count() == total_course_runs
+            assert CourseRun.objects.count() == total_course_runs
             assert Course.objects.count() == programs_count * courses_count
             assert Program.objects.count() == programs_count
