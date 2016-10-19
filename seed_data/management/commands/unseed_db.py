@@ -7,18 +7,24 @@ from django.db.models.signals import post_delete
 from django.contrib.auth.models import User
 from courses.models import Program
 from dashboard.models import CachedEnrollment, CachedCertificate
-from profiles.management.commands.gen_realistic_search_data import FAKE_PROGRAM_DESC_PREFIX, FAKE_USER_USERNAME_PREFIX
+from seed_data.management.commands import (
+    FAKE_USER_USERNAME_PREFIX, FAKE_PROGRAM_DESC_PREFIX,
+)
 
 
 class Command(BaseCommand):
     """
-    Deletes a set of realistic users and programs/courses that were generated to help us test search
+    Delete seeded data from the database, for development purposes.
     """
-    help = "Deletes a set of realistic users and programs/courses that were generated to help us test search"
+    help = "Delete seeded data from the database, for development purposes."
 
     def handle(self, *args, **options):
-        fake_program_ids = \
-            Program.objects.filter(description__startswith=FAKE_PROGRAM_DESC_PREFIX).values_list('id', flat=True)
+        fake_program_ids = (
+            Program.objects
+              .filter(description__startswith=FAKE_PROGRAM_DESC_PREFIX)
+              .values_list('id', flat=True)
+        )
+
         with mute_signals(post_delete):
             for model_cls in [CachedEnrollment, CachedCertificate]:
                 model_cls.objects.filter(course_run__course__program__id__in=fake_program_ids).delete()

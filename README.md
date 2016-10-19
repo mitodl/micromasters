@@ -176,21 +176,16 @@ Run this command:
 
 You will also need to run this command whenever ``requirements.txt`` or ``test_requirements.txt`` change.
 
-#### 4) Create database tables
-To do this, run this command:
+#### 4) Create initial data
+First, create the database tables from the Django models:
 
     docker-compose run web ./manage.py migrate
 
-#### 5) Create an Elasticsearch index
-To do this, run this command:
+Then, populate example data into these tables, for development purposes:
 
-    docker-compose run web ./manage.py recreate_index
+    docker-compose run web ./manage.py seed_db
 
-This is required to initialize the Elasticsearch index and mappings. This command should only need
-to be run when the Elasticsearch container is first created. It may also be run afterwards to clear and recreate
-existing indexes, and to reindex relevant documents.
-
-#### 6) Run the container
+#### 5) Run the container
 
 Start Django, PostgreSQL, and other related services:
 

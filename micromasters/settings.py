@@ -119,6 +119,7 @@ INSTALLED_APPS = (
     'roles',
     'search',
     'ui',
+    'seed_data',
 )
 
 MIDDLEWARE_CLASSES = (
