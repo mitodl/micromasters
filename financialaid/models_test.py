@@ -11,6 +11,7 @@ from financialaid.factories import (
 )
 from financialaid.models import (
     Tier,
+    FinancialAid,
     FinancialAidAudit,
     FinancialAidStatus
 )

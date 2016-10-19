@@ -48,8 +48,7 @@ class OrderAdmin(admin.ModelAdmin):
         """
         Saves object and logs change to object
         """
-        old_order = Order.objects.get(id=obj.id)
-        obj.save_and_log(request.user, old_order)
+        obj.save_and_log(request.user)
 
 
 class OrderAuditAdmin(admin.ModelAdmin):

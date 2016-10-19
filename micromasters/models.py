@@ -57,17 +57,15 @@ class AuditableModel(Model):
         """
         raise NotImplementedError
 
-    @transaction.atomic
-    def save_and_log(self, acting_user, before_obj, *args, **kwargs):
+    def save_and_log(self, acting_user, *args, **kwargs):
         """
         Saves the object and creates an audit object.
 
         Args:
             acting_user (django.contrib.auth.models.User):
                 The user who made the change to the model. May be None if inapplicable.
-            before_obj (Model):
-                The model before it was altered. May be None if model is new.
         """
+        before_obj = self.__class__.objects.filter(id=self.id).first()
         self.save(*args, **kwargs)
         self.refresh_from_db()
         before_dict = None
@@ -81,4 +79,3 @@ class AuditableModel(Model):
         )
         audit_kwargs[self.audit_class.related_field_name] = self
         self.audit_class.objects.create(**audit_kwargs)
-
