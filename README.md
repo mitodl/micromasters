@@ -185,6 +185,11 @@ Then, populate example data into these tables, for development purposes:
 
     docker-compose run web ./manage.py seed_db
 
+Finally, install the tier data. (This hasn't yet been integrated into the
+`seed_db` command, but it should be in the future.)
+
+    docker-compose run web ./manage.py create_tiers
+
 #### 5) Run the container
 
 Start Django, PostgreSQL, and other related services:
