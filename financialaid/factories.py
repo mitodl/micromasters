@@ -48,7 +48,7 @@ class TierProgramFactory(DjangoModelFactory):
     tier = SubFactory(TierFactory)
     discount_amount = FuzzyInteger(low=1, high=12345)
     current = FuzzyAttribute(FAKE.boolean)
-    income_threshold = FuzzyInteger(low=0, high=10000)
+    income_threshold = FuzzyInteger(low=1, high=10000)
 
     class Meta:  # pylint: disable=missing-docstring
         model = TierProgram
