@@ -136,7 +136,6 @@ class FinancialAid(TimestampedModel, AuditableModel):
     def audit_class(self):
         return FinancialAidAudit
 
-    @property
     def to_dict(self):
         return serialize_model_object(self)
 
