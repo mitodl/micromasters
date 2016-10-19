@@ -214,6 +214,8 @@ def deserialize_user_data_list(user_data_list, course_runs):
 
 def deserialize_course_price_data(course_run, course_price_data):
     """Deserializes a CoursePrice object"""
+    # set `is_valid` to True, so we don't have to specify it in the JSON file
+    course_price_data["is_valid"] = True
     course_price = deserialize_model_data(
         CoursePrice, course_price_data, dict(course_run=course_run)
     )

@@ -18,8 +18,7 @@
                         "start_date": "2015-01-15T00:00:00",
                         "enrollment_end": "2015-01-29T00:00:00",
                         "course_price": {
-                            "price": 1000,
-                            "is_valid": true
+                            "price": 1000
                         }
                     },
                     {
@@ -31,8 +30,7 @@
                         "start_date": "2015-08-15T00:00:00",
                         "enrollment_end": "2015-08-29T00:00:00",
                         "course_price": {
-                            "price": 1000,
-                            "is_valid": true
+                            "price": 1000
                         }
                     },
                     {
@@ -44,8 +42,7 @@
                         "start_date": "2016-01-15T00:00:00",
                         "enrollment_end": "2016-01-29T00:00:00",
                         "course_price": {
-                            "price": 1000,
-                            "is_valid": true
+                            "price": 1000
                         }
                     }
                 ]
@@ -64,8 +61,7 @@
                         "start_date": "2015-01-15T00:00:00",
                         "enrollment_end": "2015-01-29T00:00:00",
                         "course_price": {
-                            "price": 1000,
-                            "is_valid": true
+                            "price": 1000
                         }
                     },
                     {
@@ -77,8 +73,7 @@
                         "start_date": "2015-08-15T00:00:00",
                         "enrollment_end": "2015-08-29T00:00:00",
                         "course_price": {
-                            "price": 1000,
-                            "is_valid": true
+                            "price": 1000
                         }
                     },
                     {
@@ -90,8 +85,7 @@
                         "start_date": "2016-01-15T00:00:00",
                         "enrollment_end": "2016-01-29T00:00:00",
                         "course_price": {
-                            "price": 1000,
-                            "is_valid": true
+                            "price": 1000
                         }
                     }
                 ]
@@ -110,8 +104,7 @@
                         "start_date": "2015-01-15T00:00:00",
                         "enrollment_end": "2015-01-29T00:00:00",
                         "course_price": {
-                            "price": 1000,
-                            "is_valid": true
+                            "price": 1000
                         }
                     },
                     {
@@ -123,8 +116,7 @@
                         "start_date": "2015-08-15T00:00:00",
                         "enrollment_end": "2015-08-29T00:00:00",
                         "course_price": {
-                            "price": 1000,
-                            "is_valid": true
+                            "price": 1000
                         }
                     },
                     {
@@ -136,8 +128,7 @@
                         "start_date": "2016-01-15T00:00:00",
                         "enrollment_end": "2016-01-29T00:00:00",
                         "course_price": {
-                            "price": 1000,
-                            "is_valid": true
+                            "price": 1000
                         }
                     }
                 ]
@@ -162,8 +153,7 @@
                         "start_date": "2015-01-15T00:00:00",
                         "enrollment_end": "2015-01-29T00:00:00",
                         "course_price": {
-                            "price": 2000,
-                            "is_valid": true
+                            "price": 2000
                         }
                     },
                     {
@@ -175,8 +165,7 @@
                         "start_date": "2015-08-15T00:00:00",
                         "enrollment_end": "2015-08-29T00:00:00",
                         "course_price": {
-                            "price": 2000,
-                            "is_valid": true
+                            "price": 2000
                         }
                     },
                     {
@@ -188,8 +177,7 @@
                         "start_date": "2016-01-15T00:00:00",
                         "enrollment_end": "2016-01-29T00:00:00",
                         "course_price": {
-                            "price": 2000,
-                            "is_valid": true
+                            "price": 2000
                         }
                     }
                 ]
@@ -208,8 +196,7 @@
                         "start_date": "2015-01-15T00:00:00",
                         "enrollment_end": "2015-01-29T00:00:00",
                         "course_price": {
-                            "price": 2000,
-                            "is_valid": true
+                            "price": 2000
                         }
                     },
                     {
@@ -221,8 +208,7 @@
                         "start_date": "2015-08-15T00:00:00",
                         "enrollment_end": "2015-08-29T00:00:00",
                         "course_price": {
-                            "price": 2000,
-                            "is_valid": true
+                            "price": 2000
                         }
                     },
                     {
@@ -234,8 +220,7 @@
                         "start_date": "2016-01-15T00:00:00",
                         "enrollment_end": "2016-01-29T00:00:00",
                         "course_price": {
-                            "price": 2000,
-                            "is_valid": true
+                            "price": 2000
                         }
                     }
                 ]
@@ -254,8 +239,7 @@
                         "start_date": "2015-01-15T00:00:00",
                         "enrollment_end": "2015-01-29T00:00:00",
                         "course_price": {
-                            "price": 2000,
-                            "is_valid": true
+                            "price": 2000
                         }
                     },
                     {
@@ -267,8 +251,7 @@
                         "start_date": "2015-08-15T00:00:00",
                         "enrollment_end": "2015-08-29T00:00:00",
                         "course_price": {
-                            "price": 2000,
-                            "is_valid": true
+                            "price": 2000
                         }
                     },
                     {
@@ -280,8 +263,7 @@
                         "start_date": "2016-01-15T00:00:00",
                         "enrollment_end": "2016-01-29T00:00:00",
                         "course_price": {
-                            "price": 2000,
-                            "is_valid": true
+                            "price": 2000
                         }
                     }
                 ]
