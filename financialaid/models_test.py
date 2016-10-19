@@ -14,7 +14,7 @@ from financialaid.models import (
     FinancialAidAudit,
     FinancialAidStatus
 )
-from micromasters.utils import serialize_model
+from micromasters.utils import serialize_model_object
 from profiles.factories import ProfileFactory
 from search.base import ESTestCase
 
@@ -62,7 +62,7 @@ class FinancialAidModelsTests(ESTestCase):
             profile = ProfileFactory.create()
         acting_user = profile.user
         financial_aid = FinancialAidFactory.create()
-        original_before_json = serialize_model(financial_aid)
+        original_before_json = serialize_model_object(financial_aid)
         # Make sure audit object is created
         assert FinancialAidAudit.objects.count() == 0
         financial_aid.status = FinancialAidStatus.AUTO_APPROVED
@@ -70,7 +70,7 @@ class FinancialAidModelsTests(ESTestCase):
         assert FinancialAidAudit.objects.count() == 1
         # Make sure the before and after data are correct
         financial_aid.refresh_from_db()
-        original_after_json = serialize_model(financial_aid)
+        original_after_json = serialize_model_object(financial_aid)
         financial_aid_audit = FinancialAidAudit.objects.first()
         before_json = financial_aid_audit.data_before
         after_json = financial_aid_audit.data_after

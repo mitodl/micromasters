@@ -13,7 +13,7 @@ from django.db import (
 
 from courses.models import Program
 from financialaid.constants import FinancialAidStatus
-from micromasters.utils import serialize_model
+from micromasters.utils import serialize_model_object
 
 
 class TimestampedModelQuerySet(models.query.QuerySet):
@@ -140,8 +140,8 @@ class FinancialAid(TimestampedModel):
         FinancialAidAudit.objects.create(
             acting_user=acting_user,
             financial_aid=self,
-            data_before=serialize_model(financialaid_before),
-            data_after=serialize_model(self),
+            data_before=serialize_model_object(financialaid_before),
+            data_after=serialize_model_object(self),
         )
 
 

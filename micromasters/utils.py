@@ -65,7 +65,7 @@ def custom_exception_handler(exc, context):
         )
 
 
-def serialize_model(obj):
+def serialize_model_object(obj):
     """
     Serialize model into a dict representable as JSON
 
@@ -77,6 +77,6 @@ def serialize_model(obj):
     """
     # serialize works on iterables so we need to wrap object in a list, then unwrap it
     data = json.loads(serialize('json', [obj]))[0]
-    fields = data['fields']
-    fields['id'] = data['pk']
-    return fields
+    serialized = data['fields']
+    serialized['id'] = data['pk']
+    return serialized

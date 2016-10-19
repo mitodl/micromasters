@@ -21,7 +21,7 @@ from financialaid.factories import (
 )
 from micromasters.utils import (
     custom_exception_handler,
-    serialize_model,
+    serialize_model_object,
 )
 
 
@@ -82,7 +82,7 @@ class SerializerTests(TestCase):
         """
         with override_settings(CYBERSOURCE_SECURITY_KEY='asdf'):
             receipt = ReceiptFactory.create()
-            assert serialize_model(receipt) == {
+            assert serialize_model_object(receipt) == {
                 'created_at': format_as_iso8601(receipt.created_at),
                 'data': receipt.data,
                 'id': receipt.id,
@@ -95,7 +95,7 @@ class SerializerTests(TestCase):
         Test that a model with a datetime and date field is handled correctly
         """
         financial_aid = FinancialAidFactory.create(justification=None)
-        assert serialize_model(financial_aid) == {
+        assert serialize_model_object(financial_aid) == {
             'country_of_income': financial_aid.country_of_income,
             'created_on': format_as_iso8601(financial_aid.created_on),
             'date_documents_sent': financial_aid.date_documents_sent.isoformat(),
@@ -116,7 +116,7 @@ class SerializerTests(TestCase):
         Test that a model with a decimal field is handled correctly
         """
         course_price = CoursePriceFactory.create()
-        assert serialize_model(course_price) == {
+        assert serialize_model_object(course_price) == {
             'course_run': course_price.course_run.id,
             'created_at': format_as_iso8601(course_price.created_at),
             'id': course_price.id,
