@@ -365,3 +365,22 @@
     color: rgba(0,0,0,0.8);
   }
 }
+
+.no-hits {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  background-color: #efefef;
+  margin: 30px 0 4px 0;
+  height: 300px;
+  color: #848484;
+  font-style: italic;
+  font-weight: 200;
+
+  &.left-nav {
+    margin: 19px 6px 22px 6px;
+    font-size: 14px;
+    padding: 0 75px;
+  }
+}
