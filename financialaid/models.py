@@ -4,7 +4,6 @@ Models for the Financial Aid App
 import datetime
 
 from django.contrib.auth.models import User
-from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.db import (
     models,
@@ -13,6 +12,10 @@ from django.db import (
 
 from courses.models import Program
 from financialaid.constants import FinancialAidStatus
+from micromasters.models import (
+    AuditableModel,
+    AuditModel,
+)
 from micromasters.utils import serialize_model_object
 
 
@@ -98,7 +101,7 @@ class TierProgram(TimestampedModel):
         return super(TierProgram, self).save(*args, **kwargs)
 
 
-class FinancialAid(TimestampedModel):
+class FinancialAid(TimestampedModel, AuditableModel):
     """
     An application for financial aid/personal pricing
     """
@@ -129,30 +132,24 @@ class FinancialAid(TimestampedModel):
             raise ValidationError("Cannot have multiple FinancialAid objects for the same User and Program.")
         super().save(*args, **kwargs)
 
-    @transaction.atomic
-    def save_and_log(self, acting_user, *args, **kwargs):
-        """
-        Saves the object and creates an audit object.
-        """
-        financialaid_before = FinancialAid.objects.get(id=self.id)
-        self.save(*args, **kwargs)
-        self.refresh_from_db()
-        FinancialAidAudit.objects.create(
-            acting_user=acting_user,
-            financial_aid=self,
-            data_before=serialize_model_object(financialaid_before),
-            data_after=serialize_model_object(self),
-        )
+    @property
+    def audit_class(self):
+        return FinancialAidAudit
+
+    @property
+    def to_dict(self):
+        return serialize_model_object(self)
 
 
-class FinancialAidAudit(TimestampedModel):
+class FinancialAidAudit(AuditModel):
     """
     Audit table for the Financial Aid
     """
-    acting_user = models.ForeignKey(User, null=False)
     financial_aid = models.ForeignKey(FinancialAid, null=True, on_delete=models.SET_NULL)
-    data_before = JSONField(blank=True, null=False)
-    data_after = JSONField(blank=True, null=False)
+
+    @property
+    def related_field_name(self):
+        return 'financial_aid'
 
 
 class CurrencyExchangeRate(TimestampedModel):

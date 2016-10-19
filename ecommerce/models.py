@@ -21,10 +21,14 @@ from django.db.models.fields.related import (
 
 from courses.models import CourseRun
 from ecommerce.exceptions import EcommerceModelException
+from micromasters.models import (
+    AuditableModel,
+    AuditModel,
+)
 from micromasters.utils import serialize_model_object
 
 
-class Order(Model):
+class Order(AuditableModel):
     """
     An order for financial aid programs
     """
@@ -58,34 +62,16 @@ class Order(Model):
         data['lines'] = [serialize_model_object(line) for line in self.line_set.all()]
         return data
 
-    @transaction.atomic
-    def save_and_log(self, acting_user, order_before, *args, **kwargs):
-        """
-        Saves the object and creates an audit object.
-        """
-        self.save(*args, **kwargs)
-        self.refresh_from_db()
-        order_before_dict = None
-        if order_before is not None:
-            order_before_dict = order_before.to_dict()
-        OrderAudit.objects.create(
-            acting_user=acting_user,
-            order=self,
-            data_before=order_before_dict,
-            data_after=self.to_dict(),
-        )
 
-
-class OrderAudit(Model):
+class OrderAudit(AuditModel):
     """
     Audit model for Order
     """
-    acting_user = ForeignKey(User, null=True, on_delete=SET_NULL)
     order = ForeignKey(Order, null=True, on_delete=SET_NULL)
-    created_at = DateTimeField(auto_now_add=True)
-    modified_at = DateTimeField(auto_now=True)
-    data_before = JSONField(blank=True, null=True)
-    data_after = JSONField(blank=True, null=False)
+
+    @property
+    def related_field_name(self):
+        return 'order'
 
 
 class Line(Model):

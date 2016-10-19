@@ -32,7 +32,7 @@ class FinancialAidAdmin(admin.ModelAdmin):
         """
         Saves object and logs change to object
         """
-        obj.save_and_log(request.user)
+        obj.save_and_log(request.user, FinancialAid.objects.get(id=obj))
 
 
 class FinancialAidAuditAdmin(admin.ModelAdmin):
