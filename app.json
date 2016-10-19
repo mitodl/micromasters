@@ -1,106 +1,129 @@
 {
-    "name": "micromasters",
-    "description": "Web Portal for Micromasters",
-    "keywords": [
-        "Django",
-        "Python",
-        "MIT",
-        "Office of Digital Learning"
-    ],
-    "website": "https://github.com/mitodl/micromasters",
-    "repository": "https://github.com/mitodl/micromasters",
-    "success_url": "/",
-    "scripts": {
-        "postdeploy": "./manage.py migrate"
+  "addons": [
+    "heroku-postgresql:hobby-dev",
+    "newrelic:wayne"
+  ],
+  "buildpacks": [
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-nodejs"
     },
-    "addons": [
-        "heroku-postgresql:hobby-dev",
-        "newrelic:wayne"
-    ],
-    "buildpacks": [
-        {
-            "url": "https://github.com/heroku/heroku-buildpack-nodejs"
-        },
-        {
-            "url": "https://github.com/heroku/heroku-buildpack-python"
-        }
-    ],
-    "env": {
-        "ALLOWED_HOSTS": {
-            "description": "Array of allowed hostnames",
-            "default":  "['*']"
-        },
-        "MICROMASTERS_ADMIN_EMAIL": {
-            "description": "E-mail to send 500 reports to.",
-            "required": false
-        },
-        "MICROMASTERS_EMAIL_HOST": {
-            "description": "Outgoing e-mail settings",
-            "required": false
-        },
-        "MICROMASTERS_EMAIL_PASSWORD": {
-            "description": "Outgoing e-mail settings",
-            "required": false
-        },
-        "MICROMASTERS_EMAIL_PORT": {
-            "description": "Outgoing e-mail settings",
-            "required": false,
-            "value":  "587"
-        },
-        "MICROMASTERS_EMAIL_TLS": {
-            "description": "Outgoing e-mail settings",
-            "required": false,
-            "value":  "True"
-        },
-        "MICROMASTERS_EMAIL_USER": {
-            "description": "Outgoing e-mail settings",
-            "required": false
-        },
-        "MICROMASTERS_FROM_EMAIL": {
-            "description": "E-mail to use for the from field"
-
-        },
-        "NEW_RELIC_APP_NAME": {
-            "description": "Application identifier in New Relic.",
-            "default": "MicroMasters"
-        },
-        "SECRET_KEY": {
-            "description": "Django secret key.",
-            "generator": "secret"
-        },
-        "MICROMASTERS_SECURE_SSL_REDIRECT": {
-            "description": "Application-level SSL redirect setting.",
-            "required": false,
-            "value": "True"
-        },
-        "STATUS_TOKEN": {
-            "description": "Token to access the status API.",
-            "required": true
-        },
-        "EDXORG_BASE_URL": {
-            "description": "The base URL of the edX instance to use for logging in.",
-            "required": true
-        },
-        "EDXORG_CLIENT_ID": {
-            "description": "The OAuth client ID configured in the edX instance.",
-            "required": true
-        },
-        "EDXORG_CLIENT_SECRET": {
-            "description": "The OAuth client secret configured in the edX instance.",
-            "required": true
-        },
-        "AWS_ACCESS_KEY_ID": {
-            "description": "AWS Access Key for S3 storage."
-        },
-        "AWS_SECRET_ACCESS_KEY": {
-            "description": "AWS Secret Key for S3 storage."
-        },
-        "AWS_STORAGE_BUCKET_NAME": {
-            "description": "S3 Bucket name."
-        },
-        "MICROMASTERS_USE_S3": {
-            "description": "Use S3 for storage backend (required on Heroku)",
-            "value": "True"
-        }
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-python"
     }
+  ],
+  "description": "Web Portal for Micromasters",
+  "env": {
+    "ALLOWED_HOSTS": {
+      "default": "['*']",
+      "description": "Array of allowed hostnames"
+    },
+    "AWS_ACCESS_KEY_ID": {
+      "description": "AWS Access Key for S3 storage."
+    },
+    "AWS_SECRET_ACCESS_KEY": {
+      "description": "AWS Secret Key for S3 storage."
+    },
+    "AWS_STORAGE_BUCKET_NAME": {
+      "description": "S3 Bucket name."
+    },
+    "EDXORG_BASE_URL": {
+      "description": "The base URL of the edX instance to use for logging in.",
+      "required": true
+    },
+    "EDXORG_CLIENT_ID": {
+      "description": "The OAuth client ID configured in the edX instance.",
+      "required": true
+    },
+    "EDXORG_CLIENT_SECRET": {
+      "description": "The OAuth client secret configured in the edX instance.",
+      "required": true
+    },
+    "ELASTICSEARCH_HTTP_AUTH": {
+      "description": "Basic auth settings for connecting to Elasticsearch"
+    },
+    "ELASTICSEARCH_INDEX": {
+      "description": "Index to use on Elasticsearch"
+    },
+    "ELASTICSEARCH_URL": {
+      "description": "URL for connecting to Elasticsearch cluster"
+    },
+    "MAILGUN_KEY": {
+      "description": "The token for authenticating against the Mailgun API"
+    },
+    "MICROMASTERS_ADMIN_EMAIL": {
+      "description": "E-mail to send 500 reports to.",
+      "required": false
+    },
+    "MICROMASTERS_EMAIL_HOST": {
+      "description": "Outgoing e-mail settings",
+      "required": false
+    },
+    "MICROMASTERS_EMAIL_PASSWORD": {
+      "description": "Outgoing e-mail settings",
+      "required": false
+    },
+    "MICROMASTERS_EMAIL_PORT": {
+      "description": "Outgoing e-mail settings",
+      "required": false,
+      "value": "587"
+    },
+    "MICROMASTERS_EMAIL_TLS": {
+      "description": "Outgoing e-mail settings",
+      "required": false,
+      "value": "True"
+    },
+    "MICROMASTERS_EMAIL_USER": {
+      "description": "Outgoing e-mail settings",
+      "required": false
+    },
+    "MICROMASTERS_ENVIRONMENT": {
+      "description": "The execution environment that the app is in (e.g. dev, staging, prod)"
+    },
+    "MICROMASTERS_FROM_EMAIL": {
+      "value": "MITx MicroMasters <micromasters-support@mit.edu>"
+    },
+    "MICROMASTERS_SECURE_SSL_REDIRECT": {
+      "description": "Application-level SSL redirect setting.",
+      "required": false,
+      "value": "True"
+    },
+    "MICROMASTERS_USE_S3": {
+      "description": "Use S3 for storage backend (required on Heroku)",
+      "value": "True"
+    },
+    "NEW_RELIC_APP_NAME": {
+      "default": "MicroMasters",
+      "description": "Application identifier in New Relic."
+    },
+    "OPEN_EXCHANGE_RATES_APP_ID": {
+      "description": "The app ID for the open exchange rates API"
+    },
+    "OPEN_EXCHANGE_RATES_URL": {
+      "value": "https://openexchangerates.org/api/"
+    },
+    "SECRET_KEY": {
+      "description": "Django secret key.",
+      "generator": "secret"
+    },
+    "SENTRY_DSN": {
+      "description": "The connection settings for Sentry"
+    },
+    "STATUS_TOKEN": {
+      "description": "Token to access the status API.",
+      "required": true
+    }
+  },
+  "keywords": [
+    "Django",
+    "Python",
+    "MIT",
+    "Office of Digital Learning"
+  ],
+  "name": "micromasters",
+  "repository": "https://github.com/mitodl/micromasters",
+  "scripts": {
+    "postdeploy": "./manage.py migrate"
+  },
+  "success_url": "/",
+  "website": "https://github.com/mitodl/micromasters"
 }
