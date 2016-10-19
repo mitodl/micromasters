@@ -16,7 +16,11 @@
                         "edx_course_key": "course-v1:MITx+Digital+Learning+100+Jan_2015",
                         "title": "Digital Learning 100 - January 2015",
                         "start_date": "2015-01-15T00:00:00",
-                        "enrollment_end": "2015-01-29T00:00:00"
+                        "enrollment_end": "2015-01-29T00:00:00",
+                        "course_price": {
+                            "price": 1000,
+                            "is_valid": true
+                        }
                     },
                     {
                         "enrollment_start": "2015-08-15T00:00:00",
@@ -25,7 +29,11 @@
                         "edx_course_key": "course-v1:MITx+Digital+Learning+100+Aug_2015",
                         "title": "Digital Learning 100 - August 2015",
                         "start_date": "2015-08-15T00:00:00",
-                        "enrollment_end": "2015-08-29T00:00:00"
+                        "enrollment_end": "2015-08-29T00:00:00",
+                        "course_price": {
+                            "price": 1000,
+                            "is_valid": true
+                        }
                     },
                     {
                         "enrollment_start": "2016-01-15T00:00:00",
@@ -34,7 +42,11 @@
                         "edx_course_key": "course-v1:MITx+Digital+Learning+100+Jan_2016",
                         "title": "Digital Learning 100 - January 2016",
                         "start_date": "2016-01-15T00:00:00",
-                        "enrollment_end": "2016-01-29T00:00:00"
+                        "enrollment_end": "2016-01-29T00:00:00",
+                        "course_price": {
+                            "price": 1000,
+                            "is_valid": true
+                        }
                     }
                 ]
             },
@@ -50,7 +62,11 @@
                         "edx_course_key": "course-v1:MITx+Digital+Learning+200+Jan_2015",
                         "title": "Digital Learning 200 - January 2015",
                         "start_date": "2015-01-15T00:00:00",
-                        "enrollment_end": "2015-01-29T00:00:00"
+                        "enrollment_end": "2015-01-29T00:00:00",
+                        "course_price": {
+                            "price": 1200,
+                            "is_valid": true
+                        }
                     },
                     {
                         "enrollment_start": "2015-08-15T00:00:00",
@@ -59,7 +75,11 @@
                         "edx_course_key": "course-v1:MITx+Digital+Learning+200+Aug_2015",
                         "title": "Digital Learning 200 - August 2015",
                         "start_date": "2015-08-15T00:00:00",
-                        "enrollment_end": "2015-08-29T00:00:00"
+                        "enrollment_end": "2015-08-29T00:00:00",
+                        "course_price": {
+                            "price": 1200,
+                            "is_valid": true
+                        }
                     },
                     {
                         "enrollment_start": "2016-01-15T00:00:00",
@@ -68,7 +88,11 @@
                         "edx_course_key": "course-v1:MITx+Digital+Learning+200+Jan_2016",
                         "title": "Digital Learning 200 - January 2016",
                         "start_date": "2016-01-15T00:00:00",
-                        "enrollment_end": "2016-01-29T00:00:00"
+                        "enrollment_end": "2016-01-29T00:00:00",
+                        "course_price": {
+                            "price": 1200,
+                            "is_valid": true
+                        }
                     }
                 ]
             },
@@ -84,7 +108,11 @@
                         "edx_course_key": "course-v1:MITx+Digital+Learning+300+Jan_2015",
                         "title": "Digital Learning 300 - January 2015",
                         "start_date": "2015-01-15T00:00:00",
-                        "enrollment_end": "2015-01-29T00:00:00"
+                        "enrollment_end": "2015-01-29T00:00:00",
+                        "course_price": {
+                            "price": 900,
+                            "is_valid": true
+                        }
                     },
                     {
                         "enrollment_start": "2015-08-15T00:00:00",
@@ -93,7 +121,11 @@
                         "edx_course_key": "course-v1:MITx+Digital+Learning+300+Aug_2015",
                         "title": "Digital Learning 300 - August 2015",
                         "start_date": "2015-08-15T00:00:00",
-                        "enrollment_end": "2015-08-29T00:00:00"
+                        "enrollment_end": "2015-08-29T00:00:00",
+                        "course_price": {
+                            "price": 900,
+                            "is_valid": true
+                        }
                     },
                     {
                         "enrollment_start": "2016-01-15T00:00:00",
@@ -102,7 +134,11 @@
                         "edx_course_key": "course-v1:MITx+Digital+Learning+300+Jan_2016",
                         "title": "Digital Learning 300 - January 2016",
                         "start_date": "2016-01-15T00:00:00",
-                        "enrollment_end": "2016-01-29T00:00:00"
+                        "enrollment_end": "2016-01-29T00:00:00",
+                        "course_price": {
+                            "price": 900,
+                            "is_valid": true
+                        }
                     }
                 ]
             }
@@ -124,7 +160,11 @@
                         "edx_course_key": "course-v1:MITx+Analog+Learning+100+Jan_2015",
                         "title": "Analog Learning 100 - January 2015",
                         "start_date": "2015-01-15T00:00:00",
-                        "enrollment_end": "2015-01-29T00:00:00"
+                        "enrollment_end": "2015-01-29T00:00:00",
+                        "course_price": {
+                            "price": 2000,
+                            "is_valid": true
+                        }
                     },
                     {
                         "enrollment_start": "2015-08-15T00:00:00",
@@ -133,7 +173,11 @@
                         "edx_course_key": "course-v1:MITx+Analog+Learning+100+Aug_2015",
                         "title": "Analog Learning 100 - August 2015",
                         "start_date": "2015-08-15T00:00:00",
-                        "enrollment_end": "2015-08-29T00:00:00"
+                        "enrollment_end": "2015-08-29T00:00:00",
+                        "course_price": {
+                            "price": 2000,
+                            "is_valid": true
+                        }
                     },
                     {
                         "enrollment_start": "2016-01-15T00:00:00",
@@ -142,7 +186,11 @@
                         "edx_course_key": "course-v1:MITx+Analog+Learning+100+Jan_2016",
                         "title": "Analog Learning 100 - January 2016",
                         "start_date": "2016-01-15T00:00:00",
-                        "enrollment_end": "2016-01-29T00:00:00"
+                        "enrollment_end": "2016-01-29T00:00:00",
+                        "course_price": {
+                            "price": 2000,
+                            "is_valid": true
+                        }
                     }
                 ]
             },
@@ -158,7 +206,11 @@
                         "edx_course_key": "course-v1:MITx+Analog+Learning+200+Jan_2015",
                         "title": "Analog Learning 200 - January 2015",
                         "start_date": "2015-01-15T00:00:00",
-                        "enrollment_end": "2015-01-29T00:00:00"
+                        "enrollment_end": "2015-01-29T00:00:00",
+                        "course_price": {
+                            "price": 50,
+                            "is_valid": true
+                        }
                     },
                     {
                         "enrollment_start": "2015-08-15T00:00:00",
@@ -167,7 +219,11 @@
                         "edx_course_key": "course-v1:MITx+Analog+Learning+200+Aug_2015",
                         "title": "Analog Learning 200 - August 2015",
                         "start_date": "2015-08-15T00:00:00",
-                        "enrollment_end": "2015-08-29T00:00:00"
+                        "enrollment_end": "2015-08-29T00:00:00",
+                        "course_price": {
+                            "price": 50,
+                            "is_valid": true
+                        }
                     },
                     {
                         "enrollment_start": "2016-01-15T00:00:00",
@@ -176,7 +232,11 @@
                         "edx_course_key": "course-v1:MITx+Analog+Learning+200+Jan_2016",
                         "title": "Analog Learning 200 - January 2016",
                         "start_date": "2016-01-15T00:00:00",
-                        "enrollment_end": "2016-01-29T00:00:00"
+                        "enrollment_end": "2016-01-29T00:00:00",
+                        "course_price": {
+                            "price": 50,
+                            "is_valid": true
+                        }
                     }
                 ]
             },
@@ -192,7 +252,11 @@
                         "edx_course_key": "course-v1:MITx+Analog+Learning+300+Jan_2015",
                         "title": "Analog Learning 300 - January 2015",
                         "start_date": "2015-01-15T00:00:00",
-                        "enrollment_end": "2015-01-29T00:00:00"
+                        "enrollment_end": "2015-01-29T00:00:00",
+                        "course_price": {
+                            "price": 500,
+                            "is_valid": true
+                        }
                     },
                     {
                         "enrollment_start": "2015-08-15T00:00:00",
@@ -201,7 +265,11 @@
                         "edx_course_key": "course-v1:MITx+Analog+Learning+300+Aug_2015",
                         "title": "Analog Learning 300 - August 2015",
                         "start_date": "2015-08-15T00:00:00",
-                        "enrollment_end": "2015-08-29T00:00:00"
+                        "enrollment_end": "2015-08-29T00:00:00",
+                        "course_price": {
+                            "price": 500,
+                            "is_valid": true
+                        }
                     },
                     {
                         "enrollment_start": "2016-01-15T00:00:00",
@@ -210,7 +278,11 @@
                         "edx_course_key": "course-v1:MITx+Analog+Learning+300+Jan_2016",
                         "title": "Analog Learning 300 - January 2016",
                         "start_date": "2016-01-15T00:00:00",
-                        "enrollment_end": "2016-01-29T00:00:00"
+                        "enrollment_end": "2016-01-29T00:00:00",
+                        "course_price": {
+                            "price": 500,
+                            "is_valid": true
+                        }
                     }
                 ]
             }

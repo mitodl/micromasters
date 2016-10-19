@@ -7,6 +7,7 @@ from profiles.api import get_social_username
 from profiles.models import Employment, Education
 from courses.models import Program, Course, CourseRun
 from dashboard.models import ProgramEnrollment, CachedCertificate, CachedEnrollment
+from ecommerce.models import CoursePrice
 from roles.models import Role
 from roles.roles import Staff
 from micromasters.utils import load_json_from_file
@@ -211,9 +212,21 @@ def deserialize_user_data_list(user_data_list, course_runs):
 
 # Program data deserialization
 
+def deserialize_course_price_data(course_run, course_price_data):
+    """Deserializes a CoursePrice object"""
+    course_price = deserialize_model_data(
+        CoursePrice, course_price_data, dict(course_run=course_run)
+    )
+    return course_price
+
+
 def deserialize_course_run_data(course, course_run_data):
     """Deserializes a CourseRun object"""
-    course_run = deserialize_model_data(CourseRun, course_run_data, dict(course=course))
+    course_price_data = course_run_data.pop('course_price')
+    course_run = deserialize_model_data(
+        CourseRun, course_run_data, dict(course=course)
+    )
+    deserialize_course_price_data(course_run, course_price_data)
     return course_run
 
 
