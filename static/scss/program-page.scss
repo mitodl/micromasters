@@ -143,6 +143,10 @@
       ol {
         list-style: none;
         padding: 0;
+
+        li {
+          margin: 0 0 22px 0;
+        }
       }
 
       .title, .title a {
@@ -151,6 +155,7 @@
         font-size: 16px;
         margin: 0 0 6px 0;
         cursor: pointer;
+        line-height: 1.4em;
 
         &:hover {
           text-decoration: underline;
@@ -160,6 +165,7 @@
       .description {
         color: $font-gray;
         font-size: 15px;
+        line-height: 1.4em;
       }
 
       .enrollment-dates {
