@@ -132,8 +132,8 @@ class FinancialAid(TimestampedModel, AuditableModel):
             raise ValidationError("Cannot have multiple FinancialAid objects for the same User and Program.")
         super().save(*args, **kwargs)
 
-    @property
-    def audit_class(self):
+    @classmethod
+    def get_audit_class(cls):
         return FinancialAidAudit
 
     def to_dict(self):

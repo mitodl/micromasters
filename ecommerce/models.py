@@ -54,8 +54,8 @@ class Order(AuditableModel):
         """Description for Order"""
         return "Order {}, status={} for user={}".format(self.id, self.status, self.user)
 
-    @property
-    def audit_class(self):
+    @classmethod
+    def get_audit_class(cls):
         return OrderAudit
 
     def to_dict(self):

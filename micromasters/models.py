@@ -48,8 +48,8 @@ class AuditableModel(Model):
         """
         raise NotImplementedError
 
-    @property
-    def audit_class(self):
+    @classmethod
+    def get_audit_class(cls):
         """
         Returns:
             class of Model:
@@ -78,5 +78,6 @@ class AuditableModel(Model):
             data_before=before_dict,
             data_after=self.to_dict(),
         )
-        audit_kwargs[self.audit_class.get_related_field_name()] = self
-        self.audit_class.objects.create(**audit_kwargs)
+        audit_class = self.get_audit_class()
+        audit_kwargs[audit_class.get_related_field_name()] = self
+        audit_class.objects.create(**audit_kwargs)
