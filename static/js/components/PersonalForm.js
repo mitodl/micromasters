@@ -30,6 +30,8 @@ export default class PersonalForm extends ProfileFormFields {
     const whyWeAskThis = 'Some program sponsors and employers offer benefits or scholarships ' +
       'to learners with specific backgrounds.';
 
+    console.log('here');
+
     return (
       <Grid className="profile-form-grid">
         <Cell col={6}>

@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import _ from 'lodash';
-import AutoComplete from '../AutoComplete';
+import AutoComplete from 'material-ui/AutoComplete';
 import { defaultFilter, showAllOptions } from '../utils/AutoCompleteSettings';
 import { callFunctionArray, validationErrorSelector } from '../../util/util';
 import type { Option } from '../../flow/generalTypes';
