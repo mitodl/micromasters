@@ -88,3 +88,10 @@ class FinancialAidModelsTests(ESTestCase):
                 self.assertAlmostEqual(value, original_after_json[field])
             else:
                 assert value == original_after_json[field]
+
+    def test_to_dict(self):
+        """
+        assert output of to_dict
+        """
+        financial_aid = FinancialAidFactory.create()
+        assert financial_aid.to_dict() == serialize_model_object(financial_aid)
