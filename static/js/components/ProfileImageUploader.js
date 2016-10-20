@@ -74,8 +74,8 @@ const ProfileImageUploader = ({
       </Button>
     ]}
   >
-    { photo ? <CropperWrapper {...{updatePhotoEdit, photo}} /> : dropZone(startPhotoEdit, setPhotoError) }
-    { imageError(error) }
+   { imageError(error) }
+   { photo ? <CropperWrapper {...{updatePhotoEdit, photo}} /> : dropZone(startPhotoEdit, setPhotoError) }
   </Dialog>
 );
 
