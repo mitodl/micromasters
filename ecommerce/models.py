@@ -35,8 +35,9 @@ class Order(AuditableModel):
     FULFILLED = 'fulfilled'
     FAILED = 'failed'
     CREATED = 'created'
+    REFUNDED = 'refunded'
 
-    STATUSES = [CREATED, FULFILLED, FAILED]
+    STATUSES = [CREATED, FULFILLED, FAILED, REFUNDED]
 
     user = ForeignKey(User)
     status = CharField(

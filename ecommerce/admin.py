@@ -36,7 +36,7 @@ class OrderAdmin(admin.ModelAdmin):
     """Admin for Order"""
     model = Order
 
-    readonly_fields = get_field_names(Order)
+    readonly_fields = [name for name in get_field_names(Order) if name != 'status']
 
     def has_add_permission(self, request):
         return False
