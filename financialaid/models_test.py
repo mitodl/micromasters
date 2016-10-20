@@ -89,7 +89,7 @@ class FinancialAidModelsTests(ESTestCase):
             else:
                 assert value == original_after_json[field]
 
-    def test_to_dict(self):
+    def test_to_dict(self):  # pylint: disable=no-self-use
         """
         assert output of to_dict
         """
