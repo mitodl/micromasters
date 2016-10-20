@@ -1,9 +1,8 @@
 /* global SETTINGS: false */
 import React from 'react';
 import { assert } from 'chai';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import sinon from 'sinon';
-import TestUtils from 'react-addons-test-utils';
 
 import FilterVisibilityToggle from './FilterVisibilityToggle';
 import { makeStrippedHtml } from '../../util/util';
@@ -25,18 +24,15 @@ describe('FilterVisibilityToggle', () => {
   let setFilterVisibility = sinon.stub();
   let filterName = 'a filter';
   let sandbox;
-
   let props;
+
   beforeEach(() => {
+    sandbox = sinon.sandbox.create();
     props = {
       checkFilterVisibility:  checkFilterVisibility,
       setFilterVisibility:    setFilterVisibility,
       filterName:             filterName,
     };
-  });
-
-  beforeEach(() => {
-    sandbox = sinon.sandbox.create();
   });
 
   afterEach(() => {
@@ -57,12 +53,12 @@ describe('FilterVisibilityToggle', () => {
 
   it('hides toggle icon when no results', () => {
     sandbox.stub(FilterVisibilityToggle.prototype, 'getResults').returns(null);
-    const wrapper = shallow(
+    const wrapper = mount(
       <FilterVisibilityToggle {...props} >
         <div id="test">Test Text</div>
       </FilterVisibilityToggle>
     );
-    const icon = wrapper.find("i");
+    const icon = wrapper.find("i.material-icons");
     assert.equal(icon.length, 0);
   });
 
@@ -74,12 +70,12 @@ describe('FilterVisibilityToggle', () => {
         }
       }
     });
-    const wrapper = shallow(
+    const wrapper = mount(
       <FilterVisibilityToggle {...props} >
         <div id="test">Test Text</div>
       </FilterVisibilityToggle>
     );
-    const icon = wrapper.find("i");
+    const icon = wrapper.find("i.material-icons");
     assert.equal(icon.length, 0);
   });
 
@@ -91,15 +87,15 @@ describe('FilterVisibilityToggle', () => {
         }
       }
     });
-    let componentTree = TestUtils.renderIntoDocument(
+    const wrapper = mount(
       <FilterVisibilityToggle {...props} >
         <div id="test">Test Text</div>
       </FilterVisibilityToggle>
     );
-    let icon = TestUtils.findRenderedDOMComponentWithTag(
-      componentTree, 'i'
-    );
-    TestUtils.Simulate.click(icon);
+    const icon = wrapper.find("i.material-icons");
+
+    assert.equal(icon.length, 1);
+    icon.simulate('click');
     assert(setFilterVisibility.called);
   });
 });
