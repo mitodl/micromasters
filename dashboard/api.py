@@ -274,6 +274,7 @@ def get_status_for_courserun(course_run, mmtrack):
             status = CourseRunStatus.CHECK_IF_PASSED
         elif course_run.is_future:
             status = CourseRunStatus.WILL_ATTEND
+        # If a course run has no start or end date, is_past, is_current, and is_future all return False
     else:
         if course_run.is_past:
             status = CourseRunStatus.NOT_PASSED

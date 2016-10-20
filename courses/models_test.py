@@ -4,6 +4,7 @@ Model tests
 # pylint: disable=no-self-use
 from datetime import datetime, timedelta
 
+from ddt import ddt, data, unpack
 import pytz
 
 from courses.factories import (
@@ -22,6 +23,15 @@ class ProgramTests(ESTestCase):
         """Test for __str__ method"""
         prog = ProgramFactory.build(title="Title")
         assert "{}".format(prog) == "Title"
+
+
+def from_weeks(weeks, now=None):
+    """Helper function to get a date adjusted by a number of weeks"""
+    if weeks is None:
+        return None
+    if now is None:
+        now = datetime.now(tz=pytz.UTC)
+    return now + timedelta(weeks=weeks)
 
 
 class CourseModelTests(ESTestCase):
@@ -50,7 +60,14 @@ class CourseModelTests(ESTestCase):
             upgrade_deadline=upgrade_deadline,
         )
 
+    def from_weeks(self, weeks):
+        """Helper function to get a date adjusted by a number of weeks"""
+        return from_weeks(weeks, self.now)
 
+
+# Silencing a pylint warning caused by ddt
+# pylint: disable=too-many-arguments
+@ddt
 class GetFirstUnexpiredRunTests(CourseModelTests):  # pylint: disable=too-many-public-methods
     """Tests for get_unexpired_run function"""
 
@@ -60,103 +77,44 @@ class GetFirstUnexpiredRunTests(CourseModelTests):  # pylint: disable=too-many-p
         """
         assert self.course.get_first_unexpired_run() is None
 
-    def test_only_past(self):
+    @data(
+        # course past, enrollment past
+        [-52, -45, -62, -53, False],
+        # course present, enrollment past
+        [-1, 2, -10, -3, False],
+        # course future, enrollment past
+        [1, 3, -10, -3, False],
+        # course past, enrollment none
+        [-10, -3, None, None, False],
+        # course started in past with no end, enrollment none
+        [-52, None, None, None, True],
+        # course future, enrollment present
+        [1, 4, -10, 1, True],
+        # course present, enrollment present
+        [-1, 2, -10, 1, True],
+        # course present, enrollment past with no end
+        [-1, 2, -10, None, True],
+        # course future, enrollment future
+        [52, 62, 40, 50, True],
+        # course future, enrollment none
+        [1, 4, None, None, True],
+    )
+    @unpack
+    def test_run(self, start_weeks, end_weeks, enr_start_weeks, enr_end_weeks, is_run):
         """
-        enrollment past and course past
-        """
-        self.create_run(
-            start=self.now-timedelta(weeks=52),
-            end=self.now-timedelta(weeks=45),
-            enr_start=self.now-timedelta(weeks=62),
-            enr_end=self.now-timedelta(weeks=53),
-        )
-        assert self.course.get_first_unexpired_run() is None
-
-    def test_present_enroll_closed(self):
-        """
-        enrollment past, course present
-        """
-        self.create_run(
-            start=self.now-timedelta(weeks=1),
-            end=self.now+timedelta(weeks=2),
-            enr_start=self.now-timedelta(weeks=10),
-            enr_end=self.now-timedelta(weeks=3),
-        )
-        assert self.course.get_first_unexpired_run() is None
-
-    def test_present_enroll_closed_course_future(self):
-        """
-        enrollment past, course future
-        """
-        self.create_run(
-            start=self.now+timedelta(weeks=1),
-            end=self.now+timedelta(weeks=3),
-            enr_start=self.now-timedelta(weeks=10),
-            enr_end=self.now-timedelta(weeks=3),
-        )
-        assert self.course.get_first_unexpired_run() is None
-
-    def test_enroll_none_course_past(self):
-        """
-        enrollment none, course past
-        """
-        self.create_run(
-            start=self.now-timedelta(weeks=10),
-            end=self.now-timedelta(weeks=3),
-        )
-        assert self.course.get_first_unexpired_run() is None
-
-    def test_only_present_forever(self):
-        """
-        enrollment none, course started in the past with no end
+        Test get_first_unexpired_run for different values
         """
         course_run = self.create_run(
-            start=self.now-timedelta(weeks=52),
+            start=self.from_weeks(start_weeks),
+            end=self.from_weeks(end_weeks),
+            enr_start=self.from_weeks(enr_start_weeks),
+            enr_end=self.from_weeks(enr_end_weeks),
         )
-        next_run = self.course.get_first_unexpired_run()
-        assert isinstance(next_run, CourseRun)
-        assert next_run.pk == course_run.pk
-
-    def test_enr_present_course_future(self):
-        """
-        enrollment present, course future
-        """
-        course_run = self.create_run(
-            start=self.now+timedelta(weeks=1),
-            end=self.now+timedelta(weeks=4),
-            enr_start=self.now-timedelta(weeks=10),
-            enr_end=self.now+timedelta(weeks=1),
-        )
-        next_run = self.course.get_first_unexpired_run()
-        assert isinstance(next_run, CourseRun)
-        assert next_run.pk == course_run.pk
-
-    def test_present_enroll_open(self):
-        """
-        enrollment present, course present
-        """
-        course_run = self.create_run(
-            start=self.now-timedelta(weeks=1),
-            end=self.now+timedelta(weeks=2),
-            enr_start=self.now-timedelta(weeks=10),
-            enr_end=self.now+timedelta(weeks=1),
-        )
-        next_run = self.course.get_first_unexpired_run()
-        assert isinstance(next_run, CourseRun)
-        assert next_run.pk == course_run.pk
-
-    def test_present_enroll_open_null(self):
-        """
-        enrollment past with no end, course present
-        """
-        course_run = self.create_run(
-            start=self.now-timedelta(weeks=1),
-            end=self.now+timedelta(weeks=2),
-            enr_start=self.now-timedelta(weeks=10),
-        )
-        next_run = self.course.get_first_unexpired_run()
-        assert isinstance(next_run, CourseRun)
-        assert next_run.pk == course_run.pk
+        unexpired_run = self.course.get_first_unexpired_run()
+        if is_run:
+            assert unexpired_run == course_run
+        else:
+            assert unexpired_run is None
 
     def test_present_enroll_open_with_future_present(self):
         """
@@ -164,16 +122,16 @@ class GetFirstUnexpiredRunTests(CourseModelTests):  # pylint: disable=too-many-p
         and one run with enrollment future and course future
         """
         course_run = self.create_run(
-            start=self.now-timedelta(weeks=1),
-            end=self.now+timedelta(weeks=2),
-            enr_start=self.now-timedelta(weeks=10),
-            enr_end=self.now+timedelta(weeks=1),
+            start=self.from_weeks(-1),
+            end=self.from_weeks(2),
+            enr_start=self.from_weeks(-10),
+            enr_end=self.from_weeks(1),
         )
         self.create_run(
-            start=self.now+timedelta(weeks=52),
-            end=self.now+timedelta(weeks=62),
-            enr_start=self.now+timedelta(weeks=40),
-            enr_end=self.now+timedelta(weeks=50),
+            start=self.now+timedelta(52),
+            end=self.from_weeks(62),
+            enr_start=self.from_weeks(40),
+            enr_end=self.from_weeks(50),
         )
         next_run = self.course.get_first_unexpired_run()
         assert isinstance(next_run, CourseRun)
@@ -185,42 +143,16 @@ class GetFirstUnexpiredRunTests(CourseModelTests):  # pylint: disable=too-many-p
         and one run with enrollment future and course future
         """
         self.create_run(
-            start=self.now-timedelta(weeks=1),
-            end=self.now+timedelta(weeks=2),
-            enr_start=self.now-timedelta(weeks=10),
-            enr_end=self.now-timedelta(weeks=1),
+            start=self.from_weeks(-1),
+            end=self.from_weeks(2),
+            enr_start=self.from_weeks(-10),
+            enr_end=self.from_weeks(-1),
         )
         course_run = self.create_run(
-            start=self.now+timedelta(weeks=52),
-            end=self.now+timedelta(weeks=62),
-            enr_start=self.now+timedelta(weeks=40),
-            enr_end=self.now+timedelta(weeks=50),
-        )
-        next_run = self.course.get_first_unexpired_run()
-        assert isinstance(next_run, CourseRun)
-        assert next_run.pk == course_run.pk
-
-    def test_future(self):
-        """
-        enrollment in the future and course in the future
-        """
-        course_run = self.create_run(
-            start=self.now+timedelta(weeks=52),
-            end=self.now+timedelta(weeks=62),
-            enr_start=self.now+timedelta(weeks=40),
-            enr_end=self.now+timedelta(weeks=50),
-        )
-        next_run = self.course.get_first_unexpired_run()
-        assert isinstance(next_run, CourseRun)
-        assert next_run.pk == course_run.pk
-
-    def test_enroll_none_course_future(self):
-        """
-        enrollment none, course future
-        """
-        course_run = self.create_run(
-            start=self.now+timedelta(weeks=1),
-            end=self.now+timedelta(weeks=4),
+            start=self.from_weeks(52),
+            end=self.from_weeks(62),
+            enr_start=self.from_weeks(40),
+            enr_end=self.from_weeks(50),
         )
         next_run = self.course.get_first_unexpired_run()
         assert isinstance(next_run, CourseRun)
@@ -231,22 +163,23 @@ class GetFirstUnexpiredRunTests(CourseModelTests):  # pylint: disable=too-many-p
         Two runs, one of which will be excluded from the results.
         """
         course_run_earlier = self.create_run(
-            start=self.now-timedelta(days=2),
-            end=self.now+timedelta(days=10),
-            enr_start=self.now-timedelta(days=1),
-            enr_end=self.now+timedelta(days=4),
+            start=self.from_weeks(-2),
+            end=self.from_weeks(10),
+            enr_start=self.from_weeks(-1),
+            enr_end=self.from_weeks(4),
         )
         course_run_later = self.create_run(
-            start=self.now-timedelta(days=1),
-            end=self.now+timedelta(days=11),
-            enr_start=self.now,
-            enr_end=self.now+timedelta(days=5),
+            start=self.from_weeks(-1),
+            end=self.from_weeks(11),
+            enr_start=self.from_weeks(0),
+            enr_end=self.from_weeks(5),
         )
         next_run = self.course.get_first_unexpired_run(course_run_to_exclude=course_run_earlier)
         assert isinstance(next_run, CourseRun)
         assert next_run.pk == course_run_later.pk
 
 
+@ddt
 class CourseTests(CourseModelTests):  # pylint: disable=too-many-public-methods
     """Tests for Courses"""
 
@@ -254,78 +187,32 @@ class CourseTests(CourseModelTests):  # pylint: disable=too-many-public-methods
         """Test for __str__ method"""
         assert "{}".format(self.course) == "Title"
 
-    def test_future_course_enr_future(self):
-        """Test Course that starts in the future, enrollment in future"""
-        future_date = self.now + timedelta(weeks=1)
-        start_date = 'Starts {:%D} - '.format(future_date)
-        enr_start = 'Enrollment {:%m/%Y}'.format(future_date)
-        # create a run that starts soon, enrollment_start in the future
+    @data(
+        # course starts in future, enrollment future
+        [1, 10, 1, 2, 'Starts {:%D} - Enrollment {:%m/%Y}'.format(from_weeks(1), from_weeks(1))],
+        # course starts in future, enrollment open
+        [1, 10, -1, 10, 'Starts {:%D} - Enrollment Open'.format(from_weeks(1))],
+        # course starts in future, enrollment open with no end
+        [1, 10, -1, None, 'Starts {:%D} - Enrollment Open'.format(from_weeks(1))],
+        # course starts in future, no enrollment dates
+        [1, 10, None, None, 'Starts {:%D}'.format(from_weeks(1))],
+        # course is currently running, enrollment is open, ending soon
+        [-1, 10, -1, 10, 'Ongoing - Enrollment Ends {:%D}'.format(from_weeks(10))],
+        # course is currently running without end, enrollment is open, no end
+        [-1, None, -1, None, 'Ongoing - Enrollment Open'],
+        # course is currently running, enrollment is closed
+        [-1, 10, -2, -1, 'Not available'],
+    )
+    @unpack
+    def test_enrollment_text(self, start, end, enr_start, enr_end, expected):
+        """Tests for enrollment_text"""
         self.create_run(
-            start=future_date,
-            end=self.now + timedelta(weeks=10),
-            enr_start=future_date,
-            enr_end=self.now + timedelta(weeks=2),
+            start=self.from_weeks(start),
+            end=self.from_weeks(end),
+            enr_start=self.from_weeks(enr_start),
+            enr_end=self.from_weeks(enr_end),
         )
-        assert self.course.enrollment_text == start_date + enr_start
-
-    def test_future_course_enr_open(self):
-        """Test course in the future, enrollment open"""
-        future_date = self.now + timedelta(weeks=1)
-        start_date = 'Starts {:%D} - Enrollment Open'.format(future_date)
-        # and a run is about to start and enrollment is open
-        self.create_run(
-            start=future_date,
-            end=self.now + timedelta(weeks=10),
-            enr_start=self.now - timedelta(weeks=1),
-            enr_end=self.now + timedelta(weeks=10),
-        )
-        assert self.course.enrollment_text == start_date
-
-    def test_future_course_no_enr_end(self):
-        """Test course in the future, enrollment_end is None"""
-        future_date = self.now + timedelta(weeks=1)
-        text = 'Starts {:%D} - Enrollment Open'.format(future_date)
-        self.create_run(
-            start=future_date,
-            end=self.now + timedelta(weeks=10),
-            enr_start=self.now - timedelta(weeks=1),
-        )
-        assert self.course.enrollment_text == text
-
-    def test_future_course_no_enr(self):
-        """Test course in the future, no enrollment dates"""
-        future_date = self.now + timedelta(weeks=1)
-        expected_text = 'Starts {:%D}'.format(future_date)
-        self.create_run(
-            start=future_date,
-            end=self.now + timedelta(weeks=10),
-            enr_start=None,
-            enr_end=None,
-        )
-        assert self.course.enrollment_text == expected_text
-
-    def test_current_course(self):
-        """Test current course, enrollment ends soon"""
-        text = 'Ongoing - Enrollment Ends {:%D}'.format(
-            self.now + timedelta(weeks=10)
-        )
-        self.create_run(
-            start=self.now - timedelta(weeks=1),
-            end=self.now + timedelta(weeks=10),
-            enr_start=self.now - timedelta(weeks=1),
-            enr_end=self.now + timedelta(weeks=10),
-        )
-        assert self.course.enrollment_text == text
-
-    def test_current_course_no_enr_end(self):
-        """Test current course, enrollment open"""
-        self.create_run(
-            start=self.now - timedelta(weeks=1),
-            end=None,
-            enr_start=self.now - timedelta(weeks=1),
-            enr_end=None,
-        )
-        assert self.course.enrollment_text == 'Ongoing - Enrollment Open'
+        assert self.course.enrollment_text == expected
 
     def test_course_fuzzy_start_date(self):
         """Test course with promised course run"""
@@ -339,18 +226,8 @@ class CourseTests(CourseModelTests):  # pylint: disable=too-many-public-methods
         )
         assert self.course.enrollment_text == 'Coming Fall 2017'
 
-    def test_current_course_enr_closed(self):
-        """Test current course, enrollment closed"""
 
-        self.create_run(
-            start=self.now - timedelta(weeks=1),
-            end=self.now + timedelta(weeks=10),
-            enr_start=self.now - timedelta(weeks=2),
-            enr_end=self.now - timedelta(weeks=1),
-        )
-        assert self.course.enrollment_text == 'Not available'
-
-
+@ddt
 class CourseRunTests(CourseModelTests):
     """Tests for Course Run model"""
 
@@ -376,154 +253,104 @@ class CourseRunTests(CourseModelTests):
         assert test_run.edx_course_key is None
         assert test_run_blank_edx_key.edx_course_key is None
 
-    def test_is_current_no_start(self):
-        """Test for is_current property"""
-        course_run = self.create_run()
-        assert course_run.is_current is False
-
-        # even if the end is in the future
+    @data(
+        # no start or end
+        [None, None, False],
+        # end is in future
+        [None, 1, False],
+        # start is in past
+        [-1, None, True],
+        # start is in future
+        [1, None, False],
+        # start and end is in past
+        [-2, -1, False],
+        # start is in past, end is in future
+        [-2, 1, True],
+        # start and end are in future
+        [1, 2, False],
+        # start is in future, end is in past
+        [1, -2, False],
+    )
+    @unpack
+    def test_is_current(self, start, end, expected):
+        """Test is_current"""
         course_run = self.create_run(
-            end=self.now+timedelta(weeks=1)
+            start=self.from_weeks(start),
+            end=self.from_weeks(end),
         )
-        assert course_run.is_current is False
+        assert course_run.is_current is expected
 
-    def test_is_current_no_end(self):
-        """Test for is_current property"""
-        # with the start in the past
-        course_run = self.create_run(
-            start=self.now-timedelta(weeks=1)
-        )
-        assert course_run.is_current is True
-
-        # with the start in the future
-        course_run = self.create_run(
-            start=self.now+timedelta(weeks=1)
-        )
-        assert course_run.is_current is False
-
-    def test_is_current(self):
-        """Test for is_current property"""
-        # with the start and end in the past
-        course_run = self.create_run(
-            start=self.now-timedelta(weeks=2),
-            end=self.now-timedelta(weeks=1)
-        )
-        assert course_run.is_current is False
-
-        # with the start in the past and end in the future
-        course_run = self.create_run(
-            start=self.now-timedelta(weeks=2),
-            end=self.now+timedelta(weeks=1)
-        )
-        assert course_run.is_current is True
-
-        # with the start and end in the future
-        course_run = self.create_run(
-            start=self.now+timedelta(weeks=1),
-            end=self.now+timedelta(weeks=2)
-        )
-        assert course_run.is_current is False
-
-        # with the start in the future and end in the past
-        course_run = self.create_run(
-            start=self.now+timedelta(weeks=1),
-            end=self.now-timedelta(weeks=2)
-        )
-        assert course_run.is_current is False
-
-    def test_is_past(self):
+    @data(
+        # no start or end
+        [None, None, False],
+        # end is in future
+        [None, 2, False],
+        # end is in past
+        [None, -2, True],
+    )
+    @unpack
+    def test_is_past(self, start, end, expected):
         """Test for is_past property"""
-        # with no end
-        course_run = self.create_run()
-        assert course_run.is_past is False
-
-        # with end in the future
         course_run = self.create_run(
-            end=self.now+timedelta(weeks=2)
+            start=self.from_weeks(start),
+            end=self.from_weeks(end),
         )
-        assert course_run.is_past is False
+        assert course_run.is_past is expected
 
-        # with end in the past
-        course_run = self.create_run(
-            end=self.now-timedelta(weeks=2)
-        )
-        assert course_run.is_past is True
-
-    def test_is_future(self):
+    @data(
+        # no start or end
+        [None, None, False],
+        # start is in future
+        [2, None, True],
+        # start is in past
+        [-2, None, False],
+    )
+    @unpack
+    def test_is_future(self, start, end, expected):
         """Test for is_future property"""
-        # with no start
-        course_run = self.create_run()
-        assert course_run.is_future is False
-
-        # with start in the future
         course_run = self.create_run(
-            start=self.now+timedelta(weeks=2)
+            start=self.from_weeks(start),
+            end=self.from_weeks(end),
         )
-        assert course_run.is_future is True
+        assert course_run.is_future is expected
 
-        # with start in the past
-        course_run = self.create_run(
-            start=self.now-timedelta(weeks=2)
-        )
-        assert course_run.is_future is False
-
-    def test_is_future_enrollment_open(self):
+    @data(
+        # no start date
+        [None, None, None, None, False],
+        # with start in the future, no enrollment start
+        [2, None, None, None, False],
+        # enrollment start is in past, no enrollment end
+        [2, None, -3, None, True],
+        # enrollment start and end are in past
+        [2, None, -3, -1, False],
+        # enrollment start and end are in future
+        [2, None, -3, 3, True],
+        # enrollment start is in future, no enrollment end
+        [2, None, 1, None, False],
+    )
+    @unpack
+    def test_is_future_enrollment_open(self, start, end, enr_start, enr_end, expected):
         """Test for is_future_enrollment_open property"""
-        # with no start date
-        course_run = self.create_run()
-        assert course_run.is_future_enrollment_open is False
-
-        # with start in the future, no enrollment_start
         course_run = self.create_run(
-            start=self.now + timedelta(weeks=2)
+            start=self.from_weeks(start),
+            end=self.from_weeks(end),
+            enr_start=self.from_weeks(enr_start),
+            enr_end=self.from_weeks(enr_end),
         )
-        assert course_run.is_future_enrollment_open is False
+        assert course_run.is_future_enrollment_open is expected
 
-        # enrollment_start in the past, no enrollment_end
-        course_run = self.create_run(
-            start=self.now + timedelta(weeks=2),
-            enr_start=self.now - timedelta(weeks=3),
-            enr_end=None
-        )
-        assert course_run.is_future_enrollment_open is True
-
-        # enrollment_start in the past, enrollment_end in the past
-        course_run = self.create_run(
-            start=self.now + timedelta(weeks=2),
-            enr_start=self.now - timedelta(weeks=3),
-            enr_end=self.now - timedelta(weeks=1)
-        )
-        assert course_run.is_future_enrollment_open is False
-
-        # enrollment_start in the past, enrollment_end in the future
-        course_run = self.create_run(
-            start=self.now + timedelta(weeks=2),
-            enr_start=self.now - timedelta(weeks=3),
-            enr_end=self.now + timedelta(weeks=3)
-        )
-        assert course_run.is_future_enrollment_open is True
-
-        # enrollment_start in the future
-        course_run = self.create_run(
-            start=self.now + timedelta(weeks=2),
-            enr_start=self.now + timedelta(weeks=1)
-        )
-        assert course_run.is_future_enrollment_open is False
-
-    def test_is_upgradable(self):
+    @data(
+        # No upgrade deadline
+        [None, True],
+        # Upgrade deadline is in future
+        [2, True],
+        # Upgrade deadline is in past
+        [-2, False],
+    )
+    @unpack
+    def test_is_upgradable(self, upgrade_deadline, expected):
         """Test for is_upgradable property"""
-        # with no upgrade_deadline
-        course_run = self.create_run()
-        assert course_run.is_upgradable is True
-
-        # with upgrade_deadline in the future
         course_run = self.create_run(
-            upgrade_deadline=self.now+timedelta(weeks=2)
+            upgrade_deadline=self.from_weeks(upgrade_deadline)
         )
-        assert course_run.is_upgradable is True
-
-        # with upgrade_deadline in the past
-        course_run = self.create_run(
-            upgrade_deadline=self.now-timedelta(weeks=2)
-        )
-        assert course_run.is_upgradable is False
+        assert course_run.is_upgradable is expected
