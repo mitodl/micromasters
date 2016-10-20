@@ -12,7 +12,6 @@ import type { Program } from '../../flow/programTypes';
 import type {
   DocumentsState,
 } from '../../reducers/documents';
-import { courseListToolTip } from './util';
 import { formatPrice } from '../../util/util';
 import {
   FA_STATUS_APPROVED,
@@ -116,7 +115,6 @@ export default class FinancialAidCard extends React.Component {
     return <div className="personalized-pricing">
       <div className="heading">
         How much does it cost?
-        { courseListToolTip('filler-text', 'course-price') }
       </div>
       <div className="explanation">
         The cost of courses in the {title} MicroMasters varies
