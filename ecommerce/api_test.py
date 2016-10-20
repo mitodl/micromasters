@@ -270,9 +270,15 @@ class PurchasableTests(ESTestCase):
         assert OrderAudit.objects.count() == 1
         order_audit = OrderAudit.objects.first()
         assert order_audit.order == order
-        assert order_audit.data_before is None
         assert order_audit.data_after == order.to_dict()
 
+        # data_before only has modified_at different, since we only call save_and_log
+        # after Order is already created
+        data_before = order_audit.data_before
+        dict_before = order.to_dict()
+        del data_before['modified_at']
+        del dict_before['modified_at']
+        assert data_before == dict_before
 
 CYBERSOURCE_ACCESS_KEY = 'access'
 CYBERSOURCE_PROFILE_ID = 'profile'
