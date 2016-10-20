@@ -146,8 +146,8 @@ class FinancialAidAudit(AuditModel):
     """
     financial_aid = models.ForeignKey(FinancialAid, null=True, on_delete=models.SET_NULL)
 
-    @property
-    def related_field_name(self):
+    @classmethod
+    def get_related_field_name(cls):
         return 'financial_aid'
 
 

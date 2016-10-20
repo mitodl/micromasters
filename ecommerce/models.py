@@ -54,6 +54,10 @@ class Order(AuditableModel):
         """Description for Order"""
         return "Order {}, status={} for user={}".format(self.id, self.status, self.user)
 
+    @property
+    def audit_class(self):
+        return OrderAudit
+
     def to_dict(self):
         """
         Get a serialized representation of the Order and any attached Lines
@@ -69,8 +73,8 @@ class OrderAudit(AuditModel):
     """
     order = ForeignKey(Order, null=True, on_delete=SET_NULL)
 
-    @property
-    def related_field_name(self):
+    @classmethod
+    def get_related_field_name(cls):
         return 'order'
 
 

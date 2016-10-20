@@ -25,8 +25,8 @@ class AuditModel(Model):
     class Meta:
         abstract = True
 
-    @property
-    def related_field_name(self):
+    @classmethod
+    def get_related_field_name(cls):
         """
         Returns:
             str: A field name which links the Auditable model to this model
@@ -77,5 +77,5 @@ class AuditableModel(Model):
             data_before=before_dict,
             data_after=self.to_dict(),
         )
-        audit_kwargs[self.audit_class.related_field_name] = self
+        audit_kwargs[self.audit_class.get_related_field_name()] = self
         self.audit_class.objects.create(**audit_kwargs)
