@@ -262,10 +262,12 @@ Tests should be run in the Docker container, not the host machine. They can be r
     docker-compose run watch npm test /path/to/test.js
     # Run the JS linter
     docker-compose run watch npm run-script lint
-
-You can also run JS type-checking using [flow](https://flowtype.org), but this
-will *not* work if you run it in the Docker container (if you are not running
-Linux as your host operating system). Instead, run it on your host OS:
-
     # Run JS type-checking
+    docker-compose run watch npm run-script flow
+
+Note that running [`flow`](https://flowtype.org) may not work properly if your
+host machine isn't running Linux. If you are using a Mac, you'll need to run
+`flow` on your host machine, like this:
+
+    npm install
     npm run-script flow
