@@ -5,7 +5,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.test import RequestFactory
 
 from courses.factories import ProgramFactory
-from profiles.factories import UserFactory
+from micromasters.factories import UserFactory
 from roles.models import Role
 from roles.roles import Staff
 from search import permissions

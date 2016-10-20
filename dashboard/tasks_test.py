@@ -12,7 +12,7 @@ from dashboard.tasks import (
     batch_update_user_data,
     batch_update_user_data_subtasks
 )
-from profiles.factories import UserFactory
+from micromasters.factories import UserFactory
 
 # pylint: disable=no-self-use
 

@@ -15,12 +15,12 @@ from rest_framework.serializers import ListSerializer
 from rest_framework.exceptions import ValidationError
 
 from backends.edxorg import EdxOrgOAuth2
+from micromasters.factories import UserFactory
 from profiles.api import get_social_username
 from profiles.factories import (
     EmploymentFactory,
     EducationFactory,
     ProfileFactory,
-    UserFactory,
 )
 from profiles.models import (
     BACHELORS,

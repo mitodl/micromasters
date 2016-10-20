@@ -21,9 +21,9 @@ from dashboard import (
     models,
 )
 from dashboard.utils import MMTrack
-from profiles.factories import UserFactory
-from search.base import ESTestCase
+from micromasters.factories import UserFactory
 from micromasters.utils import load_json_from_file
+from search.base import ESTestCase
 
 
 # pylint: disable=too-many-lines

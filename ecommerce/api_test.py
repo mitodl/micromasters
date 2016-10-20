@@ -49,7 +49,7 @@ from ecommerce.models import (
 )
 from financialaid.factories import FinancialAidFactory
 from financialaid.models import FinancialAidStatus
-from profiles.factories import UserFactory
+from micromasters.factories import UserFactory
 from search.base import ESTestCase
 
 

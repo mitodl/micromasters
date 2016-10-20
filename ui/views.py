@@ -17,6 +17,7 @@ from rolepermissions.shortcuts import available_perm_status
 from rolepermissions.verifications import has_role
 
 from micromasters.utils import webpack_dev_server_host, webpack_dev_server_url
+from micromasters.serializers import UserSerializer
 from profiles.api import get_social_username
 from profiles.permissions import CanSeeIfNotPrivate
 from roles.models import Instructor, Staff
@@ -71,6 +72,7 @@ class ReactView(View):  # pylint: disable=unused-argument
             "sentry_dsn": sentry.get_public_dsn(),
             "search_url": reverse('search_api', kwargs={"elastic_url": ""}),
             "support_email": settings.EMAIL_SUPPORT,
+            "user": UserSerializer().to_representation(request.user),
         }
 
         return render(

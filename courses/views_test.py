@@ -8,7 +8,7 @@ from rest_framework.test import APITestCase
 from courses.factories import ProgramFactory
 from dashboard.factories import ProgramEnrollmentFactory
 from dashboard.models import ProgramEnrollment
-from profiles.factories import UserFactory
+from micromasters.factories import UserFactory
 from search.base import ESTestCase
 
 

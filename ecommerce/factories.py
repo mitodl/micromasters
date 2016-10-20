@@ -26,7 +26,7 @@ from ecommerce.models import (
     Order,
     Receipt,
 )
-from profiles.factories import UserFactory
+from micromasters.factories import UserFactory
 
 
 FAKE = faker.Factory.create()

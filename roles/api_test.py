@@ -3,7 +3,7 @@ Tests for the API module
 """
 
 from courses.factories import ProgramFactory
-from profiles.factories import UserFactory
+from micromasters.factories import UserFactory
 from roles.api import get_advance_searchable_programs
 from roles.models import Role
 from roles.roles import Staff

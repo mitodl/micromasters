@@ -16,6 +16,7 @@ from wagtail.wagtailimages.models import Image
 
 from courses.models import Program
 from courses.serializers import CourseSerializer
+from micromasters.serializers import UserSerializer
 from micromasters.utils import webpack_dev_server_host
 from profiles.api import get_social_username
 from roles.models import Instructor, Staff
@@ -214,7 +215,8 @@ def get_program_page_context(programpage, request):
         "courses": courses_for_popover(courses_query),
         "environment": settings.ENVIRONMENT,
         "sentry_dsn": sentry.get_public_dsn(),
-        "release_version": settings.VERSION
+        "release_version": settings.VERSION,
+        "user": UserSerializer().to_representation(request.user),
     }
     username = get_social_username(request.user)
     context = super(ProgramPage, programpage).get_context(request)

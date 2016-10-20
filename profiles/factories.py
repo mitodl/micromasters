@@ -1,12 +1,7 @@
 """Factories for making test data"""
 from datetime import date, datetime, timezone
 
-from django.contrib.auth.models import User
-from factory import (
-    Sequence,
-    SubFactory,
-    LazyAttribute,
-)
+from factory import SubFactory, LazyAttribute
 from factory.django import (
     DjangoModelFactory,
     ImageField
@@ -19,20 +14,11 @@ from factory.fuzzy import (
     FuzzyText,
 )
 import faker
-
+from micromasters.factories import UserFactory
 from profiles.models import Employment, Profile, Education
 
 
 FAKE = faker.Factory.create()
-
-
-class UserFactory(DjangoModelFactory):
-    """Factory for Users"""
-    username = Sequence(lambda n: "user_%d" % n)
-    email = LazyAttribute(lambda x: FAKE.email())
-
-    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods,old-style-class
-        model = User
 
 
 class ProfileFactory(DjangoModelFactory):

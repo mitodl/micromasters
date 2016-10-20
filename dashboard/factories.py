@@ -23,7 +23,7 @@ from courses.factories import (
     CourseFactory,
     ProgramFactory,
 )
-from profiles.factories import UserFactory
+from micromasters.factories import UserFactory
 
 
 FAKE = faker.Factory.create()

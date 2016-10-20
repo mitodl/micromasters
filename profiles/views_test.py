@@ -22,7 +22,8 @@ from rest_framework.status import (
 from backends.edxorg import EdxOrgOAuth2
 from courses.factories import ProgramFactory
 from dashboard.models import ProgramEnrollment
-from profiles.factories import ProfileFactory, UserFactory
+from micromasters.factories import UserFactory
+from profiles.factories import ProfileFactory
 from profiles.models import Profile
 from profiles.permissions import (
     CanEditIfOwner,

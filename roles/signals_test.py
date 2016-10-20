@@ -12,7 +12,7 @@ from rolepermissions.verifications import (
 
 from courses.factories import ProgramFactory
 from roles.models import Role
-from profiles.factories import UserFactory
+from micromasters.factories import UserFactory
 
 
 # pylint: disable=no-self-use

@@ -16,7 +16,7 @@ from dashboard.utils import MMTrack
 from ecommerce.factories import CoursePriceFactory, LineFactory, OrderFactory
 from ecommerce.models import Order
 from financialaid.factories import TierProgramFactory, FinancialAidFactory
-from profiles.factories import UserFactory
+from micromasters.factories import UserFactory
 from micromasters.utils import load_json_from_file
 
 

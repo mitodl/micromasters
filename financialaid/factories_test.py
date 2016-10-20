@@ -8,7 +8,7 @@ from factory.django import mute_signals
 
 from financialaid.factories import FinancialAidFactory
 from financialaid.models import FinancialAid
-from profiles.factories import UserFactory
+from micromasters.factories import UserFactory
 from profiles.models import Profile
 
 

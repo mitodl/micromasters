@@ -21,7 +21,7 @@ from backends.utils import InvalidCredentialStored
 from courses.factories import ProgramFactory, CourseRunFactory
 from dashboard.models import ProgramEnrollment, CachedEnrollment
 from dashboard.utils import MMTrack
-from profiles.factories import UserFactory
+from micromasters.factories import UserFactory
 from search.base import ESTestCase
 
 

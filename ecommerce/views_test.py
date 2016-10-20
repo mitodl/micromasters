@@ -23,10 +23,8 @@ from ecommerce.models import (
     OrderAudit,
     Receipt,
 )
-from profiles.factories import (
-    ProfileFactory,
-    UserFactory,
-)
+from micromasters.factories import UserFactory
+from profiles.factories import ProfileFactory
 from search.base import ESTestCase
 
 
