@@ -115,7 +115,7 @@ export default [
   },
   {
     "alpha2": "cu",
-    "English": "Church Slavic; Old Slavonic; Church Slavonic; Old Bulgarian; Old Church Slavonic"
+    "English": "Church Slavic; Church Slavonic; Old Bulgarian; Old Church Slavonic"
   },
   {
     "alpha2": "cv",
@@ -147,7 +147,7 @@ export default [
   },
   {
     "alpha2": "el",
-    "English": "Greek, Modern (1453-)"
+    "English": "Greek"
   },
   {
     "alpha2": "en",
@@ -447,11 +447,11 @@ export default [
   },
   {
     "alpha2": "nb",
-    "English": "Bokm\u00e5l, Norwegian; Norwegian Bokm\u00e5l"
+    "English": "Norwegian Bokm\u00e5l"
   },
   {
     "alpha2": "nd",
-    "English": "Ndebele, North; North Ndebele"
+    "English": "North Ndebele"
   },
   {
     "alpha2": "ne",
@@ -467,7 +467,7 @@ export default [
   },
   {
     "alpha2": "nn",
-    "English": "Norwegian Nynorsk; Nynorsk, Norwegian"
+    "English": "Norwegian Nynorsk"
   },
   {
     "alpha2": "no",
@@ -475,7 +475,7 @@ export default [
   },
   {
     "alpha2": "nr",
-    "English": "Ndebele, South; South Ndebele"
+    "English": "South Ndebele"
   },
   {
     "alpha2": "nv",
@@ -655,7 +655,7 @@ export default [
   },
   {
     "alpha2": "to",
-    "English": "Tonga (Tonga Islands)"
+    "English": "Tonga"
   },
   {
     "alpha2": "tr",
