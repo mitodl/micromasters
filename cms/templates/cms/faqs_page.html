@@ -5,8 +5,8 @@
 {% endblock %}
 
 {% block panel %}
-  <div class="faqs" >
-    {% for categorized in faqpage.get_children.specific %}
+  <div class="faqs">
+    {% for categorized in child_page.get_children.specific %}
       <h3 class="faq-category"> {{ categorized.title }}</h3>
       {% for faq in categorized.faqs.all %}
         <div class="faq accordion">

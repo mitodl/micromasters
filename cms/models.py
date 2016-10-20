@@ -69,24 +69,6 @@ class HomePage(Page):
         return context
 
 
-class FaqsPage(Page):
-    """
-    CMS page for questions
-    """
-    parent_page_types = ['ProgramPage']
-    subpage_types = ['CategorizedFaqsPage']
-
-    def parent_page(self):
-        """ Get the parent ProgramPage"""
-        return ProgramPage.objects.ancestor_of(self).first()
-
-    def get_context(self, request):
-        context = get_program_page_context(self.parent_page(), request)
-        context['faqpage'] = self
-        context['active_tab'] = self.title
-        return context
-
-
 class CategorizedFaqsPage(Page):
     """
     CMS page for categorized questions
@@ -97,18 +79,12 @@ class CategorizedFaqsPage(Page):
     parent_page_types = ['FaqsPage']
 
 
-class GenericPage(Page):
+class ProgramChildPage(Page):
     """
     CMS Page for custom tabs on the program page
     """
-    content = RichTextField(
-        blank=True,
-        help_text='The content of this tab on the program page'
-    )
+
     parent_page_types = ['ProgramPage']
-    content_panels = Page.content_panels + [
-        FieldPanel('content')
-    ]
 
     def parent_page(self):
         """ Get the parent ProgramPage"""
@@ -116,9 +92,30 @@ class GenericPage(Page):
 
     def get_context(self, request):
         context = get_program_page_context(self.parent_page(), request)
-        context['generic_page'] = self
+        context['child_page'] = self
         context['active_tab'] = self.title
         return context
+
+
+class FaqsPage(ProgramChildPage):
+    """
+    CMS page for questions
+    """
+    parent_page_types = ['ProgramPage']
+    subpage_types = ['CategorizedFaqsPage']
+
+
+class ProgramTabPage(ProgramChildPage):
+    """
+    CMS page for custom tabs on the program page
+    """
+    content = RichTextField(
+        blank=True,
+        help_text='The content of this tab on the program page'
+    )
+    content_panels = Page.content_panels + [
+        FieldPanel('content')
+    ]
 
 
 class ProgramPage(Page):
@@ -177,7 +174,7 @@ class ProgramPage(Page):
             'Thumbnails are cropped down to this size, preserving aspect ratio.'
         ),
     )
-    subpage_types = ['FaqsPage', 'GenericPage']
+    subpage_types = ['FaqsPage', 'ProgramTabPage']
     content_panels = Page.content_panels + [
         FieldPanel('description', classname="full"),
         FieldPanel('program'),
