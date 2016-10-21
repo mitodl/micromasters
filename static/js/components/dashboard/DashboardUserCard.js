@@ -26,8 +26,6 @@ export default class DashboardUserCard extends React.Component {
         <CardTitle>{getPreferredName(profile)}</CardTitle>
         <CardText>
           <span className="dashboard-user-card-text-program">{programTitle}</span>
-          <span className="dashboard-user-card-text-id">MicroMasters ID: {profile.pretty_printed_student_id}</span>
-
           <Link
             to={`/learner/${profile.username}`}
             className="mm-minor-action">

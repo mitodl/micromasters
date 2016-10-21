@@ -19,10 +19,6 @@ describe('DashboardUserCard', () => {
     assert.equal(textContainer.find(CardTitle).children().text(), "Jane");
 
     assert.equal(textContainer.find(".dashboard-user-card-text-program").text(), program.title);
-    assert.equal(
-      textContainer.find(".dashboard-user-card-text-id").text(),
-      `MicroMasters ID: ${profile.pretty_printed_student_id}`,
-    );
     let link = textContainer.find(Link);
     assert.deepEqual(link.children().text(), 'View Profile');
     assert.deepEqual(link.props().to, `/learner/${profile.username}`);
