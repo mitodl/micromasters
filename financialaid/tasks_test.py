@@ -54,13 +54,10 @@ class TasksTest(TestCase):
         sync_currency_exchange_rates.apply(args=()).get()
         called_args, _ = mocked_request.call_args
         assert called_args[0] == CURRENCY_EXCHANGE_RATE_API_REQUEST_URL
-        assert CurrencyExchangeRate.objects.count() == 3
-        currency = CurrencyExchangeRate.objects.get(currency_code="MNO")
-        assert currency.exchange_rate == 1.7
-        currency = CurrencyExchangeRate.objects.get(currency_code="DEF")
-        assert currency.exchange_rate == 2
-        currency = CurrencyExchangeRate.objects.get(currency_code="PQR")
-        assert currency.exchange_rate == 0.4
+        assert CurrencyExchangeRate.objects.count() == len(self.data['rates'])
+        for code, rate in self.data['rates'].items():
+            currency = CurrencyExchangeRate.objects.get(currency_code=code)
+            assert currency.exchange_rate == float(rate)
 
     @override_settings(CELERY_ALWAYS_EAGER=True)
     def test_delete_currency_exchange_rate(self, mocked_request):
@@ -75,8 +72,9 @@ class TasksTest(TestCase):
         called_args, _ = mocked_request.call_args
         assert called_args[0] == CURRENCY_EXCHANGE_RATE_API_REQUEST_URL
         assert CurrencyExchangeRate.objects.count() == 1
-        currency = CurrencyExchangeRate.objects.get(currency_code="DEF")
-        assert currency.exchange_rate == 1.9
+        for code, rate in self.data['rates'].items():
+            currency = CurrencyExchangeRate.objects.get(currency_code=code)
+            assert currency.exchange_rate == float(rate)
 
     @override_settings(CELERY_ALWAYS_EAGER=True)
     def test_exchange_rate_unexpected_api_error(self, mocked_request):

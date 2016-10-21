@@ -57,11 +57,11 @@ class ProfileFactory(DjangoModelFactory):
     edx_bio = FuzzyText()
 
     city = LazyAttribute(lambda x: FAKE.city())
-    country = LazyAttribute(lambda x: FAKE.country())
+    country = LazyAttribute(lambda x: FAKE.country_code())
     state_or_territory = LazyAttribute(lambda x: FAKE.state())
 
-    birth_country = LazyAttribute(lambda x: FAKE.country())
-    nationality = LazyAttribute(lambda x: FAKE.country())
+    birth_country = LazyAttribute(lambda x: FAKE.country_code())
+    nationality = LazyAttribute(lambda x: FAKE.country_code())
 
     has_profile_image = FuzzyAttribute(FAKE.boolean)
     edx_requires_parental_consent = FuzzyAttribute(FAKE.boolean)

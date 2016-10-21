@@ -4,11 +4,11 @@ Tests for financial aid api
 import json
 
 from datetime import datetime, timedelta
+import ddt
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_save
 from django.test import TestCase
 from factory.django import mute_signals
-from factory.fuzzy import FuzzyText
 
 from courses.factories import ProgramFactory, CourseFactory, CourseRunFactory
 from dashboard.models import ProgramEnrollment
@@ -35,37 +35,70 @@ from roles.models import Role
 from roles.roles import Staff, Instructor
 
 
+def create_program():
+    """
+    Helper function to create a financial aid program
+    Returns:
+        courses.models.Program: A new program
+    """
+    program = ProgramFactory.create(
+        financial_aid_availability=True,
+        live=True
+    )
+    course = CourseFactory.create(program=program)
+    course_run = CourseRunFactory.create(
+        enrollment_end=datetime.utcnow() + timedelta(hours=1),
+        course=course
+    )
+    CoursePriceFactory.create(
+        course_run=course_run,
+        is_valid=True
+    )
+    return program
+
+
+def create_enrolled_profile(program, role=None, **profile_kwargs):
+    """
+    Helper function to create a profile and some related models
+
+    Args:
+        program (courses.models.Program):
+            A program
+        role (str or None):
+            A role, or no role if None
+    Returns:
+        profiles.models.Profile: A new profile
+    """
+    with mute_signals(post_save):
+        profile = ProfileFactory.create(**profile_kwargs)
+
+    ProgramEnrollment.objects.create(
+        user=profile.user,
+        program=program
+    )
+    if role is not None:
+        Role.objects.create(
+            user=profile.user,
+            program=program,
+            role=role,
+        )
+
+    return profile
+
+
 class FinancialAidBaseTestCase(TestCase):
     """
     Base test case for financial aid test setup
     """
     @classmethod
     def setUpTestData(cls):
-        with mute_signals(post_save):
-            cls.profile = ProfileFactory.create(
-                country=FuzzyText(length=2)
-            )
-            cls.profile2 = ProfileFactory.create()
-            cls.staff_user_profile = ProfileFactory.create()
-            cls.staff_user_profile2 = ProfileFactory.create()
-            cls.instructor_user_profile = ProfileFactory.create()
-            cls.enrolled_profile = ProfileFactory.create()
-            cls.enrolled_profile2 = ProfileFactory.create()
-            cls.enrolled_profile3 = ProfileFactory.create()
-            cls.multi_enrolled_profile = ProfileFactory.create()
-        cls.program = ProgramFactory.create(
-            financial_aid_availability=True,
-            live=True
-        )
-        cls.course = CourseFactory.create(program=cls.program)
-        cls.course_run = CourseRunFactory.create(
-            enrollment_end=datetime.utcnow() + timedelta(hours=1),
-            course=cls.course
-        )
-        cls.course_price = CoursePriceFactory.create(
-            course_run=cls.course_run,
-            is_valid=True
-        )
+        # replace imported thresholds with fake ones created here
+        CountryIncomeThreshold.objects.all().delete()
+
+        cls.program = create_program()
+        cls.profile = create_enrolled_profile(cls.program, country="50")
+        cls.staff_user_profile = create_enrolled_profile(cls.program, role=Staff.ROLE_ID)
+        cls.instructor_user_profile = create_enrolled_profile(cls.program, role=Instructor.ROLE_ID)
         cls.tier_programs = {
             "0k": TierProgramFactory.create(program=cls.program, income_threshold=0, current=True),
             "25k": TierProgramFactory.create(program=cls.program, income_threshold=25000, current=True),
@@ -76,82 +109,15 @@ class FinancialAidBaseTestCase(TestCase):
                 current=True,
                 discount_amount=0
             ),
-            "75k_not_current": TierProgramFactory.create(program=cls.program, income_threshold=75000, current=False)
         }
-        cls.program_enrollment = ProgramEnrollment.objects.create(
-            user=cls.profile.user,
-            program=cls.program
+        cls.country_income_threshold_0 = CountryIncomeThreshold.objects.create(
+            country_code="0",
+            income_threshold=0,
         )
-        # Role for self.staff_user
-        Role.objects.create(
-            user=cls.staff_user_profile.user,
-            program=cls.program,
-            role=Staff.ROLE_ID,
-        )
-        # Role for self.staff_user_profile2.user
-        cls.program2 = ProgramFactory.create(
-            financial_aid_availability=True,
-            live=True
-        )
-        cls.course2 = CourseFactory.create(program=cls.program2)
-        Role.objects.create(
-            user=cls.staff_user_profile2.user,
-            program=cls.program2,
-            role=Staff.ROLE_ID
-        )
-        # Role for self.instructor
-        Role.objects.create(
-            user=cls.instructor_user_profile.user,
-            program=cls.program,
-            role=Instructor.ROLE_ID
-        )
-        # Program enrollments for course price
-        cls.program_enrollment_ep1 = ProgramEnrollment.objects.create(
-            user=cls.enrolled_profile.user,
-            program=cls.program
-        )
-        cls.program_enrollment_ep2 = ProgramEnrollment.objects.create(
-            user=cls.enrolled_profile2.user,
-            program=cls.program
-        )
-        cls.program_enrollment_ep3 = ProgramEnrollment.objects.create(
-            user=cls.enrolled_profile3.user,
-            program=cls.program
-        )
-        cls.multi_enrollment1 = ProgramEnrollment.objects.create(
-            user=cls.multi_enrolled_profile.user,
-            program=cls.program
-        )
-        cls.multi_enrollment2 = ProgramEnrollment.objects.create(
-            user=cls.multi_enrolled_profile.user,
-            program=cls.program2
-        )
-        cls.financialaid_approved = FinancialAidFactory.create(
-            user=cls.enrolled_profile.user,
-            tier_program=cls.tier_programs["25k"],
-            status=FinancialAidStatus.APPROVED
-        )
-        cls.financialaid_pending = FinancialAidFactory.create(
-            user=cls.enrolled_profile2.user,
-            tier_program=cls.tier_programs["25k"],
-            status=FinancialAidStatus.PENDING_MANUAL_APPROVAL
-        )
-        # Country income thresholds (CountryIncomeThreshold objects already exist in the database, but since we
-        # use fuzzy generators for cls.profile.country, it may not exist yet)
-        cls.country_income_threshold_50000, _ = CountryIncomeThreshold.objects.get_or_create(
+        cls.country_income_threshold_50000 = CountryIncomeThreshold.objects.create(
             country_code=cls.profile.country,
-            defaults={
-                "income_threshold": 50000
-            }
+            income_threshold=50000,
         )
-        if cls.country_income_threshold_50000.income_threshold != 50000:
-            cls.country_income_threshold_50000.income_threshold = 50000
-            cls.country_income_threshold_50000.save()
-        cls.country_income_threshold_0 = CountryIncomeThreshold.objects.exclude(
-            id=cls.country_income_threshold_50000.id
-        ).first()
-        cls.country_income_threshold_0.income_threshold = 0
-        cls.country_income_threshold_0.save()
 
     @staticmethod
     def assert_http_status(method, url, status, data=None, content_type="application/json", **kwargs):
@@ -174,36 +140,40 @@ class FinancialAidBaseTestCase(TestCase):
         return resp
 
 
+# pylint: disable=no-self-use
+@ddt.ddt
 class FinancialAidAPITests(FinancialAidBaseTestCase):
     """
     Tests for financialaid api backend
     """
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        CurrencyExchangeRate.objects.create(
-            currency_code="GHI",
-            exchange_rate=1.5
-        )
-
     def setUp(self):
         super().setUp()
         self.program.refresh_from_db()
 
-    def test_determine_tier_program(self):
+    @ddt.data(
+        [0, "0k"],
+        [1000, "0k"],
+        [25000, "25k"],
+        [27500, "25k"],
+        [50000, "50k"],
+        [72800, "50k"],
+        [75000, "75k"],
+        [34938234, "75k"],
+    )
+    @ddt.unpack
+    def test_determine_tier_program(self, income, expected_tier_key):
         """
         Tests determine_tier_program() assigning the correct tiers. This should assign the tier where the tier's
         income threshold is equal to or less than income.
         """
-        assert determine_tier_program(self.program, 0) == self.tier_programs["0k"]
-        assert determine_tier_program(self.program, 1000) == self.tier_programs["0k"]
-        assert determine_tier_program(self.program, 25000) == self.tier_programs["25k"]
-        assert determine_tier_program(self.program, 27500) == self.tier_programs["25k"]
-        assert determine_tier_program(self.program, 50000) == self.tier_programs["50k"]
-        assert determine_tier_program(self.program, 72800) == self.tier_programs["50k"]
-        assert determine_tier_program(self.program, 75000) == self.tier_programs["75k"]
-        assert determine_tier_program(self.program, 34938234) == self.tier_programs["75k"]
-        assert determine_tier_program(self.program, 34938234) != self.tier_programs["75k_not_current"]
+        assert determine_tier_program(self.program, income) == self.tier_programs[expected_tier_key]
+
+    def test_determine_tier_program_not_current(self):
+        """
+        A current=False tier should be ignored
+        """
+        not_current = TierProgramFactory.create(program=self.program, income_threshold=75000, current=False)
+        assert determine_tier_program(self.program, 34938234) != not_current
 
     def test_determine_tier_program_improper_setup(self):
         """
@@ -214,55 +184,42 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
         with self.assertRaises(ImproperlyConfigured):
             determine_tier_program(program, 0)
 
-    def test_determine_auto_approval(self):  # pylint: disable=no-self-use
+    @ddt.data(
+        [0, "0", True],
+        [1, "0", True],
+        [0, "50", False],
+        [49999, "50", False],
+        [50000, "50", False],
+        [50001, "50", True],
+    )
+    @ddt.unpack
+    def test_determine_auto_approval(self, income_usd, country_code, expected):
         """
         Tests determine_auto_approval() assigning the correct auto-approval status. This should return True
         if income is strictly greater than the threshold (or if the threshold is 0, which is inclusive of 0).
         """
-        # Income threshold == 0
-        assert self.country_income_threshold_0.income_threshold == 0
         financial_aid = FinancialAidFactory.create(
-            income_usd=self.country_income_threshold_0.income_threshold+1,
-            country_of_income=self.country_income_threshold_0.country_code
+            income_usd=income_usd,
+            country_of_income=country_code,
         )
-        assert determine_auto_approval(financial_aid) is True
-        financial_aid = FinancialAidFactory.create(
-            income_usd=0,
-            country_of_income=self.country_income_threshold_0.country_code
-        )
-        assert determine_auto_approval(financial_aid) is True
+        assert determine_auto_approval(financial_aid) is expected
 
-        # Income threshold greater than 0
-        assert self.country_income_threshold_50000.income_threshold > 0
-        financial_aid = FinancialAidFactory.create(
-            income_usd=self.country_income_threshold_50000.income_threshold+1,
-            country_of_income=self.country_income_threshold_50000.country_code
-        )
-        assert determine_auto_approval(financial_aid) is True
-        financial_aid = FinancialAidFactory.create(
-            income_usd=self.country_income_threshold_50000.income_threshold,
-            country_of_income=self.country_income_threshold_50000.country_code
-        )
-        assert determine_auto_approval(financial_aid) is not True  # Only auto-approved if > income threshold
-        financial_aid = FinancialAidFactory.create(
-            income_usd=self.country_income_threshold_50000.income_threshold-1,
-            country_of_income=self.country_income_threshold_50000.country_code
-        )
-        assert determine_auto_approval(financial_aid) is not True  # Only auto-approved if > income threshold
-        financial_aid = FinancialAidFactory.create(
-            income_usd=0,
-            country_of_income=self.country_income_threshold_50000.country_code
-        )
-        assert determine_auto_approval(financial_aid) is not True  # Only auto-approved if > income threshold
-
-    def test_determine_income_usd(self):  # pylint: disable=no-self-use
+    def test_determine_income_usd_from_not_usd(self):
         """
-        Tests determine_income_usd()
+        Tests determine_income_usd() from a non-USD currency
         """
-        # original income is in USD
-        assert determine_income_usd(5000, "USD") == 5000
-        # original income is in GHI currency
+        CurrencyExchangeRate.objects.create(
+            currency_code="GHI",
+            exchange_rate=1.5
+        )
         assert determine_income_usd(3000, "GHI") == 2000
+
+    def test_determine_income_usd_from_usd(self):
+        """
+        Tests determine_income_usd() from a USD currency
+        """
+        # Note no CurrencyExchangeRate created here
+        assert determine_income_usd(5000, "USD") == 5000
 
     def test_get_no_discount_tier_program(self):
         """
@@ -270,11 +227,16 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
         """
         # 75k tier program is the one with no discount
         assert get_no_discount_tier_program(self.program.id).id == self.tier_programs["75k"].id
+
+    def test_missing_no_discount_tier(self):
+        """It should raise an ImproperlyConfigured if there is no $0 discount TierProgram"""
+        program = create_program()
         with self.assertRaises(ImproperlyConfigured):
-            # No tier programs have been created for self.program2
-            assert get_no_discount_tier_program(self.program2.id)
+            # No tier programs have been created for program
+            get_no_discount_tier_program(program.id)
 
 
+@ddt.ddt
 class CoursePriceAPITests(FinancialAidBaseTestCase):
     """
     Tests for course price api backend
@@ -283,30 +245,25 @@ class CoursePriceAPITests(FinancialAidBaseTestCase):
         super().setUp()
         self.program.refresh_from_db()
 
-    def test_get_course_price_for_learner_with_approved_financial_aid(self):
+    @ddt.data(
+        [FinancialAidStatus.APPROVED],
+        [FinancialAidStatus.PENDING_MANUAL_APPROVAL],
+    )
+    @ddt.unpack
+    def test_get_course_price_for_learner_with_financial_aid(self, status):
         """
         Tests get_course_price_for_learner() who has approved financial aid
         """
-        enrollment = self.program_enrollment_ep1
-        expected_response = {
-            "program_id": enrollment.program.id,
-            "price": self.course_price.price - self.financialaid_approved.tier_program.discount_amount,
-            "financial_aid_availability": True,
-            "has_financial_aid_request": True
-        }
-        self.assertDictEqual(
-            get_formatted_course_price(enrollment),
-            expected_response
+        enrollment = ProgramEnrollment.objects.get(program=self.program, user=self.profile.user)
+        financial_aid = FinancialAidFactory.create(
+            user=self.profile.user,
+            tier_program=self.tier_programs['25k'],
+            status=status,
         )
-
-    def test_get_course_price_for_learner_with_pending_financial_aid(self):
-        """
-        Tests get_course_price_for_learner() who has pending financial aid
-        """
-        enrollment = self.program_enrollment_ep2
+        course_price = self.program.course_set.first().courserun_set.first().courseprice_set.first()
         expected_response = {
             "program_id": enrollment.program.id,
-            "price": self.course_price.price - self.financialaid_approved.tier_program.discount_amount,
+            "price": course_price.price - financial_aid.tier_program.discount_amount,
             "financial_aid_availability": True,
             "has_financial_aid_request": True
         }
@@ -317,13 +274,14 @@ class CoursePriceAPITests(FinancialAidBaseTestCase):
 
     def test_get_course_price_for_learner_with_no_financial_aid_request(self):
         """
-        Tests get_course_price_for_learner() who has pending financial aid request
+        Tests get_course_price_for_learner() who has no financial aid request
         """
-        enrollment = self.program_enrollment_ep3
+        enrollment = ProgramEnrollment.objects.get(program=self.program, user=self.profile.user)
         # Enrolled and has no financial aid
+        course_price = self.program.course_set.first().courserun_set.first().courseprice_set.first()
         expected_response = {
             "program_id": enrollment.program.id,
-            "price": self.course_price.price,
+            "price": course_price.price,
             "financial_aid_availability": True,
             "has_financial_aid_request": False
         }
@@ -336,12 +294,13 @@ class CoursePriceAPITests(FinancialAidBaseTestCase):
         """
         Tests get_course_price_for_learner() for a program without financial aid
         """
-        enrollment = self.program_enrollment_ep3
+        enrollment = ProgramEnrollment.objects.get(program=self.program, user=self.profile.user)
         self.program.financial_aid_availability = False
         self.program.save()
+        course_price = self.program.course_set.first().courserun_set.first().courseprice_set.first()
         expected_response = {
             "program_id": enrollment.program.id,
-            "price": self.course_price.price,
+            "price": course_price.price,
             "financial_aid_availability": False,
             "has_financial_aid_request": False
         }

@@ -90,7 +90,7 @@ class CountryIncomeThresholdFactory(DjangoModelFactory):
     Factory for CountryIncomeThreshold
     """
     country_code = FuzzyText(length=2)
-    income_threshold = FuzzyInteger(low=0, high=123456)
+    income_threshold = FuzzyInteger(low=1, high=123456)
 
     class Meta:  # pylint: disable=missing-docstring
         model = CountryIncomeThreshold

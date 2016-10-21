@@ -11,11 +11,15 @@ from rest_framework.response import Response
 from factory.django import mute_signals
 
 from courses.factories import ProgramFactory
-from financialaid.api_test import FinancialAidBaseTestCase
+from financialaid.api_test import (
+    FinancialAidBaseTestCase,
+    create_program,
+    create_enrolled_profile,
+)
 from financialaid.factories import FinancialAidFactory, TierProgramFactory
 from profiles.factories import ProfileFactory
 from roles.models import Role
-from roles.roles import Staff, Instructor
+from roles.roles import Staff
 
 
 def mocked_json(return_data=None):
@@ -118,37 +122,15 @@ class MailViewsTests(APITestCase):
         assert resp_post.status_code == status.HTTP_403_FORBIDDEN
 
 
-@patch('mail.views.MailgunClient')
 class FinancialAidMailViewsTests(FinancialAidBaseTestCase, APITestCase):
     """
     Tests for FinancialAidMailViews
     """
+
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        # create a user with a role for one program
-        with mute_signals(post_save):
-            cls.staff_user = ProfileFactory.create().user
-            cls.staff_user2 = ProfileFactory.create().user
-            cls.instructor_user = ProfileFactory.create().user
-            cls.learner_user = ProfileFactory.create().user
-        cls.program = ProgramFactory.create(live=True)
-        Role.objects.create(
-            user=cls.staff_user,
-            program=cls.program,
-            role=Staff.ROLE_ID
-        )
-        Role.objects.create(
-            user=cls.instructor_user,
-            program=cls.program,
-            role=Instructor.ROLE_ID
-        )
-        cls.program2 = ProgramFactory.create()
-        Role.objects.create(
-            user=cls.staff_user2,
-            program=cls.program2,
-            role=Staff.ROLE_ID
-        )
+
         cls.financial_aid = FinancialAidFactory.create(
             tier_program=TierProgramFactory.create(program=cls.program)
         )
@@ -161,28 +143,36 @@ class FinancialAidMailViewsTests(FinancialAidBaseTestCase, APITestCase):
             'email_body': 'email body'
         }
 
-    def test_financial_aid_mail_view_not_allowed(self, mock_mailgun_client):  # pylint: disable=unused-argument
-        """
-        Tests permissions for FinancialAidMailView
-        """
-        # Different program's staff
-        self.client.force_login(self.staff_user_profile2.user)
+    def test_different_programs_staff(self):
+        """Different program's staff should not be allowed to send email for this program"""
+        program = create_program()
+        staff_user = create_enrolled_profile(program, Staff.ROLE_ID).user
+        self.client.force_login(staff_user)
         self.assert_http_status(self.client.post, self.url, status.HTTP_403_FORBIDDEN, data=self.request_data)
-        # Instructor
+
+    def test_instructor(self):
+        """An instructor can't send email"""
         self.client.force_login(self.instructor_user_profile.user)
         self.assert_http_status(self.client.post, self.url, status.HTTP_403_FORBIDDEN, data=self.request_data)
-        # Other learner
-        self.client.force_login(self.profile2.user)
+
+    def test_learner(self):
+        """A learner can't send email"""
+        self.client.force_login(self.profile.user)
         self.assert_http_status(self.client.post, self.url, status.HTTP_403_FORBIDDEN, data=self.request_data)
-        # Not logged in
+
+    def test_anonymous(self):
+        """
+        Anonymous users can't send email
+        """
         self.client.logout()
         self.assert_http_status(self.client.post, self.url, status.HTTP_403_FORBIDDEN, data=self.request_data)
 
+    @patch('mail.views.MailgunClient')
     def test_send_financial_aid_view(self, mock_mailgun_client):
         """
         Test that the FinancialAidMailView will accept and return expected values
         """
-        self.client.force_login(self.staff_user)
+        self.client.force_login(self.staff_user_profile.user)
         mock_mailgun_client.send_financial_aid_email.return_value = Mock(
             spec=Response,
             status_code=status.HTTP_200_OK,
@@ -192,37 +182,18 @@ class FinancialAidMailViewsTests(FinancialAidBaseTestCase, APITestCase):
         assert resp_post.status_code == status.HTTP_200_OK
         assert mock_mailgun_client.send_financial_aid_email.called
         _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
-        assert called_kwargs['acting_user'] == self.staff_user
+        assert called_kwargs['acting_user'] == self.staff_user_profile.user
         assert called_kwargs['financial_aid'] == self.financial_aid
         assert called_kwargs['subject'] == self.request_data['email_subject']
         assert called_kwargs['body'] == self.request_data['email_body']
 
-    def test_send_financial_aid_view_not_allowed(self, mock_mailgun_client):  # pylint: disable=unused-argument
-        """
-        Test that the FinancialAidMailView returns 403 for not allowed permissions
-        """
-        # Not logged in
-        resp = self.client.post(self.url, data=self.request_data, format='json')
-        assert resp.status_code == status.HTTP_403_FORBIDDEN
-        # Instructor
-        self.client.force_login(self.instructor_user)
-        resp = self.client.post(self.url, data=self.request_data, format='json')
-        assert resp.status_code == status.HTTP_403_FORBIDDEN
-        # Staff of a different program
-        self.client.force_login(self.staff_user2)
-        resp = self.client.post(self.url, data=self.request_data, format='json')
-        assert resp.status_code == status.HTTP_403_FORBIDDEN
-        # Learner
-        self.client.force_login(self.learner_user)
-        resp = self.client.post(self.url, data=self.request_data, format='json')
-        assert resp.status_code == status.HTTP_403_FORBIDDEN
-
+    @patch('mail.views.MailgunClient')
     def test_send_financial_aid_view_improperly_configured(self, mock_mailgun_client):
         """
         Test that the FinancialAidMailView will raise ImproperlyConfigured if mailgun returns 401, which
         results in returning 500 since micromasters.utils.custom_exception_hanlder catches ImproperlyConfigured
         """
-        self.client.force_login(self.staff_user)
+        self.client.force_login(self.staff_user_profile.user)
         mock_mailgun_client.send_financial_aid_email.return_value = Mock(
             spec=Response,
             status_code=status.HTTP_401_UNAUTHORIZED
