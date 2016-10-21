@@ -20,6 +20,7 @@ import { getPreferredName } from '../util/util';
 import type { Profile } from '../flow/profileTypes';
 
 const PROFILE_SETTINGS_REGEX = /^\/profile\/?|settings\/?|learner\/[a-z]?/;
+const PROFILE_REGEX = /^\/profile\/?/;
 
 export default class Navbar extends React.Component {
   props: {
@@ -42,6 +43,16 @@ export default class Navbar extends React.Component {
     setNavDrawerOpen:            (b: boolean) => void,
     setPhotoDialogVisibility:    (b: boolean) => void,
   };
+
+  renderProfileHeader = () => ([
+    <img src="/static/images/mit-logo-transparent.svg" alt="MIT" key="header-logo"/>,
+    <span className="mdl-layout-title profile-header" key="header-text">MicroMasters</span>
+  ]);
+
+  renderNormalHeader = (link: string) => ([
+    <Link to={link} key="header-logo-link"><img src="/static/images/mit-logo-transparent.svg" alt="MIT" /></Link>,
+    <span className="mdl-layout-title" key="header-text-link"><Link to={link}>MicroMasters</Link></span>
+  ]);
 
   userMenu: Function = (): void|React$Element<*> => {
     const { empty } = this.props;
@@ -120,7 +131,11 @@ export default class Navbar extends React.Component {
 
 
   render () {
-    const { navDrawerOpen, setNavDrawerOpen } = this.props;
+    const {
+      navDrawerOpen,
+      setNavDrawerOpen,
+      pathname
+    } = this.props;
 
     let link = '/dashboard';
     if (SETTINGS.roles.find(role => role.role === 'staff' || role.role === 'instructor')) {
@@ -139,14 +154,7 @@ export default class Navbar extends React.Component {
               <div className="mobile-visible">
                 <Icon name="menu" onClick={() => setNavDrawerOpen(true)} />
               </div>
-              <Link to={link}>
-                <img src="/static/images/mit-logo-transparent.svg" alt="MIT" />
-              </Link>
-              <span className="mdl-layout-title">
-                <Link to={link}>
-                  MicroMasters
-                </Link>
-              </span>
+              { PROFILE_REGEX.test(pathname) ? this.renderProfileHeader() : this.renderNormalHeader(link) }
               <div className="desktop-visible">
                 { this.programSelector() }
               </div>
