@@ -115,7 +115,7 @@ export default [
   },
   {
     "alpha2": "cu",
-    "English": "Church Slavic; Church Slavonic; Old Bulgarian; Old Church Slavonic"
+    "English": "Church Slavonic"
   },
   {
     "alpha2": "cv",
@@ -259,7 +259,7 @@ export default [
   },
   {
     "alpha2": "ia",
-    "English": "Interlingua (International Auxiliary Language Association)"
+    "English": "Interlingua"
   },
   {
     "alpha2": "id",
@@ -487,7 +487,7 @@ export default [
   },
   {
     "alpha2": "oc",
-    "English": "Occitan (post 1500); Proven\u00e7al"
+    "English": "Occitan; Proven\u00e7al"
   },
   {
     "alpha2": "oj",
