@@ -4,8 +4,9 @@ import Cropper from 'react-cropper';
 
 export default class CropperWrapper extends React.Component {
   props: {
-    updatePhotoEdit:  (b: Blob) => void,
-    photo:            Object,
+    updatePhotoEdit:    (b: Blob) => void,
+    photo:              Object,
+    uploaderBodyHeight: () => number,
   };
 
   cropperHelper = () => {
@@ -20,9 +21,11 @@ export default class CropperWrapper extends React.Component {
   };
 
   render () {
-    const { photo } = this.props;
+    const { photo, uploaderBodyHeight } = this.props;
+
     return <Cropper
       ref='cropper'
+      style={{'height': uploaderBodyHeight()}}
       className="photo-active-item cropper"
       src={photo.preview}
       aspectRatio={ 1 / 1 }
