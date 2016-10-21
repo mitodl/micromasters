@@ -26,6 +26,7 @@ export default class DashboardUserCard extends React.Component {
         <CardTitle>{getPreferredName(profile)}</CardTitle>
         <CardText>
           <span className="dashboard-user-card-text-program">{programTitle}</span>
+
           <Link
             to={`/learner/${profile.username}`}
             className="mm-minor-action">
