@@ -10,7 +10,7 @@ import {
   noFilter
 } from './utils/AutoCompleteSettings';
 import TextField from 'material-ui/TextField';
-import Menu from './Menu';
+import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import Divider from 'material-ui/Divider';
 import Popover from 'material-ui/Popover/Popover';
