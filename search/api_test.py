@@ -82,6 +82,9 @@ class SearchAPITests(TestCase):  # pylint: disable=missing-docstring
             'bool',
             should=[
                 Q('term', **{'program.id': self.program.id})
+            ],
+            must_not=[
+                Q('term', **{'program.is_staff': True})
             ]
         )
         assert search_query_dict['query'] == expected_program_query.to_dict()

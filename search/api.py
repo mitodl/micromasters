@@ -47,6 +47,9 @@ def create_program_limit_query(user):
         'bool',
         should=[
             Q('term', **{'program.id': program.id}) for program in users_allowed_programs
+        ],
+        must_not=[
+            Q('term', **{'program.is_staff': True})
         ]
     )
 

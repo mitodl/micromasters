@@ -68,7 +68,8 @@ class UserProgramSerializerTests(TestCase):
             'id': program.id,
             'enrollments': UserProgramSerializer.serialize_valid_edx_data(user.cachedenrollment_set, program),
             'certificates': UserProgramSerializer.serialize_valid_edx_data(user.cachedcertificate_set, program),
-            'grade_average': 75
+            'grade_average': 75,
+            'is_staff': False
         }
 
     def test_cached_edx_model_serialization(self):

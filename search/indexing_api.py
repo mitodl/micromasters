@@ -248,6 +248,7 @@ def program_enrolled_user_mapping():
     mapping.field("program", "object", properties={
         'id': LONG_TYPE,
         'grade_average': LONG_TYPE,
+        'is_staff': BOOL_TYPE,
         'enrollments': {'type': 'nested', 'properties': {
             'course_details': {
                 'type': 'object',
