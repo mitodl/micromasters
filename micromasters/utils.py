@@ -2,6 +2,7 @@
 General micromasters utility functions
 """
 import json
+import logging
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -9,6 +10,9 @@ from django.core.serializers import serialize
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
+
+
+log = logging.getLogger(__name__)
 
 
 def webpack_dev_server_host(request):
@@ -50,6 +54,7 @@ def custom_exception_handler(exc, context):
     """
     # Call REST framework's default exception handler first,
     # to get the standard error response.
+    log.exception("An exception was intercepted by custom_exception_handler")
     response = exception_handler(exc, context)
 
     # if it is handled, just return the response
