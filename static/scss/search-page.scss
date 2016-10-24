@@ -22,6 +22,10 @@
   .fullwidth {
     width: 100%;
     overflow: visible;
+
+    &.results-padding {
+      padding: 0 24px 30px;
+    }
   }
 
   // remove padding and margin from MDL layout components

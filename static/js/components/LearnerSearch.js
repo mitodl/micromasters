@@ -168,7 +168,7 @@ export default class LearnerSearch extends SearchkitComponent {
               </Sticky>
             </Cell>
             <Cell col={9}>
-              <Card className="fullwidth" shadow={1}>
+              <Card className="fullwidth results-padding" shadow={1}>
                 <Grid className="search-header">
                   <Cell col={6} className="result-info">
                     <button
