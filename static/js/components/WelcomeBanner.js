@@ -9,7 +9,6 @@ import type { Profile } from '../flow/profileTypes';
 export default class WelcomeBanner extends React.Component {
   props: {
     profile:      Profile,
-    text:         string,
     children?:    React$Element<*>[],
   };
 

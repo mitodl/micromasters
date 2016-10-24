@@ -172,7 +172,7 @@ export function sendSearchResultMail(subject: string, body: string, searchReques
 }
 
 export function getProgramEnrollments(): Promise<ProgramEnrollments> {
-  return mockableFetchJSONWithCSRF('/api/v0/enrolledprograms/', {}, true);
+  return mockableFetchJSONWithCSRF('/api/v0/programs/', {}, true);
 }
 
 export function addProgramEnrollment(programId: number): Promise<ProgramEnrollment> {

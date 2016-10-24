@@ -7,18 +7,16 @@ import sinon from 'sinon';
 
 import ProgramSelector from './ProgramSelector';
 import {
-  DASHBOARD_RESPONSE,
+  PROGRAM_ENROLLMENTS,
 } from '../constants';
 
 describe('ProgramSelector', () => {
   let sandbox;
-  // define our own enrollments
-  const enrollments = DASHBOARD_RESPONSE.map(program => ({
-    id: program.id,
-    title: program.title,
-  }));
-  // remove one enrollment so that not all programs are enrolled
-  const unenrolled = enrollments.splice(0, 1)[0];
+  // make a copy of enrollments
+  const enrollments = _.cloneDeep(PROGRAM_ENROLLMENTS);
+  // remove one enrollment so not all enrollments are enrolled
+  const unenrolled = enrollments[0];
+  unenrolled.enrolled = false;
   const selectedEnrollment = enrollments[1];
 
   beforeEach(() => {
@@ -33,7 +31,6 @@ describe('ProgramSelector', () => {
     return shallow(
       <ProgramSelector
         programs={{programEnrollments: enrollments}}
-        dashboard={{programs: DASHBOARD_RESPONSE}}
         currentProgramEnrollment={selectedEnrollment}
         {...props}
       />
@@ -58,7 +55,7 @@ describe('ProgramSelector', () => {
     let wrapper = renderProgramSelector();
     let selectProps = wrapper.find(Select).props();
 
-    let sortedEnrollments = _.sortBy(enrollments, 'title');
+    let sortedEnrollments = _.sortBy(enrollments, 'title').filter(program => program.enrolled);
     // make sure we are testing sorting meaningfully
     assert.notDeepEqual(sortedEnrollments, enrollments);
 
@@ -78,7 +75,9 @@ describe('ProgramSelector', () => {
   });
 
   it("does not render the 'Enroll in a new program' option if there is not at least one available program", () => {
-    let allEnrollments = enrollments.concat(unenrolled);
+    let allEnrollments = enrollments.map(program => Object.assign({}, program, {
+      enrolled: true
+    }));
     let wrapper = renderProgramSelector({
       programs: {
         programEnrollments: allEnrollments

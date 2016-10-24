@@ -4,19 +4,29 @@ import { assert } from 'chai';
 import _ from 'lodash';
 
 import {
+  REQUEST_ADD_PROGRAM_ENROLLMENT,
+  RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
+} from '../actions/programs';
+import {
   REQUEST_GET_USER_PROFILE,
   REQUEST_PATCH_USER_PROFILE,
   RECEIVE_PATCH_USER_PROFILE_SUCCESS,
   START_PROFILE_EDIT,
   UPDATE_PROFILE_VALIDATION,
   UPDATE_VALIDATION_VISIBILITY,
+  CLEAR_PROFILE_EDIT,
 } from '../actions/profile';
-import { setProfileStep } from '../actions/ui';
+import {
+  setProfileStep,
+  setProgram,
+  SET_PROFILE_STEP,
+} from '../actions/ui';
 import {
   USER_PROFILE_RESPONSE,
   PERSONAL_STEP,
   EDUCATION_STEP,
   EMPLOYMENT_STEP,
+  PROGRAM_ENROLLMENTS,
 } from '../constants';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import * as api from '../lib/api';
@@ -155,9 +165,31 @@ describe("ProfilePage", function() {
     });
   });
 
-  it('select program display on personal tab', () => {
-    return renderComponent('/profile', [START_PROFILE_EDIT]).then(([, div]) => {
-      assert(div.querySelector(".program-select"), "Unable to find select program dropdown");
+  it('should enroll the user when they go to the next page', () => {
+    let addEnrollmentStub = helper.sandbox.stub(api, 'addProgramEnrollment');
+    let program = PROGRAM_ENROLLMENTS[0];
+    addEnrollmentStub.returns(Promise.resolve(program));
+
+    patchUserProfileStub.returns(Promise.resolve(USER_PROFILE_RESPONSE));
+
+    helper.store.dispatch(setProgram(program));
+    return renderComponent(`/profile`).then(([wrapper]) => {
+      assert.isFalse(addEnrollmentStub.called);
+
+      return helper.listenForActions([
+        REQUEST_PATCH_USER_PROFILE,
+        RECEIVE_PATCH_USER_PROFILE_SUCCESS,
+        START_PROFILE_EDIT,
+        CLEAR_PROFILE_EDIT,
+        UPDATE_PROFILE_VALIDATION,
+        REQUEST_ADD_PROGRAM_ENROLLMENT,
+        RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
+        SET_PROFILE_STEP,
+      ], () => {
+        wrapper.find(".next").simulate("click");
+      }).then(() => {
+        assert.isTrue(addEnrollmentStub.called);
+      });
     });
   });
 });

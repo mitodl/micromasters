@@ -4,6 +4,8 @@ import type { APIErrorInfo } from './generalTypes';
 export type ProgramEnrollment = {
   id: number,
   title: string,
+  programpage_url: ?string,
+  enrolled: boolean,
 };
 
 export type ProgramEnrollments = Array<ProgramEnrollment>;

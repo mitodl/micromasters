@@ -33,7 +33,6 @@ describe("NewEnrollmentDialog", () => {
       let props = dialog.props();
 
       assert.deepEqual(props.programs.programEnrollments, PROGRAM_ENROLLMENTS);
-      assert.deepEqual(props.dashboard.programs, DASHBOARD_RESPONSE);
     });
   });
 
@@ -76,7 +75,6 @@ describe("NewEnrollmentDialog", () => {
     let stub = helper.sandbox.stub();
     let wrapper = shallow(
       <NewEnrollmentDialog
-        dashboard={{programs: DASHBOARD_RESPONSE}}
         programs={{programEnrollments: PROGRAM_ENROLLMENTS}}
         enrollDialogVisibility={true}
         setEnrollSelectedProgram={stub}
@@ -91,7 +89,6 @@ describe("NewEnrollmentDialog", () => {
     let enrollStub = helper.sandbox.stub();
     let wrapper = shallow(
       <NewEnrollmentDialog
-        dashboard={{programs: DASHBOARD_RESPONSE}}
         programs={{programEnrollments: PROGRAM_ENROLLMENTS}}
         enrollDialogVisibility={true}
         setEnrollDialogVisibility={visibilityStub}
@@ -110,7 +107,6 @@ describe("NewEnrollmentDialog", () => {
     let stub = helper.sandbox.stub();
     let wrapper = shallow(
       <NewEnrollmentDialog
-        dashboard={{programs: DASHBOARD_RESPONSE}}
         programs={{programEnrollments: PROGRAM_ENROLLMENTS}}
         enrollDialogVisibility={true}
         setEnrollDialogError={stub}
@@ -126,7 +122,6 @@ describe("NewEnrollmentDialog", () => {
     let stub = helper.sandbox.stub();
     let wrapper = shallow(
       <NewEnrollmentDialog
-        dashboard={{programs: DASHBOARD_RESPONSE}}
         programs={{programEnrollments: PROGRAM_ENROLLMENTS}}
         enrollDialogVisibility={true}
         setEnrollDialogVisibility={stub}
@@ -151,7 +146,6 @@ describe("NewEnrollmentDialog", () => {
 
     let wrapper = shallow(
       <NewEnrollmentDialog
-        dashboard={{programs: DASHBOARD_RESPONSE}}
         programs={{programEnrollments: PROGRAM_ENROLLMENTS}}
         enrollDialogVisibility={false}
         enrollSelectedProgram={selectedEnrollment}
@@ -173,7 +167,6 @@ describe("NewEnrollmentDialog", () => {
 
     let wrapper = shallow(
       <NewEnrollmentDialog
-        dashboard={{programs: DASHBOARD_RESPONSE}}
         programs={{programEnrollments: PROGRAM_ENROLLMENTS}}
         enrollSelectedProgram={selectedEnrollment}
         enrollDialogVisibility={false}

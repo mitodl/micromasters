@@ -8,7 +8,6 @@ import { ReactPageClick } from 'react-page-click';
 import Swipeable from 'react-swipeable';
 import R from 'ramda';
 
-import type { DashboardState } from '../flow/dashboardTypes';
 import type {
   ProgramEnrollment,
   ProgramEnrollmentsState,
@@ -27,7 +26,6 @@ export default class Navbar extends React.Component {
     addProgramEnrollment:        (programId: number) => void,
     children?:                   React$Element<*>[],
     currentProgramEnrollment:    ProgramEnrollment,
-    dashboard:                   DashboardState,
     empty:                       boolean,
     enrollDialogError:           ?string,
     enrollDialogVisibility:      boolean,

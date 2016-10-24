@@ -74,7 +74,7 @@ class UserDashboard(APIView):
         response_data = []
 
         all_programs = (
-            Program.objects.filter(live=True)
+            Program.objects.filter(live=True, programenrollment__user=request.user)
             .prefetch_related(
                 Prefetch('course_set__courserun_set', queryset=CourseRun.get_first_unexpired_run_qset())
             )

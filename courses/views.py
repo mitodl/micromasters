@@ -10,7 +10,7 @@ from rest_framework.exceptions import (
     NotFound,
     ValidationError,
 )
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -38,7 +38,7 @@ class ProgramViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ProgramSerializer
 
 
-class ProgramEnrollmentListView(ListCreateAPIView):
+class ProgramEnrollmentListView(CreateAPIView):
     """API for the User Program Enrollments"""
 
     serializer_class = ProgramSerializer
@@ -49,13 +49,6 @@ class ProgramEnrollmentListView(ListCreateAPIView):
     permission_classes = (
         IsAuthenticated,
     )
-
-    def get_queryset(self):
-        """
-        Filter programs by the user enrollment
-        """
-        queryset = Program.objects.filter(programenrollment__user=self.request.user, live=True)
-        return queryset.order_by('title')
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):  # pylint: disable=unused-argument

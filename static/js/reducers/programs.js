@@ -39,7 +39,10 @@ export const programs = (state: ProgramEnrollmentsState = INITIAL_ENROLLMENTS_ST
     return {
       ...state,
       postStatus: FETCH_SUCCESS,
-      programEnrollments: state.programEnrollments.concat(action.payload)
+      programEnrollments: state.programEnrollments.filter(
+        // filter out old copy of program first
+        program => program.id !== action.payload.id
+      ).concat(action.payload)
     };
   case RECEIVE_ADD_PROGRAM_ENROLLMENT_FAILURE:
     return { ...state, postStatus: FETCH_FAILURE, postErrorInfo: action.payload };
@@ -57,7 +60,9 @@ export const currentProgramEnrollment = (state: any = null, action: Action) => {
     return action.payload;
   case RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS:
     if (!_.isNil(state)) {
-      let enrollment = action.payload.find(enrollment => enrollment.id === state.id);
+      let enrollment = action.payload.find(enrollment => (
+        enrollment.id === state.id && enrollment.enrolled
+      ));
       if (enrollment === undefined) {
         // current enrollment not found in list
         state = null;

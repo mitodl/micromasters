@@ -4,7 +4,6 @@ import _ from 'lodash';
 import Select from 'react-select';
 
 import NewEnrollmentDialog from './NewEnrollmentDialog';
-import type { DashboardState } from '../flow/dashboardTypes';
 import type {
   ProgramEnrollment,
   ProgramEnrollmentsState,
@@ -21,7 +20,6 @@ export default class ProgramSelector extends React.Component {
     enrollDialogError:           ?string,
     enrollDialogVisibility:      boolean,
     enrollSelectedProgram:       ?number,
-    dashboard:                   DashboardState,
     setCurrentProgramEnrollment: (enrollment: ProgramEnrollment) => void,
     setEnrollDialogError:        (error: ?string) => void,
     setEnrollDialogVisibility:   (open: boolean) => void,
@@ -51,7 +49,6 @@ export default class ProgramSelector extends React.Component {
     const {
       currentProgramEnrollment,
       programs: { programEnrollments },
-      dashboard: { programs },
     } = this.props;
 
     let currentId;
@@ -59,7 +56,9 @@ export default class ProgramSelector extends React.Component {
       currentId = currentProgramEnrollment.id;
     }
 
-    const sortedProgramEnrollments = _.sortBy(programEnrollments, 'title');
+    const sortedProgramEnrollments = _.sortBy(programEnrollments, 'title').filter(
+      enrollment => enrollment.enrolled
+    );
 
     let unselected = sortedProgramEnrollments.filter(enrollment => enrollment.id !== currentId);
     let options = unselected.map(enrollment => ({
@@ -67,8 +66,7 @@ export default class ProgramSelector extends React.Component {
       label: enrollment.title,
     }));
 
-    let enrollmentLookup = new Map(sortedProgramEnrollments.map(enrollment => [enrollment.id, null]));
-    let unenrolledPrograms = programs.filter(program => !enrollmentLookup.has(program.id));
+    let unenrolledPrograms = programEnrollments.filter(program => !program.enrolled);
     unenrolledPrograms = _.sortBy(unenrolledPrograms, 'title');
 
     if (unenrolledPrograms.length > 0) {
@@ -80,7 +78,6 @@ export default class ProgramSelector extends React.Component {
   render() {
     let {
       addProgramEnrollment,
-      dashboard,
       programs,
       programs: {programEnrollments},
       enrollDialogError,
@@ -114,7 +111,6 @@ export default class ProgramSelector extends React.Component {
         />
         <NewEnrollmentDialog
           addProgramEnrollment={addProgramEnrollment}
-          dashboard={dashboard}
           programs={programs}
           enrollDialogError={enrollDialogError}
           enrollDialogVisibility={enrollDialogVisibility}

@@ -285,13 +285,6 @@ export const USER_PROGRAM_RESPONSE = {
 
 export const DASHBOARD_RESPONSE = [
   {
-    "title": "Empty program",
-    "description": "The empty program",
-    "courses": [
-    ],
-    "id": 2
-  },
-  {
     "description": "Not passed program",
     "title": "Not passed program",
     "courses": [
@@ -562,6 +555,13 @@ export const DASHBOARD_RESPONSE = [
     "id": 5
   },
   {
+    "title": "Empty program",
+    "description": "The empty program",
+    "courses": [
+    ],
+    "id": 2
+  },
+  {
     "title": "Last program",
     "description": "The last program",
     "courses": [
@@ -590,20 +590,12 @@ export const DASHBOARD_RESPONSE = [
   },
 ];
 
-export const PROGRAM_ENROLLMENTS = [
-  {
-    id: DASHBOARD_RESPONSE[1].id,
-    title: DASHBOARD_RESPONSE[1].title,
-    programpage_url: "/program/",
-    enrolled: true,
-  },
-  {
-    id: DASHBOARD_RESPONSE[2].id,
-    title: DASHBOARD_RESPONSE[2].title,
-    programpage_url: null,
-    enrolled: true,
-  },
-];
+export const PROGRAM_ENROLLMENTS = DASHBOARD_RESPONSE.map(program => ({
+  id: program.id,
+  title: program.title,
+  programpage_url: `/program${program.id}/`,
+  enrolled: true
+}));
 
 export const FINANCIAL_AID_PARTIAL_RESPONSE = {
   application_status: null,
@@ -612,17 +604,12 @@ export const FINANCIAL_AID_PARTIAL_RESPONSE = {
   min_possible_cost: 1000
 };
 
-export const COURSE_PRICES_RESPONSE = [{
-  program_id: DASHBOARD_RESPONSE[1].id,
-  price: 100.00,
+export const COURSE_PRICES_RESPONSE = DASHBOARD_RESPONSE.map(program => ({
+  program_id: program.id,
+  price: program.id * 100,
   financial_aid_availability: false,
   has_financial_aid_request: false
-}, {
-  program_id: DASHBOARD_RESPONSE[2].id,
-  price: 200.00,
-  financial_aid_availability: false,
-  has_financial_aid_request: false
-}];
+}));
 
 export const ERROR_RESPONSE = {
   "errorStatusCode": 500,

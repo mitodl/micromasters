@@ -64,7 +64,7 @@ class ProfilePage extends ProfileFormContainer {
   render() {
     const { profiles } = this.props;
     const profileInfo = profiles[SETTINGS.user.username];
-    let props, text;
+    let props;
     let [prev, next] = this.stepTransitions();
     props = Object.assign({}, this.profileProps(profileInfo), {
       prevStep: prev,
@@ -79,7 +79,7 @@ class ProfilePage extends ProfileFormContainer {
         errorMessage = <ErrorMessage errorInfo={profileInfo.errorInfo} />;
       } else {
         content = <div>
-          <WelcomeBanner profile={profile} text={text} />
+          <WelcomeBanner profile={profile} />
           <div className="profile-pagination">
             {makeProfileProgressDisplay(this.currentStep())}
           </div>

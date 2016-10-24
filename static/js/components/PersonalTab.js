@@ -21,12 +21,11 @@ import type {
   UpdateProfileFunc,
 } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
-import type { DashboardState } from '../flow/dashboardTypes';
-import type { Program } from '../flow/programTypes';
+import type { ProgramEnrollmentsState, ProgramEnrollments } from '../flow/enrollmentTypes';
 import type { Event } from '../flow/eventType';
 import {  validationErrorSelector } from '../util/util';
 
-class PersonalTab extends React.Component {
+export default class PersonalTab extends React.Component {
   props: {
     profile:        Profile,
     errors:         ValidationErrors,
@@ -35,32 +34,32 @@ class PersonalTab extends React.Component {
     ui:             UIState,
     nextStep:       () => void,
     prevStep:       () => void,
-    dashboard:      DashboardState,
+    programs:       ProgramEnrollmentsState,
     setProgram:     Function,
     addProgramEnrollment: Function,
   };
 
-  programListing = (programs: Array<Program>) => {
+  programListing = (programs: ProgramEnrollments) => {
     const makeMenuItems = R.map(program => (
       <MenuItem value={program.id} key={program.id} primaryText={program.title} />
     ));
     const sortPrograms = R.sortBy(R.compose(R.toLower, R.prop('title')));
     const menuItems = R.compose(makeMenuItems, sortPrograms);
-    return menuItems(programs) ;
-  }
+    return menuItems(programs);
+  };
 
   setProgramHelper = (event: Event, key: string, value: string) => {
     const {
-      dashboard: { programs },
+      programs: { programEnrollments },
       setProgram,
     } = this.props;
-    let selected = programs.find(program => program.id === value);
+    let selected = programEnrollments.find(program => program.id === value);
     setProgram(selected);
-  }
+  };
 
   selectProgram = () => {
     const {
-      dashboard: { programs },
+      programs: { programEnrollments },
       ui: { selectedProgram },
       errors
     } = this.props;
@@ -71,10 +70,10 @@ class PersonalTab extends React.Component {
         style={{width: "65%"}}
         hintText="Select Program"
         onChange={this.setProgramHelper}
-        className={`program-select ${validationErrorSelector(errors, ['program'])}`}
+        className={`program-selectfield ${validationErrorSelector(errors, ['program'])}`}
         errorText={_.get(errors, "program")}
       >
-        { this.programListing(programs) }
+        { this.programListing(programEnrollments) }
       </SelectField>
     );
   }
@@ -108,5 +107,3 @@ class PersonalTab extends React.Component {
     );
   }
 }
-
-export default PersonalTab;

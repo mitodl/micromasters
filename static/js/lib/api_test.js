@@ -218,7 +218,7 @@ describe('api', function() {
       it('fetches program enrollments successfully', () => {
         fetchJSONStub.returns(Promise.resolve(PROGRAM_ENROLLMENTS));
         return getProgramEnrollments().then(enrollments => {
-          assert.ok(fetchJSONStub.calledWith('/api/v0/enrolledprograms/', {}, true));
+          assert.ok(fetchJSONStub.calledWith('/api/v0/programs/', {}, true));
           assert.deepEqual(enrollments, PROGRAM_ENROLLMENTS);
         });
       });
@@ -227,7 +227,7 @@ describe('api', function() {
         fetchJSONStub.returns(Promise.reject());
 
         return assert.isRejected(getProgramEnrollments()).then(() => {
-          assert.ok(fetchJSONStub.calledWith('/api/v0/enrolledprograms/', {}, true));
+          assert.ok(fetchJSONStub.calledWith('/api/v0/programs/', {}, true));
         });
       });
 

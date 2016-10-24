@@ -219,7 +219,6 @@ class App extends React.Component {
         navDrawerOpen,
       },
       location: { pathname },
-      dashboard,
       userProfile: { profile },
     } = this.props;
     let { children } = this.props;
@@ -251,7 +250,6 @@ class App extends React.Component {
       <Navbar
         addProgramEnrollment={this.addProgramEnrollment}
         currentProgramEnrollment={currentProgramEnrollment}
-        dashboard={dashboard}
         empty={empty}
         enrollDialogError={enrollDialogError}
         enrollDialogVisibility={enrollDialogVisibility}

@@ -34,7 +34,7 @@ import type { ActionHelpers, AsyncActionHelpers } from '../lib/redux';
 import type { Validator, UIValidator } from '../lib/validation/profile';
 import type { Profile, Profiles, ProfileGetResult } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
-import type { DashboardState } from '../flow/dashboardTypes';
+import type { ProgramEnrollmentsState } from '../flow/enrollmentTypes';
 import type { Program } from '../flow/programTypes';
 import { addProgramEnrollment } from '../actions/programs';
 import { ALL_ERRORS_VISIBLE } from '../constants';
@@ -49,7 +49,7 @@ class ProfileFormContainer extends React.Component {
     history:     Object,
     ui:          UIState,
     params:      {[k: string]: string},
-    dashboard:   DashboardState
+    programs:    ProgramEnrollmentsState
   };
 
   static contextTypes = {
@@ -60,7 +60,7 @@ class ProfileFormContainer extends React.Component {
     return {
       profiles: state.profiles,
       ui: state.ui,
-      dashboard: state.dashboard,
+      programs: state.programs,
     };
   };
 
@@ -174,7 +174,7 @@ class ProfileFormContainer extends React.Component {
   profileProps: Function = (profileFromStore: ProfileGetResult) => {
     let {
       ui,
-      dashboard,
+      programs,
       dispatch,
     } = this.props;
     let errors, isEdit, profile;
@@ -197,11 +197,11 @@ class ProfileFormContainer extends React.Component {
 
     return {
       addProgramEnrollment: this.addProgramEnrollment,
-      dashboard: dashboard,
       dispatch: dispatch,
       errors: errors,
       fetchProfile: this.fetchProfile,
       profile: profile,
+      programs: programs,
       saveProfile: this.saveProfile.bind(this, isEdit),
       setProgram: this.setProgram,
       startProfileEdit: this.startProfileEdit,

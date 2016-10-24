@@ -399,33 +399,71 @@ describe('utility functions', () => {
 
   describe('findCourseRun', () => {
     it('iterates and finds the course run, course, and program', () => {
-      let program = DASHBOARD_RESPONSE[1];
-      let course = program.courses[0];
-      let run = course.runs[0];
+      let run = {
+        id: 3,
+        course_id: "xyz"
+      };
+      let course = {
+        runs: [run],
+        id: 2
+      };
+      let program = {
+        courses: [course],
+        id: 1,
+      };
 
       assert.deepEqual(
-        findCourseRun(DASHBOARD_RESPONSE, _run => run.course_id === _run.course_id),
+        findCourseRun([program], _run => run.course_id === _run.course_id),
         [run, course, program],
       );
     });
 
-    it('finds courses with no course runs', () => {
-      let program = DASHBOARD_RESPONSE[1];
-      let course = program.courses[1];
-      assert.lengthOf(course.runs, 0);
+    it('skips runs when there is an exception', () => {
+      let run = {
+        id: 3,
+        course_id: "xyz"
+      };
+      let course = {
+        runs: [run],
+        id: 2
+      };
+      let program = {
+        courses: [course],
+        id: 1,
+      };
 
       assert.deepEqual(
-        findCourseRun(DASHBOARD_RESPONSE, (_run, _course) => _course.runs.length === 0),
+        findCourseRun([program], () => {
+          throw new Error();
+        }),
+        [null, null, null],
+      );
+    });
+
+    it('finds courses with no course runs', () => {
+      let course = {
+        runs: [],
+        id: 2
+      };
+      let program = {
+        courses: [course],
+        id: 1,
+      };
+
+      assert.deepEqual(
+        findCourseRun([program], (_run, _course) => _course.runs.length === 0),
         [null, course, program]
       );
     });
 
     it('finds a program with no courses', () => {
-      let program = DASHBOARD_RESPONSE[0];
-      assert.lengthOf(program.courses, 0);
+      let program = {
+        courses: [],
+        id: 1
+      };
 
       assert.deepEqual(
-        findCourseRun(DASHBOARD_RESPONSE, (_run, _course, _program) => _program.courses.length === 0),
+        findCourseRun([program], (_run, _course, _program) => _program.courses.length === 0),
         [null, null, program]
       );
     });

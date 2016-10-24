@@ -1,11 +1,14 @@
 """Tests for the API"""
 # pylint: disable=no-self-use
 
+from mock import Mock
+
 from django.core.urlresolvers import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from courses.factories import ProgramFactory
+from courses.serializers import ProgramSerializer
 from dashboard.factories import ProgramEnrollmentFactory
 from dashboard.models import ProgramEnrollment
 from micromasters.factories import UserFactory
@@ -30,7 +33,8 @@ class ProgramTests(ESTestCase):
         resp = self.client.get(reverse('program-list'))
 
         assert len(resp.json()) == 1
-        assert prog.title == resp.json()[0]['title']
+        expected = ProgramSerializer(context={"request": Mock(user=self.user)}).to_representation(prog)
+        assert [expected] == resp.json()
 
     def test_doesnt_list_unlive_programs(self):
         """Not-live programs should NOT show up"""
@@ -81,7 +85,7 @@ class ProgramEnrollmentTests(ESTestCase, APITestCase):
     def test_anonymous(self):
         """Anonymous user cannot access the endpoint"""
         self.client.logout()
-        resp = self.client.get(self.url)
+        resp = self.client.post(self.url)
         assert resp.status_code == status.HTTP_403_FORBIDDEN
 
     def test_no_enrollments(self):
@@ -89,32 +93,12 @@ class ProgramEnrollmentTests(ESTestCase, APITestCase):
         self.client.logout()
         self.client.force_login(self.user2)
         resp = self.client.get(self.url)
-        assert resp.status_code == status.HTTP_200_OK
-        assert resp.data == []
+        assert resp.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 
-    def test_enrollments(self):
+    def test_no_get_for_enrollments(self):
         """Only the programs where the user is enrolled in are returned"""
         resp = self.client.get(self.url)
-        assert resp.status_code == status.HTTP_200_OK
-        assert len(resp.data) == 2
-        expected_enrollments_ids = [
-            program.pk for program in (self.program1, self.program2,)
-        ]
-        for enr in resp.data:
-            assert enr.get('id') in expected_enrollments_ids
-
-    def test_not_live_enrollments(self):
-        """Programs which are not live are hidden from the list"""
-        program = ProgramFactory.create(live=False)
-        ProgramEnrollment.objects.create(user=self.user1, program=program)
-        resp = self.client.get(self.url)
-        assert resp.status_code == status.HTTP_200_OK
-        assert len(resp.data) == 2
-        expected_enrollments_ids = [
-            program.pk for program in (self.program1, self.program2,)
-        ]
-        for enr in resp.data:
-            assert enr.get('id') in expected_enrollments_ids
+        assert resp.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 
     def test_create_no_program_id(self):
         """Missing mandatory program_id parameter"""
