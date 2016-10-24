@@ -9,7 +9,6 @@ from wagtail.wagtaildocs import urls as wagtaildocs_urls
 from wagtail.wagtailcore import urls as wagtail_urls
 
 from courses.views import (
-    CourseRunViewSet,
     ProgramEnrollmentListView,
     ProgramViewSet,
 )
@@ -38,7 +37,6 @@ from mail.views import (
 
 router = routers.DefaultRouter()
 router.register(r'programs', ProgramViewSet)
-router.register(r'courses', CourseRunViewSet)
 router.register(r'profiles', ProfileViewSet)
 
 urlpatterns = [

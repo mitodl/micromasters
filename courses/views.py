@@ -14,14 +14,8 @@ from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from courses.models import (
-    CourseRun,
-    Program,
-)
-from courses.serializers import (
-    CourseRunSerializer,
-    ProgramSerializer,
-)
+from courses.models import Program
+from courses.serializers import ProgramSerializer
 from dashboard.models import ProgramEnrollment
 
 
@@ -42,19 +36,6 @@ class ProgramViewSet(viewsets.ReadOnlyModelViewSet):
     )
     queryset = Program.objects.filter(live=True)
     serializer_class = ProgramSerializer
-
-
-class CourseRunViewSet(viewsets.ReadOnlyModelViewSet):
-    """API for the Program collection"""
-    authentication_classes = (
-        SessionAuthentication,
-        TokenAuthentication,
-    )
-    permission_classes = (
-        IsAuthenticated,
-    )
-    queryset = CourseRun.objects.filter(course__program__live=True)
-    serializer_class = CourseRunSerializer
 
 
 class ProgramEnrollmentListView(ListCreateAPIView):

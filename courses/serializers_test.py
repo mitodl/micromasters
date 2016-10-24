@@ -4,7 +4,7 @@ Tests for serializers
 
 from django.test import override_settings
 from courses.factories import CourseFactory, CourseRunFactory
-from courses.serializers import CourseSerializer, CourseRunSerializer
+from courses.serializers import CourseSerializer
 from search.base import ESTestCase
 
 
@@ -38,17 +38,3 @@ class CourseSerializerTests(ESTestCase):
         result = CourseSerializer().to_representation(course)
         assert result['url'] == 'http://192.168.33.10:8000/courses/my-course-key/about'
         assert result['enrollment_text'] == course.enrollment_text
-
-
-class CourseRunSerializerTests(ESTestCase):
-    """
-    Tests for CourseRunSerializer
-    """
-
-    def test_program(self):  # pylint: disable=no-self-use
-        """
-        Make sure program id appears correctly
-        """
-        course_run = CourseRunFactory.create()
-        result = CourseRunSerializer().to_representation(course_run)
-        assert result['program'] == course_run.course.program.id

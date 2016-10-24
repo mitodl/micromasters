@@ -41,39 +41,6 @@ class ProgramTests(ESTestCase):
         assert len(resp.json()) == 0
 
 
-class CourseTests(ESTestCase):
-    """Tests for the Course API"""
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.user = UserFactory.create()
-
-    def setUp(self):
-        super().setUp()
-        self.client.force_login(self.user)
-
-    def test_list_course_if_program_live(self):
-        """
-        If the course belongs to a live program, show it.
-        """
-        course = CourseRunFactory.create(course__program__live=True)
-
-        resp = self.client.get(reverse('courserun-list'))
-
-        assert len(resp.json()) == 1
-        assert resp.json()[0]['id'] == course.id
-
-    def test_doesnt_list_courses_from_unlive_programs(self):
-        """
-        If the course belongs to a non-live program, hide it.
-        """
-        CourseRunFactory.create(course__program__live=False)
-
-        resp = self.client.get(reverse('courserun-list'))
-
-        assert len(resp.json()) == 0
-
-
 class ProgramEnrollmentTests(ESTestCase, APITestCase):
     """Tests for the ProgramEnrollment API"""
 
