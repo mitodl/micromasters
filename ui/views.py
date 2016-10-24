@@ -79,8 +79,6 @@ class ReactView(View):  # pylint: disable=unused-argument
             context={
                 "sentry_client": get_bundle_url(request, "sentry_client.js"),
                 "zendesk_widget": get_bundle_url(request, "zendesk_widget.js"),
-                "public_src": get_bundle_url(request, "public.js"),
-                "style_public_src": get_bundle_url(request, "style_public.js"),
                 "style_src": get_bundle_url(request, "style.js"),
                 "dashboard_src": get_bundle_url(request, "dashboard.js"),
                 "js_settings_json": json.dumps(js_settings),
@@ -137,8 +135,6 @@ def standard_error_page(request, status_code, template_filename):
             "style_src": get_bundle_url(request, "style.js"),
             "signup_dialog_src": get_bundle_url(request, "signup_dialog.js"),
             "dashboard_src": get_bundle_url(request, "dashboard.js"),
-            "public_src": get_bundle_url(request, "public.js"),
-            "style_public_src": get_bundle_url(request, "style_public.js"),
             "sentry_client": get_bundle_url(request, "sentry_client.js"),
             "js_settings_json": json.dumps({
                 "release_version": settings.VERSION,
@@ -168,8 +164,6 @@ def terms_of_service(request):
             "zendesk_widget": get_bundle_url(request, "zendesk_widget.js"),
             "style_src": get_bundle_url(request, "style.js"),
             "sentry_client": get_bundle_url(request, "sentry_client.js"),
-            "public_src": get_bundle_url(request, "public.js"),
-            "style_public_src": get_bundle_url(request, "style_public.js"),
             "js_settings_json": json.dumps({
                 "release_version": settings.VERSION,
                 "environment": settings.ENVIRONMENT,
