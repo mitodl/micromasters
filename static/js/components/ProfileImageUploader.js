@@ -26,7 +26,7 @@ const dropZone = (startPhotoEdit, setPhotoError) => (
 );
 
 const uploaderBodyHeight = (): number => (
-  window.innerHeight / 2
+  R.min(500, window.innerHeight / 2)
 );
 
 const imageError = err => <div className="img-error">{err}</div>;
