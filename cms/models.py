@@ -153,7 +153,7 @@ class ProgramPage(Page):
             'Thumbnails are cropped down to this size, preserving aspect ratio.'
         ),
     )
-    subpage_types = ['FaqsPage', 'ProgramTabPage']
+    subpage_types = ['FaqsPage']
     content_panels = Page.content_panels + [
         FieldPanel('description', classname="full"),
         FieldPanel('program'),
