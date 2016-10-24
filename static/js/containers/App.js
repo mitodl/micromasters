@@ -11,7 +11,6 @@ import {
 } from '../constants';
 import ErrorMessage from '../components/ErrorMessage';
 import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
 import Toast from '../components/Toast';
 import {
   FETCH_SUCCESS,
@@ -270,7 +269,6 @@ class App extends React.Component {
       <div className="page-content">
         { children }
       </div>
-      <Footer />
     </div>;
   }
 }

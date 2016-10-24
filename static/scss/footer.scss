@@ -9,13 +9,6 @@ footer {
   font-size:.83em;
   line-height: 1.2em;
 
-  @media (min-width: 1600px) {
-    .container-footer {
-      width: 1310px;
-      padding-right: 60px;
-    }
-  }
-
   .social-buttons-list {
     margin-bottom: 60px;
   }
@@ -44,31 +37,6 @@ footer {
     a {
       width: 80%;
       float: right;
-    }
-  }
-
-  .footer-cta {
-    padding:0 0 60px 0;
-
-    .btn-primary {
-      display: block;
-      background:#4c8399 !important;
-      border-color:#4c8399 !important;
-
-      color:#fff;
-      width: 100%;
-
-      &:hover {
-        background:transparent !important;
-        border-color:#830615 !important;
-        color:#fff;
-      }
-
-      &:active {
-        background:#d0021b !important;
-        border-color:#830615 !important;
-        color:#fff;
-      }
     }
   }
 }
