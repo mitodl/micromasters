@@ -4,6 +4,8 @@ Generates a set of realistic users/programs to help us test search functionality
 from datetime import datetime, timedelta
 from django.core.management import BaseCommand
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from factory.django import mute_signals
 
 from backends.edxorg import EdxOrgOAuth2
 from courses.models import Program, Course, CourseRun
@@ -14,7 +16,7 @@ from micromasters.utils import (
     load_json_from_file,
 )
 from profiles.api import get_social_username
-from profiles.models import Employment, Education
+from profiles.models import Employment, Education, Profile
 from roles.models import Role
 from roles.roles import Staff
 from search.indexing_api import recreate_index
@@ -200,6 +202,7 @@ def deserialize_user_data_list(user_data_list, course_runs):
     for user_data in user_data_list:
         new_user = deserialize_user_data(user_data, course_runs)
         new_user_count += 1
+        Profile.objects.create(user=new_user)
         deserialize_model_data_on_object(new_user.profile, user_data)
         deserialize_profile_detail_data(new_user.profile, Employment, user_data['work_history'])
         deserialize_profile_detail_data(new_user.profile, Education, user_data['education'])
@@ -292,11 +295,12 @@ class Command(BaseCommand):
             self.stdout.write("Seed data appears to already exist.")
         else:
             recreate_index()
-            fake_programs = deserialize_program_data_list(program_data_list)
-            fake_course_runs = CourseRun.objects.filter(
-                course__program__description__contains=FAKE_PROGRAM_DESC_PREFIX
-            ).all()
-            fake_user_count = deserialize_user_data_list(user_data_list, fake_course_runs)
+            with mute_signals(post_save):
+                fake_programs = deserialize_program_data_list(program_data_list)
+                fake_course_runs = CourseRun.objects.filter(
+                    course__program__description__contains=FAKE_PROGRAM_DESC_PREFIX
+                ).all()
+                fake_user_count = deserialize_user_data_list(user_data_list, fake_course_runs)
             recreate_index()
             program_msg = (
                 "Created {num} new programs from '{path}'."
