@@ -140,13 +140,14 @@ const FinancialAidCalculator = ({
     maxPossibleCost = formatPrice(program.financial_aid_user_info.max_possible_cost);
   }
   return <Dialog
+    title="Cost Calculator"
+    titleClassName="dialog-title"
+    contentClassName="dialog financial-aid-calculator"
     open={calculatorDialogVisibility}
-    contentClassName="financial-aid-calculator"
     bodyClassName="financial-aid-calculator-body"
     onRequestClose={closeDialogAndCancel}
     autoScrollBodyContent={true}
     actions={calculatorActions(openConfirmSkipDialog, closeDialogAndCancel, () => saveFinancialAid(financialAid))}
-    title="Cost Calculator"
   >
     <div className="copy">
       { `The cost of courses in the ${title} MicroMasters varies between ${minPossibleCost} and ${maxPossibleCost},

@@ -23,8 +23,10 @@ const SignupDialog = ({
   setDialogVisibility,
 }: signupProps) => {
   return <Dialog
-    open={open}
+    titleClassName="dialog-title"
+    contentClassName="dialog signup-dialog"
     className="signup-dialog-wrapper"
+    open={open}
     onRequestClose={() => setDialogVisibility(false)}
     contentStyle={dialogStyle}
     autoScrollBodyContent={true}

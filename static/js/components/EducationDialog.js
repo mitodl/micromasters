@@ -149,6 +149,9 @@ export default class EducationDialog extends ProfileFormFields {
 
     return (
       <Dialog
+        title="Education"
+        titleClassName="dialog-title"
+        contentClassName="dialog education-dialog"
         open={educationDialogVisibility}
         className="dashboard-dialog education-dashboard-dialog"
         onRequestClose={this.clearEducationEdit}

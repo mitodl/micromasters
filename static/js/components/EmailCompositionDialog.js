@@ -60,11 +60,12 @@ const EmailCompositionDialog = (props: EmailDialogProps) => {
   } = props;
 
   return <Dialog
+    title="New Email"
+    titleClassName="dialog-title"
+    contentClassName="dialog email-composition-dialog"
     open={open}
-    className="email-composition-dialog"
     actions={createDialogActions(closeEmailDialog, sendEmail)}
     onRequestClose={closeEmailDialog}
-    title="New Email"
   >
     <div className="email-composition-contents">
       <span className="user-count">

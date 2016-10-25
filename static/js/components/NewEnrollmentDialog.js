@@ -85,8 +85,10 @@ export default class NewEnrollmentDialog extends React.Component {
     // onRequestClose is not used below because an extra click or touch event causes material-ui
     // to close the dialog right after opening it. See https://github.com/JedWatson/react-select/issues/532
     return <Dialog
-      open={enrollDialogVisibility}
       title="Enroll in a new MicroMasters Program"
+      titleClassName="dialog-title"
+      contentClassName="dialog enroll-dialog"
+      open={enrollDialogVisibility}
       actions={this.createDialogActions()}
     >
       <SelectField

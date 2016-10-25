@@ -37,7 +37,9 @@ export default class ConfirmDeletion extends React.Component {
     ];
     return (
       <Dialog
-        className={"deletion-confirmation"}
+        title="Confirm Delete"
+        titleClassName="dialog-title"
+        contentClassName="dialog deletion-confirmation"
         open={open}
         onRequestClose={close}
         actions={actions}

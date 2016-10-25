@@ -310,8 +310,10 @@ class EmploymentForm extends ProfileFormFields {
           confirmText="Delete this entry?"
         />
         <Dialog
+          title="Employment"
+          titleClassName="dialog-title"
+          contentClassName="dialog dashboard-dialog employment-dashboard-dialog"
           open={workDialogVisibility}
-          className="dashboard-dialog employment-dashboard-dialog"
           onRequestClose={this.closeWorkDialog}
           actions={actions}
           autoScrollBodyContent={true}

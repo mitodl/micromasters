@@ -53,12 +53,13 @@ const ProfileImageUploader = ({
   setPhotoError,
 }: ImageUploadProps) => (
   <Dialog
-    open = {photoDialogOpen}
-    className="dashboard-dialog photo-upload-dialog"
+    title="Upload a Profile Photo"
+    titleClassName="dialog-title"
+    contentClassName="dialog dashboard-dialog photo-upload-dialog"
     onRequestClose={() => setDialogVisibility(false)}
     autoScrollBodyContent={true}
-    title="Upload a Profile Photo"
     contentStyle={{ maxWidth: '620px' }}
+    open={photoDialogOpen}
     actions = {[
       <Button
         type='button'
