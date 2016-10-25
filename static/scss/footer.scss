@@ -34,9 +34,18 @@ footer {
     width: 40%;
     min-width: 150px;
 
+    &.non-marketing-pages {
+      min-width: 300px;
+      margin-bottom: 60px;
+    }
+
     a {
       width: 80%;
       float: right;
+
+      &.no-float {
+        float: none;
+      }
     }
   }
 }
