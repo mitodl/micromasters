@@ -161,7 +161,7 @@ export default class LearnerSearch extends SearchkitComponent {
                       min={0}
                       max={100}
                       showHistogram={true}
-                      title="Program Avg. Grade"
+                      title="Average Grade in Program"
                     />
                   </FilterVisibilityToggle>
                 </Card>
