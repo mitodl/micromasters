@@ -4,10 +4,7 @@ Provides functionality for serializing a ProgramEnrollment for the ES index
 from decimal import Decimal
 
 from rolepermissions.verifications import has_role
-from roles.models import (
-    Instructor,
-    Staff,
-)
+from roles.models import NON_LEARNERS
 
 
 class UserProgramSerializer:
@@ -54,5 +51,5 @@ class UserProgramSerializer:
             'enrollments': program_cached_enrollments,
             'certificates': program_cached_certificates,
             'grade_average': cls.calculate_certificate_grade_average(program_cached_certificates),
-            'is_staff': has_role(user, [Staff.ROLE_ID, Instructor.ROLE_ID])
+            'non_learner': has_role(user, NON_LEARNERS)
         }

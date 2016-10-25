@@ -10,6 +10,7 @@ from django.db.models.signals import post_save
 from django.conf import settings
 
 from courses.factories import ProgramFactory
+from dashboard.factories import ProgramEnrollmentFactory
 from profiles.factories import ProfileFactory
 from roles.models import Role
 from roles.roles import Staff
@@ -84,7 +85,7 @@ class SearchAPITests(TestCase):  # pylint: disable=missing-docstring
                 Q('term', **{'program.id': self.program.id})
             ],
             must_not=[
-                Q('term', **{'program.is_staff': True})
+                Q('term', **{'program.non_learner': True})
             ]
         )
         assert search_query_dict['query'] == expected_program_query.to_dict()
@@ -122,6 +123,37 @@ class SearchAPITests(TestCase):  # pylint: disable=missing-docstring
             results = prepare_and_execute_search(self.user, search_param_dict=params, search_func=mock_search_func)
             mock_create_search_obj.assert_called_with(self.user, search_param_dict=params)
             assert results == ['result1', 'result2']
+
+    def test_search_user(self):
+        """
+        Assert learner in search result, staff excluded
+        """
+        params = {'size': 50}
+        with mute_signals(post_save):
+            profile = ProfileFactory.create()
+            profile2 = ProfileFactory.create()
+
+        learner = profile.user
+        learner2 = profile2.user
+
+        ProgramEnrollmentFactory(
+            user=learner,
+            program=self.program,
+        )
+        ProgramEnrollmentFactory(
+            user=learner2,
+            program=self.program,
+        )
+        # user with role staff enrollment
+        ProgramEnrollmentFactory(
+            user=self.user,
+            program=self.program,
+        )
+
+        results = prepare_and_execute_search(self.user, search_param_dict=params)
+        self.assertEqual(len(results), 2)
+        self.assertFalse(results[0].program.non_learner)
+        self.assertFalse(results[1].program.non_learner)
 
     # def test_all_query_matching_results(self):
     def test_all_query_matching_emails(self):  # pylint: disable=no-self-use

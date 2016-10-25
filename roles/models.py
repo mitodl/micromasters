@@ -10,6 +10,12 @@ from courses.models import Program
 from roles.roles import Staff, Instructor
 
 
+NON_LEARNERS = [
+    Staff.ROLE_ID,
+    Instructor.ROLE_ID
+]
+
+
 class Role(models.Model):
     """
     Assignment of a MicroMasters Role per program to a user.
