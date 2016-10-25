@@ -202,10 +202,10 @@ def deserialize_user_data_list(user_data_list, course_runs):
     for user_data in user_data_list:
         new_user = deserialize_user_data(user_data, course_runs)
         new_user_count += 1
-        Profile.objects.create(user=new_user)
-        deserialize_model_data_on_object(new_user.profile, user_data)
-        deserialize_profile_detail_data(new_user.profile, Employment, user_data['work_history'])
-        deserialize_profile_detail_data(new_user.profile, Education, user_data['education'])
+        profile = Profile.objects.create(user=new_user)
+        deserialize_model_data_on_object(profile, user_data)
+        deserialize_profile_detail_data(profile, Employment, user_data['work_history'])
+        deserialize_profile_detail_data(profile, Education, user_data['education'])
     return new_user_count
 
 
