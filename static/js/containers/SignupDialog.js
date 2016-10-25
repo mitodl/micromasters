@@ -31,8 +31,8 @@ const SignupDialog = ({
   >
     <div className="signup-dialog">
       <div className="logos">
-        <img className="edx_logo" src="/static/images/edx_logo.png" />
-        <img className="mitx_logo" src="/static/images/mitx_logo.png" />
+        <img className="edx_logo" src="/static/images/edx_logo.png" alt="edX" />
+        <img className="mitx_logo" src="/static/images/mitx_logo.png" alt="MITx" />
       </div>
       <p>
         All MITx MicroMasters courses are delivered on edX.
