@@ -290,7 +290,7 @@ def enroll_user_on_success(order):
         try:
             enrollments.append(enrollments_client.create_audit_student_enrollment(course_key))
         except Exception as ex:  # pylint: disable=broad-except
-            log.error(
+            log.exception(
                 "Error creating audit enrollment for course key %s for user %s",
                 course_key,
                 get_social_username(order.user),

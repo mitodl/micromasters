@@ -17,6 +17,7 @@ from ecommerce.api import (
     generate_cybersource_sa_payload,
     get_new_order_by_reference_number,
 )
+from ecommerce.exceptions import EcommerceEdxApiException
 from ecommerce.models import (
     Order,
     Receipt,
@@ -96,19 +97,20 @@ class OrderFulfillmentView(APIView):
         receipt.order = order
         receipt.save()
 
-        try:
-            if request.data['decision'] != 'ACCEPT':
-                # This may happen if the user clicks 'Cancel Order'
-                order.status = Order.FAILED
-            else:
-                # Do the verified enrollment with edX here
-                order.status = Order.FULFILLED
-                enroll_user_on_success(order)
-            order.save_and_log(None)
-        except:
+        if request.data['decision'] != 'ACCEPT':
+            # This may happen if the user clicks 'Cancel Order'
             order.status = Order.FAILED
-            order.save_and_log(None)
-            raise
+        else:
+            # Do the verified enrollment with edX here
+            order.status = Order.FULFILLED
+        order.save_and_log(None)
 
+        if order.status == Order.FULFILLED:
+            try:
+                enroll_user_on_success(order)
+            except EcommerceEdxApiException:
+                log.exception(
+                    "Error occurred when enrolling user in one or more courses. See other errors above for more info."
+                )
         # The response does not matter to CyberSource
         return Response()

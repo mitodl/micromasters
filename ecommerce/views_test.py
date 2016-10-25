@@ -233,7 +233,8 @@ class OrderFulfillmentViewTests(ESTestCase):
                 self.client.post(reverse('order-fulfillment'), data=data)
 
         assert Order.objects.count() == 1
-        assert Order.objects.first().status == Order.FAILED
+        # An enrollment failure should not prevent the order from being fulfilled
+        assert Order.objects.first().status == Order.FULFILLED
 
     def test_not_accept(self):
         """
