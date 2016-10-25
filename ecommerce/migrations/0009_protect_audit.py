@@ -4,7 +4,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ecommerce', '0007_orderaudit'),
+        ('ecommerce', '0008_add_refunded_status'),
     ]
 
     operations = [
