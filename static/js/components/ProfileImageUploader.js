@@ -64,7 +64,7 @@ const ProfileImageUploader = ({
     actions = {[
       <Button
         type='button'
-        className='cancel-button'
+        className='secondary-button cancel-button'
         key="cancel"
         onClick={() => {
           setDialogVisibility(false);
@@ -74,7 +74,7 @@ const ProfileImageUploader = ({
       </Button>,
       <Button
         type='button'
-        className='save-button'
+        className='primary-button save-button'
         key="save"
         onClick={updateUserPhoto}>
         Save

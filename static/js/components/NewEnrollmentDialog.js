@@ -45,14 +45,14 @@ export default class NewEnrollmentDialog extends React.Component {
   createDialogActions = () => {
     return [
       <Button
-        className="cancel-button"
+        className="secondary-button cancel-button"
         key="cancel"
         onClick={this.closeDialog}
       >
         Cancel
       </Button>,
       <Button
-        className="enroll-button"
+        className="primary-button enroll-button"
         key="enroll"
         onClick={this.addEnrollment}
       >

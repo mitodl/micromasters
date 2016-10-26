@@ -7,13 +7,13 @@ const skipActions = (cancel, skip) => (
   <div className="actions">
     <Button
       type='button'
-      className="cancel-button"
+      className="secondary-button cancel-button"
       onClick={cancel}>
       Cancel
     </Button>
     <Button
       type='button'
-      className="save-button"
+      className="primary-button save-button"
       onClick={skip}>
       Pay Full Price
     </Button>

@@ -289,13 +289,13 @@ class EmploymentForm extends ProfileFormFields {
     const actions = <ValidationAlert {...this.props}>
       <Button
         type='button'
-        className="cancel-button"
+        className="secondary-button cancel-button"
         onClick={this.closeWorkDialog}>
         Cancel
       </Button>
       <Button
         type='button'
-        className="save-button"
+        className="primary-button save-button"
         onClick={this.saveWorkHistoryEntry}>
         Save
       </Button>

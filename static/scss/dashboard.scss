@@ -487,18 +487,7 @@
     padding: 0 2px;
   }
 
-  .cancel-button {
-    background: none;
-    color: #9a9a9a;
-
-    &:hover, &:active {
-      background: none;
-      color: #616161;
-    }
-
-  }
-
-  .save-button {
+  .primary-button {
     color: #0c92e0;
     margin-right: 20px;
     background: none;
@@ -507,6 +496,17 @@
       background: none;
       color: #0473b3;
     }
+  }
+
+  .secondary-button {
+    background: none;
+    color: #9a9a9a;
+
+    &:hover, &:active {
+      background: none;
+      color: #616161;
+    }
+
   }
 }
 

@@ -11,7 +11,7 @@ import type {
 const createDialogActions = (close, send) => ([
   <Button
     type="button"
-    className="dialog-button cancel-button"
+    className="secondary-button cancel-button"
     key="first"
     onClick={close}
   >
@@ -19,7 +19,7 @@ const createDialogActions = (close, send) => ([
   </Button>,
   <Button
     type="button"
-    className="dialog-button save-button"
+    className="primary-button save-button"
     key="second"
     onClick={send}
   >

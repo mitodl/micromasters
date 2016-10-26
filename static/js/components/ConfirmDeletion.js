@@ -23,14 +23,14 @@ export default class ConfirmDeletion extends React.Component {
       <Button
         type='button'
         key='close'
-        className="cancel-button"
+        className="secondary-button cancel-button"
         onClick={close}>
         No
       </Button>,
       <Button
         key='delete'
         type='button'
-        className="delete-button"
+        className="primary-button delete-button"
         onClick={this.deleteAndClose}>
         Yes
       </Button>

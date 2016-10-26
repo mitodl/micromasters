@@ -135,13 +135,13 @@ export default class EducationDialog extends ProfileFormFields {
     let actions = <ValidationAlert {...this.props}>
       <Button
         type='button'
-        className="cancel-button"
+        className="secondary-button cancel-button"
         onClick={this.clearEducationEdit}>
         Cancel
       </Button>
       <Button
         type='button'
-        className="save-button"
+        className="primary-button save-button"
         onClick={this.saveEducationForm}>
         Save
       </Button>
