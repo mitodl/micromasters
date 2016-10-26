@@ -79,9 +79,7 @@ export const isActiveDialog = (dialog: any): boolean => (
 
 let findActiveDialog = (dialogClassName: string): HTMLDivElement => {
   let elements: any = document.getElementsByClassName(dialogClassName);
-  return [...elements].find(dialog => (
-    isActiveDialog(dialog)
-  ));
+  return [...elements].find(isActiveDialog);
 };
 
 export const noActiveDialogs = (dialogClassName: string): boolean => (
