@@ -1,4 +1,5 @@
 bpython
+ddt==1.1.1
 ipdb
 ipython
 mock==1.3.0
