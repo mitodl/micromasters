@@ -33,7 +33,7 @@ import type { Validator, UIValidator } from '../lib/validation/profile';
 import type { Profile, Profiles, ProfileGetResult } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
 import type { DashboardState } from '../flow/dashboardTypes';
-import type { DashboardProgram } from '../flow/programTypes';
+import type { Program } from '../flow/programTypes';
 import { addProgramEnrollment } from '../actions/enrollments';
 
 type UpdateProfile = (isEdit: boolean, profile: Profile, validator: Validator|UIValidator) => void;
@@ -116,7 +116,7 @@ class ProfileFormContainer extends React.Component {
     }
   }
 
-  setProgram = (program: DashboardProgram): void => {
+  setProgram = (program: Program): void => {
     const { dispatch } = this.props;
     dispatch(setProgram(program));
   }

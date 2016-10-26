@@ -7,7 +7,7 @@ export type FinancialAidUserInfo = {
   id: number;
 };
 
-export type DashboardProgram = {
+export type Program = {
   courses: Array<Course>;
   id: number;
   financial_aid_availability: boolean;

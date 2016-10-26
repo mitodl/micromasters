@@ -9,11 +9,11 @@ import { DASHBOARD_RESPONSE } from '../constants';
 import type {
   Course,
   CourseRun,
-  DashboardProgram
+  Program
 } from '../flow/programTypes';
 import type { Action, Store } from '../flow/reduxTypes';
 
-export function findCourse(courseSelector: (course: Course, program: DashboardProgram) => boolean): Course {
+export function findCourse(courseSelector: (course: Course, program: Program) => boolean): Course {
   let [, course, ] = findCourseRun(
     DASHBOARD_RESPONSE,
     (courseRun, _course, program) => courseSelector(_course, program)
@@ -29,7 +29,7 @@ export const alterFirstRun = (course: Course, overrideObject: Object): CourseRun
   return course.runs[0];
 };
 
-export function findAndCloneCourse(courseSelector: (course: Course, program: DashboardProgram) => boolean): Course {
+export function findAndCloneCourse(courseSelector: (course: Course, program: Program) => boolean): Course {
   return _.cloneDeep(findCourse(courseSelector));
 }
 

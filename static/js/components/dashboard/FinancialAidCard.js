@@ -8,7 +8,7 @@ import DatePicker from 'react-datepicker';
 import moment from 'moment';
 
 import type { CoursePrice } from '../../flow/dashboardTypes';
-import type { DashboardProgram } from '../../flow/programTypes';
+import type { Program } from '../../flow/programTypes';
 import type {
   DocumentsState,
 } from '../../reducers/documents';
@@ -30,7 +30,7 @@ const price = price => <span className="price">{ formatPrice(price) }</span>;
 
 export default class FinancialAidCard extends React.Component {
   props: {
-    program:                        DashboardProgram,
+    program:                        Program,
     coursePrice:                    CoursePrice,
     openFinancialAidCalculator:     () => void,
     skipFinancialAid:               (p: number) => void,

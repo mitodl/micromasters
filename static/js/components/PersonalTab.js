@@ -23,7 +23,7 @@ import type {
 } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
 import type { DashboardState } from '../flow/dashboardTypes';
-import type { DashboardProgram } from '../flow/programTypes';
+import type { Program } from '../flow/programTypes';
 import type { Event } from '../flow/eventType';
 
 class PersonalTab extends React.Component {
@@ -40,7 +40,7 @@ class PersonalTab extends React.Component {
     addProgramEnrollment: Function,
   };
 
-  programListing = (programs: Array<DashboardProgram>) => {
+  programListing = (programs: Array<Program>) => {
     const makeMenuItems = R.map(program => (
       <MenuItem value={program.id} key={program.id} primaryText={program.title} />
     ));
