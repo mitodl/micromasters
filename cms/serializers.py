@@ -3,7 +3,8 @@ Serializers for Wagtail-related models
 """
 from rest_framework import serializers
 from wagtail.wagtailimages.models import Image, Rendition
-from cms.models import ProgramPage, ProgramFaculty
+
+from cms.models import ProgramFaculty
 
 
 class RenditionSerializer(serializers.ModelSerializer):
@@ -25,13 +26,6 @@ class FacultyImageSerializer(serializers.ModelSerializer):
     class Meta:  # pylint: disable=missing-docstring
         model = Image
         fields = ('alt', 'rendition',)
-
-
-class ProgramSerializer(serializers.ModelSerializer):
-    """Serializer for ProgramPage objects."""
-    class Meta:
-        model = ProgramPage
-        fields = ('description', 'faculty_description')
 
 
 class FacultySerializer(serializers.ModelSerializer):
