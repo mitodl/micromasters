@@ -48,8 +48,8 @@ def create_program_limit_query(user):
         should=[
             Q('term', **{'program.id': program.id}) for program in users_allowed_programs
         ],
-        must_not=[
-            Q('term', **{'program.non_learner': True})
+        must=[
+            Q('term', **{'program.is_learner': True})
         ]
     )
 

@@ -3,8 +3,10 @@ Provides functionality for serializing a ProgramEnrollment for the ES index
 """
 from decimal import Decimal
 
-from rolepermissions.verifications import has_role
-from roles.models import NON_LEARNERS
+from roles.models import (
+    NON_LEARNERS,
+    Role
+)
 
 
 class UserProgramSerializer:
@@ -51,5 +53,18 @@ class UserProgramSerializer:
             'enrollments': program_cached_enrollments,
             'certificates': program_cached_certificates,
             'grade_average': cls.calculate_certificate_grade_average(program_cached_certificates),
-            'non_learner': has_role(user, NON_LEARNERS)
+            'is_learner': cls.is_learner(user, program)
         }
+
+    @classmethod
+    def is_learner(cls, user, program):
+        """
+        Returns true if user is learner or false
+
+        Args:
+            user (django.contrib.auth.models.User): A user
+            program (Program): Program object
+        """
+        return (
+            not Role.objects.filter(user=user, role__in=NON_LEARNERS, program=program).exists()
+        )
