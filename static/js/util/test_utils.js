@@ -93,11 +93,11 @@ export const activeDialog = (dialogClassName: string): HTMLDivElement => {
 };
 
 export const activeDeleteDialog = () => (
-  activeDialog('deletion-confirmation')
+  activeDialog('deletion-confirmation-dialog-wrapper')
 );
 
 export const noActiveDeleteDialogs = () => (
-  noActiveDialogs('deletion-confirmation')
+  noActiveDialogs('deletion-confirmation-dialog-wrapper')
 );
 
 export const localStorageMock = (init: any = {}) => {

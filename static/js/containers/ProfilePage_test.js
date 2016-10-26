@@ -87,20 +87,24 @@ describe("ProfilePage", function() {
         );
     });
 
-    let yesSwitchDialogTest = ([, div]) => {
-      let toggle = radioToggles(div, '.profile-radio-switch');
-      TestUtils.Simulate.change(toggle[0]);
-      activeDialog('dashboard-dialog');
-    };
-
     it('should launch a dialog to add an entry when an education switch is set to Yes', () => {
+      let dialogTest = ([, div]) => {
+        let toggle = radioToggles(div, '.profile-radio-switch');
+        TestUtils.Simulate.change(toggle[0]);
+        activeDialog('education-dialog-wrapper');
+      };
       setStep(EDUCATION_STEP);
-      return renderComponent('/profile').then(yesSwitchDialogTest);
+      return renderComponent('/profile').then(dialogTest);
     });
 
     it('should launch a dialog to add an entry when an employment switch is set to Yes', () => {
+      let dialogTest = ([, div]) => {
+        let toggle = radioToggles(div, '.profile-radio-switch');
+        TestUtils.Simulate.change(toggle[0]);
+        activeDialog('employment-dialog-wrapper');
+      };
       setStep(EMPLOYMENT_STEP);
-      return renderComponent('/profile').then(yesSwitchDialogTest);
+      return renderComponent('/profile').then(dialogTest);
     });
   });
 
