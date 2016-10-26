@@ -130,12 +130,12 @@ export default class LearnerSearch extends SearchkitComponent {
     );
   }
 
-  renderFacets: Function = (): React$Element<*> => {
+  renderFacets: Function = (currentProgramEnrollment: ProgramEnrollment): React$Element<*> => {
     if (_.isNull(this.getResults())) {
       return (
         <Card className="fullwidth" shadow={1}>
           <div className="no-hits left-nav">
-            There are no users in the program.
+            {`There are no users in the ${currentProgramEnrollment.title} program.`}
           </div>
         </Card>
       );
@@ -212,7 +212,7 @@ export default class LearnerSearch extends SearchkitComponent {
         <StickyContainer>
           <Grid className="search-grid">
             <Cell col={3} className="search-sidebar">
-              { this.renderFacets() }
+              { this.renderFacets(currentProgramEnrollment) }
             </Cell>
             <Cell col={9}>
               <Card className="fullwidth results-padding" shadow={1}>
