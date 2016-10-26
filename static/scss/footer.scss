@@ -31,9 +31,8 @@ footer {
   .footer-cta {
     display: inline-block;
     vertical-align: middle;
-    width: 100%;
+    width: 50%;
     min-width: 150px;
-    padding: 0 0 60px 0;
 
     @include breakpoint(phone) {
       display: block;
@@ -42,8 +41,11 @@ footer {
     }
 
     &.non-marketing-pages {
-      min-width: 300px;
       margin-bottom: 60px;
+
+      @include breakpoint(desktop) {
+        min-width: 400px;
+      }
     }
 
     a {
