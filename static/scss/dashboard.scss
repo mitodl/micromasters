@@ -472,7 +472,7 @@
   }
 }
 
-.dashboard-dialog {
+.dashboard-page .dialog {
   width: 700px;
   padding: 30px;
 
@@ -490,22 +490,23 @@
   .cancel-button {
     background: none;
     color: #9a9a9a;
+
+    &:hover, &:active {
+      background: none;
+      color: #616161;
+    }
+
   }
 
   .save-button {
     color: #0c92e0;
     margin-right: 20px;
     background: none;
-  }
 
-  .save-button:hover {
-    background: none;
-    color: #0473b3;
-  }
-
-  .cancel-button:hover {
-    background: none;
-    color: #616161;
+    &:hover, &:active {
+      background: none;
+      color: #0473b3;
+    }
   }
 }
 

@@ -312,7 +312,7 @@ class EmploymentForm extends ProfileFormFields {
         <Dialog
           title="Employment"
           titleClassName="dialog-title"
-          contentClassName="dialog dashboard-dialog employment-dashboard-dialog"
+          contentClassName="dialog employment-dialog"
           open={workDialogVisibility}
           onRequestClose={this.closeWorkDialog}
           actions={actions}

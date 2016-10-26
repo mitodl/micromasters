@@ -428,7 +428,7 @@ describe("UserPage", function() {
           return listenForActions(expectedActions, () => {
             TestUtils.Simulate.click(addButton);
 
-            let dialog = document.querySelector('.education-dashboard-dialog');
+            let dialog = document.querySelector('.education-dialog');
             let grid = dialog.getElementsByClassName('profile-tab-grid')[0];
             let inputs = grid.getElementsByTagName('input');
 
@@ -604,7 +604,7 @@ describe("UserPage", function() {
 
           return listenForActions(expectedActions, () => {
             TestUtils.Simulate.click(addButton);
-            let dialog = document.querySelector('.employment-dashboard-dialog');
+            let dialog = document.querySelector('.employment-dialog');
             let grid = dialog.querySelector('.profile-tab-grid');
             let inputs = grid.getElementsByTagName('input');
 

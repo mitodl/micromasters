@@ -153,7 +153,6 @@ export default class EducationDialog extends ProfileFormFields {
         titleClassName="dialog-title"
         contentClassName="dialog education-dialog"
         open={educationDialogVisibility}
-        className="dashboard-dialog education-dashboard-dialog"
         onRequestClose={this.clearEducationEdit}
         actions={actions}
         autoScrollBodyContent={true}

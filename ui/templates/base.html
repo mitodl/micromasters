@@ -54,7 +54,7 @@
     <!-- End Smartlook tracking -->
   {% endif %}
   </head>
-  <body>
+  <body class="{% block bodyclass %}{% endblock %}">
     {% block content %}
     {% endblock %}
   </body>
