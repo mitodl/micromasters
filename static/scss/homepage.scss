@@ -345,11 +345,10 @@ body.app-media {
       }
     }
 
-    h2 {
+    blockquote.quote-text {
       color: $font-gray;
       font-size: 24px;
-      font-style: italic;
-      font-family: helvetica;
+      font-style: normal;
       font-weight: 300;
       line-height: 1.4em;
 
@@ -357,12 +356,14 @@ body.app-media {
 
       @include breakpoint(phone) {
         font-size: 19px;
+        margin-top: 20px;
       }
     }
 
-    p {
+    p.quote-author {
       color: $font-gray;
       font-size: 22px;
+      font-weight: 300;
 
       @include breakpoint(phone) {
         font-size: 19px;
