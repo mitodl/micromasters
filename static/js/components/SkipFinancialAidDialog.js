@@ -31,10 +31,9 @@ const SkipFinancialAidDialog = ({cancel, skip, open, fullPrice}: SkipProps) => (
   <Dialog
     title="Are you sure?"
     titleClassName="dialog-title"
-    contentClassName="dialog dialog-skip-financial-aid"
+    contentClassName="dialog skip-financial-aid-dialog"
+    className="skip-financial-aid-dialog-wrapper"
     open={open}
-    className="skip-aid-dialog-wrapper"
-    bodyClassName="skip-aid-dialog"
     onRequestClose={cancel}
     actions={skipActions(cancel, skip)}
   >

@@ -152,6 +152,7 @@ export default class EducationDialog extends ProfileFormFields {
         title="Education"
         titleClassName="dialog-title"
         contentClassName="dialog education-dialog"
+        className="education-dialog-wrapper"
         open={educationDialogVisibility}
         onRequestClose={this.clearEducationEdit}
         actions={actions}

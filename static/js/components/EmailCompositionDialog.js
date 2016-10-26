@@ -63,6 +63,7 @@ const EmailCompositionDialog = (props: EmailDialogProps) => {
     title="New Email"
     titleClassName="dialog-title"
     contentClassName="dialog email-composition-dialog"
+    className="email-composition-dialog-wrapper"
     open={open}
     actions={createDialogActions(closeEmailDialog, sendEmail)}
     onRequestClose={closeEmailDialog}

@@ -88,6 +88,7 @@ export default class NewEnrollmentDialog extends React.Component {
       title="Enroll in a new MicroMasters Program"
       titleClassName="dialog-title"
       contentClassName="dialog enroll-dialog"
+      className="enroll-dialog-wrapper"
       open={enrollDialogVisibility}
       actions={this.createDialogActions()}
     >

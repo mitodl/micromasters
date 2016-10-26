@@ -143,6 +143,7 @@ const FinancialAidCalculator = ({
     title="Cost Calculator"
     titleClassName="dialog-title"
     contentClassName="dialog financial-aid-calculator"
+    className="financial-aid-calculator-wrapper"
     open={calculatorDialogVisibility}
     bodyClassName="financial-aid-calculator-body"
     onRequestClose={closeDialogAndCancel}

@@ -55,7 +55,8 @@ const ProfileImageUploader = ({
   <Dialog
     title="Upload a Profile Photo"
     titleClassName="dialog-title"
-    contentClassName="dialog dashboard-dialog photo-upload-dialog"
+    contentClassName="dialog photo-upload-dialog"
+    className="photo-upload-dialog-wrapper"
     onRequestClose={() => setDialogVisibility(false)}
     autoScrollBodyContent={true}
     contentStyle={{ maxWidth: '620px' }}

@@ -22,6 +22,7 @@ const DocsInstructionsDialog = ({ open, setDialogVisibility }: DocsInstructions)
     title={dialogTitle(setDialogVisibility)}
     titleClassName="dialog-title"
     contentClassName="dialog docs-instructions-dialog"
+    className="docs-instructions-dialog-wrapper"
     open={open}
     onRequestClose={() => setDialogVisibility(false)}
     autoScrollBodyContent={true}

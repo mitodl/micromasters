@@ -56,7 +56,8 @@ export default class UserPagePersonalDialog extends React.Component {
       <Dialog
         title="Edit Personal Info"
         titleClassName="dialog-title"
-        contentClassName="dialog dashboard-dialog personal-dialog"
+        contentClassName="dialog personal-dialog"
+        className="personal-dialog-wrapper"
         open={userPageDialogVisibility}
         onRequestClose={this.closePersonalDialog}
         actions={actions}
