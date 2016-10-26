@@ -19,14 +19,12 @@ class UserSerializer(serializers.ModelSerializer):
     first_name = serializers.SerializerMethodField()
     last_name = serializers.SerializerMethodField()
     preferred_name = serializers.SerializerMethodField()
-    is_staff = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = (
             "username", "email",
             "first_name", "last_name", "preferred_name",
-            "is_staff",
         )
 
     def get_username(self, obj):  # pylint: disable=no-self-use
@@ -63,12 +61,6 @@ class UserSerializer(serializers.ModelSerializer):
             return obj.profile.preferred_name
         except ObjectDoesNotExist:
             return None
-
-    def get_is_staff(self, obj):  # pylint: disable=no-self-use
-        """
-        Look up whether the user is staff or not
-        """
-        return has_role(obj, [Staff.ROLE_ID, Instructor.ROLE_ID])
 
     def to_representation(self, obj):
         """

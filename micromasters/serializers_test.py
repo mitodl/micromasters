@@ -28,7 +28,6 @@ class UserTests(ESTestCase):
             "first_name": None,
             "last_name": None,
             "preferred_name": None,
-            "is_staff": False,
         }
 
     def test_user_with_profile(self):
@@ -48,7 +47,6 @@ class UserTests(ESTestCase):
             "first_name": "Rando",
             "last_name": "Cardrizzian",
             "preferred_name": "Hobo",
-            "is_staff": False,
         }
 
     @mock.patch('micromasters.serializers.get_social_username')
@@ -67,7 +65,6 @@ class UserTests(ESTestCase):
             "first_name": None,
             "last_name": None,
             "preferred_name": None,
-            "is_staff": False,
         }
 
 
