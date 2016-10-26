@@ -1,5 +1,5 @@
 // @flow
-import type { Dispatch } from 'redux';
+import type { Dispatch, State } from 'redux';
 
 export type Action = {
   type: string;
@@ -14,7 +14,6 @@ export type ActionCreator = (...a: any) => Action;
 
 export type AsyncActionCreator<T> = (...a: any) => Dispatcher<T>;
 
-export type Store = {
-  dispatch: Dispatch,
-  getState: () => any,
-};
+export type AssertReducerResultState<T> = (
+  actionFunc: () => Action, stateFunc: ((reducerState: State) => T), defaultValue: any
+) => void;

@@ -1,7 +1,11 @@
+// @flow
 import configureTestStore from 'redux-asserts';
 import { assert } from 'chai';
 import sinon from 'sinon';
 import moment from 'moment';
+import type { Store } from 'redux';
+
+import type { AssertReducerResultState } from '../flow/reduxTypes';
 
 import rootReducer from '../reducers';
 import {
@@ -12,9 +16,7 @@ import { createAssertReducerResultState } from '../util/test_utils';
 import type { OrderReceiptState } from './order_receipt';
 
 describe('order receipt reducer', () => {
-  let sandbox, store, assertReducerResultState: (
-    a: () => Action, f: ((s: any) => OrderReceiptState), d: any
-  ) => void;
+  let sandbox, store: Store, assertReducerResultState: AssertReducerResultState<OrderReceiptState>;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -25,8 +27,6 @@ describe('order receipt reducer', () => {
 
   afterEach(() => {
     sandbox.restore();
-
-    store = null;
   });
 
   it('should let you set timeoutActive', () => {

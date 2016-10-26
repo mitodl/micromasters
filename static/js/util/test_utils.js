@@ -11,7 +11,8 @@ import type {
   CourseRun,
   Program
 } from '../flow/programTypes';
-import type { Action, Store } from '../flow/reduxTypes';
+import type { Action } from '../flow/reduxTypes';
+import type { Store } from 'redux';
 
 export function findCourse(courseSelector: (course: Course, program: Program) => boolean): Course {
   let [, course, ] = findCourseRun(
@@ -129,7 +130,7 @@ export const localStorageMock = (init: any = {}) => {
   };
 };
 
-export function createAssertReducerResultState<State>(store: Store, getReducerState: (x: any) => any) {
+export function createAssertReducerResultState<State>(store: Store, getReducerState: (x: any) => State) {
   return (
     action: () => Action, stateLookup: (state: State) => any, defaultValue: any
   ): void => {

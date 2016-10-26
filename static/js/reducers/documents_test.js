@@ -21,35 +21,22 @@ import * as actions from '../actions';
 import type { DocumentsState } from '../reducers/documents';
 import rootReducer from '../reducers';
 import * as api from '../lib/api';
-import type { Action } from '../flow/reduxTypes';
+import type { AssertReducerResultState } from '../flow/reduxTypes';
+import { createAssertReducerResultState } from '../util/test_utils';
 
 describe('documents reducers', () => {
-  let sandbox, store, dispatchThen;
+  let sandbox, store, dispatchThen, assertReducerResultState: AssertReducerResultState<DocumentsState>;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     store = configureTestStore(rootReducer);
     dispatchThen = store.createDispatchThen(state => state.documents);
+    assertReducerResultState = createAssertReducerResultState(store, state => state.documents);
   });
 
   afterEach(() => {
     sandbox.restore();
   });
-
-  const assertReducerResultState = (
-    action: () => Action, stateLookup: (documents: DocumentsState) => any, defaultValue: any
-  ): void => {
-    assert.deepEqual(defaultValue, stateLookup(store.getState().documents));
-    for (let value of [true, null, false, 0, 3, 'x', {'a': 'b'}, {}, [3, 4, 5], [], '']) {
-      let expected = value;
-      if (value === null) {
-        // redux-actions converts this to undefined
-        expected = undefined;
-      }
-      store.dispatch(action(value));
-      assert.deepEqual(expected, stateLookup(store.getState().documents));
-    }
-  };
 
   describe('UI', () => {
     it('should let you set the document date', () => {
