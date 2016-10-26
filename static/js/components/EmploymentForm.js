@@ -307,7 +307,7 @@ class EmploymentForm extends ProfileFormFields {
           deleteFunc={this.deleteWorkHistoryEntry}
           open={showWorkDeleteDialog}
           close={this.closeConfirmDeleteDialog}
-          confirmText="Delete this entry?"
+          itemText="position"
         />
         <Dialog
           title="Employment"

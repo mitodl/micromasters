@@ -107,7 +107,7 @@ export default class EducationDisplay extends ProfileFormFields {
           deleteFunc={this.deleteEducationEntry}
           open={showEducationDeleteDialog}
           close={this.closeConfirmDeleteDialog}
-          confirmText="Delete this entry?"
+          itemText="degree"
         />
         <EducationDialog
           {...this.props}
