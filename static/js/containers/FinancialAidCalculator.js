@@ -29,7 +29,7 @@ import type {
   FinancialAidState,
   FinancialAidValidation,
 } from '../reducers/financial_aid';
-import type { Program } from '../flow/programTypes';
+import type { DashboardProgram } from '../flow/programTypes';
 import { formatPrice } from '../util/util';
 
 const currencySelect = (update, current) => (
@@ -121,7 +121,7 @@ type CalculatorProps = {
   updateCalculatorEdit:       (f: FinancialAidState) => void,
   currentProgramEnrollment:   ProgramEnrollment,
   openConfirmSkipDialog:      () => void,
-  programs:                   Array<Program>,
+  programs:                   Array<DashboardProgram>,
 };
 
 const FinancialAidCalculator = ({

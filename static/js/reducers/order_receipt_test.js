@@ -9,9 +9,12 @@ import {
   setTimeoutActive,
 } from '../actions/order_receipt';
 import { createAssertReducerResultState } from '../util/test_utils';
+import type { OrderReceiptState } from './order_receipt';
 
 describe('order receipt reducer', () => {
-  let sandbox, store, assertReducerResultState;
+  let sandbox, store, assertReducerResultState: (
+    a: () => Action, f: ((s: any) => OrderReceiptState), d: any
+  ) => void;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();

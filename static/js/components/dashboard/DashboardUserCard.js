@@ -6,12 +6,12 @@ import Link from 'react-router/lib/Link';
 import ProfileImage from '../../containers/ProfileImage';
 import { getPreferredName } from '../../util/util';
 import type { Profile } from '../../flow/profileTypes';
-import type { Program } from '../../flow/programTypes';
+import type { DashboardProgram } from '../../flow/programTypes';
 
 export default class DashboardUserCard extends React.Component {
   props: {
     profile: Profile,
-    program: Program
+    program: DashboardProgram
   };
 
   render() {

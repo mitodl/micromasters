@@ -4,13 +4,13 @@ import { Card, CardTitle } from 'react-mdl/lib/Card';
 import Button from 'react-mdl/lib/Button';
 
 import type {
-  Program
+  DashboardProgram
 } from '../flow/programTypes';
 import { programCourseInfo } from '../util/util';
 
 export default class ProgressWidget extends React.Component {
   props: {
-    program: Program
+    program: DashboardProgram
   };
 
   circularProgressWidget: Function = (

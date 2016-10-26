@@ -1,7 +1,7 @@
 // @flow
-import type { Program } from './programTypes';
+import type { DashboardProgram } from './programTypes';
 // likely to change in very near future
-export type Dashboard = Array<Program>;
+export type Dashboard = Array<DashboardProgram>;
 export type DashboardState = {
   programs:     Dashboard,
   fetchStatus?: string,

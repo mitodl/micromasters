@@ -21,7 +21,7 @@ import type {
   ValidationErrors,
 } from '../flow/profileTypes';
 import type {
-  Program,
+  DashboardProgram,
   Course,
   CourseRun,
 } from '../flow/programTypes';
@@ -367,7 +367,7 @@ export function formatPrice(price: string|number): string {
 /**
  * Returns total courses and passed courses in program.
  */
-export function programCourseInfo(program: Program): Object {
+export function programCourseInfo(program: DashboardProgram): Object {
   let totalCourses = 0;
   let totalPassedCourses = 0;
   let passedCourses: Course;
@@ -387,9 +387,9 @@ export function programCourseInfo(program: Program): Object {
 }
 
 export function findCourseRun(
-  programs: Array<Program>,
-  selector: (courseRun: CourseRun, course: Course, program: Program) => boolean,
-): [CourseRun, Course, Program] {
+  programs: Array<DashboardProgram>,
+  selector: (courseRun: CourseRun, course: Course, program: DashboardProgram) => boolean,
+): [CourseRun, Course, DashboardProgram] {
   for (let program of programs) {
     try {
       if (selector(null, null, program)) {

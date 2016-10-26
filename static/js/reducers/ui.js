@@ -43,7 +43,7 @@ import { PERSONAL_STEP } from '../constants';
 import type { ToastMessage } from '../flow/generalTypes';
 import type { Action } from '../flow/reduxTypes';
 import { SET_PROGRAM } from '../actions/ui';
-import type { Program } from '../flow/programTypes';
+import type { DashboardProgram } from '../flow/programTypes';
 
 export type UIDialog = {
   title?: string;
@@ -77,7 +77,7 @@ export type UIState = {
   photoDialogVisibility:        boolean;
   calculatorDialogVisibility:   boolean;
   documentSentDate:             Object;
-  selectedProgram:              Program;
+  selectedProgram:              DashboardProgram;
   skipDialogVisibility:         boolean;
   docsInstructionsVisibility:   boolean;
   navDrawerOpen:                boolean;

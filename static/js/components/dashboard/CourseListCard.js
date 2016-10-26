@@ -4,7 +4,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import { Card, CardTitle } from 'react-mdl/lib/Card';
 
-import type { Program } from '../../flow/programTypes';
+import type { DashboardProgram } from '../../flow/programTypes';
 import type { CoursePrice } from '../../flow/dashboardTypes';
 import CourseRow from './CourseRow';
 import FinancialAidCalculator from '../../containers/FinancialAidCalculator';
@@ -12,7 +12,7 @@ import FinancialAidCalculator from '../../containers/FinancialAidCalculator';
 export default class CourseListCard extends React.Component {
   props: {
     checkout:                     Function,
-    program:                      Program,
+    program:                      DashboardProgram,
     coursePrice:                  CoursePrice,
     openFinancialAidCalculator?:  () => void,
     now?:                         Object,
