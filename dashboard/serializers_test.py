@@ -20,6 +20,8 @@ from dashboard.factories import (
 )
 from dashboard.models import ProgramEnrollment
 from dashboard.serializers import UserProgramSerializer
+from roles.models import Role
+from roles.roles import Staff
 
 
 class UserProgramSerializerTests(TestCase):
@@ -70,6 +72,21 @@ class UserProgramSerializerTests(TestCase):
             'certificates': UserProgramSerializer.serialize_valid_edx_data(user.cachedcertificate_set, program),
             'grade_average': 75,
             'is_learner': True
+        }
+
+        # when user has staff role, assert that he is not learner.
+        Role.objects.create(
+            user=user,
+            program=program,
+            role=Staff.ROLE_ID
+        )
+
+        assert UserProgramSerializer.serialize(self.program_enrollment) == {
+            'id': program.id,
+            'enrollments': UserProgramSerializer.serialize_valid_edx_data(user.cachedenrollment_set, program),
+            'certificates': UserProgramSerializer.serialize_valid_edx_data(user.cachedcertificate_set, program),
+            'grade_average': 75,
+            'is_learner': False
         }
 
     def test_cached_edx_model_serialization(self):
