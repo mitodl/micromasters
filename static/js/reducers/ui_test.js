@@ -35,7 +35,7 @@ import { INITIAL_UI_STATE } from '../reducers/ui';
 import { PERSONAL_STEP } from '../constants';
 import rootReducer from '../reducers';
 import { createAssertReducerResultState } from '../util/test_utils';
-import type { Action, Store } from '../flow/reduxTypes';
+import type { Action } from '../flow/reduxTypes';
 import type { UIState } from './ui';
 
 import configureTestStore from 'redux-asserts';
