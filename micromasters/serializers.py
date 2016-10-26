@@ -5,9 +5,6 @@ import logging
 from rest_framework import serializers
 from django.contrib.auth.models import User, AnonymousUser
 from django.core.exceptions import ObjectDoesNotExist
-from rolepermissions.verifications import has_role
-from roles.models import Instructor, Staff
-from backends.edxorg import EdxOrgOAuth2
 from profiles.api import get_social_username
 
 log = logging.getLogger(__name__)
