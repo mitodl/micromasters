@@ -199,8 +199,7 @@ class DashboardTests(ViewsTests):
                 'reactGaDebug': react_ga_debug,
                 'user': {
                     'email': user.email,
-                    'username': user.username,
-                    'social_username': get_social_username(user),
+                    'username': get_social_username(user),
                     'first_name': profile.first_name,
                     'last_name': profile.last_name,
                     'preferred_name': profile.preferred_name,
@@ -457,8 +456,7 @@ class TestUsersPage(ViewsTests):
                     'reactGaDebug': react_ga_debug,
                     'user': {
                         'email': user.email,
-                        'username': user.username,
-                        'social_username': username,
+                        'username': username,
                         'first_name': profile.first_name,
                         'last_name': profile.last_name,
                         'preferred_name': profile.preferred_name,
