@@ -80,5 +80,5 @@ class ProgramEnrollmentListView(ListCreateAPIView):
         status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
         return Response(
             status=status_code,
-            data=serializer(program).data
+            data=serializer(program, context={'request': request}).data
         )
