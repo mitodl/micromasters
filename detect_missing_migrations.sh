@@ -1,8 +1,8 @@
 #!/bin/bash
 
 TMPFILE=$(mktemp)
-./manage.py migrate --no-input >& "$TMPFILE"
-if cat "$TMPFILE" | grep "Your models have changes that are not yet reflected" > /dev/null
+./manage.py makemigrations --no-input --dry-run >& "$TMPFILE"
+if cat "$TMPFILE" | grep -v "No changes detected" > /dev/null
 then
     echo "Error: one or more migrations are missing:"
     echo
