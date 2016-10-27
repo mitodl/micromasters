@@ -24,6 +24,7 @@ import type { UIState } from '../reducers/ui';
 import type { AvailablePrograms } from '../flow/enrollmentTypes';
 import type { Event } from '../flow/eventType';
 import {  validationErrorSelector } from '../util/util';
+import type { ProgramEnrollment } from '../flow/enrollmentTypes';
 
 export default class PersonalTab extends React.Component {
   props: {
@@ -37,6 +38,7 @@ export default class PersonalTab extends React.Component {
     programs:       AvailablePrograms,
     setProgram:     Function,
     addProgramEnrollment: Function,
+    currentProgramEnrollment: ProgramEnrollment,
   };
 
   programListing = (programs: AvailablePrograms) => {
@@ -53,9 +55,25 @@ export default class PersonalTab extends React.Component {
       programs,
       setProgram,
     } = this.props;
-    let selected = programs.find(program => program.id === value);
+    let selected = programs.find(program => program.id === parseInt(value));
     setProgram(selected);
   };
+
+  getSelectedProgramId = () : number|null => {
+    let programId = null;
+    const {
+      ui: { selectedProgram },
+      currentProgramEnrollment
+    } = this.props;
+
+    if (selectedProgram) {
+      programId = selectedProgram.id;
+    } else if(currentProgramEnrollment) {
+      programId = currentProgramEnrollment.id;
+    }
+
+    return programId;
+  }
 
   selectProgram = () => {
     const {
@@ -66,7 +84,7 @@ export default class PersonalTab extends React.Component {
 
     return (
       <SelectField
-        value={selectedProgram ? selectedProgram.id : null}
+        value={this.getSelectedProgramId()}
         style={{width: "65%"}}
         hintText="Select Program"
         onChange={this.setProgramHelper}

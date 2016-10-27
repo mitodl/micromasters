@@ -38,6 +38,7 @@ import type { AvailableProgramsState } from '../flow/enrollmentTypes';
 import type { Program } from '../flow/programTypes';
 import { addProgramEnrollment } from '../actions/programs';
 import { ALL_ERRORS_VISIBLE } from '../constants';
+import type { ProgramEnrollment } from '../flow/enrollmentTypes';
 
 type UpdateProfile = (isEdit: boolean, profile: Profile, validator: Validator|UIValidator) => void;
 
@@ -49,7 +50,8 @@ class ProfileFormContainer extends React.Component {
     history:     Object,
     ui:          UIState,
     params:      {[k: string]: string},
-    programs:    AvailableProgramsState
+    programs:    AvailableProgramsState,
+    currentProgramEnrollment: ProgramEnrollment,
   };
 
   static contextTypes = {
@@ -61,6 +63,7 @@ class ProfileFormContainer extends React.Component {
       profiles: state.profiles,
       ui: state.ui,
       programs: state.programs,
+      currentProgramEnrollment: state.currentProgramEnrollment
     };
   };
 
@@ -176,6 +179,7 @@ class ProfileFormContainer extends React.Component {
       ui,
       programs,
       dispatch,
+      currentProgramEnrollment
     } = this.props;
     let errors, isEdit, profile;
 
@@ -203,6 +207,7 @@ class ProfileFormContainer extends React.Component {
       profile: profile,
       programs: programs.availablePrograms,
       saveProfile: this.saveProfile.bind(this, isEdit),
+      currentProgramEnrollment: currentProgramEnrollment,
       setProgram: this.setProgram,
       startProfileEdit: this.startProfileEdit,
       ui: ui,
