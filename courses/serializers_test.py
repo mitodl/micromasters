@@ -3,6 +3,7 @@ Tests for serializers
 """
 
 from django.test import override_settings
+from mock import Mock
 
 from cms.factories import ProgramPageFactory
 from cms.models import HomePage
@@ -15,6 +16,8 @@ from courses.serializers import (
     CourseSerializer,
     ProgramSerializer,
 )
+from dashboard.models import ProgramEnrollment
+from profiles.factories import UserFactory
 from search.base import ESTestCase
 
 
@@ -65,6 +68,7 @@ class ProgramSerializerTests(ESTestCase):
             'id': program.id,
             'title': program.title,
             'programpage_url': None,
+            'enrolled': False,
         }
 
     def test_program_with_programpage(self):
@@ -79,5 +83,21 @@ class ProgramSerializerTests(ESTestCase):
             'id': program.id,
             'title': program.title,
             'programpage_url': programpage.url,
+            'enrolled': False,
         }
         assert len(programpage.url) > 0
+
+    def test_program_enrolled(self):
+        """
+        Test ProgramSerializer with an enrolled user
+        """
+        program = ProgramFactory.create()
+        user = UserFactory.create()
+        ProgramEnrollment.objects.create(user=user, program=program)
+        request = Mock(user=user)
+        assert ProgramSerializer(context={"request": request}).to_representation(program) == {
+            'id': program.id,
+            'title': program.title,
+            'programpage_url': None,
+            'enrolled': True,
+        }
