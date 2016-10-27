@@ -83,9 +83,9 @@ describe('FinancialAidCalculator', () => {
       ], () => {
         wrapper.find('.pricing-actions').find('.dashboard-button').simulate('click');
         assert.equal(helper.store.getState().ui.calculatorDialogVisibility, true);
-        let calculator = document.querySelector('.financial-aid-calculator');
+        let calculator = document.querySelector('.financial-aid-calculator-wrapper');
         TestUtils.Simulate.click(calculator.querySelector('.full-price'));
-        let confirmDialog = document.querySelector('.skip-aid-dialog-wrapper');
+        let confirmDialog = document.querySelector('.skip-financial-aid-dialog-wrapper');
         TestUtils.Simulate.click(confirmDialog.querySelector('.save-button'));
       }).then(() => {
         assert(
