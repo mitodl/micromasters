@@ -10,14 +10,14 @@ fail() {
 }
 
 ./manage.py makemigrations --no-input --dry-run >& "$TMPFILE"
-if [[ $? ]]
+if [[ $? -ne 0 ]]
 then
     # makemigrations has returned a non-zero for some reason, possibly
     # because it needs input but --no-input is set
-    fail;
-elif cat "$TMPFILE" | grep -v "No changes detected" > /dev/null
+    fail
+elif [[ $(cat "$TMPFILE" | grep "No changes detected" | wc -l) -eq 0 ]]
 then
-    fail;
+    fail
 else
     rm "$TMPFILE"
 fi
