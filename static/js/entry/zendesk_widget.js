@@ -36,9 +36,9 @@ window.zEmbed || function (e, t) {
 zE(function() {
   // trigger onZendeskIFrameExists at the appropriate time
   let tries = 0;
-  let intervalID = setInterval(() => {
+  const intervalID = setInterval(() => {
     tries += 1;
-    let iframe = document.querySelector("iframe.zEWidget-launcher");
+    const iframe = document.querySelector("iframe.zEWidget-launcher");
     if (iframe) {
       clearInterval(intervalID);
       onZendeskIFrameExists();
@@ -54,10 +54,10 @@ zE(function() {
 let onZendeskIFrameExists = () => {
   // trigger onZendeskIFrameLoaded at the appropriate time
   let tries = 0;
-  let intervalID = setInterval(() => {
+  const intervalID = setInterval(() => {
     tries += 1;
-    let iframe = document.querySelector("iframe.zEWidget-launcher");
-    let btn = iframe.contentDocument.querySelector(".Button--launcher");
+    const iframe = document.querySelector("iframe.zEWidget-launcher");
+    const btn = iframe.contentDocument.querySelector(".Button--launcher");
     if (btn) {
       clearInterval(intervalID);
       onZendeskIFrameLoaded();
@@ -73,21 +73,21 @@ let onZendeskIFrameExists = () => {
 // but because the page is loaded from a different domain, the browser
 // won't allow us to detect that event.
 let onZendeskIFrameLoaded = () => {
-  let iframe = document.querySelector("iframe.zEWidget-launcher");
-  let btn = iframe.contentDocument.querySelector(".Button--launcher");
+  const iframe = document.querySelector("iframe.zEWidget-launcher");
+  const btn = iframe.contentDocument.querySelector(".Button--launcher");
 
-  let regularBackgroundColor = "rgba(0, 0, 0, .14)";
-  let hoverBackgroundColor = window.getComputedStyle(btn).backgroundColor;
+  const regularBackgroundColor = "rgba(0, 0, 0, .14)";
+  const hoverBackgroundColor = window.getComputedStyle(btn).backgroundColor;
   // We need to set a new background color, and unfortunately,
   // the existing background color is set with "!important".
   // As a result, the only way to overriding this existing color is to
   // *also* use "!important".
-  let setHover = () => {
+  const setHover = () => {
     btn.style.setProperty(
       "background-color", hoverBackgroundColor, "important"
     );
   };
-  let unsetHover = () => {
+  const unsetHover = () => {
     btn.style.setProperty(
       "background-color", regularBackgroundColor, "important"
     );
