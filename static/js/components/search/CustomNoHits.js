@@ -13,16 +13,18 @@ export default class CustomNoHits extends NoHits {
       const query = this.getQuery().getQueryString();
       let infoKey = suggestion ? "NoHits.NoResultsFoundDidYouMean" : "NoHits.NoResultsFound";
 
-      return (
-        <div className="no-hits">
-          {this.translate(infoKey, {query:query, suggestion:suggestion})}
-        </div>
-      );
+      if (query) {
+        return (
+          <div className="no-hits">
+            {this.translate(infoKey, {query:query, suggestion:suggestion})}
+          </div>
+        );
+      }
     }
 
     return (
       <div className="no-hits">
-        There are no results for your search.
+        There are no results for this search.
       </div>
     );
   }
