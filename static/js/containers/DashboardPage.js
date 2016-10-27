@@ -23,7 +23,7 @@ import {
   STATUS_PASSED,
   STATUS_CURRENTLY_ENROLLED,
 } from '../constants';
-import { addCourseEnrollment } from '../actions/enrollments';
+import { addCourseEnrollment } from '../actions/course_enrollments';
 import {
   setToastMessage,
   setConfirmSkipDialogVisibility,

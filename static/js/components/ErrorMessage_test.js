@@ -20,7 +20,7 @@ import {
   RECEIVE_PATCH_USER_PROFILE_FAILURE,
   CLEAR_PROFILE_EDIT,
 } from '../actions/profile';
-import { RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS } from '../actions/enrollments';
+import { RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS } from '../actions/programs';
 import {
   DASHBOARD_RESPONSE,
   ERROR_RESPONSE,

@@ -29,7 +29,7 @@ import {
   FETCH_SUCCESS,
 } from '../actions';
 import * as actions from '../actions';
-import { setCurrentProgramEnrollment } from '../actions/enrollments';
+import { setCurrentProgramEnrollment } from '../actions/programs';
 import { FINANCIAL_AID_EDIT } from './financial_aid';
 import rootReducer from '../reducers';
 import * as api from '../lib/api';

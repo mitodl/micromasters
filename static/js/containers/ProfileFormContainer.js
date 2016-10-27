@@ -34,7 +34,7 @@ import type { Profile, Profiles, ProfileGetResult } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
 import type { DashboardState } from '../flow/dashboardTypes';
 import type { Program } from '../flow/programTypes';
-import { addProgramEnrollment } from '../actions/enrollments';
+import { addProgramEnrollment } from '../actions/programs';
 
 type UpdateProfile = (isEdit: boolean, profile: Profile, validator: Validator|UIValidator) => void;
 

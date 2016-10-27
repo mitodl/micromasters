@@ -591,11 +591,15 @@ export const DASHBOARD_RESPONSE = [
 export const PROGRAM_ENROLLMENTS = [
   {
     id: DASHBOARD_RESPONSE[1].id,
-    title: DASHBOARD_RESPONSE[1].title
+    title: DASHBOARD_RESPONSE[1].title,
+    programpage_url: "/program/",
+    enrolled: true,
   },
   {
     id: DASHBOARD_RESPONSE[2].id,
-    title: DASHBOARD_RESPONSE[2].title
+    title: DASHBOARD_RESPONSE[2].title,
+    programpage_url: null,
+    enrolled: true,
   },
 ];
 

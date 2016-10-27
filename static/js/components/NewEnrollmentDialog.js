@@ -12,7 +12,7 @@ export default class NewEnrollmentDialog extends React.Component {
   props: {
     addProgramEnrollment:        (programId: number) => void,
     dashboard:                   DashboardState,
-    enrollments:                 ProgramEnrollmentsState,
+    programs:                    ProgramEnrollmentsState,
     enrollDialogError:           ?string,
     enrollDialogVisibility:      boolean,
     enrollSelectedProgram:       ?number,
@@ -72,7 +72,7 @@ export default class NewEnrollmentDialog extends React.Component {
       enrollDialogError,
       enrollDialogVisibility,
       enrollSelectedProgram,
-      enrollments: { programEnrollments },
+      programs: { programEnrollments },
     } = this.props;
 
     let enrollmentLookup = new Map(programEnrollments.map(enrollment => [enrollment.id, null]));

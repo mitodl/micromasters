@@ -7,9 +7,7 @@ import { shallow } from 'enzyme';
 import Dialog from 'material-ui/Dialog';
 import SelectField from 'material-ui/SelectField';
 
-import {
-} from '../actions/enrollments';
-import * as enrollmentActions from '../actions/enrollments';
+import * as enrollmentActions from '../actions/programs';
 import * as uiActions from '../actions/ui';
 
 import {
@@ -34,7 +32,7 @@ describe("NewEnrollmentDialog", () => {
       let dialog = wrapper.find(NewEnrollmentDialog).at(0);
       let props = dialog.props();
 
-      assert.deepEqual(props.enrollments.programEnrollments, PROGRAM_ENROLLMENTS);
+      assert.deepEqual(props.programs.programEnrollments, PROGRAM_ENROLLMENTS);
       assert.deepEqual(props.dashboard.programs, DASHBOARD_RESPONSE);
     });
   });
@@ -79,7 +77,7 @@ describe("NewEnrollmentDialog", () => {
     let wrapper = shallow(
       <NewEnrollmentDialog
         dashboard={{programs: DASHBOARD_RESPONSE}}
-        enrollments={{programEnrollments: PROGRAM_ENROLLMENTS}}
+        programs={{programEnrollments: PROGRAM_ENROLLMENTS}}
         enrollDialogVisibility={true}
         setEnrollSelectedProgram={stub}
       />);
@@ -94,7 +92,7 @@ describe("NewEnrollmentDialog", () => {
     let wrapper = shallow(
       <NewEnrollmentDialog
         dashboard={{programs: DASHBOARD_RESPONSE}}
-        enrollments={{programEnrollments: PROGRAM_ENROLLMENTS}}
+        programs={{programEnrollments: PROGRAM_ENROLLMENTS}}
         enrollDialogVisibility={true}
         setEnrollDialogVisibility={visibilityStub}
         addProgramEnrollment={enrollStub}
@@ -113,7 +111,7 @@ describe("NewEnrollmentDialog", () => {
     let wrapper = shallow(
       <NewEnrollmentDialog
         dashboard={{programs: DASHBOARD_RESPONSE}}
-        enrollments={{programEnrollments: PROGRAM_ENROLLMENTS}}
+        programs={{programEnrollments: PROGRAM_ENROLLMENTS}}
         enrollDialogVisibility={true}
         setEnrollDialogError={stub}
       />);
@@ -129,7 +127,7 @@ describe("NewEnrollmentDialog", () => {
     let wrapper = shallow(
       <NewEnrollmentDialog
         dashboard={{programs: DASHBOARD_RESPONSE}}
-        enrollments={{programEnrollments: PROGRAM_ENROLLMENTS}}
+        programs={{programEnrollments: PROGRAM_ENROLLMENTS}}
         enrollDialogVisibility={true}
         setEnrollDialogVisibility={stub}
       />);
@@ -154,7 +152,7 @@ describe("NewEnrollmentDialog", () => {
     let wrapper = shallow(
       <NewEnrollmentDialog
         dashboard={{programs: DASHBOARD_RESPONSE}}
-        enrollments={{programEnrollments: PROGRAM_ENROLLMENTS}}
+        programs={{programEnrollments: PROGRAM_ENROLLMENTS}}
         enrollDialogVisibility={false}
         enrollSelectedProgram={selectedEnrollment}
       />);
@@ -176,7 +174,7 @@ describe("NewEnrollmentDialog", () => {
     let wrapper = shallow(
       <NewEnrollmentDialog
         dashboard={{programs: DASHBOARD_RESPONSE}}
-        enrollments={{programEnrollments: PROGRAM_ENROLLMENTS}}
+        programs={{programEnrollments: PROGRAM_ENROLLMENTS}}
         enrollSelectedProgram={selectedEnrollment}
         enrollDialogVisibility={false}
       />);

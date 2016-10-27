@@ -31,7 +31,7 @@ import {
   clearEnrollments,
   fetchProgramEnrollments,
   setCurrentProgramEnrollment,
-} from '../actions/enrollments';
+} from '../actions/programs';
 import {
   setEnrollDialogError,
   setEnrollDialogVisibility,
@@ -62,7 +62,7 @@ class App extends React.Component {
     dispatch:                 Dispatch,
     dashboard:                DashboardState,
     prices:                   CoursePricesState,
-    enrollments:              ProgramEnrollmentsState,
+    programs:                 ProgramEnrollmentsState,
     history:                  Object,
     ui:                       UIState,
     signupDialog:             Object,
@@ -120,8 +120,8 @@ class App extends React.Component {
   }
 
   fetchEnrollments() {
-    const { enrollments, dispatch } = this.props;
-    if (enrollments.getStatus === undefined) {
+    const { programs, dispatch } = this.props;
+    if (programs.getStatus === undefined) {
       dispatch(fetchProgramEnrollments());
     }
   }
@@ -202,7 +202,7 @@ class App extends React.Component {
   render() {
     const {
       currentProgramEnrollment,
-      enrollments,
+      programs,
       ui: {
         enrollDialogError,
         enrollDialogVisibility,
@@ -220,8 +220,8 @@ class App extends React.Component {
       empty = true;
     }
 
-    if (enrollments.getStatus === FETCH_FAILURE) {
-      children = <ErrorMessage errorInfo={enrollments.getErrorInfo} />;
+    if (programs.getStatus === FETCH_FAILURE) {
+      children = <ErrorMessage errorInfo={programs.getErrorInfo} />;
       empty = true;
     }
 
@@ -248,8 +248,8 @@ class App extends React.Component {
         enrollDialogError={enrollDialogError}
         enrollDialogVisibility={enrollDialogVisibility}
         enrollSelectedProgram={enrollSelectedProgram}
-        enrollments={enrollments}
         pathname={pathname}
+        programs={programs}
         setCurrentProgramEnrollment={this.setCurrentProgramEnrollment}
         setEnrollDialogError={this.setEnrollDialogError}
         setEnrollDialogVisibility={this.setEnrollDialogVisibility}
@@ -286,7 +286,8 @@ const mapStateToProps = (state) => {
     prices:                   state.prices,
     ui:                       state.ui,
     currentProgramEnrollment: state.currentProgramEnrollment,
-    enrollments:              state.enrollments,
+    programs:                 state.programs,
+    courseEnrollments:        state.courseEnrollments,
     signupDialog:             state.signupDialog,
   };
 };

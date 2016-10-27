@@ -32,7 +32,7 @@ describe('ProgramSelector', () => {
   let renderProgramSelector = (props) => {
     return shallow(
       <ProgramSelector
-        enrollments={{programEnrollments: enrollments}}
+        programs={{programEnrollments: enrollments}}
         dashboard={{programs: DASHBOARD_RESPONSE}}
         currentProgramEnrollment={selectedEnrollment}
         {...props}
@@ -42,7 +42,7 @@ describe('ProgramSelector', () => {
 
   it('renders an empty div if there are no program enrollments', () => {
     let wrapper = renderProgramSelector({
-      enrollments: {
+      programs: {
         programEnrollments: []
       },
     });
@@ -80,7 +80,7 @@ describe('ProgramSelector', () => {
   it("does not render the 'Enroll in a new program' option if there is not at least one available program", () => {
     let allEnrollments = enrollments.concat(unenrolled);
     let wrapper = renderProgramSelector({
-      enrollments: {
+      programs: {
         programEnrollments: allEnrollments
       }
     });

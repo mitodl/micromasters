@@ -21,8 +21,8 @@ import {
 import {
   CLEAR_ENROLLMENTS,
   RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE,
-} from '../actions/enrollments';
-import * as enrollmentActions from '../actions/enrollments';
+} from '../actions/programs';
+import * as enrollmentActions from '../actions/programs';
 import {
   CLEAR_UI,
   SET_PROFILE_STEP,

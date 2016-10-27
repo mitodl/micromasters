@@ -18,6 +18,8 @@ import type {
 } from '../flow/enrollmentTypes';
 import * as api from '../lib/api';
 
+export const SET_CURRENT_PROGRAM_ENROLLMENT = 'SET_CURRENT_PROGRAM_ENROLLMENT';
+export const setCurrentProgramEnrollment = createAction(SET_CURRENT_PROGRAM_ENROLLMENT);
 
 export const REQUEST_GET_PROGRAM_ENROLLMENTS = 'REQUEST_GET_PROGRAM_ENROLLMENTS';
 export const requestGetProgramEnrollments = createAction(REQUEST_GET_PROGRAM_ENROLLMENTS);
@@ -75,30 +77,3 @@ export const addProgramEnrollment = (programId: number): Dispatcher<ProgramEnrol
 
 export const CLEAR_ENROLLMENTS = 'CLEAR_ENROLLMENTS';
 export const clearEnrollments = createAction(CLEAR_ENROLLMENTS);
-
-export const SET_CURRENT_PROGRAM_ENROLLMENT = 'SET_CURRENT_PROGRAM_ENROLLMENT';
-export const setCurrentProgramEnrollment = createAction(SET_CURRENT_PROGRAM_ENROLLMENT);
-
-export const REQUEST_ADD_COURSE_ENROLLMENT = 'REQUEST_ADD_COURSE_ENROLLMENT';
-export const requestAddCourseEnrollment = createAction(REQUEST_ADD_COURSE_ENROLLMENT);
-
-export const RECEIVE_ADD_COURSE_ENROLLMENT_SUCCESS = 'RECEIVE_ADD_COURSE_ENROLLMENT_SUCCESS';
-export const receiveAddCourseEnrollmentSuccess = createAction(RECEIVE_ADD_COURSE_ENROLLMENT_SUCCESS);
-
-export const RECEIVE_ADD_COURSE_ENROLLMENT_FAILURE = 'RECEIVE_ADD_COURSE_ENROLLMENT_FAILURE';
-export const receiveAddCourseEnrollmentFailure = createAction(RECEIVE_ADD_COURSE_ENROLLMENT_FAILURE);
-
-export const addCourseEnrollment = (courseId: string): Dispatcher<*> => {
-  return (dispatch: Dispatch) => {
-    dispatch(requestAddCourseEnrollment(courseId));
-    return api.addCourseEnrollment(courseId).
-      then(() => {
-        dispatch(receiveAddCourseEnrollmentSuccess());
-        dispatch(fetchDashboard());
-        dispatch(fetchCoursePrices());
-      }).
-      catch(() => {
-        dispatch(receiveAddCourseEnrollmentFailure());
-      });
-  };
-};

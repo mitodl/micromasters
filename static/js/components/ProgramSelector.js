@@ -17,7 +17,7 @@ export default class ProgramSelector extends React.Component {
   props: {
     addProgramEnrollment:        (programId: number) => void,
     currentProgramEnrollment:    ProgramEnrollment,
-    enrollments:                 ProgramEnrollmentsState,
+    programs:                    ProgramEnrollmentsState,
     enrollDialogError:           ?string,
     enrollDialogVisibility:      boolean,
     enrollSelectedProgram:       ?number,
@@ -31,7 +31,7 @@ export default class ProgramSelector extends React.Component {
 
   selectEnrollment = (option: Option): void => {
     const {
-      enrollments: { programEnrollments },
+      programs: { programEnrollments },
       setCurrentProgramEnrollment,
       setEnrollDialogError,
       setEnrollDialogVisibility,
@@ -50,7 +50,7 @@ export default class ProgramSelector extends React.Component {
   makeOptions = (): Array<Option> => {
     const {
       currentProgramEnrollment,
-      enrollments: { programEnrollments },
+      programs: { programEnrollments },
       dashboard: { programs },
     } = this.props;
 
@@ -81,8 +81,8 @@ export default class ProgramSelector extends React.Component {
     let {
       addProgramEnrollment,
       dashboard,
-      enrollments,
-      enrollments: {programEnrollments},
+      programs,
+      programs: {programEnrollments},
       enrollDialogError,
       enrollDialogVisibility,
       enrollSelectedProgram,
@@ -115,7 +115,7 @@ export default class ProgramSelector extends React.Component {
         <NewEnrollmentDialog
           addProgramEnrollment={addProgramEnrollment}
           dashboard={dashboard}
-          enrollments={enrollments}
+          programs={programs}
           enrollDialogError={enrollDialogError}
           enrollDialogVisibility={enrollDialogVisibility}
           enrollSelectedProgram={enrollSelectedProgram}

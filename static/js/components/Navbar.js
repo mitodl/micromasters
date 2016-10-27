@@ -32,7 +32,7 @@ export default class Navbar extends React.Component {
     enrollDialogError:           ?string,
     enrollDialogVisibility:      boolean,
     enrollSelectedProgram:       ?number,
-    enrollments:                 ProgramEnrollmentsState,
+    programs:                    ProgramEnrollmentsState,
     navDrawerOpen:               boolean,
     pathname:                    string,
     profile:                     Profile,

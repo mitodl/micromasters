@@ -40,8 +40,9 @@ import { ui } from './ui';
 import { email } from './email';
 import {
   currentProgramEnrollment,
-  enrollments,
-} from './enrollments';
+  programs,
+} from './programs';
+import { courseEnrollments } from './course_enrollments';
 import type { DashboardState, CoursePricesState } from '../flow/dashboardTypes';
 import type { Action } from '../flow/reduxTypes';
 import type {
@@ -253,7 +254,8 @@ export default combineReducers({
   email,
   checkout,
   prices,
-  enrollments,
+  programs,
+  courseEnrollments,
   currentProgramEnrollment,
   signupDialog,
   imageUpload,

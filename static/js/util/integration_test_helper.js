@@ -25,7 +25,7 @@ import {
 import {
   REQUEST_GET_PROGRAM_ENROLLMENTS,
   RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
-} from '../actions/enrollments';
+} from '../actions/programs';
 import rootReducer from '../reducers';
 import { makeDashboardRoutes } from '../dashboard_routes';
 import { localStorageMock } from '../util/test_utils';

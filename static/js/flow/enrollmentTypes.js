@@ -13,5 +13,8 @@ export type ProgramEnrollmentsState = {
   getStatus?: string,
   getErrorInfo?: APIErrorInfo,
   postStatus?: string,
+};
+
+export type CourseEnrollmentsState = {
   courseEnrollAddStatus?: string,
 };

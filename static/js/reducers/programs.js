@@ -10,10 +10,7 @@ import {
   RECEIVE_ADD_PROGRAM_ENROLLMENT_FAILURE,
   CLEAR_ENROLLMENTS,
   SET_CURRENT_PROGRAM_ENROLLMENT,
-  REQUEST_ADD_COURSE_ENROLLMENT,
-  RECEIVE_ADD_COURSE_ENROLLMENT_SUCCESS,
-  RECEIVE_ADD_COURSE_ENROLLMENT_FAILURE,
-} from '../actions/enrollments';
+} from '../actions/programs';
 import {
   FETCH_FAILURE,
   FETCH_SUCCESS,
@@ -28,7 +25,7 @@ export const INITIAL_ENROLLMENTS_STATE: ProgramEnrollmentsState = {
   programEnrollments: []
 };
 
-export const enrollments = (state: ProgramEnrollmentsState = INITIAL_ENROLLMENTS_STATE, action: Action) => {
+export const programs = (state: ProgramEnrollmentsState = INITIAL_ENROLLMENTS_STATE, action: Action) => {
   switch (action.type) {
   case REQUEST_GET_PROGRAM_ENROLLMENTS:
     return { ...state, getStatus: FETCH_PROCESSING };
@@ -48,12 +45,6 @@ export const enrollments = (state: ProgramEnrollmentsState = INITIAL_ENROLLMENTS
     return { ...state, postStatus: FETCH_FAILURE, postErrorInfo: action.payload };
   case CLEAR_ENROLLMENTS:
     return INITIAL_ENROLLMENTS_STATE;
-  case REQUEST_ADD_COURSE_ENROLLMENT:
-    return { ...state, courseEnrollAddStatus: FETCH_PROCESSING };
-  case RECEIVE_ADD_COURSE_ENROLLMENT_SUCCESS:
-    return { ...state, courseEnrollAddStatus: FETCH_SUCCESS };
-  case RECEIVE_ADD_COURSE_ENROLLMENT_FAILURE:
-    return { ...state, courseEnrollAddStatus: FETCH_FAILURE };
   default:
     return state;
   }

@@ -20,7 +20,6 @@ import {
   receiveGetProgramEnrollmentsSuccess,
   clearEnrollments,
   setCurrentProgramEnrollment,
-  addCourseEnrollment,
 
   REQUEST_GET_PROGRAM_ENROLLMENTS,
   RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
@@ -30,23 +29,19 @@ import {
   RECEIVE_ADD_PROGRAM_ENROLLMENT_FAILURE,
   CLEAR_ENROLLMENTS,
   SET_CURRENT_PROGRAM_ENROLLMENT,
-  REQUEST_ADD_COURSE_ENROLLMENT,
-  RECEIVE_ADD_COURSE_ENROLLMENT_SUCCESS,
-  RECEIVE_ADD_COURSE_ENROLLMENT_FAILURE,
-} from '../actions/enrollments';
+} from '../actions/programs';
 import * as api from '../lib/api';
 import * as actions from '../actions';
 import rootReducer from '../reducers';
 
 describe('enrollments', () => {
-  let sandbox, store, getProgramEnrollmentsStub, addProgramEnrollmentStub, addCourseEnrollmentStub;
+  let sandbox, store, getProgramEnrollmentsStub, addProgramEnrollmentStub;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     store = configureTestStore(rootReducer);
     getProgramEnrollmentsStub = sandbox.stub(api, 'getProgramEnrollments');
     addProgramEnrollmentStub = sandbox.stub(api, 'addProgramEnrollment');
-    addCourseEnrollmentStub = sandbox.stub(api, 'addCourseEnrollment');
   });
 
   afterEach(() => {
@@ -61,7 +56,7 @@ describe('enrollments', () => {
   describe('enrollments reducer', () => {
     let dispatchThen, fetchCoursePricesStub, fetchDashboardStub;
     beforeEach(() => {
-      dispatchThen = store.createDispatchThen(state => state.enrollments);
+      dispatchThen = store.createDispatchThen(state => state.programs);
 
       fetchCoursePricesStub = sandbox.stub(actions, 'fetchCoursePrices');
       fetchCoursePricesStub.returns({type: "fake"});
@@ -166,36 +161,6 @@ describe('enrollments', () => {
         assert.deepEqual(enrollmentsState, {
           programEnrollments: []
         });
-      });
-    });
-
-    it('should add a course enrollment successfully', () => {
-      addCourseEnrollmentStub.returns(Promise.resolve());
-
-      let courseKey = 'course_key';
-      return dispatchThen(addCourseEnrollment(courseKey), [
-        REQUEST_ADD_COURSE_ENROLLMENT,
-        RECEIVE_ADD_COURSE_ENROLLMENT_SUCCESS,
-      ]).then(state => {
-        assert.equal(state.courseEnrollAddStatus, FETCH_SUCCESS);
-        assert.isTrue(addCourseEnrollmentStub.calledWith(courseKey));
-        assert.isTrue(fetchCoursePricesStub.calledWith());
-        assert.isTrue(fetchDashboardStub.calledWith());
-      });
-    });
-
-    it('should fail to add a course enrollment', () => {
-      addCourseEnrollmentStub.returns(Promise.reject());
-
-      let courseKey = 'course_key';
-      return dispatchThen(addCourseEnrollment(courseKey), [
-        REQUEST_ADD_COURSE_ENROLLMENT,
-        RECEIVE_ADD_COURSE_ENROLLMENT_FAILURE,
-      ]).then(state => {
-        assert.equal(state.courseEnrollAddStatus, FETCH_FAILURE);
-        assert.isTrue(addCourseEnrollmentStub.calledWith(courseKey));
-        assert.isFalse(fetchCoursePricesStub.calledWith());
-        assert.isFalse(fetchDashboardStub.calledWith());
       });
     });
   });
