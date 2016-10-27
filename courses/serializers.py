@@ -31,13 +31,10 @@ class ProgramSerializer(serializers.ModelSerializer):
 
     def get_enrolled(self, program):
         """
-        Returns true if the user
+        Returns true if the user is enrolled in the program
         """
-        if 'request' in self.context:
-            user = self.context['request'].user
-            return ProgramEnrollment.objects.filter(user=user, program=program).exists()
-        else:
-            return False
+        user = self.context['request'].user
+        return ProgramEnrollment.objects.filter(user=user, program=program).exists()
 
     class Meta:  # pylint: disable=missing-docstring
         model = Program

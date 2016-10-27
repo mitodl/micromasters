@@ -59,14 +59,24 @@ class ProgramSerializerTests(ESTestCase):
     Tests for ProgramSerializer
     """
 
+    @classmethod
+    def setUpTestData(cls):
+        """Create a program and user to test with"""
+        super().setUpTestData()
+
+        cls.program = ProgramFactory.create()
+        cls.user = UserFactory.create()
+        cls.context = {
+            "request": Mock(user=cls.user)
+        }
+
     def test_program_no_programpage(self):
         """
         Test ProgramSerializer without a program page
         """
-        program = ProgramFactory.create()
-        assert ProgramSerializer().to_representation(program) == {
-            'id': program.id,
-            'title': program.title,
+        assert ProgramSerializer(context=self.context).to_representation(self.program) == {
+            'id': self.program.id,
+            'title': self.program.title,
             'programpage_url': None,
             'enrolled': False,
         }
@@ -75,13 +85,12 @@ class ProgramSerializerTests(ESTestCase):
         """
         Test ProgramSerializer with a program page attached
         """
-        program = ProgramFactory.create()
-        programpage = ProgramPageFactory.build(program=program)
+        programpage = ProgramPageFactory.build(program=self.program)
         homepage = HomePage.objects.first()
         homepage.add_child(instance=programpage)
-        assert ProgramSerializer().to_representation(program) == {
-            'id': program.id,
-            'title': program.title,
+        assert ProgramSerializer(context=self.context).to_representation(self.program) == {
+            'id': self.program.id,
+            'title': self.program.title,
             'programpage_url': programpage.url,
             'enrolled': False,
         }
@@ -91,13 +100,10 @@ class ProgramSerializerTests(ESTestCase):
         """
         Test ProgramSerializer with an enrolled user
         """
-        program = ProgramFactory.create()
-        user = UserFactory.create()
-        ProgramEnrollment.objects.create(user=user, program=program)
-        request = Mock(user=user)
-        assert ProgramSerializer(context={"request": request}).to_representation(program) == {
-            'id': program.id,
-            'title': program.title,
+        ProgramEnrollment.objects.create(user=self.user, program=self.program)
+        assert ProgramSerializer(context=self.context).to_representation(self.program) == {
+            'id': self.program.id,
+            'title': self.program.title,
             'programpage_url': None,
             'enrolled': True,
         }
