@@ -18,8 +18,6 @@ import {
 } from '../../constants';
 import { ifValidDate } from '../../util/date';
 
-const edxLinkBase = `${SETTINGS.edx_base_url}/courses/`;
-
 export default class CourseDescription extends React.Component {
   props: {
     courseRun: CourseRun,
@@ -69,13 +67,16 @@ export default class CourseDescription extends React.Component {
     return _.compact([dateMessage, additionalDetail]);
   }
 
-  renderViewCourseLink = (courseRun: CourseRun): React$Element<*>|null => (
-    (courseRun && courseRun.course_id) ?
-      <a href={`${edxLinkBase}${courseRun.course_id}`} target="_blank">
+  renderViewCourseLink = (courseRun: CourseRun): React$Element<*>|null => {
+    const edxLinkBase = SETTINGS.edx_base_url;
+    const edxCourseLink = _.endsWith(edxLinkBase, '/') ? `${edxLinkBase}courses/` : `${edxLinkBase}/courses/`;
+
+    return (courseRun && courseRun.course_id) ?
+      <a href={`${edxCourseLink}${courseRun.course_id}`} target="_blank">
         View on edX
       </a> :
-      null
-  );
+      null;
+  }
 
   render() {
     const { courseRun, courseTitle } = this.props;
