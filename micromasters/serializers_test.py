@@ -76,7 +76,3 @@ class AnonymousUserTests(TestCase):
         anon_user = AnonymousUser()
         result = UserSerializer().to_representation(anon_user)
         assert result is None
-
-    def test_deserialize_anonymous_user(self):
-        result = UserSerializer().to_internal_value(None)
-        assert result == AnonymousUser()

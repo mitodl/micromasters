@@ -3,7 +3,7 @@ Serializers for Django contrib models
 """
 import logging
 from rest_framework import serializers
-from django.contrib.auth.models import User, AnonymousUser
+from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from profiles.api import get_social_username
 
@@ -66,11 +66,3 @@ class UserSerializer(serializers.ModelSerializer):
         if obj.is_anonymous():
             return None
         return super().to_representation(obj)
-
-    def to_internal_value(self, data):
-        """
-        Recognize that `None` means an anonymous user.
-        """
-        if not data:
-            return AnonymousUser()
-        return super().to_internal_value(data)
