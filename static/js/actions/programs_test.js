@@ -20,7 +20,7 @@ import {
 } from './programs';
 import { assertCreatedActionHelper } from './util';
 
-describe('enrollment actions', () => {
+describe('program enrollment actions', () => {
   it('should create all action creators', () => {
     [
       [requestGetProgramEnrollments, REQUEST_GET_PROGRAM_ENROLLMENTS],
