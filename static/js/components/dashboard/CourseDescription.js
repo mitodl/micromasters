@@ -3,6 +3,7 @@
 import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
+import urljoin from 'url-join';
 
 import type { CourseRun } from '../../flow/programTypes';
 import {
@@ -17,6 +18,8 @@ import {
   DASHBOARD_FORMAT,
 } from '../../constants';
 import { ifValidDate } from '../../util/date';
+
+const edxLinkBase = urljoin(SETTINGS.edx_base_url, 'courses/');
 
 export default class CourseDescription extends React.Component {
   props: {
@@ -67,16 +70,13 @@ export default class CourseDescription extends React.Component {
     return _.compact([dateMessage, additionalDetail]);
   }
 
-  renderViewCourseLink = (courseRun: CourseRun): React$Element<*>|null => {
-    const edxLinkBase = SETTINGS.edx_base_url;
-    const edxCourseLink = _.endsWith(edxLinkBase, '/') ? `${edxLinkBase}courses/` : `${edxLinkBase}/courses/`;
-
-    return (courseRun && courseRun.course_id) ?
-      <a href={`${edxCourseLink}${courseRun.course_id}`} target="_blank">
+  renderViewCourseLink = (courseRun: CourseRun): React$Element<*>|null => (
+    (courseRun && courseRun.course_id) ?
+      <a href={`${edxLinkBase}${courseRun.course_id}`} target="_blank">
         View on edX
       </a> :
-      null;
-  }
+      null
+  );
 
   render() {
     const { courseRun, courseTitle } = this.props;
