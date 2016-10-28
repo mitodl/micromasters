@@ -36,7 +36,8 @@ window.zEmbed || function (e, t) {
 zE(function() {
   // pre-populate feedback form
   if (SETTINGS.user) {
-    let user = SETTINGS.user, identity = {};
+    const user = SETTINGS.user;
+    let identity = {};
     if (user.first_name && user.last_name) {
       identity.name = `${user.first_name} ${user.last_name}`;
     }
