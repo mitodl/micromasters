@@ -7,7 +7,7 @@ export const DOCTORATE = 'p';
 
 export const ISO_8601_FORMAT = 'YYYY-MM-DD';
 export const DASHBOARD_FORMAT = 'M/D/Y';
-export const DASHBOARD_MONTH_FORMAT = 'M/Y';
+export const DASHBOARD_MONTH_FORMAT = 'MM[/]YYYY';
 
 // NOTE: this is in order of attainment
 export const EDUCATION_LEVELS = [

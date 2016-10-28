@@ -15,6 +15,15 @@ class PrivacyForm extends ProfileFormFields {
     errors:         ValidationErrors,
   };
 
+  privacyOptions: Array<{value: string, label: string, helper: string}> = [
+    { value: 'public', label: 'Public to the world', helper: `Your MicroMasters profile will be 
+      visible to all website visitors.` },
+    { value: 'public_to_mm', label: "Public to other MicroMasters students", helper: `Your profile will be 
+      visible to other MicroMasters learners, and to MIT faculty and staff.` },
+    { value: 'private', label: 'Private', helper: `Your MicroMasters profile will only 
+      be visible to MIT faculty and staff.` }
+  ];
+
   render() {
     const emailOptions = [
       { value: "true", label: "Faculty and staff can send me emails"},

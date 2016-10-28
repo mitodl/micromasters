@@ -1,6 +1,5 @@
 // @flow
 import React from 'react';
-import _ from 'lodash';
 
 import {
   boundDateField,
@@ -8,10 +7,6 @@ import {
   boundRadioGroupField,
   boundCheckbox,
 } from './profile_edit';
-import { EDUCATION_LEVELS } from '../constants';
-import LANGUAGE_CODES from '../data/language_codes';
-import INDUSTRIES from '../data/industries';
-import type { Option } from '../flow/generalTypes';
 
 export default class ProfileFormFields extends React.Component {
   constructor(props: Object) {
@@ -22,31 +17,6 @@ export default class ProfileFormFields extends React.Component {
     this.boundDateField = boundDateField.bind(this);
     this.boundRadioGroupField = boundRadioGroupField.bind(this);
     this.boundCheckbox = boundCheckbox.bind(this);
-
-    // options we set (for select components)
-    this.genderOptions = [
-      { value: 'm', label: 'Male' },
-      { value: 'f', label: 'Female' },
-      { value: 'o', label: 'Other/Prefer not to say' }
-    ];
-    let languageOptions = LANGUAGE_CODES.map(language => ({
-      value: language.alpha2,
-      label: language.English
-    }));
-    this.languageOptions = _.sortBy(languageOptions, 'label');
-    this.privacyOptions = [
-      { value: 'public', label: 'Public to the world', helper: `Your MicroMasters profile will be 
-        visible to all website visitors.` },
-      { value: 'public_to_mm', label: "Public to other MicroMasters students", helper: `Your profile will be 
-        visible to other MicroMasters learners, and to MIT faculty and staff.` },
-      { value: 'private', label: 'Private', helper: `Your MicroMasters profile will only 
-        be visible to MIT faculty and staff.` }
-    ];
-    this.educationLevelOptions = EDUCATION_LEVELS;
-    this.industryOptions = INDUSTRIES.map(industry => ({
-      value: industry,
-      label: industry
-    }));
   }
   
   // type declarations
@@ -54,11 +24,6 @@ export default class ProfileFormFields extends React.Component {
   boundDateField: Function;
   boundRadioGroupField: Function;
   boundCheckbox: Function;
-  genderOptions: Option[];
-  languageOptions: Option[];
-  privacyOptions: Array<{value: string, label: string, helper: string}>;
-  educationLevelOptions: Option[];
-  industryOptions: Option[];
 
   defaultInputComponentProps: Function = (): Object => {
     return {
@@ -95,17 +60,5 @@ export default class ProfileFormFields extends React.Component {
     setShowEducationDeleteDialog(false);
     setShowWorkDeleteDialog(false);
     setDeletionIndex(null);
-  };
-
-  openEducationDeleteDialog: Function = (index: number): void => {
-    const { setDeletionIndex, setShowEducationDeleteDialog } = this.props;
-    setDeletionIndex(index);
-    setShowEducationDeleteDialog(true);
-  };
-
-  openWorkDeleteDialog: Function = (index: number): void => {
-    const { setDeletionIndex, setShowWorkDeleteDialog } = this.props;
-    setDeletionIndex(index);
-    setShowWorkDeleteDialog(true);
   };
 }

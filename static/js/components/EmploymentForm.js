@@ -23,7 +23,9 @@ import SelectField from './inputs/SelectField';
 import CountrySelectField from './inputs/CountrySelectField';
 import StateSelectField from './inputs/StateSelectField';
 import ValidationAlert from './ValidationAlert';
-
+import INDUSTRIES from '../data/industries';
+import { DASHBOARD_MONTH_FORMAT } from '../constants';
+import type { Option } from '../flow/generalTypes';
 import type { WorkHistoryEntry } from '../flow/profileTypes';
 import type { Validator, UIValidator } from '../lib/validation/profile';
 import type {
@@ -36,6 +38,11 @@ import type { UIState } from '../reducers/ui';
 import type { AsyncActionHelper } from '../flow/reduxTypes';
 
 class EmploymentForm extends ProfileFormFields {
+  industryOptions: Array<Option> = INDUSTRIES.map(industry => ({
+    value: industry,
+    label: industry
+  }));
+
   props: {
     profile:                          Profile,
     ui:                               UIState;
@@ -43,10 +50,12 @@ class EmploymentForm extends ProfileFormFields {
     saveProfile:                      SaveProfileFunc,
     clearProfileEdit:                 () => void,
     errors:                           ValidationErrors,
-    setWorkDialogVisibility:          () => void,
-    setWorkDialogIndex:               () => void,
-    setWorkHistoryAnswer:             () => void,
+    setDeletionIndex:                 (i: number) => void,
+    setWorkDialogVisibility:          (b: boolean) => void,
+    setWorkDialogIndex:               (i: number) => void,
+    setWorkHistoryAnswer:             (b: ?boolean) => void,
     setWorkHistoryEdit:               AsyncActionHelper,
+    setShowWorkDeleteDialog:          (b: boolean) => void,
     deletionIndex:                    number,
     showSwitch:                       boolean,
     validator:                        Validator|UIValidator,
@@ -79,6 +88,12 @@ class EmploymentForm extends ProfileFormFields {
     } = this.props;
     setWorkDialogVisibility(false);
     clearProfileEdit(username);
+  };
+
+  openWorkDeleteDialog: Function = (index: number): void => {
+    const { setDeletionIndex, setShowWorkDeleteDialog } = this.props;
+    setDeletionIndex(index);
+    setShowWorkDeleteDialog(true);
   };
 
   editWorkHistoryForm(): React$Element<*> {
@@ -174,7 +189,7 @@ class EmploymentForm extends ProfileFormFields {
       profile,
     } = this.props;
 
-    let dateFormat = date => moment(date).format("MM[/]YYYY");
+    let dateFormat = date => moment(date).format(DASHBOARD_MONTH_FORMAT);
     let endDateText = () => (
       _.isEmpty(position.end_date) ? "Current" : dateFormat(position.end_date)
     );

@@ -2,7 +2,9 @@
 import React from 'react';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import ReactTooltip from 'react-tooltip';
+import _ from 'lodash';
 
+import LANGUAGE_CODES from '../data/language_codes';
 import SelectField from './inputs/SelectField';
 import CountrySelectField from './inputs/CountrySelectField';
 import StateSelectField from './inputs/StateSelectField';
@@ -15,8 +17,19 @@ import type {
 } from '../flow/profileTypes';
 import type { Validator, UIValidator } from '../lib/validation/profile';
 import type { UIState } from '../reducers/ui';
+import type { Option } from '../flow/generalTypes';
 
 export default class PersonalForm extends ProfileFormFields {
+  genderOptions: Array<Option> = [
+    { value: 'm', label: 'Male' },
+    { value: 'f', label: 'Female' },
+    { value: 'o', label: 'Other/Prefer not to say' }
+  ];
+  languageOptions: Array<Option> = _.sortBy(LANGUAGE_CODES.map(language => ({
+    value: language.alpha2,
+    label: language.English
+  })), 'label');
+
   props: {
     profile:                Profile,
     errors:                 ValidationErrors,

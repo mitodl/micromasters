@@ -20,7 +20,7 @@ class EducationTab extends React.Component {
   render() {
     return (
       <div>
-        <EducationForm {...this.props} validator={educationValidation} />
+        <EducationForm {...this.props} showSwitch={true} validator={educationValidation} />
         <ProfileProgressControls
           {...this.props}
           nextBtnLabel="Next"

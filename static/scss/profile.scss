@@ -85,13 +85,6 @@
     display: flex;
     flex-direction: row;
 
-    .basic-info {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      width: 50%;
-    }
-
     &.row-padding {
       padding: 13px 0 0;
       margin: 0 ;
