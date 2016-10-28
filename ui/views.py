@@ -141,7 +141,8 @@ def standard_error_page(request, status_code, template_filename):
             "js_settings_json": json.dumps({
                 "release_version": settings.VERSION,
                 "environment": settings.ENVIRONMENT,
-                "sentry_dsn": sentry.get_public_dsn()
+                "sentry_dsn": sentry.get_public_dsn(),
+                "user": UserSerializer().to_representation(request.user),
             }),
             "authenticated": authenticated,
             "name": name,
@@ -169,7 +170,8 @@ def terms_of_service(request):
             "js_settings_json": json.dumps({
                 "release_version": settings.VERSION,
                 "environment": settings.ENVIRONMENT,
-                "sentry_dsn": sentry.get_public_dsn()
+                "sentry_dsn": sentry.get_public_dsn(),
+                "user": UserSerializer().to_representation(request.user),
             }),
             "signup_dialog_src": get_bundle_url(request, "signup_dialog.js"),
             "tracking_id": "",
