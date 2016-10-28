@@ -66,3 +66,10 @@ class Role(models.Model):
                 )
             )
         super(Role, self).full_clean(*args, **kwargs)
+
+    def __str__(self):
+        return "{user}: {role} in {program}".format(
+            user=self.user,
+            role=self.role,
+            program=self.program,
+        )
