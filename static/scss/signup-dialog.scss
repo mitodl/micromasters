@@ -4,6 +4,10 @@
   margin: 20px 30px;
   color: $font-black;
 
+  @include breakpoint(phone) {
+    margin: 10px 16px;
+  }
+
   .logos {
     margin: 10px auto;
 
@@ -23,9 +27,9 @@
   p {
     font-size: 15px;
     margin: 25px 0;
-    font-weight: 300;
+    font-weight: 400;
     color: #555;
-    line-height: 1.5em;
+    line-height: 1.4em;
   }
 
   .program-select {
