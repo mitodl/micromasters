@@ -4,27 +4,28 @@ import { NoHits } from 'searchkit';
 
 export default class CustomNoHits extends NoHits {
   render() {
+    let message;
+
     if ((this.hasHits() || this.isInitialLoading() || this.isLoading()) && !this.getError()) {
       return null;
     }
 
     if (this.getError()) {
+      if (this.getError().data && this.getError().data.error) {
+        message = this.getError().data.error;
+      } else {
+        message = this.translate("NoHits.Error");
+      }
+    } else {
       const suggestion = this.getSuggestion();
       const query = this.getQuery().getQueryString();
       let infoKey = suggestion ? "NoHits.NoResultsFoundDidYouMean" : "NoHits.NoResultsFound";
-
-      if (query) {
-        return (
-          <div className="no-hits">
-            {this.translate(infoKey, {query:query, suggestion:suggestion})}
-          </div>
-        );
-      }
+      message = this.translate(infoKey, {query: query, suggestion: suggestion});
     }
 
     return (
       <div className="no-hits">
-        There are no results for this search.
+        { message }
       </div>
     );
   }
