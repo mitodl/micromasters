@@ -2,7 +2,7 @@ $border-box-sizing: true !global;
 
 .page-content {
   width: 100%;
-  padding: 27px 0 65px;
+  padding: 21px 0 65px;
 
   .single-column {
     max-width: 900px;
@@ -18,7 +18,7 @@ $border-box-sizing: true !global;
   .double-column {
     display: flex;
     flex-direction: row;
-    width: 96%;
+    width: 88%;
     max-width: 1200px;
     margin: 0 auto;
 
