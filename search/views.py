@@ -3,6 +3,7 @@ Views for the Search app
 """
 
 import logging
+from django.http import Http404
 
 from rest_framework import status
 from rest_framework.views import APIView
@@ -35,10 +36,7 @@ class ElasticProxyView(APIView):
         try:
             results = prepare_and_execute_search(request.user, search_param_dict=request.data)
         except NoProgramAccessException:
-            return Response(
-                status=status.HTTP_403_FORBIDDEN,
-                data={'error': 'no_available_programs'}
-            )
+            raise Http404
         return Response(
             results.to_dict()
         )
