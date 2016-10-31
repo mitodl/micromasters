@@ -46,12 +46,12 @@ export default class Navbar extends React.Component {
 
   renderProfileHeader = () => ([
     <img src="/static/images/mit-logo-transparent.svg" alt="MIT" key="header-logo"/>,
-    <span className="mdl-layout-title profile-header" key="header-text">MicroMasters</span>
+    <span className="mdl-layout-title profile-header" key="header-text">MITx MicroMasters</span>
   ]);
 
   renderNormalHeader = (link: string) => ([
     <Link to={link} key="header-logo-link"><img src="/static/images/mit-logo-transparent.svg" alt="MIT" /></Link>,
-    <span className="mdl-layout-title" key="header-text-link"><Link to={link}>MicroMasters</Link></span>
+    <span className="mdl-layout-title" key="header-text-link"><Link to={link}>MITx MicroMasters</Link></span>
   ]);
 
   userMenu: Function = (): void|React$Element<*> => {
