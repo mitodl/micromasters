@@ -388,13 +388,16 @@
 .sk-hierarchical-menu-list {
   width: 100%;
 
-  .sk-hierarchical-menu-list__hierarchical-options > div {
-    align-items: stretch;
+  .sk-hierarchical-menu-list__root {
     margin-left: 10px;
-    margin-right: 10px;
+    margin-right: 10px !important;
 
-    .sk-hierarchical-menu-option__count {
-      color: #6f6f6f;
+    .sk-hierarchical-menu-list__hierarchical-options > div {
+      align-items: stretch;
+
+      .sk-hierarchical-menu-option__count {
+        color: #6f6f6f;
+      }
     }
   }
 }
