@@ -73,8 +73,9 @@ class App extends React.Component {
   };
 
   updateRequirements() {
-    const username = SETTINGS.user ? SETTINGS.user.username : null;
-    this.fetchUserProfile(username);
+    if (SETTINGS.user) {
+      this.fetchUserProfile(SETTINGS.user.username);
+    }
     this.fetchDashboard();
     this.fetchCoursePrices();
     this.fetchEnrollments();
