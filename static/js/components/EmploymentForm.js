@@ -23,7 +23,7 @@ import CountrySelectField from './inputs/CountrySelectField';
 import StateSelectField from './inputs/StateSelectField';
 import ValidationAlert from './ValidationAlert';
 import INDUSTRIES from '../data/industries';
-import { formatMonthDate } from './EducationForm';
+import { formatMonthDate } from '../util/date';
 import type { Option } from '../flow/generalTypes';
 import type { WorkHistoryEntry } from '../flow/profileTypes';
 import type { Validator, UIValidator } from '../lib/validation/profile';

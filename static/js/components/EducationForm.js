@@ -5,7 +5,7 @@ import Button from 'react-mdl/lib/Button';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import { Card } from 'react-mdl/lib/Card';
 import _ from 'lodash';
-import moment from 'moment';
+import R from 'ramda';
 import Dialog from 'material-ui/Dialog';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 
@@ -27,7 +27,6 @@ import {
   EDUCATION_LEVELS,
   HIGH_SCHOOL,
   BACHELORS,
-  DASHBOARD_MONTH_FORMAT,
 } from '../constants';
 import type { Option } from '../flow/generalTypes';
 import type {
@@ -43,14 +42,13 @@ import type {
   UIValidator,
 } from '../lib/validation/profile';
 import ValidationAlert from './ValidationAlert';
+import { formatMonthDate } from '../util/date';
 
 const EDUCATION_LEVEL_OPTIONS: Array<Option> = EDUCATION_LEVELS;
 const EDUCATION_LEVEL_LABELS: Object = {};
 EDUCATION_LEVEL_OPTIONS.forEach(level => {
   EDUCATION_LEVEL_LABELS[level.value] = level.label;
 });
-
-export const formatMonthDate = (date: moment$Moment): string => moment(date).format(DASHBOARD_MONTH_FORMAT);
 
 class EducationForm extends ProfileFormFields {
   props: {
@@ -129,33 +127,35 @@ class EducationForm extends ProfileFormFields {
     </Cell>;
   }
 
-  renderEducationLevelEntries(level: Option): Array<React$Element<*>|void>|void {
-    const {
-      profile: { education }
-    } = this.props;
-    let rows: Array<React$Element<*>|void> = [];
-    if (education !== undefined) {
-      let sorted = educationEntriesByDate(education);
-      rows = sorted.filter(([,entry]) => (
-        entry.degree_name === level.value
-      )).map(([index, entry]) => this.educationRow(entry, index));
+  renderEducationLevelEntries(level: ?Option): Array<React$Element<*>|void>|void {
+    const { profile } = this.props;
+    let levelValue = HIGH_SCHOOL;
+    let filterDegreeName = () => true;
+    if (level !== null) {
+      levelValue = level.value;
+      filterDegreeName = ([, entry]) => entry.degree_name === level.value;
     }
-    rows.unshift(
+
+    const renderedEducationRows = R.compose(
+      R.map(this.educationRow), educationEntriesByDate, R.filter(filterDegreeName)
+    );
+
+    return [
       <Cell col={12} className="profile-form-row" key={`header-row`}>
         <strong>{level.label}</strong>
-      </Cell>
-    );
-    rows.push(
-      <Cell col={12} className="profile-form-row" key={`add-row`}>
-        <a
-          className="mm-minor-action"
-          onClick={() => this.openNewEducationForm(level.value, null)}
-        >
-          Add degree
-        </a>
-      </Cell>
-    );
-    return rows;
+      </Cell>,
+      ...renderedEducationRows(profile.education),
+      userPrivilegeCheck(profile, () =>
+        <Cell col={12} className="profile-form-row add" key={`add-row`}>
+          <a
+            className="mm-minor-action"
+            onClick={() => this.openNewEducationForm(levelValue, null)}
+          >
+            Add degree
+          </a>
+        </Cell>
+      ),
+    ];
   }
 
   renderEducationLevel(level: Option): Array<React$Element<*>|void>|React$Element<*>|void {
@@ -166,7 +166,7 @@ class EducationForm extends ProfileFormFields {
     }
   }
 
-  educationRow: Function = (education: EducationEntry, index: number) => {
+  educationRow: Function = (index: number, education: EducationEntry) => {
     const { errors, profile } = this.props;
     if (!('id' in education)) {
       // don't show new educations, wait until we saved on the server before showing them
@@ -234,28 +234,6 @@ class EducationForm extends ProfileFormFields {
   saveEducationForm: Function = (): void => {
     const { saveProfile, profile, ui } = this.props;
     saveProfile(educationValidation, profile, ui).then(this.clearEducationEdit);
-  };
-
-  renderEducationEntries: Function = (): React$Element<*>[] => {
-    const { profile, profile: { education }} = this.props;
-    let rows = [];
-    if (education !== undefined) {
-      let sorted = educationEntriesByDate(education);
-      rows = sorted.map( ([index, entry]) => this.educationRow(entry, index));
-    }
-    userPrivilegeCheck(profile, () => {
-      rows.push(
-        <Cell col={12} className="profile-form-row add" key={"I'm unique!"}>
-          <a
-            className="mm-minor-action"
-            onClick={() => this.openNewEducationForm(HIGH_SCHOOL, null)}
-          >
-            Add degree
-          </a>
-        </Cell>
-      );
-    });
-    return rows;
   };
 
   openEducationDeleteDialog: Function = (index: number): void => {
@@ -355,7 +333,7 @@ class EducationForm extends ProfileFormFields {
               Education
             </span>
           </Cell>
-        { this.renderEducationEntries() }
+        { this.renderEducationLevelEntries(null) }
         </Grid>
       </Card>;
     }
