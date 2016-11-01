@@ -11,8 +11,8 @@ export default class CustomNoHits extends NoHits {
     }
 
     if (this.getError()) {
-      if (this.getError().data && this.getError().data.error) {
-        message = this.getError().data.error;
+      if (this.getError().data && this.getError().data.detail) {
+        message = this.getError().data.detail;
       } else {
         message = this.translate("NoHits.Error");
       }

@@ -37,7 +37,7 @@ class ElasticProxyView(APIView):
         except NoProgramAccessException:
             return Response(
                 status=status.HTTP_403_FORBIDDEN,
-                data={'error': 'You do not have access to this search.'}
+                data={'detail': 'You do not have access to this search.'}
             )
         return Response(
             results.to_dict()

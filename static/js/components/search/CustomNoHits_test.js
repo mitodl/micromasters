@@ -56,7 +56,7 @@ describe('CustomNoHits', () => {
     sandbox.stub(CustomNoHits.prototype, 'getQuery').returns({ 'getQueryString': () => ("test") });
     sandbox.stub(CustomNoHits.prototype, 'hasHits').returns(false);
     sandbox.stub(CustomNoHits.prototype, 'getError').returns({data: {
-      error: "Error!!"
+      detail: "Error!!"
     }});
 
     let results = renderCustomNoHits();
