@@ -73,7 +73,8 @@
     height: 45px;
   }
 
-  &.button-login:hover, &.button-login:focus, &.button-login.focus, &.button-signup:hover, &.button-signup:focus, &.button-signup.focus {
+  &.button-login:hover, &.button-login:focus, &.button-login:active, &.button-login:focus:not(:active),
+  &.button-signup:hover, &.button-signup:focus, &.button-signup:active, &.button-signup:focus:not(:active) {
     background: white;
     color: $mm-brand-bg !important;
     border-color: white;
