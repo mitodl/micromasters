@@ -132,7 +132,7 @@ class EducationForm extends ProfileFormFields {
     let levelValue = HIGH_SCHOOL;
     let filterDegreeName = () => true;
     let title;
-    if (level) {
+    if (!_.isNil(level)) {
       levelValue = level.value;
       let label = EDUCATION_LEVEL_LABELS[levelValue];
       filterDegreeName = ([, entry]) => entry.degree_name === level.value;
@@ -142,7 +142,9 @@ class EducationForm extends ProfileFormFields {
     }
 
     const renderedEducationRows = R.compose(
-      R.map(this.educationRow), R.filter(filterDegreeName), educationEntriesByDate
+      R.map(this.educationRow(_.isNil(level))),
+      R.filter(filterDegreeName),
+      educationEntriesByDate,
     );
 
     return [
@@ -169,7 +171,7 @@ class EducationForm extends ProfileFormFields {
     }
   }
 
-  educationRow: Function = ([index, education]: [number, EducationEntry]) => {
+  educationRow: Function = R.curry((showLevel: boolean, [index, education]: [number, EducationEntry]) => {
     const { errors, profile } = this.props;
     if (!('id' in education)) {
       // don't show new educations, wait until we saved on the server before showing them
@@ -183,7 +185,11 @@ class EducationForm extends ProfileFormFields {
       }
     };
 
-    let degree = EDUCATION_LEVEL_LABELS[education.degree_name];
+    let level;
+    if (showLevel) {
+      let degree = EDUCATION_LEVEL_LABELS[education.degree_name];
+      level = <div>{degree}</div>;
+    }
     let icons = () => (
       <div className="profile-row-icons">
         {validationAlert()}
@@ -192,9 +198,10 @@ class EducationForm extends ProfileFormFields {
       </div>
     );
     return (
-      <Cell col={12} className="profile-form-row row-padding" key={index}>
+      <Cell col={12} className="profile-form-row row-padding row-with-border" key={index}>
         <div className="col user-credentials">
           <div className="profile-row-name">
+            <div className="school-type">{level}</div>
             <div className="school-name">{ education.school_name }</div>
           </div>
         </div>
@@ -206,7 +213,7 @@ class EducationForm extends ProfileFormFields {
         </div>
       </Cell>
     );
-  };
+  });
 
   hasEducationAtLevel(levelValue: string): boolean {
     const {

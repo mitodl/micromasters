@@ -84,6 +84,15 @@
   .profile-form-row {
     display: flex;
     flex-direction: row;
+    align-items: center;
+
+    &.row-with-border {
+      border-bottom: 1px #e2e2e2 solid;
+
+      &:nth-last-child(2) {
+        border-bottom: none;
+      }
+    }
 
     &.row-padding {
       padding: 13px 0 0;
@@ -92,12 +101,6 @@
 
     &.add {
       margin-bottom: 17px;
-    }
-
-    &:nth-last-child(2) {
-      .user-credentials {
-        border-bottom: none !important;
-      }
     }
 
     .profile-row-icons {
@@ -115,7 +118,6 @@
     .col {
       &.user-credentials {
         width: 50%;
-        border-bottom: 1px #e2e2e2 solid;
 
         margin-right: 10px;
         vertical-align: middle;
@@ -135,6 +137,15 @@
         font-size: 16px;
         color: $font-black;
         padding: 12px 9px;
+      }
+
+      .school-type {
+        font-weight: 600;
+        text-transform: capitalize;
+      }
+
+      .school-name {
+        margin-top: 10px;
       }
 
       .profile-row-date-range {
