@@ -73,7 +73,7 @@ class App extends React.Component {
   };
 
   updateRequirements() {
-    this.fetchUserProfile(SETTINGS.username);
+    this.fetchUserProfile(SETTINGS.user.username);
     this.fetchDashboard();
     this.fetchCoursePrices();
     this.fetchEnrollments();
@@ -91,7 +91,7 @@ class App extends React.Component {
 
   componentWillUnmount() {
     const { dispatch } = this.props;
-    dispatch(clearProfile(SETTINGS.username));
+    dispatch(clearProfile(SETTINGS.user.username));
     dispatch(clearDashboard());
     dispatch(clearCoursePrices());
     dispatch(clearUI());
@@ -150,8 +150,8 @@ class App extends React.Component {
       !PROFILE_REGEX.test(pathname) &&
       !complete
     ) {
-      dispatch(startProfileEdit(SETTINGS.username));
-      dispatch(updateProfileValidation(SETTINGS.username, errors));
+      dispatch(startProfileEdit(SETTINGS.user.username));
+      dispatch(updateProfileValidation(SETTINGS.user.username, errors));
       if ( step !== null ) {
         dispatch(setProfileStep(step));
       }
@@ -277,8 +277,8 @@ const mapStateToProps = (state) => {
   let profile = {
     profile: {}
   };
-  if (state.profiles[SETTINGS.username] !== undefined) {
-    profile = state.profiles[SETTINGS.username];
+  if (state.profiles[SETTINGS.user.username] !== undefined) {
+    profile = state.profiles[SETTINGS.user.username];
   }
   return {
     userProfile:              profile,

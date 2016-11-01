@@ -69,7 +69,7 @@ class ProfileFormContainer extends React.Component {
   };
 
   updateProfileValidation(props: Object, profile: Profile, validator: Validator|UIValidator): void {
-    const username = SETTINGS.username;
+    const username = SETTINGS.user.username;
     const { dispatch, profiles, ui } = props;
     if ( profiles[username].edit && !_.isEmpty(profiles[username].edit.errors) ) {
       let errors = validator(profile, ui);
@@ -79,7 +79,7 @@ class ProfileFormContainer extends React.Component {
 
   updateProfile: UpdateProfile = (isEdit, profile, validator) => {
     const { dispatch } = this.props;
-    const username = SETTINGS.username;
+    const username = SETTINGS.user.username;
 
     if (!isEdit) {
       dispatch(startProfileEdit(username));
@@ -90,7 +90,7 @@ class ProfileFormContainer extends React.Component {
 
   saveProfile(isEdit: boolean, validator: Validator|UIValidator, profile: Profile, ui: UIState) {
     const { dispatch } = this.props;
-    const username = SETTINGS.username;
+    const username = SETTINGS.user.username;
 
     if (!isEdit) {
       // Validation errors will only show up if we start the edit

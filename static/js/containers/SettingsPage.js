@@ -18,17 +18,17 @@ class SettingsPage extends ProfileFormContainer {
 
   startSettingsEdit() {
     const { dispatch } = this.props;
-    dispatch(startProfileEdit(SETTINGS.username));
+    dispatch(startProfileEdit(SETTINGS.user.username));
   }
 
   render() {
     const { profiles } = this.props;
-    let props = Object.assign({}, this.profileProps(profiles[SETTINGS.username]), {
+    let props = Object.assign({}, this.profileProps(profiles[SETTINGS.user.username]), {
       nextStep: () => this.context.router.push('/dashboard'),
       prevStep: undefined
     });
     let loaded = false;
-    let username = SETTINGS.username;
+    const username = SETTINGS.user.username;
 
     if (profiles[username] !== undefined) {
       let profileFromStore = profiles[username];

@@ -48,7 +48,6 @@ class ReactView(View):  # pylint: disable=unused-argument
         Handle GET requests to templates using React
         """
         user = request.user
-        username = get_social_username(user)
         roles = []
         if not user.is_anonymous():
             roles = [
@@ -62,8 +61,6 @@ class ReactView(View):  # pylint: disable=unused-argument
         js_settings = {
             "gaTrackingID": settings.GA_TRACKING_ID,
             "reactGaDebug": settings.REACT_GA_DEBUG,
-            "authenticated": not user.is_anonymous(),
-            "username": username,
             "host": webpack_dev_server_host(request),
             "edx_base_url": settings.EDXORG_BASE_URL,
             "roles": roles,

@@ -223,13 +223,13 @@ describe('utility functions', () => {
 
   describe('User privilege check', () => {
     it('should return the value of the first function if the profile username matches', () => {
-      let profile = { username: SETTINGS.username };
+      let profile = { username: SETTINGS.user.username };
       let privilegedCallback = () => "hi";
       assert.equal(userPrivilegeCheck(profile, privilegedCallback), "hi");
     });
 
     it('should return the second argument if the profile username matches', () => {
-      let profile = { username: SETTINGS.username };
+      let profile = { username: SETTINGS.user.username };
       let privilegedString = "hi";
       assert.equal(userPrivilegeCheck(profile, privilegedString), "hi");
     });

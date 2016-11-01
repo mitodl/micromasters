@@ -50,7 +50,7 @@ describe("ProfilePage", function() {
     let { div, button } = pageElements;
     button = button || div.querySelector(nextButtonSelector);
     patchUserProfileStub.throws("Invalid arguments");
-    patchUserProfileStub.withArgs(SETTINGS.username, updatedProfile).returns(Promise.resolve(updatedProfile));
+    patchUserProfileStub.withArgs(SETTINGS.user.username, updatedProfile).returns(Promise.resolve(updatedProfile));
 
     if ( actions.length === 0 ) {
       if (!validationFailure) {
@@ -79,10 +79,10 @@ describe("ProfilePage", function() {
         work_history: []
       });
       helper.profileGetStub.
-        withArgs(SETTINGS.username).
+        withArgs(SETTINGS.user.username).
         returns(
           Promise.resolve(Object.assign({}, userProfile, {
-            username: SETTINGS.username
+            username: SETTINGS.user.username
           }))
         );
     });
@@ -145,7 +145,7 @@ describe("ProfilePage", function() {
       helper.store.dispatch({
         type: REQUEST_GET_USER_PROFILE,
         payload: {
-          username: SETTINGS.username
+          username: SETTINGS.user.username
         }
       });
 

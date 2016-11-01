@@ -55,11 +55,11 @@ describe("UserPage", function() {
     dialogIndexProperty
   ) => {
     let state = helper.store.getState();
-    let sorted = sortFunc(state.profiles[SETTINGS.username].profile[profileProperty]);
+    let sorted = sortFunc(state.profiles[SETTINGS.user.username].profile[profileProperty]);
 
     // sorted entries should not equal unsorted entries
     assert.notDeepEqual(
-      state.profiles[SETTINGS.username].profile[profileProperty],
+      state.profiles[SETTINGS.user.username].profile[profileProperty],
       sorted.map(([,entry]) => entry)
     );
 
@@ -78,7 +78,7 @@ describe("UserPage", function() {
       assert.notEqual(stateIndex, 0);
       // the entry the index in the state points to should be the same element
       // in the unsorted array that we have in the sorted array
-      let entries = state.profiles[SETTINGS.username].profile[profileProperty];
+      let entries = state.profiles[SETTINGS.user.username].profile[profileProperty];
       assert.deepEqual(sortEntry, entries[stateIndex]);
     });
   };
@@ -92,10 +92,10 @@ describe("UserPage", function() {
       patchUserProfileStub = helper.sandbox.stub(api, 'patchUserProfile');
 
       helper.profileGetStub.
-        withArgs(SETTINGS.username).
+        withArgs(SETTINGS.user.username).
         returns(
         Promise.resolve(Object.assign({}, USER_PROFILE_RESPONSE, {
-          username: SETTINGS.username
+          username: SETTINGS.user.username
         }))
       );
     });
@@ -106,7 +106,7 @@ describe("UserPage", function() {
 
 
     it('should have a logout link', () => {
-      return renderComponent(`/learner/${SETTINGS.username}`, userActions).then(([, div]) => {
+      return renderComponent(`/learner/${SETTINGS.user.username}`, userActions).then(([, div]) => {
         let logout = [...div.getElementsByTagName('a')].find(link => link.textContent === 'Logout');
         assert.ok(logout);
       });
@@ -140,7 +140,7 @@ describe("UserPage", function() {
 
 
       const clearValidation = (actions, getInput, validationExpectation, removeErrorValue) => {
-        return renderComponent(`/learner/${SETTINGS.username}`, userActions).then(([, div]) => {
+        return renderComponent(`/learner/${SETTINGS.user.username}`, userActions).then(([, div]) => {
           return listenForActions(actions, () => {
             TestUtils.Simulate.click(getEditPersonalButton(div));
 
@@ -176,7 +176,7 @@ describe("UserPage", function() {
       };
 
       const scrollIntoView = (actions, getInput) => {
-        return renderComponent(`/learner/${SETTINGS.username}`, userActions).then(([, div]) => {
+        return renderComponent(`/learner/${SETTINGS.user.username}`, userActions).then(([, div]) => {
           return listenForActions(scrollActions, () => {
             TestUtils.Simulate.click(getEditPersonalButton(div));
             let input = getInput(getDialog());
@@ -230,10 +230,10 @@ describe("UserPage", function() {
 
       it(`should clearValidationErrors when filling out a required radio field`, () => {
         const createValidationError = () => {
-          helper.store.dispatch(startProfileEdit(SETTINGS.username));
+          helper.store.dispatch(startProfileEdit(SETTINGS.user.username));
           let profile = _.cloneDeep(USER_PROFILE_RESPONSE);
           profile.gender = undefined;
-          helper.store.dispatch(updateProfile(SETTINGS.username, profile));
+          helper.store.dispatch(updateProfile(SETTINGS.user.username, profile));
         };
 
         const removeErrorValue = dialog => {
@@ -272,7 +272,7 @@ describe("UserPage", function() {
 
       beforeEach(() => {
         userProfile = Object.assign(_.cloneDeep(USER_PROFILE_RESPONSE), {
-          username: SETTINGS.username
+          username: SETTINGS.user.username
         });
         userProfile.education.push({
           "id": 3,
@@ -286,19 +286,19 @@ describe("UserPage", function() {
           "online_degree": false
         });
         helper.profileGetStub.
-          withArgs(SETTINGS.username).
+          withArgs(SETTINGS.user.username).
           returns(Promise.resolve(userProfile));
       });
 
       it('shows the education component', () => {
-        return renderComponent(`/learner/${SETTINGS.username}`, userActions).then(([, div]) => {
+        return renderComponent(`/learner/${SETTINGS.user.username}`, userActions).then(([, div]) => {
           let title = div.getElementsByClassName('profile-card-header')[0];
           assert.equal(title.textContent, 'Education');
         });
       });
 
       it('should show the entries in resume order', () => {
-        return renderComponent(`/learner/${SETTINGS.username}`, userActions).then(([, div]) => {
+        return renderComponent(`/learner/${SETTINGS.user.username}`, userActions).then(([, div]) => {
           let editButton = div.querySelector('#education-card').
             querySelector('.edit-button');
 
@@ -317,7 +317,7 @@ describe("UserPage", function() {
       });
 
       it('should confirm deletion and let you cancel', () => {
-        return renderComponent(`/learner/${SETTINGS.username}`, userActions).then(([, div]) => {
+        return renderComponent(`/learner/${SETTINGS.user.username}`, userActions).then(([, div]) => {
           let button = deleteButton(div);
 
           return listenForActions([
@@ -336,7 +336,7 @@ describe("UserPage", function() {
       });
 
       it('should confirm deletion and let you continue', () => {
-        return renderComponent(`/learner/${SETTINGS.username}`, userActions).then(([, div]) => {
+        return renderComponent(`/learner/${SETTINGS.user.username}`, userActions).then(([, div]) => {
           let expectedProfile = _.cloneDeep(userProfile);
           let sortedEducationEntries = educationEntriesByDate(expectedProfile.education);
           let indexOfFirstEntry = sortedEducationEntries[0][0];
@@ -369,7 +369,7 @@ describe("UserPage", function() {
       });
 
       it('should let you edit an education entry', () => {
-        return renderComponent(`/learner/${SETTINGS.username}`, userActions).then(([, div]) => {
+        return renderComponent(`/learner/${SETTINGS.user.username}`, userActions).then(([, div]) => {
 
           let editButton = div.getElementsByClassName('profile-form')[1].
             getElementsByClassName('profile-row-icons')[0].
@@ -386,7 +386,7 @@ describe("UserPage", function() {
       });
 
       it('should let you add an education entry', () => {
-        return renderComponent(`/learner/${SETTINGS.username}`, userActions).then(([, div]) => {
+        return renderComponent(`/learner/${SETTINGS.user.username}`, userActions).then(([, div]) => {
           let addButton = div.getElementsByClassName('profile-form')[1].
             querySelector('.mm-minor-action');
 
@@ -459,14 +459,14 @@ describe("UserPage", function() {
       };
 
       it('shows the employment history component', () => {
-        return renderComponent(`/learner/${SETTINGS.username}`, userActions).then(([wrapper, ]) => {
+        return renderComponent(`/learner/${SETTINGS.user.username}`, userActions).then(([wrapper, ]) => {
           let headerText = wrapper.find('#work-history-card').find('.profile-card-header').text();
           assert.equal(headerText, 'Employment');
         });
       });
 
       it('should show the entries in resume order', () => {
-        return renderComponent(`/learner/${SETTINGS.username}`, userActions).then(([, div]) => {
+        return renderComponent(`/learner/${SETTINGS.user.username}`, userActions).then(([, div]) => {
           let editButton = div.getElementsByClassName('profile-form')[2].
             getElementsByClassName('profile-row-icons')[0].
             getElementsByClassName('mdl-button')[0];
@@ -485,7 +485,7 @@ describe("UserPage", function() {
       });
 
       it('should confirm deletion and let you cancel', () => {
-        return renderComponent(`/learner/${SETTINGS.username}`, userActions).then(([, div]) => {
+        return renderComponent(`/learner/${SETTINGS.user.username}`, userActions).then(([, div]) => {
           let button = deleteButton(div);
 
           return listenForActions([
@@ -504,13 +504,13 @@ describe("UserPage", function() {
       });
 
       it('should confirm deletion and let you continue', () => {
-        return renderComponent(`/learner/${SETTINGS.username}`, userActions).then(([, div]) => {
+        return renderComponent(`/learner/${SETTINGS.user.username}`, userActions).then(([, div]) => {
           let updatedProfile = _.cloneDeep(USER_PROFILE_RESPONSE);
-          updatedProfile.username = SETTINGS.username;
+          updatedProfile.username = SETTINGS.user.username;
           updatedProfile.work_history.splice(0,1);
 
           patchUserProfileStub.throws("Invalid arguments");
-          patchUserProfileStub.withArgs(SETTINGS.username, updatedProfile).returns(
+          patchUserProfileStub.withArgs(SETTINGS.user.username, updatedProfile).returns(
             Promise.resolve(updatedProfile)
           );
 
@@ -538,7 +538,7 @@ describe("UserPage", function() {
       });
 
       it('should let you edit a work history entry', () => {
-        return renderComponent(`/learner/${SETTINGS.username}`, userActions).then(([, div]) => {
+        return renderComponent(`/learner/${SETTINGS.user.username}`, userActions).then(([, div]) => {
 
           let editButton = div.getElementsByClassName('profile-form')[2].
             getElementsByClassName('profile-row-icons')[0].
@@ -554,11 +554,11 @@ describe("UserPage", function() {
       });
 
       it('should let you add a work history entry', () => {
-        return renderComponent(`/learner/${SETTINGS.username}`, userActions).then(([, div]) => {
+        return renderComponent(`/learner/${SETTINGS.user.username}`, userActions).then(([, div]) => {
           let addButton = div.getElementsByClassName('profile-form')[2].querySelector('.mm-minor-action');
 
           let updatedProfile = _.cloneDeep(USER_PROFILE_RESPONSE);
-          updatedProfile.username = SETTINGS.username;
+          updatedProfile.username = SETTINGS.user.username;
           let entry = Object.assign({}, generateNewWorkHistory(), {
             position: "Assistant Foobar",
             industry: "Accounting",
@@ -585,7 +585,7 @@ describe("UserPage", function() {
           updatedProfile.work_history.push(entry);
 
           patchUserProfileStub.throws("Invalid arguments");
-          patchUserProfileStub.withArgs(SETTINGS.username, updatedProfile).returns(
+          patchUserProfileStub.withArgs(SETTINGS.user.username, updatedProfile).returns(
             Promise.resolve(updatedProfile)
           );
 
@@ -637,14 +637,14 @@ describe("UserPage", function() {
 
     describe('Personal Info', () => {
       it('should show name and location', () => {
-        return renderComponent(`/learner/${SETTINGS.username}`, userActions).then(([, div]) => {
+        return renderComponent(`/learner/${SETTINGS.user.username}`, userActions).then(([, div]) => {
           let name = div.getElementsByClassName('profile-title')[0].textContent;
           assert.deepEqual(name, getPreferredName(USER_PROFILE_RESPONSE));
         });
       });
 
       it('should let you edit personal info', () => {
-        return renderComponent(`/learner/${SETTINGS.username}`, userActions).then(([, div]) => {
+        return renderComponent(`/learner/${SETTINGS.user.username}`, userActions).then(([, div]) => {
           let personalButton = div.querySelector('.edit-profile-holder').
             getElementsByClassName('mdl-button')[0];
 
@@ -656,7 +656,7 @@ describe("UserPage", function() {
     });
 
     it("should show all edit, delete icons for an authenticated user's own page" , () => {
-      return renderComponent(`/learner/${SETTINGS.username}`, userActions).then(([, div]) => {
+      return renderComponent(`/learner/${SETTINGS.user.username}`, userActions).then(([, div]) => {
         let count = div.getElementsByClassName('mdl-button--icon').length;
         assert.equal(count,
           1 + USER_PROFILE_RESPONSE.work_history.length * 2 + USER_PROFILE_RESPONSE.education.length * 2
@@ -684,7 +684,7 @@ describe("UserPage", function() {
       listenForActions = helper.listenForActions.bind(helper);
       renderComponent = helper.renderComponent.bind(helper);
       helper.profileGetStub.
-        withArgs(SETTINGS.username).
+        withArgs(SETTINGS.user.username).
         returns(Promise.resolve(USER_PROFILE_RESPONSE));
       settingsBackup = SETTINGS;
       SETTINGS = Object.assign({}, SETTINGS, {
@@ -700,13 +700,13 @@ describe("UserPage", function() {
     });
 
     it('should hide all edit, delete icons', () => {
-      return renderComponent(`/learner/${SETTINGS.username}`, userActions).then(([, div]) => {
+      return renderComponent(`/learner/${SETTINGS.user.username}`, userActions).then(([, div]) => {
         assert.equal(0, div.getElementsByClassName('mdl-button--icon').length);
       });
     });
 
     it('should show sign in button with valid link', () => {
-      return renderComponent(`/learner/${SETTINGS.username}`, userActions).then(([, div]) => {
+      return renderComponent(`/learner/${SETTINGS.user.username}`, userActions).then(([, div]) => {
         let button = div.querySelector("a[href='/login/edxorg/']");
         assert.equal(button.textContent.trim(), "Sign in with edX.org");
       });

@@ -30,10 +30,10 @@ describe("SettingsPage", function() {
     patchUserProfileStub = helper.sandbox.stub(api, 'patchUserProfile');
 
     helper.profileGetStub.
-      withArgs(SETTINGS.username).
+      withArgs(SETTINGS.user.username).
       returns(
         Promise.resolve(_.cloneDeep(USER_PROFILE_RESPONSE), {
-          username: SETTINGS.username
+          username: SETTINGS.user.username
         })
       );
   });
@@ -46,7 +46,7 @@ describe("SettingsPage", function() {
     let { div, button } = pageElements;
     button = button || div.querySelector(nextButtonSelector);
     patchUserProfileStub.throws("Invalid arguments");
-    patchUserProfileStub.withArgs(SETTINGS.username, updatedProfile).returns(Promise.resolve(updatedProfile));
+    patchUserProfileStub.withArgs(SETTINGS.user.username, updatedProfile).returns(Promise.resolve(updatedProfile));
 
     let actions = [];
     if (!validationFailure) {
@@ -86,7 +86,7 @@ describe("SettingsPage", function() {
           account_privacy: 'public',
           email_optin: true
         });
-        helper.store.dispatch(receiveGetUserProfileSuccess(SETTINGS.username, receivedProfile));
+        helper.store.dispatch(receiveGetUserProfileSuccess(SETTINGS.user.username, receivedProfile));
 
         assert(button.innerHTML.includes("Save"));
         let updatedProfile = Object.assign(_.cloneDeep(receivedProfile), {

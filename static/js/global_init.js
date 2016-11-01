@@ -1,8 +1,12 @@
 // Define globals we would usually get from Django
 const settings = {
-  authenticated: true,
-  name: "full name",
-  username: "jane",
+  user: {
+    username: "jane",
+    email: "jane@example.com",
+    first_name: "Jane",
+    last_name: "Doe",
+    preferred_name: "JD"
+  },
   edx_base_url: "/edx/",
   roles: [],
   support_email: "a_real_email@example.com"

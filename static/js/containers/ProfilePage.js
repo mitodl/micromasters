@@ -57,7 +57,7 @@ class ProfilePage extends ProfileFormContainer {
 
   render() {
     const { profiles } = this.props;
-    const profileInfo = profiles[SETTINGS.username];
+    const profileInfo = profiles[SETTINGS.user.username];
     let props, text;
     let [prev, next] = this.stepTransitions();
     props = Object.assign({}, this.profileProps(profileInfo), {

@@ -300,8 +300,8 @@ const mapStateToProps = (state) => {
   let profile = {
     profile: {}
   };
-  if (state.profiles[SETTINGS.username] !== undefined) {
-    profile = state.profiles[SETTINGS.username];
+  if (SETTINGS.user && state.profiles[SETTINGS.user.username] !== undefined) {
+    profile = state.profiles[SETTINGS.user.username];
   }
 
   return {

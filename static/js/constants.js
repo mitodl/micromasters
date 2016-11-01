@@ -210,7 +210,7 @@ export const ELASTICSEARCH_RESPONSE = {
 };
 
 export const USER_PROFILE_RESPONSE = {
-  "username": SETTINGS.username,
+  "username": SETTINGS.user ? SETTINGS.user.username : null,
   "filled_out": true,
   "agreed_to_terms_of_service": true,
   "account_privacy": "all_users",

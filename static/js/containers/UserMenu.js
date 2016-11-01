@@ -59,7 +59,7 @@ class UserMenu extends React.Component {
       {getPreferredName(profile)}
     </span>;
 
-    if (SETTINGS.authenticated) {
+    if (SETTINGS.user) {
       let menuContents = <div className="user-menu" onClick={this.toggleMenuOpen}>
         <ProfileImage profile={profile} />
         { title }
@@ -88,8 +88,8 @@ class UserMenu extends React.Component {
 
 const mapStateToProps = (state) => {
   let profile = {};
-  if (state.profiles[SETTINGS.username] !== undefined) {
-    profile = state.profiles[SETTINGS.username].profile;
+  if (SETTINGS.user && state.profiles[SETTINGS.user.username] !== undefined) {
+    profile = state.profiles[SETTINGS.user.username].profile;
   }
   return {
     profile:  profile,

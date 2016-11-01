@@ -59,7 +59,7 @@ class ProfileImage extends React.Component {
 
   fetchUserProfile: Function = () => {
     const { dispatch } = this.props;
-    dispatch(fetchUserProfile(SETTINGS.username));
+    dispatch(fetchUserProfile(SETTINGS.user.username));
   };
 
   cameraIcon: Function = (editable: bool): React$Element<*>|null => {

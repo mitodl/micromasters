@@ -22,7 +22,7 @@ class UserPage extends ProfileFormContainer {
 
   componentWillUnmount() {
     const { dispatch, params: { username } } = this.props;
-    if (SETTINGS.username !== username) {
+    if (SETTINGS.user.username !== username) {
       // don't erase the user's own profile from the state
       dispatch(clearProfile(username));
     }
