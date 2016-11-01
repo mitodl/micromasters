@@ -50,6 +50,8 @@ EDUCATION_LEVEL_OPTIONS.forEach(level => {
   EDUCATION_LEVEL_LABELS[level.value] = level.label;
 });
 
+export const formatMonthDate = (date: moment$Moment): string => moment(date).format(DASHBOARD_MONTH_FORMAT);
+
 class EducationForm extends ProfileFormFields {
   props: {
     profile:                          Profile,
@@ -177,7 +179,7 @@ class EducationForm extends ProfileFormFields {
         return <IconButton name="error" onClick={editEntry} />;
       }
     };
-    let dateFormat = date => moment(date).format(DASHBOARD_MONTH_FORMAT);
+
     let degree = EDUCATION_LEVEL_OPTIONS.find(level => (
       level.value === education.degree_name
     )).label;
@@ -198,7 +200,7 @@ class EducationForm extends ProfileFormFields {
           </div>
         <div className="col user-credentials row-padding">
           <div className="profile-row-date-range">
-            {`${dateFormat(education.graduation_date)}`}
+            {formatMonthDate(education.graduation_date)}
           </div>
         </div>
         { userPrivilegeCheck(profile, icons, () => <div />) }

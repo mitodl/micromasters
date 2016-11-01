@@ -6,7 +6,6 @@ import Dialog from 'material-ui/Dialog';
 import Card from 'react-mdl/lib/Card/Card';
 import IconButton from 'react-mdl/lib/IconButton';
 import _ from 'lodash';
-import moment from 'moment';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 
 import { userPrivilegeCheck } from '../util/util';
@@ -24,7 +23,7 @@ import CountrySelectField from './inputs/CountrySelectField';
 import StateSelectField from './inputs/StateSelectField';
 import ValidationAlert from './ValidationAlert';
 import INDUSTRIES from '../data/industries';
-import { DASHBOARD_MONTH_FORMAT } from '../constants';
+import { formatMonthDate } from './EducationForm';
 import type { Option } from '../flow/generalTypes';
 import type { WorkHistoryEntry } from '../flow/profileTypes';
 import type { Validator, UIValidator } from '../lib/validation/profile';
@@ -189,9 +188,8 @@ class EmploymentForm extends ProfileFormFields {
       profile,
     } = this.props;
 
-    let dateFormat = date => moment(date).format(DASHBOARD_MONTH_FORMAT);
     let endDateText = () => (
-      _.isEmpty(position.end_date) ? "Current" : dateFormat(position.end_date)
+      _.isEmpty(position.end_date) ? "Current" : formatMonthDate(position.end_date)
     );
     let deleteEntry = () => this.openWorkDeleteDialog();
     let editEntry = () => this.openEditWorkHistoryForm(index);
@@ -221,7 +219,7 @@ class EmploymentForm extends ProfileFormFields {
         </div>
         <div className="col user-credentials">
           <div className="profile-row-date-range">
-            {`${dateFormat(position.start_date)} - ${endDateText()}`}
+            {`${formatMonthDate(position.start_date)} - ${endDateText()}`}
           </div>
           { icons() }
         </div>
