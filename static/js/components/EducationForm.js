@@ -44,16 +44,13 @@ import type {
 } from '../lib/validation/profile';
 import ValidationAlert from './ValidationAlert';
 
+const EDUCATION_LEVEL_OPTIONS: Array<Option> = EDUCATION_LEVELS;
+const EDUCATION_LEVEL_LABELS: Object = {};
+EDUCATION_LEVEL_OPTIONS.forEach(level => {
+  EDUCATION_LEVEL_LABELS[level.value] = level.label;
+});
+
 class EducationForm extends ProfileFormFields {
-  constructor(props: Object) {
-    super(props);
-
-    this.educationLevelLabels = {};
-    this.educationLevelOptions.forEach(level => {
-      this.educationLevelLabels[level.value] = level.label;
-    });
-  }
-
   props: {
     profile:                          Profile,
     ui:                               UIState;
@@ -70,9 +67,6 @@ class EducationForm extends ProfileFormFields {
     showSwitch:                       boolean,
     validator:                        Validator|UIValidator,
   };
-
-  educationLevelOptions: Array<Option> = EDUCATION_LEVELS;
-  educationLevelLabels: Object;
 
   openEditEducationForm: Function = (index: number): void => {
     openEditEducationForm.call(this, index);
@@ -184,7 +178,7 @@ class EducationForm extends ProfileFormFields {
       }
     };
     let dateFormat = date => moment(date).format(DASHBOARD_MONTH_FORMAT);
-    let degree = this.educationLevelOptions.find(level => (
+    let degree = EDUCATION_LEVEL_OPTIONS.find(level => (
       level.value === education.degree_name
     )).label;
     let icons = () => (
@@ -306,7 +300,7 @@ class EducationForm extends ProfileFormFields {
 
     return <Grid className="profile-tab-grid">
       <Cell col={12} className="profile-form-title">
-        {this.educationLevelLabels[educationDegreeLevel]}
+        {EDUCATION_LEVEL_LABELS[educationDegreeLevel]}
       </Cell>
       { levelForm() }
       { fieldOfStudy() }
@@ -346,7 +340,7 @@ class EducationForm extends ProfileFormFields {
     );
 
     if (showSwitch) {
-      return this.educationLevelOptions.map(level => {
+      return EDUCATION_LEVEL_OPTIONS.map(level => {
         return <Card shadow={1} className={`profile-form ${cardClass(level.value)}`} key={level.label}>
           <Grid className="profile-form-grid">
             {this.renderEducationLevel(level)}
