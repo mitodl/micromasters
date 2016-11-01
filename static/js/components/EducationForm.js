@@ -180,9 +180,7 @@ class EducationForm extends ProfileFormFields {
       }
     };
 
-    let degree = EDUCATION_LEVEL_OPTIONS.find(level => (
-      level.value === education.degree_name
-    )).label;
+    let degree = EDUCATION_LEVEL_LABELS[education.degree_name];
     let icons = () => (
       <div className="profile-row-icons">
         {validationAlert()}
