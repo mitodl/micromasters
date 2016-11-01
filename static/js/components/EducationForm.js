@@ -233,9 +233,7 @@ class EducationForm extends ProfileFormFields {
 
   saveEducationForm: Function = (): void => {
     const { saveProfile, profile, ui } = this.props;
-    saveProfile(educationValidation, profile, ui).then(() => {
-      this.clearEducationEdit();
-    });
+    saveProfile(educationValidation, profile, ui).then(this.clearEducationEdit);
   };
 
   renderEducationEntries: Function = (): React$Element<*>[] => {
