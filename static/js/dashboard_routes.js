@@ -23,6 +23,7 @@ import LearnerSearchPage from './containers/LearnerSearchPage';
  * @returns {ReactElement}
  */
 export function makeDashboardRoutes(browserHistory: Object, store: Object, onRouteUpdate: Function) {
+  const username = SETTINGS.user ? SETTINGS.user.username : null;
   return <div>
     <MuiThemeProvider muiTheme={getMuiTheme()}>
       <Provider store={store}>
@@ -32,7 +33,7 @@ export function makeDashboardRoutes(browserHistory: Object, store: Object, onRou
             <Route path="profile" component={ProfilePage} />
             <Route path="/settings" component={SettingsPage}  />
             <Route path="/learner" component={UserPage} >
-              <IndexRedirect to={`${SETTINGS.user.username}`} />
+              <IndexRedirect to={username} />
               <Route path=":username" component={User} />
             </Route>
             <Route path="/learners" component={LearnerSearchPage} />
