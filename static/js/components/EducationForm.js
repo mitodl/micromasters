@@ -127,23 +127,26 @@ class EducationForm extends ProfileFormFields {
     </Cell>;
   }
 
-  renderEducationLevelEntries(level: ?Option): Array<React$Element<*>|void>|void {
+  renderEducationLevelEntries(level: any): Array<React$Element<*>|void>|void {
     const { profile } = this.props;
     let levelValue = HIGH_SCHOOL;
     let filterDegreeName = () => true;
-    if (level !== null) {
+    let title;
+    if (level) {
       levelValue = level.value;
+      let label = EDUCATION_LEVEL_LABELS[levelValue];
       filterDegreeName = ([, entry]) => entry.degree_name === level.value;
+      title = <Cell col={12} className="profile-form-row" key={`header-row`}>
+        <strong>{label}</strong>
+      </Cell>;
     }
 
     const renderedEducationRows = R.compose(
-      R.map(this.educationRow), educationEntriesByDate, R.filter(filterDegreeName)
+      R.map(this.educationRow), R.filter(filterDegreeName), educationEntriesByDate
     );
 
     return [
-      <Cell col={12} className="profile-form-row" key={`header-row`}>
-        <strong>{level.label}</strong>
-      </Cell>,
+      title,
       ...renderedEducationRows(profile.education),
       userPrivilegeCheck(profile, () =>
         <Cell col={12} className="profile-form-row add" key={`add-row`}>
@@ -153,7 +156,7 @@ class EducationForm extends ProfileFormFields {
           >
             Add degree
           </a>
-        </Cell>
+        </Cell>, null
       ),
     ];
   }
@@ -166,7 +169,7 @@ class EducationForm extends ProfileFormFields {
     }
   }
 
-  educationRow: Function = (index: number, education: EducationEntry) => {
+  educationRow: Function = ([index, education]: [number, EducationEntry]) => {
     const { errors, profile } = this.props;
     if (!('id' in education)) {
       // don't show new educations, wait until we saved on the server before showing them
@@ -192,16 +195,15 @@ class EducationForm extends ProfileFormFields {
       <Cell col={12} className="profile-form-row row-padding" key={index}>
         <div className="col user-credentials">
           <div className="profile-row-name">
-            <div className="school-type">{ degree }</div>
             <div className="school-name">{ education.school_name }</div>
           </div>
-          </div>
-        <div className="col user-credentials row-padding">
+        </div>
+        <div className="col user-credentials">
           <div className="profile-row-date-range">
             {formatMonthDate(education.graduation_date)}
           </div>
+          { userPrivilegeCheck(profile, icons, () => <div />) }
         </div>
-        { userPrivilegeCheck(profile, icons, () => <div />) }
       </Cell>
     );
   };
@@ -309,7 +311,7 @@ class EducationForm extends ProfileFormFields {
   };
 
   renderCard() {
-    const { showSwitch } = this.props;
+    const { showSwitch, profile } = this.props;
 
     let cardClass = levelValue => (
       this.hasEducationAtLevel(levelValue) ? '' : 'collapsed'
@@ -323,7 +325,7 @@ class EducationForm extends ProfileFormFields {
           </Grid>
         </Card>;
       });
-    } else {
+    } else if (profile !== undefined) {
       return <Card shadow={1} className="profile-form" id="education-card">
         <Grid className="profile-form-grid">
           <Cell col={12} className="profile-form-row profile-card-header">
@@ -334,6 +336,8 @@ class EducationForm extends ProfileFormFields {
         { this.renderEducationLevelEntries(null) }
         </Grid>
       </Card>;
+    } else {
+      return null;
     }
   }
 

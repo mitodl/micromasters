@@ -8,4 +8,10 @@ export const ifValidDate = R.curry((defaultValue, fn, date) => (
   date.isValid() ? fn(date) : defaultValue
 ));
 
-export const formatMonthDate = (date: moment$Moment): string => moment(date).format(DASHBOARD_MONTH_FORMAT);
+export const formatMonthDate = (date: ?string): string => {
+  if (date) {
+    return moment(date).format(DASHBOARD_MONTH_FORMAT);
+  } else {
+    return '';
+  }
+};
