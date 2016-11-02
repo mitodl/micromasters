@@ -65,7 +65,7 @@
 
         .sk-item-list-option__text {
           margin-left: 10px;
-          color: m#666;
+          color: #666;
         }
 
         .sk-item-list-option__count {
@@ -75,14 +75,16 @@
     }
 
     .sk-hierarchical-menu-list {
+       width: 100%;
+
       .sk-hierarchical-menu-list__header {
         margin: 15px 5px;
         font-size: 15px;
       }
 
       .sk-hierarchical-menu-list__root {
-        margin-left: 6px;
-        margin-right: 0;
+        margin-left: 10px;
+        margin-right: 10px;
 
         .sk-hierarchical-menu-option {
           >div {
@@ -91,6 +93,14 @@
 
           .sk-hierarchical-menu-option__text {
             margin-right: 15px;
+          }
+        }
+
+        .sk-hierarchical-menu-list__hierarchical-options > div {
+          align-items: stretch;
+
+          .sk-hierarchical-menu-option__count {
+            color: $font-gray;
           }
         }
       }
@@ -382,22 +392,5 @@
     margin: 19px 6px 22px 6px;
     font-size: 14px;
     padding: 0 75px;
-  }
-}
-
-.sk-hierarchical-menu-list {
-  width: 100%;
-
-  .sk-hierarchical-menu-list__root {
-    margin-left: 10px;
-    margin-right: 10px !important;
-
-    .sk-hierarchical-menu-list__hierarchical-options > div {
-      align-items: stretch;
-
-      .sk-hierarchical-menu-option__count {
-        color: $font-gray;
-      }
-    }
   }
 }
