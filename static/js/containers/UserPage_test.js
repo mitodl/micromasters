@@ -771,8 +771,7 @@ describe("UserPage", function() {
     });
   });
 
-  // These tests don't seem to be well thought-out, so they are disabled.
-  xdescribe("Unauthenticated user page", () => {
+  describe("Unauthenticated user page", () => {
     let settingsBackup;
 
     beforeEach(() => {
@@ -793,14 +792,14 @@ describe("UserPage", function() {
 
     it('should hide all edit, delete icons', () => {
       const username = USER_PROFILE_RESPONSE.username;
-      return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
+      return renderComponent(`/learner/${username}`).then(([, div]) => {
         assert.equal(0, div.getElementsByClassName('mdl-button--icon').length);
       });
     });
 
     it('should show sign in button with valid link', () => {
       const username = USER_PROFILE_RESPONSE.username;
-      return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
+      return renderComponent(`/learner/${username}`).then(([, div]) => {
         let button = div.querySelector("a[href='/login/edxorg/']");
         assert.equal(button.textContent.trim(), "Sign in with edX.org");
       });

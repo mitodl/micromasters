@@ -23,7 +23,7 @@ import LearnerSearchPage from './containers/LearnerSearchPage';
  * @returns {ReactElement}
  */
 export function makeDashboardRoutes(browserHistory: Object, store: Object, onRouteUpdate: Function) {
-  const username = SETTINGS.user ? SETTINGS.user.username : null;
+  const username = SETTINGS.user ? SETTINGS.user.username : '';
   return <div>
     <MuiThemeProvider muiTheme={getMuiTheme()}>
       <Provider store={store}>
