@@ -21,7 +21,7 @@ from celery.schedules import crontab
 from django.core.exceptions import ImproperlyConfigured
 
 
-VERSION = "0.20.0"
+VERSION = "0.18.0"
 
 CONFIG_PATHS = [
     os.environ.get('MICROMASTERS_CONFIG', ''),
@@ -278,7 +278,12 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
-    'EXCEPTION_HANDLER': 'micromasters.utils.custom_exception_handler'
+    'EXCEPTION_HANDLER': 'micromasters.utils.custom_exception_handler',
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework_ujson.renderers.UJSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer'
+    ),
+    'DEFAULT_PARSER_CLASSES': ('rest_framework_ujson.parsers.UJSONParser',)
 }
 
 # Request files from the webpack dev server
