@@ -204,6 +204,8 @@ class ProgramPage(Page):
 
 def get_program_page_context(programpage, request):
     """ Get context for the program page"""
+    from cms.serializers import ProgramPageSerializer
+
     courses_query = (
         programpage.program.course_set.all()
     )
@@ -217,6 +219,7 @@ def get_program_page_context(programpage, request):
         "sentry_dsn": sentry.get_public_dsn(),
         "release_version": settings.VERSION,
         "user": serialize_maybe_user(request.user),
+        "program": ProgramPageSerializer(programpage).data,
     }
     username = get_social_username(request.user)
     context = super(ProgramPage, programpage).get_context(request)

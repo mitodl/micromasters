@@ -1,4 +1,4 @@
-/* global SETTINGS:false zE:false */
+/* global SETTINGS:false zE:false _:false */
 __webpack_public_path__ = `http://${SETTINGS.host}:8078/`;  // eslint-disable-line no-undef, camelcase
 
 // Start of odl Zendesk Widget script
@@ -31,8 +31,8 @@ window.zEmbed || function (e, t) {
 
 
 // This will execute when Zendesk's Javascript is finished executing, and the
-// Web Widget API is available to be used. The HTML for the Zendesk widget
-// may *not* have been inserted into the DOM yet.
+// Web Widget API is available to be used. Zendesk's various iframes may *not*
+// have been inserted into the DOM yet.
 zE(function() {
   // pre-populate feedback form
   if (SETTINGS.user) {
@@ -47,65 +47,106 @@ zE(function() {
     zE.identify(identity);
   }
 
-  // trigger onZendeskIFrameExists at the appropriate time
-  let tries = 0;
-  const intervalID = setInterval(() => {
-    tries += 1;
-    const iframe = document.querySelector("iframe.zEWidget-launcher");
-    if (iframe) {
-      clearInterval(intervalID);
-      onZendeskIFrameExists();
-    } else if (tries > 100) { // max 100 tries (10 seconds)
-      console.error("couldn't find Zendesk iframe");  // eslint-disable-line no-console
-      clearInterval(intervalID);
-    }
-  }, 100); // check every 100 milliseconds
+  setupZendeskCallbacks();
 });
 
-// This will execute when Zendesk's <iframe> element has been inserted into
-// the DOM. The <iframe> may *not* have finished loading its content yet.
-let onZendeskIFrameExists = () => {
-  // trigger onZendeskIFrameLoaded at the appropriate time
+const zendeskCallbacks = {
+  // supports the following functions:
+  //   launcherExists: runs when the launcher iframe exists on the page
+  //   launcherLoaded: runs when the launcher iframe's content is loaded
+  //   ticketSubmissionFormExists: runs when the submission form iframe exists
+  //   ticketSubmissionFormLoaded: runs when the submission form is loaded
+  //   npsExists: runs when the NPS iframe exists on the page
+  //   npsLoaded: runs when the NPS iframe is loaded
+  //   ipmExists: runs when the IPM iframe exists on the page
+  //   ipmLoaded: runs when the IPM iframe is loaded
+  // NPS = Net Promoter Score
+  // IPM = In-Product Message (Zendesk Connect)
+
+  launcherLoaded: () => {
+    const iframe = document.querySelector("iframe.zEWidget-launcher");
+    const btn = iframe.contentDocument.querySelector(".Button--launcher");
+
+    const regularBackgroundColor = "rgba(0, 0, 0, .14)";
+    const hoverBackgroundColor = window.getComputedStyle(btn).backgroundColor;
+    // We need to set a new background color, and unfortunately,
+    // the existing background color is set with "!important".
+    // As a result, the only way to override this existing color is to
+    // *also* use "!important".
+    const setHover = () => {
+      btn.style.setProperty(
+        "background-color", hoverBackgroundColor, "important"
+      );
+    };
+    const unsetHover = () => {
+      btn.style.setProperty(
+        "background-color", regularBackgroundColor, "important"
+      );
+    };
+    btn.onmouseenter = setHover;
+    btn.onmouseleave = unsetHover;
+    unsetHover();
+  },
+  ticketSubmissionFormLoaded: () => {
+    if (SETTINGS.program) {
+      const programSlug = SETTINGS.program.slug;
+      const launchIFrame = document.querySelector("iframe.zEWidget-launcher");
+      const launchBtn = launchIFrame.contentDocument.querySelector(".Button--launcher");
+      launchBtn.onclick = () => {
+        setTimeout(() => {
+          const iframe = document.querySelector("iframe.zEWidget-ticketSubmissionForm");
+          let select = iframe.contentDocument.querySelector("select");
+          const optionValues = _.map(select.options, "value");
+          if (optionValues.includes(programSlug)) {
+            select.value = programSlug;
+          }
+        }, 100);
+      };
+    }
+  }
+};
+
+const setupZendeskCallbacks = () => {
+  const zendeskIFrames = ["launcher", "ticketSubmissionForm", "nps", "ipm"];
+  for (const name of zendeskIFrames) {
+    zendeskPollForExistence(name);
+  }
+};
+
+const zendeskPollForExistence = (name) => {
   let tries = 0;
   const intervalID = setInterval(() => {
     tries += 1;
-    const iframe = document.querySelector("iframe.zEWidget-launcher");
-    const btn = iframe.contentDocument.querySelector(".Button--launcher");
-    if (btn) {
+    const iframe = document.querySelector(`iframe.zEWidget-${name}`);
+    if (iframe) {
       clearInterval(intervalID);
-      onZendeskIFrameLoaded();
+      zendeskPollForLoaded(name);
+      const callback = zendeskCallbacks[`${name}Exists`];
+      if (callback) {
+        callback();
+      }
     } else if (tries > 100) { // max 100 tries (10 seconds)
-      console.error("couldn't load Zendesk iframe");  // eslint-disable-line no-console
+      console.error(`couldn't find Zendesk iframe: ${name}`);  // eslint-disable-line no-console
       clearInterval(intervalID);
     }
   }, 100); // check every 100 milliseconds
 };
 
-// This will execute when Zendesk's <iframe> element has finished loading
-// its content. It would be nice if we could just use iframe.onload,
-// but because the page is loaded from a different domain, the browser
-// won't allow us to detect that event.
-let onZendeskIFrameLoaded = () => {
-  const iframe = document.querySelector("iframe.zEWidget-launcher");
-  const btn = iframe.contentDocument.querySelector(".Button--launcher");
-
-  const regularBackgroundColor = "rgba(0, 0, 0, .14)";
-  const hoverBackgroundColor = window.getComputedStyle(btn).backgroundColor;
-  // We need to set a new background color, and unfortunately,
-  // the existing background color is set with "!important".
-  // As a result, the only way to overriding this existing color is to
-  // *also* use "!important".
-  const setHover = () => {
-    btn.style.setProperty(
-      "background-color", hoverBackgroundColor, "important"
-    );
-  };
-  const unsetHover = () => {
-    btn.style.setProperty(
-      "background-color", regularBackgroundColor, "important"
-    );
-  };
-  btn.onmouseenter = setHover;
-  btn.onmouseleave = unsetHover;
-  unsetHover();
+const zendeskPollForLoaded = (name) => {
+  let tries = 0;
+  const intervalID = setInterval(() => {
+    tries += 1;
+    const iframe = document.querySelector(`iframe.zEWidget-${name}`);
+    const div = iframe.contentDocument.querySelector("div");
+    if (div) {
+      clearInterval(intervalID);
+      const callback = zendeskCallbacks[`${name}Loaded`];
+      if (callback) {
+        callback();
+      }
+    } else if (tries > 100) { // max 100 tries (10 seconds)
+      console.error(`couldn't load Zendesk iframe: ${name}`);  // eslint-disable-line no-console
+      clearInterval(intervalID);
+    }
+  }, 100); // check every 100 milliseconds
 };

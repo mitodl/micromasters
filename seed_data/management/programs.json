@@ -2,6 +2,7 @@
     {
         "description": "Learn stuff about digital learning.",
         "title": "Digital Learning",
+        "slug": "dl",
         "financial_aid_availability": true,
         "courses": [
             {
@@ -138,6 +139,7 @@
     {
         "description": "Learn stuff about analog learning.",
         "title": "Analog Learning",
+        "slug": "al",
         "courses": [
             {
                 "position_in_program": 1,

@@ -5,8 +5,10 @@ from search.base import ESTestCase
 from cms.serializers import (
     FacultySerializer,
     RenditionSerializer,
+    ProgramPageSerializer,
 )
-from cms.factories import FacultyFactory
+from cms.factories import FacultyFactory, ProgramPageFactory
+from courses.factories import ProgramFactory, CourseFactory
 
 
 # pylint: disable=no-self-use
@@ -44,4 +46,35 @@ class WagtailSerializerTests(ESTestCase):
             'file': rendition.url,
             'width': rendition.width,
             'height': rendition.height,
+        }
+
+    def test_program_page_serializer(self):
+        """
+        Test program page serializer
+        """
+        program = ProgramFactory.create(title="Supply Chain Management")
+        course = CourseFactory.create(program=program, title="Learning How to Supply")
+        page = ProgramPageFactory.create(program=program, title=program.title)
+        faculty = FacultyFactory.create(
+            program_page=page, name="Charles Fluffles", image=None,
+        )
+
+        data = ProgramPageSerializer(page).data
+        assert data == {
+            "id": program.id,
+            "title": "Supply Chain Management",
+            "slug": "scm",
+            "faculty": [{
+                "name": "Charles Fluffles",
+                "title": faculty.title,
+                "short_bio": faculty.short_bio,
+                "image": None,
+            }],
+            "courses": [{
+                "id": course.id,
+                "title": "Learning How to Supply",
+                "description": course.description,
+                "url": course.url,
+                "enrollment_text": "Not available",
+            }]
         }

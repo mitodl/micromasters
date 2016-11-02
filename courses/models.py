@@ -19,6 +19,7 @@ class Program(models.Model):
     A degree someone can pursue, e.g. "Supply Chain Management"
     """
     title = models.CharField(max_length=255)
+    slug = models.CharField(max_length=255, help_text="Used for Zendesk")
     live = models.BooleanField(default=False)
     description = models.TextField(blank=True, null=True)
     financial_aid_availability = models.BooleanField(default=False, null=False)
