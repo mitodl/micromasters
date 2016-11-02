@@ -185,6 +185,7 @@ describe("ProfilePage", function() {
         REQUEST_ADD_PROGRAM_ENROLLMENT,
         RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
         SET_PROFILE_STEP,
+        START_PROFILE_EDIT,
       ], () => {
         wrapper.find(".next").simulate("click");
       }).then(() => {
