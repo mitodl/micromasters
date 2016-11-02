@@ -173,19 +173,19 @@ describe("ProfilePage", function() {
     patchUserProfileStub.returns(Promise.resolve(USER_PROFILE_RESPONSE));
 
     helper.store.dispatch(setProgram(program));
-    return renderComponent(`/profile`).then(([wrapper]) => {
+    return renderComponent(`/profile`, [START_PROFILE_EDIT]).then(([wrapper]) => {
       assert.isFalse(addEnrollmentStub.called);
 
       return helper.listenForActions([
         REQUEST_PATCH_USER_PROFILE,
         RECEIVE_PATCH_USER_PROFILE_SUCCESS,
-        START_PROFILE_EDIT,
         CLEAR_PROFILE_EDIT,
         UPDATE_PROFILE_VALIDATION,
         REQUEST_ADD_PROGRAM_ENROLLMENT,
         RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
         SET_PROFILE_STEP,
         START_PROFILE_EDIT,
+        UPDATE_VALIDATION_VISIBILITY,
       ], () => {
         wrapper.find(".next").simulate("click");
       }).then(() => {
