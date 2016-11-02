@@ -75,7 +75,13 @@
   }
 
   div.dialog {
-    width: 87% !important; // this is important to override inline styles
+    width: 87% !important;
+    /* The dialog class is applied to Dialog components from Material UI
+    (http://www.material-ui.com/#/components/dialog). Material UI styles its components by setting inline
+    styles on the DOM nodes it creates. The CSS cascade defines inline styles to have a higher priority
+    than styles defined on an external stylesheet, so normal CSS rules won't override Material UI's styles.
+    The exception is !important rules, which override everything else. !important should be used very
+    sparingly, but in this case, it is necessary in order to override Material UI's inline styles. */
   }
 
   // Profile Sign Up Pages
