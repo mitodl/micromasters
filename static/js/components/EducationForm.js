@@ -26,7 +26,6 @@ import { educationEntriesByDate } from '../util/sorting';
 import {
   EDUCATION_LEVELS,
   HIGH_SCHOOL,
-  BACHELORS,
 } from '../constants';
 import type { Option } from '../flow/generalTypes';
 import type {
