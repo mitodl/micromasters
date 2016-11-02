@@ -20,14 +20,16 @@ class WagtailSerializerTests(ESTestCase):
         Make sure faculty image information is serialized correctly
         """
         faculty = FacultyFactory.create()
-        result = FacultySerializer().to_representation(faculty)
-        assert result == {
+        rendition = faculty.image.get_rendition('fill-500x385')
+        rendition_data = RenditionSerializer(rendition).data
+        data = FacultySerializer(faculty).data
+        assert data == {
             'name': faculty.name,
             'title': faculty.title,
             'short_bio': faculty.short_bio,
             'image': {
                 'alt': faculty.image.default_alt_text,
-                'rendition': RenditionSerializer().to_representation(faculty.image.get_rendition('fill-500x385'))
+                'rendition': rendition_data,
             }
         }
 
@@ -37,7 +39,8 @@ class WagtailSerializerTests(ESTestCase):
         """
         faculty = FacultyFactory.create()
         rendition = faculty.image.get_rendition('fill-1x1')
-        assert RenditionSerializer().to_representation(rendition) == {
+        data = RenditionSerializer(rendition).data
+        assert data == {
             'file': rendition.url,
             'width': rendition.width,
             'height': rendition.height,

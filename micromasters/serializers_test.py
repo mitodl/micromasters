@@ -6,7 +6,7 @@ from django.test import TestCase
 from django.contrib.auth.models import AnonymousUser
 from django.db.models.signals import post_save
 from factory.django import mute_signals
-from micromasters.serializers import UserSerializer
+from micromasters.serializers import UserSerializer, serialize_maybe_user
 from micromasters.factories import UserFactory
 from profiles.factories import ProfileFactory
 from search.base import ESTestCase
@@ -21,8 +21,21 @@ class UserTests(ESTestCase):
         with mute_signals(post_save):
             user = UserFactory.create(email="fake@example.com")
 
-        result = UserSerializer().to_representation(user)
-        assert result == {
+        data = UserSerializer(user).data
+        assert data == {
+            "username": None,
+            "email": "fake@example.com",
+            "first_name": None,
+            "last_name": None,
+            "preferred_name": None,
+        }
+
+    def test_logged_in_user_through_maybe_wrapper(self):
+        with mute_signals(post_save):
+            user = UserFactory.create(email="fake@example.com")
+
+        data = serialize_maybe_user(user)
+        assert data == {
             "username": None,
             "email": "fake@example.com",
             "first_name": None,
@@ -40,8 +53,8 @@ class UserTests(ESTestCase):
                 preferred_name="Hobo",
             )
 
-        result = UserSerializer().to_representation(user)
-        assert result == {
+        data = UserSerializer(user).data
+        assert data == {
             "username": None,
             "email": "fake@example.com",
             "first_name": "Rando",
@@ -57,9 +70,9 @@ class UserTests(ESTestCase):
                 username="local", email="fake@example.com",
             )
 
-        result = UserSerializer().to_representation(user)
+        data = UserSerializer(user).data
         mock_get_username.assert_called_with(user)
-        assert result == {
+        assert data == {
             "username": "remote",
             "email": "fake@example.com",
             "first_name": None,
@@ -74,5 +87,5 @@ class AnonymousUserTests(TestCase):
     """
     def test_serialize_anonymous_user(self):
         anon_user = AnonymousUser()
-        result = UserSerializer().to_representation(anon_user)
-        assert result is None
+        data = serialize_maybe_user(anon_user)
+        assert data is None

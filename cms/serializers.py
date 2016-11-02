@@ -21,7 +21,8 @@ class FacultyImageSerializer(serializers.ModelSerializer):
 
     def get_rendition(self, image):  # pylint: disable=no-self-use
         """Serialize a rendition for the faculty image"""
-        return RenditionSerializer().to_representation(image.get_rendition('fill-500x385'))
+        rendition = image.get_rendition('fill-500x385')
+        return RenditionSerializer(rendition).data
 
     class Meta:  # pylint: disable=missing-docstring
         model = Image

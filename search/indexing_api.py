@@ -176,7 +176,7 @@ def serialize_program_enrolled_user(program_enrollment):
         'email': user.email
     }
     try:
-        serialized['profile'] = ProfileSerializer().to_representation(user.profile)
+        serialized['profile'] = ProfileSerializer(user.profile).data
     except Profile.DoesNotExist:
         # Just in case
         pass

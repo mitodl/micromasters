@@ -291,7 +291,7 @@ class SerializerTests(ESTestCase):
             'id': program_enrollment.id,
             'user_id': profile.user.id,
             'email': profile.user.email,
-            'profile': ProfileSerializer().to_representation(profile),
+            'profile': ProfileSerializer(profile).data,
             'program': UserProgramSerializer.serialize(program_enrollment)
         }
 

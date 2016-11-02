@@ -17,7 +17,7 @@ from rolepermissions.shortcuts import available_perm_status
 from rolepermissions.verifications import has_role
 
 from micromasters.utils import webpack_dev_server_host, webpack_dev_server_url
-from micromasters.serializers import UserSerializer
+from micromasters.serializers import serialize_maybe_user
 from profiles.api import get_social_username
 from profiles.permissions import CanSeeIfNotPrivate
 from roles.models import Instructor, Staff
@@ -72,7 +72,7 @@ class ReactView(View):  # pylint: disable=unused-argument
             "sentry_dsn": sentry.get_public_dsn(),
             "search_url": reverse('search_api', kwargs={"elastic_url": ""}),
             "support_email": settings.EMAIL_SUPPORT,
-            "user": UserSerializer().to_representation(request.user),
+            "user": serialize_maybe_user(request.user),
         }
 
         return render(
@@ -142,7 +142,7 @@ def standard_error_page(request, status_code, template_filename):
                 "release_version": settings.VERSION,
                 "environment": settings.ENVIRONMENT,
                 "sentry_dsn": sentry.get_public_dsn(),
-                "user": UserSerializer().to_representation(request.user),
+                "user": serialize_maybe_user(request.user),
             }),
             "authenticated": authenticated,
             "name": name,
@@ -171,7 +171,7 @@ def terms_of_service(request):
                 "release_version": settings.VERSION,
                 "environment": settings.ENVIRONMENT,
                 "sentry_dsn": sentry.get_public_dsn(),
-                "user": UserSerializer().to_representation(request.user),
+                "user": serialize_maybe_user(request.user),
             }),
             "signup_dialog_src": get_bundle_url(request, "signup_dialog.js"),
             "tracking_id": "",

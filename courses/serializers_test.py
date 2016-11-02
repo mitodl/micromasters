@@ -32,7 +32,7 @@ class CourseSerializerTests(ESTestCase):
         Make sure course serializes correctly
         """
         course = CourseFactory.create()
-        result = CourseSerializer().to_representation(course)
+        data = CourseSerializer(course).data
         expected = {
             "id": course.id,
             "title": course.title,
@@ -40,7 +40,7 @@ class CourseSerializerTests(ESTestCase):
             "url": "",
             "enrollment_text": "Not available",
         }
-        assert result == expected
+        assert data == expected
 
     @override_settings(EDXORG_BASE_URL="http://192.168.33.10:8000")
     def test_course_with_run(self):
@@ -49,9 +49,9 @@ class CourseSerializerTests(ESTestCase):
         """
         course_run = CourseRunFactory.create(edx_course_key='my-course-key')
         course = course_run.course
-        result = CourseSerializer().to_representation(course)
-        assert result['url'] == 'http://192.168.33.10:8000/courses/my-course-key/about'
-        assert result['enrollment_text'] == course.enrollment_text
+        data = CourseSerializer(course).data
+        assert data['url'] == 'http://192.168.33.10:8000/courses/my-course-key/about'
+        assert data['enrollment_text'] == course.enrollment_text
 
 
 class ProgramSerializerTests(ESTestCase):
@@ -74,7 +74,8 @@ class ProgramSerializerTests(ESTestCase):
         """
         Test ProgramSerializer without a program page
         """
-        assert ProgramSerializer(context=self.context).to_representation(self.program) == {
+        data = ProgramSerializer(self.program, context=self.context).data
+        assert data == {
             'id': self.program.id,
             'title': self.program.title,
             'programpage_url': None,
@@ -88,7 +89,8 @@ class ProgramSerializerTests(ESTestCase):
         programpage = ProgramPageFactory.build(program=self.program)
         homepage = HomePage.objects.first()
         homepage.add_child(instance=programpage)
-        assert ProgramSerializer(context=self.context).to_representation(self.program) == {
+        data = ProgramSerializer(self.program, context=self.context).data
+        assert data == {
             'id': self.program.id,
             'title': self.program.title,
             'programpage_url': programpage.url,
@@ -101,7 +103,8 @@ class ProgramSerializerTests(ESTestCase):
         Test ProgramSerializer with an enrolled user
         """
         ProgramEnrollment.objects.create(user=self.user, program=self.program)
-        assert ProgramSerializer(context=self.context).to_representation(self.program) == {
+        data = ProgramSerializer(self.program, context=self.context).data
+        assert data == {
             'id': self.program.id,
             'title': self.program.title,
             'programpage_url': None,

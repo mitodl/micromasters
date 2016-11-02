@@ -112,11 +112,10 @@ class ProfileGETTests(ProfileBaseTests):
         """
         with mute_signals(post_save):
             profile = ProfileFactory.create(user=self.user1)
+        profile_data = ProfileSerializer(profile).data
         self.client.force_login(self.user1)
         resp = self.client.get(self.url1)
-        assert resp.json() == format_image_expectation(
-            ProfileSerializer().to_representation(profile)
-        )
+        assert resp.json() == format_image_expectation(profile_data)
 
     def test_anonym_user_get_public_profile(self):
         """
@@ -124,9 +123,10 @@ class ProfileGETTests(ProfileBaseTests):
         """
         with mute_signals(post_save):
             profile = ProfileFactory.create(user=self.user2, account_privacy=Profile.PUBLIC)
+        profile_data = ProfileLimitedSerializer(profile).data
         self.client.logout()
         resp = self.client.get(self.url2)
-        assert resp.json() == ProfileLimitedSerializer().to_representation(profile)
+        assert resp.json() == profile_data
 
     def test_mm_user_get_public_profile(self):
         """
@@ -135,9 +135,10 @@ class ProfileGETTests(ProfileBaseTests):
         with mute_signals(post_save):
             profile = ProfileFactory.create(user=self.user2, account_privacy=Profile.PUBLIC)
             ProfileFactory.create(user=self.user1, verified_micromaster_user=False)
+        profile_data = ProfileLimitedSerializer(profile).data
         self.client.force_login(self.user1)
         resp = self.client.get(self.url2)
-        assert resp.json() == ProfileLimitedSerializer().to_representation(profile)
+        assert resp.json() == profile_data
 
     def test_vermm_user_get_public_profile(self):
         """
@@ -146,9 +147,10 @@ class ProfileGETTests(ProfileBaseTests):
         with mute_signals(post_save):
             profile = ProfileFactory.create(user=self.user2, account_privacy=Profile.PUBLIC)
             ProfileFactory.create(user=self.user1, verified_micromaster_user=True)
+        profile_data = ProfileLimitedSerializer(profile).data
         self.client.force_login(self.user1)
         resp = self.client.get(self.url2)
-        assert resp.json() == ProfileLimitedSerializer().to_representation(profile)
+        assert resp.json() == profile_data
 
     def test_anonym_user_get_public_to_mm_profile(self):
         """
@@ -178,9 +180,10 @@ class ProfileGETTests(ProfileBaseTests):
         with mute_signals(post_save):
             profile = ProfileFactory.create(user=self.user2, account_privacy=Profile.PUBLIC_TO_MM)
             ProfileFactory.create(user=self.user1, verified_micromaster_user=True)
+        profile_data = ProfileLimitedSerializer(profile).data
         self.client.force_login(self.user1)
         resp = self.client.get(self.url2)
-        assert resp.json() == ProfileLimitedSerializer().to_representation(profile)
+        assert resp.json() == profile_data
 
     def test_anonym_user_get_private_profile(self):
         """
@@ -245,10 +248,9 @@ class ProfileGETTests(ProfileBaseTests):
         )
 
         self.client.force_login(self.user1)
+        profile_data = ProfileSerializer(profile).data
         resp = self.client.get(self.url2)
-        assert resp.json() == format_image_expectation(
-            ProfileSerializer().to_representation(profile)
-        )
+        assert resp.json() == format_image_expectation(profile_data)
 
     def test_staff_sees_entire_profile(self):
         """
@@ -271,9 +273,8 @@ class ProfileGETTests(ProfileBaseTests):
 
         self.client.force_login(self.user1)
         resp = self.client.get(self.url2)
-        assert resp.json() == format_image_expectation(
-            ProfileSerializer().to_representation(profile)
-        )
+        profile_data = ProfileSerializer(profile).data
+        assert resp.json() == format_image_expectation(profile_data)
 
 
 class ProfilePATCHTests(ProfileBaseTests):
@@ -294,7 +295,7 @@ class ProfilePATCHTests(ProfileBaseTests):
             provider=EdxOrgOAuth2.name,
             uid="{}_edx".format(new_profile.user.username)
         )
-        patch_data = ProfileSerializer().to_representation(new_profile)
+        patch_data = ProfileSerializer(new_profile).data
         del patch_data['image']
 
         resp = self.client.patch(self.url1, content_type="application/json", data=json.dumps(patch_data))
@@ -320,7 +321,7 @@ class ProfilePATCHTests(ProfileBaseTests):
             profile = ProfileFactory.create(user=self.user1, filled_out=False)
         self.client.force_login(self.user1)
 
-        patch_data = ProfileSerializer().to_representation(profile)
+        patch_data = ProfileSerializer(profile).data
         # PATCH may not succeed, we just care that the right serializer was used
         with patch(
             'profiles.views.ProfileFilledOutSerializer.__new__',
@@ -343,7 +344,7 @@ class ProfilePATCHTests(ProfileBaseTests):
             profile = ProfileFactory.create(user=self.user1, filled_out=True)
         self.client.force_login(self.user1)
 
-        patch_data = ProfileSerializer().to_representation(profile)
+        patch_data = ProfileSerializer(profile).data
         # PATCH may not succeed, we just care that the right serializer was used
         with patch(
             'profiles.views.ProfileFilledOutSerializer.__new__',

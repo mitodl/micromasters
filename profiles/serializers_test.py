@@ -2,12 +2,12 @@
 Tests for profile serializers
 """
 from copy import deepcopy
+from datetime import date
 
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 from rest_framework.fields import (
     CharField,
-    DateTimeField,
     ReadOnlyField,
     SerializerMethodField,
 )
@@ -46,12 +46,12 @@ class ProfileTests(ESTestCase):
     Tests for profile serializers
     """
 
-    def create_profile(self):
+    def create_profile(self, **kwargs):
         """
         Create a profile and social auth
         """
         with mute_signals(post_save):
-            profile = ProfileFactory.create()
+            profile = ProfileFactory.create(**kwargs)
             profile.user.social_auth.create(
                 provider=EdxOrgOAuth2.name,
                 uid="{}_edx".format(profile.user.username)
@@ -62,8 +62,10 @@ class ProfileTests(ESTestCase):
         """
         Test full serializer
         """
-        profile = self.create_profile()
-        assert ProfileSerializer().to_representation(profile) == {
+        birthdate = date(1980, 1, 2)
+        profile = self.create_profile(date_of_birth=birthdate)
+        data = ProfileSerializer(profile).data
+        assert data == {
             'username': get_social_username(profile.user),
             'first_name': profile.first_name,
             'filled_out': profile.filled_out,
@@ -73,7 +75,7 @@ class ProfileTests(ESTestCase):
             'email_optin': profile.email_optin,
             'email': profile.email,
             'gender': profile.gender,
-            'date_of_birth': DateTimeField().to_representation(profile.date_of_birth),
+            'date_of_birth': "1980-01-02",
             'account_privacy': profile.account_privacy,
             'has_profile_image': profile.has_profile_image,
             'profile_url_full': format_gravatar_url(profile.user.email, GravatarImgSize.FULL),
@@ -88,13 +90,10 @@ class ProfileTests(ESTestCase):
             'preferred_language': profile.preferred_language,
             'pretty_printed_student_id': profile.pretty_printed_student_id,
             'edx_level_of_education': profile.edx_level_of_education,
-            'education': [
-                EducationSerializer().to_representation(education) for education in profile.education.all()
-            ],
-            'work_history': [
-                EmploymentSerializer().to_representation(work_history) for work_history in
-                profile.work_history.all()
-            ],
+            'education': EducationSerializer(profile.education.all(), many=True).data,
+            'work_history': (
+                EmploymentSerializer(profile.work_history.all(), many=True).data
+            ),
             'image': profile.image.url
         }
 
@@ -103,7 +102,8 @@ class ProfileTests(ESTestCase):
         Test limited serializer
         """
         profile = self.create_profile()
-        assert ProfileLimitedSerializer().to_representation(profile) == {
+        data = ProfileLimitedSerializer(profile).data
+        assert data == {
             'username': get_social_username(profile.user),
             'first_name': profile.first_name,
             'last_name': profile.last_name,
@@ -121,13 +121,10 @@ class ProfileTests(ESTestCase):
             'birth_country': profile.birth_country,
             'preferred_language': profile.preferred_language,
             'edx_level_of_education': profile.edx_level_of_education,
-            'education': [
-                EducationSerializer().to_representation(education) for education in profile.education.all()
-            ],
-            'work_history': [
-                EmploymentSerializer().to_representation(work_history) for work_history in
-                profile.work_history.all()
-            ]
+            'education': EducationSerializer(profile.education.all(), many=True).data,
+            'work_history': (
+                EmploymentSerializer(profile.work_history.all(), many=True).data
+            ),
         }
 
     def test_add_education(self):
@@ -156,7 +153,8 @@ class ProfileTests(ESTestCase):
         assert user1.profile.education.count() == 1
         education = user1.profile.education.first()
         education_object['id'] = education.id
-        assert EducationSerializer().to_representation(education) == education_object
+        education_data = EducationSerializer(education).data
+        assert education_data == education_object
 
         # Other profile did not get the education assigned to it
         assert user2.profile.education.count() == 0
@@ -167,18 +165,18 @@ class ProfileTests(ESTestCase):
         """
         with mute_signals(post_save):
             education = EducationFactory.create()
-        education_object = EducationSerializer().to_representation(education)
-        education_object['degree_name'] = BACHELORS
+        education_data = EducationSerializer(education).data
+        education_data['degree_name'] = BACHELORS
 
         serializer = ProfileSerializer(instance=education.profile, data={
-            'education': [education_object], 'work_history': []
+            'education': [education_data], 'work_history': []
         })
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
         assert education.profile.education.count() == 1
         education = education.profile.education.first()
-        assert EducationSerializer().to_representation(education) == education_object
+        assert EducationSerializer(education).data == education_data
 
     def test_update_education_different_profile(self):
         """
@@ -187,7 +185,7 @@ class ProfileTests(ESTestCase):
         with mute_signals(post_save):
             education1 = EducationFactory.create()
             education2 = EducationFactory.create()
-        education_object = EducationSerializer().to_representation(education1)
+        education_object = EducationSerializer(education1).data
         education_object['id'] = education2.id
 
         serializer = ProfileSerializer(instance=education1.profile, data={
@@ -209,7 +207,7 @@ class ProfileTests(ESTestCase):
             education3 = EducationFactory.create()
 
         assert education1.profile.education.count() == 2
-        education_object1 = EducationSerializer().to_representation(education1)
+        education_object1 = EducationSerializer(education1).data
         serializer = ProfileSerializer(instance=education1.profile, data={
             'education': [education_object1], 'work_history': []
         })
@@ -248,7 +246,7 @@ class ProfileTests(ESTestCase):
         assert user1.profile.work_history.count() == 1
         employment = user1.profile.work_history.first()
         employment_object['id'] = employment.id
-        assert EmploymentSerializer().to_representation(employment) == employment_object
+        assert EmploymentSerializer(employment).data == employment_object
 
         # Other profile did not get the employment assigned to it
         assert user2.profile.work_history.count() == 0
@@ -259,7 +257,7 @@ class ProfileTests(ESTestCase):
         """
         with mute_signals(post_save):
             employment = EmploymentFactory.create()
-        employment_object = EmploymentSerializer().to_representation(employment)
+        employment_object = EmploymentSerializer(employment).data
         employment_object['position'] = "SE"
 
         serializer = ProfileSerializer(instance=employment.profile, data={
@@ -270,7 +268,7 @@ class ProfileTests(ESTestCase):
 
         assert employment.profile.work_history.count() == 1
         employment = employment.profile.work_history.first()
-        assert EmploymentSerializer().to_representation(employment) == employment_object
+        assert EmploymentSerializer(employment).data == employment_object
 
     def test_update_employment_different_profile(self):
         """
@@ -279,7 +277,7 @@ class ProfileTests(ESTestCase):
         with mute_signals(post_save):
             employment1 = EmploymentFactory.create()
             employment2 = EmploymentFactory.create()
-        employment_object = EmploymentSerializer().to_representation(employment1)
+        employment_object = EmploymentSerializer(employment1).data
         employment_object['id'] = employment2.id
 
         serializer = ProfileSerializer(instance=employment1.profile, data={
@@ -301,7 +299,7 @@ class ProfileTests(ESTestCase):
             employment3 = EmploymentFactory.create()
 
         assert employment1.profile.work_history.count() == 2
-        employment_object1 = EmploymentSerializer().to_representation(employment1)
+        employment_object1 = EmploymentSerializer(employment1).data
         serializer = ProfileSerializer(instance=employment1.profile, data={
             'work_history': [employment_object1], 'education': []
         })
@@ -340,7 +338,7 @@ class ProfileFilledOutTests(ESTestCase):
         Create a profile and social auth
         """
         serializer = ProfileFilledOutSerializer(self.profile)
-        self.data = serializer.to_representation(self.profile)
+        self.data = serializer.data
 
     def assert_required_fields(self, field_names, parent_getter, field_parent_getter):
         """

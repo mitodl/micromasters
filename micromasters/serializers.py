@@ -11,7 +11,10 @@ log = logging.getLogger(__name__)
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Serializer for users."""
+    """
+    Serializer for User objects. Note that this will only work with
+    logged-in users, not anonymous users.
+    """
     username = serializers.SerializerMethodField()
     first_name = serializers.SerializerMethodField()
     last_name = serializers.SerializerMethodField()
@@ -59,10 +62,12 @@ class UserSerializer(serializers.ModelSerializer):
         except ObjectDoesNotExist:
             return None
 
-    def to_representation(self, obj):
-        """
-        Serialize anonymous users as None
-        """
-        if obj.is_anonymous():
-            return None
-        return super().to_representation(obj)
+
+def serialize_maybe_user(user):
+    """
+    Serialize a logged-in user to Python primitives, or an anonymous user
+    to `None`.
+    """
+    if user.is_anonymous():
+        return None
+    return UserSerializer(user).data
