@@ -448,6 +448,8 @@ describe("UserPage", function() {
             SET_EDUCATION_DEGREE_LEVEL,
           ], () => {
             TestUtils.Simulate.click(editButton);
+
+            assert.equal(document.querySelector(".profile-form-title").innerHTML, "Edit Education");
           });
         });
       });
@@ -505,6 +507,8 @@ describe("UserPage", function() {
 
           return listenForActions(expectedActions, () => {
             TestUtils.Simulate.click(addButton);
+
+            assert.equal(document.querySelector(".profile-form-title").innerHTML, "Add Education");
 
             let dialog = document.querySelector('.education-dialog');
             let grid = dialog.getElementsByClassName('profile-tab-grid')[0];
@@ -633,6 +637,8 @@ describe("UserPage", function() {
             SET_WORK_DIALOG_VISIBILITY
           ], () => {
             TestUtils.Simulate.click(editButton);
+
+            assert.equal(document.querySelector(".profile-form-title").innerHTML, "Edit Employment");
           });
         });
       });
@@ -693,6 +699,8 @@ describe("UserPage", function() {
 
           return listenForActions(expectedActions, () => {
             TestUtils.Simulate.click(addButton);
+
+            assert.equal(document.querySelector(".profile-form-title").innerHTML, "Add Employment");
             let dialog = document.querySelector('.employment-dialog');
             let grid = dialog.querySelector('.profile-tab-grid');
             let inputs = grid.getElementsByTagName('input');

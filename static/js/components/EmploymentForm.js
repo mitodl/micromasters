@@ -95,12 +95,15 @@ class EmploymentForm extends ProfileFormFields {
   };
 
   editWorkHistoryForm(): React$Element<*> {
-    const { ui } = this.props;
-    let keySet = (key) => ['work_history', ui.workDialogIndex, key];
+    const { ui, profile } = this.props;
+    let keySet = (key): any => ['work_history', ui.workDialogIndex, key];
+    let id = _.get(profile, keySet("id"));
+    let title = id !== undefined ? 'Edit Employment' : 'Add Employment';
+
     return (
       <Grid className="profile-tab-grid">
         <Cell col={12} className="profile-form-title">
-          Add Employment
+          {title}
         </Cell>
         <Cell col={12}>
           {this.boundTextField(keySet('company_name'), 'Company Name')}
