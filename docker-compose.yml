@@ -20,11 +20,12 @@ web:
     /bin/bash -c '
     sleep 3 &&
     python3 manage.py migrate &&
-    ./with_host.sh python3 manage.py runserver 0.0.0.0:8079'
+    uwsgi uwsgi.ini'
   volumes:
     - .:/src
   environment:
     DEBUG: 'True'
+    DEV_ENV: True
     NODE_ENV: 'development'
     PORT: 8079
     COVERAGE_DIR: htmlcov
