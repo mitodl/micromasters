@@ -4,7 +4,8 @@ import Spinner from 'react-mdl/lib/Spinner';
 
 export default class Loader extends React.Component {
   props: {
-    loaded: boolean;
+    loaded: boolean,
+    children?: React$Element<*>[],
   };
 
   render() {
