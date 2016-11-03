@@ -19,6 +19,7 @@ from edx_api.grades.models import CurrentGrades
 from backends.edxorg import EdxOrgOAuth2
 from backends.utils import InvalidCredentialStored
 from courses.factories import ProgramFactory, CourseRunFactory
+from courses.models import Program
 from dashboard.models import ProgramEnrollment, CachedEnrollment
 from dashboard.utils import MMTrack
 from micromasters.factories import UserFactory
@@ -98,6 +99,7 @@ class DashboardTest(APITestCase):
         program_ids = [program['id'] for program in res.data]
         # not live and not enrolled programs are missing
         assert program_ids == [self.program_1.pk, self.program_2.pk]
+        assert Program.objects.count() == 4
 
 
 class DashboardTokensTest(APITestCase):
