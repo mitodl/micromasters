@@ -1,5 +1,6 @@
 """Views from ecommerce"""
 import logging
+import traceback
 from urllib.parse import urljoin
 
 from django.conf import settings
@@ -23,6 +24,7 @@ from ecommerce.models import (
     Receipt,
 )
 from ecommerce.permissions import IsSignedByCyberSource
+from mail.api import MailgunClient
 
 log = logging.getLogger(__name__)
 
@@ -100,17 +102,51 @@ class OrderFulfillmentView(APIView):
         if request.data['decision'] != 'ACCEPT':
             # This may happen if the user clicks 'Cancel Order'
             order.status = Order.FAILED
+            log.warning(
+                "Order fulfillment failed: received a decision that wasn't ACCEPT for order %s",
+                order,
+            )
+            try:
+                MailgunClient().send_individual_email(
+                    "Order fulfillment failed",
+                    "Order fulfillment failed for order {order}".format(
+                        order=order,
+                    ),
+                    settings.EMAIL_SUPPORT
+                )
+            except:
+                log.exception(
+                    "Error occurred when sending the email to notify "
+                    "about order fulfillment failure for order %s",
+                    order,
+                )
         else:
-            # Do the verified enrollment with edX here
             order.status = Order.FULFILLED
         order.save_and_log(None)
 
         if order.status == Order.FULFILLED:
             try:
                 enroll_user_on_success(order)
-            except EcommerceEdxApiException:
+            except:
                 log.exception(
-                    "Error occurred when enrolling user in one or more courses. See other errors above for more info."
+                    "Error occurred when enrolling user in one or more courses. "
+                    "See other errors above for more info."
                 )
+                try:
+                    MailgunClient().send_individual_email(
+                        "Error occurred when enrolling user during order fulfillment",
+                        "Error occurred when enrolling user during order fulfillment for {order}. "
+                        "Exception: {exception}".format(
+                            order=order,
+                            exception=traceback.format_exc()
+                        ),
+                        settings.EMAIL_SUPPORT,
+                    )
+                except:
+                    log.exception(
+                        "Error occurred when sending the email to notify support "
+                        "of user enrollment error during order %s fulfillment",
+                        order,
+                    )
         # The response does not matter to CyberSource
         return Response()

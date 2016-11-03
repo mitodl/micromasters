@@ -149,7 +149,10 @@ class CheckoutViewTests(ESTestCase):
         assert resp.redirect_chain == [('http://testserver/dashboard/', 302)]
 
 
-@override_settings(CYBERSOURCE_REFERENCE_PREFIX=CYBERSOURCE_REFERENCE_PREFIX)
+@override_settings(
+    CYBERSOURCE_REFERENCE_PREFIX=CYBERSOURCE_REFERENCE_PREFIX,
+    EMAIL_SUPPORT='support@example.com'
+)
 class OrderFulfillmentViewTests(ESTestCase):
     """
     Tests for order fulfillment
@@ -171,7 +174,9 @@ class OrderFulfillmentViewTests(ESTestCase):
 
         with patch('ecommerce.views.IsSignedByCyberSource.has_permission', return_value=True), patch(
             'ecommerce.views.enroll_user_on_success'
-        ) as enroll_user:
+        ) as enroll_user, patch(
+            'ecommerce.views.MailgunClient.send_individual_email',
+        ) as send_email:
             resp = self.client.post(reverse('order-fulfillment'), data=data)
 
         assert len(resp.content) == 0
@@ -181,6 +186,8 @@ class OrderFulfillmentViewTests(ESTestCase):
         assert order.receipt_set.count() == 1
         assert order.receipt_set.first().data == data
         enroll_user.assert_called_with(order)
+
+        assert send_email.call_count == 0
 
         assert OrderAudit.objects.count() == 2
         order_audit = OrderAudit.objects.last()
@@ -212,7 +219,7 @@ class OrderFulfillmentViewTests(ESTestCase):
 
     def test_failed_enroll(self):
         """
-        If we fail to enroll in edX, the order status should be failed
+        If we fail to enroll in edX, the order status should be fulfilled but an error email should be sent
         """
         course_run, user = create_purchasable_course_run()
         order = create_unfulfilled_order(course_run.edx_course_key, user)
@@ -226,13 +233,25 @@ class OrderFulfillmentViewTests(ESTestCase):
 
         with patch('ecommerce.views.IsSignedByCyberSource.has_permission', return_value=True), patch(
             'ecommerce.views.enroll_user_on_success', side_effect=KeyError
-        ):
-            with self.assertRaises(KeyError):
-                self.client.post(reverse('order-fulfillment'), data=data)
+        ), patch(
+            'ecommerce.views.MailgunClient.send_individual_email',
+        ) as send_email:
+            self.client.post(reverse('order-fulfillment'), data=data)
 
         assert Order.objects.count() == 1
         # An enrollment failure should not prevent the order from being fulfilled
-        assert Order.objects.first().status == Order.FULFILLED
+        order = Order.objects.first()
+        assert order.status == Order.FULFILLED
+
+        assert send_email.call_count == 1
+        assert send_email.call_args[0][0] == 'Error occurred when enrolling user during order fulfillment'
+        assert send_email.call_args[0][1].startswith(
+            'Error occurred when enrolling user during order fulfillment for {order}. '
+            'Exception: '.format(
+                order=order,
+            )
+        )
+        assert send_email.call_args[0][2] == 'support@example.com'
 
     def test_not_accept(self):
         """
@@ -245,13 +264,25 @@ class OrderFulfillmentViewTests(ESTestCase):
             'req_reference_number': make_reference_id(order),
             'decision': 'something else',
         }
-        with patch('ecommerce.views.IsSignedByCyberSource.has_permission', return_value=True):
+        with patch(
+            'ecommerce.views.IsSignedByCyberSource.has_permission',
+            return_value=True
+        ), patch(
+            'ecommerce.views.MailgunClient.send_individual_email',
+        ) as send_email:
             resp = self.client.post(reverse('order-fulfillment'), data=data)
         assert resp.status_code == status.HTTP_200_OK
         assert len(resp.content) == 0
         order.refresh_from_db()
         assert Order.objects.count() == 1
         assert order.status == Order.FAILED
+
+        assert send_email.call_count == 1
+        assert send_email.call_args[0] == (
+            'Order fulfillment failed',
+            'Order fulfillment failed for order {order}'.format(order=order),
+            'support@example.com',
+        )
 
     def test_no_permission(self):
         """
