@@ -33,8 +33,9 @@ class ProgramTests(ESTestCase):
         resp = self.client.get(reverse('program-list'))
 
         assert len(resp.json()) == 1
-        expected = ProgramSerializer(context={"request": Mock(user=self.user)}).to_representation(prog)
-        assert [expected] == resp.json()
+        context = {"request": Mock(user=self.user)}
+        data = ProgramSerializer(prog, context=context).data
+        assert [data] == resp.json()
 
     def test_doesnt_list_unlive_programs(self):
         """Not-live programs should NOT show up"""
