@@ -6,7 +6,7 @@ import Select from 'react-select';
 import NewEnrollmentDialog from './NewEnrollmentDialog';
 import type {
   ProgramEnrollment,
-  ProgramEnrollmentsState,
+  ProgramEnrollments,
 } from '../flow/enrollmentTypes';
 import type { Option } from '../flow/generalTypes';
 
@@ -16,7 +16,7 @@ export default class ProgramSelector extends React.Component {
   props: {
     addProgramEnrollment:        (programId: number) => void,
     currentProgramEnrollment:    ProgramEnrollment,
-    programs:                    ProgramEnrollmentsState,
+    programs:                    ProgramEnrollments,
     enrollDialogError:           ?string,
     enrollDialogVisibility:      boolean,
     enrollSelectedProgram:       ?number,
@@ -29,7 +29,7 @@ export default class ProgramSelector extends React.Component {
 
   selectEnrollment = (option: Option): void => {
     const {
-      programs: { programEnrollments },
+      programs,
       setCurrentProgramEnrollment,
       setEnrollDialogError,
       setEnrollDialogVisibility,
@@ -40,7 +40,7 @@ export default class ProgramSelector extends React.Component {
       setEnrollSelectedProgram(null);
       setEnrollDialogError(null);
     } else {
-      let selected = programEnrollments.find(enrollment => enrollment.id === option.value);
+      let selected = programs.find(program => program.id === option.value);
       setCurrentProgramEnrollment(selected);
     }
   };
@@ -48,7 +48,7 @@ export default class ProgramSelector extends React.Component {
   makeOptions = (): Array<Option> => {
     const {
       currentProgramEnrollment,
-      programs: { programEnrollments },
+      programs,
     } = this.props;
 
     let currentId;
@@ -56,9 +56,9 @@ export default class ProgramSelector extends React.Component {
       currentId = currentProgramEnrollment.id;
     }
 
-    const sortedProgramEnrollments = _.sortBy(programEnrollments, 'title');
-    let enrolledPrograms = sortedProgramEnrollments.filter(program => program.enrolled);
-    let unenrolledPrograms = sortedProgramEnrollments.filter(program => !program.enrolled);
+    const sortedPrograms = _.sortBy(programs, 'title');
+    let enrolledPrograms = sortedPrograms.filter(program => program.enrolled);
+    let unenrolledPrograms = sortedPrograms.filter(program => !program.enrolled);
     let unselected = enrolledPrograms.filter(enrollment => enrollment.id !== currentId);
 
     let options = unselected.map(enrollment => ({
@@ -75,7 +75,6 @@ export default class ProgramSelector extends React.Component {
     let {
       addProgramEnrollment,
       programs,
-      programs: {programEnrollments},
       enrollDialogError,
       enrollDialogVisibility,
       enrollSelectedProgram,
@@ -90,10 +89,10 @@ export default class ProgramSelector extends React.Component {
       currentId = currentProgramEnrollment.id;
     }
 
-    let selected = programEnrollments.find(enrollment => enrollment.id === currentId);
+    let selected = programs.find(enrollment => enrollment.id === currentId);
     let options = this.makeOptions();
 
-    if (programEnrollments.length === 0 || selectorVisibility === false) {
+    if (programs.length === 0 || selectorVisibility === false) {
       return <div className="program-selector" />;
     } else {
       return <div className="program-selector">

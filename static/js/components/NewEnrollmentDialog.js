@@ -5,12 +5,12 @@ import _ from 'lodash';
 
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
-import type { ProgramEnrollmentsState } from '../flow/enrollmentTypes';
+import type { ProgramEnrollments } from '../flow/enrollmentTypes';
 
 export default class NewEnrollmentDialog extends React.Component {
   props: {
     addProgramEnrollment:        (programId: number) => void,
-    programs:                    ProgramEnrollmentsState,
+    programs:                    ProgramEnrollments,
     enrollDialogError:           ?string,
     enrollDialogVisibility:      boolean,
     enrollSelectedProgram:       ?number,
@@ -69,10 +69,10 @@ export default class NewEnrollmentDialog extends React.Component {
       enrollDialogError,
       enrollDialogVisibility,
       enrollSelectedProgram,
-      programs: { programEnrollments },
+      programs,
     } = this.props;
 
-    let unenrolledPrograms = programEnrollments.filter(program => !program.enrolled);
+    let unenrolledPrograms = programs.filter(program => !program.enrolled);
     unenrolledPrograms = _.sortBy(unenrolledPrograms, 'title');
     let options = unenrolledPrograms.map(program =>
       <MenuItem value={program.id} primaryText={program.title} key={program.id} />

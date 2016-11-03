@@ -50,16 +50,16 @@ export default class PersonalTab extends React.Component {
 
   setProgramHelper = (event: Event, key: string, value: string) => {
     const {
-      programs: { programEnrollments },
+      programs,
       setProgram,
     } = this.props;
-    let selected = programEnrollments.find(program => program.id === value);
+    let selected = programs.find(program => program.id === value);
     setProgram(selected);
   };
 
   selectProgram = () => {
     const {
-      programs: { programEnrollments },
+      programs,
       ui: { selectedProgram },
       errors
     } = this.props;
@@ -73,7 +73,7 @@ export default class PersonalTab extends React.Component {
         className={`program-selectfield ${validationErrorSelector(errors, ['program'])}`}
         errorText={_.get(errors, "program")}
       >
-        { this.programListing(programEnrollments) }
+        { this.programListing(programs) }
       </SelectField>
     );
   }

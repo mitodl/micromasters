@@ -15,7 +15,7 @@ describe('Navbar', () => {
   const props = {
     profile: USER_PROFILE_RESPONSE,
     dashboard: { programs: DASHBOARD_RESPONSE },
-    programs: { programEnrollments: PROGRAM_ENROLLMENTS },
+    programs: PROGRAM_ENROLLMENTS,
   };
 
   let renderNavbar = () => shallow(<Navbar {...props} />);

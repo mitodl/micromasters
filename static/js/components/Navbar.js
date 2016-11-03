@@ -10,7 +10,7 @@ import R from 'ramda';
 
 import type {
   ProgramEnrollment,
-  ProgramEnrollmentsState,
+  ProgramEnrollments,
 } from '../flow/enrollmentTypes';
 import ProgramSelector from './ProgramSelector';
 import UserMenu from '../containers/UserMenu';
@@ -30,7 +30,7 @@ export default class Navbar extends React.Component {
     enrollDialogError:           ?string,
     enrollDialogVisibility:      boolean,
     enrollSelectedProgram:       ?number,
-    programs:                    ProgramEnrollmentsState,
+    programs:                    ProgramEnrollments,
     navDrawerOpen:               boolean,
     pathname:                    string,
     profile:                     Profile,
