@@ -31,6 +31,9 @@ RUN ./manage.py collectstatic --noinput
 RUN apt-get clean && apt-get purge
 USER mitodl
 
+RUN mkdir /var/media
+RUN chown -R mitodl:mitodl /var/media
+
 # Set pip cache folder, as it is breaking pip when it is on a shared volume
 ENV XDG_CACHE_HOME /tmp/.cache
 
