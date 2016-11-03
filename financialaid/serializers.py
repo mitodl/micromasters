@@ -74,7 +74,8 @@ class FinancialAidRequestSerializer(serializers.Serializer):
             user=user,
             income_usd=income_usd,
             country_of_income=user.profile.country,
-            date_exchange_rate=datetime.datetime.now()
+            date_exchange_rate=datetime.datetime.now(),
+            country_of_residence=user.profile.country,
         )
 
         if determine_auto_approval(financial_aid) is True:

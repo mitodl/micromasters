@@ -100,6 +100,7 @@ class SerializerTests(TestCase):
         financial_aid = FinancialAidFactory.create(justification=None)
         assert serialize_model_object(financial_aid) == {
             'country_of_income': financial_aid.country_of_income,
+            'country_of_residence': financial_aid.country_of_residence,
             'created_on': format_as_iso8601(financial_aid.created_on),
             'date_documents_sent': financial_aid.date_documents_sent.isoformat(),
             'date_exchange_rate': format_as_iso8601(financial_aid.date_exchange_rate),
