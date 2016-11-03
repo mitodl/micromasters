@@ -432,7 +432,7 @@ SL_TRACKING_ID = get_var("SL_TRACKING_ID", "")
 
 # Wagtail
 WAGTAIL_SITE_NAME = "MIT MicroMasters"
-MEDIA_ROOT = get_var('MEDIA_ROOT', '/tmp/')
+MEDIA_ROOT = get_var('MEDIA_ROOT', '/var/media/')
 MEDIA_URL = '/media/'
 MICROMASTERS_USE_S3 = get_var('MICROMASTERS_USE_S3', False)
 AWS_ACCESS_KEY_ID = get_var('AWS_ACCESS_KEY_ID', False)

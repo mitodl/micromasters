@@ -1,79 +1,86 @@
-db:
-  image: postgres
-  ports:
-    - "5432"
+version: '2'
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432"
 
-redis:
-  image: redis
-  ports:
-    - "6379"
+  redis:
+    image: redis
+    ports:
+      - "6379"
 
-elastic:
-  image: elasticsearch:2.4.1
-  command: elasticsearch -Des.network.host=0.0.0.0 -Des.http.cors.enabled=true -Des.http.cors.allow-origin=*
-  ports:
-    - "9100:9200"
+  elastic:
+    image: elasticsearch:2.4.1
+    command: elasticsearch -Des.network.host=0.0.0.0 -Des.http.cors.enabled=true -Des.http.cors.allow-origin=*
+    ports:
+      - "9100:9200"
 
-web:
-  build: .
-  command: >
-    /bin/bash -c '
-    sleep 3 &&
-    python3 manage.py migrate &&
-    uwsgi uwsgi.ini'
-  volumes:
-    - .:/src
-  environment:
-    DEBUG: 'True'
-    DEV_ENV: 'True'
-    NODE_ENV: 'development'
-    PORT: 8079
-    COVERAGE_DIR: htmlcov
-    DATABASE_URL: postgres://postgres@db:5432/postgres
-    MICROMASTERS_USE_WEBPACK_DEV_SERVER: 'True'
-    MICROMASTERS_SECURE_SSL_REDIRECT: 'False'
-    MICROMASTERS_DB_DISABLE_SSL: 'True'
-    ELASTICSEARCH_URL: elastic:9200
-  env_file: .env
-  ports:
-    - "8079:8079"
-  links:
-    - db
-    - elastic
+  web:
+    build: .
+    command: >
+      /bin/bash -c '
+      sleep 3 &&
+      python3 manage.py migrate &&
+      uwsgi uwsgi.ini'
+    volumes:
+      - .:/src
+      - django_media:/var/media
+    environment:
+      DEBUG: 'True'
+      DEV_ENV: 'True'
+      NODE_ENV: 'development'
+      PORT: 8079
+      COVERAGE_DIR: htmlcov
+      DATABASE_URL: postgres://postgres@db:5432/postgres
+      MICROMASTERS_USE_WEBPACK_DEV_SERVER: 'True'
+      MICROMASTERS_SECURE_SSL_REDIRECT: 'False'
+      MICROMASTERS_DB_DISABLE_SSL: 'True'
+      ELASTICSEARCH_URL: elastic:9200
+    env_file: .env
+    ports:
+      - "8079:8079"
+    links:
+      - db
+      - elastic
 
-watch:
-  build: .
-  dockerfile: Dockerfile-node
-  working_dir: /src
-  command: >
-    /bin/bash -c './webpack_dev_server.sh --install'
-  ports:
-    - "8078:8078"
-  volumes:
-    - .:/src
-  environment:
-    NODE_ENV: 'development'
-  env_file: .env
+  watch:
+    build:
+      context: .
+      dockerfile: Dockerfile-node
+    working_dir: /src
+    command: >
+      /bin/bash -c './webpack_dev_server.sh --install'
+    ports:
+      - "8078:8078"
+    volumes:
+      - .:/src
+    environment:
+      NODE_ENV: 'development'
+    env_file: .env
 
-celery:
-  image: micromasters_web
-  mem_limit: 384m
-  command: >
-    /bin/bash -c '
-    sleep 3;
-    celery -A micromasters worker -B -l debug'
-  volumes_from:
-    - web
-  environment:
-    DEBUG: 'True'
-    MICROMASTERS_DB_DISABLE_SSL: 'True'
-    DJANGO_LOG_LEVEL: INFO
-    DATABASE_URL: postgres://postgres@db:5432/postgres
-    BROKER_URL: redis://redis:6379/4
-    CELERY_RESULT_BACKEND: redis://redis:6379/4
-    ELASTICSEARCH_URL: elastic:9200
-  env_file: .env
-  links:
-    - db
-    - elastic
-    - redis
+  celery:
+    image: micromasters_web
+    mem_limit: 384m
+    command: >
+      /bin/bash -c '
+      sleep 3;
+      celery -A micromasters worker -B -l debug'
+    volumes_from:
+      - web
+    environment:
+      DEBUG: 'True'
+      MICROMASTERS_DB_DISABLE_SSL: 'True'
+      DJANGO_LOG_LEVEL: INFO
+      DATABASE_URL: postgres://postgres@db:5432/postgres
+      BROKER_URL: redis://redis:6379/4
+      CELERY_RESULT_BACKEND: redis://redis:6379/4
+      ELASTICSEARCH_URL: elastic:9200
+    env_file: .env
+    links:
+      - db
+      - elastic
+      - redis
+
+volumes:
+  django_media: {}
