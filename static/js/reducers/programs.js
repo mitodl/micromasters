@@ -21,16 +21,16 @@ import type {
   AvailableProgramsState,
 } from '../flow/enrollmentTypes';
 
-export const INITIAL_ENROLLMENTS_STATE: AvailableProgramsState = {
-  programEnrollments: []
+export const INITIAL_PROGRAMS_STATE: AvailableProgramsState = {
+  availablePrograms: []
 };
 
-export const programs = (state: AvailableProgramsState = INITIAL_ENROLLMENTS_STATE, action: Action) => {
+export const programs = (state: AvailableProgramsState = INITIAL_PROGRAMS_STATE, action: Action) => {
   switch (action.type) {
   case REQUEST_GET_PROGRAM_ENROLLMENTS:
     return { ...state, getStatus: FETCH_PROCESSING };
   case RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS:
-    return { ...state, getStatus: FETCH_SUCCESS, programEnrollments: action.payload };
+    return { ...state, getStatus: FETCH_SUCCESS, availablePrograms: action.payload };
   case RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE:
     return { ...state, getStatus: FETCH_FAILURE, getErrorInfo: action.payload };
   case REQUEST_ADD_PROGRAM_ENROLLMENT:
@@ -39,7 +39,7 @@ export const programs = (state: AvailableProgramsState = INITIAL_ENROLLMENTS_STA
     return {
       ...state,
       postStatus: FETCH_SUCCESS,
-      programEnrollments: state.programEnrollments.filter(
+      availablePrograms: state.availablePrograms.filter(
         // filter out old copy of program first
         program => program.id !== action.payload.id
       ).concat(action.payload)
@@ -47,7 +47,7 @@ export const programs = (state: AvailableProgramsState = INITIAL_ENROLLMENTS_STA
   case RECEIVE_ADD_PROGRAM_ENROLLMENT_FAILURE:
     return { ...state, postStatus: FETCH_FAILURE, postErrorInfo: action.payload };
   case CLEAR_ENROLLMENTS:
-    return INITIAL_ENROLLMENTS_STATE;
+    return INITIAL_PROGRAMS_STATE;
   default:
     return state;
   }

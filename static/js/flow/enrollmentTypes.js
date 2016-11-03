@@ -11,10 +11,11 @@ export type AvailableProgram = {
 export type AvailablePrograms = Array<AvailableProgram>;
 
 export type AvailableProgramsState = {
-  programEnrollments: AvailablePrograms,
+  availablePrograms: AvailablePrograms,
   getStatus?: string,
   getErrorInfo?: APIErrorInfo,
   postStatus?: string,
+  postErrorInfo?: APIErrorInfo,
 };
 
 export type CourseEnrollmentsState = {

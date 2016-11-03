@@ -67,7 +67,7 @@ describe('enrollments', () => {
     it('should have an empty default state', () => {
       return dispatchThen({type: 'unknown'}, ['unknown']).then(state => {
         assert.deepEqual(state, {
-          programEnrollments: []
+          availablePrograms: []
         });
       });
     });
@@ -80,7 +80,7 @@ describe('enrollments', () => {
         [REQUEST_GET_PROGRAM_ENROLLMENTS, RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS]
       ).then(enrollmentsState => {
         assert.equal(enrollmentsState.getStatus, FETCH_SUCCESS);
-        assert.deepEqual(enrollmentsState.programEnrollments, PROGRAMS);
+        assert.deepEqual(enrollmentsState.availablePrograms, PROGRAMS);
         assert.equal(getPrograms.callCount, 1);
         assert.deepEqual(getPrograms.args[0], []);
       });
@@ -95,7 +95,7 @@ describe('enrollments', () => {
       ).then(enrollmentsState => {
         assert.equal(enrollmentsState.getStatus, FETCH_FAILURE);
         assert.equal(enrollmentsState.getErrorInfo, "error");
-        assert.deepEqual(enrollmentsState.programEnrollments, []);
+        assert.deepEqual(enrollmentsState.availablePrograms, []);
         assert.equal(getPrograms.callCount, 1);
         assert.deepEqual(getPrograms.args[0], []);
       });
@@ -111,7 +111,7 @@ describe('enrollments', () => {
         SET_TOAST_MESSAGE,
       ]).then(enrollmentsState => {
         assert.equal(enrollmentsState.postStatus, FETCH_SUCCESS);
-        assert.deepEqual(enrollmentsState.programEnrollments, PROGRAMS.concat(newEnrollment));
+        assert.deepEqual(enrollmentsState.availablePrograms, PROGRAMS.concat(newEnrollment));
         assert.equal(addProgramEnrollmentStub.callCount, 1);
         assert.deepEqual(addProgramEnrollmentStub.args[0], [newEnrollment.id]);
         assert.ok(fetchCoursePricesStub.calledWith());
@@ -138,7 +138,7 @@ describe('enrollments', () => {
       ]).then(enrollmentsState => {
         assert.equal(enrollmentsState.postStatus, FETCH_FAILURE);
         assert.equal(enrollmentsState.postErrorInfo, "addError");
-        assert.deepEqual(enrollmentsState.programEnrollments, PROGRAMS);
+        assert.deepEqual(enrollmentsState.availablePrograms, PROGRAMS);
         assert.equal(addProgramEnrollmentStub.callCount, 1);
         assert.deepEqual(addProgramEnrollmentStub.args[0], [newEnrollment.id]);
         assert.notOk(fetchCoursePricesStub.calledWith());
@@ -159,7 +159,7 @@ describe('enrollments', () => {
 
       return dispatchThen(clearEnrollments(), [CLEAR_ENROLLMENTS]).then(enrollmentsState => {
         assert.deepEqual(enrollmentsState, {
-          programEnrollments: []
+          availablePrograms: []
         });
       });
     });
