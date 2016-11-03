@@ -26,4 +26,4 @@ requests==2.9.1
 static3==0.5.1
 tox==2.3.1
 uwsgi==2.0.12
-wagtail==1.6.3
+wagtail==1.7
