@@ -30,7 +30,7 @@ import CustomNoHits from './search/CustomNoHits';
 import EmailCompositionDialog from './EmailCompositionDialog';
 import type { Option } from '../flow/generalTypes';
 import type { Email } from '../flow/emailTypes';
-import type { ProgramEnrollment } from '../flow/enrollmentTypes';
+import type { AvailableProgram } from '../flow/enrollmentTypes';
 
 let makeSearchkitTranslations: () => Object = () => {
   let translations = {};
@@ -90,7 +90,7 @@ export default class LearnerSearch extends SearchkitComponent {
     sendEmail:                () => void,
     email:                    Email,
     children:                 React$Element<*>[],
-    currentProgramEnrollment: ProgramEnrollment,
+    currentProgramEnrollment: AvailableProgram,
   };
 
   dropdownOptions: Option[] = [
@@ -130,12 +130,12 @@ export default class LearnerSearch extends SearchkitComponent {
     );
   }
 
-  renderFacets: Function = (currentProgramEnrollment: ProgramEnrollment): React$Element<*> => {
+  renderFacets: Function = (currentProgram: AvailableProgram): React$Element<*> => {
     if (_.isNull(this.getResults())) {
       return (
         <Card className="fullwidth" shadow={1}>
           <div className="no-hits left-nav">
-            {`There are no users in the ${currentProgramEnrollment.title} program.`}
+            {`There are no users in the ${currentProgram.title} program.`}
           </div>
         </Card>
       );

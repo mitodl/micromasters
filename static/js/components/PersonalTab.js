@@ -21,7 +21,7 @@ import type {
   UpdateProfileFunc,
 } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
-import type { ProgramEnrollments } from '../flow/enrollmentTypes';
+import type { AvailablePrograms } from '../flow/enrollmentTypes';
 import type { Event } from '../flow/eventType';
 import {  validationErrorSelector } from '../util/util';
 
@@ -34,12 +34,12 @@ export default class PersonalTab extends React.Component {
     ui:             UIState,
     nextStep:       () => void,
     prevStep:       () => void,
-    programs:       ProgramEnrollments,
+    programs:       AvailablePrograms,
     setProgram:     Function,
     addProgramEnrollment: Function,
   };
 
-  programListing = (programs: ProgramEnrollments) => {
+  programListing = (programs: AvailablePrograms) => {
     const makeMenuItems = R.map(program => (
       <MenuItem value={program.id} key={program.id} primaryText={program.title} />
     ));

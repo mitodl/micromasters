@@ -590,7 +590,7 @@ export const DASHBOARD_RESPONSE = [
   },
 ];
 
-export const PROGRAM_ENROLLMENTS = DASHBOARD_RESPONSE.map(program => ({
+export const PROGRAMS = DASHBOARD_RESPONSE.map(program => ({
   id: program.id,
   title: program.title,
   programpage_url: `/program${program.id}/`,

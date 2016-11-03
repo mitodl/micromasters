@@ -23,7 +23,7 @@ import {
 import { emailValidation } from '../lib/validation/profile';
 import type { UIState } from '../reducers/ui';
 import type { EmailState } from '../flow/emailTypes';
-import type { ProgramEnrollment } from '../flow/enrollmentTypes';
+import type { AvailableProgram } from '../flow/enrollmentTypes';
 import { getCookie } from '../lib/api';
 import { SEARCH_FILTER_DEFAULT_VISIBILITY } from '../constants';
 
@@ -35,7 +35,7 @@ const searchKit = new SearchkitManager(SETTINGS.search_url, {
 
 class LearnerSearchPage extends React.Component {
   props: {
-    currentProgramEnrollment: ProgramEnrollment,
+    currentProgramEnrollment: AvailableProgram,
     dispatch:                 Dispatch,
     email:                    EmailState,
     ui:                       UIState,

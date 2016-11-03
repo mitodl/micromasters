@@ -8,14 +8,14 @@ import Navbar from './Navbar';
 import {
   USER_PROFILE_RESPONSE,
   DASHBOARD_RESPONSE,
-  PROGRAM_ENROLLMENTS,
+  PROGRAMS,
 } from '../constants';
 
 describe('Navbar', () => {
   const props = {
     profile: USER_PROFILE_RESPONSE,
     dashboard: { programs: DASHBOARD_RESPONSE },
-    programs: PROGRAM_ENROLLMENTS,
+    programs: PROGRAMS,
   };
 
   let renderNavbar = () => shallow(<Navbar {...props} />);

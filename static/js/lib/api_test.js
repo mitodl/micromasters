@@ -13,7 +13,7 @@ import {
   csrfSafeMethod,
   checkout,
   sendSearchResultMail,
-  getProgramEnrollments,
+  getPrograms,
   addProgramEnrollment,
   updateProfileImage,
   addFinancialAid,
@@ -27,7 +27,7 @@ import {
   DASHBOARD_RESPONSE,
   COURSE_PRICES_RESPONSE,
   USER_PROFILE_RESPONSE,
-  PROGRAM_ENROLLMENTS,
+  PROGRAMS,
 } from '../constants';
 
 describe('api', function() {
@@ -216,23 +216,23 @@ describe('api', function() {
 
     describe('for program enrollments', () => {
       it('fetches program enrollments successfully', () => {
-        fetchJSONStub.returns(Promise.resolve(PROGRAM_ENROLLMENTS));
-        return getProgramEnrollments().then(enrollments => {
+        fetchJSONStub.returns(Promise.resolve(PROGRAMS));
+        return getPrograms().then(enrollments => {
           assert.ok(fetchJSONStub.calledWith('/api/v0/programs/', {}, true));
-          assert.deepEqual(enrollments, PROGRAM_ENROLLMENTS);
+          assert.deepEqual(enrollments, PROGRAMS);
         });
       });
 
       it('fails to fetch program enrollments', () => {
         fetchJSONStub.returns(Promise.reject());
 
-        return assert.isRejected(getProgramEnrollments()).then(() => {
+        return assert.isRejected(getPrograms()).then(() => {
           assert.ok(fetchJSONStub.calledWith('/api/v0/programs/', {}, true));
         });
       });
 
       it('adds a program enrollment successfully', () => {
-        let enrollment = PROGRAM_ENROLLMENTS[0];
+        let enrollment = PROGRAMS[0];
         fetchJSONStub.returns(Promise.resolve(enrollment));
         fetchMock.mock('/api/v0/enrolledprograms/', (url, opts) => {
           assert.deepEqual(JSON.parse(opts.body), enrollment);
@@ -249,7 +249,7 @@ describe('api', function() {
 
       it('fails to add a program enrollment', () => {
         fetchJSONStub.returns(Promise.reject());
-        let enrollment = PROGRAM_ENROLLMENTS[0];
+        let enrollment = PROGRAMS[0];
 
         return assert.isRejected(addProgramEnrollment(enrollment.id)).then(() => {
           assert.ok(fetchJSONStub.calledWith('/api/v0/enrolledprograms/', {
@@ -262,7 +262,7 @@ describe('api', function() {
 
     describe('for adding financial aid', () => {
       it('add financial aid successfully', () => {
-        let programId = PROGRAM_ENROLLMENTS[0].id;
+        let programId = PROGRAMS[0].id;
         fetchJSONStub.returns(Promise.resolve());
 
         fetchMock.mock('/api/v0/financial_aid_request', () => {
@@ -284,7 +284,7 @@ describe('api', function() {
       it('fails to add financial aid', () => {
         fetchJSONStub.returns(Promise.reject());
 
-        let programId = PROGRAM_ENROLLMENTS[0].id;
+        let programId = PROGRAMS[0].id;
 
         return assert.isRejected(addFinancialAid(10000, 'USD', programId)).then(() => {
           assert.ok(fetchJSONStub.calledWith('/api/v0/financial_aid_request/', {

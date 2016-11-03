@@ -121,7 +121,7 @@ describe('App', () => {
 
   describe('enrollments', () => {
     it('shows an error message if the enrollments GET fetch fails', () => {
-      helper.enrollmentsGetStub.returns(Promise.reject());
+      helper.programsGetStub.returns(Promise.reject());
       let types = [
         RECEIVE_DASHBOARD_SUCCESS,
         RECEIVE_COURSE_PRICES_SUCCESS,

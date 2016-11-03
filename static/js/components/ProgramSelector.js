@@ -5,8 +5,8 @@ import Select from 'react-select';
 
 import NewEnrollmentDialog from './NewEnrollmentDialog';
 import type {
-  ProgramEnrollment,
-  ProgramEnrollments,
+  AvailableProgram,
+  AvailablePrograms,
 } from '../flow/enrollmentTypes';
 import type { Option } from '../flow/generalTypes';
 
@@ -15,12 +15,12 @@ const ENROLL_SENTINEL = 'enroll';
 export default class ProgramSelector extends React.Component {
   props: {
     addProgramEnrollment:        (programId: number) => void,
-    currentProgramEnrollment:    ProgramEnrollment,
-    programs:                    ProgramEnrollments,
+    currentProgramEnrollment:    AvailableProgram,
+    programs:                    AvailablePrograms,
     enrollDialogError:           ?string,
     enrollDialogVisibility:      boolean,
     enrollSelectedProgram:       ?number,
-    setCurrentProgramEnrollment: (enrollment: ProgramEnrollment) => void,
+    setCurrentProgramEnrollment: (enrollment: AvailableProgram) => void,
     setEnrollDialogError:        (error: ?string) => void,
     setEnrollDialogVisibility:   (open: boolean) => void,
     setEnrollSelectedProgram:    (programId: ?number) => void,

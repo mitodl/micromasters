@@ -1,17 +1,17 @@
 // @flow
 import type { APIErrorInfo } from './generalTypes';
 
-export type ProgramEnrollment = {
+export type AvailableProgram = {
   id: number,
   title: string,
   programpage_url: ?string,
   enrolled: boolean,
 };
 
-export type ProgramEnrollments = Array<ProgramEnrollment>;
+export type AvailablePrograms = Array<AvailableProgram>;
 
-export type ProgramEnrollmentsState = {
-  programEnrollments: ProgramEnrollments,
+export type AvailableProgramsState = {
+  programEnrollments: AvailablePrograms,
   getStatus?: string,
   getErrorInfo?: APIErrorInfo,
   postStatus?: string,

@@ -26,7 +26,7 @@ import {
   PERSONAL_STEP,
   EDUCATION_STEP,
   EMPLOYMENT_STEP,
-  PROGRAM_ENROLLMENTS,
+  PROGRAMS,
 } from '../constants';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import * as api from '../lib/api';
@@ -167,7 +167,7 @@ describe("ProfilePage", function() {
 
   it('should enroll the user when they go to the next page', () => {
     let addEnrollmentStub = helper.sandbox.stub(api, 'addProgramEnrollment');
-    let program = PROGRAM_ENROLLMENTS[0];
+    let program = PROGRAMS[0];
     addEnrollmentStub.returns(Promise.resolve(program));
 
     patchUserProfileStub.returns(Promise.resolve(USER_PROFILE_RESPONSE));

@@ -13,8 +13,8 @@ import {
 import { setToastMessage } from '../actions/ui';
 import type { Dispatcher } from '../flow/reduxTypes';
 import type {
-  ProgramEnrollment,
-  ProgramEnrollments,
+  AvailableProgram,
+  AvailablePrograms,
 } from '../flow/enrollmentTypes';
 import * as api from '../lib/api';
 
@@ -30,10 +30,10 @@ export const receiveGetProgramEnrollmentsSuccess = createAction(RECEIVE_GET_PROG
 export const RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE = 'RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE';
 export const receiveGetProgramEnrollmentsFailure = createAction(RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE);
 
-export function fetchProgramEnrollments(): Dispatcher<ProgramEnrollments> {
+export function fetchProgramEnrollments(): Dispatcher<AvailablePrograms> {
   return (dispatch: Dispatch) => {
     dispatch(requestGetProgramEnrollments());
-    return api.getProgramEnrollments().
+    return api.getPrograms().
       then(enrollments => dispatch(receiveGetProgramEnrollmentsSuccess(enrollments))).
       catch(error => {
         dispatch(receiveGetProgramEnrollmentsFailure(error));
@@ -51,7 +51,7 @@ export const receiveAddProgramEnrollmentSuccess = createAction(RECEIVE_ADD_PROGR
 export const RECEIVE_ADD_PROGRAM_ENROLLMENT_FAILURE = 'RECEIVE_ADD_PROGRAM_ENROLLMENT_FAILURE';
 export const receiveAddProgramEnrollmentFailure = createAction(RECEIVE_ADD_PROGRAM_ENROLLMENT_FAILURE);
 
-export const addProgramEnrollment = (programId: number): Dispatcher<ProgramEnrollment> => {
+export const addProgramEnrollment = (programId: number): Dispatcher<AvailableProgram> => {
   return (dispatch: Dispatch) => {
     dispatch(requestAddProgramEnrollment(programId));
     return api.addProgramEnrollment(programId).

@@ -4,13 +4,13 @@ import { assert } from 'chai';
 import R from 'ramda';
 
 import PersonalTab from './PersonalTab';
-import { PROGRAM_ENROLLMENTS } from '../constants';
+import { PROGRAMS } from '../constants';
 
 describe("PersonalTab", () => {
 
   let renderPersonalTab = (props = {}) => {
     return shallow(<PersonalTab
-      programs={PROGRAM_ENROLLMENTS}
+      programs={PROGRAMS}
       ui={{
         selectedProgram: null,
       }}
@@ -21,8 +21,8 @@ describe("PersonalTab", () => {
   it('should show a list of programs to enroll in for the learner page', () => {
     let wrapper = renderPersonalTab();
     let menuItems = wrapper.find("MenuItem");
-    assert.equal(menuItems.length, PROGRAM_ENROLLMENTS.length);
-    let sortedEnrollments = R.sortBy(R.compose(R.toLower, R.prop('title')))(PROGRAM_ENROLLMENTS);
+    assert.equal(menuItems.length, PROGRAMS.length);
+    let sortedEnrollments = R.sortBy(R.compose(R.toLower, R.prop('title')))(PROGRAMS);
     menuItems.forEach((menuItem, i) => {
       let program = sortedEnrollments[i];
       assert.equal(program.title, menuItem.props()['primaryText']);
@@ -31,7 +31,7 @@ describe("PersonalTab", () => {
   });
 
   it('should have the current program enrollment selected', () => {
-    let selectedProgram = PROGRAM_ENROLLMENTS[0];
+    let selectedProgram = PROGRAMS[0];
 
     let wrapper = renderPersonalTab({
       ui: {

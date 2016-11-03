@@ -7,13 +7,13 @@ import sinon from 'sinon';
 
 import ProgramSelector from './ProgramSelector';
 import {
-  PROGRAM_ENROLLMENTS,
+  PROGRAMS,
 } from '../constants';
 
 describe('ProgramSelector', () => {
   let sandbox;
   // make a copy of enrollments
-  const programs = _.cloneDeep(PROGRAM_ENROLLMENTS);
+  const programs = _.cloneDeep(PROGRAMS);
   // remove one enrollment so not all enrollments are enrolled
   const unenrolled = programs[0];
   unenrolled.enrolled = false;

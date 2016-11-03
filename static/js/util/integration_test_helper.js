@@ -9,7 +9,7 @@ import * as api from '../lib/api';
 import {
   DASHBOARD_RESPONSE,
   COURSE_PRICES_RESPONSE,
-  PROGRAM_ENROLLMENTS,
+  PROGRAMS,
   USER_PROFILE_RESPONSE,
 } from '../constants';
 import {
@@ -55,8 +55,8 @@ class IntegrationTestHelper {
     this.coursePricesStub.returns(Promise.resolve(COURSE_PRICES_RESPONSE));
     this.profileGetStub = this.sandbox.stub(api, 'getUserProfile');
     this.profileGetStub.returns(Promise.resolve(USER_PROFILE_RESPONSE));
-    this.enrollmentsGetStub = this.sandbox.stub(api, 'getProgramEnrollments');
-    this.enrollmentsGetStub.returns(Promise.resolve(PROGRAM_ENROLLMENTS));
+    this.programsGetStub = this.sandbox.stub(api, 'getPrograms');
+    this.programsGetStub.returns(Promise.resolve(PROGRAMS));
     this.browserHistory = createMemoryHistory();
     this.currentLocation = null;
     this.browserHistory.listen(url => {

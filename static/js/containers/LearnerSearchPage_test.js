@@ -4,7 +4,7 @@ import _ from 'lodash';
 
 import IntegrationTestHelper from '../util/integration_test_helper';
 import {
-  PROGRAM_ENROLLMENTS,
+  PROGRAMS,
   ELASTICSEARCH_RESPONSE,
 } from '../constants';
 
@@ -38,12 +38,12 @@ describe('LearnerSearchPage', function () {
     return renderComponent('/learners').then(() => {
       let request = server.requests[server.requests.length - 1];
       let body = JSON.parse(request.requestBody);
-      assert.deepEqual(body.filter.bool.must[0].term['program.id'], PROGRAM_ENROLLMENTS[0].id);
+      assert.deepEqual(body.filter.bool.must[0].term['program.id'], PROGRAMS[0].id);
     });
   });
 
   it("doesn't filter by program id for current enrollment if it's not set to anything", () => {
-    helper.enrollmentsGetStub.returns(Promise.resolve([]));
+    helper.programsGetStub.returns(Promise.resolve([]));
 
     return renderComponent('/learners').then(() => {
       assert.lengthOf(server.requests, 0);

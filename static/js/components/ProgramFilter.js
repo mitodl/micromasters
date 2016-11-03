@@ -6,11 +6,11 @@ import {
 } from 'searchkit';
 import _ from 'lodash';
 
-import type { ProgramEnrollment } from '../flow/enrollmentTypes';
+import type { AvailableProgram } from '../flow/enrollmentTypes';
 
 export default class ProgramFilter extends SearchkitComponent {
   props: {
-    currentProgramEnrollment: ProgramEnrollment,
+    currentProgramEnrollment: AvailableProgram,
   };
 
   _accessor = new AnonymousAccessor(query => {

@@ -18,14 +18,14 @@ import {
 } from '../actions';
 import type { Action } from '../flow/reduxTypes';
 import type {
-  ProgramEnrollmentsState,
+  AvailableProgramsState,
 } from '../flow/enrollmentTypes';
 
-export const INITIAL_ENROLLMENTS_STATE: ProgramEnrollmentsState = {
+export const INITIAL_ENROLLMENTS_STATE: AvailableProgramsState = {
   programEnrollments: []
 };
 
-export const programs = (state: ProgramEnrollmentsState = INITIAL_ENROLLMENTS_STATE, action: Action) => {
+export const programs = (state: AvailableProgramsState = INITIAL_ENROLLMENTS_STATE, action: Action) => {
   switch (action.type) {
   case REQUEST_GET_PROGRAM_ENROLLMENTS:
     return { ...state, getStatus: FETCH_PROCESSING };

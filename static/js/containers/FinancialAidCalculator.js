@@ -22,7 +22,7 @@ import SelectField from '../components/inputs/SelectField';
 import { currencyOptions } from '../lib/currency';
 import { validateFinancialAid } from '../lib/validation/profile';
 import { sanitizeNumberString } from '../lib/validation/date';
-import type { ProgramEnrollment } from '../flow/enrollmentTypes';
+import type { AvailableProgram } from '../flow/enrollmentTypes';
 import type {
   FinancialAidState,
   FinancialAidValidation,
@@ -117,7 +117,7 @@ type CalculatorProps = {
   validation:                 FinancialAidValidation,
   saveFinancialAid:           (f: FinancialAidState) => void,
   updateCalculatorEdit:       (f: FinancialAidState) => void,
-  currentProgramEnrollment:   ProgramEnrollment,
+  currentProgramEnrollment:   AvailableProgram,
   openConfirmSkipDialog:      () => void,
   programs:                   Array<Program>,
 };

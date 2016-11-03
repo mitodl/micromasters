@@ -158,7 +158,7 @@ describe("ErrorMessage", () => {
       });
 
       it('shows an error if there is no matching current program enrollment', () => {
-        helper.enrollmentsGetStub.returns(Promise.resolve([]));
+        helper.programsGetStub.returns(Promise.resolve([]));
 
         return renderComponent("/dashboard").then(([wrapper]) => {
           let message = wrapper.find('.page-content').text();
@@ -249,7 +249,7 @@ describe("ErrorMessage", () => {
 
     describe('learners page', () => {
       it('shows an error if there is no matching current program enrollment', () => {
-        helper.enrollmentsGetStub.returns(Promise.resolve([]));
+        helper.programsGetStub.returns(Promise.resolve([]));
 
         return renderComponent("/learners").then(([wrapper]) => {
           let message = wrapper.find('.page-content').text();
