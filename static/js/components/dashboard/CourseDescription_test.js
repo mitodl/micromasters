@@ -60,7 +60,7 @@ describe('CourseDescription', () => {
     const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
     let elements = getElements(wrapper);
 
-    assert.equal(elements.titleLink.length, 0);
+    assert.lengthOf(elements.titleLink, 0);
   });
 
   it('does show date with status passed', () => {

@@ -46,7 +46,7 @@ describe('LearnerSearchPage', function () {
     helper.enrollmentsGetStub.returns(Promise.resolve([]));
 
     return renderComponent('/learners').then(() => {
-      assert.equal(server.requests.length, 0);
+      assert.lengthOf(server.requests, 0);
     });
   });
 });

@@ -59,7 +59,7 @@ describe('FilterVisibilityToggle', () => {
       </FilterVisibilityToggle>
     );
     const icon = wrapper.find("i.material-icons");
-    assert.equal(icon.length, 0);
+    assert.lengthOf(icon, 0);
   });
 
   it('hides toggle icon when doc_count is 0', () => {
@@ -76,7 +76,7 @@ describe('FilterVisibilityToggle', () => {
       </FilterVisibilityToggle>
     );
     const icon = wrapper.find("i.material-icons");
-    assert.equal(icon.length, 0);
+    assert.lengthOf(icon, 0);
   });
 
   it('sets filter visibility when clicked', () => {
@@ -94,7 +94,7 @@ describe('FilterVisibilityToggle', () => {
     );
     const icon = wrapper.find("i.material-icons");
 
-    assert.equal(icon.length, 1);
+    assert.lengthOf(icon, 1);
     icon.simulate('click');
     assert(setFilterVisibility.called);
   });

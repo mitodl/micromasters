@@ -55,9 +55,9 @@ describe('DashboardPage', () => {
 
   it('has all the cards we expect', () => {
     return renderComponent('/dashboard').then(([wrapper]) => {
-      assert.equal(wrapper.find(".dashboard-user-card").length, 1);
-      assert.equal(wrapper.find(".course-list").length, 1);
-      assert.equal(wrapper.find(".progress-widget").length, 1);
+      assert.lengthOf(wrapper.find(".dashboard-user-card"), 1);
+      assert.lengthOf(wrapper.find(".course-list"), 1);
+      assert.lengthOf(wrapper.find(".progress-widget"), 1);
     });
   });
 

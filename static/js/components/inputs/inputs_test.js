@@ -38,7 +38,7 @@ describe('Profile inputs', () => {
   const renderTestSelectField = () => {
     return renderTestComponent(SelectField, inputProps);
   };
-  
+
   describe('Select field', () => {
     let selectField;
     let genderOptions = [
@@ -68,7 +68,7 @@ describe('Profile inputs', () => {
       });
       return renderTestSelectField();
     };
-    
+
     let renderLetterSelectField = () => {
       Object.assign(inputProps, {
         keySet: ['test'],
@@ -220,7 +220,7 @@ describe('Profile inputs', () => {
     it('lists no states when an invalid country is selected', () => {
       inputProps.profile.country_key = 'MISSING';
       let stateField = renderTestComponent(StateSelectField, inputProps);
-      assert.equal(stateField.props.options.length, 0);
+      assert.lengthOf(stateField.props.options, 0);
     });
 
     it('renders a select field with sorted states for the given country', () => {
@@ -258,7 +258,7 @@ describe('Profile inputs', () => {
       inputProps.profile.country = null;
       let countryField = renderTestComponent(CountrySelectField, inputProps);
       let countryCount = _.keys(iso3166.data).length;
-      assert.equal(countryField.props.options.length, countryCount);
+      assert.lengthOf(countryField.props.options, countryCount);
       // Check for a random list of country values that should exist as options in the select field
       let countriesToFind = ['AF', 'AL', 'US', 'IN', 'NZ'];
       let numCountriesFound = _(countryField.props.options)
@@ -279,7 +279,7 @@ describe('Profile inputs', () => {
       assert.equal(inputProps.profile.state_key, null);
     });
   });
-  
+
   describe("Field of study select field", () => {
     beforeEach(() => {
       inputProps = {
@@ -293,10 +293,10 @@ describe('Profile inputs', () => {
       let fieldsOfStudyCount = _.keys(FIELDS_OF_STUDY).length;
       let fieldsOfStudyField = renderTestComponent(FieldsOfStudySelectField, inputProps);
       let options = fieldsOfStudyField.props.options;
-      assert.equal(options.length, fieldsOfStudyCount);
+      assert.lengthOf(options, fieldsOfStudyCount);
       // Test that the option values follow the expected "xx.xxxx" pattern
       let fosCodePattern = /^\d{2}\.\d{4}$/;
-      assert(fosCodePattern.test(options[0].value));
+      assert.match(options[0].value, fosCodePattern);
     });
   });
 });

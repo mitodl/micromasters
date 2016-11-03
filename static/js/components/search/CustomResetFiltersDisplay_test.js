@@ -29,6 +29,6 @@ describe('CustomResetFiltersDisplay', () => {
     noFilterProps.hasFilters = false;
     const wrapper = shallow(<CustomResetFiltersDisplay {...noFilterProps}/>);
 
-    assert.equal(wrapper.children().length, 0);
+    assert.lengthOf(wrapper.children(), 0);
   });
 });

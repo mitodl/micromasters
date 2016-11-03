@@ -18,7 +18,7 @@ describe('CourseListCard', () => {
 
   it('creates a CourseRow for each course', () => {
     const program = DASHBOARD_RESPONSE[1];
-    assert(program.courses.length > 0);
+    assert.isAbove(program.courses.length, 0);
     let now = moment();
     const wrapper = shallow(
       <CourseListCard program={program} now={now} {...defaultCardParams} />
@@ -34,15 +34,15 @@ describe('CourseListCard', () => {
 
   it("fills in now if it's missing in the props", () => {
     const program = DASHBOARD_RESPONSE[1];
-    assert(program.courses.length > 0);
+    assert.isAbove(program.courses.length, 0);
     const wrapper = shallow(
       <CourseListCard program={program} {...defaultCardParams} />
     );
     let nows = wrapper.find(CourseRow).map(courseRow => courseRow.props().now);
-    assert(nows.length > 0);
+    assert.isAbove(nows.length, 0);
     for (let now of nows) {
       // Each now must be exactly the same object
-      assert(now === nows[0]);
+      assert.equal(now, nows[0]);
     }
   });
 

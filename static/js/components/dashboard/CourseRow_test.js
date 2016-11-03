@@ -25,7 +25,7 @@ describe('CourseRow', () => {
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
-    
+
     defaultRowProps = {
       hasFinancialAid: true,
       financialAid: FINANCIAL_AID_PARTIAL_RESPONSE,
@@ -45,7 +45,7 @@ describe('CourseRow', () => {
     const course = DASHBOARD_RESPONSE[1].courses[0];
     const courseRun = course.runs[0];
     const courseTitle = course.title;
-    
+
     const wrapper = shallow(
       <CourseRow
         course={course}
@@ -79,7 +79,7 @@ describe('CourseRow', () => {
           {...defaultRowProps}
         />
       );
-      assert.equal(wrapper.find('.course-container').children().length, 2);
+      assert.lengthOf(wrapper.find('.course-container').children(), 2);
     });
 
     it('shows subrows when a course has been taken multiple times', () => {
@@ -95,8 +95,8 @@ describe('CourseRow', () => {
           {...defaultRowProps}
         />
       );
-      assert.equal(
-        wrapper.find('.course-container .course-sub-row').length,
+      assert.lengthOf(
+        wrapper.find('.course-container .course-sub-row'),
         courseRunCount,
         `Should have ${courseRunCount - 1} subrows for past runs & 1 subrow indicating future run status`
       );
@@ -113,7 +113,7 @@ describe('CourseRow', () => {
           {...defaultRowProps}
         />
       );
-      assert.equal(wrapper.find('.course-container .course-sub-row').length, 1);
+      assert.lengthOf(wrapper.find('.course-container .course-sub-row'), 1);
     });
 
     it('shows a subrow when a course was failed and a future run is available', () => {
@@ -130,7 +130,7 @@ describe('CourseRow', () => {
           {...defaultRowProps}
         />
       );
-      assert.equal(wrapper.find('.course-container .course-sub-row').length, 1);
+      assert.lengthOf(wrapper.find('.course-container .course-sub-row'), 1);
     });
   });
 });
