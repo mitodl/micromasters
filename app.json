@@ -9,6 +9,9 @@
     },
     {
       "url": "https://github.com/heroku/heroku-buildpack-python"
+    },
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-pgbouncer"
     }
   ],
   "description": "Web Portal for Micromasters",
@@ -119,6 +122,8 @@
     "OPEN_EXCHANGE_RATES_URL": {
       "value": "https://openexchangerates.org/api/"
     },
+    "PGBOUNCER_DEFAULT_POOL_SIZE": 50,
+    "PGBOUNCER_MIN_POOL_SIZE": 5,
     "SECRET_KEY": {
       "description": "Django secret key.",
       "generator": "secret"
