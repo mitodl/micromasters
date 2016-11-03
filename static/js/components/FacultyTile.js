@@ -14,28 +14,34 @@ export default class FacultyTile extends React.Component {
       name,
       title,
       short_bio: shortBio,
-      image: {
+      image,
+    } = this.props;
+    let nameStr, imgEl;
+    if (title) {
+      nameStr = `${name}, ${title}`;
+    } else {
+      nameStr = name;
+    }
+    if (image) {
+      const {
         alt,
         rendition: {
           width,
           height,
           file,
         }
-      }
-    } = this.props;
-    let nameStr;
-    if (title) {
-      nameStr = `${name}, ${title}`;
+      } = image;
+      imgEl = <img src={file} alt={alt} width={width} height={height} />;
     } else {
-      nameStr = name;
+      imgEl = null;
     }
 
     return (
       <div className="faculty-tile">
-        <img src={file} alt={alt} width={width} height={height} />
+        {imgEl}
         <div className="faculty-copy">
-        <h4>{nameStr}</h4>
-        <p>{shortBio}</p>
+          <h4>{nameStr}</h4>
+          <p>{shortBio}</p>
         </div>
       </div>
     );
