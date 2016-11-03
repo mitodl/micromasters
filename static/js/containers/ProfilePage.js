@@ -2,9 +2,9 @@
 /* global SETTINGS */
 import React from 'react';
 import { connect } from 'react-redux';
-import Loader from 'react-loader';
 import ReactDOM from 'react-dom';
 
+import Loader from '../components/Loader';
 import { makeProfileProgressDisplay } from '../util/util';
 import { FETCH_PROCESSING } from '../actions';
 import { setProfileStep } from '../actions/ui';

@@ -2,7 +2,7 @@
 /* global SETTINGS: false */
 import React from 'react';
 import { connect } from 'react-redux';
-import Loader from 'react-loader';
+import Loader from '../components/Loader';
 
 import { startProfileEdit } from '../actions/profile';
 import { FETCH_PROCESSING } from '../actions/index';

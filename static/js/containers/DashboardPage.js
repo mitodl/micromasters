@@ -2,7 +2,7 @@
 import React from 'react';
 import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import Loader from 'react-loader';
+import Loader from '../components/Loader';
 import _ from 'lodash';
 import moment from 'moment';
 

@@ -75,6 +75,15 @@ input::-ms-clear {
   // arbitrarily chosen height
   height: 300px;
   width: 100%;
+
+  .mdl-spinner {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
+    height: 50px;
+    width: 50px;
+  }
 }
 
 .upper-case {
