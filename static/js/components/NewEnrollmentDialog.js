@@ -72,8 +72,7 @@ export default class NewEnrollmentDialog extends React.Component {
       programs,
     } = this.props;
 
-    let unenrolledPrograms = programs.filter(program => !program.enrolled);
-    unenrolledPrograms = _.sortBy(unenrolledPrograms, 'title');
+    let unenrolledPrograms = _.sortBy(programs.filter(program => !program.enrolled), 'title');
     let options = unenrolledPrograms.map(program =>
       <MenuItem value={program.id} primaryText={program.title} key={program.id} />
     );
