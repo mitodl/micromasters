@@ -8,11 +8,11 @@ import { PROGRAMS } from '../constants';
 
 describe("PersonalTab", () => {
 
-  let renderPersonalTab = (props = {}) => {
+  let renderPersonalTab = (selectedProgram = null, props = {}) => {
     return shallow(<PersonalTab
       programs={PROGRAMS}
       ui={{
-        selectedProgram: null,
+        selectedProgram: selectedProgram,
       }}
       {...props}
     />);
@@ -33,11 +33,7 @@ describe("PersonalTab", () => {
   it('should have the current program enrollment selected', () => {
     let selectedProgram = PROGRAMS[0];
 
-    let wrapper = renderPersonalTab({
-      ui: {
-        selectedProgram
-      },
-    });
+    let wrapper = renderPersonalTab(selectedProgram);
     assert.equal(wrapper.find("SelectField").props()['value'], selectedProgram.id);
   });
 });
