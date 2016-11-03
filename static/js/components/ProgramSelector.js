@@ -56,19 +56,15 @@ export default class ProgramSelector extends React.Component {
       currentId = currentProgramEnrollment.id;
     }
 
-    const sortedProgramEnrollments = _.sortBy(programEnrollments, 'title').filter(
-      enrollment => enrollment.enrolled
-    );
+    const sortedProgramEnrollments = _.sortBy(programEnrollments, 'title');
+    let enrolledPrograms = sortedProgramEnrollments.filter(program => program.enrolled);
+    let unenrolledPrograms = sortedProgramEnrollments.filter(program => !program.enrolled);
+    let unselected = enrolledPrograms.filter(enrollment => enrollment.id !== currentId);
 
-    let unselected = sortedProgramEnrollments.filter(enrollment => enrollment.id !== currentId);
     let options = unselected.map(enrollment => ({
       value: enrollment.id,
       label: enrollment.title,
     }));
-
-    let unenrolledPrograms = programEnrollments.filter(program => !program.enrolled);
-    unenrolledPrograms = _.sortBy(unenrolledPrograms, 'title');
-
     if (unenrolledPrograms.length > 0) {
       options.push({label: "Enroll in a new program", value: ENROLL_SENTINEL});
     }
