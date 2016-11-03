@@ -13,5 +13,6 @@ WORKDIR /src
 COPY . /src
 
 RUN chown -R mitodl:mitodl /src
+RUN mkdir /var/media && chown -R mitodl:mitodl /var/media
 
 USER mitodl

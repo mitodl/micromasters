@@ -1,34 +1,36 @@
-db:
-  image: postgres
-  ports:
-    - "5432"
+version: '2'
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432"
 
-web:
-  build: .
-  dockerfile: ./travis/Dockerfile-travis-web
-  command: >
-    /bin/bash -c '
-    sleep 3 &&
-    python3 manage.py migrate &&
-    ./with_host.sh python3 manage.py runserver 0.0.0.0:8079'
-  environment:
-    DEBUG: 'False'
-    COVERAGE_DIR: htmlcov
-    PORT: 8079
-    NODE_ENV: 'production'
-    DATABASE_URL: postgres://postgres@db:5432/postgres
-    MICROMASTERS_SECURE_SSL_REDIRECT: 'False'
-    MICROMASTERS_DB_DISABLE_SSL: 'True'
-    ELASTICSEARCH_URL: elastic:9200
-  ports:
-    - "8079:8079"
-  links:
-    - db
-    - elastic
+  web:
+    build:
+      context: .
+      dockerfile: ./travis/Dockerfile-travis-web
+    command: >
+      /bin/bash -c '
+      sleep 3 &&
+      python3 manage.py migrate &&
+      ./with_host.sh python3 manage.py runserver 0.0.0.0:8079'
+    environment:
+      DEBUG: 'False'
+      COVERAGE_DIR: htmlcov
+      PORT: 8079
+      NODE_ENV: 'production'
+      DATABASE_URL: postgres://postgres@db:5432/postgres
+      MICROMASTERS_SECURE_SSL_REDIRECT: 'False'
+      MICROMASTERS_DB_DISABLE_SSL: 'True'
+      ELASTICSEARCH_URL: elastic:9200
+    ports:
+      - "8079:8079"
+    links:
+      - db
+      - elastic
 
-elastic:
-  image: elasticsearch:2.4.1
-  command: elasticsearch -Des.network.host=0.0.0.0
-  ports:
-    - "9200"
-
+  elastic:
+    image: elasticsearch:2.4.1
+    command: elasticsearch -Des.network.host=0.0.0.0
+    ports:
+      - "9200"
