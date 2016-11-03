@@ -97,7 +97,7 @@ class ProgramEnrollmentTests(ESTestCase, APITestCase):
         assert resp.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 
     def test_no_get_for_enrollments(self):
-        """Only the programs where the user is enrolled in are returned"""
+        """GET is not allowed for /api/v0/enrolledprograms/"""
         resp = self.client.get(self.url)
         assert resp.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 
