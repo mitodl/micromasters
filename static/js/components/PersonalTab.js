@@ -21,7 +21,7 @@ import type {
   UpdateProfileFunc,
 } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
-import type { ProgramEnrollmentsState, ProgramEnrollments } from '../flow/enrollmentTypes';
+import type { ProgramEnrollments } from '../flow/enrollmentTypes';
 import type { Event } from '../flow/eventType';
 import {  validationErrorSelector } from '../util/util';
 
@@ -34,7 +34,7 @@ export default class PersonalTab extends React.Component {
     ui:             UIState,
     nextStep:       () => void,
     prevStep:       () => void,
-    programs:       ProgramEnrollmentsState,
+    programs:       ProgramEnrollments,
     setProgram:     Function,
     addProgramEnrollment: Function,
   };

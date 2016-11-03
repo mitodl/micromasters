@@ -34,7 +34,7 @@ describe("NewEnrollmentDialog", () => {
         enrollDialogVisibility={true}
         {...props}
       />
-    )
+    );
   };
 
   it('renders a dialog', () => {
