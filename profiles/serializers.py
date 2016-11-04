@@ -199,10 +199,10 @@ class ProfileSerializer(ProfileBaseSerializer):
                 else:
                     setattr(instance, attr, value)
             instance.save()
-            if 'work_history' in validated_data:
+            if 'work_history' in self.initial_data:
                 update_work_history(validated_data['work_history'], instance.id)
 
-            if 'education' in validated_data:
+            if 'education' in self.initial_data:
                 update_education(validated_data['education'], instance.id)
             return instance
 

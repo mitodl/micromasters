@@ -2,12 +2,14 @@
 Tests for profile view
 """
 import json
+from io import BytesIO
 from mock import patch
 
 from dateutil.parser import parse
 from django.core.urlresolvers import resolve, reverse
 from django.db.models.signals import post_save
 from factory.django import mute_signals
+from PIL import Image
 from rest_framework.fields import (
     DateField,
     ReadOnlyField,
@@ -18,12 +20,19 @@ from rest_framework.status import (
     HTTP_405_METHOD_NOT_ALLOWED,
     HTTP_404_NOT_FOUND
 )
+from rest_framework.test import (
+    APIClient,
+)
 
 from backends.edxorg import EdxOrgOAuth2
 from courses.factories import ProgramFactory
 from dashboard.models import ProgramEnrollment
 from micromasters.factories import UserFactory
-from profiles.factories import ProfileFactory
+from profiles.factories import (
+    EducationFactory,
+    EmploymentFactory,
+    ProfileFactory,
+)
 from profiles.models import Profile
 from profiles.permissions import (
     CanEditIfOwner,
@@ -281,6 +290,8 @@ class ProfilePATCHTests(ProfileBaseTests):
     """
     Tests for profile PATCH
     """
+    client_class = APIClient
+
     def test_patch_own_profile(self):
         """
         A user PATCHes their own profile
@@ -362,3 +373,27 @@ class ProfilePATCHTests(ProfileBaseTests):
             ProfileFactory.create(user=self.user1)
         self.client.force_login(self.user1)
         assert self.client.post(self.url1).status_code == HTTP_405_METHOD_NOT_ALLOWED
+
+    def test_upload_image(self):
+        """
+        An image upload should not delete education or work history entries
+        """
+        with mute_signals(post_save):
+            profile = ProfileFactory.create(user=self.user1)
+        EducationFactory.create(profile=profile)
+        EmploymentFactory.create(profile=profile)
+        self.client.force_login(self.user1)
+
+        # create a dummy image file in memory for upload
+        image_file = BytesIO()
+        image = Image.new('RGBA', size=(50, 50), color=(256, 0, 0))
+        image.save(image_file, 'png')
+        image_file.seek(0)
+
+        # format patch using multipart upload
+        resp = self.client.patch(self.url1, data={
+            'image': image_file
+        }, format='multipart')
+        assert resp.status_code == 200, resp.content.decode('utf-8')
+        assert profile.education.count() == 1
+        assert profile.work_history.count() == 1
