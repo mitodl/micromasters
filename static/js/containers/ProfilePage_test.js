@@ -154,7 +154,7 @@ describe("ProfilePage", function() {
 
   it('shows a spinner when profile get is processing', () => {
     return renderComponent('/profile', [START_PROFILE_EDIT]).then(([, div]) => {
-      assert.notOk(div.querySelector(".spinner"), "Found spinner but no fetch in progress");
+      assert.notOk(div.querySelector(".loader"), "Found spinner but no fetch in progress");
       helper.store.dispatch({
         type: REQUEST_GET_USER_PROFILE,
         payload: {
@@ -162,7 +162,7 @@ describe("ProfilePage", function() {
         }
       });
 
-      assert(div.querySelector(".spinner"), "Unable to find spinner");
+      assert(div.querySelector(".loader"), "Unable to find spinner");
     });
   });
 

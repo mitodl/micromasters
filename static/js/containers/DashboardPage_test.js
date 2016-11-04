@@ -46,10 +46,10 @@ describe('DashboardPage', () => {
 
   it('shows a spinner when dashboard get is processing', () => {
     return renderComponent('/dashboard').then(([, div]) => {
-      assert.notOk(div.querySelector(".spinner"), "Found spinner but no fetch in progress");
+      assert.notOk(div.querySelector(".loader"), "Found spinner but no fetch in progress");
       helper.store.dispatch({ type: REQUEST_DASHBOARD, payload: { noSpinner: false } });
 
-      assert(div.querySelector(".spinner"), "Unable to find spinner");
+      assert(div.querySelector(".loader"), "Unable to find spinner");
     });
   });
 
