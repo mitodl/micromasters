@@ -18,7 +18,6 @@ from ecommerce.api import (
     generate_cybersource_sa_payload,
     get_new_order_by_reference_number,
 )
-from ecommerce.exceptions import EcommerceEdxApiException
 from ecommerce.models import (
     Order,
     Receipt,
@@ -114,7 +113,7 @@ class OrderFulfillmentView(APIView):
                     ),
                     settings.EMAIL_SUPPORT
                 )
-            except:
+            except:  # pylint: disable=bare-except
                 log.exception(
                     "Error occurred when sending the email to notify "
                     "about order fulfillment failure for order %s",
@@ -127,10 +126,11 @@ class OrderFulfillmentView(APIView):
         if order.status == Order.FULFILLED:
             try:
                 enroll_user_on_success(order)
-            except:
+            except:  # pylint: disable=bare-except
                 log.exception(
-                    "Error occurred when enrolling user in one or more courses. "
-                    "See other errors above for more info."
+                    "Error occurred when enrolling user in one or more courses for order %s. "
+                    "See other errors above for more info.",
+                    order
                 )
                 try:
                     MailgunClient().send_individual_email(
@@ -142,7 +142,7 @@ class OrderFulfillmentView(APIView):
                         ),
                         settings.EMAIL_SUPPORT,
                     )
-                except:
+                except:  # pylint: disable=bare-except
                     log.exception(
                         "Error occurred when sending the email to notify support "
                         "of user enrollment error during order %s fulfillment",
