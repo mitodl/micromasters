@@ -433,6 +433,10 @@
       color: #616161;
     }
 
+    &:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
   }
 }
 
