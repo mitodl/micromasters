@@ -4723,11 +4723,6 @@
       "from": "react-input-autosize@>=1.1.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/react-input-autosize/-/react-input-autosize-1.1.0.tgz"
     },
-    "react-loader": {
-      "version": "2.4.0",
-      "from": "react-loader@2.4.0",
-      "resolved": "https://registry.npmjs.org/react-loader/-/react-loader-2.4.0.tgz"
-    },
     "react-mdl": {
       "version": "1.5.4",
       "from": "react-mdl@1.5.4",
@@ -5368,11 +5363,6 @@
       "version": "1.2.1",
       "from": "spdx-license-ids@>=1.0.2 <2.0.0",
       "resolved": "https://registry.npmjs.org/spdx-license-ids/-/spdx-license-ids-1.2.1.tgz"
-    },
-    "spin.js": {
-      "version": "2.3.2",
-      "from": "spin.js@>=2.0.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/spin.js/-/spin.js-2.3.2.tgz"
     },
     "sprintf-js": {
       "version": "1.0.3",
