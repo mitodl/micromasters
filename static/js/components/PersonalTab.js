@@ -21,10 +21,13 @@ import type {
   UpdateProfileFunc,
 } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
-import type { AvailablePrograms } from '../flow/enrollmentTypes';
+import type {
+  AvailableProgram,
+  AvailablePrograms,
+  AvailableProgramsState
+} from '../flow/enrollmentTypes';
 import type { Event } from '../flow/eventType';
 import {  validationErrorSelector } from '../util/util';
-import type { ProgramEnrollment } from '../flow/enrollmentTypes';
 
 export default class PersonalTab extends React.Component {
   props: {
@@ -35,10 +38,10 @@ export default class PersonalTab extends React.Component {
     ui:             UIState,
     nextStep:       () => void,
     prevStep:       () => void,
-    programs:       AvailablePrograms,
+    programs:       AvailableProgramsState,
     setProgram:     Function,
     addProgramEnrollment: Function,
-    currentProgramEnrollment: ProgramEnrollment,
+    currentProgramEnrollment: AvailableProgram,
   };
 
   programListing = (programs: AvailablePrograms) => {
@@ -52,20 +55,20 @@ export default class PersonalTab extends React.Component {
 
   setProgramHelper = (event: Event, key: string, value: string) => {
     const {
-      programs,
+      programs: { availablePrograms },
       setProgram,
     } = this.props;
-    let selected = programs.find(program => program.id === parseInt(value));
+    let selected = availablePrograms.find(program => program.id === parseInt(value));
     setProgram(selected);
   };
 
   getSelectedProgramId = () : number|null => {
-    let programId = null;
     const {
       ui: { selectedProgram },
       currentProgramEnrollment
     } = this.props;
 
+    let programId = null;
     if (selectedProgram) {
       programId = selectedProgram.id;
     } else if(currentProgramEnrollment) {
@@ -77,8 +80,7 @@ export default class PersonalTab extends React.Component {
 
   selectProgram = () => {
     const {
-      programs,
-      ui: { selectedProgram },
+      programs: { availablePrograms },
       errors
     } = this.props;
 
@@ -91,9 +93,22 @@ export default class PersonalTab extends React.Component {
         className={`program-selectfield ${validationErrorSelector(errors, ['program'])}`}
         errorText={_.get(errors, "program")}
       >
-        { this.programListing(programs) }
+        { this.programListing(availablePrograms) }
       </SelectField>
     );
+  }
+
+  componentWillMount() {
+    const {
+      programs: { availablePrograms },
+      currentProgramEnrollment,
+      setProgram,
+    } = this.props;
+
+    if (currentProgramEnrollment) {
+      let selected = availablePrograms.find(program => program.id === currentProgramEnrollment.id);
+      setProgram(selected);
+    }
   }
 
   render() {

@@ -38,12 +38,12 @@ import {
   SET_CONFIRM_SKIP_DIALOG_VISIBILITY,
   SET_DOCS_INSTRUCTIONS_VISIBILITY,
   SET_NAV_DRAWER_OPEN,
+  SET_PROGRAM,
 } from '../actions/ui';
 import { PERSONAL_STEP } from '../constants';
 import type { ToastMessage } from '../flow/generalTypes';
 import type { Action } from '../flow/reduxTypes';
-import { SET_PROGRAM } from '../actions/ui';
-import type { Program } from '../flow/programTypes';
+import type { AvailableProgram } from '../flow/enrollmentTypes';
 
 export type UIDialog = {
   title?: string;
@@ -77,7 +77,7 @@ export type UIState = {
   photoDialogVisibility:        boolean;
   calculatorDialogVisibility:   boolean;
   documentSentDate:             Object;
-  selectedProgram:              Program;
+  selectedProgram:              ?AvailableProgram;
   skipDialogVisibility:         boolean;
   docsInstructionsVisibility:   boolean;
   navDrawerOpen:                boolean;
