@@ -194,4 +194,20 @@ describe("ProfilePage", function() {
       });
     });
   });
+
+  for (let [step, component] of [
+    [PERSONAL_STEP, 'PersonalTab'],
+    [EDUCATION_STEP, 'EducationTab'],
+    [EMPLOYMENT_STEP, 'EmploymentTab'],
+  ]) {
+    it(`sends the right props to tab components for step ${step}`, () => {
+      setStep(step);
+      return renderComponent('/profile', [START_PROFILE_EDIT]).then(([wrapper]) => {
+        let props = wrapper.find(component).props();
+        assert.deepEqual(props['ui'], helper.store.getState().ui);
+        assert.deepEqual(props['programs'], helper.store.getState().programs.availablePrograms);
+        assert.deepEqual(props['profile'], helper.store.getState().profiles['jane'].profile);
+      });
+    });
+  }
 });

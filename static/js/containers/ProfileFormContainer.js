@@ -201,7 +201,7 @@ class ProfileFormContainer extends React.Component {
       errors: errors,
       fetchProfile: this.fetchProfile,
       profile: profile,
-      programs: programs,
+      programs: programs.availablePrograms,
       saveProfile: this.saveProfile.bind(this, isEdit),
       setProgram: this.setProgram,
       startProfileEdit: this.startProfileEdit,
