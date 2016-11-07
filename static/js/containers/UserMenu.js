@@ -33,10 +33,10 @@ class UserMenu extends React.Component {
   };
 
   linkMenu: Function = (): React$Element<*> => {
-    const { profile, ui: { userMenuOpen } } = this.props;
+    const { ui: { userMenuOpen } } = this.props;
     return (
       <div className={`user-menu-dropdown ${userMenuOpen ? "open" : ""}`}>
-        <Link to={`/learner/${profile.username}`}>
+        <Link to={`/learner/${SETTINGS.user.username}`}>
           View Profile
         </Link>
         <Link to="/settings">

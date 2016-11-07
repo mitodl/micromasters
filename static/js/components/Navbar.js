@@ -101,7 +101,8 @@ export default class Navbar extends React.Component {
               </div>
               <div className="link">
                 <Icon name="person" />
-                <Link to={`/learner/${profile.username}`} onClick={closeDrawer} >
+                <Link to={`/learner/${SETTINGS.user ? SETTINGS.user.username : profile.username}`}
+                  onClick={closeDrawer} >
                   View Profile
                 </Link>
               </div>
