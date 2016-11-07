@@ -163,11 +163,14 @@
                   <p>{{ program.description|default:"No description available for this program." }}</p>
 
                   {% if program.programpage %}
+                    <p>
                     {% if program.programpage.external_program_page_url %}
-                      <p><a href="{{ program.programpage.external_program_page_url }}" class="program-link">Learn More</a></p>
+                      <a href="{{ program.programpage.external_program_page_url }}" class="program-link">
                     {% else %}
-                      <p><a href="{{ program.programpage.url }}" class="program-link">Learn More</a></p>
+                      <a href="{{ program.programpage.url }}" class="program-link">
                     {% endif %}
+                    More about {{ program }}
+                    </a></p>
                   {% endif %}
                 </div>
               </div>
