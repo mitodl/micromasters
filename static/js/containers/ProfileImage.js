@@ -65,9 +65,12 @@ class ProfileImage extends React.Component {
   cameraIcon: Function = (editable: bool): React$Element<*>|null => {
     const { setDialogVisibility } = this.props;
     if ( editable ) {
-      return <span className="img">
-        <Icon name="camera_alt" onClick={() => setDialogVisibility(true)} />
-        </span>;
+      return (
+        <button className="open-photo-dialog" onClick={() => setDialogVisibility(true)}>
+          <Icon name="camera_alt" />
+          <span className="sr-only">Update user photo</span>
+        </button>
+      );
     } else {
       return null;
     }
