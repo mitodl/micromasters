@@ -15,6 +15,7 @@ RUN curl --silent --location https://bootstrap.pypa.io/get-pip.py | python3 -
 # Add, and run as, non-root user.
 RUN mkdir /src
 RUN adduser --disabled-password --gecos "" mitodl
+RUN mkdir /var/media && chown -R mitodl:mitodl /var/media
 
 # Install project packages
 COPY requirements.txt /tmp/requirements.txt
@@ -30,8 +31,6 @@ RUN chown -R mitodl:mitodl /src
 RUN ./manage.py collectstatic --noinput
 RUN apt-get clean && apt-get purge
 USER mitodl
-
-RUN mkdir /var/media && chown -R mitodl:mitodl /var/media
 
 # Set pip cache folder, as it is breaking pip when it is on a shared volume
 ENV XDG_CACHE_HOME /tmp/.cache
