@@ -86,16 +86,14 @@ const zendeskCallbacks = {
     btn.onmouseenter = setHover;
     btn.onmouseleave = unsetHover;
     unsetHover();
-  },
-  ticketSubmissionFormLoaded: () => {
+
+    // prepopulate ticket submission form
     if (SETTINGS.program) {
       const programSlug = SETTINGS.program.slug;
-      const launchIFrame = document.querySelector("iframe.zEWidget-launcher");
-      const launchBtn = launchIFrame.contentDocument.querySelector(".Button--launcher");
-      launchBtn.onclick = () => {
+      btn.onclick = () => {
         setTimeout(() => {
-          const iframe = document.querySelector("iframe.zEWidget-ticketSubmissionForm");
-          let select = iframe.contentDocument.querySelector("select");
+          const ticketIFrame = document.querySelector("iframe.zEWidget-ticketSubmissionForm");
+          let select = ticketIFrame.contentDocument.querySelector("select");
           const optionValues = _.map(select.options, "value");
           if (optionValues.includes(programSlug)) {
             select.value = programSlug;
