@@ -3,6 +3,7 @@ Serializers for Wagtail-related models
 """
 from rest_framework import serializers
 from wagtail.wagtailimages.models import Image, Rendition
+from django.utils.text import slugify
 
 from cms.models import ProgramPage, ProgramFaculty
 from courses.serializers import CourseSerializer
@@ -55,10 +56,10 @@ class ProgramPageSerializer(serializers.ModelSerializer):
         return programpage.program.id
 
     def get_slug(self, programpage):  # pylint: disable=no-self-use
-        """Get the slug from the program"""
+        """Slugify the program's title for Zendesk"""
         if not programpage.program:
             return None
-        return programpage.program.slug
+        return slugify(programpage.program.title)
 
     class Meta:  # pylint: disable=missing-docstring
         model = ProgramPage

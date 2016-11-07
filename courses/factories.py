@@ -12,17 +12,9 @@ from .models import Program, Course, CourseRun
 FAKE = faker.Factory.create()
 
 
-def generate_slug(program):
-    """Generate a slug for a program based on its title"""
-    words = program.title.split()
-    first_letters = [word[0].lower() for word in words]
-    return "".join(first_letters)
-
-
 class ProgramFactory(DjangoModelFactory):
     """Factory for Programs"""
     title = fuzzy.FuzzyText(prefix="Program ")
-    slug = factory.LazyAttribute(generate_slug)
     live = fuzzy.FuzzyAttribute(FAKE.boolean)
     description = fuzzy.FuzzyText()
 

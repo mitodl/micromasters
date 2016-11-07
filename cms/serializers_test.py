@@ -63,7 +63,7 @@ class WagtailSerializerTests(ESTestCase):
         assert data == {
             "id": program.id,
             "title": "Supply Chain Management",
-            "slug": "scm",
+            "slug": "supply-chain-management",
             "faculty": [{
                 "name": "Charles Fluffles",
                 "title": faculty.title,
