@@ -1,5 +1,6 @@
 bpython
 ddt
+django-debug-toolbar
 factory_boy
 faker
 ipdb

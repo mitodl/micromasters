@@ -14,6 +14,7 @@ coverage==4.2             # via pytest-cov
 curtsies==0.2.11          # via bpython
 ddt==1.1.1
 decorator==4.0.10         # via ipython, traitlets
+django-debug-toolbar==1.6
 execnet==1.4.1            # via pytest-cache
 factory-boy==2.7.0
 fake-factory==0.7.2       # via factory-boy
@@ -55,6 +56,7 @@ requests==2.11.1          # via bpython
 semantic-version==2.6.0
 simplegeneric==0.8.1      # via ipython
 six==1.10.0               # via astroid, bpython, fake-factory, faker, mock, nplusone, pip-tools, prompt-toolkit, pylint, pytest-pylint, python-dateutil, traitlets
+sqlparse==0.2.2           # via django-debug-toolbar
 testfixtures==4.13.1
 tox==2.4.1
 traitlets==4.3.1          # via ipython
