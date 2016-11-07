@@ -72,6 +72,7 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):  
     name = user_profile_edx.get('name', "")
     user_profile.edx_name = name
     user_profile.first_name, user_profile.last_name = split_name(name)
+    user_profile.preferred_name = user_profile.first_name
     user_profile.edx_bio = user_profile_edx.get('bio')
     user_profile.country = user_profile_edx.get('country')
     user_profile.has_profile_image = user_profile_edx.get(

@@ -186,7 +186,7 @@ class EdxPipelineApiTest(ESTestCase):
             ('edx_name', mocked_content['name']),
             ('first_name', first_name),
             ('last_name', last_name),
-            ('preferred_name', None),
+            ('preferred_name', first_name),
             ('edx_bio', mocked_content['bio']),
             ('country', mocked_content['country']),
             ('has_profile_image', mocked_content['profile_image']['has_image']),
