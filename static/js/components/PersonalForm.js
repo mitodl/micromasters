@@ -52,7 +52,7 @@ export default class PersonalForm extends ProfileFormFields {
           {this.boundTextField(["last_name"], "Family name")}
         </Cell>
         <Cell col={12}>
-          {this.boundTextField(["preferred_name"], "Preferred name")}
+          {this.boundTextField(["preferred_name"], "Nickname / Preferred name")}
         </Cell>
         <Cell col={12}>
           {this.boundDateField(['date_of_birth'], 'Date of birth')}
