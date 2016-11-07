@@ -26,10 +26,10 @@ describe('FacultyTile', () => {
 
   it('can render itself', () => {
     const wrapper = renderFacultyTile();
-    const nameEl = wrapper.find("h4");
+    const nameEl = wrapper.find(".faculty-name");
     assert.lengthOf(nameEl, 1);
     assert.equal(nameEl.text(), "Frank Professor, Ph.D");
-    const bioEl = wrapper.find("p");
+    const bioEl = wrapper.find(".faculty-bio");
     assert.lengthOf(bioEl, 1);
     assert.equal(bioEl.text(), "He does things.");
     const imgEl = wrapper.find("img");
@@ -41,10 +41,10 @@ describe('FacultyTile', () => {
 
   it('can render without an image', () => {
     const wrapper = renderFacultyTile({image: null});
-    const nameEl = wrapper.find("h4");
+    const nameEl = wrapper.find(".faculty-name");
     assert.lengthOf(nameEl, 1);
     assert.equal(nameEl.text(), "Frank Professor, Ph.D");
-    const bioEl = wrapper.find("p");
+    const bioEl = wrapper.find(".faculty-bio");
     assert.lengthOf(bioEl, 1);
     assert.equal(bioEl.text(), "He does things.");
     const imgEl = wrapper.find("img");

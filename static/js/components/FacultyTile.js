@@ -40,8 +40,8 @@ export default class FacultyTile extends React.Component {
       <div className="faculty-tile">
         {imgEl}
         <div className="faculty-copy">
-          <h4>{nameStr}</h4>
-          <p>{shortBio}</p>
+          <h4 className="faculty-name">{nameStr}</h4>
+          <p className="faculty-bio">{shortBio}</p>
         </div>
       </div>
     );
