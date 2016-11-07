@@ -24,7 +24,6 @@ import type { UIState } from '../reducers/ui';
 import type {
   AvailableProgram,
   AvailablePrograms,
-  AvailableProgramsState
 } from '../flow/enrollmentTypes';
 import type { Event } from '../flow/eventType';
 import {  validationErrorSelector } from '../util/util';
@@ -38,7 +37,7 @@ export default class PersonalTab extends React.Component {
     ui:             UIState,
     nextStep:       () => void,
     prevStep:       () => void,
-    programs:       AvailableProgramsState,
+    programs:       AvailablePrograms,
     setProgram:     Function,
     addProgramEnrollment: Function,
     currentProgramEnrollment: AvailableProgram,
@@ -55,10 +54,10 @@ export default class PersonalTab extends React.Component {
 
   setProgramHelper = (event: Event, key: string, value: string) => {
     const {
-      programs: { availablePrograms },
+      programs,
       setProgram,
     } = this.props;
-    let selected = availablePrograms.find(program => program.id === parseInt(value));
+    let selected = programs.find(program => program.id === parseInt(value));
     setProgram(selected);
   };
 
@@ -80,7 +79,7 @@ export default class PersonalTab extends React.Component {
 
   selectProgram = () => {
     const {
-      programs: { availablePrograms },
+      programs,
       errors
     } = this.props;
 
@@ -93,20 +92,20 @@ export default class PersonalTab extends React.Component {
         className={`program-selectfield ${validationErrorSelector(errors, ['program'])}`}
         errorText={_.get(errors, "program")}
       >
-        { this.programListing(availablePrograms) }
+        { this.programListing(programs) }
       </SelectField>
     );
   }
 
   componentWillMount() {
     const {
-      programs: { availablePrograms },
+      programs,
       currentProgramEnrollment,
       setProgram,
     } = this.props;
 
     if (currentProgramEnrollment) {
-      let selected = availablePrograms.find(program => program.id === currentProgramEnrollment.id);
+      let selected = programs.find(program => program.id === currentProgramEnrollment.id);
       setProgram(selected);
     }
   }

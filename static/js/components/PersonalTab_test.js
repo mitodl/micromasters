@@ -10,7 +10,7 @@ describe("PersonalTab", () => {
 
   let renderPersonalTab = (selectedProgram = null, props = {}) => {
     return shallow(<PersonalTab
-      programs={{availablePrograms: PROGRAMS}}
+      programs={PROGRAMS}
       ui={{
         selectedProgram: selectedProgram,
       }}
