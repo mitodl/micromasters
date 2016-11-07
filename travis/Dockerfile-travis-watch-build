@@ -21,5 +21,3 @@ USER mitodl
 COPY package.json npm-shrinkwrap.json ./webpack_if_prod.sh /src/
 
 RUN npm install
-
-COPY . /src
