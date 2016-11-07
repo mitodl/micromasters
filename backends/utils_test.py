@@ -29,7 +29,10 @@ class RefreshTest(ESTestCase):
         cls.user.social_auth.create(
             provider=EdxOrgOAuth2.name,
             uid="{}_edx".format(cls.user.username),
-            extra_data='{"access_token": "fooooootoken", "refresh_token": "baaaarrefresh"}'
+            extra_data={
+                "access_token": "fooooootoken",
+                "refresh_token": "baaaarrefresh",
+            }
         )
 
     def setUp(self):

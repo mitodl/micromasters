@@ -34,7 +34,7 @@ class TasksTest(TestCase):
             user.social_auth.create(
                 provider=EdxOrgOAuth2.name,
                 uid="{}_edx".format(user.username),
-                extra_data='{"access_token": "fooooootoken"}'
+                extra_data={"access_token": "fooooootoken"}
             )
 
     def setUp(self):

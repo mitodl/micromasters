@@ -40,7 +40,7 @@ class DashboardTest(APITestCase):
         cls.user.social_auth.create(
             provider=EdxOrgOAuth2.name,
             uid="{}_edx".format(cls.user.username),
-            extra_data='{"access_token": "fooooootoken"}'
+            extra_data={"access_token": "fooooootoken"}
         )
 
         # create the programs
@@ -116,7 +116,10 @@ class DashboardTokensTest(APITestCase):
         cls.user.social_auth.create(
             provider=EdxOrgOAuth2.name,
             uid="{}_edx".format(cls.user.username),
-            extra_data='{"access_token": "fooooootoken", "refresh_token": "baaaarrefresh"}'
+            extra_data={
+                "access_token": "fooooootoken",
+                "refresh_token": "baaaarrefresh",
+            }
         )
 
         cls.enrollments = Enrollments([])
@@ -203,7 +206,7 @@ class UserCourseEnrollmentTest(ESTestCase, APITestCase):
         cls.user.social_auth.create(
             provider=EdxOrgOAuth2.name,
             uid="{}_edx".format(cls.user.username),
-            extra_data='{"access_token": "fooooootoken"}'
+            extra_data={"access_token": "fooooootoken"}
         )
 
         # create the course run
