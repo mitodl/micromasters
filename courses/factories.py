@@ -36,7 +36,7 @@ class CourseFactory(DjangoModelFactory):
 
     @classmethod
     def _setup_next_sequence(cls):
-        last = Course.objects.order_by('position_in_program').last()
+        last = Course.objects.last()
         if last is not None:
             return last.position_in_program + 1
         return 0

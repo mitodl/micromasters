@@ -205,7 +205,7 @@ class ProgramPage(Page):
 def get_program_page_context(programpage, request):
     """ Get context for the program page"""
     courses_query = (
-        programpage.program.course_set.order_by('position_in_program').all()
+        programpage.program.course_set.all()
     )
     js_settings = {
         "gaTrackingID": settings.GA_TRACKING_ID,

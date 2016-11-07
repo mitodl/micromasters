@@ -68,6 +68,7 @@ class Course(models.Model):
 
     class Meta:
         unique_together = ('program', 'position_in_program',)
+        ordering = ('position_in_program',)
 
     def get_promised_run(self):
         """

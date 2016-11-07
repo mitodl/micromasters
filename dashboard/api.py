@@ -152,7 +152,6 @@ def get_info_for_program(mmtrack):
         data['courses'].append(
             get_info_for_course(course, mmtrack)
         )
-    data['courses'].sort(key=lambda x: x['position_in_program'])
     return data
 
 
