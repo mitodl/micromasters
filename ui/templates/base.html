@@ -57,5 +57,11 @@
   <body class="{% block bodyclass %}{% endblock %}">
     {% block content %}
     {% endblock %}
+    <script type="text/javascript">
+      var footer = document.querySelector("#footer");
+      if (footer) {
+        footer.style.display = "";
+      }
+    </script>
   </body>
 </html>
