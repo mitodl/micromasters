@@ -254,7 +254,7 @@ describe('Profile validation functions', () => {
       let errors = Object.assign({}, ...Object.entries({
         'first_name': "Given name",
         'last_name': "Family name",
-        'preferred_name': "Preferred name",
+        'preferred_name': "Nickname / Preferred name",
         'gender': "Gender",
         'preferred_language': "Preferred language",
         'city': "City",

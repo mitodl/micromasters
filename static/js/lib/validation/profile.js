@@ -74,7 +74,7 @@ export function personalValidation(profile: Profile): ValidationErrors {
   let validationMessages = {
     'first_name': "Given name is required",
     'last_name': "Family name is required",
-    'preferred_name': "Preferred name is required",
+    'preferred_name': "Nickname / Preferred name is required",
     'gender': "Gender is required",
     'preferred_language': "Preferred language is required",
     'city': "City is required",

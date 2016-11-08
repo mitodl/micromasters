@@ -190,7 +190,7 @@ describe("UserPage", function() {
       };
 
       it(`should clearValidation when filling out a required text field`, () => {
-        const preferredName = dialog => inputs(dialog).find(i => i.name === "Preferred name");
+        const preferredName = dialog => inputs(dialog).find(i => i.name === "Nickname / Preferred name");
 
         return clearValidation(
           userProfileActions.concat([
@@ -201,13 +201,13 @@ describe("UserPage", function() {
             START_PROFILE_EDIT,
           ]),
           preferredName,
-          { preferred_name: 'Preferred name is required' },
+          { preferred_name: 'Nickname / Preferred name is required' },
           USER_PROFILE_RESPONSE.preferred_name
         );
       });
 
       it(`should scrollIntoView when filling out a required text field`, () => {
-        const preferredName = dialog => inputs(dialog).find(i => i.name === "Preferred name");
+        const preferredName = dialog => inputs(dialog).find(i => i.name === "Nickname / Preferred name");
 
         return scrollIntoView(
           scrollActions.concat([
@@ -217,7 +217,7 @@ describe("UserPage", function() {
             START_PROFILE_EDIT,
           ]),
           preferredName,
-          { preferred_name: 'Preferred name is required' },
+          { preferred_name: 'Nickname / Preferred name is required' },
           USER_PROFILE_RESPONSE.preferred_name
         );
       });
