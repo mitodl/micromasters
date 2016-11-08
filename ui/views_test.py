@@ -406,10 +406,11 @@ class TestProgramPage(ViewsTests):
         response = self.client.get(self.program_page.url)
         js_settings = json.loads(response.context['js_settings_json'])
         # check that the courses are in the response
-        self.assertIn("courses", js_settings)
-        self.assertEqual(len(js_settings["courses"]), 5)
+        self.assertIn("program", js_settings)
+        self.assertIn("courses", js_settings["program"])
+        self.assertEqual(len(js_settings["program"]["courses"]), 5)
         # check that they're in the correct order
-        for course, js_course in zip(courses, js_settings["courses"]):
+        for course, js_course in zip(courses, js_settings["program"]["courses"]):
             self.assertEqual(course.title, js_course["title"])
             self.assertEqual(course.description, js_course["description"])
             self.assertEqual(course.url, js_course["url"])
