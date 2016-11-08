@@ -51,7 +51,7 @@ zE(function() {
 });
 
 const zendeskCallbacks = {
-  // supports the following functions:
+  // This object supports the following functions:
   //   launcherExists: runs when the launcher iframe exists on the page
   //   launcherLoaded: runs when the launcher iframe's content is loaded
   //   ticketSubmissionFormExists: runs when the submission form iframe exists
@@ -62,6 +62,15 @@ const zendeskCallbacks = {
   //   ipmLoaded: runs when the IPM iframe is loaded
   // NPS = Net Promoter Score
   // IPM = In-Product Message (Zendesk Connect)
+  //
+  // The `setupZendeskCallbacks()` function will ensure that these functions
+  // are called at the appropriate time. For any given iframe, the "exists"
+  // function will always be called before the "loaded" function.
+  // We expect that the "exists" functions  will all be executed roughly
+  // simultaneously, and the "loaded" function will all be executed roughly
+  // simultaneously after that. However, due to the unpredictable nature of
+  // the internet and callbacks in general, one iframe may be finished loading
+  // before another iframe even exists.
 
   launcherLoaded: () => {
     const iframe = document.querySelector("iframe.zEWidget-launcher");
@@ -91,6 +100,12 @@ const zendeskCallbacks = {
     if (SETTINGS.program) {
       const programSlug = SETTINGS.program.slug;
       btn.onclick = () => {
+        // Apparently we can't modify the ticket submission form *immediately*
+        // on the click event -- I assume that the Javascript that Zendesk runs
+        // re-renders the form immediately, which would override any modification
+        // that might happen here. Instead, we use `setTimeout` to modify the
+        // form after a short delay. This way, we modify the re-rendered version,
+        // and the changes we make will be visible to the user.
         setTimeout(() => {
           const ticketIFrame = document.querySelector("iframe.zEWidget-ticketSubmissionForm");
           let select = ticketIFrame.contentDocument.querySelector("select");
