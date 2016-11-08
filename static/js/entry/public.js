@@ -21,22 +21,30 @@ import SignupDialog from '../containers/SignupDialog';
 
 // Program Page course list
 const courseListEl = document.querySelector('#course-list');
+let courseList = null;
+if (SETTINGS.program) {
+  courseList = SETTINGS.program.courses;
+}
 
-if ( courseListEl ) {
+if ( courseList && courseListEl ) {
   ReactDOM.render(
     <MuiThemeProvider muiTheme={getMuiTheme()}>
-      <CourseListWithPopover courses={SETTINGS.courses} />
+      <CourseListWithPopover courses={courseList} />
     </MuiThemeProvider>,
     courseListEl
   );
 }
 
 // Program Page carousel div
-const carouselDiv = document.querySelector('#faculty-carousel');
+const carousel = document.querySelector('#faculty-carousel');
+let facultyList = null;
+if (SETTINGS.program) {
+  facultyList = SETTINGS.program.faculty;
+}
 
-if ( carouselDiv ) {
+if ( facultyList && carouselDiv ) {
   ReactDOM.render(
-    <FacultyCarousel faculty={SETTINGS.faculty}/>,
+    <FacultyCarousel faculty={facultyList}/>,
     carouselDiv
   );
 }
