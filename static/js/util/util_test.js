@@ -222,6 +222,16 @@ describe('utility functions', () => {
   });
 
   describe('User privilege check', () => {
+    let settingsBackup;
+
+    beforeEach(() => {
+      settingsBackup = SETTINGS;
+    });
+
+    afterEach(() => {
+      SETTINGS = settingsBackup;
+    });
+
     it('should return the value of the first function if the profile username matches', () => {
       let profile = { username: SETTINGS.user.username };
       let privilegedCallback = () => "hi";
@@ -246,6 +256,14 @@ describe('utility functions', () => {
       let privilegedCallback = () => "vim";
       let unprivilegedString = "emacs";
       assert.equal(userPrivilegeCheck(profile, privilegedCallback, unprivilegedString), "emacs");
+    });
+
+    it('should return the value of the second function if user is not login', () => {
+      SETTINGS = Object.assign({}, SETTINGS, {user: null});
+      let profile = { username: "another_user" };
+      let privilegedCallback = () => "vim";
+      let unprivilegedCallback = () => "emacs";
+      assert.equal(userPrivilegeCheck(profile, privilegedCallback, unprivilegedCallback), "emacs");
     });
   });
 

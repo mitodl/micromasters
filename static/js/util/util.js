@@ -41,7 +41,7 @@ export function sendGoogleAnalyticsEvent(category: any, action: any, label: any,
 }
 
 export function userPrivilegeCheck (profile: Profile, privileged: any, unPrivileged: any): any {
-  if ( profile.username === SETTINGS.user.username ) {
+  if ( SETTINGS.user && profile.username === SETTINGS.user.username ) {
     return _.isFunction(privileged) ? privileged() : privileged;
   } else {
     return _.isFunction(unPrivileged) ? unPrivileged() : unPrivileged;

@@ -52,6 +52,7 @@ import type { ProfileGetResult } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
 
 const PROFILE_REGEX = /^\/profile\/?[a-z]?/;
+const LEARNER_REGEX = /^\/learner\/?[a-z]?/;
 
 class App extends React.Component {
   props: {
@@ -227,7 +228,7 @@ class App extends React.Component {
       empty = true;
     }
 
-    if (programs.getStatus === FETCH_FAILURE) {
+    if (programs.getStatus === FETCH_FAILURE && !LEARNER_REGEX.test(pathname)) {
       children = <ErrorMessage errorInfo={programs.getErrorInfo} />;
       empty = true;
     }
