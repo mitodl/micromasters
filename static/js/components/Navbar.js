@@ -67,7 +67,11 @@ export default class Navbar extends React.Component {
     );
   };
 
-  navDrawer: Function = (drawerClass: string): React$Element<*> => {
+  navDrawer: Function = (drawerClass: string): React$Element<*>|null => {
+    if (!SETTINGS.user) {
+      return null;
+    }
+
     const {
       profile,
       setNavDrawerOpen,
@@ -101,7 +105,7 @@ export default class Navbar extends React.Component {
               </div>
               <div className="link">
                 <Icon name="person" />
-                <Link to={`/learner/${SETTINGS.user ? SETTINGS.user.username : profile.username}`}
+                <Link to={`/learner/${SETTINGS.user.username}`}
                   onClick={closeDrawer} >
                   View Profile
                 </Link>
