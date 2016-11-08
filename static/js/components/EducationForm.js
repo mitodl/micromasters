@@ -10,7 +10,10 @@ import Dialog from 'material-ui/Dialog';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 
 import { educationValidation } from '../lib/validation/profile';
-import { userPrivilegeCheck } from '../util/util';
+import {
+  userPrivilegeCheck,
+  profileOfLoggedinUser
+} from '../util/util';
 import ProfileFormFields from '../util/ProfileFormFields';
 import ConfirmDeletion from './ConfirmDeletion';
 import FieldsOfStudySelectField from './inputs/FieldsOfStudySelectField';
@@ -126,8 +129,12 @@ class EducationForm extends ProfileFormFields {
     </Cell>;
   }
 
-  renderEducationLevelEntries(level: any): Array<React$Element<*>|void>|void {
+  renderEducationLevelEntries(level: any): Array<React$Element<*>|void>|void|null {
     const { profile } = this.props;
+    if (!profileOfLoggedinUser(profile) && (!profile.education || profile.education.length === 0)) {
+      return null;
+    }
+
     let levelValue = HIGH_SCHOOL;
     let filterDegreeName = () => true;
     let title;
@@ -334,16 +341,21 @@ class EducationForm extends ProfileFormFields {
         </Card>;
       });
     } else if (profile !== undefined) {
-      return <Card shadow={1} className="profile-form" id="education-card">
-        <Grid className="profile-form-grid">
-          <Cell col={12} className="profile-form-row profile-card-header">
-            <span className="title">
-              Education
-            </span>
-          </Cell>
-        { this.renderEducationLevelEntries(null) }
-        </Grid>
-      </Card>;
+      let educationLevelEntries = this.renderEducationLevelEntries(null);
+      if (educationLevelEntries) {
+        return (
+          <Card shadow={1} className="profile-form" id="education-card">
+            <Grid className="profile-form-grid">
+              <Cell col={12} className="profile-form-row profile-card-header">
+                <span className="title">
+                  Education
+                </span>
+              </Cell>
+              { this.renderEducationLevelEntries(null) }
+            </Grid>
+          </Card>
+        );
+      }
     } else {
       return null;
     }

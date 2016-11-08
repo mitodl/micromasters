@@ -8,7 +8,10 @@ import IconButton from 'react-mdl/lib/IconButton';
 import _ from 'lodash';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 
-import { userPrivilegeCheck } from '../util/util';
+import {
+  userPrivilegeCheck,
+  profileOfLoggedinUser
+} from '../util/util';
 import { workEntriesByDate } from '../util/sorting';
 import { employmentValidation } from '../lib/validation/profile';
 import ProfileFormFields from '../util/ProfileFormFields';
@@ -157,8 +160,12 @@ class EmploymentForm extends ProfileFormFields {
     );
   }
 
-  renderWorkHistory(): Array<React$Element<*>|void>|void {
+  renderWorkHistory(): Array<React$Element<*>|void>|void|null {
     const { ui, profile, profile: { work_history } } = this.props;
+    if (!profileOfLoggedinUser(profile) && (!profile.work_history || profile.work_history.length === 0)) {
+      return null;
+    }
+
     if ( ui.workHistoryEdit === true ) {
       let workHistoryRows = [];
       if ( !_.isUndefined(work_history) ) {
@@ -293,6 +300,12 @@ class EmploymentForm extends ProfileFormFields {
       ui: { workHistoryEdit }
     } = this.props;
     let cardClass = workHistoryEdit ? '' : 'profile-tab-card-greyed';
+    let cardBody = this.renderCardBody();
+
+    if (!cardBody) {
+      return null;
+    }
+
     return <Card shadow={1} className={`profile-form ${cardClass}`} id={`work-history-card`}>
       <Grid className="profile-form-grid">
         { this.renderCardBody() }
