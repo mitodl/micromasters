@@ -210,6 +210,9 @@ def generate_cybersource_sa_payload(order, dashboard_url):
         'transaction_type': 'sale',
         'transaction_uuid': uuid.uuid4().hex,
         'unsigned_field_names': '',
+        'merchant_defined_data1': 'course',
+        'merchant_defined_data2': '{}'.format(course_run.title),
+        'merchant_defined_data3': '{}'.format(course_key),
     }
 
     field_names = sorted(list(payload.keys()) + ['signed_field_names'])

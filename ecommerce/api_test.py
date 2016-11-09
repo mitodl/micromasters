@@ -360,6 +360,9 @@ class CybersourceTests(ESTestCase):
             'transaction_type': 'sale',
             'transaction_uuid': transaction_uuid,
             'unsigned_field_names': '',
+            'merchant_defined_data1': 'course',
+            'merchant_defined_data2': '{}'.format(course_run.title),
+            'merchant_defined_data3': '{}'.format(course_run.edx_course_key),
         }
 
 
