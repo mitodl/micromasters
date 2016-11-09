@@ -134,6 +134,10 @@ const FinancialAidCalculator = ({
   programs,
 }: CalculatorProps) => {
   let program = programs.find(prog => prog.id === id);
+  if (!program) {
+    return null;
+  }
+
   let minPossibleCost, maxPossibleCost;
   if ( program.financial_aid_availability ) {
     minPossibleCost = formatPrice(program.financial_aid_user_info.min_possible_cost),

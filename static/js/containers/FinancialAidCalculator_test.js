@@ -1,7 +1,11 @@
+import React from 'react';
 import { assert } from 'chai';
 import _ from 'lodash';
 import TestUtils from 'react-addons-test-utils';
+import { render } from 'enzyme';
+import { Provider } from 'react-redux';
 
+import FinancialAidCalculator from '../containers/FinancialAidCalculator';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import * as api from '../lib/api';
 import { modifyTextField } from '../util/test_utils';
@@ -15,6 +19,10 @@ import {
   REQUEST_ADD_FINANCIAL_AID,
   RECEIVE_ADD_FINANCIAL_AID_SUCCESS,
 } from '../actions/financial_aid';
+import {
+  receiveGetProgramEnrollmentsSuccess,
+  setCurrentProgramEnrollment,
+} from '../actions/programs';
 import {
   SET_CALCULATOR_DIALOG_VISIBILITY,
   SET_CONFIRM_SKIP_DIALOG_VISIBILITY,
@@ -174,6 +182,27 @@ describe('FinancialAidCalculator', () => {
         );
       });
     });
+  });
+
+  it('should show nothing if there is no program found', () => {
+    helper.store.dispatch(receiveGetProgramEnrollmentsSuccess(DASHBOARD_RESPONSE));
+    helper.store.dispatch(setCurrentProgramEnrollment({
+      id: 123456
+    }));
+
+    let wrapper = render(
+      <Provider store={helper.store}>
+        <FinancialAidCalculator
+          programs={[]}
+          currentProgramEnrollment={{
+            id: 3,
+            title: 'title'
+          }}
+        />
+      </Provider>
+    );
+
+    assert.lengthOf(wrapper.find(".financial-aid-calculator"), 0);
   });
 });
 
