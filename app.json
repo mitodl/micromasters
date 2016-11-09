@@ -75,6 +75,14 @@
       "description": "E-mail to send 500 reports to.",
       "required": false
     },
+    "MICROMASTERS_DB_CONN_MAX_AGE": {
+      "required": true,
+      "value": "0"
+    },
+    "MICROMASTERS_DB_DISABLE_SSL": {
+      "required": true,
+      "value": "true"
+    },
     "MICROMASTERS_EMAIL_HOST": {
       "description": "Outgoing e-mail settings",
       "required": false
