@@ -110,11 +110,11 @@ class FinancialAidBaseTestCase(TestCase):
                 discount_amount=0
             ),
         }
-        cls.country_income_threshold_0 = CountryIncomeThreshold.objects.create(
+        CountryIncomeThreshold.objects.create(
             country_code="0",
             income_threshold=0,
         )
-        cls.country_income_threshold_50000 = CountryIncomeThreshold.objects.create(
+        CountryIncomeThreshold.objects.create(
             country_code=cls.profile.country,
             income_threshold=50000,
         )

@@ -8,6 +8,7 @@ import ddt
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.db.models import Q
+import pytz
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.test import APIClient
@@ -33,15 +34,21 @@ from financialaid.factories import (
     TierProgramFactory
 )
 from financialaid.models import (
+    CountryIncomeThreshold,
+    CurrencyExchangeRate,
     FinancialAid,
     FinancialAidAudit,
-    CurrencyExchangeRate
 )
 from mail.utils import generate_financial_aid_email
 from mail.views_test import mocked_json
 from roles.models import Staff
 
 
+ABC_EXCHANGE_RATE = 3.5
+XYZ_EXCHANGE_RATE = 0.15
+
+
+@ddt.ddt
 class RequestAPITests(FinancialAidBaseTestCase, APIClient):
     """
     Tests for financialaid views for the request API
@@ -51,11 +58,11 @@ class RequestAPITests(FinancialAidBaseTestCase, APIClient):
         super().setUpTestData()
         cls.currency_abc = CurrencyExchangeRate.objects.create(
             currency_code="ABC",
-            exchange_rate=3.5
+            exchange_rate=ABC_EXCHANGE_RATE
         )
         cls.currency_xyz = CurrencyExchangeRate.objects.create(
             currency_code="XYZ",
-            exchange_rate=0.15
+            exchange_rate=XYZ_EXCHANGE_RATE
         )
         # This class of tests requires no FinancialAid objects already exist
         FinancialAid.objects.all().delete()
@@ -67,39 +74,61 @@ class RequestAPITests(FinancialAidBaseTestCase, APIClient):
         self.data = {
             "original_currency": "USD",
             "program_id": self.program.id,
-            "original_income": self.country_income_threshold_50000.income_threshold-1  # Not auto-approved
+            "original_income": 50000
         }
 
-    def test_income_validation_not_auto_approved(self):
+    @ddt.data(
+        # profile income threshold is 100000 but $0 discount tier is 75000
+        [74999, "USD", 100000, False],
+        [75000, "USD", 100000, True],
+        [75001, "USD", 100000, True],
+        # Test around income threshold of 50000. We only auto approve if it's strictly greater than the threshold
+        [49999, "USD", 50000, False],
+        [50000, "USD", 50000, False],
+        [50001, "USD", 50000, True],
+        # Test with an exchange rate greater than 1
+        [49999 * ABC_EXCHANGE_RATE, "ABC", 50000, False],
+        [50000 * ABC_EXCHANGE_RATE, "ABC", 50000, False],
+        [50001 * ABC_EXCHANGE_RATE, "ABC", 50000, True],
+        # Test with an exchange rate less than 1
+        [49999 * XYZ_EXCHANGE_RATE, "XYZ", 50000, False],
+        [50000 * XYZ_EXCHANGE_RATE, "XYZ", 50000, False],
+        [50001 * XYZ_EXCHANGE_RATE, "XYZ", 50000, True],
+    )
+    @ddt.unpack
+    def test_income_validation(self, original_income, original_currency, income_threshold, auto_approved):
         """
-        Tests FinancialAidRequestView post endpoint for not-auto-approval
+        Tests FinancialAidRequestView post endpoint
         """
+        CountryIncomeThreshold.objects.filter(country_code=self.profile.country).update(
+            income_threshold=income_threshold
+        )
+        data = {
+            "original_income": original_income,
+            "original_currency": original_currency,
+            "program_id": self.program.id,
+        }
         assert FinancialAid.objects.count() == 0
         assert FinancialAidAudit.objects.count() == 0
-        self.assert_http_status(self.client.post, self.request_url, status.HTTP_201_CREATED, data=self.data)
+        self.assert_http_status(self.client.post, self.request_url, status.HTTP_201_CREATED, data=data)
         assert FinancialAid.objects.count() == 1
         assert FinancialAidAudit.objects.count() == 1
         financial_aid = FinancialAid.objects.first()
-        income_usd = determine_income_usd(self.data["original_income"], self.data["original_currency"])
+        income_usd = determine_income_usd(original_income, original_currency)
         assert financial_aid.tier_program == determine_tier_program(self.program, income_usd)
-        assert financial_aid.status == FinancialAidStatus.PENDING_DOCS
-        assert financial_aid.income_usd == self.data["original_income"]
-
-    def test_income_validation_auto_approved(self):
-        """
-        Tests FinancialAidRequestView post endpoint for auto-approval
-        """
-        assert FinancialAid.objects.count() == 0
-        assert FinancialAidAudit.objects.count() == 0
-        self.data["original_income"] = self.country_income_threshold_50000.income_threshold+1
-        self.assert_http_status(self.client.post, self.request_url, status.HTTP_201_CREATED, data=self.data)
-        assert FinancialAid.objects.count() == 1
-        assert FinancialAidAudit.objects.count() == 1
-        financial_aid = FinancialAid.objects.first()
-        income_usd = determine_income_usd(self.data["original_income"], self.data["original_currency"])
-        assert financial_aid.tier_program == determine_tier_program(self.program, income_usd)
-        assert financial_aid.status == FinancialAidStatus.AUTO_APPROVED
-        assert financial_aid.income_usd == self.data["original_income"]
+        if not auto_approved:
+            assert financial_aid.status == FinancialAidStatus.PENDING_DOCS
+        else:
+            assert financial_aid.status == FinancialAidStatus.AUTO_APPROVED
+        self.assertAlmostEqual(financial_aid.income_usd, income_usd)
+        assert financial_aid.user == self.profile.user
+        self.assertAlmostEqual(financial_aid.original_income, original_income)
+        assert financial_aid.original_currency == original_currency
+        assert financial_aid.country_of_income == self.profile.country
+        assert financial_aid.country_of_residence == self.profile.country
+        now = datetime.datetime.now(tz=pytz.UTC)
+        five_seconds = datetime.timedelta(0, 5)
+        assert now - five_seconds < financial_aid.date_exchange_rate < now + five_seconds
 
     def test_income_validation_missing_args(self):
         """
@@ -123,40 +152,6 @@ class RequestAPITests(FinancialAidBaseTestCase, APIClient):
         """
         ProgramEnrollment.objects.all().delete()
         self.assert_http_status(self.client.post, self.request_url, status.HTTP_400_BAD_REQUEST, data=self.data)
-
-    def test_income_validation_currency_not_usd_gto(self):
-        """
-        Tests FinancialAidRequestView post with a currency that is not USD with exchange rate greater than 1
-        """
-        self.data["original_currency"] = self.currency_abc.currency_code
-        assert FinancialAid.objects.count() == 0
-        resp = self.client.post(self.request_url, self.data, format="json")
-        assert resp.status_code == status.HTTP_201_CREATED
-        assert FinancialAid.objects.count() == 1
-        financial_aid = FinancialAid.objects.first()
-        income_usd = determine_income_usd(self.data["original_income"], self.data["original_currency"])
-        assert financial_aid.tier_program == determine_tier_program(self.program, income_usd)
-        self.assertAlmostEqual(
-            financial_aid.income_usd,
-            self.data["original_income"] / self.currency_abc.exchange_rate
-        )
-
-    def test_income_validation_currency_not_usd_lto(self):
-        """
-        Tests FinancialAidRequestView post with a currency that is not USD with exchange rate less than 1
-        """
-        assert FinancialAid.objects.count() == 0
-        self.data["original_currency"] = self.currency_xyz.currency_code
-        resp = self.client.post(self.request_url, self.data, format="json")
-        assert resp.status_code == status.HTTP_201_CREATED
-        assert FinancialAid.objects.count() == 1
-        financial_aid = FinancialAid.objects.first()
-        income_usd = determine_income_usd(self.data["original_income"], self.data["original_currency"])
-        assert financial_aid.tier_program == determine_tier_program(self.program, income_usd)
-        self.assertAlmostEqual(
-            financial_aid.income_usd,
-            self.data["original_income"] / self.currency_xyz.exchange_rate
-        )
 
     def test_income_validation_currency_not_supported(self):
         """
