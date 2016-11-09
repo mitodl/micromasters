@@ -12,7 +12,7 @@ import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 import { educationValidation } from '../lib/validation/profile';
 import {
   userPrivilegeCheck,
-  profileOfLoggedinUser
+  isProfileOfLoggedinUser
 } from '../util/util';
 import ProfileFormFields from '../util/ProfileFormFields';
 import ConfirmDeletion from './ConfirmDeletion';
@@ -131,7 +131,7 @@ class EducationForm extends ProfileFormFields {
 
   renderEducationLevelEntries(level: any): Array<React$Element<*>|void>|void|null {
     const { profile } = this.props;
-    if (!profileOfLoggedinUser(profile) && (!profile.education || profile.education.length === 0)) {
+    if (!isProfileOfLoggedinUser(profile) && (!profile.education || profile.education.length === 0)) {
       return null;
     }
 
@@ -169,7 +169,7 @@ class EducationForm extends ProfileFormFields {
     ];
   }
 
-  renderEducationLevel(level: Option): Array<React$Element<*>|void>|React$Element<*>|void {
+  renderEducationLevel(level: Option): Array<React$Element<*>|void>|React$Element<*>|void|null {
     if (this.hasEducationAtLevel(level.value)) {
       return this.renderEducationLevelEntries(level);
     } else {

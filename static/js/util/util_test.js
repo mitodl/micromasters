@@ -24,6 +24,7 @@ import {
   formatPrice,
   programCourseInfo,
   findCourseRun,
+  isProfileOfLoggedinUser
 } from '../util/util';
 import {
   EDUCATION_LEVELS,
@@ -221,6 +222,34 @@ describe('utility functions', () => {
     });
   });
 
+  describe('Profile of logged in user check', () => {
+    let settingsBackup;
+
+    beforeEach(() => {
+      settingsBackup = SETTINGS;
+    });
+
+    afterEach(() => {
+      SETTINGS = settingsBackup;
+    });
+
+    it('when user is not logged in', () => {
+      SETTINGS = Object.assign({}, SETTINGS, {user: null});
+      let profile = { username: "another_user" };
+      assert.isNotTrue(isProfileOfLoggedinUser(profile));
+    });
+
+    it("when other user's profile", () => {
+      let profile = { username: "another_user" };
+      assert.isNotTrue(isProfileOfLoggedinUser(profile));
+    });
+
+    it("when loggedin user's profile", () => {
+      let profile = { username: SETTINGS.user.username };
+      assert.isTrue(isProfileOfLoggedinUser(profile));
+    });
+  });
+
   describe('User privilege check', () => {
     let settingsBackup;
 
@@ -258,7 +287,7 @@ describe('utility functions', () => {
       assert.equal(userPrivilegeCheck(profile, privilegedCallback, unprivilegedString), "emacs");
     });
 
-    it('should return the value of the second function if user is not login', () => {
+    it('should return the value of the second function if user is not logged in', () => {
       SETTINGS = Object.assign({}, SETTINGS, {user: null});
       let profile = { username: "another_user" };
       let privilegedCallback = () => "vim";

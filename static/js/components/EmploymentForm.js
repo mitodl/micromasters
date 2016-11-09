@@ -10,7 +10,7 @@ import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 
 import {
   userPrivilegeCheck,
-  profileOfLoggedinUser
+  isProfileOfLoggedinUser
 } from '../util/util';
 import { workEntriesByDate } from '../util/sorting';
 import { employmentValidation } from '../lib/validation/profile';
@@ -162,7 +162,7 @@ class EmploymentForm extends ProfileFormFields {
 
   renderWorkHistory(): Array<React$Element<*>|void>|void|null {
     const { ui, profile, profile: { work_history } } = this.props;
-    if (!profileOfLoggedinUser(profile) && (!profile.work_history || profile.work_history.length === 0)) {
+    if (!isProfileOfLoggedinUser(profile) && (!profile.work_history || profile.work_history.length === 0)) {
       return null;
     }
 
