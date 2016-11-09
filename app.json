@@ -123,10 +123,10 @@
       "value": "https://openexchangerates.org/api/"
     },
     "PGBOUNCER_DEFAULT_POOL_SIZE": {
-      "value": 50
+      "value": "50"
     },
     "PGBOUNCER_MIN_POOL_SIZE": {
-      "value": 5
+      "value": "5"
     },
     "SECRET_KEY": {
       "description": "Django secret key.",
