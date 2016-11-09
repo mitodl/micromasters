@@ -129,12 +129,8 @@ class EducationForm extends ProfileFormFields {
     </Cell>;
   }
 
-  renderEducationLevelEntries(level: any): Array<React$Element<*>|void>|void|null {
+  renderEducationLevelEntries(level: any): Array<React$Element<*>|void>|void {
     const { profile } = this.props;
-    if (!isProfileOfLoggedinUser(profile) && (!profile.education || profile.education.length === 0)) {
-      return null;
-    }
-
     let levelValue = HIGH_SCHOOL;
     let filterDegreeName = () => true;
     let title;
@@ -169,7 +165,7 @@ class EducationForm extends ProfileFormFields {
     ];
   }
 
-  renderEducationLevel(level: Option): Array<React$Element<*>|void>|React$Element<*>|void|null {
+  renderEducationLevel(level: Option): Array<React$Element<*>|void>|React$Element<*>|void {
     if (this.hasEducationAtLevel(level.value)) {
       return this.renderEducationLevelEntries(level);
     } else {
@@ -341,21 +337,20 @@ class EducationForm extends ProfileFormFields {
         </Card>;
       });
     } else if (profile !== undefined) {
-      let educationLevelEntries = this.renderEducationLevelEntries(null);
-      if (educationLevelEntries) {
-        return (
-          <Card shadow={1} className="profile-form" id="education-card">
-            <Grid className="profile-form-grid">
-              <Cell col={12} className="profile-form-row profile-card-header">
-                <span className="title">
-                  Education
-                </span>
-              </Cell>
-              { this.renderEducationLevelEntries(null) }
-            </Grid>
-          </Card>
-        );
+      if (!isProfileOfLoggedinUser(profile) && (!profile.education || profile.education.length === 0)) {
+        return null;
       }
+
+      return <Card shadow={1} className="profile-form" id="education-card">
+        <Grid className="profile-form-grid">
+          <Cell col={12} className="profile-form-row profile-card-header">
+            <span className="title">
+              Education
+            </span>
+          </Cell>
+        { this.renderEducationLevelEntries(null) }
+        </Grid>
+      </Card>;
     } else {
       return null;
     }

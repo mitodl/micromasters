@@ -160,12 +160,8 @@ class EmploymentForm extends ProfileFormFields {
     );
   }
 
-  renderWorkHistory(): Array<React$Element<*>|void>|void|null {
+  renderWorkHistory(): Array<React$Element<*>|void>|void {
     const { ui, profile, profile: { work_history } } = this.props;
-    if (!isProfileOfLoggedinUser(profile) && (!profile.work_history || profile.work_history.length === 0)) {
-      return null;
-    }
-
     if ( ui.workHistoryEdit === true ) {
       let workHistoryRows = [];
       if ( !_.isUndefined(work_history) ) {
@@ -297,15 +293,15 @@ class EmploymentForm extends ProfileFormFields {
 
   renderCard () {
     const {
-      ui: { workHistoryEdit }
+      ui: { workHistoryEdit },
+      profile
     } = this.props;
-    let cardClass = workHistoryEdit ? '' : 'profile-tab-card-greyed';
-    let cardBody = this.renderCardBody();
 
-    if (!cardBody) {
+    if (!isProfileOfLoggedinUser(profile) && (!profile.work_history || profile.work_history.length === 0)) {
       return null;
     }
 
+    let cardClass = workHistoryEdit ? '' : 'profile-tab-card-greyed';
     return <Card shadow={1} className={`profile-form ${cardClass}`} id={`work-history-card`}>
       <Grid className="profile-form-grid">
         { this.renderCardBody() }
