@@ -1,4 +1,5 @@
 // @flow
+/* global SETTINGS: false */
 import React from 'react';
 import {
   SearchkitComponent,
@@ -219,7 +220,7 @@ export default class LearnerSearch extends SearchkitComponent {
                 { this.renderSearchHeader(openEmailComposer) }
                 <Hits
                   className="learner-results"
-                  hitsPerPage={50}
+                  hitsPerPage={SETTINGS.es_page_size}
                   itemComponent={LearnerResult} />
                 <CustomNoHits />
               </Card>
