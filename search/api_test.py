@@ -95,6 +95,15 @@ class SearchAPITests(TestCase):  # pylint: disable=missing-docstring
         assert len(search_query_dict['query']['bool']['filter']) == 1
         assert search_query_dict['query']['bool']['filter'][0] == expected_program_query.to_dict()
 
+    def test_size_param_in_query(self):
+        """
+        Assert value of size attribute of search object is set to default settings.
+        """
+        search_obj = create_search_obj(self.user, {})
+        search_query_dict = search_obj.to_dict()
+        assert 'size' in search_query_dict
+        assert search_query_dict['size'] == settings.DEFAULT_ES_PAGE_SIZE
+
     def test_create_search_obj_metadata(self):  # pylint: disable=no-self-use
         """
         Test that Search objects are created with proper metadata
