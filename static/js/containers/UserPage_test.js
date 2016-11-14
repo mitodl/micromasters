@@ -241,7 +241,7 @@ describe("UserPage", function() {
       });
 
       describe('date field', () => {
-        const dobMonth = dialog => inputs(dialog).find(i => i.id.includes('Dateofbirth'));
+        const dobMonth = dialog => inputs(dialog).find(i => i.id.includes('MM-Month'));
         it('should clearValidation when filling out a required date field', () => {
           return clearValidation(
             userProfileActions.concat([

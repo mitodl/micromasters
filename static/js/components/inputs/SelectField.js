@@ -28,6 +28,19 @@ class SelectField extends React.Component {
     validator:                  Validator|UIValidator,
   };
 
+  state: {
+    id: string,
+  };
+
+  componentWillMount: Function = (): void => {
+    const { label } = this.props;
+    let id = this.props.id;
+    if (!id) {
+      id = _.uniqueId(classify(label));
+    }
+    this.setState({id: id});
+  }
+
   onChange: Function = (selection: Option): void => {
     const {
       profile,
@@ -54,12 +67,6 @@ class SelectField extends React.Component {
     updateProfile(profile, validator);
   };
 
-  label: Function = (label: string): React$Element<*> => (
-    <div className="select-label">
-      { label }
-    </div>
-  );
-
   className = (): string => {
     const { className, label } = this.props;
     return `select-field ${classify(className)} ${classify(label)}`;
@@ -70,19 +77,27 @@ class SelectField extends React.Component {
     return `${validationErrorSelector(errors, keySet)} ${topMenu ? 'menu-outer-top' : ''}`;
   };
 
-
   render() {
-    const { errors, keySet, id, profile, label } = this.props;
+    const { errors, keySet, profile, label } = this.props;
+    const { id } = this.state;
+    const select = (
+      <VirtualizedSelect
+        value={_.get(profile, keySet, "")}
+        className={this.selectClassName()}
+        onChange={this.onChange}
+        onBlur={this.onBlur}
+        {...this.props}
+      />
+    );
+    let labelledSelect;
+    if (label) {
+      labelledSelect = <label>{label}{select}</label>;
+    } else {
+      labelledSelect = select;
+    }
     return (
-      <div className={this.className()} id={id ? id : ""}>
-        { label ? this.label(label) : null }
-        <VirtualizedSelect
-          value={_.get(profile, keySet, "")}
-          className={this.selectClassName()}
-          onChange={this.onChange}
-          onBlur={this.onBlur}
-          {...this.props}
-        />
+      <div className={this.className()} id={id}>
+        { labelledSelect }
         <span className="validation-error-text">
           {_.get(errors, keySet)}
         </span>

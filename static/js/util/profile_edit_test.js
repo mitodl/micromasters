@@ -48,11 +48,11 @@ describe('Profile Editing utility functions', () => {
   describe('Bound radio group', () => {
     let radioGroup, labelSpan, errorSpan;
     let privacyOptions = [
-      { value: 'public', label: 'Public to the world', helper: `We will publish your Micromasters 
+      { value: 'public', label: 'Public to the world', helper: `We will publish your Micromasters
         profile on our website.` },
-      { value: 'public_to_mm', label: 'Public to other micromasters students', helper: `Your Micromasters profile 
+      { value: 'public_to_mm', label: 'Public to other micromasters students', helper: `Your Micromasters profile
         will only be viewable by other learners in your program, and by MIT faculity and staff.` },
-      { value: 'private', label: 'Private', helper: `Your Micromasters profile will be viewable only by 
+      { value: 'private', label: 'Private', helper: `Your Micromasters profile will be viewable only by
         MIT faculty and staff.` }
     ];
 
@@ -145,10 +145,11 @@ describe('Profile Editing utility functions', () => {
     });
 
     let rerender = omitDay => {
+      let legend, space;  // eslint-disable-line no-unused-vars
       if (omitDay) {
-        [monthTextField, , yearTextField] = renderDateField(true);
+        [legend, space, monthTextField, , yearTextField] = renderDateField(true);
       } else {
-        [monthTextField, , dayTextField, , yearTextField] = renderDateField(false);
+        [legend, space, monthTextField, , dayTextField, , yearTextField] = renderDateField(false);
       }
     };
 
@@ -162,14 +163,14 @@ describe('Profile Editing utility functions', () => {
         that.props.profile.date_of_birth = dateOfBirth;
         rerender(false);
 
-        assert.equal(monthTextField.props.floatingLabelText, "Date of birth");
+        assert.equal(monthTextField.props.floatingLabelText, "Month");
         assert.equal(monthTextField.props.hintText, "MM");
         assert.equal(monthTextField.props.value, "");
         assert.equal(monthTextField.props.errorText, "Date of birth is required");
-        assert.equal(dayTextField.props.floatingLabelText, " ");
+        assert.equal(dayTextField.props.floatingLabelText, "Day");
         assert.equal(dayTextField.props.hintText, "DD");
         assert.equal(dayTextField.props.value, "");
-        assert.equal(yearTextField.props.floatingLabelText, " ");
+        assert.equal(yearTextField.props.floatingLabelText, "Year");
         assert.equal(yearTextField.props.hintText, "YYYY");
         assert.equal(yearTextField.props.value, "");
       }
@@ -179,14 +180,14 @@ describe('Profile Editing utility functions', () => {
       that.props.profile.date_of_birth = "1985-12-31";
       rerender(false);
 
-      assert.equal(monthTextField.props.floatingLabelText, "Date of birth");
+      assert.equal(monthTextField.props.floatingLabelText, "Month");
       assert.equal(monthTextField.props.hintText, "MM");
       assert.equal(monthTextField.props.value, 12);
       assert.equal(monthTextField.props.errorText, "Date of birth is required");
-      assert.equal(dayTextField.props.floatingLabelText, " ");
+      assert.equal(dayTextField.props.floatingLabelText, "Day");
       assert.equal(dayTextField.props.hintText, "DD");
       assert.equal(dayTextField.props.value, 31);
-      assert.equal(yearTextField.props.floatingLabelText, " ");
+      assert.equal(yearTextField.props.floatingLabelText, "Year");
       assert.equal(yearTextField.props.hintText, "YYYY");
       assert.equal(yearTextField.props.value, 1985);
     });
@@ -195,11 +196,11 @@ describe('Profile Editing utility functions', () => {
       that.props.profile.date_of_birth = "1985-12-31";
       rerender(true);
 
-      assert.equal(monthTextField.props.floatingLabelText, "Date of birth");
+      assert.equal(monthTextField.props.floatingLabelText, "Month");
       assert.equal(monthTextField.props.hintText, "MM");
       assert.equal(monthTextField.props.value, 12);
       assert.equal(monthTextField.props.errorText, "Date of birth is required");
-      assert.equal(yearTextField.props.floatingLabelText, " ");
+      assert.equal(yearTextField.props.floatingLabelText, "Year");
       assert.equal(yearTextField.props.hintText, "YYYY");
       assert.equal(yearTextField.props.value, 1985);
     });

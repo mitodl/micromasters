@@ -144,10 +144,10 @@ export default class DateField extends React.Component {
       daySlash = <span className="slash"> / </span>;
       dayField = <TextField
         hintText="DD"
-        floatingLabelText=" "
+        floatingLabelText="Day"
         floatingLabelFixed={true}
         style={{
-          maxWidth: "2em"
+          maxWidth: "3em"
         }}
         fullWidth={true}
         value={edit.day !== undefined ? edit.day : ""}
@@ -155,40 +155,44 @@ export default class DateField extends React.Component {
       />;
     }
 
-    return <div className={validationErrorSelector(errors, keySet)}>
-      <TextField
-        floatingLabelText={label}
-        floatingLabelFixed={true}
-        floatingLabelStyle={{whiteSpace: "nowrap"}}
-        hintText="MM"
-        style={{
-          maxWidth: "2em"
-        }}
-        errorStyle={{
-          position: "absolute",
-          top: "100%",
-          whiteSpace: "nowrap"
-        }}
-        fullWidth={true}
-        value={edit.month !== undefined ? edit.month : ""}
-        onChange={e => setNewDate(undefined, e.target.value, undefined)}
-        errorText={_.get(errors, keySet)}
-      />
-      <span className="slash"> / </span>
-      {dayField}
-      {daySlash}
-      <TextField
-        hintText="YYYY"
-        floatingLabelFixed={true}
-        floatingLabelText=" "
-        style={{
-          maxWidth: "4em"
-        }}
-        fullWidth={true}
-        value={edit.year !== undefined ? edit.year : ""}
-        onChange={e => setNewDate(undefined, undefined, e.target.value)}
-        onBlur={onBlur}
-      />
-    </div>;
+    return (
+      <fieldset className={validationErrorSelector(errors, keySet)}>
+        <legend>{label}</legend>
+        {" "}
+        <TextField
+          hintText="MM"
+          floatingLabelText="Month"
+          floatingLabelFixed={true}
+          floatingLabelStyle={{whiteSpace: "nowrap"}}
+          style={{
+            maxWidth: "3em"
+          }}
+          errorStyle={{
+            position: "absolute",
+            top: "100%",
+            whiteSpace: "nowrap"
+          }}
+          fullWidth={true}
+          value={edit.month !== undefined ? edit.month : ""}
+          onChange={e => setNewDate(undefined, e.target.value, undefined)}
+          errorText={_.get(errors, keySet)}
+        />
+        <span className="slash"> / </span>
+        {dayField}
+        {daySlash}
+        <TextField
+          hintText="YYYY"
+          floatingLabelText="Year"
+          floatingLabelFixed={true}
+          style={{
+            maxWidth: "4em"
+          }}
+          fullWidth={true}
+          value={edit.year !== undefined ? edit.year : ""}
+          onChange={e => setNewDate(undefined, undefined, e.target.value)}
+          onBlur={onBlur}
+        />
+      </fieldset>
+    );
   }
 }

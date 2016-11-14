@@ -85,9 +85,11 @@ export default class PersonalTab extends React.Component {
     return (
       <div>
         <Card shadow={1} className="program-select">
-          <div className="section-header">Which MicroMasters program are you signing up for?</div>
-          <br/>
-          { this.selectProgram() }
+          <h2>Program Selection</h2>
+          <label>
+            Which MicroMasters program are you signing up for?
+            { this.selectProgram() }
+          </label>
           <span className="validation-error-text">
             {_.get(errors, ['program'])}
           </span>

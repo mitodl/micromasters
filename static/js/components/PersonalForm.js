@@ -44,86 +44,89 @@ export default class PersonalForm extends ProfileFormFields {
       'to learners with specific backgrounds.';
 
     return (
-      <Grid className="profile-form-grid">
-        <Cell col={6}>
-          {this.boundTextField(["first_name"], "Given name")}
-        </Cell>
-        <Cell col={6}>
-          {this.boundTextField(["last_name"], "Family name")}
-        </Cell>
-        <Cell col={12}>
-          {this.boundTextField(["preferred_name"], "Nickname / Preferred name")}
-        </Cell>
-        <Cell col={12}>
-          {this.boundDateField(['date_of_birth'], 'Date of birth')}
-        </Cell>
-        <Cell col={12} className="profile-gender-group">
-          {this.boundRadioGroupField(['gender'], 'Gender', this.genderOptions)}
-        </Cell>
-        <Cell col={12}>
-          <SelectField
-            keySet={['preferred_language']}
-            label='Preferred language'
-            options={this.languageOptions}
-            {...this.defaultInputComponentProps()}
-          />
-        </Cell>
-        <Cell col={12}>
-          <div className="section-header">
-            Where are you currently living?
-          </div>
-        </Cell>
-        <Cell col={4}>
-          <CountrySelectField
-            stateKeySet={['state_or_territory']}
-            countryKeySet={['country']}
-            topMenu={true}
-            label='Country'
-            {...this.defaultInputComponentProps()}
-          />
-        </Cell>
-        <Cell col={4}>
-          <StateSelectField
-            stateKeySet={['state_or_territory']}
-            countryKeySet={['country']}
-            topMenu={true}
-            label='State or Territory'
-            {...this.defaultInputComponentProps()}
-          />
-        </Cell>
-        <Cell col={4}>
-          {this.boundTextField(['city'], 'City')}
-        </Cell>
-        <Cell col={12}>
-          <div className="section-header">
-            Where are you from? <span
-              className="tooltip-link"
-              data-tip
-              data-for='why-we-ask-this'
-              style={{"display": "inline-block"}}
-            >(Why we ask this)</span>
-            <ReactTooltip id="why-we-ask-this" effect="solid" event="click" globalEventOff="click">
-              {whyWeAskThis}
-            </ReactTooltip>
-          </div>
-        </Cell>
-        <Cell col={4}>
-          <CountrySelectField
-            countryKeySet={['birth_country']}
-            label='Country of birth'
-            topMenu={true}
-            {...this.defaultInputComponentProps()}
-          />
-        </Cell>
-        <Cell col={4}>
-          <CountrySelectField
-            countryKeySet={['nationality']}
-            label='Nationality'
-            topMenu={true}
-            {...this.defaultInputComponentProps()}
-          />
-        </Cell>
-      </Grid>
+      <section>
+        <h2 className="sr-only">Personal Information</h2>
+        <Grid className="profile-form-grid">
+          <Cell col={6}>
+            {this.boundTextField(["first_name"], "Given name")}
+          </Cell>
+          <Cell col={6}>
+            {this.boundTextField(["last_name"], "Family name")}
+          </Cell>
+          <Cell col={12}>
+            {this.boundTextField(["preferred_name"], "Nickname / Preferred name")}
+          </Cell>
+          <Cell col={12}>
+            {this.boundDateField(['date_of_birth'], 'Date of birth')}
+          </Cell>
+          <Cell col={12} className="profile-gender-group">
+            {this.boundRadioGroupField(['gender'], 'Gender', this.genderOptions)}
+          </Cell>
+          <Cell col={12}>
+            <SelectField
+              keySet={['preferred_language']}
+              label='Preferred language'
+              options={this.languageOptions}
+              {...this.defaultInputComponentProps()}
+            />
+          </Cell>
+        </Grid>
+        <section>
+          <h3>Where are you currently living?</h3>
+          <Grid className="profile-form-grid">
+            <Cell col={4}>
+              <CountrySelectField
+                stateKeySet={['state_or_territory']}
+                countryKeySet={['country']}
+                topMenu={true}
+                label='Country'
+                {...this.defaultInputComponentProps()}
+              />
+            </Cell>
+            <Cell col={4}>
+              <StateSelectField
+                stateKeySet={['state_or_territory']}
+                countryKeySet={['country']}
+                topMenu={true}
+                label='State or Territory'
+                {...this.defaultInputComponentProps()}
+              />
+            </Cell>
+            <Cell col={4}>
+              {this.boundTextField(['city'], 'City')}
+            </Cell>
+          </Grid>
+        </section>
+        <section>
+          <h3>Where are you from?</h3>
+          <span className="tooltip-link"
+            data-tip
+            data-for='why-we-ask-this'
+            style={{"display": "inline-block"}}
+          >(Why we ask this)</span>
+          <ReactTooltip id="why-we-ask-this" effect="solid" event="click" globalEventOff="click">
+            {whyWeAskThis}
+          </ReactTooltip>
+          <Grid className="profile-form-grid">
+            <Cell col={4}>
+              <CountrySelectField
+                countryKeySet={['birth_country']}
+                label='Country of birth'
+                topMenu={true}
+                {...this.defaultInputComponentProps()}
+              />
+            </Cell>
+            <Cell col={4}>
+              <CountrySelectField
+                countryKeySet={['nationality']}
+                label='Nationality'
+                topMenu={true}
+                {...this.defaultInputComponentProps()}
+              />
+            </Cell>
+          </Grid>
+        </section>
+      </section>
     );
   }
 }

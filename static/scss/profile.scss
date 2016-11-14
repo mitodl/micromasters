@@ -181,26 +181,6 @@
   margin-top: 0;
 }
 
-// for the Why we ask this tooltip
-// TODO: where should this go?
-[data-id='tooltip'] {
-  max-width: 450px;
-  font-size: 14px;
-}
-
-.tooltip-link {
-  color: $link-text;
-  cursor: pointer;
-}
-
-.profile-form.collapsed {
-  height: 100px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 20px 24px 20px;
-}
-
 .program-select {
   z-index: 2;
   overflow: visible;

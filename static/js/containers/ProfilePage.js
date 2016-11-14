@@ -87,7 +87,7 @@ class ProfilePage extends ProfileFormContainer {
           <div className="profile-pagination">
             {makeProfileProgressDisplay(this.currentStep())}
           </div>
-          <section>
+          <section className="profile-form">
             {this.currentComponent(props)}
           </section>
         </div>;
