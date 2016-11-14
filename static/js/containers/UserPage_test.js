@@ -20,6 +20,10 @@ import {
   updateProfile,
 } from '../actions/profile';
 import {
+  REQUEST_GET_PROGRAM_ENROLLMENTS,
+  RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
+} from '../actions/programs';
+import {
   SET_WORK_DIALOG_VISIBILITY,
   SET_WORK_DIALOG_INDEX,
   SET_EDUCATION_DEGREE_LEVEL,
@@ -50,7 +54,14 @@ describe("UserPage", function() {
   this.timeout(10000);
 
   let listenForActions, renderComponent, helper, patchUserProfileStub;
-  let userActions = [RECEIVE_GET_USER_PROFILE_SUCCESS, REQUEST_GET_USER_PROFILE];
+  let userActions = [
+    REQUEST_GET_PROGRAM_ENROLLMENTS,
+    RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
+    REQUEST_GET_USER_PROFILE,
+    RECEIVE_GET_USER_PROFILE_SUCCESS,
+    REQUEST_GET_USER_PROFILE,
+    RECEIVE_GET_USER_PROFILE_SUCCESS,
+  ];
 
   const confirmResumeOrder = (
     editButton,

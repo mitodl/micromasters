@@ -5,6 +5,14 @@ import { assert } from 'chai';
 import _ from 'lodash';
 
 import {
+  REQUEST_GET_USER_PROFILE,
+  RECEIVE_GET_USER_PROFILE_SUCCESS,
+} from '../actions/profile';
+import {
+  REQUEST_GET_PROGRAM_ENROLLMENTS,
+  RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
+} from '../actions/programs';
+import {
   START_PROFILE_EDIT,
   UPDATE_PROFILE_VALIDATION,
   REQUEST_PATCH_USER_PROFILE,
@@ -22,7 +30,13 @@ describe("SettingsPage", function() {
   this.timeout(5000);
   let nextButtonSelector = '.next';
   let listenForActions, renderComponent, helper, patchUserProfileStub;
-  let userActions = [START_PROFILE_EDIT];
+  let userActions = [
+    REQUEST_GET_PROGRAM_ENROLLMENTS,
+    RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
+    REQUEST_GET_USER_PROFILE,
+    RECEIVE_GET_USER_PROFILE_SUCCESS,
+    START_PROFILE_EDIT,
+  ];
 
   beforeEach(() => {
     helper = new IntegrationTestHelper();

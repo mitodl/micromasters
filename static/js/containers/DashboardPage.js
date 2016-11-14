@@ -12,6 +12,9 @@ import {
   checkout,
   updateCourseStatus,
   fetchDashboard,
+  clearDashboard,
+  fetchCoursePrices,
+  clearCoursePrices,
 } from '../actions';
 import {
   TOAST_SUCCESS,
@@ -77,11 +80,17 @@ class DashboardPage extends React.Component {
   };
 
   componentDidMount() {
-    this.handleOrderStatus();
+    this.updateRequirements();
   }
 
   componentDidUpdate() {
-    this.handleOrderStatus();
+    this.updateRequirements();
+  }
+
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch(clearDashboard());
+    dispatch(clearCoursePrices());
   }
 
   handleOrderSuccess = (course: Course): void => {
@@ -125,6 +134,26 @@ class DashboardPage extends React.Component {
       dispatch(setTimeoutActive(true));
     }
   };
+
+  updateRequirements = () => {
+    this.fetchDashboard();
+    this.fetchCoursePrices();
+    this.handleOrderStatus();
+  };
+
+  fetchDashboard() {
+    const { dashboard, dispatch } = this.props;
+    if (dashboard.fetchStatus === undefined) {
+      dispatch(fetchDashboard());
+    }
+  }
+
+  fetchCoursePrices() {
+    const { prices, dispatch } = this.props;
+    if (prices.fetchStatus === undefined) {
+      dispatch(fetchCoursePrices());
+    }
+  }
 
   handleOrderStatus = () => {
     const { dashboard, location: { query } } = this.props;

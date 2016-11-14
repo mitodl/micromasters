@@ -13,12 +13,6 @@ import {
   USER_PROFILE_RESPONSE,
 } from '../constants';
 import {
-  REQUEST_DASHBOARD,
-  RECEIVE_DASHBOARD_SUCCESS,
-  REQUEST_COURSE_PRICES,
-  RECEIVE_COURSE_PRICES_SUCCESS,
-} from '../actions';
-import {
   REQUEST_GET_USER_PROFILE,
   RECEIVE_GET_USER_PROFILE_SUCCESS,
 } from '../actions/profile';
@@ -30,8 +24,17 @@ import rootReducer from '../reducers';
 import { makeDashboardRoutes } from '../dashboard_routes';
 import { localStorageMock } from '../util/test_utils';
 import { configureMainTestStore } from '../store/configureStore';
+import type { Action } from '../flow/reduxTypes';
+import type { TestStore } from '../flow/reduxTypes';
+import type { Sandbox } from '../flow/sinonTypes';
 
-class IntegrationTestHelper {
+export default class IntegrationTestHelper {
+  listenForActions: (a: Array<string>, f: Function) => Promise<*>;
+  dispatchThen: (a: Action) => Promise<*>;
+  sandbox: Sandbox;
+  store: TestStore;
+  browserHistory: History;
+
   constructor() {
     if ( ! window.localStorage ) {
       window.localStorage = localStorageMock();
@@ -71,25 +74,25 @@ class IntegrationTestHelper {
     window.localStorage.reset();
   }
 
-  renderComponent(url = "/", extraTypesToAssert = [], isSuccessExpected = true) {
-    let expectedTypes = [
-      REQUEST_DASHBOARD,
-      REQUEST_COURSE_PRICES,
-      REQUEST_GET_USER_PROFILE,
-      REQUEST_GET_PROGRAM_ENROLLMENTS,
-    ];
-    let expectedSuccessTypes = [
-      RECEIVE_DASHBOARD_SUCCESS,
-      RECEIVE_GET_USER_PROFILE_SUCCESS,
-      RECEIVE_COURSE_PRICES_SUCCESS,
-      RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
-    ];
-
-    // if the success is expected  update the list with the success types
-    if (isSuccessExpected) {
-      expectedTypes.push(...expectedSuccessTypes);
+  /**
+   * Renders the components using the given URL.
+   * @param url {String} The react-router URL
+   * @param typesToAssert {Array<String>|null} A list of redux actions to listen for.
+   * If null, actions types for the success case is assumed.
+   * @returns {Promise<*>} A promise which provides [wrapper, div] on success
+   */
+  renderComponent(url: string = "/", typesToAssert: Array<string>|null = null): Promise<*> {
+    let expectedTypes = [];
+    if (typesToAssert === null) {
+      expectedTypes = [
+        REQUEST_GET_USER_PROFILE,
+        REQUEST_GET_PROGRAM_ENROLLMENTS,
+        RECEIVE_GET_USER_PROFILE_SUCCESS,
+        RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
+      ];
+    } else {
+      expectedTypes = typesToAssert;
     }
-    expectedTypes.push(...extraTypesToAssert);
 
     let wrapper, div;
 
@@ -109,5 +112,3 @@ class IntegrationTestHelper {
     });
   }
 }
-
-export default IntegrationTestHelper;

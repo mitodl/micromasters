@@ -7,12 +7,13 @@ import _ from 'lodash';
 
 import Navbar from '../components/Navbar';
 import {
-  CLEAR_DASHBOARD,
-  CLEAR_COURSE_PRICES,
+  REQUEST_DASHBOARD,
   RECEIVE_DASHBOARD_SUCCESS,
+  REQUEST_COURSE_PRICES,
   RECEIVE_COURSE_PRICES_SUCCESS,
 } from '../actions';
 import {
+  REQUEST_GET_USER_PROFILE,
   RECEIVE_GET_USER_PROFILE_SUCCESS,
   CLEAR_PROFILE,
   START_PROFILE_EDIT,
@@ -20,6 +21,8 @@ import {
 } from '../actions/profile';
 import {
   CLEAR_ENROLLMENTS,
+  REQUEST_GET_PROGRAM_ENROLLMENTS,
+  RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
   RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE,
 } from '../actions/programs';
 import * as enrollmentActions from '../actions/programs';
@@ -38,29 +41,37 @@ import IntegrationTestHelper from '../util/integration_test_helper';
 
 describe('App', () => {
   let listenForActions, renderComponent, helper;
-  let editProfileActions;
+  let editProfileActions, redirectActions;
 
   beforeEach(() => {
     helper = new IntegrationTestHelper();
     listenForActions = helper.listenForActions.bind(helper);
     renderComponent = helper.renderComponent.bind(helper);
-    editProfileActions = [
+
+    const successActions = [
+      REQUEST_GET_PROGRAM_ENROLLMENTS,
+      RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
+      REQUEST_GET_USER_PROFILE,
+      RECEIVE_GET_USER_PROFILE_SUCCESS,
+    ];
+    editProfileActions = successActions.concat([
       START_PROFILE_EDIT,
       START_PROFILE_EDIT,
       UPDATE_PROFILE_VALIDATION,
       SET_PROFILE_STEP,
-    ];
+    ]);
+    redirectActions = successActions.concat([
+      START_PROFILE_EDIT,
+    ]);
   });
 
   afterEach(() => {
     helper.cleanup();
   });
 
-  it('clears profile, ui, enrollments, and dashboard after unmounting', () => {
-    return renderComponent("/dashboard").then(([, div]) => {
+  it('clears profile, ui, and enrollments after unmounting', () => {
+    return renderComponent('/').then(([, div]) => {
       return listenForActions([
-        CLEAR_DASHBOARD,
-        CLEAR_COURSE_PRICES,
         CLEAR_PROFILE,
         CLEAR_UI,
         CLEAR_ENROLLMENTS
@@ -69,6 +80,7 @@ describe('App', () => {
       });
     });
   });
+
   describe('profile completeness', () => {
     let checkStep = () => helper.store.getState().ui.profileStep;
 
@@ -78,7 +90,7 @@ describe('App', () => {
       });
       helper.profileGetStub.returns(Promise.resolve(response));
 
-      return renderComponent("/dashboard", editProfileActions).then(() => {
+      return renderComponent('/', editProfileActions).then(() => {
         assert.equal(helper.currentLocation.pathname, "/profile");
         assert.equal(checkStep(), PERSONAL_STEP);
       });
@@ -90,7 +102,7 @@ describe('App', () => {
       });
       helper.profileGetStub.returns(Promise.resolve(response));
 
-      return renderComponent("/dashboard", [START_PROFILE_EDIT]).then(() => {
+      return renderComponent('/', redirectActions).then(() => {
         assert.equal(helper.currentLocation.pathname, "/profile");
         assert.equal(checkStep(), PERSONAL_STEP);
       });
@@ -101,7 +113,7 @@ describe('App', () => {
       profile.work_history[1].city = "";
 
       helper.profileGetStub.returns(Promise.resolve(profile));
-      return renderComponent("/dashboard", editProfileActions).then(() => {
+      return renderComponent('/', editProfileActions).then(() => {
         assert.equal(helper.currentLocation.pathname, "/profile");
         assert.equal(checkStep(), EMPLOYMENT_STEP);
       });
@@ -112,7 +124,7 @@ describe('App', () => {
       response.education[0].school_name = '';
       helper.profileGetStub.returns(Promise.resolve(response));
 
-      return renderComponent("/dashboard", editProfileActions).then(() => {
+      return renderComponent('/', editProfileActions).then(() => {
         assert.equal(helper.currentLocation.pathname, "/profile");
         assert.equal(checkStep(), EDUCATION_STEP);
       });
@@ -123,19 +135,23 @@ describe('App', () => {
     it('shows an error message if the enrollments GET fetch fails', () => {
       helper.programsGetStub.returns(Promise.reject());
       let types = [
+        REQUEST_DASHBOARD,
         RECEIVE_DASHBOARD_SUCCESS,
+        REQUEST_COURSE_PRICES,
         RECEIVE_COURSE_PRICES_SUCCESS,
+        REQUEST_GET_USER_PROFILE,
         RECEIVE_GET_USER_PROFILE_SUCCESS,
+        REQUEST_GET_PROGRAM_ENROLLMENTS,
         RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE,
       ];
-      return renderComponent("/dashboard", types, false).then(([wrapper]) => {
+      return renderComponent('/dashboard', types).then(([wrapper]) => {
         let text = wrapper.find('.page-content').text();
         assert(text.includes("Sorry, we were unable to load the data"));
       });
     });
 
     it('setEnrollDialogVisibility dispatches the value to the action with the same name', () => {
-      return renderComponent("/dashboard").then(([wrapper]) => {
+      return renderComponent('/').then(([wrapper]) => {
         let props = wrapper.find(Navbar).props();
         let stub = helper.sandbox.stub(uiActions, 'setEnrollDialogVisibility');
         stub.returns({type: "fake"});
@@ -145,7 +161,7 @@ describe('App', () => {
     });
 
     it('setEnrollSelectedProgram dispatches the value to the action with the same name', () => {
-      return renderComponent("/dashboard").then(([wrapper]) => {
+      return renderComponent('/').then(([wrapper]) => {
         let props = wrapper.find(Navbar).props();
         let stub = helper.sandbox.stub(uiActions, 'setEnrollSelectedProgram');
         stub.returns({type: "fake"});
@@ -155,7 +171,7 @@ describe('App', () => {
     });
 
     it('setCurrentProgramEnrollment dispatches the value to the action with the same name', () => {
-      return renderComponent("/dashboard").then(([wrapper]) => {
+      return renderComponent('/').then(([wrapper]) => {
         let props = wrapper.find(Navbar).props();
         let stub = helper.sandbox.stub(enrollmentActions, 'setCurrentProgramEnrollment');
         stub.returns({type: "fake"});

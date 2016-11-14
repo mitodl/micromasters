@@ -7,7 +7,21 @@ import { shallow } from 'enzyme';
 import Dialog from 'material-ui/Dialog';
 import SelectField from 'material-ui/SelectField';
 
+import {
+  REQUEST_DASHBOARD,
+  RECEIVE_DASHBOARD_SUCCESS,
+  REQUEST_COURSE_PRICES,
+  RECEIVE_COURSE_PRICES_SUCCESS,
+} from '../actions';
+import {
+  REQUEST_GET_USER_PROFILE,
+  RECEIVE_GET_USER_PROFILE_SUCCESS,
+} from '../actions/profile';
 import * as enrollmentActions from '../actions/programs';
+import {
+  REQUEST_GET_PROGRAM_ENROLLMENTS,
+  RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
+} from '../actions/programs';
 import * as uiActions from '../actions/ui';
 
 import {
@@ -19,6 +33,16 @@ import IntegrationTestHelper from '../util/integration_test_helper';
 
 describe("NewEnrollmentDialog", () => {
   let helper;
+  const successActions = [
+    REQUEST_GET_PROGRAM_ENROLLMENTS,
+    RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
+    REQUEST_GET_USER_PROFILE,
+    RECEIVE_GET_USER_PROFILE_SUCCESS,
+    REQUEST_COURSE_PRICES,
+    RECEIVE_COURSE_PRICES_SUCCESS,
+    REQUEST_DASHBOARD,
+    RECEIVE_DASHBOARD_SUCCESS,
+  ];
   beforeEach(() => {
     helper = new IntegrationTestHelper();
   });
@@ -38,7 +62,7 @@ describe("NewEnrollmentDialog", () => {
   };
 
   it('renders a dialog', () => {
-    return helper.renderComponent("/dashboard").then(([wrapper]) => {
+    return helper.renderComponent("/dashboard", successActions).then(([wrapper]) => {
       let dialog = wrapper.find(NewEnrollmentDialog).at(0);
       let props = dialog.props();
 
@@ -53,7 +77,7 @@ describe("NewEnrollmentDialog", () => {
   ]) {
     it(`dispatches ${funcName}`, () => {
       let stub = helper.sandbox.spy(uiActions, funcName);
-      return helper.renderComponent("/dashboard").then(([wrapper]) => {
+      return helper.renderComponent("/dashboard", successActions).then(([wrapper]) => {
         let handler = wrapper.find(NewEnrollmentDialog).at(0).props()[funcName];
         handler(value);
         assert(stub.calledWith(value));
@@ -63,7 +87,7 @@ describe("NewEnrollmentDialog", () => {
     it(`the prop ${propName} comes from the state`, () => {
       helper.store.dispatch(uiActions[funcName](value));
 
-      return helper.renderComponent("/dashboard").then(([wrapper]) => {
+      return helper.renderComponent("/dashboard", successActions).then(([wrapper]) => {
         let actual = wrapper.find(NewEnrollmentDialog).at(0).props()[propName];
         assert.equal(actual, value);
       });
@@ -73,7 +97,7 @@ describe("NewEnrollmentDialog", () => {
   it('dispatches addProgramEnrollment', () => {
     let stub = helper.sandbox.stub(enrollmentActions, 'addProgramEnrollment');
     stub.returns({type: "fake"});
-    return helper.renderComponent("/dashboard").then(([wrapper]) => {
+    return helper.renderComponent("/dashboard", successActions).then(([wrapper]) => {
       let handler = wrapper.find(NewEnrollmentDialog).at(0).props().addProgramEnrollment;
       handler(3);
       assert(stub.calledWith(3));
