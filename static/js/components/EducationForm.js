@@ -101,8 +101,8 @@ class EducationForm extends ProfileFormFields {
         onChange={(event, value)=> this.handleRadioClick(value, level.value)}
         valueSelected={valueSelected}
       >
-        <RadioButton value={"true"} label="Yes" iconStyle={radioIconStyle} style={{'marginRight': '30px'}} />
-        <RadioButton value={"false"} label="No" iconStyle={radioIconStyle} style={{'marginRight': '15px'}} />
+        <RadioButton value="true" label="Yes" iconStyle={radioIconStyle} style={{'marginRight': '30px'}} />
+        <RadioButton value="false" label="No" iconStyle={radioIconStyle} style={{'marginRight': '15px'}} />
       </RadioButtonGroup>
     );
   };
@@ -143,7 +143,7 @@ class EducationForm extends ProfileFormFields {
       levelValue = level.value;
       let label = EDUCATION_LEVEL_LABELS[levelValue];
       filterDegreeName = ([, entry]) => entry.degree_name === level.value;
-      title = <Cell col={12} className="profile-form-row" key={`header-row`}>
+      title = <Cell col={12} className="profile-form-row" key="header-row">
         <strong>{label}</strong>
       </Cell>;
     }
@@ -158,7 +158,7 @@ class EducationForm extends ProfileFormFields {
       title,
       ...renderedEducationRows(profile.education),
       userPrivilegeCheck(profile, () =>
-        <Cell col={12} className="profile-form-row add" key={`add-row`}>
+        <Cell col={12} className="profile-form-row add" key="add-row">
           <button
             className="mm-minor-action"
             onClick={() => this.openNewEducationForm(levelValue, null)}

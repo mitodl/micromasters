@@ -172,7 +172,7 @@ class EmploymentForm extends ProfileFormFields {
       }
       userPrivilegeCheck(profile, () => {
         workHistoryRows.push(
-        <Cell col={12} className="profile-form-row add" key={"I'm unique!"}>
+        <Cell col={12} className="profile-form-row add" key="I'm unique!">
           <button
             className="mm-minor-action"
             onClick={this.openNewWorkHistoryForm}
@@ -254,12 +254,12 @@ class EmploymentForm extends ProfileFormFields {
     return (
       <RadioButtonGroup
         className="profile-radio-switch"
-        name={"work-history-switch"}
+        name="work-history-switch"
         onChange={(event, value)=> this.handleRadioClick(value)}
         valueSelected={valueSelected}
       >
-        <RadioButton value={"true"} label="Yes" iconStyle={radioIconStyle} style={{'marginRight': '30px'}} />
-        <RadioButton value={"false"} label="No" iconStyle={radioIconStyle} style={{'marginRight': '15px'}} />
+        <RadioButton value="true" label="Yes" iconStyle={radioIconStyle} style={{'marginRight': '30px'}} />
+        <RadioButton value="false" label="No" iconStyle={radioIconStyle} style={{'marginRight': '15px'}} />
       </RadioButtonGroup>
     );
   }
