@@ -159,12 +159,12 @@ class EducationForm extends ProfileFormFields {
       ...renderedEducationRows(profile.education),
       userPrivilegeCheck(profile, () =>
         <Cell col={12} className="profile-form-row add" key={`add-row`}>
-          <a
+          <button
             className="mm-minor-action"
             onClick={() => this.openNewEducationForm(levelValue, null)}
           >
             Add degree
-          </a>
+          </button>
         </Cell>, null
       ),
     ];

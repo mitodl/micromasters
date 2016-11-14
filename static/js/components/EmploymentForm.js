@@ -173,12 +173,12 @@ class EmploymentForm extends ProfileFormFields {
       userPrivilegeCheck(profile, () => {
         workHistoryRows.push(
         <Cell col={12} className="profile-form-row add" key={"I'm unique!"}>
-          <a
+          <button
             className="mm-minor-action"
             onClick={this.openNewWorkHistoryForm}
           >
             Add employment
-          </a>
+          </button>
         </Cell>
         );
       });
