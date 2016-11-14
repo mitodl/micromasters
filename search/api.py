@@ -72,7 +72,6 @@ def create_search_obj(user, search_param_dict=None):
     # the following filter should come first because the sequence matters in applying them
     search_obj = search_obj.filter(create_program_limit_query(user))
     if search_param_dict is not None:
-        search_param_dict['size'] = settings.DEFAULT_ES_PAGE_SIZE
         search_obj.update_from_dict(search_param_dict)
     return search_obj
 
