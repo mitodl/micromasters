@@ -202,7 +202,8 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
             income_usd=income_usd,
             country_of_income=country_code,
         )
-        assert determine_auto_approval(financial_aid) is expected
+        tier_program = determine_tier_program(self.program, income_usd)
+        assert determine_auto_approval(financial_aid, tier_program) is expected
 
     def test_determine_income_usd_from_not_usd(self):
         """
