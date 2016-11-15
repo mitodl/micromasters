@@ -1,5 +1,5 @@
 FROM node:6.2
-MAINTAINER ODL DevOps <mitx-devops@mit.edu>
+LABEL maintainer "ODL DevOps <mitx-devops@mit.edu>"
 
 # this dockerfile builds the hub image for the watch container
 # we don't use this directly, instead we push to docker-hub, and
