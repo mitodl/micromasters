@@ -120,7 +120,7 @@ class FinancialAidBaseTestCase(TestCase):
         )
 
     @staticmethod
-    def assert_http_status(method, url, status, data=None, content_type="application/json", **kwargs):
+    def make_http_request(method, url, status, data=None, content_type="application/json", **kwargs):
         """
         Helper method for asserting an HTTP status. Returns the response for further tests if needed.
         Args:

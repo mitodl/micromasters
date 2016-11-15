@@ -148,24 +148,24 @@ class FinancialAidMailViewsTests(FinancialAidBaseTestCase, APITestCase):
         program = create_program()
         staff_user = create_enrolled_profile(program, Staff.ROLE_ID).user
         self.client.force_login(staff_user)
-        self.assert_http_status(self.client.post, self.url, status.HTTP_403_FORBIDDEN, data=self.request_data)
+        self.make_http_request(self.client.post, self.url, status.HTTP_403_FORBIDDEN, data=self.request_data)
 
     def test_instructor(self):
         """An instructor can't send email"""
         self.client.force_login(self.instructor_user_profile.user)
-        self.assert_http_status(self.client.post, self.url, status.HTTP_403_FORBIDDEN, data=self.request_data)
+        self.make_http_request(self.client.post, self.url, status.HTTP_403_FORBIDDEN, data=self.request_data)
 
     def test_learner(self):
         """A learner can't send email"""
         self.client.force_login(self.profile.user)
-        self.assert_http_status(self.client.post, self.url, status.HTTP_403_FORBIDDEN, data=self.request_data)
+        self.make_http_request(self.client.post, self.url, status.HTTP_403_FORBIDDEN, data=self.request_data)
 
     def test_anonymous(self):
         """
         Anonymous users can't send email
         """
         self.client.logout()
-        self.assert_http_status(self.client.post, self.url, status.HTTP_403_FORBIDDEN, data=self.request_data)
+        self.make_http_request(self.client.post, self.url, status.HTTP_403_FORBIDDEN, data=self.request_data)
 
     @patch('mail.views.MailgunClient')
     def test_send_financial_aid_view(self, mock_mailgun_client):
