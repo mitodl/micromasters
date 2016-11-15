@@ -95,6 +95,7 @@ class FinancialAidSkipView(UpdateAPIView):
         financialaid, _ = FinancialAid.objects.get_or_create(
             user=self.request.user,
             tier_program__program=program,
+            status__in=set(FinancialAidStatus.ALL_STATUSES) - {FinancialAidStatus.RESET},
             defaults={"tier_program": tier_program}
         )
         return financialaid

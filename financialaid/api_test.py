@@ -121,6 +121,13 @@ class FinancialAidBaseTestCase(TestCase):
             income_threshold=50000,
         )
 
+        # Create a FinancialAid with a reset status to verify that it is ignored
+        FinancialAidFactory.create(
+            user=cls.profile.user,
+            tier_program=cls.tier_programs['75k'],
+            status=FinancialAidStatus.RESET,
+        )
+
     @staticmethod
     def make_http_request(method, url, status, data=None, content_type="application/json", **kwargs):
         """

@@ -108,10 +108,10 @@ class RequestAPITests(FinancialAidBaseTestCase, APIClient):
             "original_currency": original_currency,
             "program_id": self.program.id,
         }
-        assert FinancialAid.objects.count() == 0
+        assert FinancialAid.objects.exclude(status=FinancialAidStatus.RESET).count() == 0
         assert FinancialAidAudit.objects.count() == 0
         self.make_http_request(self.client.post, self.request_url, status.HTTP_201_CREATED, data=data)
-        assert FinancialAid.objects.count() == 1
+        assert FinancialAid.objects.exclude(status=FinancialAidStatus.RESET).count() == 1
         assert FinancialAidAudit.objects.count() == 1
         financial_aid = FinancialAid.objects.first()
         income_usd = determine_income_usd(original_income, original_currency)
@@ -804,18 +804,23 @@ class LearnerSkipsFinancialAid(FinancialAidBaseTestCase, APIClient):
         Tests that a FinancialAid object with the status "skipped" is created.
         """
         assert FinancialAidAudit.objects.count() == 0
+        assert FinancialAid.objects.exclude(status=FinancialAidStatus.RESET).count() == 0
         self.make_http_request(self.client.patch, self.skip_url, status.HTTP_200_OK)
-        assert FinancialAid.objects.count() == 1
+        assert FinancialAid.objects.exclude(status=FinancialAidStatus.RESET).count() == 1
         financial_aid = FinancialAid.objects.get(
             user=self.profile.user,
+            status=FinancialAidStatus.SKIPPED,
         )
         assert financial_aid.tier_program == self.tier_programs["75k"]
-        assert financial_aid.status == FinancialAidStatus.SKIPPED
         # Check logging
         assert FinancialAidAudit.objects.count() == 1
 
     @ddt.data(
-        *([status] for status in set(FinancialAidStatus.ALL_STATUSES) - set(FinancialAidStatus.TERMINAL_STATUSES))
+        *([status] for status in (
+            set(FinancialAidStatus.ALL_STATUSES) -
+            set(FinancialAidStatus.TERMINAL_STATUSES) -
+            {FinancialAidStatus.RESET}
+        ))
     )
     @ddt.unpack
     def test_skipped_financialaid_object_updated(self, financial_aid_status):
@@ -830,7 +835,7 @@ class LearnerSkipsFinancialAid(FinancialAidBaseTestCase, APIClient):
 
         assert FinancialAidAudit.objects.count() == 0
         self.make_http_request(self.client.patch, self.skip_url, status.HTTP_200_OK)
-        assert FinancialAid.objects.count() == 1
+        assert FinancialAid.objects.exclude(status=FinancialAidStatus.RESET).count() == 1
         financial_aid.refresh_from_db()
         assert financial_aid.tier_program == self.tier_programs["75k"]
         assert financial_aid.status == FinancialAidStatus.SKIPPED
