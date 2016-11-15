@@ -78,7 +78,7 @@ class ProfileBaseTests(ESTestCase):
         cls.url1 = reverse('profile-detail', kwargs={'user': username})
 
         with mute_signals(post_save):
-            cls.user2 = UserFactory.create()
+            cls.user2 = UserFactory.create(username="test.dev.example")
             username = "{}_edx".format(cls.user2.username)
             cls.user2.social_auth.create(
                 provider=EdxOrgOAuth2.name,
