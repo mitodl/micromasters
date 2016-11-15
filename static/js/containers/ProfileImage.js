@@ -71,7 +71,7 @@ class ProfileImage extends React.Component {
     if ( editable ) {
       return (
         <button className="open-photo-dialog" onClick={() => setDialogVisibility(true)}>
-          <Icon name="camera_alt" />
+          <Icon name="camera_alt" aria-hidden="true" />
           <span className="sr-only">Update user photo</span>
         </button>
       );

@@ -98,26 +98,26 @@ export default class Navbar extends React.Component {
             </div>
             <div className="links">
               <div className="link">
-                <Icon name="dashboard" />
+                <Icon name="dashboard" aria-hidden="true" />
                 <Link to="/dashboard" onClick={closeDrawer} >
                   Dashboard
                 </Link>
               </div>
               <div className="link">
-                <Icon name="person" />
+                <Icon name="person" aria-hidden="true" />
                 <Link to={`/learner/${SETTINGS.user.username}`}
                   onClick={closeDrawer} >
                   View Profile
                 </Link>
               </div>
               <div className="link">
-                <Icon name="camera_alt" />
-                <a onClick={R.compose(() => setPhotoDialogVisibility(true), closeDrawer)}>
+                <Icon name="camera_alt" aria-hidden="true" />
+                <button onClick={R.compose(() => setPhotoDialogVisibility(true), closeDrawer)}>
                   Edit Photo
-                </a>
+                </button>
               </div>
               <div className="link">
-                <Icon name="settings" />
+                <Icon name="settings" aria-hidden="true" />
                 <Link to="/settings" onClick={closeDrawer} >
                   Settings
                 </Link>
@@ -125,7 +125,7 @@ export default class Navbar extends React.Component {
             </div>
             <div className="logout-link">
               <div className="link">
-                <Icon name="exit_to_app" />
+                <Icon name="exit_to_app" aria-hidden="true" />
                 <a href="/logout">
                   Logout
                 </a>

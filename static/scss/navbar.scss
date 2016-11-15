@@ -92,9 +92,19 @@
         align-items: center;
         padding: 10px 0;
 
-        a {
+        a, button {
           color: $font-black;
           width: 100%;
+          font-weight: 500;
+          border: 0;
+          padding: 0;
+          background: inherit;
+          text-align: left;
+
+          &:hover, &:focus {
+            text-decoration: none;
+            cursor: pointer;
+          }
         }
 
         i {
