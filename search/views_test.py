@@ -3,6 +3,7 @@ Tests for the search view
 """
 from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save
+from django.test import override_settings
 from factory.django import mute_signals
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -60,14 +61,11 @@ class SearchTests(ESTestCase, APITestCase):
         super(SearchTests, self).setUp()
         self.client.force_login(self.staff)
 
+    @override_settings(ELASTICSEARCH_DEFAULT_PAGE_SIZE=1000)
     def assert_status_code(self, status_code=status.HTTP_200_OK, json=None):
         """
         Helper function to assert the status code for POST
         """
-        if json is None:
-            json = {'size': 1000}
-        else:
-            json.update({'size': 1000})
         resp_post = self.client.post(self.search_url, json, format='json')
         assert resp_post.status_code == status_code
         return resp_post

@@ -5,7 +5,10 @@ import math
 from unittest.mock import MagicMock, Mock, patch
 from elasticsearch_dsl import Search, Q
 from factory.django import mute_signals
-from django.test import TestCase
+from django.test import (
+    override_settings,
+    TestCase
+)
 from django.db.models.signals import post_save
 from django.conf import settings
 
@@ -95,14 +98,15 @@ class SearchAPITests(TestCase):  # pylint: disable=missing-docstring
         assert len(search_query_dict['query']['bool']['filter']) == 1
         assert search_query_dict['query']['bool']['filter'][0] == expected_program_query.to_dict()
 
+    @override_settings(ELASTICSEARCH_DEFAULT_PAGE_SIZE=5)
     def test_size_param_in_query(self):
         """
         Assert value of size attribute of search object is set to default settings.
         """
-        search_obj = create_search_obj(self.user, {})
+        search_obj = create_search_obj(self.user)
         search_query_dict = search_obj.to_dict()
         assert 'size' in search_query_dict
-        assert search_query_dict['size'] == settings.DEFAULT_ES_PAGE_SIZE
+        assert search_query_dict['size'] == 5
 
     def test_create_search_obj_metadata(self):  # pylint: disable=no-self-use
         """

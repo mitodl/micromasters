@@ -191,7 +191,7 @@ class DashboardTests(ViewsTests):
             EMAIL_SUPPORT=email_support,
             VERSION='0.0.1',
             RAVEN_CONFIG={'dsn': ''},
-            DEFAULT_ES_PAGE_SIZE=10
+            ELASTICSEARCH_DEFAULT_PAGE_SIZE=10
         ):
             resp = self.client.get(DASHBOARD_URL)
             js_settings = json.loads(resp.context['js_settings_json'])
@@ -444,7 +444,7 @@ class TestUsersPage(ViewsTests):
             EMAIL_SUPPORT=email_support,
             VERSION='0.0.1',
             RAVEN_CONFIG={'dsn': ''},
-            DEFAULT_ES_PAGE_SIZE=10
+            ELASTICSEARCH_DEFAULT_PAGE_SIZE=10
         ):
             # Mock has_permission so we don't worry about testing permissions here
             has_permission = Mock(return_value=True)
@@ -496,7 +496,7 @@ class TestUsersPage(ViewsTests):
             EMAIL_SUPPORT=email_support,
             VERSION='0.0.1',
             RAVEN_CONFIG={'dsn': ''},
-            DEFAULT_ES_PAGE_SIZE=10
+            ELASTICSEARCH_DEFAULT_PAGE_SIZE=10
         ):
             # Mock has_permission so we don't worry about testing permissions here
             has_permission = Mock(return_value=True)

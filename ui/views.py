@@ -70,7 +70,7 @@ class ReactView(View):  # pylint: disable=unused-argument
             "search_url": reverse('search_api', kwargs={"elastic_url": ""}),
             "support_email": settings.EMAIL_SUPPORT,
             "user": serialize_maybe_user(request.user),
-            "es_page_size": settings.DEFAULT_ES_PAGE_SIZE,
+            "es_page_size": settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE,
         }
 
         return render(
