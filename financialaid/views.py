@@ -26,10 +26,7 @@ from financialaid.constants import (
     FinancialAidJustification,
     FinancialAidStatus
 )
-from financialaid.api import (
-    get_formatted_course_price,
-    get_no_discount_tier_program
-)
+from financialaid.api import get_formatted_course_price
 from financialaid.models import (
     FinancialAid,
     TierProgram
