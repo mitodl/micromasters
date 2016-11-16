@@ -109,7 +109,7 @@ const calculatorActions = (openSkipDialog, cancel, save) => {
   ];
 
   return <div className="actions">
-    <button className="text-link full-price" onClick={openSkipDialog}>
+    <button className="mm-minor-action full-price" onClick={openSkipDialog}>
       Skip this and Pay Full Price
     </button>
     <div className="buttons">
