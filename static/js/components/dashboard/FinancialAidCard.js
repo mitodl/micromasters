@@ -128,9 +128,9 @@ export default class FinancialAidCard extends React.Component {
         >
           Calculate your cost
         </button>
-        <a className="full-price" onClick={() => setConfirmSkipDialogVisibility(true)}>
+        <button className="text-link full-price" onClick={() => setConfirmSkipDialogVisibility(true)}>
           Skip this and Pay Full Price
-        </a>
+        </button>
       </div>
     </div>;
   }
@@ -161,9 +161,9 @@ export default class FinancialAidCard extends React.Component {
             <div>
               Your cost is {price(coursePrice.price)} per course.
             </div>
-            <a className="full-price" onClick={() => setConfirmSkipDialogVisibility(true)}>
+            <button className="text-link full-price" onClick={() => setConfirmSkipDialogVisibility(true)}>
               Skip this and Pay Full Price
-            </a>
+            </button>
           </Cell>
         </Grid>
 

@@ -92,10 +92,10 @@ const checkBox = (update, current) => (
   />
 );
 
-const actionButtons = R.map(({ name, onClick, label}) => (
+const actionButtons = R.map(({ name, primary, onClick, label}) => (
   <Button
     type='button'
-    className={`${name}-button mm-button`}
+    className={`${name}-button ${primary ? 'primary' : 'secondary'}-button mm-button`}
     key={name}
     onClick={onClick}>
     { label }
@@ -104,14 +104,14 @@ const actionButtons = R.map(({ name, onClick, label}) => (
 
 const calculatorActions = (openSkipDialog, cancel, save) => {
   const buttonManifest = [
-    { name: 'cancel', onClick: cancel, label: 'Cancel' },
-    { name: 'main-action save', onClick: save, label: 'Calculate' },
+    { name: 'cancel', primary: false, onClick: cancel, label: 'Cancel' },
+    { name: 'save', primary: true, onClick: save, label: 'Calculate' },
   ];
 
   return <div className="actions">
-    <a className="full-price" onClick={openSkipDialog}>
+    <button className="text-link full-price" onClick={openSkipDialog}>
       Skip this and Pay Full Price
-    </a>
+    </button>
     <div className="buttons">
       { actionButtons(buttonManifest) }
     </div>

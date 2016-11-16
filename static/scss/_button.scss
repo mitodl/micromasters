@@ -188,3 +188,13 @@
 a.btn {
   text-decoration: none;
 }
+
+button.text-link {
+  border: 0;
+  background-color: inherit;
+  color: $link-text;
+
+  &:hover {
+    color: $link-hover;
+  }
+}
