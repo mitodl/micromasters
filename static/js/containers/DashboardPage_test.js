@@ -5,11 +5,13 @@ import { assert } from 'chai';
 import moment from 'moment';
 import ReactDOM from 'react-dom';
 
+import { SUCCESS_ACTIONS } from './App_test';
 import CourseAction from '../components/dashboard/CourseAction';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import {
   REQUEST_DASHBOARD,
   RECEIVE_DASHBOARD_SUCCESS,
+  RECEIVE_DASHBOARD_FAILURE,
   REQUEST_COURSE_PRICES,
   RECEIVE_COURSE_PRICES_SUCCESS,
   UPDATE_COURSE_STATUS,
@@ -26,13 +28,9 @@ import {
   setInitialTime,
 } from '../actions/order_receipt';
 import {
-  REQUEST_GET_USER_PROFILE,
-  RECEIVE_GET_USER_PROFILE_SUCCESS,
   CLEAR_PROFILE,
 } from '../actions/profile';
 import {
-  REQUEST_GET_PROGRAM_ENROLLMENTS,
-  RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
   CLEAR_ENROLLMENTS,
 } from '../actions/programs';
 import { findCourseRun } from '../util/util';
@@ -49,19 +47,21 @@ import {
 } from '../constants';
 import { findCourse } from '../util/test_utils';
 
+export const DASHBOARD_SUCCESS_ACTIONS = SUCCESS_ACTIONS.concat([
+  REQUEST_DASHBOARD,
+  RECEIVE_DASHBOARD_SUCCESS,
+  REQUEST_COURSE_PRICES,
+  RECEIVE_COURSE_PRICES_SUCCESS,
+]);
+export const DASHBOARD_ERROR_ACTIONS = SUCCESS_ACTIONS.concat([
+  REQUEST_DASHBOARD,
+  RECEIVE_DASHBOARD_FAILURE,
+  REQUEST_COURSE_PRICES,
+  RECEIVE_COURSE_PRICES_SUCCESS,
+]);
+
 describe('DashboardPage', () => {
   let renderComponent, helper;
-
-  const dashboardSuccessActions = [
-    REQUEST_DASHBOARD,
-    RECEIVE_DASHBOARD_SUCCESS,
-    REQUEST_COURSE_PRICES,
-    RECEIVE_COURSE_PRICES_SUCCESS,
-    REQUEST_GET_USER_PROFILE,
-    RECEIVE_GET_USER_PROFILE_SUCCESS,
-    REQUEST_GET_PROGRAM_ENROLLMENTS,
-    RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
-  ];
 
   beforeEach(() => {
     helper = new IntegrationTestHelper();
@@ -73,7 +73,7 @@ describe('DashboardPage', () => {
   });
 
   it('shows a spinner when dashboard get is processing', () => {
-    return renderComponent('/dashboard', dashboardSuccessActions).then(([, div]) => {
+    return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([, div]) => {
       assert.notOk(div.querySelector(".loader"), "Found spinner but no fetch in progress");
       helper.store.dispatch({ type: REQUEST_DASHBOARD, payload: { noSpinner: false } });
 
@@ -82,7 +82,7 @@ describe('DashboardPage', () => {
   });
 
   it('has all the cards we expect', () => {
-    return renderComponent('/dashboard', dashboardSuccessActions).then(([wrapper]) => {
+    return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
       assert.lengthOf(wrapper.find(".dashboard-user-card"), 1);
       assert.lengthOf(wrapper.find(".course-list"), 1);
       assert.lengthOf(wrapper.find(".progress-widget"), 1);
@@ -104,7 +104,7 @@ describe('DashboardPage', () => {
       let promise = Promise.resolve(EDX_CHECKOUT_RESPONSE);
       let checkoutStub = helper.sandbox.stub(actions, 'checkout').returns(() => promise);
 
-      return renderComponent('/dashboard', dashboardSuccessActions).then(([wrapper]) => {
+      return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
         wrapper.find(CourseAction).first().props().checkout('course_id');
 
         assert.equal(checkoutStub.callCount, 1);
@@ -125,7 +125,7 @@ describe('DashboardPage', () => {
       fakeForm.submit = submitStub;
       let createFormStub = helper.sandbox.stub(util, 'createForm').returns(fakeForm);
 
-      return renderComponent('/dashboard', dashboardSuccessActions).then(([wrapper]) => {
+      return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
         wrapper.find(CourseAction).first().props().checkout('course_id');
 
         assert.equal(checkoutStub.callCount, 1);
@@ -145,14 +145,14 @@ describe('DashboardPage', () => {
   });
 
   describe('order receipt and cancellation pages', () => {
-    const successWithToastActions = dashboardSuccessActions.concat([SET_TOAST_MESSAGE]);
-    const successWithTimeoutActions = dashboardSuccessActions.concat([
+    const SUCCESS_WITH_TOAST_ACTIONS = DASHBOARD_SUCCESS_ACTIONS.concat([SET_TOAST_MESSAGE]);
+    const SUCCESS_WITH_TIMEOUT_ACTIONS = DASHBOARD_SUCCESS_ACTIONS.concat([
       SET_TIMEOUT_ACTIVE,
       UPDATE_COURSE_STATUS,
     ]);
 
     it('shows the order status toast when the query param is set for a cancellation', () => {
-      return renderComponent('/dashboard?status=cancel', successWithToastActions).then(() => {
+      return renderComponent('/dashboard?status=cancel', SUCCESS_WITH_TOAST_ACTIONS).then(() => {
         assert.deepEqual(helper.store.getState().ui.toastMessage, {
           message: "Order was cancelled",
           icon: TOAST_FAILURE
@@ -169,7 +169,7 @@ describe('DashboardPage', () => {
       let encodedKey = encodeURIComponent(run.course_id);
       return renderComponent(
         `/dashboard?status=receipt&course_key=${encodedKey}`,
-        successWithToastActions
+        SUCCESS_WITH_TOAST_ACTIONS
       ).then(() => {
         assert.deepEqual(helper.store.getState().ui.toastMessage, {
           title: "Order Complete!",
@@ -188,7 +188,7 @@ describe('DashboardPage', () => {
       let encodedKey = encodeURIComponent(run.course_id);
       return renderComponent(
         `/dashboard?status=receipt&course_key=${encodedKey}`,
-        successWithTimeoutActions
+        SUCCESS_WITH_TIMEOUT_ACTIONS
       ).then(() => {
         let [ courseRun ] = findCourseRun(
           helper.store.getState().dashboard.programs,
@@ -214,7 +214,7 @@ describe('DashboardPage', () => {
         let encodedKey = encodeURIComponent(run.course_id);
         return renderComponent(
           `/dashboard?status=receipt&course_key=${encodedKey}`,
-          successWithTimeoutActions
+          SUCCESS_WITH_TIMEOUT_ACTIONS
         ).then(() => {
           let fetchDashboardStub = helper.sandbox.stub(actions, 'fetchDashboard').returns(() => ({
             type: 'fake'
@@ -233,7 +233,7 @@ describe('DashboardPage', () => {
         let encodedKey = encodeURIComponent(run.course_id);
         return renderComponent(
           `/dashboard?status=receipt&course_key=${encodedKey}`,
-          successWithTimeoutActions
+          SUCCESS_WITH_TIMEOUT_ACTIONS
         ).then(() => {
           let future = moment().add(-35, 'seconds').toISOString();
           helper.store.dispatch(setInitialTime(future));
@@ -248,7 +248,7 @@ describe('DashboardPage', () => {
   });
 
   it('dispatches actions to clean up after unmounting', () => {
-    return renderComponent('/dashboard', dashboardSuccessActions).then(([, div]) => {
+    return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([, div]) => {
       return helper.listenForActions([
         CLEAR_PROFILE,
         CLEAR_UI,

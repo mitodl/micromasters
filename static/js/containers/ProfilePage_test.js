@@ -68,12 +68,13 @@ describe("ProfilePage", function() {
     helper.cleanup();
   });
 
-  let confirmSaveButtonBehavior = (updatedProfile, pageElements, validationFailure=false, actions = []) => {
+  let confirmSaveButtonBehavior = (updatedProfile, pageElements, validationFailure=false) => {
     let { div, button } = pageElements;
     button = button || div.querySelector(nextButtonSelector);
     patchUserProfileStub.throws("Invalid arguments");
     patchUserProfileStub.withArgs(SETTINGS.user.username, updatedProfile).returns(Promise.resolve(updatedProfile));
 
+    let actions = [];
     if ( actions.length === 0 ) {
       if (!validationFailure) {
         actions.push(

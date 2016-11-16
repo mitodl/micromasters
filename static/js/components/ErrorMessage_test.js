@@ -4,13 +4,6 @@ import TestUtils from 'react-addons-test-utils';
 import { assert } from 'chai';
 import _ from 'lodash';
 
-import {
-  REQUEST_DASHBOARD,
-  REQUEST_COURSE_PRICES,
-  RECEIVE_DASHBOARD_FAILURE,
-  RECEIVE_DASHBOARD_SUCCESS,
-  RECEIVE_COURSE_PRICES_SUCCESS,
-} from '../actions';
 import { SET_USER_PAGE_DIALOG_VISIBILITY } from '../actions/ui';
 import {
   RECEIVE_GET_USER_PROFILE_SUCCESS,
@@ -34,6 +27,10 @@ import {
 import IntegrationTestHelper from '../util/integration_test_helper';
 import { makeStrippedHtml } from '../util/util';
 import * as api from '../lib/api';
+import {
+  DASHBOARD_SUCCESS_ACTIONS,
+  DASHBOARD_ERROR_ACTIONS,
+} from '../containers/DashboardPage_test';
 import ErrorMessage from './ErrorMessage';
 
 describe("ErrorMessage", () => {
@@ -108,32 +105,10 @@ describe("ErrorMessage", () => {
     });
 
     describe('dashboard page', () => {
-      const dashboardSuccessActions = [
-        REQUEST_DASHBOARD,
-        RECEIVE_DASHBOARD_SUCCESS,
-        REQUEST_COURSE_PRICES,
-        RECEIVE_COURSE_PRICES_SUCCESS,
-        REQUEST_GET_USER_PROFILE,
-        RECEIVE_GET_USER_PROFILE_SUCCESS,
-        REQUEST_GET_PROGRAM_ENROLLMENTS,
-        RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
-      ];
-
-      const dashboardErrorActions = [
-        REQUEST_DASHBOARD,
-        RECEIVE_DASHBOARD_FAILURE,
-        REQUEST_COURSE_PRICES,
-        RECEIVE_COURSE_PRICES_SUCCESS,
-        REQUEST_GET_USER_PROFILE,
-        RECEIVE_GET_USER_PROFILE_SUCCESS,
-        REQUEST_GET_PROGRAM_ENROLLMENTS,
-        RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
-      ];
-
       it('error from the backend triggers error message in dashboard', () => {
         helper.dashboardStub.returns(Promise.reject(ERROR_RESPONSE));
 
-        return renderComponent("/dashboard", dashboardErrorActions).then(([, div]) => {
+        return renderComponent("/dashboard", DASHBOARD_ERROR_ACTIONS).then(([, div]) => {
           confirmErrorMessage(div, `AB123 ${errorString}`, 'Additional info: custom error message for the user.');
         });
       });
@@ -143,7 +118,7 @@ describe("ErrorMessage", () => {
         delete response.user_message;
         helper.dashboardStub.returns(Promise.reject(response));
 
-        return renderComponent("/dashboard", dashboardErrorActions).then(([, div]) => {
+        return renderComponent("/dashboard", DASHBOARD_ERROR_ACTIONS).then(([, div]) => {
           confirmErrorMessage(div, `AB123 ${errorString}`);
         });
       });
@@ -153,7 +128,7 @@ describe("ErrorMessage", () => {
           errorStatusCode: 500
         }));
 
-        return renderComponent("/dashboard", dashboardErrorActions).then(([, div]) => {
+        return renderComponent("/dashboard", DASHBOARD_ERROR_ACTIONS).then(([, div]) => {
           confirmErrorMessage(div, `500 ${errorString}`);
         });
       });
@@ -161,7 +136,7 @@ describe("ErrorMessage", () => {
       it('a regular response does not show the error', () => {
         helper.dashboardStub.returns(Promise.resolve(DASHBOARD_RESPONSE));
 
-        return renderComponent("/dashboard", dashboardSuccessActions).then(([, div]) => {
+        return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(([, div]) => {
           let message = div.getElementsByClassName('alert-message')[0];
           assert.equal(message, undefined);
         });
@@ -170,7 +145,7 @@ describe("ErrorMessage", () => {
       it('shows an error if there are no programs', () => {
         helper.dashboardStub.returns(Promise.resolve([]));
 
-        return renderComponent("/dashboard", dashboardSuccessActions).then(([wrapper]) => {
+        return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
           let message = wrapper.find('.page-content').text();
           assert(message.includes("Additional info: No program enrollment is available."));
         });
@@ -179,7 +154,7 @@ describe("ErrorMessage", () => {
       it('shows an error if there is no matching current program enrollment', () => {
         helper.programsGetStub.returns(Promise.resolve([]));
 
-        return renderComponent("/dashboard", dashboardSuccessActions).then(([wrapper]) => {
+        return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
           let message = wrapper.find('.page-content').text();
           assert(message.includes("Additional info: No program enrollment is available."));
         });

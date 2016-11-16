@@ -39,30 +39,29 @@ import {
 } from '../constants';
 import IntegrationTestHelper from '../util/integration_test_helper';
 
+export const SUCCESS_ACTIONS = [
+  REQUEST_GET_PROGRAM_ENROLLMENTS,
+  RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
+  REQUEST_GET_USER_PROFILE,
+  RECEIVE_GET_USER_PROFILE_SUCCESS,
+];
+const EDIT_PROFILE_ACTIONS = SUCCESS_ACTIONS.concat([
+  START_PROFILE_EDIT,
+  START_PROFILE_EDIT,
+  UPDATE_PROFILE_VALIDATION,
+  SET_PROFILE_STEP,
+]);
+const REDIRECT_ACTIONS = SUCCESS_ACTIONS.concat([
+  START_PROFILE_EDIT
+]);
+
 describe('App', () => {
   let listenForActions, renderComponent, helper;
-  let editProfileActions, redirectActions;
 
   beforeEach(() => {
     helper = new IntegrationTestHelper();
     listenForActions = helper.listenForActions.bind(helper);
     renderComponent = helper.renderComponent.bind(helper);
-
-    const successActions = [
-      REQUEST_GET_PROGRAM_ENROLLMENTS,
-      RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
-      REQUEST_GET_USER_PROFILE,
-      RECEIVE_GET_USER_PROFILE_SUCCESS,
-    ];
-    editProfileActions = successActions.concat([
-      START_PROFILE_EDIT,
-      START_PROFILE_EDIT,
-      UPDATE_PROFILE_VALIDATION,
-      SET_PROFILE_STEP,
-    ]);
-    redirectActions = successActions.concat([
-      START_PROFILE_EDIT,
-    ]);
   });
 
   afterEach(() => {
@@ -90,7 +89,7 @@ describe('App', () => {
       });
       helper.profileGetStub.returns(Promise.resolve(response));
 
-      return renderComponent('/', editProfileActions).then(() => {
+      return renderComponent('/', EDIT_PROFILE_ACTIONS).then(() => {
         assert.equal(helper.currentLocation.pathname, "/profile");
         assert.equal(checkStep(), PERSONAL_STEP);
       });
@@ -102,7 +101,7 @@ describe('App', () => {
       });
       helper.profileGetStub.returns(Promise.resolve(response));
 
-      return renderComponent('/', redirectActions).then(() => {
+      return renderComponent('/', REDIRECT_ACTIONS).then(() => {
         assert.equal(helper.currentLocation.pathname, "/profile");
         assert.equal(checkStep(), PERSONAL_STEP);
       });
@@ -113,7 +112,7 @@ describe('App', () => {
       profile.work_history[1].city = "";
 
       helper.profileGetStub.returns(Promise.resolve(profile));
-      return renderComponent('/', editProfileActions).then(() => {
+      return renderComponent('/', EDIT_PROFILE_ACTIONS).then(() => {
         assert.equal(helper.currentLocation.pathname, "/profile");
         assert.equal(checkStep(), EMPLOYMENT_STEP);
       });
@@ -124,7 +123,7 @@ describe('App', () => {
       response.education[0].school_name = '';
       helper.profileGetStub.returns(Promise.resolve(response));
 
-      return renderComponent('/', editProfileActions).then(() => {
+      return renderComponent('/', EDIT_PROFILE_ACTIONS).then(() => {
         assert.equal(helper.currentLocation.pathname, "/profile");
         assert.equal(checkStep(), EDUCATION_STEP);
       });
