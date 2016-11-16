@@ -91,13 +91,15 @@ class FinancialAidSkipView(UpdateAPIView):
             raise ValidationError("Financial aid not available for this program.")
         if not ProgramEnrollment.objects.filter(program=program.id, user=self.request.user).exists():
             raise ValidationError("User not in program.")
-        tier_program = get_no_discount_tier_program(program.id)
-        financialaid, _ = FinancialAid.objects.get_or_create(
+
+        # Look up a FinancialAid object for the user. The FinancialAidSkipSerializer
+        # will then change its status to skipped
+        financialaid = FinancialAid.objects.filter(
             user=self.request.user,
             tier_program__program=program,
-            status__in=set(FinancialAidStatus.ALL_STATUSES) - {FinancialAidStatus.RESET},
-            defaults={"tier_program": tier_program}
-        )
+        ).exclude(status=FinancialAidStatus.RESET).first()
+        if financialaid is None:
+            raise ValidationError("No financial aid application is available to mark as skipped")
         return financialaid
 
 

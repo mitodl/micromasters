@@ -801,19 +801,13 @@ class LearnerSkipsFinancialAid(FinancialAidBaseTestCase, APIClient):
 
     def test_skipped_financialaid_object_created(self):
         """
-        Tests that a FinancialAid object with the status "skipped" is created.
+        Tests that the user can't set skipped status unless a FinancialAid object already exists
         """
         assert FinancialAidAudit.objects.count() == 0
         assert FinancialAid.objects.exclude(status=FinancialAidStatus.RESET).count() == 0
-        self.make_http_request(self.client.patch, self.skip_url, status.HTTP_200_OK)
-        assert FinancialAid.objects.exclude(status=FinancialAidStatus.RESET).count() == 1
-        financial_aid = FinancialAid.objects.get(
-            user=self.profile.user,
-            status=FinancialAidStatus.SKIPPED,
-        )
-        assert financial_aid.tier_program == self.tier_programs["75k"]
-        # Check logging
-        assert FinancialAidAudit.objects.count() == 1
+        self.make_http_request(self.client.patch, self.skip_url, status.HTTP_400_BAD_REQUEST)
+        assert FinancialAidAudit.objects.count() == 0
+        assert FinancialAid.objects.exclude(status=FinancialAidStatus.RESET).count() == 0
 
     @ddt.data(
         *([status] for status in (
