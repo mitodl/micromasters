@@ -31,18 +31,19 @@ import {
 
 describe('CourseAction', () => {
   const now = moment();
-  let sandbox, checkoutStub, coursePrice, defaultParams, defaultParamsNow;
+  let sandbox, addCourseEnrollmentStub, checkoutStub, coursePrice, defaultParams, defaultParamsNow;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     checkoutStub = sandbox.stub();
+    addCourseEnrollmentStub = sandbox.stub();
     coursePrice = COURSE_PRICES_RESPONSE[1];
     defaultParams = {
       checkout: checkoutStub,
       coursePrice: coursePrice,
       hasFinancialAid: false,
       financialAid: {},
-      addCourseEnrollment: sandbox.stub(),
+      addCourseEnrollment: addCourseEnrollmentStub,
     };
     defaultParamsNow = Object.assign({}, defaultParams, { now: now });
   });
@@ -122,6 +123,11 @@ describe('CourseAction', () => {
     assert.include(elements.buttonText, 'Pay Now');
     assert.equal(elements.linkText, 'Enroll and pay later');
     assertCheckoutButton(elements.button, firstRun.course_id);
+
+    wrapper.find(".enroll-pay-later").simulate('click', {
+      preventDefault: sandbox.stub()
+    });
+    assert(addCourseEnrollmentStub.calledWith(firstRun.course_id));
   });
 
   it('hides an invalid date with STATUS_OFFERED', () => {

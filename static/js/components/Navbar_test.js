@@ -46,4 +46,9 @@ describe('Navbar', () => {
       ]);
     }
   });
+
+  it('has a logout link', () => {
+    let wrapper = renderNavbar();
+    assert.equal(wrapper.find("a[href='/logout']").text(), "Logout");
+  });
 });

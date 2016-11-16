@@ -139,6 +139,14 @@ describe("FinancialAidCard", () => {
         let wrapper = renderCard({ program });
         assert.ok(wrapper.html().includes("Cambridge, MA 02139"));
       });
+
+      it(`has a link to skip financial aid for ${status}`, () => {
+        let program = programWithStatus(status);
+        let setConfirmSkipDialogVisibility = sandbox.stub();
+        let wrapper = renderCard({ program, setConfirmSkipDialogVisibility });
+        wrapper.find(".full-price").simulate('click');
+        assert(setConfirmSkipDialogVisibility.calledWith(true));
+      });
     }
 
     describe('documents', () => {
@@ -181,5 +189,14 @@ describe("FinancialAidCard", () => {
         });
       }
     });
+  });
+
+  it('hides the skip dialog if the cancel button is clicked', () => {
+    let program = programWithStatus();
+    let setConfirmSkipDialogVisibility = sandbox.stub();
+    let wrapper = renderCard({ program, setConfirmSkipDialogVisibility });
+    let props = wrapper.find("SkipFinancialAidDialog").props();
+    props['cancel']();
+    assert(setConfirmSkipDialogVisibility.calledWith(false));
   });
 });

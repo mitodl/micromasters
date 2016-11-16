@@ -13,6 +13,8 @@ import {
   setEducationDialogVisibility,
   setEducationDialogIndex,
   setEducationDegreeLevel,
+  setEducationLevelAnswers,
+  setWorkHistoryAnswer,
   setUserPageDialogVisibility,
   setShowEducationDeleteDialog,
   setShowWorkDeleteDialog,
@@ -95,6 +97,10 @@ describe('ui reducers', () => {
     it('should set a work history dialog index', () => {
       assertReducerResultState(setWorkDialogIndex, ui => ui.workDialogIndex, null);
     });
+
+    it('should set the work history answer', () => {
+      assertReducerResultState(setWorkHistoryAnswer, ui => ui.workHistoryAnswer, null);
+    });
   });
 
   describe('education reducers', () => {
@@ -108,6 +114,10 @@ describe('ui reducers', () => {
 
     it('should let you set education dialog index', () => {
       assertReducerResultState(setEducationDialogIndex, ui => ui.educationDialogIndex, -1);
+    });
+
+    it('should set the education level answers', () => {
+      assertReducerResultState(setEducationLevelAnswers, ui => ui.educationLevelAnswers, {});
     });
   });
 

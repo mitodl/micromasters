@@ -8,6 +8,8 @@ import {
   SET_EDUCATION_DIALOG_VISIBILITY,
   SET_EDUCATION_DIALOG_INDEX,
   SET_EDUCATION_DEGREE_LEVEL,
+  SET_EDUCATION_LEVEL_ANSWERS,
+  SET_WORK_HISTORY_ANSWER,
   SET_USER_PAGE_DIALOG_VISIBILITY,
   SET_SHOW_EDUCATION_DELETE_DIALOG,
   SET_SHOW_WORK_DELETE_DIALOG,
@@ -36,6 +38,8 @@ import {
   setEducationDialogVisibility,
   setEducationDialogIndex,
   setEducationDegreeLevel,
+  setEducationLevelAnswers,
+  setWorkHistoryAnswer,
   setUserPageDialogVisibility,
   setShowEducationDeleteDialog,
   setShowWorkDeleteDialog,
@@ -66,6 +70,7 @@ describe('generated UI action helpers', () => {
       [setDialogVisibility, SET_DIALOG_VISIBILITY],
       [setWorkDialogVisibility, SET_WORK_DIALOG_VISIBILITY],
       [setWorkDialogIndex, SET_WORK_DIALOG_INDEX],
+      [setEducationLevelAnswers, SET_EDUCATION_LEVEL_ANSWERS],
       [setEducationDialogVisibility, SET_EDUCATION_DIALOG_VISIBILITY],
       [setEducationDialogIndex, SET_EDUCATION_DIALOG_INDEX],
       [setEducationDegreeLevel, SET_EDUCATION_DEGREE_LEVEL],
@@ -86,6 +91,7 @@ describe('generated UI action helpers', () => {
       [setProgram, SET_PROGRAM],
       [setConfirmSkipDialogVisibility, SET_CONFIRM_SKIP_DIALOG_VISIBILITY],
       [setDocsInstructionsVisibility, SET_DOCS_INSTRUCTIONS_VISIBILITY],
+      [setWorkHistoryAnswer, SET_WORK_HISTORY_ANSWER],
       [setNavDrawerOpen, SET_NAV_DRAWER_OPEN],
     ].forEach(assertCreatedActionHelper);
   });

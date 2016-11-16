@@ -29,6 +29,9 @@ import * as enrollmentActions from '../actions/programs';
 import {
   CLEAR_UI,
   SET_PROFILE_STEP,
+  setNavDrawerOpen,
+  SET_NAV_DRAWER_OPEN,
+  SET_PHOTO_DIALOG_VISIBILITY,
 } from '../actions/ui';
 import * as uiActions from '../actions/ui';
 import {
@@ -176,6 +179,45 @@ describe('App', () => {
         stub.returns({type: "fake"});
         props.setCurrentProgramEnrollment("value");
         assert(stub.calledWith("value"));
+      });
+    });
+  });
+
+  describe('navbar', () => {
+    for (const [title, url] of [
+      ['Dashboard', '/dashboard'],
+      ['View Profile', `/learner/${SETTINGS.user.username}`],
+      ['Settings', '/settings'],
+    ]) {
+      it(`closes the drawer and changes the URL when ${title} is clicked`, () => {
+        helper.store.dispatch(setNavDrawerOpen(true));
+        return renderComponent("/").then(([wrapper]) => {
+          let node = wrapper.find(".nav-drawer").find("Link").filterWhere(x => x.text() === title);
+          assert.equal(node.props()['to'], url);
+
+          return listenForActions([SET_NAV_DRAWER_OPEN], () => {
+            node.simulate('click');
+          }).then(state => {
+            assert.isFalse(state.ui.navDrawerOpen);
+          });
+        });
+      });
+    }
+  });
+
+  it('closes the drawer and shows the photo dialog when edit photo is clicked', () => {
+    helper.store.dispatch(setNavDrawerOpen(true));
+    return renderComponent("/").then(([wrapper]) => {
+      let node = wrapper.find("button").filterWhere(x => x.text() === "Edit Photo");
+
+      return listenForActions([
+        SET_NAV_DRAWER_OPEN,
+        SET_PHOTO_DIALOG_VISIBILITY,
+      ], () => {
+        node.simulate('click');
+      }).then(state => {
+        assert.isFalse(state.ui.navDrawerOpen);
+        assert.isTrue(state.ui.photoDialogVisibility);
       });
     });
   });

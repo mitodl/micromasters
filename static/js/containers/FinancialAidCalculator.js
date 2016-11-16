@@ -14,7 +14,6 @@ import {
   clearCalculatorEdit,
   addFinancialAid,
   updateCalculatorValidation,
-  skipFinancialAid,
 } from '../actions/financial_aid';
 import {
   setCalculatorDialogVisibility,
@@ -246,13 +245,6 @@ const updateFinancialAidEdit = R.curry((dispatch, current) => {
   dispatch(updateCalculatorEdit(clone));
 });
 
-const skipFinancialAidHelper = R.curry((dispatch, programId) => () => {
-  dispatch(skipFinancialAid(programId)).then(() => {
-    dispatch(clearCalculatorEdit());
-    dispatch(setCalculatorDialogVisibility(false));
-  });
-});
-
 const openConfirmSkipDialogHelper = dispatch => () => {
   closeDialogAndCancel(dispatch)();
   dispatch(setConfirmSkipDialogVisibility(true));
@@ -278,7 +270,6 @@ const mapDispatchToProps = dispatch => {
   return {
     closeDialogAndCancel: closeDialogAndCancel(dispatch),
     saveFinancialAid: saveFinancialAid(dispatch),
-    skipFinancialAid: skipFinancialAidHelper(dispatch),
     openConfirmSkipDialog: openConfirmSkipDialogHelper(dispatch),
     updateCalculatorEdit: updateFinancialAidEdit(dispatch),
     ...createSimpleActionHelpers(dispatch, [

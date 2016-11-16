@@ -34,10 +34,18 @@ import {
   RECEIVE_DASHBOARD_FAILURE,
   CLEAR_DASHBOARD,
   receiveDashboardSuccess,
+
   checkout,
   REQUEST_CHECKOUT,
   RECEIVE_CHECKOUT_SUCCESS,
   RECEIVE_CHECKOUT_FAILURE,
+
+  fetchCoursePrices,
+  clearCoursePrices,
+  REQUEST_COURSE_PRICES,
+  RECEIVE_COURSE_PRICES_SUCCESS,
+  RECEIVE_COURSE_PRICES_FAILURE,
+  CLEAR_COURSE_PRICES,
 
   updateCourseStatus,
   UPDATE_COURSE_STATUS,
@@ -47,6 +55,7 @@ import {
 } from '../actions/index';
 import * as api from '../lib/api';
 import {
+  COURSE_PRICES_RESPONSE,
   DASHBOARD_RESPONSE,
   USER_PROFILE_RESPONSE,
   CYBERSOURCE_CHECKOUT_RESPONSE,
@@ -309,6 +318,52 @@ describe('reducers', () => {
       assert.notEqual(run.status, 'new_status');
       return dispatchThen(updateCourseStatus(run.course_id, 'new_status'), [UPDATE_COURSE_STATUS]).then(state => {
         assert.equal(getRun(state.programs).status, 'new_status');
+      });
+    });
+  });
+
+  describe('prices reducer', () => {
+    let pricesStub;
+
+    beforeEach(() => {
+      dispatchThen = store.createDispatchThen(state => state.prices);
+      pricesStub = sandbox.stub(api, 'getCoursePrices');
+    });
+
+    it('should have an empty default state', () => {
+      return dispatchThen({type: 'unknown'}, ['unknown']).then(state => {
+        assert.deepEqual(state, {
+          coursePrices: []
+        });
+      });
+    });
+
+    it('should fetch the prices successfully then clear it', () => {
+      pricesStub.returns(Promise.resolve(COURSE_PRICES_RESPONSE));
+
+      return dispatchThen(fetchCoursePrices(), [
+        REQUEST_COURSE_PRICES,
+        RECEIVE_COURSE_PRICES_SUCCESS,
+      ]).then(pricesState => {
+        assert.deepEqual(pricesState.coursePrices, COURSE_PRICES_RESPONSE);
+        assert.equal(pricesState.fetchStatus, FETCH_SUCCESS);
+
+        return dispatchThen(clearCoursePrices(), [CLEAR_COURSE_PRICES]).then(pricesState => {
+          assert.deepEqual(pricesState, {
+            coursePrices: []
+          });
+        });
+      });
+    });
+
+    it('should fail to fetch the dashboard', () => {
+      pricesStub.returns(Promise.reject());
+
+      return dispatchThen(fetchCoursePrices(), [
+        REQUEST_COURSE_PRICES,
+        RECEIVE_COURSE_PRICES_FAILURE,
+      ]).then(pricesState => {
+        assert.equal(pricesState.fetchStatus, FETCH_FAILURE);
       });
     });
   });

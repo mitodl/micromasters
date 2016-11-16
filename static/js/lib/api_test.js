@@ -46,7 +46,6 @@ describe('api', function() {
   });
   afterEach(function() {
     sandbox.restore();
-    fetchMock.restore();
 
     for (let cookie of document.cookie.split(";")) {
       let key = cookie.split("=")[0].trim();
@@ -80,11 +79,7 @@ describe('api', function() {
 
     it('patches a user profile', () => {
       fetchJSONStub.returns(Promise.resolve(USER_PROFILE_RESPONSE));
-      fetchMock.mock('/api/v0/profiles/jane/', (url, opts) => {
-        assert.deepEqual(JSON.parse(opts.body), USER_PROFILE_RESPONSE);
-        return { status: 200 };
-      });
-      return patchUserProfile('jane', USER_PROFILE_RESPONSE).then(returnedProfile => {
+      patchUserProfile('jane', USER_PROFILE_RESPONSE).then(returnedProfile => {
         assert.ok(fetchJSONStub.calledWith('/api/v0/profiles/jane/', {
           method: 'PATCH',
           body: JSON.stringify(USER_PROFILE_RESPONSE)
@@ -118,9 +113,6 @@ describe('api', function() {
         let formData = new FormData;
         formData.append('image', blob, 'a file name');
         fetchStub.returns(Promise.resolve('good response'));
-        fetchMock.mock('/api/v0/profiles/jane/', () => {
-          return { status: 200 };
-        });
         return updateProfileImage('jane', blob, 'a file name').then(res => {
           assert.equal(res, 'good response');
           checkArgs();
@@ -162,10 +154,6 @@ describe('api', function() {
 
     it('posts to checkout', () => {
       fetchJSONStub.returns(Promise.resolve(CYBERSOURCE_CHECKOUT_RESPONSE));
-      fetchMock.mock('/api/v0/checkout/', (url, opts) => {
-        assert.deepEqual(JSON.parse(opts.body), CYBERSOURCE_CHECKOUT_RESPONSE);
-        return { status: 200 };
-      });
       return checkout('course_id').then(checkoutInfo => {
         assert.ok(fetchJSONStub.calledWith('/api/v0/checkout/', {
           method: 'POST',
@@ -192,9 +180,6 @@ describe('api', function() {
 
       it('returns expected values when a POST to send email succeeds', () => {
         fetchJSONStub.returns(Promise.resolve(MAIL_RESPONSE));
-        fetchMock.mock('/api/v0/mail/', (url, opts) => {  // eslint-disable-line no-unused-vars
-          return {status: 200};
-        });
         return sendSearchResultMail('subject', 'body', searchRequest).then(mailResp => {
           assert.ok(fetchJSONStub.calledWith('/api/v0/mail/', {
             method: 'POST',
@@ -234,10 +219,6 @@ describe('api', function() {
       it('adds a program enrollment successfully', () => {
         let enrollment = PROGRAMS[0];
         fetchJSONStub.returns(Promise.resolve(enrollment));
-        fetchMock.mock('/api/v0/enrolledprograms/', (url, opts) => {
-          assert.deepEqual(JSON.parse(opts.body), enrollment);
-          return { status: 200 };
-        });
         return addProgramEnrollment(enrollment.id).then(enrollmentResponse => {
           assert.ok(fetchJSONStub.calledWith('/api/v0/enrolledprograms/', {
             method: 'POST',
@@ -264,10 +245,6 @@ describe('api', function() {
       it('add financial aid successfully', () => {
         let programId = PROGRAMS[0].id;
         fetchJSONStub.returns(Promise.resolve());
-
-        fetchMock.mock('/api/v0/financial_aid_request', () => {
-          return { status: 200 };
-        });
 
         return addFinancialAid(10000, 'USD', programId).then(() => {
           assert.ok(fetchJSONStub.calledWith('/api/v0/financial_aid_request/', {
@@ -304,10 +281,6 @@ describe('api', function() {
       it('successfully skips financial aid', () => {
         fetchJSONStub.returns(Promise.resolve());
 
-        fetchMock.mock('/api/v0/financial_aid_skip/2/', () => {
-          return { status: 200 };
-        });
-
         return skipFinancialAid(programId).then(() => {
           assert.ok(fetchJSONStub.calledWith('/api/v0/financial_aid_skip/2/', {
             method: 'PATCH'
@@ -331,10 +304,6 @@ describe('api', function() {
         let financialAidId = 123;
         let sentDate = "2012-12-12";
         fetchJSONStub.returns(Promise.resolve());
-
-        fetchMock.mock(`/api/v0/financial_aid/${financialAidId}/`, () => {
-          return { status: 200 };
-        });
 
         return updateDocumentSentDate(financialAidId, sentDate).then(() => {
           assert.ok(fetchJSONStub.calledWith(`/api/v0/financial_aid/${financialAidId}/`, {
@@ -392,84 +361,174 @@ describe('api', function() {
     });
   });
 
-  describe('fetchWithCSRF', () => {
-    it('fetches and populates appropirate headers', () => {
-      document.cookie = "csrftoken=asdf";
-      let body = "body";
+  describe('fetch functions', () => {
+    const CSRF_TOKEN = 'asdf';
 
-      fetchMock.mock('/url', (url, opts) => {
-        assert.deepEqual(opts, {
-          credentials: "same-origin",
-          headers: {
-            "X-CSRFToken": "asdf"
-          },
-          body: body,
-          method: 'GET'
+    afterEach(() => {
+      fetchMock.restore();
+    });
+
+    describe('fetchWithCSRF', () => {
+      beforeEach(() => {
+        document.cookie = `csrftoken=${CSRF_TOKEN}`;
+      });
+
+      it('fetches and populates appropriate headers for GET', () => {
+        let body = "body";
+
+        fetchMock.mock('/url', (url, opts) => {
+          assert.deepEqual(opts, {
+            credentials: "same-origin",
+            headers: {},
+            body: body,
+            method: 'GET'
+          });
+
+          return {
+            status: 200,
+            body: "Some text"
+          };
         });
 
         return fetchWithCSRF('/url', {
           body: body
+        }).then(text => {
+          assert.equal(text, "Some text");
         });
       });
+
+      for (let method of ['PATCH', 'PUT', 'POST']) {
+        it(`fetches and populates appropriate headers for ${method}`, () => {
+          let body = "body";
+
+          fetchMock.mock('/url', (url, opts) => {
+            assert.deepEqual(opts, {
+              credentials: "same-origin",
+              headers: {
+                'X-CSRFToken': CSRF_TOKEN
+              },
+              body: body,
+              method: method
+            });
+
+            return {
+              status: 200,
+              body: "Some text"
+            };
+          });
+
+          return fetchWithCSRF('/url', {
+            body,
+            method,
+          }).then(text => {
+            assert.equal(text, 'Some text');
+          });
+        });
+      }
+
+      for (let statusCode of [199, 300, 400, 500, 100]) {
+        it(`rejects the promise if the status code is ${statusCode}`, () => {
+          fetchMock.mock('/url', () => {
+            return {status: statusCode};
+          });
+
+          return assert.isRejected(fetchWithCSRF('/url'));
+        });
+      }
     });
 
-    for (let statusCode of [199, 300, 400, 500, 100]) {
-      it(`rejects the promise if the status code is ${statusCode}`, () => {
-        fetchMock.mock('/url', () => {
-          return { status: statusCode };
+    describe('fetchJSONWithCSRF', () => {
+      it('fetches and populates appropriate headers for JSON', () => {
+        document.cookie = `csrftoken=${CSRF_TOKEN}`;
+        let expectedJSON = {data: true};
+
+        fetchMock.mock('/url', (url, opts) => {
+          assert.deepEqual(opts, {
+            credentials: "same-origin",
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json",
+              "X-CSRFToken": CSRF_TOKEN
+            },
+            body: JSON.stringify(expectedJSON),
+            method: "PATCH"
+          });
+          return {
+            status: 200,
+            body: '{"json": "here"}'
+          };
         });
 
-        return assert.isRejected(fetchWithCSRF('/url'));
-      });
-    }
-  });
-
-  describe('fetchJSONWithCSRF', () => {
-    it('fetches and populates appropriate headers for JSON', () => {
-      document.cookie = "csrftoken=asdf";
-      let expectedJSON = { data: true };
-
-      fetchMock.mock('/url', (url, opts) => {
-        assert.deepEqual(opts, {
-          credentials: "same-origin",
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "X-CSRFToken": "asdf"
-          },
-          body: JSON.stringify(expectedJSON),
-          method: "PATCH"
+        return fetchJSONWithCSRF('/url', {
+          method: 'PATCH',
+          body: JSON.stringify(expectedJSON)
+        }).then(text => {
+          assert.deepEqual(text, {
+            "json": "here"
+          });
         });
-        return {status: 200};
       });
 
-      return fetchJSONWithCSRF('/url', {
-        method: 'PATCH',
-        body: JSON.stringify(expectedJSON)
+      it('handles responses with no data', () => {
+        document.cookie = `csrftoken=${CSRF_TOKEN}`;
+        let expectedJSON = {data: true};
+
+        fetchMock.mock('/url', (url, opts) => {
+          assert.deepEqual(opts, {
+            credentials: "same-origin",
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json",
+              "X-CSRFToken": CSRF_TOKEN
+            },
+            body: JSON.stringify(expectedJSON),
+            method: "PATCH"
+          });
+          return {
+            status: 200,
+          };
+        });
+
+        return fetchJSONWithCSRF('/url', {
+          method: 'PATCH',
+          body: JSON.stringify(expectedJSON)
+        }).then(text => {
+          assert.deepEqual(text, '');
+        });
       });
+
+      for (let statusCode of [199, 300, 400, 500, 100]) {
+        it(`rejects the promise if the status code is ${statusCode}`, () => {
+          fetchMock.mock('/url', () => {
+            return {
+              status: statusCode,
+              body: JSON.stringify({
+                error: "an error"
+              })
+            };
+          });
+
+          return assert.isRejected(fetchJSONWithCSRF('/url')).then(text => {
+            assert.deepEqual(text, {
+              error: "an error",
+              errorStatusCode: statusCode
+            });
+          });
+        });
+      }
+
+      for (let statusCode of [400, 401]) {
+        it(`redirects to login if we set loginOnError and status = ${statusCode}`, () => {
+          fetchMock.mock('/url', () => {
+            return {status: statusCode};
+          });
+
+          return assert.isRejected(fetchJSONWithCSRF('/url', {}, true)).then(() => {
+            assert.equal(savedWindowLocation, '/login/edxorg/');
+          });
+        });
+      }
     });
-
-    for (let statusCode of [199, 300, 400, 500, 100]) {
-      it(`rejects the promise if the status code is ${statusCode}`, () => {
-        fetchMock.mock('/url', () => {
-          return { status: statusCode };
-        });
-
-        return assert.isRejected(fetchJSONWithCSRF('/url'));
-      });
-    }
-
-    for (let statusCode of [400, 401]) {
-      it(`redirects to login if we set loginOnError and status = ${statusCode}`, () => {
-        fetchMock.mock('/url', () => {
-          return {status: 400};
-        });
-
-        return assert.isRejected(fetchJSONWithCSRF('/url', {}, true)).then(() => {
-          assert.equal(savedWindowLocation, '/login/edxorg/');
-        });
-      });
-    }
   });
 
   describe('getCookie', () => {
