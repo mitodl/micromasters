@@ -59,7 +59,7 @@ describe('CourseAction', () => {
     }
     let description = renderedComponent.find(".description");
     let descriptionText = description.length === 1 ? description.text() : undefined;
-    let link = renderedComponent.find("a");
+    let link = renderedComponent.find("button.text-link");
     let linkText = link.length === 1 ? link.text() : undefined;
     return {
       button: button,
