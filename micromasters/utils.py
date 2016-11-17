@@ -1,12 +1,14 @@
 """
 General micromasters utility functions
 """
+import datetime
 import json
 import logging
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.serializers import serialize
+import pytz
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
@@ -135,3 +137,19 @@ def is_subset_dict(dict_to_test, master_dict):
     except KeyError:
         return False
     return result
+
+
+def is_near_now(time):
+    """
+    Returns true if time is within five seconds or so of now
+
+    Args:
+        time (datetime.datetime):
+            The time to test
+    Returns:
+        bool:
+            True if near now, false otherwise
+    """
+    now = datetime.datetime.now(tz=pytz.UTC)
+    five_seconds = datetime.timedelta(0, 5)
+    return now - five_seconds < time < now + five_seconds

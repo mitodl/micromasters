@@ -1,6 +1,7 @@
 """
 Tests for the utils module
 """
+import datetime
 import unittest
 
 from django.core.exceptions import ImproperlyConfigured
@@ -10,6 +11,7 @@ from django.test import (
     RequestFactory,
     TestCase,
 )
+import pytz
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 
@@ -26,6 +28,7 @@ from micromasters.utils import (
     get_field_names,
     serialize_model_object,
     first_matching_item,
+    is_near_now,
     is_subset_dict,
 )
 
@@ -185,3 +188,14 @@ class UtilTests(unittest.TestCase):
         new_dict = dict(d1)
         new_dict['c']['d'] = 123
         assert not is_subset_dict(new_dict, d2)
+
+    def test_is_near_now(self):
+        """
+        Test is_near_now for now
+        """
+        now = datetime.datetime.now(tz=pytz.UTC)
+        assert is_near_now(now) is True
+        later = now + datetime.timedelta(0, 6)
+        assert is_near_now(later) is False
+        earlier = now - datetime.timedelta(0, 6)
+        assert is_near_now(earlier) is False

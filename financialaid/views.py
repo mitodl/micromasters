@@ -1,6 +1,7 @@
 """
 Views for financialaid
 """
+import datetime
 import json
 from functools import reduce
 
@@ -17,16 +18,20 @@ from rest_framework.generics import (
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.status import HTTP_200_OK
 from rest_framework.views import APIView
 from rolepermissions.verifications import has_object_permission
 
 from courses.models import Program
 from dashboard.models import ProgramEnrollment
+from financialaid.api import (
+    get_formatted_course_price,
+    get_no_discount_tier_program,
+)
 from financialaid.constants import (
     FinancialAidJustification,
     FinancialAidStatus
 )
-from financialaid.api import get_formatted_course_price
 from financialaid.models import (
     FinancialAid,
     TierProgram
@@ -39,7 +44,6 @@ from financialaid.serializers import (
     FinancialAidActionSerializer,
     FinancialAidRequestSerializer,
     FinancialAidSerializer,
-    FinancialAidSkipSerializer
 )
 from mail.serializers import FinancialAidMailSerializer
 from roles.roles import Permissions
@@ -71,14 +75,13 @@ class FinancialAidSkipView(UpdateAPIView):
     aid object exists, and then either creates or updates a financial aid object to reflect
     the user skipping financial aid.
     """
-    serializer_class = FinancialAidSkipSerializer
     authentication_classes = (
         SessionAuthentication,
         TokenAuthentication,
     )
     permission_classes = (IsAuthenticated, )
 
-    def get_object(self):
+    def update(self, request, *args, **kwargs):
         """
         Overrides get_object in case financialaid object does not exist, as the learner may skip
         financial aid either after starting the process or in lieu of applying
@@ -86,18 +89,29 @@ class FinancialAidSkipView(UpdateAPIView):
         program = get_object_or_404(Program, id=self.kwargs["program_id"])
         if not program.financial_aid_availability:
             raise ValidationError("Financial aid not available for this program.")
-        if not ProgramEnrollment.objects.filter(program=program.id, user=self.request.user).exists():
+        if not ProgramEnrollment.objects.filter(program=program.id, user=request.user).exists():
             raise ValidationError("User not in program.")
 
-        # Look up a FinancialAid object for the user. The FinancialAidSkipSerializer
-        # will then change its status to skipped
+        user = request.user
         financialaid = FinancialAid.objects.filter(
-            user=self.request.user,
+            user=user,
             tier_program__program=program,
         ).exclude(status=FinancialAidStatus.RESET).first()
         if financialaid is None:
-            raise ValidationError("No financial aid application is available to mark as skipped")
-        return financialaid
+            financialaid = FinancialAid(
+                user=user,
+                country_of_income=user.profile.country,
+                date_exchange_rate=datetime.datetime.now(),
+                country_of_residence=user.profile.country,
+            )
+
+        if financialaid.status in FinancialAidStatus.TERMINAL_STATUSES:
+            raise ValidationError("Financial aid application cannot be skipped once it's been approved or skipped.")
+
+        financialaid.tier_program = get_no_discount_tier_program(program.id)
+        financialaid.status = FinancialAidStatus.SKIPPED
+        financialaid.save_and_log(self.request.user)
+        return Response(status=HTTP_200_OK)
 
 
 class ReviewFinancialAidView(UserPassesTestMixin, ListView):
