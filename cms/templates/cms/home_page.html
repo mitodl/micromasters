@@ -111,10 +111,10 @@
               {% endif %}
             </div>
             <div class="program-description">
-              <p id="program-{{ program.id }}-description">{{ program.description|default:"No description available for this program." }}</p>
+              <p class="program-description-text" id="program-{{ program.id }}-description">{{ program.description|default:"No description available for this program." }}</p>
 
               {% if program.programpage %}
-                <p>
+                <p class="program-description-link">
                 {% if program.programpage.external_program_page_url %}
                   <a href="{{ program.programpage.external_program_page_url }}" class="program-link">
                 {% else %}

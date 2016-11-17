@@ -416,6 +416,10 @@ body.app-media {
     max-width: 1400px;
     margin: 0 auto;
 
+    li {
+      padding-bottom: 1em;
+    }
+
     .program-thumbnail {
       position: relative;
       background-color: black;
@@ -464,10 +468,14 @@ body.app-media {
     .program-description {
       padding: 20px 10px;
       height: 20em;
-      overflow: auto;
 
       @include breakpoint(phone) {
         padding: 20px 3px 30px;
+      }
+
+      p.program-description-text {
+        max-height: 15em;
+        overflow: auto;
       }
 
       p {
