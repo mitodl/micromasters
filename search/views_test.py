@@ -1,6 +1,7 @@
 """
 Tests for the search view
 """
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save
 from django.test import override_settings
@@ -75,6 +76,10 @@ class SearchTests(ESTestCase, APITestCase):
         Helper function to extract the program ids in a list of elasticsearch hits.
         """
         return list(set(hit['_source']['program']['id'] for hit in hits))
+
+    def test_default_page_size(self):
+        """Assert the default page size"""
+        assert settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE == 50
 
     def test_access(self):
         """
