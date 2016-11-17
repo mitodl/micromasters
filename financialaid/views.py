@@ -86,13 +86,13 @@ class FinancialAidSkipView(UpdateAPIView):
         Overrides get_object in case financialaid object does not exist, as the learner may skip
         financial aid either after starting the process or in lieu of applying
         """
+        user = request.user
         program = get_object_or_404(Program, id=self.kwargs["program_id"])
         if not program.financial_aid_availability:
             raise ValidationError("Financial aid not available for this program.")
-        if not ProgramEnrollment.objects.filter(program=program.id, user=request.user).exists():
+        if not ProgramEnrollment.objects.filter(program=program.id, user=user).exists():
             raise ValidationError("User not in program.")
 
-        user = request.user
         financialaid = FinancialAid.objects.filter(
             user=user,
             tier_program__program=program,
@@ -110,7 +110,7 @@ class FinancialAidSkipView(UpdateAPIView):
 
         financialaid.tier_program = get_no_discount_tier_program(program.id)
         financialaid.status = FinancialAidStatus.SKIPPED
-        financialaid.save_and_log(self.request.user)
+        financialaid.save_and_log(user)
         return Response(status=HTTP_200_OK)
 
 
