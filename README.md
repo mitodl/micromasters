@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/mitodl/micromasters/branch/master/graph/badge.svg)](https://codecov.io/gh/mitodl/micromasters)
+
 # MicroMasters
 Portal for learners and course teams to access MITx MicroMasters programs
 
