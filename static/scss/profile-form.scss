@@ -1,4 +1,4 @@
-.profile-form, .personal-dialog {
+.profile-form, .dialog {
   &.collapsed {
     padding: 20px 24px 20px;
     height: 100px;
@@ -20,15 +20,21 @@
     display: inline-block;
   }
 
-  label {
+  label.react-select-label {
     display: block;
-    line-height: 2;
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.5);
+    font-weight: 400;
+
+    .Select-value, .Select-multi-value-wrapper {
+      font-size: 16px;
+    }
   }
 
   legend {
     border: 0;
     display: inline-block;
-    margin: 0;
+    margin: 0 15px 0 0;
     width: auto;
     font-size: 16px;
   }

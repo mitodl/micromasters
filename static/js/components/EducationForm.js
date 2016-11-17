@@ -299,10 +299,10 @@ class EducationForm extends ProfileFormFields {
       </Cell>
       { levelForm() }
       { fieldOfStudy() }
-      <Cell col={7}>
+      <Cell col={12}>
         {this.boundTextField(keySet('school_name'), 'School Name')}
       </Cell>
-      <Cell col={5}>
+      <Cell col={12}>
         {this.boundDateField(keySet('graduation_date'), 'Graduation Date', true, true)}
       </Cell>
       <Cell col={4}>
