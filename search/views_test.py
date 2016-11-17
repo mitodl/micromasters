@@ -18,6 +18,7 @@ from roles.roles import Staff
 from search.base import ESTestCase
 
 
+# pylint: disable=no-self-use
 class SearchTests(ESTestCase, APITestCase):
     """Tests for the search api view"""
 
@@ -71,7 +72,7 @@ class SearchTests(ESTestCase, APITestCase):
         assert resp_post.status_code == status_code
         return resp_post
 
-    def get_program_ids_in_hits(self, hits):  # pylint: disable=no-self-use
+    def get_program_ids_in_hits(self, hits):
         """
         Helper function to extract the program ids in a list of elasticsearch hits.
         """
