@@ -19,7 +19,6 @@ from financialaid.api import (
     determine_auto_approval,
     determine_tier_program,
     determine_income_usd,
-    get_no_discount_tier_program
 )
 from financialaid.constants import (
     FinancialAidJustification,
