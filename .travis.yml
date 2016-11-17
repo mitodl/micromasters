@@ -3,13 +3,19 @@ language: ruby
 
 matrix:
   include:
-    - install: docker-compose -f travis-docker-compose.yml build
+    - install:
+      - env | grep TRAVIS > .env
+      - env | grep CI >> .env
+      - docker-compose -f travis-docker-compose.yml build
       script: docker-compose -f travis-docker-compose.yml run web tox
       services:
         - docker
       env:
         name: Python
-    - install: docker build -t travis-watch -f ./travis/Dockerfile-travis-watch .
+    - install:
+      - env | grep TRAVIS > .env
+      - env | grep CI >> .env
+      - docker build -t travis-watch -f ./travis/Dockerfile-travis-watch .
       script: bash ./travis/js_tests.sh
       services:
         - docker

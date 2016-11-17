@@ -1738,6 +1738,11 @@
       "from": "execSync@1.0.2",
       "resolved": "https://registry.npmjs.org/execSync/-/execSync-1.0.2.tgz"
     },
+    "execSync": {
+      "version": "1.0.2",
+      "from": "execSync@1.0.2",
+      "resolved": "https://registry.npmjs.org/execSync/-/execSync-1.0.2.tgz"
+    },
     "executable": {
       "version": "1.1.0",
       "from": "executable@>=1.0.0 <2.0.0",

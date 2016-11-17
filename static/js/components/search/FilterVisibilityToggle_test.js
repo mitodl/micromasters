@@ -3,19 +3,32 @@ import React from 'react';
 import { assert } from 'chai';
 import { mount } from 'enzyme';
 import sinon from 'sinon';
+import { SearchkitManager, SearchkitProvider } from 'searchkit';
 
 import FilterVisibilityToggle from './FilterVisibilityToggle';
 import { makeStrippedHtml } from '../../util/util';
 
 describe('FilterVisibilityToggle', () => {
+  let searchKit;
+  beforeEach(() => {
+    searchKit = new SearchkitManager();
+  });
+
   let renderToggle = (props, children = undefined) => {
+    const searchKit = new SearchkitManager();
     if ( children === undefined) {
-      return makeStrippedHtml(<FilterVisibilityToggle {...props} />);
+      return makeStrippedHtml(
+        <SearchkitProvider searchkit={searchKit}>
+          <FilterVisibilityToggle {...props} />
+        </SearchkitProvider>
+      );
     } else {
       return makeStrippedHtml(
-        <FilterVisibilityToggle {...props}>
-          { children }
-        </FilterVisibilityToggle>
+        <SearchkitProvider searchkit={searchKit}>
+          <FilterVisibilityToggle {...props}>
+            { children }
+          </FilterVisibilityToggle>
+        </SearchkitProvider>
       );
     }
   };
@@ -54,9 +67,11 @@ describe('FilterVisibilityToggle', () => {
   it('hides toggle icon when no results', () => {
     sandbox.stub(FilterVisibilityToggle.prototype, 'getResults').returns(null);
     const wrapper = mount(
-      <FilterVisibilityToggle {...props} >
-        <div id="test">Test Text</div>
-      </FilterVisibilityToggle>
+      <SearchkitProvider searchkit={searchKit}>
+        <FilterVisibilityToggle {...props} >
+          <div id="test">Test Text</div>
+        </FilterVisibilityToggle>
+      </SearchkitProvider>
     );
     const icon = wrapper.find("i.material-icons");
     assert.lengthOf(icon, 0);
@@ -71,9 +86,11 @@ describe('FilterVisibilityToggle', () => {
       }
     });
     const wrapper = mount(
-      <FilterVisibilityToggle {...props} >
-        <div id="test">Test Text</div>
-      </FilterVisibilityToggle>
+      <SearchkitProvider searchkit={searchKit}>
+        <FilterVisibilityToggle {...props} >
+          <div id="test">Test Text</div>
+        </FilterVisibilityToggle>
+      </SearchkitProvider>
     );
     const icon = wrapper.find("i.material-icons");
     assert.lengthOf(icon, 0);
@@ -88,9 +105,11 @@ describe('FilterVisibilityToggle', () => {
       }
     });
     const wrapper = mount(
-      <FilterVisibilityToggle {...props} >
-        <div id="test">Test Text</div>
-      </FilterVisibilityToggle>
+      <SearchkitProvider searchkit={searchKit}>
+        <FilterVisibilityToggle {...props} >
+          <div id="test">Test Text</div>
+        </FilterVisibilityToggle>
+      </SearchkitProvider>
     );
     const icon = wrapper.find("i.material-icons");
 
