@@ -23,6 +23,7 @@ services:
       MICROMASTERS_SECURE_SSL_REDIRECT: 'False'
       MICROMASTERS_DB_DISABLE_SSL: 'True'
       ELASTICSEARCH_URL: elastic:9200
+    env_file: .env
     ports:
       - "8079:8079"
     links:
