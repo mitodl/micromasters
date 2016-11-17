@@ -195,8 +195,7 @@ describe("FinancialAidCard", () => {
     let program = programWithStatus();
     let setConfirmSkipDialogVisibility = sandbox.stub();
     let wrapper = renderCard({ program, setConfirmSkipDialogVisibility });
-    let props = wrapper.find("SkipFinancialAidDialog").props();
-    props['cancel']();
+    wrapper.find("SkipFinancialAidDialog").props().cancel();
     assert(setConfirmSkipDialogVisibility.calledWith(false));
   });
 });

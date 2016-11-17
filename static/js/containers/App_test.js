@@ -193,7 +193,7 @@ describe('App', () => {
         helper.store.dispatch(setNavDrawerOpen(true));
         return renderComponent("/").then(([wrapper]) => {
           let node = wrapper.find(".nav-drawer").find("Link").filterWhere(x => x.text() === title);
-          assert.equal(node.props()['to'], url);
+          assert.equal(node.props().to, url);
 
           return listenForActions([SET_NAV_DRAWER_OPEN], () => {
             node.simulate('click');

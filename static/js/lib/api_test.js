@@ -392,8 +392,8 @@ describe('api', function() {
 
         return fetchWithCSRF('/url', {
           body: body
-        }).then(text => {
-          assert.equal(text, "Some text");
+        }).then(responseBody => {
+          assert.equal(responseBody, "Some text");
         });
       });
 
@@ -420,8 +420,8 @@ describe('api', function() {
           return fetchWithCSRF('/url', {
             body,
             method,
-          }).then(text => {
-            assert.equal(text, 'Some text');
+          }).then(responseBody => {
+            assert.equal(responseBody, 'Some text');
           });
         });
       }
@@ -462,8 +462,8 @@ describe('api', function() {
         return fetchJSONWithCSRF('/url', {
           method: 'PATCH',
           body: JSON.stringify(expectedJSON)
-        }).then(text => {
-          assert.deepEqual(text, {
+        }).then(responseBody => {
+          assert.deepEqual(responseBody, {
             "json": "here"
           });
         });
@@ -492,8 +492,8 @@ describe('api', function() {
         return fetchJSONWithCSRF('/url', {
           method: 'PATCH',
           body: JSON.stringify(expectedJSON)
-        }).then(text => {
-          assert.deepEqual(text, '');
+        }).then(responseBody => {
+          assert.deepEqual(responseBody, '');
         });
       });
 
@@ -508,8 +508,8 @@ describe('api', function() {
             };
           });
 
-          return assert.isRejected(fetchJSONWithCSRF('/url')).then(text => {
-            assert.deepEqual(text, {
+          return assert.isRejected(fetchJSONWithCSRF('/url')).then(responseBody => {
+            assert.deepEqual(responseBody, {
               error: "an error",
               errorStatusCode: statusCode
             });
