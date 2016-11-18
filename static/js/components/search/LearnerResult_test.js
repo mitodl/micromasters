@@ -9,7 +9,10 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
 import LearnerResult from './LearnerResult';
 import { configureMainTestStore } from '../../store/configureStore';
-import { makeStrippedHtml } from '../../util/util';
+import {
+  getUserDisplayName,
+  makeStrippedHtml,
+} from '../../util/util';
 import {
   USER_PROFILE_RESPONSE,
   USER_PROGRAM_RESPONSE
@@ -43,7 +46,7 @@ describe('LearnerResult', () => {
 
   it("should include the user's name", () => {
     let result = renderLearnerResult(elasticHit);
-    assert.include(result, USER_PROFILE_RESPONSE.preferred_name);
+    assert.include(result, getUserDisplayName(USER_PROFILE_RESPONSE));
   });
 
   it("should include the user's location", () => {

@@ -28,6 +28,7 @@ import {
   labelSort,
   classify,
   currentOrFirstIncompleteStep,
+  getUserDisplayName,
 } from '../util/util';
 import {
   EDUCATION_LEVELS,
@@ -592,6 +593,26 @@ describe('utility functions', () => {
         input[1],
       ];
       assert.deepEqual(expected, labelSort(input));
+    });
+  });
+
+  describe('getUserDisplayName', () => {
+    let profile;
+    beforeEach(() => {
+      profile = {
+        username: 'jane_username',
+        first_name: 'jane',
+        last_name: 'doe',
+      };
+    });
+
+    it('assert first and last name', () => {
+      assert.equal('jane doe', getUserDisplayName(profile));
+    });
+
+    it('returns username when first or last name not available', () => {
+      profile.first_name = null;
+      assert.equal('jane_username', getUserDisplayName(profile));
     });
   });
 });
