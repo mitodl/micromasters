@@ -6,6 +6,7 @@ matrix:
     - install:
       - env | grep TRAVIS > .env
       - env | grep CI >> .env
+      - env | grep CODECOV >> .env
       - docker-compose -f travis-docker-compose.yml build
       script: docker-compose -f travis-docker-compose.yml run web tox
       services:
@@ -15,6 +16,7 @@ matrix:
     - install:
       - env | grep TRAVIS > .env
       - env | grep CI >> .env
+      - env | grep CODECOV >> .env
       - docker build -t travis-watch -f ./travis/Dockerfile-travis-watch .
       script: bash ./travis/js_tests.sh
       services:
