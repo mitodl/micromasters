@@ -5,13 +5,14 @@
 #    pip-compile --output-file test_requirements.txt test_requirements.in
 #
 apipkg==1.4               # via execnet
-appnope==0.1.0            # via ipython
+argparse==1.4.0           # via codecov
 astroid==1.4.8            # via pylint, pylint-plugin-utils
 blessings==1.6            # via curtsies
 blinker==1.4              # via nplusone
 bpython==0.16
 click==6.6                # via pip-tools
-coverage==4.2             # via pytest-cov
+codecov==2.0.5
+coverage==4.2             # via codecov, pytest-cov
 curtsies==0.2.11          # via bpython
 ddt==1.1.1
 decorator==4.0.10         # via ipython, traitlets
@@ -50,7 +51,7 @@ pytest-django==3.0.0
 pytest-pep8==1.0.6
 pytest-pylint==0.6.0
 pytest==3.0.3
-requests==2.11.1          # via bpython
+requests==2.11.1          # via bpython, codecov
 semantic-version==2.6.0
 simplegeneric==0.8.1      # via ipython
 six==1.10.0               # via astroid, bpython, mock, nplusone, pip-tools, prompt-toolkit, pylint, pytest-pylint, traitlets
@@ -63,5 +64,6 @@ wcwidth==0.1.7            # via curtsies, prompt-toolkit
 wmctrl==0.3               # via pdbpp
 wrapt==1.10.8             # via astroid
 
-# The following packages are considered to be unsafe in a requirements file:
+# The following packages are commented out because they are
+# considered to be unsafe in a requirements file:
 # setuptools                # via ipdb, ipython

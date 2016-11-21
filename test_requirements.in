@@ -1,4 +1,5 @@
 bpython
+codecov
 ddt
 django-debug-toolbar
 ipdb

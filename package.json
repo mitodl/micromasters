@@ -24,6 +24,7 @@
     "bootstrap": "3.3.6",
     "chai": "^3.5.0",
     "chai-as-promised": "^5.3.0",
+    "codecov": "^1.0.1",
     "css-loader": "0.23.1",
     "currency-codes": "^1.1.2",
     "enzyme": "^2.4.1",
@@ -111,7 +112,8 @@
     "lint": "node ./node_modules/eslint/bin/eslint.js ./static/js",
     "scss_lint": "node ./node_modules/sass-lint/bin/sass-lint.js --verbose --no-exit",
     "test": "./js_test.sh",
-    "coverage": "node ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- --compilers js:babel-register static/js/global_init.js 'static/**/*/*_test.js'",
+    "coverage": "COVERAGE=1 ./js_test.sh",
+    "codecov": "CODECOV=1 ./js_test.sh",
     "flow": "flow check"
   }
 }
