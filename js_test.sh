@@ -29,7 +29,13 @@ then
     exit 1
 fi
 
-if [[ $(cat "$TMP_FILE" | grep -v 'ignored, nothing could be mapped' | wc -l | awk '{print $1}') -ne 0 ]]  # is file empty?
+if [[ $(
+    cat "$TMP_FILE" |
+    grep -v 'ignored, nothing could be mapped' |
+    grep -v 'You are manually calling a React.PropTypes validation function' |
+    wc -l |
+    awk '{print $1}'
+    ) -ne 0 ]]  # is file empty?
 then
     echo "Error output found, see test output logs to see which test they came from."
     rm -f "$TMP_FILE"
