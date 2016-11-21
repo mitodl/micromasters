@@ -21,7 +21,7 @@ django-server-status==0.3.2
 django-storages-redux==1.3.2
 django-taggit==0.18.3     # via wagtail
 django-treebeard==4.0.1   # via wagtail
-Django==1.10.3            # via django-role-permissions, django-server-status, django-treebeard, jsonfield, wagtail
+django==1.10.3
 djangorestframework==3.5.2
 edx-api-client==0.3.0
 elasticsearch-dsl==2.1.0
@@ -31,9 +31,9 @@ jsonfield==1.0.3
 kombu==3.0.37             # via celery, django-server-status
 newrelic==2.72.1.53
 oauthlib==2.0.0           # via python-social-auth, requests-oauthlib
-Pillow==3.4.2             # via wagtail
+pillow==3.4.2
 psycopg2==2.6
-PyJWT==1.4.2              # via python-social-auth
+pyjwt==1.4.2              # via python-social-auth
 python-dateutil==2.5.3
 python-social-auth==0.2.21
 python3-openid==3.0.10    # via python-social-auth
@@ -45,8 +45,8 @@ requests-oauthlib==0.7.0  # via python-social-auth
 requests==2.11.1
 six==1.10.0               # via django-role-permissions, django-server-status, edx-api-client, elasticsearch-dsl, html5lib, python-dateutil, python-social-auth
 static3==0.5.1
-Unidecode==0.4.19         # via wagtail
+unidecode==0.4.19         # via wagtail
 urllib3==1.19             # via elasticsearch
 uwsgi==2.0.14
 wagtail==1.7
-Willow==0.4               # via wagtail
+willow==0.4               # via wagtail
