@@ -1,5 +1,6 @@
 // Define globals we would usually get from Django
-const settings = {
+import _ from 'lodash';
+const _settings = {
   user: {
     username: "jane",
     email: "jane@example.com",
@@ -12,7 +13,7 @@ const settings = {
   support_email: "a_real_email@example.com",
   es_page_size: 40,
 };
-global.SETTINGS = Object.assign({}, settings);
+global.SETTINGS = _.cloneDeep(_settings);
 
 // polyfill for Object.entries
 import entries from 'object.entries';
@@ -26,7 +27,7 @@ require('jsdom-global')();
 // cleanup after each test run
 afterEach(function (){
   document.body.innerHTML = '';
-  global.SETTINGS = Object.assign({}, settings);
+  global.SETTINGS = _.cloneDeep(_settings);
 });
 
 // required for interacting with react-mdl components

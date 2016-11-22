@@ -122,7 +122,7 @@ describe("UserPage", function() {
 
 
     it('should have a logout link', () => {
-      const username = SETTINGS.user ? SETTINGS.user.username : null;
+      const username = SETTINGS.user.username;
       return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
         let logout = [...div.getElementsByTagName('a')].find(link => link.textContent === 'Logout');
         assert.ok(logout);
@@ -153,7 +153,7 @@ describe("UserPage", function() {
 
 
       const clearValidation = (actions, getInput, validationExpectation, removeErrorValue) => {
-        const username = SETTINGS.user ? SETTINGS.user.username : null;
+        const username = SETTINGS.user.username;
         return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
           return listenForActions(actions, () => {
             TestUtils.Simulate.click(getEditPersonalButton(div));
@@ -187,7 +187,7 @@ describe("UserPage", function() {
       };
 
       const scrollIntoView = (actions, getInput, selectField=false) => {
-        const username = SETTINGS.user ? SETTINGS.user.username : null;
+        const username = SETTINGS.user.username;
         return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
           return listenForActions(actions, () => {
             TestUtils.Simulate.click(getEditPersonalButton(div));
@@ -374,7 +374,7 @@ describe("UserPage", function() {
       });
 
       it('shows the education component', () => {
-        const username = SETTINGS.user ? SETTINGS.user.username : null;
+        const username = SETTINGS.user.username;
         return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
           let title = div.getElementsByClassName('profile-card-header')[0];
           assert.equal(title.textContent, 'Education');
@@ -382,7 +382,7 @@ describe("UserPage", function() {
       });
 
       it('should show the entries in resume order', () => {
-        const username = SETTINGS.user ? SETTINGS.user.username : null;
+        const username = SETTINGS.user.username;
         return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
           let editButton = div.querySelector('#education-card').
             querySelector('.edit-button');
@@ -402,7 +402,7 @@ describe("UserPage", function() {
       });
 
       it('should confirm deletion and let you cancel', () => {
-        const username = SETTINGS.user ? SETTINGS.user.username : null;
+        const username = SETTINGS.user.username;
         return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
           let button = deleteButton(div);
 
@@ -422,7 +422,7 @@ describe("UserPage", function() {
       });
 
       it('should confirm deletion and let you continue', () => {
-        const username = SETTINGS.user ? SETTINGS.user.username : null;
+        const username = SETTINGS.user.username;
         return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
           let expectedProfile = _.cloneDeep(userProfile);
           let sortedEducationEntries = educationEntriesByDate(expectedProfile.education);
@@ -457,7 +457,7 @@ describe("UserPage", function() {
       });
 
       it('should let you edit an education entry', () => {
-        const username = SETTINGS.user ? SETTINGS.user.username : null;
+        const username = SETTINGS.user.username;
         return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
 
           let editButton = div.getElementsByClassName('profile-form')[1].
@@ -477,7 +477,7 @@ describe("UserPage", function() {
       });
 
       it('should let you add an education entry', () => {
-        const username = SETTINGS.user ? SETTINGS.user.username : null;
+        const username = SETTINGS.user.username;
         return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
           let addButton = div.getElementsByClassName('profile-form')[1].
             querySelector('.mm-minor-action');
@@ -567,7 +567,7 @@ describe("UserPage", function() {
       };
 
       it('shows the employment history component', () => {
-        const username = SETTINGS.user ? SETTINGS.user.username : null;
+        const username = SETTINGS.user.username;
         return renderComponent(`/learner/${username}`, userActions).then(([wrapper, ]) => {
           let headerText = wrapper.find('#work-history-card').find('.profile-card-header').text();
           assert.equal(headerText, 'Employment');
@@ -575,7 +575,7 @@ describe("UserPage", function() {
       });
 
       it('should show the entries in resume order', () => {
-        const username = SETTINGS.user ? SETTINGS.user.username : null;
+        const username = SETTINGS.user.username;
         return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
           let editButton = div.getElementsByClassName('profile-form')[2].
             getElementsByClassName('profile-row-icons')[0].
@@ -595,7 +595,7 @@ describe("UserPage", function() {
       });
 
       it('should confirm deletion and let you cancel', () => {
-        const username = SETTINGS.user ? SETTINGS.user.username : null;
+        const username = SETTINGS.user.username;
         return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
           let button = deleteButton(div);
 
@@ -615,7 +615,7 @@ describe("UserPage", function() {
       });
 
       it('should confirm deletion and let you continue', () => {
-        const username = SETTINGS.user ? SETTINGS.user.username : null;
+        const username = SETTINGS.user.username;
         return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
           let updatedProfile = _.cloneDeep(USER_PROFILE_RESPONSE);
           updatedProfile.username = SETTINGS.user.username;
@@ -651,7 +651,7 @@ describe("UserPage", function() {
       });
 
       it('should let you edit a work history entry', () => {
-        const username = SETTINGS.user ? SETTINGS.user.username : null;
+        const username = SETTINGS.user.username;
         return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
 
           let editButton = div.getElementsByClassName('profile-form')[2].
@@ -670,7 +670,7 @@ describe("UserPage", function() {
       });
 
       it('should let you add a work history entry', () => {
-        const username = SETTINGS.user ? SETTINGS.user.username : null;
+        const username = SETTINGS.user.username;
         return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
           let addButton = div.getElementsByClassName('profile-form')[2].querySelector('.mm-minor-action');
 
@@ -764,7 +764,7 @@ describe("UserPage", function() {
 
     describe('Personal Info', () => {
       it('should show name and location', () => {
-        const username = SETTINGS.user ? SETTINGS.user.username : null;
+        const username = SETTINGS.user.username;
         return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
           let name = div.getElementsByClassName('profile-title')[0].textContent;
           assert.deepEqual(name, getPreferredName(USER_PROFILE_RESPONSE));
@@ -772,7 +772,7 @@ describe("UserPage", function() {
       });
 
       it('should show an email, if present', () => {
-        const username = SETTINGS.user ? SETTINGS.user.username : null;
+        const username = SETTINGS.user.username;
         return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
           let email = div.querySelector('.profile-email').textContent;
           assert.deepEqual(email, USER_PROFILE_RESPONSE.email);
@@ -789,14 +789,14 @@ describe("UserPage", function() {
             }))
           );
 
-        const username = SETTINGS.user ? SETTINGS.user.username : null;
+        const username = SETTINGS.user.username;
         return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
           assert.isNull(div.querySelector('.profile-email'));
         });
       });
 
       it('should let you edit personal info', () => {
-        const username = SETTINGS.user ? SETTINGS.user.username : null;
+        const username = SETTINGS.user.username;
         return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
           let personalButton = div.querySelector('.edit-profile-holder').
             getElementsByClassName('mdl-button')[0];
@@ -812,7 +812,7 @@ describe("UserPage", function() {
     });
 
     it("should show all edit, delete icons for an authenticated user's own page" , () => {
-      const username = SETTINGS.user ? SETTINGS.user.username : null;
+      const username = SETTINGS.user.username;
       return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
         let count = div.getElementsByClassName('mdl-button--icon').length;
         assert.equal(count,
@@ -834,8 +834,6 @@ describe("UserPage", function() {
   });
 
   describe("Unauthenticated user page", () => {
-    let settingsBackup;
-
     beforeEach(() => {
       helper = new IntegrationTestHelper();
       listenForActions = helper.listenForActions.bind(helper);
@@ -843,13 +841,11 @@ describe("UserPage", function() {
       helper.profileGetStub.
         withArgs(USER_PROFILE_RESPONSE.username).
         returns(Promise.resolve(USER_PROFILE_RESPONSE));
-      settingsBackup = SETTINGS;
-      SETTINGS = Object.assign({}, SETTINGS, {user: null});
+      SETTINGS.user = null;
     });
 
     afterEach(() => {
       helper.cleanup();
-      SETTINGS = settingsBackup;
     });
 
     it('should hide all edit, delete icons', () => {
