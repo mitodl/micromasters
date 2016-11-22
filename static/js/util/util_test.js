@@ -603,16 +603,22 @@ describe('utility functions', () => {
         username: 'jane_username',
         first_name: 'jane',
         last_name: 'doe',
+        preferred_name: 'test'
       };
     });
 
     it('assert first and last name', () => {
-      assert.equal('jane doe', getUserDisplayName(profile));
+      assert.equal('jane doe (test)', getUserDisplayName(profile));
     });
 
-    it('returns username when first or last name not available', () => {
+    it('returns username when first not available', () => {
       profile.first_name = null;
-      assert.equal('jane_username', getUserDisplayName(profile));
+      assert.equal('jane_username doe (test)', getUserDisplayName(profile));
+    });
+
+    it('not return preferred_name when preferred_name not available', () => {
+      profile.preferred_name = null;
+      assert.equal('jane doe ', getUserDisplayName(profile));
     });
   });
 });
