@@ -28,7 +28,6 @@ import type {
 } from '../flow/programTypes';
 import { workEntriesByDate } from './sorting';
 import type { CheckoutPayload } from '../flow/checkoutTypes';
-import type { Option } from '../flow/generalTypes';
 
 export function sendGoogleAnalyticsEvent(category: any, action: any, label: any, value: any) {
   let event: any = {
