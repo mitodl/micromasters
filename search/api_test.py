@@ -141,8 +141,17 @@ class SearchAPITests(TestCase):  # pylint: disable=missing-docstring
         mock_search_func = Mock(name='execute', return_value=['result1', 'result2'])
         params = {'size': 50}
         with patch('search.api.create_search_obj', autospec=True, return_value=None) as mock_create_search_obj:
-            results = prepare_and_execute_search(self.user, search_param_dict=params, search_func=mock_search_func)
-            mock_create_search_obj.assert_called_with(self.user, search_param_dict=params)
+            results = prepare_and_execute_search(
+                self.user,
+                search_param_dict=params,
+                search_func=mock_search_func,
+                omit_email_optin_false=True
+            )
+            mock_create_search_obj.assert_called_with(
+                self.user,
+                search_param_dict=params,
+                omit_email_optin_false=True
+            )
             assert results == ['result1', 'result2']
 
     def test_search_user(self):
@@ -151,8 +160,8 @@ class SearchAPITests(TestCase):  # pylint: disable=missing-docstring
         """
         params = {'size': 50}
         with mute_signals(post_save):
-            profile = ProfileFactory.create()
-            profile2 = ProfileFactory.create()
+            profile = ProfileFactory.create(email_optin=True)
+            profile2 = ProfileFactory.create(email_optin=False)
 
         learner = profile.user
         learner2 = profile2.user
@@ -173,6 +182,18 @@ class SearchAPITests(TestCase):  # pylint: disable=missing-docstring
         )
         self.assertTrue(results[0].program.is_learner)
         self.assertTrue(results[1].program.is_learner)
+
+        # when omit_email_optin_false is enable.
+        results = prepare_and_execute_search(
+            self.user,
+            search_param_dict=params,
+            omit_email_optin_false=True
+        )
+
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0].user_id, learner.id)
+        self.assertTrue(results[0].program.is_learner)
+        self.assertTrue(results[0].program.email_optin)
 
     # def test_all_query_matching_results(self):
     def test_all_query_matching_emails(self):  # pylint: disable=no-self-use

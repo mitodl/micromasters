@@ -78,11 +78,5 @@ class UserProgramSearchSerializer:
         Args:
             user (django.contrib.auth.models.User): A user
         """
-        try:
-            user_profile = Profile.objects.get(user=user)
-            return user_profile.email_optin
-        except Profile.DoesNotExist:
-            # this should never happen, since the profile is created with a signal
-            # right after the user is created
-            log.error('No profile found for the user %s', user.username)
-            return False
+        user_profile = Profile.objects.get(user=user)
+        return user_profile.email_optin
