@@ -24,7 +24,7 @@ describe("EducationForm", () => {
     );
   };
 
-  it('sorts the industries in order', () => {
+  it('sorts the fields of study in order', () => {
     let wrapper = renderEducationForm();
     let field = wrapper.find("SelectField").filterWhere(field => field.props().label === 'Field of Study');
     let options = field.props().options;
