@@ -1,3 +1,6 @@
+"""
+Models for exams
+"""
 from django.contrib.auth.models import User
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -8,6 +11,9 @@ import uuid
 
 
 class ProctoredProfile(models.Model):
+    """
+    A stricter version of a user's profile used for proctored exams.
+    """
     user = models.ForeignKey(User, null=False, unique=True)
 
     updated_on = models.DateTimeField(auto_now=True)
