@@ -14,7 +14,7 @@ class ProctoredProfile(models.Model):
     """
     A stricter version of a user's profile used for proctored exams.
     """
-    user = models.ForeignKey(User, null=False, unique=True)
+    user = models.OneToOneField(User, null=False, unique=True)
 
     updated_on = models.DateTimeField(auto_now=True)
     synced_on = models.DateTimeField(blank=True, null=True)
