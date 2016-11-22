@@ -5,7 +5,7 @@ import { assert } from 'chai';
 
 import EmploymentForm from './EmploymentForm';
 import { USER_PROFILE_RESPONSE } from '../constants';
-import { sortOptions } from '../util/util';
+import { labelSort } from '../util/util';
 
 describe("EmploymentForm", () => {
   let renderEmploymentForm = (props = {}) => {
@@ -28,6 +28,6 @@ describe("EmploymentForm", () => {
     let wrapper = renderEmploymentForm();
     let field = wrapper.find("SelectField").filterWhere(field => field.props().label === 'Industry');
     let options = field.props().options;
-    assert.deepEqual(options, sortOptions(options));
+    assert.deepEqual(options, labelSort(options));
   });
 });

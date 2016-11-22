@@ -430,12 +430,4 @@ export const classify: (s: string) => string = (
   R.compose(R.replace(/_/g,'-'), _.snakeCase, R.defaultTo(""))
 );
 
-const lowercaseOptionComparator = R.comparator((a, b) => {
-  let aLower = a.label.toLowerCase();
-  let bLower = b.label.toLowerCase();
-  return aLower < bLower;
-});
-
-export const sortOptions = (options: Array<Option>): Array<Option> => (
-  R.sort(lowercaseOptionComparator, options)
-);
+export const labelSort = R.sortBy(R.compose(R.toLower, R.prop('label')));

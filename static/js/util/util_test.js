@@ -25,7 +25,7 @@ import {
   programCourseInfo,
   findCourseRun,
   isProfileOfLoggedinUser,
-  sortOptions,
+  labelSort,
   classify,
 } from '../util/util';
 import {
@@ -540,7 +540,7 @@ describe('utility functions', () => {
     });
   });
 
-  describe('sortOptions', () => {
+  describe('labelSort', () => {
     it('sorts options by lowercase alphabetical order', () => {
       let input = [
         {
@@ -562,7 +562,7 @@ describe('utility functions', () => {
         input[2],
         input[1],
       ];
-      assert.deepEqual(expected, sortOptions(input));
+      assert.deepEqual(expected, labelSort(input));
     });
   });
 });

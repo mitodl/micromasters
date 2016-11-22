@@ -13,7 +13,7 @@ import { educationValidation } from '../lib/validation/profile';
 import {
   userPrivilegeCheck,
   isProfileOfLoggedinUser,
-  sortOptions,
+  labelSort,
 } from '../util/util';
 import ProfileFormFields from '../util/ProfileFormFields';
 import ConfirmDeletion from './ConfirmDeletion';
@@ -46,7 +46,7 @@ import type {
 import { formatMonthDate } from '../util/date';
 import FIELDS_OF_STUDY from '../data/fields_of_study';
 
-const fieldOfStudyOptions = sortOptions(_.map(FIELDS_OF_STUDY, (name, code) => ({
+const fieldOfStudyOptions = labelSort(_.map(FIELDS_OF_STUDY, (name, code) => ({
   value: code,
   label: name
 })));

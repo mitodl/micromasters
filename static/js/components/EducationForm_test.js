@@ -5,7 +5,7 @@ import { assert } from 'chai';
 
 import EducationForm from './EducationForm';
 import { USER_PROFILE_RESPONSE } from '../constants';
-import { sortOptions } from '../util/util';
+import { labelSort } from '../util/util';
 
 describe("EducationForm", () => {
   let renderEducationForm = (props = {}) => {
@@ -28,6 +28,6 @@ describe("EducationForm", () => {
     let wrapper = renderEducationForm();
     let field = wrapper.find("SelectField").filterWhere(field => field.props().label === 'Field of Study');
     let options = field.props().options;
-    assert.deepEqual(options, sortOptions(options));
+    assert.deepEqual(options, labelSort(options));
   });
 });

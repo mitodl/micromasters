@@ -5,7 +5,7 @@ import iso3166 from 'iso-3166-2';
 import R from 'ramda';
 
 import SelectField from './SelectField';
-import { labelSort } from '../../lib/currency';
+import { labelSort } from '../../util/util';
 import type { Validator, UIValidator } from '../../lib/validation/profile';
 import type {
   Profile,

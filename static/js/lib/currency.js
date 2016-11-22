@@ -3,6 +3,8 @@ import cc from 'currency-codes';
 import R from 'ramda';
 import iso3166 from 'iso-3166-2';
 
+import { labelSort } from '../util/util';
+
 export const excludedCurrencyCodes = [
   'BOV',
   'CHE',
@@ -26,8 +28,6 @@ export const excludedCurrencyCodes = [
 const codeToOption = code => (
   { value: code, label: cc.code(code).currency }
 );
-
-export const labelSort = R.sortBy(R.compose(R.toLower, R.prop('label')));
 
 const invalidCurrency = R.contains(R.__, excludedCurrencyCodes);
 
