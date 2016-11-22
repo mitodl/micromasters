@@ -36,6 +36,7 @@ from profiles.factories import (
     EmploymentFactory,
     ProfileFactory,
 )
+from profiles.models import Profile
 from roles.models import Role
 from roles.roles import Staff
 
@@ -70,7 +71,7 @@ class UserProgramSearchSerializerTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         with mute_signals(post_save):
-            profile = ProfileFactory.create()
+            cls.profile = profile = ProfileFactory.create()
         cls.user = profile.user
         EducationFactory.create(profile=profile)
         EmploymentFactory.create(profile=profile)
@@ -136,7 +137,21 @@ class UserProgramSearchSerializerTests(TestCase):
             'certificates': list(CachedCertificate.active_data(self.user, program)),
             'current_grades': list(CachedCurrentGrade.active_data(self.user, program)),
             'grade_average': 75,
-            'is_learner': True
+            'is_learner': True,
+            'email_optin': False
+        }
+
+        Profile.objects.filter(pk=self.profile.pk).update(email_optin=True)
+        self.program_enrollment.refresh_from_db()
+        program = self.program_enrollment.program
+        assert UserProgramSearchSerializer.serialize(self.program_enrollment) == {
+            'id': program.id,
+            'enrollments': list(CachedEnrollment.active_data(self.user, program)),
+            'certificates': list(CachedCertificate.active_data(self.user, program)),
+            'current_grades': list(CachedCurrentGrade.active_data(self.user, program)),
+            'grade_average': 75,
+            'is_learner': True,
+            'email_optin': True
         }
 
     def test_full_program_user_serialization_financial_aid(self):
@@ -152,7 +167,8 @@ class UserProgramSearchSerializerTests(TestCase):
             'certificates': [],
             'current_grades': list(CachedCurrentGrade.active_data(self.user, self.fa_program)),
             'grade_average': 95,
-            'is_learner': True
+            'is_learner': True,
+            'email_optin': False
         }
         assert UserProgramSearchSerializer.serialize(self.fa_program_enrollment) == expected_result
 
@@ -173,7 +189,8 @@ class UserProgramSearchSerializerTests(TestCase):
             'certificates': list(CachedCertificate.active_data(self.user, program)),
             'current_grades': list(CachedCurrentGrade.active_data(self.user, program)),
             'grade_average': 75,
-            'is_learner': False
+            'is_learner': False,
+            'email_optin': False
         }
 
     def test_cached_edx_model_serialization(self):

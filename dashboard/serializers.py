@@ -13,6 +13,7 @@ from roles.models import (
     NON_LEARNERS,
     Role
 )
+from profiles.models import Profile
 
 
 class UserProgramSearchSerializer:
@@ -52,7 +53,8 @@ class UserProgramSearchSerializer:
             'certificates': certificates,
             'current_grades': current_grades,
             'grade_average': cls.calculate_final_grade_average(mmtrack),
-            'is_learner': cls.is_learner(user, program)
+            'is_learner': cls.is_learner(user, program),
+            'email_optin': cls.email_optin(user)
         }
 
     @classmethod
@@ -67,3 +69,20 @@ class UserProgramSearchSerializer:
         return (
             not Role.objects.filter(user=user, role__in=NON_LEARNERS, program=program).exists()
         )
+
+    @classmethod
+    def email_optin(cls, user):
+        """
+        Returns true if email_optin is set true or false
+
+        Args:
+            user (django.contrib.auth.models.User): A user
+        """
+        try:
+            user_profile = Profile.objects.get(user=user)
+            return user_profile.email_optin
+        except Profile.DoesNotExist:
+            # this should never happen, since the profile is created with a signal
+            # right after the user is created
+            log.error('No profile found for the user %s', user.username)
+            return False
