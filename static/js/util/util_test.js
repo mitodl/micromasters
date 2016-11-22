@@ -620,5 +620,10 @@ describe('utility functions', () => {
       profile.preferred_name = null;
       assert.equal('jane doe', getUserDisplayName(profile));
     });
+
+    it('does not show preferred name when first name has same value', () => {
+      profile.first_name = 'test';
+      assert.equal('test doe', getUserDisplayName(profile));
+    });
   });
 });

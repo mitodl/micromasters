@@ -453,7 +453,8 @@ export const labelSort = R.sortBy(R.compose(R.toLower, R.prop('label')));
 export function getUserDisplayName(profile: Profile): string {
   let first = profile.first_name || profile.username;
   let last =  profile.last_name || '';
-  let preferred_name = profile.preferred_name ? ` (${profile.preferred_name})` : '';
+  let preferred_name = (profile.preferred_name && (profile.preferred_name !== first)) ?
+    ` (${profile.preferred_name})` : '';
 
   return `${first} ${last}${preferred_name}`;
 }
