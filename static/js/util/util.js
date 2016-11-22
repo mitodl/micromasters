@@ -28,6 +28,7 @@ import type {
 } from '../flow/programTypes';
 import { workEntriesByDate } from './sorting';
 import type { CheckoutPayload } from '../flow/checkoutTypes';
+import type { Option } from '../flow/generalTypes';
 
 export function sendGoogleAnalyticsEvent(category: any, action: any, label: any, value: any) {
   let event: any = {
@@ -427,4 +428,14 @@ export function findCourseRun(
 
 export const classify: (s: string) => string = (
   R.compose(R.replace(/_/g,'-'), _.snakeCase, R.defaultTo(""))
+);
+
+const lowercaseOptionComparator = R.comparator((a, b) => {
+  let aLower = a.label.toLowerCase();
+  let bLower = b.label.toLowerCase();
+  return aLower < bLower;
+});
+
+export const sortOptions = (options: Array<Option>): Array<Option> => (
+  R.sort(lowercaseOptionComparator, options)
 );

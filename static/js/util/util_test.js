@@ -25,6 +25,7 @@ import {
   programCourseInfo,
   findCourseRun,
   isProfileOfLoggedinUser,
+  sortOptions,
   classify,
 } from '../util/util';
 import {
@@ -536,6 +537,32 @@ describe('utility functions', () => {
     it('returns an empty string when passed an empty string or undefined', () => {
       assert.equal(classify(''), '');
       assert.equal(classify(undefined), '');
+    });
+  });
+
+  describe('sortOptions', () => {
+    it('sorts options by lowercase alphabetical order', () => {
+      let input = [
+        {
+          value: '1',
+          label: 'One',
+        },
+        {
+          value: '2',
+          label: 'two',
+        },
+        {
+          value: '3',
+          label: 'Three',
+        }
+      ];
+
+      let expected = [
+        input[0],
+        input[2],
+        input[1],
+      ];
+      assert.deepEqual(expected, sortOptions(input));
     });
   });
 });

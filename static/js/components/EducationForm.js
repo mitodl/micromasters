@@ -12,7 +12,8 @@ import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 import { educationValidation } from '../lib/validation/profile';
 import {
   userPrivilegeCheck,
-  isProfileOfLoggedinUser
+  isProfileOfLoggedinUser,
+  sortOptions,
 } from '../util/util';
 import ProfileFormFields from '../util/ProfileFormFields';
 import ConfirmDeletion from './ConfirmDeletion';
@@ -45,10 +46,10 @@ import type {
 import { formatMonthDate } from '../util/date';
 import FIELDS_OF_STUDY from '../data/fields_of_study';
 
-const fieldOfStudyOptions = _.map(FIELDS_OF_STUDY, (name, code) => ({
+const fieldOfStudyOptions = sortOptions(_.map(FIELDS_OF_STUDY, (name, code) => ({
   value: code,
   label: name
-}));
+})));
 
 const EDUCATION_LEVEL_OPTIONS: Array<Option> = EDUCATION_LEVELS;
 const EDUCATION_LEVEL_LABELS: Object = {};
