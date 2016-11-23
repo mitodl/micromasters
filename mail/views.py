@@ -45,7 +45,7 @@ class SearchResultMailView(APIView):
             request.user,
             search_param_dict=request.data.get('search_request'),
             search_func=get_all_query_matching_emails,
-            omit_email_optin_false=True
+            filter_on_email_optin=True
         )
         mailgun_responses = MailgunClient.send_batch(
             subject=request.data['email_subject'],

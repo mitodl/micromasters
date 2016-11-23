@@ -145,12 +145,12 @@ class SearchAPITests(TestCase):  # pylint: disable=missing-docstring
                 self.user,
                 search_param_dict=params,
                 search_func=mock_search_func,
-                omit_email_optin_false=True
+                filter_on_email_optin=True
             )
             mock_create_search_obj.assert_called_with(
                 self.user,
                 search_param_dict=params,
-                omit_email_optin_false=True
+                filter_on_email_optin=True
             )
             assert results == ['result1', 'result2']
 
@@ -160,8 +160,8 @@ class SearchAPITests(TestCase):  # pylint: disable=missing-docstring
         """
         params = {'size': 50}
         with mute_signals(post_save):
-            profile = ProfileFactory.create(email_optin=True)
-            profile2 = ProfileFactory.create(email_optin=False)
+            profile = ProfileFactory.create()
+            profile2 = ProfileFactory.create()
 
         learner = profile.user
         learner2 = profile2.user
@@ -183,11 +183,29 @@ class SearchAPITests(TestCase):  # pylint: disable=missing-docstring
         self.assertTrue(results[0].program.is_learner)
         self.assertTrue(results[1].program.is_learner)
 
-        # when omit_email_optin_false is enable.
+    def test_search_user_on_email_optin_filter(self):
+        """
+        when filter_on_email_optin is enable.
+        """
+        params = {'size': 50}
+        with mute_signals(post_save):
+            profile = ProfileFactory.create(email_optin=True)
+            profile2 = ProfileFactory.create(email_optin=False)
+
+        learner = profile.user
+        learner2 = profile2.user
+
+        # self.user with role staff on program
+        for user in [learner, learner2, self.user]:
+            ProgramEnrollmentFactory(
+                user=user,
+                program=self.program,
+            )
+
         results = prepare_and_execute_search(
             self.user,
             search_param_dict=params,
-            omit_email_optin_false=True
+            filter_on_email_optin=True
         )
 
         self.assertEqual(len(results), 1)
@@ -195,7 +213,6 @@ class SearchAPITests(TestCase):  # pylint: disable=missing-docstring
         self.assertTrue(results[0].program.is_learner)
         self.assertTrue(results[0].program.email_optin)
 
-    # def test_all_query_matching_results(self):
     def test_all_query_matching_emails(self):  # pylint: disable=no-self-use
         """
         Test that a set of search results will yield an expected set of emails

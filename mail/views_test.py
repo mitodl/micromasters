@@ -20,6 +20,7 @@ from financialaid.factories import FinancialAidFactory, TierProgramFactory
 from profiles.factories import ProfileFactory
 from roles.models import Role
 from roles.roles import Staff
+from search.api import get_all_query_matching_emails
 
 
 def mocked_json(return_data=None):
@@ -70,6 +71,13 @@ class MailViewsTests(APITestCase):
         resp_post = self.client.post(self.search_result_mail_url, data=self.request_data, format='json')
         assert resp_post.status_code == status.HTTP_200_OK
         assert mock_prepare_exec_search.called
+        mock_prepare_exec_search.assert_called_with(
+            self.staff,
+            search_param_dict={},
+            search_func=get_all_query_matching_emails,
+            filter_on_email_optin=True
+        )
+
         assert mock_mailgun_client.send_batch.called
         _, called_kwargs = mock_mailgun_client.send_batch.call_args
         assert called_kwargs['subject'] == self.request_data['email_subject']

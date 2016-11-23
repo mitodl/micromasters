@@ -13,7 +13,6 @@ from roles.models import (
     NON_LEARNERS,
     Role
 )
-from profiles.models import Profile
 
 
 class UserProgramSearchSerializer:
@@ -54,7 +53,7 @@ class UserProgramSearchSerializer:
             'current_grades': current_grades,
             'grade_average': cls.calculate_final_grade_average(mmtrack),
             'is_learner': cls.is_learner(user, program),
-            'email_optin': cls.email_optin(user)
+            'email_optin': user.profile.email_optin,
         }
 
     @classmethod
@@ -69,14 +68,3 @@ class UserProgramSearchSerializer:
         return (
             not Role.objects.filter(user=user, role__in=NON_LEARNERS, program=program).exists()
         )
-
-    @classmethod
-    def email_optin(cls, user):
-        """
-        Returns true if email_optin is set true or false
-
-        Args:
-            user (django.contrib.auth.models.User): A user
-        """
-        user_profile = Profile.objects.get(user=user)
-        return user_profile.email_optin
