@@ -21,6 +21,9 @@ FAKE = faker.Factory.create()
 
 
 class ProctoredProfileFactory(DjangoModelFactory):
+    """
+    Factory for ProctoredProfile
+    """
     user = SubFactory(UserFactory)
 
     updated_on = FuzzyDateTime(datetime.datetime(2012, 1, 1, tzinfo=pytz.utc))
@@ -31,7 +34,7 @@ class ProctoredProfileFactory(DjangoModelFactory):
 
     address1 = LazyAttribute(lambda x: '{} {}'.format(FAKE.building_number(), FAKE.street_name()))
     address2 = LazyAttribute(lambda x: FAKE.secondary_address())
-    address3 = FuzzyText(length=0) # intentionally blank
+    address3 = FuzzyText(length=0)  # intentionally blank
 
     state_or_territory = LazyAttribute(lambda x: FAKE.state())
     # needs to be a ISO 3 digit country code for Pearson
@@ -40,7 +43,7 @@ class ProctoredProfileFactory(DjangoModelFactory):
     postal_code = LazyAttribute(lambda x: FAKE.postcode())
 
     phone_number = LazyAttribute(lambda x: FAKE.phone_number())
-    phone_country_code = LazyAttribute(lambda x: FAKE.randomdigit())
+    phone_country_code = LazyAttribute(lambda x: FAKE.random_digit())
 
-    class Meta:
+    class Meta:  # pylint: disable=missing-docstring
         model = ProctoredProfile
