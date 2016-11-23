@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.core.validators import MaxValueValidator
 
+from exams.utils import strip_non_cp_1252_chars
+
 
 class ProctoredProfile(models.Model):
     """
@@ -76,3 +78,12 @@ class ProctoredProfile(models.Model):
             MaxValueValidator(999),
         ]
     )
+
+    @classmethod
+    def create(cls, profile):
+        return ProctoredProfile(
+            user=profile.user,
+            first_name=strip_non_cp_1252_chars(profile.first_name),
+            last_name=strip_non_cp_1252_chars(profile.last_name),
+            city=strip_non_cp_1252_chars(profile.city),
+        )
