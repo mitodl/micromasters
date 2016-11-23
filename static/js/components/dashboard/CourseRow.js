@@ -75,11 +75,11 @@ export default class CourseRow extends React.Component {
 
     if (this.shouldDisplayGradeColumn(run)) {
       columns.push(
-        <Cell col={2} key="2">
+        <Cell col={3} key="2">
           <CourseGrade courseRun={run} />
         </Cell>
       );
-      lastColumnSize = 4;
+      lastColumnSize = 3;
     } else {
       lastColumnSize = 6;
       lastColumnClass = 'long-description';
