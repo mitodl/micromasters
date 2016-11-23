@@ -3,7 +3,6 @@
 import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
-import urljoin from 'url-join';
 
 import type { CourseRun } from '../../flow/programTypes';
 import {
@@ -16,10 +15,9 @@ import {
   STATUS_WILL_ATTEND,
   STATUS_PENDING_ENROLLMENT,
   DASHBOARD_FORMAT,
+  EDX_LINK_BASE,
 } from '../../constants';
 import { ifValidDate } from '../../util/date';
-
-export const edxLinkBase = urljoin(SETTINGS.edx_base_url, 'courses/');
 
 export default class CourseDescription extends React.Component {
   props: {
@@ -72,7 +70,7 @@ export default class CourseDescription extends React.Component {
 
   renderViewCourseLink = (courseRun: CourseRun): React$Element<*>|null => (
     (courseRun && courseRun.course_id) ?
-      <a href={`${edxLinkBase}${courseRun.course_id}`} target="_blank">
+      <a href={`${EDX_LINK_BASE}${courseRun.course_id}`} target="_blank">
         View on edX
       </a> :
       null

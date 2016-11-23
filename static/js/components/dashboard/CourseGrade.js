@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import type { CourseRun } from '../../flow/programTypes';
 import { formatGrade } from './util';
-import { edxLinkBase } from './CourseDescription';
+import { EDX_LINK_BASE } from '../../constants';
 
 export default class CourseGrade extends React.Component {
   props: {
@@ -13,7 +13,7 @@ export default class CourseGrade extends React.Component {
   };
 
   renderCourseProgressLink = (courseRun: CourseRun, grade: number|string|null): React$Element<*>|null => (
-    <a href={`${edxLinkBase}${courseRun.course_id}/progress`} target="_blank">
+    <a href={`${EDX_LINK_BASE}${courseRun.course_id}/progress`} target="_blank">
       {formatGrade(grade)}
     </a>
   );

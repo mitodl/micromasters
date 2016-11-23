@@ -1,4 +1,6 @@
 /* global SETTINGS: false */
+import urljoin from 'url-join';
+
 export const HIGH_SCHOOL = 'hs';
 export const ASSOCIATE = 'a';
 export const BACHELORS = 'b';
@@ -83,6 +85,8 @@ export const FA_APPROVED_STATUSES = [FA_STATUS_APPROVED, FA_STATUS_AUTO_APPROVED
 
 export const TOAST_SUCCESS = 'success';
 export const TOAST_FAILURE = 'failure';
+
+export const EDX_LINK_BASE = urljoin(SETTINGS.edx_base_url, 'courses/');
 
 export const ELASTICSEARCH_RESPONSE = {
   "took": 22,
