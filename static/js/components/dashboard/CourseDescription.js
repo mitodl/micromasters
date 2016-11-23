@@ -19,7 +19,7 @@ import {
 } from '../../constants';
 import { ifValidDate } from '../../util/date';
 
-const edxLinkBase = urljoin(SETTINGS.edx_base_url, 'courses/');
+export const edxLinkBase = urljoin(SETTINGS.edx_base_url, 'courses/');
 
 export default class CourseDescription extends React.Component {
   props: {
