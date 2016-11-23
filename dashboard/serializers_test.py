@@ -138,7 +138,7 @@ class UserProgramSearchSerializerTests(TestCase):
             'current_grades': list(CachedCurrentGrade.active_data(self.user, program)),
             'grade_average': 75,
             'is_learner': True,
-            'email_optin': False
+            'email_optin': True
         }
 
     def test_full_program_user_serialization_email_optin_changes(self):

@@ -65,6 +65,20 @@ class SearchAPITests(TestCase):  # pylint: disable=missing-docstring
             role=Staff.ROLE_ID
         )
 
+        with mute_signals(post_save):
+            profile = ProfileFactory.create(email_optin=True)
+            profile2 = ProfileFactory.create(email_optin=False)
+
+        cls.learner = profile.user
+        cls.learner2 = profile2.user
+
+        # self.user with role staff on program
+        for user in [cls.learner, cls.learner2, cls.user]:
+            ProgramEnrollmentFactory(
+                user=user,
+                program=cls.program,
+            )
+
     def test_execute_search(self):  # pylint: disable=no-self-use
         """
         Test that the execute_search method invokes the right method on the Search object
@@ -159,26 +173,12 @@ class SearchAPITests(TestCase):  # pylint: disable=missing-docstring
         Assert learner in search result and staff excluded
         """
         params = {'size': 50}
-        with mute_signals(post_save):
-            profile = ProfileFactory.create()
-            profile2 = ProfileFactory.create()
-
-        learner = profile.user
-        learner2 = profile2.user
-
-        # self.user with role staff on program
-        for user in [learner, learner2, self.user]:
-            ProgramEnrollmentFactory(
-                user=user,
-                program=self.program,
-            )
-
         results = prepare_and_execute_search(self.user, search_param_dict=params)
 
         self.assertEqual(len(results), 2)
         self.assertListEqual(
             sorted([results[0].user_id, results[1].user_id]),
-            [learner.id, learner2.id]
+            [self.learner.id, self.learner2.id]
         )
         self.assertTrue(results[0].program.is_learner)
         self.assertTrue(results[1].program.is_learner)
@@ -188,20 +188,6 @@ class SearchAPITests(TestCase):  # pylint: disable=missing-docstring
         when filter_on_email_optin is enable.
         """
         params = {'size': 50}
-        with mute_signals(post_save):
-            profile = ProfileFactory.create(email_optin=True)
-            profile2 = ProfileFactory.create(email_optin=False)
-
-        learner = profile.user
-        learner2 = profile2.user
-
-        # self.user with role staff on program
-        for user in [learner, learner2, self.user]:
-            ProgramEnrollmentFactory(
-                user=user,
-                program=self.program,
-            )
-
         results = prepare_and_execute_search(
             self.user,
             search_param_dict=params,
@@ -209,7 +195,7 @@ class SearchAPITests(TestCase):  # pylint: disable=missing-docstring
         )
 
         self.assertEqual(len(results), 1)
-        self.assertEqual(results[0].user_id, learner.id)
+        self.assertEqual(results[0].user_id, self.learner.id)
         self.assertTrue(results[0].program.is_learner)
         self.assertTrue(results[0].program.email_optin)
 
