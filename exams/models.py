@@ -81,6 +81,9 @@ class ProctoredProfile(models.Model):
 
     @classmethod
     def create(cls, profile):
+        """
+        Creates a new ProctoredProfile from a Profile
+        """
         return ProctoredProfile(
             user=profile.user,
             first_name=strip_non_cp_1252_chars(profile.first_name),
