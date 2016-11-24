@@ -8,6 +8,7 @@ from rest_framework.serializers import (
     IntegerField,
     ModelSerializer,
     SerializerMethodField,
+    CharField,
 )
 
 from profiles.api import get_social_username
@@ -190,6 +191,7 @@ class ProfileSerializer(ProfileBaseSerializer):
     """Serializer for Profile objects"""
     work_history = EmploymentSerializer(many=True)
     education = EducationSerializer(many=True)
+    about_me = CharField(allow_null=True, allow_blank=True, required=False)
 
     def update(self, instance, validated_data):
         with transaction.atomic():
@@ -236,6 +238,7 @@ class ProfileSerializer(ProfileBaseSerializer):
             'edx_level_of_education',
             'education',
             'image',
+            'about_me'
         )
         read_only_fields = ('edx_level_of_education', 'agreed_to_terms_of_service',)
 
@@ -269,7 +272,8 @@ class ProfileLimitedSerializer(ProfileBaseSerializer):
             'gender',
             'work_history',
             'edx_level_of_education',
-            'education'
+            'education',
+            'about_me'
         )
         read_only_fields = ('edx_level_of_education', 'agreed_to_terms_of_service',)
 
@@ -278,12 +282,13 @@ class ProfileFilledOutSerializer(ProfileSerializer):
     """Serializer for Profile objects which require filled_out = True"""
     work_history = EmploymentFilledOutSerializer(many=True)
     education = EducationFilledOutSerializer(many=True)
+    about_me = CharField(allow_null=True, allow_blank=True, required=False)
 
     def __init__(self, *args, **kwargs):
         """
         Update serializer_field_mapping to use fields setting required=True
         """
-        set_fields_to_required(self)
+        set_fields_to_required(self, ignore_fields=['about_me'])
         super(ProfileFilledOutSerializer, self).__init__(*args, **kwargs)
 
     def validate(self, attrs):

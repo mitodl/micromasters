@@ -94,7 +94,8 @@ class ProfileTests(ESTestCase):
             'work_history': (
                 EmploymentSerializer(profile.work_history.all(), many=True).data
             ),
-            'image': profile.image.url
+            'image': profile.image.url,
+            'about_me': profile.about_me
         }
 
     def test_limited(self):  # pylint: disable=no-self-use
@@ -125,6 +126,7 @@ class ProfileTests(ESTestCase):
             'work_history': (
                 EmploymentSerializer(profile.work_history.all(), many=True).data
             ),
+            'about_me': profile.about_me
         }
 
     def test_add_education(self):
@@ -350,6 +352,10 @@ class ProfileFilledOutTests(ESTestCase):
             if isinstance(field, (ListSerializer, SerializerMethodField, ReadOnlyField)):
                 continue
             elif field.read_only is True:
+                continue
+            elif field.allow_null is True:
+                continue
+            elif field.allow_blank is True:
                 continue
 
             clone = deepcopy(self.data)

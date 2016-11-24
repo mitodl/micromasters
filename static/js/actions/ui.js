@@ -53,6 +53,10 @@ export const setEducationLevelAnswers = createAction(SET_EDUCATION_LEVEL_ANSWERS
 export const SET_USER_PAGE_DIALOG_VISIBILITY = 'SET_USER_PAGE_DIALOG_VISIBILITY';
 export const setUserPageDialogVisibility = createAction(SET_USER_PAGE_DIALOG_VISIBILITY);
 
+export const SET_USER_PAGE_ABOUT_ME_DIALOG_VISIBILITY = 'SET_USER_PAGE_ABOUT_ME_DIALOG_VISIBILITY';
+export const setUserPageAboutMeDialogVisibility = createAction(SET_USER_PAGE_ABOUT_ME_DIALOG_VISIBILITY);
+
+
 export const SET_SHOW_EDUCATION_DELETE_DIALOG = 'SET_SHOW_EDUCATION_DELETE_DIALOG';
 export const setShowEducationDeleteDialog = createAction(SET_SHOW_EDUCATION_DELETE_DIALOG);
 

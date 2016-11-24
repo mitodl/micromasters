@@ -4,6 +4,7 @@ import React from 'react';
 import EmploymentForm from './EmploymentForm';
 import EducationForm from './EducationForm';
 import UserPagePersonalDialog from './UserPagePersonalDialog.js';
+import UserPageAboutMeDialog from './UserPageAboutMeDialog.js';
 import UserInfoCard from './UserInfoCard';
 import {
   educationValidation,
@@ -20,6 +21,7 @@ export default class User extends React.Component {
     clearProfileEdit:             () => void,
     saveProfile:                  SaveProfileFunc,
     startProfileEdit:             () => void,
+    setUserPageAboutMeDialogVisibility: () => void,
   };
 
   toggleShowPersonalDialog: Function = (): void => {
@@ -32,12 +34,26 @@ export default class User extends React.Component {
     startProfileEdit();
   };
 
+  toggleShowAboutMeDialog: Function = (): void => {
+    const {
+      setUserPageAboutMeDialogVisibility,
+      ui: { userPageAboutMeDialoggVisibility },
+      startProfileEdit,
+    } = this.props;
+    setUserPageAboutMeDialogVisibility(!userPageAboutMeDialoggVisibility);
+    startProfileEdit();
+  };
+
   render() {
     const { profile } = this.props;
 
     return <div className="single-column">
       <UserPagePersonalDialog {...this.props} />
-      <UserInfoCard profile={profile} toggleShowPersonalDialog={this.toggleShowPersonalDialog} />
+      <UserPageAboutMeDialog {...this.props} />
+      <UserInfoCard
+        profile={profile}
+        toggleShowAboutMeDialog={this.toggleShowAboutMeDialog}
+        toggleShowPersonalDialog={this.toggleShowPersonalDialog} />
       <EducationForm {...this.props} showSwitch={false} validator={educationValidation} />
       <EmploymentForm {...this.props} showSwitch={false} validator={employmentValidation} />
     </div>;

@@ -16,7 +16,8 @@ import type { Profile } from '../flow/profileTypes';
 export default class UserInfoCard extends React.Component {
   props: {
     profile: Profile,
-    toggleShowPersonalDialog: () => void
+    toggleShowPersonalDialog: () => void,
+    toggleShowAboutMeDialog: () => void,
   };
 
   email = (email: string): React$Element<*> => (
@@ -26,8 +27,45 @@ export default class UserInfoCard extends React.Component {
     </div>
   );
 
+  renderAboutMeWithData = (profile: Profile): Array<React$Element<*>> => ([
+    <h3 className="heading" key="heading">About Me</h3>,
+    <div className="bio" key="bio">{profile.about_me}</div>
+  ]);
+
+  renderAboutMeWithoutData = (profile: Profile): Array<React$Element<*>>|null => (
+    userPrivilegeCheck(
+      profile,
+      () => [
+        <h3 className="heading" key="heading">About Me</h3>,
+        <div className="bio placeholder" key="bio-placeholder">
+          Write something about yourself, so your classmates can learn a bit about you.
+        </div>
+      ],
+      null
+    )
+  );
+
+  renderAboutMeSection: Function = (
+    profile: Profile, toggleShowAboutMeDialog: Function
+  ): React$Element<*> => {
+    return (
+      <div className="profile-form-row">
+        <div className="about-me">
+          {profile.about_me ? this.renderAboutMeWithData(profile) : this.renderAboutMeWithoutData(profile)}
+        </div>
+        <div className="edit-about-me-holder">
+          {userPrivilegeCheck(profile, () => <IconButton name="edit" onClick={toggleShowAboutMeDialog}/>)}
+        </div>
+      </div>
+    );
+  }
+
   render() {
-    const { profile, toggleShowPersonalDialog } = this.props;
+    const {
+      profile,
+      toggleShowPersonalDialog,
+      toggleShowAboutMeDialog
+    } = this.props;
 
     return (
       <Card shadow={1} className="profile-form user-page">
@@ -42,6 +80,7 @@ export default class UserInfoCard extends React.Component {
             {userPrivilegeCheck(profile, () => <IconButton name="edit" onClick={toggleShowPersonalDialog}/>)}
           </div>
         </div>
+        {this.renderAboutMeSection(profile, toggleShowAboutMeDialog)}
       </Card>
     );
   }

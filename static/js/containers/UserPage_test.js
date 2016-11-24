@@ -808,7 +808,7 @@ describe("UserPage", function() {
       return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
         let count = div.getElementsByClassName('mdl-button--icon').length;
         assert.equal(count,
-          1 + USER_PROFILE_RESPONSE.work_history.length * 2 + USER_PROFILE_RESPONSE.education.length * 2
+          2 + USER_PROFILE_RESPONSE.work_history.length * 2 + USER_PROFILE_RESPONSE.education.length * 2
         );
       });
     });

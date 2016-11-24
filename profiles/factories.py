@@ -41,6 +41,7 @@ class ProfileFactory(DjangoModelFactory):
     edx_job_title = FuzzyText(suffix=" consultant")
     edx_name = FuzzyText(prefix="User ")
     edx_bio = FuzzyText()
+    about_me = FuzzyText()
 
     city = LazyAttribute(lambda x: FAKE.city())
     country = LazyAttribute(lambda x: FAKE.country_code())

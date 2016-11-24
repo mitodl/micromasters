@@ -57,6 +57,7 @@ export type Profile = {
   email_optin: boolean;
   agreed_to_terms_of_service: boolean;
   image: ?string;
+  about_me: ?string;
 };
 
 export type Profiles = {
@@ -82,5 +83,8 @@ export type ProfileFetchResponse = {
   payload: ProfileGetResult
 };
 
-export type SaveProfileFunc = (validator: Validator|UIValidator, profile: Profile, ui: UIState) => Promise<Profile>;
+export type SaveProfileFunc = (
+  validator: Validator|UIValidator|null, profile: Profile, ui: UIState
+) => Promise<Profile>;
+
 export type UpdateProfileFunc = (profile: Profile, validator: Validator|UIValidator) => void;

@@ -17,6 +17,7 @@ import {
   SET_EDUCATION_LEVEL_ANSWERS,
 
   SET_USER_PAGE_DIALOG_VISIBILITY,
+  SET_USER_PAGE_ABOUT_ME_DIALOG_VISIBILITY,
 
   SET_SHOW_EDUCATION_DELETE_DIALOG,
   SET_SHOW_WORK_DELETE_DIALOG,
@@ -59,6 +60,7 @@ export type UIState = {
   workDialogVisibility:         boolean;
   workHistoryAnswer:            ?boolean;
   userPageDialogVisibility:     boolean;
+  userPageAboutMeDialoggVisibility: boolean;
   showWorkDeleteDialog:         boolean;
   showEducationDeleteDialog:    boolean;
   deletionIndex:                ?number;
@@ -91,6 +93,7 @@ export const INITIAL_UI_STATE: UIState = {
   workDialogVisibility:       false,
   workHistoryAnswer:          null,
   userPageDialogVisibility: false,
+  userPageAboutMeDialoggVisibility: false,
   showWorkDeleteDialog: false,
   showEducationDeleteDialog: false,
   deletionIndex: null,
@@ -181,6 +184,11 @@ export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
   case SET_USER_PAGE_DIALOG_VISIBILITY: {
     return Object.assign({}, state, {
       userPageDialogVisibility: action.payload
+    });
+  }
+  case SET_USER_PAGE_ABOUT_ME_DIALOG_VISIBILITY: {
+    return Object.assign({}, state, {
+      userPageAboutMeDialoggVisibility: action.payload
     });
   }
   case SET_SHOW_EDUCATION_DELETE_DIALOG: {
