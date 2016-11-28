@@ -51,7 +51,12 @@ export default class UserInfoCard extends React.Component {
       <div className="profile-form-row">
         <div className="about-me">{aboutMeContent}</div>
         <div className="edit-about-me-holder">
-          {userPrivilegeCheck(profile, () => <IconButton name="edit" onClick={toggleShowAboutMeDialog}/>)}
+          {
+            userPrivilegeCheck(
+              profile,
+              () => <IconButton name="edit about me section" onClick={toggleShowAboutMeDialog}/>
+            )
+          }
         </div>
       </div>
     );

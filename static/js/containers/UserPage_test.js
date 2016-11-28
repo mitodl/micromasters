@@ -30,6 +30,8 @@ import {
   SET_EDUCATION_DIALOG_INDEX,
   SET_EDUCATION_DIALOG_VISIBILITY,
   SET_USER_PAGE_DIALOG_VISIBILITY,
+  SET_USER_PAGE_ABOUT_ME_DIALOG_VISIBILITY,
+
   SET_DELETION_INDEX,
   SET_SHOW_WORK_DELETE_DIALOG,
   SET_SHOW_EDUCATION_DELETE_DIALOG,
@@ -798,6 +800,21 @@ describe("UserPage", function() {
             START_PROFILE_EDIT,
           ], () => {
             TestUtils.Simulate.click(personalButton);
+          });
+        });
+      });
+
+      it('should let you edit about me', () => {
+        const username = SETTINGS.user.username;
+        return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
+          let aboutMEBtn = div.querySelector('.edit-about-me-holder').
+            getElementsByClassName('mdl-button')[0];
+
+          return listenForActions([
+            SET_USER_PAGE_ABOUT_ME_DIALOG_VISIBILITY,
+            START_PROFILE_EDIT,
+          ], () => {
+            TestUtils.Simulate.click(aboutMEBtn);
           });
         });
       });
