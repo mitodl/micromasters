@@ -15,8 +15,8 @@ class ProctoredProfile(models.Model):
     """
     user = models.OneToOneField(User, null=False, unique=True)
 
-    updated_on = models.DateTimeField(auto_now=True)
-    synced_on = models.DateTimeField(blank=True, null=True)
+    updated_on = models.DateTimeField(auto_now=True, db_index=True)
+    synced_on = models.DateTimeField(blank=True, null=True, db_index=True)
 
     first_name = models.TextField(
         max_length=30,
