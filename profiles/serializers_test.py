@@ -95,7 +95,7 @@ class ProfileTests(ESTestCase):
                 EmploymentSerializer(profile.work_history.all(), many=True).data
             ),
             'image': profile.image.url,
-            'about_me': profile.about_me
+            'about_me': profile.about_me,
         }
 
     def test_limited(self):  # pylint: disable=no-self-use
@@ -126,7 +126,7 @@ class ProfileTests(ESTestCase):
             'work_history': (
                 EmploymentSerializer(profile.work_history.all(), many=True).data
             ),
-            'about_me': profile.about_me
+            'about_me': profile.about_me,
         }
 
     def test_add_education(self):
@@ -348,14 +348,11 @@ class ProfileFilledOutTests(ESTestCase):
         """
         for key in field_names:
             field = field_parent_getter(ProfileFilledOutSerializer().fields)[key]
-            # skip fields that are generated, read only, or that tie to other serializers which are tested elsewhere
-            if isinstance(field, (ListSerializer, SerializerMethodField, ReadOnlyField)):
-                continue
-            elif field.read_only is True:
-                continue
-            elif field.allow_null is True:
-                continue
-            elif field.allow_blank is True:
+            is_generated = isinstance(field, (ListSerializer, SerializerMethodField, ReadOnlyField))
+            is_skippable = (field.read_only or field.allow_null or field.allow_blank)
+            # skip fields that are skippable, generated, read only, or that tie
+            #  to other serializers which are tested elsewhere.
+            if is_generated or is_skippable:
                 continue
 
             clone = deepcopy(self.data)

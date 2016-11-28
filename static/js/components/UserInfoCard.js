@@ -27,32 +27,29 @@ export default class UserInfoCard extends React.Component {
     </div>
   );
 
-  renderAboutMeWithData = (profile: Profile): Array<React$Element<*>> => ([
-    <h3 className="heading" key="heading">About Me</h3>,
-    <div className="bio" key="bio">{profile.about_me}</div>
-  ]);
-
-  renderAboutMeWithoutData = (profile: Profile): Array<React$Element<*>>|null => (
-    userPrivilegeCheck(
-      profile,
-      () => [
-        <h3 className="heading" key="heading">About Me</h3>,
-        <div className="bio placeholder" key="bio-placeholder">
-          Write something about yourself, so your classmates can learn a bit about you.
-        </div>
-      ],
-      null
-    )
-  );
-
   renderAboutMeSection: Function = (
     profile: Profile, toggleShowAboutMeDialog: Function
   ): React$Element<*> => {
+    let aboutMeContent = userPrivilegeCheck(
+      profile,
+      () => [
+        <h3 key="heading">About Me</h3>,
+        <div className="bio placeholder" key="bio-placeholder">
+          Write something about yourself, so others can learn a bit about you.
+        </div>
+      ],
+      null
+    );
+    if (profile.about_me) {
+      aboutMeContent = [
+        <h3 key="heading">About Me</h3>,
+        <div className="bio" key="bio">{profile.about_me}</div>
+      ];
+    }
+
     return (
       <div className="profile-form-row">
-        <div className="about-me">
-          {profile.about_me ? this.renderAboutMeWithData(profile) : this.renderAboutMeWithoutData(profile)}
-        </div>
+        <div className="about-me">{aboutMeContent}</div>
         <div className="edit-about-me-holder">
           {userPrivilegeCheck(profile, () => <IconButton name="edit" onClick={toggleShowAboutMeDialog}/>)}
         </div>

@@ -807,6 +807,7 @@ describe("UserPage", function() {
       const username = SETTINGS.user.username;
       return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
         let count = div.getElementsByClassName('mdl-button--icon').length;
+        // edit profile and edit about me represents hard coded 2 here.
         assert.equal(count,
           2 + USER_PROFILE_RESPONSE.work_history.length * 2 + USER_PROFILE_RESPONSE.education.length * 2
         );

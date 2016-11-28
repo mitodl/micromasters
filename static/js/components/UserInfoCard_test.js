@@ -37,25 +37,25 @@ describe('UserInfoCard', () => {
     assert.equal(wrapper.find(".profile-title").text(), getPreferredName(USER_PROFILE_RESPONSE));
     assert.equal(wrapper.find(".profile-company-name").text(), mstr(getEmployer(USER_PROFILE_RESPONSE)));
     assert.equal(wrapper.find(".profile-email").text(), USER_PROFILE_RESPONSE.email);
-    assert.equal(wrapper.find(".heading").text(), 'About Me');
+    assert.equal(wrapper.find("h3").text(), 'About Me');
     assert.equal(
       wrapper.find(".bio .placeholder").text(),
-      'Write something about yourself, so your classmates can learn a bit about you.'
+      'Write something about yourself, so others can learn a bit about you.'
     );
   });
 
-  it('edit prifile works', () => {
+  it('edit profile works', () => {
     let wrapper = shallow(<UserInfoCard {...defaultRowProps} />);
     let editProfileButton = wrapper.find(".edit-profile-holder").childAt(0);
     editProfileButton.simulate('click');
-    assert.isAbove(editProfileBtnStub.callCount, 0);
+    assert.equal(editProfileBtnStub.callCount, 1);
   });
 
   it('edit about me works', () => {
     let wrapper = shallow(<UserInfoCard {...defaultRowProps} />);
     let editAboutMeButton = wrapper.find(".edit-about-me-holder").childAt(0);
     editAboutMeButton.simulate('click');
-    assert.isAbove(editAboutMeBtnStub.callCount, 0);
+    assert.equal(editAboutMeBtnStub.callCount, 1);
   });
 
   it('set about me', () => {
@@ -63,10 +63,21 @@ describe('UserInfoCard', () => {
       about_me: "Hello world"
     });
     let wrapper = shallow(<UserInfoCard {...defaultRowProps} />);
-    assert.equal(wrapper.find(".heading").text(), 'About Me');
+    assert.equal(wrapper.find("h3").text(), 'About Me');
     assert.equal(
       wrapper.find(".bio").text(),
       "Hello world"
+    );
+  });
+
+  it('check multilines works me', () => {
+    defaultRowProps['profile'] = Object.assign(_.cloneDeep(USER_PROFILE_RESPONSE), {
+      about_me: "Hello \n world"
+    });
+    let wrapper = shallow(<UserInfoCard {...defaultRowProps} />);
+    assert.equal(
+      wrapper.find(".bio").html(),
+      '<div class="bio">Hello \n world</div>'
     );
   });
 });

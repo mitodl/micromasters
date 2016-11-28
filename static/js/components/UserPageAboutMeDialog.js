@@ -26,7 +26,7 @@ export default class UserPageAboutMeDialog extends ProfileFormFields {
     clearProfileEdit(username);
   };
 
-  saveAboutMelInfo: Function = (): void => {
+  saveAboutMeInfo: Function = (): void => {
     const { profile, ui, saveProfile } = this.props;
     saveProfile(null, profile, ui).then(() => {
       this.closeAboutMeDialog();
@@ -47,7 +47,7 @@ export default class UserPageAboutMeDialog extends ProfileFormFields {
         type='button'
         className='primary-button save-button'
         key='save'
-        onClick={this.saveAboutMelInfo}>
+        onClick={this.saveAboutMeInfo}>
         Save
       </Button>
     ];
