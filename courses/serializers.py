@@ -25,7 +25,10 @@ class ProgramSerializer(serializers.ModelSerializer):
         """
         from cms.models import ProgramPage
         try:
-            return program.programpage.url
+            page = program.programpage
+            if page.external_program_page_url:
+                return page.external_program_page_url
+            return page.url
         except ProgramPage.DoesNotExist:
             return
 
