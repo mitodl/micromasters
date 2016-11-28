@@ -42,7 +42,7 @@ python-social-auth==0.2.21
 python3-openid==3.0.10    # via python-social-auth
 pytz==2016.7              # via celery, django-modelcluster
 PyYAML==3.11
-raven==5.31.0
+raven==5.32.0
 redis==2.10.5
 requests-oauthlib==0.7.0  # via python-social-auth
 requests==2.11.1
