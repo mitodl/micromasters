@@ -60,7 +60,7 @@ export type UIState = {
   workDialogVisibility:         boolean;
   workHistoryAnswer:            ?boolean;
   userPageDialogVisibility:     boolean;
-  userPageAboutMeDialoggVisibility: boolean;
+  userPageAboutMeDialogVisibility: boolean;
   showWorkDeleteDialog:         boolean;
   showEducationDeleteDialog:    boolean;
   deletionIndex:                ?number;
@@ -93,7 +93,7 @@ export const INITIAL_UI_STATE: UIState = {
   workDialogVisibility:       false,
   workHistoryAnswer:          null,
   userPageDialogVisibility: false,
-  userPageAboutMeDialoggVisibility: false,
+  userPageAboutMeDialogVisibility: false,
   showWorkDeleteDialog: false,
   showEducationDeleteDialog: false,
   deletionIndex: null,
@@ -188,7 +188,7 @@ export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
   }
   case SET_USER_PAGE_ABOUT_ME_DIALOG_VISIBILITY: {
     return Object.assign({}, state, {
-      userPageAboutMeDialoggVisibility: action.payload
+      userPageAboutMeDialogVisibility: action.payload
     });
   }
   case SET_SHOW_EDUCATION_DELETE_DIALOG: {

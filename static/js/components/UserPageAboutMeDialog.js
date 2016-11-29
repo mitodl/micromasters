@@ -34,7 +34,7 @@ export default class UserPageAboutMeDialog extends ProfileFormFields {
   };
 
   render () {
-    const { ui: { userPageAboutMeDialoggVisibility } } = this.props;
+    const { ui: { userPageAboutMeDialogVisibility } } = this.props;
 
     const actions = [
       <Button
@@ -59,7 +59,7 @@ export default class UserPageAboutMeDialog extends ProfileFormFields {
         titleClassName="dialog-title"
         contentClassName="dialog about-me-dialog"
         className="about-me-dialog-wrapper"
-        open={userPageAboutMeDialoggVisibility}
+        open={userPageAboutMeDialogVisibility}
         onRequestClose={this.closeAboutMeDialog}
         actions={actions}
         autoScrollBodyContent={true}>

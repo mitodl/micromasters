@@ -37,10 +37,10 @@ export default class User extends React.Component {
   toggleShowAboutMeDialog: Function = (): void => {
     const {
       setUserPageAboutMeDialogVisibility,
-      ui: { userPageAboutMeDialoggVisibility },
+      ui: { userPageAboutMeDialogVisibility },
       startProfileEdit,
     } = this.props;
-    setUserPageAboutMeDialogVisibility(!userPageAboutMeDialoggVisibility);
+    setUserPageAboutMeDialogVisibility(!userPageAboutMeDialogVisibility);
     startProfileEdit();
   };
 

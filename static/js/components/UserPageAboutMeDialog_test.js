@@ -1,4 +1,3 @@
-// @flow
 import React from 'react';
 import { mount } from 'enzyme';
 import { assert } from 'chai';
@@ -31,7 +30,7 @@ describe('UserPageAboutMeDialog', () => {
       clearProfileEdit: clearProfileEdit,
       saveProfile: saveProfile,
       ui: {
-        userPageAboutMeDialoggVisibility: true
+        userPageAboutMeDialogVisibility: true
       }
     };
   });
@@ -45,7 +44,11 @@ describe('UserPageAboutMeDialog', () => {
     mount (
       <MuiThemeProvider muiTheme={getMuiTheme()}>
         <UserPageAboutMeDialog {...defaultRowProps} />
-      </MuiThemeProvider>
+      </MuiThemeProvider>,
+      {
+        context: { router: {}},
+        childContextTypes: { router: React.PropTypes.object }
+      }
     )
   );
 
@@ -66,7 +69,7 @@ describe('UserPageAboutMeDialog', () => {
 
   it('render dialog when visibility det to false', () => {
     defaultRowProps['ui'] = {
-      userPageAboutMeDialoggVisibility: false
+      userPageAboutMeDialogVisibility: false
     };
     renderDialog();
     assert.isNull(document.querySelector('h3.dialog-title'));
