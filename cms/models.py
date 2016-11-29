@@ -19,7 +19,6 @@ from micromasters.serializers import serialize_maybe_user
 from micromasters.utils import webpack_dev_server_host
 from profiles.api import get_social_username
 from roles.models import Instructor, Staff
-from ui.views import get_bundle_url
 
 
 class HomePage(Page):
@@ -43,16 +42,12 @@ class HomePage(Page):
         context = super(HomePage, self).get_context(request)
 
         context["programs"] = programs
-        context["style_src"] = get_bundle_url(request, "style.js")
-        context["public_src"] = get_bundle_url(request, "public.js")
-        context["style_public_src"] = get_bundle_url(request, "style_public.js")
+        context["is_public"] = True
         context["authenticated"] = not request.user.is_anonymous()
         context["is_staff"] = has_role(request.user, [Staff.ROLE_ID, Instructor.ROLE_ID])
         context["username"] = username
         context["js_settings_json"] = json.dumps(js_settings)
         context["title"] = self.title
-        context["common_src"] = get_bundle_url(request, "common.js")
-        context["sentry_client"] = get_bundle_url(request, "sentry_client.js")
         context["tracking_id"] = ""
 
         return context
@@ -209,17 +204,12 @@ def get_program_page_context(programpage, request):
     username = get_social_username(request.user)
     context = super(ProgramPage, programpage).get_context(request)
 
-    context["zendesk_widget"] = get_bundle_url(request, "zendesk_widget.js")
-    context["style_src"] = get_bundle_url(request, "style.js")
-    context["public_src"] = get_bundle_url(request, "public.js")
-    context["style_public_src"] = get_bundle_url(request, "style_public.js")
+    context["is_public"] = True
     context["authenticated"] = not request.user.is_anonymous()
     context["username"] = username
     context["js_settings_json"] = json.dumps(js_settings)
     context["title"] = programpage.title
     context["courses"] = courses_query
-    context["common_src"] = get_bundle_url(request, "common.js")
-    context["sentry_client"] = get_bundle_url(request, "sentry_client.js")
     context["tracking_id"] = programpage.program.ga_tracking_id
 
     return context

@@ -47,7 +47,6 @@ from financialaid.serializers import (
 )
 from mail.serializers import FinancialAidMailSerializer
 from roles.roles import Permissions
-from ui.views import get_bundle_url
 
 
 class FinancialAidRequestView(CreateAPIView):
@@ -223,9 +222,6 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         context["sort_fields"] = self.sort_fields
 
         # Required for styling
-        context["style_src"] = get_bundle_url(self.request, "style.js")
-        context["dashboard_src"] = get_bundle_url(self.request, "dashboard.js")
-        context["zendesk_widget"] = get_bundle_url(self.request, "zendesk_widget.js")
         js_settings = {
             "gaTrackingID": settings.GA_TRACKING_ID,
             "reactGaDebug": settings.REACT_GA_DEBUG,
@@ -234,10 +230,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         }
         context["js_settings_json"] = json.dumps(js_settings)
         context["authenticated"] = not self.request.user.is_anonymous()
-        context["financial_aid_src"] = get_bundle_url(self.request, "financial_aid.js")
-        context["common_src"] = get_bundle_url(self.request, "common.js")
-        context["public_src"] = get_bundle_url(self.request, "public.js")
-        context["style_public_src"] = get_bundle_url(self.request, "style_public.js")
+        context["is_public"] = True
         return context
 
     def get_queryset(self):

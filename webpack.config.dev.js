@@ -2,6 +2,7 @@ var webpack = require('webpack');
 var path = require("path");
 var sharedConfig = require(path.resolve("./webpack.config.shared.js"));
 var R = require('ramda');
+var BundleTracker = require('webpack-bundle-tracker');
 
 const hotEntry = (host, port) => (
   `webpack-hot-middleware/client?path=http://${host}:${port}/__webpack_hmr&timeout=20000&reload=true`
@@ -13,7 +14,10 @@ const insertHotReload = (host, port, entries) => (
 
 const devConfig = {
   context: __dirname,
-  output: sharedConfig.output,
+  output: {
+    path: path.resolve('./static/bundles/'),
+    filename: "[name].js"
+  },
   module: sharedConfig.module,
   sassLoader: sharedConfig.sassLoader,
   resolve: sharedConfig.resolve,
@@ -29,7 +33,8 @@ const devConfig = {
     }),
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
+    new webpack.NoErrorsPlugin(),
+    new BundleTracker({filename: './webpack-stats.json'})
   ],
   devtool: 'source-map'
 };

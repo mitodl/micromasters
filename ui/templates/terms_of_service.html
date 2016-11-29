@@ -126,6 +126,7 @@
   <div id="signup-dialog">
     <!-- signup dialog React component injected here -->
   </div>
-  <script type="text/javascript" src="{{ public_src }}"></script>
+  {% load render_bundle %}
+  {% render_bundle "public" %}
   {% include "footer.html" %}
 {% endblock %}

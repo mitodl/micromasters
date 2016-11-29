@@ -276,5 +276,6 @@
     window.CSRF_TOKEN = "{{ csrf_token }}";
     window.BASE_PATH = "{{ request.path }}?sort_by={{ current_sort_field }}&search_query="
   </script>
-  <script src="{{ financial_aid_src }}"></script>
+  {% load render_bundle %}
+  {% render_bundle "financial_aid" %}
 {% endblock %}

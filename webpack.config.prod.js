@@ -1,11 +1,15 @@
 var webpack = require('webpack');
 var path = require("path");
 var sharedConfig = require(path.resolve("./webpack.config.shared.js"));
+var BundleTracker = require('webpack-bundle-tracker');
 
 module.exports = {
   context: __dirname,
   entry: sharedConfig.entry,
-  output: sharedConfig.output,
+  output: {
+    path: path.resolve('./static/bundles/'),
+    filename: "[name]-[chunkhash].js"
+  },
   module: sharedConfig.module,
   sassLoader: sharedConfig.sassLoader,
   resolve: sharedConfig.resolve,
@@ -27,6 +31,9 @@ module.exports = {
       name: 'common',
       minChunks: 2,
     }),
+    new BundleTracker({
+      filename: './webpack-stats.json'
+    })
   ],
   devtool: 'source-map'
 };

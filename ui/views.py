@@ -6,7 +6,6 @@ import logging
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.core.urlresolvers import reverse
 from django.shortcuts import Http404, redirect, render
 from django.utils.decorators import method_decorator
@@ -16,7 +15,7 @@ from raven.contrib.django.raven_compat.models import client as sentry
 from rolepermissions.shortcuts import available_perm_status
 from rolepermissions.verifications import has_role
 
-from micromasters.utils import webpack_dev_server_host, webpack_dev_server_url
+from micromasters.utils import webpack_dev_server_host
 from micromasters.serializers import serialize_maybe_user
 from profiles.api import get_social_username
 from profiles.permissions import CanSeeIfNotPrivate
@@ -24,19 +23,6 @@ from roles.models import Instructor, Staff
 from ui.decorators import require_mandatory_urls
 
 log = logging.getLogger(__name__)
-
-
-def get_bundle_url(request, bundle_name):
-    """
-    Create a URL for the webpack bundle.
-    """
-    if settings.DEBUG and settings.USE_WEBPACK_DEV_SERVER:
-        return "{host_url}/{bundle}".format(
-            host_url=webpack_dev_server_url(request),
-            bundle=bundle_name
-        )
-    else:
-        return static("bundles/{bundle}".format(bundle=bundle_name))
 
 
 class ReactView(View):  # pylint: disable=unused-argument
@@ -77,11 +63,7 @@ class ReactView(View):  # pylint: disable=unused-argument
             request,
             "dashboard.html",
             context={
-                "common_src": get_bundle_url(request, "common.js"),
-                "sentry_client": get_bundle_url(request, "sentry_client.js"),
-                "zendesk_widget": get_bundle_url(request, "zendesk_widget.js"),
-                "style_src": get_bundle_url(request, "style.js"),
-                "dashboard_src": get_bundle_url(request, "dashboard.js"),
+                "has_zendesk_widget": True,
                 "js_settings_json": json.dumps(js_settings),
                 "tracking_id": "",
             }
@@ -132,13 +114,8 @@ def standard_error_page(request, status_code, template_filename):
         request,
         template_filename,
         context={
-            "zendesk_widget": get_bundle_url(request, "zendesk_widget.js"),
-            "style_src": get_bundle_url(request, "style.js"),
-            "dashboard_src": get_bundle_url(request, "dashboard.js"),
-            "common_src": get_bundle_url(request, "common.js"),
-            "sentry_client": get_bundle_url(request, "sentry_client.js"),
-            "style_public_src": get_bundle_url(request, "style_public.js"),
-            "public_src": get_bundle_url(request, "public.js"),
+            "has_zendesk_widget": True,
+            "is_public": True,
             "js_settings_json": json.dumps({
                 "release_version": settings.VERSION,
                 "environment": settings.ENVIRONMENT,
@@ -165,12 +142,8 @@ def terms_of_service(request):
         request,
         "terms_of_service.html",
         context={
-            "zendesk_widget": get_bundle_url(request, "zendesk_widget.js"),
-            "style_src": get_bundle_url(request, "style.js"),
-            "common_src": get_bundle_url(request, "common.js"),
-            "public_src": get_bundle_url(request, "public.js"),
-            "style_public_src": get_bundle_url(request, "style_public.js"),
-            "sentry_client": get_bundle_url(request, "sentry_client.js"),
+            "has_zendesk_widget": True,
+            "is_public": True,
             "js_settings_json": json.dumps({
                 "release_version": settings.VERSION,
                 "environment": settings.ENVIRONMENT,

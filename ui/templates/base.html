@@ -12,14 +12,15 @@
     var SETTINGS = {{ js_settings_json|safe }};
     var CURRENT_PAGE_URL = '{{ request.build_absolute_uri }}';
     </script>
-    <script type="text/javascript" src="{{ common_src }}"></script>
-    <script type="text/javascript" src="{{ sentry_client }}"></script>
-    {% if style_public_src %}
-    <script type="text/javascript" src="{{ style_public_src }}"></script>
+    {% load render_bundle %}
+    {% render_bundle "common" %}
+    {% render_bundle "sentry_client" %}
+    {% if is_public %}
+      {% render_bundle "style_public" %}
     {% endif %}
-    <script type="text/javascript" src="{{ style_src }}"></script>
-    {% if zendesk_widget %}
-      <script type="text/javascript" src="{{ zendesk_widget }}"></script>
+    {% render_bundle "style" %}
+    {% if has_zendesk_widget %}
+      {% render_bundle "zendesk_widget" %}
     {% endif %}
     <title>{% block title %}{% endblock %}</title>
     <meta name="description" content="{% block description %}{% endblock %}">

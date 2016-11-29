@@ -7,5 +7,7 @@
 {% block content %}
 <div id="dashboard"></div>
 {% include "footer.html" %}
-<script type="text/javascript" src="{{ dashboard_src }}"></script>
+
+{% load render_bundle %}
+{% render_bundle 'dashboard' %}
 {% endblock %}

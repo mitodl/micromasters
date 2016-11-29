@@ -102,6 +102,7 @@
     "url-loader": "0.5.7",
     "warning": "2.1.0",
     "webpack": "1.13.0",
+    "webpack-bundle-tracker": "^0.1.0",
     "webpack-dev-middleware": "^1.8.4",
     "webpack-hot-middleware": "^2.13.2"
   },

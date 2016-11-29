@@ -99,3 +99,9 @@ static/scss/material.css
 
 # Local settings
 micromasters.yml
+
+# Webpack
+webpack-stats.json
+
+# Celery Beat
+celerybeat-schedule

@@ -82,6 +82,21 @@ else:
 SECURE_SSL_REDIRECT = get_var('MICROMASTERS_SECURE_SSL_REDIRECT', True)
 
 
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'CACHE': not DEBUG,
+        'BUNDLE_DIR_NAME': 'bundles/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+        'POLL_INTERVAL': 0.1,
+        'TIMEOUT': None,
+        'IGNORE': [
+            '.+\.hot-update\.+',
+            '.+\.js\.map'
+        ]
+    }
+}
+
+
 # Application definition
 
 INSTALLED_APPS = (
@@ -114,6 +129,7 @@ INSTALLED_APPS = (
     # other third party APPS
     'rolepermissions',
     'raven.contrib.django.raven_compat',
+    'webpack_loader',
 
     # Our INSTALLED_APPS
     'backends',

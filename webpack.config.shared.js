@@ -15,10 +15,6 @@ module.exports = {
     'style_public': './static/js/entry/style_public',
     'zendesk_widget': './static/js/entry/zendesk_widget.js',
   },
-  output: {
-    path: path.resolve('./static/bundles/'),
-    filename: "[name].js"
-  },
   module: {
     loaders: [
       {
