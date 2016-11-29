@@ -97,8 +97,7 @@ export function boundRadioGroupField(keySet: string[], label: string, options: O
 export function boundTextField(
   keySet: string[],
   label: string,
-  multiLine: boolean=false,
-  hintText: ?string=""
+  multiLine: boolean=false
 ): React$Element<*> {
   const {
     profile,
@@ -132,7 +131,6 @@ export function boundTextField(
     <TextField
       onBlur={onBlur}
       name={label}
-      hintText={hintText}
       multiLine={multiLine}
       className={validationErrorSelector(errors, keySet)}
       floatingLabelText={label}

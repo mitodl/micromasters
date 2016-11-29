@@ -3,6 +3,7 @@ import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import Button from 'react-mdl/lib/Button';
 
+import { personalValidation } from '../lib/validation/profile';
 import ProfileFormFields from '../util/ProfileFormFields';
 import type { Profile, SaveProfileFunc } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
@@ -28,7 +29,7 @@ export default class UserPageAboutMeDialog extends ProfileFormFields {
 
   saveAboutMeInfo: Function = (): void => {
     const { profile, ui, saveProfile } = this.props;
-    saveProfile(null, profile, ui).then(() => {
+    saveProfile(personalValidation, profile, ui).then(() => {
       this.closeAboutMeDialog();
     });
   };
@@ -66,9 +67,8 @@ export default class UserPageAboutMeDialog extends ProfileFormFields {
        {
          this.boundTextField(
            ["about_me"],
-           "",
-           true,
-           "Introduce yourself to your classmates."
+           "Introduce yourself",
+           true
          )
        }
       </Dialog>

@@ -113,19 +113,15 @@ class ProfileFormContainer extends React.Component {
     dispatch(startProfileEdit(username));
   };
 
-  saveProfile(isEdit: boolean, validator: Validator|UIValidator|null, profile: Profile, ui: UIState) {
+  saveProfile(isEdit: boolean, validator: Validator|UIValidator, profile: Profile, ui: UIState) {
     const { dispatch } = this.props;
     const username = SETTINGS.user.username;
-    let errors = {};
 
     if (!isEdit) {
       // Validation errors will only show up if we start the edit
       dispatch(startProfileEdit(username));
     }
-    if (validator) {
-      errors = validator(profile, ui);
-    }
-
+    let errors = validator(profile, ui);
     this.updateValidationVisibility(ALL_ERRORS_VISIBLE);
     dispatch(updateProfileValidation(username, errors));
     if (_.isEmpty(errors)) {

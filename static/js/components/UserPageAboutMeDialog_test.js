@@ -67,7 +67,7 @@ describe('UserPageAboutMeDialog', () => {
     assert.equal(document.querySelector("textarea").textContent, "");
   });
 
-  it('render dialog when visibility det to false', () => {
+  it('render dialog when visibility set to false', () => {
     defaultRowProps['ui'] = {
       userPageAboutMeDialogVisibility: false
     };

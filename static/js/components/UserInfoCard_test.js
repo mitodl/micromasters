@@ -58,6 +58,14 @@ describe('UserInfoCard', () => {
     assert.equal(editAboutMeBtnStub.callCount, 1);
   });
 
+  it('edit about me is not available for other users is ', () => {
+    defaultRowProps['profile'] = Object.assign(_.cloneDeep(USER_PROFILE_RESPONSE), {
+      username: "xyz"
+    });
+    let wrapper = shallow(<UserInfoCard {...defaultRowProps} />);
+    assert.equal(wrapper.find(".edit-about-me-holder").children().length, 0);
+  });
+
   it('set about me', () => {
     defaultRowProps['profile'] = Object.assign(_.cloneDeep(USER_PROFILE_RESPONSE), {
       about_me: "Hello world"

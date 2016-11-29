@@ -83,8 +83,5 @@ export type ProfileFetchResponse = {
   payload: ProfileGetResult
 };
 
-export type SaveProfileFunc = (
-  validator: Validator|UIValidator|null, profile: Profile, ui: UIState
-) => Promise<Profile>;
-
+export type SaveProfileFunc = (validator: Validator|UIValidator, profile: Profile, ui: UIState) => Promise<Profile>;
 export type UpdateProfileFunc = (profile: Profile, validator: Validator|UIValidator) => void;
