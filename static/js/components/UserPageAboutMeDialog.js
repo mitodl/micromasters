@@ -35,6 +35,7 @@ export default class UserPageAboutMeDialog extends ProfileFormFields {
 
   render () {
     const { ui: { userPageAboutMeDialoggVisibility } } = this.props;
+
     const actions = [
       <Button
         type='button'
@@ -56,8 +57,8 @@ export default class UserPageAboutMeDialog extends ProfileFormFields {
       <Dialog
         title="About Me"
         titleClassName="dialog-title"
-        contentClassName="dialog personal-dialog"
-        className="personal-dialog-wrapper"
+        contentClassName="dialog about-me-dialog"
+        className="about-me-dialog-wrapper"
         open={userPageAboutMeDialoggVisibility}
         onRequestClose={this.closeAboutMeDialog}
         actions={actions}
