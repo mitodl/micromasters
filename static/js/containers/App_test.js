@@ -85,7 +85,7 @@ describe('App', function() {
       let response = Object.assign(_.cloneDeep(USER_PROFILE_RESPONSE), {
         first_name: undefined
       });
-      helper.profileGetStub.returns(Promise.resolve(response));
+      helper.profileGetStub.withArgs(SETTINGS.user.username).returns(Promise.resolve(response));
 
       return renderComponent("/", EDIT_PROFILE_ACTIONS).then(() => {
         assert.equal(helper.currentLocation.pathname, "/profile/personal");
@@ -97,7 +97,7 @@ describe('App', function() {
       let response = Object.assign(_.cloneDeep(USER_PROFILE_RESPONSE), {
         filled_out: false
       });
-      helper.profileGetStub.returns(Promise.resolve(response));
+      helper.profileGetStub.withArgs(SETTINGS.user.username).returns(Promise.resolve(response));
 
       return renderComponent("/", REDIRECT_ACTIONS).then(() => {
         assert.equal(helper.currentLocation.pathname, "/profile/professional");
@@ -109,7 +109,7 @@ describe('App', function() {
       let profile = _.cloneDeep(USER_PROFILE_RESPONSE);
       profile.work_history[1].city = "";
 
-      helper.profileGetStub.returns(Promise.resolve(profile));
+      helper.profileGetStub.withArgs(SETTINGS.user.username).returns(Promise.resolve(profile));
       return renderComponent("/", EDIT_PROFILE_ACTIONS).then(() => {
         assert.equal(helper.currentLocation.pathname, "/profile/professional");
         assert.equal(checkStep(), EMPLOYMENT_STEP);
@@ -119,7 +119,7 @@ describe('App', function() {
     it('redirects to /profile/education if a field is missing there', () => {
       let response = _.cloneDeep(USER_PROFILE_RESPONSE);
       response.education[0].school_name = '';
-      helper.profileGetStub.returns(Promise.resolve(response));
+      helper.profileGetStub.withArgs(SETTINGS.user.username).returns(Promise.resolve(response));
 
       return renderComponent("/", EDIT_PROFILE_ACTIONS).then(() => {
         assert.equal(helper.currentLocation.pathname, "/profile/education");

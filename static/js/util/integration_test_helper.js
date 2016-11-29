@@ -1,3 +1,4 @@
+/* global SETTINGS: false */
 import React from 'react';
 import { mount } from 'enzyme';
 import sinon from 'sinon';
@@ -57,7 +58,7 @@ export default class IntegrationTestHelper {
     this.coursePricesStub = this.sandbox.stub(api, 'getCoursePrices');
     this.coursePricesStub.returns(Promise.resolve(COURSE_PRICES_RESPONSE));
     this.profileGetStub = this.sandbox.stub(api, 'getUserProfile');
-    this.profileGetStub.returns(Promise.resolve(USER_PROFILE_RESPONSE));
+    this.profileGetStub.withArgs(SETTINGS.user.username).returns(Promise.resolve(USER_PROFILE_RESPONSE));
     this.programsGetStub = this.sandbox.stub(api, 'getPrograms');
     this.programsGetStub.returns(Promise.resolve(PROGRAMS));
     this.scrollIntoViewStub = this.sandbox.stub();

@@ -96,7 +96,7 @@ class App extends React.Component {
     if (userProfile.getStatus === undefined) {
       dispatch(fetchUserProfile(username)).then(() => {
         if ( PROFILE_REGEX.test(pathname) ) {
-          dispatch(startProfileEdit(SETTINGS.username));
+          dispatch(startProfileEdit(SETTINGS.user.username));
         }
       });
     }

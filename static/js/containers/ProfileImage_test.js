@@ -42,7 +42,7 @@ describe('ProfileImage', () => {
     helper = new IntegrationTestHelper();
     sandbox = helper.sandbox;
     updateProfileImageStub = sandbox.stub(api, 'updateProfileImage');
-    updateProfileImageStub.returns(Promise.resolve());
+    updateProfileImageStub.withArgs(thatProfile.username).returns(Promise.resolve());
   });
 
   afterEach(() => {

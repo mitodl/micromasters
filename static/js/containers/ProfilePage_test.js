@@ -23,6 +23,7 @@ import {
 import {
   setProgram,
   SET_PROFILE_STEP,
+  SET_TOAST_MESSAGE,
 } from '../actions/ui';
 import {
   USER_PROFILE_RESPONSE,
@@ -53,6 +54,7 @@ describe("ProfilePage", function() {
     REQUEST_GET_PROGRAM_ENROLLMENTS,
     RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
     START_PROFILE_EDIT,
+    START_PROFILE_EDIT,
     SET_PROFILE_STEP,
   ];
 
@@ -79,23 +81,30 @@ describe("ProfilePage", function() {
     patchUserProfileStub.throws("Invalid arguments");
     patchUserProfileStub.withArgs(SETTINGS.user.username, updatedProfile).returns(Promise.resolve(updatedProfile));
 
-    let actions = [];
-    if ( actions.length === 0 ) {
-      if (!validationFailure) {
-        actions.push(
-          REQUEST_PATCH_USER_PROFILE,
-          RECEIVE_PATCH_USER_PROFILE_SUCCESS,
-        );
-      }
-      actions.push(
+    let actions;
+    if (!validationFailure) {
+      actions = [
         UPDATE_PROFILE_VALIDATION,
         UPDATE_VALIDATION_VISIBILITY,
-        START_PROFILE_EDIT,
-      );
+        REQUEST_PATCH_USER_PROFILE,
+        RECEIVE_PATCH_USER_PROFILE_SUCCESS,
+        CLEAR_PROFILE_EDIT,
+        SET_PROFILE_STEP,
+      ];
+    } else {
+      actions = [
+        UPDATE_PROFILE_VALIDATION,
+        UPDATE_VALIDATION_VISIBILITY,
+      ];
     }
 
     return listenForActions(actions, () => {
       TestUtils.Simulate.click(button);
+    }).then(state => {
+      if (!validationFailure) {
+        assert.deepEqual(state.profiles[SETTINGS.user.username].edit, undefined);
+      }
+      return state;
     });
   };
 
@@ -140,7 +149,7 @@ describe("ProfilePage", function() {
       let response = Object.assign(_.cloneDeep(USER_PROFILE_RESPONSE), {
         first_name: undefined
       });
-      helper.profileGetStub.returns(Promise.resolve(response));
+      helper.profileGetStub.withArgs(SETTINGS.user.username).returns(Promise.resolve(response));
 
       return renderComponent("/profile/education", REDIRECT_ACTIONS).then(() => {
         assert.equal(helper.currentLocation.pathname, "/profile/personal");
@@ -151,7 +160,7 @@ describe("ProfilePage", function() {
     it('redirects to /profile/education if a field is missing there', () => {
       let response = _.cloneDeep(USER_PROFILE_RESPONSE);
       response.education[0].school_name = '';
-      helper.profileGetStub.returns(Promise.resolve(response));
+      helper.profileGetStub.withArgs(SETTINGS.user.username).returns(Promise.resolve(response));
 
       return renderComponent("/profile/professional", REDIRECT_ACTIONS).then(() => {
         assert.equal(helper.currentLocation.pathname, "/profile/education");
@@ -174,9 +183,10 @@ describe("ProfilePage", function() {
       it(`respects the current value (${filledOutValue}) when saving on ${step}`, () => {
         let updatedProfile = Object.assign({}, USER_PROFILE_RESPONSE, {
           filled_out: filledOutValue,
-          education: []
+          education: [],
+          work_history: [],
         });
-        helper.profileGetStub.returns(Promise.resolve(updatedProfile));
+        helper.profileGetStub.withArgs(SETTINGS.user.username).returns(Promise.resolve(updatedProfile));
         return renderComponent(`/profile/${step}`, SUCCESS_ACTIONS).then(([, div]) => {
           // close all switches
           if (step === 'personal') {
@@ -221,8 +231,8 @@ describe("ProfilePage", function() {
         REQUEST_ADD_PROGRAM_ENROLLMENT,
         RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
         SET_PROFILE_STEP,
-        START_PROFILE_EDIT,
         UPDATE_VALIDATION_VISIBILITY,
+        SET_TOAST_MESSAGE,
       ], () => {
         wrapper.find(".next").simulate("click");
       }).then(() => {

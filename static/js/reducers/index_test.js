@@ -91,7 +91,7 @@ describe('reducers', () => {
     });
 
     it('should fetch user profile successfully then clear it', () => {
-      getUserProfileStub.returns(Promise.resolve(USER_PROFILE_RESPONSE));
+      getUserProfileStub.withArgs(SETTINGS.user.username).returns(Promise.resolve(USER_PROFILE_RESPONSE));
 
       return dispatchThen(fetchUserProfile('jane'), [REQUEST_GET_USER_PROFILE, RECEIVE_GET_USER_PROFILE_SUCCESS]).
       then(profileState => {
@@ -111,7 +111,7 @@ describe('reducers', () => {
         errorStatusCode: 404,
         detail: "not found"
       };
-      getUserProfileStub.returns(Promise.reject(errorInfo));
+      getUserProfileStub.withArgs(SETTINGS.user.username).returns(Promise.reject(errorInfo));
 
       return dispatchThen(fetchUserProfile('jane'), [REQUEST_GET_USER_PROFILE, RECEIVE_GET_USER_PROFILE_FAILURE]).
       then(profileState => {
@@ -125,7 +125,7 @@ describe('reducers', () => {
       let updatedProfile = Object.assign({}, USER_PROFILE_RESPONSE, {
         change: true
       });
-      patchUserProfileStub.returns(Promise.resolve(updatedProfile));
+      patchUserProfileStub.withArgs(SETTINGS.user.username).returns(Promise.resolve(updatedProfile));
 
       return dispatchThen(
         saveProfile('jane', USER_PROFILE_RESPONSE),
@@ -140,7 +140,7 @@ describe('reducers', () => {
 
     it("should fail to patch the profile", () => {
       let errorInfo = {errorStatusCode: 500};
-      patchUserProfileStub.returns(Promise.reject(errorInfo));
+      patchUserProfileStub.withArgs(SETTINGS.user.username).returns(Promise.reject(errorInfo));
 
       return dispatchThen(
         saveProfile('jane', USER_PROFILE_RESPONSE),

@@ -115,7 +115,7 @@ describe('image upload reducer', () => {
     let filename = 'a photo';
 
     it('should patch the profile image', () => {
-      updateProfileImageStub.returns(Promise.resolve('success'));
+      updateProfileImageStub.withArgs(user, photo, filename).returns(Promise.resolve('success'));
       return dispatchThen(updateUserPhoto(user, photo, filename), [
         REQUEST_PATCH_USER_PHOTO,
         RECEIVE_PATCH_USER_PHOTO_SUCCESS
