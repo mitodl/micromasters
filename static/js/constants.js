@@ -330,7 +330,7 @@ export const DASHBOARD_RESPONSE = deepFreeze([
             "title": "Gio Test Course #13",
             "status": STATUS_PASSED,
             "position": 3,
-            "grade": "0.66",
+            "final_grade": "0.66",
             "course_id": "course-v1:odl+GIO101+FALL13",
             "id": 3,
             "course_start_date": "2016-08-22T11:48:27Z",
@@ -406,7 +406,7 @@ export const DASHBOARD_RESPONSE = deepFreeze([
             "id": 5,
             "status": STATUS_PASSED,
             "title": "Demo course",
-            "grade": "0.88",
+            "final_grade": "88",
             "position": 0,
             "course_start_date": "2016-08-22T11:48:27Z",
             "fuzzy_start_date": "Fall 2017",
@@ -424,6 +424,27 @@ export const DASHBOARD_RESPONSE = deepFreeze([
         ],
         "description": null,
         "prerequisites": null
+      },
+      {
+        "id": 6789,
+        "position_in_program": 11,
+        "title": "Current verified course - grade is 88%",
+        "runs": [
+          {
+            "certificate_url": "www.google.com",
+            "course_id": "course-v1:current",
+            "id": 5678,
+            "status": STATUS_CURRENTLY_ENROLLED,
+            "title": "Current course run",
+            "current_grade": "23",
+            "position": 0,
+            "course_start_date": "2016-08-22T11:48:27Z",
+            "fuzzy_start_date": "Fall 2017",
+            "course_end_date": "2016-09-09T10:20:10Z",
+          }
+        ],
+        "description": "The demo course",
+        "prerequisites": ""
       },
       {
         "id": 8,
@@ -620,7 +641,7 @@ export const FINANCIAL_AID_PARTIAL_RESPONSE = deepFreeze({
 
 export const COURSE_PRICES_RESPONSE = deepFreeze(DASHBOARD_RESPONSE.map(program => ({
   program_id: program.id,
-  price: program.id * 100,
+  price: program.id * 1000,
   financial_aid_availability: false,
   has_financial_aid_request: false
 })));
