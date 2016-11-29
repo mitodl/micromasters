@@ -1,5 +1,6 @@
 /* global SETTINGS:false zE:false _:false */
 __webpack_public_path__ = `http://${SETTINGS.host}:8078/`;  // eslint-disable-line no-undef, camelcase
+import "element-closest";
 
 // Start of odl Zendesk Widget script
 /*<![CDATA[*/
@@ -116,6 +117,35 @@ const zendeskCallbacks = {
         }, 100);
       };
     }
+  },
+  ticketSubmissionFormLoaded: () => {
+    const iframe = document.querySelector("iframe.zEWidget-ticketSubmissionForm");
+    // field 24690866 is the MicroMasters program selector
+    const fieldNames = ["name", "email", "24690866"];
+    const fieldHidden = [
+      SETTINGS.user && SETTINGS.user.first_name && SETTINGS.user.last_name,
+      SETTINGS.user && SETTINGS.user.email,
+      SETTINGS.program && SETTINGS.program.slug,
+    ];
+    const fields = _.map(
+      fieldNames,
+      (name) => {
+        return iframe.contentDocument.querySelector(
+          `input[name="${name}"], select[name="${name}"]`
+        );
+      }
+    );
+    _.zip(fields, fieldHidden).forEach((values) => {
+      const [ field, isHidden ] = values;
+      if (isHidden) {
+        const label = field.closest('label');
+        label.style.setProperty("display", "none", "important");
+      }
+    });
+    // adjust the iframe to the correct (smaller) height
+    const height = iframe.contentDocument.body.childNodes[0].offsetHeight;
+    // zendesk adds a 15px margin
+    iframe.style.height = `${height + 15}px`;
   }
 };
 
