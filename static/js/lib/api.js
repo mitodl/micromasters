@@ -140,6 +140,7 @@ export function getUserProfile(username: string): Promise<ProfileGetResult> {
 }
 
 export function patchUserProfile(username: string, profile: Profile): Promise<ProfilePatchResult> {
+  profile = Object.assign({}, profile);
   delete profile['image'];
   return mockableFetchJSONWithCSRF(`/api/v0/profiles/${username}/`, {
     method: 'PATCH',

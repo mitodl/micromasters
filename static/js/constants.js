@@ -1,5 +1,6 @@
 /* global SETTINGS: false */
 import urljoin from 'url-join';
+import deepFreeze from 'deep-freeze';
 
 export const HIGH_SCHOOL = 'hs';
 export const ASSOCIATE = 'a';
@@ -88,7 +89,7 @@ export const TOAST_FAILURE = 'failure';
 
 export const EDX_LINK_BASE = urljoin(SETTINGS.edx_base_url, 'courses/');
 
-export const ELASTICSEARCH_RESPONSE = {
+export const ELASTICSEARCH_RESPONSE = deepFreeze({
   "took": 22,
   "timed_out": false,
   "_shards": {
@@ -220,9 +221,9 @@ export const ELASTICSEARCH_RESPONSE = {
       }
     }
   }
-};
+});
 
-export const USER_PROFILE_RESPONSE = {
+export const USER_PROFILE_RESPONSE = deepFreeze({
   "image": "some_sort_of_image.png",
   "username": SETTINGS.user ? SETTINGS.user.username : null,
   "filled_out": true,
@@ -290,13 +291,13 @@ export const USER_PROFILE_RESPONSE = {
     "online_degree": false
   }],
   "edx_level_of_education": null,
-};
+});
 
-export const USER_PROGRAM_RESPONSE = {
+export const USER_PROGRAM_RESPONSE = deepFreeze({
   "grade_average": 83
-};
+});
 
-export const DASHBOARD_RESPONSE = [
+export const DASHBOARD_RESPONSE = deepFreeze([
   {
     "description": "Not passed program",
     "title": "Not passed program",
@@ -601,37 +602,37 @@ export const DASHBOARD_RESPONSE = [
     "financial_aid_availability": false,
     "id": 6
   },
-];
+]);
 
-export const PROGRAMS = DASHBOARD_RESPONSE.map(program => ({
+export const PROGRAMS = deepFreeze(DASHBOARD_RESPONSE.map(program => ({
   id: program.id,
   title: program.title,
   programpage_url: `/program${program.id}/`,
   enrolled: true
-}));
+})));
 
-export const FINANCIAL_AID_PARTIAL_RESPONSE = {
+export const FINANCIAL_AID_PARTIAL_RESPONSE = deepFreeze({
   application_status: null,
   has_user_applied: false,
   max_possible_cost: 1000,
   min_possible_cost: 1000
-};
+});
 
-export const COURSE_PRICES_RESPONSE = DASHBOARD_RESPONSE.map(program => ({
+export const COURSE_PRICES_RESPONSE = deepFreeze(DASHBOARD_RESPONSE.map(program => ({
   program_id: program.id,
   price: program.id * 100,
   financial_aid_availability: false,
   has_financial_aid_request: false
-}));
+})));
 
-export const ERROR_RESPONSE = {
+export const ERROR_RESPONSE = deepFreeze({
   "errorStatusCode": 500,
   "error_code": "AB123",
   "user_message": "custom error message for the user."
-};
+});
 
 /* eslint-disable max-len */
-export const CYBERSOURCE_CHECKOUT_RESPONSE = {
+export const CYBERSOURCE_CHECKOUT_RESPONSE = deepFreeze({
   "payload": {
     "access_key": "access_key",
     "amount": "123.45",
@@ -651,10 +652,10 @@ export const CYBERSOURCE_CHECKOUT_RESPONSE = {
   },
   "url": "https://testsecureacceptance.cybersource.com/pay",
   "method": "POST"
-};
-export const EDX_CHECKOUT_RESPONSE = {
+});
+export const EDX_CHECKOUT_RESPONSE = deepFreeze({
   "payload": {},
   "url": "http://edx.org",
   "method": "GET"
-};
+});
 /* eslint-enable max-len */

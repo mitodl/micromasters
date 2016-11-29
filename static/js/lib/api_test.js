@@ -91,9 +91,11 @@ describe('api', function() {
     it('fails to patch a user profile', () => {
       fetchJSONStub.returns(Promise.reject());
       return assert.isRejected(patchUserProfile('jane', USER_PROFILE_RESPONSE)).then(() => {
+        let profileWithoutImage = Object.assign({}, USER_PROFILE_RESPONSE);
+        delete profileWithoutImage['image'];
         assert.ok(fetchJSONStub.calledWith('/api/v0/profiles/jane/', {
           method: 'PATCH',
-          body: JSON.stringify(USER_PROFILE_RESPONSE)
+          body: JSON.stringify(profileWithoutImage)
         }));
       });
     });

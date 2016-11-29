@@ -184,7 +184,7 @@ describe('CourseDescription', () => {
   });
 
   it('shows fuzzy start date for a future offered course run that has no start date', () => {
-    let course = findCourse(course => (
+    let course = findAndCloneCourse(course => (
       course.runs.length > 0 &&
       course.runs[0].status === STATUS_OFFERED
     ));
@@ -199,7 +199,7 @@ describe('CourseDescription', () => {
   });
 
   it('shows nothing if a course run lacks a start date and fuzzy start date', () => {
-    let course = findCourse(course => (
+    let course = findAndCloneCourse(course => (
       course.runs.length > 0 &&
       course.runs[0].status === STATUS_OFFERED
     ));
