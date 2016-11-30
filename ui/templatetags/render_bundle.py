@@ -31,4 +31,7 @@ def _get_bundle(request, bundle_name):
 
 @register.simple_tag(takes_context=True)
 def render_bundle(context, bundle_name):
+    """
+    Render the script tags for a Webpack bundle
+    """
     return render_as_tags(_get_bundle(context['request'], bundle_name), '')
