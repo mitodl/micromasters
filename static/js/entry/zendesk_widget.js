@@ -1,6 +1,7 @@
 /* global SETTINGS:false zE:false _:false */
 __webpack_public_path__ = `http://${SETTINGS.host}:8078/`;  // eslint-disable-line no-undef, camelcase
 import "element-closest";
+import R from 'ramda';
 
 // Start of odl Zendesk Widget script
 /*<![CDATA[*/
@@ -120,28 +121,39 @@ const zendeskCallbacks = {
   },
   ticketSubmissionFormLoaded: () => {
     const iframe = document.querySelector("iframe.zEWidget-ticketSubmissionForm");
-    // field 24690866 is the MicroMasters program selector
-    const fieldNames = ["name", "email", "24690866"];
-    const fieldHidden = [
-      SETTINGS.user && SETTINGS.user.first_name && SETTINGS.user.last_name,
-      SETTINGS.user && SETTINGS.user.email,
-      SETTINGS.program && SETTINGS.program.slug,
-    ];
-    const fields = _.map(
-      fieldNames,
-      (name) => {
-        return iframe.contentDocument.querySelector(
-          `input[name="${name}"], select[name="${name}"]`
-        );
-      }
+
+    const fieldSelector = name => (
+      `input[name="${name}"], select[name="${name}"]`
     );
-    _.zip(fields, fieldHidden).forEach((values) => {
-      const [ field, isHidden ] = values;
-      if (isHidden) {
-        const label = field.closest('label');
+    const iframeQuerySelector = query => (
+      iframe.contentDocument.querySelector(query)
+    );
+    const fieldElement = R.compose(
+      iframeQuerySelector, fieldSelector
+    );
+
+    // Zendesk uses the ID 24690866 to refer to the MicroMasters program selector
+    const programFieldName = '24690866';
+    const fieldVisibility = {
+      'name':  !(SETTINGS.user && SETTINGS.user.first_name
+                 && SETTINGS.user.last_name),
+      'email': !(SETTINGS.user && SETTINGS.user.email),
+    };
+    fieldVisibility[programFieldName] = !(
+      SETTINGS.program && SETTINGS.program.slug
+    );
+
+    const adjustFieldsVisibility = R.map(name => {
+      if ( !fieldVisibility[name] ) {
+        const label = fieldElement(name).closest('label');
         label.style.setProperty("display", "none", "important");
       }
     });
+
+    adjustFieldsVisibility([
+      'name', 'email', programFieldName
+    ]);
+
     // adjust the iframe to the correct (smaller) height
     const height = iframe.contentDocument.body.childNodes[0].offsetHeight;
     // zendesk adds a 15px margin
