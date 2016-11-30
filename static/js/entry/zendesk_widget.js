@@ -125,11 +125,8 @@ const zendeskCallbacks = {
     const fieldSelector = name => (
       `input[name="${name}"], select[name="${name}"]`
     );
-    const iframeQuerySelector = query => (
-      iframe.contentDocument.querySelector(query)
-    );
-    const fieldElement = R.compose(
-      iframeQuerySelector, fieldSelector
+    const fieldElement = name => (
+      iframe.contentDocument.querySelector(fieldSelector(name))
     );
 
     // Zendesk uses the ID 24690866 to refer to the MicroMasters program selector
