@@ -12,6 +12,8 @@ import DashboardRouter from '../DashboardRouter';
 
 // requirements for react-mdl which uses a modified version of material-design-lite
 import 'react-mdl/extra/material.js';
+
+// requirement for creating blob from crop canvas.
 import 'blueimp-canvas-to-blob/js/canvas-to-blob.js';
 
 // Object.entries polyfill
