@@ -103,7 +103,8 @@
     "warning": "2.1.0",
     "webpack": "1.13.0",
     "webpack-dev-middleware": "^1.8.4",
-    "webpack-hot-middleware": "^2.13.2"
+    "webpack-hot-middleware": "^2.13.2",
+    "blueimp-canvas-to-blob": "3.6.0"
   },
   "engines": {
     "node": "6.2.0"
