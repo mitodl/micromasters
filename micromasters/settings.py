@@ -90,8 +90,8 @@ WEBPACK_LOADER = {
         'POLL_INTERVAL': 0.1,
         'TIMEOUT': None,
         'IGNORE': [
-            '.+\.hot-update\.+',
-            '.+\.js\.map'
+            r'.+\.hot-update\.+',
+            r'.+\.js\.map'
         ]
     }
 }
