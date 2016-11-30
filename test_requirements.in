@@ -4,7 +4,6 @@ ddt
 django-debug-toolbar
 ipdb
 ipython
-mock
 nplusone
 pdbpp
 pip-tools

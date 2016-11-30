@@ -2,7 +2,7 @@
 Tests for profile functions
 """
 
-from mock import Mock
+from unittest.mock import Mock
 
 from django.db.models.signals import post_save
 from factory.django import mute_signals

@@ -2,9 +2,9 @@
 Tests for mail utils
 """
 
+from unittest.mock import Mock
 from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.test import TestCase
-from mock import Mock
 from requests import Response
 from rest_framework import status
 

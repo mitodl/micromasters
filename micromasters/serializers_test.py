@@ -1,7 +1,7 @@
 """
 Tests for serializing Django User objects
 """
-import mock
+from unittest import mock
 from django.test import TestCase
 from django.contrib.auth.models import AnonymousUser
 from django.db.models.signals import post_save

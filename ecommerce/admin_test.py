@@ -1,7 +1,7 @@
 """
 Tests for ecommerce admin interface
 """
-from mock import Mock
+from unittest.mock import Mock
 
 from search.base import ESTestCase
 

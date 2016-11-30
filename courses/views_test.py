@@ -1,7 +1,7 @@
 """Tests for the API"""
 # pylint: disable=no-self-use
 
-from mock import Mock
+from unittest.mock import Mock
 
 from django.core.urlresolvers import reverse
 from rest_framework import status
