@@ -72,7 +72,7 @@ export default class CourseAction extends React.Component {
     if (needsPriceCalculation) {
       text = 'Calculate Cost';
     } else {
-      text = `Pay Now - ${this.getCoursePrice()}`;
+      text = `Pay Now ${this.getCoursePrice()}`;
     }
 
     if (this.hasPendingFinancialAid()) {
