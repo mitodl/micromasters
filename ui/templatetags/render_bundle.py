@@ -34,4 +34,8 @@ def render_bundle(context, bundle_name):
     """
     Render the script tags for a Webpack bundle
     """
-    return render_as_tags(_get_bundle(context['request'], bundle_name), '')
+    try:
+        return render_as_tags(_get_bundle(context['request'], bundle_name), '')
+    except OSError:
+        # webpack-stats.json doesn't exist
+        return ''
