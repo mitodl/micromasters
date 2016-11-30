@@ -79,7 +79,9 @@ export default class UserInfoCard extends React.Component {
             { profile.email ? this.email(profile.email) : null }
           </div>
           <div className="edit-profile-holder">
-            {userPrivilegeCheck(profile, () => <IconButton name="edit" onClick={toggleShowPersonalDialog}/>)}
+            {userPrivilegeCheck(profile, () => (
+              <IconButton name="edit personal information" onClick={toggleShowPersonalDialog}/>
+            ))}
           </div>
         </div>
         {this.renderAboutMeSection(profile, toggleShowAboutMeDialog)}
