@@ -231,6 +231,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         context["js_settings_json"] = json.dumps(js_settings)
         context["authenticated"] = not self.request.user.is_anonymous()
         context["is_public"] = True
+        context["has_zendesk_widget"] = True
         return context
 
     def get_queryset(self):

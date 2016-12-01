@@ -64,6 +64,7 @@ class ReactView(View):  # pylint: disable=unused-argument
             "dashboard.html",
             context={
                 "has_zendesk_widget": True,
+                "is_public": False,
                 "js_settings_json": json.dumps(js_settings),
                 "tracking_id": "",
             }

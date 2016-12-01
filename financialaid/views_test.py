@@ -2,12 +2,14 @@
 Tests for financialaid view
 """
 import datetime
+import json
 from unittest.mock import Mock, patch
 
 import ddt
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.db.models import Q
+from django.test import override_settings
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.test import APIClient
@@ -229,6 +231,30 @@ class ReviewTests(FinancialAidBaseTestCase, APIClient):
         """
         # Allowed for staff of program
         self.make_http_request(self.client.get, self.review_url, status.HTTP_200_OK)
+
+    def test_context(self):
+        """
+        Test context information for financial aid review page
+        """
+        ga_tracking_id = 'track'
+        react_ga_debug = True
+        base_url = 'edx_base_url'
+        with override_settings(
+            GA_TRACKING_ID=ga_tracking_id,
+            REACT_GA_DEBUG=react_ga_debug,
+            EDXORG_BASE_URL=base_url,
+        ):
+            response = self.client.get(self.review_url)
+            assert response.context['has_zendesk_widget'] is True
+            assert response.context['is_public'] is True
+            self.assertContains(response, 'Share this page')
+            self.assertContains(response, 'Give to MIT')
+            assert json.loads(response.context['js_settings_json']) == {
+                'gaTrackingID': ga_tracking_id,
+                'reactGaDebug': react_ga_debug,
+                'authenticated': True,
+                'edx_base_url': base_url,
+            }
 
     def test_filter(self):
         """

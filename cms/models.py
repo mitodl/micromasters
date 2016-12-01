@@ -43,6 +43,7 @@ class HomePage(Page):
 
         context["programs"] = programs
         context["is_public"] = True
+        context["has_zendesk_widget"] = False
         context["authenticated"] = not request.user.is_anonymous()
         context["is_staff"] = has_role(request.user, [Staff.ROLE_ID, Instructor.ROLE_ID])
         context["username"] = username
@@ -205,6 +206,7 @@ def get_program_page_context(programpage, request):
     context = super(ProgramPage, programpage).get_context(request)
 
     context["is_public"] = True
+    context["has_zendesk_widget"] = True
     context["authenticated"] = not request.user.is_anonymous()
     context["username"] = username
     context["js_settings_json"] = json.dumps(js_settings)
