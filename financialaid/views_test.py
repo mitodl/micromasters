@@ -248,7 +248,6 @@ class ReviewTests(FinancialAidBaseTestCase, APIClient):
             assert response.context['has_zendesk_widget'] is True
             assert response.context['is_public'] is True
             self.assertContains(response, 'Share this page')
-            self.assertContains(response, 'Give to MIT')
             assert json.loads(response.context['js_settings_json']) == {
                 'gaTrackingID': ga_tracking_id,
                 'reactGaDebug': react_ga_debug,
