@@ -20,7 +20,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
 from rest_framework.views import APIView
-from rolepermissions.verifications import has_object_permission
+from rolepermissions.verifications import (
+    has_object_permission,
+    has_role,
+)
 
 from courses.models import Program
 from dashboard.models import ProgramEnrollment
@@ -46,6 +49,10 @@ from financialaid.serializers import (
     FinancialAidSerializer,
 )
 from mail.serializers import FinancialAidMailSerializer
+from roles.models import (
+    Instructor,
+    Staff,
+)
 from roles.roles import Permissions
 
 
@@ -232,6 +239,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         context["authenticated"] = not self.request.user.is_anonymous()
         context["is_public"] = True
         context["has_zendesk_widget"] = True
+        context["is_staff"] = has_role(self.request.user, [Staff.ROLE_ID, Instructor.ROLE_ID])
         return context
 
     def get_queryset(self):

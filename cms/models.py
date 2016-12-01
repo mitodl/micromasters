@@ -29,7 +29,7 @@ class HomePage(Page):
     subpage_types = ['ProgramPage']
 
     def get_context(self, request):
-        programs = Program.objects.filter(live=True).order_by("id")
+        programs = Program.objects.filter(live=True).select_related('programpage').order_by("id")
         js_settings = {
             "gaTrackingID": settings.GA_TRACKING_ID,
             "host": webpack_dev_server_host(request),
@@ -41,7 +41,15 @@ class HomePage(Page):
         username = get_social_username(request.user)
         context = super(HomePage, self).get_context(request)
 
-        context["programs"] = programs
+        def get_program_page(program):
+            """Return a None if ProgramPage does not exist, to avoid template errors"""
+            try:
+                return program.programpage
+            except ProgramPage.DoesNotExist:
+                return
+
+        program_pairs = ((program, get_program_page(program)) for program in programs)
+        context["programs"] = program_pairs
         context["is_public"] = True
         context["has_zendesk_widget"] = False
         context["authenticated"] = not request.user.is_anonymous()
@@ -205,6 +213,7 @@ def get_program_page_context(programpage, request):
     username = get_social_username(request.user)
     context = super(ProgramPage, programpage).get_context(request)
 
+    context["is_staff"] = has_role(request.user, [Staff.ROLE_ID, Instructor.ROLE_ID])
     context["is_public"] = True
     context["has_zendesk_widget"] = True
     context["authenticated"] = not request.user.is_anonymous()

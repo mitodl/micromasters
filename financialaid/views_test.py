@@ -44,7 +44,10 @@ from financialaid.models import (
 from mail.utils import generate_financial_aid_email
 from mail.views_test import mocked_json
 from micromasters.utils import is_near_now
-from roles.models import Staff
+from roles.models import (
+    Staff,
+    Role,
+)
 
 
 ABC_EXCHANGE_RATE = 3.5
@@ -258,6 +261,7 @@ class ReviewTests(FinancialAidBaseTestCase, APIClient):
 
             assert response.context['has_zendesk_widget'] is True
             assert response.context['is_public'] is True
+            assert response.context['is_staff'] is True
             self.assertContains(response, 'Share this page')
             assert json.loads(response.context['js_settings_json']) == {
                 'gaTrackingID': ga_tracking_id,
@@ -415,10 +419,11 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         self.client.force_login(self.profile.user)
         self.make_http_request(self.client.patch, self.action_url, status.HTTP_403_FORBIDDEN, data=self.data)
 
-    def test_not_allowed_staff_of_different_program(self):
-        """Not allowed for staff of different program"""
+    @ddt.data(*Role.ASSIGNABLE_ROLES)
+    def test_not_allowed_staff_of_different_program(self, role):
+        """Not allowed for staff or instructors of different program"""
         program, _ = create_program()
-        staff_user = create_enrolled_profile(program, role=Staff.ROLE_ID).user
+        staff_user = create_enrolled_profile(program, role=role).user
         self.client.force_login(staff_user)
         self.make_http_request(self.client.patch, self.action_url, status.HTTP_403_FORBIDDEN, data=self.data)
 
