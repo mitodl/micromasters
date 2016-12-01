@@ -14,6 +14,7 @@ import ast
 import logging
 import os
 import platform
+from urllib.parse import urljoin
 
 import dj_database_url
 import yaml
@@ -293,6 +294,10 @@ USE_TZ = True
 
 # Serve static files with dj-static
 STATIC_URL = '/static/'
+CLOUDFRONT_DIST = get_var('CLOUDFRONT_DIST', None)
+if CLOUDFRONT_DIST:
+    STATIC_URL = urljoin('https://{dist}.cloudfront.net'.format(dist=CLOUDFRONT_DIST), STATIC_URL)
+
 STATIC_ROOT = 'staticfiles'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
