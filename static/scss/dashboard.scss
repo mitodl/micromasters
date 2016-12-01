@@ -194,9 +194,10 @@
         }
 
         .mdl-button {
-          display: flex;
           margin-bottom: 6px;
-          padding: 0 8px;
+          min-width: 120px;
+          padding: 0;
+          text-align: center;
         }
 
         .description {
