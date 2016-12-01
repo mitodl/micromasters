@@ -66,6 +66,12 @@ export function generateCourseFromExisting(courseToClone: Course, desiredRuns: n
   return course;
 }
 
+export const modifyTextArea = (field: HTMLTextAreaElement, text: string): void => {
+  field.value = text;
+  TestUtils.Simulate.change(field);
+  TestUtils.Simulate.keyDown(field, {key: "Enter", keyCode: 13, which: 13});
+};
+
 export const modifyTextField = (field: HTMLInputElement, text: string): void => {
   field.value = text;
   TestUtils.Simulate.change(field);

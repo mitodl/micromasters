@@ -46,6 +46,7 @@ import IntegrationTestHelper from '../util/integration_test_helper';
 import * as api from '../lib/api';
 import { workEntriesByDate, educationEntriesByDate } from '../util/sorting';
 import {
+  modifyTextArea,
   modifyTextField,
   activeDeleteDialog,
   modifySelectField,
@@ -791,21 +792,58 @@ describe("UserPage", function() {
 
       it('should let you edit personal info', () => {
         const username = SETTINGS.user.username;
-        return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
-          let personalButton = div.querySelector('.edit-profile-holder').
-            getElementsByClassName('mdl-button')[0];
+        const newFirstName = "New name";
+        let expectedProfile = Object.assign({}, USER_PROFILE_RESPONSE, {
+          first_name: newFirstName
+        });
+        patchUserProfileStub.
+          withArgs(username, expectedProfile).
+          returns(Promise.resolve(expectedProfile));
+
+        return renderComponent(`/learner/${username}`, userActions).then(([wrapper]) => {
+          let personalButton = wrapper.find('.edit-profile-holder').find('.mdl-button');
 
           return listenForActions([
             SET_USER_PAGE_DIALOG_VISIBILITY,
             START_PROFILE_EDIT,
           ], () => {
-            TestUtils.Simulate.click(personalButton);
+            personalButton.simulate('click');
+          }).then(() => {
+            let dialog = document.querySelector('.personal-dialog');
+            let inputs = dialog.getElementsByTagName('input');
+
+            return listenForActions([
+              UPDATE_PROFILE,
+              UPDATE_PROFILE_VALIDATION,
+              UPDATE_VALIDATION_VISIBILITY,
+            ], () => {
+              modifyTextField(inputs[0], newFirstName);
+            }).then(() => {
+              return listenForActions([
+                REQUEST_PATCH_USER_PROFILE,
+                RECEIVE_PATCH_USER_PROFILE_SUCCESS,
+                UPDATE_VALIDATION_VISIBILITY,
+                UPDATE_PROFILE_VALIDATION,
+              ], () => {
+                TestUtils.Simulate.click(dialog.querySelector('.save-button'));
+              }).then(state => {
+                assert.deepEqual(state.profiles[username].profile, expectedProfile);
+              });
+            });
           });
         });
       });
 
       it('should let you edit about me', () => {
         const username = SETTINGS.user.username;
+        const aboutMe = "🐱";
+        const expectedProfile = Object.assign({}, USER_PROFILE_RESPONSE, {
+          about_me: aboutMe
+        });
+        patchUserProfileStub.
+          withArgs(username, expectedProfile).
+          returns(Promise.resolve(expectedProfile));
+
         return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
           let aboutMEBtn = div.querySelector('.edit-about-me-holder').
             getElementsByClassName('mdl-button')[0];
@@ -815,6 +853,28 @@ describe("UserPage", function() {
             START_PROFILE_EDIT,
           ], () => {
             TestUtils.Simulate.click(aboutMEBtn);
+          }).then(() => {
+            let dialog = document.querySelector('.about-me-dialog');
+            let textarea = dialog.querySelector('textarea:not([readonly])');
+
+            return listenForActions([
+              UPDATE_PROFILE,
+              UPDATE_PROFILE_VALIDATION,
+              UPDATE_VALIDATION_VISIBILITY,
+            ], () => {
+              modifyTextArea(textarea, aboutMe);
+            }).then(() => {
+              return listenForActions([
+                REQUEST_PATCH_USER_PROFILE,
+                RECEIVE_PATCH_USER_PROFILE_SUCCESS,
+                UPDATE_VALIDATION_VISIBILITY,
+                UPDATE_PROFILE_VALIDATION,
+              ], () => {
+                TestUtils.Simulate.click(dialog.querySelector(".save-button"));
+              }).then(state => {
+                assert.deepEqual(state.profiles[username].profile, expectedProfile);
+              });
+            });
           });
         });
       });
