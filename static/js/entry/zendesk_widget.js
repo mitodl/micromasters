@@ -135,10 +135,8 @@ const zendeskCallbacks = {
       'name':  !(SETTINGS.user && SETTINGS.user.first_name
                  && SETTINGS.user.last_name),
       'email': !(SETTINGS.user && SETTINGS.user.email),
+      [programFieldName]: !(SETTINGS.program && SETTINGS.program.slug),
     };
-    fieldVisibility[programFieldName] = !(
-      SETTINGS.program && SETTINGS.program.slug
-    );
 
     const adjustFieldsVisibility = R.map(name => {
       if ( !fieldVisibility[name] ) {
