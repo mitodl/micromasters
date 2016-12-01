@@ -14,7 +14,7 @@
       "url": "https://github.com/heroku/heroku-buildpack-pgbouncer"
     }
   ],
-  "description": "Web Portal for Micromasters",
+  "description": "Web Portal for MicroMasters",
   "env": {
     "ALLOWED_HOSTS": {
       "default": "['*']",

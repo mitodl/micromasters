@@ -72,9 +72,9 @@ export default class ProgressWidget extends React.Component {
         <p className="text-course-complete">Courses complete</p>
         <p className="heading-paragraph">
           On completion, you can apply for
-          the Masters Degree Program</p>
+          the master’s degree program</p>
            <Button className="progress-button disabled">
-             Apply for Masters
+             Apply for Master’s
            </Button>
       </Card>
     );
