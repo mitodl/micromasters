@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import { Card } from 'react-mdl/lib/Card';
-import Icon from 'react-mdl/lib/Icon';
 import IconButton from 'react-mdl/lib/IconButton';
 
 import ProfileImage from '../containers/ProfileImage';
@@ -21,10 +20,7 @@ export default class UserInfoCard extends React.Component {
   };
 
   email = (email: string): React$Element<*> => (
-    <div>
-      <Icon name="email" className="email-icon" />
-      <span className="profile-email">{email}</span>
-    </div>
+    <span className="profile-email">{email}</span>
   );
 
   renderAboutMeSection: Function = (
