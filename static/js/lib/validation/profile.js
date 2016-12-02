@@ -1,11 +1,13 @@
 // @flow
 import _ from 'lodash';
 import moment from 'moment';
+import R from 'ramda';
 
 import type {
   Profile,
+  ValidationErrors,
+  EducationEntry,
   WorkHistoryEntry,
-  ValidationErrors
 } from '../../flow/profileTypes';
 import type { UIState } from '../../reducers/ui';
 import type { Email } from '../../flow/emailTypes';
@@ -20,32 +22,24 @@ import {
   EMPLOYMENT_STEP,
 } from '../../constants';
 
-let handleNestedValidation = (profile: Profile, keys, nestedKey: string) => {
-  let nestedFields = index => (
-    keys.map(key => [nestedKey, index, key])
-  );
-  return _.flatten(profile[nestedKey].map((v, i) => nestedFields(i)));
-};
+type ErrorMessages = {[key: string]: string};
 
 let isNilOrEmptyString = (val: any): boolean => (
   val === null || val === undefined || val === ""
 );
 
-let checkFieldPresence = (profile, requiredFields, messages: any) => {
-  let errors = {};
+const filledOutFields = R.compose(R.keys, R.reject(isNilOrEmptyString));
 
-  for (let keySet of requiredFields) {
-    let val = _.get(profile, keySet);
-    if (isNilOrEmptyString(val)) {
-      _.set(errors, keySet,  messages[keySet.slice(-1)[0]]);
-    }
-  }
-  return errors;
-};
+const findErrors = (input: Object, requiredKeys: string[], messages: ErrorMessages) => (
+  R.pick(R.difference(requiredKeys, filledOutFields(input)), messages)
+);
 
 export type Validator = (a: Profile) => ValidationErrors;
 export type UIValidator = (a: Profile, b: UIState) => ValidationErrors;
 
+/*
+ * Program Selector Validation
+ */
 export function programValidation(_: Profile, ui: UIState): ValidationErrors {
   let { selectedProgram } = ui;
   let errors = {};
@@ -57,148 +51,164 @@ export function programValidation(_: Profile, ui: UIState): ValidationErrors {
   return errors;
 }
 
+/*
+ * Profile Image Validator
+ */
 export const profileImageValidation = (profile: Profile) => (
   profile.image ? {} : { image: 'Please upload a profile image' }
 );
 
-export function personalValidation(profile: Profile): ValidationErrors {
-  let requiredFields = [
-    ['first_name'],
-    ['last_name'],
-    ['preferred_name'],
-    ['gender'],
-    ['preferred_language'],
-    ['city'],
-    ['state_or_territory'],
-    ['country'],
-    ['nationality'],
-    ['birth_country'],
-    ['date_of_birth'],
-  ];
-  let validationMessages = {
-    'first_name': "Given name is required",
-    'last_name': "Family name is required",
-    'preferred_name': "Nickname / Preferred name is required",
-    'gender': "Gender is required",
-    'preferred_language': "Preferred language is required",
-    'city': "City is required",
-    'state_or_territory': 'State or Territory is required',
-    'country': "Country is required",
-    'birth_country': "Country is required",
-    'nationality': "Nationality is required",
-    'date_of_birth': 'Please enter a valid date of birth'
-  };
-  let errors = checkFieldPresence(profile, requiredFields, validationMessages);
+/*
+ * Personal Validation
+ */
+const personalMessages: ErrorMessages = {
+  'first_name': "Given name is required",
+  'last_name': "Family name is required",
+  'preferred_name': "Nickname / Preferred name is required",
+  'gender': "Gender is required",
+  'preferred_language': "Preferred language is required",
+  'city': "City is required",
+  'state_or_territory': 'State or Territory is required',
+  'country': "Country is required",
+  'birth_country': "Country is required",
+  'nationality': "Nationality is required",
+  'date_of_birth': 'Please enter a valid date of birth'
+};
+
+export const personalValidation = (profile: Profile) => {
+  let errors = findErrors(profile, R.keys(personalMessages), personalMessages);
   if (!moment(profile.date_of_birth).isBefore(moment(), 'day')) {
-    // birthdays must be before today
-    errors.date_of_birth = validationMessages.date_of_birth;
+    errors.date_of_birth = personalMessages.date_of_birth;
   }
   return errors;
-}
+};
 
-export function educationValidation(profile: Profile): ValidationErrors {
-  let messages = {
-    'degree_name': 'Degree level is required',
-    'graduation_date': 'Please enter a valid graduation date',
-    'field_of_study': 'Field of study is required',
-    'online_degree': 'Online Degree is required',
-    'school_name': 'School name is required',
-    'school_city': 'City is required',
-    'school_state_or_territory': 'State is required',
-    'school_country': 'Country is required'
-  };
-  let nestedKeys = [
-    'degree_name',
-    'graduation_date',
-    'field_of_study',
-    'online_degree',
-    'school_name',
-    'school_city',
-    'school_state_or_territory',
-    'school_country'
-  ];
-  if (!_.isEmpty(profile.education)) {
-    let requiredFields = handleNestedValidation(profile, nestedKeys, 'education');
-    requiredFields = requiredFields.filter(([, index, key]) =>
-      // don't require field of study for high school students
-      !(key === 'field_of_study' && _.get(profile, ['education', index, 'degree_name']) === HIGH_SCHOOL)
-    );
-    return checkFieldPresence(profile, requiredFields, messages);
-  } else {
+/*
+ * Helper for nested validators
+ * key is the top level key on profile
+ * findErrors is a function which return an error object
+ * profile is, well, a profile
+ */
+const nestedValidator = R.curry((key: string, findErrors: Function, profile: Profile) => {
+  if (R.isEmpty(profile[key]) || R.isNil(profile[key])) {
     return {};
   }
-}
-
-export type WorkEntry = [string, WorkHistoryEntry];
-export function employmentValidation(profile: Profile): ValidationErrors {
-  let messages = {
-    'position': 'Position is required',
-    'industry': 'Industry is required',
-    'company_name': 'Name of Employer is required',
-    'start_date': 'Please enter a valid start date',
-    'city': 'City is required',
-    'country': 'Country is required',
-    'state_or_territory': 'State or Territory is required',
-  };
-  let nestedKeys = [
-    'position',
-    'industry',
-    'company_name',
-    'start_date',
-    'city',
-    'country',
-    'state_or_territory',
-  ];
-  if (!_.isEmpty(profile.work_history)) {
-    let requiredFields = handleNestedValidation(profile, nestedKeys, 'work_history');
-    let errors = checkFieldPresence(profile, requiredFields, messages);
-
-    profile.work_history.forEach((workHistory, index) => {
-      if (!isNilOrEmptyString(workHistory.end_date) &&
-        moment(workHistory.end_date).isBefore(workHistory.start_date, 'month')) {
-        _.set(errors, ['work_history', String(index), 'end_date'], "End date cannot be before start date");
-      }
-      if (!isNilOrEmptyString(workHistory.end_date) &&
-        moment(workHistory.end_date).isAfter(moment(), 'month')) {
-        _.set(errors, ['work_history', String(index), 'end_date'], 'End date cannot be in the future');
-      }
-      let editIsEmpty = _.isEmpty(workHistory.end_date_edit) || (
-        workHistory.end_date_edit !== undefined &&
-        isNilOrEmptyString(workHistory.end_date_edit.year) &&
-          isNilOrEmptyString(workHistory.end_date_edit.month)
-      );
-      if (isNilOrEmptyString(workHistory.end_date) && !editIsEmpty) {
-        _.set(errors, ['work_history', String(index), 'end_date'], "Please enter a valid end date or leave it blank");
-      }
-    });
-
-    return errors;
-  } else {
+  let errors = findErrors(profile[key]);
+  if ( R.equals(errors, R.repeat({}, errors.length)) ) {
     return {};
   }
-}
+  return { [key]: errors };
+});
 
-export function privacyValidation(profile: Profile): ValidationErrors {
-  let requiredFields = [
-    ['account_privacy']
-  ];
-  let messages = {
-    'account_privacy': 'Privacy level is required'
-  };
-  return checkFieldPresence(profile, requiredFields, messages);
-}
+/*
+ * Education Validation
+ */
+const educationMessages: ErrorMessages = {
+  'degree_name': 'Degree level is required',
+  'graduation_date': 'Please enter a valid graduation date',
+  'field_of_study': 'Field of study is required',
+  'online_degree': 'Online Degree is required',
+  'school_name': 'School name is required',
+  'school_city': 'City is required',
+  'school_state_or_territory': 'State is required',
+  'school_country': 'Country is required'
+};
+
+const isHighSchool: (e: EducationEntry) => boolean = R.compose(
+  R.equals(HIGH_SCHOOL), R.prop('degree_name')
+);
+
+const excludeFieldOfStudy: (k: string[]) => string[] = R.filter(
+  R.compose(R.not, R.equals('field_of_study'))
+);
+
+const educationKeys: (e: EducationEntry) => string[] = R.ifElse(
+  isHighSchool, R.compose(excludeFieldOfStudy, R.keys), R.keys
+);
+
+const educationErrors: (es: EducationEntry[]) => ValidationErrors[] = R.map(entry => (
+  findErrors(entry, educationKeys(entry), educationMessages)
+));
+
+export const educationValidation = nestedValidator('education', educationErrors);
+
+/*
+ * Work History Validation
+ */
+const workMessages: ErrorMessages = {
+  'position': 'Position is required',
+  'industry': 'Industry is required',
+  'company_name': 'Name of Employer is required',
+  'start_date': 'Please enter a valid start date',
+  'city': 'City is required',
+  'country': 'Country is required',
+  'state_or_territory': 'State or Territory is required',
+};
+
+// functions to perform extra checks
+// must be binary functions taking (entry, errors)
+// where entry is a work history entry
+// and errors is the output of workHistoryErrors
+// and returning errors ∪ newErrors
+
+const extraWorkCheck = R.curry((key, msg, predicate, entry, errors) => (
+  predicate(entry) ? R.merge(errors, { [key]: msg }) : errors
+));
+
+const endDateNotBeforeStart = extraWorkCheck('end_date', "End date cannot be before start date", entry => (
+  !isNilOrEmptyString(entry.end_date) && moment(entry.end_date).isBefore(entry.start_date, 'month')
+));
+
+const endDateNotInFuture = extraWorkCheck('end_date', 'End date cannot be in the future', entry => (
+  moment(entry.end_date).isAfter(moment(), 'month')
+));
+
+const dateIsValid = extraWorkCheck('end_date', "Please enter a valid end date or leave it blank", entry => {
+  let editIsEmpty = _.isEmpty(entry.end_date_edit) || (
+    entry.end_date_edit !== undefined &&
+    isNilOrEmptyString(entry.end_date_edit.year) &&
+    isNilOrEmptyString(entry.end_date_edit.month)
+  );
+  return isNilOrEmptyString(entry.end_date) && !editIsEmpty;
+});
+
+const mergeListOfArgs = R.compose(R.mergeAll, (...errors) => [...errors]);
+
+const additionalWorkValidation = R.converge(mergeListOfArgs, [
+  endDateNotBeforeStart,
+  endDateNotInFuture,
+  dateIsValid
+]);
+
+const workHistoryErrors: (xs: WorkHistoryEntry[]) => ValidationErrors[] = R.map(entry => (
+  additionalWorkValidation(entry, findErrors(entry, R.keys(workMessages), workMessages))
+));
+
+export const employmentValidation = nestedValidator('work_history', workHistoryErrors);
+
+/*
+ * Privacy Validation
+ */
+const privacyMessages: ErrorMessages = {
+  'account_privacy': 'Privacy level is required'
+};
+
+export const privacyValidation = (profile: Profile): ValidationErrors => (
+  findErrors(profile, R.keys(privacyMessages), privacyMessages)
+);
 
 /**
+ * Email Validation
  * validate an email for presence of the 'subject' and 'body' fields
  */
-export function emailValidation(email: Email): ValidationErrors {
-  let requiredFields = [ ['subject'], ['body'] ];
-  let messages = {
-    'subject': 'Please fill in a subject',
-    'body': 'Please fill in a body',
-  };
-  return checkFieldPresence(email, requiredFields, messages);
-}
+let emailMessages: ErrorMessages = {
+  'subject': 'Please fill in a subject',
+  'body': 'Please fill in a body',
+};
+
+export const emailValidation = (email: Email): ValidationErrors => (
+  findErrors(email, R.keys(emailMessages), emailMessages)
+);
 
 /*
 check that the profile is complete. we make the assumption that a
@@ -246,15 +256,15 @@ export function combineValidators(...validators: Array<Function>): Function {
   ));
 }
 
-export function validateFinancialAid(edit: FinancialAidState): FinancialAidValidation {
-  let messages = {
-    'income': 'Income is required',
-    'currency': 'Please select a currency',
-  };
-  let required = Object.keys(messages).map(k => [k]);
-  let errors: FinancialAidValidation = checkFieldPresence(edit, required, messages);
+const financialAidMessages: ErrorMessages = {
+  'income': 'Income is required',
+  'currency': 'Please select a currency',
+};
+
+export const validateFinancialAid = (edit: FinancialAidState): FinancialAidValidation => {
+  let errors: FinancialAidValidation = findErrors(edit, R.keys(financialAidMessages), financialAidMessages);
   if ( !edit.checkBox ) {
     errors['checkBox'] = 'You must agree to these terms';
   }
   return errors;
-}
+};
