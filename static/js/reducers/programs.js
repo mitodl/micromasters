@@ -58,21 +58,23 @@ export const currentProgramEnrollment = (state: any = null, action: Action) => {
   switch (action.type) {
   case SET_CURRENT_PROGRAM_ENROLLMENT:
     return action.payload;
-  case RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS:
+  case RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS: {
+    let enrollments = action.payload.filter(enrollment => enrollment.enrolled);
     if (!_.isNil(state)) {
-      let enrollment = action.payload.find(enrollment => (
-        enrollment.id === state.id && enrollment.enrolled
+      let enrollment = enrollments.find(enrollment => (
+        enrollment.id === state.id
       ));
       if (enrollment === undefined) {
         // current enrollment not found in list
         state = null;
       }
     }
-    if (_.isNil(state) && action.payload.length > 0) {
+    if (_.isNil(state) && enrollments.length > 0) {
       // no current enrollment selected, pick first from list if there are any
-      state = action.payload[0];
+      state = enrollments[0];
     }
     return state;
+  }
   case RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS:
     return action.payload;
   default:

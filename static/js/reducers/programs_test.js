@@ -190,7 +190,7 @@ describe('enrollments', () => {
     it("should replace the current enrollment if it can't be found in the list of enrollments", () => {
       let enrollment = {"id": 999, "title": "not an enrollment anymore"};
       store.dispatch(setCurrentProgramEnrollment(enrollment));
-      store.dispatch(receiveGetProgramEnrollmentsSuccess(PROGRAMS));
+      store.dispatch(receiveGetProgramEnrollmentsSuccess([enrollment].concat(PROGRAMS)));
       assert.deepEqual(store.getState().currentProgramEnrollment, PROGRAMS[0]);
     });
 
