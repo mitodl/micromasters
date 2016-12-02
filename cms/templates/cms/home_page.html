@@ -143,11 +143,11 @@
                 </div>
                 {% if programpage and programpage.thumbnail_image %}
                   {% image programpage.thumbnail_image fill-690x530 as thumbnail_image %}
-                  <img src="{{ thumbnail_image.url }}" alt="course image for {{ program }}"
+                  <img src="{{ thumbnail_image.url }}" alt=""
                        >
                 {% else %}
                   <img src="{% static 'images/course-thumbnail.png' %}"
-                       alt="course image for {{ program }}" class="program-default-image">
+                       alt="" class="program-default-image">
                 {% endif %}
               {% if programpage %}
                 </a>
