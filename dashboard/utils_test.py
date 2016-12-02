@@ -43,18 +43,22 @@ class MMTrackTest(TestCase):
         )
 
         # create the programs
-        cls.program = ProgramFactory.create(live=True, financial_aid_availability=False)
-        cls.program_financial_aid = ProgramFactory.create(live=True, financial_aid_availability=True)
+        cls.program = ProgramFactory.create(course=None)
+        cls.program_financial_aid = ProgramFactory.create(
+            financial_aid_availability=True, course=None, tiers=None,
+        )
 
         # create course runs for the normal program
-        course = CourseFactory.create(program=cls.program)
+        course = CourseFactory.create(program=cls.program, course_run=False)
         for course_key in ["course-v1:edX+DemoX+Demo_Course", "course-v1:MITx+8.MechCX+2014_T1", '', None]:
             CourseRunFactory.create(
                 course=course,
                 edx_course_key=course_key
             )
         # and the program with financial aid
-        finaid_course = CourseFactory.create(program=cls.program_financial_aid)
+        finaid_course = CourseFactory.create(
+            program=cls.program_financial_aid, course=None,
+        )
         cls.now = datetime.now(pytz.utc)
         cls.end_date = cls.now - timedelta(weeks=45)
         cls.crun_fa = CourseRunFactory.create(
@@ -63,19 +67,14 @@ class MMTrackTest(TestCase):
             end_date=cls.end_date,
             enrollment_start=cls.now-timedelta(weeks=62),
             enrollment_end=cls.now-timedelta(weeks=53),
-            edx_course_key="course-v1:odl+FOO101+CR-FALL15"
+            edx_course_key="course-v1:odl+FOO101+CR-FALL15",
+            course_price__price=1000,
         )
         CourseRunFactory.create(
             course=finaid_course,
             edx_course_key=None
         )
 
-        # create price for the financial aid course
-        CoursePriceFactory.create(
-            course_run=cls.crun_fa,
-            is_valid=True,
-            price=1000
-        )
         cls.min_tier_program = TierProgramFactory.create(
             program=cls.program_financial_aid,
             discount_amount=750,
@@ -249,7 +248,7 @@ class MMTrackTest(TestCase):
         """
         Test that if financial aid is available for the program, at least one course price should be available.
         """
-        program = ProgramFactory.create(live=True, financial_aid_availability=True)
+        program = ProgramFactory.create(financial_aid_availability=True)
         TierProgramFactory.create(
             program=program,
             discount_amount=750,
@@ -266,7 +265,7 @@ class MMTrackTest(TestCase):
         """
         Test that if financial aid is available for the program, at least one tier should be available.
         """
-        program = ProgramFactory.create(live=True, financial_aid_availability=True)
+        program = ProgramFactory.create(financial_aid_availability=True)
         course = CourseFactory.create(program=program)
         crun_fa = CourseRunFactory.create(course=course)
         CoursePriceFactory.create(

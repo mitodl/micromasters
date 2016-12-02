@@ -34,9 +34,9 @@ class SearchTests(ESTestCase, APITestCase):
         with mute_signals(post_save):
             cls.students = [(ProfileFactory.create()).user for _ in range(30)]
         # create the programs
-        cls.program1 = ProgramFactory.create(live=True)
-        cls.program2 = ProgramFactory.create(live=True)
-        cls.program3 = ProgramFactory.create(live=True)
+        cls.program1 = ProgramFactory.create()
+        cls.program2 = ProgramFactory.create()
+        cls.program3 = ProgramFactory.create()
 
         # enroll the users in the programs
         for num, student in enumerate(cls.students):

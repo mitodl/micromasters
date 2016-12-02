@@ -45,7 +45,7 @@ class CourseModelTests(ESTestCase):
     @classmethod
     def setUpTestData(cls):
         super(CourseModelTests, cls).setUpTestData()
-        cls.course = CourseFactory.create(title="Title")
+        cls.course = CourseFactory.create(title="Title", course_run=None)
 
     def setUp(self):
         super(CourseModelTests, self).setUp()
@@ -236,7 +236,7 @@ class CourseTests(CourseModelTests):  # pylint: disable=too-many-public-methods
 
     def test_url_with_no_run(self):
         """Test course url with no course runs"""
-        course = CourseFactory.create()
+        course = CourseFactory.create(course_run=None)
         assert course.url == ""
 
     def test_url_with_empty_course_key(self):

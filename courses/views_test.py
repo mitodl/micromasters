@@ -55,9 +55,9 @@ class ProgramEnrollmentTests(ESTestCase, APITestCase):
 
         cls.user1 = UserFactory.create()
         cls.user2 = UserFactory.create()
-        cls.program1 = ProgramFactory.create(live=True)
-        cls.program2 = ProgramFactory.create(live=True)
-        cls.program3 = ProgramFactory.create(live=True)
+        cls.program1 = ProgramFactory.create()
+        cls.program2 = ProgramFactory.create()
+        cls.program3 = ProgramFactory.create()
 
         cls.url = reverse('user_program_enrollments')
 

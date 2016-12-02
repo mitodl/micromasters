@@ -26,11 +26,11 @@ class CourseSerializerTests(ESTestCase):
     Tests for CourseSerializer
     """
 
-    def test_course(self):
+    def test_course_without_run(self):
         """
         Make sure course serializes correctly
         """
-        course = CourseFactory.create()
+        course = CourseFactory.create(course_run=None)
         data = CourseSerializer(course).data
         expected = {
             "id": course.id,

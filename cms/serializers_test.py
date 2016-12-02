@@ -52,8 +52,8 @@ class WagtailSerializerTests(ESTestCase):
         """
         Test program page serializer
         """
-        program = ProgramFactory.create(title="Supply Chain Management")
-        course = CourseFactory.create(program=program, title="Learning How to Supply")
+        program = ProgramFactory.create(title="Supply Chain Management", course=None)
+        course = CourseFactory.create(program=program, title="Learning How to Supply", course_run=None)
         page = ProgramPageFactory.create(program=program, title=program.title)
         faculty = FacultyFactory.create(
             program_page=page, name="Charles Fluffles", image=None,

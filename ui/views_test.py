@@ -12,11 +12,9 @@ from factory.django import mute_signals
 from factory.fuzzy import FuzzyText
 from rest_framework import status
 from rolepermissions.shortcuts import available_perm_status
-from wagtail.wagtailimages.models import Image
-from wagtail.wagtailimages.tests.utils import get_test_image_file
 
-from cms.models import HomePage, ProgramPage
-from courses.models import Program
+from cms.models import HomePage
+from cms.factories import ProgramPageFactory, ImageFactory
 from courses.factories import ProgramFactory, CourseFactory
 from backends.edxorg import EdxOrgOAuth2
 from profiles.api import get_social_username
@@ -58,26 +56,24 @@ class TestHomePage(ViewsTests):
 
     def test_program_liveness(self):
         """Verify only 'live' program visible on homepage"""
-        program_live_true = ProgramFactory.create(live=True)
-        program_live_false = ProgramFactory.create(live=False)
+        live_program = ProgramFactory.create(live=True)
+        unlive_program = ProgramFactory.create(live=False)
         response = self.client.get('/')
         self.assertContains(
             response,
-            program_live_true.description,
+            live_program.description,
             status_code=200
         )
         self.assertNotContains(
             response,
-            program_live_false.description,
+            unlive_program.description,
             status_code=200
         )
 
     def test_program_link(self):
         """Verify that program links are present in home page if ProgramPage is set"""
-        program = ProgramFactory.create(live=True)
-        program_page = ProgramPage(program=program, title="Test Program")
-        homepage = HomePage.objects.first()
-        homepage.add_child(instance=program_page)
+        program = ProgramFactory.create()
+        program_page = ProgramPageFactory.create(program=program)
         program_page.save_revision().publish()
 
         response = self.client.get('/')
@@ -90,9 +86,7 @@ class TestHomePage(ViewsTests):
     def test_program_page(self):
         """Verify that ProgramPage is passed in the context if and only if it's available"""
         program_with_page = ProgramFactory.create(live=True)
-        program_page = ProgramPage(program=program_with_page, title="Test Program")
-        homepage = HomePage.objects.first()
-        homepage.add_child(instance=program_page)
+        program_page = ProgramPageFactory.create(program=program_with_page)
         program_page.save_revision().publish()
 
         program_without_page = ProgramFactory.create(live=True)
@@ -249,7 +243,7 @@ class TestHomePage(ViewsTests):
         Assert that programs are output in id order
         """
         for i in range(10):
-            ProgramFactory.create(live=True, title="Program {}".format(i + 1))
+            ProgramFactory.create(title="Program {}".format(i + 1))
         response = self.client.get("/")
         content = response.content.decode('utf-8')
         indexes = [content.find("Program {}".format(i + 1)) for i in range(10)]
@@ -508,12 +502,8 @@ class TestProgramPage(ViewsTests):
     """
     def setUp(self):
         super(TestProgramPage, self).setUp()
-        homepage = HomePage.objects.first()
-        program = Program(title="Test Program Title", live=True)
-        program.save()
-        self.program_page = ProgramPage(program=program, title="Test Program")
-        homepage.add_child(instance=self.program_page)
-        self.program_page.save_revision().publish()
+        self.program = ProgramFactory.create(title="Test Program")
+        self.program_page = ProgramPageFactory.create(program=self.program)
 
     def test_program_page_context_anonymous(self):
         """
@@ -592,17 +582,16 @@ class TestProgramPage(ViewsTests):
         """Verify that a default thumbnail shows up for a live program"""
         self.create_and_login_user()
 
-        default_image = 'images/course-thumbnail.png'
+        self.program.live = False
+        self.program.save()
         # the default image should not show up if no program is live
-        program = self.program_page.program
-        program.live = False
-        program.save()
         resp = self.client.get('/')
+        default_image = 'images/course-thumbnail.png'
         self.assertNotContains(resp, default_image)
 
         # default image should show up if a program is live and no thumbnail image was set
-        program.live = True
-        program.save()
+        self.program.live = True
+        self.program.save()
         resp = self.client.get('/')
         self.assertContains(resp, default_image)
 
@@ -610,29 +599,32 @@ class TestProgramPage(ViewsTests):
         """Verify that a thumbnail shows up if specified for a ProgramPage"""
         self.create_and_login_user()
 
-        image = Image.objects.create(title='Test image',
-                                     file=get_test_image_file())
-
+        image = ImageFactory.create()
         self.program_page.thumbnail_image = image
         self.program_page.save()
 
         resp = self.client.get('/')
         self.assertContains(resp, image.get_rendition('fill-690x530').url)
 
+
+class TestCourseListing(ViewsTests):
     def test_course_listing(self):
         """
         Verify that courses are being serialized to JS in the correct order
         """
+        program = ProgramFactory.create(title="Test Program", course=None)
+        program_page = ProgramPageFactory.create(program=program)
+
         # Create several courses in the program
         courses = [
             CourseFactory.create(
-                program=self.program_page.program,
+                program=program,
                 position_in_program=i,
             )
             for i in range(5)
         ]
         # render the page
-        response = self.client.get(self.program_page.url)
+        response = self.client.get(program_page.url)
         js_settings = json.loads(response.context['js_settings_json'])
         # check that the courses are in the response
         self.assertIn("program", js_settings)

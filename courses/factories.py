@@ -7,55 +7,51 @@ import factory
 from factory import fuzzy
 from factory.django import DjangoModelFactory
 
-from .models import Program, Course, CourseRun
+from courses.models import Program, Course, CourseRun
+from ecommerce.models import CoursePrice
 
 FAKE = faker.Factory.create()
 
 
 class ProgramFactory(DjangoModelFactory):
     """Factory for Programs"""
-    title = fuzzy.FuzzyText(prefix="Program ")
-    live = fuzzy.FuzzyAttribute(FAKE.boolean)
-    description = fuzzy.FuzzyText()
+    title = factory.LazyAttribute(lambda x: FAKE.company())
+    description = factory.LazyAttribute(lambda x: FAKE.bs())
+    live = True
+    financial_aid_availability = False
+
+    course = factory.RelatedFactory('courses.factories.CourseFactory', "program")
+
+    @factory.post_generation
+    def tiers(self, create, extracted, **kwargs):  # pylint: disable=unused-argument
+        if not extracted:
+            return
+        if self.financial_aid_availability:
+            from financialaid.factories import TierProgramFactory
+            for discount, threshold in [(0, 1000), (50, 0)]:
+                TierProgramFactory.create(
+                    program=self,
+                    current=True,
+                    discount_amount=discount,
+                    income_threshold=threshold,
+                )
 
     class Meta:  # pylint: disable=missing-docstring
         model = Program
-
-    @classmethod
-    def _create(cls, model_class, *args, **kwargs):
-        full_create = kwargs.pop('full', False)
-        program = model_class(*args, **kwargs)
-        program.save()
-        if full_create:
-            course = CourseFactory.create(program=program)
-            course_run = CourseRunFactory.create(course=course)
-            from ecommerce.factories import CoursePriceFactory
-            course_price = CoursePriceFactory.create(course_run=course_run, is_valid=True)
-            if program.financial_aid_availability:
-                from financialaid.factories import TierProgramFactory
-                TierProgramFactory.create(
-                    program=program,
-                    current=True,
-                    discount_amount=0,
-                    income_threshold=1000
-                )
-                TierProgramFactory.create(
-                    program=program,
-                    current=True,
-                    discount_amount=int(course_price.price / 10),
-                    income_threshold=0
-                )
-        return program
 
 
 class CourseFactory(DjangoModelFactory):
     """Factory for Courses"""
     title = fuzzy.FuzzyText(prefix="Course ")
-    program = factory.SubFactory(ProgramFactory)
     position_in_program = factory.Sequence(lambda n: n)
-
-    description = fuzzy.FuzzyText()
+    description = factory.LazyAttribute(lambda x: FAKE.bs())
     prerequisites = fuzzy.FuzzyText(prefix="Course requires ")
+
+    program = factory.SubFactory(ProgramFactory)
+    course_run = factory.RelatedFactory(
+        'courses.factories.CourseRunFactory',
+        "course"
+    )
 
     class Meta:  # pylint: disable=missing-docstring
         model = Course
@@ -73,7 +69,6 @@ class CourseRunFactory(DjangoModelFactory):
     title = factory.LazyAttribute(
         lambda x: "CourseRun " + FAKE.sentence()
     )
-    course = factory.SubFactory(CourseFactory)
     # Try to make sure we escape this correctly
     edx_course_key = factory.LazyAttribute(
         lambda x: "course:/v{}/{}".format(randint(1, 100), FAKE.slug())
@@ -101,6 +96,12 @@ class CourseRunFactory(DjangoModelFactory):
     )
     prerequisites = factory.LazyAttribute(
         lambda x: FAKE.paragraph()
+    )
+
+    course = factory.SubFactory(CourseFactory)
+    course_price = factory.RelatedFactory(
+        'ecommerce.factories.CoursePriceFactory',
+        "course_run",
     )
 
     class Meta:  # pylint: disable=missing-docstring
