@@ -191,9 +191,10 @@ export default class FinancialAidCard extends React.Component {
         <Grid>
           <Cell col={1} />
           <Cell col={5}>
-            MIT Economics Department<br />
-            DEDP MicroMasters<br />
-            100 Main Street<br />
+            Department of Economics<br />
+            MicroMasters in DEDP<br />
+            Massachusetts Institute of Technology<br />
+            77 Massachusetts Avenue E52-300<br />
             Cambridge, MA 02139<br />
             USA
           </Cell>

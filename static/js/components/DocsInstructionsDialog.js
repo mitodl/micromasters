@@ -31,55 +31,52 @@ const DocsInstructionsDialog = ({ open, setDialogVisibility }: DocsInstructions)
       Whose income should I report?
     </div>
     <p>
-      Please report your own household income; that is, the combined income of all
-      people that are part of your household or place of residence. If you live
-      with, or are financially supported by your parent(s)/legal guardians, please
-      enter their combined income instead. For example, if you are a full-time
-      student with no income of your own, you should declare the combined income of
-      your parents or legal guardians instead.
+      Report your taxable household income (the combined income of all people 
+      that are part of your household or place of residence). If you live with, 
+      or are financially supported by, your parent(s) or legal guardian(s)
+      please enter their combined taxable income instead.
     </p>
     <div className="heading">
       What documents do you require to verify the income information I entered?
     </div>
     <p>
-      If we ask you for supporting documentation to verify the income you declared,
-      we require that you submit the a photocopy of the most recent tax return of all
+      Submit a signed photocopy of the most recent federal tax return of all 
       income earners in your household as defined above.
     </p>
     <div className="heading">
       What if I am unable to provide you with a tax return?
     </div>
     <p>
-      If you unable able to provide us with your tax return form, we will accept
-      notarized income statements. An income statement is a statement of annual
-      salary, printed on the official letterhead of the relevant employer (including
-      the employer’s address and contact information) and signed by the employer.
-      Notarization means that the income statement you submit to us has to signed
-      by an authorized notary and contain his or her official seal/stamp and
-      contact information. If your household income is based on more than one
-      earner, you have to submit notarized income statements for each of the people
-      whose income you used to calculate total household income.
+      We will also accept a notarized income statement (i.e. a statement of
+      annual salary, printed on the official letterhead of your employer,
+      including the employer’s address and contact information, and signed by
+      the employer). The income statement you submit must be signed by an
+      authorized notary and contain an official seal/stamp and contact
+      information. If your household income is based on more than one earner,
+      you must submit notarized income statements for each earner.
     </p>
     <div className="heading">
-      What if I am unemployed, and not a student?
+      What if no one in my household is employed? 
     </div>
     <p>
-      Please submit either one of the following: a tax return (filed for zero
-      income), a photocopy of an official receipt or check of unemployment benefits
-      received, or a notarized letter verifying your unemployment status.
+      Please submit either one of the following: a signed federal tax return
+      (where you filed for zero income), a photocopy of an official receipt or
+      check of unemployment benefits received, or a notarized letter verifying
+      your unemployment status. If you cannot provide any of these documents,
+      please submit a statement itemizing how your household supports itself on
+      no income.
     </p>
     <div className="heading">
-      What should I do if my financial documents are written in a language other than English?
+      What should I do if my financial documents are written in a language other
+      than English?
     </div>
     <p>
-      Please submit notarized income statement(s) in English, if at all possible. If
-      the employer(s) in question are unable to provide you with income statement(s)
-      written in English, you have to provide a translation of the statement(s) and
-      submit this along with the original, notarized income statement when you mail
-      or fax your documents. If you are submitting a tax return in a language other
-      than English, you also have to provide a translation in addition to the tax
-      return. We do not require the translation to be certified – you can translate
-      the document yourself.
+      Please submit notarized income statements in English. If you are unable to
+      provide documents in English, please submit a translation of the
+      statement(s) along with the original, notarized income statement. If you
+      are submitting a tax return in a language other than English, please
+      submit a translation with the original tax return. We do not require the
+      translation to be certified – you can translate the document yourself.
     </p>
   </Dialog>
 );
