@@ -1998,11 +1998,6 @@
       "from": "ee-first@1.1.1",
       "resolved": "https://registry.npmjs.org/ee-first/-/ee-first-1.1.1.tgz"
     },
-    "element-closest": {
-      "version": "2.0.2",
-      "from": "element-closest@latest",
-      "resolved": "http://registry.npmjs.org/element-closest/-/element-closest-2.0.2.tgz"
-    },
     "emojis-list": {
       "version": "2.0.1",
       "from": "emojis-list@>=2.0.0 <3.0.0",
