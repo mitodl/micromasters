@@ -140,8 +140,13 @@ const zendeskCallbacks = {
 
     const adjustFieldsVisibility = R.map(name => {
       if ( !fieldVisibility[name] ) {
-        const label = fieldElement(name).closest('label');
-        label.style.setProperty("display", "none", "important");
+        const element = fieldElement(name);
+        if (element) {
+          const label = element.closest('label');
+          if (label) {
+            label.style.setProperty("display", "none", "important");
+          }
+        }
       }
     });
 
