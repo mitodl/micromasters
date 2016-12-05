@@ -1,7 +1,8 @@
 {
   "addons": [
     "heroku-postgresql:hobby-dev",
-    "newrelic:wayne"
+    "newrelic:wayne",
+    "rediscloud:30"
   ],
   "buildpacks": [
     {
