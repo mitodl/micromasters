@@ -3,9 +3,11 @@ Model tests
 """
 # pylint: disable=no-self-use
 from datetime import datetime, timedelta
+from urllib.parse import urljoin
 
 import pytz
 from ddt import ddt, data, unpack
+from django.test import override_settings
 
 from courses.factories import (
     ProgramFactory,
@@ -14,6 +16,9 @@ from courses.factories import (
 )
 from courses.models import CourseRun
 from search.base import ESTestCase
+
+
+BASE_URL = "http://base.url/"
 
 
 class ProgramTests(ESTestCase):
@@ -228,6 +233,55 @@ class CourseTests(CourseModelTests):  # pylint: disable=too-many-public-methods
             enrollment_end=None,
         )
         assert self.course.enrollment_text == 'Coming Fall 2017'
+
+    def test_url_with_no_run(self):
+        """Test course url with no course runs"""
+        course = CourseFactory.create()
+        assert course.url == ""
+
+    def test_url_with_empty_course_key(self):
+        """Course with no course key or enrollment_url should have empty url"""
+        course_run = CourseRunFactory.create(
+            course=self.course,
+            start_date=self.from_weeks(-1),
+            end_date=None,
+            enrollment_start=self.from_weeks(-1),
+            enrollment_end=None,
+            enrollment_url=None,
+            edx_course_key=None,
+        )
+        assert course_run.course.url == ""
+
+    def test_enrollment_url(self):
+        """If enrollment_url is available we should use it over edx_course_key"""
+        course_run = CourseRunFactory.create(
+            course=self.course,
+            start_date=self.from_weeks(-1),
+            end_date=None,
+            enrollment_start=self.from_weeks(-1),
+            enrollment_end=None,
+            enrollment_url="http://enrollment.url/",
+            edx_course_key="course_key"
+        )
+        assert course_run.course.url == "http://enrollment.url/"
+
+    @override_settings(EDXORG_BASE_URL=BASE_URL)
+    def test_url_with_course_key(self):
+        """Test course url with no course key"""
+        course_run = CourseRunFactory.create(
+            course=self.course,
+            start_date=self.from_weeks(-1),
+            end_date=None,
+            enrollment_start=self.from_weeks(-1),
+            enrollment_end=None,
+            enrollment_url=None,
+            edx_course_key="course_key"
+        )
+        expected = urljoin(
+            BASE_URL,
+            'courses/{key}/about'.format(key=course_run.edx_course_key)
+        )
+        assert course_run.course.url == expected
 
 
 @ddt

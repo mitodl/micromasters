@@ -88,6 +88,8 @@ class Course(models.Model):
         course_run = self.first_unexpired_run()
         if not course_run:
             return ""
+        if course_run.enrollment_url:
+            return course_run.enrollment_url
         if not course_run.edx_course_key:
             return ""
         return urllib.parse.urljoin(
