@@ -1,6 +1,7 @@
 """
 Tests for the search view
 """
+import ddt
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save
@@ -14,11 +15,15 @@ from dashboard.factories import ProgramEnrollmentFactory
 from micromasters.factories import UserFactory
 from profiles.factories import ProfileFactory
 from roles.models import Role
-from roles.roles import Staff
+from roles.roles import (
+    Instructor,
+    Staff,
+)
 from search.base import ESTestCase
 
 
 # pylint: disable=no-self-use
+@ddt.ddt
 class SearchTests(ESTestCase, APITestCase):
     """Tests for the search api view"""
 
@@ -53,8 +58,6 @@ class SearchTests(ESTestCase, APITestCase):
             program=cls.program1,
             role=Staff.ROLE_ID
         )
-        # create another user without any role
-        cls.user = UserFactory.create()
 
         # search URL
         cls.search_url = reverse('search_api', kwargs={'elastic_url': ''})
@@ -82,19 +85,40 @@ class SearchTests(ESTestCase, APITestCase):
         """Assert the default page size"""
         assert settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE == 50
 
-    def test_access(self):
+    def test_no_anonymous_access(self):
         """
-        Test access with different user types
+        Anonymous users do not have access
         """
         self.client.logout()
-        # anonymous user cannot access
         self.assert_status_code(status.HTTP_403_FORBIDDEN)
-        # normal user without role cannot access
-        self.client.force_login(self.user)
+
+    def test_normal_user_does_not_have_access(self):
+        """Normal user without role cannot access"""
+        user = UserFactory.create()
+        self.client.force_login(user)
         self.assert_status_code(status.HTTP_403_FORBIDDEN)
-        # user with role can access
-        self.client.force_login(self.staff)
+
+    @ddt.data(
+        Staff.ROLE_ID,
+        Instructor.ROLE_ID,
+    )
+    def test_staff_and_instructor_can_access(self, role):
+        """A user with staff or instructor role can access"""
+        user = UserFactory.create()
+        Role.objects.create(
+            user=user,
+            program=self.program1,
+            role=role,
+        )
+        self.client.force_login(user)
         self.assert_status_code()
+
+    def test_require_access_to_program(self):
+        """A user must be staff or instructor of some program"""
+        # user is superuser so they have all permissions, but they are still not staff or instructor
+        user = UserFactory.create(is_superuser=True)
+        self.client.force_login(user)
+        self.assert_status_code(status_code=status.HTTP_403_FORBIDDEN)
 
     def test_proxy_woks(self):
         """
