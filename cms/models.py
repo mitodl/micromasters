@@ -48,7 +48,7 @@ class HomePage(Page):
             except ProgramPage.DoesNotExist:
                 return
 
-        program_pairs = ((program, get_program_page(program)) for program in programs)
+        program_pairs = [(program, get_program_page(program)) for program in programs]
         context["programs"] = program_pairs
         context["is_public"] = True
         context["has_zendesk_widget"] = False

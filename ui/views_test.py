@@ -76,14 +76,6 @@ class TestHomePage(ViewsTests):
         """Verify that program links are present in home page if ProgramPage is set"""
         program = ProgramFactory.create(live=True)
         program_page = ProgramPage(program=program, title="Test Program")
-
-        response = self.client.get('/')
-        self.assertNotContains(
-            response,
-            program_page.url,
-            status_code=200
-        )
-
         homepage = HomePage.objects.first()
         homepage.add_child(instance=program_page)
         program_page.save_revision().publish()
@@ -94,6 +86,21 @@ class TestHomePage(ViewsTests):
             program_page.url,
             status_code=200
         )
+
+    def test_program_page(self):
+        """Verify that ProgramPage is passed in the context if and only if it's available"""
+        program_with_page = ProgramFactory.create(live=True)
+        program_page = ProgramPage(program=program_with_page, title="Test Program")
+        homepage = HomePage.objects.first()
+        homepage.add_child(instance=program_page)
+        program_page.save_revision().publish()
+
+        program_without_page = ProgramFactory.create(live=True)
+        response = self.client.get('/')
+        assert response.context['programs'] == [
+            (program_with_page, program_page),
+            (program_without_page, None),
+        ]
 
     def test_login_button(self):
         """Verify that we see a login button if not logged in"""
@@ -131,6 +138,7 @@ class TestHomePage(ViewsTests):
             assert response.context['is_public'] is True
             assert response.context['has_zendesk_widget'] is False
             assert response.context['is_staff'] is False
+            assert response.context['programs'] == []
             self.assertContains(response, 'Share this page')
             js_settings = json.loads(response.context['js_settings_json'])
             assert js_settings['gaTrackingID'] == ga_tracking_id
@@ -162,6 +170,7 @@ class TestHomePage(ViewsTests):
             assert response.context['is_public'] is True
             assert response.context['has_zendesk_widget'] is False
             assert response.context['is_staff'] is False
+            assert response.context['programs'] == []
             self.assertContains(response, 'Share this page')
             js_settings = json.loads(response.context['js_settings_json'])
             assert js_settings['gaTrackingID'] == ga_tracking_id
@@ -195,6 +204,7 @@ class TestHomePage(ViewsTests):
             assert response.context['is_public'] is True
             assert response.context['has_zendesk_widget'] is False
             assert response.context['is_staff'] is False
+            assert response.context['programs'] == []
             self.assertContains(response, 'Share this page')
             js_settings = json.loads(response.context['js_settings_json'])
             assert js_settings['gaTrackingID'] == ga_tracking_id
@@ -227,6 +237,9 @@ class TestHomePage(ViewsTests):
             assert response.context['is_public'] is True
             assert response.context['has_zendesk_widget'] is False
             assert response.context['is_staff'] is True
+            assert response.context['programs'] == [
+                (program, None),
+            ]
             self.assertContains(response, 'Share this page')
             js_settings = json.loads(response.context['js_settings_json'])
             assert js_settings['gaTrackingID'] == ga_tracking_id
@@ -521,6 +534,16 @@ class TestProgramPage(ViewsTests):
             js_settings = json.loads(response.context['js_settings_json'])
             assert js_settings['gaTrackingID'] == ga_tracking_id
 
+            bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
+            assert set(bundles) == {
+                'common',
+                'public',
+                'sentry_client',
+                'style',
+                'style_public',
+                'zendesk_widget',
+            }
+
     @ddt.data(
         *Role.ASSIGNABLE_ROLES
     )
@@ -538,7 +561,7 @@ class TestProgramPage(ViewsTests):
         ga_tracking_id = FuzzyText().fuzz()
         with self.settings(
             GA_TRACKING_ID=ga_tracking_id,
-        ):
+        ), patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
             response = self.client.get(self.program_page.url)
             assert response.context['authenticated'] is True
             assert response.context['username'] is None
