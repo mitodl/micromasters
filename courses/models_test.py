@@ -253,7 +253,7 @@ class CourseTests(CourseModelTests):  # pylint: disable=too-many-public-methods
         assert course_run.course.url == ""
 
     def test_enrollment_url(self):
-        """If enrollment_url is available we should use it over edx_course_key"""
+        """If both enrollment_url and edx_course_key are available, use enrollment_url"""
         course_run = CourseRunFactory.create(
             course=self.course,
             start_date=self.from_weeks(-1),
@@ -267,7 +267,7 @@ class CourseTests(CourseModelTests):  # pylint: disable=too-many-public-methods
 
     @override_settings(EDXORG_BASE_URL=BASE_URL)
     def test_url_with_course_key(self):
-        """Test course url with no course key"""
+        """Test course url with a course key and no enrollment_url"""
         course_run = CourseRunFactory.create(
             course=self.course,
             start_date=self.from_weeks(-1),
