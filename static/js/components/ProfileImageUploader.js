@@ -77,9 +77,9 @@ const ProfileImageUploader = ({
       </Button>,
       <Button
         type='button'
-        className={`save-button ${!disabled ? 'primary-button' : 'secondary-button disabled'}`}
+        className={`save-button ${disabled ? 'secondary-button disabled': 'primary-button'}`}
         key="save"
-        onClick={!disabled ? updateUserPhoto : undefined}>
+        onClick={disabled ? undefined: updateUserPhoto}>
         Save
       </Button>
     ]}
