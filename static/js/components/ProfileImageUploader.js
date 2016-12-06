@@ -88,7 +88,7 @@ const ProfileImageUploader = ({
    { photo ? <CropperWrapper
      {...{updatePhotoEdit, photo, uploaderBodyHeight}} /> : dropZone(startPhotoEdit, setPhotoError)
    }
-  </Dialog>
+  </Dialog>;
 };
 
 export default ProfileImageUploader;
