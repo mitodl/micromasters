@@ -15,11 +15,11 @@
   {% include "header.html" %}
 
   <div class="main-content-wrapper">
-    <section class="main-content">
+    <main>
       <div class="page-content">
         <div class="single-column">
 
-          <div class="mdl-card">
+          <section class="mdl-card">
             <div class="mdl-card__title">
               <h2 class="mdl-card__title-text">
                 {% block error_header %}
@@ -30,10 +30,10 @@
               {% block error_content %}
               {% endblock %}
             </div>
-          </div>
+          </section>
         </div>
       </div>
-    </section>
+    </main>
   </div>
   {% include "footer.html" %}
   <div id="signup-dialog">

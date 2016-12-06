@@ -29,7 +29,7 @@
 {% block body_class %}template-programpage{% endblock %}
 {% block content %}
 {% include "header.html" %}
-<div class="page-content program-page">
+<main class="page-content program-page">
   {% image page.background_image fill-1310x613 as background_image %}
   <div class="hero-image" style="background-image: url({{ background_image.url }})">
     <!-- big image, and sign-up links, etc -->
@@ -91,7 +91,7 @@
           </div>
         </div>
         {% if page.program_home_page_url or page.program_contact_email or page.info_links.exists %}
-          <div class="info-box contact-info">
+          <section class="info-box contact-info">
             <h3 class="title">
               More Info
             </h3>
@@ -124,7 +124,7 @@
                 </p>
               {% endif %}
             </div>
-          </div>
+          </section>
         {% endif %}
         <div class="powered-by">
           <p>
@@ -137,7 +137,7 @@
   </div>
 
   {% if page.faculty_members.count > 0 %}
-    <div class="faculty-section mdl-grid mdl-grid--no-spacing">
+    <section class="faculty-section mdl-grid mdl-grid--no-spacing">
       <div class="mdl-cell mdl-cell--12-col">
         <h3 class="title">Instructors</h3>
         {% if page.faculty_description|length > 0 %}
@@ -147,10 +147,10 @@
       <div id="faculty-carousel" class="mdl-cell--12-col">
         <!-- React-Slick carousel component injected here -->
       </div>
-    </div>
+    </section>
   {% endif %}
 
-</div>
+</main>
 {% include "footer.html" %}
 <div id="signup-dialog">
   <!-- signup dialog React component injected here -->

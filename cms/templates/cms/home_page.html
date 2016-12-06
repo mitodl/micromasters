@@ -45,8 +45,7 @@
 {% include "header.html" %}
 
   <div class="main-content-wrapper">
-    <section class="main-content">
-
+    <main>
       <div class="banner-wrapper">
         <div class="banner-wrapper-content">
           <h1>
@@ -60,7 +59,7 @@
 
       <div class="row sub-banner">
         <div class="col-md-12 ">
-          <div class="sub-banner-section">
+          <section class="sub-banner-section">
             <div class="sub-banner-text">
             <h3>What is the MicroMasters Credential?</h3>
               <p>MicroMasters is a professional and academic credential for online learners from anywhere in the world. Learners who pass an integrated set of MITx graduate-level courses on edX.org, and one or more proctored exams, will earn a MicroMasters credential from MITx, and can then apply for an accelerated, on campus, master’s degree program at MIT or other top universities.</p>
@@ -71,49 +70,46 @@
                 <img src="{% static 'images/micromasters_logo.png' %}" alt="MITx" class="micromasters-logo">
               </div>
             </div>
-          </div>
+          </section>
         </div>
       </div>
 
-      <div class="row how-it-works-section">
+      <section class="row how-it-works-section">
+        <div class="centered-content">
+          <h3>How It Works</h3>
+          <div class="hiw col-md-3">
+            <div class="reasons-images-wrap">
+               <img src="{% static 'images/hiw1.png' %}" alt="">
+            </div>
 
-      <div class="centered-content">
-
-        <h3>How It Works</h3>
-        <div class="hiw col-md-3">
-          <div class="reasons-images-wrap">
-             <img src="{% static 'images/hiw1.png' %}" alt="">
+            <h4>Online Learning</h4>
+            <p>Take a series of online courses on edX, and pass all the course requirements.</p>
           </div>
+          <div class="hiw col-md-3">
+            <div class="reasons-images-wrap">
+              <img src="{% static 'images/hiw2.png' %}" alt="">
+            </div>
 
-          <h4>Online Learning</h4>
-          <p>Take a series of online courses on edX, and pass all the course requirements.</p>
-        </div>
-        <div class="hiw col-md-3">
-          <div class="reasons-images-wrap">
-            <img src="{% static 'images/hiw2.png' %}" alt="">
+            <h4>Proctored Tests</h4>
+            <p>Pass one (or more) proctored exams—either a single final exam, or one exam for each course, depending on the program.</p>
+
           </div>
-
-          <h4>Proctored Tests</h4>
-          <p>Pass one (or more) proctored exams—either a single final exam, or one exam for each course, depending on the program.</p>
-
-        </div>
-        <div class="hiw col-md-3">
-          <div class="reasons-images-wrap">
-            <img src="{% static 'images/hiw3.png' %}" alt="">
+          <div class="hiw col-md-3">
+            <div class="reasons-images-wrap">
+              <img src="{% static 'images/hiw3.png' %}" alt="">
+            </div>
+            <h4>Earn a Valuable Credential</h4>
+            <p>A MicroMasters credential from MITx proves that you’ve gained the knowledge and skills to give you a competitive advantage for career success.</p>
           </div>
-          <h4>Earn a Valuable Credential</h4>
-          <p>A MicroMasters credential from MITx proves that you’ve gained the knowledge and skills to give you a competitive advantage for career success.</p>
-        </div>
-        <div class="hiw col-md-3">
-          <div class="reasons-images-wrap">
-            <img src="{% static 'images/hiw4.png' %}" alt="">
+          <div class="hiw col-md-3">
+            <div class="reasons-images-wrap">
+              <img src="{% static 'images/hiw4.png' %}" alt="">
+            </div>
+            <h4>Pursue a Master’s</h4>
+            <p>Learners who complete the MicroMasters program can apply for the Master’s degree program at MIT or other universities.</p>
           </div>
-          <h4>Pursue a Master’s</h4>
-          <p>Learners who complete the MicroMasters program can apply for the Master’s degree program at MIT or other universities.</p>
         </div>
-        </div>
-
-      </div>
+      </section>
       <section class="row current-programs-section">
         <h3>Current MITx MicroMasters Programs</h3>
         <ul class="current-programs-list">
@@ -185,38 +181,35 @@
         </ul>
       </section>
 
-      <div class="row reasons-section">
+      <section class="row reasons-section">
+        <div class="centered-content">
+          <h3>Why should I enroll?</h3>
+          <div class="enroll-reason col-md-4">
+            <div class="reasons-images-wrap">
+               <img src="{% static 'images/online.png' %}" alt="">
+            </div>
 
-      <div class="centered-content">
-
-        <h3>Why should I enroll?</h3>
-        <div class="enroll-reason col-md-4">
-          <div class="reasons-images-wrap">
-             <img src="{% static 'images/online.png' %}" alt="">
+            <h4>Convenient &amp; Flexible</h4>
+            <p>Take online courses on a schedule that fits your needs, and meet motivated learners who share your interests.</p>
           </div>
+          <div class="enroll-reason col-md-4">
+            <div class="reasons-images-wrap">
+              <img src="{% static 'images/blended.png' %}" alt="">
+            </div>
 
-          <h4>Convenient &amp; Flexible</h4>
-          <p>Take online courses on a schedule that fits your needs, and meet motivated learners who share your interests.</p>
-        </div>
-        <div class="enroll-reason col-md-4">
-          <div class="reasons-images-wrap">
-            <img src="{% static 'images/blended.png' %}" alt="">
+            <h4>Accelerate Your Master’s</h4>
+            <p>MicroMasters is a faster path to a master’s degree from MIT and other universities, and is recognized by employers for providing deep learning in specific career fields.</p>
+
           </div>
-
-          <h4>Accelerate Your Master’s</h4>
-          <p>MicroMasters is a faster path to a master’s degree from MIT and other universities, and is recognized by employers for providing deep learning in specific career fields.</p>
-
-        </div>
-        <div class="enroll-reason col-md-4">
-          <div class="reasons-images-wrap">
-            <img src="{% static 'images/cost.png' %}" alt="">
+          <div class="enroll-reason col-md-4">
+            <div class="reasons-images-wrap">
+              <img src="{% static 'images/cost.png' %}" alt="">
+            </div>
+             <h4>Save Money &amp; Time</h4>
+            <p>MicroMasters is an affordable option for professionals who can’t take off time to earn a traditional master’s degree.</p>
           </div>
-           <h4>Save Money &amp; Time</h4>
-          <p>MicroMasters is an affordable option for professionals who can’t take off time to earn a traditional master’s degree.</p>
         </div>
-        </div>
-
-      </div>
+      </section>
 
       <section class="quote-section">
         <div class="row quote">
@@ -231,13 +224,14 @@
         </div>
       </section>
 
-    </section>
+    </main>
   </div>
 
   {% include "footer.html" %}
 
-  <div class="modal fade modal-fade-in-scale-up" id="modal-about" aria-hidden="true" aria-labelledby="modal-about"
-                                                                                     role="dialog" tabindex="-1">
+  <div class="modal fade modal-fade-in-scale-up" id="modal-about"
+       aria-hidden="true" aria-labelledby="modal-about"
+       role="dialog" tabindex="-1">
     <div class="modal-dialog modal-center">
       <div class="modal-content">
         <div class="modal-header">
