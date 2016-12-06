@@ -1,5 +1,6 @@
 /* global SETTINGS: false */
 import React from 'react';
+import TestUtils from 'react-addons-test-utils';
 import { mount } from 'enzyme';
 import { assert } from 'chai';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -9,15 +10,21 @@ import { Provider } from 'react-redux';
 import ProfileImage from './ProfileImage';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import ProfileImageUploader from '../components/ProfileImageUploader';
+import { setPhotoDialogVisibility } from '../actions/ui';
 import * as api from '../lib/api';
-import { startPhotoEdit, updatePhotoEdit } from '../actions/image_upload';
+import {
+  startPhotoEdit,
+  updatePhotoEdit,
+  requestPatchUserPhoto,
+} from '../actions/image_upload';
 import { USER_PROFILE_RESPONSE } from '../constants';
 
 describe('ProfileImage', () => {
-  let helper, sandbox, updateProfileImageStub;
+  let helper, sandbox, updateProfileImageStub, div;
 
-  const renderProfileImage = (editable=true, props = {}) => (
-    mount(
+  const renderProfileImage = (editable=true, props = {}) => {
+    div = document.createElement("div");
+    return mount(
       <MuiThemeProvider muiTheme={getMuiTheme()}>
         <Provider store={helper.store}>
           <ProfileImage
@@ -26,9 +33,12 @@ describe('ProfileImage', () => {
             {...props}
           />
         </Provider>
-      </MuiThemeProvider>
-    )
-  );
+      </MuiThemeProvider>,
+      {
+        attachTo: div
+      }
+    );
+  };
 
   const thatProfile = {
     username: 'rfeather',
@@ -110,6 +120,47 @@ describe('ProfileImage', () => {
           afterImageUpload.called,
           'afterImageUpload callback should have been called'
         );
+      });
+    });
+
+    describe('save button', () => {
+      it("should show the save button when there's an image", () => {
+        renderProfileImage(true, {
+          profile: thatProfile
+        });
+        helper.store.dispatch(startPhotoEdit({name: 'a name'}));
+        helper.store.dispatch(setPhotoDialogVisibility(true));
+        let dialog = document.querySelector(".photo-upload-dialog");
+        let saveButton = dialog.querySelector('.save-button');
+        assert.isFalse(saveButton.className.includes('disabled'));
+        TestUtils.Simulate.click(saveButton);
+        assert.isTrue(updateProfileImageStub.called);
+      });
+
+      it('should disable the save button if no image is picked', () => {
+        renderProfileImage(true, {
+          profile: thatProfile
+        });
+        helper.store.dispatch(setPhotoDialogVisibility(true));
+        let dialog = document.querySelector(".photo-upload-dialog");
+        let saveButton = dialog.querySelector('.save-button');
+        assert.isTrue(saveButton.className.includes('disabled'));
+        TestUtils.Simulate.click(saveButton);
+        assert.isFalse(updateProfileImageStub.called);
+      });
+
+      it('should disable the save button while uploading the image', () => {
+        renderProfileImage(true, {
+          profile: thatProfile
+        });
+        helper.store.dispatch(startPhotoEdit({name: 'a name'}));
+        helper.store.dispatch(setPhotoDialogVisibility(true));
+        helper.store.dispatch(requestPatchUserPhoto(SETTINGS.user.username));
+        let dialog = document.querySelector(".photo-upload-dialog");
+        let saveButton = dialog.querySelector('.save-button');
+        assert.isTrue(saveButton.className.includes('disabled'));
+        TestUtils.Simulate.click(saveButton);
+        assert.isFalse(updateProfileImageStub.called);
       });
     });
   });
