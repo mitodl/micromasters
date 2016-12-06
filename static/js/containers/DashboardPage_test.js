@@ -218,8 +218,8 @@ describe('DashboardPage', () => {
           `/dashboard?status=receipt&course_key=${encodedKey}`,
           SUCCESS_WITH_TIMEOUT_ACTIONS
         ).then(() => {
-          let future = moment().add(-35, 'seconds').toISOString();
-          helper.store.dispatch(setInitialTime(future));
+          let past = moment().add(-125, 'seconds').toISOString();
+          helper.store.dispatch(setInitialTime(past));
           clock.tick(3500);
           assert.deepEqual(helper.store.getState().ui.toastMessage, {
             message: `Order was not processed`,

@@ -43,9 +43,20 @@ class ProfileFactory(DjangoModelFactory):
     edx_bio = FuzzyText()
     about_me = FuzzyText()
 
+    romanized_first_name = LazyAttribute(lambda x: FAKE.first_name())
+    romanized_last_name = LazyAttribute(lambda x: FAKE.last_name())
+
+    address1 = LazyAttribute(lambda x: '{} {}'.format(FAKE.building_number(), FAKE.street_name()))
+    address2 = LazyAttribute(lambda x: FAKE.secondary_address())
+    address3 = None
+
+    postal_code = LazyAttribute(lambda x: FAKE.postcode())
     city = LazyAttribute(lambda x: FAKE.city())
     country = LazyAttribute(lambda x: FAKE.country_code())
     state_or_territory = LazyAttribute(lambda x: FAKE.state())
+
+    phone_number = LazyAttribute(lambda x: FAKE.numerify('###-###-####'))
+    phone_country_code = LazyAttribute(lambda x: FAKE.numerify('###'))
 
     birth_country = LazyAttribute(lambda x: FAKE.country_code())
     nationality = LazyAttribute(lambda x: FAKE.country_code())
@@ -67,6 +78,8 @@ class ProfileFactory(DjangoModelFactory):
     student_id = None
 
     image = ImageField()
+
+    updated_on = FuzzyDateTime(datetime(1850, 1, 1, tzinfo=timezone.utc))
 
     class Meta:  # pylint: disable=missing-docstring
         model = Profile

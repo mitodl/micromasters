@@ -120,7 +120,7 @@ class DashboardPage extends React.Component {
       setTimeout(() => {
         const { orderReceipt } = this.props;
         dispatch(setTimeoutActive(false));
-        let deadline = moment(orderReceipt.initialTime).add(30, 'seconds');
+        let deadline = moment(orderReceipt.initialTime).add(2, 'minutes');
         let now = moment();
         if (now.isBefore(deadline)) {
           dispatch(fetchDashboard(true));

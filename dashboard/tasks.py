@@ -17,7 +17,7 @@ from social.apps.django_app.default.models import UserSocialAuth
 from backends import utils
 from backends.edxorg import EdxOrgOAuth2
 from dashboard.models import UserCacheRefreshTime
-from dashboard.api_edx_cache import CachedEdxUserData
+from dashboard.api_edx_cache import CachedEdxDataApi
 from micromasters.celery import async
 
 
@@ -119,8 +119,8 @@ def batch_update_user_data_subtasks(students):
 
                 edx_client = EdxApi(user_social.extra_data, settings.EDXORG_BASE_URL)
 
-                for cache_type in CachedEdxUserData.SUPPORTED_CACHES:
-                    CachedEdxUserData.update_cache_if_expired(user, edx_client, cache_type)
+                for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
+                    CachedEdxDataApi.update_cache_if_expired(user, edx_client, cache_type)
 
         except Exception as e:
             log.exception(

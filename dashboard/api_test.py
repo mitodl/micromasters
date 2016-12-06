@@ -16,7 +16,7 @@ from dashboard import (
     api,
     models,
 )
-from dashboard.api_edx_cache import CachedEdxUserData
+from dashboard.api_edx_cache import CachedEdxDataApi
 from dashboard.factories import CachedEnrollmentFactory, CachedCurrentGradeFactory, UserCacheRefreshTimeFactory
 from dashboard.utils import MMTrack
 from micromasters.factories import UserFactory
@@ -750,17 +750,14 @@ class UserProgramInfoIntegrationTest(ESTestCase):
         self.expected_programs = [self.program_non_fin_aid, self.program_fin_aid]
         self.edx_client = MagicMock()
 
-    @patch('dashboard.api_edx_cache.CachedEdxUserData.update_cache_if_expired', new_callable=MagicMock)
-    @patch('dashboard.api_edx_cache.CachedEdxUserData.get_cached_edx_data', new_callable=MagicMock)
-    def test_format(self, mock_cache_get, mock_cache_refresh):
+    @patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cache_if_expired', new_callable=MagicMock)
+    def test_format(self, mock_cache_refresh):
         """Test that get_user_program_info fetches edx data and returns a list of Program data"""
         result = api.get_user_program_info(self.user, self.edx_client)
 
-        assert mock_cache_refresh.call_count == len(CachedEdxUserData.SUPPORTED_CACHES)
-        assert mock_cache_get.call_count == len(CachedEdxUserData.SUPPORTED_CACHES)
-        for cache_type in CachedEdxUserData.SUPPORTED_CACHES:
+        assert mock_cache_refresh.call_count == len(CachedEdxDataApi.SUPPORTED_CACHES)
+        for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
             mock_cache_refresh.assert_any_call(self.user, self.edx_client, cache_type)
-            mock_cache_get.assert_any_call(self.user, cache_type)
 
         assert len(result) == 2
         for i in range(2):

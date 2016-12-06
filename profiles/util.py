@@ -1,8 +1,14 @@
 """
 util functions for profiles
 """
-import hashlib
+from datetime import datetime
+from os import path
 from urllib import parse
+
+import hashlib
+import pytz
+
+IMAGE_FILENAME_MAX_LENGTH = 64
 
 
 def split_name(name):
@@ -58,4 +64,18 @@ def format_gravatar_url(user_email, size):
             size,
             parse.quote_plus(default_image_url)
         )
+    )
+
+
+def profile_image_upload_uri(_, filename):
+    """
+    Helper to format the uri for the profile image upload
+    """
+    name, ext = path.splitext(filename)
+    timestamp = datetime.now(pytz.utc).replace(microsecond=0)
+
+    return "profile/{name}-{timestamp}{ext}".format(
+        name=name[:IMAGE_FILENAME_MAX_LENGTH],
+        timestamp=timestamp.strftime("%Y-%m-%dT%H%M%S-%z"),
+        ext=ext,
     )

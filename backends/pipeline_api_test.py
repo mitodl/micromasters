@@ -33,7 +33,15 @@ class EdxPipelineApiTest(ESTestCase):
         profile.refresh_from_db()
         for field in profile._meta.get_fields():  # pylint: disable=protected-access
             key = field.name
-            if key in ('id', 'user', 'date_joined_micromasters', 'student_id', 'work_history', 'education'):
+            if key in (
+                    'id',
+                    'user',
+                    'date_joined_micromasters',
+                    'student_id',
+                    'work_history',
+                    'education',
+                    'updated_on',
+            ):
                 continue
             if key == 'account_privacy':
                 assert getattr(profile, key) == Profile.PUBLIC_TO_MM

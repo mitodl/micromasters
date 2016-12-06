@@ -39,20 +39,18 @@ class MMTrack:
     financial_aid_max_price = None
     financial_aid_date_documents_sent = None
 
-    def __init__(self, user, program, enrollments, current_grades, certificates):
+    def __init__(self, user, program, edx_user_data):
         """
         Args:
             user (User): a Django user
             program (programs.models.Program): program where the user is enrolled
-            enrollments (edx_api.enrollment.models.Enrollments): User's enrollments
-            current_grades (edx_api.grades.models.CurrentGrades): User's current grades
-            certificates (edx_api.certificates.models.Certificates): User's certificates
+            edx_user_data (dashboard.api_edx_cache.CachedEdxUserData): A CachedEdxUserData object
         """
         self.user = user
         self.program = program
-        self.enrollments = enrollments
-        self.current_grades = current_grades
-        self.certificates = certificates
+        self.enrollments = edx_user_data.enrollments
+        self.current_grades = edx_user_data.current_grades
+        self.certificates = edx_user_data.certificates
         self.financial_aid_available = program.financial_aid_availability
 
         with transaction.atomic():

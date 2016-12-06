@@ -4,6 +4,7 @@ Test end to end django views.
 import json
 from unittest.mock import patch, Mock
 
+import ddt
 from django.db.models.signals import post_save
 from django.core.urlresolvers import reverse
 from django.test import override_settings
@@ -49,6 +50,7 @@ class ViewsTests(ESTestCase):
         return profile
 
 
+@ddt.ddt
 class TestHomePage(ViewsTests):
     """
     Tests for home page
@@ -61,12 +63,12 @@ class TestHomePage(ViewsTests):
         response = self.client.get('/')
         self.assertContains(
             response,
-            program_live_true.title,
+            program_live_true.description,
             status_code=200
         )
         self.assertNotContains(
             response,
-            program_live_false.title,
+            program_live_false.description,
             status_code=200
         )
 
@@ -74,14 +76,6 @@ class TestHomePage(ViewsTests):
         """Verify that program links are present in home page if ProgramPage is set"""
         program = ProgramFactory.create(live=True)
         program_page = ProgramPage(program=program, title="Test Program")
-
-        response = self.client.get('/')
-        self.assertNotContains(
-            response,
-            program_page.url,
-            status_code=200
-        )
-
         homepage = HomePage.objects.first()
         homepage.add_child(instance=program_page)
         program_page.save_revision().publish()
@@ -92,6 +86,21 @@ class TestHomePage(ViewsTests):
             program_page.url,
             status_code=200
         )
+
+    def test_program_page(self):
+        """Verify that ProgramPage is passed in the context if and only if it's available"""
+        program_with_page = ProgramFactory.create(live=True)
+        program_page = ProgramPage(program=program_with_page, title="Test Program")
+        homepage = HomePage.objects.first()
+        homepage.add_child(instance=program_page)
+        program_page.save_revision().publish()
+
+        program_without_page = ProgramFactory.create(live=True)
+        response = self.client.get('/')
+        assert response.context['programs'] == [
+            (program_with_page, program_page),
+            (program_without_page, None),
+        ]
 
     def test_login_button(self):
         """Verify that we see a login button if not logged in"""
@@ -111,13 +120,25 @@ class TestHomePage(ViewsTests):
         ga_tracking_id = FuzzyText().fuzz()
         with self.settings(
             GA_TRACKING_ID=ga_tracking_id,
-        ):
+        ), patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
             response = self.client.get('/')
+
+            bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
+            assert set(bundles) == {
+                'common',
+                'public',
+                'sentry_client',
+                'style',
+                'style_public',
+            }
+
             assert response.context['authenticated'] is False
             assert response.context['username'] is None
             assert response.context['title'] == HomePage.objects.first().title
             assert response.context['is_public'] is True
             assert response.context['has_zendesk_widget'] is False
+            assert response.context['is_staff'] is False
+            assert response.context['programs'] == []
             self.assertContains(response, 'Share this page')
             js_settings = json.loads(response.context['js_settings_json'])
             assert js_settings['gaTrackingID'] == ga_tracking_id
@@ -131,24 +152,79 @@ class TestHomePage(ViewsTests):
         ga_tracking_id = FuzzyText().fuzz()
         with self.settings(
             GA_TRACKING_ID=ga_tracking_id,
-        ):
+        ), patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
             response = self.client.get('/')
+
+            bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
+            assert set(bundles) == {
+                'common',
+                'public',
+                'sentry_client',
+                'style',
+                'style_public',
+            }
+
             assert response.context['authenticated'] is True
             assert response.context['username'] == get_social_username(user)
             assert response.context['title'] == HomePage.objects.first().title
             assert response.context['is_public'] is True
             assert response.context['has_zendesk_widget'] is False
+            assert response.context['is_staff'] is False
+            assert response.context['programs'] == []
             self.assertContains(response, 'Share this page')
             js_settings = json.loads(response.context['js_settings_json'])
             assert js_settings['gaTrackingID'] == ga_tracking_id
 
-    def test_index_context_logged_in_staff(self):
+    def test_index_context_logged_in_no_social_auth(self):
         """
-        Assert context values when logged in as staff
+        Assert context values when logged in without a social_auth account
         """
         with mute_signals(post_save):
             profile = ProfileFactory.create()
             self.client.force_login(profile.user)
+
+        ga_tracking_id = FuzzyText().fuzz()
+        with self.settings(
+            GA_TRACKING_ID=ga_tracking_id,
+        ), patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
+            response = self.client.get('/')
+
+            bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
+            assert set(bundles) == {
+                'common',
+                'public',
+                'sentry_client',
+                'style',
+                'style_public',
+            }
+
+            assert response.context['authenticated'] is True
+            assert response.context['username'] is None
+            assert response.context['title'] == HomePage.objects.first().title
+            assert response.context['is_public'] is True
+            assert response.context['has_zendesk_widget'] is False
+            assert response.context['is_staff'] is False
+            assert response.context['programs'] == []
+            self.assertContains(response, 'Share this page')
+            js_settings = json.loads(response.context['js_settings_json'])
+            assert js_settings['gaTrackingID'] == ga_tracking_id
+
+    @ddt.data(
+        *Role.ASSIGNABLE_ROLES
+    )
+    def test_index_context_logged_in_staff(self, role):
+        """
+        Assert context values when logged in as staff for a program
+        """
+        program = ProgramFactory.create(live=True)
+        with mute_signals(post_save):
+            profile = ProfileFactory.create()
+        Role.objects.create(
+            role=role,
+            program=program,
+            user=profile.user,
+        )
+        self.client.force_login(profile.user)
 
         ga_tracking_id = FuzzyText().fuzz()
         with self.settings(
@@ -160,6 +236,10 @@ class TestHomePage(ViewsTests):
             assert response.context['title'] == HomePage.objects.first().title
             assert response.context['is_public'] is True
             assert response.context['has_zendesk_widget'] is False
+            assert response.context['is_staff'] is True
+            assert response.context['programs'] == [
+                (program, None),
+            ]
             self.assertContains(response, 'Share this page')
             js_settings = json.loads(response.context['js_settings_json'])
             assert js_settings['gaTrackingID'] == ga_tracking_id
@@ -201,8 +281,18 @@ class DashboardTests(ViewsTests):
             VERSION='0.0.1',
             RAVEN_CONFIG={'dsn': ''},
             ELASTICSEARCH_DEFAULT_PAGE_SIZE=10
-        ):
+        ), patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
             resp = self.client.get(DASHBOARD_URL)
+
+            bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
+            assert set(bundles) == {
+                'common',
+                'dashboard',
+                'sentry_client',
+                'style',
+                'zendesk_widget',
+            }
+
             js_settings = json.loads(resp.context['js_settings_json'])
             assert js_settings == {
                 'gaTrackingID': ga_tracking_id,
@@ -283,16 +373,26 @@ class HandlerTests(ViewsTests):
 
         # case with specific page
         with override_settings(EMAIL_SUPPORT='support'):
-            response = self.client.get('/404/')
-            assert response.context['authenticated'] is True
-            assert response.context['name'] == profile.preferred_name
-            assert response.context['support_email'] == 'support'
-            assert response.context['is_public'] is True
-            assert response.context['has_zendesk_widget'] is True
-            self.assertContains(response, 'Share this page', status_code=status.HTTP_404_NOT_FOUND)
+            with patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
+                response = self.client.get('/404/')
+                assert response.context['authenticated'] is True
+                assert response.context['name'] == profile.preferred_name
+                assert response.context['support_email'] == 'support'
+                assert response.context['is_public'] is True
+                assert response.context['has_zendesk_widget'] is True
+                self.assertContains(response, 'Share this page', status_code=status.HTTP_404_NOT_FOUND)
+                bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
+                assert set(bundles) == {
+                    'common',
+                    'public',
+                    'sentry_client',
+                    'style',
+                    'style_public',
+                    'zendesk_widget',
+                }
 
             # case with a fake page
-            with self.settings(DEBUG=False):
+            with self.settings(DEBUG=False), patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
                 response = self.client.get('/gfh0o4n8741387jfmnub134fn348fr38f348f/')
                 assert response.context['authenticated'] is True
                 assert response.context['name'] == profile.preferred_name
@@ -300,27 +400,55 @@ class HandlerTests(ViewsTests):
                 assert response.context['is_public'] is True
                 assert response.context['has_zendesk_widget'] is True
                 self.assertContains(response, 'Share this page', status_code=status.HTTP_404_NOT_FOUND)
+                bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
+                assert set(bundles) == {
+                    'common',
+                    'public',
+                    'sentry_client',
+                    'style',
+                    'style_public',
+                    'zendesk_widget',
+                }
 
     def test_404_error_context_logged_out(self):
         """
         Assert context values for 404 error page when logged out
         """
         # case with specific page
-        response = self.client.get('/404/')
-        assert response.context['authenticated'] is False
-        assert response.context['name'] == ""
-        assert response.context['is_public'] is True
-        assert response.context['has_zendesk_widget'] is True
-        self.assertContains(response, 'Share this page', status_code=status.HTTP_404_NOT_FOUND)
+        with patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
+            response = self.client.get('/404/')
+            assert response.context['authenticated'] is False
+            assert response.context['name'] == ""
+            assert response.context['is_public'] is True
+            assert response.context['has_zendesk_widget'] is True
+            self.assertContains(response, 'Share this page', status_code=status.HTTP_404_NOT_FOUND)
+            bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
+            assert set(bundles) == {
+                'common',
+                'public',
+                'sentry_client',
+                'style',
+                'style_public',
+                'zendesk_widget',
+            }
 
         # case with a fake page
-        with self.settings(DEBUG=False):
+        with self.settings(DEBUG=False), patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
             response = self.client.get('/gfh0o4n8741387jfmnub134fn348fr38f348f/')
             assert response.context['authenticated'] is False
             assert response.context['name'] == ""
             assert response.context['is_public'] is True
             assert response.context['has_zendesk_widget'] is True
             self.assertContains(response, 'Share this page', status_code=status.HTTP_404_NOT_FOUND)
+            bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
+            assert set(bundles) == {
+                'common',
+                'public',
+                'sentry_client',
+                'style',
+                'style_public',
+                'zendesk_widget',
+            }
 
     def test_500_error_context_logged_in(self):
         """
@@ -330,7 +458,9 @@ class HandlerTests(ViewsTests):
             profile = self.create_and_login_user()
             self.client.force_login(profile.user)
 
-        with override_settings(EMAIL_SUPPORT='support'):
+        with override_settings(EMAIL_SUPPORT='support'), patch(
+            'ui.templatetags.render_bundle._get_bundle'
+        ) as get_bundle:
             response = self.client.get('/500/')
             assert response.context['authenticated'] is True
             assert response.context['name'] == profile.preferred_name
@@ -338,20 +468,40 @@ class HandlerTests(ViewsTests):
             assert response.context['is_public'] is True
             assert response.context['has_zendesk_widget'] is True
             self.assertContains(response, 'Share this page', status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
+            assert set(bundles) == {
+                'common',
+                'public',
+                'sentry_client',
+                'style',
+                'style_public',
+                'zendesk_widget',
+            }
 
     def test_500_error_context_logged_out(self):
         """
         Assert context values for 500 error page when logged out
         """
         # case with specific page
-        response = self.client.get('/500/')
-        assert response.context['authenticated'] is False
-        assert response.context['name'] == ""
-        assert response.context['is_public'] is True
-        assert response.context['has_zendesk_widget'] is True
-        self.assertContains(response, 'Share this page', status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        with patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
+            response = self.client.get('/500/')
+            assert response.context['authenticated'] is False
+            assert response.context['name'] == ""
+            assert response.context['is_public'] is True
+            assert response.context['has_zendesk_widget'] is True
+            self.assertContains(response, 'Share this page', status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
+            assert set(bundles) == {
+                'common',
+                'public',
+                'sentry_client',
+                'style',
+                'style_public',
+                'zendesk_widget',
+            }
 
 
+@ddt.ddt
 class TestProgramPage(ViewsTests):
     """
     Test that the ProgramPage view work as expected.
@@ -372,16 +522,66 @@ class TestProgramPage(ViewsTests):
         ga_tracking_id = FuzzyText().fuzz()
         with self.settings(
             GA_TRACKING_ID=ga_tracking_id,
-        ):
+        ), patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
             response = self.client.get(self.program_page.url)
             assert response.context['authenticated'] is False
             assert response.context['username'] is None
-            assert response.context['title'] == "Test Program"
+            assert response.context['title'] == self.program_page.title
             assert response.context['is_public'] is True
             assert response.context['has_zendesk_widget'] is True
+            assert response.context['is_staff'] is False
             self.assertContains(response, 'Share this page')
             js_settings = json.loads(response.context['js_settings_json'])
             assert js_settings['gaTrackingID'] == ga_tracking_id
+
+            bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
+            assert set(bundles) == {
+                'common',
+                'public',
+                'sentry_client',
+                'style',
+                'style_public',
+                'zendesk_widget',
+            }
+
+    @ddt.data(
+        *Role.ASSIGNABLE_ROLES
+    )
+    def test_program_page_is_staff(self, role):
+        """Assert context values when staff"""
+        with mute_signals(post_save):
+            profile = ProfileFactory.create()
+        Role.objects.create(
+            role=role,
+            program=self.program_page.program,
+            user=profile.user,
+        )
+        self.client.force_login(profile.user)
+
+        ga_tracking_id = FuzzyText().fuzz()
+        with self.settings(
+            GA_TRACKING_ID=ga_tracking_id,
+        ), patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
+            response = self.client.get(self.program_page.url)
+            assert response.context['authenticated'] is True
+            assert response.context['username'] is None
+            assert response.context['title'] == self.program_page.title
+            assert response.context['is_public'] is True
+            assert response.context['has_zendesk_widget'] is True
+            assert response.context['is_staff'] is True
+            self.assertContains(response, 'Share this page')
+            js_settings = json.loads(response.context['js_settings_json'])
+            assert js_settings['gaTrackingID'] == ga_tracking_id
+
+            bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
+            assert set(bundles) == {
+                'common',
+                'public',
+                'sentry_client',
+                'style',
+                'style_public',
+                'zendesk_widget',
+            }
 
     def test_login_button(self):
         """Verify that we see a login button"""
@@ -475,7 +675,10 @@ class TestUsersPage(ViewsTests):
         ):
             # Mock has_permission so we don't worry about testing permissions here
             has_permission = Mock(return_value=True)
-            with patch('profiles.permissions.CanSeeIfNotPrivate.has_permission', has_permission):
+            with patch(
+                'profiles.permissions.CanSeeIfNotPrivate.has_permission',
+                has_permission,
+            ), patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
                 resp = self.client.get(reverse('ui-users', kwargs={'user': username}))
                 assert resp.status_code == 200
                 assert resp.context['is_public'] is False
@@ -504,6 +707,15 @@ class TestUsersPage(ViewsTests):
                 }
                 assert has_permission.called
 
+                bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
+                assert set(bundles) == {
+                    'common',
+                    'dashboard',
+                    'sentry_client',
+                    'style',
+                    'zendesk_widget',
+                }
+
     def test_users_anonymous(self):
         """
         Assert settings we pass to dashboard
@@ -530,7 +742,10 @@ class TestUsersPage(ViewsTests):
         ):
             # Mock has_permission so we don't worry about testing permissions here
             has_permission = Mock(return_value=True)
-            with patch('profiles.permissions.CanSeeIfNotPrivate.has_permission', has_permission):
+            with patch(
+                'profiles.permissions.CanSeeIfNotPrivate.has_permission',
+                has_permission,
+            ), patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
                 resp = self.client.get(reverse('ui-users', kwargs={'user': username}))
                 assert resp.status_code == 200
                 assert resp.context['is_public'] is False
@@ -552,6 +767,15 @@ class TestUsersPage(ViewsTests):
                     'es_page_size': 10
                 }
                 assert has_permission.called
+
+                bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
+                assert set(bundles) == {
+                    'common',
+                    'dashboard',
+                    'sentry_client',
+                    'style',
+                    'zendesk_widget',
+                }
 
     def test_users_404(self):
         """
@@ -588,9 +812,20 @@ class TestTermsOfService(ViewsTests):
         """
         test the settings we pass to the ToS page
         """
-        response = self.client.get(TERMS_OF_SERVICE_URL)
+        with patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
+            response = self.client.get(TERMS_OF_SERVICE_URL)
         js_settings = json.loads(response.context['js_settings_json'])
         assert response.context['is_public'] is True
         assert response.context['has_zendesk_widget'] is True
         self.assertContains(response, 'Share this page')
         assert {'environment', 'release_version', 'sentry_dsn'}.issubset(set(js_settings.keys()))
+
+        bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
+        assert set(bundles) == {
+            'common',
+            'public',
+            'sentry_client',
+            'style',
+            'style_public',
+            'zendesk_widget',
+        }

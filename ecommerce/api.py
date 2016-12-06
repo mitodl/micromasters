@@ -19,7 +19,7 @@ from rest_framework.exceptions import ValidationError
 
 from backends.edxorg import EdxOrgOAuth2
 from courses.models import CourseRun
-from dashboard.api_edx_cache import CachedEdxUserData
+from dashboard.api_edx_cache import CachedEdxDataApi
 from dashboard.models import ProgramEnrollment
 from ecommerce.exceptions import (
     EcommerceEdxApiException,
@@ -300,7 +300,7 @@ def enroll_user_on_success(order):
             exceptions.append(ex)
 
     for enrollment in enrollments:
-        CachedEdxUserData.update_cached_enrollment(
+        CachedEdxDataApi.update_cached_enrollment(
             order.user,
             enrollment,
             enrollment.course_id,

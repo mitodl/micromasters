@@ -90,7 +90,7 @@
             <!-- CourseListWithPopover component injected here -->
           </div>
         </div>
-        {% if page.program_home_page_url or page.program_contact_email %}
+        {% if page.program_home_page_url or page.program_contact_email or page.info_links.exists %}
           <div class="info-box contact-info">
             <h3 class="title">
               More Info
@@ -106,6 +106,15 @@
                   {% endif %}
                   </a>
                 </p>
+              {% endif %}
+              {% if page.info_links.exists %}
+                {% for link in page.info_links.all %}
+                  <p>
+                    <a target="_blank" href="{{ link.url }}">
+                      {{ link.title_url }}
+                    </a>
+                  </p>
+                {% endfor %}
               {% endif %}
               {% if page.program_contact_email %}
                 <p>

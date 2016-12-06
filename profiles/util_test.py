@@ -66,3 +66,11 @@ class UtilTests(TestCase):
                      util.GravatarImgSize.MEDIUM, util.GravatarImgSize.SMALL):
             assert expected_url.format(size=size) == util.format_gravatar_url(user_email, size)
             assert expected_url.format(size=size) == util.format_gravatar_url(user_email_spaces, size)
+
+    def test_profile_image_upload_uri(self):
+        """
+        Test for long profile image upload uris
+        """
+
+        too_long_url = '{}.jpg'.format('a' * 150)
+        assert len(util.profile_image_upload_uri(None, too_long_url)) == 100

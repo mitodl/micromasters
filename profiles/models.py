@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField
 from django.db import models, transaction
 
+from profiles.util import profile_image_upload_uri
+
 
 DOCTORATE = 'p'
 MASTERS = 'm'
@@ -105,10 +107,45 @@ class Profile(models.Model):
     edx_name = models.TextField(blank=True, null=True)
     edx_bio = models.TextField(blank=True, null=True)
 
+    # Romanized names
+    romanized_first_name = models.CharField(blank=True, null=True, max_length=30)
+    romanized_last_name = models.CharField(blank=True, null=True, max_length=50)
+
+    address1 = models.CharField(
+        max_length=40,
+        blank=True,
+        null=True
+    )
+    address2 = models.CharField(
+        max_length=40,
+        blank=True,
+        null=True
+    )
+    address3 = models.CharField(
+        max_length=40,
+        blank=True,
+        null=True
+    )
+    postal_code = models.CharField(
+        max_length=16,
+        blank=True,
+        null=True
+    )
     city = models.TextField(blank=True, null=True)
     country = models.TextField(blank=True, null=True)
     state_or_territory = models.CharField(
         max_length=255,
+        blank=True,
+        null=True,
+    )
+
+    phone_number = models.CharField(
+        max_length=35,
+        blank=True,
+        null=True
+    )
+    phone_country_code = models.CharField(
+        max_length=3,
         blank=True,
         null=True,
     )
@@ -118,7 +155,7 @@ class Profile(models.Model):
     about_me = models.TextField(blank=True, null=True)
 
     has_profile_image = models.BooleanField(default=False)
-    image = models.ImageField(upload_to='profile', null=True)
+    image = models.ImageField(upload_to=profile_image_upload_uri, null=True)
 
     edx_requires_parental_consent = models.NullBooleanField()
     date_of_birth = models.DateField(blank=True, null=True)
@@ -141,6 +178,8 @@ class Profile(models.Model):
     date_joined_micromasters = models.DateTimeField(blank=True, null=True, auto_now_add=True)
     linkedin = JSONField(blank=True, null=True)
     student_id = models.IntegerField(blank=True, null=True, unique=True)
+
+    updated_on = models.DateTimeField(blank=True, null=True, auto_now=True)
 
     @transaction.atomic
     def save(self, *args, **kwargs):

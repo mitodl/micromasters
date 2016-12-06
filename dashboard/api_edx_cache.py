@@ -16,6 +16,45 @@ log = logging.getLogger(__name__)
 
 
 class CachedEdxUserData:
+    """Represents all edx data related to a User"""
+    # pylint: disable=too-many-instance-attributes
+
+    enrollments = None
+    certificates = None
+    current_grades = None
+    raw_enrollments = None
+    raw_certificates = None
+    raw_current_grades = None
+
+    def __init__(self, user, program=None, include_raw_data=False):
+        """
+        Fetches the given User's edx data and sets object properties
+
+        Args:
+            user (User): a User object
+            program (Program): an optional Program to filter on
+            include_raw_data (bool): Set to True if raw edx data is needed (in addition to actual edX objects)
+        """
+        self.user = user
+        self.program = program
+        self.fetch_and_set_edx_data()
+        if include_raw_data:
+            self.fetch_and_set_raw_data()
+
+    def fetch_and_set_edx_data(self):
+        """Fetches edx data and sets object properties"""
+        self.enrollments = models.CachedEnrollment.get_edx_data(self.user, program=self.program)
+        self.certificates = models.CachedCertificate.get_edx_data(self.user, program=self.program)
+        self.current_grades = models.CachedCurrentGrade.get_edx_data(self.user, program=self.program)
+
+    def fetch_and_set_raw_data(self):
+        """Fetches raw cached data and sets object properties"""
+        self.raw_enrollments = list(models.CachedEnrollment.data_qset(self.user, program=self.program))
+        self.raw_certificates = list(models.CachedCertificate.data_qset(self.user, program=self.program))
+        self.raw_current_grades = list(models.CachedCurrentGrade.data_qset(self.user, program=self.program))
+
+
+class CachedEdxDataApi:
     """
     Class to handle the retrieval and update of the users' cached edX information
     """

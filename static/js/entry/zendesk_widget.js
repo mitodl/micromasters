@@ -1,6 +1,5 @@
 /* global SETTINGS:false zE:false _:false */
 __webpack_public_path__ = `http://${SETTINGS.host}:8078/`;  // eslint-disable-line no-undef, camelcase
-import "element-closest";
 import R from 'ramda';
 
 // Start of odl Zendesk Widget script
@@ -140,8 +139,13 @@ const zendeskCallbacks = {
 
     const adjustFieldsVisibility = R.map(name => {
       if ( !fieldVisibility[name] ) {
-        const label = fieldElement(name).closest('label');
-        label.style.setProperty("display", "none", "important");
+        const element = fieldElement(name);
+        if (element) {
+          const label = element.parentNode.parentNode;
+          if (label.tagName.toLowerCase() === "label") {
+            label.style.setProperty("display", "none", "important");
+          }
+        }
       }
     });
 

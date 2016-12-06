@@ -117,18 +117,22 @@
       <section class="row current-programs-section">
         <h3>Current MITx MicroMasters Programs</h3>
         <ul class="current-programs-list">
-        {% for program in programs %}
+        {% for program, programpage in programs %}
           <li class="col-md-4">
             <div class="program-thumbnail">
-              {% if program.programpage %}
-                {% if program.programpage.external_program_page_url %}
-                  <a href="{{ program.programpage.external_program_page_url }}" class="program-link">
+              {% if programpage %}
+                {% if programpage.external_program_page_url %}
+                  <a href="{{ programpage.external_program_page_url }}" class="program-link">
                 {% else %}
-                  <a href="{{ program.programpage.url }}" class="program-link">
+                  <a href="{{ programpage.url }}" class="program-link">
                 {% endif %}
               {% endif %}
                 <div class="program-info">
-                  <h4 class="program-title" aria-describedby="program-{{ program.id }}-description">{{ program.programpage.title }}</h4>
+                  <h4 class="program-title" aria-describedby="program-{{ program.id }}-description">
+                    {% if programpage %}
+                      {{ programpage.title }}
+                    {% endif %}
+                  </h4>
                   <div class="program-num-courses">
                     {% blocktrans count counter=program.course_set.count %}
                       {{ counter }} course
@@ -137,27 +141,27 @@
                     {% endblocktrans %}
                   </div>
                 </div>
-                {% if program.programpage and program.programpage.thumbnail_image %}
-                  {% image program.programpage.thumbnail_image fill-690x530 as thumbnail_image %}
-                  <img src="{{ thumbnail_image.url }}" alt="course image for {{ program }}"
+                {% if programpage and programpage.thumbnail_image %}
+                  {% image programpage.thumbnail_image fill-690x530 as thumbnail_image %}
+                  <img src="{{ thumbnail_image.url }}" alt=""
                        >
                 {% else %}
                   <img src="{% static 'images/course-thumbnail.png' %}"
-                       alt="course image for {{ program }}" class="program-default-image">
+                       alt="" class="program-default-image">
                 {% endif %}
-              {% if program.programpage %}
+              {% if programpage %}
                 </a>
               {% endif %}
             </div>
             <div class="program-description">
               <p class="program-description-text" id="program-{{ program.id }}-description">{{ program.description|default:"No description available for this program." }}</p>
 
-              {% if program.programpage %}
+              {% if programpage %}
                 <p class="program-description-link">
-                {% if program.programpage.external_program_page_url %}
-                  <a href="{{ program.programpage.external_program_page_url }}" class="program-link">
+                {% if programpage.external_program_page_url %}
+                  <a href="{{ programpage.external_program_page_url }}" class="program-link">
                 {% else %}
-                  <a href="{{ program.programpage.url }}" class="program-link">
+                  <a href="{{ programpage.url }}" class="program-link">
                 {% endif %}
                     More about {{ program }}
                   </a>

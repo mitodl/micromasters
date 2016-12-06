@@ -8,7 +8,7 @@ import { codeToCountryName } from "../lib/currency";
 /* Wrapper for all of the functions used by the financial aid review page */
 window.financialAidReview = (function(window, document, $) {
   "use strict";
-  
+
   var CSRF_TOKEN = window.CSRF_TOKEN;
   var BASE_PATH = window.BASE_PATH;
 
@@ -20,10 +20,10 @@ window.financialAidReview = (function(window, document, $) {
       $(this).text(codeToCountryName($(this).text()));
     });
   });
-  
+
   /**
    * Marks documents as received for a financial aid application
-   * 
+   *
    * @param financialAidId {number} Financial aid application id
    * @param url {string} URL to submit request to
    * @param action {string} FinancialAidStatus to send in request
@@ -53,7 +53,7 @@ window.financialAidReview = (function(window, document, $) {
       });
     }
   }
-  
+
   /**
    * Submits a financial aid application approval
    * 

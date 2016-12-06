@@ -2,7 +2,7 @@ var path = require("path");
 var webpack = require("webpack");
 
 let babelQuerySettings = {
-  presets: ['es2015', 'stage-1', 'react']
+  babelrc: './.babelrc'
 }
 
 module.exports = {

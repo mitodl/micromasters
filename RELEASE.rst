@@ -1,6 +1,33 @@
 Release Notes
 =============
 
+Version 0.26.0
+--------------
+
+- Remove alt text from course images (#1939)
+- Added truncation for image filenames
+- Added more info links to ProgramPage cms
+- Enabled integration with rediscloud (#1976)
+- Changed image uploader to not use png, it is too big
+- Remove closest, use parentNode.parentNode if available (#1970)
+- Add test for user without staff or instructor role (#1967)
+- Add is_staff for program and financial aid review pages and other cleanup (#1935)
+- Use enrollment_url if provided for URL (#1963)
+- Fix handling of currently selected unenrolled program (#1950)
+- Check element and label in case they&#39;re undefined (#1965)
+- Added tests for bundles (#1932)
+- Updated address for sending financial aid documents (#1953)
+- Added fields to Profile for address and roman name
+- Updated babel config
+- Added setting to configure Cloudfront (#1924)
+- Refactor user edx data fetching
+- Refactored profile_edit_test tests (#1947)
+- Remove email info from personal profile
+- Added cms template for CategorizedFaqsPage preview
+- Remove email icon from user profile (#1940)
+- Added integration tests for about me (#1933)
+- Increase order fulfillment timeout
+
 Version 0.25.3
 --------------
 

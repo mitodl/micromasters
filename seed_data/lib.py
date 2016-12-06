@@ -7,7 +7,7 @@ from functools import wraps
 
 from django.contrib.auth.models import User
 from courses.models import Program, Course
-from dashboard.api_edx_cache import CachedEdxUserData
+from dashboard.api_edx_cache import CachedEdxDataApi
 from dashboard.models import CachedCertificate, CachedEnrollment, CachedCurrentGrade, UserCacheRefreshTime
 from financialaid.factories import TierProgramFactory
 from financialaid.models import TierProgram
@@ -165,7 +165,7 @@ class CachedHandler(object):
         if not created:
             obj.data = data
             obj.save()
-        CachedEdxUserData.update_cache_last_access(self.user, self.cache_type, timestamp=datetime.utcnow())
+        CachedEdxDataApi.update_cache_last_access(self.user, self.cache_type, timestamp=datetime.utcnow())
         return obj
 
     def find(self, course_run):
@@ -252,7 +252,7 @@ def ensure_cached_data_freshness(user):
     Ensure that all cached edX data will be considered 'fresh' for a User
     """
     future = future_date()
-    updated_values = {cache: future for cache in CachedEdxUserData.SUPPORTED_CACHES}
+    updated_values = {cache: future for cache in CachedEdxDataApi.SUPPORTED_CACHES}
     updated_values['user'] = user
     UserCacheRefreshTime.objects.update_or_create(user=user, defaults=updated_values)
 

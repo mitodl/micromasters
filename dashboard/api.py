@@ -9,7 +9,7 @@ from django.db import transaction
 import pytz
 
 from courses.models import Program
-from dashboard.api_edx_cache import CachedEdxUserData
+from dashboard.api_edx_cache import CachedEdxDataApi, CachedEdxUserData
 from dashboard.utils import MMTrack
 
 log = logging.getLogger(__name__)
@@ -120,15 +120,10 @@ def get_user_program_info(user, edx_client):
     """
     # update cache
     # NOTE: this part can be moved to an asynchronous task
-    for cache_type in CachedEdxUserData.SUPPORTED_CACHES:
-        CachedEdxUserData.update_cache_if_expired(user, edx_client, cache_type)
+    for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
+        CachedEdxDataApi.update_cache_if_expired(user, edx_client, cache_type)
 
-    # get enrollments for the student
-    enrollments = CachedEdxUserData.get_cached_edx_data(user, CachedEdxUserData.ENROLLMENT)
-    # get certificates for the student
-    certificates = CachedEdxUserData.get_cached_edx_data(user, CachedEdxUserData.CERTIFICATE)
-    # get current_grades for the student
-    current_grades = CachedEdxUserData.get_cached_edx_data(user, CachedEdxUserData.CURRENT_GRADE)
+    edx_user_data = CachedEdxUserData(user)
 
     response_data = []
     all_programs = (
@@ -138,9 +133,7 @@ def get_user_program_info(user, edx_client):
         mmtrack_info = MMTrack(
             user,
             program,
-            enrollments,
-            current_grades,
-            certificates
+            edx_user_data
         )
         response_data.append(get_info_for_program(mmtrack_info))
     return response_data

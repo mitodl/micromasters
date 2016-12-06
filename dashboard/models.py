@@ -36,49 +36,35 @@ class CachedEdxInfoModel(Model):
         abstract = True
 
     @classmethod
-    def active_qset_all(cls, user):
+    def user_qset(cls, user, program=None):
         """
         Returns a queryset for the active records associated with a User
 
         Args:
             user (User): an User object
+            program (Program): optional Program to filter on
 
         Returns:
             QuerySet: a queryset of all the elements for the provided user
         """
-        return cls.objects.filter(user=user)
+        query_params = dict(user=user)
+        if program is not None:
+            query_params.update(dict(course_run__course__program=program))
+        return cls.objects.filter(**query_params)
 
     @classmethod
-    def active_qset_program(cls, user, program):
+    def data_qset(cls, user, program=None):
         """
-        Returns a queryset for the active records associated with a User/Program pair
+        Returns a queryset containing only the data property for the active records associated with a User
 
         Args:
             user (User): an User object
-            program (courses.models.Program): a program
+            program (Program): optional Program to filter on
 
         Returns:
-            QuerySet: a queryset of all the elements for the provided user and program
+            QuerySet: a flattened list queryset of 'data' values
         """
-        return cls.objects.filter(
-            user=user,
-            course_run__course__program=program
-        )
-
-    @classmethod
-    def active_data(cls, user, program):
-        """
-        Returns a list containing the 'data' property of every active record associated
-        with a User/Program pair
-
-        Args:
-            user (User): an User object
-            program (courses.models.Program): a program
-
-        Returns:
-            QuerySet: a queryset of all the data fields for the provided user and program
-        """
-        return cls.active_qset_program(user, program).values_list('data', flat=True).all()
+        return cls.user_qset(user, program=program).values_list('data', flat=True)
 
     @classmethod
     def active_course_ids(cls, user):
@@ -91,7 +77,7 @@ class CachedEdxInfoModel(Model):
         Returns:
             list: a list of all the course key fields for the provided user
         """
-        return list(cls.active_qset_all(user).values_list('course_run__edx_course_key', flat=True).all())
+        return list(cls.user_qset(user).values_list('course_run__edx_course_key', flat=True).all())
 
     @classmethod
     def delete_all_but(cls, user, course_ids_list):
@@ -105,15 +91,22 @@ class CachedEdxInfoModel(Model):
         Returns:
             None
         """
-        cls.active_qset_all(user).exclude(course_run__edx_course_key__in=course_ids_list).delete()
+        cls.user_qset(user).exclude(course_run__edx_course_key__in=course_ids_list).delete()
 
-    @classmethod
-    def get_edx_data(cls, user):
+    @staticmethod
+    def deserialize_edx_data(data_iter):
         """
-        Method to retrieve the cached date and encapsulate in specific edx-api-client classes.
-        Needs to be implemented in a per cache type bases
+        Instantiates an edX object with some iterable of raw data.
+        Must be implemented by specific subclasses.
         """
         raise NotImplementedError
+
+    @classmethod
+    def get_edx_data(cls, user, program=None):
+        """
+        Retrieves the cached data and encapsulates in specific edx-api-client classes.
+        """
+        return cls.deserialize_edx_data(cls.data_qset(user, program=program))
 
     def __str__(self):
         """
@@ -129,40 +122,35 @@ class CachedEnrollment(CachedEdxInfoModel):
     """
     Model for user enrollment data from edX
     """
-
-    @classmethod
-    def get_edx_data(cls, user):
+    @staticmethod
+    def deserialize_edx_data(data_iter):
         """
-        Implementation for enrollments.
+        Deserializes raw enrollment data
 
         Args:
-            user (User): an User object
+            data_iter (iterable): Some iterable of raw data
 
-        Returns:
-            Enrollments: an enrollments object for the user
+        Returns: Enrollments: an edX Enrollments object
         """
-        return Enrollments(
-            [enrollment.data for enrollment in cls.active_qset_all(user)]
-        )
+        return Enrollments(data_iter)
 
 
 class CachedCertificate(CachedEdxInfoModel):
     """
     Model for certificate data from edX
     """
-    @classmethod
-    def get_edx_data(cls, user):
+    @staticmethod
+    def deserialize_edx_data(data_iter):
         """
-        Implementation for certificates.
+        Deserializes raw certificate data
 
         Args:
-            user (User): an User object
+            data_iter (iterable): Some iterable of raw data
 
-        Returns:
-            Certificates: a certificates object for the user
+        Returns: Certificates: an edX Certificates object
         """
         return Certificates([
-            Certificate(certificate.data) for certificate in cls.active_qset_all(user)
+            Certificate(data) for data in data_iter
         ])
 
 
@@ -170,19 +158,18 @@ class CachedCurrentGrade(CachedEdxInfoModel):
     """
     Model for current grade data from edX
     """
-    @classmethod
-    def get_edx_data(cls, user):
+    @staticmethod
+    def deserialize_edx_data(data_iter):
         """
-        Implementation for current grades.
+        Deserializes raw current grade data
 
         Args:
-            user (User): an User object
+            data_iter (iterable): Some iterable of raw data
 
-        Returns:
-            CurrentGrades: a current grades object for the user
+        Returns: CachedCurrentGrade: an edX CachedCurrentGrade object
         """
         return CurrentGrades([
-            CurrentGrade(grade.data) for grade in cls.active_qset_all(user)
+            CurrentGrade(data) for data in data_iter
         ])
 
 

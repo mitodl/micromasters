@@ -18,7 +18,7 @@ from rest_framework.response import Response
 from backends import utils
 from backends.edxorg import EdxOrgOAuth2
 from dashboard.api import get_user_program_info
-from dashboard.api_edx_cache import CachedEdxUserData
+from dashboard.api_edx_cache import CachedEdxDataApi
 from micromasters.exceptions import PossiblyImproperlyConfigured
 from profiles.api import get_social_username
 
@@ -123,7 +123,7 @@ class UserCourseEnrollment(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 data={'error': str(exc)}
             )
-        CachedEdxUserData.update_cached_enrollment(request.user, enrollment, enrollment.course_id, index_user=True)
+        CachedEdxDataApi.update_cached_enrollment(request.user, enrollment, enrollment.course_id, index_user=True)
         return Response(
             data=enrollment.json
         )

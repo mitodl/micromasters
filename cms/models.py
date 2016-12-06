@@ -29,7 +29,7 @@ class HomePage(Page):
     subpage_types = ['ProgramPage']
 
     def get_context(self, request):
-        programs = Program.objects.filter(live=True).order_by("id")
+        programs = Program.objects.filter(live=True).select_related('programpage').order_by("id")
         js_settings = {
             "gaTrackingID": settings.GA_TRACKING_ID,
             "host": webpack_dev_server_host(request),
@@ -41,7 +41,15 @@ class HomePage(Page):
         username = get_social_username(request.user)
         context = super(HomePage, self).get_context(request)
 
-        context["programs"] = programs
+        def get_program_page(program):
+            """Return a None if ProgramPage does not exist, to avoid template errors"""
+            try:
+                return program.programpage
+            except ProgramPage.DoesNotExist:
+                return
+
+        program_pairs = [(program, get_program_page(program)) for program in programs]
+        context["programs"] = program_pairs
         context["is_public"] = True
         context["has_zendesk_widget"] = False
         context["authenticated"] = not request.user.is_anonymous()
@@ -52,16 +60,6 @@ class HomePage(Page):
         context["tracking_id"] = ""
 
         return context
-
-
-class CategorizedFaqsPage(Page):
-    """
-    CMS page for categorized questions
-    """
-    content_panels = Page.content_panels + [
-        InlinePanel('faqs', label='Frequently Asked Questions'),
-    ]
-    parent_page_types = ['FaqsPage']
 
 
 class ProgramChildPage(Page):
@@ -82,6 +80,16 @@ class ProgramChildPage(Page):
         context['child_page'] = self
         context['active_tab'] = self.title
         return context
+
+
+class CategorizedFaqsPage(ProgramChildPage):
+    """
+    CMS page for categorized questions
+    """
+    content_panels = Page.content_panels + [
+        InlinePanel('faqs', label='Frequently Asked Questions'),
+    ]
+    parent_page_types = ['FaqsPage']
 
 
 class FaqsPage(ProgramChildPage):
@@ -177,6 +185,7 @@ class ProgramPage(Page):
         FieldPanel('title_over_image'),
         FieldPanel('faculty_description'),
         InlinePanel('courses', label='Program Courses'),
+        InlinePanel('info_links', label='More Info Links'),
         InlinePanel('faculty_members', label='Faculty'),
     ]
 
@@ -205,6 +214,7 @@ def get_program_page_context(programpage, request):
     username = get_social_username(request.user)
     context = super(ProgramPage, programpage).get_context(request)
 
+    context["is_staff"] = has_role(request.user, [Staff.ROLE_ID, Instructor.ROLE_ID])
     context["is_public"] = True
     context["has_zendesk_widget"] = True
     context["authenticated"] = not request.user.is_anonymous()
@@ -215,6 +225,31 @@ def get_program_page_context(programpage, request):
     context["tracking_id"] = programpage.program.ga_tracking_id
 
     return context
+
+
+class InfoLinks(Orderable):
+    """
+    Links listed under 'More Info' for the program
+    """
+    program_page = ParentalKey(ProgramPage, related_name='info_links')
+    url = models.URLField(
+        blank=True,
+        null=True,
+        help_text="A url for an external page. There will be a link to this url from the program page."
+    )
+    title_url = models.TextField(
+        blank=True,
+        help_text='The text for the link to an external homepage.'
+    )
+
+    content_panels = [
+        MultiFieldPanel(
+            [
+                FieldPanel('url'),
+                FieldPanel('title_url')
+            ]
+        )
+    ]
 
 
 class ProgramCourse(Orderable):

@@ -3,7 +3,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Icon from 'react-mdl/lib/Icon';
-import moment from 'moment';
 import type { Dispatch } from 'redux';
 
 import {
@@ -25,7 +24,7 @@ import {
 import { fetchUserProfile } from '../actions/profile';
 
 const formatPhotoName = photo => (
-  `${photo.name.replace(/\.\w*$/, '')}-${moment().format()}.jpg`
+  `${photo.name.replace(/\.\w*$/, '')}.jpg`
 );
 
 class ProfileImage extends React.Component {

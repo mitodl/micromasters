@@ -10,7 +10,7 @@ from django.test import (
 )
 
 from backends.edxorg import EdxOrgOAuth2
-from dashboard.api_edx_cache import CachedEdxUserData
+from dashboard.api_edx_cache import CachedEdxDataApi
 from dashboard.tasks import (
     batch_update_user_data,
     batch_update_user_data_subtasks
@@ -54,7 +54,7 @@ class TasksTest(TestCase):
         self.assertTrue(batch_update_user_data.delay())
 
     @override_settings(CELERY_ALWAYS_EAGER=True)
-    @mock.patch('dashboard.api_edx_cache.CachedEdxUserData.update_cache_if_expired', new_callable=mock.MagicMock)
+    @mock.patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cache_if_expired', new_callable=mock.MagicMock)
     @mock.patch('backends.utils.refresh_user_token', autospec=True)
     def test_student_enrollments_called_task(
             self, mocked_refresh, mocked_refresh_cache):
@@ -62,8 +62,8 @@ class TasksTest(TestCase):
         Assert get_student_enrollments is actually called
         """
         batch_update_user_data_subtasks.s(self.students).apply(args=()).get()
-        assert mocked_refresh_cache.call_count == len(self.all_users) * len(CachedEdxUserData.SUPPORTED_CACHES)
+        assert mocked_refresh_cache.call_count == len(self.all_users) * len(CachedEdxDataApi.SUPPORTED_CACHES)
         assert mocked_refresh.call_count == len(self.all_users)
-        for user, cache_type in product(self.all_users, CachedEdxUserData.SUPPORTED_CACHES):
+        for user, cache_type in product(self.all_users, CachedEdxDataApi.SUPPORTED_CACHES):
             mocked_refresh_cache.assert_any_call(user, mock.ANY, cache_type)
             mocked_refresh.assert_any_call(user.social_auth.get(provider=EdxOrgOAuth2.name))

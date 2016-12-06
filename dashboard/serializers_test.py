@@ -137,9 +137,9 @@ class UserProgramSearchSerializerTests(TestCase):
         program = self.program_enrollment.program
         assert UserProgramSearchSerializer.serialize(self.program_enrollment) == {
             'id': program.id,
-            'enrollments': list(CachedEnrollment.active_data(self.user, program)),
-            'certificates': list(CachedCertificate.active_data(self.user, program)),
-            'current_grades': list(CachedCurrentGrade.active_data(self.user, program)),
+            'enrollments': list(CachedEnrollment.data_qset(self.user, program=program)),
+            'certificates': list(CachedCertificate.data_qset(self.user, program=program)),
+            'current_grades': list(CachedCurrentGrade.data_qset(self.user, program=program)),
             'grade_average': 75,
             'is_learner': True,
             'email_optin': True
@@ -155,9 +155,9 @@ class UserProgramSearchSerializerTests(TestCase):
         program = self.program_enrollment.program
         assert UserProgramSearchSerializer.serialize(self.program_enrollment) == {
             'id': program.id,
-            'enrollments': list(CachedEnrollment.active_data(self.user, program)),
-            'certificates': list(CachedCertificate.active_data(self.user, program)),
-            'current_grades': list(CachedCurrentGrade.active_data(self.user, program)),
+            'enrollments': list(CachedEnrollment.data_qset(self.user, program=program)),
+            'certificates': list(CachedCertificate.data_qset(self.user, program=program)),
+            'current_grades': list(CachedCurrentGrade.data_qset(self.user, program=program)),
             'grade_average': 75,
             'is_learner': True,
             'email_optin': email_optin_flag
@@ -174,9 +174,9 @@ class UserProgramSearchSerializerTests(TestCase):
         self.profile.refresh_from_db()
         expected_result = {
             'id': self.fa_program.id,
-            'enrollments': list(CachedEnrollment.active_data(self.user, self.fa_program)),
+            'enrollments': list(CachedEnrollment.data_qset(self.user, program=self.fa_program)),
             'certificates': [],
-            'current_grades': list(CachedCurrentGrade.active_data(self.user, self.fa_program)),
+            'current_grades': list(CachedCurrentGrade.data_qset(self.user, program=self.fa_program)),
             'grade_average': 95,
             'is_learner': True,
             'email_optin': True
@@ -198,9 +198,9 @@ class UserProgramSearchSerializerTests(TestCase):
 
         assert UserProgramSearchSerializer.serialize(self.program_enrollment) == {
             'id': program.id,
-            'enrollments': list(CachedEnrollment.active_data(self.user, program)),
-            'certificates': list(CachedCertificate.active_data(self.user, program)),
-            'current_grades': list(CachedCurrentGrade.active_data(self.user, program)),
+            'enrollments': list(CachedEnrollment.data_qset(self.user, program=program)),
+            'certificates': list(CachedCertificate.data_qset(self.user, program=program)),
+            'current_grades': list(CachedCurrentGrade.data_qset(self.user, program=program)),
             'grade_average': 75,
             'is_learner': False,
             'email_optin': True

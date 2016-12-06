@@ -2,16 +2,15 @@
 Tests for the utils module
 """
 from datetime import datetime, timedelta
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 import pytz
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
-from edx_api.enrollments.models import Enrollments
-from edx_api.certificates.models import Certificate, Certificates
-from edx_api.grades.models import CurrentGrade, CurrentGrades
 
 from courses.factories import ProgramFactory, CourseFactory, CourseRunFactory
+from dashboard.api_edx_cache import CachedEdxUserData
+from dashboard.models import CachedEnrollment, CachedCertificate, CachedCurrentGrade
 from dashboard.utils import MMTrack
 from ecommerce.factories import CoursePriceFactory, LineFactory, OrderFactory
 from ecommerce.models import Order
@@ -26,21 +25,22 @@ class MMTrackTest(TestCase):
     Tests for the MMTrack class
     """
 
+    enrollments_json = load_json_from_file('dashboard/fixtures/user_enrollments.json')
+    certificates_json = load_json_from_file('dashboard/fixtures/certificates.json')
+    current_grades_json = load_json_from_file('dashboard/fixtures/current_grades.json')
+
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
         # create an user
         cls.user = UserFactory.create()
 
-        # create Enrollments, Certificates, CurrentGrades
-        enrollments_json = load_json_from_file('dashboard/fixtures/user_enrollments.json')
-        cls.enrollments = Enrollments(enrollments_json)
-
-        certificates_json = load_json_from_file('dashboard/fixtures/certificates.json')
-        cls.certificates = Certificates([Certificate(cert_json) for cert_json in certificates_json])
-
-        current_grades_json = load_json_from_file('dashboard/fixtures/current_grades.json')
-        cls.current_grades = CurrentGrades([CurrentGrade(grade_json) for grade_json in current_grades_json])
+        cls.cached_edx_user_data = MagicMock(
+            spec=CachedEdxUserData,
+            enrollments=CachedEnrollment.deserialize_edx_data(cls.enrollments_json),
+            certificates=CachedCertificate.deserialize_edx_data(cls.certificates_json),
+            current_grades=CachedCurrentGrade.deserialize_edx_data(cls.current_grades_json),
+        )
 
         # create the programs
         cls.program = ProgramFactory.create(live=True, financial_aid_availability=False)
@@ -107,16 +107,14 @@ class MMTrackTest(TestCase):
         mmtrack = MMTrack(
             user=self.user,
             program=self.program,
-            enrollments=self.enrollments,
-            current_grades=self.current_grades,
-            certificates=self.certificates
+            edx_user_data=self.cached_edx_user_data
         )
 
         assert mmtrack.user == self.user
         assert mmtrack.program == self.program
-        assert mmtrack.enrollments == self.enrollments
-        assert mmtrack.current_grades == self.current_grades
-        assert mmtrack.certificates == self.certificates
+        assert mmtrack.enrollments == self.cached_edx_user_data.enrollments
+        assert mmtrack.current_grades == self.cached_edx_user_data.current_grades
+        assert mmtrack.certificates == self.cached_edx_user_data.certificates
         assert mmtrack.financial_aid_available == self.program.financial_aid_availability
         assert mmtrack.course_ids == {
             "course-v1:edX+DemoX+Demo_Course",
@@ -137,16 +135,14 @@ class MMTrackTest(TestCase):
         mmtrack = MMTrack(
             user=self.user,
             program=self.program_financial_aid,
-            enrollments=self.enrollments,
-            current_grades=self.current_grades,
-            certificates=self.certificates
+            edx_user_data=self.cached_edx_user_data
         )
 
         assert mmtrack.user == self.user
         assert mmtrack.program == self.program_financial_aid
-        assert mmtrack.enrollments == self.enrollments
-        assert mmtrack.current_grades == self.current_grades
-        assert mmtrack.certificates == self.certificates
+        assert mmtrack.enrollments == self.cached_edx_user_data.enrollments
+        assert mmtrack.current_grades == self.cached_edx_user_data.current_grades
+        assert mmtrack.certificates == self.cached_edx_user_data.certificates
         assert mmtrack.financial_aid_available == self.program_financial_aid.financial_aid_availability
         assert mmtrack.course_ids == {"course-v1:odl+FOO101+CR-FALL15"}
         assert mmtrack.paid_course_ids == set()
@@ -167,18 +163,14 @@ class MMTrackTest(TestCase):
         mmtrack_paid = MMTrack(
             user=self.user,
             program=self.program_financial_aid,
-            enrollments=self.enrollments,
-            current_grades=self.current_grades,
-            certificates=self.certificates
+            edx_user_data=self.cached_edx_user_data
         )
         assert mmtrack_paid.paid_course_ids == {key}
 
         mmtrack = MMTrack(
             user=UserFactory.create(),
             program=self.program_financial_aid,
-            enrollments=self.enrollments,
-            current_grades=self.current_grades,
-            certificates=self.certificates
+            edx_user_data=self.cached_edx_user_data
         )
         assert mmtrack.paid_course_ids == set()
 
@@ -195,9 +187,7 @@ class MMTrackTest(TestCase):
         mmtrack = MMTrack(
             user=self.user,
             program=self.program_financial_aid,
-            enrollments=self.enrollments,
-            current_grades=self.current_grades,
-            certificates=self.certificates
+            edx_user_data=self.cached_edx_user_data
         )
 
         assert mmtrack.financial_aid_applied is True
@@ -221,9 +211,7 @@ class MMTrackTest(TestCase):
         mmtrack = MMTrack(
             user=self.user,
             program=self.program_financial_aid,
-            enrollments=self.enrollments,
-            current_grades=self.current_grades,
-            certificates=self.certificates
+            edx_user_data=self.cached_edx_user_data
         )
         # the result is like if the user never applied
         assert mmtrack.financial_aid_applied is False
@@ -247,9 +235,7 @@ class MMTrackTest(TestCase):
         mmtrack = MMTrack(
             user=self.user,
             program=self.program_financial_aid,
-            enrollments=self.enrollments,
-            current_grades=self.current_grades,
-            certificates=self.certificates
+            edx_user_data=self.cached_edx_user_data
         )
 
         assert mmtrack.financial_aid_applied is True
@@ -273,9 +259,7 @@ class MMTrackTest(TestCase):
             MMTrack(
                 user=self.user,
                 program=program,
-                enrollments=self.enrollments,
-                current_grades=self.current_grades,
-                certificates=self.certificates
+                edx_user_data=self.cached_edx_user_data
             )
 
     def test_course_tier_mandatory(self):
@@ -294,9 +278,7 @@ class MMTrackTest(TestCase):
             MMTrack(
                 user=self.user,
                 program=program,
-                enrollments=self.enrollments,
-                current_grades=self.current_grades,
-                certificates=self.certificates
+                edx_user_data=self.cached_edx_user_data
             )
 
     def test_is_course_in_program(self):
@@ -307,9 +289,7 @@ class MMTrackTest(TestCase):
         mmtrack = MMTrack(
             user=self.user,
             program=self.program,
-            enrollments=self.enrollments,
-            current_grades=self.current_grades,
-            certificates=self.certificates
+            edx_user_data=self.cached_edx_user_data
         )
         for course_id in ["course-v1:edX+DemoX+Demo_Course", "course-v1:MITx+8.MechCX+2014_T1"]:
             assert mmtrack._is_course_in_program(course_id) is True
@@ -322,9 +302,7 @@ class MMTrackTest(TestCase):
         mmtrack = MMTrack(
             user=self.user,
             program=self.program,
-            enrollments=self.enrollments,
-            current_grades=self.current_grades,
-            certificates=self.certificates
+            edx_user_data=self.cached_edx_user_data
         )
         for course_id in ["course-v1:edX+DemoX+Demo_Course", "course-v1:MITx+8.MechCX+2014_T1"]:
             assert mmtrack.is_enrolled(course_id) is True
@@ -335,9 +313,7 @@ class MMTrackTest(TestCase):
         mmtrack_fa = MMTrack(
             user=self.user,
             program=self.program_financial_aid,
-            enrollments=self.enrollments,
-            current_grades=self.current_grades,
-            certificates=self.certificates
+            edx_user_data=self.cached_edx_user_data
         )
         assert mmtrack_fa.is_enrolled("course-v1:odl+FOO101+CR-FALL15") is True
         with patch('edx_api.enrollments.models.Enrollments.is_enrolled_in', return_value=False):
@@ -350,9 +326,7 @@ class MMTrackTest(TestCase):
         mmtrack = MMTrack(
             user=self.user,
             program=self.program,
-            enrollments=self.enrollments,
-            current_grades=self.current_grades,
-            certificates=self.certificates
+            edx_user_data=self.cached_edx_user_data
         )
         # this is a verified enrollment from edx
         assert mmtrack.is_enrolled_mmtrack("course-v1:edX+DemoX+Demo_Course") is True
@@ -369,9 +343,7 @@ class MMTrackTest(TestCase):
         mmtrack = MMTrack(
             user=self.user,
             program=self.program_financial_aid,
-            enrollments=self.enrollments,
-            current_grades=self.current_grades,
-            certificates=self.certificates
+            edx_user_data=self.cached_edx_user_data
         )
         assert mmtrack.is_enrolled_mmtrack(course_id) is False
 
@@ -380,9 +352,7 @@ class MMTrackTest(TestCase):
         mmtrack = MMTrack(
             user=self.user,
             program=self.program_financial_aid,
-            enrollments=self.enrollments,
-            current_grades=self.current_grades,
-            certificates=self.certificates
+            edx_user_data=self.cached_edx_user_data
         )
         assert mmtrack.is_enrolled_mmtrack(course_id) is True
 
@@ -393,9 +363,7 @@ class MMTrackTest(TestCase):
         mmtrack = MMTrack(
             user=self.user,
             program=self.program,
-            enrollments=self.enrollments,
-            current_grades=self.current_grades,
-            certificates=self.certificates
+            edx_user_data=self.cached_edx_user_data
         )
         # this is a verified enrollment and a verified certificate from edx
         assert mmtrack.has_passed_course("course-v1:edX+DemoX+Demo_Course") is True
@@ -411,9 +379,7 @@ class MMTrackTest(TestCase):
         mmtrack = MMTrack(
             user=self.user,
             program=self.program_financial_aid,
-            enrollments=self.enrollments,
-            current_grades=self.current_grades,
-            certificates=self.certificates
+            edx_user_data=self.cached_edx_user_data
         )
         assert mmtrack.has_passed_course(course_id) is True
 
@@ -439,9 +405,7 @@ class MMTrackTest(TestCase):
         mmtrack = MMTrack(
             user=self.user,
             program=self.program,
-            enrollments=self.enrollments,
-            current_grades=self.current_grades,
-            certificates=self.certificates
+            edx_user_data=self.cached_edx_user_data
         )
         # this is a verified enrollment and a verified certificate from edx
         assert mmtrack.get_final_grade("course-v1:edX+DemoX+Demo_Course") == 98.0
@@ -457,9 +421,7 @@ class MMTrackTest(TestCase):
         mmtrack = MMTrack(
             user=self.user,
             program=self.program_financial_aid,
-            enrollments=self.enrollments,
-            current_grades=self.current_grades,
-            certificates=self.certificates
+            edx_user_data=self.cached_edx_user_data
         )
         assert mmtrack.get_final_grade(course_id) == 69.0
         assert mmtrack.get_final_grade("course-v1:edX+DemoX+Demo_Course") is None
@@ -471,9 +433,7 @@ class MMTrackTest(TestCase):
         mmtrack = MMTrack(
             user=self.user,
             program=self.program,
-            enrollments=self.enrollments,
-            current_grades=self.current_grades,
-            certificates=self.certificates
+            edx_user_data=self.cached_edx_user_data
         )
         assert mmtrack.get_all_final_grades() == {'course-v1:edX+DemoX+Demo_Course': 98.0}
 
@@ -484,9 +444,7 @@ class MMTrackTest(TestCase):
         mmtrack = MMTrack(
             user=self.user,
             program=self.program,
-            enrollments=self.enrollments,
-            current_grades=self.current_grades,
-            certificates=self.certificates
+            edx_user_data=self.cached_edx_user_data
         )
         assert mmtrack.get_current_grade("course-v1:edX+DemoX+Demo_Course") == 77.0
         assert mmtrack.get_current_grade("course-v1:MITx+8.MechCX+2014_T1") == 3.0
