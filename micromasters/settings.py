@@ -145,6 +145,7 @@ INSTALLED_APPS = (
     'search',
     'ui',
     'seed_data',
+    'exams',
 )
 
 MIDDLEWARE_CLASSES = (
