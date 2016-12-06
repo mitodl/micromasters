@@ -46,6 +46,10 @@ export default class PersonalForm extends ProfileFormFields {
     return (
       <section>
         <h2 className="sr-only">Personal Information</h2>
+        <p className="alert-info" role="alert">
+          Please fill out this form using your legal name
+          and truthful information.
+        </p>
         <Grid className="profile-form-grid">
           <Cell col={6}>
             {this.boundTextField(["first_name"], "Given name")}
