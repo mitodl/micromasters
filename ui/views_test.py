@@ -63,12 +63,12 @@ class TestHomePage(ViewsTests):
         response = self.client.get('/')
         self.assertContains(
             response,
-            program_live_true.title,
+            program_live_true.description,
             status_code=200
         )
         self.assertNotContains(
             response,
-            program_live_false.title,
+            program_live_false.description,
             status_code=200
         )
 
