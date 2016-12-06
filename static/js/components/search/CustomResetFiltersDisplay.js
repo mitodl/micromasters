@@ -1,11 +1,11 @@
 // @flow
 import React from 'react';
 import {
-  ResetFiltersDisplay,
+  SearchkitComponent,
   FastClick
 } from 'searchkit';
 
-export default class CustomResetFiltersDisplay extends ResetFiltersDisplay {
+export default class CustomResetFiltersDisplay extends SearchkitComponent {
   props: {
     bemBlock:      any,
     hasFilters:    boolean,
@@ -21,7 +21,14 @@ export default class CustomResetFiltersDisplay extends ResetFiltersDisplay {
       clearAllLabel
     } = this.props;
 
-    if (hasFilters) {
+    let hasFiltersOtherThanSelectedProgram = (
+      this.getQuery() &&
+      this.getQuery().index &&
+      this.getQuery().index.filters &&
+      this.getQuery().index.filters.length > 1
+    );
+
+    if (hasFilters && hasFiltersOtherThanSelectedProgram) {
       return (
         <div>
           <FastClick handler={resetFilters}>
