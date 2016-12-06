@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+Version 0.27.0
+--------------
+
+- Changed profile validation to not require a photo
+- Disabled photo button during upload (#1996)
+- Add warning about legal name requirement (#1999)
+
 Version 0.26.0
 --------------
 
