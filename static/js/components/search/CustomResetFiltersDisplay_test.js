@@ -1,6 +1,5 @@
 // @flow
 import React from 'react';
-import _ from 'lodash';
 import { mount } from 'enzyme';
 import sinon from 'sinon';
 import { assert } from 'chai';
@@ -11,16 +10,6 @@ import CustomResetFiltersDisplay from './CustomResetFiltersDisplay';
 describe('CustomResetFiltersDisplay', () => {
   let sandbox;
   let searchKit;
-  let props = {
-    clearAllLabel: "Clear all filters",
-    hasFilters: true,
-    resetFilters: () => {},
-    bemBlock: (): Object => {
-      return {
-        state: (): void => {}
-      };
-    }
-  };
 
   beforeEach(() => {
     searchKit = new SearchkitManager();
@@ -31,6 +20,20 @@ describe('CustomResetFiltersDisplay', () => {
     sandbox.restore();
   });
 
+  let renderFilters = (props = {}) => (
+    mount(
+      <SearchkitProvider searchkit={searchKit}>
+        <CustomResetFiltersDisplay
+          clearAllLabel="Clear all filters"
+          hasFilters={true}
+          resetFilters={() => {}}
+          bemBlock={() => ({ state: () => {} })}
+          {...props}
+        />
+      </SearchkitProvider>
+    )
+  );
+
   it('renders reset filters link', () => {
     sandbox.stub(CustomResetFiltersDisplay.prototype, 'getQuery').returns({
       'index': {
@@ -40,12 +43,7 @@ describe('CustomResetFiltersDisplay', () => {
         ]
       }
     });
-    const wrapper = mount(
-      <SearchkitProvider searchkit={searchKit}>
-        <CustomResetFiltersDisplay {...props}/>
-      </SearchkitProvider>
-    );
-
+    const wrapper = renderFilters();
     assert.equal(wrapper.children().children().text(), 'Clear all filters');
   });
 
@@ -58,13 +56,9 @@ describe('CustomResetFiltersDisplay', () => {
         ]
       }
     });
-    let noFilterProps = _.clone(props);
-    noFilterProps.hasFilters = false;
-    const wrapper = mount(
-      <SearchkitProvider searchkit={searchKit}>
-        <CustomResetFiltersDisplay {...noFilterProps}/>
-      </SearchkitProvider>
-    );
+    const wrapper = renderFilters({
+      hasFilters: false
+    });
 
     assert.lengthOf(wrapper.children(), 0);
   });
@@ -77,11 +71,7 @@ describe('CustomResetFiltersDisplay', () => {
         ]
       }
     });
-    const wrapper = mount(
-      <SearchkitProvider searchkit={searchKit}>
-        <CustomResetFiltersDisplay {...props}/>
-      </SearchkitProvider>
-    );
+    const wrapper = renderFilters();
     assert.lengthOf(wrapper.children(), 0);
   });
 });
