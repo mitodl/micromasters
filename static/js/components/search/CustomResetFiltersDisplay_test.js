@@ -1,14 +1,16 @@
 // @flow
 import React from 'react';
 import _ from 'lodash';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import sinon from 'sinon';
 import { assert } from 'chai';
+import { SearchkitManager, SearchkitProvider } from 'searchkit';
 
 import CustomResetFiltersDisplay from './CustomResetFiltersDisplay';
 
 describe('CustomResetFiltersDisplay', () => {
   let sandbox;
+  let searchKit;
   let props = {
     clearAllLabel: "Clear all filters",
     hasFilters: true,
@@ -21,6 +23,7 @@ describe('CustomResetFiltersDisplay', () => {
   };
 
   beforeEach(() => {
+    searchKit = new SearchkitManager();
     sandbox = sinon.sandbox.create();
   });
 
@@ -37,7 +40,11 @@ describe('CustomResetFiltersDisplay', () => {
         ]
       }
     });
-    const wrapper = shallow(<CustomResetFiltersDisplay {...props}/>);
+    const wrapper = mount(
+      <SearchkitProvider searchkit={searchKit}>
+        <CustomResetFiltersDisplay {...props}/>
+      </SearchkitProvider>
+    );
 
     assert.equal(wrapper.children().children().text(), 'Clear all filters');
   });
@@ -53,7 +60,11 @@ describe('CustomResetFiltersDisplay', () => {
     });
     let noFilterProps = _.clone(props);
     noFilterProps.hasFilters = false;
-    const wrapper = shallow(<CustomResetFiltersDisplay {...noFilterProps}/>);
+    const wrapper = mount(
+      <SearchkitProvider searchkit={searchKit}>
+        <CustomResetFiltersDisplay {...noFilterProps}/>
+      </SearchkitProvider>
+    );
 
     assert.lengthOf(wrapper.children(), 0);
   });
@@ -66,7 +77,11 @@ describe('CustomResetFiltersDisplay', () => {
         ]
       }
     });
-    const wrapper = shallow(<CustomResetFiltersDisplay {...props}/>);
+    const wrapper = mount(
+      <SearchkitProvider searchkit={searchKit}>
+        <CustomResetFiltersDisplay {...props}/>
+      </SearchkitProvider>
+    );
     assert.lengthOf(wrapper.children(), 0);
   });
 });
