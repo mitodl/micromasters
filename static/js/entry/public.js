@@ -180,5 +180,5 @@ $(document).ready(function ($) {
     find('.material-icons').removeClass('rotate-reset').addClass('rotate');
   });
   // All external links should open in new tab
-  $('a[href^="https://"]').attr('target', '_blank');
+  $('a[href^="https://"], a[href^="http://"] ').attr('target', '_blank');
 });
