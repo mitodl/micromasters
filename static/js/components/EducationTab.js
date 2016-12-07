@@ -12,6 +12,7 @@ import { EDUCATION_STEP } from '../constants';
 class EducationTab extends React.Component {
   props: {
     profile:      Profile,
+    profilePatchStatus: ?string,
     ui:           UIState,
     saveProfile:  SaveProfileFunc,
     addProgramEnrollment: Function,

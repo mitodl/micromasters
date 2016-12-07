@@ -47,6 +47,7 @@ export default class PersonalTab extends React.Component {
     nextStep:                 () => void,
     prevStep:                 () => void,
     profile:                  Profile,
+    profilePatchStatus:       ?string,
     uneditedProfile:          Profile,
     programs:                 AvailablePrograms,
     saveProfile:              SaveProfileFunc,

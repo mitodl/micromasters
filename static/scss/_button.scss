@@ -197,3 +197,13 @@
 a.btn {
   text-decoration: none;
 }
+
+.disabled-with-spinner {
+  display: flex;
+  align-items: center;
+  cursor: default;
+
+  .mdl-spinner__layer {
+    border-color: white !important;
+  }
+}

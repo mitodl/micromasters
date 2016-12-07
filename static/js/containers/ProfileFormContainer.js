@@ -185,7 +185,7 @@ class ProfileFormContainer extends React.Component {
       dispatch,
       currentProgramEnrollment
     } = this.props;
-    let errors, isEdit, profile, uneditedProfile;
+    let errors, isEdit, profile, uneditedProfile, patchStatus;
 
     if ( profileFromStore === undefined ) {
       profile = {};
@@ -193,6 +193,7 @@ class ProfileFormContainer extends React.Component {
       errors = {};
       isEdit = false;
     } else {
+      patchStatus = profileFromStore.patchStatus;
       if (profileFromStore.edit !== undefined) {
         errors = profileFromStore.edit.errors;
         profile = profileFromStore.edit.profile;
@@ -212,6 +213,7 @@ class ProfileFormContainer extends React.Component {
       errors: errors,
       fetchProfile: this.fetchProfile,
       profile: profile,
+      profilePatchStatus: patchStatus,
       uneditedProfile: uneditedProfile,
       programs: programs.availablePrograms,
       saveProfile: this.saveProfile.bind(this, isEdit),

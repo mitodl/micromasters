@@ -11,8 +11,10 @@ import {
   RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
 } from '../actions/programs';
 import {
+  requestGetUserProfile,
   REQUEST_GET_USER_PROFILE,
   RECEIVE_GET_USER_PROFILE_SUCCESS,
+  requestPatchUserProfile,
   REQUEST_PATCH_USER_PROFILE,
   RECEIVE_PATCH_USER_PROFILE_SUCCESS,
   START_PROFILE_EDIT,
@@ -199,16 +201,22 @@ describe("ProfilePage", function() {
   }
 
   it('shows a spinner when profile get is processing', () => {
-    return renderComponent('/profile/personal', SUCCESS_ACTIONS).then(([, div]) => {
-      assert.notOk(div.querySelector(".loader"), "Found spinner but no fetch in progress");
-      helper.store.dispatch({
-        type: REQUEST_GET_USER_PROFILE,
-        payload: {
-          username: SETTINGS.user.username
-        }
-      });
+    return renderComponent('/profile/personal', SUCCESS_ACTIONS).then(([wrapper]) => {
+      assert.equal(wrapper.find(".loader").length, 0);
+      helper.store.dispatch(requestGetUserProfile(SETTINGS.user.username));
 
-      assert(div.querySelector(".loader"), "Unable to find spinner");
+      assert.equal(wrapper.find(".loader").length, 1);
+    });
+  });
+
+  it('disables the button and shows a spinner when profile patch is processing', () => {
+    return renderComponent('/profile/personal', SUCCESS_ACTIONS).then(([wrapper]) => {
+      helper.store.dispatch(requestPatchUserProfile(SETTINGS.user.username));
+
+      let next = wrapper.find(".next");
+      assert(next.props().className.includes("disabled-with-spinner"));
+      next.simulate("click");
+      assert.isFalse(patchUserProfileStub.called);
     });
   });
 

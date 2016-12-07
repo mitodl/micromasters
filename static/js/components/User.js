@@ -17,6 +17,7 @@ import type { UIState } from '../reducers/ui';
 export default class User extends React.Component {
   props: {
     profile:                      Profile,
+    profilePatchStatus:           ?string,
     setUserPageDialogVisibility:  () => void,
     ui:                           UIState,
     clearProfileEdit:             () => void,

@@ -8,7 +8,7 @@ import type { Dispatcher } from '../flow/reduxTypes';
 
 // actions for user profile
 export const REQUEST_GET_USER_PROFILE = 'REQUEST_GET_USER_PROFILE';
-const requestGetUserProfile = createAction(REQUEST_GET_USER_PROFILE, username => ({ username }));
+export const requestGetUserProfile = createAction(REQUEST_GET_USER_PROFILE, username => ({ username }));
 
 export const RECEIVE_GET_USER_PROFILE_SUCCESS = 'RECEIVE_GET_USER_PROFILE_SUCCESS';
 export const receiveGetUserProfileSuccess = createAction(RECEIVE_GET_USER_PROFILE_SUCCESS, 
@@ -35,7 +35,7 @@ export const CLEAR_PROFILE_EDIT = 'CLEAR_PROFILE_EDIT';
 export const clearProfileEdit = createAction(CLEAR_PROFILE_EDIT, username => ({ username }));
 
 export const REQUEST_PATCH_USER_PROFILE = 'REQUEST_PATCH_USER_PROFILE';
-const requestPatchUserProfile = createAction(REQUEST_PATCH_USER_PROFILE, username => ({ username }));
+export const requestPatchUserProfile = createAction(REQUEST_PATCH_USER_PROFILE, username => ({ username }));
 
 export const RECEIVE_PATCH_USER_PROFILE_SUCCESS = 'RECEIVE_PATCH_USER_PROFILE_SUCCESS';
 const receivePatchUserProfileSuccess = createAction(RECEIVE_PATCH_USER_PROFILE_SUCCESS,

@@ -69,7 +69,8 @@ type ValidationVisibility = Array<string[]>;
 export type ProfileGetResult = {
   profile: Profile,
   errorInfo?: APIErrorInfo,
-  getStatus: string,
+  getStatus?: string,
+  patchStatus?: string,
   edit?: {
     errors: ValidationErrors,
     profile: Profile,
