@@ -179,4 +179,6 @@ $(document).ready(function ($) {
     $(".accordion-content").not($(this).next()).slideUp('fast').prev().
     find('.material-icons').removeClass('rotate-reset').addClass('rotate');
   });
+  // All external links should open in new tab
+  $('a[href^="https://"]').attr('target', '_blank');
 });
