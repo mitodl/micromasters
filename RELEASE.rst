@@ -1,5 +1,10 @@
 Release Notes
 =============
+Version 0.28.1
+--------------
+
+- Revert &quot;Changed profile validation to not require a photo&quot;
+
 
 Version 0.28.0
 --------------
