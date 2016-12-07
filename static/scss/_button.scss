@@ -207,3 +207,13 @@ a.btn {
     border-color: white !important;
   }
 }
+
+.dialog {
+  .disabled-with-spinner {
+    display: inline-block !important;
+
+    .mdl-spinner__layer {
+      border-color: blue !important;
+    }
+  }
+}

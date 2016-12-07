@@ -9,6 +9,7 @@ import R from 'ramda';
 import Dialog from 'material-ui/Dialog';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 
+import { FETCH_PROCESSING } from '../actions';
 import { educationValidation } from '../lib/validation/profile';
 import {
   userPrivilegeCheck,
@@ -161,7 +162,7 @@ class EducationForm extends ProfileFormFields {
       userPrivilegeCheck(profile, () =>
         <Cell col={12} className="profile-form-row add" key="add-row">
           <button
-            className="mm-minor-action"
+            className="mm-minor-action add-education-button"
             onClick={() => this.openNewEducationForm(levelValue, null)}
           >
             Add degree
@@ -371,9 +372,11 @@ class EducationForm extends ProfileFormFields {
       ui: {
         showEducationDeleteDialog,
         educationDialogVisibility,
-      }
+      },
+      profilePatchStatus,
     } = this.props;
 
+    const disabled = profilePatchStatus === FETCH_PROCESSING;
     const actions = [
       <Button
         type='cancel'
@@ -385,8 +388,8 @@ class EducationForm extends ProfileFormFields {
       <Button
         type='button'
         key='save'
-        className="primary-button save-button"
-        onClick={this.saveEducationForm}>
+        className={`primary-button save-button ${disabled ? 'disabled-with-spinner' : ''}`}
+        onClick={disabled ? undefined : this.saveEducationForm}>
         Save
       </Button>
     ];

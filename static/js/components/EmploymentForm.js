@@ -5,9 +5,11 @@ import Grid, { Cell } from 'react-mdl/lib/Grid';
 import Dialog from 'material-ui/Dialog';
 import Card from 'react-mdl/lib/Card/Card';
 import IconButton from 'react-mdl/lib/IconButton';
+import Spinner from 'react-mdl/lib/Spinner';
 import _ from 'lodash';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 
+import { FETCH_PROCESSING } from '../actions';
 import {
   userPrivilegeCheck,
   isProfileOfLoggedinUser
@@ -175,7 +177,7 @@ class EmploymentForm extends ProfileFormFields {
         workHistoryRows.push(
         <Cell col={12} className="profile-form-row add" key="I'm unique!">
           <button
-            className="mm-minor-action"
+            className="mm-minor-action add-employment-button"
             onClick={this.openNewWorkHistoryForm}
           >
             Add employment
@@ -316,7 +318,14 @@ class EmploymentForm extends ProfileFormFields {
         workDialogVisibility,
         showWorkDeleteDialog,
       },
+      profilePatchStatus,
     } = this.props;
+
+    const disabled = profilePatchStatus === FETCH_PROCESSING;
+    let saveLabel = 'Save';
+    if (disabled) {
+      saveLabel = <Spinner singleColor />;
+    }
     const actions = [
       <Button
         type='button'
@@ -327,10 +336,10 @@ class EmploymentForm extends ProfileFormFields {
       </Button>,
       <Button
         type='button'
-        className="primary-button save-button"
+        className={`primary-button save-button ${disabled ? 'disabled-with-spinner' : ''}`}
         key='save'
-        onClick={this.saveWorkHistoryEntry}>
-        Save
+        onClick={disabled ? undefined : this.saveWorkHistoryEntry}>
+        {saveLabel}
       </Button>
     ];
 
