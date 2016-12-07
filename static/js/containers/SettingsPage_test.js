@@ -5,6 +5,7 @@ import { assert } from 'chai';
 import _ from 'lodash';
 
 import {
+  requestPatchUserProfile,
   REQUEST_GET_USER_PROFILE,
   RECEIVE_GET_USER_PROFILE_SUCCESS,
 } from '../actions/profile';
@@ -110,6 +111,17 @@ describe("SettingsPage", function() {
           filled_out: true
         });
         return confirmSaveButtonBehavior(updatedProfile, {button: button});
+      });
+    });
+
+    it('disables the button and shows a spinner when profile patch is processing', () => {
+      return renderComponent('/settings', userActions).then(([wrapper]) => {
+        helper.store.dispatch(requestPatchUserProfile(SETTINGS.user.username));
+
+        let next = wrapper.find(".next");
+        assert(next.props().className.includes("disabled-with-spinner"));
+        next.simulate("click");
+        assert.isFalse(patchUserProfileStub.called);
       });
     });
   });
