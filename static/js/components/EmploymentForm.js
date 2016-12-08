@@ -48,6 +48,7 @@ class EmploymentForm extends ProfileFormFields {
 
   props: {
     profile:                          Profile,
+    profilePatchStatus:               ?string,
     ui:                               UIState,
     updateProfile:                    UpdateProfileFunc,
     saveProfile:                      SaveProfileFunc,
