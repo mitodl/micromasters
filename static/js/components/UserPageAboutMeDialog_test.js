@@ -2,7 +2,6 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { assert } from 'chai';
 import sinon from 'sinon';
-import _ from 'lodash';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import TestUtils from 'react-addons-test-utils';
@@ -13,7 +12,7 @@ import { USER_PROFILE_RESPONSE } from '../constants';
 
 describe('UserPageAboutMeDialog', () => {
   let sandbox;
-  let defaultRowProps, setUserPageDialogVisibility, clearProfileEdit, saveProfile;
+  let setUserPageDialogVisibility, clearProfileEdit, saveProfile;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
