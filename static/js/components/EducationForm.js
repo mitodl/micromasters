@@ -4,6 +4,7 @@ import IconButton from 'react-mdl/lib/IconButton';
 import Button from 'react-mdl/lib/Button';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import { Card } from 'react-mdl/lib/Card';
+import Spinner from 'react-mdl/lib/Spinner';
 import _ from 'lodash';
 import R from 'ramda';
 import Dialog from 'material-ui/Dialog';
@@ -377,7 +378,7 @@ class EducationForm extends ProfileFormFields {
       profilePatchStatus,
     } = this.props;
 
-    const disabled = profilePatchStatus === FETCH_PROCESSING;
+    const inFlight = profilePatchStatus === FETCH_PROCESSING;
     const actions = [
       <Button
         type='cancel'
@@ -389,9 +390,9 @@ class EducationForm extends ProfileFormFields {
       <Button
         type='button'
         key='save'
-        className={`primary-button save-button ${disabled ? 'disabled-with-spinner' : ''}`}
-        onClick={disabled ? undefined : this.saveEducationForm}>
-        Save
+        className={`primary-button save-button ${inFlight ? 'disabled-with-spinner' : ''}`}
+        onClick={inFlight ? undefined : this.saveEducationForm}>
+        {inFlight ? <Spinner singleColor /> : 'Save'}
       </Button>
     ];
 

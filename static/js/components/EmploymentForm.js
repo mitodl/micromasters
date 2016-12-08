@@ -322,11 +322,7 @@ class EmploymentForm extends ProfileFormFields {
       profilePatchStatus,
     } = this.props;
 
-    const disabled = profilePatchStatus === FETCH_PROCESSING;
-    let saveLabel = 'Save';
-    if (disabled) {
-      saveLabel = <Spinner singleColor />;
-    }
+    const inFlight = profilePatchStatus === FETCH_PROCESSING;
     const actions = [
       <Button
         type='button'
@@ -337,10 +333,10 @@ class EmploymentForm extends ProfileFormFields {
       </Button>,
       <Button
         type='button'
-        className={`primary-button save-button ${disabled ? 'disabled-with-spinner' : ''}`}
+        className={`primary-button save-button ${inFlight ? 'disabled-with-spinner' : ''}`}
         key='save'
-        onClick={disabled ? undefined : this.saveWorkHistoryEntry}>
-        {saveLabel}
+        onClick={inFlight ? undefined : this.saveWorkHistoryEntry}>
+        {inFlight ? <Spinner singleColor /> : 'Save'}
       </Button>
     ];
 
