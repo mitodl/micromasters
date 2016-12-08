@@ -213,7 +213,7 @@ a.btn {
     display: inline-block !important;
 
     .mdl-spinner__layer {
-      border-color: blue !important;
+      border-color: $button-color !important;
     }
   }
 }
