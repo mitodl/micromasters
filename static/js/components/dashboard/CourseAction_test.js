@@ -31,21 +31,12 @@ import {
 
 describe('CourseAction', () => {
   const now = moment();
-  let sandbox, addCourseEnrollmentStub, checkoutStub, coursePrice, defaultParams, defaultParamsNow;
+  let sandbox, addCourseEnrollmentStub, checkoutStub;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     checkoutStub = sandbox.stub();
     addCourseEnrollmentStub = sandbox.stub();
-    coursePrice = COURSE_PRICES_RESPONSE[1];
-    defaultParams = {
-      checkout: checkoutStub,
-      coursePrice: coursePrice,
-      hasFinancialAid: false,
-      financialAid: {},
-      addCourseEnrollment: addCourseEnrollmentStub,
-    };
-    defaultParamsNow = Object.assign({}, defaultParams, { now: now });
   });
 
   afterEach(() => {
@@ -76,13 +67,29 @@ describe('CourseAction', () => {
     assert.deepEqual(checkoutStub.args[0], [courseId]);
   };
 
+  let renderCourseAction = (props = {}) => {
+    return shallow(
+      <CourseAction
+        checkout={checkoutStub}
+        coursePrice={COURSE_PRICES_RESPONSE[1]}
+        hasFinancialAid={false}
+        financialAid={{}}
+        addCourseEnrollment={addCourseEnrollmentStub}
+        now={now}
+        {...props}
+      />
+    )
+  };
+
   it('shows passed for a passed course', () => {
     let course = findCourse(course => (
       course.runs.length > 0 &&
       course.runs[0].status === STATUS_PASSED
     ));
     let firstRun = course.runs[0];
-    const wrapper = shallow(<CourseAction courseRun={firstRun} {...defaultParamsNow} />);
+    const wrapper = renderCourseAction({
+      courseRun: firstRun
+    });
     assert.equal(wrapper.find(".passed").text(), 'Passed');
   });
 
@@ -92,7 +99,9 @@ describe('CourseAction', () => {
       course.runs[0].status === STATUS_NOT_PASSED
     ));
     let firstRun = course.runs[0];
-    const wrapper = shallow(<CourseAction courseRun={firstRun} {...defaultParamsNow} />);
+    const wrapper = renderCourseAction({
+      courseRun: firstRun
+    });
     let elements = getElements(wrapper);
 
     assert.equal(elements.descriptionText, 'Failed');
@@ -104,7 +113,9 @@ describe('CourseAction', () => {
       course.runs[0].status === STATUS_CURRENTLY_ENROLLED
     ));
     let firstRun = course.runs[0];
-    const wrapper = shallow(<CourseAction courseRun={firstRun} {...defaultParamsNow} />);
+    const wrapper = renderCourseAction({
+      courseRun: firstRun
+    });
     let elements = getElements(wrapper);
 
     assert.equal(elements.descriptionText, 'In Progress');
@@ -116,7 +127,9 @@ describe('CourseAction', () => {
       course.runs[0].status === STATUS_OFFERED
     ));
     let firstRun = course.runs[0];
-    const wrapper = shallow(<CourseAction courseRun={firstRun} {...defaultParamsNow} />);
+    const wrapper = renderCourseAction({
+      courseRun: firstRun
+    });
     let elements = getElements(wrapper);
 
     assert.isUndefined(elements.button.props().disabled);
@@ -136,7 +149,9 @@ describe('CourseAction', () => {
       course.runs[0].status === STATUS_OFFERED
     ));
     let firstRun = alterFirstRun(course, {enrollment_start_date: '1999-13-92'});
-    const wrapper = shallow(<CourseAction courseRun={firstRun} {...defaultParamsNow} />);
+    const wrapper = renderCourseAction({
+      courseRun: firstRun
+    });
     let elements = getElements(wrapper);
     assert.isUndefined(elements.descriptionText);
   });
@@ -152,7 +167,9 @@ describe('CourseAction', () => {
 
     [nowString, pastString].forEach(dateString => {
       let firstRun = alterFirstRun(course, {enrollment_start_date: dateString});
-      const wrapper = shallow(<CourseAction courseRun={firstRun} {...defaultParamsNow} />);
+    const wrapper = renderCourseAction({
+      courseRun: firstRun
+    });
       let elements = getElements(wrapper);
 
       assert.isUndefined(elements.button.props().disabled);
@@ -168,7 +185,9 @@ describe('CourseAction', () => {
       course.runs[0].status === STATUS_CAN_UPGRADE
     ));
     let firstRun = course.runs[0];
-    const wrapper = shallow(<CourseAction courseRun={firstRun} {...defaultParamsNow} />);
+    const wrapper = renderCourseAction({
+      courseRun: firstRun
+    });
     let elements = getElements(wrapper);
     let formattedUpgradeDate = moment(firstRun.course_upgrade_deadline).format(DASHBOARD_FORMAT);
 
@@ -184,7 +203,9 @@ describe('CourseAction', () => {
       course.runs[0].status === STATUS_CAN_UPGRADE
     ));
     let firstRun = alterFirstRun(course, { course_upgrade_deadline: '1999-13-92' });
-    const wrapper = shallow(<CourseAction courseRun={firstRun} {...defaultParamsNow} />);
+    const wrapper = renderCourseAction({
+      courseRun: firstRun
+    });
     let elements = getElements(wrapper);
     assert.isUndefined(elements.descriptionText, 'Should not be any text');
   });
@@ -196,7 +217,9 @@ describe('CourseAction', () => {
     ));
     let enrollmentStartDate = moment(now).add(10, 'days').toISOString();
     let firstRun = alterFirstRun(course, {enrollment_start_date: enrollmentStartDate});
-    const wrapper = shallow(<CourseAction courseRun={firstRun} {...defaultParamsNow} />);
+    const wrapper = renderCourseAction({
+      courseRun: firstRun
+    });
     let elements = getElements(wrapper);
 
     assert.equal(elements.button.length, 0);
@@ -213,7 +236,9 @@ describe('CourseAction', () => {
       fuzzy_enrollment_start_date: 'whenever',
       enrollment_start_date: null
     });
-    const wrapper = shallow(<CourseAction courseRun={firstRun} {...defaultParamsNow} />);
+    const wrapper = renderCourseAction({
+      courseRun: firstRun
+    });
     let elements = getElements(wrapper);
 
     assert.equal(elements.button.length, 0);
@@ -229,7 +254,9 @@ describe('CourseAction', () => {
       fuzzy_enrollment_start_date: null,
       enrollment_start_date: null
     });
-    const wrapper = shallow(<CourseAction courseRun={firstRun} {...defaultParamsNow} />);
+    const wrapper = renderCourseAction({
+      courseRun: firstRun
+    });
     let elements = getElements(wrapper);
 
     assert.equal(elements.button.length, 0);
@@ -243,7 +270,9 @@ describe('CourseAction', () => {
     ));
     let startDate = moment(now).add(10, 'days');
     let firstRun = alterFirstRun(course, {course_start_date: startDate.toISOString()});
-    const wrapper = shallow(<CourseAction courseRun={firstRun} {...defaultParamsNow} />);
+    const wrapper = renderCourseAction({
+      courseRun: firstRun
+    });
     let elements = getElements(wrapper);
 
     assert.include(elements.descriptionText, 'Course starts in 10 days');
@@ -261,14 +290,18 @@ describe('CourseAction', () => {
     // Set the course to start in 10 days + 10 minutes
     startDate.add(10, 'minutes');
     let firstRun = alterFirstRun(course, {course_start_date: startDate.toISOString()});
-    let wrapper = shallow(<CourseAction courseRun={firstRun} {...defaultParamsNow} />);
+    let wrapper = renderCourseAction({
+      courseRun: firstRun
+    });
     let elements = getElements(wrapper);
     assert.include(elements.descriptionText, 'Course starts in 10 days');
 
     // Set the course to start in 10 days - 10 minutes
     startDate.add(-20, 'minutes');
     firstRun = alterFirstRun(course, {course_start_date: startDate.toISOString()});
-    wrapper = shallow(<CourseAction courseRun={firstRun} {...defaultParamsNow} />);
+    wrapper = renderCourseAction({
+      courseRun: firstRun
+    });
     elements = getElements(wrapper);
     assert.include(elements.descriptionText, 'Course starts in 10 days');
   });
@@ -279,7 +312,9 @@ describe('CourseAction', () => {
       course.runs[0].status === STATUS_MISSED_DEADLINE
     ));
     let firstRun = course.runs[0];
-    const wrapper = shallow(<CourseAction courseRun={firstRun} {...defaultParamsNow} />);
+    const wrapper = renderCourseAction({
+      courseRun: firstRun
+    });
     let elements = getElements(wrapper);
 
     assert.include(elements.descriptionText, 'You missed the payment deadline');
@@ -291,7 +326,9 @@ describe('CourseAction', () => {
       course.runs[0].status === STATUS_PENDING_ENROLLMENT
     ));
     let firstRun = course.runs[0];
-    const wrapper = shallow(<CourseAction courseRun={firstRun} {...defaultParamsNow} />);
+    const wrapper = renderCourseAction({
+      courseRun: firstRun
+    });
 
     assert.equal(wrapper.text(), "<Button />Processing...");
     assert.isTrue(wrapper.find("Button").props()['disabled']);
@@ -304,35 +341,36 @@ describe('CourseAction', () => {
       course.runs[0].status === STATUS_WILL_ATTEND
     ));
     let firstRun = alterFirstRun(course, {course_start_date: "1999-13-92"});
-    const wrapper = shallow(<CourseAction courseRun={firstRun} {...defaultParamsNow} />);
+    const wrapper = renderCourseAction({
+      courseRun: firstRun
+    });
     let elements = getElements(wrapper);
     assert.isUndefined(elements.descriptionText, 'Should not be any text');
   });
 
   describe('with financial aid', () => {
-    let course, aidParams;
+    let course;
 
     beforeEach(() => {
       course = findAndCloneCourse(course => (
         course.runs.length > 0 &&
         course.runs[0].status === STATUS_OFFERED
       ));
-      aidParams = Object.assign({}, {
-        financialAid: _.cloneDeep(FINANCIAL_AID_PARTIAL_RESPONSE),
-        hasFinancialAid: true
-      });
     });
 
     it('indicates that a user must calculate the course price', () => {
       let firstRun = alterFirstRun(course, {
         enrollment_start_date: now.toISOString(),
       });
-      aidParams.financialAid.has_user_applied = false;
 
-      let params = Object.assign({}, defaultParamsNow, aidParams);
-      const wrapper = shallow(
-        <CourseAction courseRun={firstRun} {...params} />
-      );
+      const wrapper = renderCourseAction({
+        courseRun: firstRun,
+        financialAid: {
+          ...FINANCIAL_AID_PARTIAL_RESPONSE,
+          has_user_applied: false
+        },
+        hasFinancialAid: true,
+      });
       let elements = getElements(wrapper);
 
       assert.isUndefined(elements.button.props().disabled);
@@ -344,13 +382,16 @@ describe('CourseAction', () => {
       let firstRun = alterFirstRun(course, {
         enrollment_start_date: now.toISOString(),
       });
-      aidParams.financialAid.has_user_applied = false;
-      aidParams.financialAid.application_status = FA_STATUS_SKIPPED;
 
-      let params = Object.assign({}, defaultParamsNow, aidParams);
-      const wrapper = shallow(
-        <CourseAction courseRun={firstRun} {...params} />
-      );
+      const wrapper = renderCourseAction({
+        courseRun: firstRun,
+        financialAid: {
+          ...FINANCIAL_AID_PARTIAL_RESPONSE,
+          has_user_applied: false,
+          application_status: FA_STATUS_SKIPPED,
+        },
+        hasFinancialAid: true,
+      });
       let elements = getElements(wrapper);
 
       assert.isUndefined(elements.button.props().disabled);
@@ -362,15 +403,17 @@ describe('CourseAction', () => {
       let firstRun = alterFirstRun(course, {
         enrollment_start_date: now.toISOString(),
       });
-      aidParams.financialAid.has_user_applied = true;
 
       FA_PENDING_STATUSES.forEach(pendingStatus => {
-        aidParams.financialAid.application_status = pendingStatus;
-
-        let params = Object.assign({}, defaultParamsNow, aidParams);
-        const wrapper = shallow(
-          <CourseAction courseRun={firstRun} {...params} />
-        );
+        const wrapper = renderCourseAction({
+          courseRun: firstRun,
+          financialAid: {
+            ...FINANCIAL_AID_PARTIAL_RESPONSE,
+            has_user_applied: true,
+            application_status: pendingStatus,
+          },
+          hasFinancialAid: true,
+        });
         let elements = getElements(wrapper);
 
         assert.isTrue(elements.button.props().disabled);

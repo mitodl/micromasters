@@ -21,41 +21,48 @@ import {
 import { generateCourseFromExisting } from '../../util/test_utils';
 
 describe('CourseRow', () => {
-  let sandbox, defaultRowProps;
+  let sandbox;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
-
-    defaultRowProps = {
-      hasFinancialAid: true,
-      financialAid: FINANCIAL_AID_PARTIAL_RESPONSE,
-      coursePrice: COURSE_PRICES_RESPONSE[0],
-      openFinancialAidCalculator: sinon.stub(),
-      now: moment(),
-      checkout: sinon.stub(),
-      addCourseEnrollment: sinon.stub()
-    };
   });
 
   afterEach(() => {
     sandbox.restore();
   });
 
+  const renderRow = (props = {}, isShallow = false) => {
+    let render = isShallow ? shallow : mount;
+    return render(
+      <CourseRow
+        hasFinancialAid={true}
+        financialAid={FINANCIAL_AID_PARTIAL_RESPONSE}
+        coursePrice={COURSE_PRICES_RESPONSE[0]}
+        openFinancialAidCalculator={sandbox.stub()}
+        now={moment()}
+        checkout={sandbox.stub()}
+        addCourseEnrollment={sandbox.stub()}
+        {...props}
+      />
+    )
+  };
+
   it('forwards the appropriate props', () => {
     const course = DASHBOARD_RESPONSE[1].courses[0];
     const courseRun = course.runs[0];
     const courseTitle = course.title;
 
-    const wrapper = shallow(
-      <CourseRow
-        course={course}
-        {...defaultRowProps}
-      />
-    );
-    assert.deepEqual(
-      wrapper.find(CourseAction).props(),
-      Object.assign({}, { courseRun }, defaultRowProps)
-    );
+    const wrapper = renderRow({
+      course: course
+    }, true);
+    let courseRowProps = wrapper.props();
+    let keys = Object.keys(courseRowProps).filter(key => (
+      key !== 'children' && key !== 'className'
+    ));
+    let actionProps = wrapper.find(CourseAction).props();
+    for (const key of keys) {
+      assert.deepEqual(actionProps[key], courseRowProps[key]);
+    }
     assert.deepEqual(wrapper.find(CourseDescription).props(), {
       courseRun,
       courseTitle,
@@ -73,12 +80,9 @@ describe('CourseRow', () => {
       let course = generateCourseFromExisting(courseToClone, pastCourseRunCount);
       course.runs[0].status = STATUS_MISSED_DEADLINE;
 
-      const wrapper = shallow(
-        <CourseRow
-          course={course}
-          {...defaultRowProps}
-        />
-      );
+      const wrapper = renderRow({
+        course: course
+      });
       assert.lengthOf(wrapper.find('.course-container').children(), 2);
     });
 
@@ -89,12 +93,9 @@ describe('CourseRow', () => {
         run.status = STATUS_NOT_PASSED;
       });
 
-      const wrapper = mount(
-        <CourseRow
-          course={course}
-          {...defaultRowProps}
-        />
-      );
+      const wrapper = renderRow({
+        course: course
+      });
       assert.lengthOf(
         wrapper.find('.course-container .course-sub-row'),
         courseRunCount,
@@ -107,12 +108,9 @@ describe('CourseRow', () => {
       let course = generateCourseFromExisting(courseToClone, pastCourseRunCount);
       course.runs[0].status = STATUS_NOT_PASSED;
 
-      const wrapper = mount(
-        <CourseRow
-          course={course}
-          {...defaultRowProps}
-        />
-      );
+      const wrapper = renderRow({
+        course: course
+      });
       assert.lengthOf(wrapper.find('.course-container .course-sub-row'), 1);
     });
 
@@ -124,12 +122,9 @@ describe('CourseRow', () => {
       offeredCourseRun.status = STATUS_OFFERED;
       course.runs.push(offeredCourseRun);
 
-      const wrapper = mount(
-        <CourseRow
-          course={course}
-          {...defaultRowProps}
-        />
-      );
+      const wrapper = renderRow({
+        course: course
+      });
       assert.lengthOf(wrapper.find('.course-container .course-sub-row'), 1);
     });
   });

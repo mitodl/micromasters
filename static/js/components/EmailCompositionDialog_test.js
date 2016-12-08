@@ -13,28 +13,40 @@ import { modifyTextField } from '../util/test_utils';
 import EmailCompositionDialog from './EmailCompositionDialog';
 
 describe('EmailCompositionDialog', () => {
-  let updateStub = sinon.stub();
+  let sandbox, updateStub, getHitsCount, closeEmailDialog, updateEmailEdit, sendEmail;
 
-  let defaultProps = {
-    closeEmailDialog: sinon.stub().returns(updateStub),
-    updateEmailEdit: sinon.stub().returns(updateStub),
-    open: true,
-    email: {
-      ...INITIAL_EMAIL_STATE,
-      email: NEW_EMAIL_EDIT
-    },
-    searchkit: {
-      getHitsCount: sinon.stub().returns(20)
-    },
-    sendEmail: sinon.stub(),
-  };
+  beforeEach(() => {
+    sandbox = sinon.sandbox.create();
+    updateStub = sandbox.stub();
+    getHitsCount = sandbox.stub().returns(20);
+    closeEmailDialog = sandbox.stub().returns(updateStub);
+    updateEmailEdit = sandbox.stub().returns(updateStub);
+    sendEmail = sandbox.stub();
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+  });
 
   const getDialog = () => document.querySelector('.email-composition-dialog');
 
-  const renderDialog = (props = defaultProps) => (
+  const renderDialog = (props = {}) => (
     mount (
       <MuiThemeProvider muiTheme={getMuiTheme()}>
-        <EmailCompositionDialog {...props} />
+        <EmailCompositionDialog
+          closeEmailDialog={closeEmailDialog}
+          updateEmailEdit={updateEmailEdit}
+          open={true}
+          email={{
+            ...INITIAL_EMAIL_STATE,
+            email: NEW_EMAIL_EDIT
+          }}
+          searchkit={{
+            getHitsCount: getHitsCount
+          }}
+          sendEmail={sendEmail}
+          {...props}
+        />
       </MuiThemeProvider>
     )
   );
@@ -49,7 +61,7 @@ describe('EmailCompositionDialog', () => {
     let count = document.querySelector('.user-count').textContent;
     assert.equal(count, '20 recipients selected');
     assert(
-      defaultProps.searchkit.getHitsCount.called,
+      getHitsCount.called,
       "called searchkit getHitsCount method"
     );
   });
@@ -57,7 +69,7 @@ describe('EmailCompositionDialog', () => {
   it('should fire sendSearchResultMail when the "send" button is clicked', () => {
     renderDialog();
     TestUtils.Simulate.click(getDialog().querySelector('.save-button'));
-    assert(defaultProps.sendEmail.called, "called sendSearchResultMail method");
+    assert(sendEmail.called, "called sendSearchResultMail method");
   });
 
   ['subject', 'body'].forEach(field => {
@@ -70,9 +82,15 @@ describe('EmailCompositionDialog', () => {
       });
 
       it('should display the value from the store', () => {
-        let newProps = R.clone(defaultProps);
-        newProps.email.email[field] = "a field value!";
-        renderDialog(newProps);
+        renderDialog({
+          email: {
+            ...INITIAL_EMAIL_STATE,
+            email: {
+              ...NEW_EMAIL_EDIT,
+              [field]: "a field value!"
+            }
+          }
+        });
         assert.equal(getField().value, "a field value!");
       });
 
@@ -84,11 +102,15 @@ describe('EmailCompositionDialog', () => {
       });
 
       it('should show an error if an error for the field is passed in', () => {
-        let props = R.clone(defaultProps);
-        let validationErrors = props.email.validationErrors;
         let errorMessage = `An error message for ${field}`;
-        validationErrors[field] = errorMessage;
-        renderDialog(props);
+        renderDialog({
+          email: {
+            ...INITIAL_EMAIL_STATE,
+            validationErrors: {
+              [field]: errorMessage
+            }
+          }
+        });
         let message = getDialog().querySelector('.validation-error').textContent;
         assert.equal(message, errorMessage);
       });

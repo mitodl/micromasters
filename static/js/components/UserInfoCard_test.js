@@ -15,7 +15,7 @@ import {
 } from '../util/util';
 
 describe('UserInfoCard', () => {
-  let sandbox, defaultRowProps, editProfileBtnStub, editAboutMeBtnStub;
+  let sandbox, editProfileBtnStub, editAboutMeBtnStub;
 
   const renderInfoCard = (props = {}) => (
     shallow(<UserInfoCard
@@ -30,12 +30,6 @@ describe('UserInfoCard', () => {
     sandbox = sinon.sandbox.create();
     editProfileBtnStub = sandbox.stub();
     editAboutMeBtnStub = sandbox.stub();
-
-    defaultRowProps = {
-      profile: USER_PROFILE_RESPONSE,
-      toggleShowPersonalDialog: editProfileBtnStub,
-      toggleShowAboutMeDialog: editAboutMeBtnStub
-    };
   });
 
   afterEach(() => {
@@ -68,18 +62,22 @@ describe('UserInfoCard', () => {
   });
 
   it('edit about me is not available for other users is ', () => {
-    defaultRowProps['profile'] = Object.assign(_.cloneDeep(USER_PROFILE_RESPONSE), {
-      username: "xyz"
+    let wrapper = renderInfoCard({
+      profile: {
+        ...USER_PROFILE_RESPONSE,
+        username: "xyz"
+      }
     });
-    let wrapper = renderInfoCard(defaultRowProps);
     assert.equal(wrapper.find(".edit-about-me-holder").children().length, 0);
   });
 
   it('set about me', () => {
-    defaultRowProps['profile'] = Object.assign(_.cloneDeep(USER_PROFILE_RESPONSE), {
-      about_me: "Hello world"
+    let wrapper = renderInfoCard({
+      profile: {
+        ...USER_PROFILE_RESPONSE,
+        about_me: "Hello world"
+      }
     });
-    let wrapper = renderInfoCard(defaultRowProps);
     assert.equal(wrapper.find("h3").text(), 'About Me');
     assert.equal(
       wrapper.find(".bio").text(),
@@ -88,10 +86,12 @@ describe('UserInfoCard', () => {
   });
 
   it('check multilines works me', () => {
-    defaultRowProps['profile'] = Object.assign(_.cloneDeep(USER_PROFILE_RESPONSE), {
-      about_me: "Hello \n world"
+    let wrapper = renderInfoCard({
+      profile: {
+        ...USER_PROFILE_RESPONSE,
+        about_me: "Hello \n world"
+      }
     });
-    let wrapper = renderInfoCard(defaultRowProps);
     assert.equal(
       wrapper.find(".bio").html(),
       '<div class="bio">Hello \n world</div>'
