@@ -75,6 +75,7 @@ describe('CourseAction', () => {
         financialAid={{}}
         addCourseEnrollment={addCourseEnrollmentStub}
         now={now}
+        courseRun={null}
         {...props}
       />
     );

@@ -42,6 +42,7 @@ describe('CourseRow', () => {
         now={moment()}
         checkout={sandbox.stub()}
         addCourseEnrollment={sandbox.stub()}
+        course={null}
         {...props}
       />
     );
