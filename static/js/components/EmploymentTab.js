@@ -16,12 +16,12 @@ import { EMPLOYMENT_STEP } from '../constants';
 
 class EmploymentTab extends React.Component {
   props: {
-    saveProfile:  SaveProfileFunc,
-    profile:      Profile,
-    profilePatchStatus: ?string,
-    ui:           UIState,
-    addProgramEnrollment: Function,
-    dispatch:     Function,
+    saveProfile:           SaveProfileFunc,
+    profile:               Profile,
+    profilePatchStatus:    ?string,
+    ui:                    UIState,
+    addProgramEnrollment:  Function,
+    dispatch:              Function,
   };
 
   componentWillMount() {
