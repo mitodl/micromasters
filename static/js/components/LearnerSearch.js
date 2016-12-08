@@ -17,7 +17,6 @@ import {
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import Card from 'react-mdl/lib/Card/Card';
 import iso3166 from 'iso-3166-2';
-import { StickyContainer, Sticky } from 'react-sticky';
 import _ from 'lodash';
 
 import ProgramFilter from './ProgramFilter';
@@ -144,57 +143,55 @@ export default class LearnerSearch extends SearchkitComponent {
     }
 
     return (
-      <Sticky>
-        <Card className="fullwidth" shadow={1}>
-          <FilterVisibilityToggle
-            {...this.props}
-            filterName="courses"
-          >
-            <MenuFilter
-              field="program.enrollments.title"
-              fieldOptions={{type: 'nested', options: { path: 'program.enrollments' } }}
-              title="Course"
-              id="courses"
-            />
-          </FilterVisibilityToggle>
-          <FilterVisibilityToggle
-            {...this.props}
-            filterName="birth-location"
-          >
-            <RefinementListFilter
-              id="birth_location"
-              title="Country of Birth"
-              field="profile.birth_country"
-              operator="OR"
-              itemComponent={CountryRefinementOption}
-            />
-          </FilterVisibilityToggle>
-          <FilterVisibilityToggle
-            {...this.props}
-            filterName="residence-country"
-          >
-            <HierarchicalMenuFilter
-              fields={["profile.country", "profile.state_or_territory"]}
-              title="Current Residence"
-              id="country"
-              translations={this.searchkitTranslations}
-            />
-          </FilterVisibilityToggle>
-          <FilterVisibilityToggle
-            {...this.props}
-            filterName="grade-average"
-          >
-            <RangeFilter
-              field="program.grade_average"
-              id="grade-average"
-              min={0}
-              max={100}
-              showHistogram={true}
-              title="Average Grade in Program"
-            />
-          </FilterVisibilityToggle>
-        </Card>
-      </Sticky>
+      <Card className="fullwidth" shadow={1}>
+        <FilterVisibilityToggle
+          {...this.props}
+          filterName="courses"
+        >
+          <MenuFilter
+            field="program.enrollments.title"
+            fieldOptions={{type: 'nested', options: { path: 'program.enrollments' } }}
+            title="Course"
+            id="courses"
+          />
+        </FilterVisibilityToggle>
+        <FilterVisibilityToggle
+          {...this.props}
+          filterName="birth-location"
+        >
+          <RefinementListFilter
+            id="birth_location"
+            title="Country of Birth"
+            field="profile.birth_country"
+            operator="OR"
+            itemComponent={CountryRefinementOption}
+          />
+        </FilterVisibilityToggle>
+        <FilterVisibilityToggle
+          {...this.props}
+          filterName="residence-country"
+        >
+          <HierarchicalMenuFilter
+            fields={["profile.country", "profile.state_or_territory"]}
+            title="Current Residence"
+            id="country"
+            translations={this.searchkitTranslations}
+          />
+        </FilterVisibilityToggle>
+        <FilterVisibilityToggle
+          {...this.props}
+          filterName="grade-average"
+        >
+          <RangeFilter
+            field="program.grade_average"
+            id="grade-average"
+            min={0}
+            max={100}
+            showHistogram={true}
+            title="Average Grade in Program"
+          />
+        </FilterVisibilityToggle>
+      </Card>
     );
   };
 
@@ -222,23 +219,21 @@ export default class LearnerSearch extends SearchkitComponent {
           sendEmail={sendEmail}
           searchkit={this.searchkit}
         />
-        <StickyContainer>
-          <Grid className="search-grid">
-            <Cell col={3} className="search-sidebar">
-              { this.renderFacets(currentProgramEnrollment) }
-            </Cell>
-            <Cell col={9}>
-              <Card className="fullwidth results-padding" shadow={1}>
-                { this.renderSearchHeader(openEmailComposer) }
-                <Hits
-                  className="learner-results"
-                  hitsPerPage={SETTINGS.es_page_size}
-                  itemComponent={LearnerResult} />
-                <CustomNoHits />
-              </Card>
-            </Cell>
-          </Grid>
-        </StickyContainer>
+        <Grid className="search-grid">
+          <Cell col={3} className="search-sidebar">
+            { this.renderFacets(currentProgramEnrollment) }
+          </Cell>
+          <Cell col={9}>
+            <Card className="fullwidth results-padding" shadow={1}>
+              { this.renderSearchHeader(openEmailComposer) }
+              <Hits
+                className="learner-results"
+                hitsPerPage={SETTINGS.es_page_size}
+                itemComponent={LearnerResult} />
+              <CustomNoHits />
+            </Card>
+          </Cell>
+        </Grid>
       </div>
     );
   }
