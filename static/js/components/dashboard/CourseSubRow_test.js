@@ -43,7 +43,7 @@ describe('CourseSubRow', () => {
       addCourseEnrollment={addCourseEnrollment}
       key={1}
       {...props}
-    />)
+    />);
   };
 
   it('indicates that no future runs are available when a null course run was provided', () => {

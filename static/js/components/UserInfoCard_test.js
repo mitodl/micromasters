@@ -4,7 +4,6 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import { assert } from 'chai';
 import sinon from 'sinon';
-import _ from 'lodash';
 
 import UserInfoCard from './UserInfoCard';
 import { USER_PROFILE_RESPONSE } from '../constants';

@@ -5,7 +5,6 @@ import { shallow } from 'enzyme';
 import moment from 'moment';
 import { assert } from 'chai';
 import sinon from 'sinon';
-import _ from 'lodash';
 
 import CourseAction from './CourseAction';
 import {
@@ -78,7 +77,7 @@ describe('CourseAction', () => {
         now={now}
         {...props}
       />
-    )
+    );
   };
 
   it('shows passed for a passed course', () => {
@@ -167,9 +166,9 @@ describe('CourseAction', () => {
 
     [nowString, pastString].forEach(dateString => {
       let firstRun = alterFirstRun(course, {enrollment_start_date: dateString});
-    const wrapper = renderCourseAction({
-      courseRun: firstRun
-    });
+      const wrapper = renderCourseAction({
+        courseRun: firstRun
+      });
       let elements = getElements(wrapper);
 
       assert.isUndefined(elements.button.props().disabled);

@@ -44,7 +44,7 @@ describe('CourseRow', () => {
         addCourseEnrollment={sandbox.stub()}
         {...props}
       />
-    )
+    );
   };
 
   it('forwards the appropriate props', () => {

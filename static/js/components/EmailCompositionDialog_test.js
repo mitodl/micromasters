@@ -4,7 +4,6 @@ import { assert } from 'chai';
 import sinon from 'sinon';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import R from 'ramda';
 import TestUtils from 'react-addons-test-utils';
 
 import { INITIAL_EMAIL_STATE, NEW_EMAIL_EDIT } from '../reducers/email';
