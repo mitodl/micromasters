@@ -45,13 +45,9 @@ export default class ProfileProgressControls extends React.Component {
   };
 
   render() {
-    let { nextUrl, prevUrl, nextBtnLabel, profilePatchStatus } = this.props;
+    const { nextUrl, prevUrl, nextBtnLabel, profilePatchStatus } = this.props;
 
-    let disabled = profilePatchStatus === FETCH_PROCESSING;
-    if (disabled) {
-      nextBtnLabel = <Spinner singleColor />;
-    }
-
+    const inFlight = profilePatchStatus === FETCH_PROCESSING;
     let prevButton, nextButton;
     if (prevUrl) {
       prevButton = <button
@@ -63,9 +59,9 @@ export default class ProfileProgressControls extends React.Component {
     if (nextUrl) {
       nextButton = <button
         role="button"
-        className={`mdl-button next ${disabled ? 'disabled-with-spinner' : ''}`}
-        onClick={disabled ? undefined : this.saveAndContinue}>
-        {nextBtnLabel}
+        className={`mdl-button next ${inFlight ? 'disabled-with-spinner' : ''}`}
+        onClick={inFlight ? undefined : this.saveAndContinue}>
+        {inFlight ? <Spinner singleColor /> : nextBtnLabel}
       </button>;
     }
     return <div className="profile-progress-controls">
