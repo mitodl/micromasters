@@ -208,11 +208,18 @@ a.btn {
   }
 }
 
-.dialog {
+.dialog, .course-action {
   .disabled-with-spinner {
     display: inline-block !important;
 
+    .mdl-spinner {
+      height: 20px !important;
+      line-height: 20px !important;
+      width: 20px !important;
+    }
+
     .mdl-spinner__layer {
+      // these are against a white background
       border-color: $button-color !important;
     }
   }

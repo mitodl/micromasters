@@ -17,6 +17,7 @@ import {
 export default class CourseSubRow extends React.Component {
   props: {
     courseRun: CourseRun,
+    courseEnrollAddStatus?: string,
     checkout: Function,
     coursePrice: CoursePrice,
     now: moment$Moment,

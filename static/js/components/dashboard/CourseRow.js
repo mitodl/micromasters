@@ -19,6 +19,7 @@ export default class CourseRow extends React.Component {
   props: {
     course: Course,
     checkout: Function,
+    courseEnrollAddStatus?: string,
     coursePrice: CoursePrice,
     now: moment$Moment,
     financialAid: FinancialAidUserInfo,
@@ -59,6 +60,7 @@ export default class CourseRow extends React.Component {
       course,
       coursePrice,
       checkout,
+      courseEnrollAddStatus,
       now,
       financialAid,
       hasFinancialAid,
@@ -91,6 +93,7 @@ export default class CourseRow extends React.Component {
           courseRun={run}
           coursePrice={coursePrice}
           checkout={checkout}
+          courseEnrollAddStatus={courseEnrollAddStatus}
           now={now}
           hasFinancialAid={hasFinancialAid}
           financialAid={financialAid}

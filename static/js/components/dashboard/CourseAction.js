@@ -7,6 +7,8 @@ import Spinner from 'react-mdl/lib/Spinner';
 import R from 'ramda';
 import _ from 'lodash';
 
+import SpinnerButton from '../SpinnerButton';
+import { FETCH_PROCESSING } from '../../actions';
 import type { CourseRun, FinancialAidUserInfo } from '../../flow/programTypes';
 import type { CoursePrice } from '../../flow/dashboardTypes';
 import {
@@ -31,6 +33,7 @@ export default class CourseAction extends React.Component {
     checkout: Function,
     courseRun: CourseRun,
     coursePrice: CoursePrice,
+    courseEnrollAddStatus?: string,
     now: moment$Moment,
     financialAid: FinancialAidUserInfo,
     hasFinancialAid: boolean,
@@ -118,26 +121,29 @@ export default class CourseAction extends React.Component {
 
   renderStatusDescription = this.renderDescription('boxed description');
 
-  handleAddCourseEnrollment = (event: Event, run: CourseRun): void => {
+  handleAddCourseEnrollment = (run: CourseRun): void => {
     const { addCourseEnrollment } = this.props;
-    event.preventDefault();
     addCourseEnrollment(run.course_id);
   };
 
-  renderPayLaterLink(run: CourseRun): React$Element<*> {
+  renderPayLaterLink(run: CourseRun, inFlight: bool): React$Element<*> {
     return (
-      <button
+      <SpinnerButton
+        component="button"
+        spinning={inFlight}
         className="mm-minor-action enroll-pay-later"
-        onClick={e => this.handleAddCourseEnrollment(e, run)} key="2"
+        onClick={() => this.handleAddCourseEnrollment(run)}
+        key="2"
       >
         Enroll and pay later
-      </button>
+      </SpinnerButton>
     );
   }
 
   renderContents(run: CourseRun) {
-    const { now } = this.props;
+    const { now, courseEnrollAddStatus } = this.props;
 
+    const inFlight = courseEnrollAddStatus === FETCH_PROCESSING;
     let action, description;
 
     switch (run.status) {
@@ -169,7 +175,7 @@ export default class CourseAction extends React.Component {
       let enrollmentStartDate = run.enrollment_start_date ? moment(run.enrollment_start_date) : null;
       if (isCurrentlyEnrollable(enrollmentStartDate, now)) {
         action = this.renderEnrollButton(run);
-        description = this.renderPayLaterLink(run);
+        description = this.renderPayLaterLink(run, inFlight);
       } else {
         let text;
         if (enrollmentStartDate) {

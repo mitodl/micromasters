@@ -13,6 +13,7 @@ export default class CourseListCard extends React.Component {
   props: {
     checkout:                     Function,
     program:                      Program,
+    courseEnrollAddStatus?:       string,
     coursePrice:                  CoursePrice,
     openFinancialAidCalculator?:  () => void,
     now?:                         Object,
@@ -27,6 +28,7 @@ export default class CourseListCard extends React.Component {
       checkout,
       openFinancialAidCalculator,
       addCourseEnrollment,
+      courseEnrollAddStatus,
     } = this.props;
     if (now === undefined) {
       now = moment();
@@ -38,6 +40,7 @@ export default class CourseListCard extends React.Component {
         hasFinancialAid={program.financial_aid_availability}
         financialAid={program.financial_aid_user_info}
         course={course}
+        courseEnrollAddStatus={courseEnrollAddStatus}
         coursePrice={coursePrice}
         key={course.id}
         checkout={checkout}
