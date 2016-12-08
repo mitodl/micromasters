@@ -2,7 +2,9 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import Button from 'react-mdl/lib/Button';
+import Spinner from 'react-mdl/lib/Spinner';
 
+import { FETCH_PROCESSING } from '../actions';
 import ProfileFormFields from '../util/ProfileFormFields';
 import type { Profile, SaveProfileFunc } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
@@ -12,6 +14,7 @@ export default class UserPageAboutMeDialog extends ProfileFormFields {
   props: {
     ui:                                   UIState,
     profile:                              Profile,
+    profilePatchStatus:                   ?string,
     saveProfile:                          SaveProfileFunc,
     clearProfileEdit:                     () => void,
     setUserPageAboutMeDialogVisibility:   () => void,
@@ -36,7 +39,8 @@ export default class UserPageAboutMeDialog extends ProfileFormFields {
   };
 
   render () {
-    const { ui: { userPageAboutMeDialogVisibility } } = this.props;
+    const { ui: { userPageAboutMeDialogVisibility }, profilePatchStatus } = this.props;
+    const inFlight = profilePatchStatus === FETCH_PROCESSING;
 
     const actions = [
       <Button
@@ -48,10 +52,10 @@ export default class UserPageAboutMeDialog extends ProfileFormFields {
       </Button>,
       <Button
         type='button'
-        className='primary-button save-button'
+        className={`primary-button save-button ${inFlight ? 'disabled-with-spinner' : ''}`}
         key='save'
-        onClick={this.saveAboutMeInfo}>
-        Save
+        onClick={inFlight ? undefined : this.saveAboutMeInfo}>
+        {inFlight ? <Spinner singleColor /> : 'Save'}
       </Button>
     ];
 

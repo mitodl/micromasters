@@ -2,7 +2,9 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import Button from 'react-mdl/lib/Button';
+import Spinner from 'react-mdl/lib/Spinner';
 
+import { FETCH_PROCESSING } from '../actions';
 import { personalValidation } from '../lib/validation/profile';
 import PersonalForm from './PersonalForm';
 import type { Profile, SaveProfileFunc } from '../flow/profileTypes';
@@ -13,6 +15,7 @@ export default class UserPagePersonalDialog extends React.Component {
     setUserPageDialogVisibility:  () => void,
     ui:                           UIState,
     profile:                      Profile,
+    profilePatchStatus:           ?string,
     saveProfile:                  SaveProfileFunc,
     clearProfileEdit:             () => void,
   };
@@ -35,7 +38,8 @@ export default class UserPagePersonalDialog extends React.Component {
   };
 
   render () {
-    const { ui: { userPageDialogVisibility } } = this.props;
+    const { ui: { userPageDialogVisibility }, profilePatchStatus } = this.props;
+    const inFlight = profilePatchStatus === FETCH_PROCESSING;
     const actions = [
       <Button
         type='button'
@@ -46,10 +50,10 @@ export default class UserPagePersonalDialog extends React.Component {
       </Button>,
       <Button
         type='button'
-        className='primary-button save-button'
+        className={`primary-button save-button ${inFlight ? 'disabled-with-spinner' : ''}`}
         key='save'
-        onClick={this.savePersonalInfo}>
-        Save
+        onClick={inFlight ? undefined : this.savePersonalInfo}>
+        {inFlight ? <Spinner singleColor /> : 'Save'}
       </Button>
     ];
 

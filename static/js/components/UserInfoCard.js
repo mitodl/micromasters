@@ -51,7 +51,11 @@ export default class UserInfoCard extends React.Component {
           {
             userPrivilegeCheck(
               profile,
-              () => <IconButton name="edit about me section" onClick={toggleShowAboutMeDialog}/>
+              () => <IconButton
+                name="edit about me section"
+                className="edit-about-me-button"
+                onClick={toggleShowAboutMeDialog}
+              />
             )
           }
         </div>
@@ -77,7 +81,11 @@ export default class UserInfoCard extends React.Component {
           </div>
           <div className="edit-profile-holder">
             {userPrivilegeCheck(profile, () => (
-              <IconButton name="edit personal information" onClick={toggleShowPersonalDialog}/>
+              <IconButton
+                name="edit personal information"
+                onClick={toggleShowPersonalDialog}
+                className="edit-personal-info-button"
+              />
             ))}
           </div>
         </div>
