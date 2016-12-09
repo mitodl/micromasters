@@ -2,6 +2,7 @@
 import React from 'react';
 import Spinner from 'react-mdl/lib/Spinner';
 
+import SpinnerButton from './SpinnerButton';
 import { saveProfileStep } from '../util/profile_edit';
 import { FETCH_PROCESSING } from '../actions';
 import type { Profile, SaveProfileFunc } from '../flow/profileTypes';
@@ -57,12 +58,14 @@ export default class ProfileProgressControls extends React.Component {
       </button>;
     }
     if (nextUrl) {
-      nextButton = <button
+      nextButton = <SpinnerButton
+        component="button"
+        spinning={inFlight}
         role="button"
-        className={`mdl-button next ${inFlight ? 'disabled-with-spinner' : ''}`}
-        onClick={inFlight ? undefined : this.saveAndContinue}>
-        {inFlight ? <Spinner singleColor /> : nextBtnLabel}
-      </button>;
+        className="mdl-button next"
+        onClick={this.saveAndContinue}>
+        {nextBtnLabel}
+      </SpinnerButton>;
     }
     return <div className="profile-progress-controls">
       {prevButton}

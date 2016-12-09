@@ -23,6 +23,7 @@ import {
   deleteWorkHistoryEntry,
 } from '../util/profile_history_edit';
 import ConfirmDeletion from './ConfirmDeletion';
+import SpinnerButton from './SpinnerButton';
 import SelectField from './inputs/SelectField';
 import CountrySelectField from './inputs/CountrySelectField';
 import StateSelectField from './inputs/StateSelectField';
@@ -331,13 +332,15 @@ class EmploymentForm extends ProfileFormFields {
         onClick={this.closeWorkDialog}>
         Cancel
       </Button>,
-      <Button
+      <SpinnerButton
+        component={Button}
+        spinning={inFlight}
         type='button'
-        className={`primary-button save-button ${inFlight ? 'disabled-with-spinner' : ''}`}
+        className="primary-button save-button"
         key='save'
-        onClick={inFlight ? undefined : this.saveWorkHistoryEntry}>
-        {inFlight ? <Spinner singleColor /> : 'Save'}
-      </Button>
+        onClick={this.saveWorkHistoryEntry}>
+        Save
+      </SpinnerButton>
     ];
 
     return (

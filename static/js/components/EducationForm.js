@@ -19,6 +19,7 @@ import {
 } from '../util/util';
 import ProfileFormFields from '../util/ProfileFormFields';
 import ConfirmDeletion from './ConfirmDeletion';
+import SpinnerButton from './SpinnerButton';
 import SelectField from './inputs/SelectField';
 import CountrySelectField from './inputs/CountrySelectField';
 import StateSelectField from './inputs/StateSelectField';
@@ -387,13 +388,15 @@ class EducationForm extends ProfileFormFields {
         onClick={this.clearEducationEdit}>
         Cancel
       </Button>,
-      <Button
+      <SpinnerButton
+        component={Button}
+        spinning={inFlight}
         type='button'
         key='save'
-        className={`primary-button save-button ${inFlight ? 'disabled-with-spinner' : ''}`}
-        onClick={inFlight ? undefined : this.saveEducationForm}>
-        {inFlight ? <Spinner singleColor /> : 'Save'}
-      </Button>
+        className="primary-button save-button"
+        onClick={this.saveEducationForm}>
+        Save
+      </SpinnerButton>
     ];
 
     return (

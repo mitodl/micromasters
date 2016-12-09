@@ -6,6 +6,7 @@ import Spinner from 'react-mdl/lib/Spinner';
 
 import { FETCH_PROCESSING } from '../actions';
 import ProfileFormFields from '../util/ProfileFormFields';
+import SpinnerButton from './SpinnerButton';
 import type { Profile, SaveProfileFunc } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
 import type { Validator } from '../lib/validation/profile';
@@ -50,13 +51,15 @@ export default class UserPageAboutMeDialog extends ProfileFormFields {
         onClick={this.closeAboutMeDialog}>
         Cancel
       </Button>,
-      <Button
+      <SpinnerButton
+        component={Button}
+        spinning={inFlight}
         type='button'
-        className={`primary-button save-button ${inFlight ? 'disabled-with-spinner' : ''}`}
+        className="primary-button save-button"
         key='save'
-        onClick={inFlight ? undefined : this.saveAboutMeInfo}>
-        {inFlight ? <Spinner singleColor /> : 'Save'}
-      </Button>
+        onClick={this.saveAboutMeInfo}>
+        Save
+      </SpinnerButton>
     ];
 
     return (
