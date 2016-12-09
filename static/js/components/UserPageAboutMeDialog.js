@@ -2,7 +2,6 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import Button from 'react-mdl/lib/Button';
-import Spinner from 'react-mdl/lib/Spinner';
 
 import { FETCH_PROCESSING } from '../actions';
 import ProfileFormFields from '../util/ProfileFormFields';

@@ -1,6 +1,5 @@
 // @flow
 import React from 'react';
-import Spinner from 'react-mdl/lib/Spinner';
 
 import SpinnerButton from './SpinnerButton';
 import { saveProfileStep } from '../util/profile_edit';

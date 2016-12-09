@@ -4,7 +4,6 @@ import IconButton from 'react-mdl/lib/IconButton';
 import Button from 'react-mdl/lib/Button';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import { Card } from 'react-mdl/lib/Card';
-import Spinner from 'react-mdl/lib/Spinner';
 import _ from 'lodash';
 import R from 'ramda';
 import Dialog from 'material-ui/Dialog';

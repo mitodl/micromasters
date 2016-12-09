@@ -5,7 +5,6 @@ import Grid, { Cell } from 'react-mdl/lib/Grid';
 import Dialog from 'material-ui/Dialog';
 import Card from 'react-mdl/lib/Card/Card';
 import IconButton from 'react-mdl/lib/IconButton';
-import Spinner from 'react-mdl/lib/Spinner';
 import _ from 'lodash';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 
