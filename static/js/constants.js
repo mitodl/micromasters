@@ -53,6 +53,7 @@ export const STATUS_WILL_ATTEND = 'will-attend';
 export const STATUS_CAN_UPGRADE = 'can-upgrade';
 export const STATUS_MISSED_DEADLINE = 'missed-deadline';
 export const STATUS_OFFERED = 'offered';
+export const STATUS_PAID_BUT_NOT_ENROLLED = 'paid-but-not-enrolled';
 
 // note: this status is not sent from the server
 export const STATUS_PENDING_ENROLLMENT = 'pending-enrollment';
@@ -66,6 +67,7 @@ export const ALL_COURSE_STATUSES = [
   STATUS_WILL_ATTEND,
   STATUS_PENDING_ENROLLMENT,
   STATUS_MISSED_DEADLINE,
+  STATUS_PAID_BUT_NOT_ENROLLED,
 ];
 
 // financial aid statuses

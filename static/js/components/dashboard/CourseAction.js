@@ -19,9 +19,10 @@ import {
   STATUS_WILL_ATTEND,
   STATUS_OFFERED,
   STATUS_PENDING_ENROLLMENT,
+  STATUS_PAID_BUT_NOT_ENROLLED,
   DASHBOARD_FORMAT,
   FA_PENDING_STATUSES,
-  FA_STATUS_SKIPPED
+  FA_STATUS_SKIPPED,
 } from '../../constants';
 import { isCurrentlyEnrollable } from './util';
 import { formatPrice } from '../../util/util';
@@ -114,6 +115,19 @@ export default class CourseAction extends React.Component {
     }
   );
 
+  renderDescriptionForError = R.curry(
+    (className: string, text: ?string, contact: ?string): React$Element<*>|null => {
+      let classDefinition = className;
+      let contactLink = null;
+
+      if (contact) {
+        contactLink = <a href={contact}>Contact us for help.</a>;
+      }
+      return (text && text.length > 0 || contactLink) ?
+        <div className={classDefinition} key="2">{text}{contactLink}</div> : null;
+    }
+  );
+
   renderTextDescription = this.renderDescription('description', null);
 
   renderBoxedDescription = this.renderDescription('boxed description', null);
@@ -196,6 +210,12 @@ export default class CourseAction extends React.Component {
     case STATUS_PENDING_ENROLLMENT:
       action = this.renderEnrollButton(run);
       description = this.renderTextDescription('Processing...');
+      break;
+    case STATUS_PAID_BUT_NOT_ENROLLED:
+      description = this.renderContactUsDescription(
+        'Something went wrong.\n You paid for this course but \nare not enrolled.',
+        `mailto:${SETTINGS.support_email}`
+      );
       break;
     }
 

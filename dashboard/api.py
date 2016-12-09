@@ -28,11 +28,12 @@ class CourseStatus:
     CAN_UPGRADE = 'can-upgrade'
     MISSED_DEADLINE = 'missed-deadline'
     OFFERED = 'offered'
+    PAID_BUT_NOT_ENROLLED = 'paid-but-not-enrolled'
 
     @classmethod
     def all_statuses(cls):
         """Helper to get all the statuses"""
-        return [cls.PASSED, cls.NOT_PASSED, cls.CURRENTLY_ENROLLED,
+        return [cls.PASSED, cls.NOT_PASSED, cls.CURRENTLY_ENROLLED, cls.PAID_BUT_NOT_ENROLLED,
                 cls.CAN_UPGRADE, cls.OFFERED, cls.WILL_ATTEND, cls.MISSED_DEADLINE]
 
 
@@ -47,6 +48,7 @@ class CourseRunStatus:
     CAN_UPGRADE = 'can-upgrade'
     MISSED_DEADLINE = 'missed-deadline'
     NOT_PASSED = 'not-passed'
+    PAID_BUT_NOT_ENROLLED = 'paid-but-not-enrolled'
 
 
 class CourseFormatConditionalFields:
@@ -255,6 +257,8 @@ def get_info_for_course(course, mmtrack):
         _add_run(run_status.course_run, mmtrack, CourseStatus.WILL_ATTEND)
     elif run_status.status == CourseRunStatus.CAN_UPGRADE:
         _add_run(run_status.course_run, mmtrack, CourseStatus.CAN_UPGRADE)
+    elif run_status.status == CourseRunStatus.PAID_BUT_NOT_ENROLLED:
+        _add_run(run_status.course_run, mmtrack, CourseRunStatus.PAID_BUT_NOT_ENROLLED)
 
     # add all the other runs with status != NOT_ENROLLED
     # the first one (or two in some cases) has been added with the logic before
@@ -281,6 +285,8 @@ def get_status_for_courserun(course_run, mmtrack):
     Returns:
         CourseRunUserStatus: an object representing the run status for the user
     """
+    if mmtrack.paid_but_not_enrolled_mmtrack(course_run.edx_course_key):
+        return CourseRunUserStatus(CourseRunStatus.PAID_BUT_NOT_ENROLLED, course_run)
     if not mmtrack.is_enrolled(course_run.edx_course_key):
         return CourseRunUserStatus(CourseRunStatus.NOT_ENROLLED, course_run)
     status = None

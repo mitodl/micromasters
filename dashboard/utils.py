@@ -146,6 +146,27 @@ class MMTrack:
         else:
             return course_id in self.paid_course_ids
 
+    def paid_but_not_enrolled_mmtrack(self, course_id):
+        """
+        Returns whether
+
+        Args:
+            course_id (str): an edX course run id
+
+        Returns:
+            bool: whether the user is paid but no enrolled mmtrack in the course
+        """
+        if self.is_enrolled(course_id):
+            return False
+
+        # financial aid programs need to have an audit enrollment and a paid entry for the course
+        if self.financial_aid_available:
+            return course_id in self.paid_course_ids
+
+        # need to find a way to check if user paid for course
+        # for normal programs and he is not entolled
+        return False
+
     def has_passed_course(self, course_id):
         """
         Returns whether the user has passed a course run.
