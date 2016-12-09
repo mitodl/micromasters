@@ -99,17 +99,19 @@ describe("SettingsPage", function() {
     it('save privacy changes', () => {
       return renderComponent("/settings", userActions).then(([, div]) => {
         let button = div.querySelector(nextButtonSelector);
-        let receivedProfile = Object.assign(_.cloneDeep(USER_PROFILE_RESPONSE), {
+        let receivedProfile = {
+          ...USER_PROFILE_RESPONSE,
           account_privacy: 'public',
-          email_optin: true
-        });
+          email_optin: true,
+        };
         helper.store.dispatch(receiveGetUserProfileSuccess(SETTINGS.user.username, receivedProfile));
 
         assert(button.innerHTML.includes("Save"));
-        let updatedProfile = Object.assign(_.cloneDeep(receivedProfile), {
+        let updatedProfile = {
+          ...receivedProfile,
           email_optin: true,
           filled_out: true
-        });
+        };
         return confirmSaveButtonBehavior(updatedProfile, {button: button});
       });
     });

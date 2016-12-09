@@ -26,7 +26,10 @@ export function findCourse(courseSelector: (course: Course, program: Program) =>
 }
 
 export const alterFirstRun = (course: Course, overrideObject: Object): CourseRun => {
-  course.runs[0] = Object.assign({}, course.runs[0], overrideObject);
+  course.runs[0] = {
+    ...course.runs[0],
+    ...overrideObject
+  };
   return course.runs[0];
 };
 

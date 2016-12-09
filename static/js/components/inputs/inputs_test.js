@@ -42,12 +42,14 @@ describe('Profile inputs', () => {
 
     let renderGenderSelectField = (props = {}) => {
       return renderTestSelectField(
-        Object.assign({}, inputProps, {
+        {
+          ...inputProps,
           keySet: ['gender'],
           label: "Gender",
           options: genderOptions,
           updateProfile: updateProfileStub,
-        }, props)
+          ...props,
+        },
       );
     };
 
@@ -148,7 +150,7 @@ describe('Profile inputs', () => {
       };
       selectField = renderGenderSelectField(props);
       modifyWrapperSelectField(selectField.find(VirtualizedSelect), 'genderqueer');
-      selectField.setProps(Object.assign({}, inputProps, props));
+      selectField.setProps({...inputProps, ...props});
       assert.deepEqual(selectField.state(), {
         customOptions: [
           { value: 'genderqueer', label: 'genderqueer' }
@@ -180,7 +182,7 @@ describe('Profile inputs', () => {
         stateKeySet: ['state_key'],
         countryKeySet: ['country_key'],
         label: 'State',
-        profile: Object.assign({}, USER_PROFILE_RESPONSE),
+        profile: {...USER_PROFILE_RESPONSE},
         errors: {},
         updateProfile: change
       };
@@ -219,7 +221,7 @@ describe('Profile inputs', () => {
         stateKeySet: ['state_key'],
         countryKeySet: ['country_key'],
         label: 'Country',
-        profile: Object.assign({}, USER_PROFILE_RESPONSE),
+        profile: {...USER_PROFILE_RESPONSE},
         errors: {},
         updateProfile: change
       };

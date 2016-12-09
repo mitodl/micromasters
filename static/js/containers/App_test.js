@@ -82,9 +82,10 @@ describe('App', function() {
     let checkStep = () => helper.store.getState().ui.profileStep;
 
     it('redirects to /profile/personal if profile is not complete', () => {
-      let response = Object.assign(_.cloneDeep(USER_PROFILE_RESPONSE), {
-        first_name: undefined
-      });
+      let response = {
+        ...USER_PROFILE_RESPONSE,
+        first_name: undefined,
+      };
       helper.profileGetStub.withArgs(SETTINGS.user.username).returns(Promise.resolve(response));
 
       return renderComponent("/", EDIT_PROFILE_ACTIONS).then(() => {
@@ -94,9 +95,10 @@ describe('App', function() {
     });
 
     it('redirects to /profile/professional if profile is not filled out', () => {
-      let response = Object.assign(_.cloneDeep(USER_PROFILE_RESPONSE), {
-        filled_out: false
-      });
+      let response = {
+        ...USER_PROFILE_RESPONSE,
+        filled_out: false,
+      };
       helper.profileGetStub.withArgs(SETTINGS.user.username).returns(Promise.resolve(response));
 
       return renderComponent("/", REDIRECT_ACTIONS).then(() => {

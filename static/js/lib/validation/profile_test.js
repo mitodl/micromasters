@@ -77,9 +77,10 @@ describe('Profile validation functions', () => {
     });
 
     it('should error if date of birth is in the future', () => {
-      let profile = Object.assign(_.cloneDeep(USER_PROFILE_RESPONSE), {
+      let profile = {
+        ...USER_PROFILE_RESPONSE,
         date_of_birth: "2077-01-01"
-      });
+      };
       let errors = {
         date_of_birth: "Please enter a valid date of birth"
       };
@@ -330,7 +331,10 @@ describe('Privacy validation', () => {
   });
 
   it('should return an appropriate error if a field is missing', () => {
-    let clone = Object.assign(_.cloneDeep(USER_PROFILE_RESPONSE), {account_privacy: ''});
+    let clone = {
+      ...USER_PROFILE_RESPONSE,
+      account_privacy: '',
+    };
     let expectation = {account_privacy: 'Privacy level is required'};
     assert.deepEqual(expectation, privacyValidation(clone));
   });

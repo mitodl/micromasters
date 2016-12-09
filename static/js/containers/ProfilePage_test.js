@@ -114,16 +114,15 @@ describe("ProfilePage", function() {
 
   describe('switch toggling behavior', () => {
     beforeEach(() => {
-      let userProfile = Object.assign({}, _.cloneDeep(USER_PROFILE_RESPONSE), {
+      let userProfile = {
+        ...USER_PROFILE_RESPONSE,
         education: [],
         work_history: []
-      });
+      };
       helper.profileGetStub.
         withArgs(SETTINGS.user.username).
         returns(
-          Promise.resolve(Object.assign({}, userProfile, {
-            username: SETTINGS.user.username
-          }))
+          Promise.resolve(userProfile)
         );
     });
 
@@ -148,9 +147,10 @@ describe("ProfilePage", function() {
 
   describe('profile completeness', () => {
     it('redirects to /profile/personal if profile is not complete', () => {
-      let response = Object.assign(_.cloneDeep(USER_PROFILE_RESPONSE), {
-        first_name: undefined
-      });
+      let response = {
+        ...USER_PROFILE_RESPONSE,
+        first_name: undefined,
+      };
       helper.profileGetStub.withArgs(SETTINGS.user.username).returns(Promise.resolve(response));
 
       return renderComponent("/profile/education", REDIRECT_ACTIONS).then(() => {
@@ -183,11 +183,12 @@ describe("ProfilePage", function() {
   for (let step of profileSteps.slice(0,2)) {
     for (let filledOutValue of [true, false]) {
       it(`respects the current value (${filledOutValue}) when saving on ${step}`, () => {
-        let updatedProfile = Object.assign({}, USER_PROFILE_RESPONSE, {
+        let updatedProfile = {
+          ...USER_PROFILE_RESPONSE,
           filled_out: filledOutValue,
           education: [],
           work_history: [],
-        });
+        };
         helper.profileGetStub.withArgs(SETTINGS.user.username).returns(Promise.resolve(updatedProfile));
         return renderComponent(`/profile/${step}`, SUCCESS_ACTIONS).then(([, div]) => {
           // close all switches

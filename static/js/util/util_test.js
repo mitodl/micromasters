@@ -320,10 +320,11 @@ describe('utility functions', () => {
           }
         }
 
-        let clone = Object.assign({}, USER_PROFILE_RESPONSE, {
+        let clone = {
+          ...USER_PROFILE_RESPONSE,
           edx_level_of_education: outerValue,
-          education: []
-        });
+          education: [],
+        };
         assert.deepEqual(copy, calculateDegreeInclusions(clone));
       });
     }
@@ -334,22 +335,24 @@ describe('utility functions', () => {
         defaults[value] = true;
       }
 
-      let clone = Object.assign({}, USER_PROFILE_RESPONSE, {
+      let clone = {
+        ...USER_PROFILE_RESPONSE,
         edx_level_of_education: null,
-        education: []
-      });
+        education: [],
+      };
       assert.deepEqual(defaults, calculateDegreeInclusions(clone));
     });
 
     it('turns on the switch if there is at least one education of that level', () => {
-      let clone = Object.assign({}, USER_PROFILE_RESPONSE, {
+      let clone = {
+        ...USER_PROFILE_RESPONSE,
         edx_level_of_education: HIGH_SCHOOL,
         education: [{
           degree_name: HIGH_SCHOOL
         }, {
           degree_name: DOCTORATE
-        }]
-      });
+        }],
+      };
       assert.deepEqual(calculateDegreeInclusions(clone), {
         [HIGH_SCHOOL]: true,
         [DOCTORATE]: true,

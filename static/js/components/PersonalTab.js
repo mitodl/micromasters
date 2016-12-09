@@ -104,7 +104,10 @@ export default class PersonalTab extends React.Component {
     const { profile, updateProfile } = this.props;
     let editState = _.cloneDeep(profile);
     let { payload: { profile: { image } }} = fetchResponse;
-    let newEditState = Object.assign({}, editState, { image });
+    let newEditState = {
+      ...editState,
+      image
+    };
     updateProfile(newEditState, personalTabValidator);
   };
 

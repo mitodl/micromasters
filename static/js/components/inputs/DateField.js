@@ -86,11 +86,12 @@ export default class DateField extends React.Component {
       // Update tuple with the typed text. Typically only one of the arguments
       // will have text at a time since the user can't edit more than one field at once
       // so we need to look in the state to see
-      let newEdit = Object.assign({}, edit, {
+      let newEdit = {
+        ...edit,
         year: year !== undefined ? year : edit.year,
         month: month !== undefined ? month : edit.month,
         day: day !== undefined ? day : edit.day
-      });
+      };
 
       const firstIfNumEqual = R.curry((x, y) => Number(x) === y ? x : y);
       let validatedDay = Maybe.of(1);

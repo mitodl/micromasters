@@ -67,7 +67,7 @@ export default class PopoverNullAnimation extends Component {
 
     return (
       <Paper
-        style={Object.assign(styles.root, style)}
+        style={{...styles.root, style}}
         zDepth={zDepth}
         className={className}
       >

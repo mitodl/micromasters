@@ -114,10 +114,8 @@ describe("UserPage", function() {
       helper.profileGetStub.
         withArgs(SETTINGS.user.username).
         returns(
-        Promise.resolve(Object.assign({}, USER_PROFILE_RESPONSE, {
-          username: SETTINGS.user.username
-        }))
-      );
+          Promise.resolve(USER_PROFILE_RESPONSE)
+        );
     });
 
     afterEach(() => {
@@ -350,9 +348,7 @@ describe("UserPage", function() {
       };
 
       beforeEach(() => {
-        userProfile = Object.assign(_.cloneDeep(USER_PROFILE_RESPONSE), {
-          username: SETTINGS.user.username
-        });
+        userProfile = _.cloneDeep(USER_PROFILE_RESPONSE);
         userProfile.education.push({
           "id": 3,
           "degree_name": DOCTORATE,
@@ -478,7 +474,8 @@ describe("UserPage", function() {
           let addButton = div.querySelector('.add-education-button');
 
           let expectedProfile = _.cloneDeep(userProfile);
-          let entry = Object.assign({}, generateNewEducation(HIGH_SCHOOL), {
+          let entry = {
+            ...generateNewEducation(HIGH_SCHOOL),
             graduation_date: "1999-12-01",
             graduation_date_edit: {
               year: '1999',
@@ -489,7 +486,7 @@ describe("UserPage", function() {
             school_country: "AF",
             school_state_or_territory: "AF-BAL",
             school_city: "FoobarVille"
-          });
+          };
           expectedProfile.education.push(entry);
 
           patchUserProfileStub.throws("Invalid arguments");
@@ -695,7 +692,8 @@ describe("UserPage", function() {
 
           let updatedProfile = _.cloneDeep(USER_PROFILE_RESPONSE);
           updatedProfile.username = SETTINGS.user.username;
-          let entry = Object.assign({}, generateNewWorkHistory(), {
+          let entry = {
+            ...generateNewWorkHistory(),
             position: "Assistant Foobar",
             industry: "Accounting",
             company_name: "FoobarCorp",
@@ -714,7 +712,7 @@ describe("UserPage", function() {
             city: "FoobarVille",
             country: "AF",
             state_or_territory: "AF-BAL",
-          });
+          };
           updatedProfile.work_history.push(entry);
 
           patchUserProfileStub.throws("Invalid arguments");
@@ -825,10 +823,10 @@ describe("UserPage", function() {
         helper.profileGetStub.
           withArgs(SETTINGS.user.username).
           returns(
-            Promise.resolve(Object.assign({}, USER_PROFILE_RESPONSE, {
-              username: SETTINGS.user.username,
+            Promise.resolve({
+              ...USER_PROFILE_RESPONSE,
               email: null,
-            }))
+            })
           );
 
         const username = SETTINGS.user.username;
@@ -840,9 +838,10 @@ describe("UserPage", function() {
       it('should let you edit personal info', () => {
         const username = SETTINGS.user.username;
         const newFirstName = "New name";
-        let expectedProfile = Object.assign({}, USER_PROFILE_RESPONSE, {
+        let expectedProfile = {
+          ...USER_PROFILE_RESPONSE,
           first_name: newFirstName
-        });
+        };
         patchUserProfileStub.
           withArgs(username, expectedProfile).
           returns(Promise.resolve(expectedProfile));
@@ -884,9 +883,10 @@ describe("UserPage", function() {
       it('should let you edit about me', () => {
         const username = SETTINGS.user.username;
         const aboutMe = "🐱";
-        const expectedProfile = Object.assign({}, USER_PROFILE_RESPONSE, {
+        const expectedProfile = {
+          ...USER_PROFILE_RESPONSE,
           about_me: aboutMe
-        });
+        };
         patchUserProfileStub.
           withArgs(username, expectedProfile).
           returns(Promise.resolve(expectedProfile));
@@ -962,9 +962,10 @@ describe("UserPage", function() {
     });
 
     it("should not show any edit, delete icons for other user pages" , () => {
-      let otherProfile = Object.assign({}, USER_PROFILE_RESPONSE, {
+      let otherProfile = {
+        ...USER_PROFILE_RESPONSE,
         username: 'other'
-      });
+      };
       helper.profileGetStub.withArgs('other').returns(Promise.resolve(otherProfile));
       return renderComponent(`/learner/other`, userActions).then(([, div]) => {
         let count = div.getElementsByClassName('mdl-button--icon').length;

@@ -58,9 +58,10 @@ describe('financial aid reducers', () => {
 
   it('should let you start editing', () => {
     return dispatchThen(startCalculatorEdit(1), [START_CALCULATOR_EDIT]).then(state => {
-      let expectation = Object.assign({}, FINANCIAL_AID_EDIT, {
-        programId: 1
-      });
+      let expectation = {
+        ...FINANCIAL_AID_EDIT,
+        programId: 1,
+      };
       assert.deepEqual(state, expectation);
     });
   });
@@ -111,10 +112,11 @@ describe('financial aid reducers', () => {
       REQUEST_ADD_FINANCIAL_AID,
       RECEIVE_ADD_FINANCIAL_AID_SUCCESS,
     ]).then(state => {
-      let expectation = Object.assign({}, FINANCIAL_AID_EDIT, {
+      let expectation = {
+        ...FINANCIAL_AID_EDIT,
         programId: programId,
         fetchStatus: FETCH_SUCCESS
-      });
+      };
       assert.deepEqual(state, expectation);
       assert.ok(fetchCoursePricesStub.calledWith());
       assert.ok(fetchDashboardStub.calledWith());
@@ -132,14 +134,15 @@ describe('financial aid reducers', () => {
       REQUEST_ADD_FINANCIAL_AID,
       RECEIVE_ADD_FINANCIAL_AID_FAILURE,
     ]).then(state => {
-      let expectation = Object.assign({}, FINANCIAL_AID_EDIT, {
+      let expectation = {
+        ...FINANCIAL_AID_EDIT,
         programId: programId,
         fetchStatus: FETCH_FAILURE,
         fetchError: {
           message: 'an error message',
           code: 500
         }
-      });
+      };
       assert.deepEqual(state, expectation);
       assert.ok(addFinancialAidStub.calledWith(income, currency, programId));
       assert.notOk(fetchCoursePricesStub.calledWith());

@@ -122,7 +122,10 @@ class EducationForm extends ProfileFormFields {
       }
       this.openNewEducationForm(level, null);
     } else {
-      setEducationLevelAnswers(Object.assign({}, educationLevelAnswers, {[level]: "No"}));
+      setEducationLevelAnswers({
+        ...educationLevelAnswers,
+        [level]: "No"
+      });
     }
   }
 

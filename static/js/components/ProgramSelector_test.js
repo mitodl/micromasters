@@ -74,8 +74,9 @@ describe('ProgramSelector', () => {
   });
 
   it("does not render the 'Enroll in a new program' option if there is not at least one available program", () => {
-    let allEnrollments = programs.map(program => Object.assign({}, program, {
-      enrolled: true
+    let allEnrollments = programs.map(program => ({
+      ...program,
+      enrolled: true,
     }));
     let wrapper = renderProgramSelector({
       programs: allEnrollments

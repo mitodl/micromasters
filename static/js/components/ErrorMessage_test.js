@@ -94,9 +94,10 @@ describe("ErrorMessage", () => {
       helper.profileGetStub.
         withArgs(SETTINGS.user.username).
         returns(
-          Promise.resolve(Object.assign({}, USER_PROFILE_RESPONSE, {
-            username: SETTINGS.user.username
-          }))
+          Promise.resolve({
+            ...USER_PROFILE_RESPONSE,
+            username: SETTINGS.user.username,
+          })
         );
     });
 

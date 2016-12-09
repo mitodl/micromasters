@@ -537,10 +537,11 @@ describe('Profile Editing utility functions', () => {
       let func = () => null;
       let ret = saveProfileStep.call(that, func, true);
 
-      let clone = Object.assign({}, that.props.profile, {
+      let clone = {
+        ...that.props.profile,
         filled_out: true,
-        email_optin: true
-      });
+        email_optin: true,
+      };
 
       assert.ok(that.props.saveProfile.calledWith(
         func,

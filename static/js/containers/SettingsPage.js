@@ -23,7 +23,7 @@ class SettingsPage extends ProfileFormContainer {
 
   render() {
     const { profiles } = this.props;
-    let props = Object.assign({}, this.profileProps(profiles[SETTINGS.user.username]));
+    let props = this.profileProps(profiles[SETTINGS.user.username]);
     let loaded = false;
     const username = SETTINGS.user.username;
 

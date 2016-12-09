@@ -122,9 +122,10 @@ describe('reducers', () => {
     });
 
     it("should patch the profile successfully", () => {
-      let updatedProfile = Object.assign({}, USER_PROFILE_RESPONSE, {
-        change: true
-      });
+      let updatedProfile = {
+        ...USER_PROFILE_RESPONSE,
+        change: true,
+      };
       patchUserProfileStub.withArgs(SETTINGS.user.username).returns(Promise.resolve(updatedProfile));
 
       return dispatchThen(
@@ -162,9 +163,10 @@ describe('reducers', () => {
           visibility: [],
         });
 
-        let newProfile = Object.assign({}, USER_PROFILE_RESPONSE, {
-          newField: true
-        });
+        let newProfile = {
+          ...USER_PROFILE_RESPONSE,
+          newField: true,
+        };
 
         return dispatchThen(updateProfile('jane', newProfile), [UPDATE_PROFILE]).then(profileState => {
           assert.deepEqual(profileState['jane'].edit, {

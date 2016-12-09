@@ -120,131 +120,153 @@ export const INITIAL_UI_STATE: UIState = {
 export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
   switch (action.type) {
   case UPDATE_DIALOG_TEXT:
-    return Object.assign({}, state, {
-      dialog: Object.assign(
-        {},
-        state.dialog,
-        { text: action.payload }
-      )
-    });
+    return {
+      ...state,
+      dialog: {
+        ...state.dialog,
+        text: action.payload,
+      },
+    };
   case UPDATE_DIALOG_TITLE:
-    return Object.assign({}, state, {
-      dialog: Object.assign(
-        {},
-        state.dialog,
-        { title: action.payload }
-      )
-    });
+    return {
+      ...state,
+      dialog: {
+        ...state.dialog,
+        title: action.payload,
+      },
+    };
   case SET_DIALOG_VISIBILITY:
-    return Object.assign({}, state, {
-      dialog: Object.assign(
-        {},
-        state.dialog,
-        { visible: action.payload }
-      )
-    });
+    return {
+      ...state,
+      dialog: {
+        ...state.dialog,
+        visible: action.payload,
+      },
+    };
   case SET_PROGRAM:
-    return Object.assign({}, state, {
-      selectedProgram: action.payload
-    });
+    return {
+      ...state,
+      selectedProgram: action.payload,
+    };
   case SET_WORK_HISTORY_EDIT:
-    return Object.assign({}, state, {
-      workHistoryEdit: action.payload
-    });
+    return {
+      ...state,
+      workHistoryEdit: action.payload,
+    };
   case SET_WORK_DIALOG_VISIBILITY:
-    return Object.assign({}, state, {
-      workDialogVisibility: action.payload
-    });
+    return {
+      ...state,
+      workDialogVisibility: action.payload,
+    };
   case SET_WORK_DIALOG_INDEX:
-    return Object.assign({}, state, {
-      workDialogIndex: action.payload
-    });
+    return {
+      ...state,
+      workDialogIndex: action.payload,
+    };
   case SET_WORK_HISTORY_ANSWER:
-    return Object.assign({}, state, {
-      workHistoryAnswer: action.payload
-    });
+    return {
+      ...state,
+      workHistoryAnswer: action.payload,
+    };
   case SET_EDUCATION_DIALOG_VISIBILITY:
-    return Object.assign({}, state, {
-      educationDialogVisibility: action.payload
-    });
+    return {
+      ...state,
+      educationDialogVisibility: action.payload,
+    };
   case SET_EDUCATION_DIALOG_INDEX:
-    return Object.assign({}, state, {
-      educationDialogIndex: action.payload
-    });
+    return {
+      ...state,
+      educationDialogIndex: action.payload,
+    };
   case SET_EDUCATION_DEGREE_LEVEL:
-    return Object.assign({}, state, {
-      educationDegreeLevel: action.payload
-    });
+    return {
+      ...state,
+      educationDegreeLevel: action.payload,
+    };
   case SET_EDUCATION_LEVEL_ANSWERS:
-    return Object.assign({}, state, {
-      educationLevelAnswers: action.payload
-    });
+    return {
+      ...state,
+      educationLevelAnswers: action.payload,
+    };
   case CLEAR_UI:
     return INITIAL_UI_STATE;
   case SET_USER_PAGE_DIALOG_VISIBILITY: {
-    return Object.assign({}, state, {
-      userPageDialogVisibility: action.payload
-    });
+    return {
+      ...state,
+      userPageDialogVisibility: action.payload,
+    };
   }
   case SET_USER_PAGE_ABOUT_ME_DIALOG_VISIBILITY: {
-    return Object.assign({}, state, {
-      userPageAboutMeDialogVisibility: action.payload
-    });
+    return {
+      ...state,
+      userPageAboutMeDialogVisibility: action.payload,
+    };
   }
   case SET_SHOW_EDUCATION_DELETE_DIALOG: {
-    return Object.assign({}, state, {
-      showEducationDeleteDialog: action.payload
-    });
+    return {
+      ...state,
+      showEducationDeleteDialog: action.payload,
+    };
   }
   case SET_SHOW_WORK_DELETE_DIALOG: {
-    return Object.assign({}, state, {
-      showWorkDeleteDialog: action.payload
-    });
+    return {
+      ...state,
+      showWorkDeleteDialog: action.payload,
+    };
   }
   case SET_DELETION_INDEX: {
-    return Object.assign({}, state, {
-      deletionIndex: action.payload
-    });
+    return {
+      ...state,
+      deletionIndex: action.payload,
+    };
   }
   case SET_PROFILE_STEP: {
-    return Object.assign({}, state, {
-      profileStep: action.payload
-    });
+    return {
+      ...state,
+      profileStep: action.payload,
+    };
   }
   case SET_USER_MENU_OPEN: {
-    return Object.assign({}, state, {
-      userMenuOpen: action.payload
-    });
+    return {
+      ...state,
+      userMenuOpen: action.payload,
+    };
   }
   case SET_SEARCH_FILTER_VISIBILITY: {
-    return Object.assign({}, state, {
-      searchFilterVisibility: action.payload
-    });
+    return {
+      ...state,
+      searchFilterVisibility: action.payload,
+    };
   }
   case SET_EMAIL_DIALOG_VISIBILITY: {
-    return Object.assign({}, state, {
-      emailDialogVisibility: action.payload
-    });
+    return {
+      ...state,
+      emailDialogVisibility: action.payload,
+    };
   }
   case SET_ENROLL_DIALOG_ERROR: {
-    return Object.assign({}, state, {
-      enrollDialogError: action.payload
-    });
+    return {
+      ...state,
+      enrollDialogError: action.payload,
+    };
   }
   case SET_TOAST_MESSAGE: {
-    return Object.assign({}, state, {
-      toastMessage: action.payload
-    });
+    return {
+      ...state,
+      toastMessage: action.payload,
+    };
   }
   case SET_ENROLL_SELECTED_PROGRAM: {
-    return Object.assign({}, state, {
-      enrollSelectedProgram: action.payload
-    });
+    return {
+      ...state,
+      enrollSelectedProgram: action.payload,
+    };
   }
   case SET_ENROLL_DIALOG_VISIBILITY: {
-    return Object.assign({}, state, {
+    return {
+      ...state,
       enrollDialogVisibility: action.payload
-    });
+    };
   }
   case SET_PHOTO_DIALOG_VISIBILITY:
     return { ...state, photoDialogVisibility: action.payload };

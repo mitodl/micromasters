@@ -221,9 +221,10 @@ export function boundCheckbox(keySet: string[], label: string|React$Element<*>):
  */
 export function saveProfileStep(validator: Validator|UIValidator, isLastStep: boolean = false): Promise<Profile> {
   const { saveProfile, profile, ui } = this.props;
-  let clone = Object.assign({}, profile, {
+  let clone = {
+    ...profile,
     filled_out: profile.filled_out || isLastStep
-  });
+  };
 
   if (isLastStep && !profile.filled_out) {
     clone.email_optin = true;
