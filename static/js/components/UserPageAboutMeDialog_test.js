@@ -93,6 +93,7 @@ describe('UserPageAboutMeDialog', () => {
     });
     let saveButton = getDialog().querySelector(".save-button");
     assert(saveButton.className.includes("disabled-with-spinner"));
+    assert(saveButton.querySelector(".mdl-spinner"));
     TestUtils.Simulate.click(saveButton);
     assert.equal(saveProfile.callCount, 0);
   });
