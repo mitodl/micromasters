@@ -51,8 +51,8 @@ describe('CourseAction', () => {
     }
     let description = renderedComponent.find(".description");
     let descriptionText = description.length === 1 ? description.text() : undefined;
-    let link = renderedComponent.find("button.enroll-pay-later");
-    let linkText = link.length === 1 ? link.text() : undefined;
+    let link = renderedComponent.find("SpinnerButton.enroll-pay-later");
+    let linkText = link.length === 1 ? link.children().text() : undefined;
     return {
       button: button,
       buttonText: buttonText,
@@ -431,11 +431,8 @@ describe('CourseAction', () => {
         courseRun: firstRun,
         courseEnrollAddStatus: FETCH_PROCESSING
       });
-      let link = wrapper.find(".enroll-pay-later");
-      assert(link.props().className.includes("disabled-with-spinner"));
-      assert(link.find("Spinner"));
-      link.simulate("click");
-      assert.isFalse(addCourseEnrollmentStub.called);
+      let link = wrapper.find("SpinnerButton.enroll-pay-later");
+      assert.isTrue(link.props().spinning);
     });
   });
 });
