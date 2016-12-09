@@ -217,6 +217,7 @@ describe("ProfilePage", function() {
       assert(next.props().className.includes("disabled-with-spinner"));
       next.simulate("click");
       assert.isFalse(patchUserProfileStub.called);
+      assert.lengthOf(next.find(".mdl-spinner"), 1);
     });
   });
 

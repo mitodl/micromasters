@@ -569,6 +569,7 @@ describe("UserPage", function() {
           }).then(() => {
             let button = dialog.querySelector(".save-button");
             assert(button.className.includes("disabled-with-spinner"));
+            assert(button.querySelector(".mdl-spinner"));
 
             TestUtils.Simulate.click(button);
             assert.isFalse(patchUserProfileStub.called);
@@ -795,6 +796,7 @@ describe("UserPage", function() {
           }).then(() => {
             let button = dialog.querySelector(".save-button");
             assert(button.className.includes("disabled-with-spinner"));
+            assert(button.querySelector(".mdl-spinner"));
 
             TestUtils.Simulate.click(button);
             assert.isFalse(patchUserProfileStub.called);
