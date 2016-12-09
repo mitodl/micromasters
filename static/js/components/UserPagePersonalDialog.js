@@ -2,11 +2,11 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import Button from 'react-mdl/lib/Button';
-import Spinner from 'react-mdl/lib/Spinner';
 
 import { FETCH_PROCESSING } from '../actions';
 import { personalValidation } from '../lib/validation/profile';
 import PersonalForm from './PersonalForm';
+import SpinnerButton from './SpinnerButton';
 import type { Profile, SaveProfileFunc } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
 
@@ -48,13 +48,15 @@ export default class UserPagePersonalDialog extends React.Component {
         onClick={this.closePersonalDialog}>
         Cancel
       </Button>,
-      <Button
+      <SpinnerButton
+        component={Button}
+        spinning={inFlight}
         type='button'
-        className={`primary-button save-button ${inFlight ? 'disabled-with-spinner' : ''}`}
+        className="primary-button save-button"
         key='save'
-        onClick={inFlight ? undefined : this.savePersonalInfo}>
-        {inFlight ? <Spinner singleColor /> : 'Save'}
-      </Button>
+        onClick={this.savePersonalInfo}>
+        Save
+       </SpinnerButton>
     ];
 
     return (
