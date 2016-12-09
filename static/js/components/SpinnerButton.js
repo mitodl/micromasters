@@ -8,6 +8,7 @@ export default class SpinnerButton extends React.Component {
     className?: string,
     onClick?: Function,
     children?: any,
+    disabled?: ?bool,
   };
 
   render() {
@@ -17,6 +18,7 @@ export default class SpinnerButton extends React.Component {
       className,
       onClick,
       children,
+      disabled,
       ...otherProps
     } = this.props;
 
@@ -27,11 +29,13 @@ export default class SpinnerButton extends React.Component {
       className = `${className} disabled-with-spinner`;
       onClick = undefined;
       children = <Spinner singleColor />;
+      disabled = true;
     }
 
     return <ComponentVariable
       className={className}
       onClick={onClick}
+      disabled={disabled}
       {...otherProps}
     >
       {children}

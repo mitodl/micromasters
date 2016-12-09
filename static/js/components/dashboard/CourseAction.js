@@ -3,7 +3,6 @@
 import React from 'react';
 import moment from 'moment';
 import Button from 'react-mdl/lib/Button';
-import Spinner from 'react-mdl/lib/Spinner';
 import R from 'ramda';
 import _ from 'lodash';
 
@@ -31,6 +30,7 @@ import { ifValidDate } from '../../util/date';
 export default class CourseAction extends React.Component {
   props: {
     checkout: Function,
+    checkoutStatus?: string,
     courseRun: CourseRun,
     coursePrice: CoursePrice,
     courseEnrollAddStatus?: string,
@@ -66,6 +66,7 @@ export default class CourseAction extends React.Component {
   renderEnrollButton(run: CourseRun): React$Element<*> {
     const {
       checkout,
+      checkoutStatus,
       openFinancialAidCalculator
     } = this.props;
     let text = '';
@@ -90,18 +91,16 @@ export default class CourseAction extends React.Component {
       }
     }
 
-    if (run.status === STATUS_PENDING_ENROLLMENT) {
-      buttonProps.disabled = true;
-
-      text = <div className="spinner-container">
-        <Spinner singleColor />
-      </div>;
-    }
-
     return (
-      <Button className="dashboard-button" key="1" {...buttonProps}>
+      <SpinnerButton
+        className="dashboard-button"
+        key="1"
+        component={Button}
+        spinning={run.status === STATUS_PENDING_ENROLLMENT || checkoutStatus === FETCH_PROCESSING}
+        {...buttonProps}
+      >
         {text}
-      </Button>
+      </SpinnerButton>
     );
   }
 

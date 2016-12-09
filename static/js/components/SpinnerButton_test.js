@@ -20,7 +20,6 @@ describe("SpinnerButton", () => {
   it('passes through all props when spinning is false', () => {
     let onClick = sandbox.stub();
     let props = {
-      disabled: true,
       "data-x": "y",
       onClick: onClick,
       className: "class1 class2"
@@ -38,6 +37,7 @@ describe("SpinnerButton", () => {
       assert.deepEqual(buttonProps[key], props[key]);
     }
     assert.equal(button.children().text(), "childText");
+    assert.isUndefined(buttonProps.disabled);
   });
 
   it('replaces children with a Spinner, disables onClick and updates className when spinning is true', () => {
@@ -61,6 +61,7 @@ describe("SpinnerButton", () => {
 
     assert.isUndefined(buttonProps.onClick);
     assert.equal(buttonProps.className, "class1 class2 disabled-with-spinner");
+    assert.isTrue(buttonProps.disabled);
     assert.equal(button.children().text(), "<Spinner />");
   });
 });

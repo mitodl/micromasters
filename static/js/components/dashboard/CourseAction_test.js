@@ -329,9 +329,9 @@ describe('CourseAction', () => {
       courseRun: firstRun
     });
 
-    assert.equal(wrapper.text(), "<Button />Processing...");
-    assert.isTrue(wrapper.find("Button").props()['disabled']);
-    assert.equal(wrapper.find("Spinner").length, 1);
+    assert.equal(wrapper.find(".description").text(), "Processing...");
+    let buttonProps = wrapper.find("SpinnerButton").props();
+    assert.isTrue(buttonProps.spinning);
   });
 
   it('hides an invalid date if the user is enrolled and the course has yet to start', () => {
@@ -416,6 +416,8 @@ describe('CourseAction', () => {
         let elements = getElements(wrapper);
 
         assert.isTrue(elements.button.props().disabled);
+        // we don't show a spinner in this case, only for API loads or when waiting for Cybersource callback
+        assert.isFalse(elements.button.props().spinning);
         assert.include(elements.buttonText, 'Pay Now');
         assert.equal(elements.linkText, 'Enroll and pay later');
       });
@@ -432,6 +434,20 @@ describe('CourseAction', () => {
         courseEnrollAddStatus: FETCH_PROCESSING
       });
       let link = wrapper.find("SpinnerButton.enroll-pay-later");
+      assert.isTrue(link.props().spinning);
+    });
+
+    it('shows a spinner in place of the pay button while API call is in progress', () => {
+      let course = findCourse(course => (
+        course.runs.length > 0 &&
+        course.runs[0].status === STATUS_CAN_UPGRADE
+      ));
+      let firstRun = course.runs[0];
+      const wrapper = renderCourseAction({
+        courseRun: firstRun,
+        checkoutStatus: FETCH_PROCESSING
+      });
+      let link = wrapper.find(".dashboard-button");
       assert.isTrue(link.props().spinning);
     });
   });

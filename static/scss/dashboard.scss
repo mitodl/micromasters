@@ -225,10 +225,11 @@
           color: #ffffff;
         }
 
-        .spinner-container {
+        .disabled-with-spinner {
           width: 130px;
-          height: 20px !important;
-          line-height: 20px !important;
+          // mdl-button height is 36px, spinner below is 20px so this should
+          // hackishly vertically center it
+          padding-top: 8px;
 
           .mdl-spinner {
             height: 20px !important;

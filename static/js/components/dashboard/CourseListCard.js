@@ -12,6 +12,7 @@ import FinancialAidCalculator from '../../containers/FinancialAidCalculator';
 export default class CourseListCard extends React.Component {
   props: {
     checkout:                     Function,
+    checkoutStatus?:              string,
     program:                      Program,
     courseEnrollAddStatus?:       string,
     coursePrice:                  CoursePrice,
@@ -26,6 +27,7 @@ export default class CourseListCard extends React.Component {
       coursePrice,
       now,
       checkout,
+      checkoutStatus,
       openFinancialAidCalculator,
       addCourseEnrollment,
       courseEnrollAddStatus,
@@ -44,6 +46,7 @@ export default class CourseListCard extends React.Component {
         coursePrice={coursePrice}
         key={course.id}
         checkout={checkout}
+        checkoutStatus={checkoutStatus}
         openFinancialAidCalculator={openFinancialAidCalculator}
         now={now}
         addCourseEnrollment={addCourseEnrollment}

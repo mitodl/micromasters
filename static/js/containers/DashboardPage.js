@@ -57,6 +57,7 @@ import type { CoursePricesState, DashboardState } from '../flow/dashboardTypes';
 import type { AvailableProgram, CourseEnrollmentsState } from '../flow/enrollmentTypes';
 import type { ProfileGetResult } from '../flow/profileTypes';
 import type { Course, CourseRun } from '../flow/programTypes';
+import type { CheckoutState } from '../reducers';
 import { skipFinancialAid } from '../actions/financial_aid';
 import { currencyForCountry } from '../lib/currency';
 import DocsInstructionsDialog from '../components/DocsInstructionsDialog';
@@ -78,6 +79,7 @@ class DashboardPage extends React.Component {
     fetchDashboard:           () => void,
     orderReceipt:             OrderReceiptState,
     courseEnrollments:        CourseEnrollmentsState,
+    checkout:                 CheckoutState,
   };
 
   componentDidMount() {
@@ -259,6 +261,7 @@ class DashboardPage extends React.Component {
       currentProgramEnrollment,
       ui,
       courseEnrollments,
+      checkout,
     } = this.props;
     const loaded = dashboard.fetchStatus !== FETCH_PROCESSING && prices.fetchStatus !== FETCH_PROCESSING;
     let errorMessage;
@@ -307,6 +310,7 @@ class DashboardPage extends React.Component {
               coursePrice={coursePrice}
               key={program.id}
               checkout={this.dispatchCheckout}
+              checkoutStatus={checkout.fetchStatus}
               openFinancialAidCalculator={this.openFinancialAidCalculator}
               addCourseEnrollment={this.addCourseEnrollment}
             />
@@ -345,6 +349,7 @@ const mapStateToProps = (state) => {
     documents: state.documents,
     orderReceipt: state.orderReceipt,
     courseEnrollments: state.courseEnrollments,
+    checkout: state.checkout,
   };
 };
 
