@@ -1,0 +1,43 @@
+# This file is for configuring Nginx on Heroku using the nginx-buildpack
+
+daemon off;
+#Heroku dynos have at least 4 cores.
+worker_processes <%= ENV['NGINX_WORKERS'] || 4 %>;
+
+events {
+    use epoll;
+    accept_mutex on;
+    worker_connections 1024;
+}
+
+http {
+    gzip on;
+    gzip_comp_level 2;
+    gzip_min_length 512;
+
+    server_tokens off;
+
+    log_format l2met 'measure#nginx.service=$request_time request_id=$http_x_request_id';
+    access_log logs/nginx/access.log l2met;
+    error_log logs/nginx/error.log;
+
+    include mime.types;
+    default_type application/octet-stream;
+    sendfile on;
+
+    server {
+        listen <%= ENV["PORT"] %>;
+        server_name _;
+        root /app;
+        location /static/ {
+            try_files $uri $uri/ =404;
+        }
+
+        location / {
+            include uwsgi_params;
+            uwsgi_pass unix:/tmp/nginx.socket;
+            uwsgi_pass_request_headers on;
+            uwsgi_pass_request_body on;
+        }
+    }
+}

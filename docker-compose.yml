@@ -16,6 +16,17 @@ services:
     ports:
       - "9100:9200"
 
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/web.conf
+      - .:/src
+    ports:
+      - "8080:8080"
+    links:
+      - web
+      - watch
+
   web:
     build: .
     command: >

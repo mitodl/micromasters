@@ -13,6 +13,9 @@
     },
     {
       "url": "https://github.com/heroku/heroku-buildpack-pgbouncer"
+    },
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-nginx"
     }
   ],
   "description": "Web Portal for MicroMasters",
