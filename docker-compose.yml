@@ -22,7 +22,7 @@ services:
       - ./nginx.conf:/etc/nginx/conf.d/web.conf
       - .:/src
     ports:
-      - "8080:8080"
+      - "8079:8079"
     links:
       - web
       - watch
@@ -41,7 +41,7 @@ services:
       DEBUG: 'True'
       DEV_ENV: 'True'
       NODE_ENV: 'development'
-      PORT: 8079
+      PORT: 8077
       COVERAGE_DIR: htmlcov
       DATABASE_URL: postgres://postgres@db:5432/postgres
       MICROMASTERS_USE_WEBPACK_DEV_SERVER: 'True'
@@ -53,7 +53,7 @@ services:
       CELERY_RESULT_BACKEND: redis://redis:6379/4
     env_file: .env
     ports:
-      - "8079:8079"
+      - "8077:8077"
     links:
       - db
       - elastic
