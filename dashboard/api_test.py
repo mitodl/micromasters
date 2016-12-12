@@ -161,6 +161,7 @@ class FormatRunTest(CourseTests):
             'course_end_date': crun.end_date,
             'fuzzy_start_date': crun.fuzzy_start_date,
             'final_grade': 99.99,
+            'enrollment_url': crun.enrollment_url,
         }
 
         self.assertEqual(
@@ -217,7 +218,8 @@ class FormatRunTest(CourseTests):
                 'position': 1,
                 'course_start_date': crun.start_date,
                 'course_end_date': crun.end_date,
-                'fuzzy_start_date': crun.fuzzy_start_date
+                'fuzzy_start_date': crun.fuzzy_start_date,
+                'enrollment_url': crun.enrollment_url,
             }
         )
 

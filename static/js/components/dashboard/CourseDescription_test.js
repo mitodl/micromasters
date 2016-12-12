@@ -18,6 +18,8 @@ import {
   STATUS_MISSED_DEADLINE,
   STATUS_CURRENTLY_ENROLLED,
   STATUS_OFFERED,
+  STATUS_WILL_ATTEND,
+  STATUS_PENDING_ENROLLMENT,
   ALL_COURSE_STATUSES,
 } from '../../constants';
 
@@ -35,11 +37,12 @@ describe('CourseDescription', () => {
 
   it('shows the course title and a link to view the course on edX', () => {
     for (let status of ALL_COURSE_STATUSES) {
-      let course = findCourse(course => (
+      let course = findAndCloneCourse(course => (
         course.runs.length > 0 &&
         course.runs[0].status === status
       ));
       let firstRun = course.runs[0];
+      firstRun.enrollment_url = 'http://test.com';
       const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
       let elements = getElements(wrapper);
 
@@ -47,6 +50,24 @@ describe('CourseDescription', () => {
       assert.isAbove(elements.titleLink.length, 0);
       assert.equal(elements.titleLink.text(), 'View on edX');
       assert.isAbove(elements.titleLink.props().href.length, 0);
+    }
+  });
+
+  it('does not show view the course on edX link if enrollment_url is no define', () => {
+    const NOT_ENROLLED_STATUSES =[
+      STATUS_WILL_ATTEND, STATUS_OFFERED, STATUS_CAN_UPGRADE, STATUS_MISSED_DEADLINE, STATUS_PENDING_ENROLLMENT
+    ];
+
+    for (let status of NOT_ENROLLED_STATUSES) {
+      let course = findAndCloneCourse(course => (
+        course.runs.length > 0 &&
+        course.runs[0].status === status
+      ));
+      let firstRun = course.runs[0];
+      const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
+      let elements = getElements(wrapper);
+
+      assert.lengthOf(elements.titleLink, 0);
     }
   });
 

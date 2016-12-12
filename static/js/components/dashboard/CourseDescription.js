@@ -68,13 +68,28 @@ export default class CourseDescription extends React.Component {
     return _.compact([dateMessage, additionalDetail]);
   }
 
-  renderViewCourseLink = (courseRun: CourseRun): React$Element<*>|null => (
-    (courseRun && courseRun.course_id) ?
-      <a href={`${EDX_LINK_BASE}${courseRun.course_id}`} target="_blank">
-        View on edX
-      </a> :
-      null
-  );
+  renderViewCourseLink = (courseRun: CourseRun): React$Element<*>|null => {
+    if (!courseRun || !courseRun.course_id) {
+      return null;
+    }
+
+    let url = null;
+    switch (courseRun.status) {
+    case STATUS_WILL_ATTEND:
+    case STATUS_OFFERED:
+    case STATUS_PENDING_ENROLLMENT:
+      url = courseRun.enrollment_url;
+      break;
+    case STATUS_CAN_UPGRADE:
+    case STATUS_MISSED_DEADLINE:
+      url = courseRun.enrollment_url;
+      break;
+    default:
+      url = `${EDX_LINK_BASE}${courseRun.course_id}`;
+    }
+
+    return url ? <a href={url} target="_blank">View on edX</a> : null;
+  }
 
   render() {
     const { courseRun, courseTitle } = this.props;

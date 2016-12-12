@@ -329,7 +329,8 @@ def format_courserun_for_dashboard(course_run, status_for_user, mmtrack, positio
         'position': position,
         'course_start_date': course_run.start_date,
         'course_end_date': course_run.end_date,
-        'fuzzy_start_date': course_run.fuzzy_start_date
+        'fuzzy_start_date': course_run.fuzzy_start_date,
+        'enrollment_url': course_run.enrollment_url,
     }
 
     # check if there are extra fields to pull in
