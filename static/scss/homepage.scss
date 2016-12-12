@@ -221,7 +221,9 @@ body.app-media {
       }
 
       @include breakpoint(phone) {
-        display: none;
+        font-size: 20px;
+        line-height: 1.15;
+        margin-bottom: 0;
       }
     }
 
