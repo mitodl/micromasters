@@ -188,10 +188,22 @@ const zendeskPollForExistence = (name) => {
 
 const zendeskPollForLoaded = (name) => {
   let tries = 0;
+  let iframeDocument = null;
   const intervalID = setInterval(() => {
     tries += 1;
     const iframe = document.querySelector(`iframe.zEWidget-${name}`);
-    const div = iframe.contentDocument.querySelector("div");
+    try {
+      iframeDocument = iframe.contentDocument;
+    } catch (err) {
+      // cross-domain exception: can't continue
+    }
+    if (!iframeDocument) {
+      console.error(`Can't access content of Zendesk iframe: ${name}`);  // eslint-disable-line no-console
+      clearInterval(intervalID);
+      return;
+    }
+
+    const div = iframeDocument.querySelector("div");
     if (div) {
       clearInterval(intervalID);
       const callback = zendeskCallbacks[`${name}Loaded`];
