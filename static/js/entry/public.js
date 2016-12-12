@@ -154,6 +154,8 @@ jQuery(document).ready(function ($) {
     'integrated set of graduate-level online courses. With the MicroMasters ' +
     "credentials, learners can apply for an accelerated master's degree " +
     "program on campus, at MIT or other top universities.";
+  const twitterDescription = 'MITx MicroMasters Programs: a new academic credential ' +
+    'and a new path to a master’s degree from MIT. Learn more ';
 
   $('.rrssb-buttons').rrssb({
     // required:
@@ -164,6 +166,8 @@ jQuery(document).ready(function ($) {
     description: description,
     emailBody: description + CURRENT_PAGE_URL
   });
+  $('.rrssb-buttons').find('.rrssb-twitter a').attr('href',
+    'https://twitter.com/intent/tweet?text=' + twitterDescription + '%20' + CURRENT_PAGE_URL );
 });
 
 /**
