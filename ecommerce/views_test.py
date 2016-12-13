@@ -280,7 +280,7 @@ class OrderFulfillmentViewTests(ESTestCase):
 
         assert send_email.call_count == 1
         assert send_email.call_args[0] == (
-            'Order fulfillment failed',
+            'Order fulfillment failed, decision={decision}'.format(decision='something else'),
             'Order fulfillment failed for order {order}'.format(order=order),
             'support@example.com',
         )

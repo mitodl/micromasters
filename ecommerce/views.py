@@ -107,7 +107,9 @@ class OrderFulfillmentView(APIView):
             )
             try:
                 MailgunClient().send_individual_email(
-                    "Order fulfillment failed",
+                    "Order fulfillment failed, decision={decision}".format(
+                        decision=request.data['decision']
+                    ),
                     "Order fulfillment failed for order {order}".format(
                         order=order,
                     ),
