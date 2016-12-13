@@ -113,9 +113,7 @@ describe("UserPage", function() {
 
       helper.profileGetStub.
         withArgs(SETTINGS.user.username).
-        returns(
-          Promise.resolve(USER_PROFILE_RESPONSE)
-        );
+        returns(Promise.resolve(USER_PROFILE_RESPONSE));
     });
 
     afterEach(() => {

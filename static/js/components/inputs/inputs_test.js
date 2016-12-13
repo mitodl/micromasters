@@ -41,16 +41,14 @@ describe('Profile inputs', () => {
     ];
 
     let renderGenderSelectField = (props = {}) => {
-      return renderTestSelectField(
-        {
-          ...inputProps,
-          keySet: ['gender'],
-          label: "Gender",
-          options: genderOptions,
-          updateProfile: updateProfileStub,
-          ...props,
-        },
-      );
+      return renderTestSelectField({
+        ...inputProps,
+        keySet: ['gender'],
+        label: "Gender",
+        options: genderOptions,
+        updateProfile: updateProfileStub,
+        ...props,
+      });
     };
 
     beforeEach(() => {

@@ -121,9 +121,7 @@ describe("ProfilePage", function() {
       };
       helper.profileGetStub.
         withArgs(SETTINGS.user.username).
-        returns(
-          Promise.resolve(userProfile)
-        );
+        returns(Promise.resolve(userProfile));
     });
 
     it('should launch a dialog to add an entry when an education switch is set to Yes', () => {
