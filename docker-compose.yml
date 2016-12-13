@@ -19,8 +19,8 @@ services:
   nginx:
     image: nginx
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/web.conf
-      - .:/src
+      - ./config/nginx.conf:/etc/nginx/conf.d/web.conf
+      - ./:/src
     ports:
       - "8079:8079"
     links:
