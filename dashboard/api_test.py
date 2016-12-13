@@ -521,6 +521,28 @@ class InfoCourseTest(CourseTests):
         mock_format.assert_called_once_with(self.course_run, api.CourseStatus.OFFERED, None, position=1)
 
     @patch('dashboard.api.format_courserun_for_dashboard', autospec=True)
+    def test_info_not_enrolled_but_paid(self, mock_format):
+        """test for get_info_for_course for course with with a paid but not enrolled run"""
+        with patch(
+            'dashboard.api.get_status_for_courserun',
+            autospec=True,
+            return_value=api.CourseRunUserStatus(
+                status=api.CourseRunStatus.PAID_BUT_NOT_ENROLLED,
+                course_run=self.course_run
+            )
+        ):
+            self.assert_course_equal(
+                self.course,
+                api.get_info_for_course(self.course, None)
+            )
+        mock_format.assert_called_once_with(
+            self.course_run,
+            api.CourseStatus.PAID_BUT_NOT_ENROLLED,
+            None,
+            position=1
+        )
+
+    @patch('dashboard.api.format_courserun_for_dashboard', autospec=True)
     def test_info_not_passed_offered(self, mock_format):
         """test for get_info_for_course for course with a run not passed and another offered"""
         with patch(
