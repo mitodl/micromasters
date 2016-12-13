@@ -614,7 +614,7 @@ export const DASHBOARD_RESPONSE = deepFreeze([
       "prerequisites": "",
       "runs": [{
         "course_id": "course-v1:edX+missed+deadline",
-        "id": 6,
+        "id": 12,
         "status": STATUS_MISSED_DEADLINE,
         "title": "Course run for the missed deadline program",
         "position": 0,
@@ -623,6 +623,28 @@ export const DASHBOARD_RESPONSE = deepFreeze([
       }]
     }],
     "id": 5
+  },
+  {
+    "title": "Paid but not enrolled",
+    "description": "Paid but not enrolled",
+    "courses": [{
+      "id": 14,
+      "position_in_program": 0,
+      "title": "Course for paid but not enrolled program",
+      "description": "Course for paid but not enrolled program",
+      "prerequisites": "",
+      "runs": [{
+        "course_id": "course-v1:edX+paid+not+enrolled",
+        "id": 6,
+        "status": STATUS_PAID_BUT_NOT_ENROLLED,
+        "title": "Course run for paid but not enrolled program",
+        "position": 0,
+        "course_start_date": "2016-01-01",
+        "course_end_date": "2018-09-09T10:20:10Z",
+      }]
+    }],
+    "financial_aid_availability": true,
+    "id": 7
   },
   {
     "title": "Empty program",
