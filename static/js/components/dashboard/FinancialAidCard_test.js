@@ -8,6 +8,7 @@ import moment from 'moment';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
+import { FETCH_PROCESSING } from '../../actions';
 import FinancialAidCard from './FinancialAidCard';
 import {
   DASHBOARD_RESPONSE,
@@ -91,7 +92,7 @@ describe("FinancialAidCard", () => {
       const program = programWithStatus();
       program.financial_aid_user_info.has_user_applied = false;
       let wrapper = renderCard({ program });
-      let button = wrapper.find(".dashboard-button");
+      let button = wrapper.find(".calculate-cost-button");
       assert.equal(button.text(), "Calculate your cost");
       button.simulate('click');
       assert.ok(openFinancialAidCalculatorStub.calledWith());
@@ -190,9 +191,27 @@ describe("FinancialAidCard", () => {
         updateDocumentSentDate.returns(Promise.resolve());
         let wrapper = renderCard({ program, updateDocumentSentDate });
 
-        wrapper.find(".dashboard-button").simulate('click');
+        wrapper.find(".document-sent-button").simulate('click');
         assert(updateDocumentSentDate.calledWith(123, '2011-11-11'));
       });
+
+      for (let activity of [true, false]) {
+        it(`has a document sent button with API activity = ${activity.toString()}`, () => {
+          let program = programWithStatus(FA_STATUS_PENDING_DOCS);
+
+          let wrapper = renderCard({
+            program,
+            documents: {
+              documentSentDate: '2011-11-11',
+              fetchStatus: activity ? FETCH_PROCESSING : undefined,
+            },
+          });
+
+          let button = wrapper.find("SpinnerButton");
+          assert(button.props().className.includes("document-sent-button"));
+          assert.equal(button.props().spinning, activity);
+        });
+      }
 
       for (let status of [FA_STATUS_DOCS_SENT, FA_STATUS_PENDING_MANUAL_APPROVAL]) {
         it(`shows the document sent date for status ${status}`, () => {

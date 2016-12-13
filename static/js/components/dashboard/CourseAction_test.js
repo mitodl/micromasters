@@ -44,7 +44,7 @@ describe('CourseAction', () => {
   });
 
   let getElements = (renderedComponent) => {
-    let button = renderedComponent.find(".dashboard-button");
+    let button = renderedComponent.find(".pay-button");
     let buttonText;
     if (button.length > 0 && button.children().length > 0) {
       buttonText = button.children().text();
@@ -447,8 +447,8 @@ describe('CourseAction', () => {
         courseRun: firstRun,
         checkoutStatus: FETCH_PROCESSING
       });
-      let link = wrapper.find(".dashboard-button");
-      assert.isTrue(link.props().spinning);
+      let button = wrapper.find(".pay-button");
+      assert.isTrue(button.props().spinning);
     });
   });
 });

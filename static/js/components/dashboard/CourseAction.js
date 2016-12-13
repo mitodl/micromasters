@@ -93,7 +93,7 @@ export default class CourseAction extends React.Component {
 
     return (
       <SpinnerButton
-        className="dashboard-button"
+        className="dashboard-button pay-button"
         key="1"
         component={Button}
         spinning={run.status === STATUS_PENDING_ENROLLMENT || checkoutStatus === FETCH_PROCESSING}

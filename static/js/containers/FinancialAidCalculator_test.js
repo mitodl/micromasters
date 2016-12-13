@@ -65,7 +65,7 @@ describe('FinancialAidCalculator', () => {
 
   it('should let you open and close the financial aid calculator', () => {
     return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
-      wrapper.find('.pricing-actions').find('.dashboard-button').simulate('click');
+      wrapper.find('.pricing-actions').find('.calculate-cost-button').simulate('click');
       assert.equal(helper.store.getState().ui.calculatorDialogVisibility, true);
       let calculator = document.querySelector('.financial-aid-calculator');
 
@@ -92,7 +92,7 @@ describe('FinancialAidCalculator', () => {
         RECEIVE_DASHBOARD_SUCCESS,
         SET_CONFIRM_SKIP_DIALOG_VISIBILITY,
       ], () => {
-        wrapper.find('.pricing-actions').find('.dashboard-button').simulate('click');
+        wrapper.find('.pricing-actions').find('.calculate-cost-button').simulate('click');
         assert.equal(helper.store.getState().ui.calculatorDialogVisibility, true);
         let calculator = document.querySelector('.financial-aid-calculator-wrapper');
         TestUtils.Simulate.click(calculator.querySelector('.full-price'));
@@ -116,7 +116,7 @@ describe('FinancialAidCalculator', () => {
         UPDATE_CALCULATOR_VALIDATION,
         UPDATE_CALCULATOR_EDIT
       ], () => {
-        wrapper.find('.pricing-actions').find('.dashboard-button').simulate('click');
+        wrapper.find('.pricing-actions').find('.calculate-cost-button').simulate('click');
         modifyTextField(document.querySelector('#user-salary-input'), '1000');
       }).then(() => {
         assert.deepEqual(helper.store.getState().financialAid, {
@@ -150,7 +150,7 @@ describe('FinancialAidCalculator', () => {
         UPDATE_CALCULATOR_VALIDATION,
         UPDATE_CALCULATOR_EDIT,
       ], () => {
-        wrapper.find('.pricing-actions').find('.dashboard-button').simulate('click');
+        wrapper.find('.pricing-actions').find('.calculate-cost-button').simulate('click');
         clearSelectField(document.querySelector('.currency'));
         TestUtils.Simulate.click(document.querySelector('.financial-aid-calculator .save-button'));
       }).then(() => {
@@ -176,7 +176,7 @@ describe('FinancialAidCalculator', () => {
         UPDATE_CALCULATOR_VALIDATION,
         UPDATE_CALCULATOR_EDIT,
       ], () => {
-        wrapper.find('.pricing-actions').find('.dashboard-button').simulate('click');
+        wrapper.find('.pricing-actions').find('.calculate-cost-button').simulate('click');
         let select = document.querySelector('.currency');
         modifySelectField(select, 'GBP');
       }).then(() => {
@@ -215,7 +215,7 @@ describe('FinancialAidCalculator', () => {
         RECEIVE_DASHBOARD_SUCCESS,
         CLEAR_CALCULATOR_EDIT,
       ], () => {
-        wrapper.find('.pricing-actions').find('.dashboard-button').simulate('click');
+        wrapper.find('.pricing-actions').find('.calculate-cost-button').simulate('click');
         let calculator = document.querySelector('.financial-aid-calculator');
         TestUtils.Simulate.change(calculator.querySelector('.mdl-checkbox__input'));
         modifyTextField(document.querySelector('#user-salary-input'), '1000');
@@ -246,7 +246,7 @@ describe('FinancialAidCalculator', () => {
         REQUEST_ADD_FINANCIAL_AID,
         RECEIVE_ADD_FINANCIAL_AID_FAILURE,
       ], () => {
-        wrapper.find('.pricing-actions').find('.dashboard-button').simulate('click');
+        wrapper.find('.pricing-actions').find('.calculate-cost-button').simulate('click');
         let calculator = document.querySelector('.financial-aid-calculator');
         TestUtils.Simulate.change(calculator.querySelector('.mdl-checkbox__input'));
         modifyTextField(document.querySelector('#user-salary-input'), '1000');

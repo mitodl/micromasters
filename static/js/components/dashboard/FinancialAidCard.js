@@ -7,6 +7,8 @@ import Icon from 'react-mdl/lib/Icon';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 
+import { FETCH_PROCESSING } from '../../actions';
+import SpinnerButton from '../SpinnerButton';
 import type { CoursePrice } from '../../flow/dashboardTypes';
 import type { Program } from '../../flow/programTypes';
 import type {
@@ -56,7 +58,10 @@ export default class FinancialAidCard extends React.Component {
   renderDocumentStatus() {
     const {
       setDocumentSentDate,
-      documents,
+      documents: {
+        documentSentDate,
+        fetchStatus,
+      },
       program: {
         financial_aid_user_info: {
           application_status: applicationStatus,
@@ -83,12 +88,17 @@ export default class FinancialAidCard extends React.Component {
         <Grid className="document-row">
           <Cell col={12}>
             <DatePicker
-              selected={moment(documents.documentSentDate)}
+              selected={moment(documentSentDate)}
               onChange={(obj) => setDocumentSentDate(obj.format(ISO_8601_FORMAT))}
             />
-            <Button className="dashboard-button" onClick={this.submitDocuments}>
+            <SpinnerButton
+              className="dashboard-button document-sent-button"
+              component={Button}
+              onClick={this.submitDocuments}
+              spinning={fetchStatus === FETCH_PROCESSING}
+            >
               Submit
-            </Button>
+            </SpinnerButton>
           </Cell>
         </Grid>
       </div>;
@@ -122,7 +132,7 @@ export default class FinancialAidCard extends React.Component {
       </div>
       <div className="pricing-actions">
         <button
-          className="mdl-button dashboard-button"
+          className="mdl-button dashboard-button calculate-cost-button"
           onClick={openFinancialAidCalculator}
         >
           Calculate your cost

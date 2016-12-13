@@ -74,7 +74,7 @@ describe('CourseSubRow', () => {
     assert.include(wrapper.find(".course-description").html(), "Enrollment open");
     assert.equal(wrapper.find(".course-grade").text().trim(), "");
     let actionCell = wrapper.find(".course-action");
-    assert.equal(actionCell.find("button.dashboard-button").text(), "Calculate Cost");
+    assert.equal(actionCell.find("button.pay-button").text(), "Calculate Cost");
     assert.equal(actionCell.find("button.enroll-pay-later").text(), "Enroll and pay later");
   });
 
