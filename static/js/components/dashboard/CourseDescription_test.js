@@ -55,7 +55,7 @@ describe('CourseDescription', () => {
 
   it('does not show view the course on edX link if enrollment_url is no define', () => {
     const NOT_ENROLLED_STATUSES =[
-      STATUS_WILL_ATTEND, STATUS_OFFERED, STATUS_CAN_UPGRADE, STATUS_MISSED_DEADLINE, STATUS_PENDING_ENROLLMENT
+      STATUS_WILL_ATTEND, STATUS_OFFERED, STATUS_PENDING_ENROLLMENT
     ];
 
     for (let status of NOT_ENROLLED_STATUSES) {
@@ -67,6 +67,66 @@ describe('CourseDescription', () => {
       const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
       let elements = getElements(wrapper);
 
+      assert.lengthOf(elements.titleLink, 0);
+    }
+  });
+
+  it('view the course on edX link when course start date is past chages', () => {
+    const EXPECTED_STATUSES = [
+      STATUS_CAN_UPGRADE, STATUS_MISSED_DEADLINE
+    ];
+
+    for (let status of EXPECTED_STATUSES) {
+      let course = findAndCloneCourse(course => (
+        course.runs.length > 0 &&
+        course.runs[0].status === status
+      ));
+      let firstRun = course.runs[0];
+      firstRun.course_start_date = moment().subtract(2, 'days').format();
+      firstRun.enrollment_url = null;
+      const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
+      let elements = getElements(wrapper);
+
+      assert.equal(elements.titleLink.text(), 'View on edX');
+      assert.isAbove(elements.titleLink.props().href.length, 0);
+    }
+  });
+
+  it('view the course on edX link when course is not start', () => {
+    const EXPECTED_STATUSES = [
+      STATUS_CAN_UPGRADE, STATUS_MISSED_DEADLINE
+    ];
+
+    for (let status of EXPECTED_STATUSES) {
+      let course = findAndCloneCourse(course => (
+        course.runs.length > 0 &&
+        course.runs[0].status === status
+      ));
+      let firstRun = course.runs[0];
+      firstRun.course_start_date = moment().add(2, 'days').format();
+      firstRun.enrollment_url = 'http://example.com';
+      const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
+      let elements = getElements(wrapper);
+      assert.equal(elements.titleLink.text(), 'View on edX');
+      assert.isAbove(elements.titleLink.props().href.length, 0);
+    }
+  });
+
+  it('view the course on edX link when course is not start and enrollment_url not set', () => {
+    const EXPECTED_STATUSES = [
+      STATUS_CAN_UPGRADE, STATUS_MISSED_DEADLINE
+    ];
+
+    for (let status of EXPECTED_STATUSES) {
+      let course = findAndCloneCourse(course => (
+        course.runs.length > 0 &&
+        course.runs[0].status === status
+      ));
+      let firstRun = course.runs[0];
+      firstRun.course_start_date = moment().add(2, 'days').format();
+      firstRun.enrollment_url = null;
+      const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
+      let elements = getElements(wrapper);
       assert.lengthOf(elements.titleLink, 0);
     }
   });
