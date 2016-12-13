@@ -61,19 +61,11 @@ import { ALL_ERRORS_VISIBLE } from '../constants';
 export const INITIAL_PROFILES_STATE = {};
 export const profiles = (state: Profiles = INITIAL_PROFILES_STATE, action: Action) => {
   let patchProfile = newProfile => {
-    let clone = Object.assign({}, state);
     let username = action.payload.username;
-    clone[username] = Object.assign(
-      { profile: {} },
-      clone[username],
-      newProfile
-    );
     return {
       ...state,
       [username]: {
-        ...{
-          profile: {}
-        },
+        ...{ profile: {} },
         ...state[username],
         ...newProfile,
       },
