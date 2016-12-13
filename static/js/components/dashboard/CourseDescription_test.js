@@ -42,7 +42,7 @@ describe('CourseDescription', () => {
         course.runs[0].status === status
       ));
       let firstRun = course.runs[0];
-      firstRun.enrollment_url = 'http://test.com';
+      firstRun.enrollment_url = 'http://example.com';
       const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
       let elements = getElements(wrapper);
 
