@@ -7,10 +7,10 @@ import { shallow } from 'enzyme';
 import Dialog from 'material-ui/Dialog';
 import SelectField from 'material-ui/SelectField';
 
+import { FETCH_PROCESSING } from '../actions';
 import { DASHBOARD_SUCCESS_ACTIONS } from '../containers/test_util';
 import * as enrollmentActions from '../actions/programs';
 import * as uiActions from '../actions/ui';
-
 import {
   DASHBOARD_RESPONSE,
   PROGRAMS,
@@ -93,10 +93,8 @@ describe("NewEnrollmentDialog", () => {
 
   it('can dispatch an addProgramEnrollment action for the currently selected enrollment', () => {
     let selectedEnrollment = PROGRAMS[0];
-    let visibilityStub = helper.sandbox.stub();
     let enrollStub = helper.sandbox.stub();
     let wrapper = renderEnrollmentDialog({
-      setEnrollDialogVisibility: visibilityStub,
       addProgramEnrollment: enrollStub,
       enrollSelectedProgram: selectedEnrollment,
     });
@@ -105,8 +103,20 @@ describe("NewEnrollmentDialog", () => {
     );
     button.props.onClick();
     assert(enrollStub.calledWith(selectedEnrollment));
-    assert(visibilityStub.calledWith(false));
   });
+
+  for (let activity of [true, false]) {
+    it(`spins the save button spinner depending on activity=${activity.toString()}`, () => {
+      let wrapper = renderEnrollmentDialog({
+        fetchAddStatus: activity ? FETCH_PROCESSING : undefined
+      });
+      let button = wrapper.find(Dialog).props().actions.find(
+        button => button.props.className.includes("enroll")
+      );
+      assert.equal(button.type.name, 'SpinnerButton');
+      assert.equal(button.props.spinning, activity);
+    });
+  }
 
   it("shows an error if the user didn't select any program when they click enroll", () => {
     let stub = helper.sandbox.stub();

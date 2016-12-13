@@ -1,16 +1,18 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
-import Button from 'react-mdl/lib/Button';
 import _ from 'lodash';
-
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+
+import { FETCH_PROCESSING } from '../actions';
+import { dialogActions } from './inputs/util';
 import type { AvailablePrograms } from '../flow/enrollmentTypes';
 
 export default class NewEnrollmentDialog extends React.Component {
   props: {
     addProgramEnrollment:        (programId: number) => void,
     programs:                    AvailablePrograms,
+    fetchAddStatus?:             string,
     enrollDialogError:           ?string,
     enrollDialogVisibility:      boolean,
     enrollSelectedProgram:       ?number,
@@ -29,34 +31,13 @@ export default class NewEnrollmentDialog extends React.Component {
       addProgramEnrollment,
       enrollSelectedProgram,
       setEnrollDialogError,
-      setEnrollDialogVisibility,
     } = this.props;
 
     if (_.isNil(enrollSelectedProgram)) {
       setEnrollDialogError("No program selected");
     } else {
       addProgramEnrollment(enrollSelectedProgram);
-      setEnrollDialogVisibility(false);
     }
-  };
-
-  createDialogActions = () => {
-    return [
-      <Button
-        className="secondary-button cancel-button"
-        key="cancel"
-        onClick={this.closeDialog}
-      >
-        Cancel
-      </Button>,
-      <Button
-        className="primary-button enroll-button"
-        key="enroll"
-        onClick={this.addEnrollment}
-      >
-        Enroll
-      </Button>,
-    ];
   };
 
   handleSelectedProgramChange = (event, index, value) => {
@@ -70,6 +51,7 @@ export default class NewEnrollmentDialog extends React.Component {
       enrollDialogVisibility,
       enrollSelectedProgram,
       programs,
+      fetchAddStatus,
     } = this.props;
 
     let unenrolledPrograms = _.sortBy(programs.filter(program => !program.enrolled), 'title');
@@ -77,6 +59,9 @@ export default class NewEnrollmentDialog extends React.Component {
       <MenuItem value={program.id} primaryText={program.title} key={program.id} />
     );
 
+    const actions = dialogActions(
+      this.closeDialog, this.addEnrollment, fetchAddStatus === FETCH_PROCESSING, 'Enroll', 'enroll-button'
+    );
     // onRequestClose is not used below because an extra click or touch event causes material-ui
     // to close the dialog right after opening it. See https://github.com/JedWatson/react-select/issues/532
     return <Dialog
@@ -85,7 +70,7 @@ export default class NewEnrollmentDialog extends React.Component {
       contentClassName="dialog enroll-dialog"
       className="enroll-dialog-wrapper"
       open={enrollDialogVisibility}
-      actions={this.createDialogActions()}
+      actions={actions}
     >
       <SelectField
         value={enrollSelectedProgram}

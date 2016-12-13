@@ -14,9 +14,10 @@ const ENROLL_SENTINEL = 'enroll';
 
 export default class ProgramSelector extends React.Component {
   props: {
-    addProgramEnrollment:        (programId: number) => void,
+    addProgramEnrollment:        (programId: number) => Promise<*>,
     currentProgramEnrollment:    AvailableProgram,
     programs:                    AvailablePrograms,
+    fetchAddStatus?:             string,
     enrollDialogError:           ?string,
     enrollDialogVisibility:      boolean,
     enrollSelectedProgram:       ?number,
@@ -78,6 +79,7 @@ export default class ProgramSelector extends React.Component {
       enrollDialogError,
       enrollDialogVisibility,
       enrollSelectedProgram,
+      fetchAddStatus,
       currentProgramEnrollment,
       setEnrollDialogError,
       setEnrollDialogVisibility,
@@ -113,6 +115,7 @@ export default class ProgramSelector extends React.Component {
           setEnrollDialogError={setEnrollDialogError}
           setEnrollDialogVisibility={setEnrollDialogVisibility}
           setEnrollSelectedProgram={setEnrollSelectedProgram}
+          fetchAddStatus={fetchAddStatus}
         />
       </div>;
     }

@@ -142,9 +142,9 @@ class App extends React.Component {
     }
   }
 
-  addProgramEnrollment = (programId: number): void => {
+  addProgramEnrollment = (programId: number): Promise<*> => {
     const { dispatch } = this.props;
-    dispatch(addProgramEnrollment(programId));
+    return dispatch(addProgramEnrollment(programId));
   };
 
   setEnrollDialogError = (error: ?string): void => {
@@ -231,6 +231,7 @@ class App extends React.Component {
         enrollSelectedProgram={enrollSelectedProgram}
         pathname={pathname}
         programs={programs.availablePrograms}
+        fetchAddStatus={programs.postStatus}
         setCurrentProgramEnrollment={this.setCurrentProgramEnrollment}
         setEnrollDialogError={this.setEnrollDialogError}
         setEnrollDialogVisibility={this.setEnrollDialogVisibility}

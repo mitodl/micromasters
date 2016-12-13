@@ -23,13 +23,14 @@ const PROFILE_REGEX = /^\/profile\/?/;
 
 export default class Navbar extends React.Component {
   props: {
-    addProgramEnrollment:        (programId: number) => void,
+    addProgramEnrollment:        (programId: number) => Promise<*>,
     children?:                   React$Element<*>[],
     currentProgramEnrollment:    AvailableProgram,
     empty:                       boolean,
     enrollDialogError:           ?string,
     enrollDialogVisibility:      boolean,
     enrollSelectedProgram:       ?number,
+    fetchAddStatus?:             string,
     programs:                    AvailablePrograms,
     navDrawerOpen:               boolean,
     pathname:                    string,
