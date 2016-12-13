@@ -9,6 +9,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_save
 from django.test import TestCase
 from factory.django import mute_signals
+import pytz
 
 from courses.factories import ProgramFactory, CourseFactory, CourseRunFactory
 from dashboard.models import ProgramEnrollment
@@ -47,7 +48,7 @@ def create_program(create_tiers=True):
     )
     course = CourseFactory.create(program=program)
     course_run = CourseRunFactory.create(
-        enrollment_end=datetime.utcnow() + timedelta(hours=1),
+        enrollment_end=datetime.now(tz=pytz.UTC) + timedelta(hours=1),
         course=course
     )
     CoursePriceFactory.create(

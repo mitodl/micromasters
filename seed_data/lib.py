@@ -4,6 +4,7 @@ Library functions for interacting with test data
 import re
 from datetime import datetime, timedelta
 from functools import wraps
+import pytz
 
 from django.contrib.auth.models import User
 from courses.models import Program, Course
@@ -165,7 +166,7 @@ class CachedHandler(object):
         if not created:
             obj.data = data
             obj.save()
-        CachedEdxDataApi.update_cache_last_access(self.user, self.cache_type, timestamp=datetime.utcnow())
+        CachedEdxDataApi.update_cache_last_access(self.user, self.cache_type, timestamp=datetime.now(tz=pytz.UTC))
         return obj
 
     def find(self, course_run):

@@ -14,6 +14,7 @@ from django.db.models import (
     SET_NULL,
 )
 from django.db.models.query import QuerySet
+import pytz
 
 
 class TimestampedModelQuerySet(QuerySet):
@@ -27,7 +28,7 @@ class TimestampedModelQuerySet(QuerySet):
         database level without loading objects into memory.
         """
         if "updated_on" not in kwargs:
-            kwargs["updated_on"] = datetime.datetime.utcnow()
+            kwargs["updated_on"] = datetime.datetime.now(tz=pytz.UTC)
         return super().update(**kwargs)
 
 

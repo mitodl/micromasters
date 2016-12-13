@@ -5,6 +5,7 @@ from datetime import datetime
 from urllib.parse import urljoin
 
 from django.conf import settings
+import pytz
 from social.backends.oauth import BaseOAuth2
 
 
@@ -105,5 +106,5 @@ class EdxOrgOAuth2(BaseOAuth2):
             dict of information about the user
         """
         response = super(EdxOrgOAuth2, self).refresh_token(token, *args, **kwargs)
-        response['updated_at'] = datetime.utcnow().timestamp()
+        response['updated_at'] = datetime.now(tz=pytz.UTC).timestamp()
         return response

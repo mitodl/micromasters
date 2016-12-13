@@ -14,6 +14,7 @@ from urllib.parse import quote_plus
 from django.core.exceptions import ImproperlyConfigured
 from django.http.response import Http404
 from django.test import override_settings
+import pytz
 from rest_framework.exceptions import ValidationError
 from edx_api.enrollments import Enrollment
 
@@ -326,10 +327,11 @@ class CybersourceTests(ESTestCase):
         username = 'username'
         transaction_uuid = 'hex'
 
-        now = datetime.utcnow()
+        now = datetime.now(tz=pytz.UTC)
+        now_mock = MagicMock(return_value=now)
 
         with patch('ecommerce.api.get_social_username', autospec=True, return_value=username):
-            with patch('ecommerce.api.datetime', autospec=True, utcnow=MagicMock(return_value=now)):
+            with patch('ecommerce.api.datetime', autospec=True, now=now_mock):
                 with patch('ecommerce.api.uuid.uuid4', autospec=True, return_value=MagicMock(hex=transaction_uuid)):
                     payload = generate_cybersource_sa_payload(order, 'dashboard_url')
         signature = payload.pop('signature')
@@ -364,6 +366,7 @@ class CybersourceTests(ESTestCase):
             'merchant_defined_data2': '{}'.format(course_run.title),
             'merchant_defined_data3': '{}'.format(course_run.edx_course_key),
         }
+        now_mock.assert_called_with(tz=pytz.UTC)
 
 
 @override_settings(CYBERSOURCE_REFERENCE_PREFIX=CYBERSOURCE_REFERENCE_PREFIX)

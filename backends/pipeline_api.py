@@ -5,6 +5,7 @@ import logging
 from datetime import datetime
 from urllib.parse import urljoin
 
+import pytz
 from rolepermissions.verifications import has_role
 
 from backends.edxorg import EdxOrgOAuth2
@@ -140,5 +141,5 @@ def set_last_update(details, *args, **kwargs):  # pylint: disable=unused-argumen
     Returns:
         dict: updated details dictionary
     """
-    details['updated_at'] = datetime.utcnow().timestamp()
+    details['updated_at'] = datetime.now(tz=pytz.UTC).timestamp()
     return details

@@ -2,6 +2,7 @@
 Utility functions for the backends
 """
 from datetime import datetime, timedelta
+import pytz
 
 from requests.exceptions import HTTPError
 from social.apps.django_app.utils import load_strategy
@@ -39,12 +40,12 @@ def refresh_user_token(user_social):
         user_social (UserSocialAuth): a user social auth instance
     """
     try:
-        last_update = datetime.fromtimestamp(user_social.extra_data.get('updated_at'))
+        last_update = datetime.fromtimestamp(user_social.extra_data.get('updated_at'), tz=pytz.UTC)
         expires_in = timedelta(seconds=user_social.extra_data.get('expires_in'))
     except TypeError:
         _send_refresh_request(user_social)
         return
     # small error margin of 5 minutes to be safe
     error_margin = timedelta(minutes=5)
-    if datetime.utcnow() - last_update >= expires_in - error_margin:
+    if datetime.now(tz=pytz.UTC) - last_update >= expires_in - error_margin:
         _send_refresh_request(user_social)
