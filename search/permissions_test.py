@@ -21,7 +21,7 @@ class PermissionsTests(ESTestCase):
         # create an user
         cls.user = UserFactory.create()
         # create the program
-        cls.program = ProgramFactory.create(live=True)
+        cls.program = ProgramFactory.create()
 
     def setUp(self):
         super(PermissionsTests, self).setUp()

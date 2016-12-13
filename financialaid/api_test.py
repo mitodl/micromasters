@@ -43,16 +43,9 @@ def create_program(create_tiers=True):
     """
     program = ProgramFactory.create(
         financial_aid_availability=True,
-        live=True
-    )
-    course = CourseFactory.create(program=program)
-    course_run = CourseRunFactory.create(
-        enrollment_end=datetime.utcnow() + timedelta(hours=1),
-        course=course
-    )
-    CoursePriceFactory.create(
-        course_run=course_run,
-        is_valid=True
+        live=True,
+        course__course_run__enrollment_end=datetime.utcnow() + timedelta(hours=1),
+        tiers=False,
     )
     tier_programs = None
     if create_tiers:
@@ -189,7 +182,7 @@ class FinancialAidAPITests(FinancialAidBaseTestCase):
         Tests that determine_tier_program() raises ImproperlyConfigured if no $0-discount TierProgram
         has been created and income supplied is too low.
         """
-        program = ProgramFactory.create()
+        program = ProgramFactory.create(tiers=False)
         with self.assertRaises(ImproperlyConfigured):
             determine_tier_program(program, 0)
 

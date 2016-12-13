@@ -39,7 +39,7 @@ class MailViewsTests(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.search_result_mail_url = reverse('search_result_mail_api')
-        cls.program = ProgramFactory.create(live=True)
+        cls.program = ProgramFactory.create()
         # create a user with a role for one program
         with mute_signals(post_save):
             staff_profile = ProfileFactory.create()

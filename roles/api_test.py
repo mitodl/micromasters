@@ -19,8 +19,8 @@ class APITests(ESTestCase):
         # create an user
         cls.user = UserFactory.create()
         # create the programs
-        cls.program1 = ProgramFactory.create(live=True)
-        cls.program2 = ProgramFactory.create(live=True)
+        cls.program1 = ProgramFactory.create()
+        cls.program2 = ProgramFactory.create()
 
     def test_get_advance_searchable_programs(self):
         """

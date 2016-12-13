@@ -46,7 +46,7 @@ class CachedEdxUserDataTests(ESTestCase):
         cls.p1_course_run_keys = ['p1_course_run']
         cls.p2_course_run_keys = ['p2_course_run_1', 'p2_course_run_2']
         cls.p1_course_run = CourseRunFactory.create(edx_course_key=cls.p1_course_run_keys[0])
-        p2 = ProgramFactory.create(full=True)
+        p2 = ProgramFactory.create()
         first_course = p2.course_set.first()
         extra_course = CourseFactory.create(program=p2)
         cls.p2_course_run_1 = CourseRunFactory.create(course=first_course, edx_course_key=cls.p2_course_run_keys[0])

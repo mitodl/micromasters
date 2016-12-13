@@ -22,6 +22,8 @@ from dashboard.utils import MMTrack
 from micromasters.factories import UserFactory
 from micromasters.utils import is_subset_dict
 from search.base import ESTestCase
+from ecommerce.factories import CoursePriceFactory
+from financialaid.factories import TierProgramFactory
 
 
 # pylint: disable=too-many-lines
@@ -122,6 +124,7 @@ class CourseTests(ESTestCase):
             enrollment_start=enr_start,
             enrollment_end=enr_end,
             upgrade_deadline=upgrade_deadline,
+            course_price=None,
         )
         if edx_key is not None:
             run.edx_course_key = edx_key
@@ -370,7 +373,7 @@ class InfoCourseTest(CourseTests):
     def setUpTestData(cls):
         super(InfoCourseTest, cls).setUpTestData()
         cls.user = UserFactory()
-        cls.course_noruns = CourseFactory.create(title="Title no runs")
+        cls.course_noruns = CourseFactory.create(title="Title no runs", course_run=None)
 
         now = datetime.now(pytz.utc)
         # create a run that is current
@@ -394,7 +397,7 @@ class InfoCourseTest(CourseTests):
             title="Demo"
         )
 
-        cls.course_no_next_run = CourseFactory.create(title="Title no next run")
+        cls.course_no_next_run = CourseFactory.create(title="Title no next run", course_run=None)
         cls.course_run_past = cls.create_run(
             cls,
             course=cls.course_no_next_run,
@@ -710,14 +713,16 @@ class InfoCourseTest(CourseTests):
             start_date=datetime.now(pytz.utc),
             end_date=None,
             enrollment_start=None,
-            enrollment_end=None
+            enrollment_end=None,
+            course_price=None,
         )
         CourseRunFactory.create(
             start_date=datetime.now(pytz.utc),
             end_date=datetime.now(pytz.utc),
             enrollment_start=None,
             enrollment_end=None,
-            course=run1.course
+            course=run1.course,
+            course_price=None,
         )
         with patch(
             'dashboard.api.get_status_for_courserun',
@@ -738,11 +743,13 @@ class UserProgramInfoIntegrationTest(ESTestCase):
         super(UserProgramInfoIntegrationTest, cls).setUpTestData()
         cls.user = UserFactory()
         # create the programs
-        cls.program_non_fin_aid = ProgramFactory.create(full=True, live=True)
-        cls.program_fin_aid = ProgramFactory.create(full=True, live=True, financial_aid_availability=True)
-        cls.program_unenrolled = ProgramFactory.create(full=True, live=True)
+        cls.program_non_fin_aid = ProgramFactory.create(financial_aid_availability=False)
+        cls.program_fin_aid = ProgramFactory.create(financial_aid_availability=True)
+        cls.program_unenrolled = ProgramFactory.create()
         cls.program_not_live = ProgramFactory.create(live=False)
-        for program in [cls.program_non_fin_aid, cls.program_fin_aid, cls.program_not_live]:
+
+        # enroll user in programs (except unenrolled)
+        for program in (cls.program_non_fin_aid, cls.program_fin_aid, cls.program_not_live):
             models.ProgramEnrollment.objects.create(user=cls.user, program=program)
 
     def setUp(self):
