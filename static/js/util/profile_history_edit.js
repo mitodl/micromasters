@@ -34,7 +34,7 @@ export function openNewEducationForm(level: string, index: number) {
   /* add empty education */
   let clone = {
     ...profile,
-    education: profile.education.concat(generateNewEducation(level))
+    education: [...profile.education, generateNewEducation(level)]
   };
   updateProfile(clone, validator, true);
   setEducationDialogIndex(newIndex);
@@ -59,7 +59,7 @@ export function openNewWorkHistoryForm () {
   } = this.props;
   let clone = {
     ...profile,
-    work_history: profile.work_history.concat(generateNewWorkHistory())
+    work_history: [...profile.work_history, generateNewWorkHistory()]
   };
   updateProfile(clone, validator, true);
   setWorkDialogIndex(clone.work_history.length - 1);
