@@ -148,7 +148,7 @@ class MMTrack:
 
     def paid_but_not_enrolled_mmtrack(self, course_id):
         """
-        Returns whether
+        Returns true if user paid for a course but he is not enrolled.
 
         Args:
             course_id (str): an edX course run id
