@@ -9,6 +9,8 @@ import Checkbox from 'react-mdl/lib/Checkbox';
 import Select from 'react-select';
 import _ from 'lodash';
 
+import { FETCH_PROCESSING } from '../actions';
+import SpinnerButton from '../components/SpinnerButton';
 import {
   updateCalculatorEdit,
   clearCalculatorEdit,
@@ -30,7 +32,7 @@ import type {
   FetchError,
 } from '../reducers/financial_aid';
 import type { Program } from '../flow/programTypes';
-import { formatPrice } from '../util/util';
+import { formatPrice, dialogActions } from '../util/util';
 
 const updateCurrency = R.curry((update, financialAid, selection) => {
   let _financialAid = R.clone(financialAid);
@@ -92,28 +94,13 @@ const checkBox = (update, current) => (
   />
 );
 
-const actionButtons = R.map(({ name, primary, onClick, label}) => (
-  <Button
-    type='button'
-    className={`${name}-button ${primary ? 'primary' : 'secondary'}-button mm-button`}
-    key={name}
-    onClick={onClick}>
-    { label }
-  </Button>
-));
-
-const calculatorActions = (openSkipDialog, cancel, save) => {
-  const buttonManifest = [
-    { name: 'cancel', primary: false, onClick: cancel, label: 'Cancel' },
-    { name: 'save', primary: true, onClick: save, label: 'Calculate' },
-  ];
-
+const calculatorActions = (openSkipDialog, cancel, save, fetchAddStatus) => {
   return <div className="actions">
     <button className="mm-minor-action full-price" onClick={openSkipDialog}>
       Skip this and Pay Full Price
     </button>
     <div className="buttons">
-      { actionButtons(buttonManifest) }
+      { dialogActions(cancel, save, fetchAddStatus === FETCH_PROCESSING, 'Calculate') }
     </div>
   </div>;
 };
@@ -153,7 +140,7 @@ const FinancialAidCalculator = ({
   calculatorDialogVisibility,
   closeDialogAndCancel,
   financialAid,
-  financialAid: { validation, fetchError },
+  financialAid: { validation, fetchError, fetchAddStatus },
   saveFinancialAid,
   updateCalculatorEdit,
   currentProgramEnrollment: { title, id },
@@ -179,7 +166,7 @@ const FinancialAidCalculator = ({
     bodyClassName="financial-aid-calculator-body"
     autoScrollBodyContent={true}
     onRequestClose={closeDialogAndCancel}
-    actions={calculatorActions(openConfirmSkipDialog, closeDialogAndCancel, () => saveFinancialAid(financialAid))}
+    actions={calculatorActions(openConfirmSkipDialog, closeDialogAndCancel, () => saveFinancialAid(financialAid), fetchAddStatus)}
   >
     <div className="copy">
       { `The cost of courses in the ${title} MicroMasters varies between ${minPossibleCost} and ${maxPossibleCost},
