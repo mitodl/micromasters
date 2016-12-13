@@ -87,7 +87,7 @@ export default class CourseDescription extends React.Component {
     }
     let url = null;
 
-    if (courseRun.course_id && this.isCurrentOrPastEnrolled(courseRun)) {
+    if (this.isCurrentOrPastEnrolled(courseRun)) {
       url = `${EDX_LINK_BASE}${courseRun.course_id}`;
     } else {
       url = courseRun.enrollment_url;

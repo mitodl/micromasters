@@ -53,25 +53,7 @@ describe('CourseDescription', () => {
     }
   });
 
-  it('does not show view the course on edX link if enrollment_url is no define', () => {
-    const NOT_ENROLLED_STATUSES =[
-      STATUS_WILL_ATTEND, STATUS_OFFERED, STATUS_PENDING_ENROLLMENT
-    ];
-
-    for (let status of NOT_ENROLLED_STATUSES) {
-      let course = findAndCloneCourse(course => (
-        course.runs.length > 0 &&
-        course.runs[0].status === status
-      ));
-      let firstRun = course.runs[0];
-      const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
-      let elements = getElements(wrapper);
-
-      assert.lengthOf(elements.titleLink, 0);
-    }
-  });
-
-  it('view the course on edX link when course start date is past chages', () => {
+  it('shows a course link for an audited course run that has already started', () => {
     const EXPECTED_STATUSES = [
       STATUS_CAN_UPGRADE, STATUS_MISSED_DEADLINE
     ];
@@ -83,117 +65,42 @@ describe('CourseDescription', () => {
       ));
       let firstRun = course.runs[0];
       firstRun.course_start_date = moment().subtract(2, 'days').format();
+      firstRun.course_id = "example+run";
       firstRun.enrollment_url = null;
       const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
       let elements = getElements(wrapper);
 
-      assert.equal(elements.titleLink.text(), 'View on edX');
-      assert.isAbove(elements.titleLink.props().href.length, 0);
-    }
-  });
-
-  it('show view on edX link when course is not start', () => {
-    const EXPECTED_STATUSES = [
-      STATUS_CAN_UPGRADE, STATUS_MISSED_DEADLINE
-    ];
-
-    for (let status of EXPECTED_STATUSES) {
-      let course = findAndCloneCourse(course => (
-        course.runs.length > 0 &&
-        course.runs[0].status === status
-      ));
-      let firstRun = course.runs[0];
-      firstRun.course_start_date = moment().add(2, 'days').format();
-      firstRun.enrollment_url = 'http://example.com';
-      const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
-      let elements = getElements(wrapper);
-      assert.equal(elements.titleLink.text(), 'View on edX');
-      assert.isAbove(elements.titleLink.props().href.length, 0);
-      assert.include(elements.titleLink.props().href, firstRun.enrollment_url);
-    }
-  });
-
-  it('view the course on edX link when course is not start and enrollment_url not set', () => {
-    const EXPECTED_STATUSES = [
-      STATUS_CAN_UPGRADE, STATUS_MISSED_DEADLINE
-    ];
-
-    for (let status of EXPECTED_STATUSES) {
-      let course = findAndCloneCourse(course => (
-        course.runs.length > 0 &&
-        course.runs[0].status === status
-      ));
-      let firstRun = course.runs[0];
-      firstRun.course_start_date = moment().add(2, 'days').format();
-      firstRun.enrollment_url = null;
-      const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
-      let elements = getElements(wrapper);
-      assert.lengthOf(elements.titleLink, 0);
-    }
-  });
-
-  it('view the course on edX link when course has no start and enrollment_url is set', () => {
-    const EXPECTED_STATUSES = [
-      STATUS_CAN_UPGRADE, STATUS_MISSED_DEADLINE
-    ];
-
-    for (let status of EXPECTED_STATUSES) {
-      let course = findAndCloneCourse(course => (
-        course.runs.length > 0 &&
-        course.runs[0].status === status
-      ));
-      let firstRun = course.runs[0];
-      firstRun.course_start_date = null;
-      firstRun.enrollment_url = 'http://example.com';
-      const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
-      let elements = getElements(wrapper);
-      assert.equal(elements.titleLink.text(), 'View on edX');
-      assert.isAbove(elements.titleLink.props().href.length, 0);
-      assert.include(elements.titleLink.props().href, firstRun.enrollment_url);
-    }
-  });
-
-  it('view the course on edX link when course has no start and enrollment_url is not set', () => {
-    const EXPECTED_STATUSES = [
-      STATUS_CAN_UPGRADE, STATUS_MISSED_DEADLINE
-    ];
-
-    for (let status of EXPECTED_STATUSES) {
-      let course = findAndCloneCourse(course => (
-        course.runs.length > 0 &&
-        course.runs[0].status === status
-      ));
-      let firstRun = course.runs[0];
-      firstRun.course_start_date = null;
-      firstRun.enrollment_url = null;
-      const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
-      let elements = getElements(wrapper);
-      assert.lengthOf(elements.titleLink, 0);
-    }
-  });
-
-  it('view the course on edX link when course is already start and enrollment_url is set', () => {
-    const EXPECTED_STATUSES = [
-      STATUS_CAN_UPGRADE, STATUS_MISSED_DEADLINE
-    ];
-
-    for (let status of EXPECTED_STATUSES) {
-      let course = findAndCloneCourse(course => (
-        course.runs.length > 0 &&
-        course.runs[0].status === status
-      ));
-      let firstRun = course.runs[0];
-      firstRun.course_start_date = moment().subtract(2, 'days').format();
-      firstRun.enrollment_url = 'http://example.com';
-      const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
-      let elements = getElements(wrapper);
       assert.equal(elements.titleLink.text(), 'View on edX');
       assert.isAbove(elements.titleLink.props().href.length, 0);
       assert.include(elements.titleLink.props().href, firstRun.course_id);
     }
   });
 
-  it('does not show view on edX link when course has current/past statuses and enrollment_url is not set ', () => {
+  it('shows an enrollment link for an audited course run that starts in the future', () => {
+    const EXPECTED_STATUSES = [
+      STATUS_CAN_UPGRADE, STATUS_MISSED_DEADLINE
+    ];
+
+    for (let status of EXPECTED_STATUSES) {
+      let course = findAndCloneCourse(course => (
+        course.runs.length > 0 &&
+        course.runs[0].status === status
+      ));
+      let firstRun = course.runs[0];
+      const START_DATES_TO_TEST = [moment().add(2, 'days').format(), null];
+      for (let courseStartDate of START_DATES_TO_TEST) {
+        firstRun.course_start_date = courseStartDate;
+        firstRun.enrollment_url = 'http://example.com';
+        const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
+        let elements = getElements(wrapper);
+        assert.equal(elements.titleLink.text(), 'View on edX');
+        assert.isAbove(elements.titleLink.props().href.length, 0);
+        assert.include(elements.titleLink.props().href, firstRun.enrollment_url);
+      }
+    }
+  });
+
+  it('shows a course link for an enrolled course run with a course id', () => {
     const EXPECTED_STATUSES = [
       STATUS_CURRENTLY_ENROLLED, STATUS_PASSED, STATUS_NOT_PASSED
     ];
@@ -205,7 +112,7 @@ describe('CourseDescription', () => {
       ));
       let firstRun = course.runs[0];
       firstRun.course_start_date = moment().add(2, 'days').format();
-      firstRun.enrollment_url = null;
+      firstRun.course_id = "example+run";
       const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
       let elements = getElements(wrapper);
       assert.equal(elements.titleLink.text(), 'View on edX');
@@ -227,7 +134,7 @@ describe('CourseDescription', () => {
     assert.lengthOf(elements.titleLink, 0);
   });
 
-  it('show view course on edX link when non-enroll statues and enrollment_url is set', () => {
+  it('shows an enrollment link for an unenrolled course run with an enrollment url', () => {
     const EXPECTED_STATUSES = [
       STATUS_OFFERED, STATUS_PENDING_ENROLLMENT, STATUS_WILL_ATTEND
     ];
@@ -247,7 +154,7 @@ describe('CourseDescription', () => {
     }
   });
 
-  it('does not show view course on edX link when non-enroll statues and enrollment_url is not set', () => {
+  it('does not show an edX link for an unenrolled course run with no enrollment url', () => {
     const EXPECTED_STATUSES = [
       STATUS_OFFERED, STATUS_PENDING_ENROLLMENT, STATUS_WILL_ATTEND
     ];
