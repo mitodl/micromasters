@@ -170,6 +170,19 @@ describe("FinancialAidCard", () => {
         assert.ok(setDocsInstructionsVisibility.called, 'should have called onClick handler');
       });
 
+      it(`instruction for status ${FA_STATUS_PENDING_DOCS}`, () => {
+        let program = programWithStatus(FA_STATUS_PENDING_DOCS);
+        let wrapper = renderCard({ program, setDocsInstructionsVisibility });
+        let instruction = wrapper.find('.financial-aid-box').find('div').first();
+        assert.equal(
+          instruction.text(),
+          'Before you can pay, you need to verify your income. ' +
+          'Please mail or fax an English-translated and notarized income tax or ' +
+          'income statement document. DO NOT SEND BY EMAIL.' +
+          'Read Complete Instructions'
+        );
+      });
+
       it('sends the document date', () => {
         let program = programWithStatus(FA_STATUS_PENDING_DOCS);
 

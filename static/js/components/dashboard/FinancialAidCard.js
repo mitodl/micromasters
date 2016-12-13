@@ -170,6 +170,7 @@ export default class FinancialAidCard extends React.Component {
           <Cell col={12}>
             Before you can pay, you need to verify your income. Please mail or fax an
             English-translated and notarized income tax or income statement document.
+            DO NOT SEND BY EMAIL.
           </Cell>
           <Cell col={12}>
             <a onClick={() => setDocsInstructionsVisibility(true)}>
