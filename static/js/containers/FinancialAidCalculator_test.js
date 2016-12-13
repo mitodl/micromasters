@@ -12,6 +12,7 @@ import * as api from '../lib/api';
 import { modifyTextField, modifySelectField, clearSelectField } from '../util/test_utils';
 import { DASHBOARD_RESPONSE, FINANCIAL_AID_PARTIAL_RESPONSE } from '../constants';
 import {
+  requestSkipFinancialAid,
   requestAddFinancialAid,
 
   START_CALCULATOR_EDIT,
@@ -241,7 +242,7 @@ describe('FinancialAidCalculator', () => {
       }
 
       return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
-        wrapper.find('.pricing-actions').find('.dashboard-button').simulate('click');
+        wrapper.find('.pricing-actions').find('.calculate-cost-button').simulate('click');
         let calculator = document.querySelector('.financial-aid-calculator');
         TestUtils.Simulate.change(calculator.querySelector('.mdl-checkbox__input'));
         modifyTextField(document.querySelector('#user-salary-input'), '1000');
