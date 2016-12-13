@@ -74,8 +74,7 @@ export default class CourseDescription extends React.Component {
     } else {
       if ([STATUS_CAN_UPGRADE, STATUS_MISSED_DEADLINE].includes(courseRun.status)) {
         let now = moment();
-        let courseStart = moment(courseRun.course_start_date);
-        return courseStart.isBefore(now);
+        return courseRun.course_start_date && moment(courseRun.course_start_date).isBefore(now);
       } else {
         return false;
       }
@@ -88,7 +87,7 @@ export default class CourseDescription extends React.Component {
     }
     let url = null;
 
-    if (this.isCurrentOrPastEnrolled(courseRun)) {
+    if (courseRun.course_id && this.isCurrentOrPastEnrolled(courseRun)) {
       url = `${EDX_LINK_BASE}${courseRun.course_id}`;
     } else {
       url = courseRun.enrollment_url;

@@ -92,7 +92,7 @@ describe('CourseDescription', () => {
     }
   });
 
-  it('view the course on edX link when course is not start', () => {
+  it('show view on edX link when course is not start', () => {
     const EXPECTED_STATUSES = [
       STATUS_CAN_UPGRADE, STATUS_MISSED_DEADLINE
     ];
@@ -109,6 +109,7 @@ describe('CourseDescription', () => {
       let elements = getElements(wrapper);
       assert.equal(elements.titleLink.text(), 'View on edX');
       assert.isAbove(elements.titleLink.props().href.length, 0);
+      assert.include(elements.titleLink.props().href, firstRun.enrollment_url);
     }
   });
 
@@ -131,10 +132,92 @@ describe('CourseDescription', () => {
     }
   });
 
+  it('view the course on edX link when course has no start and enrollment_url is set', () => {
+    const EXPECTED_STATUSES = [
+      STATUS_CAN_UPGRADE, STATUS_MISSED_DEADLINE
+    ];
+
+    for (let status of EXPECTED_STATUSES) {
+      let course = findAndCloneCourse(course => (
+        course.runs.length > 0 &&
+        course.runs[0].status === status
+      ));
+      let firstRun = course.runs[0];
+      firstRun.course_start_date = null;
+      firstRun.enrollment_url = 'http://example.com';
+      const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
+      let elements = getElements(wrapper);
+      assert.equal(elements.titleLink.text(), 'View on edX');
+      assert.isAbove(elements.titleLink.props().href.length, 0);
+      assert.include(elements.titleLink.props().href, firstRun.enrollment_url);
+    }
+  });
+
+  it('view the course on edX link when course has no start and enrollment_url is not set', () => {
+    const EXPECTED_STATUSES = [
+      STATUS_CAN_UPGRADE, STATUS_MISSED_DEADLINE
+    ];
+
+    for (let status of EXPECTED_STATUSES) {
+      let course = findAndCloneCourse(course => (
+        course.runs.length > 0 &&
+        course.runs[0].status === status
+      ));
+      let firstRun = course.runs[0];
+      firstRun.course_start_date = null;
+      firstRun.enrollment_url = null;
+      const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
+      let elements = getElements(wrapper);
+      assert.lengthOf(elements.titleLink, 0);
+    }
+  });
+
+  it('view the course on edX link when course is already start and enrollment_url is set', () => {
+    const EXPECTED_STATUSES = [
+      STATUS_CAN_UPGRADE, STATUS_MISSED_DEADLINE
+    ];
+
+    for (let status of EXPECTED_STATUSES) {
+      let course = findAndCloneCourse(course => (
+        course.runs.length > 0 &&
+        course.runs[0].status === status
+      ));
+      let firstRun = course.runs[0];
+      firstRun.course_start_date = moment().subtract(2, 'days').format();
+      firstRun.enrollment_url = 'http://example.com';
+      const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
+      let elements = getElements(wrapper);
+      assert.equal(elements.titleLink.text(), 'View on edX');
+      assert.isAbove(elements.titleLink.props().href.length, 0);
+      assert.include(elements.titleLink.props().href, firstRun.course_id);
+    }
+  });
+
+  it('does not show view on edX link when course has current/past statuses and enrollment_url is not set ', () => {
+    const EXPECTED_STATUSES = [
+      STATUS_CURRENTLY_ENROLLED, STATUS_PASSED, STATUS_NOT_PASSED
+    ];
+
+    for (let status of EXPECTED_STATUSES) {
+      let course = findAndCloneCourse(course => (
+        course.runs.length > 0 &&
+        course.runs[0].status === status
+      ));
+      let firstRun = course.runs[0];
+      firstRun.course_start_date = moment().add(2, 'days').format();
+      firstRun.enrollment_url = null;
+      const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
+      let elements = getElements(wrapper);
+      assert.equal(elements.titleLink.text(), 'View on edX');
+      assert.isAbove(elements.titleLink.props().href.length, 0);
+      assert.include(elements.titleLink.props().href, firstRun.course_id);
+    }
+  });
+
   it('does not show a link to view the course on edX if the course run lacks an id', () => {
     let course = findAndCloneCourse(course => (
       course.runs.length > 0 &&
-      course.runs[0].status === STATUS_OFFERED
+      course.runs[0].status === STATUS_PASSED
     ));
     let firstRun = course.runs[0];
     firstRun.course_id = null;
@@ -142,6 +225,44 @@ describe('CourseDescription', () => {
     let elements = getElements(wrapper);
 
     assert.lengthOf(elements.titleLink, 0);
+  });
+
+  it('show view course on edX link when non-enroll statues and enrollment_url is set', () => {
+    const EXPECTED_STATUSES = [
+      STATUS_OFFERED, STATUS_PENDING_ENROLLMENT, STATUS_WILL_ATTEND
+    ];
+
+    for (let status of EXPECTED_STATUSES) {
+      let course = findAndCloneCourse(course => (
+        course.runs.length > 0 &&
+        course.runs[0].status === status
+      ));
+      let firstRun = course.runs[0];
+      firstRun.enrollment_url = 'http://example.com';
+      const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
+      let elements = getElements(wrapper);
+      assert.equal(elements.titleLink.text(), 'View on edX');
+      assert.isAbove(elements.titleLink.props().href.length, 0);
+      assert.include(elements.titleLink.props().href, firstRun.enrollment_url);
+    }
+  });
+
+  it('does not show view course on edX link when non-enroll statues and enrollment_url is not set', () => {
+    const EXPECTED_STATUSES = [
+      STATUS_OFFERED, STATUS_PENDING_ENROLLMENT, STATUS_WILL_ATTEND
+    ];
+
+    for (let status of EXPECTED_STATUSES) {
+      let course = findAndCloneCourse(course => (
+        course.runs.length > 0 &&
+        course.runs[0].status === status
+      ));
+      let firstRun = course.runs[0];
+      firstRun.enrollment_url = null;
+      const wrapper = shallow(<CourseDescription courseRun={firstRun} courseTitle={course.title} />);
+      let elements = getElements(wrapper);
+      assert.lengthOf(elements.titleLink, 0);
+    }
   });
 
   it('does show date with status passed', () => {
