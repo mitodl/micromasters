@@ -152,7 +152,7 @@ class CheckoutViewTests(ESTestCase):
 
 @override_settings(
     CYBERSOURCE_REFERENCE_PREFIX=CYBERSOURCE_REFERENCE_PREFIX,
-    EMAIL_SUPPORT='support@example.com'
+    ECOMMERCE_EMAIL='ecommerce@example.com'
 )
 class OrderFulfillmentViewTests(ESTestCase):
     """
@@ -252,7 +252,7 @@ class OrderFulfillmentViewTests(ESTestCase):
                 order=order,
             )
         )
-        assert send_email.call_args[0][2] == 'support@example.com'
+        assert send_email.call_args[0][2] == 'ecommerce@example.com'
 
     def test_not_accept(self):
         """
@@ -282,7 +282,7 @@ class OrderFulfillmentViewTests(ESTestCase):
         assert send_email.call_args[0] == (
             'Order fulfillment failed, decision={decision}'.format(decision='something else'),
             'Order fulfillment failed for order {order}'.format(order=order),
-            'support@example.com',
+            'ecommerce@example.com',
         )
 
     def test_no_permission(self):

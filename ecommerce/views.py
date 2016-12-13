@@ -113,7 +113,7 @@ class OrderFulfillmentView(APIView):
                     "Order fulfillment failed for order {order}".format(
                         order=order,
                     ),
-                    settings.EMAIL_SUPPORT
+                    settings.ECOMMERCE_EMAIL
                 )
             except:  # pylint: disable=bare-except
                 log.exception(
@@ -142,7 +142,7 @@ class OrderFulfillmentView(APIView):
                             order=order,
                             exception=traceback.format_exc()
                         ),
-                        settings.EMAIL_SUPPORT,
+                        settings.ECOMMERCE_EMAIL,
                     )
                 except:  # pylint: disable=bare-except
                     log.exception(
