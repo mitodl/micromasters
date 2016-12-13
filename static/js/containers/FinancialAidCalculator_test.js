@@ -13,6 +13,7 @@ import { modifyTextField, modifySelectField, clearSelectField } from '../util/te
 import { DASHBOARD_RESPONSE, FINANCIAL_AID_PARTIAL_RESPONSE } from '../constants';
 import {
   requestAddFinancialAid,
+  requestSkipFinancialAid,
 
   START_CALCULATOR_EDIT,
   UPDATE_CALCULATOR_EDIT,
@@ -29,6 +30,7 @@ import {
   setCurrentProgramEnrollment,
 } from '../actions/programs';
 import {
+  setConfirmSkipDialogVisibility,
   SET_CALCULATOR_DIALOG_VISIBILITY,
   SET_CONFIRM_SKIP_DIALOG_VISIBILITY,
 } from '../actions/ui';
@@ -99,13 +101,50 @@ describe('FinancialAidCalculator', () => {
         let calculator = document.querySelector('.financial-aid-calculator-wrapper');
         TestUtils.Simulate.click(calculator.querySelector('.full-price'));
         let confirmDialog = document.querySelector('.skip-financial-aid-dialog-wrapper');
-        TestUtils.Simulate.click(confirmDialog.querySelector('.save-button'));
+        TestUtils.Simulate.click(confirmDialog.querySelector('.skip-button'));
       }).then(() => {
         assert(
           skipFinancialAidStub.calledWith(program.id),
           'should skip with the right program id'
         );
       });
+    });
+  });
+
+  for (let activity of [true, false]) {
+    it(`has proper spinner state for the skip dialog save button for activity=${activity.toString()}`, () => {
+      skipFinancialAidStub.returns(Promise.resolve(FINANCIAL_AID_PARTIAL_RESPONSE));
+      helper.store.dispatch(setConfirmSkipDialogVisibility(true));
+      if (activity) {
+        helper.store.dispatch(requestSkipFinancialAid());
+      }
+
+      return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
+        let confirmDialog = document.querySelector('.skip-financial-aid-dialog-wrapper');
+        let skipButton = confirmDialog.querySelector('.skip-button');
+
+        assert.equal(skipButton.className.includes('disabled-with-spinner'), activity);
+        assert(skipButton.innerHTML.includes(activity ? 'mdl-spinner' : 'Pay Full Price'));
+        TestUtils.Simulate.click(skipButton);
+        assert.equal(skipFinancialAidStub.calledWith(program.id), !activity);
+      });
+    });
+  }
+
+  it(`disables the button if fetchAddStatus is in progress`, () => {
+    skipFinancialAidStub.returns(Promise.resolve(FINANCIAL_AID_PARTIAL_RESPONSE));
+    helper.store.dispatch(setConfirmSkipDialogVisibility(true));
+    helper.store.dispatch(requestAddFinancialAid());
+
+    return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
+      let confirmDialog = document.querySelector('.skip-financial-aid-dialog-wrapper');
+      let skipButton = confirmDialog.querySelector('.skip-button');
+
+      assert.isFalse(skipButton.className.includes('disabled-with-spinner'));
+      assert.isTrue(skipButton.disabled);
+      assert.equal(skipButton.innerHTML, 'Pay Full Price');
+      TestUtils.Simulate.click(skipButton);
+      assert.isFalse(skipFinancialAidStub.calledWith(program.id));
     });
   });
 
@@ -248,6 +287,7 @@ describe('FinancialAidCalculator', () => {
 
         let saveButton = calculator.querySelector('.save-button');
         assert.equal(saveButton.className.includes('disabled-with-spinner'), activity);
+        assert.equal(saveButton.disabled, activity);
         assert(saveButton.innerHTML.includes(activity ? 'mdl-spinner' : 'Calculate'));
 
         TestUtils.Simulate.click(saveButton);
@@ -259,6 +299,27 @@ describe('FinancialAidCalculator', () => {
       });
     });
   }
+
+  it(`should be disabled if the skip button is in progress`, () => {
+    addFinancialAidStub.returns(Promise.resolve(FINANCIAL_AID_PARTIAL_RESPONSE));
+    helper.store.dispatch(requestSkipFinancialAid());
+
+    return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
+      wrapper.find('.pricing-actions').find('.dashboard-button').simulate('click');
+      let calculator = document.querySelector('.financial-aid-calculator');
+      TestUtils.Simulate.change(calculator.querySelector('.mdl-checkbox__input'));
+      modifyTextField(document.querySelector('#user-salary-input'), '1000');
+
+      let saveButton = calculator.querySelector('.save-button');
+      assert.isFalse(saveButton.className.includes('disabled-with-spinner'));
+      assert.equal(saveButton.innerHTML, 'Calculate');
+      assert.isTrue(saveButton.disabled);
+
+      TestUtils.Simulate.click(saveButton);
+    }).then(() => {
+      assert.isFalse(addFinancialAidStub.calledWith('1000', 'USD', program.id));
+    });
+  });
 
   it('should show an error if the financial aid request fails', () => {
     addFinancialAidStub.returns(Promise.reject({
@@ -321,4 +382,3 @@ if you continue to have problems.`
     assert.lengthOf(wrapper.find(".financial-aid-calculator"), 0);
   });
 });
-

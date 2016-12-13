@@ -22,14 +22,16 @@ export default class SpinnerButton extends React.Component {
       ...otherProps
     } = this.props;
 
-    if (spinning) {
+    if (spinning && !disabled) {
       if (!className) {
         className = '';
       }
       className = `${className} disabled-with-spinner`;
-      onClick = undefined;
       children = <Spinner singleColor />;
       disabled = true;
+    }
+    if (disabled) {
+      onClick = undefined;
     }
 
     return <ComponentVariable

@@ -93,13 +93,20 @@ const checkBox = (update, current) => (
   />
 );
 
-const calculatorActions = (openSkipDialog, cancel, save, fetchAddStatus) => {
+const calculatorActions = (openSkipDialog, cancel, save, fetchAddStatus, fetchSkipStatus) => {
   return <div className="actions">
     <button className="mm-minor-action full-price" onClick={openSkipDialog}>
       Skip this and Pay Full Price
     </button>
     <div className="buttons">
-      { dialogActions(cancel, save, fetchAddStatus === FETCH_PROCESSING, 'Calculate', 'calculate-cost-button') }
+      { dialogActions(
+        cancel,
+        save,
+        fetchAddStatus === FETCH_PROCESSING,
+        'Calculate',
+        'calculate-cost-button',
+        fetchSkipStatus === FETCH_PROCESSING
+      ) }
     </div>
   </div>;
 };
@@ -139,7 +146,7 @@ const FinancialAidCalculator = ({
   calculatorDialogVisibility,
   closeDialogAndCancel,
   financialAid,
-  financialAid: { validation, fetchError, fetchAddStatus },
+  financialAid: { validation, fetchError, fetchAddStatus, fetchSkipStatus },
   saveFinancialAid,
   updateCalculatorEdit,
   currentProgramEnrollment: { title, id },
@@ -166,7 +173,11 @@ const FinancialAidCalculator = ({
     autoScrollBodyContent={true}
     onRequestClose={closeDialogAndCancel}
     actions={calculatorActions(
-      openConfirmSkipDialog, closeDialogAndCancel, () => saveFinancialAid(financialAid), fetchAddStatus
+      openConfirmSkipDialog,
+       closeDialogAndCancel,
+        () => saveFinancialAid(financialAid),
+        fetchAddStatus,
+        fetchSkipStatus,
     )}
   >
     <div className="copy">

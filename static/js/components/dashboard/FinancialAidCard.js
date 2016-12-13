@@ -11,6 +11,7 @@ import { FETCH_PROCESSING } from '../../actions';
 import SpinnerButton from '../SpinnerButton';
 import type { CoursePrice } from '../../flow/dashboardTypes';
 import type { Program } from '../../flow/programTypes';
+import type { FinancialAidState } from '../../reducers/financial_aid';
 import type {
   DocumentsState,
 } from '../../reducers/documents';
@@ -34,6 +35,7 @@ export default class FinancialAidCard extends React.Component {
   props: {
     coursePrice:                    CoursePrice,
     documents:                      DocumentsState,
+    financialAid:                   FinancialAidState,
     openFinancialAidCalculator:     () => void,
     program:                        Program,
     setConfirmSkipDialogVisibility: (b: boolean) => void,
@@ -234,6 +236,7 @@ export default class FinancialAidCard extends React.Component {
       ui: { skipDialogVisibility },
       setConfirmSkipDialogVisibility,
       skipFinancialAid,
+      financialAid,
     } = this.props;
 
     let contents;
@@ -249,6 +252,8 @@ export default class FinancialAidCard extends React.Component {
         cancel={() => setConfirmSkipDialogVisibility(false)}
         skip={() => skipFinancialAid(program.id)}
         fullPrice={price(maxPossibleCost)}
+        fetchAddStatus={financialAid.fetchAddStatus}
+        fetchSkipStatus={financialAid.fetchSkipStatus}
       />
       <CardTitle>Pricing Based on Income</CardTitle>
       <div>

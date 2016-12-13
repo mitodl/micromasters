@@ -43,7 +43,6 @@ describe("SpinnerButton", () => {
   it('replaces children with a Spinner, disables onClick and updates className when spinning is true', () => {
     let onClick = sandbox.stub();
     let props = {
-      disabled: true,
       "data-x": "y",
     };
     let wrapper = shallow(<SpinnerButton
@@ -61,7 +60,22 @@ describe("SpinnerButton", () => {
 
     assert.isUndefined(buttonProps.onClick);
     assert.equal(buttonProps.className, "class1 class2 disabled-with-spinner");
+    assert.equal(buttonProps['data-x'], 'y');
     assert.isTrue(buttonProps.disabled);
     assert.equal(button.children().text(), "<Spinner />");
+  });
+
+  it("does not show the spinner when it's disabled", () => {
+    let wrapper = shallow(<SpinnerButton
+      disabled={true}
+      spinning={true}
+      onClick={sandbox.stub()}
+      component="button"
+    />);
+    let buttonProps = wrapper.find("button").props();
+
+    assert.equal(buttonProps.className, undefined);
+    assert.isTrue(buttonProps.disabled);
+    assert.equal(buttonProps.onClick, undefined);
   });
 });

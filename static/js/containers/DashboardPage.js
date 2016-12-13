@@ -262,6 +262,7 @@ class DashboardPage extends React.Component {
       ui,
       courseEnrollments,
       checkout,
+      financialAid,
     } = this.props;
     const loaded = dashboard.fetchStatus !== FETCH_PROCESSING && prices.fetchStatus !== FETCH_PROCESSING;
     let errorMessage;
@@ -292,6 +293,7 @@ class DashboardPage extends React.Component {
           setConfirmSkipDialogVisibility={this.setConfirmSkipDialogVisibility}
           setDocsInstructionsVisibility={this.setDocsInstructionsVisibility}
           ui={ui}
+          financialAid={financialAid}
         />;
       }
 
@@ -350,6 +352,7 @@ const mapStateToProps = (state) => {
     orderReceipt: state.orderReceipt,
     courseEnrollments: state.courseEnrollments,
     checkout: state.checkout,
+    financialAid: state.financialAid,
   };
 };
 

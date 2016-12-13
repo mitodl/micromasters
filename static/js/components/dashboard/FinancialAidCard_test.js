@@ -56,6 +56,7 @@ describe("FinancialAidCard", () => {
           setConfirmSkipDialogVisibility={setSkipDialogStub}
           skipFinancialAid={sandbox.stub()}
           setDocsInstructionsVisibility={sandbox.stub()}
+          financialAid={{}}
           {...props}
         />
       </MuiThemeProvider>

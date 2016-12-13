@@ -8,7 +8,7 @@ import SpinnerButton from '../SpinnerButton';
  * Helper function to create dialog action buttons, with a SpinnerButton for the save button
  */
 export const dialogActions = (
-  onCancel: Function, onSave: Function, inFlight: bool, text: string='Save', saveClass: string=''
+  onCancel: Function, onSave: Function, inFlight: bool, text: string='Save', saveClass: string='', disabled: bool=false
 ) => ([
   <Button
     type='cancel'
@@ -20,6 +20,7 @@ export const dialogActions = (
   <SpinnerButton
     component={Button}
     spinning={inFlight}
+    disabled={disabled}
     type='button'
     key='save'
     className={`primary-button save-button ${saveClass}`}
