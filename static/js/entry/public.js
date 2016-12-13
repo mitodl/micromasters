@@ -166,8 +166,8 @@ jQuery(document).ready(function ($) {
     description: description,
     emailBody: description + CURRENT_PAGE_URL
   });
-  $('.rrssb-buttons').find('.rrssb-twitter a').attr('href',
-    'https://twitter.com/intent/tweet?text=' + twitterDescription + '%20' + CURRENT_PAGE_URL );
+  const tweetUrl = `https://twitter.com/intent/tweet?text=${twitterDescription}%20${CURRENT_PAGE_URL}`;
+  document.querySelector('.rrssb-buttons .rrssb-twitter a').href = tweetUrl;
 });
 
 /**
