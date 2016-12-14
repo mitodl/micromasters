@@ -81,12 +81,12 @@ export default class FinancialAidCard extends React.Component {
     case FA_STATUS_PENDING_DOCS:
       return <div>
         <Grid>
-          <Cell col={12}>
+          <Cell col={12} >
             Please tell us the date you sent the documents
           </Cell>
         </Grid>
         <Grid className="document-row">
-          <Cell col={12}>
+          <Cell col={12} className="document-sent-button-container">
             <DatePicker
               selected={moment(documentSentDate)}
               onChange={(obj) => setDocumentSentDate(obj.format(ISO_8601_FORMAT))}

@@ -208,9 +208,10 @@ a.btn {
   }
 }
 
-.dialog, .course-action {
+.dialog, .course-action, .document-sent-button-container {
   .disabled-with-spinner {
     display: inline-block !important;
+    box-shadow: none;
 
     .mdl-spinner {
       height: 20px !important;
