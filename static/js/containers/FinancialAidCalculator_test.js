@@ -126,7 +126,8 @@ describe('FinancialAidCalculator', () => {
           income: '1000',
           currency: 'USD',
           checkBox: false,
-          fetchStatus: null,
+          fetchAddStatus: undefined,
+          fetchSkipStatus: undefined,
           programId: program.id,
           validation: {
             'checkBox': 'You must agree to these terms'
@@ -187,7 +188,8 @@ describe('FinancialAidCalculator', () => {
           income: '',
           currency: 'GBP',
           checkBox: false,
-          fetchStatus: null,
+          fetchAddStatus: undefined,
+          fetchSkipStatus: undefined,
           programId: program.id,
           validation: {
             'checkBox': 'You must agree to these terms',
