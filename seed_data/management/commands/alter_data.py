@@ -81,6 +81,13 @@ USAGE_DETAILS = (
     "--add-if-exists"
     """
 
+    # Add a past passed course run with a specific grade
+    """
+    "alter_data --action=add_past_passed_run --username=staff --program-title='Analog' --course-title='100'"
+    "--add-if-exists"
+    """
+
+
     # Add an enrollable future course run for a program called 'Test Program' and a course called 'Test Course'
     alter_data --action=add_future_run --username=staff --program-title='Test Program' --course-title='Test Course'
     """
@@ -178,26 +185,43 @@ def clear_future_runs(user=None, course=None):  # pylint: disable=unused-argumen
 @accepts_or_calculates_now
 def add_past_failed_run(user=None, course=None, now=None, grade=DEFAULT_FAILED_GRADE, add_if_exists=False):
     """Adds a past failed course run for a given user and course"""
+    chosen_past_run = get_past_course_run(user, course, now, add_if_exists)
+
+    # Add enrollment and failed grade for course run
+    CachedEnrollmentHandler(user).set_or_create(course_run=chosen_past_run)
+    CachedCurrentGradeHandler(user).set_or_create(course_run=chosen_past_run, grade=grade)
+    return chosen_past_run
+
+
+def get_past_course_run(user=None, course=None, now=None, add_if_exists=False):
+    """Loop through past course runs and find one without CachedCurrentGrade data"""
     chosen_past_run = None
     past_runs = CourseRun.objects.filter(
         course=course,
         end_date__lt=now,
     ).exclude(end_date=None).order_by('-end_date').all()
-    # Loop through past course runs and find one without CachedCurrentGrade data
     for past_run in past_runs:
         if not CachedCurrentGradeHandler(user).exists(past_run):
             chosen_past_run = past_run
             continue
         elif not add_if_exists:
-            raise Exception("Past failed course run already exists (id: {}, title: {})".format(
+            raise Exception("Past failed/passed course run already exists (id: {}, title: {})".format(
                 past_run.id,
                 past_run.title
             ))
     if not chosen_past_run:
         raise Exception("Can't find past run w/o CachedCurrentGrade")
-    # Add enrollment and failed grade for course run
+    return chosen_past_run
+
+
+@accepts_or_calculates_now
+def add_past_passed_run(user=None, course=None, now=None, grade=DEFAULT_GRADE, add_if_exists=False):
+    """Adds a past passed course run for a given user and course"""
+    chosen_past_run = get_past_course_run(user, course, now, add_if_exists)
+    # Add enrollment and  certificate for course run
     CachedEnrollmentHandler(user).set_or_create(course_run=chosen_past_run)
-    CachedCurrentGradeHandler(user).set_or_create(course_run=chosen_past_run, grade=grade)
+    CachedCertificateHandler(user).set_or_create(course_run=chosen_past_run, grade=grade)
+
     return chosen_past_run
 
 
@@ -244,6 +268,7 @@ COURSE_COMMAND_FUNCTIONS = {
         add_future_run,
         clear_future_runs,
         add_past_failed_run,
+        add_past_passed_run,
         course_info,
     ]
 }
