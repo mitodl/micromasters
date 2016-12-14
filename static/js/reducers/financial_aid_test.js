@@ -61,6 +61,8 @@ describe('financial aid reducers', () => {
       let expectation = {
         ...FINANCIAL_AID_EDIT,
         programId: 1,
+        fetchAddStatus: undefined,
+        fetchSkipStatus: undefined,
       };
       assert.deepEqual(state, expectation);
     });
@@ -70,7 +72,11 @@ describe('financial aid reducers', () => {
   it('should let you clear edits', () => {
     store.dispatch(startCalculatorEdit(1));
     return dispatchThen(clearCalculatorEdit(), [CLEAR_CALCULATOR_EDIT]).then(state => {
-      assert.deepEqual(state, FINANCIAL_AID_EDIT);
+      assert.deepEqual(state, {
+        ...FINANCIAL_AID_EDIT,
+        fetchAddStatus: undefined,
+        fetchSkipStatus: undefined,
+      });
     });
   });
 
@@ -98,7 +104,7 @@ describe('financial aid reducers', () => {
     return dispatchThen(requestAddFinancialAid(100000, 'USD', 1), [
       REQUEST_ADD_FINANCIAL_AID
     ]).then(state => {
-      assert.equal(state.fetchStatus, FETCH_PROCESSING);
+      assert.equal(state.fetchAddStatus, FETCH_PROCESSING);
     });
   });
 
@@ -115,7 +121,8 @@ describe('financial aid reducers', () => {
       let expectation = {
         ...FINANCIAL_AID_EDIT,
         programId: programId,
-        fetchStatus: FETCH_SUCCESS
+        fetchAddStatus: FETCH_SUCCESS,
+        fetchSkipStatus: undefined,
       };
       assert.deepEqual(state, expectation);
       assert.ok(fetchCoursePricesStub.calledWith());
@@ -137,7 +144,8 @@ describe('financial aid reducers', () => {
       let expectation = {
         ...FINANCIAL_AID_EDIT,
         programId: programId,
-        fetchStatus: FETCH_FAILURE,
+        fetchAddStatus: FETCH_FAILURE,
+        fetchSkipStatus: undefined,
         fetchError: {
           message: 'an error message',
           code: 500
@@ -157,7 +165,7 @@ describe('financial aid reducers', () => {
       RECEIVE_SKIP_FINANCIAL_AID_SUCCESS
     ]).then(state => {
       assert.deepEqual(state, {
-        fetchStatus: FETCH_SUCCESS
+        fetchSkipStatus: FETCH_SUCCESS
       });
       assert.ok(skipFinancialAidStub.calledWith(2));
       assert.ok(fetchCoursePricesStub.calledWith());
@@ -172,7 +180,7 @@ describe('financial aid reducers', () => {
       RECEIVE_SKIP_FINANCIAL_AID_FAILURE
     ]).then(state => {
       assert.deepEqual(state, {
-        fetchStatus: FETCH_FAILURE
+        fetchSkipStatus: FETCH_FAILURE
       });
       assert.ok(skipFinancialAidStub.calledWith(2));
       assert.notOk(fetchCoursePricesStub.calledWith());

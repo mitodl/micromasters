@@ -22,13 +22,14 @@ import _ from 'lodash';
 export const INITIAL_FINANCIAL_AID_STATE = {};
 
 export const FINANCIAL_AID_EDIT = {
-  income:       "",
-  currency:     "",
-  checkBox:     false,
-  fetchStatus:  null,
-  programId:    null,
-  validation:   {},
-  fetchError:   null,
+  income:          "",
+  currency:        "",
+  checkBox:        false,
+  fetchAddStatus:  null,
+  fetchSkipStatus: null,
+  programId:       null,
+  validation:      {},
+  fetchError:      null,
 };
 
 export type FinancialAidValidation = {
@@ -44,45 +45,53 @@ export type FetchError = {
 
 
 export type FinancialAidState = {
-  income?:      string,
-  currency?:    string,
-  checkBox?:    boolean,
-  fetchStatus?: string,
-  programId?:   number,
-  validation?:  FinancialAidValidation,
-  fetchError?:  FetchError,
+  income?:          string,
+  currency?:        string,
+  checkBox?:        boolean,
+  fetchAddStatus?:  string,
+  fetchSkipStatus?: string,
+  programId?:       number,
+  validation?:      FinancialAidValidation,
+  fetchError?:      FetchError,
 };
 
 export const financialAid = (state: FinancialAidState = INITIAL_FINANCIAL_AID_STATE, action: Action) => {
   switch (action.type) {
   case START_CALCULATOR_EDIT:
-    return { ...FINANCIAL_AID_EDIT, programId: action.payload };
+    return {
+      ...FINANCIAL_AID_EDIT,
+      programId: action.payload,
+      fetchAddStatus: state.fetchAddStatus,
+      fetchSkipStatus: state.fetchSkipStatus,
+    };
   case CLEAR_CALCULATOR_EDIT:
-    return FINANCIAL_AID_EDIT;
+    return {
+      ...FINANCIAL_AID_EDIT,
+      fetchAddStatus: state.fetchAddStatus,
+      fetchSkipStatus: state.fetchSkipStatus,
+    };
   case UPDATE_CALCULATOR_EDIT:
     return { ...state, ...action.payload };
   case UPDATE_CALCULATOR_VALIDATION: {
-    let clone = _.clone(state);
-    clone.validation = action.payload;
-    return clone;
+    return { ...state, validation: action.payload };
   }
   case REQUEST_ADD_FINANCIAL_AID:
     return {
       ...state,
-      fetchStatus: FETCH_PROCESSING,
+      fetchAddStatus: FETCH_PROCESSING,
       fetchError: null,
       validation: {},
     };
   case RECEIVE_ADD_FINANCIAL_AID_SUCCESS:
-    return { ...state, fetchStatus: FETCH_SUCCESS };
+    return { ...state, fetchAddStatus: FETCH_SUCCESS };
   case RECEIVE_ADD_FINANCIAL_AID_FAILURE:
-    return { ...state, fetchStatus: FETCH_FAILURE, fetchError: action.payload };
+    return { ...state, fetchAddStatus: FETCH_FAILURE, fetchError: action.payload };
   case REQUEST_SKIP_FINANCIAL_AID:
-    return { ...state, fetchStatus: FETCH_PROCESSING };
+    return { ...state, fetchSkipStatus: FETCH_PROCESSING };
   case RECEIVE_SKIP_FINANCIAL_AID_SUCCESS:
-    return { ...state, fetchStatus: FETCH_SUCCESS };
+    return { ...state, fetchSkipStatus: FETCH_SUCCESS };
   case RECEIVE_SKIP_FINANCIAL_AID_FAILURE:
-    return { ...state, fetchStatus: FETCH_FAILURE};
+    return { ...state, fetchSkipStatus: FETCH_FAILURE};
   default:
     return state;
   }
