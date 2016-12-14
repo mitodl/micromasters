@@ -2,7 +2,7 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
 
-import { dialogActions } from '../util/util';
+import { dialogActions } from './inputs/util';
 import { FETCH_PROCESSING } from '../actions';
 import { personalValidation } from '../lib/validation/profile';
 import PersonalForm from './PersonalForm';

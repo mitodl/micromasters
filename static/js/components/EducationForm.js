@@ -26,7 +26,7 @@ import {
   deleteEducationEntry,
 } from '../util/profile_history_edit';
 import { educationEntriesByDate } from '../util/sorting';
-import { dialogActions } from '../util/util';
+import { dialogActions } from './inputs/util';
 import {
   EDUCATION_LEVELS,
   HIGH_SCHOOL,

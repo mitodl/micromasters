@@ -20,7 +20,7 @@ import {
   openNewWorkHistoryForm,
   deleteWorkHistoryEntry,
 } from '../util/profile_history_edit';
-import { dialogActions } from '../util/util';
+import { dialogActions } from './inputs/util';
 import ConfirmDeletion from './ConfirmDeletion';
 import SelectField from './inputs/SelectField';
 import CountrySelectField from './inputs/CountrySelectField';

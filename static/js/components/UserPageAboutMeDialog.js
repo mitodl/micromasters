@@ -4,7 +4,7 @@ import Dialog from 'material-ui/Dialog';
 
 import { FETCH_PROCESSING } from '../actions';
 import ProfileFormFields from '../util/ProfileFormFields';
-import { dialogActions } from '../util/util';
+import { dialogActions } from './inputs/util';
 import type { Profile, SaveProfileFunc } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
 import type { Validator } from '../lib/validation/profile';
