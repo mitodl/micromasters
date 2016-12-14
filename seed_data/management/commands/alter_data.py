@@ -35,49 +35,49 @@ USAGE_DETAILS = (
     """
     Example commands:
 
-    # Turn financial aid off/on for a program with a title that contains 'Digital'
-    alter_data --action=turn_financial_aid_off --program-title="Digital"
-    alter_data --action=turn_financial_aid_on --program-title="Digital"
+    # Turn financial aid off/on for a program with a title that contains 'Analog'
+    alter_data --action=turn_financial_aid_off --program-title="Analog"
+    alter_data --action=turn_financial_aid_on --program-title="Analog"
 
-    # For a user with a username 'staff', set the 'Digital Learning' 100-level course to enrolled
-    alter_data --action=set_course_to_enrolled --username=staff --program-title='Digital' --course-title='100'
+    # For a user with a username 'staff', set the 'Analog Learning' 100-level course to enrolled
+    alter_data --action=set_course_to_enrolled --username=staff --program-title='Analog' --course-title='100'
 
-    # Set the 'Digital Learning' 200-level course to failed with a specific grade
-    alter_data --action=set_course_to_failed --username=staff --program-title='Digital' --course-title='200' --grade=45
+    # Set the 'Analog Learning' 200-level course to failed with a specific grade
+    alter_data --action=set_course_to_failed --username=staff --program-title='Analog' --course-title='200' --grade=45
 
-    # Set the 'Digital Learning' 300-level course to enrolled
-    alter_data --action=set_course_to_enrolled --username=staff --program-title='Digital' --course-title='300'
+    # Set the 'Analog Learning' 300-level course to enrolled
+    alter_data --action=set_course_to_enrolled --username=staff --program-title='Analog' --course-title='300'
 
-    # Set the 'Digital Learning' 300-level course to enrolled, and set it to start in the future
+    # Set the 'Analog Learning' 300-level course to enrolled, and set it to start in the future
     """
-    "alter_data --action=set_course_to_enrolled --username=staff --program-title='Digital' --course-title='300' "
+    "alter_data --action=set_course_to_enrolled --username=staff --program-title='Analog' --course-title='300' "
     "--in-future"
     """
 
-    # Set the 'Digital Learning' 300-level course to enrolled, but in need of upgrade (aka 'audit')
-    alter_data --action=set_course_to_needs_upgrade --username=staff --program-title='Digital' --course-title='300'
+    # Set the 'Analog Learning' 300-level course to enrolled, but in need of upgrade (aka 'audit')
+    alter_data --action=set_course_to_needs_upgrade --username=staff --program-title='Analog' --course-title='300'
 
     # (Another way to achieve the result of the above command...)
-    alter_data --action=set_course_to_enrolled --username=staff --program-title='Digital' --course-title='100' --audit
+    alter_data --action=set_course_to_enrolled --username=staff --program-title='Analog' --course-title='100' --audit
 
-    # Set the 'Digital Learning' 300-level course to enrolled and in need of upgrade, but past the deadline
+    # Set the 'Analog Learning' 300-level course to enrolled and in need of upgrade, but past the deadline
     """
-    "alter_data --action=set_course_to_needs_upgrade --username=staff --program-title='Digital' "
+    "alter_data --action=set_course_to_needs_upgrade --username=staff --program-title='Analog' "
     "--course-title='300' --missed-deadline"
     """
 
-    # Set the 'Digital Learning' 100-level course to have an offered course run (and no enrollments)
-    alter_data --action=set_course_to_offered --username=staff --program-title='Digital' --course-title='100'
+    # Set the 'Analog Learning' 100-level course to have an offered course run (and no enrollments)
+    alter_data --action=set_course_to_offered --username=staff --program-title='Analog' --course-title='100'
 
-    # Set the 'Digital Learning' 100-level course to have an offered course run with a fuzzy start date
-    alter_data --action=set_course_to_offered --username=staff --program-title='Digital' --course-title='100' --fuzzy
+    # Set the 'Analog Learning' 100-level course to have an offered course run with a fuzzy start date
+    alter_data --action=set_course_to_offered --username=staff --program-title='Analog' --course-title='100' --fuzzy
 
     # Add a past failed course run with a specific grade
-    alter_data --action=add_past_failed_run --username=staff --program-title='Digital' --course-title='100' --grade=30
+    alter_data --action=add_past_failed_run --username=staff --program-title='Analog' --course-title='100' --grade=30
 
     # Add a past failed course run, even if a previous failed run already exists
     """
-    "alter_data --action=add_past_failed_run --username=staff --program-title='Digital' --course-title='100' "
+    "alter_data --action=add_past_failed_run --username=staff --program-title='Analog' --course-title='100' "
     "--add-if-exists"
     """
 
