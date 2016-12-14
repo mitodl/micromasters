@@ -240,7 +240,7 @@ class CourseRunTest(CourseTests):
         """test for get_status_for_courserun for course without enrollment"""
         self.mmtrack.configure_mock(**{
             'is_enrolled.return_value': False,
-            'paid_but_not_enrolled_mmtrack.return_value': False
+            'has_paid.return_value': False
         })
         crun = self.create_run(
             start=self.now+timedelta(weeks=52),
@@ -259,7 +259,7 @@ class CourseRunTest(CourseTests):
         self.mmtrack.configure_mock(**{
             'is_enrolled.return_value': True,
             'is_enrolled_mmtrack.return_value': True,
-            'paid_but_not_enrolled_mmtrack.return_value': False
+            'has_paid.return_value': True
         })
         # create a run that is current
         crun = self.create_run(
@@ -278,7 +278,7 @@ class CourseRunTest(CourseTests):
         self.mmtrack.configure_mock(**{
             'is_enrolled.return_value': True,
             'is_enrolled_mmtrack.return_value': True,
-            'paid_but_not_enrolled_mmtrack.return_value': False
+            'has_paid.return_value': True
         })
         # create a run that is past
         crun = self.create_run(
@@ -297,7 +297,7 @@ class CourseRunTest(CourseTests):
         self.mmtrack.configure_mock(**{
             'is_enrolled.return_value': True,
             'is_enrolled_mmtrack.return_value': True,
-            'paid_but_not_enrolled_mmtrack.return_value': False
+            'has_paid.return_value': True
         })
         # create a run that is future
         crun = self.create_run(
@@ -316,7 +316,7 @@ class CourseRunTest(CourseTests):
         self.mmtrack.configure_mock(**{
             'is_enrolled.return_value': True,
             'is_enrolled_mmtrack.return_value': False,
-            'paid_but_not_enrolled_mmtrack.return_value': False
+            'has_paid.return_value': False
         })
         # create a run that is future
         future_run = self.create_run(
@@ -346,7 +346,7 @@ class CourseRunTest(CourseTests):
         self.mmtrack.configure_mock(**{
             'is_enrolled.return_value': True,
             'is_enrolled_mmtrack.return_value': False,
-            'paid_but_not_enrolled_mmtrack.return_value': False
+            'has_paid.return_value': False
         })
         # create a run that is current with upgrade deadline None
         current_run = self.create_run(
@@ -377,7 +377,7 @@ class CourseRunTest(CourseTests):
         self.mmtrack.configure_mock(**{
             'is_enrolled.return_value': True,
             'is_enrolled_mmtrack.return_value': False,
-            'paid_but_not_enrolled_mmtrack.return_value': False
+            'has_paid.return_value': False
         })
         # create a run that is past
         crun = self.create_run(
@@ -395,7 +395,8 @@ class CourseRunTest(CourseTests):
         """test for get_status_for_courserun for course without enrollment and it is paid"""
         self.mmtrack.configure_mock(**{
             'is_enrolled.return_value': False,
-            'paid_but_not_enrolled_mmtrack.return_value': True
+            'is_enrolled_mmtrack.return_value': False,
+            'has_paid.return_value': True
         })
         crun = self.create_run(
             start=self.now+timedelta(weeks=52),

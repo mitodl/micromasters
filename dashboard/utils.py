@@ -154,7 +154,7 @@ class MMTrack:
 
         # normal programs need to have a verified enrollment
         enrollment = self.enrollments.get_enrollment_for_course(course_id)
-        return enrollment.is_verified
+        return enrollment and enrollment.is_verified
 
     def has_passed_course(self, course_id):
         """
