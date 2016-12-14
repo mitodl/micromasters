@@ -115,19 +115,6 @@ export default class CourseAction extends React.Component {
     }
   );
 
-  renderDescriptionForError = R.curry(
-    (className: string, text: ?string, contact: ?string): React$Element<*>|null => {
-      let classDefinition = className;
-      let contactLink = null;
-
-      if (contact) {
-        contactLink = <a href={contact}>Contact us for help.</a>;
-      }
-      return (text && text.length > 0 || contactLink) ?
-        <div className={classDefinition} key="2">{text}{contactLink}</div> : null;
-    }
-  );
-
   renderTextDescription = this.renderDescription('description', null);
 
   renderBoxedDescription = this.renderDescription('boxed description', null);
@@ -211,13 +198,17 @@ export default class CourseAction extends React.Component {
       action = this.renderEnrollButton(run);
       description = this.renderTextDescription('Processing...');
       break;
-    case STATUS_PAID_BUT_NOT_ENROLLED:
-      description = this.renderContactUsDescription(
-        'Something went wrong.\n You paid for this course but \nare not enrolled.',
-        `mailto:${SETTINGS.support_email}`
+    case STATUS_PAID_BUT_NOT_ENROLLED: {
+      const contactText = 'Contact us for help.';
+      const contactHref = `mailto:${SETTINGS.support_email}`;
+      const descriptionText = 'Something went wrong. You paid for this course but are not enrolled.';
+      description = (
+        <div className='description' key='2'>
+          {descriptionText} <a href={contactHref}>{contactText}</a>
+        </div>
       );
       break;
-    }
+    }}
 
     return _.compact([action, description]);
   }

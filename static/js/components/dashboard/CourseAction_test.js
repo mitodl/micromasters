@@ -132,12 +132,15 @@ describe('CourseAction', () => {
     const wrapper = renderCourseAction({
       courseRun: firstRun
     });
-    let elements = getElements(wrapper);
+    let description = wrapper.find(".description");
+    let contactLink = description.find('a');
 
     assert.equal(
-      elements.descriptionText,
-      'Something went wrong.\n You paid for this course but \nare not enrolled.Contact us for help.'
+      description.text(),
+      'Something went wrong. You paid for this course but are not enrolled. Contact us for help.'
     );
+    assert.isAbove(contactLink.props().href.length, 0);
+    assert.include(contactLink.props().href, SETTINGS.support_email);
   });
 
   it('shows a button to enroll and pay, and a link to enroll and pay later', () => {

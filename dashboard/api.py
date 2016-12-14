@@ -285,8 +285,6 @@ def get_status_for_courserun(course_run, mmtrack):
     Returns:
         CourseRunUserStatus: an object representing the run status for the user
     """
-    if mmtrack.paid_but_not_enrolled_mmtrack(course_run.edx_course_key):
-        return CourseRunUserStatus(CourseRunStatus.PAID_BUT_NOT_ENROLLED, course_run)
     if not mmtrack.is_enrolled(course_run.edx_course_key):
         return CourseRunUserStatus(CourseRunStatus.NOT_ENROLLED, course_run)
     status = None
@@ -299,7 +297,9 @@ def get_status_for_courserun(course_run, mmtrack):
             status = CourseRunStatus.WILL_ATTEND
         # If a course run has no start or end date, is_past, is_current, and is_future all return False
     else:
-        if course_run.is_past:
+        if mmtrack.has_paid(course_run.edx_course_key):
+            return CourseRunUserStatus(CourseRunStatus.PAID_BUT_NOT_ENROLLED, course_run)
+        elif course_run.is_past:
             status = CourseRunStatus.NOT_PASSED
         else:
             if course_run.is_upgradable:
