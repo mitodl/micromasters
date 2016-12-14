@@ -242,7 +242,7 @@ describe('FinancialAidCalculator', () => {
       }
 
       return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
-        wrapper.find('.pricing-actions').find('.calculate-cost-button').simulate('click');
+        wrapper.find('.pricing-actions').find('.dashboard-button').simulate('click');
         let calculator = document.querySelector('.financial-aid-calculator');
         TestUtils.Simulate.change(calculator.querySelector('.mdl-checkbox__input'));
         modifyTextField(document.querySelector('#user-salary-input'), '1000');
