@@ -132,6 +132,17 @@
       }
     }
 
+    .filter--courses {
+      .sk-item-list-option {
+        margin-bottom: 8px;
+
+        .sk-item-list-option__text {
+          margin-top: 2px;
+          line-height: 1.3;
+        }
+      }
+    }
+
     .filter--grade-average {
       .sk-panel__content {
         padding-right: 25px;
