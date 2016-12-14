@@ -30,7 +30,8 @@ import type {
   FetchError,
 } from '../reducers/financial_aid';
 import type { Program } from '../flow/programTypes';
-import { formatPrice, dialogActions } from '../util/util';
+import { formatPrice } from '../util/util';
+import { dialogActions } from '../components/inputs/util';
 
 const updateCurrency = R.curry((update, financialAid, selection) => {
   let _financialAid = R.clone(financialAid);
