@@ -100,7 +100,7 @@ const calculatorActions = (openSkipDialog, cancel, save, fetchAddStatus) => {
       Skip this and Pay Full Price
     </button>
     <div className="buttons">
-      { dialogActions(cancel, save, fetchAddStatus === FETCH_PROCESSING, 'Calculate') }
+      { dialogActions(cancel, save, fetchAddStatus === FETCH_PROCESSING, 'Calculate', 'calculate-cost-button') }
     </div>
   </div>;
 };
