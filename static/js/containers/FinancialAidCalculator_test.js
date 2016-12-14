@@ -12,7 +12,6 @@ import * as api from '../lib/api';
 import { modifyTextField, modifySelectField, clearSelectField } from '../util/test_utils';
 import { DASHBOARD_RESPONSE, FINANCIAL_AID_PARTIAL_RESPONSE } from '../constants';
 import {
-  requestSkipFinancialAid,
   requestAddFinancialAid,
 
   START_CALCULATOR_EDIT,

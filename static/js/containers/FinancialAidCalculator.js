@@ -3,14 +3,12 @@ import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import { connect } from 'react-redux';
 import R from 'ramda';
-import Button from 'react-mdl/lib/Button';
 import TextField from 'material-ui/TextField';
 import Checkbox from 'react-mdl/lib/Checkbox';
 import Select from 'react-select';
 import _ from 'lodash';
 
 import { FETCH_PROCESSING } from '../actions';
-import SpinnerButton from '../components/SpinnerButton';
 import {
   updateCalculatorEdit,
   clearCalculatorEdit,
@@ -166,7 +164,9 @@ const FinancialAidCalculator = ({
     bodyClassName="financial-aid-calculator-body"
     autoScrollBodyContent={true}
     onRequestClose={closeDialogAndCancel}
-    actions={calculatorActions(openConfirmSkipDialog, closeDialogAndCancel, () => saveFinancialAid(financialAid), fetchAddStatus)}
+    actions={calculatorActions(
+      openConfirmSkipDialog, closeDialogAndCancel, () => saveFinancialAid(financialAid), fetchAddStatus
+    )}
   >
     <div className="copy">
       { `The cost of courses in the ${title} MicroMasters varies between ${minPossibleCost} and ${maxPossibleCost},

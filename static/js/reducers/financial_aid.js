@@ -17,7 +17,6 @@ import {
   FETCH_SUCCESS,
 } from '../actions';
 import type { Action } from '../flow/reduxTypes';
-import _ from 'lodash';
 
 export const INITIAL_FINANCIAL_AID_STATE = {};
 
