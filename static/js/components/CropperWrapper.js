@@ -4,6 +4,7 @@ import Cropper from 'react-cropper';
 import browser from 'detect-browser';
 
 export default class CropperWrapper extends React.Component {
+  cropper: Cropper;
   props: {
     updatePhotoEdit:    (b: Blob) => void,
     photo:              Object,
