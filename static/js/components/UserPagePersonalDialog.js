@@ -1,12 +1,11 @@
 // @flow
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
-import Button from 'react-mdl/lib/Button';
 
+import { dialogActions } from '../util/util';
 import { FETCH_PROCESSING } from '../actions';
 import { personalValidation } from '../lib/validation/profile';
 import PersonalForm from './PersonalForm';
-import SpinnerButton from './SpinnerButton';
 import type { Profile, SaveProfileFunc } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
 
@@ -40,24 +39,6 @@ export default class UserPagePersonalDialog extends React.Component {
   render () {
     const { ui: { userPageDialogVisibility }, profilePatchStatus } = this.props;
     const inFlight = profilePatchStatus === FETCH_PROCESSING;
-    const actions = [
-      <Button
-        type='button'
-        className='secondary-button cancel-button'
-        key='cancel'
-        onClick={this.closePersonalDialog}>
-        Cancel
-      </Button>,
-      <SpinnerButton
-        component={Button}
-        spinning={inFlight}
-        type='button'
-        className="primary-button save-button"
-        key='save'
-        onClick={this.savePersonalInfo}>
-        Save
-       </SpinnerButton>
-    ];
 
     return (
       <Dialog
@@ -67,7 +48,7 @@ export default class UserPagePersonalDialog extends React.Component {
         className="personal-dialog-wrapper"
         open={userPageDialogVisibility}
         onRequestClose={this.closePersonalDialog}
-        actions={actions}
+        actions={dialogActions(this.closePersonalDialog, this.savePersonalInfo, inFlight)}
         autoScrollBodyContent={true}>
         <PersonalForm {...this.props} validator={personalValidation} />
       </Dialog>

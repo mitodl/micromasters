@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import IconButton from 'react-mdl/lib/IconButton';
-import Button from 'react-mdl/lib/Button';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import { Card } from 'react-mdl/lib/Card';
 import _ from 'lodash';
@@ -18,7 +17,6 @@ import {
 } from '../util/util';
 import ProfileFormFields from '../util/ProfileFormFields';
 import ConfirmDeletion from './ConfirmDeletion';
-import SpinnerButton from './SpinnerButton';
 import SelectField from './inputs/SelectField';
 import CountrySelectField from './inputs/CountrySelectField';
 import StateSelectField from './inputs/StateSelectField';
@@ -28,6 +26,7 @@ import {
   deleteEducationEntry,
 } from '../util/profile_history_edit';
 import { educationEntriesByDate } from '../util/sorting';
+import { dialogActions } from '../util/util';
 import {
   EDUCATION_LEVELS,
   HIGH_SCHOOL,
@@ -382,24 +381,6 @@ class EducationForm extends ProfileFormFields {
     } = this.props;
 
     const inFlight = profilePatchStatus === FETCH_PROCESSING;
-    const actions = [
-      <Button
-        type='cancel'
-        key='cancel'
-        className="secondary-button cancel-button"
-        onClick={this.clearEducationEdit}>
-        Cancel
-      </Button>,
-      <SpinnerButton
-        component={Button}
-        spinning={inFlight}
-        type='button'
-        key='save'
-        className="primary-button save-button"
-        onClick={this.saveEducationForm}>
-        Save
-      </SpinnerButton>
-    ];
 
     return (
       <div>
@@ -416,7 +397,7 @@ class EducationForm extends ProfileFormFields {
           className="education-dialog-wrapper"
           open={educationDialogVisibility}
           onRequestClose={this.clearEducationEdit}
-          actions={actions}
+          actions={dialogActions(this.clearEducationEdit, this.saveEducationForm, inFlight)}
           autoScrollBodyContent={true}
         >
           {this.editEducationForm()}

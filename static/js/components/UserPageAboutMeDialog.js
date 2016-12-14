@@ -1,11 +1,10 @@
 // @flow
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
-import Button from 'react-mdl/lib/Button';
 
 import { FETCH_PROCESSING } from '../actions';
 import ProfileFormFields from '../util/ProfileFormFields';
-import SpinnerButton from './SpinnerButton';
+import { dialogActions } from '../util/util';
 import type { Profile, SaveProfileFunc } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
 import type { Validator } from '../lib/validation/profile';
@@ -42,25 +41,6 @@ export default class UserPageAboutMeDialog extends ProfileFormFields {
     const { ui: { userPageAboutMeDialogVisibility }, profilePatchStatus } = this.props;
     const inFlight = profilePatchStatus === FETCH_PROCESSING;
 
-    const actions = [
-      <Button
-        type='button'
-        className='secondary-button cancel-button'
-        key='cancel'
-        onClick={this.closeAboutMeDialog}>
-        Cancel
-      </Button>,
-      <SpinnerButton
-        component={Button}
-        spinning={inFlight}
-        type='button'
-        className="primary-button save-button"
-        key='save'
-        onClick={this.saveAboutMeInfo}>
-        Save
-      </SpinnerButton>
-    ];
-
     return (
       <Dialog
         title="About Me"
@@ -69,7 +49,7 @@ export default class UserPageAboutMeDialog extends ProfileFormFields {
         className="about-me-dialog-wrapper"
         open={userPageAboutMeDialogVisibility}
         onRequestClose={this.closeAboutMeDialog}
-        actions={actions}
+        actions={dialogActions(this.closeAboutMeDialog, this.saveAboutMeInfo, inFlight)}
         autoScrollBodyContent={true}>
        {
          this.boundTextField(

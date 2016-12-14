@@ -1,6 +1,5 @@
 // @flow
 import React from 'react';
-import Button from 'react-mdl/lib/Button';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import Dialog from 'material-ui/Dialog';
 import Card from 'react-mdl/lib/Card/Card';
@@ -21,8 +20,8 @@ import {
   openNewWorkHistoryForm,
   deleteWorkHistoryEntry,
 } from '../util/profile_history_edit';
+import { dialogActions } from '../util/util';
 import ConfirmDeletion from './ConfirmDeletion';
-import SpinnerButton from './SpinnerButton';
 import SelectField from './inputs/SelectField';
 import CountrySelectField from './inputs/CountrySelectField';
 import StateSelectField from './inputs/StateSelectField';
@@ -323,25 +322,6 @@ class EmploymentForm extends ProfileFormFields {
     } = this.props;
 
     const inFlight = profilePatchStatus === FETCH_PROCESSING;
-    const actions = [
-      <Button
-        type='button'
-        className="secondary-button cancel-button"
-        key='cancel'
-        onClick={this.closeWorkDialog}>
-        Cancel
-      </Button>,
-      <SpinnerButton
-        component={Button}
-        spinning={inFlight}
-        type='button'
-        className="primary-button save-button"
-        key='save'
-        onClick={this.saveWorkHistoryEntry}>
-        Save
-      </SpinnerButton>
-    ];
-
     return (
       <div>
         <ConfirmDeletion
@@ -357,7 +337,7 @@ class EmploymentForm extends ProfileFormFields {
           className="employment-dialog-wrapper"
           open={workDialogVisibility}
           onRequestClose={this.closeWorkDialog}
-          actions={actions}
+          actions={dialogActions(this.closeWorkDialog, this.saveWorkHistoryEntry, inFlight)}
           autoScrollBodyContent={true}
         >
           {this.editWorkHistoryForm()}
