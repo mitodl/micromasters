@@ -1,4 +1,8 @@
 .financial-aid-calculator {
+  >div >div {
+    border-top: none !important;
+  }
+
   .mm-button {
     padding-top: 1px;
   }
