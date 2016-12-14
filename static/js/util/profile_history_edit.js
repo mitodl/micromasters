@@ -46,7 +46,7 @@ export function deleteEducationEntry () {
   const { saveProfile, profile, ui } = this.props;
   let clone = _.cloneDeep(profile);
   clone['education'].splice(ui.deletionIndex, 1);
-  saveProfile(educationValidation, clone, ui);
+  return saveProfile(educationValidation, clone, ui);
 }
 
 export function openNewWorkHistoryForm () {
@@ -79,5 +79,5 @@ export function deleteWorkHistoryEntry () {
   const { saveProfile, profile, ui } = this.props;
   let clone = _.cloneDeep(profile);
   clone['work_history'].splice(ui.deletionIndex, 1);
-  saveProfile(employmentValidation, clone, ui);
+  return saveProfile(employmentValidation, clone, ui);
 }

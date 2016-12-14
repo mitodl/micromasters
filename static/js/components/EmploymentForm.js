@@ -73,7 +73,7 @@ class EmploymentForm extends ProfileFormFields {
   };
 
   deleteWorkHistoryEntry: Function = (): void => {
-    deleteWorkHistoryEntry.call(this);
+    return deleteWorkHistoryEntry.call(this);
   };
 
   saveWorkHistoryEntry: Function = (): void => {
@@ -329,6 +329,7 @@ class EmploymentForm extends ProfileFormFields {
           open={showWorkDeleteDialog}
           close={this.closeConfirmDeleteDialog}
           itemText="position"
+          inFlight={inFlight}
         />
         <Dialog
           title="Employment"

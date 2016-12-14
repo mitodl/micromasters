@@ -25,6 +25,8 @@ import {
   RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
 } from '../actions/programs';
 import {
+  setShowWorkDeleteDialog,
+  setShowEducationDeleteDialog,
   SET_WORK_DIALOG_VISIBILITY,
   SET_WORK_DIALOG_INDEX,
   SET_EDUCATION_DEGREE_LEVEL,
@@ -436,7 +438,8 @@ describe("UserPage", function() {
             SET_DELETION_INDEX,
             REQUEST_PATCH_USER_PROFILE,
             RECEIVE_PATCH_USER_PROFILE_SUCCESS,
-            UPDATE_VALIDATION_VISIBILITY
+            UPDATE_VALIDATION_VISIBILITY,
+            CLEAR_PROFILE_EDIT,
           ], () => {
             TestUtils.Simulate.click(firstEducationDeleteButton);
             let dialog = activeDeleteDialog();
@@ -445,6 +448,36 @@ describe("UserPage", function() {
           });
         });
       });
+
+      for (let activity of [true, false]) {
+        it(`should have proper spinner state during deletion of education for activity=${activity}`, () => {
+          const username = SETTINGS.user.username;
+          patchUserProfileStub.returns(Promise.resolve(USER_PROFILE_RESPONSE));
+
+          helper.store.dispatch(setShowEducationDeleteDialog(true));
+          if (activity) {
+            helper.store.dispatch(requestPatchUserProfile());
+          }
+          return renderComponent(`/learner/${username}`, userActions).then(() => {
+            let dialog = document.querySelector('.deletion-confirmation-dialog');
+            let button = dialog.querySelector(".delete-button");
+
+            let actions = activity ? [REQUEST_PATCH_USER_PROFILE] : [];
+
+            return listenForActions(actions, () => {
+              if (activity) {
+                helper.store.dispatch(requestPatchUserProfile(username));
+              }
+            }).then(() => {
+              assert.equal(button.className.includes("disabled-with-spinner"), activity);
+              assert.equal(button.innerHTML.includes("mdl-spinner"), activity);
+
+              TestUtils.Simulate.click(button);
+              assert.equal(patchUserProfileStub.called, !activity);
+            });
+          });
+        });
+      }
 
       it('should let you edit an education entry', () => {
         const username = SETTINGS.user.username;
@@ -655,6 +688,7 @@ describe("UserPage", function() {
             SET_DELETION_INDEX,
             REQUEST_PATCH_USER_PROFILE,
             RECEIVE_PATCH_USER_PROFILE_SUCCESS,
+            CLEAR_PROFILE_EDIT,
           ], () => {
             TestUtils.Simulate.click(deleteButton);
             let dialog = activeDeleteDialog();
@@ -663,6 +697,33 @@ describe("UserPage", function() {
           });
         });
       });
+
+      for (let activity of [true, false]) {
+        it(`should have proper spinner state during deletion of employment for activity=${activity}`, () => {
+          const username = SETTINGS.user.username;
+          patchUserProfileStub.returns(Promise.resolve(USER_PROFILE_RESPONSE));
+
+          helper.store.dispatch(setShowWorkDeleteDialog(true));
+          return renderComponent(`/learner/${username}`, userActions).then(() => {
+            let dialog = document.querySelector('.deletion-confirmation-dialog');
+            let button = dialog.querySelector(".delete-button");
+
+            let actions = activity ? [REQUEST_PATCH_USER_PROFILE] : [];
+
+            return listenForActions(actions, () => {
+              if (activity) {
+                helper.store.dispatch(requestPatchUserProfile(username));
+              }
+            }).then(() => {
+              assert.equal(button.className.includes("disabled-with-spinner"), activity);
+              assert.equal(button.innerHTML.includes("mdl-spinner"), activity);
+
+              TestUtils.Simulate.click(button);
+              assert.equal(patchUserProfileStub.called, !activity);
+            });
+          });
+        });
+      }
 
       it('should let you edit a work history entry', () => {
         const username = SETTINGS.user.username;

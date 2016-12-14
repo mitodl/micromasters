@@ -87,7 +87,7 @@ class EducationForm extends ProfileFormFields {
   };
 
   deleteEducationEntry: Function = (): void => {
-    deleteEducationEntry.call(this);
+    return deleteEducationEntry.call(this);
   };
 
   educationLevelRadioSwitch: Function = (level: Object): React$Element<*> => {
@@ -389,6 +389,7 @@ class EducationForm extends ProfileFormFields {
           open={showEducationDeleteDialog}
           close={this.closeConfirmDeleteDialog}
           itemText="degree"
+          inFlight={inFlight}
         />
         <Dialog
           title="Education"

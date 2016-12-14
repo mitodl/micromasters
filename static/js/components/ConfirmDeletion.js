@@ -1,42 +1,27 @@
 // @flow
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
-import Button from 'react-mdl/lib/Button';
+
+import { dialogActions } from './inputs/util';
 
 const dialogTitle = (item="entry") => (`Delete this ${item}?`);
 
 export default class ConfirmDeletion extends React.Component {
   props: {
     close:        () => void,
-    deleteFunc:   () => void,
+    deleteFunc:   () => Promise<*>,
     open:         boolean,
+    inFlight:     boolean,
     itemText:     string,
   };
 
   deleteAndClose: Function = (): void => {
     const { close, deleteFunc } = this.props;
-    deleteFunc();
-    close();
+    deleteFunc().then(close);
   };
 
   render () {
-    const { close, open, itemText } = this.props;
-    let actions = [
-      <Button
-        type='button'
-        key='close'
-        className="secondary-button cancel-button"
-        onClick={close}>
-        Cancel
-      </Button>,
-      <Button
-        key='delete'
-        type='button'
-        className="primary-button delete-button"
-        onClick={this.deleteAndClose}>
-        Delete
-      </Button>
-    ];
+    const { close, open, inFlight, itemText } = this.props;
     return (
       <Dialog
         title={dialogTitle(itemText)}
@@ -45,7 +30,7 @@ export default class ConfirmDeletion extends React.Component {
         contentClassName="dialog deletion-confirmation-dialog"
         open={open}
         onRequestClose={close}
-        actions={actions}
+        actions={dialogActions(close, this.deleteAndClose, inFlight, 'Delete', 'delete-button')}
         autoScrollBodyContent={true}
       >
       </Dialog>
