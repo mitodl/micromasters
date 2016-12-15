@@ -55,6 +55,7 @@ import type {
 } from '../reducers/documents';
 import type { CoursePricesState, DashboardState } from '../flow/dashboardTypes';
 import type { AvailableProgram, CourseEnrollmentsState } from '../flow/enrollmentTypes';
+import type { FinancialAidState } from '../reducers/financial_aid';
 import type { ProfileGetResult } from '../flow/profileTypes';
 import type { Course, CourseRun } from '../flow/programTypes';
 import type { CheckoutState } from '../reducers';
@@ -80,6 +81,7 @@ class DashboardPage extends React.Component {
     orderReceipt:             OrderReceiptState,
     courseEnrollments:        CourseEnrollmentsState,
     checkout:                 CheckoutState,
+    financialAid:             FinancialAidState,
   };
 
   componentDidMount() {

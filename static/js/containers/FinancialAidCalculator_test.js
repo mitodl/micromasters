@@ -119,7 +119,7 @@ describe('FinancialAidCalculator', () => {
         helper.store.dispatch(requestSkipFinancialAid());
       }
 
-      return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
+      return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(() => {
         let confirmDialog = document.querySelector('.skip-financial-aid-dialog-wrapper');
         let skipButton = confirmDialog.querySelector('.skip-button');
 
@@ -136,7 +136,7 @@ describe('FinancialAidCalculator', () => {
     helper.store.dispatch(setConfirmSkipDialogVisibility(true));
     helper.store.dispatch(requestAddFinancialAid());
 
-    return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
+    return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(() => {
       let confirmDialog = document.querySelector('.skip-financial-aid-dialog-wrapper');
       let skipButton = confirmDialog.querySelector('.skip-button');
 
