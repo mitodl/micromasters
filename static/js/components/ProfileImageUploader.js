@@ -9,6 +9,7 @@ import Spinner from 'react-mdl/lib/Spinner';
 import CropperWrapper from './CropperWrapper';
 import { FETCH_PROCESSING } from '../actions';
 import type { ImageUploadState } from '../reducers/image_upload';
+import { dialogActions } from './inputs/util';
 
 const onDrop = R.curry((startPhotoEdit, files) => startPhotoEdit(...files));
 
@@ -91,25 +92,17 @@ const ProfileImageUploader = ({
     autoScrollBodyContent={true}
     contentStyle={{ maxWidth: '620px' }}
     open={photoDialogOpen}
-    actions = {[
-      <Button
-        type='button'
-        className='secondary-button cancel-button'
-        key="cancel"
-        onClick={() => {
-          setDialogVisibility(false);
-          clearPhotoEdit();
-        }}>
-        Cancel
-      </Button>,
-      <Button
-        type='button'
-        className={`save-button ${disabled ? 'secondary-button disabled' : 'primary-button'}`}
-        key="save"
-        onClick={disabled ? undefined: updateUserPhoto}>
-        Save
-      </Button>
-    ]}
+    actions = { dialogActions(
+      () => {
+        setDialogVisibility(false);
+        clearPhotoEdit();
+      },
+      updateUserPhoto,
+      false,
+      'Save',
+      '',
+      disabled,
+    ) }
   >
    { imageError(error) }
    { dialogContents(

@@ -145,7 +145,8 @@ describe('ProfileImage', () => {
         helper.store.dispatch(setPhotoDialogVisibility(true));
         let dialog = document.querySelector(".photo-upload-dialog");
         let saveButton = dialog.querySelector('.save-button');
-        assert.isTrue(saveButton.className.includes('disabled'));
+        assert.isTrue(saveButton.disabled);
+        assert.isFalse(saveButton.innerHTML.includes("mdl-spinner"));
         TestUtils.Simulate.click(saveButton);
         assert.isFalse(updateProfileImageStub.called);
         assert.isNull(dialog.querySelector('.mdl-spinner'));
@@ -171,7 +172,8 @@ describe('ProfileImage', () => {
         helper.store.dispatch(requestPatchUserPhoto(SETTINGS.user.username));
         let dialog = document.querySelector(".photo-upload-dialog");
         let saveButton = dialog.querySelector('.save-button');
-        assert.include(saveButton.className, 'disabled');
+        assert.isTrue(saveButton.disabled);
+        assert.isFalse(saveButton.innerHTML.includes("mdl-spinner"));
         TestUtils.Simulate.click(saveButton);
         assert.isFalse(updateProfileImageStub.called);
       });
