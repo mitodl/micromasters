@@ -174,10 +174,10 @@ const FinancialAidCalculator = ({
     onRequestClose={closeDialogAndCancel}
     actions={calculatorActions(
       openConfirmSkipDialog,
-       closeDialogAndCancel,
-        () => saveFinancialAid(financialAid),
-        fetchAddStatus,
-        fetchSkipStatus,
+      closeDialogAndCancel,
+      () => saveFinancialAid(financialAid),
+      fetchAddStatus,
+      fetchSkipStatus,
     )}
   >
     <div className="copy">
