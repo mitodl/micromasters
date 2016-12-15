@@ -33,10 +33,6 @@ from profiles.serializers import (
     ProfileSerializer,
     ProfileFilledOutSerializer,
 )
-from profiles.util import (
-    GravatarImgSize,
-    format_gravatar_url,
-)
 from search.base import ESTestCase
 
 
