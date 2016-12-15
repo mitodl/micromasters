@@ -182,17 +182,6 @@ def clear_future_runs(user=None, course=None):  # pylint: disable=unused-argumen
     return CourseRun.objects.filter(course=course, edx_course_key__startswith=NEW_COURSE_RUN_PREFIX).delete()
 
 
-@accepts_or_calculates_now
-def add_past_failed_run(user=None, course=None, now=None, grade=DEFAULT_FAILED_GRADE, add_if_exists=False):
-    """Adds a past failed course run for a given user and course"""
-    chosen_past_run = get_past_course_run(user, course, now, add_if_exists)
-
-    # Add enrollment and failed grade for course run
-    CachedEnrollmentHandler(user).set_or_create(course_run=chosen_past_run)
-    CachedCurrentGradeHandler(user).set_or_create(course_run=chosen_past_run, grade=grade)
-    return chosen_past_run
-
-
 def get_past_course_run(user=None, course=None, now=None, add_if_exists=False):
     """Loop through past course runs and find one without CachedCurrentGrade data"""
     chosen_past_run = None
@@ -201,7 +190,8 @@ def get_past_course_run(user=None, course=None, now=None, add_if_exists=False):
         end_date__lt=now,
     ).exclude(end_date=None).order_by('-end_date').all()
     for past_run in past_runs:
-        if not CachedCurrentGradeHandler(user).exists(past_run):
+        if not (CachedCurrentGradeHandler(user).exists(past_run)
+                or CachedCertificateHandler(user).exists(past_run)):
             chosen_past_run = past_run
             continue
         elif not add_if_exists:
@@ -211,6 +201,17 @@ def get_past_course_run(user=None, course=None, now=None, add_if_exists=False):
             ))
     if not chosen_past_run:
         raise Exception("Can't find past run w/o CachedCurrentGrade")
+    return chosen_past_run
+
+
+@accepts_or_calculates_now
+def add_past_failed_run(user=None, course=None, now=None, grade=DEFAULT_FAILED_GRADE, add_if_exists=False):
+    """Adds a past failed course run for a given user and course"""
+    chosen_past_run = get_past_course_run(user, course, now, add_if_exists)
+
+    # Add enrollment and failed grade for course run
+    CachedEnrollmentHandler(user).set_or_create(course_run=chosen_past_run)
+    CachedCurrentGradeHandler(user).set_or_create(course_run=chosen_past_run, grade=grade)
     return chosen_past_run
 
 
