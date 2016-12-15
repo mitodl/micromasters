@@ -53,20 +53,6 @@ class UtilTests(TestCase):
         assert first_name == "three"
         assert last_name == "names here"
 
-    def test_format_gravatar(self):
-        """
-        Format URL for gravatar
-        """
-        user_email = "foo.bar@example.com"
-        user_email_spaces = "      foo.bar@example.com       "
-        expected_url = ('https://www.gravatar.com/avatar/a7440323a684ea47406313a33156e5e9?'
-                        'r=PG&s={size}&d=https%3A%2F%2Fs3.amazonaws.com'
-                        '%2Fodl-micromasters-production%2Favatar_default.png')
-        for size in (util.GravatarImgSize.FULL, util.GravatarImgSize.LARGE,
-                     util.GravatarImgSize.MEDIUM, util.GravatarImgSize.SMALL):
-            assert expected_url.format(size=size) == util.format_gravatar_url(user_email, size)
-            assert expected_url.format(size=size) == util.format_gravatar_url(user_email_spaces, size)
-
     def test_profile_image_upload_uri(self):
         """
         Test for long profile image upload uris

@@ -234,10 +234,6 @@ def program_enrolled_user_mapping():
         'preferred_language': NOT_ANALYZED_STRING_TYPE,
         'preferred_name': NOT_ANALYZED_STRING_TYPE,
         'pretty_printed_student_id': NOT_ANALYZED_STRING_TYPE,
-        'profile_url_full': NOT_ANALYZED_STRING_TYPE,
-        'profile_url_large': NOT_ANALYZED_STRING_TYPE,
-        'profile_url_medium': NOT_ANALYZED_STRING_TYPE,
-        'profile_url_small': NOT_ANALYZED_STRING_TYPE,
         'username': NOT_ANALYZED_STRING_TYPE,
         'work_history': {'type': 'nested', 'properties': {
             'city': NOT_ANALYZED_STRING_TYPE,
