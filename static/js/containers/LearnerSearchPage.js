@@ -67,7 +67,7 @@ class LearnerSearchPage extends React.Component {
     dispatch(setEmailDialogVisibility(false));
   };
 
-  closeEmailComposeAndSend: Function = () => {
+  closeEmailComposeAndSend = (): Promise<*> => {
     const { dispatch, email: { email } } = this.props;
     let errors = emailValidation(email);
     dispatch(updateEmailValidation(errors));
@@ -78,9 +78,10 @@ class LearnerSearchPage extends React.Component {
           email.body,
           email.query
         )
-      );
-      dispatch(clearEmailEdit());
-      dispatch(setEmailDialogVisibility(false));
+      ).then(() => {
+        dispatch(clearEmailEdit());
+        dispatch(setEmailDialogVisibility(false));
+      });
     }
   };
 

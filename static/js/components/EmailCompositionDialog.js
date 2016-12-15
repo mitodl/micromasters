@@ -1,31 +1,14 @@
 // @flow
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
-import Button from 'react-mdl/lib/Button';
 import R from 'ramda';
+
+import { FETCH_PROCESSING } from '../actions';
+import { dialogActions } from './inputs/util';
 import type {
   Email,
   EmailValidationErrors
 } from '../flow/emailTypes';
-
-const createDialogActions = (close, send) => ([
-  <Button
-    type="button"
-    className="secondary-button cancel-button"
-    key="first"
-    onClick={close}
-  >
-    Cancel
-  </Button>,
-  <Button
-    type="button"
-    className="primary-button save-button"
-    key="second"
-    onClick={send}
-  >
-    Send
-  </Button>
-]);
 
 const showValidationError = R.curry((getter, object: EmailValidationErrors) => {
   let val = getter(object);
@@ -46,7 +29,7 @@ type EmailDialogProps = {
   open:             boolean,
   email:            Email,
   searchkit:        Object,
-  sendEmail:        (e: Email) => void,
+  sendEmail:        () => Promise<*>,
 };
 
 const EmailCompositionDialog = (props: EmailDialogProps) => {
@@ -54,7 +37,7 @@ const EmailCompositionDialog = (props: EmailDialogProps) => {
     closeEmailDialog,
     updateEmailEdit,
     open,
-    email: { email, validationErrors },
+    email: { email, validationErrors, fetchStatus },
     searchkit,
     sendEmail,
   } = props;
@@ -65,7 +48,7 @@ const EmailCompositionDialog = (props: EmailDialogProps) => {
     contentClassName="dialog email-composition-dialog"
     className="email-composition-dialog-wrapper"
     open={open}
-    actions={createDialogActions(closeEmailDialog, sendEmail)}
+    actions={dialogActions(closeEmailDialog, sendEmail, fetchStatus === FETCH_PROCESSING, 'Send')}
     onRequestClose={closeEmailDialog}
   >
     <div className="email-composition-contents">
