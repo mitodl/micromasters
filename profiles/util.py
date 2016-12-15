@@ -3,9 +3,7 @@ util functions for profiles
 """
 from datetime import datetime
 from os import path
-from urllib import parse
 
-import hashlib
 import pytz
 
 IMAGE_FILENAME_MAX_LENGTH = 64
