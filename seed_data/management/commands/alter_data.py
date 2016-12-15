@@ -190,10 +190,9 @@ def get_past_course_run(user=None, course=None, now=None, add_if_exists=False):
         end_date__lt=now,
     ).exclude(end_date=None).order_by('-end_date').all()
     for past_run in past_runs:
-        if not (CachedCurrentGradeHandler(user).exists(past_run)
-                or CachedCertificateHandler(user).exists(past_run)):
+        if not (CachedCurrentGradeHandler(user).exists(past_run) or
+                CachedCertificateHandler(user).exists(past_run)):
             chosen_past_run = past_run
-            continue
         elif not add_if_exists:
             raise Exception("Past failed/passed course run already exists (id: {}, title: {})".format(
                 past_run.id,
