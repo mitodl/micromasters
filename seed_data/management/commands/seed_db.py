@@ -42,7 +42,6 @@ MODEL_DEFAULTS = {
         'edx_requires_parental_consent': False,
         'email_optin': True,
         'filled_out': True,
-        'has_profile_image': False,
     },
     Education: {
         'online_degree': False

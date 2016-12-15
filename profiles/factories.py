@@ -61,7 +61,6 @@ class ProfileFactory(DjangoModelFactory):
     birth_country = LazyAttribute(lambda x: FAKE.country_code())
     nationality = LazyAttribute(lambda x: FAKE.country_code())
 
-    has_profile_image = FuzzyAttribute(FAKE.boolean)
     edx_requires_parental_consent = FuzzyAttribute(FAKE.boolean)
     date_of_birth = FuzzyDate(date(1850, 1, 1))
     edx_level_of_education = FuzzyChoice(

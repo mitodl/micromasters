@@ -229,7 +229,6 @@ def program_enrolled_user_mapping():
         'filled_out': BOOL_TYPE,
         'first_name': NOT_ANALYZED_STRING_TYPE,
         'gender': NOT_ANALYZED_STRING_TYPE,
-        'has_profile_image': BOOL_TYPE,
         'last_name': NOT_ANALYZED_STRING_TYPE,
         'preferred_language': NOT_ANALYZED_STRING_TYPE,
         'preferred_name': NOT_ANALYZED_STRING_TYPE,

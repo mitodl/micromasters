@@ -45,7 +45,7 @@ class EdxPipelineApiTest(ESTestCase):
                 continue
             if key == 'account_privacy':
                 assert getattr(profile, key) == Profile.PUBLIC_TO_MM
-            elif key in ('has_profile_image', 'filled_out', 'email_optin',
+            elif key in ('filled_out', 'email_optin',
                          'agreed_to_terms_of_service', 'verified_micromaster_user',):
                 # booleans
                 assert getattr(profile, key) is False
@@ -195,7 +195,6 @@ class EdxPipelineApiTest(ESTestCase):
             ('preferred_name', first_name),
             ('edx_bio', mocked_content['bio']),
             ('country', mocked_content['country']),
-            ('has_profile_image', mocked_content['profile_image']['has_image']),
             ('edx_requires_parental_consent', mocked_content['requires_parental_consent']),
             ('edx_level_of_education', mocked_content['level_of_education']),
             ('edx_goals', mocked_content['goals']),
