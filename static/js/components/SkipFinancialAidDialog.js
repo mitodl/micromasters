@@ -1,30 +1,9 @@
 // @flow
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
-import Button from 'react-mdl/lib/Button';
 
 import { FETCH_PROCESSING } from '../actions';
-import SpinnerButton from './SpinnerButton';
-
-const skipActions = (cancel, skip, fetchAddStatus, fetchSkipStatus) => (
-  <div className="actions">
-    <Button
-      type='button'
-      className="secondary-button cancel-button"
-      onClick={cancel}>
-      Cancel
-    </Button>
-    <SpinnerButton
-      component={Button}
-      spinning={fetchSkipStatus === FETCH_PROCESSING}
-      disabled={fetchAddStatus === FETCH_PROCESSING}
-      type='button'
-      className="primary-button save-button skip-button"
-      onClick={skip}>
-      Pay Full Price
-    </SpinnerButton>
-  </div>
-);
+import { dialogActions } from './inputs/util';
 
 type SkipProps = {
   cancel:           () => void,
@@ -43,7 +22,14 @@ const SkipFinancialAidDialog = ({cancel, skip, open, fullPrice, fetchAddStatus, 
     className="skip-financial-aid-dialog-wrapper"
     open={open}
     onRequestClose={cancel}
-    actions={skipActions(cancel, skip, fetchAddStatus, fetchSkipStatus)}
+    actions={dialogActions(
+      cancel,
+      skip,
+      fetchSkipStatus === FETCH_PROCESSING,
+      'Pay Full Price',
+      'skip-button',
+      fetchAddStatus === FETCH_PROCESSING
+    )}
   >
     You may qualify for a reduced cost. Clicking "Pay Full Price"
     means that you are declining this option and you will pay the
