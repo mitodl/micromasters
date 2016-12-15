@@ -15,7 +15,6 @@ import {
   UPDATE_EMAIL_VALIDATION,
   UPDATE_EMAIL_EDIT,
   CLEAR_EMAIL_EDIT,
-  START_EMAIL_EDIT,
   startEmailEdit,
 } from '../actions/email';
 import {
