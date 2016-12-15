@@ -101,7 +101,19 @@ export default class LearnerSearch extends SearchkitComponent {
 
   searchkitTranslations: Object = makeSearchkitTranslations();
 
-  renderSearchHeader = (openEmailComposer: Function): React$Element<*>|null => {
+  getNumberOfCoursesInProgram: Function = (): number => {
+    let results = this.getResults();
+    if (!results) {
+      return 0;
+    }
+
+    const hit = (
+       results.hits && results.hits.hits && results.hits.hits.length > 0 ? results.hits.hits[0] : null
+    );
+    return hit !== null ? hit._source.program.total_courses : 0;
+  }
+
+  renderSearchHeader: Function = (openEmailComposer: Function): React$Element<*>|null => {
     if (_.isNull(this.getResults())) {
       return null;
     }
@@ -141,7 +153,6 @@ export default class LearnerSearch extends SearchkitComponent {
         </Card>
       );
     }
-
     return (
       <Card className="fullwidth" shadow={1}>
         <FilterVisibilityToggle
@@ -190,6 +201,18 @@ export default class LearnerSearch extends SearchkitComponent {
             showHistogram={true}
             title="Average Grade in Program"
           />
+        </FilterVisibilityToggle>
+        <FilterVisibilityToggle
+          {...this.props}
+          filterName="num-courses-passed"
+        >
+          <RangeFilter
+            field="program.num_courses_passed"
+            id="num-courses-passed"
+            min={0}
+            max={this.getNumberOfCoursesInProgram()}
+            showHistogram={false}
+            title="# of Courses Passed" />
         </FilterVisibilityToggle>
       </Card>
     );
