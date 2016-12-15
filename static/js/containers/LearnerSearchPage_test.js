@@ -1,19 +1,36 @@
 /* global SETTINGS: false */
 import { assert } from 'chai';
 import _ from 'lodash';
+import TestUtils from 'react-addons-test-utils';
 
 import IntegrationTestHelper from '../util/integration_test_helper';
 import {
   PROGRAMS,
   ELASTICSEARCH_RESPONSE,
 } from '../constants';
+import { setEmailDialogVisibility } from '../actions/ui';
+import {
+  INITIATE_SEND_EMAIL,
+  SEND_EMAIL_SUCCESS,
+  UPDATE_EMAIL_VALIDATION,
+  UPDATE_EMAIL_EDIT,
+  CLEAR_EMAIL_EDIT,
+  START_EMAIL_EDIT,
+  startEmailEdit,
+} from '../actions/email';
+import {
+  SET_EMAIL_DIALOG_VISIBILITY,
+} from '../actions/ui';
+import * as api from '../lib/api';
+import { modifyTextField } from '../util/test_utils';
 
 describe('LearnerSearchPage', function () {
-  let renderComponent, helper, server;
+  let renderComponent, listenForActions, helper, server;
 
   beforeEach(() => {
     helper = new IntegrationTestHelper();
     renderComponent = helper.renderComponent.bind(helper);
+    listenForActions = helper.listenForActions.bind(helper);
     server = helper.sandbox.useFakeServer();
     server.respondWith("POST", "http://localhost:9200/_search", [
       200, { "Content-Type": "application/json" }, JSON.stringify(ELASTICSEARCH_RESPONSE)
@@ -47,6 +64,41 @@ describe('LearnerSearchPage', function () {
 
     return renderComponent('/learners').then(() => {
       assert.lengthOf(server.requests, 0);
+    });
+  });
+
+  it('waits for a successful email send to close the dialog', () => {
+    helper.programsGetStub.returns(Promise.resolve(PROGRAMS));
+    helper.store.dispatch(setEmailDialogVisibility(true));
+    const query = {
+      fake: 'query'
+    };
+    helper.store.dispatch(startEmailEdit(query));
+    let sendMail = helper.sandbox.stub(api, 'sendSearchResultMail');
+    sendMail.returns(Promise.resolve());
+
+    return renderComponent('/learners').then(() => {
+      let dialog = document.querySelector('.email-composition-dialog');
+      let button = dialog.querySelector(".save-button");
+
+      return listenForActions([
+        UPDATE_EMAIL_EDIT,
+        UPDATE_EMAIL_EDIT,
+        UPDATE_EMAIL_VALIDATION,
+        INITIATE_SEND_EMAIL,
+        SEND_EMAIL_SUCCESS,
+        CLEAR_EMAIL_EDIT,
+        SET_EMAIL_DIALOG_VISIBILITY,
+      ], () => {
+        modifyTextField(dialog.querySelector('.email-subject'), 'subject');
+        modifyTextField(dialog.querySelector('.email-body'), 'body');
+
+        TestUtils.Simulate.click(button);
+        assert.isTrue(helper.store.getState().ui.emailDialogVisibility);
+      }).then(() => {
+        assert.isTrue(sendMail.calledWith("subject", "body", query));
+        assert.isFalse(helper.store.getState().ui.emailDialogVisibility);
+      });
     });
   });
 });

@@ -113,7 +113,7 @@ describe('EmailCompositionDialog', () => {
         renderDialog();
         let field = getField();
         modifyTextField(field, "HI");
-        assert(updateStub.called, "onChange callback was called");
+        assert(updateStub.calledWith(), "onChange callback was called");
       });
 
       it('should show an error if an error for the field is passed in', () => {
