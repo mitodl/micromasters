@@ -88,7 +88,7 @@ export default class LearnerSearch extends SearchkitComponent {
     emailDialogVisibility:    boolean,
     closeEmailDialog:         () => void,
     updateEmailEdit:          (o: Object) => void,
-    sendEmail:                () => Promise<*>,
+    sendEmail:                () => void,
     email:                    Email,
     children:                 React$Element<*>[],
     currentProgramEnrollment: AvailableProgram,

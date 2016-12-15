@@ -67,7 +67,7 @@ class LearnerSearchPage extends React.Component {
     dispatch(setEmailDialogVisibility(false));
   };
 
-  closeEmailComposeAndSend = (): Promise<*> => {
+  closeEmailComposeAndSend = (): void => {
     const { dispatch, email: { email } } = this.props;
     let errors = emailValidation(email);
     dispatch(updateEmailValidation(errors));

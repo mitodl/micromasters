@@ -29,7 +29,7 @@ type EmailDialogProps = {
   open:             boolean,
   email:            Email,
   searchkit:        Object,
-  sendEmail:        () => Promise<*>,
+  sendEmail:        () => void,
 };
 
 const EmailCompositionDialog = (props: EmailDialogProps) => {
