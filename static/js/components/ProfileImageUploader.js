@@ -3,7 +3,6 @@ import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import R from 'ramda';
 import Dropzone from 'react-dropzone';
-import Button from 'react-mdl/lib/Button';
 import Spinner from 'react-mdl/lib/Spinner';
 
 import CropperWrapper from './CropperWrapper';
