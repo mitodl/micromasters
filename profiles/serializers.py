@@ -157,6 +157,8 @@ class ProfileBaseSerializer(ModelSerializer):
     """Base class for all the profile serializers"""
 
     username = SerializerMethodField()
+    work_history = EmploymentSerializer(many=True)
+    education = EducationSerializer(many=True)
 
     def get_username(self, obj):  # pylint: disable=no-self-use
         """Getter for the username field"""
@@ -165,8 +167,6 @@ class ProfileBaseSerializer(ModelSerializer):
 
 class ProfileSerializer(ProfileBaseSerializer):
     """Serializer for Profile objects"""
-    work_history = EmploymentSerializer(many=True)
-    education = EducationSerializer(many=True)
     about_me = CharField(allow_null=True, allow_blank=True, required=False)
 
     def update(self, instance, validated_data):
@@ -219,8 +219,6 @@ class ProfileLimitedSerializer(ProfileBaseSerializer):
     Serializer for Profile objects, limited to fields that other users are
     allowed to see if a profile is marked public.
     """
-    work_history = EmploymentSerializer(many=True)
-    education = EducationSerializer(many=True)
 
     class Meta:  # pylint: disable=missing-docstring
         model = Profile
