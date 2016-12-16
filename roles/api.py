@@ -3,10 +3,7 @@ API for roles
 """
 from rolepermissions.verifications import has_object_permission
 
-from roles.models import (
-    Role,
-    NON_LEARNERS
-)
+from roles.models import Role
 
 
 def get_advance_searchable_programs(user):
@@ -35,5 +32,5 @@ def is_learner(user, program):
         program (courses.models.Program): Program object
     """
     return (
-        not Role.objects.filter(user=user, role__in=NON_LEARNERS, program=program).exists()
+        not Role.objects.filter(user=user, role__in=Role.NON_LEARNERS, program=program).exists()
     )
