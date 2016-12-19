@@ -56,12 +56,13 @@ import {
   activeDeleteDialog,
   modifySelectField,
   clearSelectField,
+  GoogleMapsStub,
 } from '../util/test_utils';
 
 describe("UserPage", function() {
   this.timeout(10000);
 
-  let listenForActions, renderComponent, helper, patchUserProfileStub;
+  let listenForActions, renderComponent, helper, gmaps, patchUserProfileStub;
   let userActions = [
     REQUEST_GET_PROGRAM_ENROLLMENTS,
     RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
@@ -109,6 +110,7 @@ describe("UserPage", function() {
 
   describe("Authenticated user page", () => {
     beforeEach(() => {
+      gmaps = new GoogleMapsStub();
       helper = new IntegrationTestHelper();
       listenForActions = helper.listenForActions.bind(helper);
       renderComponent = helper.renderComponent.bind(helper);
@@ -122,6 +124,7 @@ describe("UserPage", function() {
 
     afterEach(() => {
       helper.cleanup();
+      gmaps.cleanup();
     });
 
 

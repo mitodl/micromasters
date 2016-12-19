@@ -7,7 +7,6 @@ import _ from 'lodash';
 import LANGUAGE_CODES from '../data/language_codes';
 import SelectField from './inputs/SelectField';
 import CountrySelectField from './inputs/CountrySelectField';
-import StateSelectField from './inputs/StateSelectField';
 import ProfileFormFields from '../util/ProfileFormFields';
 import { shouldRenderRomanizedFields } from '../util/profile_edit';
 import type {
@@ -64,6 +63,12 @@ export default class PersonalForm extends ProfileFormFields {
     const whyWeAskThis = 'Some program sponsors and employers offer benefits or scholarships ' +
       'to learners with specific backgrounds.';
 
+    const addressMapping = {
+      locality: ["city"],
+      administrative_area_level_1: ["state_or_territory"],
+      country: ["country"],
+    };
+
     return (
       <section>
         <h2 className="sr-only">Personal Information</h2>
@@ -96,33 +101,16 @@ export default class PersonalForm extends ProfileFormFields {
               {...this.defaultInputComponentProps()}
             />
           </Cell>
+          <Cell col={12}>
+            {this.boundGeosuggest(addressMapping, "Current address",
+              {
+                id: "current-home",
+                placeholder: "Example: 100 Main Street, Anytown, 01234, United States",
+                types: ["geocode"]
+              }
+            )}
+          </Cell>
         </Grid>
-        <section>
-          <h3>Where are you currently living?</h3>
-          <Grid className="profile-form-grid">
-            <Cell col={4}>
-              <CountrySelectField
-                stateKeySet={['state_or_territory']}
-                countryKeySet={['country']}
-                topMenu={true}
-                label='Country'
-                {...this.defaultInputComponentProps()}
-              />
-            </Cell>
-            <Cell col={4}>
-              <StateSelectField
-                stateKeySet={['state_or_territory']}
-                countryKeySet={['country']}
-                topMenu={true}
-                label='State or Territory'
-                {...this.defaultInputComponentProps()}
-              />
-            </Cell>
-            <Cell col={4}>
-              {this.boundTextField(['city'], 'City')}
-            </Cell>
-          </Grid>
-        </section>
         <section>
           <h3>Where are you from?</h3>
           <span className="tooltip-link"

@@ -1,7 +1,7 @@
 import { assert } from 'chai';
 import _ from 'lodash';
 import sinon from 'sinon';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import moment from 'moment';
 import R from 'ramda';
 import ga from 'react-ga';
@@ -10,6 +10,7 @@ import {
   boundTextField,
   boundDateField,
   boundRadioGroupField,
+  boundGeosuggest,
   saveProfileStep,
   shouldRenderRomanizedFields
 } from './profile_edit';
@@ -18,6 +19,7 @@ import {
   YEAR_VALIDATION_CUTOFF,
   USER_PROFILE_RESPONSE
 } from '../constants';
+import { GoogleMapsStub } from './test_utils';
 
 describe('Profile Editing utility functions', () => {
   let that, sandbox, gaEvent;
@@ -559,6 +561,96 @@ describe('Profile Editing utility functions', () => {
         label: 'jane'
       }));
     });
+  });
+
+  describe('bound Geosuggest', () => {
+    let gmaps, clock;
+    beforeEach(() => {
+      gmaps = new GoogleMapsStub();
+      clock = sinon.useFakeTimers();
+    });
+    afterEach(() => {
+      gmaps.cleanup();
+      clock.restore();
+    });
+    const renderGeosuggest = (opts = {}) => {
+      const addressMapping = {
+        locality: ["city"],
+        administrative_area_level_1: ["state_or_territory"],
+        country: ["country"],
+      };
+      return mount(boundGeosuggest.call(
+        that,
+        addressMapping,
+        "Current address",
+        opts
+      ));
+    };
+
+    const typeText = (wrapper, text, wait=500) => {
+      const input = wrapper.find('input');
+      input.simulate("focus");
+      input.get(0).value = text;
+      input.simulate("change", {target: {value: text}});
+
+      if (wait) {
+        clock.tick(wait);
+      }
+    };
+
+    it('renders empty', () => {
+      const wrapper = renderGeosuggest();
+      assert.equal(wrapper.find('input').node.value, "");
+    });
+
+    it('renders default content', () => {
+      that.props.profile.city = "Cambridge";
+      that.props.profile.state_or_territory = "Massachusetts";
+      that.props.profile.country = "USA";
+      const wrapper = renderGeosuggest();
+      assert.equal(wrapper.find('input').node.value, "Cambridge, Massachusetts, USA");
+    });
+
+    it('calls Google API after typing', () => {
+      const wrapper = renderGeosuggest();
+      typeText(wrapper, "Tech");
+      assert.ok(gmaps.getPlacePredictions.calledWith({input: "Tech"}));
+    });
+
+    it('populates profile info on select', () => {
+      gmaps.autocompleteSuggestions = [{
+        description: "123 Main St, Anytown, RS, United States",
+        gmaps: {
+          address_components: [
+            {long_name: "123 Main Street", short_name: "123 Main St", types: ["street_address"]},
+            {long_name: "Anytown", short_name: "Anytown", types: ["locality"]},
+            {long_name: "RandoState", short_name: "RS", types: ["administrative_area_level_1"]},
+            {long_name: "United States", short_name: "USA", types: ["country"]},
+          ]
+        }
+      }];
+      gmaps.geocodeResults[0].gmaps = gmaps.autocompleteSuggestions[0].gmaps;
+      const wrapper = renderGeosuggest();
+      typeText(wrapper, "123 Main");
+      const item = wrapper.find("li.geosuggest__item").first();
+      item.simulate('click');
+      assert.equal(that.props.profile.city, "Anytown");
+      assert.equal(that.props.profile.state_or_territory, "RandoState");
+      assert.equal(that.props.profile.country, "United States");
+    });
+
+    it('removes profile info on empty', () => {
+      that.props.profile.city = "Cambridge";
+      that.props.profile.state_or_territory = "Massachusetts";
+      that.props.profile.country = "USA";
+      const wrapper = renderGeosuggest();
+      typeText(wrapper, "");
+      wrapper.find('input').simulate('blur');
+      assert.equal(that.props.profile.city, null);
+      assert.equal(that.props.profile.state_or_territory, null);
+      assert.equal(that.props.profile.country, null);
+    });
+
   });
 
   describe('saveProfileStep', () => {

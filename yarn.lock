@@ -3687,6 +3687,10 @@ lodash.clonedeep@^4.3.2:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
 
+lodash.debounce@^4.0.6:
+  version "4.0.8"
+  resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
+
 lodash.deburr@^3.0.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/lodash.deburr/-/lodash.deburr-3.2.0.tgz#6da8f54334a366a7cf4c4c76ef8d80aa1b365ed5"
@@ -5020,6 +5024,13 @@ react-ga@1.4.1:
   resolved "https://registry.yarnpkg.com/react-ga/-/react-ga-1.4.1.tgz#541d5e60eec26ae60f383b24de3fbb0bef5955ad"
   dependencies:
     object-assign "^4.0.1"
+
+react-geosuggest@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-geosuggest/-/react-geosuggest-2.0.0.tgz#437cc3c9dba3fcb5dbc80355be0eb5b53ef1c3a4"
+  dependencies:
+    classnames "^2.2.3"
+    lodash.debounce "^4.0.6"
 
 react-hot-loader@^3.0.0-beta.6:
   version "3.0.0-beta.6"

@@ -65,6 +65,7 @@ class ReactView(View):  # pylint: disable=unused-argument
             context={
                 "has_zendesk_widget": True,
                 "is_public": False,
+                "google_maps_api": True,
                 "js_settings_json": json.dumps(js_settings),
                 "ga_tracking_id": "",
             }

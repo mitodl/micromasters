@@ -25,6 +25,7 @@ import {
   USER_PROFILE_RESPONSE,
 } from '../constants';
 import IntegrationTestHelper from '../util/integration_test_helper';
+import { GoogleMapsStub } from '../util/test_utils';
 import { makeStrippedHtml } from '../util/util';
 import * as api from '../lib/api';
 import {
@@ -184,6 +185,16 @@ describe("ErrorMessage", () => {
     });
 
     describe('user page', () => {
+      let gmaps;
+
+      beforeEach(() => {
+        gmaps = new GoogleMapsStub();
+      });
+
+      afterEach(() => {
+        gmaps.cleanup();
+      });
+
       it('should show an error for profile GET', () => {
         let fourOhFour = {
           errorStatusCode: 404,

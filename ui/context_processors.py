@@ -13,6 +13,7 @@ def api_keys(request):
     """
     return {
         "APIKEYS": {
+            "GOOGLE": settings.GOOGLE_API_KEY,
             "GOOGLE_ANALYTICS": settings.GA_TRACKING_ID,
             "SMARTLOOK": settings.SL_TRACKING_ID,
         }

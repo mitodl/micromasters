@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    {% spaceless %}
     {% load static %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -58,6 +59,13 @@
         smartlook('init', '{{ APIKEYS.SMARTLOOK }}');
     </script>
     {% endif %}
+
+    {% if google_maps_api and APIKEYS.GOOGLE %}
+    <script async
+      src="https://maps.googleapis.com/maps/api/js?key={{ APIKEYS.GOOGLE }}&libraries=places">
+    </script>
+    {% endif %}
+    {% endspaceless %}
   </head>
   <body class="{% block bodyclass %}{% endblock %}">
     {% block content %}

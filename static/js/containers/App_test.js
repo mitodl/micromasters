@@ -41,6 +41,7 @@ import {
   EMPLOYMENT_STEP,
 } from '../constants';
 import IntegrationTestHelper from '../util/integration_test_helper';
+import { GoogleMapsStub } from '../util/test_utils';
 import { SUCCESS_ACTIONS } from './test_util';
 
 const REDIRECT_ACTIONS = SUCCESS_ACTIONS.concat([
@@ -51,16 +52,18 @@ const REDIRECT_ACTIONS = SUCCESS_ACTIONS.concat([
 ]);
 
 describe('App', function() {
-  let listenForActions, renderComponent, helper;
+  let listenForActions, renderComponent, helper, gmaps;
 
   beforeEach(() => {
     helper = new IntegrationTestHelper();
+    gmaps = new GoogleMapsStub();
     listenForActions = helper.listenForActions.bind(helper);
     renderComponent = helper.renderComponent.bind(helper);
   });
 
   afterEach(() => {
     helper.cleanup();
+    gmaps.cleanup();
   });
 
   it('clears profile, ui, and enrollments after unmounting', () => {

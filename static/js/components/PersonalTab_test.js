@@ -10,9 +10,10 @@ import PersonalTab from './PersonalTab';
 import { PROGRAMS } from '../constants';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import { USER_PROFILE_RESPONSE } from '../constants';
+import { GoogleMapsStub } from '../util/test_utils';
 
 describe("PersonalTab", () => {
-  let helper;
+  let helper, gmaps;
   let renderPersonalTab = (selectedProgram = null, props = {}) => {
     let { store } = helper;
     return mount(
@@ -36,10 +37,12 @@ describe("PersonalTab", () => {
 
   beforeEach(() => {
     helper = new IntegrationTestHelper();
+    gmaps = new GoogleMapsStub();
   });
 
   afterEach(() => {
     helper.cleanup();
+    gmaps.cleanup();
   });
 
   it('should show a list of programs to enroll in for the learner page', () => {
