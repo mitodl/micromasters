@@ -66,7 +66,7 @@ class ReactView(View):  # pylint: disable=unused-argument
                 "has_zendesk_widget": True,
                 "is_public": False,
                 "js_settings_json": json.dumps(js_settings),
-                "tracking_id": "",
+                "ga_tracking_id": "",
             }
         )
 
@@ -151,7 +151,7 @@ def terms_of_service(request):
                 "sentry_dsn": sentry.get_public_dsn(),
                 "user": serialize_maybe_user(request.user),
             }),
-            "tracking_id": "",
+            "ga_tracking_id": "",
         }
     )
 

@@ -3,14 +3,17 @@ context processors for ui
 """
 from django.conf import settings
 
-
-def google_analytics(request):
-    """inject GA_TRACKING_ID into templates"""
-    # pylint: disable=unused-argument
-    return {'GA_TRACKING_ID': settings.GA_TRACKING_ID}
+# pylint: disable=unused-argument
 
 
-def smartlook(request):
-    """inject SL_TRACKING_ID into templates"""
-    # pylint: disable=unused-argument
-    return {'SL_TRACKING_ID': settings.SL_TRACKING_ID}
+def api_keys(request):
+    """
+    Pass a `APIKEYS` dictionary into the template context, which holds
+    IDs and secret keys for the various APIs used in this project.
+    """
+    return {
+        "APIKEYS": {
+            "GOOGLE_ANALYTICS": settings.GA_TRACKING_ID,
+            "SMARTLOOK": settings.SL_TRACKING_ID,
+        }
+    }
