@@ -29,7 +29,9 @@ injectTapEventPlugin();
 const store = configureStore();
 
 let debug = SETTINGS.reactGaDebug === "true";
-ga.initialize(SETTINGS.gaTrackingID, { debug: debug });
+if ( SETTINGS.gaTrackingID ) {
+  ga.initialize(SETTINGS.gaTrackingID, { debug: debug });
+}
 
 const rootEl = document.getElementById("dashboard");
 
