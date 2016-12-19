@@ -18,7 +18,20 @@ http {
     server_tokens off;
 
     log_format l2met 'measure#nginx.service=$request_time request_id=$http_x_request_id';
-    access_log logs/nginx/access.log l2met;
+    log_format apm '"$time_local" client=$remote_addr '
+                   'method=$request_method request="$request" '
+                   'request_length=$request_length '
+                   'status=$status bytes_sent=$bytes_sent '
+                   'body_bytes_sent=$body_bytes_sent '
+                   'referer=$http_referer '
+                   'user_agent="$http_user_agent" '
+                   'upstream_addr=$upstream_addr '
+                   'upstream_status=$upstream_status '
+                   'request_time=$request_time '
+                   'upstream_response_time=$upstream_response_time '
+                   'upstream_connect_time=$upstream_connect_time '
+                   'upstream_header_time=$upstream_header_time';
+    access_log logs/nginx/access.log apm;
     error_log logs/nginx/error.log;
 
     include mime.types;
@@ -27,18 +40,18 @@ http {
 
     server {
         listen <%= ENV["PORT"] %>;
-        server_name _;
+        server_name micromasters.herokuapp.com;
         return 301 https://micromasters.mit.edu$request_uri;
     }
 
     server {
-        listen <%= ENV["PORT"] %>;
-        server_name micromasters.mit.edu;
+        listen <%= ENV["PORT"] %> default_server;
+        server_name _;
         root /app;
 
-        location ^~ /static/(.*$) {
+        location ~* /static/(.*$) {
             expires max;
-            try_files $uri $uri/ staticfiles/$1$args staticfiles/$1/$args =404;
+            try_files $uri $uri/ /staticfiles/$1 /staticfiles/$1/ =404;
         }
 
         location / {
