@@ -19,5 +19,12 @@
 		"percent": 0.69,
 		"letter_grade": null,
 		"username": "staff"
+	},
+	{
+		"course_key": "course-v1:odl+FOO102+CR-FALL16",
+		"passed": true,
+		"percent": 0.77,
+		"letter_grade": "Pass",
+		"username": "staff"
 	}
 ]

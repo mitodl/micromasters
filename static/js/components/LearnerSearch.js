@@ -153,6 +153,7 @@ export default class LearnerSearch extends SearchkitComponent {
         </Card>
       );
     }
+
     return (
       <Card className="fullwidth" shadow={1}>
         <FilterVisibilityToggle

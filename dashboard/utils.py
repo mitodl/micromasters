@@ -54,9 +54,13 @@ class MMTrack:
         self.financial_aid_available = program.financial_aid_availability
 
         with transaction.atomic():
-            self.course_ids = set(CourseRun.objects.filter(course__program=self.program).exclude(
-                Q(edx_course_key__isnull=True) | Q(edx_course_key__exact='')
-            ).values_list("edx_course_key", flat=True))
+            # Maps a CourseRun's edx_course_key to its parent Course id
+            self.edx_key_course_map = dict(
+                CourseRun.objects.filter(course__program=program).exclude(
+                    Q(edx_course_key__isnull=True) | Q(edx_course_key__exact='')
+                ).values_list("edx_course_key", "course__id")
+            )
+            self.course_ids = self.edx_key_course_map.keys()
 
             if self.financial_aid_available:
                 self.paid_course_ids = set(Line.objects.filter(
@@ -237,3 +241,15 @@ class MMTrack:
         if current_grade is None:
             return
         return float(current_grade.percent) * 100
+
+    def count_courses_passed(self):
+        """
+        Calculates number of passed courses in program.
+
+        int: A number of passed courses.
+        """
+        passed_courses = set()
+        for course_id in self.course_ids:
+            if self.has_passed_course(course_id):
+                passed_courses.add(self.edx_key_course_map[course_id])
+        return len(passed_courses)

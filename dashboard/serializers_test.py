@@ -15,7 +15,6 @@ from courses.factories import (
     CourseRunFactory,
 )
 from dashboard.api_edx_cache import CachedEdxUserData
-from dashboard.api import CourseStatus
 from dashboard.factories import (
     CachedCertificateFactory,
     CachedCurrentGradeFactory,
@@ -220,7 +219,7 @@ class UserProgramSearchSerializerTests(TestCase):
         Tests that full ProgramEnrollment serialization works as expected when user
         has passed a course.
         """
-        with patch.object(UserProgramSearchSerializer, 'count_courses_passed', return_value=0):
+        with patch.object(MMTrack, 'count_courses_passed', return_value=0):
             Profile.objects.filter(pk=self.profile.pk).update(email_optin=True)
             self.profile.refresh_from_db()
             program = self.program_enrollment.program
@@ -233,47 +232,6 @@ class UserProgramSearchSerializerTests(TestCase):
                 'num_courses_passed': 0,
                 'total_courses': 1
             }
-
-    def test_count_complete_passed(self):
-        """
-        assert count_complete_passed method works.
-        """
-        expected_course_dict = {
-            "runs": [
-                {
-                    "status": CourseStatus.PASSED
-                },
-                {
-                    "status": CourseStatus.NOT_PASSED
-                },
-            ]
-        }
-        with patch("dashboard.serializers.get_info_for_course", return_value=expected_course_dict):
-            assert UserProgramSearchSerializer.count_courses_passed(self.program_enrollment.program, None) == 1
-
-    def test_count_complete_passed_not_passed(self):
-        """
-        assert count_complete_passed method works when not passed.
-        """
-        expected_course_dict = {
-            "runs": [
-                {
-                    "status": CourseStatus.CAN_UPGRADE
-                },
-                {
-                    "status": CourseStatus.NOT_PASSED
-                },
-            ]
-        }
-        with patch("dashboard.serializers.get_info_for_course", return_value=expected_course_dict):
-            assert UserProgramSearchSerializer.count_courses_passed(self.program_enrollment.program, None) == 0
-
-    def test_count_complete_passed_with_ambiguous_course_info(self):
-        """
-        assert count_complete_passed method works when no course info.
-        """
-        with patch("dashboard.serializers.get_info_for_course", return_value=None):
-            assert UserProgramSearchSerializer.count_courses_passed(self.program_enrollment.program, None) == 0
 
 
 class UserProgramSearchSerializerEdxTests(TestCase):

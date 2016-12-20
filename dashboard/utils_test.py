@@ -46,7 +46,15 @@ class MMTrackTest(TestCase):
 
         # create course runs for the normal program
         course = CourseFactory.create(program=cls.program)
-        for course_key in ["course-v1:edX+DemoX+Demo_Course", "course-v1:MITx+8.MechCX+2014_T1", '', None]:
+        expected_course_keys = [
+            "course-v1:edX+DemoX+Demo_Course",
+            "course-v1:MITx+8.MechCX+2014_T1",
+            '',
+            None,
+            'course-v1:odl+FOO102+CR-FALL16'
+        ]
+
+        for course_key in expected_course_keys:
             CourseRunFactory.create(
                 course=course,
                 edx_course_key=course_key
@@ -116,7 +124,8 @@ class MMTrackTest(TestCase):
         assert mmtrack.financial_aid_available == self.program.financial_aid_availability
         assert mmtrack.course_ids == {
             "course-v1:edX+DemoX+Demo_Course",
-            "course-v1:MITx+8.MechCX+2014_T1"
+            "course-v1:MITx+8.MechCX+2014_T1",
+            "course-v1:odl+FOO102+CR-FALL16"
         }
         assert mmtrack.paid_course_ids == set()
         assert mmtrack.financial_aid_applied is None
@@ -451,3 +460,27 @@ class MMTrackTest(TestCase):
         # case when the grade is not available from edx
         with patch('edx_api.grades.models.CurrentGrades.get_current_grade', return_value=None):
             assert mmtrack.get_current_grade("course-v1:MITx+8.MechCX+2014_T1") is None
+
+    def count_courses_passed_normal(self):
+        """
+        Test for count_courses_passed_normal method in case of a normal program
+        """
+        mmtrack = MMTrack(
+            user=self.user,
+            program=self.program,
+            edx_user_data=self.cached_edx_user_data
+        )
+        # this is a verified enrollment and a verified certificate from edx
+        assert mmtrack.count_courses_passed() == 1
+
+    def count_courses_passed_fa(self):
+        """
+        Test for count_courses_passed_normal method in case of a normal program
+        """
+        mmtrack = MMTrack(
+            user=self.user,
+            program=self.program_financial_aid,
+            edx_user_data=self.cached_edx_user_data
+        )
+        # this is a verified enrollment and a verified certificate from edx
+        assert mmtrack.count_courses_passed() == 1
