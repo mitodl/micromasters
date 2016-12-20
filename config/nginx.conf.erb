@@ -34,10 +34,6 @@ http {
             return 301 'https://micromasters.mit.edu';
         }
 
-        location ^~ /static/(.*$) {
-            try_files $uri $uri/ staticfiles/$1$args staticfiles/$1/$args =404;
-        }
-
         location / {
             uwsgi_param QUERY_STRING $query_string;
             uwsgi_param REQUEST_METHOD $request_method;
