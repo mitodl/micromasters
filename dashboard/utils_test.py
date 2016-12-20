@@ -463,24 +463,22 @@ class MMTrackTest(TestCase):
 
     def count_courses_passed_normal(self):
         """
-        Test for count_courses_passed_normal method in case of a normal program
+        Assert that count_courses_passed works in case of a normal program.
         """
         mmtrack = MMTrack(
             user=self.user,
             program=self.program,
             edx_user_data=self.cached_edx_user_data
         )
-        # this is a verified enrollment and a verified certificate from edx
         assert mmtrack.count_courses_passed() == 1
 
     def count_courses_passed_fa(self):
         """
-        Test for count_courses_passed_normal method in case of a normal program
+        Assert that count_courses_passed works in case of fa program.
         """
         mmtrack = MMTrack(
             user=self.user,
             program=self.program_financial_aid,
             edx_user_data=self.cached_edx_user_data
         )
-        # this is a verified enrollment and a verified certificate from edx
         assert mmtrack.count_courses_passed() == 1

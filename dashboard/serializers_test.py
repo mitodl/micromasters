@@ -217,7 +217,7 @@ class UserProgramSearchSerializerTests(TestCase):
     def test_full_program_user_serialization_with__no_passed_course(self):
         """
         Tests that full ProgramEnrollment serialization works as expected when user
-        has passed a course.
+        has no passed courses.
         """
         with patch.object(MMTrack, 'count_courses_passed', return_value=0):
             Profile.objects.filter(pk=self.profile.pk).update(email_optin=True)
