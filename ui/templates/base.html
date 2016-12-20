@@ -38,11 +38,12 @@
 
     ga('create', '{{ APIKEYS.GOOGLE_ANALYTICS }}', 'auto');
     ga('send', 'pageview');
-    {# Program pages have an extra Google Analytics tracking ID,
-       used by program staff to track their own programs.
-       If the template context has an extra Google Analytics tracking ID defined,
-       include it here.
-    #}
+    {% comment %}
+      Program pages have an extra Google Analytics tracking ID,
+      used by program staff to track their own programs.
+      If the template context has an extra Google Analytics tracking ID defined,
+      include it here.
+    {% endcomment %}
     {% if ga_tracking_id %}
       ga('create', '{{ ga_tracking_id }}', 'auto', 'programPageTracker');
       ga('programPageTracker.send', 'pageview');
