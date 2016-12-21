@@ -39,6 +39,7 @@ import {
   STATUS_CURRENTLY_ENROLLED,
   STATUS_PENDING_ENROLLMENT,
   STATUS_OFFERED,
+  STATUS_PAID_BUT_NOT_ENROLLED,
 } from '../constants';
 import { findCourse } from '../util/test_utils';
 import { DASHBOARD_SUCCESS_ACTIONS } from './test_util';
@@ -158,6 +159,25 @@ describe('DashboardPage', () => {
           title: "Order Complete!",
           message: `You are now enrolled in ${course.title}`,
           icon: TOAST_SUCCESS
+        });
+      });
+    });
+
+    it('shows the toast when the query param is set for a success but user is not enrolled', () => {
+      let course = findCourse(course =>
+        course.runs.length > 0 &&
+        course.runs[0].status === STATUS_PAID_BUT_NOT_ENROLLED
+      );
+      let run = course.runs[0];
+      let encodedKey = encodeURIComponent(run.course_id);
+      return renderComponent(
+        `/dashboard?status=receipt&course_key=${encodedKey}`,
+        SUCCESS_WITH_TOAST_ACTIONS
+      ).then(() => {
+        assert.deepEqual(helper.store.getState().ui.toastMessage, {
+          title: "Course Enrollment",
+          message: `Something went wrong. You paid for this course '${course.title}' but are not enrolled.`,
+          icon: TOAST_FAILURE
         });
       });
     });

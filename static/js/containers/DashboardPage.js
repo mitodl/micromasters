@@ -25,6 +25,7 @@ import {
   STATUS_NOT_PASSED,
   STATUS_PASSED,
   STATUS_CURRENTLY_ENROLLED,
+  STATUS_PAID_BUT_NOT_ENROLLED,
 } from '../constants';
 import { addCourseEnrollment } from '../actions/course_enrollments';
 import {
@@ -100,11 +101,21 @@ class DashboardPage extends React.Component {
 
   handleOrderSuccess = (course: Course): void => {
     const { dispatch } = this.props;
-    dispatch(setToastMessage({
-      title: 'Order Complete!',
-      message: `You are now enrolled in ${course.title}`,
-      icon: TOAST_SUCCESS,
-    }));
+    let firstRun: CourseRun = course.runs.length > 0 ? course.runs[0] : null;
+
+    if (firstRun && firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
+      dispatch(setToastMessage({
+        title: 'Course Enrollment',
+        message: `Something went wrong. You paid for this course '${course.title}' but are not enrolled.`,
+        icon: TOAST_FAILURE,
+      }));
+    } else {
+      dispatch(setToastMessage({
+        title: 'Order Complete!',
+        message: `You are now enrolled in ${course.title}`,
+        icon: TOAST_SUCCESS,
+      }));
+    }
     this.context.router.push('/dashboard/');
   };
 
@@ -180,6 +191,7 @@ class DashboardPage extends React.Component {
       case STATUS_NOT_PASSED:
       case STATUS_PASSED:
       case STATUS_CURRENTLY_ENROLLED:
+      case STATUS_PAID_BUT_NOT_ENROLLED:
         this.handleOrderSuccess(course);
         break;
       default:

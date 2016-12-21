@@ -625,28 +625,6 @@ export const DASHBOARD_RESPONSE = deepFreeze([
     "id": 5
   },
   {
-    "title": "Paid but not enrolled",
-    "description": "Paid but not enrolled",
-    "courses": [{
-      "id": 14,
-      "position_in_program": 0,
-      "title": "Course for paid but not enrolled program",
-      "description": "Course for paid but not enrolled program",
-      "prerequisites": "",
-      "runs": [{
-        "course_id": "course-v1:edX+paid+not+enrolled",
-        "id": 6,
-        "status": STATUS_PAID_BUT_NOT_ENROLLED,
-        "title": "Course run for paid but not enrolled program",
-        "position": 0,
-        "course_start_date": "2016-01-01",
-        "course_end_date": "2018-09-09T10:20:10Z",
-      }]
-    }],
-    "financial_aid_availability": true,
-    "id": 7
-  },
-  {
     "title": "Empty program",
     "description": "The empty program",
     "courses": [
@@ -679,6 +657,31 @@ export const DASHBOARD_RESPONSE = deepFreeze([
     ],
     "financial_aid_availability": false,
     "id": 6
+  },
+  {
+    "title": "Paid but not enrolled",
+    "description": "Paid but not enrolled",
+    "courses": [{
+      "id": 24,
+      "position_in_program": 1,
+      "title": "Course for paid but not enrolled program",
+      "description": "Course for paid but not enrolled program",
+      "prerequisites": "",
+      "runs": [{
+        "position": 1,
+        "course_id": "course-v1:MITx+paid+not+enrolled+100+Jan_2015",
+        "id": 66,
+        "course_start_date": "2016-12-20T00:00:00Z",
+        "course_end_date": "2018-05-15T00:00:00Z",
+        "enrollment_url": "",
+        "fuzzy_start_date": "",
+        "current_grade": null,
+        "title": "Digital Learning 100 - January 2015",
+        "status": STATUS_PAID_BUT_NOT_ENROLLED
+      }]
+    }],
+    "financial_aid_availability": true,
+    "id": 7
   },
 ]);
 
