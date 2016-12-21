@@ -52,5 +52,5 @@ static3==0.5.1
 unidecode==0.4.19         # via wagtail
 urllib3==1.19             # via elasticsearch
 uwsgi==2.0.14
-wagtail==1.7
+wagtail==1.8
 willow==0.4               # via wagtail

@@ -26,4 +26,4 @@ redis==2.10.5
 requests
 static3==0.5.1
 uwsgi
-wagtail==1.7
+wagtail==1.8
