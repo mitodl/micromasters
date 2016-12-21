@@ -2,9 +2,11 @@
 Page models for the CMS
 """
 import json
+import itertools
 
 from django.conf import settings
 from django.db import models
+from django.utils.text import slugify
 from modelcluster.fields import ParentalKey
 from raven.contrib.django.raven_compat.models import client as sentry
 from rolepermissions.verifications import has_role
@@ -303,12 +305,23 @@ class FrequentlyAskedQuestion(Orderable):
     faqs_page = ParentalKey(CategorizedFaqsPage, related_name='faqs', null=True)
     question = models.TextField()
     answer = RichTextField()
+    slug = models.SlugField(unique=True, default=None, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            for x in itertools.count(1):
+                self.slug = orig = slugify(self.question)
+                if not FrequentlyAskedQuestion.objects.filter(slug=self.slug).exists():
+                    break
+                self.slug = '%s-%d' % (orig, x)
+        super(FrequentlyAskedQuestion, self).save(*args, **kwargs)
 
     content_panels = [
         MultiFieldPanel(
             [
                 FieldPanel('question'),
-                FieldPanel('answer')
+                FieldPanel('answer'),
+                FieldPanel('slug')
             ],
             heading='Frequently Asked Questions',
             classname='collapsible'
