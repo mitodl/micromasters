@@ -1,4 +1,4 @@
-FROM mitodl/mm_watch_travis_yarn
+FROM mitodl/mm_watch_travis_yarn_update
 
 WORKDIR /src
 
