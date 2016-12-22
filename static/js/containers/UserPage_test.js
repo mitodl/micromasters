@@ -1046,7 +1046,6 @@ describe("UserPage", function() {
       REQUEST_GET_USER_PROFILE,
       RECEIVE_GET_USER_PROFILE_SUCCESS,
     ];
-    let user;
     beforeEach(() => {
       helper = new IntegrationTestHelper();
       listenForActions = helper.listenForActions.bind(helper);
@@ -1054,13 +1053,11 @@ describe("UserPage", function() {
       helper.profileGetStub.
         withArgs(USER_PROFILE_RESPONSE.username).
         returns(Promise.resolve(USER_PROFILE_RESPONSE));
-      user = SETTINGS.user;  
       SETTINGS.user = null;
     });
 
     afterEach(() => {
       helper.cleanup();
-      SETTINGS.user = user;
     });
 
     it('should hide all edit, delete icons', () => {
