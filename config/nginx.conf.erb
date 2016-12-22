@@ -35,6 +35,7 @@ http {
         }
 
         location ~* /static/(.*$) {
+            add_header Access-Control-Allow-Origin *;
             try_files $uri $uri/ /staticfiles/$1 /staticfiles/$1/ =404;
         }
 
