@@ -110,7 +110,7 @@ class App extends React.Component {
       currentProgramEnrollment,
       ui: { selectedProgram },
     } = this.props;
-    if (programs.getStatus === undefined) {
+    if (programs.getStatus === undefined && SETTINGS.user) {
       dispatch(fetchProgramEnrollments()).then(({payload}) => {
         if ( PROFILE_REGEX.test(pathname) && currentProgramEnrollment && !selectedProgram ) {
           let selected = payload.find(program => program.id === currentProgramEnrollment.id);
