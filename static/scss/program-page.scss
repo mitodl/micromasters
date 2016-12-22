@@ -271,6 +271,18 @@
         position: relative;
         padding-left: 32px;
       }
+
+      a.pilcrow {
+        opacity: 0; /* to hide the element */
+        transition: opacity 0.2s linear;
+        text-decoration: none;
+      }
+
+    }
+
+    .faq:hover a.pilcrow {
+      opacity: 1; /* to reveal the element */
+      transition: opacity 0.2s linear;
     }
   }
 

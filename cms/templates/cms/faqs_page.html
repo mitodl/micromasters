@@ -10,9 +10,10 @@
       <h3 class="faq-category"> {{ categorized.title }}</h3>
       {% for faq in categorized.faqs.all %}
         <div class="faq accordion">
-          <h4 class="question accordion-toggle"><a name="{{ faq.slug }}"></a>
+          <h4 class="question accordion-toggle">
             <i class="material-icons rotate accordion-icon">arrow_drop_down</i>
             {{ faq.question }}
+            <a name="{{ faq.slug }}" href="#{{ faq.slug }}" class="pilcrow">&nbsp;&nbsp;¶</a>
           </h4>
           <div class="answer accordion-content">
             {{ faq.answer|richtext }}
