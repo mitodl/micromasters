@@ -1042,6 +1042,11 @@ describe("UserPage", function() {
   });
 
   describe("Unauthenticated user page", () => {
+    let anonymousUserActions = [
+      REQUEST_GET_USER_PROFILE,
+      RECEIVE_GET_USER_PROFILE_SUCCESS,
+    ];
+    let user;
     beforeEach(() => {
       helper = new IntegrationTestHelper();
       listenForActions = helper.listenForActions.bind(helper);
@@ -1049,23 +1054,25 @@ describe("UserPage", function() {
       helper.profileGetStub.
         withArgs(USER_PROFILE_RESPONSE.username).
         returns(Promise.resolve(USER_PROFILE_RESPONSE));
+      user = SETTINGS.user;  
       SETTINGS.user = null;
     });
 
     afterEach(() => {
       helper.cleanup();
+      SETTINGS.user = user;
     });
 
     it('should hide all edit, delete icons', () => {
       const username = USER_PROFILE_RESPONSE.username;
-      return renderComponent(`/learner/${username}`).then(([, div]) => {
+      return renderComponent(`/learner/${username}`, anonymousUserActions).then(([, div]) => {
         assert.equal(0, div.getElementsByClassName('mdl-button--icon').length);
       });
     });
 
     it('should show sign in button with valid link', () => {
       const username = USER_PROFILE_RESPONSE.username;
-      return renderComponent(`/learner/${username}`).then(([, div]) => {
+      return renderComponent(`/learner/${username}`, anonymousUserActions).then(([, div]) => {
         let button = div.querySelector("a[href='/login/edxorg/']");
         assert.equal(button.textContent.trim(), "Sign in with edX.org");
       });
