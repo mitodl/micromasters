@@ -18,14 +18,23 @@ class MailgunClient:
     _basic_auth_credentials = ('api', settings.MAILGUN_KEY)
 
     @staticmethod
-    def get_base_params():
+    def get_base_params(sender_name=None):
         """
         Base params for Mailgun request. This a method instead of an attribute to allow for overrides.
+
+        Args:
+            sender_name (str): email's sender name.
+
+        Returns:
+            json: json object containing email from info.
         """
-        return {'from': settings.MAILGUN_FROM_EMAIL}
+        email_from = settings.MAILGUN_FROM_EMAIL
+        if sender_name:
+            email_from = "{sender_name} {email}".format(sender_name=sender_name, email=email_from)
+        return {'from': email_from}
 
     @classmethod
-    def _mailgun_request(cls, request_func, endpoint, params):
+    def _mailgun_request(cls, request_func, endpoint, params, sender_name=None):
         """
         Sends a request to the Mailgun API
 
@@ -39,7 +48,7 @@ class MailgunClient:
         """
         mailgun_url = '{}/{}'.format(settings.MAILGUN_URL, endpoint)
         email_params = params.copy()
-        email_params.update(cls.get_base_params())
+        email_params.update(cls.get_base_params(sender_name))
         return request_func(
             mailgun_url,
             auth=cls._basic_auth_credentials,
@@ -88,7 +97,7 @@ class MailgunClient:
         return cls._mailgun_request(requests.post, 'messages', params)
 
     @classmethod
-    def send_batch(cls, subject, body, recipients, chunk_size=settings.MAILGUN_BATCH_CHUNK_SIZE):
+    def send_batch(cls, subject, body, recipients, chunk_size=settings.MAILGUN_BATCH_CHUNK_SIZE, sender_name=None):
         """
         Sends a text email to a list of recipients (one email per recipient) via batch.
 
@@ -114,7 +123,7 @@ class MailgunClient:
                 text=body
             )
             params['recipient-variables'] = json.dumps({email: {} for email in chunk})
-            responses.append(cls._mailgun_request(requests.post, 'messages', params))
+            responses.append(cls._mailgun_request(requests.post, 'messages', params, sender_name))
             chunk = list(islice(recipients, chunk_size))
 
         return responses

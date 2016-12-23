@@ -313,7 +313,7 @@ MAILGUN_URL = get_var('MAILGUN_URL', 'https://api.mailgun.net/v3/micromasters.mi
 MAILGUN_KEY = get_var('MAILGUN_KEY', None)
 MAILGUN_BATCH_CHUNK_SIZE = get_var('MAILGUN_BATCH_CHUNK_SIZE', 1000)
 MAILGUN_RECIPIENT_OVERRIDE = get_var('MAILGUN_RECIPIENT_OVERRIDE', None)
-MAILGUN_FROM_EMAIL = get_var('MAILGUN_FROM_EMAIL', 'no-reply@micromasters.mit.edu')
+MAILGUN_FROM_EMAIL = get_var('MAILGUN_FROM_EMAIL', 'micromasters-support@mit.edu')
 MAILGUN_BCC_TO_EMAIL = get_var('MAILGUN_BCC_TO_EMAIL', 'no-reply@micromasters.mit.edu')
 
 # e-mail configurable admins

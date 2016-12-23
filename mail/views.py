@@ -22,7 +22,7 @@ from search.api import (
     prepare_and_execute_search,
     get_all_query_matching_emails
 )
-
+from profiles.util import full_name
 
 log = logging.getLogger(__name__)
 
@@ -50,7 +50,8 @@ class SearchResultMailView(APIView):
         mailgun_responses = MailgunClient.send_batch(
             subject=request.data['email_subject'],
             body=request.data['email_body'],
-            recipients=emails
+            recipients=emails,
+            sender_name=full_name(request.user.profile)
         )
         return Response(
             status=status.HTTP_200_OK,

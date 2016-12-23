@@ -5,12 +5,18 @@ from datetime import datetime
 from io import BytesIO
 from unittest import TestCase
 from unittest.mock import patch
+import pytest
+
+from django.db.models.signals import post_save
+from factory.django import mute_signals
 
 from factory.fuzzy import FuzzyInteger
 from PIL import Image
 import pytz
 
+from backends.edxorg import EdxOrgOAuth2
 from profiles import util
+from profiles.factories import ProfileFactory
 
 
 # pylint: disable=no-self-use
@@ -18,7 +24,6 @@ class SplitNameTests(TestCase):
     """
     Tests for split_name
     """
-
     def test_none(self):
         """
         None should be treated like an empty string
@@ -145,3 +150,48 @@ class ImageTests(TestCase):
             mocked.assert_called_with(width, height, thumbnail_size)
             assert thumb_image.width == thumb_width
             assert thumb_image.height == thumb_height
+
+
+@pytest.mark.django_db
+class FullNameTests(TestCase):
+    """
+    Tests for profile full name function.
+    """
+    def create_profile(self, **kwargs):
+        """
+        Create a profile and social auth
+        """
+        with mute_signals(post_save):
+            profile = ProfileFactory.create(**kwargs)
+            profile.user.social_auth.create(
+                provider=EdxOrgOAuth2.name,
+                uid="{}_edx".format(profile.user.username)
+            )
+            return profile
+
+    def test_full_name(self):
+        """
+        test full name of user on given profile.
+        """
+        first = "Tester"
+        last = "KK"
+        profile = self.create_profile(first_name=first, last_name=last)
+        assert util.full_name(profile) == "{} {}".format(first, last)
+
+    def test_full_name_when_last_name_empty(self):
+        """
+        Test full name when last name is set empty on profile.
+        """
+        first = "Tester"
+        last = ""
+        profile = self.create_profile(first_name=first, last_name=last)
+        assert util.full_name(profile) == first
+
+    def test_full_name_when_first_name_empty(self):
+        """
+        Test full name when first name is set empty on profile.
+        """
+        first = ""
+        last = "Tester"
+        profile = self.create_profile(first_name=first, last_name=last)
+        assert util.full_name(profile) == "{} {}".format(profile.user.username, last)
