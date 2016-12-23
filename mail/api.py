@@ -106,11 +106,12 @@ class MailgunClient:
             body (str): Text email body
             recipients (list): A list of recipient emails
             chunk_size (int): The maximum amount of emails to be sent at the same time
+            sender_name (str): email sender name.
 
         Returns:
             list: List of requests.Response HTTP response from Mailgun
         """
-
+        # pylint: disable=too-many-arguments
         body, recipients = cls._recipient_override(body, recipients)
         responses = []
 
