@@ -6,7 +6,6 @@ import R from 'ramda';
 
 import { FETCH_PROCESSING } from '../actions';
 import Loader from '../components/Loader';
-import WelcomeBanner from '../components/WelcomeBanner';
 import ErrorMessage from '../components/ErrorMessage';
 import ProfileFormContainer from './ProfileFormContainer';
 import { validateProfileComplete } from '../lib/validation/profile';
@@ -50,7 +49,6 @@ class ProfilePage extends ProfileFormContainer {
 
     return (
       <div>
-        <WelcomeBanner profile={profile} />
         <div className="profile-pagination">
           {makeProfileProgressDisplay(currentStep)}
         </div>
