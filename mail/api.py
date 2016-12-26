@@ -30,7 +30,7 @@ class MailgunClient:
         """
         email_from = settings.MAILGUN_FROM_EMAIL
         if sender_name:
-            email_from = "{sender_name} {email}".format(sender_name=sender_name, email=email_from)
+            email_from = "{sender_name} <{email}>".format(sender_name=sender_name, email=email_from)
         return {'from': email_from}
 
     @classmethod
@@ -75,7 +75,7 @@ class MailgunClient:
         return body, recipients
 
     @classmethod
-    def send_bcc(cls, subject, body, recipients):
+    def send_bcc(cls, subject, body, recipients, sender_name=None):
         """
         Sends a text email to a BCC'ed list of recipients.
 
@@ -94,7 +94,7 @@ class MailgunClient:
             subject=subject,
             text=body
         )
-        return cls._mailgun_request(requests.post, 'messages', params)
+        return cls._mailgun_request(requests.post, 'messages', params, sender_name=sender_name)
 
     @classmethod
     def send_batch(cls, subject, body, recipients, chunk_size=settings.MAILGUN_BATCH_CHUNK_SIZE, sender_name=None):

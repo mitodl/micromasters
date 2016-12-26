@@ -169,6 +169,12 @@ class FullNameTests(TestCase):
             )
             return profile
 
+    def test_full_name_no_profile(self):
+        """
+        test full name of user when no profile.
+        """
+        self.assertIsNone(util.full_name(None))
+
     def test_full_name(self):
         """
         test full name of user on given profile.

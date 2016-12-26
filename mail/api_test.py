@@ -40,6 +40,19 @@ class MailAPITests(TestCase):
         _, called_kwargs = mock_post.call_args
         assert called_kwargs['data']['from'] == 'mailgun_from_email@example.com'
 
+    @override_settings(MAILGUN_FROM_EMAIL='mailgun_from_email@example.com')
+    def test_from_address_with_sender_name(self, mock_post):
+        """
+        Test that the sender name and 'from' address for our emails is set correctly.
+        """
+        sender = 'tester'
+        MailgunClient.send_bcc('email subject', 'email body', ['will_be_ignored@example.com'], sender_name=sender)
+        _, called_kwargs = mock_post.call_args
+        self.assertEqual(
+            called_kwargs['data']['from'],
+            '{sender_name} <mailgun_from_email@example.com>'.format(sender_name=sender)
+        )
+
     @override_settings(MAILGUN_RECIPIENT_OVERRIDE='override@example.com')
     def test_email_override(self, mock_post):
         """
