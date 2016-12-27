@@ -19,7 +19,7 @@ def gen_unique_slug(apps, schema_editor):
                 slug_is_unique = not FrequentlyAskedQuestion.objects.filter(slug=slug).exists()
                 count += 1
             row.slug = slug
-        row.save()
+            row.save()
 
 
 class Migration(migrations.Migration):
