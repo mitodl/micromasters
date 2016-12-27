@@ -11,11 +11,14 @@ def gen_unique_slug(apps, schema_editor):
     FrequentlyAskedQuestion = apps.get_model('cms', 'FrequentlyAskedQuestion')
     for row in FrequentlyAskedQuestion.objects.all():
         if not row.slug:
-            slug = orig_slug = slugify(row.question)
+            max_length = FrequentlyAskedQuestion._meta.get_field('slug').max_length
+            slug = orig_slug = slugify(row.question)[:max_length]
             slug_is_unique = not FrequentlyAskedQuestion.objects.filter(slug=orig_slug).exists()
             count = 1
             while not slug_is_unique:
-                slug = "{orig}-{count}".format(orig=orig_slug, count=count)
+                slug = "{orig}-{count}".format(
+                    orig=orig_slug[:max_length - len(str(count)) - 1],
+                    count=count)
                 slug_is_unique = not FrequentlyAskedQuestion.objects.filter(slug=slug).exists()
                 count += 1
             row.slug = slug
