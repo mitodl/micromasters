@@ -13,7 +13,7 @@
           <h4 class="question accordion-toggle">
             <i class="material-icons rotate accordion-icon">arrow_drop_down</i>
             {{ faq.question }}
-            <a name="{{ faq.slug }}" href="#{{ faq.slug }}" class="pilcrow">&nbsp;&nbsp;¶</a>
+            <a name="{{ faq.slug }}" href="#{{ faq.slug }}" title="Link to question" class="pilcrow">&nbsp;&nbsp;¶</a>
           </h4>
           <div class="answer accordion-content">
             {{ faq.answer|richtext }}
