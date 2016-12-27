@@ -2,7 +2,6 @@
 Page models for the CMS
 """
 import json
-import itertools
 
 from django.conf import settings
 from django.db import models
@@ -309,11 +308,14 @@ class FrequentlyAskedQuestion(Orderable):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            for x in itertools.count(1):
-                self.slug = orig = slugify(self.question)
-                if not FrequentlyAskedQuestion.objects.filter(slug=self.slug).exists():
-                    break
-                self.slug = '%s-%d' % (orig, x)
+            slug = orig_slug = slugify(self.question)
+            slug_is_unique = not FrequentlyAskedQuestion.objects.filter(slug=orig_slug).exists()
+            count = 1
+            while not slug_is_unique:
+                slug = "{orig}-{count}".format(orig=orig_slug, count=count)
+                slug_is_unique = not FrequentlyAskedQuestion.objects.filter(slug=slug).exists()
+                count += 1
+            self.slug = slug
         super(FrequentlyAskedQuestion, self).save(*args, **kwargs)
 
     content_panels = [

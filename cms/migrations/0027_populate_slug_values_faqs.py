@@ -5,18 +5,20 @@ from __future__ import unicode_literals
 from django.db import migrations
 
 from django.utils.text import slugify
-import itertools
 
 
 def gen_unique_slug(apps, schema_editor):
     FrequentlyAskedQuestion = apps.get_model('cms', 'FrequentlyAskedQuestion')
     for row in FrequentlyAskedQuestion.objects.all():
         if not row.slug:
-            for x in itertools.count(1):
-                row.slug = orig = slugify(row.question)
-                if not FrequentlyAskedQuestion.objects.filter(slug=row.slug).exists():
-                    break
-                row.slug = '%s-%d' % (orig, x)
+            slug = orig_slug = slugify(row.question)
+            slug_is_unique = not FrequentlyAskedQuestion.objects.filter(slug=orig_slug).exists()
+            count = 1
+            while not slug_is_unique:
+                slug = "{orig}-{count}".format(orig=orig_slug, count=count)
+                slug_is_unique = not FrequentlyAskedQuestion.objects.filter(slug=slug).exists()
+                count += 1
+            row.slug = slug
         row.save()
 
 
