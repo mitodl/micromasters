@@ -13,8 +13,11 @@ def populate_image_small(apps, schema_editor):
     Profile = apps.get_model('profiles.Profile')
     for profile in Profile.objects.all():
         if profile.image and not profile.image_small:
-            thumbnail = make_thumbnail(profile.image.file)
-            profile.image_small.save("{}.jpg".format(uuid4().hex), thumbnail)
+            try:
+                thumbnail = make_thumbnail(profile.image.file)
+                profile.image_small.save("{}.jpg".format(uuid4().hex), thumbnail)
+            except OSError:
+                pass
 
 
 class Migration(migrations.Migration):
