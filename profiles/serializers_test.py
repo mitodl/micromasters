@@ -92,6 +92,8 @@ class ProfileTests(ESTestCase):
             'image_small': profile.image_small.url,
             'image_medium': profile.image_medium.url,
             'about_me': profile.about_me,
+            'romanized_first_name': profile.romanized_first_name,
+            'romanized_last_name': profile.romanized_last_name,
         }
 
     def test_limited(self):  # pylint: disable=no-self-use
@@ -118,6 +120,8 @@ class ProfileTests(ESTestCase):
                 EmploymentSerializer(profile.work_history.all(), many=True).data
             ),
             'about_me': profile.about_me,
+            'romanized_first_name': profile.romanized_first_name,
+            'romanized_last_name': profile.romanized_last_name,
         }
 
     def test_add_education(self):

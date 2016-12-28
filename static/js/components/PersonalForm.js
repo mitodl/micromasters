@@ -39,6 +39,37 @@ export default class PersonalForm extends ProfileFormFields {
     ui:                     UIState,
   };
 
+  renderRomanizedFields = () => {
+    const { profile } =  this.props;
+    const english = /^[A-Za-z]*$/;
+    let firstName = _.get(profile, ["first_name"], "");
+    let lastName = _.get(profile, ["last_name"], "");
+    let rFirstName = _.get(profile, ["romanized_first_name"], "");
+    let rLastName = _.get(profile, ["romanized_last_name"], "");
+    const showRomanizedFields = (
+      !english.test(firstName) || !english.test(lastName) || rFirstName || rLastName
+    );
+
+    if (showRomanizedFields) {
+      return (
+        <Cell col={12}>
+          <section className="romanized-name">
+            <h3>Plese enter your name in Latin characters</h3>
+            <Grid className="profile-form-grid">
+              <Cell col={6}>
+                {this.boundTextField(["romanized_first_name"], "Given name")}
+              </Cell>
+              <Cell col={6}>
+                {this.boundTextField(["romanized_last_name"], "Family name")}
+              </Cell>
+            </Grid>
+          </section>
+        </Cell>
+      );
+    }
+    return null;
+  }
+
   render() {
     const whyWeAskThis = 'Some program sponsors and employers offer benefits or scholarships ' +
       'to learners with specific backgrounds.';
@@ -57,6 +88,7 @@ export default class PersonalForm extends ProfileFormFields {
           <Cell col={6}>
             {this.boundTextField(["last_name"], "Family name")}
           </Cell>
+          {this.renderRomanizedFields()}
           <Cell col={12}>
             {this.boundTextField(["preferred_name"], "Nickname / Preferred name")}
           </Cell>

@@ -60,6 +60,8 @@ export type Profile = {
   image_small:                 ?string,
   image_medium:                ?string,
   about_me:                    ?string,
+  romanized_first_name:        ?string,
+  romanized_last_name:         ?string,
 };
 
 export type Profiles = {

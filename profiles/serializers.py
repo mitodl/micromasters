@@ -226,7 +226,9 @@ class ProfileSerializer(ProfileBaseSerializer):
             'image',
             'image_small',
             'image_medium',
-            'about_me'
+            'about_me',
+            'romanized_first_name',
+            'romanized_last_name'
         )
         read_only_fields = (
             'edx_level_of_education',
@@ -259,7 +261,9 @@ class ProfileLimitedSerializer(ProfileBaseSerializer):
             'work_history',
             'edx_level_of_education',
             'education',
-            'about_me'
+            'about_me',
+            'romanized_first_name',
+            'romanized_last_name'
         )
         read_only_fields = (
             'edx_level_of_education',
@@ -279,7 +283,7 @@ class ProfileFilledOutSerializer(ProfileSerializer):
         """
         Update serializer_field_mapping to use fields setting required=True
         """
-        set_fields_to_required(self, ignore_fields=['about_me'])
+        set_fields_to_required(self, ignore_fields=['about_me', 'romanized_first_name', 'romanized_last_name'])
         super(ProfileFilledOutSerializer, self).__init__(*args, **kwargs)
 
     def validate(self, attrs):
