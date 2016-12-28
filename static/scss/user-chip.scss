@@ -2,7 +2,7 @@
   min-height: 0;
   width: 385px;
   position: absolute;
-  display: none;
+  display: block;
   top: 10%;
   left: 250px;
   padding: 12px 24px 16px;
@@ -65,10 +65,3 @@
   }
 
 }
-
-.learner-result > .learner-name:hover {
-  .mdl-card.user-chip {
-    display: block;
-  }
-}
-

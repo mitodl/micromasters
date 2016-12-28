@@ -1,11 +1,19 @@
 // @flow
 /* global SETTINGS: false */
 import React from 'react';
+import { Provider } from 'react-redux';
 import { assert } from 'chai';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
 import ProfileImage from '../../containers/ProfileImage';
 import LearnerResult from './LearnerResult';
+import {
+  SET_USER_CHIP_VISIBILITY,
+  setUserChipVisibility,
+} from '../../actions/ui';
+import IntegrationTestHelper from '../../util/integration_test_helper';
 import {
   getUserDisplayName,
 } from '../../util/util';
@@ -15,21 +23,33 @@ import {
 } from '../../constants';
 
 describe('LearnerResult', () => {
-  let renderLearnerResult = (props = {}) => shallow(
-    <LearnerResult
-      result={{
-        _source: {
-          profile: USER_PROFILE_RESPONSE,
-          program: USER_PROGRAM_RESPONSE,
-        }
-      }}
-      {...props}
-    />
+  let helper;
+  beforeEach(() => {
+    helper = new IntegrationTestHelper();
+  });
+  afterEach(() => {
+    helper.cleanup();
+  });
+
+  let renderLearnerResult = (props = {}) => mount(
+    <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <Provider store={helper.store}>
+        <LearnerResult
+          result={{
+            _source: {
+              profile: USER_PROFILE_RESPONSE,
+              program: USER_PROGRAM_RESPONSE,
+            }
+          }}
+          {...props}
+        />
+      </Provider>
+    </MuiThemeProvider>
   );
 
   it("should include the user's name", () => {
-    let result = renderLearnerResult().find(".learner-name").find("span");
-    assert.include(result.text(), getUserDisplayName(USER_PROFILE_RESPONSE));
+    let result = renderLearnerResult().find(".learner-name").find(".display-name");
+    assert.equal(result.text(), getUserDisplayName(USER_PROFILE_RESPONSE));
   });
 
   it("should include the user's location", () => {
@@ -62,6 +82,41 @@ describe('LearnerResult', () => {
 
   it('should use the small avatar', () => {
     let result = renderLearnerResult();
-    assert.isTrue(result.find(ProfileImage).props().useSmall);
+    assert.isTrue(result.find(".learner-avatar").find(ProfileImage).props().useSmall);
+  });
+
+  it('should render the user chip if the visibility equals the username', () => {
+    helper.store.dispatch(setUserChipVisibility(USER_PROFILE_RESPONSE.username));
+
+    let result = renderLearnerResult();
+    assert.equal(result.find(".user-chip").length, 1);
+  });
+
+  for (const username of ['xyz', null]) {
+    it(`should not render the user chip if visibility is set to ${String(username)}`, () => {
+      helper.store.dispatch(setUserChipVisibility(username));
+
+      let result = renderLearnerResult();
+      assert.equal(result.find(".user-chip").length, 0);
+    });
+  }
+
+  it('should set user chip visibility if onMouseEnter is triggered', () => {
+    let result = renderLearnerResult();
+    return helper.listenForActions([SET_USER_CHIP_VISIBILITY], () => {
+      result.find(".learner-name").props().onMouseEnter();
+    }).then(state => {
+      assert.equal(state.ui.userChipVisibility, USER_PROFILE_RESPONSE.username);
+    });
+  });
+
+  it('should clear user chip visibility if onMouseLeave is triggered', () => {
+    helper.store.dispatch(setUserChipVisibility(USER_PROFILE_RESPONSE.username));
+    let result = renderLearnerResult();
+    return helper.listenForActions([SET_USER_CHIP_VISIBILITY], () => {
+      result.find(".learner-name").props().onMouseLeave();
+    }).then(state => {
+      assert.equal(state.ui.userChipVisibility, null);
+    });
   });
 });

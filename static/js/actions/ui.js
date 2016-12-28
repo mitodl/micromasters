@@ -107,3 +107,6 @@ export const setDocsInstructionsVisibility = createAction(SET_DOCS_INSTRUCTIONS_
 
 export const SET_NAV_DRAWER_OPEN = 'SET_NAV_DRAWER_OPEN';
 export const setNavDrawerOpen = createAction(SET_NAV_DRAWER_OPEN);
+
+export const SET_USER_CHIP_VISIBILITY = 'SET_USER_CHIP_VISIBILITY';
+export const setUserChipVisibility = createAction(SET_USER_CHIP_VISIBILITY);

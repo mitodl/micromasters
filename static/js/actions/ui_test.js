@@ -28,6 +28,7 @@ import {
   SET_CONFIRM_SKIP_DIALOG_VISIBILITY,
   SET_DOCS_INSTRUCTIONS_VISIBILITY,
   SET_NAV_DRAWER_OPEN,
+  SET_USER_CHIP_VISIBILITY,
 
   clearUI,
   updateDialogText,
@@ -58,6 +59,7 @@ import {
   setConfirmSkipDialogVisibility,
   setDocsInstructionsVisibility,
   setNavDrawerOpen,
+  setUserChipVisibility,
 } from '../actions/ui';
 import { assertCreatedActionHelper } from './util';
 
@@ -93,6 +95,7 @@ describe('generated UI action helpers', () => {
       [setDocsInstructionsVisibility, SET_DOCS_INSTRUCTIONS_VISIBILITY],
       [setWorkHistoryAnswer, SET_WORK_HISTORY_ANSWER],
       [setNavDrawerOpen, SET_NAV_DRAWER_OPEN],
+      [setUserChipVisibility, SET_USER_CHIP_VISIBILITY],
     ].forEach(assertCreatedActionHelper);
   });
 });
