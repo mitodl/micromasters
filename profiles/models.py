@@ -8,6 +8,7 @@ from django.db import models, transaction
 from profiles.util import (
     profile_image_upload_uri,
     profile_image_upload_uri_small,
+    profile_image_upload_uri_medium,
 )
 
 
@@ -159,6 +160,7 @@ class Profile(models.Model):
 
     image = models.ImageField(upload_to=profile_image_upload_uri, null=True)
     image_small = models.ImageField(upload_to=profile_image_upload_uri_small, null=True)
+    image_medium = models.ImageField(upload_to=profile_image_upload_uri_medium, null=True)
 
     edx_requires_parental_consent = models.NullBooleanField()
     date_of_birth = models.DateField(blank=True, null=True)

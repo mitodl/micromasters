@@ -58,6 +58,7 @@ def format_image_expectation(profile):
     """formats a profile image to match what will be in JSON"""
     profile["image"] = "http://testserver{}".format(profile["image"])
     profile["image_small"] = "http://testserver{}".format(profile["image_small"])
+    profile["image_medium"] = "http://testserver{}".format(profile["image_medium"])
     return profile
 
 
@@ -416,12 +417,14 @@ class ProfilePATCHTests(ProfileBaseTests):
                 profile.image = None
             if thumb_already_exists is False:
                 profile.image_small = None
+                profile.image_medium = None
             profile.save()
         self.client.force_login(self.user1)
 
         patch_data = ProfileSerializer(profile).data
         del patch_data['image']
         del patch_data['image_small']
+        del patch_data['image_medium']
 
         resp = self.client.patch(self.url1, content_type="application/json", data=json.dumps(patch_data))
         assert resp.status_code == 200
@@ -429,6 +432,7 @@ class ProfilePATCHTests(ProfileBaseTests):
         profile.refresh_from_db()
         assert bool(profile.image) == image_already_exists
         assert bool(profile.image_small) == thumb_already_exists
+        assert bool(profile.image_medium) == thumb_already_exists
 
     @ddt.data(
         *itertools.product([True, False], [True, False])
@@ -444,12 +448,14 @@ class ProfilePATCHTests(ProfileBaseTests):
                 profile.image = None
             if thumb_already_exists is False:
                 profile.image_small = None
+                profile.image_medium = None
             profile.save()
         self.client.force_login(self.user1)
 
         patch_data = ProfileSerializer(profile).data
         del patch_data['image']
         del patch_data['image_small']
+        del patch_data['image_medium']
 
         # create a dummy image file in memory for upload
         image_file = BytesIO()
@@ -468,10 +474,13 @@ class ProfilePATCHTests(ProfileBaseTests):
         assert profile.image.width == 500
         assert profile.image_small.height == 64
         assert profile.image_small.width == 64
+        assert profile.image_medium.height == 128
+        assert profile.image_medium.width == 128
 
-    def test_readonly_image_small(self):
+    @ddt.data("image_small", "image_medium")
+    def test_readonly_resized_images(self, image_key):
         """
-        Users should not be able to modify image_small directly
+        Users should not be able to modify image_small or image_medium directly
         """
 
         with mute_signals(post_save):
@@ -485,16 +494,17 @@ class ProfilePATCHTests(ProfileBaseTests):
         image_file.seek(0)
 
         # save old thumbnail
-        backup_thumb_bytes = profile.image_small.file.read()
-        profile.image_small.file.seek(0)
+        resized_image_file = getattr(profile, image_key).file
+        backup_thumb_bytes = resized_image_file.read()
+        resized_image_file.seek(0)
 
         # format patch using multipart upload
         resp = self.client.patch(self.url1, data={
-            'image_small': image_file
+            image_key: image_file
         }, format='multipart')
         assert resp.status_code == 200, resp.content.decode('utf-8')
 
         profile.refresh_from_db()
-        # image_small should not have changed
-        thumb_bytes = profile.image_small.file.read()
+        # resized image should not have changed
+        thumb_bytes = getattr(profile, image_key).file.read()
         assert thumb_bytes == backup_thumb_bytes

@@ -78,6 +78,7 @@ class ProfileFactory(DjangoModelFactory):
 
     image = ImageField()
     image_small = ImageField()
+    image_medium = ImageField()
 
     updated_on = FuzzyDateTime(datetime(1850, 1, 1, tzinfo=timezone.utc))
 

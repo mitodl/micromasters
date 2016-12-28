@@ -14,6 +14,7 @@ from profiles.models import Profile
 from profiles.util import (
     profile_image_upload_uri,
     profile_image_upload_uri_small,
+    profile_image_upload_uri_medium,
 )
 from search.base import ESTestCase
 
@@ -78,4 +79,7 @@ class ImageTests(ESTestCase):
             assert profile.image.url.endswith(profile_image_upload_uri(None, "example.jpg").replace("+", ""))
             assert profile.image_small.url.endswith(
                 profile_image_upload_uri_small(None, "example.jpg").replace("+", "")
+            )
+            assert profile.image_medium.url.endswith(
+                profile_image_upload_uri_medium(None, "example.jpg").replace("+", "")
             )

@@ -18,7 +18,11 @@ from profiles.models import (
     Employment,
     Profile,
 )
-from profiles.util import make_thumbnail
+from profiles.util import (
+    IMAGE_SMALL_MAX_DIMENSION,
+    IMAGE_MEDIUM_MAX_DIMENSION,
+    make_thumbnail,
+)
 
 
 def update_work_history(work_history_list, profile_id):
@@ -180,10 +184,12 @@ class ProfileSerializer(ProfileBaseSerializer):
                     setattr(instance, attr, value)
 
             if 'image' in validated_data:
-                thumbnail = make_thumbnail(validated_data['image'])
+                small_thumbnail = make_thumbnail(validated_data['image'], IMAGE_SMALL_MAX_DIMENSION)
+                medium_thumbnail = make_thumbnail(validated_data['image'], IMAGE_MEDIUM_MAX_DIMENSION)
 
                 # name doesn't matter here, we use upload_to to produce that
-                instance.image_small.save("{}.jpg".format(uuid4().hex), thumbnail)
+                instance.image_small.save("{}.jpg".format(uuid4().hex), small_thumbnail)
+                instance.image_medium.save("{}.jpg".format(uuid4().hex), medium_thumbnail)
 
             instance.save()
             if 'work_history' in self.initial_data:
@@ -219,9 +225,15 @@ class ProfileSerializer(ProfileBaseSerializer):
             'education',
             'image',
             'image_small',
+            'image_medium',
             'about_me'
         )
-        read_only_fields = ('edx_level_of_education', 'agreed_to_terms_of_service', 'image_small',)
+        read_only_fields = (
+            'edx_level_of_education',
+            'agreed_to_terms_of_service',
+            'image_small',
+            'image_medium',
+        )
 
 
 class ProfileLimitedSerializer(ProfileBaseSerializer):
@@ -249,7 +261,12 @@ class ProfileLimitedSerializer(ProfileBaseSerializer):
             'education',
             'about_me'
         )
-        read_only_fields = ('edx_level_of_education', 'agreed_to_terms_of_service', 'image_small',)
+        read_only_fields = (
+            'edx_level_of_education',
+            'agreed_to_terms_of_service',
+            'image_small',
+            'image_medium',
+        )
 
 
 class ProfileFilledOutSerializer(ProfileSerializer):

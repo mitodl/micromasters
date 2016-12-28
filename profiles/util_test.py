@@ -107,20 +107,24 @@ class ImageTests(TestCase):
             util._generate_upload_to_uri("x"*150)(None, filename)  # pylint: disable=protected-access
         assert ex.exception.args[0].startswith("path is longer than max length even without name")
 
-    def test_make_small_dimensions(self):
+    def test_shrink_dimensions(self):
         """Tests for make_small_dimensions"""
         # If dimensions are too small no resizing should be done
-        assert util.make_small_dimensions(20, 63) == (20, 63)
+        assert util.shrink_dimensions(20, 63, 64) == (20, 63)
         # Both dimensions should shrink, maintaining same aspect ratio, until width or height is 64
         # dimensions will be rounded down into ints
-        assert util.make_small_dimensions(20, 100) == (12, 64)
-        assert util.make_small_dimensions(100, 20) == (64, 12)
+        assert util.shrink_dimensions(20, 100, 64) == (12, 64)
+        assert util.shrink_dimensions(100, 20, 64) == (64, 12)
+
+        # A bigger value should also work
+        assert util.shrink_dimensions(100, 20, 90) == (90, 18)
 
     def test_make_thumbnail(self):
         """
         Test that image output by make_thumbnail uses dimensions provided by make_small_dimensions
         """
 
+        thumbnail_size = 64
         thumb_width = FuzzyInteger(1, 1024).fuzz()
         thumb_height = FuzzyInteger(1, 1024).fuzz()
         # To do the asserts correctly thumbnail dimensions have to have the same aspect ratio
@@ -132,9 +136,12 @@ class ImageTests(TestCase):
         image.save(full_image_file, "PNG")
         full_image_file.seek(0)
 
-        with patch('profiles.util.make_small_dimensions', return_value=(thumb_width, thumb_height)) as mocked:
-            thumb_file = util.make_thumbnail(full_image_file)
+        with patch(
+            'profiles.util.shrink_dimensions',
+            return_value=(thumb_width, thumb_height, thumbnail_size)
+        ) as mocked:
+            thumb_file = util.make_thumbnail(full_image_file, 64)
             thumb_image = Image.open(thumb_file)
-            mocked.assert_called_with(width, height)
+            mocked.assert_called_with(width, height, thumbnail_size)
             assert thumb_image.width == thumb_width
             assert thumb_image.height == thumb_height

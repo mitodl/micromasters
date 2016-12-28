@@ -11,8 +11,9 @@ import pytz
 # This is the Django ImageField max path size
 IMAGE_PATH_MAX_LENGTH = 100
 
-# Max dimension of either height or width for a small image
+# Max dimension of either height or width for small and medium images
 IMAGE_SMALL_MAX_DIMENSION = 64
+IMAGE_MEDIUM_MAX_DIMENSION = 128
 
 
 def split_name(name):
@@ -89,37 +90,47 @@ def profile_image_upload_uri_small(instance, filename):
     return _generate_upload_to_uri("_small")(instance, filename)
 
 
-def make_small_dimensions(width, height):
+def profile_image_upload_uri_medium(instance, filename):
     """
-    Resize dimensions so max dimension is IMAGE_SMALL_MAX_DIMENSION. If dimensions are too small no resizing is done
+    upload_to handler for Profile.image_medium
+    """
+    return _generate_upload_to_uri("_medium")(instance, filename)
+
+
+def shrink_dimensions(width, height, max_dimension):
+    """
+    Resize dimensions so max dimension is max_dimension. If dimensions are too small no resizing is done
     Args:
         width (int): The width
         height (int): The height
+        max_dimension (int): The maximum size of a dimension
     Returns:
         tuple of (small_width, small_height): A resized set of dimensions, as integers
     """
     max_width_height = max(width, height)
-    if max_width_height < IMAGE_SMALL_MAX_DIMENSION:
+    if max_width_height < max_dimension:
         return width, height
-    ratio = max_width_height / IMAGE_SMALL_MAX_DIMENSION
+    ratio = max_width_height / max_dimension
 
     return int(width / ratio), int(height / ratio)
 
 
-def make_thumbnail(full_size_image):
+def make_thumbnail(full_size_image, max_dimension):
     """
     Make a thumbnail of the image
 
     Args:
         full_size_image (file):
             A file-like object containing an image. This file will seek back to the beginning after being read.
+        max_dimension (int):
+            The max size of a dimension for the thumbnail
     Returns:
         BytesIO:
             A jpeg image which is a thumbnail of full_size_image
     """
     pil_image = Image.open(full_size_image)
-    pil_image.thumbnail(make_small_dimensions(pil_image.width, pil_image.height), Image.ANTIALIAS)
-    image_small_buffer = BytesIO()
-    pil_image.save(image_small_buffer, "JPEG", quality=90)
-    image_small_buffer.seek(0)
-    return image_small_buffer
+    pil_image.thumbnail(shrink_dimensions(pil_image.width, pil_image.height, max_dimension), Image.ANTIALIAS)
+    buffer = BytesIO()
+    pil_image.save(buffer, "JPEG", quality=90)
+    buffer.seek(0)
+    return buffer

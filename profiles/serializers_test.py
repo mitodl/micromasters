@@ -90,6 +90,7 @@ class ProfileTests(ESTestCase):
             ),
             'image': profile.image.url,
             'image_small': profile.image_small.url,
+            'image_medium': profile.image_medium.url,
             'about_me': profile.about_me,
         }
 
@@ -349,6 +350,7 @@ class ProfileFilledOutTests(ESTestCase):
             clone = deepcopy(self.data)
             clone["image"] = self.profile.image
             clone["image_small"] = self.profile.image_small
+            clone["image_medium"] = self.profile.image_medium
             parent_getter(clone)[key] = None
             with self.assertRaises(ValidationError) as ex:
                 ProfileFilledOutSerializer(data=clone).is_valid(raise_exception=True)
@@ -417,11 +419,12 @@ class ProfileFilledOutTests(ESTestCase):
             lambda profile: profile['education'].child,
         )
 
-    def test_image_small_created(self):
+    def test_resized_images_created(self):
         """
-        image_small should be created if image is present in PATCH
+        resized images should be created if image is present in PATCH
         """
         self.profile.image_small = None
+        self.profile.image_medium = None
         self.profile.save()
 
         self.data['image'] = self.profile.image
@@ -430,13 +433,14 @@ class ProfileFilledOutTests(ESTestCase):
         serializer.update(self.profile, serializer.validated_data)
         self.profile.refresh_from_db()
         assert self.profile.image_small is not None
+        assert self.profile.image_medium is not None
 
-    def test_image_small_updated(self):
+    def test_resized_images_updated(self):
         """
-        image_small should be updated if image is present in PATCH
+        resized images should be updated if image is present in PATCH
         """
-        old_image_small = self.profile.image_small
-        assert old_image_small is not None
+        assert self.profile.image_small is not None
+        assert self.profile.image_medium is not None
 
         # create a dummy image file in memory for upload
         image_file = BytesIO()
@@ -449,16 +453,20 @@ class ProfileFilledOutTests(ESTestCase):
         serializer.is_valid(raise_exception=True)
         serializer.update(self.profile, serializer.validated_data)
         self.profile.refresh_from_db()
-        assert self.profile.image_small.file.read() != image_file.read()
+        image_file_bytes = image_file.read()
+        assert self.profile.image_small.file.read() != image_file_bytes
+        assert self.profile.image_medium.file.read() != image_file_bytes
 
-    def test_image_small_not_changed(self):
+    def test_resized_images_not_changed(self):
         """
-        image_small should not be updated if PATCH is performed but image is not present in PATCH
+        resized images should not be updated if PATCH is performed but image is not present in PATCH
         """
         self.data['image'] = self.profile.image
         old_image_small = self.profile.image_small
+        old_image_medium = self.profile.image_medium
         serializer = ProfileFilledOutSerializer(data=self.data)
         serializer.is_valid(raise_exception=True)
         serializer.update(self.profile, serializer.validated_data)
         self.profile.refresh_from_db()
         assert self.profile.image_small == old_image_small
+        assert self.profile.image_medium == old_image_medium

@@ -58,6 +58,7 @@ export type Profile = {
   agreed_to_terms_of_service:  boolean,
   image:                       ?string,
   image_small:                 ?string,
+  image_medium:                ?string,
   about_me:                    ?string,
 };
 
