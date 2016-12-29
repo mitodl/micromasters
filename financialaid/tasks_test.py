@@ -3,10 +3,7 @@ Test for financialaid celery tasks
 """
 from unittest.mock import patch
 
-from django.test import (
-    override_settings,
-    TestCase
-)
+from django.test import TestCase
 
 from financialaid.constants import CURRENCY_EXCHANGE_RATE_API_REQUEST_URL
 from financialaid.exceptions import ExceededAPICallsException, UnexpectedAPIErrorException
