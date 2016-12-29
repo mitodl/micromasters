@@ -177,6 +177,11 @@
     color: $link-hover;
     text-decoration: underline;
   }
+
+  &[disabled] {
+    color: $font-gray-disabled;
+    text-decoration: none;
+  }
 }
 
 .dashboard-button {

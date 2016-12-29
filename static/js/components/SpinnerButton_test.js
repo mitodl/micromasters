@@ -34,7 +34,9 @@ describe("SpinnerButton", () => {
     let button = wrapper.find("button");
     let buttonProps = button.props();
     for (let key of Object.keys(props)) {
-      assert.deepEqual(buttonProps[key], props[key]);
+      if (key !== 'onClick') {
+        assert.deepEqual(buttonProps[key], props[key]);
+      }
     }
     assert.equal(button.children().text(), "childText");
     assert.isUndefined(buttonProps.disabled);
@@ -51,7 +53,12 @@ describe("SpinnerButton", () => {
       onClick={onClick}
       className="class1 class2"
       {...props}
-    />);
+    >
+      text
+    </SpinnerButton>);
+    wrapper.setState({
+      recentlyClicked: true
+    });
     let button = wrapper.find("Button");
     let buttonProps = button.props();
     for (let key of Object.keys(props)) {
@@ -71,11 +78,64 @@ describe("SpinnerButton", () => {
       spinning={true}
       onClick={sandbox.stub()}
       component="button"
-    />);
+    >
+      text
+    </SpinnerButton>);
     let buttonProps = wrapper.find("button").props();
 
     assert.equal(buttonProps.className, undefined);
     assert.isTrue(buttonProps.disabled);
     assert.equal(buttonProps.onClick, undefined);
+    assert.equal("text", wrapper.find("button").text());
+  });
+
+  it('sets recentlyClicked to true when the button is clicked', () => {
+    let onClick = sandbox.stub();
+    let wrapper = shallow(
+      <SpinnerButton
+        component="button"
+        onClick={onClick}
+        spinning={false}
+      />
+    );
+    assert.isFalse(wrapper.state().recentlyClicked);
+    let buttonProps = wrapper.find("button").props();
+    buttonProps.onClick("args");
+    assert.isTrue(onClick.calledWith("args"));
+    assert.isTrue(wrapper.state().recentlyClicked);
+  });
+
+  it('is disabled if spinning is true but recentlyClicked is false', () => {
+    let onClick = sandbox.stub();
+    let wrapper = shallow(
+      <SpinnerButton
+        spinning={true}
+        component="button"
+        onClick={onClick}
+      >
+        text
+      </SpinnerButton>
+    );
+    let buttonProps = wrapper.find("button").props();
+    assert.equal(buttonProps.className, undefined);
+    assert.isTrue(buttonProps.disabled);
+    assert.equal(buttonProps.onClick, undefined);
+    assert.equal("text", wrapper.find("button").text());
+  });
+
+  it('sets recentlyClicked back to false if the spinning prop changes back to false', () => {
+    let wrapper = shallow(
+      <SpinnerButton
+        component="button"
+        spinning={true}
+      />
+    );
+    wrapper.setState({
+      recentlyClicked: true
+    });
+    wrapper.setProps({
+      spinning: false
+    });
+    assert.isFalse(wrapper.state().recentlyClicked);
   });
 });
