@@ -116,15 +116,17 @@ describe("SettingsPage", function() {
       });
     });
 
-    it('disables the button and shows a spinner when profile patch is processing', () => {
-      return renderComponent('/settings', userActions).then(([wrapper]) => {
-        helper.store.dispatch(requestPatchUserProfile(SETTINGS.user.username));
+    for (let activity of [true, false]) {
+      it(`has proper button state when when profile patch activity is ${String(activity)}`, () => {
+        return renderComponent('/settings', userActions).then(([wrapper]) => {
+          if (activity) {
+            helper.store.dispatch(requestPatchUserProfile(SETTINGS.user.username));
+          }
 
-        let next = wrapper.find(".next");
-        assert(next.props().className.includes("disabled-with-spinner"));
-        next.simulate("click");
-        assert.isFalse(patchUserProfileStub.called);
+          let next = wrapper.find("SpinnerButton");
+          assert.equal(next.props().spinning, activity);
+        });
       });
-    });
+    }
   });
 });

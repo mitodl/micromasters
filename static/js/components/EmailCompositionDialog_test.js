@@ -6,6 +6,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import TestUtils from 'react-addons-test-utils';
 
+import * as inputUtil from '../components/inputs/util';
 import { FETCH_PROCESSING } from '../actions';
 import { INITIAL_EMAIL_STATE, NEW_EMAIL_EDIT } from '../reducers/email';
 import { modifyTextField } from '../util/test_utils';
@@ -72,6 +73,7 @@ describe('EmailCompositionDialog', () => {
   });
 
   it('should show a disabled spinner button if email send is in progress', () => {
+    let dialogActionsSpy = sandbox.spy(inputUtil, 'dialogActions');
     renderDialog({
       email: {
         ...INITIAL_EMAIL_STATE,
@@ -80,11 +82,9 @@ describe('EmailCompositionDialog', () => {
       }
     });
 
-    let saveButton = getDialog().querySelector('.save-button');
-    TestUtils.Simulate.click(saveButton);
-    assert.isFalse(sendEmail.called, "called sendSearchResultMail method");
-    assert.isTrue(saveButton.innerHTML.includes("mdl-spinner"));
-    assert.isTrue(saveButton.className.includes("disabled-with-spinner"));
+    // assert that inFlight is true
+    assert.isTrue(dialogActionsSpy.lastCall.args[2]);
+    assert.equal(dialogActionsSpy.lastCall.args[3], 'Send');
   });
 
   ['subject', 'body'].forEach(field => {

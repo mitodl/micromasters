@@ -6,6 +6,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import TestUtils from 'react-addons-test-utils';
 
+import * as inputUtil from '../components/inputs/util';
 import { FETCH_PROCESSING } from '../actions';
 import UserPageAboutMeDialog from './UserPageAboutMeDialog';
 import { USER_PROFILE_RESPONSE } from '../constants';
@@ -88,13 +89,12 @@ describe('UserPageAboutMeDialog', () => {
   });
 
   it('disables the save button during profile update', () => {
+    let dialogActionsSpy = sandbox.spy(inputUtil, 'dialogActions');
     renderDialog({
       profilePatchStatus: FETCH_PROCESSING
     });
-    let saveButton = getDialog().querySelector(".save-button");
-    assert(saveButton.className.includes("disabled-with-spinner"));
-    assert(saveButton.querySelector(".mdl-spinner"));
-    TestUtils.Simulate.click(saveButton);
-    assert.equal(saveProfile.callCount, 0);
+    // assert that inFlight is true
+    console.log("calls", dialogActionsSpy.calls);
+    assert.isTrue(dialogActionsSpy.lastCall.args[2]);
   });
 });

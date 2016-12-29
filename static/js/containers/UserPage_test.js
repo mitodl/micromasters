@@ -5,6 +5,7 @@ import { assert } from 'chai';
 import _ from 'lodash';
 import moment from 'moment';
 
+import * as inputUtil from '../components/inputs/util';
 import {
   RECEIVE_GET_USER_PROFILE_SUCCESS,
   REQUEST_GET_USER_PROFILE,
@@ -455,26 +456,12 @@ describe("UserPage", function() {
           patchUserProfileStub.returns(Promise.resolve(USER_PROFILE_RESPONSE));
 
           helper.store.dispatch(setShowEducationDeleteDialog(true));
-          if (activity) {
-            helper.store.dispatch(requestPatchUserProfile());
-          }
+          let dialogActionsSpy = helper.sandbox.spy(inputUtil, 'dialogActions');
           return renderComponent(`/learner/${username}`, userActions).then(() => {
-            let dialog = document.querySelector('.deletion-confirmation-dialog');
-            let button = dialog.querySelector(".delete-button");
-
-            let actions = activity ? [REQUEST_PATCH_USER_PROFILE] : [];
-
-            return listenForActions(actions, () => {
-              if (activity) {
-                helper.store.dispatch(requestPatchUserProfile(username));
-              }
-            }).then(() => {
-              assert.equal(button.className.includes("disabled-with-spinner"), activity);
-              assert.equal(button.innerHTML.includes("mdl-spinner"), activity);
-
-              TestUtils.Simulate.click(button);
-              assert.equal(patchUserProfileStub.called, !activity);
-            });
+            if (activity) {
+              helper.store.dispatch(requestPatchUserProfile(username));
+            }
+            assert.equal(dialogActionsSpy.lastCall.args[2], activity);
           });
         });
       }
@@ -581,29 +568,18 @@ describe("UserPage", function() {
         });
       });
 
-      it('should disable the save button while a PATCH is in progress', () => {
-        const username = SETTINGS.user.username;
-        return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
-          let addButton = div.querySelector(".add-education-button");
-
-          TestUtils.Simulate.click(addButton);
-
-          let dialog = document.querySelector('.education-dialog');
-
-          return listenForActions([
-            REQUEST_PATCH_USER_PROFILE,
-          ], () => {
-            helper.store.dispatch(requestPatchUserProfile(username));
-          }).then(() => {
-            let button = dialog.querySelector(".save-button");
-            assert(button.className.includes("disabled-with-spinner"));
-            assert(button.querySelector(".mdl-spinner"));
-
-            TestUtils.Simulate.click(button);
-            assert.isFalse(patchUserProfileStub.called);
+      for (const activity of [true, false]) {
+        it(`should have proper button state when activity=${activity}`, () => {
+          const username = SETTINGS.user.username;
+          let dialogActionsSpy = helper.sandbox.spy(inputUtil, 'dialogActions');
+          return renderComponent(`/learner/${username}`, userActions).then(([]) => {
+            if (activity) {
+              helper.store.dispatch(requestPatchUserProfile(username));
+            }
+            assert.equal(dialogActionsSpy.lastCall.args[2], activity);
           });
         });
-      });
+      }
     });
 
     describe("Employment History", () => {
@@ -712,23 +688,12 @@ describe("UserPage", function() {
           patchUserProfileStub.returns(Promise.resolve(USER_PROFILE_RESPONSE));
 
           helper.store.dispatch(setShowWorkDeleteDialog(true));
+          let dialogActionsSpy = helper.sandbox.spy(inputUtil, 'dialogActions');
           return renderComponent(`/learner/${username}`, userActions).then(() => {
-            let dialog = document.querySelector('.deletion-confirmation-dialog');
-            let button = dialog.querySelector(".delete-button");
-
-            let actions = activity ? [REQUEST_PATCH_USER_PROFILE] : [];
-
-            return listenForActions(actions, () => {
-              if (activity) {
-                helper.store.dispatch(requestPatchUserProfile(username));
-              }
-            }).then(() => {
-              assert.equal(button.className.includes("disabled-with-spinner"), activity);
-              assert.equal(button.innerHTML.includes("mdl-spinner"), activity);
-
-              TestUtils.Simulate.click(button);
-              assert.equal(patchUserProfileStub.called, !activity);
-            });
+            if (activity) {
+              helper.store.dispatch(requestPatchUserProfile(username));
+            }
+            assert.equal(dialogActionsSpy.lastCall.args[2], activity);
           });
         });
       }
@@ -845,29 +810,18 @@ describe("UserPage", function() {
         });
       });
 
-      it('should disable the save button while a PATCH is in progress', () => {
-        const username = SETTINGS.user.username;
-        return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
-          let addButton = div.querySelector(".add-employment-button");
-
-          TestUtils.Simulate.click(addButton);
-
-          let dialog = document.querySelector('.employment-dialog');
-
-          return listenForActions([
-            REQUEST_PATCH_USER_PROFILE,
-          ], () => {
-            helper.store.dispatch(requestPatchUserProfile(username));
-          }).then(() => {
-            let button = dialog.querySelector(".save-button");
-            assert(button.className.includes("disabled-with-spinner"));
-            assert(button.querySelector(".mdl-spinner"));
-
-            TestUtils.Simulate.click(button);
-            assert.isFalse(patchUserProfileStub.called);
+      for (let activity of [true, false]) {
+        it(`should have proper save button spinner state when activity=${activity}`, () => {
+          const username = SETTINGS.user.username;
+          let dialogActionsSpy = helper.sandbox.spy(inputUtil, 'dialogActions');
+          return renderComponent(`/learner/${username}`, userActions).then(() => {
+            if (activity) {
+              helper.store.dispatch(requestPatchUserProfile(username));
+            }
+            assert.equal(dialogActionsSpy.lastCall.args[2], activity);
           });
         });
-      });
+      }
     });
 
     describe('Personal Info', () => {
@@ -992,29 +946,18 @@ describe("UserPage", function() {
         });
       });
 
-      it('should disable the save button while a PATCH is in progress', () => {
-        const username = SETTINGS.user.username;
-        return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
-          let addButton = div.querySelector(".edit-personal-info-button");
-
-          TestUtils.Simulate.click(addButton);
-
-          let dialog = document.querySelector('.personal-dialog');
-
-          return listenForActions([
-            REQUEST_PATCH_USER_PROFILE,
-          ], () => {
-            helper.store.dispatch(requestPatchUserProfile(username));
-          }).then(() => {
-            let button = dialog.querySelector(".save-button");
-            assert(button.className.includes("disabled-with-spinner"));
-            assert(button.querySelector(".mdl-spinner"));
-
-            TestUtils.Simulate.click(button);
-            assert.isFalse(patchUserProfileStub.called);
+      for (const activity of [true, false]) {
+        it(`should have proper button spinner state while a PATCH is in progress for activity=${activity}`, () => {
+          const username = SETTINGS.user.username;
+          const dialogActionsSpy = helper.sandbox.spy(inputUtil, 'dialogActions');
+          return renderComponent(`/learner/${username}`, userActions).then(() => {
+            if (activity) {
+              helper.store.dispatch(requestPatchUserProfile(username));
+            }
+            assert.equal(dialogActionsSpy.lastCall.args[2], activity);
           });
         });
-      });
+      }
     });
 
     it("should show all edit, delete icons for an authenticated user's own page" , () => {

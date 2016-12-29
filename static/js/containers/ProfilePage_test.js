@@ -207,17 +207,17 @@ describe("ProfilePage", function() {
     });
   });
 
-  it('disables the button and shows a spinner when profile patch is processing', () => {
-    return renderComponent('/profile/personal', SUCCESS_ACTIONS).then(([wrapper]) => {
-      helper.store.dispatch(requestPatchUserProfile(SETTINGS.user.username));
-
-      let next = wrapper.find(".next");
-      assert(next.props().className.includes("disabled-with-spinner"));
-      next.simulate("click");
-      assert.isFalse(patchUserProfileStub.called);
-      assert.lengthOf(next.find(".mdl-spinner"), 1);
+  for (let activity of [true, false]) {
+    it(`has proper button state when the profile patch is processing when activity=${String(activity)}`, () => {
+      return renderComponent('/profile/personal', SUCCESS_ACTIONS).then(([wrapper]) => {
+        if (activity) {
+          helper.store.dispatch(requestPatchUserProfile(SETTINGS.user.username));
+        }
+        let next = wrapper.find("SpinnerButton");
+        assert.equal(activity, next.props().spinning);
+      });
     });
-  });
+  }
 
   it('should enroll the user when they go to the next page', () => {
     let addEnrollmentStub = helper.sandbox.stub(api, 'addProgramEnrollment');
