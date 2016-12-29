@@ -92,7 +92,7 @@ describe('utility functions', () => {
   describe('makeProfileImageUrl', () => {
     it('uses the profile image if available', () => {
       let url = "/url";
-      assert.equal(url, makeProfileImageUrl({ image: url }, false));
+      assert.equal(url, makeProfileImageUrl({ image_medium: url }, false));
     });
 
     it('uses a default profile image if not available, removing duplicate slashes', () => {
@@ -106,7 +106,7 @@ describe('utility functions', () => {
       let url = '/url';
       let smallUrl = '/small';
       assert.equal(smallUrl, makeProfileImageUrl({
-        image: url,
+        image_medium: url,
         image_small: smallUrl,
       }, true));
     });
