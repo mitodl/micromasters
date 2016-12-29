@@ -61,7 +61,7 @@ class UserMenu extends React.Component {
 
     if (SETTINGS.user) {
       let menuContents = <div className="user-menu" onClick={this.toggleMenuOpen}>
-        <ProfileImage profile={profile} />
+        <ProfileImage profile={profile} useSmall={true} />
         { title }
         { this.openStateIcon() }
         { this.linkMenu() }
