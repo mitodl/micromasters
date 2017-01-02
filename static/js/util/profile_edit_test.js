@@ -11,7 +11,7 @@ import {
   boundDateField,
   boundRadioGroupField,
   saveProfileStep,
-  showRomanizedFields
+  shouldRenderRomanizedFields
 } from './profile_edit';
 import * as dateValidation from '../lib/validation/date';
 import {
@@ -588,33 +588,37 @@ describe('Profile Editing utility functions', () => {
     });
   });
 
-  describe('showRomanizedFields', () => {
+  describe('shouldRenderRomanizedFields', () => {
     it('when first and last names are empty', () => {
       let profile = _.cloneDeep(USER_PROFILE_RESPONSE);
       profile.first_name = '';
       profile.last_name = '';
-      assert.isNotTrue(showRomanizedFields(profile));
+      assert.isNotTrue(shouldRenderRomanizedFields(profile));
     });
 
     it('when first name is non cp-1252', () => {
       let profile = _.cloneDeep(USER_PROFILE_RESPONSE);
       profile.first_name = 'عامر';
       profile.last_name = 'example';
-      assert.isTrue(showRomanizedFields(profile));
+      assert.isTrue(shouldRenderRomanizedFields(profile));
     });
 
     it('when last name is non cp-1252', () => {
       let profile = _.cloneDeep(USER_PROFILE_RESPONSE);
       profile.first_name = 'example';
       profile.last_name = 'عامر';
-      assert.isTrue(showRomanizedFields(profile));
+      assert.isTrue(shouldRenderRomanizedFields(profile));
     });
 
     it('when first and last names are valid cp-1252', () => {
       let profile = _.cloneDeep(USER_PROFILE_RESPONSE);
       profile.first_name = "ââio";
       profile.last_name = "khan";
-      assert.isNotTrue(showRomanizedFields(profile));
+      assert.isNotTrue(shouldRenderRomanizedFields(profile));
+    });
+
+    it('when no profile', () => {
+      assert.isNotTrue(shouldRenderRomanizedFields());
     });
   });
 });

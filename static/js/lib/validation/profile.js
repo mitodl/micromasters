@@ -20,9 +20,9 @@ import {
   PERSONAL_STEP,
   EDUCATION_STEP,
   EMPLOYMENT_STEP,
-  CP1252_REGIX
+  CP1252_REGEX
 } from '../../constants';
-import { showRomanizedFields } from '../../util/profile_edit';
+import { shouldRenderRomanizedFields } from '../../util/profile_edit';
 
 type ErrorMessages = {[key: string]: string};
 
@@ -80,12 +80,12 @@ export const personalValidation = (profile: Profile) => {
   if (!moment(profile.date_of_birth).isBefore(moment(), 'day')) {
     errors.date_of_birth = personalMessages.date_of_birth;
   }
-  if (showRomanizedFields(profile)) {
-    if (!profile.romanized_first_name || !CP1252_REGIX.test(profile.romanized_first_name)) {
+  if (shouldRenderRomanizedFields(profile)) {
+    if (!profile.romanized_first_name || !CP1252_REGEX.test(profile.romanized_first_name)) {
       errors.romanized_first_name = "CP-1252 string is required";
     }
 
-    if (!profile.romanized_last_name || !CP1252_REGIX.test(profile.romanized_last_name)) {
+    if (!profile.romanized_last_name || !CP1252_REGEX.test(profile.romanized_last_name)) {
       errors.romanized_last_name = "CP-1252 string is required";
     }
   }

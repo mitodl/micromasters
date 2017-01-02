@@ -42,6 +42,7 @@ export type ValidationErrors = {
 
 export type Profile = {
   first_name:                  string,
+  last_name:                   string,
   education:                   EducationEntry[],
   work_history:                WorkHistoryEntry[],
   getStatus:                   string,
