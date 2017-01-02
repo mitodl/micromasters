@@ -1,4 +1,5 @@
 import { assert } from 'chai';
+import _ from 'lodash';
 import sinon from 'sinon';
 import { shallow } from 'enzyme';
 import moment from 'moment';
@@ -10,9 +11,13 @@ import {
   boundDateField,
   boundRadioGroupField,
   saveProfileStep,
+  showRomanizedFields
 } from './profile_edit';
 import * as dateValidation from '../lib/validation/date';
-import { YEAR_VALIDATION_CUTOFF } from '../constants';
+import {
+  YEAR_VALIDATION_CUTOFF,
+  USER_PROFILE_RESPONSE
+} from '../constants';
 
 describe('Profile Editing utility functions', () => {
   let that, sandbox, gaEvent;
@@ -580,6 +585,29 @@ describe('Profile Editing utility functions', () => {
         that.props.ui,
       ));
       assert.equal(ret, saveProfileReturnValue);
+    });
+  });
+
+  describe('showRomanizedFields', () => {
+    it('when first name is non cp-1252', () => {
+      let profile = _.cloneDeep(USER_PROFILE_RESPONSE);
+      profile.first_name = 'عامر';
+      profile.last_name = 'example';
+      assert.isTrue(showRomanizedFields(profile));
+    });
+
+    it('when last name is non cp-1252', () => {
+      let profile = _.cloneDeep(USER_PROFILE_RESPONSE);
+      profile.first_name = 'example';
+      profile.last_name = 'عامر';
+      assert.isTrue(showRomanizedFields(profile));
+    });
+
+    it('when first and last names are valid cp-1252', () => {
+      let profile = _.cloneDeep(USER_PROFILE_RESPONSE);
+      profile.first_name = "ââio";
+      profile.last_name = "khan";
+      assert.isNotTrue(showRomanizedFields(profile));
     });
   });
 });

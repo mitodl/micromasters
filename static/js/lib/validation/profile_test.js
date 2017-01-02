@@ -86,6 +86,57 @@ describe('Profile validation functions', () => {
       };
       assert.deepEqual(personalValidation(profile), errors);
     });
+
+    it('should error when first_name is non cp-1252 and romanized fields are missing', () => {
+      let profile = {
+        ...USER_PROFILE_RESPONSE,
+        first_name: 'عامر'
+      };
+      let errors = {
+        romanized_first_name: "CP-1252 string is required",
+        romanized_last_name: "CP-1252 string is required"
+      };
+      assert.deepEqual(personalValidation(profile), errors);
+    });
+
+    it('should error when last_name is non cp-1252 and romanized fields are missing', () => {
+      let profile = {
+        ...USER_PROFILE_RESPONSE,
+        last_name: 'عامر'
+      };
+      let errors = {
+        romanized_first_name: "CP-1252 string is required",
+        romanized_last_name: "CP-1252 string is required"
+      };
+      assert.deepEqual(personalValidation(profile), errors);
+    });
+
+    it('should error when romanized_first_name is non cp-1252', () => {
+      let profile = {
+        ...USER_PROFILE_RESPONSE,
+        first_name: 'عامر',
+        romanized_first_name: 'عامر',
+        romanized_last_name: 'test'
+      };
+      let errors = {
+        romanized_first_name: "CP-1252 string is required",
+      };
+      assert.deepEqual(personalValidation(profile), errors);
+    });
+
+    it('should error when romanized_last_name is non cp-1252', () => {
+      let profile = {
+        ...USER_PROFILE_RESPONSE,
+        first_name: 'عامر',
+        romanized_first_name: 'test',
+        romanized_last_name: 'عامر'
+
+      };
+      let errors = {
+        romanized_last_name: "CP-1252 string is required",
+      };
+      assert.deepEqual(personalValidation(profile), errors);
+    });
   });
 
 
