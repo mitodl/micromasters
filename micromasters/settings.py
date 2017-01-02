@@ -175,30 +175,11 @@ if DEBUG:
 
 AUTHENTICATION_BACKENDS = (
     'backends.edxorg.EdxOrgOAuth2',
-    'social.backends.linkedin.LinkedinOAuth2',
     # the following needs to stay here to allow login of local users
     'django.contrib.auth.backends.ModelBackend',
 )
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
-
-SOCIAL_AUTH_LINKEDIN_OAUTH2_KEY = get_var('LINKEDIN_CLIENT_ID', '')
-SOCIAL_AUTH_LINKEDIN_OAUTH2_SECRET = get_var('LINKEDIN_CLIENT_SECRET', '')
-SOCIAL_AUTH_LINKEDIN_OAUTH2_SCOPE = ["r_basicprofile"]
-SOCIAL_AUTH_LINKEDIN_OAUTH2_FIELD_SELECTORS = [
-    'first-name', 'last-name',
-    'headline',
-    'industry',
-    'location',
-    'current-share',
-    'num-connections', 'num-connections-capped',
-    'summary',
-    'specialties',
-    'positions',
-    'picture-urls',
-    'public-profile-url',
-]
-
 
 EDXORG_BASE_URL = get_var('EDXORG_BASE_URL', 'https://courses.edx.org/')
 SOCIAL_AUTH_EDXORG_KEY = get_var('EDXORG_CLIENT_ID', '')
@@ -216,7 +197,6 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.social_auth.load_extra_data',
     'social.pipeline.user.user_details',
     'backends.pipeline_api.update_profile_from_edx',
-    'backends.pipeline_api.update_from_linkedin',
 )
 SOCIAL_AUTH_EDXORG_AUTH_EXTRA_ARGUMENTS = {
     'access_type': 'offline',

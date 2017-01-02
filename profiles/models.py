@@ -181,7 +181,6 @@ class Profile(models.Model):
     )
     edx_mailing_address = models.TextField(blank=True, null=True)
     date_joined_micromasters = models.DateTimeField(blank=True, null=True, auto_now_add=True)
-    linkedin = JSONField(blank=True, null=True)
     student_id = models.IntegerField(blank=True, null=True, unique=True)
 
     updated_on = models.DateTimeField(blank=True, null=True, auto_now=True)

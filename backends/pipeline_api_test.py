@@ -5,7 +5,6 @@ from unittest import mock
 from urllib.parse import urljoin
 
 from backends import pipeline_api, edxorg
-from backends.pipeline_api import update_from_linkedin
 from courses.factories import ProgramFactory
 from profiles.api import get_social_username
 from profiles.models import Profile
@@ -248,18 +247,3 @@ class EdxPipelineApiTest(ESTestCase):
             backend = edxorg.EdxOrgOAuth2(strategy=mock.Mock(session_set=session_set))
             pipeline_api.update_profile_from_edx(backend, user, {}, False)
             session_set.assert_called_with('next', '/learners')
-
-
-class LinkedInPipelineTests(ESTestCase):
-    """Tests for the LinkedIn pipline entry"""
-
-    def test_saves_linkedin_response(self):
-        """Happy path"""
-        backend = mock.Mock()
-        backend.name = 'linkedin-oauth2'
-        user = UserFactory.create()
-        response = {'test': 'works'}
-        update_from_linkedin(backend, user, response)
-
-        profile = Profile.objects.get(user=user)
-        assert profile.linkedin == {'test': 'works'}
