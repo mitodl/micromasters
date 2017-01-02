@@ -9,6 +9,7 @@ import SelectField from './inputs/SelectField';
 import CountrySelectField from './inputs/CountrySelectField';
 import StateSelectField from './inputs/StateSelectField';
 import ProfileFormFields from '../util/ProfileFormFields';
+import { showRomanizedFields } from '../util/profile_edit';
 import type {
   Profile,
   SaveProfileFunc,
@@ -41,16 +42,7 @@ export default class PersonalForm extends ProfileFormFields {
 
   renderRomanizedFields = () => {
     const { profile } =  this.props;
-    const english = /^[A-Za-z]*$/;
-    let firstName = _.get(profile, ["first_name"], "");
-    let lastName = _.get(profile, ["last_name"], "");
-    let rFirstName = _.get(profile, ["romanized_first_name"], "");
-    let rLastName = _.get(profile, ["romanized_last_name"], "");
-    const showRomanizedFields = (
-      !english.test(firstName) || !english.test(lastName) || rFirstName || rLastName
-    );
-
-    if (showRomanizedFields) {
+    if (showRomanizedFields(profile)) {
       return (
         <Cell col={12}>
           <section className="romanized-name">

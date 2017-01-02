@@ -12,6 +12,7 @@ import { sendFormFieldEvent } from '../lib/google_analytics';
 import type { Validator, UIValidator } from '../lib/validation/profile';
 import type { Profile } from '../flow/profileTypes';
 import type { Option } from '../flow/generalTypes';
+import { CP1252_REGIX } from '../constants';
 
 // utility functions for pushing changes to profile forms back to the
 // redux store.
@@ -235,4 +236,17 @@ export function saveProfileStep(validator: Validator|UIValidator, isLastStep: bo
     clone.email_optin = true;
   }
   return saveProfile(validator, clone, ui);
+}
+
+/*
+returns true of  first name or last name has non CP-1252 value. or their is
+romanized_first_name or romanized_last_name exist in system
+ */
+export function showRomanizedFields(profile: Profile): boolean {
+  let firstName = _.get(profile, ["first_name"], "");
+  let lastName = _.get(profile, ["last_name"], "");
+  let rFirstName = _.get(profile, ["romanized_first_name"], "");
+  let rLastName = _.get(profile, ["romanized_last_name"], "");
+
+  return !CP1252_REGIX.test(firstName) || !CP1252_REGIX.test(lastName) || rFirstName || rLastName;
 }

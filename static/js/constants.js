@@ -12,6 +12,8 @@ export const ISO_8601_FORMAT = 'YYYY-MM-DD';
 export const DASHBOARD_FORMAT = 'M/D/Y';
 export const DASHBOARD_MONTH_FORMAT = 'MM[/]YYYY';
 
+export const CP1252_REGIX = /^[\u0021-\u00FF]*$/;
+
 // NOTE: this is in order of attainment
 export const EDUCATION_LEVELS = [
   {value: HIGH_SCHOOL, label: "High school"},
