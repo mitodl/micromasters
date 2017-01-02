@@ -238,8 +238,8 @@ export function saveProfileStep(validator: Validator|UIValidator, isLastStep: bo
   return saveProfile(validator, clone, ui);
 }
 
-/*
-returns true of  first name or last name has non CP-1252 value.
+/**
+ * Returns true when first name or last name has non CP-1252 string(s).
  */
 export function showRomanizedFields(profile: Profile): boolean {
   let firstName = _.get(profile, ["first_name"], "");

@@ -72,7 +72,7 @@ const personalMessages: ErrorMessages = {
   'country': "Country is required",
   'birth_country': "Country is required",
   'nationality': "Nationality is required",
-  'date_of_birth': 'Please enter a valid date of birth',
+  'date_of_birth': 'Please enter a valid date of birth'
 };
 
 export const personalValidation = (profile: Profile) => {

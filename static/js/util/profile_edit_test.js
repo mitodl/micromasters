@@ -589,6 +589,13 @@ describe('Profile Editing utility functions', () => {
   });
 
   describe('showRomanizedFields', () => {
+    it('when first and last names are empty', () => {
+      let profile = _.cloneDeep(USER_PROFILE_RESPONSE);
+      profile.first_name = '';
+      profile.last_name = '';
+      assert.isNotTrue(showRomanizedFields(profile));
+    });
+
     it('when first name is non cp-1252', () => {
       let profile = _.cloneDeep(USER_PROFILE_RESPONSE);
       profile.first_name = 'عامر';
