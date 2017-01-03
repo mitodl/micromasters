@@ -123,7 +123,7 @@ describe('FinancialAidCalculator', () => {
       }
       return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(() => {
         // assert inFlight arg
-        console.log(dialogActionsSpy.callCount);
+        console.log("dialogActionsSpy", dialogActionsSpy.lastCall);
         assert.equal(dialogActionsSpy.lastCall.args[2], activity);
         assert.equal(dialogActionsSpy.lastCall.args[3], "Enroll");
       });

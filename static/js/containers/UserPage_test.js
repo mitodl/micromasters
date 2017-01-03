@@ -461,6 +461,7 @@ describe("UserPage", function() {
             if (activity) {
               helper.store.dispatch(requestPatchUserProfile(username));
             }
+            assert.equal(dialogActionsSpy.callCount, 1);
             assert.equal(dialogActionsSpy.lastCall.args[2], activity);
           });
         });
