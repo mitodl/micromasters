@@ -94,7 +94,6 @@ describe('UserPageAboutMeDialog', () => {
       profilePatchStatus: FETCH_PROCESSING
     });
     // assert that inFlight is true
-    console.log("calls", dialogActionsSpy.calls);
     assert.isTrue(dialogActionsSpy.lastCall.args[2]);
     assert.equal(dialogActionsSpy.callCount, 1);
   });

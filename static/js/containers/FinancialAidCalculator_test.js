@@ -5,6 +5,7 @@ import _ from 'lodash';
 import TestUtils from 'react-addons-test-utils';
 import { render } from 'enzyme';
 import { Provider } from 'react-redux';
+import sinon from 'sinon';
 
 import * as inputUtil from '../components/inputs/util';
 import FinancialAidCalculator from '../containers/FinancialAidCalculator';
@@ -31,6 +32,7 @@ import {
   setCurrentProgramEnrollment,
 } from '../actions/programs';
 import {
+  setCalculatorDialogVisibility,
   setConfirmSkipDialogVisibility,
   SET_CALCULATOR_DIALOG_VISIBILITY,
   SET_CONFIRM_SKIP_DIALOG_VISIBILITY,
@@ -123,9 +125,7 @@ describe('FinancialAidCalculator', () => {
       }
       return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(() => {
         // assert inFlight arg
-        console.log("dialogActionsSpy", dialogActionsSpy.lastCall);
-        assert.equal(dialogActionsSpy.lastCall.args[2], activity);
-        assert.equal(dialogActionsSpy.lastCall.args[3], "Enroll");
+        assert.isTrue(dialogActionsSpy.calledWith(sinon.match.any, sinon.match.any, activity, "Pay Full Price"));
       });
     });
   }
@@ -273,16 +273,14 @@ describe('FinancialAidCalculator', () => {
 
   for (let activity of [true, false]) {
     it(`has appropriate state for financial aid submit button, activity=${activity.toString()}`, () => {
-      addFinancialAidStub.returns(Promise.resolve(FINANCIAL_AID_PARTIAL_RESPONSE));
+      let dialogActionsSpy = helper.sandbox.spy(inputUtil, 'dialogActions');
+
       if (activity) {
         helper.store.dispatch(requestAddFinancialAid());
       }
-
-      return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
-        let buttonProps = wrapper.find('.pricing-actions').find('SpinnerButton').filterWhere(
-          button => button.props().className.includes("dashboard-button")
-        ).props();
-        assert.equal(buttonProps.spinning, activity);
+      addFinancialAidStub.returns(Promise.resolve(FINANCIAL_AID_PARTIAL_RESPONSE));
+      return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(() => {
+        assert.isTrue(dialogActionsSpy.calledWith(sinon.match.any, sinon.match.any, activity, "Calculate"));
       });
     });
   }

@@ -83,7 +83,7 @@ describe('EmailCompositionDialog', () => {
     });
 
     // assert that inFlight is true
-    assert.isTrue(dialogActionsSpy.lastCall.args[2]);
+    assert.isTrue(dialogActionsSpy.calledWith(sinon.match.any, sinon.match.any, true));
     assert.equal(dialogActionsSpy.callCount, 1);
   });
 
