@@ -82,11 +82,11 @@ export const personalValidation = (profile: Profile) => {
   }
   if (shouldRenderRomanizedFields(profile)) {
     if (!profile.romanized_first_name || !CP1252_REGEX.test(profile.romanized_first_name)) {
-      errors.romanized_first_name = "CP-1252 string is required";
+      errors.romanized_first_name = "Latin first name is required";
     }
 
     if (!profile.romanized_last_name || !CP1252_REGEX.test(profile.romanized_last_name)) {
-      errors.romanized_last_name = "CP-1252 string is required";
+      errors.romanized_last_name = "Latin last name is required";
     }
   }
   return errors;

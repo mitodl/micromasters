@@ -93,8 +93,8 @@ describe('Profile validation functions', () => {
         first_name: 'عامر'
       };
       let errors = {
-        romanized_first_name: "CP-1252 string is required",
-        romanized_last_name: "CP-1252 string is required"
+        romanized_first_name: "Latin first name is required",
+        romanized_last_name: "Latin last name is required"
       };
       assert.deepEqual(personalValidation(profile), errors);
     });
@@ -105,8 +105,8 @@ describe('Profile validation functions', () => {
         last_name: 'عامر'
       };
       let errors = {
-        romanized_first_name: "CP-1252 string is required",
-        romanized_last_name: "CP-1252 string is required"
+        romanized_first_name: "Latin first name is required",
+        romanized_last_name: "Latin last name is required"
       };
       assert.deepEqual(personalValidation(profile), errors);
     });
@@ -119,7 +119,7 @@ describe('Profile validation functions', () => {
         romanized_last_name: 'test'
       };
       let errors = {
-        romanized_first_name: "CP-1252 string is required",
+        romanized_first_name: "Latin first name is required",
       };
       assert.deepEqual(personalValidation(profile), errors);
     });
@@ -130,10 +130,9 @@ describe('Profile validation functions', () => {
         first_name: 'عامر',
         romanized_first_name: 'test',
         romanized_last_name: 'عامر'
-
       };
       let errors = {
-        romanized_last_name: "CP-1252 string is required",
+        romanized_last_name: "Latin last name is required",
       };
       assert.deepEqual(personalValidation(profile), errors);
     });
