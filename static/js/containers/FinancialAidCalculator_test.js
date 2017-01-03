@@ -32,7 +32,6 @@ import {
   setCurrentProgramEnrollment,
 } from '../actions/programs';
 import {
-  setCalculatorDialogVisibility,
   setConfirmSkipDialogVisibility,
   SET_CALCULATOR_DIALOG_VISIBILITY,
   SET_CONFIRM_SKIP_DIALOG_VISIBILITY,

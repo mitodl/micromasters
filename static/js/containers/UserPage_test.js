@@ -4,6 +4,7 @@ import TestUtils from 'react-addons-test-utils';
 import { assert } from 'chai';
 import _ from 'lodash';
 import moment from 'moment';
+import sinon from 'sinon';
 
 import * as inputUtil from '../components/inputs/util';
 import {
@@ -461,8 +462,7 @@ describe("UserPage", function() {
             if (activity) {
               helper.store.dispatch(requestPatchUserProfile(username));
             }
-            assert.equal(dialogActionsSpy.callCount, 1);
-            assert.equal(dialogActionsSpy.lastCall.args[2], activity);
+            assert.isTrue(dialogActionsSpy.calledWith(sinon.match.any, sinon.match.any, activity, "Delete"));
           });
         });
       }
@@ -570,14 +570,14 @@ describe("UserPage", function() {
       });
 
       for (const activity of [true, false]) {
-        it(`should have proper button state when activity=${activity}`, () => {
+        it(`should have proper save button state when activity=${activity}`, () => {
           const username = SETTINGS.user.username;
           let dialogActionsSpy = helper.sandbox.spy(inputUtil, 'dialogActions');
-          return renderComponent(`/learner/${username}`, userActions).then(([]) => {
+          return renderComponent(`/learner/${username}`, userActions).then(() => {
             if (activity) {
               helper.store.dispatch(requestPatchUserProfile(username));
             }
-            assert.equal(dialogActionsSpy.lastCall.args[2], activity);
+            assert.isTrue(dialogActionsSpy.calledWith(sinon.match.any, sinon.match.any, activity));
           });
         });
       }
@@ -694,7 +694,7 @@ describe("UserPage", function() {
             if (activity) {
               helper.store.dispatch(requestPatchUserProfile(username));
             }
-            assert.equal(dialogActionsSpy.lastCall.args[2], activity);
+            assert.isTrue(dialogActionsSpy.calledWith(sinon.match.any, sinon.match.any, activity, "Delete"));
           });
         });
       }
@@ -819,7 +819,7 @@ describe("UserPage", function() {
             if (activity) {
               helper.store.dispatch(requestPatchUserProfile(username));
             }
-            assert.equal(dialogActionsSpy.lastCall.args[2], activity);
+            assert.isTrue(dialogActionsSpy.calledWith(sinon.match.any, sinon.match.any, activity));
           });
         });
       }
@@ -955,7 +955,7 @@ describe("UserPage", function() {
             if (activity) {
               helper.store.dispatch(requestPatchUserProfile(username));
             }
-            assert.equal(dialogActionsSpy.lastCall.args[2], activity);
+            assert.isTrue(dialogActionsSpy.calledWith(sinon.match.any, sinon.match.any, activity));
           });
         });
       }
