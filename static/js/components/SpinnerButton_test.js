@@ -105,7 +105,7 @@ describe("SpinnerButton", () => {
     assert.isTrue(wrapper.state().recentlyClicked);
   });
 
-  it('is disabled if spinning is true but recentlyClicked is false', () => {
+  it('does not show the spinner if spinning is true but recentlyClicked is false', () => {
     let onClick = sandbox.stub();
     let wrapper = shallow(
       <SpinnerButton
