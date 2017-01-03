@@ -32,47 +32,42 @@ export default class SpinnerButton extends React.Component {
     }
   }
 
+  isDisabled = () => (this.props.disabled || this.props.spinning) ? true : undefined;
+
+  // wrap onClick to return undefined if disabled and to set recentlyClicked if clicked
+  onClickWrapper = e => (
+    this.isDisabled() ? undefined : (...args) => {
+      this.setState({
+        recentlyClicked: true
+      });
+      return this.props.onClick(...args);
+    }
+  );
+
   render() {
     let {
       component: ComponentVariable,
       spinning,
       className,
-      onClick,
       children,
       disabled,
       ...otherProps
     } = this.props;
     const { recentlyClicked } = this.state;
 
-    if (spinning && !disabled) {
-      if (recentlyClicked) {
-        if (!className) {
-          className = '';
-        }
-        className = `${className} disabled-with-spinner`;
-        children = <Spinner singleColor/>;
+    if (spinning && !disabled && recentlyClicked) {
+      if (!className) {
+        className = '';
       }
-      disabled = true;
-    }
-    if (disabled) {
-      onClick = undefined;
-    }
-
-    if (onClick) {
-      let oldOnClick = onClick;
-      onClick = (...args) => {
-        this.setState({
-          recentlyClicked: true
-        });
-        return oldOnClick(...args);
-      };
+      className = `${className} disabled-with-spinner`;
+      children = <Spinner singleColor/>;
     }
 
     return <ComponentVariable
       className={className}
-      onClick={onClick}
-      disabled={disabled}
+      disabled={this.isDisabled()}
       {...otherProps}
+      onClick={this.onClickWrapper()}
     >
       {children}
     </ComponentVariable>;
