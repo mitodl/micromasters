@@ -28,7 +28,7 @@ class MailgunClient:
         Returns:
             json: json object containing email from info.
         """
-        email_from = settings.MAILGUN_FROM_EMAIL
+        email_from = settings.MICROMASTERS_SUPPORT_EMAIL
         if sender_name:
             email_from = "{sender_name} <{email}>".format(sender_name=sender_name, email=email_from)
         return {'from': email_from}
