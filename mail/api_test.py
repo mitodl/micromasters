@@ -29,7 +29,7 @@ class MailAPITests(TestCase):
     """
     Tests for the Mailgun client class
     """
-    @override_settings(MAILGUN_FROM_EMAIL='mailgun_from_email@example.com')
+    @override_settings(EMAIL_SUPPORT='mailgun_from_email@example.com')
     def test_from_address(self, mock_post):
         """
         Test that the 'from' address for our emails is set correctly
@@ -40,7 +40,7 @@ class MailAPITests(TestCase):
         _, called_kwargs = mock_post.call_args
         assert called_kwargs['data']['from'] == 'mailgun_from_email@example.com'
 
-    @override_settings(MAILGUN_FROM_EMAIL='mailgun_from_email@example.com')
+    @override_settings(EMAIL_SUPPORT='mailgun_from_email@example.com')
     def test_from_address_with_sender_name(self, mock_post):
         """
         Test that the sender name and 'from' address for our emails is set correctly.
@@ -167,7 +167,7 @@ class FinancialAidMailAPITests(TestCase):
         self.financial_aid.refresh_from_db()
 
     @override_settings(
-        MAILGUN_FROM_EMAIL='mailgun_from_email@example.com',
+        EMAIL_SUPPORT='mailgun_from_email@example.com',
         MAILGUN_RECIPIENT_OVERRIDE=None
     )
     def test_financial_aid_email(self, mock_post):
@@ -194,19 +194,19 @@ class FinancialAidMailAPITests(TestCase):
         assert called_kwargs['data']['text'] == 'email body'
         assert called_kwargs['data']['subject'] == 'email subject'
         assert called_kwargs['data']['to'] == [self.financial_aid.user.email]
-        assert called_kwargs['data']['from'] == settings.MAILGUN_FROM_EMAIL
+        assert called_kwargs['data']['from'] == settings.EMAIL_SUPPORT
         # Check audit creation
         assert FinancialAidEmailAudit.objects.count() == 1
         audit = FinancialAidEmailAudit.objects.first()
         assert audit.acting_user == self.staff_user_profile.user
         assert audit.financial_aid == self.financial_aid
         assert audit.to_email == self.financial_aid.user.email
-        assert audit.from_email == settings.MAILGUN_FROM_EMAIL
+        assert audit.from_email == settings.EMAIL_SUPPORT
         assert audit.email_subject == 'email subject'
         assert audit.email_body == 'email body'
 
     @override_settings(
-        MAILGUN_FROM_EMAIL='mailgun_from_email@example.com',
+        EMAIL_SUPPORT='mailgun_from_email@example.com',
         MAILGUN_RECIPIENT_OVERRIDE=None
     )
     def test_financial_aid_email_with_blank_subject_and_body(self, mock_post):
@@ -234,13 +234,13 @@ class FinancialAidMailAPITests(TestCase):
         assert called_kwargs['data']['text'] == ''
         assert called_kwargs['data']['subject'] == ''
         assert called_kwargs['data']['to'] == [self.financial_aid.user.email]
-        assert called_kwargs['data']['from'] == settings.MAILGUN_FROM_EMAIL
+        assert called_kwargs['data']['from'] == settings.EMAIL_SUPPORT
         # Check audit creation
         assert FinancialAidEmailAudit.objects.count() == 1
         audit = FinancialAidEmailAudit.objects.first()
         assert audit.acting_user == self.staff_user_profile.user
         assert audit.financial_aid == self.financial_aid
         assert audit.to_email == self.financial_aid.user.email
-        assert audit.from_email == settings.MAILGUN_FROM_EMAIL
+        assert audit.from_email == settings.EMAIL_SUPPORT
         assert audit.email_subject == ''
         assert audit.email_body == ''
