@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 from unittest.mock import patch, MagicMock
 import pytz
 from django.core.exceptions import ImproperlyConfigured
-from django.test import TestCase
 
 from courses.factories import ProgramFactory, CourseFactory, CourseRunFactory
 from dashboard.api_edx_cache import CachedEdxUserData
@@ -17,9 +16,10 @@ from financialaid.factories import TierProgramFactory, FinancialAidFactory
 from financialaid.constants import FinancialAidStatus
 from micromasters.factories import UserFactory
 from micromasters.utils import load_json_from_file
+from search.base import ESTestCase
 
 
-class MMTrackTest(TestCase):
+class MMTrackTest(ESTestCase):
     """
     Tests for the MMTrack class
     """
@@ -461,7 +461,7 @@ class MMTrackTest(TestCase):
         with patch('edx_api.grades.models.CurrentGrades.get_current_grade', return_value=None):
             assert mmtrack.get_current_grade("course-v1:MITx+8.MechCX+2014_T1") is None
 
-    def count_courses_passed_normal(self):
+    def test_count_courses_passed_normal(self):
         """
         Assert that count_courses_passed works in case of a normal program.
         """
@@ -472,10 +472,18 @@ class MMTrackTest(TestCase):
         )
         assert mmtrack.count_courses_passed() == 1
 
-    def count_courses_passed_fa(self):
+    def test_count_courses_passed_fa(self):
         """
         Assert that count_courses_passed works in case of fa program.
         """
+        mmtrack = MMTrack(
+            user=self.user,
+            program=self.program_financial_aid,
+            edx_user_data=self.cached_edx_user_data
+        )
+        assert mmtrack.count_courses_passed() == 0
+
+        self.pay_for_fa_course(self.crun_fa.edx_course_key)
         mmtrack = MMTrack(
             user=self.user,
             program=self.program_financial_aid,

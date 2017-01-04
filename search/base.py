@@ -16,9 +16,20 @@ class ESTestCase(TestCase):
     Set up ES index on setup
     """
 
-    def setUp(self):
-        super(ESTestCase, self).setUp()
+    @classmethod
+    def setUpTestData(cls):
+        # Make sure index exists when signals are run.
         recreate_index()
+        super().setUpTestData()
+
+    def setUp(self):
+        # Make sure index exists when signals are run.
+        # We want to run recreate_index instead of clear_index
+        # because the test data is contained in a transaction
+        # which is reverted after each test runs, so signals don't get run
+        # that keep ES up to date.
+        recreate_index()
+        super().setUp()
 
 
 @override_settings(ELASTICSEARCH_URL="fake")
