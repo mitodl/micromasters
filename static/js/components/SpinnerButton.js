@@ -32,7 +32,7 @@ export default class SpinnerButton extends React.Component {
     }
   }
 
-  isDisabled = () => (this.props.disabled || this.props.spinning) ? true : undefined;
+  isDisabled = () => this.props.disabled || this.props.spinning || undefined;
 
   // If button is not disabled and has an onClick handler, make sure to set recentlyClicked
   // so we display the spinner
