@@ -262,6 +262,7 @@ class ProfileLimitedSerializer(ProfileBaseSerializer):
             'edx_level_of_education',
             'education',
             'about_me',
+            'image_medium',
             'romanized_first_name',
             'romanized_last_name'
         )
