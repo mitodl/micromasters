@@ -4,8 +4,10 @@ Tests for ecommerce views
 from unittest.mock import (
     MagicMock,
     patch,
+    PropertyMock,
 )
 
+import ddt
 from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save
 from django.test import override_settings
@@ -13,18 +15,23 @@ from factory.django import mute_signals
 import faker
 import rest_framework.status as status
 
+from backends.edxorg import EdxOrgOAuth2
 from courses.factories import CourseRunFactory
 from ecommerce.api import (
     create_unfulfilled_order,
     make_reference_id,
 )
 from ecommerce.api_test import create_purchasable_course_run
+from ecommerce.factories import CouponFactory
 from ecommerce.models import (
     Order,
     OrderAudit,
     Receipt,
+    UserCoupon,
 )
+from ecommerce.serializers import CouponSerializer
 from micromasters.factories import UserFactory
+from profiles.api import get_social_username
 from profiles.factories import ProfileFactory
 from search.base import ESTestCase
 
@@ -291,4 +298,139 @@ class OrderFulfillmentViewTests(ESTestCase):
         """
         with patch('ecommerce.views.IsSignedByCyberSource.has_permission', return_value=False):
             resp = self.client.post(reverse('order-fulfillment'), data={})
+        assert resp.status_code == status.HTTP_403_FORBIDDEN
+
+
+@ddt.ddt
+class CouponTests(ESTestCase):
+    """
+    Tests for list coupon view
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        """
+        Create user, run, and coupons for testing
+        """
+        super().setUpTestData()
+        with mute_signals(post_save):
+            profile = ProfileFactory.create()
+        cls.user = profile.user
+        cls.user.social_auth.create(
+            provider='not_edx',
+        )
+        cls.social_username = "{}_edx".format(cls.user.username)
+        cls.user.social_auth.create(
+            provider=EdxOrgOAuth2.name,
+            uid='user',
+        )
+        run = CourseRunFactory.create()
+        cls.coupon = CouponFactory.create(content_object=run.course.program)
+        UserCoupon.objects.create(coupon=cls.coupon, user=cls.user)
+
+    def setUp(self):
+        super().setUp()
+        self.client.force_login(self.user)
+
+    @ddt.data(
+        # In the code this is basically is_redeemable and (is_automatic or user_coupon_exists)
+        [True, True, True, True],
+        [True, True, False, True],
+        [True, False, True, True],
+        [True, False, False, False],
+        [False, True, True, False],
+        [False, True, False, False],
+        [False, False, True, False],
+        [False, False, False, False],
+    )
+    @ddt.unpack
+    def test_list_coupons(self, is_redeemable, is_automatic, user_coupon_exists, expected):
+        """
+        Test happy path and edge cases for
+        """
+        if not user_coupon_exists:
+            UserCoupon.objects.filter(user=self.user).delete()
+        with patch(
+            'ecommerce.views.Coupon.is_automatic', new_callable=PropertyMock
+        ) as _is_automatic_mock, patch(
+            'ecommerce.views.is_coupon_redeemable', autospec=True
+        ) as _is_redeemable_mock:
+            _is_automatic_mock.return_value = is_automatic
+            _is_redeemable_mock.return_value = is_redeemable
+            resp = self.client.get(reverse('coupon-list'))
+
+        assert resp.status_code == status.HTTP_200_OK
+        coupons = resp.json()
+
+        if expected:
+            # Due to short circuiting some of these may not get called if expected is False
+            assert _is_automatic_mock.call_count == 1
+            _is_automatic_mock.assert_called_with()
+            assert _is_redeemable_mock.call_count == 1
+            _is_redeemable_mock.assert_called_with(self.coupon, self.user)
+            assert len(coupons) == 1
+            assert coupons[0] == CouponSerializer(self.coupon).data
+        else:
+            assert len(coupons) == 0
+
+    def test_not_logged_in(self):
+        """
+        Anonymous users should not be able to view this API
+        """
+        self.client.logout()
+        resp = self.client.get(reverse('coupon-list'))
+        assert resp.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_views_only_own_coupons(self):
+        """
+        We should not see a coupon for run2 in the output, since there's no UserCoupon for it.
+        """
+        # Make a coupon without a UserCoupon
+        coupon = CouponFactory.create(content_object=self.coupon.content_object)
+
+        # Verify that it doesn't exist in output
+        with patch(
+            'ecommerce.views.is_coupon_redeemable', autospec=True
+        ) as _is_redeemable_mock:
+            _is_redeemable_mock.return_value = True
+            resp = self.client.get(reverse('coupon-list'))
+
+        assert _is_redeemable_mock.call_count == 2
+        _is_redeemable_mock.assert_any_call(self.coupon, self.user)
+        _is_redeemable_mock.assert_any_call(coupon, self.user)
+        assert resp.status_code == status.HTTP_200_OK
+        coupons = resp.json()
+        assert len(coupons) == 1
+        assert coupons[0] == CouponSerializer(self.coupon).data
+
+    @ddt.data(True, False)
+    def test_create_user_coupon(self, already_exists):
+        """
+        Test happy case for creating a UserCoupon
+        """
+        if not already_exists:
+            # Won't change anything if it already exists
+            UserCoupon.objects.all().delete()
+        data = {
+            'username': get_social_username(self.user),
+        }
+        with patch(
+            'ecommerce.views.is_coupon_redeemable', autospec=True
+        ) as _is_redeemable_mock:
+            _is_redeemable_mock.return_value = True
+            resp = self.client.post(
+                reverse('coupon-user-create', kwargs={'code': self.coupon.coupon_code}),
+                data=data,
+                format='json',
+            )
+        _is_redeemable_mock.assert_called_with(self.coupon, self.user)
+        assert resp.status_code == status.HTTP_200_OK
+        assert UserCoupon.objects.count() == 1
+        assert UserCoupon.objects.filter(user=self.user, coupon=self.coupon).exists()
+
+    def test_empty_dict(self):
+        """
+        A 403 should be returned if an invalid dict is submitted
+        """
+        resp = self.client.post(reverse('coupon-user-create'), data={}, format='json')
         assert resp.status_code == status.HTTP_403_FORBIDDEN
