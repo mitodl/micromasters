@@ -34,15 +34,14 @@ export default class SpinnerButton extends React.Component {
 
   isDisabled = () => (this.props.disabled || this.props.spinning) ? true : undefined;
 
-  // wrap onClick to return undefined if disabled and to set recentlyClicked if clicked
-  onClickWrapper = () => (
-    this.isDisabled() ? undefined : (...args) => {
-      this.setState({
-        recentlyClicked: true
-      });
-      return this.props.onClick(...args);
-    }
-  );
+  // If button is not disabled and has an onClick handler, make sure to set recentlyClicked
+  // so we display the spinner
+  onClick = (...args) => {
+    this.setState({
+      recentlyClicked: true
+    });
+    return this.props.onClick(...args);
+  };
 
   render() {
     let {
@@ -67,7 +66,7 @@ export default class SpinnerButton extends React.Component {
       className={className}
       disabled={this.isDisabled()}
       {...otherProps}
-      onClick={this.onClickWrapper()}
+      onClick={this.isDisabled() ? undefined : this.onClick}
     >
       {children}
     </ComponentVariable>;
