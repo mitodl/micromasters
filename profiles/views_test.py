@@ -56,11 +56,10 @@ from search.base import ESTestCase
 
 def format_image_expectation(profile):
     """formats a profile image to match what will be in JSON"""
-    if 'image' in profile:
-        profile["image"] = "http://testserver{}".format(profile["image"])
-    if 'image_small' in profile:
-        profile["image_small"] = "http://testserver{}".format(profile["image_small"])
-    profile["image_medium"] = "http://testserver{}".format(profile["image_medium"])
+    image_fields = ['image', 'image_medium', 'image_small']
+    for field in image_fields:
+        if field in profile:
+            profile[field] = "http://testserver{}".format(profile[field])
     return profile
 
 
