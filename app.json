@@ -128,6 +128,10 @@
       "default": "MicroMasters",
       "description": "Application identifier in New Relic."
     },
+    "NODE_MODULES_CACHE": {
+      "description": "If false, disables the node_modules cache to fix yarn install",
+      "value": "false"
+    },
     "OPEN_EXCHANGE_RATES_APP_ID": {
       "description": "The app ID for the open exchange rates API"
     },
