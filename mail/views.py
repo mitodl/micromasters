@@ -51,7 +51,7 @@ class SearchResultMailView(APIView):
             subject=request.data['email_subject'],
             body=request.data['email_body'],
             recipients=emails,
-            sender_name=full_name(request.user.profile)
+            sender_name=full_name(request.user)
         )
         return Response(
             status=status.HTTP_200_OK,

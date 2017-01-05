@@ -5,6 +5,7 @@ import json
 import string
 from unittest.mock import Mock, patch
 
+from ddt import ddt, data
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.test import TestCase, override_settings
@@ -24,34 +25,34 @@ from profiles.factories import ProfileFactory
 # pylint: disable=no-self-use
 
 
+@ddt
 @patch('requests.post')
 class MailAPITests(TestCase):
     """
     Tests for the Mailgun client class
     """
     @override_settings(EMAIL_SUPPORT='mailgun_from_email@example.com')
-    def test_from_address(self, mock_post):
+    @data(None, 'Tester')
+    def test_from_address(self, sender_name, mock_post):
         """
         Test that the 'from' address for our emails is set correctly
         """
         # NOTE: Using patch.multiple to override settings values because Django's
         # override_settings decorator fails to work for mysterious reasons
-        MailgunClient.send_bcc('email subject', 'email body', ['will_be_ignored@example.com'])
-        _, called_kwargs = mock_post.call_args
-        assert called_kwargs['data']['from'] == 'mailgun_from_email@example.com'
-
-    @override_settings(EMAIL_SUPPORT='mailgun_from_email@example.com')
-    def test_from_address_with_sender_name(self, mock_post):
-        """
-        Test that the sender name and 'from' address for our emails is set correctly.
-        """
-        sender = 'tester'
-        MailgunClient.send_bcc('email subject', 'email body', ['will_be_ignored@example.com'], sender_name=sender)
-        _, called_kwargs = mock_post.call_args
-        self.assertEqual(
-            called_kwargs['data']['from'],
-            '{sender_name} <mailgun_from_email@example.com>'.format(sender_name=sender)
+        MailgunClient.send_bcc(
+            'email subject',
+            'email body',
+            ['will_be_ignored@example.com'],
+            sender_name=sender_name
         )
+        _, called_kwargs = mock_post.call_args
+        if sender_name is not None:
+            self.assertEqual(
+                called_kwargs['data']['from'],
+                '{sender_name} <mailgun_from_email@example.com>'.format(sender_name=sender_name)
+            )
+        else:
+            assert called_kwargs['data']['from'] == 'mailgun_from_email@example.com'
 
     @override_settings(MAILGUN_RECIPIENT_OVERRIDE='override@example.com')
     def test_email_override(self, mock_post):
@@ -73,11 +74,17 @@ class MailAPITests(TestCase):
         _, called_kwargs = mock_post.call_args
         assert called_kwargs['data']['bcc'] == 'a@example.com,b@example.com'
 
-    def test_send_bcc(self, mock_post):
+    @data(None, 'Tester')
+    def test_send_bcc(self, sender_name, mock_post):
         """
         Test that MailgunClient.send_bcc sends expected parameters to the Mailgun API
         """
-        MailgunClient.send_bcc('email subject', 'email body', ['a@example.com', 'b@example.com'])
+        MailgunClient.send_bcc(
+            'email subject',
+            'email body',
+            ['a@example.com', 'b@example.com'],
+            sender_name=sender_name
+        )
         assert mock_post.called
         called_args, called_kwargs = mock_post.call_args
         assert list(called_args)[0] == '{}/{}'.format(settings.MAILGUN_URL, 'messages')
@@ -85,15 +92,23 @@ class MailAPITests(TestCase):
         assert called_kwargs['data']['text'].startswith('email body')
         assert called_kwargs['data']['subject'] == 'email subject'
         assert called_kwargs['data']['to'] == settings.MAILGUN_BCC_TO_EMAIL
+        if sender_name is not None:
+            self.assertEqual(
+                called_kwargs['data']['from'],
+                "{sender_name} <{email}>".format(sender_name=sender_name, email=settings.EMAIL_SUPPORT)
+            )
+        else:
+            self.assertEqual(called_kwargs['data']['from'], settings.EMAIL_SUPPORT)
 
     @override_settings(MAILGUN_RECIPIENT_OVERRIDE=None)
-    def test_send_batch(self, mock_post):
+    @data(None, 'Tester')
+    def test_send_batch(self, sender_name, mock_post):
         """
         Test that MailgunClient.send_batch sends expected parameters to the Mailgun API
         Base case with only one batch call to the Mailgun API.
         """
         emails_to = ['a@example.com', 'b@example.com']
-        MailgunClient.send_batch('email subject', 'email body', emails_to)
+        MailgunClient.send_batch('email subject', 'email body', emails_to, sender_name=sender_name)
         assert mock_post.called
         called_args, called_kwargs = mock_post.call_args
         assert list(called_args)[0] == '{}/{}'.format(settings.MAILGUN_URL, 'messages')
@@ -104,6 +119,13 @@ class MailAPITests(TestCase):
         assert called_kwargs['data']['recipient-variables'] == json.dumps(
             {email: {} for email in emails_to}
         )
+        if sender_name is not None:
+            self.assertEqual(
+                called_kwargs['data']['from'],
+                "{sender_name} <{email}>".format(sender_name=sender_name, email=settings.EMAIL_SUPPORT)
+            )
+        else:
+            self.assertEqual(called_kwargs['data']['from'], settings.EMAIL_SUPPORT)
 
     @override_settings(MAILGUN_RECIPIENT_OVERRIDE=None)
     def test_send_batch_chunk(self, mock_post):

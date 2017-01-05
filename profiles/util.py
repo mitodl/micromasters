@@ -136,21 +136,22 @@ def make_thumbnail(full_size_image, max_dimension):
     return buffer
 
 
-def full_name(profile):
+def full_name(user):
     """
     returns users full name.
 
     Args:
-        profile (Profile): User's profile object.
+        user (User): user object.
 
     Returns:
         str: full name from profile.
     """
-    if not profile:
+    if not user or not user.profile:
         return None
 
+    profile = user.profile
     first = profile.first_name or profile.user.username
-    last = " {}".format(profile.last_name) if profile.last_name else ''
+    last = " {}".format(profile.last_name or '')
 
     return "{first_name}{last_name}".format(
         first_name=first,

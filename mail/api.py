@@ -29,7 +29,7 @@ class MailgunClient:
             json: json object containing email from info.
         """
         email_from = settings.EMAIL_SUPPORT
-        if sender_name:
+        if sender_name is not None:
             email_from = "{sender_name} <{email}>".format(sender_name=sender_name, email=email_from)
         return {'from': email_from}
 
@@ -97,7 +97,14 @@ class MailgunClient:
         return cls._mailgun_request(requests.post, 'messages', params, sender_name=sender_name)
 
     @classmethod
-    def send_batch(cls, subject, body, recipients, chunk_size=settings.MAILGUN_BATCH_CHUNK_SIZE, sender_name=None):
+    def send_batch(
+        cls,
+        subject,
+        body,
+        recipients,
+        chunk_size=settings.MAILGUN_BATCH_CHUNK_SIZE,
+        sender_name=None
+    ):  # pylint: disable=too-many-arguments
         """
         Sends a text email to a list of recipients (one email per recipient) via batch.
 
@@ -111,7 +118,6 @@ class MailgunClient:
         Returns:
             list: List of requests.Response HTTP response from Mailgun
         """
-        # pylint: disable=too-many-arguments
         body, recipients = cls._recipient_override(body, recipients)
         responses = []
 
