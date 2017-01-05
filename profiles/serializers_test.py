@@ -119,6 +119,7 @@ class ProfileTests(ESTestCase):
             'work_history': (
                 EmploymentSerializer(profile.work_history.all(), many=True).data
             ),
+            'image_medium': profile.image_medium.url,
             'about_me': profile.about_me,
             'romanized_first_name': profile.romanized_first_name,
             'romanized_last_name': profile.romanized_last_name,
