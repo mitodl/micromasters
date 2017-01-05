@@ -103,6 +103,7 @@
     "sass-lint": "^1.10.2",
     "sass-loader": "^4.1.0",
     "searchkit": "0.10.0",
+    "searchkit-multiselect": "^0.0.1",
     "sinon": "1.17.4",
     "slick-carousel": "^1.6.0",
     "striptags": "2.1.1",

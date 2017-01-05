@@ -7,7 +7,8 @@ import Icon from 'react-mdl/lib/Icon';
 const FILTER_ID_ADJUST = {
   "birth_location": "profile.birth_country5",
   "semester": "program.semester_enrollments.semester4",
-  "education_level": "profile.education.degree_name7"
+  "education_level": "profile.education.degree_name7",
+  "company_name": "profile.work_history.company_name8"
 };
 
 export default class FilterVisibilityToggle extends SearchkitComponent {

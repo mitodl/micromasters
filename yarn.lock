@@ -5333,7 +5333,7 @@ react-router@^3.0.0:
     loose-envify "^1.2.0"
     warning "^3.0.0"
 
-react-select@^1.0.0-beta14, react-select@^1.0.0-rc.1:
+react-select@^1.0.0-beta12, react-select@^1.0.0-beta14, react-select@^1.0.0-rc.1:
   version "1.0.0-rc.2"
   resolved "https://registry.yarnpkg.com/react-select/-/react-select-1.0.0-rc.2.tgz#9fc11b149a3dc1ac831289d21b40a59742f82f8d"
   dependencies:
@@ -5812,6 +5812,12 @@ sass-loader@^4.1.0:
 sax@^1.1.4, sax@~1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.1.tgz#7b8e656190b228e81a66aea748480d828cd2d37a"
+
+searchkit-multiselect@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/searchkit-multiselect/-/searchkit-multiselect-0.0.1.tgz#ae53fd6d0e77a3c80a965305591a22db42a0e1f5"
+  dependencies:
+    react-select "^1.0.0-beta12"
 
 searchkit@0.10.0:
   version "0.10.0"

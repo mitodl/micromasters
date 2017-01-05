@@ -12,7 +12,9 @@ import {
   ResetFilters,
   RangeFilter,
   SortingSelector,
+  MenuFilter
 } from 'searchkit';
+import MultiSelect from 'searchkit-multiselect';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import Card from 'react-mdl/lib/Card/Card';
 import iso3166 from 'iso-3166-2';
@@ -268,6 +270,20 @@ export default class LearnerSearch extends SearchkitComponent {
             max={this.getNumberOfCoursesInProgram()}
             showHistogram={false}
             title="# of Courses Passed" />
+        </FilterVisibilityToggle>
+        <FilterVisibilityToggle
+          {...this.props}
+          filterName="company-name"
+        >
+          <RefinementListFilter
+            field="profile.work_history.company_name"
+            title="Company"
+            id="company_name"
+            operator="OR"
+            fieldOptions={{type: 'nested', options: { path: 'profile.work_history' } }}
+            listComponent={MultiSelect}
+            size={20}
+          />
         </FilterVisibilityToggle>
       </Card>
     );
