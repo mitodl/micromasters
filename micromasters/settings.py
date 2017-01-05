@@ -324,8 +324,8 @@ else:
     ADMINS = ()
 
 # Logging configuration
-LOG_LEVEL = get_var('MICROMASTERS_LOG_LEVEL', 'DEBUG')
-DJANGO_LOG_LEVEL = get_var('DJANGO_LOG_LEVEL', 'DEBUG')
+LOG_LEVEL = get_var('MICROMASTERS_LOG_LEVEL', 'INFO')
+DJANGO_LOG_LEVEL = get_var('DJANGO_LOG_LEVEL', 'INFO')
 ES_LOG_LEVEL = get_var('ES_LOG_LEVEL', 'INFO')
 
 # For logging to a remote syslog host
