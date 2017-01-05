@@ -64,7 +64,7 @@
     "node-sass": "^4.1.0",
     "object.entries": "1.0.3",
     "postcss-loader": "^1.1.1",
-    "ramda": "^0.22.1",
+    "ramda": "^0.23.0",
     "raven-js": "^3.8.1",
     "react": "^15.4.0",
     "react-addons-shallow-compare": "^15.4.0",
