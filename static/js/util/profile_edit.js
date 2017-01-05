@@ -248,7 +248,6 @@ const curriedPathsHaveValue = R.curry((checkFunc, addressMapping) => (
 ));
 
 const allPathsHaveValue = curriedPathsHaveValue(R.all);
-const anyPathsHaveValue = curriedPathsHaveValue(R.any);
 
 export function boundGeosuggest(
   addressMapping: AddressComponentKeyMapping,
@@ -267,7 +266,6 @@ export function boundGeosuggest(
     R.forEachObjIndexed(updateValidationVisibility)
   );
   const hasAllAddressProps = allPathsHaveValue(addressMapping);
-  const hasAnyAddressProps = anyPathsHaveValue(addressMapping);
 
   const onSuggestSelect = (suggest) => {
     if (!suggest || !suggest.gmaps || !suggest.gmaps.address_components) {
@@ -306,11 +304,6 @@ export function boundGeosuggest(
 
   const initial = formatInitialAddress(profile);
 
-  let errorMsg = "";
-  if (hasAnyAddressProps(errors)) {
-    errorMsg = "Please enter a valid address.";
-  }
-
   return (
     <div>
       <Geosuggest initialValue={initial}
@@ -318,7 +311,7 @@ export function boundGeosuggest(
         onSuggestSelect={onSuggestSelect} onBlur={onBlur}
       />
       <span className="validation-error-text">
-        {errorMsg}
+        {_.get(errors, ["address"])}
       </span>
     </div>
   );

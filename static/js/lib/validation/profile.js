@@ -89,6 +89,13 @@ export const personalValidation = (profile: Profile) => {
       errors.romanized_last_name = "Latin last name is required";
     }
   }
+  if (
+    isNilOrEmptyString(profile.city) ||
+    isNilOrEmptyString(profile.state_or_territory) ||
+    isNilOrEmptyString(profile.country)
+  ) {
+    errors.address = "Please enter a valid address";
+  }
   return errors;
 };
 
