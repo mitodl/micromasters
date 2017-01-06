@@ -58,13 +58,25 @@
         })(document);
         smartlook('init', '{{ APIKEYS.SMARTLOOK }}');
     </script>
-    {% endif %}
-
+    {% endif %
     {% if google_maps_api and APIKEYS.GOOGLE %}
     <script async
       src="https://maps.googleapis.com/maps/api/js?key={{ APIKEYS.GOOGLE }}&libraries=places">
     </script>
     {% endif %}
+    <script type="text/javascript">
+      /* <![CDATA[ */
+      var google_conversion_id = 935224753;
+      var google_custom_params = window.google_tag_params;
+      var google_remarketing_only = true;
+      /* ]]> */
+    </script>
+    <script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js"></script>
+    <noscript>
+      <div style="display:inline;">
+        <img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/935224753/?guid=ON&amp;script=0"/>
+      </div>
+    </noscript>
     {% endspaceless %}
   </head>
   <body class="{% block bodyclass %}{% endblock %}">
