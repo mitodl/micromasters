@@ -251,7 +251,9 @@
     </main>
   </div>
 
-  {% include "adwords.html" %}
+  {% if not DO_NOT_TRACK %}
+    {% include "adwords.html" %}
+  {% endif %}
   {% include "footer.html" %}
 
   <div class="modal fade modal-fade-in-scale-up" id="modal-about"

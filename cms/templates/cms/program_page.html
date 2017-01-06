@@ -151,7 +151,9 @@
   {% endif %}
 
 </main>
-{% include "adwords.html" %}
+{% if not DO_NOT_TRACK %}
+  {% include "adwords.html" %}
+{% endif %}
 {% include "footer.html" %}
 
 <div id="signup-dialog">

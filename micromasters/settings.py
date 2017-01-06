@@ -230,6 +230,7 @@ TEMPLATES = [
                 'social.apps.django_app.context_processors.backends',
                 'social.apps.django_app.context_processors.login_redirect',
                 'ui.context_processors.api_keys',
+                'ui.context_processors.do_not_track',
             ],
         },
     },
