@@ -72,6 +72,10 @@
     "ELASTICSEARCH_URL": {
       "description": "URL for connecting to Elasticsearch cluster"
     },
+    "GOOGLE_API_KEY": {
+      "description": "API key for accessing Google services",
+      "required": true
+    },
     "MAILGUN_KEY": {
       "description": "The token for authenticating against the Mailgun API"
     },
