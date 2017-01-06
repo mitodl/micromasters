@@ -94,7 +94,7 @@ export const personalValidation = (profile: Profile) => {
     isNilOrEmptyString(profile.state_or_territory) ||
     isNilOrEmptyString(profile.country)
   ) {
-    errors.address = "Please enter a valid address";
+    errors["current-home"] = "Please enter a valid address";
   }
   return errors;
 };

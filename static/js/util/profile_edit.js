@@ -243,17 +243,17 @@ const profileFields = (addressMapping: AddressComponentKeyMapping, components: G
 
 const pathHasValue = R.flip(R.pathSatisfies(hasValue, R.__));
 
-const curriedPathsHaveValue = R.curry((checkFunc, addressMapping) => (
-  R.compose(checkFunc(R.__, R.values(addressMapping)), pathHasValue)
-));
-
-const allPathsHaveValue = curriedPathsHaveValue(R.all);
+const allPathsHaveValue = (addressMapping) => (
+  R.compose(R.all(R.__, R.values(addressMapping)), pathHasValue)
+);
 
 export function boundGeosuggest(
   addressMapping: AddressComponentKeyMapping,
+  id: string,
   label: string|React$Element<*>,
-  { id, placeholder, types }: { id: string, placeholder: string, types: string[] } = {}
+  { placeholder, types }: { placeholder: string, types: string[] } = {}
 ): React$Element<*> {
+  const keySet = [id];
   const {
     profile,
     errors,
@@ -262,9 +262,6 @@ export function boundGeosuggest(
     updateValidationVisibility,
   } = this.props;
 
-  const updateMultipleValidationVisibility = (
-    R.forEachObjIndexed(updateValidationVisibility)
-  );
   const hasAllAddressProps = allPathsHaveValue(addressMapping);
 
   const onSuggestSelect = (suggest) => {
@@ -276,17 +273,17 @@ export function boundGeosuggest(
       R.clone(profile),
       profileFields(addressMapping, suggest.gmaps.address_components)
     );
-    updateMultipleValidationVisibility(addressMapping);
+    updateValidationVisibility(keySet);
     updateProfile(newProfile, validator);
   };
 
   const onBlur = (value) => {
     if (!value) {
       let clone = _.cloneDeep(profile);
-      _.forOwn(addressMapping, (keySet, gmapType) => {  // eslint-disable-line no-unused-vars
-        _.set(clone, keySet, null);
+      _.forOwn(addressMapping, (addressKeySet, gmapType) => {  // eslint-disable-line no-unused-vars
+        _.set(clone, addressKeySet, null);
       });
-      updateMultipleValidationVisibility(addressMapping);
+      updateValidationVisibility(keySet);
       updateProfile(clone, validator);
     }
   };
@@ -303,15 +300,17 @@ export function boundGeosuggest(
   );
 
   const initial = formatInitialAddress(profile);
+  const className = validationErrorSelector(errors, keySet);
 
   return (
     <div>
-      <Geosuggest initialValue={initial}
-        id={id} label={label} placeholder={placeholder} types={types}
+      <Geosuggest
+        className={className} id={id}
+        initialValue={initial} label={label} placeholder={placeholder} types={types}
         onSuggestSelect={onSuggestSelect} onBlur={onBlur}
       />
       <span className="validation-error-text">
-        {_.get(errors, ["address"])}
+        {_.get(errors, keySet)}
       </span>
     </div>
   );
