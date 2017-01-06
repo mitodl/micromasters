@@ -107,7 +107,7 @@ and add a new Application. Fill in the values as follows:
 #### 5) Copy relevant values to use in the MicroMasters .env file
 
 The MicroMasters codebase contains a ``.env.example`` file which will be used as
-a template to create your ``.env`` file. For MicroMasters to work, it needs 3 values:
+a template to create your ``.env`` file. For MicroMasters to work, it needs 4 values:
 
 - ``EDXORG_BASE_URL``
 
@@ -120,6 +120,10 @@ a template to create your ``.env`` file. For MicroMasters to work, it needs 3 va
     **Client id:** and **Client secret:** values should be auto-generated for
     that new Application. Use those values for the corresponding ``EDXORG_``
     variables in the ``.env`` file.
+- ``GOOGLE_API_KEY``
+
+    You should get your own API key from Google and use it here. [Learn how to
+    get an API key from Google.](https://github.com/mitodl/micromasters/blob/master/docs/google-api-key.md)
 
 #### General edX devstack debugging notes
 
