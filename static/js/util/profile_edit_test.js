@@ -582,6 +582,7 @@ describe('Profile Editing utility functions', () => {
       return mount(boundGeosuggest.call(
         that,
         addressMapping,
+        "current-home",
         "Current address",
         opts
       ));

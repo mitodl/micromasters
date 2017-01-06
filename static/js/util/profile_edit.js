@@ -300,12 +300,10 @@ export function boundGeosuggest(
   );
 
   const initial = formatInitialAddress(profile);
-  const className = validationErrorSelector(errors, keySet);
 
   return (
-    <div>
-      <Geosuggest
-        className={className} id={id}
+    <div className={`bound-geosuggest ${validationErrorSelector(errors, keySet)}`}>
+      <Geosuggest id={id}
         initialValue={initial} label={label} placeholder={placeholder} types={types}
         onSuggestSelect={onSuggestSelect} onBlur={onBlur}
       />
