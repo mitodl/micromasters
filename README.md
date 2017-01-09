@@ -1,4 +1,4 @@
-[![codecov](https://codecov.io/gh/mitodl/micromasters/branch/master/graph/badge.svg)](https://codecov.io/gh/mitodl/micromasters)
+[![Build Status](https://travis-ci.org/mitodl/micromasters.svg?branch=master)](https://travis-ci.org/mitodl/micromasters) [![codecov](https://codecov.io/gh/mitodl/micromasters/branch/master/graph/badge.svg)](https://codecov.io/gh/mitodl/micromasters)
 
 # MicroMasters
 Portal for learners and course teams to access MITx MicroMasters programs
