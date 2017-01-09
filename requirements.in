@@ -17,7 +17,6 @@ elasticsearch==2.3.0
 factory_boy
 faker
 html5lib==0.999999
-jsonfield==1.0.3
 newrelic
 psycopg2==2.6
 pycountry==16.11.27.1

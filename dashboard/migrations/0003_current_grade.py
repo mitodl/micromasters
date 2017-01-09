@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import jsonfield.fields
+from django.contrib.postgres.fields import JSONField
 
 
 class Migration(migrations.Migration):
@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
             name='CachedCurrentGrade',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('data', jsonfield.fields.JSONField(null=True)),
+                ('data', JSONField(null=True)),
                 ('last_request', models.DateTimeField()),
                 ('course_run', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='courses.CourseRun')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),

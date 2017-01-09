@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import jsonfield.fields
+from django.contrib.postgres.fields import JSONField
 
 
 class Migration(migrations.Migration):
@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
                 ('year_of_birth', models.IntegerField(blank=True, null=True)),
                 ('level_of_education', models.TextField(blank=True, choices=[('p', 'Doctorate'), ('m', "Master's or professional degree"), ('b', "Bachelor's degree"), ('a', 'Associate degree'), ('hs', 'High school'), ('jhs', 'Junior high school'), ('el', 'Elementary school'), ('none', 'No formal education'), ('other', 'Other education')], max_length=6, null=True)),
                 ('goals', models.TextField(blank=True, null=True)),
-                ('language_proficiencies', jsonfield.fields.JSONField(blank=True, null=True)),
+                ('language_proficiencies', JSONField(blank=True, null=True)),
                 ('gender', models.CharField(blank=True, choices=[('m', 'Male'), ('f', 'Female'), ('o', 'Other/Prefer Not to Say')], max_length=6, null=True)),
                 ('mailing_address', models.TextField(blank=True, null=True)),
                 ('date_joined', models.DateTimeField(blank=True, null=True)),

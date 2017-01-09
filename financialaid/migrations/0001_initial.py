@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import jsonfield.fields
+from django.contrib.postgres.fields import JSONField
 
 
 class Migration(migrations.Migration):
@@ -55,8 +55,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('table_changed', models.CharField(max_length=50)),
-                ('data_before', jsonfield.fields.JSONField(blank=True)),
-                ('data_after', jsonfield.fields.JSONField(blank=True)),
+                ('data_before', JSONField(blank=True)),
+                ('data_after', JSONField(blank=True)),
                 ('date', models.DateTimeField()),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
