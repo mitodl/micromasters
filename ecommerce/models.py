@@ -1,6 +1,9 @@
 """
 Models for storing ecommerce data
 """
+from datetime import datetime
+
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -22,6 +25,7 @@ from django.db.models.fields import (
 from django.db.models.fields.related import (
     ForeignKey,
 )
+import pytz
 
 from courses.models import (
     Course,
@@ -165,8 +169,7 @@ class CoursePrice(Model):
 
 class Coupon(Model):
     """
-    Model for a coupon. This stores the discount for the coupon, how many people can use it, and how many times
-    a person can use it.
+    Model for a coupon. This stores the discount for the coupon and other information about how it should be redeemed.
 
     When a coupon is redeemed by a purchaser the counter on this object is decremented
     and a UserCoupon object is created for that particular purchaser.
@@ -175,6 +178,10 @@ class Coupon(Model):
     FIXED_DISCOUNT = 'fixed-discount'
 
     AMOUNT_TYPES = [PERCENT_DISCOUNT, FIXED_DISCOUNT]
+
+    STANDARD = 'standard'
+    DISCOUNTED_PREVIOUS_COURSE = 'discounted-previous-course'
+    COUPON_TYPES = [STANDARD, DISCOUNTED_PREVIOUS_COURSE]
 
     coupon_code = TextField(
         null=True,
@@ -191,6 +198,12 @@ class Coupon(Model):
     )
     object_id = PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
+    # Meaning of content_object depends on coupon_type
+    coupon_type = CharField(
+        choices=[(_type, _type) for _type in COUPON_TYPES],
+        max_length=30,
+        help_text="The type of the coupon which describes what circumstances the coupon can be redeemed",
+    )
 
     amount_type = CharField(
         choices=[(_type, _type) for _type in AMOUNT_TYPES],
@@ -203,14 +216,6 @@ class Coupon(Model):
         help_text="Either a number from 0 to 1 representing a percent, or the fixed value for discount",
     )
 
-    num_coupons_available = PositiveIntegerField(
-        null=False,
-        help_text="Number of people this coupon can be redeemed by",
-    )
-    num_redemptions_per_user = PositiveIntegerField(
-        null=False,
-        help_text="Number of times a person can redeem a coupon",
-    )
     expiration_date = DateTimeField(
         null=True,
         blank=True,
@@ -222,6 +227,44 @@ class Coupon(Model):
         help_text="If set, the coupons will not be redeemable before this time",
     )
     enabled = BooleanField(default=True, help_text="If true, coupons are presently redeemable")
+
+    @property
+    def course_keys(self):
+        """Get the course keys which the coupon can be redeemed with"""
+        obj = self.content_object
+        if isinstance(obj, Program):
+            return CourseRun.objects.filter(course__program=obj).values_list('edx_course_key', flat=True)
+        elif isinstance(obj, Course):
+            return CourseRun.objects.filter(course=obj).values_list('edx_course_key', flat=True)
+        else:
+            # This must be a CourseRun. This is validated in clean()
+            return [obj.edx_course_key]
+
+    @property
+    def is_valid(self):
+        """Returns true if the coupon is enabled and also within the valid date range"""
+        now = datetime.now(tz=pytz.UTC)
+        if not self.enabled:
+            return False
+        if self.activation_date is not None and now < self.activation_date:
+            return False
+        if self.expiration_date is not None and now > self.expiration_date:
+            return False
+        return True
+
+    @property
+    def is_automatic(self):
+        """
+        Returns true if the coupon would be redeemed automatically without input from the user.
+        """
+        return self.coupon_type == self.DISCOUNTED_PREVIOUS_COURSE
+
+    def user_has_redemptions_left(self, user):
+        """
+        Has the coupon already been redeemed for all possible runs?
+        """
+        runs_purchased = set(Line.objects.filter(order__user=user).values_list("course_key", flat=True))
+        return not set(self.course_keys).issubset(runs_purchased)
 
     def clean(self):
         """Validate amount and content_object"""
@@ -243,6 +286,14 @@ class Coupon(Model):
         if self.amount_type not in self.AMOUNT_TYPES:
             raise ValidationError("amount_type must be one of {}".format(", ".join(self.AMOUNT_TYPES)))
 
+        if self.coupon_type not in self.COUPON_TYPES:
+            raise ValidationError("coupon_type must be one of {}".format(", ".join(self.COUPON_TYPES)))
+
+        if self.coupon_type == self.DISCOUNTED_PREVIOUS_COURSE and not isinstance(self.content_object, Course):
+            raise ValidationError(
+                "coupon must be for a course if coupon_type is {}".format(self.DISCOUNTED_PREVIOUS_COURSE)
+            )
+
     def save(self, *args, **kwargs):
         """Override save to do certain validations"""
         self.full_clean()
@@ -250,11 +301,29 @@ class Coupon(Model):
 
     def __str__(self):
         """Description for Coupon"""
-        return "Coupon {amount_type} {amount} for {product}, {num_coupons_available} left".format(
+        return "Coupon {amount_type} {amount} of type {type} for {product}".format(
             amount_type=self.amount_type,
             amount=self.amount,
             product=self.content_object,
-            num_coupons_available=self.num_coupons_available,
+            type=self.coupon_type,
+        )
+
+
+class UserCoupon(Model):
+    """
+    Model for a coupon attached to a user.
+    """
+    user = ForeignKey(settings.AUTH_USER_MODEL, on_delete=SET_NULL, null=True)
+    coupon = ForeignKey(Coupon, on_delete=SET_NULL, null=True)
+
+    class Meta:
+        unique_together = ('user', 'coupon',)
+
+    def __str__(self):
+        """Description for UserCoupon"""
+        return "UserCoupon for {user}, {coupon}".format(
+            user=self.user,
+            coupon=self.coupon,
         )
 
 

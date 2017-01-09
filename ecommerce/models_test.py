@@ -1,12 +1,17 @@
 """
 Tests for ecommerce models
 """
+from datetime import (
+    datetime,
+    timedelta,
+)
 
 from django.core.exceptions import ValidationError
 from django.test import (
     TestCase,
     override_settings,
 )
+import pytz
 
 from courses.factories import CourseRunFactory
 from ecommerce.exceptions import EcommerceModelException
@@ -17,7 +22,10 @@ from ecommerce.factories import (
     OrderFactory,
     ReceiptFactory,
 )
-from ecommerce.models import Coupon
+from ecommerce.models import (
+    Coupon,
+    Order,
+)
 from micromasters.utils import serialize_model_object
 from profiles.factories import UserFactory
 
@@ -171,3 +179,77 @@ class CouponTests(TestCase):
         assert ex.exception.args[0]['__all__'][0].args[0] == (
             'amount_type must be one of percent-discount, fixed-discount'
         )
+
+    def test_validate_coupon_type(self):
+        """Coupon.coupon_type must be one of Coupon.COUPON_TYPES"""
+        with self.assertRaises(ValidationError) as ex:
+            CouponFactory.create(coupon_type='xyz')
+        assert ex.exception.args[0]['__all__'][0].args[0] == (
+            'coupon_type must be one of {}'.format(", ".join(Coupon.COUPON_TYPES))
+        )
+
+    def test_validate_discount_prev_run_coupon_type(self):
+        """Coupon must be for a course if Coupon.coupon_type is DISCOUNTED_PREVIOUS_RUN"""
+        run = CourseRunFactory.create()
+        for obj in [run, run.course.program]:
+            with self.assertRaises(ValidationError) as ex:
+                CouponFactory.create(coupon_type=Coupon.DISCOUNTED_PREVIOUS_COURSE, content_object=obj)
+            assert ex.exception.args[0]['__all__'][0].args[0] == (
+                'coupon must be for a course if coupon_type is discounted-previous-course'
+            )
+
+    def test_course_keys(self):
+        """
+        Coupon.course_keys should return a list of all course run keys in a program, course, or course run
+        """
+        run1 = CourseRunFactory.create()
+        run2 = CourseRunFactory.create(course=run1.course)
+        run3 = CourseRunFactory.create(course__program=run1.course.program)
+        run4 = CourseRunFactory.create(course=run3.course)
+
+        coupon_program = CouponFactory.create(
+            content_object=run1.course.program,
+        )
+        assert sorted(coupon_program.course_keys) == sorted([run.edx_course_key for run in [run1, run2, run3, run4]])
+
+        coupon_course = CouponFactory.create(content_object=run1.course)
+        assert sorted(coupon_course.course_keys) == sorted([run.edx_course_key for run in [run1, run2]])
+
+        coupon_run = CouponFactory.create(content_object=run1)
+        assert coupon_run.course_keys == [run1.edx_course_key]
+
+    def test_is_valid(self):
+        """
+        Coupon.is_valid should return True if the coupon is enabled and within the valid date range
+        """
+        now = datetime.now(tz=pytz.UTC)
+        assert CouponFactory.create(enabled=True).is_valid is True
+        assert CouponFactory.create(enabled=False).is_valid is False
+        assert CouponFactory.create(activation_date=now - timedelta(days=1)).is_valid is True
+        assert CouponFactory.create(activation_date=now + timedelta(days=1)).is_valid is False
+        assert CouponFactory.create(expiration_date=now - timedelta(days=1)).is_valid is False
+        assert CouponFactory.create(expiration_date=now + timedelta(days=1)).is_valid is True
+
+    def test_is_automatic(self):
+        """
+        Coupon.is_automatic should be true if the coupon type is DISCOUNTED_PREVIOUS_COURSE
+        """
+        assert CouponFactory.create(coupon_type=Coupon.STANDARD).is_automatic is False
+        run = CourseRunFactory.create()
+        assert CouponFactory.create(
+            coupon_type=Coupon.DISCOUNTED_PREVIOUS_COURSE,
+            content_object=run.course,
+        ).is_automatic is True
+
+    def test_user_has_redemptions_left(self):
+        """
+        Coupon.user_has_redemptions_left should be true if user has not yet purchased all course runs
+        """
+        run1 = CourseRunFactory.create()
+        run2 = CourseRunFactory.create(course__program=run1.course.program)
+
+        line = LineFactory.create(course_key=run1.edx_course_key, order__status=Order.FULFILLED)
+        coupon = CouponFactory.create(content_object=run1.course.program)
+        assert coupon.user_has_redemptions_left(line.order.user) is True
+        run2.delete()
+        assert coupon.user_has_redemptions_left(line.order.user) is False
