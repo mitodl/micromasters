@@ -462,8 +462,8 @@ describe('utility functions', () => {
       const programInfoActual = programCourseInfo(program);
 
       assert.deepEqual(programInfoActual, {
-        totalPassedCourses: 2,
-        totalCourses: 3
+        totalPassedCourses: 3,
+        totalCourses: 5
       });
     });
   });
