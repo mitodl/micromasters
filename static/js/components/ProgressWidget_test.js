@@ -41,11 +41,21 @@ export const program = {
           "position": 1,
           "title": "Gio Test Course #14",
           "course_id": "course-v1:odl+GIO101+FALL14",
-          "status": STATUS_NOT_PASSED,
+          "status": STATUS_PASSED,
           "id": 2,
           "course_start_date": "2016-08-22T11:48:27Z",
-          "fuzzy_start_date": "Fall 2017",
+          "fuzzy_start_date": "Fall 2016",
           "course_end_date": "2016-09-09T10:20:10Z"
+        },
+        {
+          "position": 2,
+          "title": "Gio Test Course #16",
+          "course_id": "course-v1:odl+GIO101+FALL16",
+          "status": STATUS_NOT_PASSED,
+          "id": 4,
+          "course_start_date": "2016-08-22T11:48:27Z",
+          "fuzzy_start_date": "Fall 2017",
+          "course_end_date": "2017-09-09T10:20:10Z"
         }
       ],
       "position_in_program": 1,
@@ -84,7 +94,7 @@ describe('ProgressWidget', () => {
     assert.equal(wrapper.find(".text-course-complete").children().text(), "Courses complete");
     assert.equal(
       wrapper.find(".circular-progress-widget-txt").text(),
-      "1/3"
+      "2/3"
     );
     assert.equal(
       wrapper.find(".heading-paragraph").text(),
