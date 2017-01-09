@@ -9,7 +9,6 @@ from rest_framework.serializers import (
     IntegerField,
     ModelSerializer,
     SerializerMethodField,
-    CharField,
 )
 
 from profiles.api import get_social_username
@@ -173,8 +172,6 @@ class ProfileBaseSerializer(ModelSerializer):
 
 class ProfileSerializer(ProfileBaseSerializer):
     """Serializer for Profile objects"""
-    about_me = CharField(allow_null=True, allow_blank=True, required=False)
-
     def update(self, instance, validated_data):
         with transaction.atomic():
             for attr, value in validated_data.items():
@@ -278,7 +275,6 @@ class ProfileFilledOutSerializer(ProfileSerializer):
     """Serializer for Profile objects which require filled_out = True"""
     work_history = EmploymentFilledOutSerializer(many=True)
     education = EducationFilledOutSerializer(many=True)
-    about_me = CharField(allow_null=True, allow_blank=True, required=False)
 
     def __init__(self, *args, **kwargs):
         """
