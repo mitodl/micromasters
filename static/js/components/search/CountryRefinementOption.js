@@ -10,9 +10,14 @@ export default class CountryRefinementOption extends React.Component {
     count:    number,
   };
 
-  countryName = (countryCode: string): string => (
-    iso3166.country(countryCode).name
-  );
+  countryName = (countryCode: string): string => {
+    let country, countryName = "-";
+    if (countryCode) {
+      country = iso3166.country(countryCode);
+      countryName = country ? country.name : "-";
+    }
+    return countryName;
+  }
 
   render () {
     const { active, onClick, count, label } = this.props;
@@ -20,7 +25,7 @@ export default class CountryRefinementOption extends React.Component {
     let option = "sk-item-list-option";
     return (
       <div className={`${option} sk-item-list__item ${activeClass()}`} onClick={onClick}>
-        <input 
+        <input
           type="checkbox"
           data-qa="checkbox"
           checked={active}
