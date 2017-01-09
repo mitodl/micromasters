@@ -105,7 +105,7 @@ export default class PersonalForm extends ProfileFormFields {
             {this.boundGeosuggest(addressMapping, "current-home", "Current address",
               {
                 placeholder: "Example: 100 Main Street, Anytown, 01234, United States",
-                types: ["geocode"]
+                types: ["address"]
               }
             )}
           </Cell>
