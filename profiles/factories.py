@@ -1,7 +1,7 @@
 """Factories for making test data"""
 from datetime import date, datetime, timezone
 
-from factory import SubFactory, LazyAttribute
+from factory import SubFactory, LazyFunction
 from factory.django import (
     DjangoModelFactory,
     ImageField
@@ -27,9 +27,9 @@ class ProfileFactory(DjangoModelFactory):
     filled_out = FuzzyAttribute(FAKE.boolean)
     agreed_to_terms_of_service = FuzzyAttribute(FAKE.boolean)
 
-    first_name = LazyAttribute(lambda x: FAKE.first_name())
-    last_name = LazyAttribute(lambda x: FAKE.last_name())
-    preferred_name = LazyAttribute(lambda x: FAKE.name())
+    first_name = LazyFunction(FAKE.first_name)
+    last_name = LazyFunction(FAKE.last_name)
+    preferred_name = LazyFunction(FAKE.name)
 
     account_privacy = FuzzyChoice(
         [choice[0] for choice in Profile.ACCOUNT_PRIVACY_CHOICES]
@@ -43,23 +43,23 @@ class ProfileFactory(DjangoModelFactory):
     edx_bio = FuzzyText()
     about_me = FuzzyText()
 
-    romanized_first_name = LazyAttribute(lambda x: FAKE.first_name())
-    romanized_last_name = LazyAttribute(lambda x: FAKE.last_name())
+    romanized_first_name = LazyFunction(FAKE.first_name)
+    romanized_last_name = LazyFunction(FAKE.last_name)
 
-    address1 = LazyAttribute(lambda x: '{} {}'.format(FAKE.building_number(), FAKE.street_name()))
-    address2 = LazyAttribute(lambda x: FAKE.secondary_address())
+    address1 = LazyFunction(lambda: '{} {}'.format(FAKE.building_number(), FAKE.street_name()))
+    address2 = LazyFunction(FAKE.secondary_address)
     address3 = None
 
-    postal_code = LazyAttribute(lambda x: FAKE.postcode())
-    city = LazyAttribute(lambda x: FAKE.city())
-    country = LazyAttribute(lambda x: FAKE.country_code())
-    state_or_territory = LazyAttribute(lambda x: FAKE.state())
+    postal_code = LazyFunction(FAKE.postcode)
+    city = LazyFunction(FAKE.city)
+    country = LazyFunction(FAKE.country_code)
+    state_or_territory = LazyFunction(FAKE.state)
 
-    phone_number = LazyAttribute(lambda x: FAKE.numerify('###-###-####'))
-    phone_country_code = LazyAttribute(lambda x: FAKE.numerify('###'))
+    phone_number = LazyFunction(lambda: FAKE.numerify('###-###-####'))
+    phone_country_code = LazyFunction(lambda: FAKE.numerify('###'))
 
-    birth_country = LazyAttribute(lambda x: FAKE.country_code())
-    nationality = LazyAttribute(lambda x: FAKE.country_code())
+    birth_country = LazyFunction(FAKE.country_code)
+    nationality = LazyFunction(FAKE.country_code)
 
     edx_requires_parental_consent = FuzzyAttribute(FAKE.boolean)
     date_of_birth = FuzzyDate(date(1850, 1, 1))
@@ -67,7 +67,7 @@ class ProfileFactory(DjangoModelFactory):
         [None] + [choice[0] for choice in Profile.LEVEL_OF_EDUCATION_CHOICES]
     )
     edx_goals = FuzzyText()
-    preferred_language = LazyAttribute(lambda x: FAKE.language_code())
+    preferred_language = LazyFunction(FAKE.language_code)
     edx_language_proficiencies = FuzzyAttribute(lambda: [FAKE.text() for _ in range(3)])
     gender = FuzzyChoice(
         [choice[0] for choice in Profile.GENDER_CHOICES]
@@ -91,12 +91,12 @@ class EmploymentFactory(DjangoModelFactory):
     A factory for work history
     """
     profile = SubFactory(ProfileFactory)
-    city = LazyAttribute(lambda x: FAKE.city())
-    country = LazyAttribute(lambda x: FAKE.country())
-    state_or_territory = LazyAttribute(lambda x: FAKE.state())
-    company_name = LazyAttribute(lambda x: FAKE.company())
+    city = LazyFunction(FAKE.city)
+    country = LazyFunction(FAKE.country)
+    state_or_territory = LazyFunction(FAKE.state)
+    company_name = LazyFunction(FAKE.company)
     industry = FuzzyText(suffix=" IT")
-    position = LazyAttribute(lambda x: FAKE.job())
+    position = LazyFunction(FAKE.job)
     end_date = FuzzyDate(date(1850, 1, 1))
     start_date = FuzzyDate(date(1850, 1, 1))
 
@@ -117,9 +117,9 @@ class EducationFactory(DjangoModelFactory):
     field_of_study = FuzzyText()
     online_degree = FuzzyAttribute(FAKE.boolean)
     school_name = FuzzyText()
-    school_city = LazyAttribute(lambda x: FAKE.city())
-    school_state_or_territory = LazyAttribute(lambda x: FAKE.state())
-    school_country = LazyAttribute(lambda x: FAKE.country())
+    school_city = LazyFunction(FAKE.city)
+    school_state_or_territory = LazyFunction(FAKE.state)
+    school_country = LazyFunction(FAKE.country)
 
     class Meta:  # pylint: disable=missing-docstring
         model = Education

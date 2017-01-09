@@ -4,7 +4,7 @@ Factories for financialaid tests
 import datetime
 from django.db.models.signals import post_save
 from factory import SubFactory
-from factory.declarations import LazyAttribute
+from factory.declarations import LazyFunction
 from factory.django import DjangoModelFactory, mute_signals
 from factory.fuzzy import (
     FuzzyAttribute,
@@ -68,9 +68,9 @@ class FinancialAidFactory(DjangoModelFactory):
     )
     income_usd = FuzzyFloat(low=0, high=12345)
     original_income = FuzzyFloat(low=0, high=12345)
-    original_currency = LazyAttribute(lambda x: FAKE.currency_code())
-    country_of_income = LazyAttribute(lambda x: FAKE.country_code())
-    country_of_residence = LazyAttribute(lambda x: FAKE.country_code())
+    original_currency = LazyFunction(FAKE.currency_code)
+    country_of_income = LazyFunction(FAKE.country_code)
+    country_of_residence = LazyFunction(FAKE.country_code)
     date_exchange_rate = FuzzyDateTime(datetime.datetime(2000, 1, 1, tzinfo=UTC))
     date_documents_sent = FuzzyDate(datetime.date(2000, 1, 1))
 

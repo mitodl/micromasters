@@ -22,10 +22,10 @@ class ImageFactory(DjangoModelFactory):
     class Meta:  # pylint: disable=missing-docstring
         model = Image
 
-    file = factory.LazyAttribute(lambda x: FAKE.uri_path())
-    title = factory.LazyAttribute(lambda x: FAKE.file_name(extension="jpg"))
-    width = factory.LazyAttribute(lambda x: FAKE.pyint())
-    height = factory.LazyAttribute(lambda x: FAKE.pyint())
+    file = factory.LazyFunction(FAKE.uri_path)
+    title = factory.LazyFunction(lambda: FAKE.file_name(extension="jpg"))
+    width = factory.LazyFunction(FAKE.pyint)
+    height = factory.LazyFunction(FAKE.pyint)
 
     @factory.post_generation
     def fake_willow_image(self, create, extracted, **kwargs):  # pylint: disable=unused-argument
@@ -55,7 +55,7 @@ class ProgramPageFactory(DjangoModelFactory):
 
     path = '/'
     depth = 1
-    title = factory.LazyAttribute(lambda x: FAKE.sentence(nb_words=4))
+    title = factory.LazyFunction(lambda: FAKE.sentence(nb_words=4))
 
     program = factory.SubFactory(ProgramFactory)
 
@@ -65,9 +65,9 @@ class FacultyFactory(DjangoModelFactory):
     class Meta:  # pylint: disable=missing-docstring
         model = ProgramFaculty
 
-    name = factory.LazyAttribute(lambda x: FAKE.name())
+    name = factory.LazyFunction(FAKE.name)
     title = "Ph.D"
-    short_bio = factory.LazyAttribute(lambda x: FAKE.text())
+    short_bio = factory.LazyFunction(FAKE.text)
 
     program_page = factory.SubFactory(ProgramPageFactory)
     image = factory.SubFactory(ImageFactory)
