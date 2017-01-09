@@ -19,15 +19,23 @@ import pytz
 from rest_framework.exceptions import ValidationError
 
 from backends.edxorg import EdxOrgOAuth2
-from courses.models import CourseRun
-from dashboard.api_edx_cache import CachedEdxDataApi
+from courses.models import (
+    CourseRun,
+    Program,
+)
+from dashboard.api_edx_cache import (
+    CachedEdxDataApi,
+    CachedEdxUserData,
+)
 from dashboard.models import ProgramEnrollment
+from dashboard.utils import MMTrack
 from ecommerce.exceptions import (
     EcommerceEdxApiException,
     EcommerceException,
     ParseException,
 )
 from ecommerce.models import (
+    Coupon,
     Line,
     Order,
 )
@@ -310,3 +318,64 @@ def enroll_user_on_success(order):
 
     if exceptions:
         raise EcommerceEdxApiException(exceptions)
+
+
+def is_coupon_redeemable_for_run(coupon, user, course_key):
+    """
+    Returns true if the coupon is redeemable for the user for a course run.
+
+    Args:
+        coupon (Coupon): A coupon
+        user (django.contrib.auth.models.User): A user
+        course_key (str): An edX course key
+
+    Returns:
+        bool:
+            True if a course is redeemable by a user, for the specific course run with that course key
+    """
+    if not is_coupon_redeemable(coupon, user):
+        return False
+
+    return course_key in coupon.course_keys
+
+
+def is_coupon_redeemable(coupon, user):
+    """
+    Returns true if the coupon is redeemable for the user, for any relevant course run.
+
+    Args:
+        coupon (Coupon): A coupon
+        user (django.contrib.auth.models.User): A user
+    Returns:
+        bool:
+            True if the coupon is redeemable by the user for some course run
+    """
+    if not Program.objects.filter(
+            programenrollment__user=user,
+            programenrollment__program__course__courserun__edx_course_key__in=coupon.course_keys,
+            live=True,
+    ).exists():
+        return False
+
+    if (
+            not coupon.is_valid or                      # coupon must be enabled and within valid date range
+            not coupon.user_has_redemptions_left(user)  # coupon must not be used up
+    ):
+        return False
+
+    if coupon.coupon_type == Coupon.DISCOUNTED_PREVIOUS_COURSE:
+        # We validate in clean() that content_object is a Course if coupon_type is DISCOUNTED_PREVIOUS_RUN
+        course = coupon.content_object
+        program = course.program
+        edx_user_data = CachedEdxUserData(user, program=program)
+
+        mmtrack = MMTrack(
+            user,
+            program,
+            edx_user_data,
+        )
+
+        # For this coupon type the user must have already purchased a course run on edX
+        return any((mmtrack.has_verified_cert(run.edx_course_key) for run in course.courserun_set.all()))
+
+    return True

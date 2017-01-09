@@ -490,3 +490,70 @@ class MMTrackTest(ESTestCase):
             edx_user_data=self.cached_edx_user_data
         )
         assert mmtrack.count_courses_passed() == 1
+
+    def test_has_paid_fa(self):
+        """
+        Assert that has_paid works for FA programs
+        """
+        mmtrack = MMTrack(
+            user=self.user,
+            program=self.program_financial_aid,
+            edx_user_data=self.cached_edx_user_data
+        )
+        key = self.crun_fa.edx_course_key
+        assert mmtrack.has_paid(key) is False
+
+        self.pay_for_fa_course(key)
+        mmtrack = MMTrack(
+            user=self.user,
+            program=self.program_financial_aid,
+            edx_user_data=self.cached_edx_user_data
+        )
+        assert mmtrack.has_paid(key) is True
+
+    def test_has_paid_not_fa(self):
+        """
+        Assert that has_paid works for non-FA programs
+        """
+        mmtrack = MMTrack(
+            user=self.user,
+            program=self.program,
+            edx_user_data=self.cached_edx_user_data
+        )
+        key = "course-v1:edX+DemoX+Demo_Course"
+        assert mmtrack.has_paid(key) is True
+
+    def test_has_verified_cert_fa(self):
+        """
+        Assert that has_cert_fa is true if user has a cert even if has_paid is false for FA programs
+        """
+        mmtrack = MMTrack(
+            user=self.user,
+            program=self.program_financial_aid,
+            edx_user_data=self.cached_edx_user_data
+        )
+        key = self.crun_fa.edx_course_key
+        assert mmtrack.has_verified_cert(key) is False
+        assert mmtrack.has_paid(key) is False
+
+        cert_json = {
+            "username": "staff",
+            "course_id": self.crun_fa.edx_course_key,
+            "certificate_type": "verified",
+            "status": "downloadable",
+            "download_url": "http://www.example.com/demo.pdf",
+            "grade": "0.98"
+        }
+        cached_edx_user_data = MagicMock(
+            spec=CachedEdxUserData,
+            enrollments=CachedEnrollment.deserialize_edx_data(self.enrollments_json),
+            certificates=CachedCertificate.deserialize_edx_data(self.certificates_json + [cert_json]),
+            current_grades=CachedCurrentGrade.deserialize_edx_data(self.current_grades_json),
+        )
+        mmtrack = MMTrack(
+            user=self.user,
+            program=self.program_financial_aid,
+            edx_user_data=cached_edx_user_data
+        )
+        assert mmtrack.has_verified_cert(key) is True
+        assert mmtrack.has_paid(key) is False

@@ -156,6 +156,17 @@ class MMTrack:
         enrollment = self.enrollments.get_enrollment_for_course(course_id)
         return enrollment and enrollment.is_verified
 
+    def has_verified_cert(self, course_id):
+        """
+        Returns whether the user has a verified cert.
+
+        Args:
+            course_id (str): An edX course key
+        Returns:
+            bool: whether the user has a verified cert meaning that they passed the course on edX
+        """
+        return self.certificates.has_verified_cert(course_id)
+
     def has_passed_course(self, course_id):
         """
         Returns whether the user has passed a course run.
@@ -173,7 +184,7 @@ class MMTrack:
 
         # for normal programs need to check the certificate
         if not self.financial_aid_available:
-            return self.certificates.has_verified_cert(course_id)
+            return self.has_verified_cert(course_id)
         # financial aid programs need to have an audit enrollment,
         # a current grade with a passed attribute and the course should be ended
         else:
@@ -256,7 +267,8 @@ class MMTrack:
         """
         Calculates number of passed courses in program.
 
-        int: A number of passed courses.
+        Returns:
+            int: A number of passed courses.
         """
         passed_courses = set()
         for course_id in self.course_ids:
