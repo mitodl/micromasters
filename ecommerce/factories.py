@@ -2,6 +2,7 @@
 Factories for ecommerce models
 """
 from factory import (
+    LazyFunction,
     LazyAttribute,
     SelfAttribute,
     SubFactory,
@@ -9,7 +10,6 @@ from factory import (
 )
 from factory.django import DjangoModelFactory
 from factory.fuzzy import (
-    FuzzyAttribute,
     FuzzyChoice,
     FuzzyDecimal,
     FuzzyInteger,
@@ -89,7 +89,7 @@ class ReceiptFactory(DjangoModelFactory):
 class CoursePriceFactory(DjangoModelFactory):
     """Factory for CoursePrice"""
     course_run = SubFactory(CourseRunFactory)
-    is_valid = FuzzyAttribute(FAKE.boolean)
+    is_valid = LazyFunction(FAKE.boolean)
     price = FuzzyDecimal(low=0, high=12345)
 
     class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods,old-style-class

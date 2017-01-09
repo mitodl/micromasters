@@ -15,7 +15,7 @@ FAKE = faker.Factory.create()
 class ProgramFactory(DjangoModelFactory):
     """Factory for Programs"""
     title = fuzzy.FuzzyText(prefix="Program ")
-    live = fuzzy.FuzzyAttribute(FAKE.boolean)
+    live = factory.LazyFunction(FAKE.boolean)
     description = fuzzy.FuzzyText()
     exam_series_code = factory.LazyFunction(lambda: FAKE.lexify("????_MicroMasters"))
 

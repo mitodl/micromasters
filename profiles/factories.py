@@ -7,7 +7,6 @@ from factory.django import (
     ImageField
 )
 from factory.fuzzy import (
-    FuzzyAttribute,
     FuzzyChoice,
     FuzzyDate,
     FuzzyDateTime,
@@ -24,8 +23,8 @@ FAKE = faker.Factory.create()
 class ProfileFactory(DjangoModelFactory):
     """Factory for Profiles"""
     user = SubFactory(UserFactory)
-    filled_out = FuzzyAttribute(FAKE.boolean)
-    agreed_to_terms_of_service = FuzzyAttribute(FAKE.boolean)
+    filled_out = LazyFunction(FAKE.boolean)
+    agreed_to_terms_of_service = LazyFunction(FAKE.boolean)
 
     first_name = LazyFunction(FAKE.first_name)
     last_name = LazyFunction(FAKE.last_name)
@@ -35,7 +34,7 @@ class ProfileFactory(DjangoModelFactory):
         [choice[0] for choice in Profile.ACCOUNT_PRIVACY_CHOICES]
     )
 
-    email_optin = FuzzyAttribute(FAKE.boolean)
+    email_optin = LazyFunction(FAKE.boolean)
 
     edx_employer = FuzzyText(suffix=" corp")
     edx_job_title = FuzzyText(suffix=" consultant")
@@ -61,14 +60,14 @@ class ProfileFactory(DjangoModelFactory):
     birth_country = LazyFunction(FAKE.country_code)
     nationality = LazyFunction(FAKE.country_code)
 
-    edx_requires_parental_consent = FuzzyAttribute(FAKE.boolean)
+    edx_requires_parental_consent = LazyFunction(FAKE.boolean)
     date_of_birth = FuzzyDate(date(1850, 1, 1))
     edx_level_of_education = FuzzyChoice(
         [None] + [choice[0] for choice in Profile.LEVEL_OF_EDUCATION_CHOICES]
     )
     edx_goals = FuzzyText()
     preferred_language = LazyFunction(FAKE.language_code)
-    edx_language_proficiencies = FuzzyAttribute(lambda: [FAKE.text() for _ in range(3)])
+    edx_language_proficiencies = LazyFunction(lambda: [FAKE.text() for _ in range(3)])
     gender = FuzzyChoice(
         [choice[0] for choice in Profile.GENDER_CHOICES]
     )
@@ -115,7 +114,7 @@ class EducationFactory(DjangoModelFactory):
     )
     graduation_date = FuzzyDate(date(2000, 1, 1))
     field_of_study = FuzzyText()
-    online_degree = FuzzyAttribute(FAKE.boolean)
+    online_degree = LazyFunction(FAKE.boolean)
     school_name = FuzzyText()
     school_city = LazyFunction(FAKE.city)
     school_state_or_territory = LazyFunction(FAKE.state)

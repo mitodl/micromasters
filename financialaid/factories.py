@@ -7,7 +7,6 @@ from factory import SubFactory
 from factory.declarations import LazyFunction
 from factory.django import DjangoModelFactory, mute_signals
 from factory.fuzzy import (
-    FuzzyAttribute,
     FuzzyChoice,
     FuzzyDate,
     FuzzyDateTime,
@@ -49,7 +48,7 @@ class TierProgramFactory(DjangoModelFactory):
     program = SubFactory(ProgramFactory)
     tier = SubFactory(TierFactory)
     discount_amount = FuzzyInteger(low=1, high=12345)
-    current = FuzzyAttribute(FAKE.boolean)
+    current = LazyFunction(FAKE.boolean)
     income_threshold = FuzzyInteger(low=1, high=10000)
 
     class Meta:  # pylint: disable=missing-docstring
