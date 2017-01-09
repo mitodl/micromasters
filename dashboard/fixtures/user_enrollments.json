@@ -75,7 +75,7 @@
         },
         "created": "2016-01-27T18:10:35Z",
         "is_active": true,
-        "mode": "verified",
+        "mode": "audit",
         "user": "staff"
     }
 ]
