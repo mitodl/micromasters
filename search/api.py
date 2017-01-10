@@ -79,6 +79,13 @@ def create_search_obj(user, search_param_dict=None, filter_on_email_optin=False)
         user,
         filter_on_email_optin=filter_on_email_optin
     ))
+    # Filter so that only filled_out profiles are seen
+    search_obj = search_obj.filter(Q(
+        'bool',
+        must=[
+            Q('term', **{'profile.filled_out': True})
+        ]
+    ))
     if search_param_dict is not None:
         search_param_dict['size'] = settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE
     else:

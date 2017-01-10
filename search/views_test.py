@@ -12,6 +12,7 @@ from rest_framework.test import APITestCase
 
 from courses.factories import ProgramFactory
 from dashboard.factories import ProgramEnrollmentFactory
+from dashboard.models import ProgramEnrollment
 from micromasters.factories import UserFactory
 from profiles.factories import ProfileFactory
 from roles.models import Role
@@ -32,7 +33,7 @@ class SearchTests(ESTestCase, APITestCase):
         super(SearchTests, cls).setUpTestData()
         # create some students
         with mute_signals(post_save):
-            cls.students = [(ProfileFactory.create()).user for _ in range(30)]
+            cls.students = [(ProfileFactory.create(filled_out=True)).user for _ in range(30)]
         # create the programs
         cls.program1 = ProgramFactory.create(live=True)
         cls.program2 = ProgramFactory.create(live=True)
@@ -74,6 +75,12 @@ class SearchTests(ESTestCase, APITestCase):
         resp_post = self.client.post(self.search_url, json, format='json')
         assert resp_post.status_code == status_code
         return resp_post
+
+    def get_user_ids_in_hits(self, hits):
+        """
+        Helper function to extract profile ids from elasticsearch hits
+        """
+        return [hit['_source']['user_id'] for hit in hits]
 
     def get_program_ids_in_hits(self, hits):
         """
@@ -189,3 +196,20 @@ class SearchTests(ESTestCase, APITestCase):
             program_ids_in_hits = self.get_program_ids_in_hits(resp.data['hits']['hits'])
             assert len(program_ids_in_hits) == 1
             assert program_ids_in_hits[0] == wanted_program_id
+
+    @override_settings(ELASTICSEARCH_DEFAULT_PAGE_SIZE=1000)
+    def test_filled_out(self):
+        """
+        Search results should only include profiles which are filled out
+        """
+        program = self.program1
+        filled_out_ids = list(ProgramEnrollment.objects.filter(program=program).values_list('id', flat=True))
+        enrollment_not_filled_out = ProgramEnrollmentFactory.create(
+            user__profile__filled_out=False,
+            program=program,
+        )
+
+        resp = self.assert_status_code()
+        user_ids_in_hits = self.get_user_ids_in_hits(resp.data['hits']['hits'])
+        assert sorted(user_ids_in_hits) == sorted(filled_out_ids)
+        assert enrollment_not_filled_out.user.id not in user_ids_in_hits
