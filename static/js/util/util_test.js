@@ -197,6 +197,15 @@ describe('utility functions', () => {
       };
       assert.equal(getLocation(us, false), 'US');
     });
+
+    it('should return `-` when no city and no counrty', () => {
+      let us = {
+        country: null,
+        state_or_territory: 'US-ME',
+        city: null
+      };
+      assert.equal(getLocation(us, false), '-');
+    });
   });
 
   describe('getEmployer', () => {
