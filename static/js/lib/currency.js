@@ -37,8 +37,6 @@ const codesToOptions = R.compose(
 
 export const currencyOptions = codesToOptions(cc.codes());
 
-
-
 const currencyToCode = currency => (
   currency.length === 0 ? '' : currency[0].code
 );
