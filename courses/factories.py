@@ -15,9 +15,9 @@ FAKE = faker.Factory.create()
 class ProgramFactory(DjangoModelFactory):
     """Factory for Programs"""
     title = fuzzy.FuzzyText(prefix="Program ")
-    live = factory.LazyFunction(FAKE.boolean)
+    live = factory.Faker('boolean')
     description = fuzzy.FuzzyText()
-    exam_series_code = factory.LazyFunction(lambda: FAKE.lexify("????_MicroMasters"))
+    exam_series_code = factory.Faker('lexify', text="????_MicroMasters")
 
     class Meta:  # pylint: disable=missing-docstring
         model = Program
@@ -57,7 +57,7 @@ class CourseFactory(DjangoModelFactory):
 
     description = fuzzy.FuzzyText()
     prerequisites = fuzzy.FuzzyText(prefix="Course requires ")
-    exam_module = factory.LazyFunction(lambda: FAKE.numerify("##.##x"))
+    exam_module = factory.Faker('numerify', text="##.##x")
 
     class Meta:  # pylint: disable=missing-docstring
         model = Course
@@ -80,20 +80,20 @@ class CourseRunFactory(DjangoModelFactory):
     edx_course_key = factory.LazyAttribute(
         lambda x: "course:/v{}/{}".format(randint(1, 100), FAKE.slug())
     )
-    enrollment_start = factory.LazyAttribute(
-        lambda x: FAKE.date_time_this_month(before_now=True, after_now=False, tzinfo=pytz.utc)
+    enrollment_start = factory.Faker(
+        'date_time_this_month', before_now=True, after_now=False, tzinfo=pytz.utc
     )
-    start_date = factory.LazyAttribute(
-        lambda x: FAKE.date_time_this_month(before_now=True, after_now=False, tzinfo=pytz.utc)
+    start_date = factory.Faker(
+        'date_time_this_month', before_now=True, after_now=False, tzinfo=pytz.utc
     )
-    enrollment_end = factory.LazyAttribute(
-        lambda x: FAKE.date_time_this_month(before_now=False, after_now=True, tzinfo=pytz.utc)
+    enrollment_end = factory.Faker(
+        'date_time_this_month', before_now=False, after_now=True, tzinfo=pytz.utc
     )
-    end_date = factory.LazyAttribute(
-        lambda x: FAKE.date_time_this_year(before_now=False, after_now=True, tzinfo=pytz.utc)
+    end_date = factory.Faker(
+        'date_time_this_year', before_now=False, after_now=True, tzinfo=pytz.utc
     )
-    freeze_grade_date = factory.LazyAttribute(
-        lambda x: FAKE.date_time_this_year(before_now=False, after_now=True, tzinfo=pytz.utc)
+    freeze_grade_date = factory.Faker(
+        'date_time_this_year', before_now=False, after_now=True, tzinfo=pytz.utc
     )
     fuzzy_start_date = factory.LazyAttribute(
         lambda x: "Starting {}".format(FAKE.sentence())
@@ -101,12 +101,8 @@ class CourseRunFactory(DjangoModelFactory):
     fuzzy_enrollment_start_date = factory.LazyAttribute(
         lambda x: "Enrollment starting {}".format(FAKE.sentence())
     )
-    enrollment_url = factory.LazyAttribute(
-        lambda x: FAKE.url()
-    )
-    prerequisites = factory.LazyAttribute(
-        lambda x: FAKE.paragraph()
-    )
+    enrollment_url = factory.Faker('url')
+    prerequisites = factory.Faker('paragraph')
 
     class Meta:  # pylint: disable=missing-docstring
         model = CourseRun

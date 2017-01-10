@@ -6,7 +6,6 @@ import tempfile
 
 import factory
 from factory.django import DjangoModelFactory
-import faker
 from wagtail.wagtailimages.models import Image
 from willow.image import Image as WillowImage
 
@@ -14,18 +13,15 @@ from cms.models import ProgramPage, ProgramFaculty
 from courses.factories import ProgramFactory
 
 
-FAKE = faker.Factory.create()
-
-
 class ImageFactory(DjangoModelFactory):
     """Factory for Wagtail images"""
     class Meta:  # pylint: disable=missing-docstring
         model = Image
 
-    file = factory.LazyFunction(FAKE.uri_path)
-    title = factory.LazyFunction(lambda: FAKE.file_name(extension="jpg"))
-    width = factory.LazyFunction(FAKE.pyint)
-    height = factory.LazyFunction(FAKE.pyint)
+    file = factory.Faker('uri_path')
+    title = factory.Faker('file_name', extension="jpg")
+    width = factory.Faker('pyint')
+    height = factory.Faker('pyint')
 
     @factory.post_generation
     def fake_willow_image(self, create, extracted, **kwargs):  # pylint: disable=unused-argument
@@ -55,7 +51,7 @@ class ProgramPageFactory(DjangoModelFactory):
 
     path = '/'
     depth = 1
-    title = factory.LazyFunction(lambda: FAKE.sentence(nb_words=4))
+    title = factory.Faker('sentence', nb_words=4)
 
     program = factory.SubFactory(ProgramFactory)
 
@@ -65,9 +61,9 @@ class FacultyFactory(DjangoModelFactory):
     class Meta:  # pylint: disable=missing-docstring
         model = ProgramFaculty
 
-    name = factory.LazyFunction(FAKE.name)
+    name = factory.Faker('name')
     title = "Ph.D"
-    short_bio = factory.LazyFunction(FAKE.text)
+    short_bio = factory.Faker('text')
 
     program_page = factory.SubFactory(ProgramPageFactory)
     image = factory.SubFactory(ImageFactory)
