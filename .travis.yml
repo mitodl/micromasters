@@ -1,3 +1,4 @@
+sudo: false
 # Set Ruby as the language so it doesn't download the pip things. Instead, let docker do that.
 language: ruby
 
