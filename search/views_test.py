@@ -203,7 +203,7 @@ class SearchTests(ESTestCase, APITestCase):
         Search results should only include profiles which are filled out
         """
         program = self.program1
-        filled_out_ids = list(ProgramEnrollment.objects.filter(program=program).values_list('id', flat=True))
+        filled_out_ids = list(ProgramEnrollment.objects.filter(program=program).values_list('user_id', flat=True))
         enrollment_not_filled_out = ProgramEnrollmentFactory.create(
             user__profile__filled_out=False,
             program=program,
