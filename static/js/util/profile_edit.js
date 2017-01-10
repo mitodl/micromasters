@@ -104,7 +104,7 @@ export function boundRadioGroupField(keySet: string[], label: string, options: O
 export function boundTextField(
   keySet: string[],
   label: string,
-  multiLine: boolean=false
+  { multiLine=false, maxLength=0 }: { multiLine: boolean, maxLength: number } = {}
 ): React$Element<*> {
   const {
     profile,
@@ -135,6 +135,10 @@ export function boundTextField(
 
   // fullWidth means set width to 100% instead of 256px. This lets us use the
   // Grid and Cell to manage its size
+  let options = {};
+  if (maxLength) {
+    options.maxLength = maxLength;
+  }
   return (
     <TextField
       onBlur={onBlur}
@@ -145,7 +149,8 @@ export function boundTextField(
       value={getValue()}
       fullWidth={true}
       errorText={_.get(errors, keySet)}
-      onChange={onChange} />
+      onChange={onChange}
+      {...options} />
   );
 }
 

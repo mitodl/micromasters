@@ -9,6 +9,7 @@ from profiles.util import (
     profile_image_upload_uri,
     profile_image_upload_uri_small,
     profile_image_upload_uri_medium,
+    split_at_space,
 )
 
 
@@ -115,18 +116,8 @@ class Profile(models.Model):
     romanized_first_name = models.CharField(blank=True, null=True, max_length=30)
     romanized_last_name = models.CharField(blank=True, null=True, max_length=50)
 
-    address1 = models.CharField(
-        max_length=40,
-        blank=True,
-        null=True
-    )
-    address2 = models.CharField(
-        max_length=40,
-        blank=True,
-        null=True
-    )
-    address3 = models.CharField(
-        max_length=40,
+    address = models.CharField(
+        max_length=100,
         blank=True,
         null=True
     )
@@ -202,6 +193,32 @@ class Profile(models.Model):
     def email(self):
         """email of user"""
         return self.user.email
+
+    # Split the `address` field into three fields, max 40 characters each.
+    # These fields are used in the Pearson export.
+
+    def _split_address(self):
+        if self.address is None:
+            return (None, None, None)
+
+        address1, rest = split_at_space(self.address, max_length=40)
+        address2, address3 = split_at_space(rest.strip(), max_length=40)
+        return (address1.strip(), address2.strip(), address3.strip())
+
+    @property
+    def address1(self):
+        """First line of address"""
+        return self._split_address()[0]
+
+    @property
+    def address2(self):
+        """Second line of address"""
+        return self._split_address()[1]
+
+    @property
+    def address3(self):
+        """Third line of address"""
+        return self._split_address()[2]
 
 
 class Education(models.Model):

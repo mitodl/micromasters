@@ -211,6 +211,8 @@ class ProfileSerializer(ProfileBaseSerializer):
             'country',
             'state_or_territory',
             'city',
+            'address',
+            'postal_code',
             'birth_country',
             'nationality',
             'date_of_birth',
@@ -281,7 +283,13 @@ class ProfileFilledOutSerializer(ProfileSerializer):
         """
         Update serializer_field_mapping to use fields setting required=True
         """
-        set_fields_to_required(self, ignore_fields=['about_me', 'romanized_first_name', 'romanized_last_name'])
+        ignore_fields = (
+            'about_me',
+            'romanized_first_name',
+            'romanized_last_name',
+            'postal_code',
+        )
+        set_fields_to_required(self, ignore_fields=ignore_fields)
         super(ProfileFilledOutSerializer, self).__init__(*args, **kwargs)
 
     def validate(self, attrs):
@@ -293,5 +301,11 @@ class ProfileFilledOutSerializer(ProfileSerializer):
 
         if 'agreed_to_terms_of_service' in attrs and not attrs['agreed_to_terms_of_service']:
             raise ValidationError("agreed_to_terms_of_service cannot be set to false")
+
+        # Postal code is only required in United States and Canada
+        country = attrs.get("country", "")
+        postal_code = attrs.get("postal_code", "")
+        if country in ("US", "CA") and not postal_code:
+            raise ValidationError("postal_code may not be blank")
 
         return super(ProfileFilledOutSerializer, self).validate(attrs)

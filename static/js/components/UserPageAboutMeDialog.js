@@ -55,7 +55,7 @@ export default class UserPageAboutMeDialog extends ProfileFormFields {
          this.boundTextField(
            ["about_me"],
            "Introduce yourself",
-           true
+           { multiLine: true }
          )
        }
       </Dialog>

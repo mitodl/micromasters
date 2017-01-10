@@ -68,8 +68,10 @@ const personalMessages: ErrorMessages = {
   'preferred_name': "Nickname / Preferred name is required",
   'gender': "Gender is required",
   'preferred_language': "Preferred language is required",
+  'address': "Street address is required",
   'city': "City is required",
   'state_or_territory': 'State or Territory is required',
+  'postal_code': "Postal code is required",
   'country': "Country is required",
   'birth_country': "Country is required",
   'nationality': "Nationality is required",
@@ -81,6 +83,18 @@ export const personalValidation = (profile: Profile) => {
   let errors = findErrors(profile, R.keys(personalMessages), personalMessages);
   if ( !moment(profile.date_of_birth).isBefore(moment(), 'day') ) {
     errors.date_of_birth = personalMessages.date_of_birth;
+  }
+
+  if (profile.address && !CP1252_REGEX.test(profile.address)) {
+    errors.address = "Street address must be in Latin characters";
+  }
+  if (["US", "CA"].includes(profile.country)) {
+    if (profile.postal_code && !CP1252_REGEX.test(profile.postal_code)) {
+      errors.postal_code = "Postal code must be in Latin characters";
+    }
+  } else {
+    // postal code only shown/required for US and Canada
+    delete errors.postal_code;
   }
 
   if (shouldRenderRomanizedFields(profile)) {

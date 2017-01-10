@@ -137,6 +137,51 @@ describe('Profile validation functions', () => {
       assert.deepEqual(personalValidation(profile), errors);
     });
 
+    it('should error when address is non cp-1252', () => {
+      let profile = {
+        ...USER_PROFILE_RESPONSE,
+        address: 'عامر',
+      };
+      let errors = {
+        address: "Street address must be in Latin characters",
+      };
+      assert.deepEqual(personalValidation(profile), errors);
+    });
+
+    it('should error when postal_code is non cp-1252', () => {
+      let profile = {
+        ...USER_PROFILE_RESPONSE,
+        postal_code: 'عامر',
+      };
+      let errors = {
+        postal_code: "Postal code must be in Latin characters",
+      };
+      assert.deepEqual(personalValidation(profile), errors);
+    });
+
+    for (const country of ["US", "CA"]) {
+      it(`should error when country is ${country} and no postal code`, () => {
+        let profile = {
+          ...USER_PROFILE_RESPONSE,
+          country: country,
+          postal_code: '',
+        };
+        let errors = {
+          postal_code: "Postal code is required",
+        };
+        assert.deepEqual(personalValidation(profile), errors);
+      });
+    }
+
+    it(`should not error when country does not require postal code`, () => {
+      let profile = {
+        ...USER_PROFILE_RESPONSE,
+        country: 'DE',
+        postal_code: '',
+      };
+      assert.deepEqual(personalValidation(profile), {});
+    });
+
     it('should complain if you enter an invalid phone number', () => {
       let profile = {
         ...USER_PROFILE_RESPONSE,
@@ -332,6 +377,7 @@ describe('Profile validation functions', () => {
         'preferred_name': "Nickname / Preferred name",
         'gender': "Gender",
         'preferred_language': "Preferred language",
+        'address': 'Street address',
         'city': "City",
         'state_or_territory': 'State or Territory',
         'country': "Country",

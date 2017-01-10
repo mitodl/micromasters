@@ -83,3 +83,46 @@ class ImageTests(ESTestCase):
             assert profile.image_medium.url.endswith(
                 profile_image_upload_uri_medium(None, "example.jpg").replace("+", "")
             )
+
+
+class ProfileAddressTests(ESTestCase):
+    """
+    Tests for splitting a user's address field
+    """
+
+    def test_unset_address(self):
+        """Test splitting an unset address"""
+        with mute_signals(post_save):
+            profile = ProfileFactory(address=None)
+        assert profile.address1 is None
+        assert profile.address2 is None
+        assert profile.address3 is None
+
+    def test_empty_address(self):
+        """Test splitting an empty address"""
+        with mute_signals(post_save):
+            profile = ProfileFactory(address="")
+        assert profile.address1 == ""
+        assert profile.address2 == ""
+        assert profile.address3 == ""
+
+    def test_short_address(self):
+        """Test splitting a short address"""
+        with mute_signals(post_save):
+            profile = ProfileFactory(address="123 Main Street")
+        assert profile.address1 == "123 Main Street"
+        assert profile.address2 == ""
+        assert profile.address3 == ""
+
+    def test_long_address(self):
+        """Test splitting a long address"""
+        address = (
+            "Who lives in a pineapple under the sea? "
+            "SPONGEBOB SQUAREPANTS! "
+            "Absorbent and yellow and porous is he"
+        )
+        with mute_signals(post_save):
+            profile = ProfileFactory(address=address)
+        assert profile.address1 == "Who lives in a pineapple under the sea?"
+        assert profile.address2 == "SPONGEBOB SQUAREPANTS! Absorbent and"
+        assert profile.address3 == "yellow and porous is he"

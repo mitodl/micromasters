@@ -275,8 +275,7 @@ class CDDWriterTest(TSVWriterTestCase):
             'profile__romanized_first_name': 'Jane',
             'profile__romanized_last_name': 'Smith',
             'profile__user__email': 'jane@example.com',
-            'profile__address1': '1 Main St',
-            'profile__address2': 'Room B345',
+            'profile__address': '1 Main St, Room B345',
             'profile__city': 'Boston',
             'profile__state_or_territory': 'Massachusetts',
             'profile__country': 'US',
@@ -292,7 +291,7 @@ class CDDWriterTest(TSVWriterTestCase):
 
         assert self.tsv_rows[0] == (
             "14879\tJane\tSmith\tjane@example.com\t"
-            "1 Main St\tRoom B345\t\t"  # double tab is for blank address3
+            "1 Main St, Room B345\t\t\t"  # triple tab is for blank address2 and address3
             "Boston\tMassachusetts\t02115\tUSA\t"
             "999-999-9999\t1\t2016/05/15 15:02:55"
         )

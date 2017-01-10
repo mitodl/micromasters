@@ -1,7 +1,7 @@
 """Factories for making test data"""
 from datetime import date, datetime, timezone
 
-from factory import SubFactory, LazyFunction, Faker
+from factory import SubFactory, LazyFunction, Faker, lazy_attribute
 from factory.django import (
     DjangoModelFactory,
     ImageField
@@ -45,14 +45,18 @@ class ProfileFactory(DjangoModelFactory):
     romanized_first_name = Faker('first_name')
     romanized_last_name = Faker('last_name')
 
-    address1 = LazyFunction(lambda: '{} {}'.format(FAKE.building_number(), FAKE.street_name()))
-    address2 = Faker('secondary_address')
-    address3 = None
+    address = LazyFunction(lambda: '{} {}'.format(FAKE.building_number(), FAKE.street_name()))
 
-    postal_code = Faker('postcode')
     city = Faker('city')
     country = Faker('country_code')
     state_or_territory = Faker('state')
+
+    @lazy_attribute
+    def postal_code(self):
+        """Postal codes are only required for US and Canada"""
+        if self.country in ("US", "CA"):
+            return FAKE.postcode()
+        return None
 
     phone_number = Faker('numerify', text='+# (###) ###-####')
 

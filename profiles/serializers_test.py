@@ -79,6 +79,8 @@ class ProfileTests(ESTestCase):
             'country': profile.country,
             'state_or_territory': profile.state_or_territory,
             'city': profile.city,
+            'address': profile.address,
+            'postal_code': profile.postal_code,
             'birth_country': profile.birth_country,
             'nationality': profile.nationality,
             'preferred_language': profile.preferred_language,

@@ -61,8 +61,20 @@ export default class PersonalForm extends ProfileFormFields {
   );
 
   render() {
+    const { profile } = this.props;
+
     const whyWeAskThis = 'Some program sponsors and employers offer benefits or scholarships ' +
       'to learners with specific backgrounds.';
+
+    // only show postal code for US and Canada
+    let postalCodeField = null;
+    if (profile && ["US", "CA"].includes(profile.country)) {
+      postalCodeField = (
+        <Cell col={4} key='postal_code'>
+          {this.boundTextField(['postal_code'], 'Postal code')}
+        </Cell>
+      );
+    }
 
     return (
       <section>
@@ -100,7 +112,7 @@ export default class PersonalForm extends ProfileFormFields {
         <section>
           <h3>Where are you currently living?</h3>
           <Grid className="profile-form-grid">
-            <Cell col={4}>
+            <Cell col={12}>
               <CountrySelectField
                 stateKeySet={['state_or_territory']}
                 countryKeySet={['country']}
@@ -109,7 +121,13 @@ export default class PersonalForm extends ProfileFormFields {
                 {...this.defaultInputComponentProps()}
               />
             </Cell>
-            <Cell col={4}>
+            <Cell col={12} key='address'>
+              {this.boundTextField(['address'], 'Street address', {maxLength: 100})}
+            </Cell>
+            <Cell col={4} key='city'>
+              {this.boundTextField(['city'], 'City')}
+            </Cell>
+            <Cell col={4} key='state_or_territory'>
               <StateSelectField
                 stateKeySet={['state_or_territory']}
                 countryKeySet={['country']}
@@ -118,9 +136,7 @@ export default class PersonalForm extends ProfileFormFields {
                 {...this.defaultInputComponentProps()}
               />
             </Cell>
-            <Cell col={4}>
-              {this.boundTextField(['city'], 'City')}
-            </Cell>
+            {postalCodeField}
           </Grid>
         </section>
         <section>

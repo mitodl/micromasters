@@ -36,6 +36,24 @@ def split_name(name):
         return names[0], " ".join(names[1:])
 
 
+def split_at_space(string, max_length=40):
+    """
+    Split a string into two parts. The split must occur at a whitespace
+    character, and the max_length of the first part is set with the
+    `max_length` argument. This is used for splitting the user's
+    `address` field into `address1`, `address2`, and `address3`.
+    """
+    if len(string) <= max_length:
+        return string, ""
+    last_index = 0
+    for index, char in enumerate(string):
+        if char.isspace():
+            if index > max_length:
+                return string[0:last_index], string[last_index:]
+            last_index = index
+    return string[0:last_index], string[last_index:]
+
+
 def _generate_upload_to_uri(suffix=""):
     """
     Returns a function to specify the upload directory and filename, via upload_to on an ImageField
