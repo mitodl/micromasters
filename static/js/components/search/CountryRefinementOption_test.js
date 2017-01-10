@@ -2,6 +2,7 @@
 /* global SETTINGS: false */
 import React from 'react';
 import { assert } from 'chai';
+import _ from 'lodash';
 import sinon from 'sinon';
 import TestUtils from 'react-addons-test-utils';
 
@@ -28,6 +29,13 @@ describe('CountryRefinementOption', () => {
   it('should render a country name, given a country code', () => {
     let option = renderCountryOption(props);
     assert.include(option, 'Afghanistan');
+  });
+
+  it('should render a country placeholder, given no country code', () => {
+    let newProps = _.cloneDeep(props);
+    _.set(newProps, "label", null);
+    let option = renderCountryOption(newProps);
+    assert.include(option, '-');
   });
 
   it('should display the result count for the option', () => {

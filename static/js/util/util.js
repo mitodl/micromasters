@@ -272,19 +272,20 @@ export function getPreferredName(profile: Profile, last: boolean = true): string
  */
 export function getLocation(profile: Profile, showState: boolean = true): string {
   let { country, state_or_territory, city } = profile;
-  let subCountryLocation = city || "";
+  let subCountryLocation = city ? `${city}, ` : "";
   let countryLocation = "-";
   let countryFromCode;
 
   if ( country === 'US' ) {
     let state = state_or_territory.replace(/^\D{2}-/, '');
-    subCountryLocation = showState ? `${city}, ${state}` : city;
+    city = city ? `${city}, ` : "";
+    subCountryLocation = showState ? `${city}${state}, ` : city;
     countryLocation = 'US';
   } else if (country) {
     countryFromCode = iso3166.country(country);
     countryLocation = countryFromCode ? countryFromCode.name : "-";
   }
-  return `${subCountryLocation}, ${countryLocation}`;
+  return `${subCountryLocation}${countryLocation}`;
 }
 
 /**

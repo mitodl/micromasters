@@ -179,6 +179,24 @@ describe('utility functions', () => {
       // assert hide state
       assert.equal(getLocation(us, false), 'Portland, US');
     });
+
+    it('should return `${city}, -` when no counrty code', () => {
+      let us = {
+        country: null,
+        state_or_territory: 'US-ME',
+        city: 'Portland'
+      };
+      assert.equal(getLocation(us, false), 'Portland, -');
+    });
+
+    it('should return `US` when no city', () => {
+      let us = {
+        country: 'US',
+        state_or_territory: 'US-ME',
+        city: null
+      };
+      assert.equal(getLocation(us, false), 'US');
+    });
   });
 
   describe('getEmployer', () => {
