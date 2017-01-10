@@ -26,7 +26,7 @@ class FacultyImageSerializer(serializers.ModelSerializer):
         rendition = image.get_rendition('fill-500x385')
         return RenditionSerializer(rendition).data
 
-    class Meta:  # pylint: disable=missing-docstring
+    class Meta:
         model = Image
         fields = ('alt', 'rendition',)
 
@@ -35,7 +35,7 @@ class FacultySerializer(serializers.ModelSerializer):
     """Serializer for ProgramFaculty objects."""
     image = FacultyImageSerializer(read_only=True)
 
-    class Meta:  # pylint: disable=missing-docstring
+    class Meta:
         model = ProgramFaculty
         fields = ('name', 'title', 'short_bio', 'image')
 
@@ -61,6 +61,6 @@ class ProgramPageSerializer(serializers.ModelSerializer):
             return None
         return slugify(programpage.program.title)
 
-    class Meta:  # pylint: disable=missing-docstring
+    class Meta:
         model = ProgramPage
         fields = ('id', 'title', 'slug', 'faculty', 'courses')

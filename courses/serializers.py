@@ -39,7 +39,7 @@ class ProgramSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         return ProgramEnrollment.objects.filter(user=user, program=program).exists()
 
-    class Meta:  # pylint: disable=missing-docstring
+    class Meta:
         model = Program
         fields = (
             'id',
@@ -51,7 +51,7 @@ class ProgramSerializer(serializers.ModelSerializer):
 
 class CourseSerializer(serializers.ModelSerializer):
     """Serializer for Course objects"""
-    class Meta:  # pylint: disable=missing-docstring
+    class Meta:
         model = Course
         fields = (
             'id',

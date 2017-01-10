@@ -199,7 +199,7 @@ class ProfileSerializer(ProfileBaseSerializer):
                 update_education(validated_data['education'], instance.id)
             return instance
 
-    class Meta:  # pylint: disable=missing-docstring
+    class Meta:
         model = Profile
         fields = (
             'username',
@@ -244,7 +244,7 @@ class ProfileLimitedSerializer(ProfileBaseSerializer):
     allowed to see if a profile is marked public.
     """
 
-    class Meta:  # pylint: disable=missing-docstring
+    class Meta:
         model = Profile
         fields = (
             'username',
