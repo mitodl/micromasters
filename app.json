@@ -74,7 +74,7 @@
     },
     "GOOGLE_API_KEY": {
       "description": "API key for accessing Google services",
-      "required": true
+      "required": false
     },
     "MAILGUN_KEY": {
       "description": "The token for authenticating against the Mailgun API"

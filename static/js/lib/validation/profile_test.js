@@ -329,7 +329,6 @@ describe('Profile validation functions', () => {
         'birth_country': "Country",
       }).map(([k,v]) => ({[k]: `${v} is required`})));
       errors.date_of_birth = "Please enter a valid date of birth";
-      errors["current-home"] = "Please enter a valid address";
       const expectation = [false, PERSONAL_STEP, errors];
       assert.deepEqual(validateProfileComplete(profile), expectation);
     });
