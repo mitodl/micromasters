@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import iso3166 from 'iso-3166-2';
+import { codeToCountryName } from '../../lib/currency';
 
 export default class CountryRefinementOption extends React.Component {
   props: {
@@ -9,15 +9,6 @@ export default class CountryRefinementOption extends React.Component {
     onClick:  Function,
     count:    number,
   };
-
-  countryName = (countryCode: string): string => {
-    let country, countryName = "-";
-    if (countryCode) {
-      country = iso3166.country(countryCode);
-      countryName = country ? country.name : "-";
-    }
-    return countryName;
-  }
 
   render () {
     const { active, onClick, count, label } = this.props;
@@ -34,7 +25,7 @@ export default class CountryRefinementOption extends React.Component {
         >
         </input>
         <div className={`${option}__text`}>
-          { this.countryName(label) }
+          { codeToCountryName(label) }
         </div>
         <div className={`${option}__count`}>
           { count }

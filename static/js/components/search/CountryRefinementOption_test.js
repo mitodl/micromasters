@@ -35,7 +35,7 @@ describe('CountryRefinementOption', () => {
     let newProps = _.cloneDeep(props);
     _.set(newProps, "label", null);
     let option = renderCountryOption(newProps);
-    assert.include(option, '-');
+    assert.include(option, 'N/A');
   });
 
   it('should display the result count for the option', () => {
