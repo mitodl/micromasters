@@ -1,5 +1,7 @@
 // @flow
 import React from 'react';
+import R from 'ramda';
+
 import { codeToCountryName } from '../../lib/currency';
 
 export default class CountryRefinementOption extends React.Component {
@@ -25,7 +27,7 @@ export default class CountryRefinementOption extends React.Component {
         >
         </input>
         <div className={`${option}__text`}>
-          { codeToCountryName(label) }
+          { R.when(R.equals(""), () => 'N/A', codeToCountryName(label)) }
         </div>
         <div className={`${option}__count`}>
           { count }

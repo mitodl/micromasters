@@ -24,7 +24,7 @@ describe('currency', () => {
         ['FR', 'EUR'],
         ['GB', 'GBP'],
         ['IN', 'INR'],
-        [null, 'N/A'],
+        [null, ''],
       ].forEach(([country, currency]) => {
         assert.equal(currencyForCountry(country), currency);
       });
