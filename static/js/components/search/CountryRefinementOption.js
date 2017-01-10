@@ -2,7 +2,7 @@
 import React from 'react';
 import R from 'ramda';
 
-import { codeToCountryName } from '../../lib/currency';
+import { codeToCountryName } from '../../lib/location';
 
 export default class CountryRefinementOption extends React.Component {
   props: {

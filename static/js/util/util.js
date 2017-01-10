@@ -4,7 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import striptags from 'striptags';
 import _ from 'lodash';
-import { codeToCountryName } from '../lib/currency';
+import { codeToCountryName } from '../lib/location';
 import { S } from '../lib/sanctuary';
 const { Maybe, Just, Nothing } = S;
 import R from 'ramda';

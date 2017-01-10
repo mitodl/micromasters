@@ -1,7 +1,9 @@
 // @flow
 import cc from 'currency-codes';
 import R from 'ramda';
-import iso3166 from 'iso-3166-2';
+
+import { codeToCountryName } from './location';
+import { labelSort } from '../util/util';
 
 export const excludedCurrencyCodes = [
   'BOV',
@@ -23,8 +25,6 @@ export const excludedCurrencyCodes = [
   'XXX'
 ];
 
-const labelSort = R.sortBy(R.compose(R.toLower, R.prop('label')));
-
 const codeToOption = code => (
   { value: code, label: cc.code(code).currency }
 );
@@ -37,9 +37,7 @@ const codesToOptions = R.compose(
 
 export const currencyOptions = codesToOptions(cc.codes());
 
-export const codeToCountryName = (code: string) =>  R.pathOr(
-  "", ['name'], iso3166.country(R.defaultTo("", code))
-);
+
 
 const currencyToCode = currency => (
   currency.length === 0 ? '' : currency[0].code
