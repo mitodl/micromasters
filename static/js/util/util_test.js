@@ -180,7 +180,7 @@ describe('utility functions', () => {
       assert.equal(getLocation(us, false), 'Portland, US');
     });
 
-    it('should return `${city}, ` when no counrty code', () => {
+    it('should return `${city}, ` when no country code', () => {
       let us = {
         country: null,
         state_or_territory: 'US-ME',
@@ -198,7 +198,7 @@ describe('utility functions', () => {
       assert.equal(getLocation(us, false), 'US');
     });
 
-    it('should return `-` when no city and no counrty', () => {
+    it('should return `-` when no city and no country', () => {
       let us = {
         country: null,
         state_or_territory: 'US-ME',
