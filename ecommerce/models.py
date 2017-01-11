@@ -231,6 +231,9 @@ class Coupon(Model):
     )
     enabled = BooleanField(default=True, help_text="If true, coupons are presently redeemable")
 
+    created_on = DateTimeField(auto_now_add=True)
+    updated_on = DateTimeField(auto_now=True)
+
     @property
     def course_keys(self):
         """Get the course keys which the coupon can be redeemed with"""
@@ -324,6 +327,9 @@ class UserCoupon(Model):
     user = ForeignKey(settings.AUTH_USER_MODEL, on_delete=SET_NULL, null=True)
     coupon = ForeignKey(Coupon, on_delete=SET_NULL, null=True)
 
+    created_on = DateTimeField(auto_now_add=True)
+    updated_on = DateTimeField(auto_now=True)
+
     class Meta:
         unique_together = ('user', 'coupon',)
 
@@ -341,6 +347,9 @@ class RedeemedCoupon(Model):
     """
     order = ForeignKey(Order, on_delete=SET_NULL, null=True)
     coupon = ForeignKey(Coupon, on_delete=SET_NULL, null=True)
+
+    created_on = DateTimeField(auto_now_add=True)
+    updated_on = DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ('order', 'coupon',)
