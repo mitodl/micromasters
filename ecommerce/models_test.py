@@ -7,7 +7,11 @@ from datetime import (
 )
 
 import ddt
-from django.core.exceptions import ValidationError
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import (
+    ImproperlyConfigured,
+    ValidationError,
+)
 from django.test import (
     TestCase,
     override_settings,
@@ -29,6 +33,7 @@ from ecommerce.models import (
 )
 from micromasters.utils import serialize_model_object
 from profiles.factories import UserFactory
+from profiles.models import Profile
 
 
 # pylint: disable=no-self-use
@@ -219,6 +224,19 @@ class CouponTests(TestCase):
 
         coupon_run = CouponFactory.create(content_object=run1)
         assert coupon_run.course_keys == [run1.edx_course_key]
+
+    def test_course_keys_invalid_content_object(self):
+        """
+        course_keys should error if we set content_object to an invalid value
+        """
+        coupon = CouponFactory.create()
+        profile_content_type = ContentType.objects.get_for_model(Profile)
+        # bypass clean()
+        Coupon.objects.filter(id=coupon.id).update(content_type=profile_content_type)
+        coupon.refresh_from_db()
+        with self.assertRaises(ImproperlyConfigured) as ex:
+            _ = coupon.course_keys
+        assert ex.exception.args[0] == "content_object expected to be one of Program, Course, CourseRun"
 
     def test_is_valid(self):
         """

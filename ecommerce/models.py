@@ -8,7 +8,10 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.fields import JSONField
-from django.core.exceptions import ValidationError
+from django.core.exceptions import (
+    ImproperlyConfigured,
+    ValidationError,
+)
 from django.db import transaction
 from django.db.models import (
     Model,
@@ -236,9 +239,11 @@ class Coupon(Model):
             return CourseRun.objects.filter(course__program=obj).values_list('edx_course_key', flat=True)
         elif isinstance(obj, Course):
             return CourseRun.objects.filter(course=obj).values_list('edx_course_key', flat=True)
-        else:
-            # This must be a CourseRun. This is validated in clean()
+        elif isinstance(obj, CourseRun):
             return [obj.edx_course_key]
+        else:
+            # Should probably not get here, clean() should take care of validating this
+            raise ImproperlyConfigured("content_object expected to be one of Program, Course, CourseRun")
 
     @property
     def is_valid(self):
