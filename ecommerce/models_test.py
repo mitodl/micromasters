@@ -5,6 +5,7 @@ from datetime import (
     datetime,
     timedelta,
 )
+from unittest.mock import patch
 
 import ddt
 from django.contrib.contenttypes.models import ContentType
@@ -30,6 +31,7 @@ from ecommerce.factories import (
 from ecommerce.models import (
     Coupon,
     Order,
+    RedeemedCoupon,
 )
 from micromasters.utils import serialize_model_object
 from profiles.factories import UserFactory
@@ -262,13 +264,17 @@ class CouponTests(TestCase):
         ).is_automatic is True
 
     @ddt.data(
-        [Order.CREATED, True, True],
-        [Order.CREATED, False, True],
-        [Order.FULFILLED, True, True],
-        [Order.FULFILLED, False, False],
+        [Order.CREATED, True, True, False],
+        [Order.CREATED, False, True, False],
+        [Order.FULFILLED, True, True, False],
+        [Order.FULFILLED, False, True, False],
+        [Order.CREATED, True, False, True],
+        [Order.CREATED, False, False, True],
+        [Order.FULFILLED, True, False, True],
+        [Order.FULFILLED, False, False, False],
     )
     @ddt.unpack
-    def test_user_has_redemptions_left(self, order_status, has_unpurchased_run, expected):
+    def test_user_has_redemptions_left(self, order_status, has_unpurchased_run, another_already_redeemed, expected):
         """
         Coupon.user_has_redemptions_left should be true if user has not yet purchased all course runs
         """
@@ -278,4 +284,34 @@ class CouponTests(TestCase):
 
         line = LineFactory.create(course_key=run1.edx_course_key, order__status=order_status)
         coupon = CouponFactory.create(content_object=run1.course.program)
-        assert coupon.user_has_redemptions_left(line.order.user) is expected
+        with patch(
+            'ecommerce.models.Coupon.another_user_already_redeemed',
+            autospec=True,
+        ) as _already_redeemed:
+            _already_redeemed.return_value = another_already_redeemed
+            assert coupon.user_has_redemptions_left(line.order.user) is expected
+        _already_redeemed.assert_called_with(coupon, line.order.user)
+
+    @ddt.data(
+        [Order.CREATED, True, False],
+        [Order.CREATED, False, False],
+        [Order.FULFILLED, True, True],
+        [Order.FULFILLED, False, False],
+    )
+    @ddt.unpack
+    def test_another_user_already_redeemed(self, order_status, other_user_redeemed, expected):
+        """
+        Tests for Coupon.another_user_already_redeemed
+        """
+        run1 = CourseRunFactory.create()
+        run2 = CourseRunFactory.create(course__program=run1.course.program)
+        coupon = CouponFactory.create(content_object=run1.course.program)
+
+        line1 = LineFactory.create(course_key=run1.edx_course_key, order__status=Order.FULFILLED)
+        RedeemedCoupon.objects.create(order=line1.order, coupon=coupon)
+
+        if other_user_redeemed:
+            line2 = LineFactory.create(course_key=run2.edx_course_key, order__status=order_status)
+            RedeemedCoupon.objects.create(order=line2.order, coupon=coupon)
+
+        assert coupon.another_user_already_redeemed(line1.order.user) is expected

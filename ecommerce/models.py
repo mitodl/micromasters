@@ -266,13 +266,41 @@ class Coupon(Model):
 
     def user_has_redemptions_left(self, user):
         """
-        Has the coupon not already been redeemed for all possible runs?
+        Has the coupon not already been redeemed by another user, and has the user not already
+        redeemed the coupon for all possible runs?
+
+        Args:
+            user (django.contrib.auth.models.User): A user
+
+        Returns:
+            bool:
+                True if user has not redeemed the coupon for all valid runs already
         """
+        if self.another_user_already_redeemed(user):
+            return False
+
         runs_purchased = set(Line.objects.filter(
             order__user=user,
             order__status=Order.FULFILLED,
         ).values_list("course_key", flat=True))
         return not set(self.course_keys).issubset(runs_purchased)
+
+    def another_user_already_redeemed(self, user):
+        """
+        Has another user already redeemed the coupon for something? However if the coupon is automatic
+        then it is allowed to be redeemed by any number of users.
+
+        Args:
+            user (django.contrib.auth.models.User): A user
+
+        Returns:
+            bool:
+                True if the coupon is not automatic and it has already been redeemed by someone else
+        """
+        return not self.is_automatic and RedeemedCoupon.objects.filter(
+            coupon=self,
+            order__status=Order.FULFILLED,
+        ).exclude(order__user=user).exists()
 
     def clean(self):
         """Validate amount and content_object"""
