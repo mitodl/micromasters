@@ -246,9 +246,9 @@ class Coupon(Model):
         now = datetime.now(tz=pytz.UTC)
         if not self.enabled:
             return False
-        if self.activation_date is not None and now < self.activation_date:
+        if self.activation_date is not None and now <= self.activation_date:
             return False
-        if self.expiration_date is not None and now > self.expiration_date:
+        if self.expiration_date is not None and now >= self.expiration_date:
             return False
         return True
 
