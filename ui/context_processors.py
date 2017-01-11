@@ -16,5 +16,6 @@ def api_keys(request):
             "GOOGLE": settings.GOOGLE_API_KEY,
             "GOOGLE_ANALYTICS": settings.GA_TRACKING_ID,
             "SMARTLOOK": settings.SL_TRACKING_ID,
+            "ADWORDS_CONVERSION_ID": settings.ADWORDS_CONVERSION_ID
         }
     }
