@@ -261,9 +261,12 @@ class Coupon(Model):
 
     def user_has_redemptions_left(self, user):
         """
-        Has the coupon already been redeemed for all possible runs?
+        Has the coupon not already been redeemed for all possible runs?
         """
-        runs_purchased = set(Line.objects.filter(order__user=user).values_list("course_key", flat=True))
+        runs_purchased = set(Line.objects.filter(
+            order__user=user,
+            order__status=Order.FULFILLED,
+        ).values_list("course_key", flat=True))
         return not set(self.course_keys).issubset(runs_purchased)
 
     def clean(self):

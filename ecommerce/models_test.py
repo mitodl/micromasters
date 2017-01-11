@@ -6,6 +6,7 @@ from datetime import (
     timedelta,
 )
 
+import ddt
 from django.core.exceptions import ValidationError
 from django.test import (
     TestCase,
@@ -141,6 +142,7 @@ class CoursePriceTests(TestCase):
         )
 
 
+@ddt.ddt
 class CouponTests(TestCase):
     """Tests for Coupon"""
 
@@ -241,15 +243,21 @@ class CouponTests(TestCase):
             content_object=run.course,
         ).is_automatic is True
 
-    def test_user_has_redemptions_left(self):
+    @ddt.data(
+        [Order.CREATED, True, True],
+        [Order.CREATED, False, True],
+        [Order.FULFILLED, True, True],
+        [Order.FULFILLED, False, False],
+    )
+    @ddt.unpack
+    def test_user_has_redemptions_left(self, order_status, has_unpurchased_run, expected):
         """
         Coupon.user_has_redemptions_left should be true if user has not yet purchased all course runs
         """
         run1 = CourseRunFactory.create()
-        run2 = CourseRunFactory.create(course__program=run1.course.program)
+        if has_unpurchased_run:
+            CourseRunFactory.create(course__program=run1.course.program)
 
-        line = LineFactory.create(course_key=run1.edx_course_key, order__status=Order.FULFILLED)
+        line = LineFactory.create(course_key=run1.edx_course_key, order__status=order_status)
         coupon = CouponFactory.create(content_object=run1.course.program)
-        assert coupon.user_has_redemptions_left(line.order.user) is True
-        run2.delete()
-        assert coupon.user_has_redemptions_left(line.order.user) is False
+        assert coupon.user_has_redemptions_left(line.order.user) is expected
