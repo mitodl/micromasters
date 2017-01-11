@@ -304,11 +304,11 @@ class Coupon(Model):
 
     def __str__(self):
         """Description for Coupon"""
-        return "Coupon {amount_type} {amount} of type {type} for {product}".format(
+        return "Coupon {amount_type} {amount} of type {coupon_type} for {product}".format(
             amount_type=self.amount_type,
             amount=self.amount,
             product=self.content_object,
-            type=self.coupon_type,
+            coupon_type=self.coupon_type,
         )
 
 
