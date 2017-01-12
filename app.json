@@ -158,6 +158,10 @@
     "STATUS_TOKEN": {
       "description": "Token to access the status API.",
       "required": true
+    },
+    "ADWORDS_CONVERSION_ID": {
+      "description": "Id for adwords conversion.",
+      "required": false
     }
   },
   "keywords": [
