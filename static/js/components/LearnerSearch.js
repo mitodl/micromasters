@@ -12,7 +12,6 @@ import {
   ResetFilters,
   RangeFilter,
   SortingSelector,
-  MenuFilter
 } from 'searchkit';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import Card from 'react-mdl/lib/Card/Card';
@@ -271,7 +270,13 @@ export default class LearnerSearch extends SearchkitComponent {
             showHistogram={false}
             title="# of Courses Passed" />
         </FilterVisibilityToggle>
-        <WorkHistoryFilter currentProgramEnrollment={currentProgram} />
+        <FilterVisibilityToggle
+          {...this.props}
+          filterName="company-name"
+        >
+          <WorkHistoryFilter id="company_name" />
+        </FilterVisibilityToggle>
+
       </Card>
     );
   };

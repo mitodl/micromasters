@@ -36,7 +36,8 @@ from search.indexing_api import (
     index_program_enrolled_users,
     remove_program_enrolled_user,
     serialize_program_enrolled_user,
-    USER_DOC_TYPE
+    USER_DOC_TYPE,
+    filter_current_work
 )
 from search.base import ESTestCase
 from search.exceptions import ReindexException
@@ -166,7 +167,7 @@ class IndexTests(ESTestCase):
         """
         program_enrollment = ProgramEnrollmentFactory.create()
         assert es.search()['total'] == 1
-        EmploymentFactory.create(profile=program_enrollment.user.profile)
+        EmploymentFactory.create(profile=program_enrollment.user.profile, end_date=None)
         assert_search(es.search(), [program_enrollment])
 
     def test_employment_update(self):
@@ -175,7 +176,7 @@ class IndexTests(ESTestCase):
         """
         program_enrollment = ProgramEnrollmentFactory.create()
         assert es.search()['total'] == 1
-        employment = EmploymentFactory.create(profile=program_enrollment.user.profile)
+        employment = EmploymentFactory.create(profile=program_enrollment.user.profile, end_date=None)
         employment.city = 'city'
         employment.save()
         assert_search(es.search(), [program_enrollment])
@@ -185,10 +186,21 @@ class IndexTests(ESTestCase):
         Test that Employment is removed from index after being deleted
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        employment = EmploymentFactory.create(profile=program_enrollment.user.profile)
+        employment = EmploymentFactory.create(profile=program_enrollment.user.profile, end_date=None)
         assert_search(es.search(), [program_enrollment])
         employment.delete()
         assert_search(es.search(), [program_enrollment])
+
+    def test_past_employment_add(self):
+        """
+        Test that past work history is not indexed
+        """
+        program_enrollment = ProgramEnrollmentFactory.create()
+        EmploymentFactory.create(profile=program_enrollment.user.profile, end_date=None)
+        EmploymentFactory.create(profile=program_enrollment.user.profile)
+        search_result = es.search()['hits'][0]['_source']['profile']['work_history']
+        assert len(search_result) == 1
+        self.assertFalse(search_result[0]['end_date'])
 
     def test_remove_program_enrolled_user(self):
         """
@@ -284,6 +296,7 @@ class SerializerTests(ESTestCase):
             profile = ProfileFactory.create()
         EducationFactory.create(profile=profile)
         EmploymentFactory.create(profile=profile)
+        EmploymentFactory.create(profile=profile, end_date=None)
         program = ProgramFactory.create()
         course = CourseFactory.create(program=program)
         course_runs = [CourseRunFactory.create(course=course) for _ in range(2)]
@@ -297,7 +310,7 @@ class SerializerTests(ESTestCase):
             'id': program_enrollment.id,
             'user_id': profile.user.id,
             'email': profile.user.email,
-            'profile': ProfileSerializer(profile).data,
+            'profile': filter_current_work(ProfileSerializer(profile).data),
             'program': UserProgramSearchSerializer.serialize(program_enrollment)
         }
 
