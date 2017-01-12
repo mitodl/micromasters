@@ -14,10 +14,10 @@ class CouponSerializer(serializers.ModelSerializer):
         model = Coupon
         fields = ('coupon_code', 'content_type', 'amount_type', 'amount', 'program_id',)
 
-    def get_program_id(self, coupon):
+    def get_program_id(self, coupon):  # pylint: disable=no-self-use
         """Get program id from coupon program"""
         return coupon.program.id
 
-    def get_content_type(self, coupon):
+    def get_content_type(self, coupon):  # pylint: disable=no-self-use
         """Get the content type as a string"""
         return coupon.content_type.model
