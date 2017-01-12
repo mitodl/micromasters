@@ -434,3 +434,30 @@ class CouponTests(ESTestCase):
         """
         resp = self.client.post(reverse('coupon-user-create'), data={}, format='json')
         assert resp.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_no_coupon(self):
+        """
+        A 404 should be returned if no coupon exists
+        """
+        resp = self.client.post(reverse('coupon-user-create', kwargs={'code': "missing"}), data={
+            "username": get_social_username(self.user)
+        }, format='json')
+        assert resp.status_code == status.HTTP_404_NOT_FOUND
+
+    def test_coupon_not_redeemable(self):
+        """
+        A 404 should be returned if coupon is not redeemable
+        """
+        with patch(
+            'ecommerce.views.is_coupon_redeemable', autospec=True
+        ) as _is_redeemable_mock:
+            _is_redeemable_mock.return_value = False
+            resp = self.client.post(
+                reverse('coupon-user-create', kwargs={'code': self.coupon.coupon_code}),
+                data={
+                    "username": get_social_username(self.user)
+                },
+                format='json',
+            )
+            assert resp.status_code == status.HTTP_404_NOT_FOUND
+        _is_redeemable_mock.assert_called_with(self.coupon, self.user)
