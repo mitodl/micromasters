@@ -28,6 +28,7 @@ from django.db.models.fields import (
 from django.db.models.fields.related import (
     ForeignKey,
 )
+from django.db.models.query_utils import Q
 import pytz
 
 from courses.models import (
@@ -247,6 +248,20 @@ class Coupon(TimestampedModel):
             raise ImproperlyConfigured("content_object expected to be one of Program, Course, CourseRun")
 
     @property
+    def program(self):
+        """Get the program which all course keys for the coupon belong to"""
+        obj = self.content_object
+        if isinstance(obj, Program):
+            return obj
+        elif isinstance(obj, Course):
+            return obj.program
+        elif isinstance(obj, CourseRun):
+            return obj.course.program
+        else:
+            # Should probably not get here, clean() should take care of validating this
+            raise ImproperlyConfigured("content_object expected to be one of Program, Course, CourseRun")
+
+    @property
     def is_valid(self):
         """Returns true if the coupon is enabled and also within the valid date range"""
         now = datetime.now(tz=pytz.UTC)
@@ -258,12 +273,12 @@ class Coupon(TimestampedModel):
             return False
         return True
 
-    @property
-    def is_automatic(self):
+    @classmethod
+    def is_automatic_qset(cls):
         """
         Returns true if the coupon would be redeemed automatically without input from the user.
         """
-        return self.coupon_type == self.DISCOUNTED_PREVIOUS_COURSE
+        return Q(coupon_type=cls.DISCOUNTED_PREVIOUS_COURSE)
 
     def user_has_redemptions_left(self, user):
         """

@@ -4,7 +4,6 @@ Tests for ecommerce views
 from unittest.mock import (
     MagicMock,
     patch,
-    PropertyMock,
 )
 
 import ddt
@@ -332,76 +331,27 @@ class CouponTests(ESTestCase):
         super().setUp()
         self.client.force_login(self.user)
 
-    @ddt.data(
-        # In the code this is basically is_redeemable and (is_automatic or user_coupon_exists)
-        [True, True, True, True],
-        [True, True, False, True],
-        [True, False, True, True],
-        [True, False, False, False],
-        [False, True, True, False],
-        [False, True, False, False],
-        [False, False, True, False],
-        [False, False, False, False],
-    )
-    @ddt.unpack
-    def test_list_coupons(self, is_redeemable, is_automatic, user_coupon_exists, expected):
+    def test_list_coupons(self):
         """
-        Test happy path and edge cases for
+        Test that we use pick_coupon to get the list of coupons
         """
-        if not user_coupon_exists:
-            UserCoupon.objects.filter(user=self.user).delete()
-        with patch(
-            'ecommerce.views.Coupon.is_automatic', new_callable=PropertyMock
-        ) as _is_automatic_mock, patch(
-            'ecommerce.views.is_coupon_redeemable', autospec=True
-        ) as _is_redeemable_mock:
-            _is_automatic_mock.return_value = is_automatic
-            _is_redeemable_mock.return_value = is_redeemable
+        # Despite enabled=False, the API returns this coupon because we patched pick_coupons
+        coupon = CouponFactory.create(enabled=False)
+        with patch('ecommerce.views.pick_coupons', autospec=True) as _pick_coupons:
+            _pick_coupons.return_value = [coupon]
             resp = self.client.get(reverse('coupon-list'))
-
         assert resp.status_code == status.HTTP_200_OK
-        coupons = resp.json()
+        assert resp.json() == [CouponSerializer(coupon).data]
+        assert _pick_coupons.call_count == 1
+        _pick_coupons.assert_called_with(self.user)
 
-        if expected:
-            # Due to short circuiting some of these may not get called if expected is False
-            assert _is_automatic_mock.call_count == 1
-            _is_automatic_mock.assert_called_with()
-            assert _is_redeemable_mock.call_count == 1
-            _is_redeemable_mock.assert_called_with(self.coupon, self.user)
-            assert len(coupons) == 1
-            assert coupons[0] == CouponSerializer(self.coupon).data
-        else:
-            assert len(coupons) == 0
-
-    def test_not_logged_in(self):
+    def test_anonymous_get(self):
         """
-        Anonymous users should not be able to view this API
+        Anonymous users should not be allowed to see a list of coupons
         """
         self.client.logout()
-        resp = self.client.get(reverse('coupon-list'))
+        resp = self.client.post(reverse('coupon-list'))
         assert resp.status_code == status.HTTP_403_FORBIDDEN
-
-    def test_views_only_own_coupons(self):
-        """
-        We should not see a coupon for run2 in the output, since there's no UserCoupon for it.
-        """
-        # Make a coupon without a UserCoupon
-        coupon = CouponFactory.create(content_object=self.coupon.content_object)
-
-        # Verify that it doesn't exist in output
-        with patch(
-            'ecommerce.views.is_coupon_redeemable', autospec=True
-        ) as _is_redeemable_mock:
-            _is_redeemable_mock.return_value = True
-            resp = self.client.get(reverse('coupon-list'))
-
-        assert _is_redeemable_mock.call_count == 2
-        _is_redeemable_mock.assert_any_call(self.coupon, self.user)
-        _is_redeemable_mock.assert_any_call(coupon, self.user)
-        assert resp.status_code == status.HTTP_200_OK
-        coupons = resp.json()
-        assert len(coupons) == 1
-        assert coupons[0] == CouponSerializer(self.coupon).data
 
     @ddt.data(True, False)
     def test_create_user_coupon(self, already_exists):
@@ -461,3 +411,15 @@ class CouponTests(ESTestCase):
             )
             assert resp.status_code == status.HTTP_404_NOT_FOUND
         _is_redeemable_mock.assert_called_with(self.coupon, self.user)
+
+    def test_anonymous_post(self):
+        """
+        Anonymous users should not be allowed to POST to API
+        """
+        self.client.logout()
+        resp = self.client.post(
+            reverse('coupon-user-create', kwargs={'code': self.coupon.coupon_code}),
+            data={},
+            format='json',
+        )
+        assert resp.status_code == status.HTTP_403_FORBIDDEN

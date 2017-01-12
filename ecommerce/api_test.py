@@ -37,6 +37,7 @@ from ecommerce.api import (
     is_coupon_redeemable_for_run,
     ISO_8601_FORMAT,
     make_reference_id,
+    pick_coupons,
 )
 from ecommerce.exceptions import (
     EcommerceEdxApiException,
@@ -53,6 +54,7 @@ from ecommerce.models import (
     Coupon,
     Order,
     OrderAudit,
+    UserCoupon,
 )
 from financialaid.factories import FinancialAidFactory
 from financialaid.models import FinancialAidStatus
@@ -636,3 +638,84 @@ class CouponTests(ESTestCase):
             content_object=self.run1.course,
         )
         assert is_coupon_redeemable(coupon, self.user) is False
+
+
+class PickCouponTests(ESTestCase):
+    """Tests for pick_coupon"""
+
+    @classmethod
+    def _create_coupons(cls, user):
+        """Create some coupons"""
+        course = CourseRunFactory.create(course__program__live=True).course
+        ProgramEnrollment.objects.create(program=course.program, user=user)
+        coupon1_auto = CouponFactory.create(
+            coupon_type=Coupon.DISCOUNTED_PREVIOUS_COURSE,
+            content_object=course,
+        )
+        coupon2_auto = CouponFactory.create(
+            coupon_type=Coupon.DISCOUNTED_PREVIOUS_COURSE,
+            content_object=course,
+        )
+        coupon1_attached = CouponFactory.create(content_object=course)
+        UserCoupon.objects.create(user=user, coupon=coupon1_attached)
+        coupon2_attached = CouponFactory.create(content_object=course)
+        UserCoupon.objects.create(user=user, coupon=coupon2_attached)
+
+        return coupon1_attached, coupon2_attached, coupon1_auto, coupon2_auto
+
+    @classmethod
+    def setUpTestData(cls):
+        """Set up some coupons"""
+        super().setUpTestData()
+        cls.user = UserFactory.create()
+
+        # Program 1
+        (
+            cls.coupon1_attached_p1, cls.coupon2_attached_p1, cls.coupon1_auto_p1, cls.coupon2_auto_p1
+        ) = cls._create_coupons(cls.user)
+        # Program 2
+        (
+            coupon1_attached_p2, coupon2_attached_p2, cls.coupon1_auto_p2, cls.coupon2_auto_p2
+        ) = cls._create_coupons(cls.user)
+        # Delete these coupons so that program 2 has only auto coupons
+        coupon1_attached_p2.delete()
+        coupon2_attached_p2.delete()
+
+        # Coupon to verify that we filter this one out
+        cls.not_auto_or_attached_coupon = CouponFactory.create()
+        UserCoupon.objects.create(user=UserFactory.create(), coupon=cls.not_auto_or_attached_coupon)
+
+    def test_pick_coupon(self):
+        """
+        Tests for happy case
+        """
+        # The results should be sorted in desc order, with attached first
+        expected = [
+            self.coupon2_attached_p1,
+            self.coupon2_auto_p2,
+        ]
+        with patch('ecommerce.api.is_coupon_redeemable', autospec=True) as _is_coupon_redeemable:
+            _is_coupon_redeemable.return_value = True
+            assert pick_coupons(self.user) == expected
+        for coupon in expected:
+            _is_coupon_redeemable.assert_any_call(coupon, self.user)
+
+    def test_attached_to_other_user(self):
+        """
+        Coupons only attached to another user should not be shown
+        """
+        UserCoupon.objects.all().delete()
+        UserCoupon.objects.create(user=UserFactory.create(), coupon=CouponFactory.create())
+
+        assert pick_coupons(self.user) == []
+
+    def test_not_redeemable(self):
+        """
+        Coupons which are not redeemable should not be shown
+        """
+
+        with patch('ecommerce.api.is_coupon_redeemable', autospec=True) as _is_coupon_redeemable:
+            _is_coupon_redeemable.return_value = False
+            assert pick_coupons(self.user) == []
+        for coupon in Coupon.objects.all().exclude(id=self.not_auto_or_attached_coupon.id):
+            _is_coupon_redeemable.assert_any_call(coupon, self.user)

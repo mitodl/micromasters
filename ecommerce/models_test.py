@@ -227,6 +227,26 @@ class CouponTests(TestCase):
         coupon_run = CouponFactory.create(content_object=run1)
         assert coupon_run.course_keys == [run1.edx_course_key]
 
+    def test_program(self):
+        """
+        Coupon.course_keys should return a list of all course run keys in a program, course, or course run
+        """
+        run1 = CourseRunFactory.create()
+        CourseRunFactory.create(course=run1.course)
+        run3 = CourseRunFactory.create(course__program=run1.course.program)
+        CourseRunFactory.create(course=run3.course)
+
+        coupon_program = CouponFactory.create(
+            content_object=run1.course.program,
+        )
+        assert coupon_program.program == run1.course.program
+
+        coupon_course = CouponFactory.create(content_object=run1.course)
+        assert coupon_course.program == run1.course.program
+
+        coupon_run = CouponFactory.create(content_object=run1)
+        assert coupon_run.program == run1.course.program
+
     def test_course_keys_invalid_content_object(self):
         """
         course_keys should error if we set content_object to an invalid value
@@ -238,6 +258,19 @@ class CouponTests(TestCase):
         coupon.refresh_from_db()
         with self.assertRaises(ImproperlyConfigured) as ex:
             _ = coupon.course_keys
+        assert ex.exception.args[0] == "content_object expected to be one of Program, Course, CourseRun"
+
+    def test_program_invalid_content_object(self):
+        """
+        program should error if we set content_object to an invalid value
+        """
+        coupon = CouponFactory.create()
+        profile_content_type = ContentType.objects.get_for_model(Profile)
+        # bypass clean()
+        Coupon.objects.filter(id=coupon.id).update(content_type=profile_content_type)
+        coupon.refresh_from_db()
+        with self.assertRaises(ImproperlyConfigured) as ex:
+            _ = coupon.program
         assert ex.exception.args[0] == "content_object expected to be one of Program, Course, CourseRun"
 
     def test_is_valid(self):
@@ -254,14 +287,16 @@ class CouponTests(TestCase):
 
     def test_is_automatic(self):
         """
-        Coupon.is_automatic should be true if the coupon type is DISCOUNTED_PREVIOUS_COURSE
+        Coupon.is_automatic_qset should be true if the coupon type is DISCOUNTED_PREVIOUS_COURSE
         """
-        assert CouponFactory.create(coupon_type=Coupon.STANDARD).is_automatic is False
+        coupon_not_automatic = CouponFactory.create(coupon_type=Coupon.STANDARD)
+        assert Coupon.objects.filter(Coupon.is_automatic_qset()).filter(id=coupon_not_automatic.id).exists() is False
         run = CourseRunFactory.create()
-        assert CouponFactory.create(
+        coupon_is_automatic = CouponFactory.create(
             coupon_type=Coupon.DISCOUNTED_PREVIOUS_COURSE,
             content_object=run.course,
-        ).is_automatic is True
+        )
+        assert Coupon.objects.filter(Coupon.is_automatic_qset()).filter(id=coupon_is_automatic.id).exists() is True
 
     @ddt.data(
         [Order.CREATED, True, True, False],

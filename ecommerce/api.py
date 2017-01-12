@@ -379,3 +379,40 @@ def is_coupon_redeemable(coupon, user):
         return any((mmtrack.has_verified_cert(run.edx_course_key) for run in course.courserun_set.all()))
 
     return True
+
+
+def pick_coupons(user):
+    """
+    Choose the coupon which would be used in redemptions by the user.
+
+    The heuristic is currently:
+     - choose attached coupons over automatic coupons
+     - choose the coupon which has been most recently attached, or most recently modified
+
+    Args:
+        user (django.contrib.auth.models.User): A user
+
+    Returns:
+        Coupon: The coupon which will be used by the user when redeeming runs in a program
+    """
+    sorted_attached_coupons = list(
+        Coupon.objects.filter(usercoupon__user=user).order_by('-usercoupon__updated_on')
+    )
+    sorted_automatic_coupons = list(
+        Coupon.objects.filter(Coupon.is_automatic_qset()).order_by('-updated_on')
+    )
+
+    # At this point there should only be coupons the user has attached (opted into by clicking a link)
+    # or automatic coupons, which there should only be a few. So the next iterations should not
+    # affect many rows in the DB.
+
+    coupons = []
+    # Only one coupon per program
+    program_ids = set()
+    for coupon in sorted_attached_coupons + sorted_automatic_coupons:
+        program_id = coupon.program.id
+        if program_id not in program_ids and is_coupon_redeemable(coupon, user):
+            coupons.append(coupon)
+            program_ids.add(program_id)
+
+    return coupons

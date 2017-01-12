@@ -23,6 +23,7 @@ from ecommerce.api import (
     generate_cybersource_sa_payload,
     get_new_order_by_reference_number,
     is_coupon_redeemable,
+    pick_coupons,
 )
 from ecommerce.models import (
     Coupon,
@@ -180,12 +181,7 @@ class CouponsView(ListModelMixin, GenericViewSet):
 
     def get_queryset(self):
         """List coupons which a user is allowed to see"""
-        return [
-            coupon for coupon in Coupon.objects.all()
-            if is_coupon_redeemable(coupon, self.request.user) and (
-                coupon.is_automatic or UserCoupon.objects.filter(user=self.request.user, coupon=coupon).exists()
-            )
-        ]
+        return pick_coupons(self.request.user)
 
     serializer_class = CouponSerializer
 
