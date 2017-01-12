@@ -30,14 +30,13 @@ export default class WorkHistoryFilter extends SearchkitComponent{
       {'size': 20, "order": {"company_name_count": "desc"}},
       aggs_container
     );
-    let nested_bucket = NestedBucket('inner', 'profile.work_history', terms_bucket);
 
+    let nested_bucket = NestedBucket('inner', 'profile.work_history', terms_bucket);
     return query.setAggs(FilterBucket(
       'profile.work_history.company_name11',
       TermQuery("program.id", currentProgramEnrollment.id),
       nested_bucket
     ));
-
   });
 
 
