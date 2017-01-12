@@ -15,6 +15,12 @@ from dashboard.factories import (
     CachedCurrentGradeFactory,
     CachedEnrollmentFactory,
 )
+from ecommerce.factories import CoursePriceFactory
+from financialaid.constants import FinancialAidStatus
+from financialaid.factories import (
+    FinancialAidFactory,
+    TierProgramFactory
+)
 from grades import api
 from grades.models import FinalGrade, FinalGradeStatus
 from micromasters.factories import UserFactory

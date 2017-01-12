@@ -36,7 +36,7 @@ from roles.models import Role
 from roles.roles import Staff, Instructor
 
 
-def create_program(create_tiers=True):
+def create_program(create_tiers=True, past=False):
     """
     Helper function to create a financial aid program
     Returns:
@@ -47,7 +47,12 @@ def create_program(create_tiers=True):
         live=True
     )
     course = CourseFactory.create(program=program)
+    end_date = datetime.now(tz=pytz.UTC) + timedelta(days=100)
+    if past:
+        end_date = datetime.now(tz=pytz.UTC) - timedelta(days=100)
+
     course_run = CourseRunFactory.create(
+        end_date=end_date,
         enrollment_end=datetime.now(tz=pytz.UTC) + timedelta(hours=1),
         course=course
     )
