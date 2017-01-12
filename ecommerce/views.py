@@ -200,10 +200,8 @@ class UserCouponsView(APIView):
         TokenAuthentication,
     )
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, code, *args, **kwargs):
         """Attach a coupon to a user"""
-        code = self.kwargs['code']
-
         with transaction.atomic():
             coupon = get_object_or_404(Coupon, coupon_code=code)
             if not is_coupon_redeemable(coupon, self.request.user):
