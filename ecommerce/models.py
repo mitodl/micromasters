@@ -313,10 +313,13 @@ class Coupon(TimestampedModel):
             bool:
                 True if the coupon is not automatic and it has already been redeemed by someone else
         """
-        return not self.is_automatic and RedeemedCoupon.objects.filter(
-            coupon=self,
-            order__status=Order.FULFILLED,
-        ).exclude(order__user=user).exists()
+        return (
+            not Coupon.objects.filter(id=self.id).filter(self.is_automatic_qset()) and
+            RedeemedCoupon.objects.filter(
+                coupon=self,
+                order__status=Order.FULFILLED,
+            ).exclude(order__user=user).exists()
+        )
 
     def clean(self):
         """Validate amount and content_object"""
