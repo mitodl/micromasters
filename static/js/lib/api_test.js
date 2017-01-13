@@ -20,6 +20,8 @@ import {
   skipFinancialAid,
   updateDocumentSentDate,
   addCourseEnrollment,
+  getCoupons,
+  attachCoupon,
 } from './api';
 import * as api from './api';
 import {
@@ -333,6 +335,9 @@ describe('api', function() {
         });
       });
 
+    });
+
+    describe("adding a course enrollment", () => {
       it('adds a course enrollment', () => {
         fetchJSONStub.returns(Promise.resolve());
 
@@ -356,6 +361,54 @@ describe('api', function() {
             method: 'POST',
             body: JSON.stringify({
               course_id: courseId
+            })
+          }));
+        });
+      });
+    });
+
+    describe("fetching a coupon", () => {
+      it('fetches coupons', () => {
+        fetchJSONStub.returns(Promise.resolve());
+
+        return getCoupons().then(() => {
+          assert.ok(fetchJSONStub.calledWith('/api/v0/coupons/'));
+        });
+      });
+
+      it('fails to fetch coupons', () => {
+        fetchJSONStub.returns(Promise.reject());
+
+        return assert.isRejected(getCoupons()).then(() => {
+          assert.ok(fetchJSONStub.calledWith('/api/v0/coupons/'));
+        });
+      });
+    });
+
+    describe("attaching a coupon", () => {
+      it('attaches a coupon', () => {
+        fetchJSONStub.returns(Promise.resolve());
+
+        let code = 'a b';
+        return attachCoupon(code).then(() => {
+          assert.ok(fetchJSONStub.calledWith(`/api/v0/coupons/${encodeURI(code)}/users/`, {
+            method: 'POST',
+            body: JSON.stringify({
+              username: SETTINGS.user.username
+            })
+          }));
+        });
+      });
+
+      it('fails to attach a coupon', () => {
+        fetchJSONStub.returns(Promise.reject());
+
+        let code = 'a b';
+        return assert.isRejected(attachCoupon(code)).then(() => {
+          assert.ok(fetchJSONStub.calledWith(`/api/v0/coupons/${encodeURI(code)}/users/`, {
+            method: 'POST',
+            body: JSON.stringify({
+              username: SETTINGS.user.username,
             })
           }));
         });

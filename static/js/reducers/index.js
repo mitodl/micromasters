@@ -56,6 +56,7 @@ import { imageUpload } from './image_upload';
 import { financialAid } from './financial_aid';
 import { documents } from './documents';
 import { orderReceipt } from './order_receipt';
+import { coupons } from './coupons';
 import { ALL_ERRORS_VISIBLE } from '../constants';
 
 export const INITIAL_PROFILES_STATE = {};
@@ -303,4 +304,5 @@ export default combineReducers({
   financialAid,
   documents,
   orderReceipt,
+  coupons,
 });

@@ -236,3 +236,17 @@ export function addCourseEnrollment(courseId: string) {
     })
   });
 }
+
+export function getCoupons() {
+  return mockableFetchJSONWithCSRF('/api/v0/coupons/');
+}
+
+export function attachCoupon(couponCode: string) {
+  let code = encodeURI(couponCode);
+  return mockableFetchJSONWithCSRF(`/api/v0/coupons/${code}/users/`, {
+    method: 'POST',
+    body: JSON.stringify({
+      username: SETTINGS.user.username
+    })
+  });
+}
