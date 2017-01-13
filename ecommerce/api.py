@@ -121,9 +121,9 @@ def create_unfulfilled_order(course_id, user):
     enrollment = get_object_or_404(ProgramEnrollment, program=course_run.course.program, user=user)
     price_dict = get_formatted_course_price(enrollment)
     price = price_dict['price']
-    if price <= 0:
+    if price < 0:
         log.error(
-            "Price to be charged for course run %s for user %s is less than or equal to zero: %s",
+            "Price to be charged for course run %s for user %s is less than zero: %s",
             course_id,
             get_social_username(user),
             price,
@@ -168,6 +168,25 @@ def generate_cybersource_sa_signature(payload):
     return b64encode(digest).decode('utf-8')
 
 
+def make_dashboard_receipt_url(dashboard_url, course_key, status):
+    """
+    Generate URL that user is redirected to on successful order
+
+    Args:
+        dashboard_url (str): The absolute url for the dashboard
+        course_key (str): An edX course key
+        status (str): The order receipt page status, either 'cancel' or 'receipt'
+    Returns:
+        str:
+            The URL for the order receipt page
+    """
+    return "{dashboard_url}?status={status}&course_key={course_key}".format(
+        dashboard_url=dashboard_url,
+        status=status,
+        course_key=quote_plus(course_key),
+    )
+
+
 def generate_cybersource_sa_payload(order, dashboard_url):
     """
     Generates a payload dict to send to CyberSource for Secure Acceptance
@@ -205,14 +224,8 @@ def generate_cybersource_sa_payload(order, dashboard_url):
         'item_0_tax_amount': '0',
         'item_0_unit_price': str(order.total_price_paid),
         'line_item_count': 1,
-        'override_custom_cancel_page': "{}?status=cancel&course_key={}".format(
-            dashboard_url,
-            quote_plus(course_key),
-        ),
-        'override_custom_receipt_page': "{}?status=receipt&course_key={}".format(
-            dashboard_url,
-            quote_plus(course_key),
-        ),
+        'override_custom_cancel_page': make_dashboard_receipt_url(dashboard_url, course_key, 'cancel'),
+        'override_custom_receipt_page': make_dashboard_receipt_url(dashboard_url, course_key, 'receipt'),
         'reference_number': make_reference_id(order),
         'profile_id': settings.CYBERSOURCE_PROFILE_ID,
         'signed_date_time': datetime.now(tz=pytz.UTC).strftime(ISO_8601_FORMAT),

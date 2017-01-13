@@ -23,6 +23,7 @@ from ecommerce.api import (
     generate_cybersource_sa_payload,
     get_new_order_by_reference_number,
     is_coupon_redeemable,
+    make_dashboard_receipt_url,
     pick_coupons,
 )
 from ecommerce.models import (
@@ -73,10 +74,22 @@ class CheckoutView(APIView):
         if course_run.course.program.financial_aid_availability:
             order = create_unfulfilled_order(course_id, request.user)
             dashboard_url = request.build_absolute_uri('/dashboard/')
-            payload = generate_cybersource_sa_payload(order, dashboard_url)
-            url = settings.CYBERSOURCE_SECURE_ACCEPTANCE_URL
-            method = 'POST'
+            if order.total_price_paid == 0:
+                # If price is $0, don't bother going to CyberSource, just mark as fulfilled
+                order.status = Order.FULFILLED
+                order.save_and_log(request.user)
+
+                # This redirects the user to our order success page
+                payload = {}
+                url = make_dashboard_receipt_url(dashboard_url, course_id, 'receipt')
+                method = 'GET'
+            else:
+                # This generates a signed payload which is submitted as an HTML form to CyberSource
+                payload = generate_cybersource_sa_payload(order, dashboard_url)
+                url = settings.CYBERSOURCE_SECURE_ACCEPTANCE_URL
+                method = 'POST'
         else:
+            # This redirects the user to edX to purchase the course there
             payload = {}
             url = urljoin(settings.EDXORG_BASE_URL, '/course_modes/choose/{}/'.format(course_id))
             method = 'GET'

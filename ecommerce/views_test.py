@@ -1,10 +1,8 @@
 """
 Tests for ecommerce views
 """
-from unittest.mock import (
-    MagicMock,
-    patch,
-)
+from urllib.parse import quote_plus
+from unittest.mock import patch
 
 import ddt
 from django.core.urlresolvers import reverse
@@ -21,7 +19,10 @@ from ecommerce.api import (
     make_reference_id,
 )
 from ecommerce.api_test import create_purchasable_course_run
-from ecommerce.factories import CouponFactory
+from ecommerce.factories import (
+    CouponFactory,
+    LineFactory,
+)
 from ecommerce.models import (
     Order,
     OrderAudit,
@@ -99,7 +100,7 @@ class CheckoutViewTests(ESTestCase):
             course__program__live=True,
             course__program__financial_aid_availability=True,
         )
-        order = MagicMock()
+        order = LineFactory.create(order__status=Order.CREATED).order
         payload = {
             'a': 'payload'
         }
@@ -146,6 +147,41 @@ class CheckoutViewTests(ESTestCase):
 
         # We should only create Order objects for a Cybersource checkout
         assert Order.objects.count() == 0
+
+    def test_zero_price_checkout(self):
+        """
+        If the order total is $0, we should just fulfill the order and direct the user to our order receipt page
+        """
+        user = UserFactory.create()
+        self.client.force_login(user)
+
+        course_run = CourseRunFactory.create(
+            course__program__live=True,
+            course__program__financial_aid_availability=True,
+        )
+        order = LineFactory.create(
+            order__status=Order.CREATED,
+            order__total_price_paid=0,
+            price=0,
+        ).order
+        with patch(
+            'ecommerce.views.create_unfulfilled_order',
+            autospec=True,
+            return_value=order,
+        ) as create_mock:
+            resp = self.client.post(reverse('checkout'), {'course_id': course_run.edx_course_key}, format='json')
+
+        assert resp.status_code == status.HTTP_200_OK
+        assert resp.json() == {
+            'payload': {},
+            'url': 'http://testserver/dashboard/?status=receipt&course_key={}'.format(
+                quote_plus(course_run.edx_course_key)
+            ),
+            'method': 'GET',
+        }
+
+        assert create_mock.call_count == 1
+        assert create_mock.call_args[0] == (course_run.edx_course_key, user)
 
     def test_post_redirects(self):
         """Test that POST redirects to same URL"""
