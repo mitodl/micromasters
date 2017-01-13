@@ -36,6 +36,7 @@ from courses.models import (
     Program,
 )
 from ecommerce.exceptions import EcommerceModelException
+from financialaid.models import TimestampedModel
 from micromasters.models import (
     AuditableModel,
     AuditModel,
@@ -170,7 +171,7 @@ class CoursePrice(Model):
         return "CoursePrice for {}, price={}, is_valid={}".format(self.course_run, self.price, self.is_valid)
 
 
-class Coupon(Model):
+class Coupon(TimestampedModel):
     """
     Model for a coupon. This stores the discount for the coupon and other information about how it should be redeemed.
 
@@ -230,9 +231,6 @@ class Coupon(Model):
         help_text="If set, the coupons will not be redeemable before this time",
     )
     enabled = BooleanField(default=True, help_text="If true, coupons are presently redeemable")
-
-    created_on = DateTimeField(auto_now_add=True)
-    updated_on = DateTimeField(auto_now=True)
 
     @property
     def course_keys(self):
@@ -320,15 +318,12 @@ class Coupon(Model):
         )
 
 
-class UserCoupon(Model):
+class UserCoupon(TimestampedModel):
     """
     Model for a coupon attached to a user.
     """
     user = ForeignKey(settings.AUTH_USER_MODEL, on_delete=SET_NULL, null=True)
     coupon = ForeignKey(Coupon, on_delete=SET_NULL, null=True)
-
-    created_on = DateTimeField(auto_now_add=True)
-    updated_on = DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ('user', 'coupon',)
@@ -341,15 +336,12 @@ class UserCoupon(Model):
         )
 
 
-class RedeemedCoupon(Model):
+class RedeemedCoupon(TimestampedModel):
     """
     Model for coupon which has been used in a purchase by a user.
     """
     order = ForeignKey(Order, on_delete=SET_NULL, null=True)
     coupon = ForeignKey(Coupon, on_delete=SET_NULL, null=True)
-
-    created_on = DateTimeField(auto_now_add=True)
-    updated_on = DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ('order', 'coupon',)
