@@ -314,7 +314,7 @@ class Coupon(TimestampedModel):
                 True if the coupon is not automatic and it has already been redeemed by someone else
         """
         return (
-            not Coupon.objects.filter(id=self.id).filter(self.is_automatic_qset()) and
+            not Coupon.objects.filter(id=self.id).filter(self.is_automatic_qset()).exists() and
             RedeemedCoupon.objects.filter(
                 coupon=self,
                 order__status=Order.FULFILLED,
