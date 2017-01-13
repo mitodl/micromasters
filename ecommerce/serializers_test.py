@@ -23,6 +23,7 @@ class SerializerTests(TestCase):
             'content_type': 'program',
             'coupon_code': coupon.coupon_code,
             'program_id': coupon.program.id,
+            'object_id': coupon.object_id,
         }
 
     def test_coupon_course(self):
@@ -36,6 +37,7 @@ class SerializerTests(TestCase):
             'content_type': 'course',
             'coupon_code': coupon.coupon_code,
             'program_id': coupon.program.id,
+            'object_id': coupon.object_id,
         }
 
     def test_coupon_run(self):
@@ -49,4 +51,5 @@ class SerializerTests(TestCase):
             'content_type': 'courserun',
             'coupon_code': coupon.coupon_code,
             'program_id': coupon.program.id,
+            'object_id': coupon.object_id,
         }

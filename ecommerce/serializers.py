@@ -12,7 +12,7 @@ class CouponSerializer(serializers.ModelSerializer):
 
     class Meta:  # pylint: disable=missing-docstring
         model = Coupon
-        fields = ('coupon_code', 'content_type', 'amount_type', 'amount', 'program_id',)
+        fields = ('coupon_code', 'content_type', 'amount_type', 'amount', 'program_id', 'object_id',)
 
     def get_program_id(self, coupon):  # pylint: disable=no-self-use
         """Get program id from coupon program"""
