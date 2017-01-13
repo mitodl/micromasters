@@ -1,3 +1,4 @@
+/* global SETTINGS: false */
 import { assert } from 'chai';
 import fetchMock from 'fetch-mock/src/server';
 import sinon from 'sinon';

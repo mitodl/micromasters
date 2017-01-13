@@ -4,10 +4,6 @@ import { createAction } from 'redux-actions';
 
 import type { Dispatcher } from '../flow/reduxTypes';
 import * as api from '../lib/api';
-import {
-  fetchCoursePrices,
-  fetchDashboard,
-} from '.';
 
 export const REQUEST_ATTACH_COUPON = 'REQUEST_ATTACH_COUPON';
 export const requestAttachCoupon = createAction(REQUEST_ATTACH_COUPON);
