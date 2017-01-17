@@ -100,31 +100,35 @@ class DashboardPage extends React.Component {
   }
 
   handleOrderSuccess = (course: Course): void => {
-    const { dispatch } = this.props;
+    const { dispatch, ui: { toastMessage } } = this.props;
     let firstRun: CourseRun = course.runs.length > 0 ? course.runs[0] : null;
 
-    if (firstRun && firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
-      dispatch(setToastMessage({
-        title: 'Course Enrollment',
-        message: `Something went wrong. You paid for this course '${course.title}' but are not enrolled.`,
-        icon: TOAST_FAILURE,
-      }));
-    } else {
-      dispatch(setToastMessage({
-        title: 'Order Complete!',
-        message: `You are now enrolled in ${course.title}`,
-        icon: TOAST_SUCCESS,
-      }));
+    if (_.isNil(toastMessage)) {
+      if (firstRun && firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
+        dispatch(setToastMessage({
+          title: 'Course Enrollment',
+          message: `Something went wrong. You paid for this course '${course.title}' but are not enrolled.`,
+          icon: TOAST_FAILURE,
+        }));
+      } else {
+        dispatch(setToastMessage({
+          title: 'Order Complete!',
+          message: `You are now enrolled in ${course.title}`,
+          icon: TOAST_SUCCESS,
+        }));
+      }
     }
     this.context.router.push('/dashboard/');
   };
 
   handleOrderCancellation = (): void => {
-    const { dispatch } = this.props;
-    dispatch(setToastMessage({
-      message: 'Order was cancelled',
-      icon: TOAST_FAILURE,
-    }));
+    const { dispatch, ui: { toastMessage } } = this.props;
+    if (_.isNil(toastMessage)) {
+      dispatch(setToastMessage({
+        message: 'Order was cancelled',
+        icon: TOAST_FAILURE,
+      }));
+    }
     this.context.router.push('/dashboard/');
   };
 

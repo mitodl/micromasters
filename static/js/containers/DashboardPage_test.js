@@ -17,6 +17,7 @@ import * as actions from '../actions';
 import {
   SET_TOAST_MESSAGE,
   CLEAR_UI,
+  setToastMessage,
 } from '../actions/ui';
 import {
   SET_TIMEOUT_ACTIVE,
@@ -161,6 +162,37 @@ describe('DashboardPage', () => {
           title: "Order Complete!",
           message: `You are now enrolled in ${course.title}`,
           icon: TOAST_SUCCESS
+        });
+      });
+    });
+
+    describe('toast loop', () => {
+      it("doesn't have a toast message loop on success", () => {
+        let course = findCourse(course =>
+          course.runs.length > 0 &&
+          course.runs[0].status === STATUS_CURRENTLY_ENROLLED
+        );
+        let run = course.runs[0];
+        let encodedKey = encodeURIComponent(run.course_id);
+        const customMessage = {
+          "message": "Custom toast message was not replaced"
+        };
+        helper.store.dispatch(setToastMessage(customMessage));
+        return renderComponent(
+          `/dashboard?status=receipt&course_key=${encodedKey}`,
+          DASHBOARD_SUCCESS_ACTIONS
+        ).then(() => {
+          assert.deepEqual(helper.store.getState().ui.toastMessage, customMessage);
+        });
+      });
+
+      it("doesn't have a toast message loop on failure", () => {
+        const customMessage = {
+          "message": "Custom toast message was not replaced"
+        };
+        helper.store.dispatch(setToastMessage(customMessage));
+        return renderComponent('/dashboard?status=cancel', DASHBOARD_SUCCESS_ACTIONS).then(() => {
+          assert.deepEqual(helper.store.getState().ui.toastMessage, customMessage);
         });
       });
     });
