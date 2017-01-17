@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('profiles', '0027_remove_profile_linkedin'),
+        ('profiles', '0028_auto_20170113_2133'),
     ]
 
     operations = [
