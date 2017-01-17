@@ -1,7 +1,6 @@
 """
 Tests for util functions
 """
-from datetime import datetime
 from io import BytesIO
 from unittest import TestCase
 from unittest.mock import patch
@@ -12,7 +11,6 @@ from factory.django import mute_signals
 
 from factory.fuzzy import FuzzyInteger
 from PIL import Image
-import pytz
 
 from backends.edxorg import EdxOrgOAuth2
 from profiles import util
@@ -71,27 +69,23 @@ class ImageTests(TestCase):
         """
         profile_image_upload_uri should make an upload path with a timestamp
         """
-        filename = 'name.jpg'
-        timestamp = datetime.now(pytz.utc).replace(microsecond=0)
+        name = 'name'
+        ext = '.jpg'
+        filename = '{name}{ext}'.format(name=name, ext=ext)
         url = util.profile_image_upload_uri(None, filename)
-        assert url == 'profile/{name}-{timestamp}{ext}'.format(
-            name='name',
-            timestamp=timestamp.strftime("%Y-%m-%dT%H%M%S-%z"),
-            ext='.jpg',
-        )
+        assert url.startswith('profile/{name}-'.format(name=name))
+        assert url.endswith('{ext}'.format(ext=ext))
 
     def test_small(self):
         """
         profile_image_upload_uri_small should make an upload path with a timestamp
         """
-        filename = 'name.jpg'
-        timestamp = datetime.now(pytz.utc).replace(microsecond=0)
+        name = 'name'
+        ext = '.jpg'
+        filename = '{name}{ext}'.format(name=name, ext=ext)
         url = util.profile_image_upload_uri_small(None, filename)
-        assert url == 'profile/{name}-{timestamp}_small{ext}'.format(
-            name='name',
-            timestamp=timestamp.strftime("%Y-%m-%dT%H%M%S-%z"),
-            ext='.jpg',
-        )
+        assert url.startswith('profile/{name}-'.format(name=name))
+        assert url.endswith('_small{ext}'.format(ext=ext))
 
     def test_too_long_name(self):
         """
