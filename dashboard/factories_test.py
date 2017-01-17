@@ -6,6 +6,11 @@ from django.test import TestCase
 from factory.django import mute_signals
 
 from ecommerce.models import Line, Order
+from financialaid.constants import FinancialAidStatus
+from financialaid.factories import (
+    FinancialAidFactory,
+    TierProgramFactory
+)
 from micromasters.factories import UserFactory
 from courses.factories import ProgramFactory
 from dashboard.factories import CachedEnrollmentVerifiedFactory
@@ -22,7 +27,12 @@ class DashboardFactoryTests(TestCase):
         assert Line.objects.count() == 0
         with mute_signals(post_save):
             user = UserFactory.create()
-        fa_program = ProgramFactory.create(financial_aid_availability=True)
+        fa_program = ProgramFactory.create(financial_aid_availability=True, full=True)
+        FinancialAidFactory.create(
+            user=user,
+            tier_program=TierProgramFactory.create(program=fa_program, income_threshold=0, current=True),
+            status=FinancialAidStatus.RESET,
+        )
         CachedEnrollmentVerifiedFactory.create(user=user, course_run__course__program=fa_program)
         lines = Line.objects.all()
         assert len(lines) == 1

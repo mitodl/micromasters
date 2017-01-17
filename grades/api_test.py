@@ -63,6 +63,17 @@ class GradeAPITests(ESTestCase):
 
         all_course_runs = (cls.run_fa, cls.run_fa_with_cert, cls.run_no_fa, cls.run_no_fa_with_cert, )
 
+        for run in all_course_runs:
+            CoursePriceFactory.create(course_run=run, is_valid=True)
+            if run.course.program.financial_aid_availability:
+                FinancialAidFactory.create(
+                    user=cls.user,
+                    tier_program=TierProgramFactory.create(
+                        program=run.course.program, income_threshold=0, current=True
+                    ),
+                    status=FinancialAidStatus.RESET,
+                )
+
         cls.enrollments = {
             course_run.edx_course_key: CachedEnrollmentFactory.create(
                 user=cls.user, course_run=course_run) for course_run in all_course_runs
