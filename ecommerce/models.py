@@ -28,7 +28,6 @@ from django.db.models.fields import (
 from django.db.models.fields.related import (
     ForeignKey,
 )
-from django.db.models.query_utils import Q
 import pytz
 
 from courses.models import (
@@ -276,9 +275,22 @@ class Coupon(TimestampedModel):
     @classmethod
     def is_automatic_qset(cls):
         """
-        Returns true if the coupon would be redeemed automatically without input from the user.
+        Returns queryset for the coupons would be redeemed automatically without input from the user.
+
+        Returns:
+            django.db.models.query.QuerySet: A queryset
         """
-        return Q(coupon_type=cls.DISCOUNTED_PREVIOUS_COURSE)
+        return Coupon.objects.filter(coupon_type=cls.DISCOUNTED_PREVIOUS_COURSE)
+
+    @classmethod
+    def user_coupon_qset(cls, user):
+        """
+        Returns queryset for the coupons which are attached to a user
+
+        Returns:
+            django.db.models.query.QuerySet: A queryset
+        """
+        return Coupon.objects.filter(usercoupon__user=user)
 
     def user_has_redemptions_left(self, user):
         """
@@ -314,7 +326,7 @@ class Coupon(TimestampedModel):
                 True if the coupon is not automatic and it has already been redeemed by someone else
         """
         return (
-            not Coupon.objects.filter(id=self.id).filter(self.is_automatic_qset()).exists() and
+            not Coupon.is_automatic_qset().filter(id=user.id).exists() and
             RedeemedCoupon.objects.filter(
                 coupon=self,
                 order__status=Order.FULFILLED,

@@ -290,13 +290,13 @@ class CouponTests(TestCase):
         Coupon.is_automatic_qset should be true if the coupon type is DISCOUNTED_PREVIOUS_COURSE
         """
         coupon_not_automatic = CouponFactory.create(coupon_type=Coupon.STANDARD)
-        assert Coupon.objects.filter(Coupon.is_automatic_qset()).filter(id=coupon_not_automatic.id).exists() is False
+        assert Coupon.is_automatic_qset().filter(id=coupon_not_automatic.id).exists() is False
         run = CourseRunFactory.create()
         coupon_is_automatic = CouponFactory.create(
             coupon_type=Coupon.DISCOUNTED_PREVIOUS_COURSE,
             content_object=run.course,
         )
-        assert Coupon.objects.filter(Coupon.is_automatic_qset()).filter(id=coupon_is_automatic.id).exists() is True
+        assert Coupon.is_automatic_qset().filter(id=coupon_is_automatic.id).exists() is True
 
     @ddt.data(
         [Order.CREATED, True, True, False],

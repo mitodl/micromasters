@@ -396,10 +396,10 @@ def pick_coupons(user):
         Coupon: The coupon which will be used by the user when redeeming runs in a program
     """
     sorted_attached_coupons = list(
-        Coupon.objects.filter(usercoupon__user=user).order_by('-usercoupon__updated_on')
+        Coupon.user_coupon_qset(user).order_by('-usercoupon__updated_on')
     )
     sorted_automatic_coupons = list(
-        Coupon.objects.filter(Coupon.is_automatic_qset()).order_by('-updated_on')
+        Coupon.is_automatic_qset().order_by('-updated_on')
     )
 
     # At this point there should only be coupons the user has attached (opted into by clicking a link)
