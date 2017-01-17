@@ -1,5 +1,26 @@
+// @flow
+import {
+  FA_STATUS_APPROVED,
+  FA_STATUS_AUTO_APPROVED,
+  FA_STATUS_CREATED,
+  FA_STATUS_DOCS_SENT,
+  FA_STATUS_PENDING_DOCS,
+  FA_STATUS_PENDING_MANUAL_APPROVAL,
+  FA_STATUS_SKIPPED,
+  FA_STATUS_RESET,
+} from '../constants';
+
 export type FinancialAidUserInfo = {
-  application_status: string,
+  application_status: (
+    FA_STATUS_APPROVED |
+    FA_STATUS_AUTO_APPROVED |
+    FA_STATUS_CREATED |
+    FA_STATUS_DOCS_SENT |
+    FA_STATUS_PENDING_DOCS |
+    FA_STATUS_PENDING_MANUAL_APPROVAL |
+    FA_STATUS_SKIPPED |
+    FA_STATUS_RESET
+  ),
   date_documents_sent: ?string,
   has_user_applied: boolean,
   max_possible_cost: number,
@@ -10,14 +31,16 @@ export type FinancialAidUserInfo = {
 export type Program = {
   courses: Array<Course>,
   id: number,
+  title: string,
   financial_aid_availability: boolean,
-  financial_aid_user_info?: FinancialAidUserInfo,
+  financial_aid_user_info: FinancialAidUserInfo,
 };
 
 export type Course = {
   runs: Array<CourseRun>,
   title: string,
   id: number,
+  position_in_program: number,
 };
 
 export type ProgramPageCourse = {
@@ -29,7 +52,9 @@ export type ProgramPageCourse = {
 };
 
 export type CourseRun = {
-  grade?: number|null,
+  id: number,
+  current_grade?: number,
+  final_grade?: number,
   course_id: string,
   title: string,
   fuzzy_enrollment_start_date?: string,
@@ -40,13 +65,7 @@ export type CourseRun = {
   course_end_date?: string,
   course_upgrade_deadline?: string,
   price?: number,
-};
-
-export type FinancialAid = {
-  application_status: string,
-  has_user_applied: boolean,
-  max_possible_cost: number,
-  min_possible_cost: number,
+  enrollment_url?: ?string,
 };
 
 export type UserProgram = {

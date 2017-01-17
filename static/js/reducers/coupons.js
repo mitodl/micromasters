@@ -13,13 +13,17 @@ import {
   FETCH_SUCCESS,
 } from '../actions';
 import type { Action } from '../flow/reduxTypes';
+import type { Coupons } from '../flow/couponTypes';
 
 export type CouponsState = {
   fetchPostStatus?:  string,
   fetchGetStatus?: string,
+  coupons: Coupons,
 };
 
-export const INITIAL_COUPONS_STATE: CouponsState = {};
+export const INITIAL_COUPONS_STATE: CouponsState = {
+  coupons: [],
+};
 
 export const coupons = (state: CouponsState = INITIAL_COUPONS_STATE, action: Action) => {
   switch (action.type) {
@@ -32,7 +36,11 @@ export const coupons = (state: CouponsState = INITIAL_COUPONS_STATE, action: Act
   case REQUEST_FETCH_COUPONS:
     return { ...state, fetchGetStatus: FETCH_PROCESSING };
   case RECEIVE_FETCH_COUPONS_SUCCESS:
-    return { ...state, fetchGetStatus: FETCH_SUCCESS };
+    return {
+      ...state,
+      fetchGetStatus: FETCH_SUCCESS,
+      coupons: action.payload,
+    };
   case RECEIVE_FETCH_COUPONS_FAILURE:
     return { ...state, fetchGetStatus: FETCH_FAILURE};
   default:

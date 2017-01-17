@@ -2,14 +2,15 @@ import _ from 'lodash';
 import { assert } from 'chai';
 
 import { DASHBOARD_RESPONSE } from './test_constants';
+import { makeDashboard } from './factories';
 
 describe('constants', () => {
-  it("doesn't duplicate any id numbers within the same type of information", () => {
+  const assertResponse = programs => {
     let programIds : Set<number> = new Set();
     let courseIds : Set<number> = new Set();
     let runIds : Set<number> = new Set();
     let courseKeys : Set<string> = new Set();
-    for (let program of DASHBOARD_RESPONSE) {
+    for (let program of programs) {
       assert(!_.isNil(program.id), 'Missing program id');
       assert(!programIds.has(program.id), `Duplicate program id ${program.id}`);
       programIds.add(program.id);
@@ -40,5 +41,15 @@ describe('constants', () => {
         }
       }
     }
+  };
+
+  describe("doesn't duplicate any id numbers within the same type of information", () => {
+    it('for DASHBOARD_RESPONSE', () => {
+      assertResponse(DASHBOARD_RESPONSE);
+    });
+
+    it('for a response from a factory', () => {
+      assertResponse(makeDashboard());
+    });
   });
 });

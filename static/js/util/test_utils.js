@@ -1,5 +1,4 @@
 /* global SETTINGS: false */
-// @flow
 import React from 'react';
 import { Route, IndexRedirect } from 'react-router';
 import TestUtils from 'react-addons-test-utils';

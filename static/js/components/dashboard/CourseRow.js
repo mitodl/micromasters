@@ -1,4 +1,3 @@
-// @flow
 import React from 'react';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import R from 'ramda';

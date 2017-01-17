@@ -74,7 +74,7 @@ export default class CourseDescription extends React.Component {
     } else {
       if ([STATUS_CAN_UPGRADE, STATUS_MISSED_DEADLINE].includes(courseRun.status)) {
         let now = moment();
-        return courseRun.course_start_date && moment(courseRun.course_start_date).isBefore(now);
+        return !_.isNil(courseRun.course_start_date) && moment(courseRun.course_start_date).isBefore(now);
       } else {
         return false;
       }

@@ -1,4 +1,3 @@
-// @flow
 import React from 'react';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import moment from 'moment';
@@ -148,7 +147,7 @@ export default class CourseSubRow extends React.Component {
   );
 
   isCompletedCourseRun = (courseRun: CourseRun) => (
-    [STATUS_NOT_PASSED, STATUS_PASSED].includes(courseRun.status) 
+    [STATUS_NOT_PASSED, STATUS_PASSED].includes(courseRun.status)
   );
 
   courseRunGrade = (courseRun: CourseRun) => (

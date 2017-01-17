@@ -1,4 +1,3 @@
-// @flow
 import React from 'react';
 import { shallow } from 'enzyme';
 import { assert } from 'chai';
@@ -10,6 +9,7 @@ import {
 } from '../constants';
 
 export const program = {
+  "financial_aid_availability": false,
   "description": "Not passed program",
   "title": "Not passed program",
   "courses": [
@@ -21,7 +21,7 @@ export const program = {
           "title": "Gio Test Course #13",
           "status": STATUS_PASSED,
           "position": 1,
-          "grade": "0.66",
+          "grade": 0.66,
           "course_id": "course-v1:odl+GIO101+FALL13",
           "id": 3,
           "course_start_date": "2016-08-22T11:48:27Z",

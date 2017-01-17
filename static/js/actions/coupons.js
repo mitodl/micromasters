@@ -3,6 +3,7 @@ import type { Dispatch } from 'redux';
 import { createAction } from 'redux-actions';
 
 import type { Dispatcher } from '../flow/reduxTypes';
+import type { Coupons } from '../flow/couponTypes';
 import * as api from '../lib/api';
 
 export const REQUEST_ATTACH_COUPON = 'REQUEST_ATTACH_COUPON';
@@ -42,9 +43,9 @@ export const fetchCoupons = (): Dispatcher<*> => {
   return (dispatch: Dispatch) => {
     dispatch(requestFetchCoupons());
     return api.getCoupons().then(
-      () => {
-        dispatch(receiveFetchCouponsSuccess());
-        return Promise.resolve();
+      (coupons: Coupons) => {
+        dispatch(receiveFetchCouponsSuccess(coupons));
+        return Promise.resolve(coupons);
       },
       () => {
         dispatch(receiveFetchCouponsFailure());

@@ -1,6 +1,13 @@
 /* global SETTINGS: false */
+// @flow
 import deepFreeze from 'deep-freeze';
 
+import type {
+  CoursePrices,
+  Dashboard,
+} from './flow/dashboardTypes';
+import type { AvailablePrograms } from './flow/enrollmentTypes';
+import type { FinancialAidUserInfo } from './flow/programTypes';
 import {
   HIGH_SCHOOL,
   BACHELORS,
@@ -279,7 +286,7 @@ export const USER_PROGRAM_RESPONSE = deepFreeze({
   "grade_average": 83
 });
 
-export const DASHBOARD_RESPONSE = deepFreeze([
+export const DASHBOARD_RESPONSE: Dashboard = deepFreeze([
   {
     "description": "Not passed program",
     "title": "Not passed program",
@@ -594,6 +601,7 @@ export const DASHBOARD_RESPONSE = deepFreeze([
     "id": 4
   },
   {
+    "financial_aid_availability": false,
     "title": "Missed deadline program",
     "description": "Missed deadline program",
     "courses": [{
@@ -615,6 +623,7 @@ export const DASHBOARD_RESPONSE = deepFreeze([
     "id": 5
   },
   {
+    "financial_aid_availability": false,
     "title": "Empty program",
     "description": "The empty program",
     "courses": [
@@ -675,21 +684,21 @@ export const DASHBOARD_RESPONSE = deepFreeze([
   },
 ]);
 
-export const PROGRAMS = deepFreeze(DASHBOARD_RESPONSE.map(program => ({
+export const PROGRAMS: AvailablePrograms = deepFreeze(DASHBOARD_RESPONSE.map(program => ({
   id: program.id,
   title: program.title,
   programpage_url: `/program${program.id}/`,
   enrolled: true
 })));
 
-export const FINANCIAL_AID_PARTIAL_RESPONSE = deepFreeze({
+export const FINANCIAL_AID_PARTIAL_RESPONSE: FinancialAidUserInfo = deepFreeze({
   application_status: null,
   has_user_applied: false,
   max_possible_cost: 1000,
   min_possible_cost: 1000
 });
 
-export const COURSE_PRICES_RESPONSE = deepFreeze(DASHBOARD_RESPONSE.map(program => ({
+export const COURSE_PRICES_RESPONSE: CoursePrices = deepFreeze(DASHBOARD_RESPONSE.map(program => ({
   program_id: program.id,
   price: program.id * 1000,
   financial_aid_availability: false,

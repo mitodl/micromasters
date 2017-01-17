@@ -6,6 +6,7 @@ import R from 'ramda';
 
 import type { Profile, ProfileGetResult, ProfilePatchResult } from '../flow/profileTypes';
 import type { CheckoutResponse } from '../flow/checkoutTypes';
+import type { Coupons } from '../flow/couponTypes';
 import type { Dashboard } from '../flow/dashboardTypes';
 import type { AvailableProgram, AvailablePrograms } from '../flow/enrollmentTypes';
 import type { EmailSendResponse } from '../flow/emailTypes';
@@ -237,11 +238,11 @@ export function addCourseEnrollment(courseId: string) {
   });
 }
 
-export function getCoupons() {
+export function getCoupons(): Promise<Coupons> {
   return mockableFetchJSONWithCSRF('/api/v0/coupons/');
 }
 
-export function attachCoupon(couponCode: string) {
+export function attachCoupon(couponCode: string): Promise<*> {
   let code = encodeURI(couponCode);
   return mockableFetchJSONWithCSRF(`/api/v0/coupons/${code}/users/`, {
     method: 'POST',

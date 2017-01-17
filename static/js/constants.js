@@ -79,6 +79,7 @@ export const FA_STATUS_PENDING_MANUAL_APPROVAL = 'pending-manual-approval';
 export const FA_STATUS_APPROVED = 'approved';
 export const FA_STATUS_AUTO_APPROVED = 'auto-approved';
 export const FA_STATUS_SKIPPED = 'skipped';
+export const FA_STATUS_RESET = 'reset';
 
 export const FA_PENDING_STATUSES = [
   FA_STATUS_PENDING_DOCS,
@@ -91,3 +92,10 @@ export const TOAST_SUCCESS = 'success';
 export const TOAST_FAILURE = 'failure';
 
 export const EDX_LINK_BASE = urljoin(SETTINGS.edx_base_url, 'courses/');
+
+export const COUPON_CONTENT_TYPE_COURSERUN = 'courserun';
+export const COUPON_CONTENT_TYPE_COURSE = 'course';
+export const COUPON_CONTENT_TYPE_PROGRAM = 'program';
+
+export const COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT = 'percent-discount';
+export const COUPON_AMOUNT_TYPE_FIXED_DISCOUNT = 'fixed-discount';

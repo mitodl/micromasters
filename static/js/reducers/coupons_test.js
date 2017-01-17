@@ -55,6 +55,7 @@ describe('financial aid reducers', () => {
     ]).then(state => {
       let expectation = {
         fetchPostStatus: FETCH_SUCCESS,
+        coupons: [],
       };
       assert.deepEqual(state, expectation);
       assert.isTrue(attachCouponStub.calledWith(code));
@@ -70,6 +71,7 @@ describe('financial aid reducers', () => {
     ]).then(state => {
       let expectation = {
         fetchPostStatus: FETCH_FAILURE,
+        coupons: [],
       };
       assert.deepEqual(state, expectation);
       assert.isTrue(attachCouponStub.calledWith(code));
@@ -77,13 +79,15 @@ describe('financial aid reducers', () => {
   });
 
   it('should let you fetch coupons', () => {
-    getCouponsStub.returns(Promise.resolve());
+    let coupons = ["some coupons"];
+    getCouponsStub.returns(Promise.resolve(coupons));
     return dispatchThen(fetchCoupons(), [
       REQUEST_FETCH_COUPONS,
       RECEIVE_FETCH_COUPONS_SUCCESS
     ]).then(state => {
       assert.deepEqual(state, {
-        fetchGetStatus: FETCH_SUCCESS
+        fetchGetStatus: FETCH_SUCCESS,
+        coupons: coupons,
       });
       assert.isTrue(getCouponsStub.calledWith());
     });
@@ -96,7 +100,8 @@ describe('financial aid reducers', () => {
       RECEIVE_FETCH_COUPONS_FAILURE
     ]).then(state => {
       assert.deepEqual(state, {
-        fetchGetStatus: FETCH_FAILURE
+        coupons: [],
+        fetchGetStatus: FETCH_FAILURE,
       });
       assert.isTrue(getCouponsStub.calledWith());
     });

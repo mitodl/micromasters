@@ -383,12 +383,12 @@ export function formatPrice(price: string|number): string {
 export function programCourseInfo(program: Program): Object {
   let totalCourses = 0;
   let totalPassedCourses = 0;
-  let passedCourses: Course;
 
   if (program.courses) {
     totalCourses = program.courses.length;
-    passedCourses = program.courses.filter(
+    let passedCourses = program.courses.filter(
       // returns true if any course run has a `status` property set to STATUS_PASSED.
+      // $FlowFixMe: Flow thinks second arg is not a valid predicate
       course => _.some(course.runs, ["status", STATUS_PASSED])
     );
     totalPassedCourses = passedCourses.length;
@@ -402,8 +402,8 @@ export function programCourseInfo(program: Program): Object {
 
 export function findCourseRun(
   programs: Array<Program>,
-  selector: (courseRun: CourseRun, course: Course, program: Program) => boolean,
-): [CourseRun, Course, Program] {
+  selector: (courseRun: ?CourseRun, course: ?Course, program: ?Program) => boolean,
+): [?CourseRun, ?Course, ?Program] {
   for (let program of programs) {
     try {
       if (selector(null, null, program)) {
