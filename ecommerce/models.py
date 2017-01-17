@@ -248,7 +248,9 @@ class Coupon(TimestampedModel):
 
     @property
     def program(self):
-        """Get the program which all course keys for the coupon belong to"""
+        """
+        Get the program for the coupon's content_object.
+        """
         obj = self.content_object
         if isinstance(obj, Program):
             return obj
