@@ -200,6 +200,7 @@ class UserCouponsView(APIView):
         with transaction.atomic():
             coupon = get_object_or_404(Coupon, coupon_code=code)
             if not is_coupon_redeemable(coupon, self.request.user):
+                # Coupon is not redeemable. Return a 404 to prevent the user from
                 raise Http404
 
             UserCoupon.objects.get_or_create(
@@ -207,4 +208,9 @@ class UserCouponsView(APIView):
                 user=self.request.user,
             )
 
-            return Response(status=HTTP_200_OK)
+            return Response(
+                status=HTTP_200_OK,
+                data={
+                    'message': 'Attached user to coupon successfully.'
+                }
+            )

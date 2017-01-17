@@ -377,6 +377,9 @@ class CouponTests(ESTestCase):
         assert resp.status_code == status.HTTP_200_OK
         assert UserCoupon.objects.count() == 1
         assert UserCoupon.objects.filter(user=self.user, coupon=self.coupon).exists()
+        assert resp.json() == {
+            'message': 'Attached user to coupon successfully.'
+        }
 
     def test_empty_dict(self):
         """
