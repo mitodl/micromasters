@@ -178,12 +178,11 @@ class CouponsView(ListModelMixin, GenericViewSet):
         TokenAuthentication,
     )
     permission_classes = (IsAuthenticated,)
+    serializer_class = CouponSerializer
 
     def get_queryset(self):
         """List coupons which a user is allowed to see"""
         return pick_coupons(self.request.user)
-
-    serializer_class = CouponSerializer
 
 
 class UserCouponsView(APIView):
