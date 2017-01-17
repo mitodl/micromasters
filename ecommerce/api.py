@@ -128,7 +128,7 @@ def create_unfulfilled_order(course_id, user):
             get_social_username(user),
             price,
         )
-        raise ImproperlyConfigured("Price to be charged is less than or equal to zero")
+        raise ImproperlyConfigured("Price to be charged is less than zero")
 
     order = Order.objects.create(
         status=Order.CREATED,

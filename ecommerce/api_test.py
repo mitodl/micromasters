@@ -232,7 +232,7 @@ class PurchasableTests(ESTestCase):
             with patch('ecommerce.api.get_purchasable_course_run', autospec=True, return_value=course_run) as mocked:
                 with self.assertRaises(ImproperlyConfigured) as ex:
                     create_unfulfilled_order(course_run.edx_course_key, user)
-                assert ex.exception.args[0] == "Price to be charged is less than or equal to zero"
+                assert ex.exception.args[0] == "Price to be charged is less than zero"
             assert mocked.call_count == 1
             assert mocked.call_args[0] == (course_run.edx_course_key, user)
 
