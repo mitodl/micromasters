@@ -5,6 +5,7 @@ from base64 import b64encode
 from datetime import datetime
 import hashlib
 import hmac
+from itertools import chain
 import logging
 from urllib.parse import quote_plus
 import uuid
@@ -395,12 +396,8 @@ def pick_coupons(user):
     Returns:
         Coupon: The coupon which will be used by the user when redeeming runs in a program
     """
-    sorted_attached_coupons = list(
-        Coupon.user_coupon_qset(user).order_by('-usercoupon__updated_on')
-    )
-    sorted_automatic_coupons = list(
-        Coupon.is_automatic_qset().order_by('-updated_on')
-    )
+    sorted_attached_coupons = Coupon.user_coupon_qset(user).order_by('-usercoupon__updated_on')
+    sorted_automatic_coupons = Coupon.is_automatic_qset().order_by('-updated_on')
 
     # At this point there should only be coupons the user has attached (opted into by clicking a link)
     # or automatic coupons, which there should only be a few. So the next iterations should not
@@ -409,7 +406,7 @@ def pick_coupons(user):
     coupons = []
     # Only one coupon per program
     program_ids = set()
-    for coupon in sorted_attached_coupons + sorted_automatic_coupons:
+    for coupon in chain(sorted_attached_coupons, sorted_automatic_coupons):
         program_id = coupon.program.id
         if program_id not in program_ids and is_coupon_redeemable(coupon, user):
             coupons.append(coupon)
