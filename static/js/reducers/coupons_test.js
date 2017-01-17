@@ -42,7 +42,7 @@ describe('financial aid reducers', () => {
     return dispatchThen(requestAttachCoupon("a b"), [
       REQUEST_ATTACH_COUPON
     ]).then(state => {
-      assert.equal(state.fetchAttachStatus, FETCH_PROCESSING);
+      assert.equal(state.fetchPostStatus, FETCH_PROCESSING);
     });
   });
 
@@ -54,7 +54,7 @@ describe('financial aid reducers', () => {
       RECEIVE_ATTACH_COUPON_SUCCESS,
     ]).then(state => {
       let expectation = {
-        fetchAttachStatus: FETCH_SUCCESS,
+        fetchPostStatus: FETCH_SUCCESS,
       };
       assert.deepEqual(state, expectation);
       assert.isTrue(attachCouponStub.calledWith(code));
@@ -69,7 +69,7 @@ describe('financial aid reducers', () => {
       RECEIVE_ATTACH_COUPON_FAILURE,
     ]).then(state => {
       let expectation = {
-        fetchAttachStatus: FETCH_FAILURE,
+        fetchPostStatus: FETCH_FAILURE,
       };
       assert.deepEqual(state, expectation);
       assert.isTrue(attachCouponStub.calledWith(code));

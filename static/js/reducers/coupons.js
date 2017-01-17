@@ -15,7 +15,7 @@ import {
 import type { Action } from '../flow/reduxTypes';
 
 export type CouponsState = {
-  fetchAttachStatus?:  string,
+  fetchPostStatus?:  string,
   fetchGetStatus?: string,
 };
 
@@ -24,11 +24,11 @@ export const INITIAL_COUPONS_STATE: CouponsState = {};
 export const coupons = (state: CouponsState = INITIAL_COUPONS_STATE, action: Action) => {
   switch (action.type) {
   case REQUEST_ATTACH_COUPON:
-    return { ...state, fetchAttachStatus: FETCH_PROCESSING };
+    return { ...state, fetchPostStatus: FETCH_PROCESSING };
   case RECEIVE_ATTACH_COUPON_SUCCESS:
-    return { ...state, fetchAttachStatus: FETCH_SUCCESS };
+    return { ...state, fetchPostStatus: FETCH_SUCCESS };
   case RECEIVE_ATTACH_COUPON_FAILURE:
-    return { ...state, fetchAttachStatus: FETCH_FAILURE };
+    return { ...state, fetchPostStatus: FETCH_FAILURE };
   case REQUEST_FETCH_COUPONS:
     return { ...state, fetchGetStatus: FETCH_PROCESSING };
   case RECEIVE_FETCH_COUPONS_SUCCESS:
