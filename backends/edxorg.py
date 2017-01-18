@@ -1,12 +1,17 @@
 """
 EdX.org backend for Python Social Auth
 """
+import logging
 from datetime import datetime
 from urllib.parse import urljoin
+import requests
 
 from django.conf import settings
 import pytz
 from social.backends.oauth import BaseOAuth2
+from social.exceptions import AuthFailed
+
+log = logging.getLogger(__name__)
 
 
 class EdxOrgOAuth2(BaseOAuth2):
@@ -45,12 +50,19 @@ class EdxOrgOAuth2(BaseOAuth2):
             dict: a dictionary containing user information
                 coming from the remote service.
         """
-        return self.get_json(
-            urljoin(self.EDXORG_BASE_URL, "/api/mobile/v0.5/my_user_info"),
-            headers={
-                "Authorization": "Bearer {}".format(access_token),
-            }
-        )
+        try:
+            return self.get_json(
+                urljoin(self.EDXORG_BASE_URL, "/api/mobile/v0.5/my_user_info"),
+                headers={
+                    "Authorization": "Bearer {}".format(access_token),
+                }
+            )
+        except requests.exceptions.HTTPError:
+            log.exception('Error on accessing user info')
+            return None
+        except AuthFailed:
+            log.exception('Unable to connect to api /my_user_info')
+            return None
 
     def get_user_details(self, response):
         """

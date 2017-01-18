@@ -4,6 +4,8 @@ APIs for extending the python social auth pipeline
 import logging
 from datetime import datetime
 from urllib.parse import urljoin
+from social.exceptions import AuthFailed
+import requests
 
 import pytz
 from rolepermissions.verifications import has_role
@@ -63,12 +65,20 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):  
         return
 
     username = get_social_username(user)
-    user_profile_edx = backend.get_json(
-        urljoin(backend.EDXORG_BASE_URL, '/api/user/v1/accounts/{0}'.format(username)),
-        headers={
-            "Authorization": "Bearer {}".format(access_token),
-        }
-    )
+
+    try:
+        user_profile_edx = backend.get_json(
+            urljoin(backend.EDXORG_BASE_URL, '/api/user/v1/accounts/{0}'.format(username)),
+            headers={
+                "Authorization": "Bearer {}".format(access_token),
+            }
+        )
+    except requests.exceptions.HTTPError:
+        log.exception('Error on accessing user %s accounts', user.username)
+        return
+    except AuthFailed:
+        log.exception('Unable to connect to api /accounts/%s', user.username)
+        return
 
     name = user_profile_edx.get('name', "")
     user_profile.edx_name = name
