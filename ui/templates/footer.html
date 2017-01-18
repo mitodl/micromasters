@@ -29,7 +29,8 @@
             </a>
           </div>
         {% endif %}
-         <div class="footer-copy">&copy; 2016, Massachusetts Institute of Technology</div>
+         {% now "Y" as current_year %}
+         <div class="footer-copy">&copy; {{ current_year|add:"-1" }}-{{ current_year }}, Massachusetts Institute of Technology</div>
       </div>
     </div>
   </div>
