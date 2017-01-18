@@ -6,7 +6,7 @@ from django.core.management import BaseCommand
 from courses.models import Program
 from dashboard.models import CachedEnrollment, ProgramEnrollment
 from exams.util import (
-    exam_authorization,
+    authorize_for_exam,
     get_mmtrack
 )
 
@@ -60,4 +60,4 @@ class Command(BaseCommand):
                 for enrollment in enrollments_qset:
                     # if user has passed and paid for the course
                     # and not already authorized for exam the create authorizations.
-                    exam_authorization(mmtrack, enrollment.course_run)
+                    authorize_for_exam(mmtrack, enrollment.course_run)

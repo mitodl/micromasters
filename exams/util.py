@@ -1,6 +1,7 @@
 """Exam related helpers"""
 import logging
 import datetime
+import pytz
 
 from dashboard.api_edx_cache import CachedEdxUserData
 from dashboard.utils import MMTrack
@@ -33,7 +34,7 @@ def get_mmtrack(user, program):
     )
 
 
-def exam_authorization(mmtrack, course_run):
+def authorize_for_exam(mmtrack, course_run):
     """
     Authorize user for exam if he has paid for course and passed course.
 
@@ -45,22 +46,25 @@ def exam_authorization(mmtrack, course_run):
         course_run and
         course_run.edx_course_key and
         course_run.course and
+        mmtrack.program.exam_series_code and
+        course_run.course.exam_module and
         mmtrack.has_passed_course(course_run.edx_course_key) and
         mmtrack.has_paid(course_run.edx_course_key) and
-        not ExamAuthorization.objects.filter(user=mmtrack.user, course=course_run.course).exists()
+        not ExamAuthorization.objects.filter(
+            user=mmtrack.user,
+            course=course_run.course,
+            date_first_eligible__lte=datetime.datetime.now(tz=pytz.UTC),
+            date_last_eligible__gte=datetime.datetime.now(tz=pytz.UTC)
+        ).exists()
     )
 
     if ok_for_exam:
-        exam_profile, created = ExamProfile.objects.get_or_create(profile=mmtrack.user.profile)
-
-        if created or exam_profile.status != ExamProfile.PROFILE_SUCCESS:
-            ExamProfile.objects.filter(profile=mmtrack.user.profile).update(status=ExamProfile.PROFILE_SUCCESS)
-
+        ExamProfile.objects.get_or_create(profile=mmtrack.user.profile)
         ExamAuthorization.objects.create(
             user=mmtrack.user,
             course=course_run.course,
-            date_first_eligible=datetime.datetime.now(),
-            date_last_eligible=add_year(datetime.datetime.now())
+            date_first_eligible=datetime.datetime.now(tz=pytz.UTC),
+            date_last_eligible=add_year(datetime.datetime.now(tz=pytz.UTC))
         )
         log.info(
             'user "%s" is authorize for exam the for course id "%s"',

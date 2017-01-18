@@ -11,7 +11,7 @@ from dashboard.factories import (
 )
 from financialaid.api_test import create_program
 from exams.util import (
-    exam_authorization,
+    authorize_for_exam,
     get_mmtrack
 )
 from exams.models import (
@@ -75,7 +75,7 @@ class ExamUtilTests(TestCase):
         self.assertTrue(mmtrack.has_paid(self.course_run.edx_course_key))
         self.assertTrue(mmtrack.has_passed_course(self.course_run.edx_course_key))
 
-        exam_authorization(mmtrack, self.course_run)
+        authorize_for_exam(mmtrack, self.course_run)
 
         # assert Exam Authorization and profile created.
         self.assertTrue(ExamProfile.objects.filter(profile=mmtrack.user.profile).exists())
@@ -91,7 +91,7 @@ class ExamUtilTests(TestCase):
         mmtrack = get_mmtrack(self.user, self.program)
         self.assertFalse(mmtrack.has_paid(self.course_run.edx_course_key))
 
-        exam_authorization(mmtrack, self.course_run)
+        authorize_for_exam(mmtrack, self.course_run)
 
         # assert Exam Authorization and profile created.
         self.assertFalse(ExamProfile.objects.filter(profile=mmtrack.user.profile).exists())
@@ -110,7 +110,7 @@ class ExamUtilTests(TestCase):
             self.assertTrue(mmtrack.has_paid(self.course_run.edx_course_key))
             self.assertFalse(mmtrack.has_passed_course(self.course_run.edx_course_key))
 
-            exam_authorization(mmtrack, self.course_run)
+            authorize_for_exam(mmtrack, self.course_run)
 
             # assert Exam Authorization and profile created.
             self.assertFalse(ExamProfile.objects.filter(profile=mmtrack.user.profile).exists())
