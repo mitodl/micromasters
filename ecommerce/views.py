@@ -224,6 +224,7 @@ class UserCouponsView(APIView):
             return Response(
                 status=HTTP_200_OK,
                 data={
-                    'message': 'Attached user to coupon successfully.'
+                    'message': 'Attached user to coupon successfully.',
+                    'coupon': CouponSerializer(coupon).data,
                 }
             )

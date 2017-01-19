@@ -1,5 +1,6 @@
 // @flow
 import R from 'ramda';
+import Decimal from 'decimal.js-light';
 
 import {
   STATUS_OFFERED,
@@ -96,7 +97,7 @@ export const makeCoupon = (program: Program): Coupon => ({
   coupon_code: `coupon_for_${program.id}`,
   content_type: 'program',
   amount_type: 'fixed-discount',
-  amount: '50',
+  amount: Decimal('50'),
   program_id: program.id,
   object_id: program.id,
 });

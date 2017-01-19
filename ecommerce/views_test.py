@@ -416,7 +416,15 @@ class CouponTests(MockedESTestCase):
         user_coupon = UserCoupon.objects.get(user=self.user, coupon=self.coupon)
         assert user_coupon.updated_on > previous_modified
         assert resp.json() == {
-            'message': 'Attached user to coupon successfully.'
+            'message': 'Attached user to coupon successfully.',
+            'coupon': {
+                'amount': str(self.coupon.amount),
+                'amount_type': self.coupon.amount_type,
+                'content_type': self.coupon.content_type.model,
+                'coupon_code': self.coupon.coupon_code,
+                'object_id': self.coupon.object_id,
+                'program_id': self.coupon.program.id,
+            }
         }
 
     def test_empty_dict(self):

@@ -105,6 +105,9 @@ export const setConfirmSkipDialogVisibility = createAction(SET_CONFIRM_SKIP_DIAL
 export const SET_DOCS_INSTRUCTIONS_VISIBILITY = 'SET_DOCS_INSTRUCTIONS_VISIBILITY';
 export const setDocsInstructionsVisibility = createAction(SET_DOCS_INSTRUCTIONS_VISIBILITY);
 
+export const SET_COUPON_NOTIFICATION_VISIBILITY = 'SET_COUPON_NOTIFICATION_VISIBILITY';
+export const setCouponNotificationVisibility = createAction(SET_COUPON_NOTIFICATION_VISIBILITY);
+
 export const SET_NAV_DRAWER_OPEN = 'SET_NAV_DRAWER_OPEN';
 export const setNavDrawerOpen = createAction(SET_NAV_DRAWER_OPEN);
 

@@ -7,6 +7,7 @@ import {
   RECEIVE_FETCH_COUPONS_SUCCESS,
   RECEIVE_FETCH_COUPONS_FAILURE,
   CLEAR_COUPONS,
+  SET_RECENTLY_ATTACHED_COUPON,
 } from '../actions/coupons';
 import {
   FETCH_FAILURE,
@@ -14,16 +15,18 @@ import {
   FETCH_SUCCESS,
 } from '../actions';
 import type { Action } from '../flow/reduxTypes';
-import type { Coupons } from '../flow/couponTypes';
+import type { Coupon, Coupons } from '../flow/couponTypes';
 
 export type CouponsState = {
-  fetchPostStatus?:  string,
-  fetchGetStatus?: string,
-  coupons: Coupons,
+  fetchPostStatus?:        string,
+  fetchGetStatus?:         string,
+  coupons:                 Coupons,
+  recentlyAttachedCoupon:  ?Coupon,
 };
 
 export const INITIAL_COUPONS_STATE: CouponsState = {
   coupons: [],
+  recentlyAttachedCoupon: null,
 };
 
 export const coupons = (state: CouponsState = INITIAL_COUPONS_STATE, action: Action) => {
@@ -46,6 +49,8 @@ export const coupons = (state: CouponsState = INITIAL_COUPONS_STATE, action: Act
     return { ...state, fetchGetStatus: FETCH_FAILURE };
   case CLEAR_COUPONS:
     return INITIAL_COUPONS_STATE;
+  case SET_RECENTLY_ATTACHED_COUPON:
+    return { ...state, recentlyAttachedCoupon: action.payload };
   default:
     return state;
   }

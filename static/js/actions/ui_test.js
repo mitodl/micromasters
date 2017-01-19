@@ -27,6 +27,7 @@ import {
   SET_PROGRAM,
   SET_CONFIRM_SKIP_DIALOG_VISIBILITY,
   SET_DOCS_INSTRUCTIONS_VISIBILITY,
+  SET_COUPON_NOTIFICATION_VISIBILITY,
   SET_NAV_DRAWER_OPEN,
   SET_USER_CHIP_VISIBILITY,
 
@@ -58,6 +59,7 @@ import {
   setProgram,
   setConfirmSkipDialogVisibility,
   setDocsInstructionsVisibility,
+  setCouponNotificationVisibility,
   setNavDrawerOpen,
   setUserChipVisibility,
 } from '../actions/ui';
@@ -93,6 +95,7 @@ describe('generated UI action helpers', () => {
       [setProgram, SET_PROGRAM],
       [setConfirmSkipDialogVisibility, SET_CONFIRM_SKIP_DIALOG_VISIBILITY],
       [setDocsInstructionsVisibility, SET_DOCS_INSTRUCTIONS_VISIBILITY],
+      [setCouponNotificationVisibility, SET_COUPON_NOTIFICATION_VISIBILITY],
       [setWorkHistoryAnswer, SET_WORK_HISTORY_ANSWER],
       [setNavDrawerOpen, SET_NAV_DRAWER_OPEN],
       [setUserChipVisibility, SET_USER_CHIP_VISIBILITY],

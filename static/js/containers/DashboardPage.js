@@ -19,6 +19,7 @@ import {
   clearCoursePrices,
 } from '../actions';
 import {
+  COUPON_CONTENT_TYPE_COURSE,
   TOAST_SUCCESS,
   TOAST_FAILURE,
   STATUS_OFFERED,
@@ -34,6 +35,7 @@ import {
   setToastMessage,
   setConfirmSkipDialogVisibility,
   setDocsInstructionsVisibility,
+  setCouponNotificationVisibility,
 } from '../actions/ui';
 import { createForm, findCourseRun } from '../util/util';
 import CourseListCard from '../components/dashboard/CourseListCard';
@@ -55,13 +57,16 @@ import {
   updateCalculatorEdit,
 } from '../actions/financial_aid';
 import { setTimeoutActive } from '../actions/order_receipt';
+import { attachCoupon, setRecentlyAttachedCoupon } from '../actions/coupons';
 import type { UIState } from '../reducers/ui';
 import type { OrderReceiptState } from '../reducers/order_receipt';
 import type {
   DocumentsState,
 } from '../reducers/documents';
 import type { CoursePricesState, DashboardState } from '../flow/dashboardTypes';
-import type { AvailableProgram, CourseEnrollmentsState } from '../flow/enrollmentTypes';
+import type {
+  AvailableProgram, AvailableProgramsState, CourseEnrollmentsState
+} from '../flow/enrollmentTypes';
 import type { FinancialAidState } from '../reducers/financial_aid';
 import type { CouponsState } from '../reducers/coupons';
 import type { ProfileGetResult } from '../flow/profileTypes';
@@ -70,6 +75,7 @@ import type { CheckoutState } from '../reducers';
 import { skipFinancialAid } from '../actions/financial_aid';
 import { currencyForCountry } from '../lib/currency';
 import DocsInstructionsDialog from '../components/DocsInstructionsDialog';
+import CouponNotificationDialog from '../components/CouponNotificationDialog';
 
 class DashboardPage extends React.Component {
   static contextTypes = {
@@ -80,6 +86,7 @@ class DashboardPage extends React.Component {
     coupons:                  CouponsState,
     profile:                  ProfileGetResult,
     currentProgramEnrollment: AvailableProgram,
+    programs:                 AvailableProgramsState,
     dashboard:                DashboardState,
     prices:                   CoursePricesState,
     dispatch:                 Dispatch,
@@ -168,6 +175,7 @@ class DashboardPage extends React.Component {
   updateRequirements = () => {
     this.fetchDashboard();
     this.fetchCoursePrices();
+    this.handleCoupon();
     this.fetchCoupons();
     this.handleOrderStatus();
   };
@@ -227,6 +235,36 @@ class DashboardPage extends React.Component {
     } else if (query.status === 'cancel') {
       this.handleOrderCancellation();
     }
+  };
+
+  handleCoupon = () => {
+    const { coupons, dispatch, location: { query } } = this.props;
+
+    if (!query.coupon) {
+      // If there's no coupon code in the URL query parameters,
+      // there's nothing to do.
+      return;
+    }
+
+    if ( coupons.fetchPostStatus !== undefined ) {
+      // If we've already launched a coupon fetch, don't launch another one
+      return;
+    }
+
+    dispatch(attachCoupon(query.coupon)).then(result => {
+      this.setRecentlyAttachedCoupon(result.coupon);
+      this.setCouponNotificationVisibility(true);
+      this.context.router.push('/dashboard/');
+      // update coupon state in Redux
+      return dispatch(fetchCoupons());
+    }).catch(() => {
+      dispatch(setToastMessage({
+        title: "Coupon failed",
+        message: "This coupon code is invalid or does not exist.",
+        icon: TOAST_FAILURE
+      }));
+      this.context.router.push('/dashboard/');
+    });
   };
 
   dispatchCheckout = (courseId: string) => {
@@ -292,6 +330,48 @@ class DashboardPage extends React.Component {
     dispatch(setDocsInstructionsVisibility(bool));
   };
 
+  setCouponNotificationVisibility = bool => {
+    const { dispatch } = this.props;
+    dispatch(setCouponNotificationVisibility(bool));
+  };
+
+  setRecentlyAttachedCoupon = coupon => {
+    const { dispatch } = this.props;
+    dispatch(setRecentlyAttachedCoupon(coupon));
+  };
+
+  renderCouponDialog() {
+    const {
+      programs,
+      ui,
+      coupons,
+      dashboard,
+    } = this.props;
+    const coupon = coupons.recentlyAttachedCoupon;
+    if ( !coupon ) {
+      return null;
+    }
+    const couponProgram = programs.availablePrograms.find(
+      program => program.id === coupon.program_id
+    );
+    let couponCourse = null;
+    if ( coupon.content_type === COUPON_CONTENT_TYPE_COURSE ) {
+      const dashboardCouponProgram = dashboard.programs.find(
+        program => program.id === coupon.program_id
+      );
+      couponCourse = dashboardCouponProgram.courses.find(
+        course => course.id === coupon.object_id
+      );
+    }
+    return <CouponNotificationDialog
+      coupon={coupon}
+      couponProgram={couponProgram}
+      couponCourse={couponCourse}
+      open={ui.couponNotificationVisibility}
+      setDialogVisibility={this.setCouponNotificationVisibility}
+    />;
+  }
+
   render() {
     const {
       dashboard,
@@ -349,6 +429,7 @@ class DashboardPage extends React.Component {
             open={ui.docsInstructionsVisibility}
             setDialogVisibility={this.setDocsInstructionsVisibility}
           />
+          {this.renderCouponDialog()}
           <div className="first-column">
             <DashboardUserCard profile={profile} program={program}/>
             {financialAidCard}
@@ -392,6 +473,7 @@ const mapStateToProps = (state) => {
     profile: profile,
     dashboard: state.dashboard,
     prices: state.prices,
+    programs: state.programs,
     currentProgramEnrollment: state.currentProgramEnrollment,
     ui: state.ui,
     documents: state.documents,

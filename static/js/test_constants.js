@@ -1,6 +1,7 @@
 /* global SETTINGS: false */
 // @flow
 import deepFreeze from 'deep-freeze';
+import Decimal from 'decimal.js-light';
 
 import type {
   CoursePrices,
@@ -20,6 +21,8 @@ import {
   STATUS_OFFERED,
   STATUS_PAID_BUT_NOT_ENROLLED,
   STATUS_PENDING_ENROLLMENT,
+  COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
+  COUPON_CONTENT_TYPE_PROGRAM,
 } from './constants';
 
 export const ELASTICSEARCH_RESPONSE = deepFreeze({
@@ -706,10 +709,24 @@ export const COURSE_PRICES_RESPONSE: CoursePrices = deepFreeze(DASHBOARD_RESPONS
 })));
 
 export const ERROR_RESPONSE = deepFreeze({
-  "errorStatusCode": 500,
-  "error_code": "AB123",
-  "user_message": "custom error message for the user."
+  errorStatusCode: 500,
+  error_code: "AB123",
+  user_message: "custom error message for the user."
 });
+
+export const ATTACH_COUPON_RESPONSE = deepFreeze({
+  message: "Attached user to coupon successfully.",
+  coupon: {
+    amount: Decimal("0.55"),
+    amount_type: COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
+    content_type: COUPON_CONTENT_TYPE_PROGRAM,
+    coupon_code: "success-coupon",
+    object_id: 3,
+    program_id: 3,
+  }
+});
+
+export const COUPON = deepFreeze(ATTACH_COUPON_RESPONSE.coupon);
 
 /* eslint-disable max-len */
 export const CYBERSOURCE_CHECKOUT_RESPONSE = deepFreeze({

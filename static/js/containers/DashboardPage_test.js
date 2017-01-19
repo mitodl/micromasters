@@ -18,6 +18,7 @@ import { CLEAR_COUPONS } from '../actions/coupons';
 import {
   SET_TOAST_MESSAGE,
   CLEAR_UI,
+  SET_COUPON_NOTIFICATION_VISIBILITY,
   setToastMessage,
 } from '../actions/ui';
 import {
@@ -36,11 +37,20 @@ import {
   makeDashboard,
 } from '../factories/dashboard';
 import * as libCoupon  from '../lib/coupon';
+import {
+  REQUEST_ATTACH_COUPON,
+  RECEIVE_ATTACH_COUPON_SUCCESS,
+  RECEIVE_ATTACH_COUPON_FAILURE,
+  SET_RECENTLY_ATTACHED_COUPON,
+  REQUEST_FETCH_COUPONS,
+  RECEIVE_FETCH_COUPONS_SUCCESS,
+} from '../actions/coupons';
 import { findCourseRun } from '../util/util';
 import * as util from '../util/util';
 import {
   CYBERSOURCE_CHECKOUT_RESPONSE,
   EDX_CHECKOUT_RESPONSE,
+  COUPON,
 } from '../test_constants';
 import {
   TOAST_FAILURE,
@@ -323,6 +333,54 @@ describe('DashboardPage', () => {
         CLEAR_COUPONS,
       ], () => {
         ReactDOM.unmountComponentAtNode(div);
+      });
+    });
+  });
+
+  describe('handles redeeming coupons', () => {
+    const COUPON_SUCCESS_ACTIONS = DASHBOARD_SUCCESS_ACTIONS.concat([
+      REQUEST_ATTACH_COUPON,
+      RECEIVE_ATTACH_COUPON_SUCCESS,
+      SET_RECENTLY_ATTACHED_COUPON,
+      SET_COUPON_NOTIFICATION_VISIBILITY,
+      REQUEST_FETCH_COUPONS,
+      RECEIVE_FETCH_COUPONS_SUCCESS,
+    ]);
+    const COUPON_FAILURE_ACTIONS = DASHBOARD_SUCCESS_ACTIONS.concat([
+      REQUEST_ATTACH_COUPON,
+      RECEIVE_ATTACH_COUPON_FAILURE,
+      SET_TOAST_MESSAGE,
+    ]);
+
+    it('with a successful fetch', () => {
+      helper.couponsStub.returns(Promise.resolve([COUPON]));
+
+      return renderComponent(
+        '/dashboard?coupon=success-coupon',
+        COUPON_SUCCESS_ACTIONS
+      ).then(() => {
+        const state = helper.store.getState();
+        assert.deepEqual(state.coupons.recentlyAttachedCoupon, COUPON);
+        assert.isTrue(state.ui.couponNotificationVisibility);
+        assert.deepEqual(state.coupons.coupons, [COUPON]);
+      });
+    });
+
+    it('with a failed fetch', () => {
+      helper.attachCouponStub.returns(Promise.reject());
+
+      return renderComponent(
+        '/dashboard?coupon=failure-coupon',
+        COUPON_FAILURE_ACTIONS
+      ).then(() => {
+        const state = helper.store.getState();
+        assert.isNull(state.coupons.recentlyAttachedCoupon);
+        assert.isFalse(state.ui.couponNotificationVisibility);
+        assert.deepEqual(state.ui.toastMessage, {
+          title: "Coupon failed",
+          message: "This coupon code is invalid or does not exist.",
+          icon: TOAST_FAILURE
+        });
       });
     });
   });

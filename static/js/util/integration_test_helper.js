@@ -12,6 +12,7 @@ import {
   COURSE_PRICES_RESPONSE,
   PROGRAMS,
   USER_PROFILE_RESPONSE,
+  ATTACH_COUPON_RESPONSE,
 } from '../test_constants';
 import {
   REQUEST_GET_USER_PROFILE,
@@ -60,6 +61,8 @@ export default class IntegrationTestHelper {
     this.profileGetStub.withArgs(SETTINGS.user.username).returns(Promise.resolve(USER_PROFILE_RESPONSE));
     this.programsGetStub = this.sandbox.stub(api, 'getPrograms');
     this.programsGetStub.returns(Promise.resolve(PROGRAMS));
+    this.attachCouponStub = this.sandbox.stub(api, 'attachCoupon');
+    this.attachCouponStub.returns(Promise.resolve(ATTACH_COUPON_RESPONSE));
     this.scrollIntoViewStub = this.sandbox.stub();
     window.HTMLDivElement.prototype.scrollIntoView = this.scrollIntoViewStub;
     window.HTMLFieldSetElement.prototype.scrollIntoView = this.scrollIntoViewStub;

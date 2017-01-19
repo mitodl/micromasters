@@ -3,7 +3,7 @@ import type { Dispatch } from 'redux';
 import { createAction } from 'redux-actions';
 
 import type { Dispatcher } from '../flow/reduxTypes';
-import type { Coupons } from '../flow/couponTypes';
+import type { Coupons, AttachCouponResponse } from '../flow/couponTypes';
 import * as api from '../lib/api';
 
 export const REQUEST_ATTACH_COUPON = 'REQUEST_ATTACH_COUPON';
@@ -19,13 +19,13 @@ export const attachCoupon = (code: string): Dispatcher<*> => {
   return (dispatch: Dispatch) => {
     dispatch(requestAttachCoupon());
     return api.attachCoupon(code).then(
-      () => {
-        dispatch(receiveAttachCouponSuccess());
-        return Promise.resolve();
+      (response: AttachCouponResponse) => {
+        dispatch(receiveAttachCouponSuccess(response));
+        return Promise.resolve(response);
       },
-      () => {
-        dispatch(receiveAttachCouponFailure());
-        return Promise.reject();
+      (response) => {
+        dispatch(receiveAttachCouponFailure(response));
+        return Promise.reject(response);
       });
   };
 };
@@ -56,3 +56,6 @@ export const fetchCoupons = (): Dispatcher<*> => {
 
 export const CLEAR_COUPONS = 'CLEAR_COUPONS';
 export const clearCoupons = createAction(CLEAR_COUPONS);
+
+export const SET_RECENTLY_ATTACHED_COUPON = 'SET_RECENTLY_ATTACHED_COUPON';
+export const setRecentlyAttachedCoupon = createAction(SET_RECENTLY_ATTACHED_COUPON);

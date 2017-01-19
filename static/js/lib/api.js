@@ -3,10 +3,11 @@
 // For mocking purposes we need to use 'fetch' defined as a global instead of importing as a local.
 import 'isomorphic-fetch';
 import R from 'ramda';
+import Decimal from 'decimal.js-light';
 
 import type { Profile, ProfileGetResult, ProfilePatchResult } from '../flow/profileTypes';
 import type { CheckoutResponse } from '../flow/checkoutTypes';
-import type { Coupons } from '../flow/couponTypes';
+import type { Coupons, AttachCouponResponse } from '../flow/couponTypes';
 import type { Dashboard } from '../flow/dashboardTypes';
 import type { AvailableProgram, AvailablePrograms } from '../flow/enrollmentTypes';
 import type { EmailSendResponse } from '../flow/emailTypes';
@@ -243,15 +244,20 @@ export function addCourseEnrollment(courseId: string) {
 }
 
 export function getCoupons(): Promise<Coupons> {
-  return fetchJSONWithCSRF('/api/v0/coupons/');
+  return fetchJSONWithCSRF('/api/v0/coupons/').then(coupon => (
+    // turn `amount` from string into decimal
+    R.evolve({amount: Decimal}, coupon)
+  ));
 }
 
-export function attachCoupon(couponCode: string): Promise<*> {
+export function attachCoupon(couponCode: string): Promise<AttachCouponResponse> {
   let code = encodeURI(couponCode);
   return fetchJSONWithCSRF(`/api/v0/coupons/${code}/users/`, {
     method: 'POST',
     body: JSON.stringify({
       username: SETTINGS.user.username
     })
-  });
+  }).then(obj => (
+    R.evolve({coupon: {amount: Decimal}}, obj)
+  ));
 }

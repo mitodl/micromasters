@@ -14,6 +14,7 @@ import {
   RECEIVE_FETCH_COUPONS_FAILURE,
   fetchCoupons,
   clearCoupons,
+  setRecentlyAttachedCoupon,
 } from '../actions/coupons';
 import { INITIAL_COUPONS_STATE } from '../reducers/coupons';
 import {
@@ -23,15 +24,19 @@ import {
 } from '../actions';
 import rootReducer from '../reducers';
 import * as api from '../lib/api';
+import type { CouponsState } from '../reducers/coupons';
+import type { AssertReducerResultState } from '../flow/reduxTypes';
+import { createAssertReducerResultState } from '../util/test_utils';
 
-describe('financial aid reducers', () => {
-  let sandbox, store, dispatchThen;
+describe('coupon reducers', () => {
+  let sandbox, store, dispatchThen, assertReducerResultState: AssertReducerResultState<CouponsState>;
   let attachCouponStub, getCouponsStub;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     store = configureTestStore(rootReducer);
     dispatchThen = store.createDispatchThen(state => state.coupons);
+    assertReducerResultState = createAssertReducerResultState(store, state => state.coupons);
     getCouponsStub = sandbox.stub(api, 'getCoupons');
     attachCouponStub = sandbox.stub(api, 'attachCoupon');
   });
@@ -58,6 +63,7 @@ describe('financial aid reducers', () => {
       let expectation = {
         fetchPostStatus: FETCH_SUCCESS,
         coupons: [],
+        recentlyAttachedCoupon: null,
       };
       assert.deepEqual(state, expectation);
       assert.isTrue(attachCouponStub.calledWith(code));
@@ -74,6 +80,7 @@ describe('financial aid reducers', () => {
       let expectation = {
         fetchPostStatus: FETCH_FAILURE,
         coupons: [],
+        recentlyAttachedCoupon: null,
       };
       assert.deepEqual(state, expectation);
       assert.isTrue(attachCouponStub.calledWith(code));
@@ -90,6 +97,7 @@ describe('financial aid reducers', () => {
       assert.deepEqual(state, {
         fetchGetStatus: FETCH_SUCCESS,
         coupons: coupons,
+        recentlyAttachedCoupon: null,
       });
       assert.isTrue(getCouponsStub.calledWith());
 
@@ -105,10 +113,19 @@ describe('financial aid reducers', () => {
       RECEIVE_FETCH_COUPONS_FAILURE
     ]).then(state => {
       assert.deepEqual(state, {
-        coupons: [],
         fetchGetStatus: FETCH_FAILURE,
+        coupons: [],
+        recentlyAttachedCoupon: null,
       });
       assert.isTrue(getCouponsStub.calledWith());
     });
+  });
+
+  it('should let you set a recently attached coupon', () => {
+    assertReducerResultState(
+      setRecentlyAttachedCoupon,
+      coupons => coupons.recentlyAttachedCoupon,
+      null
+    );
   });
 });

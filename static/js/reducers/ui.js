@@ -38,6 +38,7 @@ import {
   SET_CALCULATOR_DIALOG_VISIBILITY,
   SET_CONFIRM_SKIP_DIALOG_VISIBILITY,
   SET_DOCS_INSTRUCTIONS_VISIBILITY,
+  SET_COUPON_NOTIFICATION_VISIBILITY,
   SET_NAV_DRAWER_OPEN,
   SET_PROGRAM,
   SET_USER_CHIP_VISIBILITY,
@@ -82,6 +83,7 @@ export type UIState = {
   selectedProgram:                  ?AvailableProgram,
   skipDialogVisibility:             boolean,
   docsInstructionsVisibility:       boolean,
+  couponNotificationVisibility:     boolean,
   navDrawerOpen:                    boolean,
   userChipVisibility:               ?string,
 };
@@ -116,6 +118,7 @@ export const INITIAL_UI_STATE: UIState = {
   selectedProgram: null,
   skipDialogVisibility: false,
   docsInstructionsVisibility: false,
+  couponNotificationVisibility: false,
   navDrawerOpen: false,
   userChipVisibility: null,
 };
@@ -279,6 +282,8 @@ export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
     return { ...state, skipDialogVisibility: action.payload };
   case SET_DOCS_INSTRUCTIONS_VISIBILITY:
     return { ...state, docsInstructionsVisibility: action.payload };
+  case SET_COUPON_NOTIFICATION_VISIBILITY:
+    return { ...state, couponNotificationVisibility: action.payload };
   case SET_NAV_DRAWER_OPEN:
     return { ...state, navDrawerOpen: action.payload };
   case SET_USER_CHIP_VISIBILITY:
