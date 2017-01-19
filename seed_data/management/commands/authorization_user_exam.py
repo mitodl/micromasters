@@ -5,10 +5,8 @@ from django.core.management import BaseCommand
 
 from courses.models import Program
 from dashboard.models import CachedEnrollment, ProgramEnrollment
-from exams.util import (
-    authorize_for_exam,
-    get_mmtrack
-)
+from dashboard.utils import get_mmtrack
+from exams.utils import authorize_for_exam
 
 
 class Command(BaseCommand):

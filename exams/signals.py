@@ -5,11 +5,9 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from dashboard.models import CachedEnrollment
+from dashboard.utils import get_mmtrack
 from exams.models import ExamProfile
-from exams.util import (
-    authorize_for_exam,
-    get_mmtrack
-)
+from exams.utils import authorize_for_exam
 from grades.models import FinalGrade
 from profiles.models import Profile
 

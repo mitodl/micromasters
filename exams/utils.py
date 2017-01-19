@@ -3,8 +3,6 @@ import logging
 import datetime
 import pytz
 
-from dashboard.api_edx_cache import CachedEdxUserData
-from dashboard.utils import MMTrack
 from exams.models import (
     ExamProfile,
     ExamAuthorization
@@ -13,25 +11,6 @@ from seed_data.utils import add_year
 
 
 log = logging.getLogger(__name__)
-
-
-def get_mmtrack(user, program):
-    """
-    Creates mmtack object for given user.
-
-    Args:
-        user (User): a Django user.
-        program (programs.models.Program): program where the user is enrolled.
-
-    Returns:
-        mmtrack (dashboard.utils.MMTrack): a instance of all user information about a program
-    """
-    edx_user_data = CachedEdxUserData(user, program=program)
-    return MMTrack(
-        user,
-        program,
-        edx_user_data
-    )
 
 
 def authorize_for_exam(mmtrack, course_run):

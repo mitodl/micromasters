@@ -9,11 +9,9 @@ from dashboard.factories import (
     CachedCurrentGradeFactory,
     CachedEnrollmentFactory,
 )
+from dashboard.utils import get_mmtrack
 from financialaid.api_test import create_program
-from exams.util import (
-    authorize_for_exam,
-    get_mmtrack
-)
+from exams.utils import authorize_for_exam
 from exams.models import (
     ExamProfile,
     ExamAuthorization
@@ -57,15 +55,6 @@ class ExamUtilTests(TestCase):
         LineFactory.create(order=order, course_key=course_run.edx_course_key)
         return order
 
-    def test_get_mmtrack(self):
-        """
-        test creation of  mmtrack(dashboard.utils.MMTrack) object.
-        """
-        mmtrack = get_mmtrack(self.user, self.program)
-        assert mmtrack.user == self.user
-        assert mmtrack.program == self.program
-        assert mmtrack.enrollments.is_enrolled_in(self.enrollment.course_run.edx_course_key)
-
     def test_exam_authorization(self):
         """
         test exam_authorization when user passed and paid for course.
@@ -105,7 +94,7 @@ class ExamUtilTests(TestCase):
         test exam_authorization when user has not passed course but paid.
         """
         self.create_order(self.user, self.course_run)
-        with patch('exams.util.MMTrack.has_passed_course', autospec=True, return_value=False):
+        with patch('dashboard.utils.MMTrack.has_passed_course', autospec=True, return_value=False):
             mmtrack = get_mmtrack(self.user, self.program)
             self.assertTrue(mmtrack.has_paid(self.course_run.edx_course_key))
             self.assertFalse(mmtrack.has_passed_course(self.course_run.edx_course_key))

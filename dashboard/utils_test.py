@@ -9,7 +9,10 @@ from django.core.exceptions import ImproperlyConfigured
 from courses.factories import ProgramFactory, CourseFactory, CourseRunFactory
 from dashboard.api_edx_cache import CachedEdxUserData
 from dashboard.models import CachedEnrollment, CachedCertificate, CachedCurrentGrade
-from dashboard.utils import MMTrack
+from dashboard.utils import (
+    get_mmtrack,
+    MMTrack
+)
 from ecommerce.factories import CoursePriceFactory, LineFactory, OrderFactory
 from ecommerce.models import Order
 from financialaid.factories import TierProgramFactory, FinancialAidFactory
@@ -557,3 +560,13 @@ class MMTrackTest(ESTestCase):
         )
         assert mmtrack.has_verified_cert(key) is True
         assert mmtrack.has_paid(key) is False
+
+    def test_get_mmtrack(self):
+        """
+        test creation of  mmtrack(dashboard.utils.MMTrack) object.
+        """
+        self.pay_for_fa_course(self.crun_fa.edx_course_key)
+        mmtrack = get_mmtrack(self.user, self.program_financial_aid)
+        key = self.crun_fa.edx_course_key
+        assert mmtrack.user == self.user
+        assert mmtrack.has_paid(key) is True

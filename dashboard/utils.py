@@ -8,6 +8,7 @@ from django.db import transaction
 from django.db.models import Max, Min, Q
 
 from courses.models import CourseRun
+from dashboard.api_edx_cache import CachedEdxUserData
 from ecommerce.models import Line
 from financialaid.constants import FinancialAidStatus
 from financialaid.models import FinancialAid, TierProgram
@@ -275,3 +276,22 @@ class MMTrack:
             if self.has_passed_course(course_id):
                 passed_courses.add(self.edx_key_course_map[course_id])
         return len(passed_courses)
+
+
+def get_mmtrack(user, program):
+    """
+    Creates mmtack object for given user.
+
+    Args:
+        user (User): a Django user.
+        program (programs.models.Program): program where the user is enrolled.
+
+    Returns:
+        mmtrack (dashboard.utils.MMTrack): a instance of all user information about a program
+    """
+    edx_user_data = CachedEdxUserData(user, program=program)
+    return MMTrack(
+        user,
+        program,
+        edx_user_data
+    )
