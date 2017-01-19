@@ -23,7 +23,6 @@ import {
   makeProgram,
 } from '../factories/dashboard';
 
-
 describe('coupon utility functions', () => {
   let sandbox;
   beforeEach(() => {
