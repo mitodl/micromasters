@@ -1,4 +1,5 @@
 /* global SETTINGS: false */
+// @flow
 import React from 'react';
 import { Route, IndexRedirect } from 'react-router';
 import TestUtils from 'react-addons-test-utils';
@@ -27,12 +28,12 @@ import UserPage from '../containers/UserPage';
 import User from '../components/User';
 import LearnerSearchPage from '../containers/LearnerSearchPage';
 
-export function findCourse(courseSelector: (course: Course, program: Program) => boolean): Course {
+export function findCourse(courseSelector: (course: ?Course, program: ?Program) => boolean): Course {
   let [, course, ] = findCourseRun(
     DASHBOARD_RESPONSE,
     (courseRun, _course, program) => courseSelector(_course, program)
   );
-  if (course !== null) {
+  if (course !== null && course !== undefined) {
     return course;
   }
   throw "Unable to find course";
@@ -46,7 +47,7 @@ export const alterFirstRun = (course: Course, overrideObject: Object): CourseRun
   return course.runs[0];
 };
 
-export function findAndCloneCourse(courseSelector: (course: Course, program: Program) => boolean): Course {
+export function findAndCloneCourse(courseSelector: (course: ?Course, program: ?Program) => boolean): Course {
   return _.cloneDeep(findCourse(courseSelector));
 }
 

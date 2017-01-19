@@ -53,6 +53,7 @@ export type ProgramPageCourse = {
 
 export type CourseRun = {
   id: number,
+  position: number,
   current_grade?: number,
   final_grade?: number,
   course_id: string,

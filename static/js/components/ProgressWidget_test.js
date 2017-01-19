@@ -10,6 +10,7 @@ import {
 
 export const program = {
   "financial_aid_availability": false,
+  "financial_aid_user_info": null,
   "description": "Not passed program",
   "title": "Not passed program",
   "courses": [

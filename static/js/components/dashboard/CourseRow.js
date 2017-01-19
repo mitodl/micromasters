@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import R from 'ramda';
@@ -46,9 +47,10 @@ export default class CourseRow extends React.Component {
       []
   );
 
+  // $FlowFixMe: CourseRun is sometimes an empty object
   getFirstRun(): CourseRun {
     const { course } = this.props;
-    let firstRun: CourseRun = {};
+    let firstRun = {};
     if (course.runs.length > 0) {
       firstRun = course.runs[0];
     }
@@ -131,6 +133,7 @@ export default class CourseRow extends React.Component {
 
     for (let [i, subRowRun] of Object.entries(subRowRuns)) {
       subRows.push(
+        // $FlowFixMe: Flow thinks subRowRun is mixed even though it's CourseRun|null
         <CourseSubRow
           courseRun={subRowRun}
           coursePrice={coursePrice}

@@ -17,7 +17,9 @@ describe('CourseGrade', () => {
 
   _.forEach(gradeTypes, function(expectedLabel: string, gradeKey: string) {
     it(`shows the ${expectedLabel} for a course`, () => {
-      let course = findAndCloneCourse(course => course.runs.length > 0);
+      let course = findAndCloneCourse(course => (
+        course !== null && course !== undefined && course.runs.length > 0
+      ));
       let grade = '50';
       let progressUrl = `${EDX_LINK_BASE}${course.runs[0].course_id}/progress`;
       course.runs[0][gradeKey] = grade;
