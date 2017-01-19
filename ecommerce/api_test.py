@@ -3,6 +3,7 @@ Test for ecommerce functions
 """
 from base64 import b64encode
 from datetime import datetime
+from decimal import Decimal
 import hashlib
 import hmac
 from unittest.mock import (
@@ -12,6 +13,7 @@ from unittest.mock import (
 )
 from urllib.parse import quote_plus
 
+import ddt
 from django.core.exceptions import ImproperlyConfigured
 from django.http.response import Http404
 from django.test import override_settings
@@ -27,6 +29,8 @@ from dashboard.models import (
     ProgramEnrollment,
 )
 from ecommerce.api import (
+    calculate_coupon_price,
+    calculate_run_price,
     create_unfulfilled_order,
     enroll_user_on_success,
     generate_cybersource_sa_payload,
@@ -54,8 +58,10 @@ from ecommerce.models import (
     Coupon,
     Order,
     OrderAudit,
+    RedeemedCoupon,
     UserCoupon,
 )
+from financialaid.api import get_formatted_course_price
 from financialaid.factories import FinancialAidFactory
 from financialaid.models import FinancialAidStatus
 from micromasters.factories import UserFactory
@@ -84,6 +90,7 @@ def create_purchasable_course_run():
     return course_run, user
 
 
+@ddt.ddt
 class PurchasableTests(MockedESTestCase):
     """
     Tests for get_purchasable_courses and create_unfulfilled_order
@@ -238,32 +245,32 @@ class PurchasableTests(MockedESTestCase):
 
             assert Order.objects.count() == 0
 
-    def test_create_order(self):
+    @ddt.data(True, False)
+    def test_create_order(self, has_coupon):
         """
         Create Order from a purchasable course
         """
         course_run, user = create_purchasable_course_run()
         discounted_price = round(course_run.courseprice_set.get(is_valid=True).price/2, 2)
-        price_dict = {
-            "price": discounted_price
-        }
+        coupon = None
+        if has_coupon:
+            coupon = CouponFactory.create(content_object=course_run)
+        price_tuple = (discounted_price, coupon)
 
         with patch(
             'ecommerce.api.get_purchasable_course_run',
             autospec=True,
             return_value=course_run,
         ) as get_purchasable, patch(
-            'ecommerce.api.get_formatted_course_price',
+            'ecommerce.api.calculate_run_price',
             autospec=True,
-            return_value=price_dict,
-        ) as get_price:
+            return_value=price_tuple,
+        ) as _calculate_run_price:
             order = create_unfulfilled_order(course_run.edx_course_key, user)
         assert get_purchasable.call_count == 1
         assert get_purchasable.call_args[0] == (course_run.edx_course_key, user)
-        assert get_price.call_count == 1
-        assert get_price.call_args[0] == (
-            ProgramEnrollment.objects.get(user=user, program=course_run.course.program),
-        )
+        assert _calculate_run_price.call_count == 1
+        assert _calculate_run_price.call_args[0] == (course_run, user)
 
         assert Order.objects.count() == 1
         assert order.status == Order.CREATED
@@ -288,6 +295,14 @@ class PurchasableTests(MockedESTestCase):
         del data_before['modified_at']
         del dict_before['modified_at']
         assert data_before == dict_before
+
+        if has_coupon:
+            assert RedeemedCoupon.objects.count() == 1
+            redeemed_coupon = RedeemedCoupon.objects.first()
+            assert redeemed_coupon.order == order
+            assert redeemed_coupon.coupon == coupon
+        else:
+            assert RedeemedCoupon.objects.count() == 0
 
 CYBERSOURCE_ACCESS_KEY = 'access'
 CYBERSOURCE_PROFILE_ID = 'profile'
@@ -719,3 +734,92 @@ class PickCouponTests(MockedESTestCase):
             assert pick_coupons(self.user) == []
         for coupon in Coupon.objects.all().exclude(id=self.not_auto_or_attached_coupon.id):
             _is_coupon_redeemable.assert_any_call(coupon, self.user)
+
+
+class PriceTests(ESTestCase):
+    """
+    Tests for calculating prices
+    """
+
+    def test_calculate_run_price_no_coupons(self):
+        """
+        If there are no coupons for this program the price should be what get_formatted_course_price returned
+        """
+        course_run, user = create_purchasable_course_run()
+        # This coupon is for a different program
+        coupon = CouponFactory.create()
+        UserCoupon.objects.create(coupon=coupon, user=user)
+        discounted_price = 5
+        fa_price = get_formatted_course_price(course_run.course.program.programenrollment_set.first())['price']
+        with patch('ecommerce.api.calculate_coupon_price', autospec=True) as _calculate_coupon_price:
+            _calculate_coupon_price.return_value = discounted_price
+            assert calculate_run_price(course_run, user) == (fa_price, None)
+        assert _calculate_coupon_price.called is False
+
+    def test_no_program_enrollment(self):
+        """
+        If a user is not enrolled a 404 should be raised when getting the price
+        """
+        course_run, user = create_purchasable_course_run()
+        ProgramEnrollment.objects.filter(program=course_run.course.program, user=user).delete()
+        try:
+            calculate_run_price(course_run, user)
+        except Http404:
+            pass
+
+    def test_calculate_run_price_coupon(self):
+        """
+        If there is a coupon calculate_run_price should use calculate_coupon_price to get the discounted price
+        """
+        course_run, user = create_purchasable_course_run()
+        coupon = CouponFactory.create(content_object=course_run)
+        UserCoupon.objects.create(coupon=coupon, user=user)
+        discounted_price = 5
+        with patch('ecommerce.api.calculate_coupon_price', autospec=True) as _calculate_coupon_price:
+            _calculate_coupon_price.return_value = discounted_price
+            assert calculate_run_price(course_run, user) == (discounted_price, coupon)
+        fa_price = get_formatted_course_price(course_run.course.program.programenrollment_set.first())['price']
+        _calculate_coupon_price.assert_called_with(coupon, fa_price, course_run.edx_course_key)
+
+    def test_percent_discount(self):
+        """
+        Assert the price with a percent discount
+        """
+        course_run, _ = create_purchasable_course_run()
+        price = Decimal(5)
+        coupon = CouponFactory.create(
+            content_object=course_run, amount_type=Coupon.PERCENT_DISCOUNT, amount=Decimal("0.3")
+        )
+        assert calculate_coupon_price(coupon, price, course_run.edx_course_key) == price * (1 - coupon.amount)
+
+    def test_fixed_discount(self):
+        """
+        Assert the price with a fixed discount
+        """
+        course_run, _ = create_purchasable_course_run()
+        price = Decimal(5)
+        coupon = CouponFactory.create(
+            content_object=course_run, amount_type=Coupon.FIXED_DISCOUNT, amount=Decimal("1.5")
+        )
+        assert calculate_coupon_price(coupon, price, course_run.edx_course_key) == price - coupon.amount
+
+    def test_calculate_coupon_price(self):
+        """
+        Assert that the price is not adjusted if the amount type is unknown
+        """
+        course_run, _ = create_purchasable_course_run()
+        price = Decimal('0.3')
+        coupon = CouponFactory.create(content_object=course_run)
+        # Use manager to get around validation
+        Coupon.objects.filter(id=coupon.id).update(amount_type='xyz')
+        coupon.refresh_from_db()
+        assert calculate_coupon_price(coupon, price, course_run.edx_course_key) == price
+
+    def test_coupon_allowed(self):
+        """
+        Assert that the price is not adjusted if the coupon doesn't affect the course run
+        """
+        course_run, _ = create_purchasable_course_run()
+        price = Decimal('0.3')
+        coupon = CouponFactory.create()
+        assert calculate_coupon_price(coupon, price, course_run.edx_course_key) == price

@@ -39,6 +39,7 @@ from ecommerce.models import (
     Coupon,
     Line,
     Order,
+    RedeemedCoupon,
 )
 from financialaid.api import get_formatted_course_price
 from financialaid.models import (
@@ -104,27 +105,25 @@ def get_purchasable_course_run(course_key, user):
 
 
 @transaction.atomic
-def create_unfulfilled_order(course_id, user):
+def create_unfulfilled_order(course_key, user):
     """
     Create a new Order which is not fulfilled for a purchasable course run. If course run is not purchasable,
     it raises an Http404
 
     Args:
-        course_id (str):
+        course_key (str):
             A course key
         user (User):
             The purchaser of the course run
     Returns:
         Order: A newly created Order for the CourseRun with the given course_id
     """
-    course_run = get_purchasable_course_run(course_id, user)
-    enrollment = get_object_or_404(ProgramEnrollment, program=course_run.course.program, user=user)
-    price_dict = get_formatted_course_price(enrollment)
-    price = price_dict['price']
+    course_run = get_purchasable_course_run(course_key, user)
+    price, coupon = calculate_run_price(course_run, user)
     if price < 0:
         log.error(
             "Price to be charged for course run %s for user %s is less than zero: %s",
-            course_id,
+            course_key,
             get_social_username(user),
             price,
         )
@@ -137,10 +136,12 @@ def create_unfulfilled_order(course_id, user):
     )
     Line.objects.create(
         order=order,
-        course_key=course_run.edx_course_key,
+        course_key=course_key,
         description='Seat for {}'.format(course_run.title),
         price=price,
     )
+    if coupon is not None:
+        RedeemedCoupon.objects.create(order=order, coupon=coupon)
     order.save_and_log(user)
     return order
 
@@ -397,7 +398,8 @@ def is_coupon_redeemable(coupon, user):
 
 def pick_coupons(user):
     """
-    Choose the coupon which would be used in redemptions by the user.
+    Choose the coupons which would be used in redemptions by the user. There should be at most one coupon
+    per program in the output.
 
     The heuristic is currently:
      - choose attached coupons over automatic coupons
@@ -407,7 +409,7 @@ def pick_coupons(user):
         user (django.contrib.auth.models.User): A user
 
     Returns:
-        Coupon: The coupon which will be used by the user when redeeming runs in a program
+        list of Coupon: The coupons which will be used by the user when redeeming runs in a program
     """
     sorted_attached_coupons = Coupon.user_coupon_qset(user).order_by('-usercoupon__updated_on')
     sorted_automatic_coupons = Coupon.is_automatic_qset().order_by('-updated_on')
@@ -426,3 +428,48 @@ def pick_coupons(user):
             program_ids.add(program_id)
 
     return coupons
+
+
+def calculate_coupon_price(coupon, price, course_key):
+    """
+    Calculate the adjusted price given a coupon
+
+    Args:
+        coupon (Coupon): A coupon
+        price (decimal.Decimal): A price
+        course_key (str): An edX course key
+
+    Returns:
+        decimal.Decimal: An adjusted price
+    """
+    if course_key not in coupon.course_keys:
+        return price
+    if coupon.amount_type == Coupon.PERCENT_DISCOUNT:
+        return price * (1-coupon.amount)
+    elif coupon.amount_type == Coupon.FIXED_DISCOUNT:
+        return price - coupon.amount
+    else:
+        return price
+
+
+def calculate_run_price(course_run, user):
+    """
+    Calculate the price of a course given the coupons and financial aid available to the user.
+
+    Args:
+        course_run (CourseRun): A course run
+        user (django.contrib.auth.models.User): A user
+
+    Returns:
+        (decimal.Decimal, Coupon):
+            The adjusted of the course, and the coupon used if any
+    """
+    program = course_run.course.program
+    enrollment = get_object_or_404(ProgramEnrollment, program=program, user=user)
+    price = get_formatted_course_price(enrollment)['price']
+    coupons = [coupon for coupon in pick_coupons(user) if coupon.program == program]
+    coupon = None
+    if len(coupons) > 0:
+        coupon = coupons[0]
+        price = calculate_coupon_price(coupon, price, course_run.edx_course_key)
+    return price, coupon
