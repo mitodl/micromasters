@@ -280,7 +280,7 @@ class MMTrack:
 
 def get_mmtrack(user, program):
     """
-    Creates mmtack object for given user.
+    Creates mmtrack object for given user.
 
     Args:
         user (User): a Django user.

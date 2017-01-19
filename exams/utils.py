@@ -26,13 +26,14 @@ def authorize_for_exam(mmtrack, course_run):
         course_run.edx_course_key and
         course_run.course and
         course_run.course.exam_module and
-        mmtrack.program.exam_series_code
+        mmtrack.program.exam_series_code and
+        mmtrack.has_paid(course_run.edx_course_key)
     )
 
     if ok_for_exam:
+        now = datetime.datetime.now(tz=pytz.UTC)
         # if user paid for a course then create his exam profile if it is not creaated yet.
-        if mmtrack.has_paid(course_run.edx_course_key):
-            ExamProfile.objects.get_or_create(profile=mmtrack.user.profile)
+        ExamProfile.objects.get_or_create(profile=mmtrack.user.profile)
 
         # if user passed the course and currently not authorization for that run then give
         # her authorizations.
@@ -41,8 +42,8 @@ def authorize_for_exam(mmtrack, course_run):
             not ExamAuthorization.objects.filter(
                 user=mmtrack.user,
                 course=course_run.course,
-                date_first_eligible__lte=datetime.datetime.now(tz=pytz.UTC),
-                date_last_eligible__gte=datetime.datetime.now(tz=pytz.UTC)
+                date_first_eligible__lte=now,
+                date_last_eligible__gte=now
             ).exists()
         )
 
@@ -50,8 +51,8 @@ def authorize_for_exam(mmtrack, course_run):
             ExamAuthorization.objects.create(
                 user=mmtrack.user,
                 course=course_run.course,
-                date_first_eligible=datetime.datetime.now(tz=pytz.UTC),
-                date_last_eligible=add_year(datetime.datetime.now(tz=pytz.UTC))
+                date_first_eligible=now,
+                date_last_eligible=add_year(now)
             )
             log.info(
                 'user "%s" is authorize for exam the for course id "%s"',
