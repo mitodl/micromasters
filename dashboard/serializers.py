@@ -2,9 +2,8 @@
 Provides functionality for serializing a ProgramEnrollment for the ES index
 """
 from courses.utils import get_year_season_from_course_run
-from dashboard.api_edx_cache import CachedEdxUserData
 from dashboard.models import CachedEnrollment
-from dashboard.utils import MMTrack
+from dashboard.utils import get_mmtrack
 from roles.api import is_learner
 
 
@@ -64,13 +63,7 @@ class UserProgramSearchSerializer:
         """
         user = program_enrollment.user
         program = program_enrollment.program
-        edx_user_data = CachedEdxUserData(user, program=program)
-
-        mmtrack = MMTrack(
-            user,
-            program,
-            edx_user_data
-        )
+        mmtrack = get_mmtrack(user, program)
         enrollments_qset = CachedEnrollment.user_course_qset(user, program=program)
 
         return {
