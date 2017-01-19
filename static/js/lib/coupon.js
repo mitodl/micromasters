@@ -18,14 +18,14 @@ import type {
 } from '../flow/dashboardTypes';
 
 export const calculatePrices = (programs: Dashboard, prices: CoursePrices, coupons: Coupons): CalculatedPrices => {
-  let couponLookup: Map<number, Coupon> = new Map();
-  let priceLookup: Map<number, CoursePrice> = new Map();
-  for (const coupon of coupons) {
-    couponLookup.set(coupon.program_id, coupon);
+  type HasProgramId = {
+    program_id: number
+  };
+  function makeLookup<T: HasProgramId>(obj: Array<T>): Map<number, T> {
+    return new Map(obj.map((value: T) => [value.program_id, value]));
   }
-  for (const price of prices) {
-    priceLookup.set(price.program_id, price);
-  }
+  let couponLookup: Map<number, Coupon> = makeLookup(coupons);
+  let priceLookup: Map<number, CoursePrice> = makeLookup(prices);
 
   return programs.map(program => ({
     id: program.id,
