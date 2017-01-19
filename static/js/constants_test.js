@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { assert } from 'chai';
 
 import { DASHBOARD_RESPONSE } from './test_constants';
-import { makeDashboard } from './factories';
+import { makeDashboard } from './factories/dashboard';
 
 describe('constants', () => {
   const assertResponse = programs => {

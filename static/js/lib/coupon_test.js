@@ -21,7 +21,7 @@ import {
   makeCoursePrices,
   makeDashboard,
   makeProgram,
-} from '../factories';
+} from '../factories/dashboard';
 
 
 describe('coupon utility functions', () => {
