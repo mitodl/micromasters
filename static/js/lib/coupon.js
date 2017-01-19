@@ -17,15 +17,17 @@ import type {
   Dashboard,
 } from '../flow/dashboardTypes';
 
+// For objects that have a program id, make a lookup for it
+type HasProgramId = {
+  program_id: number
+};
+function makeProgramIdLookup<T: HasProgramId>(obj: Array<T>): Map<number, T> {
+  return new Map(obj.map((value: T) => [value.program_id, value]));
+}
+
 export const calculatePrices = (programs: Dashboard, prices: CoursePrices, coupons: Coupons): CalculatedPrices => {
-  type HasProgramId = {
-    program_id: number
-  };
-  function makeLookup<T: HasProgramId>(obj: Array<T>): Map<number, T> {
-    return new Map(obj.map((value: T) => [value.program_id, value]));
-  }
-  let couponLookup: Map<number, Coupon> = makeLookup(coupons);
-  let priceLookup: Map<number, CoursePrice> = makeLookup(prices);
+  let couponLookup: Map<number, Coupon> = makeProgramIdLookup(coupons);
+  let priceLookup: Map<number, CoursePrice> = makeProgramIdLookup(prices);
 
   let calcPriceForRun = (run, course, program) => ({
     id: run.id,
