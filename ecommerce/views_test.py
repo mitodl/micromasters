@@ -394,6 +394,7 @@ class CouponTests(ESTestCase):
         """
         Test happy case for creating a UserCoupon
         """
+        previous_modified = self.coupon.user_coupon_qset(self.user).first().updated_on
         if not already_exists:
             # Won't change anything if it already exists
             UserCoupon.objects.all().delete()
@@ -412,7 +413,8 @@ class CouponTests(ESTestCase):
         _is_redeemable_mock.assert_called_with(self.coupon, self.user)
         assert resp.status_code == status.HTTP_200_OK
         assert UserCoupon.objects.count() == 1
-        assert UserCoupon.objects.filter(user=self.user, coupon=self.coupon).exists()
+        user_coupon = UserCoupon.objects.get(user=self.user, coupon=self.coupon)
+        assert user_coupon.updated_on > previous_modified
         assert resp.json() == {
             'message': 'Attached user to coupon successfully.'
         }
