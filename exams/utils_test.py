@@ -102,7 +102,7 @@ class ExamUtilTests(TestCase):
             authorize_for_exam(mmtrack, self.course_run)
 
             # assert Exam Authorization and profile created.
-            self.assertFalse(ExamProfile.objects.filter(profile=mmtrack.user.profile).exists())
+            self.assertTrue(ExamProfile.objects.filter(profile=mmtrack.user.profile).exists())
             self.assertFalse(ExamAuthorization.objects.filter(
                 user=mmtrack.user,
                 course=self.course_run.course

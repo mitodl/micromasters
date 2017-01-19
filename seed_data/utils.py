@@ -1,7 +1,6 @@
 """
 General util functions for database seeding
 """
-import calendar
 from datetime import datetime, timedelta
 from functools import wraps
 import math
@@ -72,10 +71,8 @@ def localized_datetime(dt, tz='US/Eastern'):
 
 
 def add_year(date, years=1):
-    """Adds a year to given date"""
-    if calendar.isleap(date.year):
-        delta = timedelta(days=366 * years)
-    else:
-        delta = timedelta(days=365 * years)
-
-    return date + delta
+    """Adds a year to given datetime"""
+    try:
+        return date.replace(year=date.year + years)
+    except ValueError:
+        return date + (datetime(date.year + years, 1, 1, 0, 0, 0) - datetime(date.year, 1, 1, 0, 0, 0))

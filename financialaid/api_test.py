@@ -42,14 +42,17 @@ def create_program(create_tiers=True, past=False):
     Returns:
         courses.models.Program: A new program
     """
+    end_date = None
     program = ProgramFactory.create(
         financial_aid_availability=True,
         live=True
     )
     course = CourseFactory.create(program=program)
-    end_date = datetime.now(tz=pytz.UTC) + timedelta(days=100)
+
     if past:
         end_date = datetime.now(tz=pytz.UTC) - timedelta(days=100)
+    else:
+        end_date = datetime.now(tz=pytz.UTC) + timedelta(days=100)
 
     course_run = CourseRunFactory.create(
         end_date=end_date,
