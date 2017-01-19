@@ -64,7 +64,7 @@ const formatRequest = R.compose(
 
 const formatJSONRequest = R.compose(formatRequest, jsonHeaders);
 
-export function fetchWithCSRF(path: string, init: Object = {}): Promise<*> {
+const _fetchWithCSRF = (path: string, init: Object = {}): Promise<*> => {
   return fetch(path, formatRequest(init)).then(response => {
     let text = response.text();
 
@@ -76,7 +76,11 @@ export function fetchWithCSRF(path: string, init: Object = {}): Promise<*> {
 
     return text;
   });
-}
+};
+
+// allow mocking in tests
+export { _fetchWithCSRF as fetchWithCSRF };
+import { fetchWithCSRF } from './api';
 
 /**
  * Calls to fetch but does a few other things:
@@ -86,7 +90,7 @@ export function fetchWithCSRF(path: string, init: Object = {}): Promise<*> {
  *  - non 2xx status codes will reject the promise returned
  *  - response JSON is returned in place of response
  */
-export function fetchJSONWithCSRF(input: string, init: Object = {}, loginOnError: boolean = false): Promise<*> {
+const _fetchJSONWithCSRF = (input: string, init: Object = {}, loginOnError: boolean = false): Promise<*> => {
   return fetch(input, formatJSONRequest(init)).then(response => {
     // Not using response.json() here since it doesn't handle empty responses
     // Also note that text is a promise here, not a string
@@ -129,15 +133,14 @@ export function fetchJSONWithCSRF(input: string, init: Object = {}, loginOnError
     respJson.errorStatusCode = statusCode;
     return Promise.reject(respJson);
   });
-}
+};
 
-// import to allow mocking in tests
-import {
-  fetchJSONWithCSRF as mockableFetchJSONWithCSRF,
-  fetchWithCSRF as mockableFetchWithCSRF
-} from './api';
+// allow mocking in tests
+export { _fetchJSONWithCSRF as fetchJSONWithCSRF };
+import { fetchJSONWithCSRF } from './api';
+
 export function getUserProfile(username: string): Promise<ProfileGetResult> {
-  return mockableFetchJSONWithCSRF(`/api/v0/profiles/${username}/`);
+  return fetchJSONWithCSRF(`/api/v0/profiles/${username}/`);
 }
 
 export function patchUserProfile(username: string, profile: Profile): Promise<ProfilePatchResult> {
@@ -145,18 +148,18 @@ export function patchUserProfile(username: string, profile: Profile): Promise<Pr
     ...profile,
     image: undefined,
   };
-  return mockableFetchJSONWithCSRF(`/api/v0/profiles/${username}/`, {
+  return fetchJSONWithCSRF(`/api/v0/profiles/${username}/`, {
     method: 'PATCH',
     body: JSON.stringify(profile)
   });
 }
 
 export function getDashboard(): Promise<Dashboard> {
-  return mockableFetchJSONWithCSRF('/api/v0/dashboard/', {}, true);
+  return fetchJSONWithCSRF('/api/v0/dashboard/', {}, true);
 }
 
 export function checkout(courseId: string): Promise<CheckoutResponse> {
-  return mockableFetchJSONWithCSRF('/api/v0/checkout/', {
+  return fetchJSONWithCSRF('/api/v0/checkout/', {
     method: 'POST',
     body: JSON.stringify({
       course_id: courseId
@@ -165,7 +168,7 @@ export function checkout(courseId: string): Promise<CheckoutResponse> {
 }
 
 export function sendSearchResultMail(subject: string, body: string, searchRequest: Object): Promise<EmailSendResponse> {
-  return mockableFetchJSONWithCSRF('/api/v0/mail/', {
+  return fetchJSONWithCSRF('/api/v0/mail/', {
     method: 'POST',
     body: JSON.stringify({
       email_subject: subject,
@@ -176,11 +179,11 @@ export function sendSearchResultMail(subject: string, body: string, searchReques
 }
 
 export function getPrograms(): Promise<AvailablePrograms> {
-  return mockableFetchJSONWithCSRF('/api/v0/programs/', {}, true);
+  return fetchJSONWithCSRF('/api/v0/programs/', {}, true);
 }
 
 export function addProgramEnrollment(programId: number): Promise<AvailableProgram> {
-  return mockableFetchJSONWithCSRF('/api/v0/enrolledprograms/', {
+  return fetchJSONWithCSRF('/api/v0/enrolledprograms/', {
     method: 'POST',
     body: JSON.stringify({
       program_id: programId
@@ -191,7 +194,7 @@ export function addProgramEnrollment(programId: number): Promise<AvailableProgra
 export function updateProfileImage(username: string, image: Blob, name: string): Promise<string> {
   let formData = new FormData();
   formData.append('image', image, name);
-  return mockableFetchWithCSRF(`/api/v0/profiles/${username}/`, {
+  return fetchWithCSRF(`/api/v0/profiles/${username}/`, {
     headers: {
       'Accept': 'text/html',
     },
@@ -201,7 +204,7 @@ export function updateProfileImage(username: string, image: Blob, name: string):
 }
 
 export function addFinancialAid(income: number, currency: string, programId: number): Promise<*> {
-  return mockableFetchJSONWithCSRF('/api/v0/financial_aid_request/', {
+  return fetchJSONWithCSRF('/api/v0/financial_aid_request/', {
     method: 'POST',
     body: JSON.stringify({
       original_income: income,
@@ -212,16 +215,16 @@ export function addFinancialAid(income: number, currency: string, programId: num
 }
 
 export function getCoursePrices(): Promise<*> {
-  return mockableFetchJSONWithCSRF('/api/v0/course_prices/', {});
+  return fetchJSONWithCSRF('/api/v0/course_prices/', {});
 }
 
 export function skipFinancialAid(programId: number): Promise<*> {
-  return mockableFetchJSONWithCSRF(`/api/v0/financial_aid_skip/${programId}/`, {
+  return fetchJSONWithCSRF(`/api/v0/financial_aid_skip/${programId}/`, {
     method: 'PATCH',
   });
 }
 export function updateDocumentSentDate(financialAidId: number, sentDate: string): Promise<*> {
-  return mockableFetchJSONWithCSRF(`/api/v0/financial_aid/${financialAidId}/`, {
+  return fetchJSONWithCSRF(`/api/v0/financial_aid/${financialAidId}/`, {
     method: 'PATCH',
     body: JSON.stringify({
       date_documents_sent: sentDate,
@@ -230,7 +233,7 @@ export function updateDocumentSentDate(financialAidId: number, sentDate: string)
 }
 
 export function addCourseEnrollment(courseId: string) {
-  return mockableFetchJSONWithCSRF('/api/v0/course_enrollments/', {
+  return fetchJSONWithCSRF('/api/v0/course_enrollments/', {
     method: 'POST',
     body: JSON.stringify({
       course_id: courseId,
@@ -239,12 +242,12 @@ export function addCourseEnrollment(courseId: string) {
 }
 
 export function getCoupons(): Promise<Coupons> {
-  return mockableFetchJSONWithCSRF('/api/v0/coupons/');
+  return fetchJSONWithCSRF('/api/v0/coupons/');
 }
 
 export function attachCoupon(couponCode: string): Promise<*> {
   let code = encodeURI(couponCode);
-  return mockableFetchJSONWithCSRF(`/api/v0/coupons/${code}/users/`, {
+  return fetchJSONWithCSRF(`/api/v0/coupons/${code}/users/`, {
     method: 'POST',
     body: JSON.stringify({
       username: SETTINGS.user.username

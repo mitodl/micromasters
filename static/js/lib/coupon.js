@@ -31,7 +31,7 @@ export const calculatePrices = (programs: Dashboard, prices: CoursePrices, coupo
 
   let calcPriceForRun = (run, course, program) => ({
     id: run.id,
-    price: mockableCalculateRunPrice(
+    price: calculateRunPrice(
       run.id, course.id, program.id, priceLookup.get(program.id), couponLookup.get(program.id)
     ),
   });
@@ -49,7 +49,7 @@ export const calculatePrices = (programs: Dashboard, prices: CoursePrices, coupo
   return programs.map(calcPriceForProgram);
 };
 
-export const calculateDiscount = (price: number, amountType: string, amount: number) => {
+export const _calculateDiscount = (price: number, amountType: string, amount: number) => {
   switch (amountType) {
   case COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT:
     return price * (1 - amount);
@@ -59,8 +59,11 @@ export const calculateDiscount = (price: number, amountType: string, amount: num
     return price;
   }
 };
+// allow mocking of function
+export { _calculateDiscount as calculateDiscount };
+import { calculateDiscount } from './coupon';
 
-export const calculateRunPrice = (
+export const _calculateRunPrice = (
   runId: number, courseId: number, programId: number, programPrice: ?CoursePrice, coupon: ?Coupon
 ): ?number => {
   if (!programPrice) {
@@ -79,15 +82,12 @@ export const calculateRunPrice = (
     (coupon.content_type === COUPON_CONTENT_TYPE_COURSE && coupon.object_id === courseId) ||
     (coupon.content_type === COUPON_CONTENT_TYPE_COURSERUN && coupon.object_id === runId)
   ) {
-    return mockableCalculateDiscount(startingPrice, coupon.amount_type, coupon.amount);
+    return calculateDiscount(startingPrice, coupon.amount_type, coupon.amount);
   } else {
     // coupon doesn't match
     return startingPrice;
   }
 };
-
-// import to allow mocking in tests
-import {
-  calculateRunPrice as mockableCalculateRunPrice,
-  calculateDiscount as mockableCalculateDiscount
-} from './coupon';
+// allow mocking of function
+export { _calculateRunPrice as calculateRunPrice };
+import { calculateRunPrice } from './coupon';
