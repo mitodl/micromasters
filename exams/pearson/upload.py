@@ -12,6 +12,8 @@ from paramiko import SSHException
 from exams.pearson.exceptions import RetryableSFTPException
 from exams.pearson.constants import PEARSON_UPLOAD_REQUIRED_SETTINGS
 
+TEMP_DIR = '/tmp'
+
 log = logging.getLogger(__name__)
 
 
@@ -59,5 +61,34 @@ def upload_tsv(file_path):
         with get_connection() as sftp:
             with sftp.cd(settings.EXAMS_SFTP_UPLOAD_DIR):
                 sftp.put(file_path)
+    except SSHException as ex:
+        raise RetryableSFTPException() from ex
+
+
+def fetch_file(sftp, remote_path)
+    local_path = path.join(TEMP_DIR, remote_path)
+    sftp.get(remote_path, localpath=local_path)
+    return local_path
+
+
+def walk_result_files(pattern):
+    """
+    Walks (and optionally removes) result files from Pearson
+
+    Args:
+        pattern (regex): regex to match the filename against
+    """
+    try:
+        with get_connection() as sftp:
+            for remote_path in sftp.listdir(settings.EXAMS_SFTP_RESULTS_DIR):
+                if (
+                    not sftp.isfile(remote_path) or
+                    not pattern.match(remote_path)
+                ):
+                    continue
+
+                local_path = fetch_file(sftp, remote_path)
+
+
     except SSHException as ex:
         raise RetryableSFTPException() from ex
