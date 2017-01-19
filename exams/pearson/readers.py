@@ -2,6 +2,7 @@
 Readers for data Pearson exports
 """
 import csv
+from collections import namedtuple
 from datetime import datetime
 
 import pytz
@@ -44,8 +45,8 @@ class BaseTSVReader(object):
             field_mappers (list(tuple)): list of tuple field mappers
             read_as_cld (cls): class to instantiate row data
         """
-        self.read_as_cls = read_as_cls
         self.field_mappers = field_mappers
+        self.read_as_cls = read_as_cls
 
     @classmethod
     def parse_datetime(cls, dt):
@@ -66,7 +67,9 @@ class BaseTSVReader(object):
             transformer (callable): optional transformer callable, used to parse values
         """
         if source not in row:
-            raise InvalidTsvRowException("Column '{}' missing from row".format(source))
+            keys = ', '.join(str(key) for key in row.keys())
+            raise InvalidTsvRowException(
+                "Column '{}' missing from row. Available columns: {}".format(source, keys))
 
         value = row[source]
 
@@ -86,7 +89,6 @@ class BaseTSVReader(object):
             object:
                 row mapped to an object using the field mappers and read_as_cls
         """
-
         kwargs = dict(self.map_cell(row, *mapper) for mapper in self.field_mappers)
 
         return self.read_as_cls(**kwargs)
@@ -108,3 +110,24 @@ class BaseTSVReader(object):
         )
 
         return [self.map_row(row) for row in file_reader]
+
+
+VCDCResult = namedtuple('VCDCResult', [
+    'client_candidate_id',
+    'status',
+    'date',
+    'message',
+])
+
+
+class VCDCReader(BaseTSVReader):
+    """
+    Reader for Pearson VUE Candidate Data Confirmation (VCDC) files.
+    """
+    def __init__(self):
+        super().__init__([
+            ('ClientCandidateID', 'client_candidate_id', int),
+            ('Status', 'status'),
+            ('Date', 'date', self.parse_datetime),
+            ('Message', 'message'),
+        ], VCDCResult)

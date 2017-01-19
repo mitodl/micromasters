@@ -11,6 +11,8 @@ import pytz
 
 from exams.pearson.readers import (
     BaseTSVReader,
+    VCDCReader,
+    VCDCResult,
 )
 from exams.pearson.exceptions import InvalidTsvRowException
 
@@ -85,7 +87,6 @@ class BaseTSVReaderTest(UnitTestCase):
         """
         Tests the read method outputs correctly
         """
-
         PropTuple = namedtuple('PropTuple', ['prop1', 'prop2'])
         tsv_file = io.StringIO(
             "Prop1\tProp2\r\n"
@@ -104,3 +105,30 @@ class BaseTSVReaderTest(UnitTestCase):
         rows = reader.read(tsv_file)
 
         assert rows == [row]
+
+
+class VCDCReaderTest(UnitTestCase):
+    """Tests for VCDCReader"""
+    def test_vcdc_read(self):  # pylint: disable=no-self-use
+        """Test that read() correctly parses a VCDC file"""
+        sample_data = io.StringIO(
+            "ClientCandidateID\tStatus\tDate\tMessage\r\n"
+            "1\tAccepted\t2016/05/15 15:02:55\t\r\n"
+            "145\tAccepted\t2016/05/15 15:02:55\tWARNING: There be dragons\r\n"
+            "345\tError\t2016/05/15 15:02:55\tEmpty Address\r\n"
+        )
+
+        reader = VCDCReader()
+        results = reader.read(sample_data)
+
+        assert results == [
+            VCDCResult(
+                client_candidate_id=1, status='Accepted', date=FIXED_DATETIME, message=''
+            ),
+            VCDCResult(
+                client_candidate_id=145, status='Accepted', date=FIXED_DATETIME, message='WARNING: There be dragons'
+            ),
+            VCDCResult(
+                client_candidate_id=345, status='Error', date=FIXED_DATETIME, message='Empty Address'
+            ),
+        ]
