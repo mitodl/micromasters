@@ -27,18 +27,24 @@ export const calculatePrices = (programs: Dashboard, prices: CoursePrices, coupo
   let couponLookup: Map<number, Coupon> = makeLookup(coupons);
   let priceLookup: Map<number, CoursePrice> = makeLookup(prices);
 
-  return programs.map(program => ({
+  let calcPriceForRun = (run, course, program) => ({
+    id: run.id,
+    price: mockableCalculateRunPrice(
+      run.id, course.id, program.id, priceLookup.get(program.id), couponLookup.get(program.id)
+    ),
+  });
+
+  let calcPriceForCourse = (course, program) => ({
+    id: course.id,
+    runs: course.runs.map(run => calcPriceForRun(run, course, program))
+  });
+
+  let calcPriceForProgram = program => ({
     id: program.id,
-    courses: program.courses.map(course => ({
-      id: course.id,
-      runs: course.runs.map(run => ({
-        id: run.id,
-        price: mockableCalculateRunPrice(
-          run.id, course.id, program.id, priceLookup.get(program.id), couponLookup.get(program.id)
-        ),
-      }))
-    }))
-  }));
+    courses: program.courses.map(course => calcPriceForCourse(course, program))
+  });
+
+  return programs.map(calcPriceForProgram);
 };
 
 export const calculateDiscount = (price: number, amountType: string, amount: number) => {
