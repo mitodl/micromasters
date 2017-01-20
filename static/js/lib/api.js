@@ -101,7 +101,8 @@ const _fetchJSONWithCSRF = (input: string, init: Object = {}, loginOnError: bool
     // token because the data stored locally is wrong and the solution is only
     // to force a new login
     if (loginOnError === true && (response.status === 400 || response.status === 401)) {
-      window.location = '/login/edxorg/';
+      const relativePath = window.location.pathname + window.location.search;
+      window.location = `/login/edxorg/?next=${encodeURIComponent(relativePath)}`;
     }
 
     // For non 2xx status codes reject the promise adding the status code

@@ -41,9 +41,14 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):  
         return
 
     if has_role(user, [Staff.ROLE_ID, Instructor.ROLE_ID]):
-        backend.strategy.session_set('next', '/learners')
+        next_relative_url = "/learners"
     else:
-        backend.strategy.session_set('next', '/dashboard')
+        next_relative_url = "/dashboard"
+
+    next_url = backend.strategy.session.load().get('next')
+    if not next_url:
+        next_url = next_relative_url
+    backend.strategy.session_set('next', next_url)
 
     if not is_new:
         return

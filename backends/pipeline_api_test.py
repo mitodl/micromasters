@@ -232,7 +232,8 @@ class EdxPipelineApiTest(MockedESTestCase):
         """
         student = UserFactory.create()
         session_set = mock.Mock()
-        backend = edxorg.EdxOrgOAuth2(strategy=mock.Mock(session_set=session_set))
+        load = mock.Mock(return_value={})
+        backend = edxorg.EdxOrgOAuth2(strategy=mock.Mock(session_set=session_set, session=mock.Mock(load=load)))
         pipeline_api.update_profile_from_edx(backend, student, {}, False)
         session_set.assert_called_with('next', '/dashboard')
 
@@ -244,6 +245,19 @@ class EdxPipelineApiTest(MockedESTestCase):
             user = UserFactory.create()
             Role.objects.create(user=user, role=role, program=ProgramFactory.create())
             session_set = mock.Mock()
-            backend = edxorg.EdxOrgOAuth2(strategy=mock.Mock(session_set=session_set))
+            load = mock.Mock(return_value={})
+            backend = edxorg.EdxOrgOAuth2(strategy=mock.Mock(session_set=session_set, session=mock.Mock(load=load)))
             pipeline_api.update_profile_from_edx(backend, user, {}, False)
             session_set.assert_called_with('next', '/learners')
+
+    def test_login_redirect_next(self):
+        """
+        A student should be directed to what's in the next query parameter
+        """
+        student = UserFactory.create()
+        session_set = mock.Mock()
+        next_url = "/x/y?a=bc"
+        load = mock.Mock(return_value={"next": next_url})
+        backend = edxorg.EdxOrgOAuth2(strategy=mock.Mock(session_set=session_set, session=mock.Mock(load=load)))
+        pipeline_api.update_profile_from_edx(backend, student, {}, False)
+        session_set.assert_called_with('next', next_url)

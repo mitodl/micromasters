@@ -24,13 +24,32 @@ if (!Object.entries) {
   entries.shim();
 }
 
-// Make sure window and document are available for testing
+let jsdom = require('jsdom');
 require('jsdom-global')();
+
+let localStorageMock;
+beforeEach(() => { // eslint-disable-line mocha/no-top-level-hooks
+  if (!localStorageMock) {
+    // lazy import to prevent circular import problem
+    localStorageMock = require('./util/test_utils').localStorageMock;
+  }
+
+  window.localStorage = localStorageMock();
+  Object.defineProperty(window, "location", {
+    set: value => {
+      if (!value.startsWith("http")) {
+        value = `http://fake${value}`;
+      }
+      jsdom.changeURL(window, value);
+    },
+  });
+});
 
 // cleanup after each test run
 afterEach(function (){ // eslint-disable-line mocha/no-top-level-hooks
   document.body.innerHTML = '';
   global.SETTINGS = _createSettings();
+  window.localStorage.reset();
 });
 
 // required for interacting with react-mdl components

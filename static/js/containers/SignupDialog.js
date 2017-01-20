@@ -3,6 +3,7 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import { connect } from 'react-redux';
+import URI from 'urijs';
 
 import { createSimpleActionHelpers } from '../lib/redux';
 import {
@@ -22,6 +23,7 @@ const SignupDialog = ({
   open,
   setDialogVisibility,
 }: signupProps) => {
+  let next = URI(window.location.search).query(true).next;
   return <Dialog
     titleClassName="dialog-title"
     contentClassName="dialog signup-dialog"
@@ -41,7 +43,10 @@ const SignupDialog = ({
         To sign up for a MITx MicroMasters program you need an edX account.
       </p>
 
-      <a className="mdl-button signup-modal-button" href="/login/edxorg">
+      <a
+        className="mdl-button signup-modal-button"
+        href={`/login/edxorg?next=${encodeURIComponent(next)}`}
+      >
         Continue with edX
       </a>
       <div className="terms-of-service-text">

@@ -37,15 +37,8 @@ describe('api', function() {
   this.timeout(5000);  // eslint-disable-line no-invalid-this
 
   let sandbox;
-  let savedWindowLocation;
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
-    savedWindowLocation = null;
-    Object.defineProperty(window, "location", {
-      set: value => {
-        savedWindowLocation = value;
-      }
-    });
   });
   afterEach(function() {
     sandbox.restore();
@@ -580,7 +573,7 @@ describe('api', function() {
           });
 
           return assert.isRejected(fetchJSONWithCSRF('/url', {}, true)).then(() => {
-            assert.equal(savedWindowLocation, '/login/edxorg/');
+            assert.isTrue(window.location.toString().includes('/login/edxorg/'));
           });
         });
       }

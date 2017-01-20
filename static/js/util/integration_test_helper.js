@@ -24,7 +24,6 @@ import {
 import rootReducer from '../reducers';
 import DashboardRouter from '../DashboardRouter';
 import { testRoutes } from './test_utils';
-import { localStorageMock } from '../util/test_utils';
 import { configureMainTestStore } from '../store/configureStore';
 import type { Action } from '../flow/reduxTypes';
 import type { TestStore } from '../flow/reduxTypes';
@@ -38,9 +37,6 @@ export default class IntegrationTestHelper {
   browserHistory: History;
 
   constructor() {
-    if ( ! window.localStorage ) {
-      window.localStorage = localStorageMock();
-    }
     this.sandbox = sinon.sandbox.create();
     this.store = configureMainTestStore((...args) => {
       // uncomment to listen on dispatched actions
@@ -63,8 +59,8 @@ export default class IntegrationTestHelper {
     this.programsGetStub = this.sandbox.stub(api, 'getPrograms');
     this.programsGetStub.returns(Promise.resolve(PROGRAMS));
     this.scrollIntoViewStub = this.sandbox.stub();
-    HTMLDivElement.prototype.scrollIntoView = this.scrollIntoViewStub;
-    HTMLFieldSetElement.prototype.scrollIntoView = this.scrollIntoViewStub;
+    window.HTMLDivElement.prototype.scrollIntoView = this.scrollIntoViewStub;
+    window.HTMLFieldSetElement.prototype.scrollIntoView = this.scrollIntoViewStub;
     this.browserHistory = createMemoryHistory();
     this.currentLocation = null;
     this.browserHistory.listen(url => {
@@ -74,7 +70,6 @@ export default class IntegrationTestHelper {
 
   cleanup() {
     this.sandbox.restore();
-    window.localStorage.reset();
   }
 
   /**

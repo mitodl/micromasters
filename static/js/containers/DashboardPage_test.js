@@ -77,16 +77,6 @@ describe('DashboardPage', () => {
   });
 
   describe("checkout", () => {
-    let savedWindowLocation;
-    beforeEach(() => {
-      savedWindowLocation = null;
-      Object.defineProperty(window, "location", {
-        set: value => {
-          savedWindowLocation = value;
-        }
-      });
-    });
-
     it('redirects to edX when the checkout API tells us to', () => {
       let promise = Promise.resolve(EDX_CHECKOUT_RESPONSE);
       let checkoutStub = helper.sandbox.stub(actions, 'checkout').returns(() => promise);
@@ -98,7 +88,7 @@ describe('DashboardPage', () => {
         assert.deepEqual(checkoutStub.args[0], ['course_id']);
 
         return promise.then(() => {
-          assert.equal(savedWindowLocation, EDX_CHECKOUT_RESPONSE.url);
+          assert.equal(window.location.toString(), EDX_CHECKOUT_RESPONSE.url);
         });
       });
     });

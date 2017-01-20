@@ -736,7 +736,7 @@ export const CYBERSOURCE_CHECKOUT_RESPONSE = deepFreeze({
 
 export const EDX_CHECKOUT_RESPONSE = deepFreeze({
   "payload": {},
-  "url": "http://edx.org",
+  "url": "http://edx.org/",
   "method": "GET"
 });
 /* eslint-enable max-len */
