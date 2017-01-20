@@ -59,12 +59,14 @@ from ecommerce.models import (
     Order,
     OrderAudit,
     RedeemedCoupon,
+    RedeemedCouponAudit,
     UserCoupon,
 )
 from financialaid.api import get_formatted_course_price
 from financialaid.factories import FinancialAidFactory
 from financialaid.models import FinancialAidStatus
 from micromasters.factories import UserFactory
+from micromasters.utils import serialize_model_object
 from search.base import MockedESTestCase
 
 
@@ -244,7 +246,7 @@ class PurchasableTests(MockedESTestCase):
             assert Order.objects.count() == 0
 
     @ddt.data(True, False)
-    def test_create_order(self, has_coupon):
+    def test_create_order(self, has_coupon):  # pylint: disable=too-many-locals
         """
         Create Order from a purchasable course
         """
@@ -296,11 +298,15 @@ class PurchasableTests(MockedESTestCase):
 
         if has_coupon:
             assert RedeemedCoupon.objects.count() == 1
-            redeemed_coupon = RedeemedCoupon.objects.first()
-            assert redeemed_coupon.order == order
-            assert redeemed_coupon.coupon == coupon
+            redeemed_coupon = RedeemedCoupon.objects.get(order=order, coupon=coupon)
+
+            assert RedeemedCouponAudit.objects.count() == 1
+            audit = RedeemedCouponAudit.objects.first()
+            assert audit.redeemed_coupon == redeemed_coupon
+            assert audit.data_after == serialize_model_object(redeemed_coupon)
         else:
             assert RedeemedCoupon.objects.count() == 0
+            assert RedeemedCouponAudit.objects.count() == 0
 
 CYBERSOURCE_ACCESS_KEY = 'access'
 CYBERSOURCE_PROFILE_ID = 'profile'

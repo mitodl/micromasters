@@ -141,7 +141,8 @@ def create_unfulfilled_order(course_key, user):
         price=price,
     )
     if coupon is not None:
-        RedeemedCoupon.objects.create(order=order, coupon=coupon)
+        redeemed_coupon = RedeemedCoupon(order=order, coupon=coupon)
+        redeemed_coupon.save_and_log(user)
     order.save_and_log(user)
     return order
 

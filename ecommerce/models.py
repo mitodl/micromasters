@@ -171,7 +171,7 @@ class CoursePrice(Model):
         return "CoursePrice for {}, price={}, is_valid={}".format(self.course_run, self.price, self.is_valid)
 
 
-class Coupon(TimestampedModel):
+class Coupon(TimestampedModel, AuditableModel):
     """
     Model for a coupon. This stores the discount for the coupon and other information about how it should be redeemed.
 
@@ -363,6 +363,16 @@ class Coupon(TimestampedModel):
                 "coupon must be for a course if coupon_type is {}".format(self.DISCOUNTED_PREVIOUS_COURSE)
             )
 
+    @classmethod
+    def get_audit_class(cls):
+        return CouponAudit
+
+    def to_dict(self):
+        """
+        Get a serialized representation of the Coupon
+        """
+        return serialize_model_object(self)
+
     def save(self, *args, **kwargs):
         """Override save to do certain validations"""
         self.full_clean()
@@ -378,12 +388,28 @@ class Coupon(TimestampedModel):
         )
 
 
-class UserCoupon(TimestampedModel):
+class CouponAudit(AuditModel):
+    """Audit table for Coupon"""
+    coupon = ForeignKey(Coupon, null=True, on_delete=SET_NULL)
+
+    @classmethod
+    def get_related_field_name(cls):
+        return 'coupon'
+
+
+class UserCoupon(TimestampedModel, AuditableModel):
     """
     Model for a coupon attached to a user.
     """
     user = ForeignKey(settings.AUTH_USER_MODEL, on_delete=SET_NULL, null=True)
     coupon = ForeignKey(Coupon, on_delete=SET_NULL, null=True)
+
+    @classmethod
+    def get_audit_class(cls):
+        return UserCouponAudit
+
+    def to_dict(self):
+        return serialize_model_object(self)
 
     class Meta:
         unique_together = ('user', 'coupon',)
@@ -396,12 +422,28 @@ class UserCoupon(TimestampedModel):
         )
 
 
-class RedeemedCoupon(TimestampedModel):
+class UserCouponAudit(AuditModel):
+    """Audit table for Coupon"""
+    user_coupon = ForeignKey(UserCoupon, null=True, on_delete=SET_NULL)
+
+    @classmethod
+    def get_related_field_name(cls):
+        return 'user_coupon'
+
+
+class RedeemedCoupon(TimestampedModel, AuditableModel):
     """
     Model for coupon which has been used in a purchase by a user.
     """
     order = ForeignKey(Order, on_delete=SET_NULL, null=True)
     coupon = ForeignKey(Coupon, on_delete=SET_NULL, null=True)
+
+    @classmethod
+    def get_audit_class(cls):
+        return RedeemedCouponAudit
+
+    def to_dict(self):
+        return serialize_model_object(self)
 
     class Meta:
         unique_together = ('order', 'coupon',)
@@ -412,3 +454,12 @@ class RedeemedCoupon(TimestampedModel):
             order=self.order,
             coupon=self.coupon,
         )
+
+
+class RedeemedCouponAudit(AuditModel):
+    """Audit table for RedeemedCoupon"""
+    redeemed_coupon = ForeignKey(RedeemedCoupon, null=True, on_delete=SET_NULL)
+
+    @classmethod
+    def get_related_field_name(cls):
+        return 'redeemed_coupon'

@@ -6,12 +6,16 @@ from django.contrib import admin
 
 from ecommerce.models import (
     Coupon,
+    CouponAudit,
     CoursePrice,
     Line,
     Order,
     OrderAudit,
     Receipt,
     RedeemedCoupon,
+    RedeemedCouponAudit,
+    UserCoupon,
+    UserCouponAudit,
 )
 from micromasters.utils import get_field_names
 
@@ -81,17 +85,81 @@ class CouponAdmin(admin.ModelAdmin):
     """Admin for Coupon"""
     model = Coupon
 
+    def save_model(self, request, obj, form, change):
+        """
+        Saves object and logs change to object
+        """
+        obj.save_and_log(request.user)
+
+
+class CouponAuditAdmin(admin.ModelAdmin):
+    """Admin for CouponAudit"""
+    model = CouponAudit
+    readonly_fields = get_field_names(CouponAudit)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 
 class RedeemedCouponAdmin(admin.ModelAdmin):
     """Admin for RedeemedCoupon"""
     model = RedeemedCoupon
     readonly_fields = get_field_names(RedeemedCoupon)
 
+    def save_model(self, request, obj, form, change):
+        """
+        Saves object and logs change to object
+        """
+        obj.save_and_log(request.user)
+
+
+class RedeemedCouponAuditAdmin(admin.ModelAdmin):
+    """Admin for RedeemedCouponAudit"""
+    model = RedeemedCouponAudit
+    readonly_fields = get_field_names(RedeemedCouponAudit)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+class UserCouponAdmin(admin.ModelAdmin):
+    """Admin for UserCoupon"""
+    model = UserCoupon
+    readonly_fields = get_field_names(UserCoupon)
+
+    def save_model(self, request, obj, form, change):
+        """
+        Saves object and logs change to object
+        """
+        obj.save_and_log(request.user)
+
+
+class UserCouponAuditAdmin(admin.ModelAdmin):
+    """Admin for UserCouponAudit"""
+    model = UserCouponAudit
+    readonly_fields = get_field_names(UserCouponAudit)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 
 admin.site.register(Coupon, CouponAdmin)
+admin.site.register(CouponAudit, CouponAuditAdmin)
 admin.site.register(CoursePrice, CoursePriceAdmin)
 admin.site.register(Line, LineAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(OrderAudit, OrderAuditAdmin)
 admin.site.register(RedeemedCoupon, RedeemedCouponAdmin)
+admin.site.register(RedeemedCouponAudit, RedeemedCouponAuditAdmin)
 admin.site.register(Receipt, ReceiptAdmin)
+admin.site.register(UserCoupon, UserCouponAdmin)
+admin.site.register(UserCouponAudit, UserCouponAuditAdmin)

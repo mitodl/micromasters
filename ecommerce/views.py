@@ -216,10 +216,19 @@ class UserCouponsView(APIView):
                 # Coupon is not redeemable. Return a 404 to prevent the user from
                 raise Http404
 
-            UserCoupon.objects.get_or_create(
-                coupon=coupon,
-                user=self.request.user,
-            )
+            try:
+                user_coupon = UserCoupon.objects.get(
+                    coupon=coupon,
+                    user=self.request.user,
+                )
+            except UserCoupon.DoesNotExist:
+                user_coupon = UserCoupon(
+                    coupon=coupon,
+                    user=self.request.user,
+                )
+
+            # Note: we always want to save so that the modification date is updated
+            user_coupon.save_and_log(request.user)
 
             return Response(
                 status=HTTP_200_OK,

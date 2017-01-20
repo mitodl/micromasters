@@ -28,9 +28,11 @@ from ecommerce.models import (
     OrderAudit,
     Receipt,
     UserCoupon,
+    UserCouponAudit,
 )
 from ecommerce.serializers import CouponSerializer
 from micromasters.factories import UserFactory
+from micromasters.utils import serialize_model_object
 from profiles.api import get_social_username
 from profiles.factories import ProfileFactory
 from search.base import MockedESTestCase
@@ -418,6 +420,11 @@ class CouponTests(MockedESTestCase):
         assert resp.json() == {
             'message': 'Attached user to coupon successfully.'
         }
+
+        assert UserCouponAudit.objects.count() == 1
+        audit = UserCouponAudit.objects.first()
+        assert audit.user_coupon == user_coupon
+        assert audit.data_after == serialize_model_object(user_coupon)
 
     def test_empty_dict(self):
         """
