@@ -80,7 +80,6 @@ class ReceiptAdmin(admin.ModelAdmin):
 class CouponAdmin(admin.ModelAdmin):
     """Admin for Coupon"""
     model = Coupon
-    readonly_fields = get_field_names(Coupon)
 
 
 class RedeemedCouponAdmin(admin.ModelAdmin):
