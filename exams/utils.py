@@ -3,6 +3,9 @@ import logging
 import datetime
 import pytz
 
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
+
 from exams.models import (
     ExamProfile,
     ExamAuthorization
@@ -11,6 +14,16 @@ from seed_data.utils import add_year
 
 
 log = logging.getLogger(__name__)
+
+
+def exponential_backoff(retries):
+    """
+    Exponential backoff for retried tasks
+    """
+    try:
+        return int(settings.EXAMS_SFTP_BACKOFF_BASE) ** retries
+    except ValueError as ex:
+        raise ImproperlyConfigured('EXAMS_SFTP_BACKOFF_BASE must be an integer') from ex
 
 
 def authorize_for_exam(mmtrack, course_run):
