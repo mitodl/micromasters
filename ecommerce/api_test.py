@@ -736,7 +736,7 @@ class PickCouponTests(MockedESTestCase):
             _is_coupon_redeemable.assert_any_call(coupon, self.user)
 
 
-class PriceTests(ESTestCase):
+class PriceTests(MockedESTestCase):
     """
     Tests for calculating prices
     """
