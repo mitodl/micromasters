@@ -32,13 +32,14 @@ def _get_bundle(request, bundle_name):
     """
     Update bundle URLs to handle webpack hot reloading correctly if DEBUG=True
     """
-    for chunk in get_loader('DEFAULT').get_bundle(bundle_name):
-        chunk_copy = dict(chunk)
-        chunk_copy['url'] = "{host_url}/{bundle}".format(
-            host_url=public_path(request).rstrip("/"),
-            bundle=chunk['name']
-        )
-        yield chunk_copy
+    if not settings.DISABLE_WEBPACK_LOADER_STATS:
+        for chunk in get_loader('DEFAULT').get_bundle(bundle_name):
+            chunk_copy = dict(chunk)
+            chunk_copy['url'] = "{host_url}/{bundle}".format(
+                host_url=public_path(request).rstrip("/"),
+                bundle=chunk['name']
+            )
+            yield chunk_copy
 
 
 @register.simple_tag(takes_context=True)

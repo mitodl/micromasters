@@ -130,7 +130,6 @@ INSTALLED_APPS = (
     # other third party APPS
     'rolepermissions',
     'raven.contrib.django.raven_compat',
-    'webpack_loader',
 
     # Our INSTALLED_APPS
     'backends',
@@ -148,6 +147,11 @@ INSTALLED_APPS = (
     'ui',
     'seed_data',
 )
+
+DISABLE_WEBPACK_LOADER_STATS = get_var("DISABLE_WEBPACK_LOADER_STATS", False)
+if not DISABLE_WEBPACK_LOADER_STATS:
+    INSTALLED_APPS += ('webpack_loader',)
+
 
 MIDDLEWARE_CLASSES = (
     'raven.contrib.django.raven_compat.middleware.SentryResponseErrorIdMiddleware',

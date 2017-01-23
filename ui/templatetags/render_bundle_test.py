@@ -25,6 +25,7 @@ FAKE_COMMON_BUNDLE = [
 
 
 # pylint: disable=no-self-use
+@override_settings(DISABLE_WEBPACK_LOADER_STATS=False)
 class TestRenderBundle(TestCase):
     """
     Tests for render_bundle
