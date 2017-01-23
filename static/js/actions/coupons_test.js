@@ -12,6 +12,8 @@ import {
   receiveFetchCouponsSuccess,
   RECEIVE_FETCH_COUPONS_FAILURE,
   receiveFetchCouponsFailure,
+  CLEAR_COUPONS,
+  clearCoupons,
 } from './coupons';
 import { assertCreatedActionHelper } from './util';
 
@@ -24,6 +26,7 @@ describe('coupons actions', () => {
       [requestFetchCoupons, REQUEST_FETCH_COUPONS],
       [receiveFetchCouponsSuccess, RECEIVE_FETCH_COUPONS_SUCCESS],
       [receiveFetchCouponsFailure, RECEIVE_FETCH_COUPONS_FAILURE],
+      [clearCoupons, CLEAR_COUPONS],
     ].forEach(assertCreatedActionHelper);
   });
 });

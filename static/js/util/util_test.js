@@ -484,6 +484,11 @@ describe('utility functions', () => {
     it('format price', () => {
       assert.equal(formatPrice(20), "$20");
     });
+
+    it('returns an empty string if null or undefined', () => {
+      assert.equal(formatPrice(null), '');
+      assert.equal(formatPrice(undefined), '');
+    });
   });
 
   describe('programCourseInfo', () => {

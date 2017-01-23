@@ -8,7 +8,9 @@ import sinon from 'sinon';
 import { FETCH_PROCESSING } from '../../actions';
 import CourseAction from './CourseAction';
 import {
+  COUPONS_RESPONSE,
   COURSE_PRICES_RESPONSE,
+  DASHBOARD_RESPONSE,
   FINANCIAL_AID_PARTIAL_RESPONSE,
 } from '../../test_constants';
 import {
@@ -30,6 +32,7 @@ import {
   alterFirstRun,
   findAndCloneCourse
 } from '../../util/test_utils';
+import { calculatePrices } from '../../lib/coupon';
 
 describe('CourseAction', () => {
   const now = moment();
@@ -70,6 +73,7 @@ describe('CourseAction', () => {
   };
 
   let renderCourseAction = (props = {}) => {
+    let prices = calculatePrices(DASHBOARD_RESPONSE, COURSE_PRICES_RESPONSE, COUPONS_RESPONSE);
     return shallow(
       <CourseAction
         checkout={checkoutStub}
@@ -79,6 +83,7 @@ describe('CourseAction', () => {
         addCourseEnrollment={addCourseEnrollmentStub}
         now={now}
         courseRun={null}
+        prices={prices}
         {...props}
       />
     );

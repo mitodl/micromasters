@@ -6,6 +6,7 @@ import {
   REQUEST_FETCH_COUPONS,
   RECEIVE_FETCH_COUPONS_SUCCESS,
   RECEIVE_FETCH_COUPONS_FAILURE,
+  CLEAR_COUPONS,
 } from '../actions/coupons';
 import {
   FETCH_FAILURE,
@@ -42,7 +43,9 @@ export const coupons = (state: CouponsState = INITIAL_COUPONS_STATE, action: Act
       coupons: action.payload,
     };
   case RECEIVE_FETCH_COUPONS_FAILURE:
-    return { ...state, fetchGetStatus: FETCH_FAILURE};
+    return { ...state, fetchGetStatus: FETCH_FAILURE };
+  case CLEAR_COUPONS:
+    return INITIAL_COUPONS_STATE;
   default:
     return state;
   }

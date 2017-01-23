@@ -8,8 +8,8 @@ import _ from 'lodash';
 
 import SpinnerButton from '../SpinnerButton';
 import { FETCH_PROCESSING } from '../../actions';
+import type { CalculatedPrices } from '../../flow/couponTypes';
 import type { CourseRun, FinancialAidUserInfo } from '../../flow/programTypes';
-import type { CoursePrice } from '../../flow/dashboardTypes';
 import {
   STATUS_NOT_PASSED,
   STATUS_PASSED,
@@ -33,9 +33,9 @@ export default class CourseAction extends React.Component {
     checkout: Function,
     checkoutStatus?: string,
     courseRun: CourseRun,
-    coursePrice: CoursePrice,
     courseEnrollAddStatus?: string,
     now: moment$Moment,
+    prices: CalculatedPrices,
     financialAid: FinancialAidUserInfo,
     hasFinancialAid: boolean,
     openFinancialAidCalculator?: () => void,
@@ -48,8 +48,9 @@ export default class CourseAction extends React.Component {
   };
 
   getCoursePrice(): string {
-    const { coursePrice } = this.props;
-    return formatPrice(coursePrice.price);
+    const { prices, courseRun } = this.props;
+    let price = prices.get(courseRun.id);
+    return formatPrice(price);
   }
 
   needsPriceCalculation(): boolean {

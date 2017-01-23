@@ -1,3 +1,4 @@
+// @flow
 /* global SETTINGS: false */
 import React from 'react';
 import type { Dispatch } from 'redux';
@@ -6,6 +7,7 @@ import Loader from '../components/Loader';
 import _ from 'lodash';
 import moment from 'moment';
 
+import { calculatePrices } from '../lib/coupon';
 import {
   FETCH_SUCCESS,
   FETCH_PROCESSING,
@@ -41,6 +43,10 @@ import ErrorMessage from '../components/ErrorMessage';
 import ProgressWidget from '../components/ProgressWidget';
 import { setCalculatorDialogVisibility } from '../actions/ui';
 import {
+  clearCoupons,
+  fetchCoupons,
+} from '../actions/coupons';
+import {
   setDocumentSentDate,
   updateDocumentSentDate,
 } from '../actions/documents';
@@ -57,6 +63,7 @@ import type {
 import type { CoursePricesState, DashboardState } from '../flow/dashboardTypes';
 import type { AvailableProgram, CourseEnrollmentsState } from '../flow/enrollmentTypes';
 import type { FinancialAidState } from '../reducers/financial_aid';
+import type { CouponsState } from '../reducers/coupons';
 import type { ProfileGetResult } from '../flow/profileTypes';
 import type { Course, CourseRun } from '../flow/programTypes';
 import type { CheckoutState } from '../reducers';
@@ -70,6 +77,7 @@ class DashboardPage extends React.Component {
   };
 
   props: {
+    coupons:                  CouponsState,
     profile:                  ProfileGetResult,
     currentProgramEnrollment: AvailableProgram,
     dashboard:                DashboardState,
@@ -83,6 +91,7 @@ class DashboardPage extends React.Component {
     courseEnrollments:        CourseEnrollmentsState,
     checkout:                 CheckoutState,
     financialAid:             FinancialAidState,
+    location:                 Object,
   };
 
   componentDidMount() {
@@ -97,11 +106,12 @@ class DashboardPage extends React.Component {
     const { dispatch } = this.props;
     dispatch(clearDashboard());
     dispatch(clearCoursePrices());
+    dispatch(clearCoupons());
   }
 
   handleOrderSuccess = (course: Course): void => {
     const { dispatch, ui: { toastMessage } } = this.props;
-    let firstRun: CourseRun = course.runs.length > 0 ? course.runs[0] : null;
+    let firstRun: ?CourseRun = course.runs.length > 0 ? course.runs[0] : null;
 
     if (_.isNil(toastMessage)) {
       if (firstRun && firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
@@ -158,6 +168,7 @@ class DashboardPage extends React.Component {
   updateRequirements = () => {
     this.fetchDashboard();
     this.fetchCoursePrices();
+    this.fetchCoupons();
     this.handleOrderStatus();
   };
 
@@ -175,6 +186,13 @@ class DashboardPage extends React.Component {
     }
   }
 
+  fetchCoupons() {
+    const { coupons, dispatch } = this.props;
+    if (coupons.fetchGetStatus === undefined) {
+      dispatch(fetchCoupons());
+    }
+  }
+
   handleOrderStatus = () => {
     const { dashboard, location: { query } } = this.props;
 
@@ -185,7 +203,11 @@ class DashboardPage extends React.Component {
 
     let courseKey = query.course_key;
     if (query.status === 'receipt') {
-      const [courseRun, course] = findCourseRun(dashboard.programs, run => run.course_id === courseKey);
+      const [courseRun, course] = findCourseRun(dashboard.programs, run => run !== null && run.course_id === courseKey);
+      if (courseRun === null || course === null) {
+        // could not find course to handle order status for
+        return;
+      }
       switch (courseRun.status) {
       case STATUS_CAN_UPGRADE:
       case STATUS_OFFERED:
@@ -281,6 +303,7 @@ class DashboardPage extends React.Component {
       courseEnrollments,
       checkout,
       financialAid,
+      coupons,
     } = this.props;
     const loaded = dashboard.fetchStatus !== FETCH_PROCESSING && prices.fetchStatus !== FETCH_PROCESSING;
     let errorMessage;
@@ -294,8 +317,11 @@ class DashboardPage extends React.Component {
     if (dashboard.errorInfo !== undefined) {
       errorMessage = <ErrorMessage errorInfo={dashboard.errorInfo}/>;
     } else if (prices.errorInfo !== undefined) {
-      errorMessage = <ErrorMessage errorInfo={prices.errorInfo} />;
-    } else if (_.isNil(program) || _.isNil(coursePrice)) {
+      errorMessage = <ErrorMessage errorInfo={prices.errorInfo}/>;
+    } else if (
+      program === null || program === undefined ||
+      coursePrice === null || coursePrice === undefined
+    ) {
       errorMessage = <ErrorMessage errorInfo={{user_message: "No program enrollment is available."}} />;
     } else {
       let financialAidCard;
@@ -315,6 +341,8 @@ class DashboardPage extends React.Component {
         />;
       }
 
+      const calculatedPrices = calculatePrices(dashboard.programs, prices.coursePrices, coupons.coupons);
+
       dashboardContent = (
         <div className="double-column">
           <DocsInstructionsDialog
@@ -327,7 +355,7 @@ class DashboardPage extends React.Component {
             <CourseListCard
               program={program}
               courseEnrollAddStatus={courseEnrollments.courseEnrollAddStatus}
-              coursePrice={coursePrice}
+              prices={calculatedPrices}
               key={program.id}
               checkout={this.dispatchCheckout}
               checkoutStatus={checkout.fetchStatus}
@@ -371,6 +399,7 @@ const mapStateToProps = (state) => {
     courseEnrollments: state.courseEnrollments,
     checkout: state.checkout,
     financialAid: state.financialAid,
+    coupons: state.coupons,
   };
 };
 

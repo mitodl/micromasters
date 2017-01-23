@@ -373,8 +373,12 @@ export function createForm(url: string, payload: CheckoutPayload): HTMLFormEleme
 /**
  * Formats course price.
  */
-export function formatPrice(price: string|number): string {
-  return `$${price}`;
+export function formatPrice(price: ?string|number): string {
+  if (price === null || price === undefined) {
+    return '';
+  } else {
+    return `$${price}`;
+  }
 }
 
 /**
@@ -402,8 +406,8 @@ export function programCourseInfo(program: Program): Object {
 
 export function findCourseRun(
   programs: Array<Program>,
-  selector: (courseRun: ?CourseRun, course: ?Course, program: ?Program) => boolean,
-): [?CourseRun, ?Course, ?Program] {
+  selector: (courseRun: CourseRun|null, course: Course|null, program: Program|null) => boolean,
+): [CourseRun|null, Course|null, Program|null] {
   for (let program of programs) {
     try {
       if (selector(null, null, program)) {

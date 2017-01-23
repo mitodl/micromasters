@@ -4,8 +4,8 @@ import Grid, { Cell } from 'react-mdl/lib/Grid';
 import moment from 'moment';
 
 import CourseAction from './CourseAction';
+import type { CalculatedPrices } from '../../flow/couponTypes';
 import type { CourseRun, FinancialAidUserInfo } from '../../flow/programTypes';
-import type { CoursePrice } from '../../flow/dashboardTypes';
 import { isCurrentlyEnrollable, formatGrade } from './util';
 import {
   STATUS_OFFERED,
@@ -20,8 +20,8 @@ export default class CourseSubRow extends React.Component {
     courseRun:                   CourseRun,
     checkout:                    Function,
     courseEnrollAddStatus?:      string,
-    coursePrice:                 CoursePrice,
     now:                         moment$Moment,
+    prices:                      CalculatedPrices,
     financialAid:                FinancialAidUserInfo,
     hasFinancialAid:             boolean,
     openFinancialAidCalculator:  () => void,
@@ -109,22 +109,22 @@ export default class CourseSubRow extends React.Component {
 
   renderCourseRunAction = (courseRun: CourseRun) => {
     const {
-      coursePrice,
       checkout,
       now,
       financialAid,
       hasFinancialAid,
       openFinancialAidCalculator,
-      addCourseEnrollment
+      addCourseEnrollment,
+      prices,
     } = this.props;
 
     let enrollStartDate = courseRun.enrollment_start_date ? moment(courseRun.enrollment_start_date) : null;
     if (isCurrentlyEnrollable(enrollStartDate, now)) {
       return <CourseAction
         courseRun={courseRun}
-        coursePrice={coursePrice}
         checkout={checkout}
         now={now}
+        prices={prices}
         hasFinancialAid={hasFinancialAid}
         financialAid={financialAid}
         openFinancialAidCalculator={openFinancialAidCalculator}

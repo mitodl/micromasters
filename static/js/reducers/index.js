@@ -234,7 +234,7 @@ export const dashboard = (state: DashboardState = INITIAL_DASHBOARD_STATE, actio
   }
 };
 
-type CheckoutState = {
+export type CheckoutState = {
   fetchStatus?: string,
 };
 const INITIAL_CHECKOUT_STATE = {};

@@ -20,6 +20,9 @@ import {
   STATUS_OFFERED,
   STATUS_PAID_BUT_NOT_ENROLLED,
   STATUS_PENDING_ENROLLMENT,
+
+  COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
+  COUPON_CONTENT_TYPE_COURSE,
 } from './constants';
 
 export const ELASTICSEARCH_RESPONSE = deepFreeze({
@@ -710,6 +713,17 @@ export const ERROR_RESPONSE = deepFreeze({
   "error_code": "AB123",
   "user_message": "custom error message for the user."
 });
+
+export const COUPONS_RESPONSE = deepFreeze([
+  {
+    amount: "70",
+    amount_type: COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
+    content_type: COUPON_CONTENT_TYPE_COURSE,
+    coupon_code: "fixed-discount-for-course",
+    object_id: 9,
+    program_id: 4,
+  }
+]);
 
 /* eslint-disable max-len */
 export const CYBERSOURCE_CHECKOUT_RESPONSE = deepFreeze({

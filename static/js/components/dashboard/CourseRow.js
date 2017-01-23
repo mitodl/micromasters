@@ -8,7 +8,7 @@ import CourseGrade from './CourseGrade';
 import CourseDescription from './CourseDescription';
 import CourseSubRow from './CourseSubRow';
 import type { Course, CourseRun, FinancialAidUserInfo } from '../../flow/programTypes';
-import type { CoursePrice } from '../../flow/dashboardTypes';
+import type { CalculatedPrices } from '../../flow/couponTypes';
 import {
   STATUS_MISSED_DEADLINE,
   STATUS_NOT_PASSED,
@@ -21,8 +21,8 @@ export default class CourseRow extends React.Component {
     checkout: Function,
     checkoutStatus?: string,
     courseEnrollAddStatus?: string,
-    coursePrice: CoursePrice,
     now: moment$Moment,
+    prices: CalculatedPrices,
     financialAid: FinancialAidUserInfo,
     hasFinancialAid: boolean,
     openFinancialAidCalculator: () => void,
@@ -60,11 +60,11 @@ export default class CourseRow extends React.Component {
   renderRowColumns(run: CourseRun): Array<React$Element<*>> {
     const {
       course,
-      coursePrice,
       checkout,
       checkoutStatus,
       courseEnrollAddStatus,
       now,
+      prices,
       financialAid,
       hasFinancialAid,
       openFinancialAidCalculator,
@@ -94,11 +94,11 @@ export default class CourseRow extends React.Component {
       <Cell col={lastColumnSize} className={lastColumnClass} key="3">
         <CourseAction
           courseRun={run}
-          coursePrice={coursePrice}
           checkout={checkout}
           checkoutStatus={checkoutStatus}
           courseEnrollAddStatus={courseEnrollAddStatus}
           now={now}
+          prices={prices}
           hasFinancialAid={hasFinancialAid}
           financialAid={financialAid}
           openFinancialAidCalculator={openFinancialAidCalculator}
@@ -112,9 +112,9 @@ export default class CourseRow extends React.Component {
   renderSubRows(): Array<React$Element<*>> {
     const {
       course,
-      coursePrice,
       checkout,
       now,
+      prices,
       financialAid,
       hasFinancialAid,
       openFinancialAidCalculator,
@@ -136,9 +136,9 @@ export default class CourseRow extends React.Component {
         // $FlowFixMe: Flow thinks subRowRun is mixed even though it's CourseRun|null
         <CourseSubRow
           courseRun={subRowRun}
-          coursePrice={coursePrice}
           checkout={checkout}
           now={now}
+          prices={prices}
           hasFinancialAid={hasFinancialAid}
           financialAid={financialAid}
           openFinancialAidCalculator={openFinancialAidCalculator}

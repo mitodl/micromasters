@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { Card, CardTitle } from 'react-mdl/lib/Card';
 
 import type { Program } from '../../flow/programTypes';
-import type { CoursePrice } from '../../flow/dashboardTypes';
+import type { CalculatedPrices } from '../../flow/couponTypes';
 import CourseRow from './CourseRow';
 import FinancialAidCalculator from '../../containers/FinancialAidCalculator';
 
@@ -15,7 +15,7 @@ export default class CourseListCard extends React.Component {
     checkoutStatus?:              string,
     program:                      Program,
     courseEnrollAddStatus?:       string,
-    coursePrice:                  CoursePrice,
+    prices:                       CalculatedPrices,
     openFinancialAidCalculator?:  () => void,
     now?:                         Object,
     addCourseEnrollment:          (courseId: string) => void,
@@ -24,7 +24,7 @@ export default class CourseListCard extends React.Component {
   render() {
     let {
       program,
-      coursePrice,
+      prices,
       now,
       checkout,
       checkoutStatus,
@@ -43,11 +43,11 @@ export default class CourseListCard extends React.Component {
         financialAid={program.financial_aid_user_info}
         course={course}
         courseEnrollAddStatus={courseEnrollAddStatus}
-        coursePrice={coursePrice}
         key={course.id}
         checkout={checkout}
         checkoutStatus={checkoutStatus}
         openFinancialAidCalculator={openFinancialAidCalculator}
+        prices={prices}
         now={now}
         addCourseEnrollment={addCourseEnrollment}
       />

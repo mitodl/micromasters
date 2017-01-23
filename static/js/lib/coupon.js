@@ -25,28 +25,26 @@ function makeProgramIdLookup<T: HasProgramId>(obj: Array<T>): Map<number, T> {
   return new Map(obj.map((value: T) => [value.program_id, value]));
 }
 
+function* genPrices(programs: Dashboard, prices: CoursePrices, coupons: Coupons) {
+  const couponLookup: Map<number, Coupon> = makeProgramIdLookup(coupons);
+  const priceLookup: Map<number, CoursePrice> = makeProgramIdLookup(prices);
+
+  for (const program of programs) {
+    for (const course of program.courses) {
+      for (const run of course.runs) {
+        let price = calculateRunPrice(
+          run.id, course.id, program.id, priceLookup.get(program.id), couponLookup.get(program.id)
+        );
+        if (price !== null && price !== undefined) {
+          yield [run.id, price];
+        }
+      }
+    }
+  }
+}
+
 export const calculatePrices = (programs: Dashboard, prices: CoursePrices, coupons: Coupons): CalculatedPrices => {
-  let couponLookup: Map<number, Coupon> = makeProgramIdLookup(coupons);
-  let priceLookup: Map<number, CoursePrice> = makeProgramIdLookup(prices);
-
-  let calcPriceForRun = (run, course, program) => ({
-    id: run.id,
-    price: calculateRunPrice(
-      run.id, course.id, program.id, priceLookup.get(program.id), couponLookup.get(program.id)
-    ),
-  });
-
-  let calcPriceForCourse = (course, program) => ({
-    id: course.id,
-    runs: course.runs.map(run => calcPriceForRun(run, course, program))
-  });
-
-  let calcPriceForProgram = program => ({
-    id: program.id,
-    courses: program.courses.map(course => calcPriceForCourse(course, program))
-  });
-
-  return programs.map(calcPriceForProgram);
+  return new Map(genPrices(programs, prices, coupons));
 };
 
 export const _calculateDiscount = (price: number, amountType: string, amount: number) => {

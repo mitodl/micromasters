@@ -18,13 +18,4 @@ export type Coupon = {
 
 export type Coupons = Array<Coupon>;
 
-export type CalculatedPrices = Array<{
-  id: number,
-  courses: Array<{
-    id: number,
-    runs: Array<{
-      id: number,
-      price: ?number
-    }>
-  }>
-}>;
+export type CalculatedPrices = Map<number, number>;

@@ -53,3 +53,6 @@ export const fetchCoupons = (): Dispatcher<*> => {
       });
   };
 };
+
+export const CLEAR_COUPONS = 'CLEAR_COUPONS';
+export const clearCoupons = createAction(CLEAR_COUPONS);

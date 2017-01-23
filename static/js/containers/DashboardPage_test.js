@@ -14,6 +14,7 @@ import {
   CLEAR_DASHBOARD,
 } from '../actions';
 import * as actions from '../actions';
+import { CLEAR_COUPONS } from '../actions/coupons';
 import {
   SET_TOAST_MESSAGE,
   CLEAR_UI,
@@ -282,6 +283,7 @@ describe('DashboardPage', () => {
         CLEAR_ENROLLMENTS,
         CLEAR_DASHBOARD,
         CLEAR_COURSE_PRICES,
+        CLEAR_COUPONS,
       ], () => {
         ReactDOM.unmountComponentAtNode(div);
       });

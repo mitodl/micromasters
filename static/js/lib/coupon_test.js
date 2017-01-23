@@ -35,7 +35,7 @@ describe('coupon utility functions', () => {
 
   describe('calculatePrices', () => {
     it("returns an empty list if there are no programs", () => {
-      assert.deepEqual(calculatePrices([], [], []), []);
+      assert.deepEqual(calculatePrices([], [], []), new Map());
     });
 
     it('uses calculateRunPrice to figure out prices', () => {
@@ -47,18 +47,17 @@ describe('coupon utility functions', () => {
       let calculateRunPriceStub = sandbox.stub(couponFuncs, 'calculateRunPrice');
       calculateRunPriceStub.returns(stubPrice);
 
-      let expected = programs.map(program => ({
-        id: program.id,
-        courses: program.courses.map(course => ({
-          id: course.id,
-          runs: course.runs.map(run => ({
-            id: run.id,
-            price: stubPrice,
-          }))
-        }))
-      }));
+      let expected = new Map();
+      for (const program of programs) {
+        for (const course of program.courses) {
+          for (const run of course.runs) {
+            expected.set(run.id, stubPrice);
+          }
+        }
+      }
 
-      assert.deepEqual(calculatePrices(programs, prices, coupons), expected);
+      let actual = calculatePrices(programs, prices, coupons);
+      assert.deepEqual(actual, expected);
       for (const program of programs) {
         let price = prices.filter(price => price.program_id === program.id)[0];
         let coupon = coupons.filter(coupon => coupon.program_id === program.id)[0];

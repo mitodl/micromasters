@@ -13,7 +13,9 @@ import {
   RECEIVE_FETCH_COUPONS_SUCCESS,
   RECEIVE_FETCH_COUPONS_FAILURE,
   fetchCoupons,
+  clearCoupons,
 } from '../actions/coupons';
+import { INITIAL_COUPONS_STATE } from '../reducers/coupons';
 import {
   FETCH_FAILURE,
   FETCH_PROCESSING,
@@ -78,7 +80,7 @@ describe('financial aid reducers', () => {
     });
   });
 
-  it('should let you fetch coupons', () => {
+  it('should let you fetch coupons then clear coupon state', () => {
     let coupons = ["some coupons"];
     getCouponsStub.returns(Promise.resolve(coupons));
     return dispatchThen(fetchCoupons(), [
@@ -90,6 +92,9 @@ describe('financial aid reducers', () => {
         coupons: coupons,
       });
       assert.isTrue(getCouponsStub.calledWith());
+
+      store.dispatch(clearCoupons());
+      assert.deepEqual(store.getState().coupons, INITIAL_COUPONS_STATE);
     });
   });
 

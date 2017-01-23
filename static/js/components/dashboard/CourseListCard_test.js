@@ -6,6 +6,7 @@ import { assert } from 'chai';
 import _ from 'lodash';
 import sinon from 'sinon';
 
+import { calculatePrices } from '../../lib/coupon';
 import CourseListCard from './CourseListCard';
 import CourseRow from './CourseRow';
 import { DASHBOARD_RESPONSE, COURSE_PRICES_RESPONSE } from '../../test_constants';
@@ -28,12 +29,13 @@ describe('CourseListCard', () => {
       coursePrice => coursePrice.program_id === program.id
     );
 
+    let prices = calculatePrices([program], [coursePrice], []);
     return shallow(
       <CourseListCard
         program={program}
-        coursePrice={coursePrice}
         checkout={checkout}
         addCourseEnrollment={() => undefined}
+        prices={prices}
         {...props}
       />
     );
