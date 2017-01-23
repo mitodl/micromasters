@@ -41,8 +41,6 @@
     and a new path to a master’s degree from MIT. Learn more ">
 {% endblock %}
 
-{% block adwords %} {% include "adwords.html" %} {% endblock %}
-
 {% block content %}
 
 <div id="home-page">
@@ -236,6 +234,7 @@
     </main>
   </div>
 
+  {% include "adwords.html" %}
   {% include "footer.html" %}
 
   <div class="modal fade modal-fade-in-scale-up" id="modal-about"

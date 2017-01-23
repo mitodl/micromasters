@@ -26,8 +26,6 @@
   <meta itemprop="image" content="{{ page.background_image.file.url|safe }}">
 {% endblock %}
 
-{% block adwords %} {% include "adwords.html" %} {% endblock %}
-
 {% block body_class %}template-programpage{% endblock %}
 {% block content %}
 {% include "header.html" %}
@@ -153,6 +151,7 @@
   {% endif %}
 
 </main>
+{% include "adwords.html" %}
 {% include "footer.html" %}
 <div id="signup-dialog">
   <!-- signup dialog React component injected here -->
