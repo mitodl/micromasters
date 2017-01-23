@@ -18,8 +18,6 @@ import {
 export default class CourseRow extends React.Component {
   props: {
     course: Course,
-    checkout: Function,
-    checkoutStatus?: string,
     courseEnrollAddStatus?: string,
     now: moment$Moment,
     prices: CalculatedPrices,
@@ -60,8 +58,6 @@ export default class CourseRow extends React.Component {
   renderRowColumns(run: CourseRun): Array<React$Element<*>> {
     const {
       course,
-      checkout,
-      checkoutStatus,
       courseEnrollAddStatus,
       now,
       prices,
@@ -94,8 +90,6 @@ export default class CourseRow extends React.Component {
       <Cell col={lastColumnSize} className={lastColumnClass} key="3">
         <CourseAction
           courseRun={run}
-          checkout={checkout}
-          checkoutStatus={checkoutStatus}
           courseEnrollAddStatus={courseEnrollAddStatus}
           now={now}
           prices={prices}
@@ -112,7 +106,6 @@ export default class CourseRow extends React.Component {
   renderSubRows(): Array<React$Element<*>> {
     const {
       course,
-      checkout,
       now,
       prices,
       financialAid,
@@ -136,7 +129,6 @@ export default class CourseRow extends React.Component {
         // $FlowFixMe: Flow thinks subRowRun is mixed even though it's CourseRun|null
         <CourseSubRow
           courseRun={subRowRun}
-          checkout={checkout}
           now={now}
           prices={prices}
           hasFinancialAid={hasFinancialAid}

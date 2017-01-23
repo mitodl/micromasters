@@ -2,14 +2,15 @@ import App from './containers/App';
 
 // these components are intentionally imported here (unused)
 // in order to control webpack's module splitting
-import DashboardPage from './containers/DashboardPage';		
-import SettingsPage from './containers/SettingsPage';		
-import ProfilePage from './containers/ProfilePage';		
-import PersonalTab from './components/PersonalTab';		
-import EducationTab from './components/EducationTab';		
-import EmploymentTab from './components/EmploymentTab';		
-import UserPage from './containers/UserPage';		
+import DashboardPage from './containers/DashboardPage';
+import SettingsPage from './containers/SettingsPage';
+import ProfilePage from './containers/ProfilePage';
+import PersonalTab from './components/PersonalTab';
+import EducationTab from './components/EducationTab';
+import EmploymentTab from './components/EmploymentTab';
+import UserPage from './containers/UserPage';
 import User from './components/User';
+import OrderSummaryPage from './containers/OrderSummaryPage';
 
 const errorLoading = error => {
   throw new Error(`Dynamic page loading failed: ${error}`);
@@ -29,6 +30,14 @@ export const routes = {
       path: 'dashboard',
       getComponent(nextState, cb) {
         import('./containers/DashboardPage')
+          .then(loadRoute(cb))
+          .catch(errorLoading);
+      }
+    },
+    {
+      path: 'order_summary',
+      getComponent(nextState, cb) {
+        import('./containers/OrderSummaryPage')
           .then(loadRoute(cb))
           .catch(errorLoading);
       }

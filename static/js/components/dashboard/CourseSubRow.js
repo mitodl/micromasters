@@ -18,7 +18,6 @@ import {
 export default class CourseSubRow extends React.Component {
   props: {
     courseRun:                   CourseRun,
-    checkout:                    Function,
     courseEnrollAddStatus?:      string,
     now:                         moment$Moment,
     prices:                      CalculatedPrices,
@@ -109,7 +108,6 @@ export default class CourseSubRow extends React.Component {
 
   renderCourseRunAction = (courseRun: CourseRun) => {
     const {
-      checkout,
       now,
       financialAid,
       hasFinancialAid,
@@ -122,7 +120,6 @@ export default class CourseSubRow extends React.Component {
     if (isCurrentlyEnrollable(enrollStartDate, now)) {
       return <CourseAction
         courseRun={courseRun}
-        checkout={checkout}
         now={now}
         prices={prices}
         hasFinancialAid={hasFinancialAid}

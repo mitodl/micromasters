@@ -29,9 +29,11 @@ import { formatPrice } from '../../util/util';
 import { ifValidDate } from '../../util/date';
 
 export default class CourseAction extends React.Component {
+  static contextTypes = {
+    router:   React.PropTypes.object.isRequired
+  };
+
   props: {
-    checkout: Function,
-    checkoutStatus?: string,
     courseRun: CourseRun,
     courseEnrollAddStatus?: string,
     now: moment$Moment,
@@ -66,11 +68,7 @@ export default class CourseAction extends React.Component {
   }
 
   renderEnrollButton(run: CourseRun): React$Element<*> {
-    const {
-      checkout,
-      checkoutStatus,
-      openFinancialAidCalculator
-    } = this.props;
+    const { openFinancialAidCalculator } = this.props;
     let text = '';
     let needsPriceCalculation = this.needsPriceCalculation();
     let buttonProps = {};
@@ -88,7 +86,7 @@ export default class CourseAction extends React.Component {
         buttonProps.onClick = openFinancialAidCalculator;
       } else {
         buttonProps.onClick = () => {
-          checkout(run.course_id);
+          this.context.router.push(`/order_summary/?course_key=${encodeURIComponent(run.course_id)}`);
         };
       }
     }
@@ -98,7 +96,7 @@ export default class CourseAction extends React.Component {
         className="dashboard-button pay-button"
         key="1"
         component={Button}
-        spinning={run.status === STATUS_PENDING_ENROLLMENT || checkoutStatus === FETCH_PROCESSING}
+        spinning={run.status === STATUS_PENDING_ENROLLMENT}
         {...buttonProps}
       >
         {text}
