@@ -111,17 +111,36 @@ describe('CourseAction', () => {
   });
 
   it('shows a message for a verified course', () => {
-    let course = findCourse(course => (
+    let course = findAndCloneCourse(course => (
       course.runs.length > 0 &&
       course.runs[0].status === STATUS_CURRENTLY_ENROLLED
     ));
-    let firstRun = course.runs[0];
+    let firstRun = alterFirstRun(course, {
+      course_end_date: moment(now).add(10, 'days').toISOString()
+    });
     const wrapper = renderCourseAction({
       courseRun: firstRun
     });
     let elements = getElements(wrapper);
 
     assert.equal(elements.descriptionText, 'In Progress');
+  });
+
+  it('shows a message for a verified course after course end date', () => {
+    let course = findAndCloneCourse(course => (
+      course.runs.length > 0 &&
+      course.runs[0].status === STATUS_CURRENTLY_ENROLLED
+    ));
+    let firstRun = alterFirstRun(course, {
+      course_end_date: moment(now).add(-10, 'days').toISOString()
+    });
+    const wrapper = renderCourseAction({
+      courseRun: firstRun
+    });
+    let elements = getElements(wrapper);
+
+    // asset that ``descriptionText`` element dont exist.
+    assert.isUndefined(elements.descriptionText);
   });
 
   it('shows a message for course user paid but not enrolled', () => {
