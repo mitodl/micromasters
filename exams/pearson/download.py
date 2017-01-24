@@ -78,6 +78,7 @@ def process_result_files(pattern, process_result):
                     try:
                         if process_result(local_path):
                             sftp.remove(remote_path)
+                            log.debug("Removed remote file: %s", remote_path)
                         log.debug("Processed remote file: %s", remote_path)
                     except:  # pylint: disable=bare-except
                         log.exception("Error processing file: %s", remote_path)
