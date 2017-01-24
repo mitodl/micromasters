@@ -10,10 +10,7 @@ from django.test import SimpleTestCase, override_settings
 from exams.pearson import (
     download,
 )
-from exams.pearson.sftp_test import (
-    EXAMS_SFTP_SETTINGS,
-    EXAMS_SFTP_RESULTS_DIR,
-)
+from exams.pearson.sftp_test import EXAMS_SFTP_SETTINGS
 
 
 @override_settings(**EXAMS_SFTP_SETTINGS)
@@ -50,5 +47,5 @@ class PeasonUploadTest(SimpleTestCase):
 
         assert result == ['a.ext']
 
-        sftp.listdir.assert_called_once_with(EXAMS_SFTP_RESULTS_DIR)
+        sftp.listdir.assert_called_once_with()
         assert sftp.isfile.call_args_list == [call(arg) for arg in listdir_values]
