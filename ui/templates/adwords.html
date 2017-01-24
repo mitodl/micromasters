@@ -1,7 +1,7 @@
-{% if APIKEYS.ADWORDS_CONVERSION_ID %}
+{% if APIKEYS.GOOGLE_ADWORDS %}
   <script type="text/javascript">
     /* <![CDATA[ */
-    var google_conversion_id = {{ APIKEYS.ADWORDS_CONVERSION_ID }};
+    var google_conversion_id = {{ APIKEYS.GOOGLE_ADWORDS }};
     var google_custom_params = window.google_tag_params;
     var google_remarketing_only = true;
     /* ]]> */
@@ -11,7 +11,7 @@
   </div>
   <noscript>
     <div style="display:inline;">
-      <img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/{{ APIKEYS.ADWORDS_CONVERSION_ID }}/?guid=ON&amp;script=0"/>
+      <img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/{{ APIKEYS.GOOGLE_ADWORDS }}/?guid=ON&amp;script=0"/>
     </div>
   </noscript>
 {% endif %}
