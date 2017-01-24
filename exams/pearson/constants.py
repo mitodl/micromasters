@@ -20,3 +20,7 @@ PEARSON_UPLOAD_REQUIRED_SETTINGS = [
 PEARSON_DIALECT_OPTIONS = {
     'delimiter': '\t',
 }
+
+# Exam Authorization Confirmation files (EAC) file statuses.
+EAC_SUCCESS_STATUS = "Accepted"
+EAC_FAILURE_STATUS = "Error"

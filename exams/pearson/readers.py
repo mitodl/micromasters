@@ -131,3 +131,19 @@ class VCDCReader(BaseTSVReader):
             ('Date', 'date', self.parse_datetime),
             ('Message', 'message'),
         ], VCDCResult)
+
+
+EACResult = namedtuple('EACResult', ['exam_authorization_id', 'candidate_id', 'status', 'message'])
+
+
+class EACReader(BaseTSVReader):
+    """
+    Reader for Pearson VUE Exam Authorization Confirmation files (EAC) files.
+    """
+    def __init__(self):
+        super().__init__([
+            ('ClientAuthorizationID', 'exam_authorization_id'),
+            ('ClientCandidateID', 'candidate_id'),
+            ('Status', 'status'),
+            ('Message', 'message')
+        ], EACResult)

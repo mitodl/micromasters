@@ -11,6 +11,8 @@ import pytz
 
 from exams.pearson.readers import (
     BaseTSVReader,
+    EACReader,
+    EACResult,
     VCDCReader,
     VCDCResult,
 )
@@ -131,4 +133,40 @@ class VCDCReaderTest(UnitTestCase):
             VCDCResult(
                 client_candidate_id=345, status='Error', date=FIXED_DATETIME, message='Empty Address'
             ),
+        ]
+
+
+class EACReaderTest(UnitTestCase):
+    """Tests for EACReader"""
+    def test_eac_read(self):  # pylint: disable=no-self-use
+        """Test that read() correctly parses a EAC file"""
+        sample_data = io.StringIO(
+            "ClientAuthorizationID\tClientCandidateID\tStatus\tDate\tMessage\r\n"
+            "000004\t000001\tAccepted\t2016/05/15 15:02:55\t\r\n"
+            "000005\t000002\tAccepted\t2016/05/15 15:02:55\tWARNING: There be dragons\r\n"
+            "000006\t000003\tError\t2016/05/15 15:02:55\tEmpty Address\r\n"
+        )
+
+        reader = EACReader()
+        results = reader.read(sample_data)
+
+        assert results == [
+            EACResult(
+                exam_authorization_id="000004",
+                candidate_id="000001",
+                status='Accepted',
+                message=''
+            ),
+            EACResult(
+                exam_authorization_id="000005",
+                candidate_id="000002",
+                status='Accepted',
+                message='WARNING: There be dragons'
+            ),
+            EACResult(
+                exam_authorization_id="000006",
+                candidate_id="000003",
+                status='Error',
+                message='Empty Address'
+            )
         ]

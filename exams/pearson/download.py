@@ -8,9 +8,15 @@ from django.conf import settings
 from paramiko import SSHException
 
 from exams.pearson.constants import (
+    EAC_SUCCESS_STATUS,
     PEARSON_FILE_TYPE_EAC,
     PEARSON_FILE_TYPE_VCDC,
 )
+from exams.pearson.exceptions import RetryableSFTPException
+from exams.pearson.readers import EACReader
+from exams.pearson.sftp import get_connection
+from exams.models import ExamAuthorization
+from mail.api import MailgunClient
 
 
 ZIP_FILE_RE = re.compile(r'^.+\.zip$')
@@ -55,6 +61,26 @@ def get_file_type(filename):
     return match.group(1) if match else None
 
 
+def email_eac_failures(extracted_file, messages):
+    """
+    Email summary of failures to mm admin
+
+    Args:
+        extracted_file(str): Path of EAC file on local machine.
+        messages(list): List of error messages compiled in processing
+            Exam Authorization Confirmation files (EAC) file.
+    """
+    error_messages = ''.join(messages)
+    subject = "Summary of failures of file='{file}'".format(file=os.path.basename(extracted_file))
+    body = "Hi,\n Please find the list of errors below:\n\n {messages}".format(messages=error_messages)
+
+    MailgunClient().send_individual_email(
+        subject,
+        body,
+        settings.MICROMASTERS_ADMIN_EMAIL
+    )
+
+
 class ArchivedResponseProcesser(object):
     """
     Handles fetching and processing of files stored in a ZIP archive on Pearson SFTP
@@ -96,7 +122,6 @@ class ArchivedResponseProcesser(object):
                 try:
                     if self.process_zip(local_path):
                         log.debug("Processed remote file: %s", remote_path)
-
                         self.sftp.remove(remote_path)
                 except SSHException:
                     raise
@@ -170,4 +195,52 @@ class ArchivedResponseProcesser(object):
             (bool): flag for successful processing of the file
         """
         log.debug('Found EAC file: %s', extracted_file)
-        return False
+        results = EACReader().read(extracted_file)
+        messages = []
+        response = False
+        for result in results:
+            try:
+                exam_authorization = ExamAuthorization.objects.get(id=int(result['exam_authorization_id']))
+                if result['status'] == EAC_SUCCESS_STATUS:
+                    exam_authorization.status = ExamAuthorization.STATUS_SUCCESS
+                else:
+                    exam_authorization.status = ExamAuthorization.STATUS_FAILED
+                    messages.append(
+                        "- Exam authorization fail for user `{username}` "
+                        "with authorization id `{authorization_id}`. {error_message}\n".format(
+                            username=exam_authorization.user.username,
+                            authorization_id=result['exam_authorization_id'],
+                            error_message=(
+                                "Got an error: '{error}'.".format(
+                                    error=result['message']
+                                ) if result['message'] else ''
+                            )
+                        )
+                    )
+                    log.info(
+                        "Exam authorization fail for user=%s with message='%s' for id: %s",
+                        exam_authorization.user.username,
+                        result['message'],
+                        result['exam_authorization_id']
+                    )
+
+                exam_authorization.save()
+                response = True
+            except ExamAuthorization.DoesNotExist:
+                log.info(
+                    "Unable to find ExamAuthorization data for authorization_id: %s and candidate_id: %s",
+                    result['exam_authorization_id'],
+                    result['candidate_id']
+                )
+                messages.append(
+                    '- Unable to find information for authorization_id: `{authorization_id}` and '
+                    'candidate_id: `{candidate_id}` in our system.\n'.format(
+                        authorization_id=result['exam_authorization_id'],
+                        candidate_id=result['candidate_id']
+                    )
+                )
+
+        if len(messages) > 0:
+            email_eac_failures(extracted_file, messages)
+
+        return response
