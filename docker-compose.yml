@@ -113,10 +113,10 @@ services:
   sftp:
     image: atmoz/sftp
     volumes:
-        - sftp_share:/home/odl/share
+        - sftp_share:/home/odl/results
     ports:
         - "2022:22"
-    command: odl:123:1001:1001:share
+    command: odl:123:1001:1001:results,results/topvue
 
 volumes:
   django_media: {}
