@@ -37,7 +37,7 @@ describe("SignupDialog", () => {
     helper.store.dispatch(setDialogVisibility(true));
     renderDialog();
 
-    let link = document.body.querySelector(".signup-dialog").querySelector("a");
+    let link = document.body.querySelector(".signup-dialog a");
     assert.equal(link.getAttribute('href'), `/login/edxorg${queryParams}`);
   });
 });

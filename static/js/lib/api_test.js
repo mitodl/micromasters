@@ -573,7 +573,7 @@ describe('api', function() {
           });
 
           return assert.isRejected(fetchJSONWithCSRF('/url', {}, true)).then(() => {
-            assert.isTrue(window.location.toString().includes('/login/edxorg/'));
+            assert.include(window.location.toString(), '/login/edxorg/');
           });
         });
       }
