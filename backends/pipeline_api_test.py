@@ -231,11 +231,11 @@ class EdxPipelineApiTest(MockedESTestCase):
         A student should be directed to /dashboard
         """
         student = UserFactory.create()
-        session_set = mock.Mock()
-        load = mock.Mock(return_value={})
-        backend = edxorg.EdxOrgOAuth2(strategy=mock.Mock(session_set=session_set, session=mock.Mock(load=load)))
+        mock_strategy = mock.Mock()
+        mock_strategy.session.load.return_value = {}
+        backend = edxorg.EdxOrgOAuth2(strategy=mock_strategy)
         pipeline_api.update_profile_from_edx(backend, student, {}, False)
-        session_set.assert_called_with('next', '/dashboard')
+        mock_strategy.session_set.assert_called_with('next', '/dashboard')
 
     def test_login_redirect_learners(self):
         """
@@ -244,11 +244,11 @@ class EdxPipelineApiTest(MockedESTestCase):
         for role in [Staff.ROLE_ID, Instructor.ROLE_ID]:
             user = UserFactory.create()
             Role.objects.create(user=user, role=role, program=ProgramFactory.create())
-            session_set = mock.Mock()
-            load = mock.Mock(return_value={})
-            backend = edxorg.EdxOrgOAuth2(strategy=mock.Mock(session_set=session_set, session=mock.Mock(load=load)))
+            mock_strategy = mock.Mock()
+            mock_strategy.session.load.return_value = {}
+            backend = edxorg.EdxOrgOAuth2(strategy=mock_strategy)
             pipeline_api.update_profile_from_edx(backend, user, {}, False)
-            session_set.assert_called_with('next', '/learners')
+            mock_strategy.session_set.assert_called_with('next', '/learners')
 
     def test_login_redirect_next(self):
         """
