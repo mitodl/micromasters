@@ -65,7 +65,8 @@ def process_result_files(pattern, process_result):
 
     Args:
         pattern (regex): regex to match the filename against
-        process_result(callable): callable to invoke per-file for processing, returns True to remove the file from the remote
+        process_result(callable): callable to invoke per-file for processing
+            return True to signal that the file should be removed from the remote
     """
     try:
         with get_connection() as sftp:
