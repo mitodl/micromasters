@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import { Card } from 'react-mdl/lib/Card';
 import Button from 'react-mdl/lib/Button';
@@ -23,16 +24,18 @@ class SummaryPage extends React.Component {
     const { coursePrice } = this.props;
     return formatPrice(coursePrice.price);
   }
-  getExplanationText(): string {
+  getExplanationText(): React$Element<*> {
     const { coursePrice } = this.props;
+    let text;
     if (coursePrice.price > 0){
-      return "Clicking below with link outside of the MIT Micromasters app" +
-        "to an external website, where you will be able to complete the transaction by" +
-        "paying with a creadit card."
+      text = "Clicking below with link outside of the MIT MicroMasters app" +
+        " to an external website, where you will be able to complete the transaction by" +
+        " paying with a credit card.";
     }else{
-      return "Because there is no cost to enroll in this course, when you click the button below" +
-        "you will skip the normal payment process and be enrolled in the course immediately."
+      text = "Because there is no cost to enroll in this course, when you click the button below" +
+        " you will skip the normal payment process and be enrolled in the course immediately.";
     }
+    return <p className="payment-explanation">{text}</p>;
   }
 
   render() {
@@ -49,7 +52,7 @@ class SummaryPage extends React.Component {
               <b>{this.getCoursePrice()}</b>
               </Cell>
           </Grid>
-          <p className="payment-explanation">{this.getExplanationText()}</p>
+          {this.getExplanationText()}
         </Card>
         <p className="terms-of-service-text">
           By clicking below, you agree to the <a href="/terms_of_service" target="_blank">
@@ -58,7 +61,6 @@ class SummaryPage extends React.Component {
         </p>
         <SpinnerButton
           className="mdl-button next continue-payment"
-          key="1"
           component={Button}
           spinning={checkoutStatus === FETCH_PROCESSING}
           onClick={()=>{checkout(courseRun.course_id)}}
