@@ -306,6 +306,12 @@ class DashboardPage extends React.Component {
     const { dispatch } = this.props;
     dispatch(skipFinancialAid(programId)).then(() => {
       this.setConfirmSkipDialogVisibility(false);
+    }).catch(() => {
+      this.setConfirmSkipDialogVisibility(false);
+      dispatch(setToastMessage({
+        message: "Failed to skip financial aid.",
+        icon: TOAST_FAILURE,
+      }));
     });
   };
 

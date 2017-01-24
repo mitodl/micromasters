@@ -71,6 +71,7 @@ export const skipFinancialAid = (programId: number): Dispatcher<*> => {
       },
       () => {
         dispatch(receiveSkipFinancialAidFailure());
+        return Promise.reject();
       });
   };
 };
