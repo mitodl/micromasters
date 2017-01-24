@@ -9,7 +9,6 @@ import { compose } from 'redux';
 import * as api from '../lib/api';
 import {
   DASHBOARD_RESPONSE,
-  COUPONS_RESPONSE,
   COURSE_PRICES_RESPONSE,
   PROGRAMS,
   USER_PROFILE_RESPONSE,
@@ -56,7 +55,7 @@ export default class IntegrationTestHelper {
     this.coursePricesStub = this.sandbox.stub(api, 'getCoursePrices');
     this.coursePricesStub.returns(Promise.resolve(COURSE_PRICES_RESPONSE));
     this.couponsStub = this.sandbox.stub(api, 'getCoupons');
-    this.couponsStub.returns(Promise.resolve(COUPONS_RESPONSE));
+    this.couponsStub.returns(Promise.resolve([]));
     this.profileGetStub = this.sandbox.stub(api, 'getUserProfile');
     this.profileGetStub.withArgs(SETTINGS.user.username).returns(Promise.resolve(USER_PROFILE_RESPONSE));
     this.programsGetStub = this.sandbox.stub(api, 'getPrograms');

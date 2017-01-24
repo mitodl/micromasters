@@ -15,6 +15,9 @@ import type {
   Dashboard,
 } from '../flow/dashboardTypes';
 import type {
+  AvailablePrograms,
+} from '../flow/enrollmentTypes';
+import type {
   Course,
   CourseRun,
   Program,
@@ -39,6 +42,15 @@ const newFinancialAidId = makeCounter();
 
 export const makeDashboard = (): Dashboard => {
   return R.range(1, 3).map(makeProgram);
+};
+
+export const makeAvailablePrograms = (dashboard: Dashboard): AvailablePrograms => {
+  return dashboard.map(program => ({
+    enrolled: true,
+    id: program.id,
+    programpage_url: `/page/${program.id}`,
+    title: `AvailableProgram for ${program.id}`,
+  }));
 };
 
 export const makeRun = (position: number): CourseRun => {
@@ -72,7 +84,7 @@ export const makeProgram = (): Program => {
     financial_aid_user_info: {
       application_status: FA_STATUS_APPROVED,
       date_documents_sent: '2016-01-01',
-      has_user_applied: false,
+      has_user_applied: true,
       max_possible_cost: 50,
       min_possible_cost: 1000,
       id: newFinancialAidId(),

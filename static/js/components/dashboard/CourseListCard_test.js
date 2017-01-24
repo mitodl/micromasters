@@ -43,14 +43,17 @@ describe('CourseListCard', () => {
 
   it('creates a CourseRow for each course', () => {
     let now = moment();
+    let prices = new Map([[1, 2]]);
     const wrapper = renderCourseListCard({
-      now: now
+      now: now,
+      prices: prices,
     });
     assert.equal(wrapper.find(CourseRow).length, program.courses.length);
     let courses = _.sortBy(program.courses, 'position_in_program');
     wrapper.find(CourseRow).forEach((courseRow, i) => {
       const props = courseRow.props();
       assert.equal(props.now, now);
+      assert.equal(props.prices, prices);
       assert.deepEqual(props.course, courses[i]);
       assert.equal(props.checkout, checkout);
     });

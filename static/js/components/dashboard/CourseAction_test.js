@@ -7,8 +7,8 @@ import sinon from 'sinon';
 
 import { FETCH_PROCESSING } from '../../actions';
 import CourseAction from './CourseAction';
+import { makeDashboard } from '../../factories/dashboard';
 import {
-  COUPONS_RESPONSE,
   COURSE_PRICES_RESPONSE,
   DASHBOARD_RESPONSE,
   FINANCIAL_AID_PARTIAL_RESPONSE,
@@ -73,11 +73,10 @@ describe('CourseAction', () => {
   };
 
   let renderCourseAction = (props = {}) => {
-    let prices = calculatePrices(DASHBOARD_RESPONSE, COURSE_PRICES_RESPONSE, COUPONS_RESPONSE);
+    let prices = calculatePrices(DASHBOARD_RESPONSE, COURSE_PRICES_RESPONSE, []);
     return shallow(
       <CourseAction
         checkout={checkoutStub}
-        coursePrice={COURSE_PRICES_RESPONSE[1]}
         hasFinancialAid={false}
         financialAid={{}}
         addCourseEnrollment={addCourseEnrollmentStub}
@@ -423,6 +422,22 @@ describe('CourseAction', () => {
       assert.isUndefined(elements.button.props().disabled);
       assert.include(elements.buttonText, 'Pay Now');
       assert.equal(elements.linkText, 'Enroll and pay later');
+    });
+
+    it('shows the price', () => {
+      let program = makeDashboard()[0];
+      let price = 123.45;
+      let prices = new Map([[program.id, price]]);
+      let run = program.courses[0].runs[0];
+      run.start_date = '2016-01-01';
+      run.enrollment_start_date = '2016-01-01';
+      const wrapper = renderCourseAction({
+        courseRun: run,
+        prices: prices,
+      });
+
+      let buttonText = wrapper.find("SpinnerButton .pay-button").children().text();
+      assert.equal(buttonText, `Pay Now $${price}`);
     });
 
     it('shows a disabled enroll/pay button if a user is pending approval', () => {

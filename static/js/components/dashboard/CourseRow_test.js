@@ -5,13 +5,13 @@ import { assert } from 'chai';
 import sinon from 'sinon';
 import _ from 'lodash';
 
+import { makeDashboard } from '../../factories/dashboard';
 import CourseRow from './CourseRow';
 import CourseAction from './CourseAction';
 import CourseDescription from './CourseDescription';
 import CourseGrade from './CourseGrade';
 import {
   DASHBOARD_RESPONSE,
-  COURSE_PRICES_RESPONSE,
   FINANCIAL_AID_PARTIAL_RESPONSE,
 } from '../../test_constants';
 import {
@@ -34,11 +34,12 @@ describe('CourseRow', () => {
 
   const renderRow = (props = {}, isShallow = false) => {
     let render = isShallow ? shallow : mount;
+    let prices = new Map([[345, 456]]);
     return render(
       <CourseRow
         hasFinancialAid={true}
         financialAid={FINANCIAL_AID_PARTIAL_RESPONSE}
-        coursePrice={COURSE_PRICES_RESPONSE[0]}
+        prices={prices}
         openFinancialAidCalculator={sandbox.stub()}
         now={moment()}
         checkout={sandbox.stub()}
@@ -50,7 +51,10 @@ describe('CourseRow', () => {
   };
 
   it('forwards the appropriate props', () => {
-    const course = DASHBOARD_RESPONSE[1].courses[0];
+    const programs = makeDashboard();
+    const course = programs[0].courses[0];
+    // change this so there's something to show in CourseSubRow
+    course.runs[1].status = STATUS_NOT_PASSED;
     const courseRun = course.runs[0];
     const courseTitle = course.title;
 
@@ -72,6 +76,10 @@ describe('CourseRow', () => {
     assert.deepEqual(wrapper.find(CourseGrade).props(), {
       courseRun,
     });
+    let subRowProps = wrapper.find("CourseSubRow").props();
+    for (const key of keys) {
+      assert.deepEqual(subRowProps[key], courseRowProps[key]);
+    }
   });
 
   describe('with failed/missed-upgrade-deadline runs', () => {
