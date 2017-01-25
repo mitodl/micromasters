@@ -5,10 +5,7 @@ import Icon from 'react-mdl/lib/Icon';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
-import {
-  TOAST_SUCCESS,
-  TOAST_FAILURE,
-} from '../constants';
+import { TOAST_FAILURE } from '../constants';
 import ErrorMessage from '../components/ErrorMessage';
 import Navbar from '../components/Navbar';
 import Toast from '../components/Toast';
