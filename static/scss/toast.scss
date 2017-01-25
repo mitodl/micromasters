@@ -1,5 +1,5 @@
 .toast {
-  display: none;
+  display: flex;
   align-items: center;
   flex-direction: row;
   position: fixed;
@@ -13,10 +13,6 @@
   top: 0;
   z-index: 100;
   font-size: 16px;
-
-  &.open {
-    display: flex;
-  }
 
   .material-icons {
     padding: 10px;

@@ -182,6 +182,30 @@ class App extends React.Component {
     dispatch(setPhotoDialogVisibility(bool));
   };
 
+  renderToast() {
+    const {
+      ui: { toastMessage }
+    } = this.props;
+    if ( !toastMessage ) {
+      return null;
+    }
+
+    const { icon: iconName, title, message } = toastMessage;
+
+    let icon;
+    if (iconName) {
+      icon = <Icon name={iconName} key="icon" />;
+    }
+
+    return <Toast onTimeout={this.clearMessage}>
+      {icon}
+      <div className="body">
+        <span className="title">{title}</span>
+        <span className="message">{message}</span>
+      </div>
+    </Toast>;
+  }
+
   render() {
     const {
       currentProgramEnrollment,
@@ -189,7 +213,6 @@ class App extends React.Component {
       ui: {
         enrollDialogError,
         enrollDialogVisibility,
-        toastMessage,
         enrollSelectedProgram,
         navDrawerOpen,
       },
@@ -205,20 +228,6 @@ class App extends React.Component {
     if (programs.getStatus === FETCH_FAILURE && !LEARNER_REGEX.test(pathname)) {
       children = <ErrorMessage errorInfo={programs.getErrorInfo} />;
       empty = true;
-    }
-
-    let open = false;
-    let message, title, icon;
-    if (toastMessage) {
-      open = true;
-
-      if (toastMessage.icon === TOAST_FAILURE) {
-        icon = <Icon name="error" key="icon "/>;
-      } else if (toastMessage.icon === TOAST_SUCCESS) {
-        icon = <Icon name="done" key="icon" />;
-      }
-      title = toastMessage.title;
-      message = toastMessage.message;
     }
 
     return <div id="app">
@@ -241,13 +250,7 @@ class App extends React.Component {
         profile={profile}
         setPhotoDialogVisibility={this.setPhotoDialogVisibility}
       />
-      <Toast onTimeout={this.clearMessage} open={open}>
-        {icon}
-        <div className="body">
-          <span className="title">{title}</span>
-          <span className="message">{message}</span>
-        </div>
-      </Toast>
+      {this.renderToast()}
       <div className="page-content">
         { children }
       </div>

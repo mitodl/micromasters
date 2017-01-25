@@ -88,8 +88,8 @@ export const FA_PENDING_STATUSES = [
 ];
 export const FA_APPROVED_STATUSES = [FA_STATUS_APPROVED, FA_STATUS_AUTO_APPROVED];
 
-export const TOAST_SUCCESS = 'success';
-export const TOAST_FAILURE = 'failure';
+export const TOAST_SUCCESS = 'done';
+export const TOAST_FAILURE = 'error';
 
 export const EDX_LINK_BASE = urljoin(SETTINGS.edx_base_url, 'courses/');
 
