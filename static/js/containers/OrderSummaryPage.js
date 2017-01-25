@@ -1,12 +1,12 @@
 // @flow
 /* global SETTINGS: false */
 import React from 'react';
+import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
 import Loader from '../components/Loader';
 import type { Profiles } from '../flow/profileTypes';
 import type { CoursePricesState, DashboardState } from '../flow/dashboardTypes';
-import type { UIState } from '../reducers/ui';
 import type { AvailableProgram } from '../flow/enrollmentTypes';
 import OrderSummary from '../components/OrderSummary';
 import {
@@ -19,7 +19,7 @@ import type { CheckoutState } from '../reducers';
 import { createForm, findCourseRun } from '../util/util';
 
 class OrderSummaryPage extends React.Component {
-   static contextTypes = {
+  static contextTypes = {
     router:   React.PropTypes.object.isRequired
   };
 
@@ -30,7 +30,7 @@ class OrderSummaryPage extends React.Component {
     dashboard:                DashboardState,
     dispatch:                 Dispatch,
     prices:                   CoursePricesState,
-    ui:                       UIState,
+    location:                 Object,
   };
 
   componentDidMount() {
@@ -84,9 +84,9 @@ class OrderSummaryPage extends React.Component {
     }  = this.props;
     let courseRun, course, orderSummaryContent, coursePrice;
     let courseKey = query.course_key;
-    [courseRun, course] = findCourseRun(dashboard.programs, run => run.course_id === courseKey);
+    [courseRun, course] = findCourseRun(dashboard.programs, run => run !== null && run.course_id === courseKey);
     coursePrice = prices.coursePrices.find(coursePrice => coursePrice.program_id === currentProgramEnrollment.id);
-    if( course ){
+    if( course && courseRun ){
       orderSummaryContent = <OrderSummary
         course={course}
         courseRun={courseRun}
@@ -119,7 +119,6 @@ const mapStateToProps = (state) => {
     dashboard: state.dashboard,
     currentProgramEnrollment: state.currentProgramEnrollment,
     prices: state.prices,
-    ui: state.ui,
     orderReceipt: state.orderReceipt,
     checkout: state.checkout,
   };

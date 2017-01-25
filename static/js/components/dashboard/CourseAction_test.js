@@ -66,12 +66,6 @@ describe('CourseAction', () => {
     };
   };
 
-  let assertCheckoutButton = (button, courseId) => {
-    button.simulate('click');
-    assert.isAbove(checkoutStub.callCount, 0);
-    assert.deepEqual(checkoutStub.args[0], [courseId]);
-  };
-
   let renderCourseAction = (props = {}) => {
     let prices = calculatePrices(DASHBOARD_RESPONSE, COURSE_PRICES_RESPONSE, []);
     return shallow(
@@ -162,7 +156,6 @@ describe('CourseAction', () => {
     assert.isUndefined(elements.button.props().disabled);
     assert.include(elements.buttonText, 'Pay Now');
     assert.equal(elements.linkText, 'Enroll and pay later');
-    assertCheckoutButton(elements.button, firstRun.course_id);
 
     wrapper.find(".enroll-pay-later").simulate('click');
     assert(addCourseEnrollmentStub.calledWith(firstRun.course_id));
@@ -200,7 +193,6 @@ describe('CourseAction', () => {
       assert.isUndefined(elements.button.props().disabled);
       assert.include(elements.buttonText, 'Pay Now');
       assert.equal(elements.linkText, 'Enroll and pay later');
-      assertCheckoutButton(elements.button, firstRun.course_id);
     });
   });
 
@@ -219,7 +211,6 @@ describe('CourseAction', () => {
     assert.isUndefined(elements.button.props().disabled);
     assert.include(elements.buttonText, 'Pay Now');
     assert.equal(elements.descriptionText, `Payment due: ${formattedUpgradeDate}`);
-    assertCheckoutButton(elements.button, firstRun.course_id);
   });
 
   it('hides an invalid date if user is enrolled but is not verified', () => {
@@ -479,18 +470,5 @@ describe('CourseAction', () => {
       assert.isTrue(link.props().spinning);
     });
 
-    it('shows a spinner in place of the pay button while API call is in progress', () => {
-      let course = findCourse(course => (
-        course.runs.length > 0 &&
-        course.runs[0].status === STATUS_CAN_UPGRADE
-      ));
-      let firstRun = course.runs[0];
-      const wrapper = renderCourseAction({
-        courseRun: firstRun,
-        checkoutStatus: FETCH_PROCESSING
-      });
-      let button = wrapper.find(".pay-button");
-      assert.isTrue(button.props().spinning);
-    });
   });
 });

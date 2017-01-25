@@ -283,23 +283,6 @@ class DashboardPage extends React.Component {
     });
   };
 
-  dispatchCheckout = (courseId: string) => {
-    const { dispatch } = this.props;
-
-    return dispatch(checkout(courseId)).then(result => {
-      const { payload, url, method } = result;
-
-      if (method === 'POST') {
-        const form = createForm(url, payload);
-        const body = document.querySelector("body");
-        body.appendChild(form);
-        form.submit();
-      } else {
-        window.location = url;
-      }
-    });
-  };
-
   openFinancialAidCalculator = () => {
     const {
       dispatch,

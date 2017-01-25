@@ -5,15 +5,13 @@ import Button from 'react-mdl/lib/Button';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 
 import SpinnerButton from './SpinnerButton';
-import type { UIState } from '../reducers/ui';
 import { FETCH_PROCESSING } from '../actions';
 import type { Course, CourseRun } from '../flow/programTypes';
 import type { CoursePrice } from '../flow/dashboardTypes';
 import { formatPrice } from '../util/util';
 
-class SummaryPage extends React.Component {
+class OrderSummary extends React.Component {
   props: {
-    ui:               UIState,
     course:           Course,
     courseRun:        CourseRun,
     coursePrice:      CoursePrice,
@@ -63,7 +61,7 @@ class SummaryPage extends React.Component {
           className="mdl-button next continue-payment"
           component={Button}
           spinning={checkoutStatus === FETCH_PROCESSING}
-          onClick={()=>{checkout(courseRun.course_id)}}
+          onClick={()=>(checkout(courseRun.course_id))}
       >
         Continue
       </SpinnerButton>
@@ -74,4 +72,4 @@ class SummaryPage extends React.Component {
 
 
 
-export default SummaryPage;
+export default OrderSummary;
