@@ -815,9 +815,10 @@ class PriceTests(MockedESTestCase):
 
     def test_coupon_allowed(self):
         """
-        Assert that the price is not adjusted if the coupon doesn't affect the course run
+        Assert that the price is not adjusted if the coupon is for a different program
         """
         course_run, _ = create_purchasable_course_run()
         price = Decimal('0.3')
         coupon = CouponFactory.create()
+        assert coupon.content_object != course_run
         assert calculate_coupon_price(coupon, price, course_run.edx_course_key) == price
