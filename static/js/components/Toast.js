@@ -30,7 +30,7 @@ export default class Toast extends React.Component {
   render() {
     const { children, open } = this.props;
 
-    return <div className={`toast ${open ? 'open' : ''}`}>
+    return <div role="alert" className={`toast ${open ? 'open' : ''}`}>
       {children}
     </div>;
   }
