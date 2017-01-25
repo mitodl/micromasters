@@ -21,8 +21,8 @@ import type {
 type HasProgramId = {
   program_id: number
 };
-function makeProgramIdLookup<T: HasProgramId>(obj: Array<T>): Map<number, T> {
-  return new Map(obj.map((value: T) => [value.program_id, value]));
+function makeProgramIdLookup<T: HasProgramId>(arr: Array<T>): Map<number, T> {
+  return new Map(arr.map((value: T) => [value.program_id, value]));
 }
 
 function* genPrices(programs: Dashboard, prices: CoursePrices, coupons: Coupons) {
