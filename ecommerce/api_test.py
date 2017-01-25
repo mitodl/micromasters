@@ -203,10 +203,8 @@ class PurchasableTests(MockedESTestCase):
         """
         course_run, user = create_purchasable_course_run()
         ProgramEnrollment.objects.filter(program=course_run.course.program, user=user).delete()
-        try:
+        with self.assertRaises(Http404):
             create_unfulfilled_order(course_run.edx_course_key, user)
-        except Http404:
-            pass
 
     def test_already_purchased(self):
         """
@@ -762,10 +760,8 @@ class PriceTests(MockedESTestCase):
         """
         course_run, user = create_purchasable_course_run()
         ProgramEnrollment.objects.filter(program=course_run.course.program, user=user).delete()
-        try:
+        with self.assertRaises(Http404):
             calculate_run_price(course_run, user)
-        except Http404:
-            pass
 
     def test_calculate_run_price_coupon(self):
         """
