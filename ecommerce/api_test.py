@@ -748,7 +748,8 @@ class PriceTests(MockedESTestCase):
         coupon = CouponFactory.create()
         UserCoupon.objects.create(coupon=coupon, user=user)
         discounted_price = 5
-        fa_price = get_formatted_course_price(course_run.course.program.programenrollment_set.first())['price']
+        program_enrollment = course_run.course.program.programenrollment_set.first()
+        fa_price = get_formatted_course_price(program_enrollment)['price']
         with patch('ecommerce.api.calculate_coupon_price', autospec=True) as _calculate_coupon_price:
             _calculate_coupon_price.return_value = discounted_price
             assert calculate_run_price(course_run, user) == (fa_price, None)
@@ -774,7 +775,8 @@ class PriceTests(MockedESTestCase):
         with patch('ecommerce.api.calculate_coupon_price', autospec=True) as _calculate_coupon_price:
             _calculate_coupon_price.return_value = discounted_price
             assert calculate_run_price(course_run, user) == (discounted_price, coupon)
-        fa_price = get_formatted_course_price(course_run.course.program.programenrollment_set.first())['price']
+        program_enrollment = course_run.course.program.programenrollment_set.first()
+        fa_price = get_formatted_course_price(program_enrollment)['price']
         _calculate_coupon_price.assert_called_with(coupon, fa_price, course_run.edx_course_key)
 
     def test_percent_discount(self):
