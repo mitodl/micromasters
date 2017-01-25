@@ -99,6 +99,7 @@ export const COUPON_CONTENT_TYPE_PROGRAM = 'program';
 
 export const COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT = 'percent-discount';
 export const COUPON_AMOUNT_TYPE_FIXED_DISCOUNT = 'fixed-discount';
+export const COUPON_AMOUNT_TYPE_FIXED_PRICE = 'fixed-price';
 
 export const COUPON_TYPE_STANDARD = 'standard';
 export const COUPON_TYPE_DISCOUNTED_PREVIOUS_COURSE = 'discounted-previous-course';

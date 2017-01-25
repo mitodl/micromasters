@@ -806,6 +806,18 @@ class PriceTests(MockedESTestCase):
         )
         assert calculate_coupon_price(coupon, price, course_run.edx_course_key) == price - coupon.amount
 
+    def test_fixed_price(self):
+        """
+        Assert a fixed price coupon
+        """
+        course_run, _ = create_purchasable_course_run()
+        price = Decimal(5)
+        amount = Decimal("1.5")
+        coupon = CouponFactory.create(
+            content_object=course_run, amount_type=Coupon.FIXED_PRICE, amount=amount
+        )
+        assert calculate_coupon_price(coupon, price, course_run.edx_course_key) == amount
+
     def test_calculate_coupon_price(self):
         """
         Assert that the price is not adjusted if the amount type is unknown

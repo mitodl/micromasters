@@ -449,6 +449,8 @@ def calculate_coupon_price(coupon, price, course_key):
         return price * (1-coupon.amount)
     elif coupon.amount_type == Coupon.FIXED_DISCOUNT:
         return price - coupon.amount
+    elif coupon.amount_type == Coupon.FIXED_PRICE:
+        return coupon.amount
     else:
         return price
 

@@ -9,6 +9,7 @@ import {
   COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
   COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
   COUPON_TYPE_DISCOUNTED_PREVIOUS_COURSE,
+  COUPON_AMOUNT_TYPE_FIXED_PRICE,
 } from '../constants';
 import {
   calculateDiscount,
@@ -170,6 +171,11 @@ describe('coupon utility functions', () => {
       assert.equal(calculateDiscount(123, COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT, 0.5), 123 / 2);
       assert.equal(calculateDiscount(123, COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT, 1), 0);
     });
+
+    it('calculates a fixed price', () => {
+      assert.equal(calculateDiscount(123, COUPON_AMOUNT_TYPE_FIXED_PRICE, 50), 50);
+      assert.equal(calculateDiscount(123, COUPON_AMOUNT_TYPE_FIXED_PRICE, 150), 150);
+    });
   });
 
   describe('makeAmountMessage', () => {
@@ -177,14 +183,14 @@ describe('coupon utility functions', () => {
       let coupon = makeCoupon(makeProgram());
       coupon.amount_type = COUPON_AMOUNT_TYPE_FIXED_DISCOUNT;
       coupon.amount = Decimal("50.34");
-      assert.equal(makeAmountMessage(coupon), '$50.34 off');
+      assert.equal(makeAmountMessage(coupon), '$50.34');
     });
 
     it('has a message for percent discount', () => {
       let coupon = makeCoupon(makeProgram());
       coupon.amount_type = COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT;
       coupon.amount = Decimal("0.3456");
-      assert.equal(makeAmountMessage(coupon), '35% off');
+      assert.equal(makeAmountMessage(coupon), '35%');
     });
 
     it('has no message if amount type is unknown', () => {

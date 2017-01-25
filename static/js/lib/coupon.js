@@ -5,6 +5,7 @@ import {
   COUPON_CONTENT_TYPE_COURSERUN,
   COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
   COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
+  COUPON_AMOUNT_TYPE_FIXED_PRICE,
   COUPON_TYPE_DISCOUNTED_PREVIOUS_COURSE,
 } from '../constants';
 import type {
@@ -59,6 +60,8 @@ export const _calculateDiscount = (price: number, amountType: string, amount: nu
     return price * (1 - amount);
   case COUPON_AMOUNT_TYPE_FIXED_DISCOUNT:
     return price - amount;
+  case COUPON_AMOUNT_TYPE_FIXED_PRICE:
+    return amount;
   default:
     return price;
   }
@@ -99,9 +102,10 @@ import { calculateRunPrice } from './coupon';
 export function makeAmountMessage(coupon: Coupon): string {
   switch (coupon.amount_type) {
   case COUPON_AMOUNT_TYPE_FIXED_DISCOUNT:
-    return `$${coupon.amount} off`;
+  case COUPON_AMOUNT_TYPE_FIXED_PRICE:
+    return `$${coupon.amount}`;
   case COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT:
-    return `${coupon.amount.times(100).toDecimalPlaces(0).toString()}% off`;
+    return `${coupon.amount.times(100).toDecimalPlaces(0).toString()}%`;
   default:
     return '';
   }

@@ -11,6 +11,7 @@ import {
   COUPON_CONTENT_TYPE_PROGRAM,
   COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
   COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
+  COUPON_AMOUNT_TYPE_FIXED_PRICE,
   COUPON_TYPE_STANDARD,
 } from '../constants';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -20,8 +21,8 @@ import type { Coupon } from '../flow/couponTypes';
 import type { AvailableProgram } from '../flow/enrollmentTypes';
 import type { Course } from '../flow/programTypes';
 
-const COUPON_FIXED: Coupon = {
-  coupon_code: "fixed",
+const COUPON_FIXED_DISCOUNT: Coupon = {
+  coupon_code: "fixed-discount",
   coupon_type: COUPON_TYPE_STANDARD,
   content_type: COUPON_CONTENT_TYPE_PROGRAM,
   amount_type: COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
@@ -36,6 +37,16 @@ const COUPON_PERCENT: Coupon = {
   content_type: COUPON_CONTENT_TYPE_PROGRAM,
   amount_type: COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
   amount: new Decimal('0.5543'),
+  program_id: 1,
+  object_id: 1,
+};
+
+const COUPON_FIXED_PRICE: Coupon = {
+  coupon_code: "fixed-price",
+  coupon_type: COUPON_TYPE_STANDARD,
+  content_type: COUPON_CONTENT_TYPE_PROGRAM,
+  amount_type: COUPON_AMOUNT_TYPE_FIXED_PRICE,
+  amount: new Decimal('150'),
   program_id: 1,
   object_id: 1,
 };
@@ -97,7 +108,7 @@ describe("CouponNotificationDialog", () => {
   };
 
   it('renders with a fixed coupon', () => {
-    const div = renderDialog(COUPON_FIXED, PROGRAM);
+    const div = renderDialog(COUPON_FIXED_DISCOUNT, PROGRAM);
     const titleEl = div.querySelector(".dialog-title");
     assert.equal(titleEl.textContent, "Coupon applied: $123.45 off each course!");
     const messageEl = div.querySelector("p:first-child");
@@ -136,7 +147,7 @@ describe("CouponNotificationDialog", () => {
     const messageEl = div.querySelector("p:first-child");
     assert.equal(
       messageEl.textContent,
-      "This coupon gives a discount of 100% off the price of Horse in the Awesomesauce MicroMasters program."
+      "This coupon gives a discount of 100% off the price of Horse."
     );
   });
 
@@ -147,7 +158,19 @@ describe("CouponNotificationDialog", () => {
     const messageEl = div.querySelector("p:first-child");
     assert.equal(
       messageEl.textContent,
-      "This coupon gives a discount of 100% off the price of course ID 2 in the Awesomesauce MicroMasters program."
+      "This coupon gives a discount of 100% off the price of course ID 2."
+    );
+  });
+
+  it('renders a fixed price coupon', () => {
+    const div = renderDialog(COUPON_FIXED_PRICE, PROGRAM);
+    const titleEl = div.querySelector(".dialog-title");
+    assert.equal(titleEl.textContent, "Coupon applied: course price set to $150");
+    const messageEl = div.querySelector("p:first-child");
+    assert.equal(
+      messageEl.textContent,
+      "This coupon sets the price of each course in the " +
+      "Awesomesauce MicroMasters program at the fixed price of $150."
     );
   });
 

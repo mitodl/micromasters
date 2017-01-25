@@ -180,8 +180,9 @@ class Coupon(TimestampedModel, AuditableModel):
     """
     PERCENT_DISCOUNT = 'percent-discount'
     FIXED_DISCOUNT = 'fixed-discount'
+    FIXED_PRICE = 'fixed-price'
 
-    AMOUNT_TYPES = [PERCENT_DISCOUNT, FIXED_DISCOUNT]
+    AMOUNT_TYPES = [PERCENT_DISCOUNT, FIXED_DISCOUNT, FIXED_PRICE]
 
     STANDARD = 'standard'
     DISCOUNTED_PREVIOUS_COURSE = 'discounted-previous-course'

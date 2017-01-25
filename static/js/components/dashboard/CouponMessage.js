@@ -6,9 +6,10 @@ import {
   makeCouponReason,
 } from '../../lib/coupon';
 import {
+  COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
+  COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
   COUPON_CONTENT_TYPE_PROGRAM,
   COUPON_CONTENT_TYPE_COURSE,
-  COUPON_CONTENT_TYPE_COURSERUN,
 } from '../../constants';
 import type { Coupon } from '../../flow/couponTypes';
 
@@ -17,25 +18,42 @@ export default class CouponMessage extends React.Component {
     coupon: Coupon,
   };
 
-  makeCouponTargetMessage = () => {
-    const { coupon } = this.props;
-
-    if (coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM) {
-      return ' for each course in this program';
-    } else if (coupon.content_type === COUPON_CONTENT_TYPE_COURSE ||
-      coupon.content_type === COUPON_CONTENT_TYPE_COURSERUN) {
-      return ' for this course';
-    } else {
-      return '';
-    }
-  };
-
   render() {
     const { coupon } = this.props;
 
-    return <div className="coupon-message">
-      You will get <strong>{makeAmountMessage(coupon)}</strong> the
-      cost{this.makeCouponTargetMessage()}{makeCouponReason(coupon)}.
-    </div>;
+    let isDiscount = (
+      coupon.amount_type === COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT ||
+      coupon.amount_type === COUPON_AMOUNT_TYPE_FIXED_DISCOUNT
+    );
+    let message;
+    if (isDiscount) {
+      if (coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM) {
+        message = <span>
+          You will get {makeAmountMessage(coupon)} off the cost for each course in this program
+        </span>;
+      } else if (coupon.content_type === COUPON_CONTENT_TYPE_COURSE) {
+        message = <span>
+          You will get {makeAmountMessage(coupon)} off the cost for this course
+        </span>;
+      }
+    } else {
+      if (coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM) {
+        message = <span>
+          All courses are set to the discounted price of {makeAmountMessage(coupon)}
+        </span>;
+      } else if (coupon.content_type === COUPON_CONTENT_TYPE_COURSE) {
+        message = <span>
+          This course is set to the discounted price of {makeAmountMessage(coupon)}
+        </span>;
+      }
+    }
+
+    if (message === undefined) {
+      return null;
+    } else {
+      return <div className="coupon-message">
+        {message}{makeCouponReason(coupon)}.
+      </div>;
+    }
   }
 }

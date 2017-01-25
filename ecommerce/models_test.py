@@ -185,7 +185,7 @@ class CouponTests(MockedESTestCase):
         with self.assertRaises(ValidationError) as ex:
             CouponFactory.create(amount_type='xyz')
         assert ex.exception.args[0]['__all__'][0].args[0] == (
-            'amount_type must be one of percent-discount, fixed-discount'
+            'amount_type must be one of percent-discount, fixed-discount, fixed-price'
         )
 
     def test_validate_coupon_type(self):
