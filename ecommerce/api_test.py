@@ -808,7 +808,7 @@ class PriceTests(MockedESTestCase):
         course_run, _ = create_purchasable_course_run()
         price = Decimal('0.3')
         coupon = CouponFactory.create(content_object=course_run)
-        # Use manager to get around validation
+        # Use manager to skip validation, which usually prevents setting content_object to an arbitrary object
         Coupon.objects.filter(id=coupon.id).update(amount_type='xyz')
         coupon.refresh_from_db()
         assert calculate_coupon_price(coupon, price, course_run.edx_course_key) == price
