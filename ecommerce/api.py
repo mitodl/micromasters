@@ -468,8 +468,8 @@ def calculate_run_price(course_run, user):
     enrollment = get_object_or_404(ProgramEnrollment, program=program, user=user)
     price = get_formatted_course_price(enrollment)['price']
     coupons = [coupon for coupon in pick_coupons(user) if coupon.program == program]
-    coupon = None
-    if len(coupons) > 0:
-        coupon = coupons[0]
-        price = calculate_coupon_price(coupon, price, course_run.edx_course_key)
+    if not coupons:
+        return price, None
+    coupon = coupons[0]
+    price = calculate_coupon_price(coupon, price, course_run.edx_course_key)
     return price, coupon
