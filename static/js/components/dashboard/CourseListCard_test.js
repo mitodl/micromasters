@@ -12,7 +12,7 @@ import CourseRow from './CourseRow';
 import { DASHBOARD_RESPONSE, COURSE_PRICES_RESPONSE } from '../../test_constants';
 
 describe('CourseListCard', () => {
-  let program, checkout, sandbox;
+  let program, sandbox;
   beforeEach(() => {
     program = _.cloneDeep(DASHBOARD_RESPONSE[1]);
     assert(program.courses.length > 0);

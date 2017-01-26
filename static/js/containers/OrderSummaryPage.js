@@ -86,7 +86,7 @@ class OrderSummaryPage extends React.Component {
     let courseKey = query.course_key;
     [courseRun, course] = findCourseRun(dashboard.programs, run => run !== null && run.course_id === courseKey);
     coursePrice = prices.coursePrices.find(coursePrice => coursePrice.program_id === currentProgramEnrollment.id);
-    if( course && courseRun ){
+    if( course && courseRun && coursePrice ){
       orderSummaryContent = <OrderSummary
         course={course}
         courseRun={courseRun}

@@ -36,7 +36,7 @@ import {
   setDocsInstructionsVisibility,
   setCouponNotificationVisibility,
 } from '../actions/ui';
-import { createForm, findCourseRun } from '../util/util';
+import { findCourseRun } from '../util/util';
 import CourseListCard from '../components/dashboard/CourseListCard';
 import DashboardUserCard from '../components/dashboard/DashboardUserCard';
 import FinancialAidCard from '../components/dashboard/FinancialAidCard';

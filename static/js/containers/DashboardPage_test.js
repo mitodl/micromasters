@@ -5,7 +5,6 @@ import { assert } from 'chai';
 import moment from 'moment';
 import ReactDOM from 'react-dom';
 
-import CourseAction from '../components/dashboard/CourseAction';
 import { makeCoupon } from '../factories/dashboard';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import {
@@ -47,12 +46,9 @@ import {
   RECEIVE_FETCH_COUPONS_SUCCESS,
 } from '../actions/coupons';
 import { findCourseRun } from '../util/util';
-import * as util from '../util/util';
 import {
   COUPON,
-  CYBERSOURCE_CHECKOUT_RESPONSE,
   DASHBOARD_RESPONSE,
-  EDX_CHECKOUT_RESPONSE,
 } from '../test_constants';
 import {
   TOAST_FAILURE,
@@ -92,51 +88,6 @@ describe('DashboardPage', () => {
       assert.lengthOf(wrapper.find(".dashboard-user-card"), 1);
       assert.lengthOf(wrapper.find(".course-list"), 1);
       assert.lengthOf(wrapper.find(".progress-widget"), 1);
-    });
-  });
-
-  describe("checkout", () => {
-    it('redirects to edX when the checkout API tells us to', () => {
-      let promise = Promise.resolve(EDX_CHECKOUT_RESPONSE);
-      let checkoutStub = helper.sandbox.stub(actions, 'checkout').returns(() => promise);
-
-      return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
-        wrapper.find(CourseAction).first().props().checkout('course_id');
-
-        assert.equal(checkoutStub.callCount, 1);
-        assert.deepEqual(checkoutStub.args[0], ['course_id']);
-
-        return promise.then(() => {
-          assert.equal(window.location.toString(), EDX_CHECKOUT_RESPONSE.url);
-        });
-      });
-    });
-
-    it('constructs a form to be sent to Cybersource and submits it', () => {
-      let promise = Promise.resolve(CYBERSOURCE_CHECKOUT_RESPONSE);
-      let checkoutStub = helper.sandbox.stub(actions, 'checkout').returns(() => promise);
-      let submitStub = helper.sandbox.stub();
-      let fakeForm = document.createElement("form");
-      fakeForm.setAttribute("class", "fake-form");
-      fakeForm.submit = submitStub;
-      let createFormStub = helper.sandbox.stub(util, 'createForm').returns(fakeForm);
-
-      return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
-        wrapper.find(CourseAction).first().props().checkout('course_id');
-
-        assert.equal(checkoutStub.callCount, 1);
-        assert.deepEqual(checkoutStub.args[0], ['course_id']);
-
-        return promise.then(() => {
-          const {url, payload} = CYBERSOURCE_CHECKOUT_RESPONSE;
-          assert.equal(createFormStub.callCount, 1);
-          assert.deepEqual(createFormStub.args[0], [url, payload]);
-
-          assert(document.body.querySelector(".fake-form"), 'fake form not found in body');
-          assert.equal(submitStub.callCount, 1);
-          assert.deepEqual(submitStub.args[0], []);
-        });
-      });
     });
   });
 
