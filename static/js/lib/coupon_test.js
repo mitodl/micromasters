@@ -1,5 +1,6 @@
 import { assert } from 'chai';
 import sinon from 'sinon';
+import Decimal from 'decimal.js-light';
 
 import {
   COUPON_CONTENT_TYPE_COURSERUN,
@@ -7,12 +8,15 @@ import {
   COUPON_CONTENT_TYPE_PROGRAM,
   COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
   COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
+  COUPON_TYPE_DISCOUNTED_PREVIOUS_COURSE,
 } from '../constants';
 import {
   calculateDiscount,
   calculatePrice,
   calculatePrices,
   calculateRunPrice,
+  makeAmountMessage,
+  makeCouponReason,
 } from './coupon';
 import * as couponFuncs from './coupon';
 import {
@@ -165,6 +169,41 @@ describe('coupon utility functions', () => {
     it('calculates a fixed discount', () => {
       assert.equal(calculateDiscount(123, COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT, 0.5), 123 / 2);
       assert.equal(calculateDiscount(123, COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT, 1), 0);
+    });
+  });
+
+  describe('makeAmountMessage', () => {
+    it('has a message for fixed discount', () => {
+      let coupon = makeCoupon(makeProgram());
+      coupon.amount_type = COUPON_AMOUNT_TYPE_FIXED_DISCOUNT;
+      coupon.amount = Decimal("50.34");
+      assert.equal(makeAmountMessage(coupon), '$50.34 off');
+    });
+
+    it('has a message for percent discount', () => {
+      let coupon = makeCoupon(makeProgram());
+      coupon.amount_type = COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT;
+      coupon.amount = Decimal("0.3456");
+      assert.equal(makeAmountMessage(coupon), '35% off');
+    });
+
+    it('has no message if amount type is unknown', () => {
+      let coupon = makeCoupon(makeProgram());
+      coupon.amount_type = 'missing';
+      assert.equal(makeAmountMessage(coupon), '');
+    });
+  });
+
+  describe('makeCouponReason', () => {
+    it('has a reason for the discounted previous course case', () => {
+      let coupon = makeCoupon(makeProgram());
+      coupon.coupon_type = COUPON_TYPE_DISCOUNTED_PREVIOUS_COURSE;
+      assert.equal(makeCouponReason(coupon), ', because you have taken it before');
+    });
+
+    it('has no reason for other cases', () => {
+      let coupon = makeCoupon(makeProgram());
+      assert.equal(makeCouponReason(coupon), '');
     });
   });
 });

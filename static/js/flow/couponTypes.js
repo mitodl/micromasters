@@ -10,6 +10,7 @@ import {
 
 export type Coupon = {
   coupon_code: string,
+  coupon_type: string,
   content_type: COUPON_CONTENT_TYPE_COURSERUN | COUPON_CONTENT_TYPE_COURSE | COUPON_CONTENT_TYPE_PROGRAM,
   amount_type: COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT | COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
   amount: Decimal,

@@ -5,6 +5,7 @@ import {
   COUPON_CONTENT_TYPE_COURSERUN,
   COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
   COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
+  COUPON_TYPE_DISCOUNTED_PREVIOUS_COURSE,
 } from '../constants';
 import type {
   Coupons,
@@ -94,3 +95,22 @@ export const _calculateRunPrice = (
 // allow mocking of function
 export { _calculateRunPrice as calculateRunPrice };
 import { calculateRunPrice } from './coupon';
+
+export function makeAmountMessage(coupon: Coupon): string {
+  switch (coupon.amount_type) {
+  case COUPON_AMOUNT_TYPE_FIXED_DISCOUNT:
+    return `$${coupon.amount} off`;
+  case COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT:
+    return `${coupon.amount.times(100).toDecimalPlaces(0).toString()}% off`;
+  default:
+    return '';
+  }
+}
+
+export function makeCouponReason(coupon: Coupon): string {
+  if (coupon.coupon_type === COUPON_TYPE_DISCOUNTED_PREVIOUS_COURSE) {
+    return ', because you have taken it before';
+  } else {
+    return '';
+  }
+}

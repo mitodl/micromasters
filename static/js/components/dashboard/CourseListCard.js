@@ -5,12 +5,16 @@ import _ from 'lodash';
 import { Card, CardTitle } from 'react-mdl/lib/Card';
 
 import type { Program } from '../../flow/programTypes';
-import type { CalculatedPrices } from '../../flow/couponTypes';
+import type {
+  CalculatedPrices,
+  Coupon,
+} from '../../flow/couponTypes';
 import CourseRow from './CourseRow';
 import FinancialAidCalculator from '../../containers/FinancialAidCalculator';
 
 export default class CourseListCard extends React.Component {
   props: {
+    coupon:                       ?Coupon,
     program:                      Program,
     courseEnrollAddStatus?:       string,
     prices:                       CalculatedPrices,
@@ -24,6 +28,7 @@ export default class CourseListCard extends React.Component {
       program,
       prices,
       now,
+      coupon,
       openFinancialAidCalculator,
       addCourseEnrollment,
       courseEnrollAddStatus,
@@ -35,6 +40,7 @@ export default class CourseListCard extends React.Component {
     let sortedCourses = _.orderBy(program.courses, 'position_in_program');
     let courseRows = sortedCourses.map(course =>
       <CourseRow
+        coupon={coupon}
         hasFinancialAid={program.financial_aid_availability}
         financialAid={program.financial_aid_user_info}
         course={course}

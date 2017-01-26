@@ -11,6 +11,7 @@ import {
   COUPON_CONTENT_TYPE_PROGRAM,
   COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
   COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
+  COUPON_TYPE_STANDARD,
 } from '../constants';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
@@ -21,6 +22,7 @@ import type { Course } from '../flow/programTypes';
 
 const COUPON_FIXED: Coupon = {
   coupon_code: "fixed",
+  coupon_type: COUPON_TYPE_STANDARD,
   content_type: COUPON_CONTENT_TYPE_PROGRAM,
   amount_type: COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
   amount: new Decimal('123.45'),
@@ -30,6 +32,7 @@ const COUPON_FIXED: Coupon = {
 
 const COUPON_PERCENT: Coupon = {
   coupon_code: "percent",
+  coupon_type: COUPON_TYPE_STANDARD,
   content_type: COUPON_CONTENT_TYPE_PROGRAM,
   amount_type: COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
   amount: new Decimal('0.5543'),
@@ -39,6 +42,7 @@ const COUPON_PERCENT: Coupon = {
 
 const COUPON_COURSE: Coupon = {
   coupon_code: "course",
+  coupon_type: COUPON_TYPE_STANDARD,
   content_type: COUPON_CONTENT_TYPE_COURSE,
   amount_type: COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
   amount: new Decimal('1'),

@@ -32,6 +32,7 @@ describe('CourseListCard', () => {
     return shallow(
       <CourseListCard
         program={program}
+        coupon={null}
         addCourseEnrollment={() => undefined}
         prices={prices}
         {...props}

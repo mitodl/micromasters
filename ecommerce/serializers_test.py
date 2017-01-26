@@ -5,6 +5,7 @@ from django.test import TestCase
 
 from courses.factories import CourseRunFactory
 from ecommerce.factories import CouponFactory
+from ecommerce.models import Coupon
 from ecommerce.serializers import CouponSerializer
 
 
@@ -20,6 +21,7 @@ class SerializerTests(TestCase):
             'amount': str(coupon.amount),
             'amount_type': coupon.amount_type,
             'content_type': 'program',
+            'coupon_type': Coupon.STANDARD,
             'coupon_code': coupon.coupon_code,
             'program_id': coupon.program.id,
             'object_id': coupon.object_id,
@@ -34,6 +36,7 @@ class SerializerTests(TestCase):
             'amount': str(coupon.amount),
             'amount_type': coupon.amount_type,
             'content_type': 'course',
+            'coupon_type': Coupon.STANDARD,
             'coupon_code': coupon.coupon_code,
             'program_id': coupon.program.id,
             'object_id': coupon.object_id,
@@ -48,6 +51,7 @@ class SerializerTests(TestCase):
             'amount': str(coupon.amount),
             'amount_type': coupon.amount_type,
             'content_type': 'courserun',
+            'coupon_type': Coupon.STANDARD,
             'coupon_code': coupon.coupon_code,
             'program_id': coupon.program.id,
             'object_id': coupon.object_id,

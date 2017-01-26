@@ -248,8 +248,11 @@
       }
     }
 
-    .course-sub-row {
+    .coupon-message, .course-sub-row {
       margin: 0px 15px 15px 15px;
+    }
+
+    .course-sub-row {
       font-size: 11pt;
       min-height: 55px;
       align-items: center;
@@ -285,6 +288,14 @@
         font-style: italic;
       }
     }
+  }
+
+  .coupon-message {
+    font-size: 11pt;
+    align-items: center;
+    padding: 20px;
+    background-color: $fg-grey;
+    color: black;
   }
 }
 

@@ -6,7 +6,13 @@ import moment from 'moment';
 import ReactDOM from 'react-dom';
 import Decimal from 'decimal.js-light';
 
-import { makeCoupon } from '../factories/dashboard';
+import {
+  makeAvailablePrograms,
+  makeCoupon,
+  makeCoupons,
+  makeCoursePrices,
+  makeDashboard,
+} from '../factories/dashboard';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import {
   REQUEST_DASHBOARD,
@@ -32,16 +38,12 @@ import {
 } from '../actions/profile';
 import {
   CLEAR_ENROLLMENTS,
+  setCurrentProgramEnrollment,
 } from '../actions/programs';
 import {
   REQUEST_SKIP_FINANCIAL_AID,
   RECEIVE_SKIP_FINANCIAL_AID_SUCCESS,
 } from '../actions/financial_aid';
-import {
-  makeAvailablePrograms,
-  makeCoursePrices,
-  makeDashboard,
-} from '../factories/dashboard';
 import * as libCoupon  from '../lib/coupon';
 import {
   REQUEST_ATTACH_COUPON,
@@ -57,6 +59,7 @@ import {
   DASHBOARD_RESPONSE,
 } from '../test_constants';
 import {
+  COUPON_CONTENT_TYPE_COURSE,
   TOAST_FAILURE,
   TOAST_SUCCESS,
 
@@ -417,6 +420,53 @@ describe('DashboardPage', () => {
         assert.deepEqual(state.coupons.coupons, [coupon2]);
         assert.isTrue(state.ui.couponNotificationVisibility);
         assert.equal(helper.couponsStub.callCount, 2);
+      });
+    });
+  });
+
+  describe('coupon messaging', () => {
+    let dashboard, coursePrices, availablePrograms, coupons, coupon, programId, availableProgram;
+
+    beforeEach(() => {
+      dashboard = makeDashboard();
+      // pick an arbitrary program to test that filtering works
+      programId = dashboard[1].id;
+      coursePrices = makeCoursePrices(dashboard);
+      availablePrograms = makeAvailablePrograms(dashboard);
+      coupons = makeCoupons(dashboard);
+      coupon = coupons.find(coupon => coupon.program_id === programId);
+
+      availableProgram = availablePrograms.find(program => program.id === programId);
+
+      helper.dashboardStub.returns(Promise.resolve(dashboard));
+      helper.coursePricesStub.returns(Promise.resolve(coursePrices));
+      helper.programsGetStub.returns(Promise.resolve(availablePrograms));
+      helper.store.dispatch(setCurrentProgramEnrollment(availableProgram));
+    });
+
+    it('has coupon messaging for a program', () => {
+      helper.couponsStub.returns(Promise.resolve(coupons));
+
+      return renderComponent('/dashboard/', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
+        assert.deepEqual(wrapper.find("CouponCard").props(), {
+          coupon
+        });
+      });
+    });
+
+    it('has coupon messaging for a course', () => {
+      coupon.content_type = COUPON_CONTENT_TYPE_COURSE;
+      let [, course, ] = findCourseRun(dashboard, (run, course, program) => (
+        program && course && run && program.id === programId && run.status === STATUS_OFFERED
+      ));
+      coupon.object_id = course.id;
+      helper.couponsStub.returns(Promise.resolve(coupons));
+
+      return renderComponent('/dashboard/', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
+        let row = wrapper.find("CourseRow").filterWhere(_row => _row.props().course.id === course.id);
+        assert.deepEqual(row.find("CouponMessage").props(), {
+          coupon: coupon
+        });
       });
     });
   });

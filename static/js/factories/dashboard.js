@@ -3,6 +3,7 @@ import R from 'ramda';
 import Decimal from 'decimal.js-light';
 
 import {
+  COUPON_TYPE_STANDARD,
   STATUS_OFFERED,
   FA_STATUS_APPROVED,
   PEARSON_PROFILE_ABSENT,
@@ -112,6 +113,7 @@ export const makeProgram = (): Program => {
 
 export const makeCoupon = (program: Program): Coupon => ({
   coupon_code: `coupon_for_${program.id}`,
+  coupon_type: COUPON_TYPE_STANDARD,
   content_type: 'program',
   amount_type: 'fixed-discount',
   amount: Decimal('50'),

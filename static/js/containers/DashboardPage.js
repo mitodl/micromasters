@@ -3,11 +3,12 @@
 import React from 'react';
 import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import Loader from '../components/Loader';
 import _ from 'lodash';
 import moment from 'moment';
 import R from 'ramda';
 
+import Loader from '../components/Loader';
+import CouponCard from '../components/dashboard/CouponCard';
 import { calculatePrices } from '../lib/coupon';
 import {
   FETCH_SUCCESS,
@@ -480,6 +481,13 @@ class DashboardPage extends React.Component {
         }
       }
 
+      let couponCard;
+      let programId = program.id;
+      let coupon = coupons.coupons.find(coupon => coupon.program_id === programId);
+      if (coupon && coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM) {
+        couponCard = <CouponCard coupon={coupon} />;
+      }
+
       const calculatedPrices = calculatePrices(dashboard.programs, prices.coursePrices, coupons.coupons);
 
       dashboardContent = (
@@ -497,8 +505,10 @@ class DashboardPage extends React.Component {
               navigateToProfile={this.navigateToProfile}
             />
             {financialAidCard}
+            {couponCard}
             <CourseListCard
               program={program}
+              coupon={coupon}
               courseEnrollAddStatus={courseEnrollments.courseEnrollAddStatus}
               prices={calculatedPrices}
               key={program.id}

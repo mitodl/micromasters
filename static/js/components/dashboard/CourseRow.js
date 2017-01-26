@@ -3,13 +3,18 @@ import React from 'react';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import R from 'ramda';
 
+import CouponMessage from './CouponMessage';
 import CourseAction from './CourseAction';
 import CourseGrade from './CourseGrade';
 import CourseDescription from './CourseDescription';
 import CourseSubRow from './CourseSubRow';
 import type { Course, CourseRun, FinancialAidUserInfo } from '../../flow/programTypes';
-import type { CalculatedPrices } from '../../flow/couponTypes';
+import type {
+  CalculatedPrices,
+  Coupon,
+} from '../../flow/couponTypes';
 import {
+  COUPON_CONTENT_TYPE_COURSE,
   STATUS_MISSED_DEADLINE,
   STATUS_NOT_PASSED,
   STATUS_OFFERED,
@@ -17,6 +22,7 @@ import {
 
 export default class CourseRow extends React.Component {
   props: {
+    coupon: ?Coupon,
     course: Course,
     courseEnrollAddStatus?: string,
     now: moment$Moment,
@@ -143,6 +149,16 @@ export default class CourseRow extends React.Component {
     return subRows;
   }
 
+  renderCouponMessage = () => {
+    const { coupon, course } = this.props;
+
+    if (coupon && coupon.content_type === COUPON_CONTENT_TYPE_COURSE && coupon.object_id === course.id) {
+      return <CouponMessage coupon={coupon} />;
+    }
+
+    return null;
+  };
+
   render() {
     let firstRun = this.getFirstRun();
 
@@ -150,6 +166,7 @@ export default class CourseRow extends React.Component {
       <Grid className="course-row" key="0">
         { this.renderRowColumns(firstRun) }
       </Grid>
+      {this.renderCouponMessage()}
       { this.renderSubRows() }
     </div>;
   }

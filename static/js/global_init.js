@@ -27,13 +27,8 @@ if (!Object.entries) {
 let jsdom = require('jsdom');
 require('jsdom-global')();
 
-let localStorageMock;
+let localStorageMock = require('./util/test_utils').localStorageMock;
 beforeEach(() => { // eslint-disable-line mocha/no-top-level-hooks
-  if (!localStorageMock) {
-    // lazy import to prevent circular import problem
-    localStorageMock = require('./util/test_utils').localStorageMock;
-  }
-
   window.localStorage = localStorageMock();
   Object.defineProperty(window, "location", {
     set: value => {

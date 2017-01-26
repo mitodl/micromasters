@@ -12,7 +12,7 @@ class CouponSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Coupon
-        fields = ('coupon_code', 'content_type', 'amount_type', 'amount', 'program_id', 'object_id',)
+        fields = ('coupon_code', 'coupon_type', 'content_type', 'amount_type', 'amount', 'program_id', 'object_id',)
 
     def get_program_id(self, coupon):
         """Get program id from coupon program"""

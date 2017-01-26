@@ -423,6 +423,7 @@ class CouponTests(MockedESTestCase):
                 'amount': str(self.coupon.amount),
                 'amount_type': self.coupon.amount_type,
                 'content_type': self.coupon.content_type.model,
+                'coupon_type': self.coupon.coupon_type,
                 'coupon_code': self.coupon.coupon_code,
                 'object_id': self.coupon.object_id,
                 'program_id': self.coupon.program.id,
