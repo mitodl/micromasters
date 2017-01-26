@@ -5,6 +5,7 @@ import Button from 'react-mdl/lib/Button';
 
 import {
   COUPON_CONTENT_TYPE_PROGRAM,
+  COUPON_CONTENT_TYPE_COURSE,
   COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
   COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
 } from '../constants';
@@ -54,7 +55,7 @@ const CouponNotificationDialog = (
         of <strong>each</strong> course in { programName }.
       </p>;
     }
-  } else {
+  } else if (contentType === COUPON_CONTENT_TYPE_COURSE) {
     let courseName;
     if ( couponCourse ) {
       courseName = `${couponCourse.title} in ${programName}`;
