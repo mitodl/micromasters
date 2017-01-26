@@ -19,13 +19,6 @@ export default class Toast extends React.Component {
     }
   }
 
-  componentDidUpdate() {
-    const { onTimeout, timeout } = this.props;
-    if (onTimeout) {
-      setTimeout(onTimeout, timeout);
-    }
-  }
-
   render() {
     const { children } = this.props;
 
