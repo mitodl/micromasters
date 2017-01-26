@@ -190,6 +190,7 @@ class Coupon(TimestampedModel, AuditableModel):
     coupon_code = TextField(
         null=True,
         blank=True,
+        unique=True,
         help_text="""The coupon code used for redemption by the purchaser in the user interface.
     If blank, the purchaser may not redeem this coupon through the user interface,
     though it may be redeemed in their name by an administrator.""",
