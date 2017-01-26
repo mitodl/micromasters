@@ -12,9 +12,7 @@ from exams.pearson.constants import (
     PEARSON_FILE_TYPE_EAC,
     PEARSON_FILE_TYPE_VCDC,
 )
-from exams.pearson.exceptions import RetryableSFTPException
 from exams.pearson.readers import EACReader
-from exams.pearson.sftp import get_connection
 from exams.models import ExamAuthorization
 from mail.api import MailgunClient
 
@@ -78,6 +76,58 @@ def email_eac_failures(extracted_file, messages):
         subject,
         body,
         settings.MICROMASTERS_ADMIN_EMAIL
+    )
+
+
+def process_eac_failure_record(exam_authorization_id, error_message, username):
+    """
+     When there is a record in EAC which have status='Error'
+
+     Args:
+         candidate_id (str): Client candidate id from EAC
+         exam_authorization_id(str):  Exam authorization id
+
+     Returns:
+       (str): Error message description for admin email
+    """
+    log.info(
+        "Exam authorization fail for user=%s with message='%s' for authorization id: %s",
+        username,
+        error_message,
+        exam_authorization_id
+    )
+    return (
+        "- Exam authorization fail for user `{username}` "
+        "with authorization id `{authorization_id}`. {error_message}\n".format(
+            username=username,
+            authorization_id=exam_authorization_id,
+            error_message=("Got an error: '{error}'.".format(error=error_message)) if error_message else ''
+        )
+    )
+
+
+def process_eac_invalid_record(candidate_id, exam_authorization_id):
+    """
+    When there is a record in EAC which does not have corresponding data in MM system.
+
+    Args:
+        candidate_id (str): Client candidate id from EAC
+        exam_authorization_id(str):  Exam authorization id
+
+    Returns:
+        (str): Error message description for admin email
+    """
+    log.info(
+        "Unable to find ExamAuthorization data for authorization_id: %s and candidate_id: %s",
+        exam_authorization_id,
+        candidate_id
+    )
+    return (
+        '- Unable to find information for authorization_id: `{authorization_id}` and '
+        'candidate_id: `{candidate_id}` in our system.\n'.format(
+            authorization_id=exam_authorization_id,
+            candidate_id=candidate_id
+        )
     )
 
 
@@ -206,37 +256,20 @@ class ArchivedResponseProcesser(object):
                 else:
                     exam_authorization.status = ExamAuthorization.STATUS_FAILED
                     messages.append(
-                        "- Exam authorization fail for user `{username}` "
-                        "with authorization id `{authorization_id}`. {error_message}\n".format(
-                            username=exam_authorization.user.username,
-                            authorization_id=result['exam_authorization_id'],
-                            error_message=(
-                                "Got an error: '{error}'.".format(
-                                    error=result['message']
-                                ) if result['message'] else ''
-                            )
+                        process_eac_failure_record(
+                            result['exam_authorization_id'],
+                            result['message'],
+                            exam_authorization.user.username
                         )
-                    )
-                    log.info(
-                        "Exam authorization fail for user=%s with message='%s' for id: %s",
-                        exam_authorization.user.username,
-                        result['message'],
-                        result['exam_authorization_id']
                     )
 
                 exam_authorization.save()
                 response = True
             except ExamAuthorization.DoesNotExist:
-                log.info(
-                    "Unable to find ExamAuthorization data for authorization_id: %s and candidate_id: %s",
-                    result['exam_authorization_id'],
-                    result['candidate_id']
-                )
                 messages.append(
-                    '- Unable to find information for authorization_id: `{authorization_id}` and '
-                    'candidate_id: `{candidate_id}` in our system.\n'.format(
-                        authorization_id=result['exam_authorization_id'],
-                        candidate_id=result['candidate_id']
+                    process_eac_invalid_record(
+                        result['candidate_id'],
+                        result['exam_authorization_id']
                     )
                 )
 
