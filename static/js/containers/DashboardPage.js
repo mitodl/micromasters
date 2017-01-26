@@ -252,7 +252,7 @@ class DashboardPage extends React.Component {
       return;
     }
 
-    if ( coupons.fetchGetStatus === FETCH_PROCESSING ) {
+    if ( coupons.fetchGetStatus === FETCH_PROCESSING || coupons.fetchGetStatus === undefined ) {
       /*
       Abort to avoid the following race condition:
 

@@ -2,6 +2,8 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import Button from 'react-mdl/lib/Button';
+
+import { formatPrice, formatPercent } from '../util/util';
 import {
   COUPON_CONTENT_TYPE_PROGRAM,
   COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
@@ -39,10 +41,10 @@ const CouponNotificationDialog = (
   let title, message;
   if ( contentType === COUPON_CONTENT_TYPE_PROGRAM ) {
     if ( amountType === COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT ) {
-      title = `Coupon applied: ${amount.times(100)}% off each course!`;
+      title = `Coupon applied: ${amount.times(100).toDecimalPlaces(0).toString()}% off each course!`;
       message = <p>
         This coupon gives <strong>a discount
-        of { amount.times(100).toString() }% off</strong> the price
+        of { amount.times(100).toDecimalPlaces(0).toString() }% off</strong> the price
         of <strong>each</strong> course in { programName }.
       </p>;
     } else if ( amountType === COUPON_AMOUNT_TYPE_FIXED_DISCOUNT ) {

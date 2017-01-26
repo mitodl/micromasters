@@ -32,6 +32,7 @@ import {
   COUPON_CONTENT_TYPE_PROGRAM,
 } from '../constants';
 import {
+  COUPON,
   CYBERSOURCE_CHECKOUT_RESPONSE,
   DASHBOARD_RESPONSE,
   COURSE_PRICES_RESPONSE,
@@ -369,10 +370,11 @@ describe('api', function() {
 
     describe("fetching a coupon", () => {
       it('fetches coupons', () => {
-        fetchJSONStub.returns(Promise.resolve());
+        fetchJSONStub.returns(Promise.resolve([COUPON]));
 
-        return getCoupons().then(() => {
+        return getCoupons().then(coupons => {
           assert.ok(fetchJSONStub.calledWith('/api/v0/coupons/'));
+          assert.deepEqual(coupons, [COUPON]);
         });
       });
 

@@ -32,7 +32,7 @@ const COUPON_PERCENT: Coupon = {
   coupon_code: "percent",
   content_type: COUPON_CONTENT_TYPE_PROGRAM,
   amount_type: COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
-  amount: new Decimal('0.55'),
+  amount: new Decimal('0.5543'),
   program_id: 1,
   object_id: 1,
 };

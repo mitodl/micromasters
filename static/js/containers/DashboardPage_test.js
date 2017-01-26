@@ -392,37 +392,30 @@ describe('DashboardPage', () => {
       });
     });
 
-    it.only('without a race condition', () => {  // eslint-disable-line mocha/no-skipped-tests
+    it('without a race condition', () => {  // eslint-disable-line mocha/no-skipped-tests
       let program = DASHBOARD_RESPONSE[1];
       let coupon1 = makeCoupon(program);
       let coupon2 = makeCoupon(program);
-      coupon2.coupon_code = 'coupon_2';
+      coupon2.coupon_code = 'second-coupon';
       const slowPromise = new Promise(resolve => {
-        console.log("start");
         setTimeout(() => {
-          console.log("resolved");
           resolve([coupon1]);
         }, 200);
       });
 
       // Make sure we wait for the first call to complete before resolving the second promise
       helper.couponsStub.onCall(0).returns(slowPromise);
-      helper.couponsStub.onCall(1).returns(new Promise(resolve => {
-        console.log("call2");
-        resolve([coupon2]);
-      }));
+      helper.couponsStub.onCall(1).returns(Promise.resolve([coupon2]));
 
       return renderComponent(
         '/dashboard?coupon=success-coupon',
         COUPON_SUCCESS_ACTIONS
       ).then(() => {
-        console.log(COUPON_SUCCESS_ACTIONS);
         const state = helper.store.getState();
         assert.deepEqual(state.coupons.recentlyAttachedCoupon, COUPON);
         // must be the second call result
         assert.deepEqual(state.coupons.coupons, [coupon2]);
-        assert.isFalse(state.ui.couponNotificationVisibility);
-        assert.isUndefined(state.ui.toastMessage);
+        assert.isTrue(state.ui.couponNotificationVisibility);
         assert.equal(helper.couponsStub.callCount, 2);
       });
     });
