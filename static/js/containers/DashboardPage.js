@@ -240,14 +240,33 @@ class DashboardPage extends React.Component {
   handleCoupon = () => {
     const { coupons, dispatch, location: { query } } = this.props;
 
-    if (!query.coupon) {
+    if ( !query.coupon ) {
       // If there's no coupon code in the URL query parameters,
       // there's nothing to do.
       return;
     }
 
     if ( coupons.fetchPostStatus !== undefined ) {
-      // If we've already launched a coupon fetch, don't launch another one
+      // If we've already launched a POST request to attach this coupon
+      // to this user. Don't launch another one.
+      return;
+    }
+
+    if ( coupons.fetchGetStatus === FETCH_PROCESSING ) {
+      /*
+      Abort to avoid the following race condition:
+
+        1. launch first fetchCoupons() API request
+        2. launch attachCoupon() API request
+        3. attachCoupon() returns, launch second fetchCoupons() API request
+        4. second fetchCoupons() returns, updates Redux store with accurate information
+        5. first fetchCoupons() finally returns, updates Redux store with stale information
+
+      Ideally, it would be nice to abort the first fetchCoupons() API request
+      in this case, but fetches can't be aborted. Instead, we will abort
+      this function (by returning early), and rely on being called again in the
+      future.
+      */
       return;
     }
 

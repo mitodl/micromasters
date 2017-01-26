@@ -9,6 +9,9 @@ import CourseAction from '../components/dashboard/CourseAction';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import {
   REQUEST_DASHBOARD,
+  RECEIVE_DASHBOARD_SUCCESS,
+  REQUEST_COURSE_PRICES,
+  RECEIVE_COURSE_PRICES_SUCCESS,
   UPDATE_COURSE_STATUS,
   CLEAR_COURSE_PRICES,
   CLEAR_DASHBOARD,
@@ -62,7 +65,10 @@ import {
   STATUS_PAID_BUT_NOT_ENROLLED,
 } from '../constants';
 import { findCourse } from '../util/test_utils';
-import { DASHBOARD_SUCCESS_ACTIONS } from './test_util';
+import {
+  SUCCESS_ACTIONS,
+  DASHBOARD_SUCCESS_ACTIONS,
+} from './test_util';
 
 describe('DashboardPage', () => {
   let renderComponent, helper;
@@ -381,6 +387,36 @@ describe('DashboardPage', () => {
           message: "This coupon code is invalid or does not exist.",
           icon: TOAST_FAILURE
         });
+      });
+    });
+
+    // This test is disabled because I can't figure out a good way to simulate
+    // this race condition in an automated test. If someone else can pick it
+    // up and fix it, that would be great!
+    xit('without a race condition', () => {  // eslint-disable-line mocha/no-skipped-tests
+      // EXPECTED_ACTIONS is the same as DASHBOARD_SUCCESS_ACTIONS
+      // but without RECEIVE_FETCH_COUPONS_SUCCESS
+      const EXPECTED_ACTIONS = SUCCESS_ACTIONS.concat([
+        REQUEST_DASHBOARD,
+        RECEIVE_DASHBOARD_SUCCESS,
+        REQUEST_COURSE_PRICES,
+        RECEIVE_COURSE_PRICES_SUCCESS,
+        REQUEST_FETCH_COUPONS,
+      ]);
+
+      const slowPromise = new Promise(resolve => {
+        setTimeout(() => resolve([]), 200);
+      });
+      helper.couponsStub.returns(slowPromise);
+
+      return renderComponent(
+        '/dashboard?coupon=success-coupon',
+        EXPECTED_ACTIONS
+      ).then(() => {
+        const state = helper.store.getState();
+        assert.isNull(state.coupons.recentlyAttachedCoupon);
+        assert.isFalse(state.ui.couponNotificationVisibility);
+        assert.isUndefined(state.ui.toastMessage);
       });
     });
   });
