@@ -3,7 +3,6 @@ import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import Button from 'react-mdl/lib/Button';
 
-import { formatPrice, formatPercent } from '../util/util';
 import {
   COUPON_CONTENT_TYPE_PROGRAM,
   COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
