@@ -248,7 +248,7 @@ class DashboardPage extends React.Component {
 
     if ( coupons.fetchPostStatus !== undefined ) {
       // If we've already launched a POST request to attach this coupon
-      // to this user. Don't launch another one.
+      // to this user, don't launch another one.
       return;
     }
 
