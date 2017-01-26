@@ -244,9 +244,9 @@ export function addCourseEnrollment(courseId: string) {
 }
 
 export function getCoupons(): Promise<Coupons> {
-  return fetchJSONWithCSRF('/api/v0/coupons/').then(coupon => (
+  return fetchJSONWithCSRF('/api/v0/coupons/').then(coupons => (
     // turn `amount` from string into decimal
-    R.evolve({amount: Decimal}, coupon)
+    R.map(R.evolve({amount: Decimal}), coupons)
   ));
 }
 
@@ -257,7 +257,7 @@ export function attachCoupon(couponCode: string): Promise<AttachCouponResponse> 
     body: JSON.stringify({
       username: SETTINGS.user.username
     })
-  }).then(obj => (
-    R.evolve({coupon: {amount: Decimal}}, obj)
+  }).then(response => (
+    R.evolve({coupon: {amount: Decimal}}, response)
   ));
 }
