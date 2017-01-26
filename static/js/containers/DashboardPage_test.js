@@ -6,6 +6,7 @@ import moment from 'moment';
 import ReactDOM from 'react-dom';
 
 import CourseAction from '../components/dashboard/CourseAction';
+import { makeCoupon } from '../factories/dashboard';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import {
   REQUEST_DASHBOARD,
@@ -51,9 +52,10 @@ import {
 import { findCourseRun } from '../util/util';
 import * as util from '../util/util';
 import {
-  CYBERSOURCE_CHECKOUT_RESPONSE,
-  EDX_CHECKOUT_RESPONSE,
   COUPON,
+  CYBERSOURCE_CHECKOUT_RESPONSE,
+  DASHBOARD_RESPONSE,
+  EDX_CHECKOUT_RESPONSE,
 } from '../test_constants';
 import {
   TOAST_FAILURE,
@@ -390,33 +392,38 @@ describe('DashboardPage', () => {
       });
     });
 
-    // This test is disabled because I can't figure out a good way to simulate
-    // this race condition in an automated test. If someone else can pick it
-    // up and fix it, that would be great!
-    xit('without a race condition', () => {  // eslint-disable-line mocha/no-skipped-tests
-      // EXPECTED_ACTIONS is the same as DASHBOARD_SUCCESS_ACTIONS
-      // but without RECEIVE_FETCH_COUPONS_SUCCESS
-      const EXPECTED_ACTIONS = SUCCESS_ACTIONS.concat([
-        REQUEST_DASHBOARD,
-        RECEIVE_DASHBOARD_SUCCESS,
-        REQUEST_COURSE_PRICES,
-        RECEIVE_COURSE_PRICES_SUCCESS,
-        REQUEST_FETCH_COUPONS,
-      ]);
-
+    it.only('without a race condition', () => {  // eslint-disable-line mocha/no-skipped-tests
+      let program = DASHBOARD_RESPONSE[1];
+      let coupon1 = makeCoupon(program);
+      let coupon2 = makeCoupon(program);
+      coupon2.coupon_code = 'coupon_2';
       const slowPromise = new Promise(resolve => {
-        setTimeout(() => resolve([]), 200);
+        console.log("start");
+        setTimeout(() => {
+          console.log("resolved");
+          resolve([coupon1]);
+        }, 200);
       });
-      helper.couponsStub.returns(slowPromise);
+
+      // Make sure we wait for the first call to complete before resolving the second promise
+      helper.couponsStub.onCall(0).returns(slowPromise);
+      helper.couponsStub.onCall(1).returns(new Promise(resolve => {
+        console.log("call2");
+        resolve([coupon2]);
+      }));
 
       return renderComponent(
         '/dashboard?coupon=success-coupon',
-        EXPECTED_ACTIONS
+        COUPON_SUCCESS_ACTIONS
       ).then(() => {
+        console.log(COUPON_SUCCESS_ACTIONS);
         const state = helper.store.getState();
-        assert.isNull(state.coupons.recentlyAttachedCoupon);
+        assert.deepEqual(state.coupons.recentlyAttachedCoupon, COUPON);
+        // must be the second call result
+        assert.deepEqual(state.coupons.coupons, [coupon2]);
         assert.isFalse(state.ui.couponNotificationVisibility);
         assert.isUndefined(state.ui.toastMessage);
+        assert.equal(helper.couponsStub.callCount, 2);
       });
     });
   });

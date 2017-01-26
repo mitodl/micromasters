@@ -275,7 +275,7 @@ class DashboardPage extends React.Component {
       this.setCouponNotificationVisibility(true);
       this.context.router.push('/dashboard/');
       // update coupon state in Redux
-      return dispatch(fetchCoupons());
+      dispatch(fetchCoupons());
     }).catch(() => {
       dispatch(setToastMessage({
         title: "Coupon failed",
