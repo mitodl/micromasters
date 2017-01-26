@@ -42,6 +42,19 @@ def is_zip_file(filename):
     return bool(ZIP_FILE_RE.match(filename))
 
 
+def get_file_type(filename):
+    """
+    Determines the file type of a Pearson response file
+    Args:
+        filename (str): the filename to determine the type of
+
+    Returns:
+        (str): the file type of the file
+    """
+    match = EXTRACTED_FILE_RE.match(filename)
+    return match.group(1) if match else None
+
+
 class ArchivedResponseProcesser(object):
     """
     Handles fetching and processing of files stored in a ZIP archive on Pearson SFTP
@@ -122,13 +135,7 @@ class ArchivedResponseProcesser(object):
         Returns:
             (bool): True if the file processed successfully
         """
-
-        match = EXTRACTED_FILE_RE.match(extracted_file.name)
-
-        if not match:
-            return False  # we don't support this type of file
-
-        file_type = match.group(0)
+        file_type = get_file_type(extracted_file.name)
 
         if file_type == PEARSON_FILE_TYPE_VCDC:
             # We send Pearson CDD files and get the results as VCDC files
