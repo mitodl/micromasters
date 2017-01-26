@@ -36,9 +36,7 @@ import {
   DASHBOARD_RESPONSE,
   COURSE_PRICES_RESPONSE,
   USER_PROFILE_RESPONSE,
-  ATTACH_COUPON_RESPONSE,
   PROGRAMS,
-  COUPON,
 } from '../test_constants';
 
 describe('api', function() {
@@ -386,7 +384,7 @@ describe('api', function() {
           coupon_code: "success-coupon",
           object_id: 3,
           program_id: 3,
-        }
+        };
         fetchJSONStub.returns(Promise.resolve([apiCoupon]));
 
         return getCoupons().then(coupons => {
@@ -435,7 +433,7 @@ describe('api', function() {
             object_id: 3,
             program_id: 3,
           }
-        }
+        };
         fetchJSONStub.returns(Promise.resolve(apiResponse));
 
         return attachCoupon('success-coupon').then(resp => {
