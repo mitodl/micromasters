@@ -148,11 +148,11 @@ describe("CouponNotificationDialog", () => {
   });
 
   it('has an OK button', () => {
-    const callback = sandbox.spy();
+    const callback = sandbox.stub();
     const div = renderDialog(COUPON_PERCENT, PROGRAM, null, true, callback);
     const buttonEl = div.querySelector("button.primary-button");
     assert.equal(buttonEl.textContent, "OK");
     TestUtils.Simulate.click(buttonEl);
-    assert(callback.called);
+    assert.isTrue(callback.calledWith(false));
   });
 });
