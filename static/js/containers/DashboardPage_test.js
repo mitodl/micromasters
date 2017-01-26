@@ -10,9 +10,6 @@ import { makeCoupon } from '../factories/dashboard';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import {
   REQUEST_DASHBOARD,
-  RECEIVE_DASHBOARD_SUCCESS,
-  REQUEST_COURSE_PRICES,
-  RECEIVE_COURSE_PRICES_SUCCESS,
   UPDATE_COURSE_STATUS,
   CLEAR_COURSE_PRICES,
   CLEAR_DASHBOARD,
@@ -67,10 +64,7 @@ import {
   STATUS_PAID_BUT_NOT_ENROLLED,
 } from '../constants';
 import { findCourse } from '../util/test_utils';
-import {
-  SUCCESS_ACTIONS,
-  DASHBOARD_SUCCESS_ACTIONS,
-} from './test_util';
+import { DASHBOARD_SUCCESS_ACTIONS } from './test_util';
 
 describe('DashboardPage', () => {
   let renderComponent, helper;
