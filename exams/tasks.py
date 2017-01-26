@@ -7,6 +7,10 @@ from django.db import transaction
 import pytz
 
 from exams.pearson.exceptions import RetryableSFTPException
+from exams.pearson.download import (
+    ArchivedResponseProcesser,
+)
+from exams.pearson.sftp import get_connection
 from exams.models import (
     ExamAuthorization,
     ExamProfile,
@@ -126,3 +130,16 @@ def export_exam_authorizations(self):
                 id__in=valid_auth_ids).update(status=ExamAuthorization.STATUS_IN_PROGRESS)
         except:  # pylint: disable=bare-except
             log.exception('Unexpected exception updating ExamProfile.status')
+
+
+@async.task
+def batch_process_eac_files():
+    """
+    Fetch EAC files from pearsons sftp periodically.
+    """
+    try:
+        connection = get_connection()
+        processor = ArchivedResponseProcesser(connection)
+        processor.process()
+    except RetryableSFTPException:
+        log.exception('Retryable error during upload of EAD file to Pearson SFTP')

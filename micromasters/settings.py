@@ -493,6 +493,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'financialaid.tasks.sync_currency_exchange_rates',
         'schedule': crontab(minute=0, hour='3')
     },
+    'eac-files-processing-every-12-hrs': {
+        'task': 'exams.tasks.batch_process_eac_files',
+        'schedule': crontab(minute=0, hour='12')
+    },
 }
 CELERY_TIMEZONE = 'UTC'
 
