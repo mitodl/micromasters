@@ -2,6 +2,8 @@
 import { assert } from 'chai';
 import fetchMock from 'fetch-mock/src/server';
 import sinon from 'sinon';
+import Decimal from 'decimal.js-light';
+import R from 'ramda';
 
 import {
   getUserProfile,
@@ -26,11 +28,17 @@ import {
 } from './api';
 import * as api from './api';
 import {
+  COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
+  COUPON_CONTENT_TYPE_PROGRAM,
+} from '../constants';
+import {
   CYBERSOURCE_CHECKOUT_RESPONSE,
   DASHBOARD_RESPONSE,
   COURSE_PRICES_RESPONSE,
   USER_PROFILE_RESPONSE,
+  ATTACH_COUPON_RESPONSE,
   PROGRAMS,
+  COUPON,
 } from '../test_constants';
 
 describe('api', function() {
@@ -370,6 +378,28 @@ describe('api', function() {
         });
       });
 
+      it('parses response correctly', () => {
+        const apiCoupon = {
+          amount: "0.55",
+          amount_type: COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
+          content_type: COUPON_CONTENT_TYPE_PROGRAM,
+          coupon_code: "success-coupon",
+          object_id: 3,
+          program_id: 3,
+        }
+        fetchJSONStub.returns(Promise.resolve([apiCoupon]));
+
+        return getCoupons().then(coupons => {
+          const coupon = coupons[0];
+          assert.instanceOf(coupon.amount, Decimal);
+          assert.equal(coupon.amount.toString(), apiCoupon.amount);
+          // everything else aside from `amount` should be identical
+          const couponProps = R.omit(['amount'], coupon);
+          const apiCouponProps = R.omit(['amount'], apiCoupon);
+          assert.deepEqual(couponProps, apiCouponProps);
+        });
+      });
+
       it('fails to fetch coupons', () => {
         fetchJSONStub.returns(Promise.reject());
 
@@ -391,6 +421,32 @@ describe('api', function() {
               username: SETTINGS.user.username
             })
           }));
+        });
+      });
+
+      it('parses response correctly', () => {
+        const apiResponse = {
+          message: "Attached user to coupon successfully.",
+          coupon: {
+            amount: "0.55",
+            amount_type: COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
+            content_type: COUPON_CONTENT_TYPE_PROGRAM,
+            coupon_code: "success-coupon",
+            object_id: 3,
+            program_id: 3,
+          }
+        }
+        fetchJSONStub.returns(Promise.resolve(apiResponse));
+
+        return attachCoupon('success-coupon').then(resp => {
+          assert.equal(apiResponse.message, resp.message);
+          const coupon = resp.coupon, apiCoupon = apiResponse.coupon;
+          assert.instanceOf(coupon.amount, Decimal);
+          assert.equal(coupon.amount.toString(), apiCoupon.amount);
+          // everything else aside from `amount` should be identical
+          const couponProps = R.omit(['amount'], coupon);
+          const apiCouponProps = R.omit(['amount'], apiCoupon);
+          assert.deepEqual(couponProps, apiCouponProps);
         });
       });
 
