@@ -2,7 +2,7 @@
 import logging
 import os
 import re
-from zipfile import ZipFile
+import zipfile
 
 from django.conf import settings
 from paramiko import SSHException
@@ -103,7 +103,8 @@ class ArchivedResponseProcesser(object):
                 except:  # pylint: disable=bare-except
                     log.exception("Error processing file: %s", remote_path)
                 finally:
-                    os.remove(local_path)
+                    if os.path.exists(local_path):
+                        os.remove(local_path)
 
     def process_zip(self, local_path):
         """
@@ -118,10 +119,10 @@ class ArchivedResponseProcesser(object):
         processed = True
 
         # extract the zip and walk the files
-        with ZipFile(local_path) as zip_file:
+        with zipfile.ZipFile(local_path) as zip_file:
             for extracted_filename in zip_file.namelist():
                 with zip_file.open(extracted_filename) as extracted_file:
-                    processed = processed and self.process_extracted_file(extracted_file)
+                    processed = self.process_extracted_file(extracted_file) and processed
 
         return processed
 
