@@ -19,7 +19,6 @@ from financialaid.models import FinancialAid, TierProgram
 from grades.constants import FinalGradeStatus
 from grades.models import FinalGrade
 from exams.models import ExamProfile, ExamAuthorization
-from exams.utils import course_has_exam
 
 
 log = logging.getLogger(__name__)
@@ -362,7 +361,7 @@ class MMTrack:
             course__program=self.program
         )
 
-        if not any(course_has_exam(self, cr) for cr in course_runs_for_program):
+        if not any(course_run.has_exam for course_run in course_runs_for_program):
             return ""
 
         user = self.user

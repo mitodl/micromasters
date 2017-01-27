@@ -2,19 +2,15 @@
 Authorize for exam of passed users
 """
 from django.core.management import BaseCommand
-from django.db.models import Q
 
-from courses.models import Program
-from dashboard.models import CachedEnrollment, ProgramEnrollment
-from dashboard.utils import get_mmtrack
-from exams.utils import authorize_for_exam
+from exams.utils import bulk_authorize_for_exam
 
 
 class Command(BaseCommand):
     """
     Authorizations of exam of passed users
     """
-    help = "Trigger exam authorizations when users already passed course"
+    help = "Trigger exam authorization when for users who have paid and passed course(s) "
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -32,41 +28,27 @@ class Command(BaseCommand):
             type=int
         )
         parser.add_argument(
-            "--course-key",
-            dest="course_key",
-            default=None,
-            help="Edx course key where we want to authorize users who passed course(s).",
-            type=int
+            "--all",
+            action='store_true',
+            help="Authorize eligible users for exams."
         )
 
     def handle(self, *args, **options):
         """
         Trigger exam authorizations for user for a course if he has passed and paid for it.
         """
-        # pylint: disable=too-many-locals
-        program_id = options.get("program_id", None)
-        username = options.get("username", None)
-        course_key = options.get("course_key", None)
+        all_allowed = options.get("all")
+        program_id = options.get("program_id")
+        username = options.get("username")
 
-        programs = Program.objects.filter(exam_series_code__isnull=False, live=True).filter(~Q(exam_series_code=""))
-        if program_id:
-            programs = programs.filter(id=program_id)
-
-        for program in programs:
-            users_qset = ProgramEnrollment.objects.filter(program=program)
-            if username:
-                users_qset = users_qset.filter(user__username=username)
-
-            users = users_qset.values_list('user', flat=True)
-
-            for user in users:
-                enrollments_qset = CachedEnrollment.user_course_qset(user, program=program)
-                if course_key:
-                    enrollments_qset = enrollments_qset.filter(course_run__edx_course_key=course_key)
-
-                mmtrack = get_mmtrack(user, program)
-
-                for enrollment in enrollments_qset:
-                    # if user has passed and paid for the course
-                    # and not already authorized for exam the create authorizations.
-                    authorize_for_exam(mmtrack, enrollment.course_run)
+        if all_allowed:
+            bulk_authorize_for_exam()
+            self.stdout.write(self.style.SUCCESS('Done with authorization process'))
+        elif program_id or username:
+            bulk_authorize_for_exam(
+                program_id=program_id,
+                username=username
+            )
+            self.stdout.write(self.style.SUCCESS('Done with authorization process'))
+        else:
+            self.stdout.write(self.style.ERROR('Incomplete arguments. Please use --help to see options'))

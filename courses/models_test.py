@@ -452,3 +452,21 @@ class CourseRunTests(CourseModelTests):
         assert course_runs[0].pk in freeze_run_ids
         for run in course_runs[1:]:
             assert run.pk not in freeze_run_ids
+
+    @data(
+        (None, None, False),
+        ("Foo", None, False),
+        (None, "Bar", False),
+        ("", "", False),
+        ("Foo", "", False),
+        ("", "Bar", False),
+        ("Foo", "Bar", True)
+    )
+    @unpack
+    def test_has_exam(self, exam_module, exam_series_code, expected_has_exam):
+        """Test course has exam"""
+        course_run = self.create_run()
+        course_run.course.exam_module = exam_module
+        course_run.course.program.exam_series_code = exam_series_code
+
+        assert course_run.has_exam is expected_has_exam

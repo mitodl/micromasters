@@ -2,13 +2,21 @@
 Test cases for course utils
 """
 from datetime import datetime
+
+from ddt import (
+    ddt,
+    data,
+    unpack
+)
 from django.test import TestCase
 from courses.utils import (
-    get_year_season_from_course_run
+    get_year_season_from_course_run,
+    is_blank
 )
 from courses.factories import CourseRunFactory
 
 
+@ddt
 class CourseUtilTests(TestCase):
     """
     Test cases for course utils
@@ -34,3 +42,13 @@ class CourseUtilTests(TestCase):
         assert get_year_season_from_course_run(test_run4) == (2016, 'Fall')
         assert get_year_season_from_course_run(unparseable_test_run1) == ()
         assert get_year_season_from_course_run(unparseable_test_run2) == ()
+
+    @data(
+        (None, True),
+        ("", True),
+        ("Foo", False),
+    )
+    @unpack
+    def test_is_blank(self, text, expected):
+        """Test is_blank"""
+        assert is_blank(text) is expected

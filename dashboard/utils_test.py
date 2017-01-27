@@ -844,6 +844,7 @@ class MMTrackTest(MockedESTestCase):
         if not set_series_code:
             exam_series_code = self.program.exam_series_code
             self.program.exam_series_code = None
+            self.program.save()
 
         if make_profile:
             ExamProfileFactory.create(

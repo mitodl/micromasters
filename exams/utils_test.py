@@ -1,7 +1,11 @@
 """Test cases for the exam util"""
-from unittest.mock import patch
+from datetime import datetime, timedelta
 
+from unittest.mock import patch
+import ddt
 from django.core.exceptions import ImproperlyConfigured
+import pytz
+from django.test import TestCase
 from django.db.models.signals import post_save
 from django.test import (
     SimpleTestCase,
@@ -10,15 +14,30 @@ from django.test import (
 from factory.django import mute_signals
 from ddt import ddt, data, unpack
 
+from courses.factories import CourseRunFactory
 from dashboard.factories import (
     CachedCertificateFactory,
     CachedCurrentGradeFactory,
     CachedEnrollmentFactory,
 )
+from dashboard.models import ProgramEnrollment
 from dashboard.utils import get_mmtrack
+from financialaid.api_test import create_program
+from exams.utils import (
+    authorize_for_exam,
+    bulk_authorize_for_exam,
+    ExamAuthorizationException,
+    message_not_passed_or_exist_template,
+    message_not_eligible_template
+)
+from exams.models import (
+    ExamProfile,
+    ExamAuthorization
+)
 from ecommerce.factories import (
     OrderFactory,
     LineFactory,
+    CoursePriceFactory
 )
 from grades.factories import FinalGradeFactory
 from exams.utils import (
@@ -79,7 +98,7 @@ class ExamAuthorizationUtilsTests(TestCase):
         cls.program, _ = create_program(past=True)
         cls.user = profile.user
         cls.course_run = course_run = cls.program.course_set.first().courserun_set.first()
-        cls.enrollment = CachedEnrollmentFactory.create(user=cls.user, course_run=course_run)
+        CachedEnrollmentFactory.create(user=cls.user, course_run=course_run)
         CachedCurrentGradeFactory.create(
             user=cls.user,
             course_run=course_run,
@@ -107,29 +126,34 @@ class ExamAuthorizationUtilsTests(TestCase):
         self.assertTrue(mmtrack.has_passed_course(self.course_run.edx_course_key))
 
         authorize_for_exam(mmtrack, self.course_run)
-
-        # assert Exam Authorization and profile created.
-        self.assertTrue(ExamProfile.objects.filter(profile=mmtrack.user.profile).exists())
-        self.assertTrue(ExamAuthorization.objects.filter(
+        assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is True
+        assert ExamAuthorization.objects.filter(
             user=mmtrack.user,
             course=self.course_run.course
-        ).exists())
+        ).exists() is True
 
     def test_exam_authorization_when_not_paid(self):
         """
         test exam_authorization when user has passed course but not paid.
         """
         mmtrack = get_mmtrack(self.user, self.program)
-        self.assertFalse(mmtrack.has_paid(self.course_run.edx_course_key))
+        assert mmtrack.has_paid(self.course_run.edx_course_key) is False
 
-        authorize_for_exam(mmtrack, self.course_run)
+        expected_errors_message = message_not_eligible_template.format(
+            user=mmtrack.user.username,
+            course_id=self.course_run.edx_course_key
+        )
 
+        with self.assertRaises(ExamAuthorizationException) as eae:
+            authorize_for_exam(mmtrack, self.course_run)
+
+        assert eae.exception.args[0] == expected_errors_message
         # assert Exam Authorization and profile created.
-        self.assertFalse(ExamProfile.objects.filter(profile=mmtrack.user.profile).exists())
-        self.assertFalse(ExamAuthorization.objects.filter(
+        assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False
+        assert ExamAuthorization.objects.filter(
             user=mmtrack.user,
             course=self.course_run.course
-        ).exists())
+        ).exists() is False
 
     def test_exam_authorization_when_not_passed_course(self):
         """
@@ -138,17 +162,150 @@ class ExamAuthorizationUtilsTests(TestCase):
         create_order(self.user, self.course_run)
         with patch('dashboard.utils.MMTrack.has_passed_course', autospec=True, return_value=False):
             mmtrack = get_mmtrack(self.user, self.program)
-            self.assertTrue(mmtrack.has_paid(self.course_run.edx_course_key))
-            self.assertFalse(mmtrack.has_passed_course(self.course_run.edx_course_key))
+            expected_errors_message = message_not_passed_or_exist_template.format(
+                user=mmtrack.user.username,
+                course_id=self.course_run.edx_course_key
+            )
+            assert mmtrack.has_paid(self.course_run.edx_course_key) is True
+            assert mmtrack.has_passed_course(self.course_run.edx_course_key) is False
 
-            authorize_for_exam(mmtrack, self.course_run)
+            with self.assertRaises(ExamAuthorizationException) as eae:
+                authorize_for_exam(mmtrack, self.course_run)
 
+            assert eae.exception.args[0] == expected_errors_message
             # assert Exam Authorization and profile created.
-            self.assertTrue(ExamProfile.objects.filter(profile=mmtrack.user.profile).exists())
-            self.assertFalse(ExamAuthorization.objects.filter(
+            assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is True
+            assert ExamAuthorization.objects.filter(
                 user=mmtrack.user,
                 course=self.course_run.course
-            ).exists())
+            ).exists() is False
+
+
+class BulkExamUtilTests(TestCase):
+    """Tests for authorization_user_exam command operations"""
+    @classmethod
+    def set_data(cls, user, course_run):
+        """
+        creates user records like CachedGrades, CachedEnrollments and CachedCertificate
+        """
+        CachedEnrollmentFactory.create(user=user, course_run=course_run)
+        CachedCurrentGradeFactory.create(
+            user=user,
+            course_run=course_run,
+            data={
+                "passed": True,
+                "percent": 0.9,
+                "course_key": course_run.edx_course_key,
+                "username": user.username
+            }
+        )
+        CachedCertificateFactory.create(user=user, course_run=course_run)
+        create_order(user, course_run)
+
+    @classmethod
+    def setUpTestData(cls):
+        with mute_signals(post_save):
+            profile1 = ProfileFactory.create()
+            profile2 = ProfileFactory.create()
+
+        cls.program, _ = create_program(past=True)
+        cls.course_run = cls.program.course_set.first().courserun_set.first()
+        cls.users = [profile1.user, profile2.user]
+
+        for user in cls.users:
+            with mute_signals(post_save):
+                ProgramEnrollment.objects.create(user=user, program=cls.program)
+            cls.set_data(user, cls.course_run)
+
+        # second passed run on same courses
+        course_run2 = CourseRunFactory.create(
+            end_date=datetime.now(tz=pytz.UTC) - timedelta(days=366),
+            enrollment_end=datetime.now(tz=pytz.UTC) - timedelta(days=500),
+            course=cls.course_run.course
+        )
+        CoursePriceFactory.create(
+            course_run=course_run2,
+            is_valid=True
+        )
+
+        for user in cls.users:
+            cls.set_data(user, course_run2)
+
+    def test_exam_authorization(self):
+        """For all users in any program"""
+        bulk_authorize_for_exam()
+        for user in self.users:
+            assert ExamProfile.objects.filter(profile=user.profile).exists() is True
+            assert ExamAuthorization.objects.filter(
+                user=user,
+                course=self.course_run.course
+            ).exists() is True
+
+    def test_exam_authorization_specific_user(self):
+        """Authorize a user for exams of passed and paid courses"""
+        user = self.users[0]
+        bulk_authorize_for_exam(username=user.username)
+        assert ExamProfile.objects.filter(profile=user.profile).exists() is True
+        assert ExamAuthorization.objects.filter(
+            user=user,
+            course=self.course_run.course
+        ).exists() is True
+
+    def test_exam_authorization_specific_user_specific_course(self):
+        """Authorize a user for exams of passed and paid courses"""
+        user1 = self.users[0]
+        user2 = self.users[1]
+        bulk_authorize_for_exam(
+            username=user1.username
+        )
+
+        # user 1 is authorized for exam
+        assert ExamProfile.objects.filter(profile=user1.profile).exists() is True
+        assert ExamAuthorization.objects.filter(
+            user=user1,
+            course=self.course_run.course
+        ).exists() is True
+
+        # user 2 is not authorized
+        assert ExamProfile.objects.filter(profile=user2.profile).exists() is False
+        assert ExamAuthorization.objects.filter(
+            user=user2,
+            course=self.course_run.course
+        ).exists() is False
+
+    def test_exam_authorization_wrong_program_id(self):
+        """Assert user not authorize when program id is wrong"""
+        user = self.users[0]
+
+        with self.assertRaises(ExamAuthorizationException) as e:
+            bulk_authorize_for_exam(
+                program_id=-1,
+                username=user.username
+            )
+
+        assert e.exception.args[0] == '[Exam authorization] Invalid program id: %s', -1
+        assert ExamProfile.objects.filter(profile=user.profile).exists() is False
+        assert ExamAuthorization.objects.filter(
+            user=user,
+            course=self.course_run.course
+        ).exists() is False
+
+    def test_exam_authorization_invalid_user(self):
+        """Assert user not authorize when username wrong"""
+        user = self.users[0]
+
+        with self.assertRaises(ExamAuthorizationException) as e:
+            bulk_authorize_for_exam(
+                username="invalid_user"
+            )
+
+        assert e.exception.args[0] == '[Exam authorization] Invalid username: %s', "invalid_user"
+        for user in self.users:
+            assert ExamProfile.objects.filter(profile=user.profile).exists() is False
+            assert ExamAuthorization.objects.filter(
+                user=user,
+                course=self.course_run.course
+            ).exists() is False
 
 
 @ddt

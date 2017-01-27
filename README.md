@@ -230,6 +230,21 @@ You should now be able to do the following:
 1. Click "Sign in with edX.org" and sign in by authorizing an edX client. If you're
  running edX locally, this will be the client you created in the steps above.
 
+#### 7) Authorize for exam manually
+ We can authorize user(s) for exam(s) manually using django command only if they paid and 
+ passed selected course(s). **Note:** ``course.exam_module`` and ``program.exam_series_code`` must be set.
+ 
+ **params**
+ - **--username:** (optional) If provided, command will look for given user only, 
+    and authorize him if he matches the critaria.
+ - **--program-id:** (optional) if provided, command will look for given program only, 
+    and authorize all users who matches the critaria.
+ - **--all:** (optional) if provided, command will authorize all eligible users for exams.
+ 
+```shell 
+    docker-compose run web ./manage.py authorization_user_exam --username=(value) --program-id=(value)
+```
+
 ## Wagtail CMS (Content Management System)
 
 The CMS can be found at `/cms/`. Use the CMS to manage the content of the program pages and, by extension, the home 

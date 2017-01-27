@@ -2,6 +2,8 @@
 Tests for exam signals
 """
 from datetime import datetime, timedelta
+
+from unittest.mock import patch
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.test import override_settings
@@ -17,11 +19,11 @@ from dashboard.factories import (
     CachedCurrentGradeFactory,
     CachedEnrollmentFactory,
 )
+from exams.utils_test import create_order
 from exams.models import (
     ExamProfile,
     ExamAuthorization
 )
-from exams.utils_test import create_order
 from financialaid.api_test import create_program
 from grades.factories import FinalGradeFactory
 from profiles.factories import ProfileFactory
@@ -96,11 +98,41 @@ class ExamSignalsTest(MockedESTestCase):
         )
 
         # assert Exam Authorization and profile created.
-        self.assertTrue(ExamProfile.objects.filter(profile=self.profile).exists())
-        self.assertTrue(ExamAuthorization.objects.filter(
+        assert ExamProfile.objects.filter(profile=self.profile).exists() is True
+        assert ExamAuthorization.objects.filter(
             user=self.profile.user,
             course=self.course_run.course
-        ).exists())
+        ).exists() is True
+
+    @override_settings(FEATURES={"FINAL_GRADE_ALGORITHM": "v1"})
+    def test_update_exam_authorization_final_grade_when_user_not_paid(self):
+        """
+        Verify that update_exam_authorization_final_grade is called and log exception when
+        FinalGrade saves user dont match exam authorization criteria
+        """
+        with mute_signals(post_save):
+            # muting signal for CachedEnrollment. Because CachedEnrollment and FinalGrade both omits
+            # signal, we want to see behaviour of FinalGrade here
+            CachedEnrollmentFactory.create(user=self.profile.user, course_run=self.course_run)
+
+        with patch("exams.signals.log") as log:
+            FinalGradeFactory.create(
+                user=self.profile.user,
+                course_run=self.course_run,
+                passed=True,
+            )
+
+        log.exception.assert_called_with(
+            'Unable to authorize user: %s for exam on course_id: %s',
+            self.profile.user.username,
+            self.course_run.course.id
+        )
+        # assert Exam Authorization and profile created.
+        assert ExamProfile.objects.filter(profile=self.profile).exists() is False
+        assert ExamAuthorization.objects.filter(
+            user=self.profile.user,
+            course=self.course_run.course
+        ).exists() is False
 
     def test_update_exam_authorization_cached_enrollment(self):
         """

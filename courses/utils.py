@@ -89,3 +89,16 @@ def get_year_season_from_course_run(course_run):
         return season_year_tuple[0], NUMBER_SEASON_MAP[season_year_tuple[1]]
     else:
         return season_year_tuple
+
+
+def is_blank(text):
+    """
+    Returns true of string is blank i.e None or empty.
+
+    Args:
+        text(str): any string
+
+    Returns:
+        bool: True if input is empty or none
+    """
+    return not (text and text.strip())
