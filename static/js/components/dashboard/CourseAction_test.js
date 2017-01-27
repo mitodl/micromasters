@@ -36,11 +36,11 @@ import { calculatePrices } from '../../lib/coupon';
 
 describe('CourseAction', () => {
   const now = moment();
-  let sandbox, addCourseEnrollmentStub, checkoutStub;
+  let sandbox, addCourseEnrollmentStub, routerPushStub;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
-    checkoutStub = sandbox.stub();
+    routerPushStub = sandbox.stub();
     addCourseEnrollmentStub = sandbox.stub();
   });
 
@@ -65,12 +65,15 @@ describe('CourseAction', () => {
       linkText: linkText
     };
   };
+  let assertEnrollNowButton = (button, courseId) => {
+    button.simulate('click');
+    assert.isTrue(routerPushStub.calledWith(`/order_summary/?course_key=${encodeURIComponent(courseId)}`));
+  };
 
   let renderCourseAction = (props = {}) => {
     let prices = calculatePrices(DASHBOARD_RESPONSE, COURSE_PRICES_RESPONSE, []);
     return shallow(
       <CourseAction
-        checkout={checkoutStub}
         hasFinancialAid={false}
         financialAid={{}}
         addCourseEnrollment={addCourseEnrollmentStub}
@@ -79,7 +82,7 @@ describe('CourseAction', () => {
         prices={prices}
         {...props}
       />
-    );
+    , {context: { router: { push: routerPushStub}}});
   };
 
   it('shows passed for a passed course', () => {
@@ -156,6 +159,7 @@ describe('CourseAction', () => {
     assert.isUndefined(elements.button.props().disabled);
     assert.include(elements.buttonText, 'Pay Now');
     assert.equal(elements.linkText, 'Enroll and pay later');
+    assertEnrollNowButton(elements.button, firstRun.course_id);
 
     wrapper.find(".enroll-pay-later").simulate('click');
     assert(addCourseEnrollmentStub.calledWith(firstRun.course_id));
@@ -193,6 +197,7 @@ describe('CourseAction', () => {
       assert.isUndefined(elements.button.props().disabled);
       assert.include(elements.buttonText, 'Pay Now');
       assert.equal(elements.linkText, 'Enroll and pay later');
+      assertEnrollNowButton(elements.button, firstRun.course_id);
     });
   });
 
@@ -211,6 +216,7 @@ describe('CourseAction', () => {
     assert.isUndefined(elements.button.props().disabled);
     assert.include(elements.buttonText, 'Pay Now');
     assert.equal(elements.descriptionText, `Payment due: ${formattedUpgradeDate}`);
+    assertEnrollNowButton(elements.button, firstRun.course_id);
   });
 
   it('hides an invalid date if user is enrolled but is not verified', () => {
