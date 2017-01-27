@@ -42,11 +42,17 @@ describe('CourseRow', () => {
         prices={prices}
         openFinancialAidCalculator={sandbox.stub()}
         now={moment()}
-        checkout={sandbox.stub()}
         addCourseEnrollment={sandbox.stub()}
         course={null}
         {...props}
-      />
+      />,
+      {
+        context: {
+          router: {}
+        },
+        childContextTypes: {
+          router:   React.PropTypes.object.isRequired}
+      }
     );
   };
 

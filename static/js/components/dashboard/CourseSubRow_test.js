@@ -19,13 +19,12 @@ import {
 } from '../../constants';
 
 describe('CourseSubRow', () => {
-  let sandbox, courseRun, now, openFinancialAidCalculator, addCourseEnrollment, checkout;
+  let sandbox, courseRun, now, openFinancialAidCalculator, addCourseEnrollment;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     now = moment();
     openFinancialAidCalculator = sandbox.stub();
-    checkout = sandbox.stub();
     addCourseEnrollment = sandbox.stub();
     courseRun = _.cloneDeep(DASHBOARD_RESPONSE[1].courses[0]);
   });
@@ -36,17 +35,26 @@ describe('CourseSubRow', () => {
 
   let renderSubRow = (props = {}, isShallow = true) => {
     let render = isShallow ? shallow : mount;
-    return render(<CourseSubRow
-      hasFinancialAid={true}
-      financialAid={FINANCIAL_AID_PARTIAL_RESPONSE}
-      coursePrice={COURSE_PRICES_RESPONSE[0]}
-      openFinancialAidCalculator={openFinancialAidCalculator}
-      now={now}
-      checkout={checkout}
-      addCourseEnrollment={addCourseEnrollment}
-      key={1}
-      {...props}
-    />);
+    return render(
+      <CourseSubRow
+        hasFinancialAid={true}
+        financialAid={FINANCIAL_AID_PARTIAL_RESPONSE}
+        coursePrice={COURSE_PRICES_RESPONSE[0]}
+        openFinancialAidCalculator={openFinancialAidCalculator}
+        now={now}
+        addCourseEnrollment={addCourseEnrollment}
+        key={1}
+        {...props}
+      />,
+      {
+        context: {
+          router: {}
+        },
+        childContextTypes: {
+          router:   React.PropTypes.object.isRequired
+        }
+      }
+    );
   };
 
   it('indicates that no future runs are available when a null course run was provided', () => {
