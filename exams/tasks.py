@@ -1,11 +1,8 @@
-"""
-Tasks for exams
-"""
+"""Tasks for exams"""
 from datetime import datetime
 import logging
 import tempfile
 
-from django.conf import settings
 from django.db import transaction
 import pytz
 
@@ -18,6 +15,7 @@ from exams.pearson import (
     upload,
     writers,
 )
+from exams.utils import exponential_backoff
 from micromasters.celery import async
 
 PEARSON_CDD_FILE_PREFIX = "cdd-%Y%m%d%H_"
@@ -28,13 +26,6 @@ PEARSON_FILE_EXTENSION = ".dat"
 PEARSON_FILE_ENCODING = "utf-8"
 
 log = logging.getLogger(__name__)
-
-
-def _backoff(retries):
-    """
-    Exponential backoff for retried tasks
-    """
-    return settings.EXAMS_SFTP_BACKOFF_BASE ** retries
 
 
 @async.task(bind=True, max_retries=3)
@@ -66,7 +57,7 @@ def export_exam_profiles(self):
         except RetryableSFTPException as exc:
             log.exception('Retryable error during upload of CDD file to Pearson SFTP')
             # retry up to 3 times w/ exponential backoff if this was a connection error
-            self.retry(exc=exc, countdown=_backoff(self.request.retries))
+            self.retry(exc=exc, countdown=exponential_backoff(self.request.retries))
         except:  # pylint: disable=bare-except
             log.exception('Unexpected exception uploading CDD file')
             return
@@ -121,7 +112,7 @@ def export_exam_authorizations(self):
         except RetryableSFTPException as exc:
             log.exception('Retryable error during upload of EAD file to Pearson SFTP')
             # retry up to 3 times w/ exponential backoff if this was a connection error
-            self.retry(exc=exc, countdown=_backoff(self.request.retries))
+            self.retry(exc=exc, countdown=exponential_backoff(self.request.retries))
         except:  # pylint: disable=bare-except
             log.exception('Unexpected exception uploading EAD file')
             return

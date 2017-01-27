@@ -1,7 +1,13 @@
 """Test cases for the exam util"""
 from unittest.mock import patch
-from django.test import TestCase
+
+import ddt
+from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_save
+from django.test import (
+    SimpleTestCase,
+    TestCase,
+)
 from factory.django import mute_signals
 
 from dashboard.factories import (
@@ -10,20 +16,48 @@ from dashboard.factories import (
     CachedEnrollmentFactory,
 )
 from dashboard.utils import get_mmtrack
-from financialaid.api_test import create_program
-from exams.utils import authorize_for_exam
-from exams.models import (
-    ExamProfile,
-    ExamAuthorization
-)
 from ecommerce.factories import (
     OrderFactory,
     LineFactory,
 )
+from exams.utils import (
+    authorize_for_exam,
+    exponential_backoff,
+)
+from exams.models import (
+    ExamProfile,
+    ExamAuthorization
+)
+from financialaid.api_test import create_program
 from profiles.factories import ProfileFactory
 
 
-class ExamUtilTests(TestCase):
+@ddt.ddt
+class ExamBackoffUtilsTest(SimpleTestCase):
+    """Tests for exam tasks"""
+    @ddt.data(
+        (5, 1, 5),
+        (5, 2, 25),
+        (5, 3, 125),
+    )
+    @ddt.unpack
+    def test_exponential_backoff_values(self, base, retries, expected):  # pylint: disable=no-self-use
+        """
+        Test that exponential_backoff returns a power of settings.EXAMS_SFTP_BACKOFF_BASE
+        """
+        with self.settings(EXAMS_SFTP_BACKOFF_BASE=base):
+            assert exponential_backoff(retries) == expected
+
+    def test_exponential_backoff_invalid(self):  # pylint: disable=no-self-use
+        """
+        Test that exponential_backoff raises a configuration error if it gets an invalid value
+        """
+        with self.settings(EXAMS_SFTP_BACKOFF_BASE='NOT_AN_INT'):
+            with self.assertRaises(ImproperlyConfigured):
+                exponential_backoff(1)
+
+
+class ExamAuthorizationUtilsTests(TestCase):
     """Tests for exam util"""
     @classmethod
     def setUpTestData(cls):
