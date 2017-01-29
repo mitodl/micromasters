@@ -19,7 +19,6 @@ from exams.models import (
     ExamProfile,
 )
 from exams.tasks import (
-    _backoff,
     export_exam_authorizations,
     export_exam_profiles,
 )
@@ -30,19 +29,6 @@ class ExamTasksTest(TestCase):
     """
     Tests for exam tasks
     """
-    @data(
-        (5, 1, 5),
-        (5, 2, 25),
-        (5, 3, 125),
-    )
-    @unpack
-    def test_backoff(self, base, retries, expected):  # pylint: disable=no-self-use
-        """
-        Test that _backoff is a power of settings.EXAMS_SFTP_BACKOFF_BASE
-        """
-        with self.settings(EXAMS_SFTP_BACKOFF_BASE=base):
-            assert _backoff(retries) == expected
-
     @data(
         (export_exam_authorizations, 'exams.tasks.export_exam_authorizations.retry'),
         (export_exam_profiles, 'exams.tasks.export_exam_profiles.retry'),
