@@ -23,7 +23,11 @@ const SignupDialog = ({
   open,
   setDialogVisibility,
 }: signupProps) => {
-  let next = URI(window.location.search).query(true).next;
+  let loginUrl = URI('/login/edxorg');
+  const nextUrl = URI(window.location.search).query(true).next;
+  if ( nextUrl ) {
+    loginUrl = loginUrl.setSearch("next", nextUrl);
+  }
   return <Dialog
     titleClassName="dialog-title"
     contentClassName="dialog signup-dialog"
@@ -45,7 +49,7 @@ const SignupDialog = ({
 
       <a
         className="mdl-button signup-modal-button"
-        href={`/login/edxorg?next=${encodeURIComponent(next)}`}
+        href={loginUrl}
       >
         Continue with edX
       </a>

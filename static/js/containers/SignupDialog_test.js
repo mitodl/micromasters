@@ -40,4 +40,13 @@ describe("SignupDialog", () => {
     let link = document.body.querySelector(".signup-dialog a");
     assert.equal(link.getAttribute('href'), `/login/edxorg${queryParams}`);
   });
+
+  it("doesn't needlessly set a next query param", () => {
+    window.location = "http://fake/";
+    helper.store.dispatch(setDialogVisibility(true));
+    renderDialog();
+
+    let link = document.body.querySelector(".signup-dialog a");
+    assert.equal(link.getAttribute('href'), "/login/edxorg");
+  });
 });
