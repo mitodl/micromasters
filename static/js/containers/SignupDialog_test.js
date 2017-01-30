@@ -37,8 +37,30 @@ describe("SignupDialog", () => {
     helper.store.dispatch(setDialogVisibility(true));
     renderDialog();
 
-    let link = document.body.querySelector(".signup-dialog a");
+    const link = document.body.querySelector(".signup-dialog a");
     assert.equal(link.getAttribute('href'), `/login/edxorg${queryParams}`);
+  });
+
+  it('also checks the coupon query param', () => {
+    window.location = "http://fake/?coupon=whee";
+    helper.store.dispatch(setDialogVisibility(true));
+    renderDialog();
+
+    const link = document.body.querySelector(".signup-dialog a");
+    const expectedNext = "/dashboard/?coupon=whee";
+    assert.equal(
+      link.getAttribute('href'),
+      `/login/edxorg?next=${encodeURIComponent(expectedNext)}`
+    );
+  });
+
+  it('chooses next over coupon', () => {
+    window.location = "http://fake/?next=a&coupon=b";
+    helper.store.dispatch(setDialogVisibility(true));
+    renderDialog();
+
+    const link = document.body.querySelector(".signup-dialog a");
+    assert.equal(link.getAttribute('href'), "/login/edxorg?next=a");
   });
 
   it("doesn't needlessly set a next query param", () => {
@@ -46,7 +68,7 @@ describe("SignupDialog", () => {
     helper.store.dispatch(setDialogVisibility(true));
     renderDialog();
 
-    let link = document.body.querySelector(".signup-dialog a");
+    const link = document.body.querySelector(".signup-dialog a");
     assert.equal(link.getAttribute('href'), "/login/edxorg");
   });
 });

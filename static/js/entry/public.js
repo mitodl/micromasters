@@ -50,6 +50,12 @@ if (carouselEl && !_.isEmpty(facultyList)) {
   );
 }
 
+// Toast dialog
+const toastClose = document.querySelector('.toast .close');
+if ( toastClose ) {
+  toastClose.onclick = () => document.querySelector('.toast').remove();
+}
+
 // Signup dialog
 const store = signupDialogStore();
 

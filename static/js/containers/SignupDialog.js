@@ -24,7 +24,11 @@ const SignupDialog = ({
   setDialogVisibility,
 }: signupProps) => {
   let loginUrl = URI('/login/edxorg');
-  const nextUrl = URI(window.location.search).query(true).next;
+  const urlQuery = URI(window.location.search).query(true);
+  let nextUrl = urlQuery.next;
+  if (!nextUrl && urlQuery.coupon) {
+    nextUrl = `/dashboard/?coupon=${urlQuery.coupon}`;
+  }
   if (nextUrl) {
     loginUrl = loginUrl.setSearch("next", nextUrl);
   }
