@@ -24,6 +24,15 @@ from grades.factories import FinalGradeFactory
 from profiles.factories import ProfileFactory
 
 
+def create_order(user, course_run):
+    """"
+    create payment for course
+    """
+    order = OrderFactory.create(user=user, status='fulfilled')
+    LineFactory.create(order=order, course_key=course_run.edx_course_key)
+    return order
+
+
 class ExamUtilTests(TestCase):
     """Tests for exam util"""
     @classmethod
@@ -31,7 +40,7 @@ class ExamUtilTests(TestCase):
         with mute_signals(post_save):
             profile = ProfileFactory.create()
 
-        cls.program, cls.tier_programs = create_program(past=True)
+        cls.program, _ = create_program(past=True)
         cls.user = profile.user
         cls.course_run = course_run = cls.program.course_set.first().courserun_set.first()
         cls.enrollment = CachedEnrollmentFactory.create(user=cls.user, course_run=course_run)
@@ -52,19 +61,11 @@ class ExamUtilTests(TestCase):
             passed=True
         )
 
-    def create_order(self, user, course_run):
-        """"
-        create payment for course
-        """
-        order = OrderFactory.create(user=user, status='fulfilled')
-        LineFactory.create(order=order, course_key=course_run.edx_course_key)
-        return order
-
     def test_exam_authorization(self):
         """
         test exam_authorization when user passed and paid for course.
         """
-        self.create_order(self.user, self.course_run)
+        create_order(self.user, self.course_run)
         mmtrack = get_mmtrack(self.user, self.program)
         self.assertTrue(mmtrack.has_paid(self.course_run.edx_course_key))
         self.assertTrue(mmtrack.has_passed_course(self.course_run.edx_course_key))
@@ -98,7 +99,7 @@ class ExamUtilTests(TestCase):
         """
         test exam_authorization when user has not passed course but paid.
         """
-        self.create_order(self.user, self.course_run)
+        create_order(self.user, self.course_run)
         with patch('dashboard.utils.MMTrack.has_passed_course', autospec=True, return_value=False):
             mmtrack = get_mmtrack(self.user, self.program)
             self.assertTrue(mmtrack.has_paid(self.course_run.edx_course_key))

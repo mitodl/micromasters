@@ -7,7 +7,10 @@ from django.dispatch import receiver
 from dashboard.models import CachedEnrollment
 from dashboard.utils import get_mmtrack
 from exams.models import ExamProfile
-from exams.utils import authorize_for_exam
+from exams.utils import (
+    authorize_for_exam,
+    course_has_exam
+)
 from grades.models import FinalGrade
 from profiles.models import Profile
 
@@ -32,7 +35,9 @@ def update_exam_authorization_final_grade(sender, instance, **kwargs):  # pylint
 @receiver(post_save, sender=CachedEnrollment, dispatch_uid="update_exam_authorization_cached_enrollment")
 def update_exam_authorization_cached_enrollment(sender, instance, **kwargs):  # pylint: disable=unused-argument
     """
-    Signal handler to trigger an exam profile and authorization for enrollment.
+    Signal handler to trigger an exam profile when user enroll in a course.
     """
     mmtrack = get_mmtrack(instance.user, instance.course_run.course.program)
-    authorize_for_exam(mmtrack, instance.course_run)
+    if course_has_exam(mmtrack, instance.course_run) and mmtrack.has_paid(instance.course_run.edx_course_key):
+        # if user paid for a course then create his exam profile if it is not creaated yet.
+        ExamProfile.objects.get_or_create(profile=mmtrack.user.profile)
