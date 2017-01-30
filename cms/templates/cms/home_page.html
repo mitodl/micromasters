@@ -51,19 +51,19 @@
       <div class="banner-wrapper">
         {% if user.is_anonymous and request.GET.coupon %}
           <div role="alertdialog" class="toast">
-            <i class="material-icons">account_circle</i>
-            <div class="body">
-              <span class="message">
-                You need to Sign up or Login before you can apply this coupon.
-              </span>
-              <ul class="links">
-                <li><button class="mm-minor-action open-signup-dialog">Log In</button></li>
-                <li><button class="mm-minor-action open-signup-dialog">Sign Up</button></li>
-              </ul>
+            <div class="toast-message">
+              <i class="material-icons">account_circle</i>
+              <div class="toast-body">
+                <p>You need to Sign up or Login before you can apply this coupon.</p>
+              </div>
+              <button class="toast-close close">
+                <i class="material-icons close-icon">close</i>
+              </button>
             </div>
-            <button class="close" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
+            <ul class="toast-actions">
+              <li><button class="mm-minor-action open-signup-dialog">Log In</button></li>
+              <li><button class="mm-minor-action open-signup-dialog">Sign Up</button></li>
+            </ul>
           </div>
         {% endif %}
         <div class="banner-wrapper-content">

@@ -187,18 +187,32 @@ class App extends React.Component {
       return null;
     }
 
-    const { icon: iconName, title, message } = toastMessage;
+    const {
+      icon: iconName,
+      title: titleText,
+      message: messageText
+    } = toastMessage;
 
     let icon;
     if (iconName) {
       icon = <Icon name={iconName} key="icon" />;
     }
 
+    let title, message;
+    if (titleText) {
+      title = <h1>{titleText}</h1>;
+    }
+    if (messageText) {
+      message = <p>{messageText}</p>;
+    }
+
     return <Toast onTimeout={this.clearMessage}>
-      {icon}
-      <div className="body">
-        <span className="title">{title}</span>
-        <span className="message">{message}</span>
+      <div className="toast-message">
+        {icon}
+        <div className="toast-body">
+          {title}
+          {message}
+        </div>
       </div>
     </Toast>;
   }
