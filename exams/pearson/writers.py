@@ -142,8 +142,8 @@ class CDDWriter(BaseTSVWriter):
         """
         super().__init__([
             ('ClientCandidateID', 'student_id'),
-            ('FirstName', 'romanized_first_name'),
-            ('LastName', 'romanized_last_name'),
+            ('FirstName', self.first_name),
+            ('LastName', self.last_name),
             ('Email', 'user.email'),
             ('Address1', 'address1'),
             ('Address2', 'address2'),
@@ -156,6 +156,20 @@ class CDDWriter(BaseTSVWriter):
             ('PhoneCountryCode', self.profile_phone_number_to_country_code),
             ('LastUpdate', lambda profile: self.format_datetime(profile.updated_on)),
         ], field_prefix='profile')
+
+    @classmethod
+    def first_name(cls, profile):
+        """
+        romanized_first_name if we have it, first_name otherwise
+        """
+        return profile.romanized_first_name or profile.first_name
+
+    @classmethod
+    def last_name(cls, profile):
+        """
+        romanized_last_name if we have it, last_name otherwise
+        """
+        return profile.romanized_last_name or profile.last_name
 
     @classmethod
     def profile_phone_number_to_country_code(cls, profile):

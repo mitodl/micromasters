@@ -195,13 +195,60 @@ class CDDWriterTest(TSVWriterTestCase, TestCase):
         self.cdd_writer = CDDWriter()
         super().setUp()
 
+    def test_first_name(self):  # pylint: disable=missing-docstring,no-self-use
+        with mute_signals(post_save):
+            profile = ProfileFactory(
+                first_name="Jekyll",
+                romanized_first_name=None,
+            )
+        assert CDDWriter.first_name(profile) == "Jekyll"
+
+    def test_romanized_first_name(self):  # pylint: disable=missing-docstring,no-self-use
+        with mute_signals(post_save):
+            profile = ProfileFactory(
+                first_name=None,
+                romanized_first_name="Hyde",
+            )
+        assert CDDWriter.first_name(profile) == "Hyde"
+
+    def test_prefer_romanized_first_name(self):  # pylint: disable=missing-docstring,no-self-use
+        with mute_signals(post_save):
+            profile = ProfileFactory(
+                first_name="Jekyll",
+                romanized_first_name="Hyde",
+            )
+        assert CDDWriter.first_name(profile) == "Hyde"
+
+    def test_last_name(self):  # pylint: disable=missing-docstring,no-self-use
+        with mute_signals(post_save):
+            profile = ProfileFactory(
+                last_name="Jekyll",
+                romanized_last_name=None,
+            )
+        assert CDDWriter.last_name(profile) == "Jekyll"
+
+    def test_romanized_last_name(self):  # pylint: disable=missing-docstring,no-self-use
+        with mute_signals(post_save):
+            profile = ProfileFactory(
+                last_name=None,
+                romanized_last_name="Hyde",
+            )
+        assert CDDWriter.last_name(profile) == "Hyde"
+
+    def test_prefer_romanized_last_name(self):  # pylint: disable=missing-docstring,no-self-use
+        with mute_signals(post_save):
+            profile = ProfileFactory(
+                last_name="Jekyll",
+                romanized_last_name="Hyde",
+            )
+        assert CDDWriter.last_name(profile) == "Hyde"
+
     def test_profile_country_to_alpha3_invalid_country(self):  # pylint: disable=no-self-use
         """
         A profile with an invalid country code should raise an InvalidProfileDataException
         """
         with mute_signals(post_save):
-            profile = ProfileFactory.create()
-        profile.country = 'XXXX'
+            profile = ProfileFactory(country='XXXX')
         with self.assertRaises(InvalidProfileDataException):
             CDDWriter.profile_country_to_alpha3(profile)
 
@@ -210,8 +257,7 @@ class CDDWriterTest(TSVWriterTestCase, TestCase):
         A profile with a valid phone number should be parsed correctly
         """
         with mute_signals(post_save):
-            profile = ProfileFactory.create()
-        profile.phone_number = "+1 899 293-3423"
+            profile = ProfileFactory(phone_number="+1 899 293-3423")
         assert CDDWriter.profile_phone_number_to_raw_number(profile) == "899 293-3423"
         assert CDDWriter.profile_phone_number_to_country_code(profile) == "1"
 
@@ -226,8 +272,7 @@ class CDDWriterTest(TSVWriterTestCase, TestCase):
         It should raise exceptions for bad data
         """
         with mute_signals(post_save):
-            profile = ExamProfileFactory.create()
-        profile.phone_number = bad_number
+            profile = ExamProfileFactory(profile__phone_number=bad_number)
         with self.assertRaises(InvalidProfileDataException):
             CDDWriter.profile_phone_number_to_raw_number(profile)
         with self.assertRaises(InvalidProfileDataException):
@@ -276,6 +321,26 @@ class CDDWriterTest(TSVWriterTestCase, TestCase):
             "999-999-9999\t1\t2016/05/15 15:02:55"
         )
 
+    def test_write_cdd_file_with_blank_romanized_name(self):
+        """
+        Tests cdd_writer against a profile without romanized name fields
+        """
+        kwargs = {
+            'profile__id': 9876,
+            'profile__first_name': 'Jane',
+            'profile__last_name': 'Smith',
+            'profile__romanized_first_name': None,
+            'profile__romanized_last_name': None,
+        }
+
+        with mute_signals(post_save):
+            exam_profiles = [ExamProfileFactory.create(**kwargs)]
+            exam_profiles[0].profile.updated_on = FIXED_DATETIME
+
+        self.cdd_writer.write(self.tsv_file, exam_profiles)
+
+        assert self.tsv_rows[0].startswith("9876\tJane\tSmith\t")
+
 
 class EADWriterTest(TSVWriterTestCase, TestCase):
     """
@@ -312,7 +377,7 @@ class EADWriterTest(TSVWriterTestCase, TestCase):
         }
 
         with mute_signals(post_save):
-            profile = ProfileFactory.create(id=14879)
+            profile = ProfileFactory(id=14879)
             exam_auths = [ExamAuthorizationFactory.create(user=profile.user, **kwargs)]
             exam_auths[0].updated_on = FIXED_DATETIME
 
