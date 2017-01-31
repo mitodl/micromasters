@@ -195,53 +195,41 @@ class CDDWriterTest(TSVWriterTestCase, TestCase):
         self.cdd_writer = CDDWriter()
         super().setUp()
 
-    def test_first_name(self):  # pylint: disable=missing-docstring,no-self-use
+    @ddt.data(
+        ("Jekyll", None, "Jekyll"),
+        (None, "Hyde", "Hyde"),
+        ("Jekyll", "Hyde", "Hyde"),
+    )
+    @ddt.unpack  # pylint: disable=no-self-use
+    def test_first_name(self, unromanized, romanized, expected):
+        """
+        Test that the `first_name` method prefers the `romanized_first_name`
+        field, and falls back on `first_name` field.
+        """
         with mute_signals(post_save):
             profile = ProfileFactory(
-                first_name="Jekyll",
-                romanized_first_name=None,
+                first_name=unromanized,
+                romanized_first_name=romanized,
             )
-        assert CDDWriter.first_name(profile) == "Jekyll"
+        assert CDDWriter.first_name(profile) == expected
 
-    def test_romanized_first_name(self):  # pylint: disable=missing-docstring,no-self-use
+    @ddt.data(
+        ("Jekyll", None, "Jekyll"),
+        (None, "Hyde", "Hyde"),
+        ("Jekyll", "Hyde", "Hyde"),
+    )
+    @ddt.unpack  # pylint: disable=no-self-use
+    def test_last_name(self, unromanized, romanized, expected):
+        """
+        Test that the `last_name` method prefers the `romanized_last_name`
+        field, and falls back on `last_name` field.
+        """
         with mute_signals(post_save):
             profile = ProfileFactory(
-                first_name=None,
-                romanized_first_name="Hyde",
+                last_name=unromanized,
+                romanized_last_name=romanized,
             )
-        assert CDDWriter.first_name(profile) == "Hyde"
-
-    def test_prefer_romanized_first_name(self):  # pylint: disable=missing-docstring,no-self-use
-        with mute_signals(post_save):
-            profile = ProfileFactory(
-                first_name="Jekyll",
-                romanized_first_name="Hyde",
-            )
-        assert CDDWriter.first_name(profile) == "Hyde"
-
-    def test_last_name(self):  # pylint: disable=missing-docstring,no-self-use
-        with mute_signals(post_save):
-            profile = ProfileFactory(
-                last_name="Jekyll",
-                romanized_last_name=None,
-            )
-        assert CDDWriter.last_name(profile) == "Jekyll"
-
-    def test_romanized_last_name(self):  # pylint: disable=missing-docstring,no-self-use
-        with mute_signals(post_save):
-            profile = ProfileFactory(
-                last_name=None,
-                romanized_last_name="Hyde",
-            )
-        assert CDDWriter.last_name(profile) == "Hyde"
-
-    def test_prefer_romanized_last_name(self):  # pylint: disable=missing-docstring,no-self-use
-        with mute_signals(post_save):
-            profile = ProfileFactory(
-                last_name="Jekyll",
-                romanized_last_name="Hyde",
-            )
-        assert CDDWriter.last_name(profile) == "Hyde"
+        assert CDDWriter.last_name(profile) == expected
 
     def test_profile_country_to_alpha3_invalid_country(self):  # pylint: disable=no-self-use
         """
