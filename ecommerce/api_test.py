@@ -70,7 +70,6 @@ from micromasters.utils import serialize_model_object
 from search.base import MockedESTestCase
 
 
-# pylint: disable=no-self-use
 def create_purchasable_course_run():
     """
     Creates a purchasable course run and an associated user

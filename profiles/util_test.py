@@ -17,7 +17,6 @@ from profiles import util
 from profiles.factories import ProfileFactory
 
 
-# pylint: disable=no-self-use
 class SplitNameTests(TestCase):
     """
     Tests for split_name

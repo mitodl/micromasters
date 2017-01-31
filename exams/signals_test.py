@@ -55,7 +55,7 @@ class ExamSignalsTest(MockedESTestCase):
         LineFactory.create(order=order, course_key=course_run.edx_course_key)
         CachedEnrollmentFactory.create(user=profile.user, course_run=course_run)
 
-    def test_update_exam_profile_called(self):  # pylint: disable=no-self-use
+    def test_update_exam_profile_called(self):
         """
         Verify that update_exam_profile is called when a profile saves
         """
@@ -73,7 +73,7 @@ class ExamSignalsTest(MockedESTestCase):
 
         assert profile_exam.status == ExamProfile.PROFILE_PENDING
 
-    def test_update_exam_authorization_final_grade(self):  # pylint: disable=no-self-use
+    def test_update_exam_authorization_final_grade(self):
         """
         Verify that update_exam_authorization_final_grade is called when a FinalGrade saves
         """

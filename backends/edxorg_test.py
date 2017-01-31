@@ -1,7 +1,6 @@
 """
 Oauth Backend Tests
 """
-# pylint: disable=no-self-use
 from unittest import TestCase
 from .edxorg import EdxOrgOAuth2
 

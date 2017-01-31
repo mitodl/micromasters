@@ -39,7 +39,7 @@ class PeasonUploadTest(SimpleTestCase):
     Tests for Pearson upload
     """
 
-    def test_upload_tsv(self, connection_mock):  # pylint: disable=no-self-use
+    def test_upload_tsv(self, connection_mock):
         """
         Tests that upload uses the correct settings values
         """

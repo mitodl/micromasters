@@ -27,7 +27,7 @@ class UserSerializer(serializers.ModelSerializer):
             "first_name", "last_name", "preferred_name",
         )
 
-    def get_username(self, obj):  # pylint: disable=no-self-use
+    def get_username(self, obj):
         """
         Look up the user's username on edX.
         We do *not* use the `user.username` field, because the Javascript
@@ -35,7 +35,7 @@ class UserSerializer(serializers.ModelSerializer):
         """
         return get_social_username(obj)
 
-    def get_first_name(self, obj):  # pylint: disable=no-self-use
+    def get_first_name(self, obj):
         """
         Get first_name from user profile, if profile exists
         """
@@ -44,7 +44,7 @@ class UserSerializer(serializers.ModelSerializer):
         except ObjectDoesNotExist:
             return None
 
-    def get_last_name(self, obj):  # pylint: disable=no-self-use
+    def get_last_name(self, obj):
         """
         Get last_name from user profile, if profile exists
         """
@@ -53,7 +53,7 @@ class UserSerializer(serializers.ModelSerializer):
         except ObjectDoesNotExist:
             return None
 
-    def get_preferred_name(self, obj):  # pylint: disable=no-self-use
+    def get_preferred_name(self, obj):
         """
         Get preferred_name from user profile, if profile exists
         """

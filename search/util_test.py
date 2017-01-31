@@ -12,7 +12,7 @@ class UtilTests(TestCase):
     Tests for utility functions
     """
 
-    def test_traverse_mapping(self):  # pylint: disable=no-self-use
+    def test_traverse_mapping(self):
         """
         Make sure traverse_mapping is actually iterating over all nodes
         """

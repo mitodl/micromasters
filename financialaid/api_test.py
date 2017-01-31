@@ -158,7 +158,6 @@ class FinancialAidBaseTestCase(MockedESTestCase):
         return resp
 
 
-# pylint: disable=no-self-use
 @ddt.ddt
 class FinancialAidAPITests(FinancialAidBaseTestCase):
     """

@@ -44,7 +44,7 @@ class UserFinderTests(MockedESTestCase):
 
 class CourseFinderTests(MockedESTestCase):
     """Test cases for CourseFinder"""
-    def test_course_finder_success(self):  # pylint: disable=no-self-use
+    def test_course_finder_success(self):
         """Tests that CourseFinder will return a desired course"""
         program = ProgramFactory.create(title='program1')
         course = CourseFactory.create(title='Course Lvl 100', program=program)
@@ -62,7 +62,7 @@ class CourseFinderTests(MockedESTestCase):
 
 class CourseRunFinderTests(MockedESTestCase):
     """Test cases for CourseRunFinder"""
-    def test_course_run_finder_success(self):  # pylint: disable=no-self-use
+    def test_course_run_finder_success(self):
         """Tests that CourseRunFinder will return a desired course run"""
         course_run = CourseRunFactory.create(title='courserun1', edx_course_key='coursekey1')
         CourseRunFactory.create(title='courserun2', edx_course_key='coursekey2')

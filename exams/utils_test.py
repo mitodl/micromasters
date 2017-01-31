@@ -50,7 +50,6 @@ class ExamUtilTests(TestCase):
         """"
         create payment for course
         """
-        # pylint: disable=no-self-use
         order = OrderFactory.create(user=user, status='fulfilled')
         LineFactory.create(order=order, course_key=course_run.edx_course_key)
         return order

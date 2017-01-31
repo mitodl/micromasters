@@ -4,7 +4,6 @@ from unittest import TestCase
 from django.core.urlresolvers import reverse
 
 
-# pylint: disable=no-self-use
 class URLTests(TestCase):
     """URL tests"""
 

@@ -19,7 +19,7 @@ class AddYearTests(TestCase):
     @unpack
     def test_add_year(self, year, month, day, expected_year, expected_month, expected_day):
         """assert add year method works"""
-        # pylint: disable=no-self-use, too-many-arguments
+        # pylint: disable=too-many-arguments
         leap_year = datetime.datetime(year, month, day, 0, 0, 0)
         next_year_date = add_year(leap_year, years=1)
         assert next_year_date.year == expected_year

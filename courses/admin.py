@@ -35,7 +35,7 @@ class CourseAdmin(admin.ModelAdmin):
     inlines = [CourseRunInline]
     ordering = ('program__title', 'position_in_program',)
 
-    def program_title(self, course):  # pylint: disable=no-self-use
+    def program_title(self, course):
         """Getter for the foreign key element"""
         return course.program.title
 
@@ -46,11 +46,11 @@ class CourseRunAdmin(admin.ModelAdmin):
     list_filter = ('course__program__live',)
     ordering = ('course__title', 'course__program__title', 'course__position_in_program',)
 
-    def program(self, run):  # pylint: disable=no-self-use
+    def program(self, run):
         """method to show program for list display."""
         return run.course.program.title
 
-    def course(self, run):  # pylint: disable=no-self-use
+    def course(self, run):
         """Getter for course foreign key"""
         return run.course.title
 

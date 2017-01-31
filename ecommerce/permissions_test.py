@@ -12,7 +12,6 @@ from ecommerce.api import generate_cybersource_sa_signature
 from ecommerce.permissions import IsSignedByCyberSource
 
 
-# pylint: disable=no-self-use
 @override_settings(CYBERSOURCE_SECURITY_KEY="fake")
 class PermissionsTests(TestCase):
     """

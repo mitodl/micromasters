@@ -40,7 +40,6 @@ class StatusTest(MockedESTestCase):
     """
     Tests for the different status classes
     """
-    # pylint: disable= no-self-use
     def test_course_status(self):
         """test for CourseStatus"""
         for attr in ('PASSED', 'NOT_PASSED', 'CURRENTLY_ENROLLED',
@@ -577,7 +576,6 @@ class InfoCourseTest(CourseTests):
 
     def get_mock_run_status_func(self, status, specific_run, other_run_status):
         """Helper method to return mocked functions for getting course run status"""
-        # pylint: disable=no-self-use
         def mock_return_status(actual_course_run, *args, **kargs):
             """Mock function for get_status_for_courserun"""
             # pylint: disable=unused-argument

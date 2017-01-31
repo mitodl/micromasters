@@ -38,7 +38,7 @@ class SearchResultMailView(APIView):
     )
     permission_classes = (permissions.IsAuthenticated, UserCanMessageLearnersPermission, )
 
-    def post(self, request, *args, **kargs):  # pylint: disable=unused-argument, no-self-use
+    def post(self, request, *args, **kargs):  # pylint: disable=unused-argument
         """
         POST method handler
         """
@@ -79,7 +79,7 @@ class CourseTeamMailView(GenericAPIView):
     lookup_url_kwarg = "course_id"
     queryset = Course.objects.all()
 
-    def post(self, request, *args, **kargs):  # pylint: disable=unused-argument, no-self-use
+    def post(self, request, *args, **kargs):  # pylint: disable=unused-argument
         """
         POST method handler
         """

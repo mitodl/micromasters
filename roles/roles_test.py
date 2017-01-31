@@ -5,8 +5,6 @@ from unittest import TestCase
 
 from roles import roles
 
-# pylint: disable=no-self-use
-
 
 class RolesTest(TestCase):
     """

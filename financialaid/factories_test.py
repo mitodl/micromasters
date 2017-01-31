@@ -16,7 +16,7 @@ class FinancialAidModelsTests(TestCase):
     """
     Tests for financialaid factories
     """
-    def test_financial_aid_factory_create(self):  # pylint: disable=no-self-use
+    def test_financial_aid_factory_create(self):
         """
         Tests that FinancialAidFactory.create() will create a profile for the user field if a user is not specified
         """
@@ -28,7 +28,7 @@ class FinancialAidModelsTests(TestCase):
         assert User.objects.count() == 1
         assert Profile.objects.count() == 1
 
-    def test_financial_aid_factory_create_with_user(self):  # pylint: disable=no-self-use
+    def test_financial_aid_factory_create_with_user(self):
         """
         Tests that FinancialAidFactory.create() will still work normally if provided a User object
         """

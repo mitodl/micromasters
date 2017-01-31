@@ -39,7 +39,7 @@ class TSVWriterTestCase(UnitTestCase):
     """
     Base class for tests around TSVWriter implementations
     """
-    def setUp(self):  # pylint: disable=missing-docstring
+    def setUp(self):
         self.tsv_file = io.StringIO()
 
     @property
@@ -68,7 +68,7 @@ class BaseTSVWriterTest(TSVWriterTestCase):
     Tests for Pearson writer code
     """
 
-    def test_get_field_mapper(self):  # pylint: disable=no-self-use
+    def test_get_field_mapper(self):
         """
         Tests that _get_field_mapper handles input correctly
         """
@@ -87,19 +87,19 @@ class BaseTSVWriterTest(TSVWriterTestCase):
         with self.assertRaises(TypeError):
             BaseTSVWriter.get_field_mapper([])
 
-    def test_format_datetime(self):  # pylint: disable=no-self-use
+    def test_format_datetime(self):
         """
         Tests that datetimes format correctly according to Pearson spec
         """
         assert BaseTSVWriter.format_datetime(FIXED_DATETIME) == '2016/05/15 15:02:55'
 
-    def test_format_date(self):  # pylint: disable=no-self-use
+    def test_format_date(self):
         """
         Tests that datetimes format correctly according to Pearson spec
         """
         assert BaseTSVWriter.format_date(FIXED_DATE) == '2016/05/15'
 
-    def test_writer_init(self):  # pylint: disable=no-self-use
+    def test_writer_init(self):
         """
         Tests that the writer initializes correctly
         """
@@ -117,7 +117,7 @@ class BaseTSVWriterTest(TSVWriterTestCase):
 
         assert BaseTSVWriter([]).prefix_mapper is None
 
-    def test_map_row_with_prefix(self):  # pylint: disable=no-self-use
+    def test_map_row_with_prefix(self):
         """
         Tests map_row with a prefix set
         """
@@ -132,7 +132,7 @@ class BaseTSVWriterTest(TSVWriterTestCase):
             'Prop2': 145,
         }
 
-    def test_map_row_without_prefix(self):  # pylint: disable=no-self-use
+    def test_map_row_without_prefix(self):
         """
         Tests map_row with a prefix set
         """
@@ -146,7 +146,7 @@ class BaseTSVWriterTest(TSVWriterTestCase):
             'Prop2': 145,
         }
 
-    def test_write(self):  # pylint: disable=no-self-use
+    def test_write(self):
         """
         Tests the write method outputs correctly
         """
@@ -169,7 +169,7 @@ class BaseTSVWriterTest(TSVWriterTestCase):
             "145\t\r\n"  # None should convert to an empty string
         )
 
-    def test_write_skips_invalid_rows(self):  # pylint: disable=no-self-use
+    def test_write_skips_invalid_rows(self):
         """
         Tests write_cdd_file against a profile with invalid state
         """
@@ -191,7 +191,7 @@ class CDDWriterTest(TSVWriterTestCase, TestCase):
     """
     Tests for CDDWriter
     """
-    def setUp(self):  # pylint: disable=missing-docstring
+    def setUp(self):
         self.cdd_writer = CDDWriter()
         super().setUp()
 
@@ -200,7 +200,7 @@ class CDDWriterTest(TSVWriterTestCase, TestCase):
         (None, "Hyde", "Hyde"),
         ("Jekyll", "Hyde", "Hyde"),
     )
-    @ddt.unpack  # pylint: disable=no-self-use
+    @ddt.unpack
     def test_first_name(self, unromanized, romanized, expected):
         """
         Test that the `first_name` method prefers the `romanized_first_name`
@@ -218,7 +218,7 @@ class CDDWriterTest(TSVWriterTestCase, TestCase):
         (None, "Hyde", "Hyde"),
         ("Jekyll", "Hyde", "Hyde"),
     )
-    @ddt.unpack  # pylint: disable=no-self-use
+    @ddt.unpack
     def test_last_name(self, unromanized, romanized, expected):
         """
         Test that the `last_name` method prefers the `romanized_last_name`
@@ -231,7 +231,7 @@ class CDDWriterTest(TSVWriterTestCase, TestCase):
             )
         assert CDDWriter.last_name(profile) == expected
 
-    def test_profile_country_to_alpha3_invalid_country(self):  # pylint: disable=no-self-use
+    def test_profile_country_to_alpha3_invalid_country(self):
         """
         A profile with an invalid country code should raise an InvalidProfileDataException
         """
@@ -240,7 +240,7 @@ class CDDWriterTest(TSVWriterTestCase, TestCase):
         with self.assertRaises(InvalidProfileDataException):
             CDDWriter.profile_country_to_alpha3(profile)
 
-    def test_profile_phone_number_functions(self):  # pylint: disable=no-self-use
+    def test_profile_phone_number_functions(self):
         """
         A profile with a valid phone number should be parsed correctly
         """
@@ -255,7 +255,7 @@ class CDDWriterTest(TSVWriterTestCase, TestCase):
         'bad string',
         '120272727',
     )
-    def test_profile_phone_number_exceptions(self, bad_number):  # pylint: disable=no-self-use
+    def test_profile_phone_number_exceptions(self, bad_number):
         """
         It should raise exceptions for bad data
         """
@@ -334,7 +334,7 @@ class EADWriterTest(TSVWriterTestCase, TestCase):
     """
     Tests for EADWriter
     """
-    def setUp(self):  # pylint: disable=missing-docstring
+    def setUp(self):
         self.ead_writer = EADWriter()
         super().setUp()
 

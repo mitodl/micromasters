@@ -11,7 +11,6 @@ from ecommerce.models import OrderAudit
 from profiles.factories import UserFactory
 
 
-# pylint: disable=no-self-use
 class AdminTest(MockedESTestCase):
     """
     Tests specifically whether new FinancialAidAudit object is created when the financial aid

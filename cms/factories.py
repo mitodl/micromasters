@@ -15,7 +15,7 @@ from courses.factories import ProgramFactory
 
 class ImageFactory(DjangoModelFactory):
     """Factory for Wagtail images"""
-    class Meta:  # pylint: disable=missing-docstring
+    class Meta:
         model = Image
 
     file = factory.Faker('uri_path')
@@ -46,7 +46,7 @@ class ImageFactory(DjangoModelFactory):
 
 class ProgramPageFactory(DjangoModelFactory):
     """Factory for ProgramPage"""
-    class Meta:  # pylint: disable=missing-docstring
+    class Meta:
         model = ProgramPage
 
     path = '/'
@@ -58,7 +58,7 @@ class ProgramPageFactory(DjangoModelFactory):
 
 class FacultyFactory(DjangoModelFactory):
     """Factory for program faculty"""
-    class Meta:  # pylint: disable=missing-docstring
+    class Meta:
         model = ProgramFaculty
 
     name = factory.Faker('name')

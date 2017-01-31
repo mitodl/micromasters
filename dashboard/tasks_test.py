@@ -17,8 +17,6 @@ from dashboard.tasks import (
 from micromasters.factories import UserFactory
 from search.base import MockedESTestCase
 
-# pylint: disable=no-self-use
-
 
 class TasksTest(MockedESTestCase):
     """

@@ -24,7 +24,6 @@ from roles.roles import (
 from search.base import MockedESTestCase
 
 
-# pylint: disable=no-self-use
 class CanEditIfOwnerTests(MockedESTestCase):
     """
     Tests for CanEditIfOwner permissions
@@ -66,7 +65,6 @@ class CanEditIfOwnerTests(MockedESTestCase):
             assert not perm.has_object_permission(request, None, profile)
 
 
-# pylint: disable=no-self-use
 class CanSeeIfNotPrivateTests(MockedESTestCase):
     """
     Tests for CanSeeIfNotPrivate permissions

@@ -33,7 +33,7 @@ class TierFactory(DjangoModelFactory):
     name = FuzzyText()
     description = FuzzyText()
 
-    class Meta:  # pylint: disable=missing-docstring
+    class Meta:
         model = Tier
 
 
@@ -47,7 +47,7 @@ class TierProgramFactory(DjangoModelFactory):
     current = Faker('boolean')
     income_threshold = FuzzyInteger(low=1, high=10000)
 
-    class Meta:  # pylint: disable=missing-docstring
+    class Meta:
         model = TierProgram
 
 
@@ -81,7 +81,7 @@ class FinancialAidFactory(DjangoModelFactory):
             kwargs["user"] = profile.user
         return super().create(**kwargs)
 
-    class Meta:  # pylint: disable=missing-docstring
+    class Meta:
         model = FinancialAid
 
 
@@ -92,5 +92,5 @@ class CountryIncomeThresholdFactory(DjangoModelFactory):
     country_code = FuzzyText(length=2)
     income_threshold = FuzzyInteger(low=0, high=123456)
 
-    class Meta:  # pylint: disable=missing-docstring
+    class Meta:
         model = CountryIncomeThreshold

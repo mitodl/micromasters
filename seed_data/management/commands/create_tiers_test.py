@@ -18,7 +18,7 @@ class CreateTiersTest(MockedESTestCase):
         cls.program2 = ProgramFactory.create()
         cls.command = create_tiers.Command()
 
-    def test_create_tier_with_tiers_parameter(self):  # pylint: disable=no-self-use
+    def test_create_tier_with_tiers_parameter(self):
         """
         Test creating tiers with --tiers parameter
         """

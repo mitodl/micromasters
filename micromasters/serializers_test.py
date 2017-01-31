@@ -10,7 +10,6 @@ from micromasters.serializers import UserSerializer, serialize_maybe_user
 from micromasters.factories import UserFactory
 from profiles.factories import ProfileFactory
 from search.base import MockedESTestCase
-# pylint: disable=no-self-use, missing-docstring
 
 
 class UserTests(MockedESTestCase):

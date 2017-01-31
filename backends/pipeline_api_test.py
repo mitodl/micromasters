@@ -18,7 +18,6 @@ from roles.models import (
 from search.base import MockedESTestCase
 
 
-# pylint: disable=no-self-use
 class EdxPipelineApiTest(MockedESTestCase):
     """
     Test class for APIs run during the Python Social Auth

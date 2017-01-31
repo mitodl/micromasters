@@ -197,7 +197,7 @@ class Profile(models.Model):
     # Split the `address` field into three fields, max 40 characters each.
     # These fields are used in the Pearson export.
 
-    def _split_address(self):
+    def _split_address(self):  # pylint: disable=missing-docstring
         if self.address is None:
             return (None, None, None)
 

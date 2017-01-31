@@ -40,7 +40,7 @@ class SocialTests(MockedESTestCase):
             uid=self.social_username,
         )
 
-    def test_anonymous_user(self):  # pylint: disable=no-self-use
+    def test_anonymous_user(self):
         """
         get_social_username should return None for anonymous users
         """

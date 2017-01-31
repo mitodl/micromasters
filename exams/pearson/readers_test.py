@@ -22,13 +22,13 @@ class BaseTSVReaderTest(UnitTestCase):
     Tests for Pearson reader code
     """
 
-    def test_parse_datetime(self):  # pylint: disable=no-self-use
+    def test_parse_datetime(self):
         """
         Tests that datetimes format correctly according to Pearson spec
         """
         assert BaseTSVReader.parse_datetime('2016/05/15 15:02:55') == FIXED_DATETIME
 
-    def test_reader_init(self):  # pylint: disable=no-self-use
+    def test_reader_init(self):
         """
         Tests that the reader initializes correctly
         """
@@ -43,7 +43,7 @@ class BaseTSVReaderTest(UnitTestCase):
         assert reader.field_mappers == fields
         assert reader.read_as_cls == PropTuple
 
-    def test_map_row(self):  # pylint: disable=no-self-use
+    def test_map_row(self):
         """
         Tests map_row with a prefix set
         """
@@ -81,7 +81,7 @@ class BaseTSVReaderTest(UnitTestCase):
         with self.assertRaises(InvalidTsvRowException):
             reader.map_row({})
 
-    def test_read(self):  # pylint: disable=no-self-use
+    def test_read(self):
         """
         Tests the read method outputs correctly
         """

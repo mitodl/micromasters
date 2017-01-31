@@ -16,7 +16,7 @@ class DashboardFactoryTests(MockedESTestCase):
     """
     Tests for dashboard factories
     """
-    def test_verified_enroll_factory_fa_create(self):  # pylint: disable=no-self-use
+    def test_verified_enroll_factory_fa_create(self):
         """
         Tests that CachedEnrollmentVerifiedFactory creates additional data for a FA-enabled course run
         """
@@ -30,7 +30,7 @@ class DashboardFactoryTests(MockedESTestCase):
         assert len(lines) == 1
         assert lines[0].order.status == Order.FULFILLED
 
-    def test_verified_enrollment_factory_fa_build(self):  # pylint: disable=no-self-use
+    def test_verified_enrollment_factory_fa_build(self):
         """
         Tests that CachedEnrollmentVerifiedFactory does not run post-generation on .build()
         """

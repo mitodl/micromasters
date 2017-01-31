@@ -5,6 +5,8 @@ load-plugins = pylint_django
 [BASIC]
 # Allow django's urlpatterns, and our log preference
 const-rgx = (([A-Z_][A-Z0-9_]*)|(__.*__)|log|urlpatterns)$
+# Don't require docstrings for double-underscore methods, or for tests
+no-docstring-rgx = __.*__$|test_.+|setUp$|setUpClass$|tearDown$|tearDownClass$|Meta$
 
 [TYPECHECK]
 generated-members =
@@ -17,4 +19,4 @@ ignored-modules=
 	six.moves,
 
 [MESSAGES CONTROL]
-disable = no-member, old-style-class, no-init, too-few-public-methods, abstract-method, invalid-name, too-many-ancestors, line-too-long
+disable = no-member, old-style-class, no-init, too-few-public-methods, abstract-method, invalid-name, too-many-ancestors, line-too-long, no-self-use

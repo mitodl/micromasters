@@ -1,7 +1,6 @@
 """
 Model tests
 """
-# pylint: disable=no-self-use
 from django.test import TestCase
 
 from cms.models import FrequentlyAskedQuestion

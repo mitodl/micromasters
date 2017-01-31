@@ -28,7 +28,7 @@ class ElasticProxyView(APIView):
     )
     permission_classes = (IsAuthenticated, UserCanSearchPermission, )
 
-    def _execute_search_from_request(self, user, request_data):  # pylint: disable=no-self-use
+    def _execute_search_from_request(self, user, request_data):
         """
         Common function that will take care of handling requests coming from different methods.
         """

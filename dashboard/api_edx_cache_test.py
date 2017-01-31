@@ -33,9 +33,6 @@ from micromasters.utils import load_json_from_file
 from search.base import MockedESTestCase
 
 
-# pylint: disable=no-self-use
-
-
 class CachedEdxUserDataTests(MockedESTestCase):
     """
     Tests for the CachedEdxUserData class

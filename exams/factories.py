@@ -30,7 +30,7 @@ class ExamProfileFactory(DjangoModelFactory):
     )
     profile = SubFactory(ProfileFactory)
 
-    class Meta:  # pylint: disable=missing-docstring
+    class Meta:
         model = ExamProfile
 
 
@@ -54,5 +54,5 @@ class ExamAuthorizationFactory(DjangoModelFactory):
         lambda exam_auth: exam_auth.date_first_eligible + timedelta(days=10)
     )
 
-    class Meta:  # pylint: disable=missing-docstring
+    class Meta:
         model = ExamAuthorization

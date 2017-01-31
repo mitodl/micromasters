@@ -36,7 +36,7 @@ class ExamTasksTest(TestCase):
         (5, 3, 125),
     )
     @unpack
-    def test_backoff(self, base, retries, expected):  # pylint: disable=no-self-use
+    def test_backoff(self, base, retries, expected):
         """
         Test that _backoff is a power of settings.EXAMS_SFTP_BACKOFF_BASE
         """
@@ -48,7 +48,7 @@ class ExamTasksTest(TestCase):
         (export_exam_profiles, 'exams.tasks.export_exam_profiles.retry'),
     )
     @unpack
-    def test_task_retry(self, task, task_retry):  # pylint: disable=no-self-use
+    def test_task_retry(self, task, task_retry):
         """
         Verify that when a retryable error occurs that the task retries
         """
@@ -76,7 +76,7 @@ class ExamProfileTasksTest(TestCase):
             cls.all_profiles = cls.expected_in_progress_profiles + cls.expected_invalid_profiles
 
     @patch('exams.pearson.upload.upload_tsv')
-    def test_export_exam_profiles(self, upload_tsv_mock):  # pylint: disable=no-self-use
+    def test_export_exam_profiles(self, upload_tsv_mock):
         """
         Verify that export_exam_profiles makes calls to export the pending profiles
         """
@@ -136,7 +136,7 @@ class ExamAuthorizationTasksTest(TestCase):
             cls.exam_auths = ExamAuthorizationFactory.create_batch(10, status=ExamAuthorization.STATUS_PENDING)
 
     @patch('exams.pearson.upload.upload_tsv')
-    def test_export_exam_authorizations(self, upload_tsv_mock):  # pylint: disable=no-self-use
+    def test_export_exam_authorizations(self, upload_tsv_mock):
         """
         Verify that export_exam_authorizations exports pending exam auths
         """

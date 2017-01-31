@@ -1,5 +1,4 @@
 """Tests for the API"""
-# pylint: disable=no-self-use
 
 from unittest.mock import Mock
 

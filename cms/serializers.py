@@ -21,7 +21,7 @@ class FacultyImageSerializer(serializers.ModelSerializer):
     alt = serializers.CharField(source="default_alt_text")
     rendition = serializers.SerializerMethodField()
 
-    def get_rendition(self, image):  # pylint: disable=no-self-use
+    def get_rendition(self, image):
         """Serialize a rendition for the faculty image"""
         rendition = image.get_rendition('fill-500x385')
         return RenditionSerializer(rendition).data
@@ -49,13 +49,13 @@ class ProgramPageSerializer(serializers.ModelSerializer):
     faculty = FacultySerializer(source='faculty_members', many=True)
     courses = CourseSerializer(source='program.course_set', many=True)
 
-    def get_id(self, programpage):  # pylint: disable=no-self-use
+    def get_id(self, programpage):
         """Get the ID of the program"""
         if not programpage.program:
             return None
         return programpage.program.id
 
-    def get_slug(self, programpage):  # pylint: disable=no-self-use
+    def get_slug(self, programpage):
         """Slugify the program's title for Zendesk"""
         if not programpage.program:
             return None

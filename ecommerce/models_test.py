@@ -38,7 +38,6 @@ from profiles.models import Profile
 from search.base import MockedESTestCase
 
 
-# pylint: disable=no-self-use
 @override_settings(CYBERSOURCE_SECURITY_KEY='fake')
 class OrderTests(MockedESTestCase):
     """

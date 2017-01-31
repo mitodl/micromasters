@@ -8,7 +8,6 @@ from profiles.models import Profile
 from search.base import MockedESTestCase
 
 
-# pylint: disable=no-self-use
 class SignalProfilesTest(MockedESTestCase):
     """
     Test class for signals that creates a profile whenever a user is created

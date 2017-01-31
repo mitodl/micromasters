@@ -165,7 +165,7 @@ class ProfileBaseSerializer(ModelSerializer):
     work_history = EmploymentSerializer(many=True)
     education = EducationSerializer(many=True)
 
-    def get_username(self, obj):  # pylint: disable=no-self-use
+    def get_username(self, obj):
         """Getter for the username field"""
         return get_social_username(obj.user)
 

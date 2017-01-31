@@ -44,7 +44,7 @@ class CachedCertificateFactory(DjangoModelFactory):
         "username": x.user.username,
     })
 
-    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods,old-style-class
+    class Meta:
         model = CachedCertificate
 
 
@@ -59,7 +59,7 @@ class CachedCurrentGradeFactory(DjangoModelFactory):
         "username": x.user.username,
     })
 
-    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods,old-style-class
+    class Meta:
         model = CachedCurrentGrade
 
 
@@ -76,7 +76,7 @@ class CachedEnrollmentFactory(DjangoModelFactory):
         }
     })
 
-    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods,old-style-class
+    class Meta:
         model = CachedEnrollment
 
 
@@ -114,7 +114,7 @@ class UserCacheRefreshTimeFactory(DjangoModelFactory):
     # current grades expire after 1 hour, this generates a last request between 1:15 hours ago and now
     current_grade = FuzzyDateTime(datetime.now(tz=pytz.utc) - timedelta(hours=1, minutes=15))
 
-    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods,old-style-class
+    class Meta:
         model = UserCacheRefreshTime
 
 
@@ -123,7 +123,7 @@ class ProgramEnrollmentFactory(DjangoModelFactory):
     user = SubFactory(UserFactory)
     program = SubFactory(ProgramFactory)
 
-    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods,old-style-class
+    class Meta:
         model = ProgramEnrollment
 
     @classmethod

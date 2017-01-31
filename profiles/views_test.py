@@ -101,7 +101,7 @@ class ProfileGETTests(ProfileBaseTests):
         view = resolve(self.url1)
         assert view.func.cls is ProfileViewSet
 
-    def test_permissions(self):  # pylint: disable=no-self-use
+    def test_permissions(self):
         """
         Assert that we set permissions correctly
         """

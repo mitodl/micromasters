@@ -94,7 +94,6 @@ def format_as_iso8601(time):
     return time.strftime(iso_format)[:-3] + "Z"
 
 
-# pylint: disable=no-self-use
 class SerializerTests(MockedESTestCase):
     """
     Tests for serialize_model

@@ -23,7 +23,6 @@ from roles.roles import (
 from search.base import ESTestCase
 
 
-# pylint: disable=no-self-use
 @ddt.ddt
 class SearchTests(ESTestCase, APITestCase):
     """Tests for the search api view"""

@@ -36,7 +36,7 @@ def mocked_json(return_data=None):
 
 
 @patch('mail.views.prepare_and_execute_search')  # pylint: disable=missing-docstring
-@patch('mail.views.MailgunClient')  # pylint: disable=missing-docstring
+@patch('mail.views.MailgunClient')
 class MailViewsTests(APITestCase):
     @classmethod
     def setUpTestData(cls):

@@ -23,7 +23,7 @@ class FinancialAidModelsTests(MockedESTestCase):
     """
     Tests for financialaid models
     """
-    def test_timestamped_model_update(self):  # pylint: disable=no-self-use
+    def test_timestamped_model_update(self):
         """
         Tests that timestamped models have update_on updated regardless of whether using .save() or .update()
         """
@@ -81,7 +81,7 @@ class FinancialAidModelsTests(MockedESTestCase):
             tier_program=financial_aid.tier_program
         )
 
-    def test_save_and_log(self):  # pylint: disable=no-self-use
+    def test_save_and_log(self):
         """
         Tests that FinancialAid.save_and_log() creates an audit record with the correct information.
         """
@@ -116,7 +116,7 @@ class FinancialAidModelsTests(MockedESTestCase):
             else:
                 assert value == original_after_json[field]
 
-    def test_to_dict(self):  # pylint: disable=no-self-use
+    def test_to_dict(self):
         """
         assert output of to_dict
         """

@@ -79,7 +79,7 @@ class SearchAPITests(ESTestCase):  # pylint: disable=missing-docstring
                 program=cls.program,
             )
 
-    def test_execute_search(self):  # pylint: disable=no-self-use
+    def test_execute_search(self):
         """
         Test that the execute_search method invokes the right method on the Search object
         """
@@ -131,7 +131,7 @@ class SearchAPITests(ESTestCase):  # pylint: disable=missing-docstring
         assert 'size' in search_query_dict
         assert search_query_dict['size'] == 5
 
-    def test_create_search_obj_metadata(self):  # pylint: disable=no-self-use
+    def test_create_search_obj_metadata(self):
         """
         Test that Search objects are created with proper metadata
         """
@@ -202,7 +202,7 @@ class SearchAPITests(ESTestCase):  # pylint: disable=missing-docstring
         self.assertTrue(results[0].program.is_learner)
         self.assertTrue(results[0].program.email_optin)
 
-    def test_all_query_matching_emails(self):  # pylint: disable=no-self-use
+    def test_all_query_matching_emails(self):
         """
         Test that a set of search results will yield an expected set of emails
         """

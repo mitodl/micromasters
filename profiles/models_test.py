@@ -1,7 +1,6 @@
 """
 Model tests
 """
-# pylint: disable=no-self-use
 from datetime import datetime
 from unittest.mock import patch
 from ddt import ddt, data

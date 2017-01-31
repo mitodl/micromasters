@@ -17,7 +17,6 @@ from dashboard.models import ProgramEnrollment
 from profiles.factories import ProfileFactory
 
 
-# pylint: disable=no-self-use
 # Make sure that any unmocked ES activity results in an error
 @override_settings(ELASTICSEARCH_URL="fake")
 class IndexingTests(TestCase):

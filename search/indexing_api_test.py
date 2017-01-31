@@ -85,7 +85,6 @@ def assert_search(results, program_enrollments):
     assert serialized == sources
 
 
-# pylint: disable=no-self-use
 class IndexTests(ESTestCase):
     """
     Tests for indexing
@@ -288,7 +287,7 @@ class SerializerTests(ESTestCase):
     Tests for document serializers
     """
 
-    def test_program_enrolled_user_serializer(self):  # pylint: disable=no-self-use
+    def test_program_enrolled_user_serializer(self):
         """
         Asserts the output of the serializer for program-enrolled users (ProgramEnrollments)
         """
@@ -368,14 +367,14 @@ class RecreateIndexTests(ESTestCase):
         if conn.indices.exists(index_name):
             conn.indices.delete(index_name)
 
-    def test_create_index(self):  # pylint: disable=no-self-use
+    def test_create_index(self):
         """
         Test that recreate_index will create an index and let search successfully
         """
         recreate_index()
         assert es.search()['total'] == 0
 
-    def test_update_index(self):  # pylint: disable=no-self-use
+    def test_update_index(self):
         """
         Test that recreate_index will clear old data and index all profiles
         """

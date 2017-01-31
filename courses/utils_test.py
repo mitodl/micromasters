@@ -14,7 +14,7 @@ class CourseUtilTests(TestCase):
     Test cases for course utils
     """
 
-    def test_get_year_season_from_course_run(self):  # pylint: disable=no-self-use
+    def test_get_year_season_from_course_run(self):
         """
         Tests that year/season is calculated appropriately from a CourseRun
         """

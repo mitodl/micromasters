@@ -1,7 +1,6 @@
 """
 Model tests
 """
-# pylint: disable=no-self-use
 from datetime import datetime, timedelta
 from urllib.parse import urljoin
 

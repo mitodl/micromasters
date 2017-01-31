@@ -46,7 +46,7 @@ class OrderFactory(DjangoModelFactory):
     )
     total_price_paid = FuzzyDecimal(low=0, high=12345)
 
-    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods,old-style-class
+    class Meta:
         model = Order
 
 
@@ -57,7 +57,7 @@ class LineFactory(DjangoModelFactory):
     description = FuzzyText(prefix="Line ")
     course_key = FuzzyText()
 
-    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods,old-style-class
+    class Meta:
         model = Line
 
 
@@ -81,7 +81,7 @@ class ReceiptFactory(DjangoModelFactory):
     order = SubFactory(OrderFactory)
     data = LazyAttribute(lambda receipt: gen_fake_receipt_data(receipt.order))
 
-    class Meta:  # pylint: disable=missing-docstring
+    class Meta:
         model = Receipt
 
 
@@ -91,7 +91,7 @@ class CoursePriceFactory(DjangoModelFactory):
     is_valid = Faker('boolean')
     price = FuzzyDecimal(low=0, high=12345)
 
-    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods,old-style-class
+    class Meta:
         model = CoursePrice
 
 
@@ -102,7 +102,7 @@ class CouponFactory(DjangoModelFactory):
     amount_type = Coupon.PERCENT_DISCOUNT
     amount = FuzzyDecimal(0, 1)
 
-    class Meta:  # pylint: disable=missing-docstring
+    class Meta:
         model = Coupon
 
     content_object = SubFactory(ProgramFactory)

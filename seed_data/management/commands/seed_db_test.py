@@ -20,19 +20,19 @@ from search.base import MockedESTestCase
 
 class SeedDBUtilityTests(MockedESTestCase):
     """Tests for utility functions used by the seed_db command"""
-    def test_compile_model_data(self):  # pylint: disable=no-self-use
+    def test_compile_model_data(self):
         """Tests that compile_model_data creates a dict of model data"""
         model_data = compile_model_data(User, {'email': 'email1@example.com'})
         assert model_data['email'] == 'email1@example.com'
         for k, v in MODEL_DEFAULTS[User].items():
             assert model_data[k] == v
 
-    def test_compile_model_data_with_added_params(self):  # pylint: disable=no-self-use
+    def test_compile_model_data_with_added_params(self):
         """Tests that additional params can be set in compile_model_data"""
         model_data = compile_model_data(User, {'email': 'email1@example.com'}, username='username1')
         assert model_data['username'] == 'username1'
 
-    def test_deserialize_model_data(self):  # pylint: disable=no-self-use
+    def test_deserialize_model_data(self):
         """Tests that deserialize_model_data creates a new model object"""
         model_obj = deserialize_model_data(User, {'email': 'email1@example.com'}, username='username1')
         assert model_obj.email == 'email1@example.com'
@@ -103,7 +103,7 @@ class SeedDBDeserializationTests(MockedESTestCase):
         "position_in_program": 1
     }
 
-    def test_deserialize_user_data(self):  # pylint: disable=no-self-use
+    def test_deserialize_user_data(self):
         """Test that user data is correctly deserialized"""
         new_course_run = CourseRunFactory.create(edx_course_key='course-v1:MITx+Analog+Learning+100+Aug_2015')
         new_program = new_course_run.course.program
@@ -114,7 +114,7 @@ class SeedDBDeserializationTests(MockedESTestCase):
         assert user.profile.date_of_birth == '1961-04-29'
         assert CachedEnrollment.objects.filter(user=user, course_run=new_course_run).count() == 1
 
-    def test_deserialize_course_data(self):  # pylint: disable=no-self-use
+    def test_deserialize_course_data(self):
         """Test that course data is correctly deserialized"""
         new_program = ProgramFactory.create()
         new_course = deserialize_course_data(new_program, self.COURSE_DATA)

@@ -20,7 +20,6 @@ from profiles.factories import UserFactory
 from search.base import MockedESTestCase
 
 
-# pylint: disable=no-self-use
 class CourseSerializerTests(MockedESTestCase):
     """
     Tests for CourseSerializer

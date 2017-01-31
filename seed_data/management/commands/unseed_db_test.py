@@ -15,7 +15,7 @@ from search.base import MockedESTestCase
 
 class UnseedDBTests(MockedESTestCase):
     """Tests for the unseed_db_commond"""
-    def test_unseed_db(self):  # pylint: disable=no-self-use
+    def test_unseed_db(self):
         """Test that unseed_db deletes seed data"""
         for i in range(2):
             ProgramFactory.create(description='{} test program {}'.format(FAKE_PROGRAM_DESC_PREFIX, i))

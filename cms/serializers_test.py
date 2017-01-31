@@ -11,7 +11,6 @@ from cms.factories import FacultyFactory, ProgramPageFactory
 from courses.factories import ProgramFactory, CourseFactory
 
 
-# pylint: disable=no-self-use
 class WagtailSerializerTests(MockedESTestCase):
     """
     Tests for WagtailSerializer

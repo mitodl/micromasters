@@ -14,8 +14,6 @@ from roles.models import Role
 from micromasters.factories import UserFactory
 from search.base import MockedESTestCase
 
-# pylint: disable=no-self-use
-
 
 class SignalsTest(MockedESTestCase):
     """

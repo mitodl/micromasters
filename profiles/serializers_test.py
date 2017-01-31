@@ -39,7 +39,6 @@ from profiles.serializers import (
 from search.base import MockedESTestCase
 
 
-# pylint: disable=no-self-use
 class ProfileTests(MockedESTestCase):
     """
     Tests for profile serializers
@@ -57,7 +56,7 @@ class ProfileTests(MockedESTestCase):
             )
             return profile
 
-    def test_full(self):  # pylint: disable=no-self-use
+    def test_full(self):
         """
         Test full serializer
         """
@@ -99,7 +98,7 @@ class ProfileTests(MockedESTestCase):
             'phone_number': profile.phone_number,
         }
 
-    def test_limited(self):  # pylint: disable=no-self-use
+    def test_limited(self):
         """
         Test limited serializer
         """

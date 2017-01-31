@@ -7,7 +7,6 @@ from courses.models import Course, Program
 from dashboard.models import ProgramEnrollment
 
 
-# pylint: disable=no-self-use
 class ProgramSerializer(serializers.ModelSerializer):
     """Serializer for Program objects"""
     programpage_url = serializers.SerializerMethodField()

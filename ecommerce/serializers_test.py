@@ -8,7 +8,6 @@ from ecommerce.factories import CouponFactory
 from ecommerce.serializers import CouponSerializer
 
 
-# pylint: disable=no-self-use
 class SerializerTests(TestCase):
     """Tests for ecommerce serializers"""
 

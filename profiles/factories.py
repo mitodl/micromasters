@@ -84,7 +84,7 @@ class ProfileFactory(DjangoModelFactory):
 
     updated_on = FuzzyDateTime(datetime(1850, 1, 1, tzinfo=timezone.utc))
 
-    class Meta:  # pylint: disable=missing-docstring
+    class Meta:
         model = Profile
 
 
@@ -102,7 +102,7 @@ class EmploymentFactory(DjangoModelFactory):
     end_date = FuzzyDate(date(1850, 1, 1))
     start_date = FuzzyDate(date(1850, 1, 1))
 
-    class Meta:  # pylint: disable=missing-docstring
+    class Meta:
         model = Employment
 
 
@@ -123,5 +123,5 @@ class EducationFactory(DjangoModelFactory):
     school_state_or_territory = Faker('state')
     school_country = Faker('country')
 
-    class Meta:  # pylint: disable=missing-docstring
+    class Meta:
         model = Education

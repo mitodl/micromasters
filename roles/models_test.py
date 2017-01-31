@@ -9,8 +9,6 @@ from roles import roles
 from roles.models import Role
 from search.base import MockedESTestCase
 
-# pylint: disable=no-self-use
-
 
 class MicroMastersRoleTest(MockedESTestCase):
     """

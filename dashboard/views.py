@@ -36,7 +36,7 @@ class UserDashboard(APIView):
     )
     permission_classes = (permissions.IsAuthenticated, )
 
-    def get(self, request, *args, **kargs):  # pylint: disable=unused-argument, no-self-use
+    def get(self, request, *args, **kargs):  # pylint: disable=unused-argument
         """
         Returns information needed to display the user
         dashboard for all the programs the user is enrolled in.
@@ -67,7 +67,7 @@ class UserCourseEnrollment(APIView):
     )
     permission_classes = (permissions.IsAuthenticated, )
 
-    def post(self, request):  # pylint: disable=no-self-use
+    def post(self, request):
         """
         Audit enrolls the user in a course in edx
         """

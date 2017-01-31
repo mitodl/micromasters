@@ -12,7 +12,7 @@ from exams.models import (
 class ExamProfileTest(TestCase):
     """Tests for ExamProfiles"""
 
-    def test_exam_profile_str(self):  # pylint: disable=no-self-use
+    def test_exam_profile_str(self):
         """
         Test method ExamProfile.__str__ prints correctly
         """
@@ -24,7 +24,7 @@ class ExamProfileTest(TestCase):
 class ExamAuthorizationTest(TestCase):
     """Tests for ExamAuthorizationss"""
 
-    def test_exam_authorization_str(self):  # pylint: disable=no-self-use
+    def test_exam_authorization_str(self):
         """
         Test method ExamAuthorization.__str__ prints correctly
         """

@@ -24,8 +24,6 @@ from mail.views_test import mocked_json
 from profiles.factories import ProfileFactory
 from search.base import MockedESTestCase
 
-# pylint: disable=no-self-use
-
 
 @ddt
 @patch('requests.post')
