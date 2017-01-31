@@ -62,13 +62,6 @@ class CourseFactory(DjangoModelFactory):
     class Meta:
         model = Course
 
-    @classmethod
-    def _setup_next_sequence(cls):  # pylint: disable=missing-docstring
-        last = Course.objects.last()
-        if last is not None:
-            return last.position_in_program + 1
-        return 0
-
 
 class CourseRunFactory(DjangoModelFactory):
     """Factory for CourseRuns"""
