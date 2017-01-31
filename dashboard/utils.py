@@ -273,12 +273,16 @@ class MMTrack:
         Returns:
             dict: dictionary of course_ids: floats representing final grades for a course
         """
-        final_grades = {}
-        for course_id in self.course_ids:
-            final_grade = self.get_final_grade(course_id)
-            if final_grade is not None:
-                final_grades[course_id] = final_grade
-        return final_grades
+        final_grades = {
+            course_id: self.get_final_grade(course_id)
+            for course_id in self.course_ids
+        }
+        # filter out None grades
+        return {
+            course_id: final_grade
+            for course_id, final_grade in final_grades.items()
+            if final_grade is not None
+        }
 
     def calculate_final_grade_average(self):
         """
@@ -312,10 +316,11 @@ class MMTrack:
         Returns:
             int: A number of passed courses.
         """
-        passed_courses = set()
-        for course_id in self.course_ids:
-            if self.has_passed_course(course_id):
-                passed_courses.add(self.edx_key_course_map[course_id])
+        passed_courses = set(
+            self.edx_key_course_map[course_id]
+            for course_id in self.course_ids
+            if self.has_passed_course(course_id)
+        )
         return len(passed_courses)
 
     def get_pearson_exam_status(self):  # pylint: disable=too-many-return-statements
