@@ -7,11 +7,14 @@ from factory.django import mute_signals
 
 from dashboard.models import CachedEnrollment
 from courses.factories import ProgramFactory, CourseRunFactory
+from courses.models import Program
+from ecommerce.models import CoursePrice
 from seed_data.management.commands.seed_db import (
     MODEL_DEFAULTS,
     FAKE_USER_USERNAME_PREFIX,
     compile_model_data,
     deserialize_model_data,
+    deserialize_program_data_list,
     deserialize_user_data,
     deserialize_course_data,
 )
@@ -103,6 +106,40 @@ class SeedDBDeserializationTests(MockedESTestCase):
         "position_in_program": 1
     }
 
+    PROGRAM_DATA = {
+        "title": "Digital Learning",
+        "_price": 1000,
+        "description": "Learn stuff about digital learning.",
+        "financial_aid_availability": True,
+        "courses": [
+            {
+                "title": "Digital Learning 100",
+                "position_in_program": 1,
+                "description": "An introductory course to Digital Learning",
+                "course_runs": [
+                    {
+                        "title": "Digital Learning 100 - January 2016",
+                        "upgrade_deadline": "2016-01-22T00:00:00",
+                        "edx_course_key": "course-v1:MITx+Digital+Learning+100+Jan_2016",
+                        "enrollment_start": "2016-01-15T00:00:00",
+                        "end_date": "2016-05-15T00:00:00",
+                        "start_date": "2016-01-15T00:00:00",
+                        "enrollment_end": "2016-01-29T00:00:00"
+                    },
+                    {
+                        "title": "Digital Learning 100 - August 2016",
+                        "upgrade_deadline": "2016-08-22T00:00:00",
+                        "edx_course_key": "course-v1:MITx+Digital+Learning+100+Aug_2016",
+                        "enrollment_start": "2016-08-15T00:00:00",
+                        "end_date": "2016-12-15T00:00:00",
+                        "start_date": "2016-08-15T00:00:00",
+                        "enrollment_end": "2016-08-29T00:00:00"
+                    },
+                ]
+            },
+        ]
+    }
+
     def test_deserialize_user_data(self):
         """Test that user data is correctly deserialized"""
         new_course_run = CourseRunFactory.create(edx_course_key='course-v1:MITx+Analog+Learning+100+Aug_2015')
@@ -122,3 +159,29 @@ class SeedDBDeserializationTests(MockedESTestCase):
         assert new_course.title == 'Digital Learning 100'
         assert len(new_course_runs) == 1
         assert new_course_runs[0].title == 'Digital Learning 100 - January 2016'
+
+    def test_deserialize_program_data_list(self):
+        """Test that program data is correctly deserialized"""
+        programs = deserialize_program_data_list([self.PROGRAM_DATA])
+        assert Program.objects.count() == 1
+        assert len(programs) == 1
+        program = programs[0]
+        for program_key in ('title', 'description', 'financial_aid_availability'):
+            assert getattr(program, program_key) == self.PROGRAM_DATA[program_key]
+        assert program.live is True
+
+        assert program.course_set.count() == 1
+        course = program.course_set.first()
+        for course_key in ('title', 'position_in_program', 'description'):
+            assert getattr(course, course_key) == self.PROGRAM_DATA['courses'][0][course_key]
+
+        assert course.courserun_set.count() == 2
+        for i, run in enumerate(course.courserun_set.all()):
+            for key in ('title', 'edx_course_key'):
+                assert getattr(run, key) == self.PROGRAM_DATA['courses'][0]['course_runs'][i][key]
+
+        prices = CoursePrice.objects.filter(course_run__course__program=program)
+        assert prices.count() == 2
+        for price in prices:
+            assert price.price == self.PROGRAM_DATA['_price']
+            assert price.is_valid is True

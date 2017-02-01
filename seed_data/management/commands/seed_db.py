@@ -191,13 +191,12 @@ def deserialize_user_data_list(user_data_list, programs):
 def deserialize_course_price_data(program, program_data):
     """Deserializes price information from program data"""
     # set `is_valid` to True, so we don't have to specify it in the JSON file
-    first_course_run = program.course_set.first().courserun_set.first()
-    course_price = CoursePrice.objects.create(
-        course_run=first_course_run,
-        price=Decimal(program_data['_price']),
-        is_valid=True
-    )
-    return course_price
+    for run in CourseRun.objects.filter(course__program=program):
+        CoursePrice.objects.create(
+            course_run=run,
+            price=Decimal(program_data['_price']),
+            is_valid=True
+        )
 
 
 def deserialize_course_run_data(course, course_run_data):

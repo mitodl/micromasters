@@ -20,6 +20,20 @@ def create_tiers(programs, num_tiers):
         programs_with_tiers_created += 1
         created_tier_programs = TierProgramFactory.create_batch(tiers_to_create_count, program=program)
         tiers_created += len(created_tier_programs)
+
+        # there must be at least one TierProgram with discount_amount=0 and one with income_threshold=0
+        least_income_threshold = sorted(
+            created_tier_programs, key=lambda tier_program: tier_program.income_threshold
+        )[0]
+        least_income_threshold.income_threshold = 0
+        least_income_threshold.save()
+
+        least_discount = sorted(
+            created_tier_programs, key=lambda tier_program: tier_program.discount_amount
+        )[0]
+        least_discount.discount_amount = 0
+        least_discount.save()
+
     return programs_with_tiers_created, tiers_created
 
 

@@ -59,3 +59,11 @@ class CreateTiersTest(MockedESTestCase):
         self.command.handle("create_tiers", tiers=4, program_id=None, add_to_existing=True)
         assert TierProgram.objects.filter(program=self.program1).count() == 4  # Default is 4
         assert TierProgram.objects.filter(program=self.program2).count() == 4
+
+    def test_zero_threshold_and_discount(self):
+        """
+        Test that there is one TierProgram with income_threshold=0 and one with discount_amount=0
+        """
+        self.command.handle("create_tiers", tiers=4, program_id=None, add_to_existing=False)
+        assert 0 in TierProgram.objects.values_list('income_threshold', flat=True)
+        assert 0 in TierProgram.objects.values_list('discount_amount', flat=True)
