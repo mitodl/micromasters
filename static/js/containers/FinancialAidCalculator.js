@@ -112,7 +112,7 @@ const calculatorActions = (openSkipDialog, cancel, save, fetchAddStatus, fetchSk
 };
 
 const validationMessage = (key, errors) => {
-  if ( errors === undefined || R.isNil(errors[key]) ) {
+  if (errors === undefined || R.isNil(errors[key])) {
     return null;
   }
   return <div className="validation-message">
@@ -159,7 +159,7 @@ const FinancialAidCalculator = ({
   }
 
   let minPossibleCost, maxPossibleCost;
-  if ( program.financial_aid_availability ) {
+  if (program.financial_aid_availability) {
     minPossibleCost = formatPrice(program.financial_aid_user_info.min_possible_cost),
     maxPossibleCost = formatPrice(program.financial_aid_user_info.max_possible_cost);
   }
@@ -219,7 +219,7 @@ const closeDialogAndCancel = dispatch => (
 
 const updateFinancialAidValidation = (dispatch, current) => {
   let errors = validateFinancialAid(current);
-  if ( ! R.equals(errors, current.validation) ) {
+  if (! R.equals(errors, current.validation)) {
     dispatch(updateCalculatorValidation(errors));
   }
   return R.isEmpty(errors);

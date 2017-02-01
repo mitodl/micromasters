@@ -63,7 +63,7 @@ class ProfileImage extends React.Component {
       clearPhotoEdit();
       setDialogVisibility(false);
       return this.fetchUserProfile().then(resp => {
-        if ( afterImageUpload ) {
+        if (afterImageUpload) {
           afterImageUpload(resp);
         }
       });
@@ -77,7 +77,7 @@ class ProfileImage extends React.Component {
 
   cameraIcon = (): React$Element<*>|null => {
     const { setDialogVisibility, editable } = this.props;
-    if ( editable ) {
+    if (editable) {
       return (
         <button className="open-photo-dialog" onClick={() => setDialogVisibility(true)}>
           <Icon name="camera_alt" aria-hidden="true" />

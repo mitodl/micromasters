@@ -36,7 +36,7 @@ class OrderSummary extends React.Component {
     const { finalPrice, coursePrice } = this.props;
     let text;
     let price = (finalPrice !== undefined && finalPrice !== null) ? finalPrice : coursePrice.price;
-    if (price > 0 ) {
+    if (price > 0) {
       text = "Clicking below with link outside of the MIT MicroMasters app" +
         " to an external website, where you will be able to complete the transaction by" +
         " paying with a credit card.";

@@ -44,7 +44,7 @@ describe('FinalExamCard', () => {
 be taken at any Pearson test center. Before you can take an exam, you have to
 pay for the course and pass the online work.`;
 
-  let renderCard = props => ( mount(<FinalExamCard {...props} />));
+  let renderCard = props => (mount(<FinalExamCard {...props} />));
 
   it('should not render when pearson_exam_status is empty', () => {
     let card = renderCard(props);

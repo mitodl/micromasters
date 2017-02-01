@@ -110,7 +110,7 @@ class DashboardPage extends React.Component {
     this.updateRequirements();
 
     let program = this.getCurrentlyEnrolledProgram();
-    if ( this.shouldSkipFinancialAid() && program !== undefined ) {
+    if (this.shouldSkipFinancialAid() && program !== undefined) {
       this.skipFinancialAid(program.id);
     }
   }
@@ -246,19 +246,19 @@ class DashboardPage extends React.Component {
   handleCoupon = () => {
     const { coupons, dispatch, location: { query } } = this.props;
 
-    if ( !query.coupon ) {
+    if (!query.coupon) {
       // If there's no coupon code in the URL query parameters,
       // there's nothing to do.
       return;
     }
 
-    if ( coupons.fetchPostStatus !== undefined ) {
+    if (coupons.fetchPostStatus !== undefined) {
       // If we've already launched a POST request to attach this coupon
       // to this user, don't launch another one.
       return;
     }
 
-    if ( coupons.fetchGetStatus === FETCH_PROCESSING || coupons.fetchGetStatus === undefined ) {
+    if (coupons.fetchGetStatus === FETCH_PROCESSING || coupons.fetchGetStatus === undefined) {
       /*
       Abort to avoid the following race condition:
 
@@ -299,7 +299,7 @@ class DashboardPage extends React.Component {
       profile: { profile: { country } }
     } = this.props;
     dispatch(startCalculatorEdit(currentProgramEnrollment.id));
-    if ( country ) {
+    if (country) {
       let currencyPrediction = currencyForCountry(country);
       dispatch(updateCalculatorEdit({ currency: currencyPrediction }));
     }
@@ -385,14 +385,14 @@ class DashboardPage extends React.Component {
       dashboard,
     } = this.props;
     const coupon = coupons.recentlyAttachedCoupon;
-    if ( !coupon ) {
+    if (!coupon) {
       return null;
     }
     const couponProgram = programs.availablePrograms.find(
       program => program.id === coupon.program_id
     );
     let couponCourse = null;
-    if ( coupon.content_type === COUPON_CONTENT_TYPE_COURSE ) {
+    if (coupon.content_type === COUPON_CONTENT_TYPE_COURSE) {
       const dashboardCouponProgram = dashboard.programs.find(
         program => program.id === coupon.program_id
       );
@@ -462,8 +462,8 @@ class DashboardPage extends React.Component {
     } else {
       let financialAidCard;
 
-      if ( program.financial_aid_availability ) {
-        if ( !this.shouldSkipFinancialAid() ) {
+      if (program.financial_aid_availability) {
+        if (!this.shouldSkipFinancialAid()) {
           financialAidCard = <FinancialAidCard
             program={program}
             coursePrice={coursePrice}

@@ -103,7 +103,7 @@ class SelectField extends React.Component {
 
     let value = _.get(profile, keySet);
     let combinedOptions = options.concat(customOptions);
-    if ( allowCreate && value && !combinedOptions.find(option => option.value === value) ) {
+    if (allowCreate && value && !combinedOptions.find(option => option.value === value)) {
       this.setState({
         customOptions: customOptions.concat({ value: value, label: value })
       });

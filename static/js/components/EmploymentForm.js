@@ -184,9 +184,9 @@ class EmploymentForm extends ProfileFormFields {
 
   renderWorkHistory(): Array<React$Element<*>|void>|void {
     const { ui, profile, profile: { work_history } } = this.props;
-    if ( ui.workHistoryEdit === true ) {
+    if (ui.workHistoryEdit === true) {
       let workHistoryRows = [];
-      if ( !_.isUndefined(work_history) ) {
+      if (!_.isUndefined(work_history)) {
         let sorted = workEntriesByDate(work_history);
         workHistoryRows = sorted.map(([index, entry]) => (
           entry.id === undefined ? undefined : this.jobRow(entry, index)

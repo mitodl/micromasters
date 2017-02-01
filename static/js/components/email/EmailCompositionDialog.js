@@ -12,7 +12,7 @@ import type {
 
 const showValidationError = R.curry((getter, object: EmailValidationErrors) => {
   let val = getter(object);
-  if ( val !== undefined ) {
+  if (val !== undefined) {
     return <span className="validation-error">{ val }</span>;
   }
 });

@@ -92,7 +92,7 @@ class ProfileFormContainer extends React.Component {
       dispatch(startProfileEdit(username));
     }
     dispatch(updateProfile(username, profile));
-    if ( !skipValidation ) {
+    if (!skipValidation) {
       this.updateProfileValidation(profile, validator);
     }
   };
@@ -100,9 +100,9 @@ class ProfileFormContainer extends React.Component {
   updateValidationVisibility = (keySet: Array<string>) => {
     const { dispatch, profiles } = this.props;
     const username = SETTINGS.user.username;
-    if ( !profiles[username].edit ) {
+    if (!profiles[username].edit) {
       dispatch(updateValidationVisibility(username, keySet));
-    } else if ( !R.contains(keySet, profiles[username].edit.visibility) ) {
+    } else if (!R.contains(keySet, profiles[username].edit.visibility)) {
       dispatch(updateValidationVisibility(username, keySet));
     }
   };
@@ -140,7 +140,7 @@ class ProfileFormContainer extends React.Component {
     // passed to `setState` executes when the component next re-renders.
     this.setState({}, () => {
       let invalidField = document.querySelector('.invalid-input');
-      if ( invalidField !== null ) {
+      if (invalidField !== null) {
         invalidField.scrollIntoView();
       }
     });
@@ -191,7 +191,7 @@ class ProfileFormContainer extends React.Component {
     } = this.props;
     let errors, isEdit, profile, uneditedProfile, patchStatus;
 
-    if ( profileFromStore === undefined ) {
+    if (profileFromStore === undefined) {
       profile = {};
       uneditedProfile = {};
       errors = {};

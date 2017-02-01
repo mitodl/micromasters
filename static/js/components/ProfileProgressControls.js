@@ -44,7 +44,7 @@ export default class ProfileProgressControls extends React.Component {
         addProgramEnrollment(programIdForEnrollment);
       }
 
-      if ( isLastTab ) {
+      if (isLastTab) {
         sendGAEvent('profile-form', 'completed', SETTINGS.user.username);
       }
       this.context.router.push(nextUrl);

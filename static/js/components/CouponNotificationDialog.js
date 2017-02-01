@@ -32,22 +32,22 @@ const CouponNotificationDialog = (
     object_id: objectId,
   } = coupon;
   let programName;
-  if ( couponProgram ) {
+  if (couponProgram) {
     programName = `the ${couponProgram.title} MicroMasters program`;
   } else {
     programName = `program ID ${programId}`;
   }
 
   let title, message;
-  if ( contentType === COUPON_CONTENT_TYPE_PROGRAM ) {
-    if ( amountType === COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT ) {
+  if (contentType === COUPON_CONTENT_TYPE_PROGRAM) {
+    if (amountType === COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT) {
       title = `Coupon applied: ${amount.times(100).toDecimalPlaces(0).toString()}% off each course!`;
       message = <p>
         This coupon gives <strong>a discount
         of { amount.times(100).toDecimalPlaces(0).toString() }% off</strong> the price
         of <strong>each</strong> course in { programName }.
       </p>;
-    } else if ( amountType === COUPON_AMOUNT_TYPE_FIXED_DISCOUNT ) {
+    } else if (amountType === COUPON_AMOUNT_TYPE_FIXED_DISCOUNT) {
       title = `Coupon applied: $${amount} off each course!`;
       message = <p>
         This coupon gives <strong>a discount
@@ -57,19 +57,19 @@ const CouponNotificationDialog = (
     }
   } else if (contentType === COUPON_CONTENT_TYPE_COURSE) {
     let courseName;
-    if ( couponCourse ) {
+    if (couponCourse) {
       courseName = `${couponCourse.title} in ${programName}`;
     } else {
       courseName = `course ID ${objectId} in ${programName}`;
     }
-    if ( amountType === COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT ) {
+    if (amountType === COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT) {
       title = `Coupon applied: ${amount.times(100)}% off!`;
       message = <p>
         This coupon gives <strong>a discount
         of { amount.times(100).toString() }% off</strong> the price
         of { courseName }.
       </p>;
-    } else if ( amountType === COUPON_AMOUNT_TYPE_FIXED_DISCOUNT ) {
+    } else if (amountType === COUPON_AMOUNT_TYPE_FIXED_DISCOUNT) {
       title = `Coupon applied: $${amount} off!`;
       message = <p>
         This coupon gives <strong>a discount

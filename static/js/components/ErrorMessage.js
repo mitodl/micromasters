@@ -21,20 +21,20 @@ export default class ErrorMessage extends React.Component {
     } = this.props;
 
     let errorCodeStr = () => {
-      if ( errorCode !== undefined ) {
+      if (errorCode !== undefined) {
         return `${errorCode} `;
       }
-      if ( errorStatusCode !== undefined ) {
+      if (errorStatusCode !== undefined) {
         return `${errorStatusCode} `;
       }
       return '';
     };
 
     let userMessageStr = () => {
-      if ( userMessage !== undefined ) {
+      if (userMessage !== undefined) {
         return `Additional info: ${userMessage}`;
       }
-      if ( detail !== undefined ) {
+      if (detail !== undefined) {
         return `Additional info: ${detail}`;
       }
       return '';

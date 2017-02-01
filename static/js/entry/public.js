@@ -27,7 +27,7 @@ if (SETTINGS.program) {
   courseList = SETTINGS.program.courses;
 }
 
-if ( courseListEl && !_.isEmpty(courseList) ) {
+if (courseListEl && !_.isEmpty(courseList)) {
   ReactDOM.render(
     <MuiThemeProvider muiTheme={getMuiTheme()}>
       <CourseListWithPopover courses={courseList} />
@@ -43,7 +43,7 @@ if (SETTINGS.program) {
   facultyList = SETTINGS.program.faculty;
 }
 
-if ( carouselEl && !_.isEmpty(facultyList) ) {
+if (carouselEl && !_.isEmpty(facultyList)) {
   ReactDOM.render(
     <FacultyCarousel faculty={facultyList}/>,
     carouselEl
@@ -126,19 +126,19 @@ $("#mce-MMERGE4").hide();
 $("#mce-MMERGE3").hide();
 
 $("input[name=MMERGE2]").click(function() {
-  if ( $("#university").prop('checked')) {
+  if ($("#university").prop('checked')) {
     $("#mce-MMERGE3").show();
     $("#mce-MMERGE4").hide();
   }
-  if ( $("#corporation").prop('checked')) {
+  if ($("#corporation").prop('checked')) {
     $("#mce-MMERGE3").show();
     $("#mce-MMERGE4").hide();
   }
-  if ( $("#learner").prop('checked')) {
+  if ($("#learner").prop('checked')) {
     $("#mce-MMERGE3").hide();
     $("#mce-MMERGE4").hide();
   }
-  if ( $("#other").prop('checked')) {
+  if ($("#other").prop('checked')) {
     $("#mce-MMERGE3").hide();
     $("#mce-MMERGE4").show();
   }

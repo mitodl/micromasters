@@ -34,7 +34,7 @@ export const isProfileOfLoggedinUser = (profile: Profile): boolean => (
 );
 
 export function userPrivilegeCheck (profile: Profile, privileged: any, unPrivileged: any): any {
-  if ( SETTINGS.user && profile.username === SETTINGS.user.username ) {
+  if (SETTINGS.user && profile.username === SETTINGS.user.username) {
     return _.isFunction(privileged) ? privileged() : privileged;
   } else {
     return _.isFunction(unPrivileged) ? unPrivileged() : unPrivileged;
@@ -91,7 +91,7 @@ export function makeProfileProgressDisplay(active: ?string) {
     const nextCircleX = paddingX + radius + circleDistance * (i + 1);
 
     let circleLabel = () => {
-      if ( i < activeTab ) {
+      if (i < activeTab) {
         return <svg
           fill="white"
           height="24"
@@ -225,7 +225,7 @@ export const filterPositiveInt = (value: ?string|number): number|void => {
   if (value === null || value === undefined) {
     return undefined;
   }
-  if ( typeof value === 'number') {
+  if (typeof value === 'number') {
     return value;
   }
   if(/^[0-9]+$/.test(value)) {
@@ -275,7 +275,7 @@ export function getLocation(profile: Profile, showState: boolean = true): string
   let subCountryLocation, countryLocation;
   city = city ? `${city}, ` : "";
 
-  if ( country === 'US' ) {
+  if (country === 'US') {
     let state = state_or_territory.replace(/^\D{2}-/, '');
     subCountryLocation = showState ? `${city}${state}, ` : city;
     countryLocation = 'US';
@@ -291,11 +291,11 @@ export function getLocation(profile: Profile, showState: boolean = true): string
 */
 export function getEmployer(profile: Profile): Maybe<string> {
   let entries = workEntriesByDate(profile.work_history);
-  if ( _.isEmpty(entries) ) {
+  if (_.isEmpty(entries)) {
     return Nothing();
   }
   let [, entry] = entries[0];
-  if ( entry.company_name ) {
+  if (entry.company_name) {
     return Just(entry.company_name);
   }
   return Nothing();

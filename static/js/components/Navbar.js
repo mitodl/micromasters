@@ -81,7 +81,7 @@ export default class Navbar extends React.Component {
     } = this.props;
 
     const closeDrawer = () => {
-      if ( navDrawerOpen ) {
+      if (navDrawerOpen) {
         setNavDrawerOpen(false);
       }
     };

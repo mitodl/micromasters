@@ -81,7 +81,7 @@ const personalMessages: ErrorMessages = {
 
 export const personalValidation = (profile: Profile) => {
   let errors = findErrors(profile, R.keys(personalMessages), personalMessages);
-  if ( !moment(profile.date_of_birth).isBefore(moment(), 'day') ) {
+  if (!moment(profile.date_of_birth).isBefore(moment(), 'day')) {
     errors.date_of_birth = personalMessages.date_of_birth;
   }
 
@@ -107,9 +107,9 @@ export const personalValidation = (profile: Profile) => {
     }
   }
 
-  if ( profile.phone_number ) {
+  if (profile.phone_number) {
     let number = new PhoneNumber(profile.phone_number);
-    if ( ! number.isValid() ) {
+    if (! number.isValid()) {
       errors.phone_number = 'Please enter a valid phone number';
     }
   }
@@ -127,7 +127,7 @@ const nestedValidator = R.curry((key: string, findErrors: Function, profile: Pro
     return {};
   }
   let errors = findErrors(profile[key]);
-  if ( R.equals(errors, R.repeat({}, errors.length)) ) {
+  if (R.equals(errors, R.repeat({}, errors.length))) {
     return {};
   }
   return { [key]: errors };
@@ -296,7 +296,7 @@ const financialAidMessages: ErrorMessages = {
 
 export const validateFinancialAid = (edit: FinancialAidState): FinancialAidValidation => {
   let errors: FinancialAidValidation = findErrors(edit, R.keys(financialAidMessages), financialAidMessages);
-  if ( !edit.checkBox ) {
+  if (!edit.checkBox) {
     errors['checkBox'] = 'You must agree to these terms';
   }
   return errors;

@@ -25,7 +25,7 @@ const SignupDialog = ({
 }: signupProps) => {
   let loginUrl = URI('/login/edxorg');
   const nextUrl = URI(window.location.search).query(true).next;
-  if ( nextUrl ) {
+  if (nextUrl) {
     loginUrl = loginUrl.setSearch("next", nextUrl);
   }
   return <Dialog

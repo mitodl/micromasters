@@ -18,7 +18,7 @@ const notProd = () => process.env.NODE_ENV !== "production";
 
 const middleware = () =>  {
   let ware = [ thunkMiddleware ];
-  if ( notProd() ) {
+  if (notProd()) {
     ware.push(createLogger());
   }
   return applyMiddleware(...ware);
@@ -78,7 +78,7 @@ export const configureMainTestStore = (reducer: Reducer<*,*>) => {
 };
 
 export const signupDialogStore = (test: boolean = false) => {
-  if ( test ) {
+  if (test) {
     return configureTestStore({ signupDialog: INITIAL_SIGNUP_STATE });
   } else {
     return configureStore({ signupDialog: INITIAL_SIGNUP_STATE });

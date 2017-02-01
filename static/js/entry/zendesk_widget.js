@@ -138,7 +138,7 @@ const zendeskCallbacks = {
     };
 
     const adjustFieldsVisibility = R.map(name => {
-      if ( !fieldVisibility[name] ) {
+      if (!fieldVisibility[name]) {
         const element = fieldElement(name);
         if (element) {
           const label = element.parentNode.parentNode;

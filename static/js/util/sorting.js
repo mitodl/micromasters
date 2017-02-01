@@ -5,10 +5,10 @@ import _ from 'lodash';
 import type { WorkHistoryEntry, EducationEntry } from '../flow/profileTypes';
 
 export function momentCompareDesc(a: moment$Moment, b: moment$Moment): number {
-  if ( a.isBefore(b) ) {
+  if (a.isBefore(b)) {
     return 1;
   }
-  if ( a.isAfter(b) ) {
+  if (a.isAfter(b)) {
     return -1;
   }
   return 0;

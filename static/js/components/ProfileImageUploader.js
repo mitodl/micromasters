@@ -40,14 +40,14 @@ const dialogContents = (
   setPhotoError,
   inFlight
 ) => {
-  if ( inFlight ) {
+  if (inFlight) {
     return <div
       className="photo-active-item dashed-border spinner"
       style={{height: uploaderBodyHeight()}}
     >
       <Spinner singleColor />
     </div>;
-  } else if ( photo ) {
+  } else if (photo) {
     return <CropperWrapper
       updatePhotoEdit={updatePhotoEdit}
       photo={photo}

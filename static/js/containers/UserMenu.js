@@ -67,7 +67,7 @@ class UserMenu extends React.Component {
         { this.linkMenu() }
       </div>;
 
-      if ( userMenuOpen ) {
+      if (userMenuOpen) {
         return (
           <ReactPageClick notify={this.toggleMenuOpen}>
             { menuContents }

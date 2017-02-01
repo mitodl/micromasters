@@ -314,7 +314,7 @@ class EducationForm extends ProfileFormFields {
       }
     };
     let levelForm = () => {
-      if ( !showSwitch ) {
+      if (!showSwitch) {
         return <Cell col={12}>
           <SelectField
             keySet={keySet('degree_name')}

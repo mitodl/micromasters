@@ -104,7 +104,7 @@ export default class DateField extends React.Component {
       newEdit.month = mstr(validatedMonth.map(firstIfNumEqual(newEdit.month)));
 
       let validatedYear;
-      if ( allowFutureYear ) {
+      if (allowFutureYear) {
         validatedYear = validateNearFutureYear(newEdit.year);
       } else {
         validatedYear = validateYear(newEdit.year);
@@ -130,7 +130,7 @@ export default class DateField extends React.Component {
       let validatedDate = rawDate.filter(date => date.isValid()).
         filter(date => date.isAfter(moment("1800", "YYYY")));
 
-      if ( validatedDate.isNothing ) {
+      if (validatedDate.isNothing) {
         _.set(clone, keySet, null);
       } else {
         _.set(clone, keySet, validatedDate.value.format(ISO_8601_FORMAT));

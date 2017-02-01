@@ -71,7 +71,7 @@ class LearnerSearchPage extends React.Component {
     const { dispatch, searchResultEmail: { inputs } } = this.props;
     let errors = emailValidation(inputs);
     dispatch(updateEmailValidation({type: SEARCH_EMAIL_TYPE, errors: errors}));
-    if ( R.isEmpty(errors) ) {
+    if (R.isEmpty(errors)) {
       dispatch(
         sendSearchResultMail(
           inputs.subject || '',
@@ -92,7 +92,7 @@ class LearnerSearchPage extends React.Component {
     let inputsClone = R.clone(inputs);
     inputsClone[fieldName] = e.target.value;
     dispatch(updateEmailEdit({type: SEARCH_EMAIL_TYPE, inputs: inputsClone}));
-    if ( ! R.isEmpty(validationErrors) ) {
+    if (! R.isEmpty(validationErrors)) {
       let cloneErrors = emailValidation(inputsClone);
       dispatch(updateEmailValidation({type: SEARCH_EMAIL_TYPE, errors: cloneErrors}));
     }

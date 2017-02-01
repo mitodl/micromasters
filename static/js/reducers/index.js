@@ -151,7 +151,7 @@ export const profiles = (state: Profiles = INITIAL_PROFILES_STATE, action: Actio
     } else {
       let errors = {};
       let visibility = profile.edit.visibility;
-      if ( R.contains(ALL_ERRORS_VISIBLE, visibility) ) {
+      if (R.contains(ALL_ERRORS_VISIBLE, visibility)) {
         errors = action.payload.errors;
       } else {
         visibility.forEach(keySet => {

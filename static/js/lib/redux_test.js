@@ -74,7 +74,7 @@ describe('redux helpers', () => {
 
     let dispatchSpy = sinon.stub().returns(Promise.resolve());
     let asyncDispatch = (createdActionFunc) => {
-      if ( typeof(createdActionFunc) === 'function' ) {
+      if (typeof(createdActionFunc) === 'function') {
         return createdActionFunc(dispatchSpy);
       }
     };

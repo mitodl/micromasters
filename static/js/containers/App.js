@@ -93,7 +93,7 @@ class App extends React.Component {
     if (userProfile.getStatus === undefined) {
       dispatch(fetchUserProfile(username)).then(() => {
         this.requireCompleteProfile();
-        if ( PROFILE_REGEX.test(pathname) ) {
+        if (PROFILE_REGEX.test(pathname)) {
           dispatch(startProfileEdit(SETTINGS.user.username));
         }
       });
@@ -183,7 +183,7 @@ class App extends React.Component {
     const {
       ui: { toastMessage }
     } = this.props;
-    if ( !toastMessage ) {
+    if (!toastMessage) {
       return null;
     }
 

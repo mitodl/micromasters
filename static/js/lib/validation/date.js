@@ -46,7 +46,7 @@ export const validateMonth = R.compose(
   * where x is moment().year()
   */
 export const validYearInput = R.curry((highCutoff, year) => {
-  if ( year === undefined ) {
+  if (year === undefined) {
     return Nothing();
   } else {
     return String(year).length < 4 ? Maybe.of(year) : checkYearRange(highCutoff, year);

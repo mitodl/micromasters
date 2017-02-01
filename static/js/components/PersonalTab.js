@@ -71,7 +71,7 @@ export default class PersonalTab extends React.Component {
   componentDidUpdate() {
     const { currentProgramEnrollment, setProgram } = this.props;
     const selectedProgram = this.getSelectedProgramId();
-    if ( currentProgramEnrollment && !selectedProgram ) {
+    if (currentProgramEnrollment && !selectedProgram) {
       setProgram(currentProgramEnrollment);
     }
   }
@@ -81,7 +81,7 @@ export default class PersonalTab extends React.Component {
       programs,
       setProgram,
     } = this.props;
-    if ( selection && selection.value ) {
+    if (selection && selection.value) {
       let selected = programs.find(program => program.id === parseInt(selection.value));
       setProgram(selected);
     } else {

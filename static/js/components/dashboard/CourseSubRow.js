@@ -99,9 +99,9 @@ export default class CourseSubRow extends React.Component {
 
   renderAction(): ?React$Element<any> {
     const { courseRun } = this.props;
-    if ( courseRun.status === STATUS_OFFERED ) {
+    if (courseRun.status === STATUS_OFFERED) {
       return this.renderCourseRunAction(courseRun);
-    } else if ( this.isCompletedCourseRun(courseRun) ) {
+    } else if (this.isCompletedCourseRun(courseRun)) {
       return this.renderCourseRunStatus(courseRun);
     }
   }
@@ -131,9 +131,9 @@ export default class CourseSubRow extends React.Component {
   };
 
   courseRunStatus = (courseRun: CourseRun) => {
-    if (courseRun.status === STATUS_NOT_PASSED ) {
+    if (courseRun.status === STATUS_NOT_PASSED) {
       return 'Failed';
-    } else if ( courseRun.status === STATUS_PASSED ) {
+    } else if (courseRun.status === STATUS_PASSED) {
       return 'Passed';
     }
   };
@@ -175,7 +175,7 @@ export default class CourseSubRow extends React.Component {
           { this.renderAction() }
         </Cell>
       ];
-      if ( this.isCompletedCourseRun(courseRun) ) {
+      if (this.isCompletedCourseRun(courseRun)) {
         subRowClass = `${subRowClass} course-completed`;
       }
     }

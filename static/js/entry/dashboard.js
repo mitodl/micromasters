@@ -30,7 +30,7 @@ injectTapEventPlugin();
 const store = configureStore();
 
 let debug = SETTINGS.reactGaDebug === "true";
-if ( SETTINGS.gaTrackingID ) {
+if (SETTINGS.gaTrackingID) {
   ga.initialize(SETTINGS.gaTrackingID, { debug: debug });
 }
 

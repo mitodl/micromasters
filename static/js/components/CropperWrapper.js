@@ -14,8 +14,8 @@ export default class CropperWrapper extends React.Component {
   cropperHelper = () => {
     const { updatePhotoEdit } = this.props;
     let canvas;
-    if ( this.cropper ) {
-      if ( browser.name === 'safari' || browser.name === 'ios' ) {
+    if (this.cropper) {
+      if (browser.name === 'safari' || browser.name === 'ios') {
         canvas = this.cropper.getCroppedCanvas();
       } else {
         canvas = this.cropper.getCroppedCanvas({
