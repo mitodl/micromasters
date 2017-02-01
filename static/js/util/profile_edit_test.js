@@ -588,7 +588,7 @@ describe('Profile Editing utility functions', () => {
       ));
     };
 
-    const typeText = (wrapper, text, wait=500) => {
+    const typeText = (wrapper, text, wait = 500) => {
       const input = wrapper.find('input');
       input.simulate("focus");
       input.get(0).value = text;

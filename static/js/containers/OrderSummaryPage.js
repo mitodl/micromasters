@@ -113,10 +113,10 @@ class OrderSummaryPage extends React.Component {
     [courseRun, course] = findCourseRun(dashboard.programs, run => run !== null && run.course_id === courseKey);
     coursePrice = prices.coursePrices.find(coursePrice => coursePrice.program_id === currentProgramEnrollment.id);
 
-    if( course && courseRun && coursePrice ){
+    if (course && courseRun && coursePrice) {
       const calculatedPrice = calculatePrice(courseRun.id, course.id, coursePrice, coupons.coupons);
       let discount = null;
-      if(calculatedPrice !== null && calculatedPrice !== undefined){
+      if (calculatedPrice !== null && calculatedPrice !== undefined) {
         discount = coursePrice.price - calculatedPrice;
       }
       orderSummaryContent = <OrderSummary

@@ -189,7 +189,7 @@ describe("UserPage", function() {
         });
       };
 
-      const scrollIntoView = (actions, getInput, selectField=false) => {
+      const scrollIntoView = (actions, getInput, selectField = false) => {
         const username = SETTINGS.user.username;
         return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
           return listenForActions(actions, () => {

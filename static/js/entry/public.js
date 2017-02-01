@@ -130,7 +130,7 @@ $("input[name=MMERGE2]").click(function() {
     $("#mce-MMERGE3").show();
     $("#mce-MMERGE4").hide();
   }
-  if ( $("#corporation").prop('checked')){
+  if ( $("#corporation").prop('checked')) {
     $("#mce-MMERGE3").show();
     $("#mce-MMERGE4").hide();
   }

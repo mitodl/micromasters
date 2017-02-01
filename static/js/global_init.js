@@ -46,7 +46,7 @@ beforeEach(() => { // eslint-disable-line mocha/no-top-level-hooks
 });
 
 // cleanup after each test run
-afterEach(function (){ // eslint-disable-line mocha/no-top-level-hooks
+afterEach(function () { // eslint-disable-line mocha/no-top-level-hooks
   document.body.innerHTML = '';
   global.SETTINGS = _createSettings();
   window.localStorage.reset();

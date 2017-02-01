@@ -32,6 +32,8 @@
     }],
     "guard-for-in": [2],
     "prefer-template": [2],
+    "space-infix-ops": [2],
+    "space-before-blocks": [2],
     "flow-vars/define-flow-type": [2],
     "flow-vars/use-flow-type": [2],
     "flowtype/space-after-type-colon": [0],

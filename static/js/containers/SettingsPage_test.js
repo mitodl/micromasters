@@ -58,7 +58,7 @@ describe("SettingsPage", function() {
     helper.cleanup();
   });
 
-  let confirmSaveButtonBehavior = (updatedProfile, pageElements, validationFailure=false) => {
+  let confirmSaveButtonBehavior = (updatedProfile, pageElements, validationFailure = false) => {
     let { div, button } = pageElements;
     button = button || div.querySelector(nextButtonSelector);
     patchUserProfileStub.throws("Invalid arguments");

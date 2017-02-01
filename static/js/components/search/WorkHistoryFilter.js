@@ -13,7 +13,7 @@ import {
 import ModifiedMultiSelect from './ModifiedMultiSelect';
 import type { AvailableProgram } from '../../flow/enrollmentTypes';
 
-export default class WorkHistoryFilter extends SearchkitComponent{
+export default class WorkHistoryFilter extends SearchkitComponent {
   props: {
     currentProgramEnrollment: AvailableProgram,
   };

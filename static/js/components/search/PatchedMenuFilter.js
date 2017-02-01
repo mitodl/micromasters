@@ -8,7 +8,7 @@ import { MenuFilter } from 'searchkit';
 // list of MenuFilter choices, which otherwise shows up by default.
 
 export default class PatchedMenuFilter extends MenuFilter {
-  getItems(){
+  getItems() {
     return this.props.bucketsTransform(this.accessor.getBuckets());
   }
 }

@@ -4,7 +4,7 @@ import Dialog from 'material-ui/Dialog';
 
 import { dialogActions } from './inputs/util';
 
-const dialogTitle = (item="entry") => (`Delete this ${item}?`);
+const dialogTitle = (item = "entry") => (`Delete this ${item}?`);
 
 export default class ConfirmDeletion extends React.Component {
   props: {

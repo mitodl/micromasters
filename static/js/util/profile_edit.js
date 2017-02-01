@@ -104,7 +104,7 @@ export function boundRadioGroupField(keySet: string[], label: string, options: O
 export function boundTextField(
   keySet: string[],
   label: string,
-  { multiLine=false, maxLength=0 }: { multiLine: boolean, maxLength: number } = {}
+  { multiLine = false, maxLength = 0 }: { multiLine: boolean, maxLength: number } = {}
 ): React$Element<*> {
   const {
     profile,

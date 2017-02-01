@@ -13,7 +13,7 @@ export default class CustomResetFiltersDisplay extends SearchkitComponent {
     clearAllLabel: string,
   };
 
-  render(){
+  render() {
     const {
       bemBlock,
       hasFilters,

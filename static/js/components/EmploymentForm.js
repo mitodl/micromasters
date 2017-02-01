@@ -118,10 +118,10 @@ class EmploymentForm extends ProfileFormFields {
     setShowWorkDeleteDialog(true);
   };
 
-  addSpaceForError(keySet: string[]){
+  addSpaceForError(keySet: string[]) {
     const { errors } = this.props;
     let value = _.get(errors, keySet);
-    return value === undefined ? "": "top-space";
+    return value === undefined ? "" : "top-space";
   }
 
   editWorkHistoryForm(): React$Element<*> {

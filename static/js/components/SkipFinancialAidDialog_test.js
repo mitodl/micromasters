@@ -23,7 +23,7 @@ describe('SkipFinancialAidDialog', () => {
     sandbox.restore();
   });
 
-  let renderDialog = (open=true) => {
+  let renderDialog = (open = true) => {
     mount(
       <MuiThemeProvider muiTheme={getMuiTheme()}>
         <SkipFinancialAidDialog

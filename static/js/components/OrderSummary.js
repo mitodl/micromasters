@@ -36,7 +36,7 @@ class OrderSummary extends React.Component {
     const { finalPrice, coursePrice } = this.props;
     let text;
     let price = (finalPrice !== undefined && finalPrice !== null) ? finalPrice : coursePrice.price;
-    if (price > 0 ){
+    if (price > 0 ) {
       text = "Clicking below with link outside of the MIT MicroMasters app" +
         " to an external website, where you will be able to complete the transaction by" +
         " paying with a credit card.";
@@ -64,7 +64,7 @@ class OrderSummary extends React.Component {
   render() {
     let { course, courseRun, checkout, checkoutStatus, discount } = this.props;
     let discountInfo;
-    if (discount !== null && discount !== undefined){
+    if (discount !== null && discount !== undefined) {
       discountInfo = [
         this.showAmount('Discount from coupon', this.getDiscountAmount()),
         <Cell col={10} tablet={6} phone={4} className="division-line" key="division"/>,

@@ -22,7 +22,7 @@ import { USER_PROFILE_RESPONSE } from '../test_constants';
 describe('ProfileImage', () => {
   let helper, sandbox, updateProfileImageStub, div;
 
-  const renderProfileImage = (editable=true, props = {}) => {
+  const renderProfileImage = (editable = true, props = {}) => {
     div = document.createElement("div");
     return mount(
       <MuiThemeProvider muiTheme={getMuiTheme()}>
