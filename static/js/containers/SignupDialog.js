@@ -27,7 +27,7 @@ const SignupDialog = ({
   const urlQuery = URI(window.location.search).query(true);
   let nextUrl = urlQuery.next;
   if (!nextUrl && urlQuery.coupon) {
-    nextUrl = `/dashboard/?coupon=${urlQuery.coupon}`;
+    nextUrl = URI('/dashboard/').setSearch("coupon", urlQuery.coupon);
   }
   if (nextUrl) {
     loginUrl = loginUrl.setSearch("next", nextUrl);

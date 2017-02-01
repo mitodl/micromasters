@@ -2,6 +2,7 @@
 import { mount } from 'enzyme';
 import { assert } from 'chai';
 import React from 'react';
+import URI from 'urijs';
 import { Provider } from 'react-redux';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
@@ -42,16 +43,14 @@ describe("SignupDialog", () => {
   });
 
   it('also checks the coupon query param', () => {
-    window.location = "http://fake/?coupon=whee";
+    window.location = "http://fake/?coupon=aBc-123.";
     helper.store.dispatch(setDialogVisibility(true));
     renderDialog();
 
     const link = document.body.querySelector(".signup-dialog a");
-    const expectedNext = "/dashboard/?coupon=whee";
-    assert.equal(
-      link.getAttribute('href'),
-      `/login/edxorg?next=${encodeURIComponent(expectedNext)}`
-    );
+    const expectedNext = URI("/dashboard/").setQuery("coupon", "aBc-123.");
+    const expectedUrl = URI("/login/edxorg").setQuery("next", expectedNext);
+    assert.equal(link.getAttribute('href'), expectedUrl.toString());
   });
 
   it('chooses next over coupon', () => {
