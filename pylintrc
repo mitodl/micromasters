@@ -5,8 +5,8 @@ load-plugins = pylint_django
 [BASIC]
 # Allow django's urlpatterns, and our log preference
 const-rgx = (([A-Z_][A-Z0-9_]*)|(__.*__)|log|urlpatterns)$
-# Don't require docstrings for double-underscore methods, or for tests
-no-docstring-rgx = __.*__$|test_.+|setUp$|setUpClass$|tearDown$|tearDownClass$|Meta$
+# Don't require docstrings for double-underscore methods, or for unittest support methods
+no-docstring-rgx = __.*__$|setUp$|setUpClass$|tearDown$|tearDownClass$|Meta$
 
 [TYPECHECK]
 generated-members =
