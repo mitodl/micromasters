@@ -7,6 +7,7 @@ from django.test import SimpleTestCase
 # These fake middlewares allow us to use Django.test.SimpleTestCase,
 # which runs faster and doesn't touch the database at all.
 
+
 class FakeSiteMiddleware(object):  # pylint: disable=missing-docstring
     def process_request(self, request):  # pylint: disable=missing-docstring,no-self-use
         request.site = None

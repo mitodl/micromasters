@@ -1,5 +1,12 @@
+"""
+Views for exams app
+"""
 from django.views.generic.base import RedirectView
 
+
 class PearsonCallbackRedirectView(RedirectView):
-    def get_redirect_url(self, status):
+    """
+    Redirect from Pearson callbacks to dashboard
+    """
+    def get_redirect_url(self, status):  # pylint: disable=arguments-differ
         return "/dashboard?exam={status}".format(status=status)
