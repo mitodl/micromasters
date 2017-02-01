@@ -20,6 +20,7 @@ from micromasters.serializers import serialize_maybe_user
 from micromasters.utils import webpack_dev_server_host
 from profiles.api import get_social_username
 from roles.models import Instructor, Staff
+from cms.util import get_coupon_code
 
 
 class HomePage(Page):
@@ -60,6 +61,7 @@ class HomePage(Page):
         context["js_settings_json"] = json.dumps(js_settings)
         context["title"] = self.title
         context["ga_tracking_id"] = ""
+        context["coupon_code"] = get_coupon_code(request)
 
         return context
 

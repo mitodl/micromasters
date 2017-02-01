@@ -49,7 +49,7 @@
   <div class="main-content-wrapper">
     <main>
       <div class="banner-wrapper">
-        {% if user.is_anonymous and request.GET.coupon %}
+        {% if user.is_anonymous and coupon_code %}
           <div role="alertdialog" class="toast">
             <div class="toast-message">
               <i class="material-icons">account_circle</i>
