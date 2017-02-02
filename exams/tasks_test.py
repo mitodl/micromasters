@@ -4,6 +4,7 @@ Tests for exam tasks
 from unittest.mock import patch
 
 from ddt import ddt, data, unpack
+from django.core.exceptions import ImproperlyConfigured
 from django.db.models.query import QuerySet
 from django.db.models.signals import post_save
 from django.test import TestCase
@@ -58,7 +59,28 @@ class ExamTasksTest(TestCase):
             task.delay()
 
         retry.assert_called_once_with(countdown=1, exc=error)
-        return self
+
+    @data(
+        (
+            export_exam_authorizations,
+            'export_exam_authorizations is improperly configured, please review require settings.'
+        ),
+        (
+            export_exam_profiles,
+            'export_exam_profiles is improperly configured, please review require settings.'
+        )
+    )
+    @unpack
+    def test_task_improperly_config_logged(self, task, expected_warning_message):
+        """
+        Verify that when a ImproperlyConfigured error occurs that the task logs exception
+        """
+        error = ImproperlyConfigured()
+        with patch("exams.tasks.log") as log, patch('exams.pearson.upload.upload_tsv') as upload_tsv_mock:
+            upload_tsv_mock.side_effect = error
+            task.delay()
+
+        log.exception.assert_called_with(expected_warning_message)
 
 
 class ExamProfileTasksTest(TestCase):

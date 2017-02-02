@@ -6,6 +6,7 @@ import logging
 import tempfile
 
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 import pytz
 
@@ -63,6 +64,8 @@ def export_exam_profiles(self):
         try:
             # upload to SFTP server
             upload.upload_tsv(tsv.name)
+        except ImproperlyConfigured:
+            log.exception('export_exam_profiles is improperly configured, please review require settings.')
         except RetryableSFTPException as exc:
             log.exception('Retryable error during upload of CDD file to Pearson SFTP')
             # retry up to 3 times w/ exponential backoff if this was a connection error
@@ -118,6 +121,8 @@ def export_exam_authorizations(self):
         try:
             # upload to SFTP server
             upload.upload_tsv(tsv.name)
+        except ImproperlyConfigured:
+            log.exception('export_exam_authorizations is improperly configured, please review require settings.')
         except RetryableSFTPException as exc:
             log.exception('Retryable error during upload of EAD file to Pearson SFTP')
             # retry up to 3 times w/ exponential backoff if this was a connection error
