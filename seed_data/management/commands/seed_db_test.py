@@ -180,6 +180,10 @@ class SeedDBDeserializationTests(MockedESTestCase):
             for key in ('title', 'edx_course_key'):
                 assert getattr(run, key) == self.PROGRAM_DATA['courses'][0]['course_runs'][i][key]
 
+    def test_deserialize_prices(self):
+        """Test that price data is deserialized from program information"""
+        programs = deserialize_program_data_list([self.PROGRAM_DATA])
+        program = programs[0]
         prices = CoursePrice.objects.filter(course_run__course__program=program)
         assert prices.count() == 2
         for price in prices:
