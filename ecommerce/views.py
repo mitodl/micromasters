@@ -78,6 +78,30 @@ class CheckoutView(APIView):
                 # If price is $0, don't bother going to CyberSource, just mark as fulfilled
                 order.status = Order.FULFILLED
                 order.save_and_log(request.user)
+                try:
+                    enroll_user_on_success(order)
+                except:  # pylint: disable=bare-except
+                    log.exception(
+                        "Error occurred when enrolling user in one or more courses for order %s. "
+                        "See other errors above for more info.",
+                        order
+                    )
+                    try:
+                        MailgunClient().send_individual_email(
+                            "Error occurred when enrolling user during $0 checkout",
+                            "Error occurred when enrolling user during $0 checkout for {order}. "
+                            "Exception: {exception}".format(
+                                order=order,
+                                exception=traceback.format_exc()
+                            ),
+                            settings.ECOMMERCE_EMAIL,
+                        )
+                    except:  # pylint: disable=bare-except
+                        log.exception(
+                            "Error occurred when sending the email to notify support "
+                            "of user enrollment error during order %s $0 checkout",
+                            order,
+                        )
 
                 # This redirects the user to our order success page
                 payload = {}

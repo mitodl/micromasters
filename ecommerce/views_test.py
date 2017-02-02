@@ -170,7 +170,7 @@ class CheckoutViewTests(MockedESTestCase):
             'ecommerce.views.create_unfulfilled_order',
             autospec=True,
             return_value=order,
-        ) as create_mock:
+        ) as create_mock, patch('ecommerce.views.enroll_user_on_success', autospec=True) as enroll_user_mock:
             resp = self.client.post(reverse('checkout'), {'course_id': course_run.edx_course_key}, format='json')
 
         assert resp.status_code == status.HTTP_200_OK
@@ -184,6 +184,62 @@ class CheckoutViewTests(MockedESTestCase):
 
         assert create_mock.call_count == 1
         assert create_mock.call_args[0] == (course_run.edx_course_key, user)
+
+        assert enroll_user_mock.call_count == 1
+        assert enroll_user_mock.call_args[0] == (order,)
+
+    @override_settings(ECOMMERCE_EMAIL='ecommerce@example.com')
+    def test_zero_price_checkout_failed_enroll(self):
+        """
+        If we do a $0 checkout but the enrollment fails, we should send an email but leave the order as fulfilled
+        """
+        user = UserFactory.create()
+        self.client.force_login(user)
+
+        course_run = CourseRunFactory.create(
+            course__program__live=True,
+            course__program__financial_aid_availability=True,
+        )
+        order = LineFactory.create(
+            order__status=Order.CREATED,
+            order__total_price_paid=0,
+            price=0,
+        ).order
+        with patch(
+            'ecommerce.views.create_unfulfilled_order',
+            autospec=True,
+            return_value=order,
+        ) as create_mock, patch(
+            'ecommerce.views.enroll_user_on_success', side_effect=KeyError,
+        ) as enroll_user_mock, patch(
+            'ecommerce.views.MailgunClient.send_individual_email',
+        ) as send_email:
+            resp = self.client.post(reverse('checkout'), {'course_id': course_run.edx_course_key}, format='json')
+
+        assert resp.status_code == status.HTTP_200_OK
+        assert resp.json() == {
+            'payload': {},
+            'url': 'http://testserver/dashboard/?status=receipt&course_key={}'.format(
+                quote_plus(course_run.edx_course_key)
+            ),
+            'method': 'GET',
+        }
+
+        assert create_mock.call_count == 1
+        assert create_mock.call_args[0] == (course_run.edx_course_key, user)
+
+        assert enroll_user_mock.call_count == 1
+        assert enroll_user_mock.call_args[0] == (order,)
+
+        assert send_email.call_count == 1
+        assert send_email.call_args[0][0] == 'Error occurred when enrolling user during $0 checkout'
+        assert send_email.call_args[0][1].startswith(
+            'Error occurred when enrolling user during $0 checkout for {order}. '
+            'Exception: '.format(
+                order=order,
+            )
+        )
+        assert send_email.call_args[0][2] == 'ecommerce@example.com'
 
     def test_post_redirects(self):
         """Test that POST redirects to same URL"""
@@ -218,7 +274,7 @@ class OrderFulfillmentViewTests(MockedESTestCase):
         data['decision'] = 'ACCEPT'
 
         with patch('ecommerce.views.IsSignedByCyberSource.has_permission', return_value=True), patch(
-            'ecommerce.views.enroll_user_on_success'
+            'ecommerce.views.enroll_user_on_success', autospec=True,
         ) as enroll_user, patch(
             'ecommerce.views.MailgunClient.send_individual_email',
         ) as send_email:
