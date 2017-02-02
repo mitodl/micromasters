@@ -58,16 +58,25 @@ export const calculatePrices = (programs: Dashboard, prices: CoursePrices, coupo
 };
 
 export const _calculateDiscount = (price: number, amountType: string, amount: number) => {
+  let newPrice = price;
   switch (amountType) {
   case COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT:
-    return price * (1 - amount);
+    newPrice = price * (1 - amount);
+    break;
   case COUPON_AMOUNT_TYPE_FIXED_DISCOUNT:
-    return price - amount;
+    newPrice = price - amount;
+    break;
   case COUPON_AMOUNT_TYPE_FIXED_PRICE:
-    return amount;
-  default:
-    return price;
+    newPrice = amount;
+    break;
   }
+  if (newPrice < 0) {
+    newPrice = 0;
+  }
+  if (newPrice > price) {
+    newPrice = price;
+  }
+  return newPrice;
 };
 // allow mocking of function
 export { _calculateDiscount as calculateDiscount };

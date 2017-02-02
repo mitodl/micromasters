@@ -839,3 +839,25 @@ class PriceTests(MockedESTestCase):
         coupon = CouponFactory.create()
         assert coupon.content_object != course_run
         assert calculate_coupon_price(coupon, price, course_run.edx_course_key) == price
+
+    def test_capped_coupon_price_below_0(self):
+        """
+        Assert that the adjusted price cannot go below $0
+        """
+        course_run, _ = create_purchasable_course_run()
+        price = course_run.courseprice_set.first().price
+        coupon = CouponFactory.create(
+            content_object=course_run, amount_type=Coupon.FIXED_DISCOUNT, amount=price + 50,
+        )
+        assert calculate_coupon_price(coupon, price, course_run.edx_course_key) == 0
+
+    def test_capped_coupon_price_above_full(self):
+        """
+        Assert that the adjusted price cannot go above the full price
+        """
+        course_run, _ = create_purchasable_course_run()
+        price = course_run.courseprice_set.first().price
+        coupon = CouponFactory.create(
+            content_object=course_run, amount_type=Coupon.FIXED_DISCOUNT, amount=-(price + 50),
+        )
+        assert calculate_coupon_price(coupon, price, course_run.edx_course_key) == price

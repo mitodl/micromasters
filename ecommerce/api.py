@@ -443,16 +443,20 @@ def calculate_coupon_price(coupon, price, course_key):
     Returns:
         decimal.Decimal: An adjusted price
     """
-    if course_key not in coupon.course_keys:
-        return price
-    if coupon.amount_type == Coupon.PERCENT_DISCOUNT:
-        return price * (1-coupon.amount)
-    elif coupon.amount_type == Coupon.FIXED_DISCOUNT:
-        return price - coupon.amount
-    elif coupon.amount_type == Coupon.FIXED_PRICE:
-        return coupon.amount
-    else:
-        return price
+    new_price = price
+    if course_key in coupon.course_keys:
+        if coupon.amount_type == Coupon.PERCENT_DISCOUNT:
+            new_price = price * (1-coupon.amount)
+        elif coupon.amount_type == Coupon.FIXED_DISCOUNT:
+            new_price = price - coupon.amount
+        elif coupon.amount_type == Coupon.FIXED_PRICE:
+            new_price = coupon.amount
+
+    if new_price < 0:
+        new_price = 0
+    elif new_price > price:
+        new_price = price
+    return new_price
 
 
 def calculate_run_price(course_run, user):
