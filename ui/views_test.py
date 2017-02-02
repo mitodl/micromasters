@@ -3,6 +3,7 @@ Test end to end django views.
 """
 import json
 from unittest.mock import patch, Mock
+from urllib.parse import quote_plus
 
 import ddt
 from django.db.models.signals import post_save
@@ -254,6 +255,16 @@ class TestHomePage(ViewsTests):
         content = response.content.decode('utf-8')
         indexes = [content.find("Program {}".format(i + 1)) for i in range(10)]
         assert indexes == sorted(indexes)
+
+    def test_anonymous_coupon(self):
+        """
+        Assert that a coupon in the query parameter will show up in the context and in the page
+        """
+        code = "co de"
+        next_url = "/dashboard?coupon={}".format(quote_plus(code))
+        resp = self.client.get("/?next={}".format(quote_plus(next_url)))
+        assert resp.context['coupon_code'] == code
+        self.assertContains(resp, "You need to Sign up or Login before you can apply this coupon")
 
 
 class DashboardTests(ViewsTests):
