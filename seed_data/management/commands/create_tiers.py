@@ -22,15 +22,15 @@ def create_tiers(programs, num_tiers):
         tiers_created += len(created_tier_programs)
 
         # there must be at least one TierProgram with discount_amount=0 and one with income_threshold=0
-        least_income_threshold = sorted(
+        least_income_threshold = min(
             created_tier_programs, key=lambda tier_program: tier_program.income_threshold
-        )[0]
+        )
         least_income_threshold.income_threshold = 0
         least_income_threshold.save()
 
-        least_discount = sorted(
+        least_discount = min(
             created_tier_programs, key=lambda tier_program: tier_program.discount_amount
-        )[0]
+        )
         least_discount.discount_amount = 0
         least_discount.save()
 
