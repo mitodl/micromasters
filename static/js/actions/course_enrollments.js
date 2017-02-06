@@ -25,9 +25,11 @@ export const addCourseEnrollment = (courseId: string): Dispatcher<*> => {
         dispatch(receiveAddCourseEnrollmentSuccess());
         dispatch(fetchDashboard(SETTINGS.user.username));
         dispatch(fetchCoursePrices());
+        return Promise.resolve();
       }).
       catch(() => {
         dispatch(receiveAddCourseEnrollmentFailure());
+        return Promise.reject();
       });
   };
 };

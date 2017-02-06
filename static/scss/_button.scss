@@ -188,6 +188,10 @@
   font-size: 13px;
   background: $button-color;
   color: white;
+  margin-bottom: 6px;
+  min-width: 120px;
+  padding: 0 10px;
+  text-align: center;
 
   &[disabled] {
     background-color: adjust-color($button-color, $alpha: -0.5);

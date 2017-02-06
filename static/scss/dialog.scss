@@ -1,0 +1,12 @@
+.dialog {
+  .title {
+    border-bottom: none !important;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .close {
+    margin: 0;
+  }
+}

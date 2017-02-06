@@ -518,3 +518,5 @@ export function getDisplayName(WrappedComponent: ReactClass<*>) {
 }
 
 export const isNilOrBlank = R.either(R.isNil, R.isEmpty);
+
+export const pickExistingProps = R.compose(R.reject(R.isNil), R.pick);

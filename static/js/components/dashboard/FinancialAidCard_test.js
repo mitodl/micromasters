@@ -128,11 +128,10 @@ describe("FinancialAidCard", () => {
 
   describe('applied', () => {
     for (let status of [FA_STATUS_APPROVED, FA_STATUS_AUTO_APPROVED, FA_STATUS_SKIPPED]) {
-      it(`shows the cost if the status is ${status}`, () => {
+      it(`don't show card if status is ${status}`, () => {
         let program = programWithStatus(status);
         let wrapper = renderCard({ program });
-        let expectedPrice = `$${COURSE_PRICES_RESPONSE[0].price}`;
-        assert.equal(wrapper.find(".price").map(node => node.text()), expectedPrice);
+        assert.isNull(wrapper.html());
       });
     }
 
@@ -226,7 +225,7 @@ describe("FinancialAidCard", () => {
   });
 
   it('hides the skip dialog if the cancel button is clicked', () => {
-    let program = programWithStatus();
+    let program = programWithStatus(FA_STATUS_DOCS_SENT);
     let setConfirmSkipDialogVisibility = sandbox.stub();
     let wrapper = renderCard({ program, setConfirmSkipDialogVisibility });
     wrapper.find("SkipFinancialAidDialog").props().cancel();

@@ -85,8 +85,7 @@ describe('CourseSubRow', () => {
     assert.include(wrapper.find(".course-description").html(), "Enrollment open");
     assert.equal(wrapper.find(".course-grade").text().trim(), "");
     let actionCell = wrapper.find(".course-action");
-    assert.equal(actionCell.find("button.pay-button").text(), "Calculate Cost");
-    assert.equal(actionCell.find("button.enroll-pay-later").text(), "Enroll and pay later");
+    assert.equal(actionCell.find("button.enroll-button").text(), "Enroll Now");
   });
 
   it('indicates future enrollment and if a future course run is offered', () => {

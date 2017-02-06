@@ -193,13 +193,6 @@
           font-size: 14px;
         }
 
-        .mdl-button {
-          margin-bottom: 6px;
-          min-width: 120px;
-          padding: 0;
-          text-align: center;
-        }
-
         .description {
           color: $darkgrey;
           font-size: 10pt;
@@ -297,6 +290,15 @@
     background-color: $fg-grey;
     color: black;
   }
+
+  .price-message {
+    font-size: 11pt;
+    align-items: center;
+    padding: 20px;
+    margin: 0 24px;
+    background-color: #dceef8;
+    color: black;
+  }
 }
 
 .dashboard-page .dialog {
@@ -312,6 +314,25 @@
     font-weight: 500;
     margin: 6px 10px;
     padding: 0 2px;
+
+    &.mdl-button--colored {
+      background: $button-color;
+      color: white;
+      font-size: 13px;
+      font-weight: normal;
+      text-align: center;
+      min-width: 120px;
+      padding: 0 10px;
+
+      &[disabled] {
+        background-color: $medgrey;
+        color: white;
+      }
+    }
+
+    &.close {
+      margin: 0;
+    }
   }
 
   .primary-button, .secondary-button {
