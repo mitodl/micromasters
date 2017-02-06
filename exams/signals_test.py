@@ -53,8 +53,6 @@ class ExamSignalsTest(MockedESTestCase):
             }
         )
         CachedCertificateFactory.create(user=cls.profile.user, course_run=course_run)
-        order = OrderFactory.create(user=cls.profile.user, status='fulfilled')
-        LineFactory.create(order=order, course_key=course_run.edx_course_key)
 
     def test_update_exam_profile_called(self):
         """
@@ -91,8 +89,7 @@ class ExamSignalsTest(MockedESTestCase):
             course=self.course_run.course
         ).exists() is False
 
-        final_grade = get_final_grade(self.profile.user, self.course_run)
-        FinalGrade.objects.create(
+        FinalGradeFactory.create(
             user=self.profile.user,
             course_run=self.course_run,
             passed=True,

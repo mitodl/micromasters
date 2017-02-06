@@ -26,7 +26,7 @@ def course_has_exam(mmtrack, course_run):
     )
 
 
-def is_eligible_for_exam_authorization(mmtrack, course_run):
+def is_eligible_for_exam(mmtrack, course_run):
     """
     Returns True if user is eligible exam authorization process. For that the course must have exam
     settings and user must have paid for it.
@@ -49,7 +49,7 @@ def authorize_for_exam(mmtrack, course_run):
         mmtrack (dashboard.utils.MMTrack): a instance of all user information about a program.
         course_run (CourseRun): A CourseRun object.
     """
-    if is_eligible_for_exam_authorization(mmtrack, course_run):
+    if is_eligible_for_exam(mmtrack, course_run):
         now = datetime.datetime.now(tz=pytz.UTC)
         # if user paid for a course then create his exam profile if it is not creaated yet.
         ExamProfile.objects.get_or_create(profile=mmtrack.user.profile)

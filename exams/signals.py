@@ -9,7 +9,7 @@ from dashboard.utils import get_mmtrack
 from exams.models import ExamProfile
 from exams.utils import (
     authorize_for_exam,
-    course_has_exam
+    is_eligible_for_exam
 )
 from grades.models import FinalGrade
 from profiles.models import Profile
@@ -38,6 +38,6 @@ def update_exam_authorization_cached_enrollment(sender, instance, **kwargs):  # 
     Signal handler to trigger an exam profile when user enroll in a course.
     """
     mmtrack = get_mmtrack(instance.user, instance.course_run.course.program)
-    if course_has_exam(mmtrack, instance.course_run) and mmtrack.has_paid(instance.course_run.edx_course_key):
+    if is_eligible_for_exam(mmtrack, instance.course_run):
         # if user paid for a course then create his exam profile if it is not creaated yet.
         ExamProfile.objects.get_or_create(profile=mmtrack.user.profile)
