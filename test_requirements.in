@@ -15,5 +15,6 @@ pytest-django
 pytest-pep8
 pytest-pylint
 semantic-version
+selenium
 testfixtures
 tox

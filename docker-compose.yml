@@ -63,6 +63,7 @@ services:
       - elastic
       - redis
       - sftp
+      - grid
 
   watch:
     build:
@@ -115,6 +116,9 @@ services:
     ports:
         - "2022:22"
     command: odl:123:1001:1001:results,results/topvue
+
+  grid:
+    image: elgalu/selenium
 
 volumes:
   django_media: {}
