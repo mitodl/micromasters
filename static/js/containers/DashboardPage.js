@@ -90,6 +90,8 @@ import { currencyForCountry } from '../lib/currency';
 import DocsInstructionsDialog from '../components/DocsInstructionsDialog';
 import CouponNotificationDialog from '../components/CouponNotificationDialog';
 
+const isProcessing = R.equals(FETCH_PROCESSING);
+
 class DashboardPage extends React.Component {
   static contextTypes = {
     router:   React.PropTypes.object.isRequired
@@ -133,7 +135,7 @@ class DashboardPage extends React.Component {
     dispatch(clearCoursePrices());
     dispatch(clearCoupons());
   }
-  
+
   openEmailComposer = (course: Course) => {
     const { dispatch } = this.props;
     dispatch(
@@ -374,16 +376,12 @@ class DashboardPage extends React.Component {
 
   getCurrentlyEnrolledProgram = () => {
     const { currentProgramEnrollment, dashboard } = this.props;
-    if (
-      currentProgramEnrollment !== null &&
-      dashboard !== null
-    ) {
-      return dashboard.programs.find(program => (
-        program.id === currentProgramEnrollment.id
-      ));
-    } else {
+    if (_.isNil(currentProgramEnrollment) || _.isNil(dashboard)) {
       return undefined;
     }
+    return dashboard.programs.find(program => (
+      program.id === currentProgramEnrollment.id
+    ));
   }
 
   skipFinancialAid = programId => {
@@ -489,111 +487,132 @@ class DashboardPage extends React.Component {
     )(this.props);
   }
 
-  render() {
+  renderErrorMessage = (): React$Element<*>|null => {
+    const {
+      dashboard,
+      prices,
+    } = this.props;
+    if (dashboard.errorInfo) {
+      return <ErrorMessage errorInfo={dashboard.errorInfo}/>;
+    }
+    if (prices.errorInfo) {
+      return <ErrorMessage errorInfo={prices.errorInfo}/>;
+    }
+    const program = this.getCurrentlyEnrolledProgram();
+    if (program) {
+      const coursePrice = prices.coursePrices.find(
+        coursePrice => coursePrice.program_id === program.id
+      );
+      if (coursePrice) {
+        return null;
+      }
+    }
+    return <ErrorMessage errorInfo={{user_message: "No program enrollment is available."}} />;
+  }
+
+  renderPageContent = (): React$Element<*>|null => {
     const {
       dashboard,
       prices,
       profile: { profile },
       documents,
-      currentProgramEnrollment,
       ui,
       courseTeamEmail,
       courseEnrollments,
       financialAid,
       coupons,
     } = this.props;
-    const loaded = dashboard.fetchStatus !== FETCH_PROCESSING && prices.fetchStatus !== FETCH_PROCESSING;
-    let errorMessage;
-    let dashboardContent;
-    // if there are no errors coming from the backend, simply show the dashboard
-    let program, coursePrice;
-    if (!_.isNil(currentProgramEnrollment)) {
-      program = this.getCurrentlyEnrolledProgram();
-      coursePrice = prices.coursePrices.find(coursePrice => coursePrice.program_id === currentProgramEnrollment.id);
+    const program = this.getCurrentlyEnrolledProgram();
+    if (!program) {
+      throw "no program; should never get here";
+    }
+    const coursePrice = prices.coursePrices.find(
+      coursePrice => coursePrice.program_id === program.id
+    );
+
+    let financialAidCard;
+    if (program.financial_aid_availability && !this.shouldSkipFinancialAid()) {
+      financialAidCard = <FinancialAidCard
+        program={program}
+        coursePrice={coursePrice}
+        openFinancialAidCalculator={this.openFinancialAidCalculator}
+        documents={documents}
+        setDocumentSentDate={this.setDocumentSentDate}
+        skipFinancialAid={this.skipFinancialAid}
+        updateDocumentSentDate={this.updateDocumentSentDate}
+        setConfirmSkipDialogVisibility={this.setConfirmSkipDialogVisibility}
+        setDocsInstructionsVisibility={this.setDocsInstructionsVisibility}
+        ui={ui}
+        financialAid={financialAid}
+      />;
     }
 
-    if (dashboard.errorInfo !== undefined) {
-      errorMessage = <ErrorMessage errorInfo={dashboard.errorInfo}/>;
-    } else if (prices.errorInfo !== undefined) {
-      errorMessage = <ErrorMessage errorInfo={prices.errorInfo}/>;
-    } else if (
-      program === null || program === undefined ||
-      coursePrice === null || coursePrice === undefined
-    ) {
-      errorMessage = <ErrorMessage errorInfo={{user_message: "No program enrollment is available."}} />;
-    } else {
-      let financialAidCard;
+    let couponCard;
+    let programId = program.id;
+    const coupon = coupons.coupons.find(coupon => coupon.program_id === programId);
+    if (coupon && coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM) {
+      couponCard = <CouponCard coupon={coupon} />;
+    }
 
-      if (program.financial_aid_availability) {
-        if (!this.shouldSkipFinancialAid()) {
-          financialAidCard = <FinancialAidCard
+    const calculatedPrices = calculatePrices(dashboard.programs, prices.coursePrices, coupons.coupons);
+
+    return (
+      <div className="double-column">
+        <DocsInstructionsDialog
+          open={ui.docsInstructionsVisibility}
+          setDialogVisibility={this.setDocsInstructionsVisibility}
+        />
+        {this.renderCouponDialog()}
+        <div className="first-column">
+          <DashboardUserCard profile={profile} program={program}/>
+          <FinalExamCard
+            profile={profile}
             program={program}
-            coursePrice={coursePrice}
-            openFinancialAidCalculator={this.openFinancialAidCalculator}
-            documents={documents}
-            setDocumentSentDate={this.setDocumentSentDate}
-            skipFinancialAid={this.skipFinancialAid}
-            updateDocumentSentDate={this.updateDocumentSentDate}
-            setConfirmSkipDialogVisibility={this.setConfirmSkipDialogVisibility}
-            setDocsInstructionsVisibility={this.setDocsInstructionsVisibility}
-            ui={ui}
-            financialAid={financialAid}
-          />;
-        }
-      }
-
-      let couponCard;
-      let programId = program.id;
-      let coupon = coupons.coupons.find(coupon => coupon.program_id === programId);
-      if (coupon && coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM) {
-        couponCard = <CouponCard coupon={coupon} />;
-      }
-
-      const calculatedPrices = calculatePrices(dashboard.programs, prices.coursePrices, coupons.coupons);
-
-      dashboardContent = (
-        <div className="double-column">
-          <DocsInstructionsDialog
-            open={ui.docsInstructionsVisibility}
-            setDialogVisibility={this.setDocsInstructionsVisibility}
+            navigateToProfile={this.navigateToProfile}
           />
-          {this.renderCouponDialog()}
-          <div className="first-column">
-            <DashboardUserCard profile={profile} program={program}/>
-            <FinalExamCard
-              profile={profile}
-              program={program}
-              navigateToProfile={this.navigateToProfile}
-            />
-            {financialAidCard}
-            {couponCard}
-            <CourseListCard
-              program={program}
-              coupon={coupon}
-              courseEnrollAddStatus={courseEnrollments.courseEnrollAddStatus}
-              prices={calculatedPrices}
-              key={program.id}
-              openFinancialAidCalculator={this.openFinancialAidCalculator}
-              addCourseEnrollment={this.addCourseEnrollment}
-              openEmailComposer={this.openEmailComposer}
-              closeEmailDialog={this.closeAndClearEmailComposer}
-              updateEmailEdit={this.updateEmailEdit}
-              sendEmail={this.closeEmailComposerAndSend}
-              emailDialogVisibility={ui.emailDialogVisibility}
-              email={courseTeamEmail}
-            />
-          </div>
-          <div className="second-column">
-            <ProgressWidget program={program} />
-          </div>
+          {financialAidCard}
+          {couponCard}
+          <CourseListCard
+            program={program}
+            coupon={coupon}
+            courseEnrollAddStatus={courseEnrollments.courseEnrollAddStatus}
+            prices={calculatedPrices}
+            key={program.id}
+            openFinancialAidCalculator={this.openFinancialAidCalculator}
+            addCourseEnrollment={this.addCourseEnrollment}
+            openEmailComposer={this.openEmailComposer}
+            closeEmailDialog={this.closeAndClearEmailComposer}
+            updateEmailEdit={this.updateEmailEdit}
+            sendEmail={this.closeEmailComposerAndSend}
+            emailDialogVisibility={ui.emailDialogVisibility}
+            email={courseTeamEmail}
+          />
         </div>
-      );
+        <div className="second-column">
+          <ProgressWidget program={program} />
+        </div>
+      </div>
+    );
+  }
+
+  render() {
+    const {
+      dashboard,
+      prices,
+    } = this.props;
+    const loaded = R.none(isProcessing, [dashboard.fetchStatus, prices.fetchStatus]);
+
+    const errorMessage = this.renderErrorMessage();
+    let pageContent;
+    if (_.isNil(errorMessage)) {
+      pageContent = this.renderPageContent();
     }
+
     return (
       <div className="dashboard">
         <Loader loaded={loaded}>
           {errorMessage}
-          {dashboardContent}
+          {pageContent}
         </Loader>
       </div>
     );
