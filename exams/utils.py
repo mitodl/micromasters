@@ -32,11 +32,11 @@ def is_eligible_for_exam(mmtrack, course_run):
     settings and user must have paid for it.
 
     Args:
-    mmtrack (dashboard.utils.MMTrack): a instance of all user information about a program.
-    course_run (CourseRun): A CourseRun object.
+        mmtrack (dashboard.utils.MMTrack): a instance of all user information about a program.
+        course_run (courses.models.CourseRun): A CourseRun object.
 
     Returns:
-        bool: Weather use is eligible or not
+        bool: whether use is eligible or not
     """
     return course_has_exam(mmtrack, course_run) and mmtrack.has_paid(course_run.edx_course_key)
 
@@ -47,7 +47,7 @@ def authorize_for_exam(mmtrack, course_run):
 
     Args:
         mmtrack (dashboard.utils.MMTrack): a instance of all user information about a program.
-        course_run (CourseRun): A CourseRun object.
+        course_run (courses.models.CourseRun): A CourseRun object.
     """
     if is_eligible_for_exam(mmtrack, course_run):
         now = datetime.datetime.now(tz=pytz.UTC)

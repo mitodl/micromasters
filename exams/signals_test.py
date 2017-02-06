@@ -41,18 +41,18 @@ class ExamSignalsTest(MockedESTestCase):
             cls.profile = ProfileFactory.create()
 
         cls.program, _ = create_program(past=True)
-        cls.course_run = course_run = cls.program.course_set.first().courserun_set.first()
+        cls.course_run = cls.program.course_set.first().courserun_set.first()
         CachedCurrentGradeFactory.create(
             user=cls.profile.user,
-            course_run=course_run,
+            course_run=cls.course_run,
             data={
                 "passed": True,
                 "percent": 0.9,
-                "course_key": course_run.edx_course_key,
+                "course_key": cls.course_run.edx_course_key,
                 "username": cls.profile.user.username
             }
         )
-        CachedCertificateFactory.create(user=cls.profile.user, course_run=course_run)
+        CachedCertificateFactory.create(user=cls.profile.user, course_run=cls.course_run)
 
     def test_update_exam_profile_called(self):
         """
@@ -117,12 +117,14 @@ class ExamSignalsTest(MockedESTestCase):
         """
         Test no exam profile created when user enrolled in the course but not paid for it.
         """
+        # exam profile before enrollment
+        assert ExamProfile.objects.filter(profile=self.profile).exists() is False
         CachedEnrollmentFactory.create(user=self.profile.user, course_run=self.course_run)
         assert ExamProfile.objects.filter(profile=self.profile).exists() is False
 
     def test_update_exam_authorization_cached_enrollment_when_no_exam_on_course(self):
         """
-        Test no exam profile created when course has not `exam_module` setting.
+        Test no exam profile created when course has no `exam_module` setting.
         """
         course = CourseFactory.create(program=self.program, exam_module=None)
         course_run = CourseRunFactory.create(
@@ -131,5 +133,8 @@ class ExamSignalsTest(MockedESTestCase):
             course=course
         )
         create_order(self.profile.user, course_run)
+
+        # exam profile before enrollment.
+        assert ExamProfile.objects.filter(profile=self.profile).exists() is False
         CachedEnrollmentFactory.create(user=self.profile.user, course_run=course_run)
         assert ExamProfile.objects.filter(profile=self.profile).exists() is False
