@@ -76,9 +76,8 @@ class ExamTasksTest(TestCase):
         """
         Verify that when a ImproperlyConfigured error occurs that the task logs exception
         """
-        error = ImproperlyConfigured()
         with patch("exams.tasks.log") as log, patch('exams.pearson.upload.upload_tsv') as upload_tsv_mock:
-            upload_tsv_mock.side_effect = error
+            upload_tsv_mock.side_effect = ImproperlyConfigured()
             task.delay()
 
         log.exception.assert_called_with(expected_warning_message)
