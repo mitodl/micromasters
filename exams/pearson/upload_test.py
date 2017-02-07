@@ -33,7 +33,6 @@ EXAMS_SFTP_SETTINGS = {
 
 @ddt
 @override_settings(**EXAMS_SFTP_SETTINGS)
-@override_settings(FEATURES={"PEARSON_EXAMS_SYNC": True})
 @patch('pysftp.Connection')
 class PeasonUploadTest(SimpleTestCase):
     """

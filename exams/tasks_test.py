@@ -7,7 +7,7 @@ from ddt import ddt, data, unpack
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.query import QuerySet
 from django.db.models.signals import post_save
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from factory.django import mute_signals
 
 from exams.pearson.exceptions import RetryableSFTPException
@@ -26,6 +26,7 @@ from exams.tasks import (
 )
 
 
+@override_settings(FEATURES={"PEARSON_EXAMS_SYNC": True})
 @ddt
 class ExamTasksTest(TestCase):
     """
@@ -82,7 +83,17 @@ class ExamTasksTest(TestCase):
 
         log.exception.assert_called_with(expected_warning_message)
 
+    @override_settings(FEATURES={"PEARSON_EXAMS_SYNC": False})
+    @data(export_exam_authorizations, export_exam_profiles)
+    def test_task_not_run_on_feature_flag(self, task):
+        """Test that tasks do not run when feature flag `PEARSON_EXAMS_SYNC` is off"""
+        with patch('exams.pearson.upload.upload_tsv') as upload_tsv_mock:
+            task.delay()
 
+        assert upload_tsv_mock.called is False
+
+
+@override_settings(FEATURES={"PEARSON_EXAMS_SYNC": True})
 class ExamProfileTasksTest(TestCase):
     """
     Tests for exam profile tasks
@@ -147,6 +158,7 @@ class ExamProfileTasksTest(TestCase):
             assert exam_profile in in_progress_profiles
 
 
+@override_settings(FEATURES={"PEARSON_EXAMS_SYNC": True})
 class ExamAuthorizationTasksTest(TestCase):
     """
     Tests for exam authorization tasks

@@ -28,10 +28,6 @@ def get_connection():
         if getattr(settings, key) is None:
             missing_settings.append(key)
 
-    pearson_exams_sync = settings.FEATURES.get("PEARSON_EXAMS_SYNC", False)
-    if not pearson_exams_sync:
-        missing_settings.append("FEATURE_PEARSON_EXAMS_SYNC")
-
     if missing_settings:
         raise ImproperlyConfigured(
             "The setting(s) {} are required".format(', '.join(missing_settings))

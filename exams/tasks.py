@@ -43,6 +43,9 @@ def export_exam_profiles(self):
     """
     Sync any outstanding profiles
     """
+    if not settings.FEATURES.get("PEARSON_EXAMS_SYNC", False):
+        return None
+
     exam_profiles = ExamProfile.objects.filter(
         status=ExamProfile.PROFILE_PENDING).select_related('profile')
     file_prefix = datetime.now(pytz.utc).strftime(PEARSON_CDD_FILE_PREFIX)
@@ -100,6 +103,9 @@ def export_exam_authorizations(self):
     """
     Sync any outstanding profiles
     """
+    if not settings.FEATURES.get("PEARSON_EXAMS_SYNC", False):
+        return None
+
     exam_authorizations = ExamAuthorization.objects.filter(
         status=ExamAuthorization.STATUS_PENDING).prefetch_related('user__profile', 'course__program')
     file_prefix = datetime.now(pytz.utc).strftime(PEARSON_EAD_FILE_PREFIX)
