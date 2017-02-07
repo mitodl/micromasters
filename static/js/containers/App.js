@@ -27,8 +27,8 @@ import {
   setCurrentProgramEnrollment,
 } from '../actions/programs';
 import {
-  setEnrollDialogError,
-  setEnrollDialogVisibility,
+  setEnrollProgramDialogError,
+  setEnrollProgramDialogVisibility,
   setToastMessage,
   setEnrollSelectedProgram,
   setNavDrawerOpen,
@@ -144,14 +144,14 @@ class App extends React.Component {
     return dispatch(addProgramEnrollment(programId));
   };
 
-  setEnrollDialogError = (error: ?string): void => {
+  setEnrollProgramDialogError = (error: ?string): void => {
     const { dispatch } = this.props;
-    dispatch(setEnrollDialogError(error));
+    dispatch(setEnrollProgramDialogError(error));
   };
 
-  setEnrollDialogVisibility = (visibility: boolean): void => {
+  setEnrollProgramDialogVisibility = (visibility: boolean): void => {
     const { dispatch } = this.props;
-    dispatch(setEnrollDialogVisibility(visibility));
+    dispatch(setEnrollProgramDialogVisibility(visibility));
   };
 
   setEnrollSelectedProgram = (programId: ?number): void => {
@@ -222,8 +222,8 @@ class App extends React.Component {
       currentProgramEnrollment,
       programs,
       ui: {
-        enrollDialogError,
-        enrollDialogVisibility,
+        enrollProgramDialogError,
+        enrollProgramDialogVisibility,
         enrollSelectedProgram,
         navDrawerOpen,
       },
@@ -246,15 +246,15 @@ class App extends React.Component {
         addProgramEnrollment={this.addProgramEnrollment}
         currentProgramEnrollment={currentProgramEnrollment}
         empty={empty}
-        enrollDialogError={enrollDialogError}
-        enrollDialogVisibility={enrollDialogVisibility}
+        enrollProgramDialogError={enrollProgramDialogError}
+        enrollProgramDialogVisibility={enrollProgramDialogVisibility}
         enrollSelectedProgram={enrollSelectedProgram}
         pathname={pathname}
         programs={programs.availablePrograms}
         fetchAddStatus={programs.postStatus}
         setCurrentProgramEnrollment={this.setCurrentProgramEnrollment}
-        setEnrollDialogError={this.setEnrollDialogError}
-        setEnrollDialogVisibility={this.setEnrollDialogVisibility}
+        setEnrollProgramDialogError={this.setEnrollProgramDialogError}
+        setEnrollProgramDialogVisibility={this.setEnrollProgramDialogVisibility}
         setEnrollSelectedProgram={this.setEnrollSelectedProgram}
         setNavDrawerOpen={this.setNavDrawerOpen}
         navDrawerOpen={navDrawerOpen}

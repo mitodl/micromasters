@@ -8,48 +8,48 @@ import { FETCH_PROCESSING } from '../actions';
 import { dialogActions } from './inputs/util';
 import type { AvailablePrograms } from '../flow/enrollmentTypes';
 
-export default class NewEnrollmentDialog extends React.Component {
+export default class ProgramEnrollmentDialog extends React.Component {
   props: {
-    addProgramEnrollment:        (programId: number) => void,
+    enrollInProgram:             (programId: number) => void,
     programs:                    AvailablePrograms,
+    selectedProgram:             ?number,
     fetchAddStatus?:             string,
-    enrollDialogError:           ?string,
-    enrollDialogVisibility:      boolean,
-    enrollSelectedProgram:       ?number,
-    setEnrollDialogError:        (error: ?string) => void,
-    setEnrollDialogVisibility:   (open: boolean) => void,
-    setEnrollSelectedProgram:    (programId: ?number) => void,
+    error:                       ?string,
+    visibility:                  boolean,
+    setError:                    (error: ?string) => void,
+    setVisibility:               (open: boolean) => void,
+    setSelectedProgram:          (programId: ?number) => void,
   };
 
   closeDialog = () => {
-    const { setEnrollDialogVisibility } = this.props;
-    setEnrollDialogVisibility(false);
+    const { setVisibility } = this.props;
+    setVisibility(false);
   };
 
-  addEnrollment = () => {
+  enrollInProgram = () => {
     const {
-      addProgramEnrollment,
-      enrollSelectedProgram,
-      setEnrollDialogError,
+      enrollInProgram,
+      selectedProgram,
+      setError,
     } = this.props;
 
-    if (_.isNil(enrollSelectedProgram)) {
-      setEnrollDialogError("No program selected");
+    if (_.isNil(selectedProgram)) {
+      setError("No program selected");
     } else {
-      addProgramEnrollment(enrollSelectedProgram);
+      enrollInProgram(selectedProgram);
     }
   };
 
   handleSelectedProgramChange = (event, index, value) => {
-    const { setEnrollSelectedProgram } = this.props;
-    setEnrollSelectedProgram(value);
+    const { setSelectedProgram } = this.props;
+    setSelectedProgram(value);
   };
 
   render() {
     const {
-      enrollDialogError,
-      enrollDialogVisibility,
-      enrollSelectedProgram,
+      error,
+      visibility,
+      selectedProgram,
       programs,
       fetchAddStatus,
     } = this.props;
@@ -60,23 +60,23 @@ export default class NewEnrollmentDialog extends React.Component {
     );
 
     const actions = dialogActions(
-      this.closeDialog, this.addEnrollment, fetchAddStatus === FETCH_PROCESSING, 'Enroll', 'enroll-button'
+      this.closeDialog, this.enrollInProgram, fetchAddStatus === FETCH_PROCESSING, 'Enroll', 'enroll-button'
     );
     // onRequestClose is not used below because an extra click or touch event causes material-ui
     // to close the dialog right after opening it. See https://github.com/JedWatson/react-select/issues/532
     return <Dialog
       title="Enroll in a new MicroMasters Program"
       titleClassName="dialog-title"
-      contentClassName="dialog enroll-dialog"
-      className="enroll-dialog-wrapper"
-      open={enrollDialogVisibility}
+      contentClassName="dialog enroll-program-dialog"
+      className="enroll-program-dialog-wrapper"
+      open={visibility}
       actions={actions}
     >
       <SelectField
-        value={enrollSelectedProgram}
+        value={selectedProgram}
         onChange={this.handleSelectedProgramChange}
         floatingLabelText="Select Program"
-        errorText={enrollDialogError}
+        errorText={error}
         fullWidth={true}
         style={{
           width: "500px"

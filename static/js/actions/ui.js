@@ -78,11 +78,11 @@ export const setSearchFilterVisibility = createAction(SET_SEARCH_FILTER_VISIBILI
 export const SET_EMAIL_DIALOG_VISIBILITY = 'SET_EMAIL_DIALOG_VISIBILITY';
 export const setEmailDialogVisibility = createAction(SET_EMAIL_DIALOG_VISIBILITY);
 
-export const SET_ENROLL_DIALOG_ERROR = 'SET_ENROLL_DIALOG_ERROR';
-export const setEnrollDialogError = createAction(SET_ENROLL_DIALOG_ERROR);
+export const SET_ENROLL_PROGRAM_DIALOG_ERROR = 'SET_ENROLL_PROGRAM_DIALOG_ERROR';
+export const setEnrollProgramDialogError = createAction(SET_ENROLL_PROGRAM_DIALOG_ERROR);
 
-export const SET_ENROLL_DIALOG_VISIBILITY = 'SET_ENROLL_DIALOG_VISIBILITY';
-export const setEnrollDialogVisibility = createAction(SET_ENROLL_DIALOG_VISIBILITY);
+export const SET_ENROLL_PROGRAM_DIALOG_VISIBILITY = 'SET_ENROLL_PROGRAM_DIALOG_VISIBILITY';
+export const setEnrollProgramDialogVisibility = createAction(SET_ENROLL_PROGRAM_DIALOG_VISIBILITY);
 
 export const SET_TOAST_MESSAGE = 'SET_TOAST_MESSAGE';
 export const setToastMessage = createAction(SET_TOAST_MESSAGE);

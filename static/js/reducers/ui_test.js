@@ -23,8 +23,8 @@ import {
   setUserMenuOpen,
   setSearchFilterVisibility,
   setEmailDialogVisibility,
-  setEnrollDialogError,
-  setEnrollDialogVisibility,
+  setEnrollProgramDialogError,
+  setEnrollProgramDialogVisibility,
   setToastMessage,
   setEnrollSelectedProgram,
   setPhotoDialogVisibility,
@@ -171,17 +171,17 @@ describe('ui reducers', () => {
     });
   });
 
-  describe('Enrollment', () => {
+  describe('Program enrollment', () => {
     it('sets the enrollment message', () => {
       assertReducerResultState(setToastMessage, ui => ui.toastMessage, null);
     });
 
     it('sets the enrollment dialog error', () => {
-      assertReducerResultState(setEnrollDialogError, ui => ui.enrollDialogError, null);
+      assertReducerResultState(setEnrollProgramDialogError, ui => ui.enrollProgramDialogError, null);
     });
 
     it('sets the enrollment dialog visibility', () => {
-      assertReducerResultState(setEnrollDialogVisibility, ui => ui.enrollDialogVisibility, false);
+      assertReducerResultState(setEnrollProgramDialogVisibility, ui => ui.enrollProgramDialogVisibility, false);
     });
 
     it('sets the enrollment dialog currently selected program', () => {

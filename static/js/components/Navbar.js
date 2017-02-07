@@ -23,24 +23,24 @@ const PROFILE_REGEX = /^\/profile\/?/;
 
 export default class Navbar extends React.Component {
   props: {
-    addProgramEnrollment:        (programId: number) => Promise<*>,
-    children?:                   React$Element<*>[],
-    currentProgramEnrollment:    AvailableProgram,
-    empty:                       boolean,
-    enrollDialogError:           ?string,
-    enrollDialogVisibility:      boolean,
-    enrollSelectedProgram:       ?number,
-    fetchAddStatus?:             string,
-    programs:                    AvailablePrograms,
-    navDrawerOpen:               boolean,
-    pathname:                    string,
-    profile:                     Profile,
-    setCurrentProgramEnrollment: (program: AvailableProgram) => void,
-    setEnrollDialogError:        (error: ?string) => void,
-    setEnrollDialogVisibility:   (open: boolean) => void,
-    setEnrollSelectedProgram:    (programId: ?number) => void,
-    setNavDrawerOpen:            (b: boolean) => void,
-    setPhotoDialogVisibility:    (b: boolean) => void,
+    addProgramEnrollment:             (programId: number) => Promise<*>,
+    children?:                        React$Element<*>[],
+    currentProgramEnrollment:         AvailableProgram,
+    empty:                            boolean,
+    enrollProgramDialogError:         ?string,
+    enrollProgramDialogVisibility:    boolean,
+    enrollSelectedProgram:            ?number,
+    fetchAddStatus?:                  string,
+    programs:                         AvailablePrograms,
+    navDrawerOpen:                    boolean,
+    pathname:                         string,
+    profile:                          Profile,
+    setCurrentProgramEnrollment:      (program: AvailableProgram) => void,
+    setEnrollProgramDialogError:      (error: ?string) => void,
+    setEnrollProgramDialogVisibility: (open: boolean) => void,
+    setEnrollSelectedProgram:         (programId: ?number) => void,
+    setNavDrawerOpen:                 (b: boolean) => void,
+    setPhotoDialogVisibility:         (b: boolean) => void,
   };
 
   renderProfileHeader = () => ([
@@ -59,10 +59,20 @@ export default class Navbar extends React.Component {
   };
 
   programSelector = (): React$Element<*> => {
-    const { pathname } = this.props;
+    const {
+      enrollProgramDialogError,
+      enrollProgramDialogVisibility,
+      setEnrollProgramDialogError,
+      setEnrollProgramDialogVisibility,
+      pathname,
+    } = this.props;
     return (
       <ProgramSelector
         {...this.props}
+        enrollDialogError={enrollProgramDialogError}
+        enrollDialogVisibility={enrollProgramDialogVisibility}
+        setEnrollDialogError={setEnrollProgramDialogError}
+        setEnrollDialogVisibility={setEnrollProgramDialogVisibility}
         selectorVisibility={!PROFILE_SETTINGS_REGEX.test(pathname)}
       />
     );

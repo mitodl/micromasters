@@ -136,7 +136,7 @@ describe('App', function() {
     });
   });
 
-  describe('enrollments', () => {
+  describe('program enrollments', () => {
     it('shows an error message if the enrollments GET fetch fails', () => {
       helper.programsGetStub.returns(Promise.reject());
       let types = [
@@ -157,12 +157,12 @@ describe('App', function() {
       });
     });
 
-    it('setEnrollDialogVisibility dispatches the value to the action with the same name', () => {
+    it('setEnrollProgramDialogVisibility dispatches the value to the action with the same name', () => {
       return renderComponent('/').then(([wrapper]) => {
         let props = wrapper.find(Navbar).props();
-        let stub = helper.sandbox.stub(uiActions, 'setEnrollDialogVisibility');
+        let stub = helper.sandbox.stub(uiActions, 'setEnrollProgramDialogVisibility');
         stub.returns({type: "fake"});
-        props.setEnrollDialogVisibility("value");
+        props.setEnrollProgramDialogVisibility("value");
         assert(stub.calledWith("value"));
       });
     });

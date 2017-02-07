@@ -3,7 +3,7 @@ import React from 'react';
 import _ from 'lodash';
 import Select from 'react-select';
 
-import NewEnrollmentDialog from './NewEnrollmentDialog';
+import ProgramEnrollmentDialog from './ProgramEnrollmentDialog';
 import type {
   AvailableProgram,
   AvailablePrograms,
@@ -106,15 +106,15 @@ export default class ProgramSelector extends React.Component {
           clearable={false}
           tabSelectsValue={false}
         />
-        <NewEnrollmentDialog
-          addProgramEnrollment={addProgramEnrollment}
+        <ProgramEnrollmentDialog
+          enrollInProgram={addProgramEnrollment}
           programs={programs}
-          enrollDialogError={enrollDialogError}
-          enrollDialogVisibility={enrollDialogVisibility}
-          enrollSelectedProgram={enrollSelectedProgram}
-          setEnrollDialogError={setEnrollDialogError}
-          setEnrollDialogVisibility={setEnrollDialogVisibility}
-          setEnrollSelectedProgram={setEnrollSelectedProgram}
+          selectedProgram={enrollSelectedProgram}
+          error={enrollDialogError}
+          visibility={enrollDialogVisibility}
+          setError={setEnrollDialogError}
+          setVisibility={setEnrollDialogVisibility}
+          setSelectedProgram={setEnrollSelectedProgram}
           fetchAddStatus={fetchAddStatus}
         />
       </div>;

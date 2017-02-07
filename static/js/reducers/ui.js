@@ -29,8 +29,8 @@ import {
 
   SET_EMAIL_DIALOG_VISIBILITY,
 
-  SET_ENROLL_DIALOG_ERROR,
-  SET_ENROLL_DIALOG_VISIBILITY,
+  SET_ENROLL_PROGRAM_DIALOG_ERROR,
+  SET_ENROLL_PROGRAM_DIALOG_VISIBILITY,
   SET_TOAST_MESSAGE,
   SET_ENROLL_SELECTED_PROGRAM,
 
@@ -73,8 +73,8 @@ export type UIState = {
   searchFilterVisibility:           {[s: string]: boolean},
   tosDialogVisibility:              boolean,
   emailDialogVisibility:            boolean,
-  enrollDialogError:                ?string,
-  enrollDialogVisibility:           boolean,
+  enrollProgramDialogError:         ?string,
+  enrollProgramDialogVisibility:    boolean,
   toastMessage:                     ?ToastMessage,
   enrollSelectedProgram:            ?number,
   photoDialogVisibility:            boolean,
@@ -108,8 +108,8 @@ export const INITIAL_UI_STATE: UIState = {
   searchFilterVisibility: {},
   tosDialogVisibility: false,
   emailDialogVisibility: false,
-  enrollDialogError: null,
-  enrollDialogVisibility: false,
+  enrollProgramDialogError: null,
+  enrollProgramDialogVisibility: false,
   toastMessage: null,
   enrollSelectedProgram: null,
   photoDialogVisibility: false,
@@ -250,10 +250,10 @@ export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
       emailDialogVisibility: action.payload,
     };
   }
-  case SET_ENROLL_DIALOG_ERROR: {
+  case SET_ENROLL_PROGRAM_DIALOG_ERROR: {
     return {
       ...state,
-      enrollDialogError: action.payload,
+      enrollProgramDialogError: action.payload,
     };
   }
   case SET_TOAST_MESSAGE: {
@@ -268,10 +268,10 @@ export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
       enrollSelectedProgram: action.payload,
     };
   }
-  case SET_ENROLL_DIALOG_VISIBILITY: {
+  case SET_ENROLL_PROGRAM_DIALOG_VISIBILITY: {
     return {
       ...state,
-      enrollDialogVisibility: action.payload
+      enrollProgramDialogVisibility: action.payload
     };
   }
   case SET_PHOTO_DIALOG_VISIBILITY:

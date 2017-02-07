@@ -10,7 +10,7 @@ import {
   fetchCoursePrices,
   fetchDashboard,
 } from './';
-import { setToastMessage, setEnrollDialogVisibility } from '../actions/ui';
+import { setToastMessage, setEnrollProgramDialogVisibility } from '../actions/ui';
 import type { Dispatcher } from '../flow/reduxTypes';
 import type {
   AvailableProgram,
@@ -61,7 +61,7 @@ export const addProgramEnrollment = (programId: number): Dispatcher<AvailablePro
           message: `You are now enrolled in the ${enrollment.title} MicroMasters`,
           icon: TOAST_SUCCESS
         }));
-        dispatch(setEnrollDialogVisibility(false));
+        dispatch(setEnrollProgramDialogVisibility(false));
         dispatch(fetchDashboard());
         dispatch(fetchCoursePrices());
       }).
