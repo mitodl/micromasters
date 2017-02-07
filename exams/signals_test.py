@@ -71,7 +71,7 @@ class ExamSignalsTest(MockedESTestCase):
 
         assert profile_exam.status == ExamProfile.PROFILE_PENDING
 
-    @override_settings(FINAL_GRADE_ALGORITHM='v1')
+    @override_settings(FEATURES={"FINAL_GRADE_ALGORITHM": "v1"})
     def test_update_exam_authorization_final_grade(self):
         """
         Verify that update_exam_authorization_final_grade is called when a FinalGrade saves
