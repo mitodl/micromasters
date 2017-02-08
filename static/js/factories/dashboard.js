@@ -128,7 +128,7 @@ export const makeCoupons = (programs: Dashboard): Coupons => (
 
 export const makeCoursePrice = (program: Program): CoursePrice => ({
   program_id: program.id,
-  price: program.id * 100,
+  price: Decimal(program.id * 100),
   financial_aid_availability: true,
   has_financial_aid_request: true
 });

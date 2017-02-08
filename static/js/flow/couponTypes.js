@@ -30,4 +30,4 @@ export type AttachCouponResponse = {
   coupon: Coupon,
 };
 
-export type CalculatedPrices = Map<number, number>;
+export type CalculatedPrices = Map<number, Decimal>;

@@ -1,4 +1,5 @@
 // @flow
+import Decimal from 'decimal.js-light';
 import {
   COUPON_CONTENT_TYPE_PROGRAM,
   COUPON_CONTENT_TYPE_COURSE,
@@ -47,7 +48,7 @@ function* genPrices(programs: Dashboard, prices: CoursePrices, coupons: Coupons)
 
 export const calculatePrice = (
   runId: number, courseId: number, price: CoursePrice, coupons: Coupons
-): [?Coupon, ?number] => {
+): [?Coupon, ?Decimal] => {
   const couponLookup: Map<number, Coupon> = makeProgramIdLookup(coupons);
   let coupon = couponLookup.get(price.program_id);
   return [coupon, calculateRunPrice(runId, courseId, price.program_id, price, coupon)];
@@ -57,23 +58,23 @@ export const calculatePrices = (programs: Dashboard, prices: CoursePrices, coupo
   return new Map(genPrices(programs, prices, coupons));
 };
 
-export const _calculateDiscount = (price: number, amountType: string, amount: number) => {
+export const _calculateDiscount = (price: Decimal, amountType: string, amount: Decimal): Decimal => {
   let newPrice = price;
   switch (amountType) {
   case COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT:
-    newPrice = price * (1 - amount);
+    newPrice = price.times(Decimal('1').minus(amount));
     break;
   case COUPON_AMOUNT_TYPE_FIXED_DISCOUNT:
-    newPrice = price - amount;
+    newPrice = price.minus(amount);
     break;
   case COUPON_AMOUNT_TYPE_FIXED_PRICE:
     newPrice = amount;
     break;
   }
-  if (newPrice < 0) {
-    newPrice = 0;
+  if (newPrice.lessThan(0)) {
+    newPrice = Decimal('0');
   }
-  if (newPrice > price) {
+  if (newPrice.greaterThan(price)) {
     newPrice = price;
   }
   return newPrice;
@@ -84,7 +85,7 @@ import { calculateDiscount } from './coupon';
 
 export const _calculateRunPrice = (
   runId: number, courseId: number, programId: number, programPrice: ?CoursePrice, coupon: ?Coupon
-): ?number => {
+): ?Decimal => {
   if (!programPrice) {
     // don't have any price to calculate
     return null;

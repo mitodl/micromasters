@@ -164,23 +164,39 @@ describe('coupon utility functions', () => {
 
   describe('calculateDiscount', () => {
     it('calculates a percent discount', () => {
-      assert.equal(calculateDiscount(123, COUPON_AMOUNT_TYPE_FIXED_DISCOUNT, 50), 73);
-      assert.equal(calculateDiscount(123, COUPON_AMOUNT_TYPE_FIXED_DISCOUNT, 123), 0);
+      const actual1 = calculateDiscount(Decimal('123'), COUPON_AMOUNT_TYPE_FIXED_DISCOUNT, Decimal('50'));
+      const expected1 = Decimal('73');
+      assert(actual1.equals(expected1));
+      const actual2 = calculateDiscount(Decimal('123'), COUPON_AMOUNT_TYPE_FIXED_DISCOUNT, Decimal('123'));
+      const expected2 = Decimal('0');
+      assert(actual2.equals(expected2));
     });
 
     it('calculates a fixed discount', () => {
-      assert.equal(calculateDiscount(123, COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT, 0.5), 123 / 2);
-      assert.equal(calculateDiscount(123, COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT, 1), 0);
+      const actual1 = calculateDiscount(Decimal('123'), COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT, Decimal('0.5'));
+      const expected1 = Decimal('61.5');
+      assert(actual1.equals(expected1));
+      const actual2 = calculateDiscount(Decimal(123), COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT, Decimal(1));
+      const expected2 = Decimal('0');
+      assert(actual2.equals(expected2));
     });
 
     it('calculates a fixed price', () => {
-      assert.equal(calculateDiscount(123, COUPON_AMOUNT_TYPE_FIXED_PRICE, 50), 50);
-      assert.equal(calculateDiscount(123, COUPON_AMOUNT_TYPE_FIXED_PRICE, 150), 123);
+      const actual1 = calculateDiscount(Decimal('123'), COUPON_AMOUNT_TYPE_FIXED_PRICE, Decimal('50'));
+      const expected1 = Decimal('50');
+      assert(actual1.equals(expected1));
+      const actual2 = calculateDiscount(Decimal('123'), COUPON_AMOUNT_TYPE_FIXED_PRICE, Decimal('150'));
+      const expected2 = Decimal('123');
+      assert(actual2.equals(expected2));
     });
 
     it('caps the minimum price between 0 and the current price', () => {
-      assert.equal(calculateDiscount(123, COUPON_AMOUNT_TYPE_FIXED_DISCOUNT, 150), 0);
-      assert.equal(calculateDiscount(50, COUPON_AMOUNT_TYPE_FIXED_DISCOUNT, -50), 50);
+      const actual1 = calculateDiscount(Decimal('123'), COUPON_AMOUNT_TYPE_FIXED_DISCOUNT, Decimal('150'));
+      const expected1 = Decimal('0');
+      assert(actual1.equals(expected1));
+      const actual2 = calculateDiscount(Decimal('50'), COUPON_AMOUNT_TYPE_FIXED_DISCOUNT, Decimal('-50'));
+      const expected2 = Decimal('50');
+      assert(actual2.equals(expected2));
     });
   });
 
