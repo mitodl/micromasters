@@ -13,7 +13,7 @@ import {
 import { mstr } from '../lib/sanctuary';
 import type { Profile } from '../flow/profileTypes';
 
-export default class UserInfoCard extends React.Component {
+export default class LearnerInfoCard extends React.Component {
   props: {
     profile: Profile,
     toggleShowPersonalDialog: () => void,

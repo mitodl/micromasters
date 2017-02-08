@@ -8,7 +8,7 @@ import ProfileImage from '../containers/ProfileImage';
 import { mstr } from '../lib/sanctuary';
 import type { Profile } from '../flow/profileTypes';
 
-const UserChip = ({ profile }: {profile: Profile}): React$Element<*> => (
+const LearnerChip = ({ profile }: {profile: Profile}): React$Element<*> => (
   <Card className="user-chip">
     <div className="profile-info">
       <span className="name">
@@ -26,4 +26,4 @@ const UserChip = ({ profile }: {profile: Profile}): React$Element<*> => (
   </Card>
 );
 
-export default UserChip;
+export default LearnerChip;

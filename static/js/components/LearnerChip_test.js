@@ -4,15 +4,15 @@ import { assert } from 'chai';
 
 import { USER_PROFILE_RESPONSE } from '../test_constants';
 import R from 'ramda';
-import UserChip from './UserChip';
+import LearnerChip from './LearnerChip';
 import { getPreferredName } from '../util/util';
 import ProfileImage from '../containers/ProfileImage';
 
-describe('UserChip', () => {
+describe('LearnerChip', () => {
   let clone;
 
   const renderChip = profile => (
-    shallow(<UserChip profile={profile} />)
+    shallow(<LearnerChip profile={profile} />)
   );
 
   beforeEach(() => {

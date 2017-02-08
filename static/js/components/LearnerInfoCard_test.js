@@ -5,7 +5,7 @@ import { shallow } from 'enzyme';
 import { assert } from 'chai';
 import sinon from 'sinon';
 
-import UserInfoCard from './UserInfoCard';
+import LearnerInfoCard from './LearnerInfoCard';
 import { USER_PROFILE_RESPONSE } from '../test_constants';
 import { mstr } from '../lib/sanctuary';
 import {
@@ -13,11 +13,11 @@ import {
   getPreferredName,
 } from '../util/util';
 
-describe('UserInfoCard', () => {
+describe('LearnerInfoCard', () => {
   let sandbox, editProfileBtnStub, editAboutMeBtnStub;
 
   const renderInfoCard = (props = {}) => (
-    shallow(<UserInfoCard
+    shallow(<LearnerInfoCard
       profile={ USER_PROFILE_RESPONSE }
       toggleShowPersonalDialog={ editProfileBtnStub }
       toggleShowAboutMeDialog={ editAboutMeBtnStub }

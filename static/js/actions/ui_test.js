@@ -29,7 +29,7 @@ import {
   SET_DOCS_INSTRUCTIONS_VISIBILITY,
   SET_COUPON_NOTIFICATION_VISIBILITY,
   SET_NAV_DRAWER_OPEN,
-  SET_USER_CHIP_VISIBILITY,
+  SET_LEARNER_CHIP_VISIBILITY,
 
   clearUI,
   updateDialogText,
@@ -61,7 +61,7 @@ import {
   setDocsInstructionsVisibility,
   setCouponNotificationVisibility,
   setNavDrawerOpen,
-  setUserChipVisibility,
+  setLearnerChipVisibility,
 } from '../actions/ui';
 import { assertCreatedActionHelper } from './util';
 
@@ -98,7 +98,7 @@ describe('generated UI action helpers', () => {
       [setCouponNotificationVisibility, SET_COUPON_NOTIFICATION_VISIBILITY],
       [setWorkHistoryAnswer, SET_WORK_HISTORY_ANSWER],
       [setNavDrawerOpen, SET_NAV_DRAWER_OPEN],
-      [setUserChipVisibility, SET_USER_CHIP_VISIBILITY],
+      [setLearnerChipVisibility, SET_LEARNER_CHIP_VISIBILITY],
     ].forEach(assertCreatedActionHelper);
   });
 });

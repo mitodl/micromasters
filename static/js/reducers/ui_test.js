@@ -32,7 +32,7 @@ import {
   setConfirmSkipDialogVisibility,
   setDocsInstructionsVisibility,
   setNavDrawerOpen,
-  setUserChipVisibility,
+  setLearnerChipVisibility,
 } from '../actions/ui';
 import { INITIAL_UI_STATE } from '../reducers/ui';
 import rootReducer from '../reducers';
@@ -214,6 +214,6 @@ describe('ui reducers', () => {
   });
 
   it('should let you set the user chip visibility', () => {
-    assertReducerResultState(setUserChipVisibility, ui => ui.userChipVisibility, null);
+    assertReducerResultState(setLearnerChipVisibility, ui => ui.learnerChipVisibility, null);
   });
 });

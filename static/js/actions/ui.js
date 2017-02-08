@@ -111,5 +111,5 @@ export const setCouponNotificationVisibility = createAction(SET_COUPON_NOTIFICAT
 export const SET_NAV_DRAWER_OPEN = 'SET_NAV_DRAWER_OPEN';
 export const setNavDrawerOpen = createAction(SET_NAV_DRAWER_OPEN);
 
-export const SET_USER_CHIP_VISIBILITY = 'SET_USER_CHIP_VISIBILITY';
-export const setUserChipVisibility = createAction(SET_USER_CHIP_VISIBILITY);
+export const SET_LEARNER_CHIP_VISIBILITY = 'SET_LEARNER_CHIP_VISIBILITY';
+export const setLearnerChipVisibility = createAction(SET_LEARNER_CHIP_VISIBILITY);

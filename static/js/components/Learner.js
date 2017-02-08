@@ -5,7 +5,7 @@ import EmploymentForm from './EmploymentForm';
 import EducationForm from './EducationForm';
 import LearnerPagePersonalDialog from './LearnerPagePersonalDialog.js';
 import LearnerPageAboutMeDialog from './LearnerPageAboutMeDialog.js';
-import UserInfoCard from './UserInfoCard';
+import LearnerInfoCard from './LearnerInfoCard';
 import {
   educationValidation,
   employmentValidation,
@@ -52,7 +52,7 @@ export default class Learner extends React.Component {
     return <div className="single-column">
       <LearnerPagePersonalDialog {...this.props} />
       <LearnerPageAboutMeDialog {...this.props} validator={personalValidation} />
-      <UserInfoCard
+      <LearnerInfoCard
         profile={profile}
         toggleShowAboutMeDialog={this.toggleShowAboutMeDialog}
         toggleShowPersonalDialog={this.toggleShowPersonalDialog} />

@@ -41,7 +41,7 @@ import {
   SET_COUPON_NOTIFICATION_VISIBILITY,
   SET_NAV_DRAWER_OPEN,
   SET_PROGRAM,
-  SET_USER_CHIP_VISIBILITY,
+  SET_LEARNER_CHIP_VISIBILITY,
 } from '../actions/ui';
 import type { ToastMessage } from '../flow/generalTypes';
 import type { Action } from '../flow/reduxTypes';
@@ -85,7 +85,7 @@ export type UIState = {
   docsInstructionsVisibility:       boolean,
   couponNotificationVisibility:     boolean,
   navDrawerOpen:                    boolean,
-  userChipVisibility:               ?string,
+  learnerChipVisibility:               ?string,
 };
 
 export const INITIAL_UI_STATE: UIState = {
@@ -120,7 +120,7 @@ export const INITIAL_UI_STATE: UIState = {
   docsInstructionsVisibility: false,
   couponNotificationVisibility: false,
   navDrawerOpen: false,
-  userChipVisibility: null,
+  learnerChipVisibility: null,
 };
 
 export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
@@ -286,8 +286,8 @@ export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
     return { ...state, couponNotificationVisibility: action.payload };
   case SET_NAV_DRAWER_OPEN:
     return { ...state, navDrawerOpen: action.payload };
-  case SET_USER_CHIP_VISIBILITY:
-    return { ...state, userChipVisibility: action.payload };
+  case SET_LEARNER_CHIP_VISIBILITY:
+    return { ...state, learnerChipVisibility: action.payload };
   default:
     return state;
   }

@@ -11,8 +11,8 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import ProfileImage from '../../containers/ProfileImage';
 import LearnerResult from './LearnerResult';
 import {
-  SET_USER_CHIP_VISIBILITY,
-  setUserChipVisibility,
+  SET_LEARNER_CHIP_VISIBILITY,
+  setLearnerChipVisibility,
 } from '../../actions/ui';
 import IntegrationTestHelper from '../../util/integration_test_helper';
 import {
@@ -91,7 +91,7 @@ describe('LearnerResult', () => {
   });
 
   it('should render the user chip if the visibility equals the username', () => {
-    helper.store.dispatch(setUserChipVisibility(USER_PROFILE_RESPONSE.username));
+    helper.store.dispatch(setLearnerChipVisibility(USER_PROFILE_RESPONSE.username));
 
     let result = renderLearnerResult();
     assert.equal(result.find(".user-chip").length, 1);
@@ -99,7 +99,7 @@ describe('LearnerResult', () => {
 
   for (const username of ['xyz', null]) {
     it(`should not render the user chip if visibility is set to ${String(username)}`, () => {
-      helper.store.dispatch(setUserChipVisibility(username));
+      helper.store.dispatch(setLearnerChipVisibility(username));
 
       let result = renderLearnerResult();
       assert.equal(result.find(".user-chip").length, 0);
@@ -108,20 +108,20 @@ describe('LearnerResult', () => {
 
   it('should set user chip visibility if onMouseEnter is triggered', () => {
     let result = renderLearnerResult();
-    return helper.listenForActions([SET_USER_CHIP_VISIBILITY], () => {
+    return helper.listenForActions([SET_LEARNER_CHIP_VISIBILITY], () => {
       result.find(".learner-name").props().onMouseEnter();
     }).then(state => {
-      assert.equal(state.ui.userChipVisibility, USER_PROFILE_RESPONSE.username);
+      assert.equal(state.ui.learnerChipVisibility, USER_PROFILE_RESPONSE.username);
     });
   });
 
   it('should clear user chip visibility if onMouseLeave is triggered', () => {
-    helper.store.dispatch(setUserChipVisibility(USER_PROFILE_RESPONSE.username));
+    helper.store.dispatch(setLearnerChipVisibility(USER_PROFILE_RESPONSE.username));
     let result = renderLearnerResult();
-    return helper.listenForActions([SET_USER_CHIP_VISIBILITY], () => {
+    return helper.listenForActions([SET_LEARNER_CHIP_VISIBILITY], () => {
       result.find(".learner-name").props().onMouseLeave();
     }).then(state => {
-      assert.equal(state.ui.userChipVisibility, null);
+      assert.equal(state.ui.learnerChipVisibility, null);
     });
   });
 

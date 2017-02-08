@@ -5,16 +5,16 @@ import Grid, { Cell } from 'react-mdl/lib/Grid';
 import _ from 'lodash';
 import type { Dispatch } from 'redux';
 
-import { setUserChipVisibility } from '../../actions/ui';
+import { setLearnerChipVisibility } from '../../actions/ui';
 import ProfileImage from '../../containers/ProfileImage';
-import UserChip from '../UserChip';
+import LearnerChip from '../LearnerChip';
 import { getUserDisplayName, getLocation } from '../../util/util';
 import type { SearchResult } from '../../flow/searchTypes';
 
 type LearnerResultProps = {
   result: { _source: SearchResult },
-  setUserChipVisibility: (username: ?string) => void,
-  userChipVisibility: ?string,
+  setLearnerChipVisibility: (username: ?string) => void,
+  learnerChipVisibility: ?string,
 };
 
 class LearnerResult extends React.Component {
@@ -27,8 +27,8 @@ class LearnerResult extends React.Component {
   render () {
     const {
       result: { _source: { profile, program } },
-      setUserChipVisibility,
-      userChipVisibility,
+      setLearnerChipVisibility,
+      learnerChipVisibility,
     } = this.props;
     return (
       <Grid className="search-grid learner-result">
@@ -38,13 +38,13 @@ class LearnerResult extends React.Component {
         <Cell
           col={3}
           className="learner-name centered"
-          onMouseLeave={() => setUserChipVisibility(null)}
-          onMouseEnter={() => setUserChipVisibility(profile.username)}
+          onMouseLeave={() => setLearnerChipVisibility(null)}
+          onMouseEnter={() => setLearnerChipVisibility(profile.username)}
         >
           <span className="display-name">
             { getUserDisplayName(profile) }
           </span>
-          {profile.username === userChipVisibility ? <UserChip profile={profile} /> : null}
+          {profile.username === learnerChipVisibility ? <LearnerChip profile={profile} /> : null}
         </Cell>
         <Cell col={4} className="centered learner-location">
           <span>
@@ -65,15 +65,15 @@ class LearnerResult extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    userChipVisibility: state.ui.userChipVisibility,
+    learnerChipVisibility: state.ui.learnerChipVisibility,
   };
 };
 
 const mapDispatchToProps = (dispatch: Dispatch, ownProps: LearnerResultProps) => {
   return {
-    setUserChipVisibility: (username: ?string): void => {
-      if (ownProps.userChipVisibility !== username) {
-        dispatch(setUserChipVisibility(username));
+    setLearnerChipVisibility: (username: ?string): void => {
+      if (ownProps.learnerChipVisibility !== username) {
+        dispatch(setLearnerChipVisibility(username));
       }
     },
   };
