@@ -2,17 +2,15 @@
 from datetime import datetime, timedelta
 
 from unittest.mock import patch
-import ddt
-from django.core.exceptions import ImproperlyConfigured
+from ddt import ddt, data, unpack
 import pytz
-from django.test import TestCase
+from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_save
 from django.test import (
     SimpleTestCase,
     TestCase,
 )
 from factory.django import mute_signals
-from ddt import ddt, data, unpack
 
 from courses.factories import CourseRunFactory
 from dashboard.factories import (
@@ -22,13 +20,14 @@ from dashboard.factories import (
 )
 from dashboard.models import ProgramEnrollment
 from dashboard.utils import get_mmtrack
-from financialaid.api_test import create_program
 from exams.utils import (
     authorize_for_exam,
     bulk_authorize_for_exam,
     ExamAuthorizationException,
+    exponential_backoff,
     message_not_passed_or_exist_template,
-    message_not_eligible_template
+    message_not_eligible_template,
+    validate_profile
 )
 from exams.models import (
     ExamProfile,
@@ -40,15 +39,6 @@ from ecommerce.factories import (
     CoursePriceFactory
 )
 from grades.factories import FinalGradeFactory
-from exams.utils import (
-    authorize_for_exam,
-    exponential_backoff,
-    validate_profile,
-)
-from exams.models import (
-    ExamProfile,
-    ExamAuthorization
-)
 from financialaid.api_test import create_program
 from profiles.factories import ProfileFactory
 from search.base import MockedESTestCase
