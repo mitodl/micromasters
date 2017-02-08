@@ -11,13 +11,13 @@ import type { Validator } from '../lib/validation/profile';
 
 export default class LearnerPageAboutMeDialog extends ProfileFormFields {
   props: {
-    ui:                                   UIState,
-    profile:                              Profile,
-    profilePatchStatus:                   ?string,
-    saveProfile:                          SaveProfileFunc,
-    clearProfileEdit:                     () => void,
-    setLearnerPageAboutMeDialogVisibility:   () => void,
-    validator:                            Validator,
+    ui:                                     UIState,
+    profile:                                Profile,
+    profilePatchStatus:                     ?string,
+    saveProfile:                            SaveProfileFunc,
+    clearProfileEdit:                       () => void,
+    setLearnerPageAboutMeDialogVisibility:  () => void,
+    validator:                              Validator,
   };
 
   closeAboutMeDialog = (): void => {

@@ -12,11 +12,11 @@ import type { UIState } from '../reducers/ui';
 export default class LearnerPagePersonalDialog extends React.Component {
   props: {
     setLearnerPageDialogVisibility:  () => void,
-    ui:                           UIState,
-    profile:                      Profile,
-    profilePatchStatus:           ?string,
-    saveProfile:                  SaveProfileFunc,
-    clearProfileEdit:             () => void,
+    ui:                              UIState,
+    profile:                         Profile,
+    profilePatchStatus:              ?string,
+    saveProfile:                     SaveProfileFunc,
+    clearProfileEdit:                () => void,
   };
 
   closePersonalDialog = (): void => {
