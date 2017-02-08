@@ -47,6 +47,7 @@ from financialaid.serializers import (
     FinancialAidActionSerializer,
     FinancialAidRequestSerializer,
     FinancialAidSerializer,
+    FormattedCoursePriceSerializer,
 )
 from mail.serializers import GenericMailSerializer
 from roles.models import (
@@ -340,11 +341,15 @@ class CoursePriceListView(APIView):
             .select_related('user', 'program')
             .filter(user=user, program__live=True).all()
         )
-        formatted_course_prices = []
-        for program_enrollment in program_enrollments:
-            response_dict = get_formatted_course_price(program_enrollment)
-            formatted_course_prices.append(response_dict)
-        return Response(data=formatted_course_prices)
+        formatted_course_prices = [
+            get_formatted_course_price(program_enrollment)
+            for program_enrollment in program_enrollments
+        ]
+        serializer = FormattedCoursePriceSerializer(
+            formatted_course_prices,
+            many=True
+        )
+        return Response(data=serializer.data)
 
 
 class CoursePriceDetailView(APIView):
@@ -368,6 +373,7 @@ class CoursePriceDetailView(APIView):
             program__id=self.kwargs["program_id"],
             program__live=True
         )
-        return Response(
-            data=get_formatted_course_price(program_enrollment)
+        serializer = FormattedCoursePriceSerializer(
+            get_formatted_course_price(program_enrollment)
         )
+        return Response(data=serializer.data)

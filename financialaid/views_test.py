@@ -2,6 +2,7 @@
 Tests for financialaid view
 """
 import datetime
+from decimal import Decimal
 import json
 from unittest.mock import Mock, patch
 
@@ -48,6 +49,9 @@ from roles.models import (
     Staff,
     Role,
 )
+
+
+# pylint: disable=too-many-lines
 
 
 ABC_EXCHANGE_RATE = 3.5
@@ -760,9 +764,10 @@ class CoursePriceDetailViewTests(FinancialAidBaseTestCase, APIClient):
         )
         course_price = self.program.course_set.first().courserun_set.first().courseprice_set.first()
         resp = self.make_http_request(self.client.get, self.course_price_url, status.HTTP_200_OK)
+        expected_price = course_price.price - financial_aid.tier_program.discount_amount
         expected_response = {
             "program_id": self.program.id,
-            "price": course_price.price - financial_aid.tier_program.discount_amount,
+            "price": str(expected_price),
             "has_financial_aid_request": True,
             "financial_aid_availability": True
         }
@@ -779,9 +784,10 @@ class CoursePriceDetailViewTests(FinancialAidBaseTestCase, APIClient):
         )
         course_price = self.program.course_set.first().courserun_set.first().courseprice_set.first()
         resp = self.make_http_request(self.client.get, self.course_price_url, status.HTTP_200_OK)
+        expected_price = course_price.price - financial_aid.tier_program.discount_amount
         expected_response = {
             "program_id": self.program.id,
-            "price": course_price.price - financial_aid.tier_program.discount_amount,
+            "price": str(expected_price),
             "has_financial_aid_request": True,
             "financial_aid_availability": True
         }
@@ -795,7 +801,7 @@ class CoursePriceDetailViewTests(FinancialAidBaseTestCase, APIClient):
         resp = self.make_http_request(self.client.get, self.course_price_url, status.HTTP_200_OK)
         expected_response = {
             "program_id": self.program.id,
-            "price": course_price.price,
+            "price": str(course_price.price),
             "has_financial_aid_request": False,
             "financial_aid_availability": True
         }
@@ -811,7 +817,7 @@ class CoursePriceDetailViewTests(FinancialAidBaseTestCase, APIClient):
         resp = self.make_http_request(self.client.get, self.course_price_url, status.HTTP_200_OK)
         expected_response = {
             "program_id": self.program.id,
-            "price": course_price.price,
+            "price": str(course_price.price),
             "has_financial_aid_request": False,
             "financial_aid_availability": False
         }
@@ -983,8 +989,19 @@ class CoursePriceListViewTests(FinancialAidBaseTestCase, APIClient):
         """
         Test that the course_price_list route will return a list of formatted course prices
         """
+        def decimalize_price(fcp):
+            """
+            Convert the `price` key in the dictionary from a string to a Decimal
+            """
+            fcp["price"] = Decimal(fcp["price"])
+            return fcp
+
         resp = self.make_http_request(self.client.get, self.course_price_url, status.HTTP_200_OK)
-        assert sorted(resp.data, key=lambda x: x['program_id']) == sorted([
+        expected = sorted([
             get_formatted_course_price(enrollment)
             for enrollment in ProgramEnrollment.objects.filter(user=self.profile.user)
         ], key=lambda x: x['program_id'])
+        actual = sorted([
+            decimalize_price(fcp) for fcp in resp.data
+        ], key=lambda x: x['program_id'])
+        assert actual == expected

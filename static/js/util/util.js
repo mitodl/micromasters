@@ -8,6 +8,7 @@ import { codeToCountryName } from '../lib/location';
 import { S } from '../lib/sanctuary';
 const { Maybe, Just, Nothing } = S;
 import R from 'ramda';
+import Decimal from 'decimal.js-light';
 
 import {
   STATUS_PASSED,
@@ -373,7 +374,7 @@ export function createForm(url: string, payload: CheckoutPayload): HTMLFormEleme
 /**
  * Formats course price.
  */
-export function formatPrice(price: ?string|number): string {
+export function formatPrice(price: ?string|number|Decimal): string {
   if (price === null || price === undefined) {
     return '';
   } else {

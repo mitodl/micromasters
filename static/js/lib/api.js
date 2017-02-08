@@ -8,7 +8,7 @@ import Decimal from 'decimal.js-light';
 import type { Profile, ProfileGetResult, ProfilePatchResult } from '../flow/profileTypes';
 import type { CheckoutResponse } from '../flow/checkoutTypes';
 import type { Coupons, AttachCouponResponse } from '../flow/couponTypes';
-import type { Dashboard } from '../flow/dashboardTypes';
+import type { Dashboard, CoursePrices } from '../flow/dashboardTypes';
 import type { AvailableProgram, AvailablePrograms } from '../flow/enrollmentTypes';
 import type { EmailSendResponse } from '../flow/emailTypes';
 
@@ -226,8 +226,11 @@ export function addFinancialAid(income: number, currency: string, programId: num
   });
 }
 
-export function getCoursePrices(): Promise<*> {
-  return fetchJSONWithCSRF('/api/v0/course_prices/', {});
+export function getCoursePrices(): Promise<CoursePrices> {
+  return fetchJSONWithCSRF('/api/v0/course_prices/', {}).then(coursePrices => {
+    // turn `price` from string into decimal
+    return R.map(R.evolve({price: Decimal}), coursePrices);
+  });
 }
 
 export function skipFinancialAid(programId: number): Promise<*> {

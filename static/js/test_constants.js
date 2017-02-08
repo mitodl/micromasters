@@ -704,7 +704,7 @@ export const FINANCIAL_AID_PARTIAL_RESPONSE: FinancialAidUserInfo = deepFreeze({
 
 export const COURSE_PRICES_RESPONSE: CoursePrices = deepFreeze(DASHBOARD_RESPONSE.map(program => ({
   program_id: program.id,
-  price: program.id * 1000,
+  price: Decimal(program.id * 1000),
   financial_aid_availability: false,
   has_financial_aid_request: false
 })));

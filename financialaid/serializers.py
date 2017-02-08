@@ -10,7 +10,9 @@ from rest_framework.fields import (
     CharField,
     ChoiceField,
     FloatField,
-    IntegerField
+    IntegerField,
+    DecimalField,
+    BooleanField,
 )
 
 from courses.models import Program
@@ -185,3 +187,15 @@ class FinancialAidSerializer(serializers.ModelSerializer):
     class Meta:
         model = FinancialAid
         fields = ("date_documents_sent", )
+
+
+class FormattedCoursePriceSerializer(serializers.Serializer):
+    """
+    Serializer for the format returned by
+    `financialaid.api.get_formatted_course_price`.
+    Primarily exists to convert `price` from decimal to string.
+    """
+    program_id = IntegerField()
+    price = DecimalField(max_digits=None, decimal_places=2)
+    financial_aid_availability = BooleanField()
+    has_financial_aid_request = BooleanField()
