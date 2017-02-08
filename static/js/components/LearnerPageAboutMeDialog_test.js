@@ -8,16 +8,16 @@ import TestUtils from 'react-addons-test-utils';
 
 import * as inputUtil from '../components/inputs/util';
 import { FETCH_PROCESSING } from '../actions';
-import UserPageAboutMeDialog from './UserPageAboutMeDialog';
+import LearnerPageAboutMeDialog from './LearnerPageAboutMeDialog';
 import { USER_PROFILE_RESPONSE } from '../test_constants';
 
-describe('UserPageAboutMeDialog', () => {
+describe('LearnerPageAboutMeDialog', () => {
   let sandbox;
-  let setUserPageDialogVisibility, clearProfileEdit, saveProfile;
+  let setLearnerPageDialogVisibility, clearProfileEdit, saveProfile;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
-    setUserPageDialogVisibility = sandbox.stub();
+    setLearnerPageDialogVisibility = sandbox.stub();
     clearProfileEdit = sandbox.stub();
     saveProfile = sandbox.stub();
     saveProfile.returns(Promise.resolve());
@@ -31,13 +31,13 @@ describe('UserPageAboutMeDialog', () => {
   const renderDialog = (props = {}) => (
     mount (
       <MuiThemeProvider muiTheme={getMuiTheme()}>
-        <UserPageAboutMeDialog
+        <LearnerPageAboutMeDialog
           profile={USER_PROFILE_RESPONSE}
-          setUserPageAboutMeDialogVisibility={setUserPageDialogVisibility}
+          setLearnerPageAboutMeDialogVisibility={setLearnerPageDialogVisibility}
           clearProfileEdit={clearProfileEdit}
           saveProfile={saveProfile}
           ui={{
-            userPageAboutMeDialogVisibility: true
+            learnerPageAboutMeDialogVisibility: true
           }}
           {...props}
         />
@@ -69,7 +69,7 @@ describe('UserPageAboutMeDialog', () => {
   it('render dialog when visibility set to false', () => {
     renderDialog({
       ui: {
-        userPageAboutMeDialogVisibility: false
+        learnerPageAboutMeDialogVisibility: false
       }
     });
     assert.isNull(document.querySelector('h3.dialog-title'));

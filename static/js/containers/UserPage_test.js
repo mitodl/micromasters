@@ -34,8 +34,8 @@ import {
   SET_EDUCATION_DEGREE_LEVEL,
   SET_EDUCATION_DIALOG_INDEX,
   SET_EDUCATION_DIALOG_VISIBILITY,
-  SET_USER_PAGE_DIALOG_VISIBILITY,
-  SET_USER_PAGE_ABOUT_ME_DIALOG_VISIBILITY,
+  SET_LEARNER_PAGE_DIALOG_VISIBILITY,
+  SET_LEARNER_PAGE_ABOUT_ME_DIALOG_VISIBILITY,
 
   SET_DELETION_INDEX,
   SET_SHOW_WORK_DELETE_DIALOG,
@@ -60,7 +60,7 @@ import {
   GoogleMapsStub,
 } from '../util/test_utils';
 
-describe("UserPage", function() {
+describe("LearnerPage", function() {
   this.timeout(10000);
 
   let listenForActions, renderComponent, helper, gmaps, patchUserProfileStub;
@@ -144,7 +144,7 @@ describe("UserPage", function() {
       const getSave = () => getDialog().querySelector('.save-button');
 
       let scrollActions = [
-        SET_USER_PAGE_DIALOG_VISIBILITY,
+        SET_LEARNER_PAGE_DIALOG_VISIBILITY,
         START_PROFILE_EDIT,
         UPDATE_PROFILE,
         UPDATE_PROFILE_VALIDATION,
@@ -871,7 +871,7 @@ describe("UserPage", function() {
           let personalButton = wrapper.find('.edit-personal-info-button');
 
           return listenForActions([
-            SET_USER_PAGE_DIALOG_VISIBILITY,
+            SET_LEARNER_PAGE_DIALOG_VISIBILITY,
             START_PROFILE_EDIT,
           ], () => {
             personalButton.simulate('click');
@@ -916,7 +916,7 @@ describe("UserPage", function() {
           let aboutMEBtn = div.querySelector('.edit-about-me-button');
 
           return listenForActions([
-            SET_USER_PAGE_ABOUT_ME_DIALOG_VISIBILITY,
+            SET_LEARNER_PAGE_ABOUT_ME_DIALOG_VISIBILITY,
             START_PROFILE_EDIT,
           ], () => {
             TestUtils.Simulate.click(aboutMEBtn);

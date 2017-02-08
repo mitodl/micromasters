@@ -25,8 +25,8 @@ import OrderSummaryPage from '../containers/OrderSummaryPage';
 import PersonalTab from '../components/PersonalTab';
 import EducationTab from '../components/EducationTab';
 import EmploymentTab from '../components/EmploymentTab';
-import UserPage from '../containers/UserPage';
-import User from '../components/User';
+import LearnerPage from '../containers/LearnerPage';
+import Learner from '../components/Learner';
 import LearnerSearchPage from '../containers/LearnerSearchPage';
 
 export function findCourse(courseSelector: (course: ?Course, program: ?Program) => boolean): Course {
@@ -274,9 +274,9 @@ export const testRoutes = (
     </Route>
     <Route path="/settings" component={SettingsPage}  />
     <Route path="/order_summary" component={OrderSummaryPage} />
-    <Route path="/learner" component={UserPage} >
+    <Route path="/learner" component={LearnerPage} >
       <IndexRedirect to={username} />
-      <Route path=":username" component={User} />
+      <Route path=":username" component={Learner} />
     </Route>
     <Route path="/learners" component={LearnerSearchPage} />
   </Route>

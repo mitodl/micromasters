@@ -9,24 +9,24 @@ import type { Profile, SaveProfileFunc } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
 import type { Validator } from '../lib/validation/profile';
 
-export default class UserPageAboutMeDialog extends ProfileFormFields {
+export default class LearnerPageAboutMeDialog extends ProfileFormFields {
   props: {
     ui:                                   UIState,
     profile:                              Profile,
     profilePatchStatus:                   ?string,
     saveProfile:                          SaveProfileFunc,
     clearProfileEdit:                     () => void,
-    setUserPageAboutMeDialogVisibility:   () => void,
+    setLearnerPageAboutMeDialogVisibility:   () => void,
     validator:                            Validator,
   };
 
   closeAboutMeDialog = (): void => {
     const {
-      setUserPageAboutMeDialogVisibility,
+      setLearnerPageAboutMeDialogVisibility,
       clearProfileEdit,
       profile: { username }
     } = this.props;
-    setUserPageAboutMeDialogVisibility(false);
+    setLearnerPageAboutMeDialogVisibility(false);
     clearProfileEdit(username);
   };
 
@@ -38,7 +38,7 @@ export default class UserPageAboutMeDialog extends ProfileFormFields {
   };
 
   render () {
-    const { ui: { userPageAboutMeDialogVisibility }, profilePatchStatus } = this.props;
+    const { ui: { learnerPageAboutMeDialogVisibility }, profilePatchStatus } = this.props;
     const inFlight = profilePatchStatus === FETCH_PROCESSING;
 
     return (
@@ -47,7 +47,7 @@ export default class UserPageAboutMeDialog extends ProfileFormFields {
         titleClassName="dialog-title"
         contentClassName="dialog about-me-dialog"
         className="about-me-dialog-wrapper"
-        open={userPageAboutMeDialogVisibility}
+        open={learnerPageAboutMeDialogVisibility}
         onRequestClose={this.closeAboutMeDialog}
         actions={dialogActions(this.closeAboutMeDialog, this.saveAboutMeInfo, inFlight)}
         autoScrollBodyContent={true}>

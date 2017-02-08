@@ -15,7 +15,7 @@ import {
   setEducationDegreeLevel,
   setEducationLevelAnswers,
   setWorkHistoryAnswer,
-  setUserPageDialogVisibility,
+  setLearnerPageDialogVisibility,
   setShowEducationDeleteDialog,
   setShowWorkDeleteDialog,
   setDeletionIndex,
@@ -123,7 +123,7 @@ describe('ui reducers', () => {
 
   describe('user page', () => {
     it(`should let you set the user page dialog visibility`, () => {
-      assertReducerResultState(setUserPageDialogVisibility, ui => ui.userPageDialogVisibility, false);
+      assertReducerResultState(setLearnerPageDialogVisibility, ui => ui.learnerPageDialogVisibility, false);
     });
   });
 

@@ -16,8 +16,8 @@ import {
   SET_EDUCATION_DEGREE_LEVEL,
   SET_EDUCATION_LEVEL_ANSWERS,
 
-  SET_USER_PAGE_DIALOG_VISIBILITY,
-  SET_USER_PAGE_ABOUT_ME_DIALOG_VISIBILITY,
+  SET_LEARNER_PAGE_DIALOG_VISIBILITY,
+  SET_LEARNER_PAGE_ABOUT_ME_DIALOG_VISIBILITY,
 
   SET_SHOW_EDUCATION_DELETE_DIALOG,
   SET_SHOW_WORK_DELETE_DIALOG,
@@ -61,9 +61,9 @@ export type UIState = {
   workHistoryEdit:                  boolean,
   workDialogVisibility:             boolean,
   workHistoryAnswer:                ?boolean,
-  userPageDialogVisibility:         boolean,
+  learnerPageDialogVisibility:         boolean,
   showWorkDeleteDialog:             boolean,
-  userPageAboutMeDialogVisibility:  boolean,
+  learnerPageAboutMeDialogVisibility:  boolean,
   showEducationDeleteDialog:        boolean,
   deletionIndex:                    ?number,
   dialog:                           UIDialog,
@@ -96,8 +96,8 @@ export const INITIAL_UI_STATE: UIState = {
   workHistoryEdit:            true,
   workDialogVisibility:       false,
   workHistoryAnswer:          null,
-  userPageDialogVisibility: false,
-  userPageAboutMeDialogVisibility: false,
+  learnerPageDialogVisibility: false,
+  learnerPageAboutMeDialogVisibility: false,
   showWorkDeleteDialog: false,
   showEducationDeleteDialog: false,
   deletionIndex: null,
@@ -196,16 +196,16 @@ export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
     };
   case CLEAR_UI:
     return INITIAL_UI_STATE;
-  case SET_USER_PAGE_DIALOG_VISIBILITY: {
+  case SET_LEARNER_PAGE_DIALOG_VISIBILITY: {
     return {
       ...state,
-      userPageDialogVisibility: action.payload,
+      learnerPageDialogVisibility: action.payload,
     };
   }
-  case SET_USER_PAGE_ABOUT_ME_DIALOG_VISIBILITY: {
+  case SET_LEARNER_PAGE_ABOUT_ME_DIALOG_VISIBILITY: {
     return {
       ...state,
-      userPageAboutMeDialogVisibility: action.payload,
+      learnerPageAboutMeDialogVisibility: action.payload,
     };
   }
   case SET_SHOW_EDUCATION_DELETE_DIALOG: {

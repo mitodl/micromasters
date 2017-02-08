@@ -4,7 +4,7 @@ import TestUtils from 'react-addons-test-utils';
 import { assert } from 'chai';
 import _ from 'lodash';
 
-import { SET_USER_PAGE_DIALOG_VISIBILITY } from '../actions/ui';
+import { SET_LEARNER_PAGE_DIALOG_VISIBILITY } from '../actions/ui';
 import {
   RECEIVE_GET_USER_PROFILE_SUCCESS,
   REQUEST_GET_USER_PROFILE,
@@ -222,7 +222,7 @@ describe("ErrorMessage", () => {
 
       it('should show an error for profile PATCH', () => {
         patchUserProfileStub.returns(Promise.reject({errorStatusCode: 500}));
-        let userPageActions = [
+        let learnerPageActions = [
           REQUEST_GET_PROGRAM_ENROLLMENTS,
           RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
           REQUEST_GET_USER_PROFILE,
@@ -230,16 +230,16 @@ describe("ErrorMessage", () => {
           RECEIVE_GET_USER_PROFILE_SUCCESS,
           RECEIVE_GET_USER_PROFILE_SUCCESS,
         ];
-        return renderComponent(`/learner/${SETTINGS.user.username}`, userPageActions).then(([, div]) => {
+        return renderComponent(`/learner/${SETTINGS.user.username}`, learnerPageActions).then(([, div]) => {
           let editButton = div.querySelector('.mdl-card').querySelector('.mdl-button--icon');
           listenForActions([
-            SET_USER_PAGE_DIALOG_VISIBILITY,
+            SET_LEARNER_PAGE_DIALOG_VISIBILITY,
             START_PROFILE_EDIT,
             UPDATE_PROFILE_VALIDATION,
             REQUEST_PATCH_USER_PROFILE,
             RECEIVE_PATCH_USER_PROFILE_FAILURE,
             CLEAR_PROFILE_EDIT,
-            SET_USER_PAGE_DIALOG_VISIBILITY,
+            SET_LEARNER_PAGE_DIALOG_VISIBILITY,
             CLEAR_PROFILE_EDIT,
           ], () => {
             TestUtils.Simulate.click(editButton);

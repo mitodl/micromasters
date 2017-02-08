@@ -3,8 +3,8 @@ import React from 'react';
 
 import EmploymentForm from './EmploymentForm';
 import EducationForm from './EducationForm';
-import UserPagePersonalDialog from './UserPagePersonalDialog.js';
-import UserPageAboutMeDialog from './UserPageAboutMeDialog.js';
+import LearnerPagePersonalDialog from './LearnerPagePersonalDialog.js';
+import LearnerPageAboutMeDialog from './LearnerPageAboutMeDialog.js';
 import UserInfoCard from './UserInfoCard';
 import {
   educationValidation,
@@ -14,35 +14,35 @@ import {
 import type { Profile, SaveProfileFunc } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
 
-export default class User extends React.Component {
+export default class Learner extends React.Component {
   props: {
-    profile:                      Profile,
-    profilePatchStatus:           ?string,
-    setUserPageDialogVisibility:  () => void,
-    ui:                           UIState,
-    clearProfileEdit:             () => void,
-    saveProfile:                  SaveProfileFunc,
-    startProfileEdit:             () => void,
-    setUserPageAboutMeDialogVisibility: () => void,
+    profile:                                Profile,
+    profilePatchStatus:                     ?string,
+    setLearnerPageDialogVisibility:         () => void,
+    ui:                                     UIState,
+    clearProfileEdit:                       () => void,
+    saveProfile:                            SaveProfileFunc,
+    startProfileEdit:                       () => void,
+    setLearnerPageAboutMeDialogVisibility:  () => void,
   };
 
   toggleShowPersonalDialog = (): void => {
     const {
-      setUserPageDialogVisibility,
-      ui: { userPageDialogVisibility },
+      setLearnerPageDialogVisibility,
+      ui: { learnerPageDialogVisibility },
       startProfileEdit,
     } = this.props;
-    setUserPageDialogVisibility(!userPageDialogVisibility);
+    setLearnerPageDialogVisibility(!learnerPageDialogVisibility);
     startProfileEdit();
   };
 
   toggleShowAboutMeDialog = (): void => {
     const {
-      setUserPageAboutMeDialogVisibility,
-      ui: { userPageAboutMeDialogVisibility },
+      setLearnerPageAboutMeDialogVisibility,
+      ui: { learnerPageAboutMeDialogVisibility },
       startProfileEdit,
     } = this.props;
-    setUserPageAboutMeDialogVisibility(!userPageAboutMeDialogVisibility);
+    setLearnerPageAboutMeDialogVisibility(!learnerPageAboutMeDialogVisibility);
     startProfileEdit();
   };
 
@@ -50,8 +50,8 @@ export default class User extends React.Component {
     const { profile } = this.props;
 
     return <div className="single-column">
-      <UserPagePersonalDialog {...this.props} />
-      <UserPageAboutMeDialog {...this.props} validator={personalValidation} />
+      <LearnerPagePersonalDialog {...this.props} />
+      <LearnerPageAboutMeDialog {...this.props} validator={personalValidation} />
       <UserInfoCard
         profile={profile}
         toggleShowAboutMeDialog={this.toggleShowAboutMeDialog}

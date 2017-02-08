@@ -9,7 +9,7 @@ import { clearProfile } from '../actions/profile';
 import ProfileFormContainer from './ProfileFormContainer';
 import ErrorMessage from '../components/ErrorMessage';
 
-class UserPage extends ProfileFormContainer {
+class LearnerPage extends ProfileFormContainer {
   componentDidMount() {
     const { params: { username } } = this.props;
     this.fetchProfile(username);
@@ -46,4 +46,4 @@ class UserPage extends ProfileFormContainer {
   }
 }
 
-export default connect(ProfileFormContainer.mapStateToProps)(UserPage);
+export default connect(ProfileFormContainer.mapStateToProps)(LearnerPage);

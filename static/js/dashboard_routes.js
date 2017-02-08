@@ -8,8 +8,8 @@ import ProfilePage from './containers/ProfilePage';
 import PersonalTab from './components/PersonalTab';
 import EducationTab from './components/EducationTab';
 import EmploymentTab from './components/EmploymentTab';
-import UserPage from './containers/UserPage';
-import User from './components/User';
+import LearnerPage from './containers/LearnerPage';
+import Learner from './components/Learner';
 import OrderSummaryPage from './containers/OrderSummaryPage';
 
 const errorLoading = error => {
@@ -92,7 +92,7 @@ export const routes = {
     {
       path: 'learner',
       getComponent(nextState, cb) {
-        import('./containers/UserPage')
+        import('./containers/LearnerPage')
           .then(loadRoute(cb))
           .catch(errorLoading);
       },
@@ -103,7 +103,7 @@ export const routes = {
         {
           path: ':username',
           getComponent(nextState, cb) {
-            import('./components/User')
+            import('./components/Learner')
               .then(loadRoute(cb))
               .catch(errorLoading);
           }
