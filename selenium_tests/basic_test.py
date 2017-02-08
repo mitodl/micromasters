@@ -10,9 +10,8 @@ class BasicTests(SeleniumTestsBase):
         """
         Do a $0 purchase
         """
+        self.login_via_admin(self.user)
         self.get(self.live_server_url)
-        self.wait().until(lambda driver: driver.find_element_by_tag_name("body"))
-        self.selenium.find_element_by_class_name("open-signup-dialog").click()
 
-        self.wait().until(lambda driver: driver.find_element_by_class_name("signup-modal-button"))
+        self.assert_console_logs()
         self.take_screenshot()
