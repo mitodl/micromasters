@@ -160,7 +160,7 @@ FROM pg_stat_activity WHERE pid <> pg_backend_pid()""")
                 continue
             messages.append(entry)
 
-        assert len(messages) == 0
+        self.assertEquals(len(messages), 0, str(messages))
 
     def dump_console_logs(self):
         """Helper method to print out selenium logs (will consume the logs)"""
