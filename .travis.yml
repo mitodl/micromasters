@@ -18,7 +18,9 @@ matrix:
       - env | grep TRAVIS > .env
       - env | grep CI >> .env
       - docker build -t travis-watch -f ./travis/Dockerfile-travis-watch .
-      - docker run --volume $PWD:/src --env-file .env -e NODE_ENV=production -t travis-watch ./webpack_if_prod.sh
+      - docker run --name travis-watch-container --env-file .env -e NODE_ENV=production -t travis-watch ./webpack_if_prod.sh
+      - docker cp travis-watch-container:/src/webpack-stats.json .
+      - docker cp travis-watch-container:/src/static/bundles ./static/bundles
       - docker-compose -f travis-docker-compose.yml build
       script: (docker-compose -f travis-docker-compose.yml up grid &); sleep 5; ./scripts/test/run_selenium_tests.sh
       services:
