@@ -105,6 +105,9 @@ export const setProgram = createAction(SET_PROGRAM);
 export const SET_CONFIRM_SKIP_DIALOG_VISIBILITY = 'SET_CONFIRM_SKIP_DIALOG_VISIBILITY';
 export const setConfirmSkipDialogVisibility = createAction(SET_CONFIRM_SKIP_DIALOG_VISIBILITY);
 
+export const SET_CONFIRM_INCOME_DIALOG_VISIBILITY = 'SET_CONFIRM_INCOME_DIALOG_VISIBILITY';
+export const setConfirmIncomeDialogVisibility = createAction(SET_CONFIRM_INCOME_DIALOG_VISIBILITY);
+
 export const SET_DOCS_INSTRUCTIONS_VISIBILITY = 'SET_DOCS_INSTRUCTIONS_VISIBILITY';
 export const setDocsInstructionsVisibility = createAction(SET_DOCS_INSTRUCTIONS_VISIBILITY);
 

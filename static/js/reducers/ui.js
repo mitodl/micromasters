@@ -38,6 +38,7 @@ import {
   SET_PHOTO_DIALOG_VISIBILITY,
   SET_CALCULATOR_DIALOG_VISIBILITY,
   SET_CONFIRM_SKIP_DIALOG_VISIBILITY,
+  SET_CONFIRM_INCOME_DIALOG_VISIBILITY,
   SET_DOCS_INSTRUCTIONS_VISIBILITY,
   SET_COUPON_NOTIFICATION_VISIBILITY,
   SET_NAV_DRAWER_OPEN,
@@ -81,6 +82,7 @@ export type UIState = {
   enrollSelectedProgram:               ?number,
   photoDialogVisibility:               boolean,
   calculatorDialogVisibility:          boolean,
+  confirmIncomeDialogVisibility:       boolean,
   documentSentDate:                    Object,
   selectedProgram:                     ?AvailableProgram,
   skipDialogVisibility:                boolean,
@@ -117,6 +119,7 @@ export const INITIAL_UI_STATE: UIState = {
   enrollSelectedProgram:               null,
   photoDialogVisibility:               false,
   calculatorDialogVisibility:          false,
+  confirmIncomeDialogVisibility:       false,
   documentSentDate:                    {},
   selectedProgram:                     null,
   skipDialogVisibility:                false,
@@ -289,6 +292,8 @@ export const ui = (state: UIState = INITIAL_UI_STATE, action: Action) => {
     return { ...state, calculatorDialogVisibility: action.payload };
   case SET_CONFIRM_SKIP_DIALOG_VISIBILITY:
     return { ...state, skipDialogVisibility: action.payload };
+  case SET_CONFIRM_INCOME_DIALOG_VISIBILITY:
+    return { ...state, confirmIncomeDialogVisibility: action.payload };
   case SET_DOCS_INSTRUCTIONS_VISIBILITY:
     return { ...state, docsInstructionsVisibility: action.payload };
   case SET_COUPON_NOTIFICATION_VISIBILITY:

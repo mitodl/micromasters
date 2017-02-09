@@ -33,6 +33,7 @@ import {
 import {
   setConfirmSkipDialogVisibility,
   SET_CALCULATOR_DIALOG_VISIBILITY,
+  SET_CONFIRM_INCOME_DIALOG_VISIBILITY,
   SET_CONFIRM_SKIP_DIALOG_VISIBILITY,
 } from '../actions/ui';
 import {
@@ -246,6 +247,8 @@ describe('FinancialAidCalculator', () => {
         UPDATE_CALCULATOR_VALIDATION,
         UPDATE_CALCULATOR_EDIT,
         UPDATE_CALCULATOR_EDIT,
+        SET_CALCULATOR_DIALOG_VISIBILITY,
+        SET_CONFIRM_INCOME_DIALOG_VISIBILITY,
         REQUEST_ADD_FINANCIAL_AID,
         RECEIVE_ADD_FINANCIAL_AID_SUCCESS,
         REQUEST_COURSE_PRICES,
@@ -259,6 +262,8 @@ describe('FinancialAidCalculator', () => {
         TestUtils.Simulate.change(calculator.querySelector('.mdl-checkbox__input'));
         modifyTextField(document.querySelector('#user-salary-input'), '1000');
         TestUtils.Simulate.click(calculator.querySelector('.save-button'));
+        let confirmDialog = document.querySelector('.confirm-dialog');
+        TestUtils.Simulate.click(confirmDialog.querySelector('.save-button'));
       }).then(() => {
         assert(
           helper.addFinancialAidStub.calledWith('1000', 'USD', program.id),
@@ -277,7 +282,7 @@ describe('FinancialAidCalculator', () => {
       }
       helper.addFinancialAidStub.returns(Promise.resolve(FINANCIAL_AID_PARTIAL_RESPONSE));
       return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(() => {
-        assert.isTrue(dialogActionsSpy.calledWith(sinon.match.any, sinon.match.any, activity, "Calculate"));
+        assert.isTrue(dialogActionsSpy.calledWith(sinon.match.any, sinon.match.any, activity, "Submit"));
       });
     });
   }
@@ -294,7 +299,7 @@ describe('FinancialAidCalculator', () => {
 
       let saveButton = calculator.querySelector('.save-button');
       assert.isFalse(saveButton.className.includes('disabled-with-spinner'));
-      assert.equal(saveButton.innerHTML, 'Calculate');
+      assert.equal(saveButton.innerHTML, 'Submit');
       assert.isTrue(saveButton.disabled);
 
       TestUtils.Simulate.click(saveButton);
@@ -317,6 +322,8 @@ describe('FinancialAidCalculator', () => {
         UPDATE_CALCULATOR_VALIDATION,
         UPDATE_CALCULATOR_EDIT,
         UPDATE_CALCULATOR_EDIT,
+        SET_CALCULATOR_DIALOG_VISIBILITY,
+        SET_CONFIRM_INCOME_DIALOG_VISIBILITY,
         REQUEST_ADD_FINANCIAL_AID,
         RECEIVE_ADD_FINANCIAL_AID_FAILURE,
       ], () => {
@@ -325,6 +332,8 @@ describe('FinancialAidCalculator', () => {
         TestUtils.Simulate.change(calculator.querySelector('.mdl-checkbox__input'));
         modifyTextField(document.querySelector('#user-salary-input'), '1000');
         TestUtils.Simulate.click(calculator.querySelector('.save-button'));
+        let confirmDialog = document.querySelector('.confirm-dialog');
+        TestUtils.Simulate.click(confirmDialog.querySelector('.save-button'));
       }).then(() => {
         assert(
           helper.addFinancialAidStub.calledWith('1000', 'USD', program.id),

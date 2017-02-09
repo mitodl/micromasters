@@ -18,6 +18,7 @@ import {
 import {
   setCalculatorDialogVisibility,
   setConfirmSkipDialogVisibility,
+  setConfirmIncomeDialogVisibility,
 } from '../actions/ui';
 import { createSimpleActionHelpers } from '../lib/redux';
 import { currencyOptions } from '../lib/currency';
@@ -103,7 +104,7 @@ const calculatorActions = (openSkipDialog, cancel, save, fetchAddStatus, fetchSk
         cancel,
         save,
         fetchAddStatus === FETCH_PROCESSING,
-        'Calculate',
+        'Submit',
         'calculate-cost-button',
         fetchSkipStatus === FETCH_PROCESSING
       ) }
@@ -132,10 +133,13 @@ const apiError = ({ message, code }: FetchError) => (
 
 type CalculatorProps = {
   calculatorDialogVisibility: boolean,
+  confirmIncomeDialogVisibility: boolean,
   closeDialogAndCancel:       () => void,
+  closeConfirmDialogAndCancel:() => void,
   financialAid:               FinancialAidState,
   validation:                 FinancialAidValidation,
   saveFinancialAid:           (f: FinancialAidState) => void,
+  submitFinancialAid:         (f: FinancialAidState) => void,
   updateCalculatorEdit:       (f: FinancialAidState) => void,
   currentProgramEnrollment:   AvailableProgram,
   openConfirmSkipDialog:      () => void,
@@ -144,10 +148,15 @@ type CalculatorProps = {
 
 const FinancialAidCalculator = ({
   calculatorDialogVisibility,
+  confirmIncomeDialogVisibility,
   closeDialogAndCancel,
+  closeConfirmDialogAndCancel,
   financialAid,
-  financialAid: { validation, fetchError, fetchAddStatus, fetchSkipStatus },
+  financialAid: {
+    validation, fetchError, income, currency, fetchAddStatus, fetchSkipStatus
+  },
   saveFinancialAid,
+  submitFinancialAid,
   updateCalculatorEdit,
   currentProgramEnrollment: { title, id },
   openConfirmSkipDialog,
@@ -160,11 +169,36 @@ const FinancialAidCalculator = ({
 
   let minPossibleCost, maxPossibleCost;
   if (program.financial_aid_availability) {
-    minPossibleCost = formatPrice(program.financial_aid_user_info.min_possible_cost),
+    minPossibleCost = formatPrice(program.financial_aid_user_info.min_possible_cost);
     maxPossibleCost = formatPrice(program.financial_aid_user_info.max_possible_cost);
   }
-  return <Dialog
-    title="Cost Calculator"
+  let confirmDialog = <Dialog
+    key="confirm"
+    title="Confirm Your Income"
+    titleClassName="dialog-title"
+    contentClassName="dialog confirm-dialog"
+    className="financial-aid-calculator-wrapper"
+    open={confirmIncomeDialogVisibility}
+    bodyClassName="financial-aid-calculator-body"
+    onRequestClose={closeConfirmDialogAndCancel}
+    actions={dialogActions(
+      closeConfirmDialogAndCancel,
+      () => submitFinancialAid(financialAid),
+      fetchSkipStatus === FETCH_PROCESSING,
+      'Submit',
+      'confirm-income-button',
+      fetchAddStatus === FETCH_PROCESSING
+    )}
+  >
+    <div>House Hold Income: <b>{currency} {income}</b></div>
+    <br/>
+    Please make sure that your household income is accurate and that
+    you can provide documentation (if necessary). If you can't provide
+    an accurate income at this time, click cancel.
+    { fetchError ? apiError(fetchError) : null }</Dialog>;
+
+  return <div><Dialog
+    title="Personal Course Pricing"
     titleClassName="dialog-title"
     contentClassName="dialog financial-aid-calculator"
     className="financial-aid-calculator-wrapper"
@@ -207,12 +241,19 @@ const FinancialAidCalculator = ({
       { validationMessage('checkBox', validation) }
     </div>
     { fetchError ? apiError(fetchError) : null }
-  </Dialog>;
+  </Dialog>{confirmDialog}</div>;
 };
 
 const closeDialogAndCancel = dispatch => (
   () => {
     dispatch(setCalculatorDialogVisibility(false));
+    dispatch(clearCalculatorEdit());
+  }
+);
+
+const closeConfirmDialogAndCancel = dispatch => (
+  () => {
+    dispatch(setConfirmIncomeDialogVisibility(false));
     dispatch(clearCalculatorEdit());
   }
 );
@@ -226,16 +267,21 @@ const updateFinancialAidValidation = (dispatch, current) => {
 };
 
 const saveFinancialAid = R.curry((dispatch, current) => {
-  const { income, currency, programId } = current;
   let valid = updateFinancialAidValidation(dispatch, current);
   let clone = _.cloneDeep(current);
   delete clone.validation;
   if (valid) {
-    dispatch(addFinancialAid(income, currency, programId)).then(() => {
-      dispatch(clearCalculatorEdit());
-      dispatch(setCalculatorDialogVisibility(false));
-    });
+    dispatch(setCalculatorDialogVisibility(false));
+    dispatch(setConfirmIncomeDialogVisibility(true));
   }
+});
+
+const submitFinancialAid = R.curry((dispatch, current) => {
+  const { income, currency, programId } = current;
+  dispatch(addFinancialAid(income, currency, programId)).then(() => {
+    dispatch(clearCalculatorEdit());
+    dispatch(setConfirmIncomeDialogVisibility(false));
+  });
 });
 
 const updateFinancialAidEdit = R.curry((dispatch, current) => {
@@ -252,7 +298,7 @@ const openConfirmSkipDialogHelper = dispatch => () => {
 
 const mapStateToProps = state => {
   const {
-    ui: { calculatorDialogVisibility },
+    ui: { calculatorDialogVisibility, confirmIncomeDialogVisibility },
     financialAid,
     currentProgramEnrollment,
     dashboard: { programs },
@@ -260,6 +306,7 @@ const mapStateToProps = state => {
 
   return {
     calculatorDialogVisibility,
+    confirmIncomeDialogVisibility,
     financialAid,
     currentProgramEnrollment,
     programs,
@@ -269,7 +316,9 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     closeDialogAndCancel: closeDialogAndCancel(dispatch),
+    closeConfirmDialogAndCancel: closeConfirmDialogAndCancel(dispatch),
     saveFinancialAid: saveFinancialAid(dispatch),
+    submitFinancialAid: submitFinancialAid(dispatch),
     openConfirmSkipDialog: openConfirmSkipDialogHelper(dispatch),
     updateCalculatorEdit: updateFinancialAidEdit(dispatch),
     ...createSimpleActionHelpers(dispatch, [

@@ -137,7 +137,7 @@ export default class FinancialAidCard extends React.Component {
           className="mdl-button dashboard-button calculate-cost-button"
           onClick={openFinancialAidCalculator}
         >
-          Calculate your cost
+          Get My Price Now
         </button>
         <button className="mm-minor-action full-price" onClick={() => setConfirmSkipDialogVisibility(true)}>
           Skip this and Pay Full Price
@@ -255,7 +255,7 @@ export default class FinancialAidCard extends React.Component {
         fetchAddStatus={financialAid.fetchAddStatus}
         fetchSkipStatus={financialAid.fetchSkipStatus}
       />
-      <CardTitle>Pricing Based on Income</CardTitle>
+      <CardTitle>Personal Course Pricing</CardTitle>
       <div>
         {contents}
       </div>

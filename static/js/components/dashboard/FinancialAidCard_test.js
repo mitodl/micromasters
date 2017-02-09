@@ -95,7 +95,7 @@ describe("FinancialAidCard", () => {
       program.financial_aid_user_info.has_user_applied = false;
       let wrapper = renderCard({ program });
       let button = wrapper.find(".calculate-cost-button");
-      assert.equal(button.text(), "Calculate your cost");
+      assert.equal(button.text(), "Get My Price Now");
       button.simulate('click');
       assert.ok(openFinancialAidCalculatorStub.calledWith());
     });
