@@ -310,8 +310,9 @@ class BulkExamUtilTests(TestCase):
             )
 
         log.error.assert_called_with(
-            '[Exam authorization] exam_module is not set for course id="%s"',
-            self.course_run.course.id
+            'Either exam_module is not set for course id="%s" or user="%s" has no enrollment(s)',
+            self.course_run.course.id,
+            user.username
         )
 
         assert ExamProfile.objects.filter(profile=user.profile).exists() is False
