@@ -309,7 +309,7 @@ class BulkExamUtilTests(TestCase):
                 program_id=self.program.id
             )
 
-        log.info.assert_called_with(
+        log.error.assert_called_with(
             '[Exam authorization] exam_module is not set for course id="%s"',
             self.course_run.course.id
         )

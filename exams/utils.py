@@ -211,7 +211,7 @@ def authorize_for_latest_passed_course(mmtrack, course_id):
     ).order_by('-course_run__end_date')
 
     if not enrollments_qset.exists():
-        log.info(
+        log.error(
             '[Exam authorization] exam_module is not set for course id="%s"',
             course_id
         )
