@@ -58,16 +58,19 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         # ensure index exists
         recreate_index()
 
+        # Patch functions so we don't contact edX
         cls.patchers = []
         cls.patchers.append(patch('ecommerce.views.enroll_user_on_success', autospec=True))
         for patcher in cls.patchers:
             patcher.start()
 
+        # Start a selenium server running chrome
         capabilities = DesiredCapabilities.CHROME.copy()
         capabilities['chromeOptions'] = {
             'binary': os.getenv('CHROME_BIN', '/usr/bin/google-chrome-stable'),
             'args': ['--no-sandbox'],
         }
+        # grid is the name of the selenium grid docker container
         cls.selenium = Remote(
             os.getenv('SELENIUM_URL', 'http://grid:24444/wd/hub'),
             capabilities,
@@ -76,9 +79,10 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
 
     def setUp(self):
         super().setUp()
-        # Ensure index exists
+        # Ensure Elasticsearch index exists
         recreate_index()
 
+        # Create a user with a profile and fake edX social auth data
         with mute_signals(post_save):
             profile = ProfileFactory.create()
         self.user = profile.user
@@ -106,7 +110,6 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
                 'expires_in': 3600,
             }
         )
-
         UserCacheRefreshTime.objects.create(
             user=self.user,
             enrollment=later,
@@ -114,6 +117,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
             current_grade=later,
         )
 
+        # Create a live program with valid prices and financial aid
         run = CourseRunFactory.create(
             course__program__live=True,
             course__program__financial_aid_availability=True,
@@ -138,6 +142,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
             is_valid=True,
             price=1000,
         )
+        # Make a 100% off coupon. By setting the price to $0 we can avoid dealing with Cybersource
         coupon = Coupon(
             amount=1,
             amount_type=Coupon.PERCENT_DISCOUNT,
@@ -145,6 +150,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         )
         coupon.content_object = program
         coupon.save()
+        # Attach coupon and program to user
         UserCoupon.objects.create(coupon=coupon, user=self.user)
         ProgramEnrollment.objects.create(program=run.course.program, user=self.user)
 
@@ -187,6 +193,8 @@ FROM pg_stat_activity WHERE pid <> pg_backend_pid()""")
 
     def get(self, url):
         """Use self.live_server_url with a URL which will work for external services"""
+        # Swap out the hostname, which was set to 0.0.0.0 to allow external connections
+        # Change it to use ip of this container instead
         pieces = urlparse(url)
         host = socket.gethostbyname(socket.gethostname())
         new_url = ParseResult(
@@ -202,7 +210,7 @@ FROM pg_stat_activity WHERE pid <> pg_backend_pid()""")
         self.assert_console_logs()
 
     def login_via_admin(self, user):
-        """Make user a superuser, login via admin, then undo user superuser status"""
+        """Make user into staff, login via admin, then undo staff status"""
         user.refresh_from_db()
         is_staff = user.is_staff
         user.is_staff = True
@@ -239,6 +247,7 @@ FROM pg_stat_activity WHERE pid <> pg_backend_pid()""")
     def assert_console_logs(self):
         """Assert that console logs don't contain anything unexpected"""
         messages = []
+        # Note that get_log(...) will consume the logs
         for entry in self.selenium.get_log("browser"):
             message = entry['message']
             if 'chrome-extension' in message:
