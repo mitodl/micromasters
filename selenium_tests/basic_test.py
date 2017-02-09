@@ -14,6 +14,7 @@ class BasicTests(SeleniumTestsBase):
 
         self.selenium.find_element_by_class_name("header-dashboard-link").click()
         self.wait().until(lambda driver: driver.find_element_by_class_name("pay-button"))
+        self.assert_console_logs()
         self.selenium.find_element_by_class_name("pay-button").click()
         self.wait().until(lambda driver: driver.find_element_by_class_name("continue-payment"))
         self.selenium.find_element_by_class_name("continue-payment").click()
@@ -21,3 +22,4 @@ class BasicTests(SeleniumTestsBase):
         assert self.selenium.find_element_by_css_selector(".course-action .description").text == (
             "Something went wrong. You paid for this course but are not enrolled. Contact us for help."
         )
+        self.assert_console_logs()
