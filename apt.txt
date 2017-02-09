@@ -8,5 +8,3 @@ net-tools
 
 # developer requirements
 postgresql-client
-unzip
-xvfb
