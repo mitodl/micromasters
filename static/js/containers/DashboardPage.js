@@ -24,6 +24,7 @@ import {
   COUPON_CONTENT_TYPE_COURSE,
   COUPON_CONTENT_TYPE_PROGRAM,
   COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
+  FA_TERMINAL_STATUSES,
   TOAST_SUCCESS,
   TOAST_FAILURE,
   STATUS_OFFERED,
@@ -178,7 +179,7 @@ class DashboardPage extends React.Component {
       ));
     });
   };
-  
+
   openCourseContactDialog = (course: Course, canContactCourseTeam: boolean) => {
     const { dispatch } = this.props;
     if (canContactCourseTeam) {
@@ -443,7 +444,7 @@ class DashboardPage extends React.Component {
     if (
       program &&
       program.financial_aid_user_info &&
-      program.financial_aid_user_info.has_user_applied === false &&
+      !FA_TERMINAL_STATUSES.includes(program.financial_aid_user_info.application_status) &&
       financialAid.fetchSkipStatus === undefined
     ) {
       dispatch(skipFinancialAid(programId)).then(() => {

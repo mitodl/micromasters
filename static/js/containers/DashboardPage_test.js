@@ -23,7 +23,6 @@ import {
   CLEAR_COURSE_PRICES,
   CLEAR_DASHBOARD,
   FETCH_SUCCESS,
-
 } from '../actions';
 import * as actions from '../actions';
 import { CLEAR_COUPONS } from '../actions/coupons';
@@ -78,14 +77,18 @@ import {
 } from '../test_constants';
 import {
   COUPON_CONTENT_TYPE_COURSE,
-  TOAST_FAILURE,
-  TOAST_SUCCESS,
+  FA_ALL_STATUSES,
+  FA_TERMINAL_STATUSES,
+  FA_STATUS_APPROVED,
 
   STATUS_CURRENTLY_ENROLLED,
   STATUS_PENDING_ENROLLMENT,
   STATUS_OFFERED,
   STATUS_PAID_BUT_NOT_ENROLLED,
+  TOAST_FAILURE,
+  TOAST_SUCCESS,
 } from '../constants';
+import type { Program } from '../flow/programTypes';
 import { findCourse, modifyTextField } from '../util/test_utils';
 import { DASHBOARD_SUCCESS_ACTIONS } from './test_util';
 
@@ -233,7 +236,7 @@ describe('DashboardPage', () => {
 
     describe('course pricing', () => {
       let dashboard, availablePrograms, coursePrices, calculatePricesStub;
-      let run, program;
+      let run, program: Program;
 
       beforeEach(() => {
         calculatePricesStub = helper.sandbox.stub(libCoupon, 'calculatePrices');
@@ -275,12 +278,23 @@ describe('DashboardPage', () => {
           };
         });
 
-        it('should issue a request to skip if there is a 100% coupon for the program', () => {
-          return renderComponent('/dashboard', expectedActions).then(() => {
-            let aid = helper.store.getState().financialAid;
-            assert.equal(aid.fetchSkipStatus, FETCH_SUCCESS);
-            assert(helper.skipFinancialAidStub.calledWith(program.id));
-          });
+        describe('should issue a request to skip if there is a 100% coupon for the program', () => {
+          for (let status of FA_ALL_STATUSES) {
+            it(`only if status is ${status}`, () => {
+              program.financial_aid_user_info.application_status = status;
+              let expectedSkip = !FA_TERMINAL_STATUSES.includes(status);
+              let actions = expectedSkip ? expectedActions : DASHBOARD_SUCCESS_ACTIONS;
+              return renderComponent('/dashboard', actions).then(() => {
+                let aid = helper.store.getState().financialAid;
+                if (expectedSkip) {
+                  assert.equal(aid.fetchSkipStatus, FETCH_SUCCESS);
+                  assert(helper.skipFinancialAidStub.calledWith(program.id));
+                } else {
+                  assert.isUndefined(aid.fetchSkipStatus);
+                }
+              });
+            });
+          }
         });
 
         it('should hide the financial aid card if there is a 100% coupon for the program', () => {
@@ -293,7 +307,7 @@ describe('DashboardPage', () => {
           coupon.program_id = dashboard[1].id;
           coupon.object_id = dashboard[1].id;
           dashboard[1].financial_aid_user_info = {
-            has_user_applied: false
+            application_status: FA_STATUS_APPROVED,
           };
 
           return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
