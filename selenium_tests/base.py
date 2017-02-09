@@ -256,6 +256,8 @@ FROM pg_stat_activity WHERE pid <> pg_backend_pid()""")
                 continue
             if 'favicon.ico' in message:
                 continue
+            if "'webkitURL' is deprecated. Please use 'URL' instead" in message:
+                continue
 
             messages.append(entry)
 
