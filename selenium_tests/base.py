@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import logging
 import os
 import socket
+from unittest.mock import patch
 from urllib.parse import (
     ParseResult,
     urlparse,
@@ -30,6 +31,15 @@ from dashboard.models import (
     ProgramEnrollment,
     UserCacheRefreshTime,
 )
+from ecommerce.models import (
+    Coupon,
+    CoursePrice,
+    UserCoupon,
+)
+from financialaid.models import (
+    Tier,
+    TierProgram,
+)
 from search.indexing_api import (
     delete_index,
     recreate_index,
@@ -47,6 +57,11 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         super().setUpClass()
         # ensure index exists
         recreate_index()
+
+        cls.patchers = []
+        cls.patchers.append(patch('ecommerce.views.enroll_user_on_success', autospec=True))
+        for patcher in cls.patchers:
+            patcher.start()
 
         capabilities = DesiredCapabilities.CHROME.copy()
         capabilities['chromeOptions'] = {
@@ -99,12 +114,47 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
             current_grade=later,
         )
 
-        run = CourseRunFactory.create()
+        run = CourseRunFactory.create(
+            course__program__live=True,
+            course__program__financial_aid_availability=True,
+        )
+        program = run.course.program
+        TierProgram.objects.create(
+            tier=Tier.objects.create(name="$0 discount"),
+            current=True,
+            discount_amount=0,
+            income_threshold=35000,
+            program=program,
+        )
+        TierProgram.objects.create(
+            tier=Tier.objects.create(name="$0 threshold"),
+            current=True,
+            discount_amount=150,
+            income_threshold=0,
+            program=program,
+        )
+        CoursePrice.objects.create(
+            course_run=run,
+            is_valid=True,
+            price=1000,
+        )
+        coupon = Coupon(
+            amount=1,
+            amount_type=Coupon.PERCENT_DISCOUNT,
+            coupon_type=Coupon.STANDARD,
+        )
+        coupon.content_object = program
+        coupon.save()
+        UserCoupon.objects.create(coupon=coupon, user=self.user)
         ProgramEnrollment.objects.create(program=run.course.program, user=self.user)
 
     @classmethod
     def tearDownClass(cls):
         cls.selenium.quit()
+
+        for patcher in cls.patchers:
+            patcher.stop()
+
         delete_index()
         super().tearDownClass()
 
@@ -124,7 +174,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
                 cursor.execute("DROP TABLE IF EXISTS wagtailsearch_editorspick")
                 cursor.execute("CREATE TABLE wagtailsearch_editorspick ()")
 
-                # Terminate all other db connections. There's an exception regarding
+                # Terminate all other db connections. There's an exception which is raised on teardown regarding
                 # multiple connections at the same time and I'm not sure how else to work around it.
                 cursor.execute("""SELECT pg_terminate_backend(pg_stat_activity.pid)
 FROM pg_stat_activity WHERE pid <> pg_backend_pid()""")
