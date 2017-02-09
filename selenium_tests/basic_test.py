@@ -13,5 +13,4 @@ class BasicTests(SeleniumTestsBase):
         self.login_via_admin(self.user)
         self.get(self.live_server_url)
 
-        self.assert_console_logs()
-        self.take_screenshot()
+        self.selenium.find_element_by_class_name("header-dashboard-link").click()

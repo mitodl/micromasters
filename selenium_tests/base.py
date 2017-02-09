@@ -116,6 +116,7 @@ FROM pg_stat_activity WHERE pid <> pg_backend_pid()""")
         ).geturl()
         self.selenium.get(new_url)
         self.wait().until(lambda driver: driver.find_element_by_tag_name("body"))
+        self.assert_console_logs()
 
     def login_via_admin(self, user):
         """Make user a superuser, login via admin, then undo user superuser status"""
@@ -156,8 +157,14 @@ FROM pg_stat_activity WHERE pid <> pg_backend_pid()""")
         """Assert that console logs don't contain anything unexpected"""
         messages = []
         for entry in self.selenium.get_log("browser"):
-            if 'chrome-extension' in entry['message']:
+            message = entry['message']
+            if 'chrome-extension' in message:
                 continue
+            if 'This page includes a password or credit card input in a non-secure context' in message:
+                continue
+            if 'favicon.ico' in message:
+                continue
+
             messages.append(entry)
 
         self.assertEquals(len(messages), 0, str(messages))
