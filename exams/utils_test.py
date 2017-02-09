@@ -273,7 +273,7 @@ class BulkExamUtilTests(TestCase):
                 username=user.username
             )
 
-        assert e.exception.args[0] == '[Exam authorization] Invalid program id: %s', -1
+        assert e.exception.args[0] == "[Exam authorization] exam_series_code is missing on program='%s'", -1
         assert ExamProfile.objects.filter(profile=user.profile).exists() is False
         assert ExamAuthorization.objects.filter(
             user=user,
@@ -296,6 +296,47 @@ class BulkExamUtilTests(TestCase):
                 user=user,
                 course=self.course_run.course
             ).exists() is False
+
+    def test_exam_authorization_no_exam_module_set(self):
+        """Test authorization when `exam_module` is not set on course."""
+        user = self.users[0]
+        self.course_run.course.exam_module = None
+        self.course_run.course.save()
+
+        with patch("exams.utils.log") as log:
+            bulk_authorize_for_exam(
+                username=user.username,
+                program_id=self.program.id
+            )
+
+        log.info.assert_called_with(
+            '[Exam authorization] exam_module is not set for course id="%s"',
+            self.course_run.course.id
+        )
+
+        assert ExamProfile.objects.filter(profile=user.profile).exists() is False
+        assert ExamAuthorization.objects.filter(
+            user=user,
+            course=self.course_run.course
+        ).exists() is False
+
+    def test_exam_authorization_no_exam_series_code_set(self):
+        """Test authorization when `exam_series_code` is not set on program."""
+        user = self.users[0]
+        self.program.exam_series_code = None
+        self.program.save()
+        program_id = self.program.id
+
+        with self.assertRaises(ExamAuthorizationException) as e:
+            bulk_authorize_for_exam(username=user.username, program_id=program_id)
+
+        assert e.exception.args[0] == "[Exam authorization] exam_series_code is missing on program='%s'", program_id
+
+        assert ExamProfile.objects.filter(profile=user.profile).exists() is False
+        assert ExamAuthorization.objects.filter(
+            user=user,
+            course=self.course_run.course
+        ).exists() is False
 
 
 @ddt

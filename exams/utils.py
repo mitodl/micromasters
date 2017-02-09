@@ -149,7 +149,10 @@ def bulk_authorize_for_exam(program_id=None, username=None):
 
     if not programs.exists():
         if program_id is not None:
-            raise ExamAuthorizationException('[Exam authorization] Invalid program id: %s', program_id)
+            raise ExamAuthorizationException(
+                "[Exam authorization] exam_series_code is missing on program='%s'",
+                program_id
+            )
         else:
             raise ExamAuthorizationException(
                 '[Exam authorization] Program(s) are not available for exam authorization.'
@@ -201,8 +204,18 @@ def authorize_for_latest_passed_course(mmtrack, course_id):
         mmtrack (dashboard.utils.MMTrack): An instance of all user information about a program
     """
     enrollments_qset = CachedEnrollment.objects.filter(
-        user=mmtrack.user, course_run__course__id=course_id
+        ~Q(course_run__course__exam_module__exact=""),
+        course_run__course__exam_module__isnull=False,
+        user=mmtrack.user,
+        course_run__course__id=course_id,
     ).order_by('-course_run__end_date')
+
+    if not enrollments_qset.exists():
+        log.info(
+            '[Exam authorization] exam_module is not set for course id="%s"',
+            course_id
+        )
+        return
 
     for enrollment in enrollments_qset:
         # only latest passed course_run per course allowed
