@@ -1,5 +1,6 @@
 """Basic selenium tests for MicroMasters"""
 from base64 import b64encode
+from datetime import datetime, timedelta
 import logging
 import os
 import socket
@@ -17,12 +18,18 @@ from django.db import (
 )
 from django.db.models.signals import post_save
 from factory.django import mute_signals
+import pytz
 from selenium.webdriver import (
     DesiredCapabilities,
     Remote,
 )
 from selenium.webdriver.support.wait import WebDriverWait
 
+from courses.factories import CourseRunFactory
+from dashboard.models import (
+    ProgramEnrollment,
+    UserCacheRefreshTime,
+)
 from search.indexing_api import (
     delete_index,
     recreate_index,
@@ -63,11 +70,37 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         self.password = "pass"
         self.user.set_password(self.password)
         self.user.save()
+
+        # Update profile to pass validation so we don't get redirected to the signup page
+        profile.phone_number = '+93-23-232-3232'
+        profile.filled_out = True
+        profile.agreed_to_terms_of_service = True
+        profile.save()
+
+        # Create a fake edX social auth to make this user look like they logged in via edX
+        later = datetime.now(tz=pytz.UTC) + timedelta(minutes=5)
         username = "{}_edx".format(self.user.username)
+        datetime.now()
         self.user.social_auth.create(
             provider=EdxOrgOAuth2.name,
             uid=username,
+            extra_data={
+                'access_token': 'fake',
+                'refresh_token': 'fake',
+                'updated_at': later.timestamp(),
+                'expires_in': 3600,
+            }
         )
+
+        UserCacheRefreshTime.objects.create(
+            user=self.user,
+            enrollment=later,
+            certificate=later,
+            current_grade=later,
+        )
+
+        run = CourseRunFactory.create()
+        ProgramEnrollment.objects.create(program=run.course.program, user=self.user)
 
     @classmethod
     def tearDownClass(cls):
@@ -167,7 +200,7 @@ FROM pg_stat_activity WHERE pid <> pg_backend_pid()""")
 
             messages.append(entry)
 
-        self.assertEquals(len(messages), 0, str(messages))
+        assert len(messages) == 0, str(messages)
 
     def dump_console_logs(self):
         """Helper method to print out selenium logs (will consume the logs)"""

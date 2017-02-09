@@ -14,3 +14,4 @@ class BasicTests(SeleniumTestsBase):
         self.get(self.live_server_url)
 
         self.selenium.find_element_by_class_name("header-dashboard-link").click()
+        import pdb;pdb.set_trace()
