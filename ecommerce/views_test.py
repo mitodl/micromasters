@@ -19,6 +19,7 @@ from ecommerce.api import (
     make_reference_id,
 )
 from ecommerce.api_test import create_purchasable_course_run
+from ecommerce.exceptions import EcommerceException
 from ecommerce.factories import (
     CouponFactory,
     LineFactory,
@@ -254,6 +255,7 @@ class CheckoutViewTests(MockedESTestCase):
     CYBERSOURCE_REFERENCE_PREFIX=CYBERSOURCE_REFERENCE_PREFIX,
     ECOMMERCE_EMAIL='ecommerce@example.com'
 )
+@ddt.ddt
 class OrderFulfillmentViewTests(MockedESTestCase):
     """
     Tests for order fulfillment
@@ -354,7 +356,12 @@ class OrderFulfillmentViewTests(MockedESTestCase):
         )
         assert send_email.call_args[0][2] == 'ecommerce@example.com'
 
-    def test_not_accept(self):
+    @ddt.data(
+        ('CANCEL', False),
+        ('something else', True),
+    )
+    @ddt.unpack
+    def test_not_accept(self, decision, should_send_email):
         """
         If the decision is not ACCEPT then the order should be marked as failed
         """
@@ -363,7 +370,7 @@ class OrderFulfillmentViewTests(MockedESTestCase):
 
         data = {
             'req_reference_number': make_reference_id(order),
-            'decision': 'something else',
+            'decision': decision,
         }
         with patch(
             'ecommerce.views.IsSignedByCyberSource.has_permission',
@@ -378,11 +385,67 @@ class OrderFulfillmentViewTests(MockedESTestCase):
         assert Order.objects.count() == 1
         assert order.status == Order.FAILED
 
-        assert send_email.call_count == 1
-        assert send_email.call_args[0] == (
-            'Order fulfillment failed, decision={decision}'.format(decision='something else'),
-            'Order fulfillment failed for order {order}'.format(order=order),
-            'ecommerce@example.com',
+        if should_send_email:
+            assert send_email.call_count == 1
+            assert send_email.call_args[0] == (
+                'Order fulfillment failed, decision={decision}'.format(decision='something else'),
+                'Order fulfillment failed for order {order}'.format(order=order),
+                'ecommerce@example.com',
+            )
+        else:
+            assert send_email.call_count == 0
+
+    def test_ignore_duplicate_cancel(self):
+        """
+        If the decision is CANCEL and we already have a duplicate failed order, don't change anything.
+        """
+        course_run, user = create_purchasable_course_run()
+        order = create_unfulfilled_order(course_run.edx_course_key, user)
+        order.status = Order.FAILED
+        order.save()
+
+        data = {
+            'req_reference_number': make_reference_id(order),
+            'decision': 'CANCEL',
+        }
+        with patch(
+            'ecommerce.views.IsSignedByCyberSource.has_permission',
+            return_value=True
+        ):
+            resp = self.client.post(reverse('order-fulfillment'), data=data)
+        assert resp.status_code == status.HTTP_200_OK
+
+        assert Order.objects.count() == 1
+        assert Order.objects.get(id=order.id).status == Order.FAILED
+
+    @ddt.data(
+        (Order.FAILED, 'ERROR'),
+        (Order.FULFILLED, 'ERROR'),
+        (Order.FULFILLED, 'SUCCESS'),
+    )
+    @ddt.unpack
+    def test_error_on_duplicate_order(self, order_status, decision):
+        """If there is a duplicate message (except for CANCEL), raise an exception"""
+        course_run, user = create_purchasable_course_run()
+        order = create_unfulfilled_order(course_run.edx_course_key, user)
+        order.status = order_status
+        order.save()
+
+        data = {
+            'req_reference_number': make_reference_id(order),
+            'decision': decision,
+        }
+        with patch(
+            'ecommerce.views.IsSignedByCyberSource.has_permission',
+            return_value=True
+        ), self.assertRaises(EcommerceException) as ex:
+            self.client.post(reverse('order-fulfillment'), data=data)
+
+        assert Order.objects.count() == 1
+        assert Order.objects.get(id=order.id).status == order_status
+
+        assert ex.exception.args[0] == "Order {id} is expected to have status 'created'".format(
+            id=order.id,
         )
 
     def test_no_permission(self):

@@ -445,13 +445,15 @@ class ReferenceNumberTests(MockedESTestCase):
         course_run, user = create_purchasable_course_run()
         order = create_unfulfilled_order(course_run.edx_course_key, user)
 
-        for status in (status for status in Order.STATUSES if status != Order.CREATED):
-            order.status = status
-            order.save()
+        order.status = Order.FAILED
+        order.save()
 
-            with self.assertRaises(EcommerceException) as ex:
-                get_new_order_by_reference_number(make_reference_id(order))
-            assert ex.exception.args[0] == "Order {} is expected to have status 'created'".format(order.id)
+        with self.assertRaises(EcommerceException) as ex:
+            # change order number to something not likely to already exist in database
+            order.id = 98765432
+            assert not Order.objects.filter(id=order.id).exists()
+            get_new_order_by_reference_number(make_reference_id(order))
+        assert ex.exception.args[0] == "Unable to find order {}".format(order.id)
 
 
 class EnrollUserTests(MockedESTestCase):

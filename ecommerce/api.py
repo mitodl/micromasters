@@ -262,8 +262,7 @@ def make_reference_id(order):
 
 def get_new_order_by_reference_number(reference_number):
     """
-    Parse a reference number received from CyberSource and lookup the corresponding Order. If the Order
-    is already fulfilled an EcommerceException is raised.
+    Parse a reference number received from CyberSource and lookup the corresponding Order.
 
     Args:
         reference_number (str):
@@ -292,9 +291,9 @@ def get_new_order_by_reference_number(reference_number):
         raise ParseException("CyberSource prefix doesn't match")
 
     try:
-        return Order.objects.get(id=order_id, status=Order.CREATED)
+        return Order.objects.get(id=order_id)
     except Order.DoesNotExist:
-        raise EcommerceException("Order {} is expected to have status 'created'".format(order_id))
+        raise EcommerceException("Unable to find order {}".format(order_id))
 
 
 def enroll_user_on_success(order):
