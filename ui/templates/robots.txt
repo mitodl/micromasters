@@ -1,0 +1,15 @@
+User-agent: *
+Disallow: /dashboard/
+Disallow: /learner/
+Disallow: /learners/
+Disallow: /cms/
+Disallow: /profile/
+Disallow: /financial_aid/
+Disallow: /admin/
+Disallow: /logout/
+Disallow: /404/
+Disallow: /500/
+Disallow: /terms_of_service/
+Disallow: /profiles/
+Disallow: /pearson/
+Disallow: /api/
