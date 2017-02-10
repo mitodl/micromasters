@@ -9,6 +9,7 @@ omit =
     */migrations/*
     *_test.py
     *_tests.py
+    ./selenium_tests/*
 
 [report]
 exclude_lines =
