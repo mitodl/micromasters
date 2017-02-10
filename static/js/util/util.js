@@ -378,7 +378,9 @@ export function formatPrice(price: ?string|number|Decimal): string {
   if (price === null || price === undefined) {
     return '';
   } else {
-    return `$${price}`;
+    const formatedPrice = Decimal(price).todp(2, Decimal.ROUND_DOWN).toFixed(2);
+    let dollars = `$${formatedPrice}`;
+    return dollars.replace(/\.00$/,'');
   }
 }
 
