@@ -171,6 +171,28 @@ class CoursePrice(Model):
         return "CoursePrice for {}, price={}, is_valid={}".format(self.course_run, self.price, self.is_valid)
 
 
+class CouponInvoice(AuditableModel):
+    """Model for a batch of coupons"""
+    invoice_number = TextField(null=True, blank=True)
+    description = TextField(null=True, blank=True)
+
+    @classmethod
+    def get_audit_class(cls):
+        return CouponInvoiceAudit
+
+    def to_dict(self):
+        return serialize_model_object(self)
+
+
+class CouponInvoiceAudit(AuditModel):
+    """Audit table for CouponInvoice"""
+    coupon_invoice = ForeignKey(CouponInvoice, null=True, on_delete=SET_NULL)
+
+    @classmethod
+    def get_related_field_name(cls):
+        return 'coupon_invoice'
+
+
 class Coupon(TimestampedModel, AuditableModel):
     """
     Model for a coupon. This stores the discount for the coupon and other information about how it should be redeemed.
@@ -233,6 +255,12 @@ class Coupon(TimestampedModel, AuditableModel):
         help_text="If set, the coupons will not be redeemable before this time",
     )
     enabled = BooleanField(default=True, help_text="If true, coupons are presently redeemable")
+
+    invoice = ForeignKey(
+        CouponInvoice,
+        null=True,
+        blank=True,
+    )
 
     @property
     def course_keys(self):
