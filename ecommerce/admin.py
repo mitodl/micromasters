@@ -7,6 +7,8 @@ from django.contrib import admin
 from ecommerce.models import (
     Coupon,
     CouponAudit,
+    CouponInvoice,
+    CouponInvoiceAudit,
     CoursePrice,
     Line,
     Order,
@@ -73,6 +75,29 @@ class ReceiptAdmin(admin.ModelAdmin):
     """Admin for Receipt"""
     model = Receipt
     readonly_fields = get_field_names(Receipt)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+class CouponInvoiceAdmin(admin.ModelAdmin):
+    """Admin for CouponInvoice"""
+    model = CouponInvoice
+
+    def save_model(self, request, obj, form, change):
+        """
+        Saves object and logs change to object
+        """
+        obj.save_and_log(request.user)
+
+
+class CouponInvoiceAuditAdmin(admin.ModelAdmin):
+    """Admin for CouponInvoiceAudit"""
+    model = CouponInvoiceAudit
+    readonly_fields = get_field_names(CouponInvoiceAudit)
 
     def has_add_permission(self, request):
         return False
@@ -152,6 +177,8 @@ class UserCouponAuditAdmin(admin.ModelAdmin):
         return False
 
 
+admin.site.register(CouponInvoice, CouponInvoiceAdmin)
+admin.site.register(CouponInvoiceAudit, CouponInvoiceAuditAdmin)
 admin.site.register(Coupon, CouponAdmin)
 admin.site.register(CouponAudit, CouponAuditAdmin)
 admin.site.register(CoursePrice, CoursePriceAdmin)
