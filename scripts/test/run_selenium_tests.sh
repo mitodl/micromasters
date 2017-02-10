@@ -11,4 +11,4 @@ fi
 docker-compose run -e DEBUG=False -e DJANGO_LIVE_TEST_SERVER_ADDRESS=0.0.0.0:8286 web py.test ./selenium_tests
 
 # Update code coverage
-./travis/codecov_python.sh
+docker-compose run web ./travis/codecov_python.sh
