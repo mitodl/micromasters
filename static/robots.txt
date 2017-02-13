@@ -7,6 +7,5 @@ Disallow: /profile/
 Disallow: /financial_aid/
 Disallow: /admin/
 Disallow: /logout/
-Disallow: /profiles/
 Disallow: /pearson/
 Disallow: /api/

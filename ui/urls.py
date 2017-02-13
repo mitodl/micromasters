@@ -3,7 +3,6 @@ URLs for ui
 """
 from django.conf.urls import url
 from django.contrib.auth import views as auth_views
-from django.views.generic import TemplateView
 
 from ui.url_utils import (
     DASHBOARD_URLS,
@@ -28,5 +27,4 @@ urlpatterns = [
     url(r'^500/$', page_500, name='ui-500'),
     url(r'^learner/(?P<user>[-\w.]+)?/?', UsersView.as_view(), name='ui-users'),
     url(r'^{}$'.format(TERMS_OF_SERVICE_URL.lstrip("/")), terms_of_service, name='terms_of_service'),
-    url(r'^robots\.txt$', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
 ] + dashboard_urlpatterns
