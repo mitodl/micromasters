@@ -27,6 +27,8 @@ services:
       BROKER_URL: redis://redis:6379/4
       CELERY_RESULT_BACKEND: redis://redis:6379/4
       XDG_CACHE_HOME: /src/.cache
+      OPEN_EXCHANGE_RATES_URL: https://openexchangerates.org/api/
+      OPEN_EXCHANGE_RATES_APP_ID: fakeID123
     env_file: .env
 
   web:
