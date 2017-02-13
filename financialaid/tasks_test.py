@@ -3,14 +3,39 @@ Test for financialaid celery tasks
 """
 from unittest.mock import patch
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
-from financialaid.constants import CURRENCY_EXCHANGE_RATE_API_REQUEST_URL
 from financialaid.exceptions import ExceededAPICallsException, UnexpectedAPIErrorException
 from financialaid.models import CurrencyExchangeRate
 from financialaid.tasks import sync_currency_exchange_rates
 
 
+class TaskConfigurationTest(TestCase):
+    """
+    Test cases for configuration of financial aid tasks.
+    """
+    @override_settings(
+        OPEN_EXCHANGE_RATES_URL=None,
+        OPEN_EXCHANGE_RATES_APP_ID=None,
+    )
+    @patch('financialaid.constants.CURRENCY_EXCHANGE_RATE_API_REQUEST_URL', None)
+    def test_unset_currency_exchange_api_url(self):
+        """
+        Assert that the task raises an exception if it is misconfigured.
+        """
+        with self.assertRaises(RuntimeError) as context:
+            sync_currency_exchange_rates()
+        assert "Currency exchange API URL cannot be determined" in str(context.exception)
+
+
+@override_settings(
+    OPEN_EXCHANGE_RATES_URL="https://openexchangerates.org/api/",
+    OPEN_EXCHANGE_RATES_APP_ID="fakeID123",
+)
+@patch(
+    'financialaid.tasks.CURRENCY_EXCHANGE_RATE_API_REQUEST_URL',
+    "https://openexchangerates.org/api/latest.json?app_id=fakeID123"
+)
 @patch('financialaid.tasks.requests.get')
 class TasksTest(TestCase):
     """
@@ -50,7 +75,7 @@ class TasksTest(TestCase):
         assert CurrencyExchangeRate.objects.count() == 2
         sync_currency_exchange_rates.apply(args=()).get()
         called_args, _ = mocked_request.call_args
-        assert called_args[0] == CURRENCY_EXCHANGE_RATE_API_REQUEST_URL
+        assert called_args[0] == "https://openexchangerates.org/api/latest.json?app_id=fakeID123"
         assert CurrencyExchangeRate.objects.count() == len(self.data['rates'])
         for code, rate in self.data['rates'].items():
             currency = CurrencyExchangeRate.objects.get(currency_code=code)
@@ -66,7 +91,7 @@ class TasksTest(TestCase):
         assert CurrencyExchangeRate.objects.count() == 2
         sync_currency_exchange_rates.apply(args=()).get()
         called_args, _ = mocked_request.call_args
-        assert called_args[0] == CURRENCY_EXCHANGE_RATE_API_REQUEST_URL
+        assert called_args[0] == "https://openexchangerates.org/api/latest.json?app_id=fakeID123"
         assert CurrencyExchangeRate.objects.count() == 1
         for code, rate in self.data['rates'].items():
             currency = CurrencyExchangeRate.objects.get(currency_code=code)
