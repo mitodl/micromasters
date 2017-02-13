@@ -18,7 +18,7 @@ class TaskConfigurationTest(TestCase):
         OPEN_EXCHANGE_RATES_URL=None,
         OPEN_EXCHANGE_RATES_APP_ID=None,
     )
-    @patch('financialaid.constants.CURRENCY_EXCHANGE_RATE_API_REQUEST_URL', None)
+    @patch('financialaid.tasks.CURRENCY_EXCHANGE_RATE_API_REQUEST_URL', None)
     def test_unset_currency_exchange_api_url(self):
         """
         Assert that the task raises an exception if it is misconfigured.
