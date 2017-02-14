@@ -266,20 +266,35 @@ class IndexTests(ESTestCase):
             index_program_enrolled_users([program_enrollment])
             assert_search(es.search(), [program_enrollment])
 
-    def test_not_analyzed(self):
+    def test_analyzed(self):
         """
-        At the moment no string fields in the mapping should be 'analyzed' since there's no field
-        supporting full text search.
+        Most string fields in the mapping should be 'analyzed' since we don't want to
+        tokenize strings arbitrarily when filtering on fields.
         """
         program_enrollment = ProgramEnrollmentFactory.create()
         EducationFactory.create(profile=program_enrollment.user.profile)
         EmploymentFactory.create(profile=program_enrollment.user.profile)
 
         mapping = es.get_mappings()
-        nodes = list(traverse_mapping(mapping))
-        for node in nodes:
-            if node.get('type') == 'string':
+        nodes = list(traverse_mapping(mapping, ""))
+        for key, node in nodes:
+            if key == "folded":
+                assert node['analyzer'] == "folding"
+            elif node.get('type') == 'string':
                 assert node['index'] == 'not_analyzed'
+
+    def test_folded(self):
+        """
+        Check that we have a folded type for first_name, last_name, and preferred_name
+        """
+        program_enrollment = ProgramEnrollmentFactory.create()
+        EducationFactory.create(profile=program_enrollment.user.profile)
+        EmploymentFactory.create(profile=program_enrollment.user.profile)
+
+        mapping = es.get_mappings()
+        properties = mapping['program_user']['properties']['profile']['properties']
+        for key in 'first_name', 'last_name', 'preferred_name':
+            assert properties[key]['fields']['folded']['analyzer'] == 'folding'
 
 
 class SerializerTests(ESTestCase):

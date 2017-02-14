@@ -22,13 +22,8 @@ import type { AvailableProgram } from '../flow/enrollmentTypes';
 import { getCookie } from '../lib/api';
 import { SEARCH_FILTER_DEFAULT_VISIBILITY } from '../constants';
 
-const searchKit = new SearchkitManager(SETTINGS.search_url, {
-  httpHeaders: {
-    'X-CSRFToken': getCookie('csrftoken')
-  }
-});
-
 class LearnerSearchPage extends React.Component {
+  searchkit: SearchkitManager;
   props: {
     currentProgramEnrollment: AvailableProgram,
     dispatch:                 Dispatch,
@@ -36,6 +31,15 @@ class LearnerSearchPage extends React.Component {
     ui:                       UIState,
     openEmailComposer:        () => void
   };
+
+  constructor(props) {
+    super(props);
+    this.searchkit = new SearchkitManager(SETTINGS.search_url, {
+      httpHeaders: {
+        'X-CSRFToken': getCookie('csrftoken')
+      }
+    });
+  }
 
   checkFilterVisibility = (filterName: string): boolean => {
     const { ui: { searchFilterVisibility } } = this.props;
@@ -59,7 +63,7 @@ class LearnerSearchPage extends React.Component {
 
     return (
       <div>
-        <SearchkitProvider searchkit={searchKit}>
+        <SearchkitProvider searchkit={this.searchkit}>
           <LearnerSearch
             checkFilterVisibility={this.checkFilterVisibility}
             setFilterVisibility={this.setFilterVisibility}

@@ -4,9 +4,13 @@ import _ from 'lodash';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { assert } from 'chai';
-import { mount } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import {
+  SearchkitManager,
+  SearchkitProvider,
+} from 'searchkit';
 
 import ProfileImage from '../../containers/ProfileImage';
 import LearnerResult from './LearnerResult';
@@ -33,16 +37,24 @@ describe('LearnerResult', () => {
     helper.cleanup();
   });
 
-  let renderElasticSearchResult = (result, props = {}) => mount(
-    <MuiThemeProvider muiTheme={getMuiTheme()}>
-      <Provider store={helper.store}>
-        <LearnerResult
-          result={result}
-          {...props}
-        />
-      </Provider>
-    </MuiThemeProvider>
-  );
+  let renderElasticSearchResult = (result, props = {}) => {
+    const manager = new SearchkitManager();
+    manager.state = {
+      q: 'query'
+    };
+    return mount(
+      <MuiThemeProvider muiTheme={getMuiTheme()}>
+        <Provider store={helper.store}>
+          <SearchkitProvider searchkit={manager}>
+            <LearnerResult
+              result={result}
+              {...props}
+            />
+          </SearchkitProvider>
+        </Provider>
+      </MuiThemeProvider>
+    );
+  };
 
   let renderLearnerResult = (props = {}) => renderElasticSearchResult(
     { _source: {
@@ -54,7 +66,7 @@ describe('LearnerResult', () => {
 
   it("should include the user's name", () => {
     let result = renderLearnerResult().find(".learner-name").find(".display-name");
-    assert.equal(result.text(), getUserDisplayName(USER_PROFILE_RESPONSE));
+    assert.equal(result.text(), shallow(getUserDisplayName(USER_PROFILE_RESPONSE)).text());
   });
 
   it("should include the user's location", () => {

@@ -28,6 +28,17 @@ NOT_ANALYZED_STRING_TYPE = {
     'type': 'string',
     'index': 'not_analyzed',
 }
+# Used for cases where we need to support full text search
+FOLDED_SEARCHABLE_STRING_TYPE = {
+    'type': 'string',
+    'index': 'not_analyzed',
+    'fields': {
+        'folded': {
+            'type': 'string',
+            'analyzer': 'folding',
+        }
+    }
+}
 BOOL_TYPE = {'type': 'boolean'}
 DATE_TYPE = {'type': 'date', 'format': 'date'}
 LONG_TYPE = {'type': 'long'}
@@ -240,11 +251,11 @@ def program_enrolled_user_mapping():
         }},
         'email_optin': BOOL_TYPE,
         'filled_out': BOOL_TYPE,
-        'first_name': NOT_ANALYZED_STRING_TYPE,
+        'first_name': FOLDED_SEARCHABLE_STRING_TYPE,
         'gender': NOT_ANALYZED_STRING_TYPE,
-        'last_name': NOT_ANALYZED_STRING_TYPE,
+        'last_name': FOLDED_SEARCHABLE_STRING_TYPE,
         'preferred_language': NOT_ANALYZED_STRING_TYPE,
-        'preferred_name': NOT_ANALYZED_STRING_TYPE,
+        'preferred_name': FOLDED_SEARCHABLE_STRING_TYPE,
         'pretty_printed_student_id': NOT_ANALYZED_STRING_TYPE,
         'username': NOT_ANALYZED_STRING_TYPE,
         'work_history': {'type': 'nested', 'properties': {
@@ -312,7 +323,23 @@ def clear_index():
     index_name = settings.ELASTICSEARCH_INDEX
     if conn.indices.exists(index_name):
         conn.indices.delete(index_name)
-    conn.indices.create(index_name)
+    # from https://www.elastic.co/guide/en/elasticsearch/guide/current/asciifolding-token-filter.html
+    conn.indices.create(index_name, body={
+        'settings': {
+            'analysis': {
+                'analyzer': {
+                    'folding': {
+                        'tokenizer': 'standard',
+                        'filter': [
+                            'lowercase',
+                            'asciifolding',  # remove accents if we use folding analyzer
+                        ]
+                    }
+                }
+            }
+        }
+    })
+
     conn.indices.refresh()
     create_mappings()
 

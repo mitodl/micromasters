@@ -3,6 +3,8 @@ import { assert } from 'chai';
 import React from 'react';
 import R from 'ramda';
 import _ from 'lodash';
+import sinon from 'sinon';
+import { shallow } from 'enzyme';
 import { S } from '../lib/sanctuary';
 const { Just } = S;
 
@@ -30,8 +32,10 @@ import {
   currentOrFirstIncompleteStep,
   getUserDisplayName,
   renderSeparatedComponents,
-  isNilOrBlank
+  isNilOrBlank,
+  highlight,
 } from '../util/util';
+import * as utilFuncs from '../util/util';
 import {
   EDUCATION_LEVELS,
   HIGH_SCHOOL,
@@ -53,6 +57,16 @@ import { program } from '../components/ProgressWidget_test';
 
 /* eslint-disable camelcase */
 describe('utility functions', () => {
+  let sandbox;
+
+  beforeEach(() => {
+    sandbox = sinon.sandbox.create();
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
   describe('makeStrippedHtml', () => {
     it('strips HTML from a string', () => {
       assert.equal(makeStrippedHtml("<a href='x'>y</a>"), "y");
@@ -641,22 +655,62 @@ describe('utility functions', () => {
     });
 
     it('shows first, last, and preferred names', () => {
-      assert.equal('jane doe (test)', getUserDisplayName(profile));
+      assert.equal('jane doe (test)', shallow(getUserDisplayName(profile)).text());
     });
 
     it('shows username when first name is blank', () => {
       profile.first_name = null;
-      assert.equal('jane_username doe (test)', getUserDisplayName(profile));
+      assert.equal('jane_username doe (test)', shallow(getUserDisplayName(profile)).text());
     });
 
     it('does not show preferred name when that value is blank', () => {
       profile.preferred_name = null;
-      assert.equal('jane doe', getUserDisplayName(profile));
+      assert.equal('jane doe', shallow(getUserDisplayName(profile)).text());
     });
 
     it('does not show preferred name when first name has same value', () => {
       profile.first_name = 'test';
-      assert.equal('test doe', getUserDisplayName(profile));
+      assert.equal('test doe', shallow(getUserDisplayName(profile)).text());
+    });
+
+    it('highlights the part of a name that was searched for', () => {
+      let highlightStub = sandbox.stub(utilFuncs, 'highlight');
+      highlightStub.returns("highlighted");
+      let highlightPhrase = 'phrase';
+      assert.equal("highlighted highlightedhighlighted", shallow(getUserDisplayName(profile, highlightPhrase)).text());
+      assert.isTrue(highlightStub.calledWith(profile.first_name, highlightPhrase));
+      assert.isTrue(highlightStub.calledWith(profile.last_name, highlightPhrase));
+      assert.isTrue(highlightStub.calledWith(` (${profile.preferred_name})`, highlightPhrase));
+    });
+  });
+
+  describe('highlight', () => {
+    it("doesn't highlight if there's no highlight phrase", () => {
+      assert.equal(highlight('abc', ''), 'abc');
+    });
+
+    it("doesn't highlight if there's no text", () => {
+      assert.equal(highlight(null, 'xyz'), null);
+    });
+
+    it("filters out diacritics and makes text and phrase lowercase", () => {
+      let name = 'Côté';
+      let phrase = 'CÖ';
+      let result = highlight(name, phrase);
+      assert.equal(shallow(result).text(), name);
+      assert.equal(shallow(result).find('.highlight').text(), "Cô");
+    });
+
+    it("doesn't highlight if phrase doesn't match", () => {
+      assert.equal(highlight('abc', 'xyz'), 'abc');
+    });
+
+    it("handles unicode properly", () => {
+      let dog = "🐶";
+      let catdogfish = "🐱🐶🐟";
+      let result = highlight(catdogfish, dog);
+      assert.equal(catdogfish, shallow(result).text());
+      assert.equal(dog, shallow(result).find(".highlight").text());
     });
   });
 

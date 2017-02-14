@@ -9,6 +9,7 @@ import { S } from '../lib/sanctuary';
 const { Maybe, Just, Nothing } = S;
 import R from 'ramda';
 import Decimal from 'decimal.js-light';
+import { remove as removeDiacritics } from 'diacritics';
 
 import {
   STATUS_PASSED,
@@ -452,16 +453,47 @@ export const classify: (s: string) => string = (
 
 export const labelSort = R.sortBy(R.compose(R.toLower, R.prop('label')));
 
+function _highlight(text: string, highlightPhrase: ?string) {
+  if (!highlightPhrase) {
+    return text;
+  }
+  if (!text) {
+    return text;
+  }
+
+  let filteredPhrase = removeDiacritics(highlightPhrase.toLowerCase());
+  let filteredText = removeDiacritics(text.toLowerCase());
+  let index = filteredText.indexOf(filteredPhrase);
+  if (index === -1) {
+    return text;
+  }
+  let pre = text.substring(0, index);
+  let highlighted = text.substring(index, index + highlightPhrase.length);
+  let post = text.substring(index + highlightPhrase.length);
+  return <span>
+    {pre}
+    <span className="highlight">
+      {highlighted}
+    </span>
+    {post}
+  </span>;
+}
+
+// allow mocking in tests
+export { _highlight as highlight };
+import { highlight } from './util';
+
 /**
- * Return first, last, preferred_name names if available else username
+ * Return first, last, preferred_name names if available else username. If phrase
+ * is specified, that piece of text will be highlighted if it exists
  */
-export function getUserDisplayName(profile: Profile): string {
+export function getUserDisplayName(profile: Profile, phrase: ?string) {
   let first = profile.first_name || profile.username;
   let last =  profile.last_name || '';
   let preferred_name = (profile.preferred_name && (profile.preferred_name !== first)) ?
     ` (${profile.preferred_name})` : '';
 
-  return `${first} ${last}${preferred_name}`;
+  return <span>{highlight(first, phrase)} {highlight(last, phrase)}{highlight(preferred_name, phrase)}</span>;
 }
 
 /**

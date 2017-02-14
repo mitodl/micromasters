@@ -199,6 +199,7 @@
     > * {
       display: flex;
       flex-direction: row;
+      align-items: center;
     }
 
     .pagination-sort {
@@ -243,6 +244,12 @@
           padding: 0 0 !important;
         }
       }
+    }
+
+    .sk-search-box form {
+      border: 1px solid $border-color;
+      border-radius: 5px;
+      margin-right: 10px;
     }
 
     .sk-selected-filters {
@@ -422,4 +429,9 @@
     font-size: 14px;
     padding: 0 75px;
   }
+}
+
+.highlight {
+  background-color: #fdfcd2;
+  font-weight: 700;
 }

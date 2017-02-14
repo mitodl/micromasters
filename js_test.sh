@@ -33,6 +33,7 @@ if [[ $(
     cat "$TMP_FILE" |
     grep -v 'ignored, nothing could be mapped' |
     grep -v 'You are manually calling a React.PropTypes validation function' |
+    grep -v 'React.__spread is deprecated' |
     wc -l |
     awk '{print $1}'
     ) -ne 0 ]]  # is file empty?

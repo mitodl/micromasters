@@ -8,6 +8,7 @@ const _createSettings = () => ({
     preferred_name: "JD"
   },
   edx_base_url: "/edx/",
+  search_url: '/',
   roles: [],
   support_email: "a_real_email@example.com",
   es_page_size: 40,
@@ -30,11 +31,14 @@ if (!Object.entries) {
 }
 
 let jsdom = require('jsdom');
-require('jsdom-global')();
+require('jsdom-global')(undefined, {
+  url: 'http://fake/'
+});
 
 let localStorageMock = require('./util/test_utils').localStorageMock;
 beforeEach(() => { // eslint-disable-line mocha/no-top-level-hooks
   window.localStorage = localStorageMock();
+  window.sessionStorage = localStorageMock();
   Object.defineProperty(window, "location", {
     set: value => {
       if (!value.startsWith("http")) {
@@ -50,6 +54,7 @@ afterEach(function () { // eslint-disable-line mocha/no-top-level-hooks
   document.body.innerHTML = '';
   global.SETTINGS = _createSettings();
   window.localStorage.reset();
+  window.sessionStorage.reset();
 });
 
 // required for interacting with react-mdl components

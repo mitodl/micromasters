@@ -42,7 +42,7 @@ describe('LearnerSearchPage', function () {
     return renderComponent('/learners').then(() => {
       let request = server.requests[server.requests.length - 1];
       let body = JSON.parse(request.requestBody);
-      assert.deepEqual(body.filter.bool.must[0].term['program.id'], PROGRAMS[0].id);
+      assert.deepEqual(body.filter.term['program.id'], PROGRAMS[0].id);
     });
   });
 
@@ -69,6 +69,38 @@ describe('LearnerSearchPage', function () {
       }).then((state) => {
         assert.isTrue(state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG]);
       });
+    });
+  });
+
+  it('sends a request to find users by name when text is entered into the search box', () => {
+    return renderComponent('/learners').then(([wrapper]) => {
+      return new Promise(resolve => {
+        wrapper.find("SearchBox").find('input[type="text"]').props().onInput({
+          target: {
+            value: 'xyz'
+          }
+        });
+
+        // wait 500 millis for the request to be made
+        setTimeout(() => {
+          resolve();
+        }, 500);
+      });
+    }).then(() => {
+      let request = server.requests[server.requests.length - 1];
+      let body = JSON.parse(request.requestBody);
+      let query = body.query.multi_match;
+      assert.deepEqual(query, {
+        fields: [
+          'profile.first_name.folded',
+          'profile.last_name.folded',
+          'profile.preferred_name.folded',
+        ],
+        analyzer: 'folding',
+        query: 'xyz',
+        type: 'phrase_prefix',
+      });
+      assert.equal(window.location.toString(), "http://fake/?q=xyz");
     });
   });
 });

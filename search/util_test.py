@@ -33,12 +33,12 @@ class UtilTests(TestCase):
                 ])
             }
         }
-        assert list(traverse_mapping(data)) == [
-            data,
-            data['user'],
-            data['user']['properties'],
-            data['user']['properties']['certificates'],
-            data['user']['properties']['certificates']['properties'],
-            data['user']['properties']['certificates']['properties']['long_field'],
-            data['user']['properties']['string_field'],
+        assert list(traverse_mapping(data, "root")) == [
+            ("root", data),
+            ('user', data['user']),
+            ('properties', data['user']['properties']),
+            ('certificates', data['user']['properties']['certificates']),
+            ('properties', data['user']['properties']['certificates']['properties']),
+            ('long_field', data['user']['properties']['certificates']['properties']['long_field']),
+            ('string_field', data['user']['properties']['string_field']),
         ]

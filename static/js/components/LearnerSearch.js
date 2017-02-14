@@ -11,6 +11,7 @@ import {
   HitsStats,
   ResetFilters,
   RangeFilter,
+  SearchBox,
   SortingSelector,
 } from 'searchkit';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
@@ -146,7 +147,7 @@ export default class LearnerSearch extends SearchkitComponent {
 
     return (
       <Grid className="search-header">
-        <Cell col={6} className="result-info">
+        <Cell col={4} className="result-info">
           <button
             id="email-selected"
             className="mdl-button minor-action"
@@ -156,8 +157,19 @@ export default class LearnerSearch extends SearchkitComponent {
           </button>
           <HitsStats component={HitsCount} />
         </Cell>
-        <Cell col={2} />
-        <Cell col={4} className="pagination-sort">
+        <Cell col={8} className="pagination-sort">
+          <SearchBox
+            queryBuilder={() => ({})}  // we only care about prefix query
+            searchOnChange={true}
+            prefixQueryFields={[
+              'profile.first_name.folded',
+              'profile.last_name.folded',
+              'profile.preferred_name.folded',
+            ]}
+            prefixQueryOptions={{
+              analyzer: "folding"
+            }}
+          />
           <SortingSelector options={sortOptions} listComponent={CustomSortingSelect} />
           <PatchedPagination showText={false} listComponent={CustomPaginationDisplay} />
         </Cell>

@@ -48,19 +48,19 @@ describe('FilterVisibilityToggle', () => {
 
   it('renders children', () => {
     sandbox.stub(FilterVisibilityToggle.prototype, 'getResults').returns(null);
-    let toggle = renderStrippedHtmlToggle(props, <div>Test Text</div>);
+    let toggle = renderStrippedHtmlToggle(props, <div id="test">Test Text</div>);
     assert.include(toggle, "Test Text");
   });
 
   it('checks for filter visibility when rendering', () => {
     sandbox.stub(FilterVisibilityToggle.prototype, 'getResults').returns(null);
-    renderStrippedHtmlToggle(props, <div>Test Text</div>);
+    renderStrippedHtmlToggle(props, <div id="test">Test Text</div>);
     assert(checkFilterVisibility.called);
   });
 
   it('hides toggle icon when no results', () => {
     sandbox.stub(FilterVisibilityToggle.prototype, 'getResults').returns(null);
-    const wrapper = renderWrappedToggle(props, <div>Test Text</div>);
+    const wrapper = renderWrappedToggle(props, <div id="test">Test Text</div>);
     const icon = wrapper.find("i.material-icons");
     assert.lengthOf(icon, 0);
   });
@@ -107,5 +107,54 @@ describe('FilterVisibilityToggle', () => {
     assert.lengthOf(icon, 1);
     icon.simulate('click');
     assert(setFilterVisibility.called);
+  });
+
+  const filterIds = {
+    "birth_location": "profile.birth_country",
+    "semester": "program.semester_enrollments.semester",
+    "education_level": "profile.education.degree_name",
+    "company_name": "profile.work_history.company_name"
+  };
+  for (const [key, value] of Object.entries(filterIds)) {
+    it(`looks up ${key} using our filter id list`, () => {
+      sandbox.stub(FilterVisibilityToggle.prototype, 'getResults').returns({
+        aggregations: {
+          [`${value}123`]: {
+            doc_count: 2
+          }
+        }
+      });
+      props.filterName = key;
+      const wrapper = renderWrappedToggle(props, <div id={key}>Test Text</div>);
+      assert.equal(wrapper.find("Icon").props().className, "");
+    });
+  }
+
+  it('looks up a key not in our filter list', () => {
+    sandbox.stub(FilterVisibilityToggle.prototype, 'getResults').returns({
+      aggregations: {
+        [`a.b.c.d.e.f456`]: {
+          doc_count: 2
+        }
+      }
+    });
+    let key = 'a.b.c.d.e.f';
+    props.filterName = key;
+    const wrapper = renderWrappedToggle(props, <div id={key}>Test Text</div>);
+    assert.equal(wrapper.find("Icon").props().className, "");
+  });
+
+  it('has a no icon if it cant find the key', () => {
+    sandbox.stub(FilterVisibilityToggle.prototype, 'getResults').returns({
+      aggregations: {
+        other_key: {
+          doc_count: 2
+        }
+      }
+    });
+    let key = 'a.b.c.d.e.f';
+    props.filterName = key;
+    const wrapper = renderWrappedToggle(props, <div id={key}>Test Text</div>);
+    assert.equal(wrapper.find("Icon").length, 0);
   });
 });
