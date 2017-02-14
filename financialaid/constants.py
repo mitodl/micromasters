@@ -58,7 +58,7 @@ if settings.OPEN_EXCHANGE_RATES_URL and settings.OPEN_EXCHANGE_RATES_APP_ID:
         app_id=quote_plus(settings.OPEN_EXCHANGE_RATES_APP_ID)
     )
 else:
-    CURRENCY_EXCHANGE_RATE_API_REQUEST_URL = None
+    CURRENCY_EXCHANGE_RATE_API_REQUEST_URL = None  # pragma: no cover
 
 FINANCIAL_AID_DOCUMENTS_RECEIVED_SUBJECT = "Documents received for {program_name} MicroMasters"
 FINANCIAL_AID_APPROVAL_SUBJECT = "Your personalized course price for {program_name} MicroMasters"
