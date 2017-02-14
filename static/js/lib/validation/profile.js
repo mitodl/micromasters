@@ -296,18 +296,11 @@ const financialAidMessages: ErrorMessages = {
 
 export const validateFinancialAid = (edit: FinancialAidState): FinancialAidValidation => {
   let errors: FinancialAidValidation = findErrors(edit, R.keys(financialAidMessages), financialAidMessages);
-  const income = edit.income;
-  const not_whole_num = (
-    income && (
-      /[.]/.test(income) || /[a-z]/.test(income.toLowerCase())
-    )
-  );
-
   if (!edit.checkBox) {
     errors['checkBox'] = 'You must agree to these terms';
   }
 
-  if (not_whole_num) {
+  if (edit.income && !/^\d+$/.test(edit.income)) {
     errors['income'] = 'Please only use whole numbers.';
   }
 
