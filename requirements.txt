@@ -36,7 +36,7 @@ html5lib==0.999999999
 idna==2.1                 # via cryptography
 jsonfield==1.0.3
 kombu==3.0.37             # via celery, django-server-status
-newrelic==2.72.1.53
+newrelic==2.78.0.57
 oauthlib==2.0.0           # via python-social-auth, requests-oauthlib
 paramiko==2.0.2           # via pysftp
 pbr==1.10.0               # via stevedore
