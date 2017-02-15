@@ -498,6 +498,16 @@ describe('Financial aid validation', () => {
     });
   });
 
+  for (let income of ["2000.00", "2000.50", "2Adb", "two thousand"]) {
+    it(`should complain if income='${income}' is invalid`, () => {
+      financialAid.income = income;
+      let errors = validateFinancialAid(financialAid);
+      assert.deepEqual(errors, {
+        income: 'Please only use whole numbers.'
+      });
+    });
+  }
+
   it('should complain if currency is empty', () => {
     financialAid.currency = undefined;
     let errors = validateFinancialAid(financialAid);
