@@ -7,7 +7,7 @@
 amqp==1.4.9               # via kombu
 anyjson==0.3.3            # via kombu
 beautifulsoup4==4.5.1     # via wagtail
-billiard==3.3.0.23        # via celery
+billiard==3.5.0.2        # via celery
 boto==2.39.0
 celery==3.1.23
 cffi==1.9.1               # via cryptography
