@@ -27,7 +27,7 @@ services:
       - web
       - watch
 
-  web:
+  python:
     build: .
     command: >
       /bin/bash -c '
@@ -54,8 +54,12 @@ services:
       EXAMS_SFTP_HOST: sftp
       EXAMS_SFTP_USERNAME: odl
       EXAMS_SFTP_PASSWORD: 123
-
     env_file: .env
+
+  web:
+    image: micromasters_python
+    extends:
+      service: python
     ports:
       - "8077:8077"
     links:
@@ -63,7 +67,6 @@ services:
       - elastic
       - redis
       - sftp
-      - grid
 
   watch:
     build:
@@ -83,26 +86,12 @@ services:
 
   celery:
     image: micromasters_web
-    mem_limit: 384m
+    extends:
+      service: python
     command: >
       /bin/bash -c '
       sleep 3;
       celery -A micromasters worker -B -l debug'
-    volumes_from:
-      - web
-    environment:
-      DEBUG: 'True'
-      MICROMASTERS_DB_DISABLE_SSL: 'True'
-      DJANGO_LOG_LEVEL: INFO
-      DATABASE_URL: postgres://postgres@db:5432/postgres
-      BROKER_URL: redis://redis:6379/4
-      CELERY_RESULT_BACKEND: redis://redis:6379/4
-      ELASTICSEARCH_URL: elastic:9200
-      CELERY_ALWAYS_EAGER: 'False'
-      EXAMS_SFTP_HOST: sftp
-      EXAMS_SFTP_USERNAME: odl
-      EXAMS_SFTP_PASSWORD: 123
-    env_file: .env
     links:
       - db
       - elastic
@@ -116,6 +105,14 @@ services:
     ports:
         - "2022:22"
     command: odl:123:1001:1001:results,results/topvue
+
+  selenium:
+    image: micromasters_web
+    extends:
+      service: python
+    links:
+      - db
+      - elastic
 
   grid:
     image: elgalu/selenium

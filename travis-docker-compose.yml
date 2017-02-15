@@ -10,7 +10,7 @@ services:
     ports:
       - "6379"
 
-  web:
+  python:
     build:
       context: .
       dockerfile: ./travis/Dockerfile-travis-web
@@ -31,31 +31,25 @@ services:
       BROKER_URL: redis://redis:6379/4
       CELERY_RESULT_BACKEND: redis://redis:6379/4
     env_file: .env
+
+  web:
+    image: micromasters_web
+    extends:
+      service: python
     ports:
       - "8079:8079"
     links:
       - db
       - elastic
-      - grid
 
   celery:
     image: micromasters_web
-    mem_limit: 384m
+    extends:
+      service: python
     command: >
       /bin/bash -c '
       sleep 3;
       celery -A micromasters worker -B -l debug'
-    volumes_from:
-      - web
-    environment:
-      DEBUG: 'False'
-      MICROMASTERS_DB_DISABLE_SSL: 'True'
-      DATABASE_URL: postgres://postgres@db:5432/postgres
-      BROKER_URL: redis://redis:6379/4
-      CELERY_RESULT_BACKEND: redis://redis:6379/4
-      ELASTICSEARCH_URL: elastic:9200
-      CELERY_ALWAYS_EAGER: 'True'
-    env_file: .env
     links:
       - db
       - elastic
@@ -66,6 +60,15 @@ services:
     command: elasticsearch -Des.network.host=0.0.0.0
     ports:
       - "9200"
+
+  selenium:
+    image: micromasters_web
+    extends:
+      service: python
+    links:
+      - db
+      - elastic
+      - redis
 
   grid:
     image: elgalu/selenium
