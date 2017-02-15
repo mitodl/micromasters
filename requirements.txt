@@ -31,7 +31,7 @@ edx-opaque-keys==0.4
 elasticsearch-dsl==2.1.0
 elasticsearch==2.3.0
 factory-boy==2.8.1
-faker==0.7.3
+faker==0.7.7
 html5lib==0.999999999
 idna==2.1                 # via cryptography
 jsonfield==1.0.3
