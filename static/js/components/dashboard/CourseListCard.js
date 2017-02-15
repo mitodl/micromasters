@@ -18,10 +18,10 @@ export default class CourseListCard extends React.Component {
     program:                      Program,
     courseEnrollAddStatus?:       string,
     prices:                       CalculatedPrices,
-    openFinancialAidCalculator?:  () => void,
+    openFinancialAidCalculator?:  () => Promise<*>,
     now?:                         Object,
-    addCourseEnrollment:          (courseId: string) => void,
-    openCourseContactDialog:      (course: Course, canContactCourseTeam: boolean) => void
+    addCourseEnrollment:          (courseId: string) => Promise<*>,
+    openCourseContactDialog:      (course: Course, canContactCourseTeam: boolean) => Promise<*>,
   };
 
   render() {

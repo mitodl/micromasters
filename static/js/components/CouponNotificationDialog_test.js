@@ -92,7 +92,7 @@ describe("CouponNotificationDialog", () => {
     couponProgram: ?AvailableProgram = null,
     couponCourse: ?Course = null,
     open = true,
-    setDialogVisibility = () => {},
+    setDialogVisibility = () => Promise.resolve(),
   ) => {
     mount(
       <MuiThemeProvider muiTheme={getMuiTheme()}>

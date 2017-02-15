@@ -40,8 +40,8 @@ export default class CourseAction extends React.Component {
     prices: CalculatedPrices,
     financialAid: FinancialAidUserInfo,
     hasFinancialAid: boolean,
-    openFinancialAidCalculator?: () => void,
-    addCourseEnrollment: (courseId: string) => void
+    openFinancialAidCalculator?: () => ?Promise<*>,
+    addCourseEnrollment: (courseId: string) => ?Promise<*>,
   };
 
   statusDescriptionClasses = {

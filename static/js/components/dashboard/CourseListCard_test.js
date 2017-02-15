@@ -34,9 +34,9 @@ describe('CourseListCard', () => {
       <CourseListCard
         program={program}
         coupon={null}
-        addCourseEnrollment={() => undefined}
+        addCourseEnrollment={() => Promise.resolve()}
         prices={prices}
-        openCourseContactDialog={() => undefined}
+        openCourseContactDialog={() => Promise.resolve()}
         closeEmailDialog={() => undefined}
         updateEmailEdit={() => undefined}
         sendEmail={() => undefined}
