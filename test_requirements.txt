@@ -18,7 +18,7 @@ curtsies==0.2.11          # via bpython
 ddt==1.1.1
 decorator==4.0.10         # via ipython, traitlets
 django-debug-toolbar==1.6
-django==1.10.3            # via django-debug-toolbar
+django==1.10.5            # via django-debug-toolbar
 execnet==1.4.1            # via pytest-cache
 fancycompleter==0.7       # via pdbpp
 first==2.0.1              # via pip-tools
