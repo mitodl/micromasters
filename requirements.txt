@@ -55,7 +55,7 @@ pytz==2016.7              # via celery, django-modelcluster
 PyYAML==3.11
 raven==5.32.0
 redis==2.10.5
-requests-oauthlib==0.7.0  # via python-social-auth
+requests-oauthlib==0.8.0  # via python-social-auth
 requests==2.11.1
 six==1.10.0               # via cryptography, django-role-permissions, django-server-status, edx-api-client, edx-opaque-keys, elasticsearch-dsl, faker, html5lib, python-dateutil, python-social-auth, stevedore
 static3==0.5.1
