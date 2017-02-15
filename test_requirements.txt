@@ -28,7 +28,7 @@ ipython-genutils==0.1.0   # via traitlets
 ipython==5.1.0
 isort==4.2.5              # via pylint
 lazy-object-proxy==1.2.2  # via astroid
-mccabe==0.5.3             # via pylint
+mccabe==0.6.1             # via pylint
 nplusone==0.7.3
 ordereddict==1.1          # via pdbpp
 packaging==16.8           # via setuptools
