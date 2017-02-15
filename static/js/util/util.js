@@ -378,8 +378,12 @@ export function formatPrice(price: ?string|number|Decimal): string {
   if (price === null || price === undefined) {
     return '';
   } else {
-    const formatedPrice = Decimal(price).todp(2, Decimal.ROUND_DOWN).toFixed(2);
-    let dollars = `$${formatedPrice}`;
+    let formattedPrice: Decimal = Decimal(price);
+    if (!formattedPrice.isInteger()) {
+      formattedPrice =  formattedPrice.toFixed(2, Decimal.ROUND_HALF_UP);
+    }
+
+    let dollars = `$${formattedPrice}`;
     return dollars.replace(/\.00$/,'');
   }
 }

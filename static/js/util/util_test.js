@@ -485,10 +485,10 @@ describe('utility functions', () => {
   describe('formatPrice', () => {
     it('format price', () => {
       assert.equal(formatPrice(20), "$20");
-      assert.equal(formatPrice(20.005), "$20");
+      assert.equal(formatPrice(20.005), "$20.01");
       assert.equal(formatPrice(20.10), "$20.10");
-      assert.equal(formatPrice(20.6059), "$20.60");
-      assert.equal(formatPrice(20.6959), "$20.69");
+      assert.equal(formatPrice(20.6059), "$20.61");
+      assert.equal(formatPrice(20.6959), "$20.70");
       assert.equal(formatPrice(20.1234567), "$20.12");
     });
 
