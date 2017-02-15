@@ -42,7 +42,7 @@ paramiko==2.0.2           # via pysftp
 pbr==1.10.0               # via stevedore
 pillow==3.4.2
 psycopg2==2.6
-pyasn1==0.1.9             # via cryptography, paramiko
+pyasn1==0.2.2             # via cryptography, paramiko
 pycountry==16.11.27.1
 pycparser==2.17           # via cffi
 pyjwt==1.4.2              # via python-social-auth
