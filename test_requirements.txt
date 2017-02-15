@@ -11,7 +11,7 @@ astroid==1.4.9            # via pylint, pylint-plugin-utils
 blessings==1.6            # via curtsies
 blinker==1.4              # via nplusone
 bpython==0.16
-click==6.6                # via pip-tools
+click==6.7                # via pip-tools
 codecov==2.0.5
 coverage==4.3.1           # via codecov, pytest-cov
 curtsies==0.2.11          # via bpython
