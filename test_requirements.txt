@@ -41,7 +41,7 @@ pluggy==0.4.0             # via tox
 prompt-toolkit==1.0.9     # via ipython
 ptyprocess==0.5.1         # via pexpect
 py==1.4.32                # via pytest, tox
-pygments==2.1.3           # via bpython, ipython, pdbpp
+pygments==2.2.0           # via bpython, ipython, pdbpp
 pylint-django==0.7.2
 pylint-plugin-utils==0.2.4  # via pylint-django
 pylint==1.6.4
