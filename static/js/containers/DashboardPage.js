@@ -642,37 +642,40 @@ class DashboardPage extends React.Component {
     const calculatedPrices = calculatePrices(dashboard.programs, prices.coursePrices, coupons.coupons);
 
     return (
-      <div className="double-column">
-        <DocsInstructionsDialog
-          open={ui.docsInstructionsVisibility}
-          setDialogVisibility={this.setDocsInstructionsVisibility}
-        />
-        {this.renderCouponDialog()}
-        <div className="first-column">
-          <DashboardUserCard profile={profile} program={program}/>
-          <FinalExamCard
-            profile={profile}
-            program={program}
-            pearson={pearson}
-            navigateToProfile={this.navigateToProfile}
-            submitPearsonSSO={this.submitPearsonSSO}
+      <div>
+        <h5 className="program-title-dashboard">{program.title}</h5>
+        <div className="double-column">
+          <DocsInstructionsDialog
+            open={ui.docsInstructionsVisibility}
+            setDialogVisibility={this.setDocsInstructionsVisibility}
           />
-          {financialAidCard}
-          {couponCard}
-          <CourseListCard
-            program={program}
-            coupon={coupon}
-            courseEnrollAddStatus={courseEnrollments.courseEnrollAddStatus}
-            prices={calculatedPrices}
-            key={program.id}
-            openFinancialAidCalculator={this.openFinancialAidCalculator}
-            addCourseEnrollment={this.addCourseEnrollment}
-            openCourseContactDialog={this.openCourseContactDialog}
-          />
+          {this.renderCouponDialog()}
+          <div className="first-column">
+            <DashboardUserCard profile={profile} program={program}/>
+            <FinalExamCard
+              profile={profile}
+              program={program}
+              pearson={pearson}
+              navigateToProfile={this.navigateToProfile}
+              submitPearsonSSO={this.submitPearsonSSO}
+            />
+            {financialAidCard}
+            {couponCard}
+            <CourseListCard
+              program={program}
+              coupon={coupon}
+              courseEnrollAddStatus={courseEnrollments.courseEnrollAddStatus}
+              prices={calculatedPrices}
+              key={program.id}
+              openFinancialAidCalculator={this.openFinancialAidCalculator}
+              addCourseEnrollment={this.addCourseEnrollment}
+              openCourseContactDialog={this.openCourseContactDialog}
+            />
 
-        </div>
-        <div className="second-column">
-          <ProgressWidget program={program} />
+          </div>
+          <div className="second-column">
+            <ProgressWidget program={program} />
+          </div>
         </div>
       </div>
     );
