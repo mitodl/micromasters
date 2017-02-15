@@ -56,7 +56,7 @@ const currencySelect = (update, current) => (
 
 const salaryUpdate = R.curry((update, current, e) => {
   let newEdit = R.clone(current);
-  newEdit.income = e.target.value
+  newEdit.income = e.target.value;
   update(newEdit);
 });
 
