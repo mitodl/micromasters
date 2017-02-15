@@ -300,7 +300,7 @@ export const validateFinancialAid = (edit: FinancialAidState): FinancialAidValid
     errors['checkBox'] = 'You must agree to these terms';
   }
 
-  if (edit.income && !/^\d+$/.test(edit.income)) {
+  if (edit.income && /\D+/.test(edit.income)) {
     errors['income'] = 'Please only use whole numbers.';
   }
 
