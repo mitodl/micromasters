@@ -40,7 +40,7 @@ newrelic==2.72.1.53
 oauthlib==2.0.0           # via python-social-auth, requests-oauthlib
 paramiko==2.0.2           # via pysftp
 pbr==1.10.0               # via stevedore
-pillow==3.4.2
+pillow==4.0.0
 psycopg2==2.6
 pyasn1==0.1.9             # via cryptography, paramiko
 pycountry==16.11.27.1
