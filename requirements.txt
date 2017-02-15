@@ -38,7 +38,7 @@ jsonfield==1.0.3
 kombu==3.0.37             # via celery, django-server-status
 newrelic==2.72.1.53
 oauthlib==2.0.0           # via python-social-auth, requests-oauthlib
-paramiko==2.0.2           # via pysftp
+paramiko==2.1.1           # via pysftp
 pbr==1.10.0               # via stevedore
 pillow==3.4.2
 psycopg2==2.6
