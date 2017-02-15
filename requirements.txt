@@ -49,7 +49,7 @@ pyjwt==1.4.2              # via python-social-auth
 pymongo==3.4.0            # via edx-opaque-keys
 pysftp==0.2.9
 python-dateutil==2.5.3
-python-social-auth==0.2.21
+python-social-auth==0.3.6
 python3-openid==3.0.10    # via python-social-auth
 pytz==2016.7              # via celery, django-modelcluster
 PyYAML==3.11
