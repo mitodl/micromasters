@@ -25,7 +25,7 @@ django-taggit==0.18.3     # via wagtail
 django-treebeard==4.0.1   # via wagtail
 django-webpack-loader==0.4.1
 django==1.10.3
-djangorestframework==3.5.2
+djangorestframework==3.5.4
 edx-api-client==0.3.0
 edx-opaque-keys==0.4
 elasticsearch-dsl==2.1.0
