@@ -88,7 +88,8 @@ import type { FinancialAidState } from '../reducers/financial_aid';
 import type { CouponsState } from '../reducers/coupons';
 import type { EmailState } from '../flow/emailTypes';
 import type { ProfileGetResult } from '../flow/profileTypes';
-import type { Course, CourseRun } from '../flow/programTypes';
+import type { Program, Course, CourseRun } from '../flow/programTypes';
+import type { Coupon } from '../flow/couponTypes';
 import { skipFinancialAid } from '../actions/financial_aid';
 import { currencyForCountry } from '../lib/currency';
 import DocsInstructionsDialog from '../components/DocsInstructionsDialog';
@@ -137,7 +138,7 @@ class DashboardPage extends React.Component {
     this.updateRequirements();
 
     let program = this.getCurrentlyEnrolledProgram();
-    if (this.shouldSkipFinancialAid() && program !== undefined) {
+    if (this.shouldSkipFinancialAid() && program) {
       this.skipFinancialAid(program.id);
     }
   }
@@ -149,13 +150,13 @@ class DashboardPage extends React.Component {
     dispatch(clearCoupons());
   }
 
-  submitPearsonSSO = () => {
+  submitPearsonSSO = (): Promise<*> => {
     const {
       dispatch,
       profile: { profile },
     } = this.props;
 
-    dispatch(getPearsonSSODigest()).then(res => {
+    return dispatch(getPearsonSSODigest()).then(res => {
       dispatch(pearsonSSOInProgress());
       const {
         session_timeout,
@@ -180,65 +181,81 @@ class DashboardPage extends React.Component {
     });
   };
 
-  openCourseContactDialog = (course: Course, canContactCourseTeam: boolean) => {
+  openCourseContactDialog = (course: Course, canContactCourseTeam: boolean): Promise<*> => {
     const { dispatch } = this.props;
     if (canContactCourseTeam) {
-      dispatch(
-        startEmailEdit({
-          type: COURSE_EMAIL_TYPE,
-          params: {courseId: course.id},
-          subheading: `${course.title} Course Team`
-        })
-      );
-      dispatch(setEmailDialogVisibility(true));
+      return Promise.all([
+        dispatch(
+          startEmailEdit({
+            type: COURSE_EMAIL_TYPE,
+            params: {courseId: course.id},
+            subheading: `${course.title} Course Team`
+          })
+        ),
+        dispatch(setEmailDialogVisibility(true)),
+      ]);
     } else {
-      dispatch(setPaymentTeaserDialogVisibility(true));
+      return dispatch(setPaymentTeaserDialogVisibility(true));
     }
   };
 
-  closeAndClearEmailComposer = () => {
+  closeAndClearEmailComposer = (): Promise<*> => {
     const { dispatch } = this.props;
-    dispatch(clearEmailEdit(COURSE_EMAIL_TYPE));
-    dispatch(setEmailDialogVisibility(false));
+    return Promise.all([
+      dispatch(clearEmailEdit(COURSE_EMAIL_TYPE)),
+      dispatch(setEmailDialogVisibility(false)),
+    ]);
   };
 
-  updateEmailEdit = R.curry((fieldName, e) => {
+  updateEmailEdit = R.curry((fieldName, e): Promise<*> => {
     const {
       dispatch,
       courseTeamEmail: { inputs, validationErrors }
     } = this.props;
+    let promises = [];
     let inputsClone = R.clone(inputs);
     inputsClone[fieldName] = e.target.value;
-    dispatch(updateEmailEdit({type: COURSE_EMAIL_TYPE, inputs: inputsClone}));
+    promises.push(
+      dispatch(updateEmailEdit({type: COURSE_EMAIL_TYPE, inputs: inputsClone}))
+    );
     if (!R.isEmpty(validationErrors)) {
       let cloneErrors = emailValidation(inputsClone);
-      dispatch(updateEmailValidation({type: COURSE_EMAIL_TYPE, errors: cloneErrors}));
+      promises.push(
+        dispatch(updateEmailValidation({type: COURSE_EMAIL_TYPE, errors: cloneErrors}))
+      );
     }
+    return Promise.all(promises);
   });
 
-  closeEmailComposerAndSend = (): void => {
+  closeEmailComposerAndSend = (): Promise<*> => {
     const { dispatch, courseTeamEmail: { inputs, params } } = this.props;
+    let promises = [];
     let errors = emailValidation(inputs);
-    dispatch(updateEmailValidation({type: COURSE_EMAIL_TYPE, errors: errors}));
+    promises.push(
+      dispatch(updateEmailValidation({type: COURSE_EMAIL_TYPE, errors: errors}))
+    );
     if (R.isEmpty(errors)) {
-      dispatch(
-        sendCourseTeamMail(
-          inputs.subject || '',
-          inputs.body || '',
-          params.courseId
-        )
-      ).then(() => {
-        this.closeAndClearEmailComposer();
-      });
+      promises.push(
+        dispatch(
+          sendCourseTeamMail(
+            inputs.subject || '',
+            inputs.body || '',
+            params.courseId
+          )
+        ).then(() => {
+          return this.closeAndClearEmailComposer();
+        })
+      );
     }
+    return Promise.all(promises);
   };
 
-  closePaymentTeaserDialog = () => {
+  closePaymentTeaserDialog = (): Promise<*> => {
     const { dispatch } = this.props;
-    dispatch(setPaymentTeaserDialogVisibility(false));
+    return dispatch(setPaymentTeaserDialogVisibility(false));
   };
 
-  handleOrderSuccess = (course: Course): void => {
+  handleOrderSuccess = (course: Course) => {
     const { dispatch, ui: { toastMessage } } = this.props;
     let firstRun: ?CourseRun = course.runs.length > 0 ? course.runs[0] : null;
 
@@ -302,24 +319,24 @@ class DashboardPage extends React.Component {
     this.handleOrderStatus();
   };
 
-  fetchDashboard() {
+  fetchDashboard(): ?Promise<*> {
     const { dashboard, dispatch } = this.props;
     if (dashboard.fetchStatus === undefined) {
-      dispatch(fetchDashboard());
+      return dispatch(fetchDashboard());
     }
   }
 
-  fetchCoursePrices() {
+  fetchCoursePrices(): ?Promise<*> {
     const { prices, dispatch } = this.props;
     if (prices.fetchStatus === undefined) {
-      dispatch(fetchCoursePrices());
+      return dispatch(fetchCoursePrices());
     }
   }
 
-  fetchCoupons() {
+  fetchCoupons(): ?Promise<*> {
     const { coupons, dispatch } = this.props;
     if (coupons.fetchGetStatus === undefined) {
-      dispatch(fetchCoupons());
+      return dispatch(fetchCoupons());
     }
   }
 
@@ -359,7 +376,7 @@ class DashboardPage extends React.Component {
     }
   };
 
-  handleCoupon = () => {
+  handleCoupon = (): ?Promise<*> => {
     const { coupons, dispatch, location: { query } } = this.props;
 
     if (!query.coupon) {
@@ -392,12 +409,12 @@ class DashboardPage extends React.Component {
       return;
     }
 
-    dispatch(attachCoupon(query.coupon)).then(result => {
+    return dispatch(attachCoupon(query.coupon)).then(result => {
       this.setRecentlyAttachedCoupon(result.coupon);
       this.setCouponNotificationVisibility(true);
       this.context.router.push('/dashboard/');
       // update coupon state in Redux
-      dispatch(fetchCoupons());
+      return dispatch(fetchCoupons());
     }).catch(() => {
       dispatch(setToastMessage({
         title: "Coupon failed",
@@ -408,26 +425,34 @@ class DashboardPage extends React.Component {
     });
   };
 
-  openFinancialAidCalculator = () => {
+  openFinancialAidCalculator = (): Promise<*> => {
     const {
       dispatch,
       currentProgramEnrollment,
       profile: { profile: { country } }
     } = this.props;
-    dispatch(startCalculatorEdit(currentProgramEnrollment.id));
+    let promises = [];
+    promises.push(
+      dispatch(startCalculatorEdit(currentProgramEnrollment.id))
+    );
     if (country) {
       let currencyPrediction = currencyForCountry(country);
-      dispatch(updateCalculatorEdit({ currency: currencyPrediction }));
+      promises.push(
+        dispatch(updateCalculatorEdit({ currency: currencyPrediction }))
+      );
     }
-    dispatch(setCalculatorDialogVisibility(true));
+    promises.push(
+      dispatch(setCalculatorDialogVisibility(true))
+    );
+    return Promise.all(promises);
   };
 
-  setDocumentSentDate = (newDate: string): void => {
+  setDocumentSentDate = (newDate: string): Promise<*> => {
     const { dispatch } = this.props;
-    dispatch(setDocumentSentDate(newDate));
+    return dispatch(setDocumentSentDate(newDate));
   };
 
-  getCurrentlyEnrolledProgram = () => {
+  getCurrentlyEnrolledProgram = (): ?Program => {
     const { currentProgramEnrollment, dashboard } = this.props;
     if (_.isNil(currentProgramEnrollment) || _.isNil(dashboard)) {
       return undefined;
@@ -437,7 +462,7 @@ class DashboardPage extends React.Component {
     ));
   };
 
-  skipFinancialAid = programId => {
+  skipFinancialAid = (programId: number): ?Promise<*> => {
     const { dispatch, financialAid } = this.props;
 
     let program = this.getCurrentlyEnrolledProgram();
@@ -447,7 +472,7 @@ class DashboardPage extends React.Component {
       !FA_TERMINAL_STATUSES.includes(program.financial_aid_user_info.application_status) &&
       financialAid.fetchSkipStatus === undefined
     ) {
-      dispatch(skipFinancialAid(programId)).then(() => {
+      return dispatch(skipFinancialAid(programId)).then(() => {
         this.setConfirmSkipDialogVisibility(false);
       }).catch(() => {
         this.setConfirmSkipDialogVisibility(false);
@@ -459,9 +484,9 @@ class DashboardPage extends React.Component {
     }
   };
 
-  setConfirmSkipDialogVisibility = bool => {
+  setConfirmSkipDialogVisibility = (bool: boolean): Promise<*> => {
     const { dispatch } = this.props;
-    dispatch(setConfirmSkipDialogVisibility(bool));
+    return dispatch(setConfirmSkipDialogVisibility(bool));
   };
 
   updateDocumentSentDate = (financialAidId: number, sentDate: string): Promise<*> => {
@@ -469,24 +494,24 @@ class DashboardPage extends React.Component {
     return dispatch(updateDocumentSentDate(financialAidId, sentDate));
   };
 
-  addCourseEnrollment = (courseId: string): void => {
+  addCourseEnrollment = (courseId: string): Promise<*> => {
     const { dispatch } = this.props;
     return dispatch(addCourseEnrollment(courseId));
   };
 
-  setDocsInstructionsVisibility = bool => {
+  setDocsInstructionsVisibility = (bool: boolean): Promise<*> => {
     const { dispatch } = this.props;
-    dispatch(setDocsInstructionsVisibility(bool));
+    return dispatch(setDocsInstructionsVisibility(bool));
   };
 
-  setCouponNotificationVisibility = bool => {
+  setCouponNotificationVisibility = (bool: boolean): Promise<*> => {
     const { dispatch } = this.props;
-    dispatch(setCouponNotificationVisibility(bool));
+    return dispatch(setCouponNotificationVisibility(bool));
   };
 
-  setRecentlyAttachedCoupon = coupon => {
+  setRecentlyAttachedCoupon = (coupon: Coupon): Promise<*> => {
     const { dispatch } = this.props;
-    dispatch(setRecentlyAttachedCoupon(coupon));
+    return dispatch(setRecentlyAttachedCoupon(coupon));
   };
 
   navigateToProfile = () => {
@@ -498,7 +523,7 @@ class DashboardPage extends React.Component {
 
     return R.compose(
       R.any(coupon => (
-        program !== undefined &&
+        program &&
         coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM &&
         coupon.amount_type === COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT &&
         coupon.program_id === program.id &&
@@ -508,7 +533,7 @@ class DashboardPage extends React.Component {
     )(this.props);
   };
 
-  renderCouponDialog() {
+  renderCouponDialog(): ?React$Element<*> {
     const {
       programs,
       ui,
@@ -540,7 +565,7 @@ class DashboardPage extends React.Component {
     />;
   }
 
-  renderCourseContactDialogs() {
+  renderCourseContactDialogs(): Array<React$Element<*>> {
     const { ui, courseTeamEmail } = this.props;
     return [
       <EmailCompositionDialog
@@ -572,7 +597,7 @@ class DashboardPage extends React.Component {
     ];
   }
 
-  renderErrorMessage = (): React$Element<*>|null => {
+  renderErrorMessage = (): ?React$Element<*> => {
     const {
       dashboard,
       prices,
@@ -595,7 +620,7 @@ class DashboardPage extends React.Component {
     return <ErrorMessage errorInfo={{user_message: "No program enrollment is available."}} />;
   }
 
-  renderPageContent = (): React$Element<*>|null => {
+  renderPageContent = (): ?React$Element<*> => {
     const {
       dashboard,
       prices,
@@ -681,7 +706,7 @@ class DashboardPage extends React.Component {
     );
   }
 
-  render() {
+  render(): React$Element<*> {
     const {
       dashboard,
       prices,

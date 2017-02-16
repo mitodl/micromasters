@@ -6,8 +6,8 @@ import { FETCH_PROCESSING } from '../actions';
 import { dialogActions } from './inputs/util';
 
 type SkipProps = {
-  cancel:           () => void,
-  skip:             () => void,
+  cancel:           () => Promise<*>,
+  skip:             () => ?Promise<*>,
   open:             boolean,
   fullPrice:        React$Element<*>,
   fetchAddStatus?:  string,

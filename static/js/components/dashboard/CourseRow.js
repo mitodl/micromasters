@@ -29,9 +29,9 @@ export default class CourseRow extends React.Component {
     prices: CalculatedPrices,
     financialAid: FinancialAidUserInfo,
     hasFinancialAid: boolean,
-    openFinancialAidCalculator: () => void,
-    addCourseEnrollment: (courseId: string) => void,
-    openCourseContactDialog: (course: Course, canContactCourseTeam: boolean) => void,
+    openFinancialAidCalculator: () => Promise<*>,
+    addCourseEnrollment: (courseId: string) => Promise<*>,
+    openCourseContactDialog: (course: Course, canContactCourseTeam: boolean) => Promise<*>,
   };
 
   shouldDisplayGradeColumn = (run: CourseRun): boolean => (

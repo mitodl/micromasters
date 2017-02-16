@@ -53,7 +53,7 @@ const getPostalCode = profile => (
 const accountCreated = (profile, navigateToProfile) => (
   <div key="profile">
     <div className="info-box split">
-      <div className="flow"> 
+      <div className="flow">
         Your Pearson Testing account has been created. Your information
         should match the ID you bring to the test center.
       </div>
@@ -162,7 +162,7 @@ type Props = {
   profile:            Profile,
   program:            Program,
   navigateToProfile:  () => void,
-  submitPearsonSSO:   () => void,
+  submitPearsonSSO:   () => Promise<*>,
   pearson:            PearsonAPIState,
 };
 

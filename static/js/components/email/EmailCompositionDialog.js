@@ -25,11 +25,11 @@ const showSubjectError = showValidationError(R.prop('subject'));
 const showBodyError = showValidationError(R.prop('body'));
 
 type EmailDialogProps = {
-  closeEmailDialog: () => void,
+  closeEmailDialog: () => Promise<*>,
   updateEmailEdit:  Function,
   open:             boolean,
   email:            EmailState,
-  sendEmail:        () => void,
+  sendEmail:        () => Promise<*>,
   title?:           string,
   subheadingType?:  string
 };

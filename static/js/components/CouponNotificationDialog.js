@@ -19,7 +19,7 @@ type CouponNotification = {
   couponProgram:        ?AvailableProgram,
   couponCourse:         ?Course,
   open:                 boolean,
-  setDialogVisibility:  (v: boolean) => void,
+  setDialogVisibility:  (v: boolean) => Promise<*>,
 };
 
 const CouponNotificationDialog = (
