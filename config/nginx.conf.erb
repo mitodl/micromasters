@@ -59,6 +59,10 @@ http {
             alias /app/static/robots.txt;
         }
 
+        location = /.well-known/dnt-policy.txt {
+            return 204;
+        }
+
         location / {
             uwsgi_param QUERY_STRING $query_string;
             uwsgi_param REQUEST_METHOD $request_method;
