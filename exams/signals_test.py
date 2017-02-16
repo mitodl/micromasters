@@ -32,6 +32,7 @@ from search.base import MockedESTestCase
 
 # pylint: disable=no-self-use
 
+@override_settings(FEATURES={"SUPPRESS_PAYMENT_FOR_EXAM": False})
 class ExamSignalsTest(MockedESTestCase):
     """
     Tests for exam signals
@@ -104,7 +105,7 @@ class ExamSignalsTest(MockedESTestCase):
             course=self.course_run.course
         ).exists() is True
 
-    @override_settings(FEATURES={"FINAL_GRADE_ALGORITHM": "v1"})
+    @override_settings(FEATURES={"FINAL_GRADE_ALGORITHM": "v1", "SUPPRESS_PAYMENT_FOR_EXAM": False})
     def test_update_exam_authorization_final_grade_when_user_not_paid(self):
         """
         Verify that update_exam_authorization_final_grade is called and log exception when
