@@ -14,11 +14,7 @@ services:
     build:
       context: .
       dockerfile: ./travis/Dockerfile-travis-web
-    command: >
-      /bin/bash -c '
-      sleep 3 &&
-      python3 manage.py migrate &&
-      ./with_host.sh python3 manage.py runserver 0.0.0.0:8079'
+    command: /bin/true
     environment:
       DEBUG: 'False'
       COVERAGE_DIR: htmlcov
@@ -36,6 +32,11 @@ services:
     image: micromasters_python
     extends:
       service: python
+    command: >
+      /bin/bash -c '
+      sleep 3 &&
+      python3 manage.py migrate &&
+      ./with_host.sh python3 manage.py runserver 0.0.0.0:8079'
     ports:
       - "8079:8079"
     links:
