@@ -26,6 +26,10 @@ from ecommerce.api import (
     make_dashboard_receipt_url,
     pick_coupons,
 )
+from ecommerce.constants import (
+    CYBERSOURCE_DECISION_ACCEPT,
+    CYBERSOURCE_DECISION_CANCEL,
+)
 from ecommerce.exceptions import EcommerceException
 from ecommerce.models import (
     Coupon,
@@ -150,19 +154,19 @@ class OrderFulfillmentView(APIView):
         receipt.save()
 
         decision = request.data['decision']
-        if order.status == Order.FAILED and decision == 'CANCEL':
+        if order.status == Order.FAILED and decision == CYBERSOURCE_DECISION_CANCEL:
             # This is a duplicate message, ignore since it's already handled
             return Response(status=HTTP_200_OK)
         elif order.status != Order.CREATED:
             raise EcommerceException("Order {} is expected to have status 'created'".format(order.id))
 
-        if decision != 'ACCEPT':
+        if decision != CYBERSOURCE_DECISION_ACCEPT:
             order.status = Order.FAILED
             log.warning(
                 "Order fulfillment failed: received a decision that wasn't ACCEPT for order %s",
                 order,
             )
-            if decision != 'CANCEL':
+            if decision != CYBERSOURCE_DECISION_CANCEL:
                 try:
                     MailgunClient().send_individual_email(
                         "Order fulfillment failed, decision={decision}".format(
