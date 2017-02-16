@@ -28,13 +28,13 @@ const cardWrapper = (...children) => (
       </div>
       <div>
         <CardTitle>
-          Final Exams
+          Final Proctored Exam
         </CardTitle>
         <p>
           {`You must take a proctored exam for each course. Exams may be taken
             at any `}
-          <a href="">
-            Pearson test center
+          <a href="http://www.pearsonvue.com/mitx/locate/" target="_blank">
+            authorized Pearson test center
           </a>
           {`. Before you can take an exam, you have to pay for the course and
           pass the online work.`}
@@ -53,7 +53,7 @@ const getPostalCode = profile => (
 const accountCreated = (profile, navigateToProfile) => (
   <div key="profile">
     <div className="info-box split">
-      <div className="flow"> 
+      <div className="flow">
         Your Pearson Testing account has been created. Your information
         should match the ID you bring to the test center.
       </div>
