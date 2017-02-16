@@ -45,7 +45,7 @@ describe('FinalExamCard', () => {
   let stringStrip = R.compose(R.join(" "), _.words);
 
   let commonText = `You must take a proctored exam for each course. Exams may
-be taken at any Pearson test center. Before you can take an exam, you have to
+be taken at any authorized Pearson test center. Before you can take an exam, you have to
 pay for the course and pass the online work.`;
 
   let renderCard = props => (mount(<FinalExamCard {...props} />));
