@@ -152,7 +152,7 @@ class OrderFulfillmentView(APIView):
         decision = request.data['decision']
         if order.status == Order.FAILED and decision == 'CANCEL':
             # This is a duplicate message, ignore since it's already handled
-            return Response()
+            return Response(status=HTTP_200_OK)
         elif order.status != Order.CREATED:
             raise EcommerceException("Order {} is expected to have status 'created'".format(order.id))
 
@@ -209,7 +209,7 @@ class OrderFulfillmentView(APIView):
                         order,
                     )
         # The response does not matter to CyberSource
-        return Response()
+        return Response(status=HTTP_200_OK)
 
 
 class CouponsView(ListModelMixin, GenericViewSet):
