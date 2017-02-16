@@ -379,12 +379,13 @@ export function formatPrice(price: ?string|number|Decimal): string {
     return '';
   } else {
     let formattedPrice: Decimal = Decimal(price);
-    if (!formattedPrice.isInteger()) {
+
+    if (formattedPrice.isInteger()) {
+      formattedPrice =  formattedPrice.toFixed(0);
+    } else {
       formattedPrice =  formattedPrice.toFixed(2, Decimal.ROUND_HALF_UP);
     }
-
-    let dollars = `$${formattedPrice}`;
-    return dollars.replace(/\.00$/,'');
+    return `$${formattedPrice}`;
   }
 }
 
