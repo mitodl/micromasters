@@ -33,7 +33,7 @@ services:
     env_file: .env
 
   web:
-    image: micromasters_web
+    image: micromasters_python
     extends:
       service: python
     ports:
@@ -43,7 +43,7 @@ services:
       - elastic
 
   celery:
-    image: micromasters_web
+    image: micromasters_python
     extends:
       service: python
     command: >
@@ -62,7 +62,7 @@ services:
       - "9200"
 
   selenium:
-    image: micromasters_web
+    image: micromasters_python
     extends:
       service: python
     links:

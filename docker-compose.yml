@@ -85,7 +85,7 @@ services:
     env_file: .env
 
   celery:
-    image: micromasters_web
+    image: micromasters_python
     extends:
       service: python
     command: >
@@ -107,7 +107,7 @@ services:
     command: odl:123:1001:1001:results,results/topvue
 
   selenium:
-    image: micromasters_web
+    image: micromasters_python
     extends:
       service: python
     links:
