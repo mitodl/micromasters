@@ -59,7 +59,7 @@ simplegeneric==0.8.1      # via ipython
 six==1.10.0               # via astroid, bpython, nplusone, packaging, pip-tools, prompt-toolkit, pylint, pytest-pylint, setuptools, traitlets
 sqlparse==0.2.2           # via django-debug-toolbar
 testfixtures==4.13.3
-tox==2.5.0
+tox==2.6.0
 traitlets==4.3.1          # via ipython
 virtualenv==15.1.0        # via tox
 wcwidth==0.1.7            # via curtsies, prompt-toolkit
