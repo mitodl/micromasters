@@ -20,7 +20,7 @@ matrix:
       - docker run --name travis-watch-container --env-file .env -e NODE_ENV=production -t travis-watch ./webpack_if_prod.sh
       - docker cp travis-watch-container:/src/webpack-stats.json .
       - docker cp travis-watch-container:/src/static/bundles ./static/bundles
-      script: ./scripts/test/run_selenium_tests.sh
+      script: docker-compose -f travis-docker-compose.yml run -e DEBUG=False -e DJANGO_LIVE_TEST_SERVER_ADDRESS=0.0.0.0:8286 selenium py.test ./selenium_tests
       services:
         - docker
       env:
