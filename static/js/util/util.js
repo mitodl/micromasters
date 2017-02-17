@@ -454,10 +454,7 @@ export const classify: (s: string) => string = (
 export const labelSort = R.sortBy(R.compose(R.toLower, R.prop('label')));
 
 export function highlight(text: string, highlightPhrase: ?string) {
-  if (!highlightPhrase) {
-    return text;
-  }
-  if (!text) {
+  if (!highlightPhrase || !text) {
     return text;
   }
 
