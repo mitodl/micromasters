@@ -120,7 +120,16 @@ class ExamAuthorizationUtilsTests(TestCase):
         self.assertTrue(mmtrack.has_paid(self.course_run.edx_course_key))
         self.assertTrue(mmtrack.has_passed_course(self.course_run.edx_course_key))
 
+        # Neither user has exam profile nor authorization.
+        assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False
+        assert ExamAuthorization.objects.filter(
+            user=mmtrack.user,
+            course=self.course_run.course
+        ).exists() is False
+
         authorize_for_exam(mmtrack, self.course_run)
+
+        # Assert user has exam profile and authorization.
         assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is True
         assert ExamAuthorization.objects.filter(
             user=mmtrack.user,
@@ -140,11 +149,19 @@ class ExamAuthorizationUtilsTests(TestCase):
             course_id=self.course_run.edx_course_key
         )
 
+        # Neither user has exam profile nor authorization.
+        assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False
+        assert ExamAuthorization.objects.filter(
+            user=mmtrack.user,
+            course=self.course_run.course
+        ).exists() is False
+
         with self.assertRaises(ExamAuthorizationException) as eae:
             authorize_for_exam(mmtrack, self.course_run)
 
         assert eae.exception.args[0] == expected_errors_message
-        # assert Exam Authorization and profile created.
+
+        # Assert user has no exam profile and authorization after exception.
         assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False
         assert ExamAuthorization.objects.filter(
             user=mmtrack.user,
@@ -160,7 +177,16 @@ class ExamAuthorizationUtilsTests(TestCase):
             mmtrack = get_mmtrack(self.user, self.program)
             assert mmtrack.has_paid(self.course_run.edx_course_key) is False
 
+            # Neither user has exam profile nor authorization.
+            assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False
+            assert ExamAuthorization.objects.filter(
+                user=mmtrack.user,
+                course=self.course_run.course
+            ).exists() is False
+
             authorize_for_exam(mmtrack, self.course_run)
+
+            # Assert user has exam profile and authorization.
             assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is True
             assert ExamAuthorization.objects.filter(
                 user=mmtrack.user,
@@ -181,11 +207,19 @@ class ExamAuthorizationUtilsTests(TestCase):
             assert mmtrack.has_paid(self.course_run.edx_course_key) is True
             assert mmtrack.has_passed_course(self.course_run.edx_course_key) is False
 
+            # Neither user has exam profile nor authorization.
+            assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False
+            assert ExamAuthorization.objects.filter(
+                user=mmtrack.user,
+                course=self.course_run.course
+            ).exists() is False
+
             with self.assertRaises(ExamAuthorizationException) as eae:
                 authorize_for_exam(mmtrack, self.course_run)
 
             assert eae.exception.args[0] == expected_errors_message
-            # assert Exam Authorization and profile created.
+
+            # assert exam profile created but user is not authorize
             assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is True
             assert ExamAuthorization.objects.filter(
                 user=mmtrack.user,
@@ -201,7 +235,8 @@ class BulkExamUtilV0Tests(TestCase):
         """
         creates user records like CachedGrades, CachedEnrollments and CachedCertificate
         """
-        CachedEnrollmentFactory.create(user=user, course_run=course_run)
+        with mute_signals(post_save):
+            CachedEnrollmentFactory.create(user=user, course_run=course_run)
         CachedCurrentGradeFactory.create(
             user=user,
             course_run=course_run,
@@ -244,6 +279,14 @@ class BulkExamUtilV0Tests(TestCase):
 
     def test_exam_authorization_v1(self):
         """For all users in any program"""
+        for user in self.users:
+            # Neither user has exam profile nor authorization.
+            assert ExamProfile.objects.filter(profile=user.profile).exists() is False
+            assert ExamAuthorization.objects.filter(
+                user=user,
+                course=self.course_run.course
+            ).exists() is False
+
         bulk_authorize_for_exam()
         for user in self.users:
             assert ExamProfile.objects.filter(profile=user.profile).exists() is True
@@ -255,6 +298,13 @@ class BulkExamUtilV0Tests(TestCase):
     def test_exam_authorization_specific_user_v1(self):
         """Authorize a user for exams of passed and paid courses"""
         user = self.users[0]
+        # Neither user has exam profile nor authorization.
+        assert ExamProfile.objects.filter(profile=user.profile).exists() is False
+        assert ExamAuthorization.objects.filter(
+            user=user,
+            course=self.course_run.course
+        ).exists() is False
+
         bulk_authorize_for_exam(username=user.username)
         assert ExamProfile.objects.filter(profile=user.profile).exists() is True
         assert ExamAuthorization.objects.filter(
@@ -264,8 +314,17 @@ class BulkExamUtilV0Tests(TestCase):
 
     def test_exam_authorization_specific_user_specific_course_v1(self):
         """Authorize a user for exams of passed and paid courses"""
+        for user in self.users:
+            # Neither user has exam profile nor authorization.
+            assert ExamProfile.objects.filter(profile=user.profile).exists() is False
+            assert ExamAuthorization.objects.filter(
+                user=user,
+                course=self.course_run.course
+            ).exists() is False
+
         user1 = self.users[0]
         user2 = self.users[1]
+
         bulk_authorize_for_exam(
             username=user1.username
         )
@@ -287,6 +346,12 @@ class BulkExamUtilV0Tests(TestCase):
     def test_exam_authorization_wrong_program_id_v1(self):
         """Assert user not authorize when program id is wrong"""
         user = self.users[0]
+        # Neither user has exam profile nor authorization.
+        assert ExamProfile.objects.filter(profile=user.profile).exists() is False
+        assert ExamAuthorization.objects.filter(
+            user=user,
+            course=self.course_run.course
+        ).exists() is False
 
         with self.assertRaises(ExamAuthorizationException) as e:
             bulk_authorize_for_exam(
@@ -304,6 +369,12 @@ class BulkExamUtilV0Tests(TestCase):
     def test_exam_authorization_invalid_user_v1(self):
         """Assert user not authorize when username wrong"""
         user = self.users[0]
+        # Neither user has exam profile nor authorization.
+        assert ExamProfile.objects.filter(profile=user.profile).exists() is False
+        assert ExamAuthorization.objects.filter(
+            user=user,
+            course=self.course_run.course
+        ).exists() is False
 
         with self.assertRaises(ExamAuthorizationException) as e:
             bulk_authorize_for_exam(
@@ -323,6 +394,13 @@ class BulkExamUtilV0Tests(TestCase):
         user = self.users[0]
         self.course_run.course.exam_module = None
         self.course_run.course.save()
+
+        # Neither user has exam profile nor authorization.
+        assert ExamProfile.objects.filter(profile=user.profile).exists() is False
+        assert ExamAuthorization.objects.filter(
+            user=user,
+            course=self.course_run.course
+        ).exists() is False
 
         with patch("exams.utils.log") as log:
             bulk_authorize_for_exam(
@@ -349,6 +427,13 @@ class BulkExamUtilV0Tests(TestCase):
         self.program.save()
         program_id = self.program.id
 
+        # Neither user has exam profile nor authorization.
+        assert ExamProfile.objects.filter(profile=user.profile).exists() is False
+        assert ExamAuthorization.objects.filter(
+            user=user,
+            course=self.course_run.course
+        ).exists() is False
+
         with self.assertRaises(ExamAuthorizationException) as e:
             bulk_authorize_for_exam(username=user.username, program_id=program_id)
 
@@ -369,7 +454,8 @@ class BulkExamUtilV1Tests(TestCase):
         """
         creates user records like CachedGrades, CachedEnrollments and CachedCertificate
         """
-        CachedEnrollmentFactory.create(user=user, course_run=course_run)
+        with mute_signals(post_save):
+            CachedEnrollmentFactory.create(user=user, course_run=course_run)
         CachedCurrentGradeFactory.create(
             user=user,
             course_run=course_run,
@@ -380,12 +466,13 @@ class BulkExamUtilV1Tests(TestCase):
                 "username": user.username
             }
         )
-        FinalGradeFactory.create(
-            user=user,
-            course_run=course_run,
-            passed=True,
-            grade=0.9
-        )
+        with mute_signals(post_save):
+            FinalGradeFactory.create(
+                user=user,
+                course_run=course_run,
+                passed=True,
+                grade=0.9
+            )
         CachedCertificateFactory.create(user=user, course_run=course_run)
         create_order(user, course_run)
 
@@ -419,6 +506,14 @@ class BulkExamUtilV1Tests(TestCase):
 
     def test_exam_authorization(self):
         """For all users in any program"""
+        for user in self.users:
+            # Neither user has exam profile nor authorization.
+            assert ExamProfile.objects.filter(profile=user.profile).exists() is False
+            assert ExamAuthorization.objects.filter(
+                user=user,
+                course=self.course_run.course
+            ).exists() is False
+
         bulk_authorize_for_exam()
         for user in self.users:
             assert ExamProfile.objects.filter(profile=user.profile).exists() is True
@@ -430,6 +525,13 @@ class BulkExamUtilV1Tests(TestCase):
     def test_exam_authorization_specific_user(self):
         """Authorize a user for exams of passed and paid courses"""
         user = self.users[0]
+        # Neither user has exam profile nor authorization.
+        assert ExamProfile.objects.filter(profile=user.profile).exists() is False
+        assert ExamAuthorization.objects.filter(
+            user=user,
+            course=self.course_run.course
+        ).exists() is False
+
         bulk_authorize_for_exam(username=user.username)
         assert ExamProfile.objects.filter(profile=user.profile).exists() is True
         assert ExamAuthorization.objects.filter(
@@ -439,6 +541,14 @@ class BulkExamUtilV1Tests(TestCase):
 
     def test_exam_authorization_specific_user_specific_course(self):
         """Authorize a user for exams of passed and paid courses"""
+        for user in self.users:
+            # Neither user has exam profile nor authorization.
+            assert ExamProfile.objects.filter(profile=user.profile).exists() is False
+            assert ExamAuthorization.objects.filter(
+                user=user,
+                course=self.course_run.course
+            ).exists() is False
+
         user1 = self.users[0]
         user2 = self.users[1]
         bulk_authorize_for_exam(
@@ -462,6 +572,12 @@ class BulkExamUtilV1Tests(TestCase):
     def test_exam_authorization_wrong_program_id(self):
         """Assert user not authorize when program id is wrong"""
         user = self.users[0]
+        # Neither user has exam profile nor authorization.
+        assert ExamProfile.objects.filter(profile=user.profile).exists() is False
+        assert ExamAuthorization.objects.filter(
+            user=user,
+            course=self.course_run.course
+        ).exists() is False
 
         with self.assertRaises(ExamAuthorizationException) as e:
             bulk_authorize_for_exam(
@@ -479,6 +595,12 @@ class BulkExamUtilV1Tests(TestCase):
     def test_exam_authorization_invalid_user(self):
         """Assert user not authorize when username wrong"""
         user = self.users[0]
+        # Neither user has exam profile nor authorization.
+        assert ExamProfile.objects.filter(profile=user.profile).exists() is False
+        assert ExamAuthorization.objects.filter(
+            user=user,
+            course=self.course_run.course
+        ).exists() is False
 
         with self.assertRaises(ExamAuthorizationException) as e:
             bulk_authorize_for_exam(
@@ -498,6 +620,13 @@ class BulkExamUtilV1Tests(TestCase):
         user = self.users[0]
         self.course_run.course.exam_module = None
         self.course_run.course.save()
+
+        # Neither user has exam profile nor authorization.
+        assert ExamProfile.objects.filter(profile=user.profile).exists() is False
+        assert ExamAuthorization.objects.filter(
+            user=user,
+            course=self.course_run.course
+        ).exists() is False
 
         with patch("exams.utils.log") as log:
             bulk_authorize_for_exam(
@@ -523,6 +652,13 @@ class BulkExamUtilV1Tests(TestCase):
         self.program.exam_series_code = None
         self.program.save()
         program_id = self.program.id
+
+        # Neither user has exam profile nor authorization.
+        assert ExamProfile.objects.filter(profile=user.profile).exists() is False
+        assert ExamAuthorization.objects.filter(
+            user=user,
+            course=self.course_run.course
+        ).exists() is False
 
         with self.assertRaises(ExamAuthorizationException) as e:
             bulk_authorize_for_exam(username=user.username, program_id=program_id)
