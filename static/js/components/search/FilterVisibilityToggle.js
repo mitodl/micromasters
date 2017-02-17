@@ -4,7 +4,7 @@ import R from 'ramda';
 import { SearchkitComponent } from 'searchkit';
 import Icon from 'react-mdl/lib/Icon';
 
-const FILTER_ID_ADJUST = {
+export const FILTER_ID_ADJUST = {
   "birth_location": "profile.birth_country",
   "semester": "program.semester_enrollments.semester",
   "education_level": "profile.education.degree_name",

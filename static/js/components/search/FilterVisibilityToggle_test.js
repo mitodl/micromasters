@@ -6,7 +6,7 @@ import sinon from 'sinon';
 import R from 'ramda';
 import { SearchkitManager, SearchkitProvider } from 'searchkit';
 
-import FilterVisibilityToggle from './FilterVisibilityToggle';
+import FilterVisibilityToggle, { FILTER_ID_ADJUST } from './FilterVisibilityToggle';
 import { makeStrippedHtml } from '../../util/util';
 
 describe('FilterVisibilityToggle', () => {
@@ -109,13 +109,7 @@ describe('FilterVisibilityToggle', () => {
     assert(setFilterVisibility.called);
   });
 
-  const filterIds = {
-    "birth_location": "profile.birth_country",
-    "semester": "program.semester_enrollments.semester",
-    "education_level": "profile.education.degree_name",
-    "company_name": "profile.work_history.company_name"
-  };
-  for (const [key, value] of Object.entries(filterIds)) {
+  for (const [key, value] of Object.entries(FILTER_ID_ADJUST)) {
     it(`looks up ${key} using our filter id list`, () => {
       sandbox.stub(FilterVisibilityToggle.prototype, 'getResults').returns({
         aggregations: {
