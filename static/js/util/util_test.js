@@ -655,32 +655,22 @@ describe('utility functions', () => {
     });
 
     it('shows first, last, and preferred names', () => {
-      assert.equal('jane doe (test)', shallow(getUserDisplayName(profile)).text());
+      assert.equal('jane doe (test)', getUserDisplayName(profile));
     });
 
     it('shows username when first name is blank', () => {
       profile.first_name = null;
-      assert.equal('jane_username doe (test)', shallow(getUserDisplayName(profile)).text());
+      assert.equal('jane_username doe (test)', getUserDisplayName(profile));
     });
 
     it('does not show preferred name when that value is blank', () => {
       profile.preferred_name = null;
-      assert.equal('jane doe', shallow(getUserDisplayName(profile)).text());
+      assert.equal('jane doe', getUserDisplayName(profile));
     });
 
     it('does not show preferred name when first name has same value', () => {
       profile.first_name = 'test';
-      assert.equal('test doe', shallow(getUserDisplayName(profile)).text());
-    });
-
-    it('highlights the part of a name that was searched for', () => {
-      let highlightStub = sandbox.stub(utilFuncs, 'highlight');
-      highlightStub.returns("highlighted");
-      let highlightPhrase = 'phrase';
-      assert.equal("highlighted highlightedhighlighted", shallow(getUserDisplayName(profile, highlightPhrase)).text());
-      assert.isTrue(highlightStub.calledWith(profile.first_name, highlightPhrase));
-      assert.isTrue(highlightStub.calledWith(profile.last_name, highlightPhrase));
-      assert.isTrue(highlightStub.calledWith(` (${profile.preferred_name})`, highlightPhrase));
+      assert.equal('test doe', getUserDisplayName(profile));
     });
   });
 

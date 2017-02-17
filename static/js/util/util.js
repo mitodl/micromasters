@@ -463,20 +463,22 @@ function _highlight(text: string, highlightPhrase: ?string) {
 
   let filteredPhrase = removeDiacritics(highlightPhrase.toLowerCase());
   let filteredText = removeDiacritics(text.toLowerCase());
-  let index = filteredText.indexOf(filteredPhrase);
-  if (index === -1) {
-    return text;
+
+  let startPosition = 0, endPosition;
+  let pieces = [];
+  while ((endPosition = filteredText.indexOf(filteredPhrase, startPosition)) !== -1) {
+    pieces.push(text.substring(startPosition, endPosition));
+    pieces.push(
+      <span className="highlight" key={startPosition}>
+        {text.substring(endPosition, endPosition + highlightPhrase.length)}
+      </span>
+    );
+
+    startPosition = endPosition + highlightPhrase.length;
   }
-  let pre = text.substring(0, index);
-  let highlighted = text.substring(index, index + highlightPhrase.length);
-  let post = text.substring(index + highlightPhrase.length);
-  return <span>
-    {pre}
-    <span className="highlight">
-      {highlighted}
-    </span>
-    {post}
-  </span>;
+  pieces.push(text.substring(startPosition));
+
+  return pieces;
 }
 
 // allow mocking in tests
@@ -493,7 +495,7 @@ export function getUserDisplayName(profile: Profile, phrase: ?string) {
   let preferred_name = (profile.preferred_name && (profile.preferred_name !== first)) ?
     ` (${profile.preferred_name})` : '';
 
-  return <span>{highlight(first, phrase)} {highlight(last, phrase)}{highlight(preferred_name, phrase)}</span>;
+  return `${first} ${last}${preferred_name}`;
 }
 
 /**

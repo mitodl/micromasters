@@ -125,7 +125,7 @@ describe('FilterVisibilityToggle', () => {
     }
   });
 
-  it('looks up a key not in our filter list', () => {
+  it('shows the toggle icon the filter name is a prefix of a key in the ES results', () => {
     sandbox.stub(FilterVisibilityToggle.prototype, 'getResults').returns({
       aggregations: {
         [`a.b.c.d.e.f456`]: {
@@ -139,7 +139,7 @@ describe('FilterVisibilityToggle', () => {
     assert.equal(wrapper.find("Icon").length, 1);
   });
 
-  it('has a no icon if it cant find the key', () => {
+  it("hides toggle icon when the filter name doesn't match anything in ES results", () => {
     sandbox.stub(FilterVisibilityToggle.prototype, 'getResults').returns({
       aggregations: {
         other_key: {
