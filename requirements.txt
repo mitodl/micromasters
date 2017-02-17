@@ -61,7 +61,7 @@ six==1.10.0               # via cryptography, django-role-permissions, django-se
 static3==0.5.1
 stevedore==1.19.1         # via edx-opaque-keys
 unidecode==0.4.19         # via wagtail
-urllib3==1.19             # via elasticsearch
+urllib3==1.20             # via elasticsearch
 uwsgi==2.0.14
 wagtail==1.8
 willow==0.4               # via wagtail
