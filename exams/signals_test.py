@@ -32,7 +32,6 @@ from search.base import MockedESTestCase
 
 # pylint: disable=no-self-use
 
-@override_settings(FEATURES={"SUPPRESS_PAYMENT_FOR_EXAM": False})
 class ExamSignalsTest(MockedESTestCase):
     """
     Tests for exam signals
@@ -105,7 +104,7 @@ class ExamSignalsTest(MockedESTestCase):
             course=self.course_run.course
         ).exists() is True
 
-    @override_settings(FEATURES={"FINAL_GRADE_ALGORITHM": "v1", "SUPPRESS_PAYMENT_FOR_EXAM": False})
+    @override_settings(FEATURES={"FINAL_GRADE_ALGORITHM": "v1"})
     def test_update_exam_authorization_final_grade_when_user_not_paid(self):
         """
         Verify that update_exam_authorization_final_grade is called and log exception when
@@ -146,6 +145,7 @@ class ExamSignalsTest(MockedESTestCase):
         CachedEnrollmentFactory.create(user=self.profile.user, course_run=self.course_run)
         assert ExamProfile.objects.filter(profile=self.profile).exists() is True
 
+    @override_settings(FEATURES={"SUPPRESS_PAYMENT_FOR_EXAM": False})
     def test_update_exam_authorization_cached_enrollment_user_not_paid(self):
         """
         Test no exam profile created when user enrolled in the course but not paid for it.

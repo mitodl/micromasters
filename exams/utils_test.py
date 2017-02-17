@@ -79,7 +79,6 @@ class ExamBackoffUtilsTest(SimpleTestCase):
                 exponential_backoff(1)
 
 
-@override_settings(FEATURES={"SUPPRESS_PAYMENT_FOR_EXAM": False})
 class ExamAuthorizationUtilsTests(TestCase):
     """Tests for exam util"""
     @classmethod
@@ -105,11 +104,12 @@ class ExamAuthorizationUtilsTests(TestCase):
             }
         )
         CachedCertificateFactory.create(user=cls.user, course_run=course_run)
-        FinalGradeFactory.create(
-            user=cls.user,
-            course_run=course_run,
-            passed=True
-        )
+        with mute_signals(post_save):
+            FinalGradeFactory.create(
+                user=cls.user,
+                course_run=course_run,
+                passed=True
+            )
 
     def test_exam_authorization(self):
         """
@@ -127,6 +127,7 @@ class ExamAuthorizationUtilsTests(TestCase):
             course=self.course_run.course
         ).exists() is True
 
+    @override_settings(FEATURES={"SUPPRESS_PAYMENT_FOR_EXAM": False})
     def test_exam_authorization_when_not_paid(self):
         """
         test exam_authorization when user has passed course but not paid.
@@ -153,7 +154,7 @@ class ExamAuthorizationUtilsTests(TestCase):
     @override_settings(FEATURES={"SUPPRESS_PAYMENT_FOR_EXAM": True})
     def test_exam_authorization_when_payment_check_suppress(self):
         """
-        test exam_authorization when user has passed and payment check is suppress.
+        test exam_authorization when user has passed and payment check is suppressed.
         """
         with patch('dashboard.utils.MMTrack.has_passed_course', autospec=True, return_value=True):
             mmtrack = get_mmtrack(self.user, self.program)
@@ -192,10 +193,7 @@ class ExamAuthorizationUtilsTests(TestCase):
             ).exists() is False
 
 
-@override_settings(FEATURES={
-    "FINAL_GRADE_ALGORITHM": "v0",
-    "SUPPRESS_PAYMENT_FOR_EXAM": False
-})
+@override_settings(FEATURES={"FINAL_GRADE_ALGORITHM": "v0"})
 class BulkExamUtilV0Tests(TestCase):
     """Tests for authorization_user_exam command operations"""
     @classmethod
@@ -363,10 +361,7 @@ class BulkExamUtilV0Tests(TestCase):
         ).exists() is False
 
 
-@override_settings(FEATURES={
-    "FINAL_GRADE_ALGORITHM": "v1",
-    "SUPPRESS_PAYMENT_FOR_EXAM": False
-})
+@override_settings(FEATURES={"FINAL_GRADE_ALGORITHM": "v1"})
 class BulkExamUtilV1Tests(TestCase):
     """Tests for authorization_user_exam command operations"""
     @classmethod
