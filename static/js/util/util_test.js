@@ -35,7 +35,6 @@ import {
   isNilOrBlank,
   highlight,
 } from '../util/util';
-import * as utilFuncs from '../util/util';
 import {
   EDUCATION_LEVELS,
   HIGH_SCHOOL,
@@ -692,7 +691,10 @@ describe('utility functions', () => {
     });
 
     it("doesn't highlight if phrase doesn't match", () => {
-      assert.equal(highlight('abc', 'xyz'), 'abc');
+      let result = highlight('abc', 'xyz');
+      let wrapper = shallow(result);
+      assert.equal(wrapper.text(), 'abc');
+      assert.equal(wrapper.find(".highlight").length, 0);
     });
 
     it("handles unicode properly", () => {
@@ -701,6 +703,16 @@ describe('utility functions', () => {
       let result = highlight(catdogfish, dog);
       assert.equal(catdogfish, shallow(result).text());
       assert.equal(dog, shallow(result).find(".highlight").text());
+    });
+
+    it("handles multiple matches", () => {
+      let phrase = "match";
+      let text = "match1 match2";
+      let result = highlight(text, phrase);
+      assert.equal(
+        shallow(result).html(),
+        '<span><span class="highlight">match</span>1 <span class="highlight">match</span>2</span>',
+      );
     });
   });
 

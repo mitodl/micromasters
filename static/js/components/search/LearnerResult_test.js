@@ -4,7 +4,7 @@ import _ from 'lodash';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { assert } from 'chai';
-import { shallow, mount } from 'enzyme';
+import { mount } from 'enzyme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import {
@@ -66,7 +66,7 @@ describe('LearnerResult', () => {
 
   it("should include the user's name", () => {
     let result = renderLearnerResult().find(".learner-name").find(".display-name");
-    assert.equal(result.text(), shallow(getUserDisplayName(USER_PROFILE_RESPONSE)).text());
+    assert.equal(result.text(), getUserDisplayName(USER_PROFILE_RESPONSE));
   });
 
   it("should include the user's location", () => {
@@ -146,4 +146,24 @@ describe('LearnerResult', () => {
       });
     });
   }
+
+  it('should highlight the text in the result', () => {
+    let profile = Object.assign({}, USER_PROFILE_RESPONSE);
+    profile.first_name = 'queryname';
+    profile.last_name = 'qÜeryson';
+    profile.preferred_name = 'Querypreferred';
+    let result = renderElasticSearchResult(
+      {
+        _source: {
+          profile: profile,
+          program: USER_PROGRAM_RESPONSE,
+        }
+      }
+    );
+    assert.deepEqual(result.find(".display-name .highlight").map(node => node.text()), [
+      'query',
+      'qÜery',
+      'Query',
+    ]);
+  });
 });

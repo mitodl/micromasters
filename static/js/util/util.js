@@ -453,7 +453,7 @@ export const classify: (s: string) => string = (
 
 export const labelSort = R.sortBy(R.compose(R.toLower, R.prop('label')));
 
-function _highlight(text: string, highlightPhrase: ?string) {
+export function highlight(text: string, highlightPhrase: ?string) {
   if (!highlightPhrase) {
     return text;
   }
@@ -478,18 +478,14 @@ function _highlight(text: string, highlightPhrase: ?string) {
   }
   pieces.push(text.substring(startPosition));
 
-  return pieces;
+  return <span>{pieces}</span>;
 }
-
-// allow mocking in tests
-export { _highlight as highlight };
-import { highlight } from './util';
 
 /**
  * Return first, last, preferred_name names if available else username. If phrase
  * is specified, that piece of text will be highlighted if it exists
  */
-export function getUserDisplayName(profile: Profile, phrase: ?string) {
+export function getUserDisplayName(profile: Profile) {
   let first = profile.first_name || profile.username;
   let last =  profile.last_name || '';
   let preferred_name = (profile.preferred_name && (profile.preferred_name !== first)) ?
