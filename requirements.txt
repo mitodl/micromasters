@@ -63,7 +63,7 @@ stevedore==1.19.1         # via edx-opaque-keys
 unidecode==0.4.19         # via wagtail
 urllib3==1.19             # via elasticsearch
 uwsgi==2.0.14
-wagtail==1.8
+wagtail==1.8.1
 willow==0.4               # via wagtail
 
 # The following packages are considered to be unsafe in a requirements file:
