@@ -3,7 +3,6 @@ import { assert } from 'chai';
 import React from 'react';
 import R from 'ramda';
 import _ from 'lodash';
-import sinon from 'sinon';
 import { shallow } from 'enzyme';
 import { S } from '../lib/sanctuary';
 const { Just } = S;
@@ -56,16 +55,6 @@ import { program } from '../components/ProgressWidget_test';
 
 /* eslint-disable camelcase */
 describe('utility functions', () => {
-  let sandbox;
-
-  beforeEach(() => {
-    sandbox = sinon.sandbox.create();
-  });
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
   describe('makeStrippedHtml', () => {
     it('strips HTML from a string', () => {
       assert.equal(makeStrippedHtml("<a href='x'>y</a>"), "y");
