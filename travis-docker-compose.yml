@@ -70,6 +70,7 @@ services:
       - db
       - elastic
       - redis
+      - grid
 
   grid:
     image: elgalu/selenium

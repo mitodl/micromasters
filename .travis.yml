@@ -20,7 +20,7 @@ matrix:
       - docker run --name travis-watch-container --env-file .env -e NODE_ENV=production -t travis-watch ./webpack_if_prod.sh
       - docker cp travis-watch-container:/src/webpack-stats.json .
       - docker cp travis-watch-container:/src/static/bundles ./static/bundles
-      script: (docker-compose -f travis-docker-compose.yml up grid &); sleep 5; ./scripts/test/run_selenium_tests.sh
+      script: ./scripts/test/run_selenium_tests.sh
       services:
         - docker
       env:
