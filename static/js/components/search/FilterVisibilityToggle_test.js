@@ -109,8 +109,8 @@ describe('FilterVisibilityToggle', () => {
     assert(setFilterVisibility.called);
   });
 
-  for (const [key, value] of Object.entries(FILTER_ID_ADJUST)) {
-    it(`looks up ${key} using our filter id list`, () => {
+  it("shows the toggle icon when a filter name matches our filter id map and is a prefix of an ES result key", () => {
+    for (const [key, value] of Object.entries(FILTER_ID_ADJUST)) {
       sandbox.stub(FilterVisibilityToggle.prototype, 'getResults').returns({
         aggregations: {
           [`${value}123`]: {
@@ -121,8 +121,9 @@ describe('FilterVisibilityToggle', () => {
       props.filterName = key;
       const wrapper = renderWrappedToggle(props, <div id={key}>Test Text</div>);
       assert.equal(wrapper.find("Icon").props().className, "");
-    });
-  }
+      sandbox.restore();
+    }
+  });
 
   it('looks up a key not in our filter list', () => {
     sandbox.stub(FilterVisibilityToggle.prototype, 'getResults').returns({
@@ -135,7 +136,7 @@ describe('FilterVisibilityToggle', () => {
     let key = 'a.b.c.d.e.f';
     props.filterName = key;
     const wrapper = renderWrappedToggle(props, <div id={key}>Test Text</div>);
-    assert.equal(wrapper.find("Icon").props().className, "");
+    assert.equal(wrapper.find("Icon").length, 1);
   });
 
   it('has a no icon if it cant find the key', () => {
