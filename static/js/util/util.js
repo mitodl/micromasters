@@ -482,10 +482,9 @@ export function highlight(text: string, highlightPhrase: ?string) {
 }
 
 /**
- * Return first, last, preferred_name names if available else username. If phrase
- * is specified, that piece of text will be highlighted if it exists
+ * Return first, last, preferred_name names if available else username
  */
-export function getUserDisplayName(profile: Profile) {
+export function getUserDisplayName(profile: Profile): string {
   let first = profile.first_name || profile.username;
   let last =  profile.last_name || '';
   let preferred_name = (profile.preferred_name && (profile.preferred_name !== first)) ?
