@@ -13,6 +13,7 @@ from urllib.parse import (
 from backends.edxorg import EdxOrgOAuth2
 from profiles.factories import ProfileFactory
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.core.management import call_command
 from django.db import (
     connection,
     transaction,
@@ -79,6 +80,9 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
 
     def setUp(self):
         super().setUp()
+        # Run migrations before each test. These are slow but there's no better way to ensure a clean slate
+        # when running tests in a TransactionTestCase
+        call_command("migrate")
         # Ensure Elasticsearch index exists
         recreate_index()
 
@@ -98,8 +102,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
 
         # Create a fake edX social auth to make this user look like they logged in via edX
         later = datetime.now(tz=pytz.UTC) + timedelta(minutes=5)
-        username = "{}_edx".format(self.user.username)
-        datetime.now()
+        self.username = username = "{}_edx".format(self.user.username)
         self.user.social_auth.create(
             provider=EdxOrgOAuth2.name,
             uid=username,
@@ -122,7 +125,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
             course__program__live=True,
             course__program__financial_aid_availability=True,
         )
-        program = run.course.program
+        self.program = program = run.course.program
         TierProgram.objects.create(
             tier=Tier.objects.create(name="$0 discount"),
             current=True,
@@ -177,13 +180,16 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
             # https://github.com/wagtail/wagtail/issues/1824
             # It seems unused so it's easiest just to replace it behind the scenes
             with transaction.atomic():
-                cursor.execute("DROP TABLE IF EXISTS wagtailsearch_editorspick")
-                cursor.execute("CREATE TABLE wagtailsearch_editorspick ()")
-
                 # Terminate all other db connections. There's an exception which is raised on teardown regarding
                 # multiple connections at the same time and I'm not sure how else to work around it.
                 cursor.execute("""SELECT pg_terminate_backend(pg_stat_activity.pid)
 FROM pg_stat_activity WHERE pid <> pg_backend_pid()""")
+
+                # Delete all tables in the database
+                cursor.execute("DROP SCHEMA public CASCADE")
+                cursor.execute("CREATE SCHEMA public")
+                cursor.execute("GRANT ALL ON SCHEMA public TO postgres")
+                cursor.execute("GRANT ALL ON SCHEMA public TO public")
 
         super().tearDown()
 
