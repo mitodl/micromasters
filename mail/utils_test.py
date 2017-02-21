@@ -15,6 +15,8 @@ from financialaid.constants import (
     FINANCIAL_AID_APPROVAL_SUBJECT,
     FINANCIAL_AID_DOCUMENTS_RECEIVED_SUBJECT,
     FINANCIAL_AID_DOCUMENTS_RECEIVED_MESSAGE,
+    FINANCIAL_AID_DOCUMENTS_RESET_MESSAGE,
+    FINANCIAL_AID_RESET_SUBJECT,
     FINANCIAL_AID_EMAIL_BODY,
     FinancialAidStatus
 )
@@ -63,6 +65,18 @@ class MailUtilsTests(MockedESTestCase):
             ),
             program_name=self.financial_aid.tier_program.program.title
         )
+
+    def test_generate_financial_aid_email_reset(self):
+        """
+        Tests generate_financial_aid_email() with status RESET.
+        """
+        self.financial_aid.status = FinancialAidStatus.RESET
+        self.financial_aid.save()
+        email_dict = generate_financial_aid_email(self.financial_aid)
+        assert email_dict["subject"] == FINANCIAL_AID_RESET_SUBJECT.format(
+            program_name=self.financial_aid.tier_program.program.title
+        )
+        assert FINANCIAL_AID_DOCUMENTS_RESET_MESSAGE in email_dict["body"]
 
     def test_generate_financial_aid_email_docs_sent(self):
         """

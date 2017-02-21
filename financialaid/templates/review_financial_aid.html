@@ -246,6 +246,12 @@
                   </button>
                 </td>
                 {% endif %}
+                 <td style="white-space: nowrap;">
+                     <button class="btn btn-default" style="color: #0074e1; padding-top: 7px;"
+                          onclick="financialAidReview.actionReset({{ financial_aid.id }}, '{% url 'financial_aid_action' financial_aid_id=financial_aid.id %}', '{{ statuses.RESET }}');">
+                    Reset
+                  </button>
+                 </td>
                 <!-- /Actions -->
               </tr>
               <!-- /Financial aid application information -->

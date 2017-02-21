@@ -450,7 +450,11 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
     @ddt.data(
         *([
             [status] for status in FinancialAidStatus.ALL_STATUSES
-            if status not in [FinancialAidStatus.APPROVED, FinancialAidStatus.PENDING_MANUAL_APPROVAL]
+            if status not in [
+                FinancialAidStatus.APPROVED,
+                FinancialAidStatus.PENDING_MANUAL_APPROVAL,
+                FinancialAidStatus.RESET
+            ]
         ])
     )
     @ddt.unpack
@@ -641,6 +645,37 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         # Check that the tier does not change:
         assert self.financialaid.tier_program == self.tier_programs["25k"]
         assert self.financialaid.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL
+        assert mock_mailgun_client.send_financial_aid_email.called
+        _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
+        assert called_kwargs["acting_user"] == self.staff_user_profile.user
+        assert called_kwargs["financial_aid"] == self.financialaid
+        financial_aid_email = generate_financial_aid_email(self.financialaid)
+        assert called_kwargs["subject"] == financial_aid_email["subject"]
+        assert called_kwargs["body"] == financial_aid_email["body"]
+
+    @patch("financialaid.serializers.MailgunClient")
+    def test_reset_financial_aid_review(self, mock_mailgun_client):
+        """
+        Tests FinancialAidActionView when action is RESET
+        """
+        mock_mailgun_client.send_financial_aid_email.return_value = Mock(
+            spec=Response,
+            status_code=status.HTTP_200_OK,
+            json=mocked_json()
+        )
+        # Set status to docs sent
+        self.financialaid.status = FinancialAidStatus.DOCS_SENT
+        self.financialaid.save()
+        # Set action to pending manual approval from pending-docs
+        self.make_http_request(
+            self.client.patch,
+            self.action_url,
+            status.HTTP_200_OK,
+            data={"action": FinancialAidStatus.RESET}
+        )
+        self.financialaid.refresh_from_db()
+        # Check that the tier does not change:
+        assert self.financialaid.status == FinancialAidStatus.RESET
         assert mock_mailgun_client.send_financial_aid_email.called
         _, called_kwargs = mock_mailgun_client.send_financial_aid_email.call_args
         assert called_kwargs["acting_user"] == self.staff_user_profile.user

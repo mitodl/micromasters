@@ -95,7 +95,8 @@ class FinancialAidActionSerializer(serializers.Serializer):
     action = ChoiceField(
         choices=[
             FinancialAidStatus.APPROVED,
-            FinancialAidStatus.PENDING_MANUAL_APPROVAL
+            FinancialAidStatus.PENDING_MANUAL_APPROVAL,
+            FinancialAidStatus.RESET
         ],
         write_only=True
     )
@@ -149,6 +150,9 @@ class FinancialAidActionSerializer(serializers.Serializer):
         elif self.instance.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL:
             # This is intentionally left blank for clarity that this is a valid status for .save()
             pass
+        elif self.instance.status == FinancialAidStatus.RESET:
+            self.instance.justification = "Requested by the learner"
+
         self.instance.save()
 
         # Send email notification

@@ -56,7 +56,7 @@ window.financialAidReview = (function(window, document, $) {
 
   /**
    * Submits a financial aid application approval
-   * 
+   *
    * @param financialAidId {number} Financial aid application id
    * @param url {string} URL to submit request to
    * @param action {string} FinancialAidStatus to send in request
@@ -87,10 +87,43 @@ window.financialAidReview = (function(window, document, $) {
       });
     }
   }
-  
+
+  /**
+   * Resets a financial aid application
+   *
+   * @param financialAidId {number} Financial aid application id
+   * @param url {string} URL to submit request to
+   * @param action {string} FinancialAidStatus to send in request
+   **/
+  function actionReset(financialAidId, url, action) {
+    var name = $("#full-name-" + financialAidId).text().trim();
+    if (confirm("Click OK to reset " + name + "'s financial aid application. This action can not undone.")) {
+      $.ajax({
+        "url": url,
+        "type": "PATCH",
+        "headers": {
+          "X-CSRFToken": CSRF_TOKEN
+        },
+        "data": {
+          "action": action,
+        },
+        "success": function() {
+          displayMessage("Successfully reset " + name + "'s financial aid application.", "success");
+          $("#application-row-" + financialAidId + ", #application-email-row-" + financialAidId).remove();
+        },
+        "error": function(result) {
+          displayMessage(
+            "Error: " + result.responseText + " on " + name + "'s financial aid application reset.",
+            "danger"
+          );
+        }
+      });
+    }
+  }
+
   /**
    * Submits a financial aid email request
-   * 
+   *
    * @param financialAidId {number} Financial aid application id
    * @param url {string} URL to submit request to
    */
@@ -120,7 +153,7 @@ window.financialAidReview = (function(window, document, $) {
       });
     }
   }
-  
+
   /**
    * Redirects to initiate search
    */
@@ -128,10 +161,10 @@ window.financialAidReview = (function(window, document, $) {
     var searchQuery = $("#search-query").val();
     window.location = BASE_PATH + searchQuery;
   }
-  
+
   /**
    * Toggles currency display
-   * 
+   *
    * @param currency {int} The currency to display
    */
   function toggleCurrency(currency) {
@@ -143,19 +176,19 @@ window.financialAidReview = (function(window, document, $) {
       $(".income-local").show();
     }
   }
-  
+
   /**
    * Toggles email display
-   * 
+   *
    * @param financialAidId {str} FinancialAid.id to toggle
    */
   function toggleEmailDisplay(financialAidId) {
     $("#application-email-row-" + financialAidId).toggle();
   }
-  
+
   /**
    * Displays a dismissible alert message.
-   * 
+   *
    * @param message {string} Message to display
    * @param type {string} Type of Bootstrap alert
    */
@@ -166,8 +199,9 @@ window.financialAidReview = (function(window, document, $) {
     $("#messages").append(template);
     template.slideDown();
   }
-  
+
   return {
+    actionReset: actionReset,
     submitDocsReceived: submitDocsReceived,
     submitApproval: submitApproval,
     sendEmail: sendEmail,
@@ -175,5 +209,5 @@ window.financialAidReview = (function(window, document, $) {
     toggleCurrency: toggleCurrency,
     toggleEmailDisplay: toggleEmailDisplay
   };
-  
+
 })(window, document, jQuery);

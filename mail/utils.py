@@ -15,6 +15,8 @@ from financialaid.constants import (
     FINANCIAL_AID_APPROVAL_MESSAGE,
     FINANCIAL_AID_APPROVAL_SUBJECT,
     FINANCIAL_AID_DOCUMENTS_RECEIVED_MESSAGE,
+    FINANCIAL_AID_DOCUMENTS_RESET_MESSAGE,
+    FINANCIAL_AID_RESET_SUBJECT,
     FINANCIAL_AID_DOCUMENTS_RECEIVED_SUBJECT,
     FINANCIAL_AID_EMAIL_BODY,
     FinancialAidStatus
@@ -46,6 +48,11 @@ def generate_financial_aid_email(financial_aid):
     elif financial_aid.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL:
         message = FINANCIAL_AID_DOCUMENTS_RECEIVED_MESSAGE
         subject = FINANCIAL_AID_DOCUMENTS_RECEIVED_SUBJECT.format(
+            program_name=financial_aid.tier_program.program.title
+        )
+    elif financial_aid.status == FinancialAidStatus.RESET:
+        message = FINANCIAL_AID_DOCUMENTS_RESET_MESSAGE
+        subject = FINANCIAL_AID_RESET_SUBJECT.format(
             program_name=financial_aid.tier_program.program.title
         )
     else:
