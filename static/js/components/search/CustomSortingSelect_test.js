@@ -1,60 +1,70 @@
-// @flow
 import React from 'react';
 import { shallow } from 'enzyme';
 import { assert } from 'chai';
+import sinon from 'sinon';
 
 import CustomSortingSelect from './CustomSortingSelect';
+import { sortOptions } from '../../components/LearnerSearch';
 
 describe('CustomSortingSelect', () => {
-  const options = [
-    {
-      key: 'Last Name A-Z',
-      label: 'Last Name A-Z',
-      title: 'Last Name A-Z',
-      disabled: false,
-      docCount: false
-    },
-    {
-      key: 'Last Name Z-A',
-      label: 'Last Name Z-A',
-      title: 'Last Name Z-A',
-      disabled: false,
-      docCount: false
-    },
-    {
-      key: 'Grade Hight-to-low',
-      label: 'Grade Hight-to-low',
-      title: 'Grade Hight-to-low',
-      disabled: false,
-      docCount: false
-    },
-    {
-      key: 'Grade Low-to-high',
-      label: 'Grade Low-to-high',
-      title: 'Grade Low-to-high',
-      disabled: false,
-      docCount: false
-    },
-  ];
+  let sandbox, setItemsStub;
 
-  let props = {
-    mod: "sk-select",
-    className: "sk-select",
-    items: options,
-    disabled: false,
-    showCount: false,
-    translate: (text): string => { return text; },
-    countFormatter: (): void => {}
+  beforeEach(() => {
+    sandbox = sinon.sandbox.create();
+    setItemsStub = sandbox.stub();
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
+  const renderSelect = (props = {}) => {
+    return shallow(
+      <CustomSortingSelect
+        items={sortOptions}
+        setItems={setItemsStub}
+        selectedItems={null}
+        {...props}
+      />
+    );
   };
 
-  it('renders dropdown', () => {
-    const wrapper = shallow(<CustomSortingSelect {...props}/>);
-    const optionList = wrapper.find("option");
+  it('shows a up or down unicode arrow depending on the selected item key', () => {
+    for (const [key, description, arrow] of [
+      ['name_a_z', 'Name', '▲'],
+      ['name_z_a', 'Name', '▼'],
+      ['loc-a-z', 'Residence', '▲'],
+      ['loc-z-a', 'Residence', '▼'],
+      ['grade-high-low', 'Program grade', '▼'],
+      ['grade-low-high', 'Program grade', '▲'],
+      ['other', 'Program grade', ''],
+    ]) {
+      let wrapper = renderSelect({
+        selectedItems: [key]
+      });
+      let lookup = {
+        'Name': wrapper.find(".name"),
+        'Residence': wrapper.find('.residence'),
+        'Program grade': wrapper.find('.grade'),
+      };
+      assert.isTrue(lookup[description].html().includes(`${description} ${arrow}`));
 
-    assert.equal(wrapper.find("span").text(), "Sort by:");
-    assert.equal(optionList.at(0).text(), "Last Name A-Z");
-    assert.equal(optionList.at(1).text(), "Last Name Z-A");
-    assert.equal(optionList.at(2).text(), "Grade Hight-to-low");
-    assert.equal(optionList.at(3).text(), "Grade Low-to-high");
+      // assert that it's only selected when it needs to be
+      assert.equal(lookup[description].props()['className'].includes('selected'), Boolean(arrow));
+    }
+  });
+
+  it('chooses the first sorting key when the column is clicked', () => {
+    let wrapper = renderSelect();
+    wrapper.find(".name").simulate('click');
+    assert.isTrue(setItemsStub.calledWith(['name_a_z']));
+  });
+
+  it('chooses the second sorting key if the first sorting key is already selected', () => {
+    let wrapper = renderSelect({
+      selectedItems: ['name_a_z']
+    });
+    wrapper.find(".name").simulate('click');
+    assert.isTrue(setItemsStub.calledWith(['name_z_a']));
   });
 });

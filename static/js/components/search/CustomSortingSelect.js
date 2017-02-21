@@ -1,58 +1,85 @@
+// @flow
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { Select } from 'searchkit';
-import block from 'bem-cn';
+import Grid, { Cell } from 'react-mdl/lib/Grid';
 
-import type { Event } from '../../flow/eventType';
+import type { SearchSortItem } from '../../flow/searchTypes';
 
-export default class CustomSortingSelect extends Select {
-  showDropdown(sortSelectField: string, clickEvent: Event): void {
-    clickEvent.preventDefault();
-    let event: Event = document.createEvent('MouseEvents');
-    event.initMouseEvent('mousedown', true, true, window);
-    ReactDOM.findDOMNode(sortSelectField).dispatchEvent(event);
-  }
+export default class CustomSortingSelect extends React.Component {
+  props: {
+    items: Array<SearchSortItem>,
+    setItems: (keys: Array<string>) => void,
+    selectedItems: ?Array<string>,
+  };
 
-  renderOptions(
-    translate: Function,
-    showCount: number,
-    countFormatter: Function,
-    items: Array<Object>
-  ): Array<React$Element<*>> {
-    return items.map(item => {
-      let text = translate(item.label || item.title || item.key);
-      if (showCount && item.docCount !== undefined) {
-        text += ` (${countFormatter(item.docCount)})`;
-      }
+  toggleSort = ([defaultSort, otherSort]: [string, string]) => {
+    const { setItems, selectedItems } = this.props;
+    if (selectedItems && selectedItems[0] === defaultSort) {
+      setItems([otherSort]);
+    } else {
+      setItems([defaultSort]);
+    }
+  };
 
-      return <option key={item.key} value={item.key} disabled={item.disabled}>
-        { text }
-      </option>;
-    });
-  }
+  sortDirection = (keys: [string, string]) => {
+    let selectedItem = this.getSelectedItem(keys);
+    if (!selectedItem) {
+      return '';
+    }
+    let order;
+    if (selectedItem.order) {
+      order = selectedItem.order;
+    } else if (selectedItem.fields) {
+      order = selectedItem.fields[0].options.order;
+    }
+
+    if (order === 'desc') {
+      return '▼';
+    } else if (order === 'asc') {
+      return '▲';
+    }
+    return '';
+  };
+
+  getSelectedItem = (keys: [string, string]) => {
+    const { selectedItems, items } = this.props;
+    if (!selectedItems) {
+      return '';
+    }
+    return items.find(item => selectedItems[0] === item.key && keys.includes(item.key));
+  };
+
+  selectedClass = (keys: [string, string]) => {
+    let selectedItem = this.getSelectedItem(keys);
+    return selectedItem ? 'selected' : '';
+  };
 
   render() {
-    const {
-      mod,
-      className,
-      items,
-      disabled,
-      showCount,
-      translate,
-      countFormatter
-    } = this.props;
-    const bemBlocks = { container: block(mod) };
+    const nameKeys = ['name_a_z', 'name_z_a'];
+    const locationKeys = ['loc-a-z', 'loc-z-a'];
+    const gradeKeys = ['grade-high-low', 'grade-low-high'];
 
     return (
-      <div className={bemBlocks.container().mix(className).state({ disabled }) }>
-        <span className="label-before-selected"
-          onClick={this.showDropdown.bind(null, this.refs.sortSelectField)}>
-          Sort by:
-        </span>
-        <select onChange={this.onChange} value={this.getSelectedValue()} ref="sortSelectField">
-          {this.renderOptions(translate, showCount, countFormatter, items)}
-        </select>
-      </div>
+      <Grid className="sorting-row">
+        <Cell col={1}/>
+        <Cell col={3} onClick={() => this.toggleSort(nameKeys)} className={`name ${this.selectedClass(nameKeys)}`}>
+          Name {this.sortDirection(nameKeys)}
+        </Cell>
+        <Cell
+          col={4}
+          onClick={() => this.toggleSort(locationKeys)}
+          className={`residence ${this.selectedClass(locationKeys)}`}
+        >
+          Residence {this.sortDirection(locationKeys)}
+        </Cell>
+        <Cell
+          col={3}
+          onClick={() => this.toggleSort(gradeKeys)}
+          className={`grade ${this.selectedClass(gradeKeys)}`}
+        >
+          Program grade {this.sortDirection(gradeKeys)}
+        </Cell>
+        <Cell col={1}/>
+      </Grid>
     );
   }
 }

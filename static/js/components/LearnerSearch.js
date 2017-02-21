@@ -33,6 +33,7 @@ import HitsCount from './search/HitsCount';
 import CustomNoHits from './search/CustomNoHits';
 import type { Option } from '../flow/generalTypes';
 import type { AvailableProgram } from '../flow/enrollmentTypes';
+import type { SearchSortItem } from '../flow/searchTypes';
 import { EDUCATION_LEVELS } from '../constants';
 
 import PatchedPagination from './search/PatchedPagination';
@@ -74,7 +75,7 @@ const sortSemesterBuckets = R.compose(
     ))
 );
 
-const sortOptions = [
+export const sortOptions: Array<SearchSortItem> = [
   {
     label: "Last Name A-Z", key: "name_a_z", fields: [
       { field: "profile.last_name", options: { order: "asc" } },
@@ -157,7 +158,7 @@ export default class LearnerSearch extends SearchkitComponent {
           </button>
           <HitsStats component={HitsCount} />
         </Cell>
-        <Cell col={8} className="pagination-sort">
+        <Cell col={8} className="pagination-search">
           <SearchBox
             queryBuilder={() => ({})}  // we only care about prefix query
             searchOnChange={true}
@@ -170,12 +171,14 @@ export default class LearnerSearch extends SearchkitComponent {
               analyzer: "folding"
             }}
           />
-          <SortingSelector options={sortOptions} listComponent={CustomSortingSelect} />
           <PatchedPagination showText={false} listComponent={CustomPaginationDisplay} />
         </Cell>
         <Cell col={12} className="mm-filters">
           <SelectedFilters />
           <ResetFilters component={CustomResetFiltersDisplay} />
+        </Cell>
+        <Cell col={12} className="sorting-header">
+          <SortingSelector options={sortOptions} listComponent={CustomSortingSelect} />
         </Cell>
       </Grid>
     );
