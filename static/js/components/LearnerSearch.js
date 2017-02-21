@@ -206,14 +206,27 @@ export default class LearnerSearch extends SearchkitComponent {
         </FilterVisibilityToggle>
         <FilterVisibilityToggle
           {...this.props}
-          filterName="semester"
+          filterName="num-courses-passed"
         >
-          <PatchedMenuFilter
-            field="program.semester_enrollments.semester"
-            fieldOptions={{ type: 'nested', options: {path: 'program.semester_enrollments'} }}
-            title="Semester"
-            id="semester"
-            bucketsTransform={sortSemesterBuckets}
+          <RangeFilter
+            field="program.num_courses_passed"
+            id="num-courses-passed"
+            min={0}
+            max={this.getNumberOfCoursesInProgram()}
+            showHistogram={false}
+            title="# of Courses Passed" />
+        </FilterVisibilityToggle>
+        <FilterVisibilityToggle
+          {...this.props}
+          filterName="grade-average"
+        >
+          <RangeFilter
+            field="program.grade_average"
+            id="grade-average"
+            min={0}
+            max={100}
+            showHistogram={true}
+            title="Average Grade in Program"
           />
         </FilterVisibilityToggle>
         <FilterVisibilityToggle
@@ -242,6 +255,18 @@ export default class LearnerSearch extends SearchkitComponent {
         </FilterVisibilityToggle>
         <FilterVisibilityToggle
           {...this.props}
+          filterName="semester"
+        >
+          <PatchedMenuFilter
+            field="program.semester_enrollments.semester"
+            fieldOptions={{ type: 'nested', options: {path: 'program.semester_enrollments'} }}
+            title="Semester"
+            id="semester"
+            bucketsTransform={sortSemesterBuckets}
+          />
+        </FilterVisibilityToggle>
+        <FilterVisibilityToggle
+          {...this.props}
           filterName="education-level"
         >
           <PatchedMenuFilter
@@ -251,31 +276,6 @@ export default class LearnerSearch extends SearchkitComponent {
             fieldOptions={{type: 'nested', options: { path: 'profile.education' } }}
             translations={this.degreeTranslations}
           />
-        </FilterVisibilityToggle>
-        <FilterVisibilityToggle
-          {...this.props}
-          filterName="grade-average"
-        >
-          <RangeFilter
-            field="program.grade_average"
-            id="grade-average"
-            min={0}
-            max={100}
-            showHistogram={true}
-            title="Average Grade in Program"
-          />
-        </FilterVisibilityToggle>
-        <FilterVisibilityToggle
-          {...this.props}
-          filterName="num-courses-passed"
-        >
-          <RangeFilter
-            field="program.num_courses_passed"
-            id="num-courses-passed"
-            min={0}
-            max={this.getNumberOfCoursesInProgram()}
-            showHistogram={false}
-            title="# of Courses Passed" />
         </FilterVisibilityToggle>
         <FilterVisibilityToggle
           {...this.props}
