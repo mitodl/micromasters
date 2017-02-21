@@ -206,6 +206,18 @@ export default class LearnerSearch extends SearchkitComponent {
         </FilterVisibilityToggle>
         <FilterVisibilityToggle
           {...this.props}
+          filterName="semester"
+        >
+          <PatchedMenuFilter
+            field="program.semester_enrollments.semester"
+            fieldOptions={{ type: 'nested', options: {path: 'program.semester_enrollments'} }}
+            title="Semester"
+            id="semester"
+            bucketsTransform={sortSemesterBuckets}
+          />
+        </FilterVisibilityToggle>
+        <FilterVisibilityToggle
+          {...this.props}
           filterName="num-courses-passed"
         >
           <RangeFilter
@@ -251,18 +263,6 @@ export default class LearnerSearch extends SearchkitComponent {
             title="Current Residence"
             id="country"
             translations={this.countryNameTranslations}
-          />
-        </FilterVisibilityToggle>
-        <FilterVisibilityToggle
-          {...this.props}
-          filterName="semester"
-        >
-          <PatchedMenuFilter
-            field="program.semester_enrollments.semester"
-            fieldOptions={{ type: 'nested', options: {path: 'program.semester_enrollments'} }}
-            title="Semester"
-            id="semester"
-            bucketsTransform={sortSemesterBuckets}
           />
         </FilterVisibilityToggle>
         <FilterVisibilityToggle
