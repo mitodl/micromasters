@@ -183,6 +183,12 @@ class CouponInvoice(AuditableModel):
     def to_dict(self):
         return serialize_model_object(self)
 
+    def __str__(self):
+        return "CouponInvoice for invoice {invoice_number}: {description}".format(
+            invoice_number=self.invoice_number,
+            description=self.description,
+        )
+
 
 class CouponInvoiceAudit(AuditModel):
     """Audit table for CouponInvoice"""

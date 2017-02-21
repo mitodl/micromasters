@@ -29,6 +29,7 @@ from ecommerce.factories import (
 )
 from ecommerce.models import (
     Coupon,
+    CouponInvoice,
     Order,
     RedeemedCoupon,
 )
@@ -349,3 +350,10 @@ class CouponTests(MockedESTestCase):
             RedeemedCoupon.objects.create(order=line2.order, coupon=coupon)
 
         assert coupon.another_user_already_redeemed(line1.order.user) is expected
+
+    def test_invoice_str(self):
+        """
+        Test str(CouponInvoice)
+        """
+        invoice = CouponInvoice.objects.create(invoice_number="number #1", description="an invoice")
+        assert str(invoice) == "CouponInvoice for invoice number #1: an invoice"
