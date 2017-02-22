@@ -151,7 +151,7 @@ class FinancialAidActionSerializer(serializers.Serializer):
             # This is intentionally left blank for clarity that this is a valid status for .save()
             pass
         elif self.instance.status == FinancialAidStatus.RESET:
-            self.instance.justification = "Requested by the learner"
+            self.instance.justification = "Reset via the financial aid review form"
 
         self.instance.save()
 

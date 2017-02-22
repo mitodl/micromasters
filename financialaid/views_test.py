@@ -654,9 +654,16 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         assert called_kwargs["body"] == financial_aid_email["body"]
 
     @patch("financialaid.serializers.MailgunClient")
-    def test_reset_financial_aid_review(self, mock_mailgun_client):
+    @ddt.data(
+        *([
+            [status] for status in FinancialAidStatus.ALL_STATUSES
+            if status != FinancialAidStatus.RESET
+        ])
+    )
+    @ddt.unpack
+    def test_reset_financial_aid_review(self, financial_aid_status, mock_mailgun_client):
         """
-        Tests FinancialAidActionView when action is RESET
+        Tests FinancialAidActionView, when submitted action is RESET
         """
         mock_mailgun_client.send_financial_aid_email.return_value = Mock(
             spec=Response,
@@ -664,7 +671,7 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
             json=mocked_json()
         )
         # Set status to docs sent
-        self.financialaid.status = FinancialAidStatus.DOCS_SENT
+        self.financialaid.status = financial_aid_status
         self.financialaid.save()
         # Set action to pending manual approval from pending-docs
         self.make_http_request(
