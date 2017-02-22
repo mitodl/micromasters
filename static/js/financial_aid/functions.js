@@ -97,7 +97,7 @@ window.financialAidReview = (function(window, document, $) {
    **/
   function actionReset(financialAidId, url, action) {
     var name = $("#full-name-" + financialAidId).text().trim();
-    if (confirm("Click OK to reset " + name + "'s financial aid application. This action can not undone.")) {
+    if (confirm("Click OK to reset " + name + "'s financial aid application. This action cannot be undone.")) {
       $.ajax({
         "url": url,
         "type": "PATCH",
