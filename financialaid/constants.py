@@ -52,7 +52,7 @@ class FinancialAidStatus:
         SKIPPED: "Skipped",
     }
 
-FINANCIAL_AID_RESET_SUBJECT = "Your personalized course price for {program_name} MicroMasters"
+FINANCIAL_AID_RESET_SUBJECT = "Update to your personalized course price for {program_name} MicroMasters"
 FINANCIAL_AID_DOCUMENTS_RECEIVED_SUBJECT = "Documents received for {program_name} MicroMasters"
 FINANCIAL_AID_APPROVAL_SUBJECT = "Your personalized course price for {program_name} MicroMasters"
 
