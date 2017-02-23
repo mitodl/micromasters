@@ -1,6 +1,7 @@
 // @flow
 import React from 'react';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
+import R from 'ramda';
 
 import type { SearchSortItem } from '../../flow/searchTypes';
 
@@ -27,6 +28,10 @@ export default class CustomSortingColumnHeaders extends React.Component {
       setItems([defaultSort]);
     }
   };
+
+  toggleNameSort = R.partial(this.toggleSort, [nameKeys]);
+  toggleLocationSort = R.partial(this.toggleSort, [locationKeys]);
+  toggleGradeSort = R.partial(this.toggleSort, [gradeKeys]);
 
   sortDirection = (keys: [string, string]) => {
     let selectedItem = this.getSelectedItem(keys);
@@ -64,19 +69,19 @@ export default class CustomSortingColumnHeaders extends React.Component {
     return (
       <Grid className="sorting-row">
         <Cell col={1}/>
-        <Cell col={3} onClick={() => this.toggleSort(nameKeys)} className={`name ${this.selectedClass(nameKeys)}`}>
+        <Cell col={3} onClick={this.toggleNameSort} className={`name ${this.selectedClass(nameKeys)}`}>
           Name {this.sortDirection(nameKeys)}
         </Cell>
         <Cell
           col={4}
-          onClick={() => this.toggleSort(locationKeys)}
+          onClick={this.toggleLocationSort}
           className={`residence ${this.selectedClass(locationKeys)}`}
         >
           Residence {this.sortDirection(locationKeys)}
         </Cell>
         <Cell
           col={3}
-          onClick={() => this.toggleSort(gradeKeys)}
+          onClick={this.toggleGradeSort}
           className={`grade ${this.selectedClass(gradeKeys)}`}
         >
           Program grade {this.sortDirection(gradeKeys)}
