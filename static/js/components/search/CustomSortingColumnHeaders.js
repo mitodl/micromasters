@@ -5,9 +5,13 @@ import Grid, { Cell } from 'react-mdl/lib/Grid';
 import type { SearchSortItem } from '../../flow/searchTypes';
 
 export default class CustomSortingColumnHeaders extends React.Component {
+  // these props are all passed down by searchkit
   props: {
+    // A list of available options for sorting
     items: Array<SearchSortItem>,
+    // A function to set the new sorting keys
     setItems: (keys: Array<string>) => void,
+    // The currently selected set of sorting keys, if any are selected
     selectedItems: ?Array<string>,
   };
 
