@@ -42,7 +42,7 @@ export default class CourseListCard extends React.Component {
     setEnrollCourseDialogVisibility: (bool: boolean) => void,
   };
 
-  renderFinancialAidPriceMessage() {
+  renderFinancialAidPriceMessage(): React$Element<*> {
     const {
       program: {financial_aid_user_info: financialAid},
       coupon,
@@ -54,7 +54,7 @@ export default class CourseListCard extends React.Component {
       const iter = prices.values();
       const { value: price } = iter.next();
       if (!price) {
-        return null;
+        throw "missing price"; // this should never happen, it's just to make flow happy
       }
       if (coupon && coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM) {
         // financial aid + coupon
@@ -81,10 +81,10 @@ export default class CourseListCard extends React.Component {
     }
   }
 
-  renderCouponPriceMessage() {
+  renderCouponPriceMessage(): React$Element<*> {
     const { coupon } = this.props;
     if (!coupon) {
-      return null; // this should never happen, it's just to make flow happy
+      throw "missing coupon"; // this should never happen, it's just to make flow happy
     }
 
     const isDiscount = (
@@ -108,7 +108,7 @@ export default class CourseListCard extends React.Component {
     </p>;
   }
 
-  renderPriceMessage() {
+  renderPriceMessage(): React$Element<*> {
     const {
       program: {financial_aid_availability: hasFinancialAid},
       coupon,
@@ -138,7 +138,7 @@ export default class CourseListCard extends React.Component {
     const iter = prices.values();
     const { value: price } = iter.next();
     if (!price) {
-      return null;
+      throw "missing price"; // this should never happen, it's just to make flow happy
     }
 
     return <p className={priceMessageClassName}>
@@ -148,7 +148,7 @@ export default class CourseListCard extends React.Component {
     </p>;
   }
 
-  render() {
+  render(): React$Element<*> {
     const {
       program,
       prices,
