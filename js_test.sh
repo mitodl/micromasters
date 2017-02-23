@@ -3,17 +3,17 @@ export TMP_FILE=$(mktemp)
 
 if [[ ! -z "$COVERAGE" ]]
 then
-    export CMD="node ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha --"
+    export CMD="node ./node_modules/nyc/bin/nyc.js --reporter=html mocha "
 elif [[ ! -z "$CODECOV" ]]
 then
-    export CMD="node ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- --report lcovonly -R spec"
+    export CMD="node ./node_modules/nyc/bin/nyc.js --reporter=lcovonly -R spec mocha "
 else
     export CMD="node ./node_modules/mocha/bin/_mocha"
 fi
 
 export FILES=${1:-'static/**/*/*_test.js'}
 
-$CMD --require static/js/babelhook.js static/js/global_init.js "$FILES" 2> >(tee "$TMP_FILE")
+$CMD --require ./static/js/babelhook.js static/js/global_init.js "$FILES" 2> >(tee "$TMP_FILE")
 export TEST_RESULT=$?
 export TRAVIS_BUILD_DIR=$PWD
 if [[ ! -z "$CODECOV" ]]

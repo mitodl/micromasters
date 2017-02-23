@@ -45,6 +45,7 @@ coverage.xml
 *,cover
 .hypothesis/
 coverage/
+.nyc_output/
 
 # Translations
 *.mo
