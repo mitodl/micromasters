@@ -53,8 +53,7 @@ export default class CustomSortingColumnHeaders extends React.Component {
   };
 
   selectedClass = (keys: [string, string]) => {
-    let selectedItem = this.getSelectedItem(keys);
-    return selectedItem ? 'selected' : '';
+    return this.getSelectedItem(keys) ? 'selected' : '';
   };
 
   render() {
