@@ -56,6 +56,8 @@ class BasicTests(SeleniumTestsBase):
 
         page_size = settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE
         with mute_signals(post_save):
+            # Create enough profiles for two pages, but make the second page slightly smaller than the first
+            # So we can assert that we're on the second page by counting the results
             for _ in range((page_size * 2) - 5):
                 profile = ProfileFactory.create(filled_out=True)
                 ProgramEnrollment.objects.create(program=self.program, user=profile.user)
