@@ -27,7 +27,7 @@ import PatchedMenuFilter from './search/PatchedMenuFilter';
 import WorkHistoryFilter from './search/WorkHistoryFilter';
 import CustomPaginationDisplay from './search/CustomPaginationDisplay';
 import CustomResetFiltersDisplay from './search/CustomResetFiltersDisplay';
-import CustomSortingSelect from './search/CustomSortingSelect';
+import CustomSortingColumnHeaders from './search/CustomSortingColumnHeaders';
 import FilterVisibilityToggle from './search/FilterVisibilityToggle';
 import HitsCount from './search/HitsCount';
 import CustomNoHits from './search/CustomNoHits';
@@ -178,7 +178,7 @@ export default class LearnerSearch extends SearchkitComponent {
           <ResetFilters component={CustomResetFiltersDisplay} />
         </Cell>
         <Cell col={12} className="sorting-header">
-          <SortingSelector options={sortOptions} listComponent={CustomSortingSelect} />
+          <SortingSelector options={sortOptions} listComponent={CustomSortingColumnHeaders} />
         </Cell>
       </Grid>
     );

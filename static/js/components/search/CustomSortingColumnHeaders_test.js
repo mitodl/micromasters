@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import { assert } from 'chai';
 import sinon from 'sinon';
 
-import CustomSortingSelect from './CustomSortingSelect';
+import CustomSortingColumnHeaders from './CustomSortingColumnHeaders';
 import { sortOptions } from '../../components/LearnerSearch';
 
 describe('CustomSortingSelect', () => {
@@ -20,7 +20,7 @@ describe('CustomSortingSelect', () => {
 
   const renderSelect = (props = {}) => {
     return shallow(
-      <CustomSortingSelect
+      <CustomSortingColumnHeaders
         items={sortOptions}
         setItems={setItemsStub}
         selectedItems={null}

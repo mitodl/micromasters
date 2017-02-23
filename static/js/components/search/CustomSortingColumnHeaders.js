@@ -4,7 +4,7 @@ import Grid, { Cell } from 'react-mdl/lib/Grid';
 
 import type { SearchSortItem } from '../../flow/searchTypes';
 
-export default class CustomSortingSelect extends React.Component {
+export default class CustomSortingColumnHeaders extends React.Component {
   props: {
     items: Array<SearchSortItem>,
     setItems: (keys: Array<string>) => void,
