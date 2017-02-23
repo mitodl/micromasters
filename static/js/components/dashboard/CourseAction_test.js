@@ -82,9 +82,6 @@ describe('CourseAction', () => {
     const url = `/order_summary/?course_key=${encodeURIComponent(courseRun.course_id)}`;
     sinon.assert.calledWith(routerPushStub, url);
   };
-  const assertFinancialAidCalculatorOpened = () => {  // eslint-disable-line no-unused-vars
-    sinon.assert.called(openFinancialAidCalculatorStub);
-  };
 
   let renderCourseAction = (props = {}) => {
     let prices = calculatePrices(DASHBOARD_RESPONSE, COURSE_PRICES_RESPONSE, []);
