@@ -4,6 +4,10 @@ import Grid, { Cell } from 'react-mdl/lib/Grid';
 
 import type { SearchSortItem } from '../../flow/searchTypes';
 
+const nameKeys = ['name_a_z', 'name_z_a'];
+const locationKeys = ['loc-a-z', 'loc-z-a'];
+const gradeKeys = ['grade-high-low', 'grade-low-high'];
+
 export default class CustomSortingColumnHeaders extends React.Component {
   // these props are all passed down by searchkit
   props: {
@@ -57,10 +61,6 @@ export default class CustomSortingColumnHeaders extends React.Component {
   };
 
   render() {
-    const nameKeys = ['name_a_z', 'name_z_a'];
-    const locationKeys = ['loc-a-z', 'loc-z-a'];
-    const gradeKeys = ['grade-high-low', 'grade-low-high'];
-
     return (
       <Grid className="sorting-row">
         <Cell col={1}/>
