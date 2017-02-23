@@ -17,6 +17,12 @@ from selenium_tests.base import SeleniumTestsBase
 class BasicTests(SeleniumTestsBase):
     """Basic selenium tests for MicroMasters"""
 
+    def num_elements_on_page(self, selector, driver=None):
+        """Count hits from a selector"""
+        script = "return document.querySelectorAll({selector!r}).length".format(selector=selector)
+        driver = driver or self.selenium
+        return driver.execute_script(script)
+
     def test_zero_price_purchase(self):
         """
         Do a $0 purchase using a 100% off program-level coupon
@@ -71,23 +77,24 @@ class BasicTests(SeleniumTestsBase):
         # Update for new users and new role
         index_program_enrolled_users(ProgramEnrollment.objects.iterator())
         self.get("{}/learners".format(self.live_server_url))
-        assert self.selenium.execute_script("return document.querySelectorAll('.learner-result').length") == page_size
+        assert self.num_elements_on_page('.learner-result') == page_size
         self.selenium.find_elements_by_class_name('sk-pagination-option')[1].click()
-        # Verify that second page has 5 less elements
-        self.wait().until(
-            lambda driver: driver.execute_script(
-                "return document.querySelectorAll('.learner-result').length"
-            ) == page_size - 5
-        )
+
+        def verify_num_elements(driver):
+            """Verify that second page has 5 less elements"""
+            actual_size = self.num_elements_on_page('.learner-result', driver=driver)
+            return actual_size == page_size - 5
+        self.wait().until(verify_num_elements)
 
         # Go to profile and back to learners to verify that nothing breaks
         self.selenium.find_element_by_class_name("user-menu").click()
         self.wait().until(
             lambda driver: "open" in driver.find_element_by_class_name("user-menu-dropdown").get_attribute("class")
         )
-        self.selenium.find_element_by_css_selector(
-            ".user-menu-dropdown a[href='/learner/{}']".format(self.username)
-        ).click()
+        profile_link_selector = ".user-menu-dropdown a[href='/learner/{username}']".format(
+            username=self.username,
+        )
+        self.selenium.find_element_by_css_selector(profile_link_selector).click()
         self.wait().until(lambda driver: driver.find_element_by_class_name("user-page"))
         # Go back to learners
         self.selenium.find_element_by_css_selector("a[href='/learners']").click()
