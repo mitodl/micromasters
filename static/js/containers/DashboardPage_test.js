@@ -33,6 +33,8 @@ import {
   CLEAR_UI,
   SET_COUPON_NOTIFICATION_VISIBILITY,
   SET_PAYMENT_TEASER_DIALOG_VISIBILITY,
+  SET_ENROLL_COURSE_DIALOG_VISIBILITY,
+  SET_ENROLL_SELECTED_COURSE_RUN,
   setToastMessage,
 } from '../actions/ui';
 import { START_EMAIL_EDIT } from '../actions/email';
@@ -497,6 +499,38 @@ describe('DashboardPage', () => {
         }).then((state) => {
           assert.isTrue(state.ui.paymentTeaserDialogVisibility);
           assert.isFalse(state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG]);
+        });
+      });
+    });
+  });
+
+  describe('course enrollment dialog', () => {
+    let dashboardResponse;
+    const ENROLL_BUTTON_SELECTOR = '.course-list .enroll-button';
+    const COURSE_ENROLL_DIALOG_ACTIONS = [
+      SET_ENROLL_COURSE_DIALOG_VISIBILITY,
+      SET_ENROLL_SELECTED_COURSE_RUN,
+    ];
+
+    beforeEach(() => {
+      // Limit the dashboard response to 1 program
+      dashboardResponse = [R.clone(DASHBOARD_RESPONSE[0])];
+    });
+
+    it('renders correctly', () => {
+      let course = makeCourse();
+      course.runs[0].enrollment_start_date = moment().subtract(2, 'days');
+      dashboardResponse[0].courses = [course];
+      helper.dashboardStub.returns(Promise.resolve(dashboardResponse));
+
+      return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
+        let enrollButton = wrapper.find(ENROLL_BUTTON_SELECTOR).at(0);
+
+        return listenForActions(COURSE_ENROLL_DIALOG_ACTIONS, () => {
+          enrollButton.simulate('click');
+        }).then((state) => {
+          assert.isTrue(state.ui.enrollCourseDialogVisibility);
+          assert.equal(state.ui.enrollSelectedCourseRun, course.runs[0]);
         });
       });
     });
