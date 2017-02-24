@@ -15,6 +15,7 @@ from dashboard.factories import ProgramEnrollmentFactory
 from dashboard.models import ProgramEnrollment
 from micromasters.factories import UserFactory
 from profiles.factories import ProfileFactory
+from profiles.models import Profile
 from roles.models import Role
 from roles.roles import (
     Instructor,
@@ -173,28 +174,55 @@ class SearchTests(ESTestCase, APITestCase):
 
         filter_params = {
             "filter": {
-                "bool": {
-                    "should": [
-                        {"term": {"program.id": wanted_program_id}}
-                    ]
-                }
+                "term": {"program.id": wanted_program_id}
             }
         }
-        query_params = {
-            "query": {
-                "bool": {
-                    "should": [
-                        {"term": {"program.id": wanted_program_id}}
-                    ]
-                }
+        post_filter_params = {
+            "post_filter": {
+                "term": {"program.id": wanted_program_id}
             }
         }
-        for params in [filter_params, query_params]:
+        for params in [filter_params, post_filter_params]:
             # verify that only the wanted program is in the hits
             resp = self.assert_status_code(json=params)
             program_ids_in_hits = self.get_program_ids_in_hits(resp.data['hits']['hits'])
             assert len(program_ids_in_hits) == 1
             assert program_ids_in_hits[0] == wanted_program_id
+
+    def test_query_filters(self):
+        """
+        Test that if the user sends a query, it doesn't negatively affect other filters we add.
+        """
+        # Change every users names so the prefix match will hit every result
+        for profile in Profile.objects.all():
+            profile.first_name = "laura"
+            profile.last_name = "laurasia"
+            profile.preferred_name = "lexovisaurus"
+            profile.save()
+
+        data = {
+            "filter": {
+                "term": {
+                    "program.id": self.program2.id
+                }
+            },
+            "query": {
+                "multi_match": {
+                    "analyzer": "folding",
+                    "fields": [
+                        "profile.first_name.folded",
+                        "profile.last_name.folded",
+                        "profile.preferred_name.folded"
+                    ],
+                    "query": "l",
+                    "type": "phrase_prefix"
+                }
+            }
+        }
+        resp = self.assert_status_code(json=data)
+        # User does not have a role in program2 and therefore should not see any results
+        user_ids_in_hits = self.get_user_ids_in_hits(resp.data['hits']['hits'])
+        assert len(user_ids_in_hits) == 0
 
     @override_settings(ELASTICSEARCH_DEFAULT_PAGE_SIZE=1000)
     def test_filled_out(self):

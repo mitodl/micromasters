@@ -32,6 +32,13 @@ def execute_search(search_obj):
 def create_program_limit_query(user, filter_on_email_optin=False):
     """
     Constructs and returns a query that limits a user to data for their allowed programs
+
+    Args:
+        user (django.contrib.auth.models.User): A user
+        filter_on_email_optin (bool): If true, filter out profiles where email_optin != true
+
+    Returns:
+        elasticsearch_dsl.query.Q: An elasticsearch query
     """
     users_allowed_programs = get_advance_searchable_programs(user)
     # if the user cannot search any program, raise an exception.
@@ -69,29 +76,29 @@ def create_search_obj(user, search_param_dict=None, filter_on_email_optin=False)
     Args:
         user (User): User object
         search_param_dict (dict): A dict representing the body of an ES query
+        filter_on_email_optin (bool): If true, filter out profiles where email_optin != True
 
     Returns:
         Search: elasticsearch_dsl Search object
     """
     search_obj = Search(index=settings.ELASTICSEARCH_INDEX, doc_type=DOC_TYPES)
-    # the following filter should come first because the sequence matters in applying them
+    # Update from search params first so our server-side filtering will overwrite it if necessary
+    search_obj.update_from_dict(search_param_dict)
+    # Early versions of searchkit use filter which isn't in the DSL but it acts equivalently to post_filter
+    if 'filter' in search_param_dict:
+        search_obj = search_obj.post_filter(search_param_dict['filter'])
+
+    # Limit results to one of the programs the user is staff on
     search_obj = search_obj.filter(create_program_limit_query(
         user,
         filter_on_email_optin=filter_on_email_optin
     ))
     # Filter so that only filled_out profiles are seen
-    search_obj = search_obj.filter(Q(
-        'bool',
-        must=[
-            Q('term', **{'profile.filled_out': True})
-        ]
-    ))
-    if search_param_dict is not None:
-        search_param_dict['size'] = settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE
-    else:
-        search_param_dict = {'size': settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE}
-
-    search_obj.update_from_dict(search_param_dict)
+    search_obj = search_obj.filter(
+        Q('term', **{'profile.filled_out': True})
+    )
+    # Force size to be the one we set on the server
+    search_obj.update_from_dict({'size': settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE})
     return search_obj
 
 
