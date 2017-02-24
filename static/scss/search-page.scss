@@ -248,6 +248,7 @@
         .sk-pagination-option * {
           font-size: 21px;
           font-weight: 400;
+
           padding: 0 0 !important;
         }
       }
@@ -257,6 +258,14 @@
       border: 1px solid $border-color;
       border-radius: 3px;
       margin-right: 4px;
+
+      .sk-search-box__icon {
+        opacity: 1;
+      }
+
+      .sk-search-box__icon:before {
+        background: url(/static/images/search-icon.svg) no-repeat top left;
+      }
     }
 
     .sk-selected-filters {
