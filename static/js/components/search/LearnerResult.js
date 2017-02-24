@@ -41,7 +41,7 @@ class LearnerResult extends SearchkitComponent {
           <ProfileImage profile={profile} useSmall={true} />
         </Cell>
         <Cell
-          col={3}
+          col={5}
           className="learner-name centered"
           onMouseLeave={() => setLearnerChipVisibility(null)}
           onMouseEnter={() => setLearnerChipVisibility(profile.username)}
@@ -51,7 +51,7 @@ class LearnerResult extends SearchkitComponent {
           </span>
           {profile.username === learnerChipVisibility ? <LearnerChip profile={profile} /> : null}
         </Cell>
-        <Cell col={4} className="centered learner-location">
+        <Cell col={3} className="centered learner-location">
           <span>
             { getLocation(profile, false) }
           </span>
@@ -60,9 +60,7 @@ class LearnerResult extends SearchkitComponent {
           <span className="percent">
             { LearnerResult.hasGrade(program) ? `${program.grade_average}%` : '-' }
           </span>
-          <span className="hint">Program Avg. Grade</span>
         </Cell>
-        <Cell col={1} />
       </Grid>
     );
   }

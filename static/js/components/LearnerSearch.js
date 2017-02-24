@@ -148,7 +148,7 @@ export default class LearnerSearch extends SearchkitComponent {
 
     return (
       <Grid className="search-header">
-        <Cell col={4} className="result-info">
+        <Cell col={7} className="result-info">
           <button
             id="email-selected"
             className="mdl-button minor-action"
@@ -158,7 +158,7 @@ export default class LearnerSearch extends SearchkitComponent {
           </button>
           <HitsStats component={HitsCount} />
         </Cell>
-        <Cell col={8} className="pagination-search">
+        <Cell col={5} className="pagination-search">
           <SearchBox
             queryBuilder={() => ({})}  // we only care about prefix query
             searchOnChange={true}

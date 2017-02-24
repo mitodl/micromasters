@@ -107,11 +107,15 @@
   }
 
   &.minor-action {
-    font-size: 12px;
-    color: #333333;
-    border: 1px solid #d2d2d2;
-    background: linear-gradient(to bottom, #ffffff, #e2e2e2);
+    font-size: 13px;
+    color: #4a4a4a;
+    border: 1px solid #d4d4d4;
+    background: linear-gradient(to bottom, #f7f7f7, #f1f1f1);
     box-shadow: none;
+    padding: 0 12px;
+    height: 33px;
+    line-height: 32px;
+    text-transform: none;
   }
 
   &.minor-action:hover, &.minor-action:focus, &.minor-action:active, &.minor-action:focus:not(:active) {
