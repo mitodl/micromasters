@@ -106,12 +106,7 @@ class SearchAPITests(ESTestCase):  # pylint: disable=missing-docstring
                 Q('term', **{'program.is_learner': True})
             ]
         )
-        expected_filled_out_query = Q(
-            'bool',
-            must=[
-                Q('term', **{'profile.filled_out': True})
-            ]
-        )
+        expected_filled_out_query = Q('term', **{'profile.filled_out': True})
         assert 'query' in search_query_dict
         assert 'bool' in search_query_dict['query']
         assert 'filter' in search_query_dict['query']['bool']

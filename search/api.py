@@ -83,10 +83,11 @@ def create_search_obj(user, search_param_dict=None, filter_on_email_optin=False)
     """
     search_obj = Search(index=settings.ELASTICSEARCH_INDEX, doc_type=DOC_TYPES)
     # Update from search params first so our server-side filtering will overwrite it if necessary
-    search_obj.update_from_dict(search_param_dict)
-    # Early versions of searchkit use filter which isn't in the DSL but it acts equivalently to post_filter
-    if 'filter' in search_param_dict:
-        search_obj = search_obj.post_filter(search_param_dict['filter'])
+    if search_param_dict is not None:
+        search_obj.update_from_dict(search_param_dict)
+        # Early versions of searchkit use filter which isn't in the DSL but it acts equivalently to post_filter
+        if 'filter' in search_param_dict:
+            search_obj = search_obj.post_filter(search_param_dict['filter'])
 
     # Limit results to one of the programs the user is staff on
     search_obj = search_obj.filter(create_program_limit_query(
