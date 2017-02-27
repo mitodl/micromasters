@@ -10,9 +10,13 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from search.permissions import UserCanSearchPermission
+from search.permissions import UserCanAdvanceSearchPermission
 from search.api import prepare_and_execute_search
 from search.exceptions import NoProgramAccessException
+from search.serializers import (
+    ProfileLimitedSearchSerializer,
+    ProfileSearchSerializer,
+)
 
 
 log = logging.getLogger(__name__)
@@ -26,9 +30,17 @@ class ElasticProxyView(APIView):
         SessionAuthentication,
         TokenAuthentication,
     )
-    permission_classes = (IsAuthenticated, UserCanSearchPermission, )
+    permission_classes = (IsAuthenticated,)
 
-    def _execute_search_from_request(self, user, request_data):
+    def is_advance_search_capable(self):
+        return UserCanAdvanceSearchPermission().has_permission(self.request, self)
+
+    def get_serializer_class(self):
+        if self.is_advance_search_capable():
+            return ProfileSearchSerializer
+        return ProfileLimitedSearchSerializer
+
+    def _execute_search_from_request(self, user, request_data, only_public_profiles=True):
         """
         Common function that will take care of handling requests coming from different methods.
         """
@@ -39,12 +51,18 @@ class ElasticProxyView(APIView):
                 status=status.HTTP_403_FORBIDDEN,
                 data={'detail': 'You do not have access to this search.'}
             )
-        return Response(
-            results.to_dict()
-        )
+
+        serializer_class = self.get_serializer_class()
+
+        print(serializer_class())
+        results = results.to_dict()
+
+        # print(results)
+
+        return Response(serializer_class(results).data)
 
     def post(self, request, *args, **kwargs):
         """
         Handler for POST requests
         """
-        return self._execute_search_from_request(request.user, request.data)
+        return self._execute_search_from_request(request.user, request.data, self.is_advance_search_capable())

@@ -4,6 +4,7 @@ Functions for executing ES searches
 from django.conf import settings
 from elasticsearch_dsl import Search, Q
 
+from courses.models import Program
 from roles.api import get_advance_searchable_programs
 from search.indexing_api import (
     get_conn,
@@ -29,13 +30,28 @@ def execute_search(search_obj):
     return search_obj.execute()
 
 
+def get_searchable_programs(user):
+    """
+    Determines the programs a user is eligible to search
+
+    Args:
+        user (django.contrib.auth.models.User): the user that is searching
+
+    Returns:
+        list(courses.models.Program): list of programs the user can search in
+    """
+    programs = list(get_advance_searchable_programs(user))
+    programs.extend(Program.objects.filter(programenrollment__user=user))
+    return programs
+
+
 def create_program_limit_query(user, filter_on_email_optin=False):
     """
     Constructs and returns a query that limits a user to data for their allowed programs
     """
-    users_allowed_programs = get_advance_searchable_programs(user)
+    users_allowed_programs = get_searchable_programs(user)
     # if the user cannot search any program, raise an exception.
-    # in theory this should never happen because `UserCanSearchPermission`
+    # in theory this should never happen because `UserCanAdvanceSearchPermission`
     # takes care of doing the same check, but better to keep it to avoid
     # that a theoretical bug exposes all the data in the index
     if not users_allowed_programs:
