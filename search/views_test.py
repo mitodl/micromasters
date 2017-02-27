@@ -224,6 +224,29 @@ class SearchTests(ESTestCase, APITestCase):
         user_ids_in_hits = self.get_user_ids_in_hits(resp.data['hits']['hits'])
         assert len(user_ids_in_hits) == 0
 
+    def test_from(self):
+        """
+        Test that we don't filter out the from part of the query
+        """
+        data = {
+            "filter": {
+                "term": {
+                    "program.id": self.program1.id
+                }
+            },
+            "from": 0,
+            "size": 50,
+        }
+        resp = self.assert_status_code(json=data)
+        user_ids_in_hits = self.get_user_ids_in_hits(resp.data['hits']['hits'])
+        assert len(user_ids_in_hits) == 10
+
+        # Look at second page. There should be zero hits here
+        data['from'] = 50
+        resp = self.assert_status_code(json=data)
+        user_ids_in_hits = self.get_user_ids_in_hits(resp.data['hits']['hits'])
+        assert len(user_ids_in_hits) == 0
+
     @override_settings(ELASTICSEARCH_DEFAULT_PAGE_SIZE=1000)
     def test_filled_out(self):
         """

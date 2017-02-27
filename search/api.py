@@ -99,7 +99,10 @@ def create_search_obj(user, search_param_dict=None, filter_on_email_optin=False)
         Q('term', **{'profile.filled_out': True})
     )
     # Force size to be the one we set on the server
-    search_obj.update_from_dict({'size': settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE})
+    update_dict = {'size': settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE}
+    if search_param_dict is not None and search_param_dict.get('from') is not None:
+        update_dict['from'] = search_param_dict['from']
+    search_obj.update_from_dict(update_dict)
     return search_obj
 
 
