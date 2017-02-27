@@ -224,11 +224,17 @@ class IndexTests(ESTestCase):
         """
         with mute_signals(post_save):
             program_enrollments = [ProgramEnrollmentFactory.build() for _ in range(10)]
-        with patch('search.indexing_api._index_program_enrolled_users_chunk', autospec=True, return_value=0) \
-                as index_chunk:
+        with patch(
+            'search.indexing_api._index_chunk', autospec=True, return_value=0
+        ) as index_chunk, patch(
+            'search.indexing_api.serialize_program_enrolled_user', autospec=True, side_effect=lambda x: x
+        ) as serialize_mock:
             index_program_enrolled_users(program_enrollments, chunk_size=4)
             assert index_chunk.call_count == 3
-            index_chunk.assert_any_call(program_enrollments[0:4])
+            index_chunk.assert_any_call(program_enrollments[0:4], USER_DOC_TYPE)
+            assert serialize_mock.call_count == len(program_enrollments)
+            for enrollment in program_enrollments:
+                serialize_mock.assert_any_call(enrollment)
 
     def test_add_edx_record(self):
         """
