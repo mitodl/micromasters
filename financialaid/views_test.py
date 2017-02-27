@@ -504,6 +504,7 @@ class FinancialAidActionTests(FinancialAidBaseTestCase, APIClient):
         self.financialaid.save()
         assert FinancialAidAudit.objects.count() == 0
         self.make_http_request(self.client.patch, self.action_url, status.HTTP_400_BAD_REQUEST, data=self.data)
+        # assert that FinancialAidAudit object is not created for invalid fa actions.
         assert FinancialAidAudit.objects.count() == 0
 
     def test_approve_invalid_justification(self):

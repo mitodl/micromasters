@@ -29,7 +29,6 @@ from financialaid.constants import (
 from financialaid.exceptions import NotSupportedException
 from financialaid.models import (
     FinancialAid,
-    FinancialAidAudit,
     TierProgram
 )
 from mail.api import MailgunClient
@@ -144,7 +143,6 @@ class FinancialAidActionSerializer(serializers.Serializer):
         """
         Save method for this serializer
         """
-        before_dict = self.instance.to_dict()
         self.instance.status = self.validated_data["action"]
         if self.instance.status == FinancialAidStatus.APPROVED:
             self.instance.tier_program = self.validated_data["tier_program"]
@@ -155,14 +153,8 @@ class FinancialAidActionSerializer(serializers.Serializer):
         elif self.instance.status == FinancialAidStatus.RESET:
             self.instance.justification = "Reset via the financial aid review form"
 
-        self.instance.save()
-        # save history of this change.
-        FinancialAidAudit(
-            financial_aid_id=self.instance.id,
-            acting_user_id=self.instance.user.id,
-            data_after=self.instance.to_dict(),
-            data_before=before_dict
-        ).save()
+        # also saves history of this change in FinancialAidAudit.
+        self.instance.save_and_log(self.context["request"].user)
 
         # Send email notification
         MailgunClient.send_financial_aid_email(
