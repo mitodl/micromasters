@@ -37,10 +37,14 @@ from search.indexing_api import (
     remove_program_enrolled_user,
     serialize_program_enrolled_user,
     USER_DOC_TYPE,
-    filter_current_work
+    filter_current_work,
+    index_percolate_queries,
+    delete_percolate_query,
+    PERCOLATE_DOC_TYPE,
 )
 from search.base import ESTestCase
 from search.exceptions import ReindexException
+from search.models import PercolateQuery
 from search.util import traverse_mapping
 from micromasters.utils import dict_without_key
 
@@ -61,6 +65,10 @@ class ESTestActions:
         """Gets full index data from the _search endpoint"""
         refresh_index()
         return get(self.search_url).json()['hits']
+
+    def get_percolate_query(self, _id):
+        """Get percolate query"""
+        return get("{}/.percolator/{}".format(self.url, _id)).json()
 
     def get_mappings(self):
         """Gets mapping data"""
@@ -401,3 +409,52 @@ class RecreateIndexTests(ESTestCase):
         # recreate_index should index the program-enrolled user
         recreate_index()
         assert_search(es.search(), [program_enrollment])
+
+
+class PercolateQueryTests(ESTestCase):
+    """
+    Tests for indexing of percolate queries
+    """
+
+    def test_index_percolate_query(self):
+        """Test that we index the percolate query"""
+        query = {"query": {"match": {"profile.first_name": "here"}}}
+        percolate_query = PercolateQuery(query=query)
+        percolate_query_id = 123
+        percolate_query.id = percolate_query_id
+        # Don't save since that will trigger a signal which will update the index
+        assert es.get_percolate_query(percolate_query_id) == {
+            '_id': str(percolate_query_id),
+            '_index': settings.ELASTICSEARCH_INDEX,
+            '_type': PERCOLATE_DOC_TYPE,
+            'found': False,
+        }
+        index_percolate_queries([percolate_query])
+        assert es.get_percolate_query(percolate_query_id) == {
+            '_id': str(percolate_query_id),
+            '_index': settings.ELASTICSEARCH_INDEX,
+            '_source': query,
+            '_type': PERCOLATE_DOC_TYPE,
+            '_version': 1,
+            'found': True,
+        }
+
+    def test_delete_percolate_queries(self):
+        """Test that we delete the percolate query from the index"""
+        query = {"query": {"match": {"profile.first_name": "here"}}}
+        percolate_query = PercolateQuery.objects.create(query=query)
+        assert es.get_percolate_query(percolate_query.id) == {
+            '_id': str(percolate_query.id),
+            '_index': settings.ELASTICSEARCH_INDEX,
+            '_source': query,
+            '_type': PERCOLATE_DOC_TYPE,
+            '_version': 1,
+            'found': True,
+        }
+        delete_percolate_query(percolate_query)
+        assert es.get_percolate_query(percolate_query.id) == {
+            '_id': str(percolate_query.id),
+            '_index': settings.ELASTICSEARCH_INDEX,
+            '_type': PERCOLATE_DOC_TYPE,
+            'found': False,
+        }

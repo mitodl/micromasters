@@ -15,8 +15,12 @@ from profiles.serializers import ProfileSerializer
 from dashboard.models import ProgramEnrollment
 from dashboard.serializers import UserProgramSearchSerializer
 from search.exceptions import ReindexException
+from search.models import PercolateQuery
 
 log = logging.getLogger(__name__)
+
+# This is a builtin type
+PERCOLATE_DOC_TYPE = '.percolator'
 
 USER_DOC_TYPE = 'program_user'
 DOC_TYPES = (USER_DOC_TYPE, )
@@ -95,13 +99,15 @@ def get_conn(verify=True):
     return _CONN
 
 
-def _index_program_enrolled_users_chunk(program_enrollments):
+def _index_chunk(chunk, doc_type):
     """
-    Add/update a list of ProgramEnrollment records in Elasticsearch
+    Add/update a list of records in Elasticsearch
 
     Args:
-        program_enrollments (list of ProgramEnrollments):
-            List of ProgramEnrollments to serialize and index
+        chunk (list):
+            List of serialized items to index
+        doc_type (str):
+            The doc type for each item
 
     Returns:
         int: Number of items inserted into Elasticsearch
@@ -110,9 +116,9 @@ def _index_program_enrolled_users_chunk(program_enrollments):
     conn = get_conn()
     insert_count, errors = bulk(
         conn,
-        (serialize_program_enrolled_user(program_enrollment) for program_enrollment in program_enrollments),
+        chunk,
         index=settings.ELASTICSEARCH_INDEX,
-        doc_type=USER_DOC_TYPE,
+        doc_type=doc_type,
     )
     if len(errors) > 0:
         raise ReindexException("Error during bulk insert: {errors}".format(
@@ -122,28 +128,44 @@ def _index_program_enrolled_users_chunk(program_enrollments):
     return insert_count
 
 
-def index_program_enrolled_users(program_enrollments, chunk_size=100):
+def _index_chunks(items, doc_type, chunk_size=100):
     """
-    Add/update ProgramEnrollment records in Elasticsearch.
+    Add/update records in Elasticsearch.
 
     Args:
-        program_enrollments (iterable of ProgramEnrollments):
-            Iterable of ProgramEnrollments to serialize and index
+        items (iterable):
+            Iterable of serialized items to index
+        doc_type (str): The doc type for the items to be indexed
         chunk_size (int):
-            How many users to index at once.
+            How many items to index at once.
 
     Returns:
         int: Number of indexed items
     """
     # Use an iterator so we can keep track of what's been indexed already
-    program_enrollments = iter(program_enrollments)
+    items = iter(items)
     count = 0
-    chunk = list(islice(program_enrollments, chunk_size))
+    chunk = list(islice(items, chunk_size))
     while len(chunk) > 0:
-        count += _index_program_enrolled_users_chunk(chunk)
-        chunk = list(islice(program_enrollments, chunk_size))
+        count += _index_chunk(chunk, doc_type)
+        chunk = list(islice(items, chunk_size))
     refresh_index()
     return count
+
+
+def index_program_enrolled_users(program_enrollments, chunk_size=100):
+    """
+    Bulk index an iterable of ProgramEnrollments
+
+    Args:
+        program_enrollments (iterable of ProgramEnrollment): An iterable of program enrollments
+        chunk_size (int): The number of items per chunk to index
+    """
+    return _index_chunks(
+        (serialize_program_enrolled_user(program_enrollment) for program_enrollment in program_enrollments),
+        USER_DOC_TYPE,
+        chunk_size=chunk_size,
+    )
 
 
 def index_users(users, chunk_size=100):
@@ -360,3 +382,43 @@ def recreate_index():
     """
     clear_index()
     index_program_enrolled_users(ProgramEnrollment.objects.iterator())
+    index_percolate_queries(PercolateQuery.objects.iterator())
+
+
+def _serialize_percolate_query(query):
+    """Serialize PercolateQuery for Elasticsearch indexing"""
+    to_index = dict(query.query)
+    to_index["_id"] = query.id
+    return to_index
+
+
+def index_percolate_queries(percolate_queries, chunk_size=100):
+    """
+    Index percolate queries
+
+    Args:
+        percolate_queries (iterable of PercolateQuery):
+            An iterable of PercolateQuery
+        chunk_size (int): Number of queries to index per chunk
+    """
+    return _index_chunks(
+        (_serialize_percolate_query(query) for query in percolate_queries),
+        PERCOLATE_DOC_TYPE,
+        chunk_size=chunk_size,
+    )
+
+
+def delete_percolate_query(percolate_query):
+    """
+    Remove a percolate query from Elasticsearch
+
+    Args:
+        percolate_query (PercolateQuery):
+            An Elasticsearch query
+    """
+    conn = get_conn()
+    try:
+        conn.delete(index=settings.ELASTICSEARCH_INDEX, doc_type=PERCOLATE_DOC_TYPE, id=percolate_query.id)
+    except NotFoundError:
+        # Item is already gone
+        pass
