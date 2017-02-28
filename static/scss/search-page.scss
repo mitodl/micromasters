@@ -5,14 +5,6 @@
   margin: 0 auto;
   max-width: 1400px;
 
-  .mdl-grid {
-    padding: 0;
-
-    .mdl-cell {
-      margin: 0 8px;
-    }
-  }
-
   .centered {
     display: flex;
     flex-direction: row;
@@ -199,9 +191,9 @@
   }
 
   .search-header {
-    padding: 22px 0 0 5px;
+    padding-top: 22px;
+    padding-bottom: 5px;
     border-bottom: 1px solid $border-color;
-    margin: 0;
 
     > * {
       display: flex;
