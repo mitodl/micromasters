@@ -534,7 +534,7 @@ describe('DashboardPage', () => {
           enrollButton.simulate('click');
         }).then((state) => {
           assert.isTrue(state.ui.enrollCourseDialogVisibility);
-          assert.equal(state.ui.enrollSelectedCourseRun, course.runs[0]);
+          assert.deepEqual(state.ui.enrollSelectedCourseRun, course.runs[0]);
         });
       });
     });
