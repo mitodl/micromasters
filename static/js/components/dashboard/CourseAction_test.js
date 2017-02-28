@@ -396,7 +396,7 @@ describe('CourseAction', () => {
       ));
     });
 
-    it('indicates that a user must calculate the course price', () => {
+    it('allow user to click Enroll Now even without a calculated course price', () => {
       let firstRun = alterFirstRun(course, {
         enrollment_start_date: now.toISOString(),
       });
@@ -415,7 +415,30 @@ describe('CourseAction', () => {
       assert.equal(elements.buttonText, 'Enroll Now');
     });
 
-    it('shows an enroll/pay button if a user has skipped financial aid', () => {
+    it('indicates that a user must calculate the course price to upgrade to paid', () => {
+      let course = findAndCloneCourse(course => (
+        course.runs.length > 0 &&
+        course.runs[0].status === STATUS_CAN_UPGRADE
+      ));
+      let firstRun = alterFirstRun(course, {
+        enrollment_start_date: now.toISOString(),
+      });
+
+      const wrapper = renderCourseAction({
+        courseRun: firstRun,
+        financialAid: {
+          ...FINANCIAL_AID_PARTIAL_RESPONSE,
+          has_user_applied: false
+        },
+        hasFinancialAid: true,
+      });
+      let elements = getElements(wrapper);
+
+      assert.isTrue(elements.button.props().disabled);
+      assert.equal(elements.buttonText, 'Pay Now');
+    });
+
+    it('shows an enroll button if a user has skipped financial aid', () => {
       let firstRun = alterFirstRun(course, {
         enrollment_start_date: now.toISOString(),
       });
@@ -435,7 +458,7 @@ describe('CourseAction', () => {
       assert.include(elements.buttonText, 'Enroll Now');
     });
 
-    it('shows a disabled enroll/pay button if a user is pending approval', () => {
+    it('shows a disabled enroll button if a user is pending approval', () => {
       let firstRun = alterFirstRun(course, {
         enrollment_start_date: now.toISOString(),
       });

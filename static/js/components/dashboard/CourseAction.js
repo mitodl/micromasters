@@ -112,11 +112,17 @@ export default class CourseAction extends React.Component {
   }
 
   renderPayButton(run: CourseRun): React$Element<*> {
+    let props;
+    if (this.needsPriceCalculation()) {
+      props = {disabled: true};
+    } else {
+      props = {onClick: () => this.redirectToOrderSummary(run)};
+    }
     return (
       <Button
         className="dashboard-button pay-button"
         key="1"
-        onClick={() => this.redirectToOrderSummary(run)}
+        {...props}
       >
         Pay Now
       </Button>
@@ -168,9 +174,9 @@ export default class CourseAction extends React.Component {
       break;
     }
     case STATUS_CAN_UPGRADE: {
-      let date = moment(run.course_upgrade_deadline);
       action = this.renderPayButton(run);
-      let text = ifValidDate('', date => `Payment due: ${date.format(DASHBOARD_FORMAT)}`, date);
+      const date = moment(run.course_upgrade_deadline);
+      const text = ifValidDate('', date => `Payment due: ${date.format(DASHBOARD_FORMAT)}`, date);
       description = this.renderTextDescription(text);
       break;
     }
