@@ -108,7 +108,7 @@ class MailgunClient:
         Args:
             subject (str): Email subject
             body (str): Text email body
-            recipients (list): A list of recipient emails
+            recipients (iterable): A list of recipient emails
             sender_address (str): Sender email address
             sender_name (str): Sender name
             chunk_size (int): The maximum amount of emails to be sent at the same time
