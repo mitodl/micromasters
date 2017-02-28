@@ -2,6 +2,7 @@
 /* global SETTINGS: false */
 import _ from 'lodash';
 import React from 'react';
+import R from 'ramda';
 import { Provider } from 'react-redux';
 import { assert } from 'chai';
 import { mount } from 'enzyme';
@@ -27,6 +28,7 @@ import {
   USER_PROGRAM_RESPONSE,
   ELASTICSEARCH_RESPONSE,
 } from '../../test_constants';
+import { codeToCountryName } from '../../lib/location';
 
 describe('LearnerResult', () => {
   let helper;
@@ -69,11 +71,30 @@ describe('LearnerResult', () => {
     assert.equal(result.text(), getUserDisplayName(USER_PROFILE_RESPONSE));
   });
 
-  it("should include the user's location", () => {
+  it("should include the user's location for US residence", () => {
     let result = renderLearnerResult().find(".learner-location").find("span");
     assert.include(result.text(), USER_PROFILE_RESPONSE.city);
     assert.include(result.text(), USER_PROFILE_RESPONSE.country);
     assert.include(result.text(), USER_PROFILE_RESPONSE.state_or_territory);
+  });
+
+
+  it("should include the user's location for non US residence", () => {
+    let profile = R.clone(USER_PROFILE_RESPONSE);
+    profile['country'] = 'PK';
+    let searchResults = renderElasticSearchResult(
+      {
+        _source: {
+          profile: profile,
+          program: USER_PROGRAM_RESPONSE,
+        }
+      },
+      {}
+    );
+    let result = searchResults.find(".learner-location").find("span");
+    assert.include(result.text(), profile.city);
+    assert.include(result.text(), codeToCountryName(profile.country));
+    assert.notInclude(result.text(), profile.state_or_territory);
   });
 
   it("should include the user's current program grade when a grade is available", () => {
