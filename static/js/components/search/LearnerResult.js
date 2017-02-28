@@ -53,7 +53,7 @@ class LearnerResult extends SearchkitComponent {
         </Cell>
         <Cell col={4} className="centered learner-location">
           <span>
-            { getLocation(profile, false) }
+            { getLocation(profile, true) }
           </span>
         </Cell>
         <Cell col={3} className="learner-grade">
