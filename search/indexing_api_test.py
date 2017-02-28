@@ -457,7 +457,15 @@ class PercolateQueryTests(ESTestCase):
             '_version': 1,
             'found': True,
         }
-        delete_percolate_query(percolate_query)
+        delete_percolate_query(percolate_query.id)
+        assert es.get_percolate_query(percolate_query.id) == {
+            '_id': str(percolate_query.id),
+            '_index': settings.ELASTICSEARCH_INDEX,
+            '_type': PERCOLATE_DOC_TYPE,
+            'found': False,
+        }
+        # If we delete it again there should be no exception
+        delete_percolate_query(percolate_query.id)
         assert es.get_percolate_query(percolate_query.id) == {
             '_id': str(percolate_query.id),
             '_index': settings.ELASTICSEARCH_INDEX,

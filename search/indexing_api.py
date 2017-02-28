@@ -160,6 +160,9 @@ def index_program_enrolled_users(program_enrollments, chunk_size=100):
     Args:
         program_enrollments (iterable of ProgramEnrollment): An iterable of program enrollments
         chunk_size (int): The number of items per chunk to index
+
+    Returns:
+        int: Number of indexed items
     """
     return _index_chunks(
         (serialize_program_enrolled_user(program_enrollment) for program_enrollment in program_enrollments),
@@ -386,7 +389,16 @@ def recreate_index():
 
 
 def _serialize_percolate_query(query):
-    """Serialize PercolateQuery for Elasticsearch indexing"""
+    """
+    Serialize PercolateQuery for Elasticsearch indexing
+
+    Args:
+        query (PercolateQuery): A PercolateQuery instance
+
+    Returns:
+        dict:
+            This is the query dict value with `_id` set to the database id so that ES can update this in place.
+    """
     to_index = dict(query.query)
     to_index["_id"] = query.id
     return to_index
@@ -400,6 +412,9 @@ def index_percolate_queries(percolate_queries, chunk_size=100):
         percolate_queries (iterable of PercolateQuery):
             An iterable of PercolateQuery
         chunk_size (int): Number of queries to index per chunk
+
+    Returns:
+        int: Number of indexed items
     """
     return _index_chunks(
         (_serialize_percolate_query(query) for query in percolate_queries),
@@ -408,17 +423,17 @@ def index_percolate_queries(percolate_queries, chunk_size=100):
     )
 
 
-def delete_percolate_query(percolate_query):
+def delete_percolate_query(percolate_query_id):
     """
     Remove a percolate query from Elasticsearch
 
     Args:
-        percolate_query (PercolateQuery):
-            An Elasticsearch query
+        percolate_query_id (int):
+            The id of a deleted PercolateQuery
     """
     conn = get_conn()
     try:
-        conn.delete(index=settings.ELASTICSEARCH_INDEX, doc_type=PERCOLATE_DOC_TYPE, id=percolate_query.id)
+        conn.delete(index=settings.ELASTICSEARCH_INDEX, doc_type=PERCOLATE_DOC_TYPE, id=percolate_query_id)
     except NotFoundError:
         # Item is already gone
         pass
