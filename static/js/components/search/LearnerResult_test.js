@@ -73,6 +73,7 @@ describe('LearnerResult', () => {
     let result = renderLearnerResult().find(".learner-location").find("span");
     assert.include(result.text(), USER_PROFILE_RESPONSE.city);
     assert.include(result.text(), USER_PROFILE_RESPONSE.country);
+    assert.include(result.text(), USER_PROFILE_RESPONSE.state_or_territory);
   });
 
   it("should include the user's current program grade when a grade is available", () => {
