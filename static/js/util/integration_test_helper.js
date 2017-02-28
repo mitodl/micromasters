@@ -67,6 +67,10 @@ export default class IntegrationTestHelper {
     this.skipFinancialAidStub.returns(Promise.resolve());
     this.addFinancialAidStub = this.sandbox.stub(api, 'addFinancialAid');
     this.addFinancialAidStub.returns(Promise.resolve());
+    this.sendSearchResultMail = this.sandbox.stub(api, 'sendSearchResultMail');
+    this.sendSearchResultMail.returns(Promise.resolve());
+    this.sendCourseTeamMail = this.sandbox.stub(api, 'sendCourseTeamMail');
+    this.sendCourseTeamMail.returns(Promise.resolve());
     this.scrollIntoViewStub = this.sandbox.stub();
     window.HTMLDivElement.prototype.scrollIntoView = this.scrollIntoViewStub;
     window.HTMLFieldSetElement.prototype.scrollIntoView = this.scrollIntoViewStub;

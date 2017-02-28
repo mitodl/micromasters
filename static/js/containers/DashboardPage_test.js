@@ -29,6 +29,7 @@ import * as dashboardActions from '../actions/dashboard';
 import { CLEAR_COUPONS } from '../actions/coupons';
 import {
   SHOW_DIALOG,
+  HIDE_DIALOG,
   SET_TOAST_MESSAGE,
   CLEAR_UI,
   SET_COUPON_NOTIFICATION_VISIBILITY,
@@ -37,7 +38,13 @@ import {
   SET_ENROLL_SELECTED_COURSE_RUN,
   setToastMessage,
 } from '../actions/ui';
-import { START_EMAIL_EDIT } from '../actions/email';
+import {
+  INITIATE_SEND_EMAIL,
+  START_EMAIL_EDIT,
+  SEND_EMAIL_SUCCESS,
+  CLEAR_EMAIL_EDIT,
+  UPDATE_EMAIL_VALIDATION,
+} from '../actions/email';
 import {
   SET_TIMEOUT_ACTIVE,
   setInitialTime,
@@ -80,7 +87,10 @@ import {
   TOAST_SUCCESS,
 } from '../constants';
 import type { Program } from '../flow/programTypes';
-import { findCourse } from '../util/test_utils';
+import {
+  findCourse,
+  modifyTextField,
+} from '../util/test_utils';
 import { DASHBOARD_SUCCESS_ACTIONS } from './test_util';
 
 describe('DashboardPage', () => {
@@ -483,6 +493,22 @@ describe('DashboardPage', () => {
         }).then((state) => {
           assert.isFalse(state.ui.paymentTeaserDialogVisibility);
           assert.isTrue(state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG]);
+
+          modifyTextField(document.querySelector('.email-subject'), 'subject');
+          modifyTextField(document.querySelector('.email-body'), 'body');
+
+          return listenForActions([
+            UPDATE_EMAIL_VALIDATION,
+            INITIATE_SEND_EMAIL,
+            SEND_EMAIL_SUCCESS,
+            CLEAR_EMAIL_EDIT,
+            HIDE_DIALOG,
+          ], () => {
+            document.querySelector('.email-composition-dialog .save-button').click();
+          }).then(state => {
+            assert.isFalse(state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG]);
+            assert.isTrue(helper.sendCourseTeamMail.calledWith('subject', 'body', course.id));
+          });
         });
       });
     });

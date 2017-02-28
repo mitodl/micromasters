@@ -29,7 +29,7 @@ export type AllEmailsState = {
 
 export type EmailConfig = {
   title: string,
-  renderSubheading: (subheading: string) => React$Element<*>,
+  renderSubheading: (subheading: ?string) => React$Element<*>,
   emailOpenParams: (args: any) => Object,
   emailSendAction: (emailState: EmailState) => Dispatcher<EmailSendResponse>
 };

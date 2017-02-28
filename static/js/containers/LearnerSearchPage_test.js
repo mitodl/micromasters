@@ -1,15 +1,26 @@
 /* global SETTINGS: false */
 import { assert } from 'chai';
 import _ from 'lodash';
+import sinon from 'sinon';
 
 import IntegrationTestHelper from '../util/integration_test_helper';
 import {
   PROGRAMS,
   ELASTICSEARCH_RESPONSE,
 } from '../test_constants';
-import { START_EMAIL_EDIT } from '../actions/email';
-import { SHOW_DIALOG } from '../actions/ui';
+import {
+  INITIATE_SEND_EMAIL,
+  START_EMAIL_EDIT,
+  SEND_EMAIL_SUCCESS,
+  CLEAR_EMAIL_EDIT,
+  UPDATE_EMAIL_VALIDATION,
+} from '../actions/email';
+import {
+  SHOW_DIALOG,
+  HIDE_DIALOG,
+} from '../actions/ui';
 import { EMAIL_COMPOSITION_DIALOG } from '../components/email/constants';
+import { modifyTextField } from '../util/test_utils';
 
 describe('LearnerSearchPage', function () {
   let renderComponent, listenForActions, helper, server;
@@ -54,7 +65,7 @@ describe('LearnerSearchPage', function () {
     });
   });
 
-  it('email learners link shows the email composition dialog', () => {
+  it('sends an email using the email link', () => {
     const EMAIL_LINK_SELECTOR = '#email-selected';
     const EMAIL_DIALOG_ACTIONS = [
       START_EMAIL_EDIT,
@@ -68,6 +79,31 @@ describe('LearnerSearchPage', function () {
         emailLink.simulate('click');
       }).then((state) => {
         assert.isTrue(state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG]);
+
+        modifyTextField(document.querySelector('.email-subject'), 'subject');
+        modifyTextField(document.querySelector('.email-body'), 'body');
+
+        return listenForActions([
+          UPDATE_EMAIL_VALIDATION,
+          INITIATE_SEND_EMAIL,
+          SEND_EMAIL_SUCCESS,
+          CLEAR_EMAIL_EDIT,
+          HIDE_DIALOG,
+        ], () => {
+          document.querySelector('.email-composition-dialog .save-button').click();
+        }).then(state => {
+          assert.isFalse(state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG]);
+          assert.isTrue(helper.sendSearchResultMail.calledWith('subject', 'body', sinon.match.any));
+          assert.deepEqual(
+            Object.keys(helper.sendSearchResultMail.firstCall.args[2]),
+            [
+              'filter',
+              'aggs',
+              'size',
+              'sort',
+            ]
+          );
+        });
       });
     });
   });

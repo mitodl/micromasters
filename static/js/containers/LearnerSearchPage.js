@@ -2,16 +2,13 @@
 /* global SETTINGS: false */
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  SearchkitManager,
-  SearchkitProvider,
-} from 'searchkit';
 import _ from 'lodash';
 import type { Dispatch } from 'redux';
 import R from 'ramda';
 
 import ErrorMessage from '../components/ErrorMessage';
 import LearnerSearch from '../components/LearnerSearch';
+import withSearchkitManager from '../components/search/WithSearchkitManager';
 import { setSearchFilterVisibility } from '../actions/ui';
 import type { UIState } from '../reducers/ui';
 import { SEARCH_EMAIL_TYPE } from '../components/email/constants';
@@ -19,27 +16,16 @@ import { SEARCH_RESULT_EMAIL_CONFIG } from '../components/email/lib';
 import { withEmailDialog } from '../components/email/hoc';
 import type { AllEmailsState } from '../flow/emailTypes';
 import type { AvailableProgram } from '../flow/enrollmentTypes';
-import { getCookie } from '../lib/api';
 import { SEARCH_FILTER_DEFAULT_VISIBILITY } from '../constants';
 
 class LearnerSearchPage extends React.Component {
-  searchkit: SearchkitManager;
   props: {
     currentProgramEnrollment: AvailableProgram,
     dispatch:                 Dispatch,
     email:                    AllEmailsState,
     ui:                       UIState,
-    openEmailComposer:        () => void
+    openEmailComposer:        (emailType: string, emailOpenParams: any) => void
   };
-
-  constructor(props) {
-    super(props);
-    this.searchkit = new SearchkitManager(SETTINGS.search_url, {
-      httpHeaders: {
-        'X-CSRFToken': getCookie('csrftoken')
-      }
-    });
-  }
 
   checkFilterVisibility = (filterName: string): boolean => {
     const { ui: { searchFilterVisibility } } = this.props;
@@ -62,31 +48,33 @@ class LearnerSearchPage extends React.Component {
     }
 
     return (
-      <div>
-        <SearchkitProvider searchkit={this.searchkit}>
-          <LearnerSearch
-            checkFilterVisibility={this.checkFilterVisibility}
-            setFilterVisibility={this.setFilterVisibility}
-            openSearchResultEmailComposer={openEmailComposer(SEARCH_EMAIL_TYPE)}
-            currentProgramEnrollment={currentProgramEnrollment}
-          />
-        </SearchkitProvider>
-      </div>
+      <LearnerSearch
+        checkFilterVisibility={this.checkFilterVisibility}
+        setFilterVisibility={this.setFilterVisibility}
+        openSearchResultEmailComposer={openEmailComposer(SEARCH_EMAIL_TYPE)}
+        currentProgramEnrollment={currentProgramEnrollment}
+      />
     );
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, props) => {
+  let email = state.email;
+  if (email[email.currentlyActive]) {
+    email = _.cloneDeep(email);
+    email[email.currentlyActive].searchkit = props.searchkit;
+  }
   return {
     ui:                       state.ui,
-    email:                    state.email,
-    currentProgramEnrollment: state.currentProgramEnrollment
+    email:                    email,
+    currentProgramEnrollment: state.currentProgramEnrollment,
   };
 };
 
 export default R.compose(
+  withSearchkitManager,
   connect(mapStateToProps),
   withEmailDialog({
     [SEARCH_EMAIL_TYPE]: SEARCH_RESULT_EMAIL_CONFIG
-  })
+  }),
 )(LearnerSearchPage);

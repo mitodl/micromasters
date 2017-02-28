@@ -10,7 +10,7 @@ const dummyEmailActionDispatcher = () => (
 export const TEST_EMAIL_TYPE = 'TEST_EMAIL';
 export const TEST_EMAIL_CONFIG = {
   title: 'Test Email Dialog',
-  renderSubheading: (subheading: string) => (
+  renderSubheading: (subheading: ?string) => (
     <div className="test-subheading">{ subheading }</div>
   ),
   emailOpenParams: () => {},

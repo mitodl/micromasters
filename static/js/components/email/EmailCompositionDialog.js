@@ -12,7 +12,7 @@ export default class EmailCompositionDialog extends React.Component {
     dialogVisibility:           boolean,
     activeEmail:                EmailState,
     title?:                     string,
-    subheadingRenderer?:        () => React$Element<*>,
+    subheadingRenderer?:        (subheading: ?string) => React$Element<*>,
     closeAndClearEmailComposer: () => void,
     closeEmailComposerAndSend:  () => void,
     updateEmailFieldEdit:       () => void

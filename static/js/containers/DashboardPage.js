@@ -122,7 +122,7 @@ class DashboardPage extends React.Component {
     financialAid:             FinancialAidState,
     location:                 Object,
     pearson:                  PearsonAPIState,
-    openEmailComposer:        () => void
+    openEmailComposer:        (emailType: string, emailOpenParams: any) => void
   };
 
   componentDidMount() {

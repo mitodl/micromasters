@@ -11,7 +11,7 @@ import { EmailConfig } from '../../flow/emailTypes';
 export const COURSE_TEAM_EMAIL_CONFIG: EmailConfig = {
   title: 'Contact the Course Team',
 
-  renderSubheading: (subheading: string) => (
+  renderSubheading: (subheading: ?string) => (
     <div className="subheading-section">
       <Grid noSpacing={true}>
         <Cell col={1} align={"middle"} className="subheading-to">TO:</Cell>
@@ -38,7 +38,7 @@ export const SEARCH_RESULT_EMAIL_CONFIG: EmailConfig = {
   title: 'New Email',
 
   emailOpenParams: (searchkit: Object) => ({
-    params: {searchkit: searchkit},
+    params: {},
     subheading: `${searchkit.getHitsCount() || 0} recipients selected`
   }),
 
@@ -46,7 +46,7 @@ export const SEARCH_RESULT_EMAIL_CONFIG: EmailConfig = {
     sendSearchResultMail(
       emailState.inputs.subject || '',
       emailState.inputs.body || '',
-      emailState.params.searchkit.buildQuery().query
+      emailState.searchkit.buildQuery().query
     )
   )
 };
