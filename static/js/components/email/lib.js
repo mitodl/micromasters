@@ -44,7 +44,8 @@ export const SEARCH_RESULT_EMAIL_CONFIG: EmailConfig = {
   title: 'New Email',
 
   emailOpenParams: (searchkit: Object) => ({
-    subheading: `${searchkit.getHitsCount() || 0} recipients selected`
+    subheading: `${searchkit.getHitsCount() || 0} recipients selected`,
+    supportsAutomaticEmails: true,
   }),
 
   getEmailSendFunction: () => sendSearchResultMail,
@@ -52,8 +53,9 @@ export const SEARCH_RESULT_EMAIL_CONFIG: EmailConfig = {
   emailSendParams: (emailState) => ([
     emailState.inputs.subject || '',
     emailState.inputs.body || '',
-    emailState.searchkit.buildQuery().query
-  ])
+    emailState.searchkit.buildQuery().query,
+    emailState.inputs.sendAutomaticEmails || false,
+ ])
 };
 
 export const LEARNER_EMAIL_CONFIG: EmailConfig = {

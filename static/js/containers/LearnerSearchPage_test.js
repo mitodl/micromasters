@@ -82,6 +82,7 @@ describe('LearnerSearchPage', function () {
 
         modifyTextField(document.querySelector('.email-subject'), 'subject');
         modifyTextField(document.querySelector('.email-body'), 'body');
+        document.querySelector('.email-automatic input[type=checkbox]').click();
 
         return listenForActions([
           UPDATE_EMAIL_VALIDATION,
@@ -93,7 +94,7 @@ describe('LearnerSearchPage', function () {
           document.querySelector('.email-composition-dialog .save-button').click();
         }).then(state => {
           assert.isFalse(state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG]);
-          assert.isTrue(helper.sendSearchResultMail.calledWith('subject', 'body', sinon.match.any));
+          assert.isTrue(helper.sendSearchResultMail.calledWith('subject', 'body', sinon.match.any, true));
           assert.deepEqual(
             Object.keys(helper.sendSearchResultMail.firstCall.args[2]),
             [

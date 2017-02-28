@@ -1,6 +1,7 @@
 // @flow
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
+import Checkbox from 'material-ui/Checkbox';
 
 import { FETCH_PROCESSING } from '../../actions';
 import { dialogActions } from '../inputs/util';
@@ -46,13 +47,29 @@ export default class EmailCompositionDialog extends React.Component {
     if (!this.props.activeEmail) return null;
 
     const {
-      activeEmail: { fetchStatus, inputs },
+      activeEmail: { fetchStatus, inputs, supportsAutomaticEmails },
       title,
       dialogVisibility,
       closeAndClearEmailComposer,
       closeEmailComposerAndSend,
       updateEmailFieldEdit
     } = this.props;
+    let automaticCheckbox;
+    if (supportsAutomaticEmails) {
+      automaticCheckbox = <Checkbox
+        label="Automatically send this message in the future, whenever new users join who meet these criteria"
+        className="email-automatic"
+        checked={inputs.sendAutomaticEmails || false}
+        value={true}
+        onCheck={e => {
+          updateEmailFieldEdit('sendAutomaticEmails', {
+            target: {
+              value: e.target.checked
+            }
+          });
+        }}
+      />;
+    }
 
     return <Dialog
       title={title || "New Email"}
@@ -88,6 +105,7 @@ export default class EmailCompositionDialog extends React.Component {
           onChange={updateEmailFieldEdit('body')}
         />
         { this.showValidationError('body') }
+        {automaticCheckbox}
       </div>
     </Dialog>;
   }

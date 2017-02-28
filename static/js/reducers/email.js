@@ -31,7 +31,8 @@ export const INITIAL_EMAIL_STATE: EmailState = {
   params: {},
   validationErrors: {},
   sendError: {},
-  subheading: undefined
+  subheading: undefined,
+  supportsAutomaticEmails: false,
 };
 
 export const INITIAL_ALL_EMAILS_STATE: AllEmailsState = {
@@ -65,7 +66,8 @@ export const email = (state: AllEmailsState = INITIAL_ALL_EMAILS_STATE, action: 
     newState[emailType] = {
       ...INITIAL_EMAIL_STATE,
       params: action.payload.params || {},
-      subheading: action.payload.subheading
+      subheading: action.payload.subheading,
+      supportsAutomaticEmails: action.payload.supportsAutomaticEmails,
     };
     newState.currentlyActive = emailType;
     return newState;

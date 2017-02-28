@@ -171,13 +171,16 @@ export function checkout(courseId: string): Promise<CheckoutResponse> {
   });
 }
 
-export function sendSearchResultMail(subject: string, body: string, searchRequest: Object): Promise<EmailSendResponse> {
+export function sendSearchResultMail(
+  subject: string, body: string, searchRequest: Object, sendAutomaticEmails: boolean,
+): Promise<EmailSendResponse> {
   return fetchJSONWithCSRF('/api/v0/mail/search/', {
     method: 'POST',
     body: JSON.stringify({
       email_subject: subject,
       email_body: body,
-      search_request: searchRequest
+      search_request: searchRequest,
+      send_automatic_emails: sendAutomaticEmails,
     })
   });
 }

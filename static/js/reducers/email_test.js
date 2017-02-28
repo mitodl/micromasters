@@ -45,7 +45,10 @@ describe('email reducers', () => {
 
   it('should let you start editing an email', () => {
     return dispatchThen(startEmailEdit(emailType), [START_EMAIL_EDIT]).then(state => {
-      assert.deepEqual(state[emailType], initialExpectedEmailState);
+      assert.deepEqual(state[emailType], {
+        ...initialExpectedEmailState,
+        supportsAutomaticEmails: undefined,
+      });
     });
   });
 
@@ -57,7 +60,11 @@ describe('email reducers', () => {
       updateEmailEdit({type: emailType, inputs: updatedInputs}),
       [UPDATE_EMAIL_EDIT]
     ).then(state => {
-      assert.deepEqual(state[emailType], { ...initialExpectedEmailState, inputs: updatedInputs });
+      assert.deepEqual(state[emailType], {
+        ...initialExpectedEmailState,
+        supportsAutomaticEmails: undefined,
+        inputs: updatedInputs,
+      });
     });
   });
 
