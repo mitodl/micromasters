@@ -9,6 +9,7 @@ import {
   SelectedFilters,
   RefinementListFilter,
   HitsStats,
+  Pagination,
   ResetFilters,
   RangeFilter,
   SearchBox,
@@ -35,8 +36,6 @@ import type { Option } from '../flow/generalTypes';
 import type { AvailableProgram } from '../flow/enrollmentTypes';
 import type { SearchSortItem } from '../flow/searchTypes';
 import { EDUCATION_LEVELS } from '../constants';
-
-import PatchedPagination from './search/PatchedPagination';
 
 const makeCountryNameTranslations: () => Object = () => {
   let translations = {};
@@ -171,7 +170,7 @@ export default class LearnerSearch extends SearchkitComponent {
               analyzer: "folding"
             }}
           />
-          <PatchedPagination showText={false} listComponent={CustomPaginationDisplay} />
+          <Pagination showText={false} listComponent={CustomPaginationDisplay} />
         </Cell>
         <Cell col={12} className="mm-filters">
           <SelectedFilters />

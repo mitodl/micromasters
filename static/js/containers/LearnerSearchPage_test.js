@@ -53,7 +53,7 @@ describe('LearnerSearchPage', function () {
     return renderComponent('/learners').then(() => {
       let request = server.requests[server.requests.length - 1];
       let body = JSON.parse(request.requestBody);
-      assert.deepEqual(body.filter.term['program.id'], PROGRAMS[0].id);
+      assert.deepEqual(body.post_filter.term['program.id'], PROGRAMS[0].id);
     });
   });
 
@@ -97,7 +97,7 @@ describe('LearnerSearchPage', function () {
           assert.deepEqual(
             Object.keys(helper.sendSearchResultMail.firstCall.args[2]),
             [
-              'filter',
+              'post_filter',
               'aggs',
               'size',
               'sort',

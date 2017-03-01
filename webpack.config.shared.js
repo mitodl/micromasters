@@ -44,9 +44,6 @@ module.exports = {
         "node_modules"
       ],
       extensions: ['.js', '.jsx'],
-      alias: {
-        react: path.resolve('./node_modules/react')
-      }
     },
     performance: {
       hints: false
