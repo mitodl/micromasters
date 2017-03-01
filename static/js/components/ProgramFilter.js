@@ -26,11 +26,19 @@ export default class ProgramFilter extends SearchkitComponent {
     return this._accessor;
   }
 
+  refreshSearchkit = () => {
+    // (╯°□°)╯︵ ┻━┻
+    this.context.searchkit.resetState();
+    this.context.searchkit.reloadSearch();
+  };
+
+  componentDidMount() {
+    this.refreshSearchkit();
+  }
+
   componentDidUpdate(prevProps: Object): void {
     if (!_.isEqual(prevProps.currentProgramEnrollment, this.props.currentProgramEnrollment)) {
-      // (╯°□°)╯︵ ┻━┻
-      this.context.searchkit.resetState();
-      this.context.searchkit.reloadSearch();
+      this.refreshSearchkit();
     }
   }
 
