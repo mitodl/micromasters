@@ -53,7 +53,7 @@ def create_program_limit_query(user, filter_on_email_optin=False):
     ]
 
     if filter_on_email_optin:
-        must.append(Q('term', **{'program.email_optin': True}))
+        must.append(Q('term', **{'profile.email_optin': True}))
 
     # no matter what the query is, limit the programs to the allowed ones
     # if this is a superset of what searchkit sends, this will not impact the result

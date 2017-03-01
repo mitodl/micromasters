@@ -37,7 +37,6 @@ from profiles.factories import (
     EmploymentFactory,
     ProfileFactory,
 )
-from profiles.models import Profile
 from roles.models import Role
 from roles.roles import Staff
 from search.base import MockedESTestCase
@@ -157,7 +156,6 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         """
         Tests that full ProgramEnrollment serialization works as expected
         """
-        Profile.objects.filter(pk=self.profile.pk).update(email_optin=True)
         self.profile.refresh_from_db()
         program = self.program_enrollment.program
         assert UserProgramSearchSerializer.serialize(self.program_enrollment) == {
@@ -166,26 +164,6 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
             'semester_enrollments': self.semester_enrollments,
             'grade_average': 75,
             'is_learner': True,
-            'email_optin': True,
-            'num_courses_passed': 1,
-            'total_courses': 1
-        }
-
-    @ddt.data(False, True)
-    def test_full_program_user_serialization_email_optin_changes(self, email_optin_flag):
-        """
-        Tests that full ProgramEnrollment serialization works as expected on email_optin changes.
-        """
-        Profile.objects.filter(pk=self.profile.pk).update(email_optin=email_optin_flag)
-        self.profile.refresh_from_db()
-        program = self.program_enrollment.program
-        assert UserProgramSearchSerializer.serialize(self.program_enrollment) == {
-            'id': program.id,
-            'enrollments': self.serialized_enrollments,
-            'semester_enrollments': self.semester_enrollments,
-            'grade_average': 75,
-            'is_learner': True,
-            'email_optin': email_optin_flag,
             'num_courses_passed': 1,
             'total_courses': 1
         }
@@ -197,7 +175,6 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         the difference with test_full_program_user_serialization
         is that the grade is calculated using the current grades
         """
-        Profile.objects.filter(pk=self.profile.pk).update(email_optin=True)
         self.profile.refresh_from_db()
         expected_result = {
             'id': self.fa_program.id,
@@ -205,7 +182,6 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
             'semester_enrollments': self.fa_semester_enrollments,
             'grade_average': 95,
             'is_learner': True,
-            'email_optin': True,
             'num_courses_passed': 1,
             'total_courses': 2
         }
@@ -215,7 +191,6 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         """
         Tests that when user has staff role, the serialization shows that she is not a learner.
         """
-        Profile.objects.filter(pk=self.profile.pk).update(email_optin=True)
         self.profile.refresh_from_db()
         program = self.program_enrollment.program
         Role.objects.create(
@@ -230,7 +205,6 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
             'semester_enrollments': self.semester_enrollments,
             'grade_average': 75,
             'is_learner': False,
-            'email_optin': True,
             'num_courses_passed': 1,
             'total_courses': 1
         }
@@ -241,7 +215,6 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         has no passed courses.
         """
         with patch.object(MMTrack, 'count_courses_passed', return_value=0):
-            Profile.objects.filter(pk=self.profile.pk).update(email_optin=True)
             self.profile.refresh_from_db()
             program = self.program_enrollment.program
             assert UserProgramSearchSerializer.serialize(self.program_enrollment) == {
@@ -250,7 +223,6 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
                 'semester_enrollments': self.semester_enrollments,
                 'grade_average': 75,
                 'is_learner': True,
-                'email_optin': True,
                 'num_courses_passed': 0,
                 'total_courses': 1
             }

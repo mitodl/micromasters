@@ -195,7 +195,7 @@ class SearchAPITests(ESTestCase):  # pylint: disable=missing-docstring
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0].user_id, self.learner.id)
         self.assertTrue(results[0].program.is_learner)
-        self.assertTrue(results[0].program.email_optin)
+        self.assertTrue(results[0].profile.email_optin)
 
     def test_all_query_matching_emails(self):
         """

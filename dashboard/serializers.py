@@ -72,7 +72,6 @@ class UserProgramSearchSerializer:
             'semester_enrollments': cls.serialize_semester_enrollments(enrollments_qset),
             'grade_average': mmtrack.calculate_final_grade_average(),
             'is_learner': is_learner(user, program),
-            'email_optin': user.profile.email_optin,
             'num_courses_passed': mmtrack.count_courses_passed(),
             'total_courses': program.course_set.count()
         }
