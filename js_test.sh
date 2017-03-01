@@ -35,7 +35,9 @@ if [[ $(
     awk '{print $1}'
     ) -ne 0 ]]  # is file empty?
 then
-    echo "Error output found, see test output logs to see which test they came from."
+    echo "Error output found:"
+    cat "$TMP_FILE"
+    echo "End of output"
     rm -f "$TMP_FILE"
     exit 1
 fi
