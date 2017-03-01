@@ -144,21 +144,21 @@ describe("ErrorMessage", () => {
         });
       });
 
-      it('shows an error if there are no programs', () => {
+      it('shows nothing if there are no programs', () => {
         helper.dashboardStub.returns(Promise.resolve([]));
 
         return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
           let message = wrapper.find('.page-content').text();
-          assert(message.includes("Additional info: No program enrollment is available."));
+          assert.equal(message, "");
         });
       });
 
-      it('shows an error if there is no matching current program enrollment', () => {
+      it('shows nothing if there is no matching current program enrollment', () => {
         helper.programsGetStub.returns(Promise.resolve([]));
 
         return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
           let message = wrapper.find('.page-content').text();
-          assert(message.includes("Additional info: No program enrollment is available."));
+          assert.equal(message, "");
         });
       });
     });
@@ -254,12 +254,12 @@ describe("ErrorMessage", () => {
     });
 
     describe('learners page', () => {
-      it('shows an error if there is no matching current program enrollment', () => {
+      it('shows nothing if there is no matching current program enrollment', () => {
         helper.programsGetStub.returns(Promise.resolve([]));
 
         return renderComponent("/learners").then(([wrapper]) => {
           let message = wrapper.find('.page-content').text();
-          assert(message.includes("Additional info: No program enrollment is available."));
+          assert.equal(message, "");
         });
       });
     });

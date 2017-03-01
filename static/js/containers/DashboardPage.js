@@ -531,7 +531,7 @@ class DashboardPage extends React.Component {
         return null;
       }
     }
-    return <ErrorMessage errorInfo={{user_message: "No program enrollment is available."}} />;
+    return null;
   };
 
   renderPageContent = (): React$Element<*>|null => {
@@ -628,7 +628,7 @@ class DashboardPage extends React.Component {
 
     const errorMessage = this.renderErrorMessage();
     let pageContent;
-    if (_.isNil(errorMessage)) {
+    if (_.isNil(errorMessage) && this.getCurrentlyEnrolledProgram()) {
       pageContent = this.renderPageContent();
     }
 
