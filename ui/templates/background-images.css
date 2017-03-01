@@ -1,0 +1,22 @@
+{% load static %}
+.banner-wrapper {
+  background-image: url({% static "images/lp_hero.jpg" %});
+}
+.navbar .navbar-header .brand-logo {
+  background-image: url({% static "images/mit_logo.svg" %});
+}
+.navbar .navbar-header .brand-logo:hover {
+  background-image: url({% static "images/mit_logo_on.svg" %});
+}
+.navbar .navbar-header .micromasters-logo {
+  background-image: url({% static "images/micromasters_logo.svg" %});
+}
+.navbar .navbar-header .micromasters-logo:hover {
+  background-image: url({% static "images/micromasters_logo_on.svg" %});
+}
+.how-it-works-section .reasons-images-wrap::after {
+  content: url({% static "images/hiw-arrow2.png" %});
+}
+.sk-search-box form .sk-search-box__icon:before {
+  background-image: url({% static "images/search-icon.svg" %});
+}

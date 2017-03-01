@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import Http404, redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import View
+from django.views.generic import View, TemplateView
 from raven.contrib.django.raven_compat.models import client as sentry
 from rolepermissions.shortcuts import available_perm_status
 from rolepermissions.verifications import has_role
@@ -180,3 +180,12 @@ def page_500(request, *args, **kwargs):  # pylint: disable=unused-argument
     Overridden handler for the 404 error pages.
     """
     return standard_error_page(request, 500, "500.html")
+
+
+class BackgroundImagesCSSView(TemplateView):
+    """
+    Pass a CSS file through Django's template system, so that we can make
+    the URLs point to a CDN.
+    """
+    template_name = "background-images.css"
+    content_type = "text/css"

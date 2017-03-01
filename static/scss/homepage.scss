@@ -29,43 +29,26 @@ body.app-media {
         float: left;
       }
 
-      .brand-logo {
+      .brand-logo, .micromasters-logo {
         float: left;
-        margin-right: 15px;
-        background: url(/static/images/mit_logo.svg) no-repeat;
+        /* background image from background-images.css */
+        background-repeat: no-repeat;
         height: 36px;
         width: 51px;
         overflow: visible;
         position: relative;
-        top: 5px;
       }
 
-      .brand-logo:hover {
-        background: url(/static/images/mit_logo_on.svg) no-repeat;
+      .brand-logo {
         height: 36px;
         width: 51px;
-        overflow: visible;
-        position: relative;
         top: 5px;
+        margin-right: 15px;
       }
 
       .micromasters-logo {
-        float: left;
-        background: url(/static/images/micromasters_logo.svg) no-repeat;
         height: 23px;
         width: 155px;
-        overflow: visible;
-        position: relative;
-        top: 13px;
-      }
-
-      .micromasters-logo:hover {
-        float: left;
-        background: url(/static/images/micromasters_logo_on.svg) no-repeat;
-        height: 23px;
-        width: 155px;
-        overflow: visible;
-        position: relative;
         top: 13px;
       }
 
@@ -159,13 +142,16 @@ body.app-media {
 }
 
 .banner-wrapper {
-  background: #222 center center url(/static/images/lp_hero.jpg) no-repeat;
+  /* background image from background-images.css */
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-color: #222;
+  background-size: cover;
+  background-attachment: fixed;
   margin: 0 auto;
   width: 100%;
   min-height: 620px;
   padding: 0;
-  background-size: cover;
-  background-attachment: fixed;
   position: relative;
   height: 94vh;
 
@@ -600,7 +586,7 @@ body.app-media {
   background: #1a1a1a;
 
   .reasons-images-wrap::after {
-    content: url(/static/images/hiw-arrow2.png);
+    /* content from background-images.css */
     position: absolute;
     left: 103%;
     top: 18px;

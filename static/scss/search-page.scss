@@ -271,7 +271,8 @@
       }
 
       .sk-search-box__icon:before {
-        background: url(/static/images/search-icon.svg) no-repeat top left;
+        /* background-image from background-images.css */
+        background: top left no-repeat;
       }
     }
 
