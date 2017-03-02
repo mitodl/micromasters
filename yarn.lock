@@ -5956,7 +5956,7 @@ searchkit-multiselect@^0.0.1:
   dependencies:
     react-select "^1.0.0-beta12"
 
-searchkit@rc:
+searchkit@1.0.0-7:
   version "1.0.0-7"
   resolved "https://registry.yarnpkg.com/searchkit/-/searchkit-1.0.0-7.tgz#d2f391b69eab75e1101e77363a6e2eecbc8f6883"
   dependencies:

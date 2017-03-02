@@ -106,7 +106,7 @@
     "sanctuary": "^0.11.1",
     "sass-lint": "^1.10.2",
     "sass-loader": "^4.1.1",
-    "searchkit": "rc",
+    "searchkit": "1.0.0-7",
     "searchkit-multiselect": "^0.0.1",
     "sinon": "1.17.4",
     "slick-carousel": "^1.6.0",
