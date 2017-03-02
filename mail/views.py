@@ -3,7 +3,6 @@ Views for email REST APIs
 """
 import logging
 
-from django.db import transaction
 from rest_framework import (
     authentication,
     permissions,
@@ -13,25 +12,28 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from profiles.models import Profile
-from profiles.util import full_name
 from courses.models import Course
 from financialaid.models import FinancialAid
 from financialaid.permissions import UserCanEditFinancialAid
-from mail.api import MailgunClient
-from mail.models import AutomaticEmail
+from mail.api import (
+    add_automatic_email,
+    MailgunClient,
+    mark_emails_as_sent,
+)
+from mail.exceptions import SendBatchException
 from mail.permissions import (
+    UserCanMessageCourseTeamPermission,
     UserCanMessageLearnersPermission,
     UserCanMessageSpecificLearnerPermission,
-    UserCanMessageCourseTeamPermission
 )
 from mail.serializers import GenericMailSerializer
 from mail.utils import generate_mailgun_response_json
+from profiles.models import Profile
+from profiles.util import full_name
 from search.api import (
     create_search_obj,
-    get_all_query_matching_emails
+    get_all_query_matching_emails,
 )
-from search.models import PercolateQuery
 
 log = logging.getLogger(__name__)
 
@@ -108,22 +110,37 @@ class SearchResultMailView(APIView):
             filter_on_email_optin=True
         )
         emails = get_all_query_matching_emails(search_obj)
+
+        automatic_email = None
         if request.data.get('send_automatic_emails'):
-            with transaction.atomic():
-                percolate_query = PercolateQuery.objects.create(query=search_obj.to_dict())
-                AutomaticEmail.objects.create(
-                    query=percolate_query,
-                    enabled=True,
-                    email_subject=email_subject,
-                    email_body=email_body,
-                    sender_name=sender_name,
-                )
-        MailgunClient.send_batch(
-            subject=email_subject,
-            body=email_body,
-            recipients=emails,
-            sender_name=sender_name,
-        )
+            automatic_email = add_automatic_email(
+                search_obj,
+                email_subject=request.data['email_subject'],
+                email_body=request.data['email_body'],
+                sender_name=sender_name,
+            )
+
+        try:
+            MailgunClient.send_batch(
+                subject=email_subject,
+                body=email_body,
+                recipients=emails,
+                sender_name=sender_name,
+            )
+
+            if automatic_email:
+                mark_emails_as_sent(automatic_email, emails)
+        except SendBatchException as send_batch_exception:
+            if automatic_email:
+                failure_emails = set()
+                for recipients, _ in send_batch_exception.exception_pairs:
+                    failure_emails |= set(recipients)
+                success_emails = set(emails).difference(failure_emails)
+
+                mark_emails_as_sent(automatic_email, success_emails)
+
+            raise
+
         return Response(status=status.HTTP_200_OK)
 
 

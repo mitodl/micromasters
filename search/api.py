@@ -9,7 +9,9 @@ from search.connection import (
     get_default_alias,
     get_conn,
     DOC_TYPES,
+    USER_DOC_TYPE,
 )
+from search.models import PercolateQuery
 from search.exceptions import NoProgramAccessException
 
 DEFAULT_ES_LOOP_PAGE_SIZE = 100
@@ -147,3 +149,46 @@ def get_all_query_matching_emails(search_obj, page_size=DEFAULT_ES_LOOP_PAGE_SIZ
         all_results_returned = to_index >= search_results.hits.total
         loop += 1
     return results
+
+
+def search_percolate_queries(program_enrollment_id):
+    """
+    Find all PercolateQuery objects whose queries match a user document
+
+    Args:
+        program_enrollment_id (int): A ProgramEnrollment id
+
+    Returns:
+        django.db.models.query.QuerySet: A QuerySet of PercolateQuery matching the percolate results
+    """
+    conn = get_conn()
+    result = conn.percolate(settings.ELASTICSEARCH_INDEX, USER_DOC_TYPE, id=program_enrollment_id)
+    result_ids = [row['_id'] for row in result['matches']]
+    return PercolateQuery.objects.filter(id__in=result_ids)
+
+
+def adjust_search_for_percolator(search):
+    """
+    Returns an updated Search which can be used with percolator.
+
+    Percolated queries can only store the query portion of the search object
+    (see https://github.com/elastic/elasticsearch/issues/19680). This will modify the original search query
+    to add post_filter arguments to the query part of the search. Then all parts of the Search other than
+    query will be removed.
+
+    Args:
+        search (Search): A search object
+
+    Returns:
+        Search: updated search object
+    """
+    search_dict = search.to_dict()
+    if 'post_filter' in search_dict:
+        search = search.filter(search_dict['post_filter'])
+
+    # Remove all other keys besides query
+    updated_search_dict = {}
+    search_dict = search.to_dict()
+    if 'query' in search_dict:
+        updated_search_dict['query'] = search_dict['query']
+    return Search.from_dict(updated_search_dict)

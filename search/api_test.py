@@ -16,10 +16,12 @@ from profiles.factories import ProfileFactory
 from roles.models import Role
 from roles.roles import Staff
 from search.api import (
-    execute_search,
+    adjust_search_for_percolator,
     create_search_obj,
-    prepare_and_execute_search,
+    execute_search,
     get_all_query_matching_emails,
+    prepare_and_execute_search,
+    search_percolate_queries,
 )
 from search.base import ESTestCase
 from search.connection import (
@@ -27,6 +29,7 @@ from search.connection import (
     get_default_alias,
 )
 from search.exceptions import NoProgramAccessException
+from search.models import PercolateQuery
 
 
 class FakeEmailSearchHits:
@@ -211,3 +214,85 @@ class SearchAPITests(ESTestCase):  # pylint: disable=missing-docstring
             # Assert that the Search object is limited to return only the email field
             args, _ = mock_execute_search.call_args  # pylint: disable=unpacking-non-sequence
             assert args[0].to_dict()['fields'] == 'email'
+
+
+class PercolateTests(ESTestCase):
+    """Tests regarding percolator queries"""
+
+    def test_search_percolate_queries(self):
+        """search_percolate_queries should find all PercolateQuery which match the given ProgramEnrollment"""
+        with mute_signals(post_save):
+            profile = ProfileFactory.create(filled_out=True)
+        program_enrollment = ProgramEnrollmentFactory.create(user=profile.user)
+        # This patch works around on_commit by invoking it immediately, since in TestCase all tests run in transactions
+        with patch('search.signals.transaction.on_commit', side_effect=lambda callback: callback()):
+            query = PercolateQuery.objects.create(query={
+                "query": {
+                    "match": {
+                        "profile.first_name": profile.first_name,
+                    }
+                }
+            }, original_query={})
+
+            # Another query that doesn't match
+            PercolateQuery.objects.create(query={
+                "query": {
+                    "match": {
+                        "profile.first_name": "missing",
+                    }
+                }
+            }, original_query={})
+        assert list(search_percolate_queries(program_enrollment.id).values_list("id", flat=True)) == [query.id]
+
+    def test_not_percolated(self):
+        """If there are no percolated queries we should return an empty queryset"""
+        with mute_signals(post_save):
+            profile = ProfileFactory.create(filled_out=True)
+        program_enrollment = ProgramEnrollmentFactory.create(user=profile.user)
+        assert list(search_percolate_queries(program_enrollment.id)) == []
+
+    def test_adjust_search_for_percolator(self):
+        """adjust_search_for_percolator should move post_filter into the query itself and remove all other pieces"""
+        original_query = {
+            "query": {
+                "multi_match": {
+                    "query": "p",
+                    "analyzer": "folding",
+                    "type": "phrase_prefix",
+                    "fields": ["profile.first_name.folded"]
+                }
+            },
+            "post_filter": {"term": {"program.id": 1}},
+            "aggs": {
+                "profile.work_history.company_name11": {
+                    "filter": {"term": {"program.id": 1}}
+                }
+            },
+            "size": 50,
+            "sort": [
+                {
+                    "profile.last_name": {"order": "asc"}
+                }
+            ]
+        }
+        search_obj = Search.from_dict(original_query)
+        adjusted_search = adjust_search_for_percolator(search_obj)
+        assert adjusted_search.to_dict() == {
+            'query': {
+                'bool': {
+                    'filter': [
+                        {'term': {'program.id': 1}}
+                    ],
+                    'must': [
+                        {
+                            'multi_match': {
+                                'analyzer': 'folding',
+                                'fields': ['profile.first_name.folded'],
+                                'query': 'p',
+                                'type': 'phrase_prefix'
+                            }
+                        }
+                    ]
+                }
+            }
+        }

@@ -10,6 +10,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_save
 from django.test import override_settings
+from elasticsearch_dsl import Search
 from factory.django import mute_signals
 from requests import Response
 from requests.exceptions import HTTPError
@@ -20,15 +21,27 @@ from rest_framework.status import (
 )
 
 from dashboard.models import ProgramEnrollment
+from dashboard.factories import ProgramEnrollmentFactory
 from courses.factories import CourseFactory
 from ecommerce.factories import CoursePriceFactory
 from financialaid.factories import FinancialAidFactory
-from mail.api import MailgunClient
 from mail.exceptions import SendBatchException
-from mail.models import FinancialAidEmailAudit
+from mail.api import (
+    MailgunClient,
+    add_automatic_email,
+    mark_emails_as_sent,
+    send_automatic_emails,
+)
+from mail.models import (
+    AutomaticEmail,
+    FinancialAidEmailAudit,
+    SentAutomaticEmail,
+)
 from mail.views_test import mocked_json
 from profiles.factories import ProfileFactory
+from search.api import adjust_search_for_percolator
 from search.base import MockedESTestCase
+from search.models import PercolateQuery
 
 
 @ddt
@@ -487,3 +500,146 @@ class CourseTeamMailAPITests(MockedESTestCase):
         assert response.raise_for_status.called is raise_for_status
         assert response.status_code == HTTP_400_BAD_REQUEST
         assert response.json() == {}
+
+
+class AutomaticEmailTests(MockedESTestCase):
+    """Tests regarding automatic emails"""
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+
+        cls.program_enrollment_unsent = ProgramEnrollmentFactory.create()
+        cls.program_enrollment_sent = ProgramEnrollmentFactory.create()
+        with mute_signals(post_save):
+            cls.percolate_query = PercolateQuery.objects.create(
+                query="query",
+                original_query="original",
+            )
+            cls.percolate_query_disabled = PercolateQuery.objects.create(
+                query="other query",
+                original_query="other original",
+            )
+        cls.automatic_email = AutomaticEmail.objects.create(
+            query=cls.percolate_query,
+            enabled=True,
+            email_subject='subject',
+            email_body='body',
+            sender_name='Sender name',
+        )
+        cls.automatic_email_disabled = AutomaticEmail.objects.create(
+            query=None,
+            enabled=False,
+            email_subject='other subject',
+            email_body='other body',
+            sender_name='other Sender name',
+        )
+        SentAutomaticEmail.objects.create(
+            automatic_email=cls.automatic_email,
+            user=cls.program_enrollment_sent.user,
+        )
+
+    def test_send_automatic_emails(self):
+        """send_automatic_emails should send emails to users which fit criteria and mark them so we don't send twice"""
+        with patch(
+            'mail.api.search_percolate_queries', autospec=True, return_value=[self.percolate_query],
+        ) as mock_search_queries, patch('mail.api.MailgunClient') as mock_mailgun:
+            send_automatic_emails(self.program_enrollment_unsent)
+
+        mock_search_queries.assert_called_with(self.program_enrollment_unsent.id)
+        mock_mailgun.send_individual_email.assert_called_with(
+            self.automatic_email.email_subject,
+            self.automatic_email.email_body,
+            self.program_enrollment_unsent.user.email,
+            sender_name=self.automatic_email.sender_name,
+        )
+
+    def test_no_matching_query(self):
+        """If there are no queries matching percolate we should do nothing"""
+        with patch(
+            'mail.api.search_percolate_queries', autospec=True, return_value=[],
+        ) as mock_search_queries, patch('mail.api.MailgunClient') as mock_mailgun:
+            send_automatic_emails(self.program_enrollment_unsent)
+
+        mock_search_queries.assert_called_with(self.program_enrollment_unsent.id)
+        assert mock_mailgun.send_individual_email.called is False
+
+    def test_not_enabled(self):
+        """If the automatic email is not enabled we should do nothing"""
+        with patch(
+            'mail.api.search_percolate_queries', autospec=True, return_value=[self.percolate_query_disabled],
+        ) as mock_search_queries, patch('mail.api.MailgunClient') as mock_mailgun:
+            send_automatic_emails(self.program_enrollment_unsent)
+
+        mock_search_queries.assert_called_with(self.program_enrollment_unsent.id)
+        assert mock_mailgun.send_individual_email.called is False
+
+    def test_already_sent(self):
+        """If a user was already sent email we should not send it again"""
+        with patch(
+            'mail.api.search_percolate_queries', autospec=True, return_value=[self.percolate_query],
+        ) as mock_search_queries, patch('mail.api.MailgunClient') as mock_mailgun:
+            send_automatic_emails(self.program_enrollment_sent)
+
+        mock_search_queries.assert_called_with(self.program_enrollment_sent.id)
+        assert mock_mailgun.send_individual_email.called is False
+
+    def test_failed_send(self):
+        """If we fail to send email to the first user we should still send it to the second"""
+
+        with mute_signals(post_save):
+            new_percolate = PercolateQuery.objects.create(
+                query="new query",
+                original_query="original query",
+            )
+        new_automatic = AutomaticEmail.objects.create(
+            enabled=True,
+            email_subject='new subject',
+            email_body='new body',
+            sender_name='new Sender name',
+            query=new_percolate,
+        )
+
+        count = 0
+
+        def _send_individual_email(*args, **kwargs):  # pylint: disable=unused-argument
+            """Helper method to raise an error the first time it's called, but not the second"""
+            nonlocal count
+            count += 1
+            if count == 1:
+                raise KeyError()
+
+        with patch('mail.api.search_percolate_queries', autospec=True, return_value=[
+            self.percolate_query, new_automatic.query
+        ]) as mock_search_queries, patch(
+            'mail.api.MailgunClient', send_individual_email=_send_individual_email
+        ) as mock_mailgun:
+            mock_mailgun.send_individual_email = _send_individual_email
+
+            send_automatic_emails(self.program_enrollment_unsent)
+
+        mock_search_queries.assert_called_with(self.program_enrollment_unsent.id)
+        assert count == 2
+
+    def test_add_automatic_email(self):
+        """Add an AutomaticEmail entry with associated PercolateQuery"""
+        assert AutomaticEmail.objects.count() == 2
+        search_obj = Search.from_dict({"query": {"match": {}}})
+
+        new_automatic = add_automatic_email(search_obj, 'subject', 'body', 'sender')
+        assert AutomaticEmail.objects.count() == 3
+        assert new_automatic.sender_name == 'sender'
+        assert new_automatic.email_subject == 'subject'
+        assert new_automatic.email_body == 'body'
+        assert new_automatic.query.query == adjust_search_for_percolator(search_obj).to_dict()
+
+    def test_mark_emails_as_sent(self):
+        """Mark emails as sent"""
+        emails = [
+            self.program_enrollment_unsent.user.email,
+            self.program_enrollment_sent.user.email,
+        ]
+        mark_emails_as_sent(self.automatic_email, emails)
+        assert sorted(self.automatic_email.sentautomaticemail_set.values_list('user__email', flat=True)) == sorted(
+            emails
+        )

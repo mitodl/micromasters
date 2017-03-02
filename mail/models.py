@@ -34,3 +34,20 @@ class AutomaticEmail(TimestampedModel):
     def __str__(self):
         """String representation of AutomaticEmail"""
         return "AutomaticEmail sender={}, subject={}".format(self.sender_name, self.email_subject)
+
+
+class SentAutomaticEmail(TimestampedModel):
+    """
+    Keeps track of automatic emails which were sent to particular users
+    """
+    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    automatic_email = models.ForeignKey(AutomaticEmail, null=False, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'automatic_email')
+
+    def __str__(self):
+        return "SentAutomaticEmail for user={user} and automatic_email={automatic_email}".format(
+            user=self.user,
+            automatic_email=self.automatic_email,
+        )

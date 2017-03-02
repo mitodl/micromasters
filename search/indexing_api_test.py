@@ -250,13 +250,16 @@ class IndexTests(ESTestCase):
             'search.indexing_api._index_chunk', autospec=True, return_value=0
         ) as index_chunk, patch(
             'search.indexing_api.serialize_program_enrolled_user', autospec=True, side_effect=lambda x: x
-        ) as serialize_mock:
+        ) as serialize_mock, patch(
+            'search.indexing_api.send_automatic_emails', autospec=True,
+        ) as send_automatic_emails_mock:
             index_program_enrolled_users(program_enrollments, chunk_size=4)
             assert index_chunk.call_count == 3
             index_chunk.assert_any_call(program_enrollments[0:4], USER_DOC_TYPE, get_default_alias())
             assert serialize_mock.call_count == len(program_enrollments)
             for enrollment in program_enrollments:
                 serialize_mock.assert_any_call(enrollment)
+                send_automatic_emails_mock.assert_any_call(enrollment)
 
     def test_index_user_other_index(self):
         """
@@ -523,7 +526,7 @@ class PercolateQueryTests(ESTestCase):
     def test_index_percolate_query(self):
         """Test that we index the percolate query"""
         query = {"query": {"match": {"profile.first_name": "here"}}}
-        percolate_query = PercolateQuery(query=query)
+        percolate_query = PercolateQuery(query=query, original_query="original")
         percolate_query_id = 123
         percolate_query.id = percolate_query_id
         # Don't save since that will trigger a signal which will update the index
@@ -551,7 +554,7 @@ class PercolateQueryTests(ESTestCase):
         """Test that we delete the percolate query from the index"""
         query = {"query": {"match": {"profile.first_name": "here"}}}
         with patch('search.signals.transaction', on_commit=lambda callback: callback()):
-            percolate_query = PercolateQuery.objects.create(query=query)
+            percolate_query = PercolateQuery.objects.create(query=query, original_query="original")
             assert es.get_percolate_query(percolate_query.id) == {
                 '_id': str(percolate_query.id),
                 '_index': es.get_default_backing_index(),

@@ -7,11 +7,23 @@ import json
 import requests
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
+from django.db import transaction
+from django.db.utils import IntegrityError
 from rest_framework import status
 
 from mail.exceptions import SendBatchException
-from mail.models import FinancialAidEmailAudit
+from mail.models import (
+    AutomaticEmail,
+    FinancialAidEmailAudit,
+    SentAutomaticEmail,
+)
+from search.api import (
+    adjust_search_for_percolator,
+    search_percolate_queries,
+)
+from search.models import PercolateQuery
 
 
 log = logging.getLogger(__name__)
@@ -248,3 +260,80 @@ class MailgunClient:
             raise_for_status=raise_for_status,
         )
         return response
+
+
+def send_automatic_emails(program_enrollment):
+    """
+    Send all automatic emails which match the search criteria for a program enrollment
+
+    Args:
+        program_enrollment (ProgramEnrollment): A ProgramEnrollment
+    """
+    percolate_queries = search_percolate_queries(program_enrollment.id)
+    automatic_emails = AutomaticEmail.objects.filter(
+        query__in=percolate_queries,
+        enabled=True,
+    ).exclude(sentautomaticemail__user__programenrollment=program_enrollment)
+    user = program_enrollment.user
+    for automatic_email in automatic_emails:
+        try:
+            try:
+                MailgunClient.send_individual_email(
+                    automatic_email.email_subject,
+                    automatic_email.email_body,
+                    user.email,
+                    sender_name=automatic_email.sender_name,
+                )
+                SentAutomaticEmail.objects.create(
+                    user=user,
+                    automatic_email=automatic_email,
+                )
+            except:  # pylint: disable=bare-except
+                log.exception("Error sending mailgun mail for automatic email %s", automatic_email)
+        except IntegrityError:
+            # Probable race condition, skip this user since we already sent them an email
+            pass
+
+
+def add_automatic_email(original_search, email_subject, email_body, sender_name):
+    """
+    Add an automatic email entry
+
+    Args:
+        original_search (Search):
+            The original search, which contains all back end filtering but no filtering specific to mail
+            or for percolated queries.
+        email_subject (str): Subject for the email
+        email_body (str): Body for the email
+        sender_name (str): The name of the sender of the email
+    """
+    updated_search = adjust_search_for_percolator(original_search)
+    with transaction.atomic():
+        percolate_query = PercolateQuery.objects.create(
+            original_query=original_search.to_dict(),
+            query=updated_search.to_dict(),
+        )
+        return AutomaticEmail.objects.create(
+            query=percolate_query,
+            enabled=True,
+            email_subject=email_subject,
+            email_body=email_body,
+            sender_name=sender_name,
+        )
+
+
+@transaction.atomic
+def mark_emails_as_sent(automatic_email, emails):
+    """
+    Mark users who have the given emails as sent
+
+    Args:
+        automatic_email (AutomaticEmail): An instance of AutomaticEmail
+        emails (iterable): An iterable of emails
+    """
+    users = User.objects.filter(email__in=emails)
+    for user in users:
+        SentAutomaticEmail.objects.get_or_create(
+            user=user,
+            automatic_email=automatic_email,
+        )

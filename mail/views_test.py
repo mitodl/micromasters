@@ -26,8 +26,14 @@ from financialaid.api_test import (
 )
 from financialaid.factories import FinancialAidFactory, TierProgramFactory
 from mail.exceptions import SendBatchException
-from mail.models import AutomaticEmail
-from profiles.factories import ProfileFactory
+from mail.models import (
+    AutomaticEmail,
+    SentAutomaticEmail,
+)
+from profiles.factories import (
+    ProfileFactory,
+    UserFactory,
+)
 from profiles.util import full_name
 from roles.models import Role
 from roles.roles import Staff
@@ -144,27 +150,32 @@ class SearchResultMailViewsTests(MockedESTestCase, APITestCase):
         email_results = ['a@example.com', 'b@example.com']
         request_data = self.request_data.copy()
         request_data['send_automatic_emails'] = True
+        for email in email_results:
+            UserFactory.create(email=email)
 
-        assert AutomaticEmail.objects.count() == 0
-        search_dict = create_search_obj(
+        automatic_email = AutomaticEmail.objects.create(
+            email_subject='subject',
+            email_body='body',
+            query=None,
+            sender_name='sender',
+        )
+        search_obj = create_search_obj(
             user=self.staff,
             search_param_dict=request_data['search_request'],
             filter_on_email_optin=True,
-        ).to_dict()
+        )
+
         with patch(
             'mail.views.get_all_query_matching_emails', autospec=True, return_value=email_results
         ) as mock_get_emails, patch(
             'mail.views.MailgunClient'
         ) as mock_mailgun_client, patch(
-            'search.signals.index_percolate_queries.delay', autospec=True
-        ) as mocked_index_percolate_queries, patch(
-            'search.signals.transaction', on_commit=lambda callback: callback()
-        ):
+            'mail.views.add_automatic_email', autospec=True, return_value=automatic_email,
+        ) as mock_add_automatic_email:
             mock_mailgun_client.send_batch.return_value = Response()
             resp_post = self.client.post(self.search_result_mail_url, data=request_data, format='json')
         assert resp_post.status_code == status.HTTP_200_OK
-        assert mock_get_emails.called
-        assert mock_get_emails.call_args[0][0].to_dict() == search_dict
+        assert mock_get_emails.call_args[0][0].to_dict() == search_obj.to_dict()
 
         assert mock_mailgun_client.send_batch.called
         _, called_kwargs = mock_mailgun_client.send_batch.call_args
@@ -172,15 +183,73 @@ class SearchResultMailViewsTests(MockedESTestCase, APITestCase):
         assert called_kwargs['body'] == self.request_data['email_body']
         assert called_kwargs['recipients'] == email_results
 
-        assert AutomaticEmail.objects.count() == 1
-        automatic_email = AutomaticEmail.objects.first()
-        percolate_query = automatic_email.query
-        mocked_index_percolate_queries.assert_called_with([percolate_query.id])
-        assert percolate_query.query == search_dict
-        assert automatic_email.email_subject == self.request_data['email_subject']
-        assert automatic_email.email_body == self.request_data['email_body']
-        assert automatic_email.sender_name == full_name(self.staff)
-        assert automatic_email.enabled is True
+        assert mock_add_automatic_email.call_args[0][0].to_dict() == search_obj.to_dict()
+        assert mock_add_automatic_email.call_args[1] == {
+            "email_subject": self.request_data['email_subject'],
+            "email_body": self.request_data['email_body'],
+            "sender_name": full_name(self.staff),
+        }
+
+        assert SentAutomaticEmail.objects.filter(
+            user__email__in=email_results, automatic_email=automatic_email,
+        ).count() == len(email_results)
+
+    def test_automatic_email_fail(self):
+        """
+        If one request fails, we should mark all other success emails as having been sent anyway
+        """
+        email_results = set(['a@example.com', 'b@example.com'])
+        request_data = self.request_data.copy()
+        request_data['send_automatic_emails'] = True
+        for email in email_results:
+            UserFactory.create(email=email)
+
+        automatic_email = AutomaticEmail.objects.create(
+            email_subject='subject',
+            email_body='body',
+            query=None,
+            sender_name='sender',
+        )
+        search_obj = create_search_obj(
+            user=self.staff,
+            search_param_dict=request_data['search_request'],
+            filter_on_email_optin=True,
+        )
+
+        success_emails = {'a@example.com'}
+        failure_emails = email_results.difference(success_emails)
+        exception_pairs = [
+            (failure_emails, HTTPError())
+        ]
+
+        with patch(
+            'mail.views.get_all_query_matching_emails', autospec=True, return_value=email_results
+        ), patch(
+            'mail.views.MailgunClient'
+        ) as mock_mailgun_client, patch(
+            'mail.views.add_automatic_email', autospec=True, return_value=automatic_email,
+        ) as mock_add_automatic_email:
+            mock_mailgun_client.send_batch.side_effect = SendBatchException(exception_pairs)
+            with self.assertRaises(SendBatchException) as send_batch_exception:
+                self.client.post(self.search_result_mail_url, data=request_data, format='json')
+        assert send_batch_exception
+
+        assert mock_mailgun_client.send_batch.called
+        _, called_kwargs = mock_mailgun_client.send_batch.call_args
+        assert called_kwargs['subject'] == self.request_data['email_subject']
+        assert called_kwargs['body'] == self.request_data['email_body']
+        assert called_kwargs['recipients'] == email_results
+
+        assert mock_add_automatic_email.call_args[0][0].to_dict() == search_obj.to_dict()
+        assert mock_add_automatic_email.call_args[1] == {
+            "email_subject": self.request_data['email_subject'],
+            "email_body": self.request_data['email_body'],
+            "sender_name": full_name(self.staff),
+        }
+
+        assert sorted(SentAutomaticEmail.objects.filter(
+            user__email__in=email_results, automatic_email=automatic_email,
+        ).values_list('user__email', flat=True)) == sorted(success_emails)
 
 
 class CourseTeamMailViewTests(APITestCase, MockedESTestCase):
