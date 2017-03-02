@@ -5179,7 +5179,7 @@ qs@6.2.0:
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.2.0.tgz#3b7848c03c2dece69a9522b0fae8c4126d745f3b"
 
-"qs@github:ssetem/qs":
+qs@ssetem/qs:
   version "6.0.1"
   resolved "https://codeload.github.com/ssetem/qs/tar.gz/fb2b80ac750fa375e0d69643adb0840e7e04d1d3"
 
@@ -5483,7 +5483,7 @@ react-router@^3.0.0:
     loose-envify "^1.2.0"
     warning "^3.0.0"
 
-react-select@^1.0.0-beta12, react-select@^1.0.0-beta14, react-select@^1.0.0-rc.1:
+react-select@^1.0.0-beta14, react-select@^1.0.0-rc.1:
   version "1.0.0-rc.3"
   resolved "https://registry.yarnpkg.com/react-select/-/react-select-1.0.0-rc.3.tgz#94ade090522153067eff09282d0525249ea1d9e3"
   dependencies:
@@ -5949,12 +5949,6 @@ sass-loader@^4.1.1:
 sax@^1.2.1, sax@~1.2.1:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.2.tgz#fd8631a23bc7826bef5d871bdb87378c95647828"
-
-searchkit-multiselect@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/searchkit-multiselect/-/searchkit-multiselect-0.0.1.tgz#ae53fd6d0e77a3c80a965305591a22db42a0e1f5"
-  dependencies:
-    react-select "^1.0.0-beta12"
 
 searchkit@1.0.0-7:
   version "1.0.0-7"
