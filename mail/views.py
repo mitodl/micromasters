@@ -64,7 +64,6 @@ class SearchResultMailView(APIView):
                     email_body=email_body,
                     sender_name=sender_name,
                 )
-
         mailgun_responses = MailgunClient.send_batch(
             subject=email_subject,
             body=email_body,
@@ -77,7 +76,7 @@ class SearchResultMailView(APIView):
                 "batch_{}".format(batch_num): {
                     "status_code": resp.status_code,
                     "data": generate_mailgun_response_json(resp)
-                } for batch_num, resp in enumerate(mailgun_responses)
+                } for batch_num, (_, resp) in enumerate(mailgun_responses)
             }
         )
 

@@ -9,6 +9,7 @@ import requests
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from rest_framework.status import HTTP_200_OK
+
 from mail.models import FinancialAidEmailAudit
 
 
@@ -114,7 +115,7 @@ class MailgunClient:
             chunk_size (int): The maximum amount of emails to be sent at the same time
 
         Returns:
-            list: List of requests.Response HTTP response from Mailgun
+            list: List of (recipients, requests.Response) HTTP response from Mailgun
         """
         body, recipients = cls._recipient_override(body, recipients)
         responses = []
@@ -131,11 +132,14 @@ class MailgunClient:
             if sender_address:
                 params['from'] = sender_address
             responses.append(
-                cls._mailgun_request(
-                    requests.post,
-                    'messages',
-                    params,
-                    sender_name=sender_name
+                (
+                    chunk,
+                    cls._mailgun_request(
+                        requests.post,
+                        'messages',
+                        params,
+                        sender_name=sender_name
+                    ),
                 )
             )
             chunk = list(islice(recipients, chunk_size))
@@ -160,7 +164,7 @@ class MailgunClient:
         """
         # Since .send_batch() returns a list, we need to return the first in the list
         responses = cls.send_batch(subject, body, [recipient], sender_address=sender_address, sender_name=sender_name)
-        return responses[0]
+        return responses[0][1]
 
     @classmethod
     def send_financial_aid_email(cls, acting_user, financial_aid, subject, body):
