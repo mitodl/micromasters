@@ -3,7 +3,7 @@ Tests for mail utils
 """
 
 from unittest.mock import Mock
-from django.core.exceptions import ValidationError, ImproperlyConfigured
+from django.core.exceptions import ValidationError
 from requests import Response
 from rest_framework import status
 
@@ -110,23 +110,14 @@ class MailUtilsTests(MockedESTestCase):
 
     def test_generate_mailgun_response_json(self):
         """
-        Tests that generate_mailgun_response_json() returns response.json() unless the status code is 401 in which
-        case it should raise ImproperlyConfigured
+        Tests that generate_mailgun_response_json() returns response.json()
         """
-        # Normal Response
         response = Mock(
             spec=Response,
             status_code=status.HTTP_200_OK,
             json=mocked_json()
         )
         assert generate_mailgun_response_json(response) == response.json()
-        # 401 error
-        response_401 = Mock(
-            spec=Response,
-            status_code=status.HTTP_401_UNAUTHORIZED
-        )
-        with self.assertRaises(ImproperlyConfigured):
-            generate_mailgun_response_json(response_401)
 
     def test_generate_mailgun_response_json_with_failed_json_call(self):
         """

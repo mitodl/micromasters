@@ -63,12 +63,40 @@ class LearnerMailView(GenericAPIView):
             body=request.data['email_body'],
             recipient=recipient_user.email,
             sender_address=sender_user.email,
-            sender_name=sender_user.profile.display_name
+            sender_name=sender_user.profile.display_name,
+            raise_on_error=False,
         )
         return Response(
             status=mailgun_response.status_code,
             data=generate_mailgun_response_json(mailgun_response)
         )
+
+
+def _make_batch_response_dict(response, exception):
+    """
+    Helper function to format a portion of a batch response
+    """
+    if exception is not None:
+        return {
+            "data": str(exception)
+        }
+    return {
+        "status_code": response.status_code,
+        "data": generate_mailgun_response_json(response),
+    }
+
+
+def _make_batch_status(responses):
+    """
+    Helper function to figure out a status code to return. In summary, 200 unless any error, then 500.
+    The user can inspect the contents for more info.
+    """
+    for _, response, exception in responses:
+        if exception is not None:
+            return status.HTTP_500_INTERNAL_SERVER_ERROR
+        if response.status_code != status.HTTP_200_OK:
+            return status.HTTP_500_INTERNAL_SERVER_ERROR
+    return status.HTTP_200_OK
 
 
 class SearchResultMailView(APIView):
@@ -104,7 +132,6 @@ class SearchResultMailView(APIView):
                     email_body=email_body,
                     sender_name=sender_name,
                 )
-
         mailgun_responses = MailgunClient.send_batch(
             subject=email_subject,
             body=email_body,
@@ -112,12 +139,10 @@ class SearchResultMailView(APIView):
             sender_name=sender_name,
         )
         return Response(
-            status=status.HTTP_200_OK,
+            status=_make_batch_status(mailgun_responses),
             data={
-                "batch_{}".format(batch_num): {
-                    "status_code": resp.status_code,
-                    "data": generate_mailgun_response_json(resp)
-                } for batch_num, resp in enumerate(mailgun_responses)
+                "batch_{}".format(batch_num): _make_batch_response_dict(resp, exception)
+                for batch_num, (_, resp, exception) in enumerate(mailgun_responses)
             }
         )
 

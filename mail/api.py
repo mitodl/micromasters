@@ -8,7 +8,9 @@ import requests
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from rest_framework.status import HTTP_200_OK
+from rest_framework import status
+
+from mail.exceptions import MailException
 from mail.models import FinancialAidEmailAudit
 
 
@@ -78,7 +80,9 @@ class MailgunClient:
         return body, recipients
 
     @classmethod
-    def send_bcc(cls, subject, body, recipients, sender_name=None):
+    def send_bcc(  # pylint: disable=too-many-arguments
+            cls, subject, body, recipients, sender_name=None, raise_on_error=True,
+    ):
         """
         Sends a text email to a BCC'ed list of recipients.
 
@@ -87,6 +91,7 @@ class MailgunClient:
             body (str): Text email body
             recipients (list): A list of recipient emails
             sender_name (str): Sender name
+            raise_on_error (bool): If true and response is not a 2xx status code, raise an exception
         Returns:
             requests.Response: HTTP response from Mailgun
         """
@@ -97,7 +102,18 @@ class MailgunClient:
             subject=subject,
             text=body
         )
-        return cls._mailgun_request(requests.post, 'messages', params, sender_name=sender_name)
+        response = cls._mailgun_request(
+            requests.post,
+            'messages',
+            params,
+            sender_name=sender_name,
+        )
+        if raise_on_error and not 200 <= response.status_code < 300:
+            raise MailException("Expected 2xx status code from Mailgun but got {status}: {content}".format(
+                status=response.status_code,
+                content=response.content,
+            ))
+        return response
 
     @classmethod
     def send_batch(cls, subject, body, recipients,  # pylint: disable=too-many-arguments
@@ -114,7 +130,11 @@ class MailgunClient:
             chunk_size (int): The maximum amount of emails to be sent at the same time
 
         Returns:
-            list: List of requests.Response HTTP response from Mailgun
+            list:
+                List of (recipients, requests.Response, exception) where
+                recipients is a list of recipient emails,
+                Response is an HTTP response from Mailgun, if there is one,
+                exception is an exception which occurred when attempting to mail, if there is one
         """
         body, recipients = cls._recipient_override(body, recipients)
         responses = []
@@ -130,21 +150,33 @@ class MailgunClient:
             params['recipient-variables'] = json.dumps({email: {} for email in chunk})
             if sender_address:
                 params['from'] = sender_address
-            responses.append(
-                cls._mailgun_request(
+
+            try:
+                response = cls._mailgun_request(
                     requests.post,
                     'messages',
                     params,
-                    sender_name=sender_name
+                    sender_name=sender_name,
                 )
-            )
+                if response.status_code == status.HTTP_401_UNAUTHORIZED:
+                    message = "Mailgun API keys not properly configured."
+                    log.error(message)
+                    raise ImproperlyConfigured(message)
+
+                responses.append(
+                    (chunk, response, None)
+                )
+            except Exception as exception:  # pylint: disable=broad-except
+                responses.append(
+                    (chunk, None, exception)
+                )
             chunk = list(islice(recipients, chunk_size))
 
         return responses
 
     @classmethod
     def send_individual_email(cls, subject, body, recipient,  # pylint: disable=too-many-arguments
-                              sender_address=None, sender_name=None):
+                              sender_address=None, sender_name=None, raise_on_error=True):
         """
         Sends a text email to a single recipient.
 
@@ -154,16 +186,27 @@ class MailgunClient:
             recipient (str): email recipient
             sender_address (str): Sender email address
             sender_name (str): Sender name
+            raise_on_error (bool): If true and a non-zero response was received,
 
         Returns:
             requests.Response: response from Mailgun
         """
         # Since .send_batch() returns a list, we need to return the first in the list
         responses = cls.send_batch(subject, body, [recipient], sender_address=sender_address, sender_name=sender_name)
-        return responses[0]
+        _, response, exception = responses[0]
+        if exception is not None:
+            raise exception
+        if raise_on_error and not 200 <= response.status_code < 300:
+            raise MailException("Expected 2xx status code from Mailgun but got {status}: {content}".format(
+                status=response.status_code,
+                content=response.content,
+            ))
+        return response
 
     @classmethod
-    def send_financial_aid_email(cls, acting_user, financial_aid, subject, body):
+    def send_financial_aid_email(  # pylint: disable=too-many-arguments
+            cls, acting_user, financial_aid, subject, body, raise_on_error=True,
+    ):
         """
         Sends a text email to a single recipient, specifically as part of the financial aid workflow. This bundles
         saving an audit trail for emails sent (to be implemented).
@@ -173,13 +216,14 @@ class MailgunClient:
             financial_aid (FinancialAid): the FinancialAid object this pertains to (recipient is pulled from here)
             subject (str): email subject
             body (str): email body
+            raise_on_error (bool): If true and we received a non 2xx status code from Mailgun, raise an exception
         Returns:
             requests.Response: response from Mailgun
         """
         from_address = cls.default_params()['from']
         to_address = financial_aid.user.email
-        response = cls.send_individual_email(subject, body, to_address)
-        if response.status_code == HTTP_200_OK:
+        response = cls.send_individual_email(subject, body, to_address, raise_on_error=raise_on_error)
+        if response.status_code == status.HTTP_200_OK:
             FinancialAidEmailAudit.objects.create(
                 acting_user=acting_user,
                 financial_aid=financial_aid,
@@ -191,7 +235,9 @@ class MailgunClient:
         return response
 
     @classmethod
-    def send_course_team_email(cls, user, course, subject, body):
+    def send_course_team_email(  # pylint: disable=too-many-arguments
+            cls, user, course, subject, body, raise_on_error=True,
+    ):
         """
        Sends a text email from a user to a course team.
 
@@ -200,6 +246,7 @@ class MailgunClient:
             course (courses.models.Course): A Course
             subject (str): Email subject
             body (str): Email body
+            raise_on_error (bool): If true and we received a non 2xx status code from Mailgun, raise an exception
         Returns:
             requests.Response: HTTP Response from Mailgun
        """
@@ -213,6 +260,7 @@ class MailgunClient:
             body,
             course.contact_email,
             sender_address=user.email,
-            sender_name=user.profile.display_name
+            sender_name=user.profile.display_name,
+            raise_on_error=raise_on_error,
         )
         return response

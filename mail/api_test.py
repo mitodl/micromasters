@@ -12,13 +12,17 @@ from django.db.models.signals import post_save
 from django.test import override_settings
 from factory.django import mute_signals
 from requests import Response
-from rest_framework.status import HTTP_200_OK
+from rest_framework.status import (
+    HTTP_200_OK,
+    HTTP_400_BAD_REQUEST,
+)
 
 from dashboard.models import ProgramEnrollment
 from courses.factories import CourseFactory
 from ecommerce.factories import CoursePriceFactory
 from financialaid.factories import FinancialAidFactory
 from mail.api import MailgunClient
+from mail.exceptions import MailException
 from mail.models import FinancialAidEmailAudit
 from mail.views_test import mocked_json
 from profiles.factories import ProfileFactory
@@ -26,7 +30,11 @@ from search.base import MockedESTestCase
 
 
 @ddt
-@patch('requests.post')
+@patch('requests.post', autospec=True, return_value=Mock(
+    spec=Response,
+    status_code=HTTP_200_OK,
+    json=mocked_json()
+))
 class MailAPITests(MockedESTestCase):
     """
     Tests for the Mailgun client class
@@ -80,12 +88,13 @@ class MailAPITests(MockedESTestCase):
         """
         Test that MailgunClient.send_bcc sends expected parameters to the Mailgun API
         """
-        MailgunClient.send_bcc(
+        response = MailgunClient.send_bcc(
             'email subject',
             'email body',
             ['a@example.com', 'b@example.com'],
             sender_name=sender_name
         )
+        assert response.status_code == HTTP_200_OK
         assert mock_post.called
         called_args, called_kwargs = mock_post.call_args
         assert list(called_args)[0] == '{}/{}'.format(settings.MAILGUN_URL, 'messages')
@@ -100,6 +109,33 @@ class MailAPITests(MockedESTestCase):
             )
         else:
             self.assertEqual(called_kwargs['data']['from'], settings.EMAIL_SUPPORT)
+
+    @data(True, False)
+    def test_send_bcc_error(self, raise_on_error, mock_post):  # pylint: disable=unused-argument
+        """
+        Test that send_bcc raises an exception at the right time
+        """
+        mock_post.return_value = Mock(
+            spec=Response,
+            status_code=HTTP_400_BAD_REQUEST,
+            json=mocked_json()
+        )
+
+        exception = None
+        bcc_response = None
+        try:
+            bcc_response = MailgunClient.send_bcc(
+                'email subject',
+                'email body',
+                ['a@example.com', 'b@example.com'],
+                raise_on_error=raise_on_error,
+            )
+        except Exception as _exception:  # pylint: disable=broad-except
+            exception = _exception
+        if raise_on_error:
+            assert isinstance(exception, MailException)
+        else:
+            assert bcc_response.status_code == HTTP_400_BAD_REQUEST
 
     @override_settings(MAILGUN_RECIPIENT_OVERRIDE=None)
     @data(None, 'Tester')
@@ -135,9 +171,9 @@ class MailAPITests(MockedESTestCase):
         """
         chunk_size = 10
         emails_to = ["{0}@example.com".format(letter) for letter in string.ascii_letters]
-        chuncked_emails_to = [emails_to[i:i + chunk_size] for i in range(0, len(emails_to), chunk_size)]
+        chunked_emails_to = [emails_to[i:i + chunk_size] for i in range(0, len(emails_to), chunk_size)]
         assert len(emails_to) == 52
-        MailgunClient.send_batch('email subject', 'email body', emails_to, chunk_size=chunk_size)
+        responses = MailgunClient.send_batch('email subject', 'email body', emails_to, chunk_size=chunk_size)
         assert mock_post.called
         assert mock_post.call_count == 6
         for call_num, args in enumerate(mock_post.call_args_list):
@@ -145,10 +181,76 @@ class MailAPITests(MockedESTestCase):
             assert list(called_args)[0] == '{}/{}'.format(settings.MAILGUN_URL, 'messages')
             assert called_kwargs['data']['text'].startswith('email body')
             assert called_kwargs['data']['subject'] == 'email subject'
-            assert called_kwargs['data']['to'] == chuncked_emails_to[call_num]
+            assert called_kwargs['data']['to'] == chunked_emails_to[call_num]
             assert called_kwargs['data']['recipient-variables'] == json.dumps(
-                {email: {} for email in chuncked_emails_to[call_num]}
+                {email: {} for email in chunked_emails_to[call_num]}
             )
+
+            recipients, response, exception = responses[call_num]
+            assert recipients == chunked_emails_to[call_num]
+            assert response.status_code == HTTP_200_OK
+            assert exception is None
+
+    @override_settings(MAILGUN_RECIPIENT_OVERRIDE=None)
+    def test_send_batch_error(self, mock_post):
+        """
+        Test that MailgunClient.send_batch returns a non-zero error code where the mailgun API returns a non-zero code
+        """
+        mock_post.return_value = Mock(
+            spec=Response,
+            status_code=HTTP_400_BAD_REQUEST,
+            json=mocked_json()
+        )
+        chunk_size = 10
+        emails_to = ["{0}@example.com".format(letter) for letter in string.ascii_letters]
+        chunked_emails_to = [emails_to[i:i + chunk_size] for i in range(0, len(emails_to), chunk_size)]
+        assert len(emails_to) == 52
+        responses = MailgunClient.send_batch('email subject', 'email body', emails_to, chunk_size=chunk_size)
+        assert mock_post.called
+        assert mock_post.call_count == 6
+        for call_num, args in enumerate(mock_post.call_args_list):
+            called_args, called_kwargs = args
+            assert list(called_args)[0] == '{}/{}'.format(settings.MAILGUN_URL, 'messages')
+            assert called_kwargs['data']['text'].startswith('email body')
+            assert called_kwargs['data']['subject'] == 'email subject'
+            assert called_kwargs['data']['to'] == chunked_emails_to[call_num]
+            assert called_kwargs['data']['recipient-variables'] == json.dumps(
+                {email: {} for email in chunked_emails_to[call_num]}
+            )
+
+            recipients, response, exception = responses[call_num]
+            assert recipients == chunked_emails_to[call_num]
+            assert response.status_code == HTTP_400_BAD_REQUEST
+            assert exception is None
+
+    @override_settings(MAILGUN_RECIPIENT_OVERRIDE=None)
+    def test_send_batch_exception(self, mock_post):
+        """
+        Test that MailgunClient.send_batch returns a non-zero error code where the mailgun API returns a non-zero code
+        """
+        mock_post.side_effect = KeyError
+
+        chunk_size = 10
+        emails_to = ["{0}@example.com".format(letter) for letter in string.ascii_letters]
+        chunked_emails_to = [emails_to[i:i + chunk_size] for i in range(0, len(emails_to), chunk_size)]
+        assert len(emails_to) == 52
+        responses = MailgunClient.send_batch('email subject', 'email body', emails_to, chunk_size=chunk_size)
+        assert mock_post.called
+        assert mock_post.call_count == 6
+        for call_num, args in enumerate(mock_post.call_args_list):
+            called_args, called_kwargs = args
+            assert list(called_args)[0] == '{}/{}'.format(settings.MAILGUN_URL, 'messages')
+            assert called_kwargs['data']['text'].startswith('email body')
+            assert called_kwargs['data']['subject'] == 'email subject'
+            assert called_kwargs['data']['to'] == chunked_emails_to[call_num]
+            assert called_kwargs['data']['recipient-variables'] == json.dumps(
+                {email: {} for email in chunked_emails_to[call_num]}
+            )
+
+            recipients, response, exception = responses[call_num]
+            assert recipients == chunked_emails_to[call_num]
+            assert response is None
+            assert isinstance(exception, KeyError)
 
     @override_settings(MAILGUN_RECIPIENT_OVERRIDE=None)
     @data(None, 'Tester')
@@ -156,12 +258,13 @@ class MailAPITests(MockedESTestCase):
         """
         Test that MailgunClient.send_individual_email() sends an individual message
         """
-        MailgunClient.send_individual_email(
+        response = MailgunClient.send_individual_email(
             subject='email subject',
             body='email body',
             recipient='a@example.com',
             sender_name=sender_name
         )
+        assert response.status_code == HTTP_200_OK
         assert mock_post.called
         called_args, called_kwargs = mock_post.call_args
         assert list(called_args)[0] == '{}/{}'.format(settings.MAILGUN_URL, 'messages')
@@ -176,6 +279,35 @@ class MailAPITests(MockedESTestCase):
             )
         else:
             self.assertEqual(called_kwargs['data']['from'], settings.EMAIL_SUPPORT)
+
+    @data(True, False)
+    def test_send_individual_email_error(self, raise_on_error, mock_post):
+        """
+        Test handling of errors for send_individual_email
+        """
+        mock_post.return_value = Mock(
+            spec=Response,
+            status_code=HTTP_400_BAD_REQUEST,
+            json=mocked_json()
+        )
+
+        exception = None
+        response = None
+        try:
+            response = MailgunClient.send_individual_email(
+                subject='email subject',
+                body='email body',
+                recipient='a@example.com',
+                raise_on_error=raise_on_error,
+            )
+        except Exception as _exception:  # pylint: disable=broad-except
+            exception = _exception
+
+        if raise_on_error:
+            assert isinstance(exception, MailException)
+        else:
+            assert response.status_code == HTTP_400_BAD_REQUEST
+            assert response.json() == {}
 
     @override_settings(MAILGUN_RECIPIENT_OVERRIDE=None)
     def test_send_with_sender_address(self, mock_post):
@@ -195,7 +327,12 @@ class MailAPITests(MockedESTestCase):
             assert called_kwargs['data']['from'] == sender_address
 
 
-@patch('requests.post')
+@ddt
+@patch('requests.post', autospec=True, return_value=Mock(
+    spec=Response,
+    status_code=HTTP_200_OK,
+    json=mocked_json()
+))
 class FinancialAidMailAPITests(MockedESTestCase):
     """
     Tests for the Mailgun client class for financial aid
@@ -227,18 +364,14 @@ class FinancialAidMailAPITests(MockedESTestCase):
         """
         Test that MailgunClient.send_financial_aid_email() sends an individual message
         """
-        mock_post.return_value = Mock(
-            spec=Response,
-            status_code=HTTP_200_OK,
-            json=mocked_json()
-        )
         assert FinancialAidEmailAudit.objects.count() == 0
-        MailgunClient.send_financial_aid_email(
+        response = MailgunClient.send_financial_aid_email(
             self.staff_user_profile.user,
             self.financial_aid,
             'email subject',
             'email body'
         )
+        assert response.status_code == HTTP_200_OK
         # Check method call
         assert mock_post.called
         called_args, called_kwargs = mock_post.call_args
@@ -262,16 +395,45 @@ class FinancialAidMailAPITests(MockedESTestCase):
         EMAIL_SUPPORT='mailgun_from_email@example.com',
         MAILGUN_RECIPIENT_OVERRIDE=None
     )
+    @data(True, False)
+    def test_financial_aid_email_error(self, raise_on_error, mock_post):
+        """
+        Test that send_financial_aid_email handles errors correctly
+        """
+        mock_post.return_value = Mock(
+            spec=Response,
+            status_code=HTTP_400_BAD_REQUEST,
+            json=mocked_json(),
+        )
+
+        exception = None
+        response = None
+        try:
+            response = MailgunClient.send_financial_aid_email(
+                self.staff_user_profile.user,
+                self.financial_aid,
+                'email subject',
+                'email body',
+                raise_on_error=raise_on_error,
+            )
+        except Exception as _exception:  # pylint: disable=broad-except
+            exception = _exception
+
+        if raise_on_error:
+            assert isinstance(exception, MailException)
+        else:
+            assert response.status_code == HTTP_400_BAD_REQUEST
+            assert response.json() == {}
+
+    @override_settings(
+        EMAIL_SUPPORT='mailgun_from_email@example.com',
+        MAILGUN_RECIPIENT_OVERRIDE=None
+    )
     def test_financial_aid_email_with_blank_subject_and_body(self, mock_post):
         """
         Test that MailgunClient.send_financial_aid_email() sends an individual message
         with blank subject and blank email, and that the audit record saves correctly
         """
-        mock_post.return_value = Mock(
-            spec=Response,
-            status_code=HTTP_200_OK,
-            json=mocked_json()
-        )
         assert FinancialAidEmailAudit.objects.count() == 0
         MailgunClient.send_financial_aid_email(
             self.staff_user_profile.user,
@@ -299,7 +461,12 @@ class FinancialAidMailAPITests(MockedESTestCase):
         assert audit.email_body == ''
 
 
-@patch('requests.post')
+@ddt
+@patch('requests.post', autospec=True, return_value=Mock(
+    spec=Response,
+    status_code=HTTP_200_OK,
+    json=mocked_json()
+))
 class CourseTeamMailAPITests(MockedESTestCase):
     """
     Tests for course team contact functionality in the Mailgun client class
@@ -316,12 +483,13 @@ class CourseTeamMailAPITests(MockedESTestCase):
         Tests that a course team contact email is sent correctly
         """
         course_with_email = CourseFactory.create(title='course with email', contact_email='course@example.com')
-        MailgunClient.send_course_team_email(
+        response = MailgunClient.send_course_team_email(
             self.user,
             course_with_email,
             'email subject',
             'email body'
         )
+        assert response.status_code == HTTP_200_OK
         assert mock_post.called
         _, called_kwargs = mock_post.call_args
         assert called_kwargs['data']['text'] == 'email body'
@@ -347,3 +515,35 @@ class CourseTeamMailAPITests(MockedESTestCase):
             )
         assert ex.exception.args[0].startswith('Course team contact email attempted')
         assert not mock_post.called
+
+    @override_settings(MAILGUN_RECIPIENT_OVERRIDE=None)
+    @data(True, False)
+    def test_send_to_course_team_error(self, raise_on_error, mock_post):
+        """
+        Test that send_course_team_email handles errors correctly
+        """
+        mock_post.return_value = Mock(
+            spec=Response,
+            status_code=HTTP_400_BAD_REQUEST,
+            json=mocked_json(),
+        )
+        course_with_email = CourseFactory.create(title='course with email', contact_email='course@example.com')
+
+        exception = None
+        response = None
+        try:
+            response = MailgunClient.send_course_team_email(
+                self.user,
+                course_with_email,
+                'email subject',
+                'email body',
+                raise_on_error=raise_on_error,
+            )
+        except Exception as _exception:  # pylint: disable=broad-except
+            exception = _exception
+
+        if raise_on_error:
+            assert isinstance(exception, MailException)
+        else:
+            assert response.status_code == HTTP_400_BAD_REQUEST
+            assert response.json() == {}

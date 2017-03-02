@@ -3,11 +3,7 @@ Utils for mail
 """
 import logging
 
-from django.core.exceptions import (
-    ImproperlyConfigured,
-    ValidationError
-)
-from rest_framework import status
+from django.core.exceptions import ValidationError
 
 from dashboard.models import ProgramEnrollment
 from financialaid.api import get_formatted_course_price
@@ -79,13 +75,10 @@ def generate_mailgun_response_json(response):
 
     Args:
         response (requests.Response): response object
+        exception (Exception): If not None, there was an exception when trying to contact Mailgun
     Returns:
         dict
     """
-    if response.status_code == status.HTTP_401_UNAUTHORIZED:
-        message = "Mailgun API keys not properly configured."
-        log.error(message)
-        raise ImproperlyConfigured(message)
     try:
         response_json = response.json()
     except ValueError:  # Includes JSONDecodeError since it inherits from ValueError
