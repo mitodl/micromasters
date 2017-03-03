@@ -252,8 +252,22 @@
       border-radius: 3px;
       margin-right: 4px;
 
+      input.sk-search-box__text {
+        padding: 6px 10px;
+        font-size: 15px;
+      }
+
+      .sk-search-box__action {
+        height: 32px;
+      }
+
       .sk-search-box__icon {
         opacity: 1;
+        margin: 6px 0 0 7px;
+      }
+
+      .sk-search-box__loader {
+        margin: 6px;
       }
 
       .sk-search-box__icon:before {
