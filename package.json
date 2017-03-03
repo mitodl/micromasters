@@ -70,6 +70,7 @@
     "node-sass": "^4.3.0",
     "nyc": "^10.1.2",
     "object.entries": "^1.0.4",
+    "postcss-assets": "^4.1.0",
     "postcss-loader": "^1.2.2",
     "ramda": "^0.23.0",
     "raven-js": "^3.8.1",

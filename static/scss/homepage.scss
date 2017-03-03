@@ -32,7 +32,7 @@ body.app-media {
       .brand-logo {
         float: left;
         margin-right: 15px;
-        background: url(/static/images/mit_logo.svg) no-repeat;
+        background: resolve('images/mit_logo.svg') no-repeat;
         height: 36px;
         width: 51px;
         overflow: visible;
@@ -41,7 +41,7 @@ body.app-media {
       }
 
       .brand-logo:hover {
-        background: url(/static/images/mit_logo_on.svg) no-repeat;
+        background: resolve('images/mit_logo_on.svg') no-repeat;
         height: 36px;
         width: 51px;
         overflow: visible;
@@ -51,7 +51,7 @@ body.app-media {
 
       .micromasters-logo {
         float: left;
-        background: url(/static/images/micromasters_logo.svg) no-repeat;
+        background: resolve('images/micromasters_logo.svg') no-repeat;
         height: 23px;
         width: 155px;
         overflow: visible;
@@ -61,7 +61,7 @@ body.app-media {
 
       .micromasters-logo:hover {
         float: left;
-        background: url(/static/images/micromasters_logo_on.svg) no-repeat;
+        background: resolve('images/micromasters_logo_on.svg') no-repeat;
         height: 23px;
         width: 155px;
         overflow: visible;
@@ -159,7 +159,7 @@ body.app-media {
 }
 
 .banner-wrapper {
-  background: #222 center center url(/static/images/lp_hero.jpg) no-repeat;
+  background: #222 center center resolve('images/lp_hero.jpg') no-repeat;
   margin: 0 auto;
   width: 100%;
   min-height: 620px;
@@ -600,7 +600,7 @@ body.app-media {
   background: #1a1a1a;
 
   .reasons-images-wrap::after {
-    content: url(/static/images/hiw-arrow2.png);
+    content: resolve('images/hiw-arrow2.png');
     position: absolute;
     left: 103%;
     top: 18px;
