@@ -62,7 +62,7 @@ pymongo==3.4.0            # via edx-opaque-keys
 pyparsing==2.1.10         # via packaging
 pysftp==0.2.9
 python-dateutil==2.5.3
-python-social-auth==0.2.21
+python-social-auth==0.3.6
 python3-openid==3.0.10    # via python-social-auth
 pytz==2016.10             # via celery, django-modelcluster
 PyYAML==3.11
