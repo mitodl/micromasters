@@ -51,7 +51,7 @@ export default class WorkHistoryFilter extends SearchkitComponent {
     return (
       <RefinementListFilter
         field="profile.work_history.company_name"
-        title="Company"
+        title=""
         id="company_name"
         operator="OR"
         fieldOptions={{type: 'nested', options: { path: 'profile.work_history'}}}

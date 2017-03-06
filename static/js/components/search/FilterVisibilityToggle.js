@@ -13,6 +13,7 @@ export const FILTER_ID_ADJUST = {
 
 export default class FilterVisibilityToggle extends SearchkitComponent {
   props: {
+    title:             string,
     filterName:             string,
     checkFilterVisibility:  (filterName: string) => boolean,
     setFilterVisibility:    (filterName: string, visibility: boolean) => void,
@@ -71,6 +72,20 @@ export default class FilterVisibilityToggle extends SearchkitComponent {
     />;
   };
 
+  renderFilterName = (children: React$Element<*>): React$Element<*>|null => {
+    if (!this.isInResults(children.props.id)) {
+      return null;
+    }
+    const { title } = this.props;
+    return (
+      <div
+        className="sk-hierarchical-refinement-list__header"
+        onClick={this.toggleFilterVisibility}>
+        {title}
+      </div>
+    );
+  };
+
   toggleFilterVisibility = (): void => {
     const {
       filterName,
@@ -87,7 +102,10 @@ export default class FilterVisibilityToggle extends SearchkitComponent {
     const { children } = this.props;
     return (
       <div className={`filter-visibility-toggle ${this.openClass()}`}>
-        { this.openStateIcon(children) }
+        <div className="title-row">
+          { this.openStateIcon(children) }
+          { this.renderFilterName(children) }
+        </div>
         { children }
       </div>
     );

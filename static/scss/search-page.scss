@@ -64,6 +64,11 @@
       font-size: 14px;
       font-weight: 500;
       color: $font-black;
+      cursor: pointer;
+
+      &:empty {
+        display: none;
+      }
     }
 
     // Search facet content blocks
@@ -127,12 +132,17 @@
 
     .filter-visibility-toggle {
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       margin-bottom: 10px;
 
       i {
         cursor: pointer;
         padding-top: 12px;
+      }
+
+      .title-row {
+        display: flex;
+        flex-direction: row;
       }
     }
 
