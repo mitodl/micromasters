@@ -7,7 +7,7 @@ from django.test import (
     TestCase,
 )
 
-from search import indexing_api
+from search import tasks
 from search.indexing_api import recreate_index, delete_index
 
 
@@ -44,9 +44,9 @@ class MockedESTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
         cls.patchers = []
-        for name, val in indexing_api.__dict__.items():
-            if callable(val):
-                cls.patchers.append(patch('search.indexing_api.{0}'.format(name), autospec=True))
+        for name, val in tasks.__dict__.items():
+            if callable(val) and name.startswith("_"):
+                cls.patchers.append(patch('search.tasks.{0}'.format(name), autospec=True))
         for patcher in cls.patchers:
             patcher.start()
         try:
