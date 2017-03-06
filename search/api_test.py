@@ -23,9 +23,7 @@ from search.api import (
     get_all_query_matching_emails,
 )
 from search.base import ESTestCase
-from search.indexing_api import (
-    DOC_TYPES,
-)
+from search.connection import DOC_TYPES
 from search.exceptions import NoProgramAccessException
 
 

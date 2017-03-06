@@ -5,7 +5,7 @@ from django.conf import settings
 from elasticsearch_dsl import Search, Q
 
 from roles.api import get_advance_searchable_programs
-from search.indexing_api import (
+from search.connection import (
     get_conn,
     DOC_TYPES,
 )
