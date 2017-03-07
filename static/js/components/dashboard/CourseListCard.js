@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import moment from 'moment';
-import _ from 'lodash';
+import R from 'ramda';
 import { Card, CardTitle } from 'react-mdl/lib/Card';
 
 import type { Program, Course } from '../../flow/programTypes';
@@ -42,17 +42,30 @@ export default class CourseListCard extends React.Component {
     setEnrollCourseDialogVisibility: (bool: boolean) => void,
   };
 
+  sortedCourseRuns(): Array<CourseRun> {
+    const { program } = this.props;
+    const sortedCourses = R.sortBy(R.prop('position_in_program'), program.courses);
+    return R.unnest(
+      R.map(R.sortBy(R.prop('position')), R.pluck('runs', sortedCourses))
+    );
+  }
+
   renderFinancialAidPriceMessage(): React$Element<*> {
     const {
-      program: {financial_aid_user_info: financialAid},
+      program: {financial_aid_user_info: {application_status: finAidStatus}},
       coupon,
       prices,
     } = this.props;
 
-    if (FA_TERMINAL_STATUSES.includes(financialAid.application_status)) {
-      // all prices in the map are the same, so just get a random one
-      const iter = prices.values();
-      const { value: price } = iter.next();
+    if (FA_TERMINAL_STATUSES.includes(finAidStatus)) {
+      let price;
+      for (const courseRun of this.sortedCourseRuns()) {
+        price = prices.get(courseRun.id);
+        if (price) {
+          break;
+        }
+      }
+
       if (!price) {
         throw "missing price"; // this should never happen, it's just to make flow happy
       }
@@ -134,9 +147,13 @@ export default class CourseListCard extends React.Component {
       return this.renderCouponPriceMessage();
     }
 
-    // all prices in the map are the same, so just get a random one
-    const iter = prices.values();
-    const { value: price } = iter.next();
+    let price;
+    for (const courseRun of this.sortedCourseRuns()) {
+      price = prices.get(courseRun.id);
+      if (price) {
+        break;
+      }
+    }
     if (!price) {
       throw "missing price"; // this should never happen, it's just to make flow happy
     }
@@ -162,7 +179,7 @@ export default class CourseListCard extends React.Component {
 
     const courseRowOptionalProps = pickExistingProps(['coupon'], this.props);
 
-    const sortedCourses = _.orderBy(program.courses, 'position_in_program');
+    const sortedCourses = R.sortBy(R.prop('position_in_program'), program.courses);
     const courseRows = sortedCourses.map(course =>
       <CourseRow
         hasFinancialAid={program.financial_aid_availability}
