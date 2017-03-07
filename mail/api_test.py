@@ -12,7 +12,6 @@ from django.db.models.signals import post_save
 from django.test import override_settings
 from factory.django import mute_signals
 from requests import Response
-from requests.exceptions import HTTPError
 from rest_framework.status import (
     HTTP_200_OK,
     HTTP_400_BAD_REQUEST,
@@ -121,21 +120,15 @@ class MailAPITests(MockedESTestCase):
             json=mocked_json()
         )
 
-        exception = None
-        bcc_response = None
-        try:
-            bcc_response = MailgunClient.send_bcc(
-                'email subject',
-                'email body',
-                ['a@example.com', 'b@example.com'],
-                raise_for_status=raise_for_status,
-            )
-        except Exception as _exception:  # pylint: disable=broad-except
-            exception = _exception
-        if raise_for_status:
-            assert isinstance(exception, HTTPError)
-        else:
-            assert bcc_response.status_code == HTTP_400_BAD_REQUEST
+        response = MailgunClient.send_bcc(
+            'email subject',
+            'email body',
+            ['a@example.com', 'b@example.com'],
+            raise_for_status=raise_for_status,
+        )
+
+        assert response.raise_for_status.called is raise_for_status
+        assert response.status_code == HTTP_400_BAD_REQUEST
 
     @override_settings(MAILGUN_RECIPIENT_OVERRIDE=None)
     @data(None, 'Tester')
@@ -291,23 +284,16 @@ class MailAPITests(MockedESTestCase):
             json=mocked_json()
         )
 
-        exception = None
-        response = None
-        try:
-            response = MailgunClient.send_individual_email(
-                subject='email subject',
-                body='email body',
-                recipient='a@example.com',
-                raise_for_status=raise_for_status,
-            )
-        except Exception as _exception:  # pylint: disable=broad-except
-            exception = _exception
+        response = MailgunClient.send_individual_email(
+            subject='email subject',
+            body='email body',
+            recipient='a@example.com',
+            raise_for_status=raise_for_status,
+        )
 
-        if raise_for_status:
-            assert isinstance(exception, HTTPError)
-        else:
-            assert response.status_code == HTTP_400_BAD_REQUEST
-            assert response.json() == {}
+        assert response.raise_for_status.called is raise_for_status
+        assert response.status_code == HTTP_400_BAD_REQUEST
+        assert response.json() == {}
 
     @override_settings(MAILGUN_RECIPIENT_OVERRIDE=None)
     def test_send_with_sender_address(self, mock_post):
@@ -406,24 +392,17 @@ class FinancialAidMailAPITests(MockedESTestCase):
             json=mocked_json(),
         )
 
-        exception = None
-        response = None
-        try:
-            response = MailgunClient.send_financial_aid_email(
-                self.staff_user_profile.user,
-                self.financial_aid,
-                'email subject',
-                'email body',
-                raise_for_status=raise_for_status,
-            )
-        except Exception as _exception:  # pylint: disable=broad-except
-            exception = _exception
+        response = MailgunClient.send_financial_aid_email(
+            self.staff_user_profile.user,
+            self.financial_aid,
+            'email subject',
+            'email body',
+            raise_for_status=raise_for_status,
+        )
 
-        if raise_for_status:
-            assert isinstance(exception, HTTPError)
-        else:
-            assert response.status_code == HTTP_400_BAD_REQUEST
-            assert response.json() == {}
+        assert response.raise_for_status.called is raise_for_status
+        assert response.status_code == HTTP_400_BAD_REQUEST
+        assert response.json() == {}
 
     @override_settings(
         EMAIL_SUPPORT='mailgun_from_email@example.com',
@@ -529,21 +508,13 @@ class CourseTeamMailAPITests(MockedESTestCase):
         )
         course_with_email = CourseFactory.create(title='course with email', contact_email='course@example.com')
 
-        exception = None
-        response = None
-        try:
-            response = MailgunClient.send_course_team_email(
-                self.user,
-                course_with_email,
-                'email subject',
-                'email body',
-                raise_for_status=raise_for_status,
-            )
-        except Exception as _exception:  # pylint: disable=broad-except
-            exception = _exception
-
-        if raise_for_status:
-            assert isinstance(exception, HTTPError)
-        else:
-            assert response.status_code == HTTP_400_BAD_REQUEST
-            assert response.json() == {}
+        response = MailgunClient.send_course_team_email(
+            self.user,
+            course_with_email,
+            'email subject',
+            'email body',
+            raise_for_status=raise_for_status,
+        )
+        assert response.raise_for_status.called is raise_for_status
+        assert response.status_code == HTTP_400_BAD_REQUEST
+        assert response.json() == {}
