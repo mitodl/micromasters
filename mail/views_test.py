@@ -6,6 +6,7 @@ from unittest.mock import Mock, patch
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save
+from requests.exceptions import HTTPError
 from rest_framework import status
 from rest_framework.test import APITestCase
 from rest_framework.response import Response
@@ -20,7 +21,6 @@ from financialaid.api_test import (
     create_enrolled_profile,
 )
 from financialaid.factories import FinancialAidFactory, TierProgramFactory
-from mail.exceptions import MailException
 from mail.models import AutomaticEmail
 from mail.utils import generate_mailgun_response_json
 from profiles.factories import ProfileFactory
@@ -54,7 +54,7 @@ def mocked_batch_result(status_codes=None):
             ['recipient@example.com'],
             Mock(spec=Response, status_code=status_code, json=mocked_json())
             if _is_response(status_code) else None,
-            None if _is_response(status_code) else MailException("error"),
+            None if _is_response(status_code) else HTTPError(),
         ) for status_code in status_codes
     ]
 

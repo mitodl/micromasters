@@ -12,6 +12,7 @@ from django.db.models.signals import post_save
 from django.test import override_settings
 from factory.django import mute_signals
 from requests import Response
+from requests.exceptions import HTTPError
 from rest_framework.status import (
     HTTP_200_OK,
     HTTP_400_BAD_REQUEST,
@@ -22,7 +23,6 @@ from courses.factories import CourseFactory
 from ecommerce.factories import CoursePriceFactory
 from financialaid.factories import FinancialAidFactory
 from mail.api import MailgunClient
-from mail.exceptions import MailException
 from mail.models import FinancialAidEmailAudit
 from mail.views_test import mocked_json
 from profiles.factories import ProfileFactory
@@ -111,7 +111,7 @@ class MailAPITests(MockedESTestCase):
             self.assertEqual(called_kwargs['data']['from'], settings.EMAIL_SUPPORT)
 
     @data(True, False)
-    def test_send_bcc_error(self, raise_on_error, mock_post):  # pylint: disable=unused-argument
+    def test_send_bcc_error(self, raise_for_status, mock_post):  # pylint: disable=unused-argument
         """
         Test that send_bcc raises an exception at the right time
         """
@@ -128,12 +128,12 @@ class MailAPITests(MockedESTestCase):
                 'email subject',
                 'email body',
                 ['a@example.com', 'b@example.com'],
-                raise_on_error=raise_on_error,
+                raise_for_status=raise_for_status,
             )
         except Exception as _exception:  # pylint: disable=broad-except
             exception = _exception
-        if raise_on_error:
-            assert isinstance(exception, MailException)
+        if raise_for_status:
+            assert isinstance(exception, HTTPError)
         else:
             assert bcc_response.status_code == HTTP_400_BAD_REQUEST
 
@@ -281,7 +281,7 @@ class MailAPITests(MockedESTestCase):
             self.assertEqual(called_kwargs['data']['from'], settings.EMAIL_SUPPORT)
 
     @data(True, False)
-    def test_send_individual_email_error(self, raise_on_error, mock_post):
+    def test_send_individual_email_error(self, raise_for_status, mock_post):
         """
         Test handling of errors for send_individual_email
         """
@@ -298,13 +298,13 @@ class MailAPITests(MockedESTestCase):
                 subject='email subject',
                 body='email body',
                 recipient='a@example.com',
-                raise_on_error=raise_on_error,
+                raise_for_status=raise_for_status,
             )
         except Exception as _exception:  # pylint: disable=broad-except
             exception = _exception
 
-        if raise_on_error:
-            assert isinstance(exception, MailException)
+        if raise_for_status:
+            assert isinstance(exception, HTTPError)
         else:
             assert response.status_code == HTTP_400_BAD_REQUEST
             assert response.json() == {}
@@ -396,7 +396,7 @@ class FinancialAidMailAPITests(MockedESTestCase):
         MAILGUN_RECIPIENT_OVERRIDE=None
     )
     @data(True, False)
-    def test_financial_aid_email_error(self, raise_on_error, mock_post):
+    def test_financial_aid_email_error(self, raise_for_status, mock_post):
         """
         Test that send_financial_aid_email handles errors correctly
         """
@@ -414,13 +414,13 @@ class FinancialAidMailAPITests(MockedESTestCase):
                 self.financial_aid,
                 'email subject',
                 'email body',
-                raise_on_error=raise_on_error,
+                raise_for_status=raise_for_status,
             )
         except Exception as _exception:  # pylint: disable=broad-except
             exception = _exception
 
-        if raise_on_error:
-            assert isinstance(exception, MailException)
+        if raise_for_status:
+            assert isinstance(exception, HTTPError)
         else:
             assert response.status_code == HTTP_400_BAD_REQUEST
             assert response.json() == {}
@@ -518,7 +518,7 @@ class CourseTeamMailAPITests(MockedESTestCase):
 
     @override_settings(MAILGUN_RECIPIENT_OVERRIDE=None)
     @data(True, False)
-    def test_send_to_course_team_error(self, raise_on_error, mock_post):
+    def test_send_to_course_team_error(self, raise_for_status, mock_post):
         """
         Test that send_course_team_email handles errors correctly
         """
@@ -537,13 +537,13 @@ class CourseTeamMailAPITests(MockedESTestCase):
                 course_with_email,
                 'email subject',
                 'email body',
-                raise_on_error=raise_on_error,
+                raise_for_status=raise_for_status,
             )
         except Exception as _exception:  # pylint: disable=broad-except
             exception = _exception
 
-        if raise_on_error:
-            assert isinstance(exception, MailException)
+        if raise_for_status:
+            assert isinstance(exception, HTTPError)
         else:
             assert response.status_code == HTTP_400_BAD_REQUEST
             assert response.json() == {}
