@@ -18,6 +18,7 @@ from exams.models import (
     ExamProfile,
     ExamAuthorization
 )
+from grades.models import FinalGrade
 from seed_data.utils import add_year
 
 
@@ -88,6 +89,29 @@ def _has_paid_for_exam(mmtrack, edx_course_key):
     return suppress_payment_for_exam or mmtrack.has_paid(edx_course_key)
 
 
+def _has_passed_course(mmtrack, edx_course_key):
+    """
+    Returns True if user has passed the course
+
+    Args:
+        mmtrack (dashboard.utils.MMTrack): a instance of all user information about a program.
+        edx_course_key (str): An edX course key (CourseRun.edx_course_key)
+
+    Returns:
+        bool: whether user has passed the course or not.
+    """
+    has_passed_course = False
+    try:
+        has_passed_course = mmtrack.has_passed_course(edx_course_key)
+    except FinalGrade.DoesNotExist:
+        log.exception(
+            '[Exam authorization] User: %s do not have complete FinalGrade for course %s',
+            mmtrack.user.username,
+            edx_course_key
+        )
+    return has_passed_course
+
+
 def authorize_for_exam(mmtrack, course_run):
     """
     Authorize user for exam if he has paid for course and passed course.
@@ -119,7 +143,7 @@ def authorize_for_exam(mmtrack, course_run):
     # if user passed the course and currently not authorization for that run then give
     # her authorizations.
     ok_for_authorization = (
-        mmtrack.has_passed_course(course_run.edx_course_key) and
+        _has_passed_course(mmtrack, course_run.edx_course_key) and
         not ExamAuthorization.objects.filter(
             user=mmtrack.user,
             course=course_run.course,
@@ -237,24 +261,16 @@ def authorize_for_latest_passed_course(mmtrack, course_id):
 
     for enrollment in enrollments_qset:
         # only latest passed course_run per course allowed
-        edx_course_key = enrollment.course_run.edx_course_key
-        has_paid_and_passed = (
-            mmtrack.has_passed_course(edx_course_key) and
-            mmtrack.has_paid(edx_course_key)
-        )
-        if has_paid_and_passed:
-            # if user has passed and paid for the course
-            # and not already authorized for exam the create authorizations.
-            try:
-                authorize_for_exam(mmtrack, enrollment.course_run)
-            except ExamAuthorizationException:
-                log.exception(
-                    'Unable to authorize user: %s for exam on course_id: %s',
-                    mmtrack.user.username,
-                    enrollment.course_run.course.id
-                )
-            else:
-                break
+        try:
+            authorize_for_exam(mmtrack, enrollment.course_run)
+        except ExamAuthorizationException:
+            log.exception(
+                'Unable to authorize user: %s for exam on course_id: %s',
+                mmtrack.user.username,
+                enrollment.course_run.course.id
+            )
+        else:
+            break
 
 
 def _match_field(profile, field):

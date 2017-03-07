@@ -39,7 +39,9 @@ from ecommerce.factories import (
     LineFactory,
     CoursePriceFactory
 )
+from grades.constants import FinalGradeStatus
 from grades.factories import FinalGradeFactory
+from grades.models import FinalGrade
 from financialaid.api_test import create_program
 from profiles.factories import ProfileFactory
 from search.base import MockedESTestCase
@@ -648,6 +650,39 @@ class BulkExamUtilV1Tests(TestCase):
             user=user,
             course=self.course_run.course
         ).exists() is False
+
+    def test_exam_authorization_pending_final_grade(self):
+        """Test authorization when final grade is pending."""
+        user = self.users[0]
+        course = self.course_run.course
+        # change the final grade status to pending
+        with mute_signals(post_save):
+            # set status=PENDING for both course runs, so that user can not get exam authorization.
+            FinalGrade.objects.filter(course_run=self.course_run, user=user).update(status=FinalGradeStatus.PENDING)
+            FinalGrade.objects.filter(course_run=self.course_run2, user=user).update(status=FinalGradeStatus.PENDING)
+
+        # Neither user has exam profile nor authorization.
+        assert ExamProfile.objects.filter(profile=user.profile).exists() is False
+        assert ExamAuthorization.objects.filter(user=user, course=course).exists() is False
+
+        with patch("exams.utils.log") as log:
+            bulk_authorize_for_exam(
+                username=user.username,
+                program_id=self.program.id
+            )
+
+        log.exception.assert_called_with(
+            'Unable to authorize user: %s for exam on course_id: %s',
+            user.username,
+            course.id
+        )
+
+        mmtrack = get_mmtrack(user, self.program)
+        assert mmtrack.has_paid(self.course_run.edx_course_key) is True
+        assert mmtrack.has_paid(self.course_run2.edx_course_key) is True
+        assert ExamProfile.objects.filter(profile=user.profile).exists() is True
+        # because user has no complete final grade.
+        assert ExamAuthorization.objects.filter(user=user, course=course).exists() is False
 
     def test_exam_authorization_no_exam_series_code_set(self):
         """Test authorization when `exam_series_code` is not set on program."""
