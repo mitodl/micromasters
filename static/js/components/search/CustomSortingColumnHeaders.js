@@ -69,11 +69,11 @@ export default class CustomSortingColumnHeaders extends React.Component {
     return (
       <Grid className="sorting-row">
         <Cell col={1}/>
-        <Cell col={4} onClick={this.toggleNameSort} className={`name ${this.selectedClass(nameKeys)}`}>
+        <Cell col={5} onClick={this.toggleNameSort} className={`name ${this.selectedClass(nameKeys)}`}>
           Name {this.sortDirection(nameKeys)}
         </Cell>
         <Cell
-          col={4}
+          col={3}
           onClick={this.toggleLocationSort}
           className={`residence ${this.selectedClass(locationKeys)}`}
         >

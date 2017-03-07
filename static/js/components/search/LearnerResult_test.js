@@ -71,11 +71,6 @@ describe('LearnerResult', () => {
     assert.equal(result.text(), getUserDisplayName(USER_PROFILE_RESPONSE));
   });
 
-  it("should include the username", () => {
-    let result = renderLearnerResult().find(".learner-name").find(".user-name");
-    assert.equal(result.text(), USER_PROFILE_RESPONSE.username);
-  });
-
   it("should include the user's location for US residence", () => {
     let result = renderLearnerResult().find(".learner-location").find("span");
     assert.include(result.text(), USER_PROFILE_RESPONSE.city);
@@ -179,7 +174,6 @@ describe('LearnerResult', () => {
     profile.first_name = 'queryname';
     profile.last_name = 'qÜeryson';
     profile.preferred_name = 'Querypreferred';
-    profile.username = 'queryfake.username';
     let result = renderElasticSearchResult(
       {
         _source: {
@@ -193,6 +187,5 @@ describe('LearnerResult', () => {
       'qÜery',
       'Query',
     ]);
-    assert.equal(result.find(".user-name .highlight").text(), "query");
   });
 });

@@ -212,9 +212,7 @@ class SearchTests(ESTestCase, APITestCase):
                     "fields": [
                         "profile.first_name.folded",
                         "profile.last_name.folded",
-                        "profile.preferred_name.folded",
-                        "profile.username.folded",
-                        "email.folded"
+                        "profile.preferred_name.folded"
                     ],
                     "query": "l",
                     "type": "phrase_prefix"

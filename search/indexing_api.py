@@ -198,7 +198,7 @@ def program_enrolled_user_mapping():
     mapping = Mapping(USER_DOC_TYPE)
     mapping.field("id", "long")
     mapping.field("user_id", "long")
-    mapping.field("email", FOLDED_SEARCHABLE_STRING_TYPE)
+    mapping.field("email", NOT_ANALYZED_STRING_TYPE)
     mapping.field("profile", "object", properties={
         'account_privacy': NOT_ANALYZED_STRING_TYPE,
         'agreed_to_terms_of_service': BOOL_TYPE,
@@ -227,7 +227,7 @@ def program_enrolled_user_mapping():
         'preferred_language': NOT_ANALYZED_STRING_TYPE,
         'preferred_name': FOLDED_SEARCHABLE_STRING_TYPE,
         'pretty_printed_student_id': NOT_ANALYZED_STRING_TYPE,
-        'username': FOLDED_SEARCHABLE_STRING_TYPE,
+        'username': NOT_ANALYZED_STRING_TYPE,
         'work_history': {'type': 'nested', 'properties': {
             'city': NOT_ANALYZED_STRING_TYPE,
             'company_name': NOT_ANALYZED_STRING_TYPE,
