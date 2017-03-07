@@ -272,7 +272,8 @@
 
       .sk-search-box__icon:before {
         /* background-image from background-images.css */
-        background: top left no-repeat;
+        background-position: top left;
+        background-repeat: no-repeat;
       }
     }
 
