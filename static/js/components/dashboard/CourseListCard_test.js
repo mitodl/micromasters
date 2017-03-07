@@ -187,8 +187,10 @@ describe('CourseListCard', () => {
   });
 
   it('creates a CourseRow for each course', () => {
-    let now = moment();
-    let prices = new Map([[1, 2]]);
+    const now = moment();
+    const courseRunId = program.courses[0].runs[0].id;
+    const price = new Decimal('123.45');
+    const prices = new Map([[courseRunId, price]]);
     const wrapper = renderCourseListCard({
       now: now,
       prices: prices,
