@@ -264,6 +264,8 @@ FROM pg_stat_activity WHERE pid <> pg_backend_pid()""")
                 continue
             if "'webkitURL' is deprecated. Please use 'URL' instead" in message:
                 continue
+            if "zendesk" in message.lower():
+                continue
 
             # warnings (e.g. deprecations) should not fail the tests
             if entry['level'] in ["WARNING"]:
