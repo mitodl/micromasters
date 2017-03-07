@@ -48,6 +48,7 @@ fi
 if [[ $(
     cat "$TMP_FILE" |
     grep -v 'ignored, nothing could be mapped' |
+    grep -v "This browser doesn't support the \`onScroll\` event" |
     wc -l |
     awk '{print $1}'
     ) -ne 0 ]]  # is file empty?

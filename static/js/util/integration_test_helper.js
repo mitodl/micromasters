@@ -110,6 +110,8 @@ export default class IntegrationTestHelper {
     return this.listenForActions(expectedTypes, () => {
       this.browserHistory.push(url);
       div = document.createElement("div");
+      div.setAttribute("id", "integration_test_div");
+      document.body.appendChild(div);
       wrapper = mount(
         <div>
           <DashboardRouter

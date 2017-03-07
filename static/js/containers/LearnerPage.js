@@ -43,7 +43,7 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
 
   componentWillUnmount() {
     const { dispatch, params: { username } } = this.props;
-    if (SETTINGS.user.username !== username) {
+    if (!SETTINGS.user || SETTINGS.user.username !== username) {
       // don't erase the user's own profile from the state
       dispatch(clearProfile(username));
     }

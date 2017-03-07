@@ -1,4 +1,6 @@
 // Define globals we would usually get from Django
+import ReactDOM from 'react-dom';
+
 const _createSettings = () => ({
   user: {
     username: "jane",
@@ -51,6 +53,10 @@ beforeEach(() => { // eslint-disable-line mocha/no-top-level-hooks
 
 // cleanup after each test run
 afterEach(function () { // eslint-disable-line mocha/no-top-level-hooks
+  let node = document.querySelector("#integration_test_div");
+  if (node) {
+    ReactDOM.unmountComponentAtNode(node);
+  }
   document.body.innerHTML = '';
   global.SETTINGS = _createSettings();
   window.localStorage.reset();
