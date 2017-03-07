@@ -9,7 +9,6 @@ import R from 'ramda';
 import Dialog from 'material-ui/Dialog';
 
 import Loader from '../components/Loader';
-import CouponCard from '../components/dashboard/CouponCard';
 import { calculatePrices } from '../lib/coupon';
 import {
   FETCH_SUCCESS,
@@ -44,7 +43,9 @@ import {
   setDocsInstructionsVisibility,
   setCouponNotificationVisibility,
   setCalculatorDialogVisibility,
-  setPaymentTeaserDialogVisibility
+  setPaymentTeaserDialogVisibility,
+  setEnrollCourseDialogVisibility,
+  setEnrollSelectedCourseRun,
 } from '../actions/ui';
 import { findCourseRun } from '../util/util';
 import CourseListCard from '../components/dashboard/CourseListCard';
@@ -77,16 +78,18 @@ import type { OrderReceiptState } from '../reducers/order_receipt';
 import type { DocumentsState } from '../reducers/documents';
 import type { CoursePricesState, DashboardState } from '../flow/dashboardTypes';
 import type {
-  AvailableProgram, AvailableProgramsState, CourseEnrollmentsState
+  AvailableProgram, AvailableProgramsState
 } from '../flow/enrollmentTypes';
 import type { FinancialAidState } from '../reducers/financial_aid';
 import type { CouponsState } from '../reducers/coupons';
 import type { ProfileGetResult } from '../flow/profileTypes';
 import type { Course, CourseRun } from '../flow/programTypes';
+import type { Coupon } from '../flow/couponTypes';
 import { skipFinancialAid } from '../actions/financial_aid';
 import { currencyForCountry } from '../lib/currency';
 import DocsInstructionsDialog from '../components/DocsInstructionsDialog';
 import CouponNotificationDialog from '../components/CouponNotificationDialog';
+import CourseEnrollmentDialog from '../components/CourseEnrollmentDialog';
 import {
   getPearsonSSODigest,
   pearsonSSOInProgress,
@@ -116,7 +119,6 @@ class DashboardPage extends React.Component {
     email:                    AllEmailsState,
     documents:                DocumentsState,
     orderReceipt:             OrderReceiptState,
-    courseEnrollments:        CourseEnrollmentsState,
     financialAid:             FinancialAidState,
     location:                 Object,
     pearson:                  PearsonAPIState,
@@ -419,9 +421,14 @@ class DashboardPage extends React.Component {
     return dispatch(updateDocumentSentDate(financialAidId, sentDate));
   };
 
-  addCourseEnrollment = (courseId: string): void => {
+  addCourseEnrollment = (courseId: string): Promise<*> => {
     const { dispatch } = this.props;
-    return dispatch(addCourseEnrollment(courseId));
+    return dispatch(addCourseEnrollment(courseId)).catch(() => {
+      dispatch(setToastMessage({
+        message: "Failed to add course enrollment.",
+        icon: TOAST_FAILURE,
+      }));
+    });
   };
 
   setDocsInstructionsVisibility = bool => {
@@ -434,9 +441,19 @@ class DashboardPage extends React.Component {
     dispatch(setCouponNotificationVisibility(bool));
   };
 
-  setRecentlyAttachedCoupon = coupon => {
+  setRecentlyAttachedCoupon = (coupon: Coupon) => {
     const { dispatch } = this.props;
     dispatch(setRecentlyAttachedCoupon(coupon));
+  };
+
+  setEnrollCourseDialogVisibility = bool => {
+    const { dispatch } = this.props;
+    dispatch(setEnrollCourseDialogVisibility(bool));
+  };
+
+  setEnrollSelectedCourseRun = (run: CourseRun) => {
+    const { dispatch } = this.props;
+    dispatch(setEnrollSelectedCourseRun(run));
   };
 
   navigateToProfile = () => {
@@ -511,6 +528,47 @@ class DashboardPage extends React.Component {
     );
   }
 
+  renderCourseEnrollmentDialog() {
+    const { ui, dashboard, prices, coupons } = this.props;
+    const program = this.getCurrentlyEnrolledProgram();
+    if (!program) {
+      return null;
+    }
+    const courseRun = ui.enrollSelectedCourseRun;
+    if (!courseRun) {
+      return null;
+    }
+    const course = program.courses.find(
+      course => R.contains(courseRun.id, R.pluck("id", course.runs))
+    );
+    if (!course) {
+      return null;
+    }
+
+    let price;
+    if (
+      !program.financial_aid_availability ||
+      this.shouldSkipFinancialAid() ||
+      program.financial_aid_user_info.has_user_applied
+    ) {
+      const calculatedPrices = calculatePrices(
+        dashboard.programs,
+        prices.coursePrices,
+        coupons.coupons
+      );
+      price = calculatedPrices.get(courseRun.id);
+    }
+
+    return <CourseEnrollmentDialog
+      course={course}
+      courseRun={courseRun}
+      price={price}
+      open={ui.enrollCourseDialogVisibility}
+      setVisibility={this.setEnrollCourseDialogVisibility}
+      addCourseEnrollment={this.addCourseEnrollment}
+    />;
+  }
+
   renderErrorMessage = (): React$Element<*>|null => {
     const {
       dashboard,
@@ -541,7 +599,6 @@ class DashboardPage extends React.Component {
       profile: { profile },
       documents,
       ui,
-      courseEnrollments,
       financialAid,
       coupons,
       pearson
@@ -571,14 +628,13 @@ class DashboardPage extends React.Component {
       />;
     }
 
-    let couponCard;
-    let programId = program.id;
-    const coupon = coupons.coupons.find(coupon => coupon.program_id === programId);
-    if (coupon && coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM) {
-      couponCard = <CouponCard coupon={coupon} />;
-    }
-
     const calculatedPrices = calculatePrices(dashboard.programs, prices.coursePrices, coupons.coupons);
+
+    const courseListCardOptionalProps = {};
+    const coupon = coupons.coupons.find(coupon => coupon.program_id === program.id);
+    if (coupon) {
+      courseListCardOptionalProps.coupon = coupon;
+    }
 
     return (
       <div>
@@ -589,6 +645,7 @@ class DashboardPage extends React.Component {
             setDialogVisibility={this.setDocsInstructionsVisibility}
           />
           {this.renderCouponDialog()}
+          {this.renderCourseEnrollmentDialog()}
           <div className="first-column">
             <DashboardUserCard profile={profile} program={program}/>
             <FinalExamCard
@@ -599,16 +656,17 @@ class DashboardPage extends React.Component {
               submitPearsonSSO={this.submitPearsonSSO}
             />
             {financialAidCard}
-            {couponCard}
             <CourseListCard
               program={program}
-              coupon={coupon}
-              courseEnrollAddStatus={courseEnrollments.courseEnrollAddStatus}
+              coursePrice={coursePrice}
               prices={calculatedPrices}
               key={program.id}
               openFinancialAidCalculator={this.openFinancialAidCalculator}
               addCourseEnrollment={this.addCourseEnrollment}
               openCourseContactDialog={this.openCourseContactDialog}
+              setEnrollSelectedCourseRun={this.setEnrollSelectedCourseRun}
+              setEnrollCourseDialogVisibility={this.setEnrollCourseDialogVisibility}
+              {...courseListCardOptionalProps}
             />
           </div>
           <div className="second-column">
@@ -662,7 +720,6 @@ const mapStateToProps = (state) => {
     email: state.email,
     documents: state.documents,
     orderReceipt: state.orderReceipt,
-    courseEnrollments: state.courseEnrollments,
     financialAid: state.financialAid,
     coupons: state.coupons,
     pearson: state.pearson,

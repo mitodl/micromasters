@@ -19,12 +19,12 @@ import {
   STATUS_NOT_PASSED,
   STATUS_OFFERED,
 } from '../../constants';
+import { pickExistingProps } from '../../util/util';
 
 export default class CourseRow extends React.Component {
   props: {
-    coupon: ?Coupon,
+    coupon?: Coupon,
     course: Course,
-    courseEnrollAddStatus?: string,
     now: moment$Moment,
     prices: CalculatedPrices,
     financialAid: FinancialAidUserInfo,
@@ -32,6 +32,8 @@ export default class CourseRow extends React.Component {
     openFinancialAidCalculator: () => void,
     addCourseEnrollment: (courseId: string) => void,
     openCourseContactDialog: (course: Course, canContactCourseTeam: boolean) => void,
+    setEnrollSelectedCourseRun: (r: CourseRun) => void,
+    setEnrollCourseDialogVisibility: (b: boolean) => void,
   };
 
   shouldDisplayGradeColumn = (run: CourseRun): boolean => (
@@ -69,14 +71,15 @@ export default class CourseRow extends React.Component {
   renderRowColumns(run: CourseRun): Array<React$Element<*>> {
     const {
       course,
-      courseEnrollAddStatus,
       now,
       prices,
       financialAid,
       hasFinancialAid,
       openFinancialAidCalculator,
       addCourseEnrollment,
-      openCourseContactDialog
+      openCourseContactDialog,
+      setEnrollSelectedCourseRun,
+      setEnrollCourseDialogVisibility,
     } = this.props;
 
     let lastColumnSize, lastColumnClass;
@@ -105,17 +108,21 @@ export default class CourseRow extends React.Component {
       lastColumnClass = 'long-description';
     }
 
+    const optionalProps = pickExistingProps(['coupon'], this.props);
+
     columns.push(
       <Cell col={lastColumnSize} className={lastColumnClass} key="3">
         <CourseAction
           courseRun={run}
-          courseEnrollAddStatus={courseEnrollAddStatus}
           now={now}
           prices={prices}
           hasFinancialAid={hasFinancialAid}
           financialAid={financialAid}
           openFinancialAidCalculator={openFinancialAidCalculator}
           addCourseEnrollment={addCourseEnrollment}
+          setEnrollSelectedCourseRun={setEnrollSelectedCourseRun}
+          setEnrollCourseDialogVisibility={setEnrollCourseDialogVisibility}
+          {...optionalProps}
         />
       </Cell>
     );
@@ -131,6 +138,8 @@ export default class CourseRow extends React.Component {
       hasFinancialAid,
       openFinancialAidCalculator,
       addCourseEnrollment,
+      setEnrollSelectedCourseRun,
+      setEnrollCourseDialogVisibility,
     } = this.props;
 
     let firstRun = this.getFirstRun();
@@ -155,6 +164,8 @@ export default class CourseRow extends React.Component {
           openFinancialAidCalculator={openFinancialAidCalculator}
           addCourseEnrollment={addCourseEnrollment}
           key={i}
+          setEnrollSelectedCourseRun={setEnrollSelectedCourseRun}
+          setEnrollCourseDialogVisibility={setEnrollCourseDialogVisibility}
         />
       );
     }

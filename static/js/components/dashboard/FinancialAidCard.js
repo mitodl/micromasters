@@ -158,11 +158,7 @@ export default class FinancialAidCard extends React.Component {
     case FA_STATUS_APPROVED:
     case FA_STATUS_AUTO_APPROVED:
     case FA_STATUS_SKIPPED:
-      return <Grid className="financial-aid-box">
-        <Cell col={12}>
-          Your cost is <b>{price(coursePrice.price)} per course</b>.
-        </Cell>
-      </Grid>;
+      return null;
     case FA_STATUS_PENDING_MANUAL_APPROVAL:
     case FA_STATUS_DOCS_SENT:
     case FA_STATUS_PENDING_DOCS:
@@ -244,6 +240,10 @@ export default class FinancialAidCard extends React.Component {
       contents = this.renderInitialAidPrompt();
     } else {
       contents = this.renderAidApplicationStatus();
+    }
+
+    if (!contents) {
+      return null;
     }
 
     return <Card shadow={0} className="financial-aid-card">

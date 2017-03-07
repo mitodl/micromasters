@@ -93,11 +93,17 @@ export const setPaymentTeaserDialogVisibility = createAction(SET_PAYMENT_TEASER_
 export const SET_ENROLL_PROGRAM_DIALOG_VISIBILITY = 'SET_ENROLL_PROGRAM_DIALOG_VISIBILITY';
 export const setEnrollProgramDialogVisibility = createAction(SET_ENROLL_PROGRAM_DIALOG_VISIBILITY);
 
+export const SET_ENROLL_COURSE_DIALOG_VISIBILITY = 'SET_ENROLL_COURSE_DIALOG_VISIBILITY';
+export const setEnrollCourseDialogVisibility = createAction(SET_ENROLL_COURSE_DIALOG_VISIBILITY);
+
 export const SET_TOAST_MESSAGE = 'SET_TOAST_MESSAGE';
 export const setToastMessage = createAction(SET_TOAST_MESSAGE);
 
 export const SET_ENROLL_SELECTED_PROGRAM = 'SET_ENROLL_SELECTED_PROGRAM';
 export const setEnrollSelectedProgram = createAction(SET_ENROLL_SELECTED_PROGRAM);
+
+export const SET_ENROLL_SELECTED_COURSE_RUN = 'SET_ENROLL_SELECTED_COURSE_RUN';
+export const setEnrollSelectedCourseRun = createAction(SET_ENROLL_SELECTED_COURSE_RUN);
 
 export const SET_PHOTO_DIALOG_VISIBILITY = 'SET_PHOTO_DIALOG_VISIBILITY';
 export const setPhotoDialogVisibility = createAction(SET_PHOTO_DIALOG_VISIBILITY);

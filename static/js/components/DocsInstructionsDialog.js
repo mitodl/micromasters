@@ -1,14 +1,16 @@
 // @flow
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
-import Icon from 'react-mdl/lib/Icon';
+import IconButton from 'react-mdl/lib/IconButton';
 
 const dialogTitle = setDialogVisibility => (
-  <div className="docs-instructions-title">
+  <div className="title">
     <div className="text" key={1}>
       Income Verification Instructions
     </div>
-    <Icon name="close" onClick={() => setDialogVisibility(false)} key={2} />
+    <IconButton name="close" className="close"
+      onClick={() => setDialogVisibility(false)} key={2}
+    />
   </div>
 );
 
@@ -31,8 +33,8 @@ const DocsInstructionsDialog = ({ open, setDialogVisibility }: DocsInstructions)
       Whose income should I report?
     </div>
     <p>
-      Report your taxable household income (the combined income of all people 
-      that are part of your household or place of residence). If you live with, 
+      Report your taxable household income (the combined income of all people
+      that are part of your household or place of residence). If you live with,
       or are financially supported by, your parent(s) or legal guardian(s)
       please enter their combined taxable income instead.
     </p>
@@ -40,7 +42,7 @@ const DocsInstructionsDialog = ({ open, setDialogVisibility }: DocsInstructions)
       What documents do you require to verify the income information I entered?
     </div>
     <p>
-      Submit a signed photocopy of the most recent federal tax return of all 
+      Submit a signed photocopy of the most recent federal tax return of all
       income earners in your household as defined above.
     </p>
     <div className="heading">
@@ -56,7 +58,7 @@ const DocsInstructionsDialog = ({ open, setDialogVisibility }: DocsInstructions)
       you must submit notarized income statements for each earner.
     </p>
     <div className="heading">
-      What if no one in my household is employed? 
+      What if no one in my household is employed?
     </div>
     <p>
       Please submit either one of the following: a signed federal tax return

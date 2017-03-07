@@ -2,6 +2,7 @@
 import '../global_init';
 
 import { assert } from 'chai';
+import sinon from 'sinon';
 import moment from 'moment';
 import ReactDOM from 'react-dom';
 import Decimal from 'decimal.js-light';
@@ -10,7 +11,6 @@ import R from 'ramda';
 import {
   makeAvailablePrograms,
   makeCoupon,
-  makeCoupons,
   makeCoursePrices,
   makeDashboard,
   makeCourse
@@ -34,6 +34,8 @@ import {
   CLEAR_UI,
   SET_COUPON_NOTIFICATION_VISIBILITY,
   SET_PAYMENT_TEASER_DIALOG_VISIBILITY,
+  SET_ENROLL_COURSE_DIALOG_VISIBILITY,
+  SET_ENROLL_SELECTED_COURSE_RUN,
   setToastMessage,
 } from '../actions/ui';
 import {
@@ -52,7 +54,6 @@ import {
 } from '../actions/profile';
 import {
   CLEAR_ENROLLMENTS,
-  setCurrentProgramEnrollment,
 } from '../actions/programs';
 import { EMAIL_COMPOSITION_DIALOG } from '../components/email/constants';
 import {
@@ -74,7 +75,6 @@ import {
   DASHBOARD_RESPONSE,
 } from '../test_constants';
 import {
-  COUPON_CONTENT_TYPE_COURSE,
   FA_ALL_STATUSES,
   FA_TERMINAL_STATUSES,
   FA_STATUS_APPROVED,
@@ -261,8 +261,8 @@ describe('DashboardPage', () => {
         calculatePricesStub.returns(calculatedPrices);
 
         return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
-          assert.include(wrapper.text(), `Pay Now $123`);
-          assert.isTrue(calculatePricesStub.calledWith(dashboard, coursePrices, []));
+          assert.include(wrapper.text(), 'Enroll Now');
+          sinon.assert.calledWith(calculatePricesStub, dashboard, coursePrices, []);
         });
       });
 
@@ -293,7 +293,7 @@ describe('DashboardPage', () => {
                 let aid = helper.store.getState().financialAid;
                 if (expectedSkip) {
                   assert.equal(aid.fetchSkipStatus, FETCH_SUCCESS);
-                  assert(helper.skipFinancialAidStub.calledWith(program.id));
+                  sinon.assert.calledWith(helper.skipFinancialAidStub, program.id);
                 } else {
                   assert.isUndefined(aid.fetchSkipStatus);
                 }
@@ -316,7 +316,7 @@ describe('DashboardPage', () => {
           };
 
           return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
-            assert(helper.skipFinancialAidStub.notCalled);
+            sinon.assert.notCalled(helper.skipFinancialAidStub);
             assert.equal(wrapper.find(".financial-aid-card").length, 1);
           });
         });
@@ -344,7 +344,7 @@ describe('DashboardPage', () => {
             type: 'fake'
           }));
           clock.tick(3501);
-          assert(fetchDashboardStub.calledWith(SETTINGS.user.username, true), 'expected fetchDashboard called');
+          sinon.assert.calledWith(fetchDashboardStub, SETTINGS.user.username, true);
         });
       });
 
@@ -457,54 +457,7 @@ describe('DashboardPage', () => {
         // must be the second call result
         assert.deepEqual(state.coupons.coupons, [coupon2]);
         assert.isTrue(state.ui.couponNotificationVisibility);
-        assert.equal(helper.couponsStub.callCount, 2);
-      });
-    });
-  });
-
-  describe('coupon messaging', () => {
-    let dashboard, coursePrices, availablePrograms, coupons, coupon, programId, availableProgram;
-
-    beforeEach(() => {
-      dashboard = makeDashboard();
-      // pick an arbitrary program to test that filtering works
-      programId = dashboard[1].id;
-      coursePrices = makeCoursePrices(dashboard);
-      availablePrograms = makeAvailablePrograms(dashboard);
-      coupons = makeCoupons(dashboard);
-      coupon = coupons.find(coupon => coupon.program_id === programId);
-
-      availableProgram = availablePrograms.find(program => program.id === programId);
-
-      helper.dashboardStub.returns(Promise.resolve(dashboard));
-      helper.coursePricesStub.returns(Promise.resolve(coursePrices));
-      helper.programsGetStub.returns(Promise.resolve(availablePrograms));
-      helper.store.dispatch(setCurrentProgramEnrollment(availableProgram));
-    });
-
-    it('has coupon messaging for a program', () => {
-      helper.couponsStub.returns(Promise.resolve(coupons));
-
-      return renderComponent('/dashboard/', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
-        assert.deepEqual(wrapper.find("CouponCard").props(), {
-          coupon
-        });
-      });
-    });
-
-    it('has coupon messaging for a course', () => {
-      coupon.content_type = COUPON_CONTENT_TYPE_COURSE;
-      let [, course, ] = findCourseRun(dashboard, (run, course, program) => (
-        program && course && run && program.id === programId && run.status === STATUS_OFFERED
-      ));
-      coupon.object_id = course.id;
-      helper.couponsStub.returns(Promise.resolve(coupons));
-
-      return renderComponent('/dashboard/', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
-        let row = wrapper.find("CourseRow").filterWhere(_row => _row.props().course.id === course.id);
-        assert.deepEqual(row.find("CouponMessage").props(), {
-          coupon: coupon
-        });
+        sinon.assert.calledTwice(helper.couponsStub);
       });
     });
   });
@@ -576,6 +529,38 @@ describe('DashboardPage', () => {
         }).then((state) => {
           assert.isTrue(state.ui.paymentTeaserDialogVisibility);
           assert.isFalse(state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG]);
+        });
+      });
+    });
+  });
+
+  describe('course enrollment dialog', () => {
+    let dashboardResponse;
+    const ENROLL_BUTTON_SELECTOR = '.course-list .enroll-button';
+    const COURSE_ENROLL_DIALOG_ACTIONS = [
+      SET_ENROLL_COURSE_DIALOG_VISIBILITY,
+      SET_ENROLL_SELECTED_COURSE_RUN,
+    ];
+
+    beforeEach(() => {
+      // Limit the dashboard response to 1 program
+      dashboardResponse = [R.clone(DASHBOARD_RESPONSE[0])];
+    });
+
+    it('renders correctly', () => {
+      let course = makeCourse();
+      course.runs[0].enrollment_start_date = moment().subtract(2, 'days');
+      dashboardResponse[0].courses = [course];
+      helper.dashboardStub.returns(Promise.resolve(dashboardResponse));
+
+      return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
+        let enrollButton = wrapper.find(ENROLL_BUTTON_SELECTOR).at(0);
+
+        return listenForActions(COURSE_ENROLL_DIALOG_ACTIONS, () => {
+          enrollButton.simulate('click');
+        }).then((state) => {
+          assert.isTrue(state.ui.enrollCourseDialogVisibility);
+          assert.deepEqual(state.ui.enrollSelectedCourseRun, course.runs[0]);
         });
       });
     });

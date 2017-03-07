@@ -11,54 +11,179 @@ import type {
 } from '../../flow/couponTypes';
 import CourseRow from './CourseRow';
 import FinancialAidCalculator from '../../containers/FinancialAidCalculator';
+import type { CoursePrice } from '../../flow/dashboardTypes';
+import type { CourseRun } from '../../flow/programTypes';
+import {
+  FA_TERMINAL_STATUSES,
+  COUPON_CONTENT_TYPE_PROGRAM,
+  COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
+  COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
+} from '../../constants';
+import {
+  makeAmountMessage,
+  makeCouponReason,
+  isFreeCoupon,
+} from '../../lib/coupon';
+import { pickExistingProps } from '../../util/util';
+
+const priceMessageClassName = "price-message";
 
 export default class CourseListCard extends React.Component {
   props: {
-    coupon:                       ?Coupon,
+    coupon?:                      Coupon,
     program:                      Program,
-    courseEnrollAddStatus?:       string,
+    coursePrice:                  CoursePrice,
     prices:                       CalculatedPrices,
     openFinancialAidCalculator?:  () => void,
     now?:                         Object,
-    addCourseEnrollment:          (courseId: string) => void,
-    openCourseContactDialog:      (course: Course, canContactCourseTeam: boolean) => void
+    addCourseEnrollment:          (courseId: string) => Promise<*>,
+    openCourseContactDialog:      (course: Course, canContactCourseTeam: boolean) => void,
+    setEnrollSelectedCourseRun:   (r: CourseRun) => void,
+    setEnrollCourseDialogVisibility: (bool: boolean) => void,
   };
 
-  render() {
-    let {
-      program,
-      prices,
-      now,
+  renderFinancialAidPriceMessage(): React$Element<*> {
+    const {
+      program: {financial_aid_user_info: financialAid},
       coupon,
-      openFinancialAidCalculator,
-      addCourseEnrollment,
-      courseEnrollAddStatus,
-      openCourseContactDialog,
+      prices,
     } = this.props;
-    if (now === undefined) {
-      now = moment();
+
+    if (FA_TERMINAL_STATUSES.includes(financialAid.application_status)) {
+      // all prices in the map are the same, so just get a random one
+      const iter = prices.values();
+      const { value: price } = iter.next();
+      if (!price) {
+        throw "missing price"; // this should never happen, it's just to make flow happy
+      }
+      if (coupon && coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM) {
+        // financial aid + coupon
+        return <p className={priceMessageClassName}>
+          Your price is <strong>${ price.toString() } USD per course,</strong> including
+          both financial aid and your coupon.
+          If you want to audit courses for FREE and upgrade later,
+          click Enroll Now then choose the audit option.
+        </p>;
+      } else {
+        return <p className={priceMessageClassName}>
+          Your Personal Course Price is{" "}
+          <strong>${ price.toString() } USD per course.</strong> {" "}
+          If you want to audit courses for FREE and upgrade later, click
+          Enroll Now then choose the audit option.
+        </p>;
+      }
+    } else {
+      return <p className={priceMessageClassName}>
+        You need to get your Personal Course Price before you can pay for courses.
+        If you want to audit courses for FREE and upgrade later,
+        click Enroll Now then choose the audit option.
+      </p>;
+    }
+  }
+
+  renderCouponPriceMessage(): React$Element<*> {
+    const { coupon } = this.props;
+    if (!coupon) {
+      throw "missing coupon"; // this should never happen, it's just to make flow happy
     }
 
-    let sortedCourses = _.orderBy(program.courses, 'position_in_program');
-    let courseRows = sortedCourses.map(course =>
+    const isDiscount = (
+      coupon.amount_type === COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT ||
+      coupon.amount_type === COUPON_AMOUNT_TYPE_FIXED_DISCOUNT
+    );
+    let message;
+    if (isDiscount) {
+      message = <span>
+        You will get {makeAmountMessage(coupon)} off the cost for each course in this program
+      </span>;
+    } else {
+      message = <span>
+        All courses are set to the discounted price of {makeAmountMessage(coupon)}
+      </span>;
+    }
+    return <p className={priceMessageClassName}>
+      {message}{makeCouponReason(coupon)}.
+      If you want to audit courses for FREE and upgrade later,
+      click Enroll Now then choose the audit option.
+    </p>;
+  }
+
+  renderPriceMessage(): React$Element<*> {
+    const {
+      program: {financial_aid_availability: hasFinancialAid},
+      coupon,
+      prices,
+    } = this.props;
+
+    // Special case: 100% off coupon
+    if (coupon &&
+        isFreeCoupon(coupon) &&
+        coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM
+    ) {
+      return <p className={priceMessageClassName}>
+        Courses in this program are free, because of your coupon.
+      </p>;
+    }
+
+    if (hasFinancialAid) {
+      return this.renderFinancialAidPriceMessage();
+    }
+
+    // no financial aid
+    if (coupon && coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM) {
+      return this.renderCouponPriceMessage();
+    }
+
+    // all prices in the map are the same, so just get a random one
+    const iter = prices.values();
+    const { value: price } = iter.next();
+    if (!price) {
+      throw "missing price"; // this should never happen, it's just to make flow happy
+    }
+
+    return <p className={priceMessageClassName}>
+      Courses in this program cost <strong>${ price.toString() } USD each.</strong> {" "}
+      If you want to audit courses for FREE and upgrade later,
+      click Enroll Now then choose the audit option.
+    </p>;
+  }
+
+  render(): React$Element<*> {
+    const {
+      program,
+      prices,
+      openFinancialAidCalculator,
+      addCourseEnrollment,
+      openCourseContactDialog,
+      setEnrollSelectedCourseRun,
+      setEnrollCourseDialogVisibility,
+    } = this.props;
+    const now = this.props.now || moment();
+
+    const courseRowOptionalProps = pickExistingProps(['coupon'], this.props);
+
+    const sortedCourses = _.orderBy(program.courses, 'position_in_program');
+    const courseRows = sortedCourses.map(course =>
       <CourseRow
-        coupon={coupon}
         hasFinancialAid={program.financial_aid_availability}
         financialAid={program.financial_aid_user_info}
         course={course}
-        courseEnrollAddStatus={courseEnrollAddStatus}
         key={course.id}
         openFinancialAidCalculator={openFinancialAidCalculator}
         prices={prices}
         now={now}
         addCourseEnrollment={addCourseEnrollment}
         openCourseContactDialog={openCourseContactDialog}
+        setEnrollSelectedCourseRun={setEnrollSelectedCourseRun}
+        setEnrollCourseDialogVisibility={setEnrollCourseDialogVisibility}
+        {...courseRowOptionalProps}
       />
     );
 
     return <Card shadow={0} className="course-list">
       <FinancialAidCalculator />
       <CardTitle>Required Courses</CardTitle>
+      { this.renderPriceMessage() }
       { courseRows }
     </Card>;
   }

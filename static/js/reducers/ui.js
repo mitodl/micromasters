@@ -35,8 +35,10 @@ import {
 
   SET_ENROLL_PROGRAM_DIALOG_ERROR,
   SET_ENROLL_PROGRAM_DIALOG_VISIBILITY,
+  SET_ENROLL_COURSE_DIALOG_VISIBILITY,
   SET_TOAST_MESSAGE,
   SET_ENROLL_SELECTED_PROGRAM,
+  SET_ENROLL_SELECTED_COURSE_RUN,
 
   SET_PHOTO_DIALOG_VISIBILITY,
   SET_CALCULATOR_DIALOG_VISIBILITY,
@@ -52,6 +54,7 @@ import { EMAIL_COMPOSITION_DIALOG } from '../components/email/constants';
 import type { ToastMessage } from '../flow/generalTypes';
 import type { Action } from '../flow/reduxTypes';
 import type { AvailableProgram } from '../flow/enrollmentTypes';
+import type { CourseRun } from '../flow/programTypes';
 
 export type UIDialog = {
   title?: string,
@@ -88,8 +91,10 @@ export type UIState = {
   paymentTeaserDialogVisibility:       boolean,
   enrollProgramDialogError:            ?string,
   enrollProgramDialogVisibility:       boolean,
+  enrollCourseDialogVisibility:        boolean,
   toastMessage:                        ?ToastMessage,
   enrollSelectedProgram:               ?number,
+  enrollSelectedCourseRun:             ?CourseRun,
   photoDialogVisibility:               boolean,
   calculatorDialogVisibility:          boolean,
   confirmIncomeDialogVisibility:       boolean,
@@ -126,8 +131,10 @@ export const INITIAL_UI_STATE: UIState = {
   paymentTeaserDialogVisibility:       false,
   enrollProgramDialogError:            null,
   enrollProgramDialogVisibility:       false,
+  enrollCourseDialogVisibility:        false,
   toastMessage:                        null,
   enrollSelectedProgram:               null,
+  enrollSelectedCourseRun:             null,
   photoDialogVisibility:               false,
   calculatorDialogVisibility:          false,
   confirmIncomeDialogVisibility:       false,
@@ -308,10 +315,22 @@ export const ui = (state: UIState = INITIAL_UI_STATE, action: Action<any, null>)
       enrollSelectedProgram: action.payload,
     };
   }
+  case SET_ENROLL_SELECTED_COURSE_RUN: {
+    return {
+      ...state,
+      enrollSelectedCourseRun: action.payload,
+    };
+  }
   case SET_ENROLL_PROGRAM_DIALOG_VISIBILITY: {
     return {
       ...state,
       enrollProgramDialogVisibility: action.payload
+    };
+  }
+  case SET_ENROLL_COURSE_DIALOG_VISIBILITY: {
+    return {
+      ...state,
+      enrollCourseDialogVisibility: action.payload
     };
   }
   case SET_PHOTO_DIALOG_VISIBILITY:

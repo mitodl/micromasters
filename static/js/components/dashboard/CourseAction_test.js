@@ -5,9 +5,7 @@ import moment from 'moment';
 import { assert } from 'chai';
 import sinon from 'sinon';
 
-import { FETCH_PROCESSING } from '../../actions';
 import CourseAction from './CourseAction';
-import { makeDashboard } from '../../factories/dashboard';
 import {
   COURSE_PRICES_RESPONSE,
   DASHBOARD_RESPONSE,
@@ -36,12 +34,20 @@ import { calculatePrices } from '../../lib/coupon';
 
 describe('CourseAction', () => {
   const now = moment();
-  let sandbox, addCourseEnrollmentStub, routerPushStub;
+  let sandbox;
+  let addCourseEnrollmentStub;
+  let setEnrollSelectedCourseRunStub;
+  let setEnrollCourseDialogVisibilityStub;
+  let openFinancialAidCalculatorStub;
+  let routerPushStub;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
-    routerPushStub = sandbox.stub();
     addCourseEnrollmentStub = sandbox.stub();
+    setEnrollSelectedCourseRunStub = sandbox.stub();
+    setEnrollCourseDialogVisibilityStub = sandbox.stub();
+    openFinancialAidCalculatorStub = sandbox.stub();
+    routerPushStub = sandbox.stub();
   });
 
   afterEach(() => {
@@ -49,7 +55,10 @@ describe('CourseAction', () => {
   });
 
   let getElements = (renderedComponent) => {
-    let button = renderedComponent.find(".pay-button");
+    let button = renderedComponent.find(".enroll-button");
+    if (!button.length) {
+      button = renderedComponent.find(".pay-button");
+    }
     let buttonText;
     if (button.length > 0 && button.children().length > 0) {
       buttonText = button.children().text();
@@ -69,9 +78,16 @@ describe('CourseAction', () => {
       payLaterLinkText: payLaterLinkText
     };
   };
-  let assertEnrollNowButton = (button, courseId) => {
-    button.simulate('click');
-    assert.isTrue(routerPushStub.calledWith(`/order_summary/?course_key=${encodeURIComponent(courseId)}`));
+
+  const assertCourseRunSelected = (courseRun) => {
+    sinon.assert.calledWith(setEnrollSelectedCourseRunStub, courseRun);
+  };
+  const assertCourseEnrollDialogOpened = () => {
+    sinon.assert.calledWith(setEnrollCourseDialogVisibilityStub, true);
+  };
+  const assertRedirectedToOrderSummary = (courseRun) => {
+    const url = `/order_summary/?course_key=${encodeURIComponent(courseRun.course_id)}`;
+    sinon.assert.calledWith(routerPushStub, url);
   };
 
   let renderCourseAction = (props = {}) => {
@@ -81,9 +97,12 @@ describe('CourseAction', () => {
         hasFinancialAid={false}
         financialAid={{}}
         addCourseEnrollment={addCourseEnrollmentStub}
+        setEnrollSelectedCourseRun={setEnrollSelectedCourseRunStub}
+        setEnrollCourseDialogVisibility={setEnrollCourseDialogVisibilityStub}
         now={now}
         courseRun={null}
         prices={prices}
+        openFinancialAidCalculator={openFinancialAidCalculatorStub}
         {...props}
       />
     , {context: { router: { push: routerPushStub}}});
@@ -149,7 +168,7 @@ describe('CourseAction', () => {
     assert.include(contactLink.props().href, SETTINGS.support_email);
   });
 
-  it('shows a button to enroll and pay, and a link to enroll and pay later', () => {
+  it('shows a button to enroll, with no link text', () => {
     let course = findCourse(course => (
       course.runs.length > 0 &&
       course.runs[0].status === STATUS_OFFERED
@@ -161,12 +180,10 @@ describe('CourseAction', () => {
     let elements = getElements(wrapper);
 
     assert.isUndefined(elements.button.props().disabled);
-    assert.include(elements.buttonText, 'Pay Now');
-    assert.equal(elements.payLaterLinkText, 'Enroll and pay later');
-    assertEnrollNowButton(elements.button, firstRun.course_id);
-
-    elements.payLaterLink.simulate('click');
-    assert(addCourseEnrollmentStub.calledWith(firstRun.course_id));
+    assert.include(elements.buttonText, 'Enroll Now');
+    elements.button.simulate('click');
+    assertCourseRunSelected(firstRun);
+    assertCourseEnrollDialogOpened();
   });
 
   it('hides an invalid date with STATUS_OFFERED', () => {
@@ -199,9 +216,10 @@ describe('CourseAction', () => {
       let elements = getElements(wrapper);
 
       assert.isUndefined(elements.button.props().disabled);
-      assert.include(elements.buttonText, 'Pay Now');
-      assert.equal(elements.payLaterLinkText, 'Enroll and pay later');
-      assertEnrollNowButton(elements.button, firstRun.course_id);
+      assert.include(elements.buttonText, 'Enroll Now');
+      elements.button.simulate('click');
+      assertCourseRunSelected(firstRun);
+      assertCourseEnrollDialogOpened();
     });
   });
 
@@ -220,7 +238,8 @@ describe('CourseAction', () => {
     assert.isUndefined(elements.button.props().disabled);
     assert.include(elements.buttonText, 'Pay Now');
     assert.equal(elements.btnFooterText, `Payment due: ${formattedUpgradeDate}`);
-    assertEnrollNowButton(elements.button, firstRun.course_id);
+    elements.button.simulate('click');
+    assertRedirectedToOrderSummary(firstRun);
   });
 
   it('hides an invalid date if user is enrolled but is not verified', () => {
@@ -384,7 +403,7 @@ describe('CourseAction', () => {
       ));
     });
 
-    it('indicates that a user must calculate the course price', () => {
+    it('allow user to click Enroll Now even without a calculated course price', () => {
       let firstRun = alterFirstRun(course, {
         enrollment_start_date: now.toISOString(),
       });
@@ -400,11 +419,33 @@ describe('CourseAction', () => {
       let elements = getElements(wrapper);
 
       assert.isUndefined(elements.button.props().disabled);
-      assert.equal(elements.buttonText, 'Calculate Cost');
-      assert.equal(elements.payLaterLinkText, 'Enroll and pay later');
+      assert.equal(elements.buttonText, 'Enroll Now');
     });
 
-    it('shows an enroll/pay button if a user has skipped financial aid', () => {
+    it('indicates that a user must calculate the course price to upgrade to paid', () => {
+      let course = findAndCloneCourse(course => (
+        course.runs.length > 0 &&
+        course.runs[0].status === STATUS_CAN_UPGRADE
+      ));
+      let firstRun = alterFirstRun(course, {
+        enrollment_start_date: now.toISOString(),
+      });
+
+      const wrapper = renderCourseAction({
+        courseRun: firstRun,
+        financialAid: {
+          ...FINANCIAL_AID_PARTIAL_RESPONSE,
+          has_user_applied: false
+        },
+        hasFinancialAid: true,
+      });
+      let elements = getElements(wrapper);
+
+      assert.isTrue(elements.button.props().disabled);
+      assert.equal(elements.buttonText, 'Pay Now');
+    });
+
+    it('shows an enroll button if a user has skipped financial aid', () => {
       let firstRun = alterFirstRun(course, {
         enrollment_start_date: now.toISOString(),
       });
@@ -421,27 +462,10 @@ describe('CourseAction', () => {
       let elements = getElements(wrapper);
 
       assert.isUndefined(elements.button.props().disabled);
-      assert.include(elements.buttonText, 'Pay Now');
-      assert.equal(elements.payLaterLinkText, 'Enroll and pay later');
+      assert.include(elements.buttonText, 'Enroll Now');
     });
 
-    it('shows the price', () => {
-      let program = makeDashboard()[0];
-      let price = 123.45;
-      let run = program.courses[0].runs[0];
-      let prices = new Map([[run.id, price]]);
-      run.start_date = '2016-01-01';
-      run.enrollment_start_date = '2016-01-01';
-      const wrapper = renderCourseAction({
-        courseRun: run,
-        prices: prices,
-      });
-
-      let buttonText = wrapper.find("SpinnerButton .pay-button").children().text();
-      assert.equal(buttonText, `Pay Now $${price}`);
-    });
-
-    it('shows a disabled enroll/pay button if a user is pending approval', () => {
+    it('shows a disabled enroll button if a user is pending approval', () => {
       let firstRun = alterFirstRun(course, {
         enrollment_start_date: now.toISOString(),
       });
@@ -461,24 +485,8 @@ describe('CourseAction', () => {
         assert.isTrue(elements.button.props().disabled);
         // we don't show a spinner in this case, only for API loads or when waiting for Cybersource callback
         assert.isFalse(elements.button.props().spinning);
-        assert.include(elements.buttonText, 'Pay Now');
-        assert.equal(elements.payLaterLinkText, 'Enroll and pay later');
+        assert.include(elements.buttonText, 'Enroll Now');
       });
     });
-
-    it('shows a spinner in place of the enroll button while API call is in progress', () => {
-      let course = findCourse(course => (
-        course.runs.length > 0 &&
-        course.runs[0].status === STATUS_OFFERED
-      ));
-      let firstRun = course.runs[0];
-      const wrapper = renderCourseAction({
-        courseRun: firstRun,
-        courseEnrollAddStatus: FETCH_PROCESSING
-      });
-      let link = wrapper.find("SpinnerButton.course-action-btn-footer");
-      assert.isTrue(link.props().spinning);
-    });
-
   });
 });

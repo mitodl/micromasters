@@ -131,3 +131,11 @@ export function makeCouponReason(coupon: Coupon): string {
     return '';
   }
 }
+
+export function isFreeCoupon(coupon: Coupon): boolean {
+  return !!(
+    coupon &&
+    coupon.amount_type === COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT &&
+    coupon.amount.equals(1)
+  );
+}
