@@ -75,7 +75,6 @@ def generate_mailgun_response_json(response):
 
     Args:
         response (requests.Response): response object
-        exception (Exception): If not None, there was an exception when trying to contact Mailgun
     Returns:
         dict
     """
