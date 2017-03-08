@@ -134,9 +134,9 @@
       }
 
       &.user-info {
-        margin-left: 10px;
+        margin-left: 20px;
         word-wrap: break-word;
-        width: 75%;
+        flex-grow: 2;
       }
 
       .profile-row-name {
