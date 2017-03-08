@@ -15,6 +15,7 @@ from requests import Response
 from rest_framework.status import (
     HTTP_200_OK,
     HTTP_400_BAD_REQUEST,
+    HTTP_401_UNAUTHORIZED,
 )
 
 from dashboard.models import ProgramEnrollment
@@ -244,6 +245,22 @@ class MailAPITests(MockedESTestCase):
             assert recipients == chunked_emails_to[call_num]
             assert response is None
             assert isinstance(exception, KeyError)
+
+    @override_settings(MAILGUN_RECIPIENT_OVERRIDE=None)
+    def test_send_batch_improperly_configured(self, mock_post):
+        """
+        If MailgunClient.send_batch returns a 401, it should raise a ImproperlyConfigured exception
+        """
+        mock_post.return_value = Mock(
+            spec=Response,
+            status_code=HTTP_401_UNAUTHORIZED,
+        )
+
+        chunk_size = 10
+        emails_to = ["{0}@example.com".format(letter) for letter in string.ascii_letters]
+        with self.assertRaises(ImproperlyConfigured) as ex:
+            MailgunClient.send_batch('email subject', 'email body', emails_to, chunk_size=chunk_size)
+        assert ex.exception.args[0] == "Mailgun API keys not properly configured."
 
     @override_settings(MAILGUN_RECIPIENT_OVERRIDE=None)
     @data(None, 'Tester')

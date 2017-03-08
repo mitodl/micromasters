@@ -54,11 +54,16 @@ class MailgunClient:
                 sender_name=sender_name,
                 email=email_params['from']
             )
-        return request_func(
+        response = request_func(
             mailgun_url,
             auth=cls._basic_auth_credentials,
             data=email_params
         )
+        if response.status_code == status.HTTP_401_UNAUTHORIZED:
+            message = "Mailgun API keys not properly configured."
+            log.error(message)
+            raise ImproperlyConfigured(message)
+        return response
 
     @classmethod
     def _recipient_override(cls, body, recipients):
@@ -160,14 +165,12 @@ class MailgunClient:
                     params,
                     sender_name=sender_name,
                 )
-                if response.status_code == status.HTTP_401_UNAUTHORIZED:
-                    message = "Mailgun API keys not properly configured."
-                    log.error(message)
-                    raise ImproperlyConfigured(message)
 
                 responses.append(
                     (original_recipients_chunk, response, None)
                 )
+            except ImproperlyConfigured:
+                raise
             except Exception as exception:  # pylint: disable=broad-except
                 responses.append(
                     (original_recipients_chunk, None, exception)
