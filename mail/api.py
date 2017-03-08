@@ -225,7 +225,7 @@ class MailgunClient:
         from_address = cls.default_params()['from']
         to_address = financial_aid.user.email
         response = cls.send_individual_email(subject, body, to_address, raise_for_status=raise_for_status)
-        if response.status_code == status.HTTP_200_OK:
+        if response.ok:
             FinancialAidEmailAudit.objects.create(
                 acting_user=acting_user,
                 financial_aid=financial_aid,
