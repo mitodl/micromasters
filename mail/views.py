@@ -91,12 +91,15 @@ def _make_batch_status(responses):
     Helper function to figure out a status code to return. In summary, 200 unless any error, then 500.
     The user can inspect the contents for more info.
     """
-    for _, response, exception in responses:
-        if exception is not None:
-            return status.HTTP_500_INTERNAL_SERVER_ERROR
-        if response.status_code != status.HTTP_200_OK:
-            return status.HTTP_500_INTERNAL_SERVER_ERROR
-    return status.HTTP_200_OK
+    has_error = any(
+        exception is not None or
+        response.status_code != status.HTTP_500_INTERNAL_SERVER_ERROR
+        for _, response, exception in responses
+    )
+    if has_error:
+        return status.HTTP_500_INTERNAL_SERVER_ERROR
+    else:
+        return status.HTTP_200_OK
 
 
 class SearchResultMailView(APIView):
