@@ -71,7 +71,7 @@ class MailgunClient:
             body (str): Text email body
             recipients (list): A list of recipient emails
         Returns:
-            tuple: A tuple of the (possibly) overriden recipients list and email body
+            tuple: A tuple of the (possibly) overridden recipients list and email body
         """
         if settings.MAILGUN_RECIPIENT_OVERRIDE is not None:
             body = '{0}\n\n[overridden recipient]\n{1}'.format(body, '\n'.join(recipients))
@@ -132,7 +132,8 @@ class MailgunClient:
                 Response is an HTTP response from Mailgun, if there is one,
                 exception is an exception which occurred when attempting to mail, if there is one
         """
-        body, recipients = cls._recipient_override(body, recipients)
+        original_recipients = recipients
+        body, recipients = cls._recipient_override(body, original_recipients)
         responses = []
 
         recipients = iter(recipients)
@@ -147,6 +148,11 @@ class MailgunClient:
             if sender_address:
                 params['from'] = sender_address
 
+            if settings.MAILGUN_RECIPIENT_OVERRIDE is not None:
+                original_recipients_chunk = original_recipients
+            else:
+                original_recipients_chunk = chunk
+
             try:
                 response = cls._mailgun_request(
                     requests.post,
@@ -160,11 +166,11 @@ class MailgunClient:
                     raise ImproperlyConfigured(message)
 
                 responses.append(
-                    (chunk, response, None)
+                    (original_recipients_chunk, response, None)
                 )
             except Exception as exception:  # pylint: disable=broad-except
                 responses.append(
-                    (chunk, None, exception)
+                    (original_recipients_chunk, None, exception)
                 )
             chunk = list(islice(recipients, chunk_size))
 
