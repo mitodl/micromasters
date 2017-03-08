@@ -136,15 +136,6 @@ class SearchResultMailViewsTests(MockedESTestCase, APITestCase):
             resp_post = self.client.post(self.search_result_mail_url, data=self.request_data, format='json')
         assert resp_post.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
 
-        for num, (_, resp, exception) in enumerate(batch_results):
-            batch = 'batch_{0}'.format(num)
-            batch_result = resp_post.data[batch]
-            if exception is not None:
-                assert batch_result['data'] == str(exception)
-            else:
-                assert batch_result['status_code'] == resp.status_code
-                assert batch_result['data'] == generate_mailgun_response_json(resp)
-
     def test_view_response_error(self):
         """
         If there's at least one non-zero status code from Mailgun, we should return a 500 status code in our response.

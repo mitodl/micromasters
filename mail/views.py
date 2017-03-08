@@ -142,11 +142,7 @@ class SearchResultMailView(APIView):
             sender_name=sender_name,
         )
         return Response(
-            status=_make_batch_status(mailgun_responses),
-            data={
-                "batch_{}".format(batch_num): _make_batch_response_dict(resp, exception)
-                for batch_num, (_, resp, exception) in enumerate(mailgun_responses)
-            }
+            status=_make_batch_status(mailgun_responses)
         )
 
 
