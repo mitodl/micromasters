@@ -45,6 +45,8 @@ class MockedESTestCase(TestCase):
     def setUpClass(cls):
         cls.patchers = []
         for name, val in tasks.__dict__.items():
+            # This looks for functions starting with _ because those are the functions which are imported
+            # from indexing_api. The _ lets it prevent name collisions.
             if callable(val) and name.startswith("_"):
                 cls.patchers.append(patch('search.tasks.{0}'.format(name), autospec=True))
         for patcher in cls.patchers:
