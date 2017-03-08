@@ -8,7 +8,7 @@ export const MASTERS = 'm';
 export const DOCTORATE = 'p';
 
 export const ISO_8601_FORMAT = 'YYYY-MM-DD';
-export const DASHBOARD_FORMAT = 'M/D/Y';
+export const DASHBOARD_FORMAT = 'MMM D, Y';
 export const DASHBOARD_MONTH_FORMAT = 'MM[/]YYYY';
 
 export const CP1252_REGEX = /^[\u0020-\u00FF]*$/;
