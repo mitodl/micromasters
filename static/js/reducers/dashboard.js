@@ -23,7 +23,8 @@ import { updateStateByUsername } from './util';
 
 export const INITIAL_DASHBOARD_STATE: DashboardState = {
   programs: [],
-  isEdxDataFresh: true
+  isEdxDataFresh: true,
+  noSpinner: false
 };
 
 const INITIAL_DASHBOARDS_STATE: DashboardsState = {};
@@ -34,7 +35,11 @@ export const dashboard = (state: DashboardsState = INITIAL_DASHBOARDS_STATE, act
   case REQUEST_DASHBOARD: // eslint-disable-line no-case-declarations
     let newBaseState = R.dissoc(username, state);
     if (action.payload === true) {
-      return updateStateByUsername(newBaseState, username, INITIAL_DASHBOARD_STATE);
+      return updateStateByUsername(
+        newBaseState,
+        username,
+        _.merge({}, INITIAL_DASHBOARD_STATE, { noSpinner: true })
+      );
     } else {
       return updateStateByUsername(
         newBaseState,
@@ -46,7 +51,8 @@ export const dashboard = (state: DashboardsState = INITIAL_DASHBOARDS_STATE, act
     return updateStateByUsername(state, username, {
       fetchStatus: FETCH_SUCCESS,
       programs: action.payload.programs,
-      isEdxDataFresh: action.payload.is_edx_data_fresh
+      isEdxDataFresh: action.payload.is_edx_data_fresh,
+      noSpinner: false
     });
   case RECEIVE_DASHBOARD_FAILURE:
     return updateStateByUsername(state, username, {

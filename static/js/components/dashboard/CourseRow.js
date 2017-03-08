@@ -2,6 +2,7 @@
 import React from 'react';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import R from 'ramda';
+import Icon from 'react-mdl/lib/Icon';
 
 import CouponMessage from './CouponMessage';
 import CourseAction from './CourseAction';
@@ -9,6 +10,7 @@ import CourseGrade from './CourseGrade';
 import CourseDescription from './CourseDescription';
 import CourseSubRow from './CourseSubRow';
 import type { Course, CourseRun, FinancialAidUserInfo } from '../../flow/programTypes';
+import type { UIState } from '../../reducers/ui';
 import type {
   CalculatedPrices,
   Coupon,
@@ -34,6 +36,7 @@ export default class CourseRow extends React.Component {
     openCourseContactDialog: (course: Course, canContactCourseTeam: boolean) => void,
     setEnrollSelectedCourseRun: (r: CourseRun) => void,
     setEnrollCourseDialogVisibility: (b: boolean) => void,
+    ui: UIState,
   };
 
   shouldDisplayGradeColumn = (run: CourseRun): boolean => (
@@ -183,13 +186,35 @@ export default class CourseRow extends React.Component {
     return null;
   };
 
+  renderEnrollmentSuccess = (): React$Element<*> => {
+    return (
+      <Grid className="course-sub-row enroll-pay-later-success">
+        <Cell col={2} key="1">
+          <Icon name="check" className="tick-icon"/>
+        </Cell>,
+        <Cell col={7} key="2">
+          <p className="enroll-pay-later-heading">You are now auditing this course</p>
+          <span className="enroll-pay-later-txt">But you still need to pay to get credit.</span>
+        </Cell>
+      </Grid>
+    );
+  }
+
+  renderColumns = (firstRun: CourseRun): React$Element<*> => (
+    <Grid className="course-row" key="0">
+      { this.renderRowColumns(firstRun) }
+    </Grid>
+  )
+
   render() {
+    const { ui } = this.props;
     let firstRun = this.getFirstRun();
+    const showEnrollPayLaterSuccess =  (
+      ui.showEnrollPayLaterSuccess && ui.showEnrollPayLaterSuccess === firstRun.course_id
+    );
 
     return <div className="course-container">
-      <Grid className="course-row" key="0">
-        { this.renderRowColumns(firstRun) }
-      </Grid>
+      { showEnrollPayLaterSuccess ? this.renderEnrollmentSuccess() : this.renderColumns(firstRun) }
       {this.renderCouponMessage()}
       { this.renderSubRows() }
     </div>;

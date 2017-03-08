@@ -34,6 +34,9 @@ import {
   setDocsInstructionsVisibility,
   setNavDrawerOpen,
   setLearnerChipVisibility,
+  showEnrollPayLaterSuccess,
+
+  SHOW_ENROLL_PAY_LATER_SUCCESS,
 } from '../actions/ui';
 import { INITIAL_UI_STATE } from '../reducers/ui';
 import rootReducer from '../reducers';
@@ -215,6 +218,26 @@ describe('ui reducers', () => {
   describe('nav drawer', () => {
     it('should let you set the nav drawer visibility', () => {
       assertReducerResultState(setNavDrawerOpen, ui => ui.navDrawerOpen, false);
+    });
+  });
+
+  describe('show enroll pay later success alert', () => {
+    it('should let you set the pay later success alert', () => {
+      return dispatchThen(
+        showEnrollPayLaterSuccess('foo/bar/baz'),
+        [SHOW_ENROLL_PAY_LATER_SUCCESS]
+      ).then((state) => {
+        assert.equal(state.showEnrollPayLaterSuccess, 'foo/bar/baz');
+      });
+    });
+
+    it('should let you reset the pay later success alert', () => {
+      return dispatchThen(
+        showEnrollPayLaterSuccess(null),
+        [SHOW_ENROLL_PAY_LATER_SUCCESS]
+      ).then((state) => {
+        assert.deepEqual(state.showEnrollPayLaterSuccess, null);
+      });
     });
   });
 

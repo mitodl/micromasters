@@ -7,6 +7,7 @@ import { fetchDashboard } from './dashboard';
 import { fetchCoursePrices } from './course_prices';
 import type { Dispatcher } from '../flow/reduxTypes';
 import * as api from '../lib/api';
+import { showEnrollPayLaterSuccess } from './ui';
 
 export const REQUEST_ADD_COURSE_ENROLLMENT = 'REQUEST_ADD_COURSE_ENROLLMENT';
 export const requestAddCourseEnrollment = createAction(REQUEST_ADD_COURSE_ENROLLMENT);
@@ -22,14 +23,28 @@ export const addCourseEnrollment = (courseId: string): Dispatcher<*> => {
     dispatch(requestAddCourseEnrollment(courseId));
     return api.addCourseEnrollment(courseId).
       then(() => {
-        dispatch(receiveAddCourseEnrollmentSuccess());
-        dispatch(fetchDashboard(SETTINGS.user.username));
-        dispatch(fetchCoursePrices(SETTINGS.user.username));
+        dispatch(receiveAddCourseEnrollmentSuccess(courseId));
+        dispatch(fetchDashboard(SETTINGS.user.username, true));
+        dispatch(fetchCoursePrices(SETTINGS.user.username, true));
+        dispatch(showEnrollPayLaterSuccessMessage(courseId));
         return Promise.resolve();
       }).
       catch(() => {
         dispatch(receiveAddCourseEnrollmentFailure());
         return Promise.reject();
       });
+  };
+};
+
+export const showEnrollPayLaterSuccessMessage = (courseId: string): Dispatcher<*> => {
+  return (dispatch: Dispatch) => {
+    dispatch(showEnrollPayLaterSuccess(courseId));
+    let promise = new Promise(function(resolve) {
+      window.setTimeout(function() {
+        dispatch(showEnrollPayLaterSuccess(null));
+        resolve();
+      }, 9000);
+    });
+    return promise;
   };
 };

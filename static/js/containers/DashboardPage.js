@@ -262,14 +262,14 @@ class DashboardPage extends React.Component {
 
   fetchDashboard() {
     const { dashboard, dispatch } = this.props;
-    if (dashboard.fetchStatus === undefined) {
+    if (dashboard.fetchStatus === undefined && dashboard.noSpinner === false) {
       dispatch(fetchDashboard(SETTINGS.user.username));
     }
   }
 
   fetchCoursePrices() {
     const { prices, dispatch } = this.props;
-    if (prices.fetchStatus === undefined) {
+    if (prices.fetchStatus === undefined && prices.noSpinner === false) {
       dispatch(fetchCoursePrices(SETTINGS.user.username));
     }
   }
@@ -694,6 +694,7 @@ class DashboardPage extends React.Component {
               coursePrice={coursePrice}
               prices={calculatedPrices}
               key={program.id}
+              ui={ui}
               openFinancialAidCalculator={this.openFinancialAidCalculator}
               addCourseEnrollment={this.addCourseEnrollment}
               openCourseContactDialog={this.openCourseContactDialog}

@@ -7,6 +7,7 @@ import * as api from '../lib/api';
 import {
   fetchCoursePrices,
   clearCoursePrices,
+  requestCoursePrices,
   REQUEST_COURSE_PRICES,
   RECEIVE_COURSE_PRICES_SUCCESS,
   RECEIVE_COURSE_PRICES_FAILURE,
@@ -52,7 +53,8 @@ describe('prices reducer', () => {
 
       return dispatchThen(clearCoursePrices('username'), [CLEAR_COURSE_PRICES]).then(({ username: pricesState }) => {
         assert.deepEqual(pricesState, {
-          coursePrices: []
+          coursePrices: [],
+          noSpinner: false
         });
       });
     });
@@ -66,6 +68,39 @@ describe('prices reducer', () => {
       RECEIVE_COURSE_PRICES_FAILURE,
     ]).then(({ username: pricesState }) => {
       assert.equal(pricesState.fetchStatus, FETCH_FAILURE);
+    });
+  });
+
+  it('should fetch when no spin set', () => {
+    pricesStub.returns(Promise.resolve(COURSE_PRICES_RESPONSE));
+
+    return dispatchThen(fetchCoursePrices('username', true), [
+      REQUEST_COURSE_PRICES,
+      RECEIVE_COURSE_PRICES_SUCCESS,
+    ]).then(({ username: pricesState }) => {
+      assert.deepEqual(pricesState.coursePrices, COURSE_PRICES_RESPONSE);
+      assert.equal(pricesState.fetchStatus, FETCH_SUCCESS);
+
+      return dispatchThen(clearCoursePrices('username'), [CLEAR_COURSE_PRICES]).then(({ username: pricesState }) => {
+        assert.deepEqual(pricesState, {
+          coursePrices: [],
+          noSpinner: false
+        });
+      });
+    });
+  });
+
+  it('should let you set noSpinner true', () => {
+    return dispatchThen(
+      requestCoursePrices('username', true),
+      [REQUEST_COURSE_PRICES]
+    ).then((state) => {
+      assert.deepEqual(state, {
+        'username': {
+          coursePrices: [],
+          noSpinner: true
+        }
+      });
     });
   });
 });

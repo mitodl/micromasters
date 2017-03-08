@@ -13,6 +13,7 @@ import CourseRow from './CourseRow';
 import FinancialAidCalculator from '../../containers/FinancialAidCalculator';
 import type { CoursePrice } from '../../flow/dashboardTypes';
 import type { CourseRun } from '../../flow/programTypes';
+import type { UIState } from '../../reducers/ui';
 import {
   FA_TERMINAL_STATUSES,
   COUPON_CONTENT_TYPE_PROGRAM,
@@ -40,6 +41,7 @@ export default class CourseListCard extends React.Component {
     openCourseContactDialog:      (course: Course, canContactCourseTeam: boolean) => void,
     setEnrollSelectedCourseRun:   (r: CourseRun) => void,
     setEnrollCourseDialogVisibility: (bool: boolean) => void,
+    ui:                           UIState,
   };
 
   renderFinancialAidPriceMessage(): ?React$Element<*> {
@@ -167,6 +169,7 @@ export default class CourseListCard extends React.Component {
       openCourseContactDialog,
       setEnrollSelectedCourseRun,
       setEnrollCourseDialogVisibility,
+      ui,
     } = this.props;
     const now = this.props.now || moment();
 
@@ -186,6 +189,7 @@ export default class CourseListCard extends React.Component {
         openCourseContactDialog={openCourseContactDialog}
         setEnrollSelectedCourseRun={setEnrollSelectedCourseRun}
         setEnrollCourseDialogVisibility={setEnrollCourseDialogVisibility}
+        ui={ui}
         {...courseRowOptionalProps}
       />
     );

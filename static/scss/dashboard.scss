@@ -286,6 +286,27 @@
       background-color: $fg-gray;
       color: $darkgray;
 
+      &.enroll-pay-later-success {
+        padding: 10px;
+        margin-top: 10px;
+      }
+
+      .enroll-pay-later-heading {
+        color: $font-black;
+        font-weight: 500;
+        font-size: 15px;
+        margin: 0;
+      }
+
+      .enroll-pay-later-txt {
+        font-size: 13px;
+      }
+
+      .tick-icon {
+        font-size: 50px;
+        color: $button-color;
+      }
+
       .course-description,
       .course-grade,
       .course-action  {

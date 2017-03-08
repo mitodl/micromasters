@@ -48,11 +48,14 @@ import {
   SET_NAV_DRAWER_OPEN,
   SET_PROGRAM,
   SET_LEARNER_CHIP_VISIBILITY,
+  SHOW_ENROLL_PAY_LATER_SUCCESS,
 } from '../actions/ui';
 import { EMAIL_COMPOSITION_DIALOG } from '../components/email/constants';
 import type { ToastMessage } from '../flow/generalTypes';
 import type { Action } from '../flow/reduxTypes';
-import type { AvailableProgram } from '../flow/enrollmentTypes';
+import type {
+  AvailableProgram
+} from '../flow/enrollmentTypes';
 import type { CourseRun } from '../flow/programTypes';
 
 export type UIDialog = {
@@ -103,7 +106,8 @@ export type UIState = {
   couponNotificationVisibility:        boolean,
   navDrawerOpen:                       boolean,
   learnerChipVisibility:               ?string,
-  dialogVisibility:                    DialogVisibilityState
+  dialogVisibility:                    DialogVisibilityState,
+  showEnrollPayLaterSuccess:           ?string,
 };
 
 export const INITIAL_UI_STATE: UIState = {
@@ -142,7 +146,8 @@ export const INITIAL_UI_STATE: UIState = {
   couponNotificationVisibility:        false,
   navDrawerOpen:                       false,
   learnerChipVisibility:               null,
-  dialogVisibility:                    INITIAL_DIALOG_VISIBILITY_STATE
+  dialogVisibility:                    INITIAL_DIALOG_VISIBILITY_STATE,
+  showEnrollPayLaterSuccess:           null,
 };
 
 export const ui = (state: UIState = INITIAL_UI_STATE, action: Action<any, null>) => {
@@ -322,6 +327,12 @@ export const ui = (state: UIState = INITIAL_UI_STATE, action: Action<any, null>)
     return {
       ...state,
       enrollCourseDialogVisibility: action.payload
+    };
+  }
+  case SHOW_ENROLL_PAY_LATER_SUCCESS: {
+    return {
+      ...state,
+      showEnrollPayLaterSuccess: action.payload
     };
   }
   case SET_PHOTO_DIALOG_VISIBILITY:

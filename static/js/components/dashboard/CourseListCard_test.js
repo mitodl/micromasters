@@ -12,6 +12,7 @@ import CourseListCard from './CourseListCard';
 import CourseRow from './CourseRow';
 import { DASHBOARD_RESPONSE, COURSE_PRICES_RESPONSE } from '../../test_constants';
 import { INITIAL_EMAIL_STATE } from '../../reducers/email';
+import { INITIAL_UI_STATE } from '../../reducers/ui';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import IntegrationTestHelper from '../../util/integration_test_helper';
@@ -58,6 +59,7 @@ describe('CourseListCard', () => {
             coursePrice={coursePrice}
             addCourseEnrollment={() => Promise.resolve()}
             prices={prices}
+            ui={INITIAL_UI_STATE}
             openCourseContactDialog={() => undefined}
             closeEmailDialog={() => undefined}
             updateEmailEdit={() => undefined}

@@ -21,18 +21,27 @@ import type {
 import { updateStateByUsername } from './util';
 
 export const INITIAL_COURSE_PRICES_STATE: CoursePricesState = {
-  coursePrices: []
+  coursePrices: [],
+  noSpinner:    false
 };
 
 export const prices = (state: CoursePriceReducerState = {}, action: Action<any, string>) => {
   const { meta: username } = action;
   switch (action.type) {
   case REQUEST_COURSE_PRICES:
-    return updateStateByUsername(
-      R.dissoc(username, state),
-      username,
-      _.merge({}, INITIAL_COURSE_PRICES_STATE, { fetchStatus: FETCH_PROCESSING })
-    );
+    if (action.payload === true) {
+      return updateStateByUsername(
+        R.dissoc(username, state),
+        username,
+        _.merge({}, INITIAL_COURSE_PRICES_STATE, { noSpinner: true })
+      );
+    } else {
+      return updateStateByUsername(
+        R.dissoc(username, state),
+        username,
+        _.merge({}, INITIAL_COURSE_PRICES_STATE, { fetchStatus: FETCH_PROCESSING })
+      );
+    }
   case RECEIVE_COURSE_PRICES_SUCCESS:
     return updateStateByUsername(state, username, {
       fetchStatus: FETCH_SUCCESS,

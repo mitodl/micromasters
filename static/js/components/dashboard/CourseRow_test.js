@@ -20,6 +20,7 @@ import {
   STATUS_MISSED_DEADLINE,
 } from '../../constants';
 import { generateCourseFromExisting } from '../../util/test_utils';
+import { INITIAL_UI_STATE } from '../../reducers/ui';
 
 describe('CourseRow', () => {
   let sandbox;
@@ -32,6 +33,7 @@ describe('CourseRow', () => {
     addCourseEnrollment: sandbox.stub(),
     course: null,
     openCourseContactDialog: sandbox.stub(),
+    ui: INITIAL_UI_STATE
   });
 
   beforeEach(() => {
@@ -160,5 +162,25 @@ describe('CourseRow', () => {
       );
       assert.equal(wrapper.find('CourseDescription').props().hasContactEmail, hasContactEmail);
     }
+  });
+
+  it('when enroll pay later selected', () => {
+    let props = defaultCourseRowProps();
+    let course = makeCourse();
+    props.ui.showEnrollPayLaterSuccess = course.runs[0].course_id;
+    const wrapper = shallow(
+      <CourseRow
+        {...props}
+        course={course}
+      />
+    );
+    assert.equal(
+      wrapper.find('.enroll-pay-later-heading').text(),
+      "You are now auditing this course"
+    );
+    assert.equal(
+      wrapper.find('.enroll-pay-later-txt').text(),
+      "But you still need to pay to get credit."
+    );
   });
 });

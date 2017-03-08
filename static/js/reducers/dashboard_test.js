@@ -9,6 +9,7 @@ import {
   clearDashboard,
   receiveDashboardSuccess,
   updateCourseStatus,
+  requestDashboard,
 
   UPDATE_COURSE_STATUS,
   REQUEST_DASHBOARD,
@@ -59,7 +60,7 @@ describe('dashboard reducers', () => {
 
       return dispatchThen(clearDashboard(SETTINGS.user.username), [CLEAR_DASHBOARD]).then(state => {
         let dashboardState = state[SETTINGS.user.username];
-        assert.deepEqual(dashboardState, { programs: [], isEdxDataFresh: true });
+        assert.deepEqual(dashboardState, { programs: [], isEdxDataFresh: true, noSpinner: false });
       });
     });
   });
@@ -98,7 +99,8 @@ describe('dashboard reducers', () => {
     let successExpectation = {
       programs: DASHBOARD_RESPONSE.programs,
       isEdxDataFresh: DASHBOARD_RESPONSE.is_edx_data_fresh,
-      fetchStatus: FETCH_SUCCESS
+      fetchStatus: FETCH_SUCCESS,
+      noSpinner: false
     };
 
     beforeEach(() => {
@@ -125,7 +127,7 @@ describe('dashboard reducers', () => {
       ]).then(state => {
         assert.deepEqual(state, {
           [_username]: successExpectation,
-          [username]: { programs: [], isEdxDataFresh: true }
+          [username]: { programs: [], isEdxDataFresh: true,  noSpinner: false }
         });
       });
     });
@@ -142,7 +144,8 @@ describe('dashboard reducers', () => {
             fetchStatus: FETCH_FAILURE,
             errorInfo: 'err',
             programs: [],
-            isEdxDataFresh: true
+            isEdxDataFresh: true,
+            noSpinner: false
           }
         });
       });
@@ -162,6 +165,21 @@ describe('dashboard reducers', () => {
       ).then(state => {
         assert.deepEqual(state[username], successExpectation);
         assert.deepEqual(getRun(state[_username].programs).status, 'new_status');
+      });
+    });
+
+    it('should let you set noSpinner true', () => {
+      return dispatchThen(
+        requestDashboard('username', true),
+        [REQUEST_DASHBOARD]
+      ).then((state) => {
+        assert.deepEqual(state, {
+          "username": {
+            noSpinner: true,
+            isEdxDataFresh: true,
+            programs: []
+          }
+        });
       });
     });
   });

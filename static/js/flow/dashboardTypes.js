@@ -12,6 +12,7 @@ export type DashboardState = {
   programs:       Array<Program>,
   isEdxDataFresh: boolean,
   fetchStatus?:   string,
+  noSpinner:      boolean
 };
 
 export type DashboardsState = {
@@ -30,6 +31,7 @@ export type CoursePrices = Array<CoursePrice>;
 export type CoursePricesState = {
   coursePrices: CoursePrices,
   fetchStatus?: string,
+  noSpinner?:   boolean
 }
 
 export type CoursePriceReducerState = {

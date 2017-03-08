@@ -32,6 +32,7 @@ import {
   SET_COUPON_NOTIFICATION_VISIBILITY,
   SET_NAV_DRAWER_OPEN,
   SET_LEARNER_CHIP_VISIBILITY,
+  SHOW_ENROLL_PAY_LATER_SUCCESS,
 
   clearUI,
   updateDialogText,
@@ -66,6 +67,7 @@ import {
   setCouponNotificationVisibility,
   setNavDrawerOpen,
   setLearnerChipVisibility,
+  showEnrollPayLaterSuccess,
 } from '../actions/ui';
 import { assertCreatedActionHelper } from './test_util';
 
@@ -105,6 +107,7 @@ describe('generated UI action helpers', () => {
       [setWorkHistoryAnswer, SET_WORK_HISTORY_ANSWER],
       [setNavDrawerOpen, SET_NAV_DRAWER_OPEN],
       [setLearnerChipVisibility, SET_LEARNER_CHIP_VISIBILITY],
+      [showEnrollPayLaterSuccess, SHOW_ENROLL_PAY_LATER_SUCCESS],
     ].forEach(assertCreatedActionHelper);
   });
 });

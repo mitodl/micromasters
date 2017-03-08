@@ -41,7 +41,9 @@ import {
   CYBERSOURCE_CHECKOUT_RESPONSE,
 } from '../test_constants';
 import { ALL_ERRORS_VISIBLE } from '../constants';
-import rootReducer, { INITIAL_PROFILES_STATE } from '../reducers';
+import rootReducer, {
+  INITIAL_PROFILES_STATE
+} from '../reducers';
 
 describe('reducers', () => {
   let sandbox, store, dispatchThen;
@@ -228,7 +230,6 @@ describe('reducers', () => {
         assert.deepEqual(profileState['jane'].edit.errors, errors);
       });
     });
-
 
     it("can't edit a profile if we never get it successfully", () => {
       return dispatchThen(startProfileEdit('jane'), [START_PROFILE_EDIT]).then(profileState => {
