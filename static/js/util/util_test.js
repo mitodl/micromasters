@@ -34,6 +34,7 @@ import {
   renderSeparatedComponents,
   isNilOrBlank,
   highlight,
+  sortedCourseRuns,
 } from '../util/util';
 import {
   EDUCATION_LEVELS,
@@ -53,6 +54,7 @@ import {
 } from '../test_constants';
 import { assertMaybeEquality, assertIsNothing } from '../lib/sanctuary_test';
 import { program } from '../components/ProgressWidget_test';
+import { makeRun, makeCourse, makeProgram } from '../factories/dashboard';
 
 /* eslint-disable camelcase */
 describe('utility functions', () => {
@@ -759,6 +761,91 @@ describe('utility functions', () => {
 
     it('returns false for a non-blank string', () => {
       assert.isFalse(isNilOrBlank('not blank'));
+    });
+  });
+
+  describe('sortedCourseRuns', () => {
+    it('returns ordered course runs when already ordered', () => {
+      const run1 = makeRun(1);
+      const run2 = makeRun(2);
+      const run3 = makeRun(3);
+      const run4 = makeRun(4);
+      const course1 = makeCourse(1);
+      course1.runs = [run1, run2];
+      const course2 = makeCourse(2);
+      course2.runs = [run3, run4];
+      const program = makeProgram();
+      program.courses = [course1, course2];
+
+      const expected = [run1, run2, run3, run4];
+      const actual = sortedCourseRuns(program);
+      assert.deepEqual(actual, expected);
+    });
+
+    it('returns ordered course runs when courses are unordered', () => {
+      const run1 = makeRun(1);
+      const run2 = makeRun(2);
+      const run3 = makeRun(3);
+      const run4 = makeRun(4);
+      const course1 = makeCourse(1);
+      course1.runs = [run1, run2];
+      const course2 = makeCourse(2);
+      course2.runs = [run3, run4];
+      const program = makeProgram();
+      program.courses = [course2, course1];  // courses are out of order
+
+      const expected = [run1, run2, run3, run4];
+      const actual = sortedCourseRuns(program);
+      assert.deepEqual(actual, expected);
+    });
+
+    it('returns ordered course runs when runs are unordered', () => {
+      const run1 = makeRun(1);
+      const run2 = makeRun(2);
+      const run3 = makeRun(3);
+      const run4 = makeRun(4);
+      const course1 = makeCourse(1);
+      course1.runs = [run2, run1];  // course runs are out of order
+      const course2 = makeCourse(2);
+      course2.runs = [run3, run4];
+      const program = makeProgram();
+      program.courses = [course1, course2];
+
+      const expected = [run1, run2, run3, run4];
+      const actual = sortedCourseRuns(program);
+      assert.deepEqual(actual, expected);
+    });
+
+    it('returns an empty array for no runs', () => {
+      const course1 = makeCourse(1);
+      course1.runs = [];
+      const course2 = makeCourse(2);
+      course2.runs = [];
+      const program = makeProgram();
+      program.courses = [course1, course2];
+
+      const expected = [];
+      const actual = sortedCourseRuns(program);
+      assert.deepEqual(actual, expected);
+    });
+
+    it('returns an array with no gaps', () => {
+      const run1 = makeRun(1);
+      const run2 = makeRun(2);
+      const run3 = makeRun(3);
+      const run4 = makeRun(4);
+      const course1 = makeCourse(1);
+      course1.runs = [run1, run2];
+      const course2 = makeCourse(2);
+      course2.runs = [];  // no runs for this course
+      const course3 = makeCourse(3);
+      course3.runs = [run3, run4];
+      const program = makeProgram();
+      program.courses = [course1, course2, course3];
+
+      const expected = [run1, run2, run3, run4];
+      const actual = sortedCourseRuns(program);
+      assert.deepEqual(actual, expected);
     });
   });
 });

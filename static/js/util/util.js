@@ -524,3 +524,10 @@ export function getDisplayName(WrappedComponent: ReactClass<*>) {
 export const isNilOrBlank = R.either(R.isNil, R.isEmpty);
 
 export const pickExistingProps = R.compose(R.reject(R.isNil), R.pick);
+
+export function sortedCourseRuns(program: Program): Array<CourseRun> {
+  const sortedCourses = R.sortBy(R.prop('position_in_program'), program.courses);
+  return R.unnest(
+    R.map(R.sortBy(R.prop('position')), R.pluck('runs', sortedCourses))
+  );
+}

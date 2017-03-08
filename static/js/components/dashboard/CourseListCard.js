@@ -24,7 +24,7 @@ import {
   makeCouponReason,
   isFreeCoupon,
 } from '../../lib/coupon';
-import { pickExistingProps } from '../../util/util';
+import { pickExistingProps, sortedCourseRuns } from '../../util/util';
 
 const priceMessageClassName = "price-message";
 
@@ -42,24 +42,17 @@ export default class CourseListCard extends React.Component {
     setEnrollCourseDialogVisibility: (bool: boolean) => void,
   };
 
-  sortedCourseRuns(): Array<CourseRun> {
-    const { program } = this.props;
-    const sortedCourses = R.sortBy(R.prop('position_in_program'), program.courses);
-    return R.unnest(
-      R.map(R.sortBy(R.prop('position')), R.pluck('runs', sortedCourses))
-    );
-  }
-
   renderFinancialAidPriceMessage(): React$Element<*> {
     const {
-      program: {financial_aid_user_info: {application_status: finAidStatus}},
+      program,
       coupon,
       prices,
     } = this.props;
+    const finAidStatus = program.financial_aid_user_info.application_status;
 
     if (FA_TERMINAL_STATUSES.includes(finAidStatus)) {
       let price;
-      for (const courseRun of this.sortedCourseRuns()) {
+      for (const courseRun of sortedCourseRuns(program)) {
         price = prices.get(courseRun.id);
         if (price) {
           break;
@@ -123,7 +116,7 @@ export default class CourseListCard extends React.Component {
 
   renderPriceMessage(): React$Element<*> {
     const {
-      program: {financial_aid_availability: hasFinancialAid},
+      program,
       coupon,
       prices,
     } = this.props;
@@ -138,7 +131,7 @@ export default class CourseListCard extends React.Component {
       </p>;
     }
 
-    if (hasFinancialAid) {
+    if (program.financial_aid_availability) {
       return this.renderFinancialAidPriceMessage();
     }
 
@@ -148,7 +141,7 @@ export default class CourseListCard extends React.Component {
     }
 
     let price;
-    for (const courseRun of this.sortedCourseRuns()) {
+    for (const courseRun of sortedCourseRuns(program)) {
       price = prices.get(courseRun.id);
       if (price) {
         break;

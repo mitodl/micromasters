@@ -61,7 +61,7 @@ export const makeAvailablePrograms = (dashboard: Dashboard): AvailablePrograms =
 };
 
 export const makeRun = (position: number): CourseRun => {
-  let runId = newRunId();
+  const runId = newRunId();
   return {
     id: runId,
     course_id: `course-v1:${runId}`,
@@ -72,10 +72,11 @@ export const makeRun = (position: number): CourseRun => {
 };
 
 export const makeCourse = (positionInProgram: number): Course => {
-  let courseId = newCourseId();
+  const courseId = newCourseId();
+  const runs = R.reverse(R.range(1, 3)).map(makeRun);
   return {
     id: courseId,
-    runs: R.reverse(R.range(1, 3)).map(makeRun),
+    runs: runs,
     has_contact_email: false,
     position_in_program: positionInProgram,
     title: `Title for course ${courseId}`,
@@ -93,10 +94,11 @@ const PEARSON_STATUSES = [
 ];
 
 export const makeProgram = (): Program => {
-  let programId = newProgramId();
+  const programId = newProgramId();
+  const courses = R.reverse(R.range(1, 3)).map(makeCourse);
   return {
     title: `Title for course ${programId}`,
-    courses: R.reverse(R.range(1, 3)).map(makeCourse),
+    courses: courses,
     id: programId,
     financial_aid_availability: true,
     financial_aid_user_info: {
