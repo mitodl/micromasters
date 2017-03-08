@@ -93,7 +93,7 @@ def _make_batch_status(responses):
     """
     has_error = any(
         exception is not None or
-        response.status_code != status.HTTP_500_INTERNAL_SERVER_ERROR
+        response.status_code != status.HTTP_200_OK
         for _, response, exception in responses
     )
     if has_error:

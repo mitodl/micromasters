@@ -41,22 +41,31 @@ def mocked_json(return_data=None):
     return json
 
 
-def mocked_batch_result(status_codes=None):
-    """Mocked version of the send_batch return value"""
-    if status_codes is None:
-        status_codes = [status.HTTP_200_OK]
+def mocked_batch_result(inputs=None):
+    """
+    Provides some fake return values for send_batch based on the inputs.
 
-    def _is_response(_status_code):
-        """Helper function to figure out whether to generate a response or an exception"""
-        return isinstance(_status_code, int)
-    return [
-        (
-            ['recipient@example.com'],
-            Mock(spec=Response, status_code=status_code, json=mocked_json())
-            if _is_response(status_code) else None,
-            None if _is_response(status_code) else HTTPError(),
-        ) for status_code in status_codes
-    ]
+    Args:
+        inputs (list):
+            A list containing either status codes or exceptions, or a mix of both.
+    Returns:
+        list:
+            A list of tuples (recipients, response, exception) based on the values of inputs
+    """
+    if inputs is None:
+        inputs = [status.HTTP_200_OK]
+
+    responses = []
+    for i, _input in enumerate(inputs):
+        is_status_code = isinstance(_input, int)
+
+        recipients = ['recipient_{}@example.com'.format(i)]
+        if is_status_code:
+            responses.append((recipients, Mock(spec=Response, status_code=_input, json=mocked_json()), None))
+        else:
+            responses.append((recipients, None, HTTPError()))
+
+    return responses
 
 
 class SearchResultMailViewsTests(MockedESTestCase, APITestCase):
