@@ -83,11 +83,11 @@ describe("FinancialAidCard", () => {
       const program = programWithStatus();
 
       let wrapper = renderCard({program});
-      assert.equal(wrapper.find('.personalized-pricing').length, 0);
+      assert.lengthOf(wrapper.find('.personalized-pricing'), 0);
       program.financial_aid_user_info.has_user_applied = false;
 
       wrapper = renderCard({ program });
-      assert.equal(wrapper.find('.personalized-pricing').length, 1);
+      assert.lengthOf(wrapper.find('.personalized-pricing'), 1);
     });
 
     it('calculates the cost when you click the button', () => {
@@ -97,7 +97,7 @@ describe("FinancialAidCard", () => {
       let button = wrapper.find(".calculate-cost-button");
       assert.equal(button.text(), "Get My Price Now");
       button.simulate('click');
-      assert.ok(openFinancialAidCalculatorStub.calledWith());
+      sinon.assert.calledWith(openFinancialAidCalculatorStub);
     });
 
     it('shows the minimum and maximum price', () => {
@@ -122,7 +122,7 @@ describe("FinancialAidCard", () => {
       program.financial_aid_user_info.has_user_applied = false;
       let wrapper = renderCard({ program });
       wrapper.find('.full-price').simulate('click');
-      assert.ok(setSkipDialogStub.calledWith(true), 'Dialog should get opened');
+      sinon.assert.calledWith(setSkipDialogStub, true);
     });
   });
 
@@ -139,7 +139,7 @@ describe("FinancialAidCard", () => {
       it(`shows a mailing address if the status is ${status}`, () => {
         let program = programWithStatus(status);
         let wrapper = renderCard({ program });
-        assert.ok(wrapper.html().includes("Cambridge, MA 02139"));
+        assert.include(wrapper.html(), "Cambridge, MA 02139");
       });
 
       it(`has a link to skip financial aid for ${status}`, () => {
@@ -147,7 +147,7 @@ describe("FinancialAidCard", () => {
         let setConfirmSkipDialogVisibility = sandbox.stub();
         let wrapper = renderCard({ program, setConfirmSkipDialogVisibility });
         wrapper.find(".full-price").simulate('click');
-        assert(setConfirmSkipDialogVisibility.calledWith(true));
+        sinon.assert.calledWith(setConfirmSkipDialogVisibility, true);
       });
     }
 
@@ -161,7 +161,7 @@ describe("FinancialAidCard", () => {
 
         assert.equal(props.selected.format(ISO_8601_FORMAT), '2011-11-11');
         props.onChange(moment("1999-01-01"));
-        assert.ok(setDocumentSentDate.calledWith("1999-01-01"));
+        sinon.assert.calledWith(setDocumentSentDate, "1999-01-01");
       });
 
       it(`provides a link to open a dialog with complete instruction for status ${FA_STATUS_PENDING_DOCS}`, () => {
@@ -169,7 +169,7 @@ describe("FinancialAidCard", () => {
         let wrapper = renderCard({ program, setDocsInstructionsVisibility });
         let link = wrapper.find('.financial-aid-box').find('a');
         link.simulate('click');
-        assert.ok(setDocsInstructionsVisibility.called, 'should have called onClick handler');
+        sinon.assert.called(setDocsInstructionsVisibility);
       });
 
       it(`instruction for status ${FA_STATUS_PENDING_DOCS}`, () => {
@@ -193,7 +193,7 @@ describe("FinancialAidCard", () => {
         let wrapper = renderCard({ program, updateDocumentSentDate });
 
         wrapper.find(".document-sent-button").simulate('click');
-        assert(updateDocumentSentDate.calledWith(123, '2011-11-11'));
+        sinon.assert.calledWith(updateDocumentSentDate, 123, '2011-11-11');
       });
 
       for (let activity of [true, false]) {
@@ -209,7 +209,7 @@ describe("FinancialAidCard", () => {
           });
 
           let button = wrapper.find("SpinnerButton");
-          assert(button.props().className.includes("document-sent-button"));
+          assert.include(button.props().className, "document-sent-button");
           assert.equal(button.props().spinning, activity);
         });
       }
@@ -218,7 +218,7 @@ describe("FinancialAidCard", () => {
         it(`shows the document sent date for status ${status}`, () => {
           let program = programWithStatus(status);
           let wrapper = renderCard({ program });
-          assert(wrapper.text().includes('Documents mailed on 3/3/2003'));
+          assert.include(wrapper.text(), 'Documents mailed on Mar 3, 2003');
         });
       }
     });
@@ -229,6 +229,6 @@ describe("FinancialAidCard", () => {
     let setConfirmSkipDialogVisibility = sandbox.stub();
     let wrapper = renderCard({ program, setConfirmSkipDialogVisibility });
     wrapper.find("SkipFinancialAidDialog").props().cancel();
-    assert(setConfirmSkipDialogVisibility.calledWith(false));
+    sinon.assert.calledWith(setConfirmSkipDialogVisibility, false);
   });
 });
