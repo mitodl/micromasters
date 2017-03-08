@@ -22,7 +22,6 @@ from financialaid.api_test import (
 )
 from financialaid.factories import FinancialAidFactory, TierProgramFactory
 from mail.models import AutomaticEmail
-from mail.utils import generate_mailgun_response_json
 from profiles.factories import ProfileFactory
 from profiles.util import full_name
 from roles.models import Role
