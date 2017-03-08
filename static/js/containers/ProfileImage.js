@@ -102,7 +102,7 @@ class ProfileImage extends React.Component {
     const imageSizeClass = useSmall ? 'small' : 'medium';
 
     return (
-      <div className="profile-image">
+      <div className="profile-image fixed-width">
         <div className="avatar">
           <ProfileImageUploader
             {...this.props}

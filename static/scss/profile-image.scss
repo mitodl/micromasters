@@ -1,6 +1,10 @@
 .profile-image {
   display: flex;
 
+  .fixed-width {
+    width: 120px;
+  }
+
   .avatar {
     position: relative;
 

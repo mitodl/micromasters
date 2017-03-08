@@ -89,6 +89,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
 
     &.row-with-border {
       border-bottom: 1px #e2e2e2 solid;
@@ -133,9 +134,9 @@
       }
 
       &.user-info {
-        width: 80%;
-        margin-left: 23px;
-        padding: 0 7px;
+        margin-left: 10px;
+        word-wrap: break-word;
+        width: 75%;
       }
 
       .profile-row-name {
