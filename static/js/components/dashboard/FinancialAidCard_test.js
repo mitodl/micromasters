@@ -122,7 +122,7 @@ describe("FinancialAidCard", () => {
       program.financial_aid_user_info.has_user_applied = false;
       let wrapper = renderCard({ program });
       wrapper.find('.full-price').simulate('click');
-      sinon.assert.calledWith(setSkipDialogStub, true);
+      assert.ok(setSkipDialogStub.calledWith(true), 'Dialog should get opened');
     });
   });
 
@@ -169,7 +169,7 @@ describe("FinancialAidCard", () => {
         let wrapper = renderCard({ program, setDocsInstructionsVisibility });
         let link = wrapper.find('.financial-aid-box').find('a');
         link.simulate('click');
-        sinon.assert.called(setDocsInstructionsVisibility);
+        assert.ok(setDocsInstructionsVisibility.called, 'should have called onClick handler');
       });
 
       it(`instruction for status ${FA_STATUS_PENDING_DOCS}`, () => {
