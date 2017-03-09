@@ -201,15 +201,15 @@ class CourseTests(CourseModelTests):  # pylint: disable=too-many-public-methods
 
     @data(
         # course starts in future, enrollment future
-        [1, 10, 1, 2, 'Starts {:%D} - Enrollment {:%m/%Y}'.format(from_weeks(1), from_weeks(1))],
+        [1, 10, 1, 2, 'Starts {:%b %-d, %Y} - Enrollment {:%m/%Y}'.format(from_weeks(1), from_weeks(1))],
         # course starts in future, enrollment open
-        [1, 10, -1, 10, 'Starts {:%D} - Enrollment Open'.format(from_weeks(1))],
+        [1, 10, -1, 10, 'Starts {:%b %-d, %Y} - Enrollment Open'.format(from_weeks(1))],
         # course starts in future, enrollment open with no end
-        [1, 10, -1, None, 'Starts {:%D} - Enrollment Open'.format(from_weeks(1))],
+        [1, 10, -1, None, 'Starts {:%b %-d, %Y} - Enrollment Open'.format(from_weeks(1))],
         # course starts in future, no enrollment dates
-        [1, 10, None, None, 'Starts {:%D}'.format(from_weeks(1))],
+        [1, 10, None, None, 'Starts {:%b %-d, %Y}'.format(from_weeks(1))],
         # course is currently running, enrollment is open, ending soon
-        [-1, 10, -1, 10, 'Ongoing - Enrollment Ends {:%D}'.format(from_weeks(10))],
+        [-1, 10, -1, 10, 'Ongoing - Enrollment Ends {:%b %-d, %Y}'.format(from_weeks(10))],
         # course is currently running without end, enrollment is open, no end
         [-1, None, -1, None, 'Ongoing - Enrollment Open'],
         # course is currently running, enrollment is closed
