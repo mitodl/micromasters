@@ -125,7 +125,7 @@ class Course(models.Model):
 
         if course_run.is_current:
             if course_run.enrollment_end:
-                end_text = 'Enrollment Ends {:%D}'.format(
+                end_text = 'Enrollment Ends {:%b %-d, %Y}'.format(
                     course_run.enrollment_end
                 )
             else:
@@ -140,7 +140,7 @@ class Course(models.Model):
                 )
             else:
                 end_text = ''
-            return "Starts {start:%D}{end}".format(
+            return "Starts {start:%b %-d, %Y}{end}".format(
                 start=course_run.start_date,
                 end=end_text,
             )
