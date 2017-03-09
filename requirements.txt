@@ -19,12 +19,12 @@ defusedxml==0.5.0         # via python3-openid
 dj-database-url==0.3.0
 dj-static==0.0.6
 django-discover-runner==1.0  # via django-role-permissions
-django-modelcluster==2.0  # via wagtail
+django-modelcluster==3.0.1  # via wagtail
 django-redis==4.7.0
 django-role-permissions==1.2
 django-server-status==0.3.2
 django-storages-redux==1.3.2
-django-taggit==0.18.3     # via wagtail
+django-taggit==0.22.0     # via wagtail
 django-treebeard==4.1.0   # via wagtail
 django-webpack-loader==0.4.1
 django==1.10.5
@@ -78,7 +78,7 @@ traitlets==4.3.1          # via ipython
 unidecode==0.4.20         # via wagtail
 urllib3==1.20             # via elasticsearch
 uwsgi==2.0.14
-wagtail==1.8
+wagtail==1.9
 wcwidth==0.1.7            # via prompt-toolkit
 webencodings==0.5         # via html5lib
 willow==0.4               # via wagtail
