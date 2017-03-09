@@ -44,19 +44,28 @@ class MockedESTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
         cls.patchers = []
+        cls.patcher_mocks = []
         for name, val in tasks.__dict__.items():
             # This looks for functions starting with _ because those are the functions which are imported
             # from indexing_api. The _ lets it prevent name collisions.
             if callable(val) and name.startswith("_"):
                 cls.patchers.append(patch('search.tasks.{0}'.format(name), autospec=True))
         for patcher in cls.patchers:
-            patcher.start()
+            mock = patcher.start()
+            mock.name = patcher.attribute
+            cls.patcher_mocks.append(mock)
         try:
             super().setUpClass()
         except:
             for patcher in cls.patchers:
                 patcher.stop()
             raise
+
+    def setUp(self):
+        super().setUp()
+
+        for mock in self.patcher_mocks:
+            mock.reset_mock()
 
     @classmethod
     def tearDownClass(cls):

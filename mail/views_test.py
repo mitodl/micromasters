@@ -153,7 +153,9 @@ class SearchResultMailViewsTests(MockedESTestCase, APITestCase):
             'mail.views.MailgunClient'
         ) as mock_mailgun_client, patch(
             'search.signals.index_percolate_queries.delay', autospec=True
-        ) as mocked_index_percolate_queries:
+        ) as mocked_index_percolate_queries, patch(
+            'search.signals.transaction', on_commit=lambda callback: callback()
+        ):
             mock_mailgun_client.send_batch.return_value = Response()
             resp_post = self.client.post(self.search_result_mail_url, data=request_data, format='json')
         assert resp_post.status_code == status.HTTP_200_OK

@@ -4,6 +4,7 @@ Signals used for indexing
 
 import logging
 
+from django.db import transaction
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
@@ -68,10 +69,10 @@ def handle_delete_employment(sender, instance, **kwargs):
 @receiver(post_save, sender=PercolateQuery, dispatch_uid="percolate_query_save")
 def handle_update_percolate(sender, instance, **kwargs):
     """When a new query is created or a query is updated, update Elasticsearch too"""
-    index_percolate_queries.delay([instance.id])
+    transaction.on_commit(lambda: index_percolate_queries.delay([instance.id]))
 
 
 @receiver(post_delete, sender=PercolateQuery, dispatch_uid="percolate_query_delete")
 def handle_delete_percolate(sender, instance, **kwargs):
     """When a query is deleted, make sure we also delete it on Elasticsearch"""
-    delete_percolate_query.delay(instance.id)
+    transaction.on_commit(lambda: delete_percolate_query.delay(instance.id))
