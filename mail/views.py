@@ -64,7 +64,6 @@ class LearnerMailView(GenericAPIView):
             recipient=recipient_user.email,
             sender_address=sender_user.email,
             sender_name=sender_user.profile.display_name,
-            raise_for_status=False,
         )
         return Response(
             status=mailgun_response.status_code,

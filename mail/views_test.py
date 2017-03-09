@@ -221,6 +221,7 @@ class CourseTeamMailViewTests(APITestCase, MockedESTestCase):
         assert called_kwargs['course'] == self.course
         assert called_kwargs['subject'] == self.request_data['email_subject']
         assert called_kwargs['body'] == self.request_data['email_body']
+        assert 'raise_for_status' not in called_kwargs
 
     def test_course_team_email_with_no_enrollment(self):
         """
@@ -294,6 +295,18 @@ class LearnerMailViewTests(APITestCase, MockedESTestCase):
         assert called_kwargs['recipient'] == self.recipient_user.email
         assert called_kwargs['sender_address'] == self.staff_user.email
         assert called_kwargs['sender_name'] == self.staff_user.profile.display_name
+        assert 'raise_for_status' not in called_kwargs
+
+    @patch('mail.views.MailgunClient')
+    def test_send_learner_email_view_error(self, mock_mailgun_client):
+        """
+        Test that exceptions from send_individual_email are passed through the view
+        """
+        self.client.force_login(self.staff_user)
+        mock_mailgun_client.send_individual_email.side_effect = HTTPError()
+        url = reverse(self.url_name, kwargs={'student_id': self.recipient_user.profile.student_id})
+        with self.assertRaises(HTTPError):
+            self.client.post(url, data=self.request_data, format='json')
 
     def test_learner_view_invalid_student_id(self):
         """
@@ -391,6 +404,7 @@ class FinancialAidMailViewTests(FinancialAidBaseTestCase, APITestCase):
         assert called_kwargs['financial_aid'] == self.financial_aid
         assert called_kwargs['subject'] == self.request_data['email_subject']
         assert called_kwargs['body'] == self.request_data['email_body']
+        assert 'raise_for_status' not in called_kwargs
 
     def test_send_financial_aid_view_improperly_configured(self):
         """

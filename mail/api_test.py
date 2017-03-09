@@ -230,6 +230,32 @@ class MailAPITests(MockedESTestCase):
             assert exception_pairs[0][0] == emails_to
             assert isinstance(exception_pairs[0][1], HTTPError)
 
+    def test_send_batch_400_no_raise(self, mock_post):
+        """
+        Test that if raise_for_status is False we don't raise an exception for a 400 response
+        """
+        mock_post.return_value = Mock(
+            spec=Response,
+            status_code=HTTP_400_BAD_REQUEST,
+            json=mocked_json()
+        )
+
+        chunk_size = 10
+        emails_to = ["{0}@example.com".format(letter) for letter in string.ascii_letters]
+        assert len(emails_to) == 52
+        with override_settings(
+            MAILGUN_RECIPIENT_OVERRIDE=None,
+        ):
+            resp_list = MailgunClient.send_batch(
+                'email subject', 'email body', emails_to, chunk_size=chunk_size, raise_for_status=False
+            )
+
+        assert len(resp_list) == 6
+        for resp in resp_list:
+            assert resp.status_code == HTTP_400_BAD_REQUEST
+        assert mock_post.call_count == 6
+        assert mock_post.return_value.raise_for_status.called is False
+
     @override_settings(MAILGUN_RECIPIENT_OVERRIDE=None)
     def test_send_batch_exception(self, mock_post):
         """
