@@ -11,12 +11,12 @@ export type EmailInputs = {
 export type EmailValidationErrors = EmailInputs;
 
 export type EmailState = {
-  inputs:                  EmailInputs,
-  subheading:              ?string,
-  params:                  Object,
-  validationErrors:        EmailValidationErrors,
-  sendError:               EmailSendError,
-  fetchStatus?:            ?string,
+  inputs:                   EmailInputs,
+  subheading:               ?string,
+  params:                   Object,
+  validationErrors:         EmailValidationErrors,
+  sendError:                EmailSendError,
+  fetchStatus?:             ?string,
   supportsAutomaticEmails?: boolean,
 };
 
