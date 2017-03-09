@@ -1,6 +1,7 @@
 """
 Functions for ES indexing
 """
+from datetime import datetime
 from itertools import islice
 import logging
 
@@ -8,6 +9,7 @@ from django.conf import settings
 from elasticsearch.helpers import bulk
 from elasticsearch.exceptions import NotFoundError
 from elasticsearch_dsl import Mapping
+import pytz
 
 from profiles.models import Profile
 from profiles.serializers import ProfileSerializer
@@ -69,6 +71,7 @@ def _index_chunk(chunk, doc_type):
         raise ReindexException("Error during bulk insert: {errors}".format(
             errors=errors
         ))
+
     refresh_index()
     return insert_count
 
@@ -88,13 +91,17 @@ def _index_chunks(items, doc_type, chunk_size=100):
         int: Number of indexed items
     """
     # Use an iterator so we can keep track of what's been indexed already
+    log.info("Indexing chunks of type %s, chunk_size=%d...", doc_type, chunk_size)
     items = iter(items)
     count = 0
     chunk = list(islice(items, chunk_size))
     while len(chunk) > 0:
         count += _index_chunk(chunk, doc_type)
+        log.info("Indexed %d items...", count)
         chunk = list(islice(items, chunk_size))
+    log.info("Indexing done, refreshing index...")
     refresh_index()
+    log.info("Finished indexing %s", doc_type)
     return count
 
 
@@ -329,8 +336,14 @@ def recreate_index():
     Wipe and recreate index and mapping, and index all items.
     """
     clear_index()
+    start = datetime.now(pytz.UTC)
+    log.info("Indexing %d program enrollments...", ProgramEnrollment.objects.count())
     index_program_enrolled_users(ProgramEnrollment.objects.iterator())
+    log.info("Indexing %d percolator queries...", PercolateQuery.objects.count())
     index_percolate_queries(PercolateQuery.objects.iterator())
+    end = datetime.now(pytz.UTC)
+
+    log.info("recreate_index took %d seconds", (end - start).total_seconds())
 
 
 def _serialize_percolate_query(query):
