@@ -5,8 +5,9 @@ export type EmailSendResponse = {
 export type EmailSendError = EmailSendResponse;
 
 export type EmailInputs = {
-  subject?:   ?string,
-  body?:      ?string,
+  subject?:             ?string,
+  body?:                ?string,
+  sendAutomaticEmails?: boolean,
 };
 export type EmailValidationErrors = EmailInputs;
 
