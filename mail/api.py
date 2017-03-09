@@ -10,6 +10,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from rest_framework import status
 
+from mail.exceptions import SendBatchException
 from mail.models import FinancialAidEmailAudit
 
 
@@ -34,7 +35,9 @@ class MailgunClient:
         return {'from': settings.EMAIL_SUPPORT}
 
     @classmethod
-    def _mailgun_request(cls, request_func, endpoint, params, sender_name=None):
+    def _mailgun_request(  # pylint: disable=too-many-arguments
+            cls, request_func, endpoint, params, sender_name=None, raise_for_status=True
+    ):
         """
         Sends a request to the Mailgun API
 
@@ -42,6 +45,7 @@ class MailgunClient:
             request_func (function): requests library HTTP function (get/post/etc.)
             endpoint (str): Mailgun endpoint (eg: 'messages', 'events')
             params (dict): Dict of params to add to the request as 'data'
+            raise_for_status (bool): If true, check the status and raise for non-2xx statuses
         Returns:
             requests.Response: HTTP response
         """
@@ -63,6 +67,8 @@ class MailgunClient:
             message = "Mailgun API keys not properly configured."
             log.error(message)
             raise ImproperlyConfigured(message)
+        if raise_for_status:
+            response.raise_for_status()
         return response
 
     @classmethod
@@ -111,14 +117,14 @@ class MailgunClient:
             'messages',
             params,
             sender_name=sender_name,
+            raise_for_status=raise_for_status,
         )
-        if raise_for_status:
-            response.raise_for_status()
         return response
 
     @classmethod
-    def send_batch(cls, subject, body, recipients,  # pylint: disable=too-many-arguments
-                   sender_address=None, sender_name=None, chunk_size=settings.MAILGUN_BATCH_CHUNK_SIZE):
+    def send_batch(cls, subject, body, recipients,  # pylint: disable=too-many-arguments, too-many-locals
+                   sender_address=None, sender_name=None, chunk_size=settings.MAILGUN_BATCH_CHUNK_SIZE,
+                   raise_for_status=True):
         """
         Sends a text email to a list of recipients (one email per recipient) via batch.
 
@@ -129,17 +135,21 @@ class MailgunClient:
             sender_address (str): Sender email address
             sender_name (str): Sender name
             chunk_size (int): The maximum amount of emails to be sent at the same time
+            raise_for_status (bool): If true, raise for non 2xx statuses
 
         Returns:
             list:
-                List of (recipients, requests.Response, exception) where
-                recipients is a list of recipient emails,
-                Response is an HTTP response from Mailgun, if there is one,
-                exception is an exception which occurred when attempting to mail, if there is one
+                List of responses which are HTTP responses from Mailgun.
+
+        Raises:
+            SendBatchException:
+               If there is at least one exception, this exception is raised with all other exceptions in a list
+               along with recipients we failed to send to.
         """
         original_recipients = recipients
         body, recipients = cls._recipient_override(body, original_recipients)
         responses = []
+        exception_pairs = []
 
         recipients = iter(recipients)
         chunk = list(islice(recipients, chunk_size))
@@ -164,18 +174,20 @@ class MailgunClient:
                     'messages',
                     params,
                     sender_name=sender_name,
+                    raise_for_status=raise_for_status,
                 )
 
-                responses.append(
-                    (original_recipients_chunk, response, None)
-                )
+                responses.append(response)
             except ImproperlyConfigured:
                 raise
             except Exception as exception:  # pylint: disable=broad-except
-                responses.append(
-                    (original_recipients_chunk, None, exception)
+                exception_pairs.append(
+                    (original_recipients_chunk, exception)
                 )
             chunk = list(islice(recipients, chunk_size))
+
+        if len(exception_pairs) > 0:
+            raise SendBatchException(exception_pairs)
 
         return responses
 
@@ -197,13 +209,15 @@ class MailgunClient:
             requests.Response: response from Mailgun
         """
         # Since .send_batch() returns a list, we need to return the first in the list
-        responses = cls.send_batch(subject, body, [recipient], sender_address=sender_address, sender_name=sender_name)
-        _, response, exception = responses[0]
-        if exception is not None:
-            raise exception
-        if raise_for_status:
-            response.raise_for_status()
-        return response
+        responses = cls.send_batch(
+            subject,
+            body,
+            [recipient],
+            sender_address=sender_address,
+            sender_name=sender_name,
+            raise_for_status=raise_for_status,
+        )
+        return responses[0]
 
     @classmethod
     def send_financial_aid_email(  # pylint: disable=too-many-arguments

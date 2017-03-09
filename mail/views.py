@@ -86,22 +86,6 @@ def _make_batch_response_dict(response, exception):
     }
 
 
-def _make_batch_status(responses):
-    """
-    Helper function to figure out a status code to return. In summary, 200 unless any error, then 500.
-    The user can inspect the contents for more info.
-    """
-    has_error = any(
-        exception is not None or
-        response.status_code != status.HTTP_200_OK
-        for _, response, exception in responses
-    )
-    if has_error:
-        return status.HTTP_500_INTERNAL_SERVER_ERROR
-    else:
-        return status.HTTP_200_OK
-
-
 class SearchResultMailView(APIView):
     """
     View class that handles HTTP requests to search results mail API
@@ -135,15 +119,13 @@ class SearchResultMailView(APIView):
                     email_body=email_body,
                     sender_name=sender_name,
                 )
-        mailgun_responses = MailgunClient.send_batch(
+        MailgunClient.send_batch(
             subject=email_subject,
             body=email_body,
             recipients=emails,
             sender_name=sender_name,
         )
-        return Response(
-            status=_make_batch_status(mailgun_responses)
-        )
+        return Response(status=status.HTTP_200_OK)
 
 
 class CourseTeamMailView(GenericAPIView):
