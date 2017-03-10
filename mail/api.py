@@ -10,7 +10,6 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
-from django.db.utils import IntegrityError
 from rest_framework import status
 
 from mail.exceptions import SendBatchException

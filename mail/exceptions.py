@@ -19,5 +19,8 @@ class SendBatchException(Exception):
 
     @property
     def failed_recipient_emails(self):
+        """
+        Yields a list of recipient emails that we failed to send to
+        """
         for recipients, _ in self.exception_pairs:
             yield from recipients
