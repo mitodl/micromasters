@@ -132,11 +132,7 @@ class SearchResultMailView(APIView):
                 mark_emails_as_sent(automatic_email, emails)
         except SendBatchException as send_batch_exception:
             if automatic_email:
-                failure_emails = set()
-                for recipients, _ in send_batch_exception.exception_pairs:
-                    failure_emails |= set(recipients)
-                success_emails = set(emails).difference(failure_emails)
-
+                success_emails = set(emails).difference(send_batch_exception.failed_recipient_emails)
                 mark_emails_as_sent(automatic_email, success_emails)
 
             raise
