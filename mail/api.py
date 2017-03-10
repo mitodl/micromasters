@@ -277,22 +277,18 @@ def send_automatic_emails(program_enrollment):
     user = program_enrollment.user
     for automatic_email in automatic_emails:
         try:
-            try:
-                MailgunClient.send_individual_email(
-                    automatic_email.email_subject,
-                    automatic_email.email_body,
-                    user.email,
-                    sender_name=automatic_email.sender_name,
-                )
-                SentAutomaticEmail.objects.create(
-                    user=user,
-                    automatic_email=automatic_email,
-                )
-            except:  # pylint: disable=bare-except
-                log.exception("Error sending mailgun mail for automatic email %s", automatic_email)
-        except IntegrityError:
-            # Probable race condition, skip this user since we already sent them an email
-            pass
+            MailgunClient.send_individual_email(
+                automatic_email.email_subject,
+                automatic_email.email_body,
+                user.email,
+                sender_name=automatic_email.sender_name,
+            )
+            SentAutomaticEmail.objects.create(
+                user=user,
+                automatic_email=automatic_email,
+            )
+        except:  # pylint: disable=bare-except
+            log.exception("Error sending mailgun mail for automatic email %s", automatic_email)
 
 
 def add_automatic_email(original_search, email_subject, email_body, sender_name):
