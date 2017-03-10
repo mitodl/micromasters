@@ -15,7 +15,7 @@ USER_DOC_TYPE = 'program_user'
 DOC_TYPES = (USER_DOC_TYPE, )
 
 
-def get_conn(verify=True):
+def get_conn(verify=True, verify_index=None):
     """
     Lazily create the connection.
     """
@@ -49,13 +49,14 @@ def get_conn(verify=True):
         return _CONN
 
     # Make sure everything exists.
-    index_name = settings.ELASTICSEARCH_INDEX
-    if not _CONN.indices.exists(index_name):
+    if verify_index is None:
+        verify_index = settings.ELASTICSEARCH_INDEX
+    if not _CONN.indices.exists(verify_index):
         raise ReindexException("Unable to find index {index_name}".format(
-            index_name=index_name
+            index_name=verify_index
         ))
 
-    mappings = _CONN.indices.get_mapping()[index_name]["mappings"]
+    mappings = _CONN.indices.get_mapping()[verify_index]["mappings"]
     for doc_type in DOC_TYPES:
         if doc_type not in mappings.keys():
             raise ReindexException("Mapping {doc_type} not found".format(

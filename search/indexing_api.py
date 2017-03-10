@@ -10,6 +10,7 @@ from elasticsearch.helpers import bulk
 from elasticsearch.exceptions import NotFoundError
 from elasticsearch_dsl import Mapping
 import pytz
+from rest_framework.status import HTTP_200_OK
 
 from profiles.models import Profile
 from profiles.serializers import ProfileSerializer
@@ -46,7 +47,7 @@ DATE_TYPE = {'type': 'date', 'format': 'date'}
 LONG_TYPE = {'type': 'long'}
 
 
-def _index_chunk(chunk, doc_type):
+def _index_chunk(chunk, doc_type, index):
     """
     Add/update a list of records in Elasticsearch
 
@@ -55,16 +56,17 @@ def _index_chunk(chunk, doc_type):
             List of serialized items to index
         doc_type (str):
             The doc type for each item
+        index (str): An Elasticsearch index
 
     Returns:
         int: Number of items inserted into Elasticsearch
     """
 
-    conn = get_conn()
+    conn = get_conn(verify_index=index)
     insert_count, errors = bulk(
         conn,
         chunk,
-        index=settings.ELASTICSEARCH_INDEX,
+        index=index,
         doc_type=doc_type,
     )
     if len(errors) > 0:
@@ -72,11 +74,11 @@ def _index_chunk(chunk, doc_type):
             errors=errors
         ))
 
-    refresh_index()
+    refresh_index(index)
     return insert_count
 
 
-def _index_chunks(items, doc_type, chunk_size=100):
+def _index_chunks(items, doc_type, index, chunk_size=100):
     """
     Add/update records in Elasticsearch.
 
@@ -84,6 +86,7 @@ def _index_chunks(items, doc_type, chunk_size=100):
         items (iterable):
             Iterable of serialized items to index
         doc_type (str): The doc type for the items to be indexed
+        index (str): An Elasticsearch index
         chunk_size (int):
             How many items to index at once.
 
@@ -96,29 +99,51 @@ def _index_chunks(items, doc_type, chunk_size=100):
     count = 0
     chunk = list(islice(items, chunk_size))
     while len(chunk) > 0:
-        count += _index_chunk(chunk, doc_type)
+        count += _index_chunk(chunk, doc_type, index)
         log.info("Indexed %d items...", count)
         chunk = list(islice(items, chunk_size))
     log.info("Indexing done, refreshing index...")
-    refresh_index()
+    refresh_index(index)
     log.info("Finished indexing %s", doc_type)
     return count
 
 
-def index_program_enrolled_users(program_enrollments, chunk_size=100):
+def _delete_item(document_id, doc_type, index):
+    """
+    Helper function to delete a document
+
+    Args:
+        document_id (int): A document id
+        doc_type (str): A document type
+        index (str): An Elasticsearch index
+    """
+    conn = get_conn(verify_index=index)
+    try:
+        conn.delete(index=index, doc_type=doc_type, id=document_id)
+    except NotFoundError:
+        # Item is already gone
+        pass
+
+
+def index_program_enrolled_users(program_enrollments, index=None, chunk_size=100):
     """
     Bulk index an iterable of ProgramEnrollments
 
     Args:
         program_enrollments (iterable of ProgramEnrollment): An iterable of program enrollments
+        index (str): An Elasticsearch index. If None, uses Django Elasticsearch index setting
         chunk_size (int): The number of items per chunk to index
 
     Returns:
         int: Number of indexed items
     """
+    if index is None:
+        index = settings.ELASTICSEARCH_INDEX
+
     return _index_chunks(
         (serialize_program_enrolled_user(program_enrollment) for program_enrollment in program_enrollments),
         USER_DOC_TYPE,
+        index,
         chunk_size=chunk_size,
     )
 
@@ -128,19 +153,17 @@ def index_users(users, chunk_size=100):
     Indexes a list of users via their ProgramEnrollments
     """
     program_enrollments = ProgramEnrollment.prefetched_qset().filter(user__in=users)
-    return index_program_enrolled_users(program_enrollments, chunk_size)
+    return index_program_enrolled_users(program_enrollments, chunk_size=chunk_size)
 
 
-def remove_program_enrolled_user(program_enrollment):
+def remove_program_enrolled_user(program_enrollment, index=None):
     """
     Remove a program-enrolled user from Elasticsearch.
     """
-    conn = get_conn()
-    try:
-        conn.delete(index=settings.ELASTICSEARCH_INDEX, doc_type=USER_DOC_TYPE, id=program_enrollment.id)
-    except NotFoundError:
-        # Item is already gone
-        pass
+    if index is None:
+        index = settings.ELASTICSEARCH_INDEX
+
+    _delete_item(program_enrollment.id, USER_DOC_TYPE, index)
 
 
 def remove_user(user):
@@ -191,11 +214,11 @@ def filter_current_work(profile):
     return mod_profile
 
 
-def refresh_index():
+def refresh_index(index):
     """
     Refresh the Elasticsearch index
     """
-    get_conn().indices.refresh(index=settings.ELASTICSEARCH_INDEX)
+    get_conn(verify_index=index).indices.refresh(index=index)
 
 
 def program_enrolled_user_mapping():
@@ -277,31 +300,29 @@ def program_enrolled_user_mapping():
     return mapping
 
 
-def create_program_enrolled_user_mapping():
+def create_program_enrolled_user_mapping(index_name):
     """
     Save the mapping for a program user. If one already exists, delete it first.
     """
     conn = get_conn(verify=False)
-    index_name = settings.ELASTICSEARCH_INDEX
     if conn.indices.exists_type(index=index_name, doc_type=USER_DOC_TYPE):
         conn.indices.delete_mapping(index=index_name, doc_type=USER_DOC_TYPE)
     mapping = program_enrolled_user_mapping()
     mapping.save(index_name)
 
 
-def create_mappings():
+def create_mappings(index):
     """
     Create all mappings, deleting existing mappings if they exist.
     """
-    create_program_enrolled_user_mapping()
+    create_program_enrolled_user_mapping(index)
 
 
-def clear_index():
+def clear_index(index_name):
     """
     Wipe and recreate index and mapping. No indexing is done.
     """
     conn = get_conn(verify=False)
-    index_name = settings.ELASTICSEARCH_INDEX
     if conn.indices.exists(index_name):
         conn.indices.delete(index_name)
     # from https://www.elastic.co/guide/en/elasticsearch/guide/current/asciifolding-token-filter.html
@@ -322,31 +343,54 @@ def clear_index():
     })
 
     conn.indices.refresh()
-    create_mappings()
+    create_mappings(index_name)
 
 
-def delete_index():
+def delete_index(index=None):
     """
     Drop the index without re-creating it
     """
+    if index is None:
+        index = settings.ELASTICSEARCH_INDEX
+
     conn = get_conn(verify=False)
-    index_name = settings.ELASTICSEARCH_INDEX
-    if conn.indices.exists(index_name):
-        conn.indices.delete(index_name)
+    if conn.indices.exists(index):
+        conn.indices.delete(index)
 
 
 def recreate_index():
     """
     Wipe and recreate index and mapping, and index all items.
     """
-    clear_index()
+    temp_index = "{}_temp".format(settings.ELASTICSEARCH_INDEX)
+    clear_index(temp_index)
     start = datetime.now(pytz.UTC)
     log.info("Indexing %d program enrollments...", ProgramEnrollment.objects.count())
-    index_program_enrolled_users(ProgramEnrollment.objects.iterator())
+    index_program_enrolled_users(ProgramEnrollment.objects.iterator(), temp_index)
     log.info("Indexing %d percolator queries...", PercolateQuery.objects.count())
-    index_percolate_queries(PercolateQuery.objects.iterator())
-    end = datetime.now(pytz.UTC)
+    index_percolate_queries(PercolateQuery.objects.iterator(), temp_index)
 
+    # Swap out the index
+    log.info("Done with temporary index. Clearing original index and recreating mapping...")
+    clear_index(settings.ELASTICSEARCH_INDEX)
+    log.info("Running _reindex to populate original index...")
+    conn = get_conn(verify=False)
+    status, data = conn.transport.perform_request('POST', '/_reindex', body={
+        "source": {
+            "index": temp_index
+        },
+        "dest": {
+            "index": settings.ELASTICSEARCH_INDEX
+        }
+    })
+    if status != HTTP_200_OK:
+        raise Exception("_reindex failed: {status}, {data}".format(
+            status=status,
+            data=data,
+        ))
+    conn.indices.delete(temp_index)
+    refresh_index(settings.ELASTICSEARCH_INDEX)
+    end = datetime.now(pytz.UTC)
     log.info("recreate_index took %d seconds", (end - start).total_seconds())
 
 
@@ -366,36 +410,40 @@ def _serialize_percolate_query(query):
     return to_index
 
 
-def index_percolate_queries(percolate_queries, chunk_size=100):
+def index_percolate_queries(percolate_queries, index=None, chunk_size=100):
     """
     Index percolate queries
 
     Args:
         percolate_queries (iterable of PercolateQuery):
             An iterable of PercolateQuery
+        index (str): An Elasticsearch index. If None, uses the Django default Elasticsearch index
         chunk_size (int): Number of queries to index per chunk
 
     Returns:
         int: Number of indexed items
     """
+    if index is None:
+        index = settings.ELASTICSEARCH_INDEX
+
     return _index_chunks(
         (_serialize_percolate_query(query) for query in percolate_queries),
         PERCOLATE_DOC_TYPE,
+        index,
         chunk_size=chunk_size,
     )
 
 
-def delete_percolate_query(percolate_query_id):
+def delete_percolate_query(percolate_query_id, index=None):
     """
     Remove a percolate query from Elasticsearch
 
     Args:
         percolate_query_id (int):
             The id of a deleted PercolateQuery
+        index (str): An Elasticsearch index. If None, uses the Django default Elasticsearch index
     """
-    conn = get_conn()
-    try:
-        conn.delete(index=settings.ELASTICSEARCH_INDEX, doc_type=PERCOLATE_DOC_TYPE, id=percolate_query_id)
-    except NotFoundError:
-        # Item is already gone
-        pass
+    if index is None:
+        index = settings.ELASTICSEARCH_INDEX
+
+    _delete_item(percolate_query_id, PERCOLATE_DOC_TYPE, index)

@@ -1,7 +1,10 @@
 """
 Tests for search API functions.
 """
-from unittest.mock import patch
+from unittest.mock import (
+    ANY,
+    patch,
+)
 
 from django.conf import settings
 from django.db.models.signals import post_save
@@ -30,6 +33,7 @@ from profiles.serializers import (
     ProfileSerializer
 )
 from search.indexing_api import (
+    delete_index,
     get_conn,
     recreate_index,
     refresh_index,
@@ -63,7 +67,7 @@ class ESTestActions:
 
     def search(self):
         """Gets full index data from the _search endpoint"""
-        refresh_index()
+        refresh_index(self.index)
         return get(self.search_url).json()['hits']
 
     def get_percolate_query(self, _id):
@@ -72,7 +76,7 @@ class ESTestActions:
 
     def get_mappings(self):
         """Gets mapping data"""
-        refresh_index()
+        refresh_index(self.index)
         return get(self.mapping_url).json()[self.index]['mappings']
 
 
@@ -218,6 +222,16 @@ class IndexTests(ESTestCase):
         remove_program_enrolled_user(program_enrollment)
         assert_search(es.search(), [])
 
+    def test_remove_user_other_index(self):
+        """
+        Test that remove_program_enrolled_user will use another index if provided
+        """
+        other_index = 'other'
+        program_enrollment = ProgramEnrollmentFactory.create()
+        with patch('search.indexing_api._delete_item', autospec=True) as _delete_item:
+            remove_program_enrolled_user(program_enrollment, index=other_index)
+        _delete_item.assert_called_with(program_enrollment.id, USER_DOC_TYPE, other_index)
+
     def test_index_program_enrolled_users(self):
         """
         Test that index_program_enrolled_users indexes an iterable of program-enrolled users
@@ -231,10 +245,19 @@ class IndexTests(ESTestCase):
         ) as serialize_mock:
             index_program_enrolled_users(program_enrollments, chunk_size=4)
             assert index_chunk.call_count == 3
-            index_chunk.assert_any_call(program_enrollments[0:4], USER_DOC_TYPE)
+            index_chunk.assert_any_call(program_enrollments[0:4], USER_DOC_TYPE, settings.ELASTICSEARCH_INDEX)
             assert serialize_mock.call_count == len(program_enrollments)
             for enrollment in program_enrollments:
                 serialize_mock.assert_any_call(enrollment)
+
+    def test_index_user_other_index(self):
+        """
+        Test that index_program_enrolled_users uses another index if provided
+        """
+        other_index = 'other'
+        with patch('search.indexing_api._index_chunks', autospec=True) as _index_chunk:
+            index_program_enrolled_users([], index=other_index)
+        _index_chunk.assert_called_with(ANY, USER_DOC_TYPE, other_index, chunk_size=100)
 
     def test_add_edx_record(self):
         """
@@ -351,7 +374,7 @@ class GetConnTests(ESTestCase):
         """
         Start without any index
         """
-        super(GetConnTests, self).setUp()
+        super().setUp()
 
         conn = get_conn(verify=False)
         index_name = settings.ELASTICSEARCH_INDEX
@@ -369,6 +392,19 @@ class GetConnTests(ESTestCase):
         with self.assertRaises(ReindexException) as ex:
             get_conn()
         assert str(ex.exception) == "Unable to find index {}".format(settings.ELASTICSEARCH_INDEX)
+
+    def test_no_index_not_default(self):
+        """
+        Test that an error is raised if we don't have an index
+        """
+        # Reset default index so it does not cause an error
+        recreate_index()
+        other_index = "other"
+        delete_index(other_index)
+
+        with self.assertRaises(ReindexException) as ex:
+            get_conn(verify_index=other_index)
+        assert str(ex.exception) == "Unable to find index {}".format(other_index)
 
     def test_no_mapping(self):
         """
@@ -390,7 +426,7 @@ class RecreateIndexTests(ESTestCase):
         """
         Start without any index
         """
-        super(RecreateIndexTests, self).setUp()
+        super().setUp()
         conn = get_conn(verify=False)
         index_name = settings.ELASTICSEARCH_INDEX
         if conn.indices.exists(index_name):
@@ -445,6 +481,13 @@ class PercolateQueryTests(ESTestCase):
             'found': True,
         }
 
+    def test_index_other_index(self):
+        """Make sure we use the index name passed in"""
+        other_index = "other"
+        with patch('search.indexing_api._index_chunks', autospec=True) as _index_chunks:
+            index_percolate_queries([], index=other_index)
+        _index_chunks.assert_called_with(ANY, PERCOLATE_DOC_TYPE, other_index, chunk_size=100)
+
     def test_delete_percolate_queries(self):
         """Test that we delete the percolate query from the index"""
         query = {"query": {"match": {"profile.first_name": "here"}}}
@@ -473,3 +516,10 @@ class PercolateQueryTests(ESTestCase):
                 '_type': PERCOLATE_DOC_TYPE,
                 'found': False,
             }
+
+    def test_delete_other_index(self):
+        """Make sure we use the index name passed in"""
+        other_index = "other"
+        with patch('search.indexing_api._delete_item', autospec=True) as _delete_item:
+            delete_percolate_query(-1, index=other_index)
+        _delete_item.assert_called_with(-1, PERCOLATE_DOC_TYPE, other_index)
