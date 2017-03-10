@@ -34,7 +34,9 @@ from profiles.serializers import (
 )
 from search.indexing_api import (
     delete_index,
+    get_active_indices,
     get_conn,
+    get_temp_index,
     recreate_index,
     refresh_index,
     index_program_enrolled_users,
@@ -226,11 +228,12 @@ class IndexTests(ESTestCase):
         """
         Test that remove_program_enrolled_user will use another index if provided
         """
-        other_index = 'other'
+        other_indices = ['other1', 'other2']
         program_enrollment = ProgramEnrollmentFactory.create()
         with patch('search.indexing_api._delete_item', autospec=True) as _delete_item:
-            remove_program_enrolled_user(program_enrollment, index=other_index)
-        _delete_item.assert_called_with(program_enrollment.id, USER_DOC_TYPE, other_index)
+            remove_program_enrolled_user(program_enrollment, indices=other_indices)
+        for other_index in other_indices:
+            _delete_item.assert_any_call(program_enrollment.id, USER_DOC_TYPE, other_index)
 
     def test_index_program_enrolled_users(self):
         """
@@ -254,10 +257,11 @@ class IndexTests(ESTestCase):
         """
         Test that index_program_enrolled_users uses another index if provided
         """
-        other_index = 'other'
+        other_indices = ['other1', 'other2']
         with patch('search.indexing_api._index_chunks', autospec=True) as _index_chunk:
-            index_program_enrolled_users([], index=other_index)
-        _index_chunk.assert_called_with(ANY, USER_DOC_TYPE, other_index, chunk_size=100)
+            index_program_enrolled_users([], indices=other_indices)
+        for index in other_indices:
+            _index_chunk.assert_any_call(ANY, USER_DOC_TYPE, index, chunk_size=100)
 
     def test_add_edx_record(self):
         """
@@ -452,6 +456,27 @@ class RecreateIndexTests(ESTestCase):
         recreate_index()
         assert_search(es.search(), [program_enrollment])
 
+    def test_get_active_indices(self):
+        """
+        Test that active indices includes the default plus the temporary, if it exists
+        """
+        temp_index = get_temp_index()
+        other_index = "other"
+        conn = get_conn(verify=False)
+        assert get_active_indices() == []
+        recreate_index()
+        assert get_active_indices() == [settings.ELASTICSEARCH_INDEX]
+        conn.indices.create(temp_index)
+        conn.indices.create(other_index)
+
+        assert get_active_indices() == [
+            settings.ELASTICSEARCH_INDEX,
+            get_temp_index(),
+        ]
+
+        conn.indices.delete(temp_index)
+        conn.indices.delete(other_index)
+
 
 class PercolateQueryTests(ESTestCase):
     """
@@ -483,10 +508,11 @@ class PercolateQueryTests(ESTestCase):
 
     def test_index_other_index(self):
         """Make sure we use the index name passed in"""
-        other_index = "other"
+        other_indices = ["other1", "other2"]
         with patch('search.indexing_api._index_chunks', autospec=True) as _index_chunks:
-            index_percolate_queries([], index=other_index)
-        _index_chunks.assert_called_with(ANY, PERCOLATE_DOC_TYPE, other_index, chunk_size=100)
+            index_percolate_queries([], indices=other_indices)
+        for index in other_indices:
+            _index_chunks.assert_any_call(ANY, PERCOLATE_DOC_TYPE, index, chunk_size=100)
 
     def test_delete_percolate_queries(self):
         """Test that we delete the percolate query from the index"""
@@ -519,7 +545,8 @@ class PercolateQueryTests(ESTestCase):
 
     def test_delete_other_index(self):
         """Make sure we use the index name passed in"""
-        other_index = "other"
+        other_indices = ["other1", "other2"]
         with patch('search.indexing_api._delete_item', autospec=True) as _delete_item:
-            delete_percolate_query(-1, index=other_index)
-        _delete_item.assert_called_with(-1, PERCOLATE_DOC_TYPE, other_index)
+            delete_percolate_query(-1, indices=other_indices)
+        for index in other_indices:
+            _delete_item.assert_any_call(-1, PERCOLATE_DOC_TYPE, index)

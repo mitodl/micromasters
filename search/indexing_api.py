@@ -125,27 +125,30 @@ def _delete_item(document_id, doc_type, index):
         pass
 
 
-def index_program_enrolled_users(program_enrollments, index=None, chunk_size=100):
+def index_program_enrolled_users(program_enrollments, indices=None, chunk_size=100):
     """
     Bulk index an iterable of ProgramEnrollments
 
     Args:
         program_enrollments (iterable of ProgramEnrollment): An iterable of program enrollments
-        index (str): An Elasticsearch index. If None, uses Django Elasticsearch index setting
+        indices (list of str): A list of Elasticsearch indices. If None, uses Django Elasticsearch index setting
         chunk_size (int): The number of items per chunk to index
 
     Returns:
         int: Number of indexed items
     """
-    if index is None:
-        index = settings.ELASTICSEARCH_INDEX
+    if indices is None:
+        indices = get_active_indices()
 
-    return _index_chunks(
-        (serialize_program_enrolled_user(program_enrollment) for program_enrollment in program_enrollments),
-        USER_DOC_TYPE,
-        index,
-        chunk_size=chunk_size,
-    )
+    for index in indices:
+        count = _index_chunks(
+            (serialize_program_enrolled_user(program_enrollment) for program_enrollment in program_enrollments),
+            USER_DOC_TYPE,
+            index,
+            chunk_size=chunk_size,
+        )
+    # Both counts should be the same
+    return count
 
 
 def index_users(users, chunk_size=100):
@@ -156,19 +159,23 @@ def index_users(users, chunk_size=100):
     return index_program_enrolled_users(program_enrollments, chunk_size=chunk_size)
 
 
-def remove_program_enrolled_user(program_enrollment, index=None):
+def remove_program_enrolled_user(program_enrollment, indices=None):
     """
     Remove a program-enrolled user from Elasticsearch.
     """
-    if index is None:
-        index = settings.ELASTICSEARCH_INDEX
+    if indices is None:
+        indices = get_active_indices()
 
-    _delete_item(program_enrollment.id, USER_DOC_TYPE, index)
+    for index in indices:
+        _delete_item(program_enrollment.id, USER_DOC_TYPE, index)
 
 
 def remove_user(user):
     """
     Remove a user from Elasticsearch.
+
+    Args:
+        user (django.contrib.auth.models.User): A user to remove
     """
     program_enrollments = ProgramEnrollment.objects.filter(user=user).select_related('user', 'program').all()
     for program_enrollment in program_enrollments:
@@ -346,29 +353,30 @@ def clear_index(index_name):
     create_mappings(index_name)
 
 
-def delete_index(index=None):
+def delete_index(indices=None):
     """
-    Drop the index without re-creating it
+    Drop the indices without re-creating it
     """
-    if index is None:
-        index = settings.ELASTICSEARCH_INDEX
+    if indices is None:
+        indices = get_active_indices()
 
     conn = get_conn(verify=False)
-    if conn.indices.exists(index):
-        conn.indices.delete(index)
+    for index in indices:
+        if conn.indices.exists(index):
+            conn.indices.delete(index)
 
 
 def recreate_index():
     """
     Wipe and recreate index and mapping, and index all items.
     """
-    temp_index = "{}_temp".format(settings.ELASTICSEARCH_INDEX)
+    temp_index = get_temp_index()
     clear_index(temp_index)
     start = datetime.now(pytz.UTC)
     log.info("Indexing %d program enrollments...", ProgramEnrollment.objects.count())
-    index_program_enrolled_users(ProgramEnrollment.objects.iterator(), temp_index)
+    index_program_enrolled_users(ProgramEnrollment.objects.iterator(), [temp_index])
     log.info("Indexing %d percolator queries...", PercolateQuery.objects.count())
-    index_percolate_queries(PercolateQuery.objects.iterator(), temp_index)
+    index_percolate_queries(PercolateQuery.objects.iterator(), [temp_index])
 
     # Swap out the index
     log.info("Done with temporary index. Clearing original index and recreating mapping...")
@@ -410,40 +418,64 @@ def _serialize_percolate_query(query):
     return to_index
 
 
-def index_percolate_queries(percolate_queries, index=None, chunk_size=100):
+def index_percolate_queries(percolate_queries, indices=None, chunk_size=100):
     """
     Index percolate queries
 
     Args:
         percolate_queries (iterable of PercolateQuery):
             An iterable of PercolateQuery
-        index (str): An Elasticsearch index. If None, uses the Django default Elasticsearch index
+        indices (list): A list of Elasticsearch indexes. If None, uses the Django default Elasticsearch index
         chunk_size (int): Number of queries to index per chunk
 
     Returns:
         int: Number of indexed items
     """
-    if index is None:
-        index = settings.ELASTICSEARCH_INDEX
+    if indices is None:
+        indices = get_active_indices()
 
-    return _index_chunks(
-        (_serialize_percolate_query(query) for query in percolate_queries),
-        PERCOLATE_DOC_TYPE,
-        index,
-        chunk_size=chunk_size,
-    )
+    count = 0
+    for index in indices:
+        count = _index_chunks(
+            (_serialize_percolate_query(query) for query in percolate_queries),
+            PERCOLATE_DOC_TYPE,
+            index,
+            chunk_size=chunk_size,
+        )
+    # Both counts should be the same
+    return count
 
 
-def delete_percolate_query(percolate_query_id, index=None):
+def delete_percolate_query(percolate_query_id, indices=None):
     """
     Remove a percolate query from Elasticsearch
 
     Args:
         percolate_query_id (int):
             The id of a deleted PercolateQuery
-        index (str): An Elasticsearch index. If None, uses the Django default Elasticsearch index
+        indices (list of str): A list of Elasticsearch indexes. If None, uses the Django default Elasticsearch index
     """
-    if index is None:
-        index = settings.ELASTICSEARCH_INDEX
+    if indices is None:
+        indices = get_active_indices()
 
-    _delete_item(percolate_query_id, PERCOLATE_DOC_TYPE, index)
+    for index in indices:
+        _delete_item(percolate_query_id, PERCOLATE_DOC_TYPE, index)
+
+
+def get_temp_index():
+    """
+    Get name for the temporary index
+    """
+    return "{}_temp".format(settings.ELASTICSEARCH_INDEX)
+
+
+def get_active_indices():
+    """
+    Get active indexes. This will be settings.ELASTICSEARCH_INDEX and maybe a temporary one
+    """
+    conn = get_conn(verify=False)
+    indexes = []
+    for index in (settings.ELASTICSEARCH_INDEX, get_temp_index()):
+        if conn.indices.exists(index):
+            indexes.append(index)
+    return indexes
