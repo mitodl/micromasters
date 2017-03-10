@@ -90,38 +90,6 @@ class MailgunClient:
         return body, recipients
 
     @classmethod
-    def send_bcc(  # pylint: disable=too-many-arguments
-            cls, subject, body, recipients, sender_name=None, raise_for_status=True,
-    ):
-        """
-        Sends a text email to a BCC'ed list of recipients.
-
-        Args:
-            subject (str): Email subject
-            body (str): Text email body
-            recipients (list): A list of recipient emails
-            sender_name (str): Sender name
-            raise_for_status (bool): If true and response is not a 2xx status code, raise an exception
-        Returns:
-            requests.Response: HTTP response from Mailgun
-        """
-        body, recipients = cls._recipient_override(body, recipients)
-        params = dict(
-            to=settings.MAILGUN_BCC_TO_EMAIL,
-            bcc=','.join(recipients),
-            subject=subject,
-            text=body
-        )
-        response = cls._mailgun_request(
-            requests.post,
-            'messages',
-            params,
-            sender_name=sender_name,
-            raise_for_status=raise_for_status,
-        )
-        return response
-
-    @classmethod
     def send_batch(cls, subject, body, recipients,  # pylint: disable=too-many-arguments, too-many-locals
                    sender_address=None, sender_name=None, chunk_size=settings.MAILGUN_BATCH_CHUNK_SIZE,
                    raise_for_status=True):
