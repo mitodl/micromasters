@@ -21,16 +21,19 @@
     justify-content: space-between;
     margin-top: 12px;
 
-    > * {
-      margin: auto;
-    }
-
     .program-info {
       margin-top: 8px;
+      flex-grow: 2;
+    }
+
+    ul {
+      -webkit-padding-start: 30px;
     }
 
     li {
-      font-weight: 600;
+      font-weight: 500;
+      line-height: 1.4;
+      margin: 8px 0 10px;
     }
   }
 

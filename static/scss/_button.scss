@@ -25,6 +25,11 @@
     color: #fff;
   }
 
+  &.exam-button {
+    min-width: 180px;
+    margin: 10px 30px 10px 5px;
+  }
+
   &.gray-button:hover, &.gray-button:focus, &.gray-button:active, &.gray-button:focus:not(:active) {
     background: $gray-button-hover;
     color: #555;
