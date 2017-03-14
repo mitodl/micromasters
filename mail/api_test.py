@@ -528,7 +528,7 @@ class AutomaticEmailTests(MockedESTestCase):
             sender_name='Sender name',
         )
         cls.automatic_email_disabled = AutomaticEmail.objects.create(
-            query=None,
+            query=cls.percolate_query_disabled,
             enabled=False,
             email_subject='other subject',
             email_body='other body',
