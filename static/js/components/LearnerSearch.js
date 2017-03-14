@@ -14,6 +14,7 @@ import {
   RangeFilter,
   SearchBox,
   SortingSelector,
+  MultiMatchQuery,
 } from 'searchkit';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import Card from 'react-mdl/lib/Card/Card';
@@ -171,17 +172,18 @@ export default class LearnerSearch extends SearchkitComponent {
         </Cell>
         <Cell col={6} className="pagination-search">
           <SearchBox
-            queryBuilder={() => ({})}  // we only care about prefix query
+            queryBuilder={MultiMatchQuery}
             searchOnChange={true}
-            prefixQueryFields={[
+            queryFields={[
               'profile.first_name.folded',
               'profile.last_name.folded',
               'profile.preferred_name.folded',
               'profile.username.folded',
               'email.folded'
             ]}
-            prefixQueryOptions={{
-              analyzer: "folding"
+            queryOptions={{
+              analyzer: "folding",
+              type: "phrase_prefix",
             }}
           />
           <Pagination showText={false} listComponent={CustomPaginationDisplay} />
