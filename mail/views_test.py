@@ -26,6 +26,7 @@ from financialaid.api_test import (
 )
 from financialaid.factories import FinancialAidFactory, TierProgramFactory
 from mail.exceptions import SendBatchException
+from mail.factories import AutomaticEmailFactory
 from mail.models import (
     AutomaticEmail,
     SentAutomaticEmail,
@@ -153,12 +154,7 @@ class SearchResultMailViewsTests(MockedESTestCase, APITestCase):
         for email in email_results:
             UserFactory.create(email=email)
 
-        automatic_email = AutomaticEmail.objects.create(
-            email_subject='subject',
-            email_body='body',
-            query=None,
-            sender_name='sender',
-        )
+        automatic_email = AutomaticEmailFactory.create()
         search_obj = create_search_obj(
             user=self.staff,
             search_param_dict=request_data['search_request'],
@@ -204,12 +200,7 @@ class SearchResultMailViewsTests(MockedESTestCase, APITestCase):
         for email in email_results:
             UserFactory.create(email=email)
 
-        automatic_email = AutomaticEmail.objects.create(
-            email_subject='subject',
-            email_body='body',
-            query=None,
-            sender_name='sender',
-        )
+        automatic_email = AutomaticEmailFactory.create()
         search_obj = create_search_obj(
             user=self.staff,
             search_param_dict=request_data['search_request'],

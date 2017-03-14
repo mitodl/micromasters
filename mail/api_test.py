@@ -37,6 +37,7 @@ from mail.models import (
     FinancialAidEmailAudit,
     SentAutomaticEmail,
 )
+from mail.factories import AutomaticEmailFactory
 from mail.views_test import mocked_json
 from profiles.factories import ProfileFactory
 from search.api import adjust_search_for_percolator
@@ -511,33 +512,15 @@ class AutomaticEmailTests(MockedESTestCase):
 
         cls.program_enrollment_unsent = ProgramEnrollmentFactory.create()
         cls.program_enrollment_sent = ProgramEnrollmentFactory.create()
-        with mute_signals(post_save):
-            cls.percolate_query = PercolateQuery.objects.create(
-                query="query",
-                original_query="original",
-            )
-            cls.percolate_query_disabled = PercolateQuery.objects.create(
-                query="other query",
-                original_query="other original",
-            )
-        cls.automatic_email = AutomaticEmail.objects.create(
-            query=cls.percolate_query,
-            enabled=True,
-            email_subject='subject',
-            email_body='body',
-            sender_name='Sender name',
-        )
-        cls.automatic_email_disabled = AutomaticEmail.objects.create(
-            query=cls.percolate_query_disabled,
-            enabled=False,
-            email_subject='other subject',
-            email_body='other body',
-            sender_name='other Sender name',
-        )
+        cls.automatic_email = AutomaticEmailFactory.create(enabled=True)
+        cls.percolate_query = cls.automatic_email.query
+        cls.automatic_email_disabled = AutomaticEmailFactory.create(enabled=False)
+        cls.percolate_query_disabled = cls.automatic_email_disabled.query
         SentAutomaticEmail.objects.create(
             automatic_email=cls.automatic_email,
             user=cls.program_enrollment_sent.user,
         )
+
 
     def test_send_automatic_emails(self):
         """send_automatic_emails should send emails to users which fit criteria and mark them so we don't send twice"""
@@ -587,18 +570,7 @@ class AutomaticEmailTests(MockedESTestCase):
     def test_failed_send(self):
         """If we fail to send email to the first user we should still send it to the second"""
 
-        with mute_signals(post_save):
-            new_percolate = PercolateQuery.objects.create(
-                query="new query",
-                original_query="original query",
-            )
-        new_automatic = AutomaticEmail.objects.create(
-            enabled=True,
-            email_subject='new subject',
-            email_body='new body',
-            sender_name='new Sender name',
-            query=new_percolate,
-        )
+        new_automatic = AutomaticEmailFactory.create(enabled=True)
 
         count = 0
 
