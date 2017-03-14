@@ -6,10 +6,13 @@ from unittest.mock import (
     patch,
 )
 
+from ddt import (
+    data,
+    ddt,
+)
 from django.conf import settings
 from django.db.models.signals import post_save
 from factory.django import mute_signals
-from requests import get
 
 from dashboard.factories import (
     CachedCertificateFactory,
@@ -34,9 +37,10 @@ from profiles.serializers import (
 )
 from search.indexing_api import (
     delete_index,
-    get_active_indices,
+    get_active_aliases,
     get_conn,
-    get_temp_index,
+    get_default_alias,
+    get_temp_alias,
     recreate_index,
     refresh_index,
     index_program_enrolled_users,
@@ -60,26 +64,26 @@ class ESTestActions:
     Provides helper functions for tests to communicate with ES
     """
     def __init__(self):
-        self.index = settings.ELASTICSEARCH_INDEX
-        self.url = "{}/{}".format(settings.ELASTICSEARCH_URL, self.index)
-        if not self.url.startswith("http"):
-            self.url = "http://{}".format(self.url)
-        self.search_url = "{}/{}".format(self.url, "_search")
-        self.mapping_url = "{}/{}".format(self.url, "_mapping")
+        self.conn = get_conn(verify=False)
 
     def search(self):
         """Gets full index data from the _search endpoint"""
-        refresh_index(self.index)
-        return get(self.search_url).json()['hits']
+        refresh_index(get_default_alias())
+        return self.conn.search(index=get_default_alias())['hits']
 
     def get_percolate_query(self, _id):
         """Get percolate query"""
-        return get("{}/.percolator/{}".format(self.url, _id)).json()
+        return self.conn.get(id=_id, index=get_default_alias(), doc_type=PERCOLATE_DOC_TYPE)
 
     def get_mappings(self):
         """Gets mapping data"""
-        refresh_index(self.index)
-        return get(self.mapping_url).json()[self.index]['mappings']
+        refresh_index(get_default_alias())
+        mapping = self.conn.indices.get_mapping(index=get_default_alias())
+        return list(mapping.values())[0]['mappings']
+
+    def get_default_backing_index(self):
+        """Get the default backing index"""
+        return list(self.conn.indices.get_alias(name=get_default_alias()).keys())[0]
 
 
 es = ESTestActions()
@@ -248,7 +252,7 @@ class IndexTests(ESTestCase):
         ) as serialize_mock:
             index_program_enrolled_users(program_enrollments, chunk_size=4)
             assert index_chunk.call_count == 3
-            index_chunk.assert_any_call(program_enrollments[0:4], USER_DOC_TYPE, settings.ELASTICSEARCH_INDEX)
+            index_chunk.assert_any_call(program_enrollments[0:4], USER_DOC_TYPE, get_default_alias())
             assert serialize_mock.call_count == len(program_enrollments)
             for enrollment in program_enrollments:
                 serialize_mock.assert_any_call(enrollment)
@@ -381,8 +385,9 @@ class GetConnTests(ESTestCase):
         super().setUp()
 
         conn = get_conn(verify=False)
-        index_name = settings.ELASTICSEARCH_INDEX
-        conn.indices.delete(index_name)
+        for index in conn.indices.get_aliases().keys():
+            if index.startswith(settings.ELASTICSEARCH_INDEX):
+                conn.indices.delete(index)
 
         # Clear globals
         from search import indexing_api
@@ -395,7 +400,7 @@ class GetConnTests(ESTestCase):
         """
         with self.assertRaises(ReindexException) as ex:
             get_conn()
-        assert str(ex.exception) == "Unable to find index {}".format(settings.ELASTICSEARCH_INDEX)
+        assert str(ex.exception) == "Unable to find index {}".format(get_default_alias())
 
     def test_no_index_not_default(self):
         """
@@ -404,7 +409,7 @@ class GetConnTests(ESTestCase):
         # Reset default index so it does not cause an error
         recreate_index()
         other_index = "other"
-        delete_index(other_index)
+        delete_index([other_index])
 
         with self.assertRaises(ReindexException) as ex:
             get_conn(verify_index=other_index)
@@ -415,13 +420,16 @@ class GetConnTests(ESTestCase):
         Test that error is raised if we don't have a mapping
         """
         conn = get_conn(verify=False)
-        conn.indices.create(settings.ELASTICSEARCH_INDEX)
+        backing_index = "{}_backing".format(settings.ELASTICSEARCH_INDEX)
+        conn.indices.create(backing_index)
+        conn.indices.put_alias(name=get_default_alias(), index=backing_index)
 
         with self.assertRaises(ReindexException) as ex:
             get_conn()
         assert str(ex.exception) == "Mapping {} not found".format(USER_DOC_TYPE)
 
 
+@ddt
 class RecreateIndexTests(ESTestCase):
     """
     Tests for management commands
@@ -432,9 +440,9 @@ class RecreateIndexTests(ESTestCase):
         """
         super().setUp()
         conn = get_conn(verify=False)
-        index_name = settings.ELASTICSEARCH_INDEX
-        if conn.indices.exists(index_name):
-            conn.indices.delete(index_name)
+        for index in conn.indices.get_aliases().keys():
+            if index.startswith(settings.ELASTICSEARCH_INDEX):
+                conn.indices.delete(index)
 
     def test_create_index(self):
         """
@@ -442,6 +450,33 @@ class RecreateIndexTests(ESTestCase):
         """
         recreate_index()
         assert es.search()['total'] == 0
+
+    @data(True, False)
+    def test_keep_alias(self, existing_temp_alias):
+        """
+        Test that recreate_index will point an existing alias at a new backing index
+        """
+        recreate_index()
+        conn = get_conn(verify=False)
+        default_alias = get_default_alias()
+        temp_alias = get_temp_alias()
+        assert conn.indices.exists_alias(name=temp_alias) is False
+
+        if existing_temp_alias:
+            # Create a temp alias to assert that it doesn't change anything
+            backing_index = "{}_backing".format(temp_alias)
+            conn.indices.create(backing_index)
+            conn.indices.put_alias(name=temp_alias, index=backing_index)
+
+        old_backing_indexes = list(conn.indices.get_alias(name=default_alias).keys())
+        assert len(old_backing_indexes) == 1
+        recreate_index()
+        new_backing_indexes = list(conn.indices.get_alias(name=get_default_alias()).keys())
+        assert len(new_backing_indexes) == 1
+        # Backing index should have changed
+        assert old_backing_indexes != new_backing_indexes
+        # Temp index should have been deleted
+        assert conn.indices.exists_alias(name=temp_alias) is False
 
     def test_update_index(self):
         """
@@ -460,22 +495,23 @@ class RecreateIndexTests(ESTestCase):
         """
         Test that active indices includes the default plus the temporary, if it exists
         """
-        temp_index = get_temp_index()
-        other_index = "other"
+        temp_index = get_temp_alias()
+        other_index = "{}_other".format(settings.ELASTICSEARCH_INDEX)
         conn = get_conn(verify=False)
-        assert get_active_indices() == []
+        assert get_active_aliases() == []
         recreate_index()
-        assert get_active_indices() == [settings.ELASTICSEARCH_INDEX]
-        conn.indices.create(temp_index)
-        conn.indices.create(other_index)
+        assert get_active_aliases() == [get_default_alias()]
+        backing_temp = "{}_backing".format(temp_index)
+        conn.indices.create(backing_temp)
+        conn.indices.put_alias(index=backing_temp, name=temp_index)
+        backing_other = "{}_backing".format(other_index)
+        conn.indices.create(backing_other)
+        conn.indices.put_alias(index=backing_other, name=other_index)
 
-        assert get_active_indices() == [
-            settings.ELASTICSEARCH_INDEX,
-            get_temp_index(),
+        assert get_active_aliases() == [
+            get_default_alias(),
+            get_temp_alias(),
         ]
-
-        conn.indices.delete(temp_index)
-        conn.indices.delete(other_index)
 
 
 class PercolateQueryTests(ESTestCase):
@@ -492,14 +528,14 @@ class PercolateQueryTests(ESTestCase):
         # Don't save since that will trigger a signal which will update the index
         assert es.get_percolate_query(percolate_query_id) == {
             '_id': str(percolate_query_id),
-            '_index': settings.ELASTICSEARCH_INDEX,
+            '_index': es.get_default_backing_index(),
             '_type': PERCOLATE_DOC_TYPE,
             'found': False,
         }
         index_percolate_queries([percolate_query])
         assert es.get_percolate_query(percolate_query_id) == {
             '_id': str(percolate_query_id),
-            '_index': settings.ELASTICSEARCH_INDEX,
+            '_index': es.get_default_backing_index(),
             '_source': query,
             '_type': PERCOLATE_DOC_TYPE,
             '_version': 1,
@@ -521,7 +557,7 @@ class PercolateQueryTests(ESTestCase):
             percolate_query = PercolateQuery.objects.create(query=query)
             assert es.get_percolate_query(percolate_query.id) == {
                 '_id': str(percolate_query.id),
-                '_index': settings.ELASTICSEARCH_INDEX,
+                '_index': es.get_default_backing_index(),
                 '_source': query,
                 '_type': PERCOLATE_DOC_TYPE,
                 '_version': 1,
@@ -530,7 +566,7 @@ class PercolateQueryTests(ESTestCase):
             delete_percolate_query(percolate_query.id)
             assert es.get_percolate_query(percolate_query.id) == {
                 '_id': str(percolate_query.id),
-                '_index': settings.ELASTICSEARCH_INDEX,
+                '_index': es.get_default_backing_index(),
                 '_type': PERCOLATE_DOC_TYPE,
                 'found': False,
             }
@@ -538,7 +574,7 @@ class PercolateQueryTests(ESTestCase):
             delete_percolate_query(percolate_query.id)
             assert es.get_percolate_query(percolate_query.id) == {
                 '_id': str(percolate_query.id),
-                '_index': settings.ELASTICSEARCH_INDEX,
+                '_index': es.get_default_backing_index(),
                 '_type': PERCOLATE_DOC_TYPE,
                 'found': False,
             }

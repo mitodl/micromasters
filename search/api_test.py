@@ -9,7 +9,6 @@ from django.test import (
     override_settings,
 )
 from django.db.models.signals import post_save
-from django.conf import settings
 
 from courses.factories import ProgramFactory
 from dashboard.factories import ProgramEnrollmentFactory
@@ -23,7 +22,10 @@ from search.api import (
     get_all_query_matching_emails,
 )
 from search.base import ESTestCase
-from search.connection import DOC_TYPES
+from search.connection import (
+    DOC_TYPES,
+    get_default_alias,
+)
 from search.exceptions import NoProgramAccessException
 
 
@@ -132,7 +134,7 @@ class SearchAPITests(ESTestCase):  # pylint: disable=missing-docstring
         with patch('search.api.Search.update_from_dict', autospec=True) as mock_update_from_dict:
             search_obj = create_search_obj(self.user, search_param_dict=search_param_dict)
         assert search_obj._doc_type == list(DOC_TYPES)  # pylint: disable=protected-access
-        assert search_obj._index == [settings.ELASTICSEARCH_INDEX]  # pylint: disable=protected-access
+        assert search_obj._index == [get_default_alias()]  # pylint: disable=protected-access
         mock_update_from_dict.assert_called_with(search_obj, search_param_dict)
 
     def test_user_with_no_program_access(self):

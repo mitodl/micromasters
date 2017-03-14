@@ -4,20 +4,23 @@ Functions for ES indexing
 from datetime import datetime
 from itertools import islice
 import logging
+from uuid import uuid4
 
 from django.conf import settings
 from elasticsearch.helpers import bulk
 from elasticsearch.exceptions import NotFoundError
 from elasticsearch_dsl import Mapping
 import pytz
-from rest_framework.status import HTTP_200_OK
 
 from profiles.models import Profile
 from profiles.serializers import ProfileSerializer
 from dashboard.models import ProgramEnrollment
 from dashboard.serializers import UserProgramSearchSerializer
 from search.connection import (
+    get_active_aliases,
+    get_default_alias,
     get_conn,
+    get_temp_alias,
     USER_DOC_TYPE,
     PERCOLATE_DOC_TYPE,
 )
@@ -138,7 +141,7 @@ def index_program_enrolled_users(program_enrollments, indices=None, chunk_size=1
         int: Number of indexed items
     """
     if indices is None:
-        indices = get_active_indices()
+        indices = get_active_aliases()
 
     for index in indices:
         count = _index_chunks(
@@ -164,7 +167,7 @@ def remove_program_enrolled_user(program_enrollment, indices=None):
     Remove a program-enrolled user from Elasticsearch.
     """
     if indices is None:
-        indices = get_active_indices()
+        indices = get_active_aliases()
 
     for index in indices:
         _delete_item(program_enrollment.id, USER_DOC_TYPE, index)
@@ -307,9 +310,9 @@ def program_enrolled_user_mapping():
     return mapping
 
 
-def create_program_enrolled_user_mapping(index_name):
+def _create_mappings(index_name):
     """
-    Save the mapping for a program user. If one already exists, delete it first.
+    Create all mappings, deleting existing mappings if they exist.
     """
     conn = get_conn(verify=False)
     if conn.indices.exists_type(index=index_name, doc_type=USER_DOC_TYPE):
@@ -318,16 +321,12 @@ def create_program_enrolled_user_mapping(index_name):
     mapping.save(index_name)
 
 
-def create_mappings(index):
-    """
-    Create all mappings, deleting existing mappings if they exist.
-    """
-    create_program_enrolled_user_mapping(index)
-
-
 def clear_index(index_name):
     """
     Wipe and recreate index and mapping. No indexing is done.
+
+    Args:
+        index_name (str): The name of the backing Elasticsearch index
     """
     conn = get_conn(verify=False)
     if conn.indices.exists(index_name):
@@ -350,7 +349,7 @@ def clear_index(index_name):
     })
 
     conn.indices.refresh()
-    create_mappings(index_name)
+    _create_mappings(index_name)
 
 
 def delete_index(indices=None):
@@ -358,7 +357,7 @@ def delete_index(indices=None):
     Drop the indices without re-creating it
     """
     if indices is None:
-        indices = get_active_indices()
+        indices = get_active_aliases()
 
     conn = get_conn(verify=False)
     for index in indices:
@@ -370,34 +369,60 @@ def recreate_index():
     """
     Wipe and recreate index and mapping, and index all items.
     """
-    temp_index = get_temp_index()
-    clear_index(temp_index)
+    conn = get_conn(verify=False)
+
+    # Create new backing index for reindex
+    new_backing_index = "{index}_{uuid}".format(
+        index=settings.ELASTICSEARCH_INDEX,
+        uuid=uuid4().hex,
+    )
+    clear_index(new_backing_index)
+
+    # Clear away temp alias so we can reuse it
+    temp_alias = get_temp_alias()
+    if conn.indices.exists_alias(name=temp_alias):
+        # Deletes both alias and backing indexes
+        conn.indices.delete(temp_alias)
+
+    # Point temp_alias toward new backing index
+    conn.indices.put_alias(index=new_backing_index, name=temp_alias)
+
+    # Do the indexing on the temp index
     start = datetime.now(pytz.UTC)
     log.info("Indexing %d program enrollments...", ProgramEnrollment.objects.count())
-    index_program_enrolled_users(ProgramEnrollment.objects.iterator(), [temp_index])
+    index_program_enrolled_users(ProgramEnrollment.objects.iterator(), [new_backing_index])
     log.info("Indexing %d percolator queries...", PercolateQuery.objects.count())
-    index_percolate_queries(PercolateQuery.objects.iterator(), [temp_index])
+    index_percolate_queries(PercolateQuery.objects.iterator(), [new_backing_index])
 
-    # Swap out the index
-    log.info("Done with temporary index. Clearing original index and recreating mapping...")
-    clear_index(settings.ELASTICSEARCH_INDEX)
-    log.info("Running _reindex to populate original index...")
-    conn = get_conn(verify=False)
-    status, data = conn.transport.perform_request('POST', '/_reindex', body={
-        "source": {
-            "index": temp_index
+    # Point default alias to new index and delete the old backing index, if any
+    log.info("Done with temporary index. Pointing default alias to newly created backing index...")
+    default_alias = get_default_alias()
+    actions = []
+    old_backing_indexes = []
+    if conn.indices.exists_alias(name=default_alias):
+        # Should only be one backing index in normal circumstances
+        old_backing_indexes = list(conn.indices.get_alias(name=default_alias).keys())
+        for index in old_backing_indexes:
+            actions.append({
+                "remove": {
+                    "index": index,
+                    "alias": default_alias,
+                }
+            })
+    actions.append({
+        "add": {
+            "index": new_backing_index,
+            "alias": default_alias,
         },
-        "dest": {
-            "index": settings.ELASTICSEARCH_INDEX
-        }
     })
-    if status != HTTP_200_OK:
-        raise Exception("_reindex failed: {status}, {data}".format(
-            status=status,
-            data=data,
-        ))
-    conn.indices.delete(temp_index)
-    refresh_index(settings.ELASTICSEARCH_INDEX)
+    conn.indices.update_aliases({
+        "actions": actions
+    })
+
+    refresh_index(new_backing_index)
+    for index in old_backing_indexes:
+        conn.indices.delete(index)
+    conn.indices.delete_alias(name=temp_alias, index=new_backing_index)
     end = datetime.now(pytz.UTC)
     log.info("recreate_index took %d seconds", (end - start).total_seconds())
 
@@ -432,7 +457,7 @@ def index_percolate_queries(percolate_queries, indices=None, chunk_size=100):
         int: Number of indexed items
     """
     if indices is None:
-        indices = get_active_indices()
+        indices = get_active_aliases()
 
     count = 0
     for index in indices:
@@ -456,26 +481,7 @@ def delete_percolate_query(percolate_query_id, indices=None):
         indices (list of str): A list of Elasticsearch indexes. If None, uses the Django default Elasticsearch index
     """
     if indices is None:
-        indices = get_active_indices()
+        indices = get_active_aliases()
 
     for index in indices:
         _delete_item(percolate_query_id, PERCOLATE_DOC_TYPE, index)
-
-
-def get_temp_index():
-    """
-    Get name for the temporary index
-    """
-    return "{}_temp".format(settings.ELASTICSEARCH_INDEX)
-
-
-def get_active_indices():
-    """
-    Get active indexes. This will be settings.ELASTICSEARCH_INDEX and maybe a temporary one
-    """
-    conn = get_conn(verify=False)
-    indexes = []
-    for index in (settings.ELASTICSEARCH_INDEX, get_temp_index()):
-        if conn.indices.exists(index):
-            indexes.append(index)
-    return indexes

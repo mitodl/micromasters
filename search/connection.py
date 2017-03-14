@@ -50,18 +50,44 @@ def get_conn(verify=True, verify_index=None):
 
     # Make sure everything exists.
     if verify_index is None:
-        verify_index = settings.ELASTICSEARCH_INDEX
+        verify_index = get_default_alias()
     if not _CONN.indices.exists(verify_index):
         raise ReindexException("Unable to find index {index_name}".format(
             index_name=verify_index
         ))
 
-    mappings = _CONN.indices.get_mapping()[verify_index]["mappings"]
     for doc_type in DOC_TYPES:
-        if doc_type not in mappings.keys():
+        mapping = _CONN.indices.get_mapping(index=verify_index, doc_type=doc_type)
+        if not mapping:
             raise ReindexException("Mapping {doc_type} not found".format(
                 doc_type=doc_type
             ))
 
     _CONN_VERIFIED = True
     return _CONN
+
+
+def get_temp_alias():
+    """
+    Get name for alias to a the temporary index
+    """
+    return "{}_temp".format(settings.ELASTICSEARCH_INDEX)
+
+
+def get_default_alias():
+    """
+    Get name for the alias to the default index
+    """
+    return "{}_alias".format(settings.ELASTICSEARCH_INDEX)
+
+
+def get_active_aliases():
+    """
+    Get aliases for active indexes.
+    """
+    conn = get_conn(verify=False)
+    aliases = []
+    for alias in (get_default_alias(), get_temp_alias()):
+        if conn.indices.exists(alias):
+            aliases.append(alias)
+    return aliases

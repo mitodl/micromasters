@@ -6,6 +6,7 @@ from elasticsearch_dsl import Search, Q
 
 from roles.api import get_advance_searchable_programs
 from search.connection import (
+    get_default_alias,
     get_conn,
     DOC_TYPES,
 )
@@ -81,7 +82,7 @@ def create_search_obj(user, search_param_dict=None, filter_on_email_optin=False)
     Returns:
         Search: elasticsearch_dsl Search object
     """
-    search_obj = Search(index=settings.ELASTICSEARCH_INDEX, doc_type=DOC_TYPES)
+    search_obj = Search(index=get_default_alias(), doc_type=DOC_TYPES)
     # Update from search params first so our server-side filtering will overwrite it if necessary
     if search_param_dict is not None:
         search_obj.update_from_dict(search_param_dict)
