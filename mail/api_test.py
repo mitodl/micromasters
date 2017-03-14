@@ -42,7 +42,6 @@ from mail.views_test import mocked_json
 from profiles.factories import ProfileFactory
 from search.api import adjust_search_for_percolator
 from search.base import MockedESTestCase
-from search.models import PercolateQuery
 
 
 @ddt
@@ -521,7 +520,6 @@ class AutomaticEmailTests(MockedESTestCase):
             user=cls.program_enrollment_sent.user,
         )
 
-
     def test_send_automatic_emails(self):
         """send_automatic_emails should send emails to users which fit criteria and mark them so we don't send twice"""
         with patch(
@@ -572,26 +570,15 @@ class AutomaticEmailTests(MockedESTestCase):
 
         new_automatic = AutomaticEmailFactory.create(enabled=True)
 
-        count = 0
-
-        def _send_individual_email(*args, **kwargs):  # pylint: disable=unused-argument
-            """Helper method to raise an error the first time it's called, but not the second"""
-            nonlocal count
-            count += 1
-            if count == 1:
-                raise KeyError()
-
         with patch('mail.api.search_percolate_queries', autospec=True, return_value=[
             self.percolate_query, new_automatic.query
         ]) as mock_search_queries, patch(
-            'mail.api.MailgunClient', send_individual_email=_send_individual_email
+            'mail.api.MailgunClient', send_individual_email=Mock(side_effect=[KeyError(), None])
         ) as mock_mailgun:
-            mock_mailgun.send_individual_email = _send_individual_email
-
             send_automatic_emails(self.program_enrollment_unsent)
 
         mock_search_queries.assert_called_with(self.program_enrollment_unsent.id)
-        assert count == 2
+        assert mock_mailgun.send_individual_email.call_count == 2
 
     def test_add_automatic_email(self):
         """Add an AutomaticEmail entry with associated PercolateQuery"""
