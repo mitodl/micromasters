@@ -16,7 +16,6 @@ from profiles.models import Profile
 from profiles.serializers import ProfileSerializer
 from dashboard.models import ProgramEnrollment
 from dashboard.serializers import UserProgramSearchSerializer
-from mail.api import send_automatic_emails
 from search.connection import (
     get_active_aliases,
     get_default_alias,
@@ -153,9 +152,6 @@ def index_program_enrolled_users(program_enrollments, indices=None, chunk_size=1
             chunk_size=chunk_size,
         )
     # Both counts should be the same
-
-    for program_enrollment in program_enrollments:
-        send_automatic_emails(program_enrollment)
     return count
 
 

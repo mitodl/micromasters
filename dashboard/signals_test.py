@@ -2,47 +2,44 @@
 Tests for signals
 """
 
-from unittest.mock import patch
-
 from django.db.models.signals import post_save
-from django.test import (
-    override_settings,
-    TestCase,
-)
 from factory.django import mute_signals
 
 from courses.factories import ProgramFactory, CourseFactory
-
 from dashboard.models import ProgramEnrollment
 from profiles.factories import ProfileFactory
+from search.base import MockedESTestCase
 
 
-# Make sure that any unmocked ES activity results in an error
-@override_settings(ELASTICSEARCH_URL="fake")
-class IndexingTests(TestCase):
+class ProgramEnrollmentTests(MockedESTestCase):
     """
-    Test class for signals that index certain objects in Elasticsearch
+    Test indexing on program enrollment
     """
+
     @classmethod
     def setUpTestData(cls):
-        super(IndexingTests, cls).setUpTestData()
+        super().setUpTestData()
+
         with mute_signals(post_save):
             cls.user = ProfileFactory.create().user
             cls.program = ProgramFactory.create()
             cls.course = CourseFactory.create(program=cls.program)
 
+    def setUp(self):
+        super().setUp()
 
-class ProgramEnrollmentTests(IndexingTests):
-    """
-    Test indexing on program enrollment
-    """
+        for mock in self.patcher_mocks:
+            if mock.name == "_remove_program_enrolled_user":
+                self.remove_program_enrolled_user_mock = mock
+            elif mock.name == "_index_program_enrolled_users":
+                self.index_program_enrolled_users_mock = mock
+
     def test_create(self):
         """
         Tests that the database is reindexed when a ProgramEnrollment is created
         """
-        with patch('search.tasks._index_program_enrolled_users', autospec=True) as mocked:
-            enrollment = ProgramEnrollment.objects.create(user=self.user, program=self.program)
-        mocked.assert_called_once_with([enrollment])
+        enrollment = ProgramEnrollment.objects.create(user=self.user, program=self.program)
+        self.index_program_enrolled_users_mock.assert_called_once_with([enrollment])
 
     def test_update(self):
         """
@@ -50,9 +47,8 @@ class ProgramEnrollmentTests(IndexingTests):
         """
         with mute_signals(post_save):
             enrollment = ProgramEnrollment.objects.create(user=self.user, program=self.program)
-        with patch('search.tasks._index_program_enrolled_users', autospec=True) as mocked:
-            enrollment.save()
-        mocked.assert_called_once_with([enrollment])
+        enrollment.save()
+        self.index_program_enrolled_users_mock.assert_called_once_with([enrollment])
 
     def test_delete(self):
         """
@@ -60,6 +56,5 @@ class ProgramEnrollmentTests(IndexingTests):
         """
         with mute_signals(post_save):
             enrollment = ProgramEnrollment.objects.create(user=self.user, program=self.program)
-        with patch('search.tasks._remove_program_enrolled_user', autospec=True) as mocked:
-            enrollment.delete()
-        mocked.assert_called_once_with(enrollment)
+        enrollment.delete()
+        self.remove_program_enrolled_user_mock.assert_called_once_with(enrollment)

@@ -162,7 +162,7 @@ def search_percolate_queries(program_enrollment_id):
         django.db.models.query.QuerySet: A QuerySet of PercolateQuery matching the percolate results
     """
     conn = get_conn()
-    result = conn.percolate(settings.ELASTICSEARCH_INDEX, USER_DOC_TYPE, id=program_enrollment_id)
+    result = conn.percolate(get_default_alias(), USER_DOC_TYPE, id=program_enrollment_id)
     result_ids = [row['_id'] for row in result['matches']]
     return PercolateQuery.objects.filter(id__in=result_ids)
 

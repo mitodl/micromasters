@@ -2,6 +2,10 @@
 Celery tasks for search
 """
 
+# The imports which are prefixed with _ are mocked to be ignored in MockedESTestCase
+
+from dashboard.models import ProgramEnrollment
+from mail.api import send_automatic_emails as _send_automatic_emails
 from micromasters.celery import async
 from search.indexing_api import (
     index_program_enrolled_users as _index_program_enrolled_users,
@@ -31,9 +35,13 @@ def index_program_enrolled_users(program_enrollments):
     Index profiles
 
     Args:
-        program_enrollments (iterable of ProgramEnrollments): Program-enrolled users to remove from index
+        program_enrollments (list of ProgramEnrollments): Program-enrolled users to remove from index
     """
     _index_program_enrolled_users(program_enrollments)
+
+    # Send email for profiles that newly fit the search query for an automatic email
+    for program_enrollment in program_enrollments:
+        _send_automatic_emails(program_enrollment)
 
 
 @async.task
@@ -42,9 +50,13 @@ def index_users(users):
     Index users
 
     Args:
-        users (iterable of Users): Users to update in the Elasticsearch index
+        users (list of Users): Users to update in the Elasticsearch index
     """
     _index_users(users)
+
+    # Send email for profiles that newly fit the search query for an automatic email
+    for program_enrollment in ProgramEnrollment.objects.filter(user__in=users):
+        _send_automatic_emails(program_enrollment)
 
 
 @async.task
