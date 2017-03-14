@@ -128,6 +128,3 @@ export const setNavDrawerOpen = createAction(SET_NAV_DRAWER_OPEN);
 
 export const SET_LEARNER_CHIP_VISIBILITY = 'SET_LEARNER_CHIP_VISIBILITY';
 export const setLearnerChipVisibility = createAction(SET_LEARNER_CHIP_VISIBILITY);
-
-export const SET_TO_PEARSON_SITE_DIALOG_VISIBILITY = 'SET_TO_PEARSON_SITE_DIALOG_VISIBILITY';
-export const setToPearsonSiteDialogVisibility = createAction(SET_TO_PEARSON_SITE_DIALOG_VISIBILITY);

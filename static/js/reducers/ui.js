@@ -48,7 +48,6 @@ import {
   SET_NAV_DRAWER_OPEN,
   SET_PROGRAM,
   SET_LEARNER_CHIP_VISIBILITY,
-  SET_TO_PEARSON_SITE_DIALOG_VISIBILITY,
 } from '../actions/ui';
 import { EMAIL_COMPOSITION_DIALOG } from '../components/email/constants';
 import type { ToastMessage } from '../flow/generalTypes';
@@ -104,8 +103,7 @@ export type UIState = {
   couponNotificationVisibility:        boolean,
   navDrawerOpen:                       boolean,
   learnerChipVisibility:               ?string,
-  dialogVisibility:                    DialogVisibilityState,
-  showToPearsonSiteDialog:             boolean,
+  dialogVisibility:                    DialogVisibilityState
 };
 
 export const INITIAL_UI_STATE: UIState = {
@@ -144,8 +142,7 @@ export const INITIAL_UI_STATE: UIState = {
   couponNotificationVisibility:        false,
   navDrawerOpen:                       false,
   learnerChipVisibility:               null,
-  dialogVisibility:                    INITIAL_DIALOG_VISIBILITY_STATE,
-  showToPearsonSiteDialog:             false,
+  dialogVisibility:                    INITIAL_DIALOG_VISIBILITY_STATE
 };
 
 export const ui = (state: UIState = INITIAL_UI_STATE, action: Action<any, null>) => {
@@ -343,8 +340,6 @@ export const ui = (state: UIState = INITIAL_UI_STATE, action: Action<any, null>)
     return { ...state, navDrawerOpen: action.payload };
   case SET_LEARNER_CHIP_VISIBILITY:
     return { ...state, learnerChipVisibility: action.payload };
-  case SET_TO_PEARSON_SITE_DIALOG_VISIBILITY:
-     return { ...state, showToPearsonSiteDialog: action.payload };
   default:
     return state;
   }

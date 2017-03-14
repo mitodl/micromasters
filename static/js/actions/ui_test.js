@@ -32,7 +32,6 @@ import {
   SET_COUPON_NOTIFICATION_VISIBILITY,
   SET_NAV_DRAWER_OPEN,
   SET_LEARNER_CHIP_VISIBILITY,
-  SET_TO_PEARSON_SITE_DIALOG_VISIBILITY,
 
   clearUI,
   updateDialogText,
@@ -67,7 +66,6 @@ import {
   setCouponNotificationVisibility,
   setNavDrawerOpen,
   setLearnerChipVisibility,
-  setToPearsonSiteDialogVisibility,
 } from '../actions/ui';
 import { assertCreatedActionHelper } from './test_util';
 
@@ -107,7 +105,6 @@ describe('generated UI action helpers', () => {
       [setWorkHistoryAnswer, SET_WORK_HISTORY_ANSWER],
       [setNavDrawerOpen, SET_NAV_DRAWER_OPEN],
       [setLearnerChipVisibility, SET_LEARNER_CHIP_VISIBILITY],
-      [setToPearsonSiteDialogVisibility, SET_TO_PEARSON_SITE_DIALOG_VISIBILITY],
     ].forEach(assertCreatedActionHelper);
   });
 });

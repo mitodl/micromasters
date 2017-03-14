@@ -7,6 +7,7 @@ import sinon from 'sinon';
 import IconButton from 'react-mdl/lib/IconButton';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import TestUtils from 'react-addons-test-utils';
 
 import FinalExamCard from './FinalExamCard';
 import {
@@ -26,7 +27,7 @@ import { stringStrip } from '../../util/test_utils';
 
 describe('FinalExamCard', () => {
   let sandbox;
-  let navigateToProfileStub, submitPearsonSSOStub;
+  let navigateToProfileStub, submitPearsonSSOStub, showPearsonTOSDialogStub;
   let props;
 
   let profile = { ...USER_PROFILE_RESPONSE, preferred_name: 'Preferred Name' };
@@ -35,6 +36,7 @@ describe('FinalExamCard', () => {
     sandbox = sinon.sandbox.create();
     navigateToProfileStub = sandbox.stub();
     submitPearsonSSOStub = sandbox.stub();
+    showPearsonTOSDialogStub = sandbox.stub();
     let program = _.cloneDeep(DASHBOARD_RESPONSE.programs.find(program => (
       program.pearson_exam_status !== undefined
     )));
@@ -45,7 +47,7 @@ describe('FinalExamCard', () => {
       submitPearsonSSO: submitPearsonSSOStub,
       pearson: { ...INITIAL_PEARSON_STATE },
       ui: {...INITIAL_UI_STATE},
-      showToPearsonSiteDialog: () => {}
+      showPearsonTOSDialog: showPearsonTOSDialogStub
     };
   });
 
@@ -53,15 +55,12 @@ describe('FinalExamCard', () => {
 be taken at any authorized Pearson test center. Before you can take an exam, you have to
 pay for the course and pass the online work.`;
 
+  const getDialog = () => document.querySelector('.dialog-to-pearson-site');
   let renderCard = props => (
     mount(
       <MuiThemeProvider muiTheme={getMuiTheme()}>
         <FinalExamCard {...props} />
-      </MuiThemeProvider>,
-      {
-        context: { router: {}},
-        childContextTypes: { router: React.PropTypes.object }
-      }
+      </MuiThemeProvider>
     )
   );
 
@@ -130,7 +129,7 @@ pay for the course and pass the online work.`;
     let button = card.find(".exam-button");
     assert.equal(button.text(), 'Schedule an exam');
     button.simulate('click');
-    assert(submitPearsonSSOStub.called);
+    assert(showPearsonTOSDialogStub.called);
   });
 
   it('should show the titles of schedulable exams', () => {
@@ -154,18 +153,36 @@ pay for the course and pass the online work.`;
     );
   });
 
-  it('renders novigate to pearson dialog', () => {
-    props.ui.showToPearsonSiteDialog = true;
-    props.program.pearson_exam_status = PEARSON_PROFILE_IN_PROGRESS;
-    let card = renderCard(props);
+  it('renders confirm pearson TOS dialog', () => {
+    props.ui.dialogVisibility = { 'pearsonTosDialogVisible': true };
+    props.program.pearson_exam_status = PEARSON_PROFILE_SCHEDULABLE;
+    renderCard(props);
     assert.include(
-      stringStrip(document.querySelector('.dialog-content').textContent),
+      document.querySelector('.dialog-container').textContent,
       "Test Registration is completed on the Pearson VUE website"
     );
     assert.include(
-      stringStrip(document.querySelector('.dialog-content').textContent),
+      document.querySelector('.dialog-container').textContent,
       'I acknowledge that by clicking Continue I will be leaving the MicroMasters website and going to ' +
       'the Pearson VUE website, and that I accept the Pearson VUE Group’s Terms of Service'
     );
+  });
+
+  it('showToPearsonSiteDialog called in cancel', () => {
+    props.ui.dialogVisibility = { 'pearsonTosDialogVisible': true };
+    props.program.pearson_exam_status = PEARSON_PROFILE_SCHEDULABLE;
+    renderCard(props);
+    TestUtils.Simulate.click(getDialog().querySelector(".cancel-button"));
+    assert.equal(showPearsonTOSDialogStub.callCount, 1);
+  });
+
+  it('submitPearsonSSO called in continue', () => {
+    props.ui.dialogVisibility = { 'pearsonTosDialogVisible': true };
+    props.program.pearson_exam_status = PEARSON_PROFILE_SCHEDULABLE;
+    renderCard(props);
+    let btnContinue = getDialog().querySelector(".save-button");
+    assert.equal(btnContinue.textContent, "CONTINUE");
+    TestUtils.Simulate.click(btnContinue);
+    assert.equal(submitPearsonSSOStub.callCount, 1);
   });
 });
