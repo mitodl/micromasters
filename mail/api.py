@@ -10,6 +10,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
+from django.db.utils import IntegrityError
 from rest_framework import status
 
 from mail.exceptions import SendBatchException
@@ -286,6 +287,8 @@ def send_automatic_emails(program_enrollment):
                 user=user,
                 automatic_email=automatic_email,
             )
+        except IntegrityError:
+            log.exception("IntegrityError: SentAutomaticEmail was likely already created")
         except:  # pylint: disable=bare-except
             log.exception("Error sending mailgun mail for automatic email %s", automatic_email)
 
