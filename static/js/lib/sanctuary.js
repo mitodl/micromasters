@@ -2,8 +2,7 @@
 import R from 'ramda';
 import { create, env } from 'sanctuary';
 
-const checkTypes = process.env.NODE_ENV !== 'production';
-export const S = create({ checkTypes: checkTypes, env: env });
+export const S = create({ checkTypes: false, env: env });
 
 /*
  * returns Just(items) if all items are Just, else Nothing

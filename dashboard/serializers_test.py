@@ -71,6 +71,13 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
             factory_kwargs['data'] = data
         return [CachedEnrollmentFactory.create(course_run=course_run, **factory_kwargs) for course_run in course_runs]
 
+    @staticmethod
+    def sort_final_grades_values(final_grades):
+        """
+        Returns a sorted list of serialized final grades
+        """
+        return sorted(final_grades, key=lambda k: k['grade'])
+
     @classmethod
     def setUpTestData(cls):
         with mute_signals(post_save):
@@ -119,6 +126,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         non_fa_mmtrack = MMTrack(cls.user, program, non_fa_cached_edx_data)
         cls.serialized_enrollments = UserProgramSearchSerializer.serialize_enrollments(non_fa_mmtrack, cls.enrollments)
         cls.semester_enrollments = UserProgramSearchSerializer.serialize_semester_enrollments(cls.enrollments)
+        cls.final_grades = UserProgramSearchSerializer.serialize_final_grades(non_fa_mmtrack, cls.enrollments)
         cls.program_enrollment = ProgramEnrollment.objects.create(user=cls.user, program=program)
         # create a financial aid program
         cls.fa_program, _ = create_program()
@@ -151,6 +159,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
             UserProgramSearchSerializer.serialize_enrollments(fa_mmtrack, cls.fa_enrollments)
         )
         cls.fa_semester_enrollments = UserProgramSearchSerializer.serialize_semester_enrollments(cls.fa_enrollments)
+        cls.fa_final_grades = UserProgramSearchSerializer.serialize_final_grades(fa_mmtrack, cls.fa_enrollments)
 
     def test_full_program_user_serialization(self):
         """
@@ -158,15 +167,20 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         """
         self.profile.refresh_from_db()
         program = self.program_enrollment.program
-        assert UserProgramSearchSerializer.serialize(self.program_enrollment) == {
+        expected_values = {
             'id': program.id,
             'enrollments': self.serialized_enrollments,
             'semester_enrollments': self.semester_enrollments,
+            'final_grades': self.sort_final_grades_values(self.final_grades),
             'grade_average': 75,
             'is_learner': True,
             'num_courses_passed': 1,
             'total_courses': 1
         }
+        serialized_enrollments = UserProgramSearchSerializer.serialize(self.program_enrollment)
+        serialized_enrollments['final_grades'] = self.sort_final_grades_values(serialized_enrollments['final_grades'])
+
+        assert serialized_enrollments == expected_values
 
     def test_full_program_user_serialization_financial_aid(self):
         """
@@ -180,12 +194,15 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
             'id': self.fa_program.id,
             'enrollments': self.fa_serialized_enrollments,
             'semester_enrollments': self.fa_semester_enrollments,
+            'final_grades': self.sort_final_grades_values(self.fa_final_grades),
             'grade_average': 95,
             'is_learner': True,
             'num_courses_passed': 1,
             'total_courses': 2
         }
-        assert UserProgramSearchSerializer.serialize(self.fa_program_enrollment) == expected_result
+        serialized_enrollments = UserProgramSearchSerializer.serialize(self.fa_program_enrollment)
+        serialized_enrollments['final_grades'] = self.sort_final_grades_values(serialized_enrollments['final_grades'])
+        assert serialized_enrollments == expected_result
 
     def test_full_program_user_serialization_staff(self):
         """
@@ -198,16 +215,19 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
             program=program,
             role=Staff.ROLE_ID
         )
-
-        assert UserProgramSearchSerializer.serialize(self.program_enrollment) == {
+        expected_result = {
             'id': program.id,
             'enrollments': self.serialized_enrollments,
             'semester_enrollments': self.semester_enrollments,
+            'final_grades': self.sort_final_grades_values(self.final_grades),
             'grade_average': 75,
             'is_learner': False,
             'num_courses_passed': 1,
             'total_courses': 1
         }
+        serialized_enrollments = UserProgramSearchSerializer.serialize(self.program_enrollment)
+        serialized_enrollments['final_grades'] = self.sort_final_grades_values(serialized_enrollments['final_grades'])
+        assert serialized_enrollments == expected_result
 
     def test_full_program_user_serialization_with__no_passed_course(self):
         """
@@ -217,15 +237,21 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         with patch.object(MMTrack, 'count_courses_passed', return_value=0):
             self.profile.refresh_from_db()
             program = self.program_enrollment.program
-            assert UserProgramSearchSerializer.serialize(self.program_enrollment) == {
+            expected_result = {
                 'id': program.id,
                 'enrollments': self.serialized_enrollments,
                 'semester_enrollments': self.semester_enrollments,
+                'final_grades': self.sort_final_grades_values(self.final_grades),
                 'grade_average': 75,
                 'is_learner': True,
                 'num_courses_passed': 0,
                 'total_courses': 1
             }
+            serialized_enrollments = UserProgramSearchSerializer.serialize(self.program_enrollment)
+            serialized_enrollments['final_grades'] = self.sort_final_grades_values(
+                serialized_enrollments['final_grades']
+            )
+            assert serialized_enrollments == expected_result
 
 
 class UserProgramSearchSerializerEdxTests(MockedESTestCase):

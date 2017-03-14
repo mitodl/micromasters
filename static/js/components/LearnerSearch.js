@@ -4,9 +4,9 @@ import React from 'react';
 import {
   SearchkitComponent,
   HierarchicalMenuFilter,
-  HierarchicalRefinementFilter,
   Hits,
   SelectedFilters,
+  HierarchicalRefinementFilter,
   RefinementListFilter,
   HitsStats,
   Pagination,
@@ -38,6 +38,7 @@ import type { Option } from '../flow/generalTypes';
 import type { AvailableProgram } from '../flow/enrollmentTypes';
 import type { SearchSortItem } from '../flow/searchTypes';
 import type { Profile } from '../flow/profileTypes';
+import FinalGradeRangeFilter  from './search/FinalGradeRangeFilter';
 
 const makeCountryNameTranslations: () => Object = () => {
   let translations = {};
@@ -220,6 +221,16 @@ export default class LearnerSearch extends SearchkitComponent {
             id="courses"
           />
         </FilterVisibilityToggle>
+        <div className="final-grade-wrapper">
+          <FinalGradeRangeFilter
+            field="program.final_grades.grade"
+            id="final-grade"
+            min={0}
+            max={100}
+            showHistogram={true}
+            title="Final Grade in Selected Course"
+          />
+        </div>
         <FilterVisibilityToggle
           {...this.props}
           filterName="semester"
@@ -284,6 +295,7 @@ export default class LearnerSearch extends SearchkitComponent {
             title=""
             id="country"
             translations={this.countryNameTranslations}
+            size={0}
           />
         </FilterVisibilityToggle>
         <FilterVisibilityToggle

@@ -130,7 +130,7 @@
       }
     }
 
-    .filter-visibility-toggle {
+    .filter-visibility-toggle, .final-grade-wrapper {
       display: flex;
       flex-direction: column;
       margin-bottom: 10px;
@@ -157,7 +157,15 @@
       }
     }
 
-    .filter--grade-average {
+    .filter--final-grade {
+      margin-left: 30px;
+    }
+
+    .sk-panel.filter--final-grade {
+      padding-left: 0;
+    }
+
+    .filter--grade-average, .filter--final-grade {
       .sk-panel__content {
         padding-right: 25px;
       }

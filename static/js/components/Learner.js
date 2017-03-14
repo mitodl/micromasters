@@ -67,7 +67,7 @@ export default class Learner extends React.Component {
   render() {
     const { profile } = this.props;
 
-    return <div className="single-column">
+    return <div className="single-column dashboard">
       <LearnerPagePersonalDialog {...this.props} />
       <LearnerPageAboutMeDialog {...this.props} validator={personalValidation} />
       <LearnerInfoCard

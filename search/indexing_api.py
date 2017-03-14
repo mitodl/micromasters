@@ -252,6 +252,10 @@ def program_enrolled_user_mapping():
         'num_courses_passed': LONG_TYPE,
         'total_courses': LONG_TYPE,
         'is_learner': BOOL_TYPE,
+        'final_grades': {'type': 'nested', 'properties': {
+            'title':  NOT_ANALYZED_STRING_TYPE,
+            'grade': LONG_TYPE
+        }},
         'enrollments': {'type': 'nested', 'properties': {
             'level': LONG_TYPE,
             'ancestors': NOT_ANALYZED_STRING_TYPE,

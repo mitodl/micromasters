@@ -5,6 +5,7 @@ from courses.utils import get_year_season_from_course_run
 from dashboard.models import CachedEnrollment
 from dashboard.utils import get_mmtrack
 from roles.api import is_learner
+from grades.models import FinalGrade
 
 
 class UserProgramSearchSerializer:
@@ -38,6 +39,27 @@ class UserProgramSearchSerializer:
         return serialized_enrollments
 
     @classmethod
+    def serialize_final_grades(cls, mmtrack, enrollments):
+        """
+        Serializes a user's final grades
+
+        Args:
+            mmtrack (MMTrack): An MMTrack object
+            enrollments (iterable): An iterable of CachedEnrollments
+        Returns:
+            list: Serialized final grades
+        """
+        final_grades = []
+        for enrollment in enrollments:
+            try:
+                final_grade = mmtrack.get_final_grade(enrollment.course_run.edx_course_key)
+            except FinalGrade.DoesNotExist:
+                continue
+            if final_grade:
+                final_grades.append({'title': enrollment.course_run.course.title, 'grade': final_grade})
+        return final_grades
+
+    @classmethod
     def serialize_semester_enrollments(cls, enrollments):
         """
         Serializes the semesters that a user is enrolled in
@@ -69,6 +91,7 @@ class UserProgramSearchSerializer:
         return {
             'id': program.id,
             'enrollments': cls.serialize_enrollments(mmtrack, enrollments_qset),
+            'final_grades': cls.serialize_final_grades(mmtrack, enrollments_qset),
             'semester_enrollments': cls.serialize_semester_enrollments(enrollments_qset),
             'grade_average': mmtrack.calculate_final_grade_average(),
             'is_learner': is_learner(user, program),
