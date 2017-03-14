@@ -389,40 +389,42 @@ def recreate_index():
 
     # Do the indexing on the temp index
     start = datetime.now(pytz.UTC)
-    log.info("Indexing %d program enrollments...", ProgramEnrollment.objects.count())
-    index_program_enrolled_users(ProgramEnrollment.objects.iterator(), [new_backing_index])
-    log.info("Indexing %d percolator queries...", PercolateQuery.objects.count())
-    index_percolate_queries(PercolateQuery.objects.iterator(), [new_backing_index])
+    try:
+        log.info("Indexing %d program enrollments...", ProgramEnrollment.objects.count())
+        index_program_enrolled_users(ProgramEnrollment.objects.iterator(), [new_backing_index])
+        log.info("Indexing %d percolator queries...", PercolateQuery.objects.count())
+        index_percolate_queries(PercolateQuery.objects.iterator(), [new_backing_index])
 
-    # Point default alias to new index and delete the old backing index, if any
-    log.info("Done with temporary index. Pointing default alias to newly created backing index...")
-    default_alias = get_default_alias()
-    actions = []
-    old_backing_indexes = []
-    if conn.indices.exists_alias(name=default_alias):
-        # Should only be one backing index in normal circumstances
-        old_backing_indexes = list(conn.indices.get_alias(name=default_alias).keys())
+        # Point default alias to new index and delete the old backing index, if any
+        log.info("Done with temporary index. Pointing default alias to newly created backing index...")
+        default_alias = get_default_alias()
+        actions = []
+        old_backing_indexes = []
+        if conn.indices.exists_alias(name=default_alias):
+            # Should only be one backing index in normal circumstances
+            old_backing_indexes = list(conn.indices.get_alias(name=default_alias).keys())
+            for index in old_backing_indexes:
+                actions.append({
+                    "remove": {
+                        "index": index,
+                        "alias": default_alias,
+                    }
+                })
+        actions.append({
+            "add": {
+                "index": new_backing_index,
+                "alias": default_alias,
+            },
+        })
+        conn.indices.update_aliases({
+            "actions": actions
+        })
+
+        refresh_index(new_backing_index)
         for index in old_backing_indexes:
-            actions.append({
-                "remove": {
-                    "index": index,
-                    "alias": default_alias,
-                }
-            })
-    actions.append({
-        "add": {
-            "index": new_backing_index,
-            "alias": default_alias,
-        },
-    })
-    conn.indices.update_aliases({
-        "actions": actions
-    })
-
-    refresh_index(new_backing_index)
-    for index in old_backing_indexes:
-        conn.indices.delete(index)
-    conn.indices.delete_alias(name=temp_alias, index=new_backing_index)
+            conn.indices.delete(index)
+    finally:
+        conn.indices.delete_alias(name=temp_alias, index=new_backing_index)
     end = datetime.now(pytz.UTC)
     log.info("recreate_index took %d seconds", (end - start).total_seconds())
 
