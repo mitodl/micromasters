@@ -5,6 +5,8 @@ import { mount } from 'enzyme';
 import { assert } from 'chai';
 import sinon from 'sinon';
 import IconButton from 'react-mdl/lib/IconButton';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
 import FinalExamCard from './FinalExamCard';
 import {
@@ -19,6 +21,7 @@ import {
   PEARSON_PROFILE_SCHEDULABLE
 } from '../../constants';
 import { INITIAL_PEARSON_STATE } from '../../reducers/pearson';
+import { INITIAL_UI_STATE } from '../../reducers/ui';
 import { stringStrip } from '../../util/test_utils';
 
 describe('FinalExamCard', () => {
@@ -41,6 +44,8 @@ describe('FinalExamCard', () => {
       navigateToProfile: navigateToProfileStub,
       submitPearsonSSO: submitPearsonSSOStub,
       pearson: { ...INITIAL_PEARSON_STATE },
+      ui: {...INITIAL_UI_STATE},
+      showToPearsonSiteDialog: () => {}
     };
   });
 
@@ -48,11 +53,21 @@ describe('FinalExamCard', () => {
 be taken at any authorized Pearson test center. Before you can take an exam, you have to
 pay for the course and pass the online work.`;
 
-  let renderCard = props => (mount(<FinalExamCard {...props} />));
+  let renderCard = props => (
+    mount(
+      <MuiThemeProvider muiTheme={getMuiTheme()}>
+        <FinalExamCard {...props} />
+      </MuiThemeProvider>,
+      {
+        context: { router: {}},
+        childContextTypes: { router: React.PropTypes.object }
+      }
+    )
+  );
 
   it('should not render when pearson_exam_status is empty', () => {
     let card = renderCard(props);
-    assert.isNull(card.html());
+    assert.equal(card.childAt(0).children().length, 0);
   });
 
   it('should just show a basic message if the profile is absent', () => {
@@ -136,6 +151,21 @@ pay for the course and pass the online work.`;
     assert.include(
       stringStrip(card.text()),
       'ERROR ERROR'
+    );
+  });
+
+  it('renders novigate to pearson dialog', () => {
+    props.ui.showToPearsonSiteDialog = true;
+    props.program.pearson_exam_status = PEARSON_PROFILE_IN_PROGRESS;
+    let card = renderCard(props);
+    assert.include(
+      stringStrip(document.querySelector('.dialog-content').textContent),
+      "Test Registration is completed on the Pearson VUE website"
+    );
+    assert.include(
+      stringStrip(document.querySelector('.dialog-content').textContent),
+      'I acknowledge that by clicking Continue I will be leaving the MicroMasters website and going to ' +
+      'the Pearson VUE website, and that I accept the Pearson VUE Group’s Terms of Service'
     );
   });
 });

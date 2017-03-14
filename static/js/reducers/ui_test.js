@@ -34,6 +34,7 @@ import {
   setDocsInstructionsVisibility,
   setNavDrawerOpen,
   setLearnerChipVisibility,
+  setToPearsonSiteDialogVisibility,
 } from '../actions/ui';
 import { INITIAL_UI_STATE } from '../reducers/ui';
 import rootReducer from '../reducers';
@@ -215,6 +216,12 @@ describe('ui reducers', () => {
   describe('nav drawer', () => {
     it('should let you set the nav drawer visibility', () => {
       assertReducerResultState(setNavDrawerOpen, ui => ui.navDrawerOpen, false);
+    });
+  });
+
+  describe('to pearson site dialog', () => {
+    it('should let you set the pearson site dialog visibility', () => {
+      assertReducerResultState(setToPearsonSiteDialogVisibility, ui => ui.showToPearsonSiteDialog, false);
     });
   });
 
