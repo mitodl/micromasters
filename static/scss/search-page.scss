@@ -44,7 +44,7 @@
     }
 
     .mdl-card {
-      padding: 10px;
+      padding: 10px 7px;
       background-color: #ffffff;
     }
 
@@ -52,8 +52,8 @@
     .sk-panel,
     .sk-hierarchical-menu-list,
     .sk-hierarchical-refinement-list {
-      padding-left: 5px;
       width: 100%;
+      padding: 0 10px 0 23px;
     }
 
     // Search facet headers
@@ -75,7 +75,11 @@
     .sk-panel__content,
     .sk-hierarchical-menu-list__root,
     .sk-hierarchical-refinement-list__root {
-      margin-right: 10px;
+      margin-right: 0;
+    }
+
+    .sk-hierarchical-menu-list__root {
+      margin-left: -9px;
     }
 
     // Search facet option text and count
@@ -114,6 +118,10 @@
       .sk-hierarchical-menu-list__hierarchical-options > div {
         align-items: stretch;
       }
+    }
+
+    .sk-range-slider {
+      padding: 0 5px 10px 5px;
     }
 
     .filter-visibility-toggle.closed {
