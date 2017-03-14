@@ -10,6 +10,8 @@ import R from 'ramda';
 import SpinnerButton from '../SpinnerButton';
 import type { Profile } from '../../flow/profileTypes';
 import type { Program } from '../../flow/programTypes';
+import type { UIState } from '../../reducers/ui';
+import ConfirmToPearsonSiteDialog from '../exam/ConfirmToPearsonSiteDialog';
 import {
   PEARSON_PROFILE_ABSENT,
   PEARSON_PROFILE_SUCCESS,
@@ -21,35 +23,9 @@ import { FETCH_PROCESSING } from '../../actions';
 import { getRomanizedName, getLocation } from '../../util/util';
 import type { PearsonAPIState } from '../../reducers/pearson';
 
-const cardWrapper = (...children) => (
-  <Card shadow={0} className="final-exam-card">
-    <div className="card-header">
-      <div>
-        <img className="exam-icon" src="/static/images/exam_icon.png" />
-      </div>
-      <div>
-        <CardTitle>
-          Final Proctored Exam
-        </CardTitle>
-        <p>
-          {`You must take a proctored exam for each course. Exams may be taken
-            at any `}
-          <a href="http://www.pearsonvue.com/mitx/locate/" target="_blank">
-            authorized Pearson test center
-          </a>
-          {`. Before you can take an exam, you have to pay for the course and
-          pass the online work.`}
-        </p>
-      </div>
-    </div>
-    {children}
-  </Card>
-);
-
 const getPostalCode = profile => (
   profile.postal_code !== null ? <span>{ profile.postal_code }</span> : null
 );
-
 
 const accountCreated = (profile, navigateToProfile) => (
   <div key="profile">
@@ -84,41 +60,6 @@ const editProfileButton = fn => (
   <IconButton name="edit" onClick={fn} />
 );
 
-const absentCard = () => cardWrapper(
-  <p key="absent">
-    We will notify you when you become eligible to schedule course exams.
-  </p>
-);
-
-const successCard = (profile, navigateToProfile) => cardWrapper(
-  accountCreated(profile, navigateToProfile),
-  <div className="currently-ineligible" key="not-eligible">
-    We will notify you when you become eligible to schedule course exams.
-  </div>
-);
-
-
-const pendingCard = () => cardWrapper(
-  <div className="info-box" key="pending">
-    Your updated information has been submitted to Pearson. Please check back later.
-  </div>
-);
-
-const invalidCard = navigateToProfile => cardWrapper(
-  <div className="info-box" key="invalid">
-    { editProfileButton(navigateToProfile) }
-    <div>
-      You need to
-      {" "}
-      <a onClick={navigateToProfile}>
-        update your profile
-      </a>
-      {" "}
-      in order to take a test at a Pearson Test center.
-    </div>
-  </div>
-);
-
 const isProcessing = R.compose(
   R.any(R.equals(FETCH_PROCESSING)), R.props(['getStatus', 'postStatus']), R.defaultTo({})
 );
@@ -137,37 +78,101 @@ const schedulableCourseList = R.compose(
   R.defaultTo({}),
 );
 
-const schedulableCard = (profile, program, navigateToProfile, submitPearsonSSO, pearson) => cardWrapper(
-  accountCreated(profile, navigateToProfile),
-  <div key="schedulable" className="exam-scheduling">
-    <SpinnerButton
-      className="mdl-button exam-button"
-      component={Button}
-      spinning={isProcessing(pearson)}
-      onClick={submitPearsonSSO}
-      ignoreRecentlyClicked={true}
-    >
-      Schedule an exam
-    </SpinnerButton>
-    <div className="program-info">
-      You are ready to schedule an exam for:
-      <ul>
-        { schedulableCourseList(program) }
-      </ul>
-    </div>
-  </div>,
-  errorDisplay(pearson)
-);
-
 type Props = {
   profile:            Profile,
   program:            Program,
   navigateToProfile:  () => void,
   submitPearsonSSO:   () => void,
   pearson:            PearsonAPIState,
+  ui:                 UIState,
+  showToPearsonSiteDialog: () => void,
 };
 
 export default class FinalExamCard extends React.Component<void, Props, void> {
+  cardWrapper = (...children) => {
+    const { showToPearsonSiteDialog } = this.props;
+    return (
+      <Card shadow={0} className="final-exam-card">
+        <div className="card-header">
+          <div>
+            <img className="exam-icon" src="/static/images/exam_icon.png" />
+          </div>
+          <div>
+            <CardTitle>
+              Final Proctored Exam
+            </CardTitle>
+            <p>
+              {`You must take a proctored exam for each course. Exams may be taken
+                at any `}
+              <a onClick={showToPearsonSiteDialog}>
+                authorized Pearson test center
+              </a>
+              {`. Before you can take an exam, you have to pay for the course and
+              pass the online work.`}
+            </p>
+          </div>
+        </div>
+        {children}
+      </Card>
+    );
+  }
+
+  schedulableCard = (profile, program, navigateToProfile, submitPearsonSSO, pearson) => this.cardWrapper(
+    accountCreated(profile, navigateToProfile),
+    <div key="schedulable" className="exam-scheduling">
+      <SpinnerButton
+        className="mdl-button exam-button"
+        component={Button}
+        spinning={isProcessing(pearson)}
+        onClick={submitPearsonSSO}
+        ignoreRecentlyClicked={true}
+      >
+        Schedule an exam
+      </SpinnerButton>
+      <div className="program-info">
+        You are ready to schedule an exam for:
+        <ul>
+          { schedulableCourseList(program) }
+        </ul>
+      </div>
+    </div>,
+    errorDisplay(pearson)
+  );
+
+  pendingCard = () => this.cardWrapper(
+    <div className="info-box" key="pending">
+      Your updated information has been submitted to Pearson. Please check back later.
+    </div>
+  );
+
+  invalidCard = navigateToProfile => this.cardWrapper(
+    <div className="info-box" key="invalid">
+      { editProfileButton(navigateToProfile) }
+      <div>
+        You need to
+        {" "}
+        <a onClick={navigateToProfile}>
+          update your profile
+        </a>
+        {" "}
+        in order to take a test at a Pearson Test center.
+      </div>
+    </div>
+  );
+
+  absentCard = () => this.cardWrapper(
+    <p key="absent">
+      We will notify you when you become eligible to schedule course exams.
+    </p>
+  );
+
+  successCard = (profile, navigateToProfile) => this.cardWrapper(
+    accountCreated(profile, navigateToProfile),
+    <div className="currently-ineligible" key="not-eligible">
+      We will notify you when you become eligible to schedule course exams.
+    </div>
+  );
+
   render () {
     const {
       profile,
@@ -175,25 +180,39 @@ export default class FinalExamCard extends React.Component<void, Props, void> {
       navigateToProfile,
       submitPearsonSSO,
       pearson,
+      ui,
+      showToPearsonSiteDialog
     } = this.props;
 
     if (!SETTINGS.FEATURES.EXAMS) {
       return null;
     }
-
+    let content = null;
     switch (program.pearson_exam_status) {
     case PEARSON_PROFILE_ABSENT:
-      return absentCard();
+      content = this.absentCard();
+      break;
     case PEARSON_PROFILE_SUCCESS:
-      return successCard(profile, navigateToProfile);
+      content = this.successCard(profile, navigateToProfile);
+      break;
     case PEARSON_PROFILE_IN_PROGRESS:
-      return pendingCard();
+      content = this.pendingCard();
+      break;
     case PEARSON_PROFILE_INVALID:
-      return invalidCard(navigateToProfile);
+      content = this.invalidCard(navigateToProfile);
+      break;
     case PEARSON_PROFILE_SCHEDULABLE:
-      return schedulableCard(profile, program, navigateToProfile, submitPearsonSSO, pearson);
-    default:
-      return null;
+      content = this.schedulableCard(profile, program, navigateToProfile, submitPearsonSSO, pearson);
+      break;
     }
+
+    return (
+      <div>
+        <ConfirmToPearsonSiteDialog
+          open={ui.showToPearsonSiteDialog}
+          show={showToPearsonSiteDialog} />
+        {content}
+      </div>
+    );
   }
 }

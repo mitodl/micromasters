@@ -47,6 +47,7 @@ import {
   setPaymentTeaserDialogVisibility,
   setEnrollCourseDialogVisibility,
   setEnrollSelectedCourseRun,
+  setToPearsonSiteDialogVisibility,
 } from '../actions/ui';
 import { findCourseRun } from '../util/util';
 import CourseListCard from '../components/dashboard/CourseListCard';
@@ -476,6 +477,11 @@ class DashboardPage extends React.Component {
     )(this.props);
   };
 
+  showToPearsonSiteDialog = (open: boolean) => {
+    const { dispatch } = this.props;
+    dispatch(setToPearsonSiteDialogVisibility(open));
+  }
+
   renderCouponDialog() {
     const {
       programs,
@@ -669,8 +675,10 @@ class DashboardPage extends React.Component {
               profile={profile}
               program={program}
               pearson={pearson}
+              ui={ui}
               navigateToProfile={this.navigateToProfile}
               submitPearsonSSO={this.submitPearsonSSO}
+              showToPearsonSiteDialog={this.showToPearsonSiteDialog}
             />
             {financialAidCard}
             <CourseListCard
