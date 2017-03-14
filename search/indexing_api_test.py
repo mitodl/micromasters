@@ -12,6 +12,7 @@ from ddt import (
 )
 from django.conf import settings
 from django.db.models.signals import post_save
+from elasticsearch.exceptions import NotFoundError
 from factory.django import mute_signals
 
 from dashboard.factories import (
@@ -526,12 +527,8 @@ class PercolateQueryTests(ESTestCase):
         percolate_query_id = 123
         percolate_query.id = percolate_query_id
         # Don't save since that will trigger a signal which will update the index
-        assert es.get_percolate_query(percolate_query_id) == {
-            '_id': str(percolate_query_id),
-            '_index': es.get_default_backing_index(),
-            '_type': PERCOLATE_DOC_TYPE,
-            'found': False,
-        }
+        with self.assertRaises(NotFoundError):
+            es.get_percolate_query(percolate_query_id)
         index_percolate_queries([percolate_query])
         assert es.get_percolate_query(percolate_query_id) == {
             '_id': str(percolate_query_id),
@@ -564,20 +561,12 @@ class PercolateQueryTests(ESTestCase):
                 'found': True,
             }
             delete_percolate_query(percolate_query.id)
-            assert es.get_percolate_query(percolate_query.id) == {
-                '_id': str(percolate_query.id),
-                '_index': es.get_default_backing_index(),
-                '_type': PERCOLATE_DOC_TYPE,
-                'found': False,
-            }
+            with self.assertRaises(NotFoundError):
+                es.get_percolate_query(percolate_query.id)
             # If we delete it again there should be no exception
             delete_percolate_query(percolate_query.id)
-            assert es.get_percolate_query(percolate_query.id) == {
-                '_id': str(percolate_query.id),
-                '_index': es.get_default_backing_index(),
-                '_type': PERCOLATE_DOC_TYPE,
-                'found': False,
-            }
+            with self.assertRaises(NotFoundError):
+                es.get_percolate_query(percolate_query.id)
 
     def test_delete_other_index(self):
         """Make sure we use the index name passed in"""
