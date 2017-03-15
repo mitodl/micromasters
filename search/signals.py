@@ -20,6 +20,7 @@ from search.tasks import (
     index_percolate_queries,
     delete_percolate_query,
 )
+from roles.models import Role
 
 log = logging.getLogger(__name__)
 
@@ -76,3 +77,15 @@ def handle_update_percolate(sender, instance, **kwargs):
 def handle_delete_percolate(sender, instance, **kwargs):
     """When a query is deleted, make sure we also delete it on Elasticsearch"""
     transaction.on_commit(lambda: delete_percolate_query.delay(instance.id))
+
+
+@receiver(post_save, sender=Role, dispatch_uid="role_post_create_index")
+def handle_create_role(sender, instance, **kwargs):
+    """Update index when Role model instance is created."""
+    index_users.delay([instance.user])
+
+
+@receiver(post_delete, sender=Role, dispatch_uid="role_post_remove_index")
+def handle_remove_role(sender, instance, **kwargs):
+    """Update index when Role model instance is deleted."""
+    index_users.delay([instance.user])
