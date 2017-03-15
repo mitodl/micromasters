@@ -22,7 +22,8 @@ import {
   STATUS_MISSED_DEADLINE,
   STATUS_PENDING_ENROLLMENT,
   FA_PENDING_STATUSES,
-  FA_STATUS_SKIPPED,
+  FA_TERMINAL_STATUSES,
+  FA_ALL_STATUSES,
   STATUS_PAID_BUT_NOT_ENROLLED,
 } from '../../constants';
 import {
@@ -445,47 +446,58 @@ describe('CourseAction', () => {
       assert.equal(elements.buttonText, 'Pay Now');
     });
 
-    it('shows an enroll button if a user has skipped financial aid', () => {
+    it('shows a disabled enroll button if and only if a user is pending approval', () => {
       let firstRun = alterFirstRun(course, {
         enrollment_start_date: now.toISOString(),
       });
 
-      const wrapper = renderCourseAction({
-        courseRun: firstRun,
-        financialAid: {
-          ...FINANCIAL_AID_PARTIAL_RESPONSE,
-          has_user_applied: false,
-          application_status: FA_STATUS_SKIPPED,
-        },
-        hasFinancialAid: true,
-      });
-      let elements = getElements(wrapper);
-
-      assert.isUndefined(elements.button.props().disabled);
-      assert.include(elements.buttonText, 'Enroll Now');
-    });
-
-    it('shows a disabled enroll button if a user is pending approval', () => {
-      let firstRun = alterFirstRun(course, {
-        enrollment_start_date: now.toISOString(),
-      });
-
-      FA_PENDING_STATUSES.forEach(pendingStatus => {
+      FA_ALL_STATUSES.forEach(status => {
         const wrapper = renderCourseAction({
           courseRun: firstRun,
           financialAid: {
             ...FINANCIAL_AID_PARTIAL_RESPONSE,
             has_user_applied: true,
-            application_status: pendingStatus,
+            application_status: status,
           },
           hasFinancialAid: true,
         });
         let elements = getElements(wrapper);
 
-        assert.isTrue(elements.button.props().disabled);
-        // we don't show a spinner in this case, only for API loads or when waiting for Cybersource callback
-        assert.isFalse(elements.button.props().spinning);
+        if (FA_PENDING_STATUSES.includes(status)) {
+          assert.isTrue(elements.button.props().disabled);
+          // we don't show a spinner in this case, only for API loads or when waiting for Cybersource callback
+          assert.isFalse(elements.button.props().spinning);
+        } else {
+          assert.isUndefined(elements.button.props().disabled);
+        }
         assert.include(elements.buttonText, 'Enroll Now');
+      });
+    });
+
+    it('shows a disabled pay button if and only if a user has not been approved yet', () => {
+      let firstRun = alterFirstRun(course, {
+        enrollment_start_date: now.toISOString(),
+        status: STATUS_CAN_UPGRADE,
+      });
+
+      FA_ALL_STATUSES.forEach(status => {
+        const wrapper = renderCourseAction({
+          courseRun: firstRun,
+          financialAid: {
+            ...FINANCIAL_AID_PARTIAL_RESPONSE,
+            has_user_applied: true,
+            application_status: status,
+          },
+          hasFinancialAid: true,
+        });
+        let payButton = wrapper.find(".pay-button");
+
+        if (FA_TERMINAL_STATUSES.includes(status)) {
+          assert.isUndefined(payButton.props().disabled);
+        } else {
+          assert.isTrue(payButton.props().disabled);
+        }
+        assert.equal(payButton.children().text(), 'Pay Now');
       });
     });
   });

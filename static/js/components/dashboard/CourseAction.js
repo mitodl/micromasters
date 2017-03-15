@@ -21,10 +21,9 @@ import {
   STATUS_PAID_BUT_NOT_ENROLLED,
   DASHBOARD_FORMAT,
   FA_PENDING_STATUSES,
-  FA_STATUS_SKIPPED,
+  FA_TERMINAL_STATUSES,
 } from '../../constants';
 import { isCurrentlyEnrollable } from './util';
-import { formatPrice } from '../../util/util';
 import { ifValidDate } from '../../util/date';
 import { isFreeCoupon } from '../../lib/coupon';
 
@@ -51,17 +50,9 @@ export default class CourseAction extends React.Component {
     [STATUS_NOT_PASSED]: 'not-passed'
   };
 
-  getCoursePrice(): string {
-    const { prices, courseRun } = this.props;
-    let price = prices.get(courseRun.id);
-    return formatPrice(price);
-  }
-
   needsPriceCalculation(): boolean {
     const { financialAid, hasFinancialAid } = this.props;
-    return hasFinancialAid &&
-      !financialAid.has_user_applied &&
-      financialAid.application_status !== FA_STATUS_SKIPPED;
+    return hasFinancialAid && !FA_TERMINAL_STATUSES.includes(financialAid.application_status);
   }
 
   hasPendingFinancialAid(): boolean {
@@ -146,11 +137,6 @@ export default class CourseAction extends React.Component {
   renderBoxedDescription = this.renderDescription('boxed description', null);
 
   renderStatusDescription = this.renderDescription('boxed description');
-
-  handleAddCourseEnrollment = (run: CourseRun): void => {
-    const { addCourseEnrollment } = this.props;
-    addCourseEnrollment(run.course_id);
-  };
 
   renderContents(run: CourseRun) {
     const { now } = this.props;
