@@ -621,8 +621,8 @@ body.app-media {
     color: rgba(255,255,255,.45);
 
     @include breakpoint(phone) {
-       color: rgba(255,255,255,.7);
-      }
+      color: rgba(255,255,255,.7);
+    }
   }
 }
 
