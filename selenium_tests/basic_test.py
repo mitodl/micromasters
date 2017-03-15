@@ -37,6 +37,14 @@ class BasicTests(SeleniumTestsBase):
         # Click the Enroll Now button on dashboard
         self.selenium.find_element_by_class_name("enroll-button").click()
         self.wait().until(lambda driver: driver.find_element_by_class_name("continue-payment"))
+
+        # Click back then click the enroll now button again to assert back button behavior
+        self.selenium.back()
+        self.wait().until(lambda driver: driver.find_element_by_class_name("enroll-button"))
+        self.selenium.find_element_by_class_name("enroll-button").click()
+        self.wait().until(lambda driver: driver.find_element_by_class_name("continue-payment"))
+        self.assert_console_logs()
+
         # Click 'Continue' on the order summary page
         self.selenium.find_element_by_class_name("continue-payment").click()
         self.wait().until(lambda driver: driver.find_element_by_class_name("description"))

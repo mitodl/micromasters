@@ -13,6 +13,7 @@ import Learner from './components/Learner';
 import OrderSummaryPage from './containers/OrderSummaryPage';
 
 const errorLoading = error => {
+  console.trace(error);
   throw new Error(`Dynamic page loading failed: ${error}`);
 };
 

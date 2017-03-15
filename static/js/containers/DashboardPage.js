@@ -580,15 +580,6 @@ class DashboardPage extends React.Component {
     if (prices.errorInfo) {
       return <ErrorMessage errorInfo={prices.errorInfo}/>;
     }
-    const program = this.getCurrentlyEnrolledProgram();
-    if (program) {
-      const coursePrice = prices.coursePrices.find(
-        coursePrice => coursePrice.program_id === program.id
-      );
-      if (coursePrice) {
-        return null;
-      }
-    }
     return null;
   };
 
@@ -683,10 +674,11 @@ class DashboardPage extends React.Component {
       prices
     } = this.props;
     const loaded = R.none(isProcessing, [dashboard.fetchStatus, prices.fetchStatus]);
+    const fetchStarted = !_.isNil(prices.fetchStatus) && !_.isNil(dashboard.fetchStatus);
 
     const errorMessage = this.renderErrorMessage();
     let pageContent;
-    if (_.isNil(errorMessage) && this.getCurrentlyEnrolledProgram()) {
+    if (_.isNil(errorMessage) && this.getCurrentlyEnrolledProgram() && loaded && fetchStarted) {
       pageContent = this.renderPageContent();
     }
 
