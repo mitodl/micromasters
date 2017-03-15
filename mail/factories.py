@@ -16,7 +16,7 @@ class AutomaticEmailFactory(DjangoModelFactory):
     enabled = Faker('boolean')
     email_subject = FuzzyText()
     email_body = FuzzyText()
-    sender_name = FuzzyText()
+    sender_name = Faker('name')
 
     class Meta:
         model = AutomaticEmail
