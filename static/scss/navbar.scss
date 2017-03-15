@@ -36,9 +36,11 @@
 
         .mdl-button--icon {
           width: 50px;
+          top: -10px;
 
           .material-icons {
-            font-size: 45px;
+            font-size: 40px;
+            opacity: .7;
           }
         }
 

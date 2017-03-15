@@ -110,21 +110,19 @@ body.app-media {
 
       a.header-dashboard-link {
         display: inline-block;
-        background: rgba(0,0,0, 0.14);
-        margin: 0 15px 0 0;
-        padding: 12px 25px;
+        margin: 0 25px 0 0;
+        padding: 12px 0;
         font-weight: 400;
         font-size: 16px;
         color: #fff;
         text-decoration: none;
         position: relative;
-        top: 2px;
 
         @include breakpoint(phone) {
           text-align: center;
           padding: 13px 0;
           width: 48%;
-          margin-right: 4%;
+          margin-right: 0;
         }
       }
 
@@ -273,7 +271,7 @@ body.app-media {
       }
 
       @include breakpoint(phone) {
-        width: 90%;
+        width: 97%;
       }
 
       h3 {
@@ -383,8 +381,12 @@ body.app-media {
     text-align: left;
     border-bottom: 1px dashed #c5c5c5;
 
-    @include breakpoint(phone) {
-      width: 87%;
+    @include breakpoint(mobile) {
+      width: 95%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
     }
 
     img.person {
@@ -392,7 +394,7 @@ body.app-media {
       width: 170px;
       margin: 0 70px 80px;
 
-      @include breakpoint(phone) {
+      @include breakpoint(mobile) {
         float: none;
         margin: 0 auto;
       }
@@ -410,7 +412,7 @@ body.app-media {
       }
 
 
-      @include breakpoint(phone) {
+      @include breakpoint(mobile) {
         font-size: 19px;
         margin-top: 20px;
       }
@@ -420,6 +422,7 @@ body.app-media {
       color: $font-gray;
       font-size: 22px;
       font-weight: 300;
+      font-style: italic;
 
       @include breakpoint(phone) {
         font-size: 19px;
@@ -461,6 +464,10 @@ body.app-media {
 
     li {
       padding-bottom: 2.5em;
+
+      @include breakpoint(phone) {
+        padding-bottom: 1.5em;
+      }
     }
 
     .program-thumbnail {
@@ -514,11 +521,16 @@ body.app-media {
 
       @include breakpoint(phone) {
         padding: 20px 3px 30px;
+        height: auto;
       }
 
       p.program-description-text {
         max-height: 15em;
         overflow: auto;
+
+        @include breakpoint(phone) {
+          max-height: none;
+        }
       }
 
       p {
@@ -607,6 +619,10 @@ body.app-media {
 
   p {
     color: rgba(255,255,255,.45);
+
+    @include breakpoint(phone) {
+       color: rgba(255,255,255,.7);
+      }
   }
 }
 

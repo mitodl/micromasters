@@ -78,6 +78,11 @@
       margin-right: 10px;
     }
 
+    .sk-hierarchical-refinement-option {
+      line-height: 18px;
+      margin-bottom: 9px;
+    }
+
     // Search facet option text and count
     .sk-panel__content .sk-item-list-option__text,
     .sk-panel__content .sk-item-list-option__count,
@@ -410,8 +415,8 @@
         flex-direction: column;
 
         .display-name {
-          font-size: 15px;
-          font-weight: 500;
+          font-size: 14px;
+          font-weight: 400;
         }
 
         .user-name {
@@ -474,7 +479,7 @@
   &.left-nav {
     margin: 19px 6px 22px 6px;
     font-size: 14px;
-    padding: 0 75px;
+    padding: 0 40px;
   }
 }
 
