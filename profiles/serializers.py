@@ -167,7 +167,7 @@ class ProfileBaseSerializer(ModelSerializer):
 
     def get_username(self, obj):
         """Getter for the username field"""
-        return get_social_username(obj.user)
+        return get_social_username(obj.user) if hasattr(obj, 'user') else None
 
 
 class ProfileSerializer(ProfileBaseSerializer):

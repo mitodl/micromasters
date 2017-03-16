@@ -32,7 +32,7 @@ class PermissionsTests(ESTestCase):
         """
         Checks that an user can search only if she has the right permissions
         """
-        perm = permissions.UserCanSearchPermission()
+        perm = permissions.UserCanAdvanceSearchPermission()
         # the anonymous user does not have permission to search
         assert perm.has_permission(self.request, None) is False
         # neither the user by default

@@ -8,7 +8,7 @@ from rest_framework.permissions import BasePermission
 from roles.roles import Permissions
 
 
-class UserCanSearchPermission(BasePermission):
+class UserCanAdvanceSearchPermission(BasePermission):
     """
     Allow the user if she has the permission to search any program.
     """
