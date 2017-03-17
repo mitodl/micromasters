@@ -63,6 +63,7 @@ import StaffLearnerInfoCard from '../components/StaffLearnerInfoCard';
 import {
   REQUEST_DASHBOARD,
   RECEIVE_DASHBOARD_SUCCESS,
+  RECEIVE_DASHBOARD_FAILURE,
 } from '../actions/dashboard';
 
 describe("LearnerPage", function() {
@@ -1010,6 +1011,16 @@ describe("LearnerPage", function() {
       const actions = userActions.concat([REQUEST_DASHBOARD, RECEIVE_DASHBOARD_SUCCESS]);
       return renderComponent(`/learner/${username}`, actions).then(([wrapper, ]) => {
         assert.equal(wrapper.find(StaffLearnerInfoCard).length, 1);
+      });
+    });
+
+    it('should only load dashboard API once if loading failed', () => {
+      helper.dashboardStub.returns(Promise.reject());
+      const username = SETTINGS.user.username;
+      SETTINGS.roles.push({ role: 'staff', permissions: [] });
+      const actions = userActions.concat([REQUEST_DASHBOARD, RECEIVE_DASHBOARD_FAILURE]);
+      return renderComponent(`/learner/${username}`, actions).then(([wrapper, ]) => {
+        assert.equal(wrapper.find(StaffLearnerInfoCard).length, 0);
       });
     });
   });

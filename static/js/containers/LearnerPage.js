@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import Loader from '../components/Loader';
 import R from 'ramda';
 
-import { FETCH_PROCESSING, FETCH_SUCCESS } from '../actions';
+import { FETCH_PROCESSING, FETCH_SUCCESS, FETCH_FAILURE } from '../actions';
 import { clearProfile } from '../actions/profile';
 import {
   profileFormContainer,
@@ -25,7 +25,7 @@ import type { DashboardsState } from '../flow/dashboardTypes';
 import type { AllEmailsState } from '../flow/emailTypes';
 
 const notFetchingOrFetched = R.compose(
-  R.not, R.contains(R.__, [FETCH_PROCESSING, FETCH_SUCCESS])
+  R.not, R.contains(R.__, [FETCH_PROCESSING, FETCH_SUCCESS, FETCH_FAILURE])
 );
 
 type LearnerPageProps = ProfileContainerProps & {
