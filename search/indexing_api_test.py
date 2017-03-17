@@ -36,6 +36,11 @@ from profiles.factories import (
 from profiles.serializers import (
     ProfileSerializer
 )
+from roles.models import Role
+from roles.roles import (
+    Instructor,
+    Staff
+)
 from search.indexing_api import (
     delete_index,
     get_active_aliases,
@@ -90,12 +95,17 @@ class ESTestActions:
 es = ESTestActions()
 
 
+def get_sources(results):
+    """get sources from es hits"""
+    return sorted([hit['_source'] for hit in results['hits']], key=lambda hit: hit['id'])
+
+
 def assert_search(results, program_enrollments):
     """
     Assert that search results match program-enrolled users
     """
     assert results['total'] == len(program_enrollments)
-    sources = sorted([hit['_source'] for hit in results['hits']], key=lambda hit: hit['id'])
+    sources = get_sources(results)
     sorted_program_enrollments = sorted(program_enrollments, key=lambda program_enrollment: program_enrollment.id)
     serialized = [
         dict_without_key(serialize_program_enrolled_user(program_enrollment), "_id")
@@ -104,11 +114,12 @@ def assert_search(results, program_enrollments):
     assert serialized == sources
 
 
+@ddt
 class IndexTests(ESTestCase):
     """
     Tests for indexing
     """
-
+    # pylint: disable=too-many-public-methods
     def test_program_enrollment_add(self):
         """
         Test that a newly created ProgramEnrollment is indexed properly
@@ -341,6 +352,53 @@ class IndexTests(ESTestCase):
         properties = mapping['program_user']['properties']['profile']['properties']
         for key in 'first_name', 'last_name', 'preferred_name':
             assert properties[key]['fields']['folded']['analyzer'] == 'folding'
+
+    @data(Staff.ROLE_ID, Instructor.ROLE_ID)
+    def test_role_add(self, role):
+        """
+        Test that `is_learner` status is change when role is save
+        """
+        program_enrollment = ProgramEnrollmentFactory.create()
+        sources = get_sources(es.search())
+        # user is learner
+        assert sources[0]['program']['is_learner'] is True
+
+        Role.objects.create(
+            user=program_enrollment.user,
+            program=program_enrollment.program,
+            role=role
+        )
+        # user is not learner
+        sources = get_sources(es.search())
+        assert sources[0]['program']['is_learner'] is False
+
+    @data(Staff.ROLE_ID, Instructor.ROLE_ID)
+    def test_role_delete(self, role):
+        """
+        Test that `is_learner` status is restore once role is removed for a user.
+        """
+        program_enrollment = ProgramEnrollmentFactory.create()
+        sources = get_sources(es.search())
+        # user is learner
+        assert sources[0]['program']['is_learner'] is True
+        Role.objects.create(
+            user=program_enrollment.user,
+            program=program_enrollment.program,
+            role=role
+        )
+        # user is not learner
+        sources = get_sources(es.search())
+        assert sources[0]['program']['is_learner'] is False
+
+        # when staff role is deleted
+        Role.objects.filter(
+            user=program_enrollment.user,
+            program=program_enrollment.program,
+            role=role
+        ).delete()
+        sources = get_sources(es.search())
+        # user is learner
+        assert sources[0]['program']['is_learner'] is True
 
 
 class SerializerTests(ESTestCase):
