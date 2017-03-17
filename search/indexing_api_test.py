@@ -359,6 +359,7 @@ class IndexTests(ESTestCase):
         Test that `is_learner` status is change when role is save
         """
         program_enrollment = ProgramEnrollmentFactory.create()
+        assert es.search()['total'] == 1
         sources = get_sources(es.search())
         # user is learner
         assert sources[0]['program']['is_learner'] is True
@@ -368,6 +369,7 @@ class IndexTests(ESTestCase):
             program=program_enrollment.program,
             role=role
         )
+        assert es.search()['total'] == 1
         # user is not learner
         sources = get_sources(es.search())
         assert sources[0]['program']['is_learner'] is False
@@ -378,6 +380,7 @@ class IndexTests(ESTestCase):
         Test that `is_learner` status is restore once role is removed for a user.
         """
         program_enrollment = ProgramEnrollmentFactory.create()
+        assert es.search()['total'] == 1
         sources = get_sources(es.search())
         # user is learner
         assert sources[0]['program']['is_learner'] is True
@@ -386,6 +389,7 @@ class IndexTests(ESTestCase):
             program=program_enrollment.program,
             role=role
         )
+        assert es.search()['total'] == 1
         # user is not learner
         sources = get_sources(es.search())
         assert sources[0]['program']['is_learner'] is False
@@ -396,6 +400,7 @@ class IndexTests(ESTestCase):
             program=program_enrollment.program,
             role=role
         ).delete()
+        assert es.search()['total'] == 1
         sources = get_sources(es.search())
         # user is learner
         assert sources[0]['program']['is_learner'] is True
