@@ -43,8 +43,12 @@
 
   .financial-aid-box {
     background-color: $bg-light-gray;
-    padding: 20px;
+    padding: 13px;
     margin: 0;
+
+    @include breakpoint(phone) {
+      padding: 22px;
+    }
   }
 
   .price-explanation {
@@ -64,6 +68,23 @@
     button {
       margin-left: 20px;
     }
+  }
+
+  .document-sent-button-container {
+
+    @include breakpoint(phone) {
+
+      .react-datepicker__input-container {
+        position: block;
+        margin-bottom: 10px;
+      }
+
+      .document-sent-button {
+        margin-left: 0;
+        display: block;
+      }
+    }
+
   }
 
   .documents-sent {
@@ -121,6 +142,10 @@
   .course-list {
     padding: 20px 0 0 0;
 
+    @include breakpoint(phone) {
+      padding: 17px 0 19px !important;
+    }
+
     .mdl-card__title {
       // align with course-row below which includes an extra 8px of grid cell padding
       padding-left: 28px;
@@ -134,6 +159,10 @@
         font-size: 11pt;
         align-items: center;
         padding: 14px 20px;
+
+        @include breakpoint(phone) {
+          padding: 14px 25px;
+        }
       }
 
       .course-description {
@@ -180,6 +209,11 @@
         align-items: center;
         text-align: center;
 
+        @include breakpoint(phone) {
+          display: block;
+          text-align: left;
+        }
+
         .mdl-button {
           min-width: 120px;
           padding: 0;
@@ -187,8 +221,9 @@
         }
 
         .mdl-button[disabled] {
-          background-color: $lightgrey;
+          background-color: $medgrey;
           color: #ffffff;
+          box-shadow: none;
         }
 
         .course-action-btn-footer {
@@ -290,10 +325,10 @@
   }
 
   .price-message {
-    font-size: 11pt;
+    font-size: 14px;
     align-items: center;
     padding: 20px;
-    margin: 0 24px;
+    margin: 0 24px 15px;
     background-color: #dceef8;
     color: black;
   }
@@ -404,4 +439,8 @@
   margin: 18px auto 29px;
   font-weight: 400;
   font-size: 20px;
+
+  @include breakpoint(phone) {
+    margin: 10px auto 25px;
+  }
 }

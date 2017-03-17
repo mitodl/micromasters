@@ -21,9 +21,17 @@
     justify-content: space-between;
     margin-top: 12px;
 
+    @include breakpoint(phone) {
+      flex-direction: column;
+    }
+
     .program-info {
       margin-top: 8px;
       flex-grow: 2;
+
+      @include breakpoint(phone) {
+        margin-left: 10px;
+      }
     }
 
     ul {
@@ -45,8 +53,14 @@
     align-items: center;
     white-space: pre-wrap;
 
+    @include breakpoint(phone) {
+      margin: 0 0 10px;
+      padding: 13px 16px;
+    }
+
     .flow {
       white-space: normal;
+      padding: 8px;
     }
 
     &.split {

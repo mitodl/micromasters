@@ -154,7 +154,8 @@ body.app-media {
   height: 94vh;
 
   @include breakpoint(phone) {
-    height: 460px;
+    height: 380px;
+    height: calc(100vh - 200px);
     min-height: 0;
     background-attachment: scroll;
   }
