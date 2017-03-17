@@ -161,8 +161,16 @@ const renderPearsonTOSDialog = (open, show, submitPearsonSSO) => (
   </Dialog>
 );
 
-const schedulableCard = (profile, program, navigateToProfile, pearson, showPearsonTOSDialog, dialog) => cardWrapper(
-  dialog,
+const schedulableCard = (
+  profile,
+  program,
+  navigateToProfile,
+  pearson,
+  showPearsonTOSDialog,
+  open,
+  submitPearsonSSO
+) => cardWrapper(
+  renderPearsonTOSDialog(open, showPearsonTOSDialog, submitPearsonSSO),
   accountCreated(profile, navigateToProfile),
   <div key="schedulable" className="exam-scheduling">
     <SpinnerButton
@@ -210,7 +218,6 @@ export default class FinalExamCard extends React.Component<void, Props, void> {
       return null;
     }
 
-    let dialog = renderPearsonTOSDialog(pearsonTosDialogVisible, showPearsonTOSDialog, submitPearsonSSO);
     switch (program.pearson_exam_status) {
     case PEARSON_PROFILE_ABSENT:
       return absentCard();
@@ -227,7 +234,8 @@ export default class FinalExamCard extends React.Component<void, Props, void> {
         navigateToProfile,
         pearson,
         showPearsonTOSDialog,
-        dialog
+        pearsonTosDialogVisible,
+        submitPearsonSSO
       );
     default:
       return null;
