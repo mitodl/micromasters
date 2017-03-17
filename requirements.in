@@ -30,6 +30,7 @@ python-social-auth==0.2.21
 raven
 redis==2.10.5
 requests
+robohash
 static3==0.5.1
 uwsgi
 wagtail==1.9

@@ -71,10 +71,12 @@ raven==6.0.0
 redis==2.10.5
 requests-oauthlib==0.8.0  # via python-social-auth
 requests==2.11.1
+robohash==1.0
 simplegeneric==0.8.1      # via ipython
 six==1.10.0               # via cryptography, django-role-permissions, django-server-status, edx-api-client, edx-opaque-keys, elasticsearch-dsl, faker, html5lib, packaging, prompt-toolkit, python-dateutil, python-social-auth, setuptools, stevedore, traitlets
 static3==0.5.1
 stevedore==1.21.0         # via edx-opaque-keys
+tornado==4.4.2            # via robohash
 traitlets==4.3.2          # via ipython
 Unidecode==0.4.20         # via wagtail
 urllib3==1.20             # via elasticsearch
