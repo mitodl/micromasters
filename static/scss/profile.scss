@@ -29,7 +29,7 @@
   .profile-radio-switch {
     display: flex;
     flex-direction: row;
-    color: $lightgrey !important;
+    color: $lightgray !important;
     text-transform: uppercase;
 
     div:first-child {
@@ -234,7 +234,7 @@
     position: relative;
   }
 
-  .profile-tab-card-greyed {
+  .profile-tab-card-grayed {
     min-height: 70px !important;
     padding-bottom: 0;
     margin-bottom: 15px;

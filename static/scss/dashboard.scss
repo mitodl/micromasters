@@ -100,7 +100,7 @@
   .personalized-pricing {
     margin: 0 5px 10px;
     padding: 30px;
-    background-color: $lightgrey;
+    background-color: $lightgray;
 
     .heading, .explanation {
       margin-bottom: 17px;
@@ -152,7 +152,7 @@
     }
 
     .course-container {
-      border-bottom: 1px solid $lightgrey;
+      border-bottom: 1px solid $lightgray;
 
       .course-row {
         width: 100%;
@@ -174,7 +174,7 @@
         .details {
           font-weight: 400;
           font-size: 15px;
-          color: $darkgrey;
+          color: $darkgray;
           padding: 10px 0;
 
           span {
@@ -198,7 +198,7 @@
         }
 
         .caption {
-          color: $darkgrey;
+          color: $darkgray;
           font-size: 9pt;
         }
       }
@@ -221,7 +221,7 @@
         }
 
         .mdl-button[disabled] {
-          background-color: $medgrey;
+          background-color: $medgray;
           color: white;
           box-shadow: none;
         }
@@ -232,12 +232,12 @@
         }
 
         .description {
-          color: $darkgrey;
+          color: $darkgray;
           font-size: 10pt;
         }
 
         .boxed.description {
-          background-color: $fg-grey;
+          background-color: $fg-gray;
           border-radius: 5px;
           padding: 10px;
           font-size: 12pt;
@@ -283,8 +283,8 @@
       min-height: 55px;
       align-items: center;
       padding: 5px 20px;
-      background-color: $fg-grey;
-      color: $darkgrey;
+      background-color: $fg-gray;
+      color: $darkgray;
 
       .course-description,
       .course-grade,
@@ -320,7 +320,7 @@
     font-size: 11pt;
     align-items: center;
     padding: 20px;
-    background-color: $fg-grey;
+    background-color: $fg-gray;
     color: black;
   }
 
@@ -358,7 +358,7 @@
       padding: 0 10px;
 
       &[disabled] {
-        background-color: $medgrey;
+        background-color: $medgray;
         color: white;
       }
     }

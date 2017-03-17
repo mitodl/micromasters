@@ -54,24 +54,24 @@ export function makeProfileProgressDisplay(active: ?string) {
   const textY = (height - (radius * 2)) / 2 + radius * 2;
   const circleY = radius + paddingY;
 
-  const lightGreyText = "#888";
+  const lightGrayText = "#888";
   const colors = {
     completed: {
       fill: "#a31f34",
       circleText: "white",
-      text: lightGreyText,
+      text: lightGrayText,
       fontWeight: 400,
     },
     current: {
       fill: "#a31f34",
       circleText: "white",
-      text: lightGreyText,
+      text: lightGrayText,
       fontWeight: 400,
     },
     future: {
       fill: "#ffffff",
       circleText: "#444444",
-      text: lightGreyText,
+      text: lightGrayText,
       fontWeight: 400,
     }
   };

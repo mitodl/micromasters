@@ -46,7 +46,7 @@
   }
 
   .info-box {
-    background-color: $lightgrey;
+    background-color: $lightgray;
     margin: 0 5px 10px;
     padding: 20px 22px;
     display: flex;
@@ -72,7 +72,7 @@
       }
 
       > :first-child {
-        border-right: 2px solid $histogramgrey;
+        border-right: 2px solid $histogramgray;
       }
 
       .address-info {

@@ -323,7 +323,7 @@ class EmploymentForm extends ProfileFormFields {
       return null;
     }
 
-    let cardClass = workHistoryEdit ? '' : 'profile-tab-card-greyed';
+    let cardClass = workHistoryEdit ? '' : 'profile-tab-card-grayed';
     return <Card shadow={1} className={`profile-form ${cardClass}`} id={`work-history-card`}>
       <Grid className="profile-form-grid">
         { this.renderCardBody() }

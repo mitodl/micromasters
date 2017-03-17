@@ -184,7 +184,7 @@
       }
 
       .sk-range-histogram > * {
-        background-color: $histogramgrey;
+        background-color: $histogramgray;
       }
 
       .sk-range-histogram__bar {
@@ -196,7 +196,7 @@
       }
 
       .is-out-of-bounds {
-        background-color: $medgrey;
+        background-color: $medgray;
       }
 
       .rc-slider-step {
@@ -204,11 +204,11 @@
       }
 
       .rc-slider-handle {
-        border-color: $medgrey;
+        border-color: $medgray;
       }
 
       .rc-slider-mark-text {
-        color: $medgrey;
+        color: $medgray;
         background-color: transparent;
       }
     }
