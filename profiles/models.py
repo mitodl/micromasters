@@ -2,12 +2,16 @@
 Models for user profile
 """
 import re
+from uuid import uuid4
 
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField
 from django.db import models, transaction
 
 from profiles.util import (
+    IMAGE_SMALL_MAX_DIMENSION,
+    IMAGE_MEDIUM_MAX_DIMENSION,
+    make_thumbnail,
     profile_image_upload_uri,
     profile_image_upload_uri_small,
     profile_image_upload_uri_medium,
@@ -176,9 +180,16 @@ class Profile(models.Model):
     updated_on = models.DateTimeField(blank=True, null=True, auto_now=True)
 
     @transaction.atomic
-    def save(self, *args, **kwargs):
-        """Set the student_id number to the PK number"""
-        # first save the profile
+    def save(self, *args, update_thumbnails=False, **kwargs):
+        """Set the student_id number to the PK number and update thumbnails if necessary"""
+        if update_thumbnails:
+            small_thumbnail = make_thumbnail(self.image.file, IMAGE_SMALL_MAX_DIMENSION)
+            medium_thumbnail = make_thumbnail(self.image.file, IMAGE_MEDIUM_MAX_DIMENSION)
+
+            # name doesn't matter here, we use upload_to to produce that
+            self.image_small.save("{}.jpg".format(uuid4().hex), small_thumbnail)
+            self.image_medium.save("{}.jpg".format(uuid4().hex), medium_thumbnail)
+
         super(Profile, self).save(*args, **kwargs)
         # if there is no student id, assign the same number of the primary key
         if self.student_id is None:

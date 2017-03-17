@@ -1,8 +1,6 @@
 """
 Serializers for user profiles
 """
-from uuid import uuid4
-
 from django.db import transaction
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import (
@@ -16,11 +14,6 @@ from profiles.models import (
     Education,
     Employment,
     Profile,
-)
-from profiles.util import (
-    IMAGE_SMALL_MAX_DIMENSION,
-    IMAGE_MEDIUM_MAX_DIMENSION,
-    make_thumbnail,
 )
 
 
@@ -180,15 +173,8 @@ class ProfileSerializer(ProfileBaseSerializer):
                 else:
                     setattr(instance, attr, value)
 
-            if 'image' in validated_data:
-                small_thumbnail = make_thumbnail(validated_data['image'], IMAGE_SMALL_MAX_DIMENSION)
-                medium_thumbnail = make_thumbnail(validated_data['image'], IMAGE_MEDIUM_MAX_DIMENSION)
-
-                # name doesn't matter here, we use upload_to to produce that
-                instance.image_small.save("{}.jpg".format(uuid4().hex), small_thumbnail)
-                instance.image_medium.save("{}.jpg".format(uuid4().hex), medium_thumbnail)
-
-            instance.save()
+            update_thumbnails = 'image' in validated_data
+            instance.save(update_thumbnails=update_thumbnails)
             if 'work_history' in self.initial_data:
                 update_work_history(validated_data['work_history'], instance.id)
 
