@@ -1,5 +1,6 @@
 /* global SETTINGS: false */
 // @flow
+/* global SETTINGS: false */
 import React from 'react';
 import R from 'ramda';
 import _ from 'lodash';
@@ -20,6 +21,7 @@ import {
 } from '../../constants';
 import { renderSeparatedComponents } from '../../util/util';
 import { ifValidDate } from '../../util/date';
+import { hasAnyStaffRole } from '../../lib/roles';
 
 export default class CourseDescription extends React.Component {
   props: {
@@ -98,7 +100,7 @@ export default class CourseDescription extends React.Component {
       url = courseRun.enrollment_url;
     }
 
-    return url ?
+    return url && !hasAnyStaffRole(SETTINGS.roles) ?
       <a key={'view-edx-link'} className={'view-edx-link'} href={url} target="_blank">View on edX</a>
       : null;
   };
