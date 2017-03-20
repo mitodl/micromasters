@@ -175,7 +175,6 @@ const schedulableCard = (
   <div key="schedulable" className="exam-scheduling">
     <Button
       type='ok'
-      key='openTODDialog'
       className="mdl-button exam-button"
       onClick={() => showPearsonTOSDialog(true)}
     >
@@ -192,12 +191,12 @@ const schedulableCard = (
 );
 
 type Props = {
-  profile:            Profile,
-  program:            Program,
-  navigateToProfile:  () => void,
-  submitPearsonSSO:   () => void,
-  pearson:            PearsonAPIState,
-  ui:                 UIState,
+  profile:              Profile,
+  program:              Program,
+  navigateToProfile:    () => void,
+  submitPearsonSSO:     () => void,
+  pearson:              PearsonAPIState,
+  ui:                   UIState,
   showPearsonTOSDialog: (open: boolean) => void,
 };
 
@@ -209,7 +208,7 @@ export default class FinalExamCard extends React.Component<void, Props, void> {
       navigateToProfile,
       submitPearsonSSO,
       pearson,
-      ui: { dialogVisibility: { pearsonTosDialogVisible = false } },
+      ui: { dialogVisibility: { pearsonTOSDialogVisible = false } },
       showPearsonTOSDialog
     } = this.props;
 
@@ -233,7 +232,7 @@ export default class FinalExamCard extends React.Component<void, Props, void> {
         navigateToProfile,
         pearson,
         showPearsonTOSDialog,
-        pearsonTosDialogVisible,
+        pearsonTOSDialogVisible,
         submitPearsonSSO
       );
     default:

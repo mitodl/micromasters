@@ -104,7 +104,7 @@ import type { PearsonAPIState } from '../reducers/pearson';
 import { getOwnDashboard } from '../reducers/util';
 
 const isProcessing = R.equals(FETCH_PROCESSING);
-const PEARSON_TOS_DIALOG = "pearsonTosDialogVisible";
+const PEARSON_TOS_DIALOG = "pearsonTOSDialogVisible";
 
 class DashboardPage extends React.Component {
   static contextTypes = {

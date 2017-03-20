@@ -154,7 +154,7 @@ pay for the course and pass the online work.`;
   });
 
   it('renders confirm pearson TOS dialog', () => {
-    props.ui.dialogVisibility = { 'pearsonTosDialogVisible': true };
+    props.ui.dialogVisibility = { 'pearsonTOSDialogVisible': true };
     props.program.pearson_exam_status = PEARSON_PROFILE_SCHEDULABLE;
     renderCard(props);
     assert.include(
@@ -169,7 +169,7 @@ pay for the course and pass the online work.`;
   });
 
   it('showToPearsonSiteDialog called in cancel', () => {
-    props.ui.dialogVisibility = { 'pearsonTosDialogVisible': true };
+    props.ui.dialogVisibility = { 'pearsonTOSDialogVisible': true };
     props.program.pearson_exam_status = PEARSON_PROFILE_SCHEDULABLE;
     renderCard(props);
     TestUtils.Simulate.click(getDialog().querySelector(".cancel-button"));
@@ -177,7 +177,7 @@ pay for the course and pass the online work.`;
   });
 
   it('submitPearsonSSO called in continue', () => {
-    props.ui.dialogVisibility = { 'pearsonTosDialogVisible': true };
+    props.ui.dialogVisibility = { 'pearsonTOSDialogVisible': true };
     props.program.pearson_exam_status = PEARSON_PROFILE_SCHEDULABLE;
     renderCard(props);
     let btnContinue = getDialog().querySelector(".save-button");
