@@ -9,7 +9,6 @@ import R from 'ramda';
 import Dialog from 'material-ui/Dialog';
 
 import { dialogActions } from '../inputs/util';
-import SpinnerButton from '../SpinnerButton';
 import type { Profile } from '../../flow/profileTypes';
 import type { Program } from '../../flow/programTypes';
 import type { UIState } from '../../reducers/ui';
@@ -140,14 +139,15 @@ const schedulableCourseList = R.compose(
   R.defaultTo({}),
 );
 
-const renderPearsonTOSDialog = (open, show, submitPearsonSSO) => (
+const renderPearsonTOSDialog = (open, show, submitPearsonSSO, pearson) => (
   <Dialog
     key="pearson-tos-dialog"
     contentClassName="dialog content"
     className="dialog-to-pearson-site"
+    actionsContainerClassName="actions"
     open={open}
     onRequestClose={() => show(false)}
-    actions={dialogActions(() => show(false), () => submitPearsonSSO(), false, "CONTINUE")}
+    actions={dialogActions(() => show(false), submitPearsonSSO, isProcessing(pearson), "CONTINUE")}
     autoScrollBodyContent={true}>
     <div className="dialog-container">
       <img src="/static/images/pearson_vue.png" width="180"/>
@@ -170,18 +170,17 @@ const schedulableCard = (
   open,
   submitPearsonSSO
 ) => cardWrapper(
-  renderPearsonTOSDialog(open, showPearsonTOSDialog, submitPearsonSSO),
+  renderPearsonTOSDialog(open, showPearsonTOSDialog, submitPearsonSSO, pearson),
   accountCreated(profile, navigateToProfile),
   <div key="schedulable" className="exam-scheduling">
-    <SpinnerButton
+    <Button
+      type='ok'
+      key='openTODDialog'
       className="mdl-button exam-button"
-      component={Button}
-      spinning={isProcessing(pearson)}
       onClick={() => showPearsonTOSDialog(true)}
-      ignoreRecentlyClicked={true}
     >
       Schedule an exam
-    </SpinnerButton>
+    </Button>
     <div className="program-info">
       You are ready to schedule an exam for:
       <ul>

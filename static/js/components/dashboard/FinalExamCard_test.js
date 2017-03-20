@@ -66,7 +66,7 @@ pay for the course and pass the online work.`;
 
   it('should not render when pearson_exam_status is empty', () => {
     let card = renderCard(props);
-    assert.equal(card.childAt(0).children().length, 0);
+    assert.isNull(card.html());
   });
 
   it('should just show a basic message if the profile is absent', () => {
