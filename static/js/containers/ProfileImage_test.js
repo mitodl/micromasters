@@ -17,19 +17,25 @@ import {
   updatePhotoEdit,
   requestPatchUserPhoto,
 } from '../actions/image_upload';
-import { USER_PROFILE_RESPONSE } from '../test_constants';
 
 describe('ProfileImage', () => {
   let helper, sandbox, updateProfileImageStub, div;
 
-  const renderProfileImage = (editable = true, props = {}) => {
+  const thatProfile = {
+    username: 'rfeather',
+    email: 'rf@example.com',
+    first_name: 'Reginald',
+    last_name: 'Feathersworth',
+    preferred_name: 'Reggie'
+  };
+
+  const renderProfileImage = (props = {}) => {
     div = document.createElement("div");
     return mount(
       <MuiThemeProvider muiTheme={getMuiTheme()}>
         <Provider store={helper.store}>
           <ProfileImage
-            editable={editable}
-            profile={USER_PROFILE_RESPONSE}
+            profile={thatProfile}
             {...props}
           />
         </Provider>
@@ -40,19 +46,14 @@ describe('ProfileImage', () => {
     );
   };
 
-  const thatProfile = {
-    username: 'rfeather',
-    email: 'rf@example.com',
-    first_name: 'Reginald',
-    last_name: 'Feathersworth',
-    preferred_name: 'Reggie'
-  };
-
   beforeEach(() => {
     helper = new IntegrationTestHelper();
     sandbox = helper.sandbox;
+    // thatProfile is the logged in user
+    SETTINGS.user.username = thatProfile.username;
     updateProfileImageStub = sandbox.stub(api, 'updateProfileImage');
     updateProfileImageStub.withArgs(thatProfile.username).returns(Promise.resolve());
+    helper.profileGetStub.withArgs(thatProfile.username).returns(Promise.resolve(thatProfile));
   });
 
   afterEach(() => {
@@ -61,7 +62,9 @@ describe('ProfileImage', () => {
 
   describe('upload button', () => {
     it('should be hidden if not editable', () => {
-      let image = renderProfileImage(false);
+      let image = renderProfileImage({
+        editable: false
+      });
 
       assert.lengthOf(
         image.find('.open-photo-dialog'),
@@ -71,7 +74,9 @@ describe('ProfileImage', () => {
     });
 
     it('should be visible if editable and is users own profile', () => {
-      let image = renderProfileImage();
+      let image = renderProfileImage({
+        editable: true
+      });
 
       assert.lengthOf(
         image.find('.open-photo-dialog'),
@@ -81,9 +86,12 @@ describe('ProfileImage', () => {
     });
 
     it('should be hidden if editable and another users profile', () => {
-      let image = renderProfileImage();
+      SETTINGS.user.username = 'other';
+      let image = renderProfileImage({
+        editable: true
+      });
 
-      assert(
+      assert.lengthOf(
         image.find('.open-photo-dialog'),
         0,
         'image should not contain a button to upload a profile photo'
@@ -91,8 +99,8 @@ describe('ProfileImage', () => {
     });
 
     it("should display a 'open' link with the correct link text if passed the right props", () => {
-      let image = renderProfileImage(true, {
-        profile: thatProfile,
+      let image = renderProfileImage({
+        editable: true,
         showLink: true,
         linkText: 'some link text'
       });
@@ -107,9 +115,9 @@ describe('ProfileImage', () => {
     });
 
     it('should call an afterImageUpload prop after success, if it is present', () => {
-      let afterImageUpload = sandbox.stub();
-      let image = renderProfileImage(true, {
-        profile: thatProfile,
+      let afterImageUpload = sandbox.stub().returns(Promise.resolve());
+      let image = renderProfileImage({
+        editable: true,
         afterImageUpload: afterImageUpload,
       });
       helper.store.dispatch(startPhotoEdit({ name: 'a name' }));
@@ -123,10 +131,21 @@ describe('ProfileImage', () => {
       });
     });
 
+    it("should have a ProfileImageUploader only for the logged in user", () => {
+      for (const loggedIn of [true, false]) {
+        SETTINGS.user.username = loggedIn ? thatProfile.username : "other_user";
+        let image = renderProfileImage({
+          editable: true,
+        });
+
+        assert.equal(image.find("ProfileImageUploader").length === 1, loggedIn);
+      }
+    });
+
     describe('save button', () => {
       it("should show the save button when there's an image", () => {
-        renderProfileImage(true, {
-          profile: thatProfile
+        renderProfileImage({
+          editable: true
         });
         helper.store.dispatch(startPhotoEdit({name: 'a name'}));
         helper.store.dispatch(setPhotoDialogVisibility(true));
@@ -139,8 +158,8 @@ describe('ProfileImage', () => {
       });
 
       it('should disable the save button if no image is picked', () => {
-        renderProfileImage(true, {
-          profile: thatProfile
+        renderProfileImage({
+          editable: true
         });
         helper.store.dispatch(setPhotoDialogVisibility(true));
         let dialog = document.querySelector(".photo-upload-dialog");
@@ -153,8 +172,8 @@ describe('ProfileImage', () => {
       });
 
       it('should show a spinner while uploading the image', () => {
-        renderProfileImage(true, {
-          profile: thatProfile
+        renderProfileImage({
+          editable: true
         });
         helper.store.dispatch(startPhotoEdit({name: 'a name'}));
         helper.store.dispatch(setPhotoDialogVisibility(true));
@@ -164,8 +183,8 @@ describe('ProfileImage', () => {
       });
 
       it('should disable the save button when uploading an image', () => {
-        renderProfileImage(true, {
-          profile: thatProfile
+        renderProfileImage({
+          editable: true
         });
         helper.store.dispatch(startPhotoEdit({name: 'a name'}));
         helper.store.dispatch(setPhotoDialogVisibility(true));

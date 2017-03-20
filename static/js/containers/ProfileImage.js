@@ -104,10 +104,12 @@ class ProfileImage extends React.Component {
     return (
       <div className="profile-image">
         <div className="avatar">
-          <ProfileImageUploader
-            {...this.props}
-            updateUserPhoto={this.updateUserPhoto}
-          />
+          {userPrivilegeCheck(profile,
+            <ProfileImageUploader
+              {...this.props}
+              updateUserPhoto={this.updateUserPhoto}
+            />
+          )}
           <img
             src={imageUrl}
             alt={`Profile image for ${getPreferredName(profile, false)}`}
