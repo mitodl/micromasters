@@ -1,3 +1,4 @@
+/* global SETTINGS */
 import React from 'react';
 import { shallow } from 'enzyme';
 import moment from 'moment';
@@ -134,6 +135,22 @@ describe('CourseDescription', () => {
     ));
     let firstRun = course.runs[0];
     firstRun.course_id = null;
+    const wrapper = renderCourseDescription(firstRun, course.title);
+    let elements = getElements(wrapper);
+
+    assert.lengthOf(elements.edxLink, 0);
+  });
+
+  it('does not show a link to view the course on edX if the user is staff', () => {
+    SETTINGS.roles = [{
+      "role": "staff",
+      "program": 1
+    }];
+    let course = findAndCloneCourse(course => (
+      course.runs.length > 0 &&
+      course.runs[0].status === STATUS_PASSED
+    ));
+    let firstRun = course.runs[0];
     const wrapper = renderCourseDescription(firstRun, course.title);
     let elements = getElements(wrapper);
 
