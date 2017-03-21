@@ -167,10 +167,10 @@ look for the webpack server at that host instead of the host where Docker is run
 You'll need to install the [yarn](https://yarnpkg.com/en/docs/cli/)
 package manager. You can do:
 
-    npm install -g yarn@0.19.1
+    node ./scripts/install_yarn.js
 
 To install it. Nice! You can check which version is installed in
-`Dockerfile-node` to be make you're getting the version we are
+`package.json` to be make you're getting the version we are
 standardized on.
 
 Now, in a separate terminal tab, use the webpack helper script to install npm modules and run the dev server:

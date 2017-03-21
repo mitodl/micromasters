@@ -8,8 +8,6 @@ LABEL maintainer "ODL DevOps <mitx-devops@mit.edu>"
 
 RUN apt-get update && apt-get install libelf1
 
-RUN npm install -g yarn@0.19.1
-
 RUN mkdir /src
 
 WORKDIR /src
@@ -21,5 +19,8 @@ RUN chown -R mitodl:mitodl /src
 USER mitodl
 
 COPY package.json yarn.lock ./webpack_if_prod.sh /src/
+COPY scripts /src/scripts
+
+RUN node /src/install_yarn.js
 
 RUN yarn install --pure-lockfile

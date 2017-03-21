@@ -5,7 +5,11 @@ RUN apt-get update && apt-get install libelf1
 
 RUN adduser --disabled-password --gecos "" mitodl
 
-RUN npm install -g yarn@0.21.3
+COPY package.json /src/
+
+COPY scripts /src/scripts
+
+RUN node /src/scripts/install_yarn.js
 
 RUN mkdir -p /home/mitodl/.cache/yarn
 
