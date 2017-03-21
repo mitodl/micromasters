@@ -3,12 +3,9 @@ Tests for profile serializers
 """
 from copy import deepcopy
 from datetime import date
-from io import BytesIO
 
 from django.db.models.signals import post_save
-from django.core.files.uploadedfile import UploadedFile
 from factory.django import mute_signals
-from PIL import Image
 from rest_framework.fields import (
     CharField,
     ReadOnlyField,
@@ -427,55 +424,3 @@ class ProfileFilledOutTests(MockedESTestCase):
             lambda profile: profile['education'][0],
             lambda profile: profile['education'].child,
         )
-
-    def test_resized_images_created(self):
-        """
-        resized images should be created if image is present in PATCH
-        """
-        self.profile.image_small = None
-        self.profile.image_medium = None
-        self.profile.save()
-
-        self.data['image'] = self.profile.image
-        serializer = ProfileFilledOutSerializer(data=self.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.update(self.profile, serializer.validated_data)
-        self.profile.refresh_from_db()
-        assert self.profile.image_small is not None
-        assert self.profile.image_medium is not None
-
-    def test_resized_images_updated(self):
-        """
-        resized images should be updated if image is present in PATCH
-        """
-        assert self.profile.image_small is not None
-        assert self.profile.image_medium is not None
-
-        # create a dummy image file in memory for upload
-        image_file = BytesIO()
-        image = Image.new('RGBA', size=(50, 50), color=(256, 0, 0))
-        image.save(image_file, 'png')
-        image_file.seek(0)
-
-        self.data['image'] = UploadedFile(image_file, "filename.png", "image/png", len(image_file.getvalue()))
-        serializer = ProfileFilledOutSerializer(data=self.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.update(self.profile, serializer.validated_data)
-        self.profile.refresh_from_db()
-        image_file_bytes = image_file.read()
-        assert self.profile.image_small.file.read() != image_file_bytes
-        assert self.profile.image_medium.file.read() != image_file_bytes
-
-    def test_resized_images_not_changed(self):
-        """
-        resized images should not be updated if PATCH is performed but image is not present in PATCH
-        """
-        self.data['image'] = self.profile.image
-        old_image_small = self.profile.image_small
-        old_image_medium = self.profile.image_medium
-        serializer = ProfileFilledOutSerializer(data=self.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.update(self.profile, serializer.validated_data)
-        self.profile.refresh_from_db()
-        assert self.profile.image_small == old_image_small
-        assert self.profile.image_medium == old_image_medium

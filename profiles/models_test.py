@@ -4,9 +4,12 @@ Model tests
 from datetime import datetime
 from unittest.mock import patch
 from ddt import ddt, data, unpack
+from io import BytesIO
 
+from django.core.files.uploadedfile import UploadedFile
 from django.db.models.signals import post_save
 from factory.django import mute_signals
+from PIL import Image
 import pytz
 
 from profiles.factories import ProfileFactory, UserFactory
@@ -178,3 +181,58 @@ class ProfileDisplayNameTests(MockedESTestCase):
         with mute_signals(post_save):
             profile = ProfileFactory(user__username='uname', first_name=None, last_name=None, preferred_name=None)
         assert profile.display_name == 'uname'
+
+
+class ProfileImageTests(MockedESTestCase):
+    """Tests for the profile image and thumbnails"""
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+
+        with mute_signals(post_save):
+            cls.profile = ProfileFactory.create(
+                filled_out=True,
+                agreed_to_terms_of_service=True,
+            )
+
+    def test_resized_images_created(self):
+        """
+        thumbnails images should be created if update_image is True
+        """
+        self.profile.image_small = None
+        self.profile.image_medium = None
+        self.profile.save()
+
+        self.profile.save(update_image=True)
+        assert self.profile.image_small is not None
+        assert self.profile.image_medium is not None
+
+    def test_resized_images_updated(self):
+        """
+        thumbnails should be updated if image is already present and updated when update_image=True
+        """
+        assert self.profile.image_small is not None
+        assert self.profile.image_medium is not None
+
+        # create a dummy image file in memory for upload
+        image_file = BytesIO()
+        image = Image.new('RGBA', size=(50, 50), color=(256, 0, 0))
+        image.save(image_file, 'png')
+        image_file.seek(0)
+
+        self.profile.image = UploadedFile(image_file, "filename.png", "image/png", len(image_file.getvalue()))
+        self.profile.save(update_image=True)
+        image_file_bytes = image_file.read()
+        assert self.profile.image_small.file.read() != image_file_bytes
+        assert self.profile.image_medium.file.read() != image_file_bytes
+
+    def test_resized_images_not_changed(self):
+        """
+        resized images should not be updated if update_image is False
+        """
+        old_image_small = self.profile.image_small
+        old_image_medium = self.profile.image_medium
+        self.profile.save()
+        assert self.profile.image_small == old_image_small
+        assert self.profile.image_medium == old_image_medium
