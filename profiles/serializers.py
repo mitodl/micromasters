@@ -173,8 +173,8 @@ class ProfileSerializer(ProfileBaseSerializer):
                 else:
                     setattr(instance, attr, value)
 
-            update_thumbnails = 'image' in validated_data
-            instance.save(update_thumbnails=update_thumbnails)
+            update_image = 'image' in validated_data
+            instance.save(update_image=update_image)
             if 'work_history' in self.initial_data:
                 update_work_history(validated_data['work_history'], instance.id)
 

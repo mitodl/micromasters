@@ -180,9 +180,9 @@ class Profile(models.Model):
     updated_on = models.DateTimeField(blank=True, null=True, auto_now=True)
 
     @transaction.atomic
-    def save(self, *args, update_thumbnails=False, **kwargs):
+    def save(self, *args, update_image=False, **kwargs):
         """Set the student_id number to the PK number and update thumbnails if necessary"""
-        if update_thumbnails:
+        if update_image:
             small_thumbnail = make_thumbnail(self.image.file, IMAGE_SMALL_MAX_DIMENSION)
             medium_thumbnail = make_thumbnail(self.image.file, IMAGE_MEDIUM_MAX_DIMENSION)
 
