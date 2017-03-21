@@ -3,9 +3,9 @@ Model tests
 """
 from datetime import datetime
 from unittest.mock import patch
-from ddt import ddt, data, unpack
 from io import BytesIO
 
+from ddt import ddt, data, unpack
 from django.core.files.uploadedfile import UploadedFile
 from django.db.models.signals import post_save
 from factory.django import mute_signals
