@@ -14,13 +14,13 @@ WORKDIR /src
 
 RUN adduser --disabled-password --gecos "" mitodl
 
-RUN chown -R mitodl:mitodl /src
-
-USER mitodl
-
 COPY package.json yarn.lock ./webpack_if_prod.sh /src/
 COPY scripts /src/scripts
 
-RUN node /src/install_yarn.js
+RUN node /src/scripts/install_yarn.js
+
+RUN chown -R mitodl:mitodl /src
+
+USER mitodl
 
 RUN yarn install --pure-lockfile
