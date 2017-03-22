@@ -11,7 +11,6 @@ from financialaid.constants import FinancialAidStatus
 from financialaid.serializers import FinancialAidDashboardSerializer
 from micromasters.factories import UserFactory
 from courses.factories import ProgramFactory
-from ecommerce.factories import CoursePriceFactory
 
 
 class FinancialAidDashboardSerializerTests(MockedESTestCase):
@@ -22,12 +21,7 @@ class FinancialAidDashboardSerializerTests(MockedESTestCase):
     def setUpTestData(cls):
         super().setUpTestData()
         cls.user = UserFactory.create()
-        cls.program = ProgramFactory.create(live=True, financial_aid_availability=True)
-        CoursePriceFactory.create(
-            course_run__course__program=cls.program,
-            is_valid=True,
-            price=1000
-        )
+        cls.program = ProgramFactory.create(live=True, financial_aid_availability=True, price=1000)
         cls.min_tier_program = TierProgramFactory.create(
             program=cls.program,
             discount_amount=750,
@@ -119,12 +113,7 @@ class FinancialAidDashboardSerializerTests(MockedESTestCase):
         """
         Test that an attempt to serialize financial aid information will raise an exception if no tiers are created.
         """
-        new_program = ProgramFactory.create(live=True, financial_aid_availability=True)
-        CoursePriceFactory.create(
-            course_run__course__program=new_program,
-            is_valid=True,
-            price=1000
-        )
+        new_program = ProgramFactory.create(live=True, financial_aid_availability=True, price=1000)
         with self.assertRaises(ImproperlyConfigured):
             FinancialAidDashboardSerializer.serialize(self.user, new_program)
 

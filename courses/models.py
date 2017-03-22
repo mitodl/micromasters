@@ -12,13 +12,14 @@ from django.db import models
 
 from courses.utils import is_blank
 from grades.constants import FinalGradeStatus
+from micromasters.models import TimestampedModel
 from micromasters.utils import first_matching_item
 
 
 log = logging.getLogger(__name__)
 
 
-class Program(models.Model):
+class Program(TimestampedModel):
     """
     A degree someone can pursue, e.g. "Supply Chain Management"
     """
@@ -32,27 +33,10 @@ class Program(models.Model):
     # tuple of (Program.exam_series_code, Course.exam_module) is used to identify an exam
     exam_series_code = models.CharField(max_length=20, null=True, blank=True)
 
+    price = models.DecimalField(decimal_places=2, max_digits=20)
+
     def __str__(self):
         return self.title
-
-    def get_course_price(self):
-        """
-        Returns a decimal course price attached to this program.
-
-        Note: This implementation of retrieving a course price is a naive lookup that assumes
-        all course runs in a single program will be the same price for the foreseeable future.
-        Therefore we can just take the price from any currently enroll-able course run.
-        """
-        from ecommerce.models import CoursePrice
-        course_price_object = CoursePrice.objects.filter(
-            is_valid=True,
-            course_run__course__program=self
-        ).first()
-        if course_price_object is None:
-            log.error('No course price available for program "%s"', self.title)
-            # If no CoursePrice is valid for this program, can't meaningfully return any value
-            raise ImproperlyConfigured('No course price available for program "{}".'.format(self.title))
-        return course_price_object.price
 
 
 class Course(models.Model):

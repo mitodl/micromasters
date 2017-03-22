@@ -7,7 +7,6 @@ import json
 from unittest.mock import Mock, patch
 
 import ddt
-from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.test import override_settings
@@ -224,13 +223,6 @@ class ReviewTests(FinancialAidBaseTestCase, APIClient):
         self.program.live = False
         self.program.save()
         self.make_http_request(self.client.get, self.review_url, status.HTTP_404_NOT_FOUND)
-
-    def test_not_valid(self):
-        """No valid course_price will raise ImproperlyConfigured"""
-        course_price = self.program.course_set.first().courserun_set.first().courseprice_set.first()
-        course_price.is_valid = False
-        course_price.save()
-        self.assertRaises(ImproperlyConfigured, self.client.get, self.review_url)
 
     def test_review_financial_aid_view_allowed(self):
         """
@@ -819,9 +811,9 @@ class CoursePriceDetailViewTests(FinancialAidBaseTestCase, APIClient):
             tier_program=self.tier_programs["25k"],
             status=FinancialAidStatus.APPROVED,
         )
-        course_price = self.program.course_set.first().courserun_set.first().courseprice_set.first()
+        course_price = self.program.price
         resp = self.make_http_request(self.client.get, self.course_price_url, status.HTTP_200_OK)
-        expected_price = course_price.price - financial_aid.tier_program.discount_amount
+        expected_price = course_price - financial_aid.tier_program.discount_amount
         expected_response = {
             "program_id": self.program.id,
             "price": str(expected_price),
@@ -839,9 +831,9 @@ class CoursePriceDetailViewTests(FinancialAidBaseTestCase, APIClient):
             tier_program=self.tier_programs["25k"],
             status=FinancialAidStatus.PENDING_MANUAL_APPROVAL,
         )
-        course_price = self.program.course_set.first().courserun_set.first().courseprice_set.first()
+        course_price = self.program.price
         resp = self.make_http_request(self.client.get, self.course_price_url, status.HTTP_200_OK)
-        expected_price = course_price.price - financial_aid.tier_program.discount_amount
+        expected_price = course_price - financial_aid.tier_program.discount_amount
         expected_response = {
             "program_id": self.program.id,
             "price": str(expected_price),
@@ -854,11 +846,11 @@ class CoursePriceDetailViewTests(FinancialAidBaseTestCase, APIClient):
         """
         Tests ReviewFinancialAidView for enrolled user who has no financial aid request
         """
-        course_price = self.program.course_set.first().courserun_set.first().courseprice_set.first()
+        course_price = self.program.price
         resp = self.make_http_request(self.client.get, self.course_price_url, status.HTTP_200_OK)
         expected_response = {
             "program_id": self.program.id,
-            "price": str(course_price.price),
+            "price": str(course_price),
             "has_financial_aid_request": False,
             "financial_aid_availability": True
         }
@@ -868,13 +860,13 @@ class CoursePriceDetailViewTests(FinancialAidBaseTestCase, APIClient):
         """
         Tests ReviewFinancialAidView for enrolled user in program without financial aid
         """
-        course_price = self.program.course_set.first().courserun_set.first().courseprice_set.first()
+        course_price = self.program.price
         self.program.financial_aid_availability = False
         self.program.save()
         resp = self.make_http_request(self.client.get, self.course_price_url, status.HTTP_200_OK)
         expected_response = {
             "program_id": self.program.id,
-            "price": str(course_price.price),
+            "price": str(course_price),
             "has_financial_aid_request": False,
             "financial_aid_availability": False
         }

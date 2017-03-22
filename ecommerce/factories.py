@@ -6,7 +6,6 @@ from factory import (
     SelfAttribute,
     SubFactory,
     Trait,
-    Faker,
 )
 from factory.django import DjangoModelFactory
 from factory.fuzzy import (
@@ -27,7 +26,6 @@ from ecommerce.api import (
 )
 from ecommerce.models import (
     Coupon,
-    CoursePrice,
     Line,
     Order,
     Receipt,
@@ -83,16 +81,6 @@ class ReceiptFactory(DjangoModelFactory):
 
     class Meta:
         model = Receipt
-
-
-class CoursePriceFactory(DjangoModelFactory):
-    """Factory for CoursePrice"""
-    course_run = SubFactory(CourseRunFactory)
-    is_valid = Faker('boolean')
-    price = FuzzyDecimal(low=0, high=12345)
-
-    class Meta:
-        model = CoursePrice
 
 
 class CouponFactory(DjangoModelFactory):

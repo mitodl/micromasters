@@ -41,7 +41,6 @@ from ecommerce.models import (
     Order,
     RedeemedCoupon,
 )
-from ecommerce.models import CoursePrice
 from financialaid.api import get_formatted_course_price
 from financialaid.models import (
     FinancialAid,
@@ -77,7 +76,6 @@ def get_purchasable_course_run(course_key, user):
             edx_course_key=course_key,
             course__program__live=True,
             course__program__financial_aid_availability=True,
-            courseprice__is_valid=True,
         )
     except Http404:
         log.warning("Course run %s is not purchasable", course_key)
@@ -492,17 +490,10 @@ def validate_prices():
     errors = []
     programs = Program.objects.filter(live=True)
     for program in programs:
-        runs = CourseRun.objects.filter(course__program=program)
-        course_prices = [CoursePrice.objects.filter(course_run=run, is_valid=True).first() for run in runs]
-        prices = [course_price.price if course_price else None for course_price in course_prices]
-
-        if not (len(prices) and all(prices[0] == price for price in prices) and prices[0] is not None):
-            errors.append('Invalid course prices for program {0}'.format(program.title))
-
-        elif program.financial_aid_availability:
+        if program.financial_aid_availability:
             tier = TierProgram.objects.filter(program=program, current=True).order_by("-discount_amount").first()
             if tier:
-                if tier.discount_amount > prices[0]:
+                if tier.discount_amount > program.price:
                     errors.append('Discount is higher than course price for program {0}'.format(program.title))
                 if not TierProgram.objects.filter(discount_amount=0, program=program, current=True).exists():
                     errors.append('Could not find 0 discount TierProgram for program {0}'.format(program.title))

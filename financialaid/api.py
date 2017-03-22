@@ -134,7 +134,7 @@ def get_formatted_course_price(program_enrollment):
 
     has_financial_aid_request = False
     financial_aid_availability = False
-    course_price = program.get_course_price()
+    course_price = program.price
 
     if program.financial_aid_availability is True:
         financial_aid_availability = True

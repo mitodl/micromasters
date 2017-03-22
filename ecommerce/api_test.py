@@ -51,7 +51,6 @@ from ecommerce.exceptions import (
 )
 from ecommerce.factories import (
     CouponFactory,
-    CoursePriceFactory,
     LineFactory,
     OrderFactory,
 )
@@ -62,7 +61,6 @@ from ecommerce.models import (
     RedeemedCoupon,
     RedeemedCouponAudit,
     UserCoupon,
-    CoursePrice,
 )
 from financialaid.api import get_formatted_course_price
 from financialaid.factories import FinancialAidFactory, TierProgramFactory
@@ -80,12 +78,12 @@ def create_purchasable_course_run():
         course__program__live=True,
         course__program__financial_aid_availability=True,
     )
-    price = CoursePriceFactory.create(course_run=course_run, is_valid=True)
+    price = course_run.course.program.price
     user = UserFactory.create()
     FinancialAidFactory.create(
         tier_program__current=True,
         tier_program__program=course_run.course.program,
-        tier_program__discount_amount=price.price/2,
+        tier_program__discount_amount=price/2,
         user=user,
         status=FinancialAidStatus.APPROVED,
     )
@@ -188,18 +186,6 @@ class PurchasableTests(MockedESTestCase):
         with self.assertRaises(Http404):
             get_purchasable_course_run(course_run.edx_course_key, user)
 
-    def test_no_valid_price(self):
-        """
-        Purchasable course runs must have a valid price
-        """
-        course_run, user = create_purchasable_course_run()
-        course_price = course_run.courseprice_set.get(is_valid=True)
-        course_price.is_valid = False
-        course_price.save()
-
-        with self.assertRaises(Http404):
-            get_purchasable_course_run(course_run.edx_course_key, user)
-
     def test_no_program_enrollment(self):
         """
         For a user to purchase a course run they must already be enrolled in the program
@@ -231,11 +217,11 @@ class PurchasableTests(MockedESTestCase):
         An order may not have a negative or zero price
         """
         course_run, user = create_purchasable_course_run()
-        price_obj = course_run.courseprice_set.get(is_valid=True)
+        program = course_run.course.program
 
         for invalid_price in (0, -1.23,):
-            price_obj.price = invalid_price
-            price_obj.save()
+            program.price = invalid_price
+            program.save()
 
             with patch('ecommerce.api.get_purchasable_course_run', autospec=True, return_value=course_run) as mocked:
                 with self.assertRaises(ImproperlyConfigured) as ex:
@@ -252,7 +238,7 @@ class PurchasableTests(MockedESTestCase):
         Create Order from a purchasable course
         """
         course_run, user = create_purchasable_course_run()
-        discounted_price = round(course_run.courseprice_set.get(is_valid=True).price/2, 2)
+        discounted_price = round(course_run.course.program.price/2, 2)
         coupon = None
         if has_coupon:
             coupon = CouponFactory.create(content_object=course_run)
@@ -479,9 +465,7 @@ class EnrollUserTests(MockedESTestCase):
         cls.line1 = LineFactory.create(order=cls.order)
         cls.line2 = LineFactory.create(order=cls.order)
         cls.course_run1 = CourseRunFactory.create(edx_course_key=cls.line1.course_key)
-        CoursePriceFactory.create(course_run=cls.course_run1, is_valid=True)
         cls.course_run2 = CourseRunFactory.create(edx_course_key=cls.line2.course_key)
-        CoursePriceFactory.create(course_run=cls.course_run2, is_valid=True)
 
     def test_enroll(self):
         """
@@ -837,7 +821,7 @@ class PriceTests(MockedESTestCase):
         Assert that the adjusted price cannot go below $0
         """
         course_run, _ = create_purchasable_course_run()
-        price = course_run.courseprice_set.first().price
+        price = course_run.course.program.price
         coupon = CouponFactory.create(
             content_object=course_run, amount_type=Coupon.FIXED_DISCOUNT, amount=price + 50,
         )
@@ -848,7 +832,7 @@ class PriceTests(MockedESTestCase):
         Assert that the adjusted price cannot go above the full price
         """
         course_run, _ = create_purchasable_course_run()
-        price = course_run.courseprice_set.first().price
+        price = course_run.course.program.price
         coupon = CouponFactory.create(
             content_object=course_run, amount_type=Coupon.FIXED_DISCOUNT, amount=-(price + 50),
         )
@@ -862,11 +846,6 @@ class ValidatePricesTests(MockedESTestCase):
         """Set up some coupons"""
         super().setUpTestData()
         cls.program = ProgramFactory.create(live=True, financial_aid_availability=True, full=True)
-        course_price = CoursePrice.objects.filter(
-            is_valid=True,
-            course_run__course__program=cls.program
-        ).first()
-        cls.price = float(course_price.price)
 
     def setUp(self):
         super().setUp()
@@ -874,40 +853,13 @@ class ValidatePricesTests(MockedESTestCase):
         for tier_program in self.program.tier_programs.all():
             tier_program.refresh_from_db()
 
-    def test_courses_with_diff_prices(self):
-        """courses have different prices"""
-
-        course_run = CourseRunFactory.create(
-            course__program=self.program
-        )
-        CoursePriceFactory.create(course_run=course_run, is_valid=True, price=self.price+20)
-        assert validate_prices()[0] == 'Invalid course prices for program {0}'.format(self.program.title)
-
-    def test_courses_with_no_price(self):
-        """course does not have price"""
-        CourseRunFactory.create(
-            course__program=self.program,
-        )
-        assert validate_prices()[0] == 'Invalid course prices for program {0}'.format(self.program.title)
-
-    def test_program_with_no_prices(self):
-        """program with no prices"""
-        CourseRunFactory.create(
-            course__program=self.program,
-        )
-        CoursePrice.objects.filter(
-            is_valid=True,
-            course_run__course__program=self.program
-        ).delete()
-        assert validate_prices()[0] == 'Invalid course prices for program {0}'.format(self.program.title)
-
     def test_fa_discount_too_large(self):
         """discount greater then courses price"""
 
         TierProgramFactory.create(
             program=self.program,
             current=True,
-            discount_amount=int(self.price + 30),
+            discount_amount=int(self.program.price + 30),
             income_threshold=1000
         )
         assert (

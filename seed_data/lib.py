@@ -398,7 +398,7 @@ def add_paid_order_for_course(user, course_run, price=None):
     """
     Adds an Order and Line for a FA-enabled CourseRun and a User
     """
-    course_price_value = price or course_run.course.program.get_course_price()
+    course_price_value = price or course_run.course.program.price
     order = Order.objects.create(user=user, status=Order.FULFILLED, total_price_paid=course_price_value)
     Line.objects.create(order=order, course_key=course_run.edx_course_key, price=course_price_value)
 

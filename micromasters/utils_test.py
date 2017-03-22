@@ -16,10 +16,10 @@ import pytz
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 
+from courses.factories import CourseRunFactory
 from ecommerce.factories import (
     ReceiptFactory,
 )
-from ecommerce.factories import CoursePriceFactory
 from ecommerce.models import Order
 from financialaid.factories import (
     FinancialAidFactory,
@@ -90,9 +90,12 @@ class ExceptionHandlerTest(MockedESTestCase):
 def format_as_iso8601(time):
     """Helper function to format datetime with the Z at the end"""
     # Can't use datetime.isoformat() because format is slightly different from this
-    iso_format = '%Y-%m-%dT%H:%M:%S.%f'
-    # chop off microseconds to make milliseconds
-    return time.strftime(iso_format)[:-3] + "Z"
+    iso_format = '%Y-%m-%dT%H:%M:%S'
+    formatted_time = time.strftime(iso_format)
+    if time.microsecond:
+        miniseconds_format = '.%f'
+        formatted_time += time.strftime(miniseconds_format)[:4]
+    return formatted_time + "Z"
 
 
 class SerializerTests(MockedESTestCase):
@@ -139,14 +142,22 @@ class SerializerTests(MockedESTestCase):
         """
         Test that a model with a decimal field is handled correctly
         """
-        course_price = CoursePriceFactory.create()
-        assert serialize_model_object(course_price) == {
-            'course_run': course_price.course_run.id,
-            'created_at': format_as_iso8601(course_price.created_at),
-            'id': course_price.id,
-            'is_valid': course_price.is_valid,
-            'modified_at': format_as_iso8601(course_price.modified_at),
-            'price': str(course_price.price),
+        course_run = CourseRunFactory.create()
+        assert serialize_model_object(course_run) == {
+            'course': course_run.course.id,
+            'edx_course_key': course_run.edx_course_key,
+            'end_date': format_as_iso8601(course_run.end_date),
+            'enrollment_end': format_as_iso8601(course_run.enrollment_end),
+            'enrollment_start': format_as_iso8601(course_run.enrollment_start),
+            'enrollment_url': course_run.enrollment_url,
+            'freeze_grade_date': format_as_iso8601(course_run.freeze_grade_date),
+            'fuzzy_enrollment_start_date': course_run.fuzzy_enrollment_start_date,
+            'fuzzy_start_date': course_run.fuzzy_start_date,
+            'id': course_run.id,
+            'prerequisites': course_run.prerequisites,
+            'start_date': format_as_iso8601(course_run.start_date),
+            'title': course_run.title,
+            'upgrade_deadline': format_as_iso8601(course_run.upgrade_deadline),
         }
 
 

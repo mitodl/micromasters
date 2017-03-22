@@ -273,7 +273,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
             financial_aids = financial_aids.filter(search_query)
 
         # Annotate with adjusted cost
-        self.course_price = self.program.get_course_price()
+        self.course_price = self.program.price
         financial_aids = financial_aids.annotate(adjusted_cost=self.course_price - F("tier_program__discount_amount"))
 
         # Sort by field

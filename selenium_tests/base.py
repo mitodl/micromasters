@@ -34,7 +34,6 @@ from dashboard.models import (
 )
 from ecommerce.models import (
     Coupon,
-    CoursePrice,
     UserCoupon,
 )
 from financialaid.models import (
@@ -124,6 +123,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         run = CourseRunFactory.create(
             course__program__live=True,
             course__program__financial_aid_availability=True,
+            course__program__price=1000,
         )
         self.program = program = run.course.program
         TierProgram.objects.create(
@@ -139,11 +139,6 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
             discount_amount=150,
             income_threshold=0,
             program=program,
-        )
-        CoursePrice.objects.create(
-            course_run=run,
-            is_valid=True,
-            price=1000,
         )
         # Make a 100% off coupon. By setting the price to $0 we can avoid dealing with Cybersource
         coupon = Coupon(

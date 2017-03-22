@@ -7,8 +7,8 @@ from django.core.exceptions import ValidationError
 from requests import Response
 from rest_framework import status
 
+from courses.factories import CourseRunFactory
 from dashboard.models import ProgramEnrollment
-from ecommerce.factories import CoursePriceFactory
 from financialaid.api import get_formatted_course_price
 from financialaid.constants import (
     FINANCIAL_AID_APPROVAL_MESSAGE,
@@ -32,12 +32,10 @@ class MailUtilsTests(MockedESTestCase):
     """
     @classmethod
     def setUpTestData(cls):
-        cls.course_price = CoursePriceFactory.create(
-            is_valid=True
-        )
+        course_run = CourseRunFactory.create()
         cls.financial_aid = FinancialAidFactory.create()
         cls.tier_program = cls.financial_aid.tier_program
-        cls.tier_program.program = cls.course_price.course_run.course.program
+        cls.tier_program.program = course_run.course.program
         cls.tier_program.save()
         cls.program_enrollment = ProgramEnrollment.objects.create(
             user=cls.financial_aid.user,

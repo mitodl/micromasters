@@ -10,7 +10,6 @@ from factory.django import mute_signals
 from backends.edxorg import EdxOrgOAuth2
 from courses.models import Program, Course, CourseRun
 from dashboard.models import ProgramEnrollment
-from ecommerce.models import CoursePrice
 from grades.models import FinalGrade, FinalGradeStatus
 from micromasters.utils import (
     get_field_names,
@@ -182,17 +181,6 @@ def deserialize_user_data_list(user_data_list, programs):
 
 # Program data deserialization
 
-def deserialize_course_price_data(program, program_data):
-    """Deserializes price information from program data"""
-    # set `is_valid` to True, so we don't have to specify it in the JSON file
-    for run in CourseRun.objects.filter(course__program=program):
-        CoursePrice.objects.create(
-            course_run=run,
-            price=Decimal(program_data['_price']),
-            is_valid=True
-        )
-
-
 def deserialize_course_run_data(course, course_run_data):
     """Deserializes a CourseRun object"""
     course_run = deserialize_model_data(
@@ -225,7 +213,6 @@ def deserialize_program_data_list(program_data_list):
         program_data['description'] = FAKE_PROGRAM_DESC_PREFIX + program_data['description']
         program_data['live'] = True
         program = deserialize_program_data(program_data)
-        deserialize_course_price_data(program, program_data)
         programs.append(program)
     return programs
 

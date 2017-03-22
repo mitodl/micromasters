@@ -8,7 +8,6 @@ from factory.django import mute_signals
 from dashboard.models import CachedEnrollment
 from courses.factories import ProgramFactory, CourseRunFactory
 from courses.models import Program
-from ecommerce.models import CoursePrice
 from seed_data.management.commands.seed_db import (
     MODEL_DEFAULTS,
     FAKE_USER_USERNAME_PREFIX,
@@ -108,7 +107,7 @@ class SeedDBDeserializationTests(MockedESTestCase):
 
     PROGRAM_DATA = {
         "title": "Digital Learning",
-        "_price": 1000,
+        "price": 1000,
         "description": "Learn stuff about digital learning.",
         "financial_aid_availability": True,
         "courses": [
@@ -179,13 +178,3 @@ class SeedDBDeserializationTests(MockedESTestCase):
         for i, run in enumerate(course.courserun_set.all()):
             for key in ('title', 'edx_course_key'):
                 assert getattr(run, key) == self.PROGRAM_DATA['courses'][0]['course_runs'][i][key]
-
-    def test_deserialize_prices(self):
-        """Test that price data is deserialized from program information"""
-        programs = deserialize_program_data_list([self.PROGRAM_DATA])
-        program = programs[0]
-        prices = CoursePrice.objects.filter(course_run__course__program=program)
-        assert prices.count() == 2
-        for price in prices:
-            assert price.price == self.PROGRAM_DATA['_price']
-            assert price.is_valid is True

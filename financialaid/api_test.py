@@ -12,7 +12,6 @@ import pytz
 
 from courses.factories import ProgramFactory, CourseFactory, CourseRunFactory
 from dashboard.models import ProgramEnrollment
-from ecommerce.factories import CoursePriceFactory
 from financialaid.api import (
     determine_auto_approval,
     determine_income_usd,
@@ -54,14 +53,10 @@ def create_program(create_tiers=True, past=False):
     else:
         end_date = datetime.now(tz=pytz.UTC) + timedelta(days=100)
 
-    course_run = CourseRunFactory.create(
+    CourseRunFactory.create(
         end_date=end_date,
         enrollment_end=datetime.now(tz=pytz.UTC) + timedelta(hours=1),
         course=course
-    )
-    CoursePriceFactory.create(
-        course_run=course_run,
-        is_valid=True
     )
     tier_programs = None
     if create_tiers:
@@ -278,10 +273,10 @@ class CoursePriceAPITests(FinancialAidBaseTestCase):
             tier_program=self.tier_programs['25k'],
             status=status,
         )
-        course_price = self.program.course_set.first().courserun_set.first().courseprice_set.first()
+        course_price = self.program.price
         expected_response = {
             "program_id": enrollment.program.id,
-            "price": course_price.price - financial_aid.tier_program.discount_amount,
+            "price": course_price - financial_aid.tier_program.discount_amount,
             "financial_aid_availability": True,
             "has_financial_aid_request": True
         }
@@ -296,10 +291,10 @@ class CoursePriceAPITests(FinancialAidBaseTestCase):
         """
         enrollment = ProgramEnrollment.objects.get(program=self.program, user=self.profile.user)
         # Enrolled and has no financial aid
-        course_price = self.program.course_set.first().courserun_set.first().courseprice_set.first()
+        course_price = self.program.price
         expected_response = {
             "program_id": enrollment.program.id,
-            "price": course_price.price,
+            "price": course_price,
             "financial_aid_availability": True,
             "has_financial_aid_request": False
         }
@@ -319,10 +314,10 @@ class CoursePriceAPITests(FinancialAidBaseTestCase):
             status=FinancialAidStatus.RESET,
         )
         # Enrolled and has no financial aid
-        course_price = self.program.course_set.first().courserun_set.first().courseprice_set.first()
+        course_price = self.program.price
         expected_response = {
             "program_id": enrollment.program.id,
-            "price": course_price.price,
+            "price": course_price,
             "financial_aid_availability": True,
             "has_financial_aid_request": False
         }
@@ -338,10 +333,10 @@ class CoursePriceAPITests(FinancialAidBaseTestCase):
         enrollment = ProgramEnrollment.objects.get(program=self.program, user=self.profile.user)
         self.program.financial_aid_availability = False
         self.program.save()
-        course_price = self.program.course_set.first().courserun_set.first().courseprice_set.first()
+        course_price = self.program.price
         expected_response = {
             "program_id": enrollment.program.id,
-            "price": course_price.price,
+            "price": course_price,
             "financial_aid_availability": False,
             "has_financial_aid_request": False
         }

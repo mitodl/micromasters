@@ -22,8 +22,10 @@ from rest_framework.status import (
 
 from dashboard.models import ProgramEnrollment
 from dashboard.factories import ProgramEnrollmentFactory
-from courses.factories import CourseFactory
-from ecommerce.factories import CoursePriceFactory
+from courses.factories import (
+    CourseFactory,
+    CourseRunFactory,
+)
 from financialaid.factories import FinancialAidFactory
 from mail.exceptions import SendBatchException
 from mail.api import (
@@ -309,12 +311,10 @@ class FinancialAidMailAPITests(MockedESTestCase):
     def setUpTestData(cls):
         with mute_signals(post_save):
             cls.staff_user_profile = ProfileFactory.create()
-        cls.course_price = CoursePriceFactory.create(
-            is_valid=True
-        )
+        course_run = CourseRunFactory.create()
         cls.financial_aid = FinancialAidFactory.create()
         cls.tier_program = cls.financial_aid.tier_program
-        cls.tier_program.program = cls.course_price.course_run.course.program
+        cls.tier_program.program = course_run.course.program
         cls.tier_program.save()
         cls.program_enrollment = ProgramEnrollment.objects.create(
             user=cls.financial_aid.user,

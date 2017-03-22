@@ -17,7 +17,6 @@ from wagtail.wagtailimages.models import Image
 from wagtail.wagtailimages.tests.utils import get_test_image_file
 
 from cms.models import HomePage, ProgramPage
-from courses.models import Program
 from courses.factories import ProgramFactory, CourseFactory
 from backends.edxorg import EdxOrgOAuth2
 from profiles.api import get_social_username
@@ -529,8 +528,7 @@ class TestProgramPage(ViewsTests):
     def setUp(self):
         super(TestProgramPage, self).setUp()
         homepage = HomePage.objects.first()
-        program = Program(title="Test Program Title", live=True)
-        program.save()
+        program = ProgramFactory.create(title="Test Program Title", live=True)
         self.program_page = ProgramPage(program=program, title="Test Program")
         homepage.add_child(instance=self.program_page)
         self.program_page.save_revision().publish()

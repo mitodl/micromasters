@@ -51,8 +51,8 @@ class MMTrackTest(MockedESTestCase):
         )
 
         # create the programs
-        cls.program = ProgramFactory.create(live=True, financial_aid_availability=False)
-        cls.program_financial_aid = ProgramFactory.create(live=True, financial_aid_availability=True)
+        cls.program = ProgramFactory.create(live=True, financial_aid_availability=False, price=1000)
+        cls.program_financial_aid = ProgramFactory.create(live=True, financial_aid_availability=True, price=1000)
 
         # create course runs for the normal program
         course = CourseFactory.create(program=cls.program)

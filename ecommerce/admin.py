@@ -9,7 +9,6 @@ from ecommerce.models import (
     CouponAudit,
     CouponInvoice,
     CouponInvoiceAudit,
-    CoursePrice,
     Line,
     Order,
     OrderAudit,
@@ -20,11 +19,6 @@ from ecommerce.models import (
     UserCouponAudit,
 )
 from micromasters.utils import get_field_names
-
-
-class CoursePriceAdmin(admin.ModelAdmin):
-    """Admin for CoursePrice"""
-    model = CoursePrice
 
 
 class LineAdmin(admin.ModelAdmin):
@@ -181,7 +175,6 @@ admin.site.register(CouponInvoice, CouponInvoiceAdmin)
 admin.site.register(CouponInvoiceAudit, CouponInvoiceAuditAdmin)
 admin.site.register(Coupon, CouponAdmin)
 admin.site.register(CouponAudit, CouponAuditAdmin)
-admin.site.register(CoursePrice, CoursePriceAdmin)
 admin.site.register(Line, LineAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(OrderAudit, OrderAuditAdmin)

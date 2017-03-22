@@ -19,10 +19,8 @@ from django.test import (
 import pytz
 
 from courses.factories import CourseRunFactory
-from ecommerce.exceptions import EcommerceModelException
 from ecommerce.factories import (
     CouponFactory,
-    CoursePriceFactory,
     LineFactory,
     OrderFactory,
     ReceiptFactory,
@@ -79,74 +77,6 @@ class OrderTests(MockedESTestCase):
         lines_data = data.pop('lines')
         assert serialize_model_object(order) == data
         assert lines_data == [serialize_model_object(line) for line in lines]
-
-
-class CoursePriceTests(MockedESTestCase):
-    """
-    Tests for CoursePrice
-    """
-
-    def test_create_no_two_is_valid(self):
-        """
-        Two is_valid CoursePrice instances on the same model are not valid
-        """
-        price = CoursePriceFactory.create(is_valid=True)
-        with self.assertRaises(EcommerceModelException) as ex:
-            CoursePriceFactory.create(is_valid=True, course_run=price.course_run)
-
-        assert ex.exception.args[0] == "Cannot have two CoursePrice objects for same CourseRun marked is_valid"
-
-    def test_update_no_two_is_valid(self):
-        """
-        A CoursePrice instance shouldn't be able to be updated to have two is_valid instances for a CourseRun
-        """
-        price = CoursePriceFactory.create(is_valid=False)
-        CoursePriceFactory.create(is_valid=True, course_run=price.course_run)
-        with self.assertRaises(EcommerceModelException) as ex:
-            price.is_valid = True
-            price.save()
-
-        assert ex.exception.args[0] == "Cannot have two CoursePrice objects for same CourseRun marked is_valid"
-
-    def test_clean_no_two_is_valid(self):
-        """
-        A CoursePrice instance should raise a ValidationError if another CoursePrice for the same CourseRun
-        is already marked is_valid
-        """
-        price = CoursePriceFactory.create(is_valid=False)
-        CoursePriceFactory.create(is_valid=True, course_run=price.course_run)
-        with self.assertRaises(ValidationError) as ex:
-            price.is_valid = True
-            price.clean()
-
-        assert ex.exception.args[0] == {
-            'is_valid': "Cannot have two CoursePrice objects for same CourseRun marked is_valid",
-        }
-
-    def test_update_one_is_valid(self):
-        """
-        If only one CoursePrice has is_valid=True, we should be able to update it without problems
-        """
-        price = CoursePriceFactory.create(is_valid=True)
-        price.price = 345
-        price.clean()
-        price.save()
-
-    def test_two_different_courseruns(self):
-        """
-        Two CoursePrices can have is_valid=True for two different CourseRuns
-        """
-        CoursePriceFactory.create(is_valid=True)
-        CoursePriceFactory.create(is_valid=True)
-
-    def test_str(self):
-        """
-        Test output of __str__
-        """
-        course_price = CoursePriceFactory.create()
-        assert str(course_price) == "CoursePrice for {}, price={}, is_valid={}".format(
-            course_price.course_run, course_price.price, course_price.is_valid
-        )
 
 
 @ddt.ddt

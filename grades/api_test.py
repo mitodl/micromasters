@@ -16,7 +16,6 @@ from dashboard.factories import (
     CachedCurrentGradeFactory,
     CachedEnrollmentFactory,
 )
-from ecommerce.factories import CoursePriceFactory
 from financialaid.constants import FinancialAidStatus
 from financialaid.factories import (
     FinancialAidFactory,
@@ -67,7 +66,6 @@ class GradeAPITests(MockedESTestCase):
         all_course_runs = (cls.run_fa, cls.run_fa_with_cert, cls.run_no_fa, cls.run_no_fa_with_cert, )
 
         for run in all_course_runs:
-            CoursePriceFactory.create(course_run=run, is_valid=True)
             if run.course.program.financial_aid_availability:
                 FinancialAidFactory.create(
                     user=cls.user,

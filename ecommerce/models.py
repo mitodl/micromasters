@@ -12,7 +12,6 @@ from django.core.exceptions import (
     ImproperlyConfigured,
     ValidationError,
 )
-from django.db import transaction
 from django.db.models import (
     Model,
     SET_NULL,
@@ -35,7 +34,6 @@ from courses.models import (
     CourseRun,
     Program,
 )
-from ecommerce.exceptions import EcommerceModelException
 from financialaid.models import TimestampedModel
 from micromasters.models import (
     AuditableModel,
@@ -128,47 +126,6 @@ class Receipt(Model):
             return "Receipt for order {}".format(self.order.id)
         else:
             return "Receipt with no attached order"
-
-
-class CoursePrice(Model):
-    """
-    Information about a course run's price and other ecommerce info
-    """
-    course_run = ForeignKey(CourseRun)
-    price = DecimalField(decimal_places=2, max_digits=20)
-    is_valid = BooleanField(default=False)
-
-    created_at = DateTimeField(auto_now_add=True)
-    modified_at = DateTimeField(auto_now=True)
-
-    def clean(self):
-        """
-        Override clean to provide user-friendly validation around CoursePrice.is_valid
-        """
-        if self.is_valid and CoursePrice.objects.filter(
-                course_run=self.course_run,
-                is_valid=True
-        ).exclude(id=self.id).exists():
-            raise ValidationError({
-                'is_valid': 'Cannot have two CoursePrice objects for same CourseRun marked is_valid',
-            })
-
-    @transaction.atomic
-    def save(self, *args, **kwargs):
-        """
-        Override save to make sure is_valid is only set per one CourseRun
-        """
-        if self.is_valid and CoursePrice.objects.filter(
-                course_run=self.course_run,
-                is_valid=True
-        ).exclude(id=self.id).exists():
-            raise EcommerceModelException("Cannot have two CoursePrice objects for same CourseRun marked is_valid")
-
-        super(CoursePrice, self).save(*args, **kwargs)
-
-    def __str__(self):
-        """Description for CoursePrice"""
-        return "CoursePrice for {}, price={}, is_valid={}".format(self.course_run, self.price, self.is_valid)
 
 
 class CouponInvoice(AuditableModel):

@@ -37,7 +37,6 @@ from exams.models import (
 from ecommerce.factories import (
     OrderFactory,
     LineFactory,
-    CoursePriceFactory
 )
 from grades.factories import FinalGradeFactory
 from financialaid.api_test import create_program
@@ -277,10 +276,6 @@ class BulkExamUtilTests(TestCase):
             end_date=datetime.now(tz=pytz.UTC) - timedelta(days=366),
             enrollment_end=datetime.now(tz=pytz.UTC) - timedelta(days=500),
             course=cls.course_run.course
-        )
-        CoursePriceFactory.create(
-            course_run=cls.course_run2,
-            is_valid=True
         )
         cls.course_runs = [cls.course_run, cls.course_run2]
 

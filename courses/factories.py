@@ -18,6 +18,7 @@ class ProgramFactory(DjangoModelFactory):
     live = factory.Faker('boolean')
     description = fuzzy.FuzzyText()
     exam_series_code = factory.Faker('lexify', text="????_MicroMasters")
+    price = fuzzy.FuzzyDecimal(low=0, high=12345)
 
     class Meta:
         model = Program
@@ -29,9 +30,7 @@ class ProgramFactory(DjangoModelFactory):
         program.save()
         if full_create:
             course = CourseFactory.create(program=program)
-            course_run = CourseRunFactory.create(course=course)
-            from ecommerce.factories import CoursePriceFactory
-            course_price = CoursePriceFactory.create(course_run=course_run, is_valid=True)
+            CourseRunFactory.create(course=course)
             if program.financial_aid_availability:
                 from financialaid.factories import TierProgramFactory
                 TierProgramFactory.create(
@@ -43,7 +42,7 @@ class ProgramFactory(DjangoModelFactory):
                 TierProgramFactory.create(
                     program=program,
                     current=True,
-                    discount_amount=int(course_price.price / 10),
+                    discount_amount=int(program.price / 10),
                     income_threshold=0
                 )
         return program
@@ -93,6 +92,9 @@ class CourseRunFactory(DjangoModelFactory):
     )
     fuzzy_enrollment_start_date = factory.LazyAttribute(
         lambda x: "Enrollment starting {}".format(FAKE.sentence())
+    )
+    upgrade_deadline = factory.Faker(
+        'date_time_this_year', before_now=False, after_now=True, tzinfo=pytz.utc
     )
     enrollment_url = factory.Faker('url')
     prerequisites = factory.Faker('paragraph')

@@ -257,7 +257,7 @@ class FinancialAidDashboardSerializer:
         """
         Returns the financial aid possible cost range
         """
-        course_max_price = program.get_course_price()
+        course_max_price = program.price
         # get all the possible discounts for the program
         program_tiers_qset = TierProgram.objects.filter(
             Q(program=program) & Q(current=True)).order_by('discount_amount')
