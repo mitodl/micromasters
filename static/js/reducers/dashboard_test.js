@@ -20,6 +20,7 @@ import {
 import * as api from '../lib/api';
 import {
   FETCH_FAILURE,
+  FETCH_PROCESSING,
   FETCH_SUCCESS
 } from '../actions/index';
 import { DASHBOARD_RESPONSE } from '../test_constants';
@@ -177,7 +178,8 @@ describe('dashboard reducers', () => {
           "username": {
             noSpinner: true,
             isEdxDataFresh: true,
-            programs: []
+            programs: [],
+            fetchStatus: FETCH_PROCESSING
           }
         });
       });

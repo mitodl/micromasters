@@ -16,7 +16,8 @@ import {
 import { COURSE_PRICES_RESPONSE } from '../test_constants';
 import {
   FETCH_FAILURE,
-  FETCH_SUCCESS
+  FETCH_PROCESSING,
+  FETCH_SUCCESS,
 } from '../actions';
 
 describe('prices reducer', () => {
@@ -98,7 +99,8 @@ describe('prices reducer', () => {
       assert.deepEqual(state, {
         'username': {
           coursePrices: [],
-          noSpinner: true
+          noSpinner: true,
+          fetchStatus: FETCH_PROCESSING
         }
       });
     });

@@ -38,7 +38,10 @@ export const dashboard = (state: DashboardsState = INITIAL_DASHBOARDS_STATE, act
       return updateStateByUsername(
         newBaseState,
         username,
-        _.merge({}, INITIAL_DASHBOARD_STATE, { noSpinner: true })
+        _.merge({}, INITIAL_DASHBOARD_STATE, {
+          noSpinner: true,
+          fetchStatus: FETCH_PROCESSING
+        })
       );
     } else {
       return updateStateByUsername(

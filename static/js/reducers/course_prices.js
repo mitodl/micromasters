@@ -33,7 +33,10 @@ export const prices = (state: CoursePriceReducerState = {}, action: Action<any, 
       return updateStateByUsername(
         R.dissoc(username, state),
         username,
-        _.merge({}, INITIAL_COURSE_PRICES_STATE, { noSpinner: true })
+        _.merge({}, INITIAL_COURSE_PRICES_STATE, {
+          noSpinner: true,
+          fetchStatus: FETCH_PROCESSING
+        })
       );
     } else {
       return updateStateByUsername(
