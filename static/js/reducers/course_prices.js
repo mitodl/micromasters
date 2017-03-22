@@ -42,13 +42,16 @@ export const prices = (state: CoursePriceReducerState = {}, action: Action<any, 
       return updateStateByUsername(
         R.dissoc(username, state),
         username,
-        _.merge({}, INITIAL_COURSE_PRICES_STATE, { fetchStatus: FETCH_PROCESSING })
+        _.merge({}, INITIAL_COURSE_PRICES_STATE, {
+          fetchStatus: FETCH_PROCESSING
+        })
       );
     }
   case RECEIVE_COURSE_PRICES_SUCCESS:
     return updateStateByUsername(state, username, {
       fetchStatus: FETCH_SUCCESS,
       coursePrices: action.payload,
+      noSpinner: false,
     });
   case RECEIVE_COURSE_PRICES_FAILURE:
     return updateStateByUsername(state, username, {

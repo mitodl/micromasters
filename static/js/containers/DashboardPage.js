@@ -262,14 +262,14 @@ class DashboardPage extends React.Component {
 
   fetchDashboard() {
     const { dashboard, dispatch } = this.props;
-    if (dashboard.fetchStatus === undefined && dashboard.noSpinner === false) {
+    if (dashboard.fetchStatus === undefined) {
       dispatch(fetchDashboard(SETTINGS.user.username));
     }
   }
 
   fetchCoursePrices() {
     const { prices, dispatch } = this.props;
-    if (prices.fetchStatus === undefined && prices.noSpinner === false) {
+    if (prices.fetchStatus === undefined) {
       dispatch(fetchCoursePrices(SETTINGS.user.username));
     }
   }
@@ -716,7 +716,10 @@ class DashboardPage extends React.Component {
       dashboard,
       prices
     } = this.props;
-    const loaded = R.none(isProcessing, [dashboard.fetchStatus, prices.fetchStatus]);
+    const loaded = R.or(
+      R.none(isProcessing, [dashboard.fetchStatus, prices.fetchStatus]),
+      R.or(dashboard.noSpinner, prices.noSpinner)
+    );
     const fetchStarted = !_.isNil(prices.fetchStatus) && !_.isNil(dashboard.fetchStatus);
 
     const errorMessage = this.renderErrorMessage();

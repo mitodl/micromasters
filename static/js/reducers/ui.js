@@ -53,9 +53,7 @@ import {
 import { EMAIL_COMPOSITION_DIALOG } from '../components/email/constants';
 import type { ToastMessage } from '../flow/generalTypes';
 import type { Action } from '../flow/reduxTypes';
-import type {
-  AvailableProgram
-} from '../flow/enrollmentTypes';
+import type { AvailableProgram } from '../flow/enrollmentTypes';
 import type { CourseRun } from '../flow/programTypes';
 
 export type UIDialog = {
