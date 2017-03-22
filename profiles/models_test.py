@@ -203,17 +203,19 @@ class ProfileImageTests(MockedESTestCase):
         self.profile.image_small = None
         self.profile.image_medium = None
         self.profile.save()
+        assert not self.profile.image_small
+        assert not self.profile.image_medium
 
         self.profile.save(update_image=True)
-        assert self.profile.image_small is not None
-        assert self.profile.image_medium is not None
+        assert self.profile.image_small
+        assert self.profile.image_medium
 
     def test_resized_images_updated(self):
         """
         thumbnails should be updated if image is already present and updated when update_image=True
         """
-        assert self.profile.image_small is not None
-        assert self.profile.image_medium is not None
+        assert self.profile.image_small
+        assert self.profile.image_medium
 
         # create a dummy image file in memory for upload
         image_file = BytesIO()

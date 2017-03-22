@@ -37,7 +37,7 @@ class Command(BaseCommand):
                 robohash.img.save(f, format='jpeg')
                 f.seek(0)
                 profile.image.save(name, f)
-            profile.save(update_thumbnails=True)
+            profile.save(update_image=True)
 
             if count % 10 == 0:
                 self.stdout.write("Updated {} profiles...".format(count))
