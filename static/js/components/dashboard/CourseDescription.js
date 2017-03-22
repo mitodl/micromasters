@@ -29,17 +29,16 @@ export default class CourseDescription extends React.Component {
     openCourseContactDialog: () => void,
   };
 
-  renderCourseDateMessage(label: string, dateString: string): React$Element<*> {
+  renderCourseDateMessage(label: string, dateString: string): string {
     let date = moment(dateString);
-    let text = ifValidDate('', date => `${label}: ${date.format(DASHBOARD_FORMAT)}`, date);
-    return <span key='1'>{text}</span>;
+    return ifValidDate('', date => `${label}: ${date.format(DASHBOARD_FORMAT)}`, date);
   }
 
-  renderStartDateMessage(run: CourseRun, shouldStartInFuture: boolean): React$Element<*>|null {
+  renderStartDateMessage(run: CourseRun, shouldStartInFuture: boolean): string|null {
     if (run.course_start_date) {
       return this.renderCourseDateMessage('Start date', run.course_start_date);
     } else if (run.fuzzy_start_date && shouldStartInFuture) {
-      return <span key='1'>Coming {run.fuzzy_start_date}</span>;
+      return `Coming ${run.fuzzy_start_date}`;
     } else {
       return null;
     }
@@ -47,29 +46,45 @@ export default class CourseDescription extends React.Component {
 
   renderDetailContents(run: CourseRun) {
     let dateMessage, additionalDetail;
+    let additionalClass = '';
 
-    switch (run.status) {
-    case STATUS_PASSED:
-    case STATUS_NOT_PASSED:
-      dateMessage = this.renderCourseDateMessage('Ended', run.course_end_date);
-      break;
-    case STATUS_CAN_UPGRADE:
-    case STATUS_MISSED_DEADLINE:
-    case STATUS_CURRENTLY_ENROLLED:
-      dateMessage = this.renderStartDateMessage(run, false);
-      break;
-    case STATUS_WILL_ATTEND:
-    case STATUS_OFFERED:
-    case STATUS_PENDING_ENROLLMENT:
-      dateMessage = this.renderStartDateMessage(run, true);
-      break;
+    if (run && !_.isEmpty(run)) {
+      switch (run.status) {
+      case STATUS_PASSED:
+      case STATUS_NOT_PASSED:
+        dateMessage = this.renderCourseDateMessage('Ended', run.course_end_date);
+        break;
+      case STATUS_CAN_UPGRADE:
+      case STATUS_MISSED_DEADLINE:
+      case STATUS_CURRENTLY_ENROLLED:
+        dateMessage = this.renderStartDateMessage(run, false);
+        break;
+      case STATUS_WILL_ATTEND:
+      case STATUS_OFFERED:
+      case STATUS_PENDING_ENROLLMENT:
+        dateMessage = this.renderStartDateMessage(run, true);
+        break;
+      }
+
+      if (run.status === STATUS_CAN_UPGRADE || run.status === STATUS_MISSED_DEADLINE) {
+        additionalDetail = 'Auditing';
+      }
+      if (
+        run.status === STATUS_CURRENTLY_ENROLLED ||
+        run.status === STATUS_PASSED ||
+        run.status === STATUS_NOT_PASSED
+      ) {
+        additionalDetail = 'Paid';
+      }
+    } else {
+      dateMessage = 'No future courses are currently scheduled.';
+      additionalClass = 'no-runs';
     }
 
-    if (run.status === STATUS_CAN_UPGRADE || run.status === STATUS_MISSED_DEADLINE) {
-      additionalDetail = <span key='2'>You are Auditing this Course.</span>;
-    }
-
-    return _.compact([dateMessage, additionalDetail]);
+    return _.compact([
+      <span className={`course-details ${additionalClass}`} key='1'>{dateMessage}</span>,
+      <span className="status" key='2'>{additionalDetail}</span>
+    ]);
   }
 
   isCurrentOrPastEnrolled = (courseRun: CourseRun): boolean => {
@@ -130,19 +145,12 @@ export default class CourseDescription extends React.Component {
   render() {
     const { courseRun, courseTitle } = this.props;
 
-    let detailContents;
-    if (courseRun && !_.isEmpty(courseRun)) {
-      detailContents = this.renderDetailContents(courseRun);
-    } else {
-      detailContents = <span className="no-runs">No future courses are currently scheduled.</span>;
-    }
-
     return <div className="course-description">
       <div className="course-title">
         <span>{courseTitle}</span>
       </div>
       <div className="details">
-        {detailContents}
+        { this.renderDetailContents(courseRun) }
       </div>
       { this.renderCourseLinks() }
     </div>;

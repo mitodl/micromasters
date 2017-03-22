@@ -27,7 +27,8 @@ describe('CourseDescription', () => {
     titleText: renderedComponent.find(".course-title").text(),
     edxLink: renderedComponent.find("a.view-edx-link"),
     contactLink: renderedComponent.find("a.contact-link"),
-    detailsText: renderedComponent.find(".details").text()
+    detailsText: renderedComponent.find(".course-details").text(),
+    statusText: renderedComponent.find(".status").text()
   });
 
   let renderCourseDescription = (
@@ -286,7 +287,6 @@ describe('CourseDescription', () => {
     let elements = getElements(wrapper);
     let courseStartDate = moment(firstRun.course_start_date);
     let formattedDate = courseStartDate.format(DASHBOARD_FORMAT);
-
     assert.equal(elements.detailsText, `Start date: ${formattedDate}`);
   });
 
@@ -311,7 +311,6 @@ describe('CourseDescription', () => {
     let elements = getElements(wrapper);
     let courseStartDate = moment(firstRun.course_start_date);
     let formattedDate = courseStartDate.format(DASHBOARD_FORMAT);
-
     assert.include(elements.detailsText, `Start date: ${formattedDate}`);
   });
 
@@ -390,7 +389,21 @@ describe('CourseDescription', () => {
       const wrapper = renderCourseDescription(firstRun, course.title);
       let elements = getElements(wrapper);
 
-      assert.include(elements.detailsText, 'You are Auditing this Course');
+      assert.include(elements.statusText, 'Auditing');
+    });
+  });
+
+  it('shows a status when the user paid for the course', () => {
+    [STATUS_CURRENTLY_ENROLLED, STATUS_PASSED, STATUS_NOT_PASSED].forEach(auditStatus => {
+      let course = findCourse(course => (
+        course.runs.length > 0 &&
+        course.runs[0].status === auditStatus
+      ));
+      let firstRun = course.runs[0];
+      const wrapper = renderCourseDescription(firstRun, course.title);
+      let elements = getElements(wrapper);
+
+      assert.include(elements.statusText, 'Paid');
     });
   });
 });
