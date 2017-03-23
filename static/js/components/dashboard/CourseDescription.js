@@ -81,10 +81,10 @@ export default class CourseDescription extends React.Component {
       additionalClass = 'no-runs';
     }
 
-    return _.compact([
+    return [
       <span className={`course-details ${additionalClass}`} key='1'>{dateMessage}</span>,
       <span className="status" key='2'>{additionalDetail}</span>
-    ]);
+    ];
   }
 
   isCurrentOrPastEnrolled = (courseRun: CourseRun): boolean => {
