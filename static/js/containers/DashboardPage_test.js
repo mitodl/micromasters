@@ -113,7 +113,7 @@ describe('DashboardPage', () => {
       assert.notOk(div.querySelector(".loader"), "Found spinner but no fetch in progress");
       helper.store.dispatch({
         type: REQUEST_DASHBOARD,
-        payload: { noSpinner: false },
+        payload: false,
         meta: SETTINGS.user.username
       });
 
