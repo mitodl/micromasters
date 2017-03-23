@@ -242,6 +242,36 @@ class MMTrack:
         final_grade = self.get_final_grade(edx_course_key)
         return final_grade.grade_percent if final_grade else None
 
+    def get_all_final_grades(self):
+        """
+        Returns a list of final grades for only the passed courses.
+
+        Returns:
+            dict: dictionary of course_ids: FinalGrade objects
+        """
+        grades = (
+            self.final_grade_qset
+            .for_course_run_keys(self.edx_course_keys)
+            .select_related('course_run')
+        )
+        return {grade.course_run.edx_course_key: grade for grade in grades}
+
+    def get_all_enrolled_course_runs(self):
+        """
+        Returns a list of CourseRuns for which the user is either enrolled
+        or has a final grade
+
+        Returns:
+            list: list of CourseRuns
+        """
+        enrolled_course_ids = []
+        final_grades = self.get_all_final_grades()
+        for course_id in self.edx_course_keys:
+            if course_id in final_grades or self.enrollments.is_enrolled_in(course_id):
+                enrolled_course_ids.append(course_id)
+
+        return list(CourseRun.objects.filter(edx_course_key__in=enrolled_course_ids))
+
     def calculate_final_grade_average(self):
         """
         Calculates an average grade (integer) from the program final grades

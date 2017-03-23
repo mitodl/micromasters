@@ -124,9 +124,9 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
             )
         non_fa_cached_edx_data = CachedEdxUserData(cls.user, program=program)
         non_fa_mmtrack = MMTrack(cls.user, program, non_fa_cached_edx_data)
-        cls.serialized_enrollments = UserProgramSearchSerializer.serialize_enrollments(non_fa_mmtrack, cls.enrollments)
-        cls.semester_enrollments = UserProgramSearchSerializer.serialize_semester_enrollments(cls.enrollments)
-        cls.final_grades = UserProgramSearchSerializer.serialize_final_grades(non_fa_mmtrack, cls.enrollments)
+        cls.serialized_enrollments = UserProgramSearchSerializer.serialize_enrollments(non_fa_mmtrack)
+        cls.semester_enrollments = UserProgramSearchSerializer.serialize_semester_enrollments(non_fa_mmtrack)
+        cls.final_grades = UserProgramSearchSerializer.serialize_final_grades(non_fa_mmtrack)
         cls.program_enrollment = ProgramEnrollment.objects.create(user=cls.user, program=program)
         # create a financial aid program
         cls.fa_program, _ = create_program()
@@ -156,10 +156,10 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         fa_cached_edx_data = CachedEdxUserData(cls.user, program=cls.fa_program)
         fa_mmtrack = MMTrack(cls.user, cls.fa_program, fa_cached_edx_data)
         cls.fa_serialized_enrollments = (
-            UserProgramSearchSerializer.serialize_enrollments(fa_mmtrack, cls.fa_enrollments)
+            UserProgramSearchSerializer.serialize_enrollments(fa_mmtrack)
         )
-        cls.fa_semester_enrollments = UserProgramSearchSerializer.serialize_semester_enrollments(cls.fa_enrollments)
-        cls.fa_final_grades = UserProgramSearchSerializer.serialize_final_grades(fa_mmtrack, cls.fa_enrollments)
+        cls.fa_semester_enrollments = UserProgramSearchSerializer.serialize_semester_enrollments(fa_mmtrack)
+        cls.fa_final_grades = UserProgramSearchSerializer.serialize_final_grades(fa_mmtrack)
 
     def test_full_program_user_serialization(self):
         """
