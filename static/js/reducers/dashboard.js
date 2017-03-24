@@ -33,15 +33,18 @@ export const dashboard = (state: DashboardsState = INITIAL_DASHBOARDS_STATE, act
   const { meta: username } = action;
   switch (action.type) {
   case REQUEST_DASHBOARD: // eslint-disable-line no-case-declarations
-    let newBaseState = R.dissoc(username, state);
-    return updateStateByUsername(
-      newBaseState,
-      username,
-      _.merge({}, INITIAL_DASHBOARD_STATE, {
-        noSpinner: action.payload,
-        fetchStatus: FETCH_PROCESSING
-      })
-    );
+    if (action.payload === true) {
+      return updateStateByUsername(state, username,
+        _.merge({}, state[username] || {}, { fetchStatus: FETCH_PROCESSING, noSpinner: true })
+      );
+    } else {
+      let newBaseState = R.dissoc(username, state);
+      return updateStateByUsername(
+        newBaseState,
+        username,
+        _.merge({}, INITIAL_DASHBOARD_STATE, { fetchStatus: FETCH_PROCESSING })
+      );
+    }
   case RECEIVE_DASHBOARD_SUCCESS:
     return updateStateByUsername(state, username, {
       fetchStatus: FETCH_SUCCESS,
