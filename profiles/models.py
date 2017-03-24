@@ -11,6 +11,7 @@ from django.db import models, transaction
 from profiles.util import (
     IMAGE_SMALL_MAX_DIMENSION,
     IMAGE_MEDIUM_MAX_DIMENSION,
+    full_name,
     make_thumbnail,
     profile_image_upload_uri,
     profile_image_upload_uri_small,
@@ -208,6 +209,11 @@ class Profile(models.Model):
     def email(self):
         """email of user"""
         return self.user.email
+
+    @property
+    def full_name(self):
+        """returns full name of the user"""
+        return full_name(self.user)
 
     # Split the `address` field into three fields, max 40 characters each.
     # These fields are used in the Pearson export.

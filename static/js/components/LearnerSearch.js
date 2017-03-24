@@ -179,6 +179,7 @@ export default class LearnerSearch extends SearchkitComponent {
               'profile.last_name.folded',
               'profile.preferred_name.folded',
               'profile.username.folded',
+              'profile.full_name.folded',
               'email.folded'
             ]}
             queryOptions={{

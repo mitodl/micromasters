@@ -263,6 +263,7 @@ def program_enrolled_user_mapping():
         'email_optin': BOOL_TYPE,
         'filled_out': BOOL_TYPE,
         'first_name': FOLDED_SEARCHABLE_STRING_TYPE,
+        'full_name': FOLDED_SEARCHABLE_STRING_TYPE,
         'gender': NOT_ANALYZED_STRING_TYPE,
         'last_name': FOLDED_SEARCHABLE_STRING_TYPE,
         'preferred_language': NOT_ANALYZED_STRING_TYPE,

@@ -182,6 +182,21 @@ class ProfileDisplayNameTests(MockedESTestCase):
             profile = ProfileFactory(user__username='uname', first_name=None, last_name=None, preferred_name=None)
         assert profile.display_name == 'uname'
 
+    @data(
+        ('First', 'Last', 'uname', 'First Last'),
+        (None, 'Last', 'uname', 'uname Last'),
+        ('First', None, 'uname', 'First')
+    )
+    @unpack
+    def test_full_name(self, first_name, last_name, username, expected_full_name):
+        with mute_signals(post_save):
+            profile = ProfileFactory(
+                first_name=first_name,
+                last_name=last_name,
+                user__username=username
+            )
+        assert profile.full_name == expected_full_name
+
 
 class ProfileImageTests(MockedESTestCase):
     """Tests for the profile image and thumbnails"""

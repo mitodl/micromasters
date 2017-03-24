@@ -214,6 +214,7 @@ class SearchTests(ESTestCase, APITestCase):
                         "profile.last_name.folded",
                         "profile.preferred_name.folded",
                         "profile.username.folded",
+                        "profile.full_name.folded",
                         "email.folded"
                     ],
                     "query": "l",

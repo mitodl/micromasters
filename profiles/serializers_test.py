@@ -63,6 +63,7 @@ class ProfileTests(MockedESTestCase):
         assert data == {
             'username': get_social_username(profile.user),
             'first_name': profile.first_name,
+            'full_name': profile.full_name,
             'filled_out': profile.filled_out,
             'agreed_to_terms_of_service': profile.agreed_to_terms_of_service,
             'last_name': profile.last_name,
@@ -106,6 +107,7 @@ class ProfileTests(MockedESTestCase):
             'username': get_social_username(profile.user),
             'first_name': profile.first_name,
             'last_name': profile.last_name,
+            'full_name': profile.full_name,
             'preferred_name': profile.preferred_name,
             'gender': profile.gender,
             'account_privacy': profile.account_privacy,

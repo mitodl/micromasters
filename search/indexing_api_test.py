@@ -350,7 +350,7 @@ class IndexTests(ESTestCase):
 
         mapping = es.get_mappings()
         properties = mapping['program_user']['properties']['profile']['properties']
-        for key in 'first_name', 'last_name', 'preferred_name':
+        for key in 'first_name', 'last_name', 'preferred_name', 'full_name':
             assert properties[key]['fields']['folded']['analyzer'] == 'folding'
 
     @data(Staff.ROLE_ID, Instructor.ROLE_ID)
