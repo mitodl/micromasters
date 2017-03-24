@@ -178,7 +178,7 @@ describe('dashboard reducers', () => {
           "username": {
             noSpinner: true,
             isEdxDataFresh: true,
-            programs: [],
+            programs: DASHBOARD_RESPONSE.programs,
             fetchStatus: FETCH_PROCESSING
           }
         });

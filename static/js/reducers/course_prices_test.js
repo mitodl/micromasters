@@ -98,7 +98,6 @@ describe('prices reducer', () => {
     ).then((state) => {
       assert.deepEqual(state, {
         'username': {
-          coursePrices: [],
           noSpinner: true,
           fetchStatus: FETCH_PROCESSING
         }
