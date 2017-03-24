@@ -185,10 +185,11 @@ class ProfileDisplayNameTests(MockedESTestCase):
     @data(
         ('First', 'Last', 'uname', 'First Last'),
         (None, 'Last', 'uname', 'uname Last'),
-        ('First', None, 'uname', 'First')
+        ('First', None, 'uname', 'First ')
     )
     @unpack
     def test_full_name(self, first_name, last_name, username, expected_full_name):
+        """Test the profile full name"""
         with mute_signals(post_save):
             profile = ProfileFactory(
                 first_name=first_name,

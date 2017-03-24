@@ -50,6 +50,7 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
             "email_optin": true,
             "first_name": "Test",
             "last_name": "User",
+            "full_name": "Test User",
             "preferred_name": "Test",
             "country": "AF",
             "state_or_territory": "AF-BDS",
