@@ -55,7 +55,9 @@ export const SEARCH_RESULT_EMAIL_CONFIG: EmailConfig = {
     emailState.inputs.body || '',
     emailState.searchkit.buildQuery().query,
     emailState.inputs.sendAutomaticEmails || false,
-  ])
+  ]),
+
+  showExtraUI: true
 };
 
 export const LEARNER_EMAIL_CONFIG: EmailConfig = {

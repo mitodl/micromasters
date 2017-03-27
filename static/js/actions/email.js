@@ -11,6 +11,9 @@ export const startEmailEdit = createAction(START_EMAIL_EDIT);
 export const UPDATE_EMAIL_EDIT = 'UPDATE_EMAIL_EDIT';
 export const updateEmailEdit = createAction(UPDATE_EMAIL_EDIT);
 
+export const AUTOMATIC_EMAIL_TYPE = "AUTOMATIC_EMAIL_TYPE";
+export const setAutomaticEmailType = createAction(AUTOMATIC_EMAIL_TYPE);
+
 export const CLEAR_EMAIL_EDIT = 'CLEAR_EMAIL_EDIT';
 export const clearEmailEdit = createAction(CLEAR_EMAIL_EDIT);
 

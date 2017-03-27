@@ -9,6 +9,7 @@ import {
   clearEmailEdit,
   updateEmailValidation,
   sendEmail,
+  setAutomaticEmailType,
   START_EMAIL_EDIT,
   UPDATE_EMAIL_EDIT,
   CLEAR_EMAIL_EDIT,
@@ -16,9 +17,14 @@ import {
   INITIATE_SEND_EMAIL,
   SEND_EMAIL_SUCCESS,
   SEND_EMAIL_FAILURE,
+  AUTOMATIC_EMAIL_TYPE,
 } from '../actions/email';
 import { INITIAL_ALL_EMAILS_STATE, INITIAL_EMAIL_STATE } from './email';
-import { SEARCH_EMAIL_TYPE } from '../components/email/constants';
+import {
+  SEARCH_EMAIL_TYPE,
+  EMAIL_CAMPAIGN,
+  ONE_TIME_EMAIL
+} from '../components/email/constants';
 import type { EmailSendResponse } from '../flow/emailTypes';
 import rootReducer from '../reducers';
 import { assert } from 'chai';
@@ -88,6 +94,18 @@ describe('email reducers', () => {
       assert.deepEqual(state[emailType].validationErrors, errors);
     });
   });
+
+  for (let type of [EMAIL_CAMPAIGN, ONE_TIME_EMAIL]) {
+    it(`should let you set the email composition type: ${type}`, () => {
+      store.dispatch(startEmailEdit(emailType));
+      return dispatchThen(
+        setAutomaticEmailType({type: emailType, automaticEmailType: type}),
+        [AUTOMATIC_EMAIL_TYPE]
+      ).then((state) => {
+        assert.equal(state[emailType].automaticEmailType, type);
+      });
+    });
+  }
 });
 
 describe('email reducers for the sendMail action', () => {

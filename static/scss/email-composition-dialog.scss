@@ -1,67 +1,133 @@
-.email-composition-dialog {
-  .email-composition-contents {
-    display: flex;
-    flex-direction: column;
+.email-composition-dialog-wrapper {
+  overflow: auto;
 
-    .subheading-section {
-      padding-bottom: 20px;
+  .email-composition-dialog {
+    padding-top: 0 !important;
 
-      .subheading-to {
-        padding: 0 10px;
-
+    > div {
+      &:first-child {
+        > div {
+          height: auto !important;
+          max-height: inherit !important;
+        }
       }
+    }
 
-      .subheading {
-        letter-spacing: normal;
-        margin: 0;
-        padding: 0;
-        font-size: 16px;
-        font-weight: normal;
+    .email-composition-contents {
+      display: flex;
+      flex-direction: column;
+      max-height: inherit;
 
-        &.default {
-          font-style: italic;
+      .subheading-section {
+        padding-bottom: 20px;
+
+        .subheading-to {
+          padding: 0 10px;
         }
 
-        &.rounded {
-          background-color: $bg-med-gray;
-          line-height: 22px;
-          padding: 10px 10px 10px 20px;
-          border-radius: 20px;
-          font-style: normal;
-        }
+        .subheading {
+          letter-spacing: normal;
+          margin: 0;
+          padding: 0;
+          font-size: 16px;
+          font-weight: normal;
 
-        &.profile-image-bubble {
-          background-color: $bg-med-gray;
-          border-radius: 50px;
-          padding: 0 30px 0 0;
-          height: 43px;
-          display: inline-block;
+          &.default {
+            font-style: italic;
+          }
 
-          >span {
+          &.rounded {
+            background-color: $bg-med-gray;
+            line-height: 22px;
+            padding: 10px 10px 10px 20px;
+            border-radius: 20px;
+            font-style: normal;
+          }
+
+          &.profile-image-bubble {
+            background-color: $bg-med-gray;
+            border-radius: 50px;
+            padding: 0 30px 0 0;
+            height: 43px;
             display: inline-block;
-            padding-left: 15px;
+
+            > span {
+              display: inline-block;
+              padding-left: 15px;
+            }
           }
         }
       }
-    }
 
-    .validation-error {
-      font-size: 12px;
-      color: $validation-red;
-    }
+      .validation-error {
+        font-size: 12px;
+        color: $validation-red;
+      }
 
-    textarea {
-      padding: 15px;
-      border-color: $border-color;
-      border-radius: 2px;
+      textarea {
+        padding: 15px;
+        border-color: $border-color;
+        border-radius: 2px;
+        overflow: hidden;
 
-      &.email-subject {
-        margin-bottom: 5px;
+        &.email-subject {
+          padding: 8px 15px;
+          margin-bottom: 5px;
+          height: 60px;
+        }
+      }
+
+      .email-automatic {
+        padding: 20px 0 0;
       }
     }
+  }
+}
 
-    .email-automatic {
-      padding: 20px 0;
+.email-type {
+  width: 100%;
+  margin: 0 0 10px;
+  background-color: $email-composition-type;
+  padding: 15px;
+  border-radius: 8px;
+
+  .type-radio-group {
+    display: flex;
+    flex-direction: row;
+
+    label {
+      color: $darkergray;
+      font-size: 15px;
     }
+  }
+
+  .one-time-email {
+    display: flex !important;
+    flex-direction: row;
+    flex-grow: 1;
+    width: 55% !important;
+
+    > div {
+      > div {
+        margin-right: 6px !important;
+      }
+    }
+  }
+
+  .email-campaign {
+    display: flex !important;
+    flex-direction: row;
+    flex-grow: 5;
+
+    > div {
+      > div {
+        margin-right: 6px !important;
+      }
+    }
+  }
+
+  .email-campaign-content {
+    margin: 10px 5px 0;
+    font-size: 14px;
   }
 }
