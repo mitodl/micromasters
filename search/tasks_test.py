@@ -41,7 +41,6 @@ class SearchTasksTests(MockedESTestCase):
         self.index_users_mock.assert_called_with([enrollment1.user])
         for enrollment in [enrollment1, enrollment2]:
             self.send_automatic_emails_mock.assert_any_call(enrollment)
-        assert self.refresh_index_mock.call_count == 1
         self.refresh_index_mock.assert_called_with(get_default_alias())
 
     def test_index_program_enrolled_users(self):
@@ -53,5 +52,4 @@ class SearchTasksTests(MockedESTestCase):
         self.index_program_enrolled_users_mock.assert_called_with(enrollments)
         for enrollment in enrollments:
             self.send_automatic_emails_mock.assert_any_call(enrollment)
-        assert self.refresh_index_mock.call_count == 1
         self.refresh_index_mock.assert_called_with(get_default_alias())
