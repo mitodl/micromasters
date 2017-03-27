@@ -38,9 +38,8 @@ class OrderSummary extends React.Component {
     let text;
     let price = (finalPrice !== undefined && finalPrice !== null) ? finalPrice : coursePrice.price;
     if (price > 0) {
-      text = "Clicking below with link outside of the MIT MicroMasters app" +
-        " to an external website, where you will be able to complete the transaction by" +
-        " paying with a credit card.";
+      text = "Clicking Continue will link to a website outside of the MicroMasters app, where " +
+        "you will be able to complete the transaction, by paying with a credit card.";
     }else{
       text = "Because there is no cost to enroll in this course, when you click the button below" +
         " you will skip the normal payment process and be enrolled in the course immediately.";
