@@ -8,12 +8,14 @@ from dashboard.models import ProgramEnrollment
 from mail.api import send_automatic_emails as _send_automatic_emails
 from micromasters.celery import async
 from search.indexing_api import (
+    get_default_alias,
     index_program_enrolled_users as _index_program_enrolled_users,
     remove_program_enrolled_user as _remove_program_enrolled_user,
     index_users as _index_users,
     remove_user as _remove_user,
     index_percolate_queries as _index_percolate_queries,
     delete_percolate_query as _delete_percolate_query,
+    refresh_index,
 )
 from search.models import PercolateQuery
 
@@ -40,6 +42,7 @@ def index_program_enrolled_users(program_enrollments):
     _index_program_enrolled_users(program_enrollments)
 
     # Send email for profiles that newly fit the search query for an automatic email
+    refresh_index(get_default_alias())
     for program_enrollment in program_enrollments:
         _send_automatic_emails(program_enrollment)
 
@@ -55,6 +58,7 @@ def index_users(users):
     _index_users(users)
 
     # Send email for profiles that newly fit the search query for an automatic email
+    refresh_index(get_default_alias())
     for program_enrollment in ProgramEnrollment.objects.filter(user__in=users):
         _send_automatic_emails(program_enrollment)
 
