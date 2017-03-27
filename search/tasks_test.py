@@ -2,6 +2,7 @@
 from dashboard.factories import ProgramEnrollmentFactory
 from django.test import override_settings
 from search.base import MockedESTestCase
+from search.indexing_api import get_default_alias
 from search.tasks import (
     index_users,
     index_program_enrolled_users,
@@ -40,7 +41,7 @@ class SearchTasksTests(MockedESTestCase):
         for enrollment in [enrollment1, enrollment2]:
             self.send_automatic_emails_mock.assert_any_call(enrollment)
         assert refresh_index_mock.call_count == 1
-        refresh_index_mock.assert_called_with(FAKE_INDEX)
+        refresh_index_mock.assert_called_with(get_default_alias())
 
     def test_index_program_enrolled_users(self):
         """
@@ -53,4 +54,4 @@ class SearchTasksTests(MockedESTestCase):
         for enrollment in enrollments:
             self.send_automatic_emails_mock.assert_any_call(enrollment)
         assert refresh_index_mock.call_count == 1
-        refresh_index_mock.assert_called_with(FAKE_INDEX)
+        refresh_index_mock.assert_called_with(get_default_alias())
