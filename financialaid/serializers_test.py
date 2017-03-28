@@ -95,20 +95,6 @@ class FinancialAidDashboardSerializerTests(MockedESTestCase):
             "date_documents_sent": now.date(),
         }
 
-    def test_course_price_mandatory(self):
-        """
-        Test that an attempt to serialize financial aid information will raise an exception if no course prices
-        are available.
-        """
-        new_program = ProgramFactory.create(live=True, financial_aid_availability=True)
-        TierProgramFactory.create(
-            program=new_program,
-            discount_amount=750,
-            current=True
-        )
-        with self.assertRaises(ImproperlyConfigured):
-            FinancialAidDashboardSerializer.serialize(self.user, new_program)
-
     def test_course_tier_mandatory(self):
         """
         Test that an attempt to serialize financial aid information will raise an exception if no tiers are created.
