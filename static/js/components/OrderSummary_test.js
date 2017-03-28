@@ -116,7 +116,7 @@ describe('OrderSummary', () => {
 
     assert.isUndefined(elements.button.props().disabled);
     assert.include(elements.buttonText, 'Continue');
-    assert.include(elements.explanationText, 'outside of the MIT');
+    assert.include(elements.explanationText, 'take you to an external website');
     assertCheckoutButton(elements.button, firstRun.course_id);
   });
 
