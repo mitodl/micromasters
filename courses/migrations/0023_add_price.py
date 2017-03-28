@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import django.utils.timezone
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def copy_prices(apps, schema_editor):
@@ -20,7 +20,12 @@ def copy_prices(apps, schema_editor):
     for run in CourseRun.objects.all():
         program = run.course.program
         # There must be one and only one price per course run
-        price = run.courseprice_set.get(is_valid=True).price
+        try:
+            price = run.courseprice_set.get(is_valid=True).price
+        except ObjectDoesNotExist as ex:
+            raise Exception("Migration failed due to a price missing for run {}".format(
+                run.edx_course_key
+            )) from ex
         if program.id not in program_prices:
             program_prices[program.id] = price
         elif program_prices[program.id] != price:
