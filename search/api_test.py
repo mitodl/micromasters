@@ -28,7 +28,10 @@ from search.connection import (
     DOC_TYPES,
     get_default_alias,
 )
-from search.exceptions import NoProgramAccessException
+from search.exceptions import (
+    NoProgramAccessException,
+    PercolateException,
+)
 from search.models import PercolateQuery
 
 
@@ -296,3 +299,42 @@ class PercolateTests(ESTestCase):
                 }
             }
         }
+
+    def test_percolate_failure(self):
+        """
+        If search_percolate fails we should raise an Exception with some useful information for Sentry
+        """
+        failures = [
+            {
+                "shard": 0,
+                "index": "index",
+                "status": "BAD_REQUEST",
+                "reason": {
+                    "type": "parse_exception",
+                    "reason": "failed to parse request",
+                    "caused_by": {
+                        "type": "mapper_parsing_exception",
+                        "reason": "Cannot generate dynamic mappings of type [_id] for [_id]"
+                    }
+                 }
+             }
+        ]
+        failure_payload = {
+            "took": 1,
+            "_shards": {
+                "total": 5,
+                "successful": 0,
+                "failed": 5,
+                "failures": failures
+            },
+            "total": 0,
+            "matches": []
+        }
+        with mute_signals(post_save):
+            profile = ProfileFactory.create(filled_out=True)
+        program_enrollment = ProgramEnrollmentFactory.create(user=profile.user)
+        with self.assertRaises(PercolateException) as ex, patch(
+            'search.api.get_conn', return_value=Mock(percolate=Mock(return_value=failure_payload))
+        ):
+            search_percolate_queries(program_enrollment.id)
+        assert ex.exception.args[0] == "Failed to percolate: {}".format(failures)

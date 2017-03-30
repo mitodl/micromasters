@@ -4,6 +4,7 @@ Functions for executing ES searches
 from django.conf import settings
 from elasticsearch_dsl import Search, Q
 
+from dashboard.models import ProgramEnrollment
 from roles.api import get_advance_searchable_programs
 from search.connection import (
     get_default_alias,
@@ -12,7 +13,11 @@ from search.connection import (
     USER_DOC_TYPE,
 )
 from search.models import PercolateQuery
-from search.exceptions import NoProgramAccessException
+from search.exceptions import (
+    NoProgramAccessException,
+    PercolateException,
+)
+from search.indexing_api import serialize_program_enrolled_user
 
 DEFAULT_ES_LOOP_PAGE_SIZE = 100
 
@@ -162,7 +167,15 @@ def search_percolate_queries(program_enrollment_id):
         django.db.models.query.QuerySet: A QuerySet of PercolateQuery matching the percolate results
     """
     conn = get_conn()
-    result = conn.percolate(get_default_alias(), USER_DOC_TYPE, id=program_enrollment_id)
+    enrollment = ProgramEnrollment.objects.get(id=program_enrollment_id)
+    doc = serialize_program_enrolled_user(enrollment)
+    # We don't need this to search for percolator queries and
+    # it causes a dynamic mapping failure so we need to remove it
+    del doc['_id']
+    result = conn.percolate(get_default_alias(), USER_DOC_TYPE, body={"doc": doc})
+    failures = result.get('_shards', {}).get('failures', [])
+    if len(failures) > 0:
+        raise PercolateException("Failed to percolate: {}".format(failures))
     result_ids = [row['_id'] for row in result['matches']]
     return PercolateQuery.objects.filter(id__in=result_ids)
 

@@ -14,3 +14,9 @@ class NoProgramAccessException(Exception):
     Exception raised when a user executing a search doesn't have permissions
      for any Programs.
     """
+
+
+class PercolateException(Exception):
+    """
+    Exception for percolate failures
+    """
