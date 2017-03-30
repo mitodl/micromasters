@@ -316,8 +316,8 @@ class PercolateTests(ESTestCase):
                         "type": "mapper_parsing_exception",
                         "reason": "Cannot generate dynamic mappings of type [_id] for [_id]"
                     }
-                 }
-             }
+                }
+            }
         ]
         failure_payload = {
             "took": 1,
