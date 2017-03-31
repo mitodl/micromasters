@@ -12,6 +12,7 @@ from grades import api
 from grades.models import CourseRunGradingStatus
 from micromasters.celery import async
 from micromasters.utils import chunks
+from search.tasks import lookup_id
 
 
 CACHE_ID_BASE_STR = "freeze_grade_{0}"
@@ -34,20 +35,22 @@ def find_course_runs_and_freeze_grades():
     """
     runs_to_freeze = CourseRun.get_freezable()
     for run in runs_to_freeze:
-        freeze_course_run_final_grades.delay(run)
+        freeze_course_run_final_grades.delay(run.id)
 
 
 @async.task
-def freeze_course_run_final_grades(course_run):
+def freeze_course_run_final_grades(course_run_id):
     """
     Async task manager to freeze all the users' final grade in a course run
 
     Args:
-        course_run (CourseRun): a course run model object
+        course_run_id (int): a course run model object
 
     Returns:
         None
     """
+    course_run_id = lookup_id(course_run_id)
+    course_run = CourseRun.objects.get(id=course_run_id)
     # no need to do anything if the course run is not ready
     if not course_run.can_freeze_grades:
         log.info('the grades course "%s" cannot be frozen yet', course_run.edx_course_key)
@@ -93,7 +96,7 @@ def freeze_course_run_final_grades(course_run):
 
     # create a group of subtasks to be run in parallel
     job = group(
-        freeze_users_final_grade_async.s(list_users, course_run) for list_users in chunks(users_qset)
+        freeze_users_final_grade_async.s(list_users, course_run.id) for list_users in chunks(users_qset)
     )
     results = job.apply_async()
     # save the result ID in the celery backend
@@ -103,18 +106,20 @@ def freeze_course_run_final_grades(course_run):
 
 
 @async.task
-def freeze_users_final_grade_async(users, course_run):
+def freeze_users_final_grade_async(users, course_run_id):
     """
     Async task to freeze the final grade in a course run for a list of users.
 
     Args:
         users (list): a list of django users
-        course_run (CourseRun): a course run model object
+        course_run_id (int): a course run id
 
     Returns:
         None
     """
     # pylint: disable=bare-except
+    course_run_id = lookup_id(course_run_id)
+    course_run = CourseRun.objects.get(id=course_run_id)
     for user in users:
         try:
             api.freeze_user_final_grade(user, course_run)
