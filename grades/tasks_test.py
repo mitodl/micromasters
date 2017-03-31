@@ -56,7 +56,7 @@ class GradeTasksTests(MockedESTestCase):
 
         assert mock_freeze.delay.call_count == len(self.all_freezable_runs)
         for run in self.all_freezable_runs:
-            mock_freeze.delay.assert_any_call(run)
+            mock_freeze.delay.assert_any_call(run.id)
 
     @patch('grades.api.freeze_user_final_grade', autospec=True)
     def test_freeze_users_final_grade_async(self, mock_freeze_func):
