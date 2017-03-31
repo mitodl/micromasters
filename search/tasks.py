@@ -12,7 +12,6 @@ from search.indexing_api import (
     index_program_enrolled_users as _index_program_enrolled_users,
     remove_program_enrolled_user as _remove_program_enrolled_user,
     index_users as _index_users,
-    remove_user as _remove_user,
     index_percolate_queries as _index_percolate_queries,
     delete_percolate_query as _delete_percolate_query,
     refresh_index as _refresh_index,
@@ -61,17 +60,6 @@ def index_users(users):
     _refresh_index(get_default_alias())
     for program_enrollment in ProgramEnrollment.objects.filter(user__in=users):
         _send_automatic_emails(program_enrollment)
-
-
-@async.task
-def remove_user(user):
-    """
-    Remove user from index
-
-    Args:
-        user (User): A user to remove from index
-    """
-    _remove_user(user)
 
 
 @async.task

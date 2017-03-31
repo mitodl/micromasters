@@ -16,7 +16,6 @@ from profiles.models import (
 from search.models import PercolateQuery
 from search.tasks import (
     index_users,
-    remove_user,
     index_percolate_queries,
     delete_percolate_query,
 )
@@ -47,12 +46,6 @@ def handle_update_education(sender, instance, **kwargs):
 def handle_update_employment(sender, instance, **kwargs):
     """Update index when Employment model is updated."""
     index_users.delay([instance.profile.user])
-
-
-@receiver(post_delete, sender=Profile, dispatch_uid="profile_post_delete_index")
-def handle_delete_profile(sender, instance, **kwargs):
-    """Update index when Profile model instance is deleted."""
-    remove_user.delay(instance.user)
 
 
 @receiver(post_delete, sender=Education, dispatch_uid="education_post_delete_index")

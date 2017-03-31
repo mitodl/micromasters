@@ -174,18 +174,6 @@ def remove_program_enrolled_user(program_enrollment, indices=None):
         _delete_item(program_enrollment.id, USER_DOC_TYPE, index)
 
 
-def remove_user(user):
-    """
-    Remove a user from Elasticsearch.
-
-    Args:
-        user (django.contrib.auth.models.User): A user to remove
-    """
-    program_enrollments = ProgramEnrollment.objects.filter(user=user).select_related('user', 'program').all()
-    for program_enrollment in program_enrollments:
-        remove_program_enrolled_user(program_enrollment)
-
-
 def serialize_program_enrolled_user(program_enrollment):
     """
     Serializes a program-enrolled user for use with Elasticsearch.

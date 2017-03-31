@@ -148,18 +148,6 @@ class IndexTests(ESTestCase):
         profile.save()
         assert_search(es.search(), [program_enrollment])
 
-    def test_program_enrollment_clear_upon_profile_deletion(self):
-        """
-        Test that all ProgramEnrollments are cleared from the index after the User's Profile has been deleted
-        """
-        with mute_signals(post_save):
-            profile = ProfileFactory.create()
-        ProgramEnrollmentFactory.create(user=profile.user)
-        ProgramEnrollmentFactory.create(user=profile.user)
-        assert es.search()['total'] == 2
-        profile.delete()
-        assert es.search()['total'] == 0
-
     def test_education_add(self):
         """
         Test that Education is indexed after being added
