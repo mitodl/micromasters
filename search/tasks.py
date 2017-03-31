@@ -19,17 +19,6 @@ from search.indexing_api import (
 from search.models import PercolateQuery
 
 
-def lookup_id(obj_or_id):
-    """
-    Handle the current and deprecated paths while the Celery queue may possibly have old and new tasks queued up.
-    """
-    if isinstance(obj_or_id, int):
-        return obj_or_id
-    else:
-        # Deprecated!
-        return obj_or_id.id
-
-
 @async.task
 def remove_program_enrolled_user(program_enrollment_id):
     """
@@ -38,8 +27,6 @@ def remove_program_enrolled_user(program_enrollment_id):
     Args:
         program_enrollment_id (int): A ProgramEnrollment to remove from the index
     """
-    # Deprecation warning!
-    program_enrollment_id = lookup_id(program_enrollment_id)
     _remove_program_enrolled_user(program_enrollment_id)
 
 
@@ -51,8 +38,6 @@ def index_program_enrolled_users(program_enrollment_ids):
     Args:
         program_enrollment_ids (list of int): A list of program enrollment ids
     """
-    # Deprecation warning: Inline _lookup_id after next release
-    program_enrollment_ids = [lookup_id(enrollment) for enrollment in program_enrollment_ids]
     program_enrollments = ProgramEnrollment.objects.filter(id__in=program_enrollment_ids)
     _index_program_enrolled_users(program_enrollments)
 
@@ -70,9 +55,6 @@ def index_users(user_ids):
     Args:
         user_ids (list of int): Ids of users to update in the Elasticsearch index
     """
-    # Deprecated: for old tasks user_ids may contain User objects instead of user ids
-    # However it's only used in a filter(user__in=...) here and in _index_users
-    # which will handle both cases by default
     _index_users(user_ids)
 
     # Send email for profiles that newly fit the search query for an automatic email
