@@ -114,13 +114,15 @@ def assert_search(results, program_enrollments):
     assert serialized == sources
 
 
+# pylint: disable=unused-argument
 @ddt
+@patch('search.signals.transaction.on_commit', side_effect=lambda callback: callback())
 class IndexTests(ESTestCase):
     """
     Tests for indexing
     """
     # pylint: disable=too-many-public-methods
-    def test_program_enrollment_add(self):
+    def test_program_enrollment_add(self, mock_on_commit):
         """
         Test that a newly created ProgramEnrollment is indexed properly
         """
@@ -128,7 +130,7 @@ class IndexTests(ESTestCase):
         program_enrollment = ProgramEnrollmentFactory.create()
         assert_search(es.search(), [program_enrollment])
 
-    def test_program_enrollment_delete(self):
+    def test_program_enrollment_delete(self, mock_on_commit):
         """
         Test that ProgramEnrollment is removed from index after the user is removed
         """
@@ -137,7 +139,7 @@ class IndexTests(ESTestCase):
         program_enrollment.user.delete()
         assert es.search()['total'] == 0
 
-    def test_profile_update(self):
+    def test_profile_update(self, mock_on_commit):
         """
         Test that ProgramEnrollment is reindexed after the User's Profile has been updated
         """
@@ -148,7 +150,7 @@ class IndexTests(ESTestCase):
         profile.save()
         assert_search(es.search(), [program_enrollment])
 
-    def test_education_add(self):
+    def test_education_add(self, mock_on_commit):
         """
         Test that Education is indexed after being added
         """
@@ -157,7 +159,7 @@ class IndexTests(ESTestCase):
         EducationFactory.create(profile=program_enrollment.user.profile)
         assert_search(es.search(), [program_enrollment])
 
-    def test_education_update(self):
+    def test_education_update(self, mock_on_commit):
         """
         Test that Education is reindexed after being updated
         """
@@ -168,7 +170,7 @@ class IndexTests(ESTestCase):
         education.save()
         assert_search(es.search(), [program_enrollment])
 
-    def test_education_delete(self):
+    def test_education_delete(self, mock_on_commit):
         """
         Test that Education is removed from index after being deleted
         """
@@ -178,7 +180,7 @@ class IndexTests(ESTestCase):
         education.delete()
         assert_search(es.search(), [program_enrollment])
 
-    def test_employment_add(self):
+    def test_employment_add(self, mock_on_commit):
         """
         Test that Employment is indexed after being added
         """
@@ -187,7 +189,7 @@ class IndexTests(ESTestCase):
         EmploymentFactory.create(profile=program_enrollment.user.profile, end_date=None)
         assert_search(es.search(), [program_enrollment])
 
-    def test_employment_update(self):
+    def test_employment_update(self, mock_on_commit):
         """
         Test that Employment is reindexed after being updated
         """
@@ -198,7 +200,7 @@ class IndexTests(ESTestCase):
         employment.save()
         assert_search(es.search(), [program_enrollment])
 
-    def test_employment_delete(self):
+    def test_employment_delete(self, mock_on_commit):
         """
         Test that Employment is removed from index after being deleted
         """
@@ -208,7 +210,7 @@ class IndexTests(ESTestCase):
         employment.delete()
         assert_search(es.search(), [program_enrollment])
 
-    def test_past_employment_add(self):
+    def test_past_employment_add(self, mock_on_commit):
         """
         Test that past work history is not indexed
         """
@@ -219,27 +221,27 @@ class IndexTests(ESTestCase):
         assert len(search_result) == 1
         self.assertFalse(search_result[0]['end_date'])
 
-    def test_remove_program_enrolled_user(self):
+    def test_remove_program_enrolled_user(self, mock_on_commit):
         """
         Test that remove_program_enrolled_user removes the user from the index for that program
         """
         program_enrollment = ProgramEnrollmentFactory.create()
         assert_search(es.search(), [program_enrollment])
-        remove_program_enrolled_user(program_enrollment)
+        remove_program_enrolled_user(program_enrollment.id)
         assert_search(es.search(), [])
 
-    def test_remove_user_other_index(self):
+    def test_remove_user_other_index(self, mock_on_commit):
         """
         Test that remove_program_enrolled_user will use another index if provided
         """
         other_indices = ['other1', 'other2']
         program_enrollment = ProgramEnrollmentFactory.create()
         with patch('search.indexing_api._delete_item', autospec=True) as _delete_item:
-            remove_program_enrolled_user(program_enrollment, indices=other_indices)
+            remove_program_enrolled_user(program_enrollment.id, indices=other_indices)
         for other_index in other_indices:
             _delete_item.assert_any_call(program_enrollment.id, USER_DOC_TYPE, other_index)
 
-    def test_index_program_enrolled_users(self):
+    def test_index_program_enrolled_users(self, mock_on_commit):
         """
         Test that index_program_enrolled_users indexes an iterable of program-enrolled users
         """
@@ -257,7 +259,7 @@ class IndexTests(ESTestCase):
             for enrollment in program_enrollments:
                 serialize_mock.assert_any_call(enrollment)
 
-    def test_index_user_other_index(self):
+    def test_index_user_other_index(self, mock_on_commit):
         """
         Test that index_program_enrolled_users uses another index if provided
         """
@@ -267,7 +269,7 @@ class IndexTests(ESTestCase):
         for index in other_indices:
             _index_chunk.assert_any_call(ANY, USER_DOC_TYPE, index, chunk_size=100)
 
-    def test_add_edx_record(self):
+    def test_add_edx_record(self, mock_on_commit):
         """
         Test that cached edX records are indexed after being added
         """
@@ -280,7 +282,7 @@ class IndexTests(ESTestCase):
             index_program_enrolled_users([program_enrollment])
             assert_search(es.search(), [program_enrollment])
 
-    def test_update_edx_record(self):
+    def test_update_edx_record(self, mock_on_commit):
         """
         Test that a cached edX record is reindexed after being updated
         """
@@ -296,7 +298,7 @@ class IndexTests(ESTestCase):
             index_program_enrolled_users([program_enrollment])
             assert_search(es.search(), [program_enrollment])
 
-    def test_delete_edx_record(self):
+    def test_delete_edx_record(self, mock_on_commit):
         """
         Test that a cached edX record is removed from index after being deleted
         """
@@ -311,7 +313,7 @@ class IndexTests(ESTestCase):
             index_program_enrolled_users([program_enrollment])
             assert_search(es.search(), [program_enrollment])
 
-    def test_analyzed(self):
+    def test_analyzed(self, mock_on_commit):
         """
         Most string fields in the mapping should be 'analyzed' since we don't want to
         tokenize strings arbitrarily when filtering on fields.
@@ -328,7 +330,7 @@ class IndexTests(ESTestCase):
             elif node.get('type') == 'string':
                 assert node['index'] == 'not_analyzed'
 
-    def test_folded(self):
+    def test_folded(self, mock_on_commit):
         """
         Check that we have a folded type for first_name, last_name, and preferred_name
         """
@@ -342,7 +344,7 @@ class IndexTests(ESTestCase):
             assert properties[key]['fields']['folded']['analyzer'] == 'folding'
 
     @data(Staff.ROLE_ID, Instructor.ROLE_ID)
-    def test_role_add(self, role):
+    def test_role_add(self, role, mock_on_commit):
         """
         Test that `is_learner` status is change when role is save
         """
@@ -363,7 +365,7 @@ class IndexTests(ESTestCase):
         assert sources[0]['program']['is_learner'] is False
 
     @data(Staff.ROLE_ID, Instructor.ROLE_ID)
-    def test_role_delete(self, role):
+    def test_role_delete(self, role, mock_on_commit):
         """
         Test that `is_learner` status is restore once role is removed for a user.
         """
@@ -535,9 +537,10 @@ class RecreateIndexTests(ESTestCase):
         Test that recreate_index will clear old data and index all profiles
         """
         recreate_index()
-        program_enrollment = ProgramEnrollmentFactory.create()
+        with patch('search.signals.transaction.on_commit', side_effect=lambda callback: callback()):
+            program_enrollment = ProgramEnrollmentFactory.create()
         assert_search(es.search(), [program_enrollment])
-        remove_program_enrolled_user(program_enrollment)
+        remove_program_enrolled_user(program_enrollment.id)
         assert_search(es.search(), [])
         # recreate_index should index the program-enrolled user
         recreate_index()

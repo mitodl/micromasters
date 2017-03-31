@@ -288,7 +288,7 @@ class CachedEdxDataApiTests(MockedESTestCase):
         self.assert_cache_in_db(enrollment_keys=[course_id])
         cached_enr.refresh_from_db()
         assert cached_enr.data == enr_json
-        mocked_index.delay.assert_any_call([self.user])
+        mocked_index.delay.assert_any_call([self.user.id])
 
     @patch('search.tasks.index_users', autospec=True)
     def test_update_cached_enrollments(self, mocked_index):
@@ -310,7 +310,7 @@ class CachedEdxDataApiTests(MockedESTestCase):
         self.assert_cache_in_db(enrollment_keys=self.enrollment_ids)
         cache_time.refresh_from_db()
         assert cache_time.enrollment >= now
-        mocked_index.delay.assert_called_once_with([self.user])
+        mocked_index.delay.assert_called_once_with([self.user.id])
 
     @patch('search.tasks.index_users', autospec=True)
     def test_update_cached_certificates(self, mocked_index):
@@ -334,7 +334,7 @@ class CachedEdxDataApiTests(MockedESTestCase):
         self.assert_cache_in_db(certificate_keys=self.verified_certificates_ids)
         cache_time.refresh_from_db()
         assert cache_time.certificate >= now
-        mocked_index.delay.assert_called_once_with([self.user])
+        mocked_index.delay.assert_called_once_with([self.user.id])
 
     @patch('search.tasks.index_users', autospec=True)
     def test_update_cached_current_grades(self, mocked_index):
@@ -356,7 +356,7 @@ class CachedEdxDataApiTests(MockedESTestCase):
         self.assert_cache_in_db(grades_keys=self.grades_ids)
         cache_time.refresh_from_db()
         assert cache_time.current_grade >= now
-        mocked_index.delay.assert_called_once_with([self.user])
+        mocked_index.delay.assert_called_once_with([self.user.id])
 
     @patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cached_current_grades')
     @patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cached_certificates')

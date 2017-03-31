@@ -33,31 +33,31 @@ log = logging.getLogger(__name__)
 @receiver(post_save, sender=Profile, dispatch_uid="profile_post_save_index")
 def handle_update_profile(sender, instance, **kwargs):
     """Update index when Profile model is updated."""
-    index_users.delay([instance.user])
+    transaction.on_commit(lambda: index_users.delay([instance.user.id]))
 
 
 @receiver(post_save, sender=Education, dispatch_uid="education_post_save_index")
 def handle_update_education(sender, instance, **kwargs):
     """Update index when Education model is updated."""
-    index_users.delay([instance.profile.user])
+    transaction.on_commit(lambda: index_users.delay([instance.profile.user.id]))
 
 
 @receiver(post_save, sender=Employment, dispatch_uid="employment_post_save_index")
 def handle_update_employment(sender, instance, **kwargs):
     """Update index when Employment model is updated."""
-    index_users.delay([instance.profile.user])
+    transaction.on_commit(lambda: index_users.delay([instance.profile.user.id]))
 
 
 @receiver(post_delete, sender=Education, dispatch_uid="education_post_delete_index")
 def handle_delete_education(sender, instance, **kwargs):
     """Update index when Education model instance is deleted."""
-    index_users.delay([instance.profile.user])
+    transaction.on_commit(lambda: index_users.delay([instance.profile.user.id]))
 
 
 @receiver(post_delete, sender=Employment, dispatch_uid="employment_post_delete_index")
 def handle_delete_employment(sender, instance, **kwargs):
     """Update index when Employment model instance is deleted."""
-    index_users.delay([instance.profile.user])
+    transaction.on_commit(lambda: index_users.delay([instance.profile.user.id]))
 
 
 @receiver(post_save, sender=PercolateQuery, dispatch_uid="percolate_query_save")
@@ -75,10 +75,10 @@ def handle_delete_percolate(sender, instance, **kwargs):
 @receiver(post_save, sender=Role, dispatch_uid="role_post_create_index")
 def handle_create_role(sender, instance, **kwargs):
     """Update index when Role model instance is created."""
-    index_users.delay([instance.user])
+    transaction.on_commit(lambda: index_users.delay([instance.user.id]))
 
 
 @receiver(post_delete, sender=Role, dispatch_uid="role_post_remove_index")
 def handle_remove_role(sender, instance, **kwargs):
     """Update index when Role model instance is deleted."""
-    index_users.delay([instance.user])
+    transaction.on_commit(lambda: index_users.delay([instance.user.id]))

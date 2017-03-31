@@ -37,8 +37,8 @@ class SearchTasksTests(MockedESTestCase):
         """
         enrollment1 = ProgramEnrollmentFactory.create()
         enrollment2 = ProgramEnrollmentFactory.create(user=enrollment1.user)
-        index_users([enrollment1.user])
-        self.index_users_mock.assert_called_with([enrollment1.user])
+        index_users([enrollment1.user.id])
+        self.index_users_mock.assert_called_with([enrollment1.user.id])
         for enrollment in [enrollment1, enrollment2]:
             self.send_automatic_emails_mock.assert_any_call(enrollment)
         self.refresh_index_mock.assert_called_with(get_default_alias())
@@ -48,8 +48,11 @@ class SearchTasksTests(MockedESTestCase):
         When we run the index_program_enrolled_users task we should index them and send them automatic emails
         """
         enrollments = [ProgramEnrollmentFactory.create() for _ in range(2)]
-        index_program_enrolled_users(enrollments)
-        self.index_program_enrolled_users_mock.assert_called_with(enrollments)
+        enrollment_ids = [enrollment.id for enrollment in enrollments]
+        index_program_enrolled_users(enrollment_ids)
+        assert list(
+            self.index_program_enrolled_users_mock.call_args[0][0].values_list('id', flat=True)
+        ) == enrollment_ids
         for enrollment in enrollments:
             self.send_automatic_emails_mock.assert_any_call(enrollment)
         self.refresh_index_mock.assert_called_with(get_default_alias())
