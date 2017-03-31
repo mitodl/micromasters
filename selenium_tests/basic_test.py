@@ -83,7 +83,7 @@ class BasicTests(SeleniumTestsBase):
         )
 
         # Update for new users and new role
-        index_program_enrolled_users(ProgramEnrollment.objects.values_list("id", flat=True))
+        index_program_enrolled_users(ProgramEnrollment.objects.iterator())
         self.get("{}/learners".format(self.live_server_url))
         self.wait().until(lambda driver: driver.find_element_by_class_name('learner-result'))
         assert self.num_elements_on_page('.learner-result') == page_size
