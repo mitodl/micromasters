@@ -301,7 +301,7 @@ class PercolateTests(ESTestCase):
             }
         }
 
-    def test_percolate_failure(self):
+    def test_percolate_failure(self, mock_on_commit):
         """
         If search_percolate fails we should raise an Exception with some useful information for Sentry
         """
