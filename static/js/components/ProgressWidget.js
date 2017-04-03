@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import { Card, CardTitle } from 'react-mdl/lib/Card';
-import Button from 'react-mdl/lib/Button';
 
 import type {
   Program
@@ -70,12 +69,6 @@ export default class ProgressWidget extends React.Component {
       <Card className="progress-widget" shadow={0}>
         <CardTitle className="progress-title">Progress</CardTitle>
         {circularProgressWidget(63, 7, totalPassedCourses, totalCourses)}
-        <p className="heading-paragraph">
-          On completion, you can apply for
-          the master’s degree program</p>
-           <Button className="progress-button" disabled>
-             Apply for Master’s
-           </Button>
       </Card>
     );
   }
