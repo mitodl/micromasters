@@ -34,5 +34,5 @@ export type EmailConfig = {
   emailOpenParams: (args: any) => Object,
   getEmailSendFunction: () => Function,
   emailSendParams: (emailState: EmailState) => Array<any>,
-  renderRecipients?: (filters: Array<any>) => React$Element<*>,
+  renderRecipients?: (filters: ?Array<any>) => React$Element<*>,
 };

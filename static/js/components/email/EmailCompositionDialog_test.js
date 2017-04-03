@@ -7,6 +7,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import TestUtils from 'react-addons-test-utils';
 
+import { SEARCH_RESULT_EMAIL_CONFIG } from './lib';
 import * as inputUtil from '../inputs/util';
 import { FETCH_PROCESSING } from '../../actions';
 import { modifyTextField } from '../../util/test_utils';
@@ -159,5 +160,32 @@ describe('EmailCompositionDialog', () => {
         assert.equal(message, errorMessage);
       });
     });
+  });
+
+  it('should render recipients', () => {
+    let emailState = updateObject(INITIAL_TEST_EMAIL_STATE[TEST_EMAIL_TYPE], {});
+    emailState.filters = [{
+      id: '1',
+      name: "key",
+      value: "test"
+    }];
+    mount(
+      <MuiThemeProvider muiTheme={getMuiTheme()}>
+        <EmailCompositionDialog
+          updateEmailFieldEdit={() => (updateStub)}
+          closeAndClearEmailComposer={closeStub}
+          closeEmailComposerAndSend={sendStub}
+          dialogVisibility={true}
+          activeEmail={emailState}
+          title={TEST_EMAIL_CONFIG.title}
+          subheadingRenderer={TEST_EMAIL_CONFIG.renderSubheading}
+          renderRecipients={SEARCH_RESULT_EMAIL_CONFIG.renderRecipients}
+        />
+      </MuiThemeProvider>
+    );
+    assert.include(
+      getDialog().querySelector('.sk-selected-filters-option__name').textContent,
+      "key: test"
+    );
   });
 });

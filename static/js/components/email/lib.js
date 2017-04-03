@@ -63,7 +63,6 @@ export const SEARCH_RESULT_EMAIL_CONFIG: EmailConfig = {
     if (!filters || filters.length <= 0) {
       return null;
     }
-    console.log(filters);
     const renderFilterOptions = _.map(filters, filter => (
       <div className="sk-selected-filters-option sk-selected-filters__item" key={filter.id}>
         <div className="sk-selected-filters-option__name">
