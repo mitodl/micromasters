@@ -1,6 +1,4 @@
 /* global document: false, window: false, SETTINGS: false */
-import '../global_init';
-
 import { assert } from 'chai';
 import sinon from 'sinon';
 import moment from 'moment';

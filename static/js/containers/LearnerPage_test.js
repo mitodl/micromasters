@@ -1,5 +1,4 @@
 /* global SETTINGS: false */
-import '../global_init';
 import TestUtils from 'react-addons-test-utils';
 import { assert } from 'chai';
 import _ from 'lodash';

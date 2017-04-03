@@ -1,6 +1,5 @@
 // @flow
 /* global document: false, window: false, SETTINGS: false */
-import '../global_init';
 
 import ReactDOM from 'react-dom';
 import { assert } from 'chai';

@@ -25,6 +25,7 @@ import _ from 'lodash';
 import ProgramFilter from './ProgramFilter';
 import LearnerResult from './search/LearnerResult';
 import CountryRefinementOption from './search/CountryRefinementOption';
+import EducationFilter from './search/EducationFilter';
 import PatchedMenuFilter from './search/PatchedMenuFilter';
 import WorkHistoryFilter from './search/WorkHistoryFilter';
 import CustomPaginationDisplay from './search/CustomPaginationDisplay';
@@ -33,7 +34,6 @@ import CustomSortingColumnHeaders from './search/CustomSortingColumnHeaders';
 import FilterVisibilityToggle from './search/FilterVisibilityToggle';
 import HitsCount from './search/HitsCount';
 import CustomNoHits from './search/CustomNoHits';
-import { EDUCATION_LEVELS } from '../constants';
 import { wrapWithProps } from '../util/util';
 import type { Option } from '../flow/generalTypes';
 import type { AvailableProgram } from '../flow/enrollmentTypes';
@@ -48,14 +48,6 @@ const makeCountryNameTranslations: () => Object = () => {
     for (let stateCode of Object.keys(iso3166.data[code].sub)) {
       translations[stateCode] = iso3166.data[code].sub[stateCode].name;
     }
-  }
-  return translations;
-};
-
-const makeDegreeTranslations: () => Object = () => {
-  let translations = {};
-  for(let level of EDUCATION_LEVELS) {
-    translations[level.value] = level.label;
   }
   return translations;
 };
@@ -129,7 +121,6 @@ export default class LearnerSearch extends SearchkitComponent {
   ];
 
   countryNameTranslations: Object = makeCountryNameTranslations();
-  degreeTranslations: Object = makeDegreeTranslations();
 
   constructor(props: Object) {
     super(props);
@@ -140,15 +131,7 @@ export default class LearnerSearch extends SearchkitComponent {
   }
 
   getNumberOfCoursesInProgram = (): number => {
-    let results = this.getResults();
-    if (!results) {
-      return 0;
-    }
-
-    const hit = (
-       results.hits && results.hits.hits && results.hits.hits.length > 0 ? results.hits.hits[0] : null
-    );
-    return hit !== null ? hit._source.program.total_courses : 0;
+    return R.pathOr(0, ['hits', 'hits', 0, '_source', 'program', 'total_courses'], this.getResults());
   };
 
   renderSearchHeader = (): React$Element<*>|null => {
@@ -306,20 +289,14 @@ export default class LearnerSearch extends SearchkitComponent {
           title="Degree"
           filterName="education-level"
         >
-          <PatchedMenuFilter
-            id="education_level"
-            title=""
-            field="profile.education.degree_name"
-            fieldOptions={{type: 'nested', options: { path: 'profile.education' } }}
-            translations={this.degreeTranslations}
-          />
+          <EducationFilter />
         </FilterVisibilityToggle>
         <FilterVisibilityToggle
           {...this.props}
           filterName="company-name"
           title="Company"
         >
-          <WorkHistoryFilter id="company_name" />
+          <WorkHistoryFilter />
         </FilterVisibilityToggle>
 
       </Card>

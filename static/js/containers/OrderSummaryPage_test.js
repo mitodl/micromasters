@@ -1,6 +1,4 @@
 /* global SETTINGS: false */
-import '../global_init';
-
 import { assert } from 'chai';
 
 import IntegrationTestHelper from '../util/integration_test_helper';

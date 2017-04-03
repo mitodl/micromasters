@@ -48,7 +48,12 @@ class Employment(models.Model):
     profile = models.ForeignKey('Profile', on_delete=models.CASCADE, related_name='work_history')
 
     def __str__(self):
-        return 'Employment history for "{0}"'.format(self.profile.user.username)
+        return 'Employment for {user}, {title} {start}-{end}'.format(
+            user=self.profile.user.username,
+            title=self.company_name,
+            start=self.start_date.strftime("%b %Y") if self.start_date else "",
+            end=self.end_date.strftime("%b %Y") if self.end_date else "Current",
+        )
 
 
 class Profile(models.Model):
@@ -266,7 +271,7 @@ class Profile(models.Model):
             name_components.append('({})'.format(self.preferred_name))
         return ' '.join(name_components)
 
-
+import json.tool
 class Education(models.Model):
     """
     A user education
@@ -288,3 +293,17 @@ class Education(models.Model):
     school_city = models.TextField()
     school_state_or_territory = models.TextField()
     school_country = models.TextField()
+
+    def __str__(self):
+        degree_title = ''
+        for degree, title in self.DEGREE_CHOICES:
+            if self.degree_name == degree:
+                degree_title = title
+                break
+
+        return 'Education for {user}, {degree} at {title} {date}'.format(
+            user=self.profile.user.username,
+            degree=degree_title,
+            title=self.school_name,
+            date=self.graduation_date.strftime("%b %Y"),
+        )

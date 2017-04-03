@@ -32,23 +32,10 @@ if (!Object.entries) {
   entries.shim();
 }
 
-let jsdom = require('jsdom');
-require('jsdom-global')(undefined, {
-  url: 'http://fake/'
-});
-
 let localStorageMock = require('./util/test_utils').localStorageMock;
 beforeEach(() => { // eslint-disable-line mocha/no-top-level-hooks
   window.localStorage = localStorageMock();
   window.sessionStorage = localStorageMock();
-  Object.defineProperty(window, "location", {
-    set: value => {
-      if (!value.startsWith("http")) {
-        value = `http://fake${value}`;
-      }
-      jsdom.changeURL(window, value);
-    },
-  });
 });
 
 // cleanup after each test run

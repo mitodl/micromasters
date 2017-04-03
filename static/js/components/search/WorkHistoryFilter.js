@@ -11,14 +11,10 @@ import {
 } from 'searchkit';
 
 import ModifiedMultiSelect from './ModifiedMultiSelect';
-import type { AvailableProgram } from '../../flow/enrollmentTypes';
 
 export default class WorkHistoryFilter extends SearchkitComponent {
-  props: {
-    currentProgramEnrollment: AvailableProgram,
-  };
-
-  _accessor = new AnonymousAccessor(query => {
+  _accessor = new AnonymousAccessor(function(query) {
+    // Note: the function(...) syntax is required since this refers to AnonymousAccessor
     /**
      *  Modify query to perform aggregation on unique users,
      *  to avoid duplicate counts of multiple work histories
@@ -35,8 +31,10 @@ export default class WorkHistoryFilter extends SearchkitComponent {
     );
 
     let nestedBucket = NestedBucket('inner', 'profile.work_history', termsBucket);
+    // uuid + 1 is the number of the accessor in the RefinementListFilter in the render method
+    // I'm guessing uuid + 1 because its accessors get defined right after this accessor
     return query.setAggs(FilterBucket(
-      'profile.work_history.company_name11',
+      `profile.work_history.company_name${parseInt(this.uuid) + 1}`,
       {},
       nestedBucket
     ));

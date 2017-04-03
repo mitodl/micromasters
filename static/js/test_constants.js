@@ -72,7 +72,18 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
                 "industry": "Accounting",
                 "end_date": null,
                 "start_date": "1999-12-01"
-              }
+              },
+              {
+                "id": 95,
+                "city": "Kabul",
+                "state_or_territory": "AF-BDS",
+                "country": "AF",
+                "company_name": "Test Corp",
+                "position": "Assistant Foobar",
+                "industry": "Accounting",
+                "end_date": null,
+                "start_date": "1999-12-01"
+              },
             ],
             "edx_level_of_education": "jhs",
             "education": [
@@ -86,7 +97,18 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
                 "school_city": "Kabul",
                 "school_state_or_territory": "AF-BDS",
                 "school_country": "AF"
-              }
+              },
+              {
+                "id": 72,
+                "degree_name": "hs",
+                "graduation_date": "1998-07-12",
+                "field_of_study": null,
+                "online_degree": false,
+                "school_name": " High School",
+                "school_city": "Kabul",
+                "school_state_or_territory": "AF-BDS",
+                "school_country": "AF"
+              },
             ]
           },
           "id": 3
@@ -149,73 +171,337 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
       { // extreme worst-case empty profile
         '_source': {
           "profile": {}
-        }
+        },
+        '_id': 999
       }
     ]
   },
   "aggregations": {
-    "profile.birth_country3": {
-      "doc_count": 2,
-      "inner": {
-        "doc_count": 2,
-        "profile.birth_country_count": {
-          "value": 1
-        },
-        "profile.birth_country": {
-          "doc_count_error_upper_bound": 0,
-          "sum_other_doc_count": 0,
-          "buckets": [
-            {
-              "key": "AF",
-              "doc_count": 2
-            }
-          ]
+    "grade-average": {
+      "grade-average": {
+        "buckets": [
+          {
+            "doc_count": 0,
+            "key": 0
+          },
+          {
+            "doc_count": 0,
+            "key": 5
+          },
+          {
+            "doc_count": 0,
+            "key": 10
+          },
+          {
+            "doc_count": 0,
+            "key": 15
+          },
+          {
+            "doc_count": 0,
+            "key": 20
+          },
+          {
+            "doc_count": 0,
+            "key": 25
+          },
+          {
+            "doc_count": 0,
+            "key": 30
+          },
+          {
+            "doc_count": 0,
+            "key": 35
+          },
+          {
+            "doc_count": 0,
+            "key": 40
+          },
+          {
+            "doc_count": 0,
+            "key": 45
+          },
+          {
+            "doc_count": 0,
+            "key": 50
+          },
+          {
+            "doc_count": 0,
+            "key": 55
+          },
+          {
+            "doc_count": 0,
+            "key": 60
+          },
+          {
+            "doc_count": 0,
+            "key": 65
+          },
+          {
+            "doc_count": 0,
+            "key": 70
+          },
+          {
+            "doc_count": 0,
+            "key": 75
+          },
+          {
+            "doc_count": 0,
+            "key": 80
+          },
+          {
+            "doc_count": 0,
+            "key": 85
+          },
+          {
+            "doc_count": 0,
+            "key": 90
+          },
+          {
+            "doc_count": 0,
+            "key": 95
+          },
+          {
+            "doc_count": 0,
+            "key": 100
+          }
+        ]
+      },
+      "doc_count": 0
+    },
+    "courses": {
+      "children": {
+        "doc_count": 0,
+        "lvl0": {
+          "children": {
+            "doc_count_error_upper_bound": 0,
+            "buckets": [],
+            "sum_other_doc_count": 0
+          },
+          "doc_count": 0
         }
+      },
+      "doc_count": 1
+    },
+    "final-grade": {
+      "final-grade": {
+        "final-grade": {
+          "final-grade": {
+            "buckets": [
+              {
+                "doc_count": 0,
+                "key": 0
+              },
+              {
+                "doc_count": 0,
+                "key": 5
+              },
+              {
+                "doc_count": 0,
+                "key": 10
+              },
+              {
+                "doc_count": 0,
+                "key": 15
+              },
+              {
+                "doc_count": 0,
+                "key": 20
+              },
+              {
+                "doc_count": 0,
+                "key": 25
+              },
+              {
+                "doc_count": 0,
+                "key": 30
+              },
+              {
+                "doc_count": 0,
+                "key": 35
+              },
+              {
+                "doc_count": 0,
+                "key": 40
+              },
+              {
+                "doc_count": 0,
+                "key": 45
+              },
+              {
+                "doc_count": 0,
+                "key": 50
+              },
+              {
+                "doc_count": 0,
+                "key": 55
+              },
+              {
+                "doc_count": 0,
+                "key": 60
+              },
+              {
+                "doc_count": 0,
+                "key": 65
+              },
+              {
+                "doc_count": 0,
+                "key": 70
+              },
+              {
+                "doc_count": 0,
+                "key": 75
+              },
+              {
+                "doc_count": 0,
+                "key": 80
+              },
+              {
+                "doc_count": 0,
+                "key": 85
+              },
+              {
+                "doc_count": 0,
+                "key": 90
+              },
+              {
+                "doc_count": 0,
+                "key": 95
+              },
+              {
+                "doc_count": 0,
+                "key": 100
+              }
+            ]
+          },
+          "doc_count": 0
+        },
+        "doc_count": 0
+      },
+      "doc_count": 0
+    },
+    "num-courses-passed": {
+      "doc_count": 1,
+      "num-courses-passed": {
+        "value": 1
       }
     },
-    "profile.country4": {
-      "doc_count": 2,
+    "profile.birth_country8": {
+      "profile.birth_country": {
+        "doc_count_error_upper_bound": 0,
+        "buckets": [
+          {
+            "doc_count": 1,
+            "key": "DZ"
+          }
+        ],
+        "sum_other_doc_count": 0
+      },
+      "doc_count": 1,
+      "profile.birth_country_count": {
+        "value": 1
+      }
+    },
+    "profile.work_history.company_name13": {
       "inner": {
         "doc_count": 2,
+        "profile.work_history.company_name": {
+          "doc_count_error_upper_bound": 0,
+          "buckets": [
+            {
+              "company_name_count": {
+                "doc_count": 1,
+                "count": {
+                  "value": 1
+                }
+              },
+              "doc_count": 2,
+              "key": "Microsoft"
+            }
+          ],
+          "sum_other_doc_count": 0
+        },
+        "profile.work_history.company_name_count": {
+          "value": 1
+        }
+      },
+      "doc_count": 1
+    },
+    "country": {
+      "profile.country": {
         "profile.country": {
           "doc_count_error_upper_bound": 0,
-          "sum_other_doc_count": 0,
           "buckets": [
             {
-              "key": "AF",
-              "doc_count": 2
+              "doc_count": 1,
+              "key": "US"
+            }
+          ],
+          "sum_other_doc_count": 0
+        },
+        "doc_count": 1
+      },
+      "doc_count": 1
+    },
+    "profile.education.degree_name11": {
+      "inner": {
+        "profile.education.degree_name": {
+          "doc_count_error_upper_bound": 0,
+          "buckets": [
+            {
+              "doc_count": 2,
+              "key": "b",
+              "school_name_count": {
+                "doc_count": 1,
+                "count": {
+                  "value": 1
+                }
+              }
             },
             {
-              "key": null,
-              "doc_count": 2
-            }
-          ]
-        },
-        "profile.country_count": {
-          "value": 1
-        }
-      }
-    },
-    "profile.gender2": {
-      "doc_count": 2,
-      "inner": {
-        "doc_count": 2,
-        "profile.gender": {
-          "doc_count_error_upper_bound": 0,
-          "sum_other_doc_count": 0,
-          "buckets": [
+              "doc_count": 1,
+              "key": "hs",
+              "school_name_count": {
+                "doc_count": 1,
+                "count": {
+                  "value": 1
+                }
+              }
+            },
             {
-              "key": "f",
-              "doc_count": 2
+              "doc_count": 1,
+              "key": "m",
+              "school_name_count": {
+                "doc_count": 1,
+                "count": {
+                  "value": 1
+                }
+              }
             }
-          ]
+          ],
+          "sum_other_doc_count": 0
         },
-        "profile.gender_count": {
-          "value": 1
+        "doc_count": 4,
+        "profile.education.degree_name_count": {
+          "value": 3
         }
-      }
+      },
+      "doc_count": 1
+    },
+    "program.semester_enrollments.semester5": {
+      "inner": {
+        "program.semester_enrollments.semester": {
+          "doc_count_error_upper_bound": 0,
+          "buckets": [],
+          "sum_other_doc_count": 0
+        },
+        "doc_count": 0,
+        "program.semester_enrollments.semester_count": {
+          "value": 0
+        }
+      },
+      "doc_count": 1
     }
-  }
+  },
 });
 
 export const USER_PROFILE_RESPONSE = deepFreeze({
