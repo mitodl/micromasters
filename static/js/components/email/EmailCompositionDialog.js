@@ -16,7 +16,8 @@ export default class EmailCompositionDialog extends React.Component {
     subheadingRenderer?:        (activeEmail: EmailState) => React$Element<*>,
     closeAndClearEmailComposer: () => void,
     closeEmailComposerAndSend:  () => void,
-    updateEmailFieldEdit:       () => void
+    updateEmailFieldEdit:       () => void,
+    renderRecipients?:          (filters: ?Array<any>) => React$Element<*>
   };
 
   showValidationError = (fieldName: string): ?React$Element<*> => {
@@ -63,16 +64,13 @@ export default class EmailCompositionDialog extends React.Component {
     if (!this.props.activeEmail) return null;
 
     const {
-      activeEmail: {
-        fetchStatus,
-        inputs,
-        supportsAutomaticEmails
-      },
+      activeEmail: { fetchStatus, inputs, supportsAutomaticEmails, filters },
       title,
       dialogVisibility,
       closeAndClearEmailComposer,
       closeEmailComposerAndSend,
-      updateEmailFieldEdit
+      updateEmailFieldEdit,
+      renderRecipients,
     } = this.props;
 
     return <Dialog
@@ -94,6 +92,7 @@ export default class EmailCompositionDialog extends React.Component {
       <div className="email-composition-contents">
         { supportsAutomaticEmails ? this.renderAutomaticEmailSettings(inputs.sendAutomaticEmails || false) : null }
         { this.renderSubheading() }
+        { renderRecipients ? renderRecipients(filters) : null }
         <textarea
           rows="1"
           className="email-subject"

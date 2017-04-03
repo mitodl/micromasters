@@ -95,6 +95,7 @@ export const withEmailDialog = R.curry(
             activeEmail={this.getActiveEmailState()}
             title={emailConfigs[activeEmailType].title}
             subheadingRenderer={emailConfigs[activeEmailType].renderSubheading}
+            renderRecipients={emailConfigs[activeEmailType].renderRecipients}
           />
         );
       }

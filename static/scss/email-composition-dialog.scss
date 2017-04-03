@@ -104,3 +104,32 @@
     font-size: 14px;
   }
 }
+
+.sk-selected-filters-display {
+  display: flex;
+  flex-direction: row;
+  border: 1px solid $border-color;
+  border-radius: 3px 3px 0 0;
+  margin-bottom: -1px;
+  padding: 10px 15px 5px;
+
+  .sk-selected-filters-title {
+    padding-top: 4px;
+    font-size: 16px;
+    color: $font-gray-light;
+  }
+
+  .sk-selected-filters {
+    margin-left: 10px;
+
+    .sk-selected-filters-option {
+      background: #F5F5F5;
+      padding: 5px 10px;
+      margin: 0 3px 6px 3px;
+
+      .sk-selected-filters-option__name {
+        color: $darkgray;
+      }
+    }
+  }
+}
