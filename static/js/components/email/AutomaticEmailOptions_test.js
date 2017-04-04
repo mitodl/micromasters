@@ -24,24 +24,24 @@ describe('AutomaticEmailOptions', () => {
     sandbox.restore();
   });
 
-  const renderComponent = (automaticEmailType: string = ONE_TIME_EMAIL) => (
+  const renderComponent = (sendAutomaticEmails: boolean = false) => (
     mount(
       <MuiThemeProvider muiTheme={getMuiTheme()}>
         <AutomaticEmailOptions
           setAutomaticEmailType={setEmailCompositionTypeStub}
-          automaticEmailType={automaticEmailType}
+          sendAutomaticEmails={sendAutomaticEmails}
         />
       </MuiThemeProvider>
     )
   );
 
   it('div renders', () => {
-    let wrapper = renderComponent(ONE_TIME_EMAIL);
+    let wrapper = renderComponent();
     assert.equal(wrapper.find(".type-radio-group").children().length, 2);
   });
 
   it(`div renders for type: ${ONE_TIME_EMAIL}`, () => {
-    let wrapper = renderComponent(ONE_TIME_EMAIL);
+    let wrapper = renderComponent();
     assert.equal(wrapper.find(".type-radio-group").children().length, 2);
     // test setEmailCompositionType is called when one time email selected
     let radioOneTime = wrapper.find(".one-time-email input");
@@ -50,7 +50,7 @@ describe('AutomaticEmailOptions', () => {
   });
 
   it(`div renders for type: ${EMAIL_CAMPAIGN}`, () => {
-    let wrapper = renderComponent(EMAIL_CAMPAIGN);
+    let wrapper = renderComponent(true);
     assert.equal(wrapper.find(".type-radio-group").children().length, 2);
     assert.include(
       wrapper.text(),

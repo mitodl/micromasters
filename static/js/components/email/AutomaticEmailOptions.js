@@ -1,5 +1,6 @@
 // @flow
 import React from 'react';
+import R from 'ramda';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 
 import {
@@ -7,19 +8,15 @@ import {
   EMAIL_CAMPAIGN
 } from './constants';
 
-export default class EmailCompositionType extends React.Component {
+export default class AutomaticEmailOptions extends React.Component {
   props: {
-    automaticEmailType:    ?string,
-    setAutomaticEmailType: (b: string) => void,
+    sendAutomaticEmails?:  boolean,
+    setAutomaticEmailType: (b: boolean) => void,
   };
 
   handleRadioClick = (event: Event, value: string): void => {
     const { setAutomaticEmailType } = this.props;
-    setAutomaticEmailType('sendAutomaticEmails', {
-      target: {
-        value: value === EMAIL_CAMPAIGN ? true : false
-      }
-    });
+    setAutomaticEmailType(R.equals(value, EMAIL_CAMPAIGN) ? true : false);
   }
 
   renderEmailCampaign = (): React$Element<*> => (
@@ -28,15 +25,19 @@ export default class EmailCompositionType extends React.Component {
     </div>
   );
 
+  getEmailType = (sendAutomaticEmails?: boolean): string => (
+    sendAutomaticEmails ? EMAIL_CAMPAIGN : ONE_TIME_EMAIL
+  )
+
   render() {
-    const { automaticEmailType } = this.props;
+    const { sendAutomaticEmails } = this.props;
 
     return (
       <div className="email-type">
         <RadioButtonGroup
           className="type-radio-group"
           name="email-composition-type"
-          valueSelected={automaticEmailType}
+          valueSelected={this.getEmailType(sendAutomaticEmails)}
           onChange={this.handleRadioClick}
         >
           <RadioButton
@@ -48,7 +49,7 @@ export default class EmailCompositionType extends React.Component {
             label="Create an Email Campaign"
             className="email-campaign" />
         </RadioButtonGroup>
-        { automaticEmailType === EMAIL_CAMPAIGN ? this.renderEmailCampaign() : null }
+        { this.getEmailType(sendAutomaticEmails) === EMAIL_CAMPAIGN ? this.renderEmailCampaign() : null }
       </div>
     );
   }

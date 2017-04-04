@@ -7,7 +7,6 @@ import { FETCH_PROCESSING } from '../../actions';
 import { dialogActions } from '../inputs/util';
 import { isNilOrBlank } from '../../util/util';
 import type { EmailState } from '../../flow/emailTypes';
-import { ONE_TIME_EMAIL, EMAIL_CAMPAIGN } from './constants';
 
 export default class EmailCompositionDialog extends React.Component {
   props: {
@@ -44,11 +43,19 @@ export default class EmailCompositionDialog extends React.Component {
     }
   };
 
-  renderAutomaticEmailSettings =
-    (sendAutomaticEmails: boolean, updateEmailFieldEdit: () => void): React$Element<*> => (
+  setAutomaticEmailType = (sendAutomaticEmails: boolean): void => {
+    const { updateEmailFieldEdit } = this.props;
+    updateEmailFieldEdit('sendAutomaticEmails', {
+      target: {
+        value: sendAutomaticEmails
+      }
+    });
+  }
+
+  renderAutomaticEmailSettings = (sendAutomaticEmails: boolean): React$Element<*> => (
     <AutomaticEmailOptions
-      automaticEmailType={sendAutomaticEmails ? EMAIL_CAMPAIGN : ONE_TIME_EMAIL}
-      setAutomaticEmailType={updateEmailFieldEdit} />
+      sendAutomaticEmails={sendAutomaticEmails}
+      setAutomaticEmailType={this.setAutomaticEmailType} />
   );
 
   render() {
@@ -84,8 +91,7 @@ export default class EmailCompositionDialog extends React.Component {
       onRequestClose={closeAndClearEmailComposer}
     >
       <div className="email-composition-contents">
-        { supportsAutomaticEmails ?
-          this.renderAutomaticEmailSettings(inputs.sendAutomaticEmails || false, updateEmailFieldEdit) : null }
+        { supportsAutomaticEmails ? this.renderAutomaticEmailSettings(inputs.sendAutomaticEmails || false) : null }
         { this.renderSubheading() }
         <textarea
           rows="1"

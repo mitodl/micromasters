@@ -4,13 +4,9 @@
   .email-composition-dialog {
     padding-top: 0 !important;
 
-    > div {
-      &:first-child {
-        > div {
-          height: auto !important;
-          max-height: inherit !important;
-        }
-      }
+    > div:first-child > div {
+      height: auto !important;
+      max-height: inherit !important;
     }
 
     .email-composition-contents {
@@ -107,10 +103,8 @@
     flex-grow: 1;
     width: 55% !important;
 
-    > div {
-      > div {
-        margin-right: 6px !important;
-      }
+    > div > div {
+      margin-right: 6px !important;
     }
   }
 
@@ -119,10 +113,8 @@
     flex-direction: row;
     flex-grow: 5;
 
-    > div {
-      > div {
-        margin-right: 6px !important;
-      }
+    > div > div {
+      margin-right: 6px !important;
     }
   }
 
