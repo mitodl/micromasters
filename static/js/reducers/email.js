@@ -7,7 +7,8 @@ import {
   UPDATE_EMAIL_VALIDATION,
   INITIATE_SEND_EMAIL,
   SEND_EMAIL_SUCCESS,
-  SEND_EMAIL_FAILURE
+  SEND_EMAIL_FAILURE,
+  AUTOMATIC_EMAIL_TYPE
 } from '../actions/email';
 import {
   FETCH_FAILURE,
@@ -20,6 +21,7 @@ import type {
   EmailState,
   EmailInputs,
 } from '../flow/emailTypes';
+import { ONE_TIME_EMAIL } from '../components/email/constants';
 
 export const NEW_EMAIL_EDIT: EmailInputs = {
   subject:    null,
@@ -33,6 +35,8 @@ export const INITIAL_EMAIL_STATE: EmailState = {
   sendError: {},
   subheading: undefined,
   supportsAutomaticEmails: false,
+  automaticEmailType: ONE_TIME_EMAIL,
+  filters: undefined
 };
 
 export const INITIAL_ALL_EMAILS_STATE: AllEmailsState = {
@@ -68,11 +72,14 @@ export const email = (state: AllEmailsState = INITIAL_ALL_EMAILS_STATE, action: 
       params: action.payload.params || {},
       subheading: action.payload.subheading,
       supportsAutomaticEmails: action.payload.supportsAutomaticEmails,
+      filters: action.payload.filters
     };
     newState.currentlyActive = emailType;
     return newState;
   case UPDATE_EMAIL_EDIT:
     return updatedState(state, emailType, { inputs: action.payload.inputs });
+  case AUTOMATIC_EMAIL_TYPE:
+    return updatedState(state, emailType, { automaticEmailType: action.payload.automaticEmailType });
   case CLEAR_EMAIL_EDIT:
     return resetState(state, emailType);
   case UPDATE_EMAIL_VALIDATION:

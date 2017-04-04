@@ -1,12 +1,15 @@
 // @flow
 import React from 'react';
+import R from 'ramda';
 import Dialog from 'material-ui/Dialog';
 import Checkbox from 'material-ui/Checkbox';
 
+import AutomaticEmailOptions from './AutomaticEmailOptions';
 import { FETCH_PROCESSING } from '../../actions';
 import { dialogActions } from '../inputs/util';
 import { isNilOrBlank } from '../../util/util';
 import type { EmailState } from '../../flow/emailTypes';
+import { ONE_TIME_EMAIL } from './constants';
 
 export default class EmailCompositionDialog extends React.Component {
   props: {
@@ -16,7 +19,10 @@ export default class EmailCompositionDialog extends React.Component {
     subheadingRenderer?:        (activeEmail: EmailState) => React$Element<*>,
     closeAndClearEmailComposer: () => void,
     closeEmailComposerAndSend:  () => void,
-    updateEmailFieldEdit:       () => void
+    updateEmailFieldEdit:       () => void,
+    showExtraUI?:               boolean,
+    setAutomaticEmailType:      (b: string) => void,
+    renderRecipients?:          (filters: ?Array<any>) => React$Element<*>
   };
 
   showValidationError = (fieldName: string): ?React$Element<*> => {
@@ -68,12 +74,21 @@ export default class EmailCompositionDialog extends React.Component {
     if (!this.props.activeEmail) return null;
 
     const {
-      activeEmail: { fetchStatus, inputs, supportsAutomaticEmails },
+      activeEmail: {
+        fetchStatus,
+        inputs,
+        supportsAutomaticEmails,
+        automaticEmailType = ONE_TIME_EMAIL,
+        filters
+      },
       title,
       dialogVisibility,
       closeAndClearEmailComposer,
       closeEmailComposerAndSend,
-      updateEmailFieldEdit
+      updateEmailFieldEdit,
+      showExtraUI,
+      setAutomaticEmailType,
+      renderRecipients,
     } = this.props;
 
     return <Dialog
@@ -93,7 +108,10 @@ export default class EmailCompositionDialog extends React.Component {
       onRequestClose={closeAndClearEmailComposer}
     >
       <div className="email-composition-contents">
+        { R.equals(showExtraUI, true) ? <AutomaticEmailOptions automaticEmailType={automaticEmailType}
+          setAutomaticEmailType={setAutomaticEmailType} /> : null }
         { this.renderSubheading() }
+        { renderRecipients ? renderRecipients(filters) : null }
         <textarea
           rows="1"
           className="email-subject"

@@ -16,6 +16,7 @@ import {
   TEST_EMAIL_CONFIG,
   INITIAL_TEST_EMAIL_STATE
 } from './test_constants';
+import { SEARCH_RESULT_EMAIL_CONFIG } from './lib';
 
 describe('EmailCompositionDialog', () => {
   let sandbox, sendStub, closeStub, updateStub;
@@ -53,6 +54,7 @@ describe('EmailCompositionDialog', () => {
           activeEmail={emailState}
           title={TEST_EMAIL_CONFIG.title}
           subheadingRenderer={TEST_EMAIL_CONFIG.renderSubheading}
+          setEmailCompositionType={(): void => {}}
           { ...props }
         />
       </MuiThemeProvider>
@@ -62,6 +64,34 @@ describe('EmailCompositionDialog', () => {
   it('should have a title', () => {
     renderDialog();
     assert.equal(document.querySelector('h3').textContent, 'Test Email Dialog');
+  });
+
+  it('renders radio button for email type config', () => {
+    let emailState = updateObject(INITIAL_TEST_EMAIL_STATE[TEST_EMAIL_TYPE], {});
+    mount(
+      <MuiThemeProvider muiTheme={getMuiTheme()}>
+        <EmailCompositionDialog
+          updateEmailFieldEdit={() => (updateStub)}
+          closeAndClearEmailComposer={closeStub}
+          closeEmailComposerAndSend={sendStub}
+          dialogVisibility={true}
+          activeEmail={emailState}
+          title={SEARCH_RESULT_EMAIL_CONFIG.title}
+          subheadingRenderer={SEARCH_RESULT_EMAIL_CONFIG.renderSubheading}
+          showExtraUI={SEARCH_RESULT_EMAIL_CONFIG.showExtraUI}
+          setEmailCompositionType={(): void => {}}
+        />
+      </MuiThemeProvider>
+    );
+    assert.equal(document.querySelector(".type-radio-group").childElementCount, 2);
+    assert.include(
+      document.querySelector(".type-radio-group").textContent,
+      'Send a one-time email'
+    );
+    assert.include(
+      document.querySelector(".type-radio-group").textContent,
+      'Create an Email Campaign'
+    );
   });
 
   it('should fire the send handler when the "send" button is clicked', () => {

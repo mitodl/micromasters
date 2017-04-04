@@ -19,6 +19,8 @@ export type EmailState = {
   sendError:                EmailSendError,
   fetchStatus?:             ?string,
   supportsAutomaticEmails?: boolean,
+  automaticEmailType?:      string,
+  filters:                  ?Array<any>
 };
 
 export type AllEmailsState = {
@@ -32,5 +34,7 @@ export type EmailConfig = {
   renderSubheading: (activeEmail: EmailState) => React$Element<*>,
   emailOpenParams: (args: any) => Object,
   getEmailSendFunction: () => Function,
-  emailSendParams: (emailState: EmailState) => Array<any>
+  emailSendParams: (emailState: EmailState) => Array<any>,
+  showExtraUI?:    boolean,
+  renderRecipients?: (filters: ?Array<any>) => React$Element<*>,
 };
