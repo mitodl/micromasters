@@ -40,8 +40,9 @@ import type { AvailableProgram } from '../flow/enrollmentTypes';
 import type { SearchSortItem } from '../flow/searchTypes';
 import type { Profile } from '../flow/profileTypes';
 import FinalGradeRangeFilter  from './search/FinalGradeRangeFilter';
+import ModifiedSelectedFilter from './search/ModifiedSelectedFilter';
 
-const makeCountryNameTranslations: () => Object = () => {
+export const makeCountryNameTranslations: () => Object = () => {
   let translations = {};
   for (let code of Object.keys(iso3166.data)) {
     translations[code] = iso3166.data[code].name;
@@ -190,7 +191,7 @@ export default class LearnerSearch extends SearchkitComponent {
           <Pagination showText={false} listComponent={CustomPaginationDisplay} />
         </Cell>
         <Cell col={12} className="mm-filters">
-          <SelectedFilters />
+          <SelectedFilters itemComponent={ModifiedSelectedFilter}/>
           <ResetFilters component={CustomResetFiltersDisplay} />
         </Cell>
         <Cell col={12} className="sorting-header">

@@ -24,6 +24,16 @@ export const EDUCATION_LEVELS = [
   {value: DOCTORATE, label: "Doctorate"}
 ];
 
+export const SEARCH_FACET_FIELD_LABEL_MAP = {
+  'courses': 'Course',
+  'program.semester_enrollments.semester': 'Semester',
+  'program.grade_average': 'Average Grade in Program',
+  'profile.birth_country': 'Country of Birth',
+  'profile.country': 'Current Residence',
+  'profile.education.degree_name': 'Degree',
+  'profile.work_history.company_name': 'Company'
+};
+
 // NOTE: these need to be kept in sync with ui/url_utils.py
 export const PERSONAL_STEP = 'personal';
 export const EMPLOYMENT_STEP = 'professional';
