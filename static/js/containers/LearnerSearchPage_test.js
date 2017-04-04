@@ -82,7 +82,7 @@ describe('LearnerSearchPage', function () {
 
         modifyTextField(document.querySelector('.email-subject'), 'subject');
         modifyTextField(document.querySelector('.email-body'), 'body');
-        document.querySelector('.email-automatic input[type=checkbox]').click();
+        document.querySelector('.email-campaign input').click();
 
         return listenForActions([
           UPDATE_EMAIL_VALIDATION,
