@@ -68,6 +68,9 @@ describe('EmailCompositionDialog', () => {
 
   it('renders radio button for email type config', () => {
     let emailState = updateObject(INITIAL_TEST_EMAIL_STATE[TEST_EMAIL_TYPE], {});
+    emailState.supportsAutomaticEmails = true;
+    emailState.inputs.sendAutomaticEmails = true;
+
     mount(
       <MuiThemeProvider muiTheme={getMuiTheme()}>
         <EmailCompositionDialog
@@ -78,8 +81,6 @@ describe('EmailCompositionDialog', () => {
           activeEmail={emailState}
           title={SEARCH_RESULT_EMAIL_CONFIG.title}
           subheadingRenderer={SEARCH_RESULT_EMAIL_CONFIG.renderSubheading}
-          showExtraUI={SEARCH_RESULT_EMAIL_CONFIG.showExtraUI}
-          setEmailCompositionType={(): void => {}}
         />
       </MuiThemeProvider>
     );

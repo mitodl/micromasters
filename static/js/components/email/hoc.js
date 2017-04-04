@@ -11,7 +11,6 @@ import {
   clearEmailEdit,
   updateEmailValidation,
   sendEmail,
-  setAutomaticEmailType
 } from '../../actions/email';
 import { emailValidation } from '../../lib/validation/profile';
 import { EMAIL_COMPOSITION_DIALOG } from './constants';
@@ -56,14 +55,6 @@ export const withEmailDialog = R.curry(
         }
       });
 
-      setAutomaticEmailType = (automaticEmailType: string): void => {
-        const {dispatch, email: { currentlyActive }} = this.props;
-        dispatch(setAutomaticEmailType({
-          type: currentlyActive,
-          automaticEmailType: automaticEmailType
-        }));
-      };
-
       closeAndClearEmailComposer = (): void => {
         const { dispatch, email: { currentlyActive } } = this.props;
         dispatch(clearEmailEdit(currentlyActive));
@@ -104,8 +95,6 @@ export const withEmailDialog = R.curry(
             activeEmail={this.getActiveEmailState()}
             title={emailConfigs[activeEmailType].title}
             subheadingRenderer={emailConfigs[activeEmailType].renderSubheading}
-            showExtraUI={emailConfigs[activeEmailType].showExtraUI}
-            setAutomaticEmailType={this.setAutomaticEmailType}
           />
         );
       }

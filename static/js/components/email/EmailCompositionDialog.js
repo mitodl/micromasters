@@ -1,15 +1,13 @@
 // @flow
 import React from 'react';
-import R from 'ramda';
 import Dialog from 'material-ui/Dialog';
-import Checkbox from 'material-ui/Checkbox';
 
 import AutomaticEmailOptions from './AutomaticEmailOptions';
 import { FETCH_PROCESSING } from '../../actions';
 import { dialogActions } from '../inputs/util';
 import { isNilOrBlank } from '../../util/util';
 import type { EmailState } from '../../flow/emailTypes';
-import { ONE_TIME_EMAIL } from './constants';
+import { ONE_TIME_EMAIL, EMAIL_CAMPAIGN } from './constants';
 
 export default class EmailCompositionDialog extends React.Component {
   props: {
@@ -19,9 +17,7 @@ export default class EmailCompositionDialog extends React.Component {
     subheadingRenderer?:        (activeEmail: EmailState) => React$Element<*>,
     closeAndClearEmailComposer: () => void,
     closeEmailComposerAndSend:  () => void,
-    updateEmailFieldEdit:       () => void,
-    showExtraUI?:               boolean,
-    setAutomaticEmailType:      (b: string) => void,
+    updateEmailFieldEdit:       () => void
   };
 
   showValidationError = (fieldName: string): ?React$Element<*> => {
@@ -48,26 +44,12 @@ export default class EmailCompositionDialog extends React.Component {
     }
   };
 
-  automaticCheckbox = () => {
-    const {
-      activeEmail: { inputs },
-      updateEmailFieldEdit,
-    } = this.props;
-
-    return <Checkbox
-      label="Automatically send this message in the future, whenever new users join who meet these criteria"
-      className="email-automatic"
-      checked={inputs.sendAutomaticEmails || false}
-      value={true}
-      onCheck={e => {
-        updateEmailFieldEdit('sendAutomaticEmails', {
-          target: {
-            value: e.target.checked
-          }
-        });
-      }}
-    />;
-  };
+  renderAutomaticEmailSettings =
+    (sendAutomaticEmails: boolean, updateEmailFieldEdit: () => void): React$Element<*> => (
+    <AutomaticEmailOptions
+      automaticEmailType={sendAutomaticEmails ? EMAIL_CAMPAIGN : ONE_TIME_EMAIL}
+      setAutomaticEmailType={updateEmailFieldEdit} />
+  );
 
   render() {
     if (!this.props.activeEmail) return null;
@@ -76,16 +58,13 @@ export default class EmailCompositionDialog extends React.Component {
       activeEmail: {
         fetchStatus,
         inputs,
-        supportsAutomaticEmails,
-        automaticEmailType = ONE_TIME_EMAIL
+        supportsAutomaticEmails
       },
       title,
       dialogVisibility,
       closeAndClearEmailComposer,
       closeEmailComposerAndSend,
-      updateEmailFieldEdit,
-      showExtraUI,
-      setAutomaticEmailType
+      updateEmailFieldEdit
     } = this.props;
 
     return <Dialog
@@ -105,8 +84,8 @@ export default class EmailCompositionDialog extends React.Component {
       onRequestClose={closeAndClearEmailComposer}
     >
       <div className="email-composition-contents">
-        { R.equals(showExtraUI, true) ? <AutomaticEmailOptions automaticEmailType={automaticEmailType}
-          setAutomaticEmailType={setAutomaticEmailType} /> : null }
+        { supportsAutomaticEmails ?
+          this.renderAutomaticEmailSettings(inputs.sendAutomaticEmails || false, updateEmailFieldEdit) : null }
         { this.renderSubheading() }
         <textarea
           rows="1"
@@ -124,7 +103,6 @@ export default class EmailCompositionDialog extends React.Component {
           onChange={updateEmailFieldEdit('body')}
         />
         { this.showValidationError('body') }
-        {supportsAutomaticEmails ? this.automaticCheckbox() : null}
       </div>
     </Dialog>;
   }

@@ -15,7 +15,11 @@ export default class EmailCompositionType extends React.Component {
 
   handleRadioClick = (event: Event, value: string): void => {
     const { setAutomaticEmailType } = this.props;
-    setAutomaticEmailType(value);
+    setAutomaticEmailType('sendAutomaticEmails', {
+      target: {
+        value: value === EMAIL_CAMPAIGN ? true : false
+      }
+    });
   }
 
   renderEmailCampaign = (): React$Element<*> => (
