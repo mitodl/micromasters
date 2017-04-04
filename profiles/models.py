@@ -184,12 +184,16 @@ class Profile(models.Model):
     def save(self, *args, update_image=False, **kwargs):
         """Set the student_id number to the PK number and update thumbnails if necessary"""
         if update_image:
-            small_thumbnail = make_thumbnail(self.image.file, IMAGE_SMALL_MAX_DIMENSION)
-            medium_thumbnail = make_thumbnail(self.image.file, IMAGE_MEDIUM_MAX_DIMENSION)
+            if self.image:
+                small_thumbnail = make_thumbnail(self.image.file, IMAGE_SMALL_MAX_DIMENSION)
+                medium_thumbnail = make_thumbnail(self.image.file, IMAGE_MEDIUM_MAX_DIMENSION)
 
-            # name doesn't matter here, we use upload_to to produce that
-            self.image_small.save("{}.jpg".format(uuid4().hex), small_thumbnail)
-            self.image_medium.save("{}.jpg".format(uuid4().hex), medium_thumbnail)
+                # name doesn't matter here, we use upload_to to produce that
+                self.image_small.save("{}.jpg".format(uuid4().hex), small_thumbnail)
+                self.image_medium.save("{}.jpg".format(uuid4().hex), medium_thumbnail)
+            else:
+                self.image_small = None
+                self.image_medium = None
 
         super(Profile, self).save(*args, **kwargs)
         # if there is no student id, assign the same number of the primary key

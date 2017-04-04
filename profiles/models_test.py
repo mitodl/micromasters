@@ -212,6 +212,18 @@ class ProfileImageTests(MockedESTestCase):
                 agreed_to_terms_of_service=True,
             )
 
+    def setUp(self):
+        super().setUp()
+
+        # create a dummy image file in memory for upload
+        image_file = BytesIO()
+        image = Image.new('RGBA', size=(50, 50), color=(256, 0, 0))
+        image.save(image_file, 'png')
+        image_file.seek(0)
+
+        self.profile.image = UploadedFile(image_file, "filename.png", "image/png", len(image_file.getvalue()))
+        self.profile.save(update_image=True)
+
     def test_resized_images_created(self):
         """
         thumbnails images should be created if update_image is True
@@ -219,6 +231,7 @@ class ProfileImageTests(MockedESTestCase):
         self.profile.image_small = None
         self.profile.image_medium = None
         self.profile.save()
+        assert self.profile.image
         assert not self.profile.image_small
         assert not self.profile.image_medium
 
@@ -230,6 +243,7 @@ class ProfileImageTests(MockedESTestCase):
         """
         thumbnails should be updated if image is already present and updated when update_image=True
         """
+        assert self.profile.image
         assert self.profile.image_small
         assert self.profile.image_medium
 
@@ -254,3 +268,17 @@ class ProfileImageTests(MockedESTestCase):
         self.profile.save()
         assert self.profile.image_small == old_image_small
         assert self.profile.image_medium == old_image_medium
+
+    def test_null_image(self):
+        """
+        If the main image is null the thumbnails should be too
+        """
+        assert self.profile.image
+        assert self.profile.image_medium
+        assert self.profile.image_small
+
+        self.profile.image = None
+        self.profile.save(update_image=True)
+        assert not self.profile.image
+        assert not self.profile.image_medium
+        assert not self.profile.image_small
