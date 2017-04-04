@@ -10,7 +10,7 @@ import {
   updateEmailEdit,
   clearEmailEdit,
   updateEmailValidation,
-  sendEmail,
+  sendEmail
 } from '../../actions/email';
 import { emailValidation } from '../../lib/validation/profile';
 import { EMAIL_COMPOSITION_DIALOG } from './constants';

@@ -7,7 +7,7 @@ import {
   UPDATE_EMAIL_VALIDATION,
   INITIATE_SEND_EMAIL,
   SEND_EMAIL_SUCCESS,
-  SEND_EMAIL_FAILURE,
+  SEND_EMAIL_FAILURE
 } from '../actions/email';
 import {
   FETCH_FAILURE,
@@ -32,7 +32,7 @@ export const INITIAL_EMAIL_STATE: EmailState = {
   validationErrors: {},
   sendError: {},
   subheading: undefined,
-  supportsAutomaticEmails: false
+  supportsAutomaticEmails: false,
 };
 
 export const INITIAL_ALL_EMAILS_STATE: AllEmailsState = {

@@ -18,7 +18,7 @@ export type EmailState = {
   validationErrors:         EmailValidationErrors,
   sendError:                EmailSendError,
   fetchStatus?:             ?string,
-  supportsAutomaticEmails?: boolean
+  supportsAutomaticEmails?: boolean,
 };
 
 export type AllEmailsState = {

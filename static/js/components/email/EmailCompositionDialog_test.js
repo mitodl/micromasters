@@ -16,7 +16,6 @@ import {
   TEST_EMAIL_CONFIG,
   INITIAL_TEST_EMAIL_STATE
 } from './test_constants';
-import { SEARCH_RESULT_EMAIL_CONFIG } from './lib';
 
 describe('EmailCompositionDialog', () => {
   let sandbox, sendStub, closeStub, updateStub;
@@ -79,8 +78,8 @@ describe('EmailCompositionDialog', () => {
           closeEmailComposerAndSend={sendStub}
           dialogVisibility={true}
           activeEmail={emailState}
-          title={SEARCH_RESULT_EMAIL_CONFIG.title}
-          subheadingRenderer={SEARCH_RESULT_EMAIL_CONFIG.renderSubheading}
+          title={TEST_EMAIL_CONFIG.title}
+          subheadingRenderer={TEST_EMAIL_CONFIG.renderSubheading}
         />
       </MuiThemeProvider>
     );

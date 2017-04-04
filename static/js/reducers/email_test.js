@@ -18,9 +18,7 @@ import {
   SEND_EMAIL_FAILURE,
 } from '../actions/email';
 import { INITIAL_ALL_EMAILS_STATE, INITIAL_EMAIL_STATE } from './email';
-import {
-  SEARCH_EMAIL_TYPE,
-} from '../components/email/constants';
+import { SEARCH_EMAIL_TYPE } from '../components/email/constants';
 import type { EmailSendResponse } from '../flow/emailTypes';
 import rootReducer from '../reducers';
 import { assert } from 'chai';
