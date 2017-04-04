@@ -43,7 +43,7 @@ export default class EmailCompositionDialog extends React.Component {
     }
   };
 
-  setAutomaticEmailType = (sendAutomaticEmails: boolean): void => {
+  setSendAutomaticEmails = (sendAutomaticEmails: boolean): void => {
     const { updateEmailFieldEdit } = this.props;
     updateEmailFieldEdit('sendAutomaticEmails', {
       target: {
@@ -55,7 +55,8 @@ export default class EmailCompositionDialog extends React.Component {
   renderAutomaticEmailSettings = (sendAutomaticEmails: boolean): React$Element<*> => (
     <AutomaticEmailOptions
       sendAutomaticEmails={sendAutomaticEmails}
-      setAutomaticEmailType={this.setAutomaticEmailType} />
+      setSendAutomaticEmails={this.setSendAutomaticEmails}
+    />
   );
 
   render() {

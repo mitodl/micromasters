@@ -6,10 +6,6 @@ import { assert } from 'chai';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
-import {
-  ONE_TIME_EMAIL,
-  EMAIL_CAMPAIGN
-} from './constants';
 import AutomaticEmailOptions from './AutomaticEmailOptions';
 
 describe('AutomaticEmailOptions', () => {
@@ -28,7 +24,7 @@ describe('AutomaticEmailOptions', () => {
     mount(
       <MuiThemeProvider muiTheme={getMuiTheme()}>
         <AutomaticEmailOptions
-          setAutomaticEmailType={setEmailCompositionTypeStub}
+          setSendAutomaticEmails={setEmailCompositionTypeStub}
           sendAutomaticEmails={sendAutomaticEmails}
         />
       </MuiThemeProvider>
@@ -40,7 +36,7 @@ describe('AutomaticEmailOptions', () => {
     assert.equal(wrapper.find(".type-radio-group").children().length, 2);
   });
 
-  it(`div renders for type: ${ONE_TIME_EMAIL}`, () => {
+  it('div renders for type: one time email', () => {
     let wrapper = renderComponent();
     assert.equal(wrapper.find(".type-radio-group").children().length, 2);
     // test setEmailCompositionType is called when one time email selected
@@ -49,7 +45,7 @@ describe('AutomaticEmailOptions', () => {
     assert.isTrue(setEmailCompositionTypeStub.called, "called set email composition type handler");
   });
 
-  it(`div renders for type: ${EMAIL_CAMPAIGN}`, () => {
+  it('div renders for type: email campaign', () => {
     let wrapper = renderComponent(true);
     assert.equal(wrapper.find(".type-radio-group").children().length, 2);
     assert.include(
