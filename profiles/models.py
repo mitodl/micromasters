@@ -271,7 +271,7 @@ class Profile(models.Model):
             name_components.append('({})'.format(self.preferred_name))
         return ' '.join(name_components)
 
-import json.tool
+
 class Education(models.Model):
     """
     A user education
