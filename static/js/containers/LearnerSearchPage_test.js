@@ -101,7 +101,7 @@ describe('LearnerSearchPage', function () {
       }).then((state) => {
         assert.isTrue(state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG]);
         return listenForActions([UPDATE_EMAIL_EDIT], () => {
-          document.querySelectorAll('input')[1].click();
+          document.querySelector('.create-campaign input').click();
         }).then((state) => {
           assert.isTrue(state.email[state.email.currentlyActive].inputs.sendAutomaticEmails);
         });
@@ -126,7 +126,7 @@ describe('LearnerSearchPage', function () {
 
         modifyTextField(document.querySelector('.email-subject'), 'subject');
         modifyTextField(document.querySelector('.email-body'), 'body');
-        document.querySelectorAll('input')[1].click();
+        document.querySelector('.create-campaign input').click();
 
         return listenForActions([
           UPDATE_EMAIL_VALIDATION,
