@@ -5,6 +5,7 @@ import logging
 
 from celery import group
 from celery.result import GroupResult
+from django.contrib.auth.models import User
 from django.core.cache import caches
 
 from courses.models import CourseRun
@@ -82,10 +83,10 @@ def freeze_course_run_final_grades(course_run_id):
         results.delete()
 
     # extract the users to be frozen for this course
-    users_qset = api.get_users_without_frozen_final_grade(course_run)
+    user_ids_qset = api.get_users_without_frozen_final_grade(course_run).values_list('id', flat=True)
 
     # if there are no more users to be froze, just complete the task
-    if users_qset.count() == 0:
+    if not user_ids_qset.exists():
         CourseRunGradingStatus.set_to_complete(course_run)
         return
 
@@ -96,7 +97,7 @@ def freeze_course_run_final_grades(course_run_id):
 
     # create a group of subtasks to be run in parallel
     job = group(
-        freeze_users_final_grade_async.s(list_users, course_run.id) for list_users in chunks(users_qset)
+        freeze_users_final_grade_async.s(list_user_ids, course_run.id) for list_user_ids in chunks(user_ids_qset)
     )
     results = job.apply_async()
     # save the result ID in the celery backend
@@ -106,12 +107,12 @@ def freeze_course_run_final_grades(course_run_id):
 
 
 @async.task
-def freeze_users_final_grade_async(users, course_run_id):
+def freeze_users_final_grade_async(user_ids, course_run_id):
     """
     Async task to freeze the final grade in a course run for a list of users.
 
     Args:
-        users (list): a list of django users
+        user_ids (list): a list of django user ids
         course_run_id (int): a course run id
 
     Returns:
@@ -120,7 +121,7 @@ def freeze_users_final_grade_async(users, course_run_id):
     # pylint: disable=bare-except
     course_run_id = lookup_id(course_run_id)
     course_run = CourseRun.objects.get(id=course_run_id)
-    for user in users:
+    for user in User.objects.filter(id__in=user_ids):
         try:
             api.freeze_user_final_grade(user, course_run)
         except:

@@ -63,7 +63,7 @@ class GradeTasksTests(MockedESTestCase):
         """
         Test for the freeze_users_final_grade_async task
         """
-        tasks.freeze_users_final_grade_async.delay(self.users, self.course_run1)
+        tasks.freeze_users_final_grade_async.delay([user.id for user in self.users], self.course_run1)
         assert mock_freeze_func.call_count == len(self.users)
         for user in self.users:
             mock_freeze_func.assert_any_call(user, self.course_run1)
@@ -72,7 +72,7 @@ class GradeTasksTests(MockedESTestCase):
         mock_freeze_func.reset_mock()
         mock_freeze_func.side_effect = AttributeError
 
-        tasks.freeze_users_final_grade_async.delay(self.users, self.course_run1)
+        tasks.freeze_users_final_grade_async.delay([user.id for user in self.users], self.course_run1)
         assert mock_freeze_func.call_count == len(self.users)
         for user in self.users:
             mock_freeze_func.assert_any_call(user, self.course_run1)

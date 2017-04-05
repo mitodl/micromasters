@@ -177,8 +177,8 @@ def chunks(list_to_chunk, chunk_size=20):
         list_to_chunk (list): list of elements to chunk
         chunk_size (int): Max size of each sublist
 
-    Returns:
-        list: List containing student ids.
+    Yields:
+        list: List containing a slice of list_to_chunk
     """
     chunk_size = max(1, chunk_size)
     for i in range(0, len(list_to_chunk), chunk_size):
