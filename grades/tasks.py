@@ -13,7 +13,6 @@ from grades import api
 from grades.models import CourseRunGradingStatus
 from micromasters.celery import async
 from micromasters.utils import chunks
-from search.tasks import lookup_id
 
 
 CACHE_ID_BASE_STR = "freeze_grade_{0}"
@@ -50,9 +49,6 @@ def freeze_course_run_final_grades(course_run_id):
     Returns:
         None
     """
-    # Deprecated! lookup_id is used to handle queued tasks at the time of deployment
-    # In the near future course_run_id will always be an integer
-    course_run_id = lookup_id(course_run_id)
     course_run = CourseRun.objects.get(id=course_run_id)
     # no need to do anything if the course run is not ready
     if not course_run.can_freeze_grades:
@@ -121,9 +117,6 @@ def freeze_users_final_grade_async(user_ids, course_run_id):
         None
     """
     # pylint: disable=bare-except
-    # Deprecated! lookup_id is used to handle queued tasks at the time of deployment
-    # In the near future course_run_id will always be an integer
-    course_run_id = lookup_id(course_run_id)
     course_run = CourseRun.objects.get(id=course_run_id)
     for user in User.objects.filter(id__in=user_ids):
         try:
