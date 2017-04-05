@@ -63,7 +63,7 @@ class GradeTasksTests(MockedESTestCase):
         """
         Test for the freeze_users_final_grade_async task
         """
-        tasks.freeze_users_final_grade_async.delay([user.id for user in self.users], self.course_run1)
+        tasks.freeze_users_final_grade_async.delay([user.id for user in self.users], self.course_run1.id)
         assert mock_freeze_func.call_count == len(self.users)
         for user in self.users:
             mock_freeze_func.assert_any_call(user, self.course_run1)
@@ -72,7 +72,7 @@ class GradeTasksTests(MockedESTestCase):
         mock_freeze_func.reset_mock()
         mock_freeze_func.side_effect = AttributeError
 
-        tasks.freeze_users_final_grade_async.delay([user.id for user in self.users], self.course_run1)
+        tasks.freeze_users_final_grade_async.delay([user.id for user in self.users], self.course_run1.id)
         assert mock_freeze_func.call_count == len(self.users)
         for user in self.users:
             mock_freeze_func.assert_any_call(user, self.course_run1)
@@ -82,7 +82,7 @@ class GradeTasksTests(MockedESTestCase):
         Test for the test_freeze_course_run_final_grades
         task in case it ends because the run cannot be frozen
         """
-        tasks.freeze_course_run_final_grades.delay(self.course_run_future)
+        tasks.freeze_course_run_final_grades.delay(self.course_run_future.id)
         # in this case there is not even an entry in the Table
         assert CourseRunGradingStatus.objects.filter(course_run=self.course_run_future).exists() is False
 
@@ -91,7 +91,7 @@ class GradeTasksTests(MockedESTestCase):
         Test for the test_freeze_course_run_final_grades
         task in case it ends because the run has already been frozen
         """
-        tasks.freeze_course_run_final_grades.delay(self.course_run_frozen)
+        tasks.freeze_course_run_final_grades.delay(self.course_run_frozen.id)
         # in this case no task has started
         assert cache_redis.get(tasks.CACHE_ID_BASE_STR.format(self.course_run_frozen.edx_course_key)) is None
 
@@ -102,7 +102,7 @@ class GradeTasksTests(MockedESTestCase):
         """
         run_grade_info_qset = CourseRunGradingStatus.objects.filter(course_run=self.course_run2)
         assert run_grade_info_qset.exists() is False
-        tasks.freeze_course_run_final_grades.delay(self.course_run2)
+        tasks.freeze_course_run_final_grades.delay(self.course_run2.id)
         assert run_grade_info_qset.exists() is True
         info_run = run_grade_info_qset.first()
         assert info_run.course_run == self.course_run2
@@ -120,7 +120,7 @@ class GradeTasksTests(MockedESTestCase):
         # first call
         run_grade_info_qset = CourseRunGradingStatus.objects.filter(course_run=self.course_run1)
         assert run_grade_info_qset.exists() is False
-        tasks.freeze_course_run_final_grades.delay(self.course_run1)
+        tasks.freeze_course_run_final_grades.delay(self.course_run1.id)
         assert run_grade_info_qset.exists() is True
         info_run = run_grade_info_qset.first()
         assert info_run.course_run == self.course_run1
@@ -145,7 +145,7 @@ class GradeTasksTests(MockedESTestCase):
 
         # new call will process all the remaining users without changing the status of the course run
         freeze_single_user.reset_mock()
-        tasks.freeze_course_run_final_grades.delay(self.course_run1)
+        tasks.freeze_course_run_final_grades.delay(self.course_run1.id)
         info_run.refresh_from_db()
         assert info_run.status == FinalGradeStatus.PENDING
         cached_celery_task_id_2 = cache_redis.get(cache_id)
@@ -168,7 +168,7 @@ class GradeTasksTests(MockedESTestCase):
 
         # a new call will just change the status of the course and clean up the cache
         freeze_single_user.reset_mock()
-        tasks.freeze_course_run_final_grades.delay(self.course_run1)
+        tasks.freeze_course_run_final_grades.delay(self.course_run1.id)
         info_run.refresh_from_db()
         assert info_run.status == FinalGradeStatus.COMPLETE
         assert cache_redis.get(cache_id) is None
