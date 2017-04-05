@@ -87,6 +87,7 @@
   .type-radio-group {
     display: flex;
     flex-direction: row;
+    overflow: hidden;
 
     label {
       color: $darkergray;
