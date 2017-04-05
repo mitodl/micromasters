@@ -45,7 +45,7 @@ def freeze_course_run_final_grades(course_run_id):
     Async task manager to freeze all the users' final grade in a course run
 
     Args:
-        course_run_id (int): a course run model object
+        course_run_id (int): a course run id
 
     Returns:
         None
