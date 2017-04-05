@@ -295,11 +295,7 @@ class Education(models.Model):
     school_country = models.TextField()
 
     def __str__(self):
-        degree_title = ''
-        for degree, title in self.DEGREE_CHOICES:
-            if self.degree_name == degree:
-                degree_title = title
-                break
+        degree_title = dict(self.DEGREE_CHOICES).get(self.degree_name, '')
 
         return 'Education for {user}, {degree} at {title} {date}'.format(
             user=self.profile.user.username,
