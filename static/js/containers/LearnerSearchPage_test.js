@@ -14,6 +14,7 @@ import {
   SEND_EMAIL_SUCCESS,
   CLEAR_EMAIL_EDIT,
   UPDATE_EMAIL_VALIDATION,
+  UPDATE_EMAIL_EDIT,
 } from '../actions/email';
 import {
   SHOW_DIALOG,
@@ -65,6 +66,29 @@ describe('LearnerSearchPage', function () {
     });
   });
 
+  it('should set sendAutomaticEmails flag', () => {
+    const EMAIL_LINK_SELECTOR = '#email-selected';
+    const EMAIL_DIALOG_ACTIONS = [
+      START_EMAIL_EDIT,
+      SHOW_DIALOG
+    ];
+
+    return renderComponent('/learners').then(([wrapper]) => {
+      let emailLink = wrapper.find(EMAIL_LINK_SELECTOR).at(0);
+
+      return listenForActions(EMAIL_DIALOG_ACTIONS, () => {
+        emailLink.simulate('click');
+      }).then((state) => {
+        assert.isTrue(state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG]);
+        return listenForActions([UPDATE_EMAIL_EDIT], () => {
+          document.querySelectorAll('input')[1].click();
+        }).then((state) => {
+          assert.isTrue(state.email[state.email.currentlyActive].inputs.sendAutomaticEmails);
+        });
+      });
+    });
+  });
+
   it('sends an email using the email link', () => {
     const EMAIL_LINK_SELECTOR = '#email-selected';
     const EMAIL_DIALOG_ACTIONS = [
@@ -82,7 +106,7 @@ describe('LearnerSearchPage', function () {
 
         modifyTextField(document.querySelector('.email-subject'), 'subject');
         modifyTextField(document.querySelector('.email-body'), 'body');
-        document.querySelector('.email-campaign input').click();
+        document.querySelectorAll('input')[1].click();
 
         return listenForActions([
           UPDATE_EMAIL_VALIDATION,

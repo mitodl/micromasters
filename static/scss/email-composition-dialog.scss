@@ -67,9 +67,7 @@
         overflow: hidden;
 
         &.email-subject {
-          padding: 8px 15px;
           margin-bottom: 5px;
-          height: 60px;
         }
       }
 
@@ -81,7 +79,6 @@
 }
 
 .email-type {
-  width: 100%;
   margin: 0 0 10px;
   background-color: $email-composition-type;
   padding: 15px;
@@ -95,26 +92,9 @@
       color: $darkergray;
       font-size: 15px;
     }
-  }
 
-  .one-time-email {
-    display: flex !important;
-    flex-direction: row;
-    flex-grow: 1;
-    width: 55% !important;
-
-    > div > div {
-      margin-right: 6px !important;
-    }
-  }
-
-  .email-campaign {
-    display: flex !important;
-    flex-direction: row;
-    flex-grow: 5;
-
-    > div > div {
-      margin-right: 6px !important;
+    > div:first-child {
+      max-width: 35%;
     }
   }
 

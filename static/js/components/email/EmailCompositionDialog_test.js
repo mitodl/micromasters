@@ -53,7 +53,6 @@ describe('EmailCompositionDialog', () => {
           activeEmail={emailState}
           title={TEST_EMAIL_CONFIG.title}
           subheadingRenderer={TEST_EMAIL_CONFIG.renderSubheading}
-          setEmailCompositionType={(): void => {}}
           { ...props }
         />
       </MuiThemeProvider>
@@ -65,25 +64,15 @@ describe('EmailCompositionDialog', () => {
     assert.equal(document.querySelector('h3').textContent, 'Test Email Dialog');
   });
 
-  it('renders radio button for email type config', () => {
-    let emailState = updateObject(INITIAL_TEST_EMAIL_STATE[TEST_EMAIL_TYPE], {});
-    emailState.supportsAutomaticEmails = true;
-    emailState.inputs.sendAutomaticEmails = true;
-
-    mount(
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
-        <EmailCompositionDialog
-          updateEmailFieldEdit={() => (updateStub)}
-          closeAndClearEmailComposer={closeStub}
-          closeEmailComposerAndSend={sendStub}
-          dialogVisibility={true}
-          activeEmail={emailState}
-          title={TEST_EMAIL_CONFIG.title}
-          subheadingRenderer={TEST_EMAIL_CONFIG.renderSubheading}
-        />
-      </MuiThemeProvider>
-    );
-    assert.equal(document.querySelector(".type-radio-group").childElementCount, 2);
+  it('renders a radio button for setting whether an email is automatic or not', () => {
+    renderDialog({
+      supportsAutomaticEmails: true,
+      inputs: {
+        sendAutomaticEmails: false
+      }
+    });
+    const radioGroupDiv = document.querySelector(".type-radio-group");
+    assert.equal(radioGroupDiv.childElementCount, 2);
     assert.include(
       document.querySelector(".type-radio-group").textContent,
       'Send a one-time email'

@@ -9,11 +9,11 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import AutomaticEmailOptions from './AutomaticEmailOptions';
 
 describe('AutomaticEmailOptions', () => {
-  let sandbox, setEmailCompositionTypeStub;
+  let sandbox, setSendAutomaticEmailsStub;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
-    setEmailCompositionTypeStub = sandbox.stub();
+    setSendAutomaticEmailsStub = sandbox.stub();
   });
 
   afterEach(() => {
@@ -24,37 +24,30 @@ describe('AutomaticEmailOptions', () => {
     mount(
       <MuiThemeProvider muiTheme={getMuiTheme()}>
         <AutomaticEmailOptions
-          setSendAutomaticEmails={setEmailCompositionTypeStub}
+          setSendAutomaticEmails={setSendAutomaticEmailsStub}
           sendAutomaticEmails={sendAutomaticEmails}
         />
       </MuiThemeProvider>
     )
   );
 
-  it('div renders', () => {
+  it('should render a div', () => {
     let wrapper = renderComponent();
     assert.equal(wrapper.find(".type-radio-group").children().length, 2);
+    let radioOneTime = wrapper.find("input").at(0);
+    assert.isFalse(radioOneTime.prop('value'));
   });
 
-  it('div renders for type: one time email', () => {
-    let wrapper = renderComponent();
-    assert.equal(wrapper.find(".type-radio-group").children().length, 2);
-    // test setEmailCompositionType is called when one time email selected
-    let radioOneTime = wrapper.find(".one-time-email input");
-    radioOneTime.simulate('change');
-    assert.isTrue(setEmailCompositionTypeStub.called, "called set email composition type handler");
-  });
-
-  it('div renders for type: email campaign', () => {
+  it('should be able to select email campaign', () => {
     let wrapper = renderComponent(true);
-    assert.equal(wrapper.find(".type-radio-group").children().length, 2);
     assert.include(
       wrapper.text(),
       'This email will be sent now and in the future whenever users meet the criteria.'
     );
     // test setEmailCompositionType is called when campaign selected
-    let radioCampaign = wrapper.find(".email-campaign input");
+    let radioCampaign = wrapper.find("input").at(1);
+    assert.isTrue(radioCampaign.prop('value'));
     radioCampaign.simulate('change');
-    assert.isTrue(setEmailCompositionTypeStub.called, "called set email composition type handler");
+    assert.isTrue(setSendAutomaticEmailsStub.called, "called set email composition type handler");
   });
 });

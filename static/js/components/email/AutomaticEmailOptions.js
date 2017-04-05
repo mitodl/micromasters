@@ -26,18 +26,18 @@ export default class AutomaticEmailOptions extends React.Component {
       <div className="email-type">
         <RadioButtonGroup
           className="type-radio-group"
-          name="email-composition-type"
+          name="email-options"
           valueSelected={sendAutomaticEmails}
           onChange={this.handleRadioClick}
         >
           <RadioButton
             value={false}
             label="Send a one-time email"
-            className="one-time-email" />
+          />
           <RadioButton
             value={true}
             label="Create an Email Campaign"
-            className="email-campaign" />
+          />
         </RadioButtonGroup>
         { sendAutomaticEmails ? this.renderEmailCampaign() : null }
       </div>
