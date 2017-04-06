@@ -304,3 +304,16 @@ class Education(models.Model):
             title=self.school_name,
             date=self.graduation_date.strftime("%b %Y"),
         )
+
+
+class Country(models.Model):
+    """
+    List of countries.
+    """
+    name = models.TextField()
+    short_code = models.TextField()
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
