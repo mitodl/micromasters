@@ -18,11 +18,22 @@ class AdminTest(MockedESTestCase):
     """
     def test_save_and_log_model(self):
         """
-        Tests that the save_model() function on OrderAdmin creates an OrderAudit entry
+        Tests that the save_model() function on OrderAdmin and LineAdmin create OrderAudit entries
         """
         assert OrderAudit.objects.count() == 0
         order = OrderFactory.create()
         admin = OrderAdmin(model=order, admin_site=Mock())
+        mock_request = Mock(user=UserFactory.create())
+        admin.save_model(
+            request=mock_request,
+            obj=admin.model,
+            form=Mock(),
+            change=Mock()
+        )
+        assert OrderAudit.objects.count() == 1
+
+        order = LineFactory.create()
+        admin = LineAdmin(model=line, admin_site=Mock())
         mock_request = Mock(user=UserFactory.create())
         admin.save_model(
             request=mock_request,
