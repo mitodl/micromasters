@@ -6,7 +6,7 @@ import AutomaticEmailOptions from './AutomaticEmailOptions';
 import { FETCH_PROCESSING } from '../../actions';
 import { dialogActions } from '../inputs/util';
 import { isNilOrBlank } from '../../util/util';
-import type { EmailState } from '../../flow/emailTypes';
+import type { EmailState, Filter } from '../../flow/emailTypes';
 
 export default class EmailCompositionDialog extends React.Component {
   props: {
@@ -17,7 +17,7 @@ export default class EmailCompositionDialog extends React.Component {
     closeAndClearEmailComposer: () => void,
     closeEmailComposerAndSend:  () => void,
     updateEmailFieldEdit:       () => void,
-    renderRecipients?:          (filters: ?Array<any>) => React$Element<*>
+    renderRecipients?:          (filters: ?Array<Filter>) => React$Element<*>
   };
 
   showValidationError = (fieldName: string): ?React$Element<*> => {

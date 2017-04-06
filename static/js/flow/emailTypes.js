@@ -9,6 +9,13 @@ export type EmailInputs = {
   body?:                ?string,
   sendAutomaticEmails?: boolean,
 };
+
+export type Filter = {
+  id:    string,
+  name?: string,
+  value: string
+}
+
 export type EmailValidationErrors = EmailInputs;
 
 export type EmailState = {
@@ -19,7 +26,7 @@ export type EmailState = {
   sendError:                EmailSendError,
   fetchStatus?:             ?string,
   supportsAutomaticEmails?: boolean,
-  filters:                  ?Array<any>,
+  filters:                  ?Array<Filter>,
 };
 
 export type AllEmailsState = {
@@ -34,5 +41,5 @@ export type EmailConfig = {
   emailOpenParams: (args: any) => Object,
   getEmailSendFunction: () => Function,
   emailSendParams: (emailState: EmailState) => Array<any>,
-  renderRecipients?: (filters: ?Array<any>) => React$Element<*>,
+  renderRecipients?: (filters: ?Array<Filter>) => React$Element<*>,
 };
