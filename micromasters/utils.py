@@ -2,6 +2,7 @@
 General micromasters utility functions
 """
 import datetime
+from itertools import islice
 import json
 import logging
 
@@ -169,17 +170,21 @@ def is_near_now(time):
     return now - five_seconds < time < now + five_seconds
 
 
-def chunks(list_to_chunk, chunk_size=20):
+def chunks(iterable, chunk_size=20):
     """
-    Splits list into sub lists each of max size chunk_size.
+    Yields chunks of an iterable as sub lists each of max size chunk_size.
 
     Args:
-        list_to_chunk (list): list of elements to chunk
+        iterable (iterable): iterable of elements to chunk
         chunk_size (int): Max size of each sublist
 
     Yields:
         list: List containing a slice of list_to_chunk
     """
     chunk_size = max(1, chunk_size)
-    for i in range(0, len(list_to_chunk), chunk_size):
-        yield list_to_chunk[i:i + chunk_size]
+    iterable = iter(iterable)
+    chunk = list(islice(iterable, chunk_size))
+
+    while len(chunk) > 0:
+        yield chunk
+        chunk = list(islice(iterable, chunk_size))

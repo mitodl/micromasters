@@ -40,6 +40,7 @@ class EdxPipelineApiTest(MockedESTestCase):
                     'education',
                     'updated_on',
                     'exam_profile',
+                    'mail_id',
             ):
                 continue
             if key == 'account_privacy':

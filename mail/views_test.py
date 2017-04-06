@@ -76,6 +76,17 @@ class SearchResultMailViewsBase(MockedESTestCase, APITestCase):
             'email_subject': 'email subject',
             'email_body': 'email body'
         }
+        self.email_results = {'a@example.com', 'b@example.com'}
+        self.email_vars = [{
+            'email': 'a@example.com',
+            'mail_id': 'id1',
+            'first_name': 'A',
+        }, {
+            'email': 'b@example.com',
+            'mail_id': 'id2',
+            'first_name': 'B',
+        }]
+        self.recipient_tuples = [(_vars['email'], _vars) for _vars in self.email_vars]
 
 
 class SearchResultMailViewsTests(SearchResultMailViewsBase):
@@ -85,10 +96,13 @@ class SearchResultMailViewsTests(SearchResultMailViewsBase):
         """
         Test that the SearchResultMailView will accept and return expected values
         """
-        email_results = ['a@example.com', 'b@example.com']
         with patch(
-            'mail.views.get_all_query_matching_emails', autospec=True, return_value=email_results
-        ) as mock_get_emails, patch('mail.views.MailgunClient') as mock_mailgun_client:
+            'mail.views.get_all_query_matching_emails', autospec=True, return_value=self.email_results
+        ) as mock_get_emails, patch(
+            'mail.views.MailgunClient'
+        ) as mock_mailgun_client, patch(
+            'mail.views.get_mail_vars', autospec=True, return_value=self.email_vars,
+        ) as mock_get_mail_vars:
             mock_mailgun_client.send_batch.return_value = [Response()]
             resp_post = self.client.post(self.search_result_mail_url, data=self.request_data, format='json')
         assert resp_post.status_code == status.HTTP_200_OK
@@ -103,37 +117,46 @@ class SearchResultMailViewsTests(SearchResultMailViewsBase):
         _, called_kwargs = mock_mailgun_client.send_batch.call_args
         assert called_kwargs['subject'] == self.request_data['email_subject']
         assert called_kwargs['body'] == self.request_data['email_body']
-        assert called_kwargs['recipients'] == email_results
+        assert list(called_kwargs['recipients']) == self.recipient_tuples
+        mock_get_mail_vars.assert_called_once_with(self.email_results)
 
     def test_view_response_error(self):
         """
         If there's at least one non-zero status code from Mailgun, we should return a 500 status code in our response.
         """
-        email_results = ['a@example.com', 'b@example.com']
         exception_pairs = [
             ['b@example.com'], HTTPError()
         ]
         with patch(
-            'mail.views.get_all_query_matching_emails', autospec=True, return_value=email_results
-        ), patch('mail.views.MailgunClient') as mock_mailgun_client:
+            'mail.views.get_all_query_matching_emails', autospec=True, return_value=self.email_results
+        ), patch(
+            'mail.views.MailgunClient'
+        ) as mock_mailgun_client, patch(
+            'mail.views.get_mail_vars', autospec=True, return_value=self.email_vars,
+        ) as mock_get_mail_vars:
             mock_mailgun_client.send_batch.side_effect = SendBatchException(exception_pairs)
             with self.assertRaises(SendBatchException) as send_batch_exception:
                 self.client.post(self.search_result_mail_url, data=self.request_data, format='json')
 
         assert send_batch_exception.exception.exception_pairs == exception_pairs
+        mock_get_mail_vars.assert_called_once_with(self.email_results)
 
     def test_view_response_improperly_configured(self):
         """
         Test that the SearchResultMailView will raise ImproperlyConfigured if mailgun returns 401, which
         results in returning 500 since micromasters.utils.custom_exception_handler catches ImproperlyConfigured
         """
-        email_results = ['a@example.com', 'b@example.com']
         with patch(
-            'mail.views.get_all_query_matching_emails', autospec=True, return_value=email_results
-        ), patch('mail.views.MailgunClient') as mock_mailgun_client:
+            'mail.views.get_all_query_matching_emails', autospec=True, return_value=self.email_results
+        ), patch(
+            'mail.views.MailgunClient'
+        ) as mock_mailgun_client, patch(
+            'mail.views.get_mail_vars', autospec=True, return_value=self.email_vars,
+        ) as mock_get_mail_vars:
             mock_mailgun_client.send_batch.side_effect = ImproperlyConfigured
             resp = self.client.post(self.search_result_mail_url, data=self.request_data, format='json')
         assert resp.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+        mock_get_mail_vars.assert_called_once_with(self.email_results)
 
     def test_no_program_user_response(self):
         """
@@ -153,7 +176,6 @@ class AutomaticEmailTests(SearchResultMailViewsBase):
     def setUp(self):
         super().setUp()
 
-        self.email_results = {'a@example.com', 'b@example.com'}
         self.request_data = self.request_data.copy()
         self.request_data['send_automatic_emails'] = True
         for email in self.email_results:
@@ -176,7 +198,9 @@ class AutomaticEmailTests(SearchResultMailViewsBase):
             'mail.views.MailgunClient', send_batch=Mock(return_value=Response())
         ) as mock_mailgun_client, patch(
             'mail.views.add_automatic_email', autospec=True, return_value=self.automatic_email,
-        ) as mock_add_automatic_email:
+        ) as mock_add_automatic_email, patch(
+            'mail.views.get_mail_vars', autospec=True, return_value=self.email_vars,
+        ) as mock_get_mail_vars:
             resp_post = self.client.post(self.search_result_mail_url, data=self.request_data, format='json')
         assert resp_post.status_code == status.HTTP_200_OK
         assert mock_get_emails.call_args[0][0].to_dict() == self.search_obj.to_dict()
@@ -185,7 +209,7 @@ class AutomaticEmailTests(SearchResultMailViewsBase):
         _, called_kwargs = mock_mailgun_client.send_batch.call_args
         assert called_kwargs['subject'] == self.request_data['email_subject']
         assert called_kwargs['body'] == self.request_data['email_body']
-        assert called_kwargs['recipients'] == self.email_results
+        assert list(called_kwargs['recipients']) == self.recipient_tuples
 
         assert mock_add_automatic_email.call_args[0][0].to_dict() == self.search_obj.to_dict()
         assert mock_add_automatic_email.call_args[1] == {
@@ -194,6 +218,8 @@ class AutomaticEmailTests(SearchResultMailViewsBase):
             "sender_name": full_name(self.staff),
             "staff_user": self.staff,
         }
+
+        mock_get_mail_vars.assert_called_once_with(self.email_results)
 
         assert SentAutomaticEmail.objects.filter(
             user__email__in=self.email_results, automatic_email=self.automatic_email,
@@ -215,7 +241,9 @@ class AutomaticEmailTests(SearchResultMailViewsBase):
             'mail.views.MailgunClient', send_batch=Mock(side_effect=SendBatchException(exception_pairs))
         ) as mock_mailgun_client, patch(
             'mail.views.add_automatic_email', autospec=True, return_value=self.automatic_email,
-        ) as mock_add_automatic_email:
+        ) as mock_add_automatic_email, patch(
+            'mail.views.get_mail_vars', autospec=True, return_value=self.email_vars,
+        ) as mock_get_mail_vars:
             with self.assertRaises(SendBatchException) as send_batch_exception:
                 self.client.post(self.search_result_mail_url, data=self.request_data, format='json')
         assert send_batch_exception.exception.exception_pairs == exception_pairs
@@ -224,7 +252,7 @@ class AutomaticEmailTests(SearchResultMailViewsBase):
         _, called_kwargs = mock_mailgun_client.send_batch.call_args
         assert called_kwargs['subject'] == self.request_data['email_subject']
         assert called_kwargs['body'] == self.request_data['email_body']
-        assert called_kwargs['recipients'] == self.email_results
+        assert list(called_kwargs['recipients']) == self.recipient_tuples
 
         assert mock_add_automatic_email.call_args[0][0].to_dict() == self.search_obj.to_dict()
         assert mock_add_automatic_email.call_args[1] == {
@@ -233,6 +261,8 @@ class AutomaticEmailTests(SearchResultMailViewsBase):
             "sender_name": full_name(self.staff),
             "staff_user": self.staff,
         }
+
+        mock_get_mail_vars.assert_called_once_with(self.email_results)
 
         assert sorted(SentAutomaticEmail.objects.filter(
             user__email__in=self.email_results, automatic_email=self.automatic_email,

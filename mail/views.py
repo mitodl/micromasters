@@ -19,6 +19,7 @@ from financialaid.models import FinancialAid
 from financialaid.permissions import UserCanEditFinancialAid
 from mail.api import (
     add_automatic_email,
+    get_mail_vars,
     MailgunClient,
     mark_emails_as_sent,
 )
@@ -132,6 +133,7 @@ class SearchResultMailView(APIView):
             filter_on_email_optin=True
         )
         emails = get_all_query_matching_emails(search_obj)
+        user_data = get_mail_vars(emails)
 
         automatic_email = None
         if request.data.get('send_automatic_emails'):
@@ -147,7 +149,7 @@ class SearchResultMailView(APIView):
             MailgunClient.send_batch(
                 subject=email_subject,
                 body=email_body,
-                recipients=emails,
+                recipients=((_vars['email'], _vars) for _vars in user_data),
                 sender_name=sender_name,
             )
 

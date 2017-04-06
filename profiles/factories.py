@@ -1,5 +1,6 @@
 """Factories for making test data"""
 from datetime import date, datetime, timezone
+import uuid
 
 from factory import SubFactory, LazyFunction, Faker, lazy_attribute
 from factory.django import (
@@ -77,6 +78,7 @@ class ProfileFactory(DjangoModelFactory):
     edx_mailing_address = FuzzyText()
     date_joined_micromasters = FuzzyDateTime(datetime(1850, 1, 1, tzinfo=timezone.utc))
     student_id = None
+    mail_id = LazyFunction(uuid.uuid4)
 
     image = ImageField()
     image_small = ImageField()

@@ -2,7 +2,6 @@
 Functions for ES indexing
 """
 from datetime import datetime
-from itertools import islice
 import logging
 from uuid import uuid4
 
@@ -16,6 +15,7 @@ from profiles.models import Profile
 from profiles.serializers import ProfileSerializer
 from dashboard.models import ProgramEnrollment
 from dashboard.serializers import UserProgramSearchSerializer
+from micromasters.utils import chunks
 from search.connection import (
     get_active_aliases,
     get_default_alias,
@@ -98,13 +98,10 @@ def _index_chunks(items, doc_type, index, chunk_size=100):
     """
     # Use an iterator so we can keep track of what's been indexed already
     log.info("Indexing chunks of type %s, chunk_size=%d...", doc_type, chunk_size)
-    items = iter(items)
     count = 0
-    chunk = list(islice(items, chunk_size))
-    while len(chunk) > 0:
+    for chunk in chunks(items, chunk_size=chunk_size):
         count += _index_chunk(chunk, doc_type, index)
         log.info("Indexed %d items...", count)
-        chunk = list(islice(items, chunk_size))
     log.info("Indexing done, refreshing index...")
     refresh_index(index)
     log.info("Finished indexing %s", doc_type)

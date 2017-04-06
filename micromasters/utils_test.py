@@ -2,6 +2,7 @@
 Tests for the utils module
 """
 import datetime
+from math import ceil
 import unittest
 from unittest.mock import patch
 
@@ -253,3 +254,19 @@ class UtilTests(unittest.TestCase):
         for nums in chunks(input_list, chunk_size=124):
             output_list += nums
         assert output_list == input_list
+
+    def test_chunks_iterable(self):
+        """
+        test that chunks works on non-list iterables too
+        """
+        count = 113
+        input_range = range(count)
+        chunk_output = []
+        for chunk in chunks(input_range, chunk_size=10):
+            chunk_output.append(chunk)
+        assert len(chunk_output) == ceil(113/10)
+
+        range_list = []
+        for chunk in chunk_output:
+            range_list += chunk
+        assert range_list == list(range(count))
