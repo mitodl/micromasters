@@ -163,26 +163,14 @@ describe('EmailCompositionDialog', () => {
   });
 
   it('should render recipients', () => {
-    let emailState = updateObject(INITIAL_TEST_EMAIL_STATE[TEST_EMAIL_TYPE], {});
-    emailState.filters = [{
-      id: '1',
-      name: "key",
-      value: "test"
-    }];
-    mount(
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
-        <EmailCompositionDialog
-          updateEmailFieldEdit={() => (updateStub)}
-          closeAndClearEmailComposer={closeStub}
-          closeEmailComposerAndSend={sendStub}
-          dialogVisibility={true}
-          activeEmail={emailState}
-          title={TEST_EMAIL_CONFIG.title}
-          subheadingRenderer={TEST_EMAIL_CONFIG.renderSubheading}
-          renderRecipients={SEARCH_RESULT_EMAIL_CONFIG.renderRecipients}
-        />
-      </MuiThemeProvider>
-    );
+    renderDialog({
+      filters: [{
+        id: '1',
+        name: "key",
+        value: "test"
+      }]
+    }, { renderRecipients: SEARCH_RESULT_EMAIL_CONFIG.renderRecipients });
+
     assert.include(
       getDialog().querySelector('.sk-selected-filters-option__name').textContent,
       "key: test"
