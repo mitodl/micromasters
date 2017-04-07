@@ -68,24 +68,7 @@ def is_eligible_for_exam(mmtrack, course_run):
     Returns:
         bool: whether user is eligible or not
     """
-    return course_run.has_exam and _has_paid_for_exam(mmtrack, course_run.edx_course_key)
-
-
-def _has_paid_for_exam(mmtrack, edx_course_key):
-    """
-    Returns True if user has paid for the course or payment check is suppressed using feature flag
-    FEATURE_SUPPRESS_PAYMENT_FOR_EXAM.
-
-    Args:
-        mmtrack (dashboard.utils.MMTrack): a instance of all user information about a program.
-        edx_course_key (str): An edX course key (CourseRun.edx_course_key)
-
-    Returns:
-        bool: whether user has paid or not.
-    """
-    # if FEATURE_SUPPRESS_PAYMENT_FOR_EXAM=True then bypass payment check
-    suppress_payment_for_exam = settings.FEATURES.get("SUPPRESS_PAYMENT_FOR_EXAM", False)
-    return suppress_payment_for_exam or mmtrack.has_paid(edx_course_key)
+    return course_run.has_exam and mmtrack.has_paid(course_run.edx_course_key)
 
 
 def authorize_for_exam(mmtrack, course_run):
@@ -105,7 +88,7 @@ def authorize_for_exam(mmtrack, course_run):
         raise ExamAuthorizationException(errors_message)
 
     # If user has not paid for course then we dont need to process authorization
-    if not _has_paid_for_exam(mmtrack, course_run.edx_course_key):
+    if not mmtrack.has_paid(course_run.edx_course_key):
         errors_message = message_not_eligible_template.format(
             user=mmtrack.user.username,
             course_id=course_run.edx_course_key

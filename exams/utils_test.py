@@ -9,7 +9,6 @@ from django.db.models.signals import post_save
 from django.test import (
     SimpleTestCase,
     TestCase,
-    override_settings,
 )
 from factory.django import mute_signals
 
@@ -134,7 +133,6 @@ class ExamAuthorizationUtilsTests(TestCase):
             course=self.course_run.course
         ).exists() is True
 
-    @override_settings(FEATURES={"SUPPRESS_PAYMENT_FOR_EXAM": False})
     def test_exam_authorization_when_not_paid(self):
         """
         test exam_authorization when user has passed course but not paid.
@@ -168,31 +166,6 @@ class ExamAuthorizationUtilsTests(TestCase):
             user=mmtrack.user,
             course=self.course_run.course
         ).exists() is False
-
-    @override_settings(FEATURES={"SUPPRESS_PAYMENT_FOR_EXAM": True})
-    def test_exam_authorization_when_payment_check_suppress(self):
-        """
-        test exam_authorization when user has passed and payment check is suppressed.
-        """
-        with patch('dashboard.utils.MMTrack.has_passed_course', autospec=True, return_value=True):
-            mmtrack = get_mmtrack(self.user, self.program)
-            assert mmtrack.has_paid(self.course_run.edx_course_key) is False
-
-            # Neither user has exam profile nor authorization.
-            assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False
-            assert ExamAuthorization.objects.filter(
-                user=mmtrack.user,
-                course=self.course_run.course
-            ).exists() is False
-
-            authorize_for_exam(mmtrack, self.course_run)
-
-            # Assert user has exam profile and authorization.
-            assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is True
-            assert ExamAuthorization.objects.filter(
-                user=mmtrack.user,
-                course=self.course_run.course
-            ).exists() is True
 
     def test_exam_authorization_when_not_passed_course(self):
         """
