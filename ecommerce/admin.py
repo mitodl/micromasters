@@ -25,7 +25,7 @@ class LineAdmin(admin.ModelAdmin):
     """Admin for Line"""
     model = Line
 
-    readonly_fields = get_field_names(Line)
+    readonly_fields = [name for name in get_field_names(Line) if name != 'edx_course_key']
 
     def has_add_permission(self, request):
         return False
