@@ -663,4 +663,4 @@ class RecipientVariablesTests(MockedESTestCase):
 
     def test_missing_email(self):
         """get_mail_vars should skip missing emails without erroring"""
-        assert list(get_mail_vars([])) == []
+        assert list(get_mail_vars(['missing@email.com'])) == []
