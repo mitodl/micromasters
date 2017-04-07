@@ -658,7 +658,7 @@ class RecipientVariablesTests(MockedESTestCase):
         assert list(get_mail_vars([profile.user.email])) == [{
             'email': profile.user.email,
             'mail_id': profile.mail_id.hex,
-            'first_name': profile.first_name,
+            'preferred_name': profile.preferred_name,
         }]
 
     def test_missing_email(self):

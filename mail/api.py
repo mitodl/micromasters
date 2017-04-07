@@ -348,12 +348,12 @@ def get_mail_vars(emails):
     queryset = User.objects.filter(email__in=emails).values(
         'email',
         'profile__mail_id',
-        'profile__first_name',
+        'profile__preferred_name',
     )
     return (
         {
             'email': values['email'],
             'mail_id': values['profile__mail_id'].hex,
-            'first_name': values['profile__first_name'],
+            'preferred_name': values['profile__preferred_name'],
         } for values in queryset
     )
