@@ -4,6 +4,8 @@ from datetime import datetime, timedelta
 import logging
 import os
 import socket
+from subprocess import check_call
+from tempfile import mkstemp
 from unittest.mock import patch
 from urllib.parse import (
     ParseResult,
@@ -12,12 +14,10 @@ from urllib.parse import (
 
 from backends.edxorg import EdxOrgOAuth2
 from profiles.factories import ProfileFactory
+from django.conf import settings
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.core.management import call_command
-from django.db import (
-    connection,
-    transaction,
-)
+from django.db import connection
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 import pytz
@@ -55,8 +55,6 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        # ensure index exists
-        recreate_index()
 
         # Patch functions so we don't contact edX
         cls.patchers = []
@@ -64,13 +62,27 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         for patcher in cls.patchers:
             patcher.start()
 
+        # Clear and repopulate database using migrations
+        cls.clear_db()
+        call_command("migrate", noinput=True)
+
+        # ensure index exists. This uses the database so it must come after all migrations are run.
+        recreate_index()
+
+        # Dump the database so we can do a quick revert and skip migrations
+        cls.database_dump_path = cls.dump_db()
+        cls.restore_db()
+
         # Start a selenium server running chrome
         capabilities = DesiredCapabilities.CHROME.copy()
         capabilities['chromeOptions'] = {
             'binary': os.getenv('CHROME_BIN', '/usr/bin/google-chrome-stable'),
             'args': ['--no-sandbox'],
         }
-        # grid is the name of the selenium grid docker container
+
+        # Setup selenium remote connection here. This should happen at the end of setUpClass
+        # because if an exception is raised here, tearDownClass will not get executed, which will leave
+        # a connection to selenium open preventing it from rerunning the test without restarting the grid.
         cls.selenium = Remote(
             os.getenv('SELENIUM_URL', 'http://grid:24444/wd/hub'),
             capabilities,
@@ -79,9 +91,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
 
     def setUp(self):
         super().setUp()
-        # Run migrations before each test. These are slow but there's no better way to ensure a clean slate
-        # when running tests in a TransactionTestCase
-        call_command("migrate")
+
         # Ensure Elasticsearch index exists
         recreate_index()
 
@@ -160,6 +170,13 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
             patcher.stop()
 
         delete_index()
+
+        try:
+            os.remove(cls.database_dump_path)
+        except:  # pylint: disable=bare-except
+            # Doesn't matter
+            pass
+
         super().tearDownClass()
 
     def tearDown(self):
@@ -169,24 +186,44 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
             except:  # pylint: disable=bare-except
                 log.exception("Unable to take selenium screenshot")
 
-        with connection.cursor() as cursor:
-            # Drop a troublesome unused table
-            # This table is preventing the flush command from working:
-            # https://github.com/wagtail/wagtail/issues/1824
-            # It seems unused so it's easiest just to replace it behind the scenes
-            with transaction.atomic():
-                # Terminate all other db connections. There's an exception which is raised on teardown regarding
-                # multiple connections at the same time and I'm not sure how else to work around it.
-                cursor.execute("""SELECT pg_terminate_backend(pg_stat_activity.pid)
-FROM pg_stat_activity WHERE pid <> pg_backend_pid()""")
-
-                # Delete all tables in the database
-                cursor.execute("DROP SCHEMA public CASCADE")
-                cursor.execute("CREATE SCHEMA public")
-                cursor.execute("GRANT ALL ON SCHEMA public TO postgres")
-                cursor.execute("GRANT ALL ON SCHEMA public TO public")
+        # Reset database to previous state
+        self.restore_db()
 
         super().tearDown()
+
+    def _fixture_teardown(self):
+        """Override _fixture_teardown to not truncate the database. This class handles that stuff explicitly."""
+
+    @classmethod
+    def dump_db(cls):
+        """Dump database to a file"""
+        handle, path = mkstemp()
+        os.close(handle)
+        check_call(["pg_dump", *cls._get_database_args(), "-f", path])
+        return path
+
+    @classmethod
+    def _get_database_args(cls):
+        """Get connection arguments for postgres commands"""
+        config = settings.DATABASES['default']
+        return ["-h", config['HOST'], "-p", str(config['PORT']), "-U", config['USER'], config['NAME']]
+
+    @classmethod
+    def clear_db(cls):
+        """Delete and create an empty database"""
+        with connection.cursor() as cursor:
+            # Terminate all other database connections first
+            cursor.execute("""SELECT pg_terminate_backend(pg_stat_activity.pid)
+            FROM pg_stat_activity WHERE pid <> pg_backend_pid()""")
+        connection.close()
+        check_call(["dropdb", *cls._get_database_args()])
+        check_call(["createdb", *cls._get_database_args()])
+
+    @classmethod
+    def restore_db(cls):
+        """Delete database and restore from database dump file"""
+        cls.clear_db()
+        check_call(["psql", *cls._get_database_args(), "-f", cls.database_dump_path, "-q"])
 
     def wait(self):
         """Helper function for WebDriverWait"""
