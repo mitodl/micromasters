@@ -1,10 +1,6 @@
 # Core requirements
 git
 curl
-libpq-dev
 libjpeg-dev
 zlib1g-dev
 net-tools
-
-# developer requirements
-postgresql-client
