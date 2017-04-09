@@ -5,8 +5,8 @@ from unittest.mock import Mock
 
 from search.base import MockedESTestCase
 
-from ecommerce.admin import OrderAdmin
-from ecommerce.factories import OrderFactory
+from ecommerce.admin import OrderAdmin, LineAdmin
+from ecommerce.factories import OrderFactory, LineFactory
 from ecommerce.models import OrderAudit
 from profiles.factories import UserFactory
 
@@ -32,13 +32,13 @@ class AdminTest(MockedESTestCase):
         )
         assert OrderAudit.objects.count() == 1
 
-        order = LineFactory.create()
-        admin = LineAdmin(model=line, admin_site=Mock())
+        line = LineFactory.create()
+        line_admin = LineAdmin(model=line, admin_site=Mock())
         mock_request = Mock(user=UserFactory.create())
-        admin.save_model(
+        line_admin.save_model(
             request=mock_request,
-            obj=admin.model,
+            obj=line_admin.model,
             form=Mock(),
             change=Mock()
         )
-        assert OrderAudit.objects.count() == 1
+        assert OrderAudit.objects.count() == 2
