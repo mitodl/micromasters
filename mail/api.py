@@ -93,10 +93,10 @@ class MailgunClient:
         Args:
             subject (str): Email subject
             body (str): Text email body
-            recipients (iterable of (recipient, recipient_vars)):
+            recipients (iterable of (recipient, context)):
                 A list where each tuple is:
-                    (recipient, recipient_vars)
-                Where the recipient is an email address and recipient_vars is a dict of variables for templating
+                    (recipient, context)
+                Where the recipient is an email address and context is a dict of variables for templating
             sender_address (str): Sender email address
             sender_name (str): Sender name
             chunk_size (int): The maximum amount of emails to be sent at the same time

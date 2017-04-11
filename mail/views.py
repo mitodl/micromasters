@@ -149,7 +149,7 @@ class SearchResultMailView(APIView):
             MailgunClient.send_batch(
                 subject=email_subject,
                 body=email_body,
-                recipients=((_vars['email'], _vars) for _vars in user_data),
+                recipients=((context['email'], context) for context in user_data),
                 sender_name=sender_name,
             )
 

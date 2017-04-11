@@ -86,7 +86,7 @@ class SearchResultMailViewsBase(MockedESTestCase, APITestCase):
             'mail_id': 'id2',
             'first_name': 'B',
         }]
-        self.recipient_tuples = [(_vars['email'], _vars) for _vars in self.email_vars]
+        self.recipient_tuples = [(context['email'], context) for context in self.email_vars]
 
 
 class SearchResultMailViewsTests(SearchResultMailViewsBase):

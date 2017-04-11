@@ -75,7 +75,7 @@ class MailAPITests(MockedESTestCase):
         assert called_kwargs['auth'] == ('api', settings.MAILGUN_KEY)
         assert called_kwargs['data']['text'].startswith('email body')
         assert called_kwargs['data']['subject'] == 'email subject'
-        assert called_kwargs['data']['to'] == [email for email, _vars in self.batch_recipient_arg]
+        assert called_kwargs['data']['to'] == [email for email, _ in self.batch_recipient_arg]
         assert called_kwargs['data']['recipient-variables'] == json.dumps(
             {
                 'a@example.com': {},
@@ -131,9 +131,9 @@ b@example.com: {"name": "B"}"""
             assert list(called_args)[0] == '{}/{}'.format(settings.MAILGUN_URL, 'messages')
             assert called_kwargs['data']['text'].startswith('email body')
             assert called_kwargs['data']['subject'] == 'email subject'
-            assert called_kwargs['data']['to'] == [email for email, _vars in chunked_emails_to[call_num]]
+            assert called_kwargs['data']['to'] == [email for email, _ in chunked_emails_to[call_num]]
             assert called_kwargs['data']['recipient-variables'] == json.dumps(
-                {email: _vars or {} for email, _vars in chunked_emails_to[call_num]}
+                {email: context or {} for email, context in chunked_emails_to[call_num]}
             )
 
             response = responses[call_num]
@@ -167,21 +167,21 @@ b@example.com: {"name": "B"}"""
             assert list(called_args)[0] == '{}/{}'.format(settings.MAILGUN_URL, 'messages')
             assert called_kwargs['data']['text'].startswith('email body')
             assert called_kwargs['data']['subject'] == 'email subject'
-            assert called_kwargs['data']['to'] == [email for email, _vars in chunked_emails_to[call_num]]
+            assert called_kwargs['data']['to'] == [email for email, _ in chunked_emails_to[call_num]]
             assert called_kwargs['data']['recipient-variables'] == json.dumps(
-                {email: _vars or {} for email, _vars in chunked_emails_to[call_num]}
+                {email: context or {} for email, context in chunked_emails_to[call_num]}
             )
 
         exception_pairs = send_batch_exception.exception.exception_pairs
         if recipient_override is None:
             assert len(exception_pairs) == 6
             for call_num, (recipients, exception) in enumerate(exception_pairs):
-                assert recipients == [email for email, _vars in chunked_emails_to[call_num]]
+                assert recipients == [email for email, _ in chunked_emails_to[call_num]]
                 assert isinstance(exception, HTTPError)
         else:
             # The exception list should contain the original recipient emails, not the override
             assert len(exception_pairs) == 1
-            assert exception_pairs[0][0] == [email for email, _vars in recipient_tuples]
+            assert exception_pairs[0][0] == [email for email, _ in recipient_tuples]
             assert isinstance(exception_pairs[0][1], HTTPError)
 
     def test_send_batch_400_no_raise(self, mock_post):
@@ -230,15 +230,15 @@ b@example.com: {"name": "B"}"""
             assert list(called_args)[0] == '{}/{}'.format(settings.MAILGUN_URL, 'messages')
             assert called_kwargs['data']['text'].startswith('email body')
             assert called_kwargs['data']['subject'] == 'email subject'
-            assert called_kwargs['data']['to'] == [email for email, _vars in chunked_emails_to[call_num]]
+            assert called_kwargs['data']['to'] == [email for email, _ in chunked_emails_to[call_num]]
             assert called_kwargs['data']['recipient-variables'] == json.dumps(
-                {email: _vars or {} for email, _vars in chunked_emails_to[call_num]}
+                {email: context or {} for email, context in chunked_emails_to[call_num]}
             )
 
         exception_pairs = send_batch_exception.exception.exception_pairs
         assert len(exception_pairs) == 6
         for call_num, (recipients, exception) in enumerate(exception_pairs):
-            assert recipients == [email for email, _vars in chunked_emails_to[call_num]]
+            assert recipients == [email for email, _ in chunked_emails_to[call_num]]
             assert isinstance(exception, KeyError)
 
     @override_settings(MAILGUN_RECIPIENT_OVERRIDE=None)
@@ -269,12 +269,12 @@ b@example.com: {"name": "B"}"""
         """
         Test that MailgunClient.send_individual_email() sends an individual message
         """
-        _vars = {'abc': {'def': 'xyz'}}
+        context = {'abc': {'def': 'xyz'}}
         response = MailgunClient.send_individual_email(
             subject='email subject',
             body='email body',
             recipient='a@example.com',
-            recipient_variables=_vars,
+            recipient_variables=context,
             sender_name=sender_name,
         )
         assert response.status_code == HTTP_200_OK
@@ -285,7 +285,7 @@ b@example.com: {"name": "B"}"""
         assert called_kwargs['data']['text'].startswith('email body')
         assert called_kwargs['data']['subject'] == 'email subject'
         assert called_kwargs['data']['to'] == ['a@example.com']
-        assert called_kwargs['data']['recipient-variables'] == json.dumps({'a@example.com': _vars})
+        assert called_kwargs['data']['recipient-variables'] == json.dumps({'a@example.com': context})
         if sender_name is not None:
             self.assertEqual(
                 called_kwargs['data']['from'],
