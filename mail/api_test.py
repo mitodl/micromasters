@@ -538,6 +538,7 @@ class CourseTeamMailAPITests(MockedESTestCase):
         assert response.json() == {}
 
 
+@ddt
 class AutomaticEmailTests(MockedESTestCase):
     """Tests regarding automatic emails"""
 
@@ -632,12 +633,14 @@ class AutomaticEmailTests(MockedESTestCase):
         assert new_automatic.query.query == adjust_search_for_percolator(search_obj).to_dict()
         assert new_automatic.staff_user == self.staff_user
 
-    def test_mark_emails_as_sent(self):
+    @data(True, False)
+    def test_mark_emails_as_sent(self, errored):
         """Mark emails as sent"""
         emails = [
             self.program_enrollment_unsent.user.email,
             self.program_enrollment_sent.user.email,
         ]
+<<<<<<< 1706e1e940a1c2a626b8b056dfe4a1a2158f4d80
         mark_emails_as_sent(self.automatic_email, emails)
         assert sorted(self.automatic_email.sentautomaticemail_set.values_list('user__email', flat=True)) == sorted(
             emails
@@ -663,3 +666,14 @@ class RecipientVariablesTests(MockedESTestCase):
     def test_missing_email(self):
         """get_mail_vars should skip missing emails without erroring"""
         assert list(get_mail_vars(['missing@email.com'])) == []
+=======
+        try:
+            with mark_emails_as_sent(self.automatic_email, emails):
+                if errored:
+                    raise KeyError
+        except KeyError:
+            pass
+
+        expected = [self.program_enrollment_sent.user.email] if errored else sorted(emails)
+        assert sorted(self.automatic_email.sentautomaticemail_set.values_list('user__email', flat=True)) == expected
+>>>>>>> Use select_for_update to prevent race condition when sending email

@@ -1,6 +1,7 @@
 """
 Provides functions for sending and retrieving data about in-app email
 """
+from contextlib import contextmanager
 import logging
 import json
 import requests
@@ -272,17 +273,15 @@ def send_automatic_emails(program_enrollment):
     user = program_enrollment.user
     for automatic_email in automatic_emails:
         try:
-            MailgunClient.send_individual_email(
-                automatic_email.email_subject,
-                automatic_email.email_body,
-                user.email,
-                recipient_variables=list(get_mail_vars([user.email]))[0],
-                sender_name=automatic_email.sender_name,
-            )
-            SentAutomaticEmail.objects.create(
-                user=user,
-                automatic_email=automatic_email,
-            )
+            with mark_emails_as_sent(automatic_email, [user.email]):
+                MailgunClient.send_individual_email(
+                    automatic_email.email_subject,
+                    automatic_email.email_body,
+                    user.email,
+                    recipient_variables=list(get_mail_vars([user.email]))[0],
+                    sender_name=automatic_email.sender_name,
+                )
+
         except IntegrityError:
             log.exception("IntegrityError: SentAutomaticEmail was likely already created")
         except:  # pylint: disable=bare-except
@@ -318,21 +317,36 @@ def add_automatic_email(original_search, email_subject, email_body, sender_name,
         )
 
 
-@transaction.atomic
+@contextmanager
 def mark_emails_as_sent(automatic_email, emails):
     """
-    Mark users who have the given emails as sent
+    Context manager to mark users who have the given emails as sent after successful sending of email
 
     Args:
         automatic_email (AutomaticEmail): An instance of AutomaticEmail
         emails (iterable): An iterable of emails
     """
-    users = User.objects.filter(email__in=emails)
-    for user in users:
+    user_ids = User.objects.filter(email__in=emails).exclude(
+        sentautomaticemail__automatic_email=automatic_email,
+    ).values_list('id', flat=True)
+
+    # Create SentAutomaticEmail for each user. This needs to happen outside the transaction
+    # so that select_for_update can hold a lock on these rows that other workers can see.
+    for user_id in user_ids:
+        # No defaults because the default status is PENDING which is what we want
         SentAutomaticEmail.objects.get_or_create(
-            user=user,
+            user_id=user_id,
             automatic_email=automatic_email,
         )
+
+    with transaction.atomic():
+        sent_queryset = SentAutomaticEmail.objects.filter(
+            user_id__in=user_ids,
+            automatic_email=automatic_email,
+            status=SentAutomaticEmail.PENDING,
+        ).select_for_update()
+        yield
+        SentAutomaticEmail.objects.filter(user_id__in=user_ids).update(status=SentAutomaticEmail.SENT)
 
 
 def get_mail_vars(emails):

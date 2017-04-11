@@ -135,7 +135,6 @@ class SearchResultMailView(APIView):
         emails = get_all_query_matching_emails(search_obj)
         user_data = get_mail_vars(emails)
 
-        automatic_email = None
         if request.data.get('send_automatic_emails'):
             automatic_email = add_automatic_email(
                 search_obj,
@@ -145,22 +144,27 @@ class SearchResultMailView(APIView):
                 staff_user=request.user,
             )
 
-        try:
+            try:
+                with mark_emails_as_sent(automatic_email, emails):
+                    MailgunClient.send_batch(
+                        subject=email_subject,
+                        body=email_body,
+                        recipients=emails,
+                        sender_name=sender_name,
+                    )
+            except SendBatchException as send_batch_exception:
+                success_emails = set(emails).difference(send_batch_exception.failed_recipient_emails)
+                with mark_emails_as_sent(automatic_email, success_emails):
+                    pass
+                raise
+
+        else:
             MailgunClient.send_batch(
                 subject=email_subject,
                 body=email_body,
                 recipients=((context['email'], context) for context in user_data),
                 sender_name=sender_name,
             )
-
-            if automatic_email:
-                mark_emails_as_sent(automatic_email, emails)
-        except SendBatchException as send_batch_exception:
-            if automatic_email:
-                success_emails = set(emails).difference(send_batch_exception.failed_recipient_emails)
-                mark_emails_as_sent(automatic_email, success_emails)
-
-            raise
 
         return Response(status=status.HTTP_200_OK)
 
