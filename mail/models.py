@@ -41,8 +41,18 @@ class SentAutomaticEmail(TimestampedModel):
     """
     Keeps track of automatic emails which were sent to particular users
     """
+    PENDING = 'pending'
+    SENT = 'sent'
+
+    STATUSES = [PENDING, SENT]
+
     user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     automatic_email = models.ForeignKey(AutomaticEmail, null=False, on_delete=models.CASCADE)
+    status = models.CharField(
+        max_length=30,
+        choices=[(status, status) for status in STATUSES],
+        default=PENDING,
+    )
 
     class Meta:
         unique_together = ('user', 'automatic_email')
