@@ -350,7 +350,7 @@ def get_mail_vars(emails):
         'email',
         'profile__mail_id',
         'profile__preferred_name',
-    )
+    ).iterator()
     return (
         {
             'email': values['email'],
