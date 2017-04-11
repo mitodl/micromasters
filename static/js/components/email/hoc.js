@@ -86,6 +86,7 @@ export const withEmailDialog = R.curry(
 
         if (!activeEmailType) return null;
 
+        const emailConfig = emailConfigs[activeEmailType] || {};
         return (
           <EmailCompositionDialog
             updateEmailFieldEdit={this.updateEmailFieldEdit}
@@ -93,9 +94,9 @@ export const withEmailDialog = R.curry(
             closeEmailComposerAndSend={this.closeEmailComposerAndSend}
             dialogVisibility={dialogVisibility[EMAIL_COMPOSITION_DIALOG]}
             activeEmail={this.getActiveEmailState()}
-            title={emailConfigs[activeEmailType].title}
-            subheadingRenderer={emailConfigs[activeEmailType].renderSubheading}
-            renderRecipients={emailConfigs[activeEmailType].renderRecipients}
+            title={emailConfig.title}
+            subheadingRenderer={emailConfig.renderSubheading}
+            renderRecipients={emailConfig.renderRecipients}
           />
         );
       }

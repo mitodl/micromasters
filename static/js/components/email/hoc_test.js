@@ -2,7 +2,6 @@ import React from 'react';
 import R from 'ramda';
 import { mount } from 'enzyme';
 import { assert } from 'chai';
-import sinon from 'sinon';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
@@ -39,11 +38,10 @@ describe('Email higher-order component', () => {
   beforeEach(() => {
     helper = new IntegrationTestHelper();
     listenForActions = helper.listenForActions.bind(helper);
-    openEmailSpy = sinon.spy(TEST_EMAIL_CONFIG, 'emailOpenParams');
+    openEmailSpy = helper.sandbox.spy(TEST_EMAIL_CONFIG, 'emailOpenParams');
   });
 
   afterEach(() => {
-    TEST_EMAIL_CONFIG.emailOpenParams.restore();
     helper.cleanup();
   });
 
@@ -71,6 +69,21 @@ describe('Email higher-order component', () => {
       wrapper.find('button').simulate('click');
     }).then(() => {
       assert.isTrue(openEmailSpy.called);
+      assert.equal(wrapper.find("EmailCompositionDialog").props().title, "Test Email Dialog");
     });
+  });
+
+  it("should gracefully handle a currentlyActive email config that isn't present", () => {
+    let wrapper = mount(
+      <MuiThemeProvider muiTheme={getMuiTheme()}>
+        <WrappedTestContainerPage
+          dispatch={helper.store.dispatch}
+          ui={{dialogVisibility: {[EMAIL_COMPOSITION_DIALOG]: false}}}
+          email={{...INITIAL_TEST_EMAIL_STATE, currentlyActive: "missing"}}
+        />
+      </MuiThemeProvider>
+    );
+    // No error should happen and there should be no text here
+    assert.equal(wrapper.find("EmailCompositionDialog").props().title, undefined);
   });
 });
