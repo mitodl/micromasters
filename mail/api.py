@@ -111,35 +111,37 @@ class MailgunClient:
                If there is at least one exception, this exception is raised with all other exceptions in a list
                along with recipients we failed to send to.
         """
-        original_recipients = recipients
+        # Convert null contexts to empty dicts
+        recipients = (
+            (email, context or {}) for email, context in recipients
+        )
 
         if settings.MAILGUN_RECIPIENT_OVERRIDE is not None:
             # This is used for debugging only
+            recipients = [(settings.MAILGUN_RECIPIENT_OVERRIDE, {})]
+
             body = '{body}\n\n[overridden recipient]\n{recipient_data}'.format(
                 body=body,
                 recipient_data='\n'.join(
-                    ["{}: {}".format(recipient, json.dumps(_vars)) for recipient, _vars in recipients]
+                    ["{}: {}".format(recipient, json.dumps(context)) for recipient, context in recipients]
                 ),
             )
-            recipients = [(settings.MAILGUN_RECIPIENT_OVERRIDE, None)]
 
         responses = []
         exception_pairs = []
 
         for chunk in chunks(recipients, chunk_size=chunk_size):
+            chunk_dict = {email: context for email, context in chunk}
+            emails = list(chunk_dict.keys())
+
             params = {
-                'to': [email for email, _vars in chunk],
+                'to': emails,
                 'subject': subject,
                 'text': body,
-                'recipient-variables': json.dumps({email: _vars or {} for email, _vars in chunk}),
+                'recipient-variables': json.dumps(chunk_dict),
             }
             if sender_address:
                 params['from'] = sender_address
-
-            if settings.MAILGUN_RECIPIENT_OVERRIDE is not None:
-                original_recipients_chunk = original_recipients
-            else:
-                original_recipients_chunk = chunk
 
             try:
                 response = cls._mailgun_request(
@@ -155,7 +157,7 @@ class MailgunClient:
                 raise
             except Exception as exception:  # pylint: disable=broad-except
                 exception_pairs.append(
-                    ([email for email, _vars in original_recipients_chunk], exception)
+                    (emails, exception)
                 )
 
         if len(exception_pairs) > 0:
