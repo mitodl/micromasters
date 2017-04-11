@@ -75,7 +75,7 @@ class MailAPITests(MockedESTestCase):
         assert called_kwargs['auth'] == ('api', settings.MAILGUN_KEY)
         assert called_kwargs['data']['text'].startswith('email body')
         assert called_kwargs['data']['subject'] == 'email subject'
-        assert called_kwargs['data']['to'] == [email for email, _ in self.batch_recipient_arg]
+        assert sorted(called_kwargs['data']['to']) == sorted([email for email, _ in self.batch_recipient_arg])
         assert called_kwargs['data']['recipient-variables'] == json.dumps(
             {
                 'a@example.com': {},
@@ -103,7 +103,7 @@ class MailAPITests(MockedESTestCase):
         assert called_kwargs['data']['text'] == """body
 
 [overridden recipient]
-a@example.com: null
+a@example.com: {}
 b@example.com: {"name": "B"}"""
         assert called_kwargs['data']['subject'] == 'subject'
         assert called_kwargs['data']['to'] == ['recipient@override.com']
@@ -131,7 +131,7 @@ b@example.com: {"name": "B"}"""
             assert list(called_args)[0] == '{}/{}'.format(settings.MAILGUN_URL, 'messages')
             assert called_kwargs['data']['text'].startswith('email body')
             assert called_kwargs['data']['subject'] == 'email subject'
-            assert called_kwargs['data']['to'] == [email for email, _ in chunked_emails_to[call_num]]
+            assert sorted(called_kwargs['data']['to']) == sorted([email for email, _ in chunked_emails_to[call_num]])
             assert called_kwargs['data']['recipient-variables'] == json.dumps(
                 {email: context or {} for email, context in chunked_emails_to[call_num]}
             )
@@ -167,7 +167,7 @@ b@example.com: {"name": "B"}"""
             assert list(called_args)[0] == '{}/{}'.format(settings.MAILGUN_URL, 'messages')
             assert called_kwargs['data']['text'].startswith('email body')
             assert called_kwargs['data']['subject'] == 'email subject'
-            assert called_kwargs['data']['to'] == [email for email, _ in chunked_emails_to[call_num]]
+            assert sorted(called_kwargs['data']['to']) == sorted([email for email, _ in chunked_emails_to[call_num]])
             assert called_kwargs['data']['recipient-variables'] == json.dumps(
                 {email: context or {} for email, context in chunked_emails_to[call_num]}
             )
@@ -176,12 +176,11 @@ b@example.com: {"name": "B"}"""
         if recipient_override is None:
             assert len(exception_pairs) == 6
             for call_num, (recipients, exception) in enumerate(exception_pairs):
-                assert recipients == [email for email, _ in chunked_emails_to[call_num]]
+                assert sorted(recipients) == sorted([email for email, _ in chunked_emails_to[call_num]])
                 assert isinstance(exception, HTTPError)
         else:
-            # The exception list should contain the original recipient emails, not the override
             assert len(exception_pairs) == 1
-            assert exception_pairs[0][0] == [email for email, _ in recipient_tuples]
+            assert exception_pairs[0][0] == [recipient_override]
             assert isinstance(exception_pairs[0][1], HTTPError)
 
     def test_send_batch_400_no_raise(self, mock_post):
@@ -230,7 +229,7 @@ b@example.com: {"name": "B"}"""
             assert list(called_args)[0] == '{}/{}'.format(settings.MAILGUN_URL, 'messages')
             assert called_kwargs['data']['text'].startswith('email body')
             assert called_kwargs['data']['subject'] == 'email subject'
-            assert called_kwargs['data']['to'] == [email for email, _ in chunked_emails_to[call_num]]
+            assert sorted(called_kwargs['data']['to']) == sorted([email for email, _ in chunked_emails_to[call_num]])
             assert called_kwargs['data']['recipient-variables'] == json.dumps(
                 {email: context or {} for email, context in chunked_emails_to[call_num]}
             )
@@ -238,7 +237,7 @@ b@example.com: {"name": "B"}"""
         exception_pairs = send_batch_exception.exception.exception_pairs
         assert len(exception_pairs) == 6
         for call_num, (recipients, exception) in enumerate(exception_pairs):
-            assert recipients == [email for email, _ in chunked_emails_to[call_num]]
+            assert sorted(recipients) == sorted([email for email, _ in chunked_emails_to[call_num]])
             assert isinstance(exception, KeyError)
 
     @override_settings(MAILGUN_RECIPIENT_OVERRIDE=None)

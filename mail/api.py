@@ -118,14 +118,13 @@ class MailgunClient:
 
         if settings.MAILGUN_RECIPIENT_OVERRIDE is not None:
             # This is used for debugging only
-            recipients = [(settings.MAILGUN_RECIPIENT_OVERRIDE, {})]
-
             body = '{body}\n\n[overridden recipient]\n{recipient_data}'.format(
                 body=body,
                 recipient_data='\n'.join(
                     ["{}: {}".format(recipient, json.dumps(context)) for recipient, context in recipients]
                 ),
             )
+            recipients = [(settings.MAILGUN_RECIPIENT_OVERRIDE, {})]
 
         responses = []
         exception_pairs = []
