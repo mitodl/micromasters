@@ -1,4 +1,5 @@
 import React from 'react';
+import R from 'ramda';
 import { SEARCH_FACET_FIELD_LABEL_MAP } from '../../constants';
 import { makeCountryNameTranslations } from '../LearnerSearch';
 
@@ -21,8 +22,9 @@ export default class ModifiedSelectedFilter extends React.Component {
       bemBlocks,
       filterId,
     } = this.props;
-
-    if (labelKey in SEARCH_FACET_FIELD_LABEL_MAP) {
+    if (R.isEmpty(labelKey)) {
+      labelKey = SEARCH_FACET_FIELD_LABEL_MAP[filterId];
+    } else if (labelKey in SEARCH_FACET_FIELD_LABEL_MAP) {
       labelKey = SEARCH_FACET_FIELD_LABEL_MAP[labelKey];
     } else if (labelKey in this.countryNameTranslations) {
       labelKey = this.countryNameTranslations[labelKey];

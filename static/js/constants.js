@@ -25,9 +25,10 @@ export const EDUCATION_LEVELS = [
 ];
 
 export const SEARCH_FACET_FIELD_LABEL_MAP = {
-  'courses': 'Course',
-  'program.semester_enrollments.semester': 'Semester',
+  'program.enrollments.course_title': 'Course',
+  'program.enrollments.semester': 'Semester',
   'program.grade_average': 'Average Grade in Program',
+  'grade-average': 'Average Grade in Program',
   'profile.birth_country': 'Country of Birth',
   'profile.country': 'Current Residence',
   'profile.education.degree_name': 'Degree',
