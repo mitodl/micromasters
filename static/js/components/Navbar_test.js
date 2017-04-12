@@ -68,12 +68,12 @@ describe('Navbar', () => {
   it('should display menu icon when user is logged in', () => {
     SETTINGS.user = { username: "tester" };
     let wrapper = renderNavbar();
-    assert.isTrue(wrapper.find(".menu-icon").exists(), 'menu icon should display');
+    assert.isTrue(wrapper.find(".menu-icon").exists(), 'menu icon should be displayed');
   });
 
   it('should not display menu icon when user is logged out', () => {
     SETTINGS.user = undefined;
     let wrapper = renderNavbar();
-    assert.isFalse(wrapper.find(".menu-icon").exists(), 'menu icon should display');
+    assert.isFalse(wrapper.find(".menu-icon").exists(), 'menu icon should not be displayed');
   });
 });
