@@ -524,6 +524,10 @@ class DashboardPage extends React.Component {
 
   renderCourseContactPaymentDialog() {
     const { ui } = this.props;
+    const program = this.getCurrentlyEnrolledProgram();
+    let messageTail = (
+      program && program.financial_aid_availability ? 'learners who have paid for the course.' : 'verified learners.'
+    );
     return (
       <Dialog
         title="Contact the Course Team"
@@ -537,7 +541,7 @@ class DashboardPage extends React.Component {
       >
         <div className="inner-content">
           <img src="/static/images/contact_course_team_icon.png" alt="Instructor icon" />
-          <p>This is a premium feature for learners who have paid for the course.</p>
+          <p>{`This is a premium feature for ${messageTail}`}</p>
         </div>
       </Dialog>
     );
