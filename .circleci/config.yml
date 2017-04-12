@@ -1,0 +1,31 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/micromasters
+    machine:
+      enabled: true
+    steps:
+      - checkout
+      - run: sudo apt-get update && sudo apt-get install docker
+      - run: sudo service docker restart
+      - run: sudo pip install docker-compose
+      - run: cp .env.example .env
+      - run: docker-compose -f travis-docker-compose.yml build
+      - run:
+          name: Python
+          command: |
+            docker-compose -f travis-docker-compose.yml up 2>&1 &
+            sleep 5
+            docker-compose -f travis-docker-compose.yml run web tox
+      - run:
+          name: Javascript
+          command: |
+            docker build -t travis-watch -f travis/Dockerfile-travis-watch .
+            ./travis/js_tests.sh
+      - run:
+          name: Selenium
+          command: |
+            docker run --name travis-watch-container --env-file .env -e NODE_ENV=production -t travis-watch ./webpack_if_prod.sh
+            docker cp travis-watch-container:/src/webpack-stats.json .
+            docker cp travis-watch-container:/src/static/bundles ./static/bundles
+            docker-compose -f travis-docker-compose.yml run -e DEBUG=False -e DJANGO_LIVE_TEST_SERVER_ADDRESS=0.0.0.0:8286 selenium py.test ./selenium_tests
