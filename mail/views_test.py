@@ -209,7 +209,7 @@ class AutomaticEmailTests(SearchResultMailViewsBase):
         _, called_kwargs = mock_mailgun_client.send_batch.call_args
         assert called_kwargs['subject'] == self.request_data['email_subject']
         assert called_kwargs['body'] == self.request_data['email_body']
-        assert list(called_kwargs['recipients']) == self.recipient_tuples
+        assert called_kwargs['recipients'] == [context for _, context in self.recipient_tuples]
 
         assert mock_add_automatic_email.call_args[0][0].to_dict() == self.search_obj.to_dict()
         assert mock_add_automatic_email.call_args[1] == {
@@ -219,10 +219,12 @@ class AutomaticEmailTests(SearchResultMailViewsBase):
             "staff_user": self.staff,
         }
 
-        mock_get_mail_vars.assert_called_once_with(self.email_results)
+        mock_get_mail_vars.assert_called_once_with(list(self.email_results))
 
         assert SentAutomaticEmail.objects.filter(
-            user__email__in=self.email_results, automatic_email=self.automatic_email,
+            user__email__in=self.email_results,
+            automatic_email=self.automatic_email,
+            status=SentAutomaticEmail.SENT,
         ).count() == len(self.email_results)
 
     def test_automatic_email_fail(self):
@@ -252,7 +254,7 @@ class AutomaticEmailTests(SearchResultMailViewsBase):
         _, called_kwargs = mock_mailgun_client.send_batch.call_args
         assert called_kwargs['subject'] == self.request_data['email_subject']
         assert called_kwargs['body'] == self.request_data['email_body']
-        assert list(called_kwargs['recipients']) == self.recipient_tuples
+        assert called_kwargs['recipients'] == [context for _, context in self.recipient_tuples]
 
         assert mock_add_automatic_email.call_args[0][0].to_dict() == self.search_obj.to_dict()
         assert mock_add_automatic_email.call_args[1] == {
@@ -262,10 +264,12 @@ class AutomaticEmailTests(SearchResultMailViewsBase):
             "staff_user": self.staff,
         }
 
-        mock_get_mail_vars.assert_called_once_with(self.email_results)
+        mock_get_mail_vars.assert_called_once_with(list(self.email_results))
 
         assert sorted(SentAutomaticEmail.objects.filter(
-            user__email__in=self.email_results, automatic_email=self.automatic_email,
+            user__email__in=self.email_results,
+            automatic_email=self.automatic_email,
+            status=SentAutomaticEmail.SENT,
         ).values_list('user__email', flat=True)) == sorted(success_emails)
 
 

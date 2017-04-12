@@ -555,10 +555,13 @@ class AutomaticEmailTests(MockedESTestCase):
         SentAutomaticEmail.objects.create(
             automatic_email=cls.automatic_email,
             user=cls.program_enrollment_sent.user,
+            status=SentAutomaticEmail.SENT,
         )
         # User was sent email connected to a different AutomaticEmail
         SentAutomaticEmail.objects.create(
             user=cls.program_enrollment_unsent.user,
+            automatic_email=AutomaticEmailFactory.create(enabled=True),
+            status=SentAutomaticEmail.SENT,
         )
         with mute_signals(post_save):
             cls.staff_user = UserFactory.create()
@@ -626,11 +629,11 @@ class AutomaticEmailTests(MockedESTestCase):
 
     def test_add_automatic_email(self):
         """Add an AutomaticEmail entry with associated PercolateQuery"""
-        assert AutomaticEmail.objects.count() == 2
+        assert AutomaticEmail.objects.count() == 3
         search_obj = Search.from_dict({"query": {"match": {}}})
 
         new_automatic = add_automatic_email(search_obj, 'subject', 'body', 'sender', self.staff_user)
-        assert AutomaticEmail.objects.count() == 3
+        assert AutomaticEmail.objects.count() == 4
         assert new_automatic.sender_name == 'sender'
         assert new_automatic.email_subject == 'subject'
         assert new_automatic.email_body == 'body'
@@ -653,7 +656,9 @@ class AutomaticEmailTests(MockedESTestCase):
             pass
 
         expected = [self.program_enrollment_sent.user.email] if errored else sorted(emails)
-        assert sorted(self.automatic_email.sentautomaticemail_set.values_list('user__email', flat=True)) == expected
+        assert sorted(self.automatic_email.sentautomaticemail_set.filter(
+            status=SentAutomaticEmail.SENT
+        ).values_list('user__email', flat=True)) == expected
 
 
 class RecipientVariablesTests(MockedESTestCase):

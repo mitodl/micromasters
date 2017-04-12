@@ -134,7 +134,6 @@ class SearchResultMailView(APIView):
             filter_on_email_optin=True
         )
         emails = get_all_query_matching_emails(search_obj)
-        user_data = get_mail_vars(emails)
 
         if request.data.get('send_automatic_emails'):
             automatic_email = add_automatic_email(
@@ -149,11 +148,11 @@ class SearchResultMailView(APIView):
                 with mark_emails_as_sent(automatic_email, emails) as user_ids:
                     # user_ids should be all users with the matching email in emails
                     # except some who were already sent email in the meantime
-                    recipient_emails = User.objects.filter(id__in=user_ids).values_list('email', flat=True)
+                    recipient_emails = list(User.objects.filter(id__in=user_ids).values_list('email', flat=True))
                     MailgunClient.send_batch(
                         subject=email_subject,
                         body=email_body,
-                        recipients=recipient_emails,
+                        recipients=get_mail_vars(recipient_emails),
                         sender_name=sender_name,
                     )
             except SendBatchException as send_batch_exception:
@@ -166,7 +165,7 @@ class SearchResultMailView(APIView):
             MailgunClient.send_batch(
                 subject=email_subject,
                 body=email_body,
-                recipients=((context['email'], context) for context in user_data),
+                recipients=((context['email'], context) for context in get_mail_vars(emails)),
                 sender_name=sender_name,
             )
 

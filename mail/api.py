@@ -332,9 +332,7 @@ def mark_emails_as_sent(automatic_email, emails):
     Yields:
         queryset of user id: A queryset of user ids which represent users who haven't been sent emails yet
     """
-    user_ids = User.objects.filter(email__in=emails).exclude(
-        sentautomaticemail__automatic_email=automatic_email,
-    ).values_list('id', flat=True)
+    user_ids = list(User.objects.filter(email__in=emails).values_list('id', flat=True))
 
     # At any point the SentAutomaticEmail will be in three possible states:
     # it doesn't exist, status=PENDING, and status=SENT. They should only change state in that direction, ie
@@ -355,7 +353,7 @@ def mark_emails_as_sent(automatic_email, emails):
             automatic_email=automatic_email,
             status=SentAutomaticEmail.PENDING,
         )
-        user_ids_left = sent_queryset.select_for_update().values_list('user_id', flat=True)
+        user_ids_left = list(sent_queryset.select_for_update().values_list('user_id', flat=True))
         # We yield the list of user ids here to let the block know which emails have not yet been sent
         yield user_ids_left
         sent_queryset.update(status=SentAutomaticEmail.SENT)
