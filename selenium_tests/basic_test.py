@@ -87,7 +87,7 @@ class BasicTests(SeleniumTestsBase):
                     # The other half don't overlap
                     ProgramEnrollment.objects.create(
                         program=other_program,
-                        user=ProfileFactory.create(filled_out=True),
+                        user=ProfileFactory.create(filled_out=True).user,
                     )
 
         other_program = ProgramFactory.create(live=True)
