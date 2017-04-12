@@ -556,6 +556,10 @@ class AutomaticEmailTests(MockedESTestCase):
             automatic_email=cls.automatic_email,
             user=cls.program_enrollment_sent.user,
         )
+        # User was sent email connected to a different AutomaticEmail
+        SentAutomaticEmail.objects.create(
+            user=cls.program_enrollment_unsent.user,
+        )
         with mute_signals(post_save):
             cls.staff_user = UserFactory.create()
 
@@ -640,11 +644,16 @@ class AutomaticEmailTests(MockedESTestCase):
             self.program_enrollment_unsent.user.email,
             self.program_enrollment_sent.user.email,
         ]
-<<<<<<< 1706e1e940a1c2a626b8b056dfe4a1a2158f4d80
-        mark_emails_as_sent(self.automatic_email, emails)
-        assert sorted(self.automatic_email.sentautomaticemail_set.values_list('user__email', flat=True)) == sorted(
-            emails
-        )
+        try:
+            with mark_emails_as_sent(self.automatic_email, emails) as user_ids:
+                assert sorted(user_ids) == [self.program_enrollment_unsent.user.id]
+                if errored:
+                    raise KeyError
+        except KeyError:
+            pass
+
+        expected = [self.program_enrollment_sent.user.email] if errored else sorted(emails)
+        assert sorted(self.automatic_email.sentautomaticemail_set.values_list('user__email', flat=True)) == expected
 
 
 class RecipientVariablesTests(MockedESTestCase):
@@ -666,14 +675,3 @@ class RecipientVariablesTests(MockedESTestCase):
     def test_missing_email(self):
         """get_mail_vars should skip missing emails without erroring"""
         assert list(get_mail_vars(['missing@email.com'])) == []
-=======
-        try:
-            with mark_emails_as_sent(self.automatic_email, emails):
-                if errored:
-                    raise KeyError
-        except KeyError:
-            pass
-
-        expected = [self.program_enrollment_sent.user.email] if errored else sorted(emails)
-        assert sorted(self.automatic_email.sentautomaticemail_set.values_list('user__email', flat=True)) == expected
->>>>>>> Use select_for_update to prevent race condition when sending email

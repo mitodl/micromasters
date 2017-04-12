@@ -3,6 +3,7 @@ Views for email REST APIs
 """
 import logging
 
+from django.contrib.auth.models import User
 from rest_framework import (
     authentication,
     permissions,
@@ -145,11 +146,14 @@ class SearchResultMailView(APIView):
             )
 
             try:
-                with mark_emails_as_sent(automatic_email, emails):
+                with mark_emails_as_sent(automatic_email, emails) as user_ids:
+                    # user_ids should be all users with the matching email in emails
+                    # except some who were already sent email in the meantime
+                    recipient_emails = User.objects.filter(id__in=user_ids).values_list('email', flat=True)
                     MailgunClient.send_batch(
                         subject=email_subject,
                         body=email_body,
-                        recipients=emails,
+                        recipients=recipient_emails,
                         sender_name=sender_name,
                     )
             except SendBatchException as send_batch_exception:

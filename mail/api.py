@@ -273,14 +273,17 @@ def send_automatic_emails(program_enrollment):
     user = program_enrollment.user
     for automatic_email in automatic_emails:
         try:
-            with mark_emails_as_sent(automatic_email, [user.email]):
-                MailgunClient.send_individual_email(
-                    automatic_email.email_subject,
-                    automatic_email.email_body,
-                    user.email,
-                    recipient_variables=list(get_mail_vars([user.email]))[0],
-                    sender_name=automatic_email.sender_name,
-                )
+            with mark_emails_as_sent(automatic_email, [user.email]) as user_ids:
+                # user_ids should just contain user.id except when we already sent the user the email
+                # in a separate process
+                for recipient_email in User.objects.filter(id__in=user_ids).values_list('email', flat=True):
+                    MailgunClient.send_individual_email(
+                        automatic_email.email_subject,
+                        automatic_email.email_body,
+                        recipient_email,
+                        recipient_variables=list(get_mail_vars([recipient_email]))[0],
+                        sender_name=automatic_email.sender_name,
+                    )
 
         except IntegrityError:
             log.exception("IntegrityError: SentAutomaticEmail was likely already created")
@@ -325,14 +328,19 @@ def mark_emails_as_sent(automatic_email, emails):
     Args:
         automatic_email (AutomaticEmail): An instance of AutomaticEmail
         emails (iterable): An iterable of emails
+
+    Yields:
+        queryset of user id: A queryset of user ids which represent users who haven't been sent emails yet
     """
     user_ids = User.objects.filter(email__in=emails).exclude(
         sentautomaticemail__automatic_email=automatic_email,
     ).values_list('id', flat=True)
 
-    # Create SentAutomaticEmail for each user. This needs to happen outside the transaction
-    # so that select_for_update can hold a lock on these rows that other workers can see.
+    # At any point the SentAutomaticEmail will be in three possible states:
+    # it doesn't exist, status=PENDING, and status=SENT. They should only change state in that direction, ie
+    # we don't delete SentAutomaticEmail anywhere or change status from SENT to pending.
     for user_id in user_ids:
+        # If a SentAutomaticEmail doesn't exist, create it with status=PENDING.
         # No defaults because the default status is PENDING which is what we want
         SentAutomaticEmail.objects.get_or_create(
             user_id=user_id,
@@ -340,13 +348,17 @@ def mark_emails_as_sent(automatic_email, emails):
         )
 
     with transaction.atomic():
+        # Now all SentAutomaticEmails are either PENDING or SENT.
+        # If SENT it was already handled by a different thread, so filter on PENDING.
         sent_queryset = SentAutomaticEmail.objects.filter(
             user_id__in=user_ids,
             automatic_email=automatic_email,
             status=SentAutomaticEmail.PENDING,
-        ).select_for_update()
-        yield
-        SentAutomaticEmail.objects.filter(user_id__in=user_ids).update(status=SentAutomaticEmail.SENT)
+        )
+        user_ids_left = sent_queryset.select_for_update().values_list('user_id', flat=True)
+        # We yield the list of user ids here to let the block know which emails have not yet been sent
+        yield user_ids_left
+        sent_queryset.update(status=SentAutomaticEmail.SENT)
 
 
 def get_mail_vars(emails):
