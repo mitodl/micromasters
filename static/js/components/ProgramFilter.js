@@ -16,7 +16,7 @@ class ProgramFilterAccessor extends StatefulAccessor {
     this.state = new State();
   }
 
-  buildOwnQuery(query) {
+  buildOwnQuery(query: Object) {
     let programId = this.state.getValue();
     if (_.isNil(programId)) {
       return query;
@@ -24,14 +24,14 @@ class ProgramFilterAccessor extends StatefulAccessor {
     return query.addFilter("program_filter", TermQuery("program.id", programId));
   }
 
-  fromQueryObject(ob: any) {
+  fromQueryObject() {
     // This space intentionally left blank
   }
 
   getQueryObject() {
     // Leave blank so that no query parameters are added to the query string
     return {};
-  };
+  }
 }
 
 export default class ProgramFilter extends SearchkitComponent {
