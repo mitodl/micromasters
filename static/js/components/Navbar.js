@@ -173,6 +173,13 @@ export default class Navbar extends React.Component {
     );
   };
 
+  renderMenu = (setNavDrawerOpen: (b: boolean) => void): React$Element<*>|null => (
+    SETTINGS.user ? (
+      <div className="mobile-visible">
+        <Icon name="menu" className="menu-icon" onClick={() => setNavDrawerOpen(true)} />
+      </div>
+    ) : null
+  );
 
   render () {
     const {
@@ -195,9 +202,7 @@ export default class Navbar extends React.Component {
         <Header className="micromasters-nav">
           <HeaderRow className="micromasters-header">
             <div className="micromasters-title">
-              <div className="mobile-visible">
-                <Icon name="menu" className="menu-icon" onClick={() => setNavDrawerOpen(true)} />
-              </div>
+              { this.renderMenu(setNavDrawerOpen) }
               { PROFILE_REGEX.test(pathname) ? this.renderProfileHeader() : this.renderNormalHeader(link) }
             </div>
             <div className="desktop-visible">

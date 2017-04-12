@@ -64,4 +64,16 @@ describe('Navbar', () => {
     let wrapper = renderNavbar();
     assert.equal(wrapper.find("a[href='/logout']").text(), "Logout");
   });
+
+  it('should display menu icon when user is logged in', () => {
+    SETTINGS.user = { username: "tester" };
+    let wrapper = renderNavbar();
+    assert.isTrue(wrapper.find(".menu-icon").exists(), 'menu icon should display');
+  });
+
+  it('should not display menu icon when user is logged out', () => {
+    SETTINGS.user = undefined;
+    let wrapper = renderNavbar();
+    assert.isFalse(wrapper.find(".menu-icon").exists(), 'menu icon should display');
+  });
 });
