@@ -77,17 +77,17 @@ class BasicTests(SeleniumTestsBase):
             # Create enough profiles for two pages, but make the second page slightly smaller than the first
             # So we can assert that we're on the second page by counting the results
             for i in range((page_size * 2) - 5):
-                profile = ProfileFactory.create(filled_out=True)
-                ProgramEnrollment.objects.create(program=self.program, user=profile.user)
+                user = self.create_user()
+                ProgramEnrollment.objects.create(program=self.program, user=user)
 
                 if i % 2 == 0:
                     # Half the users are also enrolled in the other program
-                    ProgramEnrollment.objects.create(program=other_program, user=profile.user)
+                    ProgramEnrollment.objects.create(program=other_program, user=user)
                 else:
                     # The other half don't overlap
                     ProgramEnrollment.objects.create(
                         program=other_program,
-                        user=ProfileFactory.create(filled_out=True).user,
+                        user=self.create_user(),
                     )
 
         other_program = ProgramFactory.create(live=True)
@@ -115,7 +115,7 @@ class BasicTests(SeleniumTestsBase):
             lambda driver: "open" in driver.find_element_by_class_name("nav-drawer").get_attribute("class")
         )
         profile_link_selector = ".nav-drawer a[href='/learner/{username}']".format(
-            username=self.username,
+            username=self.edx_username,
         )
         self.selenium.find_element_by_css_selector(profile_link_selector).click()
         self.wait().until(lambda driver: driver.find_element_by_class_name("user-page"))

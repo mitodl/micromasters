@@ -95,39 +95,19 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         # Ensure Elasticsearch index exists
         recreate_index()
 
-        # Create a user with a profile and fake edX social auth data
-        with mute_signals(post_save):
-            profile = ProfileFactory.create()
-        self.user = profile.user
+        self.user = self.create_user()
         self.password = "pass"
         self.user.set_password(self.password)
         self.user.save()
 
         # Update profile to pass validation so we don't get redirected to the signup page
+        profile = self.user.profile
         profile.phone_number = '+93-23-232-3232'
         profile.filled_out = True
         profile.agreed_to_terms_of_service = True
         profile.save()
 
-        # Create a fake edX social auth to make this user look like they logged in via edX
-        later = datetime.now(tz=pytz.UTC) + timedelta(minutes=5)
-        self.username = username = "{}_edx".format(self.user.username)
-        self.user.social_auth.create(
-            provider=EdxOrgOAuth2.name,
-            uid=username,
-            extra_data={
-                'access_token': 'fake',
-                'refresh_token': 'fake',
-                'updated_at': later.timestamp(),
-                'expires_in': 3600,
-            }
-        )
-        UserCacheRefreshTime.objects.create(
-            user=self.user,
-            enrollment=later,
-            certificate=later,
-            current_grade=later,
-        )
+        self.edx_username = self.user.social_auth.get(provider=EdxOrgOAuth2.name).uid
 
         # Create a live program with valid prices and financial aid
         run = CourseRunFactory.create(
@@ -315,3 +295,30 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
     def dump_html(self):
         """Helper method to print out body HTML"""
         print(self.selenium.find_element_by_tag_name("body").get_attribute("innerHTML"))
+
+    @classmethod
+    def create_user(cls):
+        """Create a user with a profile and fake edX social auth data"""
+        with mute_signals(post_save):
+            profile = ProfileFactory.create(filled_out=True)
+        user = profile.user
+
+        # Create a fake edX social auth to make this user look like they logged in via edX
+        later = datetime.now(tz=pytz.UTC) + timedelta(minutes=5)
+        user.social_auth.create(
+            provider=EdxOrgOAuth2.name,
+            uid="{}_edx".format(user.username),
+            extra_data={
+                'access_token': 'fake',
+                'refresh_token': 'fake',
+                'updated_at': later.timestamp(),
+                'expires_in': 3600,
+            }
+        )
+        UserCacheRefreshTime.objects.create(
+            user=user,
+            enrollment=later,
+            certificate=later,
+            current_grade=later,
+        )
+        return user
