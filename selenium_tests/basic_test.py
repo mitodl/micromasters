@@ -62,19 +62,33 @@ class BasicTests(SeleniumTestsBase):
         self.login_via_admin(self.user)
         self.get(self.live_server_url)
 
-        Role.objects.create(
-            user=self.user,
-            program=self.program,
-            role=Staff.ROLE_ID,
-        )
+        # Create a second program that we aren't viewing users from other programs
+        other_program = ProgramFactory.create(live=True)
+
+        for program in [self.program, other_program]:
+            Role.objects.create(
+                user=self.user,
+                program=program,
+                role=Staff.ROLE_ID,
+            )
 
         page_size = settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE
         with mute_signals(post_save):
             # Create enough profiles for two pages, but make the second page slightly smaller than the first
             # So we can assert that we're on the second page by counting the results
-            for _ in range((page_size * 2) - 5):
+            for i in range((page_size * 2) - 5):
                 profile = ProfileFactory.create(filled_out=True)
                 ProgramEnrollment.objects.create(program=self.program, user=profile.user)
+
+                if i % 2 == 0:
+                    # Half the users are also enrolled in the other program
+                    ProgramEnrollment.objects.create(program=other_program, user=profile.user)
+                else:
+                    # The other half don't overlap
+                    ProgramEnrollment.objects.create(
+                        program=other_program,
+                        user=ProfileFactory.create(filled_out=True),
+                    )
 
         other_program = ProgramFactory.create(live=True)
         ProgramEnrollment.objects.create(
