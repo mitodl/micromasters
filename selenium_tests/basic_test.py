@@ -17,6 +17,8 @@ from selenium_tests.base import SeleniumTestsBase
 class BasicTests(SeleniumTestsBase):
     """Basic selenium tests for MicroMasters"""
 
+    other_program = None
+
     def test_zero_price_purchase(self):
         """
         Do a $0 purchase using a 100% off program-level coupon
