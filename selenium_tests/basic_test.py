@@ -140,9 +140,7 @@ class BasicTests(SeleniumTestsBase):
         """The querystring should not be affected"""
         self.learner_setup()
         self.get("{}/learners/?q=xyz".format(self.live_server_url))
-        self.wait().until(lambda driver: driver.find_element_by_class_name('search-grid'))
-
-        assert self.num_elements_on_page('.learner-result') == 0
+        self.wait().until(lambda driver: self.num_elements_on_page('.learner-result', driver=driver) == 0)
         assert self.selenium.current_url.endswith('/learners/?q=xyz')
 
     def test_switch_program(self):
@@ -156,4 +154,4 @@ class BasicTests(SeleniumTestsBase):
         switcher = self.selenium.find_element_by_css_selector('.micromasters-header .Select-input')
         switcher.send_keys(Keys.DOWN)
         switcher.send_keys(Keys.ENTER)
-        self.wait().until(lambda driver: driver.find_element_by_class_name('.result-info span').text == '0 Results')
+        self.wait().until(lambda driver: driver.find_element_by_css_selector('.result-info span').text == '0 Results')
