@@ -542,7 +542,7 @@ describe('DashboardPage', () => {
             contactLink.simulate('click');
           }).then((state) => {
             assert.equal(
-              document.querySelector('.inner-content > p').textContent,
+              wrapper.find('.inner-content > p').text()
               faExpectedObj.expectedMessage
             );
             assert.isTrue(state.ui.paymentTeaserDialogVisibility);
