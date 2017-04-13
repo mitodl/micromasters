@@ -2,6 +2,7 @@
 from django.conf import settings
 from django.db.models.signals import post_save
 from factory.django import mute_signals
+from selenium.webdriver.common.keys import Keys
 
 from courses.factories import ProgramFactory
 from dashboard.models import ProgramEnrollment
@@ -15,12 +16,6 @@ from selenium_tests.base import SeleniumTestsBase
 
 class BasicTests(SeleniumTestsBase):
     """Basic selenium tests for MicroMasters"""
-
-    def num_elements_on_page(self, selector, driver=None):
-        """Count hits from a selector"""
-        script = "return document.querySelectorAll({selector!r}).length".format(selector=selector)
-        driver = driver or self.selenium
-        return driver.execute_script(script)
 
     def test_zero_price_purchase(self):
         """
@@ -54,13 +49,12 @@ class BasicTests(SeleniumTestsBase):
         )
         self.assert_console_logs()
 
-    def test_learners(self):
+    def learner_setup(self):
         """
-        Look at the learners page
+        Do setup common to learner tests.
+        Ideally this should be moved to a setUp of its own test class or into a pytest fixture
+        but that requires some refactoring.
         """
-        self.login_via_admin(self.user)
-        self.get(self.live_server_url)
-
         # Create a second program that we aren't viewing users from other programs
         other_program = ProgramFactory.create(live=True)
 
@@ -97,8 +91,18 @@ class BasicTests(SeleniumTestsBase):
 
         # Update for new users and new role
         index_program_enrolled_users(ProgramEnrollment.objects.iterator())
+        self.login_via_admin(self.user)
+
+    def test_learners(self):
+        """
+        Learners page should contain the appropriate number of items on each page
+        """
+        self.learner_setup()
+        self.get(self.live_server_url)
+
         self.get("{}/learners".format(self.live_server_url))
         self.wait().until(lambda driver: driver.find_element_by_class_name('learner-result'))
+        page_size = settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE
         assert self.num_elements_on_page('.learner-result') == page_size
         self.selenium.find_elements_by_class_name('sk-pagination-option')[1].click()
 
@@ -108,7 +112,12 @@ class BasicTests(SeleniumTestsBase):
             return actual_size == page_size - 5
         self.wait().until(verify_num_elements)
 
-        # Go to profile and back to learners to verify that nothing breaks
+    def test_react_router(self):
+        """Go to profile and back to learners to verify that nothing breaks"""
+        self.learner_setup()
+        self.get("{}/learners".format(self.live_server_url))
+        self.wait().until(lambda driver: driver.find_element_by_class_name('learner-result'))
+
         self.selenium.find_element_by_class_name("menu-icon").click()
         self.wait().until(
             lambda driver: "open" in driver.find_element_by_class_name("nav-drawer").get_attribute("class")
@@ -126,3 +135,25 @@ class BasicTests(SeleniumTestsBase):
         )
         self.selenium.find_element_by_css_selector("a[href='/learners']").click()
         self.wait().until(lambda driver: driver.find_element_by_class_name('learner-result'))
+
+    def test_query_string_preserved(self):
+        """The querystring should not be affected"""
+        self.learner_setup()
+        self.get("{}/learners/?q=xyz".format(self.live_server_url))
+        self.wait().until(lambda driver: driver.find_element_by_class_name('search-grid'))
+
+        assert self.num_elements_on_page('.learner-result') == 0
+        assert self.selenium.current_url.endswith('/learners/?q=xyz')
+
+    def test_switch_program(self):
+        """Switching programs should clear facets and show a different set of users"""
+        self.learner_setup()
+        self.get("{}/learners".format(self.live_server_url))
+        self.wait().until(lambda driver: driver.find_element_by_class_name('search-grid'))
+
+        assert self.num_elements_on_page('.learner-result') == settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE
+
+        switcher = self.selenium.find_element_by_css_selector('.micromasters-header .Select-input')
+        switcher.send_keys(Keys.DOWN)
+        switcher.send_keys(Keys.ENTER)
+        self.wait().until(lambda driver: driver.find_element_by_class_name('.result-info span').text == '0 Results')

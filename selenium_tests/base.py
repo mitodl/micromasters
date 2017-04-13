@@ -4,7 +4,10 @@ from datetime import datetime, timedelta
 import logging
 import os
 import socket
-from subprocess import check_call
+from subprocess import (
+    check_call,
+    DEVNULL,
+)
 from tempfile import mkstemp
 from unittest.mock import patch
 from urllib.parse import (
@@ -203,7 +206,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
     def restore_db(cls):
         """Delete database and restore from database dump file"""
         cls.clear_db()
-        check_call(["psql", *cls._get_database_args(), "-f", cls.database_dump_path, "-q"])
+        check_call(["psql", *cls._get_database_args(), "-f", cls.database_dump_path, "-q"], stdout=DEVNULL)
 
     def wait(self):
         """Helper function for WebDriverWait"""
@@ -322,3 +325,9 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
             current_grade=later,
         )
         return user
+
+    def num_elements_on_page(self, selector, driver=None):
+        """Count hits from a selector"""
+        script = "return document.querySelectorAll({selector!r}).length".format(selector=selector)
+        driver = driver or self.selenium
+        return driver.execute_script(script)

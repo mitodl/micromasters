@@ -59,7 +59,7 @@ export default class ProgramFilter extends SearchkitComponent {
         this.searchkit.resetState();
       }
       this._accessor.state = this._accessor.state.setValue(currentProgramEnrollment.id);
-      this.searchkit.performSearch();
+      this.searchkit.registrationCompleted.then(() => this.searchkit.performSearch());
     }
   };
 
