@@ -5,7 +5,6 @@ from factory.django import mute_signals
 
 from courses.factories import ProgramFactory
 from dashboard.models import ProgramEnrollment
-from profiles.factories import ProfileFactory
 from roles.models import (
     Staff,
     Role,
