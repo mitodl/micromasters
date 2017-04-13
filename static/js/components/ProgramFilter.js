@@ -56,12 +56,7 @@ export default class ProgramFilter extends SearchkitComponent {
 
     if (this._accessor.state.getValue() !== currentProgramEnrollment.id) {
       this._accessor.state = this._accessor.state.setValue(currentProgramEnrollment.id);
-      if (this.searchkit.currentSearchRequest) {
-        // If there hasn't been a search request yet the value will be included as part of the initial
-        // search, so no need for an explicit search. Otherwise we need to trigger this to tell
-        // searchkit that we changed something.
-        this.searchkit.performSearch();
-      }
+      this.searchkit.performSearch();
     }
   };
 
