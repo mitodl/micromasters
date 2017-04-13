@@ -14,7 +14,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 def forwards(apps, schema_editor):
     """load list of countries from file"""
     countries_file = 'data/countries.csv'
-    countries_file_path = '{}/{}'.format(BASE_DIR, countries_file)
+    countries_file_path = os.path.join(os.sep, BASE_DIR, countries_file)
 
     with open(countries_file_path) as csvfile:
         reader = csv.DictReader(csvfile)
