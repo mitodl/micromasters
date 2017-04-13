@@ -464,6 +464,10 @@ describe('DashboardPage', () => {
 
   describe('course contact UI behavior', () => {
     let dashboardResponse;
+    const faExpectedStateList = [
+      { hasFA: true, expectedMessage: "This is a premium feature for learners who have paid for the course." },
+      { hasFA: false, expectedMessage: "This is a premium feature for verified learners." }
+    ];
     const CONTACT_LINK_SELECTOR = '.contact-link';
     const EMAIL_DIALOG_ACTIONS = [
       START_EMAIL_EDIT,
@@ -513,25 +517,40 @@ describe('DashboardPage', () => {
       });
     });
 
-    it('shows the payment teaser dialog when a user lacks permission to contact a course team', () => {
-      let course = makeCourse();
-      course.has_contact_email = true;
-      // Set all course runs to unpaid
-      course.runs = R.chain(R.set(R.lensProp('has_paid'), false), course.runs);
-      dashboardResponse.programs[0].courses = [course];
-      helper.dashboardStub.returns(Promise.resolve(dashboardResponse));
+    for (let faExpectedObj of faExpectedStateList) {
+      it(`shows the payment teaser dialog when a user lacks permission
+        to contact a course team with financial aid status: ${faExpectedObj.hasFA}`, () => {
+        let course = makeCourse();
+        course.has_contact_email = true;
+        // Set all course runs to unpaid
+        course.runs = R.chain(R.set(R.lensProp('has_paid'), false), course.runs);
+        dashboardResponse.programs[0].courses = [course];
+        dashboardResponse.programs[0].financial_aid_availability = faExpectedObj.hasFA;
+        if (faExpectedObj.hasFA) {
+          dashboardResponse.programs[0].financial_aid_user_info = {
+            max_possible_cost: 100,
+            min_possible_cost: 50,
+            has_user_applied: false,
+          };
+        }
+        helper.dashboardStub.returns(Promise.resolve(dashboardResponse));
 
-      return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
-        let contactLink = wrapper.find(CONTACT_LINK_SELECTOR).at(0);
+        return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
+          let contactLink = wrapper.find(CONTACT_LINK_SELECTOR).at(0);
 
-        return listenForActions(PAYMENT_DIALOG_ACTIONS, () => {
-          contactLink.simulate('click');
-        }).then((state) => {
-          assert.isTrue(state.ui.paymentTeaserDialogVisibility);
-          assert.isFalse(state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG]);
+          return listenForActions(PAYMENT_DIALOG_ACTIONS, () => {
+            contactLink.simulate('click');
+          }).then((state) => {
+            assert.equal(
+              document.querySelector('.inner-content > p').textContent,
+              faExpectedObj.expectedMessage
+            );
+            assert.isTrue(state.ui.paymentTeaserDialogVisibility);
+            assert.isFalse(state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG]);
+          });
         });
       });
-    });
+    }
   });
 
   describe('course enrollment dialog', () => {
