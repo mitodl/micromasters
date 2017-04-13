@@ -46,7 +46,7 @@ export default class ProgramFilter extends SearchkitComponent {
     return this._accessor;
   }
 
-  refreshSearchkit = () => {
+  refreshSearchkit = (clearState: bool) => {
     const { currentProgramEnrollment } = this.props;
 
     if (_.isNil(currentProgramEnrollment)) {
@@ -55,19 +55,21 @@ export default class ProgramFilter extends SearchkitComponent {
     }
 
     if (this._accessor.state.getValue() !== currentProgramEnrollment.id) {
+      if (clearState) {
+        this.searchkit.resetState();
+      }
       this._accessor.state = this._accessor.state.setValue(currentProgramEnrollment.id);
       this.searchkit.performSearch();
     }
   };
 
   componentDidMount() {
-    this.refreshSearchkit();
+    this.refreshSearchkit(false);
   }
 
   componentDidUpdate(prevProps: Object): void {
-    if (!_.isEqual(prevProps.currentProgramEnrollment, this.props.currentProgramEnrollment)) {
-      this.refreshSearchkit();
-    }
+    const switchingPrograms = !_.isEqual(prevProps.currentProgramEnrollment, this.props.currentProgramEnrollment);
+    this.refreshSearchkit(switchingPrograms);
   }
 
   render() {
