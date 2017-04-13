@@ -36,30 +36,26 @@ class ProgramFilterAccessor extends StatefulAccessor {
 
 export default class ProgramFilter extends SearchkitComponent {
   props: {
-    currentProgramEnrollment: AvailableProgram,
+    currentProgramEnrollmentId: number,
   };
 
   _accessor = new ProgramFilterAccessor();
-
 
   defineAccessor() {
     return this._accessor;
   }
 
   refreshSearchkit = (clearState: bool) => {
-    const { currentProgramEnrollment } = this.props;
+    const { currentProgramEnrollmentId } = this.props;
 
-    if (_.isNil(currentProgramEnrollment)) {
-      // programs aren't loaded yet
-      return;
-    }
-
-    if (this._accessor.state.getValue() !== currentProgramEnrollment.id) {
+    if (this._accessor.state.getValue() !== currentProgramEnrollmentId) {
       if (clearState) {
         this.searchkit.resetState();
       }
-      this._accessor.state = this._accessor.state.setValue(currentProgramEnrollment.id);
-      this.searchkit.registrationCompleted.then(() => this.searchkit.performSearch());
+      this._accessor.state = this._accessor.state.setValue(currentProgramEnrollmentId);
+      this.searchkit.registrationCompleted.then(() => {
+        this.searchkit._searchWhenCompleted(window.location);
+      });
     }
   };
 
@@ -68,7 +64,7 @@ export default class ProgramFilter extends SearchkitComponent {
   }
 
   componentDidUpdate(prevProps: Object): void {
-    const switchingPrograms = !_.isEqual(prevProps.currentProgramEnrollment, this.props.currentProgramEnrollment);
+    const switchingPrograms = !_.isEqual(prevProps.currentProgramEnrollmentId, this.props.currentProgramEnrollmentId);
     this.refreshSearchkit(switchingPrograms);
   }
 
