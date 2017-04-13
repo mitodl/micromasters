@@ -36,7 +36,7 @@ class ProgramFilterAccessor extends StatefulAccessor {
 
 export default class ProgramFilter extends SearchkitComponent {
   props: {
-    currentProgramEnrollmentId: number,
+    currentProgramEnrollment: AvailableProgram,
   };
 
   _accessor = new ProgramFilterAccessor();
@@ -46,16 +46,25 @@ export default class ProgramFilter extends SearchkitComponent {
   }
 
   refreshSearchkit = (clearState: bool) => {
-    const { currentProgramEnrollmentId } = this.props;
+    const { currentProgramEnrollment } = this.props;
 
-    if (this._accessor.state.getValue() !== currentProgramEnrollmentId) {
+    if (_.isNil(currentProgramEnrollment)) {
+      // programs not yet loaded
+      return;
+    }
+
+    if (this._accessor.state.getValue() !== currentProgramEnrollment.id) {
       if (clearState) {
         this.searchkit.resetState();
       }
-      this._accessor.state = this._accessor.state.setValue(currentProgramEnrollmentId);
-      this.searchkit.registrationCompleted.then(() => {
+      this._accessor.state = this._accessor.state.setValue(currentProgramEnrollment.id);
+
+      if (_.isEmpty(this.searchkit.state) && !clearState) {
+        // workaround weird searchkit behavior which removes query parameter state
         this.searchkit._searchWhenCompleted(window.location);
-      });
+      } else {
+        this.searchkit.search();
+      }
     }
   };
 
@@ -64,7 +73,7 @@ export default class ProgramFilter extends SearchkitComponent {
   }
 
   componentDidUpdate(prevProps: Object): void {
-    const switchingPrograms = !_.isEqual(prevProps.currentProgramEnrollmentId, this.props.currentProgramEnrollmentId);
+    const switchingPrograms = !_.isEqual(prevProps.currentProgramEnrollment, this.props.currentProgramEnrollment);
     this.refreshSearchkit(switchingPrograms);
   }
 
