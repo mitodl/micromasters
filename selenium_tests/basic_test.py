@@ -76,14 +76,15 @@ class BasicTests(SeleniumTestsBase):
                 ProgramEnrollment.objects.create(program=self.program, user=user)
 
                 if i % 2 == 0:
-                    # Half the users are also enrolled in the other program
+                    # Some of the users are also enrolled in the other program
                     ProgramEnrollment.objects.create(program=self.other_program, user=user)
                 else:
-                    # The other half don't overlap
-                    ProgramEnrollment.objects.create(
-                        program=self.other_program,
-                        user=self.create_user(),
-                    )
+                    # Others don't overlap
+                    for _ in range(2):
+                        ProgramEnrollment.objects.create(
+                            program=self.other_program,
+                            user=self.create_user(),
+                        )
 
         ProgramEnrollment.objects.create(
             user=self.user,
