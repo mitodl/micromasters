@@ -56,9 +56,9 @@ class BasicTests(SeleniumTestsBase):
         but that requires some refactoring.
         """
         # Create a second program that we aren't viewing users from other programs
-        other_program = ProgramFactory.create(live=True)
+        self.other_program = ProgramFactory.create(live=True)
 
-        for program in [self.program, other_program]:
+        for program in [self.program, self.other_program]:
             Role.objects.create(
                 user=self.user,
                 program=program,
@@ -75,18 +75,17 @@ class BasicTests(SeleniumTestsBase):
 
                 if i % 2 == 0:
                     # Half the users are also enrolled in the other program
-                    ProgramEnrollment.objects.create(program=other_program, user=user)
+                    ProgramEnrollment.objects.create(program=self.other_program, user=user)
                 else:
                     # The other half don't overlap
                     ProgramEnrollment.objects.create(
-                        program=other_program,
+                        program=self.other_program,
                         user=self.create_user(),
                     )
 
-        other_program = ProgramFactory.create(live=True)
         ProgramEnrollment.objects.create(
             user=self.user,
-            program=other_program,
+            program=self.other_program,
         )
 
         # Update for new users and new role
@@ -151,7 +150,18 @@ class BasicTests(SeleniumTestsBase):
 
         assert self.num_elements_on_page('.learner-result') == settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE
 
+        # Switch to other program in menu and assert there are no results
         switcher = self.selenium.find_element_by_css_selector('.micromasters-header .Select-input')
         switcher.send_keys(Keys.DOWN)
         switcher.send_keys(Keys.ENTER)
-        self.wait().until(lambda driver: driver.find_element_by_css_selector('.result-info span').text == '0 Results')
+        # Subtract own user
+        count = ProgramEnrollment.objects.filter(program=self.other_program).count() - 1
+        self.wait().until(
+            lambda driver: driver.find_element_by_css_selector('.result-info span').text == '{} Results'.format(count)
+        )
+
+        # Refresh browser and verify the count is the same
+        self.get("{}/learners".format(self.live_server_url))
+        self.wait().until(
+            lambda driver: driver.find_element_by_css_selector('.result-info span').text == '{} Results'.format(count)
+        )
