@@ -17,7 +17,7 @@ class ProgramFilterAccessor extends StatefulAccessor {
   }
 
   buildOwnQuery(query: Object) {
-    let programId = this.state.getValue();
+    const programId = this.state.getValue();
     if (_.isNil(programId)) {
       return query;
     }
