@@ -49,17 +49,7 @@ describe('LearnerSearchPage', function () {
   const renderSearch = () => {
     return renderComponent('/learners').then(([wrapper]) => {
       let searchkit = wrapper.find("SearchkitProvider").props().searchkit;
-      return searchkit.registrationCompleted.then(() => new Promise(resolve => {
-        // searchkit will trigger a search on load when loaded in a browser. I'm
-        // not sure why it's not happening in the test environment so this is
-        // done explicitly instead.
-        searchkit.search();
-
-        // wait 10 millis for the request to be made
-        setTimeout(() => {
-          resolve([wrapper]);
-        }, 10);
-      }));
+      return searchkit.registrationCompleted.then(() => Promise.resolve([wrapper]));
     });
   };
 
