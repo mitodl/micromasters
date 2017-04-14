@@ -6,6 +6,7 @@ import {
   State,
 } from 'searchkit';
 import _ from 'lodash';
+import qs from 'qs';
 
 import type { AvailableProgram } from '../flow/enrollmentTypes';
 
@@ -61,7 +62,7 @@ export default class ProgramFilter extends SearchkitComponent {
 
       if (_.isEmpty(this.searchkit.state) && !clearState) {
         // workaround weird searchkit behavior which removes query parameter state
-        this.searchkit.searchFromUrlQuery(window.location.query);
+        this.searchkit.searchFromUrlQuery(qs.parse(window.location.search.replace(/^\?/, "")));
       } else {
         this.searchkit.search();
       }
