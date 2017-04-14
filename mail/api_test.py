@@ -573,12 +573,14 @@ class AutomaticEmailTests(MockedESTestCase):
         ) as mock_search_queries, patch('mail.api.MailgunClient') as mock_mailgun:
             send_automatic_emails(self.program_enrollment_unsent)
 
+        recipient_tuples = [
+            (context['email'], context) for context in get_mail_vars([self.program_enrollment_unsent.user.email])
+        ]
         mock_search_queries.assert_called_with(self.program_enrollment_unsent.id)
-        mock_mailgun.send_individual_email.assert_called_with(
+        mock_mailgun.send_batch.assert_called_with(
             self.automatic_email.email_subject,
             self.automatic_email.email_body,
-            self.program_enrollment_unsent.user.email,
-            recipient_variables=list(get_mail_vars([self.program_enrollment_unsent.user.email]))[0],
+            recipient_tuples,
             sender_name=self.automatic_email.sender_name,
         )
 
@@ -625,7 +627,7 @@ class AutomaticEmailTests(MockedESTestCase):
             send_automatic_emails(self.program_enrollment_unsent)
 
         mock_search_queries.assert_called_with(self.program_enrollment_unsent.id)
-        assert mock_mailgun.send_individual_email.call_count == 2
+        assert mock_mailgun.send_batch.call_count == 2
 
     def test_add_automatic_email(self):
         """Add an AutomaticEmail entry with associated PercolateQuery"""

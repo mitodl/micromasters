@@ -10,7 +10,6 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
-from django.db.utils import IntegrityError
 from rest_framework import status
 
 from mail.exceptions import SendBatchException
@@ -276,17 +275,13 @@ def send_automatic_emails(program_enrollment):
             with mark_emails_as_sent(automatic_email, [user.email]) as user_ids:
                 # user_ids should just contain user.id except when we already sent the user the email
                 # in a separate process
-                for recipient_email in User.objects.filter(id__in=user_ids).values_list('email', flat=True):
-                    MailgunClient.send_individual_email(
-                        automatic_email.email_subject,
-                        automatic_email.email_body,
-                        recipient_email,
-                        recipient_variables=list(get_mail_vars([recipient_email]))[0],
-                        sender_name=automatic_email.sender_name,
-                    )
-
-        except IntegrityError:
-            log.exception("IntegrityError: SentAutomaticEmail was likely already created")
+                recipient_emails = User.objects.filter(id__in=user_ids).values_list('email', flat=True)
+                MailgunClient.send_batch(
+                    automatic_email.email_subject,
+                    automatic_email.email_body,
+                    [(context['email'], context) for context in get_mail_vars(list(recipient_emails))],
+                    sender_name=automatic_email.sender_name,
+                )
         except:  # pylint: disable=bare-except
             log.exception("Error sending mailgun mail for automatic email %s", automatic_email)
 
