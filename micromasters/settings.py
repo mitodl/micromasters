@@ -452,6 +452,7 @@ REACT_GA_DEBUG = get_var("REACT_GA_DEBUG", False)
 
 # Wagtail
 WAGTAIL_SITE_NAME = "MIT MicroMasters"
+WAGTAILIMAGES_MAX_UPLOAD_SIZE = get_var('WAGTAILIMAGES_MAX_UPLOAD_SIZE', 20971620)  # default 25 MB
 MEDIA_ROOT = get_var('MEDIA_ROOT', '/var/media/')
 MEDIA_URL = '/media/'
 MICROMASTERS_USE_S3 = get_var('MICROMASTERS_USE_S3', False)

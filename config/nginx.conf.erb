@@ -84,6 +84,7 @@ http {
             uwsgi_pass unix:/tmp/nginx.socket;
             uwsgi_pass_request_headers on;
             uwsgi_pass_request_body on;
+            client_max_body_size 25M;
         }
     }
 }
