@@ -61,7 +61,7 @@ export default class ProgramFilter extends SearchkitComponent {
 
       if (_.isEmpty(this.searchkit.state) && !clearState) {
         // workaround weird searchkit behavior which removes query parameter state
-        this.searchkit._searchWhenCompleted(window.location);
+        this.searchkit.searchFromUrlQuery(window.location.query);
       } else {
         this.searchkit.search();
       }
