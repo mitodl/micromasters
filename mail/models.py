@@ -48,8 +48,8 @@ class SentAutomaticEmail(TimestampedModel):
 
     user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     automatic_email = models.ForeignKey(AutomaticEmail, null=False, on_delete=models.CASCADE)
-    # This is used to aid the transaction in locking this row. This should only ever be visible as
-    # SENT because if the transaction failed to commit the row shouldn't exist.
+    # This is used to aid the transaction in locking this row. SentAutomaticEmail will be created as PENDING
+    # and then changed to SENT once a successful email was sent.
     status = models.CharField(
         max_length=30,
         choices=[(status, status) for status in STATUSES],
