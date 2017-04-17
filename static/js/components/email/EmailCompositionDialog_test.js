@@ -166,14 +166,14 @@ describe('EmailCompositionDialog', () => {
     renderDialog({
       filters: [{
         id: '1',
-        name: "key",
-        value: "test"
+        name: "program.enrollments.semester",
+        value: "2015"
       }]
     }, { renderRecipients: SEARCH_RESULT_EMAIL_CONFIG.renderRecipients });
 
     assert.include(
       getDialog().querySelector('.sk-selected-filters-option__name').textContent,
-      "key: test"
+      "Semester: 2015"
     );
   });
 });

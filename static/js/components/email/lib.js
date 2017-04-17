@@ -12,17 +12,31 @@ import type { Profile } from '../../flow/profileTypes';
 import type { Course } from '../../flow/programTypes';
 import type { EmailConfig, EmailState, Filter } from '../../flow/emailTypes';
 import { actions } from '../../lib/redux_rest.js';
+import { SEARCH_FACET_FIELD_LABEL_MAP } from '../../constants';
+import { makeCountryNameTranslations } from '../LearnerSearch';
 
 // NOTE: getEmailSendFunction is a function that returns a function. It is implemented this way
 // so that we can stub/mock the function that it returns (as we do in integration_test_helper.js)
 
-const renderFilterOptions = R.map(filter => (
-  <div className="sk-selected-filters-option sk-selected-filters__item" key={filter.id}>
-    <div className="sk-selected-filters-option__name">
-      {filter.name}: {filter.value}
+const countryNameTranslations: Object = makeCountryNameTranslations();
+const renderFilterOptions = R.map(filter => {
+  let labelKey;
+  if (R.isEmpty(filter.name)) {
+    labelKey = SEARCH_FACET_FIELD_LABEL_MAP[filter.id];
+  } else if (filter.name in SEARCH_FACET_FIELD_LABEL_MAP) {
+    labelKey = SEARCH_FACET_FIELD_LABEL_MAP[filter.name];
+  } else if (filter.name in countryNameTranslations) {
+    labelKey = countryNameTranslations[filter.name];
+  }
+
+  return (
+    <div className="sk-selected-filters-option sk-selected-filters__item" key={filter.id}>
+      <div className="sk-selected-filters-option__name">
+        {labelKey}: {filter.value}
+      </div>
     </div>
-  </div>
-));
+  );
+});
 
 export const COURSE_TEAM_EMAIL_CONFIG: EmailConfig = {
   title: 'Contact the Course Team',
