@@ -68,6 +68,22 @@
       .name {
         font-weight: 400;
         font-size: 15px;
+
+        a {
+          color: $sidenav-font;
+          width: 100%;
+          font-weight: 300;
+          border: 0;
+          padding: 0;
+          background: inherit;
+          text-align: left;
+
+          &:hover, &:focus {
+            text-decoration: none;
+            cursor: pointer;
+            color: #fff;
+          }
+        }
       }
 
       .program-selector:last-child, .name:last-child {

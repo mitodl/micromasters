@@ -24,9 +24,10 @@ describe('Navbar', () => {
     let wrapper = renderNavbar();
     let hrefs = wrapper.find(Link).map(link => link.props()['to']);
     assert.deepEqual(hrefs, [
+      '/learner/jane',
+      '/learner/jane',
       '/dashboard',
       '/learner/jane',
-      null,
       '/settings',
       '/dashboard',
       '/dashboard'
@@ -39,10 +40,11 @@ describe('Navbar', () => {
       let wrapper = renderNavbar();
       let hrefs = wrapper.find(Link).map(link => link.props()['to']);
       assert.deepEqual(hrefs, [
+        '/learner/jane',
+        '/learner/jane',
         '/learners',
         '/automaticemails',
         '/learner/jane',
-        null,
         '/settings',
         '/learners',
         '/learners',

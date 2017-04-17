@@ -40,7 +40,6 @@ import {
   SET_PROFILE_STEP,
   setNavDrawerOpen,
   SET_NAV_DRAWER_OPEN,
-  SET_PHOTO_DIALOG_VISIBILITY,
   SET_TOAST_MESSAGE,
 } from '../actions/ui';
 import * as uiActions from '../actions/ui';
@@ -216,22 +215,5 @@ describe('App', function() {
         });
       });
     }
-  });
-
-  it('closes the drawer and shows the photo dialog when edit photo is clicked', () => {
-    helper.store.dispatch(setNavDrawerOpen(true));
-    return renderComponent("/").then(([wrapper]) => {
-      let node = wrapper.find("a").filterWhere(x => x.text() === "Edit Photo");
-
-      return listenForActions([
-        SET_NAV_DRAWER_OPEN,
-        SET_PHOTO_DIALOG_VISIBILITY,
-      ], () => {
-        node.simulate('click');
-      }).then(state => {
-        assert.isFalse(state.ui.navDrawerOpen);
-        assert.isTrue(state.ui.photoDialogVisibility);
-      });
-    });
   });
 });

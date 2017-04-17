@@ -77,7 +77,6 @@ export default class Navbar extends React.Component {
     setEnrollProgramDialogVisibility: (open: boolean) => void,
     setEnrollSelectedProgram:         (programId: ?number) => void,
     setNavDrawerOpen:                 (b: boolean) => void,
-    setPhotoDialogVisibility:         (b: boolean) => void,
   };
 
   renderProfileHeader = () => ([
@@ -118,7 +117,6 @@ export default class Navbar extends React.Component {
     const {
       profile,
       setNavDrawerOpen,
-      setPhotoDialogVisibility,
       navDrawerOpen,
     } = this.props;
 
@@ -134,11 +132,13 @@ export default class Navbar extends React.Component {
           <div className={drawerClass}>
             <div className="profile-info">
               <div className="row">
-                <ProfileImage profile={profile} />
+                <Link to={`/learner/${SETTINGS.user.username}`} onClick={closeDrawer}>
+                  <ProfileImage profile={profile} />
+                </Link>
                 <IconButton name="chevron_left" onClick={closeDrawer} className="no-hover-styling" />
               </div>
               <div className="name">
-                { getPreferredName(profile) }
+                { reactLink(closeDrawer, `/learner/${SETTINGS.user.username}`, getPreferredName(profile))}
               </div>
               { this.programSelector() }
             </div>
@@ -156,12 +156,6 @@ export default class Navbar extends React.Component {
               { adminLink(closeDrawer, '/automaticemails', 'Email Campaigns', 'email') }
               { learnerLink(closeDrawer, '/dashboard', 'Dashboard', 'dashboard') }
               { navLink(closeDrawer, `/learner/${SETTINGS.user.username}`, 'My Profile', 'person')}
-              { navLink(
-                R.compose(() => setPhotoDialogVisibility(true), closeDrawer),
-                null,
-                'Edit Photo',
-                'camera_alt'
-              )}
               { navLink(closeDrawer, '/settings', 'Settings', 'settings') }
             </div>
             <div className="logout-link">
