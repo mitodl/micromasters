@@ -38,7 +38,10 @@ describe('CustomNoHits', () => {
     sandbox.stub(CustomNoHits.prototype, 'getError').returns(false);
 
     let results = renderCustomNoHits();
-    assert.equal(results, "No results found for search students");
+    assert.equal(
+      results,
+      "There were no results found for this search. Please remove some filters or start over."
+    );
   });
 
   it('hid when have search results', () => {
