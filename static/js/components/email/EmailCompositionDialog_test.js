@@ -168,12 +168,20 @@ describe('EmailCompositionDialog', () => {
         id: '1',
         name: "program.enrollments.semester",
         value: "2015"
+      }, {
+        id: '2',
+        name: "ES",
+        value: "foo"
       }]
     }, { renderRecipients: SEARCH_RESULT_EMAIL_CONFIG.renderRecipients });
 
     assert.include(
-      getDialog().querySelector('.sk-selected-filters-option__name').textContent,
+      getDialog().querySelector('.sk-selected-filters').textContent,
       "Semester: 2015"
+    );
+    assert.include(
+      getDialog().querySelector('.sk-selected-filters').textContent,
+      "Spain: foo"
     );
   });
 });
