@@ -58,7 +58,7 @@
 
     .sk-hierarchical-menu-list {
       max-height: 150px;
-      overflow: auto;
+      overflow-y: scroll;
     }
 
     // Search facet headers
