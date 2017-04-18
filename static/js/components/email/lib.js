@@ -20,7 +20,7 @@ import { makeCountryNameTranslations } from '../LearnerSearch';
 
 const countryNameTranslations: Object = makeCountryNameTranslations();
 const renderFilterOptions = R.map(filter => {
-  let labelKey;
+  let labelKey, labelValue;
   if (R.isEmpty(filter.name)) {
     labelKey = SEARCH_FACET_FIELD_LABEL_MAP[filter.id];
   } else if (filter.name in SEARCH_FACET_FIELD_LABEL_MAP) {
@@ -29,10 +29,16 @@ const renderFilterOptions = R.map(filter => {
     labelKey = countryNameTranslations[filter.name];
   }
 
+  if (filter.value in countryNameTranslations) {
+    labelValue = countryNameTranslations[filter.value];
+  } else {
+    labelValue = filter.value;
+  }
+
   return (
     <div className="sk-selected-filters-option sk-selected-filters__item" key={filter.id}>
       <div className="sk-selected-filters-option__name">
-        {labelKey}: {filter.value}
+        {labelKey}: {labelValue}
       </div>
     </div>
   );

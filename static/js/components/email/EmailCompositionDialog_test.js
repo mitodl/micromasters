@@ -172,6 +172,10 @@ describe('EmailCompositionDialog', () => {
         id: '2',
         name: "ES",
         value: "foo"
+      },{
+        id: '3',
+        name: "profile.birth_country",
+        value: "ES"
       }]
     }, { renderRecipients: SEARCH_RESULT_EMAIL_CONFIG.renderRecipients });
 
@@ -182,6 +186,10 @@ describe('EmailCompositionDialog', () => {
     assert.include(
       getDialog().querySelector('.sk-selected-filters').textContent,
       "Spain: foo"
+    );
+    assert.include(
+      getDialog().querySelector('.sk-selected-filters').textContent,
+      "Country of Birth: Spain"
     );
   });
 });
