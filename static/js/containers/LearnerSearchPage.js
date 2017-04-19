@@ -32,6 +32,10 @@ class LearnerSearchPage extends React.Component {
     return visibility === undefined ? SEARCH_FILTER_DEFAULT_VISIBILITY : visibility;
   };
 
+  componentDidMount() {
+    document.title = "Search";
+  }
+
   setFilterVisibility = (filterName: string, visibility: boolean): void => {
     const { ui: { searchFilterVisibility }, dispatch } = this.props;
     let clone = _.clone(searchFilterVisibility);

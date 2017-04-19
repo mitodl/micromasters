@@ -31,6 +31,10 @@ class PrivacyForm extends ProfileFormFields {
     { value: "false", label: "I don't want to receive any emails" }
   ];
 
+  componentDidMount() {
+    document.title = "Privacy";
+  }
+
   render() {
     return (
       <div>

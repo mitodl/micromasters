@@ -68,6 +68,10 @@ export default class PersonalTab extends React.Component {
     dispatch(setProfileStep(PERSONAL_STEP));
   }
 
+  componentDidMount() {
+    document.title = "Personal Profile";
+  }
+
   componentDidUpdate() {
     const { currentProgramEnrollment, setProgram } = this.props;
     const selectedProgram = this.getSelectedProgramId();

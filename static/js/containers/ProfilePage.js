@@ -24,6 +24,7 @@ class ProfilePage extends React.Component<*, ProfileContainerProps, *> {
   componentDidMount() {
     const { scrollToError } = this.props;
     scrollToError.call(this);
+    document.title = "Personal Profile";
   }
 
   static contextTypes = {

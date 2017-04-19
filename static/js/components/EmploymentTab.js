@@ -29,6 +29,10 @@ class EmploymentTab extends React.Component {
     dispatch(setProfileStep(EMPLOYMENT_STEP));
   }
 
+  componentDidMount() {
+    document.title = "Professional Profile";
+  }
+
   render () {
     return (
       <div>

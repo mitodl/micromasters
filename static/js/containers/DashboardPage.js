@@ -134,6 +134,7 @@ class DashboardPage extends React.Component {
 
   componentDidMount() {
     this.updateRequirements();
+    document.title = "Learner Dashboard";
   }
 
   componentDidUpdate() {

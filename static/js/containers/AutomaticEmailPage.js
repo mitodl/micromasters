@@ -59,6 +59,7 @@ class AutomaticEmailPage extends React.Component {
     if (!automaticEmails.processing) {
       dispatch(actions.automaticEmails.get());
     }
+    document.title = "Manage Email Campaigns";
   }
 
   // we use getm to get Maybe Array AutomaticEmail out of the store

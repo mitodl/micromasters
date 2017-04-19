@@ -24,6 +24,10 @@ class EducationTab extends React.Component {
     dispatch(setProfileStep(EDUCATION_STEP));
   }
 
+  componentDidMount() {
+    document.title = "Education Profile";
+  }
+
   render() {
     return (
       <div>

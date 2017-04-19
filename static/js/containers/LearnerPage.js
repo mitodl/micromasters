@@ -39,6 +39,7 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
     const { params: { username }, fetchProfile } = this.props;
     fetchProfile(username);
     this.fetchDashboard();
+    document.title = "Learner Profile";
   }
 
   componentDidUpdate() {
