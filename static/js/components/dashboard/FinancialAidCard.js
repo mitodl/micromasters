@@ -57,9 +57,15 @@ export default class FinancialAidCard extends React.Component {
     updateDocumentSentDate(financialAidId, documents.documentSentDate);
   };
 
+  setDocumentSentDate = (dateObj: moment): void => {
+    const { setDocumentSentDate } = this.props;
+    if (dateObj) {
+      setDocumentSentDate(dateObj.format(ISO_8601_FORMAT));
+    }
+  }
+
   renderDocumentStatus() {
     const {
-      setDocumentSentDate,
       documents: {
         documentSentDate,
         fetchStatus,
@@ -91,7 +97,7 @@ export default class FinancialAidCard extends React.Component {
           <Cell col={12} className="document-sent-button-container">
             <DatePicker
               selected={moment(documentSentDate)}
-              onChange={(obj) => setDocumentSentDate(obj.format(ISO_8601_FORMAT))}
+              onChange={this.setDocumentSentDate}
             />
             <SpinnerButton
               className="dashboard-button document-sent-button"
