@@ -1,5 +1,6 @@
 // @flow
 /* global SETTINGS: false */
+import DocumentTitle from 'react-document-title';
 import React from 'react';
 import _ from 'lodash';
 import Card from 'react-mdl/lib/Card/Card';
@@ -68,10 +69,6 @@ export default class PersonalTab extends React.Component {
     dispatch(setProfileStep(PERSONAL_STEP));
   }
 
-  componentDidMount() {
-    document.title = "Personal Profile";
-  }
-
   componentDidUpdate() {
     const { currentProgramEnrollment, setProgram } = this.props;
     const selectedProgram = this.getSelectedProgramId();
@@ -124,43 +121,45 @@ export default class PersonalTab extends React.Component {
     const { ui: { selectedProgram }, errors, uneditedProfile } = this.props;
 
     return (
-      <div>
-        <Card shadow={1} className="program-select">
-          <CardTitle>
-            Which MicroMasters program are you signing up for?
-          </CardTitle>
-          { this.selectProgram() }
-          <span className="validation-error-text">
-            {_.get(errors, ['program'])}
-          </span>
-        </Card>
-        <Card shadow={1} className={`profile-image ${validationErrorSelector(errors, ['image'])}`}>
-          <CardTitle>
-            Upload a Profile Photo
-          </CardTitle>
-          <ProfileImage
-            profile={uneditedProfile}
-            editable={true}
-            showLink={true}
-            linkText="Click here to add a profile photo"
-            afterImageUpload={this.afterImageUpload}
+      <DocumentTitle title="Personal Profile">
+        <div>
+          <Card shadow={1} className="program-select">
+            <CardTitle>
+              Which MicroMasters program are you signing up for?
+            </CardTitle>
+            { this.selectProgram() }
+            <span className="validation-error-text">
+              {_.get(errors, ['program'])}
+            </span>
+          </Card>
+          <Card shadow={1} className={`profile-image ${validationErrorSelector(errors, ['image'])}`}>
+            <CardTitle>
+              Upload a Profile Photo
+            </CardTitle>
+            <ProfileImage
+              profile={uneditedProfile}
+              editable={true}
+              showLink={true}
+              linkText="Click here to add a profile photo"
+              afterImageUpload={this.afterImageUpload}
+            />
+            <span className="validation-error-text">
+              {_.get(errors, ['image'])}
+            </span>
+          </Card>
+          <Card shadow={1} className="profile-form">
+            <PersonalForm {...this.props} validator={personalValidation} />
+          </Card>
+          <ProfileProgressControls
+            {...this.props}
+            nextUrl="/profile/education"
+            nextBtnLabel="Next"
+            programIdForEnrollment={selectedProgram ? selectedProgram.id : null}
+            isLastTab={false}
+            validator={personalTabValidator}
           />
-          <span className="validation-error-text">
-            {_.get(errors, ['image'])}
-          </span>
-        </Card>
-        <Card shadow={1} className="profile-form">
-          <PersonalForm {...this.props} validator={personalValidation} />
-        </Card>
-        <ProfileProgressControls
-          {...this.props}
-          nextUrl="/profile/education"
-          nextBtnLabel="Next"
-          programIdForEnrollment={selectedProgram ? selectedProgram.id : null}
-          isLastTab={false}
-          validator={personalTabValidator}
-        />
-      </div>
+        </div>
+      </DocumentTitle>
     );
   }
 }

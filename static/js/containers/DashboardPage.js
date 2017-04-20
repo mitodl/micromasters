@@ -1,5 +1,6 @@
 // @flow
 /* global SETTINGS: false */
+import DocumentTitle from 'react-document-title';
 import React from 'react';
 import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
@@ -134,7 +135,6 @@ class DashboardPage extends React.Component {
 
   componentDidMount() {
     this.updateRequirements();
-    document.title = "Learner Dashboard";
   }
 
   componentDidUpdate() {
@@ -739,13 +739,15 @@ class DashboardPage extends React.Component {
     }
 
     return (
-      <div className="dashboard">
-        <Loader loaded={loaded}>
-          {errorMessage}
-          {pageContent}
-          {this.renderCourseContactPaymentDialog()}
-        </Loader>
-      </div>
+      <DocumentTitle title="Learner Dashboard">
+        <div className="dashboard">
+          <Loader loaded={loaded}>
+            {errorMessage}
+            {pageContent}
+            {this.renderCourseContactPaymentDialog()}
+          </Loader>
+        </div>
+      </DocumentTitle>
     );
   }
 }

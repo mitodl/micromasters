@@ -1,5 +1,6 @@
 // @flow
 /* global SETTINGS: false */
+import DocumentTitle from 'react-document-title';
 import React from 'react';
 import { connect } from 'react-redux';
 import R from 'ramda';
@@ -59,7 +60,6 @@ class AutomaticEmailPage extends React.Component {
     if (!automaticEmails.processing) {
       dispatch(actions.automaticEmails.get());
     }
-    document.title = "Manage Email Campaigns";
   }
 
   // we use getm to get Maybe Array AutomaticEmail out of the store
@@ -97,14 +97,16 @@ class AutomaticEmailPage extends React.Component {
     } = this.props;
 
     return (
-      <div className="single-column automatic-emails">
-        <EmailCampaignsCard
-          getEmails={this.getEmails}
-          toggleEmailActive={this.toggleEmailActive}
-          emailsInFlight={emailsInFlight}
-          openEmailComposer={openEmailComposer(AUTOMATIC_EMAIL_ADMIN_TYPE)}
-        />
-      </div>
+      <DocumentTitle title="Manage Email Campaigns">
+        <div className="single-column automatic-emails">
+          <EmailCampaignsCard
+            getEmails={this.getEmails}
+            toggleEmailActive={this.toggleEmailActive}
+            emailsInFlight={emailsInFlight}
+            openEmailComposer={openEmailComposer(AUTOMATIC_EMAIL_ADMIN_TYPE)}
+          />
+        </div>
+      </DocumentTitle>
     );
   }
 }

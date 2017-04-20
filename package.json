@@ -79,6 +79,7 @@
     "react-bootstrap": "^0.30.8",
     "react-cropper": "^0.10.1",
     "react-datepicker": "^0.41.1",
+    "react-document-title": "^2.0.3",
     "react-dom": "^15.4.0",
     "react-dropzone": "^3.6.0",
     "react-ga": "^2.1.2",

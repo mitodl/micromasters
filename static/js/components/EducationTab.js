@@ -1,5 +1,6 @@
 // @flow
 import React from 'react';
+import DocumentTitle from 'react-document-title';
 
 import ProfileProgressControls from './ProfileProgressControls';
 import EducationForm from './EducationForm';
@@ -24,24 +25,22 @@ class EducationTab extends React.Component {
     dispatch(setProfileStep(EDUCATION_STEP));
   }
 
-  componentDidMount() {
-    document.title = "Education Profile";
-  }
-
   render() {
     return (
-      <div>
-        <EducationForm {...this.props} showSwitch={true} validator={educationValidation} />
-        <ProfileProgressControls
-          {...this.props}
-          prevUrl="/profile/personal"
-          nextUrl="/profile/professional"
-          nextBtnLabel="Next"
-          isLastTab={false}
-          programIdForEnrollment={null}
-          validator={educationValidation}
-        />
-      </div>
+      <DocumentTitle title="Education Profile">
+        <div>
+          <EducationForm {...this.props} showSwitch={true} validator={educationValidation} />
+          <ProfileProgressControls
+            {...this.props}
+            prevUrl="/profile/personal"
+            nextUrl="/profile/professional"
+            nextBtnLabel="Next"
+            isLastTab={false}
+            programIdForEnrollment={null}
+            validator={educationValidation}
+          />
+        </div>
+      </DocumentTitle>
     );
   }
 }

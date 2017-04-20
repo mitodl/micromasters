@@ -1,6 +1,7 @@
 // @flow
 /* global SETTINGS: false */
 import React from 'react';
+import DocumentTitle from 'react-document-title';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import type { Dispatch } from 'redux';
@@ -32,10 +33,6 @@ class LearnerSearchPage extends React.Component {
     return visibility === undefined ? SEARCH_FILTER_DEFAULT_VISIBILITY : visibility;
   };
 
-  componentDidMount() {
-    document.title = "Search";
-  }
-
   setFilterVisibility = (filterName: string, visibility: boolean): void => {
     const { ui: { searchFilterVisibility }, dispatch } = this.props;
     let clone = _.clone(searchFilterVisibility);
@@ -51,13 +48,15 @@ class LearnerSearchPage extends React.Component {
     }
 
     return (
-      <LearnerSearch
-        checkFilterVisibility={this.checkFilterVisibility}
-        setFilterVisibility={this.setFilterVisibility}
-        openSearchResultEmailComposer={openEmailComposer(SEARCH_EMAIL_TYPE)}
-        openLearnerEmailComposer={openEmailComposer(LEARNER_EMAIL_TYPE)}
-        currentProgramEnrollment={currentProgramEnrollment}
-      />
+      <DocumentTitle title="Search">
+        <LearnerSearch
+          checkFilterVisibility={this.checkFilterVisibility}
+          setFilterVisibility={this.setFilterVisibility}
+          openSearchResultEmailComposer={openEmailComposer(SEARCH_EMAIL_TYPE)}
+          openLearnerEmailComposer={openEmailComposer(LEARNER_EMAIL_TYPE)}
+          currentProgramEnrollment={currentProgramEnrollment}
+        />
+      </DocumentTitle>
     );
   }
 }

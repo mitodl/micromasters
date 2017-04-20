@@ -4,6 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Loader from '../components/Loader';
 import R from 'ramda';
+import DocumentTitle from 'react-document-title';
 
 import { FETCH_PROCESSING, FETCH_SUCCESS, FETCH_FAILURE } from '../actions';
 import { clearProfile } from '../actions/profile';
@@ -39,7 +40,6 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
     const { params: { username }, fetchProfile } = this.props;
     fetchProfile(username);
     this.fetchDashboard();
-    document.title = "My Profile";
   }
 
   componentDidUpdate() {
@@ -86,6 +86,7 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
     let profile = {};
     let toRender = null;
     let loaded = false;
+    let name = '';
     if (profiles[username] !== undefined) {
       profile = profiles[username];
       loaded = profiles[username].getStatus !== FETCH_PROCESSING;
@@ -96,11 +97,16 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
         ...profileProps(profile)
       };
       toRender = childrenWithProps(children, props);
+      name = `${profile.profile.preferred_name} ${profile.profile.last_name}'s`;
     }
     const { errorInfo } = profile;
-    return <Loader loaded={loaded}>
-      {errorInfo && loaded ? <ErrorMessage errorInfo={errorInfo} /> : toRender }
-    </Loader>;
+    return (
+      <DocumentTitle title={`${name} MicroMasters Profile`}>
+        <Loader loaded={loaded}>
+          {errorInfo && loaded ? <ErrorMessage errorInfo={errorInfo} /> : toRender }
+        </Loader>
+      </DocumentTitle>
+    );
   }
 }
 

@@ -1,5 +1,6 @@
 // @flow
 import React from 'react';
+import DocumentTitle from 'react-document-title';
 
 import EmploymentForm from './EmploymentForm';
 import ProfileProgressControls from './ProfileProgressControls';
@@ -29,30 +30,28 @@ class EmploymentTab extends React.Component {
     dispatch(setProfileStep(EMPLOYMENT_STEP));
   }
 
-  componentDidMount() {
-    document.title = "Professional Profile";
-  }
-
   render () {
     return (
-      <div>
-        <EmploymentForm {...this.props} showSwitch={true} validator={employmentValidation} />
-        <ProfileProgressControls
-          {...this.props}
-          nextBtnLabel="I'm Done!"
-          prevUrl="/profile/education"
-          nextUrl="/dashboard"
-          isLastTab={true}
-          programIdForEnrollment={null}
-          validator={
-            combineValidators(
-              personalValidation,
-              educationValidation,
-              employmentValidation
-            )
-          }
-        />
-      </div>
+      <DocumentTitle title="Professional Profile">
+        <div>
+          <EmploymentForm {...this.props} showSwitch={true} validator={employmentValidation} />
+          <ProfileProgressControls
+            {...this.props}
+            nextBtnLabel="I'm Done!"
+            prevUrl="/profile/education"
+            nextUrl="/dashboard"
+            isLastTab={true}
+            programIdForEnrollment={null}
+            validator={
+              combineValidators(
+                personalValidation,
+                educationValidation,
+                employmentValidation
+              )
+            }
+          />
+        </div>
+      </DocumentTitle>
     );
   }
 }

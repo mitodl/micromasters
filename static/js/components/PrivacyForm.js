@@ -1,5 +1,6 @@
 // @flow
 /* global SETTINGS: false */
+import DocumentTitle from 'react-document-title';
 import React from 'react';
 import { Card } from 'react-mdl/lib/Card';
 
@@ -31,26 +32,24 @@ class PrivacyForm extends ProfileFormFields {
     { value: "false", label: "I don't want to receive any emails" }
   ];
 
-  componentDidMount() {
-    document.title = "Privacy";
-  }
-
   render() {
     return (
-      <div>
-        <Card shadow={1} className="profile-form">
-          <h4 className="privacy-form-heading">Who can see your profile?</h4>
-          <div className="profile-form-row">
-            { this.boundRadioGroupField(['account_privacy'], '', this.privacyOptions) }
-          </div>
-        </Card>
-        <Card shadow={1} className="profile-form">
-          <h4 className="privacy-form-heading">Email Preferences</h4>
-          <div className="profile-form-row">
-            { this.boundRadioGroupField(['email_optin'], '', this.emailOptions) }
-          </div>
-        </Card>
-      </div>
+      <DocumentTitle title="Privacy">
+        <div>
+          <Card shadow={1} className="profile-form">
+            <h4 className="privacy-form-heading">Who can see your profile?</h4>
+            <div className="profile-form-row">
+              { this.boundRadioGroupField(['account_privacy'], '', this.privacyOptions) }
+            </div>
+          </Card>
+          <Card shadow={1} className="profile-form">
+            <h4 className="privacy-form-heading">Email Preferences</h4>
+            <div className="profile-form-row">
+              { this.boundRadioGroupField(['email_optin'], '', this.emailOptions) }
+            </div>
+          </Card>
+        </div>
+      </DocumentTitle>
     );
   }
 }
