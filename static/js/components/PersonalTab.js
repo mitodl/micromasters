@@ -121,7 +121,7 @@ export default class PersonalTab extends React.Component {
     const { ui: { selectedProgram }, errors, uneditedProfile } = this.props;
 
     return (
-      <DocumentTitle title="Personal Profile">
+      <DocumentTitle title="Personal Profile | MITx MicroMasters">
         <div>
           <Card shadow={1} className="program-select">
             <CardTitle>

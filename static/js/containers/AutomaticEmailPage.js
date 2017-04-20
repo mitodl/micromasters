@@ -97,7 +97,7 @@ class AutomaticEmailPage extends React.Component {
     } = this.props;
 
     return (
-      <DocumentTitle title="Manage Email Campaigns">
+      <DocumentTitle title="Manage Email Campaigns | MITx MicroMasters">
         <div className="single-column automatic-emails">
           <EmailCampaignsCard
             getEmails={this.getEmails}

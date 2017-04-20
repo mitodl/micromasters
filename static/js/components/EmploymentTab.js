@@ -32,7 +32,7 @@ class EmploymentTab extends React.Component {
 
   render () {
     return (
-      <DocumentTitle title="Professional Profile">
+      <DocumentTitle title="Professional Profile | MITx MicroMasters">
         <div>
           <EmploymentForm {...this.props} showSwitch={true} validator={employmentValidation} />
           <ProfileProgressControls

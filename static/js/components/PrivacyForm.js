@@ -34,7 +34,7 @@ class PrivacyForm extends ProfileFormFields {
 
   render() {
     return (
-      <DocumentTitle title="Privacy">
+      <DocumentTitle title="Settings | MITx MicroMasters">
         <div>
           <Card shadow={1} className="profile-form">
             <h4 className="privacy-form-heading">Who can see your profile?</h4>

@@ -27,7 +27,7 @@ class EducationTab extends React.Component {
 
   render() {
     return (
-      <DocumentTitle title="Education Profile">
+      <DocumentTitle title="Education Profile | MITx MicroMasters">
         <div>
           <EducationForm {...this.props} showSwitch={true} validator={educationValidation} />
           <ProfileProgressControls

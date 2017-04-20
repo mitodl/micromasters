@@ -739,7 +739,7 @@ class DashboardPage extends React.Component {
     }
 
     return (
-      <DocumentTitle title="Learner Dashboard">
+      <DocumentTitle title="Learner Dashboard | MITx MicroMasters">
         <div className="dashboard">
           <Loader loaded={loaded}>
             {errorMessage}

@@ -48,7 +48,7 @@ class LearnerSearchPage extends React.Component {
     }
 
     return (
-      <DocumentTitle title="Search">
+      <DocumentTitle title="Search | MITx MicroMasters">
         <LearnerSearch
           checkFilterVisibility={this.checkFilterVisibility}
           setFilterVisibility={this.setFilterVisibility}

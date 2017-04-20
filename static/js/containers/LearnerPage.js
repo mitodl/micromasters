@@ -73,6 +73,20 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
     )(this.getFocusedDashboard());
   }
 
+  getDocumentTitle = () => {
+    const {
+      params: { username },
+      profiles,
+    } = this.props;
+
+    if (profiles[username] !== undefined) {
+      let first = R.propOr('', 'preferred_name', profiles[username]);
+      let last = R.propOr('', 'last_name', profiles[username]);
+      return `${first} ${last} | MicroMasters Profile`.trim();
+    }
+    return 'MicroMasters Profile';
+  }
+
   render() {
     const {
       params: { username },
@@ -86,7 +100,6 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
     let profile = {};
     let toRender = null;
     let loaded = false;
-    let name = '';
     if (profiles[username] !== undefined) {
       profile = profiles[username];
       loaded = profiles[username].getStatus !== FETCH_PROCESSING;
@@ -97,11 +110,10 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
         ...profileProps(profile)
       };
       toRender = childrenWithProps(children, props);
-      name = `${profile.profile.preferred_name} ${profile.profile.last_name}'s`;
     }
     const { errorInfo } = profile;
     return (
-      <DocumentTitle title={`${name} MicroMasters Profile`}>
+      <DocumentTitle title={this.getDocumentTitle()}>
         <Loader loaded={loaded}>
           {errorInfo && loaded ? <ErrorMessage errorInfo={errorInfo} /> : toRender }
         </Loader>
