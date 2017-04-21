@@ -159,13 +159,32 @@ pay for the course and pass the online work.`;
     props.program.pearson_exam_status = PEARSON_PROFILE_SCHEDULABLE;
     renderCard(props);
     assert.include(
-      getEl(document, ".dialog-container").textContent,
-      "Test Registration is completed on the Pearson VUE website"
+      getEl(document, ".dialog-title").textContent,
+      "You are being redirected to Pearson VUE’s website."
     );
     assert.include(
-      getEl(document, ".dialog-container").textContent,
-      'I acknowledge that by clicking Continue I will be leaving the MicroMasters website and going to ' +
-      'the Pearson VUE website, and that I accept the Pearson VUE Group’s Terms of Service'
+      getEl(document, ".tos-container").textContent,
+      'You acknowledge that by clicking Continue, you will be leaving the MITx MicroMasters ' +
+      'website and going to a third-party website over which MIT’s MITx does not have control, ' +
+      'and that you accept the Pearson VUE Business Group’s Terms of Service. MIT is not responsible ' +
+      'for the content of third-party sites hyper-linked from the Pearson VUE website, ' +
+      'nor does MIT guarantee or endorse the information, recommendations, products or ' +
+      'services offered on third-party sites.By clicking Continue, you further acknowledge, ' +
+      'understand, and agree that:MIT makes no representations or warranties of any kind regarding ' +
+      'the facilities or services provided by Pearson VUE, including, but not limited to, ' +
+      'at any Pearson VUE authorized testing center. MIT hereby disclaims all representations ' +
+      'and warranties, express or implied, including, without limitation, accuracy and ' +
+      'fitness for a particular purpose. To the extent permissible by law, you assume the ' +
+      'risk of injury or loss or damage to property while visiting any Pearson VUE testing ' +
+      'center for in-person testing for any MITx MicroMasters course (the “Purpose”). ' +
+      'You hereby release MIT and all of its officers, directors, members, employees, ' +
+      'volunteers, agents, administrators, assigns, and contractors (collectively “Releasees”),' +
+      ' from any and all claims, demands, suits, judgments, damages, actions and liabilities ' +
+      'of every kind and nature whatsoever, that you may suffer at any time as a result of the Purpose.'
+    );
+    assert.include(
+       getEl(document, ".attention").textContent,
+       'By clicking Continue, I agree to above Terms and Conditions.'
     );
   });
 
