@@ -493,16 +493,15 @@
 
       .tos-container {
         max-height: 200px;
-        overflow-x: hidden;
-        overflow-y: auto;
-        border: 1px solid $medgray;
+        overflow-y: scroll;
+        border: 1px solid $border-color;
         padding: 15px;
       }
 
       .attention {
         color: $medlightgray;
         font-size: 13px;
-        margin-left: 15px;
+        margin: 20px 0 0 15px;
       }
     }
 

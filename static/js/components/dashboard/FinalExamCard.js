@@ -152,13 +152,20 @@ const renderPearsonTOSDialog = (open, show, submitPearsonSSO, pearson) => (
     <div className="dialog-container">
       <img src="/static/images/pearson_vue.png" width="180"/>
       <h3 className="dialog-title">You are being redirected to Pearson VUE’s website.</h3>
-      <p className="tos-container">
+      <div className="tos-container">
+      <p>
         You acknowledge that by clicking Continue, you will be leaving the MITx MicroMasters website
         and going to a third-party website over which MIT’s MITx does not have control, and that you
-        accept the Pearson VUE Business Group’s Terms of Service. MIT is not responsible for the content
-        of third-party sites hyper-linked from the Pearson VUE website, nor does MIT guarantee or endorse
-        the information, recommendations, products or services offered on third-party sites.<br/><br/>
-        By clicking Continue, you further acknowledge, understand, and agree that:<br/><br/>
+        accept the Pearson VUE Business Group’s <a target="_blank"
+          href="https://home.pearsonvue.com/Legal/Privacy-and-cookies-policy.aspx">Terms of Service</a>.
+        MIT is not responsible for the content of third-party sites hyper-linked from the Pearson
+        VUE website, nor does MIT guarantee or endorse the information, recommendations,
+        products or services offered on third-party sites.
+      </p>
+      <p>
+        By clicking Continue, you further acknowledge, understand, and agree that:
+      </p>
+      <p>
         <b>MIT makes no representations or warranties of any kind regarding the facilities
         or services provided by Pearson VUE, including, but not limited to, at any Pearson
         VUE authorized testing center. MIT hereby disclaims all representations and warranties,
@@ -170,6 +177,7 @@ const renderPearsonTOSDialog = (open, show, submitPearsonSSO, pearson) => (
         from any and all claims, demands, suits, judgments, damages, actions and liabilities of
         every kind and nature whatsoever, that you may suffer at any time as a result of the Purpose.</b>
       </p>
+      </div>
       <p className="attention">
         By clicking Continue, I agree to above Terms and Conditions.
       </p>
