@@ -78,13 +78,14 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
       params: { username },
       profiles,
     } = this.props;
+    let profilePath = [username, 'profile'];
 
-    if (profiles[username] !== undefined) {
-      let first = R.propOr('', 'preferred_name', profiles[username]);
-      let last = R.propOr('', 'last_name', profiles[username]);
-      return `${first} ${last} | MicroMasters Profile`.trim();
-    }
-    return 'MicroMasters Profile';
+    let first = R.pathOr('', profilePath.concat('preferred_name'), profiles);
+    let last = R.pathOr('', profilePath.concat('last_name'), profiles);
+
+    return `${first} ${last} | MITx MicroMasters Profile`
+      .trim()
+      .replace(/^\|\s/, '');
   }
 
   render() {
