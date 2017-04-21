@@ -193,7 +193,7 @@
   "name": "micromasters",
   "repository": "https://github.com/mitodl/micromasters",
   "scripts": {
-    "postdeploy": "./manage.py migrate"
+    "postdeploy": "./manage.py migrate && ./manage.py recreate_index"
   },
   "success_url": "/",
   "website": "https://github.com/mitodl/micromasters"
