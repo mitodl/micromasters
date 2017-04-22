@@ -151,7 +151,11 @@ export default class CourseAction extends React.Component {
       description = this.renderStatusDescription(run.status, 'Failed');
       break;
     case STATUS_CURRENTLY_ENROLLED: {
-      description = this.renderBoxedDescription('In Progress');
+      let endDate = moment(run.course_end_date).startOf('day');
+      let nowDate = moment(now).startOf('day');
+      if (endDate.diff(nowDate, 'days') > 0 ) {
+        description = this.renderBoxedDescription('In Progress');
+      }
       break;
     }
     case STATUS_WILL_ATTEND: {
