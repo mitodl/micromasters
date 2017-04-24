@@ -59,18 +59,6 @@
     .sk-hierarchical-menu-list {
       padding-bottom: 10px;
       position: relative;
-
-      &:after {
-        content: '';
-        width: 0;
-        height: 0;
-        border-left: 7px solid transparent;
-        border-right: 7px solid transparent;
-        border-top: 7px solid $font-gray;
-        position: absolute;
-        right: 10px;
-        bottom: -3px;
-      }
     }
 
     // Search facet headers
@@ -139,8 +127,12 @@
         justify-content: space-between;
       }
 
-      .sk-hierarchical-menu-list__hierarchical-options > div {
-        align-items: stretch;
+      .sk-hierarchical-menu-list__hierarchical-options {
+        margin-right: 10px;
+
+        > div {
+          align-items: stretch;
+        }
       }
     }
 
