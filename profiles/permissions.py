@@ -13,6 +13,7 @@ from roles.roles import (
     Staff,
 )
 from profiles.models import Profile
+from dashboard.models import ProgramEnrollment
 
 
 class CanEditIfOwner(BasePermission):
@@ -60,8 +61,9 @@ class CanSeeIfNotPrivate(BasePermission):
             # anonymous user accessing profiles.
             if request.user.is_anonymous():
                 raise Http404
-            # user who is not a micromaster verified user is accessing profiles.
-            elif not request.user.profile.verified_micromaster_user:
+            # requesting user must have enrollment in one of program where profile user is enroll.
+            program_ids = ProgramEnrollment.objects.filter(user=profile.user).values_list('program__id', flat=True)
+            if not ProgramEnrollment.objects.filter(user=request.user, program__id__in=program_ids).exists():
                 raise Http404
         elif profile.account_privacy not in [Profile.PRIVATE, Profile.PUBLIC_TO_MM, Profile.PUBLIC]:
             raise Http404

@@ -194,6 +194,16 @@ class ProfileGETTests(ProfileBaseTests):
         with mute_signals(post_save):
             profile = ProfileFactory.create(user=self.user2, account_privacy=Profile.PUBLIC_TO_MM)
             ProfileFactory.create(user=self.user1, verified_micromaster_user=True)
+            program = ProgramFactory.create()
+            ProgramEnrollment.objects.create(
+                program=program,
+                user=self.user2,
+            )
+            ProgramEnrollment.objects.create(
+                program=program,
+                user=self.user1,
+            )
+
         profile_data = ProfileLimitedSerializer(profile).data
         self.client.force_login(self.user1)
         resp = self.client.get(self.url2)
