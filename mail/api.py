@@ -20,6 +20,7 @@ from mail.models import (
     FinancialAidEmailAudit,
     SentAutomaticEmail,
 )
+from mail.utils import filter_recipient_variables
 from micromasters.utils import chunks
 from search.api import (
     adjust_search_for_percolator,
@@ -145,9 +146,9 @@ class MailgunClient:
 
             params = {
                 'to': emails,
-                'subject': subject,
-                'html': body,
-                'text': fallback_text,
+                'subject': filter_recipient_variables(subject),
+                'html': filter_recipient_variables(body),
+                'text': filter_recipient_variables(fallback_text),
                 'recipient-variables': json.dumps(chunk_dict),
             }
             if sender_address:

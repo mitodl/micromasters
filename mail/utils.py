@@ -85,3 +85,14 @@ def generate_mailgun_response_json(response):
             "message": response.reason
         }
     return response_json
+
+
+def filter_recipient_variables(text):
+    substitute_values = {
+        'PreferredName': 'recipient.preferred_name',
+        'Email': 'recipient.email',
+    }
+    for key, value in substitute_values.items():
+        text = text.replace('[{}]'.format(key), '%{}%'.format(value))
+
+    return text
