@@ -88,6 +88,13 @@ def generate_mailgun_response_json(response):
 
 
 def filter_recipient_variables(text):
+    """
+    Filter out recipient variables, like [PreferredName], and substitute it with %recipient.preferred_name%
+    Args:
+        text (string): subject or body of the email
+    Returns:
+        string: with replaced correct recipient variables
+    """
     substitute_values = {
         'PreferredName': 'recipient.preferred_name',
         'Email': 'recipient.email',
