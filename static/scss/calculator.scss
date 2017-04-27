@@ -13,17 +13,43 @@
   }
 
   h3 {
-    border-bottom: none !important;
-    padding: 40px 40px 20px !important;
+    border-bottom: none;
+
+    @include breakpoint(phone) {
+      padding: 20px 20px 10px;
+    }
+
+    @include breakpoint(desktop) {
+      padding: 40px 40px 20px;
+    }
   }
 
   .financial-aid-calculator-body {
-    padding: 0 40px 20px !important;
-    overflow-y: visible !important;
+    @include breakpoint(desktop) {
+      padding: 0 40px 20px;
+      overflow-y: visible;
+    }
+
+    @include breakpoint(phone) {
+      overflow: scroll;
+      padding: 0 20px 10px;
+
+      .checkbox {
+        .mdl-checkbox__label {
+          font-size: 14px;
+        }
+      }
+    }
   }
 
   .salary-input, .salary-input > div {
-    display:  flex;
+    @include breakpoint(phone) {
+      display: block;
+    }
+
+    @include breakpoint(desktop) {
+      display: flex;
+    }
   }
 
   .api-error {
@@ -41,12 +67,27 @@
     flex-direction: row;
     justify-content: space-between;
 
-    > div {
-      flex-direction: column;
-      width: 48%;
+    @include breakpoint(phone) {
+      padding: 15px;
+      margin-top: 15px;
 
-      > .title {
-        font-weight: 600;
+      > div {
+        width: 100%;
+      }
+
+      .currency > div {
+        padding-bottom: 6px;
+      }
+    }
+
+    @include breakpoint(desktop) {
+      > div {
+        flex-direction: column;
+        width: 48%;
+
+        > .title {
+          font-weight: 600;
+        }
       }
     }
   }
@@ -65,10 +106,19 @@
 
   .actions {
     width: 100%;
-    padding: 0 20px 20px 40px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+
+    @include breakpoint(desktop) {
+      padding: 0 20px 20px 40px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+
+    @include breakpoint(phone) {
+      padding: 0 10px 10px 20px;
+      display: block;
+      text-align: left;
+    }
 
     .buttons {
       display: flex;
@@ -76,60 +126,14 @@
 
     .full-price {
       cursor: pointer;
-      font-size: 15px;
       font-weight: 400;
-    }
-  }
-}
 
-@include breakpoint(phone) {
-  .financial-aid-calculator, .confirm-dialog {
-
-    .salary-input, .salary-input > div {
-      display: block;
-    }
-
-    h3 {
-      border-bottom: none !important;
-      padding: 20px 20px 10px !important;
-    }
-
-    .financial-aid-calculator-body {
-      overflow: scroll !important;
-      padding: 0 20px 10px !important;
-
-      .checkbox {
-        .mdl-checkbox__label {
-          font-size: 14px;
-        }
-      }
-    }
-
-    .salary-input {
-      padding: 15px;
-      margin-top: 15px;
-
-      > div {
-        width: 100%;
-      }
-
-      .currency > div {
-        padding-bottom: 6px;
-      }
-    }
-
-    .actions {
-      width: 100%;
-      padding: 0 10px 10px 20px;
-      display: block;
-      text-align: left;
-
-      .buttons {
-        display: flex;
-      }
-
-      .full-price {
+      @include breakpoint(phone) {
         font-size: 14px;
+      }
+
+      @include breakpoint(desktop) {
+        font-size: 15px;
       }
     }
   }
