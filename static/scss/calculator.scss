@@ -36,7 +36,8 @@
 
       .checkbox {
         .mdl-checkbox__label {
-          font-size: 14px;
+          font-size: 13px;
+          line-height: 1.2em;
         }
       }
     }
@@ -122,6 +123,7 @@
 
     .buttons {
       display: flex;
+      justify-content: flex-end;
     }
 
     .full-price {
