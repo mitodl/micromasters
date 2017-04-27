@@ -102,6 +102,7 @@
     .sk-hierarchical-refinement-list__root .sk-hierarchical-refinement-option__text,
     .sk-hierarchical-refinement-list__root .sk-hierarchical-refinement-option__count {
       color: $font-gray;
+      font-weight: 400;
     }
 
     // Search facet option text
@@ -316,7 +317,7 @@
     }
 
     .sk-selected-filters-option {
-      background-color: $bg-light-gray;
+      background-color: $bg-light-blue;
       padding: 6px 10px;
       font-size: 13px;
       margin-bottom: 0;
@@ -324,7 +325,7 @@
       .sk-selected-filters-option__remove-action {
         border-left: none;
         padding: 0;
-        font-weight: 300;
+        font-weight: 400;
       }
     }
 
@@ -335,7 +336,7 @@
     .sk-reset-filters {
       color: $link-text;
       font-size: 14px;
-      font-weight: 300;
+      font-weight: 400;
       padding: 4px;
     }
 
@@ -353,7 +354,7 @@
     .result-info > span {
       white-space: nowrap;
       font-size: 13px;
-      font-weight: 300;
+      font-weight: 400;
       padding-left: 15px;
       color: $font-gray;
       height: 36px;
@@ -412,7 +413,7 @@
     }
 
     .learner-result {
-      padding: 9px 0;
+      padding: 6px 0;
       font-size: 14px;
       position: relative;
       border-bottom: 1px solid $border-color;
@@ -422,8 +423,8 @@
         flex-direction: column;
 
         .display-name {
-          font-size: 14px;
-          font-weight: 400;
+          font-size: 15px;
+          font-weight: 500;
         }
 
         .user-name {
@@ -435,7 +436,7 @@
       .learner-location {
         color: $font-gray;
         font-size: 14px;
-        font-weight: 300;
+        font-weight: 400;
       }
 
       .learner-grade span {
@@ -455,13 +456,13 @@
 
         .hint {
           font-size: 12px;
-          font-weight: 300;
+          font-weight: 400;
           color: $font-gray;
         }
       }
 
       .rounded-profile-image {
-        height: 37px;
+        height: 42px;
       }
     }
 
