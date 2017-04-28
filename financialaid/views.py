@@ -241,7 +241,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         }
         context["js_settings_json"] = json.dumps(js_settings)
         context["authenticated"] = not self.request.user.is_anonymous()
-        context["is_public"] = True
+        context["is_public"] = False
         context["has_zendesk_widget"] = True
         context["is_staff"] = has_role(self.request.user, [Staff.ROLE_ID, Instructor.ROLE_ID])
         return context

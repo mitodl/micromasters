@@ -257,7 +257,7 @@ class ReviewTests(FinancialAidBaseTestCase, APIClient):
             }
 
             assert response.context['has_zendesk_widget'] is True
-            assert response.context['is_public'] is True
+            assert response.context['is_public'] is Flase
             assert response.context['is_staff'] is True
             self.assertContains(response, 'Share this page')
             assert json.loads(response.context['js_settings_json']) == {
