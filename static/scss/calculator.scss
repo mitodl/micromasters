@@ -102,7 +102,14 @@
 
   .checkbox-alert {
     margin-left: 38px;
-    margin-top: 7px;
+
+    @include breakpoint(phone) {
+      margin-top: 38px;
+    }
+
+    @include breakpoint(desktop) {
+      margin-top: 7px;
+    }
   }
 
   .actions {
