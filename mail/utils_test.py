@@ -21,7 +21,12 @@ from financialaid.constants import (
     FinancialAidStatus
 )
 from financialaid.factories import FinancialAidFactory
-from mail.utils import generate_financial_aid_email, generate_mailgun_response_json
+from mail.utils import (
+    generate_financial_aid_email,
+    generate_mailgun_response_json,
+    filter_recipient_variables,
+    RECIPIENT_VARIABLE_NAMES,
+)
 from mail.views_test import mocked_json
 from search.base import MockedESTestCase
 
@@ -133,3 +138,11 @@ class MailUtilsTests(MockedESTestCase):
             generate_mailgun_response_json(response),
             {"message": response.reason}
         )
+
+    def test_filter_recipient_variables(self):
+        """
+        Test that recipient variables get to mailgun format, e.g. %recipient.[variable_name]%
+        """
+        text = ' '.join(map('[{}]'.format, RECIPIENT_VARIABLE_NAMES.keys()))
+        result = ' '.join(map('%recipient.{}%'.format, RECIPIENT_VARIABLE_NAMES.values()))
+        assert filter_recipient_variables(text) == result

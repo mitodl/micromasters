@@ -21,6 +21,11 @@ from financialaid.constants import (
 
 log = logging.getLogger(__name__)
 
+RECIPIENT_VARIABLE_NAMES = {
+    'PreferredName': 'preferred_name',
+    'Email': 'email',
+}
+
 
 def generate_financial_aid_email(financial_aid):
     """
@@ -95,11 +100,8 @@ def filter_recipient_variables(text):
     Returns:
         string: with replaced correct recipient variables
     """
-    substitute_values = {
-        'PreferredName': 'recipient.preferred_name',
-        'Email': 'recipient.email',
-    }
-    for key, value in substitute_values.items():
-        text = text.replace('[{}]'.format(key), '%{}%'.format(value))
+
+    for key, value in RECIPIENT_VARIABLE_NAMES.items():
+        text = text.replace('[{}]'.format(key), '%recipient.{}%'.format(value))
 
     return text
