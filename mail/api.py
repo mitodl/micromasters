@@ -375,7 +375,7 @@ def get_mail_vars(emails):
 
     Returns:
         generator of dict:
-            A dictionary of template variables along with email so we can tell who is who
+            A dictionary of template variables which includes email so we can tell who is who
     """
     queryset = User.objects.filter(email__in=emails).values(
         'email',

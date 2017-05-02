@@ -209,7 +209,7 @@ class AutomaticEmailTests(SearchResultMailViewsBase):
         _, called_kwargs = mock_mailgun_client.send_batch.call_args
         assert called_kwargs['subject'] == self.request_data['email_subject']
         assert called_kwargs['body'] == self.request_data['email_body']
-        assert called_kwargs['recipients'] == [context for _, context in self.recipient_tuples]
+        assert list(called_kwargs['recipients']) == self.recipient_tuples
 
         assert mock_add_automatic_email.call_args[0][0].to_dict() == self.search_obj.to_dict()
         assert mock_add_automatic_email.call_args[1] == {
@@ -254,7 +254,7 @@ class AutomaticEmailTests(SearchResultMailViewsBase):
         _, called_kwargs = mock_mailgun_client.send_batch.call_args
         assert called_kwargs['subject'] == self.request_data['email_subject']
         assert called_kwargs['body'] == self.request_data['email_body']
-        assert called_kwargs['recipients'] == [context for _, context in self.recipient_tuples]
+        assert list(called_kwargs['recipients']) == self.recipient_tuples
 
         assert mock_add_automatic_email.call_args[0][0].to_dict() == self.search_obj.to_dict()
         assert mock_add_automatic_email.call_args[1] == {
