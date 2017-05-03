@@ -81,12 +81,17 @@ export const SEARCH_RESULT_EMAIL_CONFIG: EmailConfig = {
 
   getEmailSendFunction: () => sendSearchResultMail,
 
-  emailSendParams: (emailState) => ([
-    emailState.inputs.subject || '',
-    emailState.inputs.body || '',
-    emailState.searchkit.buildQuery().query,
-    emailState.inputs.sendAutomaticEmails || false,
-  ]),
+  emailSendParams: (emailState) => {
+    const query = emailState.searchkit.buildQuery();
+    console.log('selectedFilters', query.getSelectedFilters());
+    return [
+      emailState.inputs.subject || '',
+      emailState.inputs.body || '',
+      query.index.filters,
+      query.index.queryString,
+      emailState.inputs.sendAutomaticEmails || false,
+    ];
+  },
 
   renderRecipients: (filters?: Array<Filter>) => {
     if (!filters || filters.length <= 0) {

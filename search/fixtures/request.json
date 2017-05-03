@@ -1,0 +1,1238 @@
+{
+  "query": {
+    "multi_match": {
+      "query": "van",
+      "fields": [
+        "profile.first_name.folded",
+        "profile.last_name.folded",
+        "profile.preferred_name.folded",
+        "profile.username.folded",
+        "profile.full_name.folded",
+        "email.folded"
+      ],
+      "analyzer": "folding",
+      "type": "phrase_prefix"
+    }
+  },
+  "post_filter": {
+    "bool": {
+      "must": [
+        {
+          "nested": {
+            "path": "program.enrollments",
+            "filter": {
+              "bool": {
+                "must": [
+                  {
+                    "term": {
+                      "program.enrollments.course_title": "Digital Learning 100"
+                    }
+                  },
+                  {
+                    "range": {
+                      "program.enrollments.final_grade": {
+                        "gte": "65",
+                        "lte": "100"
+                      }
+                    }
+                  },
+                  {
+                    "term": {
+                      "program.enrollments.payment_status": "Paid"
+                    }
+                  },
+                  {
+                    "term": {
+                      "program.enrollments.semester": "2016 - Summer"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "term": {
+            "profile.birth_country": "ES"
+          }
+        },
+        {
+          "term": {
+            "profile.country": "ES"
+          }
+        },
+        {
+          "term": {
+            "profile.state_or_territory": "ES-CB"
+          }
+        },
+        {
+          "nested": {
+            "path": "profile.education",
+            "filter": {
+              "term": {
+                "profile.education.degree_name": "b"
+              }
+            }
+          }
+        },
+        {
+          "nested": {
+            "path": "profile.work_history",
+            "filter": {
+              "term": {
+                "profile.work_history.company_name": "Google"
+              }
+            }
+          }
+        },
+        {
+          "term": {
+            "program.id": 1
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "profile.education.degree_name12": {
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "nested": {
+                "path": "program.enrollments",
+                "filter": {
+                  "bool": {
+                    "must": [
+                      {
+                        "term": {
+                          "program.enrollments.course_title": "Digital Learning 100"
+                        }
+                      },
+                      {
+                        "range": {
+                          "program.enrollments.final_grade": {
+                            "gte": "65",
+                            "lte": "100"
+                          }
+                        }
+                      },
+                      {
+                        "term": {
+                          "program.enrollments.payment_status": "Paid"
+                        }
+                      },
+                      {
+                        "term": {
+                          "program.enrollments.semester": "2016 - Summer"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "term": {
+                "profile.birth_country": "ES"
+              }
+            },
+            {
+              "term": {
+                "profile.country": "ES"
+              }
+            },
+            {
+              "term": {
+                "profile.state_or_territory": "ES-CB"
+              }
+            },
+            {
+              "nested": {
+                "path": "profile.work_history",
+                "filter": {
+                  "term": {
+                    "profile.work_history.company_name": "Google"
+                  }
+                }
+              }
+            },
+            {
+              "term": {
+                "program.id": 1
+              }
+            }
+          ]
+        }
+      },
+      "aggs": {
+        "inner": {
+          "nested": {
+            "path": "profile.education"
+          },
+          "aggs": {
+            "profile.education.degree_name": {
+              "terms": {
+                "field": "profile.education.degree_name",
+                "size": 50
+              },
+              "aggs": {
+                "school_name_count": {
+                  "reverse_nested": {
+                  },
+                  "aggs": {
+                    "count": {
+                      "cardinality": {
+                        "field": "user_id"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "profile.education.degree_name_count": {
+              "cardinality": {
+                "field": "profile.education.degree_name"
+              }
+            }
+          }
+        }
+      }
+    },
+    "profile.work_history.company_name14": {
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "nested": {
+                "path": "program.enrollments",
+                "filter": {
+                  "bool": {
+                    "must": [
+                      {
+                        "term": {
+                          "program.enrollments.course_title": "Digital Learning 100"
+                        }
+                      },
+                      {
+                        "range": {
+                          "program.enrollments.final_grade": {
+                            "gte": "65",
+                            "lte": "100"
+                          }
+                        }
+                      },
+                      {
+                        "term": {
+                          "program.enrollments.payment_status": "Paid"
+                        }
+                      },
+                      {
+                        "term": {
+                          "program.enrollments.semester": "2016 - Summer"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "term": {
+                "profile.birth_country": "ES"
+              }
+            },
+            {
+              "term": {
+                "profile.country": "ES"
+              }
+            },
+            {
+              "term": {
+                "profile.state_or_territory": "ES-CB"
+              }
+            },
+            {
+              "nested": {
+                "path": "profile.education",
+                "filter": {
+                  "term": {
+                    "profile.education.degree_name": "b"
+                  }
+                }
+              }
+            },
+            {
+              "term": {
+                "program.id": 1
+              }
+            }
+          ]
+        }
+      },
+      "aggs": {
+        "inner": {
+          "nested": {
+            "path": "profile.work_history"
+          },
+          "aggs": {
+            "profile.work_history.company_name": {
+              "terms": {
+                "field": "profile.work_history.company_name",
+                "size": 20,
+                "order": {
+                  "company_name_count": "desc"
+                }
+              },
+              "aggs": {
+                "company_name_count": {
+                  "reverse_nested": {
+                  },
+                  "aggs": {
+                    "count": {
+                      "cardinality": {
+                        "field": "user_id"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "profile.work_history.company_name_count": {
+              "cardinality": {
+                "field": "profile.work_history.company_name"
+              }
+            }
+          }
+        }
+      }
+    },
+    "program.enrollments.course_title3": {
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "term": {
+                "profile.birth_country": "ES"
+              }
+            },
+            {
+              "term": {
+                "profile.country": "ES"
+              }
+            },
+            {
+              "term": {
+                "profile.state_or_territory": "ES-CB"
+              }
+            },
+            {
+              "nested": {
+                "path": "profile.education",
+                "filter": {
+                  "term": {
+                    "profile.education.degree_name": "b"
+                  }
+                }
+              }
+            },
+            {
+              "nested": {
+                "path": "profile.work_history",
+                "filter": {
+                  "term": {
+                    "profile.work_history.company_name": "Google"
+                  }
+                }
+              }
+            },
+            {
+              "term": {
+                "program.id": 1
+              }
+            },
+            {
+              "nested": {
+                "path": "program.enrollments",
+                "filter": {
+                  "bool": {
+                    "must": [
+                      {
+                        "range": {
+                          "program.enrollments.final_grade": {
+                            "gte": "65",
+                            "lte": "100"
+                          }
+                        }
+                      },
+                      {
+                        "term": {
+                          "program.enrollments.payment_status": "Paid"
+                        }
+                      },
+                      {
+                        "term": {
+                          "program.enrollments.semester": "2016 - Summer"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "aggs": {
+        "inner": {
+          "nested": {
+            "path": "program.enrollments"
+          },
+          "aggs": {
+            "program.enrollments.course_title": {
+              "filter": {
+                "bool": {
+                  "must": [
+                    {
+                      "range": {
+                        "program.enrollments.final_grade": {
+                          "gte": "65",
+                          "lte": "100"
+                        }
+                      }
+                    },
+                    {
+                      "term": {
+                        "program.enrollments.payment_status": "Paid"
+                      }
+                    },
+                    {
+                      "term": {
+                        "program.enrollments.semester": "2016 - Summer"
+                      }
+                    }
+                  ]
+                }
+              },
+              "aggs": {
+                "nested_terms": {
+                  "terms": {
+                    "field": "program.enrollments.course_title",
+                    "size": 50
+                  },
+                  "aggs": {
+                    "top_level_doc_count": {
+                      "reverse_nested": {
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "program.enrollments.course_title_count": {
+              "cardinality": {
+                "field": "program.enrollments.course_title"
+              }
+            }
+          }
+        }
+      }
+    },
+    "final-grade": {
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "term": {
+                "profile.birth_country": "ES"
+              }
+            },
+            {
+              "term": {
+                "profile.country": "ES"
+              }
+            },
+            {
+              "term": {
+                "profile.state_or_territory": "ES-CB"
+              }
+            },
+            {
+              "nested": {
+                "path": "profile.education",
+                "filter": {
+                  "term": {
+                    "profile.education.degree_name": "b"
+                  }
+                }
+              }
+            },
+            {
+              "nested": {
+                "path": "profile.work_history",
+                "filter": {
+                  "term": {
+                    "profile.work_history.company_name": "Google"
+                  }
+                }
+              }
+            },
+            {
+              "term": {
+                "program.id": 1
+              }
+            },
+            {
+              "nested": {
+                "path": "program.enrollments",
+                "filter": {
+                  "bool": {
+                    "must": [
+                      {
+                        "term": {
+                          "program.enrollments.course_title": "Digital Learning 100"
+                        }
+                      },
+                      {
+                        "term": {
+                          "program.enrollments.payment_status": "Paid"
+                        }
+                      },
+                      {
+                        "term": {
+                          "program.enrollments.semester": "2016 - Summer"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "aggs": {
+        "inner": {
+          "nested": {
+            "path": "program.enrollments"
+          },
+          "aggs": {
+            "final-grade": {
+              "filter": {
+                "bool": {
+                  "must": [
+                    {
+                      "term": {
+                        "program.enrollments.course_title": "Digital Learning 100"
+                      }
+                    },
+                    {
+                      "term": {
+                        "program.enrollments.payment_status": "Paid"
+                      }
+                    },
+                    {
+                      "term": {
+                        "program.enrollments.semester": "2016 - Summer"
+                      }
+                    }
+                  ]
+                }
+              },
+              "aggs": {
+                "final-grade": {
+                  "histogram": {
+                    "field": "program.enrollments.final_grade",
+                    "interval": 5,
+                    "min_doc_count": 0,
+                    "extended_bounds": {
+                      "min": 0,
+                      "max": 100
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "program.enrollments.payment_status5": {
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "term": {
+                "profile.birth_country": "ES"
+              }
+            },
+            {
+              "term": {
+                "profile.country": "ES"
+              }
+            },
+            {
+              "term": {
+                "profile.state_or_territory": "ES-CB"
+              }
+            },
+            {
+              "nested": {
+                "path": "profile.education",
+                "filter": {
+                  "term": {
+                    "profile.education.degree_name": "b"
+                  }
+                }
+              }
+            },
+            {
+              "nested": {
+                "path": "profile.work_history",
+                "filter": {
+                  "term": {
+                    "profile.work_history.company_name": "Google"
+                  }
+                }
+              }
+            },
+            {
+              "term": {
+                "program.id": 1
+              }
+            },
+            {
+              "nested": {
+                "path": "program.enrollments",
+                "filter": {
+                  "bool": {
+                    "must": [
+                      {
+                        "term": {
+                          "program.enrollments.course_title": "Digital Learning 100"
+                        }
+                      },
+                      {
+                        "range": {
+                          "program.enrollments.final_grade": {
+                            "gte": "65",
+                            "lte": "100"
+                          }
+                        }
+                      },
+                      {
+                        "term": {
+                          "program.enrollments.semester": "2016 - Summer"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "aggs": {
+        "inner": {
+          "nested": {
+            "path": "program.enrollments"
+          },
+          "aggs": {
+            "program.enrollments.payment_status": {
+              "filter": {
+                "bool": {
+                  "must": [
+                    {
+                      "term": {
+                        "program.enrollments.course_title": "Digital Learning 100"
+                      }
+                    },
+                    {
+                      "range": {
+                        "program.enrollments.final_grade": {
+                          "gte": "65",
+                          "lte": "100"
+                        }
+                      }
+                    },
+                    {
+                      "term": {
+                        "program.enrollments.semester": "2016 - Summer"
+                      }
+                    }
+                  ]
+                }
+              },
+              "aggs": {
+                "nested_terms": {
+                  "terms": {
+                    "field": "program.enrollments.payment_status",
+                    "size": 50,
+                    "order": {
+                      "_term": "asc"
+                    }
+                  },
+                  "aggs": {
+                    "top_level_doc_count": {
+                      "reverse_nested": {
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "program.enrollments.payment_status_count": {
+              "cardinality": {
+                "field": "program.enrollments.payment_status"
+              }
+            }
+          }
+        }
+      }
+    },
+    "program.enrollments.semester6": {
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "term": {
+                "profile.birth_country": "ES"
+              }
+            },
+            {
+              "term": {
+                "profile.country": "ES"
+              }
+            },
+            {
+              "term": {
+                "profile.state_or_territory": "ES-CB"
+              }
+            },
+            {
+              "nested": {
+                "path": "profile.education",
+                "filter": {
+                  "term": {
+                    "profile.education.degree_name": "b"
+                  }
+                }
+              }
+            },
+            {
+              "nested": {
+                "path": "profile.work_history",
+                "filter": {
+                  "term": {
+                    "profile.work_history.company_name": "Google"
+                  }
+                }
+              }
+            },
+            {
+              "term": {
+                "program.id": 1
+              }
+            },
+            {
+              "nested": {
+                "path": "program.enrollments",
+                "filter": {
+                  "bool": {
+                    "must": [
+                      {
+                        "term": {
+                          "program.enrollments.course_title": "Digital Learning 100"
+                        }
+                      },
+                      {
+                        "range": {
+                          "program.enrollments.final_grade": {
+                            "gte": "65",
+                            "lte": "100"
+                          }
+                        }
+                      },
+                      {
+                        "term": {
+                          "program.enrollments.payment_status": "Paid"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "aggs": {
+        "inner": {
+          "nested": {
+            "path": "program.enrollments"
+          },
+          "aggs": {
+            "program.enrollments.semester": {
+              "filter": {
+                "bool": {
+                  "must": [
+                    {
+                      "term": {
+                        "program.enrollments.course_title": "Digital Learning 100"
+                      }
+                    },
+                    {
+                      "range": {
+                        "program.enrollments.final_grade": {
+                          "gte": "65",
+                          "lte": "100"
+                        }
+                      }
+                    },
+                    {
+                      "term": {
+                        "program.enrollments.payment_status": "Paid"
+                      }
+                    }
+                  ]
+                }
+              },
+              "aggs": {
+                "nested_terms": {
+                  "terms": {
+                    "field": "program.enrollments.semester",
+                    "size": 50
+                  },
+                  "aggs": {
+                    "top_level_doc_count": {
+                      "reverse_nested": {
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "program.enrollments.semester_count": {
+              "cardinality": {
+                "field": "program.enrollments.semester"
+              }
+            }
+          }
+        }
+      }
+    },
+    "num-courses-passed": {
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "nested": {
+                "path": "program.enrollments",
+                "filter": {
+                  "bool": {
+                    "must": [
+                      {
+                        "term": {
+                          "program.enrollments.course_title": "Digital Learning 100"
+                        }
+                      },
+                      {
+                        "range": {
+                          "program.enrollments.final_grade": {
+                            "gte": "65",
+                            "lte": "100"
+                          }
+                        }
+                      },
+                      {
+                        "term": {
+                          "program.enrollments.payment_status": "Paid"
+                        }
+                      },
+                      {
+                        "term": {
+                          "program.enrollments.semester": "2016 - Summer"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "term": {
+                "profile.birth_country": "ES"
+              }
+            },
+            {
+              "term": {
+                "profile.country": "ES"
+              }
+            },
+            {
+              "term": {
+                "profile.state_or_territory": "ES-CB"
+              }
+            },
+            {
+              "nested": {
+                "path": "profile.education",
+                "filter": {
+                  "term": {
+                    "profile.education.degree_name": "b"
+                  }
+                }
+              }
+            },
+            {
+              "nested": {
+                "path": "profile.work_history",
+                "filter": {
+                  "term": {
+                    "profile.work_history.company_name": "Google"
+                  }
+                }
+              }
+            },
+            {
+              "term": {
+                "program.id": 1
+              }
+            },
+            {
+              "range": {
+                "program.num_courses_passed": {
+                  "gte": 0,
+                  "lte": 0
+                }
+              }
+            }
+          ]
+        }
+      },
+      "aggs": {
+        "num-courses-passed": {
+          "cardinality": {
+            "field": "program.num_courses_passed"
+          }
+        }
+      }
+    },
+    "grade-average": {
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "nested": {
+                "path": "program.enrollments",
+                "filter": {
+                  "bool": {
+                    "must": [
+                      {
+                        "term": {
+                          "program.enrollments.course_title": "Digital Learning 100"
+                        }
+                      },
+                      {
+                        "range": {
+                          "program.enrollments.final_grade": {
+                            "gte": "65",
+                            "lte": "100"
+                          }
+                        }
+                      },
+                      {
+                        "term": {
+                          "program.enrollments.payment_status": "Paid"
+                        }
+                      },
+                      {
+                        "term": {
+                          "program.enrollments.semester": "2016 - Summer"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "term": {
+                "profile.birth_country": "ES"
+              }
+            },
+            {
+              "term": {
+                "profile.country": "ES"
+              }
+            },
+            {
+              "term": {
+                "profile.state_or_territory": "ES-CB"
+              }
+            },
+            {
+              "nested": {
+                "path": "profile.education",
+                "filter": {
+                  "term": {
+                    "profile.education.degree_name": "b"
+                  }
+                }
+              }
+            },
+            {
+              "nested": {
+                "path": "profile.work_history",
+                "filter": {
+                  "term": {
+                    "profile.work_history.company_name": "Google"
+                  }
+                }
+              }
+            },
+            {
+              "term": {
+                "program.id": 1
+              }
+            },
+            {
+              "range": {
+                "program.grade_average": {
+                  "gte": 0,
+                  "lte": 100
+                }
+              }
+            }
+          ]
+        }
+      },
+      "aggs": {
+        "grade-average": {
+          "histogram": {
+            "field": "program.grade_average",
+            "interval": 5,
+            "min_doc_count": 0,
+            "extended_bounds": {
+              "min": 0,
+              "max": 100
+            }
+          }
+        }
+      }
+    },
+    "profile.birth_country9": {
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "nested": {
+                "path": "program.enrollments",
+                "filter": {
+                  "bool": {
+                    "must": [
+                      {
+                        "term": {
+                          "program.enrollments.course_title": "Digital Learning 100"
+                        }
+                      },
+                      {
+                        "range": {
+                          "program.enrollments.final_grade": {
+                            "gte": "65",
+                            "lte": "100"
+                          }
+                        }
+                      },
+                      {
+                        "term": {
+                          "program.enrollments.payment_status": "Paid"
+                        }
+                      },
+                      {
+                        "term": {
+                          "program.enrollments.semester": "2016 - Summer"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "term": {
+                "profile.country": "ES"
+              }
+            },
+            {
+              "term": {
+                "profile.state_or_territory": "ES-CB"
+              }
+            },
+            {
+              "nested": {
+                "path": "profile.education",
+                "filter": {
+                  "term": {
+                    "profile.education.degree_name": "b"
+                  }
+                }
+              }
+            },
+            {
+              "nested": {
+                "path": "profile.work_history",
+                "filter": {
+                  "term": {
+                    "profile.work_history.company_name": "Google"
+                  }
+                }
+              }
+            },
+            {
+              "term": {
+                "program.id": 1
+              }
+            }
+          ]
+        }
+      },
+      "aggs": {
+        "profile.birth_country": {
+          "terms": {
+            "field": "profile.birth_country",
+            "size": 15
+          }
+        },
+        "profile.birth_country_count": {
+          "cardinality": {
+            "field": "profile.birth_country"
+          }
+        }
+      }
+    },
+    "country": {
+      "filter": {
+        "bool": {
+          "must": [
+            {
+              "nested": {
+                "path": "program.enrollments",
+                "filter": {
+                  "bool": {
+                    "must": [
+                      {
+                        "term": {
+                          "program.enrollments.course_title": "Digital Learning 100"
+                        }
+                      },
+                      {
+                        "range": {
+                          "program.enrollments.final_grade": {
+                            "gte": "65",
+                            "lte": "100"
+                          }
+                        }
+                      },
+                      {
+                        "term": {
+                          "program.enrollments.payment_status": "Paid"
+                        }
+                      },
+                      {
+                        "term": {
+                          "program.enrollments.semester": "2016 - Summer"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "term": {
+                "profile.birth_country": "ES"
+              }
+            },
+            {
+              "nested": {
+                "path": "profile.education",
+                "filter": {
+                  "term": {
+                    "profile.education.degree_name": "b"
+                  }
+                }
+              }
+            },
+            {
+              "nested": {
+                "path": "profile.work_history",
+                "filter": {
+                  "term": {
+                    "profile.work_history.company_name": "Google"
+                  }
+                }
+              }
+            },
+            {
+              "term": {
+                "program.id": 1
+              }
+            }
+          ]
+        }
+      },
+      "aggs": {
+        "profile.country": {
+          "filter": {
+          },
+          "aggs": {
+            "profile.country": {
+              "terms": {
+                "field": "profile.country",
+                "size": 0
+              }
+            }
+          }
+        },
+        "profile.state_or_territory": {
+          "filter": {
+            "term": {
+              "profile.country": "ES"
+            }
+          },
+          "aggs": {
+            "profile.state_or_territory": {
+              "terms": {
+                "field": "profile.state_or_territory",
+                "size": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "no_filters_top_hits": {
+      "top_hits": {
+        "size": 1,
+        "_source": false
+      }
+    }
+  },
+  "size": 50,
+  "from": 50,
+  "sort": [
+    {
+      "profile.last_name": {
+        "order": "asc"
+      }
+    },
+    {
+      "profile.first_name": {
+        "order": "asc"
+      }
+    }
+  ]
+}

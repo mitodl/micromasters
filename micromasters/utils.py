@@ -203,3 +203,34 @@ def safely_remove_file(file_path):
             os.remove(file_path)
         except:  # pylint: disable=bare-except
             pass
+
+
+def walk_hierarchy(obj, stack=None):
+    """
+    Walks an object recursively, yielding the value and the place in the stack.
+    Note: stack will be mutated so it's important for the caller not to modify it. The caller
+    must also make a copy if it needs to keep a record of the stack at some point in time.
+
+    Args:
+        obj (any): The object to walk
+        stack (list): The hierarchy stack, or None if no stack. This contains all parent keys.
+        
+    Yields:
+        (obj, stack):
+            The object being inspected, and the stack at the moment the object is inspected.
+    """
+    if stack is None:
+        stack = []
+    yield obj, stack
+
+    items = None
+    if isinstance(obj, list):
+        items = enumerate(obj)
+    elif isinstance(obj, dict):
+        items = obj.items()
+
+    if items is not None:
+        for key, value in items:
+            stack.append(key)
+            yield from walk_hierarchy(value, stack)
+            stack.pop()
