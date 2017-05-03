@@ -59,7 +59,7 @@ services:
     command: >
       /bin/bash -c '
       sleep 3 &&
-      python3 manage.py migrate &&
+      python3 manage.py migrate --no-input &&
       uwsgi uwsgi.ini'
     ports:
       - "8077:8077"
