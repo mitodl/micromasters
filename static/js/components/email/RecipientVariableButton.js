@@ -10,7 +10,7 @@ export default class RecipientVariableButton extends React.Component {
   render() {
     const { onClick, value } = this.props;
     return <div
-        className='rdw-option-wrapper custom-toolbar-button'
+        className={`rdw-option-wrapper custom-toolbar-button button-${value}`}
         onClick={onClick}
       >
         {`[${value}]`}

@@ -190,6 +190,13 @@ describe('EmailCompositionDialog', () => {
       assert.equal(link.textContent, 'A Link!');
       assert.equal(link.href, "https://en.wikipedia.org/wiki/Potato");
     });
+
+    it('should insert recipient variables', () => {
+      renderDialog();
+      TestUtils.Simulate.click(getDialog().querySelector('.button-Email'));
+      assert.include(getEditorContents().textContent, '[Email]');
+
+    });
   });
 
   it('should render recipients', () => {
