@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 
 export default class RecipientVariableButton extends React.Component {
@@ -10,10 +11,10 @@ export default class RecipientVariableButton extends React.Component {
   render() {
     const { onClick, value } = this.props;
     return <div
-        className={`rdw-option-wrapper custom-toolbar-button button-${value}`}
-        onClick={onClick}
-      >
-        {`[${value}]`}
-      </div>;
+      className={`rdw-option-wrapper custom-toolbar-button button-${value}`}
+      onClick={onClick}
+    >
+      {`[${value}]`}
+    </div>;
   }
 }

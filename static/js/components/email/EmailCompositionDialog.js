@@ -87,27 +87,27 @@ export default class EmailCompositionDialog extends React.Component {
     }
   }
 
-  insertRecipientVariable = (variable_name: string) => {
+  insertRecipientVariable = (variableName: string) => {
 
     const { editorState } = this.state;
     let selection = editorState.getSelection();
     const entityKey = editorState
       .getCurrentContent()
-      .createEntity('MENTION', 'IMMUTABLE', {})
+      .createEntity('RECIPIENT_VAR', 'IMMUTABLE', {})
       .getLastCreatedEntityKey();
 
     let contentState = Modifier.replaceText(
       editorState.getCurrentContent(),
       selection,
-      `${variable_name}`,
+      `${variableName}`,
       editorState.getCurrentInlineStyle(),
       entityKey,
     );
     let newEditorState = EditorState.push(editorState, contentState, 'insert-characters');
     // insert a blank space after the variable
     selection = newEditorState.getSelection().merge({
-      anchorOffset: selection.get('anchorOffset') + variable_name.length,
-      focusOffset: selection.get('anchorOffset') + variable_name.length,
+      anchorOffset: selection.get('anchorOffset') + variableName.length,
+      focusOffset: selection.get('anchorOffset') + variableName.length,
     });
     newEditorState = EditorState.acceptSelection(newEditorState, selection);
     contentState = Modifier.insertText(
@@ -118,6 +118,7 @@ export default class EmailCompositionDialog extends React.Component {
       undefined,
     );
     this.onEditorStateChange(EditorState.push(newEditorState, contentState, 'insert-characters'));
+
   };
 
   showValidationError = (fieldName: string): ?React$Element<*> => {
@@ -181,12 +182,12 @@ export default class EmailCompositionDialog extends React.Component {
     this.clearEditorState();
   };
 
-  makeCustomToolbarButton = (variable_name: string) => {
+  makeCustomToolbarButton = (variableName: string) => {
     return <RecipientVariableButton
-      value={variable_name}
-      key={variable_name}
-      onClick={()=>(this.insertRecipientVariable(`[${variable_name}]`))}
-    />
+      value={variableName}
+      key={variableName}
+      onClick={()=>(this.insertRecipientVariable(`[${variableName}]`))}
+    />;
   };
 
 

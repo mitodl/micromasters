@@ -172,14 +172,13 @@
 
 .toolbar-below {
   padding: 6px 5px 0;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
 
   .custom-toolbar-button {
     width: 130px;
     height: 30px;
   }
+
   .insert {
     padding: 5px;
     height: 30px;
