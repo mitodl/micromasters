@@ -33,7 +33,7 @@ const convertHTMLToEditorState = (html: string): Object => {
 // Otherwise, we set our state to be a blank object, which will cause the
 // <Editor /> component to create a blank EditorState of its own accord.
 const editorStateFromProps = R.compose(
-  S.maybe({}, R.objOf('editorState')),
+  S.maybe({editorState: EditorState.createEmpty()}, R.objOf('editorState')),
   S.map(convertHTMLToEditorState),
   S.filter(R.compose(R.not, R.isEmpty)),
   getm('body'),
@@ -79,9 +79,6 @@ export default class EmailCompositionDialog extends React.Component {
   constructor (props: EmailDialogProps) {
     super(props);
     this.state = editorStateFromProps(props);
-    if (R.isNil(this.state.editorState)) {
-      this.state = { editorState: EditorState.createEmpty()};
-    }
   }
 
   componentWillReceiveProps (nextProps: EmailDialogProps) {
@@ -91,7 +88,6 @@ export default class EmailCompositionDialog extends React.Component {
   }
 
   insertRecipientVariable = (variable_name: string) => {
-
 
     const { editorState } = this.state;
     let selection = editorState.getSelection();
