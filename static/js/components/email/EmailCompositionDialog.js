@@ -4,9 +4,10 @@ import Dialog from 'material-ui/Dialog';
 import R from 'ramda';
 import { Editor } from 'react-draft-wysiwyg';
 // $FlowFixMe: Flow thinks this module isn't present for some reason
-import { EditorState, ContentState, convertFromHTML } from 'draft-js';
+import { EditorState, ContentState, convertFromHTML, Modifier } from 'draft-js';
 
 import AutomaticEmailOptions from './AutomaticEmailOptions';
+import RecipientVariableButton from './RecipientVariableButton';
 import { FETCH_PROCESSING } from '../../actions';
 import { dialogActions } from '../inputs/util';
 import { isNilOrBlank } from '../../util/util';
@@ -78,6 +79,9 @@ export default class EmailCompositionDialog extends React.Component {
   constructor (props: EmailDialogProps) {
     super(props);
     this.state = editorStateFromProps(props);
+    if (R.isNil(this.state.editorState)) {
+      this.state = { editorState: EditorState.createEmpty()};
+    }
   }
 
   componentWillReceiveProps (nextProps: EmailDialogProps) {
@@ -85,6 +89,40 @@ export default class EmailCompositionDialog extends React.Component {
       this.setState(editorStateFromProps(nextProps));
     }
   }
+
+  insertRecipientVariable = (variable_name: string) => {
+
+
+    const { editorState } = this.state;
+    let selection = editorState.getSelection();
+    const entityKey = editorState
+      .getCurrentContent()
+      .createEntity('MENTION', 'IMMUTABLE', {})
+      .getLastCreatedEntityKey();
+
+    let contentState = Modifier.replaceText(
+      editorState.getCurrentContent(),
+      selection,
+      `${variable_name}`,
+      editorState.getCurrentInlineStyle(),
+      entityKey,
+    );
+    let newEditorState = EditorState.push(editorState, contentState, 'insert-characters');
+    // insert a blank space after the variable
+    selection = newEditorState.getSelection().merge({
+      anchorOffset: selection.get('anchorOffset') + variable_name.length,
+      focusOffset: selection.get('anchorOffset') + variable_name.length,
+    });
+    newEditorState = EditorState.acceptSelection(newEditorState, selection);
+    contentState = Modifier.insertText(
+      newEditorState.getCurrentContent(),
+      selection,
+      ' ',
+      newEditorState.getCurrentInlineStyle(),
+      undefined,
+    );
+    this.onEditorStateChange(EditorState.push(newEditorState, contentState, 'insert-characters'));
+  };
 
   showValidationError = (fieldName: string): ?React$Element<*> => {
     const { activeEmail: { validationErrors } } = this.props;
@@ -147,6 +185,15 @@ export default class EmailCompositionDialog extends React.Component {
     this.clearEditorState();
   };
 
+  makeCustomToolbarButton = (variable_name: string) => {
+    return <RecipientVariableButton
+      value={variable_name}
+      key={variable_name}
+      onClick={()=>(this.insertRecipientVariable(`[${variable_name}]`))}
+    />
+  };
+
+
   render() {
     if (!this.props.activeEmail) return null;
 
@@ -158,6 +205,7 @@ export default class EmailCompositionDialog extends React.Component {
       renderRecipients,
     } = this.props;
     const { editorState } = this.state;
+    let customButtons = R.map(this.makeCustomToolbarButton, ['PreferredName', 'Email']);
 
     return <Dialog
       title={title || "New Email"}
@@ -193,6 +241,10 @@ export default class EmailCompositionDialog extends React.Component {
           onEditorStateChange={this.onEditorStateChange}
           toolbar={draftWysiwygToolbar}
         />
+        <div className="toolbar-below">
+          <div className="insert" >Insert:</div>
+          {customButtons}
+        </div>
         { this.showValidationError('body') }
       </div>
     </Dialog>;
