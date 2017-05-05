@@ -245,6 +245,12 @@
       margin-top: 44px;
       margin-bottom: 36px;
     }
+
+    h3 {
+      color: $mm-brand-bg;
+      font-size: 20px;
+      font-weight: 500;
+    }
   }
 
   .faqs {
@@ -252,12 +258,6 @@
 
     @include breakpoint(phone) {
       margin: 18px auto;
-    }
-
-    h3.faq-category {
-      color: $mm-brand-bg;
-      font-size: 20px;
-      font-weight: 500;
     }
 
     * {
