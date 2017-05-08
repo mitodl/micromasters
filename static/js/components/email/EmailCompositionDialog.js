@@ -90,7 +90,7 @@ export default class EmailCompositionDialog extends React.Component {
   insertRecipientVariable = (variableName: string) => {
 
     const { editorState } = this.state;
-    if(editorState !== null && editorState !== undefined){
+    if(editorState !== null && editorState !== undefined) {
       let selection = editorState.getSelection();
       const entityKey = editorState
         .getCurrentContent()
