@@ -23,19 +23,28 @@ export default class CourseEnrollmentDialog extends React.Component {
   };
 
   props: {
-    open:                 boolean,
-    setVisibility:        (v: boolean) => void,
-    course:               Course,
-    courseRun:            CourseRun,
-    price:                ?Decimal,
-    addCourseEnrollment:  (courseId: string) => Promise<*>,
+    open:                     boolean,
+    setVisibility:            (v: boolean) => void,
+    course:                   Course,
+    courseRun:                CourseRun,
+    price:                    ?Decimal,
+    addCourseEnrollment:      (courseId: string) => Promise<*>,
+    financialAidAvailability: boolean,
   };
 
   handlePayClick = () => {
-    const { courseRun, setVisibility } = this.props;
-    setVisibility(false);
-    const url = `/order_summary/?course_key=${encodeURIComponent(courseRun.course_id)}`;
-    this.context.router.push(url);
+    const {
+      courseRun,
+      setVisibility,
+      financialAidAvailability,
+    } = this.props;
+    if (financialAidAvailability) {
+      setVisibility(false);
+      const url = `/order_summary/?course_key=${encodeURIComponent(courseRun.course_id)}`;
+      this.context.router.push(url);
+    } else if (courseRun.enrollment_url) {
+      window.open(courseRun.enrollment_url, '_blank');
+    }
   }
 
   handleAuditClick = () => {

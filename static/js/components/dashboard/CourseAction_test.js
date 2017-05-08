@@ -24,6 +24,7 @@ import {
   FA_PENDING_STATUSES,
   FA_TERMINAL_STATUSES,
   FA_ALL_STATUSES,
+  FA_STATUS_APPROVED,
   STATUS_PAID_BUT_NOT_ENROLLED,
 } from '../../constants';
 import {
@@ -41,6 +42,7 @@ describe('CourseAction', () => {
   let setEnrollCourseDialogVisibilityStub;
   let openFinancialAidCalculatorStub;
   let routerPushStub;
+  let windowOpenStub;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -49,6 +51,7 @@ describe('CourseAction', () => {
     setEnrollCourseDialogVisibilityStub = sandbox.stub();
     openFinancialAidCalculatorStub = sandbox.stub();
     routerPushStub = sandbox.stub();
+    windowOpenStub = sandbox.stub(window, 'open');
   });
 
   afterEach(() => {
@@ -231,7 +234,13 @@ describe('CourseAction', () => {
     ));
     let firstRun = course.runs[0];
     const wrapper = renderCourseAction({
-      courseRun: firstRun
+      financialAid: {
+        ...FINANCIAL_AID_PARTIAL_RESPONSE,
+        has_user_applied: true,
+        application_status: FA_STATUS_APPROVED,
+      },
+      courseRun: firstRun,
+      hasFinancialAid: true,
     });
     let elements = getElements(wrapper);
     let formattedUpgradeDate = moment(firstRun.course_upgrade_deadline).format(DASHBOARD_FORMAT);
@@ -500,5 +509,29 @@ describe('CourseAction', () => {
         assert.equal(payButton.children().text(), 'Pay Now');
       });
     });
+
+    const enrollmentUrlData = [
+      { url: undefined, expected: false },
+      { url: "http://test.com", expected: true }
+    ];
+    for (let urlExpectedPair of enrollmentUrlData) {
+      it(`pay button redirects to course enrollment url: ${String(urlExpectedPair.url)}`, () => {
+        let firstRun = alterFirstRun(course, {
+          enrollment_start_date: now.toISOString(),
+          status: STATUS_CAN_UPGRADE,
+          enrollment_url: urlExpectedPair.url
+        });
+        const wrapper = renderCourseAction({
+          courseRun: firstRun,
+          hasFinancialAid: false,
+        });
+        const payButton = wrapper.find('.pay-button');
+        payButton.simulate('click');
+        assert.equal(
+          windowOpenStub.calledWith(urlExpectedPair.url, "_blank"),
+          urlExpectedPair.expected
+        );
+      });
+    }
   });
 });
