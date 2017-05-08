@@ -90,34 +90,36 @@ export default class EmailCompositionDialog extends React.Component {
   insertRecipientVariable = (variableName: string) => {
 
     const { editorState } = this.state;
-    let selection = editorState.getSelection();
-    const entityKey = editorState
-      .getCurrentContent()
-      .createEntity('RECIPIENT_VAR', 'IMMUTABLE', {})
-      .getLastCreatedEntityKey();
+    if(editorState !== null && editorState !== undefined){
+      let selection = editorState.getSelection();
+      const entityKey = editorState
+        .getCurrentContent()
+        .createEntity('MENTION', 'IMMUTABLE', {})
+        .getLastCreatedEntityKey();
 
-    let contentState = Modifier.replaceText(
-      editorState.getCurrentContent(),
-      selection,
-      `${variableName}`,
-      editorState.getCurrentInlineStyle(),
-      entityKey,
-    );
-    let newEditorState = EditorState.push(editorState, contentState, 'insert-characters');
-    // insert a blank space after the variable
-    selection = newEditorState.getSelection().merge({
-      anchorOffset: selection.get('anchorOffset') + variableName.length,
-      focusOffset: selection.get('anchorOffset') + variableName.length,
-    });
-    newEditorState = EditorState.acceptSelection(newEditorState, selection);
-    contentState = Modifier.insertText(
-      newEditorState.getCurrentContent(),
-      selection,
-      ' ',
-      newEditorState.getCurrentInlineStyle(),
-      undefined,
-    );
-    this.onEditorStateChange(EditorState.push(newEditorState, contentState, 'insert-characters'));
+      let contentState = Modifier.replaceText(
+        editorState.getCurrentContent(),
+        selection,
+        `${variableName}`,
+        editorState.getCurrentInlineStyle(),
+        entityKey,
+      );
+      let newEditorState = EditorState.push(editorState, contentState, 'insert-characters');
+      // insert a blank space after the variable
+      selection = newEditorState.getSelection().merge({
+        anchorOffset: selection.get('anchorOffset') + variableName.length,
+        focusOffset: selection.get('anchorOffset') + variableName.length,
+      });
+      newEditorState = EditorState.acceptSelection(newEditorState, selection);
+      contentState = Modifier.insertText(
+        newEditorState.getCurrentContent(),
+        selection,
+        ' ',
+        newEditorState.getCurrentInlineStyle(),
+        undefined,
+      );
+      this.onEditorStateChange(EditorState.push(newEditorState, contentState, 'insert-characters'));
+    }
 
   };
 
