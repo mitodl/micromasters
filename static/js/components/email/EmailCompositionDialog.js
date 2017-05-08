@@ -182,13 +182,13 @@ export default class EmailCompositionDialog extends React.Component {
     this.clearEditorState();
   };
 
-  makeCustomToolbarButton = (variableName: string) => {
+  makeCustomToolbarButtons = R.map((variableName: string) => {
     return <RecipientVariableButton
       value={variableName}
       key={variableName}
       onClick={()=>(this.insertRecipientVariable(`[${variableName}]`))}
     />;
-  };
+  });
 
 
   render() {
@@ -202,7 +202,6 @@ export default class EmailCompositionDialog extends React.Component {
       renderRecipients,
     } = this.props;
     const { editorState } = this.state;
-    let customButtons = R.map(this.makeCustomToolbarButton, ['PreferredName', 'Email']);
 
     return <Dialog
       title={title || "New Email"}
@@ -240,7 +239,7 @@ export default class EmailCompositionDialog extends React.Component {
         />
         <div className="toolbar-below">
           <div className="insert" >Insert:</div>
-          {customButtons}
+          {this.makeCustomToolbarButtons(['PreferredName', 'Email'])}
         </div>
         { this.showValidationError('body') }
       </div>
