@@ -289,6 +289,12 @@ class ProgramCourse(Orderable):
     Courses listed for the program
     """
     program_page = ParentalKey(ProgramPage, related_name='courses')
+    course = models.OneToOneField(
+        'courses.Course',
+        null=True,
+        on_delete=models.SET_NULL,
+        help_text='The course for this ProgramCourse',
+    )
     title = models.CharField(max_length=255, default='')
     description = RichTextField(blank=True, null=True)
     content_panels = Page.content_panels + [

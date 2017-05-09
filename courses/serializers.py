@@ -50,6 +50,13 @@ class ProgramSerializer(serializers.ModelSerializer):
 
 class CourseSerializer(serializers.ModelSerializer):
     """Serializer for Course objects"""
+    description = serializers.SerializerMethodField()
+
+    def get_description(self, course):
+        """Choose the right description for course"""
+        description = course.programcourse.description
+        return description if description else course.description
+
     class Meta:
         model = Course
         fields = (

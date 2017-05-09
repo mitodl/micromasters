@@ -86,7 +86,8 @@ export default class CourseListItemWithPopover extends React.Component {
           onRequestClose={this.handleRequestClose}
         >
           <h4 className="title">{title}</h4>
-          <div className="description course-description">{descriptionText}</div>
+          <div className="description course-description"
+               dangerouslySetInnerHTML={{__html: descriptionText}}/>
           {popoverLink(url)}
         </Popover>
         <div className="description enrollment-dates">
