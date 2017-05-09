@@ -101,8 +101,7 @@
     .sk-hierarchical-menu-list__root .sk-hierarchical-menu-option__count,
     .sk-hierarchical-refinement-list__root .sk-hierarchical-refinement-option__text,
     .sk-hierarchical-refinement-list__root .sk-hierarchical-refinement-option__count {
-      color: $font-gray;
-      font-weight: 400;
+      color: $font-black;
     }
 
     // Search facet option text
@@ -113,6 +112,18 @@
 
     .sk-panel .sk-panel__content {
       .sk-item-list {
+
+        .is-selected, .is-active {
+          .sk-panel__content .sk-item-list-option__text,
+          .sk-panel__content .sk-item-list-option__count,
+          .sk-hierarchical-menu-list__root .sk-hierarchical-menu-option__text,
+          .sk-hierarchical-menu-list__root .sk-hierarchical-menu-option__count,
+          .sk-hierarchical-refinement-list__root .sk-hierarchical-refinement-option__text,
+          .sk-hierarchical-refinement-list__root .sk-hierarchical-refinement-option__count {
+            font-weight: 500 !important;
+          }
+        }
+
         > div {
           align-items: stretch;
         }
