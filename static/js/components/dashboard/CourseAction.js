@@ -61,13 +61,8 @@ export default class CourseAction extends React.Component {
   }
 
   redirectToOrderSummary(run: CourseRun): void {
-    let { hasFinancialAid } = this.props;
-    if (hasFinancialAid) {
-      const url = `/order_summary/?course_key=${encodeURIComponent(run.course_id)}`;
-      this.context.router.push(url);
-    } else if (run.enrollment_url) {
-      window.open(run.enrollment_url, '_blank');
-    }
+    const url = `/order_summary/?course_key=${encodeURIComponent(run.course_id)}`;
+    this.context.router.push(url);
   }
 
   handleEnrollButtonClick(run: CourseRun): void {

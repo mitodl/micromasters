@@ -13,14 +13,13 @@ import { makeCourse, makeRun } from '../factories/dashboard';
 import { getEl } from '../util/test_utils';
 
 describe("CourseEnrollmentDialog", () => {
-  let sandbox, setVisibilityStub, addCourseEnrollmentStub, routerPushStub, windowOpenStub;
+  let sandbox, setVisibilityStub, addCourseEnrollmentStub, routerPushStub;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     setVisibilityStub = sandbox.spy();
     addCourseEnrollmentStub = sandbox.spy();
     routerPushStub = sandbox.spy();
-    windowOpenStub = sandbox.stub(window, 'open');
   });
 
   afterEach(() => {
@@ -32,7 +31,6 @@ describe("CourseEnrollmentDialog", () => {
     courseRun = makeRun(1),
     course = makeCourse(1),
     open = true,
-    financialAidAvailability = true
   ) => {
     mount(
       <MuiThemeProvider muiTheme={getMuiTheme()}>
@@ -43,7 +41,6 @@ describe("CourseEnrollmentDialog", () => {
           price={price}
           setVisibility={setVisibilityStub}
           addCourseEnrollment={addCourseEnrollmentStub}
-          financialAidAvailability={financialAidAvailability}
         />
       </MuiThemeProvider>,
       {
@@ -104,26 +101,4 @@ describe("CourseEnrollmentDialog", () => {
     sinon.assert.calledWith(setVisibilityStub, false);
     sinon.assert.calledWith(addCourseEnrollmentStub, courseRun.course_id);
   });
-
-  const enrollmentUrlData = [
-    { url: undefined, expected: false },
-    { url: "http://test.com", expected: true }
-  ];
-
-  for (let urlExpectedPair of enrollmentUrlData) {
-    it(`pay button redirects to course enrollment url: ${String(urlExpectedPair.url)}`, () => {
-      const price = new Decimal("123.45");
-      const courseRun = makeRun(1);
-      courseRun['enrollment_url'] = urlExpectedPair.url;
-      const wrapper = renderDialog(
-        price, courseRun, makeCourse(1), true, false
-      );
-      const payButton = wrapper.querySelector('.pay-button');
-      TestUtils.Simulate.click(payButton);
-      assert.equal(
-        windowOpenStub.calledWith(urlExpectedPair.url, "_blank"),
-        urlExpectedPair.expected
-      );
-    });
-  }
 });
