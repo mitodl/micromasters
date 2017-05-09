@@ -1,6 +1,7 @@
 """
 Tests for ecommerce serializers
 """
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from courses.factories import CourseRunFactory
@@ -46,13 +47,6 @@ class SerializerTests(TestCase):
         """
         Test coupon serializer
         """
-        coupon = CouponFactory.create(content_object=CourseRunFactory.create())
-        assert CouponSerializer(coupon).data == {
-            'amount': str(coupon.amount),
-            'amount_type': coupon.amount_type,
-            'content_type': 'courserun',
-            'coupon_type': Coupon.STANDARD,
-            'coupon_code': coupon.coupon_code,
-            'program_id': coupon.program.id,
-            'object_id': coupon.object_id,
-        }
+        with self.assertRaises(ValidationError) as ex:
+            CouponFactory.create(content_object=CourseRunFactory.create())
+        assert ex.exception.args[0]['__all__'][0].args[0] == 'content_object must be of type Course or Program'

@@ -334,10 +334,9 @@ class Coupon(TimestampedModel, AuditableModel):
 
         if self.content_type.model_class() not in (
                 Course,
-                CourseRun,
                 Program,
         ):
-            raise ValidationError("content_object must be of type Course, CourseRun, or Program")
+            raise ValidationError("content_object must be of type Course or Program")
 
         if self.amount_type == self.PERCENT_DISCOUNT:
             if self.amount is None or not 0 <= self.amount <= 1:

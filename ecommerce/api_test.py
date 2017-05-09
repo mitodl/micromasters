@@ -241,7 +241,7 @@ class PurchasableTests(MockedESTestCase):
         discounted_price = round(course_run.course.program.price/2, 2)
         coupon = None
         if has_coupon:
-            coupon = CouponFactory.create(content_object=course_run)
+            coupon = CouponFactory.create(content_object=course_run.course)
         price_tuple = (discounted_price, coupon)
 
         with patch(
@@ -548,7 +548,7 @@ class CouponTests(MockedESTestCase):
 
     def test_is_coupon_redeemable_for_run(self):
         """Happy case for is_coupon_redeemable_for_run"""
-        coupon = CouponFactory.create(content_object=self.run1)
+        coupon = CouponFactory.create(content_object=self.run1.course)
         with patch('ecommerce.api.is_coupon_redeemable', autospec=True) as _is_coupon_redeemable:
             _is_coupon_redeemable.return_value = True
             assert is_coupon_redeemable_for_run(coupon, self.user, self.run1.edx_course_key) is True
@@ -557,7 +557,7 @@ class CouponTests(MockedESTestCase):
 
     def test_is_not_redeemable(self):
         """If is_coupon_redeemable returns False, is_coupon_redeemable_for_run should also return False"""
-        coupon = CouponFactory.create(content_object=self.run1)
+        coupon = CouponFactory.create(content_object=self.run1.course)
         with patch('ecommerce.api.is_coupon_redeemable', autospec=True) as _is_coupon_redeemable:
             _is_coupon_redeemable.return_value = False
             assert is_coupon_redeemable_for_run(coupon, self.user, self.run1.edx_course_key) is False
@@ -750,7 +750,7 @@ class PriceTests(MockedESTestCase):
         If there is a coupon calculate_run_price should use calculate_coupon_price to get the discounted price
         """
         course_run, user = create_purchasable_course_run()
-        coupon = CouponFactory.create(content_object=course_run)
+        coupon = CouponFactory.create(content_object=course_run.course)
         UserCoupon.objects.create(coupon=coupon, user=user)
         discounted_price = 5
         with patch('ecommerce.api.calculate_coupon_price', autospec=True) as _calculate_coupon_price:
@@ -767,7 +767,9 @@ class PriceTests(MockedESTestCase):
         course_run, _ = create_purchasable_course_run()
         price = Decimal(5)
         coupon = CouponFactory.create(
-            content_object=course_run, amount_type=Coupon.PERCENT_DISCOUNT, amount=Decimal("0.3")
+            content_object=course_run.course,
+            amount_type=Coupon.PERCENT_DISCOUNT,
+            amount=Decimal("0.3"),
         )
         assert calculate_coupon_price(coupon, price, course_run.edx_course_key) == price * (1 - coupon.amount)
 
@@ -778,7 +780,7 @@ class PriceTests(MockedESTestCase):
         course_run, _ = create_purchasable_course_run()
         price = Decimal(5)
         coupon = CouponFactory.create(
-            content_object=course_run, amount_type=Coupon.FIXED_DISCOUNT, amount=Decimal("1.5")
+            content_object=course_run.course, amount_type=Coupon.FIXED_DISCOUNT, amount=Decimal("1.5")
         )
         assert calculate_coupon_price(coupon, price, course_run.edx_course_key) == price - coupon.amount
 
@@ -790,7 +792,7 @@ class PriceTests(MockedESTestCase):
         price = Decimal(5)
         amount = Decimal("1.5")
         coupon = CouponFactory.create(
-            content_object=course_run, amount_type=Coupon.FIXED_PRICE, amount=amount
+            content_object=course_run.course, amount_type=Coupon.FIXED_PRICE, amount=amount
         )
         assert calculate_coupon_price(coupon, price, course_run.edx_course_key) == amount
 
@@ -800,7 +802,7 @@ class PriceTests(MockedESTestCase):
         """
         course_run, _ = create_purchasable_course_run()
         price = Decimal('0.3')
-        coupon = CouponFactory.create(content_object=course_run)
+        coupon = CouponFactory.create(content_object=course_run.course)
         # Use manager to skip validation, which usually prevents setting content_object to an arbitrary object
         Coupon.objects.filter(id=coupon.id).update(amount_type='xyz')
         coupon.refresh_from_db()
@@ -823,7 +825,7 @@ class PriceTests(MockedESTestCase):
         course_run, _ = create_purchasable_course_run()
         price = course_run.course.program.price
         coupon = CouponFactory.create(
-            content_object=course_run, amount_type=Coupon.FIXED_DISCOUNT, amount=price + 50,
+            content_object=course_run.course, amount_type=Coupon.FIXED_DISCOUNT, amount=price + 50,
         )
         assert calculate_coupon_price(coupon, price, course_run.edx_course_key) == 0
 
@@ -834,7 +836,7 @@ class PriceTests(MockedESTestCase):
         course_run, _ = create_purchasable_course_run()
         price = course_run.course.program.price
         coupon = CouponFactory.create(
-            content_object=course_run, amount_type=Coupon.FIXED_DISCOUNT, amount=-(price + 50),
+            content_object=course_run.course, amount_type=Coupon.FIXED_DISCOUNT, amount=-(price + 50),
         )
         assert calculate_coupon_price(coupon, price, course_run.edx_course_key) == price
 

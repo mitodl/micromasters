@@ -32,7 +32,6 @@ from ecommerce.models import (
     RedeemedCoupon,
 )
 from micromasters.utils import serialize_model_object
-from profiles.factories import UserFactory
 from profiles.models import Profile
 from search.base import MockedESTestCase
 
@@ -88,15 +87,14 @@ class CouponTests(MockedESTestCase):
         Coupon.content_object should only accept Course, CourseRun, or Program
         """
         course_run = CourseRunFactory.create()
-        user = UserFactory.create()
         coupons = []
-        for obj in (course_run, course_run.course, course_run.course.program):
+        for obj in (course_run.course, course_run.course.program):
             coupons.append(CouponFactory.create(content_object=obj))
 
         with self.assertRaises(ValidationError) as ex:
-            CouponFactory.create(content_object=user)
+            CouponFactory.create(content_object=course_run)
         assert ex.exception.args[0]['__all__'][0].args[0] == (
-            'content_object must be of type Course, CourseRun, or Program'
+            'content_object must be of type Course or Program'
         )
 
     def test_validate_amount(self):
@@ -130,12 +128,14 @@ class CouponTests(MockedESTestCase):
     def test_validate_discount_prev_run_coupon_type(self):
         """Coupon must be for a course if Coupon.coupon_type is DISCOUNTED_PREVIOUS_RUN"""
         run = CourseRunFactory.create()
-        for obj in [run, run.course.program]:
-            with self.assertRaises(ValidationError) as ex:
-                CouponFactory.create(coupon_type=Coupon.DISCOUNTED_PREVIOUS_COURSE, content_object=obj)
-            assert ex.exception.args[0]['__all__'][0].args[0] == (
-                'coupon must be for a course if coupon_type is discounted-previous-course'
+        with self.assertRaises(ValidationError) as ex:
+            CouponFactory.create(
+                coupon_type=Coupon.DISCOUNTED_PREVIOUS_COURSE,
+                content_object=run.course.program,
             )
+        assert ex.exception.args[0]['__all__'][0].args[0] == (
+            'coupon must be for a course if coupon_type is discounted-previous-course'
+        )
 
     def test_course_keys(self):
         """
@@ -154,9 +154,6 @@ class CouponTests(MockedESTestCase):
         coupon_course = CouponFactory.create(content_object=run1.course)
         assert sorted(coupon_course.course_keys) == sorted([run.edx_course_key for run in [run1, run2]])
 
-        coupon_run = CouponFactory.create(content_object=run1)
-        assert coupon_run.course_keys == [run1.edx_course_key]
-
     def test_program(self):
         """
         Coupon.course_keys should return a list of all course run keys in a program, course, or course run
@@ -173,9 +170,6 @@ class CouponTests(MockedESTestCase):
 
         coupon_course = CouponFactory.create(content_object=run1.course)
         assert coupon_course.program == run1.course.program
-
-        coupon_run = CouponFactory.create(content_object=run1)
-        assert coupon_run.program == run1.course.program
 
     def test_course_keys_invalid_content_object(self):
         """
