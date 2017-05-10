@@ -54,8 +54,9 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def get_description(self, course):
         """Choose the right description for course"""
-        description = course.programcourse.description
-        return description if description else course.description
+        if hasattr(course, 'programcourse') and course.programcourse.description:
+            return course.programcourse.description
+        return course.description
 
     class Meta:
         model = Course

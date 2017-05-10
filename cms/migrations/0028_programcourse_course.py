@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('courses', '0025_remove_unused_fields'),
-        ('cms', '0028_delete_program_courses'),
+        ('cms', '0027_semesterdate'),
     ]
 
     operations = [

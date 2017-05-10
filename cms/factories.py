@@ -9,8 +9,8 @@ from factory.django import DjangoModelFactory
 from wagtail.wagtailimages.models import Image
 from willow.image import Image as WillowImage
 
-from cms.models import ProgramPage, ProgramFaculty
-from courses.factories import ProgramFactory
+from cms.models import ProgramPage, ProgramFaculty, ProgramCourse
+from courses.factories import ProgramFactory, CourseFactory
 
 
 class ImageFactory(DjangoModelFactory):
@@ -54,6 +54,17 @@ class ProgramPageFactory(DjangoModelFactory):
     title = factory.Faker('sentence', nb_words=4)
 
     program = factory.SubFactory(ProgramFactory)
+
+
+class ProgramCourseFactory(DjangoModelFactory):
+    """Factory for ProgramCourse"""
+    class Meta:
+        model = ProgramCourse
+
+    title = factory.Faker('sentence', nb_words=4)
+    program_page = factory.SubFactory(ProgramPageFactory)
+    course = factory.SubFactory(CourseFactory)
+    description = factory.Faker('sentence', nb_words=4)
 
 
 class FacultyFactory(DjangoModelFactory):

@@ -9,6 +9,7 @@ def populate_program_courses(apps, schema_editor):
     ProgramCourse = apps.get_model('cms', 'ProgramCourse')
     ProgramPage = apps.get_model('cms', 'ProgramPage')
 
+    ProgramCourse.objects.all().delete()
     program_pages = ProgramPage.objects.all()
 
     for program_page in program_pages:
@@ -22,18 +23,13 @@ def populate_program_courses(apps, schema_editor):
             )
 
 
-def reverse_populate_program_courses(apps, schema_editor):
-    ProgramCourse = apps.get_model('cms', 'ProgramCourse')
-    ProgramCourse.objects.all().delete()
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cms', '0029_programcourse_course'),
+        ('cms', '0028_programcourse_course'),
         ('courses', '0025_remove_unused_fields')
     ]
 
     operations = [
-        migrations.RunPython(populate_program_courses, reverse_populate_program_courses),
+        migrations.RunPython(populate_program_courses, reverse_code=migrations.RunPython.noop),
     ]

@@ -7,7 +7,7 @@ from cms.serializers import (
     RenditionSerializer,
     ProgramPageSerializer,
 )
-from cms.factories import FacultyFactory, ProgramPageFactory
+from cms.factories import FacultyFactory, ProgramPageFactory, ProgramCourseFactory
 from courses.factories import ProgramFactory, CourseFactory
 
 
@@ -54,6 +54,7 @@ class WagtailSerializerTests(MockedESTestCase):
         program = ProgramFactory.create(title="Supply Chain Management")
         course = CourseFactory.create(program=program, title="Learning How to Supply")
         page = ProgramPageFactory.create(program=program, title=program.title)
+        program_course = ProgramCourseFactory(program_page=page, course=course)
         faculty = FacultyFactory.create(
             program_page=page, name="Charles Fluffles", image=None,
         )
@@ -72,7 +73,7 @@ class WagtailSerializerTests(MockedESTestCase):
             "courses": [{
                 "id": course.id,
                 "title": "Learning How to Supply",
-                "description": course.description,
+                "description": program_course.description,
                 "url": course.url,
                 "enrollment_text": "Not available",
             }]
