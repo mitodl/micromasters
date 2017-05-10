@@ -233,8 +233,6 @@ class Coupon(TimestampedModel, AuditableModel):
             return CourseRun.objects.filter(course__program=obj).values_list('edx_course_key', flat=True)
         elif isinstance(obj, Course):
             return CourseRun.objects.filter(course=obj).values_list('edx_course_key', flat=True)
-        elif isinstance(obj, CourseRun):
-            return [obj.edx_course_key]
         else:
             # Should probably not get here, clean() should take care of validating this
             raise ImproperlyConfigured("content_object expected to be one of Program, Course, CourseRun")
@@ -249,8 +247,6 @@ class Coupon(TimestampedModel, AuditableModel):
             return obj
         elif isinstance(obj, Course):
             return obj.program
-        elif isinstance(obj, CourseRun):
-            return obj.course.program
         else:
             # Should probably not get here, clean() should take care of validating this
             raise ImproperlyConfigured("content_object expected to be one of Program, Course, CourseRun")
