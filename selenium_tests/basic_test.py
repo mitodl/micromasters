@@ -28,8 +28,8 @@ class BasicTests(SeleniumTestsBase):
 
         # Click the dashboard link on the upper right of the homepage
         self.selenium.find_element_by_class_name("header-dashboard-link").click()
-        self.wait().until(lambda driver: driver.find_element_by_class_name("enroll-button"))
         self.assert_console_logs()
+        self.wait().until(lambda driver: driver.find_element_by_class_name("enroll-button"))
         # Click the Enroll Now button on dashboard
         self.selenium.find_element_by_class_name("enroll-button").click()
         self.wait().until(lambda driver: driver.find_element_by_class_name("continue-payment"))
@@ -38,11 +38,12 @@ class BasicTests(SeleniumTestsBase):
         self.selenium.back()
         self.wait().until(lambda driver: driver.find_element_by_class_name("enroll-button"))
         self.selenium.find_element_by_class_name("enroll-button").click()
-        self.wait().until(lambda driver: driver.find_element_by_class_name("continue-payment"))
         self.assert_console_logs()
 
         # Click 'Continue' on the order summary page
+        self.wait().until(lambda driver: driver.find_element_by_class_name("continue-payment"))
         self.selenium.find_element_by_class_name("continue-payment").click()
+        self.assert_console_logs()
         self.wait().until(lambda driver: driver.find_element_by_class_name("description"))
         # Assert that the purchase went through fine but enrolling in edX failed
         # Which makes sense since there is no edX for these tests
@@ -144,6 +145,7 @@ class BasicTests(SeleniumTestsBase):
         self.get("{}/learners/?q=xyz".format(self.live_server_url))
         self.wait().until(lambda driver: self.num_elements_on_page('.learner-result', driver=driver) == 0)
         assert self.selenium.current_url.endswith('/learners/?q=xyz')
+        self.assert_console_logs()
 
     def test_switch_program(self):
         """Switching programs should clear facets and show a different set of users"""

@@ -73,7 +73,20 @@ services:
       - db
       - elastic
       - redis
-      - grid
+      - hub
+      - chrome
 
-  grid:
-    image: elgalu/selenium:2
+  hub:
+    image: selenium/hub:3.4.0-chromium
+    ports:
+      - "4444:4444"
+
+  chrome:
+    image: selenium/node-chrome:3.4.0-chromium
+    environment:
+      - HUB_PORT_4444_TCP_ADDR=hub
+      - HUB_PORT_4444_TCP_PORT=4444
+    links:
+      - hub
+    ports:
+      - "5555:5555"

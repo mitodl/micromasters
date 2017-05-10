@@ -87,7 +87,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         # because if an exception is raised here, tearDownClass will not get executed, which will leave
         # a connection to selenium open preventing it from rerunning the test without restarting the grid.
         cls.selenium = Remote(
-            os.getenv('SELENIUM_URL', 'http://grid:24444/wd/hub'),
+            os.getenv('SELENIUM_URL', 'http://chrome:5555/wd/hub'),
             capabilities,
         )
         cls.selenium.implicitly_wait(10)
@@ -145,6 +145,8 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         UserCoupon.objects.create(coupon=coupon, user=self.user)
         ProgramEnrollment.objects.create(program=run.course.program, user=self.user)
 
+        self.assert_console_logs()
+
     @classmethod
     def tearDownClass(cls):
         cls.selenium.quit()
@@ -169,10 +171,13 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
             except:  # pylint: disable=bare-except
                 log.exception("Unable to take selenium screenshot")
 
-        # Reset database to previous state
-        self.restore_db()
+        try:
+            self.assert_console_logs()
+        finally:
+            # Reset database to previous state
+            self.restore_db()
 
-        super().tearDown()
+            super().tearDown()
 
     def _fixture_teardown(self):
         """Override _fixture_teardown to not truncate the database. This class handles that stuff explicitly."""
