@@ -3322,8 +3322,6 @@ fieldset[disabled] .btn-pure.focus {
 }
 .navbar {
   border: none;
-  -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, .08);
-          box-shadow: 0 2px 4px rgba(0, 0, 0, .08);
 }
 .navbar-fixed-top,
 .navbar-fixed-bottom {

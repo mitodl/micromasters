@@ -31,41 +31,46 @@
 {% include "header.html" %}
 <main class="page-content program-page">
   {% image page.background_image fill-1310x613 as background_image %}
-  <div class="hero-image" style="background-image: url({{ background_image.url }})">
-    <!-- big image, and sign-up links, etc -->
-    <h1 class="title">
-      {{ page.title }} MicroMasters
-    </h1>
-    <div class="description">
-      {{ page.title_over_image|richtext }}
-    </div>
-    {% if not authenticated %}
-    <button class="mdl-button hero-button open-signup-dialog mdl-cell--hide-phone">
-      Sign Up Now
-    </button>
-    <div class="log-in mdl-cell--hide-phone">
-      Already a Member?
-      <a href="/login/edxorg">
-        Log In
-      </a>
-    </div>
-    {% endif %}
-  </div>
-    <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+  <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
     <div class="mdl-tabs__tab-bar">
       <div class="tab-container">
-        <a href="{{ page.url }}"
-           class="tab-link {% if active_tab == 'about' %}active-tab{% endif %}">
-          About the Program
-        </a>
-        {% for child in page.get_children.live %}
-          <a href="{{ child.url }}"
-             class="tab-link {% if child.title == active_tab %}active-tab{% endif %}">
-            {{ child.title }}
+        <div class="tab-wrapper">
+          <a href="{{ page.url }}"
+             class="tab-link {% if active_tab == 'about' %}active-tab{% endif %}">
+            About the Program
           </a>
-        {% endfor %}
+          {% for child in page.get_children.live %}
+            <a href="{{ child.url }}"
+               class="tab-link {% if child.title == active_tab %}active-tab{% endif %}">
+              {{ child.title }}
+            </a>
+          {% endfor %}
+        </div>
       </div>
     </div>
+    {% if active_tab == 'about' %}
+      <div class="hero-image" style="background-image: url({{ background_image.url }})">
+        <!-- big image, and sign-up links, etc -->
+        <h1 class="title">
+          {{ page.title }} MicroMasters
+        </h1>
+        <div class="description">
+          {{ page.title_over_image|richtext }}
+        </div>
+        {% if not authenticated %}
+          <button class="mdl-button hero-button open-signup-dialog mdl-cell--hide-phone">
+            Sign Up Now
+          </button>
+          <div class="log-in mdl-cell--hide-phone">
+            Already a Member?
+            <a href="/login/edxorg">
+              Log In
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+
     <div class="mdl-grid tabs-content">
       <div class="mdl-cell mdl-cell--8-col">
       {% if active_tab == 'about' %}

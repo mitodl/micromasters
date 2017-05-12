@@ -64,32 +64,38 @@
 
   .mdl-tabs {
     .tab-container {
-      width: 96%;
-      max-width: 1150px;
-      display: flex;
-      overflow-x: scroll;
+      background-color: $mm-brand-bg;
+      width: 100%;
 
-      a {
-        white-space: nowrap;
-      }
+      .tab-wrapper {
+        display: flex;
+        overflow-x: scroll;
+        margin-left: 8px;
 
-      a:focus, a:hover {
-        text-decoration: none;
-      }
+        a {
+          white-space: nowrap;
+          font-weight: 400;
+          font-size: 13px;
+        }
 
-      a.tab-link {
-        padding: 0 24px;
-        float: left;
-        height: 56px;
-        line-height: 55px;
-        text-transform: uppercase;
-        color: rgba(0,0,0,.54);
+        a:focus, a:hover {
+          text-decoration: none;
+        }
 
-      }
+        a.tab-link {
+          padding: 0 24px;
+          float: left;
+          height: 56px;
+          line-height: 55px;
+          text-transform: uppercase;
+          color: rgba(255,255,255,.75);
 
-      a.active-tab {
-        color: rgba(0,0,0,.87);
-        border-bottom: 3px solid $mm-brand-bg;
+        }
+
+        a.active-tab {
+          color: white;
+          border-bottom: 3px solid white;
+        }
       }
     }
 
@@ -99,9 +105,9 @@
     }
 
     .mdl-tabs__tab-bar {
-      margin-bottom: 30px;
       height: 57px;
       overflow: hidden;
+      border-bottom: 1px solid $mm-brand-bg;
     }
 
     .panel-content {
@@ -205,7 +211,7 @@
 
   .tabs-content {
     width: 94%;
-    margin: 0 auto;
+    margin: 20px auto 0;
     max-width: 1150px;
 
     @include breakpoint(phone) {
