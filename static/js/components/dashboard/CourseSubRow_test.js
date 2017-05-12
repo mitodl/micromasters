@@ -43,6 +43,7 @@ describe('CourseSubRow', () => {
         openFinancialAidCalculator={openFinancialAidCalculator}
         now={now}
         addCourseEnrollment={addCourseEnrollment}
+        checkout={() => undefined}
         key={1}
         {...props}
       />,

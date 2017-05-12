@@ -25,6 +25,19 @@ import { calculatePrice } from '../lib/coupon';
 import { getOwnDashboard, getOwnCoursePrices } from '../reducers/util';
 import { actions } from '../lib/redux_rest';
 import type { RestState } from '../flow/restTypes';
+import type { CheckoutResponse } from '../flow/checkoutTypes';
+
+export const processCheckout = (result: CheckoutResponse) => {
+  const { payload, url, method } = result;
+  if (method === 'POST') {
+    const form = createForm(url, payload);
+    const body: HTMLElement = (document.querySelector("body"): any);
+    body.appendChild(form);
+    form.submit();
+  } else {
+    window.location = url;
+  }
+};
 
 class OrderSummaryPage extends React.Component {
   static contextTypes = {
@@ -86,19 +99,7 @@ class OrderSummaryPage extends React.Component {
 
   dispatchCheckout = (courseId: string) => {
     const { dispatch } = this.props;
-
-    return dispatch(checkout(courseId)).then(result => {
-      const { payload, url, method } = result;
-
-      if (method === 'POST') {
-        const form = createForm(url, payload);
-        const body: HTMLElement = (document.querySelector("body"): any);
-        body.appendChild(form);
-        form.submit();
-      } else {
-        window.location = url;
-      }
-    });
+    return dispatch(checkout(courseId)).then(processCheckout);
   };
 
   render() {

@@ -42,6 +42,7 @@ export default class CourseListCard extends React.Component {
     setEnrollSelectedCourseRun:   (r: CourseRun) => void,
     setEnrollCourseDialogVisibility: (bool: boolean) => void,
     ui:                           UIState,
+    checkout:                     Function,
   };
 
   renderFinancialAidPriceMessage(): ?React$Element<*> {
@@ -170,6 +171,7 @@ export default class CourseListCard extends React.Component {
       setEnrollSelectedCourseRun,
       setEnrollCourseDialogVisibility,
       ui,
+      checkout
     } = this.props;
     const now = this.props.now || moment();
 
@@ -190,6 +192,7 @@ export default class CourseListCard extends React.Component {
         setEnrollSelectedCourseRun={setEnrollSelectedCourseRun}
         setEnrollCourseDialogVisibility={setEnrollCourseDialogVisibility}
         ui={ui}
+        checkout={checkout}
         {...courseRowOptionalProps}
       />
     );

@@ -27,6 +27,7 @@ export default class CourseSubRow extends React.Component {
     addCourseEnrollment:         (courseId: string) => void,
     setEnrollSelectedCourseRun:  (r: CourseRun) => void,
     setEnrollCourseDialogVisibility: (b: boolean) => void,
+    checkout:                    Function,
   };
 
   getFormattedDateOrFuzzy(dateKey: string, fuzzyDateKey: string): string|null {
@@ -130,6 +131,7 @@ export default class CourseSubRow extends React.Component {
       prices,
       setEnrollSelectedCourseRun,
       setEnrollCourseDialogVisibility,
+      checkout
     } = this.props;
 
     let enrollStartDate = courseRun.enrollment_start_date ? moment(courseRun.enrollment_start_date) : null;
@@ -140,6 +142,7 @@ export default class CourseSubRow extends React.Component {
         now={now}
         prices={prices}
         hasFinancialAid={hasFinancialAid}
+        checkout={checkout}
         financialAid={financialAid}
         openFinancialAidCalculator={openFinancialAidCalculator}
         addCourseEnrollment={addCourseEnrollment}

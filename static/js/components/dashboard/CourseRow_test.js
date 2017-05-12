@@ -33,7 +33,8 @@ describe('CourseRow', () => {
     addCourseEnrollment: sandbox.stub(),
     course: null,
     openCourseContactDialog: sandbox.stub(),
-    ui: INITIAL_UI_STATE
+    ui: INITIAL_UI_STATE,
+    checkout: () => undefined
   });
 
   beforeEach(() => {

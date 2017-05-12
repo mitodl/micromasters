@@ -10,6 +10,7 @@ import type { Course, CourseRun } from '../flow/programTypes';
 import type { CoursePrice } from '../flow/dashboardTypes';
 import { formatPrice } from '../util/util';
 
+
 class OrderSummary extends React.Component {
   props: {
     course:           Course,

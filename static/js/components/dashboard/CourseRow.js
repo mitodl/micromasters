@@ -37,6 +37,7 @@ export default class CourseRow extends React.Component {
     setEnrollSelectedCourseRun: (r: CourseRun) => void,
     setEnrollCourseDialogVisibility: (b: boolean) => void,
     ui: UIState,
+    checkout: Function,
   };
 
   shouldDisplayGradeColumn = (run: CourseRun): boolean => (
@@ -83,6 +84,7 @@ export default class CourseRow extends React.Component {
       openCourseContactDialog,
       setEnrollSelectedCourseRun,
       setEnrollCourseDialogVisibility,
+      checkout
     } = this.props;
 
     let lastColumnSize, lastColumnClass;
@@ -121,6 +123,7 @@ export default class CourseRow extends React.Component {
           now={now}
           prices={prices}
           hasFinancialAid={hasFinancialAid}
+          checkout={checkout}
           financialAid={financialAid}
           openFinancialAidCalculator={openFinancialAidCalculator}
           addCourseEnrollment={addCourseEnrollment}
@@ -144,6 +147,7 @@ export default class CourseRow extends React.Component {
       addCourseEnrollment,
       setEnrollSelectedCourseRun,
       setEnrollCourseDialogVisibility,
+      checkout,
     } = this.props;
 
     let firstRun = this.getFirstRun();
@@ -168,6 +172,7 @@ export default class CourseRow extends React.Component {
           openFinancialAidCalculator={openFinancialAidCalculator}
           addCourseEnrollment={addCourseEnrollment}
           key={i}
+          checkout={checkout}
           setEnrollSelectedCourseRun={setEnrollSelectedCourseRun}
           setEnrollCourseDialogVisibility={setEnrollCourseDialogVisibility}
         />

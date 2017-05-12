@@ -15,6 +15,7 @@ import { calculatePrices } from '../lib/coupon';
 import {
   FETCH_SUCCESS,
   FETCH_PROCESSING,
+  checkout,
 } from '../actions';
 import {
   updateCourseStatus,
@@ -98,6 +99,7 @@ import {
   pearsonSSOFailure,
   setPearsonError
 } from '../actions/pearson';
+import { processCheckout } from './OrderSummaryPage';
 import { generateSSOForm } from '../lib/pearson';
 import type { PearsonAPIState } from '../reducers/pearson';
 import type { RestState } from '../flow/restTypes';
@@ -550,6 +552,11 @@ class DashboardPage extends React.Component {
     );
   }
 
+  dispatchCheckout = (courseId: string) => {
+    const { dispatch } = this.props;
+    return dispatch(checkout(courseId)).then(processCheckout);
+  };
+
   renderCourseEnrollmentDialog() {
     const { ui, dashboard, prices, coupons } = this.props;
     const program = this.getCurrentlyEnrolledProgram();
@@ -585,6 +592,8 @@ class DashboardPage extends React.Component {
       course={course}
       courseRun={courseRun}
       price={price}
+      financialAidAvailability={program.financial_aid_availability}
+      checkout={this.dispatchCheckout}
       open={ui.enrollCourseDialogVisibility}
       setVisibility={this.setEnrollCourseDialogVisibility}
       addCourseEnrollment={this.addCourseEnrollment}
@@ -706,6 +715,7 @@ class DashboardPage extends React.Component {
               prices={calculatedPrices}
               key={program.id}
               ui={ui}
+              checkout={this.dispatchCheckout}
               openFinancialAidCalculator={this.openFinancialAidCalculator}
               addCourseEnrollment={this.addCourseEnrollment}
               openCourseContactDialog={this.openCourseContactDialog}

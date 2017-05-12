@@ -69,6 +69,7 @@ describe('CourseListCard', () => {
             email={INITIAL_EMAIL_STATE}
             setEnrollCourseDialogVisibility={() => undefined}
             setEnrollSelectedCourseRun={() => undefined}
+            checkout={() => undefined}
             {...props}
           />
         </Provider>

@@ -13,13 +13,14 @@ import { makeCourse, makeRun } from '../factories/dashboard';
 import { getEl } from '../util/test_utils';
 
 describe("CourseEnrollmentDialog", () => {
-  let sandbox, setVisibilityStub, addCourseEnrollmentStub, routerPushStub;
+  let sandbox, setVisibilityStub, addCourseEnrollmentStub, routerPushStub, checkoutStub;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     setVisibilityStub = sandbox.spy();
     addCourseEnrollmentStub = sandbox.spy();
     routerPushStub = sandbox.spy();
+    checkoutStub = sandbox.spy();
   });
 
   afterEach(() => {
@@ -31,6 +32,7 @@ describe("CourseEnrollmentDialog", () => {
     courseRun = makeRun(1),
     course = makeCourse(1),
     open = true,
+    financialAidAvailability = true
   ) => {
     mount(
       <MuiThemeProvider muiTheme={getMuiTheme()}>
@@ -41,6 +43,8 @@ describe("CourseEnrollmentDialog", () => {
           price={price}
           setVisibility={setVisibilityStub}
           addCourseEnrollment={addCourseEnrollmentStub}
+          checkout={checkoutStub}
+          financialAidAvailability={financialAidAvailability}
         />
       </MuiThemeProvider>,
       {
@@ -100,5 +104,19 @@ describe("CourseEnrollmentDialog", () => {
     TestUtils.Simulate.click(auditButton);
     sinon.assert.calledWith(setVisibilityStub, false);
     sinon.assert.calledWith(addCourseEnrollmentStub, courseRun.course_id);
+  });
+
+  it('pay button redirects to checkout', () => {
+    const price = new Decimal("123.45");
+    const courseRun = makeRun(1);
+    const wrapper = renderDialog(
+      price, courseRun, makeCourse(1), true, false
+    );
+    const payButton = wrapper.querySelector('.pay-button');
+    TestUtils.Simulate.click(payButton);
+    assert.equal(
+      checkoutStub.calledWith(courseRun.course_id),
+      true
+    );
   });
 });

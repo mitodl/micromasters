@@ -43,6 +43,7 @@ export default class CourseAction extends React.Component {
     setEnrollSelectedCourseRun: (r: CourseRun) => void,
     setEnrollCourseDialogVisibility: (b: boolean) => void,
     coupon?: Coupon,
+    checkout: Function
   };
 
   statusDescriptionClasses = {
@@ -61,8 +62,13 @@ export default class CourseAction extends React.Component {
   }
 
   redirectToOrderSummary(run: CourseRun): void {
-    const url = `/order_summary/?course_key=${encodeURIComponent(run.course_id)}`;
-    this.context.router.push(url);
+    let { hasFinancialAid, checkout } = this.props;
+    if (hasFinancialAid) {
+      const url = `/order_summary/?course_key=${encodeURIComponent(run.course_id)}`;
+      this.context.router.push(url);
+    } else {
+      return checkout(run.course_id);
+    }
   }
 
   handleEnrollButtonClick(run: CourseRun): void {

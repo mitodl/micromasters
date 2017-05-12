@@ -2,6 +2,7 @@
 export type CheckoutResponse = {
   url: string,
   payload: CheckoutPayload,
+  method?: ?string
 };
 
 export type CheckoutPayload = {
