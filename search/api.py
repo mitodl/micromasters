@@ -256,3 +256,9 @@ def adjust_search_for_percolator(search):
     if 'query' in search_dict:
         updated_search_dict['query'] = search_dict['query']
     return Search.from_dict(updated_search_dict)
+
+
+def parse_query(query):
+    """
+    Parse the search query into an AST
+    """
