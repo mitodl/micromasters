@@ -71,7 +71,7 @@ describe("CourseEnrollmentDialog", () => {
     const price = new Decimal("123.45");
     const wrapper = renderDialog(price);
     const payButton = ((wrapper.querySelector('.pay-button'): any): HTMLButtonElement);
-    assert.equal(payButton.textContent, "Pay Now ($123.45)");
+    assert.equal(payButton.textContent, "Pay Now");
     assert.isFalse(payButton.disabled);
     const auditButton = getEl(wrapper, '.audit-button');
     assert.equal(auditButton.textContent, "Audit for Free & Pay Later");

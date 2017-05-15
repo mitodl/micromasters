@@ -42,7 +42,7 @@ export default class CourseListCard extends React.Component {
     setEnrollSelectedCourseRun:   (r: CourseRun) => void,
     setEnrollCourseDialogVisibility: (bool: boolean) => void,
     ui:                           UIState,
-    checkout:                     Function,
+    checkout:                     (s: string) => void,
   };
 
   renderFinancialAidPriceMessage(): ?React$Element<*> {

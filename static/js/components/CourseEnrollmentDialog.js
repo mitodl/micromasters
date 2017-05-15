@@ -69,7 +69,7 @@ export default class CourseEnrollmentDialog extends React.Component {
       payButton = (
         <Button key="pay" onClick={this.handlePayClick}
           colored className="dashboard-button pay-button">
-          Pay Now (${ price.toString() })
+          Pay Now
         </Button>
       );
     } else {

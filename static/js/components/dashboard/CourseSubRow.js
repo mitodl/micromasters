@@ -27,7 +27,7 @@ export default class CourseSubRow extends React.Component {
     addCourseEnrollment:         (courseId: string) => void,
     setEnrollSelectedCourseRun:  (r: CourseRun) => void,
     setEnrollCourseDialogVisibility: (b: boolean) => void,
-    checkout:                    Function,
+    checkout:                    (s: string) => void,
   };
 
   getFormattedDateOrFuzzy(dateKey: string, fuzzyDateKey: string): string|null {

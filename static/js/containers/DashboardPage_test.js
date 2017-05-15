@@ -19,7 +19,7 @@ import {
   UPDATE_COURSE_STATUS,
   CLEAR_DASHBOARD,
 } from '../actions/dashboard';
-import { FETCH_SUCCESS } from '../actions';
+import * as storeActions from '../actions';
 import * as dashboardActions from '../actions/dashboard';
 import { CLEAR_COUPONS } from '../actions/coupons';
 import {
@@ -69,6 +69,7 @@ import {
   COUPON,
   DASHBOARD_RESPONSE,
   ERROR_RESPONSE,
+  EDX_CHECKOUT_RESPONSE,
 } from '../test_constants';
 import {
   FA_ALL_STATUSES,
@@ -81,6 +82,7 @@ import {
   STATUS_PAID_BUT_NOT_ENROLLED,
   TOAST_FAILURE,
   TOAST_SUCCESS,
+  STATUS_CAN_UPGRADE,
 } from '../constants';
 import type { Program } from '../flow/programTypes';
 import {
@@ -293,7 +295,7 @@ describe('DashboardPage', () => {
               return renderComponent('/dashboard', actions).then(() => {
                 let aid = helper.store.getState().financialAid;
                 if (expectedSkip) {
-                  assert.equal(aid.fetchSkipStatus, FETCH_SUCCESS);
+                  assert.equal(aid.fetchSkipStatus, storeActions.FETCH_SUCCESS);
                   sinon.assert.calledWith(helper.skipFinancialAidStub, program.id);
                 } else {
                   assert.isUndefined(aid.fetchSkipStatus);
@@ -616,6 +618,42 @@ describe('DashboardPage', () => {
       helper.dashboardStub.returns(Promise.reject(ERROR_RESPONSE));
       return renderComponent("/dashboard", DASHBOARD_ERROR_ACTIONS).then(([wrapper]) => {
         assert.lengthOf(wrapper.find(ERROR_MESSAGE_SELECTOR), 0);
+      });
+    });
+  });
+
+  describe("checkout", () => {
+    let dashboardResponse;
+    beforeEach(() => {
+      // Limit the dashboard response to 1 program
+      dashboardResponse = {"programs": [R.clone(DASHBOARD_RESPONSE.programs[0])]};
+    });
+
+    it('redirects to edX when the checkout API tells us to', () => {
+      let promise = Promise.resolve(EDX_CHECKOUT_RESPONSE);
+      let checkoutStub = helper.sandbox.stub(storeActions, 'checkout').returns(() => promise);
+      let course = makeCourse();
+      // Set all course runs to unpaid
+      course.runs = R.chain(R.set(R.lensProp('has_paid'), false), course.runs);
+      course.runs = R.chain(R.set(R.lensProp('status'), STATUS_CAN_UPGRADE), course.runs);
+      course.runs = R.chain(R.set(R.lensProp('course_end_date'), moment().add(-1, 'months')), course.runs);
+      course.runs = R.chain(
+        R.set(R.lensProp('course_upgrade_deadline'), moment().add(1, 'months')),
+        course.runs
+      );
+      course.runs = R.chain(R.set(R.lensProp('final_grade'), 75), course.runs);
+      dashboardResponse.programs[0].courses = [course];
+      dashboardResponse.programs[0].financial_aid_availability = false;
+      helper.dashboardStub.returns(Promise.resolve(dashboardResponse));
+      return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
+        wrapper.find('.pay-button').at(0).props().onClick();
+
+        assert.equal(checkoutStub.callCount, 1);
+        assert.deepEqual(checkoutStub.args[0], [course.runs[0].course_id]);
+
+        return promise.then(() => {
+          assert.equal(window.location.toString(), EDX_CHECKOUT_RESPONSE.url);
+        });
       });
     });
   });

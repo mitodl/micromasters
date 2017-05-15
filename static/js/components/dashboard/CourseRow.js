@@ -37,7 +37,7 @@ export default class CourseRow extends React.Component {
     setEnrollSelectedCourseRun: (r: CourseRun) => void,
     setEnrollCourseDialogVisibility: (b: boolean) => void,
     ui: UIState,
-    checkout: Function,
+    checkout: (s: string) => void,
   };
 
   shouldDisplayGradeColumn = (run: CourseRun): boolean => (
