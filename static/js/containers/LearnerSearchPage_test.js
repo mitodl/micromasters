@@ -427,4 +427,40 @@ describe('LearnerSearchPage', function () {
       });
     });
   });
+
+  describe('filter titles', () => {
+    it('has proper filter titles', () => {
+      const query = {
+        "courses": ["Digital Learning 200"],
+        "final-grade": {"min": 50, "max": 100},
+        "payment_status": ["Paid"],
+        "semester": ["2016 - Spring"],
+        "num-courses-passed": {},
+        "grade-average": {"min": 47, "max": 100},
+        "birth_location": ["US"],
+        "country": [["US"], ["US-ME"]],
+        "education_level": ["hs"],
+        "company_name": ["Microsoft"]
+      };
+      return renderSearch().then(([wrapper]) => {
+        const searchkit = wrapper.find("SearchkitProvider").props().searchkit;
+        searchkit.searchFromUrlQuery(query);
+
+        let titles = wrapper.find(".mm-filters .sk-selected-filters-option__name").map(
+          filter => filter.text()
+        );
+        assert.deepEqual(titles, [
+          "Course: Digital Learning 200",
+          "Final Grade in Selected Course: 50 - 100",
+          "Payment Status: Paid",
+          "Semester: 2016 - Spring",
+          "Average Grade in Program: 47 - 100",
+          "Country of Birth: United States",
+          "United States: Maine",
+          "Degree: High school",
+          "Company: Microsoft",
+        ]);
+      });
+    });
+  });
 });
