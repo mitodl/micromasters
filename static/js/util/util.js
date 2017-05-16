@@ -554,3 +554,11 @@ export const mapObj = R.curry((fn, obj) => R.compose(
   R.map(fn),
   R.toPairs
 )(obj));
+
+export const wait = (millis: number): Promise<void> => {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve();
+    }, millis);
+  });
+};

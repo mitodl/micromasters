@@ -45,7 +45,8 @@ import { HIGH_SCHOOL, DOCTORATE } from '../constants';
 import {
   generateNewEducation,
   generateNewWorkHistory,
-  getPreferredName
+  getPreferredName,
+  wait,
 } from '../util/util';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import * as api from '../lib/api';
@@ -207,11 +208,9 @@ describe("LearnerPage", function() {
             }
             TestUtils.Simulate.click(getSave());
           }).then(() => {
-            return new Promise(resolve => {
-              setTimeout(() => { // ensure that the DOM update after clicking 'save' has finished
-                assert(helper.scrollIntoViewStub.called, "Not called yet");
-                resolve();
-              }, 100);
+            // ensure that the DOM update after clicking 'save' has finished
+            return wait(100).then(() => {
+              assert(helper.scrollIntoViewStub.called, "Not called yet");
             });
           });
         });

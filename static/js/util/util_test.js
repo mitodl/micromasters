@@ -36,6 +36,7 @@ import {
   highlight,
   sortedCourseRuns,
   mapObj,
+  wait,
 } from '../util/util';
 import {
   EDUCATION_LEVELS,
@@ -858,5 +859,22 @@ describe('utility functions', () => {
       );
       assert.deepEqual(edited, { baz_foo: 'baz_bar' });
     });
+  });
+
+  it('waits some milliseconds', done => {
+    let executed = false;
+    wait(30).then(() => {
+      executed = true;
+    });
+
+    setTimeout(() => {
+      assert.isFalse(executed);
+
+      setTimeout(() => {
+        assert.isTrue(executed);
+
+        done();
+      }, 20);
+    }, 20);
   });
 });

@@ -2,6 +2,8 @@
 __webpack_public_path__ = `${SETTINGS.public_path}`;  // eslint-disable-line no-undef, camelcase
 import R from 'ramda';
 
+import { wait } from '../util/util';
+
 // Start of odl Zendesk Widget script
 /*<![CDATA[*/
 window.zEmbed || function (e, t) {
@@ -104,17 +106,17 @@ const zendeskCallbacks = {
         // Apparently we can't modify the ticket submission form *immediately*
         // on the click event -- I assume that the Javascript that Zendesk runs
         // re-renders the form immediately, which would override any modification
-        // that might happen here. Instead, we use `setTimeout` to modify the
+        // that might happen here. Instead, we use `wait` to modify the
         // form after a short delay. This way, we modify the re-rendered version,
         // and the changes we make will be visible to the user.
-        setTimeout(() => {
+        wait(100).then(() => {
           const ticketIFrame = document.querySelector("iframe.zEWidget-ticketSubmissionForm");
           let select = ticketIFrame.contentDocument.querySelector("select");
           const optionValues = _.map(select.options, "value");
           if (optionValues.includes(programSlug)) {
             select.value = programSlug;
           }
-        }, 100);
+        });
       };
     }
   },

@@ -65,7 +65,8 @@ import {
   REQUEST_FETCH_COUPONS,
   RECEIVE_FETCH_COUPONS_SUCCESS,
 } from '../actions/coupons';
-import { findCourseRun } from '../util/util';
+import { findCourseRun, wait } from '../util/util';
+import * as util from '../util/util';
 import {
   COUPON,
   DASHBOARD_RESPONSE,
@@ -328,12 +329,15 @@ describe('DashboardPage', () => {
     });
 
     describe('fake timer tests', function() {
-      let clock;
+      let waitStub, waitResolve, waitPromise;
       beforeEach(() => {
-        clock = helper.sandbox.useFakeTimers(moment('2016-09-01').valueOf());
+        waitPromise = new Promise(resolve => {
+          waitResolve = resolve;
+        });
+        waitStub = helper.sandbox.stub(util, 'wait').returns(waitPromise);
       });
 
-      it('refetches the dashboard after 3 seconds if 30 seconds has not passed', () => {
+      it('refetches the dashboard after 3 seconds if 2 minutes has not passed', () => {
         let course = findCourse(course =>
           course.runs.length > 0 &&
           course.runs[0].status === STATUS_OFFERED
@@ -347,8 +351,13 @@ describe('DashboardPage', () => {
           let fetchDashboardStub = helper.sandbox.stub(dashboardActions, 'fetchDashboard').returns(() => ({
             type: 'fake'
           }));
-          clock.tick(3501);
-          sinon.assert.calledWith(fetchDashboardStub, SETTINGS.user.username, true);
+          assert.equal(fetchDashboardStub.callCount, 0);
+
+          sinon.assert.calledWith(waitStub, 3000);
+          waitResolve();
+          return waitPromise.then(() => {
+            sinon.assert.calledWith(fetchDashboardStub, SETTINGS.user.username, true);
+          });
         });
       });
 
@@ -365,10 +374,13 @@ describe('DashboardPage', () => {
         ).then(() => {
           let past = moment().add(-125, 'seconds').toISOString();
           helper.store.dispatch(setInitialTime(past));
-          clock.tick(3500);
-          assert.deepEqual(helper.store.getState().ui.toastMessage, {
-            message: `Order was not processed`,
-            icon: TOAST_FAILURE
+          sinon.assert.calledWith(waitStub, 3000);
+          waitResolve();
+          return waitPromise.then(() => {
+            assert.deepEqual(helper.store.getState().ui.toastMessage, {
+              message: `Order was not processed`,
+              icon: TOAST_FAILURE
+            });
           });
         });
       });
@@ -442,11 +454,7 @@ describe('DashboardPage', () => {
       let coupon1 = makeCoupon(program);
       let coupon2 = makeCoupon(program);
       coupon2.coupon_code = 'second-coupon';
-      const slowPromise = new Promise(resolve => {
-        setTimeout(() => {
-          resolve([coupon1]);
-        }, 200);
-      });
+      const slowPromise = wait(200).then(() => [coupon1]);
 
       // Make sure we wait for the first call to complete before resolving the second promise
       helper.couponsStub.onCall(0).returns(slowPromise);

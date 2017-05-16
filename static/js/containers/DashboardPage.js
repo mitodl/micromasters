@@ -105,6 +105,7 @@ import type { PearsonAPIState } from '../reducers/pearson';
 import type { RestState } from '../flow/restTypes';
 import { getOwnDashboard, getOwnCoursePrices } from '../reducers/util';
 import { actions } from '../lib/redux_rest';
+import { wait } from '../util/util';
 
 const isProcessing = R.equals(FETCH_PROCESSING);
 const PEARSON_TOS_DIALOG = "pearsonTOSDialogVisible";
@@ -235,7 +236,7 @@ class DashboardPage extends React.Component {
     dispatch(updateCourseStatus(SETTINGS.user.username, run.course_id, STATUS_PENDING_ENROLLMENT));
 
     if (!this.props.orderReceipt.timeoutActive) {
-      setTimeout(() => {
+      wait(3000).then(() => {
         const { orderReceipt } = this.props;
         dispatch(setTimeoutActive(false));
         let deadline = moment(orderReceipt.initialTime).add(2, 'minutes');
@@ -248,7 +249,7 @@ class DashboardPage extends React.Component {
             icon: TOAST_FAILURE,
           }));
         }
-      }, 3000);
+      });
       dispatch(setTimeoutActive(true));
     }
   };

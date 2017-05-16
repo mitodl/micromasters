@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { wait } from '../util/util';
+
 export default class Toast extends React.Component {
   props: {
     children: any,
@@ -15,7 +17,7 @@ export default class Toast extends React.Component {
     const { onTimeout, timeout } = this.props;
 
     if (onTimeout) {
-      setTimeout(onTimeout, timeout);
+      wait(timeout).then(onTimeout);
     }
   }
 
