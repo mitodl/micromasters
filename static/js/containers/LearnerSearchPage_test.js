@@ -230,7 +230,7 @@ describe('LearnerSearchPage', function () {
         query: 'xyz',
         type: 'phrase_prefix',
       });
-      assert.equal(window.location.toString(), "http://edx.org/?q=xyz");
+      assert.equal(window.location.toString(), "http://fake/?q=xyz");
     });
   });
 

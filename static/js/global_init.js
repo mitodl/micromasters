@@ -48,6 +48,7 @@ afterEach(function () { // eslint-disable-line mocha/no-top-level-hooks
   global.SETTINGS = _createSettings();
   window.localStorage.reset();
   window.sessionStorage.reset();
+  window.location = 'http://fake/';
 });
 
 // required for interacting with react-mdl components

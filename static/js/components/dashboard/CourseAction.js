@@ -43,7 +43,7 @@ export default class CourseAction extends React.Component {
     setEnrollSelectedCourseRun: (r: CourseRun) => void,
     setEnrollCourseDialogVisibility: (b: boolean) => void,
     coupon?: Coupon,
-    checkout: Function
+    checkout: (s: string) => void,
   };
 
   statusDescriptionClasses = {

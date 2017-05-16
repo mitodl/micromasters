@@ -11,7 +11,8 @@ import {
   makeCoupon,
   makeCoursePrices,
   makeDashboard,
-  makeCourse
+  makeCourse,
+  makeProgram,
 } from '../factories/dashboard';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import {
@@ -622,34 +623,37 @@ describe('DashboardPage', () => {
     });
   });
 
-  describe("checkout", () => {
-    let dashboardResponse;
-    beforeEach(() => {
-      // Limit the dashboard response to 1 program
-      dashboardResponse = {"programs": [R.clone(DASHBOARD_RESPONSE.programs[0])]};
-    });
-
+  describe("checkout for non financial aid courses", () => {
     it('redirects to edX when the checkout API tells us to', () => {
+      let program = makeProgram();
       let promise = Promise.resolve(EDX_CHECKOUT_RESPONSE);
       let checkoutStub = helper.sandbox.stub(storeActions, 'checkout').returns(() => promise);
-      let course = makeCourse();
-      // Set all course runs to unpaid
-      course.runs = R.chain(R.set(R.lensProp('has_paid'), false), course.runs);
-      course.runs = R.chain(R.set(R.lensProp('status'), STATUS_CAN_UPGRADE), course.runs);
-      course.runs = R.chain(R.set(R.lensProp('course_end_date'), moment().add(-1, 'months')), course.runs);
-      course.runs = R.chain(
-        R.set(R.lensProp('course_upgrade_deadline'), moment().add(1, 'months')),
-        course.runs
-      );
-      course.runs = R.chain(R.set(R.lensProp('final_grade'), 75), course.runs);
-      dashboardResponse.programs[0].courses = [course];
-      dashboardResponse.programs[0].financial_aid_availability = false;
+
+      program.financial_aid_availability = false;
+      program.description = "Not passed program",
+      program.courses[0].runs = [{
+        ...program.courses[0].runs[0],
+        course_start_date: "2016-09-22T11:48:27Z",
+        fuzzy_start_date: "Fall 2016",
+        position: 1,
+        has_paid: false,
+        status: STATUS_CAN_UPGRADE,
+        course_end_date: moment().add(-1, 'months'),
+        course_upgrade_deadline: moment().add(1, 'months'),
+        final_grade: 75
+      }];
+
+      let dashboardResponse = {"programs": [ program ]};
+      let coursePrices = makeCoursePrices(dashboardResponse);
+      let availablePrograms = makeAvailablePrograms(dashboardResponse);
       helper.dashboardStub.returns(Promise.resolve(dashboardResponse));
+      helper.programsGetStub.returns(Promise.resolve(availablePrograms));
+      helper.coursePricesStub.returns(Promise.resolve(coursePrices));
       return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
-        wrapper.find('.pay-button').at(0).props().onClick();
+        wrapper.find('.pay-button').props().onClick();
 
         assert.equal(checkoutStub.callCount, 1);
-        assert.deepEqual(checkoutStub.args[0], [course.runs[0].course_id]);
+        assert.deepEqual(checkoutStub.args[0], [ program.courses[0].runs[0].course_id]);
 
         return promise.then(() => {
           assert.equal(window.location.toString(), EDX_CHECKOUT_RESPONSE.url);
