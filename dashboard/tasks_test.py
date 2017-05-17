@@ -1,8 +1,11 @@
 """
 Tests for tasks
 """
+from datetime import datetime
+
 from itertools import product
 from unittest import mock
+import pytz
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -14,6 +17,7 @@ from dashboard.tasks import (
     batch_update_user_data,
     batch_update_user_data_subtasks
 )
+from dashboard.factories import UserCacheRefreshTimeFactory
 from micromasters.factories import UserFactory
 from search.base import MockedESTestCase
 
@@ -49,6 +53,24 @@ class TasksTest(MockedESTestCase):
         Assert task schedule using celery beat.
         """
         self.assertTrue(batch_update_user_data.delay())
+
+    @mock.patch('dashboard.tasks.batch_update_user_data_subtasks.s', autospec=True)
+    def test_batch_update_user_date_for_active_users(self, mocked_subtasks):
+        """
+        Assert batch_update_user_data does not update inactive users
+        """
+        for user in self.all_working_users:
+            user.is_active = False
+            user.save()
+        now = datetime.now(tz=pytz.UTC)
+        UserCacheRefreshTimeFactory.create(
+            user=self.user2,
+            enrollment=now,
+            certificate=now,
+            current_grade=now,
+        )
+        batch_update_user_data.delay()
+        mocked_subtasks.assert_called_with([self.user_no_social_auth.id])
 
     @mock.patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cache_if_expired', new_callable=mock.MagicMock)
     @mock.patch('backends.utils.refresh_user_token', autospec=True)
