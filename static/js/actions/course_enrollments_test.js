@@ -4,10 +4,7 @@ import configureTestStore from 'redux-asserts';
 import sinon from 'sinon';
 
 import { showEnrollPayLaterSuccessMessage } from './course_enrollments';
-import {
-  showEnrollPayLaterSuccess,
-  SHOW_ENROLL_PAY_LATER_SUCCESS,
-} from './ui';
+import { SHOW_ENROLL_PAY_LATER_SUCCESS } from './ui';
 import rootReducer from '../reducers';
 import * as util from '../util/util';
 
