@@ -97,7 +97,7 @@
       }
 
       .subheading-section {
-        padding-bottom: 20px;
+        margin: 10px 0 20px 10px;
 
         .subheading-to {
           padding: 0 10px;
@@ -225,8 +225,12 @@
   display: flex;
 
   .custom-toolbar-button {
-    width: 130px;
+    font-size: 14px;
+    padding: 0 9px;
+    background: $bg-med-gray;
+    color: $font-gray;
     height: 30px;
+    width: auto;
   }
 
   .insert {
