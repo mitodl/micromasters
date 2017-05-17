@@ -7,7 +7,6 @@ import axios from 'axios';
 import { Utils as SearchkitUtils } from 'searchkit';
 
 import IntegrationTestHelper from '../util/integration_test_helper';
-import { wait } from '../util/util';
 import {
   PROGRAMS,
   ELASTICSEARCH_RESPONSE,
@@ -491,10 +490,8 @@ describe('LearnerSearchPage', function () {
       const searchkit = wrapper.find("SearchkitProvider").props().searchkit;
       searchkit.searchFromUrlQuery(query);
 
-      return wait(1000).then(() => {
-        assert(wrapper.find('.sk-search-box'), 'Unable to find textbox');
-        assert.equal(wrapper.find('.filter-visibility-toggle').length, 9);
-      });
+      assert(wrapper.find('.sk-search-box'), 'Unable to find textbox');
+      assert.equal(wrapper.find('.filter-visibility-toggle').length, 9);
     });
   });
 });
