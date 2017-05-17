@@ -9,7 +9,7 @@ import { showEnrollPayLaterSuccess } from './ui';
 export const showEnrollPayLaterSuccessMessage = (courseId: string): Dispatcher<*> => {
   return (dispatch: Dispatch) => {
     dispatch(showEnrollPayLaterSuccess(courseId));
-    return wait(900).then(() => {
+    return wait(9000).then(() => {
       dispatch(showEnrollPayLaterSuccess(null));
     });
   };
