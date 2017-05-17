@@ -499,8 +499,6 @@ class SerializerTests(ESTestCase):
         program_enrollment = self.program_enrollment
 
         serialized = serialize_program_enrolled_user(program_enrollment)
-        print(profile.user.username)
-        print(serialized)
 
         assert serialize_public_enrolled_user(serialized) == {
             '_id': program_enrollment.id,
