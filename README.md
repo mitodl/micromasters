@@ -322,13 +322,13 @@ overwriting `webpack-stats.json`:
 
     docker-compose stop watch
 
-Then, if you are **not** running OS X:
+Then, if you are running OS X:
 
-    docker-compose run -e NODE_ENV=prod watch ./webpack_if_prod.sh
+    ./node_modules/webpack/bin/webpack.js --config webpack.config.prod.js --progress --bail
 
-Otherwise, if you are running OS X do the same command locally:
+Otherwise, if you are **not** running OS X do the same command within the `watch` container:
 
-    NODE_ENV=prod ./webpack_if_prod.sh
+    docker-compose run watch ./node_modules/webpack/bin/webpack.js --config webpack.config.prod.js --progress --bail
 
 Finally run this script locally to run the selenium tests:
 
