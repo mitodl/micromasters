@@ -133,16 +133,6 @@ export default class LearnerSearch extends SearchkitComponent {
       {openLearnerEmailComposer: this.props.openLearnerEmailComposer},
       LearnerResult
     );
-    this.forceSearch = true;
-  }
-
-  loaded = (): boolean => {
-    if (this.forceSearch) {
-      this.forceSearch = false;
-      return true;
-    } else {
-      return !this.isInitialLoading();
-    }
   }
 
   getNumberOfCoursesInProgram = (): number => {
@@ -340,7 +330,7 @@ export default class LearnerSearch extends SearchkitComponent {
     const { currentProgramEnrollment } = this.props;
 
     return (
-      <Loader loaded={this.loaded()}>
+      <Loader loaded={!this.isInitialLoading()} shouldRenderAll={true}>
         <div className="learners-search">
           <ProgramFilter
             currentProgramEnrollment={currentProgramEnrollment}

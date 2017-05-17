@@ -4,7 +4,7 @@ import _ from 'lodash';
 import sinon from 'sinon';
 import MockAdapter from 'axios-mock-adapter';
 import axios from 'axios';
-import { Utils as SearchkitUtils } from 'searchkit';
+import { Utils as SearchkitUtils, SearchkitComponent } from 'searchkit';
 
 import IntegrationTestHelper from '../util/integration_test_helper';
 import {
@@ -37,6 +37,7 @@ describe('LearnerSearchPage', function () {
     mockAxios = new MockAdapter(axios);
 
     helper = new IntegrationTestHelper();
+    helper.sandbox.stub(SearchkitComponent.prototype, 'isInitialLoading').returns(false);
     replySpy = helper.sandbox.stub().returns(Promise.resolve([200, _.cloneDeep(ELASTICSEARCH_RESPONSE)]));
     mockAxios.onPost('/_search').reply(replySpy);
     renderComponent = helper.renderComponent.bind(helper);
