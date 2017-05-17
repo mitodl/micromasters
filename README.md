@@ -289,7 +289,7 @@ Tests should be run in the Docker container, not the host machine. They can be r
     # Run Python tests only
     docker-compose run web tox
     # Single file test
-    docker-compose run web tox -- -x /path/to/test.py
+    docker-compose run web tox /path/to/test.py
     # Run the JS tests with coverage report
     docker-compose run watch npm run-script coverage
     # run the JS tests without coverage report
@@ -313,6 +313,34 @@ host machine isn't running Linux. If you are using a Mac, you'll need to run
 To validate prices and financial aid discounts for all programs run:
 
     docker-compose run web ./manage.py validate_db
+
+#### Selenium
+
+To run selenium tests you will first need to create the Javascript bundles.
+Shut down the `watch` docker container if it's running to prevent
+overwriting `webpack-stats.json`:
+
+    docker-compose stop watch
+
+Then, if you are **not** running OS X:
+
+    docker-compose run -e NODE_ENV=prod watch ./webpack_if_prod.sh
+
+Otherwise, if you are running OS X do the same command locally:
+
+    NODE_ENV=prod ./webpack_if_prod.sh
+
+Finally run this script locally to run the selenium tests:
+
+    ./scripts/test/run_selenium_tests.sh
+
+This script sets up certain environment variables and runs
+all tests in the `selenium_tests/` directory, which are assumed
+to all require selenium.
+
+**Note**: If you are having trouble with database state
+(this works differently from the rest of the tests), remove the
+`--reuse-db` flag from `pytest.ini` and try again.
 
 ## Connecting to external services
 
