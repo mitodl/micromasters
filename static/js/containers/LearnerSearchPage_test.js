@@ -7,6 +7,7 @@ import axios from 'axios';
 import { Utils as SearchkitUtils } from 'searchkit';
 
 import IntegrationTestHelper from '../util/integration_test_helper';
+import { wait } from '../util/util';
 import {
   PROGRAMS,
   ELASTICSEARCH_RESPONSE,
@@ -460,6 +461,39 @@ describe('LearnerSearchPage', function () {
           "Degree: High school",
           "Company: Microsoft",
         ]);
+      });
+    });
+  });
+
+  it('shows filters and the textbox even if there are no results', () => {
+    const query = {
+      "courses": ["Digital Learning 200"],
+      "final-grade": {"min": 50, "max": 100},
+      "payment_status": ["Paid"],
+      "semester": ["2016 - Spring"],
+      "num-courses-passed": {},
+      "grade-average": {"min": 47, "max": 100},
+      "birth_location": ["US"],
+      "country": [["US"], ["US-ME"]],
+      "education_level": ["hs"],
+      "company_name": ["Microsoft"]
+    };
+
+    const noHitsResponse = {
+      hits: {
+        'total': 0,
+        'max_score': null,
+        'hits': []
+      }
+    };
+    replySpy.returns(Promise.resolve([200, noHitsResponse]));
+    return renderSearch().then(([wrapper]) => {
+      const searchkit = wrapper.find("SearchkitProvider").props().searchkit;
+      searchkit.searchFromUrlQuery(query);
+
+      return wait(1000).then(() => {
+        assert(wrapper.find('.sk-search-box'), 'Unable to find textbox');
+        assert.equal(wrapper.find('.filter-visibility-toggle').length, 9);
       });
     });
   });
