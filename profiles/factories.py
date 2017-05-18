@@ -24,6 +24,7 @@ FAKE = faker.Factory.create()
 class ProfileFactory(DjangoModelFactory):
     """Factory for Profiles"""
     user = SubFactory(UserFactory)
+    fake_user = True
     filled_out = Faker('boolean')
     agreed_to_terms_of_service = Faker('boolean')
 

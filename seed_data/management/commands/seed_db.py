@@ -94,7 +94,7 @@ def deserialize_user_data(user_data, programs):
     )
     # The user data is generated in this script with mute_signals(post_save)
     # so we need to create the profile explicitly.
-    profile = deserialize_model_data(Profile, user_data, user=user)
+    profile = deserialize_model_data(Profile, user_data, user=user, fake_user=True)
     deserialize_profile_detail_data(profile, Employment, user_data['work_history'])
     deserialize_profile_detail_data(profile, Education, user_data['education'])
     deserialize_dashboard_data(user, user_data, programs)

@@ -58,12 +58,13 @@ def batch_update_user_data():
             Q(enrollment__lt=refresh_time_limit) |
             Q(certificate__lt=refresh_time_limit) |
             Q(current_grade__lt=refresh_time_limit),
-            user__is_active=True
+            user__is_active=True,
+            user__profile__fake_user=False
         ).values_list('user', flat=True).distinct()
 
         users_not_in_cache = User.objects.exclude(
             Q(id__in=users_expired_cache)
-        ).filter(is_active=True).values_list('id', flat=True)
+        ).filter(is_active=True, profile__fake_user=False).values_list('id', flat=True)
 
         users_to_refresh = list(set(users_expired_cache) | set(users_not_in_cache))
 
