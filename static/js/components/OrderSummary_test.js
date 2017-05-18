@@ -64,27 +64,32 @@ describe('OrderSummary', () => {
     );
   };
 
-  it('shows discount calculation if user has a coupon', () => {
-    let course = findCourse(course => (
-      course.runs.length > 0 &&
-      course.runs[0].status === STATUS_OFFERED
-    ));
-    let firstRun = course.runs[0];
-    const wrapper = renderOrderSummary({
-      courseRun: firstRun,
-      course: course,
-      discount: COURSE_PRICES_RESPONSE[1].price,
-      finalPrice: 0,
-      couponCode: '561KH'
-    });
+  for (let code of ['561KH', null, '']) {
+    it(`shows discount calculation if user has a coupon with code ${code}`, () => {
+      let course = findCourse(course => (
+        course.runs.length > 0 &&
+        course.runs[0].status === STATUS_OFFERED
+      ));
+      let firstRun = course.runs[0];
+      const wrapper = renderOrderSummary({
+        courseRun: firstRun,
+        course: course,
+        discount: COURSE_PRICES_RESPONSE[1].price,
+        finalPrice: 0,
+        couponCode: code
+      });
 
-    let descriptions = wrapper.find(".description");
-    assert.equal(descriptions.length, 3);
-    assert.equal(descriptions.children().nodes[1], 'Discount from coupon 561KH');
-    let amounts = wrapper.find(".amount");
-    assert.equal(amounts.length, 3);
-    assert.equal(amounts.children().nodes[1], `-$${COURSE_PRICES_RESPONSE[1].price}`);
-  });
+      let descriptions = wrapper.find(".description");
+      assert.equal(descriptions.length, 3);
+      assert.equal(
+        descriptions.children().nodes[1],
+        code ? `Discount from coupon ${code}` : 'Discount from coupon'
+      );
+      let amounts = wrapper.find(".amount");
+      assert.equal(amounts.length, 3);
+      assert.equal(amounts.children().nodes[1], `-$${COURSE_PRICES_RESPONSE[1].price}`);
+    });
+  }
 
   it('does not show discount calculation if no discount applies', () => {
     let course = findCourse(course => (

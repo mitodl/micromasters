@@ -68,15 +68,18 @@ class OrderSummary extends React.Component {
   }
 
   render() {
-    let { course, courseRun, checkout, checkoutStatus, couponCode} = this.props;
+    let { course, courseRun, checkout, checkoutStatus, couponCode, discount} = this.props;
     let discountInfo;
-    if (couponCode) {
+    const message = couponCode ? `Discount from coupon ${couponCode}` : 'Discount from coupon';
+
+    if (discount) {
       discountInfo = [
-        this.showAmount(`Discount from coupon ${couponCode}`, this.getDiscountAmount()),
+        this.showAmount(message, this.getDiscountAmount()),
         <Cell col={10} tablet={6} phone={4} className="division-line" key="division"/>,
         this.showAmount('Total', this.getFinalPrice())
       ];
     }
+
     return (
       <div>
         <Card shadow={1}>
