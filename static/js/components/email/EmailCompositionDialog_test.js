@@ -100,19 +100,19 @@ describe('EmailCompositionDialog', () => {
     assert.isTrue(sendStub.called, "called send handler");
   });
 
-  it('should rename "send" button to "Save Changes"', () => {
+  it('should show a "Save" label when the dialog is being used to edit an email', () => {
     renderDialog(
       {inputs: {subject: 'abc', body: 'abc'}},
-      {type: AUTOMATIC_EMAIL_ADMIN_TYPE}
+      {dialogType: AUTOMATIC_EMAIL_ADMIN_TYPE}
     );
     assert.equal(getDialog().querySelector('.save-button').textContent, "Save Changes");
   });
 
-  for (let type of [LEARNER_EMAIL_TYPE, COURSE_EMAIL_TYPE, SEARCH_EMAIL_TYPE]) {
-    it(`should label primary button as"send" for composer type ${type}`, () => {
+  for (let dialogType of [LEARNER_EMAIL_TYPE, COURSE_EMAIL_TYPE, SEARCH_EMAIL_TYPE]) {
+    it('should show a "Send" label when the dialog is being used to send an email', () => {
       renderDialog(
         {inputs: {subject: 'abc', body: 'abc'}},
-        {type: type}
+        {dialogType: dialogType}
       );
       assert.equal(getDialog().querySelector('.save-button').textContent, "Send");
     });

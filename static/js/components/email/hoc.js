@@ -120,7 +120,7 @@ export const withEmailDialog = R.curry(
             subheadingRenderer={emailConfig.renderSubheading}
             renderRecipients={emailConfig.renderRecipients}
             updateEmailBody={this.updateEmailBody}
-            type={activeEmailType}
+            dialogType={activeEmailType}
           />
         );
       }

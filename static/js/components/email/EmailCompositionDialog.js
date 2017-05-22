@@ -68,7 +68,7 @@ type EmailDialogProps = {
   updateEmailFieldEdit:       () => void,
   renderRecipients?:          (filters: ?Array<Filter>) => React$Element<*>,
   updateEmailBody:            (e: Object) => void,
-  type:                       string
+  dialogType:                 string
 };
 
 export default class EmailCompositionDialog extends React.Component {
@@ -205,7 +205,7 @@ export default class EmailCompositionDialog extends React.Component {
       dialogVisibility,
       updateEmailFieldEdit,
       renderRecipients,
-      type
+      dialogType
     } = this.props;
     const { editorState } = this.state;
 
@@ -220,7 +220,7 @@ export default class EmailCompositionDialog extends React.Component {
           this.closeEmailComposeAndClear,
           this.closeEmailComposerAndSend,
           fetchStatus === FETCH_PROCESSING,
-          this.okButtonLabel(type)
+          this.okButtonLabel(dialogType)
         )
       }
       onRequestClose={this.closeEmailComposeAndClear}
