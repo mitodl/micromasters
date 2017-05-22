@@ -6,6 +6,7 @@ import { Editor } from 'react-draft-wysiwyg';
 // $FlowFixMe: Flow thinks this module isn't present for some reason
 import { EditorState, ContentState, convertFromHTML, Modifier } from 'draft-js';
 
+import { AUTOMATIC_EMAIL_ADMIN_TYPE } from './constants';
 import AutomaticEmailOptions from './AutomaticEmailOptions';
 import RecipientVariableButton from './RecipientVariableButton';
 import { FETCH_PROCESSING } from '../../actions';
@@ -67,6 +68,7 @@ type EmailDialogProps = {
   updateEmailFieldEdit:       () => void,
   renderRecipients?:          (filters: ?Array<Filter>) => React$Element<*>,
   updateEmailBody:            (e: Object) => void,
+  type:                       string
 };
 
 export default class EmailCompositionDialog extends React.Component {
@@ -190,6 +192,9 @@ export default class EmailCompositionDialog extends React.Component {
     />;
   });
 
+  okButtonLabel = (dialogType: string) => (
+    dialogType === AUTOMATIC_EMAIL_ADMIN_TYPE ? 'Save Changes' : 'Send'
+  );
 
   render() {
     if (!this.props.activeEmail) return null;
@@ -200,6 +205,7 @@ export default class EmailCompositionDialog extends React.Component {
       dialogVisibility,
       updateEmailFieldEdit,
       renderRecipients,
+      type
     } = this.props;
     const { editorState } = this.state;
 
@@ -214,7 +220,7 @@ export default class EmailCompositionDialog extends React.Component {
           this.closeEmailComposeAndClear,
           this.closeEmailComposerAndSend,
           fetchStatus === FETCH_PROCESSING,
-          'Send'
+          this.okButtonLabel(type)
         )
       }
       onRequestClose={this.closeEmailComposeAndClear}
