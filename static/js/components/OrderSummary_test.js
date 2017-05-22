@@ -64,8 +64,12 @@ describe('OrderSummary', () => {
     );
   };
 
-  for (let code of ['561KH', null, '']) {
-    it(`shows discount calculation if user has a coupon with code ${code}`, () => {
+  [
+    ['561KH', 'non-blank coupon code'],
+    [null, 'null coupon code'],
+    ['', 'blank coupon code']
+  ].forEach(([code, codeDescription]) => {
+    it(`shows discount calculation if user has a coupon with code ${codeDescription}`, () => {
       let course = findCourse(course => (
         course.runs.length > 0 &&
         course.runs[0].status === STATUS_OFFERED
@@ -89,7 +93,7 @@ describe('OrderSummary', () => {
       assert.equal(amounts.length, 3);
       assert.equal(amounts.children().nodes[1], `-$${COURSE_PRICES_RESPONSE[1].price}`);
     });
-  }
+  });
 
   it('does not show discount calculation if no discount applies', () => {
     let course = findCourse(course => (
