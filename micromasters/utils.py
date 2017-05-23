@@ -212,7 +212,7 @@ def safely_remove_file(file_path):
 def now_in_utc():
     """
     Get the current time in UTC
-    
+
     Returns:
         datetime.datetime: A datetime object for the current time
     """
