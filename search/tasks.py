@@ -6,7 +6,7 @@ Celery tasks for search
 
 from dashboard.models import ProgramEnrollment
 from mail.api import send_automatic_emails as _send_automatic_emails
-from micromasters.celery import async
+from micromasters.celery import app
 from search.indexing_api import (
     get_default_alias,
     index_program_enrolled_users as _index_program_enrolled_users,
@@ -19,7 +19,7 @@ from search.indexing_api import (
 from search.models import PercolateQuery
 
 
-@async.task
+@app.task
 def remove_program_enrolled_user(program_enrollment_id):
     """
     Remove program-enrolled user from index
@@ -30,7 +30,7 @@ def remove_program_enrolled_user(program_enrollment_id):
     _remove_program_enrolled_user(program_enrollment_id)
 
 
-@async.task
+@app.task
 def index_program_enrolled_users(program_enrollment_ids):
     """
     Index program enrollments
@@ -47,7 +47,7 @@ def index_program_enrolled_users(program_enrollment_ids):
         _send_automatic_emails(program_enrollment)
 
 
-@async.task
+@app.task
 def index_users(user_ids):
     """
     Index users' ProgramEnrollment documents
@@ -63,7 +63,7 @@ def index_users(user_ids):
         _send_automatic_emails(program_enrollment)
 
 
-@async.task
+@app.task
 def index_percolate_queries(percolate_query_ids):
     """
     Index percolate queries
@@ -75,7 +75,7 @@ def index_percolate_queries(percolate_query_ids):
     _index_percolate_queries(PercolateQuery.objects.filter(id__in=percolate_query_ids))
 
 
-@async.task
+@app.task
 def delete_percolate_query(percolate_query_id):
     """
     Delete a percolate query in Elasticsearch

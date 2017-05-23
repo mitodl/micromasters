@@ -117,7 +117,7 @@ class FinalGrade(TimestampedModel, AuditableModel):
             course_id=self.course_run.edx_course_key
         )
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
         """Overridden method to run validation"""
         self.full_clean()
         return super().save(*args, **kwargs)

@@ -209,6 +209,19 @@ def safely_remove_file(file_path):
             pass
 
 
+def as_datetime(date):
+    """
+    Convert date to datetime set to midnight with a UTC timezone
+
+    Args:
+        date (datetime.date): A date object
+
+    Returns:
+        datetime.datetime: A datetime object for midnight of that date, UTC
+    """
+    return datetime.datetime.combine(date, datetime.datetime.min.time()).replace(tzinfo=pytz.utc)
+
+
 def now_in_utc():
     """
     Get the current time in UTC

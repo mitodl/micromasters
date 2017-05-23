@@ -17,6 +17,7 @@ from exams.models import (
     ExamRun,
 )
 from micromasters.factories import UserFactory
+from micromasters.utils import as_datetime
 from profiles.factories import ProfileFactory
 
 FAKE = faker.Factory.create()
@@ -54,7 +55,8 @@ class ExamRunFactory(DjangoModelFactory):
         lambda exam_run: exam_run.date_first_eligible + timedelta(days=20)
     )
     date_grades_available = factory.LazyAttribute(
-        lambda exam_run: exam_run.date_last_eligible
+        # Convert date to datetime
+        lambda exam_run: as_datetime(exam_run.date_last_eligible)
     )
     authorized = False
 

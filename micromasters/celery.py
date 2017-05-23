@@ -26,9 +26,9 @@ class CustomCelery(Celery):
         register_logger_signal(client)
         register_signal(client)
 
-async = CustomCelery('micromasters')
+app = CustomCelery('micromasters')
 
 # Using a string here means the worker will not have to
 # pickle the object when using Windows.
-async.config_from_object('django.conf:settings')
-async.autodiscover_tasks(lambda: settings.INSTALLED_APPS)  # pragma: no cover
+app.config_from_object('django.conf:settings')
+app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)  # pragma: no cover

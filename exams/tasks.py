@@ -24,7 +24,7 @@ from exams.utils import (
     exponential_backoff,
     validate_profile,
 )
-from micromasters.celery import async
+from micromasters.celery import app
 from micromasters.utils import now_in_utc
 
 PEARSON_CDD_FILE_PREFIX = "cdd-%Y%m%d%H_"
@@ -37,7 +37,7 @@ PEARSON_FILE_ENCODING = "utf-8"
 log = logging.getLogger(__name__)
 
 
-@async.task(bind=True, max_retries=3)
+@app.task(bind=True, max_retries=3)
 def export_exam_profiles(self):
     """
     Sync any outstanding profiles
@@ -116,7 +116,7 @@ def export_exam_profiles(self):
         log.exception('Unexpected exception updating ExamProfile.status')
 
 
-@async.task(bind=True, max_retries=3)
+@app.task(bind=True, max_retries=3)
 def export_exam_authorizations(self):
     """
     Sync any outstanding profiles
@@ -175,7 +175,7 @@ def export_exam_authorizations(self):
             log.exception('Unexpected exception updating ExamProfile.status')
 
 
-@async.task
+@app.task
 def batch_process_pearson_zip_files():
     """
     Fetch zip files from pearsons sftp periodically.
@@ -194,7 +194,7 @@ def batch_process_pearson_zip_files():
         log.exception('Retryable error during SFTP operation')
 
 
-@async.task
+@app.task
 def update_exam_run(exam_run_id):
     """
     An updated ExamRun means all authorizations should be updated
@@ -210,7 +210,7 @@ def update_exam_run(exam_run_id):
     api.update_authorizations_for_exam_run(exam_run)
 
 
-@async.task
+@app.task
 def authorize_exam_runs():
     """
     Check for outstanding exam runs

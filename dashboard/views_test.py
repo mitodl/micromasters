@@ -315,7 +315,7 @@ class UserCourseEnrollmentTest(MockedESTestCase, APITestCase):
         assert PossiblyImproperlyConfigured.__name__ in resp.data[0]
 
         # if the error from the call to edX is is not HTTPError, the user gets a normal json error
-        mock_edx_enr.side_effect = ValueError()  # pylint: disable=redefined-variable-type
+        mock_edx_enr.side_effect = ValueError()
         resp = self.client.post(self.url, {'course_id': self.course_id}, format='json')
         assert resp.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
         # the response has a structure like {"error": "<message>"}

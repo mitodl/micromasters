@@ -46,7 +46,7 @@ class TierProgram(TimestampedModel):
         return 'tier "{0}" for program "{1}"'.format(self.tier.name, self.program.title)
 
     @transaction.atomic
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
         """
         Override the save to enforce the existence of only one `current` = True
         per program and tier
@@ -77,7 +77,7 @@ class FinancialAid(TimestampedModel, AuditableModel):
     justification = models.TextField(null=True)
     country_of_residence = models.TextField()
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
         """
         Override save to make sure only one FinancialAid object exists for a User and the associated Program
         """

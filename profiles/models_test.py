@@ -61,7 +61,7 @@ class StudentIdTests(MockedESTestCase):
             user = UserFactory()
         profile = Profile(user=user)
         assert profile.student_id is None
-        assert profile.pretty_printed_student_id is ''
+        assert profile.pretty_printed_student_id == ''
 
 
 class ImageTests(MockedESTestCase):

@@ -168,7 +168,7 @@ class CourseRun(models.Model):
     def __str__(self):
         return self.title
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
         """Overridden save method"""
         if not self.edx_course_key:
             self.edx_course_key = None

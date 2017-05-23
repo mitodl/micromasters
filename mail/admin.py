@@ -13,10 +13,10 @@ class FinancialAidEmailAuditAdmin(admin.ModelAdmin):
     model = FinancialAidEmailAudit
     readonly_fields = get_field_names(FinancialAidEmailAudit)
 
-    def has_add_permission(self, *args, **kwargs):  # pylint: disable=unused-argument
+    def has_add_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
         return False
 
-    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument
+    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
         return False
 
 

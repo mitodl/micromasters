@@ -17,7 +17,7 @@ from backends import utils
 from backends.edxorg import EdxOrgOAuth2
 from dashboard.models import UserCacheRefreshTime
 from dashboard.api_edx_cache import CachedEdxDataApi
-from micromasters.celery import async
+from micromasters.celery import app
 from micromasters.utils import (
     chunks,
     now_in_utc,
@@ -34,7 +34,7 @@ LOCK_EXPIRE = 60 * 60 * 2  # Lock expires in 2 hrs
 lock_id = '{0}-lock'.format(uuid.uuid4())
 
 
-@async.task
+@app.task
 def batch_update_user_data():
     """
     Create sub tasks to update user data like enrollments,
@@ -81,7 +81,7 @@ def batch_update_user_data():
             release_lock()
 
 
-@async.task(rate_limit=PARALLEL_RATE_LIMIT)
+@app.task(rate_limit=PARALLEL_RATE_LIMIT)
 def batch_update_user_data_subtasks(students):
     """
     Update user data like enrollments, certificates and grades from edX platform.

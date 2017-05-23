@@ -13,7 +13,7 @@ class FinalGradeAdmin(admin.ModelAdmin):
     list_display = ('id', 'grade', 'user', 'course_run', )
     ordering = ('course_run',)
 
-    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument
+    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
         return False
 
     def save_model(self, request, obj, form, change):
@@ -31,10 +31,10 @@ class FinalGradeAuditAdmin(admin.ModelAdmin):
     ordering = ('final_grade', 'id', )
     list_filter = ('final_grade__course_run__edx_course_key', )
 
-    def has_add_permission(self, *args, **kwargs):  # pylint: disable=unused-argument
+    def has_add_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
         return False
 
-    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument
+    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
         return False
 
 
@@ -51,7 +51,7 @@ class ProctoredExamGradeAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'course', )
     ordering = ('course', 'user')
 
-    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument
+    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
         return False
 
     def save_model(self, request, obj, form, change):
@@ -69,10 +69,10 @@ class ProctoredExamGradeAuditAdmin(admin.ModelAdmin):
     ordering = ('proctored_exam_grade', 'id', )
     list_filter = ('proctored_exam_grade__course__title', )
 
-    def has_add_permission(self, *args, **kwargs):  # pylint: disable=unused-argument
+    def has_add_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
         return False
 
-    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument
+    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
         return False
 
 admin.site.register(models.FinalGrade, FinalGradeAdmin)

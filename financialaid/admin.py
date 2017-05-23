@@ -25,7 +25,7 @@ class FinancialAidAdmin(admin.ModelAdmin):
     """Admin for FinancialAid"""
     model = FinancialAid
 
-    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument
+    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
         return False
 
     def save_model(self, request, obj, form, change):
@@ -40,10 +40,10 @@ class FinancialAidAuditAdmin(admin.ModelAdmin):
     model = FinancialAidAudit
     readonly_fields = get_field_names(FinancialAidAudit)
 
-    def has_add_permission(self, *args, **kwargs):  # pylint: disable=unused-argument
+    def has_add_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
         return False
 
-    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument
+    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
         return False
 
 

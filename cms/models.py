@@ -35,7 +35,7 @@ class HomePage(Page):
     content_panels = []
     subpage_types = ['ProgramPage']
 
-    def get_context(self, request):
+    def get_context(self, request, *args, **kwargs):
         programs = Program.objects.filter(live=True).select_related('programpage').order_by("id")
         js_settings = {
             "gaTrackingID": settings.GA_TRACKING_ID,
@@ -84,7 +84,7 @@ class ProgramChildPage(Page):
         """ Get the parent ProgramPage"""
         return ProgramPage.objects.ancestor_of(self).first()
 
-    def get_context(self, request):
+    def get_context(self, request, *args, **kwargs):
         context = get_program_page_context(self.parent_page(), request)
         context['child_page'] = self
         context['active_tab'] = self.title
@@ -199,7 +199,7 @@ class ProgramPage(Page):
         InlinePanel('semester_dates', label='Future Semester Dates'),
     ]
 
-    def get_context(self, request):
+    def get_context(self, request, *args, **kwargs):
         context = get_program_page_context(self, request)
         context['active_tab'] = 'about'
         return context
@@ -345,7 +345,7 @@ class FrequentlyAskedQuestion(Orderable):
     answer = RichTextField()
     slug = models.SlugField(unique=True, default=None, blank=True)
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
         if not self.slug:
             max_length = FrequentlyAskedQuestion._meta.get_field('slug').max_length
             slug = orig_slug = slugify(self.question)[:max_length]

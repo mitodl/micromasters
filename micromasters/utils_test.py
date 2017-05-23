@@ -29,6 +29,7 @@ from financialaid.factories import (
 )
 from micromasters.exceptions import PossiblyImproperlyConfigured
 from micromasters.utils import (
+    as_datetime,
     chunks,
     custom_exception_handler,
     dict_with_keys,
@@ -295,6 +296,12 @@ class UtilTests(unittest.TestCase):
             'a': 1,
         }
         assert dict_with_keys(source_dict, ['a', 'b']) == source_dict
+
+
+def test_as_datetime():
+    """as_datetime should convert a date to datetime at midnight, UTC"""
+    a_while_ago = datetime.date(2016, 3, 4)
+    assert as_datetime(a_while_ago) == datetime.datetime(2016, 3, 4, tzinfo=pytz.UTC)
 
 
 def test_now_in_utc():

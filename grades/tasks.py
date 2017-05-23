@@ -11,7 +11,7 @@ from django.core.cache import caches
 from courses.models import CourseRun
 from grades import api
 from grades.models import CourseRunGradingStatus
-from micromasters.celery import async
+from micromasters.celery import app
 from micromasters.utils import chunks
 
 
@@ -21,7 +21,7 @@ log = logging.getLogger(__name__)
 cache_redis = caches['redis']
 
 
-@async.task
+@app.task
 def find_course_runs_and_freeze_grades():
     """
     Async task that takes care of finding all the course
@@ -38,7 +38,7 @@ def find_course_runs_and_freeze_grades():
         freeze_course_run_final_grades.delay(run.id)
 
 
-@async.task
+@app.task
 def freeze_course_run_final_grades(course_run_id):
     """
     Async task manager to freeze all the users' final grade in a course run
@@ -104,7 +104,7 @@ def freeze_course_run_final_grades(course_run_id):
     cache_redis.set(cache_id, results.id, None)
 
 
-@async.task
+@app.task
 def freeze_users_final_grade_async(user_ids, course_run_id):
     """
     Async task to freeze the final grade in a course run for a list of users.

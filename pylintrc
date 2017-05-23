@@ -19,4 +19,4 @@ ignored-modules=
 	six.moves,
 
 [MESSAGES CONTROL]
-disable = no-member, old-style-class, no-init, too-few-public-methods, abstract-method, invalid-name, too-many-ancestors, line-too-long, no-self-use
+disable = no-member, old-style-class, no-init, too-few-public-methods, abstract-method, invalid-name, too-many-ancestors, line-too-long, no-self-use, len-as-condition, no-else-return

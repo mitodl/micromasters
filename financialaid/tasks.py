@@ -6,10 +6,10 @@ import requests
 from financialaid.api import update_currency_exchange_rate
 from financialaid.constants import get_currency_exchange_rate_api_request_url
 from financialaid.exceptions import ExceededAPICallsException, UnexpectedAPIErrorException
-from micromasters.celery import async
+from micromasters.celery import app
 
 
-@async.task
+@app.task
 def sync_currency_exchange_rates():
     """
     Updates all CurrencyExchangeRate objects to reflect latest exchange rates from

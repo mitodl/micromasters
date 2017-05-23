@@ -49,7 +49,7 @@ class PearsonUtilsTest(SimpleTestCase):
         """Tests parse_or_default uses parsed value or default"""
         assert utils.parse_or_default(int, None)('5') == 5
         assert utils.parse_or_default(int, None)('') is None
-        assert utils.parse_or_default(int, 4)('') is 4
+        assert utils.parse_or_default(int, 4)('') == 4
 
     @patch('mail.api.MailgunClient')
     def test_email_processing_failures(self, mailgun_client_mock):  # pylint: disable=no-self-use

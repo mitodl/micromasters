@@ -188,7 +188,7 @@ class Profile(models.Model):
     updated_on = models.DateTimeField(blank=True, null=True, auto_now=True)
 
     @transaction.atomic
-    def save(self, *args, update_image=False, **kwargs):
+    def save(self, *args, update_image=False, **kwargs):  # pylint: disable=arguments-differ
         """Set the student_id number to the PK number and update thumbnails if necessary"""
         if update_image:
             if self.image:

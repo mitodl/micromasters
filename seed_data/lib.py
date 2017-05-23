@@ -205,7 +205,7 @@ class CachedEnrollmentHandler(CachedHandler):
     def set_edx_key(cls, obj, course_run):
         obj.data['course_details']['course_id'] = course_run.edx_course_key
 
-    def build_data_property(self, course_run, verified=True, **kwargs):
+    def build_data_property(self, course_run, verified=True, **kwargs):  # pylint: disable=arguments-differ
         return {
             'user': self.username,
             'mode': 'verified' if verified else 'not verified',
@@ -227,7 +227,7 @@ class CachedCertificateHandler(CachedHandler):
     def set_edx_key(cls, obj, course_run):
         obj.data['course_id'] = course_run.edx_course_key
 
-    def build_data_property(self, course_run, grade=DEFAULT_GRADE, **kwargs):
+    def build_data_property(self, course_run, grade=DEFAULT_GRADE, **kwargs):  # pylint: disable=arguments-differ
         return {
             'username': self.username,
             'course_id': course_run.edx_course_key,
@@ -245,7 +245,7 @@ class CachedCurrentGradeHandler(CachedHandler):
     def set_edx_key(cls, obj, course_run):
         obj.data['course_key'] = course_run.edx_course_key
 
-    def build_data_property(self, course_run, grade=DEFAULT_GRADE, **kwargs):
+    def build_data_property(self, course_run, grade=DEFAULT_GRADE, **kwargs):  # pylint: disable=arguments-differ
         return {
             'course_key': course_run.edx_course_key,
             'username': self.username,

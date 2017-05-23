@@ -50,18 +50,18 @@ class FinancialAidRequestSerializer(serializers.Serializer):
     original_currency = CharField()
     program_id = IntegerField()
 
-    def validate(self, data):
+    def validate(self, attrs):
         """
         Validators for this serializer
         """
-        data["program"] = get_object_or_404(Program, pk=data["program_id"])
-        if not data["program"].financial_aid_availability:
+        attrs["program"] = get_object_or_404(Program, pk=attrs["program_id"])
+        if not attrs["program"].financial_aid_availability:
             raise ValidationError("Financial aid not available for this program.")
-        if not ProgramEnrollment.objects.filter(program=data["program"], user=self.context["request"].user).exists():
+        if not ProgramEnrollment.objects.filter(program=attrs["program"], user=self.context["request"].user).exists():
             raise ValidationError("User not in program.")
-        return data
+        return attrs
 
-    def save(self):
+    def save(self, **kwargs):
         """
         Override save method
         """
@@ -114,39 +114,39 @@ class FinancialAidActionSerializer(serializers.Serializer):
         write_only=True
     )
 
-    def validate(self, data):
+    def validate(self, attrs):
         """
         Validators for this serializer
         """
         # Required field
-        if data.get("action") is None:
+        if attrs.get("action") is None:
             raise ValidationError({"action": "This field is required."})
         # For approving
-        if data["action"] == FinancialAidStatus.APPROVED:
+        if attrs["action"] == FinancialAidStatus.APPROVED:
             # Required fields
-            if data.get("tier_program_id") is None:
+            if attrs.get("tier_program_id") is None:
                 raise ValidationError({"tier_program_id": "This field is required."})
-            if data.get("justification") is None:
+            if attrs.get("justification") is None:
                 raise ValidationError({"justification": "This field is required."})
             # Required instance status
             if self.instance.status != FinancialAidStatus.PENDING_MANUAL_APPROVAL:
                 raise ValidationError("Cannot approve an application that is not pending manual approval.")
             # Check tier program exists
             try:
-                data["tier_program"] = TierProgram.objects.get(
-                    id=data["tier_program_id"],
+                attrs["tier_program"] = TierProgram.objects.get(
+                    id=attrs["tier_program_id"],
                     program_id=self.instance.tier_program.program_id,
                     current=True
                 )
             except TierProgram.DoesNotExist:
                 raise ValidationError({"tier_program_id": "Financial Aid Tier does not exist for this program."})
         # For marking documents received
-        if data["action"] == FinancialAidStatus.PENDING_MANUAL_APPROVAL:
+        if attrs["action"] == FinancialAidStatus.PENDING_MANUAL_APPROVAL:
             if self.instance.status not in [FinancialAidStatus.PENDING_DOCS, FinancialAidStatus.DOCS_SENT]:
                 raise ValidationError("Cannot mark documents as received for an application not awaiting docs.")
-        return data
+        return attrs
 
-    def save(self):
+    def save(self, **kwargs):
         """
         Save method for this serializer
         """
@@ -177,7 +177,7 @@ class FinancialAidSerializer(serializers.ModelSerializer):
     """
     Serializer for indicating financial documents have been sent
     """
-    def validate(self, data):
+    def validate(self, attrs):
         """
         Validate method for this serializer
         """
@@ -185,9 +185,9 @@ class FinancialAidSerializer(serializers.ModelSerializer):
             raise ValidationError(
                 "Cannot indicate documents sent for an application that is not pending documents"
             )
-        return data
+        return attrs
 
-    def save(self):
+    def save(self, **kwargs):
         """
         Save method for this serializer
         """

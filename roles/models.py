@@ -41,14 +41,14 @@ class Role(models.Model):
         unique_together = ('user', 'program', 'role',)
 
     @transaction.atomic
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
         """
         Overridden method to run a preventive validation before saving the object.
         """
         self.full_clean()
         super(Role, self).save(*args, **kwargs)
 
-    def full_clean(self, *args, **kwargs):
+    def full_clean(self, *args, **kwargs):  # pylint: disable=arguments-differ
         """
         Overridden method to run a preventive validation.
         """
