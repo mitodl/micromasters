@@ -344,10 +344,9 @@ class CybersourceTests(MockedESTestCase):
         transaction_uuid = 'hex'
 
         now = now_in_utc()
-        now_mock = MagicMock(return_value=now)
 
         with patch('ecommerce.api.get_social_username', autospec=True, return_value=username):
-            with patch('ecommerce.api.datetime', autospec=True, now=now_mock):
+            with patch('ecommerce.api.now_in_utc', autospec=True, return_value=now):
                 with patch('ecommerce.api.uuid.uuid4', autospec=True, return_value=MagicMock(hex=transaction_uuid)):
                     payload = generate_cybersource_sa_payload(order, 'dashboard_url')
         signature = payload.pop('signature')
