@@ -1,9 +1,11 @@
 __webpack_public_path__ = `${SETTINGS.public_path}`;  // eslint-disable-line no-undef, camelcase
+
+// material design lite (MDL)
+import '../../scss/material-design-lite.scss';
+
 // bootstrap
 import 'style-loader!css-loader!bootstrap/dist/css/bootstrap.min.css';
 
-// react-mdl material-design-lite file
-import 'style-loader!css-loader!react-mdl/extra/material.css';
 // react-virtualized requirement
 import 'style-loader!css-loader!react-virtualized/styles.css';
 import 'style-loader!css-loader!react-virtualized-select/styles.css';
