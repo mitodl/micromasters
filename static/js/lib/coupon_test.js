@@ -3,7 +3,6 @@ import sinon from 'sinon';
 import Decimal from 'decimal.js-light';
 
 import {
-  COUPON_CONTENT_TYPE_COURSERUN,
   COUPON_CONTENT_TYPE_COURSE,
   COUPON_CONTENT_TYPE_PROGRAM,
   COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
@@ -124,7 +123,6 @@ describe('coupon utility functions', () => {
       for (const contentType of [
         COUPON_CONTENT_TYPE_PROGRAM,
         COUPON_CONTENT_TYPE_COURSE,
-        COUPON_CONTENT_TYPE_COURSERUN,
       ]) {
         coupon.content_type = contentType;
         coupon.object_id = -1;
@@ -150,13 +148,6 @@ describe('coupon utility functions', () => {
       it('calculates the price if the coupon matches for course', () => {
         coupon.content_type = COUPON_CONTENT_TYPE_COURSE;
         coupon.object_id = course.id;
-        assert.equal(calculateRunPrice(run.id, course.id, program.id, price, coupon), discountedPrice);
-        assert.isTrue(calculateDiscountStub.calledWith(price.price, coupon.amount_type, coupon.amount));
-      });
-
-      it('calculates the price if the coupon matches for run', () => {
-        coupon.content_type = COUPON_CONTENT_TYPE_COURSERUN;
-        coupon.object_id = run.id;
         assert.equal(calculateRunPrice(run.id, course.id, program.id, price, coupon), discountedPrice);
         assert.isTrue(calculateDiscountStub.calledWith(price.price, coupon.amount_type, coupon.amount));
       });

@@ -122,7 +122,6 @@ export const TOAST_FAILURE = 'error';
 
 export const EDX_LINK_BASE = urljoin(SETTINGS.edx_base_url, 'courses/');
 
-export const COUPON_CONTENT_TYPE_COURSERUN = 'courserun';
 export const COUPON_CONTENT_TYPE_COURSE = 'course';
 export const COUPON_CONTENT_TYPE_PROGRAM = 'program';
 

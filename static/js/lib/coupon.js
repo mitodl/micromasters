@@ -3,7 +3,6 @@ import Decimal from 'decimal.js-light';
 import {
   COUPON_CONTENT_TYPE_PROGRAM,
   COUPON_CONTENT_TYPE_COURSE,
-  COUPON_CONTENT_TYPE_COURSERUN,
   COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
   COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
   COUPON_AMOUNT_TYPE_FIXED_PRICE,
@@ -101,8 +100,7 @@ export const _calculateRunPrice = (
 
   if (
     (coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM && coupon.object_id === programId) ||
-    (coupon.content_type === COUPON_CONTENT_TYPE_COURSE && coupon.object_id === courseId) ||
-    (coupon.content_type === COUPON_CONTENT_TYPE_COURSERUN && coupon.object_id === runId)
+    (coupon.content_type === COUPON_CONTENT_TYPE_COURSE && coupon.object_id === courseId)
   ) {
     return calculateDiscount(startingPrice, coupon.amount_type, coupon.amount);
   } else {
