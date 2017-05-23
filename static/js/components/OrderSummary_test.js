@@ -69,7 +69,7 @@ describe('OrderSummary', () => {
     [null, 'null coupon code'],
     ['', 'blank coupon code']
   ].forEach(([code, codeDescription]) => {
-    it(`shows discount calculation if user has a coupon with code ${codeDescription}`, () => {
+    it(`shows discount calculation if user has a coupon with ${codeDescription}`, () => {
       let course = findCourse(course => (
         course.runs.length > 0 &&
         course.runs[0].status === STATUS_OFFERED
