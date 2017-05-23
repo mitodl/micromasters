@@ -1,13 +1,11 @@
 """
 Models for exams
 """
-from datetime import datetime
-
-import pytz
 from django.contrib.auth.models import User
 from django.db import models
 
 from micromasters.models import TimestampedModel
+from micromasters.utils import now_in_utc
 
 
 class ExamRun(TimestampedModel):
@@ -36,7 +34,7 @@ class ExamRun(TimestampedModel):
         Returns:
             django.db.models.query.QuerySet: A Queryset filtered to currently schedulable exam runs
         """
-        now = datetime.now(pytz.utc)
+        now = now_in_utc()
         return cls.objects.filter(
             course=course,
             date_first_schedulable__lte=now,
@@ -57,7 +55,7 @@ class ExamRun(TimestampedModel):
         Returns:
             bool: True if the exam run is currently schedulable
         """
-        now = datetime.now(pytz.utc)
+        now = now_in_utc()
         return self.date_first_schedulable <= now < self.date_last_schedulable
 
     @property

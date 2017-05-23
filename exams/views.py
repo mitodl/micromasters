@@ -1,10 +1,8 @@
 """
 Views for exams app
 """
-from datetime import datetime
 
 from urllib.parse import quote_plus
-import pytz
 from django.views.generic.base import RedirectView
 from django.core.exceptions import ImproperlyConfigured
 from rest_framework import (
@@ -17,6 +15,7 @@ from rest_framework.views import APIView
 
 from exams.api import sso_digest
 from exams.models import ExamProfile
+from micromasters.utils import now_in_utc
 
 
 class PearsonCallbackRedirectView(RedirectView):
@@ -54,7 +53,7 @@ class PearsonSSO(APIView):
                 'error': 'You are not ready to schedule an exam at this time',
             }, status=status.HTTP_403_FORBIDDEN)
 
-        timestamp = int(datetime.now(pytz.utc).timestamp())
+        timestamp = int(now_in_utc().timestamp())
         session_timeout = request.session.get_expiry_age()
 
         try:

@@ -36,6 +36,7 @@ from micromasters.utils import (
     get_field_names,
     is_near_now,
     is_subset_dict,
+    now_in_utc,
     remove_falsey_values,
     safely_remove_file,
     serialize_model_object,
@@ -294,3 +295,10 @@ class UtilTests(unittest.TestCase):
             'a': 1,
         }
         assert dict_with_keys(source_dict, ['a', 'b']) == source_dict
+
+
+def test_now_in_utc():
+    """now_in_utc() should get the current time"""
+    now = now_in_utc()
+    assert is_near_now(now)
+    assert now.tzinfo == pytz.UTC

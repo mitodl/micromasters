@@ -1,10 +1,9 @@
 """
 Model tests
 """
-from datetime import datetime, timedelta
+from datetime import timedelta
 from urllib.parse import urljoin
 
-import pytz
 from ddt import ddt, data, unpack
 from django.core.exceptions import ImproperlyConfigured
 from django.test import override_settings
@@ -18,6 +17,7 @@ from courses.models import CourseRun
 from exams.factories import ExamRunFactory
 from grades.models import CourseRunGradingStatus
 from grades.constants import FinalGradeStatus
+from micromasters.utils import now_in_utc
 from search.base import MockedESTestCase
 
 
@@ -38,7 +38,7 @@ def from_weeks(weeks, now=None):
     if weeks is None:
         return None
     if now is None:
-        now = datetime.now(tz=pytz.UTC)
+        now = now_in_utc()
     return now + timedelta(weeks=weeks)
 
 
@@ -52,7 +52,7 @@ class CourseModelTests(MockedESTestCase):
 
     def setUp(self):
         super(CourseModelTests, self).setUp()
-        self.now = datetime.now(pytz.utc)
+        self.now = now_in_utc()
 
     def create_run(self, course=None, start=None, end=None,
                    enr_start=None, enr_end=None, upgrade_deadline=None,
@@ -466,7 +466,7 @@ class CourseRunTests(CourseModelTests):
         assert course_run.has_exam is False
         exam_run = ExamRunFactory.create(
             course=course_run.course,
-            date_last_eligible=datetime.now(pytz.utc).date(),
+            date_last_eligible=now_in_utc().date(),
         )
         assert course_run.has_exam is False
         exam_run.delete()
@@ -474,6 +474,6 @@ class CourseRunTests(CourseModelTests):
         assert course_run.has_exam is False
         ExamRunFactory.create(
             course=course_run.course,
-            date_last_eligible=(datetime.now(pytz.utc) - timedelta(days=1)).date(),
+            date_last_eligible=(now_in_utc() - timedelta(days=1)).date(),
         )
         assert course_run.has_exam is False

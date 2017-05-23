@@ -2,17 +2,21 @@
 Library functions for interacting with test data
 """
 import re
-from datetime import datetime, timedelta
-import pytz
+from datetime import timedelta
+
 from django.db import transaction
 from django.db.utils import IntegrityError
 from django.contrib.auth.models import User
+
 from courses.models import Program, Course, CourseRun
 from dashboard.api_edx_cache import CachedEdxDataApi
 from dashboard.models import CachedCertificate, CachedEnrollment, CachedCurrentGrade, UserCacheRefreshTime
 from grades.models import FinalGrade, FinalGradeStatus
 from ecommerce.models import Line, Order
-from micromasters.utils import remove_falsey_values
+from micromasters.utils import (
+    remove_falsey_values,
+    now_in_utc,
+)
 from seed_data.management.commands import (
     DEFAULT_GRADE,
     FAKE_PROGRAM_DESC_PREFIX,
@@ -175,7 +179,7 @@ class CachedHandler(object):
         if not created:
             obj.data = data
             obj.save()
-        CachedEdxDataApi.update_cache_last_access(self.user, self.cache_type, timestamp=datetime.now(tz=pytz.UTC))
+        CachedEdxDataApi.update_cache_last_access(self.user, self.cache_type, timestamp=now_in_utc())
         return obj
 
     def find(self, course_run):

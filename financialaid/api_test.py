@@ -3,12 +3,11 @@ Tests for financial aid api
 """
 import json
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 import ddt
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_save
 from factory.django import mute_signals
-import pytz
 
 from courses.factories import ProgramFactory, CourseFactory, CourseRunFactory
 from dashboard.models import ProgramEnrollment
@@ -29,6 +28,7 @@ from financialaid.models import (
     CountryIncomeThreshold,
     CurrencyExchangeRate
 )
+from micromasters.utils import now_in_utc
 from profiles.factories import ProfileFactory
 from roles.models import Role
 from roles.roles import Staff, Instructor
@@ -49,13 +49,13 @@ def create_program(create_tiers=True, past=False):
     course = CourseFactory.create(program=program)
 
     if past:
-        end_date = datetime.now(tz=pytz.UTC) - timedelta(days=100)
+        end_date = now_in_utc() - timedelta(days=100)
     else:
-        end_date = datetime.now(tz=pytz.UTC) + timedelta(days=100)
+        end_date = now_in_utc() + timedelta(days=100)
 
     CourseRunFactory.create(
         end_date=end_date,
-        enrollment_end=datetime.now(tz=pytz.UTC) + timedelta(hours=1),
+        enrollment_end=now_in_utc() + timedelta(hours=1),
         course=course
     )
     tier_programs = None

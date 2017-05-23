@@ -1,17 +1,16 @@
 """
 Factories for dashboard
 """
-from datetime import datetime, timedelta
+from datetime import timedelta
 from random import randint
 
-import faker
-import pytz
 import factory
 from factory import SubFactory, LazyAttribute
 from factory.django import DjangoModelFactory
 from factory.fuzzy import (
     FuzzyDateTime,
 )
+import faker
 
 from dashboard.models import (
     CachedCertificate,
@@ -26,6 +25,7 @@ from courses.factories import (
     ProgramFactory,
 )
 from micromasters.factories import UserFactory
+from micromasters.utils import now_in_utc
 from ecommerce.factories import LineFactory
 from ecommerce.models import Order
 
@@ -109,11 +109,11 @@ class UserCacheRefreshTimeFactory(DjangoModelFactory):
     """Factory for UserCacheRefreshTime"""
     user = SubFactory(UserFactory)
     # enrollments expire after 5 minutes, this generates a last request between 10 minutes ago and now
-    enrollment = FuzzyDateTime(datetime.now(tz=pytz.utc) - timedelta(minutes=10))
+    enrollment = FuzzyDateTime(now_in_utc() - timedelta(minutes=10))
     # certificates expire after 6 hours, this generates a last request between 6:15 hours ago and now
-    certificate = FuzzyDateTime(datetime.now(tz=pytz.utc) - timedelta(hours=6, minutes=15))
+    certificate = FuzzyDateTime(now_in_utc() - timedelta(hours=6, minutes=15))
     # current grades expire after 1 hour, this generates a last request between 1:15 hours ago and now
-    current_grade = FuzzyDateTime(datetime.now(tz=pytz.utc) - timedelta(hours=1, minutes=15))
+    current_grade = FuzzyDateTime(now_in_utc() - timedelta(hours=1, minutes=15))
 
     class Meta:
         model = UserCacheRefreshTime

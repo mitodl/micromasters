@@ -1,16 +1,15 @@
 """
 Tests for financial aid serializers
 """
-from datetime import datetime
-from pytz import utc
 from django.core.exceptions import ImproperlyConfigured
 
-from search.base import MockedESTestCase
+from courses.factories import ProgramFactory
 from financialaid.factories import TierProgramFactory, FinancialAidFactory
 from financialaid.constants import FinancialAidStatus
 from financialaid.serializers import FinancialAidDashboardSerializer
 from micromasters.factories import UserFactory
-from courses.factories import ProgramFactory
+from micromasters.utils import now_in_utc
+from search.base import MockedESTestCase
 
 
 class FinancialAidDashboardSerializerTests(MockedESTestCase):
@@ -79,7 +78,7 @@ class FinancialAidDashboardSerializerTests(MockedESTestCase):
         Test that a user that has a FinancialAid record and has sent documents will have serialized financial aid
         information that indicates the date that documents were sent
         """
-        now = datetime.now(tz=utc)
+        now = now_in_utc()
         fin_aid = FinancialAidFactory.create(
             user=self.user,
             tier_program=self.min_tier_program,

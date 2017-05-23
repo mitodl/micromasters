@@ -2,7 +2,6 @@
 Functions for ecommerce
 """
 from base64 import b64encode
-from datetime import datetime
 import hashlib
 import hmac
 from itertools import chain
@@ -16,7 +15,6 @@ from django.db import transaction
 from django.http.response import Http404
 from django.shortcuts import get_object_or_404
 from edx_api.client import EdxApi
-import pytz
 from rest_framework.exceptions import ValidationError
 
 from backends.edxorg import EdxOrgOAuth2
@@ -47,6 +45,7 @@ from financialaid.models import (
     FinancialAidStatus,
     TierProgram
 )
+from micromasters.utils import now_in_utc
 from profiles.api import get_social_username
 
 
@@ -230,7 +229,7 @@ def generate_cybersource_sa_payload(order, dashboard_url):
         'override_custom_receipt_page': make_dashboard_receipt_url(dashboard_url, course_key, 'receipt'),
         'reference_number': make_reference_id(order),
         'profile_id': settings.CYBERSOURCE_PROFILE_ID,
-        'signed_date_time': datetime.now(tz=pytz.UTC).strftime(ISO_8601_FORMAT),
+        'signed_date_time': now_in_utc().strftime(ISO_8601_FORMAT),
         'transaction_type': 'sale',
         'transaction_uuid': uuid.uuid4().hex,
         'unsigned_field_names': '',

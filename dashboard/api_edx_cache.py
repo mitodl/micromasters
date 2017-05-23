@@ -5,7 +5,6 @@ import datetime
 import logging
 from collections import namedtuple
 
-import pytz
 from django.db import transaction
 from django.conf import settings
 from edx_api.client import EdxApi
@@ -16,6 +15,7 @@ from backends.exceptions import InvalidCredentialStored
 from backends.edxorg import EdxOrgOAuth2
 from courses.models import CourseRun
 from dashboard import models
+from micromasters.utils import now_in_utc
 from profiles.api import get_social_username
 from search import tasks
 
@@ -115,7 +115,7 @@ class CachedEdxDataApi:
         if cache_type not in cls.SUPPORTED_CACHES:
             raise ValueError("{} is an unsupported cache type".format(cache_type))
         if timestamp is None:
-            timestamp = datetime.datetime.now(tz=pytz.utc)
+            timestamp = now_in_utc()
         updated_values = {
             'user': user,
             cache_type: timestamp,
@@ -141,7 +141,7 @@ class CachedEdxDataApi:
             return False
         cache_timestamp = getattr(cache_timestamps, cache_type)
         return cache_timestamp is not None and cache_timestamp > (
-            datetime.datetime.now(tz=pytz.utc) - cls.CACHE_EXPIRATION_DELTAS[cache_type]
+            now_in_utc() - cls.CACHE_EXPIRATION_DELTAS[cache_type]
         )
 
     @classmethod

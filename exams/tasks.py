@@ -1,12 +1,10 @@
 """Tasks for exams"""
-from datetime import datetime
 import logging
 import tempfile
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
-import pytz
 
 from exams import api
 from exams.pearson.exceptions import RetryableSFTPException
@@ -27,6 +25,7 @@ from exams.utils import (
     validate_profile,
 )
 from micromasters.celery import async
+from micromasters.utils import now_in_utc
 
 PEARSON_CDD_FILE_PREFIX = "cdd-%Y%m%d%H_"
 PEARSON_EAD_FILE_PREFIX = "ead-%Y%m%d%H_"
@@ -48,7 +47,7 @@ def export_exam_profiles(self):
 
     exam_profiles = ExamProfile.objects.filter(
         status=ExamProfile.PROFILE_PENDING).select_related('profile')
-    file_prefix = datetime.now(pytz.utc).strftime(PEARSON_CDD_FILE_PREFIX)
+    file_prefix = now_in_utc().strftime(PEARSON_CDD_FILE_PREFIX)
 
     valid_exam_profiles = []
     for exam_profile in exam_profiles:
@@ -127,7 +126,7 @@ def export_exam_authorizations(self):
 
     exam_authorizations = ExamAuthorization.objects.filter(
         status=ExamAuthorization.STATUS_PENDING).prefetch_related('user__profile', 'course__program')
-    file_prefix = datetime.now(pytz.utc).strftime(PEARSON_EAD_FILE_PREFIX)
+    file_prefix = now_in_utc().strftime(PEARSON_EAD_FILE_PREFIX)
 
     # write the file out locally
     # this will be written out to a file like: /tmp/ead-20160405_kjfiamdf.dat
@@ -218,7 +217,7 @@ def authorize_exam_runs():
     """
     for exam_run in ExamRun.objects.filter(
             authorized=False,
-            date_first_schedulable__lte=datetime.now(pytz.utc),
+            date_first_schedulable__lte=now_in_utc(),
     ):
         api.bulk_authorize_for_exam_run(exam_run)
 

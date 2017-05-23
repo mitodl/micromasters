@@ -1,7 +1,6 @@
 """
 Model tests
 """
-from datetime import datetime
 from unittest.mock import patch
 from io import BytesIO
 
@@ -10,8 +9,8 @@ from django.core.files.uploadedfile import UploadedFile
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 from PIL import Image
-import pytz
 
+from micromasters.utils import now_in_utc
 from profiles.factories import ProfileFactory, UserFactory
 from profiles.models import Profile
 from profiles.util import (
@@ -75,7 +74,7 @@ class ImageTests(MockedESTestCase):
         """
         # pin the timestamps used in creating the URL
         with patch('profiles.util.datetime', autospec=True) as mocked_datetime:
-            mocked_datetime.now.return_value = datetime.now(tz=pytz.UTC)
+            mocked_datetime.now.return_value = now_in_utc()
             with mute_signals(post_save):
                 profile = ProfileFactory.create()
 

@@ -1,12 +1,12 @@
 """
 util functions for profiles
 """
-from datetime import datetime
 from io import BytesIO
 from os import path
 
 from PIL import Image
-import pytz
+
+from micromasters.utils import now_in_utc
 
 # This is the Django ImageField max path size
 IMAGE_PATH_MAX_LENGTH = 100
@@ -69,7 +69,7 @@ def _generate_upload_to_uri(suffix=""):
     def _upload_to(_, filename):
         """Function passed to upload_to on an ImageField"""
         name, ext = path.splitext(filename)
-        timestamp = datetime.now(pytz.utc).replace(microsecond=0)
+        timestamp = now_in_utc().replace(microsecond=0)
         path_format = "profile/{name}-{timestamp}{suffix}{ext}"
 
         path_without_name = path_format.format(

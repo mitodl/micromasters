@@ -1,7 +1,6 @@
 """Factories for the grades app"""
 import datetime
 
-import pytz
 from factory import (
     SubFactory,
     Faker,
@@ -25,6 +24,7 @@ from grades.models import (
     ProctoredExamGrade,
 )
 from micromasters.factories import UserFactory
+from micromasters.utils import now_in_utc
 
 
 class FinalGradeFactory(DjangoModelFactory):
@@ -45,7 +45,7 @@ class ProctoredExamGradeFactory(DjangoModelFactory):
     user = SubFactory(UserFactory)
     course = SubFactory(CourseFactory)
     exam_run = SubFactory(ExamRunFactory)
-    exam_date = FuzzyDateTime(datetime.datetime.now(tz=pytz.utc) - datetime.timedelta(weeks=4))
+    exam_date = FuzzyDateTime(now_in_utc() - datetime.timedelta(weeks=4))
     # this assumes that the max score is 100
     passing_score = 60.0
     score = LazyAttribute(lambda x: x.percentage_grade * 100)

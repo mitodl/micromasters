@@ -1,7 +1,6 @@
 """
 Functions for ES indexing
 """
-from datetime import datetime
 import logging
 from uuid import uuid4
 
@@ -9,7 +8,6 @@ from django.conf import settings
 from elasticsearch.helpers import bulk
 from elasticsearch.exceptions import NotFoundError
 from elasticsearch_dsl import Mapping
-import pytz
 
 from profiles.models import Profile
 from profiles.serializers import ProfileSerializer
@@ -18,6 +16,7 @@ from dashboard.serializers import UserProgramSearchSerializer
 from micromasters.utils import (
     chunks,
     dict_with_keys,
+    now_in_utc,
 )
 from search.connection import (
     get_active_aliases,
@@ -496,7 +495,7 @@ def recreate_index():
     conn.indices.put_alias(index=new_backing_index, name=temp_alias)
 
     # Do the indexing on the temp index
-    start = datetime.now(pytz.UTC)
+    start = now_in_utc()
     try:
         enrollment_count = ProgramEnrollment.objects.count()
         log.info("Indexing %d documents for %d program enrollments...", enrollment_count * 2, enrollment_count)
@@ -534,7 +533,7 @@ def recreate_index():
             conn.indices.delete(index)
     finally:
         conn.indices.delete_alias(name=temp_alias, index=new_backing_index)
-    end = datetime.now(pytz.UTC)
+    end = now_in_utc()
     log.info("recreate_index took %d seconds", (end - start).total_seconds())
 
 

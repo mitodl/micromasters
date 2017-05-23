@@ -2,11 +2,10 @@
 Tests for the dashboard APIs functions that deal with the edx cached data
 """
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from unittest.mock import patch, MagicMock, ANY
 
 import ddt
-import pytz
 from edx_api.certificates.models import Certificate, Certificates
 from edx_api.enrollments.models import Enrollment, Enrollments
 from edx_api.grades.models import CurrentGrade, CurrentGrades
@@ -32,7 +31,10 @@ from dashboard.models import (
     CachedEnrollment,
 )
 from micromasters.factories import UserFactory
-from micromasters.utils import load_json_from_file
+from micromasters.utils import (
+    load_json_from_file,
+    now_in_utc,
+)
 from search.base import MockedESTestCase
 
 
@@ -205,11 +207,11 @@ class CachedEdxDataApiTests(MockedESTestCase):
 
         CachedEdxDataApi.update_cache_last_access(self.user, CachedEdxDataApi.ENROLLMENT)
         cache_time = UserCacheRefreshTime.objects.get(user=self.user)
-        assert cache_time.enrollment <= datetime.now(tz=pytz.UTC)
+        assert cache_time.enrollment <= now_in_utc()
         assert cache_time.certificate is None
         assert cache_time.current_grade is None
 
-        old_timestamp = datetime.now(tz=pytz.UTC) - timedelta(days=1)
+        old_timestamp = now_in_utc() - timedelta(days=1)
         CachedEdxDataApi.update_cache_last_access(self.user, CachedEdxDataApi.ENROLLMENT, old_timestamp)
         cache_time.refresh_from_db()
         assert cache_time.enrollment == old_timestamp
@@ -222,7 +224,7 @@ class CachedEdxDataApiTests(MockedESTestCase):
         assert UserCacheRefreshTime.objects.filter(user=self.user).exists() is False
         for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
             assert CachedEdxDataApi.is_cache_fresh(self.user, cache_type) is False
-        now = datetime.now(tz=pytz.UTC)
+        now = now_in_utc()
         user_cache = UserCacheRefreshTimeFactory.create(
             user=self.user,
             enrollment=now,
@@ -245,7 +247,7 @@ class CachedEdxDataApiTests(MockedESTestCase):
         """Test for are_all_caches_fresh"""
         assert UserCacheRefreshTime.objects.filter(user=self.user).exists() is False
         assert CachedEdxDataApi.are_all_caches_fresh(self.user) is False
-        now = datetime.now(tz=pytz.UTC)
+        now = now_in_utc()
         yesterday = now - timedelta(days=1)
         user_cache = UserCacheRefreshTimeFactory.create(
             user=self.user,
@@ -298,7 +300,7 @@ class CachedEdxDataApiTests(MockedESTestCase):
         CachedEdxDataApi.update_cached_enrollments(self.user, self.edx_client)
         self.assert_cache_in_db(enrollment_keys=self.enrollment_ids)
         cache_time = UserCacheRefreshTime.objects.get(user=self.user)
-        now = datetime.now(tz=pytz.UTC)
+        now = now_in_utc()
         assert cache_time.enrollment <= now
         assert mocked_index.delay.called is True
         mocked_index.reset_mock()
@@ -321,7 +323,7 @@ class CachedEdxDataApiTests(MockedESTestCase):
         CachedEdxDataApi.update_cached_certificates(self.user, self.edx_client)
         self.assert_cache_in_db(certificate_keys=self.verified_certificates_ids)
         cache_time = UserCacheRefreshTime.objects.get(user=self.user)
-        now = datetime.now(tz=pytz.UTC)
+        now = now_in_utc()
         assert cache_time.certificate <= now
         assert mocked_index.delay.called is True
         mocked_index.reset_mock()
@@ -344,7 +346,7 @@ class CachedEdxDataApiTests(MockedESTestCase):
         CachedEdxDataApi.update_cached_current_grades(self.user, self.edx_client)
         self.assert_cache_in_db(grades_keys=self.grades_ids)
         cache_time = UserCacheRefreshTime.objects.get(user=self.user)
-        now = datetime.now(tz=pytz.UTC)
+        now = now_in_utc()
         assert cache_time.current_grade <= now
         assert mocked_index.delay.called is True
         mocked_index.reset_mock()
@@ -378,7 +380,7 @@ class CachedEdxDataApiTests(MockedESTestCase):
             mock_func.reset_mock()
 
         # if we create a fresh entry in the UserCacheRefreshTime, no update is called
-        now = datetime.now(tz=pytz.UTC)
+        now = now_in_utc()
         user_cache = UserCacheRefreshTimeFactory.create(
             user=self.user,
             enrollment=now,

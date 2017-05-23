@@ -1,12 +1,12 @@
 """
 EdX.org backend for Python Social Auth
 """
-from datetime import datetime
 from urllib.parse import urljoin
 
 from django.conf import settings
-import pytz
 from social_core.backends.oauth import BaseOAuth2
+
+from micromasters.utils import now_in_utc
 
 
 class EdxOrgOAuth2(BaseOAuth2):
@@ -106,5 +106,5 @@ class EdxOrgOAuth2(BaseOAuth2):
             dict of information about the user
         """
         response = super(EdxOrgOAuth2, self).refresh_token(token, *args, **kwargs)
-        response['updated_at'] = datetime.now(tz=pytz.UTC).timestamp()
+        response['updated_at'] = now_in_utc().timestamp()
         return response

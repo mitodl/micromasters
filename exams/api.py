@@ -3,9 +3,7 @@ API for exams app
 """
 import logging
 import hashlib
-from datetime import datetime
 
-import pytz
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q
@@ -21,6 +19,7 @@ from exams.models import (
     ExamProfile,
     ExamRun,
 )
+from micromasters.utils import now_in_utc
 
 MESSAGE_NOT_PASSED_OR_EXIST_TEMPLATE = (
     '[Exam authorization] Unable to authorize user "{user}" for exam, '
@@ -193,5 +192,5 @@ def update_authorizations_for_exam_run(exam_run):
     ).update(
         status=ExamAuthorization.STATUS_PENDING,
         operation=ExamAuthorization.OPERATION_UPDATE,
-        updated_on=datetime.now(pytz.utc)
+        updated_on=now_in_utc()
     )

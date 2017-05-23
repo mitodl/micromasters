@@ -1,18 +1,17 @@
 """Tests for simulate_sftp_responses"""
-from datetime import datetime
 from unittest.mock import (
     ANY,
     MagicMock,
     patch,
 )
 
-import pytz
 from django.test import (
     TestCase,
     override_settings,
 )
 
 from exams.management.commands import simulate_sftp_responses
+from micromasters.utils import now_in_utc
 
 
 class SimulateSftpResponsesTest(TestCase):
@@ -82,7 +81,7 @@ class SimulateSftpResponsesTest(TestCase):
         sftp_mock = MagicMock()
 
         cmd = simulate_sftp_responses.Command()
-        cmd.write_zip(sftp_mock, 'data string', 'file.dat', datetime.now(pytz.utc))
+        cmd.write_zip(sftp_mock, 'data string', 'file.dat', now_in_utc())
 
         zip_file_mock.assert_called_once_with(ANY, 'w')
         zf_mock = zip_file_mock.return_value.__enter__.return_value

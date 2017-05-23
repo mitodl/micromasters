@@ -1,7 +1,7 @@
 """
 Tests for the dashboard api functions
 """
-from datetime import datetime, timedelta
+from datetime import timedelta
 from unittest.mock import (
     MagicMock,
     Mock,
@@ -10,7 +10,6 @@ from unittest.mock import (
 )
 
 import ddt
-import pytz
 from django.core.exceptions import ImproperlyConfigured
 from rest_framework import status as http_status
 
@@ -35,7 +34,10 @@ from grades.factories import ProctoredExamGradeFactory
 from grades.models import FinalGrade, CourseRunGradingStatus, ProctoredExamGrade
 from grades.serializers import ProctoredExamGradeSerializer
 from micromasters.factories import UserFactory
-from micromasters.utils import is_subset_dict
+from micromasters.utils import (
+    is_subset_dict,
+    now_in_utc,
+)
 from search.base import MockedESTestCase
 
 
@@ -120,7 +122,7 @@ class CourseTests(MockedESTestCase):
 
     def setUp(self):
         super(CourseTests, self).setUp()
-        self.now = datetime.now(pytz.utc)
+        self.now = now_in_utc()
         self.mmtrack = MagicMock(wraps=MMTrack)
 
     def create_run(self, course=None, start=None, end=None,
@@ -318,7 +320,7 @@ class CourseRunTest(CourseTests):
     @classmethod
     def setUpTestData(cls):
         super(CourseRunTest, cls).setUpTestData()
-        cls.now = datetime.now(pytz.utc)
+        cls.now = now_in_utc()
 
     def test_status_for_run_not_enrolled(self):
         """test for get_status_for_courserun for course without enrollment"""
@@ -738,7 +740,7 @@ class InfoCourseTest(CourseTests):
         cls.user = UserFactory()
         cls.course_noruns = CourseFactory.create(title="Title no runs")
 
-        now = datetime.now(pytz.utc)
+        now = now_in_utc()
         # create a run that is current
         cls.course_run = cls.create_run(
             cls,
@@ -1186,14 +1188,14 @@ class InfoCourseTest(CourseTests):
         self.mmtrack.configure_mock(**{'user': self.user})
 
         run1 = CourseRunFactory.create(
-            start_date=datetime.now(pytz.utc),
+            start_date=now_in_utc(),
             end_date=None,
             enrollment_start=None,
             enrollment_end=None
         )
         CourseRunFactory.create(
-            start_date=datetime.now(pytz.utc),
-            end_date=datetime.now(pytz.utc),
+            start_date=now_in_utc(),
+            end_date=now_in_utc(),
             enrollment_start=None,
             enrollment_end=None,
             course=run1.course
@@ -1282,7 +1284,7 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
     def test_past_course_runs(self):
         """Test that past course runs are returned in the API results"""
         # Set a course run to be failed
-        now = datetime.now(tz=pytz.UTC)
+        now = now_in_utc()
         program = self.program_non_fin_aid
         course = program.course_set.first()
 
@@ -1454,7 +1456,7 @@ class InfoProgramTest(MockedESTestCase):
             "application_status": "WHO-KNOWS",
             "min_possible_cost": 100,
             "max_possible_cost": 200,
-            "date_documents_sent": datetime.now(pytz.utc) - timedelta(hours=12)
+            "date_documents_sent": now_in_utc() - timedelta(hours=12)
         }
         mock_fin_aid_serialize.return_value = serialized_fin_aid
         mock_info_course.return_value = {'position_in_program': 1}

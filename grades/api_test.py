@@ -1,11 +1,10 @@
 """
 Tests for grades API
 """
-from datetime import datetime, timedelta
+from datetime import timedelta
 from unittest.mock import patch, MagicMock
 
 import ddt
-import pytz
 from django.core.exceptions import ImproperlyConfigured
 
 from backends.edxorg import EdxOrgOAuth2
@@ -25,6 +24,7 @@ from grades import api
 from grades.exceptions import FreezeGradeFailedException
 from grades.models import FinalGrade, FinalGradeStatus
 from micromasters.factories import UserFactory
+from micromasters.utils import now_in_utc
 from search.base import MockedESTestCase
 
 
@@ -47,7 +47,7 @@ class GradeAPITests(MockedESTestCase):
         )
 
         cls.run_fa = CourseRunFactory.create(
-            freeze_grade_date=datetime.now(tz=pytz.UTC)-timedelta(days=1),
+            freeze_grade_date=now_in_utc()-timedelta(days=1),
             course__program__financial_aid_availability=True,
         )
         cls.run_fa_with_cert = CourseRunFactory.create(
@@ -56,7 +56,7 @@ class GradeAPITests(MockedESTestCase):
         )
 
         cls.run_no_fa = CourseRunFactory.create(
-            freeze_grade_date=datetime.now(tz=pytz.UTC)+timedelta(days=1),
+            freeze_grade_date=now_in_utc()+timedelta(days=1),
             course__program__financial_aid_availability=False,
         )
         cls.run_no_fa_with_cert = CourseRunFactory.create(

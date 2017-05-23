@@ -2,13 +2,12 @@
 APIs for extending the python social auth pipeline
 """
 import logging
-from datetime import datetime
 from urllib.parse import urljoin
 
-import pytz
 from rolepermissions.verifications import has_role
 
 from backends.edxorg import EdxOrgOAuth2
+from micromasters.utils import now_in_utc
 from profiles.api import get_social_username
 from profiles.models import Profile
 from profiles.util import split_name
@@ -113,5 +112,5 @@ def set_last_update(details, *args, **kwargs):  # pylint: disable=unused-argumen
     Returns:
         dict: updated details dictionary
     """
-    details['updated_at'] = datetime.now(tz=pytz.UTC).timestamp()
+    details['updated_at'] = now_in_utc().timestamp()
     return details

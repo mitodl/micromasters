@@ -1,10 +1,13 @@
 """
 General util functions for database seeding
 """
-from datetime import datetime, timedelta
+from datetime import timedelta
 from functools import wraps
 import math
-from pytz import timezone, utc
+
+from pytz import timezone
+
+from micromasters.utils import now_in_utc
 
 
 def accepts_or_calculates_now(func):
@@ -12,7 +15,7 @@ def accepts_or_calculates_now(func):
     @wraps(func)
     def wrapper(*args, **kwargs):  # pylint: disable=missing-docstring
         if not kwargs.get('now'):
-            kwargs['now'] = datetime.now(tz=utc)
+            kwargs['now'] = now_in_utc()
         return func(*args, **kwargs)
     return wrapper
 

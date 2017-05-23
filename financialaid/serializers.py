@@ -2,7 +2,6 @@
 Serializers from financial aid
 """
 import logging
-import datetime
 import copy
 
 from django.db.models import Max, Min, Q
@@ -37,6 +36,7 @@ from financialaid.models import (
 )
 from mail.api import MailgunClient
 from mail.utils import generate_financial_aid_email
+from micromasters.utils import now_in_utc
 
 
 log = logging.getLogger(__name__)
@@ -82,7 +82,7 @@ class FinancialAidRequestSerializer(serializers.Serializer):
             user=user,
             income_usd=income_usd,
             country_of_income=user.profile.country,
-            date_exchange_rate=datetime.datetime.now(),
+            date_exchange_rate=now_in_utc(),
             country_of_residence=user.profile.country,
         )
 

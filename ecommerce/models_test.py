@@ -1,10 +1,7 @@
 """
 Tests for ecommerce models
 """
-from datetime import (
-    datetime,
-    timedelta,
-)
+from datetime import timedelta
 from unittest.mock import patch
 
 import ddt
@@ -16,7 +13,6 @@ from django.core.exceptions import (
 from django.test import (
     override_settings,
 )
-import pytz
 
 from courses.factories import CourseRunFactory
 from ecommerce.factories import (
@@ -31,7 +27,10 @@ from ecommerce.models import (
     Order,
     RedeemedCoupon,
 )
-from micromasters.utils import serialize_model_object
+from micromasters.utils import (
+    now_in_utc,
+    serialize_model_object,
+)
 from profiles.models import Profile
 from search.base import MockedESTestCase
 
@@ -201,7 +200,7 @@ class CouponTests(MockedESTestCase):
         """
         Coupon.is_valid should return True if the coupon is enabled and within the valid date range
         """
-        now = datetime.now(tz=pytz.UTC)
+        now = now_in_utc()
         assert CouponFactory.create(enabled=True).is_valid is True
         assert CouponFactory.create(enabled=False).is_valid is False
         assert CouponFactory.create(activation_date=now - timedelta(days=1)).is_valid is True

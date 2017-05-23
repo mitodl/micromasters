@@ -5,9 +5,7 @@ import os
 import random
 import time
 import zipfile
-from datetime import datetime
 
-import pytz
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
@@ -16,6 +14,7 @@ from exams.pearson.constants import (
     PEARSON_FILE_TYPES,
 )
 from exams.pearson import sftp
+from micromasters.utils import now_in_utc
 
 
 class Command(BaseCommand):
@@ -92,7 +91,7 @@ class Command(BaseCommand):
 
     def handle_ead(self, sftp_conn, remote_path, ratio):
         """Handle an EAD file"""
-        now = datetime.now(pytz.utc)
+        now = now_in_utc()
         result_file = io.StringIO()
         writer = csv.DictWriter(result_file, [
             'ClientAuthorizationID',
@@ -130,7 +129,7 @@ class Command(BaseCommand):
 
     def handle_cdd(self, sftp_conn, remote_path, ratio):
         """Handle a CDD file"""
-        now = datetime.now(pytz.utc)
+        now = now_in_utc()
         result_file = io.StringIO()
         writer = csv.DictWriter(result_file, [
             'ClientCandidateID',

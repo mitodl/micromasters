@@ -4,10 +4,8 @@ Utility functions and classes for the dashboard
 import logging
 from decimal import Decimal
 
-from datetime import datetime
 from django.db import transaction
 from django.db.models import Q
-from pytz import utc
 
 from courses.models import CourseRun
 from dashboard.api_edx_cache import CachedEdxUserData
@@ -22,6 +20,7 @@ from exams.models import (
     ExamAuthorization,
     ExamRun,
 )
+from micromasters.utils import now_in_utc
 
 
 log = logging.getLogger(__name__)
@@ -51,7 +50,7 @@ class MMTrack:
             program (programs.models.Program): program where the user is enrolled
             edx_user_data (dashboard.api_edx_cache.CachedEdxUserData): A CachedEdxUserData object
         """
-        self.now = datetime.now(utc)
+        self.now = now_in_utc()
         self.user = user
         self.program = program
         self.enrollments = edx_user_data.enrollments

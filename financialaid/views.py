@@ -1,7 +1,6 @@
 """
 Views for financialaid
 """
-import datetime
 import json
 from functools import reduce
 
@@ -52,6 +51,7 @@ from financialaid.serializers import (
     FormattedCoursePriceSerializer,
 )
 from mail.serializers import GenericMailSerializer
+from micromasters.utils import now_in_utc
 from roles.models import (
     Instructor,
     Staff,
@@ -111,7 +111,7 @@ class FinancialAidSkipView(UpdateAPIView):
             financialaid = FinancialAid(
                 user=user,
                 country_of_income=user.profile.country,
-                date_exchange_rate=datetime.datetime.now(),
+                date_exchange_rate=now_in_utc(),
                 country_of_residence=user.profile.country,
             )
 

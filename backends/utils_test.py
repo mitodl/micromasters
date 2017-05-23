@@ -1,17 +1,17 @@
 """
 Tests for the utils
 """
-from datetime import datetime, timedelta
+from datetime import timedelta
 from unittest.mock import (
     MagicMock,
     patch,
 )
 
-import pytz
 from requests.exceptions import HTTPError
 
 from backends import utils
 from backends.edxorg import EdxOrgOAuth2
+from micromasters.utils import now_in_utc
 from profiles.factories import UserFactory
 from search.base import MockedESTestCase
 # pylint: disable=protected-access
@@ -37,7 +37,7 @@ class RefreshTest(MockedESTestCase):
 
     def setUp(self):
         super(RefreshTest, self).setUp()
-        self.now = datetime.now(pytz.utc)
+        self.now = now_in_utc()
 
     def update_social_extra_data(self, data):
         """Helper function to update the python social auth extra data"""

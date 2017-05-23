@@ -3,16 +3,17 @@ Models for course structure
 """
 import logging
 import urllib.parse
-from datetime import datetime
 
-import pytz
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 
 from grades.constants import FinalGradeStatus
 from micromasters.models import TimestampedModel
-from micromasters.utils import first_matching_item
+from micromasters.utils import (
+    first_matching_item,
+    now_in_utc,
+)
 
 
 log = logging.getLogger(__name__)
@@ -178,7 +179,7 @@ class CourseRun(models.Model):
         """Checks if the course is running now"""
         if not self.start_date:
             return False
-        now = datetime.now(pytz.utc)
+        now = now_in_utc()
         if not self.end_date:
             return self.start_date <= now
         return self.start_date <= now <= self.end_date
@@ -188,14 +189,14 @@ class CourseRun(models.Model):
         """Checks if the course run in the past"""
         if not self.end_date:
             return False
-        return self.end_date < datetime.now(pytz.utc)
+        return self.end_date < now_in_utc()
 
     @property
     def is_future(self):
         """Checks if the course will run in the future"""
         if not self.start_date:
             return False
-        return self.start_date > datetime.now(pytz.utc)
+        return self.start_date > now_in_utc()
 
     @property
     def is_future_enrollment_open(self):
@@ -205,7 +206,7 @@ class CourseRun(models.Model):
         """
         if self.is_future:
             if self.enrollment_start:
-                now = datetime.now(pytz.utc)
+                now = now_in_utc()
                 if self.enrollment_end:
                     return self.enrollment_start <= now <= self.enrollment_end
                 else:
@@ -219,14 +220,14 @@ class CourseRun(models.Model):
         A null value means that the upgrade window is always open
         """
         return (self.upgrade_deadline is None or
-                (self.upgrade_deadline > datetime.now(pytz.utc)))
+                (self.upgrade_deadline > now_in_utc()))
 
     @property
     def is_not_beyond_enrollment(self):
         """
         Checks if the course is not beyond its enrollment period
         """
-        now = datetime.now(pytz.utc)
+        now = now_in_utc()
         return (
             (self.enrollment_end is None and (self.end_date is None or self.end_date > now)) or
             self.enrollment_end > now
@@ -246,7 +247,7 @@ class CourseRun(models.Model):
         """
         if self.freeze_grade_date is None:
             raise ImproperlyConfigured('Missing freeze_grade_date')
-        return datetime.now(pytz.utc) > self.freeze_grade_date
+        return now_in_utc() > self.freeze_grade_date
 
     @property
     def has_frozen_grades(self):
@@ -264,7 +265,7 @@ class CourseRun(models.Model):
         """
         Check if the user is authorized for an exam for a course run
         """
-        return self.course.exam_runs.filter(date_last_eligible__gt=datetime.now(pytz.utc).date()).exists()
+        return self.course.exam_runs.filter(date_last_eligible__gt=now_in_utc().date()).exists()
 
     @classmethod
     def get_freezable(cls):
@@ -275,6 +276,6 @@ class CourseRun(models.Model):
             freeze_grade_date=None
         ).exclude(
             courserungradingstatus__status=FinalGradeStatus.COMPLETE
-        ).filter(freeze_grade_date__lt=datetime.now(pytz.utc))
+        ).filter(freeze_grade_date__lt=now_in_utc())
 
         return course_runs

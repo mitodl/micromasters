@@ -207,3 +207,13 @@ def safely_remove_file(file_path):
             os.remove(file_path)
         except:  # pylint: disable=bare-except
             pass
+
+
+def now_in_utc():
+    """
+    Get the current time in UTC
+    
+    Returns:
+        datetime.datetime: A datetime object for the current time
+    """
+    return datetime.datetime.now(tz=pytz.UTC)

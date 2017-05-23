@@ -44,6 +44,7 @@ from exams.pearson.readers import (
 )
 from exams.pearson.sftp_test import EXAMS_SFTP_SETTINGS
 from grades.models import ProctoredExamGrade
+from micromasters.utils import now_in_utc
 from search.base import MockedESTestCase
 
 FIXED_DATETIME = datetime(2016, 5, 15, 15, 2, 55, tzinfo=pytz.UTC)
@@ -302,7 +303,7 @@ class VCDCDownloadTest(MockedESTestCase):
     @classmethod
     def setUpTestData(cls):
         sftp = Mock()
-        cls.now = datetime.now(pytz.utc)
+        cls.now = now_in_utc()
         cls.processor = download.ArchivedResponseProcessor(sftp)
         with mute_signals(post_save):
             cls.success_profiles = ExamProfileFactory.create_batch(2) + [

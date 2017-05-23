@@ -1,13 +1,11 @@
 """
 Models for the grades app
 """
-from datetime import datetime
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.utils import IntegrityError
-import pytz
 
 from courses.models import (
     Course,
@@ -20,7 +18,10 @@ from micromasters.models import (
     AuditModel,
     TimestampedModel,
 )
-from micromasters.utils import serialize_model_object
+from micromasters.utils import (
+    now_in_utc,
+    serialize_model_object,
+)
 
 
 class CourseRunGradingAlreadyCompleteError(Exception):
@@ -227,7 +228,7 @@ class ProctoredExamGrade(TimestampedModel, AuditableModel):
         """
         Returns a queryset of the exam result for an user in a course of a program
         """
-        now = datetime.now(pytz.utc)
+        now = now_in_utc()
         return cls.objects.filter(user=user, course=course, exam_run__date_grades_available__lte=now)
 
     def to_dict(self):

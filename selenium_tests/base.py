@@ -1,6 +1,6 @@
 """Basic selenium tests for MicroMasters"""
 from base64 import b64encode
-from datetime import datetime, timedelta
+from datetime import timedelta
 import logging
 import os
 import socket
@@ -23,7 +23,6 @@ from django.core.management import call_command
 from django.db import connection
 from django.db.models.signals import post_save
 from factory.django import mute_signals
-import pytz
 from selenium.webdriver import (
     DesiredCapabilities,
     Remote,
@@ -43,6 +42,7 @@ from financialaid.models import (
     Tier,
     TierProgram,
 )
+from micromasters.utils import now_in_utc
 from search.indexing_api import (
     delete_index,
     recreate_index,
@@ -312,7 +312,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         user = profile.user
 
         # Create a fake edX social auth to make this user look like they logged in via edX
-        later = datetime.now(tz=pytz.UTC) + timedelta(minutes=5)
+        later = now_in_utc() + timedelta(minutes=5)
         user.social_auth.create(
             provider=EdxOrgOAuth2.name,
             uid="{}_edx".format(user.username),

@@ -3,17 +3,16 @@ Tests for exam views
 """
 from unittest.mock import patch
 
-from datetime import datetime
 import ddt
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
-import pytz
 
 from exams.models import ExamProfile
-from micromasters.test import SimpleTestCase
 from micromasters.factories import UserFactory
+from micromasters.test import SimpleTestCase
+from micromasters.utils import now_in_utc
 from search.base import MockedESTestCase
 
 
@@ -126,7 +125,7 @@ class PearsonSSOViewTests(MockedESTestCase, APITestCase):
             timestamp = result['timestamp']
             assert isinstance(timestamp, int)
 
-            now = int(datetime.now(pytz.utc).timestamp())
+            now = int(now_in_utc().timestamp())
             assert now - timestamp < 5
 
             assert result['sso_digest'] == 'test value'

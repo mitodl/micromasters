@@ -3,9 +3,8 @@ Periodic task that updates user data.
 """
 import logging
 import uuid
-from datetime import datetime, timedelta
+from datetime import timedelta
 
-import pytz
 from celery import group
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -19,7 +18,10 @@ from backends.edxorg import EdxOrgOAuth2
 from dashboard.models import UserCacheRefreshTime
 from dashboard.api_edx_cache import CachedEdxDataApi
 from micromasters.celery import async
-from micromasters.utils import chunks
+from micromasters.utils import (
+    chunks,
+    now_in_utc,
+)
 
 
 log = logging.getLogger(__name__)
@@ -52,7 +54,7 @@ def batch_update_user_data():
         return cache_redis.delete(lock_id)
 
     if acquire_lock():
-        refresh_time_limit = datetime.now(tz=pytz.UTC) - timedelta(hours=MAX_HRS_MAIN_TASK)
+        refresh_time_limit = now_in_utc() - timedelta(hours=MAX_HRS_MAIN_TASK)
 
         users_expired_cache = UserCacheRefreshTime.objects.filter(
             Q(enrollment__lt=refresh_time_limit) |

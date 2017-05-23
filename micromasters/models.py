@@ -2,7 +2,6 @@
 Classes related to models for MicroMasters
 """
 
-import datetime
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField
 from django.db import transaction
@@ -14,7 +13,8 @@ from django.db.models import (
     SET_NULL,
 )
 from django.db.models.query import QuerySet
-import pytz
+
+from micromasters.utils import now_in_utc
 
 
 class TimestampedModelQuerySet(QuerySet):
@@ -28,7 +28,7 @@ class TimestampedModelQuerySet(QuerySet):
         database level without loading objects into memory.
         """
         if "updated_on" not in kwargs:
-            kwargs["updated_on"] = datetime.datetime.now(tz=pytz.UTC)
+            kwargs["updated_on"] = now_in_utc()
         return super().update(**kwargs)
 
 

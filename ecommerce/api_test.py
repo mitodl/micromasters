@@ -2,7 +2,6 @@
 Test for ecommerce functions
 """
 from base64 import b64encode
-from datetime import datetime
 from decimal import Decimal
 import hashlib
 import hmac
@@ -66,7 +65,10 @@ from financialaid.api import get_formatted_course_price
 from financialaid.factories import FinancialAidFactory, TierProgramFactory
 from financialaid.models import FinancialAidStatus, TierProgram
 from micromasters.factories import UserFactory
-from micromasters.utils import serialize_model_object
+from micromasters.utils import (
+    now_in_utc,
+    serialize_model_object,
+)
 from search.base import MockedESTestCase
 
 
@@ -341,7 +343,7 @@ class CybersourceTests(MockedESTestCase):
         username = 'username'
         transaction_uuid = 'hex'
 
-        now = datetime.now(tz=pytz.UTC)
+        now = now_in_utc()
         now_mock = MagicMock(return_value=now)
 
         with patch('ecommerce.api.get_social_username', autospec=True, return_value=username):

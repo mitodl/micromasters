@@ -1,11 +1,8 @@
 """
 Tests for tasks
 """
-from datetime import datetime
-
 from itertools import product
 from unittest import mock
-import pytz
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -19,6 +16,7 @@ from dashboard.tasks import (
 )
 from dashboard.factories import UserCacheRefreshTimeFactory
 from micromasters.factories import UserFactory
+from micromasters.utils import now_in_utc
 from search.base import MockedESTestCase
 
 
@@ -62,7 +60,7 @@ class TasksTest(MockedESTestCase):
         for user in self.all_working_users:
             user.is_active = False
             user.save()
-        now = datetime.now(tz=pytz.UTC)
+        now = now_in_utc()
         UserCacheRefreshTimeFactory.create(
             user=self.user2,
             enrollment=now,

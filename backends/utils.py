@@ -8,6 +8,7 @@ from requests.exceptions import HTTPError
 from social_django.utils import load_strategy
 
 from backends.exceptions import InvalidCredentialStored
+from micromasters.utils import now_in_utc
 
 
 def _send_refresh_request(user_social):
@@ -42,5 +43,5 @@ def refresh_user_token(user_social):
         return
     # small error margin of 5 minutes to be safe
     error_margin = timedelta(minutes=5)
-    if datetime.now(tz=pytz.UTC) - last_update >= expires_in - error_margin:
+    if now_in_utc() - last_update >= expires_in - error_margin:
         _send_refresh_request(user_social)

@@ -1,13 +1,12 @@
 """
 Tests for exam signals
 """
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 import ddt
-import pytz
 
 from courses.factories import (
     CourseFactory,
@@ -31,6 +30,7 @@ from exams.models import (
 )
 from financialaid.api_test import create_program
 from grades.factories import FinalGradeFactory
+from micromasters.utils import now_in_utc
 from profiles.factories import ProfileFactory
 from search.base import MockedESTestCase
 
@@ -63,7 +63,7 @@ class ExamSignalsTest(MockedESTestCase):
         CachedCertificateFactory.create(user=cls.profile.user, course_run=cls.course_run)
         cls.exam_run = ExamRunFactory.create(
             course=cls.course_run.course,
-            date_first_schedulable=datetime.now(pytz.utc) - timedelta(days=1),
+            date_first_schedulable=now_in_utc() - timedelta(days=1),
         )
 
     def test_update_exam_profile_called(self):
@@ -205,8 +205,8 @@ class ExamSignalsTest(MockedESTestCase):
         self.exam_run.delete()
         course = CourseFactory.create(program=self.program)
         course_run = CourseRunFactory.create(
-            end_date=datetime.now(tz=pytz.UTC) - timedelta(days=100),
-            enrollment_end=datetime.now(tz=pytz.UTC) + timedelta(hours=1),
+            end_date=now_in_utc() - timedelta(days=100),
+            enrollment_end=now_in_utc() + timedelta(hours=1),
             course=course
         )
         create_order(self.profile.user, course_run)

@@ -1,10 +1,9 @@
 """
 Tests for grades tasks
 """
-from datetime import datetime, timedelta
+from datetime import timedelta
 from unittest.mock import patch
 
-import pytz
 from django.core.cache import caches
 
 from courses.factories import CourseRunFactory
@@ -16,6 +15,7 @@ from grades.models import (
     FinalGradeStatus,
 )
 from micromasters.factories import UserFactory
+from micromasters.utils import now_in_utc
 from search.base import MockedESTestCase
 
 
@@ -33,8 +33,8 @@ class GradeTasksTests(MockedESTestCase):
     def setUpTestData(cls):
         cls.users = [UserFactory.create() for _ in range(35)]
 
-        freeze_date = datetime.now(tz=pytz.UTC)-timedelta(days=1)
-        future_freeze_date = datetime.now(tz=pytz.UTC)+timedelta(days=1)
+        freeze_date = now_in_utc()-timedelta(days=1)
+        future_freeze_date = now_in_utc()+timedelta(days=1)
         cls.course_run1 = CourseRunFactory.create(freeze_grade_date=freeze_date)
         cls.course_run2 = CourseRunFactory.create(freeze_grade_date=freeze_date)
         cls.all_freezable_runs = [cls.course_run1, cls.course_run2]

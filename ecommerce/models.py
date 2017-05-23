@@ -1,8 +1,6 @@
 """
 Models for storing ecommerce data
 """
-from datetime import datetime
-
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -27,7 +25,6 @@ from django.db.models.fields import (
 from django.db.models.fields.related import (
     ForeignKey,
 )
-import pytz
 
 from courses.models import (
     Course,
@@ -39,7 +36,10 @@ from micromasters.models import (
     AuditableModel,
     AuditModel,
 )
-from micromasters.utils import serialize_model_object
+from micromasters.utils import (
+    now_in_utc,
+    serialize_model_object,
+)
 
 
 class Order(AuditableModel):
@@ -254,7 +254,7 @@ class Coupon(TimestampedModel, AuditableModel):
     @property
     def is_valid(self):
         """Returns true if the coupon is enabled and also within the valid date range"""
-        now = datetime.now(tz=pytz.UTC)
+        now = now_in_utc()
         if not self.enabled:
             return False
         if self.activation_date is not None and now <= self.activation_date:

@@ -21,7 +21,10 @@ from exams.models import ExamProfile, ExamAuthorization
 from grades.factories import FinalGradeFactory
 from grades.models import FinalGrade
 from micromasters.factories import UserFactory
-from micromasters.utils import load_json_from_file
+from micromasters.utils import (
+    load_json_from_file,
+    now_in_utc,
+)
 from search.base import MockedESTestCase
 
 
@@ -75,7 +78,7 @@ class MMTrackTest(MockedESTestCase):
 
         # and the program with financial aid
         finaid_course = CourseFactory.create(program=cls.program_financial_aid)
-        cls.now = datetime.now(pytz.utc)
+        cls.now = now_in_utc()
         cls.end_date = cls.now - timedelta(weeks=45)
         cls.crun_fa = CourseRunFactory.create(
             course=finaid_course,
@@ -650,7 +653,7 @@ class MMTrackTest(MockedESTestCase):
         """
         test get_pearson_exam_status
         """
-        now = datetime.now(pytz.utc)
+        now = now_in_utc()
         exam_run = None
         if make_exam_run:
             exam_run = ExamRunFactory.create(
