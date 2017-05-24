@@ -29,22 +29,21 @@ class BasicTests(SeleniumTestsBase):
         # Click the dashboard link on the upper right of the homepage
         self.selenium.find_element_by_class_name("header-dashboard-link").click()
         self.assert_console_logs()
-        self.wait().until(lambda driver: driver.find_element_by_class_name("enroll-button"))
+
         # Click the Enroll Now button on dashboard
-        self.selenium.find_element_by_class_name("enroll-button").click()
+        self.wait().click(lambda driver: driver.find_element_by_class_name("enroll-button"))
         self.wait().until(lambda driver: driver.find_element_by_class_name("continue-payment"))
 
         # Click back then click the enroll now button again to assert back button behavior
         self.selenium.back()
-        self.wait().until(lambda driver: driver.find_element_by_class_name("enroll-button"))
-        self.selenium.find_element_by_class_name("enroll-button").click()
+        self.wait().click(lambda driver: driver.find_element_by_class_name("enroll-button"))
         self.assert_console_logs()
 
         # Click 'Continue' on the order summary page
-        self.wait().until(lambda driver: driver.find_element_by_class_name("continue-payment"))
-        self.selenium.find_element_by_class_name("continue-payment").click()
+        self.wait().click(lambda driver: driver.find_element_by_class_name("continue-payment"))
         self.assert_console_logs()
         self.wait().until(lambda driver: driver.find_element_by_class_name("description"))
+
         # Assert that the purchase went through fine but enrolling in edX failed
         # Which makes sense since there is no edX for these tests
         assert self.selenium.find_element_by_css_selector(".course-action .description").text == (
@@ -121,22 +120,22 @@ class BasicTests(SeleniumTestsBase):
         self.get("{}/learners".format(self.live_server_url))
         self.wait().until(lambda driver: driver.find_element_by_class_name('learner-result'))
 
-        self.selenium.find_element_by_class_name("menu-icon").click()
+        self.wait().click(lambda driver: driver.find_element_by_class_name("menu-icon"))
         self.wait().until(
             lambda driver: "open" in driver.find_element_by_class_name("nav-drawer").get_attribute("class")
         )
         profile_link_selector = ".nav-drawer a[href='/learner/{username}']".format(
             username=self.edx_username,
         )
-        self.selenium.find_element_by_css_selector(profile_link_selector).click()
+        self.wait().click(lambda driver: driver.find_element_by_css_selector(profile_link_selector))
         self.wait().until(lambda driver: driver.find_element_by_class_name("user-page"))
 
         # Go back to learners
-        self.selenium.find_element_by_class_name("menu-icon").click()
+        self.wait().click(lambda driver: driver.find_element_by_class_name("menu-icon"))
         self.wait().until(
             lambda driver: "open" in driver.find_element_by_class_name("nav-drawer").get_attribute("class")
         )
-        self.selenium.find_element_by_css_selector("a[href='/learners']").click()
+        self.wait().click(lambda driver: driver.find_element_by_css_selector("a[href='/learners']"))
         self.wait().until(lambda driver: driver.find_element_by_class_name('learner-result'))
 
     def test_query_string_preserved(self):
@@ -151,7 +150,7 @@ class BasicTests(SeleniumTestsBase):
         """Switching programs should clear facets and show a different set of users"""
         self.learner_setup()
         self.get("{}/learners".format(self.live_server_url))
-        self.wait().until(lambda driver: driver.find_element_by_class_name('search-grid'))
+        self.wait().until(lambda driver: driver.find_element_by_class_name('learner-result'))
 
         assert self.num_elements_on_page('.learner-result') == settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE
 

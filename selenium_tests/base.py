@@ -15,20 +15,20 @@ from urllib.parse import (
     urlparse,
 )
 
-from backends.edxorg import EdxOrgOAuth2
-from profiles.factories import ProfileFactory
 from django.conf import settings
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.core.management import call_command
 from django.db import connection
 from django.db.models.signals import post_save
 from factory.django import mute_signals
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver import (
     DesiredCapabilities,
     Remote,
 )
 from selenium.webdriver.support.wait import WebDriverWait
 
+from backends.edxorg import EdxOrgOAuth2
 from courses.factories import CourseRunFactory
 from dashboard.models import (
     ProgramEnrollment,
@@ -43,6 +43,7 @@ from financialaid.models import (
     TierProgram,
 )
 from micromasters.utils import now_in_utc
+from profiles.factories import ProfileFactory
 from search.indexing_api import (
     delete_index,
     recreate_index,
@@ -50,6 +51,21 @@ from search.indexing_api import (
 
 
 log = logging.getLogger(__name__)
+
+
+class CustomWebDriverWait(WebDriverWait):
+    """WebDriverWait with extra custom methods"""
+
+    def click(self, method, retries=3):
+        """Ignore StaleElementReferenceExceptions when clicking an item"""
+        while True:
+            try:
+                return self.until(method).click()
+            except StaleElementReferenceException:
+                if retries > 0:
+                    retries -= 1
+                else:
+                    raise
 
 
 class SeleniumTestsBase(StaticLiveServerTestCase):
@@ -215,7 +231,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
 
     def wait(self):
         """Helper function for WebDriverWait"""
-        return WebDriverWait(self.selenium, 5)
+        return CustomWebDriverWait(driver=self.selenium, timeout=5)
 
     def get(self, url):
         """Use self.live_server_url with a URL which will work for external services"""
