@@ -4,8 +4,8 @@ Factories for dashboard
 from datetime import timedelta
 from random import randint
 
-import factory
 import faker
+import factory
 from factory import SubFactory, LazyAttribute
 from factory.django import DjangoModelFactory
 from factory.fuzzy import (
