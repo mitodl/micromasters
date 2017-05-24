@@ -5,12 +5,12 @@ from datetime import timedelta
 from random import randint
 
 import factory
+import faker
 from factory import SubFactory, LazyAttribute
 from factory.django import DjangoModelFactory
 from factory.fuzzy import (
     FuzzyDateTime,
 )
-import faker
 
 from dashboard.models import (
     CachedCertificate,

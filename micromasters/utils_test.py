@@ -298,7 +298,7 @@ class UtilTests(unittest.TestCase):
 
 
 def test_now_in_utc():
-    """now_in_utc() should get the current time"""
+    """now_in_utc() should return the current time set to the UTC time zone"""
     now = now_in_utc()
     assert is_near_now(now)
     assert now.tzinfo == pytz.UTC
