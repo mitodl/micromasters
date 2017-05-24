@@ -9,6 +9,8 @@ from ddt import (
     unpack
 )
 from django.test import TestCase
+import pytz
+
 from courses.utils import (
     get_year_season_from_course_run,
     is_blank
@@ -26,7 +28,7 @@ class CourseUtilTests(TestCase):
         """
         Tests that year/season is calculated appropriately from a CourseRun
         """
-        fall_2016_dt = datetime(2016, 10, 1)
+        fall_2016_dt = datetime(2016, 10, 1, tzinfo=pytz.UTC)
         test_run1 = CourseRunFactory.build(edx_course_key='course-v1:MITx+CTL.SC0x+1T2016', start_date=fall_2016_dt)
         test_run2 = CourseRunFactory.build(edx_course_key='MITx/14.73x_1/1T2016', start_date=fall_2016_dt)
         test_run3 = CourseRunFactory.build(edx_course_key='MITx/14.73x_1', start_date=fall_2016_dt)

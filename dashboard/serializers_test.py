@@ -442,7 +442,7 @@ class UserProgramSerializerSemesterTests(MockedESTestCase):
         """
         Tests that semester information in a course run is serialized to the right values
         """
-        valid_semester_course_run = CourseRunFactory.build(start_date=datetime(2017, 1, 1))
+        valid_semester_course_run = CourseRunFactory.build(start_date=datetime(2017, 1, 1, tzinfo=pytz.UTC))
         no_semester_course_run = CourseRunFactory.build(start_date=None, edx_course_key='bad_key')
         valid_semester_serialized = UserProgramSearchSerializer.serialize_semester(valid_semester_course_run)
         no_semester_serialized = UserProgramSearchSerializer.serialize_semester(no_semester_course_run)

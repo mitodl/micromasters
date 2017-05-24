@@ -5,6 +5,7 @@ from datetime import datetime
 
 from django.db import migrations
 from django.db.models import Q
+import pytz
 
 
 def populate_created_updated(apps, schema_editor):
@@ -13,7 +14,7 @@ def populate_created_updated(apps, schema_editor):
     for exam_profile in ExamProfile.objects.filter(
             Q(created_on__isnull=True) | Q(updated_on__isnull=True)
     ).iterator():
-        exam_profile.created_on = datetime(2017, 3, 1)  # ExamProfile records created for the beta
+        exam_profile.created_on = datetime(2017, 3, 1, tzinfo=pytz.UTC)  # ExamProfile records created for the beta
         exam_profile.save()  # updated_on populated by virtue of auto_now=True
 
 

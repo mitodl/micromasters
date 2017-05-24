@@ -4,12 +4,14 @@ from __future__ import unicode_literals
 from datetime import datetime
 
 from django.db import migrations
+import pytz
+
 
 PILOT_SERIES_CODE = 'PILOT'
-PILOT_SCHEDULE_START_DATE = datetime(2017, 3, 6)
-PILOT_SCHEDULE_END_DATE = datetime(2017, 3, 30)
-PILOT_ELIGIBILITY_START_DATE = datetime(2017, 3, 18)
-PILOT_ELIGIBILITY_END_DATE = datetime(2017, 3, 31)
+PILOT_SCHEDULE_START_DATE = datetime(2017, 3, 6, tzinfo=pytz.UTC)
+PILOT_SCHEDULE_END_DATE = datetime(2017, 3, 30, tzinfo=pytz.UTC)
+PILOT_ELIGIBILITY_START_DATE = datetime(2017, 3, 18, tzinfo=pytz.UTC)
+PILOT_ELIGIBILITY_END_DATE = datetime(2017, 3, 31, tzinfo=pytz.UTC)
 
 
 def populate_pilot_runs(apps, schema_editor):

@@ -717,7 +717,7 @@ class FinancialAidDetailViewTests(FinancialAidBaseTestCase, APIClient):
         )
         cls.data = {
             "financial_aid_id": cls.financialaid_pending_docs.id,
-            "date_documents_sent": datetime.datetime(2016, 9, 25).strftime("%Y-%m-%d")
+            "date_documents_sent": datetime.date(2016, 9, 25).strftime("%Y-%m-%d")
         }
 
     def setUp(self):
