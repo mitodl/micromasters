@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 import datetime
 from django.db import migrations, models
-
+import pytz
 
 class Migration(migrations.Migration):
 
@@ -32,49 +32,49 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='financialaid',
             name='created_on',
-            field=models.DateTimeField(auto_now_add=True, default=datetime.datetime(2016, 9, 19, 20, 49, 9, 163340)),
+            field=models.DateTimeField(auto_now_add=True, default=datetime.datetime(2016, 9, 19, 20, 49, 9, 163340, tzinfo=pytz.UTC)),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='financialaid',
             name='updated_on',
-            field=models.DateTimeField(auto_now=True, default=datetime.datetime(2016, 9, 19, 20, 49, 15, 251688)),
+            field=models.DateTimeField(auto_now=True, default=datetime.datetime(2016, 9, 19, 20, 49, 15, 251688, tzinfo=pytz.UTC)),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='financialaidaudit',
             name='created_on',
-            field=models.DateTimeField(auto_now_add=True, default=datetime.datetime(2016, 9, 19, 20, 49, 28, 458443)),
+            field=models.DateTimeField(auto_now_add=True, default=datetime.datetime(2016, 9, 19, 20, 49, 28, 458443, tzinfo=pytz.UTC)),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='financialaidaudit',
             name='updated_on',
-            field=models.DateTimeField(auto_now=True, default=datetime.datetime(2016, 9, 19, 20, 49, 33, 212715)),
+            field=models.DateTimeField(auto_now=True, default=datetime.datetime(2016, 9, 19, 20, 49, 33, 212715, tzinfo=pytz.UTC)),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='tier',
             name='created_on',
-            field=models.DateTimeField(auto_now_add=True, default=datetime.datetime(2016, 9, 19, 20, 49, 36, 384897)),
+            field=models.DateTimeField(auto_now_add=True, default=datetime.datetime(2016, 9, 19, 20, 49, 36, 384897, tzinfo=pytz.UTC)),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='tier',
             name='updated_on',
-            field=models.DateTimeField(auto_now=True, default=datetime.datetime(2016, 9, 19, 20, 49, 39, 48049)),
+            field=models.DateTimeField(auto_now=True, default=datetime.datetime(2016, 9, 19, 20, 49, 39, 48049, tzinfo=pytz.UTC)),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='tierprogram',
             name='created_on',
-            field=models.DateTimeField(auto_now_add=True, default=datetime.datetime(2016, 9, 19, 20, 49, 42, 224231)),
+            field=models.DateTimeField(auto_now_add=True, default=datetime.datetime(2016, 9, 19, 20, 49, 42, 224231, tzinfo=pytz.UTC)),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='tierprogram',
             name='updated_on',
-            field=models.DateTimeField(auto_now=True, default=datetime.datetime(2016, 9, 19, 20, 49, 44, 842380)),
+            field=models.DateTimeField(auto_now=True, default=datetime.datetime(2016, 9, 19, 20, 49, 44, 842380, tzinfo=pytz.UTC)),
             preserve_default=False,
         ),
         migrations.AlterField(
