@@ -146,6 +146,7 @@ INSTALLED_APPS = (
     'search',
     'ui',
     'seed_data',
+    'selenium_tests',
 )
 
 DISABLE_WEBPACK_LOADER_STATS = get_var("DISABLE_WEBPACK_LOADER_STATS", False)

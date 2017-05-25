@@ -1,16 +1,20 @@
 """Basic selenium tests for MicroMasters"""
 from django.conf import settings
+from django.core.management import call_command
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 from selenium.webdriver.common.keys import Keys
 
 from courses.factories import ProgramFactory
+from courses.models import Program
 from dashboard.models import ProgramEnrollment
+from ecommerce.models import Coupon
 from roles.models import (
     Staff,
     Role,
 )
 from search.indexing_api import index_program_enrolled_users
+from seed_data.management.commands.alter_data import EXAMPLE_COMMANDS
 from selenium_tests.base import SeleniumTestsBase
 
 
@@ -24,7 +28,7 @@ class BasicTests(SeleniumTestsBase):
         Do a $0 purchase using a 100% off program-level coupon
         """
         self.login_via_admin(self.user)
-        self.get(self.live_server_url)
+        self.get("/")
 
         # Click the dashboard link on the upper right of the homepage
         self.selenium.find_element_by_class_name("header-dashboard-link").click()
@@ -100,9 +104,9 @@ class BasicTests(SeleniumTestsBase):
         Learners page should contain the appropriate number of items on each page
         """
         self.learner_setup()
-        self.get(self.live_server_url)
+        self.get("/")
 
-        self.get("{}/learners".format(self.live_server_url))
+        self.get("/learners")
         self.wait().until(lambda driver: driver.find_element_by_class_name('learner-result'))
         page_size = settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE
         assert self.num_elements_on_page('.learner-result') == page_size
@@ -117,7 +121,7 @@ class BasicTests(SeleniumTestsBase):
     def test_react_router(self):
         """Go to profile and back to learners to verify that nothing breaks"""
         self.learner_setup()
-        self.get("{}/learners".format(self.live_server_url))
+        self.get("learners")
         self.wait().until(lambda driver: driver.find_element_by_class_name('learner-result'))
 
         self.wait().click(lambda driver: driver.find_element_by_class_name("menu-icon"))
@@ -141,7 +145,7 @@ class BasicTests(SeleniumTestsBase):
     def test_query_string_preserved(self):
         """The querystring should not be affected"""
         self.learner_setup()
-        self.get("{}/learners/?q=xyz".format(self.live_server_url))
+        self.get("/learners/?q=xyz")
         self.wait().until(lambda driver: self.num_elements_on_page('.learner-result', driver=driver) == 0)
         assert self.selenium.current_url.endswith('/learners/?q=xyz')
         self.assert_console_logs()
@@ -149,7 +153,7 @@ class BasicTests(SeleniumTestsBase):
     def test_switch_program(self):
         """Switching programs should clear facets and show a different set of users"""
         self.learner_setup()
-        self.get("{}/learners".format(self.live_server_url))
+        self.get("/learners")
         self.wait().until(lambda driver: driver.find_element_by_class_name('learner-result'))
 
         assert self.num_elements_on_page('.learner-result') == settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE
@@ -165,7 +169,7 @@ class BasicTests(SeleniumTestsBase):
         )
 
         # Refresh browser and verify the count is the same
-        self.get("{}/learners".format(self.live_server_url))
+        self.get("/learners")
         self.wait().until(
             lambda driver: driver.find_element_by_css_selector('.result-info span').text == '{} Results'.format(count)
         )

@@ -10,7 +10,7 @@ from seed_data.management.commands import FAKE_USER_USERNAME_PREFIX
 
 class Command(BaseCommand):
     """
-    Seed the database with a set of realistic data, for development purposes.
+    Attach avatars to profiles
     """
     help = "Attach avatars to profiles"
 

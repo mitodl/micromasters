@@ -196,6 +196,11 @@ class CachedHandler(object):
         return self.model_cls.objects.filter(user=self.user, course_run=course_run).exists()
 
 
+def _isoformat(date):
+    """Format a date or return None if no date exists"""
+    return date.isoformat() if date else None
+
+
 class CachedEnrollmentHandler(CachedHandler):
     """Provides functionality to CachedEnrollment objects"""
     model_cls = CachedEnrollment
@@ -212,8 +217,8 @@ class CachedEnrollmentHandler(CachedHandler):
             'is_active': True,
             'course_details': {
                 'course_id': course_run.edx_course_key,
-                'enrollment_start': course_run.enrollment_start.isoformat(),
-                'enrollment_end': course_run.enrollment_end.isoformat()
+                'enrollment_start': _isoformat(course_run.enrollment_start),
+                'enrollment_end': _isoformat(course_run.enrollment_end)
             }
         }
 
@@ -407,7 +412,8 @@ def clear_course_payment_data(user, course=None, course_run=None):
             line__course_key__in=remove_falsey_values(course_keys)
         ).delete()
     else:
-        CachedEnrollmentHandler(user).set_or_create(course_run, verified=False)
+        if course_run:
+            CachedEnrollmentHandler(user).set_or_create(course_run, verified=False)
         FinalGrade.objects.filter(user=user, **final_grade_params).update(course_run_paid_on_edx=False)
 
 

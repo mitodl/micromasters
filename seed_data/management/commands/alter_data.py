@@ -5,6 +5,8 @@ Management commands that can be used to fine-tune course/program data
 from decimal import Decimal
 import json
 from functools import wraps
+import shlex
+
 from django.core.management import BaseCommand, CommandError
 
 from courses.models import CourseRun
@@ -33,62 +35,114 @@ from seed_data.lib import (
     update_fake_course_run_edx_key,
 )
 
+from collections import namedtuple
+
+
+ExampleCommand = namedtuple('ExampleCommand', ['text', 'command', 'args'])
+
+
+EXAMPLE_COMMANDS = [
+    ExampleCommand(
+        text="Get some convenient information about a course and a given user's enrollments/grades in that course",
+        command='course_info',
+        args=['--username', 'staff', '--program-title', 'Analog', '--course-title', '100'],
+    ),
+    ExampleCommand(
+        text="For a user with a username 'staff', set the 'Analog Learning' 100-level course to enrolled",
+        command='set_to_enrolled',
+        args=['--username', 'staff', '--program-title', 'Analog', '--course-title', '100'],
+    ),
+    ExampleCommand(
+        text="Same result as above, but the course title is specific enough to match a single Course",
+        command='set_to_enrolled',
+        args=['--username', 'staff', '--course-title', 'Analog Learning 100'],
+    ),
+    ExampleCommand(
+        text="Same result as above, but the CourseRun is targeted directly instead of picking the most recent from the Course",
+        command='set_to_enrolled',
+        args=['--username', 'staff', '--course-run-key', 'course-v1:MITx+Analog+Learning+100+Apr_2017'],
+    ),
+    ExampleCommand(
+        text="Set the 'Analog Learning' 300-level course to enrolled, and set it to start in the future",
+        command='set_to_enrolled',
+        args=['--username', 'staff', '--course-title', 'Analog Learning 300', '--in-future'],
+    ),
+    ExampleCommand(
+        text="Set the 'Analog Learning' 200-level course to passed with a default grade",
+        command='set_to_passed',
+        args=['--username', 'staff', '--course-title', 'Analog Learning 200'],
+    ),
+    ExampleCommand(
+        text="Set the 'Analog Learning' 200-level course to failed with a specific grade",
+        command='set_to_failed',
+        args=['--username', 'staff', '--course-title', 'Analog Learning 200', '--grade', '45'],
+    ),
+    ExampleCommand(
+        text="Set the 'Analog Learning' 300-level course to enrolled, but in need of upgrade (aka 'audit')",
+        command='set_to_needs_upgrade',
+        args=['--username', 'staff', '--program-title', 'Analog', '--course-title', '300'],
+    ),
+    ExampleCommand(
+        text="(Another way to achieve the result of the above command...)",
+        command='set_to_enrolled',
+        args=['--username', 'staff', '--course-title', 'Analog Learning 100', '--audit'],
+    ),
+    ExampleCommand(
+        text="Set the 'Analog Learning' 300-level course to enrolled and in need of upgrade, but past the deadline",
+        command='set_to_needs_upgrade',
+        args=['--username', 'staff', '--course-title', 'Analog Learning 300', '--missed-deadline'],
+    ),
+    ExampleCommand(
+        text="Set the 'Analog Learning' 100-level course to have an offered course run (and no enrollments)",
+        command='set_to_offered',
+        args=['--username', 'staff', '--course-title', 'Analog Learning 100'],
+    ),
+    ExampleCommand(
+        text="Set the 'Analog Learning' 100-level course to have an offered course run with a fuzzy start date",
+        command='set_to_offered',
+        args=['--username', 'staff', '--course-title', 'Analog Learning 100', '--fuzzy'],
+    ),
+    ExampleCommand(
+        text="Set the 'Analog Learning' 100-level course to be paid but not enrolled",
+        command='set_to_paid_but_not_enrolled',
+        args=['--username', 'staff', '--course-title', 'Analog Learning 100'],
+    ),
+    ExampleCommand(
+        text="Get a past ungraded course run for a course and set it to failed with a specific grade",
+        command='set_past_run_to_failed',
+        args=['--username', 'staff', '--program-title', 'Analog', '--course-title', '100', '--grade', '30'],
+    ),
+    ExampleCommand(
+        text="Get a past ungraded course run for a course and set it to passed",
+        command='set_past_run_to_passed',
+        args=['--username', 'staff', '--program-title', 'Analog', '--course-title', '100'],
+    ),
+    ExampleCommand(
+        text="Set a course to have a past course run that is passed, unpaid, and still upgradeable",
+        command='set_past_run_to_passed',
+        args=['--username', 'staff', '--course-title', 'Analog Learning 200', '--audit'],
+    ),
+    ExampleCommand(
+        text="Clear all of a user's dashboard data (final grade data, cached edX data, payment data) for a course",
+        command='clear_user_dashboard_data',
+        args=['--username', 'staff', '--course-title', 'Analog Learning 100'],
+    ),
+]
+
 
 USAGE_DETAILS = (
     """
     Example commands:
-
-    # Get some convenient information about a course and a given user's enrollments/grades in that course
-    alter_data course_info --username=staff --program-title='Analog' --course-title='100'
-
-    # For a user with a username 'staff', set the 'Analog Learning' 100-level course to enrolled
-    alter_data set_to_enrolled --username=staff --program-title='Analog' --course-title='100'
-
-    # Same result as above, but the course title is specific enough to match a single Course
-    alter_data set_to_enrolled --username=staff --course-title='Analog Learning 100'
-
-    # Same result as above, but the CourseRun is targeted directly instead of picking the most recent from the Course
-    alter_data set_to_enrolled --username=staff --course-run-key='course-v1:MITx+Analog+Learning+100+Apr_2017'
-
-    # Set the 'Analog Learning' 300-level course to enrolled, and set it to start in the future
-    alter_data set_to_enrolled --username=staff --course-title='Analog Learning 300' --in-future
-
-    # Set the 'Analog Learning' 200-level course to passed with a default grade
-    alter_data set_to_passed --username=staff --course-title='Analog Learning 200'
-
-    # Set the 'Analog Learning' 200-level course to failed with a specific grade
-    alter_data set_to_failed --username=staff --course-title='Analog Learning 200' --grade=45
-
-    # Set the 'Analog Learning' 300-level course to enrolled, but in need of upgrade (aka 'audit')
-    alter_data set_to_needs_upgrade --username=staff --program-title='Analog' --course-title='300'
-
-    # (Another way to achieve the result of the above command...)
-    alter_data set_to_enrolled --username=staff --course-title='Analog Learning 100' --audit
-
-    # Set the 'Analog Learning' 300-level course to enrolled and in need of upgrade, but past the deadline
-    alter_data set_to_needs_upgrade --username=staff --course-title='Analog Learning 300' --missed-deadline
-
-    # Set the 'Analog Learning' 100-level course to have an offered course run (and no enrollments)
-    alter_data set_to_offered --username=staff --course-title='Analog Learning 100'
-
-    # Set the 'Analog Learning' 100-level course to have an offered course run with a fuzzy start date
-    alter_data set_to_offered --username=staff --course-title='Analog Learning 100' --fuzzy
-
-    # Set the 'Analog Learning' 100-level course to be paid but not enrolled
-    alter_data set_to_paid_but_not_enrolled --username=staff --course-title='Analog Learning 100'
-
-    # Get a past ungraded course run for a course and set it to failed with a specific grade
-    alter_data set_past_run_to_failed --username=staff --program-title='Analog' --course-title='100' --grade=30
-
-    # Get a past ungraded course run for a course and set it to passed
-    alter_data set_past_run_to_passed --username=staff --program-title='Analog' --course-title='100'
-
-    # Set a course to have a past course run that is passed, unpaid, and still upgradeable
-    alter_data set_past_run_to_passed --username=staff --course-title='Digital Learning 100' --audit
-
-    # Clear all of a user's dashboard data (final grade data, cached edX data, payment data) for a course
-    alter_data clear_user_dashboard_data --username=staff --course-title='Analog Learning 100'
-    """
+{commands}""".format(commands="".join([
+        """
+    # {text}
+    alter_data {command} {args}
+""".format(
+            text=command.text,
+            command=command.command,
+            args=" ".join(shlex.quote(arg) for arg in command.args),
+        ) for command in EXAMPLE_COMMANDS
+    ]))
 )
 
 NEW_COURSE_RUN_PREFIX = 'new-course-run'
