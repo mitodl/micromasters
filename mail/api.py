@@ -22,6 +22,7 @@ from mail.models import (
 )
 from mail.utils import filter_recipient_variables
 from micromasters.utils import chunks
+from profiles.models import Profile
 from search.api import (
     adjust_search_for_percolator,
     search_percolate_queries,
@@ -377,15 +378,15 @@ def get_mail_vars(emails):
         generator of dict:
             A dictionary of template variables which includes email so we can tell who is who
     """
-    queryset = User.objects.filter(email__in=emails).values(
-        'email',
-        'profile__mail_id',
-        'profile__preferred_name',
+    queryset = Profile.objects.filter(user__email__in=emails).values(
+        'user__email',
+        'mail_id',
+        'preferred_name',
     ).iterator()
     return (
         {
-            'email': values['email'],
-            'mail_id': values['profile__mail_id'].hex,
-            'preferred_name': values['profile__preferred_name'],
+            'email': values['user__email'],
+            'mail_id': values['mail_id'].hex,
+            'preferred_name': values['preferred_name'],
         } for values in queryset
     )

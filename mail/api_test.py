@@ -684,3 +684,12 @@ class RecipientVariablesTests(MockedESTestCase):
     def test_missing_email(self):
         """get_mail_vars should skip missing emails without erroring"""
         assert list(get_mail_vars(['missing@email.com'])) == []
+
+    def test_missing_profile(self):
+        """get_mail_vars should skip User objects without a Profile"""
+        with mute_signals(post_save):
+            profile = ProfileFactory.create()
+        user = profile.user
+        profile.delete()
+
+        assert list(get_mail_vars([user.email])) == []
