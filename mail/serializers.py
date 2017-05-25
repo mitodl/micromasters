@@ -7,6 +7,7 @@ from rest_framework import (
     serializers
 )
 from mail.models import AutomaticEmail
+from search.models import PercolateQuery
 
 
 class GenericMailSerializer(serializers.Serializer):
@@ -17,10 +18,23 @@ class GenericMailSerializer(serializers.Serializer):
     email_body = fields.CharField(label="Email Body", style={"base_template": "textarea.html"})
 
 
+class PercolateQuerySerializer(serializers.ModelSerializer):
+    """
+    PercolateQuerySerializer
+    """
+    class Meta:
+        model = PercolateQuery
+        fields = (
+            'original_query',
+            'query'
+        )
+
+
 class AutomaticEmailSerializer(serializers.ModelSerializer):
     """
     AutomaticEmailSerializer
     """
+    query = PercolateQuerySerializer()
     class Meta:
         model = AutomaticEmail
         fields = (
@@ -28,5 +42,6 @@ class AutomaticEmailSerializer(serializers.ModelSerializer):
             'email_subject',
             'email_body',
             'sender_name',
-            'id'
+            'id',
+            'query'
         )

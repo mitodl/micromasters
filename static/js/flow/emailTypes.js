@@ -50,4 +50,5 @@ export type AutomaticEmail = {
   email_body:     string,
   sender_name:    string,
   id:             number,
+  query:          Object
 };

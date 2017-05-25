@@ -1,6 +1,7 @@
 import React from 'react';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import R from 'ramda';
+import _ from 'lodash';
 
 import {
   sendCourseTeamMail,
@@ -10,7 +11,7 @@ import {
 import { makeProfileImageUrl, mapObj } from '../../util/util';
 import type { Profile } from '../../flow/profileTypes';
 import type { Course } from '../../flow/programTypes';
-import type { EmailConfig, EmailState, Filter } from '../../flow/emailTypes';
+import type { AutomaticEmail, EmailConfig, EmailState, Filter } from '../../flow/emailTypes';
 import { actions } from '../../lib/redux_rest.js';
 import { SEARCH_FACET_FIELD_LABEL_MAP } from '../../constants';
 import { makeCountryNameTranslations } from '../LearnerSearch';
@@ -147,9 +148,57 @@ export const convertEmailEdit = mapObj(([k, v]) => (
   [k.match(/^subject$|^body$/) ? `email_${k}` : k.replace(/^email_/, ""), v]
 ));
 
+const findTerms = (tree) => {
+  if (tree.hasOwnProperty("term") && !tree.term.hasOwnProperty("program.id")) {
+    return [tree.term];
+  }
+  if (R.any(_.isObject, Object.values(tree))) {
+    return R.flatten(
+      Object.values(tree)
+      .filter(_.isObject)
+      .map(obj => findTerms(obj))
+    );
+  }
+  return undefined;
+};
+
+export const getFilters  = (root: Object) => {
+  let terms = R.filter(obj => obj !== undefined, findTerms(root));
+
+  return _.map(terms, (term: Object) => ({
+    'id': Object.keys(term)[0],
+    'name': Object.keys(term)[0],
+    'value': term[Object.keys(term)[0]]
+  }));
+};
+
 export const AUTOMATIC_EMAIL_ADMIN_CONFIG: EmailConfig = {
-  title: 'Edit Message',
+  title: 'Edit Email Campaign',
   editEmail: actions.automaticEmails.patch,
-  emailOpenParams: R.compose(R.objOf('inputs'), convertEmailEdit),
   emailSendParams: R.compose(convertEmailEdit, R.prop('inputs')),
+
+  emailOpenParams: (emailOpenParams: AutomaticEmail) => ({
+    inputs: {
+      subject: emailOpenParams.email_subject,
+      body: emailOpenParams.email_body,
+      sendAutomaticEmails: emailOpenParams.enabled,
+    },
+    filters: getFilters(emailOpenParams.query.original_query.post_filter)
+  }),
+
+  renderRecipients: (filters?: Array<Filter>) => {
+    if (!filters || filters.length <= 0) {
+      return null;
+    }
+    return (
+      <div className="sk-selected-filters-display">
+        <div className="sk-selected-filters-title">
+          Recipients
+        </div>
+        <div className="sk-selected-filters">
+          {renderFilterOptions(filters)}
+        </div>
+      </div>
+    );
+  }
 };
