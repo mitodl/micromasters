@@ -21,7 +21,12 @@ from django.core.management import call_command
 from django.db import connection
 from django.db.models.signals import post_save
 from factory.django import mute_signals
-from selenium.common.exceptions import StaleElementReferenceException
+import pytest
+from selenium.common.exceptions import (
+    ElementNotVisibleException,
+    StaleElementReferenceException,
+    WebDriverException,
+)
 from selenium.webdriver import (
     DesiredCapabilities,
     Remote,
@@ -61,8 +66,15 @@ class CustomWebDriverWait(WebDriverWait):
         while True:
             try:
                 return self.until(method).click()
-            except StaleElementReferenceException:
+            except (StaleElementReferenceException, ElementNotVisibleException):
                 if retries > 0:
+                    retries -= 1
+                else:
+                    raise
+            except WebDriverException as ex:
+                if 'not clickable at point' not in ex.msg:
+                    raise
+                elif retries > 0:
                     retries -= 1
                 else:
                     raise
@@ -82,7 +94,8 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
             patcher.start()
 
         # Clear and repopulate database using migrations
-        cls.clear_db()
+        if not pytest.config.option.reuse_db:
+            cls.clear_db()
         call_command("migrate", noinput=True)
 
         # ensure index exists. This uses the database so it must come after all migrations are run.
@@ -111,6 +124,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
     def setUp(self):
         super().setUp()
 
+        self.restore_db()
         # Ensure Elasticsearch index exists
         recreate_index()
 
@@ -121,7 +135,10 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
 
         # Update profile to pass validation so we don't get redirected to the signup page
         profile = self.user.profile
-        profile.phone_number = '+93-23-232-3232'
+        profile.phone_number = '+1-800-888-8888'
+        profile.country = 'US'
+        profile.state_or_territory = 'US-MA'
+        profile.postal_code = '02142'
         profile.filled_out = True
         profile.agreed_to_terms_of_service = True
         profile.save()
@@ -161,7 +178,8 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         UserCoupon.objects.create(coupon=coupon, user=self.user)
         ProgramEnrollment.objects.create(program=run.course.program, user=self.user)
 
-        self.assert_console_logs()
+        # Iterate through browser logs to empty them so we start with a clean slate
+        list(self.selenium.get_log("browser"))
 
     @classmethod
     def tearDownClass(cls):
