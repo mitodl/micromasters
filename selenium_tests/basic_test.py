@@ -1,20 +1,16 @@
 """Basic selenium tests for MicroMasters"""
 from django.conf import settings
-from django.core.management import call_command
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 from selenium.webdriver.common.keys import Keys
 
 from courses.factories import ProgramFactory
-from courses.models import Program
 from dashboard.models import ProgramEnrollment
-from ecommerce.models import Coupon
 from roles.models import (
     Staff,
     Role,
 )
 from search.indexing_api import index_program_enrolled_users
-from seed_data.management.commands.alter_data import EXAMPLE_COMMANDS
 from selenium_tests.base import SeleniumTestsBase
 
 

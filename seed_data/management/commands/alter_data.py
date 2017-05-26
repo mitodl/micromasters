@@ -2,6 +2,7 @@
 Management commands that can be used to fine-tune course/program data
 (and associated enrollments/grades/etc) for a user.
 """
+from collections import namedtuple
 from decimal import Decimal
 import json
 from functools import wraps
@@ -35,8 +36,6 @@ from seed_data.lib import (
     update_fake_course_run_edx_key,
 )
 
-from collections import namedtuple
-
 
 ExampleCommand = namedtuple('ExampleCommand', ['text', 'command', 'args'])
 
@@ -58,7 +57,8 @@ EXAMPLE_COMMANDS = [
         args=['--username', 'staff', '--course-title', 'Analog Learning 100'],
     ),
     ExampleCommand(
-        text="Same result as above, but the CourseRun is targeted directly instead of picking the most recent from the Course",
+        text="Same result as above, but the CourseRun is targeted "
+             "directly instead of picking the most recent from the Course",
         command='set_to_enrolled',
         args=['--username', 'staff', '--course-run-key', 'course-v1:MITx+Analog+Learning+100+Apr_2017'],
     ),
@@ -128,22 +128,19 @@ EXAMPLE_COMMANDS = [
         args=['--username', 'staff', '--course-title', 'Analog Learning 100'],
     ),
 ]
-
-
-USAGE_DETAILS = (
-    """
-    Example commands:
-{commands}""".format(commands="".join([
-        """
+EXAMPLE_COMMAND_TEMPLATE = """
     # {text}
     alter_data {command} {args}
-""".format(
-            text=command.text,
-            command=command.command,
-            args=" ".join(shlex.quote(arg) for arg in command.args),
-        ) for command in EXAMPLE_COMMANDS
-    ]))
-)
+"""
+
+
+USAGE_DETAILS = ("""
+    Example commands:
+{commands}""".format(commands="".join([EXAMPLE_COMMAND_TEMPLATE.format(
+    text=command.text,
+    command=command.command,
+    args=" ".join(shlex.quote(arg) for arg in command.args),
+) for command in EXAMPLE_COMMANDS])))
 
 NEW_COURSE_RUN_PREFIX = 'new-course-run'
 
