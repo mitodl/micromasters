@@ -30,10 +30,10 @@ class TestRenderBundle(TestCase):
     Tests for render_bundle
     """
 
-    @override_settings(DEBUG=True, USE_WEBPACK_DEV_SERVER=True)
+    @override_settings(USE_WEBPACK_DEV_SERVER=True)
     def test_debug(self):
         """
-        If DEBUG=True and USE_WEBPACK_DEV_SERVER=True, return a hot reload URL
+        If USE_WEBPACK_DEV_SERVER=True, return a hot reload URL
         """
         request = RequestFactory().get('/')
         context = {"request": request}
@@ -57,7 +57,7 @@ class TestRenderBundle(TestCase):
             get_bundle.assert_called_with(bundle_name)
             get_loader.assert_called_with('DEFAULT')
 
-    @override_settings(DEBUG=True, USE_WEBPACK_DEV_SERVER=False)
+    @override_settings(USE_WEBPACK_DEV_SERVER=False)
     def test_production(self):
         """
         If USE_WEBPACK_DEV_SERVER=False, return a static URL for production

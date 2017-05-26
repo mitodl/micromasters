@@ -302,6 +302,8 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
                 continue
             if "zendesk" in message.lower():
                 continue
+            if "__webpack_hmr" in message:
+                continue
 
             # warnings (e.g. deprecations) should not fail the tests
             if entry['level'] in ["WARNING"]:
