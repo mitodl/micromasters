@@ -22,4 +22,4 @@ docker-compose run \
    -e ELASTICSEARCH_INDEX=testindex \
    -e USE_WEBPACK_DEV_SERVER=True \
    -e WEBPACK_DEV_SERVER_HOST="$WEBPACK_DEV_SERVER_HOST" \
-   selenium py.test ./selenium_tests/basic_test.py::BasicTests::test_zero_price_purchase
+   selenium py.test ./selenium_tests
