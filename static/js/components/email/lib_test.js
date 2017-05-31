@@ -18,6 +18,7 @@ import {
   LEARNER_EMAIL_CONFIG,
   AUTOMATIC_EMAIL_ADMIN_CONFIG,
   convertEmailEdit,
+  getFilters,
 } from './lib';
 import {
   START_EMAIL_EDIT,
@@ -75,6 +76,28 @@ describe('Specific email config', () => {
       </MuiThemeProvider>
     );
   };
+
+  const queryFilters = `{
+    "bool": {
+      "must":[
+        { 
+          "nested": {
+            "path": "program.enrollments",
+            "filter": {
+              "term": {
+                "program.enrollments.payment_status": "Paid"
+              }
+            }
+          }
+        },
+        {
+          "term": {
+            "program.id":1
+          }
+        }
+      ]
+    }
+  }`;
 
   describe('for the learner email', () => {
     let wrapper,
@@ -227,6 +250,15 @@ describe('Specific email config', () => {
         ].forEach(obj => {
           assert.deepEqual(convertEmailEdit(convertEmailEdit(obj)), obj);
         });
+      });
+
+      it('should return filters', () => {
+        let filters = getFilters(JSON.parse(queryFilters));
+        assert.deepEqual(filters, [{
+          "id": "program.enrollments.payment_status",
+          "name": "program.enrollments.payment_status",
+          "value": "Paid"
+        }]);
       });
     });
   });

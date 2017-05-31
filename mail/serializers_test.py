@@ -2,7 +2,7 @@
 Tests for the mail serializers
 """
 from mail.factories import AutomaticEmailFactory
-from mail.serializers import AutomaticEmailSerializer
+from mail.serializers import AutomaticEmailSerializer, PercolateQuerySerializer
 
 from search.base import MockedESTestCase
 
@@ -23,4 +23,5 @@ class AutomaticEmailSerializerTests(MockedESTestCase):
             "email_body": automatic.email_body,
             "sender_name": automatic.sender_name,
             "id": automatic.id,
+            "query": PercolateQuerySerializer(automatic.query).data
         }

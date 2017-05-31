@@ -1009,6 +1009,28 @@ export const EDX_CHECKOUT_RESPONSE = deepFreeze({
 });
 /* eslint-enable max-len */
 
+const queryFilters = `{
+  "bool": {
+    "must":[
+      { 
+        "nested": {
+          "path": "program.enrollments",
+          "filter": {
+            "term": {
+              "program.enrollments.payment_status": "Paid"
+            }
+          }
+        }
+      },
+      {
+        "term": {
+          "program.id":1
+        }
+      }
+    ]
+  }
+}`;
+
 export const GET_AUTOMATIC_EMAILS_RESPONSE = [
   {
     enabled: true,
@@ -1016,6 +1038,11 @@ export const GET_AUTOMATIC_EMAILS_RESPONSE = [
     email_body: 'such a great email, literally so great',
     sender_name: 'Simone de Beauvoir',
     id: 1,
+    query: {
+      original_query: {
+        post_filter: {...JSON.parse(queryFilters)}
+      }
+    }
   },
   {
     enabled: false,
@@ -1023,5 +1050,10 @@ export const GET_AUTOMATIC_EMAILS_RESPONSE = [
     email_body: 'this one was not as good :(',
     sender_name: 'Jean-Paul Sartre',
     id: 2,
+    query: {
+      original_query: {
+        post_filter: {...JSON.parse(queryFilters)}
+      }
+    }
   }
 ];

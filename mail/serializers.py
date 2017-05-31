@@ -35,6 +35,7 @@ class AutomaticEmailSerializer(serializers.ModelSerializer):
     AutomaticEmailSerializer
     """
     query = PercolateQuerySerializer()
+
     class Meta:
         model = AutomaticEmail
         fields = (
