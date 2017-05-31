@@ -109,6 +109,9 @@ class CustomWebDriverWait(WebDriverWait):
 class SeleniumTestsBase(StaticLiveServerTestCase):
     """Base class for selenium tests"""
 
+    # Password used by all created users
+    PASSWORD = 'pass'
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -155,21 +158,6 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         recreate_index()
 
         self.user = self.create_user()
-        self.password = "pass"
-        self.user.set_password(self.password)
-        self.user.save()
-
-        # Update profile to pass validation so we don't get redirected to the signup page
-        profile = self.user.profile
-        profile.phone_number = '+1-800-888-8888'
-        profile.country = 'US'
-        profile.state_or_territory = 'US-MA'
-        profile.postal_code = '02142'
-        profile.filled_out = True
-        profile.agreed_to_terms_of_service = True
-        profile.save()
-
-        self.edx_username = self.user.social_auth.get(provider=EdxOrgOAuth2.name).uid
 
         # Create a live program with valid prices and financial aid
         run = CourseRunFactory.create(
@@ -296,7 +284,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         self.get("admin/")
         self.wait().until(lambda driver: driver.find_element_by_id("id_username"))
         self.selenium.find_element_by_id("id_username").send_keys(user.username)
-        self.selenium.find_element_by_id("id_password").send_keys(self.password)
+        self.selenium.find_element_by_id("id_password").send_keys(self.PASSWORD)
         self.selenium.find_element_by_css_selector("input[type=submit]").click()
         # This is the 'Welcome, username' box on the upper right
         self.wait().until(lambda driver: driver.find_element_by_id("user-tools"))
@@ -359,11 +347,15 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         print(self.selenium.find_element_by_tag_name("body").get_attribute("innerHTML"))
 
     @classmethod
-    def create_user(cls):
+    def create_user(cls, username=None):
         """Create a user with a profile and fake edX social auth data"""
         with mute_signals(post_save):
             profile = ProfileFactory.create(filled_out=True)
         user = profile.user
+
+        if username is not None:
+            user.username = username
+            user.save()
 
         # Create a fake edX social auth to make this user look like they logged in via edX
         later = now_in_utc() + timedelta(minutes=5)
@@ -383,6 +375,20 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
             certificate=later,
             current_grade=later,
         )
+
+        user.set_password(cls.PASSWORD)
+        user.save()
+
+        # Update profile to pass validation so we don't get redirected to the signup page
+        profile = user.profile
+        profile.phone_number = '+1-800-888-8888'
+        profile.country = 'US'
+        profile.state_or_territory = 'US-MA'
+        profile.postal_code = '02142'
+        profile.filled_out = True
+        profile.agreed_to_terms_of_service = True
+        profile.save()
+
         return user
 
     def num_elements_on_page(self, selector, driver=None):
@@ -390,3 +396,8 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         script = "return document.querySelectorAll({selector!r}).length".format(selector=selector)
         driver = driver or self.selenium
         return driver.execute_script(script)
+
+    @property
+    def edx_username(self):
+        """Get the edx username for self.user"""
+        return self.user.social_auth.get(provider=EdxOrgOAuth2.name).uid
