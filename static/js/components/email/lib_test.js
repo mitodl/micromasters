@@ -19,6 +19,7 @@ import {
   AUTOMATIC_EMAIL_ADMIN_CONFIG,
   convertEmailEdit,
   getFilters,
+  findTerms,
 } from './lib';
 import {
   START_EMAIL_EDIT,
@@ -259,6 +260,43 @@ describe('Specific email config', () => {
           "name": "program.enrollments.payment_status",
           "value": "Paid"
         }]);
+      });
+
+      describe('getFilters', () => {
+        it('should return filters', () => {
+          let filters = getFilters(JSON.parse(queryFilters));
+          assert.deepEqual(filters, [{
+            "id": "program.enrollments.payment_status",
+            "name": "program.enrollments.payment_status",
+            "value": "Paid"
+          }]);
+        });
+      });
+
+      describe('findTerms', () => {
+        it('should return filters', () => {
+          let filters = findTerms(JSON.parse(queryFilters));
+          assert.equal(filters.length, 1);
+          assert.deepEqual(filters, [{
+            "program.enrollments.payment_status": "Paid"
+          }]);
+        });
+
+        it('should ignore program.id and return empty list when no filter selected', () => {
+          const query = `{
+            "bool": {
+              "must":[
+                {
+                  "term": {
+                    "program.id":1
+                  }
+                }
+              ]
+            }
+          }`;
+          let filters = findTerms(JSON.parse(query));
+          assert.equal(filters.length, 0);
+        });
       });
     });
   });

@@ -148,7 +148,7 @@ export const convertEmailEdit = mapObj(([k, v]) => (
   [k.match(/^subject$|^body$/) ? `email_${k}` : k.replace(/^email_/, ""), v]
 ));
 
-const findTerms = (tree) => {
+export const findTerms = (tree) => {
   if (tree.hasOwnProperty("term") && !tree.term.hasOwnProperty("program.id")) {
     return [tree.term];
   }
@@ -159,12 +159,11 @@ const findTerms = (tree) => {
       .map(obj => findTerms(obj))
     );
   }
-  return undefined;
+  return [];
 };
 
 export const getFilters  = (root: Object) => {
-  let terms = R.filter(obj => obj !== undefined, findTerms(root));
-
+  let terms = findTerms(root);
   return _.map(terms, (term: Object) => ({
     'id': Object.keys(term)[0],
     'name': Object.keys(term)[0],
