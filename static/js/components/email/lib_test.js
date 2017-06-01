@@ -276,7 +276,7 @@ describe('Specific email config', () => {
       describe('findFilters', () => {
         it('should return an empty list if passed an empty object', () => {
           let filters = findFilters({});
-          assert.equal(filters.length, 0);
+          assert.deepEqual(filters, []);
         });
 
         it('should return an empty list if passed an object without any "term" and "range" key on it', () => {
@@ -290,7 +290,7 @@ describe('Specific email config', () => {
             }
           }`;
           let filters = findFilters(JSON.parse(query));
-          assert.equal(filters.length, 0);
+          assert.deepEqual(filters, []);
         });
 
         it('should return a list of filters defined at the top-level', () => {
@@ -319,7 +319,11 @@ describe('Specific email config', () => {
             }
           }`;
           let filters = findFilters(JSON.parse(query));
-          assert.equal(filters.length, 3);
+          assert.deepEqual(filters, [
+            { "program.grade_average": { "gte": 0, "lte": 81 } },
+            { "profile.birth_country": "US" },
+            { "profile.country": "US" },
+          ]);
         });
 
         it('should return a list of filters which are nested in the object', () => {
@@ -364,7 +368,12 @@ describe('Specific email config', () => {
             }
           }`;
           let filters = findFilters(JSON.parse(query));
-          assert.equal(filters.length, 4);
+          assert.deepEqual(filters, [
+            { "program.enrollments.course_title": "Digital Learning 100" },
+            { "program.enrollments.final_grade": { "gte": 0, "lte": 89 } },
+            { "program.enrollments.payment_status": "Paid" },
+            { "program.enrollments.semester": "2016 - Summer" },
+          ]);
         });
 
         it('should return a list of filters which are nested at different levels', () => {
@@ -416,7 +425,11 @@ describe('Specific email config', () => {
             }
           }`;
           let filters = findFilters(JSON.parse(query));
-          assert.equal(filters.length, 3);
+          assert.deepEqual(filters, [
+            { "program.enrollments.course_title": "Digital Learning 100" },
+            { "profile.education.degree_name": "b" },
+            { "profile.work_history.company_name": "Volvo" },
+          ]);
         });
 
         it('should ignore program.id', () => {
@@ -432,7 +445,7 @@ describe('Specific email config', () => {
             }
           }`;
           let filters = findFilters(JSON.parse(query));
-          assert.equal(filters.length, 0);
+          assert.deepEqual(filters, []);
         });
       });
     });
