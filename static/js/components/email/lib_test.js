@@ -19,7 +19,7 @@ import {
   AUTOMATIC_EMAIL_ADMIN_CONFIG,
   convertEmailEdit,
   getFilters,
-  findTerms,
+  findFilters,
 } from './lib';
 import {
   START_EMAIL_EDIT,
@@ -273,16 +273,153 @@ describe('Specific email config', () => {
         });
       });
 
-      describe('findTerms', () => {
-        it('should return filters', () => {
-          let filters = findTerms(JSON.parse(queryFilters));
-          assert.equal(filters.length, 1);
-          assert.deepEqual(filters, [{
-            "program.enrollments.payment_status": "Paid"
-          }]);
+      describe('findFilters', () => {
+        it('should return an empty list if passed an empty object', () => {
+          let filters = findFilters({});
+          assert.equal(filters.length, 0);
         });
 
-        it('should ignore program.id and return empty list when no filter selected', () => {
+        it('should return an empty list if passed an object without any "term" and "range" key on it', () => {
+          const query = `{
+            "bool": {
+              "must":[
+                {
+                  "program.id":1
+                }
+              ]
+            }
+          }`;
+          let filters = findFilters(JSON.parse(query));
+          assert.equal(filters.length, 0);
+        });
+
+        it('should return a list of filters defined at the top-level', () => {
+          const query = `{
+            "bool": {
+              "must":[
+                {
+                  "range": {
+                    "program.grade_average": {
+                      "gte": 0,
+                      "lte": 81
+                    }
+                  }
+                },
+                {
+                  "term": {
+                    "profile.birth_country": "US"
+                  }
+                },
+                {
+                  "term": {
+                    "profile.country": "US"
+                  }
+                }
+              ]
+            }
+          }`;
+          let filters = findFilters(JSON.parse(query));
+          assert.equal(filters.length, 3);
+        });
+
+        it('should return a list of filters which are nested in the object', () => {
+          const query = `{
+            "bool": {
+              "must": [
+                {
+                  "nested": {
+                    "path": "program.enrollments",
+                    "filter": {
+                      "bool": {
+                        "must": [
+                          {
+                            "term": {
+                              "program.enrollments.course_title": "Digital Learning 100"
+                            }
+                          },
+                          {
+                            "range": {
+                              "program.enrollments.final_grade": {
+                                "gte": 0,
+                                "lte": 89
+                              }
+                            }
+                          },
+                          {
+                            "term": {
+                              "program.enrollments.payment_status": "Paid"
+                            }
+                          },
+                          {
+                            "term": {
+                              "program.enrollments.semester": "2016 - Summer"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }`;
+          let filters = findFilters(JSON.parse(query));
+          assert.equal(filters.length, 4);
+        });
+
+        it('should return a list of filters which are nested at different levels', () => {
+          let query = `{
+            "bool": {
+              "must": [
+                {
+                  "nested": {
+                    "path": "program.enrollments",
+                    "filter": {
+                      "bool": {
+                        "must": [
+                          {
+                            "term": {
+                              "program.enrollments.course_title": "Digital Learning 100"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "nested": {
+                    "path": "profile.education",
+                    "filter": {
+                      "term": {
+                        "profile.education.degree_name": "b"
+                      }
+                    }
+                  }
+                },
+                {
+                  "nested": {
+                    "path": "profile.work_history",
+                    "filter": {
+                      "term": {
+                        "profile.work_history.company_name": "Volvo"
+                      }
+                    }
+                  }
+                },
+                {
+                  "term": {
+                    "program.id": 1
+                  }
+                }
+              ]
+            }
+          }`;
+          let filters = findFilters(JSON.parse(query));
+          assert.equal(filters.length, 3);
+        });
+
+        it('should ignore program.id', () => {
           const query = `{
             "bool": {
               "must":[
@@ -294,7 +431,7 @@ describe('Specific email config', () => {
               ]
             }
           }`;
-          let filters = findTerms(JSON.parse(query));
+          let filters = findFilters(JSON.parse(query));
           assert.equal(filters.length, 0);
         });
       });

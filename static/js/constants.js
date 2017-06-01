@@ -35,6 +35,7 @@ export const SEARCH_FACET_FIELD_LABEL_MAP = {
   'profile.education.degree_name': 'Degree',
   'profile.work_history.company_name': 'Company',
   'num-courses-passed': '# of Courses Passed',
+  'program.enrollments.final_grade': 'Final Grade'
 };
 
 // NOTE: these need to be kept in sync with ui/url_utils.py

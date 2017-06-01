@@ -148,26 +148,35 @@ export const convertEmailEdit = mapObj(([k, v]) => (
   [k.match(/^subject$|^body$/) ? `email_${k}` : k.replace(/^email_/, ""), v]
 ));
 
-export const findTerms = (tree) => {
+export const findFilters = (tree) => {
   if (tree.hasOwnProperty("term") && !tree.term.hasOwnProperty("program.id")) {
     return [tree.term];
   }
+
+  if (tree.hasOwnProperty("range")) {
+    return [tree.range];
+  }
+
   if (R.any(_.isObject, Object.values(tree))) {
     return R.flatten(
       Object.values(tree)
       .filter(_.isObject)
-      .map(obj => findTerms(obj))
+      .map(obj => findFilters(obj))
     );
   }
   return [];
 };
 
+const serializeValue = (value: Object|string) => (
+  _.isObject(value) ? `${value.gte} - ${value.lte}` : value
+);
+
 export const getFilters  = (root: Object) => {
-  let terms = findTerms(root);
+  let terms = findFilters(root);
   return _.map(terms, (term: Object) => ({
     'id': Object.keys(term)[0],
     'name': Object.keys(term)[0],
-    'value': term[Object.keys(term)[0]]
+    'value': serializeValue(term[Object.keys(term)[0]])
   }));
 };
 
