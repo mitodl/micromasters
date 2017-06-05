@@ -328,6 +328,10 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
                 continue
             if "__webpack_hmr" in message:
                 continue
+            if "Warning: Accessing PropTypes via the main React package is deprecated." in message:
+                continue
+            if "Warning: ReactTelephoneInput: React.createClass is deprecated" in message:
+                continue
 
             # warnings (e.g. deprecations) should not fail the tests
             if entry['level'] in ["WARNING"]:
