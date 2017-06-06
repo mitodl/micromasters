@@ -51,18 +51,22 @@ class BasicTests(SeleniumTestsBase):
         )
         self.assert_console_logs()
 
-    def learner_setup(self):
+
+class LearnerTests(SeleniumTestsBase):
+    """Tests for learner search"""
+
+    @classmethod
+    def setUpTestData(cls):
         """
         Do setup common to learner tests.
-        Ideally this should be moved to a setUp of its own test class or into a pytest fixture
-        but that requires some refactoring.
         """
+        super().setUpTestData()
         # Create a second program that we aren't viewing users from other programs
-        self.other_program = ProgramFactory.create(live=True)
+        cls.other_program = ProgramFactory.create(live=True)
 
-        for program in [self.program, self.other_program]:
+        for program in [cls.program, cls.other_program]:
             Role.objects.create(
-                user=self.user,
+                user=cls.user,
                 program=program,
                 role=Staff.ROLE_ID,
             )
@@ -72,34 +76,37 @@ class BasicTests(SeleniumTestsBase):
             # Create enough profiles for two pages, but make the second page slightly smaller than the first
             # So we can assert that we're on the second page by counting the results
             for i in range((page_size * 2) - 5):
-                user = self.create_user()
-                ProgramEnrollment.objects.create(program=self.program, user=user)
+                user = cls.create_user()
+                ProgramEnrollment.objects.create(program=cls.program, user=user)
 
                 if i % 2 == 0:
                     # Some of the users are also enrolled in the other program
-                    ProgramEnrollment.objects.create(program=self.other_program, user=user)
+                    ProgramEnrollment.objects.create(program=cls.other_program, user=user)
                 else:
                     # Others don't overlap
                     for _ in range(2):
                         ProgramEnrollment.objects.create(
-                            program=self.other_program,
-                            user=self.create_user(),
+                            program=cls.other_program,
+                            user=cls.create_user(),
                         )
 
         ProgramEnrollment.objects.create(
-            user=self.user,
-            program=self.other_program,
+            user=cls.user,
+            program=cls.other_program,
         )
 
         # Update for new users and new role
         index_program_enrolled_users(ProgramEnrollment.objects.iterator())
+
+    def setUp(self):
+        """Login the user before each test"""
+        super().setUp()
         self.login_via_admin(self.user)
 
     def test_learners(self):
         """
         Learners page should contain the appropriate number of items on each page
         """
-        self.learner_setup()
         self.get("/")
 
         self.get("/learners")
@@ -116,7 +123,6 @@ class BasicTests(SeleniumTestsBase):
 
     def test_react_router(self):
         """Go to profile and back to learners to verify that nothing breaks"""
-        self.learner_setup()
         self.get("learners")
         self.wait().until(lambda driver: driver.find_element_by_class_name('learner-result'))
 
@@ -140,7 +146,6 @@ class BasicTests(SeleniumTestsBase):
 
     def test_query_string_preserved(self):
         """The querystring should not be affected"""
-        self.learner_setup()
         self.get("/learners/?q=xyz")
         self.wait().until(lambda driver: self.num_elements_on_page('.learner-result', driver=driver) == 0)
         assert self.selenium.current_url.endswith('/learners/?q=xyz')
@@ -148,7 +153,6 @@ class BasicTests(SeleniumTestsBase):
 
     def test_switch_program(self):
         """Switching programs should clear facets and show a different set of users"""
-        self.learner_setup()
         self.get("/learners")
         self.wait().until(lambda driver: driver.find_element_by_class_name('learner-result'))
 

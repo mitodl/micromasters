@@ -5,10 +5,11 @@ import logging
 import os
 import socket
 from subprocess import (
+    CalledProcessError,
     check_call,
+    check_output,
     DEVNULL,
 )
-from tempfile import mkstemp
 from unittest.mock import patch
 from urllib.parse import (
     ParseResult,
@@ -106,58 +107,63 @@ class CustomWebDriverWait(WebDriverWait):
                     raise
 
 
+# During setUpClass the tests will do some initialization of the database. To avoid running migrations once
+# per test class we use this flag to determine the first time setUpClass is run.
+INITIALIZED_DB = False
+
+
 class SeleniumTestsBase(StaticLiveServerTestCase):
     """Base class for selenium tests"""
 
     # Password used by all created users
     PASSWORD = 'pass'
+    first_time = now_in_utc()
+    selenium = None
+    patchers = []
 
     @classmethod
     def setUpClass(cls):
-        super().setUpClass()
+        try:
+            super().setUpClass()
 
-        # Patch functions so we don't contact edX
-        cls.patchers = []
-        cls.patchers.append(patch('ecommerce.views.enroll_user_on_success', autospec=True))
-        for patcher in cls.patchers:
-            patcher.start()
+            # Patch functions so we don't contact edX
+            cls.patchers = []
+            cls.patchers.append(patch('ecommerce.views.enroll_user_on_success', autospec=True))
+            for patcher in cls.patchers:
+                patcher.start()
 
-        # Clear and repopulate database using migrations
-        if not pytest.config.option.reuse_db:
-            cls.clear_db()
-        call_command("migrate", noinput=True)
+            # Clear and repopulate database using migrations
+            global INITIALIZED_DB  # pylint: disable=global-statement
+            if not pytest.config.option.reuse_db and not INITIALIZED_DB:
+                cls.clear_db()
+            INITIALIZED_DB = True
+            call_command("migrate", noinput=True)
 
-        # ensure index exists. This uses the database so it must come after all migrations are run.
-        recreate_index()
+            # Copy the database so we can do a quick revert and skip migrations
+            cls.backup_db(cls._get_migrations_backup())
+            # ensure index exists. This uses the database so it must come after all migrations are run.
+            # It must also come before working with any new models whose signals may involve Elasticsearch.
+            recreate_index()
 
-        # Dump the database so we can do a quick revert and skip migrations
-        cls.database_dump_path = cls.dump_db()
-        cls.restore_db()
+            # Create data used by each test in the test case
+            cls.setUpTestData()
 
-        # Start a selenium server running chrome
-        capabilities = DesiredCapabilities.CHROME.copy()
-        capabilities['chromeOptions'] = {
-            'binary': os.getenv('CHROME_BIN', '/usr/bin/google-chrome-stable'),
-            'args': ['--no-sandbox'],
-        }
+            # Make a copy of the database after setUpTestData so that
+            cls.backup_db(cls._get_data_backup())
 
-        # Setup selenium remote connection here. This should happen at the end of setUpClass
-        # because if an exception is raised here, tearDownClass will not get executed, which will leave
-        # a connection to selenium open preventing it from rerunning the test without restarting the grid.
-        cls.selenium = Remote(
-            os.getenv('SELENIUM_URL', 'http://chrome:5555/wd/hub'),
-            capabilities,
-        )
-        cls.selenium.implicitly_wait(10)
+        except:
+            # This is actually not the default thing to do for unittest.TestCase, but we have some stuff that needs
+            # to cleanup
+            cls.tearDownClass()
+            raise
 
-    def setUp(self):
-        super().setUp()
-
-        self.restore_db()
-        # Ensure Elasticsearch index exists
-        recreate_index()
-
-        self.user = self.create_user()
+    @classmethod
+    def setUpTestData(cls):
+        """
+        Create models at the class level here. These will be saved in the backup database and
+        restored for quick access.
+        """
+        cls.user = cls.create_user()
 
         # Create a live program with valid prices and financial aid
         run = CourseRunFactory.create(
@@ -165,7 +171,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
             course__program__financial_aid_availability=True,
             course__program__price=1000,
         )
-        self.program = program = run.course.program
+        cls.program = program = run.course.program
         TierProgram.objects.create(
             tier=Tier.objects.create(name="$0 discount"),
             current=True,
@@ -189,26 +195,47 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         coupon.content_object = program
         coupon.save()
         # Attach coupon and program to user
-        UserCoupon.objects.create(coupon=coupon, user=self.user)
-        ProgramEnrollment.objects.create(program=run.course.program, user=self.user)
+        UserCoupon.objects.create(coupon=coupon, user=cls.user)
+        ProgramEnrollment.objects.create(program=run.course.program, user=cls.user)
 
-        # Iterate through browser logs to empty them so we start with a clean slate
-        list(self.selenium.get_log("browser"))
+    def setUp(self):
+        try:
+            super().setUp()
+
+            self.restore_db(self._get_data_backup())
+            # Ensure Elasticsearch index exists and is up to date
+            recreate_index()
+
+            # Start a selenium server running chrome
+            capabilities = DesiredCapabilities.CHROME.copy()
+            capabilities['chromeOptions'] = {
+                'binary': os.getenv('CHROME_BIN', '/usr/bin/google-chrome-stable'),
+                'args': ['--no-sandbox'],
+            }
+
+            # Setup selenium remote connection here. This should happen at the end of setUpClass
+            # because if an exception is raised here, tearDownClass will not get executed, which will leave
+            # a connection to selenium open preventing it from rerunning the test without restarting the grid.
+            self.selenium = Remote(
+                os.getenv('SELENIUM_URL', 'http://chrome:5555/wd/hub'),
+                capabilities,
+            )
+            self.selenium.implicitly_wait(10)
+        except:
+            self.tearDown()
+            raise
 
     @classmethod
     def tearDownClass(cls):
-        cls.selenium.quit()
-
         for patcher in cls.patchers:
             patcher.stop()
 
         delete_index()
 
-        try:
-            os.remove(cls.database_dump_path)
-        except:  # pylint: disable=bare-except
-            # Doesn't matter
-            pass
+        # Restore to state right after migrations so that
+        cls.restore_db(cls._get_migrations_backup())
+        cls._delete_db(cls._get_migrations_backup())
+        cls._delete_db(cls._get_data_backup())
 
         super().tearDownClass()
 
@@ -222,8 +249,9 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         try:
             self.assert_console_logs()
         finally:
-            # Reset database to previous state
-            self.restore_db()
+            if self.selenium is not None:
+                self.selenium.quit()
+                self.selenium = None
 
             super().tearDown()
 
@@ -231,37 +259,81 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         """Override _fixture_teardown to not truncate the database. This class handles that stuff explicitly."""
 
     @classmethod
-    def dump_db(cls):
-        """Dump database to a file"""
-        handle, path = mkstemp()
-        os.close(handle)
-        check_call(["pg_dump", *cls._get_database_args(), "-f", path])
-        return path
-
-    @classmethod
-    def _get_database_args(cls):
-        """Get connection arguments for postgres commands"""
-        config = settings.DATABASES['default']
-        return ["-h", config['HOST'], "-p", str(config['PORT']), "-U", config['USER'], config['NAME']]
+    def backup_db(cls, backup_database_name):
+        """Copy database to a backup database"""
+        cls._copy_db(from_db=cls._get_database_name(), to_db=backup_database_name)
 
     @classmethod
     def clear_db(cls):
-        """Delete and create an empty database"""
+        """Clear the test database"""
+        cls._terminate_connections()
+        database_name = cls._get_database_name()
+        cls._delete_db(database_name)
+        cls._create_empty_db(database_name)
+
+    @classmethod
+    def _delete_db(cls, database_name):
+        """Delete a database"""
+        try:
+            check_call(["dropdb", *cls._get_database_args(database_name)], stdout=DEVNULL, stderr=DEVNULL)
+        except CalledProcessError:
+            # Assuming this failed because database didn't exist
+            pass
+
+    @classmethod
+    def _create_empty_db(cls, database_name):
+        """Create an empty database"""
+        check_call(["createdb", *cls._get_database_args(database_name)], stdout=DEVNULL, stderr=DEVNULL)
+
+    @classmethod
+    def _copy_db(cls, from_db, to_db):
+        """Create a copy of a database, overwriting the old database if necessary"""
+        # Can't use connection.cursor() here because database may not exist
+        cls._terminate_connections()
+        cls._delete_db(to_db)
+        sql = """CREATE DATABASE {to_db} TEMPLATE {from_db}""".format(
+            from_db=from_db,
+            to_db=to_db,
+        ).encode('utf-8')
+        check_output(["psql", *cls._get_database_args(None)], input=sql)
+
+    @classmethod
+    def _terminate_connections(cls):
+        """Terminate all database connections so we can modify the database"""
         with connection.cursor() as cursor:
             # Terminate all other database connections first
             cursor.execute("""SELECT pg_terminate_backend(pg_stat_activity.pid)
             FROM pg_stat_activity WHERE pid <> pg_backend_pid()""")
         connection.close()
-        check_call(["dropdb", *cls._get_database_args()])
-        check_call(["createdb", *cls._get_database_args()])
 
     @classmethod
-    def restore_db(cls, database_dump_path=None):
-        """Delete database and restore from database dump file"""
-        if database_dump_path is None:
-            database_dump_path = cls.database_dump_path
-        cls.clear_db()
-        check_call(["psql", *cls._get_database_args(), "-f", database_dump_path, "-q"], stdout=DEVNULL)
+    def _get_database_name(cls):
+        """Get name of the database (should be the test database)"""
+        return settings.DATABASES['default']['NAME']
+
+    @classmethod
+    def _get_migrations_backup(cls):
+        """Get name of database we use for storing migrations"""
+        return "backup_migrations_{}".format(cls._get_database_name())
+
+    @classmethod
+    def _get_data_backup(cls):
+        """Get name of database we use for data"""
+        return "backup_data_{}".format(cls._get_database_name())
+
+    @classmethod
+    def _get_database_args(cls, database_name):
+        """Get connection arguments for postgres commands"""
+        config = settings.DATABASES['default']
+        args = ["-h", config['HOST'], "-p", str(config['PORT']), "-U", config['USER']]
+        if database_name is not None:
+            args.append(database_name)
+        return args
+
+    @classmethod
+    def restore_db(cls, backup_database_name):
+        """Delete test database and restore from backup database"""
+        cls._copy_db(from_db=backup_database_name, to_db=cls._get_database_name())
 
     def wait(self):
         """Helper function for WebDriverWait"""
@@ -281,6 +353,8 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         user.is_staff = True
         user.save()
 
+        # Getting admin/ twice to work around an CSRF issue
+        self.get("admin/")
         self.get("admin/")
         self.wait().until(lambda driver: driver.find_element_by_id("id_username"))
         self.selenium.find_element_by_id("id_username").send_keys(user.username)

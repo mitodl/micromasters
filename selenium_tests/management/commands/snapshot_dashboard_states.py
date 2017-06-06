@@ -34,6 +34,10 @@ from selenium_tests.base import SeleniumTestsBase
 # invoke the test.
 RUNNING_DASHBOARD_STATES = False
 
+# We are passing options via global variable because of the bizarre way this management command is structured. Since
+# pytest is used to invoke the tests, we don't have a good way to pass options to it directly.
+DASHBOARD_STATES_OPTIONS = None
+
 
 def make_scenario(command):
     """Make lambda from ExampleCommand"""
@@ -51,6 +55,7 @@ def bind_args(func, *args, **kwargs):
 )
 class DashboardStates(SeleniumTestsBase):
     """Runs through each dashboard state taking a snapshot"""
+
     def create_exams(self, edx_passed, exam_passed, is_offered):
         """Create an exam and mark it and the related course as passed or not passed"""
         if edx_passed:
@@ -145,34 +150,49 @@ class DashboardStates(SeleniumTestsBase):
         )
         UserCoupon.objects.create(user=self.user, coupon=coupon)
 
-    def test_dashboard_states(self):
-        """Iterate through all possible dashboard states and take screenshots of each one"""
-        self.user = self.create_user('staff')
-
-        self.get("/admin")
-        self.login_via_admin(self.user)
+    @classmethod
+    def setUpTestData(cls):
+        """
+        Set up default user and run seed_db
+        """
+        cls.user = cls.create_user('staff')
         call_command("seed_db")
 
-        db_path = self.dump_db()
+    @classmethod
+    def _make_filename(cls, num, name):
+        """Format the filename without extension for dashboard states"""
+        return "dashboard_state_{num:03d}_{command}".format(
+            num=num,
+            command=name,
+        )
 
+    def _make_scenarios(self):
+        """
+        Make generator of all scenarios supported by this command.
+
+        Yields:
+            tuple of scenario_func, name:
+                scenario_func is a function to make modifications to the database to produce a scenario
+                name is the name of this scenario, to use with the filename
+        """
         # Generate scenarios from all alter_data example commands
-        scenarios = [
+        yield from (
             (make_scenario(command), command.command) for command in EXAMPLE_COMMANDS
             # Complicated to handle, and this is the same as the previous command anyway
             if "--course-run-key" not in command.args
-        ]
+        )
 
         # Add scenarios for every combination of passed/failed course and exam
         for tup in itertools.product([True, False], repeat=3):
             edx_passed, exam_passed, is_passed = tup
 
-            scenarios.append((
+            yield (
                 bind_args(self.create_exams, edx_passed, exam_passed, is_passed),
                 'create_exams_{}_{}_{}'.format(edx_passed, exam_passed, is_passed),
-            ))
+            )
 
         # Also test for two different passing and failed runs on the same course
-        scenarios.append((self.with_prev_passed_run, 'failed_with_prev_passed_run'))
+        yield (self.with_prev_passed_run, 'failed_with_prev_passed_run')
 
         # Add scenarios for coupons
         coupon_scenarios = [
@@ -185,18 +205,34 @@ class DashboardStates(SeleniumTestsBase):
             (Coupon.PERCENT_DISCOUNT, True, True),
             (Coupon.PERCENT_DISCOUNT, False, True),
         ]
-        scenarios.extend([
+        yield from (
             (bind_args(self.with_coupon, *args), "coupon_{}_{}_{}".format(*args))
             for args in coupon_scenarios
-        ])
+        )
 
         # Other misc scenarios
-        scenarios.append((self.pending_enrollment, 'pending_enrollment'))
-        scenarios.append((self.contact_course, 'contact_course'))
-        scenarios.append((self.missed_payment_can_reenroll, 'missed_payment_can_reenroll'))
+        yield (self.pending_enrollment, 'pending_enrollment')
+        yield (self.contact_course, 'contact_course')
+        yield (self.missed_payment_can_reenroll, 'missed_payment_can_reenroll')
 
-        for num, (run_scenario, name) in enumerate(scenarios):
-            self.restore_db(db_path)
+    def test_dashboard_states(self):
+        """Iterate through all possible dashboard states and take screenshots of each one"""
+        self.login_via_admin(self.user)
+
+        scenarios = self._make_scenarios()
+
+        scenarios_with_numbers = enumerate(scenarios)
+
+        suffix = DASHBOARD_STATES_OPTIONS.get('suffix')
+        if suffix is not None:
+            scenarios_with_numbers = (
+                (num, (run_scenario, name))
+                for (num, (run_scenario, name)) in scenarios_with_numbers
+                if self._make_filename(num, name).endswith(suffix)
+            )
+
+        for num, (run_scenario, name) in scenarios_with_numbers:
+            self.restore_db(self._get_data_backup())
 
             ProgramEnrollment.objects.create(user=self.user, program=Program.objects.get(title='Analog Learning'))
 
@@ -206,10 +242,7 @@ class DashboardStates(SeleniumTestsBase):
             self.get(new_url)
             self.wait().until(lambda driver: driver.find_element_by_class_name('course-list'))
             self.selenium.execute_script('document.querySelector(".course-list").scrollIntoView()')
-            filename = "dashboard_state_{num:03d}_{command}".format(
-                num=num,
-                command=name,
-            )
+            filename = self._make_filename(num, name)
             self.take_screenshot(filename)
             self.get("/api/v0/dashboard/{}/".format(self.edx_username))
             text = self.selenium.execute_script('return document.querySelector(".response-info pre").innerText')
@@ -223,15 +256,41 @@ class Command(BaseCommand):
     """
     help = "Create snapshots of dashboard states"
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--suffix",
+            dest="suffix",
+            help="Runs only scenarios matching the given suffix",
+            required=False,
+        )
+        parser.add_argument(
+            "--list-scenarios",
+            dest="list_scenarios",
+            action='store_true',
+            help="List scenario names and exit",
+            required=False
+        )
+
     def handle(self, *args, **options):
-        os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = '0.0.0.0:8286'
+        if options.get('list_scenarios'):
+            self.stdout.write('Scenarios:\n')
+            for num, (_, name) in enumerate(DashboardStates()._make_scenarios()):  # pylint: disable=protected-access
+                self.stdout.write("  {:03}_{}\n".format(num, name))
+            return
+
+        os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = '0.0.0.0:7000-8000'
         if not os.environ.get('WEBPACK_DEV_SERVER_HOST'):
             raise Exception(
                 'Missing environment variable WEBPACK_DEV_SERVER_HOST. Please set this to the IP address of your '
                 'webpack dev server (omit the port number).'
             )
 
+        # We need to use pytest here instead of invoking the tests directly so that the test database
+        # is used. Using override_settings(DATABASE...) causes a warning message and is not reliable.
         global RUNNING_DASHBOARD_STATES  # pylint: disable=global-statement
         RUNNING_DASHBOARD_STATES = True
+        global DASHBOARD_STATES_OPTIONS  # pylint: disable=global-statement
+        DASHBOARD_STATES_OPTIONS = options
+
         with override_settings(ELASTICSEARCH_INDEX='testindex'):
             sys.exit(pytest.main(args=["{}::DashboardStates".format(__file__), "-s"]))

@@ -10,6 +10,6 @@ then
 fi
 docker-compose run \
    -e DEBUG=False \
-   -e DJANGO_LIVE_TEST_SERVER_ADDRESS=0.0.0.0:8286 \
+   -e DJANGO_LIVE_TEST_SERVER_ADDRESS=0.0.0.0:7000-8000 \
    -e ELASTICSEARCH_INDEX=testindex \
    selenium py.test ./selenium_tests
