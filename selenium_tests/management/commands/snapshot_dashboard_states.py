@@ -8,6 +8,7 @@ from django.core.management import (
     BaseCommand,
     call_command,
 )
+from django.test import override_settings
 import pytest
 
 from courses.factories import CourseRunFactory
@@ -224,10 +225,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = '0.0.0.0:8286'
-        os.environ['ELASTICSEARCH_INDEX'] = 'testindex'
-        os.environ['DEBUG'] = 'False'
-        os.environ['DISABLE_WEBPACK_LOADER_STATS'] = 'True'
-        os.environ['USE_WEBPACK_DEV_SERVER'] = 'True'
         if not os.environ.get('WEBPACK_DEV_SERVER_HOST'):
             raise Exception(
                 'Missing environment variable WEBPACK_DEV_SERVER_HOST. Please set this to the IP address of your '
@@ -236,4 +233,5 @@ class Command(BaseCommand):
 
         global RUNNING_DASHBOARD_STATES  # pylint: disable=global-statement
         RUNNING_DASHBOARD_STATES = True
-        sys.exit(pytest.main(args=["{}::DashboardStates".format(__file__), "-s"]))
+        with override_settings(ELASTICSEARCH_INDEX='testindex'):
+            sys.exit(pytest.main(args=["{}::DashboardStates".format(__file__), "-s"]))
