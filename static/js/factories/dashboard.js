@@ -131,6 +131,16 @@ export const makeCoupon = (program: Program): Coupon => ({
   object_id: program.id,
 });
 
+export const makeCourseCoupon = (courseId: number, programId: number): Coupon => ({
+  coupon_code: `coupon_for_${courseId}`,
+  coupon_type: COUPON_TYPE_STANDARD,
+  content_type: 'course',
+  amount_type: 'fixed-discount',
+  amount: Decimal('50'),
+  program_id: programId,
+  object_id: courseId,
+});
+
 export const makeCoupons = (dashboard: Dashboard): Coupons => (
   dashboard.programs.map(makeCoupon)
 );

@@ -3,6 +3,7 @@ import React from 'react';
 import moment from 'moment';
 import R from 'ramda';
 import { Card, CardTitle } from 'react-mdl/lib/Card';
+import Decimal from 'decimal.js-light';
 
 import type { Program, Course } from '../../flow/programTypes';
 import type {
@@ -47,6 +48,26 @@ export default class CourseListCard extends React.Component {
     checkout:                        (s: string) => void,
   };
 
+  getRegularPrice = (program: Program, prices: CalculatedPrices): Decimal|null => {
+    let price;
+    let list = [];
+
+    for (const courseRun of sortedCourseRuns(program)) {
+      price = prices.get(courseRun.id);
+      if (price) {
+        list.push(price);
+      }
+    }
+    // retruning max price, assuming that max price is regular price otherwise discounted.
+    // what happen when user has coupans for all course in program for COUPON_CONTENT_TYPE_COURSE.
+    // should we show max price here?
+    if (list.length > 0) {
+      return R.sort((left, right) => right - left, list)[0];
+    }
+
+    return null;
+  }
+
   renderFinancialAidPriceMessage(): ?React$Element<*> {
     const {
       program,
@@ -56,13 +77,7 @@ export default class CourseListCard extends React.Component {
     const finAidStatus = program.financial_aid_user_info.application_status;
 
     if (FA_TERMINAL_STATUSES.includes(finAidStatus)) {
-      let price;
-      for (const courseRun of sortedCourseRuns(program)) {
-        price = prices.get(courseRun.id);
-        if (price) {
-          break;
-        }
-      }
+      let price = this.getRegularPrice(program, prices);
 
       if (!price) {
         return null;
@@ -145,13 +160,7 @@ export default class CourseListCard extends React.Component {
       return this.renderCouponPriceMessage();
     }
 
-    let price;
-    for (const courseRun of sortedCourseRuns(program)) {
-      price = prices.get(courseRun.id);
-      if (price) {
-        break;
-      }
-    }
+    let price = this.getRegularPrice(program, prices);
     if (!price) {
       return null;
     }
