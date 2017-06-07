@@ -6,7 +6,6 @@
 #
 amqp==1.4.9               # via kombu
 anyjson==0.3.3            # via kombu
-appdirs==1.4.3            # via setuptools
 asn1crypto==0.22.0        # via cryptography
 beautifulsoup4==4.5.3     # via wagtail
 billiard==3.3.0.23        # via celery
@@ -30,7 +29,7 @@ django-treebeard==4.1.0   # via wagtail
 django-webpack-loader==0.4.1
 django==1.10.5
 djangorestframework==3.5.2
-edx-api-client==0.3.0
+edx-api-client==0.4.0
 edx-opaque-keys==0.4
 elasticsearch-dsl==2.1.0
 elasticsearch==2.3.0
@@ -45,7 +44,7 @@ jsonfield==1.0.3
 kombu==3.0.37             # via celery, django-server-status
 newrelic==2.82.0.62
 oauthlib==2.0.2           # via requests-oauthlib, social-auth-core
-packaging==16.8           # via cryptography, setuptools
+packaging==16.8           # via cryptography
 paramiko==2.1.2           # via pysftp
 pbr==2.0.0                # via stevedore
 pexpect==4.2.1            # via ipython
@@ -74,7 +73,7 @@ requests-oauthlib==0.8.0  # via social-auth-core
 requests==2.11.1
 robohash==1.0
 simplegeneric==0.8.1      # via ipython
-six==1.10.0               # via cryptography, django-role-permissions, django-server-status, edx-api-client, edx-opaque-keys, elasticsearch-dsl, faker, html5lib, packaging, prompt-toolkit, python-dateutil, setuptools, social-auth-app-django, social-auth-core, stevedore, traitlets
+six==1.10.0               # via cryptography, django-role-permissions, django-server-status, edx-api-client, edx-opaque-keys, elasticsearch-dsl, faker, html5lib, packaging, prompt-toolkit, python-dateutil, social-auth-app-django, social-auth-core, stevedore, traitlets
 social-auth-app-django==1.1.0
 social-auth-core==1.2.0   # via social-auth-app-django
 static3==0.5.1
@@ -88,6 +87,3 @@ wagtail==1.9
 wcwidth==0.1.7            # via prompt-toolkit
 webencodings==0.5         # via html5lib
 willow==0.4               # via wagtail
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools                # via cryptography, html5lib, ipython

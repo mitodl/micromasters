@@ -144,7 +144,7 @@ class MMTrack:
         if not self.certificates.has_verified_cert(edx_course_key):
             return False
         certificate = self.certificates.get_verified_cert(edx_course_key)
-        return certificate.status == 'downloadable'
+        return certificate.is_passing
 
     @property
     def final_grade_qset(self):

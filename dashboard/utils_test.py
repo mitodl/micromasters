@@ -557,14 +557,14 @@ class MMTrackTest(MockedESTestCase):
         assert mmtrack.has_paid_for_any_in_program() is True
 
     @ddt.data(
-        ("verified", "downloadable", True),
-        ("audit", "downloadable", False),
-        ("verified", "generating", False),
-        ("verified", "notpassing", False),
-        ("verified", "unverified", False),
+        ("verified", "downloadable", True, True),
+        ("audit", "downloadable", False, False),
+        ("verified", "generating", True, True),
+        ("verified", "notpassing", False, False),
+        ("verified", "unverified", False, False),
     )
     @ddt.unpack
-    def test_has_passing_certificate(self, certificate_type, status, expected_result):
+    def test_has_passing_certificate(self, certificate_type, status, is_passing, expected_result):
         """
         Test for has_passing_certificate method with different type of certificates
         """
@@ -574,6 +574,7 @@ class MMTrackTest(MockedESTestCase):
             "course_id": course_key,
             "certificate_type": certificate_type,
             "status": status,
+            "is_passing": is_passing,
             "download_url": "http://www.example.com/demo.pdf",
             "grade": "0.98"
         }
@@ -608,6 +609,7 @@ class MMTrackTest(MockedESTestCase):
             "course_id": self.crun_fa.edx_course_key,
             "certificate_type": "verified",
             "status": "downloadable",
+            "is_passing": True,
             "download_url": "http://www.example.com/demo.pdf",
             "grade": "0.98"
         }
