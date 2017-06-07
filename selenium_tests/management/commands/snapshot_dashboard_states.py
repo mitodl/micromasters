@@ -23,6 +23,8 @@ from ecommerce.models import (
     UserCoupon,
 )
 from exams.factories import ExamRunFactory
+from financialaid.factories import FinancialAidFactory
+from financialaid.models import FinancialAidStatus
 from grades.factories import ProctoredExamGradeFactory
 from seed_data.management.commands.alter_data import EXAMPLE_COMMANDS
 from selenium_tests.base import SeleniumTestsBase
@@ -56,7 +58,7 @@ def bind_args(func, *args, **kwargs):
 class DashboardStates(SeleniumTestsBase):
     """Runs through each dashboard state taking a snapshot"""
 
-    def create_exams(self, edx_passed, exam_passed, is_offered):
+    def create_exams(self, edx_passed, exam_passed, new_offering):
         """Create an exam and mark it and the related course as passed or not passed"""
         if edx_passed:
             call_command(
@@ -83,7 +85,7 @@ class DashboardStates(SeleniumTestsBase):
             exam_run=exam_run,
             passed=exam_passed,
         )
-        if is_offered:
+        if new_offering:
             CourseRunFactory.create(course=course)
 
     def with_prev_passed_run(self):
@@ -150,6 +152,27 @@ class DashboardStates(SeleniumTestsBase):
         )
         UserCoupon.objects.create(user=self.user, coupon=coupon)
 
+    def with_financial_aid(self, status, is_enrolled):
+        """Set the status of user's financial aid"""
+        if is_enrolled:
+            call_command(
+                "alter_data", 'set_to_needs_upgrade', '--username', 'staff', '--course-title', 'Digital Learning 200'
+            )
+        else:
+            call_command(
+                "alter_data", 'set_to_offered', '--username', 'staff', '--course-title', 'Digital Learning 200'
+            )
+        Program.objects.get(title='Analog Learning').delete()
+        # We need to use Digital Learning here since it has financial aid enabled. Deleting Analog Learning
+        # because it's simpler than adjusting the UI to show the right one
+        program = Program.objects.get(title='Digital Learning')
+        ProgramEnrollment.objects.create(user=self.user, program=program)
+        FinancialAidFactory.create(
+            user=self.user,
+            status=status,
+            tier_program__program=program,
+        )
+
     @classmethod
     def setUpTestData(cls):
         """
@@ -159,11 +182,12 @@ class DashboardStates(SeleniumTestsBase):
         call_command("seed_db")
 
     @classmethod
-    def _make_filename(cls, num, name):
+    def _make_filename(cls, num, name, use_mobile=False):
         """Format the filename without extension for dashboard states"""
-        return "dashboard_state_{num:03d}_{command}".format(
+        return "dashboard_state_{num:03d}_{command}{mobile}".format(
             num=num,
             command=name,
+            mobile="_mobile" if use_mobile else "",
         )
 
     def _make_scenarios(self):
@@ -184,11 +208,15 @@ class DashboardStates(SeleniumTestsBase):
 
         # Add scenarios for every combination of passed/failed course and exam
         for tup in itertools.product([True, False], repeat=3):
-            edx_passed, exam_passed, is_passed = tup
+            edx_passed, exam_passed, is_offered = tup
 
             yield (
-                bind_args(self.create_exams, edx_passed, exam_passed, is_passed),
-                'create_exams_{}_{}_{}'.format(edx_passed, exam_passed, is_passed),
+                bind_args(self.create_exams, edx_passed, exam_passed, is_offered),
+                'create_exams_{edx_passed}_{exam_passed}{new_offering}'.format(
+                    edx_passed='edx_✔' if edx_passed else 'edx_✖',
+                    exam_passed='exam_✔' if exam_passed else 'exam_✖',
+                    new_offering='_with_new_offering' if is_offered else '',
+                ),
             )
 
         # Also test for two different passing and failed runs on the same course
@@ -206,7 +234,11 @@ class DashboardStates(SeleniumTestsBase):
             (Coupon.PERCENT_DISCOUNT, False, True),
         ]
         yield from (
-            (bind_args(self.with_coupon, *args), "coupon_{}_{}_{}".format(*args))
+            (bind_args(self.with_coupon, *args), "coupon_{amount_type}_{program}_{free}".format(
+                amount_type=args[0],
+                program='program' if args[1] else 'course',
+                free='free' if args[2] else 'not-free',
+            ))
             for args in coupon_scenarios
         )
 
@@ -215,12 +247,26 @@ class DashboardStates(SeleniumTestsBase):
         yield (self.contact_course, 'contact_course')
         yield (self.missed_payment_can_reenroll, 'missed_payment_can_reenroll')
 
+        # Financial aid statuses
+        for status in FinancialAidStatus.ALL_STATUSES:
+            for is_enrolled in (True, False):
+                yield (
+                    bind_args(self.with_financial_aid, status, is_enrolled),
+                    'finaid_{status}{enrolled}'.format(
+                        status=status,
+                        enrolled="_needs_upgrade" if is_enrolled else "_offered",
+                    )
+                )
+
     def test_dashboard_states(self):
         """Iterate through all possible dashboard states and take screenshots of each one"""
+        use_mobile = DASHBOARD_STATES_OPTIONS.get('mobile')
+        if use_mobile:
+            self.selenium.set_window_size(480, 854)
+
         self.login_via_admin(self.user)
 
         scenarios = self._make_scenarios()
-
         scenarios_with_numbers = enumerate(scenarios)
 
         suffix = DASHBOARD_STATES_OPTIONS.get('suffix')
@@ -233,6 +279,8 @@ class DashboardStates(SeleniumTestsBase):
 
         for num, (run_scenario, name) in scenarios_with_numbers:
             self.restore_db(self._get_data_backup())
+            # Close Django Debug Toolbar
+            self.selenium.execute_script("djdt.close()")
 
             ProgramEnrollment.objects.create(user=self.user, program=Program.objects.get(title='Analog Learning'))
 
@@ -241,8 +289,8 @@ class DashboardStates(SeleniumTestsBase):
                 new_url = '/dashboard'
             self.get(new_url)
             self.wait().until(lambda driver: driver.find_element_by_class_name('course-list'))
-            self.selenium.execute_script('document.querySelector(".course-list").scrollIntoView()')
-            filename = self._make_filename(num, name)
+
+            filename = self._make_filename(num, name, use_mobile=use_mobile)
             self.take_screenshot(filename)
             self.get("/api/v0/dashboard/{}/".format(self.edx_username))
             text = self.selenium.execute_script('return document.querySelector(".response-info pre").innerText')
@@ -269,6 +317,13 @@ class Command(BaseCommand):
             action='store_true',
             help="List scenario names and exit",
             required=False
+        )
+        parser.add_argument(
+            "--mobile",
+            dest="mobile",
+            action='store_true',
+            help="Take screenshots with a smaller width as if viewed with a mobile device",
+            required=False,
         )
 
     def handle(self, *args, **options):

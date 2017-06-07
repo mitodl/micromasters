@@ -373,6 +373,10 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
 
     def take_screenshot(self, name=None, output_base64=False):
         """Helper method to take a screenshot and put it in a temp directory"""
+        width = self.selenium.get_window_size()['width']
+        height = self.selenium.execute_script("return document.body.scrollHeight")
+        self.selenium.set_window_size(width, height)
+
         if name is None:
             name = self._testMethodName
 
