@@ -147,7 +147,7 @@ describe('CourseListCard', () => {
     });
 
     it('should show regular course price on coupon message', () => {
-      const coupon = makeCourseCoupon(program["courses"][0].id, program.id);
+      const coupon = makeCourseCoupon(program.courses[0], program);
       const wrapper = renderCourseListCard({coupon});
       const messageEl = wrapper.find(".price-message");
       assert.lengthOf(messageEl, 1);
@@ -167,7 +167,7 @@ describe('CourseListCard', () => {
         min_possible_cost: 100,
         id: 1,
       };
-      const coupon = makeCourseCoupon(program["courses"][0].id, program.id);
+      const coupon = makeCourseCoupon(program.courses[0], program);
       const wrapper = renderCourseListCard({coupon});
       const messageEl = wrapper.find(".price-message");
       assert.lengthOf(messageEl, 1);
