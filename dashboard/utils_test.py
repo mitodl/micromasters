@@ -572,6 +572,7 @@ class MMTrackTest(MockedESTestCase):
             "course_id": course_key,
             "certificate_type": certificate_type,
             "is_passing": is_passing,
+            "status": "downloadable",
             "download_url": "http://www.example.com/demo.pdf",
             "grade": "0.98"
         }
