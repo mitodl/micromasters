@@ -246,14 +246,14 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
             except:  # pylint: disable=bare-except
                 log.exception("Unable to take selenium screenshot")
 
-        try:
-            self.assert_console_logs()
-        finally:
-            if self.selenium is not None:
+        if self.selenium is not None:
+            try:
+                self.assert_console_logs()
+            finally:
                 self.selenium.quit()
                 self.selenium = None
 
-            super().tearDown()
+        super().tearDown()
 
     def _fixture_teardown(self):
         """Override _fixture_teardown to not truncate the database. This class handles that stuff explicitly."""
