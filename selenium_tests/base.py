@@ -232,7 +232,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
 
         delete_index()
 
-        # Restore to state right after migrations so that
+        # Restore to state right after migrations so that we leave the database in proper state to rerun
         cls.restore_db(cls._get_migrations_backup())
         cls._delete_db(cls._get_migrations_backup())
         cls._delete_db(cls._get_data_backup())
