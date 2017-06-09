@@ -314,10 +314,12 @@ def test_now_in_utc():
 
 def test_parse_envs():
     """parse_envs() should break an environment variable string into a dictionary"""
-    assert parse_envs("""
-a=b=c
-d=e
-    """) == {
+    expected = {
         'a': 'b=c',
         'd': 'e',
     }
+    assert parse_envs("""
+a=b=c
+
+d=e
+""") == expected
