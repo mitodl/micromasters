@@ -307,9 +307,14 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         connection.close()
 
     @classmethod
+    def _get_default_database_config(cls):
+        """Get default database configuration"""
+        return settings.DATABASES['default']
+
+    @classmethod
     def _get_database_name(cls):
         """Get name of the database (should be the test database)"""
-        return settings.DATABASES['default']['NAME']
+        return cls._get_default_database_config()['NAME']
 
     @classmethod
     def _get_migrations_backup(cls):
@@ -324,7 +329,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
     @classmethod
     def _get_database_args(cls, database_name):
         """Get connection arguments for postgres commands"""
-        config = settings.DATABASES['default']
+        config = cls._get_default_database_config()
         args = ["-h", config['HOST'], "-p", str(config['PORT']), "-U", config['USER']]
         if database_name is not None:
             args.append(database_name)
