@@ -2,18 +2,16 @@
 
 # cd to root of repo
 cd "$( dirname "${BASH_SOURCE[0]}" )"/../../
-
 if [[ ! -e "webpack-stats.json" ]]
 then
     echo "Please start the webpack dev server before running this script."
     exit 1
 fi
 
-# TODO: can we detect this somehow?
-source .env
+source ./scripts/envs.sh
 if [[ -z "$WEBPACK_DEV_SERVER_HOST" ]]
 then
-    echo "Please set WEBPACK_DEV_SERVER_HOST to the IP address of your webpack dev server, omitting the port number."
+    echo "WEBPACK_DEV_SERVER_HOST is missing. Do you have docker-machine configured correctly?"
     exit 1
 fi
 

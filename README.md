@@ -156,10 +156,6 @@ variables in the ``.env`` file appropriately.
 
 #### 2) _(OSX only)_ Set up and run the webpack dev server on your host machine
 
-First, you'll need to add another variable into ``.env``:
-
-    WEBPACK_DEV_SERVER_HOST='localhost'
-
 In the development environment, our static assets are served from the webpack
 dev server. When this environment variable is set, the script sources will
 look for the webpack server at that host instead of the host where Docker is running.

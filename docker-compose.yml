@@ -1,4 +1,4 @@
-version: '2'
+version: '2.1'
 services:
   db:
     image: postgres
@@ -50,6 +50,7 @@ services:
       EXAMS_SFTP_HOST: sftp
       EXAMS_SFTP_USERNAME: odl
       EXAMS_SFTP_PASSWORD: 123
+      DOCKER_HOST: ${DOCKER_HOST:-missing}
     env_file: .env
 
   web:

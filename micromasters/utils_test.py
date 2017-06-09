@@ -37,6 +37,7 @@ from micromasters.utils import (
     get_field_names,
     is_near_now,
     is_subset_dict,
+    parse_envs,
     now_in_utc,
     remove_falsey_values,
     safely_remove_file,
@@ -309,3 +310,14 @@ def test_now_in_utc():
     now = now_in_utc()
     assert is_near_now(now)
     assert now.tzinfo == pytz.UTC
+
+
+def test_parse_envs():
+    """parse_envs() should break an environment variable string into a dictionary"""
+    assert parse_envs("""
+a=b=c
+d=e
+    """) == {
+        'a': 'b=c',
+        'd': 'e',
+    }

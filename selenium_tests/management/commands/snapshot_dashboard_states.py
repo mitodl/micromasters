@@ -1,9 +1,12 @@
 """Management command to attach avatars to profiles"""
 import itertools
 import os
+from shlex import quote
+from subprocess import check_output
 import sys
 from urllib.parse import quote_plus
 
+from django.conf import settings
 from django.core.management import (
     BaseCommand,
     call_command,
@@ -24,6 +27,7 @@ from ecommerce.models import (
 )
 from exams.factories import ExamRunFactory
 from grades.factories import ProctoredExamGradeFactory
+from micromasters.utils import parse_envs
 from seed_data.management.commands.alter_data import EXAMPLE_COMMANDS
 from selenium_tests.base import SeleniumTestsBase
 
@@ -279,11 +283,14 @@ class Command(BaseCommand):
             return
 
         os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = '0.0.0.0:7000-8000'
-        if not os.environ.get('WEBPACK_DEV_SERVER_HOST'):
-            raise Exception(
-                'Missing environment variable WEBPACK_DEV_SERVER_HOST. Please set this to the IP address of your '
-                'webpack dev server (omit the port number).'
-            )
+        envs_path = os.path.join(settings.BASE_DIR, "scripts", "envs.sh")
+        command = "source {} && env\n".format(quote(envs_path)).encode('utf-8')
+        envs_string = check_output("bash", input=command).decode('utf-8')
+        envs = parse_envs(envs_string)
+        if not envs.get('WEBPACK_DEV_SERVER_HOST'):
+            # This should only happen if the user is running in an environment without Docker, which isn't allowed
+            # for this command.
+            raise Exception('Missing environment variable WEBPACK_DEV_SERVER_HOST.')
 
         # We need to use pytest here instead of invoking the tests directly so that the test database
         # is used. Using override_settings(DATABASE...) causes a warning message and is not reliable.
@@ -292,5 +299,8 @@ class Command(BaseCommand):
         global DASHBOARD_STATES_OPTIONS  # pylint: disable=global-statement
         DASHBOARD_STATES_OPTIONS = options
 
-        with override_settings(ELASTICSEARCH_INDEX='testindex'):
+        with override_settings(
+            ELASTICSEARCH_INDEX='testindex',
+            WEBPACK_DEV_SERVER_HOST=envs['WEBPACK_DEV_SERVER_HOST'],
+        ):
             sys.exit(pytest.main(args=["{}::DashboardStates".format(__file__), "-s"]))
