@@ -57,11 +57,11 @@ else
     if [[ "$INSIDE_CONTAINER" == "true" ]]
     then
         # Linux container
-        WEBPACK_DEV_SERVER_HOST="$(ip route | grep default | awk '{ print $3 }')"
+        WEBPACK_SELENIUM_DEV_SERVER_HOST="$(ip route | grep default | awk '{ print $3 }')"
     else
         # Linux host
         CONTAINER_NAME="$(docker-compose ps -q watch)"
-        WEBPACK_DEV_SERVER_HOST="$(docker exec "$CONTAINER_NAME" ip route | grep default | awk '{ print $3 }')"
+        WEBPACK_SELENIUM_DEV_SERVER_HOST="$(docker exec "$CONTAINER_NAME" ip route | grep default | awk '{ print $3 }')"
     fi
 fi
 
