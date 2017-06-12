@@ -230,20 +230,3 @@ def now_in_utc():
         datetime.datetime: A datetime object for the current time
     """
     return datetime.datetime.now(tz=pytz.UTC)
-
-
-def parse_envs(env_string):
-    """
-    Parse env output into a dictionary
-
-    Args:
-        env_string (str): Output from running env in a shell, converted to UTF-8
-
-    Returns:
-        dict: A dict of key value environment variable pairs (these are bytes)
-    """
-    lines = env_string.split("\n")
-    # Remove empty lines
-    lines = [line for line in lines if line]
-    pairs = [line.split("=", maxsplit=1) for line in lines]
-    return {key: value for key, value in pairs}
