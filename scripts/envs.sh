@@ -64,7 +64,8 @@ then
             exit 1
         fi
 
-        VBOXNET_INTERFACE="$(arp -an | grep "$DOCKER_HOST" | awk -F'on' '{print $2}')"
+        DOCKER_HOST_IP="$(echo "$DOCKER_HOST" | awk -F'/|:' '{print $4}' )"
+        VBOXNET_INTERFACE="$(arp -an | grep "$DOCKER_HOST_IP" | awk -F'on' '{print $2}' | awk '{print $1}')"
         WEBPACK_SELENIUM_DEV_SERVER_HOST="$(ifconfig "$VBOXNET_INTERFACE" | grep inet | awk '{print $2}')"
     fi
 else
