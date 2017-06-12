@@ -32,12 +32,16 @@ if [[ "$IS_OSX" == "true" ]]
 then
     if [[ "$INSIDE_CONTAINER" == "true" ]]
     then
-        # This should be already defined and passed in via script. If not, we should error.
-        if [[ -z "$WEBPACK_SELENIUM_DEV_SERVER_HOST" ]]
+        if [[ "$CONTAINER_NAME" != "watch" ]]
         then
-            echo "WEBPACK_SELENIUM_DEV_SERVER_HOST is undefined. Did you run the management command from a script?"
-            exit 1
+            # This should be already defined and passed in via script. If not, we should error.
+            if [[ -z "$WEBPACK_SELENIUM_DEV_SERVER_HOST" ]]
+            then
+                echo "WEBPACK_SELENIUM_DEV_SERVER_HOST is undefined. Did you run the management command from a script?"
+                exit 1
+            fi
         fi
+        # Else webpack_dev_server.sh should handle the exit message
     else
         if [[ -z "$DOCKER_HOST" ]]
         then

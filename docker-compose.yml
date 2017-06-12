@@ -85,6 +85,8 @@ services:
       - yarn-cache:/home/mitodl/.cache/yarn
     environment:
       NODE_ENV: 'development'
+      DOCKER_HOST: ${DOCKER_HOST:-missing}
+      CONTAINER_NAME: 'watch'
     env_file: .env
 
   celery:

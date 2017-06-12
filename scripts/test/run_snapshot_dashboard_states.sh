@@ -16,6 +16,7 @@ then
     exit 1
 fi
 
+echo "here"
 docker-compose run \
    -e WEBPACK_DEV_SERVER_HOST="$WEBPACK_SELENIUM_DEV_SERVER_HOST" \
    selenium ./manage.py snapshot_dashboard_states $@
