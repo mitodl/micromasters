@@ -18,4 +18,4 @@ fi
 
 docker-compose run \
    -e WEBPACK_DEV_SERVER_HOST="$WEBPACK_SELENIUM_DEV_SERVER_HOST" \
-   selenium py.test ./selenium_tests
+   selenium ./manage.py snapshot_dashboard_states $@
