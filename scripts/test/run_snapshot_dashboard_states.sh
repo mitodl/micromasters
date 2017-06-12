@@ -15,6 +15,8 @@ then
     echo "WEBPACK_SELENIUM_DEV_SERVER_HOST is missing. Do you have docker-machine configured correctly?"
     exit 1
 fi
+echo $WEBPACK_SELENIUM_DEV_SERVER_HOST
+echo $WEBPACK_DEV_SERVER_HOST
 
 docker-compose run \
    -e WEBPACK_DEV_SERVER_HOST="$WEBPACK_SELENIUM_DEV_SERVER_HOST" \
