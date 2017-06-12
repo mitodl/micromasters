@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e -o pipefail
 
 # cd to root of repo
 cd "$( dirname "${BASH_SOURCE[0]}" )"/../../
@@ -16,9 +17,5 @@ then
 fi
 
 docker-compose run \
-   -e DEBUG=False \
-   -e DJANGO_LIVE_TEST_SERVER_ADDRESS=0.0.0.0:7000-8000 \
-   -e ELASTICSEARCH_INDEX=testindex \
-   -e USE_WEBPACK_DEV_SERVER=True \
    -e WEBPACK_DEV_SERVER_HOST="$WEBPACK_SELENIUM_DEV_SERVER_HOST" \
    selenium py.test ./selenium_tests

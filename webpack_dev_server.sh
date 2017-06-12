@@ -4,12 +4,7 @@ set -ef -o pipefail
 # Define some environment variables to figure out where we are running
 source ./scripts/envs.sh
 
-if [[ "$IS_OSX" == 'true' ]] ; then
-  WEBPACK_HOST='127.0.0.1'
-else
-  WEBPACK_HOST='0.0.0.0'
-fi
-
+WEBPACK_HOST='0.0.0.0'
 WEBPACK_PORT='8078'
 
 # The webpack server should only be run in one of two cases:

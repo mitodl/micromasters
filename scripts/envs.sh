@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e -o pipefail
 
-# Where are we running?
+# Set IS_OSX to true or false depending on which environment we're running in
 if [[ ! -z "$DOCKER_HOST" && "$DOCKER_HOST" != "missing" ]]
 then
     # OS X, either container or host but docker-machine is set up beforehand
@@ -14,6 +14,7 @@ else
     IS_OSX="false"
 fi
 
+# If we're running from inside a container /.dockerenv should exist (not a guarantee but the best we can do)
 if [[ -e "/.dockerenv" ]]
 then
   INSIDE_CONTAINER="true"
@@ -21,13 +22,10 @@ else
   INSIDE_CONTAINER="false"
 fi
 
-# Determine the IP the host should use to contact these docker containers
+# Set WEBPACK_DEV_SERVER_HOST to the IP or hostname which the browser will use to contact the webpack dev server
 if [[ "$IS_OSX" == "true" ]]
 then
-    # OS X
-    # This will be an empty string if docker-machine was not set up, but in that case it doesn't matter and we can't
-    # detect it anyway
-    WEBPACK_DEV_SERVER_HOST="$(echo $DOCKER_HOST | awk -F "/|:" '{ print $4 }')"
+    WEBPACK_DEV_SERVER_HOST="localhost"
 else
     if [[ "$INSIDE_CONTAINER" == "true" ]]
     then
@@ -40,6 +38,41 @@ else
     fi
 fi
 
+# Set WEBPACK_SELENIUM_DEV_SERVER_HOST to the IP address for the webpack dev server
+# This is different from WEBPACK_DEV_SERVER_HOST because localhost won't suffice here since the request
+# is coming from a docker container, not the browser. If we can't detect this the user must set it via a script.
+
+if [[ "$IS_OSX" == "true" ]]
+then
+    if [[ "$INSIDE_CONTAINER" == "true" ]]
+    then
+        # This should be already defined and passed in via script. If not, we should error.
+        if [[ -z "$WEBPACK_SELENIUM_DEV_SERVER_HOST" ]]
+        then
+            echo "WEBPACK_SELENIUM_DEV_SERVER_HOST is undefined. Did you run the management command from a script?"
+            exit 1
+        fi
+    else
+        # This is kind of kludgy. The DOCKER_HOST ip address is usually something like 192.168.99.100.
+        # We can access the webpack dev server running on the host by using the gateway IP for this subnet,
+        # 192.168.99.1. To get it we need to look up the interface for the DOCKER_HOST ip, then look up
+        # the gateway IP address for that interface.
+        if [[ -z "$DOCKER_HOST" ]]
+        then
+            # User needs to set up docker-machine first
+            echo "DOCKER_HOST is undefined. Did you run docker-machine env first?"
+            exit 1
+        fi
+
+        VBOXNET_INTERFACE="$(arp -an | grep "$DOCKER_HOST" | awk -F'on' '{print $2}')"
+        WEBPACK_SELENIUM_DEV_SERVER_HOST="$(ifconfig "$VBOXNET_INTERFACE" | grep inet | awk '{print $2}')"
+    fi
+else
+    # Linux: no complications here
+    WEBPACK_SELENIUM_DEV_SERVER_HOST="$WEBPACK_DEV_SERVER_HOST"
+fi
+
 export IS_OSX="$IS_OSX"
 export INSIDE_CONTAINER="$INSIDE_CONTAINER"
 export WEBPACK_DEV_SERVER_HOST="$WEBPACK_DEV_SERVER_HOST"
+export WEBPACK_SELENIUM_DEV_SERVER_HOST="$WEBPACK_SELENIUM_DEV_SERVER_HOST"
