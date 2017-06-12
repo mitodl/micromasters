@@ -53,20 +53,19 @@ then
             exit 1
         fi
     else
-        # This is kind of kludgy. The DOCKER_HOST ip address is usually something like 192.168.99.100.
-        # We can access the webpack dev server running on the host by using the gateway IP for this subnet,
-        # 192.168.99.1. To get it we need to look up the interface for the DOCKER_HOST ip, then look up
-        # the gateway IP address for that interface.
-        if [[ -z "$DOCKER_HOST" ]]
+        if [[ ! -z "$DOCKER_HOST" ]]
         then
-            # User needs to set up docker-machine first
-            echo "DOCKER_HOST is undefined. Did you run docker-machine env first?"
-            exit 1
+            # If we're running the webpack dev server we don't need this
+            WEBPACK_SELENIUM_DEV_SERVER_HOST=""
+        else
+            # This is kind of kludgy. The DOCKER_HOST ip address is usually something like 192.168.99.100.
+            # We can access the webpack dev server running on the host by using the gateway IP for this subnet,
+            # 192.168.99.1. To get it we need to look up the interface for the DOCKER_HOST ip, then look up
+            # the gateway IP address for that interface.
+            DOCKER_HOST_IP="$(echo "$DOCKER_HOST" | awk -F'/|:' '{print $4}' )"
+            VBOXNET_INTERFACE="$(arp -an | grep "$DOCKER_HOST_IP" | awk -F'on' '{print $2}' | awk '{print $1}')"
+            WEBPACK_SELENIUM_DEV_SERVER_HOST="$(ifconfig "$VBOXNET_INTERFACE" | grep inet | awk '{print $2}')"
         fi
-
-        DOCKER_HOST_IP="$(echo "$DOCKER_HOST" | awk -F'/|:' '{print $4}' )"
-        VBOXNET_INTERFACE="$(arp -an | grep "$DOCKER_HOST_IP" | awk -F'on' '{print $2}' | awk '{print $1}')"
-        WEBPACK_SELENIUM_DEV_SERVER_HOST="$(ifconfig "$VBOXNET_INTERFACE" | grep inet | awk '{print $2}')"
     fi
 else
     # Linux: no complications here
