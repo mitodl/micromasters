@@ -23,25 +23,11 @@ else
 fi
 
 # Set WEBPACK_DEV_SERVER_HOST to the IP or hostname which the browser will use to contact the webpack dev server
-if [[ "$IS_OSX" == "true" ]]
-then
-    WEBPACK_DEV_SERVER_HOST="localhost"
-else
-    if [[ "$INSIDE_CONTAINER" == "true" ]]
-    then
-        # Linux container
-        WEBPACK_DEV_SERVER_HOST="$(ip route | grep default | awk '{ print $3 }')"
-    else
-        # Linux host
-        CONTAINER_NAME="$(docker-compose ps -q watch)"
-        WEBPACK_DEV_SERVER_HOST="$(docker exec "$CONTAINER_NAME" ip route | grep default | awk '{ print $3 }')"
-    fi
-fi
+WEBPACK_DEV_SERVER_HOST="localhost"
 
 # Set WEBPACK_SELENIUM_DEV_SERVER_HOST to the IP address for the webpack dev server
 # This is different from WEBPACK_DEV_SERVER_HOST because localhost won't suffice here since the request
 # is coming from a docker container, not the browser. If we can't detect this the user must set it via a script.
-
 if [[ "$IS_OSX" == "true" ]]
 then
     if [[ "$INSIDE_CONTAINER" == "true" ]]
@@ -68,11 +54,18 @@ then
         fi
     fi
 else
-    # Linux: no complications here
-    WEBPACK_SELENIUM_DEV_SERVER_HOST="$WEBPACK_DEV_SERVER_HOST"
+    if [[ "$INSIDE_CONTAINER" == "true" ]]
+    then
+        # Linux container
+        WEBPACK_DEV_SERVER_HOST="$(ip route | grep default | awk '{ print $3 }')"
+    else
+        # Linux host
+        CONTAINER_NAME="$(docker-compose ps -q watch)"
+        WEBPACK_DEV_SERVER_HOST="$(docker exec "$CONTAINER_NAME" ip route | grep default | awk '{ print $3 }')"
+    fi
 fi
 
 export IS_OSX="$IS_OSX"
 export INSIDE_CONTAINER="$INSIDE_CONTAINER"
-export WEBPACK_DEV_SERVER_HOST="$WEBPACK_DEV_SERVER_HOST"
+export WEBPACK_DEV_SERVER_HOST="localhost"
 export WEBPACK_SELENIUM_DEV_SERVER_HOST="$WEBPACK_SELENIUM_DEV_SERVER_HOST"
