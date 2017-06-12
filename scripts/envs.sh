@@ -53,7 +53,7 @@ then
             exit 1
         fi
     else
-        if [[ ! -z "$DOCKER_HOST" ]]
+        if [[ -z "$DOCKER_HOST" ]]
         then
             # If we're running the webpack dev server we don't need this
             WEBPACK_SELENIUM_DEV_SERVER_HOST=""
