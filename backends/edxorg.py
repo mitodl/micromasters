@@ -3,6 +3,7 @@ EdX.org backend for Python Social Auth
 """
 from urllib.parse import urljoin
 
+from edx_api.client import EdxApi
 from django.conf import settings
 from social_core.backends.oauth import BaseOAuth2
 
@@ -45,12 +46,9 @@ class EdxOrgOAuth2(BaseOAuth2):
             dict: a dictionary containing user information
                 coming from the remote service.
         """
-        return self.get_json(
-            urljoin(self.EDXORG_BASE_URL, "/api/mobile/v0.5/my_user_info"),
-            headers={
-                "Authorization": "Bearer {}".format(access_token),
-            }
-        )
+        edx_client = EdxApi({'access_token': access_token}, self.EDXORG_BASE_URL)
+        info = edx_client.user_info.get_user_info()
+        return {'name': info.name, 'username': info.username, 'email': info.email}
 
     def get_user_details(self, response):
         """
