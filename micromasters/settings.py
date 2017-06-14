@@ -482,14 +482,17 @@ else:
 
 # Celery
 USE_CELERY = True
-BROKER_URL = get_var("BROKER_URL", get_var("REDISCLOUD_URL", None))
+# for the following variables keep backward compatibility for the environment variables
+# the part after "or" can be removed after we replace the environment variables in production
+CELERY_BROKER_URL = get_var(
+    "CELERY_BROKER_URL", get_var("REDISCLOUD_URL", None)) or get_var("BROKER_URL", get_var("REDISCLOUD_URL", None))
 CELERY_RESULT_BACKEND = get_var(
     "CELERY_RESULT_BACKEND", get_var("REDISCLOUD_URL", None)
 )
-CELERY_ALWAYS_EAGER = get_var("CELERY_ALWAYS_EAGER", False)
-CELERY_EAGER_PROPAGATES_EXCEPTIONS = get_var(
-    "CELERY_EAGER_PROPAGATES_EXCEPTIONS", True)
-CELERYBEAT_SCHEDULE = {
+CELERY_TASK_ALWAYS_EAGER = get_var("CELERY_TASK_ALWAYS_EAGER", False) or get_var("CELERY_ALWAYS_EAGER", False)
+CELERY_TASK_EAGER_PROPAGATES = (get_var("CELERY_TASK_EAGER_PROPAGATES", True) or
+                                get_var("CELERY_EAGER_PROPAGATES_EXCEPTIONS", True))
+CELERY_BEAT_SCHEDULE = {
     'batch-update-user-data-every-6-hrs': {
         'task': 'dashboard.tasks.batch_update_user_data',
         'schedule': crontab(minute=0, hour='*/6')
@@ -529,7 +532,7 @@ CACHES = {
     },
     'redis': {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": BROKER_URL,
+        "LOCATION": CELERY_BROKER_URL,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
         },
