@@ -17,16 +17,16 @@ from django.conf import settings  # noqa pylint: disable=wrong-import-position
 log = logging.getLogger(__name__)
 
 
-class CustomCelery(Celery):
-    """Custom celery class to handle Sentry setup."""
+client = Client(**settings.RAVEN_CONFIG)
 
-    def on_configure(self):
-        """Automatically register Sentry client for use with Celery tasks."""
-        client = Client(**settings.RAVEN_CONFIG)
-        register_logger_signal(client)
-        register_signal(client)
+register_logger_signal(client, loglevel=settings.LOG_LEVEL)
 
-app = CustomCelery('micromasters')
+# The register_signal function can also take an optional argument
+# `ignore_expected` which causes exception classes specified in Task.throws
+# to be ignored
+register_signal(client, ignore_expected=True)
+
+app = Celery('micromasters')
 
 # Using a string here means the worker will not have to
 # pickle the object when using Windows.

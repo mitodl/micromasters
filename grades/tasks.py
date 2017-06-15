@@ -72,7 +72,7 @@ def freeze_course_run_final_grades(course_run_id):
         # delete the entry from the cache (if needed it will be added again later)
         cache_redis.delete(cache_id)
         # extract the results from the id
-        results = GroupResult.restore(group_results_id)
+        results = GroupResult.restore(group_results_id, app=app)
         # if the subtasks are not done, revoke them
         if not results.ready():
             log.error('freezing of users for course %s took more than one iteration', course_run.edx_course_key)

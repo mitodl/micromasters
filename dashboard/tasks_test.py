@@ -52,7 +52,7 @@ class TasksTest(MockedESTestCase):
         """
         self.assertTrue(batch_update_user_data.delay())
 
-    @mock.patch('dashboard.tasks.batch_update_user_data_subtasks.s', autospec=True)
+    @mock.patch('dashboard.tasks.batch_update_user_data_subtasks.run', autospec=True)
     def test_batch_update_user_date_for_active_users(self, mocked_subtasks):
         """
         Assert batch_update_user_data does not update inactive users

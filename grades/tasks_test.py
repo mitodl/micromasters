@@ -2,7 +2,7 @@
 Tests for grades tasks
 """
 from datetime import timedelta
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from django.core.cache import caches
 
@@ -108,8 +108,9 @@ class GradeTasksTests(MockedESTestCase):
         assert info_run.course_run == self.course_run2
         assert info_run.status == FinalGradeStatus.COMPLETE
 
-    @patch('grades.api.freeze_user_final_grade', autospec=True)
-    def test_freeze_course_run_final_grades_4(self, freeze_single_user):
+    @patch('celery.result.GroupResult.restore', new_callable=MagicMock)
+    @patch('grades.api.freeze_user_final_grade', autospec=True, return_value=None)
+    def test_freeze_course_run_final_grades_4(self, freeze_single_user, mock_restore):
         """
         Test for the test_freeze_course_run_final_grades
         task in case there are users to be processed
@@ -117,6 +118,10 @@ class GradeTasksTests(MockedESTestCase):
         NOTE: In this test it is mocked a function in a subtask and not the subtask.
         The reason is because mocking subtasks inside celery groups creates problems.
         """
+        restore_result = MagicMock()
+        restore_result.ready.return_value = True
+        mock_restore.return_value = restore_result
+
         # first call
         run_grade_info_qset = CourseRunGradingStatus.objects.filter(course_run=self.course_run1)
         assert run_grade_info_qset.exists() is False
