@@ -159,7 +159,7 @@
     }
 
     .course-container {
-      border-bottom: 1px solid $lightgray;
+      border-bottom: 1px solid $medgray;
 
       .course-row {
         width: 100%;
@@ -339,10 +339,11 @@
   .price-message {
     font-size: 14px;
     align-items: center;
-    padding: 20px;
+    padding: 18px 20px;
     margin: 0 24px 15px;
     background-color: #dceef8;
     color: black;
+    border-radius: 3px;
   }
 }
 

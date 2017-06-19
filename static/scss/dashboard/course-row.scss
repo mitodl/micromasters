@@ -1,10 +1,11 @@
 .course-row {
   .course-info {
-    margin: 25px 24px 28px;
+    margin: 29px 22px 35px 28px;
 
     .course-title {
       font-weight: 500;
       font-size: 16px;
+      margin-bottom: 4px;
     }
   }
 
@@ -22,6 +23,11 @@
   }
 
   .enrollable-course-info {
+    .course-start-date-message {
+      color: $font-gray;
+      margin-left: 1px;
+    }
+
     .second-col {
       display: flex;
       flex-direction: column;
@@ -30,7 +36,7 @@
     }
 
     .mdl-spinner {
-      margin-bottom: 5px;
+      margin-bottom: 1px;
     }
   }
 }

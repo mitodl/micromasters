@@ -3,7 +3,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin: 17px 0;
+  margin: 15px 0 9px;
 
   .grades {
     justify-content: flex-start;
@@ -43,7 +43,9 @@
     color: $meddarkgray;
 
     .number {
-      margin-right: 18px;
+      margin-right: 10px;
+      font-size: 17px;
+      color: #000;
     }
   }
 }

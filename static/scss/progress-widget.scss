@@ -12,7 +12,7 @@
 
   .circular-progress-widget-fg {
     transition: stroke-dashoffset .5s ease-in-out;
-    stroke: $mm-brand-bg-light;
+    stroke: $progress-bar-color;
     transform: rotate(-90deg);
     transform-origin: 50% 50%;
   }

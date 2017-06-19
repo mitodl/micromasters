@@ -5,18 +5,23 @@
 
   .number {
     font-size: 18pt;
-    font-weight: 500;
+    font-weight: 400;
     margin-bottom: 15px;
+
+    a{
+      font-weight: 400;
+      color: $font-black;
+    }
   }
 
   .course-progress {
-    background-color: $medgray;
-    width: 50px;
-    height: 5px;
+    background-color: #e5e5e5;
+    width: 83px;
+    height: 4px;
 
     .course-progress-bar {
-      height: 5px;
-      background-color: $mm-brand-fg;
+      height: 4px;
+      background-color: $progress-bar-color;
     }
   }
 }

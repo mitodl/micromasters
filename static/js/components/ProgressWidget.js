@@ -68,7 +68,7 @@ export default class ProgressWidget extends React.Component {
     return (
       <Card className="progress-widget" shadow={0}>
         <CardTitle className="progress-title">Progress</CardTitle>
-        {circularProgressWidget(63, 7, totalPassedCourses, totalCourses)}
+        {circularProgressWidget(63, 6, totalPassedCourses, totalCourses)}
       </Card>
     );
   }

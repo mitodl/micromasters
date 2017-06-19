@@ -50,7 +50,7 @@ export default class CourseRow extends React.Component {
 
   pastCourseRuns = (course: Course): Array<CourseRun> => (
     (course.runs.length > 1)
-      ? R.drop(1, course.runs).filter(run => run.status !== STATUS_OFFERED) 
+      ? R.drop(1, course.runs).filter(run => run.status !== STATUS_OFFERED)
       : []
   );
 
@@ -165,7 +165,7 @@ export default class CourseRow extends React.Component {
 
     return <div className="enrollable-course-info">
         <div className="cols">
-        <div className="first-col">
+        <div className="first-col course-start-date-message">
           { courseStartDateMessage(run) }
         </div>
         <div className="second-col">

@@ -1,10 +1,15 @@
 .course-status-messages {
-  padding-top: 18px;
+  padding-top: 8px;
 
   .status-message {
     background-color: $bg-warm;
     border: 1px solid $dashboard-button-disable;
-    padding: 15px 0 15px 18px;
+    padding: 13px 0 15px 18px;
     border-radius: 2px;
+
+    .dashboard-button {
+      position: relative;
+      top: 3px;
+    }
   }
 }
