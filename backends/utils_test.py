@@ -17,6 +17,12 @@ from search.base import MockedESTestCase
 # pylint: disable=protected-access
 
 
+social_extra_data = {
+    "access_token": "fooooootoken",
+    "refresh_token": "baaaarrefresh",
+}
+
+
 class RefreshTest(MockedESTestCase):
     """Class to test refresh token"""
 
@@ -29,10 +35,7 @@ class RefreshTest(MockedESTestCase):
         cls.user.social_auth.create(
             provider=EdxOrgOAuth2.name,
             uid="{}_edx".format(cls.user.username),
-            extra_data={
-                "access_token": "fooooootoken",
-                "refresh_token": "baaaarrefresh",
-            }
+            extra_data=social_extra_data
         )
 
     def setUp(self):
@@ -46,7 +49,7 @@ class RefreshTest(MockedESTestCase):
         social_user.save()
         return social_user
 
-    @patch('backends.edxorg.EdxOrgOAuth2.refresh_token', autospec=True)
+    @patch('backends.edxorg.EdxOrgOAuth2.refresh_token', return_value=social_extra_data, autospec=True)
     def test_refresh(self, mock_refresh):
         """The refresh needs to be called"""
         extra_data = {
@@ -57,7 +60,7 @@ class RefreshTest(MockedESTestCase):
         utils.refresh_user_token(social_user)
         assert mock_refresh.called
 
-    @patch('backends.edxorg.EdxOrgOAuth2.refresh_token', autospec=True)
+    @patch('backends.edxorg.EdxOrgOAuth2.refresh_token', return_value=social_extra_data, autospec=True)
     def test_refresh_no_extradata(self, mock_refresh):
         """The refresh needs to be called because there is not valid timestamps"""
         social_user = self.user.social_auth.get(provider=EdxOrgOAuth2.name)
@@ -66,7 +69,7 @@ class RefreshTest(MockedESTestCase):
         utils.refresh_user_token(social_user)
         assert mock_refresh.called
 
-    @patch('backends.edxorg.EdxOrgOAuth2.refresh_token', autospec=True)
+    @patch('backends.edxorg.EdxOrgOAuth2.refresh_token', return_value=social_extra_data, autospec=True)
     def test_no_refresh(self, mock_refresh):
         """The refresh does not need to be called"""
         extra_data = {
@@ -77,7 +80,7 @@ class RefreshTest(MockedESTestCase):
         utils.refresh_user_token(social_user)
         assert not mock_refresh.called
 
-    @patch('backends.edxorg.EdxOrgOAuth2.refresh_token', autospec=True)
+    @patch('backends.edxorg.EdxOrgOAuth2.refresh_token', return_value=social_extra_data, autospec=True)
     def test_refresh_400_error_server(self, mock_refresh):
         """Test to check what happens when the OAUTH server returns 400 code"""
         def raise_http_error(*args, **kwargs):  # pylint: disable=unused-argument
@@ -92,7 +95,7 @@ class RefreshTest(MockedESTestCase):
         with self.assertRaises(utils.InvalidCredentialStored):
             utils._send_refresh_request(social_user)
 
-    @patch('backends.edxorg.EdxOrgOAuth2.refresh_token', autospec=True)
+    @patch('backends.edxorg.EdxOrgOAuth2.refresh_token', return_value=social_extra_data, autospec=True)
     def test_refresh_401_error_server(self, mock_refresh):
         """Test to check what happens when the OAUTH server returns 401 code"""
         def raise_http_error(*args, **kwargs):  # pylint: disable=unused-argument
@@ -107,7 +110,7 @@ class RefreshTest(MockedESTestCase):
         with self.assertRaises(utils.InvalidCredentialStored):
             utils._send_refresh_request(social_user)
 
-    @patch('backends.edxorg.EdxOrgOAuth2.refresh_token', autospec=True)
+    @patch('backends.edxorg.EdxOrgOAuth2.refresh_token', return_value=social_extra_data, autospec=True)
     def test_refresh_500_error_server(self, mock_refresh):
         """Test to check what happens when the OAUTH server returns 500 code"""
         def raise_http_error(*args, **kwargs):  # pylint: disable=unused-argument
