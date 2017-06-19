@@ -30,6 +30,12 @@ from roles.roles import (
 )
 
 
+social_extra_data = {
+    "access_token": "fooooootoken",
+    "refresh_token": "baaaarrefresh",
+}
+
+
 @ddt.ddt
 class DashboardTest(MockedESTestCase, APITestCase):
     """
@@ -147,10 +153,7 @@ class DashboardTokensTest(MockedESTestCase, APITestCase):
         cls.user.social_auth.create(
             provider=EdxOrgOAuth2.name,
             uid=cls.username,
-            extra_data={
-                "access_token": "fooooootoken",
-                "refresh_token": "baaaarrefresh",
-            }
+            extra_data=social_extra_data
         )
 
         cls.enrollments = Enrollments([])
@@ -178,7 +181,7 @@ class DashboardTokensTest(MockedESTestCase, APITestCase):
         ):
             return self.client.get(self.url)
 
-    @patch('backends.edxorg.EdxOrgOAuth2.refresh_token', autospec=True)
+    @patch('backends.edxorg.EdxOrgOAuth2.refresh_token', return_value=social_extra_data, autospec=True)
     def test_refresh_token(self, mock_refresh):
         """Test to verify that the access token is refreshed if it has expired"""
         extra_data = {
@@ -190,7 +193,7 @@ class DashboardTokensTest(MockedESTestCase, APITestCase):
         assert mock_refresh.called
         assert res.status_code == status.HTTP_200_OK
 
-    @patch('backends.edxorg.EdxOrgOAuth2.refresh_token', autospec=True)
+    @patch('backends.edxorg.EdxOrgOAuth2.refresh_token', return_value=social_extra_data, autospec=True)
     def test_refresh_token_still_valid(self, mock_refresh):
         """Test to verify that the access token is not refreshed if it has not expired"""
         extra_data = {
