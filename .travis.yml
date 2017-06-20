@@ -26,11 +26,15 @@ matrix:
       env:
         name: Python-Selenium
     - install:
-      - env | grep TRAVIS > .env
-      - env | grep CI >> .env
-      - docker build -t travis-watch -f ./travis/Dockerfile-travis-watch .
-      script: bash ./travis/js_tests.sh
-      services:
-        - docker
+      language: node_js
+      cache: yarn
+      node_js:
+        - "6"
+      script:
+        - npm run coverage
+        - npm run lint
+        - npm run scss_lint
+        - npm run flow
+        - NODE_ENV=production ./webpack_if_prod.sh
       env:
         name: JavaScript
