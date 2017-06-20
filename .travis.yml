@@ -30,7 +30,6 @@ matrix:
       cache: yarn
       node_js:
         - "6"
-        - "7"
       script:
         - npm run coverage
         - npm run lint
