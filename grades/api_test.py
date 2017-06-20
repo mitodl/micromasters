@@ -213,6 +213,40 @@ class GradeAPITests(MockedESTestCase):
         assert grade.grade == self.certificates.get(course_key).data.get('grade')
         assert grade.payed_on_edx is payed_edx_result
 
+    @ddt.data('', None, ' ', 'foo', )
+    def test_compute_grade_odd_grade(self, odd_value):
+        """
+        Tests in case the grade coming from edX is not a number
+        """
+        # test for grade computed on current grades
+        test_values = (
+            (self.run_fa, api._compute_grade_for_fa, ),
+            (self.run_no_fa, api._compute_grade_for_non_fa, ),
+        )
+        for course_run, grade_func in test_values:
+            course_key = course_run.edx_course_key
+            current_grade = self.current_grades[course_key]
+            current_grade.data['percent'] = odd_value
+            current_grade.save()
+            user_edx_data = CachedEdxUserData(self.user)
+            run_data = user_edx_data.get_run_data(course_key)
+            grade = grade_func(run_data)
+            assert grade.grade == 0.0
+        # test for grade computed on certificates
+        test_values = (
+            (self.run_fa_with_cert, api._compute_grade_for_fa, ),
+            (self.run_no_fa_with_cert, api._compute_grade_for_non_fa, )
+        )
+        for course_run, grade_func in test_values:
+            course_key = course_run.edx_course_key
+            cert = self.certificates[course_key]
+            cert.data['grade'] = odd_value
+            cert.save()
+            user_edx_data = CachedEdxUserData(self.user)
+            run_data = user_edx_data.get_run_data(course_key)
+            grade = grade_func(run_data)
+            assert grade.grade == 0.0
+
     def test_get_compute_func(self):
         """
         tests for _get_compute_func function

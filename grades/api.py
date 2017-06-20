@@ -43,6 +43,11 @@ def _compute_grade_for_fa(user_edx_run_data):
         run_passed = user_edx_run_data.current_grade.passed
         grade = user_edx_run_data.current_grade.percent
         payed_on_edx = False
+    # making sure the grade is a float
+    try:
+        grade = float(grade)
+    except (ValueError, TypeError):
+        grade = 0.
     return UserFinalGrade(grade=grade, passed=run_passed, payed_on_edx=payed_on_edx)
 
 
@@ -67,7 +72,11 @@ def _compute_grade_for_non_fa(user_edx_run_data):
         run_passed = False
         grade = user_edx_run_data.current_grade.percent
         payed_on_edx = user_edx_run_data.enrollment.mode in ['honor', 'verified']
-
+    # making sure the grade is a float
+    try:
+        grade = float(grade)
+    except (ValueError, TypeError):
+        grade = 0.
     return UserFinalGrade(grade=grade, passed=run_passed, payed_on_edx=payed_on_edx)
 
 
