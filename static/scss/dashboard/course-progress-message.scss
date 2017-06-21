@@ -2,10 +2,14 @@
   .details {
     font-size: 14px;
     color: $meddarkgray;
-    margin-left: 6px;
+    margin-left: 2px;
 
     .course-links {
       font-size: 14px;
+      margin-top: 4px;
+      a {
+      	font-weight: 400;
+      }
     }
   }
 }
