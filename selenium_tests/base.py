@@ -61,7 +61,8 @@ log = logging.getLogger(__name__)
 
 def _make_absolute_url(relative_url, absolute_base):
     """
-    Create an absolute URL for selenium testing given a relative URL
+    Create an absolute URL for selenium testing given a relative URL. This will also replace the host of absolute_base
+    with the host IP of this instance.
 
     Args:
         relative_url (str): A relative URL
@@ -344,9 +345,13 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         """Helper function for WebDriverWait"""
         return CustomWebDriverWait(driver=self.selenium, timeout=5)
 
+    def make_absolute_url(self, relative_url):
+        """Make an absolute URL appropriate for selenium testing"""
+        return _make_absolute_url(relative_url, self.live_server_url)
+
     def get(self, relative_url):
         """Use self.live_server_url with a URL which will work for external services"""
-        new_url = _make_absolute_url(relative_url, self.live_server_url)
+        new_url = self.make_absolute_url(relative_url)
         self.selenium.get(new_url)
         self.wait().until(lambda driver: driver.find_element_by_tag_name("body"))
         self.assert_console_logs()
