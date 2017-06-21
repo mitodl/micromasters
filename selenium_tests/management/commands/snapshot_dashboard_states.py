@@ -1,6 +1,5 @@
 """Management command to attach avatars to profiles"""
 import itertools
-import json
 import os
 import sys
 from urllib.parse import quote_plus
@@ -11,7 +10,6 @@ from django.core.management import (
 )
 from django.test import override_settings
 import pytest
-import requests
 
 from courses.factories import CourseRunFactory
 from courses.models import (
@@ -304,21 +302,7 @@ class DashboardStates(SeleniumTestsBase):
 
             filename = self._make_filename(num, name, use_mobile=use_mobile)
             self.take_screenshot(filename)
-
-            # Get the API results and store them alongside the screenshots
-            sessionid = self.selenium.get_cookie('sessionid')['value']
-            for api_url, api_name in [
-                ("/api/v0/dashboard/{}/".format(self.edx_username), 'dashboard'),
-                ("/api/v0/coupons/", 'coupons'),
-                ("/api/v0/course_prices/{}/".format(self.edx_username), 'course_prices'),
-            ]:
-                absolute_url = self.make_absolute_url(api_url)
-                api_json = requests.get(absolute_url, cookies={'sessionid': sessionid}).json()
-                with open("{filename}.{api_name}.json".format(
-                    filename=filename,
-                    api_name=api_name,
-                ), 'w') as f:
-                    json.dump(api_json, f, indent="    ")
+            self.store_api_results(filename)
 
 
 class Command(BaseCommand):

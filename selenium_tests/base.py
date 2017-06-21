@@ -1,6 +1,7 @@
 """Basic selenium tests for MicroMasters"""
 from base64 import b64encode
 from datetime import timedelta
+import json
 import logging
 import os
 import socket
@@ -23,6 +24,7 @@ from django.db import connection
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 import pytest
+import requests
 from selenium.common.exceptions import (
     ElementNotVisibleException,
     StaleElementReferenceException,
@@ -397,6 +399,26 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
             # Can be useful for travis where we don't have access to build artifacts
             with open(filename, 'rb') as f:
                 print("Screenshot as base64: {}".format(b64encode(f.read())))
+
+    def store_api_results(self, name=None):
+        """Helper method to save certain GET REST API responses"""
+        if name is None:
+            name = self._testMethodName
+
+        # Get the API results and store them alongside the screenshots
+        sessionid = self.selenium.get_cookie('sessionid')['value']
+        for api_url, api_name in [
+                ("/api/v0/dashboard/{}/".format(self.edx_username), 'dashboard'),
+                ("/api/v0/coupons/", 'coupons'),
+                ("/api/v0/course_prices/{}/".format(self.edx_username), 'course_prices'),
+        ]:
+            absolute_url = self.make_absolute_url(api_url)
+            api_json = requests.get(absolute_url, cookies={'sessionid': sessionid}).json()
+            with open("{filename}.{api_name}.json".format(
+                filename=name,
+                api_name=api_name,
+            ), 'w') as f:
+                json.dump(api_json, f, indent="    ")
 
     def assert_console_logs(self):
         """Assert that console logs don't contain anything unexpected"""
