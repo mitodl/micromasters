@@ -40,3 +40,10 @@ export type CoursePricesState = {
 export type CoursePriceReducerState = {
   [username: string]: CoursePricesState
 };
+
+export type ProgramLearner = {
+  username: string,
+  image_small: string,
+};
+
+export type ProgramLearners = Array<ProgramLearner>;

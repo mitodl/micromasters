@@ -17,6 +17,8 @@ from rest_framework.response import Response
 from courses.models import Program
 from courses.serializers import ProgramSerializer
 from dashboard.models import ProgramEnrollment
+from profiles.models import Profile
+from profiles.serializers import ProfileImageSerializer
 
 
 class ResourceConflict(APIException):
@@ -36,6 +38,37 @@ class ProgramViewSet(viewsets.ReadOnlyModelViewSet):
     )
     queryset = Program.objects.filter(live=True)
     serializer_class = ProgramSerializer
+
+
+class ProgramLearnersViewSet(viewsets.ReadOnlyModelViewSet):
+    """API for Learners enrolled in the Program"""
+
+    authentication_classes = (
+        SessionAuthentication,
+        TokenAuthentication,
+    )
+    permission_classes = (
+        IsAuthenticated,
+    )
+    serializer_class = ProfileImageSerializer
+
+    def get_queryset(self):
+        program_id = self.kwargs["program_id"]
+        users = ProgramEnrollment.objects.filter(
+            program_id=program_id
+        ).values_list('user', flat=True)
+
+        queryset = Profile.objects.exclude(
+            image_small__exact=''
+        ).filter(user__in=users).exclude(
+            account_privacy='private'
+        )
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = ProfileImageSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class ProgramEnrollmentListView(CreateAPIView):

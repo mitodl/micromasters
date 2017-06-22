@@ -7,7 +7,7 @@ import Decimal from 'decimal.js-light';
 import type { Profile, ProfileGetResult, ProfilePatchResult } from '../flow/profileTypes';
 import type { CheckoutResponse } from '../flow/checkoutTypes';
 import type { Coupons, AttachCouponResponse } from '../flow/couponTypes';
-import type { Dashboard, CoursePrices } from '../flow/dashboardTypes';
+import type { Dashboard, CoursePrices, ProgramLearners } from '../flow/dashboardTypes';
 import type { AvailableProgram, AvailablePrograms } from '../flow/enrollmentTypes';
 import type { EmailSendResponse } from '../flow/emailTypes';
 import type { PearsonSSOParameters } from '../flow/pearsonTypes';
@@ -97,6 +97,10 @@ export async function getPrograms(): Promise<AvailablePrograms> {
     loginOnEdXError(response);
     return response;
   }
+}
+
+export function getProgramLearners(programId: number): Promise<ProgramLearners> {
+  return fetchJSONWithCSRF(`/api/v0/programlearners/${programId}/`, {}, true);
 }
 
 export function addProgramEnrollment(programId: number): Promise<AvailableProgram> {

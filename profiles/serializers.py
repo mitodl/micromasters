@@ -299,3 +299,18 @@ class ProfileFilledOutSerializer(ProfileSerializer):
             raise ValidationError("postal_code may not be blank")
 
         return super(ProfileFilledOutSerializer, self).validate(attrs)
+
+
+class ProfileImageSerializer(ModelSerializer):
+    username = SerializerMethodField()
+
+    def get_username(self, obj):
+        """Getter for the username field"""
+        return get_social_username(obj.user)
+
+    class Meta:
+        model = Profile
+        fields = (
+            'username',
+            'image_small',
+        )

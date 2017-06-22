@@ -58,6 +58,7 @@ import DashboardUserCard from '../components/dashboard/DashboardUserCard';
 import FinancialAidCard from '../components/dashboard/FinancialAidCard';
 import FinalExamCard from '../components/dashboard/FinalExamCard';
 import ErrorMessage from '../components/ErrorMessage';
+import LearnersInProgramCard from '../components/LearnersInProgramCard';
 import ProgressWidget from '../components/ProgressWidget';
 import {
   clearCoupons,
@@ -81,7 +82,7 @@ import { singleBtnDialogActions } from '../components/inputs/util';
 import type { UIState } from '../reducers/ui';
 import type { OrderReceiptState } from '../reducers/order_receipt';
 import type { DocumentsState } from '../reducers/documents';
-import type { CoursePrices, DashboardState } from '../flow/dashboardTypes';
+import type { CoursePrices, DashboardState, ProgramLearners } from '../flow/dashboardTypes';
 import type {
   AvailableProgram, AvailableProgramsState
 } from '../flow/enrollmentTypes';
@@ -125,6 +126,7 @@ class DashboardPage extends React.Component {
     programs:                 AvailableProgramsState,
     dashboard:                DashboardState,
     prices:                   RestState<CoursePrices>,
+    programLearners:          RestState<ProgramLearners>,
     dispatch:                 Dispatch,
     ui:                       UIState,
     email:                    AllEmailsState,
@@ -151,8 +153,10 @@ class DashboardPage extends React.Component {
 
   componentWillUnmount() {
     const { dispatch } = this.props;
+    let program = this.getCurrentlyEnrolledProgram();
     dispatch(clearDashboard(SETTINGS.user.username));
     dispatch(actions.prices.clear(SETTINGS.user.username));
+    dispatch(actions.programLearners.clear(program.id));
     dispatch(clearCoupons());
   }
 
@@ -260,6 +264,7 @@ class DashboardPage extends React.Component {
   updateRequirements = () => {
     this.fetchDashboard();
     this.fetchCoursePrices();
+    this.fetchProgramLearners();
     this.handleCoupon();
     this.fetchCoupons();
     this.handleOrderStatus();
@@ -276,6 +281,14 @@ class DashboardPage extends React.Component {
     const { prices, dispatch } = this.props;
     if (prices.getStatus === undefined) {
       dispatch(actions.prices.get(SETTINGS.user.username));
+    }
+  }
+
+  fetchProgramLearners() {
+    const { programLearners, dispatch } = this.props;
+    let program = this.getCurrentlyEnrolledProgram();
+    if (program !== undefined && R.pathEq([program.id, 'getStatus'], undefined, programLearners)) {
+      dispatch(actions.programLearners.get(program.id))
     }
   }
 
@@ -653,6 +666,7 @@ class DashboardPage extends React.Component {
     const {
       dashboard,
       prices,
+      programLearners,
       profile: { profile },
       documents,
       ui,
@@ -689,6 +703,11 @@ class DashboardPage extends React.Component {
       />;
     }
 
+    let learnersInProgramCard;
+    if (programLearners[program.id]){
+      learnersInProgramCard = <LearnersInProgramCard programLearners={programLearners[program.id].data}/>;
+    }
+
     const calculatedPrices = calculatePrices(dashboard.programs, prices.data || [], coupons.coupons);
 
     const courseListCardOptionalProps = {};
@@ -696,7 +715,6 @@ class DashboardPage extends React.Component {
     if (coupon) {
       courseListCardOptionalProps.coupon = coupon;
     }
-
     return (
       <div>
         {this.renderEdxCacheRefreshErrorMessage()}
@@ -739,6 +757,7 @@ class DashboardPage extends React.Component {
           </div>
           <div className="second-column">
             <ProgressWidget program={program} />
+            {learnersInProgramCard}
           </div>
         </div>
       </div>
@@ -787,11 +806,11 @@ const mapStateToProps = (state) => {
   if (SETTINGS.user && state.profiles[SETTINGS.user.username] !== undefined) {
     profile = state.profiles[SETTINGS.user.username];
   }
-
   return {
     profile: profile,
     dashboard: getOwnDashboard(state),
     prices: getOwnCoursePrices(state),
+    programLearners: state.programLearners,
     programs: state.programs,
     currentProgramEnrollment: state.currentProgramEnrollment,
     ui: state.ui,
