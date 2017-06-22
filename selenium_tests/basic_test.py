@@ -6,6 +6,12 @@ from selenium.webdriver.common.keys import Keys
 
 from courses.factories import ProgramFactory
 from dashboard.models import ProgramEnrollment
+from financialaid.constants import FinancialAidStatus
+from financialaid.factories import FinancialAidFactory
+from financialaid.models import (
+    FinancialAid,
+    TierProgram,
+)
 from roles.models import (
     Staff,
     Role,
@@ -173,3 +179,47 @@ class LearnerTests(SeleniumTestsBase):
         self.wait().until(
             lambda driver: driver.find_element_by_css_selector('.result-info span').text == '{} Results'.format(count)
         )
+
+
+class ReviewFinancialAidTests(SeleniumTestsBase):
+    """Look at the financial aid review page"""
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+
+        Role.objects.create(
+            role='staff',
+            user=cls.user,
+            program=cls.program,
+        )
+
+        cls.student = cls.create_user()
+        tier_program = TierProgram.objects.get(discount_amount=0)
+        FinancialAidFactory.create(
+            user=cls.student,
+            tier_program=tier_program,
+            status=FinancialAidStatus.DOCS_SENT,
+        )
+
+    def setUp(self):
+        super().setUp()
+        self.login_via_admin(self.user)
+
+    def test_approve_docs(self):
+        """Test the financial aid review page"""
+        self.get("/financial_aid/review/{}/{}".format(self.program.id, FinancialAidStatus.DOCS_SENT))
+        self.wait().click(
+            # Mark as received
+            lambda driver: driver.find_element_by_css_selector("tr td:nth-child(7) button")
+        )
+        alert = self.selenium.switch_to_alert()
+        alert.accept()
+        self.wait().until(lambda driver: driver.find_element_by_css_selector('.alert-dismissable'))
+
+        def is_now_pending(driver):  # pylint: disable=unused-argument
+            """Wait until the change to the financial aid takes effect"""
+            assert FinancialAid.objects.count() == 1
+            financial_aid = FinancialAid.objects.first()
+            return financial_aid.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL
+        self.wait().until(is_now_pending)
