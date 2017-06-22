@@ -5,10 +5,8 @@ Portal for learners and course teams to access MITx MicroMasters programs
 
 ## Major Dependencies
 - Docker
-  - OSX recommended install method: [Download from Docker website](https://docs.docker.com/mac/)
-- docker-compose
-  - Recommended install: pip (`pip install docker-compose`)
-- Virtualbox (https://www.virtualbox.org/wiki/Downloads)
+  - [Download from Docker website](https://docker.com/). Follow the OS X or Linux instructions depending on your OS.
+- [Virtualbox](https://www.virtualbox.org/wiki/Downloads) to run edX locally
 - _(OSX only)_ Node/NPM, and Yarn
   - OSX recommended install method: [Installer on Node website](https://nodejs.org/en/download/)
   - No specific version has been chosen yet.
@@ -17,14 +15,14 @@ Portal for learners and course teams to access MITx MicroMasters programs
 
 #### Create your docker container:
 
-The following commands create a Docker machine named ``mm``, start the
+The following commands create a Docker machine named ``default``, start the
 container, and configure environment variables to facilitate communication
 with the edX instance.
 
-    docker-machine create --driver virtualbox mm
-    docker-machine start mm
-    # 'docker-machine env (machine)' prints export commands for important environment variables
-    eval "$(docker-machine env mm)"
+    docker-machine create
+    docker-machine start
+    # 'docker-machine env' prints export commands for important environment variables
+    eval "$(docker-machine env)"
 
 ## Running edX devstack locally _(optional, but recommended)_
 
@@ -157,8 +155,9 @@ variables in the ``.env`` file appropriately.
 #### 2) _(OSX only)_ Set up and run the webpack dev server on your host machine
 
 In the development environment, our static assets are served from the webpack
-dev server. When this environment variable is set, the script sources will
-look for the webpack server at that host instead of the host where Docker is running.
+dev server. This is run in the `watch` container on Linux but at the moment
+file notifications don't work across the shared folders used in docker-machine. So for
+OSX we need to run this in the host environment.
 
 You'll need to install the [yarn](https://yarnpkg.com/en/docs/cli/)
 package manager. You can do:
@@ -177,7 +176,7 @@ The ``--install`` flag is only needed if you're starting up for the first time, 
 to the packages in ``./package.json``. If you've installed those packages and there are no ``./package.json``
 updates, you can run this without the ``--install`` flag: ``./webpack_dev_server.sh``
 
-**DEBUGGING NOTE:** If you see an error related to node-sass when you run this script, try running
+**DEBUGGING NOTE:** If you see an error related to node-sass when you run this script, try deleting `node_modules` and running
 ``yarn install`` again.
 
 #### 3) Build the containers
@@ -213,54 +212,43 @@ Start Django, PostgreSQL, and other related services:
 
     docker-compose up
 
-In another terminal tab, navigate the the MicroMasters directory
+In another terminal tab, navigate to the MicroMasters directory
 and add a superuser in the now-running Docker container:
 
     docker-compose run web ./manage.py createsuperuser
 
 You should now be able to do the following:
 
-1. Visit MicroMasters in your browser on port `8079`. _(OSX Only)_ Docker auto-assigns
+1. Visit MicroMasters in your browser on port `8079`.
+
+  * OSX: Docker auto-assigns
  the container IP. Run ``docker-machine ip`` to see it. Your MicroMasters URL will
  be something like this: ``192.168.99.100:8079``.
-1. Click "Sign in with edX.org" and sign in by authorizing an edX client. If you're
- running edX locally, this will be the client you created in the steps above.
+  * Linux: You should be able to access this port at localhost: ``localhost:8079``.
 
-#### 7) Authorize for exam manually
- We can authorize user(s) for exam(s) manually using django command only if they paid and 
- passed selected course(s). **Note:** ``course.exam_module`` and ``program.exam_series_code`` must be set.
- 
- **params**
- - **--username:** (optional) If provided, command will look for given user only, 
-    and authorize him if he matches the critaria.
- - **--program-id:** (optional) if provided, command will look for given program only, 
-    and authorize all users who matches the critaria.
- - **--all:** (optional) if provided, command will authorize all eligible users for exams.
- 
-```shell 
-    docker-compose run web ./manage.py authorization_user_exam --username=(value) --program-id=(value)
-```
+2. Click "Sign in with edX.org" and sign in by authorizing an edX client. If you're
+ running edX locally, this will be the client you created in the steps above.
 
 ## Wagtail CMS (Content Management System)
 
-The CMS can be found at `/cms/`. Use the CMS to manage the content of the program pages and, by extension, the home 
+The CMS can be found at `/cms/`. Use the CMS to manage the content of the program pages and home 
 page.  
 
 #### Adding a new MicroMasters program
 
-1. Login to the cms with an admin account. If you don't have one, you can use the superuser account created earlier.
+1. Login to the CMS with an admin account. If you don't have one, you can use the superuser account created earlier.
 
 2. Click on the `Explorer` menu in the left nav to find the home page (labelled "MIT credentials are...")
 
 3. Click on `+ Add Child Page`
 
-4. Choose Program Page. Complete the form. Don't forget to save. 
+4. Choose Program Page. Complete the form. Don't forget to publish your changes.
 
 #### Adding CMS users
 
 1. Don't create new users from the CMS. Ask users to log in and fill out a MicroMasters profile first.  
 
-2. Login to the cms with an existing account. If you don't have one, you can use the superuser account created earlier.
+2. Login to the CMS with an existing account. If you don't have one, you can use the superuser account created earlier.
 
 3. From the Settings menu in the left nav, choose users.
 
@@ -271,12 +259,14 @@ skip to step 5.
 
 6. Check the box for the editors group. This will allow the user to view and edit all pages in the CMS. 
 
-## Running Commands and Testing
+## Running Commands
 
-As shown above, manage commands can be executed on the Docker-contained
+As shown above, management commands can be executed on the Docker-contained
 MicroMasters app. For example, you can run a Python shell with the following command:
 
     docker-compose run web ./manage.py shell
+
+## Testing
 
 Tests should be run in the Docker container, not the host machine. They can be run with the following commands:
 
@@ -293,9 +283,9 @@ Tests should be run in the Docker container, not the host machine. They can be r
     # run a single JS test file
     docker-compose run watch npm test /path/to/test.js
     # Run the JS linter
-    docker-compose run watch npm run-script lint
+    docker-compose run watch npm run lint
     # Run JS type-checking
-    docker-compose run watch npm run-script flow
+    docker-compose run watch npm run flow
     # Run SCSS linter
     docker-compose run watch npm run scss_lint
 
@@ -312,23 +302,10 @@ To validate prices and financial aid discounts for all programs run:
 
 #### Selenium
 
-To run selenium tests you will first need to create the Javascript bundles.
-Shut down the `watch` docker container if it's running to prevent
-overwriting `webpack-stats.json`:
+To run selenium tests make sure you have the application running, including the web
+server and webpack dev server. Then run this script to run the selenium tests:
 
-    docker-compose stop watch
-
-Then, if you are running OS X:
-
-    ./node_modules/webpack/bin/webpack.js --config webpack.config.prod.js --progress --bail
-
-Otherwise, if you are **not** running OS X do the same command within the `watch` container:
-
-    docker-compose run watch ./node_modules/webpack/bin/webpack.js --config webpack.config.prod.js --progress --bail
-
-Finally run this script locally to run the selenium tests:
-
-    ./scripts/test/run_selenium_tests.sh
+    ./scripts/test/run_selenium_tests_dev.sh
 
 This script sets up certain environment variables and runs
 all tests in the `selenium_tests/` directory, which are assumed
@@ -337,6 +314,16 @@ to all require selenium.
 **Note**: If you are having trouble with database state
 (this works differently from the rest of the tests), remove the
 `--reuse-db` flag from `pytest.ini` and try again.
+
+If a test errors but selenium is still working, it will take
+a screenshot of the browser at the point of the error and write it
+as a png file in the project directory.
+
+#### Generating screenshots
+
+To generate screenshots of various dashboard states, run this command:
+
+    ./scripts/test/run_snapshot_dashboard_states.sh
 
 ## Connecting to external services
 
@@ -351,9 +338,9 @@ If you want to connect to an ES cluster aside from the one created by Docker, yo
         ELASTICSEARCH_URL=https://(your_elastic_search_url)
         ELASTICSEARCH_HTTP_AUTH=(your_cluster_name):(key)
 
-1. If any of the above variables are set in the `web` configuration in `docker-compose.yml`, those
+2. If any of the above variables are set in the `web` configuration in `docker-compose.yml`, those
  will override the values you have in `.env`. Delete them.
-1. Restart the `db` and `elastic` docker-compose services if they're running:
+3. Restart the `db` and `elastic` docker-compose services if they're running:
  `docker-compose restart db elastic`
  
 You should now be able to connect to the external ES cluster. You
