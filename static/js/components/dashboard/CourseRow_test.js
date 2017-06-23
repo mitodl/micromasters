@@ -5,7 +5,7 @@ import moment from 'moment';
 import { assert } from 'chai';
 import sinon from 'sinon';
 
-import { makeDashboard, makeCourse } from '../../factories/dashboard';
+import { makeDashboard, makeCourse, makeCoursePrices } from '../../factories/dashboard';
 import CourseRow from './CourseRow';
 import CourseAction from './CourseAction';
 import ProgressMessage from './courses/ProgressMessage';
@@ -14,6 +14,7 @@ import { FINANCIAL_AID_PARTIAL_RESPONSE } from '../../test_constants';
 import { STATUS_NOT_PASSED } from '../../constants';
 import { INITIAL_UI_STATE } from '../../reducers/ui';
 import { makeRunCurrent, makeRunPast } from './courses/test_util';
+import { calculatePrices } from '../../lib/coupon';
 
 describe('CourseRow', () => {
   let sandbox, openCourseContactDialogStub;
@@ -29,18 +30,22 @@ describe('CourseRow', () => {
 
   const renderRow = (props = {}, isShallow = false) => {
     let render = isShallow ? shallow : mount;
+    const dashboard = makeDashboard();
+    const prices = makeCoursePrices(dashboard);
+    const course = props.course || makeCourse(dashboard.programs[0].position_in_program);
+    const couponPrices = calculatePrices(dashboard.programs, prices, []);
     return render(
       <CourseRow
         hasFinancialAid={true}
         financialAid={FINANCIAL_AID_PARTIAL_RESPONSE}
-        prices={new Map([[345, 456]])}
         openFinancialAidCalculator={sandbox.stub}
         now={moment()}
         addCourseEnrollment={sandbox.stub()}
-        course={null}
+        course={course}
         openCourseContactDialog={openCourseContactDialogStub}
         ui={INITIAL_UI_STATE}
         checkout={() => undefined}
+        couponPrices={couponPrices}
         {...props}
       />,
       {

@@ -4,7 +4,6 @@ import Decimal from 'decimal.js-light';
 
 import {
   COUPON_CONTENT_TYPE_COURSE,
-  COUPON_CONTENT_TYPE_PROGRAM,
   COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
   COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
   COUPON_TYPE_DISCOUNTED_PREVIOUS_COURSE,
@@ -12,19 +11,14 @@ import {
 } from '../constants';
 import {
   calculateDiscount,
-  calculatePrice,
   calculatePrices,
-  calculateRunPrice,
   makeAmountMessage,
   makeCouponReason,
   makeCouponMessage,
 } from './coupon';
-import * as couponFuncs from './coupon';
 import {
   makeCoupon,
-  makeCoupons,
   makeCourseCoupon,
-  makeCoursePrice,
   makeCoursePrices,
   makeDashboard,
   makeProgram,
@@ -40,119 +34,118 @@ describe('coupon utility functions', () => {
     sandbox.restore();
   });
 
-  describe('calculatePrice', () => {
-    it('uses calculateRunPrice to figure out price', () => {
-      let program = makeProgram();
-      let coupons = makeCoupons({"programs": [program]});
-      let price = makeCoursePrice(program);
-      let course = program.courses[0];
-      let run = course.runs[0];
-
-      let stubPrice = 5;
-      let calculateRunPriceStub = sandbox.stub(couponFuncs, 'calculateRunPrice');
-      calculateRunPriceStub.returns(stubPrice);
-      let [ actualCoupon, actualPrice ] = calculatePrice(run.id, course.id, price, coupons);
-      assert.equal(actualPrice, stubPrice);
-      let coupon = coupons.find(coupon => coupon.program_id === program.id);
-      assert.deepEqual(actualCoupon, coupon);
-      assert.isTrue(calculateRunPriceStub.calledWith(
-        run.id, course.id, program.id, price, coupon
-      ));
-    });
-  });
-
   describe('calculatePrices', () => {
-    it("returns an empty list if there are no programs", () => {
-      assert.deepEqual(calculatePrices([], [], []), new Map());
-    });
-
-    it('uses calculateRunPrice to figure out prices', () => {
-      let dashboard = makeDashboard();
-      let programs = dashboard.programs;
-      let prices = makeCoursePrices(dashboard);
-      let coupons = makeCoupons(dashboard);
-
-      let stubPrice = 5;
-      let calculateRunPriceStub = sandbox.stub(couponFuncs, 'calculateRunPrice');
-      calculateRunPriceStub.returns(stubPrice);
-
-      let expected = new Map();
-      for (const program of programs) {
-        for (const course of program.courses) {
-          for (const run of course.runs) {
-            expected.set(run.id, stubPrice);
-          }
-        }
-      }
-
-      let actual = calculatePrices(programs, prices, coupons);
-      assert.deepEqual(actual, expected);
-      for (const program of programs) {
-        let price = prices.filter(price => price.program_id === program.id)[0];
-        let coupon = coupons.filter(coupon => coupon.program_id === program.id)[0];
-
-        for (const course of program.courses) {
-          for (const run of course.runs) {
-            assert.isTrue(calculateRunPriceStub.calledWith(
-              run.id, course.id, program.id, price, coupon
-            ));
-          }
-        }
-      }
-    });
-  });
-
-  describe('calculateRunPrice', () => {
-    let program, course, run, price, coupon;
-
+    let dashboard, programs, coursePrices, pricesLookup;
     beforeEach(() => {
-      program = makeProgram();
-      course = program.courses[0];
-      run = course.runs[0];
-      price = makeCoursePrice(program);
-      coupon = makeCoupon(program);
-    });
-
-    it('returns null if there is no price', () => {
-      assert.isNull(calculateRunPrice(run.id, course.id, program.id, null, coupon));
-    });
-
-    it('uses the program price in the CoursePrice dict if there is no coupon', () => {
-      assert.equal(calculateRunPrice(run.id, course.id, program.id, price, null), price.price);
-    });
-
-    it('uses the program price if the coupon does not match', () => {
-      for (const contentType of [
-        COUPON_CONTENT_TYPE_PROGRAM,
-        COUPON_CONTENT_TYPE_COURSE,
-      ]) {
-        coupon.content_type = contentType;
-        coupon.object_id = -1;
-        assert.equal(calculateRunPrice(run.id, course.id, program.id, price, coupon), price.price);
+      dashboard = makeDashboard();
+      programs = dashboard.programs;
+      coursePrices = makeCoursePrices(dashboard);
+      pricesLookup = new Map();
+      for (let price of coursePrices) {
+        pricesLookup.set(price.program_id, price.price);
       }
     });
 
-    describe('uses calculateDiscount', () => {
-      let discountedPrice = 47;
-      let calculateDiscountStub;
-      beforeEach(() => {
-        calculateDiscountStub = sandbox.stub(couponFuncs, 'calculateDiscount');
-        calculateDiscountStub.returns(discountedPrice);
+    it("returns an empty set of maps if there are no programs", () => {
+      assert.deepEqual(calculatePrices([], [], []), {
+        pricesInclCouponByRun: new Map(),
+        pricesInclCouponByCourse: new Map(),
+        pricesInclCouponByProgram: new Map(),
+        pricesExclCouponByProgram: new Map(),
+      });
+    });
+
+    it('returns some Maps with a price defined for every program, course and run', () => {
+      let expectedRunPrices = new Map();
+      let expectedCoursePrices = new Map();
+      let expectedProgramPrices = new Map();
+      for (const program of programs) {
+        expectedProgramPrices.set(program.id, {
+          coupon: null,
+          price: pricesLookup.get(program.id),
+        });
+        for (const course of program.courses) {
+          expectedCoursePrices.set(course.id, {
+            coupon: null,
+            price: pricesLookup.get(program.id),
+          });
+          for (const run of course.runs) {
+            expectedRunPrices.set(run.id, {
+              coupon: null,
+              price: pricesLookup.get(program.id),
+            });
+          }
+        }
+      }
+
+      const prices = calculatePrices(programs, coursePrices, []);
+      assert.deepEqual(prices, {
+        pricesExclCouponByProgram: expectedProgramPrices,
+        pricesInclCouponByProgram: expectedProgramPrices,
+        pricesInclCouponByCourse: expectedCoursePrices,
+        pricesInclCouponByRun: expectedRunPrices,
+      });
+    });
+
+    it('applies a program coupon', () => {
+      let program = programs[0];
+      let coupon = makeCoupon(program);
+      let programPrice = pricesLookup.get(program.id);
+      let priceWithCoupon = new Decimal(programPrice - 50);
+      const prices = calculatePrices(programs, coursePrices, [coupon]);
+
+      assert.deepEqual(prices.pricesInclCouponByProgram.get(program.id), {
+        price: priceWithCoupon,
+        coupon: coupon,
+      });
+      assert.deepEqual(prices.pricesExclCouponByProgram.get(program.id), {
+        price: programPrice,
+        coupon: null,
       });
 
-      it('calculates the price if the coupon matches for program', () => {
-        coupon.content_type = COUPON_CONTENT_TYPE_PROGRAM;
-        coupon.object_id = program.id;
-        assert.equal(calculateRunPrice(run.id, course.id, program.id, price, coupon), discountedPrice);
-        assert.isTrue(calculateDiscountStub.calledWith(price.price, coupon.amount_type, coupon.amount));
+      for (const course of program.courses) {
+        assert.deepEqual(prices.pricesInclCouponByCourse.get(course.id), {
+          price: priceWithCoupon,
+          coupon: coupon,
+        });
+        for (const run of course.runs) {
+          assert.deepEqual(prices.pricesInclCouponByRun.get(run.id), {
+            price: priceWithCoupon,
+            coupon: coupon,
+          });
+        }
+      }
+    });
+
+    it('applies a course coupon', () => {
+      let program = programs[0];
+      let course = program.courses[1];
+      let coupon = makeCoupon(program);
+      coupon.content_type = COUPON_CONTENT_TYPE_COURSE;
+      coupon.object_id = course.id;
+      let programPrice = pricesLookup.get(program.id);
+      let priceWithCoupon = new Decimal(programPrice - 50);
+      const prices = calculatePrices(programs, coursePrices, [coupon]);
+
+      assert.deepEqual(prices.pricesInclCouponByProgram.get(program.id), {
+        price: programPrice,
+        coupon: null,
+      });
+      assert.deepEqual(prices.pricesExclCouponByProgram.get(program.id), {
+        price: programPrice,
+        coupon: null,
       });
 
-      it('calculates the price if the coupon matches for course', () => {
-        coupon.content_type = COUPON_CONTENT_TYPE_COURSE;
-        coupon.object_id = course.id;
-        assert.equal(calculateRunPrice(run.id, course.id, program.id, price, coupon), discountedPrice);
-        assert.isTrue(calculateDiscountStub.calledWith(price.price, coupon.amount_type, coupon.amount));
+      assert.deepEqual(prices.pricesInclCouponByCourse.get(course.id), {
+        price: priceWithCoupon,
+        coupon: coupon,
       });
+      for (const run of course.runs) {
+        assert.deepEqual(prices.pricesInclCouponByRun.get(run.id), {
+          price: priceWithCoupon,
+          coupon: coupon,
+        });
+      }
     });
   });
 

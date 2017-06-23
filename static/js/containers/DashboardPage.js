@@ -664,19 +664,13 @@ class DashboardPage extends React.Component {
     if (!program || !prices.data) {
       throw "no program; should never get here";
     }
-    let coursePrice;
 
-    if (prices.data) {
-      coursePrice = prices.data.find(
-        coursePrice => coursePrice.program_id === program.id
-      );
-    }
-
+    const couponPrices = calculatePrices(dashboard.programs, prices.data, coupons.coupons);
     let financialAidCard;
     if (program.financial_aid_availability && !this.shouldSkipFinancialAid()) {
       financialAidCard = <FinancialAidCard
         program={program}
-        coursePrice={coursePrice}
+        couponPrices={couponPrices}
         openFinancialAidCalculator={this.openFinancialAidCalculator}
         documents={documents}
         setDocumentSentDate={this.setDocumentSentDate}
@@ -687,14 +681,6 @@ class DashboardPage extends React.Component {
         ui={ui}
         financialAid={financialAid}
       />;
-    }
-
-    const calculatedPrices = calculatePrices(dashboard.programs, prices.data || [], coupons.coupons);
-
-    const courseListCardOptionalProps = {};
-    const coupon = coupons.coupons.find(coupon => coupon.program_id === program.id);
-    if (coupon) {
-      courseListCardOptionalProps.coupon = coupon;
     }
 
     return (
@@ -722,8 +708,7 @@ class DashboardPage extends React.Component {
             {financialAidCard}
             <CourseListCard
               program={program}
-              coursePrice={coursePrice}
-              prices={calculatedPrices}
+              couponPrices={couponPrices}
               key={program.id}
               ui={ui}
               checkout={this.dispatchCheckout}
@@ -734,7 +719,6 @@ class DashboardPage extends React.Component {
               setEnrollCourseDialogVisibility={this.setEnrollCourseDialogVisibility}
               setShowExpandedCourseStatus={this.setShowExpandedCourseStatus}
               setShowGradeDetailDialog={this.setShowGradeDetailDialog}
-              {...courseListCardOptionalProps}
             />
           </div>
           <div className="second-column">

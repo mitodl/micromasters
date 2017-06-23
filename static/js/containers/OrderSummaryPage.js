@@ -22,7 +22,7 @@ import {
 import type { CouponsState } from '../reducers/coupons';
 import type { CheckoutState } from '../reducers';
 import { createForm, findCourseRun } from '../util/util';
-import { calculatePrice } from '../lib/coupon';
+import { calculatePrices } from '../lib/coupon';
 import { getOwnDashboard, getOwnCoursePrices } from '../reducers/util';
 import { actions } from '../lib/redux_rest';
 import type { RestState } from '../flow/restTypes';
@@ -112,24 +112,33 @@ class OrderSummaryPage extends React.Component {
       coupons,
       location: { query }
     }  = this.props;
-    let courseRun, course, orderSummaryContent, coursePrice;
+    let orderSummaryContent, coursePrice;
     let courseKey = query.course_key;
-    [courseRun, course] = findCourseRun(dashboard.programs, run => run !== null && run.course_id === courseKey);
+    let [courseRun, course, program] = findCourseRun(
+      dashboard.programs, run => run !== null && run.course_id === courseKey
+    );
     if (prices.data) {
       coursePrice = prices.data.find(coursePrice => coursePrice.program_id === currentProgramEnrollment.id);
     }
 
-    if (course && courseRun && coursePrice) {
-      const [coupon, calculatedPrice] = calculatePrice(courseRun.id, course.id, coursePrice, coupons.coupons);
-      let discount = null;
-      if (calculatedPrice !== null && calculatedPrice !== undefined) {
-        discount = coursePrice.price - calculatedPrice;
+    if (program && course && courseRun && coursePrice && prices.data) {
+      const couponPrices = calculatePrices(dashboard.programs, prices.data, coupons.coupons);
+      const couponPrice = couponPrices.pricesInclCouponByRun.get(courseRun.id);
+      if (!couponPrice) {
+        throw `Unable to find price for run ${courseRun.id}`;
       }
+      const { coupon, price } = couponPrice;
+      const originalPriceObj = couponPrices.pricesExclCouponByProgram.get(program.id);
+      if (!originalPriceObj) {
+        throw `Unable to find price for program ${program.id}`;
+      }
+      const originalPrice = originalPriceObj.price;
+      const discount = originalPrice - price;
       orderSummaryContent = <OrderSummary
         course={course}
         courseRun={courseRun}
         coursePrice={coursePrice}
-        finalPrice={calculatedPrice}
+        finalPrice={price}
         couponCode={coupon ? coupon.coupon_code : null}
         discount={discount}
         checkout={this.dispatchCheckout}

@@ -1,5 +1,6 @@
 // @flow
 import Decimal from 'decimal.js-light';
+
 import {
   COUPON_CONTENT_TYPE_PROGRAM,
   COUPON_CONTENT_TYPE_COURSE,
@@ -11,7 +12,7 @@ import {
 import type {
   Coupons,
   Coupon,
-  CalculatedPrices,
+  CouponPrices,
 } from '../flow/couponTypes';
 import type {
   CoursePrice,
@@ -29,34 +30,81 @@ function makeProgramIdLookup<T: HasProgramId>(arr: Array<T>): Map<number, T> {
   return new Map(arr.map((value: T) => [value.program_id, value]));
 }
 
-function* genPrices(programs: Array<Program>, prices: CoursePrices, coupons: Coupons) {
+// This calculates coupon adjusted prices (and unadjusted prices) for all programs, courses, and course runs.
+export const calculatePrices = (
+  programs: Array<Program>, prices: CoursePrices, coupons: Coupons
+): CouponPrices => {
   const couponLookup: Map<number, Coupon> = makeProgramIdLookup(coupons);
   const priceLookup: Map<number, CoursePrice> = makeProgramIdLookup(prices);
 
+  const pricesInclCouponByRun = new Map();
+  const pricesInclCouponByCourse = new Map();
+  const pricesInclCouponByProgram = new Map();
+  const pricesExclCouponByProgram = new Map();
+
   for (const program of programs) {
-    for (const course of program.courses) {
-      for (const run of course.runs) {
-        let price = calculateRunPrice(
-          run.id, course.id, program.id, priceLookup.get(program.id), couponLookup.get(program.id)
-        );
-        if (price !== null && price !== undefined) {
-          yield [run.id, price];
-        }
-      }
+    let priceObj = priceLookup.get(program.id);
+    if (!priceObj) {
+      // Shouldn't get here, we should only be calling this function
+      // if we retrieved all the values from the API already
+      throw 'Unable to find program to get the price';
     }
+    let originalPrice = priceObj.price;
+    // Currently only one coupon per program is allowed, even if that program only affects one course
+    let coupon = couponLookup.get(program.id);
+    // Note that this variable is independent of what the coupon is for
+    let adjustedPrice = originalPrice;
+    if (coupon) {
+      adjustedPrice = calculateDiscount(originalPrice, coupon.amount_type, coupon.amount);
+    }
+
+    let priceExclCouponByProgram = {
+      price: originalPrice,
+      coupon: null,
+    };
+    let isProgramCoupon = (
+      coupon && coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM && coupon.object_id === program.id
+    );
+    let priceInclCouponByProgram;
+    if (isProgramCoupon) {
+      priceInclCouponByProgram = {
+        price: adjustedPrice,
+        coupon: coupon,
+      };
+    } else {
+      priceInclCouponByProgram = priceExclCouponByProgram;
+    }
+
+    for (const course of program.courses) {
+      let isCourseCoupon = (
+        coupon && coupon.content_type === COUPON_CONTENT_TYPE_COURSE && coupon.object_id === course.id
+      );
+      let priceInclCouponByCourse;
+      if (isCourseCoupon || isProgramCoupon) {
+        priceInclCouponByCourse = {
+          price: adjustedPrice,
+          coupon: coupon,
+        };
+      } else {
+        priceInclCouponByCourse = priceExclCouponByProgram;
+      }
+
+      for (const run of course.runs) {
+        // there are no run-specific coupons
+        pricesInclCouponByRun.set(run.id, priceInclCouponByCourse);
+      }
+      pricesInclCouponByCourse.set(course.id, priceInclCouponByCourse);
+    }
+    pricesInclCouponByProgram.set(program.id, priceInclCouponByProgram);
+    pricesExclCouponByProgram.set(program.id, priceExclCouponByProgram);
   }
-}
 
-export const calculatePrice = (
-  runId: number, courseId: number, price: CoursePrice, coupons: Coupons
-): [?Coupon, ?Decimal] => {
-  const couponLookup: Map<number, Coupon> = makeProgramIdLookup(coupons);
-  let coupon = couponLookup.get(price.program_id);
-  return [coupon, calculateRunPrice(runId, courseId, price.program_id, price, coupon)];
-};
-
-export const calculatePrices = (programs: Array<Program>, prices: CoursePrices, coupons: Coupons): CalculatedPrices => {
-  return new Map(genPrices(programs, prices, coupons));
+  return {
+    pricesInclCouponByRun,
+    pricesInclCouponByCourse,
+    pricesInclCouponByProgram,
+    pricesExclCouponByProgram,
+  };
 };
 
 export const _calculateDiscount = (price: Decimal, amountType: string, amount: Decimal): Decimal => {
@@ -83,34 +131,6 @@ export const _calculateDiscount = (price: Decimal, amountType: string, amount: D
 // allow mocking of function
 export { _calculateDiscount as calculateDiscount };
 import { calculateDiscount } from './coupon';
-
-export const _calculateRunPrice = (
-  runId: number, courseId: number, programId: number, programPrice: ?CoursePrice, coupon: ?Coupon
-): ?Decimal => {
-  if (!programPrice) {
-    // don't have any price to calculate
-    return null;
-  }
-
-  const startingPrice = programPrice.price;
-  if (!coupon) {
-    // don't have any discount to figure out
-    return startingPrice;
-  }
-
-  if (
-    (coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM && coupon.object_id === programId) ||
-    (coupon.content_type === COUPON_CONTENT_TYPE_COURSE && coupon.object_id === courseId)
-  ) {
-    return calculateDiscount(startingPrice, coupon.amount_type, coupon.amount);
-  } else {
-    // coupon doesn't match
-    return startingPrice;
-  }
-};
-// allow mocking of function
-export { _calculateRunPrice as calculateRunPrice };
-import { calculateRunPrice } from './coupon';
 
 export function _makeAmountMessage(coupon: Coupon): string {
   switch (coupon.amount_type) {

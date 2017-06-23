@@ -9,7 +9,7 @@ import moment from 'moment';
 
 import { FETCH_PROCESSING } from '../../actions';
 import SpinnerButton from '../SpinnerButton';
-import type { CoursePrice } from '../../flow/dashboardTypes';
+import type { CouponPrices } from '../../flow/couponTypes';
 import type { Program } from '../../flow/programTypes';
 import type { FinancialAidState } from '../../reducers/financial_aid';
 import type {
@@ -33,7 +33,7 @@ const price = price => <span className="price">{ formatPrice(price) }</span>;
 
 export default class FinancialAidCard extends React.Component {
   props: {
-    coursePrice:                    CoursePrice,
+    couponPrices:                   CouponPrices,
     documents:                      DocumentsState,
     financialAid:                   FinancialAidState,
     openFinancialAidCalculator:     () => void,
@@ -155,10 +155,17 @@ export default class FinancialAidCard extends React.Component {
   renderAidApplicationStatus() {
     const {
       program,
-      coursePrice,
+      couponPrices,
       setConfirmSkipDialogVisibility,
       setDocsInstructionsVisibility,
     } = this.props;
+
+    let couponPrice = couponPrices.pricesInclCouponByProgram.get(program.id);
+    if (!couponPrice) {
+      // shouldn't happen, at this point we should have prices for all programs
+      throw `Unable to find price for program ${program.id}`;
+    }
+    let calculatedPrice = couponPrice.price;
 
     switch (program.financial_aid_user_info.application_status) {
     case FA_STATUS_APPROVED:
@@ -172,7 +179,7 @@ export default class FinancialAidCard extends React.Component {
         <Grid>
           <Cell col={12} className="price-explanation">
             <div>
-              Your cost is {price(coursePrice.price)} per course.
+              Your cost is {price(calculatedPrice)} per course.
             </div>
             <button className="mm-minor-action full-price" onClick={() => setConfirmSkipDialogVisibility(true)}>
               Skip this and Pay Full Price

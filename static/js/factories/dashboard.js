@@ -17,7 +17,6 @@ import {
 } from '../constants';
 import type {
   Coupon,
-  Coupons,
 } from '../flow/couponTypes';
 import type {
   CoursePrice,
@@ -134,7 +133,7 @@ export const makeCoupon = (program: Program): Coupon => ({
   object_id: program.id,
 });
 
-export const makeCourseCoupon = (course: Course, program: Program) => ({
+export const makeCourseCoupon = (course: Course, program: Program): Coupon => ({
   coupon_code: `coupon_for_course_${course.id}`,
   coupon_type: COUPON_TYPE_STANDARD,
   content_type: COUPON_CONTENT_TYPE_COURSE,
@@ -143,10 +142,6 @@ export const makeCourseCoupon = (course: Course, program: Program) => ({
   program_id: program.id,
   object_id: course.id,
 });
-
-export const makeCoupons = (dashboard: Dashboard): Coupons => (
-  dashboard.programs.map(makeCoupon)
-);
 
 export const makeCoursePrice = (program: Program): CoursePrice => ({
   program_id: program.id,

@@ -12,11 +12,10 @@ import StatusMessages from './courses/StatusMessages';
 import type { Course, CourseRun, FinancialAidUserInfo } from '../../flow/programTypes';
 import type { UIState } from '../../reducers/ui';
 import type {
-  CalculatedPrices,
+  CouponPrices,
   Coupon,
 } from '../../flow/couponTypes';
 import {
-  STATUS_OFFERED,
   STATUS_PENDING_ENROLLMENT,
   COURSE_ACTION_ENROLL,
 } from '../../constants';
@@ -29,10 +28,9 @@ import { isEnrollableRun } from './courses/util';
 
 export default class CourseRow extends React.Component {
   props: {
-    coupon?:                         Coupon,
     course:                          Course,
     now:                             moment$Moment,
-    prices:                          CalculatedPrices,
+    couponPrices:                    CouponPrices,
     financialAid:                    FinancialAidUserInfo,
     hasFinancialAid:                 boolean,
     openFinancialAidCalculator:      () => void,
@@ -46,12 +44,6 @@ export default class CourseRow extends React.Component {
     setShowGradeDetailDialog:        (b: boolean, title: string) => void,
   };
 
-  pastCourseRuns = (course: Course): Array<CourseRun> => (
-    (course.runs.length > 1)
-      ? R.drop(1, course.runs).filter(run => run.status !== STATUS_OFFERED)
-      : []
-  );
-
   // $FlowFixMe: CourseRun is sometimes an empty object
   getFirstRun(): CourseRun {
     const { course } = this.props;
@@ -62,10 +54,22 @@ export default class CourseRow extends React.Component {
     return firstRun;
   }
 
+  getCourseCoupon = (): ?Coupon => {
+    const {
+      couponPrices,
+      course,
+    } = this.props;
+
+    const couponPrice = couponPrices.pricesInclCouponByCourse.get(course.id);
+    if (!couponPrice) {
+      return undefined;
+    }
+    return couponPrice.coupon;
+  };
+
   courseAction = (run: CourseRun, actionType: string): React$Element<*>|null => {
     const {
       now,
-      prices,
       financialAid,
       hasFinancialAid,
       openFinancialAidCalculator,
@@ -73,19 +77,18 @@ export default class CourseRow extends React.Component {
       setEnrollSelectedCourseRun,
       setEnrollCourseDialogVisibility,
       checkout,
-      coupon,
     } = this.props;
 
     if (actionType === COURSE_ACTION_ENROLL && !isEnrollableRun(run)) {
       return null;
     }
+    const coupon = this.getCourseCoupon();
 
     return (
       <CourseAction
         courseRun={run}
         actionType={actionType}
         now={now}
-        prices={prices}
         hasFinancialAid={hasFinancialAid}
         checkout={checkout}
         financialAid={financialAid}
@@ -118,9 +121,10 @@ export default class CourseRow extends React.Component {
       openCourseContactDialog,
       ui,
       setShowExpandedCourseStatus,
-      coupon,
       setShowGradeDetailDialog,
     } = this.props;
+
+    const coupon = this.getCourseCoupon();
 
     return (
       <div className="enrolled-course-info">

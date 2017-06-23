@@ -327,8 +327,8 @@ describe('DashboardPage', () => {
 
         it('should not care about coupons for other programs', () => {
           let otherProgram = dashboard.programs[1];
-          coupon.program_id = otherProgram.id;
           coupon.object_id = otherProgram.id;
+          coupon.program_id = otherProgram.id;
 
           return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
             sinon.assert.notCalled(helper.skipFinancialAidStub);

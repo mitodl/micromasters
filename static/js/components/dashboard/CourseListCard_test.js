@@ -27,11 +27,13 @@ import {
   FA_STATUS_APPROVED,
   COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
 } from '../../constants';
-import { makeCoupon } from '../../factories/dashboard';
-import type { CoursePrice } from '../../flow/dashboardTypes';
+import {
+  makeCoupon,
+  makeCourseCoupon,
+} from '../../factories/dashboard';
 
 describe('CourseListCard', () => {
-  let program, coursePrice: CoursePrice, sandbox, helper, routerPushStub;
+  let program, coursePrice, sandbox, helper, routerPushStub;
   beforeEach(() => {
     program = _.cloneDeep(DASHBOARD_RESPONSE.programs[1]);
     coursePrice = _.cloneDeep((COURSE_PRICES_RESPONSE.find(
@@ -66,8 +68,7 @@ describe('CourseListCard', () => {
     helper.store.dispatch(receiveGetProgramEnrollmentsSuccess(DASHBOARD_RESPONSE.programs));
     helper.store.dispatch(setCurrentProgramEnrollment(program));
 
-    let coupons = props.coupon ? [props.coupon] : [];
-    let prices = calculatePrices([program], [coursePrice], coupons);
+    let couponPrices = calculatePrices([program], [coursePrice], []);
     return mount(
       <MuiThemeProvider muiTheme={getMuiTheme()}>
         <Provider store={helper.store}>
@@ -75,7 +76,7 @@ describe('CourseListCard', () => {
             program={program}
             coursePrice={coursePrice}
             addCourseEnrollment={() => Promise.resolve()}
-            prices={prices}
+            couponPrices={couponPrices}
             ui={INITIAL_UI_STATE}
             openCourseContactDialog={() => undefined}
             closeEmailDialog={() => undefined}
@@ -138,7 +139,8 @@ describe('CourseListCard', () => {
       it('displays price with fixed discount coupon', () => {
         changeToFinancialAid(FA_STATUS_APPROVED, true);
         const coupon = makeCoupon(program);
-        const wrapper = renderCourseListCard({coupon});
+        const couponPrices = calculatePrices([program], [coursePrice], [coupon]);
+        const wrapper = renderCourseListCard({couponPrices});
         const messageEl = wrapper.find(".price-message");
         assert.lengthOf(messageEl, 1);
         assert.include(
@@ -147,12 +149,39 @@ describe('CourseListCard', () => {
         );
       });
 
+      it('should show regular course price on coupon message', () => {
+        changeToFinancialAid(FA_STATUS_APPROVED, true);
+        const coupon = makeCourseCoupon(program.courses[0], program);
+        const couponPrices = calculatePrices([program], [coursePrice], [coupon]);
+        const wrapper = renderCourseListCard({couponPrices});
+        const messageEl = wrapper.find(".price-message");
+        assert.lengthOf(messageEl, 1);
+        assert.include(
+          messageEl.text(),
+          "Your Personal Course Price is $4000 USD per course."
+        );
+      });
+
+      it('displays regular price on course coupon message for financial aid program', () => {
+        changeToFinancialAid(FA_STATUS_APPROVED, true);
+        const coupon = makeCourseCoupon(program.courses[0], program);
+        const couponPrices = calculatePrices([program], [coursePrice], [coupon]);
+        const wrapper = renderCourseListCard({couponPrices});
+        const messageEl = wrapper.find(".price-message");
+        assert.lengthOf(messageEl, 1);
+        assert.include(
+          messageEl.text(),
+          "Your Personal Course Price is $4000 USD per course."
+        );
+      });
+
       it('displays price with percentage discount coupon', () => {
         changeToFinancialAid(FA_STATUS_APPROVED, true);
         const coupon = makeCoupon(program);
         coupon.amount_type = COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT;
         coupon.amount = new Decimal('0.30');
-        const wrapper = renderCourseListCard({coupon});
+        const couponPrices = calculatePrices([program], [coursePrice], [coupon]);
+        const wrapper = renderCourseListCard({couponPrices});
         const messageEl = wrapper.find(".price-message");
         assert.lengthOf(messageEl, 1);
         assert.include(
@@ -164,9 +193,11 @@ describe('CourseListCard', () => {
       it('displays price with both coupon and financial aid', () => {
         changeToFinancialAid(FA_STATUS_APPROVED, true);
         const coupon = makeCoupon(program);
-        const wrapper = renderCourseListCard({coupon});
+        const couponPrices = calculatePrices([program], [coursePrice], [coupon]);
+        const wrapper = renderCourseListCard({couponPrices});
         const messageEl = wrapper.find(".price-message");
         assert.lengthOf(messageEl, 1);
+        // This is $4000 - a $50 discount from the coupon
         assert.include(
           messageEl.text(),
           "Your price is $3950 USD per course, including both financial aid and your coupon."
@@ -178,7 +209,8 @@ describe('CourseListCard', () => {
         const coupon = makeCoupon(program);
         coupon.amount_type = COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT;
         coupon.amount = new Decimal('1');
-        const wrapper = renderCourseListCard({coupon});
+        const couponPrices = calculatePrices([program], [coursePrice], [coupon]);
+        const wrapper = renderCourseListCard({couponPrices});
         const messageEl = wrapper.find(".price-message");
         assert.lengthOf(messageEl, 1);
         assert.include(
@@ -191,9 +223,7 @@ describe('CourseListCard', () => {
 
   it('creates a CourseRow for each course', () => {
     const now = moment();
-    const courseRunId = program.courses[0].runs[0].id;
-    const price = new Decimal('123.45');
-    const prices = new Map([[courseRunId, price]]);
+    const prices = calculatePrices([program], [coursePrice], []);
     const wrapper = renderCourseListCard({
       now: now,
       prices: prices,
@@ -203,7 +233,7 @@ describe('CourseListCard', () => {
     wrapper.find(CourseRow).forEach((courseRow, i) => {
       const props = courseRow.props();
       assert.equal(props.now, now);
-      assert.equal(props.prices, prices);
+      assert.deepEqual(props.couponPrices, prices);
       assert.deepEqual(props.course, courses[i]);
     });
   });

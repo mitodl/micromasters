@@ -9,6 +9,8 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import DatePicker from 'react-datepicker';
 
+import { makeCoursePrices } from '../../factories/dashboard';
+import { calculatePrices } from '../../lib/coupon';
 import { FETCH_PROCESSING } from '../../actions';
 import FinancialAidCard from './FinancialAidCard';
 import {
@@ -42,10 +44,16 @@ describe("FinancialAidCard", () => {
   });
 
   let renderCard = (props = {}) => {
+    const program = props.program || DASHBOARD_RESPONSE.programs[1];
+    const dashboard = {
+      programs: [program],
+      is_edx_data_fresh: true
+    };
+    const couponPrices = calculatePrices(dashboard.programs, makeCoursePrices(dashboard), []);
     return mount(
       <MuiThemeProvider muiTheme={getMuiTheme()}>
         <FinancialAidCard
-          program={DASHBOARD_RESPONSE.programs[1]}
+          program={program}
           coursePrice={COURSE_PRICES_RESPONSE[0]}
           updateDocumentSentDate={sandbox.stub()}
           documents={{
@@ -59,6 +67,7 @@ describe("FinancialAidCard", () => {
           skipFinancialAid={sandbox.stub()}
           setDocsInstructionsVisibility={sandbox.stub()}
           financialAid={{}}
+          couponPrices={couponPrices}
           {...props}
         />
       </MuiThemeProvider>

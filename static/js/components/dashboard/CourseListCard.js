@@ -6,39 +6,30 @@ import { Card, CardTitle } from 'react-mdl/lib/Card';
 
 import type { Program, Course } from '../../flow/programTypes';
 import type {
-  CalculatedPrices,
-  Coupon,
+  CouponPrice,
+  CouponPrices,
 } from '../../flow/couponTypes';
 import CourseRow from './CourseRow';
 import FinancialAidCalculator from '../../containers/FinancialAidCalculator';
-import type { CoursePrice } from '../../flow/dashboardTypes';
 import type { CourseRun } from '../../flow/programTypes';
 import type { UIState } from '../../reducers/ui';
 import {
   FA_TERMINAL_STATUSES,
   COUPON_CONTENT_TYPE_PROGRAM,
-  COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
-  COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
 } from '../../constants';
 import {
-  makeAmountMessage,
-  makeCouponReason,
   isFreeCoupon,
 } from '../../lib/coupon';
 import {
   formatPrice,
-  pickExistingProps,
-  sortedCourseRuns,
 } from '../../util/util';
 
 const priceMessageClassName = "price-message";
 
 export default class CourseListCard extends React.Component {
   props: {
-    coupon?:                         Coupon,
     program:                         Program,
-    coursePrice:                     CoursePrice,
-    prices:                          CalculatedPrices,
+    couponPrices:                    CouponPrices,
     openFinancialAidCalculator?:     () => void,
     now?:                            Object,
     addCourseEnrollment:             (courseId: string) => Promise<*>,
@@ -51,27 +42,24 @@ export default class CourseListCard extends React.Component {
     checkout:                        (s: string) => void,
   };
 
+  getProgramCouponPrice = (): CouponPrice => {
+    const { couponPrices, program } = this.props;
+    let couponPrice = couponPrices.pricesInclCouponByProgram.get(program.id);
+    if (!couponPrice) {
+      // This shouldn't happen since we should have waited for the API requests to finish before getting here
+      throw `Unable to find program ${program.id} in list of prices`;
+    }
+    return couponPrice;
+  };
+
   renderFinancialAidPriceMessage(): ?React$Element<*> {
-    const {
-      program,
-      coupon,
-      prices,
-    } = this.props;
+    const { program } = this.props;
     const finAidStatus = program.financial_aid_user_info.application_status;
 
     if (FA_TERMINAL_STATUSES.includes(finAidStatus)) {
-      let price;
-      for (const courseRun of sortedCourseRuns(program)) {
-        price = prices.get(courseRun.id);
-        if (price) {
-          break;
-        }
-      }
+      const { coupon, price } = this.getProgramCouponPrice();
 
-      if (!price) {
-        return null;
-      }
-      if (coupon && coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM) {
+      if (coupon) {
         // financial aid + coupon
         return <p className={priceMessageClassName}>
           Your price is <strong>{ formatPrice(price) } USD per course,</strong> including
@@ -96,45 +84,12 @@ export default class CourseListCard extends React.Component {
     }
   }
 
-  renderCouponPriceMessage(): React$Element<*> {
-    const { coupon } = this.props;
-    if (!coupon) {
-      throw "missing coupon"; // this should never happen, it's just to make flow happy
-    }
-
-    const isDiscount = (
-      coupon.amount_type === COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT ||
-      coupon.amount_type === COUPON_AMOUNT_TYPE_FIXED_DISCOUNT
-    );
-    let message;
-    if (isDiscount) {
-      message = <span>
-        You will get {makeAmountMessage(coupon)} off the cost for each course in this program
-      </span>;
-    } else {
-      message = <span>
-        All courses are set to the discounted price of {makeAmountMessage(coupon)}
-      </span>;
-    }
-    return <p className={priceMessageClassName}>
-      {message}{makeCouponReason(coupon)}.
-      If you want to audit courses for FREE and upgrade later,
-      click Enroll then choose the audit option.
-    </p>;
-  }
-
   renderPriceMessage(): ?React$Element<*> {
-    const {
-      program,
-      coupon,
-      prices,
-    } = this.props;
+    const { program } = this.props;
+    const { coupon, price } = this.getProgramCouponPrice();
 
     // Special case: 100% off coupon
-    if (coupon &&
-        isFreeCoupon(coupon) &&
-        coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM
-    ) {
+    if (coupon && isFreeCoupon(coupon) && coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM) {
       return <p className={priceMessageClassName}>
         Courses in this program are free, because of your coupon.
       </p>;
@@ -142,22 +97,6 @@ export default class CourseListCard extends React.Component {
 
     if (program.financial_aid_availability) {
       return this.renderFinancialAidPriceMessage();
-    }
-
-    // no financial aid
-    if (coupon && coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM) {
-      return this.renderCouponPriceMessage();
-    }
-
-    let price;
-    for (const courseRun of sortedCourseRuns(program)) {
-      price = prices.get(courseRun.id);
-      if (price) {
-        break;
-      }
-    }
-    if (!price) {
-      return null;
     }
 
     return <p className={priceMessageClassName}>
@@ -170,7 +109,7 @@ export default class CourseListCard extends React.Component {
   render(): React$Element<*> {
     const {
       program,
-      prices,
+      couponPrices,
       openFinancialAidCalculator,
       addCourseEnrollment,
       openCourseContactDialog,
@@ -183,8 +122,6 @@ export default class CourseListCard extends React.Component {
     } = this.props;
     const now = this.props.now || moment();
 
-    const courseRowOptionalProps = pickExistingProps(['coupon'], this.props);
-
     const sortedCourses = R.sortBy(R.prop('position_in_program'), program.courses);
     const courseRows = sortedCourses.map(course =>
       <CourseRow
@@ -193,7 +130,7 @@ export default class CourseListCard extends React.Component {
         course={course}
         key={course.id}
         openFinancialAidCalculator={openFinancialAidCalculator}
-        prices={prices}
+        couponPrices={couponPrices}
         now={now}
         addCourseEnrollment={addCourseEnrollment}
         openCourseContactDialog={openCourseContactDialog}
@@ -203,7 +140,6 @@ export default class CourseListCard extends React.Component {
         checkout={checkout}
         setShowExpandedCourseStatus={setShowExpandedCourseStatus}
         setShowGradeDetailDialog={setShowGradeDetailDialog}
-        {...courseRowOptionalProps}
       />
     );
 
