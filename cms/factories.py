@@ -44,6 +44,7 @@ class ImageFactory(DjangoModelFactory):
 
         return image
 
+
 class ProgramPageFactory(DjangoModelFactory):
     """Factory for ProgramPage"""
     class Meta:
@@ -63,6 +64,7 @@ class ProgramPageFactory(DjangoModelFactory):
         home_page.add_child(instance=page)
         page.save_revision().publish()
         return page
+
 
 class ProgramCourseFactory(DjangoModelFactory):
     """Factory for ProgramCourse"""
