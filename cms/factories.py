@@ -1,15 +1,21 @@
 """Factories for making test data"""
-from contextlib import contextmanager
-import os.path
-import shutil
-import tempfile
+from tempfile import NamedTemporaryFile
+import uuid
 
 import factory
 from factory.django import DjangoModelFactory
+from factory.fuzzy import FuzzyText
+from robohash import Robohash
 from wagtail.wagtailimages.models import Image
-from willow.image import Image as WillowImage
 
-from cms.models import ProgramPage, ProgramFaculty, ProgramCourse
+from cms.models import (
+    HomePage,
+    InfoLinks,
+    ProgramPage,
+    ProgramFaculty,
+    ProgramCourse,
+    SemesterDate,
+)
 from courses.factories import ProgramFactory, CourseFactory
 
 
@@ -18,43 +24,45 @@ class ImageFactory(DjangoModelFactory):
     class Meta:
         model = Image
 
-    file = factory.Faker('uri_path')
     title = factory.Faker('file_name', extension="jpg")
     width = factory.Faker('pyint')
     height = factory.Faker('pyint')
 
-    @factory.post_generation
-    def fake_willow_image(self, create, extracted, **kwargs):  # pylint: disable=unused-argument
-        """
-        Build a fake implementation of the `get_willow_image()` method
-        """
-        image_dir = tempfile.mkdtemp()
-        origin_image_path = os.path.join(
-            os.path.dirname(os.path.dirname(__file__)), "test_resources", "stata_center.jpg",
-        )
-        shutil.copy(origin_image_path, image_dir)
-        fake_image_path = os.path.join(image_dir, "stata_center.jpg")
-        fake_image = WillowImage.open(open(fake_image_path, "rb"))
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        image = model_class.objects.create(*args, **kwargs)
 
-        @contextmanager
-        def get_fake_willow():  # pylint: disable=missing-docstring
-            yield fake_image
+        name = uuid.uuid4().hex
+        robohash = Robohash(name)
+        roboset = robohash.sets[0]
+        robohash.assemble(roboset=roboset)
 
-        self.get_willow_image = get_fake_willow  # pylint: disable=attribute-defined-outside-init
-        return self
+        with NamedTemporaryFile() as f:
+            robohash.img.save(f, format='jpeg')
+            f.seek(0)
+            image.file.save(name, f)
 
+        return image
 
 class ProgramPageFactory(DjangoModelFactory):
     """Factory for ProgramPage"""
     class Meta:
         model = ProgramPage
 
-    path = '/'
-    depth = 1
     title = factory.Faker('sentence', nb_words=4)
-
+    description = factory.Faker('text')
     program = factory.SubFactory(ProgramFactory)
+    faculty_description = factory.Faker('paragraph')
+    program_contact_email = factory.Faker('email')
+    title_over_image = factory.Faker('sentence')
 
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        home_page = HomePage.objects.first()
+        page = model_class(*args, **kwargs)
+        home_page.add_child(instance=page)
+        page.save_revision().publish()
+        return page
 
 class ProgramCourseFactory(DjangoModelFactory):
     """Factory for ProgramCourse"""
@@ -78,3 +86,23 @@ class FacultyFactory(DjangoModelFactory):
 
     program_page = factory.SubFactory(ProgramPageFactory)
     image = factory.SubFactory(ImageFactory)
+
+
+class InfoLinksFactory(DjangoModelFactory):
+    """Factory for more info links"""
+    class Meta:
+        model = InfoLinks
+
+    url = factory.Faker('url')
+    title_url = factory.Faker('text')
+    program_page = factory.SubFactory(ProgramPageFactory)
+
+
+class SemesterDateFactory(DjangoModelFactory):
+    """Factory for semester dates"""
+    class Meta:
+        model = SemesterDate
+
+    program_page = factory.SubFactory(ProgramPageFactory)
+    semester_name = FuzzyText(prefix='Semester ')
+    start_date = factory.Faker('date_time_this_month')

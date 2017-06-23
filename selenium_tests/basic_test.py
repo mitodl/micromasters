@@ -4,6 +4,13 @@ from django.db.models.signals import post_save
 from factory.django import mute_signals
 from selenium.webdriver.common.keys import Keys
 
+from cms.factories import (
+    FacultyFactory,
+    InfoLinksFactory,
+    ProgramCourseFactory,
+    ProgramPageFactory,
+    SemesterDateFactory,
+)
 from courses.factories import ProgramFactory
 from dashboard.models import ProgramEnrollment
 from financialaid.constants import FinancialAidStatus
@@ -223,3 +230,23 @@ class ReviewFinancialAidTests(SeleniumTestsBase):
             financial_aid = FinancialAid.objects.first()
             return financial_aid.status == FinancialAidStatus.PENDING_MANUAL_APPROVAL
         self.wait().until(is_now_pending)
+
+
+class ProgramPageTests(SeleniumTestsBase):
+    """Look at the program page"""
+
+    def test_program_page(self):
+        """Test viewing the program page"""
+        self.login_via_admin(self.user)
+
+        page = ProgramPageFactory.create(program=self.program, title="A Program Title")
+        for _ in range(3):
+            FacultyFactory.create(program_page=page)
+        for _ in range(3):
+            InfoLinksFactory.create(program_page=page)
+        for _ in range(3):
+            SemesterDateFactory.create(program_page=page)
+        for course in self.program.course_set.all():
+            ProgramCourseFactory.create(program_page=page, course=course)
+
+        self.get("/a-program-title/")
