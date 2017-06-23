@@ -11,7 +11,10 @@ from subprocess import (
     check_output,
     DEVNULL,
 )
-from unittest.mock import patch
+from unittest.mock import (
+    Mock,
+    patch,
+)
 from urllib.parse import (
     ParseResult,
     urlparse,
@@ -132,6 +135,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
             # Patch functions so we don't contact edX
             cls.patchers = []
             cls.patchers.append(patch('ecommerce.views.enroll_user_on_success', autospec=True))
+            cls.patchers.append(patch('mail.api.MailgunClient._mailgun_request'))
             for patcher in cls.patchers:
                 patcher.start()
 
