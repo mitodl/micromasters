@@ -9,8 +9,8 @@ export default class LearnersInProgramCard extends React.Component{
   };
 
   render() {
-    const { programLearners } = this.props;
-    const learnersList = programLearners.map(learner => (
+    const { learners, learners_count } = this.props.programLearners;
+    const learnersList = learners.map(learner => (
 
         <img key={learner.username}
           src={learner.image_small}
@@ -22,7 +22,7 @@ export default class LearnersInProgramCard extends React.Component{
         {learnersList}
       </div>
       <a href='/learners/'>
-        <span>View All</span>
+        <span>View All({learners_count})</span>
       </a>
     </Card>
   }

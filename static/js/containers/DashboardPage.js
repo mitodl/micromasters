@@ -704,7 +704,7 @@ class DashboardPage extends React.Component {
     }
 
     let learnersInProgramCard;
-    if (programLearners[program.id]){
+    if (R.pathOr(false, [program.id, 'data', 'learners'],programLearners)){
       learnersInProgramCard = <LearnersInProgramCard programLearners={programLearners[program.id].data}/>;
     }
 

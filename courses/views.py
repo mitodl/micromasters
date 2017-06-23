@@ -4,6 +4,7 @@ from rest_framework import (
     viewsets,
     status,
 )
+from rest_framework.views import APIView
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.exceptions import (
     APIException,
@@ -40,7 +41,7 @@ class ProgramViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ProgramSerializer
 
 
-class ProgramLearnersViewSet(viewsets.ReadOnlyModelViewSet):
+class ProgramLearnersView(APIView):
     """API for Learners enrolled in the Program"""
 
     authentication_classes = (
@@ -52,7 +53,7 @@ class ProgramLearnersViewSet(viewsets.ReadOnlyModelViewSet):
     )
     serializer_class = ProfileImageSerializer
 
-    def get_queryset(self):
+    def get(self, request, *args, **kargs):
         program_id = self.kwargs["program_id"]
         users = ProgramEnrollment.objects.filter(
             program_id=program_id
@@ -62,13 +63,16 @@ class ProgramLearnersViewSet(viewsets.ReadOnlyModelViewSet):
             image_small__exact=''
         ).filter(user__in=users).exclude(
             account_privacy='private'
-        )
-        return queryset
+        ).order_by('?')
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = ProfileImageSerializer(queryset, many=True)
-        return Response(serializer.data)
+        learners_result = {
+            'learners_count': queryset.count(),
+            'learners': ProfileImageSerializer(queryset[:8], many=True).data
+        }
+        return Response(
+            status=status.HTTP_200_OK,
+            data=learners_result
+        )
 
 
 class ProgramEnrollmentListView(CreateAPIView):
