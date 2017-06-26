@@ -226,7 +226,7 @@
                 <td style="white-space: nowrap;">
                   <!-- Mark docs as received -->
                   {% if selected_status == statuses.PENDING_DOCS or selected_status == statuses.DOCS_SENT %}
-                  <button class="btn btn-default" style="color: #0074e1; padding-top: 7px;"
+                  <button class="btn btn-default mark-docs-as-received" style="color: #0074e1; padding-top: 7px;"
                          onclick="financialAidReview.submitDocsReceived({{ financial_aid.id }}, '{% url 'financial_aid_action' financial_aid_id=financial_aid.id %}', '{{ statuses.PENDING_MANUAL_APPROVAL }}');">
                     Mark Docs Received
                   </button>

@@ -211,7 +211,7 @@ class ReviewFinancialAidTests(SeleniumTestsBase):
         self.get("/financial_aid/review/{}/{}".format(self.program.id, FinancialAidStatus.DOCS_SENT))
         self.wait().click(
             # Mark as received
-            lambda driver: driver.find_element_by_css_selector("tr td:nth-child(7) button")
+            lambda driver: driver.find_element_by_css_selector(".mark-docs-as-received")
         )
         alert = self.selenium.switch_to_alert()
         alert.accept()
