@@ -24,10 +24,7 @@ from ecommerce.models import (
 )
 from exams.factories import ExamRunFactory
 from financialaid.factories import FinancialAidFactory
-from financialaid.models import (
-    FinancialAid,
-    FinancialAidStatus,
-)
+from financialaid.models import FinancialAidStatus
 from grades.factories import ProctoredExamGradeFactory
 from seed_data.management.commands.alter_data import EXAMPLE_COMMANDS
 from selenium_tests.base import SeleniumTestsBase
