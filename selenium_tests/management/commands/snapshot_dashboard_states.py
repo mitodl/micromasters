@@ -9,6 +9,7 @@ from django.core.management import (
     call_command,
 )
 from django.test import override_settings
+from faker.generator import random
 import pytest
 
 from courses.factories import CourseRunFactory
@@ -354,6 +355,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        random.seed(12345)
         if options.get('list_scenarios'):
             self.stdout.write('Scenarios:\n')
             for num, (_, name) in enumerate(DashboardStates()._make_scenarios()):  # pylint: disable=protected-access
