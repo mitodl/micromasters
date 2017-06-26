@@ -23,6 +23,7 @@ import type {
   CoursePrice,
   CoursePrices,
   Dashboard,
+  ProgramLearners,
 } from '../flow/dashboardTypes';
 import type {
   AvailablePrograms,
@@ -157,6 +158,12 @@ export const makeCoursePrice = (program: Program): CoursePrice => ({
 
 export const makeCoursePrices = (dashboard: Dashboard): CoursePrices => (
   dashboard.programs.map(makeCoursePrice)
+);
+
+export const makeProgramLearners = (): ProgramLearners => ({
+    learners: [],
+    learners_count: 25
+  }
 );
 
 export const makeProctoredExamResult = (): ProctoredExamResult => {

@@ -31,6 +31,7 @@ import * as api from '../lib/api';
 import {
   DASHBOARD_SUCCESS_ACTIONS,
   DASHBOARD_ERROR_ACTIONS,
+  SUBSET_DASHBOARD_SUCCESS_ACTIONS,
 } from '../containers/test_util';
 import ErrorMessage from './ErrorMessage';
 
@@ -147,7 +148,7 @@ describe("ErrorMessage", () => {
       it('shows nothing if there are no programs', () => {
         helper.dashboardStub.returns(Promise.resolve([]));
 
-        return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
+        return renderComponent("/dashboard", SUBSET_DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
           let message = wrapper.find('.page-content').text();
           assert.equal(message, "");
         });
@@ -156,7 +157,7 @@ describe("ErrorMessage", () => {
       it('shows nothing if there is no matching current program enrollment', () => {
         helper.programsGetStub.returns(Promise.resolve([]));
 
-        return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
+        return renderComponent("/dashboard", SUBSET_DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
           let message = wrapper.find('.page-content').text();
           assert.equal(message, "");
         });

@@ -14,6 +14,7 @@ import {
   makeDashboard,
   makeCourse,
   makeProgram,
+  makeProgramLearners,
 } from '../factories/dashboard';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import {
@@ -267,7 +268,7 @@ describe('DashboardPage', () => {
     });
 
     describe('course pricing', () => {
-      let dashboard, availablePrograms, coursePrices;
+      let dashboard, availablePrograms, coursePrices, programLearners;
       let run, program: Program, course;
 
       beforeEach(() => {
@@ -278,9 +279,14 @@ describe('DashboardPage', () => {
         run.enrollment_start_date = '2016-01-01';
         availablePrograms = makeAvailablePrograms(dashboard);
         coursePrices = makeCoursePrices(dashboard);
+        programLearners = makeProgramLearners();
         helper.dashboardStub.returns(Promise.resolve(dashboard));
         helper.programsGetStub.returns(Promise.resolve(availablePrograms));
         helper.coursePricesStub.returns(Promise.resolve(coursePrices));
+        helper.programLearnersStub = helper.fetchJSONWithCSRFStub.withArgs(
+      `/api/v0/programlearners/${program.id}/`
+    );
+        helper.programLearnersStub.returns(Promise.resolve(programLearners));
       });
 
       describe('100% program coupon', () => {
@@ -405,6 +411,7 @@ describe('DashboardPage', () => {
         CLEAR_ENROLLMENTS,
         CLEAR_DASHBOARD,
         actions.prices.clearType,
+        actions.programLearners.clearType,
         CLEAR_COUPONS,
       ], () => {
         ReactDOM.unmountComponentAtNode(div);
@@ -666,9 +673,14 @@ describe('DashboardPage', () => {
       let dashboardResponse = {"programs": [ program ]};
       let coursePrices = makeCoursePrices(dashboardResponse);
       let availablePrograms = makeAvailablePrograms(dashboardResponse);
+      let programLearners = makeProgramLearners();
       helper.dashboardStub.returns(Promise.resolve(dashboardResponse));
       helper.programsGetStub.returns(Promise.resolve(availablePrograms));
       helper.coursePricesStub.returns(Promise.resolve(coursePrices));
+      helper.programLearnersStub = helper.fetchJSONWithCSRFStub.withArgs(
+      `/api/v0/programlearners/${program.id}/`
+    );
+        helper.programLearnersStub.returns(Promise.resolve(programLearners));
 
       return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
         wrapper.find('.pay-button').props().onClick();

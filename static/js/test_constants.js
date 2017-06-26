@@ -6,6 +6,7 @@ import Decimal from 'decimal.js-light';
 import type {
   CoursePrices,
   Dashboard,
+  ProgramLearners
 } from './flow/dashboardTypes';
 import type { AvailablePrograms } from './flow/enrollmentTypes';
 import type { FinancialAidUserInfo } from './flow/programTypes';
@@ -958,6 +959,16 @@ export const COURSE_PRICES_RESPONSE: CoursePrices = deepFreeze(DASHBOARD_RESPONS
   financial_aid_availability: false,
   has_financial_aid_request: false
 })));
+
+export const PROGRAM_LEARNERS_RESPONSE: ProgramLearners = deepFreeze({
+  learners:[
+    {
+      username:'Jane',
+      image_small: 'url'
+    }
+  ],
+  learners_count: 50
+});
 
 export const ERROR_RESPONSE = deepFreeze({
   errorStatusCode: 500,

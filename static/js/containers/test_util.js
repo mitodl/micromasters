@@ -26,13 +26,19 @@ export const SUCCESS_ACTIONS: Array<ActionType> = [
   RECEIVE_GET_USER_PROFILE_SUCCESS,
 ];
 
-export const DASHBOARD_SUCCESS_ACTIONS = SUCCESS_ACTIONS.concat([
+export const SUBSET_DASHBOARD_SUCCESS_ACTIONS = SUCCESS_ACTIONS.concat([
   REQUEST_DASHBOARD,
   RECEIVE_DASHBOARD_SUCCESS,
   actions.prices.get.requestType,
   actions.prices.get.successType,
   REQUEST_FETCH_COUPONS,
   RECEIVE_FETCH_COUPONS_SUCCESS,
+]);
+
+
+export const DASHBOARD_SUCCESS_ACTIONS = SUBSET_DASHBOARD_SUCCESS_ACTIONS.concat([
+  actions.programLearners.get.requestType,
+  actions.programLearners.get.successType,
 ]);
 
 export const DASHBOARD_ERROR_ACTIONS = SUCCESS_ACTIONS.concat([

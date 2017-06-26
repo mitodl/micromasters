@@ -10,7 +10,7 @@ import {
   CYBERSOURCE_CHECKOUT_RESPONSE,
   EDX_CHECKOUT_RESPONSE,
 } from '../test_constants';
-import { DASHBOARD_SUCCESS_ACTIONS } from './test_util';
+import { SUBSET_DASHBOARD_SUCCESS_ACTIONS } from './test_util';
 import { findCourse } from '../util/test_utils';
 
 describe('OrderSummaryPage', () => {
@@ -32,7 +32,7 @@ describe('OrderSummaryPage', () => {
   });
 
   it('shows a spinner when dashboard get is processing', () => {
-    return renderComponent(url, DASHBOARD_SUCCESS_ACTIONS).then(([, div]) => {
+    return renderComponent(url, SUBSET_DASHBOARD_SUCCESS_ACTIONS).then(([, div]) => {
 
       assert.notOk(div.querySelector(".loader"), "Found spinner but no fetch in progress");
       helper.store.dispatch({type: REQUEST_DASHBOARD, payload: false, meta: SETTINGS.user.username});
@@ -46,7 +46,7 @@ describe('OrderSummaryPage', () => {
       let promise = Promise.resolve(EDX_CHECKOUT_RESPONSE);
       let checkoutStub = helper.sandbox.stub(actions, 'checkout').returns(() => promise);
 
-      return renderComponent(url, DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
+      return renderComponent(url, SUBSET_DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
         wrapper.find('SpinnerButton').props().onClick();
 
         assert.equal(checkoutStub.callCount, 1);
@@ -67,7 +67,7 @@ describe('OrderSummaryPage', () => {
       fakeForm.submit = submitStub;
       let createFormStub = helper.sandbox.stub(util, 'createForm').returns(fakeForm);
 
-      return renderComponent(url, DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
+      return renderComponent(url, SUBSET_DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
         wrapper.find('SpinnerButton').props().onClick();
 
         assert.equal(checkoutStub.callCount, 1);
