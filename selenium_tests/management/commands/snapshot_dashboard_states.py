@@ -162,12 +162,12 @@ class DashboardStates(SeleniumTestsBase):
     def with_coupon_no_financial_aid_application(self):
         """Coupon without a financial aid application"""
         self.with_coupon(Coupon.PERCENT_DISCOUNT, True, False)
-        FinancialAid.objects.all().delete()
+        self.user.financialaid_set.update(status=FinancialAidStatus.RESET)
 
     def with_coupon_pending_financial_aid(self):
         """Coupon with a non-terminal financial aid application"""
         self.with_coupon(Coupon.PERCENT_DISCOUNT, True, False)
-        FinancialAid.objects.update(status=FinancialAidStatus.PENDING_MANUAL_APPROVAL)
+        self.user.financialaid_set.update(status=FinancialAidStatus.PENDING_MANUAL_APPROVAL)
 
     def with_financial_aid(self, status, is_enrolled):
         """Set the status of user's financial aid"""
