@@ -46,4 +46,7 @@ export type ProgramLearner = {
   image_small: string,
 };
 
-export type ProgramLearners = Array<ProgramLearner>;
+export type ProgramLearners = {
+  learners: Array<ProgramLearner>,
+  learners_count: number,
+};
