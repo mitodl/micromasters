@@ -480,7 +480,7 @@ class CouponTests(MockedESTestCase):
             provider=EdxOrgOAuth2.name,
             uid='user',
         )
-        run = CourseRunFactory.create()
+        run = CourseRunFactory.create(course__program__financial_aid_availability=True)
         cls.coupon = CouponFactory.create(content_object=run.course.program)
         UserCoupon.objects.create(coupon=cls.coupon, user=cls.user)
 

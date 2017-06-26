@@ -98,7 +98,7 @@ class CouponFactory(DjangoModelFactory):
     class Meta:
         model = Coupon
 
-    content_object = SubFactory(ProgramFactory)
+    content_object = SubFactory(ProgramFactory, financial_aid_availability=True)
 
     class Params:  # pylint: disable=missing-docstring
         percent = Trait(

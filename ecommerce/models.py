@@ -351,6 +351,9 @@ class Coupon(TimestampedModel, AuditableModel):
                 "coupon must be for a course if coupon_type is {}".format(self.DISCOUNTED_PREVIOUS_COURSE)
             )
 
+        if not self.program.financial_aid_availability:
+            raise ValidationError("coupons are only allowed for programs with financial aid")
+
     @classmethod
     def get_audit_class(cls):
         return CouponAudit

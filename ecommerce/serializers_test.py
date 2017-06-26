@@ -17,7 +17,8 @@ class SerializerTests(TestCase):
         """
         Test coupon serializer
         """
-        coupon = CouponFactory.create(content_object=CourseRunFactory.create().course.program)
+        course_run = CourseRunFactory.create(course__program__financial_aid_availability=True)
+        coupon = CouponFactory.create(content_object=course_run.course.program)
         assert CouponSerializer(coupon).data == {
             'amount': str(coupon.amount),
             'amount_type': coupon.amount_type,
@@ -32,7 +33,8 @@ class SerializerTests(TestCase):
         """
         Test coupon serializer
         """
-        coupon = CouponFactory.create(content_object=CourseRunFactory.create().course)
+        course_run = CourseRunFactory.create(course__program__financial_aid_availability=True)
+        coupon = CouponFactory.create(content_object=course_run.course)
         assert CouponSerializer(coupon).data == {
             'amount': str(coupon.amount),
             'amount_type': coupon.amount_type,
@@ -47,6 +49,7 @@ class SerializerTests(TestCase):
         """
         Test coupon serializer
         """
+        course_run = CourseRunFactory.create(course__program__financial_aid_availability=True)
         with self.assertRaises(ValidationError) as ex:
-            CouponFactory.create(content_object=CourseRunFactory.create())
+            CouponFactory.create(content_object=course_run)
         assert ex.exception.args[0]['__all__'][0].args[0] == 'content_object must be of type Course or Program'

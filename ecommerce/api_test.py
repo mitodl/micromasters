@@ -534,7 +534,10 @@ class CouponTests(MockedESTestCase):
     def setUpTestData(cls):
         """Create a set of course runs for testing"""
         super().setUpTestData()
-        cls.run1 = CourseRunFactory.create(course__program__live=True)
+        cls.run1 = CourseRunFactory.create(
+            course__program__live=True,
+            course__program__financial_aid_availability=True,
+        )
         cls.program = cls.run1.course.program
         cls.run2 = CourseRunFactory.create(course=cls.run1.course)
         cls.runs = [cls.run1, cls.run2]
@@ -640,7 +643,11 @@ class PickCouponTests(MockedESTestCase):
     @classmethod
     def _create_coupons(cls, user):
         """Create some coupons"""
-        course = CourseRunFactory.create(course__program__live=True).course
+        course_run = CourseRunFactory.create(
+            course__program__financial_aid_availability=True,
+            course__program__live=True,
+        )
+        course = course_run.course
         ProgramEnrollment.objects.create(program=course.program, user=user)
         coupon1_auto = CouponFactory.create(
             coupon_type=Coupon.DISCOUNTED_PREVIOUS_COURSE,

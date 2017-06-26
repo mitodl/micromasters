@@ -85,7 +85,7 @@ class CouponTests(MockedESTestCase):
         """
         Coupon.content_object should only accept Course, CourseRun, or Program
         """
-        course_run = CourseRunFactory.create()
+        course_run = CourseRunFactory.create(course__program__financial_aid_availability=True)
         coupons = []
         for obj in (course_run.course, course_run.course.program):
             coupons.append(CouponFactory.create(content_object=obj))
@@ -136,11 +136,25 @@ class CouponTests(MockedESTestCase):
             'coupon must be for a course if coupon_type is discounted-previous-course'
         )
 
+    def test_validate_coupon_program(self):
+        """Coupons should fail to validate for non-financial aid programs"""
+        run = CourseRunFactory.create(
+            course__program__financial_aid_availability=False,
+        )
+        with self.assertRaises(ValidationError) as ex:
+            CouponFactory.create(
+                coupon_type=Coupon.STANDARD,
+                content_object=run.course,
+            )
+        assert ex.exception.args[0]['__all__'][0].args[0] == (
+            "coupons are only allowed for programs with financial aid"
+        )
+
     def test_course_keys(self):
         """
         Coupon.course_keys should return a list of all course run keys in a program, course, or course run
         """
-        run1 = CourseRunFactory.create()
+        run1 = CourseRunFactory.create(course__program__financial_aid_availability=True)
         run2 = CourseRunFactory.create(course=run1.course)
         run3 = CourseRunFactory.create(course__program=run1.course.program)
         run4 = CourseRunFactory.create(course=run3.course)
@@ -157,7 +171,7 @@ class CouponTests(MockedESTestCase):
         """
         Coupon.course_keys should return a list of all course run keys in a program, course, or course run
         """
-        run1 = CourseRunFactory.create()
+        run1 = CourseRunFactory.create(course__program__financial_aid_availability=True)
         CourseRunFactory.create(course=run1.course)
         run3 = CourseRunFactory.create(course__program=run1.course.program)
         CourseRunFactory.create(course=run3.course)
@@ -214,7 +228,7 @@ class CouponTests(MockedESTestCase):
         """
         coupon_not_automatic = CouponFactory.create(coupon_type=Coupon.STANDARD)
         assert Coupon.is_automatic_qset().filter(id=coupon_not_automatic.id).exists() is False
-        run = CourseRunFactory.create()
+        run = CourseRunFactory.create(course__program__financial_aid_availability=True)
         coupon_is_automatic = CouponFactory.create(
             coupon_type=Coupon.DISCOUNTED_PREVIOUS_COURSE,
             content_object=run.course,
@@ -236,7 +250,7 @@ class CouponTests(MockedESTestCase):
         """
         Coupon.user_has_redemptions_left should be true if user has not yet purchased all course runs
         """
-        run1 = CourseRunFactory.create()
+        run1 = CourseRunFactory.create(course__program__financial_aid_availability=True)
         if has_unpurchased_run:
             CourseRunFactory.create(course__program=run1.course.program)
 
@@ -261,7 +275,7 @@ class CouponTests(MockedESTestCase):
         """
         Tests for Coupon.another_user_already_redeemed
         """
-        run1 = CourseRunFactory.create()
+        run1 = CourseRunFactory.create(course__program__financial_aid_availability=True)
         run2 = CourseRunFactory.create(course__program=run1.course.program)
         coupon = CouponFactory.create(content_object=run1.course.program)
 
