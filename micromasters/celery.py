@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 
 client = Client(**settings.RAVEN_CONFIG)
 
-register_logger_signal(client, loglevel=settings.LOG_LEVEL)
+register_logger_signal(client, loglevel=logging.ERROR)
 
 # The register_signal function can also take an optional argument
 # `ignore_expected` which causes exception classes specified in Task.throws
