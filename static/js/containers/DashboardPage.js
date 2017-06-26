@@ -156,7 +156,9 @@ class DashboardPage extends React.Component {
     let program = this.getCurrentlyEnrolledProgram();
     dispatch(clearDashboard(SETTINGS.user.username));
     dispatch(actions.prices.clear(SETTINGS.user.username));
-    dispatch(actions.programLearners.clear(program.id));
+    if (program !== undefined) {
+      dispatch(actions.programLearners.clear(program.id));
+    }
     dispatch(clearCoupons());
   }
 
@@ -288,7 +290,7 @@ class DashboardPage extends React.Component {
     const { programLearners, dispatch } = this.props;
     let program = this.getCurrentlyEnrolledProgram();
     if (program !== undefined && R.pathEq([program.id, 'getStatus'], undefined, programLearners)) {
-      dispatch(actions.programLearners.get(program.id))
+      dispatch(actions.programLearners.get(program.id));
     }
   }
 
@@ -715,6 +717,7 @@ class DashboardPage extends React.Component {
     if (coupon) {
       courseListCardOptionalProps.coupon = coupon;
     }
+
     return (
       <div>
         {this.renderEdxCacheRefreshErrorMessage()}

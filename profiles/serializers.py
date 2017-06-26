@@ -302,6 +302,7 @@ class ProfileFilledOutSerializer(ProfileSerializer):
 
 
 class ProfileImageSerializer(ModelSerializer):
+    """Serializer for Profile objects for the Learners In Program card"""
     username = SerializerMethodField()
 
     def get_username(self, obj):

@@ -3,13 +3,13 @@ import { Card, CardTitle } from 'react-mdl/lib/Card';
 
 import type { ProgramLearners } from '../flow/dashboardTypes';
 
-export default class LearnersInProgramCard extends React.Component{
+export default class LearnersInProgramCard extends React.Component {
   props: {
     programLearners: ProgramLearners,
   };
 
   render() {
-    const { learners, learners_count } = this.props.programLearners;
+    const { learners, learnersCount } = this.props.programLearners;
     const learnersList = learners.map(learner => (
 
         <img key={learner.username}
@@ -22,8 +22,8 @@ export default class LearnersInProgramCard extends React.Component{
         {learnersList}
       </div>
       <a href='/learners/'>
-        <span>View All({learners_count})</span>
+        <span>View All({learnersCount})</span>
       </a>
-    </Card>
+    </Card>;
   }
 }
