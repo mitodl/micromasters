@@ -133,6 +133,7 @@ describe('DashboardPage', () => {
       assert.lengthOf(wrapper.find(".dashboard-user-card"), 1);
       assert.lengthOf(wrapper.find(".course-list"), 1);
       assert.lengthOf(wrapper.find(".progress-widget"), 1);
+      assert.lengthOf(wrapper.find(".learners-card"), 1);
     });
   });
 
