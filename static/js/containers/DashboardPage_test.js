@@ -285,8 +285,8 @@ describe('DashboardPage', () => {
         helper.programsGetStub.returns(Promise.resolve(availablePrograms));
         helper.coursePricesStub.returns(Promise.resolve(coursePrices));
         helper.programLearnersStub = helper.fetchJSONWithCSRFStub.withArgs(
-      `/api/v0/programlearners/${program.id}/`
-    );
+          `/api/v0/programlearners/${program.id}/`
+        );
         helper.programLearnersStub.returns(Promise.resolve(programLearners));
       });
 
@@ -679,9 +679,9 @@ describe('DashboardPage', () => {
       helper.programsGetStub.returns(Promise.resolve(availablePrograms));
       helper.coursePricesStub.returns(Promise.resolve(coursePrices));
       helper.programLearnersStub = helper.fetchJSONWithCSRFStub.withArgs(
-      `/api/v0/programlearners/${program.id}/`
-    );
-        helper.programLearnersStub.returns(Promise.resolve(programLearners));
+        `/api/v0/programlearners/${program.id}/`
+      );
+      helper.programLearnersStub.returns(Promise.resolve(programLearners));
 
       return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
         wrapper.find('.pay-button').props().onClick();

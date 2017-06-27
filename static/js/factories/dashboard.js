@@ -161,9 +161,9 @@ export const makeCoursePrices = (dashboard: Dashboard): CoursePrices => (
 );
 
 export const makeProgramLearners = (): ProgramLearners => ({
-    learners: [],
-    learners_count: 25
-  }
+  learners: [],
+  learners_count: 25
+}
 );
 
 export const makeProctoredExamResult = (): ProctoredExamResult => {
