@@ -134,6 +134,12 @@ describe("FinancialAidCard", () => {
         let wrapper = renderCard({ program });
         assert.isNull(wrapper.html());
       });
+
+      it(`don't show no-calls message if status is ${status}`, () => {
+        const program = programWithStatus(status);
+        let wrapper = renderCard({program});
+        assert.lengthOf(wrapper.find('.no-calls-message'), 0);
+      });
     }
 
     for (let status of [FA_STATUS_PENDING_DOCS, FA_STATUS_DOCS_SENT, FA_STATUS_PENDING_MANUAL_APPROVAL]) {
@@ -141,6 +147,12 @@ describe("FinancialAidCard", () => {
         let program = programWithStatus(status);
         let wrapper = renderCard({ program });
         assert.include(wrapper.html(), "Cambridge, MA 02139");
+      });
+
+      it(`shows no-calls message if status is ${status}`, () => {
+        const program = programWithStatus(status);
+        let wrapper = renderCard({program});
+        assert.lengthOf(wrapper.find('.no-calls-message'), 1);
       });
 
       it(`has a link to skip financial aid for ${status}`, () => {
