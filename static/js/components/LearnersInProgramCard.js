@@ -9,20 +9,20 @@ export default class LearnersInProgramCard extends React.Component {
   };
 
   render() {
-    const { learners, learnersCount } = this.props.programLearners;
-    const learnersList = learners.map(learner => (
-
+    const { programLearners } = this.props;
+    const learnersList = programLearners.learners.map(learner => (
         <img key={learner.username}
           src={learner.image_small}
           className='learner-image'
-        />));
+        />
+    ));
     return <Card className="learners-card" shadow={0} >
       <CardTitle className="learners-title">Learners in this Program</CardTitle>
       <div className="learners-wrapper">
         {learnersList}
       </div>
       <a href='/learners/'>
-        <span>View All({learnersCount})</span>
+        <span>View All ({programLearners.learners_count})</span>
       </a>
     </Card>;
   }
