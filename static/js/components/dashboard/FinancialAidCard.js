@@ -265,6 +265,11 @@ export default class FinancialAidCard extends React.Component {
       <div>
         {contents}
       </div>
+      <div className="no-calls-massage">
+        If you have questions, contact us using the Help button at the bottom of the page,
+        or e-mail <a href="mailto:micromasters-support@mit.edu">micromasters-support@mit.edu</a>. Due to high volume of inquiries we do
+        not have a support phone number at this time.
+      </div>
     </Card>;
   }
 }

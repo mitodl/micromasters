@@ -58,6 +58,12 @@
     }
   }
 
+  .no-calls-massage {
+    color: $font-gray;
+    font-style: italic;
+    margin-top: 30px;
+  }
+
   .price-explanation {
     display: flex;
     justify-content: space-between;
