@@ -337,6 +337,7 @@ class ArchivedResponseProcessor:
                     user=exam_authorization.user,
                     course=exam_authorization.course,
                     client_authorization_id=result.client_authorization_id,
+                    exam_run=exam_authorization.exam_run,
                     defaults=defaults
                 )
 
