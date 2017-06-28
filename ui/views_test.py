@@ -9,6 +9,7 @@ import ddt
 from django.db.models.signals import post_save
 from django.core.urlresolvers import reverse
 from django.test import override_settings
+from factory import Iterator
 from factory.django import mute_signals
 from factory.fuzzy import FuzzyText
 from rest_framework import status
@@ -16,9 +17,17 @@ from rolepermissions.shortcuts import available_perm_status
 from wagtail.wagtailimages.models import Image
 from wagtail.wagtailimages.tests.utils import get_test_image_file
 
-from cms.models import HomePage, ProgramPage
-from courses.factories import ProgramFactory, CourseFactory
 from backends.edxorg import EdxOrgOAuth2
+from cms.factories import (
+    FacultyFactory,
+    InfoLinksFactory,
+    ProgramCourseFactory,
+    SemesterDateFactory,
+)
+from cms.models import HomePage, ProgramPage
+from cms.serializers import ProgramPageSerializer
+from courses.factories import ProgramFactory, CourseFactory
+from micromasters.serializers import serialize_maybe_user
 from profiles.api import get_social_username
 from profiles.factories import ProfileFactory
 from roles.models import Role
@@ -530,40 +539,41 @@ class TestProgramPage(ViewsTests):
         homepage.add_child(instance=self.program_page)
         self.program_page.save_revision().publish()
 
-    def test_program_page_context_anonymous(self):
+    def test_bundles(self):
         """
-        Assert context values when anonymous
+        Assert javascript files rendered on program page
         """
-        ga_tracking_id = FuzzyText().fuzz()
-        with self.settings(
-            GA_TRACKING_ID=ga_tracking_id,
-        ), patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
-            response = self.client.get(self.program_page.url)
-            assert response.context['authenticated'] is False
-            assert response.context['username'] is None
-            assert response.context['title'] == self.program_page.title
-            assert response.context['is_public'] is True
-            assert response.context['has_zendesk_widget'] is True
-            assert response.context['is_staff'] is False
-            self.assertContains(response, 'Share this page')
-            js_settings = json.loads(response.context['js_settings_json'])
-            assert js_settings['gaTrackingID'] == ga_tracking_id
+        with patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
+            self.client.get(self.program_page.url)
 
-            bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
-            assert set(bundles) == {
-                'common',
-                'public',
-                'sentry_client',
-                'style',
-                'style_public',
-                'zendesk_widget',
-            }
+        bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
+        assert set(bundles) == {
+            'common',
+            'public',
+            'sentry_client',
+            'style',
+            'style_public',
+            'zendesk_widget',
+        }
+
+    def test_context_anonymous(self):
+        """
+        Assert context values when anonymous which are different than for the logged in user
+        """
+        response = self.client.get(self.program_page.url)
+        assert response.context['authenticated'] is False
+        assert response.context['username'] is None
+        assert response.context['is_staff'] is False
+        js_settings = json.loads(response.context['js_settings_json'])
+        assert js_settings['user'] is None
 
     @ddt.data(
         *Role.ASSIGNABLE_ROLES
     )
-    def test_program_page_is_staff(self, role):
-        """Assert context values when staff"""
+    def test_context_has_role(self, role):
+        """
+        Assert context values when staff or instructor which are different than for regular logged in user
+        """
         with mute_signals(post_save):
             profile = ProfileFactory.create()
         Role.objects.create(
@@ -572,31 +582,68 @@ class TestProgramPage(ViewsTests):
             user=profile.user,
         )
         self.client.force_login(profile.user)
+        response = self.client.get(self.program_page.url)
+        assert response.context['authenticated'] is True
+        assert response.context['username'] is None
+        assert response.context['is_staff'] is True
+
+    def test_context(self):
+        """
+        Assert context values for logged in user
+        """
+        with mute_signals(post_save):
+            profile = ProfileFactory.create()
+        self.client.force_login(profile.user)
+
+        # ProgramFaculty and ProgramCourse are asserted via ProgramPageSerializer below
+        FacultyFactory.create_batch(3, program_page=self.program_page)
+        courses = self.program_page.program.course_set.all()
+        ProgramCourseFactory.create_batch(
+            len(courses), program_page=self.program_page, course=Iterator(courses)
+        )
 
         ga_tracking_id = FuzzyText().fuzz()
         with self.settings(
             GA_TRACKING_ID=ga_tracking_id,
-        ), patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
+            ENVIRONMENT='environment',
+            VERSION='version',
+        ):
             response = self.client.get(self.program_page.url)
             assert response.context['authenticated'] is True
             assert response.context['username'] is None
             assert response.context['title'] == self.program_page.title
             assert response.context['is_public'] is True
             assert response.context['has_zendesk_widget'] is True
-            assert response.context['is_staff'] is True
+            assert response.context['is_staff'] is False
             self.assertContains(response, 'Share this page')
             js_settings = json.loads(response.context['js_settings_json'])
-            assert js_settings['gaTrackingID'] == ga_tracking_id
-
-            bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
-            assert set(bundles) == {
-                'common',
-                'public',
-                'sentry_client',
-                'style',
-                'style_public',
-                'zendesk_widget',
+            assert js_settings == {
+                'gaTrackingID': ga_tracking_id,
+                'environment': 'environment',
+                'sentry_dsn': None,
+                'host': 'testserver',
+                'release_version': 'version',
+                'user': serialize_maybe_user(profile.user),
+                'program': ProgramPageSerializer(self.program_page).data,
             }
+
+    def test_info_links(self):
+        """
+        If present, info links should be displayed
+        """
+        info_links = InfoLinksFactory.create_batch(3, program_page=self.program_page)
+        response = self.client.get(self.program_page.url)
+        for info_link in info_links:
+            self.assertContains(response, info_link.title_url)
+
+    def test_semester_date(self):
+        """
+        If present, semester data should be displayed
+        """
+        semester_dates = SemesterDateFactory.create_batch(3, program_page=self.program_page)
+        response = self.client.get(self.program_page.url)
+        for semester_date in semester_dates:
+            self.assertContains(response, semester_date.semester_name)
 
     def test_login_button(self):
         """Verify that we see a login button"""

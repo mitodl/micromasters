@@ -3,12 +3,16 @@ Tests for CMS serializers
 """
 from search.base import MockedESTestCase
 from cms.serializers import (
+    CourseSerializer,
     FacultySerializer,
     RenditionSerializer,
     ProgramPageSerializer,
 )
-from cms.factories import FacultyFactory, ProgramPageFactory, ProgramCourseFactory
-from courses.factories import ProgramFactory, CourseFactory
+from cms.factories import (
+    FacultyFactory,
+    ProgramPageFactory,
+)
+from courses.factories import CourseFactory
 
 
 class WagtailSerializerTests(MockedESTestCase):
@@ -51,30 +55,16 @@ class WagtailSerializerTests(MockedESTestCase):
         """
         Test program page serializer
         """
-        program = ProgramFactory.create(title="Supply Chain Management")
-        course = CourseFactory.create(program=program, title="Learning How to Supply")
-        page = ProgramPageFactory.create(program=program, title=program.title)
-        program_course = ProgramCourseFactory(program_page=page, course=course)
-        faculty = FacultyFactory.create(
-            program_page=page, name="Charles Fluffles", image=None,
-        )
+        page = ProgramPageFactory.create()
+        courses = CourseFactory.create_batch(3, program=page.program)
+        faculty = FacultyFactory.create_batch(3, program_page=page)
 
         data = ProgramPageSerializer(page).data
+        data['faculty'] = sorted(data['faculty'], key=lambda member: member['name'])
         assert data == {
-            "id": program.id,
-            "title": "Supply Chain Management",
-            "slug": "supply-chain-management",
-            "faculty": [{
-                "name": "Charles Fluffles",
-                "title": faculty.title,
-                "short_bio": faculty.short_bio,
-                "image": None,
-            }],
-            "courses": [{
-                "id": course.id,
-                "title": "Learning How to Supply",
-                "description": program_course.description,
-                "url": course.url,
-                "enrollment_text": "Not available",
-            }]
+            "id": page.program.id,
+            "title": page.title,
+            "slug": ProgramPageSerializer().get_slug(page),
+            "faculty": FacultySerializer(sorted(faculty, key=lambda member: member.name), many=True).data,
+            "courses": CourseSerializer(courses, many=True).data,
         }
