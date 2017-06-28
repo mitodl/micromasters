@@ -1,6 +1,7 @@
 """Basic selenium tests for MicroMasters"""
 from django.conf import settings
 from django.db.models.signals import post_save
+from factory import Iterator
 from factory.django import mute_signals
 from selenium.webdriver.common.keys import Keys
 
@@ -243,7 +244,7 @@ class ProgramPageTests(SeleniumTestsBase):
         FacultyFactory.create_batch(3, program_page=page)
         InfoLinksFactory.create_batch(3, program_page=page)
         SemesterDateFactory.create_batch(3, program_page=page)
-        for course in self.program.course_set.all():
-            ProgramCourseFactory.create(program_page=page, course=course)
+        courses = self.program.course_set.all()
+        ProgramCourseFactory.create_batch(len(courses), program_page=page, course=Iterator(courses))
 
         self.get("/a-program-title/")
