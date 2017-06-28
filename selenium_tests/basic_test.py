@@ -236,15 +236,53 @@ class ReviewFinancialAidTests(SeleniumTestsBase):
 class ProgramPageTests(SeleniumTestsBase):
     """Look at the program page"""
 
-    def test_program_page(self):
+    def test_program_page(self):  # pylint: disable=too-many-locals
         """Test viewing the program page"""
         self.login_via_admin(self.user)
 
         page = ProgramPageFactory.create(program=self.program, title="A Program Title")
-        FacultyFactory.create_batch(3, program_page=page)
-        InfoLinksFactory.create_batch(3, program_page=page)
-        SemesterDateFactory.create_batch(3, program_page=page)
+        faculty = FacultyFactory.create_batch(3, program_page=page)
+        info_links = InfoLinksFactory.create_batch(3, program_page=page)
+        semester_dates = SemesterDateFactory.create_batch(3, program_page=page)
         courses = self.program.course_set.all()
-        ProgramCourseFactory.create_batch(len(courses), program_page=page, course=Iterator(courses))
+        program_courses = [
+            ProgramCourseFactory.create(program_page=page, course=course)
+            for course in courses
+        ]
 
+        # Make page extra wide so that all faculty members show up
+        self.set_dimension(width=2000)
         self.get("/a-program-title/")
+
+        # Wait for carousel to load
+        self.wait().until(lambda driver: driver.find_element_by_css_selector(".faculty-name").text)
+
+        faculty_elements = self.selenium.find_elements_by_css_selector(".faculty-tile")
+        faculty_elements = sorted(
+            faculty_elements, key=lambda elem: elem.find_element_by_css_selector(".faculty-name").text
+        )
+        faculty = sorted(faculty, key=lambda faculty_member: faculty_member.name)
+        assert len(faculty) == len(faculty_elements)
+        for faculty_member, faculty_element in zip(faculty, faculty_elements):
+            image_element = faculty_element.find_element_by_css_selector("img")
+            assert faculty_member.name in faculty_element.find_element_by_css_selector(".faculty-name").text
+            rendition_url = faculty_member.image.renditions.first().file.url
+            assert image_element.get_attribute("src").endswith(rendition_url)
+
+        info_elements = self.selenium.find_elements_by_css_selector(".program-contact-link")
+        info_elements = sorted(info_elements, key=lambda elem: elem.get_attribute("href"))
+        info_links = sorted(info_links, key=lambda info_link: info_link.url)
+        assert len(info_links) == len(info_elements)
+        for info_link, info_element in zip(info_links, info_elements):
+            assert info_link.url == info_element.get_attribute("href")
+
+        semester_elements = self.selenium.find_elements_by_css_selector(".semester-date")
+        assert len(semester_dates) == len(semester_elements)
+        for semester_date, semester_element in zip(semester_dates, semester_elements):
+            assert semester_date.semester_name in semester_element.text
+
+        program_course_elements = self.selenium.find_elements_by_css_selector(".program-course-title")
+        assert len(program_courses) == len(program_course_elements)
+        for program_course, program_course_element in zip(program_courses, program_course_elements):
+            assert program_course.course.url == program_course_element.get_attribute("href")
+            assert program_course.course.title in program_course_element.text

@@ -379,11 +379,18 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         user.is_staff = is_staff
         user.save()
 
+    def set_dimension(self, width=None, height=None):
+        """Helper function to set the width or height, or both at once"""
+        current_dimensions = self.selenium.get_window_size()
+        if width is None:
+            width = current_dimensions['width']
+        if height is None:
+            height = current_dimensions['height']
+        self.selenium.set_window_size(width, height)
+
     def take_screenshot(self, name=None, output_base64=False):
         """Helper method to take a screenshot and put it in a temp directory"""
-        width = self.selenium.get_window_size()['width']
-        height = self.selenium.execute_script("return document.body.scrollHeight")
-        self.selenium.set_window_size(width, height)
+        self.set_dimension(height=self.selenium.execute_script("return document.body.scrollHeight"))
 
         if name is None:
             name = self._testMethodName

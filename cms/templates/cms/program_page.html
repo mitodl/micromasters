@@ -127,7 +127,7 @@
               {% if page.info_links.exists %}
                 {% for link in page.info_links.all %}
                   <p>
-                    <a target="_blank" href="{{ link.url }}" rel="noopener noreferrer">
+                    <a target="_blank" href="{{ link.url }}" rel="noopener noreferrer" class="program-contact-link">
                       {{ link.title_url }}
                     </a>
                   </p>
