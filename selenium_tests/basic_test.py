@@ -240,12 +240,9 @@ class ProgramPageTests(SeleniumTestsBase):
         self.login_via_admin(self.user)
 
         page = ProgramPageFactory.create(program=self.program, title="A Program Title")
-        for _ in range(3):
-            FacultyFactory.create(program_page=page)
-        for _ in range(3):
-            InfoLinksFactory.create(program_page=page)
-        for _ in range(3):
-            SemesterDateFactory.create(program_page=page)
+        FacultyFactory.create_batch(3, program_page=page)
+        InfoLinksFactory.create_batch(3, program_page=page)
+        SemesterDateFactory.create_batch(3, program_page=page)
         for course in self.program.course_set.all():
             ProgramCourseFactory.create(program_page=page, course=course)
 
