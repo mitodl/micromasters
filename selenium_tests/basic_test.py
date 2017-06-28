@@ -12,7 +12,10 @@ from cms.factories import (
     ProgramPageFactory,
     SemesterDateFactory,
 )
-from courses.factories import ProgramFactory
+from courses.factories import (
+    CourseFactory,
+    ProgramFactory,
+)
 from dashboard.models import ProgramEnrollment
 from financialaid.constants import FinancialAidStatus
 from financialaid.factories import FinancialAidFactory
@@ -240,15 +243,14 @@ class ProgramPageTests(SeleniumTestsBase):
         """Test viewing the program page"""
         self.login_via_admin(self.user)
 
+        CourseFactory.create_batch(2, program=self.program)
+
         page = ProgramPageFactory.create(program=self.program, title="A Program Title")
         faculty = FacultyFactory.create_batch(3, program_page=page)
         info_links = InfoLinksFactory.create_batch(3, program_page=page)
         semester_dates = SemesterDateFactory.create_batch(3, program_page=page)
         courses = self.program.course_set.all()
-        program_courses = [
-            ProgramCourseFactory.create(program_page=page, course=course)
-            for course in courses
-        ]
+        program_courses = ProgramCourseFactory.create_batch(len(courses), program_page=page, course=Iterator(courses))
 
         # Make page extra wide so that all faculty members show up
         self.set_dimension(width=2000)
@@ -281,8 +283,7 @@ class ProgramPageTests(SeleniumTestsBase):
         for semester_date, semester_element in zip(semester_dates, semester_elements):
             assert semester_date.semester_name in semester_element.text
 
-        program_course_elements = self.selenium.find_elements_by_css_selector(".program-course-title")
+        program_course_elements = self.selenium.find_elements_by_css_selector(".program-course .title")
         assert len(program_courses) == len(program_course_elements)
         for program_course, program_course_element in zip(program_courses, program_course_elements):
-            assert program_course.course.url == program_course_element.get_attribute("href")
             assert program_course.course.title in program_course_element.text

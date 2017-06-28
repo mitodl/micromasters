@@ -5,10 +5,6 @@ import Popover from 'material-ui/Popover';
 import PopoverNullAnimation from '../util/popover_animation';
 import type { ProgramPageCourse } from '../flow/programTypes';
 
-const titleEl = (title, url) => (
-  url ? <a className="program-course-title" href={url}>{title}</a> : title
-);
-
 const popoverLink = (url) => (
   url ? <a className="edx-link" href={url}>View on edX</a> : null
 );
@@ -73,7 +69,7 @@ export default class CourseListItemWithPopover extends React.Component {
     return (
       <li className="program-course">
         <h4 className="title" onClick={this.handleClick}>
-          {titleEl(title, url)}
+          {title}
         </h4>
         <Popover
           className="program-course-popover mdl-cell mdl-cell--4-col"
