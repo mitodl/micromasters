@@ -115,6 +115,7 @@ class CustomWebDriverWait(WebDriverWait):
 INITIALIZED_DB = False
 
 
+# pylint: disable=too-many-public-methods
 class SeleniumTestsBase(StaticLiveServerTestCase):
     """Base class for selenium tests"""
 
