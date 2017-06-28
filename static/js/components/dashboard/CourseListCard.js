@@ -3,7 +3,6 @@ import React from 'react';
 import moment from 'moment';
 import R from 'ramda';
 import { Card, CardTitle } from 'react-mdl/lib/Card';
-import Decimal from 'decimal.js-light';
 
 import type { Program, Course } from '../../flow/programTypes';
 import type {
@@ -26,7 +25,7 @@ import {
   makeCouponReason,
   isFreeCoupon,
 } from '../../lib/coupon';
-import { pickExistingProps } from '../../util/util';
+import { pickExistingProps, sortedCourseRuns } from '../../util/util';
 
 const priceMessageClassName = "price-message";
 
@@ -48,20 +47,22 @@ export default class CourseListCard extends React.Component {
     checkout:                        (s: string) => void,
   };
 
-  getRegularPrice = (coursePrice?: CoursePrice): Decimal|null => {
-    return coursePrice ? coursePrice.price : null;
-  }
-
   renderFinancialAidPriceMessage(): ?React$Element<*> {
     const {
       program,
       coupon,
-      coursePrice
+      prices,
     } = this.props;
     const finAidStatus = program.financial_aid_user_info.application_status;
 
     if (FA_TERMINAL_STATUSES.includes(finAidStatus)) {
-      let price = this.getRegularPrice(coursePrice);
+      let price;
+      for (const courseRun of sortedCourseRuns(program)) {
+        price = prices.get(courseRun.id);
+        if (price) {
+          break;
+        }
+      }
 
       if (!price) {
         return null;
@@ -122,7 +123,7 @@ export default class CourseListCard extends React.Component {
     const {
       program,
       coupon,
-      coursePrice
+      prices,
     } = this.props;
 
     // Special case: 100% off coupon
@@ -144,7 +145,13 @@ export default class CourseListCard extends React.Component {
       return this.renderCouponPriceMessage();
     }
 
-    let price = this.getRegularPrice(coursePrice);
+    let price;
+    for (const courseRun of sortedCourseRuns(program)) {
+      price = prices.get(courseRun.id);
+      if (price) {
+        break;
+      }
+    }
     if (!price) {
       return null;
     }

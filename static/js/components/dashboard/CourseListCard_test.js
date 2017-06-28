@@ -27,7 +27,7 @@ import {
   FA_STATUS_APPROVED,
   COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
 } from '../../constants';
-import { makeCoupon, makeCourseCoupon } from '../../factories/dashboard';
+import { makeCoupon } from '../../factories/dashboard';
 import type { CoursePrice } from '../../flow/dashboardTypes';
 
 describe('CourseListCard', () => {
@@ -143,37 +143,6 @@ describe('CourseListCard', () => {
       assert.include(
         messageEl.text(),
         "You will get $50 off the cost for each course in this program."
-      );
-    });
-
-    it('should show regular course price on coupon message', () => {
-      const coupon = makeCourseCoupon(program.courses[0], program);
-      const wrapper = renderCourseListCard({coupon});
-      const messageEl = wrapper.find(".price-message");
-      assert.lengthOf(messageEl, 1);
-      assert.include(
-        messageEl.text(),
-        "Courses in this program cost $4000 USD each."
-      );
-    });
-
-    it('displays regular price on course coupon message for financial aid program', () => {
-      program.financial_aid_availability = true;
-      program.financial_aid_user_info = {
-        application_status: FA_STATUS_APPROVED,
-        date_documents_sent: "foo",
-        has_user_applied: true,
-        max_possible_cost: 100,
-        min_possible_cost: 100,
-        id: 1,
-      };
-      const coupon = makeCourseCoupon(program.courses[0], program);
-      const wrapper = renderCourseListCard({coupon});
-      const messageEl = wrapper.find(".price-message");
-      assert.lengthOf(messageEl, 1);
-      assert.include(
-        messageEl.text(),
-        "Your Personal Course Price is $4000 USD per course."
       );
     });
 
