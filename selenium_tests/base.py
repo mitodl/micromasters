@@ -131,9 +131,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
             super().setUpClass()
 
             # Patch functions so we don't contact edX
-            cls.patchers = []
-            cls.patchers.append(patch('ecommerce.views.enroll_user_on_success', autospec=True))
-            cls.patchers.append(patch('mail.api.MailgunClient._mailgun_request'))
+            cls.patchers = cls.make_patchers()
             for patcher in cls.patchers:
                 patcher.start()
 
@@ -353,12 +351,15 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         """Make an absolute URL appropriate for selenium testing"""
         return _make_absolute_url(relative_url, self.live_server_url)
 
-    def get(self, relative_url):
+    def get(self, relative_url, ignore_errors=True):
         """Use self.live_server_url with a URL which will work for external services"""
         new_url = self.make_absolute_url(relative_url)
         self.selenium.get(new_url)
         self.wait().until(lambda driver: driver.find_element_by_tag_name("body"))
-        self.assert_console_logs()
+        if not ignore_errors:
+            self.assert_console_logs()
+        else:
+            self.dump_console_logs()
 
     def login_via_admin(self, user):
         """Make user into staff, login via admin, then undo staff status"""
@@ -524,3 +525,11 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
     def edx_username(self):
         """Get the edx username for self.user"""
         return self.user.social_auth.get(provider=EdxOrgOAuth2.name).uid
+
+    @classmethod
+    def make_patchers(cls):
+        """Return a list of patches to apply during setUpClass"""
+        return [
+            patch('ecommerce.views.enroll_user_on_success'),
+            patch('mail.api.MailgunClient._mailgun_request'),
+        ]
