@@ -341,12 +341,15 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         """Make an absolute URL appropriate for selenium testing"""
         return _make_absolute_url(relative_url, self.live_server_url)
 
-    def get(self, relative_url):
+    def get(self, relative_url, ignore_errors=True):
         """Use self.live_server_url with a URL which will work for external services"""
         new_url = self.make_absolute_url(relative_url)
         self.selenium.get(new_url)
         self.wait().until(lambda driver: driver.find_element_by_tag_name("body"))
-        self.assert_console_logs()
+        if not ignore_errors:
+            self.assert_console_logs()
+        else:
+            self.dump_console_logs()
 
     def login_via_admin(self, user):
         """Make user into staff, login via admin, then undo staff status"""
