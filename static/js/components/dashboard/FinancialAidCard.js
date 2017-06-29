@@ -206,12 +206,11 @@ export default class FinancialAidCard extends React.Component {
         <Grid>
           <Cell col={1} />
           <Cell col={5}>
-            Department of Economics<br />
-            MicroMasters in DEDP<br />
+            J-PAL<br />
+            DEDP MicroMasters<br />
             Massachusetts Institute of Technology<br />
-            77 Massachusetts Avenue E52-300<br />
-            Cambridge, MA 02139<br />
-            USA
+            77 Massachusetts Avenue E19-235D<br />
+            Cambridge, MA 02139 United States of America<br />
           </Cell>
           <Cell col={6}>
             1 (617) 715-5799
