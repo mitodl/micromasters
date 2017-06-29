@@ -23,6 +23,7 @@ import * as couponFuncs from './coupon';
 import {
   makeCoupon,
   makeCoupons,
+  makeCourseCoupon,
   makeCoursePrice,
   makeCoursePrices,
   makeDashboard,
@@ -266,6 +267,14 @@ describe('coupon utility functions', () => {
       let coupon = makeCoupon(makeProgram());
       coupon.amount_type = COUPON_AMOUNT_TYPE_FIXED_PRICE;
       assert.equal(makeCouponMessage(coupon), "All courses are set to the discounted price of $50.");
+    });
+
+    it('renders a message for a course coupon for a fixed price', () => {
+      let program = makeProgram();
+      let course = program.courses[0];
+      let coupon = makeCourseCoupon(course, program);
+      coupon.amount_type = COUPON_AMOUNT_TYPE_FIXED_PRICE;
+      assert.equal(makeCouponMessage(coupon), "This course is set to the discounted price of $50.");
     });
   });
 });
