@@ -46,7 +46,7 @@ export default class IntegrationTestHelper {
     this.sandbox = sinon.sandbox.create();
     this.store = configureMainTestStore((...args) => {
       // uncomment to listen on dispatched actions
-      // console.log(args[args.length-1]);
+      // console.log(args);
       const reducer = compose(
         mergePersistedState()
       )(rootReducer);
