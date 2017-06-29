@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import Dialog from 'material-ui/Dialog';
 import IconButton from 'react-mdl/lib/IconButton';
 import Button from 'react-mdl/lib/Button';
-import Decimal from 'decimal.js-light';
 import type { Course, CourseRun } from '../flow/programTypes';
 
 const dialogTitle = (course, setDialogVisibility) => (
@@ -28,7 +27,7 @@ export default class CourseEnrollmentDialog extends React.Component {
     setVisibility:            (v: boolean) => void,
     course:                   Course,
     courseRun:                CourseRun,
-    price:                    ?Decimal,
+    hasUserApplied:           boolean,
     addCourseEnrollment:      (courseId: string) => Promise<*>,
     checkout:                 Function,
     financialAidAvailability: boolean,
@@ -61,9 +60,9 @@ export default class CourseEnrollmentDialog extends React.Component {
   };
 
   render() {
-    const { open, setVisibility, course, price } = this.props;
+    const { open, setVisibility, course, hasUserApplied } = this.props;
     let message, payButton, auditButton;
-    if (price) {
+    if (hasUserApplied) {
       message = `You can pay now, or you can audit the course for FREE
         and upgrade later. (Payment is required to get credit for the
         MicroMasters certificate.)`;

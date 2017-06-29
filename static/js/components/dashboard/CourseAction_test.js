@@ -9,8 +9,6 @@ import Button from 'react-mdl/lib/Button';
 import SpinnerButton from '../SpinnerButton';
 import CourseAction from './CourseAction';
 import {
-  COURSE_PRICES_RESPONSE,
-  DASHBOARD_RESPONSE,
   FINANCIAL_AID_PARTIAL_RESPONSE,
 } from '../../test_constants';
 import {
@@ -30,7 +28,6 @@ import {
   findAndCloneCourse
 } from '../../util/test_utils';
 import { makeCourse } from '../../factories/dashboard';
-import { calculatePrices } from '../../lib/coupon';
 
 describe('CourseAction', () => {
   const now = moment();
@@ -67,7 +64,6 @@ describe('CourseAction', () => {
   };
 
   let renderCourseAction = (props = {}) => {
-    let prices = calculatePrices(DASHBOARD_RESPONSE.programs, COURSE_PRICES_RESPONSE, []);
     return shallow(
       <CourseAction
         hasFinancialAid={false}
@@ -77,7 +73,6 @@ describe('CourseAction', () => {
         setEnrollCourseDialogVisibility={setEnrollCourseDialogVisibilityStub}
         now={now}
         courseRun={course.runs[0]}
-        prices={prices}
         checkout={checkoutStub}
         openFinancialAidCalculator={openFinancialAidCalculatorStub}
         {...props}
@@ -89,13 +84,13 @@ describe('CourseAction', () => {
     it('says Enroll for COURSE_ACTION_ENROLL', () => {
       let wrapper = renderCourseAction({ actionType: COURSE_ACTION_ENROLL });
       assert.equal(wrapper.find(SpinnerButton).props().children, 'Enroll');
-    });   
+    });
 
     it('should handle a basic enrollment', () => {
       let wrapper = renderCourseAction({ actionType: COURSE_ACTION_ENROLL });
       wrapper.find(SpinnerButton).simulate('click');
       assertCourseRunSelected(course.runs[0]);
-      assertCourseEnrollDialogOpened();     
+      assertCourseEnrollDialogOpened();
     });
 
     it('says Re-Enroll for COURSE_ACTION_REENROLL', () => {

@@ -5,7 +5,6 @@ import R from 'ramda';
 import Icon from 'react-mdl/lib/Icon';
 import Spinner from 'react-mdl/lib/Spinner';
 
-import CouponMessage from './CouponMessage';
 import CourseAction from './CourseAction';
 import Grades from './courses/Grades';
 import ProgressMessage from './courses/ProgressMessage';
@@ -17,7 +16,6 @@ import type {
   Coupon,
 } from '../../flow/couponTypes';
 import {
-  COUPON_CONTENT_TYPE_COURSE,
   STATUS_OFFERED,
   STATUS_PENDING_ENROLLMENT,
   COURSE_ACTION_ENROLL,
@@ -38,14 +36,14 @@ export default class CourseRow extends React.Component {
     financialAid:                    FinancialAidUserInfo,
     hasFinancialAid:                 boolean,
     openFinancialAidCalculator:      () => void,
-    addCourseEnrollment:             (courseId: string) => void,
+    addCourseEnrollment:             (courseId: string) => Promise<*>,
     openCourseContactDialog:         (course: Course, canContactCourseTeam: boolean) => void,
     setEnrollSelectedCourseRun:      (r: CourseRun) => void,
     setEnrollCourseDialogVisibility: (b: boolean) => void,
     ui:                              UIState,
     checkout:                        (s: string) => void,
     setShowExpandedCourseStatus:     (n: number) => void,
-    setShowGradeDetailDialog:        (b: boolean) => void,
+    setShowGradeDetailDialog:        (b: boolean, title: string) => void,
   };
 
   pastCourseRuns = (course: Course): Array<CourseRun> => (
@@ -98,16 +96,6 @@ export default class CourseRow extends React.Component {
         coupon={coupon}
       />
     );
-  };
-
-  renderCouponMessage = () => {
-    const { coupon, course } = this.props;
-
-    if (coupon && coupon.content_type === COUPON_CONTENT_TYPE_COURSE && coupon.object_id === course.id) {
-      return <CouponMessage coupon={coupon} />;
-    }
-
-    return null;
   };
 
   renderEnrollmentSuccess = (): React$Element<*> => {

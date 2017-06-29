@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import PropTypes from 'prop-types';
-import Decimal from 'decimal.js-light';
 import { mount } from 'enzyme';
 import { assert } from 'chai';
 import sinon from 'sinon';
@@ -29,7 +28,7 @@ describe("CourseEnrollmentDialog", () => {
   });
 
   const renderDialog = (
-    price = null,
+    hasUserApplied = false,
     courseRun = makeRun(1),
     course = makeCourse(1),
     open = true,
@@ -41,11 +40,11 @@ describe("CourseEnrollmentDialog", () => {
           open={open}
           course={course}
           courseRun={courseRun}
-          price={price}
           setVisibility={setVisibilityStub}
           addCourseEnrollment={addCourseEnrollmentStub}
           checkout={checkoutStub}
           financialAidAvailability={financialAidAvailability}
+          hasUserApplied={hasUserApplied}
         />
       </MuiThemeProvider>,
       {
@@ -68,9 +67,8 @@ describe("CourseEnrollmentDialog", () => {
     assert.equal(auditButton.textContent, "Audit for Free & Pay Later");
   });
 
-  it('can render with price', () => {
-    const price = new Decimal("123.45");
-    const wrapper = renderDialog(price);
+  it('can render with hasUserApplied = true', () => {
+    const wrapper = renderDialog(true);
     const payButton = ((wrapper.querySelector('.pay-button'): any): HTMLButtonElement);
     assert.equal(payButton.textContent, "Pay Now");
     assert.isFalse(payButton.disabled);
@@ -87,9 +85,8 @@ describe("CourseEnrollmentDialog", () => {
   });
 
   it('can click pay button with price', () => {
-    const price = new Decimal("123.45");
     const courseRun = makeRun(1);
-    const wrapper = renderDialog(price, courseRun);
+    const wrapper = renderDialog(true, courseRun);
     const payButton = wrapper.querySelector('.pay-button');
     ReactTestUtils.Simulate.click(payButton);
     sinon.assert.calledWith(setVisibilityStub, false);
@@ -98,9 +95,8 @@ describe("CourseEnrollmentDialog", () => {
   });
 
   it('can click audit button', () => {
-    const price = new Decimal("123.45");
     const courseRun = makeRun(1);
-    const wrapper = renderDialog(price, courseRun);
+    const wrapper = renderDialog(true, courseRun);
     const auditButton = wrapper.querySelector('.audit-button');
     ReactTestUtils.Simulate.click(auditButton);
     sinon.assert.calledWith(setVisibilityStub, false);
@@ -108,10 +104,9 @@ describe("CourseEnrollmentDialog", () => {
   });
 
   it('pay button redirects to checkout', () => {
-    const price = new Decimal("123.45");
     const courseRun = makeRun(1);
     const wrapper = renderDialog(
-      price, courseRun, makeCourse(1), true, false
+      true, courseRun, makeCourse(1), true, false
     );
     const payButton = wrapper.querySelector('.pay-button');
     ReactTestUtils.Simulate.click(payButton);

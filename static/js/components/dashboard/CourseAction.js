@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import Button from 'react-mdl/lib/Button';
 
 import SpinnerButton from '../SpinnerButton';
-import type { Coupon, CalculatedPrices } from '../../flow/couponTypes';
+import type { Coupon } from '../../flow/couponTypes';
 import type { CourseRun, FinancialAidUserInfo } from '../../flow/programTypes';
 import {
   STATUS_NOT_PASSED,
@@ -27,14 +27,13 @@ export default class CourseAction extends React.Component {
   props: {
     courseRun:                       CourseRun,
     now:                             moment$Moment,
-    prices:                          CalculatedPrices,
     financialAid:                    FinancialAidUserInfo,
     hasFinancialAid:                 boolean,
     openFinancialAidCalculator:      () => void,
-    addCourseEnrollment:             (courseId: string) => void,
+    addCourseEnrollment:             (courseId: string) => Promise<*>,
     setEnrollSelectedCourseRun:      (r:        CourseRun) => void,
     setEnrollCourseDialogVisibility: (b:        boolean) => void,
-    coupon?:                         Coupon,
+    coupon:                          ?Coupon,
     actionType:                      string,
     checkout:                        (s: string) => void,
   };

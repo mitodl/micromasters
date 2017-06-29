@@ -16,23 +16,11 @@ import { INITIAL_UI_STATE } from '../../reducers/ui';
 import { makeRunCurrent, makeRunPast } from './courses/test_util';
 
 describe('CourseRow', () => {
-  let sandbox, defaultCourseRowProps, openCourseContactDialogStub;
+  let sandbox, openCourseContactDialogStub;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     openCourseContactDialogStub = sandbox.stub();
-    defaultCourseRowProps = {
-      hasFinancialAid: true,
-      financialAid: FINANCIAL_AID_PARTIAL_RESPONSE,
-      prices: new Map([[345, 456]]),
-      openFinancialAidCalculator: sandbox.stub(),
-      now: moment(),
-      addCourseEnrollment: sandbox.stub(),
-      course: null,
-      openCourseContactDialog: openCourseContactDialogStub,
-      ui: INITIAL_UI_STATE,
-      checkout: () => undefined
-    };
   });
 
   afterEach(() => {
@@ -43,7 +31,16 @@ describe('CourseRow', () => {
     let render = isShallow ? shallow : mount;
     return render(
       <CourseRow
-        {...defaultCourseRowProps}
+        hasFinancialAid={true}
+        financialAid={FINANCIAL_AID_PARTIAL_RESPONSE}
+        prices={new Map([[345, 456]])}
+        openFinancialAidCalculator={sandbox.stub}
+        now={moment()}
+        addCourseEnrollment={sandbox.stub()}
+        course={null}
+        openCourseContactDialog={openCourseContactDialogStub}
+        ui={INITIAL_UI_STATE}
+        checkout={() => undefined}
         {...props}
       />,
       {
@@ -51,7 +48,8 @@ describe('CourseRow', () => {
           router: {}
         },
         childContextTypes: {
-          router:   PropTypes.object.isRequired}
+          router:   PropTypes.object.isRequired
+        }
       }
     );
   };
@@ -107,10 +105,12 @@ describe('CourseRow', () => {
 
   it('when enroll pay later selected', () => {
     let course = makeCourse();
-    defaultCourseRowProps.ui.showEnrollPayLaterSuccess = course.runs[0].course_id;
     const wrapper = shallow(
       <CourseRow
-        {...defaultCourseRowProps}
+        ui={{
+          ...INITIAL_UI_STATE,
+          showEnrollPayLaterSuccess: course.runs[0].course_id,
+        }}
         course={course}
       />
     );

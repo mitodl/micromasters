@@ -17,6 +17,7 @@ import {
   calculateRunPrice,
   makeAmountMessage,
   makeCouponReason,
+  makeCouponMessage,
 } from './coupon';
 import * as couponFuncs from './coupon';
 import {
@@ -224,6 +225,47 @@ describe('coupon utility functions', () => {
     it('has no reason for other cases', () => {
       let coupon = makeCoupon(makeProgram());
       assert.equal(makeCouponReason(coupon), '');
+    });
+  });
+
+  describe('makeCouponMessage', () => {
+    let sandbox;
+    beforeEach(() => {
+      sandbox = sinon.sandbox.create();
+    });
+
+    afterEach(() => {
+      sandbox.restore();
+    });
+
+    it('renders a message for a coupon for a program', () => {
+      let coupon = makeCoupon(makeProgram());
+      assert.equal(makeCouponMessage(coupon), "You will get $50 off the cost for each course in this program.");
+    });
+
+    it('renders a message for a coupon for a course', () => {
+      let coupon = makeCoupon(makeProgram());
+      coupon.content_type = COUPON_CONTENT_TYPE_COURSE;
+      let makeAmountMessageStub = sandbox.stub(couponFuncs, 'makeAmountMessage').returns('all of the money');
+      let makeCouponTargetMessageStub = sandbox.stub(couponFuncs, 'makeCouponReason').returns(', because why not');
+      assert.equal(
+        makeCouponMessage(coupon),
+        "You will get all of the money off the cost for this course, because why not.",
+      );
+      assert.isTrue(makeAmountMessageStub.calledWith(coupon));
+      assert.isTrue(makeCouponTargetMessageStub.calledWith(coupon));
+    });
+
+    it('renders a message for a coupon for an unknown content type', () => {
+      let coupon = makeCoupon(makeProgram());
+      coupon.content_type = 'xyz';
+      assert.equal(makeCouponMessage(coupon), "");
+    });
+
+    it('renders a message for a coupon for a fixed price', () => {
+      let coupon = makeCoupon(makeProgram());
+      coupon.amount_type = COUPON_AMOUNT_TYPE_FIXED_PRICE;
+      assert.equal(makeCouponMessage(coupon), "All courses are set to the discounted price of $50.");
     });
   });
 });

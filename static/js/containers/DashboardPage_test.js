@@ -58,7 +58,6 @@ import {
   REQUEST_SKIP_FINANCIAL_AID,
   RECEIVE_SKIP_FINANCIAL_AID_SUCCESS,
 } from '../actions/financial_aid';
-import * as libCoupon  from '../lib/coupon';
 import {
   REQUEST_ATTACH_COUPON,
   RECEIVE_ATTACH_COUPON_SUCCESS,
@@ -78,7 +77,6 @@ import {
 import {
   FA_ALL_STATUSES,
   FA_TERMINAL_STATUSES,
-  FA_STATUS_APPROVED,
 
   STATUS_CURRENTLY_ENROLLED,
   STATUS_PENDING_ENROLLMENT,
@@ -269,30 +267,20 @@ describe('DashboardPage', () => {
     });
 
     describe('course pricing', () => {
-      let dashboard, availablePrograms, coursePrices, calculatePricesStub;
-      let run, program: Program;
+      let dashboard, availablePrograms, coursePrices;
+      let run, program: Program, course;
 
       beforeEach(() => {
-        calculatePricesStub = helper.sandbox.stub(libCoupon, 'calculatePrices');
         dashboard = makeDashboard();
         program = dashboard.programs[0];
-        run = program.courses[0].runs[0];
+        course = program.courses[0];
+        run = course.runs[0];
         run.enrollment_start_date = '2016-01-01';
         availablePrograms = makeAvailablePrograms(dashboard);
         coursePrices = makeCoursePrices(dashboard);
         helper.dashboardStub.returns(Promise.resolve(dashboard));
         helper.programsGetStub.returns(Promise.resolve(availablePrograms));
         helper.coursePricesStub.returns(Promise.resolve(coursePrices));
-      });
-
-      it('renders a price', () => {
-        let calculatedPrices = new Map([[run.id, 123]]);
-        calculatePricesStub.returns(calculatedPrices);
-
-        return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
-          assert.include(wrapper.text(), 'Enroll');
-          sinon.assert.calledWith(calculatePricesStub, dashboard.programs, coursePrices, []);
-        });
       });
 
       describe('100% program coupon', () => {
@@ -338,11 +326,9 @@ describe('DashboardPage', () => {
         });
 
         it('should not care about coupons for other programs', () => {
-          coupon.program_id = dashboard.programs[1].id;
-          coupon.object_id = dashboard.programs[1].id;
-          dashboard.programs[1].financial_aid_user_info = {
-            application_status: FA_STATUS_APPROVED,
-          };
+          let otherProgram = dashboard.programs[1];
+          coupon.program_id = otherProgram.id;
+          coupon.object_id = otherProgram.id;
 
           return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
             sinon.assert.notCalled(helper.skipFinancialAidStub);

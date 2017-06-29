@@ -4,6 +4,9 @@ import Decimal from 'decimal.js-light';
 import moment from 'moment';
 import {
   COUPON_TYPE_STANDARD,
+  COUPON_CONTENT_TYPE_PROGRAM,
+  COUPON_CONTENT_TYPE_COURSE,
+  COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
   STATUS_OFFERED,
   FA_STATUS_APPROVED,
   PEARSON_PROFILE_ABSENT,
@@ -124,11 +127,21 @@ export const makeProgram = (): Program => {
 export const makeCoupon = (program: Program): Coupon => ({
   coupon_code: `coupon_for_${program.id}`,
   coupon_type: COUPON_TYPE_STANDARD,
-  content_type: 'program',
-  amount_type: 'fixed-discount',
+  content_type: COUPON_CONTENT_TYPE_PROGRAM,
+  amount_type: COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
   amount: Decimal('50'),
   program_id: program.id,
   object_id: program.id,
+});
+
+export const makeCourseCoupon = (course: Course, program: Program) => ({
+  coupon_code: `coupon_for_course_${course.id}`,
+  coupon_type: COUPON_TYPE_STANDARD,
+  content_type: COUPON_CONTENT_TYPE_COURSE,
+  amount_type: COUPON_AMOUNT_TYPE_FIXED_DISCOUNT,
+  amount: Decimal('50'),
+  program_id: program.id,
+  object_id: course.id,
 });
 
 export const makeCoupons = (dashboard: Dashboard): Coupons => (

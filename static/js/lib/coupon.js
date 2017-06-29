@@ -112,7 +112,7 @@ export const _calculateRunPrice = (
 export { _calculateRunPrice as calculateRunPrice };
 import { calculateRunPrice } from './coupon';
 
-export function makeAmountMessage(coupon: Coupon): string {
+export function _makeAmountMessage(coupon: Coupon): string {
   switch (coupon.amount_type) {
   case COUPON_AMOUNT_TYPE_FIXED_DISCOUNT:
   case COUPON_AMOUNT_TYPE_FIXED_PRICE:
@@ -123,10 +123,51 @@ export function makeAmountMessage(coupon: Coupon): string {
     return '';
   }
 }
+// allow mocking of function
+export { _makeAmountMessage as makeAmountMessage };
+import { makeAmountMessage } from './coupon';
 
-export function makeCouponReason(coupon: Coupon): string {
+export function _makeCouponReason(coupon: Coupon): string {
   if (coupon.coupon_type === COUPON_TYPE_DISCOUNTED_PREVIOUS_COURSE) {
     return ', because you have taken it before';
+  } else {
+    return '';
+  }
+}
+// allow mocking of function
+export { _makeCouponReason as makeCouponReason };
+import { makeCouponReason } from './coupon';
+
+export const _couponMessageText = (coupon: Coupon) => {
+  let isDiscount = (
+    coupon.amount_type === COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT ||
+    coupon.amount_type === COUPON_AMOUNT_TYPE_FIXED_DISCOUNT
+  );
+
+  if (isDiscount) {
+    if (coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM) {
+      return `You will get ${makeAmountMessage(coupon)} off the cost for each course in this program`;
+    } else if (coupon.content_type === COUPON_CONTENT_TYPE_COURSE) {
+      return `You will get ${makeAmountMessage(coupon)} off the cost for this course`;
+    }
+  } else {
+    if (coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM) {
+      return `All courses are set to the discounted price of ${makeAmountMessage(coupon)}`;
+    } else if (coupon.content_type === COUPON_CONTENT_TYPE_COURSE) {
+      return `This course is set to the discounted price of ${makeAmountMessage(coupon)}`;
+    }
+  }
+  return '';
+};
+
+// allow mocking of function
+export { _couponMessageText as couponMessageText };
+import { couponMessageText } from './coupon';
+
+export function makeCouponMessage(coupon: Coupon): string {
+  const message = `${couponMessageText(coupon)}${makeCouponReason(coupon)}`;
+  if (message) {
+    return `${message}.`;
   } else {
     return '';
   }

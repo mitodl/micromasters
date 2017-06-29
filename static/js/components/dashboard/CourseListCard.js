@@ -25,7 +25,11 @@ import {
   makeCouponReason,
   isFreeCoupon,
 } from '../../lib/coupon';
-import { pickExistingProps, sortedCourseRuns } from '../../util/util';
+import {
+  formatPrice,
+  pickExistingProps,
+  sortedCourseRuns,
+} from '../../util/util';
 
 const priceMessageClassName = "price-message";
 
@@ -70,7 +74,7 @@ export default class CourseListCard extends React.Component {
       if (coupon && coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM) {
         // financial aid + coupon
         return <p className={priceMessageClassName}>
-          Your price is <strong>${ price.toString() } USD per course,</strong> including
+          Your price is <strong>{ formatPrice(price) } USD per course,</strong> including
           both financial aid and your coupon.
           If you want to audit courses for FREE and upgrade later,
           click Enroll then choose the audit option.
@@ -78,7 +82,7 @@ export default class CourseListCard extends React.Component {
       } else {
         return <p className={priceMessageClassName}>
           Your Personal Course Price is{" "}
-          <strong>${ price.toString() } USD per course.</strong> {" "}
+          <strong>{ formatPrice(price) } USD per course.</strong> {" "}
           If you want to audit courses for FREE and upgrade later, click
           Enroll then choose the audit option.
         </p>;
@@ -157,7 +161,7 @@ export default class CourseListCard extends React.Component {
     }
 
     return <p className={priceMessageClassName}>
-      Courses in this program cost <strong>${ price.toString() } USD each.</strong> {" "}
+      Courses in this program cost <strong>{ formatPrice(price) } USD each.</strong> {" "}
       If you want to audit courses for FREE and upgrade later,
       click Enroll then choose the audit option.
     </p>;

@@ -6,8 +6,7 @@ import moment from 'moment';
 
 import type { Coupon } from '../../../flow/couponTypes';
 import type { Course, CourseRun } from '../../../flow/programTypes';
-import { couponMessageText } from '../CouponMessage';
-import { makeCouponReason } from '../../../lib/coupon';
+import { makeCouponMessage } from '../../../lib/coupon';
 import {
   COUPON_CONTENT_TYPE_COURSE,
   COURSE_ACTION_PAY,
@@ -33,10 +32,6 @@ type Message = {
   message: string|React$Element<*>,
   action?: React$Element<*>
 };
-
-const makeCouponMessage = coupon => (
-  `${couponMessageText(coupon)}${makeCouponReason(coupon)}.`
-);
 
 export const formatAction = (message: Message) => (
   <div className="second-col">
@@ -69,7 +64,7 @@ type CalculateMessagesProps = {
 // this calculates any status messages we'll need to show the user
 // we wrap the array of messages in a Maybe, so that we can indicate
 // the case where there are no messages cleanly
-// 
+//
 // I'm so sorry for anyone who has to read / modify this
 // sometimes there really isn't a better way :/
 export const calculateMessages = (props: CalculateMessagesProps) => {
@@ -108,7 +103,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
 
   // Course is running, user has already paid, we show no messages
   if (courseUpcomingOrCurrent(firstRun) && paid) {
-    return S.Nothing; 
+    return S.Nothing;
   }
 
   let messages = [];

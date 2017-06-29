@@ -31,9 +31,13 @@ import { makeCoupon } from '../../factories/dashboard';
 import type { CoursePrice } from '../../flow/dashboardTypes';
 
 describe('CourseListCard', () => {
-  let program, sandbox, helper, routerPushStub;
+  let program, coursePrice: CoursePrice, sandbox, helper, routerPushStub;
   beforeEach(() => {
     program = _.cloneDeep(DASHBOARD_RESPONSE.programs[1]);
+    coursePrice = _.cloneDeep((COURSE_PRICES_RESPONSE.find(
+      coursePrice => coursePrice.program_id === program.id
+    ): any));
+
     assert.isAbove(program.courses.length, 0);
     sandbox = sinon.sandbox.create();
     routerPushStub = sandbox.stub();
@@ -45,14 +49,25 @@ describe('CourseListCard', () => {
     helper.cleanup();
   });
 
+  const changeToFinancialAid = (status = FA_STATUS_APPROVED, hasUserApplied = true) => {
+    program.financial_aid_availability = true;
+    program.financial_aid_user_info = {
+      application_status: status,
+      date_documents_sent: "foo",
+      has_user_applied: hasUserApplied,
+      max_possible_cost: 100,
+      min_possible_cost: 100,
+      id: 1,
+    };
+    coursePrice.financial_aid_availability = true;
+  };
+
   let renderCourseListCard = (props = {}) => {
     helper.store.dispatch(receiveGetProgramEnrollmentsSuccess(DASHBOARD_RESPONSE.programs));
     helper.store.dispatch(setCurrentProgramEnrollment(program));
-    let coursePrice: CoursePrice = (COURSE_PRICES_RESPONSE.find(
-      coursePrice => coursePrice.program_id === program.id
-    ): any);
 
-    let prices = calculatePrices([program], [coursePrice], []);
+    let coupons = props.coupon ? [props.coupon] : [];
+    let prices = calculatePrices([program], [coursePrice], coupons);
     return mount(
       <MuiThemeProvider muiTheme={getMuiTheme()}>
         <Provider store={helper.store}>
@@ -97,99 +112,89 @@ describe('CourseListCard', () => {
       );
     });
 
-    it('requires applying for financial aid', () => {
-      program.financial_aid_availability = true;
-      program.financial_aid_user_info = {
-        application_status: FA_STATUS_CREATED,
-        date_documents_sent: "foo",
-        has_user_applied: false,
-        max_possible_cost: 100,
-        min_possible_cost: 100,
-        id: 1,
-      };
-      const wrapper = renderCourseListCard();
-      const messageEl = wrapper.find(".price-message");
-      assert.lengthOf(messageEl, 1);
-      assert.include(
-        messageEl.text(),
-        "You need to get your Personal Course Price before you can pay for courses."
-      );
-    });
+    describe('with financial aid', () => {
+      it('requires applying for financial aid', () => {
+        changeToFinancialAid(FA_STATUS_CREATED, false);
+        const wrapper = renderCourseListCard();
+        const messageEl = wrapper.find(".price-message");
+        assert.lengthOf(messageEl, 1);
+        assert.include(
+          messageEl.text(),
+          "You need to get your Personal Course Price before you can pay for courses."
+        );
+      });
 
-    it('displays price after financial aid', () => {
-      program.financial_aid_availability = true;
-      program.financial_aid_user_info = {
-        application_status: FA_STATUS_APPROVED,
-        date_documents_sent: "foo",
-        has_user_applied: true,
-        max_possible_cost: 100,
-        min_possible_cost: 100,
-        id: 1,
-      };
-      const wrapper = renderCourseListCard();
-      const messageEl = wrapper.find(".price-message");
-      assert.lengthOf(messageEl, 1);
-      assert.include(
-        messageEl.text(),
-        "Your Personal Course Price is $4000 USD per course."
-      );
-    });
+      it('displays price after financial aid', () => {
+        changeToFinancialAid(FA_STATUS_APPROVED, true);
+        program.financial_aid_availability = true;
+        program.financial_aid_user_info = {
+          application_status: FA_STATUS_APPROVED,
+          date_documents_sent: "foo",
+          has_user_applied: true,
+          max_possible_cost: 100,
+          min_possible_cost: 100,
+          id: 1,
+        };
+        const wrapper = renderCourseListCard();
+        const messageEl = wrapper.find(".price-message");
+        assert.lengthOf(messageEl, 1);
+        assert.include(
+          messageEl.text(),
+          "Your Personal Course Price is $4000 USD per course."
+        );
+      });
 
-    it('displays price with fixed discount coupon', () => {
-      const coupon = makeCoupon(program);
-      const wrapper = renderCourseListCard({coupon});
-      const messageEl = wrapper.find(".price-message");
-      assert.lengthOf(messageEl, 1);
-      assert.include(
-        messageEl.text(),
-        "You will get $50 off the cost for each course in this program."
-      );
-    });
+      it('displays price with fixed discount coupon', () => {
+        changeToFinancialAid(FA_STATUS_APPROVED, true);
+        const coupon = makeCoupon(program);
+        const wrapper = renderCourseListCard({coupon});
+        const messageEl = wrapper.find(".price-message");
+        assert.lengthOf(messageEl, 1);
+        assert.include(
+          messageEl.text(),
+          "Your price is $3950 USD per course, including both financial aid and your coupon."
+        );
+      });
 
-    it('displays price with percentage discount coupon', () => {
-      const coupon = makeCoupon(program);
-      coupon.amount_type = COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT;
-      coupon.amount = new Decimal('0.30');
-      const wrapper = renderCourseListCard({coupon});
-      const messageEl = wrapper.find(".price-message");
-      assert.lengthOf(messageEl, 1);
-      assert.include(
-        messageEl.text(),
-        "You will get 30% off the cost for each course in this program."
-      );
-    });
+      it('displays price with percentage discount coupon', () => {
+        changeToFinancialAid(FA_STATUS_APPROVED, true);
+        const coupon = makeCoupon(program);
+        coupon.amount_type = COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT;
+        coupon.amount = new Decimal('0.30');
+        const wrapper = renderCourseListCard({coupon});
+        const messageEl = wrapper.find(".price-message");
+        assert.lengthOf(messageEl, 1);
+        assert.include(
+          messageEl.text(),
+          "Your price is $2800 USD per course, including both financial aid and your coupon."
+        );
+      });
 
-    it('displays price with both coupon and financial aid', () => {
-      program.financial_aid_availability = true;
-      program.financial_aid_user_info = {
-        application_status: FA_STATUS_APPROVED,
-        date_documents_sent: "foo",
-        has_user_applied: true,
-        max_possible_cost: 100,
-        min_possible_cost: 100,
-        id: 1,
-      };
-      const coupon = makeCoupon(program);
-      const wrapper = renderCourseListCard({coupon});
-      const messageEl = wrapper.find(".price-message");
-      assert.lengthOf(messageEl, 1);
-      assert.include(
-        messageEl.text(),
-        "Your price is $4000 USD per course, including both financial aid and your coupon."
-      );
-    });
+      it('displays price with both coupon and financial aid', () => {
+        changeToFinancialAid(FA_STATUS_APPROVED, true);
+        const coupon = makeCoupon(program);
+        const wrapper = renderCourseListCard({coupon});
+        const messageEl = wrapper.find(".price-message");
+        assert.lengthOf(messageEl, 1);
+        assert.include(
+          messageEl.text(),
+          "Your price is $3950 USD per course, including both financial aid and your coupon."
+        );
+      });
 
-    it('handles 100% coupon (special case)', () => {
-      const coupon = makeCoupon(program);
-      coupon.amount_type = COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT;
-      coupon.amount = new Decimal('1');
-      const wrapper = renderCourseListCard({coupon});
-      const messageEl = wrapper.find(".price-message");
-      assert.lengthOf(messageEl, 1);
-      assert.include(
-        messageEl.text(),
-        "Courses in this program are free, because of your coupon."
-      );
+      it('handles 100% coupon (special case)', () => {
+        changeToFinancialAid(FA_STATUS_APPROVED, true);
+        const coupon = makeCoupon(program);
+        coupon.amount_type = COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT;
+        coupon.amount = new Decimal('1');
+        const wrapper = renderCourseListCard({coupon});
+        const messageEl = wrapper.find(".price-message");
+        assert.lengthOf(messageEl, 1);
+        assert.include(
+          messageEl.text(),
+          "Courses in this program are free, because of your coupon."
+        );
+      });
     });
   });
 

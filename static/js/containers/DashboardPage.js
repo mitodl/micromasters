@@ -12,10 +12,11 @@ import Dialog from 'material-ui/Dialog';
 import Alert from 'react-bootstrap/lib/Alert';
 
 import Loader from '../components/Loader';
-import { calculatePrices } from '../lib/coupon';
+import { calculatePrices, isFreeCoupon } from '../lib/coupon';
 import {
   FETCH_SUCCESS,
   FETCH_PROCESSING,
+  FETCH_FAILURE,
   checkout,
 } from '../actions';
 import {
@@ -26,7 +27,6 @@ import {
 import {
   COUPON_CONTENT_TYPE_COURSE,
   COUPON_CONTENT_TYPE_PROGRAM,
-  COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
   FA_TERMINAL_STATUSES,
   TOAST_SUCCESS,
   TOAST_FAILURE,
@@ -110,7 +110,7 @@ import { actions } from '../lib/redux_rest';
 import { wait } from '../util/util';
 import { CALCULATOR_DIALOG } from './FinancialAidCalculator';
 
-const isProcessing = R.equals(FETCH_PROCESSING);
+const isFinishedProcessing = R.anyPass([R.equals(FETCH_SUCCESS), R.equals(FETCH_FAILURE)]);
 const PEARSON_TOS_DIALOG = "pearsonTOSDialogVisible";
 
 class DashboardPage extends React.Component {
@@ -476,15 +476,15 @@ class DashboardPage extends React.Component {
   };
 
   shouldSkipFinancialAid = (): boolean => {
+    // If the user has a 100% off coupon for the program, there's no need for financial aid
     let program = this.getCurrentlyEnrolledProgram();
 
     return R.compose(
       R.any(coupon => (
         program !== undefined &&
+        isFreeCoupon(coupon) &&
         coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM &&
-        coupon.amount_type === COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT &&
-        coupon.program_id === program.id &&
-        coupon.amount.eq(1)
+        coupon.program_id === program.id
       )),
       R.pathOr([], ['coupons', 'coupons'])
     )(this.props);
@@ -576,7 +576,7 @@ class DashboardPage extends React.Component {
   };
 
   renderCourseEnrollmentDialog() {
-    const { ui, dashboard, prices, coupons } = this.props;
+    const { ui } = this.props;
     const program = this.getCurrentlyEnrolledProgram();
     if (!program) {
       return null;
@@ -592,24 +592,17 @@ class DashboardPage extends React.Component {
       return null;
     }
 
-    let price;
-    if (
+    // technically this is, has user applied or does it not matter if they didn't
+    let hasUserApplied = (
       !program.financial_aid_availability ||
       this.shouldSkipFinancialAid() ||
       program.financial_aid_user_info.has_user_applied
-    ) {
-      const calculatedPrices = calculatePrices(
-        dashboard.programs,
-        prices.data || [],
-        coupons.coupons
-      );
-      price = calculatedPrices.get(courseRun.id);
-    }
+    );
 
     return <CourseEnrollmentDialog
       course={course}
       courseRun={courseRun}
-      price={price}
+      hasUserApplied={hasUserApplied}
       financialAidAvailability={program.financial_aid_availability}
       checkout={this.dispatchCheckout}
       open={ui.enrollCourseDialogVisibility}
@@ -668,7 +661,7 @@ class DashboardPage extends React.Component {
       pearson
     } = this.props;
     const program = this.getCurrentlyEnrolledProgram();
-    if (!program) {
+    if (!program || !prices.data) {
       throw "no program; should never get here";
     }
     let coursePrice;
@@ -757,15 +750,19 @@ class DashboardPage extends React.Component {
       dashboard,
       prices
     } = this.props;
-    const loaded = R.or(
-      R.none(isProcessing, [dashboard.fetchStatus, prices.getStatus]),
-      R.or(dashboard.noSpinner, prices.processing)
-    );
+    const loaded = R.all(isFinishedProcessing, [dashboard.fetchStatus, prices.getStatus]);
     const fetchStarted = !_.isNil(prices.getStatus) && !_.isNil(dashboard.fetchStatus);
+    const hasData = dashboard.programs.length > 0 && Boolean(prices.data);
+    // TODO: we should handle prices.noSpinner too. This currently works because we always dispatch both actions with
+    // noSpinner: true at the same time
+    const noSpinner = dashboard.noSpinner;
 
     const errorMessage = this.renderErrorMessage();
     let pageContent;
-    if (_.isNil(errorMessage) && this.getCurrentlyEnrolledProgram() && loaded && fetchStarted) {
+    if (
+      (_.isNil(errorMessage) && this.getCurrentlyEnrolledProgram() && loaded && fetchStarted) ||
+      (hasData && noSpinner)
+    ) {
       pageContent = this.renderPageContent();
     }
 
