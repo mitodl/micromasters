@@ -35,7 +35,6 @@ export const DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS = SUCCESS_ACTIONS.concat([
   RECEIVE_FETCH_COUPONS_SUCCESS,
 ]);
 
-
 export const DASHBOARD_SUCCESS_ACTIONS = DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS.concat([
   actions.programLearners.get.requestType,
   actions.programLearners.get.successType,
