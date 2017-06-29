@@ -664,11 +664,19 @@ class DashboardPage extends React.Component {
     return null;
   };
 
+  renderLearnersInProgramCard(programID: number) {
+    const { programLearners } = this.props;
+    let learnersInProgramCard;
+    if(R.pathOr(false, [programID, 'data', 'learners'],programLearners)) {
+      learnersInProgramCard = <LearnersInProgramCard programLearners={programLearners[programID].data}/>;
+    }
+    return learnersInProgramCard;
+  }
+
   renderPageContent = (): React$Element<*>|null => {
     const {
       dashboard,
       prices,
-      programLearners,
       profile: { profile },
       documents,
       ui,
@@ -703,11 +711,6 @@ class DashboardPage extends React.Component {
         ui={ui}
         financialAid={financialAid}
       />;
-    }
-
-    let learnersInProgramCard;
-    if (R.pathOr(false, [program.id, 'data', 'learners'],programLearners)) {
-      learnersInProgramCard = <LearnersInProgramCard programLearners={programLearners[program.id].data}/>;
     }
 
     const calculatedPrices = calculatePrices(dashboard.programs, prices.data || [], coupons.coupons);
@@ -760,7 +763,7 @@ class DashboardPage extends React.Component {
           </div>
           <div className="second-column">
             <ProgressWidget program={program} />
-            {learnersInProgramCard}
+            {this.renderLearnersInProgramCard(program.id)}
           </div>
         </div>
       </div>
