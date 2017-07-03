@@ -67,6 +67,8 @@ class ProgramLearnersView(APIView):
             image_small__exact=''
         ).filter(user__in=users).exclude(
             account_privacy='private'
+        ).exclude(
+            user=request.user
         ).order_by('?')
 
         learners_result = {
