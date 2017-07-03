@@ -165,8 +165,9 @@ export default class EmailCompositionDialog extends React.Component {
 
   onEditorStateChange = (editorState: EditorState) => {
     const { updateEmailBody } = this.props;
-    updateEmailBody(editorState);
-    this.setState({ editorState });
+    this.setState({ editorState }, () => {
+      updateEmailBody(editorState);
+    });
   };
 
   clearEditorState = () => {
