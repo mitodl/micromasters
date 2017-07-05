@@ -110,7 +110,7 @@ import { actions } from '../lib/redux_rest';
 import { wait } from '../util/util';
 import { CALCULATOR_DIALOG } from './FinancialAidCalculator';
 
-const isFinishedProcessing = R.anyPass([R.equals(FETCH_SUCCESS), R.equals(FETCH_FAILURE)]);
+const isFinishedProcessing = R.contains(R.__, [FETCH_SUCCESS, FETCH_FAILURE]);
 const PEARSON_TOS_DIALOG = "pearsonTOSDialogVisible";
 
 class DashboardPage extends React.Component {
