@@ -126,15 +126,6 @@ describe('CourseListCard', () => {
 
       it('displays price after financial aid', () => {
         changeToFinancialAid(FA_STATUS_APPROVED, true);
-        program.financial_aid_availability = true;
-        program.financial_aid_user_info = {
-          application_status: FA_STATUS_APPROVED,
-          date_documents_sent: "foo",
-          has_user_applied: true,
-          max_possible_cost: 100,
-          min_possible_cost: 100,
-          id: 1,
-        };
         const wrapper = renderCourseListCard();
         const messageEl = wrapper.find(".price-message");
         assert.lengthOf(messageEl, 1);
