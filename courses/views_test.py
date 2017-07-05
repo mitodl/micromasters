@@ -11,6 +11,7 @@ from courses.serializers import ProgramSerializer
 from dashboard.factories import ProgramEnrollmentFactory
 from dashboard.models import ProgramEnrollment
 from micromasters.factories import UserFactory
+from profiles.models import Profile
 from search.base import MockedESTestCase
 
 
@@ -43,6 +44,71 @@ class ProgramTests(MockedESTestCase):
         resp = self.client.get(reverse('program-list'))
 
         assert len(resp.json()) == 0
+
+
+def create_learner_with_image(privacy):
+    """Helper function to create a user with account_privacy and image_small set"""
+    user = UserFactory.create()
+    user.profile.account_privacy = privacy
+    user.profile.image_small = 'some_url'
+    user.profile.save()
+    return user
+
+
+class ProgramLearnersTests(MockedESTestCase, APITestCase):
+    """Tests for the ProgramLearners API"""
+
+    @classmethod
+    def setUpTestData(cls):
+
+        super(ProgramLearnersTests, cls).setUpTestData()
+
+        cls.program = ProgramFactory.create(live=True)
+        cls.url = reverse('learners_in_program', kwargs={"program_id": cls.program.id})
+        cls.user = create_learner_with_image(privacy=Profile.PUBLIC)
+
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def create_learners_in_program(self, learners_count, privacy=Profile.PUBLIC):
+        """helper function to create a list of learners in the program"""
+        for _ in range(0, learners_count):
+            user = create_learner_with_image(privacy)
+            ProgramEnrollmentFactory.create(
+                user=user,
+                program=self.program,
+            )
+
+    def test_should_get_empty_list_if_only_one_learner(self):
+        """
+        should return empty list for learners if there are no other enrolled learners
+        """
+
+        response = self.client.get(self.url)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['learners_count'] == 0
+
+    def test_should_return_only_eight_users(self):
+        """
+        should return total number of learners in the program
+        and only eight of them in a list
+        """
+        self.create_learners_in_program(learners_count=10)
+        response = self.client.get(self.url)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['learners_count'] == 10
+        assert len(response.data['learners']) == 8
+
+    def test_should_return_only_public_users(self):
+        """
+        should return only profiles that are not private
+        """
+        self.create_learners_in_program(learners_count=5, privacy=Profile.PRIVATE)
+        self.create_learners_in_program(learners_count=5, privacy=Profile.PUBLIC_TO_MM)
+        self.create_learners_in_program(learners_count=5)
+        response = self.client.get(self.url)
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['learners_count'] == 10
 
 
 class ProgramEnrollmentTests(MockedESTestCase, APITestCase):
