@@ -16,6 +16,7 @@ import {
   makeCouponReason,
   makeCouponMessage,
 } from './coupon';
+import * as couponFuncs from './coupon';
 import {
   makeCoupon,
   makeCourseCoupon,
