@@ -1,4 +1,6 @@
 // @flow
+import { fetchJSONWithCSRF } from 'redux-hammock/django_csrf_fetch';
+
 import type { Endpoint } from '../flow/restTypes';
 import { GET } from '../constants';
 import { INITIAL_STATE } from '../lib/redux_rest_constants';
@@ -17,4 +19,5 @@ export const programLearnersEndpoint: Endpoint = {
   getFunc: getProgramLearners,
   initialState: {},
   usernameInitialState: INITIAL_PROGRAM_LEARNERS_STATE,
+  fetchFunc: fetchJSONWithCSRF,
 };
