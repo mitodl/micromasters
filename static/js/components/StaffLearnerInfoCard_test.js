@@ -13,6 +13,7 @@ import { stringStrip } from '../util/test_utils';
 import { STATUS_OFFERED } from '../constants';
 import CourseDescription from '../components/dashboard/CourseDescription';
 import Progress from '../components/dashboard/courses/Progress';
+import { calculatePrices } from '../lib/coupon';
 
 describe('StaffLearnerInfoCard', () => {
   let sandbox;
@@ -26,11 +27,17 @@ describe('StaffLearnerInfoCard', () => {
     sandbox.restore();
   });
 
-  let renderCard = (program = DASHBOARD_RESPONSE.programs[0]) => (
+  let renderCard = (program = DASHBOARD_RESPONSE.programs[0], price = 1000) => (
     mount(
       <MuiThemeProvider muiTheme={getMuiTheme()}>
         <StaffLearnerInfoCard
           program={program}
+          prices={calculatePrices([program], [{
+            program_id: program.id,
+            price: price,
+            financial_aid_availability: false,
+            has_financial_aid_request: false
+          }], [])}
           setShowGradeDetailDialog={() => undefined}
           dialogVisibility={{}}
         />
@@ -45,6 +52,25 @@ describe('StaffLearnerInfoCard', () => {
       `Progress ${DASHBOARD_RESPONSE.programs[0].title}`
     );
   });
+
+  const dataSet = [
+    {
+      price: 1000,
+      display: "$1000"
+    },
+    {
+      price: 0,
+      display: "$0"
+    }
+  ];
+
+  for (let data of dataSet) {
+    it(`should have the program price ${data.display}`, () => {
+      let card = renderCard(DASHBOARD_RESPONSE.programs[0], data.price);
+      let price = card.find('.course-price .program-badge').text();
+      assert.equal(price, data.display);
+    });
+  }
 
   it('should render the progress display', () => {
     let card = renderCard();

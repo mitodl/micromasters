@@ -5,7 +5,7 @@ import R from 'ramda';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 
 import { circularProgressWidget } from './ProgressWidget';
-import { programCourseInfo, classify } from '../util/util';
+import { programCourseInfo, classify, formatPrice } from '../util/util';
 import type { Program } from '../flow/programTypes';
 import CourseDescription from '../components/dashboard/CourseDescription';
 import Progress from '../components/dashboard/courses/Progress';
@@ -13,11 +13,13 @@ import Grades from '../components/dashboard/courses/Grades';
 import { STATUS_OFFERED } from '../constants';
 import { S, getm } from '../lib/sanctuary';
 import type { DialogVisibilityState } from '../reducers/ui';
+import type { CouponPrices } from '../flow/couponTypes';
 
 type StaffLearnerCardProps = {
   program: Program,
   setShowGradeDetailDialog: (b: boolean, t: string) => void,
   dialogVisibility:         DialogVisibilityState,
+  prices:                   CouponPrices,
 };
 
 const formatCourseRun = R.curry((title, run) => ({
@@ -100,8 +102,14 @@ const formatCourseGrade = R.compose(
 );
 
 const StaffLearnerInfoCard = (props: StaffLearnerCardProps) => {
-  const { program, dialogVisibility, setShowGradeDetailDialog } = props;
+  const { program, dialogVisibility, setShowGradeDetailDialog, prices } = props;
   const { totalPassedCourses, totalCourses } = programCourseInfo(program);
+  const courseProgramPrice = prices.pricesInclCouponByProgram.get(program.id);
+  let priceToDisplay = "--";
+
+  if (courseProgramPrice) {
+    priceToDisplay = formatPrice(courseProgramPrice.price.toString());
+  }
 
   return (
     <Card shadow={1} className="staff-learner-info-card course-list">
@@ -114,7 +122,7 @@ const StaffLearnerInfoCard = (props: StaffLearnerCardProps) => {
             { circularProgressWidget(63, 7, totalPassedCourses, totalCourses) }
           </div>
           { programInfoBadge('Average program grade', formatCourseGrade(program)) }
-          { programInfoBadge('Course Price', '--') }
+          { programInfoBadge('Course Price', priceToDisplay) }
         </div>
         { displayCourseRuns(setShowGradeDetailDialog, dialogVisibility, program) }
       </div>

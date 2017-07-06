@@ -42,6 +42,8 @@ import {
   SET_SHOW_EDUCATION_DELETE_DIALOG,
   showDialog,
 } from '../actions/ui';
+
+import { REQUEST_GET_PRICES } from '../actions/index';
 import { USER_PROFILE_RESPONSE, DASHBOARD_RESPONSE } from '../test_constants';
 import {
   HIGH_SCHOOL,
@@ -71,6 +73,10 @@ import {
   RECEIVE_DASHBOARD_SUCCESS,
   RECEIVE_DASHBOARD_FAILURE,
 } from '../actions/dashboard';
+import {
+    RECEIVE_FETCH_COUPONS_SUCCESS,
+    REQUEST_FETCH_COUPONS,
+} from '../actions/coupons';
 import Grades from '../components/dashboard/courses/Grades';
 
 describe("LearnerPage", function() {
@@ -84,6 +90,9 @@ describe("LearnerPage", function() {
     RECEIVE_GET_USER_PROFILE_SUCCESS,
     REQUEST_GET_USER_PROFILE,
     RECEIVE_GET_USER_PROFILE_SUCCESS,
+    RECEIVE_FETCH_COUPONS_SUCCESS,
+    REQUEST_FETCH_COUPONS,
+    REQUEST_GET_PRICES
   ];
 
   const confirmResumeOrder = (
@@ -1232,6 +1241,8 @@ describe("LearnerPage", function() {
     let anonymousUserActions = [
       REQUEST_GET_USER_PROFILE,
       RECEIVE_GET_USER_PROFILE_SUCCESS,
+      RECEIVE_FETCH_COUPONS_SUCCESS,
+      REQUEST_FETCH_COUPONS
     ];
     beforeEach(() => {
       helper = new IntegrationTestHelper();

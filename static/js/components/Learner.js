@@ -16,7 +16,10 @@ import {
 import StaffLearnerInfoCard from './StaffLearnerInfoCard';
 import type { Profile, SaveProfileFunc } from '../flow/profileTypes';
 import type { UIState } from '../reducers/ui';
-import type { DashboardState } from '../flow/dashboardTypes';
+import type { CoursePrices, DashboardState } from '../flow/dashboardTypes';
+import type { RestState } from '../flow/restTypes';
+import type { CouponsState } from '../reducers/coupons';
+import { calculatePrices } from '../lib/coupon';
 
 export default class Learner extends React.Component {
   props: {
@@ -31,6 +34,8 @@ export default class Learner extends React.Component {
     setLearnerPageAboutMeDialogVisibility:  () => void,
     openLearnerEmailComposer:               () => void,
     setShowGradeDetailDialog:               (b: boolean, t:string) => void,
+    prices:                                 RestState<CoursePrices>,
+    coupons:                                CouponsState,
   };
 
   toggleShowPersonalDialog = (): void => {
@@ -58,11 +63,15 @@ export default class Learner extends React.Component {
       dashboard,
       ui,
       setShowGradeDetailDialog,
+      coupons,
+      prices,
     } = this.props;
 
-    if (! R.isEmpty(dashboard)) {
+    if (!R.isEmpty(dashboard) && coupons && !R.isEmpty(prices)) {
+      let calculatedPrices = calculatePrices(dashboard.programs, prices.data || [], coupons.coupons);
       return dashboard.programs.map(program => (
         <StaffLearnerInfoCard
+          prices={calculatedPrices}
           program={program}
           key={program.title}
           setShowGradeDetailDialog={setShowGradeDetailDialog}
