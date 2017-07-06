@@ -152,13 +152,13 @@ class DashboardPage extends React.Component {
   }
 
   componentWillUnmount() {
-    const { dispatch } = this.props;
-    let program = this.getCurrentlyEnrolledProgram();
+    const { dispatch, programLearners } = this.props;
     dispatch(clearDashboard(SETTINGS.user.username));
     dispatch(actions.prices.clear(SETTINGS.user.username));
-    if (program !== undefined) {
-      dispatch(actions.programLearners.clear(program.id));
-    }
+
+    _.forEach(R.keys(programLearners), id => (
+      dispatch(actions.programLearners.clear(id))
+    ));
     dispatch(clearCoupons());
   }
 
