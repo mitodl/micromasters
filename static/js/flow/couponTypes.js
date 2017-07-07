@@ -1,6 +1,7 @@
 // @flow
 import Decimal from 'decimal.js-light';
 
+import type { Course, Program } from './programTypes';
 import {
   COUPON_CONTENT_TYPE_PROGRAM,
   COUPON_CONTENT_TYPE_COURSE,
@@ -41,3 +42,5 @@ export type CouponPrices = {
   pricesInclCouponByProgram: Map<number, CouponPrice>,
   pricesExclCouponByProgram: Map<number, CouponPrice>,
 };
+
+export type CouponObject = Course | Program;

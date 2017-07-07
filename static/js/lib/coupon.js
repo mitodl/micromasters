@@ -1,5 +1,6 @@
 // @flow
 import Decimal from 'decimal.js-light';
+import R from 'ramda';
 
 import {
   COUPON_CONTENT_TYPE_PROGRAM,
@@ -12,6 +13,7 @@ import {
 import type {
   Coupons,
   Coupon,
+  CouponObject,
   CouponPrices,
 } from '../flow/couponTypes';
 import type {
@@ -21,6 +23,13 @@ import type {
 import type {
   Program
 } from '../flow/programTypes';
+
+const isTypeCoupon = R.curry((type: str, coupon: Coupon, obj: CouponObject) => (
+  coupon && coupon.content_type === type && coupon.object_id === obj.id
+));
+
+const isProgramCoupon = isTypeCoupon(COUPON_CONTENT_TYPE_PROGRAM);
+const isCourseCoupon = isTypeCoupon(COUPON_CONTENT_TYPE_COURSE);
 
 // For objects that have a program id, make a lookup for it
 type HasProgramId = {
@@ -52,42 +61,21 @@ export const calculatePrices = (
     let originalPrice = priceObj.price;
     // Currently only one coupon per program is allowed, even if that coupon only affects one course
     let coupon = couponLookup.get(program.id);
-    // Note that this variable is independent of what the coupon is for
-    let adjustedPrice = originalPrice;
-    if (coupon) {
-      adjustedPrice = calculateDiscount(originalPrice, coupon.amount_type, coupon.amount);
-    }
-
-    let priceExclCouponByProgram = {
+    let priceExclCoupon = {
       price: originalPrice,
       coupon: null,
     };
-    let isProgramCoupon = (
-      coupon && coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM && coupon.object_id === program.id
-    );
-    let priceInclCouponByProgram;
-    if (isProgramCoupon) {
-      priceInclCouponByProgram = {
-        price: adjustedPrice,
-        coupon: coupon,
-      };
-    } else {
-      priceInclCouponByProgram = priceExclCouponByProgram;
-    }
+    let priceInclCoupon = coupon ? {
+      price: calculateDiscount(originalPrice, coupon.amount_type, coupon.amount),
+      coupon: coupon,
+    } : priceExclCoupon;
+
+    let priceExclCouponByProgram = priceExclCoupon;
+    let priceInclCouponByProgram = isProgramCoupon(coupon, program) ? priceInclCoupon : priceExclCoupon;
 
     for (const course of program.courses) {
-      let isCourseCoupon = (
-        coupon && coupon.content_type === COUPON_CONTENT_TYPE_COURSE && coupon.object_id === course.id
-      );
-      let priceInclCouponByCourse;
-      if (isCourseCoupon || isProgramCoupon) {
-        priceInclCouponByCourse = {
-          price: adjustedPrice,
-          coupon: coupon,
-        };
-      } else {
-        priceInclCouponByCourse = priceExclCouponByProgram;
-      }
+      // will be either the course coupon price, the program coupon price, or the original price
+      let priceInclCouponByCourse = isCourseCoupon(coupon, course) ? priceInclCoupon : priceInclCouponByProgram;
 
       for (const run of course.runs) {
         // there are no run-specific coupons
