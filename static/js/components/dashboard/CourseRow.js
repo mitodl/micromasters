@@ -61,10 +61,7 @@ export default class CourseRow extends React.Component {
     } = this.props;
 
     const couponPrice = couponPrices.pricesInclCouponByCourse.get(course.id);
-    if (!couponPrice) {
-      return undefined;
-    }
-    return couponPrice.coupon;
+    return couponPrice ? couponPrice.coupon : undefined;
   };
 
   courseAction = (run: CourseRun, actionType: string): React$Element<*>|null => {
