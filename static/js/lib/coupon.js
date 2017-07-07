@@ -24,7 +24,7 @@ import type {
   Program
 } from '../flow/programTypes';
 
-const isTypeCoupon = R.curry((type: str, coupon: Coupon, obj: CouponObject) => (
+const isTypeCoupon = R.curry((type: string, coupon: Coupon, obj: CouponObject) => (
   coupon && coupon.content_type === type && coupon.object_id === obj.id
 ));
 
