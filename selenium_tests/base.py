@@ -11,7 +11,6 @@ from subprocess import (
     check_output,
     DEVNULL,
 )
-from unittest.mock import patch
 from urllib.parse import (
     ParseResult,
     urlparse,
