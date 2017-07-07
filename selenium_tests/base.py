@@ -123,19 +123,11 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
     PASSWORD = 'pass'
     first_time = now_in_utc()
     selenium = None
-    patchers = []
 
     @classmethod
     def setUpClass(cls):
         try:
             super().setUpClass()
-
-            # Patch functions so we don't contact edX
-            cls.patchers = []
-            cls.patchers.append(patch('ecommerce.views.enroll_user_on_success', autospec=True))
-            cls.patchers.append(patch('mail.api.MailgunClient._mailgun_request'))
-            for patcher in cls.patchers:
-                patcher.start()
 
             # Clear and repopulate database using migrations
             global INITIALIZED_DB  # pylint: disable=global-statement
@@ -232,9 +224,6 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        for patcher in cls.patchers:
-            patcher.stop()
-
         delete_index()
 
         # Restore to state right after migrations so that we leave the database in proper state to rerun
@@ -524,3 +513,15 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
     def edx_username(self):
         """Get the edx username for self.user"""
         return self.user.social_auth.get(provider=EdxOrgOAuth2.name).uid
+
+    def wait_for_server_thread(self):
+        """
+        Make a request to the status page and block until the thread returns. Since the server thread
+        handles only one request at a time, this ensures that the server thread is done executing and the
+        test can start patches and do other things modifying global state.
+
+        Note that the browser might trigger other requests afterwards which may cause other concurrency problems. The
+        user should take care to handle this case separately.
+        """
+        absolute_url = self.make_absolute_url("static/hash.txt")
+        requests.get(absolute_url)

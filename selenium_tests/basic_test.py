@@ -1,4 +1,6 @@
 """Basic selenium tests for MicroMasters"""
+from unittest.mock import patch
+
 from django.conf import settings
 from django.db.models.signals import post_save
 from factory import Iterator
@@ -57,9 +59,12 @@ class BasicTests(SeleniumTestsBase):
         self.assert_console_logs()
 
         # Click 'Continue' on the order summary page
-        self.wait().click(lambda driver: driver.find_element_by_class_name("continue-payment"))
+        with patch('ecommerce.views.enroll_user_on_success', autospec=True):
+            self.wait().click(lambda driver: driver.find_element_by_class_name("continue-payment"))
+
+            self.wait_for_server_thread()
         self.assert_console_logs()
-        self.wait().until(lambda driver: driver.find_element_by_class_name("description"))
+        self.wait().until(lambda driver: driver.find_element_by_class_name("status-message"))
 
         # Assert that the purchase went through fine but enrolling in edX failed
         # Which makes sense since there is no edX for these tests
@@ -224,9 +229,11 @@ class ReviewFinancialAidTests(SeleniumTestsBase):
             # Mark as received
             lambda driver: driver.find_element_by_css_selector(".mark-docs-as-received")
         )
-        alert = self.selenium.switch_to_alert()
-        alert.accept()
-        self.wait().until(lambda driver: driver.find_element_by_css_selector('.alert-dismissable'))
+        with patch('mail.api.MailgunClient._mailgun_request'):
+            alert = self.selenium.switch_to_alert()
+            alert.accept()
+
+            self.wait_for_server_thread()
 
         def is_now_pending(driver):  # pylint: disable=unused-argument
             """Wait until the change to the financial aid takes effect"""
