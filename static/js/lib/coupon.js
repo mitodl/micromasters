@@ -50,7 +50,7 @@ export const calculatePrices = (
       throw 'Unable to find program to get the price';
     }
     let originalPrice = priceObj.price;
-    // Currently only one coupon per program is allowed, even if that program only affects one course
+    // Currently only one coupon per program is allowed, even if that coupon only affects one course
     let coupon = couponLookup.get(program.id);
     // Note that this variable is independent of what the coupon is for
     let adjustedPrice = originalPrice;
