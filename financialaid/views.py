@@ -314,7 +314,14 @@ class FinancialAidActionView(UpdateAPIView):
 
     def patch(self, *args, **kwargs):
         log.warning("WARNING XYZ {} {} {}".format(args, kwargs, self))
-        return super().patch(*args, **kwargs)
+
+        try:
+            return super().patch(*args, **kwargs)
+        except:
+            import traceback
+
+            return Response({"exception": "{}".format(traceback.format_exc())}, status=405)
+
 
 
 class FinancialAidDetailView(UpdateAPIView):
