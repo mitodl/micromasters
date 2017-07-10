@@ -21,6 +21,4 @@ docker-compose run \
    -e ELASTICSEARCH_INDEX=testindex \
    -e USE_WEBPACK_DEV_SERVER=True \
    -e WEBPACK_DEV_SERVER_HOST="$WEBPACK_SELENIUM_DEV_SERVER_HOST" \
-   -e MICROMASTERS_LOG_LEVEL=DEBUG \
-   -e DJANGO_LOG_LEVEL=DEBUG \
    selenium py.test ${@-./selenium_tests}
