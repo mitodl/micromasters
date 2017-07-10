@@ -17,41 +17,17 @@ import platform
 from urllib.parse import urljoin
 
 import dj_database_url
-import yaml
 from celery.schedules import crontab
 from django.core.exceptions import ImproperlyConfigured
 
 
 VERSION = "0.65.0"
 
-CONFIG_PATHS = [
-    os.environ.get('MICROMASTERS_CONFIG', ''),
-    os.path.join(os.getcwd(), 'micromasters.yml'),
-    os.path.join(os.path.expanduser('~'), 'micromasters.yml'),
-    '/etc/micromasters.yml',
-]
-
-
-def load_fallback():
-    """Load optional yaml config"""
-    fallback_config = {}
-    config_file_path = None
-    for config_path in CONFIG_PATHS:
-        if os.path.isfile(config_path):
-            config_file_path = config_path
-            break
-    if config_file_path is not None:
-        with open(config_file_path) as config_file:
-            fallback_config = yaml.safe_load(config_file)
-    return fallback_config
-
-FALLBACK_CONFIG = load_fallback()
-
 
 def get_var(name, default):
     """Return the settings in a precedence way with default"""
     try:
-        value = os.environ.get(name, FALLBACK_CONFIG.get(name, default))
+        value = os.environ.get(name, default)
         return ast.literal_eval(value)
     except (SyntaxError, ValueError):
         return value
@@ -588,7 +564,7 @@ EXAMS_AUDIT_AWS_SECRET_ACCESS_KEY = get_var('EXAMS_AUDIT_AWS_SECRET_ACCESS_KEY',
 # features flags
 def get_all_config_keys():
     """Returns all the configuration keys from both environment and configuration files"""
-    return list(set(os.environ.keys()).union(set(FALLBACK_CONFIG.keys())))
+    return list(os.environ.keys())
 
 MM_FEATURES_PREFIX = get_var('MM_FEATURES_PREFIX', 'FEATURE_')
 FEATURES = {
