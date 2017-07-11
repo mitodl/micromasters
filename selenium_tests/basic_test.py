@@ -198,7 +198,7 @@ class LearnerTests(SeleniumTestsBase):
         )
 
 
-@pytest.skip("Intermittent failures regarding patch and alert dialog")
+@pytest.mark.skip("Intermittent failures regarding patch and alert dialog")
 class ReviewFinancialAidTests(SeleniumTestsBase):
     """Look at the financial aid review page"""
 
