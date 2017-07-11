@@ -3,7 +3,6 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from factory import Iterator
 from factory.django import mute_signals
-import pytest
 from selenium.webdriver.common.keys import Keys
 
 from cms.factories import (
@@ -195,7 +194,6 @@ class LearnerTests(SeleniumTestsBase):
         )
 
 
-@pytest.mark.skip("Intermittent failures regarding patch and alert dialog")
 class ReviewFinancialAidTests(SeleniumTestsBase):
     """Look at the financial aid review page"""
 
