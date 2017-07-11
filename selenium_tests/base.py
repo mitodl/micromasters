@@ -540,4 +540,3 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
             self._wait_for_server_thread()
             yield patched
             self._wait_for_server_thread()
-

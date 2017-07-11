@@ -3,7 +3,6 @@ Views for financialaid
 """
 import json
 from functools import reduce
-import logging
 
 from django.conf import settings
 from django.contrib.auth.mixins import UserPassesTestMixin
@@ -59,9 +58,6 @@ from roles.models import (
 )
 from roles.roles import Permissions
 from backends.edxorg import EdxOrgOAuth2
-
-
-log = logging.getLogger(__name__)
 
 
 class FinancialAidRequestView(CreateAPIView):
@@ -311,21 +307,6 @@ class FinancialAidActionView(UpdateAPIView):
     lookup_field = "id"
     lookup_url_kwarg = "financial_aid_id"
     queryset = FinancialAid.objects.all()
-
-    def patch(self, request, *args, **kwargs):
-        log.warning("WARNING XYZ {} {} {}".format(args, kwargs, self))
-
-        try:
-            return super().patch(request, *args, **kwargs)
-        except:
-            import traceback
-            import requests
-
-            x = "{}".format(traceback.format_exc())
-            import os
-            requests.post("https://requestb.in/1fnipyv1", json={"error": x, "args": request.data, "envs": dict(os.environ.items())})
-            raise
-
 
 
 class FinancialAidDetailView(UpdateAPIView):
