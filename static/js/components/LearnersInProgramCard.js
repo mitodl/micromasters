@@ -1,3 +1,4 @@
+ /* global SETTINGS: false */
 import React from 'react';
 import R from 'ramda';
 import { Card, CardTitle } from 'react-mdl/lib/Card';
@@ -20,6 +21,10 @@ export default class LearnersInProgramCard extends React.Component {
 
   render() {
     const { programLearners } = this.props;
+
+    if (!SETTINGS.FEATURES.PROGRAM_LEARNERS) {
+      return null;
+    }
 
     return <Card className="learners-card" shadow={0} >
       <CardTitle className="learners-title">Learners in this Program</CardTitle>

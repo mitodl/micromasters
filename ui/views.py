@@ -61,7 +61,9 @@ class ReactView(View):  # pylint: disable=unused-argument
             "public_path": public_path(request),
             "EXAMS_SSO_CLIENT_CODE": settings.EXAMS_SSO_CLIENT_CODE,
             "EXAMS_SSO_URL": settings.EXAMS_SSO_URL,
-            "FEATURES": {},  # placeholder
+            "FEATURES": {
+                "PROGRAM_LEARNERS": settings.FEATURES.get('PROGRAM_LEARNERS_ENABLED', False)
+            },
         }
 
         return render(
