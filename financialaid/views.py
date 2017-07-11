@@ -312,17 +312,17 @@ class FinancialAidActionView(UpdateAPIView):
     lookup_url_kwarg = "financial_aid_id"
     queryset = FinancialAid.objects.all()
 
-    def patch(self, *args, **kwargs):
+    def patch(self, request, *args, **kwargs):
         log.warning("WARNING XYZ {} {} {}".format(args, kwargs, self))
 
         try:
-            return super().patch(*args, **kwargs)
+            return super().patch(request, *args, **kwargs)
         except:
             import traceback
             import requests
 
             x = "{}".format(traceback.format_exc())
-            requests.post("https://requestb.in/1fnipyv1", data={"error": x})
+            requests.post("https://requestb.in/1fnipyv1", data={"error": x, "args": request.data})
             raise
 
 
