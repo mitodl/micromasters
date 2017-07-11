@@ -147,7 +147,7 @@
             <tbody>
             {% for financial_aid in financial_aid_objects %}
               <!-- Financial aid application information -->
-              <tr id="application-row-{{ financial_aid.id }}" class="alert-dismissable">
+              <tr id="application-row-{{ financial_aid.id }}" class="alert-dismissible">
                 <!-- Profile picture -->
                 <td>
                   {% if financial_aid.user.profile.image %}
