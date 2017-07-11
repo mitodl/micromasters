@@ -124,6 +124,8 @@ services:
 
   hub:
     image: selenium/hub:3.4.0-chromium
+    environment:
+      GRID_TIMEOUT: '3600'
     ports:
       - "4444:4444"
 
