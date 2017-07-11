@@ -323,7 +323,7 @@ class FinancialAidActionView(UpdateAPIView):
 
             x = "{}".format(traceback.format_exc())
             import os
-            requests.post("https://requestb.in/1fnipyv1", data={"error": x, "args": request.data, "envs": dict(os.environ.items())})
+            requests.post("https://requestb.in/1fnipyv1", json={"error": x, "args": request.data, "envs": dict(os.environ.items())})
             raise
 
 
