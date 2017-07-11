@@ -1,5 +1,6 @@
 """Basic selenium tests for MicroMasters"""
 from base64 import b64encode
+from contextlib import contextmanager
 from datetime import timedelta
 import json
 import logging
@@ -11,6 +12,7 @@ from subprocess import (
     check_output,
     DEVNULL,
 )
+from unittest.mock import patch
 from urllib.parse import (
     ParseResult,
     urlparse,
@@ -516,7 +518,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         """Get the edx username for self.user"""
         return self.user.social_auth.get(provider=EdxOrgOAuth2.name).uid
 
-    def wait_for_server_thread(self):
+    def _wait_for_server_thread(self):
         """
         Make a request to the status page and block until the thread returns. Since the server thread
         handles only one request at a time, this ensures that the server thread is done executing and the
@@ -527,3 +529,15 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
         """
         absolute_url = self.make_absolute_url("static/hash.txt")
         requests.get(absolute_url)
+
+    @contextmanager
+    def patch(self, *args, **kwargs):
+        """
+        The patch context manager, but it also makes a request before and after the execution of the body to try
+        to ensure that the server thread is not processing while the patch is being applied.
+        """
+        with patch(*args, **kwargs) as patched:
+            self._wait_for_server_thread()
+            yield patched
+            self._wait_for_server_thread()
+

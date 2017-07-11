@@ -1,6 +1,4 @@
 """Basic selenium tests for MicroMasters"""
-from unittest.mock import patch
-
 from django.conf import settings
 from django.db.models.signals import post_save
 from factory import Iterator
@@ -60,10 +58,9 @@ class BasicTests(SeleniumTestsBase):
         self.assert_console_logs()
 
         # Click 'Continue' on the order summary page
-        with patch('ecommerce.views.enroll_user_on_success', autospec=True):
+        with self.patch('ecommerce.views.enroll_user_on_success', autospec=True):
             self.wait().click(lambda driver: driver.find_element_by_class_name("continue-payment"))
 
-            self.wait_for_server_thread()
         self.assert_console_logs()
         self.wait().until(lambda driver: driver.find_element_by_class_name("status-message"))
 
@@ -231,11 +228,9 @@ class ReviewFinancialAidTests(SeleniumTestsBase):
             # Mark as received
             lambda driver: driver.find_element_by_css_selector(".mark-docs-as-received")
         )
-        with patch('mail.api.MailgunClient._mailgun_request'):
+        with self.patch('mail.api.MailgunClient._mailgun_request'):
             alert = self.selenium.switch_to_alert()
             alert.accept()
-
-            self.wait_for_server_thread()
 
         def is_now_pending(driver):  # pylint: disable=unused-argument
             """Wait until the change to the financial aid takes effect"""
