@@ -382,7 +382,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
             height = current_dimensions['height']
         self.selenium.set_window_size(width, height)
 
-    def take_screenshot(self, name=None, output_base64=False):
+    def take_screenshot(self, name=None, output_base64=True):
         """Helper method to take a screenshot and put it in a temp directory"""
         self.set_dimension(height=self.selenium.execute_script("return document.body.scrollHeight"))
 

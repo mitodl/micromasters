@@ -232,6 +232,8 @@ class ReviewFinancialAidTests(SeleniumTestsBase):
             alert = self.selenium.switch_to_alert()
             alert.accept()
 
+            self.wait().until(lambda driver: driver.find_element_by_css_selector(".alert-dismissable"))
+
         def is_now_pending(driver):  # pylint: disable=unused-argument
             """Wait until the change to the financial aid takes effect"""
             assert FinancialAid.objects.count() == 1
