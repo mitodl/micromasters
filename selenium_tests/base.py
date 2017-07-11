@@ -235,7 +235,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
     def tearDown(self):
         if self._outcome.errors:
             try:
-                self.take_screenshot()
+                self.take_screenshot(output_base64=True)
             except:  # pylint: disable=bare-except
                 log.exception("Unable to take selenium screenshot")
 
@@ -380,7 +380,7 @@ class SeleniumTestsBase(StaticLiveServerTestCase):
             height = current_dimensions['height']
         self.selenium.set_window_size(width, height)
 
-    def take_screenshot(self, name=None, output_base64=True):
+    def take_screenshot(self, name=None, output_base64=False):
         """Helper method to take a screenshot and put it in a temp directory"""
         self.set_dimension(height=self.selenium.execute_script("return document.body.scrollHeight"))
 
