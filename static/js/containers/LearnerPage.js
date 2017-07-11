@@ -21,7 +21,7 @@ import {
 } from '../actions/coupons';
 import { actions } from '../lib/redux_rest';
 import { hasAnyStaffRole } from '../lib/roles';
-import { getDashboard } from '../reducers/util';
+import { getDashboard, getCoursePrices } from '../reducers/util';
 import type { CouponsState } from '../reducers/coupons';
 import { S } from '../lib/sanctuary';
 import { LEARNER_EMAIL_TYPE } from '../components/email/constants';
@@ -88,11 +88,20 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
     )(this.getFocusedDashboard());
   }
 
+  getFocusedPrices() {
+    const { prices, params: { username }} = this.props;
+    return S.filter(
+      () => this.isPrivileged(username),
+      getCoursePrices(username, prices)
+    );
+  }
+
   fetchCoursePrices() {
-    const { prices, dispatch, params: { username } } = this.props;
-    if (prices.getStatus === undefined && this.isPrivileged(username)) {
-      dispatch(actions.prices.get(username));
-    }
+    const { dispatch, params: { username } } = this.props;
+    R.compose(
+      S.map(() => dispatch(actions.prices.get(username))),
+      S.filter(R.propSatisfies(notFetchingOrFetched, 'getStatus'))
+    )(this.getFocusedPrices());
   }
 
   fetchCoupons() {
@@ -141,31 +150,24 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
       email,
       openEmailComposer,
       coupons,
-      prices,
     } = this.props;
 
     let profile = {};
     let toRender = null;
     let loaded = false;
-    let priceLoaded = false;
     let couponsLoaded = false;
     let profileLoaded = false;
-    let isPrivileged = this.isPrivileged(username);
 
     if (profiles[username] !== undefined) {
       profile = profiles[username];
       profileLoaded = profiles[username].getStatus !== FETCH_PROCESSING;
-      priceLoaded = R.or(
-        !isPrivileged, // that mean he can not download price of other leaner, so we skip checking loading
-        !R.isEmpty(prices) && prices[username].getStatus !== FETCH_PROCESSING
-      );
       couponsLoaded = !R.isEmpty(coupons) && coupons.fetchGetStatus !== FETCH_PROCESSING;
-      loaded = R.all(R.equals(true))([profileLoaded, priceLoaded, couponsLoaded]);
+      loaded = R.all(R.equals(true))([profileLoaded, couponsLoaded]);
 
       let props = {
         dashboard: S.maybe({}, R.identity, this.getFocusedDashboard()),
         email: email,
-        prices: prices[username],
+        prices: S.maybe({}, R.identity, this.getFocusedPrices()),
         coupons: coupons,
         openLearnerEmailComposer: R.partial(openEmailComposer(LEARNER_EMAIL_TYPE), [profile.profile]),
         setShowGradeDetailDialog: this.setShowGradeDetailDialog,

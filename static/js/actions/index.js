@@ -13,7 +13,6 @@ export const FETCH_FAILURE = 'FETCH_FAILURE';
 export const FETCH_SUCCESS = 'FETCH_SUCCESS';
 export const FETCH_PROCESSING = 'FETCH_PROCESSING';
 
-export const REQUEST_GET_PRICES = 'REQUEST_GET_PRICES';
 
 export const REQUEST_CHECKOUT = 'REQUEST_CHECKOUT';
 export const requestCheckout = (courseId: string) => ({

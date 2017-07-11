@@ -42,8 +42,8 @@ import {
   SET_SHOW_EDUCATION_DELETE_DIALOG,
   showDialog,
 } from '../actions/ui';
+import { actions } from '../lib/redux_rest';
 
-import { REQUEST_GET_PRICES } from '../actions/index';
 import { USER_PROFILE_RESPONSE, DASHBOARD_RESPONSE } from '../test_constants';
 import {
   HIGH_SCHOOL,
@@ -92,7 +92,7 @@ describe("LearnerPage", function() {
     RECEIVE_GET_USER_PROFILE_SUCCESS,
     RECEIVE_FETCH_COUPONS_SUCCESS,
     REQUEST_FETCH_COUPONS,
-    REQUEST_GET_PRICES
+    actions.prices.get.requestType
   ];
 
   const confirmResumeOrder = (

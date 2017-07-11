@@ -35,6 +35,10 @@ export const getDashboard = guard((username, dashboard) => (
   R.pathOr(INITIAL_DASHBOARD_STATE, [username], dashboard)
 ));
 
+export const getCoursePrices = guard((username, prices?: CoursePricesState) => (
+  R.pathOr(INITIAL_COURSE_PRICES_STATE, [username], prices)
+));
+
 export const updateStateByUsername = (state: Object, username: string, update: Object) => (
   _.merge({}, state, {[username]: update })
 );
