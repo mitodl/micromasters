@@ -11,7 +11,6 @@ from django.core import mail
 from django.core.exceptions import ImproperlyConfigured
 import semantic_version
 
-from micromasters.settings import get_var
 from search.base import MockedESTestCase
 
 
@@ -29,28 +28,6 @@ class TestSettings(MockedESTestCase):
         # Restore settings to original settings after test
         self.addCleanup(importlib.reload, sys.modules['micromasters.settings'])
         return vars(sys.modules['micromasters.settings'])
-
-    def test_get_var(self):
-        """Verify that get_var does the right thing with precedence"""
-        # Verify default value
-        self.assertEqual(get_var('NOTATHING', 'foobar'), 'foobar')
-
-        with mock.patch.dict(
-            'os.environ', {'FOO': 'notbar'}, clear=True
-        ):
-            self.assertEqual(get_var('FOO', 'lemon'), 'notbar')
-
-        # Verify that types work:
-        with mock.patch.dict(
-            'os.environ',
-            {
-                'FOO': 'False',
-                'BAR': '[1,2,3]',
-            },
-            clear=True
-        ):
-            self.assertFalse(get_var('FOO', True))
-            self.assertEqual(get_var('BAR', []), [1, 2, 3])
 
     def test_s3_settings(self):
         """Verify that we enable and configure S3 with a variable"""
@@ -111,9 +88,7 @@ class TestSettings(MockedESTestCase):
         """Verify that we can enable/disable database SSL with a var"""
 
         # Check default state is SSL on
-        with mock.patch.dict('os.environ', {
-            'MICROMASTERS_DB_DISABLE_SSL': ''
-        }, clear=True):
+        with mock.patch.dict('os.environ', {}, clear=True):
             settings_vars = self.reload_settings()
             self.assertEqual(
                 settings_vars['DATABASES']['default']['OPTIONS'],

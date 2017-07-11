@@ -1,16 +1,6 @@
 """
-Django settings for ui pp. This is just a harness type
-project for testing and interacting with the app.
-
-
-For more information on this file, see
-https://docs.djangoproject.com/en/1.8/topics/settings/
-
-For the full list of settings and their values, see
-https://docs.djangoproject.com/en/1.8/ref/settings/
-
+Django settings for MicroMasters.
 """
-import ast
 import logging
 import os
 import platform
@@ -19,18 +9,16 @@ from urllib.parse import urljoin
 import dj_database_url
 from celery.schedules import crontab
 from django.core.exceptions import ImproperlyConfigured
+from micromasters.envs import (
+    get_any,
+    get_bool,
+    get_int,
+    get_list_of_str,
+    get_string,
+)
 
 
 VERSION = "0.67.0"
-
-
-def get_var(name, default):
-    """Return the settings in a precedence way with default"""
-    try:
-        value = os.environ.get(name, default)
-        return ast.literal_eval(value)
-    except (SyntaxError, ValueError):
-        return value
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -39,13 +27,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = get_var(
+SECRET_KEY = get_string(
     'SECRET_KEY',
     '36boam8miiz0c22il@3&gputb=wrqr2plah=0#0a_bknw9(2^r'
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = get_var('DEBUG', False)
+DEBUG = get_bool('DEBUG', False)
 
 if DEBUG:
     # Disabling the protection added in 1.10.3 against a DNS rebinding vulnerability:
@@ -54,9 +42,9 @@ if DEBUG:
     # to this problem.
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS = get_var('ALLOWED_HOSTS', [])
+    ALLOWED_HOSTS = get_list_of_str('ALLOWED_HOSTS', [])
 
-SECURE_SSL_REDIRECT = get_var('MICROMASTERS_SECURE_SSL_REDIRECT', True)
+SECURE_SSL_REDIRECT = get_bool('MICROMASTERS_SECURE_SSL_REDIRECT', True)
 
 
 WEBPACK_LOADER = {
@@ -125,7 +113,7 @@ INSTALLED_APPS = (
     'selenium_tests',
 )
 
-DISABLE_WEBPACK_LOADER_STATS = get_var("DISABLE_WEBPACK_LOADER_STATS", False)
+DISABLE_WEBPACK_LOADER_STATS = get_bool("DISABLE_WEBPACK_LOADER_STATS", False)
 if not DISABLE_WEBPACK_LOADER_STATS:
     INSTALLED_APPS += ('webpack_loader',)
 
@@ -162,9 +150,9 @@ AUTHENTICATION_BACKENDS = (
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 
-EDXORG_BASE_URL = get_var('EDXORG_BASE_URL', 'https://courses.edx.org/')
-SOCIAL_AUTH_EDXORG_KEY = get_var('EDXORG_CLIENT_ID', '')
-SOCIAL_AUTH_EDXORG_SECRET = get_var('EDXORG_CLIENT_SECRET', '')
+EDXORG_BASE_URL = get_string('EDXORG_BASE_URL', 'https://courses.edx.org/')
+SOCIAL_AUTH_EDXORG_KEY = get_string('EDXORG_CLIENT_ID', '')
+SOCIAL_AUTH_EDXORG_SECRET = get_string('EDXORG_CLIENT_SECRET', '')
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
@@ -222,14 +210,14 @@ WSGI_APPLICATION = 'micromasters.wsgi.application'
 # For URL structure:
 # https://github.com/kennethreitz/dj-database-url
 DEFAULT_DATABASE_CONFIG = dj_database_url.parse(
-    get_var(
+    get_string(
         'DATABASE_URL',
         'sqlite:///{0}'.format(os.path.join(BASE_DIR, 'db.sqlite3'))
     )
 )
-DEFAULT_DATABASE_CONFIG['CONN_MAX_AGE'] = int(get_var('MICROMASTERS_DB_CONN_MAX_AGE', 0))
+DEFAULT_DATABASE_CONFIG['CONN_MAX_AGE'] = get_int('MICROMASTERS_DB_CONN_MAX_AGE', 0)
 
-if get_var('MICROMASTERS_DB_DISABLE_SSL', False):
+if get_bool('MICROMASTERS_DB_DISABLE_SSL', False):
     DEFAULT_DATABASE_CONFIG['OPTIONS'] = {}
 else:
     DEFAULT_DATABASE_CONFIG['OPTIONS'] = {'sslmode': 'require'}
@@ -257,7 +245,7 @@ USE_TZ = True
 
 # Serve static files with dj-static
 STATIC_URL = '/static/'
-CLOUDFRONT_DIST = get_var('CLOUDFRONT_DIST', None)
+CLOUDFRONT_DIST = get_string('CLOUDFRONT_DIST', None)
 if CLOUDFRONT_DIST:
     STATIC_URL = urljoin('https://{dist}.cloudfront.net'.format(dist=CLOUDFRONT_DIST), STATIC_URL)
     # Configure Django Storages to use Cloudfront distribution for S3 assets
@@ -276,45 +264,45 @@ REST_FRAMEWORK = {
 }
 
 # Request files from the webpack dev server
-USE_WEBPACK_DEV_SERVER = get_var('MICROMASTERS_USE_WEBPACK_DEV_SERVER', False)
-WEBPACK_DEV_SERVER_HOST = get_var('WEBPACK_DEV_SERVER_HOST', '')
-WEBPACK_DEV_SERVER_PORT = get_var('WEBPACK_DEV_SERVER_PORT', '8078')
+USE_WEBPACK_DEV_SERVER = get_bool('MICROMASTERS_USE_WEBPACK_DEV_SERVER', False)
+WEBPACK_DEV_SERVER_HOST = get_string('WEBPACK_DEV_SERVER_HOST', '')
+WEBPACK_DEV_SERVER_PORT = get_int('WEBPACK_DEV_SERVER_PORT', 8078)
 
 # Important to define this so DEBUG works properly
-INTERNAL_IPS = (get_var('HOST_IP', '127.0.0.1'), )
+INTERNAL_IPS = (get_string('HOST_IP', '127.0.0.1'), )
 
 # Configure e-mail settings
-EMAIL_BACKEND = get_var('MICROMASTERS_EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
-EMAIL_HOST = get_var('MICROMASTERS_EMAIL_HOST', 'localhost')
-EMAIL_PORT = get_var('MICROMASTERS_EMAIL_PORT', 25)
-EMAIL_HOST_USER = get_var('MICROMASTERS_EMAIL_USER', '')
-EMAIL_HOST_PASSWORD = get_var('MICROMASTERS_EMAIL_PASSWORD', '')
-EMAIL_USE_TLS = get_var('MICROMASTERS_EMAIL_TLS', False)
-EMAIL_SUPPORT = get_var('MICROMASTERS_SUPPORT_EMAIL', 'support@example.com')
-DEFAULT_FROM_EMAIL = get_var('MICROMASTERS_FROM_EMAIL', 'webmaster@localhost')
-ECOMMERCE_EMAIL = get_var('MICROMASTERS_ECOMMERCE_EMAIL', 'support@example.com')
-MAILGUN_URL = get_var('MAILGUN_URL', 'https://api.mailgun.net/v3/micromasters.mit.edu')
-MAILGUN_KEY = get_var('MAILGUN_KEY', None)
-MAILGUN_BATCH_CHUNK_SIZE = get_var('MAILGUN_BATCH_CHUNK_SIZE', 1000)
-MAILGUN_RECIPIENT_OVERRIDE = get_var('MAILGUN_RECIPIENT_OVERRIDE', None)
-MAILGUN_FROM_EMAIL = get_var('MAILGUN_FROM_EMAIL', 'no-reply@micromasters.mit.edu')
-MAILGUN_BCC_TO_EMAIL = get_var('MAILGUN_BCC_TO_EMAIL', 'no-reply@micromasters.mit.edu')
+EMAIL_BACKEND = get_string('MICROMASTERS_EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
+EMAIL_HOST = get_string('MICROMASTERS_EMAIL_HOST', 'localhost')
+EMAIL_PORT = get_int('MICROMASTERS_EMAIL_PORT', 25)
+EMAIL_HOST_USER = get_string('MICROMASTERS_EMAIL_USER', '')
+EMAIL_HOST_PASSWORD = get_string('MICROMASTERS_EMAIL_PASSWORD', '')
+EMAIL_USE_TLS = get_bool('MICROMASTERS_EMAIL_TLS', False)
+EMAIL_SUPPORT = get_string('MICROMASTERS_SUPPORT_EMAIL', 'support@example.com')
+DEFAULT_FROM_EMAIL = get_string('MICROMASTERS_FROM_EMAIL', 'webmaster@localhost')
+ECOMMERCE_EMAIL = get_string('MICROMASTERS_ECOMMERCE_EMAIL', 'support@example.com')
+MAILGUN_URL = get_string('MAILGUN_URL', 'https://api.mailgun.net/v3/micromasters.mit.edu')
+MAILGUN_KEY = get_string('MAILGUN_KEY', None)
+MAILGUN_BATCH_CHUNK_SIZE = get_int('MAILGUN_BATCH_CHUNK_SIZE', 1000)
+MAILGUN_RECIPIENT_OVERRIDE = get_string('MAILGUN_RECIPIENT_OVERRIDE', None)
+MAILGUN_FROM_EMAIL = get_string('MAILGUN_FROM_EMAIL', 'no-reply@micromasters.mit.edu')
+MAILGUN_BCC_TO_EMAIL = get_string('MAILGUN_BCC_TO_EMAIL', 'no-reply@micromasters.mit.edu')
 
 # e-mail configurable admins
-ADMIN_EMAIL = get_var('MICROMASTERS_ADMIN_EMAIL', '')
+ADMIN_EMAIL = get_string('MICROMASTERS_ADMIN_EMAIL', '')
 if ADMIN_EMAIL != '':
     ADMINS = (('Admins', ADMIN_EMAIL),)
 else:
     ADMINS = ()
 
 # Logging configuration
-LOG_LEVEL = get_var('MICROMASTERS_LOG_LEVEL', 'INFO')
-DJANGO_LOG_LEVEL = get_var('DJANGO_LOG_LEVEL', 'INFO')
-ES_LOG_LEVEL = get_var('ES_LOG_LEVEL', 'INFO')
+LOG_LEVEL = get_string('MICROMASTERS_LOG_LEVEL', 'INFO')
+DJANGO_LOG_LEVEL = get_string('DJANGO_LOG_LEVEL', 'INFO')
+ES_LOG_LEVEL = get_string('ES_LOG_LEVEL', 'INFO')
 
 # For logging to a remote syslog host
-LOG_HOST = get_var('MICROMASTERS_LOG_HOST', 'localhost')
-LOG_HOST_PORT = get_var('MICROMASTERS_LOG_HOST_PORT', 514)
+LOG_HOST = get_string('MICROMASTERS_LOG_HOST', 'localhost')
+LOG_HOST_PORT = get_int('MICROMASTERS_LOG_HOST_PORT', 514)
 
 HOSTNAME = platform.node().split('.')[0]
 DEFAULT_LOG_STANZA = {
@@ -402,41 +390,41 @@ LOGGING = {
 }
 
 # Sentry
-ENVIRONMENT = get_var('MICROMASTERS_ENVIRONMENT', 'dev')
+ENVIRONMENT = get_string('MICROMASTERS_ENVIRONMENT', 'dev')
 SENTRY_CLIENT = 'raven.contrib.django.raven_compat.DjangoClient'
 RAVEN_CONFIG = {
-    'dsn': get_var('SENTRY_DSN', ''),
+    'dsn': get_string('SENTRY_DSN', ''),
     'environment': ENVIRONMENT,
     'release': VERSION
 }
 
 # to run the app locally on mac you need to bypass syslog
-if get_var('MICROMASTERS_BYPASS_SYSLOG', False):
+if get_bool('MICROMASTERS_BYPASS_SYSLOG', False):
     LOGGING['handlers'].pop('syslog')
     LOGGING['loggers']['root']['handlers'] = ['console']
     LOGGING['loggers']['ui']['handlers'] = ['console']
     LOGGING['loggers']['django']['handlers'] = ['console']
 
 # server-status
-STATUS_TOKEN = get_var("STATUS_TOKEN", "")
+STATUS_TOKEN = get_string("STATUS_TOKEN", "")
 HEALTH_CHECK = ['CELERY', 'REDIS', 'POSTGRES', 'ELASTIC_SEARCH']
 
-ADWORDS_CONVERSION_ID = get_var("ADWORDS_CONVERSION_ID", "")
-GA_TRACKING_ID = get_var("GA_TRACKING_ID", "")
-GOOGLE_API_KEY = get_var("GOOGLE_API_KEY", "")
-SL_TRACKING_ID = get_var("SL_TRACKING_ID", "")
-REACT_GA_DEBUG = get_var("REACT_GA_DEBUG", False)
+ADWORDS_CONVERSION_ID = get_string("ADWORDS_CONVERSION_ID", "")
+GA_TRACKING_ID = get_string("GA_TRACKING_ID", "")
+GOOGLE_API_KEY = get_string("GOOGLE_API_KEY", "")
+SL_TRACKING_ID = get_string("SL_TRACKING_ID", "")
+REACT_GA_DEBUG = get_bool("REACT_GA_DEBUG", False)
 
 # Wagtail
 WAGTAIL_SITE_NAME = "MIT MicroMasters"
-WAGTAILIMAGES_MAX_UPLOAD_SIZE = get_var('WAGTAILIMAGES_MAX_UPLOAD_SIZE', 20971620)  # default 25 MB
-MEDIA_ROOT = get_var('MEDIA_ROOT', '/var/media/')
+WAGTAILIMAGES_MAX_UPLOAD_SIZE = get_int('WAGTAILIMAGES_MAX_UPLOAD_SIZE', 20971620)  # default 25 MB
+MEDIA_ROOT = get_string('MEDIA_ROOT', '/var/media/')
 MEDIA_URL = '/media/'
-MICROMASTERS_USE_S3 = get_var('MICROMASTERS_USE_S3', False)
-AWS_ACCESS_KEY_ID = get_var('AWS_ACCESS_KEY_ID', False)
-AWS_SECRET_ACCESS_KEY = get_var('AWS_SECRET_ACCESS_KEY', False)
-AWS_STORAGE_BUCKET_NAME = get_var('AWS_STORAGE_BUCKET_NAME', False)
-AWS_QUERYSTRING_AUTH = get_var('AWS_QUERYSTRING_AUTH', False)
+MICROMASTERS_USE_S3 = get_bool('MICROMASTERS_USE_S3', False)
+AWS_ACCESS_KEY_ID = get_string('AWS_ACCESS_KEY_ID', False)
+AWS_SECRET_ACCESS_KEY = get_string('AWS_SECRET_ACCESS_KEY', False)
+AWS_STORAGE_BUCKET_NAME = get_string('AWS_STORAGE_BUCKET_NAME', False)
+AWS_QUERYSTRING_AUTH = get_string('AWS_QUERYSTRING_AUTH', False)
 # Provide nice validation of the configuration
 if (
         MICROMASTERS_USE_S3 and
@@ -460,14 +448,15 @@ else:
 USE_CELERY = True
 # for the following variables keep backward compatibility for the environment variables
 # the part after "or" can be removed after we replace the environment variables in production
-CELERY_BROKER_URL = get_var(
-    "CELERY_BROKER_URL", get_var("REDISCLOUD_URL", None)) or get_var("BROKER_URL", get_var("REDISCLOUD_URL", None))
-CELERY_RESULT_BACKEND = get_var(
-    "CELERY_RESULT_BACKEND", get_var("REDISCLOUD_URL", None)
+CELERY_BROKER_URL = get_string(
+    "CELERY_BROKER_URL", get_string("REDISCLOUD_URL", None)
+) or get_string("BROKER_URL", get_string("REDISCLOUD_URL", None))
+CELERY_RESULT_BACKEND = get_string(
+    "CELERY_RESULT_BACKEND", get_string("REDISCLOUD_URL", None)
 )
-CELERY_TASK_ALWAYS_EAGER = get_var("CELERY_TASK_ALWAYS_EAGER", False) or get_var("CELERY_ALWAYS_EAGER", False)
-CELERY_TASK_EAGER_PROPAGATES = (get_var("CELERY_TASK_EAGER_PROPAGATES", True) or
-                                get_var("CELERY_EAGER_PROPAGATES_EXCEPTIONS", True))
+CELERY_TASK_ALWAYS_EAGER = get_bool("CELERY_TASK_ALWAYS_EAGER", False) or get_bool("CELERY_ALWAYS_EAGER", False)
+CELERY_TASK_EAGER_PROPAGATES = (get_bool("CELERY_TASK_EAGER_PROPAGATES", True) or
+                                get_bool("CELERY_EAGER_PROPAGATES_EXCEPTIONS", True))
 CELERY_BEAT_SCHEDULE = {
     'batch-update-user-data-every-6-hrs': {
         'task': 'dashboard.tasks.batch_update_user_data',
@@ -517,48 +506,48 @@ CACHES = {
 
 
 # Elasticsearch
-ELASTICSEARCH_DEFAULT_PAGE_SIZE = get_var('ELASTICSEARCH_DEFAULT_PAGE_SIZE', 50)
-ELASTICSEARCH_URL = get_var("ELASTICSEARCH_URL", None)
-ELASTICSEARCH_INDEX = get_var('ELASTICSEARCH_INDEX', 'micromasters')
-ELASTICSEARCH_HTTP_AUTH = get_var("ELASTICSEARCH_HTTP_AUTH", None)
+ELASTICSEARCH_DEFAULT_PAGE_SIZE = get_int('ELASTICSEARCH_DEFAULT_PAGE_SIZE', 50)
+ELASTICSEARCH_URL = get_string("ELASTICSEARCH_URL", None)
+ELASTICSEARCH_INDEX = get_string('ELASTICSEARCH_INDEX', 'micromasters')
+ELASTICSEARCH_HTTP_AUTH = get_string("ELASTICSEARCH_HTTP_AUTH", None)
 
 # django-role-permissions
 ROLEPERMISSIONS_MODULE = 'roles.roles'
 
 # Cybersource
-CYBERSOURCE_ACCESS_KEY = get_var("CYBERSOURCE_ACCESS_KEY", None)
-CYBERSOURCE_SECURITY_KEY = get_var("CYBERSOURCE_SECURITY_KEY", None)
-CYBERSOURCE_TRANSACTION_KEY = get_var("CYBERSOURCE_TRANSACTION_KEY", None)
-CYBERSOURCE_SECURE_ACCEPTANCE_URL = get_var("CYBERSOURCE_SECURE_ACCEPTANCE_URL", None)
-CYBERSOURCE_PROFILE_ID = get_var("CYBERSOURCE_PROFILE_ID", None)
-CYBERSOURCE_REFERENCE_PREFIX = get_var("CYBERSOURCE_REFERENCE_PREFIX", None)
+CYBERSOURCE_ACCESS_KEY = get_string("CYBERSOURCE_ACCESS_KEY", None)
+CYBERSOURCE_SECURITY_KEY = get_string("CYBERSOURCE_SECURITY_KEY", None)
+CYBERSOURCE_TRANSACTION_KEY = get_string("CYBERSOURCE_TRANSACTION_KEY", None)
+CYBERSOURCE_SECURE_ACCEPTANCE_URL = get_string("CYBERSOURCE_SECURE_ACCEPTANCE_URL", None)
+CYBERSOURCE_PROFILE_ID = get_string("CYBERSOURCE_PROFILE_ID", None)
+CYBERSOURCE_REFERENCE_PREFIX = get_string("CYBERSOURCE_REFERENCE_PREFIX", None)
 
 # Open Exchange Rates
-OPEN_EXCHANGE_RATES_URL = get_var("OPEN_EXCHANGE_RATES_URL", "https://openexchangerates.org/api/")
-OPEN_EXCHANGE_RATES_APP_ID = get_var("OPEN_EXCHANGE_RATES_APP_ID", "")
+OPEN_EXCHANGE_RATES_URL = get_string("OPEN_EXCHANGE_RATES_URL", "https://openexchangerates.org/api/")
+OPEN_EXCHANGE_RATES_APP_ID = get_string("OPEN_EXCHANGE_RATES_APP_ID", "")
 
 # Exams SFTP
-EXAMS_SFTP_TEMP_DIR = get_var('EXAMS_SFTP_TEMP_DIR', '/tmp')
-EXAMS_SFTP_HOST = get_var('EXAMS_SFTP_HOST', 'localhost')
-EXAMS_SFTP_PORT = get_var('EXAMS_SFTP_PORT', '22')
-EXAMS_SFTP_USERNAME = get_var('EXAMS_SFTP_USERNAME', None)
-EXAMS_SFTP_PASSWORD = get_var('EXAMS_SFTP_PASSWORD', None)
-EXAMS_SFTP_UPLOAD_DIR = get_var('EXAMS_SFTP_UPLOAD_DIR', '/results/topvue')
-EXAMS_SFTP_RESULTS_DIR = get_var('EXAMS_SFTP_RESULTS_DIR', '/results')
-EXAMS_SFTP_BACKOFF_BASE = get_var('EXAMS_SFTP_BACKOFF_BASE', '5')
+EXAMS_SFTP_TEMP_DIR = get_string('EXAMS_SFTP_TEMP_DIR', '/tmp')
+EXAMS_SFTP_HOST = get_string('EXAMS_SFTP_HOST', 'localhost')
+EXAMS_SFTP_PORT = get_int('EXAMS_SFTP_PORT', 22)
+EXAMS_SFTP_USERNAME = get_string('EXAMS_SFTP_USERNAME', None)
+EXAMS_SFTP_PASSWORD = get_string('EXAMS_SFTP_PASSWORD', None)
+EXAMS_SFTP_UPLOAD_DIR = get_string('EXAMS_SFTP_UPLOAD_DIR', '/results/topvue')
+EXAMS_SFTP_RESULTS_DIR = get_string('EXAMS_SFTP_RESULTS_DIR', '/results')
+EXAMS_SFTP_BACKOFF_BASE = get_string('EXAMS_SFTP_BACKOFF_BASE', '5')
 
 # Pearson SSO
-EXAMS_SSO_PASSPHRASE = get_var('EXAMS_SSO_PASSPHRASE', None)
-EXAMS_SSO_CLIENT_CODE = get_var('EXAMS_SSO_CLIENT_CODE', None)
-EXAMS_SSO_URL = get_var('EXAMS_SSO_URL', None)
+EXAMS_SSO_PASSPHRASE = get_string('EXAMS_SSO_PASSPHRASE', None)
+EXAMS_SSO_CLIENT_CODE = get_string('EXAMS_SSO_CLIENT_CODE', None)
+EXAMS_SSO_URL = get_string('EXAMS_SSO_URL', None)
 
 # Exam request/response auditing
-EXAMS_AUDIT_ENABLED = get_var('EXAMS_AUDIT_ENABLED', False)
-EXAMS_AUDIT_ENCRYPTION_PUBLIC_KEY = get_var('EXAMS_AUDIT_ENCRYPTION_PUBLIC_KEY', None)
-EXAMS_AUDIT_ENCRYPTION_FINGERPRINT = get_var('EXAMS_AUDIT_ENCRYPTION_FINGERPRINT', None)
-EXAMS_AUDIT_S3_BUCKET = get_var('EXAMS_AUDIT_S3_BUCKET', None)
-EXAMS_AUDIT_AWS_ACCESS_KEY_ID = get_var('EXAMS_AUDIT_AWS_ACCESS_KEY_ID', None)
-EXAMS_AUDIT_AWS_SECRET_ACCESS_KEY = get_var('EXAMS_AUDIT_AWS_SECRET_ACCESS_KEY', None)
+EXAMS_AUDIT_ENABLED = get_bool('EXAMS_AUDIT_ENABLED', False)
+EXAMS_AUDIT_ENCRYPTION_PUBLIC_KEY = get_string('EXAMS_AUDIT_ENCRYPTION_PUBLIC_KEY', None)
+EXAMS_AUDIT_ENCRYPTION_FINGERPRINT = get_string('EXAMS_AUDIT_ENCRYPTION_FINGERPRINT', None)
+EXAMS_AUDIT_S3_BUCKET = get_string('EXAMS_AUDIT_S3_BUCKET', None)
+EXAMS_AUDIT_AWS_ACCESS_KEY_ID = get_string('EXAMS_AUDIT_AWS_ACCESS_KEY_ID', None)
+EXAMS_AUDIT_AWS_SECRET_ACCESS_KEY = get_string('EXAMS_AUDIT_AWS_SECRET_ACCESS_KEY', None)
 
 
 # features flags
@@ -566,15 +555,15 @@ def get_all_config_keys():
     """Returns all the configuration keys from both environment and configuration files"""
     return list(os.environ.keys())
 
-MM_FEATURES_PREFIX = get_var('MM_FEATURES_PREFIX', 'FEATURE_')
+MM_FEATURES_PREFIX = get_string('MM_FEATURES_PREFIX', 'FEATURE_')
 FEATURES = {
-    key[len(MM_FEATURES_PREFIX):]: get_var(key, None) for key
+    key[len(MM_FEATURES_PREFIX):]: get_any(key, None) for key
     in get_all_config_keys() if key.startswith(MM_FEATURES_PREFIX)
 }
 
-MIDDLEWARE_FEATURE_FLAG_QS_PREFIX = get_var("MIDDLEWARE_FEATURE_FLAG_QS_PREFIX", None)
-MIDDLEWARE_FEATURE_FLAG_COOKIE_NAME = get_var('MIDDLEWARE_FEATURE_FLAG_COOKIE_NAME', 'MM_FEATURE_FLAGS')
-MIDDLEWARE_FEATURE_FLAG_COOKIE_MAX_AGE_SECONDS = get_var('MIDDLEWARE_FEATURE_FLAG_COOKIE_MAX_AGE_SECONDS', 60 * 60)
+MIDDLEWARE_FEATURE_FLAG_QS_PREFIX = get_string("MIDDLEWARE_FEATURE_FLAG_QS_PREFIX", None)
+MIDDLEWARE_FEATURE_FLAG_COOKIE_NAME = get_string('MIDDLEWARE_FEATURE_FLAG_COOKIE_NAME', 'MM_FEATURE_FLAGS')
+MIDDLEWARE_FEATURE_FLAG_COOKIE_MAX_AGE_SECONDS = get_int('MIDDLEWARE_FEATURE_FLAG_COOKIE_MAX_AGE_SECONDS', 60 * 60)
 
 
 if MIDDLEWARE_FEATURE_FLAG_QS_PREFIX:
