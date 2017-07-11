@@ -667,7 +667,7 @@ class DashboardPage extends React.Component {
   renderLearnersInProgramCard(programID: number) {
     const { programLearners } = this.props;
     let learnersInProgramCard;
-    if(R.pathOr(false, [programID, 'data', 'learners'],programLearners)) {
+    if(R.pathSatisfies(count=>count > 0, [programID, 'data', 'learners_count'], programLearners)) {
       learnersInProgramCard = <LearnersInProgramCard programLearners={programLearners[programID].data}/>;
     }
     return learnersInProgramCard;

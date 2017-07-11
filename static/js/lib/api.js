@@ -100,7 +100,7 @@ export async function getPrograms(): Promise<AvailablePrograms> {
 }
 
 export function getProgramLearners(programId: number): Promise<ProgramLearners> {
-  return fetchJSONWithCSRF(`/api/v0/programlearners/${programId}/`, {}, true);
+  return fetchJSONWithCSRF(`/api/v0/programlearners/${programId}/`);
 }
 
 export function addProgramEnrollment(programId: number): Promise<AvailableProgram> {

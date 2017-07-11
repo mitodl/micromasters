@@ -161,8 +161,13 @@ export const makeCoursePrices = (dashboard: Dashboard): CoursePrices => (
 );
 
 export const makeProgramLearners = (): ProgramLearners => ({
-  learners: [],
-  learners_count: 25
+  learners: [
+    {
+      username:'Jane',
+      image_small: 'url'
+    }
+  ],
+  learners_count: 1
 }
 );
 

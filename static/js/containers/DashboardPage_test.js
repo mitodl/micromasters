@@ -137,6 +137,17 @@ describe('DashboardPage', () => {
     });
   });
 
+  it('doesnt show LearnersCard if no learners', () => {
+    helper.programLearnersStub.returns(Promise.resolve({
+      learners: [],
+      learners_count: 0
+    }));
+
+    return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
+      assert.lengthOf(wrapper.find(".learners-card"), 0);
+    });
+  });
+
   it('should show a <Grades /> component, and open the dialog when clicked', () => {
     return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
       wrapper.find(Grades).find('.grades').simulate('click');
