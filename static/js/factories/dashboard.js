@@ -98,7 +98,6 @@ const PEARSON_STATUSES = [
   PEARSON_PROFILE_IN_PROGRESS,
   PEARSON_PROFILE_INVALID,
   PEARSON_PROFILE_SCHEDULABLE,
-  "",
 ];
 
 export const makeProgram = (): Program => {
