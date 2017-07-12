@@ -240,7 +240,7 @@ describe("FinancialAidCard", () => {
         it(`shows the document sent date for status ${status}`, () => {
           let program = programWithStatus(status);
           let wrapper = renderCard({ program });
-          assert.include(wrapper.text(), 'Documents mailed on Mar 3, 2003');
+          assert.include(wrapper.text(), 'Documents mailed/faxed on Mar 3, 2003');
         });
       }
     });
