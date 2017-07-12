@@ -83,7 +83,7 @@ export default class FinancialAidCard extends React.Component {
     case FA_STATUS_DOCS_SENT:
       return <div className="documents-sent">
         <Icon name="done" key="icon" />
-        Documents mailed on {moment(dateDocumentsSent).format(DASHBOARD_FORMAT)}.
+        Documents mailed/faxed on {moment(dateDocumentsSent).format(DASHBOARD_FORMAT)}.
         We will review your documents as soon as possible.
       </div>;
     case FA_STATUS_PENDING_DOCS:
