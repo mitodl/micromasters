@@ -8,6 +8,7 @@ from django.core.management import BaseCommand, CommandError
 from courses.models import CourseRun
 from grades.models import CourseRunGradingStatus
 from grades.tasks import CACHE_ID_BASE_STR
+from micromasters.celery import app
 
 
 cache_redis = caches['redis']
@@ -50,7 +51,7 @@ class Command(BaseCommand):
         cache_id = CACHE_ID_BASE_STR.format(edx_course_key)
         group_results_id = cache_redis.get(cache_id)
         if group_results_id is not None:
-            results = GroupResult.restore(group_results_id)
+            results = GroupResult.restore(group_results_id, app=app)
             if results and not results.ready():
                 self.stdout.write(
                     self.style.WARNING(
