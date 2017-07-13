@@ -177,6 +177,8 @@ describe('DashboardPage', () => {
     let waitResolve, waitPromise, waitStub;
     beforeEach(() => {
       waitPromise = new Promise(resolve => {
+        // Note that most tests here won't call waitResolve at all so the promise won't resolve. The only tests
+        // that should are tests testing the order receipt 3 second timeout functionality.
         waitResolve = resolve;
       });
       waitStub = helper.sandbox.stub(util, 'wait').returns(waitPromise);
