@@ -42,7 +42,6 @@ export default class IntegrationTestHelper {
   browserHistory: History;
 
   constructor() {
-    fetchMock.restore();
     this.sandbox = sinon.sandbox.create();
     this.store = configureMainTestStore((...args) => {
       // uncomment to listen on dispatched actions

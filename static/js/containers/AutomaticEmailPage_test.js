@@ -36,7 +36,7 @@ describe('AutomaticEmailPage', () => {
 
   afterEach(() => {
     helper.cleanup();
-  }); 
+  });
 
   const baseActions = [
     REQUEST_GET_USER_PROFILE,
@@ -85,6 +85,7 @@ describe('AutomaticEmailPage', () => {
   });
 
   it('shows a placeholder if there is no data', () => {
+    // clear the previous automatic email mock set in IntegrationTestHelper
     fetchMock.restore();
     fetchMock.mock('/api/v0/mail/automatic_email/', () => (
       { body: JSON.stringify([]) }

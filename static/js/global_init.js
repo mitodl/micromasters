@@ -32,10 +32,21 @@ if (!Object.entries) {
   entries.shim();
 }
 
+import fetchMock from 'fetch-mock';
 let localStorageMock = require('./util/test_utils').localStorageMock;
 beforeEach(() => { // eslint-disable-line mocha/no-top-level-hooks
   window.localStorage = localStorageMock();
   window.sessionStorage = localStorageMock();
+
+  // Uncomment to diagnose stray API calls. Also see relevant block in afterEach
+  /*
+  fetchMock.restore();
+  fetchMock.catch((...args) => {
+    console.log("ERROR: Unmatched request: ", args);
+    console.trace();
+    process.exit(1);
+  });
+  */
 });
 
 // cleanup after each test run
@@ -49,6 +60,13 @@ afterEach(function () { // eslint-disable-line mocha/no-top-level-hooks
   window.localStorage.reset();
   window.sessionStorage.reset();
   window.location = 'http://fake/';
+
+  // Comment next line to diagnose stray API calls. Also see relevant block in beforeEach
+  fetchMock.restore();
+  // Uncomment this to diagnose stray API calls
+  // This adds a 200 ms delay between tests. Since fetchMock is still enabled at this point the next unmatched
+  // fetch attempt which occurs within 200 ms after the test finishes will cause a warning.
+  // return require('./util/util').wait(200);
 });
 
 // required for interacting with react-mdl components

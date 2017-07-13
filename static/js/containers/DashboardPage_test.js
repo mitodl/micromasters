@@ -174,6 +174,13 @@ describe('DashboardPage', () => {
       SET_TIMEOUT_ACTIVE,
       UPDATE_COURSE_STATUS,
     ]);
+    let waitResolve, waitPromise, waitStub;
+    beforeEach(() => {
+      waitPromise = new Promise(resolve => {
+        waitResolve = resolve;
+      });
+      waitStub = helper.sandbox.stub(util, 'wait').returns(waitPromise);
+    });
 
     it('shows the order status toast when the query param is set for a cancellation', () => {
       return renderComponent('/dashboard?status=cancel', SUCCESS_WITH_TOAST_ACTIONS).then(() => {
@@ -365,14 +372,6 @@ describe('DashboardPage', () => {
     });
 
     describe('fake timer tests', function() {
-      let waitStub, waitResolve, waitPromise;
-      beforeEach(() => {
-        waitPromise = new Promise(resolve => {
-          waitResolve = resolve;
-        });
-        waitStub = helper.sandbox.stub(util, 'wait').returns(waitPromise);
-      });
-
       it('refetches the dashboard after 3 seconds if 2 minutes has not passed', () => {
         let course = findCourse(course =>
           course.runs.length > 0 &&
