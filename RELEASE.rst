@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.1
+-----------
+
+- Remove geosuggest component, revert to dropdowns
+
 Version 0.68.0
 --------------
 
