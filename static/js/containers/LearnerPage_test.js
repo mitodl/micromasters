@@ -65,7 +65,6 @@ import {
   activeDeleteDialog,
   modifySelectField,
   clearSelectField,
-  GoogleMapsStub,
 } from '../util/test_utils';
 import StaffLearnerInfoCard from '../components/StaffLearnerInfoCard';
 import {
@@ -82,7 +81,7 @@ import Grades from '../components/dashboard/courses/Grades';
 describe("LearnerPage", function() {
   this.timeout(10000);
 
-  let listenForActions, renderComponent, helper, gmaps, patchUserProfileStub;
+  let listenForActions, renderComponent, helper, patchUserProfileStub;
   let userActions = [
     REQUEST_GET_PROGRAM_ENROLLMENTS,
     RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
@@ -133,7 +132,6 @@ describe("LearnerPage", function() {
 
   describe("Authenticated user page", () => {
     beforeEach(() => {
-      gmaps = new GoogleMapsStub();
       helper = new IntegrationTestHelper();
       listenForActions = helper.listenForActions.bind(helper);
       renderComponent = helper.renderComponent.bind(helper);
@@ -147,7 +145,6 @@ describe("LearnerPage", function() {
 
     afterEach(() => {
       helper.cleanup();
-      gmaps.cleanup();
     });
 
     it('should render home links to /dashboard', () => {
@@ -383,8 +380,8 @@ describe("LearnerPage", function() {
           "field_of_study": "Philosophy",
           "school_name": "Harvard",
           "school_city": "Cambridge",
-          "school_state_or_territory": "AF-KAN",
-          "school_country": "AF",
+          "school_state_or_territory": "US-MA",
+          "school_country": "US",
           "online_degree": false
         });
         helper.profileGetStub.
@@ -528,8 +525,8 @@ describe("LearnerPage", function() {
             },
             school_name: "A School",
             school_country: "AF",
-            school_state_or_territory: "AF-KAN",
-            school_city: "Anytown"
+            school_state_or_territory: "AF-BAL",
+            school_city: "FoobarVille"
           };
           expectedProfile.education.push(entry);
 
@@ -537,82 +534,6 @@ describe("LearnerPage", function() {
           patchUserProfileStub.
             withArgs(expectedProfile.username, expectedProfile).
             returns(Promise.resolve(expectedProfile));
-
-          let expectedActions = [
-            START_PROFILE_EDIT,
-            SET_EDUCATION_DIALOG_INDEX,
-            SET_EDUCATION_DIALOG_VISIBILITY,
-            SET_EDUCATION_DEGREE_LEVEL,
-            REQUEST_PATCH_USER_PROFILE,
-            RECEIVE_PATCH_USER_PROFILE_SUCCESS,
-            CLEAR_PROFILE_EDIT
-          ];
-          for (let i = 0; i < 6; i++) {
-            expectedActions.push(UPDATE_PROFILE);
-          }
-          for (let i = 0; i < 6; i++) {
-            expectedActions.push(UPDATE_PROFILE_VALIDATION);
-          }
-          for (let i = 0; i < 3; i++) {
-            expectedActions.push(UPDATE_VALIDATION_VISIBILITY);
-          }
-
-          return listenForActions(expectedActions, () => {
-            ReactTestUtils.Simulate.click(addButton);
-
-            assert.equal(document.querySelector(".profile-form-title").innerHTML, "Add Education");
-
-            let dialog = document.querySelector('.education-dialog');
-            let grid = dialog.getElementsByClassName('profile-tab-grid')[0];
-            let inputs = grid.getElementsByTagName('input');
-
-            const modifyEducationSelect = (label, value) => {
-              modifySelectField(
-                dialog.querySelector(`.select-field${label}`),
-                value
-              );
-            };
-
-            // set the degree type
-            modifyEducationSelect('.degree-type', 'High School');
-
-            // fill out graduation date, school name
-            modifyTextField(inputs[1], "A School");
-            modifyTextField(inputs[2], "12");
-            modifyTextField(inputs[3], "1999");
-
-            // set country, state, and city
-            modifyTextField(inputs[4], "Anytown, Qandahar, Afghanistan");
-            let save = dialog.querySelector('.save-button');
-            ReactTestUtils.Simulate.click(save);
-          });
-        });
-      });
-
-      it('should use state & country dropdowns if google maps is unavailable', () => {
-        const username = SETTINGS.user.username;
-        window.google = null;
-        return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
-          let addButton = div.querySelector('.add-education-button');
-          let expectedProfile = _.cloneDeep(userProfile);
-          let entry = {
-            ...generateNewEducation(HIGH_SCHOOL),
-            graduation_date: "1999-12-01",
-            graduation_date_edit: {
-              year: '1999',
-              month: '12',
-              day: undefined
-            },
-            school_name: "A School",
-            school_country: "AF",
-            school_state_or_territory: "AF-KAN",
-            school_city: "Anytown"
-          };
-          expectedProfile.education.push(entry);
-
-          patchUserProfileStub.throws("Invalid arguments");
-          patchUserProfileStub.withArgs(expectedProfile.username, expectedProfile).returns(
-            Promise.resolve(expectedProfile));
 
           let expectedActions = [
             START_PROFILE_EDIT,
@@ -635,9 +556,7 @@ describe("LearnerPage", function() {
           for (let i = 0; i < 3; i++) {
             expectedActions.push(UPDATE_VALIDATION_VISIBILITY);
           }
-          if (window.google) {
-            window.google = null;
-          }
+
           return listenForActions(expectedActions, () => {
             ReactTestUtils.Simulate.click(addButton);
 
@@ -663,9 +582,9 @@ describe("LearnerPage", function() {
             modifyTextField(inputs[3], "1999");
 
             // set country, state, and city
-            modifyEducationSelect('.country', "AF");
-            modifyEducationSelect('.state', "AF-KAN");
-            modifyTextField(inputs[6], "Anytown");
+            modifyEducationSelect('.country', "Afghanistan");
+            modifyEducationSelect('.state', "Balkh");
+            modifyTextField(inputs[6], "FoobarVille");
             let save = dialog.querySelector('.save-button');
             ReactTestUtils.Simulate.click(save);
           });
@@ -845,98 +764,9 @@ describe("LearnerPage", function() {
               month: "01",
               day: undefined
             },
-            city: "Anytown",
+            city: "FoobarVille",
             country: "AF",
-            state_or_territory: "AF-KAN",
-          };
-          updatedProfile.work_history.push(entry);
-
-          patchUserProfileStub.throws("Invalid arguments");
-          patchUserProfileStub.withArgs(SETTINGS.user.username, updatedProfile).returns(
-            Promise.resolve(updatedProfile)
-          );
-
-          let expectedActions = [
-            START_PROFILE_EDIT,
-            SET_WORK_DIALOG_INDEX,
-            SET_WORK_DIALOG_VISIBILITY,
-            REQUEST_PATCH_USER_PROFILE,
-            RECEIVE_PATCH_USER_PROFILE_SUCCESS
-          ];
-          for (let i = 0; i < 9; i++) {
-            expectedActions.push(UPDATE_PROFILE);
-            expectedActions.push(UPDATE_PROFILE_VALIDATION);
-          }
-          for (let i = 0; i < 4; i++) {
-            expectedActions.push(UPDATE_VALIDATION_VISIBILITY);
-          }
-
-          return listenForActions(expectedActions, () => {
-            ReactTestUtils.Simulate.click(addButton);
-
-            assert.equal(document.querySelector(".profile-form-title").innerHTML, "Add Employment");
-            let dialog = document.querySelector('.employment-dialog');
-            let grid = dialog.querySelector('.profile-tab-grid');
-            let inputs = grid.getElementsByTagName('input');
-
-            const modifyWorkSelect = (label, value) => {
-              modifySelectField(
-                dialog.querySelector(`.select-field${label}`),
-                value
-              );
-            };
-
-            // company name
-            modifyTextField(inputs[0], "FoobarCorp");
-
-            // industry
-            modifyWorkSelect('.industry', "Accounting");
-
-            // position
-            modifyTextField(inputs[2], "Assistant Foobar");
-
-            // start date, end date
-            modifyTextField(inputs[3], "12");
-            modifyTextField(inputs[4], "2001");
-            modifyTextField(inputs[5], "01");
-            modifyTextField(inputs[6], "2002");
-            // country, state, city
-            modifyTextField(inputs[7], "Anytown, Kandahar, Afghanistan");
-
-            let button = dialog.querySelector(".save-button");
-            ReactTestUtils.Simulate.click(button);
-          });
-        });
-      });
-
-      it('should use state/country dropdowns if google maps api is unavailable', () => {
-        const username = SETTINGS.user.username;
-        window.google = null;
-        return renderComponent(`/learner/${username}`, userActions).then(([, div]) => {
-          let addButton = div.getElementsByClassName('profile-form')[2].querySelector('.mm-minor-action');
-
-          let updatedProfile = _.cloneDeep(USER_PROFILE_RESPONSE);
-          updatedProfile.username = SETTINGS.user.username;
-          let entry = {
-            ...generateNewWorkHistory(),
-            position: "Assistant Foobar",
-            industry: "Accounting",
-            company_name: "FoobarCorp",
-            start_date: "2001-12-01",
-            start_date_edit: {
-              year: "2001",
-              month: "12",
-              day: undefined
-            },
-            end_date: "2002-01-01",
-            end_date_edit: {
-              year: "2002",
-              month: "01",
-              day: undefined
-            },
-            city: "Anytown",
-            country: "AF",
-            state_or_territory: "AF-KAN",
+            state_or_territory: "AF-BAL",
           };
           updatedProfile.work_history.push(entry);
 
@@ -980,28 +810,28 @@ describe("LearnerPage", function() {
             // company name
             modifyTextField(inputs[0], "FoobarCorp");
 
+            // country, state, city
+            modifyWorkSelect('.country', "Afghanistan");
+            modifyWorkSelect('.state-or-territory', "Balkh");
+            modifyTextField(inputs[3], "FoobarVille");
+
             // industry
             modifyWorkSelect('.industry', "Accounting");
 
             // position
-            modifyTextField(inputs[2], "Assistant Foobar");
+            modifyTextField(inputs[5], "Assistant Foobar");
 
             // start date, end date
-            modifyTextField(inputs[3], "12");
-            modifyTextField(inputs[4], "2001");
-            modifyTextField(inputs[5], "01");
-            modifyTextField(inputs[6], "2002");
-            // country, state, city
-            modifyWorkSelect('.country', "Afghanistan");
-            modifyWorkSelect('.state-or-territory', "AF-KAN");
-            modifyTextField(inputs[9], "Anytown");
+            modifyTextField(inputs[6], "12");
+            modifyTextField(inputs[7], "2001");
+            modifyTextField(inputs[8], "01");
+            modifyTextField(inputs[9], "2002");
 
             let button = dialog.querySelector(".save-button");
             ReactTestUtils.Simulate.click(button);
           });
         });
       });
-
 
       for (let activity of [true, false]) {
         it(`should have proper save button spinner state when activity=${activity}`, () => {

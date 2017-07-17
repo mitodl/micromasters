@@ -10,10 +10,9 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import PersonalTab from './PersonalTab';
 import { PROGRAMS, USER_PROFILE_RESPONSE } from '../test_constants';
 import IntegrationTestHelper from '../util/integration_test_helper';
-import { GoogleMapsStub } from '../util/test_utils';
 
 describe("PersonalTab", () => {
-  let helper, gmaps;
+  let helper;
   let renderPersonalTab = (selectedProgram = null, props = {}) => {
     let { store } = helper;
     return mount(
@@ -38,12 +37,10 @@ describe("PersonalTab", () => {
 
   beforeEach(() => {
     helper = new IntegrationTestHelper();
-    gmaps = new GoogleMapsStub();
   });
 
   afterEach(() => {
     helper.cleanup();
-    gmaps.cleanup();
   });
 
   it('should show a list of programs to enroll in for the learner page', () => {

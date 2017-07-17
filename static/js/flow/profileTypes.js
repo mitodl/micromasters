@@ -21,38 +21,6 @@ export type DateEdit = {
   year: ?string,
 };
 
-// https://developers.google.com/maps/documentation/geocoding/intro#Types
-export type GoogleMapsAddressComponent = {
-  long_name:  string,
-  short_name: string,
-  types:      string[]
-}
-
-export type AddressComponentKeyMapping = {
-  street_address?:              string[],
-  route?:                       string[],
-  intersection?:                string[],
-  political?:                   string[],
-  country?:                     string[],
-  administrative_area_level_1?: string[],
-  administrative_area_level_2?: string[],
-  administrative_area_level_3?: string[],
-  administrative_area_level_4?: string[],
-  administrative_area_level_5?: string[],
-  colloquial_area?:             string[],
-  locality?:                    string[],
-  ward?:                        string[],
-  sublocality?:                 string[],
-  neighborhood?:                string[],
-  premise?:                     string[],
-  subpremise?:                  string[],
-  postal_code?:                 string[],
-  natural_feature?:             string[],
-  airport?:                     string[],
-  park?:                        string[],
-  point_of_interest?:           string[],
-};
-
 export type WorkHistoryEntry = {
   id?:                  ?number,
   position:             string,

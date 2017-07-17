@@ -1,7 +1,7 @@
 import { assert } from 'chai';
 import _ from 'lodash';
 import sinon from 'sinon';
-import { shallow, mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import moment from 'moment';
 import R from 'ramda';
 import ga from 'react-ga';
@@ -10,7 +10,6 @@ import {
   boundTextField,
   boundDateField,
   boundRadioGroupField,
-  boundGeosuggest,
   boundTelephoneInput,
   saveProfileStep,
   shouldRenderRomanizedFields
@@ -18,7 +17,6 @@ import {
 import * as dateValidation from '../lib/validation/date';
 import { YEAR_VALIDATION_CUTOFF } from '../constants';
 import { USER_PROFILE_RESPONSE } from '../test_constants';
-import { GoogleMapsStub } from './test_utils';
 
 describe('Profile Editing utility functions', () => {
   let that, sandbox, gaEvent;
@@ -561,191 +559,6 @@ describe('Profile Editing utility functions', () => {
         label: 'jane'
       }));
     });
-  });
-
-  describe('bound Geosuggest', () => {
-    let gmaps, clock;
-    beforeEach(() => {
-      gmaps = new GoogleMapsStub();
-      clock = sinon.useFakeTimers();
-    });
-    afterEach(() => {
-      gmaps.cleanup();
-      clock.restore();
-    });
-    const renderGeosuggest = (opts = {}) => {
-      const addressMapping = {
-        locality: ["city"],
-        administrative_area_level_1: ["state_or_territory"],
-        country: ["country"],
-      };
-      return mount(boundGeosuggest.call(
-        that,
-        addressMapping,
-        "current-home",
-        "Current address",
-        opts
-      ));
-    };
-
-    const typeText = (wrapper, text, wait = 500) => {
-      const input = wrapper.find('input');
-      input.simulate("focus");
-      input.get(0).value = text;
-      input.simulate("change", {target: {value: text}});
-
-      if (wait) {
-        clock.tick(wait);
-      }
-    };
-
-    it('renders empty', () => {
-      const wrapper = renderGeosuggest();
-      assert.equal(wrapper.find('input').node.value, "");
-    });
-
-    it('renders default content', () => {
-      that.props.profile.city = "Cambridge";
-      that.props.profile.state_or_territory = "US-MA";
-      that.props.profile.country = "US";
-      const wrapper = renderGeosuggest();
-      assert.equal(wrapper.find('input').node.value, "Cambridge, Massachusetts, United States");
-    });
-
-    it('calls Google API after typing', () => {
-      const wrapper = renderGeosuggest();
-      typeText(wrapper, "Tech");
-      assert.ok(gmaps.getPlacePredictions.calledWith({input: "Tech"}));
-    });
-
-    it('populates profile info on geosuggest select', () => {
-      gmaps.geocodeResults = [{
-        address_components: [
-          {long_name: "Golden", short_name: "Golden", types: ["locality"]},
-          {long_name: "Colorado", short_name: "Colorado", types: ["administrative_area_level_1"]},
-          {long_name: "United States", short_name: "US", types: ["country"]},
-        ],
-        geometry: {
-          location: {
-            lat: () => 48.859,
-            lng: () => 2.207,
-          }
-        }
-      }];
-      gmaps.geocode = gmaps.sandbox.stub().callsArgWith(1, gmaps.geocodeResults, 'OK');
-      const wrapper = renderGeosuggest();
-      typeText(wrapper, "Golden");
-      const item = wrapper.find("li.geosuggest__item").first();
-      item.simulate('click');
-      assert.equal(that.props.profile.city, "Golden");
-      assert.equal(that.props.profile.state_or_territory, "US-CO");
-      assert.equal(that.props.profile.country, "US");
-    });
-
-    it('populates profile info on geosuggest select but without any state', () => {
-      gmaps.geocodeResults = [{
-        address_components: [
-          {long_name: "Golden", short_name: "Golden", types: ["locality"]},
-          {long_name: "United States", short_name: "US", types: ["country"]},
-        ],
-        geometry: {
-          location: {
-            lat: () => 48.859,
-            lng: () => 2.207,
-          }
-        }
-      }];
-      gmaps.geocode = gmaps.sandbox.stub().callsArgWith(1, gmaps.geocodeResults, 'OK');
-      const wrapper = renderGeosuggest();
-      typeText(wrapper, "Golden");
-      const item = wrapper.find("li.geosuggest__item").first();
-      item.simulate('click');
-      assert.equal(that.props.profile.city, "Golden");
-      assert.equal(that.props.profile.state_or_territory, "Not Available");
-      assert.equal(that.props.profile.country, "US");
-    });
-
-    it('populates geosuggest text with 1st autocomplete suggestion on blur', () => {
-      gmaps.autocompleteSuggestions = [{
-        "description": "Golden, Colorado, United States",
-        "id": "691b237b0322f28988f3ce03e321ff72a12167fd",
-        "matched_substrings": [{"length": 5, "offset": 0}],
-        "place_id": "ChIJD7fiBh9u5kcRYJSMaMOCCwQ",
-        "reference": "CjQlAAAA_KB6EEceSTfkteSSF6U0",
-        "terms": [
-          {offset: 0, value: "Golden"},
-          {offset: 8, value: "Colorado"},
-          {offset: 17, value: "United States"},
-        ],
-        "types": ["locality", "political", "geocode"]
-      }];
-      gmaps.getPlacePredictions = gmaps.sandbox.stub().callsArgWith(1, gmaps.autocompleteSuggestions);
-      const wrapper = renderGeosuggest();
-      typeText(wrapper, "Golden");
-      wrapper.find('input').simulate('blur');
-      assert.equal(wrapper.find('input').get(0).value, "Golden, Colorado, United States");
-    });
-
-    it('populates statecode via fuzzy match on geosuggest select', () => {
-      gmaps.geocodeResults = [{
-        address_components: [
-          {long_name: "Anytown", short_name: "Anytown", types: ["locality"]},
-          {long_name: "Lääne-Viru County", short_name: "Lääne-Viru County", types: ["administrative_area_level_1"]},
-          {long_name: "Estonia", short_name: "EE", types: ["country"]},
-        ],
-        geometry: {
-          location: {
-            lat: () => 48.859,
-            lng: () => 2.207,
-          }
-        }
-      }];
-      gmaps.geocode = gmaps.sandbox.stub().callsArgWith(1, gmaps.geocodeResults, 'OK');
-      const wrapper = renderGeosuggest();
-      typeText(wrapper, "Anyt");
-      const item = wrapper.find("li.geosuggest__item").first();
-      item.simulate('click');
-      assert.equal(that.props.profile.city, "Anytown");
-      assert.equal(that.props.profile.state_or_territory, "EE-59");
-      assert.equal(that.props.profile.country, "EE");
-    });
-
-    it('populates statecode with "Not Available" if all matching attempts fail', () => {
-      gmaps.geocodeResults = [{
-        address_components: [
-          {long_name: "Someplace", short_name: "Someplace", types: ["locality"]},
-          {long_name: "djkfsldkfjdslfjsl", short_name: "djkfsldkfjdslfjsl", types: ["administrative_area_level_1"]},
-          {long_name: "United States", short_name: "US", types: ["country"]},
-        ],
-        geometry: {
-          location: {
-            lat: () => 48.859,
-            lng: () => 2.207,
-          }
-        }
-      }];
-      gmaps.geocode = gmaps.sandbox.stub().callsArgWith(1, gmaps.geocodeResults, 'OK');
-      const wrapper = renderGeosuggest();
-      typeText(wrapper, "123 Main Street");
-      const item = wrapper.find("li.geosuggest__item").first();
-      item.simulate('click');
-      assert.equal(that.props.profile.city, "Someplace");
-      assert.equal(that.props.profile.state_or_territory, 'Not Available');
-      assert.equal(that.props.profile.country, "US");
-    });
-
-    it('removes profile info on empty', () => {
-      that.props.profile.city = "Cambridge";
-      that.props.profile.state_or_territory = "Massachusetts";
-      that.props.profile.country = "USA";
-      const wrapper = renderGeosuggest();
-      typeText(wrapper, "");
-      wrapper.find('input').simulate('blur');
-      assert.equal(that.props.profile.city, null);
-      assert.equal(that.props.profile.state_or_territory, null);
-      assert.equal(that.props.profile.country, null);
-    });
-
   });
 
   describe('boundTelephoneInput', () => {

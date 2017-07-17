@@ -4,18 +4,14 @@ import _ from 'lodash';
 import TextField from 'material-ui/TextField';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 import Checkbox from 'material-ui/Checkbox';
-import Geosuggest from 'react-geosuggest';
 import R from 'ramda';
 import ReactTelInput from 'react-telephone-input';
 
 import DateField from '../components/inputs/DateField';
-import {codeToCountryName, codeToStateName, nameToCountryCode, nameToStateCode} from '../lib/location';
 import { validationErrorSelector, classify } from './util';
 import { sendFormFieldEvent } from '../lib/google_analytics';
 import type { Validator, UIValidator } from '../lib/validation/profile';
-import type {
-  Profile, AddressComponentKeyMapping, GoogleMapsAddressComponent
-} from '../flow/profileTypes';
+import type { Profile } from '../flow/profileTypes';
 import type { Option } from '../flow/generalTypes';
 import { CP1252_REGEX } from '../constants';
 
@@ -223,143 +219,6 @@ export function boundCheckbox(keySet: string[], label: string|React$Element<*>):
           { label }
         </span>
       </div>
-      <span className="validation-error-text">
-        {_.get(errors, keySet)}
-      </span>
-    </div>
-  );
-}
-
-const hasValue = R.and(
-  R.compose(R.not, R.isEmpty),
-  R.compose(R.not, R.isNil),
-);
-
-const getComponentForType = (components: GoogleMapsAddressComponent[], type: string) => (
-  R.find(R.propSatisfies(R.contains(type), "types"), components)
-);
-
-const profileFields = (addressMapping: AddressComponentKeyMapping, components: GoogleMapsAddressComponent[]) => {
-  let profile = {};
-  let stateKey = [];
-  let countryCode = null;
-  _.forOwn(addressMapping, (keySet, gmapType) => {
-    const component = getComponentForType(components, gmapType);
-    if (component !== undefined) {
-      _.set(profile, keySet, component.long_name);
-      if (gmapType === 'administrative_area_level_1') {
-        stateKey = [keySet, component.long_name];
-      } else if (gmapType === 'country') {
-        // Save country code instead of country name
-        countryCode = nameToCountryCode(component.long_name);
-        _.set(profile, keySet, countryCode);
-      }
-    } else {
-      _.set(profile, keySet, '');
-      if (gmapType === 'administrative_area_level_1') {
-        stateKey = [keySet, ''];
-      }
-    }
-  });
-  // Modify state code to be '<country code>-<state code>
-  if (countryCode !== null && stateKey.length > 0) {
-    _.set(profile, stateKey[0], nameToStateCode(countryCode, stateKey[1]));
-  }
-
-
-  return profile;
-};
-
-const pathHasValue = R.flip(R.pathSatisfies(hasValue, R.__));
-
-const allPathsHaveValue = (addressMapping) => (
-  R.compose(R.all(R.__, R.values(addressMapping)), pathHasValue)
-);
-
-class MicroGeosuggest extends Geosuggest {
-  //Override the default onInputBlur behavior of Geosuggest
-  onInputBlur = () => {
-    this.selectSuggest(this.state.activeSuggest);
-    if (!this.state.ignoreBlur) {
-      this.hideSuggests();
-    }
-  };
-}
-
-export function boundGeosuggest(
-  addressMapping: AddressComponentKeyMapping,
-  id: string[],
-  label: string|React$Element<*>,
-  { placeholder, types }: { placeholder: string, types: string[] } = {}
-): React$Element<*> {
-  const keySet = id;
-  const {
-    profile,
-    errors,
-    updateProfile,
-    validator,
-    updateValidationVisibility
-  } = this.props;
-
-  const hasAllAddressProps = allPathsHaveValue(addressMapping);
-
-  const onSuggestSelect = (suggest) => {
-    if (!suggest || !suggest.gmaps || !suggest.gmaps.address_components) {
-      return;
-    }
-
-    const newProfile = _.merge(
-      R.clone(profile),
-      profileFields(addressMapping, suggest.gmaps.address_components)
-    );
-
-    updateValidationVisibility(keySet);
-    updateProfile(newProfile, validator);
-  };
-
-  const onBlur = (value) => {
-    if (!value || value !== formatInitialAddress(profile)) {
-      let clone = _.cloneDeep(profile);
-      _.forOwn(addressMapping, (addressKeySet, gmapType) => {  // eslint-disable-line no-unused-vars
-        _.set(clone, addressKeySet, null);
-      });
-      updateValidationVisibility(keySet);
-      updateProfile(clone, validator);
-    }
-  };
-
-  const hasExistingAddress = R.allPass([
-    hasValue,
-    R.unary(hasAllAddressProps),
-  ]);
-
-
-  // Get all the values of a location (city, state, country) as an array.
-  // Convert state and country elements to ISO3166 codes
-  const getLocationElements = () => {
-    let elements = R.map(R.path(R.__, profile), R.values(addressMapping));
-    elements[2] = codeToCountryName(elements[2]);
-    elements[1] = codeToStateName(elements[1]);
-    return elements;
-  };
-
-  // Join the elements of a location array into a formatted string.
-  const getLocationName = R.compose(R.join(", "), getLocationElements);
-
-  const formatInitialAddress = R.ifElse(
-    hasExistingAddress,
-    getLocationName,
-    R.always(""),
-  );
-
-  const initial = formatInitialAddress(profile);
-
-  return (
-    <div className={`bound-geosuggest ${validationErrorSelector(errors, keySet)}`}>
-      <MicroGeosuggest id={id}
-        initialValue={initial} label={label} placeholder={placeholder} types={types}
-        onSuggestSelect={onSuggestSelect} autoActivateFirstSuggest={true} onBlur={onBlur}
-      />
       <span className="validation-error-text">
         {_.get(errors, keySet)}
       </span>

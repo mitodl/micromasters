@@ -16,7 +16,6 @@ import type {
   Program
 } from '../flow/programTypes';
 import type { Action } from '../flow/reduxTypes';
-import type { Sandbox } from '../flow/sinonTypes';
 import type { Store } from 'redux';
 import App from '../containers/App';
 import DashboardPage from '../containers/DashboardPage';
@@ -177,73 +176,6 @@ export const localStorageMock = (init: any = {}) => {
     reset: reset,
   };
 };
-
-export class GoogleMapsStub {
-  sandbox: Sandbox;
-  getPlacePredictions: any;
-  geocode: any;
-
-  autocompleteSuggestions = [{
-    "description": "Paris, France",
-    "id": "691b237b0322f28988f3ce03e321ff72a12167fd",
-    "matched_substrings": [{"length": 5, "offset": 0}],
-    "place_id": "ChIJD7fiBh9u5kcRYJSMaMOCCwQ",
-    "reference": "CjQlAAAA_KB6EEceSTfkteSSF6U0",
-    "terms": [
-      {offset: 0, value: "Paris"},
-      {offset: 7, value: "France"},
-    ],
-    "types": ["locality", "political", "geocode"]
-  }];
-
-  geocodeResults = [{
-    address_components: [
-      {long_name: "123 Main Street", short_name: "123 Main St", types: ["street_address"]},
-      {long_name: "Anytown", short_name: "Anytown", types: ["locality"]},
-      {long_name: "Kandahar", short_name: "Kandahar", types: ["administrative_area_level_1"]},
-      {long_name: "Afghanistan", short_name: "AF", types: ["country"]},
-    ],
-    geometry: {
-      location: {
-        lat: () => 48.859,
-        lng: () => 2.207,
-      }
-    }
-  }];
-
-  constructor() {
-    this.sandbox = sinon.sandbox.create();
-    this.getPlacePredictions = this.sandbox.stub().callsArgWith(1, this.autocompleteSuggestions);
-    this.geocode = this.sandbox.stub().callsArgWith(1, this.geocodeResults, 'OK');
-
-    const that = this;
-    class FakeAutocompleteService {
-      getPlacePredictions = that.getPlacePredictions;
-    }
-    class FakeGeocoder {
-      geocode = that.geocode;
-    }
-
-    let google = {
-      maps: {
-        Geocoder: FakeGeocoder,
-        GeocoderStatus: {
-          OK: 'OK'
-        },
-        places: {
-          AutocompleteService: FakeAutocompleteService
-        }
-      }
-    };
-
-    window.google = google;
-  }
-
-  cleanup() {
-    this.sandbox.restore();
-    delete window.google;
-  }
-}
 
 export  const getEl = (div: any, selector: string): HTMLElement => {
   let el: HTMLElement = (div.querySelector(selector): any);

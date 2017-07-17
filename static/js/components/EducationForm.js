@@ -326,51 +326,6 @@ class EducationForm extends ProfileFormFields {
       }
     };
 
-    const schoolAddressMapping = {
-      locality: keySet("school_city"),
-      administrative_area_level_1: keySet("school_state_or_territory"),
-      country: keySet("school_country")
-    };
-
-    // Load geosuggest component only if Google Maps API is loaded.
-    let addressForm = () => {
-      if (window.google && window.google.maps) {
-        return <Cell col={12}>
-        {this.boundGeosuggest(schoolAddressMapping, keySet('location'), "School Location",
-          {
-            placeholder: "Anytown, Massachusetts, United States",
-            types: ["(cities)"]
-          }
-        )}
-      </Cell>;
-      } else {
-        return <Grid style={{padding:'0px', margin:'0px', width:'100%'}}>
-              <Cell col={4}>
-                <CountrySelectField
-                  stateKeySet={keySet('school_state_or_territory')}
-                  countryKeySet={keySet('school_country')}
-                  label='Country'
-                  topMenu={true}
-                  {...this.defaultInputComponentProps()}
-                />
-              </Cell>
-              <Cell col={4}>
-                <StateSelectField
-                  stateKeySet={keySet('school_state_or_territory')}
-                  countryKeySet={keySet('school_country')}
-                  label='State'
-                  topMenu={true}
-                  {...this.defaultInputComponentProps()}
-                />
-              </Cell>
-              <Cell col={4} key="school_city">
-                {this.boundTextField(keySet('school_city'), 'City')}
-              </Cell></Grid>;
-      }
-
-    };
-
-
     return <Grid className="profile-tab-grid">
       <Cell col={12} className="profile-form-title">
         {title}
@@ -383,7 +338,27 @@ class EducationForm extends ProfileFormFields {
       <Cell col={12}>
         {this.boundDateField(keySet('graduation_date'), 'Graduation Date', true, true)}
       </Cell>
-      {addressForm()}
+      <Cell col={4}>
+        <CountrySelectField
+          stateKeySet={keySet('school_state_or_territory')}
+          countryKeySet={keySet('school_country')}
+          label='Country'
+          topMenu={true}
+          {...this.defaultInputComponentProps()}
+        />
+      </Cell>
+      <Cell col={4}>
+        <StateSelectField
+          stateKeySet={keySet('school_state_or_territory')}
+          countryKeySet={keySet('school_country')}
+          label='State'
+          topMenu={true}
+          {...this.defaultInputComponentProps()}
+        />
+      </Cell>
+      <Cell col={4} key="school_city">
+        {this.boundTextField(keySet('school_city'), 'City')}
+      </Cell>
     </Grid>;
   };
 

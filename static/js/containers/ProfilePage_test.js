@@ -36,12 +36,12 @@ import {
 } from '../constants';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import * as api from '../lib/api';
-import { GoogleMapsStub, activeDialog } from '../util/test_utils';
+import { activeDialog } from '../util/test_utils';
 
 describe("ProfilePage", function() {
   this.timeout(5000);  // eslint-disable-line no-invalid-this
 
-  let listenForActions, renderComponent, helper, gmaps;
+  let listenForActions, renderComponent, helper;
   let addProgramEnrollmentStub, patchUserProfileStub;
 
   let profileSteps = [
@@ -71,7 +71,6 @@ describe("ProfilePage", function() {
 
   beforeEach(() => {
     helper = new IntegrationTestHelper();
-    gmaps = new GoogleMapsStub();
     listenForActions = helper.listenForActions.bind(helper);
     renderComponent = helper.renderComponent.bind(helper);
     patchUserProfileStub = helper.sandbox.stub(api, 'patchUserProfile');
@@ -81,7 +80,6 @@ describe("ProfilePage", function() {
 
   afterEach(() => {
     helper.cleanup();
-    gmaps.cleanup();
   });
 
   let confirmSaveButtonBehavior = (updatedProfile, pageElements, additionalActions = []) => {

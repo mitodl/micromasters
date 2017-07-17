@@ -130,48 +130,6 @@ class EmploymentForm extends ProfileFormFields {
     let id = _.get(profile, keySet("id"));
     let title = id !== undefined ? 'Edit Employment' : 'Add Employment';
 
-    const employerAddressMapping = {
-      locality: keySet("city"),
-      administrative_area_level_1: keySet("state_or_territory"),
-      country: keySet("country")
-    };
-
-    let addressForm = () => {
-      // Use the Geosuggest component only if Google Maps API is loaded.
-      if (window.google && window.google.maps) {
-        return <Cell col={12}>
-                {this.boundGeosuggest(employerAddressMapping, keySet('location'), "Employer Location",
-                  {
-                    placeholder: "Anytown, Massachusetts, United States",
-                    types: ["(cities)"]
-                  }
-                )}
-              </Cell>;
-      } else {
-        return <Grid style={{padding:'0px', margin:'0px', width: '100%'}}>
-                <Cell col={4}>
-                  <CountrySelectField
-                    stateKeySet={keySet('state_or_territory')}
-                    countryKeySet={keySet('country')}
-                    label='Country'
-                    {...this.defaultInputComponentProps()}
-                  />
-                </Cell>
-                <Cell col={4}>
-                  <StateSelectField
-                    stateKeySet={keySet('state_or_territory')}
-                    countryKeySet={keySet('country')}
-                    label='State or Territory'
-                    {...this.defaultInputComponentProps()}
-                  />
-                </Cell>
-                <Cell col={4}>
-                  {this.boundTextField(keySet('city'), 'City')}
-                </Cell>
-               </Grid>;
-      }
-    };
-
     return (
       <Grid className="profile-tab-grid">
         <Cell col={12} className="profile-form-title">
@@ -179,6 +137,25 @@ class EmploymentForm extends ProfileFormFields {
         </Cell>
         <Cell col={12}>
           {this.boundTextField(keySet('company_name'), 'Name of Employer')}
+        </Cell>
+        <Cell col={4}>
+          <CountrySelectField
+            stateKeySet={keySet('state_or_territory')}
+            countryKeySet={keySet('country')}
+            label='Country'
+            {...this.defaultInputComponentProps()}
+          />
+        </Cell>
+        <Cell col={4}>
+          <StateSelectField
+            stateKeySet={keySet('state_or_territory')}
+            countryKeySet={keySet('country')}
+            label='State or Territory'
+            {...this.defaultInputComponentProps()}
+          />
+        </Cell>
+        <Cell col={4}>
+          {this.boundTextField(keySet('city'), 'City')}
         </Cell>
         <Cell col={12}>
           <SelectField
@@ -201,7 +178,6 @@ class EmploymentForm extends ProfileFormFields {
             Leave blank if this is a current position
           </span>
         </Cell>
-        {addressForm()}
       </Grid>
     );
   }
