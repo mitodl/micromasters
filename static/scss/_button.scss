@@ -60,10 +60,10 @@
   }
 
   &.button-signup, &.button-login {
-    font-size: 15px;
+    font-size: 14px;
     text-decoration: none;
-    height: 44px;
-    line-height: 43px;
+    height: 38px;
+    box-shadow: none;
   }
 
   &.button-signup {
@@ -72,13 +72,11 @@
   }
 
   &.button-login {
-    margin-right: 19px;
+    margin-right: 12px;
     border: 2px solid rgba(255,255,255,.5);
     border-radius: 3px;
     color: rgba(255,255,255,.8);
     background: transparent;
-    line-height: 40px;
-    height: 45px;
   }
 
   &.button-login:hover, &.button-login:focus, &.button-login:active, &.button-login:focus:not(:active),

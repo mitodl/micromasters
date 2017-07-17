@@ -16,7 +16,7 @@ body.app-media {
   border-radius: 0;
   height: auto;
   min-height: 0;
-  padding: 10px 27px 8px 33px;
+  padding: 9px 27px 8px 33px;
 
   .navbar-header {
     padding: 0;
@@ -42,20 +42,20 @@ body.app-media {
       .brand-logo {
         height: 36px;
         width: 51px;
-        top: 5px;
+        top: 2px;
         margin-right: 15px;
       }
 
       .micromasters-logo {
         height: 23px;
-        width: 155px;
-        top: 13px;
+        width: 152px;
+        top: 10px;
       }
 
       .divider-large {
         width: 1px;
         height: 32px;
-        margin: 3px 18px 0 0;
+        margin: 1px 18px 0 0;
         border-left: 1px solid rgba(255, 255, 255, 0.5);
         float: left;
       }
@@ -291,9 +291,9 @@ body.app-media {
       }
 
       p {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 400;
-        color: rgba(0,0,0,.6);
+        color: rgba(0,0,0,.87);
         margin-bottom: 2.1em;
 
         @media (min-width: 1200px) {
@@ -321,9 +321,9 @@ body.app-media {
         .sub-banner-logos-text {
           vertical-align: bottom;
           display: inline-block;
-          font-size: 18px;
+          font-size: 16px;
           font-weight: 400;
-          color: rgba(0, 0, 0, 0.6);
+          color: rgba(0, 0, 0, 0.87);
 
           @media (min-width: 1200px) {
             font-size: 1.4vw;

@@ -15,7 +15,7 @@
     color: white;
     text-align: center;
     background-size: cover;
-    padding: 210px 5% 0;
+    padding: 180px 5% 0;
     background-position: center;
 
     @media (max-width: 479px) {
@@ -26,7 +26,7 @@
     .title {
       font-size: 36px;
       margin-top: 0;
-      margin-bottom: 31px;
+      margin-bottom: 15px;
       max-width: 700px;
       @include breakpoint(phone) {
         font-size: 31px;
@@ -85,8 +85,8 @@
         a.tab-link {
           padding: 0 24px;
           float: left;
-          height: 56px;
-          line-height: 55px;
+          height: 48px;
+          line-height: 47px;
           text-transform: uppercase;
           color: rgba(255,255,255,.75);
 
@@ -94,7 +94,7 @@
 
         a.active-tab {
           color: white;
-          border-bottom: 3px solid white;
+          border-bottom: 2px solid white;
         }
       }
     }
@@ -105,7 +105,7 @@
     }
 
     .mdl-tabs__tab-bar {
-      height: 56px;
+      height: 48px;
       overflow: hidden;
       border-bottom: none;
     }
@@ -154,8 +154,8 @@
 
       .title, .title a {
         color: $link-text;
-        font-weight: 600;
-        font-size: 16px;
+        font-weight: 500;
+        font-size: 15px;
         margin: 0 0 6px 0;
         cursor: pointer;
         line-height: 1.4em;
@@ -167,7 +167,7 @@
 
       .description {
         color: $font-gray;
-        font-size: 15px;
+        font-size: 14px;
         line-height: 1.4em;
       }
 
@@ -234,10 +234,10 @@
     }
 
     p {
-      font-size: 17px;
-      color: rgba(0,0,0,.7);
+      font-size: 16px;
+      color: rgba(0,0,0,.87);
       margin-bottom: 24px;
-      line-height: 1.5em;
+      line-height: 1.4em;
     }
 
     li {
@@ -253,7 +253,7 @@
     }
 
     h3 {
-      color: $mm-brand-bg;
+      color: $font-black;
       font-size: 20px;
       font-weight: 500;
     }
