@@ -287,8 +287,8 @@ const saveFinancialAid = R.curry((dispatch, current) => {
 const submitFinancialAid = R.curry((dispatch, current) => {
   const { income, currency, programId } = current;
   dispatch(addFinancialAid(income, currency, programId)).then(() => {
+    dispatch(hideDialog(INCOME_DIALOG));
     dispatch(clearCalculatorEdit());
-    dispatch(showDialog(INCOME_DIALOG));
   });
 });
 
