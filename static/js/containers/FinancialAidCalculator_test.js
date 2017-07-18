@@ -275,6 +275,7 @@ describe('FinancialAidCalculator', () => {
         actions.prices.get.successType,
         RECEIVE_DASHBOARD_SUCCESS,
         CLEAR_CALCULATOR_EDIT,
+        HIDE_DIALOG,
       ], () => {
         wrapper.find('.pricing-actions').find('.calculate-cost-button').simulate('click');
         let calculator = document.querySelector('.financial-aid-calculator');
