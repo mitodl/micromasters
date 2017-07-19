@@ -15,9 +15,6 @@ import {
   STATUS_OFFERED,
   STATUS_CAN_UPGRADE,
   STATUS_PENDING_ENROLLMENT,
-  FA_PENDING_STATUSES,
-  FA_TERMINAL_STATUSES,
-  FA_ALL_STATUSES,
   COURSE_ACTION_PAY,
   COURSE_ACTION_ENROLL,
   COURSE_ACTION_REENROLL,
@@ -170,63 +167,6 @@ describe('CourseAction', () => {
       let button = wrapper.find(Button);
       assert.isTrue(button.props().disabled);
       assert.equal(button.props().children, 'Pay Now');
-    });
-
-    it('shows a disabled enroll button if and only if a user is pending approval', () => {
-      let firstRun = alterFirstRun(course, {
-        enrollment_start_date: now.toISOString(),
-      });
-
-      FA_ALL_STATUSES.forEach(status => {
-        const wrapper = renderCourseAction({
-          courseRun: firstRun,
-          financialAid: {
-            ...FINANCIAL_AID_PARTIAL_RESPONSE,
-            has_user_applied: true,
-            application_status: status,
-          },
-          hasFinancialAid: true,
-          actionType: COURSE_ACTION_ENROLL,
-        });
-        let button = wrapper.find(SpinnerButton);
-
-        if (FA_PENDING_STATUSES.includes(status)) {
-          assert.isTrue(button.props().disabled);
-          // we don't show a spinner in this case, only for API loads or when waiting for Cybersource callback
-          assert.isFalse(button.props().spinning);
-        } else {
-          assert.isUndefined(button.props().disabled);
-        }
-        assert.include(button.props().children, 'Enroll');
-      });
-    });
-
-    it('shows a disabled pay button if and only if a user has not been approved yet', () => {
-      let firstRun = alterFirstRun(course, {
-        enrollment_start_date: now.toISOString(),
-        status: STATUS_CAN_UPGRADE,
-      });
-
-      FA_ALL_STATUSES.forEach(status => {
-        const wrapper = renderCourseAction({
-          courseRun: firstRun,
-          financialAid: {
-            ...FINANCIAL_AID_PARTIAL_RESPONSE,
-            has_user_applied: true,
-            application_status: status,
-          },
-          hasFinancialAid: true,
-          actionType: COURSE_ACTION_PAY,
-        });
-        let payButton = wrapper.find(Button);
-
-        if (FA_TERMINAL_STATUSES.includes(status)) {
-          assert.isUndefined(payButton.props().disabled);
-        } else {
-          assert.isTrue(payButton.props().disabled);
-        }
-        assert.equal(payButton.children().text(), 'Pay Now');
-      });
     });
 
     it('pay button redirects to checkout', () => {

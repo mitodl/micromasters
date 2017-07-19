@@ -32,7 +32,8 @@ describe("CourseEnrollmentDialog", () => {
     courseRun = makeRun(1),
     course = makeCourse(1),
     open = true,
-    financialAidAvailability = true
+    financialAidAvailability = true,
+    pendingFinancialAid = false
   ) => {
     mount(
       <MuiThemeProvider muiTheme={getMuiTheme()}>
@@ -45,6 +46,7 @@ describe("CourseEnrollmentDialog", () => {
           checkout={checkoutStub}
           financialAidAvailability={financialAidAvailability}
           hasUserApplied={hasUserApplied}
+          pendingFinancialAid={pendingFinancialAid}
         />
       </MuiThemeProvider>,
       {
@@ -72,6 +74,16 @@ describe("CourseEnrollmentDialog", () => {
     const payButton = ((wrapper.querySelector('.pay-button'): any): HTMLButtonElement);
     assert.equal(payButton.textContent, "Pay Now");
     assert.isFalse(payButton.disabled);
+    const auditButton = getEl(wrapper, '.audit-button');
+    assert.equal(auditButton.textContent, "Audit for Free & Pay Later");
+  });
+  it('can render with pendingFinancialAid = true', () => {
+    const wrapper = renderDialog(
+      true,  makeRun(1), makeCourse(1), true, true, true
+    );
+    const payButton = ((wrapper.querySelector('.pay-button'): any): HTMLButtonElement);
+    assert.equal(payButton.textContent, "Pay Now");
+    assert.isTrue(payButton.disabled);
     const auditButton = getEl(wrapper, '.audit-button');
     assert.equal(auditButton.textContent, "Audit for Free & Pay Later");
   });

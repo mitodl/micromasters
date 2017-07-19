@@ -63,7 +63,7 @@ export default class CourseEnrollmentDialog extends React.Component {
   render() {
     const { open, setVisibility, course, hasUserApplied, pendingFinancialAid } = this.props;
     let message, payButton, auditButton;
-    if (pendingFinancialAid){
+    if (pendingFinancialAid) {
       message = `Your Personalized Course Price is still pending approval, but you can
         sign up now to audit the course for FREE, and then pay later. (Payment is required
         to get credit for the MicroMasters certificate.)`;
@@ -73,7 +73,7 @@ export default class CourseEnrollmentDialog extends React.Component {
           Pay Now
         </Button>
       );
-    } else if (hasUserApplied){
+    } else if (hasUserApplied) {
       message = `You can pay now, or you can audit the course for FREE
         and upgrade later. (Payment is required to get credit for the
         MicroMasters certificate.)`;
