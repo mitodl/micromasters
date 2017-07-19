@@ -80,11 +80,7 @@ export default class CourseAction extends React.Component {
   }
 
   renderEnrollButton(run: CourseRun, actionType: string): React$Element<*> {
-    let buttonProps = {};
 
-    if (this.hasPendingFinancialAid()) {
-      buttonProps.disabled = true;
-    }
 
     return (
       <div className="course-action">
@@ -93,7 +89,6 @@ export default class CourseAction extends React.Component {
           component={Button}
           spinning={run.status === STATUS_PENDING_ENROLLMENT}
           onClick={() => this.handleEnrollButtonClick(run)}
-          {...buttonProps}
         >
           { actionType === COURSE_ACTION_REENROLL ? 'Re-Enroll' : 'Enroll' }
         </SpinnerButton>

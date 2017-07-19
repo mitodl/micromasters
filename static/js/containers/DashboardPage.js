@@ -28,6 +28,7 @@ import {
   COUPON_CONTENT_TYPE_COURSE,
   COUPON_CONTENT_TYPE_PROGRAM,
   FA_TERMINAL_STATUSES,
+  FA_PENDING_STATUSES,
   TOAST_SUCCESS,
   TOAST_FAILURE,
   STATUS_OFFERED,
@@ -613,11 +614,17 @@ class DashboardPage extends React.Component {
       this.shouldSkipFinancialAid() ||
       program.financial_aid_user_info.has_user_applied
     );
+    let pendingFinancialAid = (
+      program.financial_aid_availability &&
+      program.financial_aid_user_info.has_user_applied &&
+      FA_PENDING_STATUSES.includes(program.financial_aid_user_info.application_status)
+    );
 
     return <CourseEnrollmentDialog
       course={course}
       courseRun={courseRun}
       hasUserApplied={hasUserApplied}
+      pendingFinancialAid={pendingFinancialAid}
       financialAidAvailability={program.financial_aid_availability}
       checkout={this.dispatchCheckout}
       open={ui.enrollCourseDialogVisibility}
