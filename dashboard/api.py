@@ -418,7 +418,10 @@ def format_courserun_for_dashboard(course_run, status_for_user, mmtrack, positio
             formatted_run['current_grade'] = mmtrack.get_current_grade(course_run.edx_course_key)
     # any other status but "offered" should have the current grade
     elif status_for_user != CourseStatus.OFFERED:
-        formatted_run['current_grade'] = mmtrack.get_current_grade(course_run.edx_course_key)
+        if mmtrack.has_final_grade(course_run.edx_course_key):
+            formatted_run['final_grade'] = mmtrack.get_final_grade_percent(course_run.edx_course_key)
+        else:
+            formatted_run['current_grade'] = mmtrack.get_current_grade(course_run.edx_course_key)
 
     return formatted_run
 

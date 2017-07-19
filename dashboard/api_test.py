@@ -154,6 +154,7 @@ class FormatRunTest(CourseTests):
             'get_final_grade_percent.return_value': 99.99,
             'get_current_grade.return_value': 33.33,
             'has_paid.return_value': False,
+            'has_final_grade.return_value': False
         })
         self.crun = self.create_run(
             start=self.now+timedelta(weeks=52),
@@ -311,6 +312,25 @@ class FormatRunTest(CourseTests):
         # test that a weird status raises here
         with self.assertRaises(ImproperlyConfigured):
             api.format_courserun_for_dashboard(crun, 'foo_status', self.mmtrack)
+
+    def test_has_final_grade_not_enrolled(self):
+        """
+        Test a special case where user has a final grade and he missed the
+        deadline and neither he is enrolled in course nor he has paid
+        """
+        self.mmtrack.configure_mock(**{
+            'get_final_grade_percent.return_value': 99.99,
+            'has_paid.return_value': False,
+            'has_final_grade.return_value': True
+        })
+        self.expected_ret_data.update({
+            'status': api.CourseStatus.MISSED_DEADLINE,
+            'final_grade': 99.99
+        })
+        self.assertEqual(
+            api.format_courserun_for_dashboard(self.crun, api.CourseStatus.MISSED_DEADLINE, self.mmtrack),
+            self.expected_ret_data
+        )
 
 
 @ddt.ddt
