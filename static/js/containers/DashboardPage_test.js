@@ -639,17 +639,19 @@ describe('DashboardPage', () => {
         });
       });
     });
-    R.forEach((fa_status) => {
-      it(`shows course enrollment dialog ${fa_status}`, () => {
+    R.forEach((faStatus) => {
+      let expected_disabled = FA_PENDING_STATUSES.includes(faStatus);
+      it(`${faStatus} status ${expected_disabled?"disables":"does not disable"} pay now button`, () => {
         let course = makeCourse();
         course.runs[0].enrollment_start_date = moment().subtract(2, 'days');
         dashboardResponse.programs[0].courses = [course];
         dashboardResponse.programs[0].financial_aid_availability = true;
         dashboardResponse.programs[0].financial_aid_user_info = {
-          application_status: fa_status,
+          application_status: faStatus,
           date_documents_sent: '2016-01-01',
           has_user_applied: true,
         };
+
 
         helper.dashboardStub.returns(Promise.resolve(dashboardResponse));
         return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
@@ -659,11 +661,11 @@ describe('DashboardPage', () => {
             enrollButton.simulate('click');
           }).then((state) => {
             assert.isTrue(state.ui.enrollCourseDialogVisibility);
-            assert.isTrue(document.querySelector('.pay-button').disabled);
+            assert.equal(document.querySelector('.pay-button').disabled, expected_disabled);
           });
         });
       });
-    }, FA_PENDING_STATUSES);
+    }, FA_ALL_STATUSES);
   });
 
 
