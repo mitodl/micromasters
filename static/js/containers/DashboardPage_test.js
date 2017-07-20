@@ -679,7 +679,7 @@ describe('DashboardPage', () => {
       let checkoutStub = helper.sandbox.stub(storeActions, 'checkout').returns(() => promise);
 
       program.financial_aid_availability = false;
-      program.description = "Not passed program",
+      program.description = "Not passed program";
       program.courses[0].runs = [{
         ...program.courses[0].runs[0],
         course_start_date: "2016-09-22T11:48:27Z",

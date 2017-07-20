@@ -5,6 +5,7 @@ import R from 'ramda';
 import { wait } from '../util/util';
 
 // Start of odl Zendesk Widget script
+/* eslint-disable no-sequences */
 /*<![CDATA[*/
 window.zEmbed || function (e, t) {
   let n, o, d, i, s, a = [],
@@ -31,7 +32,7 @@ window.zEmbed || function (e, t) {
     o.close();
 }("https://assets.zendesk.com/embeddable_framework/main.js", "odl.zendesk.com");
  /*]]>*/
-
+/* eslint-enable no-sequences */
 
 // This will execute when Zendesk's Javascript is finished executing, and the
 // Web Widget API is available to be used. Zendesk's various iframes may *not*
