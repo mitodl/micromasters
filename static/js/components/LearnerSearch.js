@@ -13,6 +13,7 @@ import {
   SearchBox,
   SortingSelector,
   MultiMatchQuery,
+  SearchkitManager,
 } from 'searchkit';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import Card from 'react-mdl/lib/Card/Card';
@@ -133,6 +134,25 @@ export default class LearnerSearch extends SearchkitComponent {
       {openLearnerEmailComposer: this.props.openLearnerEmailComposer},
       LearnerResult
     );
+  }
+
+  clearFilters = (searchkit: SearchkitManager): void => {
+    let hasFiltersOtherThanSelectedProgram = (
+      searchkit &&
+      searchkit.query &&
+      searchkit.query.index &&
+      searchkit.query.index.filters &&
+      searchkit.query.index.filters.length > 1
+    );
+
+    if (window.location && R.isEmpty(window.location.search) && hasFiltersOtherThanSelectedProgram) {
+      searchkit.getQueryAccessor().keepOnlyQueryState();
+      searchkit.performSearch(true);
+    }
+  }
+
+  componentWillReceiveProps() {
+    this.clearFilters(this.searchkit);
   }
 
   getNumberOfCoursesInProgram = (): number => {
