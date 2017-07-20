@@ -79,6 +79,7 @@ import {
 import {
   FA_ALL_STATUSES,
   FA_TERMINAL_STATUSES,
+  FA_PENDING_STATUSES,
 
   STATUS_CURRENTLY_ENROLLED,
   STATUS_PENDING_ENROLLMENT,
@@ -638,7 +639,33 @@ describe('DashboardPage', () => {
         });
       });
     });
+    R.forEach((fa_status) => {
+      it(`shows course enrollment dialog ${fa_status}`, () => {
+        let course = makeCourse();
+        course.runs[0].enrollment_start_date = moment().subtract(2, 'days');
+        dashboardResponse.programs[0].courses = [course];
+        dashboardResponse.programs[0].financial_aid_availability = true;
+        dashboardResponse.programs[0].financial_aid_user_info = {
+          application_status: fa_status,
+          date_documents_sent: '2016-01-01',
+          has_user_applied: true,
+        };
+
+        helper.dashboardStub.returns(Promise.resolve(dashboardResponse));
+        return renderComponent('/dashboard', DASHBOARD_SUCCESS_ACTIONS).then(([wrapper]) => {
+          let enrollButton = wrapper.find(ENROLL_BUTTON_SELECTOR).at(0);
+
+          return listenForActions(COURSE_ENROLL_DIALOG_ACTIONS, () => {
+            enrollButton.simulate('click');
+          }).then((state) => {
+            assert.isTrue(state.ui.enrollCourseDialogVisibility);
+            assert.isTrue(document.querySelector('.pay-button').disabled);
+          });
+        });
+      });
+    }, FA_PENDING_STATUSES);
   });
+
 
   describe('edx cache refresh error message', () => {
     let dashboardResponse;
