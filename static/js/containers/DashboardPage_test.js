@@ -640,8 +640,8 @@ describe('DashboardPage', () => {
       });
     });
     R.forEach((faStatus) => {
-      let expected_disabled = FA_PENDING_STATUSES.includes(faStatus);
-      it(`${faStatus} status ${expected_disabled?"disables":"does not disable"} pay now button`, () => {
+      let expectedDisabled = FA_PENDING_STATUSES.includes(faStatus);
+      it(`${faStatus} status ${expectedDisabled ? "disables" : "does not disable"} pay now button`, () => {
         let course = makeCourse();
         course.runs[0].enrollment_start_date = moment().subtract(2, 'days');
         dashboardResponse.programs[0].courses = [course];
@@ -661,7 +661,7 @@ describe('DashboardPage', () => {
             enrollButton.simulate('click');
           }).then((state) => {
             assert.isTrue(state.ui.enrollCourseDialogVisibility);
-            assert.equal(document.querySelector('.pay-button').disabled, expected_disabled);
+            assert.equal(document.querySelector('.pay-button').disabled, expectedDisabled);
           });
         });
       });
