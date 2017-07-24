@@ -453,7 +453,6 @@ describe('LearnerSearchPage', function () {
         "company_name": ["Microsoft"]
       };
       return renderSearch().then(([wrapper]) => {
-        window.location = 'http://fake/?courses[0]=Digital Learning 200';
         const searchkit = wrapper.find("SearchkitProvider").props().searchkit;
         searchkit.searchFromUrlQuery(query);
 

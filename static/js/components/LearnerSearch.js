@@ -328,13 +328,7 @@ export default class LearnerSearch extends SearchkitComponent {
 
   render () {
     const { currentProgramEnrollment } = this.props;
-    // Remove any filters that are still applied by searchkit, but don't appear in the querystring
-    let hasFiltersOtherThanSelectedProgram = _.get(this, 'searchkit.query.index.filters.length', 0) > 1;
-    if (window.location && R.isEmpty(window.location.search) && hasFiltersOtherThanSelectedProgram) {
-      this.searchkit.getQueryAccessor().keepOnlyQueryState();
-    }
 
-    // Render the searchkit component
     return (
       <Loader loaded={!this.isInitialLoading()} shouldRenderAll={true}>
         <div className="learners-search">
