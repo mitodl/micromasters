@@ -305,7 +305,7 @@ def enroll_user_on_success(order):
     Returns:
          None
     """
-    user_social = order.user.social_auth.get(provider=EdxOrgOAuth2.name)
+    user_social = get_social_auth(order.user)
     enrollments_client = EdxApi(user_social.extra_data, settings.EDXORG_BASE_URL).enrollments
 
     exceptions = []
