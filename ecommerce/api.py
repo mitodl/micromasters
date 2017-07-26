@@ -46,7 +46,7 @@ from financialaid.models import (
     TierProgram
 )
 from micromasters.utils import now_in_utc
-from profiles.api import get_social_username
+from profiles.api import get_social_username, get_social_auth
 
 
 ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'

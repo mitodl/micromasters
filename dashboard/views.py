@@ -23,7 +23,7 @@ from dashboard.permissions import CanReadIfStaffOrSelf
 from dashboard.api import get_user_program_info
 from dashboard.api_edx_cache import CachedEdxDataApi
 from micromasters.exceptions import PossiblyImproperlyConfigured
-from profiles.api import get_social_username
+from profiles.api import get_social_username, get_social_auth
 
 
 log = logging.getLogger(__name__)

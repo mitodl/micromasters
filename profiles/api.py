@@ -16,7 +16,7 @@ def get_social_auth(user):
     Args:
          user (django.contrib.auth.models.User):  A Django user
     """
-    return get_social_auth(order.user)
+    return user.social_auth.filter(provider=EdxOrgOAuth2.name).latest('id')
 
 def get_social_username(user):
     """
@@ -30,7 +30,7 @@ def get_social_username(user):
         return None
 
     try:
-        return get_social_auth(order.user).uid
+        return get_social_auth(user).uid
     except ObjectDoesNotExist:
         return None
     except Exception as ex:  # pylint: disable=broad-except
