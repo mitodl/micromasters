@@ -12,7 +12,6 @@ from requests.exceptions import HTTPError
 
 from backends import utils
 from backends.exceptions import InvalidCredentialStored
-from backends.edxorg import EdxOrgOAuth2
 from courses.models import CourseRun
 from dashboard import models
 from micromasters.utils import now_in_utc

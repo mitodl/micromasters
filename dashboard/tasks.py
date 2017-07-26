@@ -14,7 +14,6 @@ from edx_api.client import EdxApi
 from social_django.models import UserSocialAuth
 
 from backends import utils
-from backends.edxorg import EdxOrgOAuth2
 from dashboard.models import UserCacheRefreshTime
 from dashboard.api_edx_cache import CachedEdxDataApi
 from micromasters.celery import app

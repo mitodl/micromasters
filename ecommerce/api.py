@@ -17,7 +17,6 @@ from django.shortcuts import get_object_or_404
 from edx_api.client import EdxApi
 from rest_framework.exceptions import ValidationError
 
-from backends.edxorg import EdxOrgOAuth2
 from courses.models import (
     CourseRun,
     Program,
