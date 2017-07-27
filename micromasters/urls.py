@@ -3,6 +3,7 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.conf.urls.static import static
 from django.contrib import admin
+from social_django import views as social_views
 from wagtail.wagtailadmin import urls as wagtailadmin_urls
 from wagtail.wagtaildocs import urls as wagtaildocs_urls
 from wagtail.wagtailcore import urls as wagtail_urls
@@ -18,7 +19,7 @@ if settings.DEBUG:
     ]
 
 urlpatterns += [
-    url('', include('social_django.urls', namespace='social')),
+    url(r'', include('backends.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url('', include('courses.urls')),
     url('', include('dashboard.urls')),
