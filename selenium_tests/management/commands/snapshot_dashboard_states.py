@@ -330,6 +330,7 @@ def test_data(django_db_blocker, seeded_database_loader):
     yield dict(user=user)
 
 
+# pylint: disable=too-many-locals
 @pytest.mark.skipif(
     'not RUNNING_DASHBOARD_STATES',
     reason='DashboardStates test suite is only meant to be run via management command',
