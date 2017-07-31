@@ -1,14 +1,11 @@
 """URLs module"""
-from django.conf import settings
 from django.conf.urls import url
 
-from social_core.utils import setting_name
 from social_django import views
+from social_django.urls import extra
 
 from backends.views import complete
 
-
-extra = getattr(settings, setting_name('TRAILING_SLASH'), True) and '/' or ''
 
 app_name = 'social'
 

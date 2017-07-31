@@ -1,3 +1,4 @@
+"""Views related to social auth"""
 from django.contrib.auth import logout
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
