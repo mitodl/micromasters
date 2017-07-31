@@ -12,12 +12,12 @@ log = logging.getLogger(__name__)
 
 def get_social_auth(user):
     """
-    returns social auth object for user
+    Returns social auth object for user
 
     Args:
          user (django.contrib.auth.models.User):  A Django user
     """
-    return user.social_auth.filter(provider=EdxOrgOAuth2.name).latest('id')
+    return user.social_auth.get(provider=EdxOrgOAuth2.name)
 
 
 def get_social_username(user):

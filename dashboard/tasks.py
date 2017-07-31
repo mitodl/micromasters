@@ -97,7 +97,9 @@ def batch_update_user_data_subtasks(students):
             log.exception('edX data refresh task: unable to get user "%s"', user_id)
             continue
 
-        if not UserSocialAuth.objects.filter(user=user).exists():
+        try:
+            UserSocialAuth.objects.get(user=user)
+        except:
             log.exception('user "%s" does not have python social auth object', user.username)
             continue
 

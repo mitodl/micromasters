@@ -3,6 +3,10 @@ Tests for profile functions
 """
 
 from unittest.mock import Mock
+
+from django.core.exceptions import MultipleObjectsReturned
+from testfixtures import LogCapture
+
 from backends.edxorg import EdxOrgOAuth2
 
 from profiles.api import get_social_username, get_social_auth
@@ -53,17 +57,31 @@ class SocialTests(MockedESTestCase):
 
     def test_two_social(self):
         """
-        get_social_username should return latest social user name if
-        there are two social edX accounts for a user
+        get_social_username should return None if there are two social edX accounts for a user
         """
-        new_social_auth = UserSocialAuthFactory.create(user=self.user, uid='other name')
-        assert get_social_username(self.user) == new_social_auth.uid
+        self.user.social_auth.create(
+            provider=EdxOrgOAuth2.name,
+            uid='other name',
+        )
+
+        with LogCapture() as log_capture:
+            assert get_social_username(self.user) is None
+            log_capture.check(
+                (
+                    'profiles.api',
+                    'ERROR',
+                    'Unexpected error retrieving social auth username: get() returned more than '
+                    'one UserSocialAuth -- it returned 2!'
+                )
+            )
 
     def test_get_social_auth(self):
         """
         Tests that get_social_auth returns a user's edX social auth object, and if multiple edX social auth objects
-        exists, it returns the most recently created
+        exists, it raises an exception
         """
         assert get_social_auth(self.user) == self.user.social_auth.get(provider=EdxOrgOAuth2.name)
-        new_social_auth = UserSocialAuthFactory.create(user=self.user, uid='other name')
-        assert get_social_auth(self.user) == new_social_auth
+        UserSocialAuthFactory.create(user=self.user, uid='other name')
+        with self.assertRaises(MultipleObjectsReturned) as ex:
+            get_social_auth(self.user)
+        assert ex.exception.args[0] == 'get() returned more than one UserSocialAuth -- it returned 2!'
