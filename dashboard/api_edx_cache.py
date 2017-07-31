@@ -12,11 +12,10 @@ from requests.exceptions import HTTPError
 
 from backends import utils
 from backends.exceptions import InvalidCredentialStored
-from backends.edxorg import EdxOrgOAuth2
 from courses.models import CourseRun
 from dashboard import models
 from micromasters.utils import now_in_utc
-from profiles.api import get_social_username
+from profiles.api import get_social_username, get_social_auth
 from search import tasks
 
 log = logging.getLogger(__name__)
@@ -342,7 +341,7 @@ class CachedEdxDataApi:
             None
         """
         # get the credentials for the current user for edX
-        user_social = user.social_auth.get(provider=EdxOrgOAuth2.name)
+        user_social = get_social_auth(user)
         utils.refresh_user_token(user_social)
         # create an instance of the client to query edX
         edx_client = EdxApi(user_social.extra_data, settings.EDXORG_BASE_URL)

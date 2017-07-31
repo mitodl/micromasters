@@ -1,6 +1,14 @@
 Release Notes
 =============
 
+Version 0.70.0
+--------------
+
+- Added --learner to take snapshots of learner info page (#3436)
+- Upgraded requirement for server status
+- Fixed issue when a user have more the one social auth objects (#3429)
+- Put expiration date far into future (#3434)
+
 Version 0.69.1
 --------------
 

@@ -78,6 +78,24 @@ class TasksTest(MockedESTestCase):
 
     @mock.patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cache_if_expired', new_callable=mock.MagicMock)
     @mock.patch('backends.utils.refresh_user_token', autospec=True)
+    def test_student_enrollments_called_task_when_multiple_social(self, mocked_refresh, mocked_refresh_cache):
+        """
+        Assert get_student_enrollments is actually called in happy path when user
+        has more the one social auth objects
+        """
+        self.user1.social_auth.create(
+            provider=EdxOrgOAuth2.name,
+            uid="{}_edx1".format(self.user1.username),
+            extra_data=self.social_infos
+        )
+        batch_update_user_data_subtasks.s([self.students[0]]).apply(args=()).get()
+        assert mocked_refresh.call_count == 1
+        for user, cache_type in product([self.user1], CachedEdxDataApi.SUPPORTED_CACHES):
+            mocked_refresh_cache.assert_any_call(user, mock.ANY, cache_type)
+            mocked_refresh.assert_any_call(user.social_auth.filter(provider=EdxOrgOAuth2.name).latest('id'))
+
+    @mock.patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cache_if_expired', new_callable=mock.MagicMock)
+    @mock.patch('backends.utils.refresh_user_token', autospec=True)
     def test_subtask_user_does_not_exist(self, mocked_refresh, mocked_refresh_cache):
         """
         Test if the user has been deleted between the select and the run of the task,

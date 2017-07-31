@@ -49,7 +49,7 @@ def create_user_for_login(is_staff=True, username=None):
             profile_params['user__username'] = username
         user = ProfileFactory.create(**profile_params).user
 
-    later = now_in_utc() + timedelta(minutes=5)
+    later = now_in_utc() + timedelta(weeks=5000)
     # Create a fake edX social auth to make this user look like they logged in via edX
     user.social_auth.create(
         provider=EdxOrgOAuth2.name,

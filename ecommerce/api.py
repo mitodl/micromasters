@@ -17,7 +17,6 @@ from django.shortcuts import get_object_or_404
 from edx_api.client import EdxApi
 from rest_framework.exceptions import ValidationError
 
-from backends.edxorg import EdxOrgOAuth2
 from courses.models import (
     CourseRun,
     Program,
@@ -46,7 +45,7 @@ from financialaid.models import (
     TierProgram
 )
 from micromasters.utils import now_in_utc
-from profiles.api import get_social_username
+from profiles.api import get_social_username, get_social_auth
 
 
 ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
@@ -305,7 +304,7 @@ def enroll_user_on_success(order):
     Returns:
          None
     """
-    user_social = order.user.social_auth.get(provider=EdxOrgOAuth2.name)
+    user_social = get_social_auth(order.user)
     enrollments_client = EdxApi(user_social.extra_data, settings.EDXORG_BASE_URL).enrollments
 
     exceptions = []

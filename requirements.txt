@@ -4,17 +4,17 @@
 #
 #    pip-compile --output-file requirements.txt requirements.in
 #
-amqp==2.1.4               # via kombu
+amqp==2.2.1               # via kombu
 asn1crypto==0.22.0        # via cryptography
 bcrypt==3.1.3             # via paramiko
 beautifulsoup4==4.6.0     # via wagtail
-billiard==3.5.0.2         # via celery
+billiard==3.5.0.3         # via celery
 boto==2.39.0
 celery==4.0.2
 cffi==1.10.0              # via bcrypt, cryptography, pynacl
 contextlib2==0.5.5        # via raven
-cryptography==1.9         # via paramiko
-decorator==4.0.11         # via ipython, traitlets
+cryptography==2.0.2       # via paramiko
+decorator==4.1.2          # via ipython, traitlets
 defusedxml==0.5.0         # via python3-openid, social-auth-core
 dj-database-url==0.3.0
 dj-static==0.0.6
@@ -22,19 +22,19 @@ django-discover-runner==1.0  # via django-role-permissions
 django-modelcluster==3.1  # via wagtail
 django-redis==4.7.0
 django-role-permissions==1.2
-django-server-status==0.3.2
+django-server-status==0.4.0
 django-storages-redux==1.3.2
 django-taggit==0.22.1     # via wagtail
-django-treebeard==4.1.1   # via wagtail
+django-treebeard==4.1.2   # via wagtail
 django-webpack-loader==0.4.1
-django==1.10.5
+django==1.10.5            # via django-role-permissions, django-server-status, django-treebeard, jsonfield, wagtail
 djangorestframework==3.5.2
 edx-api-client==0.4.0
 edx-opaque-keys==0.4
 elasticsearch-dsl==2.1.0
 elasticsearch==2.3.0
 factory-boy==2.8.1
-faker==0.7.17
+faker==0.7.18
 gnupg==2.2.0
 html5lib==0.999999999
 idna==2.5                 # via cryptography
@@ -42,24 +42,24 @@ ipython-genutils==0.2.0   # via traitlets
 ipython==6.1.0
 jedi==0.10.2              # via ipython
 jsonfield==1.0.3
-kombu==4.0.2              # via celery, django-server-status
-newrelic==2.86.3.70
+kombu==4.1.0              # via celery, django-server-status
+newrelic==2.88.1.73
 oauthlib==2.0.2           # via requests-oauthlib, social-auth-core
 paramiko==2.2.1           # via pysftp
-pbr==3.0.1                # via stevedore
+pbr==3.1.1                # via stevedore
 pexpect==4.2.1            # via ipython
 phonenumbers==8.3.2
 pickleshare==0.7.4        # via ipython
-pillow==3.4.2
-prompt-toolkit==1.0.14    # via ipython
+pillow==3.4.2             # via robohash, wagtail
+prompt-toolkit==1.0.15    # via ipython
 psutil==5.2.2             # via gnupg
 psycopg2==2.6
-ptyprocess==0.5.1         # via pexpect
-pyasn1==0.2.3             # via paramiko
+ptyprocess==0.5.2         # via pexpect
+pyasn1==0.3.1             # via paramiko
 pycountry==16.11.27.1
-pycparser==2.17           # via cffi
+pycparser==2.18           # via cffi
 pygments==2.2.0           # via ipython
-pyjwt==1.5.0              # via social-auth-core
+pyjwt==1.5.2              # via social-auth-core
 pymongo==3.4.0            # via edx-opaque-keys
 pynacl==1.1.2             # via paramiko
 pysftp==0.2.9
@@ -76,13 +76,13 @@ six==1.10.0               # via bcrypt, cryptography, django-role-permissions, d
 social-auth-app-django==1.1.0
 social-auth-core==1.4.0   # via social-auth-app-django
 static3==0.5.1
-stevedore==1.23.0         # via edx-opaque-keys
+stevedore==1.25.0         # via edx-opaque-keys
 tornado==4.5.1            # via robohash
 traitlets==4.3.2          # via ipython
-unidecode==0.4.20         # via wagtail
-urllib3==1.21.1           # via elasticsearch
+unidecode==0.4.21         # via wagtail
+urllib3==1.22             # via elasticsearch
 uwsgi==2.0.15
-vine==1.1.3               # via amqp
+vine==1.1.4               # via amqp
 wagtail==1.10.1
 wcwidth==0.1.7            # via prompt-toolkit
 webencodings==0.5.1       # via html5lib

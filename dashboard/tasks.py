@@ -14,7 +14,6 @@ from edx_api.client import EdxApi
 from social_django.models import UserSocialAuth
 
 from backends import utils
-from backends.edxorg import EdxOrgOAuth2
 from dashboard.models import UserCacheRefreshTime
 from dashboard.api_edx_cache import CachedEdxDataApi
 from micromasters.celery import app
@@ -22,6 +21,7 @@ from micromasters.utils import (
     chunks,
     now_in_utc,
 )
+from profiles.api import get_social_auth
 
 
 log = logging.getLogger(__name__)
@@ -97,15 +97,13 @@ def batch_update_user_data_subtasks(students):
             log.exception('edX data refresh task: unable to get user "%s"', user_id)
             continue
 
-        try:
-            UserSocialAuth.objects.get(user=user)
-        except:
+        if not UserSocialAuth.objects.filter(user=user).exists():
             log.exception('user "%s" does not have python social auth object', user.username)
             continue
 
         # get the credentials for the current user for edX
         try:
-            user_social = user.social_auth.get(provider=EdxOrgOAuth2.name)
+            user_social = get_social_auth(user)
         except:
             log.exception('user "%s" does not have edX credentials', user.username)
             continue

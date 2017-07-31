@@ -23,7 +23,7 @@ from dashboard.permissions import CanReadIfStaffOrSelf
 from dashboard.api import get_user_program_info
 from dashboard.api_edx_cache import CachedEdxDataApi
 from micromasters.exceptions import PossiblyImproperlyConfigured
-from profiles.api import get_social_username
+from profiles.api import get_social_username, get_social_auth
 
 
 log = logging.getLogger(__name__)
@@ -53,7 +53,7 @@ class UserDashboard(APIView):
         # get the credentials for the current user for edX
         edx_client = None
         if user == request.user:
-            user_social = request.user.social_auth.get(provider=EdxOrgOAuth2.name)
+            user_social = get_social_auth(request.user)
             try:
                 utils.refresh_user_token(user_social)
             except utils.InvalidCredentialStored as exc:
@@ -98,7 +98,7 @@ class UserCourseEnrollment(APIView):
         if course_id is None:
             raise ValidationError('course id missing in the request')
         # get the credentials for the current user for edX
-        user_social = request.user.social_auth.get(provider=EdxOrgOAuth2.name)
+        user_social = get_social_auth(request.user)
         try:
             utils.refresh_user_token(user_social)
         except utils.InvalidCredentialStored as exc:

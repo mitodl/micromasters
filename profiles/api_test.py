@@ -6,7 +6,6 @@ from unittest.mock import Mock
 
 from django.db.models.signals import post_save
 from factory.django import mute_signals
-from testfixtures import LogCapture
 
 from backends.edxorg import EdxOrgOAuth2
 from profiles.api import get_social_username
@@ -64,21 +63,12 @@ class SocialTests(MockedESTestCase):
 
     def test_two_social(self):
         """
-        get_social_username should return None if there are two social edX accounts for a user
+        get_social_username should return latest social user name if
+        there are two social edX accounts for a user
         """
-
+        social_username = 'other name'
         self.user.social_auth.create(
             provider=EdxOrgOAuth2.name,
-            uid='other name',
+            uid=social_username,
         )
-
-        with LogCapture() as log_capture:
-            assert get_social_username(self.user) is None
-            log_capture.check(
-                (
-                    'profiles.api',
-                    'ERROR',
-                    'Unexpected error retrieving social auth username: get() returned more than '
-                    'one UserSocialAuth -- it returned 2!'
-                )
-            )
+        assert get_social_username(self.user) == social_username

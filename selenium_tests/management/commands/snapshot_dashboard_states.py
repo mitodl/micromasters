@@ -32,6 +32,7 @@ from financialaid.factories import FinancialAidFactory
 from financialaid.models import FinancialAidStatus
 from grades.factories import ProctoredExamGradeFactory
 from profiles.api import get_social_username
+from roles.models import Role, Staff
 from seed_data.management.commands.alter_data import EXAMPLE_COMMANDS
 from selenium_tests.data_util import create_user_for_login
 from selenium_tests.util import (
@@ -329,6 +330,7 @@ def test_data(django_db_blocker, seeded_database_loader):
     yield dict(user=user)
 
 
+# pylint: disable=too-many-locals
 @pytest.mark.skipif(
     'not RUNNING_DASHBOARD_STATES',
     reason='DashboardStates test suite is only meant to be run via management command',
@@ -336,6 +338,7 @@ def test_data(django_db_blocker, seeded_database_loader):
 def test_dashboard_states(browser, seeded_database_loader, django_db_blocker, test_data):
     """Iterate through all possible dashboard states and save screenshots/API results of each one"""
     output_directory = DASHBOARD_STATES_OPTIONS.get('output_directory')
+    use_learner_page = DASHBOARD_STATES_OPTIONS.get('learner')
     os.makedirs(output_directory, exist_ok=True)
     use_mobile = DASHBOARD_STATES_OPTIONS.get('mobile')
     if use_mobile:
@@ -352,19 +355,33 @@ def test_dashboard_states(browser, seeded_database_loader, django_db_blocker, te
 
     LoginPage(browser).log_in_via_admin(dashboard_states.user, DEFAULT_PASSWORD)
     for num, (run_scenario, name) in dashboard_state_iter:
+        skip_screenshot = False
         with django_db_blocker.unblock():
             dashboard_states.user.refresh_from_db()
+            if use_learner_page:
+                for program in Program.objects.all():
+                    Role.objects.create(role=Staff.ROLE_ID, user=dashboard_states.user, program=program)
+            filename = make_filename(num, name, output_directory=output_directory, use_mobile=use_mobile)
             new_url = run_scenario()
             if new_url is None:
-                new_url = '/dashboard'
-            browser.get(new_url)
-            browser.wait_until_loaded(By.CLASS_NAME, 'course-list')
-            filename = make_filename(num, name, output_directory=output_directory, use_mobile=use_mobile)
-            browser.take_screenshot(filename=filename)
-            browser.store_api_results(
-                get_social_username(dashboard_states.user),
-                filename=filename
-            )
+                if use_learner_page:
+                    new_url = '/learner'
+                else:
+                    new_url = '/dashboard'
+            elif use_learner_page:
+                # the new_url is only for the dashboard page, skip
+                skip_screenshot = True
+            if not skip_screenshot:
+                browser.get(new_url)
+                browser.store_api_results(
+                    get_social_username(dashboard_states.user),
+                    filename=filename
+                )
+                if use_learner_page:
+                    browser.wait_until_loaded(By.CLASS_NAME, 'user-page')
+                else:
+                    browser.wait_until_loaded(By.CLASS_NAME, 'course-list')
+                browser.take_screenshot(filename=filename)
         with django_db_blocker.unblock():
             terminate_db_connections()
         seeded_database_loader.load_backup()
@@ -402,6 +419,13 @@ class Command(BaseCommand):
             dest="mobile",
             action='store_true',
             help="Take screenshots with a smaller width as if viewed with a mobile device",
+            required=False,
+        )
+        parser.add_argument(
+            "--learner",
+            dest="learner",
+            action="store_true",
+            help="Take screenshots of /learner instead",
             required=False,
         )
         parser.add_argument(
