@@ -355,6 +355,7 @@ def test_dashboard_states(browser, seeded_database_loader, django_db_blocker, te
 
     LoginPage(browser).log_in_via_admin(dashboard_states.user, DEFAULT_PASSWORD)
     for num, (run_scenario, name) in dashboard_state_iter:
+        skip_screenshot = False
         with django_db_blocker.unblock():
             dashboard_states.user.refresh_from_db()
             if use_learner_page:
@@ -369,17 +370,18 @@ def test_dashboard_states(browser, seeded_database_loader, django_db_blocker, te
                     new_url = '/dashboard'
             elif use_learner_page:
                 # the new_url is only for the dashboard page, skip
-                continue
-            browser.get(new_url)
-            browser.store_api_results(
-                get_social_username(dashboard_states.user),
-                filename=filename
-            )
-            if use_learner_page:
-                browser.wait_until_loaded(By.CLASS_NAME, 'user-page')
-            else:
-                browser.wait_until_loaded(By.CLASS_NAME, 'course-list')
-            browser.take_screenshot(filename=filename)
+                skip_screenshot = True
+            if not skip_screenshot:
+                browser.get(new_url)
+                browser.store_api_results(
+                    get_social_username(dashboard_states.user),
+                    filename=filename
+                )
+                if use_learner_page:
+                    browser.wait_until_loaded(By.CLASS_NAME, 'user-page')
+                else:
+                    browser.wait_until_loaded(By.CLASS_NAME, 'course-list')
+                browser.take_screenshot(filename=filename)
         with django_db_blocker.unblock():
             terminate_db_connections()
         seeded_database_loader.load_backup()
