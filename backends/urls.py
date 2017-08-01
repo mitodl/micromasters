@@ -2,12 +2,12 @@
 from django.conf.urls import url
 
 from social_django import views
-from social_django.urls import extra
+from social_django.urls import (
+    app_name,  # pylint: disable=unused-import
+    extra,
+)
 
 from backends.views import complete
-
-
-app_name = 'social'
 
 urlpatterns = [
     # authentication / association
