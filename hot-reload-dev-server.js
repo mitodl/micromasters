@@ -15,6 +15,11 @@ const app = express();
 
 const compiler = webpack(config);
 
+app.use(function(req, res, next) {
+ res.header('Access-Control-Allow-Origin', '*');
+ next();
+});
+
 app.use(devMiddleware(compiler, {
   publicPath: "/"
 }));
