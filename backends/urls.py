@@ -2,8 +2,8 @@
 from django.conf.urls import url
 
 from social_django import views
-from social_django.urls import (
-    app_name,  # pylint: disable=unused-import
+from social_django.urls import (  # pylint: disable=unused-import
+    app_name,
     extra,
 )
 
