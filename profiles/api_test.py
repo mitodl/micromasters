@@ -59,10 +59,7 @@ class SocialTests(MockedESTestCase):
         """
         get_social_username should return None if there are two social edX accounts for a user
         """
-        self.user.social_auth.create(
-            provider=EdxOrgOAuth2.name,
-            uid='other name',
-        )
+        UserSocialAuthFactory.create(user=self.user, uid='other name')
 
         with LogCapture() as log_capture:
             assert get_social_username(self.user) is None
@@ -82,6 +79,5 @@ class SocialTests(MockedESTestCase):
         """
         assert get_social_auth(self.user) == self.user.social_auth.get(provider=EdxOrgOAuth2.name)
         UserSocialAuthFactory.create(user=self.user, uid='other name')
-        with self.assertRaises(MultipleObjectsReturned) as ex:
+        with self.assertRaises(MultipleObjectsReturned):
             get_social_auth(self.user)
-        assert ex.exception.args[0] == 'get() returned more than one UserSocialAuth -- it returned 2!'
