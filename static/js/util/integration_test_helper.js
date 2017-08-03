@@ -30,13 +30,9 @@ import rootReducer from '../reducers';
 import DashboardRouter from '../DashboardRouter';
 import { testRoutes } from './test_utils';
 import { configureMainTestStore } from '../store/configureStore';
-import type { Action } from '../flow/reduxTypes';
-import type { TestStore } from '../flow/reduxTypes';
 import type { Sandbox } from '../flow/sinonTypes';
 
 export default class IntegrationTestHelper {
-  listenForActions: (a: Array<string>, f: Function) => Promise<*>;
-  dispatchThen: (a: Action) => Promise<*>;
   sandbox: Sandbox;
   store: TestStore;
   browserHistory: History;

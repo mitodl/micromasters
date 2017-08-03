@@ -77,10 +77,6 @@ export const configureMainTestStore = (reducer: Reducer<*,*>) => {
   );
 };
 
-export const signupDialogStore = (test: boolean = false) => {
-  if (test) {
-    return configureTestStore({ signupDialog: INITIAL_SIGNUP_STATE });
-  } else {
-    return configureStore({ signupDialog: INITIAL_SIGNUP_STATE });
-  }
+export const signupDialogStore = () => {
+  return configureStore({ signupDialog: INITIAL_SIGNUP_STATE });
 };
