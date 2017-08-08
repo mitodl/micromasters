@@ -439,11 +439,8 @@ def is_exam_schedulable(user, course):
 
 def get_future_exam_runs(user, course):
     exam_runs = ExamRun.get_schedulable_in_future(course)
-    schedulable_exam_runs = []
-    for exam_run in exam_runs:
-        if ExamAuthorization.objects.filter(user=user, exam_run__in=exam_runs).exists():
-            schedulable_exam_runs.append(exam_run.date_first_schedulable)
-    return schedulable_exam_runs
+    exam_authizations_queryset = ExamAuthorization.objects.filter(user=user, exam_run__in=exam_runs)
+    return [exam_run.date_first_schedulable for exam_run in exam_runs if exam_authizations_queryset.exists()]
 
 
 def has_to_pay_for_course(mmtrack, course):
