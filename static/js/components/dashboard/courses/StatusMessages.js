@@ -146,7 +146,11 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
               messageBox['message'] = `You did not pass the exam, but you can try again.
                Click above to reschedule an exam with Pearson.`;
             }
-          } else if (course.exams_schedulable_in_future) {
+          } else if (R.isEmpty(course.exams_schedulable_in_future)) {
+            // no info about future exam runs
+            messageBox['message'] = `You did not pass the exam. There are currently no exams
+             available for scheduling. Please check back later.`;
+          } else {
             // can not schedule now, but some time in the future
             if (course.has_to_pay) {
               messageBox = {
@@ -159,9 +163,6 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
               messageBox['message'] = `You can sign up to re-take the exam starting
                on ${formatDate(course.exams_schedulable_in_future[0])}.`;
             }
-          } else {
-            messageBox['message'] = `You did not pass the exam. There are currently no exams
-             available for scheduling. Please check back later.`;
           }
         } else { // no past exam attempts
           messageBox['message'] = "The edX course is complete, but you need to pass the final exam.";
