@@ -438,11 +438,17 @@ def is_exam_schedulable(user, course):
 
 
 def get_future_exam_runs(user, course):
+    """
+    Return a list of first dates when exams can be scheduled
+    """
     exam_runs = ExamRun.get_schedulable_in_future(course)
     exam_authizations_queryset = ExamAuthorization.objects.filter(user=user, exam_run__in=exam_runs)
     return [exam_run.date_first_schedulable for exam_run in exam_runs if exam_authizations_queryset.exists()]
 
 
 def has_to_pay_for_course(mmtrack, course):
+    """
+    Determine if payment is required to for another exam attempt
+    """
     attempt_limit = mmtrack.get_payments_count_for_course(course) * ATTEMPTS_PER_PAID_RUN
     return ExamAuthorization.taken_exams().count() >= attempt_limit
