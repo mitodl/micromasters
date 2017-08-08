@@ -57,6 +57,11 @@ export const hasPassingExamGrade = R.compose(
   R.propOr([], 'proctorate_exams_grades')
 );
 
+export const hasFailingExamGrade = R.compose(
+  R.any(R.propEq('passed', false)),
+  R.propOr([], 'proctorate_exams_grades')
+);
+
 export const hasPassedCourseRun = R.compose(
   R.any(R.propEq('status', STATUS_PASSED)),
   R.propOr([], 'runs')

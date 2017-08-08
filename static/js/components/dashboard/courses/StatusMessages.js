@@ -25,7 +25,7 @@ import {
   isEnrollableRun,
   userIsEnrolled,
 } from './util';
-import { hasPassingExamGrade, hasPassedCourseRun } from '../../../lib/grades';
+import { hasPassingExamGrade, hasFailingExamGrade, hasPassedCourseRun } from '../../../lib/grades';
 import { COURSE_CARD_FORMAT } from '../../../constants';
 
 type Message = {
@@ -80,6 +80,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   let exams = course.has_exam;
   let paid = firstRun.has_paid;
   let passedExam = hasPassingExamGrade(course);
+  let failedExam = hasFailingExamGrade(course);
   let paymentDueDate = moment(firstRun.course_upgrade_deadline);
 
   if (firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
@@ -133,8 +134,38 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     if (hasPaidForAnyCourseRun(course)) {
       // exam is required, user has not yet passed it
       if (exams && ! passedExam) {
+        let messageBox = {};
+        if (failedExam) {
+          messageBox['message'] = "You did not pass the exam, but you can try again. ";
+          if (course.can_schedule_exam) { // if can schedule exam now
+            if(course.has_to_pay) {
+              messageBox = {
+                message: "You did not pass the exam. If you want to re-take the exam, you need to pay again.",
+                action: courseAction(firstRun, COURSE_ACTION_PAY)
+              };
+            } else {
+              messageBox['message'] = R.concat(messageBox['message'],"Click above to reschedule an exam with Pearson.");
+            }
+          } else if (course.exams_schedulable_in_future) {
+              // can not schedule now, but some time in the future
+            if(course.has_to_pay) {
+              messageBox = {
+                message: `You did not pass the exam. If you want to re-take the exam, you need
+                 to pay again. You can sign up to re-take the exam starting
+                  on ${formatDate(course.exams_schedulable_in_future[0])}`,
+                action: courseAction(firstRun, COURSE_ACTION_PAY)
+              };
+            } else {
+              messageBox['message'] = `You can sign up to re-take the exam starting on ${formatDate(course.exams_schedulable_in_future[0])}.`;
+            }
+          } else {
+            messageBox['message'] =  "You did not pass the exam. There are currently no exams available for scheduling. Please check back later.";
+          }
+        } else { // no past exam attempts
+          messageBox['message'] = "The edX course is complete, but you need to pass the final exam.";
+        }
         messages.push(S.maybe(
-          { message: "The edX course is complete, but you need to pass the final exam." },
+          messageBox,
           () => ({
             message: <span>
               The edX course is complete, but you need to pass the final exam.

@@ -17,6 +17,7 @@ from grades import api
 from grades.models import FinalGrade
 from grades.serializers import ProctoredExamGradeSerializer
 from exams.models import ExamAuthorization, ExamRun
+from exams.api import ATTEMPTS_PER_PAID_RUN
 
 log = logging.getLogger(__name__)
 
@@ -208,6 +209,8 @@ def get_info_for_course(course, mmtrack):
         "prerequisites": course.prerequisites,
         "has_contact_email": bool(course.contact_email),
         "can_schedule_exam": is_exam_schedulable(mmtrack.user, course),
+        "exams_schedulable_in_future": get_future_exam_runs(mmtrack.user, course),
+        "has_to_pay": has_to_pay_for_course(mmtrack, course),
         "runs": [],
         "proctorate_exams_grades": ProctoredExamGradeSerializer(
             mmtrack.get_course_proctorate_exam_results(course), many=True
@@ -432,3 +435,17 @@ def is_exam_schedulable(user, course):
     """
     schedulable_exam_runs = ExamRun.get_currently_schedulable(course)
     return ExamAuthorization.objects.filter(user=user, exam_run__in=schedulable_exam_runs).exists()
+
+
+def get_future_exam_runs(user, course):
+    exam_runs = ExamRun.get_schedulable_in_future(course)
+    schedulable_exam_runs = []
+    for exam_run in exam_runs:
+        if ExamAuthorization.objects.filter(user=user, exam_run__in=exam_runs).exists():
+            schedulable_exam_runs.append(exam_run.date_first_schedulable)
+    return schedulable_exam_runs
+
+
+def has_to_pay_for_course(mmtrack, course):
+    attempt_limit = mmtrack.get_payments_count_for_course(course) * ATTEMPTS_PER_PAID_RUN
+    return ExamAuthorization.taken_exams().count() >= attempt_limit

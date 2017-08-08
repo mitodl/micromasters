@@ -41,6 +41,23 @@ class ExamRun(TimestampedModel):
             date_last_schedulable__gte=now,
         )
 
+    @classmethod
+    def get_schedulable_in_future(cls, course):
+        """
+        Get a QuerySet with currently schedulable exam runs
+
+        Args:
+            course (courses.models.Course): the course to find exam runs for
+
+        Returns:
+            django.db.models.query.QuerySet: A Queryset filtered to currently schedulable exam runs
+        """
+        now = now_in_utc()
+        return cls.objects.filter(
+            course=course,
+            date_first_schedulable__gte=now
+        )
+
     def __str__(self):
         return 'Exam run for course "{}" with exam series code "{}"'.format(
             self.course.title,

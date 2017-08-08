@@ -55,6 +55,8 @@ export type Course = {
   id:                       number,
   position_in_program:      number,
   can_schedule_exam:        boolean,
+  exams_schedulable_in_future: Array<string>,
+  has_to_pay:               boolean,
   proctorate_exams_grades:  Array<ProctoredExamResult>,
   has_exam:                 boolean,
 };

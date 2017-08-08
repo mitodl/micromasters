@@ -219,6 +219,16 @@ class MMTrack:
             order__status=Order.FULFILLED, order__user=self.user, course_key=course_key
         ).values('order_id').distinct().count()
 
+    def get_payments_count_for_course(self, course):
+        """
+        Get the total count of payments for given course
+        Args:
+           course (courses.models.Course): a course
+        Returns:
+            int: count of paid course runs
+        """
+        return sum([self.get_course_paid_count(course_run.edx_course_key) for course_run in course.courserun_set.all()])
+
     def has_paid_for_any_in_program(self):
         """
         Returns true if a user has paid for any course run in the program
