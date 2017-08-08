@@ -208,7 +208,7 @@ class MMTrack:
 
     def get_course_paid_count(self, course_key):
         """
-        Gets the count of paid course runs for the course
+        Gets the count of payments for given course run
 
         Args:
             edx_course_key (str): an edX course run key
