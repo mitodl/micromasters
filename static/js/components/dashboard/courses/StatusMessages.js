@@ -136,19 +136,19 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
       if (exams && ! passedExam) {
         let messageBox = {};
         if (failedExam) {
-          messageBox['message'] = "You did not pass the exam, but you can try again. ";
           if (course.can_schedule_exam) { // if can schedule exam now
-            if(course.has_to_pay) {
+            if (course.has_to_pay) {
               messageBox = {
                 message: "You did not pass the exam. If you want to re-take the exam, you need to pay again.",
                 action: courseAction(firstRun, COURSE_ACTION_PAY)
               };
             } else {
-              messageBox['message'] = R.concat(messageBox['message'],"Click above to reschedule an exam with Pearson.");
+              messageBox['message'] = `You did not pass the exam, but you can try again.
+               Click above to reschedule an exam with Pearson.`;
             }
           } else if (course.exams_schedulable_in_future) {
-              // can not schedule now, but some time in the future
-            if(course.has_to_pay) {
+            // can not schedule now, but some time in the future
+            if (course.has_to_pay) {
               messageBox = {
                 message: `You did not pass the exam. If you want to re-take the exam, you need
                  to pay again. You can sign up to re-take the exam starting
@@ -156,10 +156,12 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
                 action: courseAction(firstRun, COURSE_ACTION_PAY)
               };
             } else {
-              messageBox['message'] = `You can sign up to re-take the exam starting on ${formatDate(course.exams_schedulable_in_future[0])}.`;
+              messageBox['message'] = `You can sign up to re-take the exam starting
+               on ${formatDate(course.exams_schedulable_in_future[0])}.`;
             }
           } else {
-            messageBox['message'] =  "You did not pass the exam. There are currently no exams available for scheduling. Please check back later.";
+            messageBox['message'] = `You did not pass the exam. There are currently no exams
+             available for scheduling. Please check back later.`;
           }
         } else { // no past exam attempts
           messageBox['message'] = "The edX course is complete, but you need to pass the final exam.";
