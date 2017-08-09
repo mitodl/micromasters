@@ -223,11 +223,14 @@ class MMTrack:
         """
         Get the total count of payments for given course
         Args:
-           course (courses.models.Course): a course
+            course (courses.models.Course): a course
         Returns:
             int: count of paid course runs
         """
-        return sum([self.get_course_paid_count(course_run.edx_course_key) for course_run in course.courserun_set.all()])
+        return sum([
+            self.get_course_paid_count(course_run.edx_course_key)
+            for course_run in course.courserun_set.only('edx_course_key')
+        ])
 
     def has_paid_for_any_in_program(self):
         """
