@@ -17,7 +17,9 @@ from grades import api
 from grades.models import FinalGrade
 from grades.serializers import ProctoredExamGradeSerializer
 from exams.models import ExamAuthorization, ExamRun
-from exams.api import ATTEMPTS_PER_PAID_RUN
+
+# maximum number of exam attempts per payment
+ATTEMPTS_PER_PAID_RUN = 2
 
 log = logging.getLogger(__name__)
 

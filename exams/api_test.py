@@ -18,6 +18,7 @@ from dashboard.factories import (
     ProgramEnrollmentFactory,
 )
 from dashboard.utils import get_mmtrack
+from dashboard.api import ATTEMPTS_PER_PAID_RUN
 from ecommerce.factories import LineFactory
 from exams.api import (
     authorize_for_exam_run,
@@ -27,7 +28,6 @@ from exams.api import (
     sso_digest,
     MESSAGE_NOT_ELIGIBLE_TEMPLATE,
     MESSAGE_NOT_PASSED_OR_EXIST_TEMPLATE,
-    ATTEMPTS_PER_PAID_RUN,
 )
 from exams.exceptions import ExamAuthorizationException
 from exams.factories import (

@@ -35,7 +35,6 @@ MESSAGE_NO_ATTEMPTS_TEMPLATE = (
     'course id is "{course_id}". No attempts remaining.'
 )
 
-ATTEMPTS_PER_PAID_RUN = 2
 
 log = logging.getLogger(__name__)
 
