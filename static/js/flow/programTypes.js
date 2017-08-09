@@ -49,16 +49,16 @@ export type ProctoredExamResult = {
 };
 
 export type Course = {
-  runs:                     Array<CourseRun>,
-  title:                    string,
-  has_contact_email:        boolean,
-  id:                       number,
-  position_in_program:      number,
-  can_schedule_exam:        boolean,
-  exams_schedulable_in_future: Array<string>,
-  has_to_pay:               boolean,
-  proctorate_exams_grades:  Array<ProctoredExamResult>,
-  has_exam:                 boolean,
+  runs:                         Array<CourseRun>,
+  title:                        string,
+  has_contact_email:            boolean,
+  id:                           number,
+  position_in_program:          number,
+  can_schedule_exam:            boolean,
+  exams_schedulable_in_future:  Array<string>,
+  has_to_pay:                   boolean,
+  proctorate_exams_grades:      Array<ProctoredExamResult>,
+  has_exam:                     boolean,
 };
 
 export type ProgramPageCourse = {
