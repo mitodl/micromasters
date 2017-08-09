@@ -13,6 +13,7 @@ from dashboard.models import (
     ProgramEnrollment,
 )
 from dashboard.utils import get_mmtrack
+from dashboard.api import has_to_pay_for_exam
 from exams.exceptions import ExamAuthorizationException
 from exams.models import (
     ExamAuthorization,
@@ -101,9 +102,8 @@ def authorize_for_exam_run(mmtrack, course_run, exam_run):
         )
         raise ExamAuthorizationException(errors_message)
 
-    # if they have run out of attempt, they don't get authorizaed
-    attempt_limit = mmtrack.get_course_paid_count(course_run.edx_course_key) * ATTEMPTS_PER_PAID_RUN
-    if ExamAuthorization.taken_exams().count() >= attempt_limit:
+    # if they have run out of attempts, they don't get authorized
+    if has_to_pay_for_exam(mmtrack, course_run.course):
         errors_message = MESSAGE_NO_ATTEMPTS_TEMPLATE.format(
             user=mmtrack.user.username,
             course_id=course_run.edx_course_key
