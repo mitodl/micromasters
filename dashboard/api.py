@@ -209,8 +209,8 @@ def get_info_for_course(course, mmtrack):
         "prerequisites": course.prerequisites,
         "has_contact_email": bool(course.contact_email),
         "can_schedule_exam": is_exam_schedulable(mmtrack.user, course),
-        "exams_schedulable_in_future": get_future_exam_runs(mmtrack.user, course),
-        "has_to_pay": has_to_pay_for_course(mmtrack, course),
+        "exams_schedulable_in_future": get_future_exam_runs(course),
+        "has_to_pay": has_to_pay_for_exam(mmtrack, course),
         "runs": [],
         "proctorate_exams_grades": ProctoredExamGradeSerializer(
             mmtrack.get_course_proctorate_exam_results(course), many=True
@@ -437,18 +437,29 @@ def is_exam_schedulable(user, course):
     return ExamAuthorization.objects.filter(user=user, exam_run__in=schedulable_exam_runs).exists()
 
 
-def get_future_exam_runs(user, course):
+def get_future_exam_runs(course):
     """
     Return a list of first dates when exams can be scheduled
+
+    Args:
+        course (courses.models.Course): A course
+
+    Returns:
+        list of strings: a list of dates when future exams become schedulable
     """
-    exam_runs = ExamRun.get_schedulable_in_future(course)
-    exam_authizations_queryset = ExamAuthorization.objects.filter(user=user, exam_run__in=exam_runs)
-    return [exam_run.date_first_schedulable for exam_run in exam_runs if exam_authizations_queryset.exists()]
+    exam_runs = ExamRun.get_schedulable_in_future(course).order_by('date_first_schedulable')
+    return [exam_run.date_first_schedulable for exam_run in exam_runs]
 
 
-def has_to_pay_for_course(mmtrack, course):
+def has_to_pay_for_exam(mmtrack, course):
     """
-    Determine if payment is required to for another exam attempt
+    Determine if payment is required for another exam attempt
+
+    Args:
+        mmtrack (dashboard.utils.MMTrack): a instance of all user information about a program
+        course (courses.models.Course): A course
+    Returns:
+        bool: if the user has to pay for another exam attempt
     """
     attempt_limit = mmtrack.get_payments_count_for_course(course) * ATTEMPTS_PER_PAID_RUN
-    return ExamAuthorization.taken_exams().count() >= attempt_limit
+    return ExamAuthorization.objects.filter(user=mmtrack.user, course=course).count() >= attempt_limit
