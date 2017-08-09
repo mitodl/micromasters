@@ -753,7 +753,7 @@ class CourseRunTest(CourseTests):
 
 @ddt.ddt
 @patch('dashboard.api.get_future_exam_runs', return_value=[])
-@patch('dashboard.api.has_to_pay_for_course', return_value=False)
+@patch('dashboard.api.has_to_pay_for_exam', return_value=False)
 class InfoCourseTest(CourseTests):
     """Tests for get_info_for_course"""
 
