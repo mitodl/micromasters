@@ -1588,3 +1588,20 @@ class ExamSchedulableTests(MockedESTestCase):
         exam_auth = ExamAuthorizationFactory.create(exam_run=exam_run, course=exam_run.course)
 
         assert api.is_exam_schedulable(exam_auth.user, exam_auth.course) is (not is_past and not is_future)
+
+
+@ddt.ddt
+class FutureExamRunsTests(MockedESTestCase):
+    """Tests future schedulable exam runs"""
+
+    @ddt.data(
+        (False, True, 1),
+        (True, False, 0),
+        (False, False, 0),
+    )
+    @ddt.unpack
+    def test_get_future_exam_runs(self, is_past, is_future, result):
+        """test get_future_exam_runs"""
+        exam_run = ExamRunFactory.create(scheduling_past=is_past, scheduling_future=is_future)
+
+        assert len(api.get_future_exam_runs(exam_run.course)) == result
