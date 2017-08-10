@@ -48,7 +48,7 @@ export const formatMessage = (message: Message, index?: number) => (
   </div>
 );
 
-export const formatDate = date => (
+export const formatDate = (date: ?string) => (
   moment(date).format(COURSE_CARD_FORMAT)
 );
 
