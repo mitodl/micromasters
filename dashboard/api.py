@@ -447,10 +447,11 @@ def get_future_exam_runs(course):
         course (courses.models.Course): A course
 
     Returns:
-        list of strings: a list of dates when future exams become schedulable
+        list(str): a list of dates when future exams become schedulable
     """
-    exam_runs = ExamRun.get_schedulable_in_future(course).order_by('date_first_schedulable')
-    return [exam_run.date_first_schedulable for exam_run in exam_runs]
+
+    return (ExamRun.get_schedulable_in_future(course).
+            order_by('date_first_schedulable').values_list('date_first_schedulable', flat=True))
 
 
 def has_to_pay_for_exam(mmtrack, course):
@@ -464,4 +465,4 @@ def has_to_pay_for_exam(mmtrack, course):
         bool: if the user has to pay for another exam attempt
     """
     attempt_limit = mmtrack.get_payments_count_for_course(course) * ATTEMPTS_PER_PAID_RUN
-    return ExamAuthorization.objects.filter(user=mmtrack.user, course=course).count() >= attempt_limit
+    return ExamAuthorization.objects.filter(user=mmtrack.user, course=course, exam_taken=True).count() >= attempt_limit
