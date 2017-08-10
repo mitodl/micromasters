@@ -1605,3 +1605,26 @@ class FutureExamRunsTests(MockedESTestCase):
         exam_run = ExamRunFactory.create(scheduling_past=is_past, scheduling_future=is_future)
 
         assert len(api.get_future_exam_runs(exam_run.course)) == result
+
+
+@ddt.ddt
+class ExamAttemptsTests(CourseTests):
+    """Tests exam attempts for user"""
+
+    def setUp(self):
+        super().setUp()
+        self.mmtrack.user = self.user
+
+    @ddt.data(
+        (1, 1, False),
+        (2, 1, True),
+        (3, 1, True),
+        (3, 2, False),
+    )
+    @ddt.unpack
+    def test_has_to_pay(self, num_of_taken_exams, num_of_payments, result):
+        """Test has_to_pay_for_exam"""
+        self.mmtrack.get_payments_count_for_course.return_value = num_of_payments
+        for _ in range(num_of_taken_exams):
+            ExamAuthorizationFactory.create(user=self.user, course=self.course, exam_taken=True)
+        assert api.has_to_pay_for_exam(self.mmtrack, self.course) is result
