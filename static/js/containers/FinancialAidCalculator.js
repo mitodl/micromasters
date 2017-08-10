@@ -162,10 +162,15 @@ const FinancialAidCalculator = ({
   saveFinancialAid,
   submitFinancialAid,
   updateCalculatorEdit,
-  currentProgramEnrollment: { title, id },
+  currentProgramEnrollment,
   openConfirmSkipDialog,
   programs,
 }: CalculatorProps) => {
+  if (!currentProgramEnrollment) {
+    return null;
+  }
+  const { title, id } = currentProgramEnrollment;
+
   let program = programs.find(prog => prog.id === id);
   if (!program) {
     return null;
