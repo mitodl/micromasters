@@ -7,6 +7,7 @@ import {
   getLargestEdXGrade,
   calculateFinalGrade,
   hasPassingExamGrade,
+  hasFailingExamGrade,
   hasPassedCourseRun,
   passedCourse,
 
@@ -108,6 +109,32 @@ describe('Grades library', () => {
       assert.isFalse(hasPassingExamGrade(course));
     });
   });
+
+  describe('hasFailingExamGrade', () => {
+    let course;
+
+    beforeEach(() => {
+      course = {
+        proctorate_exams_grades:  [1,2].map(makeProctoredExamResult)
+      };
+    });
+    it('should return true if the user has any failing exam grades', () => {
+      course.proctorate_exams_grades[0].passed = false;
+      assert.isTrue(hasFailingExamGrade(course));
+    });
+
+    it('should return false otherwise', () => {
+      course.proctorate_exams_grades.forEach(grade => {
+        grade.passed = true;
+      });
+      assert.isFalse(hasFailingExamGrade(course));
+    });
+    it('should return false if no grades', () => {
+      course.proctorate_exams_grades = [];
+      assert.isFalse(hasFailingExamGrade(course));
+    });
+  });
+
 
   describe('hasPassedCourseRun', () => {
     let course;
