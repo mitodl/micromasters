@@ -48,7 +48,7 @@ export const formatMessage = (message: Message, index?: number) => (
   </div>
 );
 
-const formatDate = date => (
+export const formatDate = date => (
   moment(date).format(COURSE_CARD_FORMAT)
 );
 
@@ -143,25 +143,26 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
                 action: courseAction(firstRun, COURSE_ACTION_PAY)
               };
             } else {
-              messageBox['message'] = `You did not pass the exam, but you can try again.
-               Click above to reschedule an exam with Pearson.`;
+              messageBox['message'] = "You did not pass the exam, but you can try again. " +
+                "Click above to reschedule an exam with Pearson.";
             }
           } else if (R.isEmpty(course.exams_schedulable_in_future)) {
             // no info about future exam runs
-            messageBox['message'] = `You did not pass the exam. There are currently no exams
-             available for scheduling. Please check back later.`;
+            messageBox['message'] = "You did not pass the exam. There are currently no exams " +
+             "available for scheduling. Please check back later.";
           } else {
             // can not schedule now, but some time in the future
             if (course.has_to_pay) {
               messageBox = {
-                message: `You did not pass the exam. If you want to re-take the exam, you need
-                 to pay again. You can sign up to re-take the exam starting
-                  on ${formatDate(course.exams_schedulable_in_future[0])}`,
+                message: "You did not pass the exam. If you want to re-take the exam, you need " +
+                "to pay again. You can sign up to re-take the exam starting " +
+                `on ${formatDate(course.exams_schedulable_in_future[0])}`,
                 action: courseAction(firstRun, COURSE_ACTION_PAY)
               };
             } else {
-              messageBox['message'] = `You can sign up to re-take the exam starting
-               on ${formatDate(course.exams_schedulable_in_future[0])}.`;
+              messageBox['message'] = "You did not pass the exam, but you can try again. " +
+                "You can sign up to re-take the exam starting on " +
+                `on ${formatDate(course.exams_schedulable_in_future[0])}.`;
             }
           }
         } else { // no past exam attempts

@@ -9,6 +9,7 @@ import moment from 'moment';
 import {
   formatAction,
   formatMessage,
+  formatDate,
   calculateMessages,
 } from './StatusMessages';
 import {
@@ -174,6 +175,68 @@ describe('Course Status Messages', () => {
           message: "The edX course is complete, but you need to pass the final exam."
         }]);
       });
+      // Cases with failed exam attempts
+      it('should prompt the user to schedule another exam', () => {
+        course.runs = [course.runs[0]];
+        course.proctorate_exams_grades = [ makeProctoredExamResult() ];
+        course.proctorate_exams_grades[0].passed = false;
+        course.can_schedule_exam = true;
+        assertIsJust(calculateMessages(calculateMessagesProps), [{
+          message: "You did not pass the exam, but you can try again." +
+          " Click above to reschedule an exam with Pearson."
+        }]);
+      });
+
+      it('should ask to pay and schedule another exam', () => {
+        course.runs = [course.runs[0]];
+        course.proctorate_exams_grades = [ makeProctoredExamResult() ];
+        course.proctorate_exams_grades[0].passed = false;
+        course.can_schedule_exam = true;
+        course.has_to_pay = true;
+        assertIsJust(calculateMessages(calculateMessagesProps), [{
+          message: "You did not pass the exam. If you want to re-take the exam, you need to pay again.",
+          action: 'course action was called'
+        }]);
+      });
+
+      it('should prompt the user to schedule another exam after certain date', () => {
+        course.runs = [course.runs[0]];
+        course.proctorate_exams_grades = [ makeProctoredExamResult() ];
+        course.proctorate_exams_grades[0].passed = false;
+        course.can_schedule_exam = false;
+        course.exams_schedulable_in_future = [moment().add(2, 'day').format()];
+
+        assertIsJust(calculateMessages(calculateMessagesProps), [{
+          message: "You did not pass the exam, but you can try again. " +
+                "You can sign up to re-take the exam starting on " +
+                `on ${formatDate(course.exams_schedulable_in_future[0])}.`
+        }]);
+      });
+
+      it('should prompt the user to pay and schedule another exam after certain date', () => {
+        course.runs = [course.runs[0]];
+        course.proctorate_exams_grades = [ makeProctoredExamResult() ];
+        course.proctorate_exams_grades[0].passed = false;
+        course.can_schedule_exam = false;
+        course.exams_schedulable_in_future = [moment().add(2, 'day').format()];
+        course.has_to_pay = true;
+        assertIsJust(calculateMessages(calculateMessagesProps), [{
+          message: "You did not pass the exam. If you want to re-take the exam, you need to pay again. " +
+          "You can sign up to re-take the exam starting on " +
+          `${formatDate(course.exams_schedulable_in_future[0])}`,
+          action: 'course action was called'
+        }]);
+      });
+      // no exam runs to schedule
+      it('should ask to check back later if there is no future course run', () => {
+        course.runs = [course.runs[0]];
+        course.proctorate_exams_grades = [ makeProctoredExamResult() ];
+        course.proctorate_exams_grades[0].passed = false;
+        assertIsJust(calculateMessages(calculateMessagesProps), [{
+          message: "You did not pass the exam. There are currently no exams" +
+          " available for scheduling. Please check back later."
+        }]);
+      });
 
       it('should show un-expanded message', () => {
         // this component returns a react component as its message
@@ -192,7 +255,7 @@ describe('Course Status Messages', () => {
         let messages = calculateMessages(calculateMessagesProps).value;
         assert.equal(messages.length, 2);
         assert.deepEqual(messages[1], {
-          message: `Next course starts ${moment(course.runs[1].course_start_date).format('MM/DD/YYYY')}.`,
+          message: `Next course starts ${formatDate(course.runs[1].course_start_date)}.`,
           action: 'course action was called'
         });
         assert(calculateMessagesProps.courseAction.calledWith(
@@ -222,7 +285,7 @@ describe('Course Status Messages', () => {
       makeRunPassed(course.runs[0]);
       makeRunOverdue(course.runs[0]);
       makeRunFuture(course.runs[1]);
-      let date = moment(course.runs[1].course_start_date).format('MM/DD/YYYY');
+      let date = formatDate(course.runs[1].course_start_date);
       assertIsJust(calculateMessages(calculateMessagesProps), [{
         message: `You missed the payment deadline, but you can re-enroll. Next course starts ${date}`,
         action: "course action was called"
