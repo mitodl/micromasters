@@ -33,8 +33,6 @@ COPY . /src
 WORKDIR /src
 RUN chown -R mitodl:mitodl /src
 
-# Gather static
-RUN ./manage.py collectstatic --noinput
 RUN apt-get clean && apt-get purge
 USER mitodl
 
