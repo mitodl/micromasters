@@ -25,7 +25,6 @@ services:
       - "8079:8079"
     links:
       - web
-      - watch
 
   python:
     build: .
