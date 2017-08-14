@@ -3,7 +3,7 @@ codecov
 ddt
 django-debug-toolbar
 ipdb
-nplusone
+nplusone>=0.8.1
 pdbpp
 pip-tools
 pylint==1.7.1
