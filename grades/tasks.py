@@ -8,6 +8,7 @@ from celery.result import GroupResult
 from django.contrib.auth.models import User
 from django.core.cache import caches
 from django.db.models import Count
+from django_redis import get_redis_connection
 
 from courses.models import CourseRun
 from grades import api
@@ -140,12 +141,20 @@ def freeze_course_run_final_grades(course_run_id):
     # extract the users to be frozen for this course
     user_ids_qset = api.get_users_without_frozen_final_grade(course_run).values_list('id', flat=True)
 
+    # find number of users for which cache could not be updated
+    con = get_redis_connection("redis")
+    failed_users_count = con.llen('{}'.format(course_run.edx_course_key))
     # if there are no more users to be froze, just complete the task
-    if not user_ids_qset.exists():
+    if not user_ids_qset.exists() or user_ids_qset.count() == failed_users_count:
+        log.info('Completing grading with %d users getting refresh cache errors', failed_users_count)
         CourseRunGradingStatus.set_to_complete(course_run)
         return
 
     # if the task reaches this point, it means there are users still to be processed
+
+    # clear the list for users for whom cache update failed
+    for _ in range(0, failed_users_count):
+        con.lpop('{}'.format(course_run.edx_course_key))
 
     # create an entry in with pending status ('pending' is the default status)
     CourseRunGradingStatus.create_pending(course_run=course_run)
