@@ -3,9 +3,10 @@ Test utilities
 """
 from unittest.mock import patch
 import django.test
+from django.utils.deprecation import MiddlewareMixin
 
 
-class FakeSiteMiddleware(object):
+class FakeSiteMiddleware(MiddlewareMixin):
     """
     A mock implementation of `wagtail.wagtailcore.middleware.SiteMiddleware`
     that doesn't make any database calls.
@@ -15,7 +16,7 @@ class FakeSiteMiddleware(object):
         return None
 
 
-class FakeRedirectMiddleware(object):
+class FakeRedirectMiddleware(MiddlewareMixin):
     """
     A mock implementation of `wagtail.wagtailredirects.middleware.RedirectMiddleware`
     that doesn't make any database calls.
