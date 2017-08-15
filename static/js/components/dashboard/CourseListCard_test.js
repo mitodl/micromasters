@@ -111,7 +111,7 @@ describe('CourseListCard', () => {
       assert.lengthOf(messageEl, 1);
       assert.include(
         messageEl.text(),
-        "Courses in this program cost $4000 USD each."
+        "you must pay for a verified certificate from edx.org."
       );
     });
 
