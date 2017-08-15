@@ -138,15 +138,6 @@ describe('Course Status Messages', () => {
       assertIsNothing(calculateMessages(calculateMessagesProps));
     });
 
-    it('should say "auditing" if the user already paid, but has re-enrolled', () => {
-      makeRunCurrent(course.runs[0]);
-      makeRunPaid(course.runs[1]);
-      makeRunEnrolled(course.runs[0]);
-      assertIsJust(calculateMessages(calculateMessagesProps), [{
-        "message": "You are auditing this course."
-      }]);
-    });
-
     it('should nag unpaid auditors to pay', () => {
       makeRunCurrent(course.runs[0]);
       makeRunEnrolled(course.runs[0]);

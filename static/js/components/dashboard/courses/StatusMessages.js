@@ -116,14 +116,10 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
 
   // handle other 'in-progress' cases
   if (courseUpcomingOrCurrent(firstRun) || firstRun.status === STATUS_CAN_UPGRADE) {
-    if (hasPaidForAnyCourseRun(course)) {
-      messages.push({message: "You are auditing this course."});
-    } else {
-      messages.push({
-        message: "You are auditing. To get credit, you need to pay for the course.",
-        action: courseAction(firstRun, COURSE_ACTION_PAY)
-      });
-    }
+    messages.push({
+      message: "You are auditing. To get credit, you need to pay for the course.",
+      action: courseAction(firstRun, COURSE_ACTION_PAY)
+    });
     return S.Just(messages);
   }
 
