@@ -143,14 +143,13 @@ def freeze_course_run_final_grades(course_run_id):
 
     # find number of users for which cache could not be updated
     con = get_redis_connection("redis")
-    failed_users_count = con.llen(api.CACHE_KEY_FAILED_USERS_BASE_STR.format(course_run.edx_course_key))
+    failed_users_cache_key = api.CACHE_KEY_FAILED_USERS_BASE_STR.format(course_run.edx_course_key)
+    failed_users_count = con.llen(failed_users_cache_key)
 
     # get the list of users that failed authentication last run of the task
-    failed_users_list = list(map(int, con.lrange(
-        api.CACHE_KEY_FAILED_USERS_BASE_STR.format(course_run.edx_course_key), 0, failed_users_count)))
+    failed_users_list = list(map(int, con.lrange(failed_users_cache_key, 0, failed_users_count)))
     users_need_freeze = list(user_ids_qset)
-    users_left = [user_id for user_id in users_need_freeze if user_id not in failed_users_list]
-
+    users_left = list(set(users_need_freeze) - set(failed_users_list))
     # if there are no more users to be frozen, just complete the task
     if not users_left:
         log.info('Completing grading with %d users getting refresh cache errors', len(failed_users_list))
@@ -160,7 +159,7 @@ def freeze_course_run_final_grades(course_run_id):
     # if the task reaches this point, it means there are users still to be processed
 
     # clear the list for users for whom cache update failed
-    con.delete(api.CACHE_KEY_FAILED_USERS_BASE_STR.format(course_run.edx_course_key))
+    con.delete(failed_users_cache_key)
     # create an entry in with pending status ('pending' is the default status)
     CourseRunGradingStatus.create_pending(course_run=course_run)
 
