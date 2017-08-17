@@ -16,6 +16,7 @@ from grades.models import (
     FinalGradeStatus,
 )
 
+CACHE_KEY_FAILED_USERS_BASE_STR = "failed_users_{0}"
 
 log = logging.getLogger(__name__)
 
@@ -168,7 +169,7 @@ def freeze_user_final_grade(user, course_run, raise_on_exception=False):
         CachedEdxDataApi.update_all_cached_grade_data(user)
     except Exception as ex:  # pylint: disable=broad-except
         con = get_redis_connection("redis")
-        con.lpush('{}'.format(course_run.edx_course_key), user.id)
+        con.lpush(CACHE_KEY_FAILED_USERS_BASE_STR.format(course_run.edx_course_key), user.id)
         if not raise_on_exception:
             log.exception('Impossible to refresh the edX cache for user "%s"', user.username)
             return
