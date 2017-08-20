@@ -3291,9 +3291,9 @@ isexe@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
 
-"iso-3166-2@https://github.com/mitodl/iso-3166-2.js#56e303c367fc1bed0784fe70d41c18b674cd1352":
-  version "0.6.0"
-  resolved "https://github.com/mitodl/iso-3166-2.js#56e303c367fc1bed0784fe70d41c18b674cd1352"
+iso-3166-2@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/iso-3166-2/-/iso-3166-2-1.0.0.tgz#20c5cda527b56bfc7409c6802d9bff0119086131"
 
 isobject@^2.0.0:
   version "2.1.0"
