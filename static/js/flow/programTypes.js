@@ -59,6 +59,7 @@ export type Course = {
   has_to_pay:                   boolean,
   proctorate_exams_grades:      Array<ProctoredExamResult>,
   has_exam:                     boolean,
+  certificate_url:              string,
 };
 
 export type ProgramPageCourse = {

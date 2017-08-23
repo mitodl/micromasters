@@ -101,6 +101,14 @@ class FinalGrade(TimestampedModel, AuditableModel):
         """Returns the grade field value as a number out of 100 (or None if the value is None)"""
         return self.grade * 100 if self.grade is not None else None
 
+    @property
+    def has_certificate(self):
+        try:
+            self.certificate
+        except self._meta.model.certificate.RelatedObjectDoesNotExist:
+            return False
+        return True
+
     @classmethod
     def get_frozen_users(cls, course_run):
         """
@@ -146,7 +154,7 @@ class MicromastersCourseCertificate(TimestampedModel):
     """
     Model for storing MicroMasters course certificates
     """
-    final_grade = models.OneToOneField(FinalGrade, null=False)
+    final_grade = models.OneToOneField(FinalGrade, null=False, related_name='certificate')
     hash = models.CharField(max_length=32, null=False, unique=True)
 
     def save(self, *args, **kwargs):  # pylint: disable=arguments-differ

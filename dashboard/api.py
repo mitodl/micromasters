@@ -14,7 +14,7 @@ from dashboard.api_edx_cache import CachedEdxDataApi, CachedEdxUserData
 from dashboard.utils import MMTrack
 from financialaid.serializers import FinancialAidDashboardSerializer
 from grades import api
-from grades.models import FinalGrade
+from grades.models import FinalGrade, MicromastersCourseCertificate
 from grades.serializers import ProctoredExamGradeSerializer
 from exams.models import ExamAuthorization, ExamRun
 
@@ -218,6 +218,7 @@ def get_info_for_course(course, mmtrack):
             mmtrack.get_course_proctorate_exam_results(course), many=True
         ).data,
         "has_exam": course.has_exam,
+        "certificate_url": get_certificate_url(mmtrack, course)
     }
 
     def _add_run(run, mmtrack_, status):
@@ -466,3 +467,22 @@ def has_to_pay_for_exam(mmtrack, course):
     """
     attempt_limit = mmtrack.get_payments_count_for_course(course) * ATTEMPTS_PER_PAID_RUN
     return ExamAuthorization.objects.filter(user=mmtrack.user, course=course, exam_taken=True).count() >= attempt_limit
+
+
+def get_certificate_url(mmtrack, course):
+    """
+    Find certificate associated with highest passing grade for the course
+
+    Args:
+        mmtrack (dashboard.utils.MMTrack): a instance of all user information about a program
+        course (courses.models.Course): A course
+    Returns:
+        str: url to view the certificate
+    """
+    final_grades = mmtrack.get_passing_final_grades_for_course(course)
+    url = ""
+    if final_grades.exists():
+        best_grade = final_grades.first()
+        if best_grade.has_certificate:
+            url = "certificate/{}".format(final_grades.first().certificate.hash)
+    return url

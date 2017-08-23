@@ -82,7 +82,6 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   let passedExam = hasPassingExamGrade(course);
   let failedExam = hasFailingExamGrade(course);
   let paymentDueDate = moment(firstRun.course_upgrade_deadline);
-
   if (firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
     const contactHref = `mailto:${SETTINGS.support_email}`;
     return S.Just([{
@@ -186,9 +185,17 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
         }
 
       } else {
+        let message = "You passed this course!";
+        if(course.certificate_url){
+          message = <div>
+            { "You passed this course! " }
+            <a href={course.certificate_url}>
+              View Certificate
+            </a>
+          </div>;
+          }
         messages.push({
-          // TODO add links
-          message: "You passed this course."
+          message: message
         });
       }
       return S.Just(messages);
