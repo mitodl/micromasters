@@ -31,7 +31,7 @@ from exams.models import ExamProfile
 from exams.factories import ExamRunFactory, ExamAuthorizationFactory
 from grades.constants import FinalGradeStatus
 from grades.exceptions import FreezeGradeFailedException
-from grades.factories import ProctoredExamGradeFactory
+from grades.factories import ProctoredExamGradeFactory, FinalGradeFactory, MicromastersCourseCertificateFactory
 from grades.models import FinalGrade, CourseRunGradingStatus, ProctoredExamGrade
 from grades.serializers import ProctoredExamGradeSerializer
 from micromasters.factories import UserFactory
@@ -1665,3 +1665,32 @@ class ExamAttemptsTests(CourseTests):
         for _ in range(num_of_taken_exams):
             ExamAuthorizationFactory.create(user=self.user, course=self.course, exam_taken=True)
         assert api.has_to_pay_for_exam(self.mmtrack, self.course) is result
+
+
+class GetCertificateForCourse(CourseTests):
+    """Tests get_certificate_url for a course"""
+
+    def setUp(self):
+        super().setUp()
+        self.mmtrack.user = self.user
+        self.course_run = self.create_run(course=self.course)
+
+    def test_get_certificate_url(self):
+        """Test get_certificate_url for course with certificate"""
+
+        final_grade = FinalGradeFactory.create(user=self.user, course_run=self.course_run, grade=0.8, passed=True)
+        self.mmtrack.get_passing_final_grades_for_course.return_value = FinalGrade.objects.filter(user=self.user)
+        cert = MicromastersCourseCertificateFactory.create(final_grade=final_grade)
+
+        assert api.get_certificate_url(self.mmtrack, self.course) == 'certificate/{}'.format(cert.hash)
+
+    def test_has_no_final_grade(self):
+        """Test no final grade for a course"""
+        self.mmtrack.get_passing_final_grades_for_course.return_value = FinalGrade.objects.filter(user=self.user)
+        assert api.get_certificate_url(self.mmtrack, self.course) == ''
+
+    def test_has_passing_grade_no_certificate(self):
+        """Test has passing grade but no certificate"""
+        FinalGradeFactory.create(user=self.user, course_run=self.course_run, grade=0.8, passed=True)
+        self.mmtrack.get_passing_final_grades_for_course.return_value = FinalGrade.objects.filter(user=self.user)
+        assert api.get_certificate_url(self.mmtrack, self.course) == ''
