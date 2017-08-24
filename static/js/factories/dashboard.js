@@ -93,6 +93,7 @@ export const makeCourse = (positionInProgram: number): Course => {
     has_to_pay: false,
     has_exam: false,
     proctorate_exams_grades: [],
+    certificate_url: ""
   };
 };
 

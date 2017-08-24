@@ -40,7 +40,7 @@ def generate_course_certificates_for_fa_students():
             course_run__course__program__financial_aid_availability=True,
             passed=True,
         )
-        .annotate(certificate_count=Count('micromasterscoursecertificate'))
+        .annotate(certificate_count=Count('certificate'))
         .filter(certificate_count=0)
         .annotate(exam_run_count=Count('course_run__course__exam_runs'))
         .values(
