@@ -269,6 +269,17 @@ describe('Course Status Messages', () => {
       assertIsJust(calculateMessages(calculateMessagesProps), [{
         message: "You passed this course."
       }]);
+      course.certificate_url = "certificate_url";
+      let [{ message }] = calculateMessages(calculateMessagesProps).value;
+      let mounted = shallow(message);
+      assert.equal(
+        mounted.text(),
+        "You passed this course! View Certificate"
+      );
+      assert.equal(
+        mounted.find('a').props().href,
+        "certificate_url"
+      );
     });
 
     it('should nag about missing the payment deadline', () => {

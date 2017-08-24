@@ -185,7 +185,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
         }
 
       } else {
-        let message = "You passed this course!";
+        let message = "You passed this course.";
         if(course.certificate_url){
           message = <div>
             { "You passed this course! " }
