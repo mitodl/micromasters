@@ -103,6 +103,7 @@ class FinalGrade(TimestampedModel, AuditableModel):
 
     @property
     def has_certificate(self):
+        """Returns true if there is a certificate for this grade"""
         try:
             self.certificate
         except self._meta.model.certificate.RelatedObjectDoesNotExist:
