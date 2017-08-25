@@ -1673,6 +1673,8 @@ class GetCertificateForCourse(CourseTests):
     def setUp(self):
         super().setUp()
         self.mmtrack.user = self.user
+        self.mmtrack.financial_aid_available = True
+
         self.course_run = self.create_run(course=self.course)
 
     def test_get_certificate_url(self):
