@@ -189,7 +189,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
         if(course.certificate_url) {
           message = <div>
             { "You passed this course! " }
-            <a href={course.certificate_url}>
+            <a href={course.certificate_url} target="_blank">
               View Certificate
             </a>
           </div>;
