@@ -1682,7 +1682,7 @@ class GetCertificateForCourse(CourseTests):
         self.mmtrack.get_passing_final_grades_for_course.return_value = FinalGrade.objects.filter(user=self.user)
         cert = MicromastersCourseCertificateFactory.create(final_grade=final_grade)
 
-        assert api.get_certificate_url(self.mmtrack, self.course) == 'certificate/{}'.format(cert.hash)
+        assert api.get_certificate_url(self.mmtrack, self.course) == '/certificate/{}'.format(cert.hash)
 
     def test_has_no_final_grade(self):
         """Test no final grade for a course"""
