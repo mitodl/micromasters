@@ -484,5 +484,5 @@ def get_certificate_url(mmtrack, course):
     if final_grades.exists():
         best_grade = final_grades.first()
         if best_grade.has_certificate:
-            url = "certificate/{}".format(final_grades.first().certificate.hash)
+            url = "/certificate/{}".format(final_grades.first().certificate.hash)
     return url
