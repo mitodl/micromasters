@@ -646,7 +646,7 @@ class MMTrackTest(MockedESTestCase):
         low_grade = qset.last()
         low_grade.passed = False
         low_grade.save()
-        assert mmtrack.get_passing_final_grades_for_course(finaid_course).count() == 2
+        assert mmtrack.get_passing_final_grades_for_course(finaid_course).count() == 3
 
     def test_get_mmtrack(self):
         """
