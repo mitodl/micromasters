@@ -4,11 +4,11 @@ Apis for the dashboard
 import datetime
 import logging
 
+from urllib.parse import urljoin
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
-import pytz
-from urllib.parse import urljoin
 from django.conf import settings
+import pytz
 
 from backends.exceptions import InvalidCredentialStored
 from courses.models import Program
