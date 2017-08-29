@@ -5,10 +5,12 @@ from datetime import timedelta
 from unittest.mock import patch, MagicMock
 
 from django.core.cache import caches
+from django_redis import get_redis_connection
 
 from courses.factories import CourseRunFactory
 from dashboard.factories import CachedEnrollmentFactory
 from grades import tasks
+from grades.api import CACHE_KEY_FAILED_USERS_BASE_STR
 from grades.models import (
     CourseRunGradingStatus,
     FinalGrade,
@@ -174,6 +176,59 @@ class GradeTasksTests(MockedESTestCase):
         # a new call will just change the status of the course and clean up the cache
         freeze_single_user.reset_mock()
         tasks.freeze_course_run_final_grades.delay(self.course_run1.id)
+        info_run.refresh_from_db()
+        assert info_run.status == FinalGradeStatus.COMPLETE
+        assert cache_redis.get(cache_id) is None
+        assert freeze_single_user.call_count == 0
+
+    @patch('celery.result.GroupResult.restore', new_callable=MagicMock)
+    @patch('grades.api.freeze_user_final_grade', autospec=True, return_value=None)
+    def test_freeze_course_run_final_grades_5(self, freeze_single_user, mock_restore):
+        """
+        Test for the test_freeze_course_run_final_grades
+        task in case there are users that failed authentication
+        """
+        restore_result = MagicMock()
+        restore_result.ready.return_value = True
+        mock_restore.return_value = restore_result
+
+        # first call
+        run_grade_info_qset = CourseRunGradingStatus.objects.filter(course_run=self.course_run1)
+        assert run_grade_info_qset.exists() is False
+        tasks.freeze_course_run_final_grades.delay(self.course_run1.id)
+        assert run_grade_info_qset.exists() is True
+        info_run = run_grade_info_qset.first()
+        assert info_run.course_run == self.course_run1
+        assert info_run.status == FinalGradeStatus.PENDING
+        cache_id = tasks.CACHE_ID_BASE_STR.format(self.course_run1.edx_course_key)
+        cached_celery_task_id_1 = cache_redis.get(cache_id)
+        assert cached_celery_task_id_1 is not None
+        assert freeze_single_user.call_count == len(self.users)
+        for user in self.users:
+            freeze_single_user.assert_any_call(user, self.course_run1)
+
+        # simulate successful freeze for most users
+        successful_users = self.users[5:]
+        for user in successful_users:
+            FinalGrade.objects.create(
+                user=user,
+                grade=0.6,
+                passed=True,
+                course_run=self.course_run1,
+                status=FinalGradeStatus.COMPLETE
+            )
+        failed_users = self.users[:5]
+        failed_users_cache_key = CACHE_KEY_FAILED_USERS_BASE_STR.format(self.course_run1.edx_course_key)
+        con = get_redis_connection("redis")
+        con.delete(failed_users_cache_key)
+        for user in failed_users:
+            con.lpush(failed_users_cache_key, user.id)
+
+        # second call
+        freeze_single_user.reset_mock()
+        tasks.freeze_course_run_final_grades.delay(self.course_run1.id)
+
+        # new call will not try to process any failed users and will set status to COMPLETE
         info_run.refresh_from_db()
         assert info_run.status == FinalGradeStatus.COMPLETE
         assert cache_redis.get(cache_id) is None
