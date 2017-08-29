@@ -4,9 +4,11 @@ Checks the freeze status for a final grade
 from celery.result import GroupResult
 from django.core.cache import caches
 from django.core.management import BaseCommand, CommandError
+from django_redis import get_redis_connection
 
 from courses.models import CourseRun
 from dashboard.models import CachedEnrollment
+from grades.api import CACHE_KEY_FAILED_USERS_BASE_STR
 from grades.models import CourseRunGradingStatus, FinalGrade
 from grades.tasks import CACHE_ID_BASE_STR
 from micromasters.celery import app
@@ -31,10 +33,14 @@ class Command(BaseCommand):
         except CourseRun.DoesNotExist:
             raise CommandError('Course Run for course_id "{0}" does not exist'.format(edx_course_key))
 
+        con = get_redis_connection("redis")
+        failed_users_count = con.llen(CACHE_KEY_FAILED_USERS_BASE_STR.format(edx_course_key))
+
         if CourseRunGradingStatus.is_complete(run):
             self.stdout.write(
                 self.style.SUCCESS(
-                    'Final grades for course "{0}" are complete'.format(edx_course_key)
+                    'Final grades for course "{0}" are complete, with {1}'
+                    ' users that failed authentication'.format(edx_course_key, failed_users_count)
                 )
             )
         elif CourseRunGradingStatus.is_pending(run):
@@ -70,9 +76,10 @@ class Command(BaseCommand):
             )
         self.stdout.write(
             self.style.SUCCESS(
-                'The students with a final grade are {0}/{1}'.format(
+                'The students with a final grade are {0}/{1}, where {2} failed authentication'.format(
                     FinalGrade.objects.filter(course_run=run).count(),
                     CachedEnrollment.objects.filter(course_run=run).count(),
+                    failed_users_count
                 )
             )
         )
