@@ -6,6 +6,7 @@ from unittest.mock import patch, MagicMock
 
 import ddt
 from django.core.exceptions import ImproperlyConfigured
+from django_redis import get_redis_connection
 
 from courses.factories import CourseRunFactory
 from dashboard.api_edx_cache import CachedEdxUserData, UserCachedRunData
@@ -355,6 +356,12 @@ class GradeAPITests(MockedESTestCase):
         assert mock_get_fg.called is False
         mock_refr.assert_called_once_with(self.user)
         assert FinalGrade.objects.filter(user=self.user, course_run=self.run_fa).exists() is False
+
+        con = get_redis_connection("redis")
+        failed_users_cache_key = api.CACHE_KEY_FAILED_USERS_BASE_STR.format(self.run_fa.edx_course_key)
+        failed_users_count = con.llen(failed_users_cache_key)
+        failed_users_list = list(map(int, con.lrange(failed_users_cache_key, 0, failed_users_count)))
+        assert self.user.id in failed_users_list
 
     @patch('grades.api.get_final_grade', autospec=True)
     @patch('dashboard.api_edx_cache.CachedEdxDataApi.update_all_cached_grade_data', new_callable=MagicMock)
