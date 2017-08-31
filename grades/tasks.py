@@ -154,6 +154,7 @@ def freeze_course_run_final_grades(course_run_id):
     if not users_left:
         log.info('Completing grading with %d users getting refresh cache errors', len(failed_users_list))
         CourseRunGradingStatus.set_to_complete(course_run)
+        con.delete(failed_users_cache_key)
         return
 
     # if the task reaches this point, it means there are users still to be processed
