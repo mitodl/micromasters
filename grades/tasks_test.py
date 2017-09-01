@@ -231,5 +231,6 @@ class GradeTasksTests(MockedESTestCase):
         # new call will not try to process any failed users and will set status to COMPLETE
         info_run.refresh_from_db()
         assert info_run.status == FinalGradeStatus.COMPLETE
+        assert con.llen(failed_users_cache_key) == 0
         assert cache_redis.get(cache_id) is None
         assert freeze_single_user.call_count == 0
