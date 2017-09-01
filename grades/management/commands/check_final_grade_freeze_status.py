@@ -73,12 +73,13 @@ class Command(BaseCommand):
                     'Final grades for course "{0}" are not being processed yet'.format(edx_course_key)
                 )
             )
-        message_detail = ', where {0} failed authentication'.format(failed_users_count) if failed_users_count else ""
+        message_detail = ', where {0} failed authentication'.format(failed_users_count) if failed_users_count else ''
         self.stdout.write(
             self.style.SUCCESS(
-                'The students with a final grade are {0}/{1}'.format(
+                'The students with a final grade are {0}/{1}{2}'.format(
                     FinalGrade.objects.filter(course_run=run).count(),
-                    CachedEnrollment.objects.filter(course_run=run).count()
-                ) + message_detail
+                    CachedEnrollment.objects.filter(course_run=run).count(),
+                    message_detail
+                )
             )
         )
