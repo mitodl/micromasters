@@ -3,13 +3,13 @@ Apis for the dashboard
 """
 import datetime
 import logging
+from urllib.parse import urljoin
+import pytz
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 from django.urls import reverse
-import pytz
-from urllib.parse import urljoin
 
 from backends.exceptions import InvalidCredentialStored
 from courses.models import Program
