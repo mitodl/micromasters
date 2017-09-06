@@ -1,7 +1,14 @@
 Release Notes
 =============
 
-Version 0.73.1
+Version 0.74.0
+--------------
+
+
+- Filter on coupon id for automatic emails (#3509)
+
+
+
 --------------
 
 - Delete failed users when course run grading status is complete (#3506)
