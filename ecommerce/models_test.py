@@ -265,19 +265,26 @@ class CouponTests(MockedESTestCase):
         _already_redeemed.assert_called_with(coupon, line.order.user)
 
     @ddt.data(
-        [Order.CREATED, True, False],
-        [Order.CREATED, False, False],
-        [Order.FULFILLED, True, True],
-        [Order.FULFILLED, False, False],
+        [Order.CREATED, True, False, False],
+        [Order.CREATED, False, False, False],
+        [Order.FULFILLED, True, False, True],
+        [Order.FULFILLED, False, False, False],
+        [Order.CREATED, True, True, False],
+        [Order.CREATED, False, True, False],
+        [Order.FULFILLED, True, True, False],
+        [Order.FULFILLED, False, True, False],
     )
     @ddt.unpack
-    def test_another_user_already_redeemed(self, order_status, other_user_redeemed, expected):
+    def test_another_user_already_redeemed(self, order_status, other_user_redeemed, is_automatic, expected):
         """
         Tests for Coupon.another_user_already_redeemed
         """
         run1 = CourseRunFactory.create(course__program__financial_aid_availability=True)
-        run2 = CourseRunFactory.create(course__program=run1.course.program)
-        coupon = CouponFactory.create(content_object=run1.course.program)
+        run2 = CourseRunFactory.create(course=run1.course)
+        coupon = CouponFactory.create(
+            content_object=run1.course,
+            coupon_type=Coupon.DISCOUNTED_PREVIOUS_COURSE if is_automatic else Coupon.STANDARD,
+        )
 
         line1 = LineFactory.create(course_key=run1.edx_course_key, order__status=Order.FULFILLED)
         RedeemedCoupon.objects.create(order=line1.order, coupon=coupon)
