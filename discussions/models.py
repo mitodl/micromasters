@@ -4,6 +4,8 @@ Models for user profile
 from django.conf import settings
 from django.db import models
 
+from search.models import PercolateQuery
+
 
 class DiscussionUser(models.Model):
     """
@@ -15,3 +17,14 @@ class DiscussionUser(models.Model):
 
     def __str__(self):
         return "Discussion Profile: {}".format(self.username)
+
+
+class Channel(models.Model):
+    """
+    Represents a link between the open-discussions channel and a percolate query
+    """
+    name = models.TextField(unique=True)
+    query = models.ForeignKey(PercolateQuery, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return "Channel: {}".format(self.name)

@@ -4,9 +4,14 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from rest_framework import status
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.decorators import api_view
+from rest_framework.generics import CreateAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from discussions.permissions import CanCreateChannel
+from discussions.serializers import ChannelSerializer
 from discussions.utils import get_token_for_user
 
 
@@ -58,3 +63,18 @@ def discussions_redirect(request):
         response = HttpResponse('', status=status.HTTP_409_CONFLICT)
 
     return response
+
+
+class ChannelsView(CreateAPIView):
+    """
+    View for discussions channels. Used to create new channels
+    """
+    authentication_classes = (
+        SessionAuthentication,
+        TokenAuthentication,
+    )
+    permission_classes = (
+        IsAuthenticated,
+        CanCreateChannel,
+    )
+    serializer_class = ChannelSerializer

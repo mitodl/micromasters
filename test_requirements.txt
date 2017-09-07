@@ -6,7 +6,7 @@ ipdb
 nplusone>=0.8.1
 pdbpp
 pip-tools
-pylint==1.7.1
+pylint==1.7.2
 pylint-django==0.7.2
 pytest
 pytest-cov

@@ -277,7 +277,7 @@ def send_automatic_emails(program_enrollment):
     Args:
         program_enrollment (ProgramEnrollment): A ProgramEnrollment
     """
-    percolate_queries = search_percolate_queries(program_enrollment.id)
+    percolate_queries = search_percolate_queries(program_enrollment.id, PercolateQuery.AUTOMATIC_EMAIL_TYPE)
     automatic_emails = AutomaticEmail.objects.filter(
         query__in=percolate_queries,
         enabled=True,
@@ -317,6 +317,7 @@ def add_automatic_email(original_search, email_subject, email_body, sender_name,
         percolate_query = PercolateQuery.objects.create(
             original_query=original_search.to_dict(),
             query=updated_search.to_dict(),
+            source_type=PercolateQuery.AUTOMATIC_EMAIL_TYPE,
         )
         return AutomaticEmail.objects.create(
             query=percolate_query,

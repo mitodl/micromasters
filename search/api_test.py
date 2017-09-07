@@ -242,6 +242,7 @@ class SearchAPITests(ESTestCase):
 
 
 # pylint: disable=unused-argument
+# This patch works around on_commit by invoking it immediately, since in TestCase all tests run in transactions
 @patch('search.signals.transaction.on_commit', side_effect=lambda callback: callback())
 class PercolateTests(ESTestCase):
     """Tests regarding percolator queries"""
@@ -251,14 +252,25 @@ class PercolateTests(ESTestCase):
         with mute_signals(post_save):
             profile = ProfileFactory.create(filled_out=True)
         program_enrollment = ProgramEnrollmentFactory.create(user=profile.user)
-        # This patch works around on_commit by invoking it immediately, since in TestCase all tests run in transactions
-        query = PercolateQuery.objects.create(query={
+        matching_query = {
             "query": {
                 "match": {
                     "profile.first_name": profile.first_name,
                 }
             }
-        }, original_query={})
+        }
+        query = PercolateQuery.objects.create(
+            query=matching_query,
+            original_query={},
+            source_type=PercolateQuery.AUTOMATIC_EMAIL_TYPE,
+        )
+
+        # Another query which matches but has a different source_type
+        PercolateQuery.objects.create(
+            query=matching_query,
+            original_query={},
+            source_type=PercolateQuery.DISCUSSION_CHANNEL_TYPE,
+        )
 
         # Another query that doesn't match
         PercolateQuery.objects.create(query={
@@ -267,15 +279,22 @@ class PercolateTests(ESTestCase):
                     "profile.first_name": "missing",
                 }
             }
-        }, original_query={})
-        assert list(search_percolate_queries(program_enrollment.id).values_list("id", flat=True)) == [query.id]
+        }, original_query={}, source_type=PercolateQuery.AUTOMATIC_EMAIL_TYPE)
+
+        # Only the first appears in the results
+        assert list(
+            search_percolate_queries(
+                program_enrollment.id,
+                PercolateQuery.AUTOMATIC_EMAIL_TYPE,
+            ).values_list("id", flat=True)
+        ) == [query.id]
 
     def test_not_percolated(self, mock_on_commit):
         """If there are no percolated queries we should return an empty queryset"""
         with mute_signals(post_save):
             profile = ProfileFactory.create(filled_out=True)
         program_enrollment = ProgramEnrollmentFactory.create(user=profile.user)
-        assert list(search_percolate_queries(program_enrollment.id)) == []
+        assert list(search_percolate_queries(program_enrollment.id, PercolateQuery.AUTOMATIC_EMAIL_TYPE)) == []
 
     def test_adjust_search_for_percolator(self, mock_on_commit):
         """adjust_search_for_percolator should move post_filter into the query itself and remove all other pieces"""
@@ -359,5 +378,5 @@ class PercolateTests(ESTestCase):
         with self.assertRaises(PercolateException) as ex, patch(
             'search.api.get_conn', return_value=Mock(percolate=Mock(return_value=failure_payload))
         ):
-            search_percolate_queries(program_enrollment.id)
+            search_percolate_queries(program_enrollment.id, "doesnt_matter")
         assert ex.exception.args[0] == "Failed to percolate: {}".format(failures)

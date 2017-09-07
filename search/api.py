@@ -207,12 +207,13 @@ def get_all_query_matching_emails(search_obj, page_size=DEFAULT_ES_LOOP_PAGE_SIZ
     return results
 
 
-def search_percolate_queries(program_enrollment_id):
+def search_percolate_queries(program_enrollment_id, source_type):
     """
     Find all PercolateQuery objects whose queries match a user document
 
     Args:
         program_enrollment_id (int): A ProgramEnrollment id
+        source_type (str): The type of the percolate query to filter on
 
     Returns:
         django.db.models.query.QuerySet: A QuerySet of PercolateQuery matching the percolate results
@@ -228,7 +229,7 @@ def search_percolate_queries(program_enrollment_id):
     if len(failures) > 0:
         raise PercolateException("Failed to percolate: {}".format(failures))
     result_ids = [row['_id'] for row in result['matches']]
-    return PercolateQuery.objects.filter(id__in=result_ids)
+    return PercolateQuery.objects.filter(id__in=result_ids, source_type=source_type)
 
 
 def adjust_search_for_percolator(search):

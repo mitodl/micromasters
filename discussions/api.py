@@ -5,8 +5,16 @@ from django.db import transaction
 from open_discussions_api.client import OpenDiscussionsApi
 from open_discussions_api.constants import ROLE_STAFF
 
-from discussions.models import DiscussionUser
-from discussions.exceptions import DiscussionUserSyncException
+from discussions.models import (
+    DiscussionUser,
+    Channel,
+)
+from discussions.exceptions import (
+    ChannelCreationException,
+    DiscussionUserSyncException,
+)
+from search.api import adjust_search_for_percolator
+from search.models import PercolateQuery
 
 
 def get_staff_client():
@@ -111,4 +119,47 @@ def update_discussion_user(discussion_user):
     else:
         raise DiscussionUserSyncException(
             "Error updating discussion user, got status_code {}".format(result.status_code)
+        )
+
+
+def add_channel(original_search, title, name, public_description, channel_type):
+    """
+    Add the channel and associated query
+
+    Args:
+        original_search (Search):
+            The original search, which contains all back end filtering but no filtering specific to mail
+            or for percolated queries.
+        title (str): Title of the channel
+        name (str): Name of the channel
+        public_description (str): Description for the channel
+        channel_type (str): Whether the channel is public or private
+
+    Returns:
+        Channel: A new channel object
+    """
+    # There's no way to protect against race conditions between micromasters and open-discussions
+    # so we need to leave it in a state where the user can retry
+    # since open-discussions does not support deleting an existing channel.
+
+    client = get_staff_client()
+    response = client.channels.create(
+        title=title,
+        name=name,
+        public_description=public_description,
+        channel_type=channel_type,
+    )
+    if not response.ok:
+        raise ChannelCreationException("Error creating channel: {}".format(response.content))
+
+    updated_search = adjust_search_for_percolator(original_search)
+    with transaction.atomic():
+        percolate_query = PercolateQuery.objects.create(
+            original_query=original_search.to_dict(),
+            query=updated_search.to_dict(),
+            source_type=PercolateQuery.DISCUSSION_CHANNEL_TYPE,
+        )
+        return Channel.objects.create(
+            query=percolate_query,
+            name=name,
         )
