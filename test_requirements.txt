@@ -7,7 +7,7 @@ nplusone>=0.8.1
 pdbpp
 pip-tools
 pylint==1.7.2
-pylint-django==0.7.2
+pylint-django==git+git://github.com/landscapeio/pylint-django.git@f0655cc6e70c1a50fb5637b0324d3a9a30b98f49#egg=pylint-django
 pytest
 pytest-cov
 pytest-django
