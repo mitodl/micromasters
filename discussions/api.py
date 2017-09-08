@@ -138,10 +138,6 @@ def add_channel(original_search, title, name, public_description, channel_type):
     Returns:
         Channel: A new channel object
     """
-    # There's no way to protect against race conditions between micromasters and open-discussions
-    # so we need to leave it in a state where the user can retry
-    # since open-discussions does not support deleting an existing channel.
-
     client = get_staff_client()
     response = client.channels.create(
         title=title,
