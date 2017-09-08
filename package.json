@@ -127,8 +127,8 @@
     "webpack-hot-middleware": "^2.17.1"
   },
   "engines": {
-    "node": "6.2.0",
-    "yarn": "0.27.5"
+    "node": "8.5.0",
+    "yarn": "1.0.2"
   },
   "scripts": {
     "postinstall": "./webpack_if_prod.sh",
@@ -137,6 +137,7 @@
     "test": "./js_test.sh",
     "coverage": "COVERAGE=1 ./js_test.sh",
     "codecov": "CODECOV=1 ./js_test.sh",
+    "watch": "WATCH=1 ./js_test.sh",
     "flow": "flow check"
   }
 }

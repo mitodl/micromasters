@@ -35,6 +35,7 @@ import {
   SET_PAYMENT_TEASER_DIALOG_VISIBILITY,
   SET_ENROLL_COURSE_DIALOG_VISIBILITY,
   SET_ENROLL_SELECTED_COURSE_RUN,
+  SET_CONFIRM_SKIP_DIALOG_VISIBILITY,
   setToastMessage,
   showDialog,
 } from '../actions/ui';
@@ -341,6 +342,7 @@ describe('DashboardPage', () => {
                 RECEIVE_DASHBOARD_SUCCESS,
                 actions.prices.get.requestType,
                 actions.prices.get.successType,
+                SET_CONFIRM_SKIP_DIALOG_VISIBILITY,
               ]);
               let _actions = expectedSkip ? expectedActionsWithDashboardRequest : DASHBOARD_SUCCESS_ACTIONS;
               return renderComponent('/dashboard', _actions).then(() => {
@@ -348,6 +350,7 @@ describe('DashboardPage', () => {
                 if (expectedSkip) {
                   assert.equal(aid.fetchSkipStatus, storeActions.FETCH_SUCCESS);
                   sinon.assert.calledWith(helper.skipFinancialAidStub, program.id);
+                  assert.isFalse(helper.store.getState().ui.skipDialogVisibility);
                 } else {
                   assert.isUndefined(aid.fetchSkipStatus);
                 }

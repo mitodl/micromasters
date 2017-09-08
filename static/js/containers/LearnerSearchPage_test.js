@@ -6,6 +6,7 @@ import MockAdapter from 'axios-mock-adapter';
 import axios from 'axios';
 import { Utils as SearchkitUtils } from 'searchkit';
 
+import { wait } from '../util/util';
 import IntegrationTestHelper from '../util/integration_test_helper';
 import {
   PROGRAMS,
@@ -64,11 +65,13 @@ describe('LearnerSearchPage', function () {
     });
   });
 
-  const renderSearch = () => {
-    return renderComponent('/learners').then(([wrapper]) => {
-      let searchkit = wrapper.find("SearchkitProvider").props().searchkit;
-      return searchkit.registrationCompleted.then(() => Promise.resolve([wrapper]));
-    });
+  const renderSearch = async () => {
+    let [wrapper] = await renderComponent('/learners');
+    let searchkit = wrapper.find("SearchkitProvider").props().searchkit;
+    await searchkit.registrationCompleted;
+    // cycle through the event loop to let searchkit do its rendering
+    await wait(0);
+    return [wrapper];
   };
 
   it('calls the elasticsearch API', () => {

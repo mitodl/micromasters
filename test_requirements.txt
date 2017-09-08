@@ -7,7 +7,7 @@ nplusone>=0.8.1
 pdbpp
 pip-tools
 pylint==1.7.2
- -e git+git://github.com/mitodl/pylint-django.git@2c7136f1cb3ff618aa08189c7fab4f8e08772eae#egg=pylint-django-0.7.2fix
+-e git+git://github.com/mitodl/pylint-django.git@2c7136f1cb3ff618aa08189c7fab4f8e08772eae#egg=pylint-django-0.7.2fix
 pytest
 pytest-cov
 pytest-django
