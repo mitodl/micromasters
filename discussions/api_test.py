@@ -2,14 +2,21 @@
 # pylint: disable=redefined-outer-name
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_save
+from django.db.utils import IntegrityError
+from elasticsearch_dsl import Search
 from factory.django import mute_signals
 from open_discussions_api.constants import ROLE_STAFF
 import pytest
 
 from discussions import api
-from discussions.exceptions import DiscussionUserSyncException
-from discussions.models import DiscussionUser
+from discussions.exceptions import DiscussionUserSyncException, ChannelCreationException
+from discussions.factories import ChannelFactory
+from discussions.models import (
+    Channel,
+    DiscussionUser,
+)
 from profiles.factories import ProfileFactory
+from search.models import PercolateQuery
 
 pytestmark = pytest.mark.django_db
 
@@ -142,3 +149,81 @@ def test_update_discussion_user_error(mock_staff_client, status_code):
         api.update_discussion_user(discussion_user)
 
     assert str(exc.value) == "Error updating discussion user, got status_code {}".format(status_code)
+
+
+def test_add_channel(mock_staff_client, mocker):
+    """add_channel should tell open-discussions to create a channel"""
+    mock_staff_client.channels.create.return_value.ok = True
+
+    title = "title"
+    name = "name"
+    public_description = "public description"
+    channel_type = "private"
+    input_search = Search.from_dict({"unmodified": "search"})
+    modified_search = Search.from_dict({"result": "modified"})
+    adjust_search_for_percolator_stub = mocker.patch(
+        'discussions.api.adjust_search_for_percolator',
+        return_value=modified_search,
+    )
+    channel = api.add_channel(
+        original_search=input_search,
+        title=title,
+        name=name,
+        public_description=public_description,
+        channel_type=channel_type,
+    )
+
+    mock_staff_client.channels.create.assert_called_once_with(
+        title=title,
+        name=name,
+        public_description=public_description,
+        channel_type=channel_type,
+    )
+    adjust_search_for_percolator_stub.assert_called_once_with(input_search)
+
+    assert channel.name == name
+    query = channel.query
+    assert query.source_type == PercolateQuery.DISCUSSION_CHANNEL_TYPE
+    assert query.original_query == input_search.to_dict()
+    assert query.query == modified_search.to_dict()
+
+
+def test_add_channel_failed_create_channel(mock_staff_client):
+    """If client.channels.create fails an exception should be raised"""
+    mock_staff_client.channels.create.return_value.ok = False
+    mock_staff_client.channels.create.return_value.content = "error message"
+
+    with pytest.raises(ChannelCreationException) as ex:
+        api.add_channel(Search.from_dict({}), "title", "name", "public_description", "channel_type")
+    assert ex.value.args[0] == "Error creating channel: error message"
+    assert mock_staff_client.channels.create.called is True
+    assert PercolateQuery.objects.count() == 0
+    assert Channel.objects.count() == 0
+
+
+def test_add_channel_channel_already_exists(mock_staff_client):
+    """Channel already exists with that channel name"""
+    mock_staff_client.channels.create.return_value.ok = True
+    ChannelFactory.create(name="name")
+
+    title = "title"
+    name = "name"
+    public_description = "public description"
+    channel_type = "private"
+    input_search = Search.from_dict({"unmodified": "search"})
+
+    with pytest.raises(IntegrityError):
+        api.add_channel(
+            original_search=input_search,
+            title=title,
+            name=name,
+            public_description=public_description,
+            channel_type=channel_type,
+        )
+
+    mock_staff_client.channels.create.assert_called_once_with(
+        title=title,
+        name=name,
+        public_description=public_description,
+        channel_type=channel_type,
+    )

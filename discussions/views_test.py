@@ -4,11 +4,28 @@ Tests for discussions views
 from django.core.urlresolvers import reverse
 
 import pytest
+from rest_framework.test import (
+    APIClient,
+)
 
+from discussions.factories import ChannelFactory
 from discussions.models import DiscussionUser
 from micromasters.factories import UserFactory
+from roles.factories import RoleFactory
+from roles.models import Staff
 
 pytestmark = pytest.mark.django_db
+
+
+@pytest.fixture(autouse=True)
+def discussion_settings(settings):
+    """Set discussion-specific settings"""
+    settings.OPEN_DISCUSSIONS_JWT_SECRET = 'secret'
+    settings.OPEN_DISCUSSIONS_COOKIE_NAME = 'jwt_cookie'
+    settings.OPEN_DISCUSSIONS_COOKIE_DOMAIN = 'localhost'
+    settings.OPEN_DISCUSSIONS_REDIRECT_URL = 'http://localhost/'
+    settings.OPEN_DISCUSSIONS_BASE_URL = 'http://localhost/'
+    settings.OPEN_DISCUSSIONS_API_USERNAME = 'mitodl'
 
 
 def test_anonymous_user_jwt_api(client):
@@ -21,15 +38,10 @@ def test_anonymous_user_jwt_api(client):
     assert 'jwt_cookie' not in response.client.cookies
 
 
-def test_user_jwt_api(settings, client):
+def test_user_jwt_api(client):
     """
     Tests that anonymous users gets no token
     """
-    settings.OPEN_DISCUSSIONS_JWT_SECRET = 'secret'
-    settings.OPEN_DISCUSSIONS_COOKIE_NAME = 'jwt_cookie'
-    settings.OPEN_DISCUSSIONS_COOKIE_DOMAIN = 'localhost'
-    settings.OPEN_DISCUSSIONS_REDIRECT_URL = 'http://localhost/'
-
     user = UserFactory.create()
     DiscussionUser.objects.create(user=user, username='username')
 
@@ -50,15 +62,10 @@ def test_anonymous_user_403(client):
     assert 'jwt_cookie' not in response.client.cookies
 
 
-def test_logged_in_user_redirect(settings, client):
+def test_logged_in_user_redirect(client):
     """
     Tests that logged in user gets cookie and redirect
     """
-    settings.OPEN_DISCUSSIONS_JWT_SECRET = 'secret'
-    settings.OPEN_DISCUSSIONS_COOKIE_NAME = 'jwt_cookie'
-    settings.OPEN_DISCUSSIONS_COOKIE_DOMAIN = 'localhost'
-    settings.OPEN_DISCUSSIONS_REDIRECT_URL = 'http://localhost/'
-
     user = UserFactory.create()
     DiscussionUser.objects.create(user=user, username='username')
 
@@ -80,3 +87,94 @@ def test_logged_in_user_redirect_no_username(client):
     response = client.get(reverse('discussions'), follow=True)
     assert response.status_code == 409
     assert 'jwt_cookie' not in response.client.cookies
+
+
+CREATE_CHANNEL_INPUT = {
+    "title": "title",
+    "name": "name",
+    "public_description": "public description",
+    "channel_type": "public",
+    "query": {}
+}
+
+
+def test_create_channel(mocker):
+    """Staff can create a channel using the REST API"""
+    client = APIClient()
+    role = RoleFactory.create(role=Staff.ROLE_ID)
+    user = role.user
+    client.force_login(user)
+
+    channel = ChannelFactory.create()
+    add_channel_mock = mocker.patch('discussions.serializers.add_channel', return_value=channel, autospec=True)
+
+    resp = client.post(reverse('channel-list'), data={
+        **CREATE_CHANNEL_INPUT,
+        "name": channel.name,
+    }, format="json")
+    assert resp.status_code == 201
+    assert resp.json() == {
+        "name": channel.name,
+        "title": CREATE_CHANNEL_INPUT['title'],
+        "public_description": CREATE_CHANNEL_INPUT['public_description'],
+        "channel_type": CREATE_CHANNEL_INPUT['channel_type'],
+        "query": channel.query.query,
+    }
+
+    kwargs = add_channel_mock.call_args[1]
+    assert kwargs['title'] == CREATE_CHANNEL_INPUT['title']
+    assert kwargs['name'] == channel.name
+    assert kwargs['public_description'] == CREATE_CHANNEL_INPUT['public_description']
+    assert kwargs['channel_type'] == CREATE_CHANNEL_INPUT['channel_type']
+    assert kwargs['original_search'].to_dict() == {
+        'query': {
+            'bool': {
+                'filter': [
+                    {
+                        'bool': {
+                            'minimum_should_match': 1,
+                            'must': [{'term': {'program.is_learner': True}}],
+                            'should': [{
+                                'term': {'program.id': role.program.id}
+                            }]
+                        }
+                    },
+                    {
+                        'term': {'profile.filled_out': True}
+                    }
+                ]
+            }
+        },
+        'size': 50
+    }
+
+
+def test_create_channel_anonymous():
+    """Anonymous users should get a 401 error"""
+    client = APIClient()
+    resp = client.post(reverse('channel-list'), data=CREATE_CHANNEL_INPUT, format="json")
+    assert resp.status_code == 403
+
+
+def test_create_channel_user_without_permission():
+    """If a user doesn't have permission to create the channel they should get a forbidden status"""
+    client = APIClient()
+    user = UserFactory.create()
+    client.force_login(user)
+    resp = client.post(reverse('channel-list'), data=CREATE_CHANNEL_INPUT, format="json")
+    assert resp.status_code == 403
+
+
+@pytest.mark.parametrize("missing_param", ["title", "name", "public_description", "channel_type", "query"])
+def test_create_channel_missing_param(missing_param):
+    """A missing param should cause a validation error"""
+    client = APIClient()
+    user = RoleFactory.create(role=Staff.ROLE_ID).user
+    client.force_login(user)
+    inputs = dict(CREATE_CHANNEL_INPUT)
+    del inputs[missing_param]
+    resp = client.post(reverse('channel-list'), data=inputs, format="json")
+    assert resp.status_code == 400
+    assert resp.json() == {
+        missing_param: ["This field is required."]
+    }
