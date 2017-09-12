@@ -10,6 +10,7 @@ from django.db.utils import IntegrityError
 from courses.models import (
     Course,
     CourseRun,
+    Program,
 )
 from exams.models import ExamRun
 from exams.pearson.constants import EXAM_GRADE_PASS, EXAM_GRADE_FAIL
@@ -169,6 +170,33 @@ class MicromastersCourseCertificate(TimestampedModel):
     def __str__(self):
         return 'final_grade_id={final_grade_id}, hash="{hash}"'.format(
             final_grade_id=self.final_grade.id,
+            hash=self.hash,
+        )
+
+
+class MicromastersProgramCertificate(TimestampedModel):
+    """
+    Model for storing MicroMasters program certificates
+    """
+    program = models.ForeignKey(Program, null=False)
+    user = models.ForeignKey(User, null=False)
+    hash = models.CharField(max_length=32, null=False, unique=True)
+
+    class Meta:
+        unique_together = ('user', 'program')
+
+    def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
+        """Overridden save method"""
+        if not self.hash:
+            self.hash = generate_md5(
+                '{}|{}'.format(self.user_id, self.program_id).encode('utf-8')
+            )
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return 'Program Certificate for user={user}, program={program}, hash="{hash}"'.format(
+            user=self.user,
+            program=self.program,
             hash=self.hash,
         )
 
