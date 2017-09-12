@@ -177,6 +177,37 @@ def prepare_and_execute_search(user, search_param_dict=None, search_func=execute
     return search_func(search_obj)
 
 
+def search_for_field(search_obj, field_name, page_size=DEFAULT_ES_LOOP_PAGE_SIZE):
+    """
+    Retrieves all unique instances of a field for documents that match an ES query
+
+    Args:
+        search_obj (Search): Search object
+        field_name (str): The name of the field for the value to get
+        page_size (int): Number of docs per page of results
+
+    Returns:
+        set: Set of unique values
+    """
+    results = set()
+    # Maintaining a consistent sort on '_doc' will help prevent bugs where the
+    # index is altered during the loop.
+    # This also limits the query to only return the field value.
+    search_obj = search_obj.sort('_doc').fields(field_name)
+    loop = 0
+    all_results_returned = False
+    while not all_results_returned:
+        from_index = loop * page_size
+        to_index = from_index + page_size
+        search_results = execute_search(search_obj[from_index: to_index])
+        # add the field value for every search result hit to the set
+        for hit in search_results.hits:
+            results.add(getattr(hit, field_name)[0])
+        all_results_returned = to_index >= search_results.hits.total
+        loop += 1
+    return results
+
+
 def get_all_query_matching_emails(search_obj, page_size=DEFAULT_ES_LOOP_PAGE_SIZE):
     """
     Retrieves all unique emails for documents that match an ES query
@@ -188,23 +219,7 @@ def get_all_query_matching_emails(search_obj, page_size=DEFAULT_ES_LOOP_PAGE_SIZ
     Returns:
         set: Set of unique emails
     """
-    results = set()
-    # Maintaining a consistent sort on '_doc' will help prevent bugs where the
-    # index is altered during the loop.
-    # This also limits the query to only return the 'email' field.
-    search_obj = search_obj.sort('_doc').fields('email')
-    loop = 0
-    all_results_returned = False
-    while not all_results_returned:
-        from_index = loop * page_size
-        to_index = from_index + page_size
-        search_results = execute_search(search_obj[from_index: to_index])
-        # add the email for every search result hit to the set
-        for hit in search_results.hits:
-            results.add(hit.email[0])
-        all_results_returned = to_index >= search_results.hits.total
-        loop += 1
-    return results
+    return search_for_field(search_obj, "email", page_size=page_size)
 
 
 def search_percolate_queries(program_enrollment_id, source_type):

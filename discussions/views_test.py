@@ -9,7 +9,6 @@ from rest_framework.test import (
 )
 
 from discussions.factories import ChannelFactory
-from discussions.models import DiscussionUser
 from micromasters.factories import UserFactory
 from roles.factories import RoleFactory
 from roles.models import Staff
@@ -17,17 +16,7 @@ from roles.models import Staff
 pytestmark = pytest.mark.django_db
 
 
-@pytest.fixture(autouse=True)
-def discussion_settings(settings):
-    """Set discussion-specific settings"""
-    settings.OPEN_DISCUSSIONS_JWT_SECRET = 'secret'
-    settings.OPEN_DISCUSSIONS_COOKIE_NAME = 'jwt_cookie'
-    settings.OPEN_DISCUSSIONS_COOKIE_DOMAIN = 'localhost'
-    settings.OPEN_DISCUSSIONS_REDIRECT_URL = 'http://localhost/'
-    settings.OPEN_DISCUSSIONS_BASE_URL = 'http://localhost/'
-    settings.OPEN_DISCUSSIONS_API_USERNAME = 'mitodl'
-
-
+# pylint: disable=unused-argument
 def test_anonymous_user_jwt_api(client):
     """
     Tests that anonymous users gets no token
@@ -38,12 +27,13 @@ def test_anonymous_user_jwt_api(client):
     assert 'jwt_cookie' not in response.client.cookies
 
 
-def test_user_jwt_api(client):
+def test_user_jwt_api(client, patched_users_api):
     """
     Tests that anonymous users gets no token
     """
     user = UserFactory.create()
-    DiscussionUser.objects.create(user=user, username='username')
+    user.discussion_user.username = 'username'
+    user.discussion_user.save()
 
     client.force_login(user)
     response = client.get(reverse('discussions_token'))
@@ -62,12 +52,13 @@ def test_anonymous_user_403(client):
     assert 'jwt_cookie' not in response.client.cookies
 
 
-def test_logged_in_user_redirect(client):
+def test_logged_in_user_redirect(client, patched_users_api):
     """
     Tests that logged in user gets cookie and redirect
     """
     user = UserFactory.create()
-    DiscussionUser.objects.create(user=user, username='username')
+    user.discussion_user.username = 'username'
+    user.discussion_user.save()
 
     client.force_login(user)
     response = client.get(reverse('discussions'), follow=True)
@@ -76,12 +67,13 @@ def test_logged_in_user_redirect(client):
     assert response.client.cookies['jwt_cookie'] is not None
 
 
-def test_logged_in_user_redirect_no_username(client):
+def test_logged_in_user_redirect_no_username(client, patched_users_api):
     """
     Tests that logged in user gets cookie and redirect
     """
     user = UserFactory.create()
-    DiscussionUser.objects.create(user=user, username=None)
+    user.discussion_user.username = None
+    user.discussion_user.save()
 
     client.force_login(user)
     response = client.get(reverse('discussions'), follow=True)
@@ -98,7 +90,7 @@ CREATE_CHANNEL_INPUT = {
 }
 
 
-def test_create_channel(mocker):
+def test_create_channel(mocker, patched_users_api):
     """Staff can create a channel using the REST API"""
     client = APIClient()
     role = RoleFactory.create(role=Staff.ROLE_ID)
@@ -156,7 +148,7 @@ def test_create_channel_anonymous():
     assert resp.status_code == 403
 
 
-def test_create_channel_user_without_permission():
+def test_create_channel_user_without_permission(patched_users_api):
     """If a user doesn't have permission to create the channel they should get a forbidden status"""
     client = APIClient()
     user = UserFactory.create()
@@ -166,7 +158,7 @@ def test_create_channel_user_without_permission():
 
 
 @pytest.mark.parametrize("missing_param", ["title", "name", "public_description", "channel_type", "query"])
-def test_create_channel_missing_param(missing_param):
+def test_create_channel_missing_param(missing_param, patched_users_api):
     """A missing param should cause a validation error"""
     client = APIClient()
     user = RoleFactory.create(role=Staff.ROLE_ID).user

@@ -44,3 +44,19 @@ def sync_discussion_users():
             api.create_or_update_discussion_user(user_id)
         except DiscussionUserSyncException:
             log.error('Impossible to sync user_id %s to discussions', user_id)
+
+
+@app.task()
+def add_contributors(channel_name, user_ids):
+    """
+    Add users to a open-discussions channel as contributors and subscribers
+
+    Args:
+        channel_name (str): The name of the channel
+        user_ids (set of int): profile ids to sync
+    """
+    if not settings.FEATURES.get('OPEN_DISCUSSIONS_USER_SYNC', False):
+        log.error('OPEN_DISCUSSIONS_USER_SYNC is set to False (so disabled) in the settings')
+        return
+
+    api.add_contributors(channel_name, user_ids)

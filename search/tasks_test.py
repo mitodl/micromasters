@@ -30,6 +30,8 @@ class SearchTasksTests(MockedESTestCase):
                 self.send_automatic_emails_mock = mock
             elif mock.name == "_refresh_index":
                 self.refresh_index_mock = mock
+            elif mock.name == "_sync_user_to_channels":
+                self.sync_user_to_channels_mock = mock
 
     def test_index_users(self):
         """
@@ -41,6 +43,7 @@ class SearchTasksTests(MockedESTestCase):
         self.index_users_mock.assert_called_with([enrollment1.user.id])
         for enrollment in [enrollment1, enrollment2]:
             self.send_automatic_emails_mock.assert_any_call(enrollment)
+            self.sync_user_to_channels_mock.assert_any_call(enrollment.user.id)
         self.refresh_index_mock.assert_called_with(get_default_alias())
 
     def test_index_program_enrolled_users(self):
@@ -55,4 +58,5 @@ class SearchTasksTests(MockedESTestCase):
         ) == enrollment_ids
         for enrollment in enrollments:
             self.send_automatic_emails_mock.assert_any_call(enrollment)
+            self.sync_user_to_channels_mock.assert_any_call(enrollment.user.id)
         self.refresh_index_mock.assert_called_with(get_default_alias())
