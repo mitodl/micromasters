@@ -19,12 +19,24 @@
       <div class="certificate-text">
         <p>This is to certify that</p>
         <p class="name">{{ name }}</p>
-        <p>has successfully completed and received a passing grade in</p>
-        <p class="course-name">{{ course_title }}</p>
-        <p>
-          a course offered by the {{ program_title }} MicroMasters program, an online learning initiative offered by
-          the Massachusetts Institute of Technology in collaboration with edX.
-        </p>
+        {% if course_title %}
+          <p>has successfully completed and received a passing grade in</p>
+          <p class="course-name">{{ course_title }}</p>
+          <p>
+            a course offered by the {{ program_title }} MicroMasters program, an online learning initiative offered by
+            the Massachusetts Institute of Technology in collaboration with edX.
+          </p>
+        {% else %}
+          <p>
+            has successfully completed all the courses and received passing grades for a MicroMasters credential
+            inpassed all the requirements of the
+          </p>
+          <p class="course-name">{{ program_title }}</p>
+          <p>
+            a program offered by MITx, in collaboration with edX.
+          </p>
+        {% endif %}
+
       </div>
 
       <div class="certificate-stamps row">

@@ -8,17 +8,20 @@ from django.conf import settings
 from django.views.generic import TemplateView
 from rest_framework.generics import Http404
 
-from cms.models import CourseCertificateSignatories
-from grades.models import MicromastersCourseCertificate
+from cms.models import CourseCertificateSignatories, ProgramCertificateSignatories
+from grades.models import MicromastersCourseCertificate, MicromastersProgramCertificate
 
 log = logging.getLogger(__name__)
 
 
-class CourseCertificateView(TemplateView):  # pylint: disable=unused-argument
+class CertificateView(TemplateView):
     """
-    Views for course certificates
+    Abstract view for certificate
     """
-    template_name = 'course_certificate.html'
+    class Meta:
+        abstract = True
+
+    template_name = 'certificate.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -28,6 +31,17 @@ class CourseCertificateView(TemplateView):  # pylint: disable=unused-argument
             "edx_base_url": settings.EDXORG_BASE_URL,
         }
         context["js_settings_json"] = json.dumps(js_settings)
+
+        return context
+
+
+class CourseCertificateView(CertificateView):  # pylint: disable=unused-argument
+    """
+    Views for course certificates
+    """
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
         certificate = (
             MicromastersCourseCertificate.objects.filter(hash=kwargs.get('certificate_hash')).
@@ -48,6 +62,40 @@ class CourseCertificateView(TemplateView):  # pylint: disable=unused-argument
         context['course_title'] = course.title
         context['program_title'] = course.program.title
         context['name'] = certificate.final_grade.user.profile.full_name
+        context['signatories'] = list(signatories)
+        context['certificate'] = certificate
+
+        return context
+
+
+class ProgramCertificateView(CertificateView):
+    """
+    Views for program certificates
+    """
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        certificate = (
+            MicromastersProgramCertificate.objects.filter(hash=kwargs.get('certificate_hash')).
+            select_related('program', 'user__profile').
+            first()
+        )
+        program = certificate.program
+        if not certificate:
+            raise Http404
+
+        signatories = ProgramCertificateSignatories.objects.filter(program_page__program=program)
+        if not signatories.exists():
+            log.error(
+                'Program "%s" (id: %s) does not have any signatories set in the CMS.',
+                program.title,
+                program.id
+            )
+            raise Http404
+
+        context['program_title'] = program.title
+        context['name'] = certificate.user.profile.full_name
         context['signatories'] = list(signatories)
         context['certificate'] = certificate
 
