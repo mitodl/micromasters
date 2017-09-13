@@ -10,12 +10,14 @@ from django.core.cache import caches
 from django.db.models import Count
 from django_redis import get_redis_connection
 
-from courses.models import CourseRun
+from courses.models import CourseRun, Program
+
 from grades import api
 from grades.models import (
     FinalGrade,
     ProctoredExamGrade,
     MicromastersCourseCertificate,
+    MicromastersProgramCertificate,
     CourseRunGradingStatus,
 )
 from micromasters.celery import app

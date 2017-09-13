@@ -10,10 +10,12 @@ from django_redis import get_redis_connection
 
 from dashboard.api_edx_cache import CachedEdxUserData, CachedEdxDataApi
 from dashboard.models import CachedEnrollment
+from dashboard.utils import get_mmtrack
 from grades.exceptions import FreezeGradeFailedException
 from grades.models import (
     FinalGrade,
     FinalGradeStatus,
+    MicromastersProgramCertificate,
 )
 
 CACHE_KEY_FAILED_USERS_BASE_STR = "failed_users_{0}"
@@ -202,3 +204,44 @@ def freeze_user_final_grade(user, course_run, raise_on_exception=False):
         course_run_paid_on_edx=final_grade.payed_on_edx
     )
     return final_grade_obj
+
+
+def generate_program_certificate_after_course_cert_created(course_certificate):
+    """
+    After MicromastersCourseCertifcate was created, check if program certificate
+    can be created
+
+    Args:
+        course_certificate (grades.models.MicromastersCourseCertificate): course certificate
+    """
+    user = course_certificate.final_grade.user
+    program = course_certificate.final_grade.course_run.course.program
+    generate_program_certificate(user, program)
+
+
+def generate_program_certificate(user, program):
+    """
+    Create a program certificate if the user has a MM course certificate
+    for each course in the program
+
+    Args:
+        user (User): a Django user.
+        program (programs.models.Program): program where the user is enrolled.
+    """
+    mmtrack = get_mmtrack(user, program)
+
+    if program.financial_aid_availability:
+
+        for course in program.course_set.all():
+            final_grades = mmtrack.get_passing_final_grades_for_course(course)
+            if not final_grades.exists():
+                return
+            best_grade = final_grades.first()
+            if not best_grade.has_certificate:
+                return
+        MicromastersProgramCertificate.objects.create(user=user, program=program)
+        log.info(
+            'Created MM program certificate for [%s] in program [%s]',
+            user.username,
+            program.title
+        )
