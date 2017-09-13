@@ -140,7 +140,7 @@ class Course(models.Model):
         """
         Return frozen runs for this course, that has frozen grades
         """
-        return [run for run in self.courserun_set.all() if run.has_frozen_grade]
+        return [run for run in self.courserun_set.all() if run.has_frozen_grades]
 
     def first_unexpired_run(self):
         """

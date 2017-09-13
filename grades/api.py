@@ -206,19 +206,6 @@ def freeze_user_final_grade(user, course_run, raise_on_exception=False):
     return final_grade_obj
 
 
-def generate_program_certificate_after_course_cert_created(course_certificate):
-    """
-    After MicromastersCourseCertifcate was created, check if program certificate
-    can be created
-
-    Args:
-        course_certificate (grades.models.MicromastersCourseCertificate): course certificate
-    """
-    user = course_certificate.final_grade.user
-    program = course_certificate.final_grade.course_run.course.program
-    generate_program_certificate(user, program)
-
-
 def generate_program_certificate(user, program):
     """
     Create a program certificate if the user has a MM course certificate
@@ -230,18 +217,20 @@ def generate_program_certificate(user, program):
     """
     mmtrack = get_mmtrack(user, program)
 
-    if program.financial_aid_availability:
+    if MicromastersProgramCertificate.objects.filter(user=user, program=program).exists():
+        log.error('User {0} already has a certificate for program {1}', user, program)
+        return
 
-        for course in program.course_set.all():
-            final_grades = mmtrack.get_passing_final_grades_for_course(course)
-            if not final_grades.exists():
-                return
-            best_grade = final_grades.first()
-            if not best_grade.has_certificate:
-                return
-        MicromastersProgramCertificate.objects.create(user=user, program=program)
-        log.info(
-            'Created MM program certificate for [%s] in program [%s]',
-            user.username,
-            program.title
-        )
+    for course in program.course_set.all():
+        final_grades = mmtrack.get_passing_final_grades_for_course(course)
+        if not final_grades.exists():
+            return
+        best_grade = final_grades.first()
+        if not best_grade.has_certificate:
+            return
+    MicromastersProgramCertificate.objects.create(user=user, program=program)
+    log.info(
+        'Created MM program certificate for [%s] in program [%s]',
+        user.username,
+        program.title
+    )
