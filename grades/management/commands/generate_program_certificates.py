@@ -1,4 +1,6 @@
-
+"""
+Find all users that completed the program and create certificates
+"""
 from django.core.management import BaseCommand
 
 from courses.models import Program

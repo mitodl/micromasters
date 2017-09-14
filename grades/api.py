@@ -218,7 +218,7 @@ def generate_program_certificate(user, program):
     mmtrack = get_mmtrack(user, program)
 
     if MicromastersProgramCertificate.objects.filter(user=user, program=program).exists():
-        log.error('User {0} already has a certificate for program {1}', user, program)
+        log.error('User [%s] already has a certificate for program [%s]', user, program)
         return
 
     for course in program.course_set.all():

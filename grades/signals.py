@@ -18,4 +18,3 @@ def handle_create_coursecertificate(sender, instance, created, **kwargs):  # pyl
         user = instance.final_grade.user
         program = instance.final_grade.course_run.course.program
         transaction.on_commit(lambda: generate_program_certificate(user, program))
-
