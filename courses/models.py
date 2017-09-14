@@ -136,15 +136,9 @@ class Course(models.Model):
         else:
             return "Not available"
 
-    def get_frozen_runs(self):
-        """
-        Return frozen runs for this course, that has frozen grades
-        """
-        return [run for run in self.courserun_set.all() if run.has_frozen_grades]
-
     def has_frozen_runs(self):
         """
-        Return frozen runs for this course, that has frozen grades
+        Return true if has any frozen runs
         """
         return any([run.has_frozen_grades for run in self.courserun_set.all()])
 
