@@ -11,7 +11,6 @@ from django.db.models import Count
 from django_redis import get_redis_connection
 
 from courses.models import CourseRun
-
 from grades import api
 from grades.models import (
     FinalGrade,
