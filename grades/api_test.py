@@ -6,7 +6,9 @@ from unittest.mock import patch, MagicMock
 
 import ddt
 from django.core.exceptions import ImproperlyConfigured
+from django.db.models.signals import post_save
 from django_redis import get_redis_connection
+from factory.django import mute_signals
 
 from courses.factories import CourseRunFactory
 from dashboard.api_edx_cache import CachedEdxUserData, UserCachedRunData
@@ -438,7 +440,8 @@ class GradeAPITests(MockedESTestCase):
             grade=0.8
         )
         CourseRunGradingStatus.objects.create(course_run=self.run_fa, status='complete')
-        MicromastersCourseCertificate.objects.create(final_grade=final_grade)
+        with mute_signals(post_save):
+            MicromastersCourseCertificate.objects.create(final_grade=final_grade)
 
         program = self.run_fa.course.program
         cert_qset = MicromastersProgramCertificate.objects.filter(user=self.user, program=program)
@@ -453,6 +456,7 @@ class GradeAPITests(MockedESTestCase):
             grade=0.8
         )
         CourseRunGradingStatus.objects.create(course_run=self.run_fa_with_cert, status='complete')
-        MicromastersCourseCertificate.objects.create(final_grade=final_grade)
+        with mute_signals(post_save):
+            MicromastersCourseCertificate.objects.create(final_grade=final_grade)
         api.generate_program_certificate(self.user, program)
         assert cert_qset.exists() is True
