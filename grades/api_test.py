@@ -22,7 +22,14 @@ from financialaid.factories import (
 )
 from grades import api
 from grades.exceptions import FreezeGradeFailedException
-from grades.models import FinalGrade, FinalGradeStatus
+from grades.models import (
+    FinalGrade,
+    FinalGradeStatus,
+    MicromastersCourseCertificate,
+    MicromastersProgramCertificate,
+    CourseRunGradingStatus
+)
+from grades.factories import FinalGradeFactory
 from micromasters.factories import SocialUserFactory, UserFactory
 from micromasters.utils import now_in_utc
 from search.base import MockedESTestCase
@@ -417,3 +424,35 @@ class GradeAPITests(MockedESTestCase):
         assert final_grade is not None
         assert mock_refr.call_count == 2
         assert fg_qset.count() == 1
+
+    def test_generate_program_certificates(self):
+        """
+        Test for generate_program_certificate
+        """
+
+        final_grade = FinalGradeFactory.create(
+            user=self.user,
+            course_run=self.run_fa,
+            passed=True,
+            status='complete',
+            grade=0.8
+        )
+        CourseRunGradingStatus.objects.create(course_run=self.run_fa, status='complete')
+        MicromastersCourseCertificate.objects.create(final_grade=final_grade)
+
+        program = self.run_fa.course.program
+        cert_qset = MicromastersProgramCertificate.objects.filter(user=self.user, program=program)
+        assert cert_qset.exists() is False
+        api.generate_program_certificate(self.user, program)
+        assert cert_qset.exists() is False
+        final_grade = FinalGradeFactory.create(
+            user=self.user,
+            course_run=self.run_fa_with_cert,
+            passed=True,
+            status='complete',
+            grade=0.8
+        )
+        CourseRunGradingStatus.objects.create(course_run=self.run_fa_with_cert, status='complete')
+        MicromastersCourseCertificate.objects.create(final_grade=final_grade)
+        api.generate_program_certificate(self.user, program)
+        assert cert_qset.exists() is True
