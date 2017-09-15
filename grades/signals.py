@@ -12,7 +12,7 @@ from grades.api import generate_program_certificate
 @receiver(post_save, sender=MicromastersCourseCertificate, dispatch_uid="coursecertificate_post_save")
 def handle_create_coursecertificate(sender, instance, created, **kwargs):  # pylint: disable=unused-argument
     """
-    When a ProgramEnrollment model is created/updated, update index.
+    When a MicromastersCourseCertificate model is created
     """
     if created:
         user = instance.final_grade.user
