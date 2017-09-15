@@ -75,6 +75,53 @@ class CourseModelTests(MockedESTestCase):
         return from_weeks(weeks, self.now)
 
 
+class HasFrozenRunsTests(CourseModelTests):
+    """Test has_frozen_runs"""
+
+    def test_no_run(self):
+        """
+        The course has no runs
+        """
+        assert self.course.has_frozen_runs() is False
+
+    def test_no_frozen_runs(self):
+        """
+        The course has run with no grading status
+        """
+        now = now_in_utc()
+        self.create_run(freeze_grade_date=now - timedelta(weeks=1))
+        assert self.course.has_frozen_runs() is False
+
+    def test_has_frozen_run(self):
+        """
+        The course has one frozen run
+        """
+        now = now_in_utc()
+        course_run = self.create_run(freeze_grade_date=now - timedelta(weeks=1))
+        CourseRunGradingStatus.objects.create(course_run=course_run, status='complete')
+
+        assert self.course.has_frozen_runs() is True
+
+    def test_has_frozen_run_and_another_run(self):
+        """
+        The course has one frozen run, and a run with no grading status
+        """
+        now = now_in_utc()
+        course_run = self.create_run(freeze_grade_date=now - timedelta(weeks=1))
+        CourseRunGradingStatus.objects.create(course_run=course_run, status='complete')
+        self.create_run()
+        assert self.course.has_frozen_runs() is True
+
+    def test_has_frozen_run_and_pending(self):
+        """
+        The course has a run with pending status
+        """
+        now = now_in_utc()
+        not_frozen_run = self.create_run(freeze_grade_date=now - timedelta(weeks=1))
+        CourseRunGradingStatus.objects.create(course_run=not_frozen_run, status='pending')
+        assert self.course.has_frozen_runs() is False
+
+
 # Silencing a pylint warning caused by ddt
 # pylint: disable=too-many-arguments
 @ddt
