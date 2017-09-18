@@ -24,6 +24,7 @@ from search.base import MockedESTestCase
 BASE_URL = "http://base.url/"
 
 
+@ddt
 class ProgramTests(MockedESTestCase):
     """Tests for Program model"""
 
@@ -31,6 +32,38 @@ class ProgramTests(MockedESTestCase):
         """Test for __str__ method"""
         prog = ProgramFactory.build(title="Title")
         assert "{}".format(prog) == "Title"
+
+    def create_frozen_run(self, course):
+        """helper function to create frozen course runs"""
+
+        now = now_in_utc()
+        run = CourseRunFactory.create(
+            course=course,
+            title="Title Run",
+            freeze_grade_date=now - timedelta(weeks=1),
+        )
+        CourseRunGradingStatus.objects.create(course_run=run, status='complete')
+        return run
+
+    @data(
+        [True, True, True],
+        [False, True, False],
+        [True, False, False],
+        [False, False, False],
+    )
+    @unpack
+    def test_complete(self, first_has_frozen, second_has_frozen, result):
+        """
+        Test has_frozen_grades_for_all_courses
+        """
+        course_1 = CourseFactory.create(title="Title")
+        course_2 = CourseFactory.create(title="Title", program=course_1.program)
+        if first_has_frozen:
+            self.create_frozen_run(course_1)
+        if second_has_frozen:
+            self.create_frozen_run(course_2)
+
+        assert course_1.program.has_frozen_grades_for_all_courses() is result
 
 
 def from_weeks(weeks, now=None):
