@@ -77,3 +77,6 @@ class ChannelsView(CreateAPIView):
         CanCreateChannel,
     )
     serializer_class = ChannelSerializer
+
+    # Make django-rest-framework happy
+    queryset = []
