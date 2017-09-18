@@ -36,5 +36,8 @@ class CourseCertificateTests(MockedESTestCase):
         Test that generate_program_certificate is called when a course
         certificate is created
         """
-        MicromastersCourseCertificateFactory.create(final_grade=self.final_grade)
-        generate_program_cert_mock.assert_called_with(self.user, self.final_grade.course_run.course.program)
+        program = self.final_grade.course_run.course.program
+        cert = MicromastersCourseCertificateFactory.create(final_grade=self.final_grade)
+        generate_program_cert_mock.assert_called_once_with(self.user, program)
+        cert.save()
+        generate_program_cert_mock.assert_called_once_with(self.user, program)
