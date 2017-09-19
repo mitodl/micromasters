@@ -1,15 +1,28 @@
 {
   "parser": "babel-eslint",
   "extends": [
-      "defaults/configurations/google",
+      "google",
       "eslint:recommended",
       "plugin:react/recommended"
   ],
   "rules": {
+    "key-spacing": [2, {
+      "beforeColon": false,
+      "afterColon": true,
+      "align": {
+        "beforeColon": false,
+        "afterColon": true,
+        "mode": "minimum",
+        "on": "value"
+      }
+    }],
     "quotes": [0], // no opinion on ' vs "
     "object-curly-spacing": [0],
     "new-cap": [0], // allows function calls like Immutable.Map(...)
-    "max-len": [2, 120, 2], // 120 max line length, tabs count as 2 spaces
+    "max-len": [0, {
+        "code": 80,
+        "ignoreComments": true,
+    }],
     "indent": [2, 2], // no tabs, indent is 2 spaces
     "newline-after-var": [0],
     "react/jsx-indent-props": [2, 2], // no tabs, indent is two spaces
@@ -25,7 +38,7 @@
     }],
     "comma-dangle": [0],
     "no-unreachable": [2],
-    "semi": [2, "always"],
+    "semi": [2, "never"],
     "eqeqeq": [2],
     "no-var": [2],
     "camelcase": [2, {
@@ -52,7 +65,6 @@
     "mocha/no-top-level-hooks": [2],
     "mocha/no-identical-title": [2],
     "mocha/no-nested-tests": [2],
-    "no-sequences": [2],
   },
   "env": {
     "es6": true,
@@ -60,8 +72,10 @@
     "node": true,
     "mocha": true
   },
-  "ecmaFeatures": {
-    "jsx": true
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
   },
   "plugins": [
     "babel",

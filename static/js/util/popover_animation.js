@@ -1,25 +1,23 @@
 // @flow
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import Paper from 'material-ui/Paper';
-import propTypes from 'material-ui/utils/propTypes';
-
+import React, { Component } from "react"
+import PropTypes from "prop-types"
+import Paper from "material-ui/Paper"
+import propTypes from "material-ui/utils/propTypes"
 
 function getStyles(props, context, state) {
-  const {open} = state;
-  const {muiTheme} = context;
+  const { open } = state
+  const { muiTheme } = context
 
   return {
     root: {
-      opacity: open ? 1 : 0,
+      opacity:    open ? 1 : 0,
       transition: 0,
-      position: 'fixed',
-      zIndex: muiTheme.zIndex.popover,
-      maxHeight: '100%',
-    },
-  };
+      position:   "fixed",
+      zIndex:     muiTheme.zIndex.popover,
+      maxHeight:  "100%"
+    }
+  }
 }
-
 
 export default class PopoverNullAnimation extends Component {
   static propTypes = {
@@ -31,49 +29,45 @@ export default class PopoverNullAnimation extends Component {
      */
     style:        PropTypes.object,
     targetOrigin: propTypes.origin.isRequired,
-    zDepth:       propTypes.zDepth,
-  };
+    zDepth:       propTypes.zDepth
+  }
 
   static defaultProps = {
-    style: {},
-    zDepth: 1,
-  };
+    style:  {},
+    zDepth: 1
+  }
 
   static contextTypes = {
-    muiTheme: PropTypes.object.isRequired,
-  };
+    muiTheme: PropTypes.object.isRequired
+  }
 
   state = {
-    open: false,
-  };
+    open: false
+  }
 
   componentDidMount() {
-    this.setState({open: true}); // eslint-disable-line react/no-did-mount-set-state
+    this.setState({ open: true }) // eslint-disable-line react/no-did-mount-set-state
   }
 
   componentWillReceiveProps(nextProps: any) {
     this.setState({
-      open: nextProps.open,
-    });
+      open: nextProps.open
+    })
   }
 
   render() {
-    const {
-      className,
-      style,
-      zDepth,
-    } = this.props;
+    const { className, style, zDepth } = this.props
 
-    const styles = getStyles(this.props, this.context, this.state);
+    const styles = getStyles(this.props, this.context, this.state)
 
     return (
       <Paper
-        style={{...styles.root, style}}
+        style={{ ...styles.root, style }}
         zDepth={zDepth}
         className={className}
       >
         {this.props.children}
       </Paper>
-    );
+    )
   }
 }

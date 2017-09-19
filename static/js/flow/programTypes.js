@@ -8,7 +8,7 @@ import {
   FA_STATUS_PENDING_MANUAL_APPROVAL,
   FA_STATUS_SKIPPED,
   FA_STATUS_RESET,
-} from '../constants';
+} from '../constants'
 
 export type FinancialAidUserInfo = {
   application_status: (
@@ -26,7 +26,7 @@ export type FinancialAidUserInfo = {
   max_possible_cost: number,
   min_possible_cost: number,
   id: number,
-};
+}
 
 export type Program = {
   courses:                    Array<Course>,
@@ -36,7 +36,7 @@ export type Program = {
   financial_aid_user_info:    FinancialAidUserInfo,
   pearson_exam_status:        string,
   grade_average:              ?number,
-};
+}
 
 export type ProctoredExamResult = {
   exam_date:               string,
@@ -46,7 +46,7 @@ export type ProctoredExamResult = {
   client_authorization_id: string,
   passed:                  boolean,
   percentage_grade:        number
-};
+}
 
 export type Course = {
   runs:                         Array<CourseRun>,
@@ -60,7 +60,7 @@ export type Course = {
   proctorate_exams_grades:      Array<ProctoredExamResult>,
   has_exam:                     boolean,
   certificate_url:              string,
-};
+}
 
 export type ProgramPageCourse = {
   id:               number,
@@ -68,7 +68,7 @@ export type ProgramPageCourse = {
   description:      string,
   url:              string,
   enrollment_text:  string,
-};
+}
 
 export type CourseRun = {
   id:                           number,
@@ -87,8 +87,8 @@ export type CourseRun = {
   price?:                       number,
   enrollment_url?:              ?string,
   has_paid:                     boolean,
-};
+}
 
 export type UserProgram = {
   grade_average: number
-};
+}

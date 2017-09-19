@@ -132,7 +132,8 @@ export default {
   "05.0200": "Ethnic Studies",
   "05.0201": "African-American/Black Studies",
   "05.0202": "American Indian/Native American Studies",
-  "05.0203": "Hispanic-American, Puerto Rican, and Mexican-American/Chicano Studies",
+  "05.0203":
+    "Hispanic-American, Puerto Rican, and Mexican-American/Chicano Studies",
   "05.0206": "Asian-American Studies",
   "05.0207": "Women's Studies",
   "05.0208": "Gay/Lesbian Studies",
@@ -171,13 +172,15 @@ export default {
   "10.0301": "Graphic Communications, General",
   "10.0302": "Printing Management",
   "10.0303": "Prepress/Desktop Publishing and Digital Imaging Design",
-  "10.0304": "Animation, Interactive Technology, Video Graphics and Special Effects",
+  "10.0304":
+    "Animation, Interactive Technology, Video Graphics and Special Effects",
   "10.0305": "Graphic and Printing Equipment Operator, General Production",
   "10.0306": "Platemaker/Imager",
   "10.0307": "Printing Press Operator",
   "10.0308": "Computer Typography and Composition Equipment Operator",
   "10.0399": "Graphic Communications, Other",
-  "10.9999": "Communications Technologies/Technicians and Support Services, Other",
+  "10.9999":
+    "Communications Technologies/Technicians and Support Services, Other",
   "11.0101": "Computer and Information Sciences, General",
   "11.0102": "Artificial Intelligence",
   "11.0103": "Information Technology",
@@ -206,7 +209,8 @@ export default {
   "11.1004": "Web/Multimedia Management and Webmaster",
   "11.1005": "Information Technology Project Management",
   "11.1006": "Computer Support Specialist",
-  "11.1099": "Computer/Information Technology Services Administration and Management, Other",
+  "11.1099":
+    "Computer/Information Technology Services Administration and Management, Other",
   "11.9999": "Computer and Information Sciences and Support Services, Other",
   "12.0301": "Funeral Service and Mortuary Science, General",
   "12.0302": "Funeral Direction/Service",
@@ -232,7 +236,8 @@ export default {
   "12.0504": "Restaurant, Culinary, and Catering Management/Manager",
   "12.0505": "Food Preparation/Professional Cooking/Kitchen Assistant",
   "12.0506": "Meat Cutting/Meat Cutter",
-  "12.0507": "Food Service, Waiter/Waitress, and Dining Room Management/Manager",
+  "12.0507":
+    "Food Service, Waiter/Waitress, and Dining Room Management/Manager",
   "12.0508": "Institutional Food Workers",
   "12.0509": "Culinary Science/Culinology",
   "12.0510": "Wine Steward/Sommelier",
@@ -264,22 +269,32 @@ export default {
   "13.0701": "International and Comparative Education",
   "13.0901": "Social and Philosophical Foundations of Education",
   "13.1001": "Special Education and Teaching, General",
-  "13.1003": "Education/Teaching of Individuals with Hearing Impairments Including Deafness",
+  "13.1003":
+    "Education/Teaching of Individuals with Hearing Impairments Including Deafness",
   "13.1004": "Education/Teaching of the Gifted and Talented",
   "13.1005": "Education/Teaching of Individuals with Emotional Disturbances",
   "13.1006": "Education/Teaching of Individuals with Mental Retardation",
   "13.1007": "Education/Teaching of Individuals with Multiple Disabilities",
-  "13.1008": "Education/Teaching of Individuals with Orthopedic and Other Physical Health Impairments",
-  "13.1009": "Education/Teaching of Individuals with Vision Impairments Including Blindness",
-  "13.1011": "Education/Teaching of Individuals with Specific Learning Disabilities",
-  "13.1012": "Education/Teaching of Individuals with Speech or Language Impairments",
+  "13.1008":
+    "Education/Teaching of Individuals with Orthopedic and Other Physical Health Impairments",
+  "13.1009":
+    "Education/Teaching of Individuals with Vision Impairments Including Blindness",
+  "13.1011":
+    "Education/Teaching of Individuals with Specific Learning Disabilities",
+  "13.1012":
+    "Education/Teaching of Individuals with Speech or Language Impairments",
   "13.1013": "Education/Teaching of Individuals with Autism",
-  "13.1014": "Education/Teaching of Individuals Who are Developmentally Delayed",
-  "13.1015": "Education/Teaching of Individuals in Early Childhood Special Education Programs",
+  "13.1014":
+    "Education/Teaching of Individuals Who are Developmentally Delayed",
+  "13.1015":
+    "Education/Teaching of Individuals in Early Childhood Special Education Programs",
   "13.1016": "Education/Teaching of Individuals with Traumatic Brain Injuries",
-  "13.1017": "Education/Teaching of Individuals in Elementary Special Education Programs",
-  "13.1018": "Education/Teaching of Individuals in Junior High/Middle School Special Education Programs",
-  "13.1019": "Education/Teaching of Individuals in Secondary Special Education Programs",
+  "13.1017":
+    "Education/Teaching of Individuals in Elementary Special Education Programs",
+  "13.1018":
+    "Education/Teaching of Individuals in Junior High/Middle School Special Education Programs",
+  "13.1019":
+    "Education/Teaching of Individuals in Secondary Special Education Programs",
   "13.1099": "Special Education and Teaching, Other",
   "13.1101": "Counselor Education/School Counseling and Guidance Services",
   "13.1102": "College Student Counseling and Personnel Services",
@@ -293,7 +308,8 @@ export default {
   "13.1208": "Waldorf/Steiner Teacher Education",
   "13.1209": "Kindergarten/Preschool Education and Teaching",
   "13.1210": "Early Childhood Education and Teaching",
-  "13.1299": "Teacher Education and Professional Development, Specific Levels and Methods, Other",
+  "13.1299":
+    "Teacher Education and Professional Development, Specific Levels and Methods, Other",
   "13.1301": "Agricultural Teacher Education",
   "13.1302": "Art Teacher Education",
   "13.1303": "Business Teacher Education",
@@ -303,7 +319,8 @@ export default {
   "13.1307": "Health Teacher Education",
   "13.1308": "Family and Consumer Sciences/Home Economics Teacher Education",
   "13.1309": "Technology Teacher Education/Industrial Arts Teacher Education",
-  "13.1310": "Sales and Marketing Operations/Marketing and Distribution   Teacher Education",
+  "13.1310":
+    "Sales and Marketing Operations/Marketing and Distribution   Teacher Education",
   "13.1311": "Mathematics Teacher Education",
   "13.1312": "Music Teacher Education",
   "13.1314": "Physical Education Teaching and Coaching",
@@ -330,10 +347,13 @@ export default {
   "13.1335": "Psychology Teacher Education",
   "13.1337": "Earth Science Teacher Education",
   "13.1338": "Environmental Education",
-  "13.1399": "Teacher Education and Professional Development, Specific Subject Areas, Other",
-  "13.1401": "Teaching English as a Second or Foreign Language/ESL Language Instructor",
+  "13.1399":
+    "Teacher Education and Professional Development, Specific Subject Areas, Other",
+  "13.1401":
+    "Teaching English as a Second or Foreign Language/ESL Language Instructor",
   "13.1402": "Teaching French as a Second or Foreign Language",
-  "13.1499": "Teaching English or French as a Second or Foreign Language, Other",
+  "13.1499":
+    "Teaching English or French as a Second or Foreign Language, Other",
   "13.1501": "Teacher Assistant/Aide",
   "13.1502": "Adult Literacy Tutor/Instructor",
   "13.1599": "Teaching Assistants/Aides, Other",
@@ -394,21 +414,27 @@ export default {
   "15.0000": "Engineering Technology, General",
   "15.0101": "Architectural Engineering Technology/Technician",
   "15.0201": "Civil Engineering Technology/Technician",
-  "15.0303": "Electrical, Electronic and Communications Engineering Technology/Technician",
+  "15.0303":
+    "Electrical, Electronic and Communications Engineering Technology/Technician",
   "15.0304": "Laser and Optical Technology/Technician",
   "15.0305": "Telecommunications Technology/Technician",
   "15.0306": "Integrated Circuit Design",
-  "15.0399": "Electrical and Electronic Engineering Technologies/Technicians, Other",
+  "15.0399":
+    "Electrical and Electronic Engineering Technologies/Technicians, Other",
   "15.0401": "Biomedical Technology/Technician",
-  "15.0403": "Electromechanical Technology/Electromechanical Engineering Technology",
+  "15.0403":
+    "Electromechanical Technology/Electromechanical Engineering Technology",
   "15.0404": "Instrumentation Technology/Technician",
   "15.0405": "Robotics Technology/Technician",
   "15.0406": "Automation Engineer Technology/Technician",
-  "15.0499": "Electromechanical and Instrumentation and Maintenance Technologies/Technicians, Other",
-  "15.0501": "Heating, Ventilation, Air Conditioning and Refrigeration Engineering Technology/Technician",
+  "15.0499":
+    "Electromechanical and Instrumentation and Maintenance Technologies/Technicians, Other",
+  "15.0501":
+    "Heating, Ventilation, Air Conditioning and Refrigeration Engineering Technology/Technician",
   "15.0503": "Energy Management and Systems Technology/Technician",
   "15.0505": "Solar Energy Technology/Technician",
-  "15.0506": "Water Quality and Wastewater Treatment Management and Recycling Technology/Technician",
+  "15.0506":
+    "Water Quality and Wastewater Treatment Management and Recycling Technology/Technician",
   "15.0507": "Environmental Engineering Technology/Environmental Technology",
   "15.0508": "Hazardous Materials Management and Waste Technology/Technician",
   "15.0599": "Environmental Control Technologies/Technicians, Other",
@@ -445,7 +471,8 @@ export default {
   "15.1302": "CAD/CADD Drafting and/or Design Technology/Technician",
   "15.1303": "Architectural Drafting and Architectural CAD/CADD",
   "15.1304": "Civil Drafting and Civil Engineering CAD/CADD",
-  "15.1305": "Electrical/Electronics Drafting and Electrical/Electronics CAD/CADD",
+  "15.1305":
+    "Electrical/Electronics Drafting and Electrical/Electronics CAD/CADD",
   "15.1306": "Mechanical Drafting and Mechanical Drafting CAD/CADD",
   "15.1399": "Drafting/Design Engineering Technologies/Technicians, Other",
   "15.1401": "Nuclear Engineering Technology/Technician",
@@ -460,7 +487,8 @@ export default {
   "16.0103": "Language Interpretation and Translation",
   "16.0104": "Comparative Literature",
   "16.0105": "Applied Linguistics",
-  "16.0199": "Linguistic, Comparative, and Related Language Studies and Services, Other",
+  "16.0199":
+    "Linguistic, Comparative, and Related Language Studies and Services, Other",
   "16.0201": "African Languages, Literatures, and Linguistics",
   "16.0300": "East Asian Languages, Literatures, and Linguistics, General",
   "16.0301": "Chinese Language and Literature",
@@ -478,7 +506,8 @@ export default {
   "16.0408": "Bosnian, Serbian, and Croatian Languages and Literatures",
   "16.0409": "Slovak Language and Literature",
   "16.0410": "Ukrainian Language and Literature",
-  "16.0499": "Slavic, Baltic, and Albanian Languages, Literatures, and Linguistics, Other",
+  "16.0499":
+    "Slavic, Baltic, and Albanian Languages, Literatures, and Linguistics, Other",
   "16.0500": "Germanic Languages, Literatures, and Linguistics, General",
   "16.0501": "German Language and Literature",
   "16.0502": "Scandinavian Languages, Literatures, and Linguistics",
@@ -490,7 +519,8 @@ export default {
   "16.0601": "Modern Greek Language and Literature",
   "16.0700": "South Asian Languages, Literatures, and Linguistics, General",
   "16.0701": "Hindi Language and Literature",
-  "16.0702": "Sanskrit and Classical Indian Languages, Literatures, and Linguistics",
+  "16.0702":
+    "Sanskrit and Classical Indian Languages, Literatures, and Linguistics",
   "16.0704": "Bengali Language and Literature",
   "16.0705": "Punjabi Language and Literature",
   "16.0706": "Tamil Language and Literature",
@@ -504,21 +534,29 @@ export default {
   "16.0905": "Spanish Language and Literature",
   "16.0906": "Romanian Language and Literature",
   "16.0907": "Catalan Language and Literature",
-  "16.0908": "Hispanic and Latin American Languages, Literatures, and Linguistics, General",
+  "16.0908":
+    "Hispanic and Latin American Languages, Literatures, and Linguistics, General",
   "16.0999": "Romance Languages, Literatures, and Linguistics, Other",
-  "16.1001": "American Indian/Native American Languages, Literatures, and Linguistics",
-  "16.1100": "Middle/Near Eastern and Semitic Languages, Literatures, and Linguistics, General",
+  "16.1001":
+    "American Indian/Native American Languages, Literatures, and Linguistics",
+  "16.1100":
+    "Middle/Near Eastern and Semitic Languages, Literatures, and Linguistics, General",
   "16.1101": "Arabic Language and Literature",
   "16.1102": "Hebrew Language and Literature",
-  "16.1103": "Ancient Near Eastern and Biblical Languages, Literatures, and Linguistics",
-  "16.1199": "Middle/Near Eastern and Semitic Languages, Literatures, and Linguistics, Other",
-  "16.1200": "Classics and Classical Languages, Literatures, and Linguistics, General",
+  "16.1103":
+    "Ancient Near Eastern and Biblical Languages, Literatures, and Linguistics",
+  "16.1199":
+    "Middle/Near Eastern and Semitic Languages, Literatures, and Linguistics, Other",
+  "16.1200":
+    "Classics and Classical Languages, Literatures, and Linguistics, General",
   "16.1202": "Ancient/Classical Greek Language and Literature",
   "16.1203": "Latin Language and Literature",
-  "16.1299": "Classics and Classical Languages, Literatures, and Linguistics, Other",
+  "16.1299":
+    "Classics and Classical Languages, Literatures, and Linguistics, Other",
   "16.1301": "Celtic Languages, Literatures, and Linguistics",
   "16.1400": "Southeast Asian Languages, Literatures, and Linguistics, General",
-  "16.1401": "Australian/Oceanic/Pacific Languages, Literatures, and Linguistics",
+  "16.1401":
+    "Australian/Oceanic/Pacific Languages, Literatures, and Linguistics",
   "16.1402": "Indonesian/Malay Languages and Literatures",
   "16.1403": "Burmese Language and Literature",
   "16.1404": "Filipino/Tagalog Language and Literature",
@@ -526,12 +564,14 @@ export default {
   "16.1406": "Lao Language and Literature",
   "16.1407": "Thai Language and Literature",
   "16.1408": "Vietnamese Language and Literature",
-  "16.1499": "Southeast Asian and Australasian/Pacific Languages, Literatures, and Linguistics, Other",
+  "16.1499":
+    "Southeast Asian and Australasian/Pacific Languages, Literatures, and Linguistics, Other",
   "16.1501": "Turkish Language and Literature",
   "16.1502": "Uralic Languages, Literatures, and Linguistics",
   "16.1503": "Hungarian/Magyar Language and Literature",
   "16.1504": "Mongolian Language and Literature",
-  "16.1599": "Turkic, Uralic-Altaic, Caucasian, and Central Asian Languages, Literatures, and Linguistics, Other",
+  "16.1599":
+    "Turkic, Uralic-Altaic, Caucasian, and Central Asian Languages, Literatures, and Linguistics, Other",
   "16.1601": "American Sign Language (ASL)",
   "16.1602": "Linguistics of ASL and Other Sign Languages",
   "16.1603": "Sign Language Interpretation and Translation",
@@ -542,7 +582,8 @@ export default {
   "19.0201": "Business Family and Consumer Sciences/Human Sciences",
   "19.0202": "Family and Consumer Sciences/Human Sciences Communication",
   "19.0203": "Consumer Merchandising/Retailing Management",
-  "19.0299": "Family and Consumer Sciences/Human Sciences Business Services, Other",
+  "19.0299":
+    "Family and Consumer Sciences/Human Sciences Business Services, Other",
   "19.0401": "Family Resource Management Studies, General",
   "19.0402": "Consumer Economics",
   "19.0403": "Consumer Services and Advocacy",
@@ -792,7 +833,8 @@ export default {
   "30.2001": "International/Global Studies",
   "30.2101": "Holocaust and Related Studies",
   "30.2201": "Ancient Studies/Civilization",
-  "30.2202": "Classical, Ancient Mediterranean and Near Eastern Studies and Archaeology",
+  "30.2202":
+    "Classical, Ancient Mediterranean and Near Eastern Studies and Archaeology",
   "30.2301": "Intercultural/Multicultural and Diversity Studies",
   "30.2501": "Cognitive Science",
   "30.2601": "Cultural Studies/Critical Theory and Analysis",
@@ -941,7 +983,8 @@ export default {
   "41.0101": "Biology Technician/Biotechnology Laboratory Technician",
   "41.0204": "Industrial Radiologic Technology/Technician",
   "41.0205": "Nuclear/Nuclear Power Technology/Technician",
-  "41.0299": "Nuclear and Industrial Radiologic Technologies/Technicians, Other",
+  "41.0299":
+    "Nuclear and Industrial Radiologic Technologies/Technicians, Other",
   "41.0301": "Chemical Technology/Technician",
   "41.0303": "Chemical Process Technology",
   "41.0399": "Physical Science Technologies/Technicians, Other",
@@ -1006,7 +1049,8 @@ export default {
   "43.0303": "Critical Infrastructure Protection",
   "43.0304": "Terrorism and Counterterrorism Operations",
   "43.0399": "Homeland Security, Other",
-  "43.9999": "Homeland Security, Law Enforcement, Firefighting and Related Protective Services, Other",
+  "43.9999":
+    "Homeland Security, Law Enforcement, Firefighting and Related Protective Services, Other",
   "44.0000": "Human Services, General",
   "44.0201": "Community Organization and Advocacy",
   "44.0401": "Public Administration",
@@ -1054,7 +1098,8 @@ export default {
   "46.0000": "Construction Trades, General",
   "46.0101": "Mason/Masonry",
   "46.0201": "Carpentry/Carpenter",
-  "46.0301": "Electrical and Power Transmission Installation/Installer, General",
+  "46.0301":
+    "Electrical and Power Transmission Installation/Installer, General",
   "46.0302": "Electrician",
   "46.0303": "Lineworker",
   "46.0399": "Electrical and Power Transmission Installers, Other",
@@ -1070,7 +1115,8 @@ export default {
   "46.0413": "Carpet, Floor, and Tile Worker",
   "46.0414": "Insulator",
   "46.0415": "Building Construction Technology",
-  "46.0499": "Building/Construction Finishing, Management, and Inspection, Other",
+  "46.0499":
+    "Building/Construction Finishing, Management, and Inspection, Other",
   "46.0502": "Pipefitting/Pipefitter and Sprinkler Fitter",
   "46.0503": "Plumbing Technology/Plumber",
   "46.0504": "Well Drilling/Driller",
@@ -1078,15 +1124,18 @@ export default {
   "46.0599": "Plumbing and Related Water Supply Services, Other",
   "46.9999": "Construction Trades, Other",
   "47.0000": "Mechanics and Repairers, General",
-  "47.0101": "Electrical/Electronics Equipment Installation and Repair, General",
+  "47.0101":
+    "Electrical/Electronics Equipment Installation and Repair, General",
   "47.0102": "Business Machine Repair",
   "47.0103": "Communications Systems Installation and Repair Technology",
   "47.0104": "Computer Installation and Repair Technology/Technician",
   "47.0105": "Industrial Electronics Technology/Technician",
   "47.0106": "Appliance Installation and Repair Technology/Technician",
-  "47.0110": "Security System Installation, Repair, and Inspection Technology/Technician",
+  "47.0110":
+    "Security System Installation, Repair, and Inspection Technology/Technician",
   "47.0199": "Electrical/Electronics Maintenance and Repair Technology, Other",
-  "47.0201": "Heating, Air Conditioning, Ventilation and Refrigeration Maintenance Technology/Technician",
+  "47.0201":
+    "Heating, Air Conditioning, Ventilation and Refrigeration Maintenance Technology/Technician",
   "47.0302": "Heavy Equipment Maintenance Technology/Technician",
   "47.0303": "Industrial Mechanics and Maintenance Technology",
   "47.0399": "Heavy/Industrial Equipment Maintenance Technologies, Other",
@@ -1094,19 +1143,22 @@ export default {
   "47.0403": "Locksmithing and Safe Repair",
   "47.0404": "Musical Instrument Fabrication and Repair",
   "47.0408": "Watchmaking and Jewelrymaking",
-  "47.0409": "Parts and Warehousing Operations and Maintenance Technology/Technician",
+  "47.0409":
+    "Parts and Warehousing Operations and Maintenance Technology/Technician",
   "47.0499": "Precision Systems Maintenance and Repair Technologies, Other",
   "47.0600": "Vehicle Maintenance and Repair Technologies, General",
   "47.0603": "Autobody/Collision and Repair Technology/Technician",
   "47.0604": "Automobile/Automotive Mechanics Technology/Technician",
   "47.0605": "Diesel Mechanics Technology/Technician",
   "47.0606": "Small Engine Mechanics and Repair Technology/Technician",
-  "47.0607": "Airframe Mechanics and Aircraft Maintenance Technology/Technician",
+  "47.0607":
+    "Airframe Mechanics and Aircraft Maintenance Technology/Technician",
   "47.0608": "Aircraft Powerplant Technology/Technician",
   "47.0609": "Avionics Maintenance Technology/Technician",
   "47.0610": "Bicycle Mechanics and Repair Technology/Technician",
   "47.0611": "Motorcycle Maintenance and Repair Technology/Technician",
-  "47.0612": "Vehicle Emissions Inspection and Maintenance Technology/Technician",
+  "47.0612":
+    "Vehicle Emissions Inspection and Maintenance Technology/Technician",
   "47.0613": "Medium/Heavy Vehicle and Truck Technology/Technician",
   "47.0614": "Alternative Fuel Vehicle Technology/Technician",
   "47.0615": "Engine Machinist",
@@ -1125,7 +1177,8 @@ export default {
   "48.0507": "Tool and Die Technology/Technician",
   "48.0508": "Welding Technology/Welder",
   "48.0509": "Ironworking/Ironworker",
-  "48.0510": "Computer Numerically Controlled (CNC) Machinist Technology/CNC Machinist",
+  "48.0510":
+    "Computer Numerically Controlled (CNC) Machinist Technology/CNC Machinist",
   "48.0511": "Metal Fabricator",
   "48.0599": "Precision Metal Working, Other",
   "48.0701": "Woodworking, General",
@@ -1266,7 +1319,8 @@ export default {
   "51.0803": "Occupational Therapist Assistant",
   "51.0805": "Pharmacy Technician/Assistant",
   "51.0806": "Physical Therapy Technician/Assistant",
-  "51.0808": "Veterinary/Animal Health Technology/Technician and Veterinary Assistant",
+  "51.0808":
+    "Veterinary/Animal Health Technology/Technician and Veterinary Assistant",
   "51.0809": "Anesthesiologist Assistant",
   "51.0810": "Emergency Care Attendant (EMT Ambulance)",
   "51.0811": "Pathology/Pathologist Assistant",
@@ -1278,14 +1332,16 @@ export default {
   "51.0899": "Allied Health and Medical Assisting Services, Other",
   "51.0901": "Cardiovascular Technology/Technologist",
   "51.0902": "Electrocardiograph Technology/Technician",
-  "51.0903": "Electroneurodiagnostic/Electroencephalographic Technology/Technologist",
+  "51.0903":
+    "Electroneurodiagnostic/Electroencephalographic Technology/Technologist",
   "51.0904": "Emergency Medical Technology/Technician (EMT Paramedic)",
   "51.0905": "Nuclear Medical Technology/Technologist",
   "51.0906": "Perfusion Technology/Perfusionist",
   "51.0907": "Medical Radiologic Technology/Science - Radiation Therapist",
   "51.0908": "Respiratory Care Therapy/Therapist",
   "51.0909": "Surgical Technology/Technologist",
-  "51.0910": "Diagnostic Medical Sonography/Sonographer and Ultrasound Technician",
+  "51.0910":
+    "Diagnostic Medical Sonography/Sonographer and Ultrasound Technician",
   "51.0911": "Radiologic Technology/Science - Radiographer",
   "51.0912": "Physician Assistant",
   "51.0913": "Athletic Training/Trainer",
@@ -1296,7 +1352,8 @@ export default {
   "51.0918": "Hearing Instrument Specialist",
   "51.0919": "Mammography Technician/Technology",
   "51.0920": "Magnetic Resonance Imaging (MRI) Technology/Technician",
-  "51.0999": "Allied Health Diagnostic, Intervention, and Treatment Professions, Other",
+  "51.0999":
+    "Allied Health Diagnostic, Intervention, and Treatment Professions, Other",
   "51.1001": "Blood Bank Technology Specialist",
   "51.1002": "Cytotechnology/Cytotechnologist",
   "51.1003": "Hematology Technology/Technician",
@@ -1309,7 +1366,8 @@ export default {
   "51.1010": "Cytogenetics/Genetics/Clinical Genetics Technology/Technologist",
   "51.1011": "Renal/Dialysis Technologist/Technician",
   "51.1012": "Sterile Processing Technology/Technician",
-  "51.1099": "Clinical/Medical Laboratory Science and Allied Professions, Other",
+  "51.1099":
+    "Clinical/Medical Laboratory Science and Allied Professions, Other",
   "51.1101": "Pre-Dentistry Studies",
   "51.1102": "Pre-Medicine/Pre-Medical Studies",
   "51.1103": "Pre-Pharmacy Studies",
@@ -1337,10 +1395,12 @@ export default {
   "51.1802": "Optometric Technician/Assistant",
   "51.1803": "Ophthalmic Technician/Technologist",
   "51.1804": "Orthoptics/Orthoptist",
-  "51.1899": "Ophthalmic and Optometric Support Services and Allied Professions, Other",
+  "51.1899":
+    "Ophthalmic and Optometric Support Services and Allied Professions, Other",
   "51.1901": "Osteopathic Medicine/Osteopathy",
   "51.2001": "Pharmacy",
-  "51.2002": "Pharmacy Administration and Pharmacy Policy and Regulatory Affairs",
+  "51.2002":
+    "Pharmacy Administration and Pharmacy Policy and Regulatory Affairs",
   "51.2003": "Pharmaceutics and Drug Design",
   "51.2004": "Medicinal and Pharmaceutical Chemistry",
   "51.2005": "Natural Products Chemistry and Pharmacognosy",
@@ -1403,14 +1463,16 @@ export default {
   "51.3104": "Dietitian Assistant",
   "51.3199": "Dietetics and Clinical Nutrition Services, Other",
   "51.3201": "Bioethics/Medical Ethics",
-  "51.3300": "Alternative and Complementary Medicine and Medical Systems, General",
+  "51.3300":
+    "Alternative and Complementary Medicine and Medical Systems, General",
   "51.3301": "Acupuncture and Oriental Medicine",
   "51.3302": "Traditional Chinese Medicine and Chinese Herbology",
   "51.3303": "Naturopathic Medicine/Naturopathy",
   "51.3304": "Homeopathic Medicine/Homeopathy",
   "51.3305": "Ayurvedic Medicine/Ayurveda",
   "51.3306": "Holistic Health",
-  "51.3399": "Alternative and Complementary Medicine and Medical Systems, Other",
+  "51.3399":
+    "Alternative and Complementary Medicine and Medical Systems, Other",
   "51.3401": "Direct Entry Midwifery",
   "51.3499": "Alternative and Complementary Medical Support Services, Other",
   "51.3501": "Massage Therapy/Therapeutic Massage",
@@ -1448,10 +1510,12 @@ export default {
   "51.3820": "Clinical Nurse Leader",
   "51.3821": "Geriatric Nurse/Nursing",
   "51.3822": "Women's Health Nurse/Nursing",
-  "51.3899": "Registered Nursing, Nursing Administration, Nursing Research and Clinical Nursing, Other",
+  "51.3899":
+    "Registered Nursing, Nursing Administration, Nursing Research and Clinical Nursing, Other",
   "51.3901": "Licensed Practical/Vocational Nurse Training",
   "51.3902": "Nursing Assistant/Aide and Patient Care Assistant/Aide",
-  "51.3999": "Practical Nursing, Vocational Nursing and Nursing Assistants, Other",
+  "51.3999":
+    "Practical Nursing, Vocational Nursing and Nursing Assistants, Other",
   "51.9999": "Health Professions and Related Clinical Sciences, Other",
   "52.0101": "Business/Commerce, General",
   "52.0201": "Business Administration and Management, General",
@@ -1532,7 +1596,8 @@ export default {
   "52.1802": "Merchandising and Buying Operations",
   "52.1803": "Retailing and Retail Operations",
   "52.1804": "Selling Skills and Sales Operations",
-  "52.1899": "General Merchandising, Sales, and Related Marketing Operations, Other",
+  "52.1899":
+    "General Merchandising, Sales, and Related Marketing Operations, Other",
   "52.1901": "Auctioneering",
   "52.1902": "Fashion Merchandising",
   "52.1903": "Fashion Modeling",
@@ -1543,13 +1608,17 @@ export default {
   "52.1908": "Business and Personal/Financial Services Marketing Operations",
   "52.1909": "Special Products Marketing Operations",
   "52.1910": "Hospitality and Recreation Marketing Operations",
-  "52.1999": "Specialized Merchandising, Sales, and Marketing Operations, Other",
+  "52.1999":
+    "Specialized Merchandising, Sales, and Marketing Operations, Other",
   "52.2001": "Construction Management",
   "52.2101": "Telecommunications Management",
-  "52.9999": "Business, Management, Marketing, and Related Support Services, Other",
+  "52.9999":
+    "Business, Management, Marketing, and Related Support Services, Other",
   "53.0101": "Regular/General High School/Secondary Diploma Program",
-  "53.0102": "College/University Preparatory and Advanced High School/Secondary Diploma Program",
-  "53.0103": "Vocational High School and Secondary Business/Vocational-Industrial/Occupational Diploma Program",
+  "53.0102":
+    "College/University Preparatory and Advanced High School/Secondary Diploma Program",
+  "53.0103":
+    "Vocational High School and Secondary Business/Vocational-Industrial/Occupational Diploma Program",
   "53.0104": "Honors/Regents High School/Secondary Diploma Program",
   "53.0105": "Adult High School/Secondary Diploma Program",
   "53.0199": "High School/Secondary Diploma Programs, Other",
@@ -1579,7 +1648,8 @@ export default {
   "60.0301": "Veterinary Anesthesiology Residency Program",
   "60.0302": "Veterinary Dentistry Residency Program",
   "60.0303": "Veterinary Dermatology Residency Program",
-  "60.0304": "Veterinary Emergency and Critical Care Medicine Residency Program",
+  "60.0304":
+    "Veterinary Emergency and Critical Care Medicine Residency Program",
   "60.0305": "Veterinary Internal Medicine Residency Program",
   "60.0306": "Laboratory Animal Medicine Residency Program",
   "60.0307": "Veterinary Microbiology Residency Program",
@@ -1699,7 +1769,8 @@ export default {
   "60.0565": "Pediatric Surgery Residency Program",
   "60.0566": "Pediatric Transplant Hepatology Residency Program",
   "60.0567": "Pediatric Urology Residency Program",
-  "60.0568": "Physical Medicine and Rehabilitation/Psychiatry Residency Program",
+  "60.0568":
+    "Physical Medicine and Rehabilitation/Psychiatry Residency Program",
   "60.0569": "Plastic Surgery Within the Head and Neck Residency Program",
   "60.0570": "Psychosomatic Medicine Residency Program",
   "60.0571": "Pulmonary Disease Residency Program",
@@ -1719,4 +1790,4 @@ export default {
   "60.0599": "Medical Residency Programs - Subspecialty Certificates, Other",
   "60.0601": "Podiatric Medicine and Surgery - 24 Residency Program",
   "60.0602": "Podiatric Medicine and Surgery - 36 Residency Program"
-};
+}

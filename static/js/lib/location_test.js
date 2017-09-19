@@ -1,16 +1,16 @@
-import { assert } from 'chai';
+import { assert } from "chai"
 
-import { codeToCountryName } from './location';
+import { codeToCountryName } from "./location"
 
-describe('location', () => {
-  describe('codeToCountryName', () => {
-    it('should return a valid country name for a code', () => {
+describe("location", () => {
+  describe("codeToCountryName", () => {
+    it("should return a valid country name for a code", () => {
       [
-        ['US', 'United States'],
-        [null, ''],
+        ["US", "United States"],
+        [null, ""]
       ].forEach(([countryCode, country]) => {
-        assert.equal(codeToCountryName(countryCode), country);
-      });
-    });
-  });
-});
+        assert.equal(codeToCountryName(countryCode), country)
+      })
+    })
+  })
+})

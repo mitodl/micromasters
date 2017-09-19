@@ -1,126 +1,138 @@
-import React from 'react';
-import Grid, { Cell } from 'react-mdl/lib/Grid';
-import R from 'ramda';
-import _ from 'lodash';
+import React from "react"
+import Grid, { Cell } from "react-mdl/lib/Grid"
+import R from "ramda"
+import _ from "lodash"
 
 import {
   sendCourseTeamMail,
   sendSearchResultMail,
   sendLearnerMail
-} from '../../lib/api';
-import { makeProfileImageUrl, mapObj } from '../../util/util';
-import type { Profile } from '../../flow/profileTypes';
-import type { Course } from '../../flow/programTypes';
-import type { AutomaticEmail, EmailConfig, EmailState, Filter } from '../../flow/emailTypes';
-import { actions } from '../../lib/redux_rest.js';
-import { SEARCH_FACET_FIELD_LABEL_MAP } from '../../constants';
-import { makeCountryNameTranslations } from '../LearnerSearch';
+} from "../../lib/api"
+import { makeProfileImageUrl, mapObj } from "../../util/util"
+import type { Profile } from "../../flow/profileTypes"
+import type { Course } from "../../flow/programTypes"
+import type {
+  AutomaticEmail,
+  EmailConfig,
+  EmailState,
+  Filter
+} from "../../flow/emailTypes"
+import { actions } from "../../lib/redux_rest.js"
+import { SEARCH_FACET_FIELD_LABEL_MAP } from "../../constants"
+import { makeCountryNameTranslations } from "../LearnerSearch"
 
 // NOTE: getEmailSendFunction is a function that returns a function. It is implemented this way
 // so that we can stub/mock the function that it returns (as we do in integration_test_helper.js)
 
-const countryNameTranslations: Object = makeCountryNameTranslations();
+const countryNameTranslations: Object = makeCountryNameTranslations()
 const renderFilterOptions = R.map(filter => {
-  let labelKey, labelValue;
+  let labelKey, labelValue
   if (R.isEmpty(filter.name)) {
-    labelKey = SEARCH_FACET_FIELD_LABEL_MAP[filter.id];
+    labelKey = SEARCH_FACET_FIELD_LABEL_MAP[filter.id]
   } else if (filter.name in SEARCH_FACET_FIELD_LABEL_MAP) {
-    labelKey = SEARCH_FACET_FIELD_LABEL_MAP[filter.name];
+    labelKey = SEARCH_FACET_FIELD_LABEL_MAP[filter.name]
   } else if (filter.name in countryNameTranslations) {
-    labelKey = countryNameTranslations[filter.name];
+    labelKey = countryNameTranslations[filter.name]
   }
 
   if (filter.value in countryNameTranslations) {
-    labelValue = countryNameTranslations[filter.value];
+    labelValue = countryNameTranslations[filter.value]
   } else {
-    labelValue = filter.value;
+    labelValue = filter.value
   }
 
   return (
-    <div className="sk-selected-filters-option sk-selected-filters__item" key={filter.id}>
+    <div
+      className="sk-selected-filters-option sk-selected-filters__item"
+      key={filter.id}
+    >
       <div className="sk-selected-filters-option__name">
         {labelKey}: {labelValue}
       </div>
     </div>
-  );
-});
+  )
+})
 
 export const COURSE_TEAM_EMAIL_CONFIG: EmailConfig = {
-  title: 'Contact the Course Team',
+  title: "Contact the Course Team",
 
   renderSubheading: (activeEmail: EmailState) => (
     <div className="subheading-section">
       <Grid noSpacing={true}>
-        <Cell col={1} align={"middle"} className="subheading-to">TO:</Cell>
-        <Cell col={11}><h5 className="subheading rounded">{ activeEmail.subheading }</h5></Cell>
+        <Cell col={1} align={"middle"} className="subheading-to">
+          TO:
+        </Cell>
+        <Cell col={11}>
+          <h5 className="subheading rounded">{activeEmail.subheading}</h5>
+        </Cell>
       </Grid>
     </div>
   ),
 
   emailOpenParams: (course: Course) => ({
-    params: {courseId: course.id},
+    params:     { courseId: course.id },
     subheading: `${course.title} Course Team`
   }),
 
   getEmailSendFunction: () => sendCourseTeamMail,
 
-  emailSendParams: (emailState) => ([
-    emailState.inputs.subject || '',
-    emailState.inputs.body || '',
+  emailSendParams: emailState => [
+    emailState.inputs.subject || "",
+    emailState.inputs.body || "",
     emailState.params.courseId
-  ])
-};
+  ]
+}
 
 export const SEARCH_RESULT_EMAIL_CONFIG: EmailConfig = {
-  title: 'New Email',
+  title: "New Email",
 
   emailOpenParams: (searchkit: Object) => ({
-    subheading: `${searchkit.getHitsCount() || 0} recipients selected`,
+    subheading:              `${searchkit.getHitsCount() || 0} recipients selected`,
     supportsAutomaticEmails: true,
-    filters: searchkit.query.getSelectedFilters()
+    filters:                 searchkit.query.getSelectedFilters()
   }),
 
   getEmailSendFunction: () => sendSearchResultMail,
 
-  emailSendParams: (emailState) => ([
-    emailState.inputs.subject || '',
-    emailState.inputs.body || '',
+  emailSendParams: emailState => [
+    emailState.inputs.subject || "",
+    emailState.inputs.body || "",
     emailState.searchkit.buildQuery().query,
-    emailState.inputs.sendAutomaticEmails || false,
-  ]),
+    emailState.inputs.sendAutomaticEmails || false
+  ],
 
   renderRecipients: (filters?: Array<Filter>) => {
     if (!filters || filters.length <= 0) {
-      return null;
+      return null
     }
     return (
       <div className="sk-selected-filters-display">
-        <div className="sk-selected-filters-title">
-          Recipients
-        </div>
+        <div className="sk-selected-filters-title">Recipients</div>
         <div className="sk-selected-filters">
           {renderFilterOptions(filters)}
         </div>
       </div>
-    );
+    )
   }
-};
+}
 
 export const LEARNER_EMAIL_CONFIG: EmailConfig = {
-  title: 'Send a Message',
+  title: "Send a Message",
 
   renderSubheading: (activeEmail: EmailState) => (
     <div className="subheading-section">
       <Grid noSpacing={true}>
-        <Cell col={1} align={"middle"} className="subheading-to">TO:</Cell>
+        <Cell col={1} align={"middle"} className="subheading-to">
+          TO:
+        </Cell>
         <Cell col={11}>
           <div className="subheading profile-image-bubble">
             <img
               src={activeEmail.params.profileImage}
-              className='rounded-profile-image small'
+              className="rounded-profile-image small"
               alt={`${activeEmail.subheading} profile image`}
             />
-            <span>{ activeEmail.subheading }</span>
+            <span>{activeEmail.subheading}</span>
           </div>
         </Cell>
       </Grid>
@@ -129,7 +141,7 @@ export const LEARNER_EMAIL_CONFIG: EmailConfig = {
 
   emailOpenParams: (profile: Profile) => ({
     params: {
-      studentId: profile.student_id,
+      studentId:    profile.student_id,
       profileImage: makeProfileImageUrl(profile, true)
     },
     subheading: `${profile.first_name} ${profile.last_name}`
@@ -137,77 +149,75 @@ export const LEARNER_EMAIL_CONFIG: EmailConfig = {
 
   getEmailSendFunction: () => sendLearnerMail,
 
-  emailSendParams: (emailState) => ([
-    emailState.inputs.subject || '',
-    emailState.inputs.body || '',
+  emailSendParams: emailState => [
+    emailState.inputs.subject || "",
+    emailState.inputs.body || "",
     emailState.params.studentId
-  ])
-};
+  ]
+}
 
-export const convertEmailEdit = mapObj(([k, v]) => (
-  [k.match(/^subject$|^body$/) ? `email_${k}` : k.replace(/^email_/, ""), v]
-));
+export const convertEmailEdit = mapObj(([k, v]) => [
+  k.match(/^subject$|^body$/) ? `email_${k}` : k.replace(/^email_/, ""),
+  v
+])
 
-export const findFilters = (tree) => {
+export const findFilters = tree => {
   if (tree.hasOwnProperty("term") && !tree.term.hasOwnProperty("program.id")) {
-    return [tree.term];
+    return [tree.term]
   }
 
   if (tree.hasOwnProperty("range")) {
-    return [tree.range];
+    return [tree.range]
   }
 
   if (R.any(_.isObject, Object.values(tree))) {
     return R.flatten(
       Object.values(tree)
-      .filter(_.isObject)
-      .map(obj => findFilters(obj))
-    );
+        .filter(_.isObject)
+        .map(obj => findFilters(obj))
+    )
   }
-  return [];
-};
+  return []
+}
 
-const serializeValue = (value: Object|string) => (
+const serializeValue = (value: Object | string) =>
   _.isObject(value) ? `${value.gte} - ${value.lte}` : value
-);
 
-export const getFilters  = (root: Object) => {
-  let terms = findFilters(root);
+export const getFilters = (root: Object) => {
+  let terms = findFilters(root)
   return _.map(terms, (term: Object) => ({
-    'id': Object.keys(term)[0],
-    'name': Object.keys(term)[0],
-    'value': serializeValue(term[Object.keys(term)[0]])
-  }));
-};
+    id:    Object.keys(term)[0],
+    name:  Object.keys(term)[0],
+    value: serializeValue(term[Object.keys(term)[0]])
+  }))
+}
 
 export const AUTOMATIC_EMAIL_ADMIN_CONFIG: EmailConfig = {
-  title: 'Edit Email Campaign',
-  editEmail: actions.automaticEmails.patch,
-  emailSendParams: R.compose(convertEmailEdit, R.prop('inputs')),
+  title:           "Edit Email Campaign",
+  editEmail:       actions.automaticEmails.patch,
+  emailSendParams: R.compose(convertEmailEdit, R.prop("inputs")),
 
   emailOpenParams: (emailOpenParams: AutomaticEmail) => ({
     inputs: {
-      subject: emailOpenParams.email_subject,
-      body: emailOpenParams.email_body,
+      subject:             emailOpenParams.email_subject,
+      body:                emailOpenParams.email_body,
       sendAutomaticEmails: emailOpenParams.enabled,
-      id: emailOpenParams.id,
+      id:                  emailOpenParams.id
     },
     filters: getFilters(emailOpenParams.query.original_query.post_filter)
   }),
 
   renderRecipients: (filters?: Array<Filter>) => {
     if (!filters || filters.length <= 0) {
-      return null;
+      return null
     }
     return (
       <div className="sk-selected-filters-display">
-        <div className="sk-selected-filters-title">
-          Recipients
-        </div>
+        <div className="sk-selected-filters-title">Recipients</div>
         <div className="sk-selected-filters">
           {renderFilterOptions(filters)}
         </div>
       </div>
-    );
+    )
   }
-};
+}

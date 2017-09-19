@@ -1,5 +1,5 @@
 // @flow
-import { MenuFilter } from 'searchkit';
+import { MenuFilter } from "searchkit"
 
 // NOTE:
 // This is a hack to get around a Searchkit bug (https://github.com/searchkit/searchkit/issues/327).
@@ -9,6 +9,6 @@ import { MenuFilter } from 'searchkit';
 
 export default class PatchedMenuFilter extends MenuFilter {
   getItems() {
-    return this.props.bucketsTransform(this.accessor.getBuckets());
+    return this.props.bucketsTransform(this.accessor.getBuckets())
   }
 }

@@ -1,7 +1,7 @@
 // @flow
-import { assert } from 'chai';
+import { assert } from "chai"
 
-import { makeCourse, makeProctoredExamResult } from '../factories/dashboard';
+import { makeCourse, makeProctoredExamResult } from "../factories/dashboard"
 import {
   getLargestExamGrade,
   getLargestEdXGrade,
@@ -10,10 +10,9 @@ import {
   hasFailingExamGrade,
   hasPassedCourseRun,
   passedCourse,
-
   COURSE_GRADE_WEIGHT,
-  EXAM_GRADE_WEIGHT,
-} from './grades';
+  EXAM_GRADE_WEIGHT
+} from "./grades"
 import {
   STATUS_PASSED,
   STATUS_NOT_PASSED,
@@ -23,132 +22,132 @@ import {
   STATUS_WILL_ATTEND,
   STATUS_PENDING_ENROLLMENT,
   STATUS_MISSED_DEADLINE,
-  STATUS_PAID_BUT_NOT_ENROLLED,
-} from '../constants';
+  STATUS_PAID_BUT_NOT_ENROLLED
+} from "../constants"
 
-import { assertIsNothing, assertIsJust } from './test_utils';
+import { assertIsNothing, assertIsJust } from "./test_utils"
 
-describe('Grades library', () => {
-  let course;
+describe("Grades library", () => {
+  let course
 
   beforeEach(() => {
-    course = makeCourse(1);
-  });
+    course = makeCourse(1)
+  })
 
-  describe('getLargestExamGrade', () => {
-    it('returns Nothing if no exam grade', () => {
-      assertIsNothing(getLargestExamGrade(course));
-    });
+  describe("getLargestExamGrade", () => {
+    it("returns Nothing if no exam grade", () => {
+      assertIsNothing(getLargestExamGrade(course))
+    })
 
-    it('returns Just the largest grade, if present', () => {
-      course.proctorate_exams_grades = [1,2].map(makeProctoredExamResult);
-      course.proctorate_exams_grades[0].percentage_grade = 0.12;
-      course.proctorate_exams_grades[1].percentage_grade = 0.89;
-      assertIsJust(getLargestExamGrade(course), 89);
-    });
-  });
+    it("returns Just the largest grade, if present", () => {
+      course.proctorate_exams_grades = [1, 2].map(makeProctoredExamResult)
+      course.proctorate_exams_grades[0].percentage_grade = 0.12
+      course.proctorate_exams_grades[1].percentage_grade = 0.89
+      assertIsJust(getLargestExamGrade(course), 89)
+    })
+  })
 
-  describe('getLargestEdXGrade', () => {
-    it('returns Nothing if no edx grade', () => {
-      assertIsNothing(getLargestEdXGrade(course));
-    });
+  describe("getLargestEdXGrade", () => {
+    it("returns Nothing if no edx grade", () => {
+      assertIsNothing(getLargestEdXGrade(course))
+    })
 
-    it('returns Just the largest edx grade, if present', () => {
-      course.runs[0].final_grade = 39;
-      course.runs[1].final_grade = 92;
-      assertIsJust(getLargestEdXGrade(course), 92);
-    });
-  });
+    it("returns Just the largest edx grade, if present", () => {
+      course.runs[0].final_grade = 39
+      course.runs[1].final_grade = 92
+      assertIsJust(getLargestEdXGrade(course), 92)
+    })
+  })
 
-  describe('calculateFinalGrade', () => {
-    it('returns Nothing if there are no grades', () => {
-      assertIsNothing(calculateFinalGrade(course));
-    });
+  describe("calculateFinalGrade", () => {
+    it("returns Nothing if there are no grades", () => {
+      assertIsNothing(calculateFinalGrade(course))
+    })
 
-    it('returns Nothing if just exam grades are missing', () => {
+    it("returns Nothing if just exam grades are missing", () => {
       course.runs.forEach(run => {
-        run.final_grade = Math.floor(Math.random() * 100);
-      });
-      assertIsNothing(calculateFinalGrade(course));
-    });
+        run.final_grade = Math.floor(Math.random() * 100)
+      })
+      assertIsNothing(calculateFinalGrade(course))
+    })
 
-    it('returns Nothing if just course grades are missing', () => {
-      course.proctorate_exams_grades = [ makeProctoredExamResult() ];
-      assertIsNothing(calculateFinalGrade(course));
-    });
+    it("returns Nothing if just course grades are missing", () => {
+      course.proctorate_exams_grades = [makeProctoredExamResult()]
+      assertIsNothing(calculateFinalGrade(course))
+    })
 
-    it('returns Just if both grade types are present', () => {
-      course.runs[0].final_grade = Math.floor(Math.random() * 100);
-      course.proctorate_exams_grades = [ makeProctoredExamResult() ];
+    it("returns Just if both grade types are present", () => {
+      course.runs[0].final_grade = Math.floor(Math.random() * 100)
+      course.proctorate_exams_grades = [makeProctoredExamResult()]
 
       assertIsJust(
         calculateFinalGrade(course),
-        (COURSE_GRADE_WEIGHT * ((course.runs[0].final_grade): any)) +
-        (EXAM_GRADE_WEIGHT * (course.proctorate_exams_grades[0].percentage_grade * 100))
-      );
-    });
-  });
+        COURSE_GRADE_WEIGHT * (course.runs[0].final_grade: any) +
+          EXAM_GRADE_WEIGHT *
+            (course.proctorate_exams_grades[0].percentage_grade * 100)
+      )
+    })
+  })
 
-  describe('hasPassingExamGrade', () => {
-    let course;
-
-    beforeEach(() => {
-      course = {
-        proctorate_exams_grades:  [1,2].map(makeProctoredExamResult)
-      };
-    });
-    it('should return true if the user has any passed exam grades', () => {
-      course.proctorate_exams_grades[0].passed = true;
-      assert.isTrue(hasPassingExamGrade(course));
-    });
-
-    it('should return false otherwise', () => {
-      course.proctorate_exams_grades.forEach(grade => {
-        grade.passed = false;
-      });
-      assert.isFalse(hasPassingExamGrade(course));
-    });
-  });
-
-  describe('hasFailingExamGrade', () => {
-    let course;
+  describe("hasPassingExamGrade", () => {
+    let course
 
     beforeEach(() => {
       course = {
-        proctorate_exams_grades:  [1,2].map(makeProctoredExamResult)
-      };
-    });
-    it('should return true if the user has any failing exam grades', () => {
-      course.proctorate_exams_grades[0].passed = false;
-      assert.isTrue(hasFailingExamGrade(course));
-    });
+        proctorate_exams_grades: [1, 2].map(makeProctoredExamResult)
+      }
+    })
+    it("should return true if the user has any passed exam grades", () => {
+      course.proctorate_exams_grades[0].passed = true
+      assert.isTrue(hasPassingExamGrade(course))
+    })
 
-    it('should return false otherwise', () => {
+    it("should return false otherwise", () => {
       course.proctorate_exams_grades.forEach(grade => {
-        grade.passed = true;
-      });
-      assert.isFalse(hasFailingExamGrade(course));
-    });
-    it('should return false if no grades', () => {
-      course.proctorate_exams_grades = [];
-      assert.isFalse(hasFailingExamGrade(course));
-    });
-  });
+        grade.passed = false
+      })
+      assert.isFalse(hasPassingExamGrade(course))
+    })
+  })
 
-
-  describe('hasPassedCourseRun', () => {
-    let course;
+  describe("hasFailingExamGrade", () => {
+    let course
 
     beforeEach(() => {
-      course = makeCourse(0);
-    });
+      course = {
+        proctorate_exams_grades: [1, 2].map(makeProctoredExamResult)
+      }
+    })
+    it("should return true if the user has any failing exam grades", () => {
+      course.proctorate_exams_grades[0].passed = false
+      assert.isTrue(hasFailingExamGrade(course))
+    })
 
-    it('should return true if any course run has status === STATUS_PASSED', () => {
-      course.runs[0].status = STATUS_PASSED;
-      assert.isTrue(hasPassedCourseRun(course));
-    });
+    it("should return false otherwise", () => {
+      course.proctorate_exams_grades.forEach(grade => {
+        grade.passed = true
+      })
+      assert.isFalse(hasFailingExamGrade(course))
+    })
+    it("should return false if no grades", () => {
+      course.proctorate_exams_grades = []
+      assert.isFalse(hasFailingExamGrade(course))
+    })
+  })
 
-    it('should return false otherwise', () => {
+  describe("hasPassedCourseRun", () => {
+    let course
+
+    beforeEach(() => {
+      course = makeCourse(0)
+    })
+
+    it("should return true if any course run has status === STATUS_PASSED", () => {
+      course.runs[0].status = STATUS_PASSED
+      assert.isTrue(hasPassedCourseRun(course))
+    })
+
+    it("should return false otherwise", () => {
       [
         STATUS_NOT_PASSED,
         STATUS_OFFERED,
@@ -157,65 +156,60 @@ describe('Grades library', () => {
         STATUS_WILL_ATTEND,
         STATUS_PENDING_ENROLLMENT,
         STATUS_MISSED_DEADLINE,
-        STATUS_PAID_BUT_NOT_ENROLLED,
+        STATUS_PAID_BUT_NOT_ENROLLED
       ].forEach(status => {
         course.runs.forEach(run => {
-          run.status = status;
-        });
-        assert.isFalse(hasPassedCourseRun(course));
-      });
-    });
+          run.status = status
+        })
+        assert.isFalse(hasPassedCourseRun(course))
+      })
+    })
+  })
 
-  });
-
-  describe('passedCourse', () => {
-    let course;
+  describe("passedCourse", () => {
+    let course
 
     beforeEach(() => {
-      course = makeCourse(0);
-    });
+      course = makeCourse(0)
+    })
 
-    describe('exam course', () => {
-      it('should return true if the course and exam are passed', () => {
-        course.runs[0].status = STATUS_PASSED;
-        course.proctorate_exams_grades = [
-          makeProctoredExamResult()
-        ];
-        course.proctorate_exams_grades[0].passed = true;
-        course.has_exam = true;
-        assert.isTrue(passedCourse(course));
-      });
+    describe("exam course", () => {
+      it("should return true if the course and exam are passed", () => {
+        course.runs[0].status = STATUS_PASSED
+        course.proctorate_exams_grades = [makeProctoredExamResult()]
+        course.proctorate_exams_grades[0].passed = true
+        course.has_exam = true
+        assert.isTrue(passedCourse(course))
+      })
 
-      it('should return false if you only pass the course', () => {
-        course.runs[0].status = STATUS_PASSED;
-        course.has_exam = true;
-        assert.isFalse(passedCourse(course));
-      });
+      it("should return false if you only pass the course", () => {
+        course.runs[0].status = STATUS_PASSED
+        course.has_exam = true
+        assert.isFalse(passedCourse(course))
+      })
 
-      it('should return false if you only pass the exam (not possible really)', () => {
-        course.has_exam = true;
-        course.proctorate_exams_grades = [
-          makeProctoredExamResult()
-        ];
-        course.proctorate_exams_grades[0].passed = true;
-        assert.isFalse(passedCourse(course));
-      });
+      it("should return false if you only pass the exam (not possible really)", () => {
+        course.has_exam = true
+        course.proctorate_exams_grades = [makeProctoredExamResult()]
+        course.proctorate_exams_grades[0].passed = true
+        assert.isFalse(passedCourse(course))
+      })
 
-      it('should return false otherwise', () => {
-        course.has_exam = true;
-        assert.isFalse(passedCourse(course));
-      });
-    });
+      it("should return false otherwise", () => {
+        course.has_exam = true
+        assert.isFalse(passedCourse(course))
+      })
+    })
 
-    describe('non-exam course', () => {
-      it('should return true if the course was passed', () => {
-        course.runs[0].status = STATUS_PASSED;
-        assert.isTrue(passedCourse(course));
-      });
+    describe("non-exam course", () => {
+      it("should return true if the course was passed", () => {
+        course.runs[0].status = STATUS_PASSED
+        assert.isTrue(passedCourse(course))
+      })
 
-      it('should return false otherwise', () => {
-        assert.isFalse(passedCourse(course));
-      });
-    });
-  });
-});
+      it("should return false otherwise", () => {
+        assert.isFalse(passedCourse(course))
+      })
+    })
+  })
+})

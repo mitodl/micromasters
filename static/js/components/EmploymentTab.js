@@ -1,40 +1,44 @@
 // @flow
-import React from 'react';
-import DocumentTitle from 'react-document-title';
+import React from "react"
+import DocumentTitle from "react-document-title"
 
-import EmploymentForm from './EmploymentForm';
-import ProfileProgressControls from './ProfileProgressControls';
+import EmploymentForm from "./EmploymentForm"
+import ProfileProgressControls from "./ProfileProgressControls"
 import {
   combineValidators,
   personalValidation,
   educationValidation,
-  employmentValidation,
-} from '../lib/validation/profile';
-import type { Profile, SaveProfileFunc } from '../flow/profileTypes';
-import type { UIState } from '../reducers/ui';
-import { setProfileStep } from '../actions/ui';
-import { EMPLOYMENT_STEP } from '../constants';
+  employmentValidation
+} from "../lib/validation/profile"
+import type { Profile, SaveProfileFunc } from "../flow/profileTypes"
+import type { UIState } from "../reducers/ui"
+import { setProfileStep } from "../actions/ui"
+import { EMPLOYMENT_STEP } from "../constants"
 
 class EmploymentTab extends React.Component {
   props: {
-    saveProfile:           SaveProfileFunc,
-    profile:               Profile,
-    profilePatchStatus:    ?string,
-    ui:                    UIState,
-    addProgramEnrollment:  (p: number) => void,
-    dispatch:              Function,
-  };
-
-  componentWillMount() {
-    const { dispatch } = this.props;
-    dispatch(setProfileStep(EMPLOYMENT_STEP));
+    saveProfile: SaveProfileFunc,
+    profile: Profile,
+    profilePatchStatus: ?string,
+    ui: UIState,
+    addProgramEnrollment: (p: number) => void,
+    dispatch: Function
   }
 
-  render () {
+  componentWillMount() {
+    const { dispatch } = this.props
+    dispatch(setProfileStep(EMPLOYMENT_STEP))
+  }
+
+  render() {
     return (
       <DocumentTitle title="Professional Profile | MITx MicroMasters">
         <div>
-          <EmploymentForm {...this.props} showSwitch={true} validator={employmentValidation} />
+          <EmploymentForm
+            {...this.props}
+            showSwitch={true}
+            validator={employmentValidation}
+          />
           <ProfileProgressControls
             {...this.props}
             nextBtnLabel="I'm Done!"
@@ -42,18 +46,16 @@ class EmploymentTab extends React.Component {
             nextUrl="/dashboard"
             isLastTab={true}
             programIdForEnrollment={null}
-            validator={
-              combineValidators(
-                personalValidation,
-                educationValidation,
-                employmentValidation
-              )
-            }
+            validator={combineValidators(
+              personalValidation,
+              educationValidation,
+              employmentValidation
+            )}
           />
         </div>
       </DocumentTitle>
-    );
+    )
   }
 }
 
-export default EmploymentTab;
+export default EmploymentTab

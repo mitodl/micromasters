@@ -19,12 +19,12 @@ import {
   RECEIVE_SKIP_FINANCIAL_AID_FAILURE,
   receiveSkipFinancialAidFailure,
   RECEIVE_SKIP_FINANCIAL_AID_SUCCESS,
-  receiveSkipFinancialAidSuccess,
-} from './financial_aid';
-import { assertCreatedActionHelper } from './test_util';
+  receiveSkipFinancialAidSuccess
+} from "./financial_aid"
+import { assertCreatedActionHelper } from "./test_util"
 
-describe('financial aid actions', () => {
-  it('should create all action creators', () => {
+describe("financial aid actions", () => {
+  it("should create all action creators", () => {
     [
       [startCalculatorEdit, START_CALCULATOR_EDIT],
       [clearCalculatorEdit, CLEAR_CALCULATOR_EDIT],
@@ -35,7 +35,7 @@ describe('financial aid actions', () => {
       [receiveAddFinancialAidFailure, RECEIVE_ADD_FINANCIAL_AID_FAILURE],
       [requestSkipFinancialAid, REQUEST_SKIP_FINANCIAL_AID],
       [receiveSkipFinancialAidFailure, RECEIVE_SKIP_FINANCIAL_AID_FAILURE],
-      [receiveSkipFinancialAidSuccess, RECEIVE_SKIP_FINANCIAL_AID_SUCCESS],
-    ].forEach(assertCreatedActionHelper);
-  });
-});
+      [receiveSkipFinancialAidSuccess, RECEIVE_SKIP_FINANCIAL_AID_SUCCESS]
+    ].forEach(assertCreatedActionHelper)
+  })
+})

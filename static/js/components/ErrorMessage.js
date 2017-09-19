@@ -1,14 +1,14 @@
 // @flow
 /* global SETTINGS: false */
-import React from 'react';
-import Alert from 'react-bootstrap/lib/Alert';
+import React from "react"
+import Alert from "react-bootstrap/lib/Alert"
 
-import type { APIErrorInfo } from '../flow/generalTypes';
+import type { APIErrorInfo } from "../flow/generalTypes"
 
 export default class ErrorMessage extends React.Component {
   props: {
-    errorInfo: APIErrorInfo,
-  };
+    errorInfo: APIErrorInfo
+  }
 
   render() {
     const {
@@ -16,45 +16,47 @@ export default class ErrorMessage extends React.Component {
         error_code: errorCode,
         user_message: userMessage,
         detail,
-        errorStatusCode,
+        errorStatusCode
       }
-    } = this.props;
+    } = this.props
 
     let errorCodeStr = () => {
       if (errorCode !== undefined) {
-        return `${errorCode} `;
+        return `${errorCode} `
       }
       if (errorStatusCode !== undefined) {
-        return `${errorStatusCode} `;
+        return `${errorStatusCode} `
       }
-      return '';
-    };
+      return ""
+    }
 
     let userMessageStr = () => {
       if (userMessage !== undefined) {
-        return `Additional info: ${userMessage}`;
+        return `Additional info: ${userMessage}`
       }
       if (detail !== undefined) {
-        return `Additional info: ${detail}`;
+        return `Additional info: ${detail}`
       }
-      return '';
-    };
+      return ""
+    }
 
-    let email = SETTINGS.support_email;
+    let email = SETTINGS.support_email
 
     return (
       <div className="alert-message">
         <Alert bsStyle="danger">
-          <p>{ errorCodeStr() }Sorry, we were unable to load the data necessary to
-          process your request. Please reload the page.</p>
-          <p>{ userMessageStr() }</p>
           <p>
-            If the error persists, please contact <a href={`mailto:${email}`}>
-            {email}</a> specifying
-            this entire error message.
+            {errorCodeStr()}Sorry, we were unable to load the data necessary to
+            process your request. Please reload the page.
+          </p>
+          <p>{userMessageStr()}</p>
+          <p>
+            If the error persists, please contact{" "}
+            <a href={`mailto:${email}`}>{email}</a> specifying this entire error
+            message.
           </p>
         </Alert>
       </div>
-    );
+    )
   }
 }

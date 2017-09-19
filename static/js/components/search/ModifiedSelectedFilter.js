@@ -1,7 +1,7 @@
-import React from 'react';
-import R from 'ramda';
-import { SEARCH_FACET_FIELD_LABEL_MAP } from '../../constants';
-import { makeCountryNameTranslations } from '../LearnerSearch';
+import React from "react"
+import R from "ramda"
+import { SEARCH_FACET_FIELD_LABEL_MAP } from "../../constants"
+import { makeCountryNameTranslations } from "../LearnerSearch"
 
 export default class ModifiedSelectedFilter extends React.Component {
   props: {
@@ -10,34 +10,40 @@ export default class ModifiedSelectedFilter extends React.Component {
     removeFilters: Function,
     bemBlocks?: any,
     filterId: string
-  };
+  }
 
-  countryNameTranslations: Object = makeCountryNameTranslations();
+  countryNameTranslations: Object = makeCountryNameTranslations()
 
   render() {
-    let {
-      labelKey,
-      labelValue,
-      removeFilter,
-      bemBlocks,
-      filterId,
-    } = this.props;
+    let { labelKey, labelValue, removeFilter, bemBlocks, filterId } = this.props
     if (R.isEmpty(labelKey)) {
-      labelKey = SEARCH_FACET_FIELD_LABEL_MAP[filterId];
+      labelKey = SEARCH_FACET_FIELD_LABEL_MAP[filterId]
     } else if (labelKey in SEARCH_FACET_FIELD_LABEL_MAP) {
-      labelKey = SEARCH_FACET_FIELD_LABEL_MAP[labelKey];
+      labelKey = SEARCH_FACET_FIELD_LABEL_MAP[labelKey]
     } else if (labelKey in this.countryNameTranslations) {
-      labelKey = this.countryNameTranslations[labelKey];
+      labelKey = this.countryNameTranslations[labelKey]
     }
     if (labelValue in this.countryNameTranslations) {
-      labelValue = this.countryNameTranslations[labelValue];
+      labelValue = this.countryNameTranslations[labelValue]
     }
     // This comes from searchkit documentation on "Overriding Selected Filter Component"
     return (
-      <div className={bemBlocks.option().mix(bemBlocks.container("item")).mix(`selected-filter--${filterId}`)()}>
-        <div className={bemBlocks.option("name")}>{labelKey}: {labelValue}</div>
-        <div className={bemBlocks.option("remove-action")} onClick={removeFilter}>x</div>
+      <div
+        className={bemBlocks
+          .option()
+          .mix(bemBlocks.container("item"))
+          .mix(`selected-filter--${filterId}`)()}
+      >
+        <div className={bemBlocks.option("name")}>
+          {labelKey}: {labelValue}
+        </div>
+        <div
+          className={bemBlocks.option("remove-action")}
+          onClick={removeFilter}
+        >
+          x
+        </div>
       </div>
-    );
+    )
   }
 }
