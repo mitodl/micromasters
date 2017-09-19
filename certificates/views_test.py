@@ -79,4 +79,3 @@ def test_valid_program_certificate_200(client):
         },
         resp.context_data
     )
-
