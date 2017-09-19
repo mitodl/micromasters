@@ -16,6 +16,7 @@ from factory.fuzzy import (
 from courses.factories import (
     CourseFactory,
     CourseRunFactory,
+    ProgramFactory,
 )
 from exams.factories import ExamRunFactory
 from exams.pearson.constants import EXAM_GRADE_PASS, EXAM_GRADE_FAIL
@@ -24,6 +25,7 @@ from grades.models import (
     FinalGrade,
     ProctoredExamGrade,
     MicromastersCourseCertificate,
+    MicromastersProgramCertificate,
 )
 from micromasters.factories import UserFactory
 from micromasters.utils import now_in_utc, generate_md5
@@ -68,3 +70,13 @@ class MicromastersCourseCertificateFactory(DjangoModelFactory):
 
     class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods,old-style-class
         model = MicromastersCourseCertificate
+
+
+class MicromastersProgramCertificateFactory(DjangoModelFactory):
+    """Factory for MicromastersProgramCertificate"""
+
+    user = SubFactory(UserFactory)
+    program = SubFactory(ProgramFactory)
+
+    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods,old-style-class
+        model = MicromastersProgramCertificate

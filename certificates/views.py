@@ -81,9 +81,9 @@ class ProgramCertificateView(CertificateView):
             select_related('program', 'user__profile').
             first()
         )
-        program = certificate.program
         if not certificate:
             raise Http404
+        program = certificate.program
 
         signatories = ProgramCertificateSignatories.objects.filter(program_page__program=program)
         if not signatories.exists():
