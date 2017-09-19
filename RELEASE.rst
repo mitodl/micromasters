@@ -1,6 +1,15 @@
 Release Notes
 =============
 
+Version 0.75.1
+--------------
+
+- Add prettier-eslint-cli, fiddle with eslint config
+- See Certificates links for non FA courses (#3500)
+- Added management command to backfill discussion users
+- Generate MM Program Certificates (#3524)
+- Updated open-discussions-client (#3529)
+
 Version 0.75.0
 --------------
 
