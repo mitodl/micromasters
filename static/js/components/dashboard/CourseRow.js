@@ -1,72 +1,76 @@
 // @flow
-import React from 'react';
-import Grid, { Cell } from 'react-mdl/lib/Grid';
-import R from 'ramda';
-import Icon from 'react-mdl/lib/Icon';
-import Spinner from 'react-mdl/lib/Spinner';
+import React from "react"
+import Grid, { Cell } from "react-mdl/lib/Grid"
+import R from "ramda"
+import Icon from "react-mdl/lib/Icon"
+import Spinner from "react-mdl/lib/Spinner"
 
-import CourseAction from './CourseAction';
-import Grades from './courses/Grades';
-import ProgressMessage from './courses/ProgressMessage';
-import StatusMessages from './courses/StatusMessages';
-import type { Course, CourseRun, FinancialAidUserInfo } from '../../flow/programTypes';
-import type { UIState } from '../../reducers/ui';
-import type { GradeType } from '../../containers/DashboardPage';
+import CourseAction from "./CourseAction"
+import Grades from "./courses/Grades"
+import ProgressMessage from "./courses/ProgressMessage"
+import StatusMessages from "./courses/StatusMessages"
 import type {
-  CouponPrices,
-  Coupon,
-} from '../../flow/couponTypes';
+  Course,
+  CourseRun,
+  FinancialAidUserInfo
+} from "../../flow/programTypes"
+import type { UIState } from "../../reducers/ui"
+import type { GradeType } from "../../containers/DashboardPage"
+import type { CouponPrices, Coupon } from "../../flow/couponTypes"
 import {
   STATUS_PENDING_ENROLLMENT,
-  COURSE_ACTION_ENROLL,
-} from '../../constants';
+  COURSE_ACTION_ENROLL
+} from "../../constants"
 import {
   courseStartDateMessage,
   userIsEnrolled,
-  hasPaidForAnyCourseRun,
-} from './courses/util';
-import { isEnrollableRun } from './courses/util';
+  hasPaidForAnyCourseRun
+} from "./courses/util"
+import { isEnrollableRun } from "./courses/util"
 
 export default class CourseRow extends React.Component {
   props: {
-    course:                          Course,
-    now:                             moment$Moment,
-    couponPrices:                    CouponPrices,
-    financialAid:                    FinancialAidUserInfo,
-    hasFinancialAid:                 boolean,
-    openFinancialAidCalculator:      () => void,
-    addCourseEnrollment:             (courseId: string) => Promise<*>,
-    openCourseContactDialog:         (course: Course, canContactCourseTeam: boolean) => void,
-    setEnrollSelectedCourseRun:      (r: CourseRun) => void,
+    course: Course,
+    now: moment$Moment,
+    couponPrices: CouponPrices,
+    financialAid: FinancialAidUserInfo,
+    hasFinancialAid: boolean,
+    openFinancialAidCalculator: () => void,
+    addCourseEnrollment: (courseId: string) => Promise<*>,
+    openCourseContactDialog: (
+      course: Course,
+      canContactCourseTeam: boolean
+    ) => void,
+    setEnrollSelectedCourseRun: (r: CourseRun) => void,
     setEnrollCourseDialogVisibility: (b: boolean) => void,
-    ui:                              UIState,
-    checkout:                        (s: string) => void,
-    setShowExpandedCourseStatus:     (n: number) => void,
-    setShowGradeDetailDialog:        (b: boolean, t: GradeType, title: string) => void,
-    showStaffView:                   boolean,
-  };
+    ui: UIState,
+    checkout: (s: string) => void,
+    setShowExpandedCourseStatus: (n: number) => void,
+    setShowGradeDetailDialog: (b: boolean, t: GradeType, title: string) => void,
+    showStaffView: boolean
+  }
 
   // $FlowFixMe: CourseRun is sometimes an empty object
   getFirstRun(): CourseRun {
-    const { course } = this.props;
-    let firstRun = {};
+    const { course } = this.props
+    let firstRun = {}
     if (course.runs.length > 0) {
-      firstRun = course.runs[0];
+      firstRun = course.runs[0]
     }
-    return firstRun;
+    return firstRun
   }
 
   getCourseCoupon = (): ?Coupon => {
-    const {
-      couponPrices,
-      course,
-    } = this.props;
+    const { couponPrices, course } = this.props
 
-    const couponPrice = couponPrices.pricesInclCouponByCourse.get(course.id);
-    return couponPrice ? couponPrice.coupon : undefined;
-  };
+    const couponPrice = couponPrices.pricesInclCouponByCourse.get(course.id)
+    return couponPrice ? couponPrice.coupon : undefined
+  }
 
-  courseAction = (run: CourseRun, actionType: string): React$Element<*>|null => {
+  courseAction = (
+    run: CourseRun,
+    actionType: string
+  ): React$Element<*> | null => {
     const {
       now,
       financialAid,
@@ -76,17 +80,17 @@ export default class CourseRow extends React.Component {
       setEnrollSelectedCourseRun,
       setEnrollCourseDialogVisibility,
       checkout,
-      showStaffView,
-    } = this.props;
+      showStaffView
+    } = this.props
 
     if (showStaffView) {
-      return null;
+      return null
     }
 
     if (actionType === COURSE_ACTION_ENROLL && !isEnrollableRun(run)) {
-      return null;
+      return null
     }
-    const coupon = this.getCourseCoupon();
+    const coupon = this.getCourseCoupon()
 
     return (
       <CourseAction
@@ -102,21 +106,25 @@ export default class CourseRow extends React.Component {
         setEnrollCourseDialogVisibility={setEnrollCourseDialogVisibility}
         coupon={coupon}
       />
-    );
-  };
+    )
+  }
 
   renderEnrollmentSuccess = (): React$Element<*> => {
     return (
       <Grid className="course-sub-row enroll-pay-later-success">
         <Cell col={2} key="1">
-          <Icon name="check" className="tick-icon"/>
+          <Icon name="check" className="tick-icon" />
         </Cell>,
         <Cell col={7} key="2">
-          <p className="enroll-pay-later-heading">You are now auditing this course</p>
-          <span className="enroll-pay-later-txt">But you still need to pay to get credit.</span>
+          <p className="enroll-pay-later-heading">
+            You are now auditing this course
+          </p>
+          <span className="enroll-pay-later-txt">
+            But you still need to pay to get credit.
+          </span>
         </Cell>
       </Grid>
-    );
+    )
   }
 
   renderInProgressCourseInfo = (run: CourseRun) => {
@@ -126,10 +134,10 @@ export default class CourseRow extends React.Component {
       ui,
       setShowExpandedCourseStatus,
       setShowGradeDetailDialog,
-      showStaffView,
-    } = this.props;
+      showStaffView
+    } = this.props
 
-    const coupon = this.getCourseCoupon();
+    const coupon = this.getCourseCoupon()
 
     return (
       <div className="enrolled-course-info">
@@ -141,76 +149,78 @@ export default class CourseRow extends React.Component {
         <ProgressMessage
           courseRun={run}
           course={course}
-          openCourseContactDialog={
-            R.partial(openCourseContactDialog, [course, hasPaidForAnyCourseRun(course)])
-          }
+          openCourseContactDialog={R.partial(openCourseContactDialog, [
+            course,
+            hasPaidForAnyCourseRun(course)
+          ])}
           showStaffView={showStaffView}
         />
-        { showStaffView
-            ? null
-            : <StatusMessages
-              course={course}
-              firstRun={run}
-              courseAction={this.courseAction}
-              expandedStatuses={ui.expandedCourseStatuses}
-              setShowExpandedCourseStatus={setShowExpandedCourseStatus}
-              coupon={coupon}
-            /> }
+        {showStaffView ? null : (
+          <StatusMessages
+            course={course}
+            firstRun={run}
+            courseAction={this.courseAction}
+            expandedStatuses={ui.expandedCourseStatuses}
+            setShowExpandedCourseStatus={setShowExpandedCourseStatus}
+            coupon={coupon}
+          />
+        )}
       </div>
-    );
+    )
   }
 
   renderEnrollableCourseInfo = (run: CourseRun) => {
-    const { course, showStaffView } = this.props;
+    const { course, showStaffView } = this.props
 
-    return <div className="enrollable-course-info">
+    return (
+      <div className="enrollable-course-info">
         <div className="cols">
-        <div className="first-col course-start-date-message">
-          { courseStartDateMessage(run) }
+          <div className="first-col course-start-date-message">
+            {courseStartDateMessage(run)}
+          </div>
+          <div className="second-col">
+            {run.status === STATUS_PENDING_ENROLLMENT ? (
+              <Spinner singleColor />
+            ) : (
+              this.courseAction(run, COURSE_ACTION_ENROLL)
+            )}
+            {run.status === STATUS_PENDING_ENROLLMENT ? "Processing..." : null}
+          </div>
         </div>
-        <div className="second-col">
-          { run.status === STATUS_PENDING_ENROLLMENT
-              ? <Spinner singleColor/>
-              : this.courseAction(run, COURSE_ACTION_ENROLL)
-          }
-          { run.status === STATUS_PENDING_ENROLLMENT ? "Processing..." : null }
-        </div>
+        {!isEnrollableRun(run) && !showStaffView ? (
+          <StatusMessages course={course} firstRun={run} />
+        ) : null}
       </div>
-      { (!isEnrollableRun(run) && !showStaffView)
-          ? <StatusMessages
-            course={course}
-            firstRun={run}
-            />
-          : null }
-    </div>;
-  };
+    )
+  }
 
   renderCourseInfo = (run: CourseRun) => {
-    const { course } = this.props;
+    const { course } = this.props
 
     return (
       <div className="course-info">
-        <div className="course-title">
-          { course.title }
-        </div>
-        { R.any(userIsEnrolled, course.runs)
-            ? this.renderInProgressCourseInfo(run)
-            : this.renderEnrollableCourseInfo(run)
-        }
+        <div className="course-title">{course.title}</div>
+        {R.any(userIsEnrolled, course.runs)
+          ? this.renderInProgressCourseInfo(run)
+          : this.renderEnrollableCourseInfo(run)}
       </div>
-    );
-  };
+    )
+  }
 
   render() {
-    const { ui } = this.props;
+    const { ui } = this.props
 
-    let firstRun = this.getFirstRun();
-    const showEnrollPayLaterSuccess =  (
-      ui.showEnrollPayLaterSuccess && ui.showEnrollPayLaterSuccess === firstRun.course_id
-    );
+    let firstRun = this.getFirstRun()
+    const showEnrollPayLaterSuccess =
+      ui.showEnrollPayLaterSuccess &&
+      ui.showEnrollPayLaterSuccess === firstRun.course_id
 
-    return <div className="course-container course-row">
-      { showEnrollPayLaterSuccess ? this.renderEnrollmentSuccess() : this.renderCourseInfo(firstRun) }
-    </div>;
+    return (
+      <div className="course-container course-row">
+        {showEnrollPayLaterSuccess
+          ? this.renderEnrollmentSuccess()
+          : this.renderCourseInfo(firstRun)}
+      </div>
+    )
   }
 }

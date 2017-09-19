@@ -11,6 +11,7 @@ from unittest.mock import (
 
 import ddt
 from django.core.exceptions import ImproperlyConfigured
+from django.conf import settings
 from rest_framework import status as http_status
 
 from backends.exceptions import InvalidCredentialStored
@@ -26,6 +27,7 @@ from dashboard import (
 )
 from dashboard.api_edx_cache import CachedEdxDataApi
 from dashboard.factories import CachedEnrollmentFactory, CachedCurrentGradeFactory, UserCacheRefreshTimeFactory
+from dashboard.models import CachedCertificate
 from dashboard.utils import MMTrack
 from exams.models import ExamProfile
 from exams.factories import ExamRunFactory, ExamAuthorizationFactory
@@ -1667,12 +1669,15 @@ class ExamAttemptsTests(CourseTests):
         assert api.has_to_pay_for_exam(self.mmtrack, self.course) is result
 
 
+@ddt.ddt
 class GetCertificateForCourse(CourseTests):
     """Tests get_certificate_url for a course"""
 
     def setUp(self):
         super().setUp()
         self.mmtrack.user = self.user
+        self.mmtrack.financial_aid_available = True
+
         self.course_run = self.create_run(course=self.course)
 
     def test_get_certificate_url(self):
@@ -1694,3 +1699,30 @@ class GetCertificateForCourse(CourseTests):
         FinalGradeFactory.create(user=self.user, course_run=self.course_run, grade=0.8, passed=True)
         self.mmtrack.get_passing_final_grades_for_course.return_value = FinalGrade.objects.filter(user=self.user)
         assert api.get_certificate_url(self.mmtrack, self.course) == ''
+
+    @ddt.data(
+        ("verified", True, True),
+        ("audit", False, False),
+        ("verified", False, False),
+        ("audit", True, False),
+    )
+    @ddt.unpack
+    def test_edx_course_certificate(self, certificate_type, is_passing, has_url):
+        """Test edx certificate url for non FA courses"""
+        FinalGradeFactory.create(user=self.user, course_run=self.course_run, grade=0.8, passed=True)
+        self.mmtrack.get_passing_final_grades_for_course.return_value = FinalGrade.objects.filter(user=self.user)
+        self.mmtrack.financial_aid_available = False
+        self.mmtrack.has_passing_certificate.return_value = (certificate_type == "verified") and is_passing
+
+        cert_json = {
+            "username": "staff",
+            "course_id": self.course_run.edx_course_key,
+            "certificate_type": certificate_type,
+            "is_passing": is_passing,
+            "status": "downloadable",
+            "download_url": "/certificates/user/course_key",
+            "grade": "0.98"
+        }
+        self.mmtrack.certificates = CachedCertificate.deserialize_edx_data([cert_json])
+        certificate_url = (settings.EDXORG_BASE_URL + "certificates/user/course_key") if has_url else ""
+        assert api.get_certificate_url(self.mmtrack, self.course) == certificate_url

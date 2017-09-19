@@ -1,38 +1,38 @@
 // @flow
-import React from 'react';
-import R from 'ramda';
+import React from "react"
+import R from "ramda"
 
-import { codeToCountryName } from '../../lib/location';
+import { codeToCountryName } from "../../lib/location"
 
 export default class CountryRefinementOption extends React.Component {
   props: {
-    label:    string,
-    active:   boolean,
-    onClick:  Function,
-    count:    number,
-  };
+    label: string,
+    active: boolean,
+    onClick: Function,
+    count: number
+  }
 
-  render () {
-    const { active, onClick, count, label } = this.props;
-    let activeClass = () => active ? "is-active" : "";
-    let option = "sk-item-list-option";
+  render() {
+    const { active, onClick, count, label } = this.props
+    let activeClass = () => (active ? "is-active" : "")
+    let option = "sk-item-list-option"
     return (
-      <div className={`${option} sk-item-list__item ${activeClass()}`} onClick={onClick}>
+      <div
+        className={`${option} sk-item-list__item ${activeClass()}`}
+        onClick={onClick}
+      >
         <input
           type="checkbox"
           data-qa="checkbox"
           checked={active}
           readOnly
           className={`${option} checkbox`}
-        >
-        </input>
+        />
         <div className={`${option}__text`}>
-          { R.when(R.equals(""), () => 'N/A', codeToCountryName(label)) }
+          {R.when(R.equals(""), () => "N/A", codeToCountryName(label))}
         </div>
-        <div className={`${option}__count`}>
-          { count }
-        </div>
+        <div className={`${option}__count`}>{count}</div>
       </div>
-    );
+    )
   }
 }

@@ -309,7 +309,7 @@ class MMTrack:
         """
         return self.final_grade_qset.for_course_run_keys(
             list(course.courserun_set.values_list('edx_course_key', flat=True))
-        ).passed().order_by('-grade')
+        ).passed().select_related('course_run').order_by('-grade')
 
     def get_all_enrolled_course_runs(self):
         """

@@ -1,9 +1,7 @@
-FROM node:6.2
+FROM node:8.5
 LABEL maintainer "ODL DevOps <mitx-devops@mit.edu>"
 
 RUN apt-get update && apt-get install libelf1
-
-RUN adduser --disabled-password --gecos "" mitodl
 
 COPY package.json /src/
 
@@ -11,8 +9,8 @@ COPY scripts /src/scripts
 
 RUN node /src/scripts/install_yarn.js
 
-RUN mkdir -p /home/mitodl/.cache/yarn
+RUN mkdir -p /home/node/.cache/yarn
 
-RUN chown mitodl:mitodl /home/mitodl/.cache/yarn
+RUN chown node:node /home/node/.cache/yarn
 
-USER mitodl
+USER node

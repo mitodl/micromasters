@@ -1,14 +1,19 @@
 import {
-  RangeFilter, RangeQuery,
-  HistogramBucket, FilterBucket, CardinalityMetric
-} from "searchkit";
-import _ from 'lodash';
-import { NestedAccessorMixin } from './util';
-import { EnabledSelectionRangeAccessor } from './EnabledSelectionRangeFilter';
+  RangeFilter,
+  RangeQuery,
+  HistogramBucket,
+  FilterBucket,
+  CardinalityMetric
+} from "searchkit"
+import _ from "lodash"
+import { NestedAccessorMixin } from "./util"
+import { EnabledSelectionRangeAccessor } from "./EnabledSelectionRangeFilter"
 
-const REQUIRED_FILTER_ID = 'courses';
+const REQUIRED_FILTER_ID = "courses"
 
-class FinalGradeRangeAccessor extends NestedAccessorMixin(EnabledSelectionRangeAccessor) {
+class FinalGradeRangeAccessor extends NestedAccessorMixin(
+  EnabledSelectionRangeAccessor
+) {
   /**
    * Overrides buildOwnQuery in RangeAccessor
    * By default, Searchkit does this by creating an aggs bucket that applies all filters
@@ -24,7 +29,7 @@ class FinalGradeRangeAccessor extends NestedAccessorMixin(EnabledSelectionRangeA
         this.createAggFilter(query),
         ...this.fieldContext.wrapAggregations(this.getRangeBucket(query))
       )
-    );
+    )
   }
 
   /**
@@ -38,16 +43,15 @@ class FinalGradeRangeAccessor extends NestedAccessorMixin(EnabledSelectionRangeA
       this.key,
       this.fieldContext.getAggregationPath(),
       this.key
-    ];
-    let aggs = this.getAggregations(
-      baseAggsPath.concat(["buckets"]), []
-    );
+    ]
+    let aggs = this.getAggregations(baseAggsPath.concat(["buckets"]), [])
     if (aggs.length > 0) {
-      return aggs;
+      return aggs
     } else {
       return this.getAggregations(
-        baseAggsPath.concat([this.key, "buckets"]), []
-      );
+        baseAggsPath.concat([this.key, "buckets"]),
+        []
+      )
     }
   }
 
@@ -55,43 +59,39 @@ class FinalGradeRangeAccessor extends NestedAccessorMixin(EnabledSelectionRangeA
    * Returns the key the Searchkit uses for this element in ImmutableQuery.filtersMap (which differs depending on the
    * type of filter).
    */
-  getFilterMapKey = () => (this.key);
+  getFilterMapKey = () => this.key
 
   /**
    * This range filter should only be applied if a filter has been applied on the course title. This
    * function will return true in that case. If a course title filter has not been applied, this
    * accessor should not do anything to the shared query, so this will return false.
    */
-  shouldApplyFilter = () => (
+  shouldApplyFilter = () =>
     _.get(this.searchkit.state, REQUIRED_FILTER_ID, []).length > 0
-  );
 
   /**
    * Creates the appropriate query element for this filter type
    * (e.g.: {"range": {"program.enrollments.final_grade": {"gte": 64, "lte": 100}}})
    */
   createQueryFilter(appliedFilterValue) {
-    return RangeQuery(
-      this.options.field, {
-        gte: appliedFilterValue.min, lte: appliedFilterValue.max
-      }
-    );
+    return RangeQuery(this.options.field, {
+      gte: appliedFilterValue.min,
+      lte: appliedFilterValue.max
+    })
   }
 
   /**
    * Gets the appropriate range bucket for this element's agg query.
    */
   getRangeBucket(query) {
-    let otherAppliedFiltersOnPath = this.createFilterForOtherElementsOnPath(query);
-    let rangeBucket = this.createInnerRangeBucket();
+    let otherAppliedFiltersOnPath = this.createFilterForOtherElementsOnPath(
+      query
+    )
+    let rangeBucket = this.createInnerRangeBucket()
     if (otherAppliedFiltersOnPath) {
-      return FilterBucket(
-        this.key,
-        otherAppliedFiltersOnPath,
-        rangeBucket
-      );
+      return FilterBucket(this.key, otherAppliedFiltersOnPath, rangeBucket)
     } else {
-      return rangeBucket;
+      return rangeBucket
     }
   }
 
@@ -100,39 +100,49 @@ class FinalGradeRangeAccessor extends NestedAccessorMixin(EnabledSelectionRangeA
    * option).
    */
   createInnerRangeBucket() {
-    let metric ;
+    let metric
     if (this.options.loadHistogram) {
       metric = HistogramBucket(this.key, this.options.field, {
-        "interval": this.getInterval(),
-        "min_doc_count": 0,
-        "extended_bounds": {
-          "min": this.options.min,
-          "max": this.options.max
+        interval:        this.getInterval(),
+        min_doc_count:   0,
+        extended_bounds: {
+          min: this.options.min,
+          max: this.options.max
         }
-      });
+      })
     } else {
-      metric = CardinalityMetric(this.key, this.options.field);
+      metric = CardinalityMetric(this.key, this.options.field)
     }
-    return metric;
+    return metric
   }
 }
 
 export default class FinalGradeRangeFilter extends RangeFilter {
   defineAccessor() {
     const {
-      id, title, min, max, field, fieldOptions,
-      interval, showHistogram
-    } = this.props;
+      id,
+      title,
+      min,
+      max,
+      field,
+      fieldOptions,
+      interval,
+      showHistogram
+    } = this.props
     return new FinalGradeRangeAccessor(id, {
-      id, min, max, title, field,
-      interval, loadHistogram: showHistogram, fieldOptions
-    });
+      id,
+      min,
+      max,
+      title,
+      field,
+      interval,
+      loadHistogram: showHistogram,
+      fieldOptions
+    })
   }
 
   render() {
-    let numFilters = _.get(this.searchkit.state, REQUIRED_FILTER_ID, []);
-    return numFilters.length > 0 ?
-      super.render() :
-      null;
+    let numFilters = _.get(this.searchkit.state, REQUIRED_FILTER_ID, [])
+    return numFilters.length > 0 ? super.render() : null
   }
 }

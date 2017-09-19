@@ -34,6 +34,12 @@ class Program(TimestampedModel):
     def __str__(self):
         return self.title
 
+    def has_frozen_grades_for_all_courses(self):
+        """
+        Return true if has frozen grades for all courses in the program
+        """
+        return all([course.has_frozen_runs() for course in self.course_set.all()])
+
 
 class Course(models.Model):
     """
@@ -129,6 +135,12 @@ class Course(models.Model):
             )
         else:
             return "Not available"
+
+    def has_frozen_runs(self):
+        """
+        Return true if has any frozen runs
+        """
+        return any([run.has_frozen_grades for run in self.courserun_set.all()])
 
     def first_unexpired_run(self):
         """

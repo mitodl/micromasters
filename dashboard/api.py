@@ -3,10 +3,13 @@ Apis for the dashboard
 """
 import datetime
 import logging
+from urllib.parse import urljoin
+import pytz
 
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
-import pytz
+from django.urls import reverse
 
 from backends.exceptions import InvalidCredentialStored
 from courses.models import Program
@@ -479,10 +482,16 @@ def get_certificate_url(mmtrack, course):
     Returns:
         str: url to view the certificate
     """
-    final_grades = mmtrack.get_passing_final_grades_for_course(course)
     url = ""
+    final_grades = mmtrack.get_passing_final_grades_for_course(course)
     if final_grades.exists():
         best_grade = final_grades.first()
-        if best_grade.has_certificate:
-            url = "/certificate/{}".format(final_grades.first().certificate.hash)
+        course_key = best_grade.course_run.edx_course_key
+        if mmtrack.financial_aid_available:
+            if best_grade.has_certificate:
+                url = reverse('certificate', args=[best_grade.certificate.hash])
+        elif mmtrack.has_passing_certificate(course_key):
+            download_url = mmtrack.certificates.get_verified_cert(course_key).download_url
+            if download_url:
+                url = urljoin(settings.EDXORG_BASE_URL, download_url)
     return url

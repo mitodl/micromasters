@@ -1,13 +1,17 @@
 import {
-  FacetAccessor, TermQuery, TermsBucket,
-  FilterBucket, AggsContainer, CardinalityMetric
-} from "searchkit";
-import _ from 'lodash';
-import { NestedAccessorMixin } from './util';
-import PatchedMenuFilter from './PatchedMenuFilter';
+  FacetAccessor,
+  TermQuery,
+  TermsBucket,
+  FilterBucket,
+  AggsContainer,
+  CardinalityMetric
+} from "searchkit"
+import _ from "lodash"
+import { NestedAccessorMixin } from "./util"
+import PatchedMenuFilter from "./PatchedMenuFilter"
 
-const REVERSE_NESTED_AGG_KEY = 'top_level_doc_count';
-const INNER_TERMS_AGG_KEY = 'nested_terms';
+const REVERSE_NESTED_AGG_KEY = "top_level_doc_count"
+const INNER_TERMS_AGG_KEY = "nested_terms"
 
 /**
  * Produces a Searchkit TermsBucket that includes a "reverse nested" aggregation.
@@ -24,11 +28,15 @@ const INNER_TERMS_AGG_KEY = 'nested_terms';
  * }
  */
 function ReverseNestedTermsBucket(key, field, options) {
-  let reverseNestedAgg = AggsContainer(REVERSE_NESTED_AGG_KEY, {'reverse_nested': {}});
-  return TermsBucket(key, field, options, reverseNestedAgg);
+  let reverseNestedAgg = AggsContainer(REVERSE_NESTED_AGG_KEY, {
+    reverse_nested: {}
+  })
+  return TermsBucket(key, field, options, reverseNestedAgg)
 }
 
-class NestedAggregatingFacetAccessor extends NestedAccessorMixin(FacetAccessor) {
+class NestedAggregatingFacetAccessor extends NestedAccessorMixin(
+  FacetAccessor
+) {
   /**
    * Overrides buildOwnQuery in FacetAccessor
    * By default, Searchkit does this by creating an aggs bucket that applies all filters
@@ -39,7 +47,7 @@ class NestedAggregatingFacetAccessor extends NestedAccessorMixin(FacetAccessor) 
    */
   buildOwnQuery(query) {
     if (!this.loadAggregations) {
-      return query;
+      return query
     } else {
       return query.setAggs(
         FilterBucket(
@@ -50,7 +58,7 @@ class NestedAggregatingFacetAccessor extends NestedAccessorMixin(FacetAccessor) 
             CardinalityMetric(`${this.key}_count`, this.key)
           )
         )
-      );
+      )
     }
   }
 
@@ -65,16 +73,15 @@ class NestedAggregatingFacetAccessor extends NestedAccessorMixin(FacetAccessor) 
       this.uuid,
       this.fieldContext.getAggregationPath(),
       this.key
-    ];
-    let aggs = this.getAggregations(
-      baseAggsPath.concat(["buckets"]), []
-    );
+    ]
+    let aggs = this.getAggregations(baseAggsPath.concat(["buckets"]), [])
     if (aggs.length > 0) {
-      return aggs;
+      return aggs
     } else {
       return this.getAggregations(
-        baseAggsPath.concat([INNER_TERMS_AGG_KEY, "buckets"]), []
-      );
+        baseAggsPath.concat([INNER_TERMS_AGG_KEY, "buckets"]),
+        []
+      )
     }
   }
 
@@ -82,37 +89,42 @@ class NestedAggregatingFacetAccessor extends NestedAccessorMixin(FacetAccessor) 
    * Returns the key the Searchkit uses for this element in ImmutableQuery.filtersMap (which differs depending on the
    * type of filter).
    */
-  getFilterMapKey = () => (this.uuid);
+  getFilterMapKey = () => this.uuid
 
   /**
    * Creates the appropriate query element for this filter type (e.g.: {'term': 'program.enrollments.course_title'})
    */
   createQueryFilter(appliedFilterValue) {
-    return TermQuery(this.key, appliedFilterValue);
+    return TermQuery(this.key, appliedFilterValue)
   }
 
   /**
    * Gets the appropriate terms bucket for this element's agg query.
    */
   getTermsBucket(query) {
-    let otherAppliedFiltersOnPath = this.createFilterForOtherElementsOnPath(query);
-    let termsKey = otherAppliedFiltersOnPath ? INNER_TERMS_AGG_KEY : this.key;
-    let termsBucket = ReverseNestedTermsBucket(termsKey, this.key, _.omitBy({
-      size:this.size,
-      order:this.getOrder(),
-      include: this.options.include,
-      exclude: this.options.exclude,
-      min_doc_count:this.options.min_doc_count
-    }, _.isUndefined));
+    let otherAppliedFiltersOnPath = this.createFilterForOtherElementsOnPath(
+      query
+    )
+    let termsKey = otherAppliedFiltersOnPath ? INNER_TERMS_AGG_KEY : this.key
+    let termsBucket = ReverseNestedTermsBucket(
+      termsKey,
+      this.key,
+      _.omitBy(
+        {
+          size:          this.size,
+          order:         this.getOrder(),
+          include:       this.options.include,
+          exclude:       this.options.exclude,
+          min_doc_count: this.options.min_doc_count
+        },
+        _.isUndefined
+      )
+    )
 
     if (otherAppliedFiltersOnPath) {
-      return FilterBucket(
-        this.key,
-        otherAppliedFiltersOnPath,
-        termsBucket
-      );
+      return FilterBucket(this.key, otherAppliedFiltersOnPath, termsBucket)
     } else {
-      return termsBucket;
+      return termsBucket
     }
   }
 }
@@ -124,8 +136,9 @@ export default class NestedAggregatingMenuFilter extends PatchedMenuFilter {
    */
   defineAccessor() {
     return new NestedAggregatingFacetAccessor(
-      this.props.field, this.getAccessorOptions()
-    );
+      this.props.field,
+      this.getAccessorOptions()
+    )
   }
 
   /**
@@ -136,12 +149,12 @@ export default class NestedAggregatingMenuFilter extends PatchedMenuFilter {
    * elements that match (which could be greater than the number of users).
    */
   getItems() {
-    let items = super.getItems();
-    return items.map(
-      item => ({
-        ...item,
-        doc_count: item[REVERSE_NESTED_AGG_KEY] ? item[REVERSE_NESTED_AGG_KEY].doc_count : item.doc_count
-      })
-    );
+    let items = super.getItems()
+    return items.map(item => ({
+      ...item,
+      doc_count: item[REVERSE_NESTED_AGG_KEY]
+        ? item[REVERSE_NESTED_AGG_KEY].doc_count
+        : item.doc_count
+    }))
   }
 }

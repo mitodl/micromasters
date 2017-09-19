@@ -1,14 +1,14 @@
 /* global SETTINGS: false */
-import React from 'react';
-import { mount } from 'enzyme';
-import sinon from 'sinon';
-import { createMemoryHistory } from 'react-router';
-import { mergePersistedState }  from 'redux-localstorage';
-import { compose } from 'redux';
-import fetchMock from 'fetch-mock';
+import React from "react"
+import { mount } from "enzyme"
+import sinon from "sinon"
+import { createMemoryHistory } from "react-router"
+import { mergePersistedState } from "redux-localstorage"
+import { compose } from "redux"
+import fetchMock from "fetch-mock"
 
-import * as api from '../lib/api';
-import * as djangoFetch from 'redux-hammock/django_csrf_fetch';
+import * as api from "../lib/api"
+import * as djangoFetch from "redux-hammock/django_csrf_fetch"
 import {
   DASHBOARD_RESPONSE,
   COURSE_PRICES_RESPONSE,
@@ -16,92 +16,95 @@ import {
   PROGRAMS,
   USER_PROFILE_RESPONSE,
   ATTACH_COUPON_RESPONSE,
-  GET_AUTOMATIC_EMAILS_RESPONSE,
-} from '../test_constants';
+  GET_AUTOMATIC_EMAILS_RESPONSE
+} from "../test_constants"
 import {
   REQUEST_GET_USER_PROFILE,
-  RECEIVE_GET_USER_PROFILE_SUCCESS,
-} from '../actions/profile';
+  RECEIVE_GET_USER_PROFILE_SUCCESS
+} from "../actions/profile"
 import {
   REQUEST_GET_PROGRAM_ENROLLMENTS,
-  RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
-} from '../actions/programs';
-import rootReducer from '../reducers';
-import DashboardRouter from '../DashboardRouter';
-import { testRoutes } from './test_utils';
-import { configureMainTestStore } from '../store/configureStore';
-import type { Sandbox } from '../flow/sinonTypes';
+  RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS
+} from "../actions/programs"
+import rootReducer from "../reducers"
+import DashboardRouter from "../DashboardRouter"
+import { testRoutes } from "./test_utils"
+import { configureMainTestStore } from "../store/configureStore"
+import type { Sandbox } from "../flow/sinonTypes"
 
 export default class IntegrationTestHelper {
-  sandbox: Sandbox;
-  store: TestStore;
-  browserHistory: History;
+  sandbox: Sandbox
+  store: TestStore
+  browserHistory: History
 
   constructor() {
-    this.sandbox = sinon.sandbox.create();
+    this.sandbox = sinon.sandbox.create()
     this.store = configureMainTestStore((...args) => {
       // uncomment to listen on dispatched actions
       // console.log(args);
-      const reducer = compose(
-        mergePersistedState()
-      )(rootReducer);
-      return reducer(...args);
-    });
+      const reducer = compose(mergePersistedState())(rootReducer)
+      return reducer(...args)
+    })
 
     // we need this to deal with the 'endpoint' objects, it's now necessary
     // to directly mock out the fetch call because at module load time the
     // endpoint object already holds a reference to the unmocked API function
     // (e.g. getCoupons) which Sinon doesn't seem to be able to deal with.
-    this.fetchJSONWithCSRFStub = this.sandbox.stub(djangoFetch, 'fetchJSONWithCSRF');
+    this.fetchJSONWithCSRFStub = this.sandbox.stub(
+      djangoFetch,
+      "fetchJSONWithCSRF"
+    )
 
-    this.listenForActions = this.store.createListenForActions();
-    this.dispatchThen = this.store.createDispatchThen();
+    this.listenForActions = this.store.createListenForActions()
+    this.dispatchThen = this.store.createDispatchThen()
 
-    this.dashboardStub = this.sandbox.stub(api, 'getDashboard');
-    this.dashboardStub.returns(Promise.resolve(DASHBOARD_RESPONSE));
+    this.dashboardStub = this.sandbox.stub(api, "getDashboard")
+    this.dashboardStub.returns(Promise.resolve(DASHBOARD_RESPONSE))
     this.coursePricesStub = this.fetchJSONWithCSRFStub.withArgs(
       `/api/v0/course_prices/${SETTINGS.user.username}/`
-    );
-    this.coursePricesStub.returns(Promise.resolve(COURSE_PRICES_RESPONSE));
+    )
+    this.coursePricesStub.returns(Promise.resolve(COURSE_PRICES_RESPONSE))
 
-    fetchMock.mock('/api/v0/mail/automatic_email/', () => {
-      return { body: JSON.stringify(GET_AUTOMATIC_EMAILS_RESPONSE) };
-    });
+    fetchMock.mock("/api/v0/mail/automatic_email/", () => {
+      return { body: JSON.stringify(GET_AUTOMATIC_EMAILS_RESPONSE) }
+    })
     this.programLearnersStub = this.fetchJSONWithCSRFStub.withArgs(
       `/api/v0/programlearners/${PROGRAMS[0].id}/`
-    );
-    this.programLearnersStub.returns(Promise.resolve(PROGRAM_LEARNERS_RESPONSE));
+    )
+    this.programLearnersStub.returns(Promise.resolve(PROGRAM_LEARNERS_RESPONSE))
 
-    this.couponsStub = this.sandbox.stub(api, 'getCoupons');
-    this.couponsStub.returns(Promise.resolve([]));
-    this.profileGetStub = this.sandbox.stub(api, 'getUserProfile');
-    this.profileGetStub.withArgs(SETTINGS.user.username).returns(Promise.resolve(USER_PROFILE_RESPONSE));
-    this.programsGetStub = this.sandbox.stub(api, 'getPrograms');
-    this.programsGetStub.returns(Promise.resolve(PROGRAMS));
-    this.attachCouponStub = this.sandbox.stub(api, 'attachCoupon');
-    this.attachCouponStub.returns(Promise.resolve(ATTACH_COUPON_RESPONSE));
-    this.skipFinancialAidStub = this.sandbox.stub(api, 'skipFinancialAid');
-    this.skipFinancialAidStub.returns(Promise.resolve());
-    this.addFinancialAidStub = this.sandbox.stub(api, 'addFinancialAid');
-    this.addFinancialAidStub.returns(Promise.resolve());
-    this.sendSearchResultMail = this.sandbox.stub(api, 'sendSearchResultMail');
-    this.sendSearchResultMail.returns(Promise.resolve());
-    this.sendCourseTeamMail = this.sandbox.stub(api, 'sendCourseTeamMail');
-    this.sendCourseTeamMail.returns(Promise.resolve());
-    this.sendLearnerMail = this.sandbox.stub(api, 'sendLearnerMail');
-    this.sendLearnerMail.returns(Promise.resolve());
-    this.scrollIntoViewStub = this.sandbox.stub();
-    window.HTMLDivElement.prototype.scrollIntoView = this.scrollIntoViewStub;
-    window.HTMLFieldSetElement.prototype.scrollIntoView = this.scrollIntoViewStub;
-    this.browserHistory = createMemoryHistory();
-    this.currentLocation = null;
+    this.couponsStub = this.sandbox.stub(api, "getCoupons")
+    this.couponsStub.returns(Promise.resolve([]))
+    this.profileGetStub = this.sandbox.stub(api, "getUserProfile")
+    this.profileGetStub
+      .withArgs(SETTINGS.user.username)
+      .returns(Promise.resolve(USER_PROFILE_RESPONSE))
+    this.programsGetStub = this.sandbox.stub(api, "getPrograms")
+    this.programsGetStub.returns(Promise.resolve(PROGRAMS))
+    this.attachCouponStub = this.sandbox.stub(api, "attachCoupon")
+    this.attachCouponStub.returns(Promise.resolve(ATTACH_COUPON_RESPONSE))
+    this.skipFinancialAidStub = this.sandbox.stub(api, "skipFinancialAid")
+    this.skipFinancialAidStub.returns(Promise.resolve())
+    this.addFinancialAidStub = this.sandbox.stub(api, "addFinancialAid")
+    this.addFinancialAidStub.returns(Promise.resolve())
+    this.sendSearchResultMail = this.sandbox.stub(api, "sendSearchResultMail")
+    this.sendSearchResultMail.returns(Promise.resolve())
+    this.sendCourseTeamMail = this.sandbox.stub(api, "sendCourseTeamMail")
+    this.sendCourseTeamMail.returns(Promise.resolve())
+    this.sendLearnerMail = this.sandbox.stub(api, "sendLearnerMail")
+    this.sendLearnerMail.returns(Promise.resolve())
+    this.scrollIntoViewStub = this.sandbox.stub()
+    window.HTMLDivElement.prototype.scrollIntoView = this.scrollIntoViewStub
+    window.HTMLFieldSetElement.prototype.scrollIntoView = this.scrollIntoViewStub
+    this.browserHistory = createMemoryHistory()
+    this.currentLocation = null
     this.browserHistory.listen(url => {
-      this.currentLocation = url;
-    });
+      this.currentLocation = url
+    })
   }
 
   cleanup() {
-    this.sandbox.restore();
+    this.sandbox.restore()
   }
 
   /**
@@ -111,26 +114,29 @@ export default class IntegrationTestHelper {
    * If null, actions types for the success case is assumed.
    * @returns {Promise<*>} A promise which provides [wrapper, div] on success
    */
-  renderComponent(url: string = "/", typesToAssert: Array<string>|null = null): Promise<*> {
-    let expectedTypes = [];
+  renderComponent(
+    url: string = "/",
+    typesToAssert: Array<string> | null = null
+  ): Promise<*> {
+    let expectedTypes = []
     if (typesToAssert === null) {
       expectedTypes = [
         REQUEST_GET_USER_PROFILE,
         REQUEST_GET_PROGRAM_ENROLLMENTS,
         RECEIVE_GET_USER_PROFILE_SUCCESS,
-        RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
-      ];
+        RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS
+      ]
     } else {
-      expectedTypes = typesToAssert;
+      expectedTypes = typesToAssert
     }
 
-    let wrapper, div;
+    let wrapper, div
 
     return this.listenForActions(expectedTypes, () => {
-      this.browserHistory.push(url);
-      div = document.createElement("div");
-      div.setAttribute("id", "integration_test_div");
-      document.body.appendChild(div);
+      this.browserHistory.push(url)
+      div = document.createElement("div")
+      div.setAttribute("id", "integration_test_div")
+      document.body.appendChild(div)
       wrapper = mount(
         <div>
           <DashboardRouter
@@ -143,9 +149,9 @@ export default class IntegrationTestHelper {
         {
           attachTo: div
         }
-      );
+      )
     }).then(() => {
-      return Promise.resolve([wrapper, div]);
-    });
+      return Promise.resolve([wrapper, div])
+    })
   }
 }

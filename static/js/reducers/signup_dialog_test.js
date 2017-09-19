@@ -1,40 +1,38 @@
-import configureTestStore from 'redux-asserts';
-import { assert } from 'chai';
-import sinon from 'sinon';
+import configureTestStore from "redux-asserts"
+import { assert } from "chai"
+import sinon from "sinon"
 
-import { signupDialog } from './signup_dialog';
+import { signupDialog } from "./signup_dialog"
 import {
   setDialogVisibility,
+  SET_DIALOG_VISIBILITY
+} from "../actions/signup_dialog"
 
-  SET_DIALOG_VISIBILITY,
-} from '../actions/signup_dialog';
-
-describe('signup dialog reducer', () => {
-  let sandbox, store, dispatchThen;
+describe("signup dialog reducer", () => {
+  let sandbox, store, dispatchThen
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
-    store = configureTestStore(signupDialog);
-    dispatchThen = store.createDispatchThen();
-  });
+    sandbox = sinon.sandbox.create()
+    store = configureTestStore(signupDialog)
+    dispatchThen = store.createDispatchThen()
+  })
 
   afterEach(() => {
-    sandbox.restore();
+    sandbox.restore()
 
-    store = null;
-    dispatchThen = null;
-  });
+    store = null
+    dispatchThen = null
+  })
 
-  describe('dialog visibility', () => {
+  describe("dialog visibility", () => {
     [true, false].forEach(bool => {
       it(`should let you set dialog visibility to ${bool}`, () => {
         return dispatchThen(setDialogVisibility(bool), [
           SET_DIALOG_VISIBILITY
         ]).then(state => {
-          assert.equal(state.dialogVisibility, bool);
-        });
-      });
-    });
-  });
-});
-
+          assert.equal(state.dialogVisibility, bool)
+        })
+      })
+    })
+  })
+})

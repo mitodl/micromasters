@@ -6,7 +6,9 @@ from unittest.mock import patch, MagicMock
 
 import ddt
 from django.core.exceptions import ImproperlyConfigured
+from django.db.models.signals import post_save
 from django_redis import get_redis_connection
+from factory.django import mute_signals
 
 from courses.factories import CourseRunFactory
 from dashboard.api_edx_cache import CachedEdxUserData, UserCachedRunData
@@ -22,7 +24,14 @@ from financialaid.factories import (
 )
 from grades import api
 from grades.exceptions import FreezeGradeFailedException
-from grades.models import FinalGrade, FinalGradeStatus
+from grades.models import (
+    FinalGrade,
+    FinalGradeStatus,
+    MicromastersCourseCertificate,
+    MicromastersProgramCertificate,
+    CourseRunGradingStatus
+)
+from grades.factories import FinalGradeFactory
 from micromasters.factories import SocialUserFactory, UserFactory
 from micromasters.utils import now_in_utc
 from search.base import MockedESTestCase
@@ -417,3 +426,73 @@ class GradeAPITests(MockedESTestCase):
         assert final_grade is not None
         assert mock_refr.call_count == 2
         assert fg_qset.count() == 1
+
+
+class GenerateCertificatesAPITests(MockedESTestCase):
+    """
+    Tests for final grades api
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = SocialUserFactory.create()
+
+        cls.run_1 = CourseRunFactory.create(
+            freeze_grade_date=now_in_utc()-timedelta(days=1),
+            course__program__financial_aid_availability=True,
+        )
+        cls.program = cls.run_1.course.program
+
+    def test_successful_program_certificate_generation(self):
+        """
+        Test has final grade and a certificate
+        """
+        final_grade = FinalGradeFactory.create(
+            user=self.user,
+            course_run=self.run_1,
+            passed=True,
+            status='complete',
+            grade=0.8
+        )
+        CourseRunGradingStatus.objects.create(course_run=self.run_1, status='complete')
+        with mute_signals(post_save):
+            MicromastersCourseCertificate.objects.create(final_grade=final_grade)
+
+        cert_qset = MicromastersProgramCertificate.objects.filter(user=self.user, program=self.program)
+        assert cert_qset.exists() is False
+        api.generate_program_certificate(self.user, self.program)
+        assert cert_qset.exists() is True
+
+    def test_has_no_final_grade(self):
+        """
+        Test has no final grade
+        """
+        CourseRunGradingStatus.objects.create(course_run=self.run_1, status='complete')
+        cert_qset = MicromastersProgramCertificate.objects.filter(user=self.user, program=self.program)
+        api.generate_program_certificate(self.user, self.program)
+        assert cert_qset.exists() is False
+
+    def test_final_grade_with_no_certificate(self):
+        """
+        Test has a final grade but no certificate
+        """
+        FinalGradeFactory.create(
+            user=self.user,
+            course_run=self.run_1,
+            passed=True,
+            status='complete',
+            grade=0.8
+        )
+        CourseRunGradingStatus.objects.create(course_run=self.run_1, status='complete')
+        cert_qset = MicromastersProgramCertificate.objects.filter(user=self.user, program=self.program)
+        assert cert_qset.exists() is False
+        api.generate_program_certificate(self.user, self.program)
+        assert cert_qset.exists() is False
+
+    def test_already_has_program_certificate(self):
+        """
+        Test already has a certificate
+        """
+        MicromastersProgramCertificate.objects.create(user=self.user, program=self.program)
+        # should not raise an exception
+        api.generate_program_certificate(self.user, self.program)
