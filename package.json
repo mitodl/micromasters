@@ -42,11 +42,12 @@
     "draft-js": "^0.10.1",
     "draft-js-export-html": "^0.5.4",
     "enzyme": "^2.8.2",
-    "eslint": "^3.19.0",
+    "eslint": "4.2.0",
     "eslint-config-defaults": "9.0.0",
+    "eslint-config-google": "^0.9.1",
     "eslint-plugin-babel": "^4.1.1",
     "eslint-plugin-flow-vars": "^0.5.0",
-    "eslint-plugin-flowtype": "^2.33.0",
+    "eslint-plugin-flowtype": "^2.35.1",
     "eslint-plugin-mocha": "^4.9.0",
     "eslint-plugin-react": "^7.0.1",
     "express": "^4.15.3",
@@ -73,6 +74,7 @@
     "nyc": "^10.1.2",
     "object.entries": "^1.0.4",
     "postcss-loader": "^2.0.5",
+    "prettier-eslint-cli": "^4.3.2",
     "prop-types": "^15.5.10",
     "ramda": "^0.23.0",
     "raven-js": "^3.15.0",
@@ -127,8 +129,8 @@
     "webpack-hot-middleware": "^2.17.1"
   },
   "engines": {
-    "node": "6.2.0",
-    "yarn": "0.27.5"
+    "node": "8.5.0",
+    "yarn": "1.0.2"
   },
   "scripts": {
     "postinstall": "./webpack_if_prod.sh",
@@ -138,6 +140,9 @@
     "coverage": "COVERAGE=1 ./js_test.sh",
     "codecov": "CODECOV=1 ./js_test.sh",
     "watch": "WATCH=1 ./js_test.sh",
-    "flow": "flow check"
+    "flow": "flow check",
+    "fmt": "LOG_LEVEL= prettier-eslint --write --no-semi --ignore 'static/js/flow/**/*.js' 'static/js/**/*.js'",
+    "fmt:check": "prettier-eslint --list-different --no-semi --ignore 'static/js/flow/**/*.js' 'static/js/**/*.js'",
+    "repl": "node --require ./scripts/repl.js"
   }
 }

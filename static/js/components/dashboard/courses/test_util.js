@@ -1,67 +1,67 @@
 // @flow
-import moment from 'moment';
+import moment from "moment"
 
-import type { CourseRun } from '../../../flow/programTypes';
+import type { CourseRun } from "../../../flow/programTypes"
 import {
   STATUS_CURRENTLY_ENROLLED,
   STATUS_PASSED,
-  STATUS_NOT_PASSED,
-} from '../../../constants';
+  STATUS_NOT_PASSED
+} from "../../../constants"
 
 export const makeRunCurrent = (run: CourseRun) => {
   run.course_start_date = moment()
-    .subtract(10, 'days')
-    .format();
+    .subtract(10, "days")
+    .format()
   run.enrollment_start_date = moment()
-    .subtract(12, 'days')
-    .format();
+    .subtract(12, "days")
+    .format()
   run.course_end_date = moment()
-    .add(10, 'days')
-    .format();
-};
+    .add(10, "days")
+    .format()
+}
 
 export const makeRunPast = (run: CourseRun) => {
   run.course_start_date = moment()
-    .subtract(30, 'days')
-    .format();
+    .subtract(30, "days")
+    .format()
   run.course_end_date = moment()
-    .subtract(10, 'days')
-    .format();
-};
+    .subtract(10, "days")
+    .format()
+}
 
 export const makeRunFuture = (run: CourseRun) => {
   run.course_start_date = moment()
-    .add(10, 'days')
-    .format();
+    .add(10, "days")
+    .format()
   run.course_end_date = moment()
-    .add(30, 'days')
-    .format();
-};
+    .add(30, "days")
+    .format()
+}
 
 export const makeRunOverdue = (run: CourseRun) => {
   run.course_upgrade_deadline = moment()
-    .subtract(10, 'days')
-    .format();
-};
+    .subtract(10, "days")
+    .format()
+}
 
 export const makeRunDueSoon = (run: CourseRun) => {
   run.course_upgrade_deadline = moment()
-    .add(5, 'days')
-    .format();
-};
+    .add(5, "days")
+    .format()
+}
 
 export const makeRunEnrolled = (run: CourseRun) => {
-  run.status = STATUS_CURRENTLY_ENROLLED;
-};
+  run.status = STATUS_CURRENTLY_ENROLLED
+}
 
 export const makeRunPaid = (run: CourseRun) => {
-  run.has_paid = true;
-};
+  run.has_paid = true
+}
 
 export const makeRunPassed = (run: CourseRun) => {
-  run.status = STATUS_PASSED;
-};
+  run.status = STATUS_PASSED
+}
 
 export const makeRunFailed = (run: CourseRun) => {
-  run.status = STATUS_NOT_PASSED;
-};
+  run.status = STATUS_NOT_PASSED
+}

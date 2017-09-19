@@ -1,148 +1,171 @@
 // @flow
-import Dialog from 'material-ui/Dialog';
-import React from 'react';
-import R from 'ramda';
-import Icon from 'react-mdl/lib/Icon';
-import moment from 'moment';
+import Dialog from "material-ui/Dialog"
+import React from "react"
+import R from "ramda"
+import Icon from "react-mdl/lib/Icon"
+import moment from "moment"
 
 import type {
   Course,
   CourseRun,
-  ProctoredExamResult,
-} from '../../../flow/programTypes';
-import { formatGrade } from '../util';
+  ProctoredExamResult
+} from "../../../flow/programTypes"
+import { formatGrade } from "../util"
 import {
   STATUS_NOT_PASSED,
   STATUS_PASSED,
-  DASHBOARD_FORMAT,
-} from '../../../constants';
-import type { GradeType } from '../../../containers/DashboardPage';
-import { EDX_GRADE } from '../../../containers/DashboardPage';
+  DASHBOARD_FORMAT
+} from "../../../constants"
+import type { GradeType } from "../../../containers/DashboardPage"
+import { EDX_GRADE } from "../../../containers/DashboardPage"
 
-const scaleExamGrade = percentageGrade => percentageGrade * 100;
+const scaleExamGrade = percentageGrade => percentageGrade * 100
 
-const rowGrade = (grade: number, isBestGrade: boolean): string|React$Element<*> => {
+const rowGrade = (
+  grade: number,
+  isBestGrade: boolean
+): string | React$Element<*> => {
   if (!R.isNil(grade)) {
     if (isBestGrade) {
-      return <div className="best-grade">
-        { formatGrade(grade) }
-        <Icon name="check" />
-      </div>;
+      return (
+        <div className="best-grade">
+          {formatGrade(grade)}
+          <Icon name="check" />
+        </div>
+      )
     }
-    return formatGrade(grade);
+    return formatGrade(grade)
   }
-  return "";
-};
+  return ""
+}
 
-const failed = () => <div className="status failed">
-  Not passed
-</div>;
+const failed = () => <div className="status failed">Not passed</div>
 
-const passed = () => <div className="status passed">
-  Passed
-</div>;
-
+const passed = () => <div className="status passed">Passed</div>
 
 const runStatus = (courseRun: CourseRun): React$Element<*> => {
   if (courseRun.status === STATUS_NOT_PASSED) {
-    return failed();
+    return failed()
   }
   if (courseRun.status === STATUS_PASSED) {
-    return passed();
+    return passed()
   }
-  return <div className="status audited">
-    Audited
-  </div>;
-};
+  return <div className="status audited">Audited</div>
+}
 
-const examStatus = (grade: ProctoredExamResult): React$Element<*> => (
+const examStatus = (grade: ProctoredExamResult): React$Element<*> =>
   grade.passed ? passed() : failed()
-);
 
-const renderRunRow = ([courseRun: CourseRun, isBestGrade: boolean], idx: number) => (
+const renderRunRow = (
+  [courseRun: CourseRun, isBestGrade: boolean],
+  idx: number
+) => (
   <div className="course-run-row" key={idx}>
-    <div className="title">{ courseRun.title }</div>
+    <div className="title">{courseRun.title}</div>
     <div className="grade-status">
-      <div>{ runStatus(courseRun) }</div>
-      <div className="grade">{ rowGrade(courseRun.final_grade, isBestGrade) }</div>
-    </div>
-  </div>
-);
-
-const renderExamRow = ([grade: ProctoredExamResult, isBestGrade: boolean], idx: number) => (
-  <div className="course-run-row" key={idx}>
-    <div className="title">
-      { `Pearson test - ${moment(grade.exam_date).format(DASHBOARD_FORMAT)}` }
-    </div>
-    <div className="grade-status">
-      <div>{ examStatus(grade) }</div>
+      <div>{runStatus(courseRun)}</div>
       <div className="grade">
-        { rowGrade(scaleExamGrade(grade.percentage_grade), isBestGrade) }
+        {rowGrade(courseRun.final_grade, isBestGrade)}
       </div>
     </div>
   </div>
-);
+)
 
-const labelBestEdxGrade = (runs: Array<CourseRun>): Array<[CourseRun, boolean]> => {
-  let bestGrade = runs.reduce((acc, run) => (
-    run.final_grade && run.final_grade > acc ? run.final_grade : acc
-  ), 0);
+const renderExamRow = (
+  [grade: ProctoredExamResult, isBestGrade: boolean],
+  idx: number
+) => (
+  <div className="course-run-row" key={idx}>
+    <div className="title">
+      {`Pearson test - ${moment(grade.exam_date).format(DASHBOARD_FORMAT)}`}
+    </div>
+    <div className="grade-status">
+      <div>{examStatus(grade)}</div>
+      <div className="grade">
+        {rowGrade(scaleExamGrade(grade.percentage_grade), isBestGrade)}
+      </div>
+    </div>
+  </div>
+)
 
-  return runs.map(run => ([
+const labelBestEdxGrade = (
+  runs: Array<CourseRun>
+): Array<[CourseRun, boolean]> => {
+  let bestGrade = runs.reduce(
+    (acc, run) =>
+      run.final_grade && run.final_grade > acc ? run.final_grade : acc,
+    0
+  )
+
+  return runs.map(run => [
     run,
-    !R.isNil(run.final_grade) && run.final_grade !== 0 && run.final_grade === bestGrade
-  ]));
-};
+    !R.isNil(run.final_grade) &&
+      run.final_grade !== 0 &&
+      run.final_grade === bestGrade
+  ])
+}
 
-const labelBestExamGrade = (exams: Array<ProctoredExamResult>): Array<[ProctoredExamResult, boolean]> => {
-  let bestGrade = exams.reduce((acc, exam) => (
-    exam.percentage_grade > acc ? exam.percentage_grade : acc
-  ), 0);
+const labelBestExamGrade = (
+  exams: Array<ProctoredExamResult>
+): Array<[ProctoredExamResult, boolean]> => {
+  let bestGrade = exams.reduce(
+    (acc, exam) => (exam.percentage_grade > acc ? exam.percentage_grade : acc),
+    0
+  )
 
-  return exams.map(exam => ([exam, exam.passed && exam.percentage_grade === bestGrade]));
-};
+  return exams.map(exam => [
+    exam,
+    exam.passed && exam.percentage_grade === bestGrade
+  ])
+}
 
 const renderRunRows = R.compose(
   R.addIndex(R.map)(renderRunRow),
   labelBestEdxGrade
-);
+)
 
 const renderExamRows = R.compose(
   R.addIndex(R.map)(renderExamRow),
   labelBestExamGrade
-);
+)
 
-const dialogTitle = (course: Course, gradeType: GradeType): string => (
-  `${course.title} - ${gradeType === EDX_GRADE ? "Completed edX Course Runs" : "Completed Exams"}`
-);
+const dialogTitle = (course: Course, gradeType: GradeType): string =>
+  `${course.title} - ${gradeType === EDX_GRADE
+    ? "Completed edX Course Runs"
+    : "Completed Exams"}`
 
 type GradeDetailPopupProps = {
-  course:                   Course,
+  course: Course,
   setShowGradeDetailDialog: (b: boolean, type: GradeType, t: string) => void,
-  dialogVisibility:         boolean,
-  gradeType:                GradeType,
-};
+  dialogVisibility: boolean,
+  gradeType: GradeType
+}
 
 const GradeDetailPopup = (props: GradeDetailPopupProps) => {
   const {
     course,
     setShowGradeDetailDialog,
     dialogVisibility,
-    gradeType,
-  } = props;
+    gradeType
+  } = props
 
-  return <Dialog
-    className="grade-detail-popup"
-    title={dialogTitle(course, gradeType)}
-    titleClassName="grade-dialog-title"
-    open={dialogVisibility}
-    onRequestClose={() => setShowGradeDetailDialog(false, gradeType, course.title)}
-  >
-    { gradeType === EDX_GRADE ? renderRunRows(course.runs) : renderExamRows(course.proctorate_exams_grades) }
-    <div className="explanation">
-      Only your best passing grade counts toward your final grade
-    </div>
-  </Dialog>;
-};
+  return (
+    <Dialog
+      className="grade-detail-popup"
+      title={dialogTitle(course, gradeType)}
+      titleClassName="grade-dialog-title"
+      open={dialogVisibility}
+      onRequestClose={() =>
+        setShowGradeDetailDialog(false, gradeType, course.title)}
+    >
+      {gradeType === EDX_GRADE
+        ? renderRunRows(course.runs)
+        : renderExamRows(course.proctorate_exams_grades)}
+      <div className="explanation">
+        Only your best passing grade counts toward your final grade
+      </div>
+    </Dialog>
+  )
+}
 
-export default GradeDetailPopup;
+export default GradeDetailPopup

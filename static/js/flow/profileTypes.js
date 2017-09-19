@@ -1,7 +1,7 @@
 // @flow
-import type { Validator, UIValidator } from '../lib/validation/profile';
-import type { UIState } from '../reducers/ui';
-import type { APIErrorInfo } from './generalTypes';
+import type { Validator, UIValidator } from '../lib/validation/profile'
+import type { UIState } from '../reducers/ui'
+import type { APIErrorInfo } from './generalTypes'
 
 export type EducationEntry = {
   id?:                        ?number,
@@ -14,12 +14,12 @@ export type EducationEntry = {
   school_city:                ?string,
   school_state_or_territory:  ?string,
   school_country:             ?string,
-};
+}
 
 export type DateEdit = {
   month: ?string,
   year: ?string,
-};
+}
 
 export type WorkHistoryEntry = {
   id?:                  ?number,
@@ -33,12 +33,12 @@ export type WorkHistoryEntry = {
   city?:                ?string,
   country?:             ?string,
   state_or_territory?:  ?string,
-};
+}
 
 export type ValidationErrors = {
   date_of_birth?:         string,
   work_history_required?: string,
-};
+}
 
 export type Profile = {
   first_name:                  string,
@@ -66,13 +66,13 @@ export type Profile = {
   romanized_last_name:         ?string,
   student_id:                  number,
   postal_code:                 string,
-};
+}
 
 export type Profiles = {
   [username: string]: ProfileGetResult,
-};
+}
 
-type ValidationVisibility = Array<string[]>;
+type ValidationVisibility = Array<string[]>
 
 export type ProfileGetResult = {
   profile: Profile,
@@ -84,13 +84,13 @@ export type ProfileGetResult = {
     profile: Profile,
     visibility: ValidationVisibility,
   },
-};
+}
 
-export type ProfilePatchResult = ProfileGetResult;
+export type ProfilePatchResult = ProfileGetResult
 
 export type ProfileFetchResponse = {
   payload: ProfileGetResult
-};
+}
 
-export type SaveProfileFunc = (validator: Validator|UIValidator, profile: Profile, ui: UIState) => Promise<Profile>;
-export type UpdateProfileFunc = (profile: Profile, validator: Validator|UIValidator) => void;
+export type SaveProfileFunc = (validator: Validator|UIValidator, profile: Profile, ui: UIState) => Promise<Profile>
+export type UpdateProfileFunc = (profile: Profile, validator: Validator|UIValidator) => void

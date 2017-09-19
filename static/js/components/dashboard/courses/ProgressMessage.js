@@ -1,12 +1,12 @@
 // @flow
 /* global SETTINGS: false */
-import React from 'react';
-import R from 'ramda';
-import _ from 'lodash';
-import moment from 'moment';
-import urljoin from 'url-join';
+import React from "react"
+import R from "ramda"
+import _ from "lodash"
+import moment from "moment"
+import urljoin from "url-join"
 
-import type { CourseRun, Course } from '../../../flow/programTypes';
+import type { CourseRun, Course } from "../../../flow/programTypes"
 import {
   STATUS_PASSED,
   STATUS_NOT_PASSED,
@@ -15,160 +15,181 @@ import {
   STATUS_CURRENTLY_ENROLLED,
   STATUS_PAID_BUT_NOT_ENROLLED,
   EDX_LINK_BASE,
-  COURSE_CARD_FORMAT,
-} from '../../../constants';
-import { renderSeparatedComponents } from '../../../util/util';
-import { hasAnyStaffRole } from '../../../lib/roles';
-import Progress from './Progress';
+  COURSE_CARD_FORMAT
+} from "../../../constants"
+import { renderSeparatedComponents } from "../../../util/util"
+import { hasAnyStaffRole } from "../../../lib/roles"
+import Progress from "./Progress"
 import {
   courseStartDateMessage,
   courseCurrentlyInProgress,
   hasEnrolledInAnyRun,
   courseUpcomingOrCurrent,
   hasPaidForAnyCourseRun,
-  hasPassedCourseRun,
-} from './util';
-import { hasPassingExamGrade } from '../../../lib/grades';
+  hasPassedCourseRun
+} from "./util"
+import { hasPassingExamGrade } from "../../../lib/grades"
 
 // ProgressMessage is ONLY displayed for users who are already enrolled
 
-const courseHasStarted = (courseRun: CourseRun): boolean => (
+const courseHasStarted = (courseRun: CourseRun): boolean =>
   moment(courseRun.course_start_date).isBefore(moment())
-);
 
-const addKeys = R.addIndex(R.map)((el, idx) => <span key={`element${idx}`}>{ el }</span>);
+const addKeys = R.addIndex(R.map)((el, idx) => (
+  <span key={`element${idx}`}>{el}</span>
+))
 
 const courseMessage = (courseRun: CourseRun) => {
   if (courseHasStarted(courseRun) && !courseCurrentlyInProgress(courseRun)) {
-    return null;
+    return null
   }
   return courseHasStarted(courseRun)
     ? "Course in progress"
-    : courseStartDateMessage(courseRun);
-};
+    : courseStartDateMessage(courseRun)
+}
 
 export const staffCourseInfo = (courseRun: CourseRun, course: Course) => {
-  if (!hasEnrolledInAnyRun(course) && courseRun.status !== STATUS_PAID_BUT_NOT_ENROLLED) {
-    return null;
+  if (
+    !hasEnrolledInAnyRun(course) &&
+    courseRun.status !== STATUS_PAID_BUT_NOT_ENROLLED
+  ) {
+    return null
   }
   if (courseUpcomingOrCurrent(courseRun)) {
     if (hasPaidForAnyCourseRun(course)) {
-      return "Paid";
+      return "Paid"
     }
     if (courseRun.status === STATUS_CAN_UPGRADE) {
       if (courseCurrentlyInProgress(courseRun)) {
-        return `Auditing (Upgrade deadline ${moment(courseRun.course_upgrade_deadline).format(COURSE_CARD_FORMAT)})`;
+        return `Auditing (Upgrade deadline ${moment(
+          courseRun.course_upgrade_deadline
+        ).format(COURSE_CARD_FORMAT)})`
       }
-      return "Auditing";
+      return "Auditing"
     }
     if (courseRun.status === STATUS_MISSED_DEADLINE) {
-      return "Missed payment deadline";
+      return "Missed payment deadline"
     }
     if (courseRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
-      return "Paid but not enrolled";
+      return "Paid but not enrolled"
     }
   } else {
     if (hasPassedCourseRun(course)) {
       if (course.has_exam && !hasPassingExamGrade(course)) {
-        return "Passed edX course, did not pass exam";
+        return "Passed edX course, did not pass exam"
       }
-      return "Passed";
+      return "Passed"
     }
     if (courseRun.status === STATUS_NOT_PASSED) {
       if (hasPaidForAnyCourseRun(course)) {
-        return "Paid, did not pass";
+        return "Paid, did not pass"
       } else {
-        return "Audited, did not pass";
+        return "Audited, did not pass"
       }
     }
   }
-};
+}
 
 export default class ProgressMessage extends React.Component {
   props: {
-    course:                  Course,
-    courseRun:               CourseRun,
+    course: Course,
+    courseRun: CourseRun,
     openCourseContactDialog: () => void,
-    showStaffView:           boolean,
-  };
+    showStaffView: boolean
+  }
 
   isCurrentOrPastEnrolled = (courseRun: CourseRun): boolean => {
-    if([STATUS_CURRENTLY_ENROLLED, STATUS_PASSED, STATUS_NOT_PASSED].includes(courseRun.status)) {
-      return true;
+    if (
+      [STATUS_CURRENTLY_ENROLLED, STATUS_PASSED, STATUS_NOT_PASSED].includes(
+        courseRun.status
+      )
+    ) {
+      return true
     } else {
-      if ([STATUS_CAN_UPGRADE, STATUS_MISSED_DEADLINE].includes(courseRun.status)) {
-        let now = moment();
-        return !_.isNil(courseRun.course_start_date) && moment(courseRun.course_start_date).isBefore(now);
+      if (
+        [STATUS_CAN_UPGRADE, STATUS_MISSED_DEADLINE].includes(courseRun.status)
+      ) {
+        let now = moment()
+        return (
+          !_.isNil(courseRun.course_start_date) &&
+          moment(courseRun.course_start_date).isBefore(now)
+        )
       } else {
-        return false;
+        return false
       }
     }
-  };
+  }
 
-  renderViewCourseEdxLink = (): React$Element<*>|null => {
-    const { courseRun } = this.props;
+  renderViewCourseEdxLink = (): React$Element<*> | null => {
+    const { courseRun } = this.props
     if (!courseRun.course_id) {
-      return null;
+      return null
     }
 
     let url = this.isCurrentOrPastEnrolled(courseRun)
       ? urljoin(EDX_LINK_BASE, courseRun.course_id)
-      : courseRun.enrollment_url;
+      : courseRun.enrollment_url
 
-    return url && !hasAnyStaffRole(SETTINGS.roles) 
-      ? <a
-        key={'view-edx-link'}
-        className={'view-edx-link'}
+    return url && !hasAnyStaffRole(SETTINGS.roles) ? (
+      <a
+        key={"view-edx-link"}
+        className={"view-edx-link"}
         href={url}
         target="_blank"
         rel="noopener noreferrer"
       >
         View on edX
       </a>
-      : null;
-  };
+    ) : null
+  }
 
-  renderCourseContactLink = (): React$Element<*>|null => {
-    const { course, openCourseContactDialog } = this.props;
-    return course.has_contact_email && !hasAnyStaffRole(SETTINGS.roles)
-      ? <a key={'contact-link'} className={'contact-link'} onClick={openCourseContactDialog}>
-          Contact Course Team
-        </a>
-      : null;
-  };
+  renderCourseContactLink = (): React$Element<*> | null => {
+    const { course, openCourseContactDialog } = this.props
+    return course.has_contact_email && !hasAnyStaffRole(SETTINGS.roles) ? (
+      <a
+        key={"contact-link"}
+        className={"contact-link"}
+        onClick={openCourseContactDialog}
+      >
+        Contact Course Team
+      </a>
+    ) : null
+  }
 
-  renderCourseLinks = (): React$Element<*>|null => {
-    const { courseRun } = this.props;
+  renderCourseLinks = (): React$Element<*> | null => {
+    const { courseRun } = this.props
 
     let courseLinks = R.reject(R.isNil, [
       this.renderViewCourseEdxLink(courseRun),
       this.renderCourseContactLink()
-    ]);
+    ])
 
-    return courseLinks.length > 0 
-      ? <div className="course-links">
-          { renderSeparatedComponents(courseLinks, ' | ') }
-        </div>
-      : null;
-  };
+    return courseLinks.length > 0 ? (
+      <div className="course-links">
+        {renderSeparatedComponents(courseLinks, " | ")}
+      </div>
+    ) : null
+  }
 
   render() {
-    const { showStaffView, courseRun, course } = this.props;
+    const { showStaffView, courseRun, course } = this.props
 
     return (
       <div className="course-progress-message cols">
         <div className="details first-col">
-          { renderSeparatedComponents(
+          {renderSeparatedComponents(
             addKeys(
               R.reject(R.isNil, [
                 courseMessage(courseRun),
                 this.renderCourseLinks(),
                 showStaffView ? staffCourseInfo(courseRun, course) : null
               ])
-            ), ' - ') }
+            ),
+            " - "
+          )}
         </div>
         <Progress courseRun={courseRun} className="second-col" />
       </div>
-    );
+    )
   }
 }

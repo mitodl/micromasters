@@ -1,37 +1,40 @@
 // @flow
 /* global SETTINGS: false */
-import React from 'react';
-import { connect } from 'react-redux';
-import Loader from '../components/Loader';
-import R from 'ramda';
+import React from "react"
+import { connect } from "react-redux"
+import Loader from "../components/Loader"
+import R from "ramda"
 
-import { startProfileEdit } from '../actions/profile';
-import { FETCH_PROCESSING } from '../actions/index';
-import { profileFormContainer, mapStateToProfileProps } from './ProfileFormContainer';
-import PrivacyForm from '../components/PrivacyForm';
-import ProfileProgressControls from '../components/ProfileProgressControls';
-import { privacyValidation } from '../lib/validation/profile';
-import type { ProfileContainerProps } from './ProfileFormContainer';
+import { startProfileEdit } from "../actions/profile"
+import { FETCH_PROCESSING } from "../actions/index"
+import {
+  profileFormContainer,
+  mapStateToProfileProps
+} from "./ProfileFormContainer"
+import PrivacyForm from "../components/PrivacyForm"
+import ProfileProgressControls from "../components/ProfileProgressControls"
+import { privacyValidation } from "../lib/validation/profile"
+import type { ProfileContainerProps } from "./ProfileFormContainer"
 
 class SettingsPage extends React.Component<*, ProfileContainerProps, *> {
   componentWillMount() {
-    this.startSettingsEdit();
+    this.startSettingsEdit()
   }
 
   startSettingsEdit() {
-    const { dispatch } = this.props;
-    dispatch(startProfileEdit(SETTINGS.user.username));
+    const { dispatch } = this.props
+    dispatch(startProfileEdit(SETTINGS.user.username))
   }
 
   render() {
-    const { profiles, profileProps } = this.props;
-    let props = profileProps(profiles[SETTINGS.user.username]);
-    let loaded = false;
-    const username = SETTINGS.user.username;
+    const { profiles, profileProps } = this.props
+    let props = profileProps(profiles[SETTINGS.user.username])
+    let loaded = false
+    const username = SETTINGS.user.username
 
     if (profiles[username] !== undefined) {
-      let profileFromStore = profiles[username];
-      loaded = profileFromStore.getStatus !== FETCH_PROCESSING;
+      let profileFromStore = profiles[username]
+      loaded = profileFromStore.getStatus !== FETCH_PROCESSING
     }
 
     return (
@@ -48,10 +51,9 @@ class SettingsPage extends React.Component<*, ProfileContainerProps, *> {
           />
         </div>
       </Loader>
-    );
+    )
   }
 }
-export default R.compose(
-  connect(mapStateToProfileProps),
-  profileFormContainer
-)(SettingsPage);
+export default R.compose(connect(mapStateToProfileProps), profileFormContainer)(
+  SettingsPage
+)

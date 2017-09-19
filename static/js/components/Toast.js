@@ -1,31 +1,33 @@
-import React from 'react';
+import React from "react"
 
-import { wait } from '../util/util';
+import { wait } from "../util/util"
 
 export default class Toast extends React.Component {
   props: {
     children: any,
     timeout: number,
-    onTimeout: () => void,
-  };
+    onTimeout: () => void
+  }
 
   static defaultProps = {
     timeout: 5000
-  };
+  }
 
   componentDidMount() {
-    const { onTimeout, timeout } = this.props;
+    const { onTimeout, timeout } = this.props
 
     if (onTimeout) {
-      wait(timeout).then(onTimeout);
+      wait(timeout).then(onTimeout)
     }
   }
 
   render() {
-    const { children } = this.props;
+    const { children } = this.props
 
-    return <div role="alert" className="toast">
-      {children}
-    </div>;
+    return (
+      <div role="alert" className="toast">
+        {children}
+      </div>
+    )
   }
 }

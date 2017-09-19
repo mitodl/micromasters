@@ -148,4 +148,4 @@ export default [
   "Wine and Spirits",
   "Wireless",
   "Writing and Editing"
-];
+]

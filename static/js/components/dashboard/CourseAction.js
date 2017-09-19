@@ -1,12 +1,12 @@
 /* global SETTINGS: false */
 // @flow
-import React from 'react';
-import PropTypes from 'prop-types';
-import Button from 'react-mdl/lib/Button';
+import React from "react"
+import PropTypes from "prop-types"
+import Button from "react-mdl/lib/Button"
 
-import SpinnerButton from '../SpinnerButton';
-import type { Coupon } from '../../flow/couponTypes';
-import type { CourseRun, FinancialAidUserInfo } from '../../flow/programTypes';
+import SpinnerButton from "../SpinnerButton"
+import type { Coupon } from "../../flow/couponTypes"
+import type { CourseRun, FinancialAidUserInfo } from "../../flow/programTypes"
 import {
   STATUS_NOT_PASSED,
   STATUS_PASSED,
@@ -15,51 +15,59 @@ import {
   FA_TERMINAL_STATUSES,
   COURSE_ACTION_PAY,
   COURSE_ACTION_ENROLL,
-  COURSE_ACTION_REENROLL,
-} from '../../constants';
-import { isFreeCoupon } from '../../lib/coupon';
+  COURSE_ACTION_REENROLL
+} from "../../constants"
+import { isFreeCoupon } from "../../lib/coupon"
 
 export default class CourseAction extends React.Component {
   static contextTypes = {
-    router:   PropTypes.object.isRequired
-  };
+    router: PropTypes.object.isRequired
+  }
 
   props: {
-    courseRun:                       CourseRun,
-    now:                             moment$Moment,
-    financialAid:                    FinancialAidUserInfo,
-    hasFinancialAid:                 boolean,
-    openFinancialAidCalculator:      () => void,
-    addCourseEnrollment:             (courseId: string) => Promise<*>,
-    setEnrollSelectedCourseRun:      (r:        CourseRun) => void,
-    setEnrollCourseDialogVisibility: (b:        boolean) => void,
-    coupon:                          ?Coupon,
-    actionType:                      string,
-    checkout:                        (s: string) => void,
-  };
+    courseRun: CourseRun,
+    now: moment$Moment,
+    financialAid: FinancialAidUserInfo,
+    hasFinancialAid: boolean,
+    openFinancialAidCalculator: () => void,
+    addCourseEnrollment: (courseId: string) => Promise<*>,
+    setEnrollSelectedCourseRun: (r: CourseRun) => void,
+    setEnrollCourseDialogVisibility: (b: boolean) => void,
+    coupon: ?Coupon,
+    actionType: string,
+    checkout: (s: string) => void
+  }
 
   statusDescriptionClasses = {
-    [STATUS_PASSED]: 'passed',
-    [STATUS_NOT_PASSED]: 'not-passed'
-  };
+    [STATUS_PASSED]:     "passed",
+    [STATUS_NOT_PASSED]: "not-passed"
+  }
 
   needsPriceCalculation(): boolean {
-    const { financialAid, hasFinancialAid } = this.props;
-    return hasFinancialAid && !FA_TERMINAL_STATUSES.includes(financialAid.application_status);
+    const { financialAid, hasFinancialAid } = this.props
+    return (
+      hasFinancialAid &&
+      !FA_TERMINAL_STATUSES.includes(financialAid.application_status)
+    )
   }
 
   hasPendingFinancialAid(): boolean {
-    const { financialAid, hasFinancialAid } = this.props;
-    return hasFinancialAid && FA_PENDING_STATUSES.includes(financialAid.application_status);
+    const { financialAid, hasFinancialAid } = this.props
+    return (
+      hasFinancialAid &&
+      FA_PENDING_STATUSES.includes(financialAid.application_status)
+    )
   }
 
   redirectToOrderSummary(run: CourseRun): void {
-    let { hasFinancialAid, checkout } = this.props;
+    let { hasFinancialAid, checkout } = this.props
     if (hasFinancialAid) {
-      const url = `/order_summary/?course_key=${encodeURIComponent(run.course_id)}`;
-      this.context.router.push(url);
+      const url = `/order_summary/?course_key=${encodeURIComponent(
+        run.course_id
+      )}`
+      this.context.router.push(url)
     } else {
-      return checkout(run.course_id);
+      return checkout(run.course_id)
     }
   }
 
@@ -67,21 +75,19 @@ export default class CourseAction extends React.Component {
     const {
       coupon,
       setEnrollSelectedCourseRun,
-      setEnrollCourseDialogVisibility,
-    } = this.props;
+      setEnrollCourseDialogVisibility
+    } = this.props
 
-    setEnrollSelectedCourseRun(run);
+    setEnrollSelectedCourseRun(run)
 
     if (coupon && isFreeCoupon(coupon)) {
-      this.redirectToOrderSummary(run);
+      this.redirectToOrderSummary(run)
     } else {
-      setEnrollCourseDialogVisibility(true);
+      setEnrollCourseDialogVisibility(true)
     }
   }
 
   renderEnrollButton(run: CourseRun, actionType: string): React$Element<*> {
-
-
     return (
       <div className="course-action">
         <SpinnerButton
@@ -90,40 +96,39 @@ export default class CourseAction extends React.Component {
           spinning={run.status === STATUS_PENDING_ENROLLMENT}
           onClick={() => this.handleEnrollButtonClick(run)}
         >
-          { actionType === COURSE_ACTION_REENROLL ? 'Re-Enroll' : 'Enroll' }
+          {actionType === COURSE_ACTION_REENROLL ? "Re-Enroll" : "Enroll"}
         </SpinnerButton>
       </div>
-    );
+    )
   }
 
   renderPayButton(run: CourseRun): React$Element<*> {
-    let props;
+    let props
     if (this.needsPriceCalculation()) {
-      props = {disabled: true};
+      props = { disabled: true }
     } else {
-      props = {onClick: () => this.redirectToOrderSummary(run)};
+      props = { onClick: () => this.redirectToOrderSummary(run) }
     }
     return (
       <div className="course-action">
-        <Button
-          className="dashboard-button pay-button"
-          key="1"
-          {...props}
-        >
+        <Button className="dashboard-button pay-button" key="1" {...props}>
           Pay Now
         </Button>
       </div>
-    );
+    )
   }
 
-  render () {
-    const { courseRun, actionType } = this.props;
+  render() {
+    const { courseRun, actionType } = this.props
 
-    if (actionType === COURSE_ACTION_ENROLL || actionType === COURSE_ACTION_REENROLL) {
-      return this.renderEnrollButton(courseRun, actionType);
+    if (
+      actionType === COURSE_ACTION_ENROLL ||
+      actionType === COURSE_ACTION_REENROLL
+    ) {
+      return this.renderEnrollButton(courseRun, actionType)
     } else if (actionType === COURSE_ACTION_PAY) {
-      return this.renderPayButton(courseRun);
+      return this.renderPayButton(courseRun)
     }
-    return null;
+    return null
   }
 }

@@ -1,14 +1,19 @@
 // @flow
 /* global SETTINGS:false */
-import R from 'ramda';
+import R from "ramda"
 
-export const staticFormEntries: Array<[string, string]> = [
-];
+export const staticFormEntries: Array<[string, string]> = []
 
-const ssoFormEntries = (studentId, timestamp, timeout, ssoDigest, ssoRedirectURL) => {
-  let baseURL = ssoRedirectURL.replace(/\/$/, '');
+const ssoFormEntries = (
+  studentId,
+  timestamp,
+  timeout,
+  ssoDigest,
+  ssoRedirectURL
+) => {
+  let baseURL = ssoRedirectURL.replace(/\/$/, "")
   if (R.isNil(SETTINGS.EXAMS_SSO_CLIENT_CODE)) {
-    throw "EXAMS_SSO_CLIENT_CODE not configured";
+    throw "EXAMS_SSO_CLIENT_CODE not configured"
   }
   return [
     ["ACTION", "scheduleExam"],
@@ -20,43 +25,40 @@ const ssoFormEntries = (studentId, timestamp, timeout, ssoDigest, ssoRedirectURL
     ["CLIENT_CANDIDATE_ID", String(studentId)],
     ["EXTERNAL_PAGE_TIMESTAMP", String(timestamp)],
     ["EXTERNAL_SESSION_TIMEOUT", String(timeout)],
-    ["EXTERNAL_AUTH_HASH", ssoDigest],
-  ];
-};
+    ["EXTERNAL_AUTH_HASH", ssoDigest]
+  ]
+}
 
 export const createFormInput = R.curry((form, [name, value]) => {
-  let node = document.createElement("input");
-  node.type = "hidden";
-  node.name = name;
-  node.value = value;
-  form.appendChild(node);
-});
+  let node = document.createElement("input")
+  node.type = "hidden"
+  node.name = name
+  node.value = value
+  form.appendChild(node)
+})
 
 const createForm = () => {
-  let form = document.createElement('form');
+  let form = document.createElement("form")
   // $FlowFixMe: flow disagrees
-  document.body.appendChild(form);
+  document.body.appendChild(form)
   if (R.isNil(SETTINGS.EXAMS_SSO_URL)) {
-    throw "EXAMS_SSO_URL not configured";
+    throw "EXAMS_SSO_URL not configured"
   }
-  form.action = SETTINGS.EXAMS_SSO_URL;
-  return form;
-};
+  form.action = SETTINGS.EXAMS_SSO_URL
+  return form
+}
 
 export const generateSSOForm = (
   studentId: number,
   timestamp: number,
   timeout: number,
   ssoDigest: string,
-  ssoRedirectURL: string,
+  ssoRedirectURL: string
 ) => {
-  let form = createForm();
-  R.map(createFormInput(form), ssoFormEntries(
-    studentId,
-    timestamp,
-    timeout,
-    ssoDigest,
-    ssoRedirectURL,
-  ));
-  return form;
-};
+  let form = createForm()
+  R.map(
+    createFormInput(form),
+    ssoFormEntries(studentId, timestamp, timeout, ssoDigest, ssoRedirectURL)
+  )
+  return form
+}

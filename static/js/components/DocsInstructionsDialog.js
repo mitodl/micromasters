@@ -1,25 +1,31 @@
 // @flow
-import React from 'react';
-import Dialog from 'material-ui/Dialog';
-import IconButton from 'react-mdl/lib/IconButton';
+import React from "react"
+import Dialog from "material-ui/Dialog"
+import IconButton from "react-mdl/lib/IconButton"
 
 const dialogTitle = setDialogVisibility => (
   <div className="title">
     <div className="text" key={1}>
       Income Verification Instructions
     </div>
-    <IconButton name="close" className="close"
-      onClick={() => setDialogVisibility(false)} key={2}
+    <IconButton
+      name="close"
+      className="close"
+      onClick={() => setDialogVisibility(false)}
+      key={2}
     />
   </div>
-);
+)
 
 type DocsInstructions = {
-  open:                 boolean,
-  setDialogVisibility:  (v: boolean) => void,
-};
+  open: boolean,
+  setDialogVisibility: (v: boolean) => void
+}
 
-const DocsInstructionsDialog = ({ open, setDialogVisibility }: DocsInstructions) => (
+const DocsInstructionsDialog = ({
+  open,
+  setDialogVisibility
+  }: DocsInstructions) => (
   <Dialog
     title={dialogTitle(setDialogVisibility)}
     titleClassName="dialog-title"
@@ -29,9 +35,7 @@ const DocsInstructionsDialog = ({ open, setDialogVisibility }: DocsInstructions)
     onRequestClose={() => setDialogVisibility(false)}
     autoScrollBodyContent={true}
   >
-    <div className="heading">
-      Whose income should I report?
-    </div>
+    <div className="heading">Whose income should I report?</div>
     <p>
       Report your taxable household income (the combined income of all people
       that are part of your household or place of residence). If you live with,
@@ -57,9 +61,7 @@ const DocsInstructionsDialog = ({ open, setDialogVisibility }: DocsInstructions)
       information. If your household income is based on more than one earner,
       you must submit notarized income statements for each earner.
     </p>
-    <div className="heading">
-      What if no one in my household is employed?
-    </div>
+    <div className="heading">What if no one in my household is employed?</div>
     <p>
       Please submit either one of the following: a signed federal tax return
       (where you filed for zero income), a photocopy of an official receipt or
@@ -81,6 +83,6 @@ const DocsInstructionsDialog = ({ open, setDialogVisibility }: DocsInstructions)
       translation to be certified – you can translate the document yourself.
     </p>
   </Dialog>
-);
+)
 
-export default DocsInstructionsDialog;
+export default DocsInstructionsDialog

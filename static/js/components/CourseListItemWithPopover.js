@@ -1,56 +1,51 @@
 // @flow
-import React from 'react';
-import Popover from 'material-ui/Popover';
+import React from "react"
+import Popover from "material-ui/Popover"
 
-import PopoverNullAnimation from '../util/popover_animation';
-import type { ProgramPageCourse } from '../flow/programTypes';
+import PopoverNullAnimation from "../util/popover_animation"
+import type { ProgramPageCourse } from "../flow/programTypes"
 
-const popoverLink = (url) => (
-  url ? <a className="edx-link" href={url}>View on edX</a> : null
-);
+const popoverLink = url =>
+  url ? (
+    <a className="edx-link" href={url}>
+      View on edX
+    </a>
+  ) : null
 
 export default class CourseListItemWithPopover extends React.Component {
   props: {
-    course: ProgramPageCourse,
-  };
+    course: ProgramPageCourse
+  }
 
   state = {
-    isOpen: false,
-    anchorEl: undefined,
+    isOpen:   false,
+    anchorEl: undefined
   }
 
   handleClick = (event: Event) => {
     // This prevents ghost click.
-    event.preventDefault();
+    event.preventDefault()
 
     this.setState({
-      isOpen: true,
-      anchorEl: event.currentTarget,
-    });
+      isOpen:   true,
+      anchorEl: event.currentTarget
+    })
   }
 
   handleRequestClose = () => {
     this.setState({
-      isOpen: false,
-    });
+      isOpen: false
+    })
   }
 
   render() {
     const {
-      course: {
-        title,
-        description,
-        url,
-        enrollment_text: enrollmentText
-      }
-    } = this.props;
-    const {
-      isOpen,
-      anchorEl
-    } = this.state;
+      course: { title, description, url, enrollment_text: enrollmentText }
+    } = this.props
+    const { isOpen, anchorEl } = this.state
 
     // if there is no description, set a default
-    const descriptionText = description || "No description available.";
+    const descriptionText = description || "No description available."
 
     // We want to disable animations for the Popover component, and the
     // documentation *says* that you can pass `animated={false}` to do so.
@@ -77,21 +72,19 @@ export default class CourseListItemWithPopover extends React.Component {
           anchorEl={anchorEl}
           animated={false}
           animation={PopoverNullAnimation}
-          anchorOrigin={{horizontal: 'left', vertical: 'top'}}
-          targetOrigin={{horizontal: 'middle', vertical: 'bottom'}}
+          anchorOrigin={{ horizontal: "left", vertical: "top" }}
+          targetOrigin={{ horizontal: "middle", vertical: "bottom" }}
           onRequestClose={this.handleRequestClose}
         >
           <h4 className="title">{title}</h4>
           <div
             className="description course-description"
-            dangerouslySetInnerHTML={{__html: descriptionText}}
+            dangerouslySetInnerHTML={{ __html: descriptionText }}
           />
           {popoverLink(url)}
         </Popover>
-        <div className="description enrollment-dates">
-          {enrollmentText}
-        </div>
+        <div className="description enrollment-dates">{enrollmentText}</div>
       </li>
-    );
+    )
   }
 }
