@@ -28,15 +28,13 @@
           </p>
         {% else %}
           <p>
-            has successfully completed all the courses and received passing grades for a MicroMasters credential
-            inpassed all the requirements of the
+            has successfully completed all the courses and received passing grades for a MicroMasters credential in
           </p>
           <p class="course-name">{{ program_title }}</p>
           <p>
             a program offered by MITx, in collaboration with edX.
           </p>
         {% endif %}
-
       </div>
 
       <div class="certificate-stamps row">
@@ -52,9 +50,15 @@
         <div class="col-md-5 certificate-id">
           <label>Valid Certificate ID</label>
           <span>
-            <a href="{% url 'certificate' certificate.hash %}">
-              {{ certificate.hash }}
-            </a>
+            {% if course_title %}
+              <a href="{% url 'certificate' certificate.hash %}">
+                {{ certificate.hash }}
+              </a>
+            {% else %}
+              <a href="{% url 'program-certificate' certificate.hash %}">
+                {{ certificate.hash }}
+              </a>
+            {% endif %}
           </span>
         </div>
       </div>
