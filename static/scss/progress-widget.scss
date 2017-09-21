@@ -40,6 +40,11 @@
       font-weight: 400;
     }
   }
+  .certificate-thumbnail {
+    max-width: 160px;
+    width: 70%;
+    margin: 6px auto 20px;
+  }
 
   p {
     padding: 0;
@@ -56,6 +61,11 @@
   .text-course-complete {
     font-size: 14pt;
     font-weight: 400;
+  }
+  .certificate-text {
+    padding-top: 10px;
+    text-align: center;
+    color: $font-gray;
   }
 
 }

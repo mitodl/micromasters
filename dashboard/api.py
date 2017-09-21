@@ -182,6 +182,7 @@ def get_info_for_program(mmtrack):
         "courses": [],
         "pearson_exam_status": mmtrack.get_pearson_exam_status(),
         "grade_average": mmtrack.calculate_final_grade_average(),
+        "certificate": mmtrack.get_program_certificate_url(),
     }
     if mmtrack.financial_aid_available:
         data["financial_aid_user_info"] = FinancialAidDashboardSerializer.serialize(mmtrack.user, mmtrack.program)

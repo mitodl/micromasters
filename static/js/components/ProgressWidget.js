@@ -1,6 +1,7 @@
 // @flow
 import React from "react"
 import { Card, CardTitle } from "react-mdl/lib/Card"
+import Button from "react-mdl/lib/Button"
 
 import type { Program } from "../flow/programTypes"
 import { programCourseInfo } from "../util/util"
@@ -67,6 +68,22 @@ export default class ProgressWidget extends React.Component {
 
   render() {
     const { program } = this.props
+    if (program.certificate) {
+      return (
+        <Card className="progress-widget" shadow={0}>
+          <img
+            className="certificate-thumbnail"
+            src="/static/images/diploma_sm.png"
+            alt="Certificate"
+          />
+          <div className="text-course-complete">Congatulations!</div>
+          <p className="certificate-text">You completed the MicroMasters Certificate in { program.title }</p>
+          <Button className="dashboard-button" onClick={() => this.context.router.push(program.certificate)}>
+            View Certificate
+          </Button>
+        </Card>
+      )
+    }
     const { totalPassedCourses, totalCourses } = programCourseInfo(program)
 
     return (

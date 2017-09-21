@@ -1537,6 +1537,7 @@ class InfoProgramTest(MockedESTestCase):
             'financial_aid_available': False,
             'get_pearson_exam_status.return_value': ExamProfile.PROFILE_SUCCESS,
             'calculate_final_grade_average.return_value': 91,
+            'get_program_certificate_url.return_value': "",
         })
         mock_info_course.return_value = {'position_in_program': 1}
         res = api.get_info_for_program(self.mmtrack)
@@ -1550,6 +1551,7 @@ class InfoProgramTest(MockedESTestCase):
             "financial_aid_availability": False,
             "pearson_exam_status": ExamProfile.PROFILE_SUCCESS,
             "grade_average": 91,
+            "certificate": "",
         }
         self.assertEqual(res, expected_data)
 
@@ -1561,6 +1563,7 @@ class InfoProgramTest(MockedESTestCase):
             'financial_aid_available': False,
             'get_pearson_exam_status.return_value': ExamProfile.PROFILE_INVALID,
             'calculate_final_grade_average.return_value': 91,
+            'get_program_certificate_url.return_value': "",
         })
         res = api.get_info_for_program(self.mmtrack)
         assert mock_info_course.called is False
@@ -1572,6 +1575,7 @@ class InfoProgramTest(MockedESTestCase):
             "financial_aid_availability": False,
             "pearson_exam_status": ExamProfile.PROFILE_INVALID,
             "grade_average": 91,
+            "certificate": "",
         }
         self.assertEqual(res, expected_data)
 
@@ -1584,6 +1588,7 @@ class InfoProgramTest(MockedESTestCase):
             'get_pearson_exam_status.return_value': ExamProfile.PROFILE_IN_PROGRESS,
             'calculate_final_grade_average.return_value': 91,
             'financial_aid_available': True,
+            'get_program_certificate_url.return_value': "",
         })
         serialized_fin_aid = {
             "id": 123,
@@ -1608,6 +1613,7 @@ class InfoProgramTest(MockedESTestCase):
             "financial_aid_user_info": serialized_fin_aid,
             "pearson_exam_status": ExamProfile.PROFILE_IN_PROGRESS,
             "grade_average": 91,
+            "certificate": "",
         }
         self.assertEqual(res, expected_data)
 
