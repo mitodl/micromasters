@@ -9,7 +9,7 @@ from django.db import transaction
 from django.db.models import Q, Count
 from django.urls import reverse
 
-from courses.models import CourseRun
+from courses.models import CourseRun, Course
 from dashboard.api_edx_cache import CachedEdxUserData
 from ecommerce.models import Order, Line
 from grades.constants import FinalGradeStatus
@@ -47,7 +47,6 @@ class MMTrack:
     certificates = None
     edx_course_keys = set()
     edx_course_keys_no_exam = set()  # Course keys for courses that don't have exams
-    paid_course_keys = set()  # Course keys for course runs that were paid for via financial aid
     pearson_exam_status = None
 
     def __init__(self, user, program, edx_user_data):
@@ -64,6 +63,7 @@ class MMTrack:
         self.current_grades = edx_user_data.current_grades
         self.certificates = edx_user_data.certificates
         self.financial_aid_available = program.financial_aid_availability
+        self.paid_course_fa = {}  # courses_id -> payment number association for financial aid courses
 
         with transaction.atomic():
             # Maps a CourseRun's edx_course_key to its parent Course id
@@ -75,13 +75,13 @@ class MMTrack:
             self.edx_course_keys = set(self.edx_key_course_map.keys())
 
             if self.financial_aid_available:
-                self.paid_course_keys = set(Line.objects.filter(
-                    order__status=Order.FULFILLED, course_key__in=self.edx_course_keys, order__user=user
-                ).values_list("course_key", flat=True))
                 # edx course keys for courses with no exam
                 self.edx_course_keys_no_exam = set(CourseRun.objects.filter(
                     course__program=program, course__exam_runs__isnull=True
                 ).values_list("edx_course_key", flat=True))
+
+                for course in self.program.course_set.all():
+                    self.paid_course_fa[course.id] = self.get_payments_count_for_course(course) > 0
 
     def __str__(self):
         return 'MMTrack for user {0} on program "{1}"'.format(
@@ -210,7 +210,9 @@ class MMTrack:
         """
         # financial aid programs need to have a paid entry for the course
         if self.financial_aid_available:
-            return edx_course_key in self.paid_course_keys
+            # get the course associated with the course key
+            course = Course.objects.get(courserun__edx_course_key=edx_course_key)
+            return self.paid_course_fa.get(course.id, False)
 
         # normal programs need to have paid_on_edx in the final grades or a verified enrollment
         if self.has_final_grade(edx_course_key):
