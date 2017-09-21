@@ -61,6 +61,7 @@ def test_valid_certificate_200(client):
         },
         resp.context_data
     )
+    assert reverse('certificate', args=[certificate.hash]) in resp.content.decode('utf-8')
 
 
 def test_valid_program_certificate_200(client):
@@ -79,3 +80,4 @@ def test_valid_program_certificate_200(client):
         },
         resp.context_data
     )
+    assert reverse('program-certificate', args=[certificate.hash]) in resp.content.decode('utf-8')
