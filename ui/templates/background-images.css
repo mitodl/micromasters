@@ -22,5 +22,5 @@
 }
 
 .certificate .certificate-body.verified {
-  background-image: url({% static "images/verified-seal-grayscale.png" %});
+  background-image: url({% static "images/mm_watermark2.png" %});
 }
