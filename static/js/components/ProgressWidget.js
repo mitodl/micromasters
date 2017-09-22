@@ -77,8 +77,13 @@ export default class ProgressWidget extends React.Component {
             alt="Certificate"
           />
           <div className="text-course-complete">Congatulations!</div>
-          <p className="certificate-text">You completed the MicroMasters Certificate in { program.title }</p>
-          <Button className="dashboard-button" onClick={() => this.context.router.push(program.certificate)}>
+          <p className="certificate-text">
+            You completed the MicroMasters Certificate in {program.title}
+          </p>
+          <Button
+            className="dashboard-button"
+            onClick={() => {window.open(program.certificate)}}
+          >
             View Certificate
           </Button>
         </Card>
