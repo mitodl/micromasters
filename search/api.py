@@ -277,6 +277,6 @@ def adjust_search_for_percolator(search):
     search_dict = search.to_dict()
     if 'query' in search_dict:
         updated_search_dict['query'] = search_dict['query']
-    updated_search = Search(index=search._index, doc_type=search._doc_type)
+    updated_search = Search(index=search._index, doc_type=search._doc_type)  # pylint: disable=protected-access
     updated_search.update_from_dict(updated_search_dict)
     return updated_search
