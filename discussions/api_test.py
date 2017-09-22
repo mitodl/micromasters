@@ -27,6 +27,7 @@ from profiles.factories import (
     ProfileFactory,
     UserFactory,
 )
+from search.api import create_search_obj
 from search.models import PercolateQuery
 
 pytestmark = pytest.mark.django_db
