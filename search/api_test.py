@@ -38,29 +38,6 @@ from search.exceptions import (
 from search.models import PercolateQuery
 
 
-class FakeEmailSearchHits:
-    """
-    Mocks an elasticsearch_dsl.result.Response object
-    """
-    total = 5
-    results = [
-        Mock(id=2, email=['a@example.com']),
-        Mock(id=3, email=['b@example.com']),
-        Mock(id=4, email=['c@example.com']),
-        Mock(id=5, email=['b@example.com'])
-    ]
-
-    def __iter__(self):
-        return iter(self.results)
-
-
-def create_fake_search_result(hits_cls):
-    """
-    Creates a fake elasticsearch_dsl.result.Response object
-    """
-    return Mock(hits=hits_cls())
-
-
 @ddt.ddt  # pylint: disable=missing-docstring
 class SearchAPITests(ESTestCase):
     @classmethod
@@ -93,7 +70,7 @@ class SearchAPITests(ESTestCase):
         """
         Test that the execute_search method invokes the right method on the Search object
         """
-        search_obj = Search()
+        search_obj = Search(index="index")
         search_obj.execute = Mock(name='execute')
         with patch('search.api.get_conn', autospec=True) as mock_get_conn:
             execute_search(search_obj)
@@ -230,19 +207,21 @@ class SearchAPITests(ESTestCase):
         """
         Test that a set of search results will yield an expected set of values
         """
-        fake_search_result = create_fake_search_result(FakeEmailSearchHits)
         test_es_page_size = 2
-        results = search_for_field(Search(), 'id', page_size=test_es_page_size)
-        assert results == set([result.id for result in fake_search_result.hits.results])
+        search = create_search_obj(self.user)
+        user_ids = self.program.programenrollment_set.values_list("user__id", flat=True).order_by("-user__id")
+        results = search_for_field(search, 'user_id', page_size=test_es_page_size)
+        assert results == set(user_ids[:test_es_page_size])
 
     def test_all_query_matching_emails(self):
         """
         Test that a set of search results will yield an expected set of emails
         """
-        fake_search_result = create_fake_search_result(FakeEmailSearchHits)
         test_es_page_size = 2
-        results = get_all_query_matching_emails(Search(), page_size=test_es_page_size)
-        assert results == set([result.email[0] for result in fake_search_result.hits.results])
+        search = create_search_obj(self.user)
+        user_ids = self.program.programenrollment_set.values_list("user__email", flat=True).order_by("-user__id")
+        results = search_for_field(search, 'email', page_size=test_es_page_size)
+        assert results == set(user_ids[:test_es_page_size])
 
 
 # pylint: disable=unused-argument

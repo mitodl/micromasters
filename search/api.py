@@ -2,6 +2,7 @@
 Functions for executing ES searches
 """
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q as Query
 from elasticsearch_dsl import Search, Q
 
@@ -36,6 +37,11 @@ def execute_search(search_obj):
         elasticsearch_dsl.result.Response: ES response
     """
     # make sure there is a live connection
+    if search_obj._index is None:  # pylint: disable=protected-access
+        # If you're seeing this it means you're creating Search() without using
+        # create_search_obj which sets important fields like the index and doc_type.
+        raise ImproperlyConfigured("search object is missing an index")
+
     get_conn()
     return search_obj.execute()
 
