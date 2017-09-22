@@ -20,7 +20,7 @@ from search.models import PercolateQuery
 
 class ChannelFactory(DjangoModelFactory):
     """Factory for Channel"""
-    name = Faker('numerify', text='channel_###')
+    name = Faker('word')
     query = SubFactory(PercolateQueryFactory, source_type=PercolateQuery.DISCUSSION_CHANNEL_TYPE)
 
     class Meta:
@@ -30,7 +30,7 @@ class ChannelFactory(DjangoModelFactory):
 class DiscussionUserFactory(DjangoModelFactory):
     """Factory for DiscussionUser"""
     user = SubFactory(User)
-    username = Faker('numerify', text='username_#')
+    username = Faker('user_name')
     last_sync = Faker('date_time_this_month')
 
     @classmethod

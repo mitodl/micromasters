@@ -1,7 +1,6 @@
 """
 Tests for search API functionality
 """
-import math
 from unittest.mock import Mock, patch
 import ddt
 from elasticsearch_dsl import Search, Q
@@ -220,7 +219,7 @@ class SearchAPITests(ESTestCase):
         test_es_page_size = 2
         search = create_search_obj(self.user)
         user_ids = self.program.programenrollment_set.values_list("user__email", flat=True).order_by("-user__id")
-        results = search_for_field(search, 'email', page_size=test_es_page_size)
+        results = get_all_query_matching_emails(search, page_size=test_es_page_size)
         assert results == set(user_ids[:test_es_page_size])
 
 

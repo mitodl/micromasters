@@ -7,7 +7,7 @@ import pytest
 def _update_discussion_user(discussion_user):
     """Helper function to create a DiscussionUser and update its username"""
     if discussion_user.username is None:
-        discussion_user.username = Faker('profile').generate({})['username']
+        discussion_user.username = Faker('user_name').generate({})
     discussion_user.last_sync = discussion_user.user.profile.updated_on
     discussion_user.save()
 
