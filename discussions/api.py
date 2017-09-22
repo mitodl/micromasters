@@ -289,7 +289,7 @@ def add_channel(
     # Do a one time sync of all matching profiles
     user_ids = search_for_field(updated_search, 'user_id')
     from discussions import tasks
-    tasks.add_contributors(channel.name, user_ids)
+    tasks.add_contributors.delay(channel.name, user_ids)
     return channel
 
 

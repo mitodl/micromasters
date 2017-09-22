@@ -360,7 +360,7 @@ def test_add_channel(mock_staff_client, mocker, patched_users_api):
     assert search_for_field_stub.call_args[0][0].to_dict() == modified_search.to_dict()
     assert search_for_field_stub.call_args[0][1] == 'user_id'
 
-    add_contributors_task_stub.assert_called_once_with(channel.name, contributor_ids)
+    add_contributors_task_stub.delay.assert_called_once_with(channel.name, contributor_ids)
 
 
 def test_add_channel_failed_create_channel(mock_staff_client, mocker):
