@@ -1,6 +1,7 @@
 import React from "react"
 import { shallow } from "enzyme"
 import { assert } from "chai"
+import Button from "react-mdl/lib/Button"
 
 import ProgressWidget from "./ProgressWidget"
 import { STATUS_NOT_PASSED, STATUS_PASSED } from "../constants"
@@ -140,5 +141,19 @@ describe("ProgressWidget", () => {
       "Courses complete"
     )
     assert.equal(wrapper.find(".circular-progress-widget-txt").text(), "3/5")
+  })
+  it("progress widget display program certificate", () => {
+    program['certificate'] = 'certificate_url'
+    const wrapper = shallow(<ProgressWidget program={program} />)
+
+    assert.equal(wrapper.find(Button).props().children, "View Certificate")
+
+    assert.equal(
+      wrapper
+        .find(".text-course-complete")
+        .children()
+        .text(),
+      "Congatulations!"
+    )
   })
 })
