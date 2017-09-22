@@ -20,7 +20,7 @@ from search.models import PercolateQuery
 
 class ChannelFactory(DjangoModelFactory):
     """Factory for Channel"""
-    name = Faker('word')
+    name = Faker('uuid4')
     query = SubFactory(PercolateQueryFactory, source_type=PercolateQuery.DISCUSSION_CHANNEL_TYPE)
 
     class Meta:

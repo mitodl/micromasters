@@ -179,6 +179,20 @@ def remove_from_channel(channel_name, discussion_username):
         discussion_username (str): The username used by open-discussions
     """
     admin_client = get_staff_client()
+
+    # If the channel is private and the user is not a contributor, their subscription status will always
+    # look like it's false. To work around this we always remove the subscriber first.
+    try:
+        response = admin_client.channels.remove_subscriber(channel_name, discussion_username)
+        if not response.ok and response.status_code != statuses.HTTP_404_NOT_FOUND:
+            # 404 means the subscriber was already removed, which is fine
+            response.raise_for_status()
+    except HTTPError as ex:
+        raise SubscriberSyncException("Unable to remove a subscriber {user} from channel {channel}".format(
+            user=discussion_username,
+            channel=channel_name,
+        )) from ex
+
     try:
         response = admin_client.channels.remove_contributor(channel_name, discussion_username)
         if not response.ok and response.status_code not in (statuses.HTTP_404_NOT_FOUND, statuses.HTTP_409_CONFLICT):
@@ -189,17 +203,6 @@ def remove_from_channel(channel_name, discussion_username):
         raise ContributorSyncException("Unable to remove a contributor {user} from channel {channel}".format(
             user=discussion_username,
             channel=channel_name
-        )) from ex
-
-    try:
-        response = admin_client.channels.remove_subscriber(channel_name, discussion_username)
-        if not response.ok and response.status_code != statuses.HTTP_404_NOT_FOUND:
-            # 404 means the subscriber was already removed, which is fine
-            response.raise_for_status()
-    except HTTPError as ex:
-        raise SubscriberSyncException("Unable to remove a subscriber {user} from channel {channel}".format(
-            user=discussion_username,
-            channel=channel_name,
         )) from ex
 
 

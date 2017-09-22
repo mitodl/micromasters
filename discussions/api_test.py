@@ -27,7 +27,6 @@ from profiles.factories import (
     ProfileFactory,
     UserFactory,
 )
-from search.api import create_search_obj
 from search.models import PercolateQuery
 
 pytestmark = pytest.mark.django_db
@@ -177,7 +176,7 @@ def test_add_to_channel_failed_contributor(mock_staff_client):
     with pytest.raises(ContributorSyncException) as ex:
         api.add_to_channel('channel', 'user')
     assert ex.value.args[0] == 'Error adding contributor user to channel channel'
-    assert mock_staff_client.channel.add_subscriber.called is False
+    assert mock_staff_client.channels.add_subscriber.called is False
 
 
 def test_add_to_channel_failed_subscriber(mock_staff_client):
@@ -216,15 +215,18 @@ def test_remove_from_channel_failed_contributor(mock_staff_client, status_code):
     remove_from_channel should raise an exception if it fails to remove a user's contributor status,
     depending on the status code
     """
+    channel_name = 'channel'
+    discussion_username = 'user'
     response = mock_staff_client.channels.remove_contributor.return_value
     response.ok = False
     response.status_code = status_code
     response.raise_for_status.side_effect = HTTPError
 
     with pytest.raises(ContributorSyncException) as ex:
-        api.remove_from_channel('channel', 'user')
+        api.remove_from_channel(channel_name, discussion_username)
     assert ex.value.args[0] == 'Unable to remove a contributor user from channel channel'
-    assert mock_staff_client.channel.remove_subscriber.called is False
+    mock_staff_client.channels.remove_contributor.assert_called_once_with(channel_name, discussion_username)
+    mock_staff_client.channels.remove_subscriber.assert_called_once_with(channel_name, discussion_username)
 
 
 @pytest.mark.parametrize("status_code", [400, 401, 403, 409, 500, 505])
@@ -244,8 +246,8 @@ def test_remove_from_channel_failed_subscriber(mock_staff_client, status_code):
     with pytest.raises(SubscriberSyncException) as ex:
         api.remove_from_channel(channel_name, discussion_username)
     assert ex.value.args[0] == 'Unable to remove a subscriber username from channel channel'
-    mock_staff_client.channels.remove_contributor.assert_called_once_with(channel_name, discussion_username)
-    assert mock_staff_client.channel.remove_subscriber.called is False
+    mock_staff_client.channels.remove_subscriber.assert_called_once_with(channel_name, discussion_username)
+    assert mock_staff_client.channels.remove_contributor.called is False
 
 
 def test_sync_user_to_channels_no_feature(settings, mocker):
@@ -322,10 +324,7 @@ def test_add_channel(mock_staff_client, mocker, patched_users_api):
         autospec=True,
         return_value=contributor_ids,
     )
-    add_contributors_task_stub = mocker.patch(
-        'discussions.api.add_contributors',
-        autospec=True,
-    )
+    add_contributors_task_stub = mocker.patch('discussions.api.add_contributors')
 
     moderator = UserFactory.create()
     moderator_name = moderator.discussion_user.username
@@ -360,7 +359,7 @@ def test_add_channel(mock_staff_client, mocker, patched_users_api):
     assert search_for_field_stub.call_args[0][0].to_dict() == modified_search.to_dict()
     assert search_for_field_stub.call_args[0][1] == 'user_id'
 
-    add_contributors_task_stub.delay.assert_called_once_with(channel.name, contributor_ids)
+    add_contributors_task_stub.assert_called_once_with(channel.name, contributor_ids)
 
 
 def test_add_channel_failed_create_channel(mock_staff_client, mocker):
