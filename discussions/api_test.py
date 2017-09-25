@@ -8,6 +8,7 @@ from factory.django import mute_signals
 from open_discussions_api.constants import ROLE_STAFF
 import pytest
 from requests.exceptions import HTTPError
+from rest_framework import status as statuses
 
 from dashboard.factories import ProgramEnrollmentFactory
 from discussions import api
@@ -196,9 +197,9 @@ def test_add_to_channel_failed_subscriber(mock_staff_client):
 
 
 @pytest.mark.parametrize("contributor_status_code,subscriber_status_code", [
-    (200, 200),
-    (404, 404),
-    (409, 404),
+    (statuses.HTTP_200_OK, statuses.HTTP_200_OK),
+    (statuses.HTTP_404_NOT_FOUND, statuses.HTTP_404_NOT_FOUND),
+    (statuses.HTTP_409_CONFLICT, statuses.HTTP_404_NOT_FOUND),
 ])
 def test_remove_from_channel(mock_staff_client, contributor_status_code, subscriber_status_code):
     """remove_from_channel should remove a user's contributor and subscriber status"""
@@ -209,7 +210,13 @@ def test_remove_from_channel(mock_staff_client, contributor_status_code, subscri
     mock_staff_client.channels.remove_subscriber.assert_called_once_with(channel_name, discussion_username)
 
 
-@pytest.mark.parametrize("status_code", [400, 401, 403, 500, 505])
+@pytest.mark.parametrize("status_code", [
+    statuses.HTTP_400_BAD_REQUEST,
+    statuses.HTTP_401_UNAUTHORIZED,
+    statuses.HTTP_403_FORBIDDEN,
+    statuses.HTTP_500_INTERNAL_SERVER_ERROR,
+    statuses.HTTP_505_HTTP_VERSION_NOT_SUPPORTED
+])
 def test_remove_from_channel_failed_contributor(mock_staff_client, status_code):
     """
     remove_from_channel should raise an exception if it fails to remove a user's contributor status,
@@ -229,7 +236,14 @@ def test_remove_from_channel_failed_contributor(mock_staff_client, status_code):
     mock_staff_client.channels.remove_subscriber.assert_called_once_with(channel_name, discussion_username)
 
 
-@pytest.mark.parametrize("status_code", [400, 401, 403, 409, 500, 505])
+@pytest.mark.parametrize("status_code", [
+    statuses.HTTP_400_BAD_REQUEST,
+    statuses.HTTP_401_UNAUTHORIZED,
+    statuses.HTTP_403_FORBIDDEN,
+    statuses.HTTP_409_CONFLICT,
+    statuses.HTTP_500_INTERNAL_SERVER_ERROR,
+    statuses.HTTP_505_HTTP_VERSION_NOT_SUPPORTED
+])
 def test_remove_from_channel_failed_subscriber(mock_staff_client, status_code):
     """
     remove_from_channel should raise an exception if it fails to remove a user's subscriber status,
