@@ -92,22 +92,23 @@ def create_discussion_user(discussion_user):
     profile = discussion_user.user.profile
 
     api = get_staff_client()
-    try:
-        result = api.users.create(
-            name=profile.full_name,
-            image=profile.image.url if profile.image else None,
-            image_small=profile.image_small.url if profile.image_small else None,
-            image_medium=profile.image_medium.url if profile.image_medium else None,
-        )
-        result.raise_for_status()
+    result = api.users.create(
+        name=profile.full_name,
+        image=profile.image.url if profile.image else None,
+        image_small=profile.image_small.url if profile.image_small else None,
+        image_medium=profile.image_medium.url if profile.image_medium else None,
+    )
 
-        discussion_user.username = result.json()['username']
-        discussion_user.last_sync = profile.updated_on
-        discussion_user.save()
+    try:
+        result.raise_for_status()
     except HTTPError as ex:
         raise DiscussionUserSyncException(
             "Error creating discussion user for {}".format(profile.user.username)
         ) from ex
+
+    discussion_user.username = result.json()['username']
+    discussion_user.last_sync = profile.updated_on
+    discussion_user.save()
 
 
 def update_discussion_user(discussion_user):
@@ -126,22 +127,23 @@ def update_discussion_user(discussion_user):
         return
 
     api = get_staff_client()
-    try:
-        result = api.users.update(
-            discussion_user.username,
-            name=profile.full_name,
-            image=profile.image.url if profile.image else None,
-            image_small=profile.image_small.url if profile.image_small else None,
-            image_medium=profile.image_medium.url if profile.image_medium else None,
-        )
-        result.raise_for_status()
+    result = api.users.update(
+        discussion_user.username,
+        name=profile.full_name,
+        image=profile.image.url if profile.image else None,
+        image_small=profile.image_small.url if profile.image_small else None,
+        image_medium=profile.image_medium.url if profile.image_medium else None,
+    )
 
-        discussion_user.last_sync = profile.updated_on
-        discussion_user.save()
+    try:
+        result.raise_for_status()
     except HTTPError as ex:
         raise DiscussionUserSyncException(
             "Error updating discussion user for {}".format(profile.user.username)
         ) from ex
+
+    discussion_user.last_sync = profile.updated_on
+    discussion_user.save()
 
 
 def add_to_channel(channel_name, discussion_username):
