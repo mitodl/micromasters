@@ -5,7 +5,6 @@ from open_discussions_api.channels.constants import VALID_CHANNEL_TYPES
 from rest_framework import serializers
 
 from discussions.api import add_channel
-from discussions.models import DiscussionUser
 from search.api import create_search_obj
 
 
@@ -23,7 +22,7 @@ class ChannelSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         user = self.context['request'].user
-        moderator_username = DiscussionUser.objects.get(user=user).username
+        moderator_username = user.discussion_user.username
         search_obj = create_search_obj(
             user,
             search_param_dict=validated_data['query']
