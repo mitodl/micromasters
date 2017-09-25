@@ -1,7 +1,9 @@
 """
 Celery tasks for search
 """
+import logging
 
+from django.conf import settings
 # The imports which are prefixed with _ are mocked to be ignored in MockedESTestCase
 
 from dashboard.models import ProgramEnrollment
@@ -20,6 +22,9 @@ from search.indexing_api import (
 from search.models import PercolateQuery
 
 
+log = logging.getLogger(__name__)
+
+
 def post_indexing_handler(program_enrollment_ids):
     """
     Do the work which happens after a profile is reindexed
@@ -27,11 +32,17 @@ def post_indexing_handler(program_enrollment_ids):
     Args:
         program_enrollment_ids (list of int): A list of ProgramEnrollment ids
     """
+    feature_sync_user = settings.FEATURES.get('OPEN_DISCUSSIONS_USER_SYNC', False)
+
+    if not feature_sync_user:
+        log.error('OPEN_DISCUSSIONS_USER_SYNC is set to False (so disabled) in the settings')
+
     _refresh_index(get_default_alias())
     for program_enrollment in ProgramEnrollment.objects.filter(id__in=program_enrollment_ids):
         _send_automatic_emails(program_enrollment)
 
-        _sync_user_to_channels(program_enrollment.user.id)
+        if feature_sync_user:
+            _sync_user_to_channels(program_enrollment.user.id)
 
 
 @app.task

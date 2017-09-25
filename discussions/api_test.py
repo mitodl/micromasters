@@ -264,15 +264,6 @@ def test_remove_from_channel_failed_subscriber(mock_staff_client, status_code):
     assert mock_staff_client.channels.remove_contributor.called is False
 
 
-def test_sync_user_to_channels_no_feature(settings, mocker):
-    """If the feature flag is off nothing should happen"""
-    patched = mocker.patch('discussions.api.create_or_update_discussion_user')
-    settings.FEATURES['OPEN_DISCUSSIONS_USER_SYNC'] = False
-    user = UserFactory.create()
-    api.sync_user_to_channels(user.id)
-    assert patched.called is False
-
-
 def test_sync_user_to_channels(mocker, patched_users_api):
     """sync_user_to_channels should add or remove the user's membership from channels"""
     member_channels = [ChannelFactory.create() for _ in range(4)]

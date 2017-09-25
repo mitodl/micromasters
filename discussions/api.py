@@ -214,9 +214,6 @@ def sync_user_to_channels(user_id):
     Args:
         user_id (int): A user id
     """
-    if not settings.FEATURES.get('OPEN_DISCUSSIONS_USER_SYNC', False):
-        return
-
     # This guards against a race condition where the user's profile is in a celery task
     # and hasn't yet actually been created
     user = User.objects.get(id=user_id)
