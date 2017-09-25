@@ -324,7 +324,7 @@ def test_add_channel(mock_staff_client, mocker, patched_users_api):
         autospec=True,
         return_value=contributor_ids,
     )
-    add_contributors_task_stub = mocker.patch('discussions.api.add_contributors')
+    add_users_task_stub = mocker.patch('discussions.api.add_users_to_channel')
 
     moderator = UserFactory.create()
     moderator_name = moderator.discussion_user.username
@@ -359,7 +359,7 @@ def test_add_channel(mock_staff_client, mocker, patched_users_api):
     assert search_for_field_stub.call_args[0][0].to_dict() == modified_search.to_dict()
     assert search_for_field_stub.call_args[0][1] == 'user_id'
 
-    add_contributors_task_stub.assert_called_once_with(channel.name, contributor_ids)
+    add_users_task_stub.assert_called_once_with(channel.name, contributor_ids)
 
 
 def test_add_channel_failed_create_channel(mock_staff_client, mocker):
@@ -433,9 +433,9 @@ def test_add_channel_channel_already_exists(mock_staff_client):
     )
 
 
-def test_add_contributors(mocker):
+def test_add_users_to_channel(mocker):
     """
-    add_contributors should add a number of users as contributors and subscribers, retrying if necessary
+    add_users_to_channel should add a number of users as contributors and subscribers, retrying if necessary
     """
     def _make_fake_discussionuser(user_id):
         """Helper function to make a mock DiscussionUser"""
@@ -450,15 +450,15 @@ def test_add_contributors(mocker):
 
     users = [UserFactory.create() for _ in range(5)]
     channel_name = 'channel_name'
-    api.add_contributors(channel_name, [user.id for user in users])
+    api.add_users_to_channel(channel_name, [user.id for user in users])
     for user in users:
         stub.assert_any_call(user.id)
         add_to_channel_stub.assert_any_call(channel_name, "discussion_user_{}".format(user.id))
 
 
-def test_add_contributors_retry(patched_users_api, mocker):
+def test_add_users_to_channel_retry(patched_users_api, mocker):
     """
-    add_contributors should retry up to three times
+    add_users_to_channel should retry up to three times
     """
 
     failed_username = None
@@ -474,7 +474,7 @@ def test_add_contributors_retry(patched_users_api, mocker):
 
     users = [UserFactory.create() for _ in range(5)]
     channel_name = 'channel_name'
-    api.add_contributors(channel_name, [user.id for user in users])
+    api.add_users_to_channel(channel_name, [user.id for user in users])
     for user in users:
         add_to_channel_stub.assert_any_call(channel_name, user.discussion_user.username)
 
@@ -482,7 +482,7 @@ def test_add_contributors_retry(patched_users_api, mocker):
     assert add_to_channel_stub.call_count == len(users) + 1
 
 
-def test_add_contributors_failed(patched_users_api, mocker):
+def test_add_users_to_channel_failed(patched_users_api, mocker):
     """
     If the retry count is exceeded an exception should be raised
     """
@@ -501,7 +501,7 @@ def test_add_contributors_failed(patched_users_api, mocker):
 
     users = [UserFactory.create() for _ in range(5)]
     with pytest.raises(DiscussionUserSyncException) as ex:
-        api.add_contributors('channel', [user.id for user in users])
+        api.add_users_to_channel('channel', [user.id for user in users])
     assert ex.value.args[0] == "Unable to sync these users: {}".format(
         [DiscussionUser.objects.get(username=failed_username).user.id]
     )

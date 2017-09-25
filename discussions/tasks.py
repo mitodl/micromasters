@@ -47,7 +47,7 @@ def sync_discussion_users():
 
 
 @app.task()
-def add_contributors(channel_name, user_ids):
+def add_users_to_channel(channel_name, user_ids):
     """
     Add users to a open-discussions channel as contributors and subscribers
 
@@ -59,4 +59,4 @@ def add_contributors(channel_name, user_ids):
         log.error('OPEN_DISCUSSIONS_USER_SYNC is set to False (so disabled) in the settings')
         return
 
-    api.add_contributors(channel_name, user_ids)
+    api.add_users_to_channel(channel_name, user_ids)

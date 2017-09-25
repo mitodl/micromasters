@@ -292,11 +292,11 @@ def add_channel(
     # Do a one time sync of all matching profiles
     user_ids = list(search_for_field(updated_search, 'user_id'))
     from discussions import tasks
-    tasks.add_contributors.delay(channel.name, user_ids)
+    tasks.add_users_to_channel.delay(channel.name, user_ids)
     return channel
 
 
-def add_contributors(channel_name, user_ids, retries=3):
+def add_users_to_channel(channel_name, user_ids, retries=3):
     """
     Add users to a open-discussions channel as contributors and subscribers
 
@@ -326,6 +326,6 @@ def add_contributors(channel_name, user_ids, retries=3):
 
     if len(failed_user_ids) > 0:
         if retries > 1:
-            add_contributors(channel_name, failed_user_ids, retries - 1)
+            add_users_to_channel(channel_name, failed_user_ids, retries - 1)
         else:
             raise DiscussionUserSyncException("Unable to sync these users: {}".format(failed_user_ids))

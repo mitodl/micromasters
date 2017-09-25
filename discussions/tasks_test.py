@@ -87,16 +87,16 @@ def test_sync_discussion_users_task_api_error(mocker):
     mock_log.error.assert_called_once_with("Impossible to sync user_id %s to discussions", user.id)
 
 
-def test_add_contributors_no_feature_flag(settings, mocker):
-    """Don't attempt to add contributors if the feature flag is disabled"""
+def test_add_users_to_channel_no_feature_flag(settings, mocker):
+    """Don't attempt to add users if the feature flag is disabled"""
     settings.FEATURES['OPEN_DISCUSSIONS_USER_SYNC'] = False
-    stub = mocker.patch('discussions.api.add_contributors')
-    tasks.add_contributors.delay('channel', [1, 2, 3])
+    stub = mocker.patch('discussions.api.add_users_to_channel')
+    tasks.add_users_to_channel.delay('channel', [1, 2, 3])
     assert stub.called is False
 
 
-def test_add_contributors(mocker):
-    """add_contributors should forward all arguments to the api function of the same name"""
-    stub = mocker.patch('discussions.api.add_contributors', autospec=True)
-    tasks.add_contributors.delay('channel', [1, 2, 3])
+def test_add_users_to_channel(mocker):
+    """add_users_to_channel should forward all arguments to the api function of the same name"""
+    stub = mocker.patch('discussions.api.add_users_to_channel', autospec=True)
+    tasks.add_users_to_channel.delay('channel', [1, 2, 3])
     stub.assert_called_once_with('channel', [1, 2, 3])
