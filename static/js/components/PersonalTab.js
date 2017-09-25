@@ -18,7 +18,6 @@ import {
 } from "../lib/validation/profile"
 import type {
   Profile,
-  ProfileFetchResponse,
   SaveProfileFunc,
   ValidationErrors,
   UpdateProfileFunc
@@ -111,14 +110,6 @@ export default class PersonalTab extends React.Component {
     )
   }
 
-  afterImageUpload = (fetchResponse: ProfileFetchResponse): void => {
-    const { profile, updateProfile } = this.props
-    let editState = _.cloneDeep(profile)
-    let { payload: { profile: { image } } } = fetchResponse
-    let newEditState = { ...editState, image }
-    updateProfile(newEditState, personalTabValidator)
-  }
-
   render() {
     const { ui: { selectedProgram }, errors, uneditedProfile } = this.props
 
@@ -146,7 +137,6 @@ export default class PersonalTab extends React.Component {
               editable={true}
               showLink={true}
               linkText="Click here to add a profile photo"
-              afterImageUpload={this.afterImageUpload}
             />
             <span className="validation-error-text">
               {_.get(errors, ["image"])}

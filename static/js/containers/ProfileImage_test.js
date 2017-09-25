@@ -9,14 +9,9 @@ import { Provider } from "react-redux"
 
 import ProfileImage, { PROFILE_IMAGE_DIALOG } from "./ProfileImage"
 import IntegrationTestHelper from "../util/integration_test_helper"
-import ProfileImageUploader from "../components/ProfileImageUploader"
 import { showDialog } from "../actions/ui"
 import * as api from "../lib/api"
-import {
-  startPhotoEdit,
-  updatePhotoEdit,
-  requestPatchUserPhoto
-} from "../actions/image_upload"
+import { startPhotoEdit, requestPatchUserPhoto } from "../actions/image_upload"
 
 describe("ProfileImage", () => {
   let helper, sandbox, updateProfileImageStub, div
@@ -113,26 +108,6 @@ describe("ProfileImage", () => {
         helper.store.getState().ui.dialogVisibility[PROFILE_IMAGE_DIALOG],
         "should be open now"
       )
-    })
-
-    it("should call an afterImageUpload prop after success, if it is present", () => {
-      let afterImageUpload = sandbox.stub().returns(Promise.resolve())
-      let image = renderProfileImage({
-        editable:         true,
-        afterImageUpload: afterImageUpload
-      })
-      helper.store.dispatch(startPhotoEdit({ name: "a name" }))
-      helper.store.dispatch(updatePhotoEdit({ name: "a name" }))
-      let uploader = image.find(ProfileImageUploader)
-      return uploader
-        .props()
-        .updateUserPhoto()
-        .then(() => {
-          assert.ok(
-            afterImageUpload.called,
-            "afterImageUpload callback should have been called"
-          )
-        })
     })
 
     it("should have a ProfileImageUploader only for the logged in user", () => {

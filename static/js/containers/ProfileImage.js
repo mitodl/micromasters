@@ -10,7 +10,7 @@ import {
   getPreferredName,
   userPrivilegeCheck
 } from "../util/util"
-import type { Profile, ProfileFetchResponse } from "../flow/profileTypes"
+import type { Profile } from "../flow/profileTypes"
 import ProfileImageUploader from "../components/ProfileImageUploader"
 import { createActionHelper } from "../lib/redux"
 import {
@@ -29,7 +29,6 @@ const formatPhotoName = photo => `${photo.name.replace(/\.\w*$/, "")}.jpg`
 
 class ProfileImage extends React.Component {
   props: {
-    afterImageUpload: ?(o: ProfileFetchResponse) => void,
     clearPhotoEdit: () => void,
     dispatch: Dispatch,
     editable: boolean,
@@ -53,8 +52,7 @@ class ProfileImage extends React.Component {
       profile: { username },
       imageUpload: { edit, photo },
       dispatch,
-      clearPhotoEdit,
-      afterImageUpload
+      clearPhotoEdit
     } = this.props
 
     return dispatch(
@@ -62,11 +60,7 @@ class ProfileImage extends React.Component {
     ).then(() => {
       clearPhotoEdit()
       this.setDialogVisibility(false)
-      return this.fetchUserProfile().then(resp => {
-        if (afterImageUpload) {
-          afterImageUpload(resp)
-        }
-      })
+      return this.fetchUserProfile()
     })
   }
 
