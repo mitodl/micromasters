@@ -223,7 +223,6 @@ def get_info_for_course(course, mmtrack):
         ).data,
         "has_exam": course.has_exam,
         "certificate_url": get_certificate_url(mmtrack, course),
-        "final_grade": ""
     }
 
     def _add_run(run, mmtrack_, status):

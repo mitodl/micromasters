@@ -82,7 +82,9 @@ export default class ProgressWidget extends React.Component {
           </p>
           <Button
             className="dashboard-button"
-            onClick={() => {window.open(program.certificate)}}
+            onClick={() => {
+              window.open(program.certificate)
+            }}
           >
             View Certificate
           </Button>
