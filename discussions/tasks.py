@@ -53,7 +53,7 @@ def add_contributors(channel_name, user_ids):
 
     Args:
         channel_name (str): The name of the channel
-        user_ids (set of int): profile ids to sync
+        user_ids (list of int): profile ids to sync
     """
     if not settings.FEATURES.get('OPEN_DISCUSSIONS_USER_SYNC', False):
         log.error('OPEN_DISCUSSIONS_USER_SYNC is set to False (so disabled) in the settings')

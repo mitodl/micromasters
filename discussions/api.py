@@ -290,7 +290,7 @@ def add_channel(
         )
 
     # Do a one time sync of all matching profiles
-    user_ids = search_for_field(updated_search, 'user_id')
+    user_ids = list(search_for_field(updated_search, 'user_id'))
     from discussions import tasks
     tasks.add_contributors.delay(channel.name, user_ids)
     return channel
@@ -302,13 +302,13 @@ def add_contributors(channel_name, user_ids, retries=3):
 
     Args:
         channel_name (str): The name of the channel
-        user_ids (set of int): profile ids to sync
+        user_ids (list of int): profile ids to sync
         retries (int):
             Number of times to resync failed profiles. This is independent of Celery's retry mechanism
             because we want to only retry the failed profiles.
     """
 
-    failed_user_ids = set()
+    failed_user_ids = []
     for user_id in user_ids:
         try:
             # This guards against a race condition where the user's profile is in a celery task
@@ -322,7 +322,7 @@ def add_contributors(channel_name, user_ids, retries=3):
                 user_id,
                 channel_name,
             )
-            failed_user_ids.add(user_id)
+            failed_user_ids.append(user_id)
 
     if len(failed_user_ids) > 0:
         if retries > 1:

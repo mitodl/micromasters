@@ -450,7 +450,7 @@ def test_add_contributors(mocker):
 
     users = [UserFactory.create() for _ in range(5)]
     channel_name = 'channel_name'
-    api.add_contributors(channel_name, set([user.id for user in users]))
+    api.add_contributors(channel_name, [user.id for user in users])
     for user in users:
         stub.assert_any_call(user.id)
         add_to_channel_stub.assert_any_call(channel_name, "discussion_user_{}".format(user.id))
@@ -474,7 +474,7 @@ def test_add_contributors_retry(patched_users_api, mocker):
 
     users = [UserFactory.create() for _ in range(5)]
     channel_name = 'channel_name'
-    api.add_contributors(channel_name, set([user.id for user in users]))
+    api.add_contributors(channel_name, [user.id for user in users])
     for user in users:
         add_to_channel_stub.assert_any_call(channel_name, user.discussion_user.username)
 
@@ -501,9 +501,9 @@ def test_add_contributors_failed(patched_users_api, mocker):
 
     users = [UserFactory.create() for _ in range(5)]
     with pytest.raises(DiscussionUserSyncException) as ex:
-        api.add_contributors('channel', set([user.id for user in users]))
+        api.add_contributors('channel', [user.id for user in users])
     assert ex.value.args[0] == "Unable to sync these users: {}".format(
-        set([DiscussionUser.objects.get(username=failed_username).user.id])
+        [DiscussionUser.objects.get(username=failed_username).user.id]
     )
 
     # there are 3 retries
