@@ -20,7 +20,7 @@ from ecommerce.factories import LineFactory, OrderFactory
 from ecommerce.models import Order
 from exams.factories import ExamProfileFactory, ExamAuthorizationFactory, ExamRunFactory
 from exams.models import ExamProfile, ExamAuthorization
-from grades.factories import FinalGradeFactory
+from grades.factories import FinalGradeFactory, ProctoredExamGradeFactory
 from grades.models import FinalGrade, MicromastersProgramCertificate
 from micromasters.factories import UserFactory
 from micromasters.utils import (
@@ -668,6 +668,32 @@ class MMTrackTest(MockedESTestCase):
         low_grade.passed = False
         low_grade.save()
         assert mmtrack.get_passing_final_grades_for_course(finaid_course).count() == 3
+
+    def test_get_best_proctorate_exam_grade(self):
+        """
+        Test get_best_proctorate_exam_grade to return a passed exam with the highest score
+        """
+        mmtrack = MMTrack(
+            user=self.user,
+            program=self.program_financial_aid,
+            edx_user_data=self.cached_edx_user_data
+        )
+        finaid_course = self.crun_fa.course
+        last_week = now_in_utc() - timedelta(weeks=1)
+
+        ProctoredExamGradeFactory.create(user=self.user, course=finaid_course, passed=False, percentage_grade=0.6)
+        assert mmtrack.get_best_proctorate_exam_grade(finaid_course) is None
+        best_exam = ProctoredExamGradeFactory.create(
+            user=self.user, course=finaid_course, passed=True, percentage_grade=0.9,
+            exam_run__date_grades_available=last_week
+        )
+        assert mmtrack.get_best_proctorate_exam_grade(finaid_course) == best_exam
+
+        ProctoredExamGradeFactory.create(
+            user=self.user, course=finaid_course, passed=True, percentage_grade=0.8,
+            exam_run__date_grades_available=last_week
+        )
+        assert mmtrack.get_best_proctorate_exam_grade(finaid_course) == best_exam
 
     def test_get_mmtrack(self):
         """
