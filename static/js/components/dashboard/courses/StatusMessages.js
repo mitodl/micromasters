@@ -60,6 +60,18 @@ type CalculateMessagesProps = {
   coupon?: Coupon
 }
 
+const messageForNotAttemptedExam = (course: Course) => {
+  let message = "There are currently no exams available for scheduling. Please check back later."
+
+  if (course.can_schedule_exam) {
+    message = "Click above to schedule an exam with Pearson."
+  } else if (!R.isEmpty(course.exams_schedulable_in_future)) {
+    message = "You can sign up to take the exam starting on " +
+              `on ${formatDate(course.exams_schedulable_in_future[0])}.`
+  }
+  return message
+}
+
 // this calculates any status messages we'll need to show the user
 // we wrap the array of messages in a Maybe, so that we can indicate
 // the case where there are no messages cleanly
@@ -108,7 +120,11 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
 
   // Course is running, user has already paid, we show no messages
   if (courseUpcomingOrCurrent(firstRun) && paid) {
-    return S.Nothing
+    return S.Just([
+      {
+        message: messageForNotAttemptedExam(course)
+      }
+    ])
   }
 
   const messages = []
