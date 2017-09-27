@@ -146,13 +146,16 @@ describe("ProgressWidget", () => {
     program["certificate"] = "certificate_url"
     const wrapper = shallow(<ProgressWidget program={program} />)
 
-    assert.equal(wrapper.find(Button).props().children, "View Certificate")
-
     assert.equal(
       wrapper
-        .find(".text-course-complete")
+        .find(Button)
         .children()
         .text(),
+      "View Certificate"
+    )
+
+    assert.equal(
+      wrapper.find(".text-course-complete").text(),
       "Congatulations!"
     )
   })

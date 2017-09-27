@@ -66,31 +66,34 @@ export default class ProgressWidget extends React.Component {
     program: Program
   }
 
-  render() {
+  renderProgramCertificate() {
     const { program } = this.props
-    if (program.certificate) {
-      return (
-        <Card className="progress-widget" shadow={0}>
-          <img
-            className="certificate-thumbnail"
-            src="/static/images/diploma_sm.png"
-            alt="Certificate"
-          />
-          <div className="text-course-complete">Congatulations!</div>
-          <p className="certificate-text">
-            You completed the MicroMasters Certificate in {program.title}
-          </p>
-          <Button
-            className="dashboard-button"
-            onClick={() => {
-              window.open(program.certificate)
-            }}
-          >
-            View Certificate
-          </Button>
-        </Card>
-      )
-    }
+
+    return (
+      <Card className="progress-widget" shadow={0}>
+        <img
+          className="certificate-thumbnail"
+          src="/static/images/diploma_sm.png"
+          alt="Certificate"
+        />
+        <div className="text-course-complete">Congatulations!</div>
+        <p className="certificate-text">
+          You completed the MicroMasters Certificate in {program.title}
+        </p>
+        <Button
+          className="dashboard-button"
+          onClick={() => {
+            window.open(program.certificate)
+          }}
+        >
+          View Certificate
+        </Button>
+      </Card>
+    )
+  }
+
+  renderProgressIndicator() {
+    const { program } = this.props
     const { totalPassedCourses, totalCourses } = programCourseInfo(program)
 
     return (
@@ -99,5 +102,11 @@ export default class ProgressWidget extends React.Component {
         {circularProgressWidget(60, 6, totalPassedCourses, totalCourses)}
       </Card>
     )
+  }
+  render() {
+    const { program } = this.props
+    return program.certificate
+      ? this.renderProgramCertificate()
+      : this.renderProgressIndicator()
   }
 }
