@@ -61,3 +61,19 @@ def discussion_settings(settings):
     settings.OPEN_DISCUSSIONS_BASE_URL = 'http://localhost/'
     settings.OPEN_DISCUSSIONS_API_USERNAME = 'mitodl'
     settings.FEATURES['OPEN_DISCUSSIONS_USER_SYNC'] = True
+
+
+@pytest.fixture()
+def mocked_on_commit(mocker):
+    """
+    Patch on_commit to execute immediately instead of waiting for transaction to commit.
+    Since tests run inside transactions this will delay execution until after the test.
+    Since uses of on_commit are usually meant to delay executing tasks, and since
+    tasks are executed immediately in unit tests, executing immediately shouldn't
+    cause problems here.
+    """
+    return mocker.patch(
+        'django.db.transaction.on_commit',
+        autospec=True,
+        side_effect=lambda callback: callback(),
+    )

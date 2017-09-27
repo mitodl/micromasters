@@ -30,7 +30,11 @@ from profiles.factories import (
 )
 from search.models import PercolateQuery
 
-pytestmark = pytest.mark.django_db
+pytestmark = [
+    pytest.mark.usefixtures('mocked_elasticsearch'),
+    pytest.mark.usefixtures('mocked_on_commit'),
+    pytest.mark.django_db,
+]
 
 
 # pylint: disable=too-many-locals, unused-argument

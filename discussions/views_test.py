@@ -13,7 +13,11 @@ from micromasters.factories import UserFactory
 from roles.factories import RoleFactory
 from roles.models import Staff
 
-pytestmark = pytest.mark.django_db
+pytestmark = [
+    pytest.mark.usefixtures('mocked_elasticsearch'),
+    pytest.mark.usefixtures('mocked_on_commit'),
+    pytest.mark.django_db,
+]
 
 
 # pylint: disable=unused-argument

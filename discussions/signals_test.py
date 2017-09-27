@@ -7,7 +7,11 @@ from factory.django import mute_signals
 from profiles.factories import ProfileFactory
 from micromasters.factories import UserFactory
 
-pytestmark = pytest.mark.django_db
+pytestmark = [
+    pytest.mark.usefixtures('mocked_elasticsearch'),
+    pytest.mark.usefixtures('mocked_on_commit'),
+    pytest.mark.django_db,
+]
 
 
 # pylint: disable=unused-argument

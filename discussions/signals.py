@@ -2,6 +2,7 @@
 Signals for user profiles
 """
 from django.conf import settings
+from django.db import transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -16,4 +17,4 @@ def sync_user_profile(sender, instance, created, **kwargs):  # pylint: disable=u
     """
     if not settings.FEATURES.get('OPEN_DISCUSSIONS_USER_SYNC', False):
         return
-    tasks.sync_discussion_user.delay(instance.user_id)
+    transaction.on_commit(lambda: tasks.sync_discussion_user.delay(instance.user_id))

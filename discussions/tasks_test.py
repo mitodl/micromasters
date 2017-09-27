@@ -6,7 +6,11 @@ from discussions import tasks
 from discussions.exceptions import DiscussionUserSyncException
 from profiles.factories import UserFactory
 
-pytestmark = pytest.mark.django_db
+pytestmark = [
+    pytest.mark.usefixtures('mocked_elasticsearch'),
+    pytest.mark.usefixtures('mocked_on_commit'),
+    pytest.mark.django_db,
+]
 
 
 # pylint: disable=unused-argument
