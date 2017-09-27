@@ -5,7 +5,7 @@ import logging
 from decimal import Decimal
 
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.urls import reverse
 
 from courses.models import CourseRun
@@ -446,7 +446,9 @@ class MMTrack:
         Returns:
             str: a string with url or empty string
         """
-        certificate = self.program_certificate_qset().first()
+        certificate = self.program_certificate_qset().annotate(
+            signatories=Count('program__programpage__program_certificate_signatories')
+        ).filter(signatories__gt=0).first()
         if certificate is None:
             return ""
         return reverse('program-certificate', args=[certificate.hash])

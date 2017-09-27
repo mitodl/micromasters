@@ -11,6 +11,7 @@ from django.urls import reverse
 import pytz
 import ddt
 
+from cms.factories import ProgramCertificateSignatoriesFactory
 from courses.factories import ProgramFactory, CourseFactory, CourseRunFactory
 from dashboard.api_edx_cache import CachedEdxUserData
 from dashboard.models import CachedEnrollment, CachedCertificate, CachedCurrentGrade
@@ -637,10 +638,13 @@ class MMTrackTest(MockedESTestCase):
         )
         assert mmtrack.get_program_certificate_url() == ""
 
-        program_cert = MicromastersProgramCertificate.objects.create(
+        certificate = MicromastersProgramCertificate.objects.create(
             user=self.user, program=self.program_financial_aid
         )
-        assert mmtrack.get_program_certificate_url() == reverse('program-certificate', args=[program_cert.hash])
+        assert mmtrack.get_program_certificate_url() == ""
+
+        ProgramCertificateSignatoriesFactory.create(program_page__program=certificate.program)
+        assert mmtrack.get_program_certificate_url() == reverse('program-certificate', args=[certificate.hash])
 
     def test_get_passing_final_grades(self):
         """
