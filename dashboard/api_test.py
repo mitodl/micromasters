@@ -15,6 +15,7 @@ from django.conf import settings
 from rest_framework import status as http_status
 
 from backends.exceptions import InvalidCredentialStored
+from cms.factories import CourseCertificateSignatoriesFactory
 from courses.factories import (
     CourseFactory,
     CourseRunFactory,
@@ -1677,7 +1678,6 @@ class GetCertificateForCourse(CourseTests):
         super().setUp()
         self.mmtrack.user = self.user
         self.mmtrack.financial_aid_available = True
-
         self.course_run = self.create_run(course=self.course)
 
     def test_get_certificate_url(self):
@@ -1686,8 +1686,17 @@ class GetCertificateForCourse(CourseTests):
         final_grade = FinalGradeFactory.create(user=self.user, course_run=self.course_run, grade=0.8, passed=True)
         self.mmtrack.get_passing_final_grades_for_course.return_value = FinalGrade.objects.filter(user=self.user)
         cert = MicromastersCourseCertificateFactory.create(final_grade=final_grade)
-
+        CourseCertificateSignatoriesFactory.create(course=self.course)
         assert api.get_certificate_url(self.mmtrack, self.course) == '/certificate/course/{}'.format(cert.hash)
+
+    def test_no_signatories(self):
+        """Test get_certificate_url for course with no signatories"""
+
+        final_grade = FinalGradeFactory.create(user=self.user, course_run=self.course_run, grade=0.8, passed=True)
+        self.mmtrack.get_passing_final_grades_for_course.return_value = FinalGrade.objects.filter(user=self.user)
+        MicromastersCourseCertificateFactory.create(final_grade=final_grade)
+
+        assert api.get_certificate_url(self.mmtrack, self.course) == ''
 
     def test_has_no_final_grade(self):
         """Test no final grade for a course"""

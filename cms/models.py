@@ -382,6 +382,7 @@ class CourseCertificateSignatories(Orderable):
     program_page = ParentalKey(ProgramPage, related_name='course_certificate_signatories')
     course = models.ForeignKey(
         'courses.Course',
+        related_name='signatories',
         help_text='The course for this certificate.',
     )
     name = models.CharField(max_length=255, help_text='Full name of the signatory')
