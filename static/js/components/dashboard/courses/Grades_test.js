@@ -61,16 +61,9 @@ describe("Course Grades", () => {
   })
 
   it("should display a calculated final grade", () => {
-    course.runs[0].final_grade = 82
-    course.proctorate_exams_grades = [makeProctoredExamResult()]
+    course.overall_grade = "40"
     const grades = renderGrades()
-    const expectation = _.round(
-      // $FlowFixMe: flow doesnt like this
-      COURSE_GRADE_WEIGHT * course.runs[0].final_grade +
-        EXAM_GRADE_WEIGHT *
-          (course.proctorate_exams_grades[0].percentage_grade * 100)
-    )
-    assert.equal(grades.find(".final-grade .number").text(), `${expectation}%`)
+    assert.equal(grades.find(".final-grade .number").text(), `${course.overall_grade}%`)
   })
 
   it("should only display the edX grade if has_exam == false", () => {

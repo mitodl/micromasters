@@ -24,6 +24,9 @@ from exams.models import ExamAuthorization, ExamRun
 # maximum number of exam attempts per payment
 ATTEMPTS_PER_PAID_RUN = 2
 
+COURSE_GRADE_WEIGHT = 0.4
+EXAM_GRADE_WEIGHT = 0.6
+
 log = logging.getLogger(__name__)
 
 # pylint: disable=too-many-branches
@@ -223,6 +226,7 @@ def get_info_for_course(course, mmtrack):
         ).data,
         "has_exam": course.has_exam,
         "certificate_url": get_certificate_url(mmtrack, course),
+        "overall_grade": get_overall_final_grade_for_course(mmtrack, course)
     }
 
     def _add_run(run, mmtrack_, status):
@@ -496,3 +500,27 @@ def get_certificate_url(mmtrack, course):
             if download_url:
                 url = urljoin(settings.EDXORG_BASE_URL, download_url)
     return url
+
+
+def get_overall_final_grade_for_course(mmtrack, course):
+    """
+    Calculate overall grade for course
+
+    Args:
+        mmtrack (dashboard.utils.MMTrack): an instance of all user information about a program
+        course (courses.models.Course): A course
+    Returns:
+        str: the overall final grade
+    """
+    final_grades = mmtrack.get_passing_final_grades_for_course(course)
+    best_grade = final_grades.first()
+    if best_grade is None:
+        return ""
+    if not course.has_exam:
+        return str(round(best_grade.grade_percent))
+
+    best_exam = mmtrack.get_best_proctorate_exam_grade(course)
+    if best_exam is None:
+        return ""
+
+    return str(round(best_grade.grade_percent * COURSE_GRADE_WEIGHT + best_exam.score * EXAM_GRADE_WEIGHT))

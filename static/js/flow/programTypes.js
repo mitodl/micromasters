@@ -61,6 +61,7 @@ export type Course = {
   proctorate_exams_grades:      Array<ProctoredExamResult>,
   has_exam:                     boolean,
   certificate_url:              string,
+  overall_grade:                string,
 }
 
 export type ProgramPageCourse = {

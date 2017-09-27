@@ -5,7 +5,7 @@ import Icon from "react-mdl/lib/Icon"
 
 import type { Course } from "../../../flow/programTypes"
 import { formatGrade } from "../util"
-import { S, reduceM } from "../../../lib/sanctuary"
+import { S, reduceM, getm } from "../../../lib/sanctuary"
 import { classify } from "../../../util/util"
 import {
   getLargestExamGrade,
@@ -57,7 +57,8 @@ const renderFinalGrade = R.ifElse(
   R.compose(
     reduceM("--", renderGrade("Final Grade")),
     S.map(formatGrade),
-    calculateFinalGrade
+    S.filter(R.complement(R.isEmpty)),
+    getm("overall_grade")
   ),
   R.always(null)
 )

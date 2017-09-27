@@ -842,7 +842,8 @@ class InfoCourseTest(CourseTests):
             "has_to_pay": has_to_pay,
             "proctorate_exams_grades": proct_exams,
             "has_exam": has_exam,
-            "certificate_url": ""
+            "certificate_url": "",
+            "overall_grade": "",
         }
         # remove the runs part: assumed checked with the mock assertion
         del course_data_from_call['runs']
@@ -1741,3 +1742,49 @@ class GetCertificateForCourse(CourseTests):
         self.mmtrack.certificates = CachedCertificate.deserialize_edx_data([cert_json])
         certificate_url = (settings.EDXORG_BASE_URL + "certificates/user/course_key") if has_url else ""
         assert api.get_certificate_url(self.mmtrack, self.course) == certificate_url
+
+
+class GetOverallGradeForCourse(CourseTests):
+    """Tests get_overall_final_grade_for_course for a course"""
+
+    def setUp(self):
+        super().setUp()
+        self.mmtrack.user = self.user
+        self.mmtrack.financial_aid_available = True
+
+        self.course_run = self.create_run(course=self.course)
+
+    def test_get_overall_final_grade_for_course(self):
+        """Test get_overall_final_grade_for_course return overall grade"""
+
+        FinalGradeFactory.create(user=self.user, course_run=self.course_run, grade=0.8, passed=True)
+        ExamRunFactory.create(course=self.course)
+        self.mmtrack.get_passing_final_grades_for_course.return_value = FinalGrade.objects.filter(user=self.user)
+        best_exam = ProctoredExamGradeFactory(
+            user=self.user, course=self.course, percentage_grade=0.7
+        )
+        self.mmtrack.get_best_proctorate_exam_grade.return_value = best_exam
+        assert api.get_overall_final_grade_for_course(self.mmtrack, self.course) == '74'
+
+    def test_no_final_grade(self):
+        """Test get_overall_final_grade_for_course user has no final grade"""
+
+        self.mmtrack.get_passing_final_grades_for_course.return_value = FinalGrade.objects.filter(user=self.user)
+        assert api.get_overall_final_grade_for_course(self.mmtrack, self.course) == ''
+
+    def test_course_has_no_exam(self):
+        """Test get_overall_final_grade_for_course for course with no exam"""
+
+        FinalGradeFactory.create(user=self.user, course_run=self.course_run, grade=0.8, passed=True)
+        self.mmtrack.get_passing_final_grades_for_course.return_value = FinalGrade.objects.filter(user=self.user)
+        self.mmtrack.get_best_proctorate_exam_grade.return_value = None
+        assert api.get_overall_final_grade_for_course(self.mmtrack, self.course) == '80'
+
+    def test_no_passing_exam(self):
+        """Test get_overall_final_grade_for_course user has no passing exam"""
+
+        FinalGradeFactory.create(user=self.user, course_run=self.course_run, grade=0.8, passed=True)
+        ExamRunFactory.create(course=self.course)
+        self.mmtrack.get_passing_final_grades_for_course.return_value = FinalGrade.objects.filter(user=self.user)
+        self.mmtrack.get_best_proctorate_exam_grade.return_value = None
+        assert api.get_overall_final_grade_for_course(self.mmtrack, self.course) == ''
