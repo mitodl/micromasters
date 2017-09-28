@@ -14,6 +14,11 @@
     background: #fcfcfc;
     box-shadow: 0 1px 2px 1px rgba(167,164,164,.25);
     padding: 35px 50px;
+    position: relative;
+
+    .col-md-8 {
+      position: static;
+    }
 
     &.verified {
       background-position: 0 -60px;
@@ -26,12 +31,12 @@
       padding-bottom: 40px;
 
       img {
-        width: 435px;
+        width: 405px;
       }
     }
 
     .organization-logo img {
-      width: 160px;
+      width: 150px;
     }
 
     .certificate-text {
@@ -63,17 +68,23 @@
     .certificate-stamps {
       text-align: left;
       font-size: 12px;
+      position: absolute;
+      bottom: 45px;
+      left: 68px;
 
       div {
-        padding: 0;
+        padding: 0 20px 0 0;
       }
 
-      .certificate-date {
-        padding-left: 10px;
+      .certificate-date, .certificate-id {
+        padding-top: 10px;
       }
 
-      .edx-logo img {
-        width: 125px;
+      .edx-logo {
+        padding-right: 30px;
+        img {
+          width: 106px;
+        }
       }
 
       label {
@@ -100,11 +111,11 @@
     }
 
     .organization-logo {
-      padding-bottom: 50px;
+      padding-bottom: 32px;
     }
 
     .signatory {
-      padding-bottom: 15px;
+      padding-bottom: 10px;
 
       .name {
         margin: 0;
