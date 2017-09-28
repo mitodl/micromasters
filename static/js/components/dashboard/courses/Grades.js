@@ -10,7 +10,6 @@ import { classify } from "../../../util/util"
 import {
   getLargestExamGrade,
   getLargestEdXGrade,
-  calculateFinalGrade,
   passedCourse
 } from "../../../lib/grades"
 import { hasPearsonExam } from "./util"
@@ -57,7 +56,7 @@ const renderFinalGrade = R.ifElse(
   R.compose(
     reduceM("--", renderGrade("Final Grade")),
     S.map(formatGrade),
-    S.filter(R.complement(R.isEmpty)),
+    S.filter(R.complement(R.equals(""))),
     getm("overall_grade")
   ),
   R.always(null)

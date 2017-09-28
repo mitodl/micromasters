@@ -60,10 +60,13 @@ describe("Course Grades", () => {
     )
   })
 
-  it("should display a calculated final grade", () => {
+  it("should display a final grade", () => {
     course.overall_grade = "40"
     const grades = renderGrades()
-    assert.equal(grades.find(".final-grade .number").text(), `${course.overall_grade}%`)
+    assert.equal(
+      grades.find(".final-grade .number").text(),
+      `${course.overall_grade}%`
+    )
   })
 
   it("should only display the edX grade if has_exam == false", () => {
