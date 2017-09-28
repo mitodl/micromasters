@@ -34,7 +34,7 @@ def sync_discussion_users():
     Sync the user's profile to open discussions
     """
     if not settings.FEATURES.get('OPEN_DISCUSSIONS_USER_SYNC', False):
-        log.error('OPEN_DISCUSSIONS_USER_SYNC is set to False (so disabled) in the settings')
+        log.debug('OPEN_DISCUSSIONS_USER_SYNC is set to False (so disabled) in the settings')
         return
     users_to_backfill = Profile.objects.exclude(
         user__discussion_user__isnull=False).values_list('user__id', flat=True)
@@ -56,7 +56,7 @@ def add_users_to_channel(channel_name, user_ids):
         user_ids (list of int): profile ids to sync
     """
     if not settings.FEATURES.get('OPEN_DISCUSSIONS_USER_SYNC', False):
-        log.error('OPEN_DISCUSSIONS_USER_SYNC is set to False (so disabled) in the settings')
+        log.debug('OPEN_DISCUSSIONS_USER_SYNC is set to False (so disabled) in the settings')
         return
 
     api.add_users_to_channel(channel_name, user_ids)
