@@ -19,10 +19,11 @@ class ChannelSerializer(serializers.Serializer):
         (choice, choice) for choice in VALID_CHANNEL_TYPES
     ])
     query = serializers.JSONField()
+    program_id = serializers.IntegerField()
 
     def create(self, validated_data):
         user = self.context['request'].user
-        moderator_username = user.discussion_user.username
+
         search_obj = create_search_obj(
             user,
             search_param_dict=validated_data['query']
@@ -31,13 +32,14 @@ class ChannelSerializer(serializers.Serializer):
         name = validated_data['name']
         public_description = validated_data['public_description']
         channel_type = validated_data['channel_type']
+        program_id = validated_data['program_id']
         channel = add_channel(
             original_search=search_obj,
             title=title,
             name=name,
             public_description=public_description,
             channel_type=channel_type,
-            moderator_username=moderator_username,
+            program_id=program_id,
         )
         return {
             "title": title,
@@ -45,4 +47,5 @@ class ChannelSerializer(serializers.Serializer):
             "query": channel.query.query,
             "public_description": public_description,
             "channel_type": channel_type,
+            "program_id": program_id,
         }

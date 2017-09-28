@@ -85,13 +85,16 @@ def test_logged_in_user_redirect_no_username(client, patched_users_api):
         client.get(reverse('discussions'))
 
 
-CREATE_CHANNEL_INPUT = {
-    "title": "title",
-    "name": "name",
-    "public_description": "public description",
-    "channel_type": "public",
-    "query": {}
-}
+def _make_create_channel_input(program_id):
+    """Generate parameters for create API"""
+    return {
+        "title": "title",
+        "name": "name",
+        "public_description": "public description",
+        "channel_type": "public",
+        "query": {},
+        "program_id": program_id,
+    }
 
 
 def test_create_channel(mocker, patched_users_api):
@@ -104,24 +107,26 @@ def test_create_channel(mocker, patched_users_api):
     channel = ChannelFactory.create()
     add_channel_mock = mocker.patch('discussions.serializers.add_channel', return_value=channel, autospec=True)
 
+    create_channel_input = _make_create_channel_input(role.program.id)
     resp = client.post(reverse('channel-list'), data={
-        **CREATE_CHANNEL_INPUT,
+        **create_channel_input,
         "name": channel.name,
     }, format="json")
     assert resp.status_code == 201
     assert resp.json() == {
         "name": channel.name,
-        "title": CREATE_CHANNEL_INPUT['title'],
-        "public_description": CREATE_CHANNEL_INPUT['public_description'],
-        "channel_type": CREATE_CHANNEL_INPUT['channel_type'],
+        "title": create_channel_input['title'],
+        "public_description": create_channel_input['public_description'],
+        "channel_type": create_channel_input['channel_type'],
         "query": channel.query.query,
+        "program_id": role.program.id,
     }
 
     kwargs = add_channel_mock.call_args[1]
-    assert kwargs['title'] == CREATE_CHANNEL_INPUT['title']
+    assert kwargs['title'] == create_channel_input['title']
     assert kwargs['name'] == channel.name
-    assert kwargs['public_description'] == CREATE_CHANNEL_INPUT['public_description']
-    assert kwargs['channel_type'] == CREATE_CHANNEL_INPUT['channel_type']
+    assert kwargs['public_description'] == create_channel_input['public_description']
+    assert kwargs['channel_type'] == create_channel_input['channel_type']
     assert kwargs['original_search'].to_dict() == {
         'query': {
             'bool': {
@@ -143,12 +148,14 @@ def test_create_channel(mocker, patched_users_api):
         },
         'size': 50
     }
+    assert kwargs['program_id'] == role.program.id
 
 
-def test_create_channel_anonymous():
+def test_create_channel_anonymous(patched_users_api):
     """Anonymous users should get a 401 error"""
     client = APIClient()
-    resp = client.post(reverse('channel-list'), data=CREATE_CHANNEL_INPUT, format="json")
+    program = RoleFactory.create().program
+    resp = client.post(reverse('channel-list'), data=_make_create_channel_input(program.id), format="json")
     assert resp.status_code == 403
 
 
@@ -157,7 +164,8 @@ def test_create_channel_user_without_permission(patched_users_api):
     client = APIClient()
     user = UserFactory.create()
     client.force_login(user)
-    resp = client.post(reverse('channel-list'), data=CREATE_CHANNEL_INPUT, format="json")
+    program = RoleFactory.create().program
+    resp = client.post(reverse('channel-list'), data=_make_create_channel_input(program.id), format="json")
     assert resp.status_code == 403
 
 
@@ -165,12 +173,23 @@ def test_create_channel_user_without_permission(patched_users_api):
 def test_create_channel_missing_param(missing_param, patched_users_api):
     """A missing param should cause a validation error"""
     client = APIClient()
-    user = RoleFactory.create(role=Staff.ROLE_ID).user
-    client.force_login(user)
-    inputs = dict(CREATE_CHANNEL_INPUT)
+    role = RoleFactory.create(role=Staff.ROLE_ID)
+    client.force_login(role.user)
+    inputs = {**_make_create_channel_input(role.program.id)}
     del inputs[missing_param]
     resp = client.post(reverse('channel-list'), data=inputs, format="json")
     assert resp.status_code == 400
     assert resp.json() == {
         missing_param: ["This field is required."]
     }
+
+
+def test_create_channel_bad_program_id(patched_users_api):
+    """A missing param should cause a validation error"""
+    client = APIClient()
+    role = RoleFactory.create(role=Staff.ROLE_ID)
+    client.force_login(role.user)
+    inputs = {**_make_create_channel_input("invalid_program_id")}
+    resp = client.post(reverse('channel-list'), data=inputs, format="json")
+    assert resp.status_code == 400
+    assert resp.json() == ["missing or invalid program id"]

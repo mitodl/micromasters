@@ -1,8 +1,9 @@
 """Permissions for discussions"""
 
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import BasePermission
-from rolepermissions.verifications import has_permission
 
+from roles.models import Role
 from roles.roles import Permissions
 
 
@@ -12,4 +13,13 @@ class CanCreateChannel(BasePermission):
     """
 
     def has_permission(self, request, view):
-        return has_permission(request.user, Permissions.CAN_CREATE_FORUMS)
+        try:
+            program_id = int(request.data['program_id'])
+        except (KeyError, ValueError) as ex:
+            raise ValidationError("missing or invalid program id") from ex
+
+        return Role.objects.filter(
+            user=request.user,
+            program_id=program_id,
+            role__in=Role.permission_to_roles[Permissions.CAN_CREATE_FORUMS]
+        ).exists()

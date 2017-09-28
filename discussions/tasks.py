@@ -60,3 +60,15 @@ def add_users_to_channel(channel_name, user_ids):
         return
 
     api.add_users_to_channel(channel_name, user_ids)
+
+
+@app.task()
+def add_moderators_to_channel(channel_name):
+    """
+    Add moderators to a open-discussions chane
+    """
+    if not settings.FEATURES.get('OPEN_DISCUSSIONS_USER_SYNC', False):
+        log.debug('OPEN_DISCUSSIONS_USER_SYNC is set to False (so disabled) in the settings')
+        return
+
+    api.add_moderators_to_channel(channel_name)

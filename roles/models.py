@@ -1,13 +1,34 @@
 """
 General models for the micromasters app
 """
+from collections import defaultdict
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
+from rolepermissions.roles import RolesManager
 
 from courses.models import Program
 from roles.roles import Staff, Instructor
+
+
+def _construct_permission_to_roles(role_ids):
+    """
+    Create a mapping of role id
+
+    Args:
+        role_ids (list of str): A list of all role ids
+
+    Returns:
+        dict:
+            A map of permission to a list of role ids which have that permission
+    """
+    permissions = defaultdict(list)
+    for role_id in role_ids:
+        for permission, is_set in RolesManager.retrieve_role(role_id).available_permissions.items():
+            if is_set:
+                permissions[permission].append(role_id)
+    return permissions
 
 
 class Role(models.Model):
@@ -28,6 +49,8 @@ class Role(models.Model):
         Staff.ROLE_ID,
         Instructor.ROLE_ID
     ]
+
+    permission_to_roles = _construct_permission_to_roles(ASSIGNABLE_ROLES)
 
     user = models.ForeignKey(User)
     program = models.ForeignKey(Program)

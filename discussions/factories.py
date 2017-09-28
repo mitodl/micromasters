@@ -10,8 +10,10 @@ from factory.django import (
     mute_signals,
 )
 
+from courses.factories import ProgramFactory
 from discussions.models import (
     Channel,
+    ChannelProgram,
     DiscussionUser,
 )
 from search.factories import PercolateQueryFactory
@@ -25,6 +27,15 @@ class ChannelFactory(DjangoModelFactory):
 
     class Meta:
         model = Channel
+
+
+class ChannelProgramFactory(DjangoModelFactory):
+    """Factory for ChannelProgram"""
+    channel = SubFactory(ChannelFactory)
+    program = SubFactory(ProgramFactory)
+
+    class Meta:
+        model = ChannelProgram
 
 
 class DiscussionUserFactory(DjangoModelFactory):

@@ -2,6 +2,7 @@
 /* global SETTINGS: false */
 import React from "react"
 import R from "ramda"
+import type { Dispatch } from "redux"
 
 import { showDialog, hideDialog, setToastMessage } from "../../actions/ui"
 import {
@@ -17,7 +18,12 @@ import { getDisplayName } from "../../util/util"
 import { CHANNEL_CREATE_DIALOG } from "../../constants"
 import ChannelCreateDialog from "./ChannelCreateDialog"
 
-import type { CreateChannelResponse } from "../../flow/discussionTypes"
+import type { AvailableProgram } from "../../flow/enrollmentTypes"
+import type {
+  ChannelState,
+  CreateChannelResponse
+} from "../../flow/discussionTypes"
+import type { UIState } from "../../reducers/ui"
 
 const isVisible = R.propOr(false, CHANNEL_CREATE_DIALOG)
 
@@ -28,6 +34,13 @@ export const setDialogVisibility = (visible: boolean) =>
 
 export const withChannelCreateDialog = (WrappedComponent: ReactClass<*>) => {
   class WithChannelCreateDialog extends React.Component {
+    props: {
+      channelDialog: ChannelState,
+      currentProgramEnrollment: AvailableProgram,
+      dispatch: Dispatch,
+      ui: UIState
+    }
+
     openChannelCreateDialog = (searchkit: Object): void => {
       const { dispatch } = this.props
       dispatch(
@@ -46,12 +59,20 @@ export const withChannelCreateDialog = (WrappedComponent: ReactClass<*>) => {
     }
 
     closeAndCreateDialog = (): void => {
-      const { dispatch, channelDialog: { inputs, searchkit } } = this.props
+      const {
+        dispatch,
+        channelDialog: { inputs, searchkit },
+        currentProgramEnrollment
+      } = this.props
       const query = searchkit.buildQuery().query
       if (R.isEmpty(discussionErrors(inputs))) {
         dispatch(
           createChannel((...args) => dispatch(actions.channels.post(...args)), [
-            { ...inputs, query }
+            {
+              ...inputs,
+              query,
+              program_id: currentProgramEnrollment.id
+            }
           ])
         ).then((channel: CreateChannelResponse) => {
           this.closeAndClearDialog()

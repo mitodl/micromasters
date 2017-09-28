@@ -94,7 +94,7 @@ def test_sync_discussion_users_task_api_error(mocker):
 def test_add_users_to_channel_no_feature_flag(settings, mocker):
     """Don't attempt to add users if the feature flag is disabled"""
     settings.FEATURES['OPEN_DISCUSSIONS_USER_SYNC'] = False
-    stub = mocker.patch('discussions.api.add_users_to_channel')
+    stub = mocker.patch('discussions.api.add_users_to_channel', autospec=True)
     tasks.add_users_to_channel.delay('channel', [1, 2, 3])
     assert stub.called is False
 
@@ -104,3 +104,18 @@ def test_add_users_to_channel(mocker):
     stub = mocker.patch('discussions.api.add_users_to_channel', autospec=True)
     tasks.add_users_to_channel.delay('channel', [1, 2, 3])
     stub.assert_called_once_with('channel', [1, 2, 3])
+
+
+def test_add_moderators_to_channel(mocker):
+    """add_moderators_to_channel should forward all arguments to the api function"""
+    stub = mocker.patch('discussions.api.add_moderators_to_channel', autospec=True)
+    tasks.add_moderators_to_channel.delay('channel')
+    stub.assert_called_once_with('channel')
+
+
+def test_add_moderators_to_channel_no_feature_flag(settings, mocker):
+    """add_moderators_to_channel should forward all arguments to the api function"""
+    settings.FEATURES['OPEN_DISCUSSIONS_USER_SYNC'] = False
+    stub = mocker.patch('discussions.api.add_moderators_to_channel', autospec=True)
+    tasks.add_moderators_to_channel.delay('channel')
+    assert stub.called is False

@@ -10,6 +10,7 @@ import pytest
 from requests.exceptions import HTTPError
 from rest_framework import status as statuses
 
+from courses.factories import ProgramFactory
 from dashboard.factories import ProgramEnrollmentFactory
 from discussions import api
 from discussions.exceptions import (
@@ -19,15 +20,21 @@ from discussions.exceptions import (
     ModeratorSyncException,
     SubscriberSyncException,
 )
-from discussions.factories import ChannelFactory
+from discussions.factories import (
+    ChannelFactory,
+    ChannelProgramFactory,
+)
 from discussions.models import (
     Channel,
+    ChannelProgram,
     DiscussionUser,
 )
 from profiles.factories import (
     ProfileFactory,
     UserFactory,
 )
+from roles.factories import RoleFactory
+from roles.roles import Staff
 from search.models import PercolateQuery
 
 pytestmark = [
@@ -269,18 +276,47 @@ def test_remove_from_channel_failed_subscriber(mock_staff_client, status_code):
 
 
 def test_sync_user_to_channels(mocker, patched_users_api):
-    """sync_user_to_channels should add or remove the user's membership from channels"""
+    """
+    sync_user_to_channels should add or remove the user's membership from channels, not touching channels where
+    the user is a moderator of at least one program
+    """
+    # member here means the user matches the percolate query of the channel
     member_channels = [ChannelFactory.create() for _ in range(4)]
     nonmember_channels = [ChannelFactory.create() for _ in range(3)]
 
-    user = ProgramEnrollmentFactory.create().user
-    enrollment = ProgramEnrollmentFactory.create(user=user)
+    # User is a staff of some channels and not of others.
+    # Note that a staff user may or may not match the percolate query or a channel
+    staff_programs = [
+        ChannelProgramFactory.create(channel=member_channels[0]).program,
+        ChannelProgramFactory.create(channel=nonmember_channels[0]).program,
+    ]
+    non_staff_programs = [
+        ChannelProgramFactory.create(channel=member_channels[1]).program,
+        ChannelProgramFactory.create(channel=nonmember_channels[1]).program,
+    ]
 
+    # first channel of members and first channel of nonmembers are skipped since user is staff
+    channels_to_add = member_channels[1:]
+    channels_to_remove = nonmember_channels[1:]
+
+    user = UserFactory.create()
+    for program in staff_programs:
+        RoleFactory.create(program=program, user=user, role=Staff.ROLE_ID)
+
+    # Enroll the user in all programs. This isn't technically required but it's unrealistic to have a query
+    # matching a user if they are not enrolled in the program.
+    enrollment_ids = [
+        ProgramEnrollmentFactory.create(program=program, user=user).id
+        for program in staff_programs + non_staff_programs
+    ]
+
+    # One percolate query per channel
     assert PercolateQuery.objects.count() == len(member_channels) + len(nonmember_channels)
 
     def _search_percolate_queries(enrollment_id, discussion_type):
         """Helper function to return a percolate queryset for enrollment"""
-        if enrollment_id == enrollment.id:
+        # The user matches all queries
+        if enrollment_id in enrollment_ids:
             return PercolateQuery.objects.filter(channel__in=member_channels)
         else:
             return PercolateQuery.objects.none()
@@ -290,23 +326,44 @@ def test_sync_user_to_channels(mocker, patched_users_api):
         autospec=True,
         side_effect=_search_percolate_queries
     )
-    add_to_channel_stub = mocker.patch('discussions.api.add_to_channel', autospec=True)
-    remove_from_channel_stub = mocker.patch('discussions.api.remove_from_channel', autospec=True)
+    add_subscriber_stub = mocker.patch(
+        'discussions.api.add_subscriber_to_channel',
+        autospec=True,
+    )
+    add_contributor_stub = mocker.patch(
+        'discussions.api.add_contributor_to_channel',
+        autospec=True,
+    )
+    remove_subscriber_stub = mocker.patch(
+        'discussions.api.remove_subscriber_from_channel',
+        autospec=True,
+    )
+    remove_contributor_stub = mocker.patch(
+        'discussions.api.remove_contributor_from_channel',
+        autospec=True,
+    )
 
     api.sync_user_to_channels(user.id)
 
+    created_stub, _ = patched_users_api
+    created_stub.assert_any_call(user.discussion_user)
     assert search_percolate_queries_stub.call_count == user.programenrollment_set.count()
     for enrollment in user.programenrollment_set.all():
         search_percolate_queries_stub.assert_any_call(
             enrollment.id,
             PercolateQuery.DISCUSSION_CHANNEL_TYPE,
         )
-    assert add_to_channel_stub.call_count == len(member_channels)
-    assert remove_from_channel_stub.call_count == len(nonmember_channels)
-    for channel in member_channels:
-        add_to_channel_stub.assert_any_call(channel.name, user.discussion_user.username)
-    for channel in nonmember_channels:
-        remove_from_channel_stub.assert_any_call(channel.name, user.discussion_user.username)
+    assert add_subscriber_stub.call_count == len(channels_to_add)
+    assert add_contributor_stub.call_count == len(channels_to_add)
+    assert remove_subscriber_stub.call_count == len(channels_to_remove)
+    assert remove_contributor_stub.call_count == len(channels_to_remove)
+
+    for channel in channels_to_add:
+        add_subscriber_stub.assert_any_call(channel.name, user.discussion_user.username)
+        add_contributor_stub.assert_any_call(channel.name, user.discussion_user.username)
+    for channel in channels_to_remove:
+        remove_contributor_stub.assert_any_call(channel.name, user.discussion_user.username)
+        remove_subscriber_stub.assert_any_call(channel.name, user.discussion_user.username)
 
 
 def test_add_channel(mock_staff_client, mocker, patched_users_api):
@@ -326,6 +383,7 @@ def test_add_channel(mock_staff_client, mocker, patched_users_api):
         return_value=modified_search,
     )
 
+    program = ProgramFactory.create()
     contributors = [UserFactory.create() for _ in range(5)]
     contributor_ids = [user.id for user in contributors]
     search_for_field_stub = mocker.patch(
@@ -333,10 +391,8 @@ def test_add_channel(mock_staff_client, mocker, patched_users_api):
         autospec=True,
         return_value=contributor_ids,
     )
-    add_users_task_stub = mocker.patch('discussions.api.add_users_to_channel')
-
-    moderator = UserFactory.create()
-    moderator_name = moderator.discussion_user.username
+    add_users_task_stub = mocker.patch('discussions.api.add_users_to_channel', autospec=True)
+    add_moderators_task_stub = mocker.patch('discussions.api.add_moderators_to_channel', autospec=True)
 
     channel = api.add_channel(
         original_search=input_search,
@@ -344,7 +400,7 @@ def test_add_channel(mock_staff_client, mocker, patched_users_api):
         name=name,
         public_description=public_description,
         channel_type=channel_type,
-        moderator_username=moderator_name,
+        program_id=program.id,
     )
 
     mock_staff_client.channels.create.assert_called_once_with(
@@ -354,9 +410,6 @@ def test_add_channel(mock_staff_client, mocker, patched_users_api):
         channel_type=channel_type,
     )
     adjust_search_for_percolator_stub.assert_called_once_with(input_search)
-    mock_staff_client.channels.add_moderator.assert_called_once_with(
-        name, moderator_name
-    )
 
     assert channel.name == name
     query = channel.query
@@ -364,11 +417,17 @@ def test_add_channel(mock_staff_client, mocker, patched_users_api):
     assert query.original_query == input_search.to_dict()
     assert query.query == modified_search.to_dict()
 
+    assert ChannelProgram.objects.count() == 1
+    channel_program = ChannelProgram.objects.first()
+    assert channel_program.program == program
+    assert channel_program.channel == channel
+
     assert search_for_field_stub.call_count == 1
     assert search_for_field_stub.call_args[0][0].to_dict() == modified_search.to_dict()
     assert search_for_field_stub.call_args[0][1] == 'user_id'
 
     add_users_task_stub.assert_called_once_with(channel.name, contributor_ids)
+    add_moderators_task_stub.assert_called_once_with(channel.name)
 
 
 def test_add_channel_failed_create_channel(mock_staff_client, mocker):
@@ -382,7 +441,7 @@ def test_add_channel_failed_create_channel(mock_staff_client, mocker):
             "name",
             "public_description",
             "channel_type",
-            "mod",
+            123,
         )
     assert ex.value.args[0] == "Error creating channel name"
     mock_staff_client.channels.create.return_value.raise_for_status.assert_called_with()
@@ -391,29 +450,7 @@ def test_add_channel_failed_create_channel(mock_staff_client, mocker):
     assert Channel.objects.count() == 0
 
 
-def test_add_channel_failed_add_moderator(mock_staff_client, mocker):
-    """If add_moderator fails an exception should be raised"""
-    mock_staff_client.channels.add_moderator.return_value.raise_for_status.side_effect = HTTPError
-
-    with pytest.raises(ModeratorSyncException) as ex:
-        api.add_channel(
-            Search.from_dict({}),
-            "title",
-            "name",
-            "public_description",
-            "channel_type",
-            "mod",
-        )
-    assert ex.value.args[0] == "Error adding {moderator} as moderator to channel {channel}".format(
-        moderator='mod',
-        channel='name',
-    )
-
-    assert mock_staff_client.channels.create.called is True
-    mock_staff_client.channels.add_moderator.return_value.raise_for_status.assert_called_with()
-
-
-def test_add_channel_channel_already_exists(mock_staff_client):
+def test_add_channel_channel_already_exists(mock_staff_client, patched_users_api):
     """Channel already exists with that channel name"""
     mock_staff_client.channels.create.return_value.ok = True
     ChannelFactory.create(name="name")
@@ -423,6 +460,7 @@ def test_add_channel_channel_already_exists(mock_staff_client):
     public_description = "public description"
     channel_type = "private"
     input_search = Search.from_dict({"unmodified": "search"})
+    role = RoleFactory.create()
 
     with pytest.raises(IntegrityError):
         api.add_channel(
@@ -431,7 +469,7 @@ def test_add_channel_channel_already_exists(mock_staff_client):
             name=name,
             public_description=public_description,
             channel_type=channel_type,
-            moderator_username='mod',
+            program_id=role.program.id,
         )
 
     mock_staff_client.channels.create.assert_called_once_with(
@@ -442,27 +480,32 @@ def test_add_channel_channel_already_exists(mock_staff_client):
     )
 
 
-def test_add_users_to_channel(mocker):
+def test_add_users_to_channel(mocker, patched_users_api):
     """
     add_users_to_channel should add a number of users as contributors and subscribers, retrying if necessary
     """
-    def _make_fake_discussionuser(user_id):
-        """Helper function to make a mock DiscussionUser"""
-        return mocker.Mock(username='discussion_user_{}'.format(user_id))
-
-    stub = mocker.patch(
-        'discussions.api.create_or_update_discussion_user',
+    _, updated_stub = patched_users_api
+    add_subscriber_stub = mocker.patch(
+        'discussions.api.add_subscriber_to_channel',
         autospec=True,
-        side_effect=_make_fake_discussionuser
     )
-    add_to_channel_stub = mocker.patch('discussions.api.add_to_channel', autospec=True)
+    add_contributor_stub = mocker.patch(
+        'discussions.api.add_contributor_to_channel',
+        autospec=True,
+    )
 
     users = [UserFactory.create() for _ in range(5)]
     channel_name = 'channel_name'
+    updated_stub.reset_mock()
     api.add_users_to_channel(channel_name, [user.id for user in users])
     for user in users:
-        stub.assert_any_call(user.id)
-        add_to_channel_stub.assert_any_call(channel_name, "discussion_user_{}".format(user.id))
+        updated_stub.assert_any_call(user.discussion_user)
+        add_subscriber_stub.assert_any_call(channel_name, user.discussion_user.username)
+        add_contributor_stub.assert_any_call(channel_name, user.discussion_user.username)
+
+    assert updated_stub.call_count == len(users)
+    assert add_subscriber_stub.call_count == len(users)
+    assert add_contributor_stub.call_count == len(users)
 
 
 def test_add_users_to_channel_retry(patched_users_api, mocker):
@@ -479,16 +522,26 @@ def test_add_users_to_channel_retry(patched_users_api, mocker):
             failed_username = username
             raise TypeError
 
-    add_to_channel_stub = mocker.patch('discussions.api.add_to_channel', autospec=True, side_effect=_raise_once)
+    add_subscriber_stub = mocker.patch(
+        'discussions.api.add_subscriber_to_channel',
+        autospec=True,
+        side_effect=_raise_once,
+    )
+    add_contributor_stub = mocker.patch(
+        'discussions.api.add_contributor_to_channel',
+        autospec=True,
+    )
 
     users = [UserFactory.create() for _ in range(5)]
     channel_name = 'channel_name'
     api.add_users_to_channel(channel_name, [user.id for user in users])
     for user in users:
-        add_to_channel_stub.assert_any_call(channel_name, user.discussion_user.username)
+        add_contributor_stub.assert_any_call(channel_name, user.discussion_user.username)
+        add_subscriber_stub.assert_any_call(channel_name, user.discussion_user.username)
 
     # There should be one extra call, for the retry after failure
-    assert add_to_channel_stub.call_count == len(users) + 1
+    assert add_contributor_stub.call_count == len(users) + 1
+    assert add_subscriber_stub.call_count == len(users) + 1
 
 
 def test_add_users_to_channel_failed(patched_users_api, mocker):
@@ -506,7 +559,15 @@ def test_add_users_to_channel_failed(patched_users_api, mocker):
         elif username == failed_username:
             raise TypeError
 
-    add_to_channel_stub = mocker.patch('discussions.api.add_to_channel', autospec=True, side_effect=_raise_once)
+    add_subscriber_stub = mocker.patch(
+        'discussions.api.add_subscriber_to_channel',
+        side_effect=_raise_once,
+        autospec=True,
+    )
+    add_contributor_stub = mocker.patch(
+        'discussions.api.add_contributor_to_channel',
+        autospec=True,
+    )
 
     users = [UserFactory.create() for _ in range(5)]
     with pytest.raises(DiscussionUserSyncException) as ex:
@@ -516,4 +577,49 @@ def test_add_users_to_channel_failed(patched_users_api, mocker):
     )
 
     # there are 3 retries
-    assert add_to_channel_stub.call_count == 2 + len(users)
+    assert add_subscriber_stub.call_count == 2 + len(users)
+    assert add_contributor_stub.call_count == 2 + len(users)
+
+
+def test_add_moderators_to_channel(mocker, patched_users_api):
+    """add_moderators_to_channel should add staff or instructors as moderators and subscribers"""
+    channel = ChannelFactory.create()
+    mods = []
+    for _ in range(3):
+        program = ChannelProgramFactory.create(channel=channel).program
+        mods += [RoleFactory.create(program=program).user for _ in range(5)]
+
+        for __ in range(5):
+            # Add some users to the channel to show that being part of the channel is not enough to be added as a mod
+            ProgramEnrollmentFactory.create(program=program)
+
+    _, updated_stub = patched_users_api
+    updated_stub.reset_mock()
+    add_subscriber_stub = mocker.patch('discussions.api.add_subscriber_to_channel', autospec=True)
+    add_moderator_stub = mocker.patch('discussions.api.add_moderator_to_channel', autospec=True)
+    api.add_moderators_to_channel(channel.name)
+
+    for mod in mods:
+        add_subscriber_stub.assert_any_call(channel.name, mod.discussion_user.username)
+        add_moderator_stub.assert_any_call(channel.name, mod.discussion_user.username)
+        updated_stub.assert_any_call(mod.discussion_user)
+
+    assert add_subscriber_stub.call_count == len(mods)
+    assert add_moderator_stub.call_count == len(mods)
+    assert updated_stub.call_count == len(mods)
+
+
+def test_add_moderator_to_channel(mock_staff_client):
+    """add_moderator_to_channel should add a moderator to a channel"""
+    api.add_moderator_to_channel('channel', 'user')
+
+    mock_staff_client.channels.add_moderator.assert_called_once_with('channel', 'user')
+
+
+def test_add_moderator_to_channel_failed(mock_staff_client):
+    """If there's a non-2xx status code, add_moderator_to_channel raise an exception"""
+    mock_staff_client.channels.add_moderator.return_value.raise_for_status.side_effect = HTTPError
+    with pytest.raises(ModeratorSyncException):
+        api.add_moderator_to_channel('channel', 'user')
+
+    mock_staff_client.channels.add_moderator.assert_called_once_with('channel', 'user')
