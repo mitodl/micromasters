@@ -136,13 +136,6 @@ describe("Course Status Messages", () => {
       assert.isTrue(makeCouponTargetMessageStub.calledWith(coupon))
     })
 
-    it("should return Nothing if the user paid and the course is running", () => {
-      makeRunCurrent(course.runs[0])
-      makeRunPaid(course.runs[0])
-      makeRunEnrolled(course.runs[0])
-      assertIsNothing(calculateMessages(calculateMessagesProps))
-    })
-
     it("should nag unpaid auditors to pay", () => {
       makeRunCurrent(course.runs[0])
       makeRunEnrolled(course.runs[0])
@@ -159,6 +152,52 @@ describe("Course Status Messages", () => {
           COURSE_ACTION_PAY
         )
       )
+    })
+
+    describe("should prompt users who are paid and enrolled in the class, if applicable", () => {
+      beforeEach(() => {
+        makeRunCurrent(course.runs[0])
+        makeRunPaid(course.runs[0])
+        makeRunEnrolled(course.runs[0])
+      })
+
+      it("should prompt to schedule exam", () => {
+        course.can_schedule_exam = true
+
+        assertIsJust(calculateMessages(calculateMessagesProps), [
+          {
+            message: "Click above to schedule an exam with Pearson."
+          }
+        ])
+      })
+
+      it("should prompt to sign up for future", () => {
+        course.can_schedule_exam = false
+        course.exams_schedulable_in_future = [
+          moment()
+            .add(2, "day")
+            .format()
+        ]
+
+        assertIsJust(calculateMessages(calculateMessagesProps), [
+          {
+            message: "You can sign up to take the exam starting on " +
+              `on ${formatDate(course.exams_schedulable_in_future[0])}.`
+          }
+        ])
+      })
+
+      it("should inform that no exam is avaiable", () => {
+        course.can_schedule_exam = false
+        course.exams_schedulable_in_future = []
+
+        assertIsJust(calculateMessages(calculateMessagesProps), [
+          {
+            message: "There are currently no exams available for scheduling. Please check back later."
+          }
+        ])
+      })
+
     })
 
     describe("should prompt users who pass the class to take the exam, if applicable", () => {
