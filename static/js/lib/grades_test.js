@@ -5,13 +5,10 @@ import { makeCourse, makeProctoredExamResult } from "../factories/dashboard"
 import {
   getLargestExamGrade,
   getLargestEdXGrade,
-  calculateFinalGrade,
   hasPassingExamGrade,
   hasFailingExamGrade,
   hasPassedCourseRun,
   passedCourse,
-  COURSE_GRADE_WEIGHT,
-  EXAM_GRADE_WEIGHT
 } from "./grades"
 import {
   STATUS_PASSED,
@@ -56,36 +53,6 @@ describe("Grades library", () => {
       course.runs[0].final_grade = 39
       course.runs[1].final_grade = 92
       assertIsJust(getLargestEdXGrade(course), 92)
-    })
-  })
-
-  describe("calculateFinalGrade", () => {
-    it("returns Nothing if there are no grades", () => {
-      assertIsNothing(calculateFinalGrade(course))
-    })
-
-    it("returns Nothing if just exam grades are missing", () => {
-      course.runs.forEach(run => {
-        run.final_grade = Math.floor(Math.random() * 100)
-      })
-      assertIsNothing(calculateFinalGrade(course))
-    })
-
-    it("returns Nothing if just course grades are missing", () => {
-      course.proctorate_exams_grades = [makeProctoredExamResult()]
-      assertIsNothing(calculateFinalGrade(course))
-    })
-
-    it("returns Just if both grade types are present", () => {
-      course.runs[0].final_grade = Math.floor(Math.random() * 100)
-      course.proctorate_exams_grades = [makeProctoredExamResult()]
-
-      assertIsJust(
-        calculateFinalGrade(course),
-        COURSE_GRADE_WEIGHT * (course.runs[0].final_grade: any) +
-          EXAM_GRADE_WEIGHT *
-            (course.proctorate_exams_grades[0].percentage_grade * 100)
-      )
     })
   })
 

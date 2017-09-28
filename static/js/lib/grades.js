@@ -29,16 +29,6 @@ export const getLargestEdXGrade = R.compose(
   getm("runs")
 )
 
-export const COURSE_GRADE_WEIGHT = 0.4
-
-export const EXAM_GRADE_WEIGHT = 0.6
-
-// calculateFinalGrade :: Course -> Maybe Number
-export const calculateFinalGrade = R.converge(S.lift2(R.add), [
-  R.compose(S.map(R.multiply(COURSE_GRADE_WEIGHT)), getLargestEdXGrade),
-  R.compose(S.map(R.multiply(EXAM_GRADE_WEIGHT)), getLargestExamGrade)
-])
-
 export const hasPassingExamGrade = R.compose(
   R.any(R.propEq("passed", true)),
   R.propOr([], "proctorate_exams_grades")

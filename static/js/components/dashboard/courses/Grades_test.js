@@ -10,7 +10,6 @@ import {
   makeCourse,
   makeProctoredExamResult
 } from "../../../factories/dashboard"
-import { COURSE_GRADE_WEIGHT, EXAM_GRADE_WEIGHT } from "../../../lib/grades"
 import { STATUS_PASSED, STATUS_OFFERED } from "../../../constants"
 import { EXAM_GRADE, EDX_GRADE } from "../../../containers/DashboardPage"
 
