@@ -118,7 +118,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     ])
   }
 
-  // Course is running, user has already paid, we show no messages
+  // Course is running, user has already paid,
   if (courseUpcomingOrCurrent(firstRun) && paid) {
     return S.Just([
       {

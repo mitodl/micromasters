@@ -29,7 +29,7 @@ import {
   makeRunDueSoon,
   makeRunFailed
 } from "./test_util"
-import { assertIsJust, assertIsNothing } from "../../../lib/test_utils"
+import { assertIsJust } from "../../../lib/test_utils"
 import {
   COURSE_ACTION_PAY,
   COURSE_ACTION_REENROLL,
@@ -197,7 +197,6 @@ describe("Course Status Messages", () => {
           }
         ])
       })
-
     })
 
     describe("should prompt users who pass the class to take the exam, if applicable", () => {
