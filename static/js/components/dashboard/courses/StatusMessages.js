@@ -61,13 +61,15 @@ type CalculateMessagesProps = {
 }
 
 const messageForNotAttemptedExam = (course: Course) => {
-  let message = "There are currently no exams available for scheduling. Please check back later."
+  let message =
+    "There are currently no exams available for scheduling. Please check back later."
 
   if (course.can_schedule_exam) {
     message = "Click above to schedule an exam with Pearson."
   } else if (!R.isEmpty(course.exams_schedulable_in_future)) {
-    message = "You can sign up to take the exam starting on " +
-              `on ${formatDate(course.exams_schedulable_in_future[0])}.`
+    message =
+      "You can sign up to take the exam starting on " +
+      `on ${formatDate(course.exams_schedulable_in_future[0])}.`
   }
   return message
 }

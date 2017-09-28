@@ -181,7 +181,8 @@ describe("Course Status Messages", () => {
 
         assertIsJust(calculateMessages(calculateMessagesProps), [
           {
-            message: "You can sign up to take the exam starting on " +
+            message:
+              "You can sign up to take the exam starting on " +
               `on ${formatDate(course.exams_schedulable_in_future[0])}.`
           }
         ])
@@ -193,7 +194,8 @@ describe("Course Status Messages", () => {
 
         assertIsJust(calculateMessages(calculateMessagesProps), [
           {
-            message: "There are currently no exams available for scheduling. Please check back later."
+            message:
+              "There are currently no exams available for scheduling. Please check back later."
           }
         ])
       })
