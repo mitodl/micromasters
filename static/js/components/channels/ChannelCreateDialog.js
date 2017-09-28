@@ -121,9 +121,8 @@ export default class ChannelCreateDialog extends React.Component {
             />
             {this.showValidationError("name")}
             <p>
-              No spaces, e.g., "books" or "bookclub". Avoid using solely
-              trademarked names, e.g. use "FansOfAcme" instead of "Acme". Once
-              chosen, this name cannot be changed.
+              No spaces, e.g., "lectures" or "lectureDiscussion". Once chosen,
+              this cannot be changed. This only shows up in the channel URL.
             </p>
           </Cell>
           <Cell col={12}>

@@ -4,7 +4,7 @@ import R from "ramda"
 import { checkProp, checkIsNotNilOrEmpty, mergeValidations } from "./profile"
 
 export const CHANNEL_NAME_ERROR = `
-Channel name must be between 3 and 21 characters long,
+Must be between 3 and 21 characters, without spaces, 
 using the characters A-Z, a-z, 0-9, _, and cannot start with _.
 `
 
