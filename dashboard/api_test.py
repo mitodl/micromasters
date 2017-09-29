@@ -1709,7 +1709,7 @@ class ExamAttemptsTests(CourseTests):
 
 
 @ddt.ddt
-class GetCertificateForCourse(CourseTests):
+class GetCertificateForCourseTests(CourseTests):
     """Tests get_certificate_url for a course"""
 
     def setUp(self):
@@ -1775,7 +1775,7 @@ class GetCertificateForCourse(CourseTests):
         assert api.get_certificate_url(self.mmtrack, self.course) == certificate_url
 
 
-class GetOverallGradeForCourse(CourseTests):
+class GetOverallGradeForCourseTests(CourseTests):
     """Tests get_overall_final_grade_for_course for a course"""
 
     def setUp(self):
@@ -1794,7 +1794,7 @@ class GetOverallGradeForCourse(CourseTests):
         best_exam = ProctoredExamGradeFactory(
             user=self.user, course=self.course, percentage_grade=0.7
         )
-        self.mmtrack.get_best_proctorate_exam_grade.return_value = best_exam
+        self.mmtrack.get_best_proctored_exam_grade.return_value = best_exam
         assert api.get_overall_final_grade_for_course(self.mmtrack, self.course) == '74'
 
     def test_no_final_grade(self):
@@ -1808,7 +1808,7 @@ class GetOverallGradeForCourse(CourseTests):
 
         FinalGradeFactory.create(user=self.user, course_run=self.course_run, grade=0.8, passed=True)
         self.mmtrack.get_passing_final_grades_for_course.return_value = FinalGrade.objects.filter(user=self.user)
-        self.mmtrack.get_best_proctorate_exam_grade.return_value = None
+        self.mmtrack.get_best_proctored_exam_grade.return_value = None
         assert api.get_overall_final_grade_for_course(self.mmtrack, self.course) == '80'
 
     def test_no_passing_exam(self):
@@ -1817,5 +1817,5 @@ class GetOverallGradeForCourse(CourseTests):
         FinalGradeFactory.create(user=self.user, course_run=self.course_run, grade=0.8, passed=True)
         ExamRunFactory.create(course=self.course)
         self.mmtrack.get_passing_final_grades_for_course.return_value = FinalGrade.objects.filter(user=self.user)
-        self.mmtrack.get_best_proctorate_exam_grade.return_value = None
+        self.mmtrack.get_best_proctored_exam_grade.return_value = None
         assert api.get_overall_final_grade_for_course(self.mmtrack, self.course) == ''

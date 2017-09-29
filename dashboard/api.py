@@ -519,7 +519,7 @@ def get_overall_final_grade_for_course(mmtrack, course):
     if not course.has_exam:
         return str(round(best_grade.grade_percent))
 
-    best_exam = mmtrack.get_best_proctorate_exam_grade(course)
+    best_exam = mmtrack.get_best_proctored_exam_grade(course)
     if best_exam is None:
         return ""
 

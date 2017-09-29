@@ -418,7 +418,7 @@ class MMTrack:
             )
             return ExamProfile.PROFILE_INVALID
 
-    def get_best_proctorate_exam_grade(self, course):
+    def get_best_proctored_exam_grade(self, course):
 
         """
         Returns the best exam grade
@@ -429,7 +429,9 @@ class MMTrack:
         Returns:
             grades.models.ProctoredExamGrade: the best exam grade
         """
-        return self.get_course_proctorate_exam_results(course).filter(passed=True).order_by('percentage_grade').last()
+        return self.get_course_proctorate_exam_results(course).filter(
+            passed=True
+        ).order_by('-percentage_grade').first()
 
     def get_course_proctorate_exam_results(self, course):
         """
