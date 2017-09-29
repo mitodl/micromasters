@@ -8,7 +8,7 @@ import {
   hasPassingExamGrade,
   hasFailingExamGrade,
   hasPassedCourseRun,
-  passedCourse,
+  passedCourse
 } from "./grades"
 import {
   STATUS_PASSED,
@@ -115,7 +115,7 @@ describe("Grades library", () => {
     })
 
     it("should return false otherwise", () => {
-      [
+      ;[
         STATUS_NOT_PASSED,
         STATUS_OFFERED,
         STATUS_CAN_UPGRADE,
