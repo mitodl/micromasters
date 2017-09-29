@@ -46,9 +46,9 @@ def generate_course_certificates_for_fa_students():
         .annotate(exam_run_count=Count('course_run__course__exam_runs'))
         .values(
             'id',
-            'user__id',
+            'user',
             'user__username',
-            'course_run__course__id',
+            'course_run__course',
             'course_run__edx_course_key',
             'exam_run_count',
         )
@@ -60,9 +60,10 @@ def generate_course_certificates_for_fa_students():
     final_grades_to_certify = filter(
         lambda final_grade_dict: (
             final_grade_dict['exam_run_count'] == 0 or
-            ProctoredExamGrade.objects.filter(
-                user_id=final_grade_dict['user__id'],
-                course_id=final_grade_dict['course_run__course__id'],
+            ProctoredExamGrade.for_user_course(
+                final_grade_dict['user'],
+                final_grade_dict['course_run__course'])
+            .filter(
                 passed=True
             ).exists()
         ),
