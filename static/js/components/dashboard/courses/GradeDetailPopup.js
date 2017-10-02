@@ -14,7 +14,8 @@ import { formatGrade } from "../util"
 import {
   STATUS_NOT_PASSED,
   STATUS_PASSED,
-  DASHBOARD_FORMAT
+  STATUS_CURRENTLY_ENROLLED,
+  DASHBOARD_FORMAT,
 } from "../../../constants"
 import type { GradeType } from "../../../containers/DashboardPage"
 import { EDX_GRADE } from "../../../containers/DashboardPage"
@@ -49,6 +50,9 @@ const runStatus = (courseRun: CourseRun): React$Element<*> => {
   }
   if (courseRun.status === STATUS_PASSED) {
     return passed()
+  }
+  if (courseRun.status === STATUS_CURRENTLY_ENROLLED) {
+    return <div className="status audited">Auditing</div>
   }
   return <div className="status audited">Audited</div>
 }

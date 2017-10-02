@@ -11,7 +11,7 @@ import {
   makeCourse,
   makeProctoredExamResult
 } from "../../../factories/dashboard"
-import { makeRunPassed, makeRunFailed } from "./test_util"
+import { makeRunPassed, makeRunFailed, makeRunEnrolled } from "./test_util"
 import { EXAM_GRADE, EDX_GRADE } from "../../../containers/DashboardPage"
 import { formatGrade } from "../util"
 
@@ -46,6 +46,18 @@ describe("GradeDetailPopup", () => {
       .forEach((node, idx) =>
         assert.equal(node.text(), `${course.runs[idx].title}Audited`)
       )
+  })
+
+  it("shows info for a currently enrolled course", () => {
+    makeRunEnrolled(course.runs[0])
+    const wrapper = renderDetailPopup()
+    assert.equal(
+      wrapper
+        .find(".course-run-row")
+        .first()
+        .text(),
+      `${course.runs[0].title}Auditing`
+    )
   })
 
   it("shows info for a passed course", () => {
