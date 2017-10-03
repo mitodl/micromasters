@@ -661,18 +661,21 @@ class EmailBouncedViewTests(APITestCase, MockedESTestCase):
         # api will always response success
         assert resp_post.status_code == status.HTTP_200_OK
 
+    @patch('mail.views.EmailBouncedView.verify')
     @patch('mail.views.log')
-    def test_email_bounced_raise_exception(self, mock_logger):
+    def test_email_bounced_raise_exception(self, mock_logger, mocked_verify):
         """Tests that api logs error when email is bounced"""
         data = {
             "event": "bounced",
             "recipient": "c@example.com",
             "error": "Unable to send email"
         }
-        error_msg = 'Email to course team: {to} is bounced with an error message {error}'.format(
+        error_msg = 'Email to course team: {to} is bounced with an error message {error}, headers: NA'.format(
             to=data["recipient"],
             error=data["error"]
         )
+        mocked_verify.return_value = True
+
         factory = RequestFactory()
         request = factory.post(self.url, data=data)
         EmailBouncedView().post(request)

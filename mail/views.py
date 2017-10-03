@@ -2,6 +2,7 @@
 Views for email REST APIs
 """
 import logging
+import hashlib, hmac
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -256,6 +257,19 @@ class EmailBouncedView(APIView):
             )
         )
 
+    @classmethod
+    def verify(cls, token, timestamp, signature, api_key=settings.MAILGUN_KEY):
+        """Verify signature of event for security"""
+        if timestamp is not None and signature is not None and token is not None:
+            hmac_digest = hmac.new(
+                key=api_key,
+                msg='{}{}'.format(timestamp, token),
+                digestmod=hashlib.sha256
+            ).hexdigest()
+            return hmac.compare_digest(unicode(signature), unicode(hmac_digest))
+
+        return False
+
     def post(self, request, *args, **kargs):  # pylint: disable=unused-argument
         """
         POST method handler
@@ -263,12 +277,23 @@ class EmailBouncedView(APIView):
         event = request.POST.get("event", None)
         recipient = request.POST.get("recipient", None)
         error = request.POST.get("error", None)
+        message_headers = request.POST.get("message-headers", "NA")
+        timestamp = request.POST.get("timestamp", None)
+        signature = request.POST.get("signature", None)
+        token = request.POST.get("token", None)
 
-        if event == "bounced" and EmailBouncedView.is_course_team_email(recipient):
-            error_msg = 'Email to course team: {to} is bounced with an error message {error}'.format(
-                to=recipient,
-                error=error
-            )
-            log.error(error_msg)
+        if EmailBouncedView.verify(token, timestamp, signature):
+            if event == "bounced" and EmailBouncedView.is_course_team_email(recipient):
+                error_msg = 'Email to course team: {to} is bounced ' \
+                            'with an error message {error}, headers: {headers}'.format(
+                    to=recipient,
+                    error=error,
+                    headers=message_headers
+                )
+                log.error(error_msg)
+            else:
+                log.debug("Some event: %s from mailgun webhook", event)
+        else:
+            log.debug("invalid data from mailgun webhook")
 
         return Response(status=status.HTTP_200_OK)
