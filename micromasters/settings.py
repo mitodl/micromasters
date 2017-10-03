@@ -371,7 +371,7 @@ LOGGING = {
             'propagate': True,
         },
         'urllib3': {
-            'level': 'INFO',
+            'level': ES_LOG_LEVEL,
         },
         'elasticsearch': {
             'level': ES_LOG_LEVEL,
