@@ -79,7 +79,7 @@ export const withChannelCreateDialog = (WrappedComponent: ReactClass<*>) => {
 
           if (SETTINGS.open_discussions_redirect_url) {
             const channelUrl = `${SETTINGS.open_discussions_redirect_url}channel/${channel.name}`
-            window.open(channelUrl, "_blank")
+            window.open(channelUrl, "_self")
           }
 
           return dispatch(
