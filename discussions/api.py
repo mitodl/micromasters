@@ -230,8 +230,6 @@ def remove_subscriber_from_channel(channel_name, discussion_username):
     """
     admin_client = get_staff_client()
 
-    # If the channel is private and the user is not a contributor, their subscription status will always
-    # look like it's false. To work around this we always remove the subscriber first.
     try:
         admin_client.channels.remove_subscriber(channel_name, discussion_username).raise_for_status()
     except HTTPError as ex:
@@ -263,8 +261,8 @@ def remove_from_channel(channel_name, discussion_username):
         channel_name (str): An open-discussions channel
         discussion_username (str): The username used by open-discussions
     """
-    # This is done in this order because a user can't be removed as a subscriber
-    # if they are no longer a contributor
+    # If the channel is private and the user is not a contributor, their subscription status will always
+    # look like it's false. To work around this we always remove the subscriber first.
     remove_subscriber_from_channel(channel_name, discussion_username)
     remove_contributor_from_channel(channel_name, discussion_username)
 
@@ -302,19 +300,13 @@ def sync_user_to_channels(user_id):
 
     membership_channels = Channel.objects.filter(id__in=membership_channel_ids)
     for channel in membership_channels:
-        # This is done in this order because a user cannot be added as a subscriber
-        # to a private channel without first being a contributor
-        add_contributor_to_channel(channel.name, discussion_user.username)
-        add_subscriber_to_channel(channel.name, discussion_user.username)
+        add_to_channel(channel.name, discussion_user.username)
 
     nonmembership_channels = Channel.objects.filter(
         id__in=all_channel_ids.difference(membership_channel_ids)
     )
     for channel in nonmembership_channels:
-        # This is done in this order because a user can't be removed as a subscriber
-        # if they are no longer a contributor
-        remove_subscriber_from_channel(channel.name, discussion_user.username)
-        remove_contributor_from_channel(channel.name, discussion_user.username)
+        remove_from_channel(channel.name, discussion_user.username)
 
 
 def add_channel(
@@ -390,10 +382,7 @@ def add_users_to_channel(channel_name, user_ids, retries=3):
             # and hasn't yet actually been created
             discussion_user = create_or_update_discussion_user(user_id)
 
-            # This is done in this order because a user cannot be added as a subscriber
-            # to a private channel without first being a contributor
-            add_contributor_to_channel(channel_name, discussion_user.username)
-            add_subscriber_to_channel(channel_name, discussion_user.username)
+            add_to_channel(channel_name, discussion_user.username)
         except:  # pylint: disable=bare-except
             log.exception(
                 "Error syncing user channel membership for user id #%s, channel %s",
