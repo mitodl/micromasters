@@ -2,7 +2,6 @@
 Views for email REST APIs
 """
 import logging
-import hashlib, hmac
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -31,6 +30,7 @@ from mail.permissions import (
     UserCanMessageCourseTeamPermission,
     UserCanMessageLearnersPermission,
     UserCanMessageSpecificLearnerPermission,
+    MailGunWebHookPermission,
 )
 from mail.serializers import GenericMailSerializer, AutomaticEmailSerializer
 from mail.utils import generate_mailgun_response_json
@@ -201,6 +201,7 @@ class CourseTeamMailView(GenericAPIView):
             course=course,
             subject=serializer.data['email_subject'],
             body=serializer.data['email_body'],
+            log_error_on_bounce=True
         )
         return Response(
             status=mailgun_response.status_code,
@@ -245,30 +246,7 @@ class EmailBouncedView(APIView):
     """
     View class that handles HTTP requests to course team mail API
     """
-    permission_classes = (permissions.AllowAny, )
-
-    @classmethod
-    def is_course_team_email(cls, recipient):
-        """checks if recipient is valid course team email"""
-        return (
-            recipient is not None and (
-                Course.objects.filter(contact_email=recipient).exists() or
-                settings.MAILGUN_RECIPIENT_OVERRIDE == recipient
-            )
-        )
-
-    @classmethod
-    def verify(cls, token, timestamp, signature, api_key=settings.MAILGUN_KEY):
-        """Verify signature of event for security"""
-        if timestamp is not None and signature is not None and token is not None:
-            hmac_digest = hmac.new(
-                key=api_key,
-                msg='{}{}'.format(timestamp, token),
-                digestmod=hashlib.sha256
-            ).hexdigest()
-            return hmac.compare_digest(unicode(signature), unicode(hmac_digest))
-
-        return False
+    permission_classes = (MailGunWebHookPermission, )
 
     def post(self, request, *args, **kargs):  # pylint: disable=unused-argument
         """
@@ -278,22 +256,18 @@ class EmailBouncedView(APIView):
         recipient = request.POST.get("recipient", None)
         error = request.POST.get("error", None)
         message_headers = request.POST.get("message-headers", "NA")
-        timestamp = request.POST.get("timestamp", None)
-        signature = request.POST.get("signature", None)
-        token = request.POST.get("token", None)
+        log_error_on_bounce = request.POST.get("log_error_on_bounce", False)
 
-        if EmailBouncedView.verify(token, timestamp, signature):
-            if event == "bounced" and EmailBouncedView.is_course_team_email(recipient):
-                error_msg = 'Email to course team: {to} is bounced ' \
-                            'with an error message {error}, headers: {headers}'.format(
+        if event == "bounced" and log_error_on_bounce:
+            error_msg = (
+                'Email to course team: {to} is bounced with an error message {error}, headers: {headers}'.format(
                     to=recipient,
                     error=error,
                     headers=message_headers
                 )
-                log.error(error_msg)
-            else:
-                log.debug("Some event: %s from mailgun webhook", event)
+            )
+            log.error(error_msg)
         else:
-            log.debug("invalid data from mailgun webhook")
+            log.debug("Some event: %s from mailgun webhook", event)
 
         return Response(status=status.HTTP_200_OK)

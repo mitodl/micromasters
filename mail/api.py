@@ -90,7 +90,7 @@ class MailgunClient:
     @classmethod
     def send_batch(cls, subject, body, recipients,  # pylint: disable=too-many-arguments, too-many-locals
                    sender_address=None, sender_name=None, chunk_size=settings.MAILGUN_BATCH_CHUNK_SIZE,
-                   raise_for_status=True):
+                   raise_for_status=True, log_error_on_bounce=False):
         """
         Sends a text email to a list of recipients (one email per recipient) via batch.
 
@@ -105,6 +105,7 @@ class MailgunClient:
             sender_name (str): Sender name
             chunk_size (int): The maximum amount of emails to be sent at the same time
             raise_for_status (bool): If true, raise for non 2xx statuses
+            log_error_on_bounce (bool): App will log bounce email event when True
 
         Returns:
             list:
@@ -151,6 +152,9 @@ class MailgunClient:
                 'html': filter_recipient_variables(body),
                 'text': filter_recipient_variables(fallback_text),
                 'recipient-variables': json.dumps(chunk_dict),
+                'v:my-custom-data': {
+                    "log_error_on_bounce": log_error_on_bounce
+                }
             }
             if sender_address:
                 params['from'] = sender_address
@@ -180,7 +184,8 @@ class MailgunClient:
     @classmethod
     def send_individual_email(cls, subject, body, recipient,  # pylint: disable=too-many-arguments
                               recipient_variables=None,
-                              sender_address=None, sender_name=None, raise_for_status=True):
+                              sender_address=None, sender_name=None, raise_for_status=True, log_error_on_bounce=False
+    ):
         """
         Sends a text email to a single recipient.
 
@@ -192,6 +197,7 @@ class MailgunClient:
             sender_address (str): Sender email address
             sender_name (str): Sender name
             raise_for_status (bool): If true and a non-zero response was received,
+            log_error_on_bounce (bool): App will log bounce email event when True
 
         Returns:
             requests.Response: response from Mailgun
@@ -204,6 +210,7 @@ class MailgunClient:
             sender_address=sender_address,
             sender_name=sender_name,
             raise_for_status=raise_for_status,
+            log_error_on_bounce=log_error_on_bounce
         )
         return responses[0]
 
@@ -240,7 +247,7 @@ class MailgunClient:
 
     @classmethod
     def send_course_team_email(  # pylint: disable=too-many-arguments
-            cls, user, course, subject, body, raise_for_status=True,
+            cls, user, course, subject, body, raise_for_status=True, log_error_on_bounce=False
     ):
         """
        Sends a text email from a user to a course team.
@@ -251,7 +258,9 @@ class MailgunClient:
             subject (str): Email subject
             body (str): Email body
             raise_for_status (bool): If true and we received a non 2xx status code from Mailgun, raise an exception
-        Returns:
+            log_error_on_bounce (bool): App will log bounce email event when True
+
+       Returns:
             requests.Response: HTTP Response from Mailgun
        """
         if not course.contact_email:
@@ -266,6 +275,7 @@ class MailgunClient:
             sender_address=user.email,
             sender_name=user.profile.display_name,
             raise_for_status=raise_for_status,
+            log_error_on_bounce=log_error_on_bounce
         )
         return response
 

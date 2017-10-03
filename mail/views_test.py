@@ -2,10 +2,12 @@
 Tests for HTTP email API views
 """
 from unittest.mock import Mock, patch
+import ddt
 
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save
+from django.test import override_settings
 from django.test.client import RequestFactory
 from requests.exceptions import HTTPError
 from rest_framework import status
@@ -28,6 +30,7 @@ from financialaid.factories import FinancialAidFactory, TierProgramFactory
 from mail.exceptions import SendBatchException
 from mail.factories import AutomaticEmailFactory
 from mail.models import SentAutomaticEmail, AutomaticEmail
+from mail.permissions import MailGunWebHookPermission
 from mail.serializers import AutomaticEmailSerializer
 from mail.views import EmailBouncedView
 from profiles.factories import (
@@ -640,16 +643,16 @@ class FinancialAidMailViewTests(FinancialAidBaseTestCase, APITestCase):
         assert resp.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
+@ddt.ddt
 class EmailBouncedViewTests(APITestCase, MockedESTestCase):
     """Test email bounce view web hook"""
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
         cls.url = reverse('email_bounced_view')
-        CourseFactory.create(contact_email='c@example.com')
 
-    def test_email_bounced_hook_api(self):
-        """Test that webhook api returns status code 200"""
+    def test_email_bounced_hook_api_fail(self):
+        """Test that webhook api returns status code 403"""
         resp_post = self.client.post(
             self.url,
             data={
@@ -658,23 +661,65 @@ class EmailBouncedViewTests(APITestCase, MockedESTestCase):
                 "error": "Unable to send email"
             }
         )
-        # api will always response success
-        assert resp_post.status_code == status.HTTP_200_OK
+        # api returns status code 403 because signature is not provided
+        assert resp_post.status_code == status.HTTP_403_FORBIDDEN
 
-    @patch('mail.views.EmailBouncedView.verify')
+    @override_settings(MAILGUN_KEY="key-12345")
+    @ddt.data(
+        ("d717895b90e49108c74df5e0cecf0d80b20e2fb2ed836bfa9209b723d57b2e77", status.HTTP_200_OK),
+        ("f717895b90e49108c74df5e0cecf0d80b20e2fb2ed836bfa9209b723d57b2e88", status.HTTP_403_FORBIDDEN),
+    )
+    @ddt.unpack
+    def test_email_bounced_hook_api_success(self, signature, status_code):
+        """Test that webhook api returns status code 200 when valid data"""
+        resp_post = self.client.post(
+            self.url,
+            data={
+                "event": "bounced",
+                "recipient": "c@example.com",
+                "error": "Unable to send email",
+                "timestamp": 1507117424,
+                "token": "43f17fa66f43f64ee7f6f0927b03c5b60a4c5eb88cfff4b2c1",
+                "signature": signature
+            }
+        )
+        # api returns status code 200 when signature is valid
+        assert resp_post.status_code == status_code
+
+    @override_settings(MAILGUN_KEY="key-12345")
+    @ddt.data(
+        ("d717895b90e49108c74df5e0cecf0d80b20e2fb2ed836bfa9209b723d57b2e77", True),
+        ("f717895b90e49108c74df5e0cecf0d80b20e2fb2ed836bfa9209b723d57b2e88", False),
+    )
+    @ddt.unpack
+    def test_permission(self, signature, has_permission):
+        """Test permission on webhook api """
+        data = {
+            "event": "bounced",
+            "recipient": "c@example.com",
+            "error": "Unable to send email",
+            "timestamp": 1507117424,
+            "token": "43f17fa66f43f64ee7f6f0927b03c5b60a4c5eb88cfff4b2c1",
+            "signature": signature
+        }
+
+        factory = RequestFactory()
+        request = factory.post(self.url, data=data)
+        assert MailGunWebHookPermission().has_permission(request, None) == has_permission
+
     @patch('mail.views.log')
-    def test_email_bounced_raise_exception(self, mock_logger, mocked_verify):
+    def test_email_bounced_raise_exception(self, mock_logger):
         """Tests that api logs error when email is bounced"""
         data = {
             "event": "bounced",
             "recipient": "c@example.com",
-            "error": "Unable to send email"
+            "error": "Unable to send email",
+            "log_error_on_bounce": True
         }
         error_msg = 'Email to course team: {to} is bounced with an error message {error}, headers: NA'.format(
             to=data["recipient"],
             error=data["error"]
         )
-        mocked_verify.return_value = True
 
         factory = RequestFactory()
         request = factory.post(self.url, data=data)
