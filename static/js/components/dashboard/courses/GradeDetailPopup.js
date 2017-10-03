@@ -15,7 +15,7 @@ import {
   STATUS_NOT_PASSED,
   STATUS_PASSED,
   STATUS_CURRENTLY_ENROLLED,
-  DASHBOARD_FORMAT,
+  DASHBOARD_FORMAT
 } from "../../../constants"
 import type { GradeType } from "../../../containers/DashboardPage"
 import { EDX_GRADE } from "../../../containers/DashboardPage"
