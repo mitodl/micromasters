@@ -6,6 +6,7 @@ from unittest.mock import Mock, patch
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.db.models.signals import post_save
+from django.test.client import RequestFactory
 from requests.exceptions import HTTPError
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -28,6 +29,7 @@ from mail.exceptions import SendBatchException
 from mail.factories import AutomaticEmailFactory
 from mail.models import SentAutomaticEmail, AutomaticEmail
 from mail.serializers import AutomaticEmailSerializer
+from mail.views import EmailBouncedView
 from profiles.factories import (
     ProfileFactory,
     UserFactory,
@@ -636,3 +638,44 @@ class FinancialAidMailViewTests(FinancialAidBaseTestCase, APITestCase):
         with patch('mail.views.MailgunClient.send_batch', side_effect=ImproperlyConfigured):
             resp = self.client.post(self.url, data=self.request_data, format='json')
         assert resp.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+
+
+class EmailBouncedViewTests(APITestCase, MockedESTestCase):
+    """Test email bounce view web hook"""
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse('email_bounced_view')
+        CourseFactory.create(contact_email='c@example.com')
+
+    def test_email_bounced_hook_api(self):
+        """Test that webhook api returns status code 200"""
+        resp_post = self.client.post(
+            self.url,
+            data={
+                "event": "bounced",
+                "recipient": "c@example.com",
+                "error": "Unable to send email"
+            }
+        )
+        # api will always response success
+        assert resp_post.status_code == status.HTTP_200_OK
+
+    @patch('mail.views.log')
+    def test_email_bounced_raise_exception(self, mock_logger):
+        """Tests that api logs error when email is bounced"""
+        data = {
+            "event": "bounced",
+            "recipient": "c@example.com",
+            "error": "Unable to send email"
+        }
+        error_msg = 'Email to course team: {to} is bounced with an error message {error}'.format(
+            to=data["recipient"],
+            error=data["error"]
+        )
+        factory = RequestFactory()
+        request = factory.post(self.url, data=data)
+        EmailBouncedView().post(request)
+
+        # assert that error message is logged
+        mock_logger.error.assert_called_with(error_msg)

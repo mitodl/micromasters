@@ -3,6 +3,7 @@ Views for email REST APIs
 """
 import logging
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from rest_framework import (
     authentication,
@@ -237,3 +238,37 @@ class FinancialAidMailView(GenericAPIView):
             status=mailgun_response.status_code,
             data=generate_mailgun_response_json(mailgun_response)
         )
+
+
+class EmailBouncedView(APIView):
+    """
+    View class that handles HTTP requests to course team mail API
+    """
+    permission_classes = (permissions.AllowAny, )
+
+    @classmethod
+    def is_course_team_email(cls, recipient):
+        """checks if recipient is valid course team email"""
+        return (
+            recipient is not None and (
+                Course.objects.filter(contact_email=recipient).exists() or
+                settings.MAILGUN_RECIPIENT_OVERRIDE == recipient
+            )
+        )
+
+    def post(self, request, *args, **kargs):  # pylint: disable=unused-argument
+        """
+        POST method handler
+        """
+        event = request.POST.get("event", None)
+        recipient = request.POST.get("recipient", None)
+        error = request.POST.get("error", None)
+
+        if event == "bounced" and EmailBouncedView.is_course_team_email(recipient):
+            error_msg = 'Email to course team: {to} is bounced with an error message {error}'.format(
+                to=recipient,
+                error=error
+            )
+            log.error(error_msg)
+
+        return Response(status=status.HTTP_200_OK)
