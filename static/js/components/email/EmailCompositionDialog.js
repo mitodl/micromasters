@@ -10,6 +10,7 @@ import { AUTOMATIC_EMAIL_ADMIN_TYPE } from "./constants"
 import AutomaticEmailOptions from "./AutomaticEmailOptions"
 import RecipientVariableButton from "./RecipientVariableButton"
 import { FETCH_PROCESSING } from "../../actions"
+import { RECIPIENT_VARIABLE_NAMES } from "../../constants"
 import { dialogActions } from "../inputs/util"
 import { isNilOrBlank } from "../../util/util"
 import type { EmailState, Filter } from "../../flow/emailTypes"
@@ -255,7 +256,7 @@ export default class EmailCompositionDialog extends React.Component {
           />
           <div className="toolbar-below">
             <div className="insert">Insert:</div>
-            {this.makeCustomToolbarButtons(["PreferredName", "Email"])}
+            {this.makeCustomToolbarButtons(RECIPIENT_VARIABLE_NAMES)}
           </div>
           {this.showValidationError("body")}
         </div>

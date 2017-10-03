@@ -3,6 +3,7 @@ import _ from "lodash"
 import moment from "moment"
 import R from "ramda"
 import PhoneNumber from "awesome-phonenumber"
+import striptags from "striptags"
 
 import type {
   Profile,
@@ -22,7 +23,8 @@ import {
   EDUCATION_STEP,
   EMPLOYMENT_STEP,
   CP1252_REGEX,
-  INVALID_NAME_CHARS_REGEX
+  INVALID_NAME_CHARS_REGEX,
+  RECIPIENT_VARIABLE_NAMES,
 } from "../../constants"
 import { shouldRenderRomanizedFields } from "../../util/profile_edit"
 
@@ -389,7 +391,7 @@ const emailMessages: ErrorMessages = {
   body:    "Please fill in a body"
 }
 
-const emailBodyValid = R.ifElse(
+const emailLinksValid = R.ifElse(
   R.test(/<a.*>.*<\/a>/),
   R.compose(R.not, R.test(/<a\s.*href=("|')(?!http|https|mailto:)/)),
   R.T
@@ -398,10 +400,24 @@ const emailBodyValid = R.ifElse(
 export const emailValidation = (emailInputs: EmailInputs): ValidationErrors => {
   const errors = findErrors(emailInputs, R.keys(emailMessages), emailMessages)
 
-  if (!R.has("body", errors) && !emailBodyValid(emailInputs.body)) {
+  const body = emailInputs.body;
+  if (!R.has("body", errors) && !emailLinksValid(body)) {
     errors["body"] =
       "All link URLs must start with 'http', 'https', or 'mailto:'"
   }
+
+  const strippedBody = striptags(body);
+  for (const name of RECIPIENT_VARIABLE_NAMES) {
+    const regexp = new RegExp(`\\[${name}\\]`, "g")
+    const matches = body.match(regexp) || []
+    const escapedMatches = strippedBody.match(regexp) || []
+
+    if (matches.length !== escapedMatches.length) {
+      errors["body"] = `"[${name}]" appears to be broken up by markup. Please delete and insert it again.`
+      break
+    }
+  }
+
   return errors
 }
 
