@@ -695,16 +695,19 @@ describe("Privacy validation", () => {
 })
 
 describe("Email validation", () => {
-  const email = {
-    subject: "a great email",
-    body:    "hi, how are you?"
-  }
+  let email
 
-  const blank = field => {
-    const emailClone = _.cloneDeep(email)
-    emailClone[field] = null
-    return emailClone
-  }
+  beforeEach(() => {
+    email = {
+      subject: "a great email",
+      body:    "hi, how are you?"
+    }
+  })
+
+  const blank = field => ({
+    ...email,
+    [field]: null
+  })
 
   it("should require a subject", () => {
     assert.deepEqual(emailValidation(blank("subject")), {
@@ -725,10 +728,9 @@ describe("Email validation", () => {
       ['<a href="https://foo.bar">my better link :D</a>', false],
       ['<a href="mailto:me@example.com">EMAIL ME!!!!</a>', false]
     ].forEach(([bodyText, shouldFail]) => {
-      const inputs = _.clone(email)
-      inputs.body = bodyText
+      email.body = bodyText
       assert.deepEqual(
-        emailValidation(inputs),
+        emailValidation(email),
         shouldFail
           ? {
             body:
@@ -742,6 +744,27 @@ describe("Email validation", () => {
   it("should return no errors if all fields are filled out", () => {
     const errors = emailValidation(email)
     assert.deepEqual(errors, {})
+  })
+
+  it("should not allow broken tags", () => {
+    [
+      [
+        ["[Emai<b />l]", "Email"],
+        ["<strong>[Pref</strong>erredName]<i />", "PreferredName"],
+        ["<h3> </h3>[Email][PreferredName]", null],
+        ["Hello [PreferredName]", null]
+      ].forEach(([text, failName]) => {
+        email.body = text
+        assert.deepEqual(
+          emailValidation(email),
+          failName
+            ? {
+              body: `"[${failName}]" appears to be broken up by markup. Please delete and insert it again.`
+            }
+            : {}
+        )
+      })
+    ]
   })
 })
 

@@ -24,7 +24,7 @@ import {
   EMPLOYMENT_STEP,
   CP1252_REGEX,
   INVALID_NAME_CHARS_REGEX,
-  RECIPIENT_VARIABLE_NAMES,
+  RECIPIENT_VARIABLE_NAMES
 } from "../../constants"
 import { shouldRenderRomanizedFields } from "../../util/profile_edit"
 
@@ -400,21 +400,25 @@ const emailLinksValid = R.ifElse(
 export const emailValidation = (emailInputs: EmailInputs): ValidationErrors => {
   const errors = findErrors(emailInputs, R.keys(emailMessages), emailMessages)
 
-  const body = emailInputs.body;
+  const body = emailInputs.body
   if (!R.has("body", errors) && !emailLinksValid(body)) {
     errors["body"] =
       "All link URLs must start with 'http', 'https', or 'mailto:'"
   }
 
-  const strippedBody = striptags(body);
-  for (const name of RECIPIENT_VARIABLE_NAMES) {
-    const regexp = new RegExp(`\\[${name}\\]`, "g")
-    const matches = body.match(regexp) || []
-    const escapedMatches = strippedBody.match(regexp) || []
+  if (body) {
+    const strippedBody = striptags(body)
+    for (const name of RECIPIENT_VARIABLE_NAMES) {
+      const regexp = new RegExp(`\\[${name}\\]`, "g")
+      const matches = body.match(regexp) || []
+      const escapedMatches = strippedBody.match(regexp) || []
 
-    if (matches.length !== escapedMatches.length) {
-      errors["body"] = `"[${name}]" appears to be broken up by markup. Please delete and insert it again.`
-      break
+      if (matches.length !== escapedMatches.length) {
+        errors[
+          "body"
+        ] = `"[${name}]" appears to be broken up by markup. Please delete and insert it again.`
+        break
+      }
     }
   }
 
