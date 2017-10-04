@@ -183,9 +183,8 @@ class MailgunClient:
 
     @classmethod
     def send_individual_email(cls, subject, body, recipient,  # pylint: disable=too-many-arguments
-                              recipient_variables=None,
-                              sender_address=None, sender_name=None, raise_for_status=True, log_error_on_bounce=False
-    ):
+                              recipient_variables=None, sender_address=None, sender_name=None,
+                              raise_for_status=True, log_error_on_bounce=False):
         """
         Sends a text email to a single recipient.
 
