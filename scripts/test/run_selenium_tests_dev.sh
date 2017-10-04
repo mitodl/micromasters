@@ -22,4 +22,6 @@ docker-compose run \
    -e USE_WEBPACK_DEV_SERVER=True \
    -e WEBPACK_DEV_SERVER_HOST="$WEBPACK_SELENIUM_DEV_SERVER_HOST" \
    -e ELASTICSEARCH_DEFAULT_PAGE_SIZE=5 \
+   -e MAILGUN_URL=http://fake.mailgun.url \
+   -e MAILGUN_KEY=fake_mailgun_key \
    selenium py.test ${@-./selenium_tests}

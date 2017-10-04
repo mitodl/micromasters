@@ -13,4 +13,6 @@ docker-compose -f travis-docker-compose.yml run \
    -e DJANGO_LIVE_TEST_SERVER_ADDRESS=0.0.0.0:7000-8000 \
    -e ELASTICSEARCH_INDEX=testindex \
    -e ELASTICSEARCH_DEFAULT_PAGE_SIZE=5 \
+   -e MAILGUN_URL=http://fake.mailgun.url \
+   -e MAILGUN_KEY=fake_mailgun_key \
    selenium py.test ./selenium_tests
