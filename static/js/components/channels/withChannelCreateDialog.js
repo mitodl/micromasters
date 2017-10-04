@@ -81,13 +81,6 @@ export const withChannelCreateDialog = (WrappedComponent: ReactClass<*>) => {
             const channelUrl = `${SETTINGS.open_discussions_redirect_url}channel/${channel.name}`
             window.open(channelUrl, "_self")
           }
-
-          return dispatch(
-            setToastMessage({
-              message: `Your channel "${channel.title}" has been created.`,
-              icon:    TOAST_SUCCESS
-            })
-          )
         })
       }
     }
