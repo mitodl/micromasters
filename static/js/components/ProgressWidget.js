@@ -76,7 +76,7 @@ export default class ProgressWidget extends React.Component {
           src="/static/images/diploma_sm.png"
           alt="Certificate"
         />
-        <div className="text-course-complete">Congatulations!</div>
+        <div className="text-course-complete">Congratulations!</div>
         <p className="certificate-text">
           You completed the MicroMasters Certificate in {program.title}
         </p>

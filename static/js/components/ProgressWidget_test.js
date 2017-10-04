@@ -156,7 +156,7 @@ describe("ProgressWidget", () => {
 
     assert.equal(
       wrapper.find(".text-course-complete").text(),
-      "Congatulations!"
+      "Congratulations!"
     )
   })
 })
