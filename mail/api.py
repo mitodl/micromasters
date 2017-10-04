@@ -152,7 +152,7 @@ class MailgunClient:
                 'html': filter_recipient_variables(body),
                 'text': filter_recipient_variables(fallback_text),
                 'recipient-variables': json.dumps(chunk_dict),
-                'v:my-custom-data': {
+                'X-Mailgun-Variables': {
                     "log_error_on_bounce": log_error_on_bounce
                 }
             }
