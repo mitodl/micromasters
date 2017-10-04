@@ -107,6 +107,9 @@
     "MAILGUN_KEY": {
       "description": "The token for authenticating against the Mailgun API"
     },
+    "MAILGUN_URL": {
+      "description": "The URL used to connect with Mailgun"
+    },
     "MICROMASTERS_ADMIN_EMAIL": {
       "description": "E-mail to send 500 reports to.",
       "required": false
