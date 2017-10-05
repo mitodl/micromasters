@@ -146,9 +146,8 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     firstRun.status === STATUS_CAN_UPGRADE
   ) {
     messages.push({
-      message:
-        `You are auditing. To get credit, you need to pay for the course. (Payment due on ${dueDate})`,
-      action: courseAction(firstRun, COURSE_ACTION_PAY)
+      message: `You are auditing. To get credit, you need to pay for the course. (Payment due on ${dueDate})`,
+      action:  courseAction(firstRun, COURSE_ACTION_PAY)
     })
     return S.Just(messages)
   }
