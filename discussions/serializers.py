@@ -14,7 +14,7 @@ class ChannelSerializer(serializers.Serializer):
     """
     title = serializers.CharField()
     name = serializers.CharField()
-    public_description = serializers.CharField()
+    public_description = serializers.CharField(required=False, allow_blank=True)
     channel_type = serializers.ChoiceField(choices=[
         (choice, choice) for choice in VALID_CHANNEL_TYPES
     ])
