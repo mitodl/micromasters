@@ -13,7 +13,7 @@ const ssoFormEntries = (
 ) => {
   const baseURL = ssoRedirectURL.replace(/\/$/, "")
   if (R.isNil(SETTINGS.EXAMS_SSO_CLIENT_CODE)) {
-    throw "EXAMS_SSO_CLIENT_CODE not configured"
+    throw new Error("EXAMS_SSO_CLIENT_CODE not configured")
   }
   return [
     ["ACTION", "scheduleExam"],
@@ -42,7 +42,7 @@ const createForm = () => {
   // $FlowFixMe: flow disagrees
   document.body.appendChild(form)
   if (R.isNil(SETTINGS.EXAMS_SSO_URL)) {
-    throw "EXAMS_SSO_URL not configured"
+    throw new Error("EXAMS_SSO_URL not configured")
   }
   form.action = SETTINGS.EXAMS_SSO_URL
   return form

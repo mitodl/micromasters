@@ -54,7 +54,7 @@ export const calculatePrices = (
     if (!priceObj) {
       // Shouldn't get here, we should only be calling this function
       // if we retrieved all the values from the API already
-      throw "Unable to find program to get the price"
+      throw new Error("Unable to find program to get the price")
     }
     const originalPrice = priceObj.price
     // Currently only one coupon per program is allowed, even if that coupon only affects one course

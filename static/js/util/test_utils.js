@@ -39,7 +39,7 @@ export function findCourse(
   if (course !== null && course !== undefined) {
     return course
   }
-  throw "Unable to find course"
+  throw new Error("Unable to find course")
 }
 
 export const alterFirstRun = (

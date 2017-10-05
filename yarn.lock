@@ -2283,9 +2283,9 @@ eslint-config-google@^0.9.1:
   version "0.9.1"
   resolved "https://registry.yarnpkg.com/eslint-config-google/-/eslint-config-google-0.9.1.tgz#83353c3dba05f72bb123169a4094f4ff120391eb"
 
-eslint-config-mitodl@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/eslint-config-mitodl/-/eslint-config-mitodl-0.0.3.tgz#045d81e3816c4c21d5ae31cedc358e7a3375a283"
+eslint-config-mitodl@0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/eslint-config-mitodl/-/eslint-config-mitodl-0.0.4.tgz#34b0bb5a3e77a2b26e83898497fbb02b2c77a35a"
 
 eslint-plugin-babel@^4.1.1:
   version "4.1.1"
@@ -5276,10 +5276,6 @@ querystring@0.2.0, querystring@^0.2.0:
 quick-lru@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/quick-lru/-/quick-lru-1.1.0.tgz#4360b17c61136ad38078397ff11416e186dcfbb8"
-
-ramda@^0.23.0:
-  version "0.23.0"
-  resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.23.0.tgz#ccd13fff73497a93974e3e86327bfd87bd6e8e2b"
 
 ramda@^0.24.0, ramda@^0.24.1:
   version "0.24.1"

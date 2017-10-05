@@ -165,7 +165,7 @@ export default class FinancialAidCard extends React.Component {
     const couponPrice = couponPrices.pricesInclCouponByProgram.get(program.id)
     if (!couponPrice) {
       // shouldn't happen, at this point we should have prices for all programs
-      throw `Unable to find price for program ${program.id}`
+      throw new Error(`Unable to find price for program ${program.id}`)
     }
     const calculatedPrice = couponPrice.price
 

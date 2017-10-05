@@ -126,14 +126,14 @@ class OrderSummaryPage extends React.Component {
       )
       const couponPrice = couponPrices.pricesInclCouponByRun.get(courseRun.id)
       if (!couponPrice) {
-        throw `Unable to find price for run ${courseRun.id}`
+        throw new Error(`Unable to find price for run ${courseRun.id}`)
       }
       const { coupon, price } = couponPrice
       const originalPriceObj = couponPrices.pricesExclCouponByProgram.get(
         program.id
       )
       if (!originalPriceObj) {
-        throw `Unable to find price for program ${program.id}`
+        throw new Error(`Unable to find price for program ${program.id}`)
       }
       const originalPrice = originalPriceObj.price
       const discount = originalPrice - price

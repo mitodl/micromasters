@@ -771,7 +771,7 @@ class DashboardPage extends React.Component {
     } = this.props
     const program = this.getCurrentlyEnrolledProgram()
     if (!program || !prices.data) {
-      throw "no program; should never get here"
+      throw new Error("no program; should never get here")
     }
 
     const couponPrices = calculatePrices(
