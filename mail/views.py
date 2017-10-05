@@ -2,7 +2,6 @@
 Views for email REST APIs
 """
 import logging
-import json
 
 from django.contrib.auth.models import User
 from rest_framework import (
@@ -241,30 +240,11 @@ class FinancialAidMailView(GenericAPIView):
         )
 
 
-class EmailBouncedView(APIView):
+class MailWebhookView(APIView):
     """
     View class that handles HTTP requests to capture bounced email
     """
     permission_classes = (MailGunWebHookPermission, )
-
-    @classmethod
-    def fetch_custom_var(cls, headers, keyword):
-        """
-        fetch data from message-headers
-
-        Args:
-            headers (Json): complete Json object
-            keyword (str): json key that need to fetch
-
-        Returns:
-            Json: return json object if matches
-        """
-        var_dict = None
-        for header in headers:
-            if header[0] == keyword:
-                var_dict = header[1]
-
-        return var_dict
 
     def post(self, request, *args, **kargs):  # pylint: disable=unused-argument
         """
@@ -274,25 +254,17 @@ class EmailBouncedView(APIView):
         recipient = request.POST.get("recipient", None)
         error = request.POST.get("error", None)
         message_headers = request.POST.get("message-headers", None)
+        log_error_on_bounce = request.POST.get("log_error_on_bounce", False)
         error_msg = (
-            "Email to: {to} is bounced with an error message {error}".format(
+            "Webhook event {event} received by Mailgun for recipient {to}: {error}".format(
                 to=recipient,
-                error=error
+                error=error,
+                event=event
             )
         )
 
-        # load custom vars from headers
-        headers_obj = json.loads(message_headers)
-        custom_vars = EmailBouncedView.fetch_custom_var(headers_obj, "X-Mailgun-Variables")
-
-        if "log_error_on_bounce" not in custom_vars:
-            custom_vars = EmailBouncedView.fetch_custom_var(headers_obj, "my-custom-data")
-
-        log_error_on_bounce = False
-        if "log_error_on_bounce" in custom_vars and isinstance(custom_vars["log_error_on_bounce"], str):
-            log_error_on_bounce = True if custom_vars["log_error_on_bounce"] == "True" else False
-        elif "log_error_on_bounce" in custom_vars and isinstance(custom_vars["log_error_on_bounce"], bool):
-            log_error_on_bounce = custom_vars["log_error_on_bounce"]
+        if isinstance(log_error_on_bounce, str):
+            log_error_on_bounce = True if log_error_on_bounce == "True" else False
 
         if log_error_on_bounce is True and event == "bounced":
             log.error(error_msg, message_headers)

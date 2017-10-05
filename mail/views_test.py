@@ -2,7 +2,6 @@
 Tests for HTTP email API views
 """
 from unittest.mock import Mock, patch
-import json as json_api
 import ddt
 
 from django.core.exceptions import ImproperlyConfigured
@@ -32,7 +31,7 @@ from mail.exceptions import SendBatchException
 from mail.factories import AutomaticEmailFactory
 from mail.models import SentAutomaticEmail, AutomaticEmail
 from mail.serializers import AutomaticEmailSerializer
-from mail.views import EmailBouncedView
+from mail.views import MailWebhookView
 from profiles.factories import (
     ProfileFactory,
     UserFactory,
@@ -671,9 +670,6 @@ class EmailBouncedViewTests(APITestCase, MockedESTestCase):
     @ddt.unpack
     def test_signature(self, signature, status_code):
         """Test that webhook api returns status code 200 when valid data"""
-        header = [
-            ["X-Mailgun-Variables", {"log_error_on_bounce": True}]
-        ]
         resp_post = self.client.post(
             self.url,
             data={
@@ -683,7 +679,6 @@ class EmailBouncedViewTests(APITestCase, MockedESTestCase):
                 "timestamp": 1507117424,
                 "token": "43f17fa66f43f64ee7f6f0927b03c5b60a4c5eb88cfff4b2c1",
                 "signature": signature,
-                "message-headers": json_api.dumps(header)
             }
         )
         # api returns status code 200 when signature is valid
@@ -697,25 +692,22 @@ class EmailBouncedViewTests(APITestCase, MockedESTestCase):
     @ddt.unpack
     def test_bounce(self, log_error_on_bounce, logger, mock_logger):
         """Tests that api logs error when email is bounced"""
-        header = [
-            ["X-Mailgun-Variables", {"log_error_on_bounce": log_error_on_bounce}]
-        ]
-        header_str = json_api.dumps(header)
         data = {
             "event": "bounced",
             "recipient": "c@example.com",
             "error": "Unable to send email",
-            "message-headers": header_str
+            "log_error_on_bounce": log_error_on_bounce
         }
         error_msg = (
-            "Email to: {to} is bounced with an error message {error}".format(
+            "Webhook event {event} received by Mailgun for recipient {to}: {error}".format(
                 to=data["recipient"],
-                error=data["error"]
+                error=data["error"],
+                event=data["event"]
             )
         )
         factory = RequestFactory()
         request = factory.post(self.url, data=data)
-        EmailBouncedView().post(request)
+        MailWebhookView().post(request)
 
         # assert that error message is logged
-        getattr(mock_logger, logger).assert_called_with(error_msg, header_str)
+        getattr(mock_logger, logger).assert_called_with(error_msg, None)

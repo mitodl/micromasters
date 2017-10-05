@@ -109,10 +109,10 @@ class UserCanMessageCourseTeamPermission(BasePermission):
 
 class MailGunWebHookPermission(BasePermission):
     """
-    Permission class indicating permission to log bounced emails
+    Verifies HMAC signature for Mailgun webhook
     """
     @classmethod
-    def verify(cls, token, timestamp, signature, api_key=None):
+    def verify(cls, token, timestamp, signature):
         """
         Verify signature of event for security
 
@@ -124,9 +124,8 @@ class MailGunWebHookPermission(BasePermission):
         Returns:
             boolean: True if signature is valid
         """
-        api_key = api_key or settings.MAILGUN_KEY
-        if timestamp is not None and signature is not None and token is not None and api_key is not None:
-            key_bytes = bytes(api_key, 'latin-1')
+        if timestamp is not None and signature is not None and token is not None:
+            key_bytes = bytes(settings.MAILGUN_KEY, 'latin-1')
             data_bytes = bytes('{}{}'.format(timestamp, token), 'latin-1')
 
             hmac_digest = hmac.new(
