@@ -5,8 +5,8 @@ import { discussionErrors, CHANNEL_NAME_ERROR } from "./discussions"
 describe("Discussion validation functions", () => {
   it("should return that two fields are required", () => {
     assert.deepEqual(discussionErrors({}), {
-      name:               "Channel name is required",
-      title:              "Channel title is required"
+      name: "Channel name is required",
+      title: "Channel title is required"
     })
   })
 
@@ -14,8 +14,8 @@ describe("Discussion validation functions", () => {
     it(`should return an error for invalid channel name: ${invalidName}`, () => {
       assert.deepEqual(
         discussionErrors({
-          name:               invalidName,
-          title:              "valid",
+          name: invalidName,
+          title: "valid",
           public_description: "valid"
         }),
         {
@@ -40,8 +40,8 @@ describe("Discussion validation functions", () => {
     it(`should not return an error for valid channel name: ${validName}`, () => {
       assert.deepEqual(
         discussionErrors({
-          name:               validName,
-          title:              "valid",
+          name: validName,
+          title: "valid",
           public_description: "valid"
         }),
         {}
