@@ -17,7 +17,7 @@ const checkName = checkProp(
 )
 
 const requiredMessages = {
-  name: "Channel name is required",
+  name:  "Channel name is required",
   title: "Channel title is required"
 }
 

@@ -33,7 +33,7 @@ describe("channel_dialog reducers", () => {
 
   const VALIDATION_ERRORS = {
     title: "Channel title is required",
-    name: "Channel name is required"
+    name:  "Channel name is required"
   }
 
   it("should let you start editing an channel", async () => {
@@ -54,7 +54,7 @@ describe("channel_dialog reducers", () => {
     )
     assert.deepEqual(state, {
       ...INITIAL_CHANNEL_STATE,
-      inputs: updatedInputs,
+      inputs:           updatedInputs,
       validationErrors: R.dissoc("title", VALIDATION_ERRORS)
     })
   })
@@ -69,10 +69,10 @@ describe("channel_dialog reducers for the createChannel action", () => {
   let helper, createFuncStub, dispatchThen
   const createArgs = [
     {
-      name: "name",
-      title: "title",
+      name:               "name",
+      title:              "title",
       public_description: "public_description",
-      channel_type: "private"
+      channel_type:       "private"
     }
   ]
 
