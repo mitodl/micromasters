@@ -254,7 +254,7 @@ class MailWebhookView(APIView):
         recipient = request.POST.get("recipient", None)
         error = request.POST.get("error", None)
         message_headers = request.POST.get("message-headers", None)
-        log_error_on_bounce = request.POST.get("log_error_on_bounce", False)
+        log_error_on_bounce = request.POST.get("log_error_on_bounce", "")
         error_msg = (
             "Webhook event {event} received by Mailgun for recipient {to}: {error}".format(
                 to=recipient,
@@ -263,10 +263,7 @@ class MailWebhookView(APIView):
             )
         )
 
-        if isinstance(log_error_on_bounce, str):
-            log_error_on_bounce = True if log_error_on_bounce == "True" else False
-
-        if log_error_on_bounce is True and event == "bounced":
+        if log_error_on_bounce.lower() == "true" and event == "bounced":
             log.error(error_msg, message_headers)
         else:
             log.debug(error_msg, message_headers)

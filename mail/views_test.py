@@ -647,7 +647,7 @@ class EmailBouncedViewTests(APITestCase, MockedESTestCase):
     """Test email bounce view web hook"""
     def setUp(self):
         super().setUp()
-        self.url = reverse('email_bounced_view')
+        self.url = reverse('mailgun_webhook')
 
     def test_missing_signature(self):
         """Test that webhook api returns status code 403"""
