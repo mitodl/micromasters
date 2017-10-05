@@ -33,8 +33,7 @@ describe("channel_dialog reducers", () => {
 
   const VALIDATION_ERRORS = {
     title:              "Channel title is required",
-    name:               "Channel name is required",
-    public_description: "Channel description is required"
+    name:               "Channel name is required"
   }
 
   it("should let you start editing an channel", async () => {

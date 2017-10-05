@@ -169,7 +169,7 @@ def test_create_channel_user_without_permission(patched_users_api):
     assert resp.status_code == 403
 
 
-@pytest.mark.parametrize("missing_param", ["title", "name", "public_description", "channel_type", "query"])
+@pytest.mark.parametrize("missing_param", ["title", "name", "channel_type", "query"])
 def test_create_channel_missing_param(missing_param, patched_users_api):
     """A missing param should cause a validation error"""
     client = APIClient()

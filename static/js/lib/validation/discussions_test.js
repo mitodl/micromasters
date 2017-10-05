@@ -3,11 +3,10 @@ import { assert } from "chai"
 import { discussionErrors, CHANNEL_NAME_ERROR } from "./discussions"
 
 describe("Discussion validation functions", () => {
-  it("should return that all fields are required", () => {
+  it("should return that two fields are required", () => {
     assert.deepEqual(discussionErrors({}), {
       name:               "Channel name is required",
-      title:              "Channel title is required",
-      public_description: "Channel description is required"
+      title:              "Channel title is required"
     })
   })
 
