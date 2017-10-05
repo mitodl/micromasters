@@ -242,7 +242,7 @@ class FinancialAidMailView(GenericAPIView):
 
 class MailWebhookView(APIView):
     """
-    View class that handles HTTP requests to capture bounced email
+    View class that handles Mailgun webhooks
     """
     permission_classes = (MailGunWebHookPermission, )
 
