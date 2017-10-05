@@ -258,14 +258,14 @@ class MailWebhookView(APIView):
         error_msg = (
             "Webhook event {event} received by Mailgun for recipient {to}: {error}".format(
                 to=recipient,
-                error=error,
+                error="{},{}".format(error, message_headers),
                 event=event
             )
         )
 
         if log_error_on_bounce.lower() == "true" and event == "bounced":
-            log.error(error_msg, message_headers)
+            log.error(error_msg)
         else:
-            log.debug(error_msg, message_headers)
+            log.debug(error_msg)
 
         return Response(status=status.HTTP_200_OK)

@@ -701,7 +701,7 @@ class EmailBouncedViewTests(APITestCase, MockedESTestCase):
         error_msg = (
             "Webhook event {event} received by Mailgun for recipient {to}: {error}".format(
                 to=data["recipient"],
-                error=data["error"],
+                error="{},{}".format(data["error"], None),
                 event=data["event"]
             )
         )
@@ -710,4 +710,4 @@ class EmailBouncedViewTests(APITestCase, MockedESTestCase):
         MailWebhookView().post(request)
 
         # assert that error message is logged
-        getattr(mock_logger, logger).assert_called_with(error_msg, None)
+        getattr(mock_logger, logger).assert_called_with(error_msg)
