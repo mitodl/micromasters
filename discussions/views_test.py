@@ -85,19 +85,20 @@ def test_logged_in_user_redirect_no_username(client, patched_users_api):
         client.get(reverse('discussions'))
 
 
-def _make_create_channel_input(program_id):
+def _make_create_channel_input(program_id, description="default description"):
     """Generate parameters for create API"""
     return {
         "title": "title",
         "name": "name",
-        "public_description": "public description",
+        "public_description": description,
         "channel_type": "public",
         "query": {},
         "program_id": program_id,
     }
 
 
-def test_create_channel(mocker, patched_users_api):
+@pytest.mark.parametrize("description", ["public description", ""])
+def test_create_channel(description, mocker, patched_users_api):
     """Staff can create a channel using the REST API"""
     client = APIClient()
     role = RoleFactory.create(role=Staff.ROLE_ID)
@@ -107,7 +108,7 @@ def test_create_channel(mocker, patched_users_api):
     channel = ChannelFactory.create()
     add_channel_mock = mocker.patch('discussions.serializers.add_channel', return_value=channel, autospec=True)
 
-    create_channel_input = _make_create_channel_input(role.program.id)
+    create_channel_input = _make_create_channel_input(role.program.id, description)
     resp = client.post(reverse('channel-list'), data={
         **create_channel_input,
         "name": channel.name,
