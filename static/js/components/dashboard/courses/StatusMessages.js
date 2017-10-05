@@ -95,6 +95,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   const passedExam = hasPassingExamGrade(course)
   const failedExam = hasFailingExamGrade(course)
   const paymentDueDate = moment(firstRun.course_upgrade_deadline)
+  const dueDate = paymentDueDate.format(COURSE_CARD_FORMAT)
   if (firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
     const contactHref = `mailto:${SETTINGS.support_email}`
     return S.Just([
@@ -146,7 +147,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   ) {
     messages.push({
       message:
-        "You are auditing. To get credit, you need to pay for the course.",
+        `You are auditing. To get credit, you need to pay for the course. (Payment due on ${dueDate})`,
       action: courseAction(firstRun, COURSE_ACTION_PAY)
     })
     return S.Just(messages)
@@ -282,7 +283,6 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
           )
         )
       } else {
-        const dueDate = paymentDueDate.format(COURSE_CARD_FORMAT)
         if (exams) {
           messages.push({
             message: `The edX course is complete, but you need to pass the exam. (Payment due on ${dueDate})`,
