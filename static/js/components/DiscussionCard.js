@@ -49,7 +49,7 @@ const DiscussionCard = (props: DiscussionCardProps) => {
   return (
     <Card className="discussion-card" shadow={0}>
       <div className="mdl-card__title header">
-        <h2 className="mdl-card__title-text">Recent Posts</h2>
+        <h2 className="mdl-card__title-text">Discussion</h2>
         <a href="/discussions" target="_blank" rel="noopener noreferrer">
           View All
         </a>
