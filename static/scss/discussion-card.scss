@@ -13,27 +13,38 @@
   .post {
     display: flex;
     align-items: center;
+    padding: 13px 0 13px 0;
+    border-bottom: 1px solid #e6e6e6;
 
-    &:not(:last-child) {
-      margin: 26px 0;
+    &:last-child {
+      padding: 13px 0 0 0;
+      border-bottom: none;
+    }
+
+    &:first-child {
+      padding: 0 0 13px 0;
     }
 
     img {
-      height: 60px;
+      height: 50px;
       border-radius: 100%;
     }
 
     .title-and-author {
       margin-left: 10px;
 
+      .post-title {
+        font-size: 15px;
+      }
+
       .time-and-channel {
         font-size: 13px;
-        font-weight: 300;
-        color: $darkergray;
+        font-weight: 400;
+        color: $font-gray;
 
         a {
-          font-weight: 400;
-          color: $darkergray;
+          font-weight: 500;
+          color: $font-black;
         }
       }
     }

@@ -176,7 +176,7 @@ export default class LearnerSearch extends SearchkitComponent {
 
     return (
       <Grid noSpacing={true} className="search-header">
-        <Cell col={6} className="result-info">
+        <Cell col={7} className="result-info">
           {canEmailLearners ? (
             <button
               id="email-selected"
@@ -185,7 +185,7 @@ export default class LearnerSearch extends SearchkitComponent {
                 this.searchkit
               ])}
             >
-              Email These Learners
+              Email Selected
             </button>
           ) : null}
           {canCreateChannel ? (
@@ -194,12 +194,12 @@ export default class LearnerSearch extends SearchkitComponent {
               className="mdl-button minor-action"
               onClick={R.partial(openChannelCreateDialog, [this.searchkit])}
             >
-              Create a Discussion Channel
+              New Channel
             </button>
           ) : null}
           <HitsStats component={HitsCount} />
         </Cell>
-        <Cell col={6} className="pagination-search">
+        <Cell col={5} className="pagination-search">
           <SearchBox
             queryBuilder={MultiMatchQuery}
             searchOnChange={true}
