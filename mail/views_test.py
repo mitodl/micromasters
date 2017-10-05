@@ -690,8 +690,12 @@ class EmailBouncedViewTests(APITestCase, MockedESTestCase):
         assert resp_post.status_code == status_code
 
     @patch('mail.views.log')
-    @ddt.data(True, False)
-    def test_bounce(self, log_error_on_bounce, mock_logger):
+    @ddt.data(
+        (True, "error"),
+        (False, "debug")
+    )
+    @ddt.unpack
+    def test_bounce(self, log_error_on_bounce, logger, mock_logger):
         """Tests that api logs error when email is bounced"""
         header = [
             ["X-Mailgun-Variables", {"log_error_on_bounce": log_error_on_bounce}]
@@ -714,7 +718,4 @@ class EmailBouncedViewTests(APITestCase, MockedESTestCase):
         EmailBouncedView().post(request)
 
         # assert that error message is logged
-        if log_error_on_bounce:
-            mock_logger.error.assert_called_with(error_msg, header_str)
-        else:
-            mock_logger.debug.assert_called_with(error_msg, header_str)
+        getattr(mock_logger, logger).assert_called_with(error_msg, header_str)
