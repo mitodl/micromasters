@@ -2,6 +2,7 @@
 Tests for HTTP email API views
 """
 from unittest.mock import Mock, patch
+import json as json_api
 import ddt
 
 from django.core.exceptions import ImproperlyConfigured
@@ -670,6 +671,9 @@ class EmailBouncedViewTests(APITestCase, MockedESTestCase):
     @ddt.unpack
     def test_signature(self, signature, status_code):
         """Test that webhook api returns status code 200 when valid data"""
+        header = [
+            ["X-Mailgun-Variables", {"log_error_on_bounce": True}]
+        ]
         resp_post = self.client.post(
             self.url,
             data={
@@ -678,7 +682,8 @@ class EmailBouncedViewTests(APITestCase, MockedESTestCase):
                 "error": "Unable to send email",
                 "timestamp": 1507117424,
                 "token": "43f17fa66f43f64ee7f6f0927b03c5b60a4c5eb88cfff4b2c1",
-                "signature": signature
+                "signature": signature,
+                "message-headers": json_api.dumps(header)
             }
         )
         # api returns status code 200 when signature is valid
@@ -688,17 +693,20 @@ class EmailBouncedViewTests(APITestCase, MockedESTestCase):
     @ddt.data(True, False)
     def test_bounce(self, log_error_on_bounce, mock_logger):
         """Tests that api logs error when email is bounced"""
+        header = [
+            ["X-Mailgun-Variables", {"log_error_on_bounce": log_error_on_bounce}]
+        ]
+        header_str = json_api.dumps(header)
         data = {
             "event": "bounced",
             "recipient": "c@example.com",
             "error": "Unable to send email",
-            "log_error_on_bounce": log_error_on_bounce
+            "message-headers": header_str
         }
         error_msg = (
-            'Email to: {to} is bounced with an error message {error}, headers: {headers}'.format(
+            "Email to: {to} is bounced with an error message {error}".format(
                 to=data["recipient"],
-                error=data["error"],
-                headers=None
+                error=data["error"]
             )
         )
         factory = RequestFactory()
@@ -707,6 +715,6 @@ class EmailBouncedViewTests(APITestCase, MockedESTestCase):
 
         # assert that error message is logged
         if log_error_on_bounce:
-            mock_logger.error.assert_called_with(error_msg)
+            mock_logger.error.assert_called_with(error_msg, header_str)
         else:
-            mock_logger.debug.assert_called_with(error_msg)
+            mock_logger.debug.assert_called_with(error_msg, header_str)
