@@ -18,9 +18,18 @@ import {
   UPDATE_EMAIL_EDIT
 } from "../actions/email"
 import { START_CHANNEL_EDIT } from "../actions/channels"
+import {
+  RECEIVE_FETCH_COUPONS_SUCCESS,
+  REQUEST_FETCH_COUPONS
+} from "../actions/coupons"
+import {
+  REQUEST_DASHBOARD,
+  RECEIVE_DASHBOARD_SUCCESS
+} from "../actions/dashboard"
 import { SHOW_DIALOG, HIDE_DIALOG } from "../actions/ui"
 import { EMAIL_COMPOSITION_DIALOG } from "../components/email/constants"
 import { CHANNEL_CREATE_DIALOG } from "../constants"
+import { actions } from "../lib/redux_rest"
 import { modifyTextField } from "../util/test_utils"
 import EmailCompositionDialog from "../components/email/EmailCompositionDialog"
 
@@ -567,5 +576,24 @@ describe("LearnerSearchPage", function() {
       assert(wrapper.find(".sk-search-box"), "Unable to find textbox")
       assert.equal(wrapper.find(".filter-visibility-toggle").length, 9)
     })
+  })
+
+  it("navigates between the learner search page and the profile page without error", async () => {
+    await renderSearch()
+    await listenForActions(
+      [
+        REQUEST_DASHBOARD,
+        RECEIVE_DASHBOARD_SUCCESS,
+        RECEIVE_FETCH_COUPONS_SUCCESS,
+        REQUEST_FETCH_COUPONS,
+        actions.prices.get.requestType,
+        actions.prices.get.successType
+      ],
+      () => {
+        helper.browserHistory.push(`/learner/${SETTINGS.user.username}`)
+      }
+    )
+    helper.browserHistory.push("/learners")
+    helper.browserHistory.push(`/learner/${SETTINGS.user.username}`)
   })
 })

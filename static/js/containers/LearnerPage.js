@@ -14,7 +14,7 @@ import {
   childrenWithProps
 } from "./ProfileFormContainer"
 import ErrorMessage from "../components/ErrorMessage"
-import { fetchDashboard } from "../actions/dashboard"
+import { fetchDashboard, clearDashboard } from "../actions/dashboard"
 import { clearCoupons, fetchCoupons } from "../actions/coupons"
 import { actions } from "../lib/redux_rest"
 import { hasAnyStaffRole } from "../lib/roles"
@@ -68,6 +68,7 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
     }
     dispatch(actions.prices.clear(username))
     dispatch(clearCoupons())
+    dispatch(clearDashboard(username))
   }
 
   getFocusedDashboard() {

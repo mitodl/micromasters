@@ -88,7 +88,8 @@ describe("LearnerPage", function() {
     RECEIVE_GET_USER_PROFILE_SUCCESS,
     RECEIVE_FETCH_COUPONS_SUCCESS,
     REQUEST_FETCH_COUPONS,
-    actions.prices.get.requestType
+    actions.prices.get.requestType,
+    actions.prices.get.successType
   ]
 
   const confirmResumeOrder = (
