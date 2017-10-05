@@ -696,13 +696,15 @@ class EmailBouncedViewTests(APITestCase, MockedESTestCase):
             "event": "bounced",
             "recipient": "c@example.com",
             "error": "Unable to send email",
-            "log_error_on_bounce": log_error_on_bounce
+            "log_error_on_bounce": log_error_on_bounce,
+            "message-headers": "[[\"sender\": \"xyx@example.com\"]]"
         }
         error_msg = (
-            "Webhook event {event} received by Mailgun for recipient {to}: {error}".format(
+            "Webhook event {event} received by Mailgun for recipient {to}: {error} {header}".format(
                 to=data["recipient"],
-                error="{},{}".format(data["error"], None),
-                event=data["event"]
+                error=data["error"],
+                event=data["event"],
+                header=data["message-headers"]
             )
         )
         factory = RequestFactory()

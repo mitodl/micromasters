@@ -256,10 +256,11 @@ class MailWebhookView(APIView):
         message_headers = request.POST.get("message-headers", None)
         log_error_on_bounce = request.POST.get("log_error_on_bounce", "")
         error_msg = (
-            "Webhook event {event} received by Mailgun for recipient {to}: {error}".format(
+            "Webhook event {event} received by Mailgun for recipient {to}: {error} {header}".format(
                 to=recipient,
-                error="{},{}".format(error, message_headers),
-                event=event
+                error=error,
+                event=event,
+                header=message_headers
             )
         )
 
