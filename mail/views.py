@@ -199,8 +199,7 @@ class CourseTeamMailView(GenericAPIView):
             user=user,
             course=course,
             subject=serializer.data['email_subject'],
-            body=serializer.data['email_body'],
-            log_error_on_bounce=True
+            body=serializer.data['email_body']
         )
         return Response(
             status=mailgun_response.status_code,
@@ -243,7 +242,7 @@ class FinancialAidMailView(GenericAPIView):
 
 class EmailBouncedView(APIView):
     """
-    View class that handles HTTP requests to course team mail API
+    View class that handles HTTP requests to capture bounced email
     """
     permission_classes = (MailGunWebHookPermission, )
 
@@ -254,19 +253,19 @@ class EmailBouncedView(APIView):
         event = request.POST.get("event", None)
         recipient = request.POST.get("recipient", None)
         error = request.POST.get("error", None)
-        message_headers = request.POST.get("message-headers", "NA")
+        message_headers = request.POST.get("message-headers", None)
         log_error_on_bounce = request.POST.get("log_error_on_bounce", False)
-
-        if event == "bounced" and log_error_on_bounce:
-            error_msg = (
-                'Email to course team: {to} is bounced with an error message {error}, headers: {headers}'.format(
-                    to=recipient,
-                    error=error,
-                    headers=message_headers
-                )
+        error_msg = (
+            'Email to: {to} is bounced with an error message {error}, headers: {headers}'.format(
+                to=recipient,
+                error=error,
+                headers=message_headers
             )
+        )
+
+        if log_error_on_bounce == "True" and event == "bounced":
             log.error(error_msg)
         else:
-            log.debug("Some event: %s from mailgun webhook", event)
+            log.debug(error_msg)
 
         return Response(status=status.HTTP_200_OK)

@@ -113,7 +113,17 @@ class MailGunWebHookPermission(BasePermission):
     """
     @classmethod
     def verify(cls, token, timestamp, signature, api_key=None):
-        """Verify signature of event for security"""
+        """
+        Verify signature of event for security
+
+        Args:
+            token (str): Randomly generated alpha numeric string with length 50.
+            timestamp (int): Number of seconds passed since January 1, 1970
+            signature (str): String with hexadecimal digits generate by HMAC algorithm.
+
+        Returns:
+            boolean: True if signature is valid
+        """
         api_key = api_key or settings.MAILGUN_KEY
         if timestamp is not None and signature is not None and token is not None and api_key is not None:
             key_bytes = bytes(api_key, 'latin-1')

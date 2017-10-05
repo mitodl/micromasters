@@ -30,7 +30,6 @@ from financialaid.factories import FinancialAidFactory, TierProgramFactory
 from mail.exceptions import SendBatchException
 from mail.factories import AutomaticEmailFactory
 from mail.models import SentAutomaticEmail, AutomaticEmail
-from mail.permissions import MailGunWebHookPermission
 from mail.serializers import AutomaticEmailSerializer
 from mail.views import EmailBouncedView
 from profiles.factories import (
@@ -646,12 +645,11 @@ class FinancialAidMailViewTests(FinancialAidBaseTestCase, APITestCase):
 @ddt.ddt
 class EmailBouncedViewTests(APITestCase, MockedESTestCase):
     """Test email bounce view web hook"""
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.url = reverse('email_bounced_view')
+    def setUp(self):
+        super().setUp()
+        self.url = reverse('email_bounced_view')
 
-    def test_email_bounced_hook_api_fail(self):
+    def test_missing_signature(self):
         """Test that webhook api returns status code 403"""
         resp_post = self.client.post(
             self.url,
@@ -670,7 +668,7 @@ class EmailBouncedViewTests(APITestCase, MockedESTestCase):
         ("f717895b90e49108c74df5e0cecf0d80b20e2fb2ed836bfa9209b723d57b2e88", status.HTTP_403_FORBIDDEN),
     )
     @ddt.unpack
-    def test_email_bounced_hook_api_success(self, signature, status_code):
+    def test_signature(self, signature, status_code):
         """Test that webhook api returns status code 200 when valid data"""
         resp_post = self.client.post(
             self.url,
@@ -686,44 +684,29 @@ class EmailBouncedViewTests(APITestCase, MockedESTestCase):
         # api returns status code 200 when signature is valid
         assert resp_post.status_code == status_code
 
-    @override_settings(MAILGUN_KEY="key-12345")
-    @ddt.data(
-        ("d717895b90e49108c74df5e0cecf0d80b20e2fb2ed836bfa9209b723d57b2e77", True),
-        ("f717895b90e49108c74df5e0cecf0d80b20e2fb2ed836bfa9209b723d57b2e88", False),
-    )
-    @ddt.unpack
-    def test_permission(self, signature, has_permission):
-        """Test permission on webhook api """
-        data = {
-            "event": "bounced",
-            "recipient": "c@example.com",
-            "error": "Unable to send email",
-            "timestamp": 1507117424,
-            "token": "43f17fa66f43f64ee7f6f0927b03c5b60a4c5eb88cfff4b2c1",
-            "signature": signature
-        }
-
-        factory = RequestFactory()
-        request = factory.post(self.url, data=data)
-        assert MailGunWebHookPermission().has_permission(request, None) == has_permission
-
     @patch('mail.views.log')
-    def test_email_bounced_raise_exception(self, mock_logger):
+    @ddt.data(True, False)
+    def test_bounce(self, log_error_on_bounce, mock_logger):
         """Tests that api logs error when email is bounced"""
         data = {
             "event": "bounced",
             "recipient": "c@example.com",
             "error": "Unable to send email",
-            "log_error_on_bounce": True
+            "log_error_on_bounce": log_error_on_bounce
         }
-        error_msg = 'Email to course team: {to} is bounced with an error message {error}, headers: NA'.format(
-            to=data["recipient"],
-            error=data["error"]
+        error_msg = (
+            'Email to: {to} is bounced with an error message {error}, headers: {headers}'.format(
+                to=data["recipient"],
+                error=data["error"],
+                headers=None
+            )
         )
-
         factory = RequestFactory()
         request = factory.post(self.url, data=data)
         EmailBouncedView().post(request)
 
         # assert that error message is logged
-        mock_logger.error.assert_called_with(error_msg)
+        if log_error_on_bounce:
+            mock_logger.error.assert_called_with(error_msg)
+        else:
+            mock_logger.debug.assert_called_with(error_msg)

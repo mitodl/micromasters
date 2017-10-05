@@ -90,7 +90,7 @@ class MailgunClient:
     @classmethod
     def send_batch(cls, subject, body, recipients,  # pylint: disable=too-many-arguments, too-many-locals
                    sender_address=None, sender_name=None, chunk_size=settings.MAILGUN_BATCH_CHUNK_SIZE,
-                   raise_for_status=True, log_error_on_bounce=False):
+                   raise_for_status=True, log_error_on_bounce=True):
         """
         Sends a text email to a list of recipients (one email per recipient) via batch.
 
@@ -184,7 +184,7 @@ class MailgunClient:
     @classmethod
     def send_individual_email(cls, subject, body, recipient,  # pylint: disable=too-many-arguments
                               recipient_variables=None, sender_address=None, sender_name=None,
-                              raise_for_status=True, log_error_on_bounce=False):
+                              raise_for_status=True, log_error_on_bounce=True):
         """
         Sends a text email to a single recipient.
 
@@ -215,7 +215,7 @@ class MailgunClient:
 
     @classmethod
     def send_financial_aid_email(  # pylint: disable=too-many-arguments
-            cls, acting_user, financial_aid, subject, body, raise_for_status=True,
+            cls, acting_user, financial_aid, subject, body, raise_for_status=True, log_error_on_bounce=True
     ):
         """
         Sends a text email to a single recipient, specifically as part of the financial aid workflow. This bundles
@@ -227,12 +227,19 @@ class MailgunClient:
             subject (str): email subject
             body (str): email body
             raise_for_status (bool): If true and we received a non 2xx status code from Mailgun, raise an exception
+            log_error_on_bounce (bool): App will log bounce email event when True
         Returns:
             requests.Response: response from Mailgun
         """
         from_address = cls.default_params()['from']
         to_address = financial_aid.user.email
-        response = cls.send_individual_email(subject, body, to_address, raise_for_status=raise_for_status)
+        response = cls.send_individual_email(
+            subject,
+            body,
+            to_address,
+            raise_for_status=raise_for_status,
+            log_error_on_bounce=log_error_on_bounce
+        )
         if response.ok:
             FinancialAidEmailAudit.objects.create(
                 acting_user=acting_user,
@@ -246,7 +253,7 @@ class MailgunClient:
 
     @classmethod
     def send_course_team_email(  # pylint: disable=too-many-arguments
-            cls, user, course, subject, body, raise_for_status=True, log_error_on_bounce=False
+            cls, user, course, subject, body, raise_for_status=True, log_error_on_bounce=True
     ):
         """
        Sends a text email from a user to a course team.
