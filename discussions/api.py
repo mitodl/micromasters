@@ -310,7 +310,7 @@ def sync_user_to_channels(user_id):
 
 
 def add_channel(
-        original_search, title, name, public_description, channel_type, program_id,
+        original_search, title, name, public_description, channel_type, program_id, creator_id,
 ):  # pylint: disable=too-many-arguments
     """
     Add the channel and associated query
@@ -324,6 +324,7 @@ def add_channel(
         public_description (str): Description for the channel
         channel_type (str): Whether the channel is public or private
         program_id (int): The program id to connect the new channel to
+        creator_id (int): The user id of the creator of a channel
 
     Returns:
         Channel: A new channel object
@@ -360,6 +361,13 @@ def add_channel(
     from discussions import tasks
     tasks.add_moderators_to_channel.delay(channel.name)
     tasks.add_users_to_channel.delay(channel.name, user_ids)
+
+    # The creator is added in add_moderators_to_channel but do it here also to prevent a race condition
+    # where the user is redirected to the channel page before they have permission to access it.
+    discussion_user = create_or_update_discussion_user(creator_id)
+    add_moderator_to_channel(channel.name, discussion_user.username)
+    add_subscriber_to_channel(channel.name, discussion_user.username)
+
     return channel
 
 

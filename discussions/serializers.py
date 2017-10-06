@@ -40,6 +40,7 @@ class ChannelSerializer(serializers.Serializer):
             public_description=public_description,
             channel_type=channel_type,
             program_id=program_id,
+            creator_id=user.id,
         )
         return {
             "title": title,

@@ -393,7 +393,10 @@ def test_add_channel(mock_staff_client, mocker, patched_users_api):
     )
     add_users_task_stub = mocker.patch('discussions.api.add_users_to_channel', autospec=True)
     add_moderators_task_stub = mocker.patch('discussions.api.add_moderators_to_channel', autospec=True)
+    add_subscriber_stub = mocker.patch('discussions.api.add_subscriber_to_channel', autospec=True)
+    add_moderator_stub = mocker.patch('discussions.api.add_moderator_to_channel', autospec=True)
 
+    mod = UserFactory.create()
     channel = api.add_channel(
         original_search=input_search,
         title=title,
@@ -401,6 +404,7 @@ def test_add_channel(mock_staff_client, mocker, patched_users_api):
         public_description=public_description,
         channel_type=channel_type,
         program_id=program.id,
+        creator_id=mod.id,
     )
 
     mock_staff_client.channels.create.assert_called_once_with(
@@ -429,6 +433,11 @@ def test_add_channel(mock_staff_client, mocker, patched_users_api):
     add_users_task_stub.assert_called_once_with(channel.name, contributor_ids)
     add_moderators_task_stub.assert_called_once_with(channel.name)
 
+    add_subscriber_stub.assert_called_once_with(channel.name, mod.discussion_user.username)
+    add_moderator_stub.assert_called_once_with(channel.name, mod.discussion_user.username)
+    _, updated_stub = patched_users_api
+    updated_stub.assert_any_call(mod.discussion_user)
+
 
 def test_add_channel_failed_create_channel(mock_staff_client, mocker):
     """If client.channels.create fails an exception should be raised"""
@@ -442,6 +451,7 @@ def test_add_channel_failed_create_channel(mock_staff_client, mocker):
             "public_description",
             "channel_type",
             123,
+            456,
         )
     assert ex.value.args[0] == "Error creating channel name"
     mock_staff_client.channels.create.return_value.raise_for_status.assert_called_with()
@@ -461,6 +471,7 @@ def test_add_channel_channel_already_exists(mock_staff_client, patched_users_api
     channel_type = "private"
     input_search = Search.from_dict({"unmodified": "search"})
     role = RoleFactory.create()
+    mod = UserFactory.create()
 
     with pytest.raises(IntegrityError):
         api.add_channel(
@@ -470,6 +481,7 @@ def test_add_channel_channel_already_exists(mock_staff_client, patched_users_api
             public_description=public_description,
             channel_type=channel_type,
             program_id=role.program.id,
+            creator_id=mod.id,
         )
 
     mock_staff_client.channels.create.assert_called_once_with(
