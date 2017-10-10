@@ -2,7 +2,7 @@
 /* global SETTINGS: false */
 import React from "react"
 import R from "ramda"
-import moment from "moment"
+import moment from "moment-timezone"
 
 import type { Coupon } from "../../../flow/couponTypes"
 import type { Course, CourseRun } from "../../../flow/programTypes"
@@ -144,10 +144,10 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     courseUpcomingOrCurrent(firstRun) ||
     firstRun.status === STATUS_CAN_UPGRADE
   ) {
-
+    const date_with_zone = moment(firstRun.course_upgrade_deadline).tz(moment.tz.guess())
     messages.push({
       message: `You are auditing. To get credit, you need to pay for the course.
-       (Payment due on ${paymentDueDate.format(COURSE_DEADLINE_FORMAT)})`,
+       (Payment due on ${date_with_zone.format(COURSE_DEADLINE_FORMAT)})`,
       action:  courseAction(firstRun, COURSE_ACTION_PAY)
     })
     return S.Just(messages)
