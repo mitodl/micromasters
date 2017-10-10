@@ -288,7 +288,7 @@ MAILGUN_URL = get_string('MAILGUN_URL', None)
 if not MAILGUN_URL:
     raise ImproperlyConfigured("MAILGUN_URL not set")
 MAILGUN_KEY = get_string('MAILGUN_KEY', None)
-if not MAILGUN_URL:
+if not MAILGUN_KEY:
     raise ImproperlyConfigured("MAILGUN_KEY not set")
 MAILGUN_BATCH_CHUNK_SIZE = get_int('MAILGUN_BATCH_CHUNK_SIZE', 1000)
 MAILGUN_RECIPIENT_OVERRIDE = get_string('MAILGUN_RECIPIENT_OVERRIDE', None)
