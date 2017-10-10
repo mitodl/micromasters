@@ -30,7 +30,7 @@ import {
   hasFailingExamGrade,
   hasPassedCourseRun
 } from "../../../lib/grades"
-import { COURSE_CARD_FORMAT } from "../../../constants"
+import { COURSE_CARD_FORMAT, COURSE_DEADLINE_FORMAT } from "../../../constants"
 
 type Message = {
   message: string | React$Element<*>,
@@ -95,7 +95,6 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   const passedExam = hasPassingExamGrade(course)
   const failedExam = hasFailingExamGrade(course)
   const paymentDueDate = moment(firstRun.course_upgrade_deadline)
-  const dueDate = paymentDueDate.format(COURSE_CARD_FORMAT)
   if (firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
     const contactHref = `mailto:${SETTINGS.support_email}`
     return S.Just([
@@ -145,8 +144,10 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     courseUpcomingOrCurrent(firstRun) ||
     firstRun.status === STATUS_CAN_UPGRADE
   ) {
+
     messages.push({
-      message: `You are auditing. To get credit, you need to pay for the course. (Payment due on ${dueDate})`,
+      message: `You are auditing. To get credit, you need to pay for the course.
+       (Payment due on ${paymentDueDate.format(COURSE_DEADLINE_FORMAT)})`,
       action:  courseAction(firstRun, COURSE_ACTION_PAY)
     })
     return S.Just(messages)
@@ -282,6 +283,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
           )
         )
       } else {
+        const dueDate = paymentDueDate.format(COURSE_CARD_FORMAT)
         if (exams) {
           messages.push({
             message: `The edX course is complete, but you need to pass the exam. (Payment due on ${dueDate})`,
