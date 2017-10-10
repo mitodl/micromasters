@@ -35,6 +35,7 @@ import {
   COURSE_ACTION_REENROLL,
   COUPON_CONTENT_TYPE_COURSE,
   COURSE_CARD_FORMAT,
+  COURSE_DEADLINE_FORMAT,
   STATUS_PAID_BUT_NOT_ENROLLED
 } from "../../../constants"
 import * as libCoupon from "../../../lib/coupon"
@@ -140,7 +141,7 @@ describe("Course Status Messages", () => {
       makeRunCurrent(course.runs[0])
       makeRunEnrolled(course.runs[0])
       const dueDate = moment(course.runs[0].course_upgrade_deadline).format(
-        COURSE_CARD_FORMAT
+        COURSE_DEADLINE_FORMAT
       )
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
