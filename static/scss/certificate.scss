@@ -9,6 +9,10 @@
   font-weight: 300;
   -webkit-font-smoothing: antialiased; // sass-lint:disable-line no-vendor-prefixes
 
+  @media print {
+    width: 95%;
+  }
+
   .certificate-body {
     border: 1px solid #cdd7db;
     background: #fcfcfc;
@@ -16,8 +20,25 @@
     padding: 35px 50px;
     position: relative;
 
+    @media print {
+      border: none;
+      padding: 25px 30px 25px 10px;
+    }
+
     .col-md-8 {
       position: static;
+    }
+
+    @media print {
+      .col-md-8 {
+        width: 50%;
+        float: left;
+      };
+
+      .col-md-4 {
+        width: 45%;
+        float: right;
+      }
     }
 
     &.verified {
@@ -32,11 +53,20 @@
 
       img {
         width: 405px;
+
+        @media print {
+          width: 320px;
+        }
       }
     }
 
     .organization-logo img {
       width: 150px;
+
+      @media print {
+        width: 100px;
+      }
+
     }
 
     .certificate-text {
@@ -48,6 +78,10 @@
         margin: 0;
         padding-bottom: 15px;
         font-size: 18px;
+
+        @media print {
+          font-size: 12pt;
+        }
       }
 
       .name {
@@ -71,6 +105,20 @@
       position: absolute;
       bottom: 45px;
       left: 68px;
+
+      @media print {
+        left: 22px;
+
+        .col-md-3 {
+          width: 20%;
+          float: left;
+        }
+
+        .col-md-4, .col-md-5 {
+          width: 33%;
+          float: left;
+        }
+      }
 
       div {
         padding: 0 20px 0 0;
@@ -113,6 +161,10 @@
 
     .organization-logo {
       padding-bottom: 32px;
+
+      @media print {
+        padding-bottom: 20px;
+      }
     }
 
     .signatory {
@@ -134,8 +186,16 @@
         color: #6b6969;
         font-size: 12px;
 
+        @media print {
+          padding-bottom: 0;
+        }
+
         li {
           line-height: 18px;
+
+          @media print {
+            line-height: 15px;
+          }
         }
       }
 
@@ -145,5 +205,17 @@
         font-style: italic;
       }
     }
+  }
+}
+
+@media print {
+  #footer {
+    display: none;
+  }
+}
+
+@media print {
+  a[href]:after {
+  content: "";
   }
 }
