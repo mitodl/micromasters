@@ -58,11 +58,9 @@ export default class Learner extends React.Component {
       dashboard,
       ui,
       setShowGradeDetailDialog,
-      coupons,
-      prices
     } = this.props
 
-    if (!R.isEmpty(dashboard) && coupons && !R.isEmpty(prices)) {
+    if (!R.isEmpty(dashboard)) {
       return dashboard.programs.map(program => (
         <div key={program.id}>
           <CourseListCard

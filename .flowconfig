@@ -4,6 +4,7 @@
 .*/node_modules/draftjs-utils/.*
 .*/node_modules/react-event-listener/src/index.js
 .*.git/.*
+.*/staticfiles/.*
 
 [include]
 ./static/js

@@ -15,9 +15,8 @@ import {
 } from "./ProfileFormContainer"
 import ErrorMessage from "../components/ErrorMessage"
 import { fetchDashboard, clearDashboard } from "../actions/dashboard"
-import { actions } from "../lib/redux_rest"
 import { hasAnyStaffRole } from "../lib/roles"
-import { getDashboard, getCoursePrices } from "../reducers/util"
+import { getDashboard } from "../reducers/util"
 import { S } from "../lib/sanctuary"
 import { LEARNER_EMAIL_TYPE } from "../components/email/constants"
 import { LEARNER_EMAIL_CONFIG } from "../components/email/lib"
@@ -79,14 +78,6 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
     )(this.getFocusedDashboard())
   }
 
-  getFocusedPrices() {
-    const { prices, params: { username } } = this.props
-    return S.filter(
-      () => this.isPrivileged(username),
-      getCoursePrices(username, prices)
-    )
-  }
-
   isPrivileged = (username: string): boolean =>
     R.or(
       hasAnyStaffRole(SETTINGS.roles),
@@ -125,27 +116,19 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
       profileProps,
       email,
       openEmailComposer,
-      coupons
     } = this.props
 
     let profile = {}
     let toRender = null
     let loaded = false
-    let couponsLoaded = false
-    let profileLoaded = false
 
     if (profiles[username] !== undefined) {
       profile = profiles[username]
-      profileLoaded = profiles[username].getStatus !== FETCH_PROCESSING
-      couponsLoaded =
-        !R.isEmpty(coupons) && coupons.fetchGetStatus !== FETCH_PROCESSING
-      loaded = R.all(R.equals(true))([profileLoaded, couponsLoaded])
+      loaded = profiles[username].getStatus !== FETCH_PROCESSING
 
       const props = {
         dashboard:                S.maybe({}, R.identity, this.getFocusedDashboard()),
         email:                    email,
-        prices:                   S.maybe({}, R.identity, this.getFocusedPrices()),
-        coupons:                  coupons,
         openLearnerEmailComposer: R.partial(
           openEmailComposer(LEARNER_EMAIL_TYPE),
           [profile.profile]
