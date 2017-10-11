@@ -584,10 +584,6 @@ describe("LearnerSearchPage", function() {
       [
         REQUEST_DASHBOARD,
         RECEIVE_DASHBOARD_SUCCESS,
-        RECEIVE_FETCH_COUPONS_SUCCESS,
-        REQUEST_FETCH_COUPONS,
-        actions.prices.get.requestType,
-        actions.prices.get.successType
       ],
       () => {
         helper.browserHistory.push(`/learner/${SETTINGS.user.username}`)

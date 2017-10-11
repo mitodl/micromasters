@@ -86,10 +86,6 @@ describe("LearnerPage", function() {
     RECEIVE_GET_USER_PROFILE_SUCCESS,
     REQUEST_GET_USER_PROFILE,
     RECEIVE_GET_USER_PROFILE_SUCCESS,
-    RECEIVE_FETCH_COUPONS_SUCCESS,
-    REQUEST_FETCH_COUPONS,
-    actions.prices.get.requestType,
-    actions.prices.get.successType
   ]
 
   const confirmResumeOrder = (
@@ -1229,8 +1225,6 @@ describe("LearnerPage", function() {
         RECEIVE_GET_USER_PROFILE_SUCCESS,
         REQUEST_GET_USER_PROFILE,
         RECEIVE_GET_USER_PROFILE_SUCCESS,
-        RECEIVE_FETCH_COUPONS_SUCCESS,
-        REQUEST_FETCH_COUPONS
       ]
       return renderComponent(`/learner/other`, actions).then(([, div]) => {
         const count = div
@@ -1343,8 +1337,6 @@ describe("LearnerPage", function() {
     const anonymousUserActions = [
       REQUEST_GET_USER_PROFILE,
       RECEIVE_GET_USER_PROFILE_SUCCESS,
-      RECEIVE_FETCH_COUPONS_SUCCESS,
-      REQUEST_FETCH_COUPONS
     ]
     beforeEach(() => {
       helper = new IntegrationTestHelper()

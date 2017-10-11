@@ -55,25 +55,6 @@ describe("StaffLearnerInfoCard", () => {
     )
   })
 
-  const dataSet = [
-    {
-      price:   1000,
-      display: "$1000"
-    },
-    {
-      price:   0,
-      display: "$0"
-    }
-  ]
-
-  for (const data of dataSet) {
-    it(`should have the program price ${data.display}`, () => {
-      const card = renderCard(DASHBOARD_RESPONSE.programs[0], data.price)
-      const price = card.find(".course-price .program-badge").text()
-      assert.equal(price, data.display)
-    })
-  }
-
   it("should render the progress display", () => {
     const card = renderCard()
     assert.include(stringStrip(card.text()), "1 4 Courses complete")
