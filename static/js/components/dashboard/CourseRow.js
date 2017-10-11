@@ -137,8 +137,6 @@ export default class CourseRow extends React.Component {
       showStaffView
     } = this.props
 
-    const coupon = this.getCourseCoupon()
-
     return (
       <div className="enrolled-course-info">
         <Grades
@@ -162,7 +160,7 @@ export default class CourseRow extends React.Component {
             courseAction={this.courseAction}
             expandedStatuses={ui.expandedCourseStatuses}
             setShowExpandedCourseStatus={setShowExpandedCourseStatus}
-            coupon={coupon}
+            coupon={this.getCourseCoupon()}
           />
         )}
       </div>

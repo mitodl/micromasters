@@ -4,17 +4,15 @@ import { Card, CardTitle } from "react-mdl/lib/Card"
 import R from "ramda"
 
 import { circularProgressWidget } from "./ProgressWidget"
-import { programCourseInfo, classify, formatPrice } from "../util/util"
+import { programCourseInfo, classify } from "../util/util"
 import type { Program } from "../flow/programTypes"
 import { S, getm } from "../lib/sanctuary"
 import type { DialogVisibilityState } from "../reducers/ui"
-import type { CouponPrices } from "../flow/couponTypes"
 
 type StaffLearnerCardProps = {
   program: Program,
   setShowGradeDetailDialog: (b: boolean, t: string) => void,
   dialogVisibility: DialogVisibilityState,
-  prices: CouponPrices
 }
 
 const programInfoBadge = (title, text) => (
@@ -37,14 +35,8 @@ const formatCourseGrade = R.compose(
 )
 
 const StaffLearnerInfoCard = (props: StaffLearnerCardProps) => {
-  const { program, prices } = props
+  const { program } = props
   const { totalPassedCourses, totalCourses } = programCourseInfo(program)
-  const courseProgramPrice = prices.pricesInclCouponByProgram.get(program.id)
-  let priceToDisplay = "--"
-
-  if (courseProgramPrice) {
-    priceToDisplay = formatPrice(courseProgramPrice.price.toString())
-  }
 
   return (
     <Card shadow={1} className="staff-learner-info-card course-list">
@@ -58,7 +50,6 @@ const StaffLearnerInfoCard = (props: StaffLearnerCardProps) => {
             "Average program grade",
             formatCourseGrade(program)
           )}
-          {programInfoBadge("Course Price", priceToDisplay)}
         </div>
       </div>
     </Card>

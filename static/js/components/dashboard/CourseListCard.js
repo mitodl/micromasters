@@ -23,7 +23,7 @@ const priceMessageClassName = "price-message"
 export default class CourseListCard extends React.Component {
   props: {
     program: Program,
-    couponPrices: CouponPrices,
+    couponPrices?: CouponPrices,
     openFinancialAidCalculator?: () => void,
     now?: Object,
     addCourseEnrollment?: (courseId: string) => Promise<*>,
@@ -42,6 +42,10 @@ export default class CourseListCard extends React.Component {
 
   getProgramCouponPrice = (): CouponPrice => {
     const { couponPrices, program } = this.props
+    if (!couponPrices) {
+      // shouldn't happen, we should not be here unless we already checked this
+      throw new Error('No coupon prices available')
+    }
     const couponPrice = couponPrices.pricesInclCouponByProgram.get(program.id)
     if (!couponPrice) {
       // This shouldn't happen since we should have waited for the API requests to finish before getting here
