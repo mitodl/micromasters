@@ -94,7 +94,9 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   const paid = firstRun.has_paid
   const passedExam = hasPassingExamGrade(course)
   const failedExam = hasFailingExamGrade(course)
-  const paymentDueDate = moment(firstRun.course_upgrade_deadline)
+  const paymentDueDate = moment(
+    R.defaultTo("", firstRun.course_upgrade_deadline)
+  )
   if (firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
     const contactHref = `mailto:${SETTINGS.support_email}`
     return S.Just([
@@ -146,12 +148,12 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   ) {
     const message =
       "You are auditing. To get credit, you need to pay for the course."
-    const dateWithZone = paymentDueDate
-      .tz(moment.tz.guess())
-      .format(COURSE_DEADLINE_FORMAT)
-    const paymentDueMessage = paymentDueDate.isValid()
-      ? ` (Payment due on ${dateWithZone})`
-      : ""
+    let paymentDueMessage = ""
+    if (paymentDueDate.isValid()) {
+      paymentDueMessage = ` (Payment due on ${paymentDueDate
+        .tz(moment.tz.guess())
+        .format(COURSE_DEADLINE_FORMAT)})`
+    }
     messages.push({
       message: message + paymentDueMessage,
       action:  courseAction(firstRun, COURSE_ACTION_PAY)
@@ -289,15 +291,17 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
           )
         )
       } else {
-        const dueDate = paymentDueDate.format(COURSE_CARD_FORMAT)
+        const dueDate = paymentDueDate.isValid()
+          ? ` (Payment due on ${paymentDueDate.format(COURSE_CARD_FORMAT)})`
+          : ""
         if (exams) {
           messages.push({
-            message: `The edX course is complete, but you need to pass the exam. (Payment due on ${dueDate})`,
+            message: `The edX course is complete, but you need to pass the exam.${dueDate}`,
             action:  courseAction(firstRun, COURSE_ACTION_PAY)
           })
         } else {
           messages.push({
-            message: `The edX course is complete, but you need to pay to get credit. (Payment due on ${dueDate})`,
+            message: `The edX course is complete, but you need to pay to get credit.${dueDate}`,
             action:  courseAction(firstRun, COURSE_ACTION_PAY)
           })
         }
