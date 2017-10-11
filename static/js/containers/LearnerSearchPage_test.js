@@ -19,17 +19,12 @@ import {
 } from "../actions/email"
 import { START_CHANNEL_EDIT } from "../actions/channels"
 import {
-  RECEIVE_FETCH_COUPONS_SUCCESS,
-  REQUEST_FETCH_COUPONS
-} from "../actions/coupons"
-import {
   REQUEST_DASHBOARD,
   RECEIVE_DASHBOARD_SUCCESS
 } from "../actions/dashboard"
 import { SHOW_DIALOG, HIDE_DIALOG } from "../actions/ui"
 import { EMAIL_COMPOSITION_DIALOG } from "../components/email/constants"
 import { CHANNEL_CREATE_DIALOG } from "../constants"
-import { actions } from "../lib/redux_rest"
 import { modifyTextField } from "../util/test_utils"
 import EmailCompositionDialog from "../components/email/EmailCompositionDialog"
 

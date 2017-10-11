@@ -33,10 +33,6 @@ import {
   DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS
 } from "../containers/test_util"
 import ErrorMessage from "./ErrorMessage"
-import {
-  RECEIVE_FETCH_COUPONS_SUCCESS,
-  REQUEST_FETCH_COUPONS
-} from "../actions/coupons"
 import { actions } from "../lib/redux_rest"
 
 describe("ErrorMessage", () => {
