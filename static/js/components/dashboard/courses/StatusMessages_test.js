@@ -140,9 +140,9 @@ describe("Course Status Messages", () => {
     it("should nag unpaid auditors to pay", () => {
       makeRunCurrent(course.runs[0])
       makeRunEnrolled(course.runs[0])
-      const dueDate = moment(course.runs[0].course_upgrade_deadline).tz(moment.tz.guess()moment().format(
-        COURSE_DEADLINE_FORMAT
-      )
+      const dueDate = moment(course.runs[0].course_upgrade_deadline)
+        .tz(moment.tz.guess())
+        .format(COURSE_DEADLINE_FORMAT)
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
           action:  "course action was called",

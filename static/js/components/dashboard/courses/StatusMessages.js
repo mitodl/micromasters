@@ -144,10 +144,11 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     courseUpcomingOrCurrent(firstRun) ||
     firstRun.status === STATUS_CAN_UPGRADE
   ) {
-    const date_with_zone = moment(firstRun.course_upgrade_deadline).tz(moment.tz.guess())
+    const dateWithZone = moment(firstRun.course_upgrade_deadline)
+      .tz(moment.tz.guess())
+      .format(COURSE_DEADLINE_FORMAT)
     messages.push({
-      message: `You are auditing. To get credit, you need to pay for the course.
-       (Payment due on ${date_with_zone.format(COURSE_DEADLINE_FORMAT)})`,
+      message: `You are auditing. To get credit, you need to pay for the course. (Payment due on ${dateWithZone})`,
       action:  courseAction(firstRun, COURSE_ACTION_PAY)
     })
     return S.Just(messages)
