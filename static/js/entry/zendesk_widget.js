@@ -99,7 +99,7 @@ const zendeskCallbacks = {
 
   launcherLoaded: () => {
     const iframe = document.querySelector("iframe.zEWidget-launcher")
-    const btn = iframe.contentDocument.querySelector(".u-userBackgroundColor")
+    const btn = iframe.contentDocument.querySelector(".u-userLauncherColor")
 
     const regularBackgroundColor = "rgba(0, 0, 0, .14)"
     const hoverBackgroundColor = window.getComputedStyle(btn).backgroundColor
