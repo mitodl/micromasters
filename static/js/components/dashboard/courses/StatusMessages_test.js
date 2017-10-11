@@ -164,7 +164,8 @@ describe("Course Status Messages", () => {
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
           action:  "course action was called",
-          message: "You are auditing. To get credit, you need to pay for the course."
+          message:
+            "You are auditing. To get credit, you need to pay for the course."
         }
       ])
       assert(
