@@ -86,7 +86,6 @@ export type CourseRun = {
   course_start_date?:           ?string,
   course_end_date?:             string,
   course_upgrade_deadline?:     string,
-  price?:                       number,
   enrollment_url?:              ?string,
   has_paid:                     boolean,
 }
