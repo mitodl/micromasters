@@ -115,7 +115,7 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
       children,
       profileProps,
       email,
-      openEmailComposer,
+      openEmailComposer
     } = this.props
 
     let profile = {}

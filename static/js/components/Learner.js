@@ -31,7 +31,7 @@ export default class Learner extends React.Component {
     startProfileEdit: () => void,
     setLearnerPageAboutMeDialogVisibility: () => void,
     openLearnerEmailComposer: () => void,
-    setShowGradeDetailDialog: (b: boolean, t: string) => void,
+    setShowGradeDetailDialog: (b: boolean, t: string) => void
   }
 
   toggleShowPersonalDialog = (): void => {
@@ -54,11 +54,7 @@ export default class Learner extends React.Component {
     startProfileEdit()
   }
   showStaffInfo = () => {
-    const {
-      dashboard,
-      ui,
-      setShowGradeDetailDialog,
-    } = this.props
+    const { dashboard, ui, setShowGradeDetailDialog } = this.props
 
     if (!R.isEmpty(dashboard)) {
       return dashboard.programs.map(program => (

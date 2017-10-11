@@ -44,7 +44,7 @@ export default class CourseListCard extends React.Component {
     const { couponPrices, program } = this.props
     if (!couponPrices) {
       // shouldn't happen, we should not be here unless we already checked this
-      throw new Error('No coupon prices available')
+      throw new Error("No coupon prices available")
     }
     const couponPrice = couponPrices.pricesInclCouponByProgram.get(program.id)
     if (!couponPrice) {

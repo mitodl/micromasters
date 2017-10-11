@@ -12,7 +12,7 @@ import type { DialogVisibilityState } from "../reducers/ui"
 type StaffLearnerCardProps = {
   program: Program,
   setShowGradeDetailDialog: (b: boolean, t: string) => void,
-  dialogVisibility: DialogVisibilityState,
+  dialogVisibility: DialogVisibilityState
 }
 
 const programInfoBadge = (title, text) => (
