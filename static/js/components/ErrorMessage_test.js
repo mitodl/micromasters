@@ -233,7 +233,7 @@ describe("ErrorMessage", () => {
           RECEIVE_GET_USER_PROFILE_FAILURE,
           RECEIVE_GET_USER_PROFILE_FAILURE,
           REQUEST_GET_PROGRAM_ENROLLMENTS,
-          RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
+          RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS
         ]
         return renderComponent(
           `/learner/${SETTINGS.user.username}`,
@@ -255,7 +255,7 @@ describe("ErrorMessage", () => {
           REQUEST_GET_USER_PROFILE,
           REQUEST_GET_USER_PROFILE,
           RECEIVE_GET_USER_PROFILE_SUCCESS,
-          RECEIVE_GET_USER_PROFILE_SUCCESS,
+          RECEIVE_GET_USER_PROFILE_SUCCESS
         ]
         return renderComponent(
           `/learner/${SETTINGS.user.username}`,

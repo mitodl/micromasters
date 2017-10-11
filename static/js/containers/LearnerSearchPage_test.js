@@ -581,10 +581,7 @@ describe("LearnerSearchPage", function() {
   it("navigates between the learner search page and the profile page without error", async () => {
     await renderSearch()
     await listenForActions(
-      [
-        REQUEST_DASHBOARD,
-        RECEIVE_DASHBOARD_SUCCESS,
-      ],
+      [REQUEST_DASHBOARD, RECEIVE_DASHBOARD_SUCCESS],
       () => {
         helper.browserHistory.push(`/learner/${SETTINGS.user.username}`)
       }

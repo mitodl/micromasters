@@ -85,7 +85,7 @@ describe("LearnerPage", function() {
     REQUEST_GET_USER_PROFILE,
     RECEIVE_GET_USER_PROFILE_SUCCESS,
     REQUEST_GET_USER_PROFILE,
-    RECEIVE_GET_USER_PROFILE_SUCCESS,
+    RECEIVE_GET_USER_PROFILE_SUCCESS
   ]
 
   const confirmResumeOrder = (
@@ -1224,7 +1224,7 @@ describe("LearnerPage", function() {
         REQUEST_GET_USER_PROFILE,
         RECEIVE_GET_USER_PROFILE_SUCCESS,
         REQUEST_GET_USER_PROFILE,
-        RECEIVE_GET_USER_PROFILE_SUCCESS,
+        RECEIVE_GET_USER_PROFILE_SUCCESS
       ]
       return renderComponent(`/learner/other`, actions).then(([, div]) => {
         const count = div
@@ -1336,7 +1336,7 @@ describe("LearnerPage", function() {
   describe("Unauthenticated user page", () => {
     const anonymousUserActions = [
       REQUEST_GET_USER_PROFILE,
-      RECEIVE_GET_USER_PROFILE_SUCCESS,
+      RECEIVE_GET_USER_PROFILE_SUCCESS
     ]
     beforeEach(() => {
       helper = new IntegrationTestHelper()
