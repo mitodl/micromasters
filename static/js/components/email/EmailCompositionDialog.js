@@ -6,7 +6,7 @@ import { Editor } from "react-draft-wysiwyg"
 // $FlowFixMe: Flow thinks this module isn't present for some reason
 import { EditorState, ContentState, convertFromHTML, Modifier } from "draft-js"
 
-import { AUTOMATIC_EMAIL_ADMIN_TYPE } from "./constants"
+import { AUTOMATIC_EMAIL_ADMIN_TYPE, COURSE_EMAIL_TYPE } from "./constants"
 import AutomaticEmailOptions from "./AutomaticEmailOptions"
 import RecipientVariableButton from "./RecipientVariableButton"
 import { FETCH_PROCESSING } from "../../actions"
@@ -204,6 +204,13 @@ export default class EmailCompositionDialog extends React.Component {
   okButtonLabel = (dialogType: string) =>
     dialogType === AUTOMATIC_EMAIL_ADMIN_TYPE ? "Save Changes" : "Send"
 
+  renderRecipientVariable = () => (
+    <div className="toolbar-below">
+      <div className="insert">Insert:</div>
+      {this.makeCustomToolbarButtons(RECIPIENT_VARIABLE_NAMES)}
+    </div>
+  )
+
   render() {
     if (!this.props.activeEmail) return null
 
@@ -254,10 +261,9 @@ export default class EmailCompositionDialog extends React.Component {
             onEditorStateChange={this.onEditorStateChange}
             toolbar={draftWysiwygToolbar}
           />
-          <div className="toolbar-below">
-            <div className="insert">Insert:</div>
-            {this.makeCustomToolbarButtons(RECIPIENT_VARIABLE_NAMES)}
-          </div>
+          {dialogType !== COURSE_EMAIL_TYPE
+            ? this.renderRecipientVariable()
+            : null}
           {this.showValidationError("body")}
         </div>
       </Dialog>
