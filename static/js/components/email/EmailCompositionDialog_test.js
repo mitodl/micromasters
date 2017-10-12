@@ -239,8 +239,9 @@ describe("EmailCompositionDialog", () => {
       [COURSE_EMAIL_TYPE, true],
       [SEARCH_EMAIL_TYPE, false]
     ]) {
-      it(`should not insert recipient variables for ${dialogType[0]}`, () => {
-        renderDialog({}, {dialogType: dialogType[0]})
+      it(`should ${!dialogType[1] ? "display" : "not display"} 
+        recipient variables for ${dialogType[0]}`, () => {
+        renderDialog({}, { dialogType: dialogType[0] })
         assert.equal(
           _.isNull(getDialog().querySelector(".toolbar-below")),
           dialogType[1]
