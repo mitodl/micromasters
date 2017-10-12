@@ -180,8 +180,7 @@
       "required": false
     },
     "OPEN_DISCUSSIONS_COOKIE_NAME": {
-      "description": "The name of the cookie to set the JWT token on",
-      "required": false
+      "description": "The name of the cookie to set the JWT token on"
     },
     "OPEN_DISCUSSIONS_COOKIE_DOMAIN": {
       "description": "The domain to set the JWT token cookie on",

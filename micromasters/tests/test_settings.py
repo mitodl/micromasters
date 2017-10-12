@@ -17,7 +17,7 @@ from search.base import MockedESTestCase
 
 REQUIRED_SETTINGS = {
     'MAILGUN_URL': 'http://fake.mailgun.url',
-    'MAILGUN_KEY': 'fake_mailgun_key'
+    'MAILGUN_KEY': 'fake_mailgun_key',
 }
 
 

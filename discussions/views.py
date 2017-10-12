@@ -1,6 +1,7 @@
 """APIs for discussions"""
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ImproperlyConfigured
 from django.shortcuts import redirect
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
@@ -23,6 +24,8 @@ def _set_jwt_cookie(response, token):
         response (django.http.Response): the response to set the cookie on
         token (str): the JWT token
     """
+    if not settings.OPEN_DISCUSSIONS_COOKIE_NAME:
+        raise ImproperlyConfigured('OPEN_DISCUSSIONS_COOKIE_NAME must be set')
     response.set_cookie(
         settings.OPEN_DISCUSSIONS_COOKIE_NAME,
         token,
