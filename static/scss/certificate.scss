@@ -1,3 +1,13 @@
+ @media print {
+   @page {
+     size: auto;  margin: 0mm;
+   }
+
+   body {
+    margin: 0;
+   }
+  }
+
 .certificate {
   max-width: 1120px;
   margin-left: auto;
@@ -11,6 +21,7 @@
 
   @media print {
     width: 95%;
+    margin: 0;
   }
 
   .certificate-body {
@@ -23,6 +34,8 @@
     @media print {
       border: none;
       padding: 25px 30px 25px 10px;
+      padding: 0;
+      margin: 1.4cm;
     }
 
     .col-md-8 {
@@ -107,10 +120,11 @@
       left: 68px;
 
       @media print {
-        left: 22px;
+        left: 12px;
+        bottom: 15px;
 
         .col-md-3 {
-          width: 20%;
+          width: 19%;
           float: left;
         }
 
@@ -122,17 +136,17 @@
 
       div {
         padding: 0 20px 0 0;
-      }
 
-      .certificate-date, .certificate-id {
-        padding-top: 10px;
+        @media print {
+          padding-right: 10px;
+        }
       }
 
       .edx-logo {
         padding-right: 30px;
 
         img {
-          width: 106px;
+          width: 82px;
         }
       }
 
