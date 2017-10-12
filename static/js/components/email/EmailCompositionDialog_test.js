@@ -233,6 +233,20 @@ describe("EmailCompositionDialog", () => {
       ReactTestUtils.Simulate.click(getDialog().querySelector(".button-Email"))
       assert.include(getEditorContents().textContent, "[Email]")
     })
+
+    for (const dialogType of [
+      [LEARNER_EMAIL_TYPE, false],
+      [COURSE_EMAIL_TYPE, true],
+      [SEARCH_EMAIL_TYPE, false]
+    ]) {
+      it(`should not insert recipient variables for ${dialogType[0]}`, () => {
+        renderDialog({}, {dialogType: dialogType[0]})
+        assert.equal(
+          _.isNull(getDialog().querySelector(".toolbar-below")),
+          dialogType[1]
+        )
+      })
+    }
   })
 
   it("should render recipients", () => {
