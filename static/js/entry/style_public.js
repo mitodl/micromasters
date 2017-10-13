@@ -7,4 +7,4 @@ window.$ = $
 
 import "../../scss/public_style/web-icons.css"
 import "../../scss/public_style/bootstrap-extend.css"
-import "style-loader!css-loader!rrssb/css/rrssb.css"
+import "rrssb/css/rrssb.css"

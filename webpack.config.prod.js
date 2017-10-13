@@ -1,6 +1,7 @@
 var webpack = require('webpack');
 var path = require("path");
 var BundleTracker = require('webpack-bundle-tracker');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const { config, babelSharedLoader } = require(path.resolve("./webpack.config.shared.js"));
 
 const prodBabelConfig = Object.assign({}, babelSharedLoader);
@@ -11,7 +12,17 @@ prodBabelConfig.query.plugins.push(
 );
 
 const prodConfig = Object.assign({}, config);
-prodConfig.module.rules = [prodBabelConfig, ...config.module.rules];
+prodConfig.module.rules = [
+  prodBabelConfig,
+  ...config.module.rules,
+  {
+    test: /\.css$|\.scss$/,
+    use:     ExtractTextPlugin.extract({
+      fallback: 'style-loader',
+      use:      ['css-loader', 'postcss-loader', 'sass-loader'],
+    })
+  }
+];
 
 module.exports = Object.assign(prodConfig, {
   context: __dirname,
@@ -45,6 +56,11 @@ module.exports = Object.assign(prodConfig, {
       minimize: true
     }),
     new webpack.optimize.AggressiveMergingPlugin(),
+    new ExtractTextPlugin({
+      filename: "styles-[contenthash].css",
+      allChunks: true,
+      ignoreOrder: false,
+    }),
   ],
   devtool: 'source-map'
 });

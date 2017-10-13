@@ -18,24 +18,6 @@ module.exports = {
           test: /\.(svg|ttf|woff|woff2|eot|gif)$/,
           use: 'url-loader'
         },
-        {
-          test: /\.scss$/,
-          exclude: /node_modules/,
-          use: [
-            { loader: 'style-loader' },
-            { loader: 'css-loader' },
-            { loader: 'postcss-loader' },
-            { loader: 'sass-loader' },
-          ]
-        },
-        {
-          test: /\.css$/,
-          exclude: /node_modules/,
-          use: [
-            { loader: 'style-loader' },
-            { loader: 'css-loader' }
-          ]
-        },
       ]
     },
     resolve: {
