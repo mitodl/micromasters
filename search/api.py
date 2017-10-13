@@ -4,6 +4,7 @@ Functions for executing ES searches
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q as Query
+from elasticsearch.exceptions import NotFoundError
 from elasticsearch_dsl import Search, Q
 
 from courses.models import Program
@@ -280,3 +281,23 @@ def adjust_search_for_percolator(search):
     updated_search = Search(index=search._index, doc_type=search._doc_type)  # pylint: disable=protected-access
     updated_search.update_from_dict(updated_search_dict)
     return updated_search
+
+
+def document_needs_updating(enrollment):
+    """
+    Get the document from elasticsearch and see if it matches what's in the database
+
+    Args:
+        enrollment (ProgramEnrollment): A program enrollment
+
+    Returns:
+        bool: True if the document needs to be updated via reindex
+    """
+    conn = get_conn()
+    try:
+        document = conn.get(index=get_default_alias(), doc_type=USER_DOC_TYPE, id=enrollment.id)
+    except NotFoundError:
+        return True
+    serialized_enrollment = serialize_program_enrolled_user(enrollment)
+    del serialized_enrollment['_id']
+    return serialized_enrollment != document['_source']

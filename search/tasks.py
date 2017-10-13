@@ -10,11 +10,11 @@ from dashboard.models import ProgramEnrollment
 from discussions.api import sync_user_to_channels as _sync_user_to_channels
 from mail.api import send_automatic_emails as _send_automatic_emails
 from micromasters.celery import app
+from search.api import document_needs_updating as _document_needs_updating
 from search.indexing_api import (
     get_default_alias,
     index_program_enrolled_users as _index_program_enrolled_users,
     remove_program_enrolled_user as _remove_program_enrolled_user,
-    index_users as _index_users,
     index_percolate_queries as _index_percolate_queries,
     delete_percolate_query as _delete_percolate_query,
     refresh_index as _refresh_index,
@@ -25,12 +25,12 @@ from search.models import PercolateQuery
 log = logging.getLogger(__name__)
 
 
-def post_indexing_handler(program_enrollment_ids):
+def post_indexing_handler(program_enrollments):
     """
     Do the work which happens after a profile is reindexed
 
     Args:
-        program_enrollment_ids (list of int): A list of ProgramEnrollment ids
+        program_enrollments (list of ProgramEnrollment): A list of ProgramEnrollments
     """
     feature_sync_user = settings.FEATURES.get('OPEN_DISCUSSIONS_USER_SYNC', False)
 
@@ -38,7 +38,7 @@ def post_indexing_handler(program_enrollment_ids):
         log.debug('OPEN_DISCUSSIONS_USER_SYNC is set to False (so disabled) in the settings')
 
     _refresh_index(get_default_alias())
-    for program_enrollment in ProgramEnrollment.objects.filter(id__in=program_enrollment_ids):
+    for program_enrollment in program_enrollments:
         _send_automatic_emails(program_enrollment)
 
         if feature_sync_user:
@@ -68,22 +68,32 @@ def index_program_enrolled_users(program_enrollment_ids):
     _index_program_enrolled_users(program_enrollments)
 
     # Send email for profiles that newly fit the search query for an automatic email
-    post_indexing_handler(program_enrollment_ids)
+    post_indexing_handler(program_enrollments)
 
 
 @app.task
-def index_users(user_ids):
+def index_users(user_ids, check_if_changed=False):
     """
     Index users' ProgramEnrollment documents
 
     Args:
         user_ids (list of int): Ids of users to update in the Elasticsearch index
+        check_if_changed (bool):
+            If true, read the document from elasticsearch before indexing and
+            check if the serialized value would be different.
     """
-    _index_users(user_ids)
+    enrollments = list(ProgramEnrollment.objects.filter(user__in=user_ids))
 
-    # Send email for profiles that newly fit the search query for an automatic email
-    enrollment_ids = list(ProgramEnrollment.objects.filter(user__in=user_ids).values_list("id", flat=True))
-    post_indexing_handler(enrollment_ids)
+    if check_if_changed:
+        enrollments = [
+            enrollment for enrollment in enrollments if _document_needs_updating(enrollment)
+        ]
+
+    if len(enrollments) > 0:
+        _index_program_enrolled_users(enrollments)
+
+        # Send email for profiles that newly fit the search query for an automatic email
+        post_indexing_handler(enrollments)
 
 
 @app.task

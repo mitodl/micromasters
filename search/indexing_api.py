@@ -217,18 +217,6 @@ def index_program_enrolled_users(program_enrollments, indices=None, chunk_size=1
     return count
 
 
-def index_users(user_ids, chunk_size=100):
-    """
-    Indexes a list of users via their ProgramEnrollments
-
-    Args:
-        user_ids (list of int): A list of User ids to index
-        chunk_size (int): The number of documents in index in one bulk call. Used to keep memory use down.
-    """
-    program_enrollments = ProgramEnrollment.prefetched_qset().filter(user__in=user_ids)
-    return index_program_enrolled_users(program_enrollments, chunk_size=chunk_size)
-
-
 def remove_program_enrolled_user(program_enrollment_id, indices=None):
     """
     Remove a program-enrolled user from Elasticsearch.

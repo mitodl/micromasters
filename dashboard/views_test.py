@@ -317,7 +317,7 @@ class UserCourseEnrollmentTest(MockedESTestCase, APITestCase):
         assert mock_edx_enr.call_count == 1
         assert mock_edx_enr.call_args[0][1] == self.course_id
         assert resp.data == enr_json
-        mock_index.delay.assert_called_once_with([self.user.id])
+        mock_index.delay.assert_called_once_with([self.user.id], check_if_changed=True)
 
         cache_enr = CachedEnrollment.objects.filter(
             user=self.user, course_run__edx_course_key=self.course_id).first()

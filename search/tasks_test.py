@@ -2,6 +2,7 @@
 from ddt import (
     data,
     ddt,
+    unpack,
 )
 from django.test import override_settings
 
@@ -33,10 +34,10 @@ class SearchTasksTests(MockedESTestCase):
         super().setUp()
 
         for mock in self.patcher_mocks:
-            if mock.name == "_index_users":
-                self.index_users_mock = mock
-            elif mock.name == "_index_program_enrolled_users":
+            if mock.name == "_index_program_enrolled_users":
                 self.index_program_enrolled_users_mock = mock
+            elif mock.name == "_document_needs_updating":
+                self.document_needs_updating_mock = mock
             elif mock.name == "_send_automatic_emails":
                 self.send_automatic_emails_mock = mock
             elif mock.name == "_refresh_index":
@@ -53,12 +54,55 @@ class SearchTasksTests(MockedESTestCase):
         enrollment2 = ProgramEnrollmentFactory.create(user=enrollment1.user)
         with self.settings(FEATURES={"OPEN_DISCUSSIONS_USER_SYNC": sync_feature_flag}):
             index_users([enrollment1.user.id])
-            self.index_users_mock.assert_called_with([enrollment1.user.id])
+            self.index_program_enrolled_users_mock.assert_called_once_with([enrollment1, enrollment2])
             for enrollment in [enrollment1, enrollment2]:
                 self.send_automatic_emails_mock.assert_any_call(enrollment)
                 if sync_feature_flag:
                     self.sync_user_to_channels_mock.assert_any_call(enrollment.user.id)
             self.refresh_index_mock.assert_called_with(get_default_alias())
+
+    @data(*[
+        [True, True],
+        [True, False],
+        [False, True],
+        [False, False],
+    ])
+    @unpack
+    def test_index_users_check_if_changed(self, enrollment1_needs_update, enrollment2_needs_update):
+        """
+        If check_if_changed is true we should only update documents which need updating
+        """
+        enrollment1 = ProgramEnrollmentFactory.create()
+        enrollment2 = ProgramEnrollmentFactory.create()
+
+        needs_update_list = []
+        if enrollment1_needs_update:
+            needs_update_list.append(enrollment1)
+        if enrollment2_needs_update:
+            needs_update_list.append(enrollment2)
+
+        def fake_needs_updating(_enrollment):
+            """Fake document_needs_update to conform to test data"""
+            return _enrollment in needs_update_list
+
+        self.document_needs_updating_mock.side_effect = fake_needs_updating
+        index_users([enrollment1.user.id, enrollment2.user.id], check_if_changed=True)
+
+        expected_enrollments = []
+        if enrollment1_needs_update:
+            expected_enrollments.append(enrollment1)
+        if enrollment2_needs_update:
+            expected_enrollments.append(enrollment2)
+
+        self.document_needs_updating_mock.assert_any_call(enrollment1)
+        self.document_needs_updating_mock.assert_any_call(enrollment2)
+        if len(needs_update_list) > 0:
+            self.index_program_enrolled_users_mock.assert_called_once_with(needs_update_list)
+            for enrollment in needs_update_list:
+                self.send_automatic_emails_mock.assert_any_call(enrollment)
+        else:
+            assert self.index_program_enrolled_users_mock.called is False
+            assert self.send_automatic_emails_mock.called is False
 
     @data(True, False)
     def test_index_program_enrolled_users(self, sync_feature_flag):

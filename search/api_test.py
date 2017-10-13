@@ -18,6 +18,7 @@ from roles.roles import Staff
 from search.api import (
     adjust_search_for_percolator,
     create_search_obj,
+    document_needs_updating,
     execute_search,
     get_all_query_matching_emails,
     prepare_and_execute_search,
@@ -37,8 +38,10 @@ from search.exceptions import (
 from search.models import PercolateQuery
 
 
-@ddt.ddt  # pylint: disable=missing-docstring
+# pylint: disable=unused-argument
+@ddt.ddt
 class SearchAPITests(ESTestCase):
+    """Tests for the search API"""
     @classmethod
     def setUpTestData(cls):
         with mute_signals(post_save):
@@ -222,8 +225,30 @@ class SearchAPITests(ESTestCase):
         results = get_all_query_matching_emails(search, page_size=test_es_page_size)
         assert results == set(user_ids[:test_es_page_size])
 
+    # This patch works around on_commit by invoking it immediately, since in TestCase all tests run in transactions
+    @patch('search.signals.transaction.on_commit', side_effect=lambda callback: callback())
+    def test_document_needs_update(self, mocked_on_commit):
+        """
+        If a document on ES is out of date with the database, document_needs_update should return true
+        """
+        enrollment = ProgramEnrollmentFactory.create()
+        assert document_needs_updating(enrollment) is False
 
-# pylint: disable=unused-argument
+        with mute_signals(post_save):
+            enrollment.user.profile.first_name = "Changed"
+            enrollment.user.profile.save()
+
+        assert document_needs_updating(enrollment) is True
+
+    def test_document_needs_update_missing(self):
+        """
+        If a document doesn't exist on Elasticsearch, document_needs_update should return true
+        """
+        with mute_signals(post_save):
+            enrollment = ProgramEnrollmentFactory.create()
+        assert document_needs_updating(enrollment) is True
+
+
 # This patch works around on_commit by invoking it immediately, since in TestCase all tests run in transactions
 @patch('search.signals.transaction.on_commit', side_effect=lambda callback: callback())
 class PercolateTests(ESTestCase):

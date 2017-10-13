@@ -187,7 +187,7 @@ class CachedEdxDataApi:
             )
         if index_user:
             # submit a celery task to reindex the user
-            tasks.index_users.delay([user.id])
+            tasks.index_users.delay([user.id], check_if_changed=True)
 
     @classmethod
     def update_cached_enrollments(cls, user, edx_client):
@@ -215,7 +215,7 @@ class CachedEdxDataApi:
             # update the last refresh timestamp
             cls.update_cache_last_access(user, cls.ENROLLMENT)
         # submit a celery task to reindex the user
-        tasks.index_users.delay([user.id])
+        tasks.index_users.delay([user.id], check_if_changed=True)
 
     @classmethod
     def update_cached_certificates(cls, user, edx_client):
@@ -255,7 +255,7 @@ class CachedEdxDataApi:
             # update the last refresh timestamp
             cls.update_cache_last_access(user, cls.CERTIFICATE)
         # submit a celery task to reindex the user
-        tasks.index_users.delay([user.id])
+        tasks.index_users.delay([user.id], check_if_changed=True)
 
     @classmethod
     def update_cached_current_grades(cls, user, edx_client):
@@ -295,7 +295,7 @@ class CachedEdxDataApi:
             # update the last refresh timestamp
             cls.update_cache_last_access(user, cls.CURRENT_GRADE)
         # submit a celery task to reindex the user
-        tasks.index_users.delay([user.id])
+        tasks.index_users.delay([user.id], check_if_changed=True)
 
     @classmethod
     def update_cache_if_expired(cls, user, edx_client, cache_type):
