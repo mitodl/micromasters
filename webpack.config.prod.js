@@ -57,7 +57,7 @@ module.exports = Object.assign(prodConfig, {
     }),
     new webpack.optimize.AggressiveMergingPlugin(),
     new ExtractTextPlugin({
-      filename: "styles-[contenthash].css",
+      filename: "styles-[name]-[contenthash].css",
       allChunks: true,
       ignoreOrder: false,
     }),
