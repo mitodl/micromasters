@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+./manage.py migrate --noinput
+
+if [[ ! -z "$HEROKU_PARENT_APP_NAME" ]]
+then
+    # Review app, we need to tweak the Elasticsearch index a bit
+    NEW_INDEX="${ELASTICSEARCH_INDEX}-${HEROKU_APP_NAME}"
+
+    # Patch environment variable for this PR build
+    curl -n -X PATCH https://api.heroku.com/apps/"$HEROKU_APP_NAME"/config-vars/ \
+        -d "{\"ELASTICSEARCH_INDEX\": \"$NEW_INDEX\"}" \
+        -H "Content-Type: application/json" \
+        -H "Accept: application/vnd.heroku+json; version=3" --fail
+
+    # Set up the index
+    ELASTICSEARCH_INDEX=$NEW_INDEX ./manage.py recreate_index
+fi

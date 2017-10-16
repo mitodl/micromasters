@@ -104,6 +104,12 @@
       "description": "API key for accessing Google services",
       "required": true
     },
+    "HEROKU_APP_NAME": {
+      "required": true
+    },
+    "HEROKU_PARENT_APP_NAME": {
+      "required": true
+    },
     "MAILGUN_KEY": {
       "description": "The token for authenticating against the Mailgun API"
     },
@@ -231,7 +237,7 @@
   "name": "micromasters",
   "repository": "https://github.com/mitodl/micromasters",
   "scripts": {
-    "postdeploy": "./manage.py migrate"
+    "postdeploy": "./bin/postdeploy"
   },
   "success_url": "/",
   "website": "https://github.com/mitodl/micromasters"
