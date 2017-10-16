@@ -518,7 +518,12 @@ CACHES = {
 # Elasticsearch
 ELASTICSEARCH_DEFAULT_PAGE_SIZE = get_int('ELASTICSEARCH_DEFAULT_PAGE_SIZE', 50)
 ELASTICSEARCH_URL = get_string("ELASTICSEARCH_URL", None)
-ELASTICSEARCH_INDEX = get_string('ELASTICSEARCH_INDEX', 'micromasters')
+if get_string("HEROKU_PARENT_APP_NAME", None) is not None:
+    ELASTICSEARCH_INDEX = get_string('HEROKU_APP_NAME', None)
+else:
+    ELASTICSEARCH_INDEX = get_string('ELASTICSEARCH_INDEX', None)
+if not ELASTICSEARCH_INDEX:
+    raise ImproperlyConfigured("Missing ELASTICSEARCH_INDEX")
 ELASTICSEARCH_HTTP_AUTH = get_string("ELASTICSEARCH_HTTP_AUTH", None)
 
 # django-role-permissions
