@@ -6,7 +6,7 @@ import { Editor } from "react-draft-wysiwyg"
 // $FlowFixMe: Flow thinks this module isn't present for some reason
 import { EditorState, ContentState, convertFromHTML, Modifier } from "draft-js"
 
-import { AUTOMATIC_EMAIL_ADMIN_TYPE, COURSE_EMAIL_TYPE } from "./constants"
+import { AUTOMATIC_EMAIL_ADMIN_TYPE } from "./constants"
 import AutomaticEmailOptions from "./AutomaticEmailOptions"
 import RecipientVariableButton from "./RecipientVariableButton"
 import { FETCH_PROCESSING } from "../../actions"
@@ -62,7 +62,8 @@ type EmailDialogProps = {
   updateEmailFieldEdit: () => void,
   renderRecipients?: (filters: ?Array<Filter>) => React$Element<*>,
   updateEmailBody: (e: Object) => void,
-  dialogType: string
+  dialogType: string,
+  supportBulkEmails: boolean
 }
 
 export default class EmailCompositionDialog extends React.Component {
@@ -220,7 +221,8 @@ export default class EmailCompositionDialog extends React.Component {
       dialogVisibility,
       updateEmailFieldEdit,
       renderRecipients,
-      dialogType
+      dialogType,
+      supportBulkEmails = false
     } = this.props
     const { editorState } = this.state
 
@@ -261,9 +263,7 @@ export default class EmailCompositionDialog extends React.Component {
             onEditorStateChange={this.onEditorStateChange}
             toolbar={draftWysiwygToolbar}
           />
-          {dialogType !== COURSE_EMAIL_TYPE
-            ? this.renderRecipientVariable()
-            : null}
+          {supportBulkEmails ? this.renderRecipientVariable() : null}
           {this.showValidationError("body")}
         </div>
       </Dialog>

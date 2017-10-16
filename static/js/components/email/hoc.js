@@ -130,6 +130,7 @@ export const withEmailDialog = R.curry(
             dialogVisibility={dialogVisibility[EMAIL_COMPOSITION_DIALOG]}
             activeEmail={this.getActiveEmailState()}
             title={emailConfig.title}
+            supportBulkEmails={emailConfig.supportBulkEmails}
             subheadingRenderer={emailConfig.renderSubheading}
             renderRecipients={emailConfig.renderRecipients}
             updateEmailBody={this.updateEmailBody}

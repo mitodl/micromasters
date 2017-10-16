@@ -54,7 +54,8 @@ export const renderFilterOptions = R.map(filter => {
 })
 
 export const COURSE_TEAM_EMAIL_CONFIG: EmailConfig = {
-  title: "Contact the Course Team",
+  title:             "Contact the Course Team",
+  supportBulkEmails: false,
 
   renderSubheading: (activeEmail: EmailState) => (
     <div className="subheading-section">
@@ -84,7 +85,8 @@ export const COURSE_TEAM_EMAIL_CONFIG: EmailConfig = {
 }
 
 export const SEARCH_RESULT_EMAIL_CONFIG: EmailConfig = {
-  title: "New Email",
+  title:             "New Email",
+  supportBulkEmails: true,
 
   emailOpenParams: (searchkit: Object) => ({
     subheading:              `${searchkit.getHitsCount() || 0} recipients selected`,
@@ -117,7 +119,8 @@ export const SEARCH_RESULT_EMAIL_CONFIG: EmailConfig = {
 }
 
 export const LEARNER_EMAIL_CONFIG: EmailConfig = {
-  title: "Send a Message",
+  title:             "Send a Message",
+  supportBulkEmails: false,
 
   renderSubheading: (activeEmail: EmailState) => (
     <div className="subheading-section">
@@ -193,9 +196,10 @@ export const getFilters = (root: Object) => {
 }
 
 export const AUTOMATIC_EMAIL_ADMIN_CONFIG: EmailConfig = {
-  title:           "Edit Email Campaign",
-  editEmail:       actions.automaticEmails.patch,
-  emailSendParams: R.compose(convertEmailEdit, R.prop("inputs")),
+  title:             "Edit Email Campaign",
+  editEmail:         actions.automaticEmails.patch,
+  emailSendParams:   R.compose(convertEmailEdit, R.prop("inputs")),
+  supportBulkEmails: true,
 
   emailOpenParams: (emailOpenParams: AutomaticEmail) => ({
     inputs: {

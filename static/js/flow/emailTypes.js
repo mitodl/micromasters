@@ -37,6 +37,7 @@ export type AllEmailsState = {
 
 export type EmailConfig = {
   title: string,
+  supportBulkEmails: boolean,
   renderSubheading: (activeEmail: EmailState) => React$Element<*>,
   emailOpenParams: (args: any) => Object,
   getEmailSendFunction: () => Function,
