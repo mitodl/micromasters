@@ -222,7 +222,7 @@ export default class EmailCompositionDialog extends React.Component {
       updateEmailFieldEdit,
       renderRecipients,
       dialogType,
-      supportBulkEmails = false
+      supportBulkEmails
     } = this.props
     const { editorState } = this.state
 
