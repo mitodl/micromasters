@@ -1,0 +1,7 @@
+services:
+  python:
+    build:
+      dockerfile: ./travis/Dockerfile-travis-web
+    environment:
+      DEBUG: 'False'
+      NODE_ENV: 'production'
