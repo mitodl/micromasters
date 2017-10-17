@@ -1,0 +1,29 @@
+version: '2.1'
+services:
+  selenium:
+    image: micromasters_python
+    extends:
+      service: python
+    links:
+      - db
+      - elastic
+      - redis
+      - hub
+      - chrome
+
+  hub:
+    image: selenium/hub:3.4.0-chromium
+    environment:
+      GRID_TIMEOUT: '3600'
+    ports:
+      - "4444:4444"
+
+  chrome:
+    image: selenium/node-chrome:3.4.0-chromium
+    environment:
+      - HUB_PORT_4444_TCP_ADDR=hub
+      - HUB_PORT_4444_TCP_PORT=4444
+    links:
+      - hub
+    ports:
+      - "5555:5555"

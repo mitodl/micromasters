@@ -18,9 +18,6 @@ services:
 
   nginx:
     image: nginx
-    volumes:
-      - ./config/nginx.conf:/etc/nginx/conf.d/web.conf
-      - ./:/src
     ports:
       - "8079:8079"
     links:
@@ -29,9 +26,6 @@ services:
   python:
     build: .
     command: /bin/true
-    volumes:
-      - .:/src
-      - django_media:/var/media
     environment:
       DEBUG: 'True'
       DEV_ENV: 'True'
@@ -80,9 +74,6 @@ services:
       /bin/bash -c './webpack_dev_server.sh --install'
     ports:
       - "8078:8078"
-    volumes:
-      - .:/src
-      - yarn-cache:/home/mitodl/.cache/yarn
     environment:
       NODE_ENV: 'development'
       DOCKER_HOST: ${DOCKER_HOST:-missing}
@@ -105,41 +96,10 @@ services:
 
   sftp:
     image: atmoz/sftp
-    volumes:
-        - sftp_share:/home/odl/results
     ports:
         - "2022:22"
     command: odl:123:1001:1001:results,results/topvue
 
-  selenium:
-    image: micromasters_python
-    extends:
-      service: python
-    links:
-      - db
-      - elastic
-      - redis
-      - hub
-      - chrome
-
-  hub:
-    image: selenium/hub:3.4.0-chromium
-    command: /bin/true
-    environment:
-      GRID_TIMEOUT: '3600'
-    ports:
-      - "4444:4444"
-
-  chrome:
-    image: selenium/node-chrome:3.4.0-chromium
-    command: /bin/true
-    environment:
-      - HUB_PORT_4444_TCP_ADDR=hub
-      - HUB_PORT_4444_TCP_PORT=4444
-    links:
-      - hub
-    ports:
-      - "5555:5555"
 
 volumes:
   django_media: {}

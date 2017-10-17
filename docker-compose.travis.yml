@@ -6,3 +6,7 @@ services:
     environment:
       DEBUG: 'False'
       NODE_ENV: 'production'
+
+      # for celery, to avoid ImproperlyConfigured
+      MAILGUN_URL: 'http://fake.example.com'
+      MAILGUN_KEY: 'fake'

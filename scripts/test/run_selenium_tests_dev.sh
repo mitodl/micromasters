@@ -15,9 +15,7 @@ then
     exit 1
 fi
 
-docker-compose run hub /opt/bin/entry_point.sh &
-docker-compose run chrome /opt/bin/entry_point.sh &
-docker-compose run \
+docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.selenium.yml run \
    -e DEBUG=False \
    -e DJANGO_LIVE_TEST_SERVER_ADDRESS=0.0.0.0:7000-8000 \
    -e ELASTICSEARCH_INDEX=testindex \
