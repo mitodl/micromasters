@@ -15,7 +15,7 @@ then
     exit 1
 fi
 
-docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.selenium.yml run \
+docker-compose -f docker-compose.selenium.yml -f docker-compose.override.yml -f docker-compose.yml run \
    -e USE_WEBPACK_DEV_SERVER=True \
    -e WEBPACK_DEV_SERVER_HOST="$WEBPACK_SELENIUM_DEV_SERVER_HOST" \
    selenium py.test ${@-./selenium_tests}
