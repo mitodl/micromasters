@@ -2,6 +2,7 @@ version: '2.1'
 services:
   python:
     build:
+      context: .
       dockerfile: ./travis/Dockerfile-travis-web
     environment:
       DEBUG: 'False'
