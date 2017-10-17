@@ -4,6 +4,13 @@ services:
     image: micromasters_python
     extends:
       service: python
+    environment:
+      - DJANGO_LIVE_TEST_SERVER_ADDRESS=0.0.0.0:7000-8000
+      - ELASTICSEARCH_INDEX=testindex
+      - DEBUG=False
+      - ELASTICSEARCH_DEFAULT_PAGE_SIZE=5
+      - MAILGUN_URL=http://fake.mailgun.url
+      - MAILGUN_KEY=fake_mailgun_key
     links:
       - db
       - elastic
