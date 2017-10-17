@@ -15,6 +15,8 @@ then
     exit 1
 fi
 
+docker-compose run hub /opt/bin/entry_point.sh &
+docker-compose run chrome /opt/bin/entry_point.sh &
 docker-compose run \
    -e DEBUG=False \
    -e DJANGO_LIVE_TEST_SERVER_ADDRESS=0.0.0.0:7000-8000 \

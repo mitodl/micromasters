@@ -124,6 +124,7 @@ services:
 
   hub:
     image: selenium/hub:3.4.0-chromium
+    command: /bin/true
     environment:
       GRID_TIMEOUT: '3600'
     ports:
@@ -131,6 +132,7 @@ services:
 
   chrome:
     image: selenium/node-chrome:3.4.0-chromium
+    command: /bin/true
     environment:
       - HUB_PORT_4444_TCP_ADDR=hub
       - HUB_PORT_4444_TCP_PORT=4444
