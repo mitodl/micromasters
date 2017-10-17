@@ -8,7 +8,7 @@ then
     echo "webpack-stats.json must exist before running the selenium tests. Run webpack to create it."
     exit 1
 fi
-docker-compose -f travis-docker-compose.yml run \
+docker-compose -f docker-compose.yml -f docker-compose.travis.yml run \
    -e DEBUG=False \
    -e DJANGO_LIVE_TEST_SERVER_ADDRESS=0.0.0.0:7000-8000 \
    -e ELASTICSEARCH_INDEX=testindex \
