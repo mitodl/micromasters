@@ -6,7 +6,6 @@ services:
       - django_media:/var/media
     environment:
       DEBUG: 'True'
-      DEV_ENV: 'True'
       NODE_ENV: 'development'
       MICROMASTERS_USE_WEBPACK_DEV_SERVER: 'True'
 
