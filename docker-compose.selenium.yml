@@ -13,6 +13,9 @@ services:
       # To silence ImproperlyConfigured when running tests
       MAILGUN_URL: http://fake.mailgun.url
       MAILGUN_KEY: fake_mailgun_key
+    volumes:
+      - .:/src
+      - django_media:/var/media
     links:
       - db
       - elastic

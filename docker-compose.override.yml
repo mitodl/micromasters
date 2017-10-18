@@ -10,6 +10,16 @@ services:
       NODE_ENV: 'development'
       MICROMASTERS_USE_WEBPACK_DEV_SERVER: 'True'
 
+  web:
+    volumes:
+      - .:/src
+      - django_media:/var/media
+
+  celery:
+    volumes:
+      - .:/src
+      - django_media:/var/media
+
   nginx:
     volumes:
       - ./config/nginx.conf:/etc/nginx/conf.d/web.conf
