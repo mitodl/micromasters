@@ -16,10 +16,13 @@ then
 fi
 
 # Start hub and chrome containers
-docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.selenium.yml up -d
+YML_ARGS="-f docker-compose.yml -f docker-compose.override.yml -f docker-compose.selenium.yml"
+VOLUME_ARGS="-v .:/src"
+
+docker-compose ${YML_ARGS} up ${VOLUME_ARGS} -d
 
 # Run tests
-docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.selenium.yml run \
+docker-compose ${YML_ARGS} run ${VOLUME_ARGS} \
    -e USE_WEBPACK_DEV_SERVER=True \
    -e WEBPACK_DEV_SERVER_HOST="$WEBPACK_SELENIUM_DEV_SERVER_HOST" \
    selenium py.test ${@-./selenium_tests}
