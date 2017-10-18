@@ -29,13 +29,11 @@ services:
       dockerfile: Dockerfile
     command: /bin/true
     environment:
-      DEBUG: 'True'
-      DEV_ENV: 'True'
-      NODE_ENV: 'development'
+      DEBUG: 'False'
+      NODE_ENV: 'production'
       PORT: 8077
       COVERAGE_DIR: htmlcov
       DATABASE_URL: postgres://postgres@db:5432/postgres
-      MICROMASTERS_USE_WEBPACK_DEV_SERVER: 'True'
       MICROMASTERS_SECURE_SSL_REDIRECT: 'False'
       MICROMASTERS_DB_DISABLE_SSL: 'True'
       ELASTICSEARCH_URL: elastic:9200
