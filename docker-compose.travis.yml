@@ -20,7 +20,7 @@ services:
       dockerfile: ./travis/Dockerfile-travis-web
 
   selenium:
-    volumes:
+    volumes: []
     build:
       context: .
       dockerfile: ./travis/Dockerfile-travis-web
