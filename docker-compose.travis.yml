@@ -11,3 +11,18 @@ services:
       # for celery, to avoid ImproperlyConfigured
       MAILGUN_URL: 'http://fake.example.com'
       MAILGUN_KEY: 'fake'
+
+  celery:
+    build:
+      context: .
+      dockerfile: ./travis/Dockerfile-travis-web
+
+  web:
+    build:
+      context: .
+      dockerfile: ./travis/Dockerfile-travis-web
+
+  selenium:
+    build:
+      context: .
+      dockerfile: ./travis/Dockerfile-travis-web
