@@ -15,6 +15,10 @@ then
     exit 1
 fi
 
+# Start hub and chrome containers
+docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.selenium.yml up -d
+
+# Run tests
 docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.selenium.yml run \
    -e USE_WEBPACK_DEV_SERVER=True \
    -e WEBPACK_DEV_SERVER_HOST="$WEBPACK_SELENIUM_DEV_SERVER_HOST" \
