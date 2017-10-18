@@ -24,7 +24,9 @@ services:
       - web
 
   python:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     command: /bin/true
     environment:
       DEBUG: 'True'
