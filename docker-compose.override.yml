@@ -37,6 +37,8 @@ services:
       - sftp_share:/home/odl/results
 
   watch:
+    environment:
+      NODE_ENV: 'development'
     volumes:
       - .:/src
       - yarn-cache:/home/mitodl/.cache/yarn

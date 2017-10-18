@@ -76,7 +76,7 @@ services:
     ports:
       - "8078:8078"
     environment:
-      NODE_ENV: 'development'
+      NODE_ENV: 'productions'
       DOCKER_HOST: ${DOCKER_HOST:-missing}
       CONTAINER_NAME: 'watch'
     env_file: .env
