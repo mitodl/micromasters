@@ -105,9 +105,11 @@
       "required": true
     },
     "HEROKU_APP_NAME": {
+      "description": "Value provided by Heroku containing the app name (eg micromasters-ci)",
       "required": true
     },
     "HEROKU_PARENT_APP_NAME": {
+      "description": "Value provided by Heroku containing the parent app name (eg micromasters-ci for a PR build)",
       "required": true
     },
     "MAILGUN_KEY": {
