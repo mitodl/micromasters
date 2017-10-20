@@ -15,13 +15,12 @@ export default class ModifiedSelectedFilter extends React.Component {
   }
 
   countryNameTranslations: Object = makeCountryNameTranslations()
+  countryNameList: string = _.values(this.countryNameTranslations)
 
-  isResidence = (labelKey: string) => (
-    R.or(
-      _.includes(labelKey, 'Country'),
-      _.includes(labelKey, 'Residence')
-    )
-  )
+  isResidence = (labelKey: string) =>
+    R.or(_.includes(labelKey, "Country"), _.includes(labelKey, "Residence"))
+
+  isState = (labelKey: string) => _.indexOf(this.countryNameList, labelKey) > -1
 
   render() {
     let { labelKey, labelValue } = this.props
@@ -33,7 +32,10 @@ export default class ModifiedSelectedFilter extends React.Component {
     } else if (labelKey in this.countryNameTranslations) {
       labelKey = this.countryNameTranslations[labelKey]
     }
-    if (this.isResidence(labelValue) && labelValue in this.countryNameTranslations) {
+    if (
+      R.or(this.isResidence(labelKey), this.isState(labelKey)) &&
+      _.hasIn(this.countryNameTranslations, labelValue)
+    ) {
       labelValue = this.countryNameTranslations[labelValue]
     }
     // This comes from searchkit documentation on "Overriding Selected Filter Component"
