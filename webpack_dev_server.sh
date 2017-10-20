@@ -17,7 +17,7 @@ if [[ "$IS_OSX" == "true" && "$INSIDE_CONTAINER" == "true" ]] ; then
   echo -e "EXITING WEBPACK STARTUP SCRIPT\nOSX Users: The webpack dev server should be run on your host machine."
 else
   if [[ "$1" == "--install" ]] ; then
-    yarn install --pure-lockfile && echo "Finished yarn install"
+    yarn install --frozen-lockfile && echo "Finished yarn install"
   fi
   # Start the webpack dev server on the appropriate host and port
   node ./hot-reload-dev-server.js --host "$WEBPACK_HOST" --port "$WEBPACK_PORT"

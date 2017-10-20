@@ -23,6 +23,6 @@ USER node
 
 # this is just to get a warm cache, we delete node_modules afterwards to
 # avoid issues with native extensions (mainly node-sass)
-RUN yarn install --pure-lockfile
+RUN yarn install --frozen-lockfile
 
 RUN rm -rf node_modules

@@ -295,7 +295,7 @@ Note that running [`flow`](https://flowtype.org) may not work properly if your
 host machine isn't running Linux. If you are using a Mac, you'll need to run
 `flow` on your host machine, like this:
 
-    yarn install --pure-lockfile
+    yarn install --frozen-lockfile
     npm run-script flow
 
 To validate prices and financial aid discounts for all programs run:

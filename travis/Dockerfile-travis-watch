@@ -10,7 +10,7 @@ ADD ./webpack_if_prod.sh /src
 
 USER node
 
-RUN yarn install --pure-lockfile
+RUN yarn install --frozen-lockfile
 
 COPY . /src
 
