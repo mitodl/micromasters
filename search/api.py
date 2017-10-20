@@ -1,11 +1,15 @@
 """
 Functions for executing ES searches
 """
+import json
+import logging
+
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q as Query
 from elasticsearch.exceptions import NotFoundError
 from elasticsearch_dsl import Search, Q
+from jsonpatch import make_patch
 
 from courses.models import Program
 from dashboard.models import ProgramEnrollment
@@ -25,6 +29,9 @@ from search.exceptions import (
 from search.indexing_api import serialize_program_enrolled_user
 
 DEFAULT_ES_LOOP_PAGE_SIZE = 100
+
+
+log = logging.getLogger(__name__)
 
 
 def execute_search(search_obj):
@@ -300,4 +307,14 @@ def document_needs_updating(enrollment):
         return True
     serialized_enrollment = serialize_program_enrolled_user(enrollment)
     del serialized_enrollment['_id']
-    return serialized_enrollment != document['_source']
+    source = document['_source']
+
+    if serialized_enrollment != source:
+        # Convert OrderedDict to dict
+        reserialized_enrollment = json.loads(json.dumps(serialized_enrollment))
+
+        diff = make_patch(source, reserialized_enrollment).patch
+        serialized_diff = json.dumps(diff, indent="    ")
+        log.info("Difference found for enrollment %s: %s", enrollment, serialized_diff)
+        return True
+    return False

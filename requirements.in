@@ -2,6 +2,7 @@ Django==1.10.5
 Pillow==3.4.2
 boto==2.39.0
 celery==4.0.2
+deepdiff==3.3.0
 dj-database-url==0.3.0
 dj-static==0.0.6
 django-cors-headers==2.1.0
@@ -21,10 +22,11 @@ gnupg==2.2.0
 html5lib==0.999999999
 ipython
 jsonfield==1.0.3
+jsonpatch==1.16
 newrelic
 open-discussions-client==0.2.2
 phonenumbers==8.3.2
-psycopg2==2.6
+psycopg2==2.7.3.1
 pycountry==16.11.27.1
 pysftp==0.2.9
 python-dateutil
