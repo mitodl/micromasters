@@ -5784,9 +5784,9 @@ redux-asserts@0.0.10:
     redux "^3.3.1"
     redux-thunk "^2.0.1"
 
-redux-hammock@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/redux-hammock/-/redux-hammock-0.2.1.tgz#6c5fe3d221c3b2eb9817477d422926579cefd75e"
+redux-hammock@0.2.3:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/redux-hammock/-/redux-hammock-0.2.3.tgz#0235e8657d4808c6a9c9d25bdf367b2e3f0714f2"
   dependencies:
     babel-polyfill "^6.23.0"
     babel-runtime "^6.23.0"
@@ -5795,7 +5795,6 @@ redux-hammock@^0.2.1:
     lodash.snakecase "^4.1.1"
     ramda "^0.24.1"
     redux-actions "^2.0.3"
-    sanctuary "^0.13.2"
 
 redux-localstorage-filter@^0.1.1:
   version "0.1.1"
@@ -6079,13 +6078,6 @@ samsam@1.x, samsam@^1.1.3:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/samsam/-/samsam-1.2.1.tgz#edd39093a3184370cb859243b2bdf255e7d8ea67"
 
-sanctuary-def@0.12.1:
-  version "0.12.1"
-  resolved "https://registry.yarnpkg.com/sanctuary-def/-/sanctuary-def-0.12.1.tgz#bb9b2ad9407b1519d1ee61fd293b24e86a2044b3"
-  dependencies:
-    sanctuary-type-classes "6.0.x"
-    sanctuary-type-identifiers "2.0.x"
-
 sanctuary-def@0.9.0:
   version "0.9.0"
   resolved "https://registry.yarnpkg.com/sanctuary-def/-/sanctuary-def-0.9.0.tgz#a54bc330ec955d0ef47752317a01657db6d4760e"
@@ -6105,19 +6097,9 @@ sanctuary-type-classes@3.0.1:
   dependencies:
     sanctuary-type-identifiers "1.0.x"
 
-sanctuary-type-classes@6.0.0, sanctuary-type-classes@6.0.x:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/sanctuary-type-classes/-/sanctuary-type-classes-6.0.0.tgz#1db3f8c1247de018471e978fe4956a03eb62f464"
-  dependencies:
-    sanctuary-type-identifiers "1.0.x"
-
 sanctuary-type-identifiers@1.0.0, sanctuary-type-identifiers@1.0.x:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/sanctuary-type-identifiers/-/sanctuary-type-identifiers-1.0.0.tgz#e8f359f006cb5e624cfb8464603fc114608bde9f"
-
-sanctuary-type-identifiers@2.0.1, sanctuary-type-identifiers@2.0.x:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/sanctuary-type-identifiers/-/sanctuary-type-identifiers-2.0.1.tgz#fc524cf6dd92cebfcbb0dd9509eff193159a20ed"
 
 sanctuary@^0.12.2:
   version "0.12.2"
@@ -6126,14 +6108,6 @@ sanctuary@^0.12.2:
     sanctuary-def "0.9.0"
     sanctuary-type-classes "3.0.1"
     sanctuary-type-identifiers "1.0.0"
-
-sanctuary@^0.13.2:
-  version "0.13.2"
-  resolved "https://registry.yarnpkg.com/sanctuary/-/sanctuary-0.13.2.tgz#ed1c9c2f2b1745d659ee3457954c8b1154f8d4a8"
-  dependencies:
-    sanctuary-def "0.12.1"
-    sanctuary-type-classes "6.0.0"
-    sanctuary-type-identifiers "2.0.1"
 
 sass-graph@^2.1.1:
   version "2.2.4"
