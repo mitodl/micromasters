@@ -47,22 +47,6 @@ def sync_discussion_users():
 
 
 @app.task()
-def add_users_to_channel(channel_name, user_ids):
-    """
-    Add users to a open-discussions channel as contributors and subscribers
-
-    Args:
-        channel_name (str): The name of the channel
-        user_ids (list of int): profile ids to sync
-    """
-    if not settings.FEATURES.get('OPEN_DISCUSSIONS_USER_SYNC', False):
-        log.debug('OPEN_DISCUSSIONS_USER_SYNC is set to False (so disabled) in the settings')
-        return
-
-    api.add_users_to_channel(channel_name, user_ids)
-
-
-@app.task()
 def add_moderators_to_channel(channel_name):
     """
     Add moderators to a open-discussions chane
@@ -72,3 +56,15 @@ def add_moderators_to_channel(channel_name):
         return
 
     api.add_moderators_to_channel(channel_name)
+
+
+@app.task()
+def sync_channel_memberships():
+    """
+    Syncs outstanding channel memberships
+    """
+    if not settings.FEATURES.get('OPEN_DISCUSSIONS_USER_SYNC', False):
+        log.debug('OPEN_DISCUSSIONS_USER_SYNC is set to False (so disabled) in the settings')
+        return
+
+    api.sync_channel_memberships()

@@ -2,7 +2,9 @@
 Functions for executing ES searches
 """
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
+from django.db import transaction
 from django.db.models import Q as Query
 from elasticsearch.exceptions import NotFoundError
 from elasticsearch_dsl import Search, Q
@@ -17,7 +19,10 @@ from search.connection import (
     USER_DOC_TYPE,
     PUBLIC_USER_DOC_TYPE,
 )
-from search.models import PercolateQuery
+from search.models import (
+    PercolateQuery,
+    PercolateQueryMembership,
+)
 from search.exceptions import (
     NoProgramAccessException,
     PercolateException,
@@ -240,9 +245,23 @@ def search_percolate_queries(program_enrollment_id, source_type):
     Returns:
         django.db.models.query.QuerySet: A QuerySet of PercolateQuery matching the percolate results
     """
-    conn = get_conn()
     enrollment = ProgramEnrollment.objects.get(id=program_enrollment_id)
-    doc = serialize_program_enrolled_user(enrollment)
+    result_ids = _search_percolate_queries(enrollment)
+    return PercolateQuery.objects.filter(id__in=result_ids, source_type=source_type)
+
+
+def _search_percolate_queries(program_enrollment):
+    """
+    Find all PercolateQuery ids whose queries match a user document
+
+    Args:
+        program_enrollment (ProgramEnrollment): A ProgramEnrollment
+
+    Returns:
+        list of int: A list of PercolateQuery ids
+    """
+    conn = get_conn()
+    doc = serialize_program_enrolled_user(program_enrollment)
     # We don't need this to search for percolator queries and
     # it causes a dynamic mapping failure so we need to remove it
     del doc['_id']
@@ -250,8 +269,7 @@ def search_percolate_queries(program_enrollment_id, source_type):
     failures = result.get('_shards', {}).get('failures', [])
     if len(failures) > 0:
         raise PercolateException("Failed to percolate: {}".format(failures))
-    result_ids = [row['_id'] for row in result['matches']]
-    return PercolateQuery.objects.filter(id__in=result_ids, source_type=source_type)
+    return [int(row['_id']) for row in result['matches']]
 
 
 def adjust_search_for_percolator(search):
@@ -301,3 +319,85 @@ def document_needs_updating(enrollment):
     serialized_enrollment = serialize_program_enrolled_user(enrollment)
     del serialized_enrollment['_id']
     return serialized_enrollment != document['_source']
+
+
+def update_percolate_memberships(user, source_type):
+    """
+    Updates membership in a PercolateQuery
+
+    Args:
+        user (User): A User to check for membership changes
+        source_type (str): The type of the percolate query to filter on
+    """
+    # ensure we have a membership for each of the queries so we can acquire a lock on them
+    percolate_queries = list(PercolateQuery.objects.filter(source_type=source_type))
+    membership_ids = _ensure_memberships_for_queries(
+        percolate_queries,
+        user
+    )
+
+    _update_memberships([query.id for query in percolate_queries], membership_ids, user)
+
+
+def _ensure_memberships_for_queries(percolate_queries, user):
+    """
+    Ensures PercolateQueryMemberships exist for the user on the designated PercolateQueries
+
+    Args:
+        percolate_queries (list of PercolateQuery): A list of PercolateQuerys to add PercolateQueryMemberships for
+        user (User): The user to ensure memberships for
+    """
+    membership_ids = []
+    for query in percolate_queries:
+        membership, _ = PercolateQueryMembership.objects.get_or_create(query=query, user=user)
+        membership_ids.append(membership.id)
+
+    return membership_ids
+
+
+def _update_memberships(percolate_query_ids, membership_ids, user, force_save=False):
+    """
+    Atomically determine and update memberships
+
+    Args:
+        percolate_query_ids (set of int): a set of PercolateQuery.id
+        membership_ids (list of int): A list of ids for PercolateQueryMemberships to update
+            user (User): A User to check for membership changes
+        force_save (bool): True if membership saves should be force even if no change
+    """
+    if not percolate_query_ids:
+        return
+
+    with transaction.atomic():
+        memberships = PercolateQueryMembership.objects.filter(id__in=membership_ids).select_for_update()
+
+        # limit the query_ids to the queries we are trying to update
+        query_ids = set()
+        for enrollment in user.programenrollment_set.all():
+            query_ids.update(set(_search_percolate_queries(enrollment)))
+        query_ids.intersection_update(percolate_query_ids)
+
+        for membership in memberships:
+            # only update if there's a delta in membership status
+            is_member = membership.query_id in query_ids
+            if force_save or (membership.is_member is not is_member):
+                membership.is_member = is_member
+                membership.needs_update = True
+                membership.save()
+
+
+def populate_query_memberships(percolate_query_id):
+    """
+    Populates PercolateQueryMemberships for the given query and enrollments
+
+    Args:
+        percolate_query_id (int): Datebase id for the PercolateQuery to populate
+        enrollment_ids (iterable of int): Database ids for ProgramEnrollments to check
+    """
+    # practically this is a list of 1 query, but _ensure_memberships_for_queries requires a list
+    query = PercolateQuery.objects.get(id=percolate_query_id)
+    users = User.objects.all().iterator()
+
+    for user in users:
+        membership_ids = _ensure_memberships_for_queries([query], user)
+        _update_memberships(set([query.id]), membership_ids, user, force_save=True)

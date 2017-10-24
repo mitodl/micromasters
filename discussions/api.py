@@ -2,7 +2,6 @@
 import logging
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 from open_discussions_api.client import OpenDiscussionsApi
@@ -23,12 +22,11 @@ from discussions.exceptions import (
 )
 from roles.models import Role
 from roles.roles import Permissions
-from search.api import (
-    adjust_search_for_percolator,
-    search_for_field,
-    search_percolate_queries,
+from search.api import adjust_search_for_percolator
+from search.models import (
+    PercolateQuery,
+    PercolateQueryMembership,
 )
-from search.models import PercolateQuery
 
 
 log = logging.getLogger(__name__)
@@ -267,46 +265,58 @@ def remove_from_channel(channel_name, discussion_username):
     remove_contributor_from_channel(channel_name, discussion_username)
 
 
-def sync_user_to_channels(user_id):
+def sync_channel_memberships():
     """
-    Make sure the user's profile exists on open-discussions,
-    then update user's subscription and contributor status.
-
-    Args:
-        user_id (int): A user id
+    Sync outstanding channel memberships
     """
-    # This guards against a race condition where the user's profile is in a celery task
-    # and hasn't yet actually been created
-    user = User.objects.get(id=user_id)
-    discussion_user = create_or_update_discussion_user(user_id)
+    program_ids_by_channel_id = {
+        channel_program.channel_id: channel_program.program_id
+        for channel_program in ChannelProgram.objects.all()
+    }
+    membership_ids = PercolateQueryMembership.objects.filter(
+        query__source_type=PercolateQuery.DISCUSSION_CHANNEL_TYPE,
+        needs_update=True
+    ).values_list("id", flat=True)
 
-    mod_channel_ids = set(
-        Role.objects.filter(
-            role__in=Role.permission_to_roles[Permissions.CAN_CREATE_FORUMS],
-            user_id=user_id,
-        ).values_list('program__channelprogram__channel__id', flat=True)
-    )
+    for membership_id in membership_ids:
+        with transaction.atomic():
+            membership = (
+                PercolateQueryMembership.objects
+                .filter(id=membership_id)
+                .prefetch_related('query__channels')
+                .select_for_update()
+                .first()
+            )
 
-    # If the user is a moderator of a channel, don't adjust their status. It should remain as before,
-    # they should be subscriber, moderator and not a contributor.
-    all_channel_ids = set(Channel.objects.values_list("id", flat=True)).difference(mod_channel_ids)
+            channel = membership.query.channels.first()
 
-    membership_channel_ids = set()
-    for enrollment_id in user.programenrollment_set.values_list("id", flat=True):
-        queries = search_percolate_queries(enrollment_id, PercolateQuery.DISCUSSION_CHANNEL_TYPE)
-        membership_channel_ids.update(queries.values_list("channel__id", flat=True))
-    # Make sure we don't include extra channels beyond what's in all_channel_ids
-    membership_channel_ids = membership_channel_ids.intersection(all_channel_ids)
+            # if we can't look up the program, skip this one
+            if channel is None or channel.id not in program_ids_by_channel_id:
+                continue
 
-    membership_channels = Channel.objects.filter(id__in=membership_channel_ids)
-    for channel in membership_channels:
-        add_to_channel(channel.name, discussion_user.username)
+            # if the user is a moderator, don't manipulate subscriptions
+            if Role.objects.filter(
+                    role__in=Role.permission_to_roles[Permissions.CAN_CREATE_FORUMS],
+                    user_id=membership.user_id,
+                    program_id=program_ids_by_channel_id[channel.id],
+            ).exists():
+                membership.needs_update = False
+                membership.save()
+            else:
+                try:
+                    # This guards against a race condition where the user's profile is in a celery task
+                    # and hasn't yet actually been created
+                    discussion_user = create_or_update_discussion_user(membership.user_id)
 
-    nonmembership_channels = Channel.objects.filter(
-        id__in=all_channel_ids.difference(membership_channel_ids)
-    )
-    for channel in nonmembership_channels:
-        remove_from_channel(channel.name, discussion_user.username)
+                    if membership.is_member:
+                        add_to_channel(channel.name, discussion_user.username)
+                    else:
+                        remove_from_channel(channel.name, discussion_user.username)
+
+                    membership.needs_update = False
+                    membership.save()
+                except DiscussionUserSyncException:
+                    log.exception("Error updating channel membership")
 
 
 def add_channel(
@@ -356,11 +366,13 @@ def add_channel(
             program_id=program_id,
         )
 
-    # Do a one time sync of all matching profiles
-    user_ids = list(search_for_field(updated_search, 'user_id'))
-    from discussions import tasks
-    tasks.add_moderators_to_channel.delay(channel.name)
-    tasks.add_users_to_channel.delay(channel.name, user_ids)
+    from discussions import tasks as discussions_tasks
+    discussions_tasks.add_moderators_to_channel.delay(channel.name)
+
+    # populate memberships based on the enrollments we found now
+    # subsequent matches will be picked up via indexing
+    from search import tasks as search_tasks
+    search_tasks.populate_query_memberships.delay(percolate_query.id)
 
     # The creator is added in add_moderators_to_channel but do it here also to prevent a race condition
     # where the user is redirected to the channel page before they have permission to access it.
@@ -369,41 +381,6 @@ def add_channel(
     add_subscriber_to_channel(channel.name, discussion_user.username)
 
     return channel
-
-
-def add_users_to_channel(channel_name, user_ids, retries=3):
-    """
-    Add users to a open-discussions channel as contributors and subscribers
-
-    Args:
-        channel_name (str): The name of the channel
-        user_ids (list of int): profile ids to sync
-        retries (int):
-            Number of times to resync failed profiles. This is independent of Celery's retry mechanism
-            because we want to only retry the failed profiles.
-    """
-
-    failed_user_ids = []
-    for user_id in user_ids:
-        try:
-            # This guards against a race condition where the user's profile is in a celery task
-            # and hasn't yet actually been created
-            discussion_user = create_or_update_discussion_user(user_id)
-
-            add_to_channel(channel_name, discussion_user.username)
-        except:  # pylint: disable=bare-except
-            log.exception(
-                "Error syncing user channel membership for user id #%s, channel %s",
-                user_id,
-                channel_name,
-            )
-            failed_user_ids.append(user_id)
-
-    if len(failed_user_ids) > 0:
-        if retries > 1:
-            add_users_to_channel(channel_name, failed_user_ids, retries - 1)
-        else:
-            raise DiscussionUserSyncException("Unable to sync these users: {}".format(failed_user_ids))
 
 
 def add_moderators_to_channel(channel_name):

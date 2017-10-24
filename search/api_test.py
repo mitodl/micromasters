@@ -1,6 +1,7 @@
 """
 Tests for search API functionality
 """
+from itertools import product
 from unittest.mock import Mock, patch
 import ddt
 from elasticsearch_dsl import Search, Q
@@ -24,6 +25,8 @@ from search.api import (
     prepare_and_execute_search,
     search_for_field,
     search_percolate_queries,
+    update_percolate_memberships,
+    populate_query_memberships,
 )
 from search.base import ESTestCase
 from search.connection import (
@@ -35,7 +38,8 @@ from search.exceptions import (
     NoProgramAccessException,
     PercolateException,
 )
-from search.models import PercolateQuery
+from search.factories import PercolateQueryFactory, PercolateQueryMembershipFactory
+from search.models import PercolateQuery, PercolateQueryMembership
 
 
 # pylint: disable=unused-argument
@@ -250,6 +254,7 @@ class SearchAPITests(ESTestCase):
 
 
 # This patch works around on_commit by invoking it immediately, since in TestCase all tests run in transactions
+@ddt.ddt
 @patch('search.signals.transaction.on_commit', side_effect=lambda callback: callback())
 class PercolateTests(ESTestCase):
     """Tests regarding percolator queries"""
@@ -387,3 +392,65 @@ class PercolateTests(ESTestCase):
         ):
             search_percolate_queries(program_enrollment.id, "doesnt_matter")
         assert ex.exception.args[0] == "Failed to percolate: {}".format(failures)
+
+    @ddt.data(*product(
+        [PercolateQuery.AUTOMATIC_EMAIL_TYPE, PercolateQuery.DISCUSSION_CHANNEL_TYPE],
+        [True, False],
+        [True, False]
+    ))
+    @ddt.unpack
+    def test_update_percolate_memberships(self, source_type, is_member, query_matches, mock_on_commit):
+        """
+        Tests that existing memberships are updated where appropriate
+        """
+        with mute_signals(post_save):
+            query = PercolateQueryFactory.create(source_type=source_type)
+            profile = ProfileFactory.create(filled_out=True)
+            program_enrollment = ProgramEnrollmentFactory.create(user=profile.user)
+        membership = PercolateQueryMembershipFactory.create(
+            user=profile.user,
+            query=query,
+            is_member=is_member,
+            needs_update=False
+        )
+
+        with patch(
+            'search.api._search_percolate_queries',
+            return_value=[query.id] if query_matches else []
+        ) as search_percolate_queries_mock:
+            update_percolate_memberships(profile.user, source_type)
+
+        search_percolate_queries_mock.assert_called_once_with(program_enrollment)
+
+        membership.refresh_from_db()
+        assert membership.needs_update is (is_member is not query_matches)
+
+    @ddt.data(*product(
+        [PercolateQuery.AUTOMATIC_EMAIL_TYPE, PercolateQuery.DISCUSSION_CHANNEL_TYPE],
+        [True, False],
+        [True, False]
+    ))
+    @ddt.unpack
+    def test_populate_query_memberships(self, source_type, is_member, query_matches, mock_on_commit):
+        """
+        Tests that existing memberships are updated where appropriate
+        """
+        with mute_signals(post_save):
+            query = PercolateQueryFactory.create(source_type=source_type)
+            profiles = [ProfileFactory.create(filled_out=True) for _ in range(3)]
+            program_enrollments = [ProgramEnrollmentFactory.create(user=profile.user) for profile in profiles]
+
+        with patch(
+            'search.api._search_percolate_queries',
+            return_value=[query.id] if query_matches else []
+        ) as search_percolate_queries_mock:
+            populate_query_memberships(query.id)
+
+        assert search_percolate_queries_mock.call_count == len(program_enrollments)
+        for program_enrollment in program_enrollments:
+            search_percolate_queries_mock.assert_any_call(program_enrollment)
+
+        for profile in profiles:
+            membership = PercolateQueryMembership.objects.get(user=profile.user, query=query)
+            assert membership.is_member is query_matches
+            assert membership.needs_update is True

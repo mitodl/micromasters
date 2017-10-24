@@ -9,6 +9,7 @@ from django.test import override_settings
 from dashboard.factories import ProgramEnrollmentFactory
 from search.base import MockedESTestCase
 from search.indexing_api import get_default_alias
+from search.models import PercolateQuery
 from search.tasks import (
     index_users,
     index_program_enrolled_users,
@@ -42,24 +43,22 @@ class SearchTasksTests(MockedESTestCase):
                 self.send_automatic_emails_mock = mock
             elif mock.name == "_refresh_index":
                 self.refresh_index_mock = mock
-            elif mock.name == "_sync_user_to_channels":
-                self.sync_user_to_channels_mock = mock
+            elif mock.name == "_update_percolate_memberships":
+                self.update_percolate_memberships_mock = mock
 
-    @data(True, False)
-    def test_index_users(self, sync_feature_flag):
+    def test_index_users(self):
         """
         When we run the index_users task we should index user's program enrollments and send them automatic emails
         """
         enrollment1 = ProgramEnrollmentFactory.create()
         enrollment2 = ProgramEnrollmentFactory.create(user=enrollment1.user)
-        with self.settings(FEATURES={"OPEN_DISCUSSIONS_USER_SYNC": sync_feature_flag}):
-            index_users([enrollment1.user.id])
-            self.index_program_enrolled_users_mock.assert_called_once_with([enrollment1, enrollment2])
-            for enrollment in [enrollment1, enrollment2]:
-                self.send_automatic_emails_mock.assert_any_call(enrollment)
-                if sync_feature_flag:
-                    self.sync_user_to_channels_mock.assert_any_call(enrollment.user.id)
-            self.refresh_index_mock.assert_called_with(get_default_alias())
+        index_users([enrollment1.user.id])
+        self.index_program_enrolled_users_mock.assert_called_once_with([enrollment1, enrollment2])
+        for enrollment in [enrollment1, enrollment2]:
+            self.send_automatic_emails_mock.assert_any_call(enrollment)
+            self.update_percolate_memberships_mock.assert_any_call(
+                enrollment.user, PercolateQuery.DISCUSSION_CHANNEL_TYPE)
+        self.refresh_index_mock.assert_called_with(get_default_alias())
 
     @data(*[
         [True, True],
@@ -100,25 +99,25 @@ class SearchTasksTests(MockedESTestCase):
             self.index_program_enrolled_users_mock.assert_called_once_with(needs_update_list)
             for enrollment in needs_update_list:
                 self.send_automatic_emails_mock.assert_any_call(enrollment)
+                self.update_percolate_memberships_mock.assert_any_call(
+                    enrollment.user, PercolateQuery.DISCUSSION_CHANNEL_TYPE)
         else:
             assert self.index_program_enrolled_users_mock.called is False
             assert self.send_automatic_emails_mock.called is False
 
-    @data(True, False)
-    def test_index_program_enrolled_users(self, sync_feature_flag):
+    def test_index_program_enrolled_users(self):
         """
         When we run the index_program_enrolled_users task we should index them and send them automatic emails
         """
         enrollments = [ProgramEnrollmentFactory.create() for _ in range(2)]
         enrollment_ids = [enrollment.id for enrollment in enrollments]
 
-        with self.settings(FEATURES={"OPEN_DISCUSSIONS_USER_SYNC": sync_feature_flag}):
-            index_program_enrolled_users(enrollment_ids)
-            assert list(
-                self.index_program_enrolled_users_mock.call_args[0][0].values_list('id', flat=True)
-            ) == enrollment_ids
-            for enrollment in enrollments:
-                self.send_automatic_emails_mock.assert_any_call(enrollment)
-                if sync_feature_flag:
-                    self.sync_user_to_channels_mock.assert_any_call(enrollment.user.id)
-            self.refresh_index_mock.assert_called_with(get_default_alias())
+        index_program_enrolled_users(enrollment_ids)
+        assert list(
+            self.index_program_enrolled_users_mock.call_args[0][0].values_list('id', flat=True)
+        ) == enrollment_ids
+        for enrollment in enrollments:
+            self.send_automatic_emails_mock.assert_any_call(enrollment)
+            self.update_percolate_memberships_mock.assert_any_call(
+                enrollment.user, PercolateQuery.DISCUSSION_CHANNEL_TYPE)
+        self.refresh_index_mock.assert_called_with(get_default_alias())

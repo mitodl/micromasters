@@ -1,9 +1,9 @@
 """Models related to search"""
+from django.conf import settings
+from django.contrib.postgres.fields import JSONField
+from django.db import models
 
 from micromasters.models import TimestampedModel
-
-from django.contrib.postgres.fields import JSONField
-from django.db.models import CharField
 
 
 class PercolateQuery(TimestampedModel):
@@ -18,7 +18,22 @@ class PercolateQuery(TimestampedModel):
 
     original_query = JSONField()
     query = JSONField()
-    source_type = CharField(max_length=255, choices=[(choice, choice) for choice in SOURCE_TYPES])
+    source_type = models.CharField(max_length=255, choices=[(choice, choice) for choice in SOURCE_TYPES])
 
     def __str__(self):
         return "Percolate query {}: {}".format(self.id, self.query)
+
+
+class PercolateQueryMembership(TimestampedModel):
+    """A user's membership in a PercolateQuery"""
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="percolate_memberships")
+    query = models.ForeignKey(PercolateQuery, on_delete=models.CASCADE, related_name="percolate_memberships")
+
+    is_member = models.BooleanField(default=False)
+    needs_update = models.BooleanField(default=False)
+
+    def __str__(self):
+        return "Percolate query membership: user: {}, query: {}".format(self.user_id, self.query_id)
+
+    class Meta:
+        unique_together = (('user', 'query'),)

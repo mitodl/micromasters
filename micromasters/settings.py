@@ -492,6 +492,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'grades.tasks.generate_course_certificates_for_fa_students',
         'schedule': crontab(minute=0, hour='*')
     },
+    'discussions-sync-memberships-every-minute': {
+        'task': 'discussions.tasks.sync_channel_memberships',
+        'schedule': crontab(minute='*', hour='*')
+    },
 }
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'

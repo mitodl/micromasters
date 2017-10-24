@@ -7,10 +7,13 @@ from django.conf import settings
 # The imports which are prefixed with _ are mocked to be ignored in MockedESTestCase
 
 from dashboard.models import ProgramEnrollment
-from discussions.api import sync_user_to_channels as _sync_user_to_channels
 from mail.api import send_automatic_emails as _send_automatic_emails
 from micromasters.celery import app
-from search.api import document_needs_updating as _document_needs_updating
+from search import api
+from search.api import (
+    document_needs_updating as _document_needs_updating,
+    update_percolate_memberships as _update_percolate_memberships,
+)
 from search.indexing_api import (
     get_default_alias,
     index_program_enrolled_users as _index_program_enrolled_users,
@@ -41,8 +44,8 @@ def post_indexing_handler(program_enrollments):
     for program_enrollment in program_enrollments:
         _send_automatic_emails(program_enrollment)
 
-        if feature_sync_user:
-            _sync_user_to_channels(program_enrollment.user.id)
+        # only update for discussion queries for now
+        _update_percolate_memberships(program_enrollment.user, PercolateQuery.DISCUSSION_CHANNEL_TYPE)
 
 
 @app.task
@@ -117,3 +120,14 @@ def delete_percolate_query(percolate_query_id):
         percolate_query_id (int): A PercolateQuery id
     """
     _delete_percolate_query(percolate_query_id)
+
+
+@app.task
+def populate_query_memberships(percolate_query_id):
+    """
+    Populate existing users to the query's memberships
+
+    Args:
+        percolate_query_id (int): Datebase id for the PercolateQuery to populate
+    """
+    api.populate_query_memberships(percolate_query_id)

@@ -91,21 +91,6 @@ def test_sync_discussion_users_task_api_error(mocker):
     mock_log.error.assert_called_once_with("Impossible to sync user_id %s to discussions", user.id)
 
 
-def test_add_users_to_channel_no_feature_flag(settings, mocker):
-    """Don't attempt to add users if the feature flag is disabled"""
-    settings.FEATURES['OPEN_DISCUSSIONS_USER_SYNC'] = False
-    stub = mocker.patch('discussions.api.add_users_to_channel', autospec=True)
-    tasks.add_users_to_channel.delay('channel', [1, 2, 3])
-    assert stub.called is False
-
-
-def test_add_users_to_channel(mocker):
-    """add_users_to_channel should forward all arguments to the api function of the same name"""
-    stub = mocker.patch('discussions.api.add_users_to_channel', autospec=True)
-    tasks.add_users_to_channel.delay('channel', [1, 2, 3])
-    stub.assert_called_once_with('channel', [1, 2, 3])
-
-
 def test_add_moderators_to_channel(mocker):
     """add_moderators_to_channel should forward all arguments to the api function"""
     stub = mocker.patch('discussions.api.add_moderators_to_channel', autospec=True)
@@ -114,8 +99,23 @@ def test_add_moderators_to_channel(mocker):
 
 
 def test_add_moderators_to_channel_no_feature_flag(settings, mocker):
-    """add_moderators_to_channel should forward all arguments to the api function"""
+    """add_moderators_to_channel should not call the api function if the feature flag is disabled"""
     settings.FEATURES['OPEN_DISCUSSIONS_USER_SYNC'] = False
     stub = mocker.patch('discussions.api.add_moderators_to_channel', autospec=True)
     tasks.add_moderators_to_channel.delay('channel')
+    assert stub.called is False
+
+
+def test_sync_channel_memberships(settings, mocker):
+    """sync_channel_memberships should forward all arguments to the api function"""
+    stub = mocker.patch('discussions.api.sync_channel_memberships', autospec=True)
+    tasks.sync_channel_memberships.delay()
+    assert stub.called is True
+
+
+def test_sync_channel_memberships_no_feature_flag(settings, mocker):
+    """sync_channel_memberships should not call the api function if the feature flag is disabled"""
+    settings.FEATURES['OPEN_DISCUSSIONS_USER_SYNC'] = False
+    stub = mocker.patch('discussions.api.sync_channel_memberships', autospec=True)
+    tasks.sync_channel_memberships.delay()
     assert stub.called is False

@@ -25,7 +25,7 @@ class Channel(models.Model):
     Represents an open-discussions channel and a percolate query which specifies its membership
     """
     name = models.TextField(unique=True)
-    query = models.ForeignKey(PercolateQuery, null=True, on_delete=models.SET_NULL)
+    query = models.ForeignKey(PercolateQuery, null=True, on_delete=models.SET_NULL, related_name='channels')
 
     def __str__(self):
         return "Channel: {}".format(self.name)
