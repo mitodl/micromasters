@@ -118,7 +118,7 @@ class EducationForm extends ProfileFormFields {
     const valueSelected = level.value in educationLevelAnswers ? "false" : null
     return (
       <RadioButtonGroup
-        className={`profile-radio-switch ${level.value}`}
+        className={`profile-radio-group ${level.value}`}
         id={`profile-tab-education-switch-${level.value}`}
         name={`profile-tab-education-switch-${level.value}`}
         onChange={(event, value) => this.handleRadioClick(value, level.value)}

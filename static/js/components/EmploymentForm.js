@@ -285,7 +285,7 @@ class EmploymentForm extends ProfileFormFields {
     const radioIconStyle = { marginRight: "8px" }
     return (
       <RadioButtonGroup
-        className="profile-radio-switch"
+        className="profile-radio-group"
         name="work-history-switch"
         onChange={(event, value) => this.handleRadioClick(value)}
         valueSelected={valueSelected}
