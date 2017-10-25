@@ -7,11 +7,15 @@ from urllib.parse import urljoin
 import pytz
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 from django.urls import reverse
+from edx_api.client import EdxApi
+from social_django.models import UserSocialAuth
 
 from backends.exceptions import InvalidCredentialStored
+from backends import utils
 from courses.models import Program
 from dashboard.api_edx_cache import CachedEdxDataApi, CachedEdxUserData
 from dashboard.utils import MMTrack
@@ -20,6 +24,8 @@ from grades import api
 from grades.models import FinalGrade
 from grades.serializers import ProctoredExamGradeSerializer
 from exams.models import ExamAuthorization, ExamRun
+from micromasters.utils import now_in_utc
+from profiles.api import get_social_auth
 
 # maximum number of exam attempts per payment
 ATTEMPTS_PER_PAID_RUN = 2
@@ -524,3 +530,74 @@ def get_overall_final_grade_for_course(mmtrack, course):
         return ""
 
     return str(round(best_grade.grade_percent * COURSE_GRADE_WEIGHT + best_exam.score * EXAM_GRADE_WEIGHT))
+
+
+def calculate_users_to_refresh_in_bulk():
+    """
+    Calculate the set of user ids which would be updated when running a bulk update. This uses a 6 hour delta
+    because this is a bulk operation. For individual updates see CachedEdxDataApi.is_cache_fresh.
+
+    Returns:
+        list of int: A list of user ids which need to be updated
+    """
+    refresh_time_limit = now_in_utc() - datetime.timedelta(hours=6)
+
+    all_users = User.objects.filter(is_active=True, profile__fake_user=False).exclude(social_auth=None)
+
+    # If one of these fields is null in the database the gte expression will be false, so we will refresh those users
+    users_not_expired = all_users.filter(
+        usercacherefreshtime__enrollment__gte=refresh_time_limit,
+        usercacherefreshtime__certificate__gte=refresh_time_limit,
+        usercacherefreshtime__current_grade__gte=refresh_time_limit
+    )
+
+    return list(all_users.exclude(id__in=users_not_expired.values_list("id", flat=True)).values_list("id", flat=True))
+
+
+def refresh_user_data(user_id):
+    """
+    Refresh the edx cache data for a user.
+
+    Note that this function will not raise an exception on error, instead the errors are logged.
+
+    Args:
+        user_id (int): The user id
+    """
+    # pylint: disable=bare-except
+    try:
+        user = User.objects.get(pk=user_id)
+    except:
+        log.exception('edX data refresh task: unable to get user "%s"', user_id)
+        return
+
+    try:
+        UserSocialAuth.objects.get(user=user)
+    except:
+        log.exception('user "%s" does not have python social auth object', user.username)
+        return
+
+    # get the credentials for the current user for edX
+    try:
+        user_social = get_social_auth(user)
+    except:
+        log.exception('user "%s" does not have edX credentials', user.username)
+        return
+
+    try:
+        utils.refresh_user_token(user_social)
+    except:
+        log.exception("Unable to refresh token for student %s", user.username)
+        return
+
+    try:
+        edx_client = EdxApi(user_social.extra_data, settings.EDXORG_BASE_URL)
+    except:
+        log.exception("Unable to create an edX client object for student %s", user.username)
+        return
+
+    for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
+        try:
+            CachedEdxDataApi.update_cache_if_expired(user, edx_client, cache_type)
+        except:
+            log.exception("Unable to refresh cache %s for student %s", cache_type, user.username)
+            continue

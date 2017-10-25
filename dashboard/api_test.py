@@ -12,6 +12,7 @@ from unittest.mock import (
 import ddt
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
+import pytest
 from rest_framework import status as http_status
 
 from backends.exceptions import InvalidCredentialStored
@@ -42,6 +43,7 @@ from micromasters.utils import (
     is_subset_dict,
     now_in_utc,
 )
+from profiles.factories import SocialProfileFactory
 from search.base import MockedESTestCase
 
 
@@ -1819,3 +1821,203 @@ class GetOverallGradeForCourseTests(CourseTests):
         self.mmtrack.get_passing_final_grades_for_course.return_value = FinalGrade.objects.filter(user=self.user)
         self.mmtrack.get_best_proctored_exam_grade.return_value = None
         assert api.get_overall_final_grade_for_course(self.mmtrack, self.course) == ''
+
+
+# pylint: disable=unused-argument, redefined-outer-name
+def _make_fake_real_user():
+    """Make a User whose profile.fake_user is False"""
+    user = SocialProfileFactory.create().user
+    user.profile.fake_user = False
+    user.profile.save()
+    now = now_in_utc()
+    UserCacheRefreshTimeFactory.create(user=user, enrollment=now, certificate=now, current_grade=now)
+    return user
+
+
+@pytest.fixture
+def calc_users(db):
+    """Create users with an empty cache"""
+    up_to_date = [_make_fake_real_user() for _ in range(5)]
+    needs_update = [_make_fake_real_user() for _ in range(5)]
+    for user in needs_update:
+        user.usercacherefreshtime.delete()
+
+    return needs_update, up_to_date
+
+
+def test_calculate_up_to_date(calc_users):
+    """
+    calculate_users_to_refresh should return a list of user ids for users whose cache has expired or who are not cached
+    """
+    needs_update, up_to_date = calc_users
+    assert api.calculate_users_to_refresh_in_bulk() == [user.id for user in needs_update]
+
+
+def test_calculate_missing_cache(calc_users):
+    """
+    If a user's cache is missing they should be part of the list of users to update
+    """
+    needs_update, up_to_date = calc_users
+    up_to_date[0].usercacherefreshtime.delete()
+    assert api.calculate_users_to_refresh_in_bulk() == [user.id for user in needs_update] + [up_to_date[0].id]
+
+
+def test_calculate_fake_user(calc_users):
+    """Fake users should not have their caches updated"""
+    needs_update, up_to_date = calc_users
+    needs_update[0].profile.fake_user = True
+    needs_update[0].profile.save()
+    assert api.calculate_users_to_refresh_in_bulk() == [user.id for user in needs_update[1:]]
+
+
+def test_calculate_inactive(calc_users):
+    """Inactive users should not have their caches updated"""
+    needs_update, up_to_date = calc_users
+    needs_update[0].active = False
+    needs_update[0].profile.save()
+    assert api.calculate_users_to_refresh_in_bulk() == [user.id for user in needs_update[1:]]
+
+
+def test_calculate_missing_social_auth(calc_users):
+    """Users without a linked social auth should not be counted"""
+    needs_update, up_to_date = calc_users
+    needs_update[0].social_auth.all().delete()
+    assert api.calculate_users_to_refresh_in_bulk() == [user.id for user in needs_update[1:]]
+
+
+@pytest.mark.parametrize("enrollment,certificate,current_grade,expired", [
+    [None, 0, 0, True],
+    [0, None, 0, True],
+    [0, 0, None, True],
+    [-5, 0, 0, False],
+    [0, -5, 0, False],
+    [0, 0, -5, False],
+    [5, 0, 0, True],
+    [0, 5, 0, True],
+    [0, 0, 5, True],
+])
+def test_calculate_expired(calc_users, enrollment, certificate, current_grade, expired):
+    """
+    Users with some part of their cache that is expired should show up as needing update
+    """
+    needs_update, up_to_date = calc_users
+    cache = up_to_date[0].usercacherefreshtime
+    cache.enrollment = now_in_utc() - timedelta(hours=6, minutes=enrollment - 1) if enrollment is not None else None
+    cache.certificate = now_in_utc() - timedelta(hours=6, minutes=certificate - 1) if certificate is not None else None
+    cache.current_grade = (
+        now_in_utc() - timedelta(hours=6, minutes=current_grade - 1) if current_grade is not None else None
+    )
+    cache.save()
+
+    expected = needs_update + [up_to_date[0]] if expired else needs_update
+
+    assert sorted(api.calculate_users_to_refresh_in_bulk()) == sorted([user.id for user in expected])
+
+
+def test_refresh_user_data(db, mocker):
+    """refresh_user_data should refresh the cache on all cache types"""
+    user = _make_fake_real_user()
+    user_social = user.social_auth.first()
+    refresh_user_token_mock = mocker.patch('dashboard.api.utils.refresh_user_token', autospec=True)
+    edx_api = mocker.Mock()
+    edx_api_init = mocker.patch('dashboard.api.EdxApi', autospec=True, return_value=edx_api)
+    update_cache_mock = mocker.patch('dashboard.api.CachedEdxDataApi.update_cache_if_expired')
+
+    api.refresh_user_data(user.id)
+
+    refresh_user_token_mock.assert_called_once_with(user_social)
+    edx_api_init.assert_called_once_with(user_social.extra_data, settings.EDXORG_BASE_URL)
+    for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
+        update_cache_mock.assert_any_call(user, edx_api, cache_type)
+
+
+def test_refresh_missing_user(db, mocker):
+    """If the user doesn't exist we should skip the refresh"""
+    refresh_user_token_mock = mocker.patch('dashboard.api.utils.refresh_user_token', autospec=True)
+    edx_api = mocker.Mock()
+    edx_api_init = mocker.patch('dashboard.api.EdxApi', autospec=True, return_value=edx_api)
+    update_cache_mock = mocker.patch('dashboard.api.CachedEdxDataApi.update_cache_if_expired')
+
+    api.refresh_user_data(999)
+
+    assert refresh_user_token_mock.called is False
+    assert edx_api_init.called is False
+    assert update_cache_mock.called is False
+
+
+def test_refresh_missing_social_auth(db, mocker):
+    """If the social auth doesn't exist we should skip the refresh"""
+    user = _make_fake_real_user()
+    user.social_auth.all().delete()
+    refresh_user_token_mock = mocker.patch('dashboard.api.utils.refresh_user_token', autospec=True)
+    edx_api = mocker.Mock()
+    edx_api_init = mocker.patch('dashboard.api.EdxApi', autospec=True, return_value=edx_api)
+    update_cache_mock = mocker.patch('dashboard.api.CachedEdxDataApi.update_cache_if_expired')
+
+    api.refresh_user_data(user.id)
+
+    assert refresh_user_token_mock.called is False
+    assert edx_api_init.called is False
+    assert update_cache_mock.called is False
+
+
+def test_refresh_failed_oauth_update(db, mocker):
+    """If the oauth user token refresh fails, we should skip the edx refresh"""
+    user = _make_fake_real_user()
+    user_social = user.social_auth.first()
+    refresh_user_token_mock = mocker.patch(
+        'dashboard.api.utils.refresh_user_token', autospec=True, side_effect=KeyError,
+    )
+    edx_api = mocker.Mock()
+    edx_api_init = mocker.patch('dashboard.api.EdxApi', autospec=True, return_value=edx_api)
+    update_cache_mock = mocker.patch('dashboard.api.CachedEdxDataApi.update_cache_if_expired')
+
+    api.refresh_user_data(user.id)
+
+    refresh_user_token_mock.assert_called_once_with(user_social)
+    assert edx_api_init.called is False
+    assert update_cache_mock.called is False
+
+
+def test_refresh_failed_edx_client(db, mocker):
+    """If we fail to create the edx client, we should skip the edx refresh"""
+    user = _make_fake_real_user()
+    user_social = user.social_auth.first()
+    refresh_user_token_mock = mocker.patch(
+        'dashboard.api.utils.refresh_user_token', autospec=True,
+    )
+    edx_api_init = mocker.patch('dashboard.api.EdxApi', autospec=True, side_effect=KeyError)
+    update_cache_mock = mocker.patch('dashboard.api.CachedEdxDataApi.update_cache_if_expired')
+
+    api.refresh_user_data(user.id)
+
+    refresh_user_token_mock.assert_called_once_with(user_social)
+    edx_api_init.assert_called_once_with(user_social.extra_data, settings.EDXORG_BASE_URL)
+    assert update_cache_mock.called is False
+
+
+@pytest.mark.parametrize("failed_cache_type", CachedEdxDataApi.SUPPORTED_CACHES)
+def test_refresh_update_cache(db, mocker, failed_cache_type):
+    """If we fail to create the edx client, we should skip the edx refresh"""
+    user = _make_fake_real_user()
+    user_social = user.social_auth.first()
+    refresh_user_token_mock = mocker.patch(
+        'dashboard.api.utils.refresh_user_token', autospec=True,
+    )
+    edx_api = mocker.Mock()
+    edx_api_init = mocker.patch('dashboard.api.EdxApi', autospec=True, return_value=edx_api)
+
+    def _update_cache(self, user, edx_client, cache_type):
+        if cache_type == failed_cache_type:
+            raise KeyError()
+
+    update_cache_mock = mocker.patch(
+        'dashboard.api.CachedEdxDataApi.update_cache_if_expired', side_effect=_update_cache,
+    )
+
+    api.refresh_user_data(user.id)
+
+    refresh_user_token_mock.assert_called_once_with(user_social)
+    edx_api_init.assert_called_once_with(user_social.extra_data, settings.EDXORG_BASE_URL)
+    for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
+        update_cache_mock.assert_any_call(user, edx_api, cache_type)
