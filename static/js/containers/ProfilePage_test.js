@@ -116,7 +116,7 @@ describe("ProfilePage", function() {
 
     it("should launch a dialog to add an entry when an education switch is set to Yes", () => {
       const dialogTest = ([, div]) => {
-        const toggle = radioToggles(div, ".profile-radio-switch")
+        const toggle = radioToggles(div, ".profile-radio-group")
         ReactTestUtils.Simulate.change(toggle[0])
         activeDialog("education-dialog-wrapper")
       }
@@ -127,7 +127,7 @@ describe("ProfilePage", function() {
 
     it("should launch a dialog to add an entry when an employment switch is set to Yes", () => {
       const dialogTest = ([, div]) => {
-        const toggle = radioToggles(div, ".profile-radio-switch")
+        const toggle = radioToggles(div, ".profile-radio-group")
         ReactTestUtils.Simulate.change(toggle[0])
         activeDialog("employment-dialog-wrapper")
       }
