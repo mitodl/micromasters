@@ -99,7 +99,7 @@ class GradeAPITests(MockedESTestCase):
     def test_compute_grade_for_fa(self):
         """
         Tests for _compute_grade_for_fa function.
-        This tests that, if present, a certificate is considered before the current grade.
+        This tests that even with certificate the grade is from current_grades.
         """
         run1_data = self.user_edx_data.get_run_data(self.run_fa.edx_course_key)
         run2_data = self.user_edx_data.get_run_data(self.run_fa_with_cert.edx_course_key)
@@ -117,8 +117,8 @@ class GradeAPITests(MockedESTestCase):
         assert grade1_from_cur_grade.payed_on_edx is False
 
         assert grade2_from_cert.passed is True
-        assert grade2_from_cert.grade == self.certificates.get(
-            self.run_fa_with_cert.edx_course_key).data.get('grade')
+        assert grade2_from_cert.grade == self.current_grades.get(
+            self.run_fa_with_cert.edx_course_key).data.get('percent')
         # this is True as long as the certificate is verified
         assert grade2_from_cert.payed_on_edx is True
 
@@ -146,7 +146,7 @@ class GradeAPITests(MockedESTestCase):
         run_data = CachedEdxUserData(self.user).get_run_data(course_key)
         grade = api._compute_grade_for_fa(run_data)
         assert grade.passed is grade_result
-        assert grade.grade == self.certificates.get(course_key).data.get('grade')
+        assert grade.grade == self.current_grades.get(course_key).data.get('percent')
         assert grade.payed_on_edx == payed_edx_result
 
     def test_compute_grade_for_non_fa(self):
@@ -169,8 +169,8 @@ class GradeAPITests(MockedESTestCase):
         # this is true if the enrollment is verified
         assert grade3_from_cur_grade.payed_on_edx is True
         assert grade4_from_cert.passed is True
-        assert grade4_from_cert.grade == self.certificates.get(
-            self.run_no_fa_with_cert.edx_course_key).data.get('grade')
+        assert grade4_from_cert.grade == self.current_grades.get(
+            self.run_no_fa_with_cert.edx_course_key).data.get('percent')
         # this is True as long as the certificate is verified
         assert grade4_from_cert.payed_on_edx is True
 
@@ -214,7 +214,7 @@ class GradeAPITests(MockedESTestCase):
         run_data = CachedEdxUserData(self.user).get_run_data(course_key)
         grade = api._compute_grade_for_non_fa(run_data)
         assert grade.passed is grade_result
-        assert grade.grade == self.certificates.get(course_key).data.get('grade')
+        assert grade.grade == self.current_grades[course_key].data.get('percent')
         assert grade.payed_on_edx is payed_edx_result
 
     @ddt.data('', None, ' ', 'foo', )
@@ -232,20 +232,6 @@ class GradeAPITests(MockedESTestCase):
             current_grade = self.current_grades[course_key]
             current_grade.data['percent'] = odd_value
             current_grade.save()
-            user_edx_data = CachedEdxUserData(self.user)
-            run_data = user_edx_data.get_run_data(course_key)
-            grade = grade_func(run_data)
-            assert grade.grade == 0.0
-        # test for grade computed on certificates
-        test_values = (
-            (self.run_fa_with_cert, api._compute_grade_for_fa, ),
-            (self.run_no_fa_with_cert, api._compute_grade_for_non_fa, )
-        )
-        for course_run, grade_func in test_values:
-            course_key = course_run.edx_course_key
-            cert = self.certificates[course_key]
-            cert.data['grade'] = odd_value
-            cert.save()
             user_edx_data = CachedEdxUserData(self.user)
             run_data = user_edx_data.get_run_data(course_key)
             grade = grade_func(run_data)
