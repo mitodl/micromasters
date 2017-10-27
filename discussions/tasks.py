@@ -49,7 +49,7 @@ def sync_discussion_users():
 @app.task()
 def add_moderators_to_channel(channel_name):
     """
-    Add moderators to a open-discussions chane
+    Add moderators to a open-discussions channel
     """
     if not settings.FEATURES.get('OPEN_DISCUSSIONS_USER_SYNC', False):
         log.debug('OPEN_DISCUSSIONS_USER_SYNC is set to False (so disabled) in the settings')

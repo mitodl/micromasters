@@ -128,6 +128,6 @@ def populate_query_memberships(percolate_query_id):
     Populate existing users to the query's memberships
 
     Args:
-        percolate_query_id (int): Datebase id for the PercolateQuery to populate
+        percolate_query_id (int): Database id for the PercolateQuery to populate
     """
     api.populate_query_memberships(percolate_query_id)

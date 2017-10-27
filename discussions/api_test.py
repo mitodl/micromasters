@@ -363,6 +363,70 @@ def test_sync_channel_memberships(mocker, patched_users_api):
         remove_subscriber_stub.assert_any_call(channel.name, user.discussion_user.username)
 
 
+def test_sync_channel_memberships_api_error(mocker, patched_users_api):
+    """
+    sync_user_to_channels should not fail hard on a sync exception
+    """
+    user = UserFactory.create()
+
+    # member here means the user matches the percolate query of the channel
+    channels_to_add = [ChannelFactory.create() for _ in range(4)]
+    channels_to_remove = [ChannelFactory.create() for _ in range(3)]
+
+    programs = [
+        ChannelProgramFactory.create(channel=channel).program
+        for channel in (channels_to_add + channels_to_remove)
+    ]
+
+    memberships_to_add = [
+        PercolateQueryMembership.objects.create(user=user, query=channel.query, needs_update=True, is_member=True)
+        for channel in channels_to_add
+    ]
+
+    memberships_to_remove = [
+        PercolateQueryMembership.objects.create(user=user, query=channel.query, needs_update=True, is_member=False)
+        for channel in channels_to_remove
+    ]
+
+    # Enroll the user in all programs. This isn't technically required but it's unrealistic to have a query
+    # matching a user if they are not enrolled in the program.
+    for program in programs:
+        ProgramEnrollmentFactory.create(program=program, user=user)
+
+    # One percolate query per channel
+    assert PercolateQuery.objects.count() == len(channels_to_add) + len(channels_to_remove)
+
+    # these are the first calls to be made for either change
+    add_contributor_stub = mocker.patch(
+        'discussions.api.add_contributor_to_channel',
+        autospec=True,
+        side_effect=DiscussionUserSyncException
+    )
+    remove_subscriber_stub = mocker.patch(
+        'discussions.api.remove_subscriber_from_channel',
+        autospec=True,
+        side_effect=DiscussionUserSyncException
+    )
+
+    api.sync_channel_memberships()
+
+    created_stub, _ = patched_users_api
+    created_stub.assert_any_call(user.discussion_user)
+
+    assert add_contributor_stub.call_count == len(channels_to_add)
+    assert remove_subscriber_stub.call_count == len(channels_to_remove)
+
+    # should still need updates since everything failed
+    for membership in memberships_to_add + memberships_to_remove:
+        membership.refresh_from_db()
+        assert membership.needs_update is True
+
+    for channel in channels_to_add:
+        add_contributor_stub.assert_any_call(channel.name, user.discussion_user.username)
+    for channel in channels_to_remove:
+        remove_subscriber_stub.assert_any_call(channel.name, user.discussion_user.username)
+
+
 def test_add_channel(mock_staff_client, mocker, patched_users_api):
     """add_channel should tell open-discussions to create a channel"""
     mock_staff_client.channels.create.return_value.ok = True

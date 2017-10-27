@@ -362,7 +362,7 @@ def _update_memberships(percolate_query_ids, membership_ids, user, force_save=Fa
     Args:
         percolate_query_ids (set of int): a set of PercolateQuery.id
         membership_ids (list of int): A list of ids for PercolateQueryMemberships to update
-            user (User): A User to check for membership changes
+        user (User): A User to check for membership changes
         force_save (bool): True if membership saves should be force even if no change
     """
     if not percolate_query_ids:
@@ -391,8 +391,7 @@ def populate_query_memberships(percolate_query_id):
     Populates PercolateQueryMemberships for the given query and enrollments
 
     Args:
-        percolate_query_id (int): Datebase id for the PercolateQuery to populate
-        enrollment_ids (iterable of int): Database ids for ProgramEnrollments to check
+        percolate_query_id (int): Database id for the PercolateQuery to populate
     """
     # practically this is a list of 1 query, but _ensure_memberships_for_queries requires a list
     query = PercolateQuery.objects.get(id=percolate_query_id)
