@@ -12,7 +12,6 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 from django.urls import reverse
 from edx_api.client import EdxApi
-from social_django.models import UserSocialAuth
 
 from backends.exceptions import InvalidCredentialStored
 from backends import utils
@@ -568,12 +567,6 @@ def refresh_user_data(user_id):
         user = User.objects.get(pk=user_id)
     except:
         log.exception('edX data refresh task: unable to get user "%s"', user_id)
-        return
-
-    try:
-        UserSocialAuth.objects.get(user=user)
-    except:
-        log.exception('user "%s" does not have python social auth object', user.username)
         return
 
     # get the credentials for the current user for edX
