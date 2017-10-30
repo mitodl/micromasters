@@ -1835,7 +1835,7 @@ def _make_fake_real_user():
 
 
 @pytest.fixture
-def calc_users(db):
+def users_without_with_cache(db):
     """Create users with an empty cache"""
     up_to_date = [_make_fake_real_user() for _ in range(5)]
     needs_update = [_make_fake_real_user() for _ in range(5)]
@@ -1845,44 +1845,44 @@ def calc_users(db):
     return needs_update, up_to_date
 
 
-def test_calculate_up_to_date(calc_users):
+def test_calculate_up_to_date(users_without_with_cache):
     """
     calculate_users_to_refresh should return a list of user ids for users whose cache has expired or who are not cached
     """
-    needs_update, _ = calc_users
+    needs_update, _ = users_without_with_cache
     assert api.calculate_users_to_refresh_in_bulk() == [user.id for user in needs_update]
 
 
-def test_calculate_missing_cache(calc_users):
+def test_calculate_missing_cache(users_without_with_cache):
     """
     If a user's cache is missing they should be part of the list of users to update
     """
-    needs_update, up_to_date = calc_users
+    needs_update, up_to_date = users_without_with_cache
     up_to_date[0].usercacherefreshtime.delete()
     assert sorted(api.calculate_users_to_refresh_in_bulk()) == sorted(
         [user.id for user in needs_update] + [up_to_date[0].id]
     )
 
 
-def test_calculate_fake_user(calc_users):
+def test_calculate_fake_user(users_without_with_cache):
     """Fake users should not have their caches updated"""
-    needs_update, _ = calc_users
+    needs_update, _ = users_without_with_cache
     needs_update[0].profile.fake_user = True
     needs_update[0].profile.save()
     assert api.calculate_users_to_refresh_in_bulk() == [user.id for user in needs_update[1:]]
 
 
-def test_calculate_inactive(calc_users):
+def test_calculate_inactive(users_without_with_cache):
     """Inactive users should not have their caches updated"""
-    needs_update, _ = calc_users
+    needs_update, _ = users_without_with_cache
     needs_update[0].is_active = False
     needs_update[0].save()
     assert api.calculate_users_to_refresh_in_bulk() == [user.id for user in needs_update[1:]]
 
 
-def test_calculate_missing_social_auth(calc_users):
+def test_calculate_missing_social_auth(users_without_with_cache):
     """Users without a linked social auth should not be counted"""
-    needs_update, _ = calc_users
+    needs_update, _ = users_without_with_cache
     needs_update[0].social_auth.all().delete()
     assert api.calculate_users_to_refresh_in_bulk() == [user.id for user in needs_update[1:]]
 
@@ -1898,11 +1898,11 @@ def test_calculate_missing_social_auth(calc_users):
     [0, 5, 0, True],
     [0, 0, 5, True],
 ])
-def test_calculate_expired(calc_users, enrollment, certificate, current_grade, expired):
+def test_calculate_expired(users_without_with_cache, enrollment, certificate, current_grade, expired):
     """
     Users with some part of their cache that is expired should show up as needing update
     """
-    needs_update, up_to_date = calc_users
+    needs_update, up_to_date = users_without_with_cache
     cache = up_to_date[0].usercacherefreshtime
     cache.enrollment = now_in_utc() - timedelta(hours=6, minutes=enrollment - 1) if enrollment is not None else None
     cache.certificate = now_in_utc() - timedelta(hours=6, minutes=certificate - 1) if certificate is not None else None
