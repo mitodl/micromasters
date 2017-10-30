@@ -68,7 +68,9 @@ def batch_update_user_data():
             Q(id__in=users_expired_cache)
         ).filter(is_active=True, profile__fake_user=False).values_list('id', flat=True)
 
-        users_to_refresh = list(set(users_expired_cache) | set(users_not_in_cache))
+        users_to_refresh = UserSocialAuth.objects.filter(
+            user__id__in=(list(set(users_expired_cache) | set(users_not_in_cache)))
+        ).values_list('user__id', flat=True).distinct()
 
         job = group(
             batch_update_user_data_subtasks.s(list_users) for list_users in chunks(users_to_refresh)
@@ -95,12 +97,6 @@ def batch_update_user_data_subtasks(students):
             user = User.objects.get(pk=user_id)
         except:
             log.exception('edX data refresh task: unable to get user "%s"', user_id)
-            continue
-
-        try:
-            UserSocialAuth.objects.get(user=user)
-        except:
-            log.exception('user "%s" does not have python social auth object', user.username)
             continue
 
         # get the credentials for the current user for edX
