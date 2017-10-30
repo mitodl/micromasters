@@ -13,6 +13,7 @@ services:
       # for celery, to avoid ImproperlyConfigured
       MAILGUN_URL: 'http://fake.example.com'
       MAILGUN_KEY: 'fake'
+      ELASTICSEARCH_INDEX: 'testindex'
 
   web:
     build:
