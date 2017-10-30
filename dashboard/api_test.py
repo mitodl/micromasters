@@ -1849,7 +1849,7 @@ def test_calculate_up_to_date(calc_users):
     """
     calculate_users_to_refresh should return a list of user ids for users whose cache has expired or who are not cached
     """
-    needs_update, up_to_date = calc_users
+    needs_update, _ = calc_users
     assert api.calculate_users_to_refresh_in_bulk() == [user.id for user in needs_update]
 
 
@@ -1859,12 +1859,14 @@ def test_calculate_missing_cache(calc_users):
     """
     needs_update, up_to_date = calc_users
     up_to_date[0].usercacherefreshtime.delete()
-    assert api.calculate_users_to_refresh_in_bulk() == [user.id for user in needs_update] + [up_to_date[0].id]
+    assert sorted(api.calculate_users_to_refresh_in_bulk()) == sorted(
+        [user.id for user in needs_update] + [up_to_date[0].id]
+    )
 
 
 def test_calculate_fake_user(calc_users):
     """Fake users should not have their caches updated"""
-    needs_update, up_to_date = calc_users
+    needs_update, _ = calc_users
     needs_update[0].profile.fake_user = True
     needs_update[0].profile.save()
     assert api.calculate_users_to_refresh_in_bulk() == [user.id for user in needs_update[1:]]
@@ -1872,15 +1874,15 @@ def test_calculate_fake_user(calc_users):
 
 def test_calculate_inactive(calc_users):
     """Inactive users should not have their caches updated"""
-    needs_update, up_to_date = calc_users
-    needs_update[0].active = False
-    needs_update[0].profile.save()
+    needs_update, _ = calc_users
+    needs_update[0].is_active = False
+    needs_update[0].save()
     assert api.calculate_users_to_refresh_in_bulk() == [user.id for user in needs_update[1:]]
 
 
 def test_calculate_missing_social_auth(calc_users):
     """Users without a linked social auth should not be counted"""
-    needs_update, up_to_date = calc_users
+    needs_update, _ = calc_users
     needs_update[0].social_auth.all().delete()
     assert api.calculate_users_to_refresh_in_bulk() == [user.id for user in needs_update[1:]]
 
@@ -2008,6 +2010,7 @@ def test_refresh_update_cache(db, mocker, failed_cache_type):
     edx_api_init = mocker.patch('dashboard.api.EdxApi', autospec=True, return_value=edx_api)
 
     def _update_cache(self, user, edx_client, cache_type):
+        """Fail updating the cache for only the given cache type"""
         if cache_type == failed_cache_type:
             raise KeyError()
 
