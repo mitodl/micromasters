@@ -44,13 +44,13 @@ def post_indexing_handler(program_enrollments):
     for program_enrollment in program_enrollments:
         try:
             _send_automatic_emails(program_enrollment)
-        except:  # pylint: disable=broad-except
+        except:  # pylint: disable=bare-except
             log.exception("Error sending automatic email for enrollment %s", program_enrollment)
 
         # only update for discussion queries for now
         try:
             _update_percolate_memberships(program_enrollment.user, PercolateQuery.DISCUSSION_CHANNEL_TYPE)
-        except:  # pylint: disable=broad-except
+        except:  # pylint: disable=bare-except
             log.exception("Error syncing %s to channels", program_enrollment.user)
 
 
