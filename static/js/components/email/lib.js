@@ -19,12 +19,12 @@ import type {
 } from "../../flow/emailTypes"
 import { actions } from "../../lib/redux_rest.js"
 import { SEARCH_FACET_FIELD_LABEL_MAP } from "../../constants"
-import { makeCountryNameTranslations } from "../LearnerSearch"
+import { makeTranslations } from "../LearnerSearch"
 
 // NOTE: getEmailSendFunction is a function that returns a function. It is implemented this way
 // so that we can stub/mock the function that it returns (as we do in integration_test_helper.js)
 
-const countryNameTranslations: Object = makeCountryNameTranslations()
+const countryNameTranslations: Object = makeTranslations()
 export const renderFilterOptions = R.map(filter => {
   let labelKey, labelValue
   if (R.isEmpty(filter.name)) {

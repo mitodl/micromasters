@@ -3,7 +3,7 @@ import R from "ramda"
 import _ from "lodash"
 
 import { SEARCH_FACET_FIELD_LABEL_MAP } from "../../constants"
-import { makeCountryNameTranslations } from "../LearnerSearch"
+import { makeTranslations } from "../LearnerSearch"
 
 export default class ModifiedSelectedFilter extends React.Component {
   props: {
@@ -14,29 +14,28 @@ export default class ModifiedSelectedFilter extends React.Component {
     filterId: string
   }
 
-  countryNameTranslations: Object = makeCountryNameTranslations()
-  countryNameList: string = _.values(this.countryNameTranslations)
+  translations: Object = makeTranslations()
 
-  isResidence = (labelKey: string) =>
+  isLocation = (labelKey: string) =>
     R.or(_.includes(labelKey, "Country"), _.includes(labelKey, "Residence"))
-
-  isState = (labelKey: string) => _.indexOf(this.countryNameList, labelKey) > -1
 
   render() {
     let { labelKey, labelValue } = this.props
+    let isLabelCountryName = false
     const { removeFilter, bemBlocks, filterId } = this.props
     if (R.isEmpty(labelKey)) {
       labelKey = SEARCH_FACET_FIELD_LABEL_MAP[filterId]
     } else if (labelKey in SEARCH_FACET_FIELD_LABEL_MAP) {
       labelKey = SEARCH_FACET_FIELD_LABEL_MAP[labelKey]
-    } else if (labelKey in this.countryNameTranslations) {
-      labelKey = this.countryNameTranslations[labelKey]
+    } else if (labelKey in this.translations) {
+      labelKey = this.translations[labelKey]
+      isLabelCountryName = true
     }
     if (
-      R.or(this.isResidence(labelKey), this.isState(labelKey)) &&
-      _.hasIn(this.countryNameTranslations, labelValue)
+      R.or(this.isLocation(labelKey), isLabelCountryName) &&
+      _.hasIn(this.translations, labelValue)
     ) {
-      labelValue = this.countryNameTranslations[labelValue]
+      labelValue = this.translations[labelValue]
     }
     // This comes from searchkit documentation on "Overriding Selected Filter Component"
     return (

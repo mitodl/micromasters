@@ -47,7 +47,7 @@ import {
   hasStaffForProgram
 } from "../lib/roles"
 
-export const makeCountryNameTranslations: () => Object = () => {
+export const makeTranslations: () => Object = () => {
   const translations = {}
   for (const code of Object.keys(iso3166.data)) {
     translations[code] = iso3166.data[code].name
@@ -141,7 +141,7 @@ export default class LearnerSearch extends SearchkitComponent {
     { value: "dob", label: "Sort: dob" }
   ]
 
-  countryNameTranslations: Object = makeCountryNameTranslations()
+  countryNameTranslations: Object = makeTranslations()
 
   constructor(props: Object) {
     super(props)
