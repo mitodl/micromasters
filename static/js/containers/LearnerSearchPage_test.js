@@ -540,6 +540,31 @@ describe("LearnerSearchPage", function() {
         ])
       })
     })
+
+    it("has proper filter titles when company name and state name are same", () => {
+      const query = {
+        courses:         ["Digital Learning 200"],
+        birth_location:  ["US"],
+        country:         [["US"], ["US-ME"]],
+        education_level: ["hs"],
+        company_name:    ["US-ME"]
+      }
+      return renderSearch().then(([wrapper]) => {
+        const searchkit = wrapper.find("SearchkitProvider").props().searchkit
+        searchkit.searchFromUrlQuery(query)
+
+        const titles = wrapper
+          .find(".mm-filters .sk-selected-filters-option__name")
+          .map(filter => filter.text())
+        assert.deepEqual(titles, [
+          "Course: Digital Learning 200",
+          "Country of Birth: United States",
+          "United States: Maine",
+          "Degree: High school",
+          "Company: US-ME"
+        ])
+      })
+    })
   })
 
   it("shows filters and the textbox even if there are no results", () => {
