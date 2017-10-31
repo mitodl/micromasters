@@ -162,6 +162,11 @@
     "MICROMASTERS_FROM_EMAIL": {
       "value": "MITx MicroMasters <micromasters-support@mit.edu>"
     },
+    "MICROMASTERS_LOG_LEVEL": {
+      "description": "The logging level for the application",
+      "required": false,
+      "value": "DEBUG"
+    },
     "MICROMASTERS_SECURE_SSL_REDIRECT": {
       "description": "Application-level SSL redirect setting.",
       "required": false,
