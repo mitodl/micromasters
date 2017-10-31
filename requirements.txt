@@ -15,7 +15,6 @@ cffi==1.10.0              # via bcrypt, cryptography, pynacl
 contextlib2==0.5.5        # via raven
 cryptography==2.0.2       # via paramiko
 decorator==4.1.2          # via ipython, traitlets
-deepdiff==3.3.0
 defusedxml==0.5.0         # via python3-openid, social-auth-core
 dj-database-url==0.3.0
 dj-static==0.0.6
