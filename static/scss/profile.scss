@@ -41,6 +41,10 @@
     font-size: 14px;
     display: flex;
 
+    div {
+      display: block !important;
+    }
+
     .profile-radio-button {
       margin-bottom: 8px;
     }
