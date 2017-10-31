@@ -12,6 +12,7 @@ from django_redis import get_redis_connection
 
 from courses.models import CourseRun
 from grades import api
+from grades.constants import FinalGradeStatus
 from grades.models import (
     FinalGrade,
     ProctoredExamGrade,
@@ -39,6 +40,7 @@ def generate_course_certificates_for_fa_students():
         FinalGrade.objects
         .filter(
             course_run__course__program__financial_aid_availability=True,
+            status=FinalGradeStatus.COMPLETE,
             passed=True,
         )
         .annotate(certificate_count=Count('certificate'))

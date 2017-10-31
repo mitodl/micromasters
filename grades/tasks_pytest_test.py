@@ -44,6 +44,7 @@ def test_generate_course_certificates():
     )
     FinalGradeFactory.create(course_run__course=non_fa_course, passed=True)
     FinalGradeFactory.create(course_run__course=course, passed=False)
+    FinalGradeFactory.create(course_run__course=course, passed=True, status='pending')
     # Create ProctoredExamGrade records with a mix of passed and failed outcomes, and exam grade availability
     final_grades_with_passed_exam = passed_final_grades_with_exam[:2]
     final_grades_with_passed_exam_no_grades = passed_final_grades_with_exam[2:4]
