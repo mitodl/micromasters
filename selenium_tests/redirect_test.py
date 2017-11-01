@@ -1,9 +1,10 @@
 """Test for redirect on 401 behavior"""
 # pylint: disable=redefined-outer-name,unused-argument
-import pytest
+import json
 
 from django.conf.urls import url
 from django.http.response import HttpResponse
+import pytest
 
 from micromasters.urls import urlpatterns
 
@@ -26,7 +27,10 @@ def test_redirect(browser, logged_in_staff, mocker, settings):
     # Set ROOT_URLCONF to this modules path. This will cause the app to use the 'urlpatterns' value defined above
     # at the module level.
     settings.ROOT_URLCONF = __name__
-    dashboard_patch = mocker.patch('dashboard.views.UserDashboard.get', return_value=HttpResponse(status=401))
+    dashboard_patch = mocker.patch('dashboard.views.UserDashboard.get', return_value=HttpResponse(
+        status=401,
+        content=json.dumps({"error": "message"}).encode()
+    ))
     browser.get("/dashboard", ignore_errors=True)
     assert FAKE_RESPONSE in browser.driver.find_element_by_css_selector("body").text
     assert dashboard_patch.called
