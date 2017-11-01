@@ -2,12 +2,14 @@
 from datetime import timedelta
 
 import pytest
-from redis.exceptions import LockError
 
 from discussions import tasks
 from discussions.exceptions import DiscussionUserSyncException
 from profiles.factories import UserFactory
-from micromasters.utils import now_in_utc
+from micromasters.utils import (
+    is_near_now,
+    now_in_utc,
+)
 
 pytestmark = [
     pytest.mark.usefixtures('mocked_elasticsearch'),
@@ -111,8 +113,13 @@ def test_add_moderators_to_channel_no_feature_flag(settings, mocker):
 
 def test_sync_channel_memberships(settings, mocker):
     """sync_channel_memberships should forward all arguments to the api function"""
-    lock_stub = mocker.patch('discussions.tasks._get_sync_memberships_lock', autospec=True)
-    lock_stub.return_value.acquire.return_value = True
+
+    def acquire_func(lock):
+        """Fake a lock acquisition"""
+        lock.acquired = True
+
+    acquire_stub = mocker.patch('discussions.tasks.Lock.acquire', autospec=True, side_effect=acquire_func)
+    release_stub = mocker.patch('discussions.tasks.Lock.release', autospec=True)
 
     expected_membership_ids = [1, 2, 3]
     get_memberships_stub = mocker.patch(
@@ -133,14 +140,25 @@ def test_sync_channel_memberships(settings, mocker):
     tasks.sync_channel_memberships.delay()
     assert api_stub.call_count == 1
     assert get_memberships_stub.call_count == 1
-    assert lock_stub.return_value.acquire.called is True
-    assert lock_stub.return_value.release.called is True
+    assert acquire_stub.called is True
+    assert release_stub.called is True
+
+
+def test_sync_channel_memberships_lock_name(settings, mocker):
+    """sync_channel_memberships should use the proper lock name and expiration"""
+
+    lock_mock = mocker.patch('discussions.tasks.Lock', autospec=True)
+
+    tasks.sync_channel_memberships.delay()
+    assert lock_mock.call_count == 1
+    assert lock_mock.call_args[0][0] == tasks.SYNC_MEMBERSHIPS_LOCK_NAME
+    assert is_near_now(lock_mock.call_args[0][1] - timedelta(seconds=tasks.SYNC_MEMBERSHIPS_LOCK_TTL_SECONDS))
 
 
 def test_sync_channel_memberships_generator(settings, mocker):
     """sync_channel_memberships internal generator should stop when the lock times out"""
     now_in_utc_stub = mocker.patch(
-        'discussions.tasks.now_in_utc',
+        'micromasters.locks.now_in_utc',
         autospec=True,
         side_effect=[
             # call when we determine end_time
@@ -151,8 +169,13 @@ def test_sync_channel_memberships_generator(settings, mocker):
             now_in_utc() + timedelta(minutes=5),
         ]
     )
-    lock_stub = mocker.patch('discussions.tasks._get_sync_memberships_lock', autospec=True)
-    lock_stub.return_value.acquire.return_value = True
+
+    def acquire_func(lock):
+        """Fake a lock acquisition"""
+        lock.acquired = True
+
+    acquire_stub = mocker.patch('discussions.tasks.Lock.acquire', autospec=True, side_effect=acquire_func)
+    release_stub = mocker.patch('discussions.tasks.Lock.release', autospec=True)
 
     expected_membership_ids = [1, 2, 3]
     get_memberships_stub = mocker.patch(
@@ -175,31 +198,25 @@ def test_sync_channel_memberships_generator(settings, mocker):
     assert now_in_utc_stub.call_count == 3
     assert api_stub.call_count == 1
     assert get_memberships_stub.call_count == 1
-    assert lock_stub.return_value.acquire.called is True
-    assert lock_stub.return_value.release.called is True
+    assert acquire_stub.called is True
+    assert release_stub.called is True
 
 
 def test_sync_channel_memberships_no_lock(settings, mocker):
     """sync_channel_memberships exit without calling the api method if no lock"""
-    lock_stub = mocker.patch('discussions.tasks._get_sync_memberships_lock', autospec=True)
-    lock_stub.return_value.acquire.return_value = False
-    api_stub = mocker.patch('discussions.api.sync_channel_memberships', autospec=True)
-    tasks.sync_channel_memberships.delay()
-    assert api_stub.call_count == 0
-    assert lock_stub.return_value.acquire.called is True
-    assert lock_stub.return_value.release.called is False
+    acquire_stub = mocker.patch('discussions.tasks.Lock.acquire', autospec=False, return_value=False)
+    release_stub = mocker.patch('discussions.tasks.Lock.release', autospec=True)
 
+    def assert_memberships(membership_ids):
+        """Asserts the generator passed into sync_channel_memberships can evaluate"""
+        # this should only be the first two items
+        assert list(membership_ids) == []
 
-def test_sync_channel_memberships_lock_error(settings, mocker):
-    """sync_channel_memberships exits gracefully if it can no longer release the lock"""
-    lock_stub = mocker.patch('discussions.tasks._get_sync_memberships_lock', autospec=True)
-    lock_stub.return_value.acquire.return_value = True
-    lock_stub.return_value.release.side_effect = LockError
-    api_stub = mocker.patch('discussions.api.sync_channel_memberships', autospec=True)
+    api_stub = mocker.patch('discussions.api.sync_channel_memberships', autospec=True, side_effect=assert_memberships)
     tasks.sync_channel_memberships.delay()
     assert api_stub.call_count == 1
-    assert lock_stub.return_value.acquire.called is True
-    assert lock_stub.return_value.release.called is True
+    assert acquire_stub.called is True
+    assert release_stub.called is True
 
 
 def test_sync_channel_memberships_no_feature_flag(settings, mocker):
