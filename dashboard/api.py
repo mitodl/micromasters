@@ -12,6 +12,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 from django.urls import reverse
 from edx_api.client import EdxApi
+from django_redis import get_redis_connection
 
 from backends.exceptions import InvalidCredentialStored
 from backends import utils
@@ -31,6 +32,10 @@ ATTEMPTS_PER_PAID_RUN = 2
 
 COURSE_GRADE_WEIGHT = 0.4
 EXAM_GRADE_WEIGHT = 0.6
+
+CACHE_KEY_FAILURE_NUMS_BY_USER = "update_cache_401_failure_numbers"
+CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE = "failed_cache_update_users_not_to_update"
+FIELD_USER_ID_BASE_STR = "user_{0}"
 
 log = logging.getLogger(__name__)
 
@@ -579,6 +584,7 @@ def refresh_user_data(user_id):
     try:
         utils.refresh_user_token(user_social)
     except:
+        save_cache_update_failure(user_id)
         log.exception("Unable to refresh token for student %s", user.username)
         return
 
@@ -592,5 +598,20 @@ def refresh_user_data(user_id):
         try:
             CachedEdxDataApi.update_cache_if_expired(user, edx_client, cache_type)
         except:
+            save_cache_update_failure(user_id)
             log.exception("Unable to refresh cache %s for student %s", cache_type, user.username)
             continue
+
+
+def save_cache_update_failure(user_id):
+    """
+    Store the number of time update cache failed for a user
+    """
+    con = get_redis_connection("redis")
+    user_key = FIELD_USER_ID_BASE_STR.format(user_id)
+    if con.hexists(CACHE_KEY_FAILURE_NUMS_BY_USER, user_key):
+        new_value = con.hincrby(CACHE_KEY_FAILURE_NUMS_BY_USER, user_key, 1)
+        if int(new_value) >= 3:
+            con.sadd(CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE, user_key)
+    else:
+        con.hset(CACHE_KEY_FAILURE_NUMS_BY_USER, user_key, 1)

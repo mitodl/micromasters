@@ -1974,12 +1974,14 @@ def test_refresh_failed_oauth_update(db, mocker):
     edx_api = mocker.Mock()
     edx_api_init = mocker.patch('dashboard.api.EdxApi', autospec=True, return_value=edx_api)
     update_cache_mock = mocker.patch('dashboard.api.CachedEdxDataApi.update_cache_if_expired')
+    save_failure_mock = mocker.patch('dashboard.api.save_cache_update_failure')
 
     api.refresh_user_data(user.id)
 
     refresh_user_token_mock.assert_called_once_with(user_social)
     assert edx_api_init.called is False
     assert update_cache_mock.called is False
+    assert save_failure_mock.called is True
 
 
 def test_refresh_failed_edx_client(db, mocker):
@@ -2018,10 +2020,12 @@ def test_refresh_update_cache(db, mocker, failed_cache_type):
     update_cache_mock = mocker.patch(
         'dashboard.api.CachedEdxDataApi.update_cache_if_expired', side_effect=_update_cache,
     )
+    save_failure_mock = mocker.patch('dashboard.api.save_cache_update_failure')
 
     api.refresh_user_data(user.id)
 
     refresh_user_token_mock.assert_called_once_with(user_social)
     edx_api_init.assert_called_once_with(user_social.extra_data, settings.EDXORG_BASE_URL)
+    assert save_failure_mock.call_count == 3
     for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
         update_cache_mock.assert_any_call(user, edx_api, cache_type)

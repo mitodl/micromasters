@@ -4,6 +4,8 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from social_django.views import complete as social_complete
 from social_django.utils import psa
+from django_redis import get_redis_connection
+from dashboard.api import CACHE_KEY_FAILURE_NUMS_BY_USER, FIELD_USER_ID_BASE_STR, CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE
 
 
 @never_cache
@@ -24,4 +26,13 @@ def complete(request, *args, **kwargs):
         request.session[key] = backend_state
 
     # Continue with social_core pipeline
-    return social_complete(request, *args, **kwargs)
+    social_complete_rtn = social_complete(request, *args, **kwargs)
+
+    # Update redis cache if user had invalid credentials
+    con = get_redis_connection("redis")
+    user_key = FIELD_USER_ID_BASE_STR.format(request.user.id)
+    if con.hexists(CACHE_KEY_FAILURE_NUMS_BY_USER, user_key):
+        con.hdel(CACHE_KEY_FAILURE_NUMS_BY_USER, user_key)
+        con.srem(CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE, user_key)
+
+    return social_complete_rtn
