@@ -47,6 +47,9 @@ def release_batch_update_user_data_lock(*args):  # pylint: disable=unused-argume
     log.info("Released batch_update_user_data lock")
 
 
+# This lock is not safe against repeated executions of the task since there is no logic
+# to stop the batch update halfway through and the lock expiration might be shorter than the length of time this
+# executes.
 @app.task
 def batch_update_user_data():
     """
