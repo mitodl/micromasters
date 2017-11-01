@@ -106,7 +106,7 @@ const zendeskCallbacks = {
     }
 
     const regularBackgroundColor = "rgba(0, 0, 0, .14)"
-    const defaultHoverBackgroundColor = "#a31f34"
+    const defaultHoverBackgroundColor = "#a31f34" // fall back color
     const hoverBackgroundColor = window.getComputedStyle(
       btn,
       defaultHoverBackgroundColor
