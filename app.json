@@ -164,8 +164,8 @@
     },
     "MICROMASTERS_LOG_LEVEL": {
       "description": "The logging level for the application",
-      "required": false,
-      "value": "DEBUG"
+      "required": true,
+      "value": "INFO"
     },
     "MICROMASTERS_SECURE_SSL_REDIRECT": {
       "description": "Application-level SSL redirect setting.",

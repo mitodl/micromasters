@@ -88,7 +88,7 @@ services:
     command: >
       /bin/bash -c '
       sleep 3;
-      celery -A micromasters worker -B -l debug'
+      celery -A micromasters worker -B -l ${MICROMASTERS_LOG_LEVEL:-INFO}'
     links:
       - db
       - elastic
