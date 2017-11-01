@@ -1,6 +1,7 @@
 /* global SETTINGS:false zE:false _:false */
 __webpack_public_path__ = `${SETTINGS.public_path}` // eslint-disable-line no-undef, camelcase
 import R from "ramda"
+import _ from "lodash"
 
 import { wait } from "../util/util"
 
@@ -100,9 +101,16 @@ const zendeskCallbacks = {
   launcherLoaded: () => {
     const iframe = document.querySelector("iframe.zEWidget-launcher")
     const btn = iframe.contentDocument.querySelector(".u-userLauncherColor")
+    if (_.isNull(btn)) {
+      return
+    }
 
     const regularBackgroundColor = "rgba(0, 0, 0, .14)"
-    const hoverBackgroundColor = window.getComputedStyle(btn).backgroundColor
+    const defaultHoverBackgroundColor = "#a31f34"
+    const hoverBackgroundColor = window.getComputedStyle(
+      btn,
+      defaultHoverBackgroundColor
+    ).backgroundColor
     // We need to set a new background color, and unfortunately,
     // the existing background color is set with "!important".
     // As a result, the only way to override this existing color is to
