@@ -141,7 +141,7 @@ export default class LearnerSearch extends SearchkitComponent {
     { value: "dob", label: "Sort: dob" }
   ]
 
-  countryNameTranslations: Object = makeTranslations()
+  translations: Object = makeTranslations()
 
   constructor(props: Object) {
     super(props)
@@ -370,7 +370,7 @@ export default class LearnerSearch extends SearchkitComponent {
             fields={["profile.country", "profile.state_or_territory"]}
             title=""
             id="country"
-            translations={this.countryNameTranslations}
+            translations={this.translations}
             size={0}
           />
         </FilterVisibilityToggle>

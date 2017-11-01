@@ -125,4 +125,20 @@ describe("ChannelCreateDialog", () => {
       "Course: Test Course 100"
     )
   })
+
+  it("should render company name same as state abbr. correct", () => {
+    renderDialog({
+      filters: [
+        {
+          id:    "company_name",
+          name:  "profile.work_history.company_name",
+          value: "US-ME"
+        }
+      ]
+    })
+    assert.equal(
+      getDialog().querySelector(".sk-selected-filters-list").textContent,
+      "Company: US-ME"
+    )
+  })
 })

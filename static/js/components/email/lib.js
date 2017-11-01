@@ -23,20 +23,27 @@ import { makeTranslations } from "../LearnerSearch"
 
 // NOTE: getEmailSendFunction is a function that returns a function. It is implemented this way
 // so that we can stub/mock the function that it returns (as we do in integration_test_helper.js)
+export const isLocation = (labelKey: string) =>
+  R.or(_.includes(labelKey, "Country"), _.includes(labelKey, "Residence"))
 
-const countryNameTranslations: Object = makeTranslations()
+const translations: Object = makeTranslations()
 export const renderFilterOptions = R.map(filter => {
   let labelKey, labelValue
+  let isTranslated = false
   if (R.isEmpty(filter.name)) {
     labelKey = SEARCH_FACET_FIELD_LABEL_MAP[filter.id]
   } else if (filter.name in SEARCH_FACET_FIELD_LABEL_MAP) {
     labelKey = SEARCH_FACET_FIELD_LABEL_MAP[filter.name]
-  } else if (filter.name in countryNameTranslations) {
-    labelKey = countryNameTranslations[filter.name]
+  } else if (filter.name in translations) {
+    labelKey = translations[filter.name]
+    isTranslated = true
   }
 
-  if (filter.value in countryNameTranslations) {
-    labelValue = countryNameTranslations[filter.value]
+  if (
+    R.or(isLocation(labelKey), isTranslated) &&
+    filter.value in translations
+  ) {
+    labelValue = translations[filter.value]
   } else {
     labelValue = filter.value
   }

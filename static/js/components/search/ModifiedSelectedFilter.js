@@ -4,6 +4,7 @@ import _ from "lodash"
 
 import { SEARCH_FACET_FIELD_LABEL_MAP } from "../../constants"
 import { makeTranslations } from "../LearnerSearch"
+import { isLocation } from "../email/lib"
 
 export default class ModifiedSelectedFilter extends React.Component {
   props: {
@@ -16,12 +17,9 @@ export default class ModifiedSelectedFilter extends React.Component {
 
   translations: Object = makeTranslations()
 
-  isLocation = (labelKey: string) =>
-    R.or(_.includes(labelKey, "Country"), _.includes(labelKey, "Residence"))
-
   render() {
     let { labelKey, labelValue } = this.props
-    let isLabelCountryName = false
+    let isTranslated = false
     const { removeFilter, bemBlocks, filterId } = this.props
     if (R.isEmpty(labelKey)) {
       labelKey = SEARCH_FACET_FIELD_LABEL_MAP[filterId]
@@ -29,10 +27,10 @@ export default class ModifiedSelectedFilter extends React.Component {
       labelKey = SEARCH_FACET_FIELD_LABEL_MAP[labelKey]
     } else if (labelKey in this.translations) {
       labelKey = this.translations[labelKey]
-      isLabelCountryName = true
+      isTranslated = true
     }
     if (
-      R.or(this.isLocation(labelKey), isLabelCountryName) &&
+      R.or(isLocation(labelKey), isTranslated) &&
       _.hasIn(this.translations, labelValue)
     ) {
       labelValue = this.translations[labelValue]
