@@ -100,6 +100,10 @@ const zendeskCallbacks = {
 
   launcherLoaded: () => {
     const iframe = document.querySelector("iframe.zEWidget-launcher")
+    if (_.isNull(iframe)) {
+      return
+    }
+
     const btn = iframe.contentDocument.querySelector(".u-userLauncherColor")
     if (_.isNull(btn)) {
       return
