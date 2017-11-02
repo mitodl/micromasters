@@ -72,8 +72,8 @@ def test_generate_course_certificates():
 
     tasks.generate_course_certificates_for_fa_students.delay()
 
-    # Make sure that certificates were created only for passed FinalGrades that either had no course exam, or had
-    # a passed ProctoredExamGrade.
+    # Make sure that certificates were created only for passed and 'complete' status FinalGrades that either
+    # had no course exam, or had a passed ProctoredExamGrade.
     created_certificates = MicromastersCourseCertificate.objects.all()
     assert len(created_certificates) == 6
     certificate_grade_ids = set([certificate.final_grade.id for certificate in created_certificates])
