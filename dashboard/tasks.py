@@ -28,7 +28,7 @@ from micromasters.utils import (
 log = logging.getLogger(__name__)
 
 
-PARALLEL_RATE_LIMIT = '10/m'
+PARALLEL_RATE_LIMIT = '5/m'
 LOCK_ID = 'batch_update_user_data_lock'
 
 
