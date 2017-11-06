@@ -272,10 +272,20 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
         paymentDueDate.isBefore(moment())
       ) {
         const date = run => formatDate(run.course_start_date)
-        const msg = run =>
-          `You missed the payment deadline, but you can re-enroll. Next course starts ${date(
+        const msg = run => {
+          let enrollmentDateMessage = ""
+          if (
+            !R.isNil(run.enrollment_start_date) &&
+            R.not(isEnrollableRun(run))
+          ) {
+            enrollmentDateMessage = ` Enrollment starts ${formatDate(
+              run.enrollment_start_date
+            )}`
+          }
+          return `You missed the payment deadline, but you can re-enroll. Next course starts ${date(
             run
-          )}`
+          )}.${enrollmentDateMessage}`
+        }
         messages.push(
           S.maybe(
             {
