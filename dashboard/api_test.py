@@ -2012,7 +2012,7 @@ def test_refresh_update_cache(db, mocker, failed_cache_type):
     edx_api = mocker.Mock()
     edx_api_init = mocker.patch('dashboard.api.EdxApi', autospec=True, return_value=edx_api)
 
-    def _update_cache(self, user, edx_client, cache_type):
+    def _update_cache(user, edx_client, cache_type):
         """Fail updating the cache for only the given cache type"""
         if cache_type == failed_cache_type:
             raise KeyError()
@@ -2020,12 +2020,12 @@ def test_refresh_update_cache(db, mocker, failed_cache_type):
     update_cache_mock = mocker.patch(
         'dashboard.api.CachedEdxDataApi.update_cache_if_expired', side_effect=_update_cache,
     )
-    save_failure_mock = mocker.patch('dashboard.api.save_cache_update_failure')
+    save_failure_mock = mocker.patch('dashboard.api.save_cache_update_failure', autospec=True)
 
     api.refresh_user_data(user.id)
 
     refresh_user_token_mock.assert_called_once_with(user_social)
     edx_api_init.assert_called_once_with(user_social.extra_data, settings.EDXORG_BASE_URL)
-    assert save_failure_mock.call_count == 3
+    assert save_failure_mock.call_count == 1
     for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
         update_cache_mock.assert_any_call(user, edx_api, cache_type)
