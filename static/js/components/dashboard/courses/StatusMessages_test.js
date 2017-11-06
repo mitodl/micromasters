@@ -395,7 +395,7 @@ describe("Course Status Messages", () => {
       const date = formatDate(course.runs[1].course_start_date)
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
-          message: `You missed the payment deadline, but you can re-enroll. Next course starts ${date}`,
+          message: `You missed the payment deadline, but you can re-enroll. Next course starts ${date}.`,
           action:  "course action was called"
         }
       ])
@@ -406,6 +406,41 @@ describe("Course Status Messages", () => {
         )
       )
     })
+
+    for (const nextEnrollmentStart of [
+      ["", ""],
+      [
+        moment()
+          .add(10, "days")
+          .format(),
+        ` Enrollment starts ${formatDate(
+          moment()
+            .add(10, "days")
+            .format()
+        )}`
+      ]
+    ]) {
+      it("should nag about missing the payment deadline and future re-enrollments", () => {
+        makeRunPast(course.runs[0])
+        makeRunPassed(course.runs[0])
+        makeRunOverdue(course.runs[0])
+        makeRunFuture(course.runs[1])
+        course.runs[1].enrollment_start_date = nextEnrollmentStart[0]
+        const date = formatDate(course.runs[1].course_start_date)
+        assertIsJust(calculateMessages(calculateMessagesProps), [
+          {
+            message: `You missed the payment deadline, but you can re-enroll. Next course starts ${date}.${nextEnrollmentStart[1]}`,
+            action:  "course action was called"
+          }
+        ])
+        assert(
+          calculateMessagesProps.courseAction.calledWith(
+            course.runs[1],
+            COURSE_ACTION_REENROLL
+          )
+        )
+      })
+    }
 
     it("should have a message for missing the payment deadline with no future courses", () => {
       course.runs = [course.runs[0]]
@@ -519,6 +554,42 @@ describe("Course Status Messages", () => {
         )
       )
     })
+
+    for (const nextEnrollmentStart of [
+      ["", ""],
+      [
+        moment()
+          .add(10, "days")
+          .format(),
+        ` Enrollment starts ${formatDate(
+          moment()
+            .add(10, "days")
+            .format()
+        )}`
+      ]
+    ]) {
+      it("should inform next enrollment date after failing edx course", () => {
+        makeRunPast(course.runs[0])
+        makeRunFailed(course.runs[0])
+        makeRunFuture(course.runs[1])
+        course.runs[1].enrollment_start_date = nextEnrollmentStart[0]
+        const date = moment(course.runs[1].course_start_date).format(
+          "MM/DD/YYYY"
+        )
+        assertIsJust(calculateMessages(calculateMessagesProps), [
+          {
+            message: `You did not pass the edX course, but you can re-enroll. Next course starts ${date}.${nextEnrollmentStart[1]}`,
+            action:  "course action was called"
+          }
+        ])
+        assert(
+          calculateMessagesProps.courseAction.calledWith(
+            course.runs[1],
+            COURSE_ACTION_REENROLL
+          )
+        )
+      })
+    }
 
     it("should let the user know they did not pass, when there are no future runs", () => {
       course.runs = course.runs.slice(0, 1)

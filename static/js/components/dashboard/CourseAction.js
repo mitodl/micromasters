@@ -90,7 +90,7 @@ export default class CourseAction extends React.Component {
     }
   }
 
-  isFutureCourse = (run: CourseRun): boolean =>
+  shouldDisableEnrollBtn = (run: CourseRun): boolean =>
     R.not(isEnrollableRun(run)) || _.isEmpty(run.course_id)
 
   renderEnrollButton(run: CourseRun, actionType: string): React$Element<*> {
@@ -98,7 +98,7 @@ export default class CourseAction extends React.Component {
       <div className="course-action">
         <SpinnerButton
           className="dashboard-button enroll-button"
-          disabled={this.isFutureCourse(run)}
+          disabled={this.shouldDisableEnrollBtn(run)}
           component={Button}
           spinning={run.status === STATUS_PENDING_ENROLLMENT}
           onClick={() => this.handleEnrollButtonClick(run)}

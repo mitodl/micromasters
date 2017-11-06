@@ -1,7 +1,7 @@
 /* global SETTINGS: false */
 import React from "react"
 import { shallow } from "enzyme"
-import moment from "moment"
+import moment from "moment-timezone"
 import { assert } from "chai"
 import sinon from "sinon"
 import Button from "react-mdl/lib/Button"
@@ -93,6 +93,52 @@ describe("CourseAction", () => {
       const wrapper = renderCourseAction({ actionType: COURSE_ACTION_REENROLL })
       assert.equal(wrapper.find(SpinnerButton).props().children, "Re-Enroll")
     })
+
+    for (const data of [
+      ["", "", true],
+      ["foo/bar/baz", "", true],
+      [
+        "foo/bar/baz",
+        moment()
+          .add(10, "days")
+          .toISOString(),
+        true
+      ],
+      [
+        "",
+        moment()
+          .add(10, "days")
+          .toISOString(),
+        true
+      ],
+      [
+        "",
+        moment()
+          .subtract(10, "days")
+          .toISOString(),
+        true
+      ],
+      [
+        "foo/bar/baz",
+        moment()
+          .subtract(10, "days")
+          .toISOString(),
+        false
+      ]
+    ]) {
+      it(`should ${data[2] ? "disable" : "enable"} Re-Enroll button`, () => {
+        const run = course.runs[0]
+        run.status = STATUS_OFFERED
+        run.course_id = data[0]
+        run.enrollment_start_date = data[1]
+
+        const wrapper = renderCourseAction({
+          actionType: COURSE_ACTION_REENROLL,
+          courseRun:  run
+        })
+        assert.equal(wrapper.find(SpinnerButton).props().disabled, data[2])
+      })
+    }
   })
 
   describe("course payment", () => {
@@ -131,6 +177,7 @@ describe("CourseAction", () => {
       const firstRun = alterFirstRun(course, {
         enrollment_start_date: now.toISOString()
       })
+      firstRun.status = STATUS_OFFERED
 
       const wrapper = renderCourseAction({
         courseRun:    firstRun,
@@ -142,7 +189,7 @@ describe("CourseAction", () => {
         actionType:      COURSE_ACTION_ENROLL
       })
       const button = wrapper.find(SpinnerButton)
-      assert.isUndefined(button.props().disabled)
+      assert.isFalse(button.props().disabled)
       assert.equal(button.props().children, "Enroll")
     })
 
