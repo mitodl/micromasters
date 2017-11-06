@@ -12,6 +12,7 @@ from unittest.mock import (
 import ddt
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
+from django_redis import get_redis_connection
 import pytest
 from rest_framework import status as http_status
 
@@ -27,6 +28,7 @@ from dashboard import (
     api,
     models,
 )
+from dashboard.api import save_cache_update_failure, FIELD_USER_ID_BASE_STR
 from dashboard.api_edx_cache import CachedEdxDataApi
 from dashboard.factories import CachedEnrollmentFactory, CachedCurrentGradeFactory, UserCacheRefreshTimeFactory
 from dashboard.models import CachedCertificate
@@ -2029,3 +2031,22 @@ def test_refresh_update_cache(db, mocker, failed_cache_type):
     assert save_failure_mock.call_count == 1
     for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
         update_cache_mock.assert_any_call(user, edx_api, cache_type)
+
+
+@patch("dashboard.api.CACHE_KEY_FAILURE_NUMS_BY_USER", "test_failure_nums_by_user")
+@patch("dashboard.api.CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE", "test_users_not_to_update")
+def test_save_cache_update_failures(db):
+    """Count the number of failures and then add to the list to not try to update cache"""
+    user = _make_fake_real_user()
+    con = get_redis_connection("redis")
+    user_key = FIELD_USER_ID_BASE_STR.format(user.id)
+
+    save_cache_update_failure(user.id)
+    assert int(con.hget("test_failure_nums_by_user", user_key)) == 1
+
+    save_cache_update_failure(user.id)
+    assert int(con.hget("test_failure_nums_by_user", user_key)) == 2
+
+    save_cache_update_failure(user.id)
+    assert int(con.hget("test_failure_nums_by_user", user_key)) == 3
+    assert con.sismember("test_users_not_to_update", user_key) is True
