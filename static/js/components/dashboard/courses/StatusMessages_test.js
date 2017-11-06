@@ -392,6 +392,9 @@ describe("Course Status Messages", () => {
       makeRunPassed(course.runs[0])
       makeRunOverdue(course.runs[0])
       makeRunFuture(course.runs[1])
+      course.runs[1].enrollment_start_date = moment()
+        .subtract(10, "days")
+        .toISOString()
       const date = formatDate(course.runs[1].course_start_date)
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
@@ -412,15 +415,11 @@ describe("Course Status Messages", () => {
       [
         moment()
           .add(10, "days")
-          .format(),
-        ` Enrollment starts ${formatDate(
-          moment()
-            .add(10, "days")
-            .format()
-        )}`
+          .toISOString(),
+        ` Enrollment starts ${formatDate(moment().add(10, "days"))}`
       ]
     ]) {
-      it("should nag about missing the payment deadline and future re-enrollments", () => {
+      it(`should nag about missing the payment deadline when future re-enrollments and date is ${nextEnrollmentStart[0]}`, () => {
         makeRunPast(course.runs[0])
         makeRunPassed(course.runs[0])
         makeRunOverdue(course.runs[0])
@@ -540,6 +539,9 @@ describe("Course Status Messages", () => {
       makeRunPast(course.runs[0])
       makeRunFailed(course.runs[0])
       makeRunFuture(course.runs[1])
+      course.runs[1].enrollment_start_date = moment()
+        .subtract(10, "days")
+        .toISOString()
       const date = moment(course.runs[1].course_start_date).format("MM/DD/YYYY")
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
@@ -560,15 +562,11 @@ describe("Course Status Messages", () => {
       [
         moment()
           .add(10, "days")
-          .format(),
-        ` Enrollment starts ${formatDate(
-          moment()
-            .add(10, "days")
-            .format()
-        )}`
+          .toISOString(),
+        ` Enrollment starts ${formatDate(moment().add(10, "days"))}`
       ]
     ]) {
-      it("should inform next enrollment date after failing edx course", () => {
+      it(`should inform next enrollment date after failing edx course when date is ${nextEnrollmentStart[0]}`, () => {
         makeRunPast(course.runs[0])
         makeRunFailed(course.runs[0])
         makeRunFuture(course.runs[1])

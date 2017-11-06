@@ -1,6 +1,6 @@
 // @flow
 import { assert } from "chai"
-import moment from "moment"
+import moment from "moment-timezone"
 
 import { makeCourse, makeRun } from "../../../factories/dashboard"
 import {
@@ -339,5 +339,10 @@ describe("dashboard course utilities", () => {
         assert.equal(isEnrollableRun(course.runs[0]), data[1])
       })
     }
+
+    it("should return false when course id is empty", () => {
+      course.runs[0].course_id = ""
+      assert.isFalse(isEnrollableRun(course.runs[0]))
+    })
   })
 })

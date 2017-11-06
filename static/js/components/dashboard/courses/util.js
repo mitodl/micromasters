@@ -1,5 +1,5 @@
 // @flow
-import moment from "moment"
+import moment from "moment-timezone"
 import R from "ramda"
 
 import type { CourseRun } from "../../../flow/programTypes"
@@ -92,6 +92,7 @@ export const futureEnrollableRun = R.compose(
 
 // checks if a run is enrollable
 export const isEnrollableRun = (run: CourseRun): boolean =>
+  !R.isEmpty(run.course_id) &&
   !R.isNil(run.enrollment_start_date) &&
   !R.isEmpty(run.enrollment_start_date) &&
   moment(run.enrollment_start_date).isSameOrBefore(moment(), "day") &&

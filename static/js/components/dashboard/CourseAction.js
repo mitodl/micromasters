@@ -3,7 +3,6 @@
 import React from "react"
 import PropTypes from "prop-types"
 import Button from "react-mdl/lib/Button"
-import _ from "lodash"
 import R from "ramda"
 
 import SpinnerButton from "../SpinnerButton"
@@ -90,15 +89,12 @@ export default class CourseAction extends React.Component {
     }
   }
 
-  shouldDisableEnrollBtn = (run: CourseRun): boolean =>
-    R.not(isEnrollableRun(run)) || _.isEmpty(run.course_id)
-
   renderEnrollButton(run: CourseRun, actionType: string): React$Element<*> {
     return (
       <div className="course-action">
         <SpinnerButton
           className="dashboard-button enroll-button"
-          disabled={this.shouldDisableEnrollBtn(run)}
+          disabled={R.not(isEnrollableRun(run))}
           component={Button}
           spinning={run.status === STATUS_PENDING_ENROLLMENT}
           onClick={() => this.handleEnrollButtonClick(run)}
