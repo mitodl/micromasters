@@ -40,9 +40,10 @@
   .profile-radio-switch, .profile-radio-group {
     font-size: 14px;
     display: flex;
+    margin-top: 8px;
 
-    div {
-      display: block !important;
+    > div {
+      width: auto !important;
     }
 
     .profile-radio-button {
@@ -176,6 +177,12 @@
 
   .bound-check-box {
     margin:  12px 0 20px;
+  }
+}
+
+.privacy-form {
+  .profile-radio-group {
+    flex-direction: column;
   }
 }
 
