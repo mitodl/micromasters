@@ -29,10 +29,11 @@ def complete(request, *args, **kwargs):
     social_complete_rtn = social_complete(request, *args, **kwargs)
 
     # Update redis cache if user had invalid credentials
-    con = get_redis_connection("redis")
-    user_key = FIELD_USER_ID_BASE_STR.format(request.user.id)
-    if con.hexists(CACHE_KEY_FAILURE_NUMS_BY_USER, user_key):
-        con.hdel(CACHE_KEY_FAILURE_NUMS_BY_USER, user_key)
-        con.srem(CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE, user_key)
+    if request.user.is_authenticated():
+        con = get_redis_connection("redis")
+        user_key = FIELD_USER_ID_BASE_STR.format(request.user.id)
+        if con.hexists(CACHE_KEY_FAILURE_NUMS_BY_USER, user_key):
+            con.hdel(CACHE_KEY_FAILURE_NUMS_BY_USER, user_key)
+            con.srem(CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE, user_key)
 
     return social_complete_rtn
