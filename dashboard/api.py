@@ -548,6 +548,9 @@ def calculate_users_to_refresh_in_bulk():
 
     all_users = User.objects.filter(is_active=True, profile__fake_user=False).exclude(social_auth=None)
 
+    con = get_redis_connection("redis")
+    user_ids_invalid_credentials = con.smembers(CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE)
+
     # If one of these fields is null in the database the gte expression will be false, so we will refresh those users
     users_not_expired = all_users.filter(
         usercacherefreshtime__enrollment__gte=refresh_time_limit,
@@ -555,7 +558,12 @@ def calculate_users_to_refresh_in_bulk():
         usercacherefreshtime__current_grade__gte=refresh_time_limit
     )
 
-    return list(all_users.exclude(id__in=users_not_expired.values_list("id", flat=True)).values_list("id", flat=True))
+    return list(
+        all_users
+        .exclude(id__in=users_not_expired.values_list("id", flat=True))
+        .exclude(id__in=user_ids_invalid_credentials)
+        .values_list("id", flat=True)
+    )
 
 
 def refresh_user_data(user_id):
@@ -606,12 +614,15 @@ def refresh_user_data(user_id):
 def save_cache_update_failure(user_id):
     """
     Store the number of time update cache failed for a user
+
+    Args:
+        user_id (int): The user id
     """
     con = get_redis_connection("redis")
     user_key = FIELD_USER_ID_BASE_STR.format(user_id)
     if con.hexists(CACHE_KEY_FAILURE_NUMS_BY_USER, user_key):
         new_value = con.hincrby(CACHE_KEY_FAILURE_NUMS_BY_USER, user_key, 1)
         if int(new_value) >= 3:
-            con.sadd(CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE, user_key)
+            con.sadd(CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE, user_id)
     else:
         con.hset(CACHE_KEY_FAILURE_NUMS_BY_USER, user_key, 1)
