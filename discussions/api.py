@@ -16,11 +16,13 @@ from discussions.models import (
 from discussions.exceptions import (
     DiscussionSyncException,
     ChannelCreationException,
+    ChannelAlreadyExistsException,
     ContributorSyncException,
     DiscussionUserSyncException,
     ModeratorSyncException,
     SubscriberSyncException,
 )
+from rest_framework import status as statuses
 from roles.models import Role
 from roles.roles import Permissions
 from search.api import adjust_search_for_percolator
@@ -364,6 +366,8 @@ def add_channel(
             channel_type=channel_type,
         ).raise_for_status()
     except HTTPError as ex:
+        if ex.response.status_code == statuses.HTTP_409_CONFLICT:
+            raise ChannelAlreadyExistsException("Channel {} already exists".format(name)) from ex
         raise ChannelCreationException("Error creating channel {}".format(name)) from ex
 
     updated_search = adjust_search_for_percolator(original_search)

@@ -13,6 +13,10 @@ class ChannelCreationException(DiscussionSyncException):
     """Exception which occurs when an error happens on open-discussions when creating a channel"""
 
 
+class ChannelAlreadyExistsException(ChannelCreationException):
+    """Exception which occurs when an error happens on open-discussions when creating a channel that already exists"""
+
+
 class ContributorSyncException(DiscussionSyncException):
     """Exception indicating failure to add or remove a contributor"""
 

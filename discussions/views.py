@@ -6,11 +6,14 @@ from django.shortcuts import redirect
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.decorators import api_view
-from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from discussions.exceptions import UnableToAuthenticateDiscussionUserException
+from discussions.exceptions import (
+    ChannelAlreadyExistsException,
+    UnableToAuthenticateDiscussionUserException,
+)
 from discussions.permissions import CanCreateChannel
 from discussions.serializers import ChannelSerializer
 from discussions.utils import get_token_for_request
@@ -67,7 +70,7 @@ def discussions_redirect(request):
     return response
 
 
-class ChannelsView(CreateAPIView):
+class ChannelsView(APIView):
     """
     View for discussions channels. Used to create new channels
     """
@@ -79,7 +82,17 @@ class ChannelsView(CreateAPIView):
         IsAuthenticated,
         CanCreateChannel,
     )
-    serializer_class = ChannelSerializer
 
-    # Make django-rest-framework happy
-    queryset = []
+    def post(self, request, *args, **kwargs):
+        """Create a new channel"""
+        serializer = ChannelSerializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        try:
+            serializer.save()
+        except ChannelAlreadyExistsException:
+            return Response(status=status.HTTP_409_CONFLICT)
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED,
+        )
