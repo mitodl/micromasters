@@ -2,13 +2,16 @@
 Tests for discussions views
 """
 from django.core.urlresolvers import reverse
-
 import pytest
+from rest_framework import status as statuses
 from rest_framework.test import (
     APIClient,
 )
 
-from discussions.exceptions import UnableToAuthenticateDiscussionUserException
+from discussions.exceptions import (
+    ChannelAlreadyExistsException,
+    UnableToAuthenticateDiscussionUserException,
+)
 from discussions.factories import ChannelFactory
 from micromasters.factories import UserFactory
 from roles.factories import RoleFactory
@@ -194,3 +197,25 @@ def test_create_channel_bad_program_id(patched_users_api):
     resp = client.post(reverse('channel-list'), data=inputs, format="json")
     assert resp.status_code == 400
     assert resp.json() == ["missing or invalid program id"]
+
+
+def test_create_channel_duplicate(mocker, patched_users_api):
+    """Staff can create a channel using the REST API"""
+    client = APIClient()
+    role = RoleFactory.create(role=Staff.ROLE_ID)
+    user = role.user
+    client.force_login(user)
+
+    channel = ChannelFactory.create()
+    mocker.patch(
+        'discussions.serializers.add_channel',
+        side_effect=ChannelAlreadyExistsException,
+        autospec=True,
+    )
+
+    create_channel_input = _make_create_channel_input(role.program.id, 'description')
+    resp = client.post(reverse('channel-list'), data={
+        **create_channel_input,
+        "name": channel.name,
+    }, format="json")
+    assert resp.status_code == statuses.HTTP_409_CONFLICT

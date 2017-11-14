@@ -2,18 +2,19 @@
 # pylint: disable=redefined-outer-name
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_save
-from django.db.utils import IntegrityError
 from elasticsearch_dsl import Search
 from factory.django import mute_signals
 from open_discussions_api.constants import ROLE_STAFF
 import pytest
 from requests.exceptions import HTTPError
+from requests import Response
 from rest_framework import status as statuses
 
 from courses.factories import ProgramFactory
 from dashboard.factories import ProgramEnrollmentFactory
 from discussions import api
 from discussions.exceptions import (
+    ChannelAlreadyExistsException,
     ChannelCreationException,
     ContributorSyncException,
     DiscussionUserSyncException,
@@ -547,7 +548,9 @@ def test_add_channel(mock_staff_client, mocker, patched_users_api):
 
 def test_add_channel_failed_create_channel(mock_staff_client, mocker):
     """If client.channels.create fails an exception should be raised"""
-    mock_staff_client.channels.create.return_value.raise_for_status.side_effect = HTTPError
+    response_500 = Response()
+    response_500.status_code = statuses.HTTP_500_INTERNAL_SERVER_ERROR
+    mock_staff_client.channels.create.return_value.raise_for_status.side_effect = HTTPError(response=response_500)
 
     with pytest.raises(ChannelCreationException) as ex:
         api.add_channel(
@@ -568,8 +571,9 @@ def test_add_channel_failed_create_channel(mock_staff_client, mocker):
 
 def test_add_channel_channel_already_exists(mock_staff_client, patched_users_api):
     """Channel already exists with that channel name"""
-    mock_staff_client.channels.create.return_value.ok = True
-    ChannelFactory.create(name="name")
+    response_409 = Response()
+    response_409.status_code = statuses.HTTP_409_CONFLICT
+    mock_staff_client.channels.create.return_value = response_409
 
     title = "title"
     name = "name"
@@ -579,7 +583,7 @@ def test_add_channel_channel_already_exists(mock_staff_client, patched_users_api
     role = RoleFactory.create()
     mod = UserFactory.create()
 
-    with pytest.raises(IntegrityError):
+    with pytest.raises(ChannelAlreadyExistsException):
         api.add_channel(
             original_search=input_search,
             title=title,
