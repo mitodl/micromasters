@@ -622,9 +622,6 @@ def save_cache_update_failure(user_id):
     """
     con = get_redis_connection("redis")
     user_key = FIELD_USER_ID_BASE_STR.format(user_id)
-    if con.hexists(CACHE_KEY_FAILURE_NUMS_BY_USER, user_key):
-        new_value = con.hincrby(CACHE_KEY_FAILURE_NUMS_BY_USER, user_key, 1)
-        if int(new_value) >= 3:
-            con.sadd(CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE, user_id)
-    else:
-        con.hset(CACHE_KEY_FAILURE_NUMS_BY_USER, user_key, 1)
+    new_value = con.hincrby(CACHE_KEY_FAILURE_NUMS_BY_USER, user_key, 1)
+    if int(new_value) >= 3:
+        con.sadd(CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE, user_id)
