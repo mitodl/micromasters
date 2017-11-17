@@ -33,7 +33,9 @@ ATTEMPTS_PER_PAID_RUN = 2
 COURSE_GRADE_WEIGHT = 0.4
 EXAM_GRADE_WEIGHT = 0.6
 
+# key that stores user_key and number of failures in a hash
 CACHE_KEY_FAILURE_NUMS_BY_USER = "update_cache_401_failure_numbers"
+# key that stores user ids to exclude from cache update
 CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE = "failed_cache_update_users_not_to_update"
 FIELD_USER_ID_BASE_STR = "user_{0}"
 
