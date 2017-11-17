@@ -48,7 +48,8 @@ from micromasters.utils import (
 from profiles.factories import SocialProfileFactory
 from search.base import MockedESTestCase
 
-SET_USER_IDS_NOT_TO_UPDATE = "test_users_not_to_update"
+TEST_CACHE_KEY_USER_IDS_NOT_TO_UPDATE = "test_users_not_to_update"
+TEST_CACHE_KEY_FAILURES_BY_USER = "test_failure_nums_by_user"
 
 
 # pylint: disable=too-many-lines, too-many-arguments
@@ -1849,6 +1850,18 @@ def users_without_with_cache(db):
     return needs_update, up_to_date
 
 
+@pytest.fixture
+def patched_redis_keys(mocker):
+    """Patch redis cache keys"""
+    mocker.patch("dashboard.api.CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE", TEST_CACHE_KEY_USER_IDS_NOT_TO_UPDATE)
+    mocker.patch("dashboard.api.CACHE_KEY_FAILURE_NUMS_BY_USER", TEST_CACHE_KEY_FAILURES_BY_USER)
+
+    yield
+    con = get_redis_connection("redis")
+    con.delete(TEST_CACHE_KEY_FAILURES_BY_USER)
+    con.delete(TEST_CACHE_KEY_USER_IDS_NOT_TO_UPDATE)
+
+
 def test_calculate_up_to_date(users_without_with_cache):
     """
     calculate_users_to_refresh should return a list of user ids
@@ -1920,15 +1933,14 @@ def test_calculate_expired(users_without_with_cache, enrollment, certificate, cu
     assert sorted(api.calculate_users_to_refresh_in_bulk()) == sorted([user.id for user in expected])
 
 
-@patch("dashboard.api.CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE", SET_USER_IDS_NOT_TO_UPDATE)
-def test_calculate_exclude_users(users_without_with_cache):
+def test_calculate_exclude_users(users_without_with_cache, patched_redis_keys):
     """
     Users in the 'failed update cache' set should be excluded
     """
     needs_update, _ = users_without_with_cache
     expected = needs_update[1:]
     con = get_redis_connection('redis')
-    con.sadd(SET_USER_IDS_NOT_TO_UPDATE, needs_update[0].id)
+    con.sadd(TEST_CACHE_KEY_USER_IDS_NOT_TO_UPDATE, needs_update[0].id)
 
     assert sorted(api.calculate_users_to_refresh_in_bulk()) == sorted([user.id for user in expected])
 
@@ -2047,20 +2059,18 @@ def test_refresh_update_cache(db, mocker, failed_cache_type):
         update_cache_mock.assert_any_call(user, edx_api, cache_type)
 
 
-@patch("dashboard.api.CACHE_KEY_FAILURE_NUMS_BY_USER", "test_failure_nums_by_user")
-@patch("dashboard.api.CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE", SET_USER_IDS_NOT_TO_UPDATE)
-def test_save_cache_update_failures(db):
+def test_save_cache_update_failures(db, patched_redis_keys):
     """Count the number of failures and then add to the list to not try to update cache"""
     user = _make_fake_real_user()
     con = get_redis_connection("redis")
     user_key = FIELD_USER_ID_BASE_STR.format(user.id)
 
     save_cache_update_failure(user.id)
-    assert int(con.hget("test_failure_nums_by_user", user_key)) == 1
+    assert int(con.hget(TEST_CACHE_KEY_FAILURES_BY_USER, user_key)) == 1
 
     save_cache_update_failure(user.id)
-    assert int(con.hget("test_failure_nums_by_user", user_key)) == 2
+    assert int(con.hget(TEST_CACHE_KEY_FAILURES_BY_USER, user_key)) == 2
 
     save_cache_update_failure(user.id)
-    assert int(con.hget("test_failure_nums_by_user", user_key)) == 3
-    assert con.sismember("test_users_not_to_update", user.id) is True
+    assert int(con.hget(TEST_CACHE_KEY_FAILURES_BY_USER, user_key)) == 3
+    assert con.sismember(TEST_CACHE_KEY_USER_IDS_NOT_TO_UPDATE, user.id) is True
