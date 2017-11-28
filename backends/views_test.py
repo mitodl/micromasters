@@ -33,7 +33,7 @@ class BackendViewTest(MockedESTestCase, APITestCase):
         """
         def log_user_again(request, *args, **kwargs):  # pylint: disable=unused-argument
             """mock function to login the user again"""
-            self.client.force_login(request.user)
+            request.user = self.user
             return HttpResponse()
 
         mocked_complete.side_effect = log_user_again
