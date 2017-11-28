@@ -3,9 +3,9 @@ Tests for backends views
 """
 from unittest.mock import patch
 from django.http import HttpResponse
-from rest_framework.test import APITestCase
 from django.core.urlresolvers import reverse
 from django_redis import get_redis_connection
+from rest_framework.test import APITestCase
 
 from dashboard.factories import UserCacheRefreshTimeFactory
 from dashboard.api import CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE
@@ -29,10 +29,10 @@ class BackendViewTest(MockedESTestCase, APITestCase):
     @patch('backends.views.social_complete', autospec=True)
     def test_redis_cache_updated(self, mocked_complete):
         """
-        Test
+        Test when user logs in again redis cache entry for that user is cleared
         """
-
-        def log_user_again(request, *args, **kwargs):
+        def log_user_again(request, *args, **kwargs):  # pylint: disable=unused-argument
+            """mock function to login the user again"""
             self.client.force_login(request.user)
             return HttpResponse()
 
