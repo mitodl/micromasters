@@ -111,6 +111,12 @@ export const setEnrollCourseDialogVisibility = createAction(
   SET_ENROLL_COURSE_DIALOG_VISIBILITY
 )
 
+export const SET_CALCULATE_PRICE_DIALOG_VISIBILITY =
+  "SET_CALCULATE_PRICE_DIALOG_VISIBILITY"
+export const setCalculatePriceDialogVisibility = createAction(
+  SET_CALCULATE_PRICE_DIALOG_VISIBILITY
+)
+
 export const SET_TOAST_MESSAGE = "SET_TOAST_MESSAGE"
 export const setToastMessage = createAction(SET_TOAST_MESSAGE)
 

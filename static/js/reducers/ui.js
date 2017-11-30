@@ -24,6 +24,7 @@ import {
   SET_ENROLL_PROGRAM_DIALOG_ERROR,
   SET_ENROLL_PROGRAM_DIALOG_VISIBILITY,
   SET_ENROLL_COURSE_DIALOG_VISIBILITY,
+  SET_CALCULATE_PRICE_DIALOG_VISIBILITY,
   SET_TOAST_MESSAGE,
   SET_ENROLL_SELECTED_PROGRAM,
   SET_ENROLL_SELECTED_COURSE_RUN,
@@ -79,6 +80,7 @@ export type UIState = {
   enrollProgramDialogError: ?string,
   enrollProgramDialogVisibility: boolean,
   enrollCourseDialogVisibility: boolean,
+  calculatePriceDialogVisibility: boolean,
   toastMessage: ?ToastMessage,
   enrollSelectedProgram: ?number,
   enrollSelectedCourseRun: ?CourseRun,
@@ -118,6 +120,7 @@ export const INITIAL_UI_STATE: UIState = {
   enrollProgramDialogError:           null,
   enrollProgramDialogVisibility:      false,
   enrollCourseDialogVisibility:       false,
+  calculatePriceDialogVisibility:     false,
   toastMessage:                       null,
   enrollSelectedProgram:              null,
   enrollSelectedCourseRun:            null,
@@ -290,6 +293,12 @@ export const ui = (
     return {
       ...state,
       enrollCourseDialogVisibility: action.payload
+    }
+  }
+  case SET_CALCULATE_PRICE_DIALOG_VISIBILITY: {
+    return {
+      ...state,
+      calculatePriceDialogVisibility: action.payload
     }
   }
   case SHOW_ENROLL_PAY_LATER_SUCCESS: {

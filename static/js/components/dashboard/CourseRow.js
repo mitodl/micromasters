@@ -43,6 +43,7 @@ export default class CourseRow extends React.Component {
     ) => void,
     setEnrollSelectedCourseRun: (r: CourseRun) => void,
     setEnrollCourseDialogVisibility: (b: boolean) => void,
+    setCalculatePriceDialogVisibility: (b: boolean) => void,
     ui: UIState,
     checkout: (s: string) => void,
     setShowExpandedCourseStatus: (n: number) => void,
@@ -79,6 +80,7 @@ export default class CourseRow extends React.Component {
       addCourseEnrollment,
       setEnrollSelectedCourseRun,
       setEnrollCourseDialogVisibility,
+      setCalculatePriceDialogVisibility,
       checkout,
       showStaffView
     } = this.props
@@ -104,6 +106,7 @@ export default class CourseRow extends React.Component {
         addCourseEnrollment={addCourseEnrollment}
         setEnrollSelectedCourseRun={setEnrollSelectedCourseRun}
         setEnrollCourseDialogVisibility={setEnrollCourseDialogVisibility}
+        setCalculatePriceDialogVisibility={setCalculatePriceDialogVisibility}
         coupon={coupon}
       />
     )
@@ -130,10 +133,13 @@ export default class CourseRow extends React.Component {
   renderInProgressCourseInfo = (run: CourseRun) => {
     const {
       course,
+      financialAid,
+      hasFinancialAid,
       openCourseContactDialog,
       ui,
       setShowExpandedCourseStatus,
       setShowGradeDetailDialog,
+      setCalculatePriceDialogVisibility,
       showStaffView
     } = this.props
 
@@ -156,6 +162,8 @@ export default class CourseRow extends React.Component {
         {showStaffView ? null : (
           <StatusMessages
             course={course}
+            financialAid={financialAid}
+            hasFinancialAid={hasFinancialAid}
             firstRun={run}
             courseAction={this.courseAction}
             expandedStatuses={ui.expandedCourseStatuses}
