@@ -33,7 +33,7 @@ export default class PersonalCoursePriceDialog extends React.Component {
 
     const calculateButton = (
       <Button
-        key="audit"
+        key="ask-to-calculate"
         onClick={this.handleCalculateClick}
         className="primary-button save-button"
       >

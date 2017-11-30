@@ -3,6 +3,8 @@ import React from "react"
 import moment from "moment"
 import R from "ramda"
 import { Card, CardTitle } from "react-mdl/lib/Card"
+import Button from "react-mdl/lib/Button"
+
 
 import type { Program, Course } from "../../flow/programTypes"
 import type { CouponPrice, CouponPrices } from "../../flow/couponTypes"
@@ -56,7 +58,7 @@ export default class CourseListCard extends React.Component {
   }
 
   renderFinancialAidPriceMessage(): ?React$Element<*> {
-    const { program } = this.props
+    const { program, openFinancialAidCalculator } = this.props
     const finAidStatus = program.financial_aid_user_info.application_status
 
     if (FA_TERMINAL_STATUSES.includes(finAidStatus)) {
@@ -85,11 +87,18 @@ export default class CourseListCard extends React.Component {
         )
       }
     } else {
+      const calculateButton = (
+      <Button
+        onClick={openFinancialAidCalculator}
+        className="link-to-open-dialog"
+      >
+        calculate your course price
+      </Button>
+    )
       return (
         <p className={priceMessageClassName}>
-          You need to get your Personal Course Price before you can pay for
-          courses. If you want to audit courses for FREE and upgrade later,
-          click Enroll then choose the audit option.
+          *You need to { calculateButton } before you can pay for
+          courses. Or you can audit courses for free by clicking Enroll.
         </p>
       )
     }
