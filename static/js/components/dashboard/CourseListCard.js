@@ -87,17 +87,14 @@ export default class CourseListCard extends React.Component {
         )
       }
     } else {
-      const calculateButton = (
-      <Button
-        onClick={openFinancialAidCalculator}
-        className="link-to-open-dialog"
-      >
+      const calculateLink = (
+        <a href="#" onClick={openFinancialAidCalculator}>
         calculate your course price
-      </Button>
-    )
+        </a>
+      )
       return (
         <p className={priceMessageClassName}>
-          *You need to { calculateButton } before you can pay for
+          *You need to { calculateLink } before you can pay for
           courses. Or you can audit courses for free by clicking Enroll.
         </p>
       )

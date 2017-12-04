@@ -711,6 +711,7 @@ class DashboardPage extends React.Component {
         hasUserApplied={hasUserApplied}
         pendingFinancialAid={pendingFinancialAid}
         financialAidAvailability={program.financial_aid_availability}
+        openFinancialAidCalculator={this.openFinancialAidCalculator}
         checkout={this.dispatchCheckout}
         open={ui.enrollCourseDialogVisibility}
         setVisibility={this.setEnrollCourseDialogVisibility}

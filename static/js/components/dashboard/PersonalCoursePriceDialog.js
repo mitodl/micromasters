@@ -17,7 +17,6 @@ export default class PersonalCoursePriceDialog extends React.Component {
     open: boolean,
     setVisibility: (v: boolean) => void,
     openFinancialAidCalculator: () => void,
-
   }
 
   handleCalculateClick = () => {
@@ -26,7 +25,6 @@ export default class PersonalCoursePriceDialog extends React.Component {
     openFinancialAidCalculator()
 
   }
-
 
   render() {
     const { open, setVisibility } = this.props

@@ -34,7 +34,8 @@ export default class CourseEnrollmentDialog extends React.Component {
     pendingFinancialAid: boolean,
     addCourseEnrollment: (courseId: string) => Promise<*>,
     checkout: Function,
-    financialAidAvailability: boolean
+    financialAidAvailability: boolean,
+    openFinancialAidCalculator: () => void
   }
 
   handlePayClick = () => {
@@ -60,6 +61,13 @@ export default class CourseEnrollmentDialog extends React.Component {
     setVisibility(false)
     addCourseEnrollment(courseRun.course_id)
   }
+
+  handleCalculatePriceClick = () => {
+    const { openFinancialAidCalculator, setVisibility } = this.props
+    setVisibility(false)
+    openFinancialAidCalculator()
+  }
+
 
   render() {
     const {
@@ -99,10 +107,10 @@ export default class CourseEnrollmentDialog extends React.Component {
         </Button>
       )
     } else {
-      message = `You need to get a Personalized Course Price before
-        you can pay for this course. Or you can audit the course for FREE
-        and upgrade later. (Payment is required to get credit for the
-        MicroMasters certificate.)`
+      message = [<p>You need to <a href="#" onClick={this.handleCalculatePriceClick}>
+        calculate you course price</a> before you can pay for this course.
+        Or you can audit courses for free and pay later.</p>,
+        <p>You will need to pay in order to get credit for MicroMasters certificate.</p>]
       payButton = (
         <Button
           key="pay"
