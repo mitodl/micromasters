@@ -4,7 +4,6 @@ import PropTypes from "prop-types"
 import Dialog from "material-ui/Dialog"
 import Button from "react-mdl/lib/Button"
 
-import {dialogActions} from "./../inputs/util"
 import {singleBtnDialogActions} from "../inputs/util";
 
 
@@ -33,7 +32,7 @@ export default class PersonalCoursePriceDialog extends React.Component {
       <Button
         key="ask-to-calculate"
         onClick={this.handleCalculateClick}
-        className="primary-button save-button"
+        className="primary-button save-button calculate-button"
       >
         Calculate Price
       </Button>
@@ -42,7 +41,7 @@ export default class PersonalCoursePriceDialog extends React.Component {
       <Dialog
         title="Calculate Personal Course Price?"
         titleClassName="dialog-title"
-        contentClassName="dialog calculate-dialog"
+        contentClassName="dialog calculate-price-dialog"
         className="calculate-dialog-wrapper"
         open={open}
         onRequestClose={() => setVisibility(false)}
