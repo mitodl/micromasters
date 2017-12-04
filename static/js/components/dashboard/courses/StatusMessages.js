@@ -152,9 +152,14 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   ) {
     let message =
       "You are auditing. To get credit, you need to pay for the course."
-    if (hasFinancialAid && FA_PENDING_STATUSES.includes(financialAid.application_status)){
-         message = "You are auditing. Your personal course price is pending, " +
-           "and needs to be approved before you can pay for courses."
+    let actionType = COURSE_ACTION_PAY
+    if (hasFinancialAid) {
+      if (FA_PENDING_STATUSES.includes(financialAid.application_status)) {
+        message = "You are auditing. Your personal course price is pending, " +
+          "and needs to be approved before you can pay for courses."
+      } else if(!FA_TERMINAL_STATUSES.includes(financialAid.application_status)){
+        actionType = COURSE_ACTION_CALCULATE_PRICE
+      }
     }
 
     let paymentDueMessage = ""
@@ -165,7 +170,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     }
     messages.push({
       message: message + paymentDueMessage,
-      action:  courseAction(firstRun, COURSE_ACTION_CALCULATE_PRICE)
+      action:  courseAction(firstRun, actionType)
     })
     return S.Just(messages)
   }

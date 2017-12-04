@@ -14,6 +14,7 @@ import {
   STATUS_CAN_UPGRADE,
   STATUS_PENDING_ENROLLMENT,
   COURSE_ACTION_PAY,
+  COURSE_ACTION_CALCULATE_PRICE,
   COURSE_ACTION_ENROLL,
   COURSE_ACTION_REENROLL
 } from "../../constants"
@@ -207,6 +208,30 @@ describe("CourseAction", () => {
         financialAid: {
           ...FINANCIAL_AID_PARTIAL_RESPONSE,
           has_user_applied: false
+        },
+        hasFinancialAid: true,
+        actionType:      COURSE_ACTION_CALCULATE_PRICE
+      })
+
+      const button = wrapper.find(Button)
+      assert.equal(button.props().children, "Pay Now")
+    })
+
+    it("indicates that a user can't pay for course while FA is pending", () => {
+      const course = findAndCloneCourse(
+        course =>
+          course.runs.length > 0 && course.runs[0].status === STATUS_CAN_UPGRADE
+      )
+      const firstRun = alterFirstRun(course, {
+        enrollment_start_date: now.toISOString()
+      })
+
+      const wrapper = renderCourseAction({
+        courseRun:    firstRun,
+        financialAid: {
+          ...FINANCIAL_AID_PARTIAL_RESPONSE,
+          has_user_applied: true,
+          application_status: 'pending-docs'
         },
         hasFinancialAid: true,
         actionType:      COURSE_ACTION_PAY

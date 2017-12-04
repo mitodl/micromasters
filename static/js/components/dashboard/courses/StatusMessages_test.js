@@ -32,6 +32,7 @@ import {
 import { assertIsJust } from "../../../lib/test_utils"
 import {
   COURSE_ACTION_PAY,
+  COURSE_ACTION_CALCULATE_PRICE,
   COURSE_ACTION_REENROLL,
   COUPON_CONTENT_TYPE_COURSE,
   COURSE_CARD_FORMAT,
@@ -148,6 +149,53 @@ describe("Course Status Messages", () => {
         {
           action:  "course action was called",
           message: `You are auditing. To get credit, you need to pay for the course. (Payment due on ${dueDate})`
+        }
+      ])
+      assert(
+        calculateMessagesProps.courseAction.calledWith(
+          course.runs[0],
+          COURSE_ACTION_PAY
+        )
+      )
+    })
+    it("should tell auditors to calculate price and pay for course", () => {
+      makeRunCurrent(course.runs[0])
+      makeRunEnrolled(course.runs[0])
+      course.runs[0].course_upgrade_deadline = moment().format()
+      const dueDate = moment(course.runs[0].course_upgrade_deadline)
+        .tz(moment.tz.guess())
+        .format(COURSE_DEADLINE_FORMAT)
+      calculateMessagesProps['financialAid'] = {application_status: "reset"}
+      calculateMessagesProps['hasFinancialAid'] = true
+
+      assertIsJust(calculateMessages(calculateMessagesProps), [
+        {
+          action:  "course action was called",
+          message: `You are auditing. To get credit, you need to pay for the course. (Payment due on ${dueDate})`
+        }
+      ])
+      assert(
+        calculateMessagesProps.courseAction.calledWith(
+          course.runs[0],
+          COURSE_ACTION_CALCULATE_PRICE
+        )
+      )
+    })
+    it("should tell auditors to wait while FA application is pending", () => {
+      makeRunCurrent(course.runs[0])
+      makeRunEnrolled(course.runs[0])
+      course.runs[0].course_upgrade_deadline = moment().format()
+      const dueDate = moment(course.runs[0].course_upgrade_deadline)
+        .tz(moment.tz.guess())
+        .format(COURSE_DEADLINE_FORMAT)
+      calculateMessagesProps['financialAid'] = {application_status: "pending-docs"}
+      calculateMessagesProps['hasFinancialAid'] = true
+
+      assertIsJust(calculateMessages(calculateMessagesProps), [
+        {
+          action:  "course action was called",
+          message: "You are auditing. Your personal course price is pending, "+
+          `and needs to be approved before you can pay for courses. (Payment due on ${dueDate})`
         }
       ])
       assert(

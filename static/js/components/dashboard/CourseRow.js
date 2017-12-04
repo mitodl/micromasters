@@ -139,7 +139,6 @@ export default class CourseRow extends React.Component {
       ui,
       setShowExpandedCourseStatus,
       setShowGradeDetailDialog,
-      setCalculatePriceDialogVisibility,
       showStaffView
     } = this.props
 
