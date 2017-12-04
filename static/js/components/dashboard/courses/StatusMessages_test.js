@@ -194,7 +194,7 @@ describe("Course Status Messages", () => {
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
           action:  "course action was called",
-          message: "You are auditing. Your personal course price is pending, "+
+          message: "You are auditing. Your personal course price is pending, " +
           `and needs to be approved before you can pay for courses. (Payment due on ${dueDate})`
         }
       ])

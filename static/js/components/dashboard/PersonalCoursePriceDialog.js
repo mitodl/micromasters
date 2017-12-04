@@ -4,7 +4,7 @@ import PropTypes from "prop-types"
 import Dialog from "material-ui/Dialog"
 import Button from "react-mdl/lib/Button"
 
-import {singleBtnDialogActions} from "../inputs/util";
+import {singleBtnDialogActions} from "../inputs/util"
 
 
 export default class PersonalCoursePriceDialog extends React.Component {

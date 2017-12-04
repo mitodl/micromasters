@@ -117,7 +117,7 @@ import type { Coupon } from "../flow/couponTypes"
 import type { PearsonAPIState } from "../reducers/pearson"
 import type { RestState } from "../flow/restTypes"
 import type { Post } from "../flow/discussionTypes"
-import PersonalCoursePriceDialog from "../components/dashboard/PersonalCoursePriceDialog";
+import PersonalCoursePriceDialog from "../components/dashboard/PersonalCoursePriceDialog"
 
 const isFinishedProcessing = R.contains(R.__, [FETCH_SUCCESS, FETCH_FAILURE])
 const PEARSON_TOS_DIALOG = "pearsonTOSDialogVisible"
@@ -552,7 +552,7 @@ class DashboardPage extends React.Component {
   }
 
   setCalculatePriceDialogVisibility = bool => {
-    const { dispatch } = this.props;
+    const { dispatch } = this.props
     dispatch(setCalculatePriceDialogVisibility(bool))
   }
 
@@ -672,7 +672,7 @@ class DashboardPage extends React.Component {
       open={ui.calculatePriceDialogVisibility}
       openFinancialAidCalculator={this.openFinancialAidCalculator}
       setVisibility={this.setCalculatePriceDialogVisibility}
-      />
+    />
   }
 
   renderCourseEnrollmentDialog() {

@@ -107,10 +107,12 @@ export default class CourseEnrollmentDialog extends React.Component {
         </Button>
       )
     } else {
-      message = [<p>You need to <a href="#" onClick={this.handleCalculatePriceClick}>
+      message = [
+        <p key="1">You need to <a href="#" onClick={this.handleCalculatePriceClick}>
         calculate you course price</a> before you can pay for this course.
         Or you can audit courses for free and pay later.</p>,
-        <p>You will need to pay in order to get credit for MicroMasters certificate.</p>]
+        <p key="2">You will need to pay in order to get credit for MicroMasters certificate.</p>
+      ]
       payButton = (
         <Button
           key="pay"

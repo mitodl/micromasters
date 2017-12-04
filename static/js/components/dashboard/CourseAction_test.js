@@ -229,8 +229,7 @@ describe("CourseAction", () => {
       const wrapper = renderCourseAction({
         courseRun:    firstRun,
         financialAid: {
-          ...FINANCIAL_AID_PARTIAL_RESPONSE,
-          has_user_applied: true,
+          has_user_applied:   true,
           application_status: 'pending-docs'
         },
         hasFinancialAid: true,

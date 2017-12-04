@@ -157,7 +157,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
       if (FA_PENDING_STATUSES.includes(financialAid.application_status)) {
         message = "You are auditing. Your personal course price is pending, " +
           "and needs to be approved before you can pay for courses."
-      } else if(!FA_TERMINAL_STATUSES.includes(financialAid.application_status)){
+      } else if(!FA_TERMINAL_STATUSES.includes(financialAid.application_status)) {
         actionType = COURSE_ACTION_CALCULATE_PRICE
       }
     }

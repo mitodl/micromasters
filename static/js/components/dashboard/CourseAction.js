@@ -110,7 +110,7 @@ export default class CourseAction extends React.Component {
     const { setCalculatePriceDialogVisibility } = this.props
     let props
     if (this.hasPendingFinancialAid()) {
-       props = { disabled: true }
+      props = { disabled: true }
     } else if (this.needsPriceCalculation()) {
       props = { onClick: () => setCalculatePriceDialogVisibility(true) }
     } else {

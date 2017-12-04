@@ -3,8 +3,6 @@ import React from "react"
 import moment from "moment"
 import R from "ramda"
 import { Card, CardTitle } from "react-mdl/lib/Card"
-import Button from "react-mdl/lib/Button"
-
 
 import type { Program, Course } from "../../flow/programTypes"
 import type { CouponPrice, CouponPrices } from "../../flow/couponTypes"

@@ -38,7 +38,8 @@ describe("CourseEnrollmentDialog", () => {
         />
       </MuiThemeProvider>,
       {
-        context: {router: {push: routerPushStub}},
+        context: {
+          router: { push: routerPushStub}},
         childContextTypes: {
           router: PropTypes.object.isRequired
         }
