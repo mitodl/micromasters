@@ -88,7 +88,7 @@ export default class CourseListCard extends React.Component {
       }
     } else {
       const calculateLink = (
-        <a href="#" onClick={openFinancialAidCalculator}>
+        <a href="#" className="calculate-link" onClick={openFinancialAidCalculator}>
         calculate your course price
         </a>
       )

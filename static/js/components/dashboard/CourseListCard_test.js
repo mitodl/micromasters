@@ -34,7 +34,7 @@ import {
 import { makeCoupon, makeCourseCoupon } from "../../factories/dashboard"
 
 describe("CourseListCard", () => {
-  let program, coursePrice, sandbox, helper, routerPushStub
+  let program, coursePrice, sandbox, helper, routerPushStub, openFinancialAidCalculatorStub
   beforeEach(() => {
     program = _.cloneDeep(DASHBOARD_RESPONSE.programs[1])
     coursePrice = _.cloneDeep(
@@ -46,6 +46,7 @@ describe("CourseListCard", () => {
     assert.isAbove(program.courses.length, 0)
     sandbox = sinon.sandbox.create()
     routerPushStub = sandbox.stub()
+    openFinancialAidCalculatorStub = sandbox.spy()
     helper = new IntegrationTestHelper()
   })
 
@@ -84,6 +85,7 @@ describe("CourseListCard", () => {
             program={program}
             coursePrice={coursePrice}
             addCourseEnrollment={() => Promise.resolve()}
+            openFinancialAidCalculator={openFinancialAidCalculatorStub}
             couponPrices={couponPrices}
             ui={INITIAL_UI_STATE}
             openCourseContactDialog={() => undefined}
@@ -94,6 +96,7 @@ describe("CourseListCard", () => {
             email={INITIAL_EMAIL_STATE}
             setEnrollCourseDialogVisibility={() => undefined}
             setEnrollSelectedCourseRun={() => undefined}
+            setCalculatePriceDialogVisibility={() => undefined}
             checkout={() => undefined}
             setShowExpandedCourseStatus={() => undefined}
             setShowGradeDetailDialog={() => undefined}
@@ -130,8 +133,13 @@ describe("CourseListCard", () => {
         assert.lengthOf(messageEl, 1)
         assert.include(
           messageEl.text(),
-          "You need to get your Personal Course Price before you can pay for courses."
+          "You need to calculate your course price before you can pay for courses."
         )
+
+        const linkEl = messageEl.find("a.calculate-link")
+        assert.include(linkEl.text(), "calculate your course price")
+        linkEl.simulate("click")
+        sinon.assert.calledOnce(openFinancialAidCalculatorStub)
       })
 
       it("displays price after financial aid", () => {
