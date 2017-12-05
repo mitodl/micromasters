@@ -41,7 +41,7 @@ import {
   STATUS_PAID_BUT_NOT_ENROLLED
 } from "../../../constants"
 import * as libCoupon from "../../../lib/coupon"
-import {FINANCIAL_AID_PARTIAL_RESPONSE} from "../../../test_constants";
+import {FINANCIAL_AID_PARTIAL_RESPONSE} from "../../../test_constants"
 
 describe("Course Status Messages", () => {
   let message

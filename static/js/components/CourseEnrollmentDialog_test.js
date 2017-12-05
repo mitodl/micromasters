@@ -137,7 +137,7 @@ describe("CourseEnrollmentDialog", () => {
     sinon.assert.calledWith(addCourseEnrollmentStub, courseRun.course_id)
   })
 
-   it("can click link to calculate price", () => {
+  it("can click link to calculate price", () => {
     const wrapper = renderDialog()
     const auditButton = getEl(wrapper, ".calculate-link")
     ReactTestUtils.Simulate.click(auditButton)
