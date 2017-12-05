@@ -191,7 +191,7 @@ describe("CourseAction", () => {
       })
       const button = wrapper.find(SpinnerButton)
       assert.isFalse(button.props().disabled)
-      assert.equal(button.props().children, "Enroll")
+      assert.equal(button.props().children, "Enroll *")
     })
 
     it("indicates that a user must calculate the course price to upgrade to paid", () => {
@@ -214,7 +214,7 @@ describe("CourseAction", () => {
       })
 
       const button = wrapper.find(Button)
-      assert.equal(button.props().children, "Pay Now")
+      assert.equal(button.props().children, "Pay Now *")
     })
 
     it("indicates that a user can't pay for course while FA is pending", () => {
@@ -238,7 +238,7 @@ describe("CourseAction", () => {
 
       const button = wrapper.find(Button)
       assert.isTrue(button.props().disabled)
-      assert.equal(button.props().children, "Pay Now")
+      assert.equal(button.props().children, "Pay Now *")
     })
 
     it("pay button redirects to checkout", () => {

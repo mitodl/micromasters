@@ -88,7 +88,7 @@ export default class CourseListCard extends React.Component {
     } else if (FA_PENDING_STATUSES.includes(finAidStatus)) {
       return (
         <p className={priceMessageClassName}>
-          Your personal course price is pending, and needs to be approved before
+          *Your personal course price is pending, and needs to be approved before
           you can pay for courses. Or you can audit courses for free by clicking
           Enroll.
         </p>
