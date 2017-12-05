@@ -12,10 +12,7 @@ import PersonalCoursePriceDialog from "./PersonalCoursePriceDialog"
 import { getEl } from "../../util/test_utils"
 
 describe("CourseEnrollmentDialog", () => {
-  let sandbox,
-    setVisibilityStub,
-    openFinancialAidCalculatorStub,
-    routerPushStub
+  let sandbox, setVisibilityStub, openFinancialAidCalculatorStub, routerPushStub
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()
@@ -28,7 +25,7 @@ describe("CourseEnrollmentDialog", () => {
     sandbox.restore()
   })
 
-  const renderDialog = (open = true,) => {
+  const renderDialog = (open = true) => {
     mount(
       <MuiThemeProvider muiTheme={getMuiTheme()}>
         <PersonalCoursePriceDialog
@@ -39,7 +36,8 @@ describe("CourseEnrollmentDialog", () => {
       </MuiThemeProvider>,
       {
         context: {
-          router: { push: routerPushStub}},
+          router: { push: routerPushStub }
+        },
         childContextTypes: {
           router: PropTypes.object.isRequired
         }

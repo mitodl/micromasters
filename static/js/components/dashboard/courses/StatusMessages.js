@@ -5,7 +5,11 @@ import R from "ramda"
 import moment from "moment-timezone"
 
 import type { Coupon } from "../../../flow/couponTypes"
-import type {Course, CourseRun, FinancialAidUserInfo} from "../../../flow/programTypes"
+import type {
+  Course,
+  CourseRun,
+  FinancialAidUserInfo
+} from "../../../flow/programTypes"
 import { makeCouponMessage } from "../../../lib/coupon"
 import {
   COUPON_CONTENT_TYPE_COURSE,
@@ -159,9 +163,12 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     let actionType = COURSE_ACTION_PAY
     if (hasFinancialAid) {
       if (FA_PENDING_STATUSES.includes(financialAid.application_status)) {
-        message = "You are auditing. Your personal course price is pending, " +
+        message =
+          "You are auditing. Your personal course price is pending, " +
           "and needs to be approved before you can pay for courses."
-      } else if(!FA_TERMINAL_STATUSES.includes(financialAid.application_status)) {
+      } else if (
+        !FA_TERMINAL_STATUSES.includes(financialAid.application_status)
+      ) {
         actionType = COURSE_ACTION_CALCULATE_PRICE
       }
     }

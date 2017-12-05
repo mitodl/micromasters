@@ -230,7 +230,7 @@ describe("CourseAction", () => {
         courseRun:    firstRun,
         financialAid: {
           has_user_applied:   true,
-          application_status: 'pending-docs'
+          application_status: "pending-docs"
         },
         hasFinancialAid: true,
         actionType:      COURSE_ACTION_PAY

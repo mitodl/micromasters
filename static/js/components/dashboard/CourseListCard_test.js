@@ -29,12 +29,18 @@ import {
 import {
   FA_STATUS_CREATED,
   FA_STATUS_APPROVED,
-  COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT, FA_STATUS_PENDING_DOCS
+  COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
+  FA_STATUS_PENDING_DOCS
 } from "../../constants"
 import { makeCoupon, makeCourseCoupon } from "../../factories/dashboard"
 
 describe("CourseListCard", () => {
-  let program, coursePrice, sandbox, helper, routerPushStub, openFinancialAidCalculatorStub
+  let program,
+    coursePrice,
+    sandbox,
+    helper,
+    routerPushStub,
+    openFinancialAidCalculatorStub
   beforeEach(() => {
     program = _.cloneDeep(DASHBOARD_RESPONSE.programs[1])
     coursePrice = _.cloneDeep(
@@ -150,7 +156,7 @@ describe("CourseListCard", () => {
         assert.include(
           messageEl.text(),
           "Your personal course price is pending, and needs to be approved before you can " +
-          "pay for courses. Or you can audit courses for free by clicking Enroll."
+            "pay for courses. Or you can audit courses for free by clicking Enroll."
         )
       })
 

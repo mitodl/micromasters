@@ -68,7 +68,6 @@ export default class CourseEnrollmentDialog extends React.Component {
     openFinancialAidCalculator()
   }
 
-
   render() {
     const {
       open,
@@ -80,9 +79,14 @@ export default class CourseEnrollmentDialog extends React.Component {
     let message, payButton
     if (pendingFinancialAid) {
       message = [
-        <p key="1">Your personal course price is pending, and needs to approved before
-          you can pay for courses. Or you can audit for free and pay later.</p>,
-        <p key="2">You will need to pay in order to get credit for MicroMasters certificate.</p>
+        <p key="1">
+          Your personal course price is pending, and needs to approved before
+          you can pay for courses. Or you can audit for free and pay later.
+        </p>,
+        <p key="2">
+          You will need to pay in order to get credit for MicroMasters
+          certificate.
+        </p>
       ]
       payButton = (
         <Button
@@ -110,10 +114,22 @@ export default class CourseEnrollmentDialog extends React.Component {
       )
     } else {
       message = [
-        <p key="1">You need to <a href="#" className="calculate-link" onClick={this.handleCalculatePriceClick}>
-        calculate you course price</a> before you can pay for this course.
-        Or you can audit courses for free and pay later.</p>,
-        <p key="2">You will need to pay in order to get credit for MicroMasters certificate.</p>
+        <p key="1">
+          You need to{" "}
+          <a
+            href="#"
+            className="calculate-link"
+            onClick={this.handleCalculatePriceClick}
+          >
+            calculate you course price
+          </a>{" "}
+          before you can pay for this course. Or you can audit courses for free
+          and pay later.
+        </p>,
+        <p key="2">
+          You will need to pay in order to get credit for MicroMasters
+          certificate.
+        </p>
       ]
       payButton = (
         <Button

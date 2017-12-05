@@ -668,11 +668,13 @@ class DashboardPage extends React.Component {
 
   renderPersonalCoursePriceDialog() {
     const { ui } = this.props
-    return <PersonalCoursePriceDialog
-      open={ui.calculatePriceDialogVisibility}
-      openFinancialAidCalculator={this.openFinancialAidCalculator}
-      setVisibility={this.setCalculatePriceDialogVisibility}
-    />
+    return (
+      <PersonalCoursePriceDialog
+        open={ui.calculatePriceDialogVisibility}
+        openFinancialAidCalculator={this.openFinancialAidCalculator}
+        setVisibility={this.setCalculatePriceDialogVisibility}
+      />
+    )
   }
 
   renderCourseEnrollmentDialog() {

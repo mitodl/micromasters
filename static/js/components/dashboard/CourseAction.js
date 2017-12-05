@@ -16,7 +16,8 @@ import {
   FA_TERMINAL_STATUSES,
   COURSE_ACTION_PAY,
   COURSE_ACTION_ENROLL,
-  COURSE_ACTION_REENROLL, COURSE_ACTION_CALCULATE_PRICE
+  COURSE_ACTION_REENROLL,
+  COURSE_ACTION_CALCULATE_PRICE
 } from "../../constants"
 import { isFreeCoupon } from "../../lib/coupon"
 import { isEnrollableRun } from "./courses/util"
@@ -133,8 +134,10 @@ export default class CourseAction extends React.Component {
       actionType === COURSE_ACTION_REENROLL
     ) {
       return this.renderEnrollButton(courseRun, actionType)
-    } else if (actionType === COURSE_ACTION_PAY ||
-      actionType === COURSE_ACTION_CALCULATE_PRICE) {
+    } else if (
+      actionType === COURSE_ACTION_PAY ||
+      actionType === COURSE_ACTION_CALCULATE_PRICE
+    ) {
       return this.renderPayButton(courseRun)
     }
     return null

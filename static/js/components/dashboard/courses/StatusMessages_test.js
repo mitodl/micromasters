@@ -41,7 +41,7 @@ import {
   STATUS_PAID_BUT_NOT_ENROLLED
 } from "../../../constants"
 import * as libCoupon from "../../../lib/coupon"
-import {FINANCIAL_AID_PARTIAL_RESPONSE} from "../../../test_constants"
+import { FINANCIAL_AID_PARTIAL_RESPONSE } from "../../../test_constants"
 
 describe("Course Status Messages", () => {
   let message
@@ -81,7 +81,7 @@ describe("Course Status Messages", () => {
   })
 
   describe("calculateMessages", () => {
-    let course, sandbox,financialAid, calculateMessagesProps
+    let course, sandbox, financialAid, calculateMessagesProps
 
     beforeEach(() => {
       course = makeCourse(0)
@@ -171,7 +171,7 @@ describe("Course Status Messages", () => {
       const dueDate = moment(course.runs[0].course_upgrade_deadline)
         .tz(moment.tz.guess())
         .format(COURSE_DEADLINE_FORMAT)
-      calculateMessagesProps['hasFinancialAid'] = true
+      calculateMessagesProps["hasFinancialAid"] = true
 
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
@@ -193,14 +193,16 @@ describe("Course Status Messages", () => {
       const dueDate = moment(course.runs[0].course_upgrade_deadline)
         .tz(moment.tz.guess())
         .format(COURSE_DEADLINE_FORMAT)
-      calculateMessagesProps['financialAid']['application_status'] = "pending-docs"
-      calculateMessagesProps['hasFinancialAid'] = true
+      calculateMessagesProps["financialAid"]["application_status"] =
+        "pending-docs"
+      calculateMessagesProps["hasFinancialAid"] = true
 
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
           action:  "course action was called",
-          message: "You are auditing. Your personal course price is pending, " +
-          `and needs to be approved before you can pay for courses. (Payment due on ${dueDate})`
+          message:
+            "You are auditing. Your personal course price is pending, " +
+            `and needs to be approved before you can pay for courses. (Payment due on ${dueDate})`
         }
       ])
       assert(

@@ -4,8 +4,7 @@ import PropTypes from "prop-types"
 import Dialog from "material-ui/Dialog"
 import Button from "react-mdl/lib/Button"
 
-import {singleBtnDialogActions} from "../inputs/util"
-
+import { singleBtnDialogActions } from "../inputs/util"
 
 export default class PersonalCoursePriceDialog extends React.Component {
   static contextTypes = {
@@ -15,14 +14,13 @@ export default class PersonalCoursePriceDialog extends React.Component {
   props: {
     open: boolean,
     setVisibility: (v: boolean) => void,
-    openFinancialAidCalculator: () => void,
+    openFinancialAidCalculator: () => void
   }
 
   handleCalculateClick = () => {
     const { setVisibility, openFinancialAidCalculator } = this.props
     setVisibility(false)
     openFinancialAidCalculator()
-
   }
 
   render() {
@@ -45,10 +43,14 @@ export default class PersonalCoursePriceDialog extends React.Component {
         className="calculate-dialog-wrapper"
         open={open}
         onRequestClose={() => setVisibility(false)}
-        actions={[singleBtnDialogActions(()=>(setVisibility(false)), 'cancel'), calculateButton]}
+        actions={[
+          singleBtnDialogActions(() => setVisibility(false), "cancel"),
+          calculateButton
+        ]}
       >
-        You need to calculate your course price before you can pay for this course. (
-        Payment is required to get credit for the MicroMasters certificate.)
+        You need to calculate your course price before you can pay for this
+        course. ( Payment is required to get credit for the MicroMasters
+        certificate.)
       </Dialog>
     )
   }

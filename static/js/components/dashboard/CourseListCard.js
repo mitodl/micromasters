@@ -89,19 +89,24 @@ export default class CourseListCard extends React.Component {
       return (
         <p className={priceMessageClassName}>
           Your personal course price is pending, and needs to be approved before
-          you can pay for courses. Or you can audit courses for free by clicking Enroll.
+          you can pay for courses. Or you can audit courses for free by clicking
+          Enroll.
         </p>
       )
     } else {
       const calculateLink = (
-        <a href="#" className="calculate-link" onClick={openFinancialAidCalculator}>
-        calculate your course price
+        <a
+          href="#"
+          className="calculate-link"
+          onClick={openFinancialAidCalculator}
+        >
+          calculate your course price
         </a>
       )
       return (
         <p className={priceMessageClassName}>
-          *You need to { calculateLink } before you can pay for
-          courses. Or you can audit courses for free by clicking Enroll.
+          *You need to {calculateLink} before you can pay for courses. Or you
+          can audit courses for free by clicking Enroll.
         </p>
       )
     }
