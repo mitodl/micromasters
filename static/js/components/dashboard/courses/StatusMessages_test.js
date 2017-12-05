@@ -1,5 +1,6 @@
 // @flow
 /* global SETTINGS: false */
+import _ from "lodash"
 import React from "react"
 import { shallow } from "enzyme"
 import { assert } from "chai"
@@ -40,6 +41,7 @@ import {
   STATUS_PAID_BUT_NOT_ENROLLED
 } from "../../../constants"
 import * as libCoupon from "../../../lib/coupon"
+import {FINANCIAL_AID_PARTIAL_RESPONSE} from "../../../test_constants";
 
 describe("Course Status Messages", () => {
   let message
@@ -79,13 +81,17 @@ describe("Course Status Messages", () => {
   })
 
   describe("calculateMessages", () => {
-    let course, sandbox, calculateMessagesProps
+    let course, sandbox,financialAid, calculateMessagesProps
 
     beforeEach(() => {
       course = makeCourse(0)
       sandbox = sinon.sandbox.create()
+      financialAid = _.cloneDeep(FINANCIAL_AID_PARTIAL_RESPONSE)
+
       calculateMessagesProps = {
         courseAction:                sandbox.stub(),
+        financialAid:                financialAid,
+        hasFinancialAid:             false,
         firstRun:                    course.runs[0],
         course:                      course,
         expandedStatuses:            new Set(),
@@ -165,7 +171,6 @@ describe("Course Status Messages", () => {
       const dueDate = moment(course.runs[0].course_upgrade_deadline)
         .tz(moment.tz.guess())
         .format(COURSE_DEADLINE_FORMAT)
-      calculateMessagesProps['financialAid'] = {application_status: "reset"}
       calculateMessagesProps['hasFinancialAid'] = true
 
       assertIsJust(calculateMessages(calculateMessagesProps), [
@@ -188,7 +193,7 @@ describe("Course Status Messages", () => {
       const dueDate = moment(course.runs[0].course_upgrade_deadline)
         .tz(moment.tz.guess())
         .format(COURSE_DEADLINE_FORMAT)
-      calculateMessagesProps['financialAid'] = {application_status: "pending-docs"}
+      calculateMessagesProps['financialAid']['application_status'] = "pending-docs"
       calculateMessagesProps['hasFinancialAid'] = true
 
       assertIsJust(calculateMessages(calculateMessagesProps), [

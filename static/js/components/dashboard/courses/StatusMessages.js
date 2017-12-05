@@ -5,7 +5,7 @@ import R from "ramda"
 import moment from "moment-timezone"
 
 import type { Coupon } from "../../../flow/couponTypes"
-import type { Course, CourseRun } from "../../../flow/programTypes"
+import type {Course, CourseRun, FinancialAidUserInfo} from "../../../flow/programTypes"
 import { makeCouponMessage } from "../../../lib/coupon"
 import {
   COUPON_CONTENT_TYPE_COURSE,
@@ -15,7 +15,10 @@ import {
   FA_TERMINAL_STATUSES,
   STATUS_MISSED_DEADLINE,
   STATUS_PAID_BUT_NOT_ENROLLED,
-  STATUS_CAN_UPGRADE, COURSE_ACTION_CALCULATE_PRICE
+  STATUS_CAN_UPGRADE,
+  COURSE_ACTION_CALCULATE_PRICE,
+  COURSE_CARD_FORMAT,
+  COURSE_DEADLINE_FORMAT
 } from "../../../constants"
 import { S } from "../../../lib/sanctuary"
 import {
@@ -32,7 +35,6 @@ import {
   hasFailingExamGrade,
   hasPassedCourseRun
 } from "../../../lib/grades"
-import { COURSE_CARD_FORMAT, COURSE_DEADLINE_FORMAT } from "../../../constants"
 
 type Message = {
   message: string | React$Element<*>,
@@ -55,6 +57,8 @@ export const formatDate = (date: ?string) =>
 
 type CalculateMessagesProps = {
   courseAction: (run: CourseRun, actionType: string) => React$Element<*>,
+  financialAid: FinancialAidUserInfo,
+  hasFinancialAid: boolean,
   firstRun: CourseRun,
   course: Course,
   expandedStatuses: Set<number>,
