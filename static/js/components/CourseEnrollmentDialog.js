@@ -79,9 +79,11 @@ export default class CourseEnrollmentDialog extends React.Component {
     } = this.props
     let message, payButton
     if (pendingFinancialAid) {
-      message = `Your Personalized Course Price is still pending approval, but you can
-        sign up now to audit the course for FREE, and then pay later. (Payment is required
-        to get credit for the MicroMasters certificate.)`
+      message = [
+        <p key="1">Your personal course price is pending, and needs to approved before
+          you can pay for courses. Or you can audit for free and pay later.</p>,
+        <p key="2">You will need to pay in order to get credit for MicroMasters certificate.</p>
+      ]
       payButton = (
         <Button
           key="pay"

@@ -12,6 +12,7 @@ import type { CourseRun } from "../../flow/programTypes"
 import type { UIState } from "../../reducers/ui"
 import {
   FA_TERMINAL_STATUSES,
+  FA_PENDING_STATUSES,
   COUPON_CONTENT_TYPE_PROGRAM
 } from "../../constants"
 import { isFreeCoupon } from "../../lib/coupon"
@@ -84,6 +85,13 @@ export default class CourseListCard extends React.Component {
           </p>
         )
       }
+    } else if (FA_PENDING_STATUSES.includes(finAidStatus)) {
+      return (
+        <p className={priceMessageClassName}>
+          Your personal course price is pending, and needs to be approved before
+          you can pay for courses. Or you can audit courses for free by clicking Enroll.
+        </p>
+      )
     } else {
       const calculateLink = (
         <a href="#" className="calculate-link" onClick={openFinancialAidCalculator}>
