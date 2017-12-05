@@ -96,6 +96,7 @@
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
+    position: relative;
 
     &.row-with-border {
       border-bottom: 1px #e2e2e2 solid;
