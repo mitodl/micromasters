@@ -38,7 +38,8 @@ class Browser:
         "zendesk",
         "__webpack_hmr",
         "Warning: Accessing PropTypes via the main React package is deprecated.",
-        "Warning: ReactTelephoneInput: React.createClass is deprecated"
+        "Warning: ReactTelephoneInput: React.createClass is deprecated",
+        ".jpg - Failed to load resource",
     }
 
     def __init__(self, driver, live_server_url):
