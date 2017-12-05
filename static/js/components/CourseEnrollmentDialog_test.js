@@ -16,6 +16,7 @@ describe("CourseEnrollmentDialog", () => {
   let sandbox,
     setVisibilityStub,
     addCourseEnrollmentStub,
+    openFinancialAidCalculatorStub,
     routerPushStub,
     checkoutStub
 
@@ -23,6 +24,7 @@ describe("CourseEnrollmentDialog", () => {
     sandbox = sinon.sandbox.create()
     setVisibilityStub = sandbox.spy()
     addCourseEnrollmentStub = sandbox.spy()
+    openFinancialAidCalculatorStub = sandbox.spy()
     routerPushStub = sandbox.spy()
     checkoutStub = sandbox.spy()
   })
@@ -51,6 +53,7 @@ describe("CourseEnrollmentDialog", () => {
           financialAidAvailability={financialAidAvailability}
           hasUserApplied={hasUserApplied}
           pendingFinancialAid={pendingFinancialAid}
+          openFinancialAidCalculator={openFinancialAidCalculatorStub}
         />
       </MuiThemeProvider>,
       {
@@ -132,6 +135,14 @@ describe("CourseEnrollmentDialog", () => {
     ReactTestUtils.Simulate.click(auditButton)
     sinon.assert.calledWith(setVisibilityStub, false)
     sinon.assert.calledWith(addCourseEnrollmentStub, courseRun.course_id)
+  })
+
+   it("can click link to calculate price", () => {
+    const wrapper = renderDialog()
+    const auditButton = getEl(wrapper, ".calculate-link")
+    ReactTestUtils.Simulate.click(auditButton)
+    sinon.assert.calledWith(setVisibilityStub, false)
+    sinon.assert.calledOnce(openFinancialAidCalculatorStub)
   })
 
   it("pay button redirects to checkout", () => {
