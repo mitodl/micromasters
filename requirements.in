@@ -25,7 +25,7 @@ jsonpatch==1.16
 newrelic
 open-discussions-client==0.2.2
 phonenumbers==8.3.2
-psycopg2==2.7.2
+psycopg2==2.7.3.2
 pycountry==16.11.27.1
 pysftp==0.2.9
 python-dateutil
