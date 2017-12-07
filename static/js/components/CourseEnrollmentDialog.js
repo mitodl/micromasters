@@ -99,9 +99,13 @@ export default class CourseEnrollmentDialog extends React.Component {
         </Button>
       )
     } else if (hasUserApplied) {
-      message = `You can pay now, or you can audit the course for FREE
-        and upgrade later. (Payment is required to get credit for the
-        MicroMasters certificate.)`
+      message = (
+        <p>
+          You can pay now, or you can audit the course for FREE and upgrade
+          later. (Payment is required to get credit for the MicroMasters
+          certificate.)
+        </p>
+      )
       payButton = (
         <Button
           key="pay"
@@ -165,7 +169,7 @@ export default class CourseEnrollmentDialog extends React.Component {
         contentStyle={{ maxWidth: "600px" }}
         actionsContainerStyle={{ paddingBottom: "20px", textAlign: "center" }}
       >
-        <p>{message}</p>
+        {message}
       </Dialog>
     )
   }
