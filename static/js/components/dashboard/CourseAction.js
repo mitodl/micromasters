@@ -92,7 +92,8 @@ export default class CourseAction extends React.Component {
   }
 
   renderEnrollButton(run: CourseRun, actionType: string): React$Element<*> {
-    const asterisk = (this.hasPendingFinancialAid() || this.needsPriceCalculation()) ? " *" : ""
+    const asterisk =
+      this.hasPendingFinancialAid() || this.needsPriceCalculation() ? " *" : ""
 
     return (
       <div className="course-action">
@@ -103,7 +104,9 @@ export default class CourseAction extends React.Component {
           spinning={run.status === STATUS_PENDING_ENROLLMENT}
           onClick={() => this.handleEnrollButtonClick(run)}
         >
-          {actionType === COURSE_ACTION_REENROLL ? "Re-Enroll" : `Enroll${asterisk}`}
+          {actionType === COURSE_ACTION_REENROLL
+            ? "Re-Enroll"
+            : `Enroll${asterisk}`}
         </SpinnerButton>
       </div>
     )
@@ -111,7 +114,8 @@ export default class CourseAction extends React.Component {
 
   renderPayButton(run: CourseRun): React$Element<*> {
     const { setCalculatePriceDialogVisibility } = this.props
-    let props, payText = "Pay Now"
+    let props,
+      payText = "Pay Now"
     if (this.hasPendingFinancialAid()) {
       props = { disabled: true }
       payText = `${payText} *`
