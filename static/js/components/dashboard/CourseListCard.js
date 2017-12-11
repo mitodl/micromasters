@@ -56,28 +56,28 @@ export default class CourseListCard extends React.Component {
     return couponPrice
   }
 
-  handleCalculatePriceClick = (e) => {
+  handleCalculatePriceClick = (e: Event) => {
     const { openFinancialAidCalculator } = this.props
-    openFinancialAidCalculator()
+    if (openFinancialAidCalculator) openFinancialAidCalculator()
     e.preventDefault()
   }
 
-  renderCalculatePriceLink() : ?React$Element<*> {
+  renderCalculatePriceLink(): ?React$Element<*> {
     const calculateLink = (
-        <a
-          href="#"
-          className="calculate-link"
-          onClick={this.handleCalculatePriceClick}
-        >
-          calculate your course price
-        </a>
-      )
-      return (
-        <p className={priceMessageClassName}>
-          *You need to {calculateLink} before you can pay for courses. Or you
-          can audit courses for free by clicking Enroll.
-        </p>
-      )
+      <a
+        href="#"
+        className="calculate-link"
+        onClick={this.handleCalculatePriceClick}
+      >
+        calculate your course price
+      </a>
+    )
+    return (
+      <p className={priceMessageClassName}>
+        *You need to {calculateLink} before you can pay for courses. Or you can
+        audit courses for free by clicking Enroll.
+      </p>
+    )
   }
 
   renderFinancialAidPriceMessage(): ?React$Element<*> {

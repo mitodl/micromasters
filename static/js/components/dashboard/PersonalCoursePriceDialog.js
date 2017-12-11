@@ -49,7 +49,7 @@ export default class PersonalCoursePriceDialog extends React.Component {
         ]}
       >
         You need to calculate your course price before you can pay for this
-        course. ( Payment is required to get credit for the MicroMasters
+        course. (Payment is required to get credit for the MicroMasters
         certificate.)
       </Dialog>
     )

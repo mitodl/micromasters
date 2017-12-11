@@ -38,7 +38,8 @@ import {
   COUPON_CONTENT_TYPE_COURSE,
   COURSE_CARD_FORMAT,
   COURSE_DEADLINE_FORMAT,
-  STATUS_PAID_BUT_NOT_ENROLLED
+  STATUS_PAID_BUT_NOT_ENROLLED,
+  FA_STATUS_PENDING_DOCS
 } from "../../../constants"
 import * as libCoupon from "../../../lib/coupon"
 import { FINANCIAL_AID_PARTIAL_RESPONSE } from "../../../test_constants"
@@ -193,8 +194,9 @@ describe("Course Status Messages", () => {
       const dueDate = moment(course.runs[0].course_upgrade_deadline)
         .tz(moment.tz.guess())
         .format(COURSE_DEADLINE_FORMAT)
-      calculateMessagesProps["financialAid"]["application_status"] =
-        "pending-docs"
+      calculateMessagesProps["financialAid"][
+        "application_status"
+      ] = FA_STATUS_PENDING_DOCS
       calculateMessagesProps["hasFinancialAid"] = true
 
       assertIsJust(calculateMessages(calculateMessagesProps), [
