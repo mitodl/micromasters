@@ -16,7 +16,8 @@ import {
   COURSE_ACTION_PAY,
   COURSE_ACTION_CALCULATE_PRICE,
   COURSE_ACTION_ENROLL,
-  COURSE_ACTION_REENROLL
+  COURSE_ACTION_REENROLL,
+  FA_STATUS_PENDING_DOCS
 } from "../../constants"
 import {
   findCourse,
@@ -230,7 +231,7 @@ describe("CourseAction", () => {
         courseRun:    firstRun,
         financialAid: {
           has_user_applied:   true,
-          application_status: "pending-docs"
+          application_status: FA_STATUS_PENDING_DOCS
         },
         hasFinancialAid: true,
         actionType:      COURSE_ACTION_PAY

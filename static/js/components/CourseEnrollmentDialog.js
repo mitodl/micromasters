@@ -62,10 +62,11 @@ export default class CourseEnrollmentDialog extends React.Component {
     addCourseEnrollment(courseRun.course_id)
   }
 
-  handleCalculatePriceClick = () => {
+  handleCalculatePriceClick = (e) => {
     const { openFinancialAidCalculator, setVisibility } = this.props
     setVisibility(false)
     openFinancialAidCalculator()
+    e.preventDefault()
   }
 
   render() {
