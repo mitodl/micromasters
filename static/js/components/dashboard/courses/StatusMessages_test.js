@@ -212,6 +212,28 @@ describe("Course Status Messages", () => {
         )
       )
     })
+    it("should tell auditors to wait while FA is pending without due date", () => {
+      makeRunCurrent(course.runs[0])
+      makeRunEnrolled(course.runs[0])
+      calculateMessagesProps["financialAid"]["application_status"] =
+        "pending-docs"
+      calculateMessagesProps["hasFinancialAid"] = true
+
+      assertIsJust(calculateMessages(calculateMessagesProps), [
+        {
+          action:  "course action was called",
+          message:
+            "You are auditing. Your personal course price is pending, " +
+            "and needs to be approved before you can pay for courses."
+        }
+      ])
+      assert(
+        calculateMessagesProps.courseAction.calledWith(
+          course.runs[0],
+          COURSE_ACTION_PAY
+        )
+      )
+    })
     it("should not show payment due date if missing", () => {
       makeRunCurrent(course.runs[0])
       makeRunEnrolled(course.runs[0])
