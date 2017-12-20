@@ -13,17 +13,17 @@
   .post {
     display: flex;
     align-items: center;
-    padding: 13px 24px 13px;
+    padding: 11px 14px 12px 17px;
     margin: 0 -24px;
     border-bottom: 1px solid #e6e6e6;
 
     &:last-child {
-      padding: 13px 24px 0;
+      padding-bottom: 0;
       border-bottom: none;
     }
 
     &:first-child {
-      padding: 0 24px 13px;
+      padding-top: 0;
     }
 
     img {
