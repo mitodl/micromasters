@@ -475,9 +475,16 @@ def calculate_run_price(course_run, user):
     enrollment = get_object_or_404(ProgramEnrollment, program=program, user=user)
     price = get_formatted_course_price(enrollment)['price']
     coupons = [coupon for coupon in pick_coupons(user) if coupon.program == program]
+
     if not coupons:
+        # There is no coupon for this program
         return price, None
     coupon = coupons[0]
+
+    if course_run.edx_course_key not in coupon.course_keys:
+        # coupon does not apply to this particular course run
+        return price, None
+
     price = calculate_coupon_price(coupon, price, course_run.edx_course_key)
     return price, coupon
 

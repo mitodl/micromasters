@@ -761,6 +761,22 @@ class PriceTests(MockedESTestCase):
             assert calculate_run_price(course_run, user) == (fa_price, None)
         assert _calculate_coupon_price.called is False
 
+    def test_calculate_run_price_other_run(self):
+        """
+        If the coupon is for another course in this program it should not be returned here
+        """
+        course_run, user = create_purchasable_course_run()
+        other_course = CourseRunFactory.create(course__program=course_run.course.program).course
+        coupon = CouponFactory.create(content_object=other_course)
+        UserCoupon.objects.create(coupon=coupon, user=user)
+        discounted_price = 5
+        program_enrollment = course_run.course.program.programenrollment_set.first()
+        fa_price = get_formatted_course_price(program_enrollment)['price']
+        with patch('ecommerce.api.calculate_coupon_price', autospec=True) as _calculate_coupon_price:
+            _calculate_coupon_price.return_value = discounted_price
+            assert calculate_run_price(course_run, user) == (fa_price, None)
+        assert _calculate_coupon_price.called is False
+
     def test_no_program_enrollment(self):
         """
         If a user is not enrolled a 404 should be raised when getting the price
@@ -833,13 +849,24 @@ class PriceTests(MockedESTestCase):
         coupon.refresh_from_db()
         assert calculate_coupon_price(coupon, price, course_run.edx_course_key) == price
 
-    def test_coupon_allowed(self):
+    def test_coupon_allowed_program(self):
         """
         Assert that the price is not adjusted if the coupon is for a different program
         """
         course_run, _ = create_purchasable_course_run()
         price = Decimal('0.3')
         coupon = CouponFactory.create()
+        assert coupon.content_object != course_run
+        assert calculate_coupon_price(coupon, price, course_run.edx_course_key) == price
+
+    def test_coupon_allowed_course(self):
+        """
+        Assert that the price is not adjusted if the coupon is for a different course in the same program
+        """
+        course_run, _ = create_purchasable_course_run()
+        other_course = CourseRunFactory.create(course__program=course_run.course.program).course
+        price = Decimal('0.3')
+        coupon = CouponFactory.create(content_object=other_course)
         assert coupon.content_object != course_run
         assert calculate_coupon_price(coupon, price, course_run.edx_course_key) == price
 
