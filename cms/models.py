@@ -17,10 +17,7 @@ from wagtail.wagtailimages.models import Image
 
 from courses.models import Program
 from micromasters.serializers import serialize_maybe_user
-from micromasters.utils import (
-    now_in_utc,
-    webpack_dev_server_host,
-)
+from micromasters.utils import webpack_dev_server_host
 from profiles.api import get_social_username
 from roles.models import Instructor, Staff
 from cms.util import get_coupon_code
