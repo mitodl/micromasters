@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django_redis import get_redis_connection
 
 from dashboard.api_edx_cache import CachedEdxUserData, CachedEdxDataApi
-from dashboard.models import CachedEnrollment
+from dashboard.models import CachedEnrollment, CachedCurrentGrade
 from dashboard.utils import get_mmtrack
 from grades.exceptions import FreezeGradeFailedException
 from grades.models import (
@@ -128,7 +128,9 @@ def get_users_without_frozen_final_grade(course_run):
         queryset: a queryset of users
     """
     # get the list of users enrolled in the course
-    users_in_cache = set(CachedEnrollment.get_cached_users(course_run))
+    users_in_cache = set(CachedEnrollment.get_cached_users(course_run)).intersection(
+        set(CachedCurrentGrade.get_cached_users(course_run))
+    )
     # get all the users with already frozen final grade
     users_already_processed = set(FinalGrade.get_frozen_users(course_run))
     return User.objects.filter(pk__in=users_in_cache.difference(users_already_processed))

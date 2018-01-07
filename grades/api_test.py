@@ -286,6 +286,11 @@ class GradeAPITests(MockedESTestCase):
         CachedEnrollmentFactory.create(user=other_user, course_run=self.run_fa)
         assert sorted(
             [user.pk for user in api.get_users_without_frozen_final_grade(self.run_fa)]
+        ) == sorted([self.user.pk])
+
+        CachedCurrentGradeFactory.create(user=other_user, course_run=self.run_fa)
+        assert sorted(
+            [user.pk for user in api.get_users_without_frozen_final_grade(self.run_fa)]
         ) == sorted([self.user.pk, other_user.pk])
 
         # add the user to the FinalGrade model as in progress
