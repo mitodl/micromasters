@@ -358,7 +358,6 @@ export default class LearnerSearch extends SearchkitComponent {
             field="profile.birth_country"
             operator="OR"
             itemComponent={CountryRefinementOption}
-            size={15}
           />
         </FilterVisibilityToggle>
         <FilterVisibilityToggle
@@ -371,7 +370,6 @@ export default class LearnerSearch extends SearchkitComponent {
             title=""
             id="country"
             translations={this.translations}
-            size={0}
           />
         </FilterVisibilityToggle>
         {isStaff ? (

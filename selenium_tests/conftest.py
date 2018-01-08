@@ -30,7 +30,7 @@ from courses.factories import (
 from dashboard.models import ProgramEnrollment
 from financialaid.factories import TierProgramFactory
 from search.indexing_api import (
-    delete_index,
+    delete_indices,
     recreate_index,
 )
 from roles.roles import Staff
@@ -155,7 +155,7 @@ def es_index():
     """
     recreate_index()
     yield
-    delete_index()
+    delete_indices()
 
 
 @pytest.fixture()

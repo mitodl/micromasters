@@ -15,12 +15,11 @@ from search.api import (
     update_percolate_memberships as _update_percolate_memberships,
 )
 from search.indexing_api import (
-    get_default_alias,
+    refresh_all_default_indices as _refresh_all_default_indices,
     index_program_enrolled_users as _index_program_enrolled_users,
     remove_program_enrolled_user as _remove_program_enrolled_user,
     index_percolate_queries as _index_percolate_queries,
     delete_percolate_query as _delete_percolate_query,
-    refresh_index as _refresh_index,
 )
 from search.models import PercolateQuery
 
@@ -40,7 +39,7 @@ def post_indexing_handler(program_enrollments):
     if not feature_sync_user:
         log.debug('OPEN_DISCUSSIONS_USER_SYNC is set to False (so disabled) in the settings')
 
-    _refresh_index(get_default_alias())
+    _refresh_all_default_indices()
     for program_enrollment in program_enrollments:
         try:
             _send_automatic_emails(program_enrollment)

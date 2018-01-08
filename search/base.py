@@ -8,7 +8,7 @@ from django.test import (
 )
 
 from search import tasks
-from search.indexing_api import recreate_index, delete_index
+from search.indexing_api import recreate_index, delete_indices
 
 
 class ESTestCase(TestCase):
@@ -33,7 +33,7 @@ class ESTestCase(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        delete_index()
+        delete_indices()
         super().tearDownClass()
 
 

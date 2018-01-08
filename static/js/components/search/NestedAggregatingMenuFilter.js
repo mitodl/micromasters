@@ -111,7 +111,6 @@ class NestedAggregatingFacetAccessor extends NestedAccessorMixin(
       this.key,
       _.omitBy(
         {
-          size:          this.size,
           order:         this.getOrder(),
           include:       this.options.include,
           exclude:       this.options.exclude,

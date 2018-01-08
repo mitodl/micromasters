@@ -8,7 +8,6 @@ from django.test import override_settings
 
 from dashboard.factories import ProgramEnrollmentFactory
 from search.base import MockedESTestCase
-from search.indexing_api import get_default_alias
 from search.models import PercolateQuery
 from search.tasks import (
     index_users,
@@ -54,7 +53,7 @@ class SearchTasksTests(MockedESTestCase):
                 self.document_needs_updating_mock = mock
             elif mock.name == "_send_automatic_emails":
                 self.send_automatic_emails_mock = mock
-            elif mock.name == "_refresh_index":
+            elif mock.name == "_refresh_all_default_indices":
                 self.refresh_index_mock = mock
             elif mock.name == "_update_percolate_memberships":
                 self.update_percolate_memberships_mock = mock
@@ -71,7 +70,7 @@ class SearchTasksTests(MockedESTestCase):
             self.send_automatic_emails_mock.assert_any_call(enrollment)
             self.update_percolate_memberships_mock.assert_any_call(
                 enrollment.user, PercolateQuery.DISCUSSION_CHANNEL_TYPE)
-        self.refresh_index_mock.assert_called_with(get_default_alias())
+        self.refresh_index_mock.assert_called_with()
 
     @data(*[
         [True, True],
@@ -133,7 +132,7 @@ class SearchTasksTests(MockedESTestCase):
             self.send_automatic_emails_mock.assert_any_call(enrollment)
             self.update_percolate_memberships_mock.assert_any_call(
                 enrollment.user, PercolateQuery.DISCUSSION_CHANNEL_TYPE)
-        self.refresh_index_mock.assert_called_with(get_default_alias())
+        self.refresh_index_mock.assert_called_with()
 
     def test_failed_automatic_email(self):
         """
@@ -155,7 +154,7 @@ class SearchTasksTests(MockedESTestCase):
             )
         assert self.send_automatic_emails_mock.call_count == len(enrollments)
         assert self.update_percolate_memberships_mock.call_count == len(enrollments)
-        self.refresh_index_mock.assert_called_with(get_default_alias())
+        self.refresh_index_mock.assert_called_with()
 
     def test_failed_update_percolate_memberships(self):
         """
@@ -178,4 +177,4 @@ class SearchTasksTests(MockedESTestCase):
             )
         assert self.send_automatic_emails_mock.call_count == len(enrollments)
         assert self.update_percolate_memberships_mock.call_count == len(enrollments)
-        self.refresh_index_mock.assert_called_with(get_default_alias())
+        self.refresh_index_mock.assert_called_with()

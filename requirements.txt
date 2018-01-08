@@ -32,8 +32,8 @@ django==1.10.5
 djangorestframework==3.5.2
 edx-api-client==0.4.0
 edx-opaque-keys==0.4
-elasticsearch-dsl==2.1.0
-elasticsearch==2.3.0
+elasticsearch-dsl==5.4.0
+elasticsearch==5.5.1
 factory-boy==2.8.1
 faker==0.7.18
 gnupg==2.2.0
@@ -84,7 +84,7 @@ stevedore==1.25.0         # via edx-opaque-keys
 tornado==4.5.1            # via robohash
 traitlets==4.3.2          # via ipython
 unidecode==0.4.21         # via wagtail
-urllib3==1.22             # via elasticsearch
+urllib3==1.21.1           # via elasticsearch
 uwsgi==2.0.15
 vine==1.1.4               # via amqp
 wagtail==1.10.1

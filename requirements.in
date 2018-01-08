@@ -13,8 +13,8 @@ django-webpack-loader==0.4.1
 djangorestframework==3.5.2
 edx-api-client==0.4.0
 edx-opaque-keys==0.4
-elasticsearch-dsl==2.1.0
-elasticsearch==2.3.0
+elasticsearch-dsl==5.4.0
+elasticsearch==5.5.1
 factory_boy
 faker
 gnupg==2.2.0
