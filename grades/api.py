@@ -119,7 +119,8 @@ def get_final_grade(user, course_run):
 def get_users_without_frozen_final_grade(course_run):
     """
     Public function to extract all the users that need a final grade freeze for a course run.
-    All the users that are enrolled in a course run must have frozen final grade.
+    All the users that are enrolled in a course run and have a
+    current grade must have frozen final grade.
 
     Args:
         course_run (CourseRun): a course run model object
@@ -127,7 +128,7 @@ def get_users_without_frozen_final_grade(course_run):
     Returns:
         queryset: a queryset of users
     """
-    # get the list of users enrolled in the course
+    # get the list of users enrolled in the course and have current grade
     users_in_cache = set(CachedEnrollment.get_cached_users(course_run)).intersection(
         set(CachedCurrentGrade.get_cached_users(course_run))
     )
