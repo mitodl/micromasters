@@ -25,7 +25,12 @@ class PercolateQuery(TimestampedModel):
 
 
 class PercolateQueryMembership(TimestampedModel):
-    """A user's membership in a PercolateQuery"""
+    """
+    A user's membership in a PercolateQuery. There should be roughly
+    count(users) * count(percolate_query) rows in this model
+    (some users will be missing if they don't have ProgramEnrollments),
+    for percolate queries connected to channels.
+    """
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="percolate_memberships")
     query = models.ForeignKey(PercolateQuery, on_delete=models.CASCADE, related_name="percolate_memberships")
 
