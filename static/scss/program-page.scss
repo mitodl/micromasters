@@ -472,20 +472,22 @@
 }
 
 .program-course-popover {
-  padding: 17px 28px 25px;
+  padding: 31px 32px 25px;
   box-shadow: 0px 1px 15px 6px rgba(0, 0, 0, 0.14) !important;
   /* important is used here to overwrite the inline style in the popover */
 
   .title {
-    font-weight: 500;
-    font-size: 17px;
-    margin: 0 0 6px 0;
+    font-weight: 400;
+    font-size: 18px;
+    margin: 0 0 17px 0;
+    line-height: 1.3;
   }
 
   .description {
     color: $font-black;
     font-size: 15px;
     margin-bottom: 1em;
+    line-height: 1.4;
   }
 
   .edx-link {
