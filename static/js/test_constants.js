@@ -27,7 +27,7 @@ import {
 } from "./constants"
 
 export const ELASTICSEARCH_RESPONSE = deepFreeze({
-  took:      22,
+  took:      48,
   timed_out: false,
   _shards:   {
     total:      5,
@@ -35,140 +35,222 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
     failed:     0
   },
   hits: {
-    total:     1,
-    max_score: 1,
+    total:     66,
+    max_score: null,
     hits:      [
       {
-        _index:  "micromasters",
-        _type:   "user",
-        _id:     "3",
-        _score:  1,
+        _index:  "micromasters_334c64b09c6d47e38854ba0649bf18fc",
+        _type:   "program_user",
+        _id:     "214",
+        _score:  null,
         _source: {
+          id:      214,
+          user_id: 210,
+          email:   "xavier.addy@example.com",
           profile: {
-            username:                  "test_user",
-            filled_out:                true,
-            account_privacy:           "public",
-            email_optin:               true,
-            first_name:                "Test",
-            last_name:                 "User",
-            full_name:                 "Test User",
-            preferred_name:            "Test",
-            country:                   "AF",
-            state_or_territory:        "AF-BDS",
-            city:                      "Kabul",
-            birth_country:             "AF",
-            nationality:               "US",
-            date_of_birth:             "1986-08-12",
-            preferred_language:        "ab",
-            gender:                    "f",
-            pretty_printed_student_id: "MMM000003",
-            work_history:              [
+            username:                   "fake.xavier.addy",
+            filled_out:                 true,
+            agreed_to_terms_of_service: false,
+            account_privacy:            "private",
+            email_optin:                true,
+            email:                      "xavier.addy@example.com",
+            first_name:                 "othername",
+            last_name:                  "Addy",
+            full_name:                  "othername Addy",
+            preferred_name:             "Xavier",
+            country:                    "US",
+            state_or_territory:         "US-ND",
+            city:                       "Temecula",
+            address:                    null,
+            postal_code:                null,
+            birth_country:              "CA",
+            nationality:                "CA",
+            date_of_birth:              "1986-06-15",
+            preferred_language:         null,
+            gender:                     "m",
+            pretty_printed_student_id:  "MMM000210",
+            student_id:                 210,
+            work_history:               [
               {
-                id:                 15,
-                city:               "Kabul",
-                state_or_territory: "AF-BDS",
-                country:            "AF",
-                company_name:       "Test Corp",
-                position:           "Assistant Foobar",
-                industry:           "Accounting",
+                id:                 314,
+                city:               "Stirling",
+                state_or_territory: "CA-NS",
+                country:            "CA",
+                company_name:       "Volvo",
+                position:           "Mechanic",
+                industry:           "Automotive",
                 end_date:           null,
-                start_date:         "1999-12-01"
-              },
-              {
-                id:                 95,
-                city:               "Kabul",
-                state_or_territory: "AF-BDS",
-                country:            "AF",
-                company_name:       "Test Corp",
-                position:           "Assistant Foobar",
-                industry:           "Accounting",
-                end_date:           null,
-                start_date:         "1999-12-01"
-              }
-            ],
-            edx_level_of_education: "jhs",
-            education:              [
-              {
-                id:                        12,
-                degree_name:               "hs",
-                graduation_date:           "1998-07-12",
-                field_of_study:            null,
-                online_degree:             false,
-                school_name:               " High School",
-                school_city:               "Kabul",
-                school_state_or_territory: "AF-BDS",
-                school_country:            "AF"
-              },
-              {
-                id:                        72,
-                degree_name:               "hs",
-                graduation_date:           "1998-07-12",
-                field_of_study:            null,
-                online_degree:             false,
-                school_name:               " High School",
-                school_city:               "Kabul",
-                school_state_or_territory: "AF-BDS",
-                school_country:            "AF"
-              }
-            ]
-          },
-          id: 3
-        }
-      },
-      {
-        // worse-case profile with null props
-        _index:  "micromasters",
-        _type:   "user",
-        _id:     "4",
-        _score:  1,
-        _source: {
-          profile: {
-            username:                  null,
-            filled_out:                true,
-            account_privacy:           null,
-            email_optin:               true,
-            first_name:                null,
-            last_name:                 null,
-            preferred_name:            null,
-            country:                   null,
-            state_or_territory:        null,
-            city:                      null,
-            birth_country:             null,
-            nationality:               null,
-            date_of_birth:             null,
-            preferred_language:        null,
-            gender:                    null,
-            pretty_printed_student_id: null,
-            work_history:              [
-              {
-                id:                 15,
-                city:               null,
-                state_or_territory: null,
-                country:            null,
-                company_name:       null,
-                position:           null,
-                industry:           null,
-                end_date:           null,
-                start_date:         null
+                start_date:         "2015-01-17"
               }
             ],
             edx_level_of_education: null,
             education:              [
               {
-                id:                        12,
-                degree_name:               null,
-                graduation_date:           null,
-                field_of_study:            null,
+                id:                        589,
+                degree_name:               "m",
+                graduation_date:           "2016-06-15",
+                field_of_study:            "28.0799",
                 online_degree:             false,
-                school_name:               null,
-                school_city:               null,
-                school_state_or_territory: null,
-                school_country:            null
+                school_name:               "Stirling University",
+                school_city:               "Stirling",
+                school_state_or_territory: "CA-NS",
+                school_country:            "CA"
+              },
+              {
+                id:                        588,
+                degree_name:               "b",
+                graduation_date:           "2008-06-15",
+                field_of_study:            "05.0114",
+                online_degree:             false,
+                school_name:               "Stirling University",
+                school_city:               "Stirling",
+                school_state_or_territory: "CA-NS",
+                school_country:            "CA"
+              },
+              {
+                id:                        587,
+                degree_name:               "hs",
+                graduation_date:           "2004-06-15",
+                field_of_study:            "45.1201",
+                online_degree:             false,
+                school_name:               "Stirling High School",
+                school_city:               "Stirling",
+                school_state_or_territory: "CA-NS",
+                school_country:            "CA"
               }
-            ]
+            ],
+            image:                null,
+            image_small:          null,
+            image_medium:         null,
+            about_me:             null,
+            romanized_first_name: null,
+            romanized_last_name:  null,
+            phone_number:         null
           },
-          id: 4
-        }
+          program: {
+            id:          34,
+            enrollments: [
+              {
+                final_grade:    86.0,
+                semester:       "2017 - Fall",
+                course_title:   "Digital Learning 100",
+                payment_status: "Auditing"
+              }
+            ],
+            grade_average:      86,
+            is_learner:         true,
+            num_courses_passed: 1,
+            total_courses:      3
+          }
+        },
+        sort: ["Addy", "othername"]
+      },
+      {
+        _index:  "micromasters_334c64b09c6d47e38854ba0649bf18fc",
+        _type:   "program_user",
+        _id:     "232",
+        _score:  null,
+        _source: {
+          id:      232,
+          user_id: 227,
+          email:   "concepcion.alonso@example.com",
+          profile: {
+            username:                   "fake.concepcion.alonso",
+            filled_out:                 true,
+            agreed_to_terms_of_service: false,
+            account_privacy:            "private",
+            email_optin:                true,
+            email:                      "concepcion.alonso@example.com",
+            first_name:                 "Concepcion",
+            last_name:                  "Alonso",
+            full_name:                  "Concepcion Alonso",
+            preferred_name:             "Concepcion",
+            country:                    "ES",
+            state_or_territory:         "ES-EX",
+            city:                       "Albacete",
+            address:                    null,
+            postal_code:                null,
+            birth_country:              "ES",
+            nationality:                "ES",
+            date_of_birth:              "1974-11-11",
+            preferred_language:         null,
+            gender:                     "f",
+            pretty_printed_student_id:  "MMM000227",
+            student_id:                 227,
+            work_history:               [
+              {
+                id:                 339,
+                city:               "Albacete",
+                state_or_territory: "ES-EX",
+                country:            "ES",
+                company_name:       "Chase",
+                position:           "Branch Manager",
+                industry:           "Banking",
+                end_date:           null,
+                start_date:         "2015-01-17"
+              }
+            ],
+            edx_level_of_education: null,
+            education:              [
+              {
+                id:                        638,
+                degree_name:               "m",
+                graduation_date:           "2004-11-11",
+                field_of_study:            "52.0406",
+                online_degree:             false,
+                school_name:               "Albacete University",
+                school_city:               "Albacete",
+                school_state_or_territory: "ES-EX",
+                school_country:            "ES"
+              },
+              {
+                id:                        637,
+                degree_name:               "b",
+                graduation_date:           "1996-11-11",
+                field_of_study:            "46.0504",
+                online_degree:             false,
+                school_name:               "Albacete University",
+                school_city:               "Albacete",
+                school_state_or_territory: "ES-EX",
+                school_country:            "ES"
+              },
+              {
+                id:                        636,
+                degree_name:               "hs",
+                graduation_date:           "1992-11-11",
+                field_of_study:            "16.0801",
+                online_degree:             false,
+                school_name:               "Albacete High School",
+                school_city:               "Albacete",
+                school_state_or_territory: "ES-EX",
+                school_country:            "ES"
+              }
+            ],
+            image:                null,
+            image_small:          null,
+            image_medium:         null,
+            about_me:             null,
+            romanized_first_name: null,
+            romanized_last_name:  null,
+            phone_number:         null
+          },
+          program: {
+            id:          34,
+            enrollments: [
+              {
+                final_grade:    98.0,
+                semester:       "2017 - Fall",
+                course_title:   "Digital Learning 100",
+                payment_status: "Auditing"
+              }
+            ],
+            grade_average:      98,
+            is_learner:         true,
+            num_courses_passed: 1,
+            total_courses:      3
+          }
+        },
+        sort: ["Alonso", "Concepcion"]
       },
       {
         // extreme worst-case empty profile
@@ -180,227 +262,10 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
     ]
   },
   aggregations: {
-    "grade-average": {
-      "grade-average": {
-        buckets: [
-          {
-            doc_count: 0,
-            key:       0
-          },
-          {
-            doc_count: 0,
-            key:       5
-          },
-          {
-            doc_count: 0,
-            key:       10
-          },
-          {
-            doc_count: 0,
-            key:       15
-          },
-          {
-            doc_count: 0,
-            key:       20
-          },
-          {
-            doc_count: 0,
-            key:       25
-          },
-          {
-            doc_count: 0,
-            key:       30
-          },
-          {
-            doc_count: 0,
-            key:       35
-          },
-          {
-            doc_count: 0,
-            key:       40
-          },
-          {
-            doc_count: 0,
-            key:       45
-          },
-          {
-            doc_count: 0,
-            key:       50
-          },
-          {
-            doc_count: 0,
-            key:       55
-          },
-          {
-            doc_count: 0,
-            key:       60
-          },
-          {
-            doc_count: 0,
-            key:       65
-          },
-          {
-            doc_count: 0,
-            key:       70
-          },
-          {
-            doc_count: 0,
-            key:       75
-          },
-          {
-            doc_count: 0,
-            key:       80
-          },
-          {
-            doc_count: 0,
-            key:       85
-          },
-          {
-            doc_count: 0,
-            key:       90
-          },
-          {
-            doc_count: 0,
-            key:       95
-          },
-          {
-            doc_count: 0,
-            key:       100
-          }
-        ]
-      },
-      doc_count: 0
-    },
-    courses: {
-      children: {
-        doc_count: 0,
-        lvl0:      {
-          children: {
-            doc_count_error_upper_bound: 0,
-            buckets:                     [],
-            sum_other_doc_count:         0
-          },
-          doc_count: 0
-        }
-      },
-      doc_count: 1
-    },
-    "num-courses-passed": {
-      doc_count:            1,
-      "num-courses-passed": {
-        value: 1
-      }
-    },
-    "profile.birth_country8": {
-      "profile.birth_country": {
-        doc_count_error_upper_bound: 0,
-        buckets:                     [
-          {
-            doc_count: 1,
-            key:       "DZ"
-          }
-        ],
-        sum_other_doc_count: 0
-      },
-      doc_count:                     1,
-      "profile.birth_country_count": {
-        value: 1
-      }
-    },
-    "profile.work_history.company_name14": {
-      inner: {
-        doc_count:                           2,
-        "profile.work_history.company_name": {
-          doc_count_error_upper_bound: 0,
-          buckets:                     [
-            {
-              company_name_count: {
-                doc_count: 1,
-                count:     {
-                  value: 1
-                }
-              },
-              doc_count: 2,
-              key:       "Microsoft"
-            }
-          ],
-          sum_other_doc_count: 0
-        },
-        "profile.work_history.company_name_count": {
-          value: 1
-        }
-      },
-      doc_count: 1
-    },
-    country: {
-      "profile.country": {
-        "profile.country": {
-          doc_count_error_upper_bound: 0,
-          buckets:                     [
-            {
-              doc_count: 1,
-              key:       "US"
-            }
-          ],
-          sum_other_doc_count: 0
-        },
-        doc_count: 1
-      },
-      doc_count: 1
-    },
-    "profile.education.degree_name12": {
-      inner: {
-        "profile.education.degree_name": {
-          doc_count_error_upper_bound: 0,
-          buckets:                     [
-            {
-              doc_count:         2,
-              key:               "b",
-              school_name_count: {
-                doc_count: 1,
-                count:     {
-                  value: 1
-                }
-              }
-            },
-            {
-              doc_count:         1,
-              key:               "hs",
-              school_name_count: {
-                doc_count: 1,
-                count:     {
-                  value: 1
-                }
-              }
-            },
-            {
-              doc_count:         1,
-              key:               "m",
-              school_name_count: {
-                doc_count: 1,
-                count:     {
-                  value: 1
-                }
-              }
-            }
-          ],
-          sum_other_doc_count: 0
-        },
-        doc_count:                             4,
-        "profile.education.degree_name_count": {
-          value: 3
-        }
-      },
-      doc_count: 1
-    },
-    // Adding aggregation responses for enrollments, which are structured differently
-    // because of custom query building...
-    //
-    // This agg response is structured as if no filters were applied to enrollments
-    "program.enrollments.course_title3": {
-      doc_count: 250,
+    "program.enrollments.course_title2": {
+      doc_count: 66,
       inner:     {
-        doc_count:                                250,
+        doc_count:                                100,
         "program.enrollments.course_title_count": {
           value: 3
         },
@@ -409,54 +274,556 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
           sum_other_doc_count:         0,
           buckets:                     [
             {
-              key:                 "Test Course 100",
-              doc_count:           150,
+              key:                 "Digital Learning 100",
+              doc_count:           65,
               top_level_doc_count: {
-                doc_count: 15
+                doc_count: 65
               }
             },
             {
-              key:                 "Test Course 200",
-              doc_count:           100,
+              key:                 "Digital Learning 200",
+              doc_count:           31,
               top_level_doc_count: {
-                doc_count: 10
+                doc_count: 31
+              }
+            },
+            {
+              key:                 "Digital Learning 300",
+              doc_count:           4,
+              top_level_doc_count: {
+                doc_count: 4
               }
             }
           ]
         }
       }
     },
-    // This agg response is structured as if one or more filters were applied to enrollments
-    "program.enrollments.payment_status5": {
-      doc_count: 20,
+    country: {
+      doc_count:         66,
+      "profile.country": {
+        doc_count:         66,
+        "profile.country": {
+          doc_count_error_upper_bound: 0,
+          sum_other_doc_count:         0,
+          buckets:                     [
+            {
+              key:       "ES",
+              doc_count: 23
+            },
+            {
+              key:       "CA",
+              doc_count: 22
+            },
+            {
+              key:       "US",
+              doc_count: 21
+            }
+          ]
+        }
+      }
+    },
+    company_name11: {
+      doc_count: 66,
       inner:     {
-        doc_count:                            50,
-        "program.enrollments.payment_status": {
-          doc_count:    20,
-          nested_terms: {
-            doc_count_error_upper_bound: 0,
-            sum_other_doc_count:         0,
-            buckets:                     [
-              {
-                key:                 "Auditing",
-                doc_count:           15,
-                top_level_doc_count: {
-                  doc_count: 15
-                }
-              },
-              {
-                key:                 "Paid",
-                doc_count:           5,
-                top_level_doc_count: {
-                  doc_count: 5
+        doc_count:                                 66,
+        "profile.work_history.company_name_count": {
+          value: 16
+        },
+        "profile.work_history.company_name": {
+          doc_count_error_upper_bound: 0,
+          sum_other_doc_count:         0,
+          buckets:                     [
+            {
+              key:                "Hyundai",
+              doc_count:          7,
+              company_name_count: {
+                doc_count: 7,
+                count:     {
+                  value: 7
                 }
               }
-            ]
+            },
+            {
+              key:                "Chase",
+              doc_count:          6,
+              company_name_count: {
+                doc_count: 6,
+                count:     {
+                  value: 6
+                }
+              }
+            },
+            {
+              key:                "Goldman Sachs",
+              doc_count:          6,
+              company_name_count: {
+                doc_count: 6,
+                count:     {
+                  value: 6
+                }
+              }
+            },
+            {
+              key:                "Google",
+              doc_count:          6,
+              company_name_count: {
+                doc_count: 6,
+                count:     {
+                  value: 6
+                }
+              }
+            },
+            {
+              key:                "Volvo",
+              doc_count:          6,
+              company_name_count: {
+                doc_count: 6,
+                count:     {
+                  value: 6
+                }
+              }
+            },
+            {
+              key:                "Ford",
+              doc_count:          5,
+              company_name_count: {
+                doc_count: 5,
+                count:     {
+                  value: 5
+                }
+              }
+            },
+            {
+              key:                "TD Bank",
+              doc_count:          5,
+              company_name_count: {
+                doc_count: 5,
+                count:     {
+                  value: 5
+                }
+              }
+            },
+            {
+              key:                "Toyota",
+              doc_count:          5,
+              company_name_count: {
+                doc_count: 5,
+                count:     {
+                  value: 5
+                }
+              }
+            },
+            {
+              key:                "Apple",
+              doc_count:          4,
+              company_name_count: {
+                doc_count: 4,
+                count:     {
+                  value: 4
+                }
+              }
+            },
+            {
+              key:                "Microsoft",
+              doc_count:          4,
+              company_name_count: {
+                doc_count: 4,
+                count:     {
+                  value: 4
+                }
+              }
+            },
+            {
+              key:                "Berkshire Hathaway",
+              doc_count:          3,
+              company_name_count: {
+                doc_count: 3,
+                count:     {
+                  value: 3
+                }
+              }
+            },
+            {
+              key:                "Fidelity",
+              doc_count:          3,
+              company_name_count: {
+                doc_count: 3,
+                count:     {
+                  value: 3
+                }
+              }
+            },
+            {
+              key:                "Bank of America",
+              doc_count:          2,
+              company_name_count: {
+                doc_count: 2,
+                count:     {
+                  value: 2
+                }
+              }
+            },
+            {
+              key:                "Vanguard",
+              doc_count:          2,
+              company_name_count: {
+                doc_count: 2,
+                count:     {
+                  value: 2
+                }
+              }
+            },
+            {
+              key:                "Audi",
+              doc_count:          1,
+              company_name_count: {
+                doc_count: 1,
+                count:     {
+                  value: 1
+                }
+              }
+            },
+            {
+              key:                "ME",
+              doc_count:          1,
+              company_name_count: {
+                doc_count: 1,
+                count:     {
+                  value: 1
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "final-grade": {
+      doc_count: 66,
+      inner:     {
+        doc_count:     100,
+        "final-grade": {
+          buckets: [
+            {
+              key:       0,
+              doc_count: 0
+            },
+            {
+              key:       5,
+              doc_count: 0
+            },
+            {
+              key:       10,
+              doc_count: 0
+            },
+            {
+              key:       15,
+              doc_count: 0
+            },
+            {
+              key:       20,
+              doc_count: 0
+            },
+            {
+              key:       25,
+              doc_count: 0
+            },
+            {
+              key:       30,
+              doc_count: 0
+            },
+            {
+              key:       35,
+              doc_count: 0
+            },
+            {
+              key:       40,
+              doc_count: 0
+            },
+            {
+              key:       45,
+              doc_count: 0
+            },
+            {
+              key:       50,
+              doc_count: 0
+            },
+            {
+              key:       55,
+              doc_count: 0
+            },
+            {
+              key:       60,
+              doc_count: 9
+            },
+            {
+              key:       65,
+              doc_count: 15
+            },
+            {
+              key:       70,
+              doc_count: 11
+            },
+            {
+              key:       75,
+              doc_count: 8
+            },
+            {
+              key:       80,
+              doc_count: 18
+            },
+            {
+              key:       85,
+              doc_count: 12
+            },
+            {
+              key:       90,
+              doc_count: 9
+            },
+            {
+              key:       95,
+              doc_count: 13
+            },
+            {
+              key:       100,
+              doc_count: 0
+            }
+          ]
+        }
+      }
+    },
+    "num-courses-passed6": {
+      doc_count:            66,
+      "num-courses-passed": {
+        value: 4
+      }
+    },
+    education_level10: {
+      doc_count: 66,
+      inner:     {
+        doc_count:                       186,
+        "profile.education.degree_name": {
+          doc_count_error_upper_bound: 0,
+          sum_other_doc_count:         0,
+          buckets:                     [
+            {
+              key:               "hs",
+              doc_count:         65,
+              school_name_count: {
+                doc_count: 65,
+                count:     {
+                  value: 65
+                }
+              }
+            },
+            {
+              key:               "b",
+              doc_count:         64,
+              school_name_count: {
+                doc_count: 64,
+                count:     {
+                  value: 64
+                }
+              }
+            },
+            {
+              key:               "m",
+              doc_count:         57,
+              school_name_count: {
+                doc_count: 57,
+                count:     {
+                  value: 57
+                }
+              }
+            }
+          ]
+        },
+        "profile.education.degree_name_count": {
+          value: 3
+        }
+      }
+    },
+    "program.enrollments.semester5": {
+      doc_count: 66,
+      inner:     {
+        doc_count:                            100,
+        "program.enrollments.semester_count": {
+          value: 3
+        },
+        "program.enrollments.semester": {
+          doc_count_error_upper_bound: 0,
+          sum_other_doc_count:         0,
+          buckets:                     [
+            {
+              key:                 "2017 - Fall",
+              doc_count:           65,
+              top_level_doc_count: {
+                doc_count: 65
+              }
+            },
+            {
+              key:                 "2016 - Spring",
+              doc_count:           31,
+              top_level_doc_count: {
+                doc_count: 31
+              }
+            },
+            {
+              key:                 "2015 - Summer",
+              doc_count:           4,
+              top_level_doc_count: {
+                doc_count: 4
+              }
+            }
+          ]
+        }
+      }
+    },
+    "grade-average7": {
+      doc_count:       65,
+      "grade-average": {
+        buckets: [
+          {
+            key:       0,
+            doc_count: 0
+          },
+          {
+            key:       5,
+            doc_count: 0
+          },
+          {
+            key:       10,
+            doc_count: 0
+          },
+          {
+            key:       15,
+            doc_count: 0
+          },
+          {
+            key:       20,
+            doc_count: 0
+          },
+          {
+            key:       25,
+            doc_count: 0
+          },
+          {
+            key:       30,
+            doc_count: 0
+          },
+          {
+            key:       35,
+            doc_count: 0
+          },
+          {
+            key:       40,
+            doc_count: 0
+          },
+          {
+            key:       45,
+            doc_count: 0
+          },
+          {
+            key:       50,
+            doc_count: 0
+          },
+          {
+            key:       55,
+            doc_count: 0
+          },
+          {
+            key:       60,
+            doc_count: 3
+          },
+          {
+            key:       65,
+            doc_count: 10
+          },
+          {
+            key:       70,
+            doc_count: 6
+          },
+          {
+            key:       75,
+            doc_count: 7
+          },
+          {
+            key:       80,
+            doc_count: 19
+          },
+          {
+            key:       85,
+            doc_count: 6
+          },
+          {
+            key:       90,
+            doc_count: 6
+          },
+          {
+            key:       95,
+            doc_count: 8
+          },
+          {
+            key:       100,
+            doc_count: 0
           }
+        ]
+      }
+    },
+    "program.enrollments.payment_status4": {
+      doc_count: 66,
+      inner:     {
+        doc_count:                            100,
+        "program.enrollments.payment_status": {
+          doc_count_error_upper_bound: 0,
+          sum_other_doc_count:         0,
+          buckets:                     [
+            {
+              key:                 "Auditing",
+              doc_count:           65,
+              top_level_doc_count: {
+                doc_count: 65
+              }
+            },
+            {
+              key:                 "Paid",
+              doc_count:           35,
+              top_level_doc_count: {
+                doc_count: 31
+              }
+            }
+          ]
         },
         "program.enrollments.payment_status_count": {
           value: 2
         }
+      }
+    },
+    birth_location8: {
+      doc_count:                     66,
+      "profile.birth_country_count": {
+        value: 4
+      },
+      "profile.birth_country": {
+        doc_count_error_upper_bound: 0,
+        sum_other_doc_count:         0,
+        buckets:                     [
+          {
+            key:       "ES",
+            doc_count: 23
+          },
+          {
+            key:       "CA",
+            doc_count: 21
+          },
+          {
+            key:       "US",
+            doc_count: 21
+          },
+          {
+            key:       "DZ",
+            doc_count: 1
+          }
+        ]
       }
     }
   }

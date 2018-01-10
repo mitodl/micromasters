@@ -3,10 +3,10 @@ import React from "react"
 import R from "ramda"
 import { SearchkitComponent } from "searchkit"
 import Icon from "react-mdl/lib/Icon"
-import { getAppliedFilterValue } from "./util"
+
+import { getAppliedFilterValue, matchFieldName } from "./util"
 
 export const FILTER_ID_ADJUST = {
-  birth_location:  "profile.birth_country",
   education_level: "profile.education.degree_name",
   company_name:    "profile.work_history.company_name",
   courses:         "program.enrollments.course_title",
@@ -31,12 +31,7 @@ export default class FilterVisibilityToggle extends SearchkitComponent {
 
   getChildFacetDocCount = (results: Object, resultIdPrefix: string): number => {
     const matchingAggKey = R.compose(
-      R.find(
-        // Accept keys that start with the given prefix and end with numbers
-        key =>
-          key.startsWith(resultIdPrefix) &&
-          !isNaN(key.substring(resultIdPrefix.length))
-      ),
+      R.find(matchFieldName(resultIdPrefix)),
       R.keys
     )(results.aggregations)
 

@@ -76,15 +76,10 @@ class LearnerSearchPage extends React.Component {
   }
 }
 
-const mapStateToProps = (state, props) => {
-  let email = state.email
-  if (email[email.currentlyActive]) {
-    email = _.cloneDeep(email)
-    email[email.currentlyActive].searchkit = props.searchkit
-  }
+const mapStateToProps = state => {
   return {
     ui:                       state.ui,
-    email:                    email,
+    email:                    state.email,
     currentProgramEnrollment: state.currentProgramEnrollment,
     channelDialog:            state.channelDialog,
     channels:                 state.channels
@@ -92,8 +87,9 @@ const mapStateToProps = (state, props) => {
 }
 
 export default R.compose(
-  withSearchkitManager,
   connect(mapStateToProps),
+  // withSearchkitManager uses currentProgramEnrollment so it must come after connect(...)
+  withSearchkitManager,
   withEmailDialog({
     [SEARCH_EMAIL_TYPE]:  SEARCH_RESULT_EMAIL_CONFIG,
     [LEARNER_EMAIL_TYPE]: LEARNER_EMAIL_CONFIG

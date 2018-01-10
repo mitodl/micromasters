@@ -4,16 +4,25 @@ import { mount } from "enzyme"
 import sinon from "sinon"
 import { assert } from "chai"
 import { SearchkitManager, SearchkitProvider } from "searchkit"
+import axios from "axios"
+import MockAdapter from "axios-mock-adapter"
 
 import CustomResetFiltersDisplay from "./CustomResetFiltersDisplay"
+import { ELASTICSEARCH_RESPONSE } from "../../test_constants"
 
 describe("CustomResetFiltersDisplay", () => {
-  let sandbox
-  let searchKit
+  let sandbox, searchKit, mockAxios
 
   beforeEach(() => {
-    searchKit = new SearchkitManager()
     sandbox = sinon.sandbox.create()
+    mockAxios = new MockAdapter(axios)
+
+    const replySpy = sandbox
+      .stub()
+      .returns(Promise.resolve([200, ELASTICSEARCH_RESPONSE]))
+    mockAxios.onPost("/_search").reply(replySpy)
+
+    searchKit = new SearchkitManager()
   })
 
   afterEach(() => {

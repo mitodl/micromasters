@@ -103,10 +103,10 @@ export const SEARCH_RESULT_EMAIL_CONFIG: EmailConfig = {
 
   getEmailSendFunction: () => sendSearchResultMail,
 
-  emailSendParams: emailState => [
+  emailSendParams: (emailState, searchkit) => [
     emailState.inputs.subject || "",
     emailState.inputs.body || "",
-    emailState.searchkit.buildQuery().query,
+    searchkit.buildQuery().query,
     emailState.inputs.sendAutomaticEmails || false
   ],
 

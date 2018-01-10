@@ -41,7 +41,7 @@ export default class ModifiedSelectedFilter extends React.Component {
         className={bemBlocks
           .option()
           .mix(bemBlocks.container("item"))
-          .mix(`selected-filter--${filterId}`)()}
+          .mix(`selected-filter--${filterId}`)}
       >
         <div className={bemBlocks.option("name")}>
           {labelKey}: {labelValue}

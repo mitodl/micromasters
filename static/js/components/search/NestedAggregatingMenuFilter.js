@@ -4,11 +4,11 @@ import {
   TermsBucket,
   FilterBucket,
   AggsContainer,
-  CardinalityMetric
+  CardinalityMetric,
+  MenuFilter
 } from "searchkit"
 import _ from "lodash"
 import { NestedAccessorMixin } from "./util"
-import PatchedMenuFilter from "./PatchedMenuFilter"
 
 const REVERSE_NESTED_AGG_KEY = "top_level_doc_count"
 const INNER_TERMS_AGG_KEY = "nested_terms"
@@ -127,9 +127,15 @@ class NestedAggregatingFacetAccessor extends NestedAccessorMixin(
       return termsBucket
     }
   }
+
+  getDocCount() {
+    // don't use the nested inner doc_count which is the sum of all document counts, instead
+    // use the number of users with that document
+    return this.getAggregations([this.uuid, "doc_count"], 0)
+  }
 }
 
-export default class NestedAggregatingMenuFilter extends PatchedMenuFilter {
+export default class NestedAggregatingMenuFilter extends MenuFilter {
   /**
    * Overrides defineAccessor in MenuFilter
    * Sets a custom Accessor for this Filter type. This is otherwise identical to the original implementation.

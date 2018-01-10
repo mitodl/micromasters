@@ -83,7 +83,7 @@ export const withEmailDialog = R.curry(
       }
 
       closeEmailComposerAndSend = (): Promise<void> => {
-        const { dispatch, email: { currentlyActive } } = this.props
+        const { dispatch, email: { currentlyActive }, searchkit } = this.props
         const activeEmail = this.getActiveEmailState()
         const errors = emailValidation(activeEmail.inputs)
         dispatch(
@@ -99,7 +99,10 @@ export const withEmailDialog = R.curry(
           if (emailConfigs[currentlyActive].editEmail) {
             return dispatch(
               emailConfigs[currentlyActive].editEmail(
-                emailConfigs[currentlyActive].emailSendParams(activeEmail)
+                emailConfigs[currentlyActive].emailSendParams(
+                  activeEmail,
+                  searchkit
+                )
               )
             ).then(this.closeAndClearEmailComposer)
           } else {
@@ -107,7 +110,10 @@ export const withEmailDialog = R.curry(
               sendEmail(
                 currentlyActive,
                 emailConfigs[currentlyActive].getEmailSendFunction(),
-                emailConfigs[currentlyActive].emailSendParams(activeEmail)
+                emailConfigs[currentlyActive].emailSendParams(
+                  activeEmail,
+                  searchkit
+                )
               )
             ).then(this.closeAndClearEmailComposer())
           }
