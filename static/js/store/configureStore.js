@@ -28,7 +28,7 @@ const devTools = () =>
 const storage = paths => compose(filter(paths))(adapter(window.localStorage))
 
 const createPersistentStore = persistence =>
-  compose(persistence, middleware(), devTools())(createStore)
+  compose(middleware(), persistence, devTools())(createStore)
 
 const createPersistentTestStore = persistence =>
   compose(persistence)(configureTestStore)
