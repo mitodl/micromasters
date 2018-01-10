@@ -545,6 +545,32 @@ body.app-media {
       }
     }
   }
+
+  div.more-coming-soon {
+    background: $bg-light-gray;
+    padding: 42px 70px 20px;
+    width: 90%;
+    margin: 0 auto 80px;
+    max-width: 870px;
+    text-align: center;
+
+    p {
+      font-size: 17px;
+      color: #6f6f6f;
+      line-height: 23px;
+      margin: 0 0 22px;
+      font-weight: 400;
+
+      a.sign-up-link {
+        font-size: 18px;
+        font-weight: 500;
+        cursor: pointer;
+
+      }
+
+    }
+
+  }
 }
 
 .reasons-section, .how-it-works-section {
