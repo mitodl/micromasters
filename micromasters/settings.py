@@ -497,7 +497,7 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': crontab(minute='*', hour='*')
     },
     'freeze-final-grades-3-days-a-week': {
-        'task': 'grades.find_course_runs_and_freeze_grades',
+        'task': 'grades.tasks.find_course_runs_and_freeze_grades',
         'schedule': crontab(minute=0, hour='2', day_of_week='1,3,5')
     },
 }
