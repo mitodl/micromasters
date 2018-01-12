@@ -114,7 +114,7 @@ class LearnersStates:
         Iterator over all dashboard states supported by this command.
 
         Yields:
-            tuple of scenario_func, name, url:
+            tuple of scenario_func, name:
                 scenario_func is a function to make modifications to the database to produce a scenario
                 name is the name of this scenario, to use with the filename
         """
