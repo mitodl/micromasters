@@ -44,7 +44,13 @@ def create_enrolled_user_batch(num_to_create, program, **kwargs):
 def create_user_for_login(is_staff=True, username=None):
     """Create a test user that can log into the app"""
     with mute_signals(post_save):
-        profile_params = dict(validated=True, user__is_staff=is_staff)
+        profile_params = dict(
+            validated=True,
+            user__is_staff=is_staff,
+            image=None,  # make these None so the default image is used
+            image_small=None,
+            image_medium=None,
+        )
         if username is not None:
             profile_params['user__username'] = username
         user = ProfileFactory.create(**profile_params).user
