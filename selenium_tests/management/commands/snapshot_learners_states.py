@@ -17,7 +17,6 @@ from selenium.common.exceptions import ElementNotVisibleException
 
 from courses.models import Program
 from dashboard.models import ProgramEnrollment
-from profiles.api import get_social_username
 from roles.models import Role, Staff
 from search.indexing_api import recreate_index
 from selenium_tests.data_util import create_user_for_login
