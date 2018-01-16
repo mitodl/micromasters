@@ -2,9 +2,6 @@
 # pylint: disable=redefined-outer-name,unused-argument
 import os
 import sys
-from selenium.webdriver.common.by import By
-from faker.generator import random
-import pytest
 
 from django.core.management import (
     BaseCommand,
@@ -13,7 +10,10 @@ from django.core.management import (
 from django.db import connection
 from django.test import override_settings
 from django.contrib.auth.models import User
+from faker.generator import random
+import pytest
 from selenium.common.exceptions import ElementNotVisibleException
+from selenium.webdriver.common.by import By
 
 from courses.models import Program
 from dashboard.models import ProgramEnrollment
@@ -284,9 +284,9 @@ class Command(BaseCommand):
         # We need to use pytest here instead of invoking the tests directly so that the test database
         # is used. Using override_settings(DATABASE...) causes a warning message and is not reliable.
         global RUNNING_DASHBOARD_STATES  # pylint: disable=global-statement
-        RUNNING_DASHBOARD_STATES = True
+        RUNNING_DASHBOARD_STATES = True  # pylint: disable=global-variable-undefined
         global DASHBOARD_STATES_OPTIONS  # pylint: disable=global-statement
-        DASHBOARD_STATES_OPTIONS = options
+        DASHBOARD_STATES_OPTIONS = options  # pylint: disable=global-variable-undefined
 
         with override_settings(
             ELASTICSEARCH_INDEX='testindex',
