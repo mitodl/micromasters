@@ -283,9 +283,9 @@ class Command(BaseCommand):
 
         # We need to use pytest here instead of invoking the tests directly so that the test database
         # is used. Using override_settings(DATABASE...) causes a warning message and is not reliable.
-        global RUNNING_DASHBOARD_STATES  # pylint: disable=global-statement
+        global RUNNING_DASHBOARD_STATES  # pylint: disable=global-statement,global-variable-undefined
         RUNNING_DASHBOARD_STATES = True  # pylint: disable=global-variable-undefined
-        global DASHBOARD_STATES_OPTIONS  # pylint: disable=global-statement
+        global DASHBOARD_STATES_OPTIONS  # pylint: disable=global-statement,global-variable-undefined
         DASHBOARD_STATES_OPTIONS = options  # pylint: disable=global-variable-undefined
 
         with override_settings(
