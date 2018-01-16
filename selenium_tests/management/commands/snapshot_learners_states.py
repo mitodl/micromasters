@@ -163,6 +163,9 @@ class LearnersStates:
         yield (
             self.simple_scenario("semester[0]=2015 - Summer&q=cam"), "2015_cam",
         )
+        yield (
+            self.simple_scenario("education_level[0]=m"), "grad"
+        )
 
     def simple_scenario(self, url):
         """
