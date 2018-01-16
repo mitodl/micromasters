@@ -137,6 +137,13 @@ class LearnersStates:
         )
         yield (
             self.simple_scenario(
+                "courses[0]=Analog Learning 100&final-grade[min]=60&"
+                "final-grade[max]=100&grade-average[min]=80&grade-average[max]=90"
+            ),
+            "100_course_passing_final_grade_80s_avg_grade"
+        )
+        yield (
+            self.simple_scenario(
                 "courses[0]=Analog Learning 200&payment_status[0]=Paid&semester[0]=2016 - Summer",
             ),
             "200_course_paid_2016__no_results",
