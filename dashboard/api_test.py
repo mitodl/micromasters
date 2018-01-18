@@ -550,6 +550,11 @@ class CourseRunTest(CourseTests):
         run_status = api.get_status_for_courserun(crun, self.mmtrack)
         assert run_status.status == api.CourseRunStatus.WILL_ATTEND
         assert run_status.course_run == crun
+        # promised run in the future
+        crun.start_date = None
+        crun.save()
+        run_status = api.get_status_for_courserun(crun, self.mmtrack)
+        assert run_status.status == api.CourseRunStatus.WILL_ATTEND
 
     def test_enrolled_not_paid_course(self):
         """test for get_status_for_courserun for present and future course with audit enrollment"""
@@ -635,6 +640,8 @@ class CourseRunTest(CourseTests):
             enr_end=None,
             edx_key="course-v1:MITx+8.MechCX+2014_T1"
         )
+        crun.fuzzy_start_date = None
+        crun.save()
         with self.assertRaises(ImproperlyConfigured):
             api.get_status_for_courserun(crun, self.mmtrack)
 
