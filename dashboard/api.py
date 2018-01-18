@@ -346,7 +346,7 @@ def get_status_for_courserun(course_run, mmtrack):
     if mmtrack.is_enrolled_mmtrack(course_run.edx_course_key):
         if course_run.is_current:
             status = CourseRunStatus.CURRENTLY_ENROLLED
-        elif course_run.is_future:
+        elif course_run.is_future or course_run.is_promised:
             status = CourseRunStatus.WILL_ATTEND
         # the following statement needs to happen only with the new version of the algorithm
         elif course_run.has_frozen_grades:

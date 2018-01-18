@@ -219,6 +219,13 @@ class CourseRun(models.Model):
         return self.start_date > now_in_utc()
 
     @property
+    def is_promised(self):
+        """Checks if the course has fuzzy start date"""
+        if not self.start_date:
+            return self.fuzzy_start_date is not None
+        return False
+
+    @property
     def is_future_enrollment_open(self):
         """
         Checks if the course will run in the future and
