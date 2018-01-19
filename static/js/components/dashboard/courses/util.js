@@ -97,3 +97,9 @@ export const isEnrollableRun = (run: CourseRun): boolean =>
   !R.isEmpty(run.enrollment_start_date) &&
   moment(run.enrollment_start_date).isSameOrBefore(moment(), "day") &&
   run.status === STATUS_OFFERED
+
+export const isOfferedInUncertainFuture = (run: CourseRun): boolean =>
+  R.isNil(run.course_start_date) &&
+  !R.isNil(run.fuzzy_start_date) &&
+  !R.isEmpty(run.fuzzy_start_date) &&
+  run.status === STATUS_OFFERED

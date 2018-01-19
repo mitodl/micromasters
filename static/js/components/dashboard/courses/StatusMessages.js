@@ -32,7 +32,8 @@ import {
   hasFailedCourseRun,
   futureEnrollableRun,
   isEnrollableRun,
-  userIsEnrolled
+  userIsEnrolled,
+  isOfferedInUncertainFuture
 } from "./util"
 import {
   hasPassingExamGrade,
@@ -127,11 +128,19 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
 
   // Course run isn't enrollable, user never enrolled
   if (!isEnrollableRun(firstRun) && !R.any(userIsEnrolled, course.runs)) {
-    return S.Just([
-      {
-        message: "There are no future course runs scheduled."
-      }
-    ])
+    if(isOfferedInUncertainFuture(firstRun)){
+      return S.Just([
+        {
+          message: `Course starts ${formatDate(firstRun.fuzzy_start_date)}.`
+        }
+      ])
+    } else {
+      return S.Just([
+        {
+          message: "There are no future course runs scheduled."
+        }
+      ])
+    }
   }
 
   // Course is running, user has already paid,
