@@ -7,8 +7,6 @@ import Icon from "react-mdl/lib/Icon"
 import { getAppliedFilterValue, matchFieldName } from "./util"
 
 export const FILTER_ID_ADJUST = {
-  education_level: "profile.education.degree_name",
-  company_name:    "profile.work_history.company_name",
   courses:         "program.enrollments.course_title",
   payment_status:  "program.enrollments.payment_status",
   semester:        "program.enrollments.semester"
