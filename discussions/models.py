@@ -6,9 +6,10 @@ from django.db import models
 
 from courses.models import Program
 from search.models import PercolateQuery
+from micromasters.models import TimestampedModel
 
 
-class DiscussionUser(models.Model):
+class DiscussionUser(TimestampedModel):
     """
     Tracks the user's discussion user and profile
     """
@@ -20,7 +21,7 @@ class DiscussionUser(models.Model):
         return "Discussion Profile: {}".format(self.username)
 
 
-class Channel(models.Model):
+class Channel(TimestampedModel):
     """
     Represents an open-discussions channel and a percolate query which specifies its membership
     """
