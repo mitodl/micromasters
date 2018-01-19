@@ -53,6 +53,7 @@ class Course(models.Model):
 
     # These fields will likely make their way into the CMS at some point.
     title = models.CharField(max_length=255)
+    course_number = models.TextField(blank=True, null=True)
     thumbnail = models.ImageField(null=True, blank=True)
     description = models.TextField(blank=True, null=True)
     prerequisites = models.TextField(blank=True, null=True)
