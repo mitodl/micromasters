@@ -7,9 +7,9 @@ import Icon from "react-mdl/lib/Icon"
 import { getAppliedFilterValue, matchFieldName } from "./util"
 
 export const FILTER_ID_ADJUST = {
-  courses:         "program.enrollments.course_title",
-  payment_status:  "program.enrollments.payment_status",
-  semester:        "program.enrollments.semester"
+  courses:        "program.enrollments.course_title",
+  payment_status: "program.enrollments.payment_status",
+  semester:       "program.enrollments.semester"
 }
 
 export default class FilterVisibilityToggle extends SearchkitComponent {
