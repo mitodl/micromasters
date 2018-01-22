@@ -128,7 +128,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
 
   // Course run isn't enrollable, user never enrolled
   if (!isEnrollableRun(firstRun) && !R.any(userIsEnrolled, course.runs)) {
-    if (isOfferedInUncertainFuture(firstRun)) {
+    if (firstRun.fuzzy_start_date && isOfferedInUncertainFuture(firstRun)) {
       return S.Just([
         {
           message: `Course starts ${firstRun.fuzzy_start_date}.`
