@@ -120,6 +120,16 @@ describe("Course Status Messages", () => {
       )
     })
 
+    it("should show next promised course", () => {
+      course.runs[0].fuzzy_start_date = "Fall 2018"
+
+      assertIsJust(calculateMessages(calculateMessagesProps), [
+        {
+          message: "Course starts Fall 2018"
+        }
+      ])
+    })
+
     it("should include information about a course coupon", () => {
       const makeAmountMessageStub = sandbox
         .stub(libCoupon, "makeAmountMessage")
