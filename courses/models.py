@@ -220,7 +220,12 @@ class CourseRun(models.Model):
 
     @property
     def is_promised(self):
-        """Checks if the course has fuzzy start date"""
+        """
+        Checks if the course has fuzzy start date
+
+        Returns:
+            bool: if the course has only fuzzy start date
+        """
         if not self.start_date:
             return self.fuzzy_start_date is not None
         return False
