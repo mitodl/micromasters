@@ -125,7 +125,7 @@ describe("Course Status Messages", () => {
 
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
-          message: "Course starts Fall 2018"
+          message: "Course starts Fall 2018."
         }
       ])
     })

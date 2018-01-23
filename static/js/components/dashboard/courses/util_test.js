@@ -360,10 +360,10 @@ describe("dashboard course utilities", () => {
         [STATUS_WILL_ATTEND, "Fuzzy date", null, false],
         [STATUS_OFFERED, "Fuzzy date", moment(), false],
         [STATUS_OFFERED, "", null, false]
-      ].forEach(([status, fuzzy_date, start_date, result]) => {
+      ].forEach(([status, fuzzyDate, startDate, result]) => {
         course.runs[0].status = status
-        course.runs[0].fuzzy_start_date = fuzzy_date
-        course.runs[0].course_start_date = start_date
+        course.runs[0].fuzzy_start_date = fuzzyDate
+        course.runs[0].course_start_date = startDate
         assert.equal(isOfferedInUncertainFuture(course.runs[0]), result)
       })
     })
