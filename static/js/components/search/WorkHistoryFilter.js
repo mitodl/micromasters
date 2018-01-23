@@ -17,9 +17,7 @@ const WorkHistoryAccessor = WithReverseNestedAccessor(
 
 const ModifiedRefinementListFilter = WithAccessor(
   RefinementListFilter,
-  filter => {
-    return new WorkHistoryAccessor(filter.props.id, filter.getAccessorOptions())
-  }
+  WorkHistoryAccessor
 )
 
 export default class WorkHistoryFilter extends SearchkitComponent {

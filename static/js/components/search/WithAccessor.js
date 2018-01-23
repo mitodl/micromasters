@@ -3,11 +3,11 @@ import { Accessor, SearchkitComponent } from "searchkit"
 
 const WithAccessor = (
   BaseSearchkitComponent: SearchkitComponent,
-  defineAccessor: (component: SearchkitComponent) => Accessor
+  accessor: Accessor
 ) =>
   class extends BaseSearchkitComponent {
     defineAccessor() {
-      return defineAccessor(this)
+      return new accessor(this.props.id, this.getAccessorOptions())
     }
   }
 

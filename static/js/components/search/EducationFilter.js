@@ -13,9 +13,7 @@ const EducationAccessor = WithReverseNestedAccessor(
   "school_name_count"
 )
 
-const ModifiedMenuFilter = WithAccessor(MenuFilter, filter => {
-  return new EducationAccessor(filter.props.id, filter.getAccessorOptions())
-})
+const ModifiedMenuFilter = WithAccessor(MenuFilter, EducationAccessor)
 
 const makeDegreeTranslations: () => Object = () => {
   const translations = {}
