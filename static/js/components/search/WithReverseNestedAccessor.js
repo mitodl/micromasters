@@ -20,8 +20,8 @@ const WithReverseNestedAccessor = (
       const modifiedQuery = super.buildSharedQuery(query)
       /**
      *  Modify query to perform aggregation on unique users,
-     *  to avoid duplicate counts of multiple work histories
-     *  at one company of the same user
+     *  to avoid duplicate counts of multiple work histories or education items
+     *  for the same user
      **/
       const pieces = nestedField.split(".")
       if (pieces.length !== 3) {
