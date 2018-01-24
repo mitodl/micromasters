@@ -96,18 +96,17 @@ export const NestedAccessorMixin = BaseSearchkitAccessorClass =>
         filters.push(groupedNestedFilter)
         query = query.update({ filters: { $set: filters } })
 
-        const filtersMap = _.cloneDeep(query.index.filtersMap)
+        let filtersMap = _.cloneDeep(query.index.filtersMap)
         // Add the same 'AND' filter to query.index.filtersMap, with the nested path (not the uuid) as the key
         filtersMap[nestedPath] = groupedNestedFilter
         // If it exists, delete the key for this specific filter (since all filters on this path are grouped together).
         const oldKey = this.getFilterMapKey()
         const matcher = matchFieldName(oldKey)
-        for (const key of Object.keys(filtersMap)) {
-          if (matcher(key)) {
-            delete filtersMap[key]
-            break
-          }
-        }
+        filtersMap = R.compose(
+          R.fromPairs,
+          R.reject(R.compose(matcher, R.view(R.lensIndex(0)))),
+          R.toPairs
+        )(filtersMap)
 
         query = query.update({ filtersMap: { $set: filtersMap } })
       }
