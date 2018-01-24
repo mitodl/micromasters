@@ -6,6 +6,7 @@ import MockAdapter from "axios-mock-adapter"
 import axios from "axios"
 import { Utils as SearchkitUtils } from "searchkit"
 import qs from "qs"
+import { browserHistory } from "react-router"
 
 import { wait } from "../util/util"
 import IntegrationTestHelper from "../util/integration_test_helper"
@@ -72,8 +73,9 @@ describe("LearnerSearchPage", function() {
     })
   })
 
-  const renderSearch = async () => {
-    const [wrapper] = await renderComponent("/learners")
+  const renderSearch = async (query: Object) => {
+    const url = query ? `/learners?${qs.stringify(query)}` : "/learners"
+    const [wrapper] = await renderComponent(url)
     const searchkit = wrapper.find("SearchkitProvider").props().searchkit
     await searchkit.registrationCompleted
     // cycle through the event loop to let searchkit do its rendering
@@ -298,7 +300,7 @@ describe("LearnerSearchPage", function() {
           query:    "xyz",
           type:     "phrase_prefix"
         })
-        assert.equal(window.location.toString(), "http://fake/?q=xyz")
+        assert.equal(window.location.toString(), "http://fake/learners?q=xyz")
       })
   })
 
@@ -615,15 +617,65 @@ describe("LearnerSearchPage", function() {
     })
   })
 
+  it("has correctly adjusted filters for the final grade", async () => {
+    const query = {
+      courses:       ["Digital Learning 200"],
+      "final-grade": { min: 40, max: 100 }
+    }
+
+    await renderSearch(query)
+
+    assert.equal(replySpy.callCount, 1)
+    const callArgs = replySpy.firstCall.args[0]
+    const body = JSON.parse(callArgs.data)
+    // there should be three filters, none should be duplicates
+    assert.deepEqual(body.aggs.education_level10.filter, {
+      bool: {
+        must: [
+          {
+            nested: {
+              path:  "program.enrollments",
+              query: {
+                bool: {
+                  must: [
+                    {
+                      term: {
+                        "program.enrollments.course_title":
+                          "Digital Learning 200"
+                      }
+                    },
+                    {
+                      range: {
+                        "program.enrollments.final_grade": {
+                          gte: "40",
+                          lte: "100"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            term: {
+              "program.id": 3
+            }
+          }
+        ]
+      }
+    })
+  })
+
   it("navigates between the learner search page and the profile page without error", async () => {
     await renderSearch()
     await listenForActions(
       [REQUEST_DASHBOARD, RECEIVE_DASHBOARD_SUCCESS],
       () => {
-        helper.browserHistory.push(`/learner/${SETTINGS.user.username}`)
+        browserHistory.push(`/learner/${SETTINGS.user.username}`)
       }
     )
-    helper.browserHistory.push("/learners")
-    helper.browserHistory.push(`/learner/${SETTINGS.user.username}`)
+    browserHistory.push("/learners")
+    browserHistory.push(`/learner/${SETTINGS.user.username}`)
   })
 })

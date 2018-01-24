@@ -2,7 +2,7 @@
 import React from "react"
 import { mount } from "enzyme"
 import sinon from "sinon"
-import { createMemoryHistory } from "react-router"
+import { browserHistory } from "react-router"
 import { mergePersistedState } from "redux-localstorage"
 import { compose } from "redux"
 import fetchMock from "fetch-mock"
@@ -107,11 +107,6 @@ export default class IntegrationTestHelper {
     this.scrollIntoViewStub = this.sandbox.stub()
     window.HTMLDivElement.prototype.scrollIntoView = this.scrollIntoViewStub
     window.HTMLFieldSetElement.prototype.scrollIntoView = this.scrollIntoViewStub
-    this.browserHistory = createMemoryHistory()
-    this.currentLocation = null
-    this.browserHistory.listen(url => {
-      this.currentLocation = url
-    })
   }
 
   cleanup() {
@@ -144,14 +139,14 @@ export default class IntegrationTestHelper {
     let wrapper, div
 
     return this.listenForActions(expectedTypes, () => {
-      this.browserHistory.push(url)
+      browserHistory.push(url)
       div = document.createElement("div")
       div.setAttribute("id", "integration_test_div")
       document.body.appendChild(div)
       wrapper = mount(
         <div>
           <DashboardRouter
-            browserHistory={this.browserHistory}
+            browserHistory={browserHistory}
             store={this.store}
             onRouteUpdate={() => null}
             routes={testRoutes}

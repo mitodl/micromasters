@@ -151,7 +151,7 @@ describe("ProfilePage", function() {
         "/profile/education",
         REDIRECT_ACTIONS.concat(SET_PROGRAM)
       ).then(() => {
-        assert.equal(helper.currentLocation.pathname, "/profile/personal")
+        assert.equal(window.location.pathname, "/profile/personal")
         assert.equal(getStep(), PERSONAL_STEP)
       })
     })
@@ -167,7 +167,7 @@ describe("ProfilePage", function() {
         "/profile/professional",
         REDIRECT_ACTIONS
       ).then(() => {
-        assert.equal(helper.currentLocation.pathname, "/profile/education")
+        assert.equal(window.location.pathname, "/profile/education")
         assert.equal(getStep(), EDUCATION_STEP)
       })
     })

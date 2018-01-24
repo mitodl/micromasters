@@ -89,7 +89,7 @@ describe("App", function() {
         .returns(Promise.resolve(response))
 
       return renderComponent("/", REDIRECT_ACTIONS).then(() => {
-        assert.equal(helper.currentLocation.pathname, "/profile/personal")
+        assert.equal(window.location.pathname, "/profile/personal")
         assert.equal(checkStep(), PERSONAL_STEP)
       })
     })
@@ -104,7 +104,7 @@ describe("App", function() {
         .returns(Promise.resolve(response))
 
       return renderComponent("/", REDIRECT_ACTIONS).then(() => {
-        assert.equal(helper.currentLocation.pathname, "/profile/professional")
+        assert.equal(window.location.pathname, "/profile/professional")
         assert.equal(checkStep(), EMPLOYMENT_STEP)
       })
     })
@@ -117,7 +117,7 @@ describe("App", function() {
         .withArgs(SETTINGS.user.username)
         .returns(Promise.resolve(profile))
       return renderComponent("/", REDIRECT_ACTIONS).then(() => {
-        assert.equal(helper.currentLocation.pathname, "/profile/professional")
+        assert.equal(window.location.pathname, "/profile/professional")
         assert.equal(checkStep(), EMPLOYMENT_STEP)
       })
     })
@@ -130,7 +130,7 @@ describe("App", function() {
         .returns(Promise.resolve(response))
 
       return renderComponent("/", REDIRECT_ACTIONS).then(() => {
-        assert.equal(helper.currentLocation.pathname, "/profile/education")
+        assert.equal(window.location.pathname, "/profile/education")
         assert.equal(checkStep(), EDUCATION_STEP)
       })
     })

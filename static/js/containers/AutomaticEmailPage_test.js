@@ -59,7 +59,7 @@ describe("AutomaticEmailPage", () => {
       actions.automaticEmails.get.successType
     )
     return renderComponent("/automaticemails", expectedActions).then(() => {
-      assert.equal(helper.currentLocation.pathname, "/dashboard")
+      assert.equal(window.location.pathname, "/dashboard")
     })
   })
 
