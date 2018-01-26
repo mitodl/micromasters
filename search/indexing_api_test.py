@@ -791,3 +791,60 @@ class PercolateQueryTests(ESTestCase):
             delete_percolate_query(percolate_query.id)
             with self.assertRaises(NotFoundError):
                 es.get_percolate_query(percolate_query.id)
+
+    def test_fix_percolate_query(self):
+        input_query = {
+            "query": {
+                "bool": {
+                    "filter": [
+                        {
+                            "bool": {
+                                "must": [
+                                    {
+                                        "term": {
+                                            "program.is_learner": True
+                                        }
+                                    }
+                                ],
+                                "should": [
+                                    {
+                                        "term": {
+                                            "program.id": 34
+                                        }
+                                    }
+                                ],
+                                "minimum_should_match": 1
+                            }
+                        },
+                        {
+                            "term": {
+                                "profile.filled_out": True
+                            }
+                        },
+                        {
+                            "bool": {
+                                "must": [
+                                    {
+                                        "nested": {
+                                            "path": "program.enrollments",
+                                            "filter": {
+                                                "term": {
+                                                    "program.enrollments.semester": "2015 - Summer"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "term": {
+                                            "program.id": 34
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+        query = PercolateQueryFactory.create(query=input_query)
+        assert index_percolate_queries([query]) == 1

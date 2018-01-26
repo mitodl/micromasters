@@ -30,7 +30,10 @@ from search.connection import (
 )
 from search.exceptions import ReindexException
 from search.models import PercolateQuery
-from search.util import open_json_stream
+from search.util import (
+    fix_nested_filter,
+    open_json_stream,
+)
 
 log = logging.getLogger(__name__)
 
@@ -633,7 +636,7 @@ def _serialize_percolate_query(query):
             This is the query dict value with `_id` set to the database id so that ES can update this in place.
     """
     return {
-        **query.query,
+        **fix_nested_filter(query.query, None),
         "_id": query.id,
     }
 
