@@ -75,7 +75,9 @@ export const staffCourseInfo = (courseRun: CourseRun, course: Course) => {
     }
   } else {
     if (hasPassedCourseRun(course)) {
-      if (course.has_exam && !hasPassingExamGrade(course)) {
+      if (course.has_exam && course.can_schedule_exam) {
+        return "Passed edX course. Authorized to schedule exam."
+      } else if (course.has_exam && !hasPassingExamGrade(course)) {
         return "Passed edX course, did not pass exam"
       }
       return "Passed"

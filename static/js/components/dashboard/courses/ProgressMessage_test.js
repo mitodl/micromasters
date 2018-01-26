@@ -161,9 +161,21 @@ describe("Course ProgressMessage", () => {
       assert.equal(staffCourseInfo(course.runs[0], course), "Passed")
     })
 
+    it("should describe passing the edX course and can schedule an exam", () => {
+      makeRunPast(course.runs[0])
+      course.runs[0].status = STATUS_PASSED
+      course.can_schedule_exam = true
+      course.has_exam = true
+      assert.equal(
+        staffCourseInfo(course.runs[0], course),
+        "Passed edX course. Authorized to schedule exam."
+      )
+    })
+
     it("should describe passing the edX course but not the exam", () => {
       makeRunPast(course.runs[0])
       course.runs[0].status = STATUS_PASSED
+      course.can_schedule_exam = false
       course.has_exam = true
       assert.equal(
         staffCourseInfo(course.runs[0], course),
