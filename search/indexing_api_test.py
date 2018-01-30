@@ -793,6 +793,9 @@ class PercolateQueryTests(ESTestCase):
                 es.get_percolate_query(percolate_query.id)
 
     def test_fix_percolate_query(self):
+        """
+        Make sure all nested -> filter are replaced with nested -> query
+        """
         input_query = {
             "query": {
                 "bool": {
