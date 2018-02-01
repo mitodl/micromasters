@@ -49,9 +49,6 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):  
         next_url = next_relative_url
     backend.strategy.session_set('next', next_url)
 
-    if not is_new:
-        return
-
     access_token = response.get('access_token')
     if not access_token:
         # this should never happen for the edx oauth provider, but just in case...
@@ -74,6 +71,10 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):  
         }
     )
 
+    if not is_new:
+        update_email(user_profile_edx, user)
+        return
+
     name = user_profile_edx.get('name', "")
     user_profile.edx_name = name
     user_profile.first_name, user_profile.last_name = split_name(name)
@@ -93,6 +94,7 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):  
     user_profile.agreed_to_terms_of_service = True
 
     user_profile.save()
+    update_email(user_profile_edx, user)
 
     log.debug(
         'Profile for user "%s" updated with values from EDX %s',
@@ -114,3 +116,14 @@ def set_last_update(details, *args, **kwargs):  # pylint: disable=unused-argumen
     """
     details['updated_at'] = now_in_utc().timestamp()
     return details
+
+
+def update_email(user_profile_edx, user):
+    """
+    updates email address of user
+    Args:
+        user_profile_edx (dict): user details from edX
+        user (User): user object
+    """
+    user.email = user_profile_edx.get('email')
+    user.save()

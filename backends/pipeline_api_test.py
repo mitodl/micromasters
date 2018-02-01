@@ -211,6 +211,27 @@ class EdxPipelineApiTest(MockedESTestCase):
         assert self.user_profile.date_of_birth is None
 
     @mock.patch('backends.edxorg.EdxOrgOAuth2.get_json')
+    def test_update_email(self, mocked_get_json):
+        """
+        Assert email change.
+        """
+        mocked_content = {
+            'email': 'foo@example.com'
+        }
+        mocked_get_json.return_value = mocked_content
+        pipeline_api.update_profile_from_edx(
+            edxorg.EdxOrgOAuth2(strategy=mock.Mock()), self.user, {'access_token': 'foo_token'}, True)
+        mocked_get_json.assert_called_once_with(
+            urljoin(
+                edxorg.EdxOrgOAuth2.EDXORG_BASE_URL,
+                '/api/user/v1/accounts/{0}'.format(get_social_username(self.user))
+            ),
+            headers={'Authorization': 'Bearer foo_token'}
+        )
+
+        assert self.user.email == mocked_content['email']
+
+    @mock.patch('backends.edxorg.EdxOrgOAuth2.get_json')
     def test_preferred_language(self, mocked_get_json):
         """
         If language_proficiencies is missing or invalid, we should not set
