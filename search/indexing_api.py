@@ -17,7 +17,7 @@ from micromasters.utils import (
 )
 from search.connection import (
     ALL_INDEX_TYPES,
-    get_aliases_and_doc_type,
+    get_aliases_and_doc_types,
     get_default_alias_and_doc_type,
     get_legacy_default_alias,
     get_conn,
@@ -379,14 +379,18 @@ def index_program_enrolled_users(
         chunk_size (int): The number of items per chunk to index
     """
     if public_indices is None and public_doc_type is None:
-        public_indices, public_doc_type = get_aliases_and_doc_type(PUBLIC_ENROLLMENT_INDEX_TYPE)
+        public_tuples = get_aliases_and_doc_types(PUBLIC_ENROLLMENT_INDEX_TYPE)
     elif public_indices is None or public_doc_type is None:
         raise ValueError("Both public_indices and public_doc_type must be set or neither of them should be set")
+    else:
+        public_tuples = [(index, public_doc_type) for index in public_indices]
 
     if private_indices is None and private_doc_type is None:
-        private_indices, private_doc_type = get_aliases_and_doc_type(PRIVATE_ENROLLMENT_INDEX_TYPE)
+        private_tuples = get_aliases_and_doc_types(PRIVATE_ENROLLMENT_INDEX_TYPE)
     elif private_indices is None or private_doc_type is None:
         raise ValueError("Both private_indices and private_doc_type must be set or neither of them should be set")
+    else:
+        private_tuples = [(index, private_doc_type) for index in private_indices]
 
     # Serialize to a temporary file so we don't serialize twice (serializing is expensive)
     with open_json_stream() as json_stream:
@@ -394,19 +398,19 @@ def index_program_enrolled_users(
             (document for document in _get_private_documents(program_enrollments))
         )
 
-        for index in public_indices:
+        for index, doc_type in public_tuples:
             _index_chunks(
                 _get_public_documents(json_stream.read_stream()),
                 index=index,
-                doc_type=public_doc_type,
+                doc_type=doc_type,
                 chunk_size=chunk_size,
             )
 
-        for index in private_indices:
+        for index, doc_type in private_tuples:
             _index_chunks(
                 json_stream.read_stream(),
                 index=index,
-                doc_type=private_doc_type,
+                doc_type=doc_type,
                 chunk_size=chunk_size,
             )
 
@@ -418,13 +422,13 @@ def remove_program_enrolled_user(program_enrollment_id):
     Args:
         program_enrollment_id (int): A program enrollment id which is the same as the document id to remove
     """
-    public_indices, public_doc_type = get_aliases_and_doc_type(PUBLIC_ENROLLMENT_INDEX_TYPE)
-    for index in public_indices:
-        _delete_item(program_enrollment_id, doc_type=public_doc_type, index=index)
+    public_tuples = get_aliases_and_doc_types(PUBLIC_ENROLLMENT_INDEX_TYPE)
+    for index, doc_type in public_tuples:
+        _delete_item(program_enrollment_id, doc_type=doc_type, index=index)
 
-    private_indices, private_doc_type = get_aliases_and_doc_type(PRIVATE_ENROLLMENT_INDEX_TYPE)
-    for index in private_indices:
-        _delete_item(program_enrollment_id, doc_type=private_doc_type, index=index)
+    private_tuples = get_aliases_and_doc_types(PRIVATE_ENROLLMENT_INDEX_TYPE)
+    for index, doc_type in private_tuples:
+        _delete_item(program_enrollment_id, doc_type=doc_type, index=index)
 
 
 def serialize_program_enrolled_user(program_enrollment):
@@ -531,8 +535,8 @@ def delete_indices():
     """
     conn = get_conn(verify=False)
     for index_type in ALL_INDEX_TYPES:
-        aliases, _ = get_aliases_and_doc_type(index_type)
-        for alias in aliases:
+        tuples = get_aliases_and_doc_types(index_type)
+        for alias, _ in tuples:
             if conn.indices.exists(alias):
                 conn.indices.delete(alias)
 
@@ -653,17 +657,17 @@ def index_percolate_queries(percolate_queries, chunk_size=100):
     Returns:
         int: Number of indexed items
     """
-    indices, doc_type = get_aliases_and_doc_type(PERCOLATE_INDEX_TYPE)
+    tuples = get_aliases_and_doc_types(PERCOLATE_INDEX_TYPE)
 
     count = 0
-    for index in indices:
+    for index, doc_type in tuples:
         count = _index_chunks(
             (_serialize_percolate_query(query) for query in percolate_queries),
             doc_type=doc_type,
             index=index,
             chunk_size=chunk_size,
         )
-    # Both counts should be the same
+    # All counts should be the same
     return count
 
 
@@ -675,7 +679,7 @@ def delete_percolate_query(percolate_query_id):
         percolate_query_id (int):
             The id of a deleted PercolateQuery
     """
-    indices, doc_type = get_aliases_and_doc_type(PERCOLATE_INDEX_TYPE)
+    tuples = get_aliases_and_doc_types(PERCOLATE_INDEX_TYPE)
 
-    for index in indices:
+    for index, doc_type in tuples:
         _delete_item(percolate_query_id, doc_type=doc_type, index=index)

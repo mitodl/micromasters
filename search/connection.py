@@ -74,7 +74,9 @@ def get_conn(*, verify=True, verify_indices=None):
     if verify_indices is None:
         verify_indices = set()
         for index_type in ALL_INDEX_TYPES:
-            verify_indices = verify_indices.union(get_aliases_and_doc_type(index_type)[0])
+            verify_indices = verify_indices.union(
+                (tup[0] for tup in get_aliases_and_doc_types(index_type))
+            )
     for verify_index in verify_indices:
         if not _CONN.indices.exists(verify_index):
             raise ReindexException("Unable to find index {index_name}".format(
@@ -126,52 +128,23 @@ def get_legacy_default_alias():
     return "{}_alias".format(settings.ELASTICSEARCH_INDEX)
 
 
-def _get_new_active_aliases_for_type(index_type):
-    """
-    Get aliases for active indexes. This is used to allow indexing of documents during a recreate_index
-
-    Args:
-        index_type (str): An index type
-
-    Returns:
-        tuple of str:
-            The alias for default, the alias for reindexing (if it exists)
-    """
-    conn = get_conn(verify=False)
-    default_alias = make_new_alias_name(index_type, is_reindexing=False)
-    temp_alias = make_new_alias_name(index_type, is_reindexing=True)
-    if conn.indices.exists(temp_alias):
-        return default_alias, temp_alias
-    else:
-        return default_alias,
-
-
-def _has_upgraded_to_elasticsearch_5():
-    """
-    If the legacy mapping exists then we are still on 2.4
-
-    Returns:
-        bool:
-            True if we have run recreate_index at least once after upgrading to Elasticsearch 5
-    """
-    conn = get_conn(verify=False)
-    index_name = make_new_alias_name(PRIVATE_ENROLLMENT_INDEX_TYPE, is_reindexing=False)
-    return conn.indices.exists(index_name)
-
-
-def get_aliases_and_doc_type(index_type):
+def get_aliases_and_doc_types(index_type):
     """
     Depending on whether or not we upgraded to the new schema for Elasticsearch 5,
-    return the doc type and index to use
+    return a list of active indices and associated doc types to use for indexing.
+
+    There is always one item in the returned list and the first tuple is always for the default alias.
 
     Args:
         index_type (str): The index type
 
     Returns:
-        tuple:
-            (a tuple of aliases to update, the doc type to use for the indexing)
-            The tuple of aliases will always be (default, reindexing), or (default,) if reindexing doesn't exist
+        list of tuple:
+            (a tuple of the alias, the doc type to use for the indexing of that alias)
+            The list will always have at least one tuple, and the first is always the default, newest alias
     """
+    conn = get_conn(verify=False)
+
     mapping = {
         PRIVATE_ENROLLMENT_INDEX_TYPE: LEGACY_USER_DOC_TYPE,
         PUBLIC_ENROLLMENT_INDEX_TYPE: LEGACY_PUBLIC_USER_DOC_TYPE,
@@ -179,10 +152,26 @@ def get_aliases_and_doc_type(index_type):
     }
 
     legacy_doc_type = mapping[index_type]
-    if _has_upgraded_to_elasticsearch_5():
-        return _get_new_active_aliases_for_type(index_type), GLOBAL_DOC_TYPE
+
+    default_alias = make_new_alias_name(index_type, is_reindexing=False)
+    reindexing_alias = make_new_alias_name(index_type, is_reindexing=True)
+    legacy_alias = get_legacy_default_alias()
+
+    if conn.indices.exists(default_alias):
+        # Elasticsearch 5
+        tuples = [
+            (default_alias, GLOBAL_DOC_TYPE),
+            (reindexing_alias, GLOBAL_DOC_TYPE),
+            (legacy_alias, legacy_doc_type),
+        ]
+        return [
+            tup for tup in tuples if conn.indices.exists(tup[0])
+        ]
     else:
-        return (get_legacy_default_alias(), ), legacy_doc_type
+        # Elasticsearch 2
+        return [
+            (legacy_alias, legacy_doc_type),
+        ]
 
 
 def get_default_alias_and_doc_type(index_type):
@@ -196,5 +185,4 @@ def get_default_alias_and_doc_type(index_type):
     Returns:
         tuple: (the default alias to update, the doc type to use for the indexing)
     """
-    aliases, doc_type = get_aliases_and_doc_type(index_type)
-    return aliases[0], doc_type
+    return get_aliases_and_doc_types(index_type)[0]
