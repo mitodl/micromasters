@@ -3,6 +3,7 @@ Tests for the pipeline APIs
 """
 from unittest import mock
 from urllib.parse import urljoin
+import ddt
 
 from backends import pipeline_api, edxorg
 from courses.factories import ProgramFactory
@@ -18,6 +19,7 @@ from roles.models import (
 from search.base import MockedESTestCase
 
 
+@ddt.ddt
 class EdxPipelineApiTest(MockedESTestCase):
     """
     Test class for APIs run during the Python Social Auth
@@ -129,10 +131,12 @@ class EdxPipelineApiTest(MockedESTestCase):
         self.user_profile.refresh_from_db()
         self.check_empty_profile(self.user_profile)
 
-    def test_update_profile_old_user(self):
+    @mock.patch('backends.edxorg.EdxOrgOAuth2.get_json')
+    def test_update_profile_old_user(self, mocked_get_json):
         """
         Only new users are updated
         """
+        mocked_get_json.return_value = self.mocked_edx_profile
         self.check_empty_profile(self.user_profile)
         pipeline_api.update_profile_from_edx(
             edxorg.EdxOrgOAuth2(strategy=mock.Mock()), self.user, {'access_token': 'foo'}, False)
@@ -152,11 +156,13 @@ class EdxPipelineApiTest(MockedESTestCase):
         self.user_profile.refresh_from_db()
         self.check_empty_profile(self.user_profile)
 
-    def test_update_profile_no_existing_profile(self):
+    @mock.patch('backends.edxorg.EdxOrgOAuth2.get_json')
+    def test_update_profile_no_existing_profile(self, mocked_get_json):
         """
         The profile did not exist for the user
         """
         self.user_profile.delete()
+        mocked_get_json.return_value = self.mocked_edx_profile
 
         with self.assertRaises(Profile.DoesNotExist):
             Profile.objects.get(user=self.user)
@@ -210,17 +216,18 @@ class EdxPipelineApiTest(MockedESTestCase):
         # We do not set the date_of_birth using year_of_birth
         assert self.user_profile.date_of_birth is None
 
+    @ddt.data(True, False)
     @mock.patch('backends.edxorg.EdxOrgOAuth2.get_json')
-    def test_update_email(self, mocked_get_json):
+    def test_update_email(self, is_new, mocked_get_json):
         """
-        Assert email change.
+        Test email changed for new user.
         """
         mocked_content = {
             'email': 'foo@example.com'
         }
         mocked_get_json.return_value = mocked_content
         pipeline_api.update_profile_from_edx(
-            edxorg.EdxOrgOAuth2(strategy=mock.Mock()), self.user, {'access_token': 'foo_token'}, True)
+            edxorg.EdxOrgOAuth2(strategy=mock.Mock()), self.user, {'access_token': 'foo_token'}, is_new)
         mocked_get_json.assert_called_once_with(
             urljoin(
                 edxorg.EdxOrgOAuth2.EDXORG_BASE_URL,

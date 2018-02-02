@@ -55,14 +55,6 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):  
         log.error('Missing access token for the user %s', user.username)
         return
 
-    try:
-        user_profile = Profile.objects.get(user=user)
-    except Profile.DoesNotExist:
-        # this should never happen, since the profile is created with a signal
-        # right after the user is created
-        log.error('No profile found for the user %s', user.username)
-        return
-
     username = get_social_username(user)
     user_profile_edx = backend.get_json(
         urljoin(backend.EDXORG_BASE_URL, '/api/user/v1/accounts/{0}'.format(username)),
@@ -73,6 +65,14 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):  
 
     if not is_new:
         update_email(user_profile_edx, user)
+        return
+
+    try:
+        user_profile = Profile.objects.get(user=user)
+    except Profile.DoesNotExist:
+        # this should never happen, since the profile is created with a signal
+        # right after the user is created
+        log.error('No profile found for the user %s', user.username)
         return
 
     name = user_profile_edx.get('name', "")
