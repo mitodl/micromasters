@@ -21,7 +21,7 @@ from dashboard.api_edx_cache import CachedEdxDataApi, CachedEdxUserData
 from dashboard.utils import MMTrack
 from financialaid.serializers import FinancialAidDashboardSerializer
 from grades import api
-from grades.models import FinalGrade
+from grades.models import FinalGrade, CombinedFinalGrade
 from grades.serializers import ProctoredExamGradeSerializer
 from exams.models import ExamAuthorization, ExamRun
 from micromasters.utils import now_in_utc
@@ -29,9 +29,6 @@ from profiles.api import get_social_auth
 
 # maximum number of exam attempts per payment
 ATTEMPTS_PER_PAID_RUN = 2
-
-COURSE_GRADE_WEIGHT = 0.4
-EXAM_GRADE_WEIGHT = 0.6
 
 # key that stores user_key and number of failures in a hash
 CACHE_KEY_FAILURE_NUMS_BY_USER = "update_cache_401_failure_numbers"
@@ -238,7 +235,7 @@ def get_info_for_course(course, mmtrack):
         ).data,
         "has_exam": course.has_exam,
         "certificate_url": get_certificate_url(mmtrack, course),
-        "overall_grade": get_overall_final_grade_for_course(mmtrack, course)
+        "overall_grade": get_overall_final_grade_for_course(mmtrack.user, course)
     }
 
     def _add_run(run, mmtrack_, status):
@@ -514,28 +511,20 @@ def get_certificate_url(mmtrack, course):
     return url
 
 
-def get_overall_final_grade_for_course(mmtrack, course):
+def get_overall_final_grade_for_course(user, course):
     """
     Calculate overall grade for course
 
     Args:
-        mmtrack (dashboard.utils.MMTrack): an instance of all user information about a program
+        user (django.contrib.auth.models.User): A user
         course (courses.models.Course): A course
     Returns:
         str: the overall final grade
     """
-    final_grades = mmtrack.get_passing_final_grades_for_course(course)
-    best_grade = final_grades.first()
-    if best_grade is None:
-        return ""
-    if not course.has_exam:
-        return str(round(best_grade.grade_percent))
-
-    best_exam = mmtrack.get_best_proctored_exam_grade(course)
-    if best_exam is None:
-        return ""
-
-    return str(round(best_grade.grade_percent * COURSE_GRADE_WEIGHT + best_exam.score * EXAM_GRADE_WEIGHT))
+    combined_grade = CombinedFinalGrade.objects.filter(user=user, course=course)
+    if combined_grade.exists():
+        return str(round(combined_grade.first().grade))
+    return ""
 
 
 def calculate_users_to_refresh_in_bulk():

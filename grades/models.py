@@ -329,3 +329,48 @@ class ProctoredExamGradeAudit(AuditModel):
             user=self.proctored_exam_grade.user,
             course_title=self.proctored_exam_grade.course.title
         )
+
+
+class CombinedFinalGrade(TimestampedModel, AuditableModel):
+    """
+    Model to store a combined grade for course_run and an exam
+    """
+    user = models.ForeignKey(User, null=False)
+    course = models.ForeignKey(Course, null=False)
+    grade = models.FloatField(
+        validators=[MinValueValidator(0.0), MaxValueValidator(1.0)]
+    )
+
+    class Meta:
+        unique_together = ('user', 'course')
+
+    @classmethod
+    def get_audit_class(cls):
+        return CombinedFinalGradeAudit
+
+    def to_dict(self):
+        return serialize_model_object(self)
+
+    def __str__(self):
+        return 'Combined Final Grade in course "{course_title}", user "{user}", value {grade}'.format(
+            user=self.user.username,
+            grade=self.grade,
+            course_title=self.course.title
+        )
+
+
+class CombinedFinalGradeAudit(AuditModel):
+    """
+    Audit table for CombinedFinalGrade
+    """
+    combined_final_grade = models.ForeignKey(CombinedFinalGrade, null=True, on_delete=models.SET_NULL)
+
+    @classmethod
+    def get_related_field_name(cls):
+        return 'combined_final_grade'
+
+    def __str__(self):
+        return 'Combined Final Grade audit for user "{user}", course "{course_title}"'.format(
+            user=self.combined_final_grade.user,
+            course_title=self.combined_final_grade.course.title
+        )

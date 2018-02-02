@@ -303,15 +303,28 @@ class MMTrack:
     def get_passing_final_grades_for_course(self, course):
         """
         Returns a list of passing final grades for given course
-         Args:
-            course (courses.models.Course): a course
 
+        Args:
+            course (courses.models.Course): a course
         Returns:
             qset: a queryset of grades.models.FinalGrade
         """
         return self.final_grade_qset.for_course_run_keys(
             list(course.courserun_set.values_list('edx_course_key', flat=True))
         ).passed().select_related('course_run').order_by('-grade')
+
+    def get_best_final_grade_for_course(self, course):
+        """
+        Return the best final grade for given course
+
+        Args:
+            course (courses.models.Course): a course
+        Returns:
+            grades.models.FinalGrade: the best exam grade
+        """
+        return self.final_grade_qset.for_course_run_keys(
+            list(course.courserun_set.values_list('edx_course_key', flat=True))
+        ).passed().order_by('-grade').first()
 
     def get_all_enrolled_course_runs(self):
         """
