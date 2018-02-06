@@ -63,8 +63,8 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):  
         }
     )
 
+    update_email(user_profile_edx, user)
     if not is_new:
-        update_email(user_profile_edx, user)
         return
 
     try:
@@ -94,7 +94,6 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):  
     user_profile.agreed_to_terms_of_service = True
 
     user_profile.save()
-    update_email(user_profile_edx, user)
 
     log.debug(
         'Profile for user "%s" updated with values from EDX %s',
