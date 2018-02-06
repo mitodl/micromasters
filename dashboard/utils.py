@@ -8,7 +8,7 @@ from django.db import transaction
 from django.db.models import Q, Count
 from django.urls import reverse
 
-from courses.models import CourseRun
+from courses.models import CourseRun, Course
 from dashboard.api_edx_cache import CachedEdxUserData
 from ecommerce.models import Order, Line
 from grades.constants import FinalGradeStatus
@@ -16,6 +16,7 @@ from grades.models import (
     FinalGrade,
     ProctoredExamGrade,
     MicromastersProgramCertificate,
+    CombinedFinalGrade
 )
 from exams.models import (
     ExamProfile,
@@ -363,11 +364,21 @@ class MMTrack:
         Returns:
             int: A number of passed courses.
         """
-        return (
-            self.final_grade_qset.for_course_run_keys(self.edx_course_keys).passed()
-            .values_list('course_run__course__id', flat=True)
-            .distinct().count()
-        )
+        if self.program.financial_aid_availability:
+            courses = Course.objects.filter(program=self.program)
+            return sum([
+                CombinedFinalGrade.objects.filter(user=self.user, course=course).exists()
+                if course.has_exam
+                else self.get_best_final_grade_for_course(course) is not None
+                for course in courses
+            ])
+
+        else:
+            return (
+                self.final_grade_qset.for_course_run_keys(self.edx_course_keys).passed()
+                .values_list('course_run__course__id', flat=True)
+                .distinct().count()
+            )
 
     def get_pearson_exam_status(self):  # pylint: disable=too-many-return-statements
         """
