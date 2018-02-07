@@ -8,7 +8,7 @@ from django.db import transaction
 from django.db.models import Q, Count
 from django.urls import reverse
 
-from courses.models import CourseRun, Course
+from courses.models import CourseRun
 from dashboard.api_edx_cache import CachedEdxUserData
 from ecommerce.models import Order, Line
 from grades.constants import FinalGradeStatus
