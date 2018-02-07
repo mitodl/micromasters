@@ -372,12 +372,12 @@ class MMTrack:
         if self.financial_aid_available:
             return sum([
                 CombinedFinalGrade.objects.filter(user=self.user, course__program=self.program).count(),
-                self.count_passing_final_grades_for_keys(self.edx_course_keys_no_exam)
+                self.count_passing_courses_for_keys(self.edx_course_keys_no_exam)
             ])
         else:
-            return self.count_passing_final_grades_for_keys(self.edx_course_keys)
+            return self.count_passing_courses_for_keys(self.edx_course_keys)
 
-    def count_passing_final_grades_for_keys(self, edx_course_keys):
+    def count_passing_courses_for_keys(self, edx_course_keys):
         """
         Calculate the number of passed courses for a given list of edx_course_keys
 
@@ -388,8 +388,8 @@ class MMTrack:
         """
         return (
             self.final_grade_qset.for_course_run_keys(edx_course_keys).passed()
-                .values_list('course_run__course__id', flat=True)
-                .distinct().count()
+            .values_list('course_run__course__id', flat=True)
+            .distinct().count()
         )
 
     def get_pearson_exam_status(self):  # pylint: disable=too-many-return-statements

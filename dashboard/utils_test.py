@@ -435,6 +435,15 @@ class MMTrackTest(MockedESTestCase):
         )
         assert mmtrack.count_courses_passed() == 1
 
+        course = CourseFactory.create(program=self.program)
+        final_grade = FinalGradeFactory.create(
+            user=self.user,
+            course_run__course=course,
+            passed=True
+        )
+        mmtrack.edx_course_keys.add(final_grade.course_run.edx_course_key)
+        assert mmtrack.count_courses_passed() == 2
+
     def test_count_courses_passed_fa(self):
         """
         Assert that count_courses_passed works in case of fa program.
@@ -479,6 +488,34 @@ class MMTrackTest(MockedESTestCase):
         )
 
         assert mmtrack.count_courses_passed() == 2
+
+    def test_count_passing_courses_for_keys(self):
+        """
+        Assert that count_courses_passed works in case of normal program.
+        """
+        mmtrack = MMTrack(
+            user=self.user,
+            program=self.program,
+            edx_user_data=self.cached_edx_user_data
+        )
+        assert mmtrack.count_passing_courses_for_keys(mmtrack.edx_course_keys) == 0
+        for crun_index in [0, 1]:
+            course_run = self.cruns[crun_index]
+            FinalGradeFactory.create(
+                user=self.user,
+                course_run=course_run,
+                passed=True
+            )
+            assert mmtrack.count_passing_courses_for_keys(mmtrack.edx_course_keys) == 1
+
+        # now create a grade for another course
+        final_grade = FinalGradeFactory.create(
+            user=self.user,
+            course_run__course__program=self.program,
+            passed=True
+        )
+        mmtrack.edx_course_keys.add(final_grade.course_run.edx_course_key)
+        assert mmtrack.count_passing_courses_for_keys(mmtrack.edx_course_keys) == 2
 
     def test_has_paid_fa_no_final_grade(self):
         """
