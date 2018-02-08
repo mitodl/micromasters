@@ -16,6 +16,7 @@ from grades.models import (
     FinalGrade,
     ProctoredExamGrade,
     MicromastersProgramCertificate,
+    CombinedFinalGrade
 )
 from exams.models import (
     ExamProfile,
@@ -42,6 +43,7 @@ class MMTrack:
     current_grades = None
     certificates = None
     edx_course_keys = set()
+    edx_course_keys_no_exam = set()  # Course keys for courses that don't have exams
     paid_course_keys = set()  # Course keys for course runs that were paid for via financial aid
     pearson_exam_status = None
 
@@ -73,6 +75,10 @@ class MMTrack:
                 self.paid_course_keys = set(Line.objects.filter(
                     order__status=Order.FULFILLED, course_key__in=self.edx_course_keys, order__user=user
                 ).values_list("course_key", flat=True))
+                # edx course keys for courses with no exam
+                self.edx_course_keys_no_exam = set(CourseRun.objects.filter(
+                    course__program=program, course__exam_runs__isnull=True
+                ).values_list("edx_course_key", flat=True))
 
     def __str__(self):
         return 'MMTrack for user {0} on program "{1}"'.format(
@@ -363,8 +369,25 @@ class MMTrack:
         Returns:
             int: A number of passed courses.
         """
+        if self.financial_aid_available:
+            return sum([
+                CombinedFinalGrade.objects.filter(user=self.user, course__program=self.program).count(),
+                self.count_passing_courses_for_keys(self.edx_course_keys_no_exam)
+            ])
+        else:
+            return self.count_passing_courses_for_keys(self.edx_course_keys)
+
+    def count_passing_courses_for_keys(self, edx_course_keys):
+        """
+        Calculate the number of passed courses for a given list of edx_course_keys
+
+        Args:
+            edx_course_keys (set): a set of edx_course_keys
+        Returns:
+            int: A number of passed courses
+        """
         return (
-            self.final_grade_qset.for_course_run_keys(self.edx_course_keys).passed()
+            self.final_grade_qset.for_course_run_keys(edx_course_keys).passed()
             .values_list('course_run__course__id', flat=True)
             .distinct().count()
         )

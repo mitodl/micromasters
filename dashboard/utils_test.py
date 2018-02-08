@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from unittest.mock import (
     patch,
     MagicMock,
+    PropertyMock
 )
 from django.urls import reverse
 
@@ -21,7 +22,7 @@ from ecommerce.models import Order
 from exams.factories import ExamProfileFactory, ExamAuthorizationFactory, ExamRunFactory
 from exams.models import ExamProfile, ExamAuthorization
 from grades.factories import FinalGradeFactory, ProctoredExamGradeFactory
-from grades.models import FinalGrade, MicromastersProgramCertificate
+from grades.models import FinalGrade, MicromastersProgramCertificate, CombinedFinalGrade
 from micromasters.factories import UserFactory
 from micromasters.utils import (
     load_json_from_file,
@@ -434,6 +435,15 @@ class MMTrackTest(MockedESTestCase):
         )
         assert mmtrack.count_courses_passed() == 1
 
+        course = CourseFactory.create(program=self.program)
+        final_grade = FinalGradeFactory.create(
+            user=self.user,
+            course_run__course=course,
+            passed=True
+        )
+        mmtrack.edx_course_keys.add(final_grade.course_run.edx_course_key)
+        assert mmtrack.count_courses_passed() == 2
+
     def test_count_courses_passed_fa(self):
         """
         Assert that count_courses_passed works in case of fa program.
@@ -443,13 +453,69 @@ class MMTrackTest(MockedESTestCase):
             program=self.program_financial_aid,
             edx_user_data=self.cached_edx_user_data
         )
-        assert mmtrack.count_courses_passed() == 0
+        with patch('courses.models.Course.has_exam', new_callable=PropertyMock, return_value=True):
+            assert mmtrack.count_courses_passed() == 0
+            CombinedFinalGrade.objects.create(
+                user=self.user,
+                course=self.crun_fa.course,
+                grade=0.6
+            )
+            assert mmtrack.count_courses_passed() == 1
+
+    def test_count_courses_mixed_fa(self):
+        """
+        Test count_courses_passed with mixed course-exam configuration
+        """
+        mmtrack = MMTrack(
+            user=self.user,
+            program=self.program_financial_aid,
+            edx_user_data=self.cached_edx_user_data
+        )
+        # this is course with exam run and the user has CombinedFinalGrade for it
+        course_with_exam_1 = CourseFactory.create(program=self.program_financial_aid)
+        ExamRunFactory.create(course=course_with_exam_1, date_grades_available=now_in_utc()-timedelta(weeks=1))
+        CombinedFinalGrade.objects.create(user=self.user, course=course_with_exam_1, grade=0.7)
+        # create course with exam run the user did not pass
+        ExamRunFactory.create(
+            course__program=self.program_financial_aid,
+            date_grades_available=now_in_utc() - timedelta(weeks=1)
+        )
+        # another course with no exam
         FinalGradeFactory.create(
             user=self.user,
             course_run=self.crun_fa,
             passed=True
         )
-        assert mmtrack.count_courses_passed() == 1
+
+        assert mmtrack.count_courses_passed() == 2
+
+    def test_count_passing_courses_for_keys(self):
+        """
+        Assert that count_courses_passed works in case of normal program.
+        """
+        mmtrack = MMTrack(
+            user=self.user,
+            program=self.program,
+            edx_user_data=self.cached_edx_user_data
+        )
+        assert mmtrack.count_passing_courses_for_keys(mmtrack.edx_course_keys) == 0
+        for crun_index in [0, 1]:
+            course_run = self.cruns[crun_index]
+            FinalGradeFactory.create(
+                user=self.user,
+                course_run=course_run,
+                passed=True
+            )
+            assert mmtrack.count_passing_courses_for_keys(mmtrack.edx_course_keys) == 1
+
+        # now create a grade for another course
+        final_grade = FinalGradeFactory.create(
+            user=self.user,
+            course_run__course__program=self.program,
+            passed=True
+        )
+        mmtrack.edx_course_keys.add(final_grade.course_run.edx_course_key)
+        assert mmtrack.count_passing_courses_for_keys(mmtrack.edx_course_keys) == 2
 
     def test_has_paid_fa_no_final_grade(self):
         """

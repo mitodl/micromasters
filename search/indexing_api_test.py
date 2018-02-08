@@ -1,14 +1,13 @@
 """
 Tests for search API functions.
 """
-from unittest.mock import (
-    ANY,
-    patch,
-)
+import itertools
+from unittest.mock import patch
 
 from ddt import (
     data,
     ddt,
+    unpack,
 )
 from django.conf import settings
 from django.db.models.signals import post_save
@@ -41,12 +40,28 @@ from roles.roles import (
     Instructor,
     Staff
 )
+from search.base import ESTestCase
+from search.connection import (
+    ALL_INDEX_TYPES,
+    get_aliases_and_doc_types,
+    get_default_alias_and_doc_type,
+    get_legacy_default_alias,
+    make_new_alias_name,
+    make_new_backing_index_name,
+    GLOBAL_DOC_TYPE,
+    PERCOLATE_INDEX_TYPE,
+    PUBLIC_ENROLLMENT_INDEX_TYPE,
+    PRIVATE_ENROLLMENT_INDEX_TYPE,
+    LEGACY_PERCOLATE_DOC_TYPE,
+    LEGACY_PUBLIC_USER_DOC_TYPE,
+    LEGACY_USER_DOC_TYPE,
+)
+from search.exceptions import ReindexException
+from search.factories import PercolateQueryFactory
 from search.indexing_api import (
-    delete_index,
-    get_active_aliases,
+    clear_and_create_index,
+    delete_indices,
     get_conn,
-    get_default_alias,
-    get_temp_alias,
     recreate_index,
     refresh_index,
     index_program_enrolled_users,
@@ -56,16 +71,12 @@ from search.indexing_api import (
     filter_current_work,
     index_percolate_queries,
     delete_percolate_query,
-    PERCOLATE_DOC_TYPE,
-    PUBLIC_USER_DOC_TYPE,
-    USER_DOC_TYPE,
+    PRIVATE_ENROLLMENT_MAPPING,
+    PUBLIC_ENROLLMENT_MAPPING,
 )
-from search.base import ESTestCase
-from search.exceptions import ReindexException
-from search.factories import PercolateQueryFactory
 from search.util import traverse_mapping
 
-DOC_TYPES_PER_ENROLLMENT = 2  # USER_DOC_TYPE and PUBLIC_USER_DOC_TYPE
+DOC_TYPES_PER_ENROLLMENT = 1
 
 
 class ESTestActions:
@@ -75,36 +86,45 @@ class ESTestActions:
     def __init__(self):
         self.conn = get_conn(verify=False)
 
-    def search(self):
+    def search(self, index_type):
         """Gets full index data from the _search endpoint"""
-        refresh_index(get_default_alias())
-        return self.conn.search(index=get_default_alias())['hits']
+        alias, _ = get_default_alias_and_doc_type(index_type)
+        refresh_index(alias)
+        return self.conn.search(index=alias)['hits']
 
     def get_percolate_query(self, _id):
         """Get percolate query"""
-        return self.conn.get(id=_id, index=get_default_alias(), doc_type=PERCOLATE_DOC_TYPE)
+        index, doc_type = get_default_alias_and_doc_type(PERCOLATE_INDEX_TYPE)
+        return self.conn.get(id=_id, index=index, doc_type=doc_type)
 
-    def get_mappings(self):
+    def get_mappings(self, index_type):
         """Gets mapping data"""
-        refresh_index(get_default_alias())
-        mapping = self.conn.indices.get_mapping(index=get_default_alias())
+        alias, _ = get_default_alias_and_doc_type(index_type)
+        refresh_index(alias)
+        mapping = self.conn.indices.get_mapping(index=alias)
         return list(mapping.values())[0]['mappings']
 
-    def get_default_backing_index(self):
+    def get_default_backing_index(self, index_type):
         """Get the default backing index"""
-        return list(self.conn.indices.get_alias(name=get_default_alias()).keys())[0]
+        alias, _ = get_default_alias_and_doc_type(index_type)
+        return list(self.conn.indices.get_alias(name=alias).keys())[0]
 
 
 es = ESTestActions()
 
 
 def get_sources(results):
-    """get sources from es hits"""
+    """
+    Get sources from hits, sorted by source id
+
+    Args:
+        results (dict): Elasticsearch results
+
+    Returns:
+        list of dict: The list of source dicts
+    """
     sorted_hits = sorted(results['hits'], key=lambda hit: hit['_source']['id'])
-    return (
-        [hit['_source'] for hit in sorted_hits if hit['_type'] == USER_DOC_TYPE],
-        [hit['_source'] for hit in sorted_hits if hit['_type'] == PUBLIC_USER_DOC_TYPE],
-    )
+    return [hit['_source'] for hit in sorted_hits]
 
 
 def remove_es_keys(hit):
@@ -112,10 +132,10 @@ def remove_es_keys(hit):
     Removes ES keys from a hit object in-place
 
     Args:
-        hit: Elasticsearch hit object
+        hit (dict): Elasticsearch hit object
 
     Returns:
-        hit: modified Elasticsearch hit object
+        dict: modified Elasticsearch hit object
     """
     del hit['_id']
     if '_type' in hit:
@@ -123,25 +143,30 @@ def remove_es_keys(hit):
     return hit
 
 
-def assert_search(results, program_enrollments):
+def assert_search(results, program_enrollments, *, index_type):
     """
     Assert that search results match program-enrolled users
     """
     assert results['total'] == len(program_enrollments) * DOC_TYPES_PER_ENROLLMENT
-    sources_advanced, sources_public = get_sources(results)
+    sources_advanced = get_sources(results)
     sorted_program_enrollments = sorted(program_enrollments, key=lambda program_enrollment: program_enrollment.id)
-    serialized_advanced = [
-        remove_es_keys(serialize_program_enrolled_user(program_enrollment))
-        for program_enrollment in sorted_program_enrollments
-    ]
-    serialized_public = [
-        remove_es_keys(serialize_public_enrolled_user(
-            serialize_program_enrolled_user(program_enrollment)
-        ))
-        for program_enrollment in sorted_program_enrollments
-    ]
-    assert serialized_advanced == sources_advanced
-    assert serialized_public == sources_public
+
+    if index_type == PRIVATE_ENROLLMENT_INDEX_TYPE:
+        serialized = [
+            remove_es_keys(serialize_program_enrolled_user(program_enrollment))
+            for program_enrollment in sorted_program_enrollments
+        ]
+    elif index_type == PUBLIC_ENROLLMENT_INDEX_TYPE:
+        serialized = [
+            remove_es_keys(serialize_public_enrolled_user(
+                serialize_program_enrolled_user(program_enrollment)
+            ))
+            for program_enrollment in sorted_program_enrollments
+        ]
+    else:
+        raise Exception("Unexpected index type")
+
+    assert serialized == sources_advanced
 
 
 # pylint: disable=unused-argument
@@ -152,153 +177,174 @@ class IndexTests(ESTestCase):
     Tests for indexing
     """
     # pylint: disable=too-many-public-methods
-    def test_program_enrollment_add(self, mock_on_commit):
+    @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
+    def test_program_enrollment_add(self, index_type, mock_on_commit):
         """
         Test that a newly created ProgramEnrollment is indexed properly
         """
-        assert es.search()['total'] == 0
+        assert es.search(index_type)['total'] == 0
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert_search(es.search(), [program_enrollment])
+        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
 
-    def test_program_enrollment_delete(self, mock_on_commit):
+    @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
+    def test_program_enrollment_delete(self, index_type, mock_on_commit):
         """
         Test that ProgramEnrollment is removed from index after the user is removed
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search()['total'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
         program_enrollment.user.delete()
-        assert es.search()['total'] == 0
+        assert es.search(index_type)['total'] == 0
 
-    def test_profile_update(self, mock_on_commit):
+    @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
+    def test_profile_update(self, index_type, mock_on_commit):
         """
         Test that ProgramEnrollment is reindexed after the User's Profile has been updated
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search()['total'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
         profile = program_enrollment.user.profile
         profile.first_name = 'updated'
         profile.save()
-        assert_search(es.search(), [program_enrollment])
+        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
 
-    def test_education_add(self, mock_on_commit):
+    @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
+    def test_education_add(self, index_type, mock_on_commit):
         """
         Test that Education is indexed after being added
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search()['total'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
         EducationFactory.create(profile=program_enrollment.user.profile)
-        assert_search(es.search(), [program_enrollment])
+        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
 
-    def test_education_update(self, mock_on_commit):
+    @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
+    def test_education_update(self, index_type, mock_on_commit):
         """
         Test that Education is reindexed after being updated
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search()['total'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
         education = EducationFactory.create(profile=program_enrollment.user.profile)
         education.school_city = 'city'
         education.save()
-        assert_search(es.search(), [program_enrollment])
+        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
 
-    def test_education_delete(self, mock_on_commit):
+    @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
+    def test_education_delete(self, index_type, mock_on_commit):
         """
         Test that Education is removed from index after being deleted
         """
         program_enrollment = ProgramEnrollmentFactory.create()
         education = EducationFactory.create(profile=program_enrollment.user.profile)
-        assert_search(es.search(), [program_enrollment])
+        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
         education.delete()
-        assert_search(es.search(), [program_enrollment])
+        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
 
-    def test_employment_add(self, mock_on_commit):
+    @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
+    def test_employment_add(self, index_type, mock_on_commit):
         """
         Test that Employment is indexed after being added
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search()['total'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
         EmploymentFactory.create(profile=program_enrollment.user.profile, end_date=None)
-        assert_search(es.search(), [program_enrollment])
+        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
 
-    def test_employment_update(self, mock_on_commit):
+    @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
+    def test_employment_update(self, index_type, mock_on_commit):
         """
         Test that Employment is reindexed after being updated
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search()['total'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
         employment = EmploymentFactory.create(profile=program_enrollment.user.profile, end_date=None)
         employment.city = 'city'
         employment.save()
-        assert_search(es.search(), [program_enrollment])
+        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
 
-    def test_employment_delete(self, mock_on_commit):
+    @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
+    def test_employment_delete(self, index_type, mock_on_commit):
         """
         Test that Employment is removed from index after being deleted
         """
         program_enrollment = ProgramEnrollmentFactory.create()
         employment = EmploymentFactory.create(profile=program_enrollment.user.profile, end_date=None)
-        assert_search(es.search(), [program_enrollment])
+        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
         employment.delete()
-        assert_search(es.search(), [program_enrollment])
+        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
 
-    def test_past_employment_add(self, mock_on_commit):
+    @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
+    def test_past_employment_add(self, index_type, mock_on_commit):
         """
         Test that past work history is not indexed
         """
         program_enrollment = ProgramEnrollmentFactory.create()
         EmploymentFactory.create(profile=program_enrollment.user.profile, end_date=None)
         EmploymentFactory.create(profile=program_enrollment.user.profile)
-        search_result = es.search()['hits'][0]['_source']['profile']['work_history']
+        search_result = es.search(index_type)['hits'][0]['_source']['profile']['work_history']
         assert len(search_result) == 1
         self.assertFalse(search_result[0]['end_date'])
 
-    def test_remove_program_enrolled_user(self, mock_on_commit):
+    @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
+    def test_remove_program_enrolled_user(self, index_type, mock_on_commit):
         """
         Test that remove_program_enrolled_user removes the user from the index for that program
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert_search(es.search(), [program_enrollment])
+        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
         remove_program_enrolled_user(program_enrollment.id)
-        assert_search(es.search(), [])
+        assert_search(es.search(index_type), [], index_type=index_type)
 
-    def test_remove_user_other_index(self, mock_on_commit):
-        """
-        Test that remove_program_enrolled_user will use another index if provided
-        """
-        other_indices = ['other1', 'other2']
-        program_enrollment = ProgramEnrollmentFactory.create()
-        with patch('search.indexing_api._delete_item', autospec=True) as _delete_item:
-            remove_program_enrolled_user(program_enrollment.id, indices=other_indices)
-        for other_index in other_indices:
-            _delete_item.assert_any_call(program_enrollment.id, USER_DOC_TYPE, other_index)
-
+    # pylint: disable=too-many-locals
     def test_index_program_enrolled_users(self, mock_on_commit):
         """
         Test that index_program_enrolled_users indexes an iterable of program-enrolled users
         """
+        num_enrollments = 10
+        chunk_size = 4
         with mute_signals(post_save):
-            program_enrollments = [ProgramEnrollmentFactory.build() for _ in range(10)]
+            program_enrollments = [
+                ProgramEnrollmentFactory.create() for _ in range(num_enrollments)
+            ]
+            for enrollment in program_enrollments:
+                ProfileFactory.create(user=enrollment.user)
+
+        private = [serialize_program_enrolled_user(enrollment) for enrollment in program_enrollments]
+        private_dicts = {serialized['id']: serialized for serialized in private}
+        public = [serialize_public_enrolled_user(serialized) for serialized in private]
+        public_dicts = {serialized['id']: serialized for serialized in public}
+
         with patch(
             'search.indexing_api._index_chunk', autospec=True, return_value=0
         ) as index_chunk, patch(
-            'search.indexing_api.serialize_program_enrolled_user', autospec=True, side_effect=lambda x: x
+            'search.indexing_api.serialize_program_enrolled_user', autospec=True,
+            side_effect=lambda x: private_dicts[x.id]
         ) as serialize_mock, patch(
-            'search.indexing_api.serialize_public_enrolled_user', autospec=True, side_effect=lambda x: x
+            'search.indexing_api.serialize_public_enrolled_user', autospec=True,
+            side_effect=lambda x: public_dicts[x['id']]
         ) as serialize_public_mock:
-            index_program_enrolled_users(program_enrollments, chunk_size=4)
-            assert index_chunk.call_count == 5  # 2 doctypes for each of 10 enrollments
-            for offset in range(5):
+            index_program_enrolled_users(program_enrollments, chunk_size=chunk_size)
+            assert index_chunk.call_count == 6  # 10 enrollments divided in chunks of 4, times the number of types (2)
+
+            public_index = make_new_alias_name(PUBLIC_ENROLLMENT_INDEX_TYPE, is_reindexing=False)
+            private_index = make_new_alias_name(PRIVATE_ENROLLMENT_INDEX_TYPE, is_reindexing=False)
+            for offset in range(0, num_enrollments, chunk_size):
                 # each enrollment should get yielded twice to account for each doctype
-                index_chunk.assert_any_call([
-                    program_enrollments[offset*2],
-                    program_enrollments[offset*2],
-                    program_enrollments[offset*2+1],
-                    program_enrollments[offset*2+1],
-                ], USER_DOC_TYPE, get_default_alias())
+                index_chunk.assert_any_call(
+                    public[offset:offset+4],  # ordered dicts FTW
+                    doc_type=GLOBAL_DOC_TYPE, index=public_index
+                )
+                index_chunk.assert_any_call(
+                    private[offset:offset+4],
+                    doc_type=GLOBAL_DOC_TYPE, index=private_index
+                )
+
             assert serialize_mock.call_count == len(program_enrollments)
             assert serialize_public_mock.call_count == len(program_enrollments)
             for enrollment in program_enrollments:
                 serialize_mock.assert_any_call(enrollment)
-                serialize_public_mock.assert_any_call(enrollment)
+                serialize_public_mock.assert_any_call(private_dicts[enrollment.id])
 
     def test_index_program_enrolled_users_missing_profiles(self, mock_on_commit):
         """
@@ -320,36 +366,28 @@ class IndexTests(ESTestCase):
             assert serialize_public_mock.call_count == 0
             assert serialize_mock.call_count == len(program_enrollments)
 
-    def test_index_user_other_index(self, mock_on_commit):
-        """
-        Test that index_program_enrolled_users uses another index if provided
-        """
-        other_indices = ['other1', 'other2']
-        with patch('search.indexing_api._index_chunks', autospec=True) as _index_chunk:
-            index_program_enrolled_users([], indices=other_indices)
-        for index in other_indices:
-            _index_chunk.assert_any_call(ANY, USER_DOC_TYPE, index, chunk_size=100)
-
-    def test_add_edx_record(self, mock_on_commit):
+    @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
+    def test_add_edx_record(self, index_type, mock_on_commit):
         """
         Test that cached edX records are indexed after being added
         """
         program_enrollment = ProgramEnrollmentFactory.create()
         for edx_cached_model_factory in [CachedCertificateFactory, CachedEnrollmentFactory, CachedCurrentGradeFactory]:
-            assert es.search()['total'] == DOC_TYPES_PER_ENROLLMENT
+            assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
             course = CourseFactory.create(program=program_enrollment.program)
             course_run = CourseRunFactory.create(course=course)
             edx_cached_model_factory.create(user=program_enrollment.user, course_run=course_run)
             index_program_enrolled_users([program_enrollment])
-            assert_search(es.search(), [program_enrollment])
+            assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
 
-    def test_update_edx_record(self, mock_on_commit):
+    @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
+    def test_update_edx_record(self, index_type, mock_on_commit):
         """
         Test that a cached edX record is reindexed after being updated
         """
         program_enrollment = ProgramEnrollmentFactory.create()
         for edx_cached_model_factory in [CachedCertificateFactory, CachedEnrollmentFactory, CachedCurrentGradeFactory]:
-            assert es.search()['total'] == DOC_TYPES_PER_ENROLLMENT
+            assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
             course = CourseFactory.create(program=program_enrollment.program)
             course_run = CourseRunFactory.create(course=course)
             edx_record = edx_cached_model_factory.create(user=program_enrollment.user, course_run=course_run)
@@ -357,9 +395,10 @@ class IndexTests(ESTestCase):
             edx_record.data.update({'new': 'data'})
             edx_record.save()
             index_program_enrolled_users([program_enrollment])
-            assert_search(es.search(), [program_enrollment])
+            assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
 
-    def test_delete_edx_record(self, mock_on_commit):
+    @data(PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE)
+    def test_delete_edx_record(self, index_type, mock_on_commit):
         """
         Test that a cached edX record is removed from index after being deleted
         """
@@ -369,10 +408,10 @@ class IndexTests(ESTestCase):
             course_run = CourseRunFactory.create(course=course)
             edx_record = edx_cached_model_factory.create(user=program_enrollment.user, course_run=course_run)
             index_program_enrolled_users([program_enrollment])
-            assert_search(es.search(), [program_enrollment])
+            assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
             edx_record.delete()
             index_program_enrolled_users([program_enrollment])
-            assert_search(es.search(), [program_enrollment])
+            assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
 
     def test_analyzed(self, mock_on_commit):
         """
@@ -383,13 +422,14 @@ class IndexTests(ESTestCase):
         EducationFactory.create(profile=program_enrollment.user.profile)
         EmploymentFactory.create(profile=program_enrollment.user.profile)
 
-        mapping = es.get_mappings()
-        nodes = list(traverse_mapping(mapping, ""))
-        for key, node in nodes:
-            if key == "folded":
-                assert node['analyzer'] == "folding"
-            elif node.get('type') == 'string':
-                assert node['index'] == 'not_analyzed'
+        for index_type in ALL_INDEX_TYPES:
+            mapping = es.get_mappings(index_type)
+            nodes = list(traverse_mapping(mapping, ""))
+            for key, node in nodes:
+                if key == "folded":
+                    assert node['analyzer'] == "folding"
+                elif node.get('type') == 'string':
+                    assert node['index'] == 'not_analyzed'
 
     def test_folded(self, mock_on_commit):
         """
@@ -399,19 +439,33 @@ class IndexTests(ESTestCase):
         EducationFactory.create(profile=program_enrollment.user.profile)
         EmploymentFactory.create(profile=program_enrollment.user.profile)
 
-        mapping = es.get_mappings()
-        properties = mapping['program_user']['properties']['profile']['properties']
-        for key in 'first_name', 'last_name', 'preferred_name', 'full_name':
-            assert properties[key]['fields']['folded']['analyzer'] == 'folding'
+        for index_type in ALL_INDEX_TYPES:
+            mapping = es.get_mappings(index_type)
+            properties = mapping[GLOBAL_DOC_TYPE]['properties']
+            if index_type == PUBLIC_ENROLLMENT_INDEX_TYPE:
+                # Make sure we aren't exposing people's email addresses
+                assert 'email' not in properties
+            else:
+                assert properties['email']['fields']['folded']['analyzer'] == 'folding'
 
-    @data(Staff.ROLE_ID, Instructor.ROLE_ID)
-    def test_role_add(self, role, mock_on_commit):
+            profile_properties = properties['profile']['properties']
+            for key in 'first_name', 'last_name', 'preferred_name', 'full_name', 'username':
+                assert profile_properties[key]['fields']['folded']['analyzer'] == 'folding'
+
+    @data(
+        *itertools.product(
+            [Staff.ROLE_ID, Instructor.ROLE_ID],
+            [PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE],
+        )
+    )
+    @unpack
+    def test_role_add(self, role, index_type, mock_on_commit):
         """
         Test that `is_learner` status is change when role is save
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search()['total'] == DOC_TYPES_PER_ENROLLMENT
-        sources, _ = get_sources(es.search())
+        assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
+        sources = get_sources(es.search(index_type))
         # user is learner
         assert sources[0]['program']['is_learner'] is True
 
@@ -420,19 +474,25 @@ class IndexTests(ESTestCase):
             program=program_enrollment.program,
             role=role
         )
-        assert es.search()['total'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
         # user is not learner
-        sources, _ = get_sources(es.search())
+        sources = get_sources(es.search(index_type))
         assert sources[0]['program']['is_learner'] is False
 
-    @data(Staff.ROLE_ID, Instructor.ROLE_ID)
-    def test_role_delete(self, role, mock_on_commit):
+    @data(
+        *itertools.product(
+            [Staff.ROLE_ID, Instructor.ROLE_ID],
+            [PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE],
+        )
+    )
+    @unpack
+    def test_role_delete(self, role, index_type, mock_on_commit):
         """
         Test that `is_learner` status is restore once role is removed for a user.
         """
         program_enrollment = ProgramEnrollmentFactory.create()
-        assert es.search()['total'] == DOC_TYPES_PER_ENROLLMENT
-        sources, _ = get_sources(es.search())
+        assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
+        sources = get_sources(es.search(index_type))
         # user is learner
         assert sources[0]['program']['is_learner'] is True
         Role.objects.create(
@@ -440,9 +500,9 @@ class IndexTests(ESTestCase):
             program=program_enrollment.program,
             role=role
         )
-        assert es.search()['total'] == DOC_TYPES_PER_ENROLLMENT
+        assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
         # user is not learner
-        sources, _ = get_sources(es.search())
+        sources = get_sources(es.search(index_type))
         assert sources[0]['program']['is_learner'] is False
 
         # when staff role is deleted
@@ -451,8 +511,8 @@ class IndexTests(ESTestCase):
             program=program_enrollment.program,
             role=role
         ).delete()
-        assert es.search()['total'] == DOC_TYPES_PER_ENROLLMENT
-        sources, _ = get_sources(es.search())
+        assert es.search(index_type)['total'] == DOC_TYPES_PER_ENROLLMENT
+        sources = get_sources(es.search(index_type))
         # user is learner
         assert sources[0]['program']['is_learner'] is True
 
@@ -502,12 +562,12 @@ class SerializerTests(ESTestCase):
 
         assert serialize_public_enrolled_user(serialized) == {
             '_id': program_enrollment.id,
-            '_type': 'public_program_user',
             'id': program_enrollment.id,
             'user_id': profile.user.id,
             'profile': {
                 'first_name': profile.first_name,
                 'last_name': profile.last_name,
+                'full_name': profile.full_name,
                 'preferred_name': profile.preferred_name,
                 'romanized_first_name': profile.romanized_first_name,
                 'romanized_last_name': profile.romanized_last_name,
@@ -535,6 +595,7 @@ class SerializerTests(ESTestCase):
         }
 
 
+@ddt
 class GetConnTests(ESTestCase):
     """
     Tests for get_conn
@@ -546,7 +607,7 @@ class GetConnTests(ESTestCase):
         super().setUp()
 
         conn = get_conn(verify=False)
-        for index in conn.indices.get_aliases().keys():
+        for index in conn.indices.get_alias().keys():
             if index.startswith(settings.ELASTICSEARCH_INDEX):
                 conn.indices.delete(index)
 
@@ -561,7 +622,7 @@ class GetConnTests(ESTestCase):
         """
         with self.assertRaises(ReindexException) as ex:
             get_conn()
-        assert str(ex.exception) == "Unable to find index {}".format(get_default_alias())
+        assert "Unable to find index" in str(ex.exception)
 
     def test_no_index_not_default(self):
         """
@@ -570,24 +631,55 @@ class GetConnTests(ESTestCase):
         # Reset default index so it does not cause an error
         recreate_index()
         other_index = "other"
-        delete_index([other_index])
+        delete_indices()
 
         with self.assertRaises(ReindexException) as ex:
-            get_conn(verify_index=other_index)
+            get_conn(verify_indices=[other_index])
         assert str(ex.exception) == "Unable to find index {}".format(other_index)
 
-    def test_no_mapping(self):
+    @data(
+        [True, False, PRIVATE_ENROLLMENT_INDEX_TYPE, ('testindex_alias', ), LEGACY_USER_DOC_TYPE],
+        [True, False, PUBLIC_ENROLLMENT_INDEX_TYPE, ('testindex_alias', ), LEGACY_PUBLIC_USER_DOC_TYPE],
+        [True, False, PERCOLATE_INDEX_TYPE, ('testindex_alias',), LEGACY_PERCOLATE_DOC_TYPE],
+        [False, False, PRIVATE_ENROLLMENT_INDEX_TYPE, ('testindex_private_enrollment_default',), GLOBAL_DOC_TYPE],
+        [False, False, PUBLIC_ENROLLMENT_INDEX_TYPE, ('testindex_public_enrollment_default',), GLOBAL_DOC_TYPE],
+        [False, False, PERCOLATE_INDEX_TYPE, ('testindex_percolate_default',), GLOBAL_DOC_TYPE],
+        [True, True, PRIVATE_ENROLLMENT_INDEX_TYPE, ('testindex_alias',), LEGACY_USER_DOC_TYPE],
+        [True, True, PUBLIC_ENROLLMENT_INDEX_TYPE, ('testindex_alias',), LEGACY_PUBLIC_USER_DOC_TYPE],
+        [True, True, PERCOLATE_INDEX_TYPE, ('testindex_alias',), LEGACY_PERCOLATE_DOC_TYPE],
+        [False, True, PRIVATE_ENROLLMENT_INDEX_TYPE,
+         ('testindex_private_enrollment_default', 'testindex_private_enrollment_reindexing'), GLOBAL_DOC_TYPE],
+        [False, True, PUBLIC_ENROLLMENT_INDEX_TYPE,
+         ('testindex_public_enrollment_default', 'testindex_public_enrollment_reindexing'), GLOBAL_DOC_TYPE],
+        [False, True, PERCOLATE_INDEX_TYPE,
+         ('testindex_percolate_default', 'testindex_percolate_reindexing'), GLOBAL_DOC_TYPE],
+    )
+    @unpack
+    # pylint: disable=too-many-arguments
+    def test_get_aliases_and_doc_type(self, is_legacy, is_reindex, index_type, expected_indices, expected_doc_type):
         """
-        Test that error is raised if we don't have a mapping
+        We should choose the correct alias and doc type given the circumstances
         """
         conn = get_conn(verify=False)
-        backing_index = "{}_backing".format(settings.ELASTICSEARCH_INDEX)
-        conn.indices.create(backing_index)
-        conn.indices.put_alias(name=get_default_alias(), index=backing_index)
 
-        with self.assertRaises(ReindexException) as ex:
-            get_conn()
-        assert str(ex.exception) == "Mapping {} not found".format(USER_DOC_TYPE)
+        if is_legacy:
+            # If no indices can be found it assumes the 2.x schema
+            alias = get_legacy_default_alias()
+        else:
+            alias = make_new_alias_name(index_type, is_reindexing=False)
+
+        backing_index = make_new_backing_index_name()
+        # Skip the mapping because it's invalid for 2.x schema, and we don't need it here
+        clear_and_create_index(backing_index, index_type=index_type, skip_mapping=True)
+        conn.indices.put_alias(index=backing_index, name=alias)
+
+        if is_reindex and not is_legacy:
+            conn.indices.put_alias(index=backing_index, name=make_new_alias_name(index_type, is_reindexing=True))
+
+        tuples = get_aliases_and_doc_types(index_type)
+        assert tuples == [(index, expected_doc_type) for index in expected_indices]
+
+        assert get_default_alias_and_doc_type(index_type) == tuples[0]
 
 
 @ddt
@@ -595,32 +687,33 @@ class RecreateIndexTests(ESTestCase):
     """
     Tests for management commands
     """
-    def setUp(self):
-        """
-        Start without any index
-        """
-        super().setUp()
-        conn = get_conn(verify=False)
-        for index in conn.indices.get_aliases().keys():
-            if index.startswith(settings.ELASTICSEARCH_INDEX):
-                conn.indices.delete(index)
 
-    def test_create_index(self):
+    def tearDown(self):
+        super().tearDown()
+
+        conn = get_conn(verify=False)
+        for index in conn.indices.get_mapping().keys():
+            conn.indices.delete(index=index)
+
+    @data(PUBLIC_ENROLLMENT_INDEX_TYPE, PRIVATE_ENROLLMENT_INDEX_TYPE)
+    def test_create_index(self, index_type):
         """
         Test that recreate_index will create an index and let search successfully
         """
-        recreate_index()
-        assert es.search()['total'] == 0
+        assert es.search(index_type)['total'] == 0
 
-    @data(True, False)
-    def test_keep_alias(self, existing_temp_alias):
+    @data(*itertools.product(
+        [True, False],
+        [PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE],
+    ))
+    @unpack
+    def test_keep_alias(self, existing_temp_alias, index_type):
         """
         Test that recreate_index will point an existing alias at a new backing index
         """
-        recreate_index()
         conn = get_conn(verify=False)
-        default_alias = get_default_alias()
-        temp_alias = get_temp_alias()
+        default_alias = make_new_alias_name(index_type, is_reindexing=False)
+        temp_alias = make_new_alias_name(index_type, is_reindexing=True)
         assert conn.indices.exists_alias(name=temp_alias) is False
 
         if existing_temp_alias:
@@ -632,48 +725,91 @@ class RecreateIndexTests(ESTestCase):
         old_backing_indexes = list(conn.indices.get_alias(name=default_alias).keys())
         assert len(old_backing_indexes) == 1
         recreate_index()
-        new_backing_indexes = list(conn.indices.get_alias(name=get_default_alias()).keys())
+        new_backing_indexes = list(conn.indices.get_alias(name=default_alias).keys())
         assert len(new_backing_indexes) == 1
         # Backing index should have changed
         assert old_backing_indexes != new_backing_indexes
         # Temp index should have been deleted
         assert conn.indices.exists_alias(name=temp_alias) is False
 
-    def test_update_index(self):
+    @data(PUBLIC_ENROLLMENT_INDEX_TYPE, PRIVATE_ENROLLMENT_INDEX_TYPE)
+    def test_update_index(self, index_type):
         """
         Test that recreate_index will clear old data and index all profiles
         """
-        recreate_index()
         with patch('search.signals.transaction.on_commit', side_effect=lambda callback: callback()):
             program_enrollment = ProgramEnrollmentFactory.create()
-        assert_search(es.search(), [program_enrollment])
+        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
         remove_program_enrolled_user(program_enrollment.id)
-        assert_search(es.search(), [])
+        assert_search(es.search(index_type), [], index_type=index_type)
         # recreate_index should index the program-enrolled user
         recreate_index()
-        assert_search(es.search(), [program_enrollment])
+        assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
 
-    def test_get_active_indices(self):
+    def test_update_during_recreate_index(self):
         """
-        Test that active indices includes the default plus the temporary, if it exists
+        If an indexing action happens during a recreate_index it should update all active indices
         """
-        temp_index = get_temp_alias()
-        other_index = "{}_other".format(settings.ELASTICSEARCH_INDEX)
         conn = get_conn(verify=False)
-        assert get_active_aliases() == []
         recreate_index()
-        assert get_active_aliases() == [get_default_alias()]
-        backing_temp = "{}_backing".format(temp_index)
-        conn.indices.create(backing_temp)
-        conn.indices.put_alias(index=backing_temp, name=temp_index)
-        backing_other = "{}_backing".format(other_index)
-        conn.indices.create(backing_other)
-        conn.indices.put_alias(index=backing_other, name=other_index)
 
-        assert get_active_aliases() == [
-            get_default_alias(),
-            get_temp_alias(),
-        ]
+        types = {
+            PRIVATE_ENROLLMENT_INDEX_TYPE: LEGACY_USER_DOC_TYPE,
+            PUBLIC_ENROLLMENT_INDEX_TYPE: LEGACY_PUBLIC_USER_DOC_TYPE,
+        }
+
+        temp_aliases = {}
+        for index_type, _ in types.items():
+            # create temporary index
+            temp_index = make_new_backing_index_name()
+            temp_alias = make_new_alias_name(index_type=index_type, is_reindexing=True)
+            clear_and_create_index(temp_index, index_type=index_type)
+            conn.indices.put_alias(index=temp_index, name=temp_alias)
+            temp_aliases[index_type] = temp_alias
+
+        # create legacy index
+        legacy_index = make_new_backing_index_name()
+        legacy_alias = get_legacy_default_alias()
+
+        conn.indices.create(legacy_index, body={
+            'settings': {
+                'analysis': {
+                    'analyzer': {
+                        'folding': {
+                            'type': 'custom',
+                            'tokenizer': 'standard',
+                            'filter': [
+                                'lowercase',
+                                'asciifolding',  # remove accents if we use folding analyzer
+                            ]
+                        }
+                    }
+                }
+            },
+            'mappings': {
+                LEGACY_PUBLIC_USER_DOC_TYPE: PUBLIC_ENROLLMENT_MAPPING[GLOBAL_DOC_TYPE],
+                LEGACY_USER_DOC_TYPE: PRIVATE_ENROLLMENT_MAPPING[GLOBAL_DOC_TYPE],
+            }
+        })
+
+        conn.indices.put_alias(index=legacy_index, name=legacy_alias)
+
+        with patch('search.signals.transaction.on_commit', side_effect=lambda callback: callback()):
+            program_enrollment = ProgramEnrollmentFactory.create()
+
+        for index_type, legacy_doc_type in types.items():
+            assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
+
+            # Legacy alias should get updated
+            refresh_index(legacy_alias)
+            legacy_hits = conn.search(index=legacy_alias, doc_type=legacy_doc_type)['hits']
+            assert_search(legacy_hits, [program_enrollment], index_type=index_type)
+
+            # Temp alias should get updated too
+            temp_alias = temp_aliases[index_type]
+            refresh_index(temp_alias)
+            temp_hits = conn.search(index=temp_alias, doc_type=GLOBAL_DOC_TYPE)['hits']
+            assert_search(temp_hits, [program_enrollment], index_type=index_type)
 
 
 class PercolateQueryTests(ESTestCase):
@@ -693,20 +829,12 @@ class PercolateQueryTests(ESTestCase):
         index_percolate_queries([percolate_query])
         assert es.get_percolate_query(percolate_query_id) == {
             '_id': str(percolate_query_id),
-            '_index': es.get_default_backing_index(),
+            '_index': es.get_default_backing_index(PERCOLATE_INDEX_TYPE),
             '_source': query,
-            '_type': PERCOLATE_DOC_TYPE,
+            '_type': GLOBAL_DOC_TYPE,
             '_version': 1,
             'found': True,
         }
-
-    def test_index_other_index(self):
-        """Make sure we use the index name passed in"""
-        other_indices = ["other1", "other2"]
-        with patch('search.indexing_api._index_chunks', autospec=True) as _index_chunks:
-            index_percolate_queries([], indices=other_indices)
-        for index in other_indices:
-            _index_chunks.assert_any_call(ANY, PERCOLATE_DOC_TYPE, index, chunk_size=100)
 
     def test_delete_percolate_queries(self):
         """Test that we delete the percolate query from the index"""
@@ -715,9 +843,9 @@ class PercolateQueryTests(ESTestCase):
             percolate_query = PercolateQueryFactory.create(query=query, original_query="original")
             assert es.get_percolate_query(percolate_query.id) == {
                 '_id': str(percolate_query.id),
-                '_index': es.get_default_backing_index(),
+                '_index': es.get_default_backing_index(PERCOLATE_INDEX_TYPE),
                 '_source': query,
-                '_type': PERCOLATE_DOC_TYPE,
+                '_type': GLOBAL_DOC_TYPE,
                 '_version': 1,
                 'found': True,
             }
@@ -729,10 +857,62 @@ class PercolateQueryTests(ESTestCase):
             with self.assertRaises(NotFoundError):
                 es.get_percolate_query(percolate_query.id)
 
-    def test_delete_other_index(self):
-        """Make sure we use the index name passed in"""
-        other_indices = ["other1", "other2"]
-        with patch('search.indexing_api._delete_item', autospec=True) as _delete_item:
-            delete_percolate_query(-1, indices=other_indices)
-        for index in other_indices:
-            _delete_item.assert_any_call(-1, PERCOLATE_DOC_TYPE, index)
+    def test_fix_percolate_query(self):
+        """
+        Make sure all nested -> filter are replaced with nested -> query
+        """
+        input_query = {
+            "query": {
+                "bool": {
+                    "filter": [
+                        {
+                            "bool": {
+                                "must": [
+                                    {
+                                        "term": {
+                                            "program.is_learner": True
+                                        }
+                                    }
+                                ],
+                                "should": [
+                                    {
+                                        "term": {
+                                            "program.id": 34
+                                        }
+                                    }
+                                ],
+                                "minimum_should_match": 1
+                            }
+                        },
+                        {
+                            "term": {
+                                "profile.filled_out": True
+                            }
+                        },
+                        {
+                            "bool": {
+                                "must": [
+                                    {
+                                        "nested": {
+                                            "path": "program.enrollments",
+                                            "filter": {
+                                                "term": {
+                                                    "program.enrollments.semester": "2015 - Summer"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "term": {
+                                            "program.id": 34
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+        query = PercolateQueryFactory.create(query=input_query)
+        assert index_percolate_queries([query]) == 1

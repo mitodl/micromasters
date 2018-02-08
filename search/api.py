@@ -18,10 +18,11 @@ from dashboard.models import ProgramEnrollment
 from profiles.models import Profile
 from roles.api import get_advance_searchable_program_ids
 from search.connection import (
-    get_default_alias,
+    get_default_alias_and_doc_type,
     get_conn,
-    USER_DOC_TYPE,
-    PUBLIC_USER_DOC_TYPE,
+    PRIVATE_ENROLLMENT_INDEX_TYPE,
+    PUBLIC_ENROLLMENT_INDEX_TYPE,
+    PERCOLATE_INDEX_TYPE,
 )
 from search.models import (
     PercolateQuery,
@@ -68,7 +69,7 @@ def get_searchable_programs(user, staff_program_ids):
         staff_program_ids (list of int): the list of program ids the user is staff for if any
 
     Returns:
-        set(courses.models.Program): set of programs the user can search in
+        set of courses.models.Program: set of programs the user can search in
     """
 
     # filter only to the staff programs or enrolled programs
@@ -119,16 +120,6 @@ def create_program_limit_query(user, staff_program_ids, filter_on_email_optin=Fa
     )
 
 
-def _get_search_doc_types(is_advance_search_capable):
-    """
-    Determines searchable doc types based on search capabilities
-
-    Args:
-        is_advance_search_capable (bool): If true, allows user to perform staff search
-    """
-    return (USER_DOC_TYPE,) if is_advance_search_capable else (PUBLIC_USER_DOC_TYPE,)
-
-
 def create_search_obj(user, search_param_dict=None, filter_on_email_optin=False):
     """
     Creates a search object and prepares it with metadata and query parameters that
@@ -144,7 +135,9 @@ def create_search_obj(user, search_param_dict=None, filter_on_email_optin=False)
     """
     staff_program_ids = get_advance_searchable_program_ids(user)
     is_advance_search_capable = bool(staff_program_ids)
-    search_obj = Search(index=get_default_alias(), doc_type=_get_search_doc_types(is_advance_search_capable))
+    index_type = PRIVATE_ENROLLMENT_INDEX_TYPE if is_advance_search_capable else PUBLIC_ENROLLMENT_INDEX_TYPE
+    index, doc_type = get_default_alias_and_doc_type(index_type)
+    search_obj = Search(index=index, doc_type=doc_type)
     # Update from search params first so our server-side filtering will overwrite it if necessary
     if search_param_dict is not None:
         search_obj.update_from_dict(search_param_dict)
@@ -212,7 +205,7 @@ def search_for_field(search_obj, field_name, page_size=DEFAULT_ES_LOOP_PAGE_SIZE
     # Maintaining a consistent sort on '_doc' will help prevent bugs where the
     # index is altered during the loop.
     # This also limits the query to only return the field value.
-    search_obj = search_obj.sort('_doc').fields(field_name)
+    search_obj = search_obj.sort('_doc').source(include=[field_name])
     loop = 0
     all_results_returned = False
     while not all_results_returned:
@@ -221,7 +214,7 @@ def search_for_field(search_obj, field_name, page_size=DEFAULT_ES_LOOP_PAGE_SIZE
         search_results = execute_search(search_obj[from_index: to_index])
         # add the field value for every search result hit to the set
         for hit in search_results.hits:
-            results.add(getattr(hit, field_name)[0])
+            results.add(getattr(hit, field_name))
         all_results_returned = to_index >= search_results.hits.total
         loop += 1
     return results
@@ -268,11 +261,12 @@ def _search_percolate_queries(program_enrollment):
         list of int: A list of PercolateQuery ids
     """
     conn = get_conn()
+    index, doc_type = get_default_alias_and_doc_type(PERCOLATE_INDEX_TYPE)
     doc = serialize_program_enrolled_user(program_enrollment)
     # We don't need this to search for percolator queries and
     # it causes a dynamic mapping failure so we need to remove it
     del doc['_id']
-    result = conn.percolate(get_default_alias(), USER_DOC_TYPE, body={"doc": doc})
+    result = conn.percolate(index, doc_type, body={"doc": doc})
     failures = result.get('_shards', {}).get('failures', [])
     if len(failures) > 0:
         raise PercolateException("Failed to percolate: {}".format(failures))
@@ -318,9 +312,11 @@ def document_needs_updating(enrollment):
     Returns:
         bool: True if the document needs to be updated via reindex
     """
+    index, doc_type = get_default_alias_and_doc_type(PRIVATE_ENROLLMENT_INDEX_TYPE)
+
     conn = get_conn()
     try:
-        document = conn.get(index=get_default_alias(), doc_type=USER_DOC_TYPE, id=enrollment.id)
+        document = conn.get(index=index, doc_type=doc_type, id=enrollment.id)
     except NotFoundError:
         return True
     serialized_enrollment = serialize_program_enrolled_user(enrollment)
