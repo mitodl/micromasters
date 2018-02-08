@@ -11,6 +11,7 @@ beautifulsoup4==4.6.0     # via wagtail
 billiard==3.5.0.3         # via celery
 boto==2.39.0
 celery==4.0.2
+certifi==2018.1.18
 cffi==1.10.0              # via bcrypt, cryptography, pynacl
 contextlib2==0.5.5        # via raven
 cryptography==2.0.2       # via paramiko
