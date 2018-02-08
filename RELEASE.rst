@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.89.2
+--------------
+
+- count_courses_passed for courses with exams (#3809)
+- Upgrade to Elasticsearch 5 (#3789)
+
 Version 0.89.1
 --------------
 

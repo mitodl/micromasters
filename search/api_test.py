@@ -30,9 +30,9 @@ from search.api import (
 )
 from search.base import ESTestCase
 from search.connection import (
-    USER_DOC_TYPE,
-    PUBLIC_USER_DOC_TYPE,
-    get_default_alias,
+    get_default_alias_and_doc_type,
+    PRIVATE_ENROLLMENT_INDEX_TYPE,
+    PUBLIC_ENROLLMENT_INDEX_TYPE,
 )
 from search.exceptions import (
     NoProgramAccessException,
@@ -126,11 +126,11 @@ class SearchAPITests(ESTestCase):
         assert search_query_dict['size'] == 5
 
     @ddt.data(
-        (True, [USER_DOC_TYPE]),
-        (False, [PUBLIC_USER_DOC_TYPE]),
+        (True, PRIVATE_ENROLLMENT_INDEX_TYPE),
+        (False, PUBLIC_ENROLLMENT_INDEX_TYPE),
     )
     @ddt.unpack
-    def test_create_search_obj_metadata(self, is_advance_search_capable, expected_doc_type):
+    def test_create_search_obj_metadata(self, is_advance_search_capable, expected_index_type):
         """
         Test that Search objects are created with proper metadata
         """
@@ -141,8 +141,9 @@ class SearchAPITests(ESTestCase):
                 user,
                 search_param_dict=search_param_dict,
             )
-        assert search_obj._doc_type == expected_doc_type  # pylint: disable=protected-access
-        assert search_obj._index == [get_default_alias()]  # pylint: disable=protected-access
+        expected_alias, doc_type = get_default_alias_and_doc_type(expected_index_type)
+        assert search_obj._doc_type == [doc_type]  # pylint: disable=protected-access
+        assert search_obj._index == [expected_alias]  # pylint: disable=protected-access
         assert mock_update_from_dict.call_count == 2
         assert isinstance(mock_update_from_dict.call_args[0][0], Search)
         assert mock_update_from_dict.call_args[0][1] == search_param_dict
