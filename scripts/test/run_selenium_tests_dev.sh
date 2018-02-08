@@ -25,4 +25,5 @@ docker-compose ${YML_ARGS} run -v "$PWD:/src" \
    -e MICROMASTERS_USE_WEBPACK_DEV_SERVER=True \
    -e FEATURE_OPEN_DISCUSSIONS_POST_UI=false \
    -e WEBPACK_DEV_SERVER_HOST="$WEBPACK_SELENIUM_DEV_SERVER_HOST" \
+   --service-ports \
    selenium py.test ${@-./selenium_tests}

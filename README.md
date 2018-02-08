@@ -321,11 +321,16 @@ If a test errors but selenium is still working, it will take
 a screenshot of the browser at the point of the error and write it
 as a png file in the project directory.
 
-#### Generating screenshots
+##### Generating screenshots
 
 To generate screenshots of various dashboard states, run this command:
 
     ./scripts/test/run_snapshot_dashboard_states.sh
+
+##### Viewing tests via browser
+
+Selenium tests run locally will forward port 7000 to the inner container. To
+view the test server with your browser, go to [http://your_mm_ip_address:7000](http://your_mm_ip_address:7000).
 
 ## Connecting to external services
 

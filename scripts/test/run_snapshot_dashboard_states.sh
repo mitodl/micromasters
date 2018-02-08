@@ -27,4 +27,5 @@ docker-compose ${YML_ARGS} run -v "$PWD:/src" \
    -e RUNNING_SELENIUM=true \
    -e FEATURE_OPEN_DISCUSSIONS_POST_UI=false \
    -e WEBPACK_DEV_SERVER_HOST="$WEBPACK_SELENIUM_DEV_SERVER_HOST" \
+   --service-ports \
    selenium ./manage.py snapshot_dashboard_states $@
