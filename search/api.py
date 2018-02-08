@@ -261,12 +261,13 @@ def _search_percolate_queries(program_enrollment):
         list of int: A list of PercolateQuery ids
     """
     conn = get_conn()
-    index, doc_type = get_default_alias_and_doc_type(PERCOLATE_INDEX_TYPE)
+    percolate_index, _ = get_default_alias_and_doc_type(PERCOLATE_INDEX_TYPE)
+    _, user_doc_type = get_default_alias_and_doc_type(PRIVATE_ENROLLMENT_INDEX_TYPE)
     doc = serialize_program_enrolled_user(program_enrollment)
     # We don't need this to search for percolator queries and
     # it causes a dynamic mapping failure so we need to remove it
     del doc['_id']
-    result = conn.percolate(index, doc_type, body={"doc": doc})
+    result = conn.percolate(percolate_index, user_doc_type, body={"doc": doc})
     failures = result.get('_shards', {}).get('failures', [])
     if len(failures) > 0:
         raise PercolateException("Failed to percolate: {}".format(failures))
