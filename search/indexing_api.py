@@ -67,8 +67,14 @@ PUBLIC_ENROLLMENT_MAPPING = {
                     'filled_out': BOOL_TYPE,
                     'first_name': FOLDED_SEARCHABLE_KEYWORD_TYPE,
                     'full_name': FOLDED_SEARCHABLE_KEYWORD_TYPE,
+                    'image': KEYWORD_TYPE,
+                    'image_small': KEYWORD_TYPE,
+                    'image_medium': KEYWORD_TYPE,
                     'last_name': FOLDED_SEARCHABLE_KEYWORD_TYPE,
+                    'romanized_first_name': KEYWORD_TYPE,
+                    'romanized_last_name': KEYWORD_TYPE,
                     'preferred_name': FOLDED_SEARCHABLE_KEYWORD_TYPE,
+                    'state_or_territory': KEYWORD_TYPE,
                     'username': FOLDED_SEARCHABLE_KEYWORD_TYPE,
                     'work_history': {'type': 'nested', 'properties': {
                         'city': KEYWORD_TYPE,
@@ -97,16 +103,7 @@ PUBLIC_ENROLLMENT_MAPPING = {
                 }
             }
         },
-        # Make strings keyword by default to prevent tokenization
-        "dynamic_templates": [
-            {
-                "notanalyzed": {
-                    "match": "*",
-                    "match_mapping_type": "string",
-                    "mapping": KEYWORD_TYPE
-                }
-            }
-        ]
+        'dynamic': 'strict',
     }
 }
 PRIVATE_ENROLLMENT_MAPPING = {
@@ -118,6 +115,8 @@ PRIVATE_ENROLLMENT_MAPPING = {
             "profile": {
                 "properties": {
                     'account_privacy': KEYWORD_TYPE,
+                    'about_me': KEYWORD_TYPE,
+                    'address': KEYWORD_TYPE,
                     'agreed_to_terms_of_service': BOOL_TYPE,
                     'birth_city': KEYWORD_TYPE,
                     'birth_country': KEYWORD_TYPE,
@@ -125,6 +124,7 @@ PRIVATE_ENROLLMENT_MAPPING = {
                     'city': KEYWORD_TYPE,
                     'country': KEYWORD_TYPE,
                     'date_of_birth': DATE_TYPE,
+                    'edx_level_of_education': KEYWORD_TYPE,
                     'education': {'type': 'nested', 'properties': {
                         'degree_name': KEYWORD_TYPE,
                         'field_of_study': KEYWORD_TYPE,
@@ -136,15 +136,26 @@ PRIVATE_ENROLLMENT_MAPPING = {
                         'school_name': KEYWORD_TYPE,
                         'school_state_or_territory': KEYWORD_TYPE,
                     }},
+                    'email': KEYWORD_TYPE,
                     'email_optin': BOOL_TYPE,
                     'filled_out': BOOL_TYPE,
                     'first_name': FOLDED_SEARCHABLE_KEYWORD_TYPE,
                     'full_name': FOLDED_SEARCHABLE_KEYWORD_TYPE,
                     'gender': KEYWORD_TYPE,
                     'last_name': FOLDED_SEARCHABLE_KEYWORD_TYPE,
+                    'nationality': KEYWORD_TYPE,
                     'preferred_language': KEYWORD_TYPE,
                     'preferred_name': FOLDED_SEARCHABLE_KEYWORD_TYPE,
                     'pretty_printed_student_id': KEYWORD_TYPE,
+                    'image': KEYWORD_TYPE,
+                    'image_small': KEYWORD_TYPE,
+                    'image_medium': KEYWORD_TYPE,
+                    'phone_number': KEYWORD_TYPE,
+                    'postal_code': KEYWORD_TYPE,
+                    'romanized_first_name': KEYWORD_TYPE,
+                    'romanized_last_name': KEYWORD_TYPE,
+                    'state_or_territory': KEYWORD_TYPE,
+                    'student_id': KEYWORD_TYPE,
                     'username': FOLDED_SEARCHABLE_KEYWORD_TYPE,
                     'work_history': {'type': 'nested', 'properties': {
                         'city': KEYWORD_TYPE,
@@ -178,14 +189,7 @@ PRIVATE_ENROLLMENT_MAPPING = {
                 }
             }
         },
-        # Make strings not tokenized by default
-        'dynamic_templates': [{
-            "notanalyzed": {
-                "match": "*",
-                "match_mapping_type": "string",
-                "mapping": KEYWORD_TYPE
-            }
-        }]
+        'dynamic': 'strict'
     }
 }
 PERCOLATE_MAPPING = {
