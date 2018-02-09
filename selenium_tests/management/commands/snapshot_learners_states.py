@@ -1,4 +1,4 @@
-"""Management command to take screenshots and save API results for dashboard states"""
+"""Management command to take screenshots and save API results for learner search states"""
 # pylint: disable=redefined-outer-name,unused-argument
 import os
 import sys
