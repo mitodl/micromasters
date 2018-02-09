@@ -97,6 +97,8 @@ def create_discussion_user(discussion_user):
     api = get_staff_client()
     result = api.users.create(
         name=profile.full_name,
+        email=profile.user.email,
+        email_optin=profile.email_optin,
         image=profile.image.url if profile.image else None,
         image_small=profile.image_small.url if profile.image_small else None,
         image_medium=profile.image_medium.url if profile.image_medium else None,
@@ -133,6 +135,7 @@ def update_discussion_user(discussion_user):
     result = api.users.update(
         discussion_user.username,
         name=profile.full_name,
+        email=profile.user.email,
         image=profile.image.url if profile.image else None,
         image_small=profile.image_small.url if profile.image_small else None,
         image_medium=profile.image_medium.url if profile.image_medium else None,
