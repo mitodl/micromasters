@@ -74,6 +74,7 @@ from search.indexing_api import (
     PRIVATE_ENROLLMENT_MAPPING,
     PUBLIC_ENROLLMENT_MAPPING,
 )
+from search.models import PercolateQuery
 from search.util import traverse_mapping
 
 DOC_TYPES_PER_ENROLLMENT = 1
@@ -916,3 +917,104 @@ class PercolateQueryTests(ESTestCase):
         }
         query = PercolateQueryFactory.create(query=input_query)
         assert index_percolate_queries([query]) == 1
+
+    def test_fix_field_error(self):
+        """recreate_index should not cause any error with this percolate query"""
+        query = {
+            "query": {
+                "bool": {
+                    "filter": [
+                        {
+                            "bool": {
+                                "must": [
+                                    {
+                                        "term": {
+                                            "program.is_learner": True
+                                        }
+                                    },
+                                    {
+                                        "term": {
+                                            "profile.email_optin": True
+                                        }
+                                    }
+                                ],
+                                "should": [
+                                    {
+                                        "term": {
+                                            "program.id": 1
+                                        }
+                                    },
+                                    {
+                                        "term": {
+                                            "program.id": 2
+                                        }
+                                    },
+                                    {
+                                        "term": {
+                                            "program.id": 13
+                                        }
+                                    }
+                                ],
+                                "minimum_should_match": 1
+                            }
+                        },
+                        {
+                            "term": {
+                                "profile.filled_out": True
+                            }
+                        },
+                        {
+                            "bool": {
+                                "must": [
+                                    {
+                                        "nested": {
+                                            "path": "program.enrollments",
+                                            "query": {
+                                                "bool": {
+                                                    "must": [
+                                                        {
+                                                            "term": {
+                                                                "program.enrollments.course_title":
+                                                                    "Supply Chain Fundamentals  (SC1x)"
+                                                            }
+                                                        },
+                                                        {
+                                                            "term": {
+                                                                "program.enrollments.payment_status": "Auditing"
+                                                            }
+                                                        },
+                                                        {
+                                                            "term": {
+                                                                "program.enrollments.semester": "2017 - Spring"
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "term": {
+                                            "profile.birth_country": "DE"
+                                        }
+                                    },
+                                    {
+                                        "term": {
+                                            "profile.country": "US"
+                                        }
+                                    },
+                                    {
+                                        "term": {
+                                            "program.id": 1
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+
+        PercolateQuery.objects.create(query=query, original_query=query)
+        recreate_index()

@@ -172,6 +172,7 @@ PRIVATE_ENROLLMENT_MAPPING = {
                             'semester': KEYWORD_TYPE,
                             'course_title': KEYWORD_TYPE,
                             'status': KEYWORD_TYPE,
+                            'payment_status': KEYWORD_TYPE,
                         }
                     },
                 }
