@@ -65,7 +65,14 @@ class SearchTasksTests(MockedESTestCase):
         enrollment1 = ProgramEnrollmentFactory.create()
         enrollment2 = ProgramEnrollmentFactory.create(user=enrollment1.user)
         index_users([enrollment1.user.id])
-        self.index_program_enrolled_users_mock.assert_called_once_with([enrollment1, enrollment2])
+        assert self.index_program_enrolled_users_mock.call_count == 1
+        assert sorted(
+            self.index_program_enrolled_users_mock.call_args[0][0],
+            key=lambda _enrollment: _enrollment.id
+        ) == sorted(
+            [enrollment1, enrollment2],
+            key=lambda _enrollment: _enrollment.id
+        )
         for enrollment in [enrollment1, enrollment2]:
             self.send_automatic_emails_mock.assert_any_call(enrollment)
             self.update_percolate_memberships_mock.assert_any_call(

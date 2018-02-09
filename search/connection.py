@@ -11,12 +11,6 @@ _CONN = None
 # When we create the connection, check to make sure all appropriate mappings exist
 _CONN_VERIFIED = False
 
-# This is a builtin type in Elasticsearch 2
-LEGACY_PERCOLATE_DOC_TYPE = '.percolator'
-
-LEGACY_USER_DOC_TYPE = 'program_user'
-LEGACY_PUBLIC_USER_DOC_TYPE = 'public_program_user'
-
 PUBLIC_ENROLLMENT_INDEX_TYPE = 'public_enrollment'
 PRIVATE_ENROLLMENT_INDEX_TYPE = 'private_enrollment'
 PERCOLATE_INDEX_TYPE = 'percolate'
@@ -75,7 +69,7 @@ def get_conn(*, verify=True, verify_indices=None):
         verify_indices = set()
         for index_type in ALL_INDEX_TYPES:
             verify_indices = verify_indices.union(
-                (tup[0] for tup in get_aliases_and_doc_types(index_type))
+                get_aliases(index_type)
             )
     for verify_index in verify_indices:
         if not _CONN.indices.exists(verify_index):
@@ -87,7 +81,7 @@ def get_conn(*, verify=True, verify_indices=None):
     return _CONN
 
 
-def make_new_backing_index_name():
+def make_backing_index_name():
     """
     Make a unique name for use for a backing index
 
@@ -100,7 +94,7 @@ def make_new_backing_index_name():
     )
 
 
-def make_new_alias_name(index_type, *, is_reindexing):
+def make_alias_name(index_type, *, is_reindexing):
     """
     Make the name used for the Elasticsearch alias
 
@@ -118,71 +112,39 @@ def make_new_alias_name(index_type, *, is_reindexing):
     )
 
 
-def get_legacy_default_alias():
+def get_aliases(index_type):
     """
-    Get name for the alias to the legacy index
+    Return a list of active aliases
 
-    Returns:
-        str: The name of the legacy alias
-    """
-    return "{}_alias".format(settings.ELASTICSEARCH_INDEX)
-
-
-def get_aliases_and_doc_types(index_type):
-    """
-    Depending on whether or not we upgraded to the new schema for Elasticsearch 5,
-    return a list of active indices and associated doc types to use for indexing.
-
-    There is always one item in the returned list and the first tuple is always for the default alias.
+    There is always one item in the returned list and the first is always the default alias.
 
     Args:
         index_type (str): The index type
 
     Returns:
-        list of tuple:
-            (a tuple of the alias, the doc type to use for the indexing of that alias)
-            The list will always have at least one tuple, and the first is always the default, newest alias
+        list of str:
+            A list of aliases.
+            The list will always have at least one tuple, and the first is always the default alias
     """
     conn = get_conn(verify=False)
 
-    mapping = {
-        PRIVATE_ENROLLMENT_INDEX_TYPE: LEGACY_USER_DOC_TYPE,
-        PUBLIC_ENROLLMENT_INDEX_TYPE: LEGACY_PUBLIC_USER_DOC_TYPE,
-        PERCOLATE_INDEX_TYPE: LEGACY_PERCOLATE_DOC_TYPE,
-    }
+    default_alias = make_alias_name(index_type, is_reindexing=False)
+    reindexing_alias = make_alias_name(index_type, is_reindexing=True)
 
-    legacy_doc_type = mapping[index_type]
-
-    default_alias = make_new_alias_name(index_type, is_reindexing=False)
-    reindexing_alias = make_new_alias_name(index_type, is_reindexing=True)
-    legacy_alias = get_legacy_default_alias()
-
-    if conn.indices.exists(default_alias):
-        # Elasticsearch 5
-        tuples = [
-            (default_alias, GLOBAL_DOC_TYPE),
-            (reindexing_alias, GLOBAL_DOC_TYPE),
-            (legacy_alias, legacy_doc_type),
-        ]
-        return [
-            tup for tup in tuples if conn.indices.exists(tup[0])
-        ]
-    else:
-        # Elasticsearch 2
-        return [
-            (legacy_alias, legacy_doc_type),
-        ]
+    aliases = [default_alias]
+    if conn.indices.exists(reindexing_alias):
+        aliases.append(reindexing_alias)
+    return aliases
 
 
-def get_default_alias_and_doc_type(index_type):
+def get_default_alias(index_type):
     """
-    Depending on whether or not we upgraded to the new schema for Elasticsearch 5,
-    return the doc type and index to use
+    Return the default alias
 
     Args:
         index_type (str): The index type
 
     Returns:
-        tuple: (the default alias to update, the doc type to use for the indexing)
+        str: The default alias
     """
-    return get_aliases_and_doc_types(index_type)[0]
+    return get_aliases(index_type)[0]

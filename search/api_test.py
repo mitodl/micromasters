@@ -30,7 +30,7 @@ from search.api import (
 )
 from search.base import ESTestCase
 from search.connection import (
-    get_default_alias_and_doc_type,
+    get_default_alias,
     PRIVATE_ENROLLMENT_INDEX_TYPE,
     PUBLIC_ENROLLMENT_INDEX_TYPE,
 )
@@ -141,8 +141,7 @@ class SearchAPITests(ESTestCase):
                 user,
                 search_param_dict=search_param_dict,
             )
-        expected_alias, doc_type = get_default_alias_and_doc_type(expected_index_type)
-        assert search_obj._doc_type == [doc_type]  # pylint: disable=protected-access
+        expected_alias = get_default_alias(expected_index_type)
         assert search_obj._index == [expected_alias]  # pylint: disable=protected-access
         assert mock_update_from_dict.call_count == 2
         assert isinstance(mock_update_from_dict.call_args[0][0], Search)

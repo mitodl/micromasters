@@ -17,12 +17,11 @@ from micromasters.utils import (
 )
 from search.connection import (
     ALL_INDEX_TYPES,
-    get_aliases_and_doc_types,
-    get_default_alias_and_doc_type,
-    get_legacy_default_alias,
+    get_aliases,
+    get_default_alias,
     get_conn,
-    make_new_alias_name,
-    make_new_backing_index_name,
+    make_alias_name,
+    make_backing_index_name,
     GLOBAL_DOC_TYPE,
     PERCOLATE_INDEX_TYPE,
     PRIVATE_ENROLLMENT_INDEX_TYPE,
@@ -200,15 +199,13 @@ PERCOLATE_MAPPING = {
 }
 
 
-def _index_chunk(chunk, *, doc_type, index):
+def _index_chunk(chunk, *, index):
     """
     Add/update a list of records in Elasticsearch
 
     Args:
         chunk (list):
             List of serialized items to index
-        doc_type (str):
-            The doc type for each item
         index (str): An Elasticsearch index
 
     Returns:
@@ -220,7 +217,7 @@ def _index_chunk(chunk, *, doc_type, index):
         conn,
         chunk,
         index=index,
-        doc_type=doc_type,
+        doc_type=GLOBAL_DOC_TYPE,
     )
     if len(errors) > 0:
         raise ReindexException("Error during bulk insert: {errors}".format(
@@ -231,14 +228,13 @@ def _index_chunk(chunk, *, doc_type, index):
     return insert_count
 
 
-def _index_chunks(items, *, doc_type, index, chunk_size=100):
+def _index_chunks(items, *, index, chunk_size=100):
     """
     Add/update records in Elasticsearch.
 
     Args:
         items (iterable):
             Iterable of serialized items to index
-        doc_type (str): The doc type for the items to be indexed
         index (str): An Elasticsearch index
         chunk_size (int):
             How many items to index at once.
@@ -250,7 +246,7 @@ def _index_chunks(items, *, doc_type, index, chunk_size=100):
     log.info("Indexing chunk pairs, chunk_size=%d...", chunk_size)
     count = 0
     for chunk in chunks(items, chunk_size=chunk_size):
-        count += _index_chunk(chunk, doc_type=doc_type, index=index)
+        count += _index_chunk(chunk, index=index)
         log.info("Indexed %d items...", count)
     log.info("Indexing done, refreshing index...")
     refresh_index(index)
@@ -258,18 +254,17 @@ def _index_chunks(items, *, doc_type, index, chunk_size=100):
     return count
 
 
-def _delete_item(document_id, *, doc_type, index):
+def _delete_item(document_id, *, index):
     """
     Helper function to delete a document
 
     Args:
         document_id (int): A document id
-        doc_type (str): A document type
         index (str): An Elasticsearch index
     """
     conn = get_conn(verify_indices=[index])
     try:
-        conn.delete(index=index, doc_type=doc_type, id=document_id)
+        conn.delete(index=index, doc_type=GLOBAL_DOC_TYPE, id=document_id)
     except NotFoundError:
         # Item is already gone
         pass
@@ -365,7 +360,7 @@ def _get_percolate_documents(percolate_queries):
 
 def index_program_enrolled_users(
         program_enrollments, *,
-        public_indices=None, public_doc_type=None, private_indices=None, private_doc_type=None, chunk_size=100
+        public_indices=None, private_indices=None, chunk_size=100
 ):
     """
     Bulk index an iterable of ProgramEnrollments
@@ -373,24 +368,14 @@ def index_program_enrolled_users(
     Args:
         program_enrollments (iterable of ProgramEnrollment): An iterable of program enrollments
         public_indices (list of str): The indices to store public enrollment documents
-        public_doc_type (str): The doc type for the public documents
         private_indices (list of str): The indices to store private enrollment documents
-        private_doc_type (str): The doc type for the private documents
         chunk_size (int): The number of items per chunk to index
     """
-    if public_indices is None and public_doc_type is None:
-        public_tuples = get_aliases_and_doc_types(PUBLIC_ENROLLMENT_INDEX_TYPE)
-    elif public_indices is None or public_doc_type is None:
-        raise ValueError("Both public_indices and public_doc_type must be set or neither of them should be set")
-    else:
-        public_tuples = [(index, public_doc_type) for index in public_indices]
+    if public_indices is None:
+        public_indices = get_aliases(PUBLIC_ENROLLMENT_INDEX_TYPE)
 
-    if private_indices is None and private_doc_type is None:
-        private_tuples = get_aliases_and_doc_types(PRIVATE_ENROLLMENT_INDEX_TYPE)
-    elif private_indices is None or private_doc_type is None:
-        raise ValueError("Both private_indices and private_doc_type must be set or neither of them should be set")
-    else:
-        private_tuples = [(index, private_doc_type) for index in private_indices]
+    if private_indices is None:
+        private_indices = get_aliases(PRIVATE_ENROLLMENT_INDEX_TYPE)
 
     # Serialize to a temporary file so we don't serialize twice (serializing is expensive)
     with open_json_stream() as json_stream:
@@ -398,19 +383,17 @@ def index_program_enrolled_users(
             (document for document in _get_private_documents(program_enrollments))
         )
 
-        for index, doc_type in public_tuples:
+        for index in public_indices:
             _index_chunks(
                 _get_public_documents(json_stream.read_stream()),
                 index=index,
-                doc_type=doc_type,
                 chunk_size=chunk_size,
             )
 
-        for index, doc_type in private_tuples:
+        for index in private_indices:
             _index_chunks(
                 json_stream.read_stream(),
                 index=index,
-                doc_type=doc_type,
                 chunk_size=chunk_size,
             )
 
@@ -422,13 +405,13 @@ def remove_program_enrolled_user(program_enrollment_id):
     Args:
         program_enrollment_id (int): A program enrollment id which is the same as the document id to remove
     """
-    public_tuples = get_aliases_and_doc_types(PUBLIC_ENROLLMENT_INDEX_TYPE)
-    for index, doc_type in public_tuples:
-        _delete_item(program_enrollment_id, doc_type=doc_type, index=index)
+    public_indices = get_aliases(PUBLIC_ENROLLMENT_INDEX_TYPE)
+    for index in public_indices:
+        _delete_item(program_enrollment_id, index=index)
 
-    private_tuples = get_aliases_and_doc_types(PRIVATE_ENROLLMENT_INDEX_TYPE)
-    for index, doc_type in private_tuples:
-        _delete_item(program_enrollment_id, doc_type=doc_type, index=index)
+    private_indices = get_aliases(PRIVATE_ENROLLMENT_INDEX_TYPE)
+    for index in private_indices:
+        _delete_item(program_enrollment_id, index=index)
 
 
 def serialize_program_enrolled_user(program_enrollment):
@@ -482,7 +465,7 @@ def refresh_all_default_indices():
     Refresh all default indexes
     """
     for index_type in ALL_INDEX_TYPES:
-        alias, _ = get_default_alias_and_doc_type(index_type)
+        alias = get_default_alias(index_type)
         refresh_index(alias)
 
 
@@ -535,8 +518,8 @@ def delete_indices():
     """
     conn = get_conn(verify=False)
     for index_type in ALL_INDEX_TYPES:
-        tuples = get_aliases_and_doc_types(index_type)
-        for alias, _ in tuples:
+        aliases = get_aliases(index_type)
+        for alias in aliases:
             if conn.indices.exists(alias):
                 conn.indices.delete(alias)
 
@@ -549,9 +532,9 @@ def recreate_index():
     conn = get_conn(verify=False)
 
     # Create new backing index for reindex
-    new_backing_public_index = make_new_backing_index_name()
-    new_backing_private_index = make_new_backing_index_name()
-    new_backing_percolate_index = make_new_backing_index_name()
+    new_backing_public_index = make_backing_index_name()
+    new_backing_private_index = make_backing_index_name()
+    new_backing_percolate_index = make_backing_index_name()
     backing_index_tuples = [
         (new_backing_public_index, PUBLIC_ENROLLMENT_INDEX_TYPE),
         (new_backing_private_index, PRIVATE_ENROLLMENT_INDEX_TYPE),
@@ -560,7 +543,7 @@ def recreate_index():
     for backing_index, index_type in backing_index_tuples:
         # Clear away temp alias so we can reuse it, and create mappings
         clear_and_create_index(backing_index, index_type=index_type)
-        temp_alias = make_new_alias_name(index_type, is_reindexing=True)
+        temp_alias = make_alias_name(index_type, is_reindexing=True)
         if conn.indices.exists_alias(name=temp_alias):
             # Deletes both alias and backing indexes
             conn.indices.delete(temp_alias)
@@ -576,16 +559,13 @@ def recreate_index():
         index_program_enrolled_users(
             ProgramEnrollment.objects.iterator(),
             public_indices=[new_backing_public_index],
-            public_doc_type=GLOBAL_DOC_TYPE,
             private_indices=[new_backing_private_index],
-            private_doc_type=GLOBAL_DOC_TYPE,
         )
 
         log.info("Indexing %d percolator queries...", PercolateQuery.objects.count())
         _index_chunks(
             _get_percolate_documents(PercolateQuery.objects.iterator()),
             index=new_backing_percolate_index,
-            doc_type=GLOBAL_DOC_TYPE,
         )
 
         # Point default alias to new index and delete the old backing index, if any
@@ -594,19 +574,17 @@ def recreate_index():
         for new_backing_index, index_type in backing_index_tuples:
             actions = []
             old_backing_indexes = []
-            default_alias = make_new_alias_name(index_type, is_reindexing=False)
-            aliases_to_remove = [get_legacy_default_alias(), default_alias]
-            for alias in aliases_to_remove:
-                if conn.indices.exists_alias(name=alias):
-                    # Should only be one backing index in normal circumstances
-                    old_backing_indexes = list(conn.indices.get_alias(name=alias).keys())
-                    for index in old_backing_indexes:
-                        actions.append({
-                            "remove": {
-                                "index": index,
-                                "alias": alias,
-                            }
-                        })
+            default_alias = make_alias_name(index_type, is_reindexing=False)
+            if conn.indices.exists_alias(name=default_alias):
+                # Should only be one backing index in normal circumstances
+                old_backing_indexes = list(conn.indices.get_alias(name=default_alias).keys())
+                for index in old_backing_indexes:
+                    actions.append({
+                        "remove": {
+                            "index": index,
+                            "alias": default_alias,
+                        }
+                    })
             actions.append({
                 "add": {
                     "index": new_backing_index,
@@ -622,7 +600,7 @@ def recreate_index():
                 conn.indices.delete(index)
     finally:
         for new_backing_index, index_type in backing_index_tuples:
-            temp_alias = make_new_alias_name(index_type, is_reindexing=True)
+            temp_alias = make_alias_name(index_type, is_reindexing=True)
             conn.indices.delete_alias(name=temp_alias, index=new_backing_index)
     end = now_in_utc()
     log.info("recreate_index took %d seconds", (end - start).total_seconds())
@@ -657,13 +635,12 @@ def index_percolate_queries(percolate_queries, chunk_size=100):
     Returns:
         int: Number of indexed items
     """
-    tuples = get_aliases_and_doc_types(PERCOLATE_INDEX_TYPE)
+    aliases = get_aliases(PERCOLATE_INDEX_TYPE)
 
     count = 0
-    for index, doc_type in tuples:
+    for index in aliases:
         count = _index_chunks(
             (_serialize_percolate_query(query) for query in percolate_queries),
-            doc_type=doc_type,
             index=index,
             chunk_size=chunk_size,
         )
@@ -679,7 +656,7 @@ def delete_percolate_query(percolate_query_id):
         percolate_query_id (int):
             The id of a deleted PercolateQuery
     """
-    tuples = get_aliases_and_doc_types(PERCOLATE_INDEX_TYPE)
+    aliases = get_aliases(PERCOLATE_INDEX_TYPE)
 
-    for index, doc_type in tuples:
-        _delete_item(percolate_query_id, doc_type=doc_type, index=index)
+    for index in aliases:
+        _delete_item(percolate_query_id, index=index)

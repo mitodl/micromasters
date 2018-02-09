@@ -43,18 +43,14 @@ from roles.roles import (
 from search.base import ESTestCase
 from search.connection import (
     ALL_INDEX_TYPES,
-    get_aliases_and_doc_types,
-    get_default_alias_and_doc_type,
-    get_legacy_default_alias,
-    make_new_alias_name,
-    make_new_backing_index_name,
+    get_aliases,
+    get_default_alias,
+    make_alias_name,
+    make_backing_index_name,
     GLOBAL_DOC_TYPE,
     PERCOLATE_INDEX_TYPE,
     PUBLIC_ENROLLMENT_INDEX_TYPE,
     PRIVATE_ENROLLMENT_INDEX_TYPE,
-    LEGACY_PERCOLATE_DOC_TYPE,
-    LEGACY_PUBLIC_USER_DOC_TYPE,
-    LEGACY_USER_DOC_TYPE,
 )
 from search.exceptions import ReindexException
 from search.factories import PercolateQueryFactory
@@ -71,8 +67,6 @@ from search.indexing_api import (
     filter_current_work,
     index_percolate_queries,
     delete_percolate_query,
-    PRIVATE_ENROLLMENT_MAPPING,
-    PUBLIC_ENROLLMENT_MAPPING,
 )
 from search.util import traverse_mapping
 
@@ -88,25 +82,25 @@ class ESTestActions:
 
     def search(self, index_type):
         """Gets full index data from the _search endpoint"""
-        alias, _ = get_default_alias_and_doc_type(index_type)
+        alias = get_default_alias(index_type)
         refresh_index(alias)
         return self.conn.search(index=alias)['hits']
 
     def get_percolate_query(self, _id):
         """Get percolate query"""
-        index, doc_type = get_default_alias_and_doc_type(PERCOLATE_INDEX_TYPE)
-        return self.conn.get(id=_id, index=index, doc_type=doc_type)
+        index = get_default_alias(PERCOLATE_INDEX_TYPE)
+        return self.conn.get(id=_id, index=index)
 
     def get_mappings(self, index_type):
         """Gets mapping data"""
-        alias, _ = get_default_alias_and_doc_type(index_type)
+        alias = get_default_alias(index_type)
         refresh_index(alias)
         mapping = self.conn.indices.get_mapping(index=alias)
         return list(mapping.values())[0]['mappings']
 
     def get_default_backing_index(self, index_type):
         """Get the default backing index"""
-        alias, _ = get_default_alias_and_doc_type(index_type)
+        alias = get_default_alias(index_type)
         return list(self.conn.indices.get_alias(name=alias).keys())[0]
 
 
@@ -327,17 +321,17 @@ class IndexTests(ESTestCase):
             index_program_enrolled_users(program_enrollments, chunk_size=chunk_size)
             assert index_chunk.call_count == 6  # 10 enrollments divided in chunks of 4, times the number of types (2)
 
-            public_index = make_new_alias_name(PUBLIC_ENROLLMENT_INDEX_TYPE, is_reindexing=False)
-            private_index = make_new_alias_name(PRIVATE_ENROLLMENT_INDEX_TYPE, is_reindexing=False)
+            public_index = make_alias_name(PUBLIC_ENROLLMENT_INDEX_TYPE, is_reindexing=False)
+            private_index = make_alias_name(PRIVATE_ENROLLMENT_INDEX_TYPE, is_reindexing=False)
             for offset in range(0, num_enrollments, chunk_size):
                 # each enrollment should get yielded twice to account for each doctype
                 index_chunk.assert_any_call(
                     public[offset:offset+4],  # ordered dicts FTW
-                    doc_type=GLOBAL_DOC_TYPE, index=public_index
+                    index=public_index
                 )
                 index_chunk.assert_any_call(
                     private[offset:offset+4],
-                    doc_type=GLOBAL_DOC_TYPE, index=private_index
+                    index=private_index
                 )
 
             assert serialize_mock.call_count == len(program_enrollments)
@@ -638,48 +632,38 @@ class GetConnTests(ESTestCase):
         assert str(ex.exception) == "Unable to find index {}".format(other_index)
 
     @data(
-        [True, False, PRIVATE_ENROLLMENT_INDEX_TYPE, ('testindex_alias', ), LEGACY_USER_DOC_TYPE],
-        [True, False, PUBLIC_ENROLLMENT_INDEX_TYPE, ('testindex_alias', ), LEGACY_PUBLIC_USER_DOC_TYPE],
-        [True, False, PERCOLATE_INDEX_TYPE, ('testindex_alias',), LEGACY_PERCOLATE_DOC_TYPE],
-        [False, False, PRIVATE_ENROLLMENT_INDEX_TYPE, ('testindex_private_enrollment_default',), GLOBAL_DOC_TYPE],
-        [False, False, PUBLIC_ENROLLMENT_INDEX_TYPE, ('testindex_public_enrollment_default',), GLOBAL_DOC_TYPE],
-        [False, False, PERCOLATE_INDEX_TYPE, ('testindex_percolate_default',), GLOBAL_DOC_TYPE],
-        [True, True, PRIVATE_ENROLLMENT_INDEX_TYPE, ('testindex_alias',), LEGACY_USER_DOC_TYPE],
-        [True, True, PUBLIC_ENROLLMENT_INDEX_TYPE, ('testindex_alias',), LEGACY_PUBLIC_USER_DOC_TYPE],
-        [True, True, PERCOLATE_INDEX_TYPE, ('testindex_alias',), LEGACY_PERCOLATE_DOC_TYPE],
-        [False, True, PRIVATE_ENROLLMENT_INDEX_TYPE,
-         ('testindex_private_enrollment_default', 'testindex_private_enrollment_reindexing'), GLOBAL_DOC_TYPE],
-        [False, True, PUBLIC_ENROLLMENT_INDEX_TYPE,
-         ('testindex_public_enrollment_default', 'testindex_public_enrollment_reindexing'), GLOBAL_DOC_TYPE],
-        [False, True, PERCOLATE_INDEX_TYPE,
-         ('testindex_percolate_default', 'testindex_percolate_reindexing'), GLOBAL_DOC_TYPE],
+        [False, PRIVATE_ENROLLMENT_INDEX_TYPE, ('testindex_private_enrollment_default',)],
+        [False, PUBLIC_ENROLLMENT_INDEX_TYPE, ('testindex_public_enrollment_default',)],
+        [False, PERCOLATE_INDEX_TYPE, ('testindex_percolate_default',)],
+        [True, PRIVATE_ENROLLMENT_INDEX_TYPE,
+         ('testindex_private_enrollment_default', 'testindex_private_enrollment_reindexing')],
+        [True, PUBLIC_ENROLLMENT_INDEX_TYPE,
+         ('testindex_public_enrollment_default', 'testindex_public_enrollment_reindexing')],
+        [True, PERCOLATE_INDEX_TYPE,
+         ('testindex_percolate_default', 'testindex_percolate_reindexing')],
     )
     @unpack
     # pylint: disable=too-many-arguments
-    def test_get_aliases_and_doc_type(self, is_legacy, is_reindex, index_type, expected_indices, expected_doc_type):
+    def test_get_aliases(self, is_reindex, index_type, expected_indices):
         """
         We should choose the correct alias and doc type given the circumstances
         """
         conn = get_conn(verify=False)
 
-        if is_legacy:
-            # If no indices can be found it assumes the 2.x schema
-            alias = get_legacy_default_alias()
-        else:
-            alias = make_new_alias_name(index_type, is_reindexing=False)
+        alias = make_alias_name(index_type, is_reindexing=False)
 
-        backing_index = make_new_backing_index_name()
+        backing_index = make_backing_index_name()
         # Skip the mapping because it's invalid for 2.x schema, and we don't need it here
         clear_and_create_index(backing_index, index_type=index_type, skip_mapping=True)
         conn.indices.put_alias(index=backing_index, name=alias)
 
-        if is_reindex and not is_legacy:
-            conn.indices.put_alias(index=backing_index, name=make_new_alias_name(index_type, is_reindexing=True))
+        if is_reindex:
+            conn.indices.put_alias(index=backing_index, name=make_alias_name(index_type, is_reindexing=True))
 
-        tuples = get_aliases_and_doc_types(index_type)
-        assert tuples == [(index, expected_doc_type) for index in expected_indices]
+        aliases = get_aliases(index_type)
+        assert aliases == list(expected_indices)
 
-        assert get_default_alias_and_doc_type(index_type) == tuples[0]
+        assert get_default_alias(index_type) == aliases[0]
 
 
 @ddt
@@ -712,8 +696,8 @@ class RecreateIndexTests(ESTestCase):
         Test that recreate_index will point an existing alias at a new backing index
         """
         conn = get_conn(verify=False)
-        default_alias = make_new_alias_name(index_type, is_reindexing=False)
-        temp_alias = make_new_alias_name(index_type, is_reindexing=True)
+        default_alias = make_alias_name(index_type, is_reindexing=False)
+        temp_alias = make_alias_name(index_type, is_reindexing=True)
         assert conn.indices.exists_alias(name=temp_alias) is False
 
         if existing_temp_alias:
@@ -753,62 +737,26 @@ class RecreateIndexTests(ESTestCase):
         conn = get_conn(verify=False)
         recreate_index()
 
-        types = {
-            PRIVATE_ENROLLMENT_INDEX_TYPE: LEGACY_USER_DOC_TYPE,
-            PUBLIC_ENROLLMENT_INDEX_TYPE: LEGACY_PUBLIC_USER_DOC_TYPE,
-        }
-
         temp_aliases = {}
-        for index_type, _ in types.items():
+        index_types = [PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE]
+        for index_type in index_types:
             # create temporary index
-            temp_index = make_new_backing_index_name()
-            temp_alias = make_new_alias_name(index_type=index_type, is_reindexing=True)
+            temp_index = make_backing_index_name()
+            temp_alias = make_alias_name(index_type=index_type, is_reindexing=True)
             clear_and_create_index(temp_index, index_type=index_type)
             conn.indices.put_alias(index=temp_index, name=temp_alias)
             temp_aliases[index_type] = temp_alias
 
-        # create legacy index
-        legacy_index = make_new_backing_index_name()
-        legacy_alias = get_legacy_default_alias()
-
-        conn.indices.create(legacy_index, body={
-            'settings': {
-                'analysis': {
-                    'analyzer': {
-                        'folding': {
-                            'type': 'custom',
-                            'tokenizer': 'standard',
-                            'filter': [
-                                'lowercase',
-                                'asciifolding',  # remove accents if we use folding analyzer
-                            ]
-                        }
-                    }
-                }
-            },
-            'mappings': {
-                LEGACY_PUBLIC_USER_DOC_TYPE: PUBLIC_ENROLLMENT_MAPPING[GLOBAL_DOC_TYPE],
-                LEGACY_USER_DOC_TYPE: PRIVATE_ENROLLMENT_MAPPING[GLOBAL_DOC_TYPE],
-            }
-        })
-
-        conn.indices.put_alias(index=legacy_index, name=legacy_alias)
-
         with patch('search.signals.transaction.on_commit', side_effect=lambda callback: callback()):
             program_enrollment = ProgramEnrollmentFactory.create()
 
-        for index_type, legacy_doc_type in types.items():
+        for index_type in index_types:
             assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
 
-            # Legacy alias should get updated
-            refresh_index(legacy_alias)
-            legacy_hits = conn.search(index=legacy_alias, doc_type=legacy_doc_type)['hits']
-            assert_search(legacy_hits, [program_enrollment], index_type=index_type)
-
-            # Temp alias should get updated too
+            # Temp alias should get updated
             temp_alias = temp_aliases[index_type]
             refresh_index(temp_alias)
-            temp_hits = conn.search(index=temp_alias, doc_type=GLOBAL_DOC_TYPE)['hits']
+            temp_hits = conn.search(index=temp_alias)['hits']
             assert_search(temp_hits, [program_enrollment], index_type=index_type)
 
 

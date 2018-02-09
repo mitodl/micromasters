@@ -18,8 +18,9 @@ from dashboard.models import ProgramEnrollment
 from profiles.models import Profile
 from roles.api import get_advance_searchable_program_ids
 from search.connection import (
-    get_default_alias_and_doc_type,
+    get_default_alias,
     get_conn,
+    GLOBAL_DOC_TYPE,
     PRIVATE_ENROLLMENT_INDEX_TYPE,
     PUBLIC_ENROLLMENT_INDEX_TYPE,
     PERCOLATE_INDEX_TYPE,
@@ -53,7 +54,7 @@ def execute_search(search_obj):
     # make sure there is a live connection
     if search_obj._index is None:  # pylint: disable=protected-access
         # If you're seeing this it means you're creating Search() without using
-        # create_search_obj which sets important fields like the index and doc_type.
+        # create_search_obj which sets important fields like the index.
         raise ImproperlyConfigured("search object is missing an index")
 
     get_conn()
@@ -136,8 +137,8 @@ def create_search_obj(user, search_param_dict=None, filter_on_email_optin=False)
     staff_program_ids = get_advance_searchable_program_ids(user)
     is_advance_search_capable = bool(staff_program_ids)
     index_type = PRIVATE_ENROLLMENT_INDEX_TYPE if is_advance_search_capable else PUBLIC_ENROLLMENT_INDEX_TYPE
-    index, doc_type = get_default_alias_and_doc_type(index_type)
-    search_obj = Search(index=index, doc_type=doc_type)
+    index = get_default_alias(index_type)
+    search_obj = Search(index=index)
     # Update from search params first so our server-side filtering will overwrite it if necessary
     if search_param_dict is not None:
         search_obj.update_from_dict(search_param_dict)
@@ -261,13 +262,12 @@ def _search_percolate_queries(program_enrollment):
         list of int: A list of PercolateQuery ids
     """
     conn = get_conn()
-    percolate_index, _ = get_default_alias_and_doc_type(PERCOLATE_INDEX_TYPE)
-    _, user_doc_type = get_default_alias_and_doc_type(PRIVATE_ENROLLMENT_INDEX_TYPE)
+    percolate_index = get_default_alias(PERCOLATE_INDEX_TYPE)
     doc = serialize_program_enrolled_user(program_enrollment)
     # We don't need this to search for percolator queries and
     # it causes a dynamic mapping failure so we need to remove it
     del doc['_id']
-    result = conn.percolate(percolate_index, user_doc_type, body={"doc": doc})
+    result = conn.percolate(percolate_index, GLOBAL_DOC_TYPE, body={"doc": doc})
     failures = result.get('_shards', {}).get('failures', [])
     if len(failures) > 0:
         raise PercolateException("Failed to percolate: {}".format(failures))
@@ -298,7 +298,7 @@ def adjust_search_for_percolator(search):
     search_dict = search.to_dict()
     if 'query' in search_dict:
         updated_search_dict['query'] = search_dict['query']
-    updated_search = Search(index=search._index, doc_type=search._doc_type)  # pylint: disable=protected-access
+    updated_search = Search(index=search._index)  # pylint: disable=protected-access
     updated_search.update_from_dict(updated_search_dict)
     return updated_search
 
@@ -313,11 +313,11 @@ def document_needs_updating(enrollment):
     Returns:
         bool: True if the document needs to be updated via reindex
     """
-    index, doc_type = get_default_alias_and_doc_type(PRIVATE_ENROLLMENT_INDEX_TYPE)
+    index = get_default_alias(PRIVATE_ENROLLMENT_INDEX_TYPE)
 
     conn = get_conn()
     try:
-        document = conn.get(index=index, doc_type=doc_type, id=enrollment.id)
+        document = conn.get(index=index, id=enrollment.id)
     except NotFoundError:
         return True
     serialized_enrollment = serialize_program_enrolled_user(enrollment)
