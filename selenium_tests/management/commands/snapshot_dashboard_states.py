@@ -4,6 +4,8 @@ import itertools
 import os
 import sys
 from urllib.parse import quote_plus
+
+from datetime import timedelta
 from selenium.webdriver.common.by import By
 from faker.generator import random
 import pytest
@@ -29,7 +31,7 @@ from ecommerce.models import (
     UserCoupon,
     Order,
 )
-from exams.factories import ExamRunFactory
+from exams.factories import ExamRunFactory, ExamProfileFactory, ExamAuthorizationFactory
 from exams.models import ExamAuthorization
 from financialaid.factories import FinancialAidFactory
 from financialaid.models import FinancialAidStatus
@@ -80,7 +82,7 @@ class DashboardStates:
         """
         self.user = user
 
-    def create_exams(self, edx_passed, exam_passed, new_offering):
+    def create_exams(self, edx_passed, exam_passed, new_offering, can_schedule, future_exam):
         """Create an exam and mark it and the related course as passed or not passed"""
         self.make_fa_program_enrollment(FinancialAidStatus.AUTO_APPROVED)
         if edx_passed:
@@ -95,19 +97,13 @@ class DashboardStates:
             )
         course = Course.objects.get(title='Digital Learning 200')
         course_run = course.courserun_set.first()
+        ExamProfileFactory.create(status='success', profile=self.user.profile)
         exam_run = ExamRunFactory.create(course=course, eligibility_past=True, scheduling_past=True)
-        ExamAuthorization(user=self.user, course=course, exam_run=exam_run, exam_taken=True)
         LineFactory.create(
             order__status=Order.FULFILLED,
             course_key=course_run
         )
-        for _ in range(2):
-            ProctoredExamGradeFactory.create(
-                user=self.user,
-                course=course,
-                exam_run=exam_run,
-                passed=False,
-            )
+
         ProctoredExamGradeFactory.create(
             user=self.user,
             course=course,
@@ -116,6 +112,25 @@ class DashboardStates:
         )
         if new_offering:
             CourseRunFactory.create(course=course)
+
+        if can_schedule:
+            exam_run = ExamRunFactory.create(
+                scheduling_past=False,
+                scheduling_future=False,
+                authorized=True,
+                course=course
+            )
+            ExamAuthorizationFactory.create(
+                user=self.user, course=course, exam_run=exam_run, status='success',
+            )
+
+        if future_exam:
+            ExamRunFactory.create(
+                scheduling_past=False,
+                scheduling_future=True,
+                authorized=True,
+                course=course
+            )
 
     def with_prev_passed_run(self):
         """Add a passed run to a failed course. The course should then be passed"""
@@ -237,15 +252,17 @@ class DashboardStates:
         )
 
         # Add scenarios for every combination of passed/failed course and exam
-        for tup in itertools.product([True, False], repeat=3):
-            edx_passed, exam_passed, is_offered = tup
+        for tup in itertools.product([True, False], repeat=5):
+            edx_passed, exam_passed, is_offered, can_schedule, future_exam = tup
 
             yield (
-                bind_args(self.create_exams, edx_passed, exam_passed, is_offered),
-                'create_exams_{edx_passed}_{exam_passed}{new_offering}'.format(
+                bind_args(self.create_exams, edx_passed, exam_passed, is_offered, can_schedule, future_exam),
+                'create_exams_{edx_passed}_{exam_passed}{new_offering}{can_schedule}{future_exam}'.format(
                     edx_passed='edx_✔' if edx_passed else 'edx_✖',
                     exam_passed='exam_✔' if exam_passed else 'exam_✖',
                     new_offering='_with_new_offering' if is_offered else '',
+                    can_schedule='_can_schedule' if can_schedule else '',
+                    new_offering_exam='_more_exams' if future_exam else ''
                 ),
             )
 
