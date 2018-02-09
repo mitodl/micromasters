@@ -80,6 +80,7 @@ from search.util import traverse_mapping
 DOC_TYPES_PER_ENROLLMENT = 1
 
 
+# pylint: disable=too-many-lines
 class ESTestActions:
     """
     Provides helper functions for tests to communicate with ES
