@@ -82,7 +82,7 @@ class DashboardStates:
         """
         self.user = user
 
-    def create_exams(self, edx_passed, exam_passed, new_offering, can_schedule, future_exam):
+    def create_exams(self, edx_passed, exam_passed, new_offering, can_schedule, future_exam, need_to_pay):
         """Create an exam and mark it and the related course as passed or not passed"""
         self.make_fa_program_enrollment(FinancialAidStatus.AUTO_APPROVED)
         if edx_passed:
@@ -99,6 +99,9 @@ class DashboardStates:
         course_run = course.courserun_set.first()
         ExamProfileFactory.create(status='success', profile=self.user.profile)
         exam_run = ExamRunFactory.create(course=course, eligibility_past=True, scheduling_past=True)
+        ExamAuthorizationFactory.create(
+            user=self.user, course=course, exam_run=exam_run, status='success', exam_taken=True
+        )
         LineFactory.create(
             order__status=Order.FULFILLED,
             course_key=course_run
@@ -130,6 +133,17 @@ class DashboardStates:
                 scheduling_future=True,
                 authorized=True,
                 course=course
+            )
+        if need_to_pay:
+            exam_run = ExamRunFactory.create(course=course, eligibility_past=True, scheduling_past=True)
+            ExamAuthorizationFactory.create(
+                user=self.user, course=course, exam_run=exam_run, status='success', exam_taken=True
+            )
+            ProctoredExamGradeFactory.create(
+                user=self.user,
+                course=course,
+                exam_run=exam_run,
+                passed=False,
             )
 
     def with_prev_passed_run(self):
@@ -252,17 +266,18 @@ class DashboardStates:
         )
 
         # Add scenarios for every combination of passed/failed course and exam
-        for tup in itertools.product([True, False], repeat=5):
-            edx_passed, exam_passed, is_offered, can_schedule, future_exam = tup
+        for tup in itertools.product([True, False], repeat=6):
+            edx_passed, exam_passed, is_offered, can_schedule, future_exam, has_to_pay = tup
 
             yield (
-                bind_args(self.create_exams, edx_passed, exam_passed, is_offered, can_schedule, future_exam),
-                'create_exams_{edx_passed}_{exam_passed}{new_offering}{can_schedule}{future_exam}'.format(
+                bind_args(self.create_exams, edx_passed, exam_passed, is_offered, can_schedule, future_exam, has_to_pay),
+                'create_exams_{edx_passed}_{exam_passed}{new_offering}{can_schedule}{future_exam}{has_to_pay}'.format(
                     edx_passed='edx_✔' if edx_passed else 'edx_✖',
                     exam_passed='exam_✔' if exam_passed else 'exam_✖',
                     new_offering='_with_new_offering' if is_offered else '',
                     can_schedule='_can_schedule' if can_schedule else '',
-                    new_offering_exam='_more_exams' if future_exam else ''
+                    future_exam='_more_exams' if future_exam else '',
+                    has_to_pay='_failed_one_exam' if has_to_pay else ''
                 ),
             )
 
