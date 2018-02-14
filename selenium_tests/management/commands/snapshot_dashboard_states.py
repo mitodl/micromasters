@@ -5,7 +5,6 @@ import os
 import sys
 from urllib.parse import quote_plus
 
-from datetime import timedelta
 from selenium.webdriver.common.by import By
 from faker.generator import random
 import pytest
@@ -32,7 +31,6 @@ from ecommerce.models import (
     Order,
 )
 from exams.factories import ExamRunFactory, ExamProfileFactory, ExamAuthorizationFactory
-from exams.models import ExamAuthorization
 from financialaid.factories import FinancialAidFactory
 from financialaid.models import FinancialAidStatus
 from grades.factories import ProctoredExamGradeFactory
@@ -84,6 +82,7 @@ class DashboardStates:
 
     def create_exams(self, edx_passed, exam_passed, new_offering, can_schedule, future_exam, need_to_pay):
         """Create an exam and mark it and the related course as passed or not passed"""
+        # pylint: disable-msg=too-many-arguments
         self.make_fa_program_enrollment(FinancialAidStatus.AUTO_APPROVED)
         if edx_passed:
             call_command(
