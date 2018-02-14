@@ -163,6 +163,30 @@ def test_update_discussion_user(mock_staff_client):
     )
 
 
+def test_update_discussion_user_with_email_optin(mock_staff_client):
+    """Verify update_discussion_user makes the correct API calls"""
+    mock_response = mock_staff_client.users.update.return_value
+    mock_response.status_code = 200
+    mock_response.json.return_value = {
+        'username': 'username'
+    }
+    with mute_signals(post_save):
+        profile = ProfileFactory.create()
+    discussion_user = DiscussionUser.objects.create(user=profile.user, username='username')
+    api.update_discussion_user(discussion_user, allow_email_optin=True)
+    mock_staff_client.users.update.assert_called_once_with(
+        discussion_user.username,
+        email=profile.user.email,
+        profile=dict(
+            name=profile.full_name,
+            image=profile.image.url if profile.image else None,
+            image_small=profile.image_small.url if profile.image_small else None,
+            image_medium=profile.image_medium.url if profile.image_medium else None,
+            email_optin=profile.email_optin
+        )
+    )
+
+
 def test_update_discussion_user_no_update(mock_staff_client):
     """Verify update_discussion_user makes the correct API calls"""
     with mute_signals(post_save):
