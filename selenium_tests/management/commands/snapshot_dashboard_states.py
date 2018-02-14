@@ -219,6 +219,17 @@ class DashboardStates:
             tier_program__discount_amount=50,
         )
 
+    def create_paid_failed_course_run(self):
+        """Make paid failed course run, and offer another run"""
+        self.make_fa_program_enrollment(FinancialAidStatus.AUTO_APPROVED)
+        call_command(
+            "alter_data", 'set_to_failed', '--username', 'staff',
+            '--course-title', 'Digital Learning 200', '--grade', '45',
+        )
+        course = Course.objects.get(title='Digital Learning 200')
+        # create another offered run
+        CourseRunFactory.create(course=course)
+
     def __iter__(self):
         """
         Iterator over all dashboard states supported by this command.
@@ -248,6 +259,8 @@ class DashboardStates:
                     new_offering='_with_new_offering' if is_offered else '',
                 ),
             )
+
+        yield (self.create_paid_course_run, 'create_paid_course_run')
 
         # Also test for two different passing and failed runs on the same course
         yield (self.with_prev_passed_run, 'failed_with_prev_passed_run')
