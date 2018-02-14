@@ -58,6 +58,24 @@ def sync_discussion_users():
 
 
 @app.task()
+def sync_discussion_users_with_email_optin():
+    """
+    Sync the user's profile to open discussions
+    """
+    if not settings.FEATURES.get('OPEN_DISCUSSIONS_USER_SYNC', False):
+        log.debug('OPEN_DISCUSSIONS_USER_SYNC is set to False (so disabled) in the settings')
+        return
+    users_to_backfill = Profile.objects.exclude(
+        user__discussion_user__isnull=False).values_list('user__id', flat=True)
+
+    for user_id in users_to_backfill:
+        try:
+            api.create_or_update_discussion_user(user_id, allow_email_optin=True)
+        except DiscussionUserSyncException:
+            log.error('Impossible to sync user_id %s to discussions', user_id)
+
+
+@app.task()
 def add_moderators_to_channel(channel_name):
     """
     Add moderators to a open-discussions channel

@@ -54,12 +54,13 @@ def get_staff_client():
     )
 
 
-def create_or_update_discussion_user(user_id):
+def create_or_update_discussion_user(user_id, allow_email_optin=False):
     """
     Create or update a DiscussionUser record and sync it
 
     Args:
         user_id (int): user id of the user to sync
+         allow_email_optin (bool): if True send email_optin in profile dict on users.update call
 
     Returns:
         DiscussionUser: The DiscussionUser connected to the user
@@ -77,7 +78,7 @@ def create_or_update_discussion_user(user_id):
         if discussion_user.username is None:
             create_discussion_user(discussion_user)
         else:
-            update_discussion_user(discussion_user)
+            update_discussion_user(discussion_user, allow_email_optin=allow_email_optin)
 
         return discussion_user
 

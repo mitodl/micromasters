@@ -4,7 +4,7 @@ import pytest
 
 
 # pylint: disable=unused-argument
-def _update_discussion_user(discussion_user):
+def _update_discussion_user(discussion_user, allow_email_optin=False):
     """Helper function to create a DiscussionUser and update its username"""
     if discussion_user.username is None:
         discussion_user.username = Faker('user_name').generate({})

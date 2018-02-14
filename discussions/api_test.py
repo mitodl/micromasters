@@ -574,7 +574,7 @@ def test_add_channel(mock_staff_client, mocker, patched_users_api):
     add_subscriber_stub.assert_called_once_with(channel.name, mod.discussion_user.username)
     add_moderator_stub.assert_called_once_with(channel.name, mod.discussion_user.username)
     _, updated_stub = patched_users_api
-    updated_stub.assert_any_call(mod.discussion_user)
+    updated_stub.assert_any_call(mod.discussion_user, allow_email_optin=False)
 
 
 def test_add_channel_failed_create_channel(mock_staff_client, mocker):
@@ -654,7 +654,7 @@ def test_add_moderators_to_channel(mocker, patched_users_api):
     for mod in mods:
         add_subscriber_stub.assert_any_call(channel.name, mod.discussion_user.username)
         add_moderator_stub.assert_any_call(channel.name, mod.discussion_user.username)
-        updated_stub.assert_any_call(mod.discussion_user)
+        updated_stub.assert_any_call(mod.discussion_user, allow_email_optin=False)
 
     assert add_subscriber_stub.call_count == len(mods)
     assert add_moderator_stub.call_count == len(mods)
