@@ -269,7 +269,9 @@ class DashboardStates:
             edx_passed, exam_passed, is_offered, can_schedule, future_exam, has_to_pay = tup
 
             yield (
-                bind_args(self.create_exams, edx_passed, exam_passed, is_offered, can_schedule, future_exam, has_to_pay),
+                bind_args(
+                    self.create_exams, edx_passed, exam_passed, is_offered, can_schedule, future_exam, has_to_pay
+                ),
                 'create_exams_{edx_passed}_{exam_passed}{new_offering}{can_schedule}{future_exam}{has_to_pay}'.format(
                     edx_passed='edx_✔' if edx_passed else 'edx_✖',
                     exam_passed='exam_✔' if exam_passed else 'exam_✖',
