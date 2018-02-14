@@ -89,19 +89,17 @@ def test_sync_discussion_users_sync_with_email_optin_enabled(settings, mocker, p
     for user in users:
         # Delete DiscussionUser so it will get backfilled
         user.discussion_user.delete()
-    user_already_sync = UserFactory.create()
+    UserFactory.create()
     user_no_profile = UserFactory.create()
     user_no_profile.profile.delete()
 
     mock_api = mocker.patch('discussions.api.create_or_update_discussion_user', autospec=True)
-    tasks.sync_discussion_users_with_email_optin()
-    assert mock_api.call_count == len(users)
+    tasks.force_sync_discussion_users()
+    assert mock_api.call_count == len(users) + 1
     for user in users:
         mock_api.assert_any_call(user.id, allow_email_optin=True)
     with pytest.raises(AssertionError):
         mock_api.assert_any_call(user_no_profile.id, allow_email_optin=True)
-    with pytest.raises(AssertionError):
-        mock_api.assert_any_call(user_already_sync.id, allow_email_optin=True)
 
 
 def test_sync_discussion_users_task_api_error(mocker):

@@ -133,9 +133,9 @@ def update_discussion_user(discussion_user, allow_email_optin=False):
     profile = discussion_user.user.profile
 
     if (
-        not allow_email_optin and
-        discussion_user.last_sync is not None and
-        profile.updated_on <= discussion_user.last_sync
+            not allow_email_optin and
+            discussion_user.last_sync is not None and
+            profile.updated_on <= discussion_user.last_sync
     ):
         return
 

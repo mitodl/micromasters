@@ -58,15 +58,15 @@ def sync_discussion_users():
 
 
 @app.task()
-def sync_discussion_users_with_email_optin():
+def force_sync_discussion_users():
     """
     Sync the user's profile to open discussions along with email optin flag
     """
     if not settings.FEATURES.get('OPEN_DISCUSSIONS_USER_SYNC', False):
         log.debug('OPEN_DISCUSSIONS_USER_SYNC is set to False (so disabled) in the settings')
         return
-    users_to_backfill = Profile.objects.values_list('user__id', flat=True)
 
+    users_to_backfill = Profile.objects.values_list('user__id', flat=True)
     for user_id in users_to_backfill:
         try:
             api.create_or_update_discussion_user(user_id, allow_email_optin=True)

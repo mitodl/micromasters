@@ -4,7 +4,7 @@ Backfills the users
 from django.conf import settings
 from django.core.management import BaseCommand, CommandError
 
-from discussions.tasks import sync_discussion_users_with_email_optin
+from discussions.tasks import force_sync_discussion_users
 
 
 class Command(BaseCommand):
@@ -18,7 +18,7 @@ class Command(BaseCommand):
         if not settings.FEATURES.get('OPEN_DISCUSSIONS_USER_SYNC', False):
             raise CommandError('OPEN_DISCUSSIONS_USER_SYNC is set to False (so disabled).')
 
-        sync_discussion_users_with_email_optin.delay()
+        force_sync_discussion_users.delay()
         self.stdout.write(
             self.style.SUCCESS('Async job to backfill users submitted with there email optin')
         )
