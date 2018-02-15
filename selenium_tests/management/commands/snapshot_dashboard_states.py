@@ -260,7 +260,7 @@ class DashboardStates:
                 ),
             )
 
-        yield (self.create_paid_course_run, 'create_paid_course_run')
+        yield (self.create_paid_failed_course_run, 'failed_paid_run_another_offered')
 
         # Also test for two different passing and failed runs on the same course
         yield (self.with_prev_passed_run, 'failed_with_prev_passed_run')
