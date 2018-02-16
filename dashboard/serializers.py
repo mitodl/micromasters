@@ -3,7 +3,6 @@ Provides functionality for serializing a ProgramEnrollment for the ES index
 """
 from courses.utils import get_year_season_from_course_run
 from dashboard.utils import get_mmtrack
-from dashboard.api import get_overall_final_grade_for_course
 from roles.api import is_learner
 
 
@@ -53,7 +52,7 @@ class UserProgramSearchSerializer:
         final_grade = mmtrack.get_best_final_grade_for_course(course_run.edx_course_key)
         if mmtrack.financial_aid_available:
             if course_run.course.has_exam:
-                final_grade = get_overall_final_grade_for_course(mmtrack, course_run.course)
+                final_grade = mmtrack.get_overall_final_grade_for_course(course_run.course)
         semester = cls.serialize_semester(course_run)
         return {
             'final_grade': final_grade,

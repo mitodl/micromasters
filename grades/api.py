@@ -11,6 +11,7 @@ from django_redis import get_redis_connection
 from dashboard.api_edx_cache import CachedEdxUserData, CachedEdxDataApi
 from dashboard.models import CachedEnrollment, CachedCurrentGrade
 from dashboard.utils import get_mmtrack
+from grades.constants import EXAM_GRADE_WEIGHT, COURSE_GRADE_WEIGHT
 from grades.exceptions import FreezeGradeFailedException
 from grades.models import (
     FinalGrade,
@@ -23,9 +24,6 @@ CACHE_KEY_FAILED_USERS_BASE_STR = "failed_users_{0}"
 log = logging.getLogger(__name__)
 
 UserFinalGrade = namedtuple('UserFinalGrade', ['grade', 'passed', 'payed_on_edx'])
-
-COURSE_GRADE_WEIGHT = 0.4
-EXAM_GRADE_WEIGHT = 0.6
 
 
 def _compute_grade_for_fa(user_edx_run_data):

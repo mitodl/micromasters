@@ -21,7 +21,7 @@ from dashboard.api_edx_cache import CachedEdxDataApi, CachedEdxUserData
 from dashboard.utils import MMTrack
 from financialaid.serializers import FinancialAidDashboardSerializer
 from grades import api
-from grades.models import FinalGrade, CombinedFinalGrade
+from grades.models import FinalGrade
 from grades.serializers import ProctoredExamGradeSerializer
 from exams.models import ExamAuthorization, ExamRun
 from micromasters.utils import now_in_utc
@@ -235,8 +235,7 @@ def get_info_for_course(course, mmtrack):
         ).data,
         "has_exam": course.has_exam,
         "certificate_url": get_certificate_url(mmtrack, course),
-        "overall_grade":
-            get_overall_final_grade_for_course(mmtrack, course)
+        "overall_grade": mmtrack.get_overall_final_grade_for_course(course)
     }
 
     def _add_run(run, mmtrack_, status):
@@ -509,36 +508,6 @@ def get_certificate_url(mmtrack, course):
             if download_url:
                 url = urljoin(settings.EDXORG_BASE_URL, download_url)
     return url
-
-
-def get_overall_final_grade_for_course(mmtrack, course):
-    """
-    Calculate overall grade for course
-
-    Args:
-       mmtrack (dashboard.utils.MMTrack): an instance of all user information about a program
-       course (courses.models.Course): A course
-    Returns:
-       str: the overall final grade
-    """
-    if settings.FEATURES.get('USE_COMBINED_FINAL_GRADE', False):
-
-        combined_grade = CombinedFinalGrade.objects.filter(user=mmtrack.user, course=course)
-        if combined_grade.exists():
-            return str(round(combined_grade.first().grade))
-        return ""
-    else:
-        best_grade = mmtrack.get_best_final_grade_for_course(course)
-        if best_grade is None:
-            return ""
-        if not course.has_exam:
-            return str(round(best_grade.grade_percent))
-
-        best_exam = mmtrack.get_best_proctored_exam_grade(course)
-        if best_exam is None:
-            return ""
-
-        return str(round(best_grade.grade_percent * api.COURSE_GRADE_WEIGHT + best_exam.score * api.EXAM_GRADE_WEIGHT))
 
 
 def calculate_users_to_refresh_in_bulk():

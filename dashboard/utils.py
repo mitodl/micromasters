@@ -4,6 +4,7 @@ Utility functions and classes for the dashboard
 import logging
 from decimal import Decimal
 
+from django.conf import settings
 from django.db import transaction
 from django.db.models import Q, Count
 from django.urls import reverse
@@ -12,6 +13,7 @@ from courses.models import CourseRun
 from dashboard.api_edx_cache import CachedEdxUserData
 from ecommerce.models import Order, Line
 from grades.constants import FinalGradeStatus
+from grades.constants import COURSE_GRADE_WEIGHT, EXAM_GRADE_WEIGHT
 from grades.models import (
     FinalGrade,
     ProctoredExamGrade,
@@ -318,6 +320,35 @@ class MMTrack:
         return self.final_grade_qset.for_course_run_keys(
             list(course.courserun_set.values_list('edx_course_key', flat=True))
         ).passed().order_by('-grade').first()
+
+    def get_overall_final_grade_for_course(self, course):
+        """
+        Calculate overall grade for course
+
+        Args:
+           course (courses.models.Course): A course
+        Returns:
+           str: the overall final grade
+        """
+        if settings.FEATURES.get('USE_COMBINED_FINAL_GRADE', False):
+
+            combined_grade = CombinedFinalGrade.objects.filter(user=self.user, course=course)
+            if combined_grade.exists():
+                return str(round(combined_grade.first().grade))
+            return ""
+        else:
+            best_grade = self.get_best_final_grade_for_course(course)
+            if best_grade is None:
+                return ""
+            if not course.has_exam:
+                return str(round(best_grade.grade_percent))
+
+            best_exam = self.get_best_proctored_exam_grade(course)
+            if best_exam is None:
+                return ""
+
+            return str(
+                round(best_grade.grade_percent * COURSE_GRADE_WEIGHT + best_exam.score * EXAM_GRADE_WEIGHT))
 
     def get_all_enrolled_course_runs(self):
         """

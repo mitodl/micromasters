@@ -1828,30 +1828,6 @@ class GetCertificateForCourseTests(CourseTests):
         assert api.get_certificate_url(self.mmtrack, self.course) == certificate_url
 
 
-class GetOverallGradeForCourseTests(CourseTests):
-    """Tests get_overall_final_grade_for_course for a course"""
-
-    def setUp(self):
-        super().setUp()
-        self.mmtrack.user = self.user
-        self.mmtrack.financial_aid_available = True
-
-        self.course_run = self.create_run(course=self.course)
-        self.final_grade = FinalGradeFactory.create(
-            user=self.user,
-            course_run=self.course_run,
-            grade=0.8,
-            passed=True
-        )
-
-    @override_settings(FEATURES={"USE_COMBINED_FINAL_GRADE": True})
-    def test_get_overall_final_grade_for_course(self):
-        """Test get_overall_final_grade_for_course return overall grade"""
-        assert api.get_overall_final_grade_for_course(self.mmtrack, self.course) == ""
-        CombinedFinalGrade.objects.create(user=self.user, course=self.course, grade="74")
-        assert api.get_overall_final_grade_for_course(self.mmtrack, self.course) == "74"
-
-
 # pylint: disable=unused-argument, redefined-outer-name
 def _make_fake_real_user():
     """Make a User whose profile.fake_user is False"""
