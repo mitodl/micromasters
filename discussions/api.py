@@ -124,7 +124,7 @@ def update_discussion_user(discussion_user, allow_email_optin=False):
     Updates the user's discussion user profile
 
     Args:
-        discussion_user (profiles.models.DiscussionUser): discussion user to update
+        discussion_user (discussions.models.DiscussionUser): discussion user to update
         allow_email_optin (bool): if True send email_optin in profile dict on users.update call
 
     Raises:

@@ -83,23 +83,49 @@ def test_sync_discussion_users_sync_enabled(settings, mocker, patched_users_api)
 def test_sync_discussion_users_sync_with_email_optin_enabled(settings, mocker, patched_users_api):
     """
     Test that sync_discussion_users call the api if enabled
-    and for only users with a profile and not already syncronized
+    and for only users with a profile and not already synchronized
     """
     users = [UserFactory.create() for _ in range(5)]
-    for user in users:
+    for user in users[1:]:
         # Delete DiscussionUser so it will get backfilled
         user.discussion_user.delete()
-    UserFactory.create()
     user_no_profile = UserFactory.create()
     user_no_profile.profile.delete()
 
     mock_api = mocker.patch('discussions.api.create_or_update_discussion_user', autospec=True)
     tasks.force_sync_discussion_users()
-    assert mock_api.call_count == len(users) + 1
+    assert mock_api.call_count == len(users)
     for user in users:
         mock_api.assert_any_call(user.id, allow_email_optin=True)
     with pytest.raises(AssertionError):
         mock_api.assert_any_call(user_no_profile.id, allow_email_optin=True)
+
+
+def test_sync_discussion_users_with_email_optin_enabled_no_feature_flag(settings, mocker, patched_users_api):
+    """
+    Test that sync_discussion_users does not call the api when
+    OPEN_DISCUSSIONS_USER_SYNC flag is off
+    """
+    settings.FEATURES['OPEN_DISCUSSIONS_USER_SYNC'] = False
+    api_stub = mocker.patch('discussions.api.create_or_update_discussion_user', autospec=True)
+    tasks.force_sync_discussion_users.delay()
+    assert api_stub.call_count == 0
+
+
+def test_force_sync_discussion_users_task_api_error(mocker):
+    """
+    Test that sync_discussion_users logs errors if they occur
+    """
+    mock_api = mocker.patch('discussions.api.create_or_update_discussion_user', autospec=True)
+    user = UserFactory.create()
+
+    # don't count the one triggered by signals on UserFactory.create()
+    mock_api.reset_mock()
+    mock_log = mocker.patch('discussions.tasks.log', autospec=True)
+    mock_api.side_effect = DiscussionUserSyncException()
+    tasks.force_sync_discussion_users()
+    mock_api.assert_called_once_with(user.id, allow_email_optin=True)
+    mock_log.error.assert_called_once_with("Impossible to sync user_id %s to discussions", user.id)
 
 
 def test_sync_discussion_users_task_api_error(mocker):
