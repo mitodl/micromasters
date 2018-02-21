@@ -150,6 +150,22 @@ describe("dashboard course utilities", () => {
         .format()
       assert.isFalse(courseCurrentlyInProgress(run))
     })
+
+    it("should return true if the start date passed and end date is null", () => {
+      run.course_start_date = moment()
+        .subtract(5, "days")
+        .format()
+      run.course_end_date = null
+      assert.isTrue(courseCurrentlyInProgress(run))
+    })
+
+    it("should return false for a future course run end date is null", () => {
+      run.course_start_date = moment()
+        .add(5, "days")
+        .format()
+      run.course_end_date = null
+      assert.isFalse(courseCurrentlyInProgress(run))
+    })
   })
 
   describe("courseUpcomingOrCurrent", () => {
@@ -171,6 +187,11 @@ describe("dashboard course utilities", () => {
         .subtract(5, "days")
         .format()
       assert.isFalse(courseUpcomingOrCurrent(run))
+    })
+
+    it("should return true when no end date is available", () => {
+      run.course_end_date = null
+      assert.isTrue(courseUpcomingOrCurrent(run))
     })
   })
 

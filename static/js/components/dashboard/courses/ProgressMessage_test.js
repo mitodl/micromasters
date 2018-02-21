@@ -55,6 +55,13 @@ describe("Course ProgressMessage", () => {
     assert.equal(wrapper.find(".details").text(), "Course in progress")
   })
 
+  it("displays information for an in-progress course run when end date is null", () => {
+    makeRunCurrent(course.runs[0])
+    course.runs[0].course_end_date = null
+    const wrapper = renderCourseDescription()
+    assert.equal(wrapper.find(".details").text(), "Course in progress")
+  })
+
   it("displays a contact link, if appropriate, and a view on edX link", () => {
     makeRunEnrolled(course.runs[0])
     makeRunCurrent(course.runs[0])
@@ -116,6 +123,14 @@ describe("Course ProgressMessage", () => {
     it("should return paid if course current and user has paid", () => {
       makeRunCurrent(course.runs[0])
       makeRunEnrolled(course.runs[0])
+      course.runs[0].has_paid = true
+      assert.equal("Paid", staffCourseInfo(course.runs[0], course))
+    })
+
+    it("should return paid if course current and user has paid and end date is null", () => {
+      makeRunCurrent(course.runs[0])
+      makeRunEnrolled(course.runs[0])
+      course.runs[0].course_end_date = null
       course.runs[0].has_paid = true
       assert.equal("Paid", staffCourseInfo(course.runs[0], course))
     })

@@ -54,13 +54,14 @@ export const hasEnrolledInAnyRun = R.compose(
 
 export const courseCurrentlyInProgress = (courseRun: CourseRun) => {
   const startDate = moment(courseRun.course_start_date)
-  const endDate = moment(courseRun.course_end_date)
   const now = moment()
-  return now.isAfter(startDate) && now.isBefore(endDate)
+  const endDateNotPass = courseRun.course_end_date ?
+    now.isBefore(moment(courseRun.course_end_date)) : true
+  return now.isAfter(startDate) && endDateNotPass
 }
 
 export const courseUpcomingOrCurrent = (courseRun: CourseRun) =>
-  moment().isBefore(moment(courseRun.course_end_date))
+  courseRun.course_end_date ? moment().isBefore(moment(courseRun.course_end_date)) : true
 
 export const hasPaidForAnyCourseRun = R.compose(
   R.any(R.propEq("has_paid", true)),
