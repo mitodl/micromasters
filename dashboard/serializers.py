@@ -48,14 +48,10 @@ class UserProgramSearchSerializer:
         has_paid = mmtrack.has_paid(course_run.edx_course_key)
         payment_status = cls.PAID_STATUS if has_paid else cls.UNPAID_STATUS
 
-        # find the best final grade or overall grade for course (with exams)
-        final_grade = mmtrack.get_best_final_grade_for_course(course_run.edx_course_key)
-        if mmtrack.financial_aid_available:
-            if course_run.course.has_exam:
-                final_grade = mmtrack.get_overall_final_grade_for_course(course_run.course)
+        final_grade = mmtrack.get_final_grades_for_course(course_run.course).first()
         semester = cls.serialize_semester(course_run)
         return {
-            'final_grade': final_grade,
+            'final_grade': final_grade.grade_percent if final_grade else None,
             'semester': semester,
             'course_title': course_title,
             'payment_status': payment_status,
