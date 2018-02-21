@@ -151,19 +151,19 @@ describe("dashboard course utilities", () => {
       assert.isFalse(courseCurrentlyInProgress(run))
     })
 
-    it("should return true if the start date passed and end date is null", () => {
+    it("should return true if the start date passed and end date is empty", () => {
       run.course_start_date = moment()
         .subtract(5, "days")
         .format()
-      run.course_end_date = null
+      run.course_end_date = ""
       assert.isTrue(courseCurrentlyInProgress(run))
     })
 
-    it("should return false for a future course run end date is null", () => {
+    it("should return false for a future course run end date is empty", () => {
       run.course_start_date = moment()
         .add(5, "days")
         .format()
-      run.course_end_date = null
+      run.course_end_date = ""
       assert.isFalse(courseCurrentlyInProgress(run))
     })
   })
@@ -190,7 +190,7 @@ describe("dashboard course utilities", () => {
     })
 
     it("should return true when no end date is available", () => {
-      run.course_end_date = null
+      run.course_end_date = ""
       assert.isTrue(courseUpcomingOrCurrent(run))
     })
   })
