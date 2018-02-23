@@ -1,7 +1,7 @@
 """
 Tests for discussions views
 """
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 import pytest
 from rest_framework import status as statuses
 from rest_framework.test import (

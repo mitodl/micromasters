@@ -8,7 +8,7 @@ from unittest.mock import (
 )
 
 import ddt
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from requests.exceptions import HTTPError
 from rest_framework import status
 from rest_framework.test import APITestCase

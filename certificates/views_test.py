@@ -4,7 +4,7 @@ Tests for certificate views
 # pylint: disable=redefined-outer-name
 
 import pytest
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from rest_framework import status
 
 from micromasters.utils import is_subset_dict

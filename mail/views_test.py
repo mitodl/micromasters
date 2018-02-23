@@ -5,7 +5,7 @@ from unittest.mock import Mock, patch
 import ddt
 
 from django.core.exceptions import ImproperlyConfigured
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db.models.signals import post_save
 from django.test import override_settings
 from django.test.client import RequestFactory

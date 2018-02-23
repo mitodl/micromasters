@@ -5,7 +5,7 @@ from urllib.parse import quote_plus
 from unittest.mock import patch
 
 import ddt
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db.models.signals import post_save
 from django.test import override_settings
 from factory.django import mute_signals

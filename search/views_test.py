@@ -3,7 +3,7 @@ Tests for the search view
 """
 import ddt
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db.models.signals import post_save
 from django.test import override_settings
 from factory.django import mute_signals

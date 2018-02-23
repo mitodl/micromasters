@@ -3,7 +3,7 @@ Tests for backends views
 """
 from unittest.mock import patch
 from django.http import HttpResponse
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django_redis import get_redis_connection
 from rest_framework.test import APITestCase
 

@@ -6,7 +6,7 @@ import json
 from types import SimpleNamespace
 from urllib.parse import urlencode
 import pytest
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 import factory
 from rest_framework import status
 

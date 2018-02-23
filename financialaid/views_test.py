@@ -6,7 +6,7 @@ from unittest.mock import Mock, patch
 
 from backends.edxorg import EdxOrgOAuth2
 import ddt
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.test import APIClient

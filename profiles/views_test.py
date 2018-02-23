@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 from dateutil.parser import parse
 import ddt
-from django.core.urlresolvers import resolve, reverse
+from django.urls import resolve, reverse
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 from PIL import Image

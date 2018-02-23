@@ -1,6 +1,6 @@
 """Discussions utils"""
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from open_discussions_api import utils
 
 from discussions import api

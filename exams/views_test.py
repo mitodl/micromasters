@@ -7,7 +7,7 @@ import ddt
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.core.exceptions import ImproperlyConfigured
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from exams.models import ExamProfile
 from micromasters.factories import UserFactory
