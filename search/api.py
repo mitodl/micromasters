@@ -61,6 +61,28 @@ def execute_search(search_obj):
     return search_obj.execute()
 
 
+def scan_search(search_obj):
+    """
+    Executes a scan search after checking the connection and return a
+    generator that will iterate over all the documents matching the query.
+
+    Args:
+        search_obj (Search): elasticsearch_dsl Search object
+
+    Returns:
+        generator of dict:
+            A generator that will iterate over all the documents matching the query
+    """
+    # make sure there is a live connection
+    if search_obj._index is None:  # pylint: disable=protected-access
+        # If you're seeing this it means you're creating Search() without using
+        # create_search_obj which sets important fields like the index.
+        raise ImproperlyConfigured("search object is missing an index")
+
+    get_conn()
+    return search_obj.scan()
+
+
 def get_searchable_programs(user, staff_program_ids):
     """
     Determines the programs a user is eligible to search
@@ -190,14 +212,13 @@ def prepare_and_execute_search(user, search_param_dict=None, search_func=execute
     return search_func(search_obj)
 
 
-def search_for_field(search_obj, field_name, page_size=DEFAULT_ES_LOOP_PAGE_SIZE):
+def search_for_field(search_obj, field_name):
     """
     Retrieves all unique instances of a field for documents that match an ES query
 
     Args:
         search_obj (Search): Search object
         field_name (str): The name of the field for the value to get
-        page_size (int): Number of docs per page of results
 
     Returns:
         set: Set of unique values
@@ -207,17 +228,10 @@ def search_for_field(search_obj, field_name, page_size=DEFAULT_ES_LOOP_PAGE_SIZE
     # index is altered during the loop.
     # This also limits the query to only return the field value.
     search_obj = search_obj.sort('_doc').source(include=[field_name])
-    loop = 0
-    all_results_returned = False
-    while not all_results_returned:
-        from_index = loop * page_size
-        to_index = from_index + page_size
-        search_results = execute_search(search_obj[from_index: to_index])
-        # add the field value for every search result hit to the set
-        for hit in search_results.hits:
-            results.add(getattr(hit, field_name))
-        all_results_returned = to_index >= search_results.hits.total
-        loop += 1
+    search_results = scan_search(search_obj)
+    # add the field value for every search result hit to the set
+    for hit in search_results:
+        results.add(getattr(hit, field_name))
     return results
 
 
