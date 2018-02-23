@@ -1,7 +1,7 @@
 """
 API for roles
 """
-from rolepermissions.verifications import has_object_permission
+from rolepermissions.checkers import has_object_permission
 
 from roles.models import Role
 

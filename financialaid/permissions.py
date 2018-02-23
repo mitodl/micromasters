@@ -1,7 +1,7 @@
 """
 Permission classes for financial aid views
 """
-from rolepermissions.verifications import has_object_permission
+from rolepermissions.checkers import has_object_permission
 from rest_framework.permissions import BasePermission
 
 from roles.roles import Permissions

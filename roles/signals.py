@@ -10,7 +10,7 @@ from django.db.models.signals import (
     post_delete,
 )
 from django.dispatch import receiver
-from rolepermissions.shortcuts import assign_role, remove_role
+from rolepermissions.roles import assign_role, remove_role
 
 from roles.models import Role
 
@@ -42,7 +42,7 @@ def save_remove_role_from_user(sender, instance, **kwargs):  # pylint: disable=u
         instance.role,
         instance.user.username,
     )
-    remove_role(instance.user)
+    remove_role(instance.user, old_instance.role)
 
 
 @receiver(post_save, sender=Role, dispatch_uid="save_assign_role_to_user")
@@ -75,4 +75,4 @@ def delete_remove_role_from_user(sender, instance, **kwargs):  # pylint: disable
         instance.role,
         instance.user.username,
     )
-    remove_role(instance.user)
+    remove_role(instance.user, instance.role)

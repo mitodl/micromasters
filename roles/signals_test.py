@@ -3,7 +3,7 @@ Tests for signals
 """
 from django.db.models.signals import post_save
 from factory.django import mute_signals
-from rolepermissions.verifications import (
+from rolepermissions.checkers import (
     has_role,
     has_permission,
     has_object_permission,

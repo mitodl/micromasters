@@ -12,8 +12,8 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View, TemplateView
 from raven.contrib.django.raven_compat.models import client as sentry
-from rolepermissions.shortcuts import available_perm_status
-from rolepermissions.verifications import has_role
+from rolepermissions.permissions import available_perm_status
+from rolepermissions.checkers import has_role
 
 from micromasters.utils import webpack_dev_server_host
 from micromasters.serializers import serialize_maybe_user

@@ -13,7 +13,7 @@ from factory import Iterator
 from factory.django import mute_signals
 from factory.fuzzy import FuzzyText
 from rest_framework import status
-from rolepermissions.shortcuts import available_perm_status
+from rolepermissions.permissions import available_perm_status
 from wagtail.wagtailimages.models import Image
 from wagtail.wagtailimages.tests.utils import get_test_image_file
 

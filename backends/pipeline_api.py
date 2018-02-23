@@ -4,7 +4,7 @@ APIs for extending the python social auth pipeline
 import logging
 from urllib.parse import urljoin
 
-from rolepermissions.verifications import has_role
+from rolepermissions.checkers import has_role
 
 from backends.edxorg import EdxOrgOAuth2
 from micromasters.utils import now_in_utc

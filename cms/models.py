@@ -8,7 +8,7 @@ from django.db import models
 from django.utils.text import slugify
 from modelcluster.fields import ParentalKey
 from raven.contrib.django.raven_compat.models import client as sentry
-from rolepermissions.verifications import has_role
+from rolepermissions.checkers import has_role
 from wagtail.wagtailadmin.edit_handlers import (FieldPanel, InlinePanel,
                                                 MultiFieldPanel)
 from wagtail.wagtailcore.fields import RichTextField
