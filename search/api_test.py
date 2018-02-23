@@ -213,21 +213,27 @@ class SearchAPITests(ESTestCase):
         """
         Test that a set of search results will yield an expected set of values
         """
-        test_es_page_size = 2
         search = create_search_obj(self.user)
-        user_ids = self.program.programenrollment_set.values_list("user__id", flat=True).order_by("-user__id")
-        results = search_for_field(search, 'user_id', page_size=test_es_page_size)
-        assert results == set(user_ids[:test_es_page_size])
+        user_ids = self.program.programenrollment_set.values_list(
+            "user__id", flat=True
+        ).exclude(
+            user__id=self.user.id
+        ).order_by("-user__id")
+        results = search_for_field(search, 'user_id')
+        assert results == set(user_ids)
 
     def test_all_query_matching_emails(self):
         """
         Test that a set of search results will yield an expected set of emails
         """
-        test_es_page_size = 2
         search = create_search_obj(self.user)
-        user_ids = self.program.programenrollment_set.values_list("user__email", flat=True).order_by("-user__id")
-        results = get_all_query_matching_emails(search, page_size=test_es_page_size)
-        assert results == set(user_ids[:test_es_page_size])
+        user_ids = self.program.programenrollment_set.values_list(
+            "user__email", flat=True
+        ).exclude(
+            user__email=self.user.email
+        ).order_by("-user__id")
+        results = get_all_query_matching_emails(search)
+        assert results == set(user_ids)
 
     # This patch works around on_commit by invoking it immediately, since in TestCase all tests run in transactions
     @patch('search.signals.transaction.on_commit', side_effect=lambda callback: callback())

@@ -235,7 +235,7 @@ def search_for_field(search_obj, field_name):
     return results
 
 
-def get_all_query_matching_emails(search_obj, page_size=DEFAULT_ES_LOOP_PAGE_SIZE):
+def get_all_query_matching_emails(search_obj):
     """
     Retrieves all unique emails for documents that match an ES query
 
@@ -246,7 +246,7 @@ def get_all_query_matching_emails(search_obj, page_size=DEFAULT_ES_LOOP_PAGE_SIZ
     Returns:
         set: Set of unique emails
     """
-    return search_for_field(search_obj, "email", page_size=page_size)
+    return search_for_field(search_obj, "email")
 
 
 def search_percolate_queries(program_enrollment_id, source_type):
