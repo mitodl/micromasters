@@ -19,7 +19,7 @@ if settings.DEBUG:
 
 urlpatterns += [
     url(r'', include('backends.urls')),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
     url('', include('courses.urls')),
     url('', include('dashboard.urls')),
     url('', include('ecommerce.urls')),
