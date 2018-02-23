@@ -43,7 +43,7 @@ def export_exam_profiles(self):
     Sync any outstanding profiles
     """
     if not settings.FEATURES.get("PEARSON_EXAMS_SYNC", False):
-        return None
+        return
 
     exam_profiles = ExamProfile.objects.filter(
         status=ExamProfile.PROFILE_PENDING).select_related('profile')
@@ -122,7 +122,7 @@ def export_exam_authorizations(self):
     Sync any outstanding profiles
     """
     if not settings.FEATURES.get("PEARSON_EXAMS_SYNC", False):
-        return None
+        return
 
     exam_authorizations = ExamAuthorization.objects.filter(
         status=ExamAuthorization.STATUS_PENDING).prefetch_related('user__profile', 'course__program')

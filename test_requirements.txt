@@ -1,4 +1,3 @@
-astroid==1.5.3 # fix https://github.com/PyCQA/pylint/issues/1609
 bpython
 codecov
 ddt
@@ -7,8 +6,8 @@ ipdb
 nplusone>=0.8.1
 pdbpp
 pip-tools
-pylint==1.7.2
--e git+git://github.com/mitodl/pylint-django.git@2c7136f1cb3ff618aa08189c7fab4f8e08772eae#egg=pylint-django-0.7.2fix
+pylint==1.8.2
+pylint-django==0.9.0
 pytest
 pytest-cov
 pytest-django

@@ -115,6 +115,7 @@ def custom_exception_handler(exc, context):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             data=[formatted_exception_string]
         )
+    return None
 
 
 def serialize_model_object(obj):

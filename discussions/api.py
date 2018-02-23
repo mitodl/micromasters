@@ -7,6 +7,7 @@ from django.db import transaction
 from open_discussions_api.client import OpenDiscussionsApi
 from open_discussions_api.constants import ROLE_STAFF
 from requests.exceptions import HTTPError
+from rest_framework import status as statuses
 
 from discussions.models import (
     Channel,
@@ -22,7 +23,6 @@ from discussions.exceptions import (
     ModeratorSyncException,
     SubscriberSyncException,
 )
-from rest_framework import status as statuses
 from roles.models import Role
 from roles.roles import Permissions
 from search.api import adjust_search_for_percolator
@@ -60,7 +60,7 @@ def create_or_update_discussion_user(user_id, allow_email_optin=False):
 
     Args:
         user_id (int): user id of the user to sync
-         allow_email_optin (bool): if True send email_optin in profile dict on users.update call
+        allow_email_optin (bool): if True send email_optin in profile dict on users.update call
 
     Returns:
         DiscussionUser: The DiscussionUser connected to the user

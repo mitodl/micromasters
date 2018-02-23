@@ -379,6 +379,9 @@ class MMTrack:
     def calculate_final_grade_average(self):
         """
         Calculates an average grade (integer) from the program final grades
+
+        Returns:
+            float: The average final grade or None if no final grades
         """
         final_grades = self.final_grade_qset.for_course_run_keys(self.edx_course_keys)
         if final_grades:
@@ -386,6 +389,7 @@ class MMTrack:
                 sum(Decimal(final_grade.grade_percent) for final_grade in final_grades) /
                 len(final_grades)
             )
+        return None
 
     def get_current_grade(self, edx_course_key):
         """
@@ -397,10 +401,10 @@ class MMTrack:
             float: the current grade of the user in the course run
         """
         if not self.is_enrolled(edx_course_key):
-            return
+            return None
         current_grade = self.current_grades.get_current_grade(edx_course_key)
         if current_grade is None:
-            return
+            return None
         return float(current_grade.percent) * 100
 
     def count_courses_passed(self):

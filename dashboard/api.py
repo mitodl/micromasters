@@ -411,7 +411,7 @@ def format_courserun_for_dashboard(course_run, status_for_user, mmtrack, positio
         dict: a dictionary containing information about the course
     """
     if course_run is None:
-        return
+        return None
     formatted_run = {
         'id': course_run.id,
         'course_id': course_run.edx_course_key,

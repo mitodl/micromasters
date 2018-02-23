@@ -32,6 +32,7 @@ class FullProgramFactory(ProgramFactory):
                 from financialaid.factories import TierProgramFactory
                 TierProgramFactory.create_properly_configured_batch(2, program=self)
             return self
+        return None
 
 
 class CourseFactory(DjangoModelFactory):

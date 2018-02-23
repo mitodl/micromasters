@@ -2,11 +2,46 @@
 Pytest configuration file for the entire micromasters app
 """
 # pylint: disable=redefined-outer-name
+import warnings
+
 from unittest.mock import patch
 from types import SimpleNamespace
 import pytest
 
 from search import tasks
+
+
+@pytest.fixture(autouse=True)
+def warnings_as_errors():
+    """
+    Convert warnings to errors. This should only affect unit tests, letting pylint and other plugins
+    raise DeprecationWarnings without erroring.
+    """
+    try:
+        warnings.resetwarnings()
+        warnings.simplefilter('error')
+        # For celery
+        warnings.simplefilter('ignore', category=ImportWarning)
+        warnings.filterwarnings(
+            "ignore",
+            message="'async' and 'await' will become reserved keywords in Python 3.7",
+            category=DeprecationWarning,
+        )
+        # For wagtail, compatibility modules in various libraries
+        warnings.filterwarnings(
+            "ignore",
+            module=".*(compat|permission_tags|modelcluster|wagtail).*",
+        )
+        # For pysftp
+        warnings.filterwarnings(
+            "ignore",
+            category=UserWarning,
+            message='Failed to load HostKeys',
+        )
+
+        yield
+    finally:
+        warnings.resetwarnings()
 
 
 @pytest.fixture(autouse=True)

@@ -4,13 +4,13 @@ Tests for financialaid view
 from decimal import Decimal
 from unittest.mock import Mock, patch
 
-from backends.edxorg import EdxOrgOAuth2
 import ddt
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
+from backends.edxorg import EdxOrgOAuth2
 from courses.models import Program
 from dashboard.models import ProgramEnrollment
 from financialaid.api import (

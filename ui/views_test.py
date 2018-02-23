@@ -707,6 +707,7 @@ class TestProgramPage(ViewsTests):
             self.assertEqual(course.url, js_course["url"])
 
 
+# pylint: disable=too-many-locals
 class TestUsersPage(ViewsTests):
     """
     Tests for user page

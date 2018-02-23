@@ -30,7 +30,7 @@ class ProgramSerializer(serializers.ModelSerializer):
                 return page.external_program_page_url
             return page.url
         except ProgramPage.DoesNotExist:
-            return
+            return None
 
     def get_enrolled(self, program):
         """

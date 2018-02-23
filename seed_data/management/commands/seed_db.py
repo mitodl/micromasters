@@ -251,7 +251,7 @@ class Command(BaseCommand):
             ProgramEnrollment.objects.create(user=staff_user, program=program)
             Role.objects.create(user=staff_user, program=program, role=Staff.ROLE_ID)
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options):  # pylint: disable=too-many-locals
         program_data_list = load_json_from_file(PROGRAM_DATA_PATH)
         user_data_list = load_json_from_file(USER_DATA_PATH)
         existing_fake_user_count = User.objects.filter(username__startswith=FAKE_USER_USERNAME_PREFIX).count()

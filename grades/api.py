@@ -145,9 +145,10 @@ def freeze_user_final_grade(user, course_run, raise_on_exception=False):
     Args:
         user (User): a django User
         course_run (CourseRun): a course run model object
+        raise_on_exception (bool): If true, raise an exception on error. Else create a warning and exit
 
     Returns:
-        None
+        FinalGrade: The final grade created, or None if there was an exception but raise_on_exception was False
     """
     # no need to do anything if the course run is not ready
     if not course_run.can_freeze_grades:
@@ -156,7 +157,7 @@ def freeze_user_final_grade(user, course_run, raise_on_exception=False):
                 'The grade for user "%s" course "%s" cannot be frozen yet',
                 user.username, course_run.edx_course_key
             )
-            return
+            return None
         else:
             raise FreezeGradeFailedException(
                 'The grade for user "{0}" course "{1}" cannot be frozen yet'.format(
@@ -172,7 +173,7 @@ def freeze_user_final_grade(user, course_run, raise_on_exception=False):
         con.lpush(CACHE_KEY_FAILED_USERS_BASE_STR.format(course_run.edx_course_key), user.id)
         if not raise_on_exception:
             log.exception('Impossible to refresh the edX cache for user "%s"', user.username)
-            return
+            return None
         else:
             raise FreezeGradeFailedException(
                 'Impossible to refresh the edX cache for user "{0}"'.format(user.username)) from ex
@@ -183,7 +184,7 @@ def freeze_user_final_grade(user, course_run, raise_on_exception=False):
         if not raise_on_exception:
             log.exception(
                 'Impossible to get final grade for user "%s" in course %s', user.username, course_run.edx_course_key)
-            return
+            return None
         else:
             raise FreezeGradeFailedException(
                 'Impossible to get final grade for user "{0}" in course {1}'.format(

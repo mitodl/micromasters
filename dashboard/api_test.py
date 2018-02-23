@@ -1845,7 +1845,9 @@ def test_calculate_up_to_date(users_without_with_cache):
     for users whose cache has expired or who are not cached
     """
     needs_update, _ = users_without_with_cache
-    assert api.calculate_users_to_refresh_in_bulk() == [user.id for user in needs_update]
+    assert sorted(api.calculate_users_to_refresh_in_bulk()) == sorted(
+        [user.id for user in needs_update]
+    )
 
 
 def test_calculate_missing_cache(users_without_with_cache):

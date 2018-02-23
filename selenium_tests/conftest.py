@@ -207,3 +207,11 @@ def logged_in_student(browser, base_test_data):
         User: User object
     """
     return LoginPage(browser).log_in_via_admin(base_test_data.student_user, DEFAULT_PASSWORD)
+
+
+@pytest.fixture(autouse=True)
+def warnings_as_errors():
+    """
+    Override other fixture to disable it. For some reason warnings as errors isn't working in selenium
+    tests.
+    """
