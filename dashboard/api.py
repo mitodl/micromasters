@@ -102,6 +102,12 @@ class CourseFormatConditionalFields:
                 'course_run_field': 'upgrade_deadline',
                 'format_field': 'course_upgrade_deadline'
             },
+        ],
+        CourseStatus.PAID_BUT_NOT_ENROLLED: [
+            {
+                'course_run_field': 'enrollment_start',
+                'format_field': 'enrollment_start_date'
+            },
         ]
     }
 

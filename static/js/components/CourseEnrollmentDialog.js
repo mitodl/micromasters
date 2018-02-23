@@ -74,6 +74,7 @@ export default class CourseEnrollmentDialog extends React.Component {
       open,
       setVisibility,
       course,
+      courseRun,
       hasUserApplied,
       pendingFinancialAid
     } = this.props
@@ -89,6 +90,22 @@ export default class CourseEnrollmentDialog extends React.Component {
           certificate.
         </p>
       ]
+      payButton = (
+        <Button
+          key="pay"
+          disabled
+          colored
+          className="dashboard-button pay-button"
+        >
+          Pay Now
+        </Button>
+      )
+    } else if (courseRun.has_paid) {
+      message = (
+        <p>
+          Would you like to enroll in this course? You already paid for this course.
+        </p>
+      )
       payButton = (
         <Button
           key="pay"
@@ -158,7 +175,7 @@ export default class CourseEnrollmentDialog extends React.Component {
         colored
         className="dashboard-button audit-button"
       >
-        Audit for Free & Pay Later
+        {courseRun.has_paid? "Enroll" : "Audit for Free & Pay Later"}
       </Button>
     )
 

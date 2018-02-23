@@ -111,19 +111,29 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     R.defaultTo("", firstRun.course_upgrade_deadline)
   )
   if (firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
-    const contactHref = `mailto:${SETTINGS.support_email}`
-    return S.Just([
-      {
-        message: (
-          <div>
-            {
-              "Something went wrong. You paid for this course but are not enrolled. "
-            }
-            <a href={contactHref}>Contact us for help.</a>
-          </div>
-        )
-      }
-    ])
+    if (hasFinancialAid) {
+      return S.Just([
+        {
+          message: "You are not enrolled.",
+            action:  courseAction(firstRun, COURSE_ACTION_REENROLL)
+        }
+      ])
+    } else {
+      const contactHref = `mailto:${SETTINGS.support_email}`
+      return S.Just([
+        {
+          message: (
+            <div>
+              {
+                "Something went wrong. You paid for this course but are not enrolled. "
+              }
+              <a href={contactHref}>Contact us for help.</a>
+            </div>
+          )
+        }
+      ])
+    }
+
   }
 
   // Course run isn't enrollable, user never enrolled

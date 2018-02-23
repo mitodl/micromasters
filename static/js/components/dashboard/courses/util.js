@@ -11,7 +11,8 @@ import {
   STATUS_CAN_UPGRADE,
   STATUS_CURRENTLY_ENROLLED,
   STATUS_WILL_ATTEND,
-  DASHBOARD_FORMAT
+  DASHBOARD_FORMAT,
+  STATUS_PAID_BUT_NOT_ENROLLED
 } from "../../../constants"
 import { S } from "../../../lib/sanctuary"
 
@@ -100,7 +101,8 @@ export const isEnrollableRun = (run: CourseRun): boolean =>
   !R.isNil(run.enrollment_start_date) &&
   !R.isEmpty(run.enrollment_start_date) &&
   moment(run.enrollment_start_date).isSameOrBefore(moment(), "day") &&
-  run.status === STATUS_OFFERED
+  (run.status === STATUS_OFFERED ||
+  run.status === STATUS_PAID_BUT_NOT_ENROLLED)
 
 export const isOfferedInUncertainFuture = (run: CourseRun): boolean =>
   R.isNil(run.course_start_date) &&
