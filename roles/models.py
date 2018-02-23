@@ -52,8 +52,8 @@ class Role(models.Model):
 
     permission_to_roles = _construct_permission_to_roles(ASSIGNABLE_ROLES)
 
-    user = models.ForeignKey(User)
-    program = models.ForeignKey(Program)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
     role = models.CharField(
         choices=[(role_id, role_id) for role_id in ASSIGNABLE_ROLES],
         default=DEFAULT_ROLE,

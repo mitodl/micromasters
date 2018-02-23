@@ -23,7 +23,7 @@ def require_mandatory_urls(func):
         Args:
             request (django.http.request.HttpRequest): A request
         """
-        if not request.user.is_anonymous():
+        if not request.user.is_anonymous:
             profile = request.user.profile
             if not request.path.startswith(PROFILE_URL) and not profile.filled_out:
                 return redirect(PROFILE_URL)

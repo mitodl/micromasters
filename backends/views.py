@@ -16,7 +16,7 @@ def complete(request, *args, **kwargs):
     # This view overrides the behavior of the default 'complete' endpoint in order
     # to log out the user first. If user 1 is already logged in and user 2 is logged in on edX,
     # social_core can get confused on which User should get the SocialAuth object.
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         key = "{}_state".format(request.backend.name)
         backend_state = request.session.get(key)
         logout(request)
@@ -29,7 +29,7 @@ def complete(request, *args, **kwargs):
     social_complete_rtn = social_complete(request, *args, **kwargs)
 
     # Update redis cache if user had invalid credentials
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         con = get_redis_connection("redis")
         user_key = FIELD_USER_ID_BASE_STR.format(request.user.id)
         con.hdel(CACHE_KEY_FAILURE_NUMS_BY_USER, user_key)

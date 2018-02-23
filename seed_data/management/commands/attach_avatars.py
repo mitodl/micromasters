@@ -34,7 +34,7 @@ class Command(BaseCommand):
             robohash.assemble(roboset=roboset)
 
             with NamedTemporaryFile() as f:
-                robohash.img.save(f, format='jpeg')
+                robohash.img.convert('RGB').save(f, format='jpeg')
                 f.seek(0)
                 profile.image.save(name, f)
             profile.save(update_image=True)

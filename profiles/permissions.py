@@ -48,7 +48,7 @@ class CanSeeIfNotPrivate(BasePermission):
             return True
 
         # If viewer is instructor or staff in the program, skip this check
-        if not request.user.is_anonymous() and request.user.role_set.filter(
+        if not request.user.is_anonymous and request.user.role_set.filter(
                 role__in=(Staff.ROLE_ID, Instructor.ROLE_ID),
                 program__programenrollment__user__profile=profile,
         ).exists():
@@ -59,7 +59,7 @@ class CanSeeIfNotPrivate(BasePermission):
             raise Http404
         elif profile.account_privacy == Profile.PUBLIC_TO_MM:
             # anonymous user accessing profiles.
-            if request.user.is_anonymous():
+            if request.user.is_anonymous:
                 raise Http404
             # requesting user must have enrollment in one of program where profile user is enroll.
             program_ids = ProgramEnrollment.objects.filter(user=profile.user).values_list('program__id', flat=True)

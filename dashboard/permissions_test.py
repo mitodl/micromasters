@@ -55,7 +55,7 @@ class CanReadIfStaffOrSelfTests(MockedESTestCase):
         Test that anonymous users get a 404
         """
         perm = CanReadIfStaffOrSelf()
-        request = Mock(user=Mock(is_anonymous=Mock(return_value=True)))
+        request = Mock(user=Mock(is_anonymous=True))
         view = Mock(kwargs={'user': 'username'})
         with self.assertRaises(Http404):
             perm.has_permission(request, view)

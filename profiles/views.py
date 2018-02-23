@@ -50,7 +50,7 @@ class ProfileViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
             else:
                 return self.serializer_class_owner
         # Staff or instructor is looking at profile
-        elif not self.request.user.is_anonymous() and self.request.user.role_set.filter(
+        elif not self.request.user.is_anonymous and self.request.user.role_set.filter(
                 role__in=(Staff.ROLE_ID, Instructor.ROLE_ID),
                 program__programenrollment__user__profile=profile,
         ).exists():

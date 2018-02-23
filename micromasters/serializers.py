@@ -68,6 +68,6 @@ def serialize_maybe_user(user):
     Serialize a logged-in user to Python primitives, or an anonymous user
     to `None`.
     """
-    if user.is_anonymous():
+    if user.is_anonymous:
         return None
     return UserSerializer(user).data

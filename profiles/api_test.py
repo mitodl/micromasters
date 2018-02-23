@@ -37,10 +37,8 @@ class SocialTests(MockedESTestCase):
         """
         get_social_username should return None for anonymous users
         """
-        is_anonymous = Mock(return_value=True)
-        user = Mock(is_anonymous=is_anonymous)
+        user = Mock(is_anonymous=True)
         assert get_social_username(user) is None
-        assert is_anonymous.called
 
     def test_zero_social(self):
         """

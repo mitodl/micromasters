@@ -91,7 +91,7 @@ class Profile(models.Model):
         (OTHER_EDUCATION, "Other education"),
     )
 
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     # Is the profile filled out yet?
     filled_out = models.BooleanField(default=False)
@@ -286,7 +286,7 @@ class Education(models.Model):
         (HIGH_SCHOOL, "High school"),
         (OTHER_EDUCATION, "Other education"),
     )
-    profile = models.ForeignKey(Profile, related_name='education')
+    profile = models.ForeignKey(Profile, related_name='education', on_delete=models.CASCADE)
     degree_name = models.CharField(max_length=30, choices=DEGREE_CHOICES)
     graduation_date = models.DateField()
     field_of_study = models.TextField(blank=True, null=True)

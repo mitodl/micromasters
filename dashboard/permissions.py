@@ -20,7 +20,7 @@ class CanReadIfStaffOrSelf(BasePermission):
     """
 
     def has_permission(self, request, view):
-        if request.user.is_anonymous():
+        if request.user.is_anonymous:
             raise Http404
 
         user = get_object_or_404(

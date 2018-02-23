@@ -10,7 +10,7 @@ from micromasters.utils import now_in_utc
 
 class ExamRun(TimestampedModel):
     """Represents an individual run of an exam"""
-    course = models.ForeignKey('courses.Course', related_name='exam_runs')
+    course = models.ForeignKey('courses.Course', related_name='exam_runs', on_delete=models.CASCADE)
     exam_series_code = models.CharField(max_length=20)
 
     date_first_schedulable = models.DateTimeField()
@@ -122,7 +122,8 @@ class ExamProfile(TimestampedModel):
 
     profile = models.OneToOneField(
         'profiles.Profile',
-        related_name='exam_profile'
+        related_name='exam_profile',
+        on_delete=models.CASCADE,
     )
     status = models.CharField(
         max_length=30,
@@ -178,9 +179,9 @@ class ExamAuthorization(TimestampedModel):
         (STATUS_SUCCESS, 'Sync Suceeded'),
     )
 
-    user = models.ForeignKey(User, related_name='exam_authorizations')
-    course = models.ForeignKey('courses.Course', related_name='exam_authorizations')
-    exam_run = models.ForeignKey(ExamRun, related_name='exam_authorizations')
+    user = models.ForeignKey(User, related_name='exam_authorizations', on_delete=models.CASCADE)
+    course = models.ForeignKey('courses.Course', related_name='exam_authorizations', on_delete=models.CASCADE)
+    exam_run = models.ForeignKey(ExamRun, related_name='exam_authorizations', on_delete=models.CASCADE)
 
     operation = models.CharField(
         max_length=30,

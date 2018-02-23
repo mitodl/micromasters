@@ -40,7 +40,7 @@ class ImageFactory(DjangoModelFactory):
         robohash.assemble(roboset=roboset)
 
         with NamedTemporaryFile() as f:
-            robohash.img.save(f, format='jpeg')
+            robohash.img.convert('RGB').save(f, format='jpeg')
             f.seek(0)
             image.file.save(name, f)
 

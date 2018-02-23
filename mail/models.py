@@ -13,7 +13,7 @@ class FinancialAidEmailAudit(TimestampedModel):
     """
     Audit table for the Financial Aid
     """
-    acting_user = models.ForeignKey(User, null=False)
+    acting_user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     financial_aid = models.ForeignKey(FinancialAid, null=True, on_delete=models.SET_NULL)
     to_email = models.TextField(null=False)
     from_email = models.TextField(null=False)
@@ -30,7 +30,7 @@ class AutomaticEmail(TimestampedModel):
     email_subject = models.TextField(null=False, blank=True)
     email_body = models.TextField(null=False, blank=True)
     sender_name = models.TextField(null=False, blank=True)
-    staff_user = models.ForeignKey(User, null=True)
+    staff_user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         """String representation of AutomaticEmail"""

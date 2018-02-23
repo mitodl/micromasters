@@ -55,7 +55,7 @@ class HomePage(Page):
         context["is_public"] = True
         context["has_zendesk_widget"] = False
         context["google_maps_api"] = False
-        context["authenticated"] = not request.user.is_anonymous()
+        context["authenticated"] = not request.user.is_anonymous
         context["is_staff"] = has_role(request.user, [Staff.ROLE_ID, Instructor.ROLE_ID])
         context["username"] = username
         context["js_settings_json"] = json.dumps(js_settings)
@@ -225,7 +225,7 @@ def get_program_page_context(programpage, request):
     context["is_public"] = True
     context["has_zendesk_widget"] = True
     context["google_maps_api"] = False
-    context["authenticated"] = not request.user.is_anonymous()
+    context["authenticated"] = not request.user.is_anonymous
     context["username"] = username
     context["js_settings_json"] = json.dumps(js_settings)
     context["title"] = programpage.title
@@ -377,6 +377,7 @@ class CourseCertificateSignatories(Orderable):
         'courses.Course',
         related_name='signatories',
         help_text='The course for this certificate.',
+        on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=255, help_text='Full name of the signatory')
     title_line_1 = models.TextField(help_text='Signatory title (e.g.: Associate Professor)')
@@ -389,7 +390,8 @@ class CourseCertificateSignatories(Orderable):
     signature_image = models.ForeignKey(
         Image,
         related_name='+',
-        help_text='Signature image.'
+        help_text='Signature image.',
+        on_delete=models.CASCADE,
     )
 
     content_panels = [
@@ -421,7 +423,8 @@ class ProgramCertificateSignatories(Orderable):
     signature_image = models.ForeignKey(
         Image,
         related_name='+',
-        help_text='Signature image.'
+        help_text='Signature image.',
+        on_delete=models.CASCADE,
     )
 
     content_panels = [

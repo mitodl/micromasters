@@ -11,6 +11,7 @@ from django.core.exceptions import (
     ValidationError,
 )
 from django.db.models import (
+    CASCADE,
     Model,
     SET_NULL,
 )
@@ -53,7 +54,7 @@ class Order(AuditableModel):
 
     STATUSES = [CREATED, FULFILLED, FAILED, REFUNDED]
 
-    user = ForeignKey(User)
+    user = ForeignKey(User, on_delete=CASCADE)
     status = CharField(
         choices=[(status, status) for status in STATUSES],
         default=CREATED,
@@ -98,7 +99,7 @@ class Line(Model):
     A line in an order. This contains information about a specific item to be purchased.
     """
     course_key = TextField(db_index=True)
-    order = ForeignKey(Order)
+    order = ForeignKey(Order, on_delete=CASCADE)
     price = DecimalField(decimal_places=2, max_digits=20)
     description = TextField(blank=True, null=True)
 
@@ -114,7 +115,7 @@ class Receipt(Model):
     """
     The contents of the message from CyberSource about an Order fulfillment or cancellation
     """
-    order = ForeignKey(Order, null=True)
+    order = ForeignKey(Order, null=True, on_delete=CASCADE)
     data = JSONField()
 
     created_at = DateTimeField(auto_now_add=True)
@@ -223,6 +224,7 @@ class Coupon(TimestampedModel, AuditableModel):
         CouponInvoice,
         null=True,
         blank=True,
+        on_delete=CASCADE,
     )
 
     @property

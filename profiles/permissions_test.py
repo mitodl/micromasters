@@ -100,7 +100,7 @@ class CanSeeIfNotPrivateTests(MockedESTestCase):
         """
         new_profile = SocialProfileFactory.create(account_privacy=account_privacy_setting)
 
-        request = Mock(user=Mock(is_anonymous=Mock(return_value=True)))
+        request = Mock(user=Mock(is_anonymous=True))
         view = Mock(kwargs={'user': self.get_social_auth_uid(new_profile.user)})
 
         with self.assertRaises(Http404):
@@ -112,7 +112,7 @@ class CanSeeIfNotPrivateTests(MockedESTestCase):
         """
         new_profile = SocialProfileFactory.create(account_privacy=Profile.PUBLIC)
 
-        request = Mock(user=Mock(is_anonymous=Mock(return_value=True)))
+        request = Mock(user=Mock(is_anonymous=True))
         view = Mock(kwargs={'user': self.get_social_auth_uid(new_profile.user)})
 
         assert self.perm.has_permission(request, view) is True

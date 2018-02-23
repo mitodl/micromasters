@@ -48,7 +48,7 @@ class Course(models.Model):
     given course instance (aka course run), but rather only the things that are
     general across multiple course runs.
     """
-    program = models.ForeignKey(Program)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
     position_in_program = models.PositiveSmallIntegerField()
 
     # These fields will likely make their way into the CMS at some point.
@@ -181,7 +181,7 @@ class CourseRun(models.Model):
         "put something here like 'Fall 2019'.")
     enrollment_url = models.URLField(blank=True, null=True)
     prerequisites = models.TextField(blank=True, null=True)
-    course = models.ForeignKey(Course, null=True)
+    course = models.ForeignKey(Course, null=True, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ('start_date', )

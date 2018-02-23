@@ -36,7 +36,7 @@ class ReactView(View):  # pylint: disable=unused-argument
         """
         user = request.user
         roles = []
-        if not user.is_anonymous():
+        if not user.is_anonymous:
             roles = [
                 {
                     'program': role.program.id,
@@ -108,7 +108,7 @@ class UsersView(ReactView):
         if user is not None:
             if not CanSeeIfNotPrivate().has_permission(request, self):
                 raise Http404
-        elif request.user.is_anonymous():
+        elif request.user.is_anonymous:
             # /learner/ redirects to logged in user's page, but user is not logged in here
             raise Http404
 
@@ -119,8 +119,8 @@ def standard_error_page(request, status_code, template_filename):
     """
     Returns an error page with a given template filename and provides necessary context variables
     """
-    name = request.user.profile.preferred_name if not request.user.is_anonymous() else ""
-    authenticated = not request.user.is_anonymous()
+    name = request.user.profile.preferred_name if not request.user.is_anonymous else ""
+    authenticated = not request.user.is_anonymous
     username = get_social_username(request.user)
     response = render(
         request,

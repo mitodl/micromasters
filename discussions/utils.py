@@ -20,7 +20,7 @@ def get_token_for_user(user, auth_url=None, session_url=None, force_create=False
     Returns:
         str: the token or None
     """
-    if user.is_anonymous():
+    if user.is_anonymous:
         return None
 
     discussion_user = None

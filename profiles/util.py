@@ -149,7 +149,7 @@ def make_thumbnail(full_size_image, max_dimension):
     pil_image = Image.open(full_size_image)
     pil_image.thumbnail(shrink_dimensions(pil_image.width, pil_image.height, max_dimension), Image.ANTIALIAS)
     buffer = BytesIO()
-    pil_image.save(buffer, "JPEG", quality=90)
+    pil_image.convert('RGB').save(buffer, "JPEG", quality=90)
     buffer.seek(0)
     return buffer
 

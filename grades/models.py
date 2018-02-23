@@ -72,8 +72,8 @@ class FinalGrade(TimestampedModel, AuditableModel):
     # Docs: https://docs.djangoproject.com/en/1.10/topics/db/managers/#creating-a-manager-with-queryset-methods
     objects = FinalGradeQuerySet.as_manager()
 
-    user = models.ForeignKey(User, null=False)
-    course_run = models.ForeignKey(CourseRun, null=False)
+    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    course_run = models.ForeignKey(CourseRun, null=False, on_delete=models.CASCADE)
     grade = models.FloatField(
         null=True,
         validators=[MinValueValidator(0.0), MaxValueValidator(1.0)]
@@ -156,7 +156,7 @@ class MicromastersCourseCertificate(TimestampedModel):
     """
     Model for storing MicroMasters course certificates
     """
-    final_grade = models.OneToOneField(FinalGrade, null=False, related_name='certificate')
+    final_grade = models.OneToOneField(FinalGrade, null=False, related_name='certificate', on_delete=models.CASCADE)
     hash = models.CharField(max_length=32, null=False, unique=True)
 
     def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
@@ -178,8 +178,8 @@ class MicromastersProgramCertificate(TimestampedModel):
     """
     Model for storing MicroMasters program certificates
     """
-    program = models.ForeignKey(Program, null=False)
-    user = models.ForeignKey(User, null=False)
+    program = models.ForeignKey(Program, null=False, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     hash = models.CharField(max_length=32, null=False, unique=True)
 
     class Meta:
@@ -205,7 +205,7 @@ class CourseRunGradingStatus(TimestampedModel):
     """
     Additional information for the course run related to the final grades
     """
-    course_run = models.OneToOneField(CourseRun, null=False)
+    course_run = models.OneToOneField(CourseRun, null=False, on_delete=models.CASCADE)
     status = models.CharField(
         null=False,
         choices=[(status, status) for status in FinalGradeStatus.ALL_STATUSES],
@@ -262,9 +262,9 @@ class ProctoredExamGrade(TimestampedModel, AuditableModel):
     Model to store proctored exam grades (like the pearson exams)
     """
     # relationship to other models
-    user = models.ForeignKey(User, null=False)
-    course = models.ForeignKey(Course, null=False)
-    exam_run = models.ForeignKey(ExamRun, null=True)
+    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, null=False, on_delete=models.CASCADE)
+    exam_run = models.ForeignKey(ExamRun, null=True, on_delete=models.CASCADE)
 
     # fields from proctorate exam results
     exam_date = models.DateTimeField()
@@ -335,8 +335,8 @@ class CombinedFinalGrade(TimestampedModel, AuditableModel):
     """
     Model to store a combined grade for course_run and an exam
     """
-    user = models.ForeignKey(User, null=False)
-    course = models.ForeignKey(Course, null=False)
+    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, null=False, on_delete=models.CASCADE)
     grade = models.FloatField(
         validators=[MinValueValidator(0.0), MaxValueValidator(1.0)]
     )

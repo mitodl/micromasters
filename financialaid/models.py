@@ -33,8 +33,8 @@ class TierProgram(TimestampedModel):
     """
     The tiers for discounted pricing assigned to a program
     """
-    program = models.ForeignKey(Program, null=False, related_name="tier_programs")
-    tier = models.ForeignKey(Tier, null=False, related_name="tier_programs")
+    program = models.ForeignKey(Program, null=False, related_name="tier_programs", on_delete=models.CASCADE)
+    tier = models.ForeignKey(Tier, null=False, related_name="tier_programs", on_delete=models.CASCADE)
     discount_amount = models.IntegerField(null=False)
     current = models.BooleanField(null=False, default=False)
     income_threshold = models.IntegerField(null=False)
@@ -60,8 +60,8 @@ class FinancialAid(TimestampedModel, AuditableModel):
     """
     An application for financial aid/personal pricing
     """
-    user = models.ForeignKey(User, null=False)
-    tier_program = models.ForeignKey(TierProgram, null=False)
+    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    tier_program = models.ForeignKey(TierProgram, null=False, on_delete=models.CASCADE)
     status = models.CharField(
         null=False,
         choices=[(status, status) for status in FinancialAidStatus.ALL_STATUSES],

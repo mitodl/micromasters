@@ -28,7 +28,7 @@ def get_social_username(user):
         user (django.contrib.auth.models.User):
             A Django user
     """
-    if user.is_anonymous():
+    if user.is_anonymous:
         return None
 
     try:

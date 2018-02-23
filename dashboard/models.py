@@ -5,6 +5,7 @@ Models for dashboard
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField
 from django.db.models import (
+    CASCADE,
     DateTimeField,
     ForeignKey,
     Model,
@@ -27,8 +28,8 @@ class CachedEdxInfoModel(Model):
     """
     Base class to define other cached models
     """
-    user = ForeignKey(User)
-    course_run = ForeignKey(CourseRun)
+    user = ForeignKey(User, on_delete=CASCADE)
+    course_run = ForeignKey(CourseRun, on_delete=CASCADE)
     data = JSONField()
 
     class Meta:
@@ -198,7 +199,7 @@ class UserCacheRefreshTime(Model):
     """
     Model to store the last refresh timestamp for each of the edX cached info model.
     """
-    user = OneToOneField(User)
+    user = OneToOneField(User, on_delete=CASCADE)
     enrollment = DateTimeField(null=True)
     certificate = DateTimeField(null=True)
     current_grade = DateTimeField(null=True)
@@ -214,8 +215,8 @@ class ProgramEnrollment(Model):
     """
     Model for student enrollments in Programs
     """
-    user = ForeignKey(User)
-    program = ForeignKey(Program)
+    user = ForeignKey(User, on_delete=CASCADE)
+    program = ForeignKey(Program, on_delete=CASCADE)
 
     class Meta:
         unique_together = (('user', 'program'), )
