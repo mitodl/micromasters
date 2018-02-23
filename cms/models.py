@@ -48,7 +48,7 @@ class HomePage(Page):
             try:
                 return program.programpage
             except ProgramPage.DoesNotExist:
-                return
+                return None
 
         program_pairs = [(program, get_program_page(program)) for program in programs]
         context["programs"] = program_pairs
