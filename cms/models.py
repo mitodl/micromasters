@@ -9,11 +9,14 @@ from django.utils.text import slugify
 from modelcluster.fields import ParentalKey
 from raven.contrib.django.raven_compat.models import client as sentry
 from rolepermissions.checkers import has_role
-from wagtail.wagtailadmin.edit_handlers import (FieldPanel, InlinePanel,
-                                                MultiFieldPanel)
-from wagtail.wagtailcore.fields import RichTextField
-from wagtail.wagtailcore.models import Orderable, Page
-from wagtail.wagtailimages.models import Image
+from wagtail.admin.edit_handlers import (
+    FieldPanel,
+    InlinePanel,
+    MultiFieldPanel,
+)
+from wagtail.core.fields import RichTextField
+from wagtail.core.models import Orderable, Page
+from wagtail.images.models import Image
 
 from courses.models import Program
 from micromasters.serializers import serialize_maybe_user

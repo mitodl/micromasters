@@ -6,7 +6,7 @@ import factory
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyText
 from robohash import Robohash
-from wagtail.wagtailimages.models import Image
+from wagtail.images.models import Image
 
 from cms.models import (
     HomePage,

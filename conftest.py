@@ -27,10 +27,10 @@ def warnings_as_errors():
             message="'async' and 'await' will become reserved keywords in Python 3.7",
             category=DeprecationWarning,
         )
-        # For wagtail, compatibility modules in various libraries
+        # For compatibility modules in various libraries
         warnings.filterwarnings(
             "ignore",
-            module=".*(compat|permission_tags|modelcluster|wagtail).*",
+            module=".*(compat|permission_tags).*",
         )
         # For pysftp
         warnings.filterwarnings(

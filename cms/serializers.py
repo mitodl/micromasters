@@ -2,7 +2,7 @@
 Serializers for Wagtail-related models
 """
 from rest_framework import serializers
-from wagtail.wagtailimages.models import Image, Rendition
+from wagtail.images.models import Image, Rendition
 from django.utils.text import slugify
 
 from cms.models import ProgramPage, ProgramFaculty

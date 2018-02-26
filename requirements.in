@@ -37,4 +37,4 @@ social-auth-app-django==2.1.0
 robohash
 static3==0.5.1
 uwsgi
-wagtail==1.10.1
+wagtail==2.0rc1

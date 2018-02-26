@@ -14,8 +14,8 @@ from factory.django import mute_signals
 from factory.fuzzy import FuzzyText
 from rest_framework import status
 from rolepermissions.permissions import available_perm_status
-from wagtail.wagtailimages.models import Image
-from wagtail.wagtailimages.tests.utils import get_test_image_file
+from wagtail.images.models import Image
+from wagtail.images.tests.utils import get_test_image_file
 
 from cms.factories import (
     FacultyFactory,

@@ -8,7 +8,7 @@ from django.utils.deprecation import MiddlewareMixin
 
 class FakeSiteMiddleware(MiddlewareMixin):
     """
-    A mock implementation of `wagtail.wagtailcore.middleware.SiteMiddleware`
+    A mock implementation of `wagtail.core.middleware.SiteMiddleware`
     that doesn't make any database calls.
     """
     def process_request(self, request):  # pylint: disable=missing-docstring,no-self-use
@@ -18,7 +18,7 @@ class FakeSiteMiddleware(MiddlewareMixin):
 
 class FakeRedirectMiddleware(MiddlewareMixin):
     """
-    A mock implementation of `wagtail.wagtailredirects.middleware.RedirectMiddleware`
+    A mock implementation of `wagtail.contrib.redirects.middleware.RedirectMiddleware`
     that doesn't make any database calls.
     """
     def process_request(self, request):  # pylint: disable=missing-docstring,no-self-use,unused-argument
@@ -33,11 +33,11 @@ class SimpleTestCase(django.test.SimpleTestCase):
     """
     def setUp(self):
         site_patcher = patch(
-            'wagtail.wagtailcore.middleware.SiteMiddleware',
+            'wagtail.core.middleware.SiteMiddleware',
             new=FakeSiteMiddleware
         )
         redirect_patcher = patch(
-            'wagtail.wagtailredirects.middleware.RedirectMiddleware',
+            'wagtail.contrib.redirects.middleware.RedirectMiddleware',
             new=FakeRedirectMiddleware
         )
         site_patcher.start()
