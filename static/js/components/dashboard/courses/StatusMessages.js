@@ -112,12 +112,15 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   )
   if (firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
     if (hasFinancialAid) {
-      return S.Just([
-        {
-          message: "You are not enrolled.",
-            action:  courseAction(firstRun, COURSE_ACTION_REENROLL)
-        }
-      ])
+      if(isEnrollableRun(firstRun)){
+        return S.Just([
+          {
+            message: "You paid for this course. Click the button to enroll.",
+            action:  courseAction(firstRun, COURSE_ACTION_ENROLL)
+          }
+        ])
+      }
+      // if no enrollable runs then falls through
     } else {
       const contactHref = `mailto:${SETTINGS.support_email}`
       return S.Just([
