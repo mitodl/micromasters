@@ -97,27 +97,6 @@ class ProgramSerializerTests(MockedESTestCase):
         }
         assert len(programpage.url) > 0
 
-    def test_program_with_external_url(self):
-        """
-        Test ProgramSerializer with a program page that has an external url
-        """
-        url = 'http://example.com/external-url/'
-        programpage = ProgramPageFactory.build(
-            program=self.program,
-            external_program_page_url=url,
-        )
-        homepage = HomePage.objects.first()
-        homepage.add_child(instance=programpage)
-        data = ProgramSerializer(self.program, context=self.context).data
-        assert data == {
-            'id': self.program.id,
-            'title': self.program.title,
-            'programpage_url': url,
-            'enrolled': False,
-            'total_courses': 0,
-        }
-        assert programpage.url != url
-
     def test_program_enrolled(self):
         """
         Test ProgramSerializer with an enrolled user

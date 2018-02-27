@@ -136,11 +136,6 @@ class ProgramPage(Page):
         on_delete=models.SET_NULL,
         help_text='The program for this page',
     )
-    external_program_page_url = models.URLField(
-        blank=True,
-        null=True,
-        help_text="If this field is set the program page link on the home page will go to this URL."
-    )
     program_home_page_url = models.URLField(
         blank=True,
         null=True,
@@ -181,7 +176,6 @@ class ProgramPage(Page):
         FieldPanel('description', classname="full"),
         FieldPanel('program'),
         FieldPanel('thumbnail_image'),
-        FieldPanel('external_program_page_url'),
         FieldPanel('program_home_page_url'),
         FieldPanel('title_program_home_page_url'),
         FieldPanel('program_contact_email'),

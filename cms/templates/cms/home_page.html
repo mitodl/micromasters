@@ -141,11 +141,7 @@
           <li class="col-md-4">
             <div class="program-thumbnail">
               {% if programpage %}
-                {% if programpage.external_program_page_url %}
-                  <a href="{{ programpage.external_program_page_url }}" class="program-link">
-                {% else %}
                   <a href="{{ programpage.url }}" class="program-link">
-                {% endif %}
               {% endif %}
                 <div class="program-info">
                   <h4 class="program-title" aria-describedby="program-{{ program.id }}-description">
@@ -178,11 +174,7 @@
 
               {% if programpage %}
                 <p class="program-description-link">
-                {% if programpage.external_program_page_url %}
-                  <a href="{{ programpage.external_program_page_url }}" class="program-link">
-                {% else %}
                   <a href="{{ programpage.url }}" class="program-link">
-                {% endif %}
                     More about {{ program }}
                   </a>
                 </p>
