@@ -130,9 +130,15 @@
     .col {
       &.user-credentials {
         width: 50%;
-
         vertical-align: middle;
         padding-bottom: 13px;
+        display: -webkit-box;
+        display: flex;
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+        flex-direction: row;
+        -webkit-box-pack: end;
+        justify-content: space-between;
 
         &.row-padding {
           padding-top: 30px;
