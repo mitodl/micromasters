@@ -259,6 +259,7 @@ class DashboardStates:
         CourseRunFactory.create(course=course)
 
     def create_paid_but_no_enrollable_run(self, in_future, fuzzy):
+        """Make paid but not enrolled, with offered currently, in future, and fuzzy """
         self.make_fa_program_enrollment(FinancialAidStatus.AUTO_APPROVED)
         course = Course.objects.get(title='Digital Learning 200')
         course_run = course.courserun_set.order_by('start_date').first()
