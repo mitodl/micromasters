@@ -10,7 +10,7 @@ from django.core.cache import caches
 from django.db.models import Count
 from django_redis import get_redis_connection
 
-from courses.models import CourseRun
+from courses.models import CourseRun, Course
 from grades import api
 from grades.constants import FinalGradeStatus
 from grades.models import (
@@ -18,10 +18,10 @@ from grades.models import (
     ProctoredExamGrade,
     MicromastersCourseCertificate,
     CourseRunGradingStatus,
+    CombinedFinalGrade,
 )
 from micromasters.celery import app
-from micromasters.utils import chunks
-
+from micromasters.utils import chunks, now_in_utc
 
 CACHE_ID_BASE_STR = "freeze_grade_{0}"
 
@@ -81,6 +81,26 @@ def generate_course_certificates_for_fa_students():
             final_grade_dict['course_run__edx_course_key']
         )
 
+@app.task
+def create_combined_final_grades():
+    """
+    Creates any missing CombinedFinalGrades
+    """
+    courses = Course.objects.filter(
+        program__live=True,
+        program__financial_aid_availability=True
+    )
+    for course in courses:
+        if course.has_frozen_runs() and course.has_exam:
+            exam_grades = ProctoredExamGrade.objects.filter(
+                course=course,
+                passed=True,
+                exam_run__date_grades_available__lte=now_in_utc()
+            )
+            users_with_grade = list(CombinedFinalGrade.objects.filter(course=course).values_list('user', flat=True))
+            for exam_grade in exam_grades:
+                if exam_grade.user.id not in users_with_grade:
+                    api.update_or_create_combined_final_grade(exam_grade.user, course)
 
 @app.task
 def find_course_runs_and_freeze_grades():

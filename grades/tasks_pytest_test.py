@@ -4,14 +4,14 @@ Tests for grades tasks
 from datetime import timedelta
 import pytest
 import factory
-from courses.factories import CourseFactory
+from courses.factories import CourseFactory, CourseRunFactory
 from exams.factories import ExamRunFactory
 from grades import tasks
 from grades.factories import (
     FinalGradeFactory,
     ProctoredExamGradeFactory,
 )
-from grades.models import MicromastersCourseCertificate
+from grades.models import MicromastersCourseCertificate, CombinedFinalGrade, CourseRunGradingStatus
 from micromasters.utils import now_in_utc
 
 pytestmark = [
@@ -79,3 +79,36 @@ def test_generate_course_certificates():
     certificate_grade_ids = set([certificate.final_grade.id for certificate in created_certificates])
     expected_certificate_final_grades = passed_final_grades + final_grades_with_passed_exam
     assert certificate_grade_ids == set([final_grade.id for final_grade in expected_certificate_final_grades])
+
+
+def test_create_combined_final_grade(mocker):
+    """
+    Test create_combined_final_grade creates the grade when it is missing
+    """
+    update_mock = mocker.patch('grades.api.update_or_create_combined_final_grade', autospec=True)
+    course_run = CourseRunFactory.create(
+        freeze_grade_date=now_in_utc()-timedelta(days=1),
+        course__program__financial_aid_availability=True,
+        course__program__live=True
+    )
+    CourseRunGradingStatus.objects.create(course_run=course_run, status='complete')
+    # Create exam run for course with date_grades_available True
+    exam_run_grades_available = ExamRunFactory.create(
+        course=course_run.course,
+        date_grades_available=now_in_utc() - timedelta(weeks=1))
+
+    exam_grades = ProctoredExamGradeFactory.create_batch(
+        5,
+        course=course_run.course,
+        exam_run=exam_run_grades_available,
+        passed=True,
+    )
+    for exam_grade in exam_grades[:3]:
+        CombinedFinalGrade.objects.create(user=exam_grade.user, course=course_run.course, grade=0.7)
+    # Only 3 users will have combined grades
+    for exam_grade in exam_grades[3:]:
+        FinalGradeFactory.create(user=exam_grade.user, course_run=course_run, passed=True)
+
+    tasks.create_combined_final_grades.delay()
+
+    assert update_mock.call_count == 2
