@@ -81,6 +81,7 @@ def generate_course_certificates_for_fa_students():
             final_grade_dict['course_run__edx_course_key']
         )
 
+
 @app.task
 def create_combined_final_grades():
     """
@@ -101,6 +102,7 @@ def create_combined_final_grades():
             for exam_grade in exam_grades:
                 if exam_grade.user.id not in users_with_grade:
                     api.update_or_create_combined_final_grade(exam_grade.user, course)
+
 
 @app.task
 def find_course_runs_and_freeze_grades():
