@@ -23,7 +23,6 @@ from selenium_tests.util import (
 )
 from selenium_tests.data_util import create_user_for_login
 from selenium_tests.page import LoginPage
-from selenium_tests.util import get_ip_address
 from courses.factories import (
     ProgramFactory,
     CourseRunFactory,
@@ -157,10 +156,8 @@ def set_live_server_host():
     Also, for some reason 0.0.0.0 no longer works to bind all hosts, but we only really need the
     external IP address.
     """
-    ip_address = get_ip_address()
-    os.environ.setdefault('DJANGO_LIVE_TEST_SERVER_ADDRESS', "{}:7000".format(ip_address))
+    os.environ.setdefault('DJANGO_LIVE_TEST_SERVER_ADDRESS', "0.0.0.0:7000")
     yield
-
 
 
 @pytest.fixture()
@@ -203,7 +200,15 @@ def base_test_data():
 
 
 @pytest.fixture()
-def logged_in_staff(browser, base_test_data):
+def override_allowed_hosts(settings):
+    """
+    Override ALLOWED_HOSTS to force Django to allow outside connections to the selenium test server
+    """
+    settings.ALLOWED_HOSTS = "['*']"
+
+
+@pytest.fixture()
+def logged_in_staff(browser, override_allowed_hosts, base_test_data):
     """
     Fixture for a logged-in staff user
 
@@ -214,7 +219,7 @@ def logged_in_staff(browser, base_test_data):
 
 
 @pytest.fixture()
-def logged_in_student(browser, base_test_data):
+def logged_in_student(browser, override_allowed_hosts, base_test_data):
     """
     Fixture for a logged-in student user
 
