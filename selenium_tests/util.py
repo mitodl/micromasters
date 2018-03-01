@@ -191,7 +191,7 @@ def make_absolute_url(relative_url, absolute_base):
     # Change it to use ip of this container instead
     absolute_pieces = urlparse(absolute_base)
     relative_pieces = urlparse(relative_url)
-    host = socket.gethostbyname(socket.gethostname())
+    host = get_ip_address()
     return ParseResult(
         absolute_pieces.scheme,
         "{host}:{port}".format(host=host, port=absolute_pieces.port),
@@ -316,3 +316,13 @@ def should_load_from_existing_db(database_loader, cursor):
         not pytest.config.option.create_db and
         database_loader.has_backup(db_cursor=cursor)
     )
+
+
+def get_ip_address():
+    """
+    Get this container's IP address
+
+    Returns:
+        str: An IP address
+    """
+    return socket.gethostbyname(socket.gethostname())

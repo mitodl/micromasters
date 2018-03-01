@@ -23,6 +23,7 @@ from selenium_tests.util import (
 )
 from selenium_tests.data_util import create_user_for_login
 from selenium_tests.page import LoginPage
+from selenium_tests.util import get_ip_address
 from courses.factories import (
     ProgramFactory,
     CourseRunFactory,
@@ -141,11 +142,25 @@ def driver():
 
 
 @pytest.fixture(scope='session')
-def browser(driver, live_server):
+def browser(driver, set_live_server_host, live_server):
     """
     Fixture for our Browser abstraction. 'live_server' is provided by pytest-django.
     """
     return Browser(driver, live_server.url)
+
+
+@pytest.fixture(scope='session')
+def set_live_server_host():
+    """
+    Override pytest fixture to set the environment variable to set the host and port for the live server.
+    Note that this env variable was removed by Django but is still used by pytest-django.
+    Also, for some reason 0.0.0.0 no longer works to bind all hosts, but we only really need the
+    external IP address.
+    """
+    ip_address = get_ip_address()
+    os.environ.setdefault('DJANGO_LIVE_TEST_SERVER_ADDRESS', "{}:7000".format(ip_address))
+    yield
+
 
 
 @pytest.fixture()

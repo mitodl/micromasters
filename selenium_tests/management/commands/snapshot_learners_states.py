@@ -280,7 +280,6 @@ class Command(BaseCommand):
                 self.stdout.write("  {:03}_{}\n".format(num, name))
             return
 
-        os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = '0.0.0.0:7000-8000'
         if not os.environ.get('WEBPACK_DEV_SERVER_HOST'):
             # This should only happen if the user is running in an environment without Docker, which isn't allowed
             # for this command.
