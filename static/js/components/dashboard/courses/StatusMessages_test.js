@@ -273,6 +273,7 @@ describe("Course Status Messages", () => {
       })
 
       it("should prompt to schedule exam", () => {
+        course.has_exam = true
         course.can_schedule_exam = true
 
         assertIsJust(calculateMessages(calculateMessagesProps), [
@@ -283,6 +284,7 @@ describe("Course Status Messages", () => {
       })
 
       it("should prompt to sign up for future", () => {
+        course.has_exam = true
         course.can_schedule_exam = false
         course.exams_schedulable_in_future = [
           moment()
@@ -300,6 +302,7 @@ describe("Course Status Messages", () => {
       })
 
       it("should inform that no exam is avaiable", () => {
+        course.has_exam = true
         course.can_schedule_exam = false
         course.exams_schedulable_in_future = []
 

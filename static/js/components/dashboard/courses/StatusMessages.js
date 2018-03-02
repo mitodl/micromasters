@@ -162,10 +162,12 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     })
   }
   // Course is running, user has already paid,
-  if (courseUpcomingOrCurrent(firstRun) && paid && exams) {
-    messages.push({
+  if (courseUpcomingOrCurrent(firstRun) && paid) {
+    if (exams) {
+      messages.push({
         message: messageForNotAttemptedExam(course)
       })
+    }
     return S.Just(messages)
   }
 
@@ -297,6 +299,10 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
             )
           )
         }
+      } else if(!course.certificate_url) {
+          messages.push({
+            message: "You passed this course."
+          })
       }
       return S.Just(messages)
     } else {
