@@ -171,7 +171,6 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     return S.Just(messages)
   }
 
-
   if (
     coupon &&
     coupon.content_type === COUPON_CONTENT_TYPE_COURSE &&
@@ -187,8 +186,9 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   ) {
     let message =
       "You are auditing. To get credit, you need to pay for the course."
-    if(course.certificate_url) {
-      message = "You are re-taking this course. To get a new grade, you need to pay again."
+    if (course.certificate_url) {
+      message =
+        "You are re-taking this course. To get a new grade, you need to pay again."
     }
     let actionType = COURSE_ACTION_PAY
     if (hasFinancialAid) {
@@ -299,7 +299,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
             )
           )
         }
-      } else if(!course.certificate_url) {
+      } else if (!course.certificate_url) {
         messages.push({
           message: "You passed this course."
         })
