@@ -300,9 +300,9 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
           )
         }
       } else if(!course.certificate_url) {
-          messages.push({
-            message: "You passed this course."
-          })
+        messages.push({
+          message: "You passed this course."
+        })
       }
       return S.Just(messages)
     } else {
