@@ -17,6 +17,7 @@ from django.db import connection
 from django.test import override_settings
 from django.contrib.auth.models import User
 
+from cms.factories import CourseCertificateSignatoriesFactory
 from courses.factories import CourseRunFactory
 from courses.models import (
     Course,
@@ -33,9 +34,11 @@ from ecommerce.models import (
 from exams.factories import ExamRunFactory, ExamProfileFactory, ExamAuthorizationFactory
 from financialaid.factories import FinancialAidFactory
 from financialaid.models import FinancialAidStatus
-from grades.factories import ProctoredExamGradeFactory
+from grades.factories import ProctoredExamGradeFactory, MicromastersCourseCertificateFactory
+from grades.models import FinalGrade, CourseRunGradingStatus
 from profiles.api import get_social_username
 from roles.models import Role, Staff
+from seed_data.lib import set_course_run_current, CachedEnrollmentHandler
 from seed_data.management.commands.alter_data import EXAMPLE_COMMANDS
 from selenium_tests.data_util import create_user_for_login
 from selenium_tests.util import (
@@ -276,6 +279,25 @@ class DashboardStates:
             alter_arg_list.append('--fuzzy')
         call_command(*alter_arg_list)
 
+    def create_passed_enrolled_again(self):
+        self.make_fa_program_enrollment(FinancialAidStatus.AUTO_APPROVED)
+        course = Course.objects.get(title='Digital Learning 200')
+        CourseCertificateSignatoriesFactory.create(course=course)
+
+        call_command(
+            "alter_data", 'set_past_run_to_passed', '--username', 'staff',
+            '--course-title', 'Digital Learning 200', '--grade', '87',
+        )
+        final_grade = FinalGrade.objects.filter(
+            course_run__course__title='Digital Learning 200', user=self.user
+        ).first()
+        CourseRunGradingStatus.objects.create(course_run=final_grade.course_run, status='complete')
+        MicromastersCourseCertificateFactory.create(final_grade=final_grade)
+
+        course_run = CourseRunFactory.create(course=course)
+        set_course_run_current(course_run, upgradeable=True, save=True)
+        CachedEnrollmentHandler(self.user).set_or_create(course_run, verified=False)
+
     def __iter__(self):
         """
         Iterator over all dashboard states supported by this command.
@@ -312,6 +334,8 @@ class DashboardStates:
             )
 
         yield (self.create_paid_failed_course_run, 'failed_paid_run_another_offered')
+
+        yield (self.create_passed_enrolled_again, 'passed_and_taking_again')
 
         # Add scenarios for paid and course run offered [now, in future, fuzzy future]
         for tup in itertools.product([True, False], repeat=2):

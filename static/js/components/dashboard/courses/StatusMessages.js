@@ -143,16 +143,32 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     }
   }
 
+  const messages = []
+
+  if (course.certificate_url) {
+    messages.push({
+      message: (
+        <div>
+          {"You passed this course! "}
+          <a
+            href={course.certificate_url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View Certificate
+          </a>
+        </div>
+      )
+    })
+  }
   // Course is running, user has already paid,
-  if (courseUpcomingOrCurrent(firstRun) && paid) {
-    return S.Just([
-      {
+  if (courseUpcomingOrCurrent(firstRun) && paid && exams) {
+    messages.push({
         message: messageForNotAttemptedExam(course)
-      }
-    ])
+      })
+    return S.Just(messages)
   }
 
-  const messages = []
 
   if (
     coupon &&
@@ -169,6 +185,9 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   ) {
     let message =
       "You are auditing. To get credit, you need to pay for the course."
+    if(course.certificate_url) {
+      message = "You are re-taking this course. To get a new grade, you need to pay again."
+    }
     let actionType = COURSE_ACTION_PAY
     if (hasFinancialAid) {
       if (FA_PENDING_STATUSES.includes(financialAid.application_status)) {
@@ -278,25 +297,6 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
             )
           )
         }
-      } else {
-        let message = "You passed this course."
-        if (course.certificate_url) {
-          message = (
-            <div>
-              {"You passed this course! "}
-              <a
-                href={course.certificate_url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                View Certificate
-              </a>
-            </div>
-          )
-        }
-        messages.push({
-          message: message
-        })
       }
       return S.Just(messages)
     } else {
