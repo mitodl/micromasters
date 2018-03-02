@@ -280,6 +280,7 @@ class DashboardStates:
         call_command(*alter_arg_list)
 
     def create_passed_enrolled_again(self):
+        """Make course passed and user retaking/auditing the course again"""
         self.make_fa_program_enrollment(FinancialAidStatus.AUTO_APPROVED)
         course = Course.objects.get(title='Digital Learning 200')
         CourseCertificateSignatoriesFactory.create(course=course)
