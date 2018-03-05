@@ -89,7 +89,7 @@ unidecode==0.4.21         # via wagtail
 urllib3==1.21.1           # via elasticsearch
 uwsgi==2.0.15
 vine==1.1.4               # via amqp
-wagtail==2.0rc1
+wagtail==2.0
 wcwidth==0.1.7            # via prompt-toolkit
 webencodings==0.5.1       # via html5lib
 willow==1.1               # via wagtail
