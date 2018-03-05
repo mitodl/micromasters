@@ -179,7 +179,7 @@ describe("Course Status Messages", () => {
       makeRunCurrent(course.runs[0])
       makeRunEnrolled(course.runs[0])
       course.certificate_url = 'certificate'
-      let messages = calculateMessages(calculateMessagesProps).value
+      const messages = calculateMessages(calculateMessagesProps).value
       assert.equal(messages.length, 2)
       const mounted = shallow(messages[0]['message'])
 
