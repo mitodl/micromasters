@@ -1,4 +1,4 @@
-Django==1.11.10
+Django==2.0.2
 Pillow==3.4.2
 boto==2.39.0
 celery==4.0.2
@@ -30,7 +30,7 @@ psycopg2==2.7.3.2
 pycountry==16.11.27.1
 pysftp==0.2.9
 python-dateutil
-raven
+raven==6.6.0
 redis==2.10.5
 requests
 social-auth-app-django==2.1.0

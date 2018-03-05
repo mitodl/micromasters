@@ -3,9 +3,10 @@ Pytest configuration file for the entire micromasters app
 """
 # pylint: disable=redefined-outer-name
 import warnings
-
 from unittest.mock import patch
 from types import SimpleNamespace
+
+from django.utils.deprecation import RemovedInDjango30Warning
 import pytest
 
 from search import tasks
@@ -38,6 +39,8 @@ def warnings_as_errors():
             category=UserWarning,
             message='Failed to load HostKeys',
         )
+        # For Django 3.0 compatibility, which we don't care about yet
+        warnings.filterwarnings("ignore", category=RemovedInDjango30Warning)
 
         yield
     finally:

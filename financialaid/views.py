@@ -179,7 +179,7 @@ class ReviewFinancialAidView(UserPassesTestMixin, ListView):
         )
         return has_object_permission(Permissions.CAN_EDIT_FINANCIAL_AID, self.request.user, self.program)
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs):  # pylint: disable=arguments-differ
         """
         Gets context for view
         """
