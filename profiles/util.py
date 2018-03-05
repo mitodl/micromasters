@@ -1,8 +1,10 @@
 """
 util functions for profiles
 """
+from contextlib import contextmanager
 from io import BytesIO
 from os import path
+from tempfile import NamedTemporaryFile
 
 from PIL import Image
 
@@ -175,3 +177,15 @@ def full_name(user):
         first_name=first,
         last_name=last
     )
+
+
+@contextmanager
+def make_temp_image_file(*, width=500, height=500):
+    """
+    Create a temporary PNG image to test image uploads
+    """
+    with NamedTemporaryFile(suffix=".png") as image_file:
+        image = Image.new('RGBA', size=(width, height), color=(256, 0, 0))
+        image.save(image_file, 'png')
+        image_file.seek(0)
+        yield image_file

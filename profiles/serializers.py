@@ -118,8 +118,8 @@ class EmploymentFilledOutSerializer(EmploymentSerializer):
         """
         Update serializer_field_mapping to use fields setting required=True
         """
+        super().__init__(*args, **kwargs)
         set_fields_to_required(self, ['end_date'])
-        super(EmploymentFilledOutSerializer, self).__init__(*args, **kwargs)
 
 
 class EducationSerializer(ModelSerializer):
@@ -147,8 +147,8 @@ class EducationFilledOutSerializer(EducationSerializer):
         """
         Update serializer_field_mapping to use fields setting required=True
         """
+        super().__init__(*args, **kwargs)
         set_fields_to_required(self, ['field_of_study'])
-        super(EducationFilledOutSerializer, self).__init__(*args, **kwargs)
 
 
 class ProfileBaseSerializer(ModelSerializer):
@@ -273,6 +273,7 @@ class ProfileFilledOutSerializer(ProfileSerializer):
         """
         Update serializer_field_mapping to use fields setting required=True
         """
+        super().__init__(*args, **kwargs)
         ignore_fields = (
             'about_me',
             'romanized_first_name',
@@ -280,7 +281,6 @@ class ProfileFilledOutSerializer(ProfileSerializer):
             'postal_code',
         )
         set_fields_to_required(self, ignore_fields=ignore_fields)
-        super(ProfileFilledOutSerializer, self).__init__(*args, **kwargs)
 
     def validate(self, attrs):
         """
@@ -298,7 +298,7 @@ class ProfileFilledOutSerializer(ProfileSerializer):
         if country in ("US", "CA") and not postal_code:
             raise ValidationError("postal_code may not be blank")
 
-        return super(ProfileFilledOutSerializer, self).validate(attrs)
+        return super().validate(attrs)
 
 
 class ProfileImageSerializer(ModelSerializer):

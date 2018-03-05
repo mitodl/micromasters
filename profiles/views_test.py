@@ -2,7 +2,6 @@
 Tests for profile view
 """
 import json
-from io import BytesIO
 import itertools
 from unittest.mock import patch
 
@@ -11,7 +10,6 @@ import ddt
 from django.urls import resolve, reverse
 from django.db.models.signals import post_save
 from factory.django import mute_signals
-from PIL import Image
 from rest_framework.fields import (
     DateField,
     ReadOnlyField,
@@ -45,6 +43,7 @@ from profiles.serializers import (
     ProfileLimitedSerializer,
     ProfileSerializer,
 )
+from profiles.util import make_temp_image_file
 from profiles.views import ProfileViewSet
 from roles.models import Role
 from roles.roles import (
@@ -401,15 +400,12 @@ class ProfilePATCHTests(ProfileBaseTests):
         self.client.force_login(self.user1)
 
         # create a dummy image file in memory for upload
-        image_file = BytesIO()
-        image = Image.new('RGBA', size=(50, 50), color=(256, 0, 0))
-        image.save(image_file, 'png')
-        image_file.seek(0)
+        with make_temp_image_file(width=50, height=50) as image_file:
+            # format patch using multipart upload
+            resp = self.client.patch(self.url1, data={
+                'image': image_file
+            }, format='multipart')
 
-        # format patch using multipart upload
-        resp = self.client.patch(self.url1, data={
-            'image': image_file
-        }, format='multipart')
         assert resp.status_code == 200, resp.content.decode('utf-8')
         assert profile.education.count() == 1
         assert profile.work_history.count() == 1
@@ -469,15 +465,11 @@ class ProfilePATCHTests(ProfileBaseTests):
         del patch_data['image_medium']
 
         # create a dummy image file in memory for upload
-        image_file = BytesIO()
-        image = Image.new('RGBA', size=(500, 500), color=(256, 0, 0))
-        image.save(image_file, 'png')
-        image_file.seek(0)
-
-        # format patch using multipart upload
-        resp = self.client.patch(self.url1, data={
-            'image': image_file
-        }, format='multipart')
+        with make_temp_image_file() as image_file:
+            # format patch using multipart upload
+            resp = self.client.patch(self.url1, data={
+                'image': image_file
+            }, format='multipart')
         assert resp.status_code == 200, resp.content.decode('utf-8')
 
         profile.refresh_from_db()
@@ -499,20 +491,17 @@ class ProfilePATCHTests(ProfileBaseTests):
         self.client.force_login(self.user1)
 
         # create a dummy image file in memory for upload
-        image_file = BytesIO()
-        image = Image.new('RGBA', size=(500, 500), color=(256, 0, 0))
-        image.save(image_file, 'png')
-        image_file.seek(0)
+        with make_temp_image_file() as image_file:
 
-        # save old thumbnail
-        resized_image_file = getattr(profile, image_key).file
-        backup_thumb_bytes = resized_image_file.read()
-        resized_image_file.seek(0)
+            # save old thumbnail
+            resized_image_file = getattr(profile, image_key).file
+            backup_thumb_bytes = resized_image_file.read()
+            resized_image_file.seek(0)
 
-        # format patch using multipart upload
-        resp = self.client.patch(self.url1, data={
-            image_key: image_file
-        }, format='multipart')
+            # format patch using multipart upload
+            resp = self.client.patch(self.url1, data={
+                image_key: image_file
+            }, format='multipart')
         assert resp.status_code == 200, resp.content.decode('utf-8')
 
         profile.refresh_from_db()
