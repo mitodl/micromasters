@@ -112,3 +112,5 @@ def test_create_combined_final_grade(mocker):
     tasks.create_combined_final_grades.delay()
 
     assert update_mock.call_count == 2
+
+    update_mock.assert_called_with(exam_grades[4].user, course_run.course)

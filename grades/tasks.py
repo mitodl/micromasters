@@ -98,7 +98,7 @@ def create_combined_final_grades():
                 passed=True,
                 exam_run__date_grades_available__lte=now_in_utc()
             )
-            users_with_grade = list(CombinedFinalGrade.objects.filter(course=course).values_list('user', flat=True))
+            users_with_grade = set(CombinedFinalGrade.objects.filter(course=course).values_list('user', flat=True))
             for exam_grade in exam_grades:
                 if exam_grade.user.id not in users_with_grade:
                     api.update_or_create_combined_final_grade(exam_grade.user, course)
