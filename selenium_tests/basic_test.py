@@ -78,11 +78,7 @@ def test_zero_price_purchase(browser, base_test_data, logged_in_student, mocker)
     browser.assert_no_console_errors()
     browser.wait_until_loaded(By.CLASS_NAME, "toast-message")
 
-    # Assert that the purchase went through fine but enrolling in edX failed
-    # Which makes sense since there is no edX for these tests
-    assert browser.driver.find_element_by_css_selector(".course-status-messages .status-message .message").text == (
-        "Something went wrong. You paid for this course but are not enrolled. Contact us for help."
-    )
+    # No status message is shown here since this is FA program
     browser.assert_no_console_errors()
 
 

@@ -40,7 +40,8 @@ import {
   COURSE_DEADLINE_FORMAT,
   STATUS_PAID_BUT_NOT_ENROLLED,
   FA_STATUS_PENDING_DOCS,
-  STATUS_MISSED_DEADLINE
+  STATUS_MISSED_DEADLINE,
+  COURSE_ACTION_ENROLL
 } from "../../../constants"
 import * as libCoupon from "../../../lib/coupon"
 import { FINANCIAL_AID_PARTIAL_RESPONSE } from "../../../test_constants"
@@ -118,6 +119,19 @@ describe("Course Status Messages", () => {
       assert.equal(
         mounted.find("a").props().href,
         `mailto:${SETTINGS.support_email}`
+      )
+      calculateMessagesProps['hasFinancialAid'] = true
+      makeRunCurrent(course.runs[0])
+      assertIsJust(calculateMessages(calculateMessagesProps), [{
+        action:  "course action was called",
+        message: "You paid for this course. Click the button to enroll."
+      }]
+      )
+      assert(
+        calculateMessagesProps.courseAction.calledWith(
+          course.runs[0],
+          COURSE_ACTION_ENROLL
+        )
       )
     })
 
