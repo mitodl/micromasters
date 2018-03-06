@@ -2,6 +2,8 @@
 Tests for grades tasks
 """
 from datetime import timedelta
+from unittest.mock import call
+
 import pytest
 import factory
 from courses.factories import CourseFactory, CourseRunFactory
@@ -91,20 +93,21 @@ def test_create_combined_final_grade(mocker):
         course__program__financial_aid_availability=True,
         course__program__live=True
     )
+    course = course_run.course
     CourseRunGradingStatus.objects.create(course_run=course_run, status='complete')
     # Create exam run for course with date_grades_available True
     exam_run_grades_available = ExamRunFactory.create(
-        course=course_run.course,
+        course=course,
         date_grades_available=now_in_utc() - timedelta(weeks=1))
 
     exam_grades = ProctoredExamGradeFactory.create_batch(
         5,
-        course=course_run.course,
+        course=course,
         exam_run=exam_run_grades_available,
         passed=True,
     )
     for exam_grade in exam_grades[:3]:
-        CombinedFinalGrade.objects.create(user=exam_grade.user, course=course_run.course, grade=0.7)
+        CombinedFinalGrade.objects.create(user=exam_grade.user, course=course, grade=0.7)
     # Only 3 users will have combined grades
     for exam_grade in exam_grades[3:]:
         FinalGradeFactory.create(user=exam_grade.user, course_run=course_run, passed=True)
@@ -113,4 +116,7 @@ def test_create_combined_final_grade(mocker):
 
     assert update_mock.call_count == 2
 
-    update_mock.assert_called_with(exam_grades[4].user, course_run.course)
+    update_mock.assert_has_calls(
+        [call(exam_grades[3].user, course), call(exam_grades[4].user, course)],
+        any_order=True
+    )
