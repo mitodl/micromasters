@@ -103,7 +103,8 @@ export default class CourseEnrollmentDialog extends React.Component {
     } else if (courseRun.has_paid) {
       message = (
         <p>
-          Would you like to enroll in this course? You already paid for this course.
+          Would you like to enroll in this course? You already paid for this
+          course.
         </p>
       )
       payButton = (
@@ -175,7 +176,7 @@ export default class CourseEnrollmentDialog extends React.Component {
         colored
         className="dashboard-button audit-button"
       >
-        {courseRun.has_paid? "Enroll" : "Audit for Free & Pay Later"}
+        {courseRun.has_paid ? "Enroll" : "Audit for Free & Pay Later"}
       </Button>
     )
 

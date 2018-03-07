@@ -113,7 +113,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   )
   if (firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
     if (hasFinancialAid) {
-      if(isEnrollableRun(firstRun)){
+      if (isEnrollableRun(firstRun)) {
         return S.Just([
           {
             message: "You paid for this course. Click the button to enroll.",
@@ -137,7 +137,6 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
         }
       ])
     }
-
   }
 
   // Course run isn't enrollable, user never enrolled

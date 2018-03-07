@@ -120,13 +120,14 @@ describe("Course Status Messages", () => {
         mounted.find("a").props().href,
         `mailto:${SETTINGS.support_email}`
       )
-      calculateMessagesProps['hasFinancialAid'] = true
+      calculateMessagesProps["hasFinancialAid"] = true
       makeRunCurrent(course.runs[0])
-      assertIsJust(calculateMessages(calculateMessagesProps), [{
-        action:  "course action was called",
-        message: "You paid for this course. Click the button to enroll."
-      }]
-      )
+      assertIsJust(calculateMessages(calculateMessagesProps), [
+        {
+          action:  "course action was called",
+          message: "You paid for this course. Click the button to enroll."
+        }
+      ])
       assert(
         calculateMessagesProps.courseAction.calledWith(
           course.runs[0],
