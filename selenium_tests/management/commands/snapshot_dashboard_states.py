@@ -448,7 +448,7 @@ def test_data(django_db_blocker, seeded_database_loader):
     'not RUNNING_DASHBOARD_STATES',
     reason='DashboardStates test suite is only meant to be run via management command',
 )
-def test_dashboard_states(browser, seeded_database_loader, django_db_blocker, test_data):
+def test_dashboard_states(browser, override_allowed_hosts, seeded_database_loader, django_db_blocker, test_data):
     """Iterate through all possible dashboard states and save screenshots/API results of each one"""
     output_directory = DASHBOARD_STATES_OPTIONS.get('output_directory')
     use_learner_page = DASHBOARD_STATES_OPTIONS.get('learner')
