@@ -216,19 +216,6 @@ class MMTrack:
             return self.has_final_grade_paid_on_edx(edx_course_key)
         return self.has_verified_enrollment(edx_course_key)
 
-    def get_course_paid_count(self, course_key):
-        """
-        Gets the count of payments for given course run
-
-        Args:
-            edx_course_key (str): an edX course run key
-        Returns:
-            int: count of paid course runs
-        """
-        return Line.objects.filter(
-            order__status=Order.FULFILLED, order__user=self.user, course_key=course_key
-        ).values('order_id').distinct().count()
-
     def get_payments_count_for_course(self, course):
         """
         Get the total count of payments for given course
@@ -237,10 +224,11 @@ class MMTrack:
         Returns:
             int: count of paid course runs
         """
-        return sum([
-            self.get_course_paid_count(course_run.edx_course_key)
-            for course_run in course.courserun_set.only('edx_course_key')
-        ])
+        return Line.objects.filter(
+            order__status=Order.FULFILLED,
+            order__user=self.user,
+            course_key__in=course.courserun_set.values('edx_course_key'),
+        ).values('order_id').distinct().count()
 
     def has_paid_for_any_in_program(self):
         """
@@ -316,9 +304,7 @@ class MMTrack:
         Returns:
             qset: a queryset of all final grades for course
         """
-        return self.final_grade_qset.for_course_run_keys(
-            list(course.courserun_set.values_list('edx_course_key', flat=True))
-        ).order_by('-grade')
+        return self.final_grade_qset.filter(course_run__in=course.courserun_set.all()).order_by('-grade')
 
     def get_best_final_grade_for_course(self, course):
         """
