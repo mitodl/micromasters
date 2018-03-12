@@ -1,12 +1,12 @@
 version: '2.1'
 services:
   db:
-    image: postgres
+    image: postgres:9.6
     ports:
       - "5432"
 
   redis:
-    image: redis
+    image: redis:3.0.3
     ports:
       - "6379"
 
@@ -17,7 +17,7 @@ services:
       - "9100:9200"
 
   nginx:
-    image: nginx
+    image: nginx:1.9.5
     ports:
       - "8079:8079"
     links:
