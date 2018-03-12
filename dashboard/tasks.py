@@ -8,6 +8,7 @@ from datetime import (
 import logging
 
 from celery import group
+from django.conf import settings
 import pytz
 
 from dashboard.api import (
@@ -28,7 +29,6 @@ from micromasters.utils import (
 log = logging.getLogger(__name__)
 
 
-PARALLEL_RATE_LIMIT = '5/m'
 LOCK_ID = 'batch_update_user_data_lock'
 
 
@@ -76,7 +76,7 @@ def batch_update_user_data():
         jobs.delay()
 
 
-@app.task(rate_limit=PARALLEL_RATE_LIMIT)
+@app.task(rate_limit=settings.BATCH_UPDATE_RATE_LIMIT)
 def batch_update_user_data_subtasks(students, expiration_timestamp):
     """
     Update user data like enrollments, certificates and grades from edX platform.

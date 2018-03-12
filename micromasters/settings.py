@@ -517,6 +517,11 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TIMEZONE = 'UTC'
 
 
+# Celery parallel rate limit for batch_update_user_data
+# This is the number of tasks per minute, each task updates data for 20 users
+BATCH_UPDATE_RATE_LIMIT = get_string('BATCH_UPDATE_RATE_LIMIT', '5/m')
+
+
 # django cache back-ends
 CACHES = {
     'default': {
