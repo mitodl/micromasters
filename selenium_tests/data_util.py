@@ -7,18 +7,17 @@ from factory.django import mute_signals
 
 from micromasters.utils import now_in_utc
 from search.indexing_api import index_program_enrolled_users
-from backends.edxorg import EdxOrgOAuth2
 from dashboard.models import (
     ProgramEnrollment,
     UserCacheRefreshTime,
 )
-from profiles.factories import ProfileFactory
+from profiles.factories import SocialProfileFactory
 from selenium_tests.util import DEFAULT_PASSWORD
 
 
 def create_user_batch(num_to_create, is_staff=False):
     """Create a batch of test users"""
-    profiles = ProfileFactory.create_batch(
+    profiles = SocialProfileFactory.create_batch(
         num_to_create,
         validated=True,
         user__is_staff=is_staff,
@@ -43,30 +42,23 @@ def create_enrolled_user_batch(num_to_create, program, **kwargs):
 
 def create_user_for_login(is_staff=True, username=None):
     """Create a test user that can log into the app"""
+    later = now_in_utc() + timedelta(weeks=5000)
     with mute_signals(post_save):
-        profile_params = dict(
+        user = SocialProfileFactory.create(
             validated=True,
             user__is_staff=is_staff,
             image=None,  # make these None so the default image is used
             image_small=None,
             image_medium=None,
-        )
-        if username is not None:
-            profile_params['user__username'] = username
-        user = ProfileFactory.create(**profile_params).user
+            **({'user_username': username} if username is not None else {}),
+            user__social_auth__extra_data={
+                'access_token': 'fake',
+                'refresh_token': 'fake',
+                'updated_at': later.timestamp(),
+                'expires_in': 3600,
+            }
+        ).user
 
-    later = now_in_utc() + timedelta(weeks=5000)
-    # Create a fake edX social auth to make this user look like they logged in via edX
-    user.social_auth.create(
-        provider=EdxOrgOAuth2.name,
-        uid="{}_edx".format(user.username),
-        extra_data={
-            'access_token': 'fake',
-            'refresh_token': 'fake',
-            'updated_at': later.timestamp(),
-            'expires_in': 3600,
-        }
-    )
     UserCacheRefreshTime.objects.create(
         user=user,
         enrollment=later,
