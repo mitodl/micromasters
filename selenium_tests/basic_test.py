@@ -1,11 +1,14 @@
 """Basic MicroMasters selenium tests"""
 # pylint: disable=redefined-outer-name,unused-argument
+import csv
+
+from django.conf import settings
+from django.db.models.signals import post_save
+from factory import Iterator
+from factory.django import mute_signals
 import pytest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-
-from django.conf import settings
-from factory import Iterator
 
 from selenium_tests.data_util import create_enrolled_user_batch
 from roles.models import (
@@ -17,6 +20,13 @@ from courses.factories import (
     ProgramFactory,
     CourseFactory
 )
+from cms.factories import (
+    FacultyFactory,
+    InfoLinksFactory,
+    ProgramCourseFactory,
+    ProgramPageFactory,
+    SemesterDateFactory,
+)
 from ecommerce.models import (
     Coupon,
     UserCoupon,
@@ -27,13 +37,8 @@ from financialaid.models import (
     FinancialAidStatus
 )
 from financialaid.factories import FinancialAidFactory
-from cms.factories import (
-    FacultyFactory,
-    InfoLinksFactory,
-    ProgramCourseFactory,
-    ProgramPageFactory,
-    SemesterDateFactory,
-)
+from profiles.models import Profile
+from search.indexing_api import recreate_index
 
 
 pytestmark = [
@@ -214,3 +219,38 @@ class TestLearnerSearchPage:
         )
         browser.click_when_loaded(By.CSS_SELECTOR, "a[href='/learners']")
         browser.wait_until_loaded(By.CLASS_NAME, 'learner-results')
+
+    def test_country_limit(self, browser, base_test_data):
+        """
+        There should be more than 20 countries in current country and birth country facets
+        """
+        with open("profiles/data/countries.csv") as f:
+            reader = csv.DictReader(f)
+            country_codes = [row['code'] for row in reader]
+        create_enrolled_user_batch(len(country_codes), program=base_test_data.program, is_staff=False)
+
+        # Don't update elasticsearch for each profile, do that in bulk after
+        with mute_signals(post_save):
+            for i, profile in enumerate(Profile.objects.all()):
+                code = country_codes[i % len(country_codes)]
+                profile.birth_country = code
+                profile.country = code
+                profile.save()
+
+        recreate_index()
+
+        browser.get("/learners")
+        browser.wait_until_loaded(By.CLASS_NAME, 'menu-icon')
+
+        current_selector = '.filter--country .sk-hierarchical-menu-list__item'
+        birth_country_selector = ".filter--birth_location .sk-item-list__item"
+
+        country_count = browser.driver.execute_script(
+            "return document.querySelectorAll('{}').length".format(current_selector)
+        )
+        assert country_count == len(country_codes)
+
+        birth_country_count = browser.driver.execute_script(
+            "return document.querySelectorAll('{}').length".format(birth_country_selector)
+        )
+        assert birth_country_count == len(country_codes)
