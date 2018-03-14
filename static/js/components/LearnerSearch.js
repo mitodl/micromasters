@@ -358,7 +358,7 @@ export default class LearnerSearch extends SearchkitComponent {
             field="profile.birth_country"
             operator="OR"
             itemComponent={CountryRefinementOption}
-            size={1000} // should contain all the countries
+            size={15}
           />
         </FilterVisibilityToggle>
         <FilterVisibilityToggle
