@@ -250,7 +250,7 @@ class DashboardStates:
             tier_program__discount_amount=50,
         )
 
-    def create_paid_failed_course_run(self):
+    def create_paid_failed_course_run(self, in_future, fuzzy):
         """Make paid failed course run, and offer another run"""
         self.make_fa_program_enrollment(FinancialAidStatus.AUTO_APPROVED)
         call_command(
@@ -260,6 +260,15 @@ class DashboardStates:
         course = Course.objects.get(title='Digital Learning 200')
         # create another offered run
         CourseRunFactory.create(course=course)
+
+        alter_arg_list = [
+            "alter_data", 'set_to_offered', '--username', 'staff', '--course-title', 'Digital Learning 200'
+        ]
+        if in_future:
+            alter_arg_list.append('--in-future')
+        if fuzzy:
+            alter_arg_list.append('--fuzzy')
+        call_command(*alter_arg_list)
 
     def create_paid_but_no_enrollable_run(self, in_future, fuzzy):
         """Make paid but not enrolled, with offered currently, in future, and fuzzy """
@@ -334,7 +343,14 @@ class DashboardStates:
                 ),
             )
 
-        yield (self.create_paid_failed_course_run, 'failed_paid_run_another_offered')
+        for tup in itertools.product([True, False], repeat=2):
+            in_future, fuzzy = tup
+
+            yield (bind_args(self.create_paid_failed_course_run, in_future, fuzzy),
+                   'create_paid_failed_course_run{in_future}{fuzzy}'.format(
+                       in_future='_offered_in_future' if in_future else '',
+                       fuzzy='_offered_fuzzy' if fuzzy else ''
+                   ))
 
         yield (self.create_passed_enrolled_again, 'passed_and_taking_again')
 
