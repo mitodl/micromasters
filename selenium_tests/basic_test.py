@@ -243,14 +243,8 @@ class TestLearnerSearchPage:
         browser.wait_until_loaded(By.CLASS_NAME, 'menu-icon')
 
         current_selector = '.filter--country .sk-hierarchical-menu-list__item'
-        birth_country_selector = ".filter--birth_location .sk-item-list__item"
 
         country_count = browser.driver.execute_script(
             "return document.querySelectorAll('{}').length".format(current_selector)
         )
         assert country_count == len(country_codes)
-
-        birth_country_count = browser.driver.execute_script(
-            "return document.querySelectorAll('{}').length".format(birth_country_selector)
-        )
-        assert birth_country_count == len(country_codes)
