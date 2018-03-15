@@ -257,6 +257,7 @@ def set_to_offered(user=None, course_run=None, now=None,  # pylint: disable=unus
         course_run.fuzzy_start_date = fuzzy_date_string
         course_run.fuzzy_enrollment_start_date = fuzzy_date_string
         course_run.start_date = None
+        course_run.enrollment_start = None
         course_run.end_date = None
         course_run.enrollment_end = None
     elif in_future:
