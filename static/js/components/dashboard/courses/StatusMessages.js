@@ -368,15 +368,17 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
           !R.isNil(run.enrollment_start_date) &&
           !R.isEmpty(run.enrollment_start_date)
         ) {
-          const start_text = isEnrollableRun(run) ? 'started' : 'starts'
-          enrollmentDateMessage = ` Enrollment ${start_text} ${formatDate(
+          const startText = isEnrollableRun(run) ? "started" : "starts"
+          enrollmentDateMessage = ` Enrollment ${startText} ${formatDate(
             run.enrollment_start_date
           )}`
         } else if (run.fuzzy_enrollment_start_date) {
           enrollmentDateMessage = `Enrollment starts ${run.fuzzy_enrollment_start_date}`
         }
         if (run.course_start_date) {
-          courseStartMessage = `Next course starts ${formatDate(run.course_start_date)}.`
+          courseStartMessage = `Next course starts ${formatDate(
+            run.course_start_date
+          )}.`
         } else if (run.fuzzy_start_date) {
           courseStartMessage = `Next course starts ${run.fuzzy_start_date}.`
         }
