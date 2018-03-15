@@ -250,7 +250,7 @@ class DashboardStates:
             tier_program__discount_amount=50,
         )
 
-    def create_paid_failed_course_run(self, in_future, fuzzy):
+    def create_paid_failed_course_run(self, current, in_future, fuzzy):
         """Make paid failed course run, and offer another run"""
         self.make_fa_program_enrollment(FinancialAidStatus.AUTO_APPROVED)
         call_command(
@@ -258,17 +258,22 @@ class DashboardStates:
             '--course-title', 'Digital Learning 200', '--grade', '45',
         )
         course = Course.objects.get(title='Digital Learning 200')
-        # create another offered run
-        CourseRunFactory.create(course=course)
 
-        alter_arg_list = [
-            "alter_data", 'set_to_offered', '--username', 'staff', '--course-title', 'Digital Learning 200'
-        ]
+        if current:
+            CourseRunFactory.create(course=course)
+
         if in_future:
-            alter_arg_list.append('--in-future')
+            course_run = CourseRunFactory.create(course=course, edx_course_key='course-in-future')
+            call_command(
+                "alter_data", 'set_to_offered', '--username', 'staff',
+                '--course-run-key', course_run.edx_course_key, '--in-future'
+            )
         if fuzzy:
-            alter_arg_list.append('--fuzzy')
-        call_command(*alter_arg_list)
+            course_run = CourseRunFactory.create(course=course, edx_course_key='course-fuzzy')
+            call_command(
+                "alter_data", 'set_to_offered', '--username', 'staff',
+                '--course-run-key', course_run.edx_course_key, '--fuzzy'
+            )
 
     def create_paid_but_no_enrollable_run(self, in_future, fuzzy):
         """Make paid but not enrolled, with offered currently, in future, and fuzzy """
@@ -343,11 +348,12 @@ class DashboardStates:
                 ),
             )
 
-        for tup in itertools.product([True, False], repeat=2):
-            in_future, fuzzy = tup
+        for tup in itertools.product([True, False], repeat=3):
+            current, in_future, fuzzy = tup
 
-            yield (bind_args(self.create_paid_failed_course_run, in_future, fuzzy),
-                   'create_paid_failed_course_run{in_future}{fuzzy}'.format(
+            yield (bind_args(self.create_paid_failed_course_run, current, in_future, fuzzy),
+                   'create_paid_failed_course_run{current}{in_future}{fuzzy}'.format(
+                       current='_offered_now' if current else '',
                        in_future='_offered_in_future' if in_future else '',
                        fuzzy='_offered_fuzzy' if fuzzy else ''
                    ))
