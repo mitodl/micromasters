@@ -380,7 +380,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
         } else if (run.fuzzy_start_date) {
           courseStartMessage = `Next course starts ${run.fuzzy_start_date}.`
         }
-        return `You did not pass the edX course, but you can re-enroll. ${courseStartMessage} ${enrollmentDateMessage}`
+        return `You did not pass the edX course, but you can re-enroll. ${courseStartMessage}${enrollmentDateMessage}`
       }
       return S.Just(
         S.maybe(
