@@ -102,7 +102,9 @@ class SearchAPITests(ESTestCase):
             ]
         )
         expected_filled_out_query = Q('term', **{'profile.filled_out': True})
-        expected_privacy_query = ~Q('term', **{'profile.account_privacy': 'private'})
+        expected_privacy_query = ~Q(
+            'term', **{'profile.account_privacy': 'private'}
+        )  # pylint: disable=invalid-unary-operand-type
         assert 'query' in search_query_dict
         assert 'bool' in search_query_dict['query']
         assert 'filter' in search_query_dict['query']['bool']

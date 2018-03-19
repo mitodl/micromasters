@@ -168,7 +168,7 @@ def create_search_obj(user, search_param_dict=None, filter_on_email_optin=False)
     if not is_advance_search_capable:
         # Learners can't search for other learners with privacy set to private
         search_obj = search_obj.filter(
-            ~Q('term', **{'profile.account_privacy': Profile.PRIVATE})
+            ~Q('term', **{'profile.account_privacy': Profile.PRIVATE})  # pylint: disable=invalid-unary-operand-type
         )
 
     # Limit results to one of the programs the user is staff on
