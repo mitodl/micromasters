@@ -19,7 +19,7 @@ from grades.models import (
     MicromastersCourseCertificate,
     CourseRunGradingStatus,
     CombinedFinalGrade,
-)
+    FACourseCertificate)
 from micromasters.celery import app
 from micromasters.utils import chunks, now_in_utc
 
@@ -92,16 +92,53 @@ def create_combined_final_grades():
         program__financial_aid_availability=True
     )
     for course in courses:
-        if course.has_frozen_runs() and course.has_exam:
-            exam_grades = ProctoredExamGrade.objects.filter(
+        if not course.has_frozen_runs() or not course.has_exam:
+            continue
+
+        users_with_grade = set(CombinedFinalGrade.objects.filter(course=course).values_list('user', flat=True))
+        exam_grades = ProctoredExamGrade.objects.filter(
+            course=course,
+            passed=True,
+            exam_run__date_grades_available__lte=now_in_utc()
+        ).exclude(user__in=users_with_grade)
+
+        for exam_grade in exam_grades:
+            api.update_or_create_combined_final_grade(exam_grade.user, course)
+
+
+@app.task
+def create_fa_course_certificates():
+    """
+    Creates any missing unique course-user FACourseCertificates
+    """
+    courses = Course.objects.filter(
+        program__live=True,
+        program__financial_aid_availability=True
+    )
+    for course in courses:
+        if not course.has_frozen_runs():
+            continue
+        users_with_cert = set(FACourseCertificate.objects.filter(course=course).values_list('user', flat=True))
+        # Find users that passed the course but don't have a certificate yet
+        users_need_cert = FinalGrade.objects.filter(
+            course_run__course=course,
+            status=FinalGradeStatus.COMPLETE,
+            passed=True
+        ).exclude(user__in=users_with_cert).values_list('user', flat=True)
+        if course.has_exam:
+            # need also to pass exam
+            users_need_cert = set(ProctoredExamGrade.objects.filter(
                 course=course,
                 passed=True,
-                exam_run__date_grades_available__lte=now_in_utc()
+                exam_run__date_grades_available__lte=now_in_utc(),
+                user__in=users_need_cert
+            ).values_list('user', flat=True))
+
+        for user in users_need_cert:
+            FACourseCertificate.objects.get_or_create(
+                user=user,
+                course=course
             )
-            users_with_grade = set(CombinedFinalGrade.objects.filter(course=course).values_list('user', flat=True))
-            for exam_grade in exam_grades:
-                if exam_grade.user.id not in users_with_grade:
-                    api.update_or_create_combined_final_grade(exam_grade.user, course)
 
 
 @app.task
