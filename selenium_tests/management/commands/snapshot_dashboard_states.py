@@ -35,7 +35,7 @@ from exams.factories import ExamRunFactory, ExamProfileFactory, ExamAuthorizatio
 from financialaid.factories import FinancialAidFactory
 from financialaid.models import FinancialAidStatus
 from grades.factories import ProctoredExamGradeFactory, MicromastersCourseCertificateFactory
-from grades.models import FinalGrade, CourseRunGradingStatus
+from grades.models import FinalGrade, CourseRunGradingStatus, MicromastersCourseCertificate
 from profiles.api import get_social_username
 from roles.models import Role, Staff
 from seed_data.lib import set_course_run_current, CachedEnrollmentHandler
@@ -261,6 +261,24 @@ class DashboardStates:
         # create another offered run
         CourseRunFactory.create(course=course)
 
+    def create_passed_and_offered_course_run(self, grades_frozen, with_certificate):
+        """Make passed and currently offered course run, and see the View Certificate and Re-Enroll"""
+        self.make_fa_program_enrollment(FinancialAidStatus.AUTO_APPROVED)
+        call_command(
+            "alter_data", 'set_to_passed', '--username', 'staff',
+            '--course-title', 'Digital Learning 200', '--grade', '89',
+        )
+        course = Course.objects.get(title='Digital Learning 200')
+        # create another currently offered run
+        CourseRunFactory.create(course=course)
+
+        if grades_frozen:
+            final_grade = FinalGrade.objects.filter(user=self.user, course_run__course=course, passed=True).first()
+            CourseRunGradingStatus.objects.create(course_run=final_grade.course_run, status='complete')
+            if with_certificate:
+                MicromastersCourseCertificate.objects.create(final_grade=final_grade)
+                CourseCertificateSignatoriesFactory.create(course=course)
+
     def create_paid_but_no_enrollable_run(self, in_future, fuzzy):
         """Make paid but not enrolled, with offered currently, in future, and fuzzy """
         self.make_fa_program_enrollment(FinancialAidStatus.AUTO_APPROVED)
@@ -335,6 +353,17 @@ class DashboardStates:
             )
 
         yield (self.create_paid_failed_course_run, 'failed_paid_run_another_offered')
+
+        for tup in itertools.product([True, False], repeat=2):
+            frozen, with_certificate = tup
+            # can't create a certificate without a frozen grade
+            if not frozen and with_certificate:
+                continue
+            yield (bind_args(self.create_passed_and_offered_course_run, frozen, with_certificate),
+                   'create_passed_and_offered_course_run{frozen}{with_certificate}'.format(
+                       frozen='_grades_frozen' if frozen else '',
+                       with_certificate='_with_certificate' if with_certificate else ''
+                   ))
 
         yield (self.create_passed_enrolled_again, 'passed_and_taking_again')
 
