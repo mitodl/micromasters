@@ -1,14 +1,20 @@
 """
 Tests for financial aid serializers
 """
+from unittest.mock import MagicMock
 from django.core.exceptions import ImproperlyConfigured
+from django.db.models.signals import post_save
+from factory.django import mute_signals
+from rest_framework.exceptions import ValidationError
 
 from courses.factories import ProgramFactory
 from financialaid.factories import TierProgramFactory, FinancialAidFactory
 from financialaid.constants import FinancialAidStatus
-from financialaid.serializers import FinancialAidDashboardSerializer
+from financialaid.serializers import FinancialAidDashboardSerializer, FinancialAidRequestSerializer
 from micromasters.factories import UserFactory
 from micromasters.utils import now_in_utc
+from profiles.factories import ProfileFactory
+from dashboard.factories import ProgramEnrollmentFactory
 from search.base import MockedESTestCase
 
 
@@ -108,3 +114,58 @@ class FinancialAidDashboardSerializerTests(MockedESTestCase):
         """
         non_fa_program = ProgramFactory.create(live=True, financial_aid_availability=False)
         assert FinancialAidDashboardSerializer.serialize(self.user, non_fa_program) == {}
+
+    def test_financial_aid_with_application_with_no_residence(self):
+        """
+        Test that financialAid request serializer throws exception when profile is not filled out.
+        """
+        user = UserFactory.create()
+        assert user.profile.filled_out is False
+        ProgramEnrollmentFactory.create(user=user, program=self.program)
+        serializer = FinancialAidRequestSerializer(
+            data={
+                'program_id': self.program.id,
+                'tier_program': self.min_tier_program,
+                'date_documents_sent': None,
+                'original_currency': 'USD',
+                'original_income': 1000
+            },
+            context={
+                'request': MagicMock(user=user)
+            }
+        )
+        with self.assertRaises(ValidationError) as ex:
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+        assert ex.exception.detail == {'non_field_errors': ['Profile is not complete']}
+
+    def test_financial_aid_with_application_with_full_profile(self):
+        """
+        Test that financialAid request serializer works when profile is filled out.
+        """
+        with mute_signals(post_save):
+            profile = ProfileFactory.create()
+
+        ProgramEnrollmentFactory.create(user=profile.user, program=self.program)
+        original_currency = 'USD'
+        original_income = 1000.0
+        serializer = FinancialAidRequestSerializer(
+            data={
+                'program_id': self.program.id,
+                'tier_program': self.min_tier_program,
+                'date_documents_sent': None,
+                'original_currency': original_currency,
+                'original_income': original_income
+            },
+            context={
+                'request': MagicMock(user=profile.user)
+            }
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        assert serializer.data == {
+            'original_currency': original_currency,
+            'original_income': original_income,
+            'program_id': self.program.id
+        }

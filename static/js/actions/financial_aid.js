@@ -54,7 +54,7 @@ export const addFinancialAid = (
       err => {
         dispatch(
           receiveAddFinancialAidFailure({
-            message: err[0],
+            message: err[0] || err["non_field_errors"][0],
             code:    err.errorStatusCode
           })
         )

@@ -37,6 +37,7 @@ from financialaid.models import (
 from mail.api import MailgunClient
 from mail.utils import generate_financial_aid_email
 from micromasters.utils import now_in_utc
+from profiles.util import is_profile_filled_out
 
 
 log = logging.getLogger(__name__)
@@ -59,6 +60,8 @@ class FinancialAidRequestSerializer(serializers.Serializer):
             raise ValidationError("Financial aid not available for this program.")
         if not ProgramEnrollment.objects.filter(program=attrs["program"], user=self.context["request"].user).exists():
             raise ValidationError("User not in program.")
+        if not is_profile_filled_out(self.context["request"].user.profile):
+            raise ValidationError("Profile is not complete")
         return attrs
 
     def save(self, **kwargs):

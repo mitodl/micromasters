@@ -16,6 +16,10 @@ IMAGE_PATH_MAX_LENGTH = 100
 # Max dimension of either height or width for small and medium images
 IMAGE_SMALL_MAX_DIMENSION = 64
 IMAGE_MEDIUM_MAX_DIMENSION = 128
+COMPULSORY_FIELDS = [
+    'first_name', 'last_name', 'preferred_name', 'date_of_birth', 'gender',
+    'country', 'state_or_territory', 'city', 'nationality', 'preferred_language'
+]
 
 
 def split_name(name):
@@ -189,3 +193,19 @@ def make_temp_image_file(*, width=500, height=500):
         image.save(image_file, 'png')
         image_file.seek(0)
         yield image_file
+
+
+def is_profile_filled_out(profile):
+    """
+    check if profile is filled
+
+    Args:
+        profile (Profile): User profile object
+    Returns:
+        bool
+    """
+    for field in profile._meta.get_fields():
+        # is empty string
+        if field.name in COMPULSORY_FIELDS and not getattr(profile, field.name):
+            return False
+    return True

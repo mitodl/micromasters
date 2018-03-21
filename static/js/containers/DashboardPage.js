@@ -24,6 +24,7 @@ import {
   fetchDashboard,
   clearDashboard
 } from "../actions/dashboard"
+import { clearProfile } from "../actions/profile"
 import {
   COUPON_CONTENT_TYPE_COURSE,
   COUPON_CONTENT_TYPE_PROGRAM,
@@ -53,6 +54,7 @@ import {
   setShowExpandedCourseStatus
 } from "../actions/ui"
 import { showEnrollPayLaterSuccessMessage } from "../actions/course_enrollments"
+import { clearCalculatorEdit } from "../actions/financial_aid"
 import { findCourseRun } from "../util/util"
 import CourseListCard from "../components/dashboard/CourseListCard"
 import DashboardUserCard from "../components/dashboard/DashboardUserCard"
@@ -88,6 +90,7 @@ import {
   pearsonSSOFailure,
   setPearsonError
 } from "../actions/pearson"
+import { INCOME_DIALOG } from "./FinancialAidCalculator"
 import { processCheckout } from "./OrderSummaryPage"
 import { generateSSOForm } from "../lib/pearson"
 import { getOwnDashboard, getOwnCoursePrices } from "../reducers/util"
@@ -294,6 +297,17 @@ class DashboardPage extends React.Component {
     this.fetchCoupons()
     this.handleOrderStatus()
     this.fetchDiscussionsFrontpage()
+    this.checkFinancialAidError()
+  }
+
+  checkFinancialAidError = () => {
+    const { financialAid: { fetchError }, dispatch } = this.props
+    if (fetchError && fetchError.message === "Profile is not complete") {
+      dispatch(clearProfile(SETTINGS.user.username))
+      this.context.router.push(`/profile/`)
+      dispatch(hideDialog(INCOME_DIALOG))
+      dispatch(clearCalculatorEdit())
+    }
   }
 
   fetchDashboard() {

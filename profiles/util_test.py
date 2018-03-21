@@ -4,14 +4,17 @@ Tests for util functions
 from io import BytesIO
 from unittest import TestCase
 from unittest.mock import patch
+import ddt
 
+from django.db.models.signals import post_save
 from django.test import TestCase as DjangoTestCase
+from factory.django import mute_signals
 
 from factory.fuzzy import FuzzyInteger
 from PIL import Image
 
 from profiles import util
-from profiles.factories import SocialProfileFactory
+from profiles.factories import ProfileFactory, SocialProfileFactory
 
 
 class SplitNameTests(TestCase):
@@ -178,3 +181,35 @@ class FullNameTests(DjangoTestCase):
         last = "Tester"
         profile = SocialProfileFactory.create(first_name=first, last_name=last)
         assert util.full_name(profile.user) == "{} {}".format(profile.user.username, last)
+
+
+@ddt.ddt
+class IsProfileFilledOutTests(DjangoTestCase):
+    """
+    Tests for is_profile_filled_out function.
+    """
+    def setUp(self):
+        super(IsProfileFilledOutTests, self).setUp()
+        with mute_signals(post_save):
+            self.profile = ProfileFactory.create()
+
+    @ddt.data(*util.COMPULSORY_FIELDS)
+    def test_is_profile_filled_out_when_none(self, column):
+        """tests is_profile_filled_out method when column is None"""
+        setattr(self.profile, column, None)
+        self.profile.save()
+        assert util.is_profile_filled_out(self.profile) is False
+
+    # dob cannot be blank since it is a Date
+    @ddt.data(
+        *[field for field in util.COMPULSORY_FIELDS if field != 'date_of_birth']
+    )
+    def test_is_profile_filled_out_when_blank(self, column):
+        """tests is_profile_filled_out method when column is blank"""
+        setattr(self.profile, column, "")
+        self.profile.save()
+        assert util.is_profile_filled_out(self.profile) is False
+
+    def test_is_profile_filled_out(self):
+        """tests is_profile_filled_out method when column is filled out"""
+        assert util.is_profile_filled_out(self.profile) is True
