@@ -32,7 +32,7 @@ from mail.permissions import (
     MailGunWebHookPermission,
 )
 from mail.serializers import GenericMailSerializer, AutomaticEmailSerializer
-from mail.utils import generate_mailgun_response_json
+from mail.utils import generate_mailgun_response_json, get_email_footer
 from mail.models import AutomaticEmail
 from profiles.models import Profile
 from profiles.util import full_name
@@ -126,8 +126,10 @@ class SearchResultMailView(APIView):
         """
         POST method handler
         """
+        url = request.build_absolute_uri('/settings')
+        email_footer = get_email_footer(url)
         email_subject = request.data['email_subject']
-        email_body = request.data['email_body']
+        email_body = request.data['email_body'] + email_footer
         sender_name = full_name(request.user)
         search_obj = create_search_obj(
             request.user,
@@ -140,7 +142,7 @@ class SearchResultMailView(APIView):
             automatic_email = add_automatic_email(
                 search_obj,
                 email_subject=request.data['email_subject'],
-                email_body=request.data['email_body'],
+                email_body=email_body,
                 sender_name=sender_name,
                 staff_user=request.user,
             )
