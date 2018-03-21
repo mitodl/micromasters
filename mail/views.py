@@ -126,10 +126,8 @@ class SearchResultMailView(APIView):
         """
         POST method handler
         """
-        url = request.build_absolute_uri('/settings')
-        email_footer = get_email_footer(url)
         email_subject = request.data['email_subject']
-        email_body = request.data['email_body'] + email_footer
+        email_body = request.data['email_body'] + get_email_footer(request.build_absolute_uri('/settings'))
         sender_name = full_name(request.user)
         search_obj = create_search_obj(
             request.user,

@@ -31,6 +31,7 @@ from mail.exceptions import SendBatchException
 from mail.factories import AutomaticEmailFactory
 from mail.models import SentAutomaticEmail, AutomaticEmail
 from mail.serializers import AutomaticEmailSerializer
+from mail.utils import get_email_footer
 from mail.views import MailWebhookView
 from profiles.factories import (
     ProfileFactory,
@@ -119,7 +120,8 @@ class SearchResultMailViewsTests(SearchResultMailViewsBase):
         assert mock_mailgun_client.send_batch.called
         _, called_kwargs = mock_mailgun_client.send_batch.call_args
         assert called_kwargs['subject'] == self.request_data['email_subject']
-        assert called_kwargs['body'] == self.request_data['email_body']
+        self.assertIn(self.request_data['email_body'], called_kwargs['body'])
+        self.assertIn('edit your settings', called_kwargs['body'])
         assert list(called_kwargs['recipients']) == self.recipient_tuples
         mock_get_mail_vars.assert_called_once_with(self.email_results)
 
@@ -211,13 +213,14 @@ class AutomaticEmailTests(SearchResultMailViewsBase):
         assert mock_mailgun_client.send_batch.called
         _, called_kwargs = mock_mailgun_client.send_batch.call_args
         assert called_kwargs['subject'] == self.request_data['email_subject']
-        assert called_kwargs['body'] == self.request_data['email_body']
+        body_result = self.request_data['email_body'] + get_email_footer('http://testserver/settings')
+        assert called_kwargs['body'] == body_result
         assert list(called_kwargs['recipients']) == self.recipient_tuples
 
         assert mock_add_automatic_email.call_args[0][0].to_dict() == self.search_obj.to_dict()
         assert mock_add_automatic_email.call_args[1] == {
             "email_subject": self.request_data['email_subject'],
-            "email_body": self.request_data['email_body'],
+            "email_body": body_result,
             "sender_name": full_name(self.staff),
             "staff_user": self.staff,
         }
@@ -256,13 +259,14 @@ class AutomaticEmailTests(SearchResultMailViewsBase):
         assert mock_mailgun_client.send_batch.called
         _, called_kwargs = mock_mailgun_client.send_batch.call_args
         assert called_kwargs['subject'] == self.request_data['email_subject']
-        assert called_kwargs['body'] == self.request_data['email_body']
+        body_result = self.request_data['email_body'] + get_email_footer('http://testserver/settings')
+        assert called_kwargs['body'] == body_result
         assert list(called_kwargs['recipients']) == self.recipient_tuples
 
         assert mock_add_automatic_email.call_args[0][0].to_dict() == self.search_obj.to_dict()
         assert mock_add_automatic_email.call_args[1] == {
             "email_subject": self.request_data['email_subject'],
-            "email_body": self.request_data['email_body'],
+            "email_body": body_result,
             "sender_name": full_name(self.staff),
             "staff_user": self.staff,
         }
