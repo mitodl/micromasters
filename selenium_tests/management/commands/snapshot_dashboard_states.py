@@ -250,7 +250,7 @@ class DashboardStates:
             tier_program__discount_amount=50,
         )
 
-    def create_paid_failed_course_run(self, current, in_future, fuzzy):
+    def create_paid_failed_course_run(self, *, current, in_future, fuzzy):
         """Make paid failed course run, and offer another run"""
         self.make_fa_program_enrollment(FinancialAidStatus.AUTO_APPROVED)
         call_command(
@@ -351,7 +351,7 @@ class DashboardStates:
         for tup in itertools.product([True, False], repeat=3):
             current, in_future, fuzzy = tup
 
-            yield (bind_args(self.create_paid_failed_course_run, current, in_future, fuzzy),
+            yield (bind_args(self.create_paid_failed_course_run, current=current, in_future=in_future, fuzzy=fuzzy),
                    'create_paid_failed_course_run{current}{in_future}{fuzzy}'.format(
                        current='_offered_now' if current else '',
                        in_future='_offered_in_future' if in_future else '',

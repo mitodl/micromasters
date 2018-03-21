@@ -667,7 +667,7 @@ describe("Course Status Messages", () => {
         {
           message:
             "You did not pass the edX course, but you can re-enroll." +
-            ` Next course starts ${date}. Enrollment started ${enrollmentDate}`,
+            ` Next course starts ${date}. Enrollment started ${enrollmentDate}.`,
           action: "course action was called"
         }
       ])
@@ -685,7 +685,7 @@ describe("Course Status Messages", () => {
         moment()
           .add(10, "days")
           .toISOString(),
-        ` Enrollment starts ${formatDate(moment().add(10, "days"))}`
+        ` Enrollment starts ${formatDate(moment().add(10, "days"))}.`
       ]
     ]) {
       it(`should inform next enrollment date after failing edx course when date is ${nextEnrollmentStart[0]}`, () => {
