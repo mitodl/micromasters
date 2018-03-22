@@ -165,13 +165,14 @@ class MicromastersCourseCertificate(TimestampedModel):
         """Overridden save method"""
         if not self.hash:
             self.hash = generate_md5(
-                '{}|{}'.format(self.final_grade.user_id, self.final_grade.course_run_id).encode('utf-8')
+                '{}|{}'.format(self.user_id, self.course_id).encode('utf-8')
             )
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return 'final_grade_id={final_grade_id}, hash="{hash}"'.format(
-            final_grade_id=self.final_grade.id,
+        return 'Course Certificate for user={user}, course={course}, hash="{hash}"'.format(
+            user=self.user,
+            course=self.course.id,
             hash=self.hash,
         )
 

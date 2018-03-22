@@ -7,7 +7,6 @@ from celery import group
 from celery.result import GroupResult
 from django.contrib.auth.models import User
 from django.core.cache import caches
-from django.db.models import Count
 from django_redis import get_redis_connection
 
 from courses.models import CourseRun, Course
@@ -64,6 +63,7 @@ def generate_course_certificates_for_fa_students():
                 user=user,
                 course=course
             )
+
 
 @app.task
 def create_combined_final_grades():

@@ -1751,7 +1751,7 @@ class GetCertificateForCourseTests(CourseTests):
         """Test get_certificate_url for course with certificate"""
 
         self.mmtrack.get_best_final_grade_for_course.return_value = self.final_grade
-        cert = MicromastersCourseCertificateFactory.create(final_grade=self.final_grade)
+        cert = MicromastersCourseCertificateFactory.create(course=self.course, user=self.user)
         CourseCertificateSignatoriesFactory.create(course=self.course)
         assert api.get_certificate_url(self.mmtrack, self.course) == '/certificate/course/{}'.format(cert.hash)
 
@@ -1759,7 +1759,7 @@ class GetCertificateForCourseTests(CourseTests):
         """Test get_certificate_url for course with no signatories"""
 
         self.mmtrack.get_best_final_grade_for_course.return_value = self.final_grade
-        MicromastersCourseCertificateFactory.create(final_grade=self.final_grade)
+        MicromastersCourseCertificateFactory.create(course=self.course, user=self.user)
 
         assert api.get_certificate_url(self.mmtrack, self.course) == ''
 

@@ -15,8 +15,8 @@ def handle_create_coursecertificate(sender, instance, created, **kwargs):  # pyl
     When a MicromastersCourseCertificate model is created
     """
     if created:
-        user = instance.final_grade.user
-        program = instance.final_grade.course_run.course.program
+        user = instance.user
+        program = instance.course.program
         transaction.on_commit(lambda: generate_program_certificate(user, program))
 
 

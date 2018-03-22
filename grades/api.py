@@ -214,7 +214,6 @@ def generate_program_certificate(user, program):
         user (User): a Django user.
         program (programs.models.Program): program where the user is enrolled.
     """
-    mmtrack = get_mmtrack(user, program)
 
     if MicromastersProgramCertificate.objects.filter(user=user, program=program).exists():
         log.error('User [%s] already has a certificate for program [%s]', user, program)
