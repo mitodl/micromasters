@@ -156,7 +156,9 @@ class MicromastersCourseCertificate(TimestampedModel):
     """
     Model for storing MicroMasters course certificates
     """
-    final_grade = models.OneToOneField(FinalGrade, null=False, related_name='certificate', on_delete=models.CASCADE)
+    final_grade = models.OneToOneField(FinalGrade, null=True, related_name='certificate', on_delete=models.SET_NULL)
+    user = models.ForeignKey(User, models.SET_NULL, null=True)
+    course = models.ForeignKey(Course, models.SET_NULL, null=True)
     hash = models.CharField(max_length=32, null=False, unique=True)
 
     def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
