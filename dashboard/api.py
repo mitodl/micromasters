@@ -21,7 +21,7 @@ from dashboard.api_edx_cache import CachedEdxDataApi, CachedEdxUserData
 from dashboard.utils import MMTrack
 from financialaid.serializers import FinancialAidDashboardSerializer
 from grades import api
-from grades.models import FinalGrade
+from grades.models import FinalGrade, MicromastersCourseCertificate
 from grades.serializers import ProctoredExamGradeSerializer
 from exams.models import ExamAuthorization, ExamRun
 from micromasters.utils import now_in_utc
@@ -503,8 +503,9 @@ def get_certificate_url(mmtrack, course):
     if best_grade:
         course_key = best_grade.course_run.edx_course_key
         if mmtrack.financial_aid_available:
-            if best_grade.has_certificate and course.signatories.exists():
-                url = reverse('certificate', args=[best_grade.certificate.hash])
+            certificate = MicromastersCourseCertificate.objects.filter(user=mmtrack.user, course=course).first()
+            if certificate and course.signatories.exists():
+                url = reverse('certificate', args=[certificate.hash])
         elif mmtrack.has_passing_certificate(course_key):
             download_url = mmtrack.certificates.get_verified_cert(course_key).download_url
             if download_url:

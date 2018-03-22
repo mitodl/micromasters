@@ -32,55 +32,38 @@ cache_redis = caches['redis']
 @app.task
 def generate_course_certificates_for_fa_students():
     """
-    Task that finds users with a final grade that should have a certificate and creates
-    the certificate.
+    Creates any missing unique course-user FACourseCertificates
     """
-    # Fetch FinalGrades in FA programs with no associated MicromastersCourseCertificate
-    final_grade_values = (
-        FinalGrade.objects
-        .filter(
-            course_run__course__program__financial_aid_availability=True,
+    courses = Course.objects.filter(
+        program__live=True,
+        program__financial_aid_availability=True
+    )
+    for course in courses:
+        if not course.has_frozen_runs():
+            continue
+        users_with_cert = set(
+            MicromastersCourseCertificate.objects.filter(course=course).values_list('user', flat=True)
+        )
+        # Find users that passed the course but don't have a certificate yet
+        users_need_cert = FinalGrade.objects.filter(
+            course_run__course=course,
             status=FinalGradeStatus.COMPLETE,
-            passed=True,
-        )
-        .annotate(certificate_count=Count('certificate'))
-        .filter(certificate_count=0)
-        .annotate(exam_run_count=Count('course_run__course__exam_runs'))
-        .values(
-            'id',
-            'user',
-            'user__username',
-            'course_run__course',
-            'course_run__edx_course_key',
-            'exam_run_count',
-        )
-    )
-    # Filter the results for FinalGrades that should have a MicromastersCourseCertificate created.
-    # A FinalGrade should have a certificate if:
-    #   1. No exams were scheduled for the course, or
-    #   2. The course has a scheduled exam and the user has a passing ProctoredExamGrade in the course.
-    final_grades_to_certify = filter(
-        lambda final_grade_dict: (
-            final_grade_dict['exam_run_count'] == 0 or
-            ProctoredExamGrade.for_user_course(
-                final_grade_dict['user'],
-                final_grade_dict['course_run__course'])
-            .filter(
-                passed=True
-            ).exists()
-        ),
-        final_grade_values
-    )
-    for final_grade_dict in final_grades_to_certify:
-        MicromastersCourseCertificate.objects.create(
-            final_grade_id=final_grade_dict['id']
-        )
-        log.info(
-            'Created MM course certificate for [%s] in course run [%s]',
-            final_grade_dict['user__username'],
-            final_grade_dict['course_run__edx_course_key']
-        )
+            passed=True
+        ).exclude(user__in=users_with_cert).values_list('user', flat=True)
+        if course.has_exam:
+            # need also to pass exam
+            users_need_cert = set(ProctoredExamGrade.objects.filter(
+                course=course,
+                passed=True,
+                exam_run__date_grades_available__lte=now_in_utc(),
+                user__in=users_need_cert
+            ).values_list('user', flat=True))
 
+        for user in users_need_cert:
+            MicromastersCourseCertificate.objects.get_or_create(
+                user=user,
+                course=course
+            )
 
 @app.task
 def create_combined_final_grades():
