@@ -127,5 +127,36 @@ and type (being ABSOLUTELY sure of what you are doing):
     FinalGrade.objects.filter(course_run__edx_course_key=edx_course_key).delete()
     CourseRunGradingStatus.objects.filter(course_run__edx_course_key=edx_course_key).delete()
 
+## How to adjust (curve) proctored exam grades
 
+Overview: After the last day of proctored exams, we deliver the grades to the course team. It typically takes them a few 
+weeks to adjust the grades and return them to us for upload. 
 
+### Delivering a preliminary grade report to the course team
+
+Grades arrive daily from the proctored exam vendor. Our Business Intelligence Server (BI) has a report that is updated 
+daily with grades. When the exam period is complete, we notify the course team so they can download a copy of the 
+proctored exam grades for analysis when the exam period is complete. 
+
+### Testing adjusted grades
+
+The course team will deliver updated grades to us via a csv file in dropbox. Since adjusting grades is a complex process,
+they like us to validate their changes by calculating the number of learners who, after uploading the adjusted grades,
+will have earned 1, 2, 3, 4 and 5 course certificates and how many will have earned a program certificate. Currently
+we do this analysis _before_ importing the grades into the micromasters application. 
+
+### load adjusted grades
+
+Once the we have verified the outcomes of the adjusted grades with the course team, we can import them into the 
+micromasters web application. This can be done with the following management command: `adjust_exam_grades_from_csv.py`
+
+### release exam grades to learners 
+
+Now that the adjusted grades are loaded, we can release them to learners by updating the date/time that grades are 
+available in the exam run admin. 
+
+### update certificates
+
+New Program certificates are generated every hour (on the hour) for learners who have passed all five courses. If this 
+time is too long to wait, use the `generate_program_certificates` management command. Each learner can only earn one 
+Program certificate. 
