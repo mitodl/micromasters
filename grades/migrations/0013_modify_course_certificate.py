@@ -23,7 +23,6 @@ def populate_final_grade(apps, schema_editor):
     for certificate in MicromastersCourseCertificate.objects.select_related('final_grade').all():
         if not certificate.final_grade:
             mmtrack = get_mmtrack(certificate.user, certificate.course.program)
-            mmtrack.get_best_final_grade_for_course(certificate.course)
             certificate.final_grade = mmtrack.get_best_final_grade_for_course(certificate.course)
             certificate.save()
 
