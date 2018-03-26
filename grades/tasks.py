@@ -44,14 +44,14 @@ def generate_course_certificates_for_fa_students():
             MicromastersCourseCertificate.objects.filter(course=course).values_list('user', flat=True)
         )
         # Find users that passed the course but don't have a certificate yet
-        users_need_cert = FinalGrade.objects.filter(
+        users_need_cert = list(FinalGrade.objects.filter(
             course_run__course=course,
             status=FinalGradeStatus.COMPLETE,
             passed=True
-        ).exclude(user__in=users_with_cert).values_list('user', flat=True)
+        ).exclude(user__in=users_with_cert).values_list('user', flat=True))
         if course.has_exam:
             # need also to pass exam
-            users_need_cert = set(ProctoredExamGrade.objects.filter(
+            users_need_cert = list(ProctoredExamGrade.objects.filter(
                 course=course,
                 passed=True,
                 exam_run__date_grades_available__lte=now_in_utc(),
@@ -59,8 +59,8 @@ def generate_course_certificates_for_fa_students():
             ).values_list('user', flat=True))
 
         for user in users_need_cert:
-            MicromastersCourseCertificate.objects.get_or_create(
-                user=user,
+            MicromastersCourseCertificate.objects.create(
+                user_id=user,
                 course=course
             )
 
