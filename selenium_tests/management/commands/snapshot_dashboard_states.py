@@ -354,16 +354,13 @@ class DashboardStates:  # pylint: disable=too-many-locals
 
         yield (self.create_paid_failed_course_run, 'failed_paid_run_another_offered')
 
-        for tup in itertools.product([True, False], repeat=2):
-            frozen, with_certificate = tup
-            # can't create a certificate without a frozen grade
-            if not frozen and with_certificate:
-                continue
-            yield (bind_args(self.create_passed_and_offered_course_run, frozen, with_certificate),
-                   'create_passed_and_offered_course_run{frozen}{with_certificate}'.format(
-                       frozen='_grades_frozen' if frozen else '',
-                       with_certificate='_with_certificate' if with_certificate else ''
-                   ))
+        yield from (
+            (bind_args(self.create_passed_and_offered_course_run, frozen, with_certificate),
+             'create_passed_and_offered_course_run{frozen}{with_certificate}'.format(
+                 frozen='_grades_frozen' if frozen else '',
+                 with_certificate='_with_certificate' if with_certificate else ''
+            )) for frozen, with_certificate in [(True, True), (True, False), (False, False)]
+        )
 
         yield (self.create_passed_enrolled_again, 'passed_and_taking_again')
 
