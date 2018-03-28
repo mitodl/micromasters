@@ -167,15 +167,6 @@ describe("LearnerResult", () => {
     )
   })
 
-  it("should render the user chip if the visibility equals the username", () => {
-    helper.store.dispatch(
-      setLearnerChipVisibility(USER_PROFILE_RESPONSE.username)
-    )
-
-    const result = renderLearnerResult()
-    assert.equal(result.find(".user-chip").length, 1)
-  })
-
   for (const username of ["xyz", null]) {
     it(`should not render the user chip if visibility is set to ${String(
       username
@@ -186,69 +177,6 @@ describe("LearnerResult", () => {
       assert.equal(result.find(".user-chip").length, 0)
     })
   }
-
-  it("should set user chip visibility if onMouseEnter is triggered", () => {
-    const result = renderLearnerResult()
-    return helper
-      .listenForActions([SET_LEARNER_CHIP_VISIBILITY], () => {
-        result
-          .find(".learner-name")
-          .props()
-          .onMouseEnter()
-      })
-      .then(state => {
-        assert.equal(
-          state.ui.learnerChipVisibility,
-          USER_PROFILE_RESPONSE.username
-        )
-      })
-  })
-
-  it("should clear user chip visibility if onMouseLeave is triggered", () => {
-    helper.store.dispatch(
-      setLearnerChipVisibility(USER_PROFILE_RESPONSE.username)
-    )
-    const result = renderLearnerResult()
-    return helper
-      .listenForActions([SET_LEARNER_CHIP_VISIBILITY], () => {
-        result
-          .find(".learner-name")
-          .props()
-          .onMouseLeave()
-      })
-      .then(state => {
-        assert.equal(state.ui.learnerChipVisibility, null)
-      })
-  })
-
-  it("should pass down a function that can open a dialog to email a learner", () => {
-    helper.store.dispatch(
-      setLearnerChipVisibility(USER_PROFILE_RESPONSE.username)
-    )
-    const openLearnerEmailComposerStub = helper.sandbox.stub()
-
-    const result = renderLearnerResult({
-      openLearnerEmailComposer: openLearnerEmailComposerStub
-    })
-    return helper
-      .listenForActions([SET_LEARNER_CHIP_VISIBILITY], () => {
-        result
-          .find(".learner-name")
-          .props()
-          .onMouseEnter()
-      })
-      .then(() => {
-        const chip = result.find("LearnerChip")
-        assert.lengthOf(chip, 1)
-        // Execute the openLearnerEmailComposer function passed down to the LearnerChip
-        chip.props().openLearnerEmailComposer()
-        sinon.assert.called(openLearnerEmailComposerStub)
-        sinon.assert.calledWith(
-          openLearnerEmailComposerStub,
-          USER_PROFILE_RESPONSE
-        )
-      })
-  })
 
   for (const [index, profile] of ELASTICSEARCH_RESPONSE.hits.hits.entries()) {
     it(`should render without error with ES profile result at index ${index}`, () => {

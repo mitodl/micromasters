@@ -3,24 +3,16 @@
 import React from "react"
 import { connect } from "react-redux"
 import Grid, { Cell } from "react-mdl/lib/Grid"
-import type { Dispatch } from "redux"
-import R from "ramda"
 import _ from "lodash"
 
-import { setLearnerChipVisibility } from "../../actions/ui"
 import { canAdvanceSearchProgram } from "../../lib/roles"
 import ProfileImage from "../../containers/ProfileImage"
-import LearnerChip from "../LearnerChip"
 import { getLocation, highlight, getPreferredName } from "../../util/util"
 import { SearchkitComponent } from "searchkit"
 import type { SearchResult } from "../../flow/searchTypes"
-import type { Profile } from "../../flow/profileTypes"
 
 type LearnerResultProps = {
-  result: { _source: SearchResult },
-  setLearnerChipVisibility: (username: ?string) => void,
-  learnerChipVisibility: ?string,
-  openLearnerEmailComposer: (profile: Profile) => void
+  result: { _source: SearchResult }
 }
 
 class LearnerResult extends SearchkitComponent {
@@ -30,46 +22,25 @@ class LearnerResult extends SearchkitComponent {
     _.has(program, "grade_average") && _.isNumber(program.grade_average)
 
   render() {
-    const {
-      result: { _source: { profile, program } },
-      setLearnerChipVisibility,
-      learnerChipVisibility,
-      openLearnerEmailComposer
-    } = this.props
+    const { result: { _source: { profile, program } } } = this.props
 
     const showGrade =
       program && canAdvanceSearchProgram(program, SETTINGS.roles)
-
-    let renderedLearnerChip
-    if (profile.username === learnerChipVisibility) {
-      renderedLearnerChip = (
-        <LearnerChip
-          profile={profile}
-          openLearnerEmailComposer={R.partial(openLearnerEmailComposer, [
-            profile
-          ])}
-        />
-      )
-    }
 
     return (
       <Grid className="search-grid learner-result">
         <Cell col={1} className="learner-avatar">
           <ProfileImage profile={profile} useSmall={true} />
         </Cell>
-        <Cell
-          col={4}
-          className="learner-name"
-          onMouseLeave={() => setLearnerChipVisibility(null)}
-          onMouseEnter={() => setLearnerChipVisibility(profile.username)}
-        >
+        <Cell col={4} className="learner-name">
           <span className="display-name">
-            {highlight(getPreferredName(profile), this.searchkit.state.q)}
+            <a href={`/learner/${profile.username}`} target="_blank">
+              {highlight(getPreferredName(profile), this.searchkit.state.q)}
+            </a>
           </span>
           <span className="user-name">
             {highlight(profile.username, this.searchkit.state.q)}
           </span>
-          {renderedLearnerChip}
         </Cell>
         <Cell col={showGrade ? 4 : 7} className="centered learner-location">
           <span>{getLocation(profile)}</span>
@@ -88,23 +59,4 @@ class LearnerResult extends SearchkitComponent {
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    learnerChipVisibility: state.ui.learnerChipVisibility
-  }
-}
-
-const mapDispatchToProps = (
-  dispatch: Dispatch,
-  ownProps: LearnerResultProps
-) => {
-  return {
-    setLearnerChipVisibility: (username: ?string): void => {
-      if (ownProps.learnerChipVisibility !== username) {
-        dispatch(setLearnerChipVisibility(username))
-      }
-    }
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(LearnerResult)
+export default connect()(LearnerResult)
