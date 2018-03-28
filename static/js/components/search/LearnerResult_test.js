@@ -13,10 +13,6 @@ import { SearchkitManager, SearchkitProvider } from "searchkit"
 
 import ProfileImage from "../../containers/ProfileImage"
 import LearnerResult from "./LearnerResult"
-import {
-  SET_LEARNER_CHIP_VISIBILITY,
-  setLearnerChipVisibility
-} from "../../actions/ui"
 import IntegrationTestHelper from "../../util/integration_test_helper"
 import { getPreferredName } from "../../util/util"
 import {
@@ -79,6 +75,14 @@ describe("LearnerResult", () => {
       .find(".learner-name")
       .find(".user-name")
     assert.equal(result.text(), USER_PROFILE_RESPONSE.username)
+  })
+
+  it("should render profile link", () => {
+    const href = renderLearnerResult()
+      .find(".learner-name")
+      .find(".display-name")
+      .find("a").at(0).props().href
+    assert.equal(href, `/learner/${USER_PROFILE_RESPONSE.username}`)
   })
 
   it("should include the user's location for US residence", () => {
@@ -166,17 +170,6 @@ describe("LearnerResult", () => {
         .props().useSmall
     )
   })
-
-  for (const username of ["xyz", null]) {
-    it(`should not render the user chip if visibility is set to ${String(
-      username
-    )}`, () => {
-      helper.store.dispatch(setLearnerChipVisibility(username))
-
-      const result = renderLearnerResult()
-      assert.equal(result.find(".user-chip").length, 0)
-    })
-  }
 
   for (const [index, profile] of ELASTICSEARCH_RESPONSE.hits.hits.entries()) {
     it(`should render without error with ES profile result at index ${index}`, () => {
