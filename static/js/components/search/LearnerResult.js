@@ -1,7 +1,6 @@
 // @flow
 /* global SETTINGS: false */
 import React from "react"
-import { connect } from "react-redux"
 import Grid, { Cell } from "react-mdl/lib/Grid"
 import _ from "lodash"
 
@@ -15,7 +14,7 @@ type LearnerResultProps = {
   result: { _source: SearchResult }
 }
 
-class LearnerResult extends SearchkitComponent {
+export default class LearnerResult extends SearchkitComponent {
   props: LearnerResultProps
 
   static hasGrade = program =>
@@ -58,5 +57,3 @@ class LearnerResult extends SearchkitComponent {
     )
   }
 }
-
-export default connect()(LearnerResult)

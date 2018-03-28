@@ -27,7 +27,6 @@ import {
   setConfirmSkipDialogVisibility,
   setDocsInstructionsVisibility,
   setNavDrawerOpen,
-  setLearnerChipVisibility,
   showEnrollPayLaterSuccess,
   setShowExpandedCourseStatus,
   SHOW_ENROLL_PAY_LATER_SUCCESS
@@ -291,14 +290,6 @@ describe("ui reducers", () => {
         assert.deepEqual(state.showEnrollPayLaterSuccess, null)
       })
     })
-  })
-
-  it("should let you set the user chip visibility", () => {
-    assertReducerResultState(
-      setLearnerChipVisibility,
-      ui => ui.learnerChipVisibility,
-      null
-    )
   })
 
   describe("expanded course status visibility", () => {

@@ -33,7 +33,6 @@ import {
   SET_COUPON_NOTIFICATION_VISIBILITY,
   SET_NAV_DRAWER_OPEN,
   SET_PROGRAM,
-  SET_LEARNER_CHIP_VISIBILITY,
   SHOW_ENROLL_PAY_LATER_SUCCESS,
   SET_SHOW_EXPANDED_COURSE_STATUS
 } from "../actions/ui"
@@ -91,7 +90,6 @@ export type UIState = {
   docsInstructionsVisibility: boolean,
   couponNotificationVisibility: boolean,
   navDrawerOpen: boolean,
-  learnerChipVisibility: ?string,
   dialogVisibility: DialogVisibilityState,
   showEnrollPayLaterSuccess: ?string,
   expandedCourseStatuses: Set<number>
@@ -131,7 +129,6 @@ export const INITIAL_UI_STATE: UIState = {
   docsInstructionsVisibility:         false,
   couponNotificationVisibility:       false,
   navDrawerOpen:                      false,
-  learnerChipVisibility:              null,
   dialogVisibility:                   INITIAL_DIALOG_VISIBILITY_STATE,
   showEnrollPayLaterSuccess:          null,
   expandedCourseStatuses:             new Set()
@@ -315,8 +312,6 @@ export const ui = (
     return { ...state, couponNotificationVisibility: action.payload }
   case SET_NAV_DRAWER_OPEN:
     return { ...state, navDrawerOpen: action.payload }
-  case SET_LEARNER_CHIP_VISIBILITY:
-    return { ...state, learnerChipVisibility: action.payload }
   case SET_SHOW_EXPANDED_COURSE_STATUS:
     return {
       ...state,

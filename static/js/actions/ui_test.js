@@ -25,7 +25,6 @@ import {
   SET_DOCS_INSTRUCTIONS_VISIBILITY,
   SET_COUPON_NOTIFICATION_VISIBILITY,
   SET_NAV_DRAWER_OPEN,
-  SET_LEARNER_CHIP_VISIBILITY,
   SHOW_ENROLL_PAY_LATER_SUCCESS,
   SET_SHOW_EXPANDED_COURSE_STATUS,
   clearUI,
@@ -54,7 +53,6 @@ import {
   setDocsInstructionsVisibility,
   setCouponNotificationVisibility,
   setNavDrawerOpen,
-  setLearnerChipVisibility,
   showEnrollPayLaterSuccess,
   setShowExpandedCourseStatus
 } from "../actions/ui"
@@ -89,7 +87,6 @@ describe("generated UI action helpers", () => {
       [setCouponNotificationVisibility, SET_COUPON_NOTIFICATION_VISIBILITY],
       [setWorkHistoryAnswer, SET_WORK_HISTORY_ANSWER],
       [setNavDrawerOpen, SET_NAV_DRAWER_OPEN],
-      [setLearnerChipVisibility, SET_LEARNER_CHIP_VISIBILITY],
       [showEnrollPayLaterSuccess, SHOW_ENROLL_PAY_LATER_SUCCESS],
       [setShowExpandedCourseStatus, SET_SHOW_EXPANDED_COURSE_STATUS]
     ].forEach(assertCreatedActionHelper)

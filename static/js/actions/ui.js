@@ -154,11 +154,6 @@ export const setCouponNotificationVisibility = createAction(
 export const SET_NAV_DRAWER_OPEN = "SET_NAV_DRAWER_OPEN"
 export const setNavDrawerOpen = createAction(SET_NAV_DRAWER_OPEN)
 
-export const SET_LEARNER_CHIP_VISIBILITY = "SET_LEARNER_CHIP_VISIBILITY"
-export const setLearnerChipVisibility = createAction(
-  SET_LEARNER_CHIP_VISIBILITY
-)
-
 export const SHOW_ENROLL_PAY_LATER_SUCCESS = "SHOW_ENROLL_PAY_LATER_SUCCESS"
 export const showEnrollPayLaterSuccess = createAction(
   SHOW_ENROLL_PAY_LATER_SUCCESS
