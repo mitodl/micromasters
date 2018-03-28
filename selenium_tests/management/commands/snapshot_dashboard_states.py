@@ -359,7 +359,7 @@ class DashboardStates:  # pylint: disable=too-many-locals
              'create_passed_and_offered_course_run{frozen}{with_certificate}'.format(
                  frozen='_grades_frozen' if frozen else '',
                  with_certificate='_with_certificate' if with_certificate else ''
-            )) for frozen, with_certificate in [(True, True), (True, False), (False, False)]
+             )) for frozen, with_certificate in [(True, True), (True, False), (False, False)]
         )
 
         yield (self.create_passed_enrolled_again, 'passed_and_taking_again')
