@@ -374,3 +374,54 @@ class CombinedFinalGradeAudit(AuditModel):
             user=self.combined_final_grade.user,
             course_title=self.combined_final_grade.course.title
         )
+
+
+class FACourseCertificate(TimestampedModel, AuditableModel):
+    """
+    Model for storing MicroMasters course certificates
+    """
+    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, null=False, on_delete=models.CASCADE)
+    hash = models.CharField(max_length=32, null=False, unique=True)
+
+    class Meta:
+        unique_together = ('user', 'course')
+
+    def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
+        """Overridden save method"""
+        if not self.hash:
+            self.hash = generate_md5(
+                '{}|{}'.format(self.user_id, self.course_id).encode('utf-8')
+            )
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def get_audit_class(cls):
+        return FACourseCertificateAudit
+
+    def to_dict(self):
+        return serialize_model_object(self)
+
+    def __str__(self):
+        return 'Course Certificate for course  "{course_title}", user="{user}", hash="{hash}"'.format(
+            course_title=self.course.title,
+            user=self.user,
+            hash=self.hash,
+        )
+
+
+class FACourseCertificateAudit(AuditModel):
+    """
+    Audit table for CombinedFinalGrade
+    """
+    course_certificate = models.ForeignKey(FACourseCertificate, null=True, on_delete=models.SET_NULL)
+
+    @classmethod
+    def get_related_field_name(cls):
+        return 'fa_course_certificate'
+
+    def __str__(self):
+        return 'Course Certificate audit for user "{user}", course "{course_title}"'.format(
+            user=self.course_certificate.user,
+            course_title=self.course_certificate.course.title
+        )
