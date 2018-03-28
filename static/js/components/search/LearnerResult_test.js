@@ -4,7 +4,6 @@ import _ from "lodash"
 import React from "react"
 import R from "ramda"
 import { Provider } from "react-redux"
-import sinon from "sinon"
 import { assert } from "chai"
 import { mount } from "enzyme"
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider"
@@ -81,7 +80,9 @@ describe("LearnerResult", () => {
     const href = renderLearnerResult()
       .find(".learner-name")
       .find(".display-name")
-      .find("a").at(0).props().href
+      .find("a")
+      .at(0)
+      .props().href
     assert.equal(href, `/learner/${USER_PROFILE_RESPONSE.username}`)
   })
 
