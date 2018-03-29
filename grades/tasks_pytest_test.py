@@ -37,7 +37,14 @@ def test_generate_course_certificates():
         course_run__freeze_grade_date=week_ago,
         passed=True
     )
+    dup_final_grade = FinalGradeFactory.create(
+        user=passed_final_grades[0].user,
+        course_run__course=course,
+        course_run__freeze_grade_date=week_ago,
+        passed=True
+    )
     all_final_grades.extend(passed_final_grades)
+    all_final_grades.append(dup_final_grade)
     all_final_grades.append(FinalGradeFactory.create(course_run__course=course, passed=False))
     all_final_grades.append(FinalGradeFactory.create(course_run__course=course, passed=True, status='pending'))
 

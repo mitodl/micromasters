@@ -7,6 +7,7 @@ from celery import group
 from celery.result import GroupResult
 from django.contrib.auth.models import User
 from django.core.cache import caches
+from django.db.models import Count
 from django_redis import get_redis_connection
 
 from courses.models import CourseRun, Course
@@ -40,15 +41,18 @@ def generate_course_certificates_for_fa_students():
     for course in courses:
         if not course.has_frozen_runs():
             continue
-        users_with_cert = set(
-            MicromastersCourseCertificate.objects.filter(course=course).values_list('user', flat=True)
-        )
+
         # Find users that passed the course but don't have a certificate yet
         users_need_cert = list(FinalGrade.objects.filter(
             course_run__course=course,
             status=FinalGradeStatus.COMPLETE,
             passed=True
-        ).exclude(user__in=users_with_cert).values_list('user', flat=True))
+        ).annotate(
+            certificate_count=Count('user__course_certificates')
+        ).filter(
+            certificate_count=0
+        ).values_list('user', flat=True))
+
         if course.has_exam:
             # need also to pass exam
             users_need_cert = list(ProctoredExamGrade.objects.filter(
@@ -59,7 +63,7 @@ def generate_course_certificates_for_fa_students():
             ).values_list('user', flat=True))
 
         for user in users_need_cert:
-            MicromastersCourseCertificate.objects.create(
+            MicromastersCourseCertificate.objects.get_or_create(
                 user_id=user,
                 course=course
             )
