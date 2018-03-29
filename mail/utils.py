@@ -116,9 +116,11 @@ def get_email_footer(url):
         string: with the html styled footer
     """
     text = ("You are receiving this e-mail because you signed up for MITx"
-            " MicroMasters. If you don't want to receive these emails in the"
-            " future, you can <a href='{0}'>edit your settings</a>"
-            " or <a href='{0}'>unsubscribe</a>").format(url)
-    return ("<div style='margin-top:80px'>"
-            "<p style='margin:auto; color: #757575; max-width:60%; text-align: center;'>{0}</p>"
-            "</div>").format(text)
+            " MicroMasters.<br/> If you don't want to receive these emails in the"
+            " future, you can<br/> <a href='{0}'>edit your settings</a>"
+            " or <a href='{0}'>unsubscribe</a>.").format(url)
+    return ("<div style='margin-top:80px; text-align: center; color: #757575;'>"
+            "<div style='margin:auto; max-width:50%;'><p>{0}</p>"
+            "<p>MIT Office of Digital Learning<br/>"
+            "600 Technology Square, 2nd Floor, Cambridge, MA 02139</p>"
+            "</div></div>").format(text)
