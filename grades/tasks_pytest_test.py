@@ -13,7 +13,7 @@ from grades.factories import (
     FinalGradeFactory,
     ProctoredExamGradeFactory,
 )
-from grades.models import MicromastersCourseCertificate, CombinedFinalGrade, CourseRunGradingStatus
+from grades.models import MicromastersCourseCertificate, CombinedFinalGrade, CourseRunGradingStatus, FinalGrade
 from micromasters.utils import now_in_utc
 
 pytestmark = [
@@ -28,7 +28,6 @@ def test_generate_course_certificates():
     """
     program = ProgramFactory.create(financial_aid_availability=True, live=True)
     week_ago = now_in_utc() - timedelta(weeks=1)
-    all_final_grades = []
     # Course without exams
     course = CourseFactory.create(program=program)
     passed_final_grades = FinalGradeFactory.create_batch(
@@ -37,20 +36,15 @@ def test_generate_course_certificates():
         course_run__freeze_grade_date=week_ago,
         passed=True
     )
-    dup_final_grade = FinalGradeFactory.create(
+    # create a duplicate final grade for course for user
+    FinalGradeFactory.create(
         user=passed_final_grades[0].user,
         course_run__course=course,
         course_run__freeze_grade_date=week_ago,
         passed=True
     )
-    all_final_grades.extend(passed_final_grades)
-    all_final_grades.append(dup_final_grade)
-    all_final_grades.append(FinalGradeFactory.create(course_run__course=course, passed=False))
-    all_final_grades.append(FinalGradeFactory.create(course_run__course=course, passed=True, status='pending'))
-
     # Another non-fa course
     non_fa_course = CourseFactory.create(program__financial_aid_availability=False)
-    all_final_grades.append(FinalGradeFactory.create(course_run__course=non_fa_course, passed=True))
 
     # Course with exams
     # Create two exam runs for course with different date_grades_available
@@ -66,7 +60,6 @@ def test_generate_course_certificates():
         course_run__course=course_with_exams,
         passed=True
     )
-    all_final_grades.extend(passed_final_grades_with_exam)
 
     # Create ProctoredExamGrade records with a mix of passed and failed outcomes, and exam grade availability
     final_grades_with_passed_exam = passed_final_grades_with_exam[:2]
@@ -92,14 +85,14 @@ def test_generate_course_certificates():
         passed=False,
     )
     # course runs need to have CourseRunGradingStatus to get certificates
-    for final_grade in all_final_grades:
+    all_grades = FinalGrade.objects.filter(course_run__course__in=[course, course_with_exams, non_fa_course])
+    for final_grade in all_grades:
         CourseRunGradingStatus.objects.create(course_run=final_grade.course_run, status='complete')
-    print(all_final_grades)
     tasks.generate_course_certificates_for_fa_students.delay()
 
     # Make sure that certificates were created only for passed and 'complete' status FinalGrades that either
     # had no course exam, or had a passed ProctoredExamGrade.
-    certificate_user_ids = set(MicromastersCourseCertificate.objects.all().values_list('user', flat=True))
+    certificate_user_ids = set(MicromastersCourseCertificate.objects.values_list('user', flat=True))
     assert len(certificate_user_ids) == 6
     expected_certificate_final_grades = passed_final_grades + final_grades_with_passed_exam
     assert certificate_user_ids == set([final_grade.user.id for final_grade in expected_certificate_final_grades])
