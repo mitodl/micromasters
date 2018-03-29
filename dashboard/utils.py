@@ -499,6 +499,19 @@ class MMTrack:
         """
         return ProctoredExamGrade.for_user_course(self.user, course)
 
+    def get_course_certificate(self, course):
+        """
+        Returns a course certificate available for display on the dashboard
+
+        Args:
+            course (courses.models.Course): a course
+        Returns:
+            grades.models.MicromastersCourseCertificate: a course certificate
+        """
+        return MicromastersCourseCertificate.objects.filter(user=self.user, course=course).annotate(
+            signatories=Count('course__signatories')
+        ).filter(signatories__gt=0).first()
+
     def program_certificate_qset(self):
         """
         Returns the queryset of micromasters program certificate

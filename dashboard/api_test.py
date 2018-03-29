@@ -1752,6 +1752,7 @@ class GetCertificateForCourseTests(CourseTests):
 
         self.mmtrack.get_best_final_grade_for_course.return_value = self.final_grade
         cert = MicromastersCourseCertificateFactory.create(course=self.course, user=self.user)
+        self.mmtrack.get_course_certificate.return_value = cert
         CourseCertificateSignatoriesFactory.create(course=self.course)
         assert api.get_certificate_url(self.mmtrack, self.course) == '/certificate/course/{}'.format(cert.hash)
 
@@ -1760,6 +1761,7 @@ class GetCertificateForCourseTests(CourseTests):
 
         self.mmtrack.get_best_final_grade_for_course.return_value = self.final_grade
         MicromastersCourseCertificateFactory.create(course=self.course, user=self.user)
+        self.mmtrack.get_course_certificate.return_value = None
 
         assert api.get_certificate_url(self.mmtrack, self.course) == ''
 
@@ -1771,6 +1773,7 @@ class GetCertificateForCourseTests(CourseTests):
     def test_has_passing_grade_no_certificate(self):
         """Test has passing grade but no certificate"""
         self.mmtrack.get_best_final_grade_for_course.return_value = self.final_grade
+        self.mmtrack.get_course_certificate.return_value = None
         assert api.get_certificate_url(self.mmtrack, self.course) == ''
 
     @ddt.data(
