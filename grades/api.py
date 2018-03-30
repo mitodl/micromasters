@@ -221,13 +221,12 @@ def generate_program_certificate(user, program):
 
     courses_in_program_ids = set(program.course_set.all().values_list('id', flat=True))
 
-    courses_with_cert = set(
-        MicromastersCourseCertificate.objects.filter(
-            user=user,
-            course_id__in=courses_in_program_ids
-        ).values_list('course__id', flat=True))
+    num_courses_with_cert = MicromastersCourseCertificate.objects.filter(
+        user=user,
+        course_id__in=courses_in_program_ids
+    ).values_list('course__id', flat=True).distinct().count()
 
-    if courses_in_program_ids.difference(courses_with_cert):
+    if len(courses_in_program_ids) > num_courses_with_cert:
         return
 
     MicromastersProgramCertificate.objects.create(user=user, program=program)
