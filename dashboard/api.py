@@ -21,7 +21,7 @@ from dashboard.api_edx_cache import CachedEdxDataApi, CachedEdxUserData
 from dashboard.utils import MMTrack
 from financialaid.serializers import FinancialAidDashboardSerializer
 from grades import api
-from grades.models import FinalGrade, MicromastersCourseCertificate
+from grades.models import FinalGrade
 from grades.serializers import ProctoredExamGradeSerializer
 from exams.models import ExamAuthorization, ExamRun
 from micromasters.utils import now_in_utc

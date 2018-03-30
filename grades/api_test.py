@@ -449,7 +449,7 @@ class GenerateCertificatesAPITests(MockedESTestCase):
         )
         CourseRunGradingStatus.objects.create(course_run=self.run_1, status='complete')
         with mute_signals(post_save):
-            MicromastersCourseCertificate.objects.create(course=final_grade.course.course_run, user=self.user)
+            MicromastersCourseCertificate.objects.create(course=final_grade.course_run.course, user=self.user)
 
         cert_qset = MicromastersProgramCertificate.objects.filter(user=self.user, program=self.program)
         assert cert_qset.exists() is False

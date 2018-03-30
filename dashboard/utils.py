@@ -18,7 +18,8 @@ from grades.models import (
     FinalGrade,
     ProctoredExamGrade,
     MicromastersProgramCertificate,
-    CombinedFinalGrade
+    CombinedFinalGrade,
+    MicromastersCourseCertificate
 )
 from exams.models import (
     ExamProfile,
