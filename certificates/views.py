@@ -45,13 +45,13 @@ class CourseCertificateView(CertificateView):  # pylint: disable=unused-argument
 
         certificate = (
             MicromastersCourseCertificate.objects.filter(hash=kwargs.get('certificate_hash')).
-            select_related('final_grade__course_run__course__program', 'final_grade__user__profile').
+            select_related('course__program', 'user__profile').
             first()
         )
         if not certificate:
             raise Http404
 
-        course = certificate.final_grade.course_run.course
+        course = certificate.course
         signatories = CourseCertificateSignatories.objects.filter(course=course).all()
         if len(signatories) == 0:
             log.error(
@@ -61,7 +61,7 @@ class CourseCertificateView(CertificateView):  # pylint: disable=unused-argument
 
         context['course_title'] = course.title
         context['program_title'] = course.program.title
-        context['name'] = certificate.final_grade.user.profile.full_name
+        context['name'] = certificate.user.profile.full_name
         context['signatories'] = list(signatories)
         context['certificate'] = certificate
 
