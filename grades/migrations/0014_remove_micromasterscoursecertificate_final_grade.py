@@ -15,8 +15,6 @@ def delete_duplicate_cert(apps, schema_editor):
         program__financial_aid_availability=True
     )
     for course in courses:
-        if not course.has_frozen_runs():
-            continue
         # find all users with duplicate certificates
         users_with_dup = MicromastersCourseCertificate.objects.filter(
             course=course
