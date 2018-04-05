@@ -132,13 +132,14 @@ class TestHomePage(ViewsTests):
                 'sentry_client',
                 'style',
                 'style_public',
+                'zendesk_widget',
             }
 
             assert response.context['authenticated'] is False
             assert response.context['username'] is None
             assert response.context['title'] == HomePage.objects.first().title
             assert response.context['is_public'] is True
-            assert response.context['has_zendesk_widget'] is False
+            assert response.context['has_zendesk_widget'] is True
             assert response.context['is_staff'] is False
             assert response.context['programs'] == []
             self.assertContains(response, 'Share this page')
@@ -164,13 +165,14 @@ class TestHomePage(ViewsTests):
                 'sentry_client',
                 'style',
                 'style_public',
+                'zendesk_widget',
             }
 
             assert response.context['authenticated'] is True
             assert response.context['username'] == get_social_username(user)
             assert response.context['title'] == HomePage.objects.first().title
             assert response.context['is_public'] is True
-            assert response.context['has_zendesk_widget'] is False
+            assert response.context['has_zendesk_widget'] is True
             assert response.context['is_staff'] is False
             assert response.context['programs'] == []
             self.assertContains(response, 'Share this page')
@@ -198,13 +200,14 @@ class TestHomePage(ViewsTests):
                 'sentry_client',
                 'style',
                 'style_public',
+                'zendesk_widget',
             }
 
             assert response.context['authenticated'] is True
             assert response.context['username'] is None
             assert response.context['title'] == HomePage.objects.first().title
             assert response.context['is_public'] is True
-            assert response.context['has_zendesk_widget'] is False
+            assert response.context['has_zendesk_widget'] is True
             assert response.context['is_staff'] is False
             assert response.context['programs'] == []
             self.assertContains(response, 'Share this page')
@@ -237,7 +240,7 @@ class TestHomePage(ViewsTests):
             assert response.context['username'] is None
             assert response.context['title'] == HomePage.objects.first().title
             assert response.context['is_public'] is True
-            assert response.context['has_zendesk_widget'] is False
+            assert response.context['has_zendesk_widget'] is True
             assert response.context['is_staff'] is True
             assert response.context['programs'] == [
                 (program, None),
