@@ -56,7 +56,7 @@ class HomePage(Page):
         program_pairs = [(program, get_program_page(program)) for program in programs]
         context["programs"] = program_pairs
         context["is_public"] = True
-        context["has_zendesk_widget"] = False
+        context["has_zendesk_widget"] = True
         context["google_maps_api"] = False
         context["authenticated"] = not request.user.is_anonymous
         context["is_staff"] = has_role(request.user, [Staff.ROLE_ID, Instructor.ROLE_ID])
