@@ -41,13 +41,12 @@ def add_final_grade(apps, schema_editor):
 
     certificates = MicromastersCourseCertificate.objects.filter(course__program__financial_aid_availability=True)
     for certificate in certificates:
-        final_grade = FinalGrade.objects.filter(
+        certificate.final_grade = FinalGrade.objects.filter(
             user=certificate.user,
             course_run__course=certificate.course,
             passed=True
         ).order_by('-grade').first()
-        certificate.final_grade = final_grade
-        final_grade.save()
+        certificate.save()
 
 
 class Migration(migrations.Migration):
