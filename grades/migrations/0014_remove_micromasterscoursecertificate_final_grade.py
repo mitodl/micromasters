@@ -35,6 +35,21 @@ def delete_duplicate_cert(apps, schema_editor):
                 certs.exclude(id__in=certs[:1]).delete()
 
 
+def add_final_grade(apps, schema_editor):
+    MicromastersCourseCertificate = apps.get_model('grades', 'MicromastersCourseCertificate')
+    FinalGrade = apps.get_model('grades', 'FinalGrade')
+
+    certificates = MicromastersCourseCertificate.objects.filter(course__program__financial_aid_availability=True)
+    for certificate in certificates:
+        final_grade = FinalGrade.objects.filter(
+            user=certificate.user,
+            course_run__course=certificate.course,
+            passed=True
+        ).order_by('-grade').first()
+        certificate.final_grade = final_grade
+        final_grade.save()
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -42,7 +57,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(delete_duplicate_cert, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(delete_duplicate_cert, add_final_grade),
         migrations.RemoveField(
             model_name='micromasterscoursecertificate',
             name='final_grade',
