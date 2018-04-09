@@ -193,12 +193,13 @@ def set_to_passed(user=None, course_run=None, grade=DEFAULT_GRADE, audit=False, 
 
 
 @course_state_editor
-def set_to_failed(user=None, course_run=None, grade=DEFAULT_FAILED_GRADE, audit=False):
+def set_to_failed(user=None, course_run=None, grade=DEFAULT_FAILED_GRADE, audit=False, missed_deadline=False):
     """Sets a course run to have a failing grade"""
     set_course_run_to_past_graded(
         user=user,
         course_run=course_run,
-        grade=grade
+        grade=grade,
+        upgradeable=audit and not missed_deadline
     )
     set_course_run_payment_status(user, course_run, paid=not audit)
     return course_run

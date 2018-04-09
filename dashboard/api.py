@@ -312,6 +312,8 @@ def get_info_for_course(course, mmtrack):
             else:
                 # any other status means that the student never passed the course run
                 _add_run(run_status.course_run, mmtrack, CourseStatus.NOT_PASSED)
+        elif run_status.status == CourseRunStatus.MISSED_DEADLINE:
+            _add_run(run_status.course_run, mmtrack, CourseStatus.MISSED_DEADLINE)
         elif run_status.status == CourseRunStatus.CAN_UPGRADE:
             _add_run(run_status.course_run, mmtrack, CourseStatus.CAN_UPGRADE)
 

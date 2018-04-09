@@ -331,6 +331,24 @@ class DashboardStates:  # pylint: disable=too-many-locals
         set_course_run_current(course_run, upgradeable=True, save=True)
         CachedEnrollmentHandler(self.user).set_or_create(course_run, verified=False)
 
+    def create_passed_and_upgrade_deadline_past(self):
+        """Make course passed in past and fail new next attempts"""
+        self.make_fa_program_enrollment(FinancialAidStatus.AUTO_APPROVED)
+
+        call_command(
+            "alter_data", 'set_past_run_to_failed', '--username', 'staff',
+            '--course-title', 'Digital Learning 200', '--grade', '10', '--audit'
+        )
+        call_command(
+            "alter_data", 'set_past_run_to_failed', '--username', 'staff',
+            '--course-title', 'Digital Learning 200', '--grade', '0', '--audit'
+        )
+        call_command(
+            "alter_data", 'set_past_run_to_passed', '--username', 'staff',
+            '--course-title', 'Digital Learning 200', '--grade', '87', '--audit',
+            '--missed-deadline'
+        )
+
     def __iter__(self):
         """
         Iterator over all dashboard states supported by this command.
@@ -385,6 +403,7 @@ class DashboardStates:  # pylint: disable=too-many-locals
         )
 
         yield (self.create_passed_enrolled_again, 'passed_and_taking_again')
+        yield (self.create_passed_and_upgrade_deadline_past, 'passed_and_missed_deadline_and_fail_in_next')
 
         # Add scenarios for paid and course run offered [now, in future, fuzzy future]
         for tup in itertools.product([True, False], repeat=2):
