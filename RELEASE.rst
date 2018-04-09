@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+Version 0.97.0
+--------------
+
+- Remove final_grade from MicromastersCourseCertificate (#3920)
+- Fix learner search page email send error
+- Updated README to refer to common web app guide where appropriate
+
 Version 0.96.1
 --------------
 
