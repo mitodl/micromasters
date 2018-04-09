@@ -170,7 +170,7 @@ class SearchResultMailView(APIView):
                 sender_name=sender_name,
             )
 
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK, data={})
 
 
 class CourseTeamMailView(GenericAPIView):

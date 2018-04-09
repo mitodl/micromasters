@@ -79,20 +79,16 @@ class ProctoredExamGradeAuditAdmin(admin.ModelAdmin):
 class MicromastersCourseCertificateAdmin(admin.ModelAdmin):
     """Admin for MicromastersCourseCertificate"""
     model = models.MicromastersCourseCertificate
-    list_display = ('id', 'final_grade_username', 'final_grade_course_run_key', 'hash')
-    list_filter = ('final_grade__course_run__course', )
+    list_display = ('id', 'user_username', 'course', 'hash')
+    list_filter = ('course', )
 
-    def final_grade_username(self, obj):  # pylint: disable=missing-docstring
-        return obj.final_grade.user.username
-
-    def final_grade_course_run_key(self, obj):  # pylint: disable=missing-docstring
-        return obj.final_grade.course_run.edx_course_key
-
-    final_grade_username.short_description = 'User'
-    final_grade_course_run_key.short_description = 'Course Run'
+    def user_username(self, obj):  # pylint: disable=missing-docstring
+        return obj.user.username
 
     def has_add_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
         return False
+
+    user_username.short_description = 'User'
 
 
 admin.site.register(models.FinalGrade, FinalGradeAdmin)

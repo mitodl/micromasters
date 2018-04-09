@@ -67,8 +67,7 @@ class MicromastersCourseCertificateFactory(DjangoModelFactory):
     """Factory for MicromastersCourseCertificate"""
     user = SubFactory(UserFactory)
     course = SubFactory(CourseFactory)
-    final_grade = SubFactory(FinalGradeFactory)
-    hash = LazyAttribute(lambda cert: generate_md5(str(cert.final_grade).encode('utf-8')))
+    hash = LazyAttribute(lambda cert: generate_md5('{}|{}'.format(cert.user.id, cert.course.id).encode('utf-8')))
 
     class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods,old-style-class
         model = MicromastersCourseCertificate

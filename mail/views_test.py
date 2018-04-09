@@ -110,6 +110,7 @@ class SearchResultMailViewsTests(SearchResultMailViewsBase):
             mock_mailgun_client.send_batch.return_value = [Response()]
             resp_post = self.client.post(self.search_result_mail_url, data=self.request_data, format='json')
         assert resp_post.status_code == status.HTTP_200_OK
+        assert resp_post.data == {}
         assert mock_get_emails.called
         assert mock_get_emails.call_args[0][0].to_dict() == create_search_obj(
             user=self.staff,
