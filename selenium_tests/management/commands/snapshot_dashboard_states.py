@@ -290,7 +290,7 @@ class DashboardStates:  # pylint: disable=too-many-locals
             final_grade = FinalGrade.objects.filter(user=self.user, course_run__course=course, passed=True).first()
             CourseRunGradingStatus.objects.create(course_run=final_grade.course_run, status='complete')
             if with_certificate:
-                MicromastersCourseCertificate.objects.create(final_grade=final_grade)
+                MicromastersCourseCertificate.objects.create(user=self.user, course=course)
                 CourseCertificateSignatoriesFactory.create(course=course)
 
     def create_paid_but_no_enrollable_run(self, in_future, fuzzy):
@@ -325,7 +325,7 @@ class DashboardStates:  # pylint: disable=too-many-locals
             course_run__course__title='Digital Learning 200', user=self.user
         ).first()
         CourseRunGradingStatus.objects.create(course_run=final_grade.course_run, status='complete')
-        MicromastersCourseCertificateFactory.create(final_grade=final_grade)
+        MicromastersCourseCertificateFactory.create(user=self.user, course=course)
 
         course_run = CourseRunFactory.create(course=course)
         set_course_run_current(course_run, upgradeable=True, save=True)

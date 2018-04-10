@@ -50,7 +50,7 @@ def create_user_for_login(is_staff=True, username=None):
             image=None,  # make these None so the default image is used
             image_small=None,
             image_medium=None,
-            **({'user_username': username} if username is not None else {}),
+            **({'user__username': username} if username is not None else {}),
             user__social_auth__extra_data={
                 'access_token': 'fake',
                 'refresh_token': 'fake',
