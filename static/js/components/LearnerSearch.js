@@ -24,6 +24,8 @@ import Loader from "./Loader"
 import ProgramFilter from "./ProgramFilter"
 import LearnerResult from "./search/LearnerResult"
 import CountryRefinementOption from "./search/CountryRefinementOption"
+import MultiSelectCheckboxItemList from "./search/MultiSelectCheckboxItemList"
+import CheckboxItem from "./search/CheckboxItem"
 import EducationFilter from "./search/EducationFilter"
 import NestedAggregatingMenuFilter from "./search/NestedAggregatingMenuFilter"
 import WorkHistoryFilter from "./search/WorkHistoryFilter"
@@ -36,7 +38,7 @@ import CustomNoHits from "./search/CustomNoHits"
 import ModifiedSelectedFilter from "./search/ModifiedSelectedFilter"
 import FinalGradeRangeFilter from "./search/FinalGradeRangeFilter"
 import EnabledSelectionRangeFilter from "./search/EnabledSelectionRangeFilter"
-import { wrapWithProps } from "../util/util"
+import { findObjByName, wrapWithProps } from "../util/util"
 import type { Option } from "../flow/generalTypes"
 import type { AvailableProgram } from "../flow/enrollmentTypes"
 import type { SearchSortItem } from "../flow/searchTypes"
@@ -235,6 +237,20 @@ export default class LearnerSearch extends SearchkitComponent {
     )
   }
 
+  isFilterSelected = (filterName: string) => {
+    const nestedList = findObjByName(
+      R.pathOr([], ["bool", "must"], this.getQuery().query.post_filter),
+      "nested"
+    )
+    for (const obj of nestedList) {
+      const term = R.pathOr(null, ["nested", "query", "term"], obj)
+      if (_.has(term, filterName)) {
+        return true
+      }
+    }
+    return false
+  }
+
   renderFacets = (currentProgram: AvailableProgram): React$Element<*> => {
     if (_.isNull(this.getResults())) {
       return (
@@ -254,6 +270,7 @@ export default class LearnerSearch extends SearchkitComponent {
           title="Course"
           filterName="courses"
           stayVisibleIfFilterApplied="final-grade"
+          disabled={this.isFilterSelected("program.enrollments.semester")}
         >
           <NestedAggregatingMenuFilter
             field="program.enrollments.course_title"
@@ -302,17 +319,22 @@ export default class LearnerSearch extends SearchkitComponent {
         <FilterVisibilityToggle
           {...this.props}
           filterName="semester"
-          title="Semester"
+          title="Enrolled Semester"
+          disabled={this.isFilterSelected("program.enrollments.course_title")}
         >
-          <NestedAggregatingMenuFilter
-            field="program.enrollments.semester"
+          <RefinementListFilter
+            id="semester"
+            title=""
             fieldOptions={{
               type:    "nested",
               options: { path: "program.enrollments" }
             }}
-            title=""
-            id="semester"
+            field="program.enrollments.semester"
+            operator="OR"
+            itemComponent={CheckboxItem}
+            listComponent={MultiSelectCheckboxItemList}
             bucketsTransform={sortSemesterBuckets}
+            size={15}
           />
         </FilterVisibilityToggle>
         {isStaff ? (

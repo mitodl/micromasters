@@ -8,14 +8,14 @@ import { getAppliedFilterValue, matchFieldName } from "./util"
 
 export const FILTER_ID_ADJUST = {
   courses:        "program.enrollments.course_title",
-  payment_status: "program.enrollments.payment_status",
-  semester:       "program.enrollments.semester"
+  payment_status: "program.enrollments.payment_status"
 }
 
 export default class FilterVisibilityToggle extends SearchkitComponent {
   props: {
     title: string,
     filterName: string,
+    disabled?: boolean,
     checkFilterVisibility: (filterName: string) => boolean,
     setFilterVisibility: (filterName: string, visibility: boolean) => void,
     stayVisibleIfFilterApplied: string,
@@ -25,6 +25,11 @@ export default class FilterVisibilityToggle extends SearchkitComponent {
   openClass = (): string => {
     const { filterName, checkFilterVisibility } = this.props
     return checkFilterVisibility(filterName) ? "" : "closed"
+  }
+
+  disabledClass = (): string => {
+    const { disabled = false } = this.props
+    return disabled ? "disabled" : ""
   }
 
   getChildFacetDocCount = (results: Object, resultIdPrefix: string): number => {
@@ -103,7 +108,9 @@ export default class FilterVisibilityToggle extends SearchkitComponent {
   render() {
     const { children } = this.props
     return (
-      <div className={`filter-visibility-toggle ${this.openClass()}`}>
+      <div
+        className={`filter-visibility-toggle ${this.openClass()} ${this.disabledClass()}`}
+      >
         {this.renderFilterTitle(children)}
         {children}
       </div>

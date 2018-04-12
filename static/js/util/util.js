@@ -600,3 +600,18 @@ export const mapObj = R.curry((fn, obj) =>
  */
 export const wait = (millis: number): Promise<void> =>
   new Promise(resolve => setTimeout(resolve, millis))
+
+/**
+ * extract object from json
+ */
+export const findObjByName = (list: Object, key: string) => {
+  if (_.has(list, key)) {
+    return [list]
+  }
+  return _.flatten(
+    _.map(list, function(value) {
+      return typeof value === "object" ? findObjByName(value, key) : []
+    }),
+    true
+  )
+}

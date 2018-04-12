@@ -150,6 +150,25 @@ class LearnersStates:
         )
         yield (
             self.simple_scenario(
+                "semester[0]=2015 - Summer&semester[1]=2016 - Summer&q=cam"
+            ),
+            "multiple_semester_select_with_payment_status_all",
+        )
+        yield (
+            self.simple_scenario(
+                "semester[0]=2015 - Summer&payment_status[0]=Paid&q=cam"
+            ),
+            "semester_selected_with_paid",
+        )
+        yield (
+            self.simple_scenario(
+                "semester[0]=2015 - Summer&payment_status[0]=Paid&courses[0]=Analog Learning 100&" +
+                "semester[1]=2016 - Summer&q=cam"
+            ),
+            "multiple_semester_select_with_course",
+        )
+        yield (
+            self.simple_scenario(
                 "birth_location[0]=CA&country[0][0]=US&country[1][0]=US-ND"
             ),
             "canadian_north_dakotan",
