@@ -39,7 +39,8 @@ import {
   DASHBOARD_FORMAT,
   COURSE_DEADLINE_FORMAT,
   STATUS_PAID_BUT_NOT_ENROLLED,
-  FA_STATUS_PENDING_DOCS
+  FA_STATUS_PENDING_DOCS,
+  STATUS_MISSED_DEADLINE
 } from "../../../constants"
 import * as libCoupon from "../../../lib/coupon"
 import { FINANCIAL_AID_PARTIAL_RESPONSE } from "../../../test_constants"
@@ -547,6 +548,21 @@ describe("Course Status Messages", () => {
           COURSE_ACTION_REENROLL
         )
       )
+    })
+
+    it("should nag about missing the payment deadline for future course", () => {
+      course.runs = [course.runs[0]]
+      course.runs[0].course_start_date = ""
+      course.runs[0].course_end_date = ""
+      course.runs[0].fuzzy_start_date = "Spring 2019"
+      course.runs[0].status = STATUS_MISSED_DEADLINE
+      assertIsJust(calculateMessages(calculateMessagesProps), [
+        {
+          message:
+            "You missed the payment deadline and will not receive MicroMasters credit for this course. " +
+            "There are no future runs of this course scheduled at this time."
+        }
+      ])
     })
 
     for (const nextEnrollmentStart of [

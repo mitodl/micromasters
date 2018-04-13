@@ -194,7 +194,8 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
 
   // handle other 'in-progress' cases
   if (
-    courseUpcomingOrCurrent(firstRun) ||
+    (courseUpcomingOrCurrent(firstRun) &&
+      firstRun.status !== STATUS_MISSED_DEADLINE) ||
     firstRun.status === STATUS_CAN_UPGRADE
   ) {
     let message =
