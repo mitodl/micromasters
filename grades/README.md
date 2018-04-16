@@ -140,7 +140,8 @@ proctored exam grades for analysis when the exam period is complete.
 
 ### Testing adjusted grades
 
-The course team will deliver updated grades to us via a csv file in dropbox. Since adjusting grades is a complex process,
+The course team will deliver updated grades to us via a csv file in keybase (in order to ensure the file is encrypted 
+at rest) . Since adjusting grades is a complex process,
 they like us to validate their changes by calculating the number of learners who, after uploading the adjusted grades,
 will have earned 1, 2, 3, 4 and 5 course certificates and how many will have earned a program certificate. Currently
 we do this analysis _before_ importing the grades into the micromasters application. 
