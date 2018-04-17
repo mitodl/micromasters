@@ -3,12 +3,11 @@
 from django.db import migrations
 from django.db.models import Count
 
-from dashboard.utils import get_mmtrack
-
 
 def delete_duplicate_cert(apps, schema_editor):
     Course = apps.get_model('courses', 'Course')
     MicromastersCourseCertificate = apps.get_model('grades', 'MicromastersCourseCertificate')
+    FinalGrade = apps.get_model('grades', 'FinalGrade')
 
     courses = Course.objects.filter(
         program__live=True,
@@ -20,17 +19,20 @@ def delete_duplicate_cert(apps, schema_editor):
             course=course
         ).values('user').annotate(Count('user')).filter(user__count__gt=1)
         for user in users_with_dup:
-            mmtrack = get_mmtrack(user['user'], course.program)
-            best_grade = mmtrack.get_best_final_grade_for_course(course)
+            best_grade = FinalGrade.objects.filter(
+                user=user['user'],
+                course_run__course=course,
+                passed=True
+            ).order_by('-grade').first()
             # trying to preserve the cert that is linked in the dashboard
             if MicromastersCourseCertificate.objects.filter(final_grade=best_grade).exists():
                 # delete other certificates
                 MicromastersCourseCertificate.objects.filter(
-                    course=course, user=user
+                    course=course, user=user['user']
                 ).exclude(final_grade=best_grade).delete()
             else:
                 certs = MicromastersCourseCertificate.objects.filter(
-                    course=course, user=user
+                    course=course, user=user['user']
                 )
                 certs.exclude(id__in=certs[:1]).delete()
 
