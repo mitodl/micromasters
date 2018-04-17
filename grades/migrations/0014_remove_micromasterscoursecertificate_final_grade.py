@@ -3,6 +3,8 @@
 from django.db import migrations
 from django.db.models import Count
 
+from micromasters.utils import generate_md5
+
 
 def delete_duplicate_cert(apps, schema_editor):
     Course = apps.get_model('courses', 'Course')
@@ -40,15 +42,30 @@ def delete_duplicate_cert(apps, schema_editor):
 def add_final_grade(apps, schema_editor):
     MicromastersCourseCertificate = apps.get_model('grades', 'MicromastersCourseCertificate')
     FinalGrade = apps.get_model('grades', 'FinalGrade')
+    Course = apps.get_model('courses', 'Course')
 
-    certificates = MicromastersCourseCertificate.objects.filter(course__program__financial_aid_availability=True)
+    certificates= MicromastersCourseCertificate.objects.filter(course__isnull=True)
     for certificate in certificates:
-        certificate.final_grade = FinalGrade.objects.filter(
+        certificate.delete()
+    certificates = MicromastersCourseCertificate.objects.filter(course__program__financial_aid_availability=True)
+
+    for certificate in certificates:
+        passing_final_grades = FinalGrade.objects.filter(
             user=certificate.user,
             course_run__course=certificate.course,
             passed=True
-        ).order_by('-grade').first()
+        ).order_by('-grade')
+        certificate.final_grade = passing_final_grades.first()
         certificate.save()
+        # check if has other passing final_grades
+        for final_grade in passing_final_grades[1:]:
+            hash = generate_md5('{}|{}'.format(certificate.user_id, final_grade.course_run_id).encode('utf-8'))
+            MicromastersCourseCertificate.objects.create(
+                final_grade=final_grade,
+                user=final_grade.user,
+                course=certificate.course,
+                hash=hash
+            )
 
 
 class Migration(migrations.Migration):
@@ -58,9 +75,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(delete_duplicate_cert, add_final_grade),
-        migrations.RemoveField(
-            model_name='micromasterscoursecertificate',
-            name='final_grade',
-        ),
+                migrations.RunPython(delete_duplicate_cert, add_final_grade),
     ]
