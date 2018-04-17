@@ -42,9 +42,12 @@ class CourseAdmin(admin.ModelAdmin):
 
 class CourseRunAdmin(admin.ModelAdmin):
     """ModelAdmin for Courses"""
-    list_display = ('title', 'edx_course_key', 'course', 'program',)
-    list_filter = ('course__program__live',)
-    ordering = ('course__title', 'course__program__title', 'course__position_in_program',)
+    list_display = ('title', 'course_number', 'edx_course_key', 'enrollment_start','start_date','enrollment_end',
+        'end_date','upgrade_deadline','freeze_grade_date', )
+    list_filter = ('course__program__live', 'course__program', 'course', 'course__course_number' )
+    list_editable = ('enrollment_start', 'start_date', 'enrollment_end', 'end_date', 'upgrade_deadline',
+        'freeze_grade_date', )
+    ordering = ('course__title', 'course__program__title', 'course__position_in_program', )
 
     def program(self, run):
         """method to show program for list display."""
@@ -53,6 +56,10 @@ class CourseRunAdmin(admin.ModelAdmin):
     def course(self, run):
         """Getter for course foreign key"""
         return run.course.title
+
+    def course_number(self, run):
+        """Getter for course's course_number"""
+        return run.course.course_number
 
 
 admin.site.register(CourseRun, CourseRunAdmin)
