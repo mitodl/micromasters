@@ -159,6 +159,5 @@ available in the exam run admin.
 ### update certificates
 
 When a learner's fifth and final course certificate is created, it triggers the creation of a program certificate. 
-Course certificates are generated every hour (on the hour). If If this 
-is too long to wait, use the `generate_program_certificates` management command. Each learner can only earn one 
-Program certificate. 
+Course certificates are generated every hour (on the hour). If this is too long to wait, use the 
+`generate_program_certificates` management command. Each learner can only earn one Program certificate. 
