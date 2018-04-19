@@ -458,8 +458,8 @@ body.app-media {
     list-style: none;
     text-align: left;
     padding: 0;
-    width: 96%;
-    max-width: 1400px;
+    width: 92%;
+    max-width: 2000px;
     margin: 0 auto;
 
     li {
@@ -467,6 +467,16 @@ body.app-media {
 
       @include breakpoint(phone) {
         padding-bottom: 1.5em;
+      }
+    }
+
+    li.col-md-4 {
+      @media (min-width: 992px) {
+        width: 50%;
+      }
+
+      @media (min-width: 1600px) {
+        width: 25%;
       }
     }
 
