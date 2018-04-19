@@ -709,6 +709,17 @@ class TestProgramPage(ViewsTests):
             self.assertEqual(course.description, js_course["description"])
             self.assertEqual(course.url, js_course["url"])
 
+    def test_no_courses(self):
+        """
+        Verify that no courses result in a different button
+        """
+        response = self.client.get(self.program_page.url)
+        js_settings = json.loads(response.context['js_settings_json'])
+        self.assertIn("programs", js_settings)
+        self.assertIn("courses", js_settings["program"])
+        self.assertEqual(len(js_settings["program"]["courses"]), 0)
+        self.assertContains(response, "I'm Interested")
+
 
 # pylint: disable=too-many-locals
 class TestUsersPage(ViewsTests):
