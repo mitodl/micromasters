@@ -18,12 +18,12 @@ export default class CourseListWithPopover extends React.Component {
   render() {
     return (
       <div className="info-box course-info">
-          <h3 className="title">
-            Courses
-          </h3>
-          <div id="course-list">
-            <ol className="program-course-list">{listItems(this.props.courses)}</ol>
-          </div>
+        <h3 className="title">
+          Courses
+        </h3>
+        <div id="course-list">
+          <ol className="program-course-list">{listItems(this.props.courses)}</ol>
+        </div>
       </div>
     )
   }
