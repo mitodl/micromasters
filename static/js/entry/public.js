@@ -19,7 +19,7 @@ import { signupDialogStore } from "../store/configureStore"
 import SignupDialog from "../containers/SignupDialog"
 
 // Program Page course list
-const courseListEl = document.querySelector("#course-list")
+const courseListEl = document.querySelector("#courses-component")
 let courseList = null
 if (SETTINGS.program) {
   courseList = SETTINGS.program.courses
