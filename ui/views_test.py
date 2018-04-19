@@ -650,6 +650,7 @@ class TestProgramPage(ViewsTests):
 
     def test_login_button(self):
         """Verify that we see a login button"""
+        CourseFactory.create(program=self.program_page.program)
         response = self.client.get(self.program_page.url)
         self.assertContains(response, "Sign Up Now")
 
@@ -715,10 +716,11 @@ class TestProgramPage(ViewsTests):
         """
         response = self.client.get(self.program_page.url)
         js_settings = json.loads(response.context['js_settings_json'])
-        self.assertIn("programs", js_settings)
+        self.assertIn("program", js_settings)
         self.assertIn("courses", js_settings["program"])
         self.assertEqual(len(js_settings["program"]["courses"]), 0)
-        self.assertContains(response, "I'm Interested")
+        print(response)
+        self.assertContains(response, "I'm interested")
 
 
 # pylint: disable=too-many-locals
