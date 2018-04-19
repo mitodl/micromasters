@@ -57,16 +57,22 @@
         <div class="description">
           {{ page.title_over_image|richtext }}
         </div>
-        {% if not authenticated %}
-          <button class="mdl-button hero-button open-signup-dialog mdl-cell--hide-phone">
-            Sign Up Now
-          </button>
-          <div class="log-in mdl-cell--hide-phone">
-            Already a Member?
-            <a href="/login/edxorg">
-              Log In
-            </a>
-          </div>
+        {% if courses %}
+          {% if not authenticated %}
+            <button class="mdl-button hero-button open-signup-dialog mdl-cell--hide-phone">
+              Sign Up Now
+            </button>
+            <div class="log-in mdl-cell--hide-phone">
+              Already a Member?
+              <a href="/login/edxorg">
+                Log In
+              </a>
+            </div>
+          {% endif %}
+        {% else %}
+          <a class="mdl-button hero-button mdl-cell--hide-phone"
+                  href="http://eepurl.com/dqCpLr"
+                  target="blank">I'm interested</a>
         {% endif %}
       </div>
     {% endif %}
