@@ -20,7 +20,7 @@
 
     @media (max-width: 479px) {
       height: 460px;
-      padding: 90px 5% 0;
+      padding: 60px 5% 0;
     }
 
     .title {
@@ -30,6 +30,7 @@
       max-width: 700px;
       @include breakpoint(phone) {
         font-size: 26px;
+        line-height: 1.25;
       }
     }
 
@@ -41,9 +42,11 @@
         font-size: 23px;
         @include breakpoint(phone) {
           font-size: 18px;
+          line-height: 1.2;
+          font-weight: 400;
         }
         font-weight: 300;
-        line-height: 1.3em;
+        line-height: 1.3;
         color: rgba(255,255,255,1);
       }
     }
