@@ -61,7 +61,7 @@ export async function getDashboard(username: string): Promise<Dashboard> {
     return response
   } catch (response) {
     loginOnEdXError(response)
-    return response
+    return Promise.reject("Unable to process")
   }
 }
 
@@ -125,7 +125,7 @@ export async function getPrograms(): Promise<AvailablePrograms> {
     return response
   } catch (response) {
     loginOnEdXError(response)
-    return response
+    return Promise.reject("Unable to process")
   }
 }
 
