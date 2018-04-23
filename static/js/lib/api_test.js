@@ -169,6 +169,16 @@ describe("api", function() {
           })
         })
       }
+
+      it("dashboard api returns error if status = 503", () => {
+        fetchJSONStub.returns(Promise.reject({ errorStatusCode: 503 }))
+        return getDashboard().then(
+          () => {},
+          (error: string) => {
+            assert.equal(error, "Unable to process")
+          }
+        )
+      })
     })
 
     it("gets course prices", () => {
@@ -311,6 +321,16 @@ describe("api", function() {
           })
         })
       }
+
+      it("programs api returns error if status = 503", () => {
+        fetchJSONStub.returns(Promise.reject({ errorStatusCode: 503 }))
+        return getPrograms().then(
+          () => {},
+          (error: string) => {
+            assert.equal(error, "Unable to process")
+          }
+        )
+      })
 
       it("adds a program enrollment successfully", () => {
         const enrollment = PROGRAMS[0]

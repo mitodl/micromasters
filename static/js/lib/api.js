@@ -11,15 +11,8 @@ import type {
 } from "../flow/profileTypes"
 import type { CheckoutResponse } from "../flow/checkoutTypes"
 import type { Coupons, AttachCouponResponse } from "../flow/couponTypes"
-import type {
-  Dashboard,
-  CoursePrices,
-  ProgramLearners
-} from "../flow/dashboardTypes"
-import type {
-  AvailableProgram,
-  AvailablePrograms
-} from "../flow/enrollmentTypes"
+import type { CoursePrices, ProgramLearners } from "../flow/dashboardTypes"
+import type { AvailableProgram } from "../flow/enrollmentTypes"
 import type { EmailSendResponse } from "../flow/emailTypes"
 import type { PearsonSSOParameters } from "../flow/pearsonTypes"
 import {
@@ -34,7 +27,9 @@ const loginOnEdXError = (response: Response) => {
       relativePath
     )}`
     window.location = `/logout?next=${encodeURIComponent(loginRedirect)}`
+    return response
   }
+  return Promise.reject("Unable to process")
 }
 
 export function getUserProfile(username: string): Promise<ProfileGetResult> {
@@ -55,13 +50,12 @@ export function patchUserProfile(
   })
 }
 
-export async function getDashboard(username: string): Promise<Dashboard> {
+export async function getDashboard(username: string): Promise<Response> {
   try {
     const response = await fetchJSONWithCSRF(`/api/v0/dashboard/${username}/`)
     return response
   } catch (response) {
-    loginOnEdXError(response)
-    return Promise.reject("Unable to process")
+    return loginOnEdXError(response)
   }
 }
 
@@ -119,13 +113,12 @@ export function sendLearnerMail(
   })
 }
 
-export async function getPrograms(): Promise<AvailablePrograms> {
+export async function getPrograms(): Promise<Response> {
   try {
     const response = await fetchJSONWithCSRF("/api/v0/programs/")
     return response
   } catch (response) {
-    loginOnEdXError(response)
-    return Promise.reject("Unable to process")
+    return loginOnEdXError(response)
   }
 }
 
