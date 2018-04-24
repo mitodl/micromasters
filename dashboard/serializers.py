@@ -49,13 +49,26 @@ class UserProgramSearchSerializer:
         payment_status = cls.PAID_STATUS if has_paid else cls.UNPAID_STATUS
 
         final_grade = mmtrack.get_final_grades_for_course(course_run.course).first()
-        semester = cls.serialize_semester(course_run)
         return {
             'final_grade': final_grade.grade_percent if final_grade else None,
-            'semester': semester,
             'course_title': course_title,
             'payment_status': payment_status,
         }
+
+    @classmethod
+    def semesters_enrolled(cls, mmtrack):
+        """
+        Serializes information about a user's semester enrollments
+
+        Args:
+            mmtrack (MMTrack): An MMTrack object
+        Returns:
+            list: Serialized all semester enrollments
+        """
+        serialized_enrollments = []
+        for course_run in mmtrack.get_all_enrolled_course_runs():
+            serialized_enrollments.append({'semester': cls.serialize_semester(course_run)})
+        return serialized_enrollments
 
     @classmethod
     def serialize_semester(cls, course_run):
@@ -84,6 +97,7 @@ class UserProgramSearchSerializer:
         return {
             'id': program.id,
             'enrollments': cls.serialize_enrollments(mmtrack),
+            'semesters': cls.semesters_enrolled(mmtrack),
             'grade_average': mmtrack.calculate_final_grade_average(),
             'is_learner': is_learner(user, program),
             'num_courses_passed': mmtrack.count_courses_passed(),
