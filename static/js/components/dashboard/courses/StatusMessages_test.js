@@ -550,11 +550,27 @@ describe("Course Status Messages", () => {
       )
     })
 
-    it("should nag about missing the payment deadline for future course", () => {
+    it("should nag about missing the payment deadline for future course with one run", () => {
       course.runs = [course.runs[0]]
       course.runs[0].course_start_date = ""
       course.runs[0].course_end_date = ""
       course.runs[0].fuzzy_start_date = "Spring 2019"
+      course.runs[0].status = STATUS_MISSED_DEADLINE
+      assertIsJust(calculateMessages(calculateMessagesProps), [
+        {
+          message:
+            "You missed the payment deadline and will not receive MicroMasters credit for this course. " +
+            "There are no future runs of this course scheduled at this time."
+        }
+      ])
+    })
+
+    it("should nag about missing the payment deadline for current course with one run", () => {
+      course.runs = [course.runs[0]]
+      course.runs[0].course_start_date = moment()
+        .subtract(5, "days")
+        .toISOString()
+      course.runs[0].course_end_date = ""
       course.runs[0].status = STATUS_MISSED_DEADLINE
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
