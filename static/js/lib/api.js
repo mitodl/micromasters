@@ -29,7 +29,7 @@ const loginOnEdXError = (response: Response) => {
     window.location = `/logout?next=${encodeURIComponent(loginRedirect)}`
     return response
   }
-  return Promise.reject("Unable to process")
+  return Promise.reject(response)
 }
 
 export function getUserProfile(username: string): Promise<ProfileGetResult> {

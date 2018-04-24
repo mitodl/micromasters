@@ -170,15 +170,17 @@ describe("api", function() {
         })
       }
 
-      it("dashboard api returns error if status = 503", () => {
-        fetchJSONStub.returns(Promise.reject({ errorStatusCode: 503 }))
-        return getDashboard().then(
-          () => {},
-          (error: string) => {
-            assert.equal(error, "Unable to process")
-          }
-        )
-      })
+      for (const statusCode of [503, 500, 404]) {
+        it(`dashboard api returns error if status = ${statusCode}`, () => {
+          fetchJSONStub.returns(Promise.reject({ errorStatusCode: statusCode }))
+          return getDashboard().then(
+            () => {},
+            (error: string) => {
+              assert.deepEqual(error, { errorStatusCode: statusCode })
+            }
+          )
+        })
+      }
     })
 
     it("gets course prices", () => {
@@ -322,15 +324,17 @@ describe("api", function() {
         })
       }
 
-      it("programs api returns error if status = 503", () => {
-        fetchJSONStub.returns(Promise.reject({ errorStatusCode: 503 }))
-        return getPrograms().then(
-          () => {},
-          (error: string) => {
-            assert.equal(error, "Unable to process")
-          }
-        )
-      })
+      for (const statusCode of [503, 500, 404]) {
+        it(`programs api returns error if status = ${statusCode}`, () => {
+          fetchJSONStub.returns(Promise.reject({ errorStatusCode: statusCode }))
+          return getPrograms().then(
+            () => {},
+            (error: string) => {
+              assert.deepEqual(error, { errorStatusCode: statusCode })
+            }
+          )
+        })
+      }
 
       it("adds a program enrollment successfully", () => {
         const enrollment = PROGRAMS[0]
