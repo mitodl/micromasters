@@ -161,12 +161,15 @@ describe("api", function() {
         it(`redirects to login if status = ${statusCode}`, () => {
           fetchJSONStub.returns(Promise.reject({ errorStatusCode: statusCode }))
 
-          return getDashboard().then(() => {
-            const redirectUrl = `/logout?next=${encodeURIComponent(
-              "/login/edxorg/"
-            )}`
-            assert.include(window.location.toString(), redirectUrl)
-          })
+          return getDashboard().then(
+            () => {},
+            () => {
+              const redirectUrl = `/logout?next=${encodeURIComponent(
+                "/login/edxorg/"
+              )}`
+              assert.include(window.location.toString(), redirectUrl)
+            }
+          )
         })
       }
 
@@ -315,12 +318,15 @@ describe("api", function() {
         it(`redirects to login if status = ${statusCode}`, () => {
           fetchJSONStub.returns(Promise.reject({ errorStatusCode: statusCode }))
 
-          return getPrograms().then(() => {
-            const redirectUrl = `/logout?next=${encodeURIComponent(
-              "/login/edxorg/"
-            )}`
-            assert.include(window.location.toString(), redirectUrl)
-          })
+          return getPrograms().then(
+            () => {},
+            () => {
+              const redirectUrl = `/logout?next=${encodeURIComponent(
+                "/login/edxorg/"
+              )}`
+              assert.include(window.location.toString(), redirectUrl)
+            }
+          )
         })
       }
 
