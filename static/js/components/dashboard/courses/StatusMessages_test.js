@@ -567,10 +567,7 @@ describe("Course Status Messages", () => {
 
     it("should nag about missing the payment deadline for current course with one run", () => {
       course.runs = [course.runs[0]]
-      course.runs[0].course_start_date = moment()
-        .subtract(5, "days")
-        .toISOString()
-      course.runs[0].course_end_date = ""
+      makeRunCurrent(course.runs[0])
       course.runs[0].status = STATUS_MISSED_DEADLINE
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
