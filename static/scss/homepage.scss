@@ -459,7 +459,7 @@ body.app-media {
       width: 82%;
     }
 
-    include breakpoint(phone) {
+    @include breakpoint(phone) {
       width: 100%;
     }
 
