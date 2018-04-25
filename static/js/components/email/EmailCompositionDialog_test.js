@@ -258,7 +258,7 @@ describe("EmailCompositionDialog", () => {
         filters: [
           {
             id:    "1",
-            name:  "program.enrollments.semester",
+            name:  "program.semesters.semester",
             value: "2015"
           },
           {
