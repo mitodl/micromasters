@@ -116,6 +116,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         non_fa_cached_edx_data = CachedEdxUserData(cls.user, program=program)
         non_fa_mmtrack = MMTrack(cls.user, program, non_fa_cached_edx_data)
         cls.serialized_enrollments = UserProgramSearchSerializer.serialize_enrollments(non_fa_mmtrack)
+        cls.semester_enrollments = UserProgramSearchSerializer.semesters_enrolled(non_fa_mmtrack)
         cls.program_enrollment = ProgramEnrollment.objects.create(user=cls.user, program=program)
         # create a financial aid program
         cls.fa_program, _ = create_program()
@@ -157,6 +158,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         expected_values = {
             'id': program.id,
             'enrollments': self.serialized_enrollments,
+            'semesters': self.semester_enrollments,
             'grade_average': 75,
             'is_learner': True,
             'num_courses_passed': 1,
@@ -176,6 +178,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         expected_result = {
             'id': self.fa_program.id,
             'enrollments': self.fa_serialized_enrollments,
+            'semesters': self.semester_enrollments,
             'grade_average': 95,
             'is_learner': True,
             'num_courses_passed': 1,
@@ -198,6 +201,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         expected_result = {
             'id': program.id,
             'enrollments': self.serialized_enrollments,
+            'semesters': self.semester_enrollments,
             'grade_average': 75,
             'is_learner': False,
             'num_courses_passed': 1,
@@ -217,6 +221,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
             expected_result = {
                 'id': program.id,
                 'enrollments': self.serialized_enrollments,
+                'semesters': self.semester_enrollments,
                 'grade_average': 75,
                 'is_learner': True,
                 'num_courses_passed': 0,
@@ -431,8 +436,8 @@ class UserProgramSerializerSemesterTests(MockedESTestCase):
             serialized_program_user = UserProgramSearchSerializer.serialize(self.program_enrollment)
         assert len(serialized_program_user['enrollments']) == num_courses
         assert all(
-            enrollment['semester'] == '2017 - Spring'
-            for enrollment in serialized_program_user['enrollments']
+            semester_enrollment['semester'] == '2017 - Spring'
+            for semester_enrollment in serialized_program_user['semesters']
         )
         assert get_year_season_patch.call_count == num_courses
 

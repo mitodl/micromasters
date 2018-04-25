@@ -582,9 +582,12 @@ class SerializerTests(ESTestCase):
             'program': {
                 'id': program_enrollment.program.id,
                 'enrollments': [{
-                    'course_title': enrollment['course_title'],
-                    'semester': enrollment['semester'],
+                    'course_title': enrollment['course_title']
                 } for enrollment in serialized['program']['enrollments']],
+                'semesters': [{
+                    'semester': semester_enrolled['semester']
+
+                } for semester_enrolled in serialized['program']['semesters']],
                 'is_learner': True,
                 'total_courses': 1,
             }
@@ -844,10 +847,10 @@ class PercolateQueryTests(ESTestCase):
                                 "must": [
                                     {
                                         "nested": {
-                                            "path": "program.enrollments",
+                                            "path": "program.semesters",
                                             "filter": {
                                                 "term": {
-                                                    "program.enrollments.semester": "2015 - Summer"
+                                                    "program.semesters.semester": "2015 - Summer"
                                                 }
                                             }
                                         }
@@ -931,13 +934,18 @@ class PercolateQueryTests(ESTestCase):
                                                             "term": {
                                                                 "program.enrollments.payment_status": "Auditing"
                                                             }
-                                                        },
-                                                        {
-                                                            "term": {
-                                                                "program.enrollments.semester": "2017 - Spring"
-                                                            }
                                                         }
                                                     ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    {
+                                        'nested': {
+                                            'path': "program.semesters",
+                                            'query': {
+                                                'term': {
+                                                    'program.semesters.semester': "2016 - Summer"
                                                 }
                                             }
                                         }
