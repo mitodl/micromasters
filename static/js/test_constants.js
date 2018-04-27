@@ -265,7 +265,7 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
     "program.courses.course_title2": {
       doc_count: 66,
       inner:     {
-        doc_count:                                100,
+        doc_count:                            100,
         "program.courses.course_title_count": {
           value: 3
         },
@@ -645,7 +645,7 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
     "program.courses.semester5": {
       doc_count: 66,
       inner:     {
-        doc_count:                            100,
+        doc_count:                        100,
         "program.courses.semester_count": {
           value: 3
         },
@@ -772,7 +772,7 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
     "program.courses.payment_status4": {
       doc_count: 66,
       inner:     {
-        doc_count:                            100,
+        doc_count:                        100,
         "program.courses.payment_status": {
           doc_count_error_upper_bound: 0,
           sum_other_doc_count:         0,

@@ -640,8 +640,7 @@ describe("LearnerSearchPage", function() {
                   must: [
                     {
                       term: {
-                        "program.courses.course_title":
-                          "Digital Learning 200"
+                        "program.courses.course_title": "Digital Learning 200"
                       }
                     },
                     {

@@ -26,17 +26,17 @@ export const EDUCATION_LEVELS = [
 ]
 
 export const SEARCH_FACET_FIELD_LABEL_MAP = {
-  "program.courses.course_title":   "Course",
-  "program.semesters.semester":         "Semester",
-  "program.courses.payment_status": "Payment Status",
-  "program.grade_average":              "Average Grade in Program",
-  "grade-average":                      "Average Grade in Program",
-  "profile.birth_country":              "Country of Birth",
-  "profile.country":                    "Current Residence",
-  "profile.education.degree_name":      "Degree",
-  "profile.work_history.company_name":  "Company",
-  "num-courses-passed":                 "# of Courses Passed",
-  "program.courses.final_grade":    "Final Grade"
+  "program.courses.course_title":      "Course",
+  "program.semesters.semester":        "Semester",
+  "program.courses.payment_status":    "Payment Status",
+  "program.grade_average":             "Average Grade in Program",
+  "grade-average":                     "Average Grade in Program",
+  "profile.birth_country":             "Country of Birth",
+  "profile.country":                   "Current Residence",
+  "profile.education.degree_name":     "Degree",
+  "profile.work_history.company_name": "Company",
+  "num-courses-passed":                "# of Courses Passed",
+  "program.courses.final_grade":       "Final Grade"
 }
 
 // NOTE: these need to be kept in sync with ui/url_utils.py
