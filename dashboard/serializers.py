@@ -56,7 +56,7 @@ class UserProgramSearchSerializer:
         }
 
     @classmethod
-    def semesters_enrolled(cls, mmtrack):
+    def serialize_semesters_enrolled(cls, mmtrack):
         """
         Serializes information about a user's semester enrollments
 
@@ -96,8 +96,8 @@ class UserProgramSearchSerializer:
 
         return {
             'id': program.id,
-            'enrollments': cls.serialize_enrollments(mmtrack),
-            'semesters': cls.semesters_enrolled(mmtrack),
+            'courses': cls.serialize_enrollments(mmtrack),
+            'semesters': cls.serialize_semesters_enrolled(mmtrack),
             'grade_average': mmtrack.calculate_final_grade_average(),
             'is_learner': is_learner(user, program),
             'num_courses_passed': mmtrack.count_courses_passed(),

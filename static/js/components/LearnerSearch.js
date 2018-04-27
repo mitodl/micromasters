@@ -274,10 +274,10 @@ export default class LearnerSearch extends SearchkitComponent {
           disabled={this.isFilterSelected("program.enrollments.semester")}
         >
           <NestedAggregatingMenuFilter
-            field="program.enrollments.course_title"
+            field="program.courses.course_title"
             fieldOptions={{
               type:    "nested",
-              options: { path: "program.enrollments" }
+              options: { path: "program.courses" }
             }}
             title=""
             id="courses"
@@ -286,10 +286,10 @@ export default class LearnerSearch extends SearchkitComponent {
         {isStaff ? (
           <div className="final-grade-wrapper">
             <FinalGradeRangeFilter
-              field="program.enrollments.final_grade"
+              field="program.courses.final_grade"
               fieldOptions={{
                 type:    "nested",
-                options: { path: "program.enrollments" }
+                options: { path: "program.courses" }
               }}
               id="final-grade"
               min={0}
@@ -306,10 +306,10 @@ export default class LearnerSearch extends SearchkitComponent {
             title="Payment Status"
           >
             <NestedAggregatingMenuFilter
-              field="program.enrollments.payment_status"
+              field="program.courses.payment_status"
               fieldOptions={{
                 type:    "nested",
-                options: { path: "program.enrollments" }
+                options: { path: "program.courses" }
               }}
               title=""
               orderKey="_term"

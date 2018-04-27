@@ -920,19 +920,19 @@ class PercolateQueryTests(ESTestCase):
                                 "must": [
                                     {
                                         "nested": {
-                                            "path": "program.enrollments",
+                                            "path": "program.courses",
                                             "query": {
                                                 "bool": {
                                                     "must": [
                                                         {
                                                             "term": {
-                                                                "program.enrollments.course_title":
+                                                                "program.courses.course_title":
                                                                     "Supply Chain Fundamentals  (SC1x)"
                                                             }
                                                         },
                                                         {
                                                             "term": {
-                                                                "program.enrollments.payment_status": "Auditing"
+                                                                "program.courses.payment_status": "Auditing"
                                                             }
                                                         }
                                                     ]

@@ -116,7 +116,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         non_fa_cached_edx_data = CachedEdxUserData(cls.user, program=program)
         non_fa_mmtrack = MMTrack(cls.user, program, non_fa_cached_edx_data)
         cls.serialized_enrollments = UserProgramSearchSerializer.serialize_enrollments(non_fa_mmtrack)
-        cls.semester_enrollments = UserProgramSearchSerializer.semesters_enrolled(non_fa_mmtrack)
+        cls.semester_enrollments = UserProgramSearchSerializer.serialize_semesters_enrolled(non_fa_mmtrack)
         cls.program_enrollment = ProgramEnrollment.objects.create(user=cls.user, program=program)
         # create a financial aid program
         cls.fa_program, _ = create_program()
