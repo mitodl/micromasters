@@ -157,7 +157,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         program = self.program_enrollment.program
         expected_values = {
             'id': program.id,
-            'enrollments': self.serialized_enrollments,
+            'courses': self.serialized_enrollments,
             'semesters': self.semester_enrollments,
             'grade_average': 75,
             'is_learner': True,
@@ -177,7 +177,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         self.profile.refresh_from_db()
         expected_result = {
             'id': self.fa_program.id,
-            'enrollments': self.fa_serialized_enrollments,
+            'courses': self.fa_serialized_enrollments,
             'semesters': self.semester_enrollments,
             'grade_average': 95,
             'is_learner': True,
@@ -200,7 +200,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         )
         expected_result = {
             'id': program.id,
-            'enrollments': self.serialized_enrollments,
+            'courses': self.serialized_enrollments,
             'semesters': self.semester_enrollments,
             'grade_average': 75,
             'is_learner': False,
@@ -220,7 +220,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
             program = self.program_enrollment.program
             expected_result = {
                 'id': program.id,
-                'enrollments': self.serialized_enrollments,
+                'courses': self.serialized_enrollments,
                 'semesters': self.semester_enrollments,
                 'grade_average': 75,
                 'is_learner': True,
@@ -325,7 +325,7 @@ class UserProgramSerializerEnrollmentsTests(MockedESTestCase):
         """
         for program_enrollment in (self.non_fa_program_enrollment, self.fa_program_enrollment):
             serialized_program_user = UserProgramSearchSerializer.serialize(program_enrollment)
-            serialized_enrollments = serialized_program_user['enrollments']
+            serialized_enrollments = serialized_program_user['courses']
             assert self.all_courses_serialized(serialized_enrollments, program_enrollment.program.course_set.all())
 
     def test_course_serialization_format(self):
@@ -348,7 +348,7 @@ class UserProgramSerializerEnrollmentsTests(MockedESTestCase):
                 self.unverified_enroll(self.user, course_run=course_run)
             # Serialize the program enrollment and make sure each course is serialized properly
             serialized_program_user = UserProgramSearchSerializer.serialize(program_enrollment)
-            serialized_enrollments = serialized_program_user['enrollments']
+            serialized_enrollments = serialized_program_user['courses']
             assert len(serialized_enrollments) == 2
             # A course with a mix of verified and unverified course runs should be serialized as verified
             assert self.is_course_serialized_with_status(serialized_enrollments, existing_course, is_verified=True)
@@ -368,7 +368,7 @@ class UserProgramSerializerEnrollmentsTests(MockedESTestCase):
             serialized_program_user = UserProgramSearchSerializer.serialize(program_enrollment_to_test)
             # If the new course's program is the same one we just serialized, we expect the course to be serialized.
             course_is_expected_serialized = program == program_enrollment_to_test.program
-            course_is_serialized = self.is_course_serialized(serialized_program_user['enrollments'], course)
+            course_is_serialized = self.is_course_serialized(serialized_program_user['courses'], course)
             assert course_is_serialized == course_is_expected_serialized
 
     def test_course_enrollments_serialized_unique(self):
@@ -377,13 +377,13 @@ class UserProgramSerializerEnrollmentsTests(MockedESTestCase):
         """
         # Create an enrollment for a different course run of an already-enrolled course
         serialized_program_user = UserProgramSearchSerializer.serialize(self.non_fa_program_enrollment)
-        serialized_count_before_addition = len(serialized_program_user['enrollments'])
+        serialized_count_before_addition = len(serialized_program_user['courses'])
         first_enrollment = self.non_fa_enrollments[0]
         new_course_run = CourseRunFactory.create(course=first_enrollment.course_run.course)
         self.verified_enroll(self.user, course_run=new_course_run)
         serialized_program_user = UserProgramSearchSerializer.serialize(self.non_fa_program_enrollment)
         # Number of serialized enrollments should be unaffected
-        assert len(serialized_program_user['enrollments']) == serialized_count_before_addition
+        assert len(serialized_program_user['courses']) == serialized_count_before_addition
 
     def test_course_final_grade_serialization(self):
         """
@@ -391,12 +391,12 @@ class UserProgramSerializerEnrollmentsTests(MockedESTestCase):
         """
         # Final grades should all be None since none have been created yet
         serialized_program_user = UserProgramSearchSerializer.serialize(self.fa_program_enrollment)
-        assert all(enrollment['final_grade'] is None for enrollment in serialized_program_user['enrollments'])
+        assert all(enrollment['final_grade'] is None for enrollment in serialized_program_user['courses'])
         # Add some final grades and test that their values are properly serialized
         for enrollment in self.fa_enrollments:
             FinalGradeFactory.create(user=self.user, course_run=enrollment.course_run, grade=0.8, passed=True)
         serialized_program_user = UserProgramSearchSerializer.serialize(self.fa_program_enrollment)
-        assert all(enrollment['final_grade'] == 80.0 for enrollment in serialized_program_user['enrollments'])
+        assert all(enrollment['final_grade'] == 80.0 for enrollment in serialized_program_user['courses'])
 
 
 class UserProgramSerializerSemesterTests(MockedESTestCase):
@@ -434,7 +434,7 @@ class UserProgramSerializerSemesterTests(MockedESTestCase):
             'dashboard.serializers.get_year_season_from_course_run', autospec=True, return_value=(2017, 'Spring')
         ) as get_year_season_patch:
             serialized_program_user = UserProgramSearchSerializer.serialize(self.program_enrollment)
-        assert len(serialized_program_user['enrollments']) == num_courses
+        assert len(serialized_program_user['courses']) == num_courses
         assert all(
             semester_enrollment['semester'] == '2017 - Spring'
             for semester_enrollment in serialized_program_user['semesters']
