@@ -584,10 +584,10 @@ class SerializerTests(ESTestCase):
                 'courses': [{
                     'course_title': enrollment['course_title']
                 } for enrollment in serialized['program']['courses']],
-                'semesters': [{
+                'course_runs': [{
                     'semester': semester_enrolled['semester']
 
-                } for semester_enrolled in serialized['program']['semesters']],
+                } for semester_enrolled in serialized['program']['course_runs']],
                 'is_learner': True,
                 'total_courses': 1,
             }
@@ -847,10 +847,10 @@ class PercolateQueryTests(ESTestCase):
                                 "must": [
                                     {
                                         "nested": {
-                                            "path": "program.semesters",
+                                            "path": "program.course_runs",
                                             "filter": {
                                                 "term": {
-                                                    "program.semesters.semester": "2015 - Summer"
+                                                    "program.course_runs.semester": "2015 - Summer"
                                                 }
                                             }
                                         }
@@ -942,10 +942,10 @@ class PercolateQueryTests(ESTestCase):
                                     },
                                     {
                                         'nested': {
-                                            'path': "program.semesters",
+                                            'path': "program.course_runs",
                                             'query': {
                                                 'term': {
-                                                    'program.semesters.semester': "2016 - Summer"
+                                                    'program.course_runs.semester': "2016 - Summer"
                                                 }
                                             }
                                         }

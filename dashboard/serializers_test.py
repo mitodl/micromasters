@@ -158,7 +158,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         expected_values = {
             'id': program.id,
             'courses': self.serialized_enrollments,
-            'semesters': self.semester_enrollments,
+            'course_runs': self.semester_enrollments,
             'grade_average': 75,
             'is_learner': True,
             'num_courses_passed': 1,
@@ -178,7 +178,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         expected_result = {
             'id': self.fa_program.id,
             'courses': self.fa_serialized_enrollments,
-            'semesters': self.semester_enrollments,
+            'course_runs': self.semester_enrollments,
             'grade_average': 95,
             'is_learner': True,
             'num_courses_passed': 1,
@@ -201,7 +201,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         expected_result = {
             'id': program.id,
             'courses': self.serialized_enrollments,
-            'semesters': self.semester_enrollments,
+            'course_runs': self.semester_enrollments,
             'grade_average': 75,
             'is_learner': False,
             'num_courses_passed': 1,
@@ -221,7 +221,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
             expected_result = {
                 'id': program.id,
                 'courses': self.serialized_enrollments,
-                'semesters': self.semester_enrollments,
+                'course_runs': self.semester_enrollments,
                 'grade_average': 75,
                 'is_learner': True,
                 'num_courses_passed': 0,
@@ -437,7 +437,7 @@ class UserProgramSerializerSemesterTests(MockedESTestCase):
         assert len(serialized_program_user['courses']) == num_courses
         assert all(
             semester_enrollment['semester'] == '2017 - Spring'
-            for semester_enrollment in serialized_program_user['semesters']
+            for semester_enrollment in serialized_program_user['course_runs']
         )
         assert get_year_season_patch.call_count == num_courses
 

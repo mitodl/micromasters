@@ -328,9 +328,9 @@ export default class LearnerSearch extends SearchkitComponent {
             title=""
             fieldOptions={{
               type:    "nested",
-              options: { path: "program.semesters" }
+              options: { path: "program.course_runs" }
             }}
-            field="program.semesters.semester"
+            field="program.course_runs.semester"
             operator="OR"
             itemComponent={CheckboxItem}
             listComponent={MultiSelectCheckboxItemList}
