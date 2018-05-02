@@ -289,12 +289,20 @@ describe("dashboard course utilities", () => {
     })
 
     it("returns Nothing if future runs are not OFFERRED", () => {
+      course.runs[0].status = STATUS_NOT_PASSED
       course.runs[1].status = STATUS_CURRENTLY_ENROLLED
       assertIsNothing(futureEnrollableRun(course))
     })
 
     it("returns Just(run) if the future run is offerred", () => {
-      assertIsJust(futureEnrollableRun(course), course.runs[1])
+      assertIsJust(futureEnrollableRun(course), course.runs[0])
+    })
+
+    it("returns Just(run) if the future run is paid but not enrolled", () => {
+      // course.runs = [course.runs[1]]
+      course.runs[0].status = STATUS_PAID_BUT_NOT_ENROLLED
+      course.runs[1].status = STATUS_NOT_PASSED
+      assertIsJust(futureEnrollableRun(course), course.runs[0])
     })
   })
 

@@ -89,9 +89,9 @@ export const hasPassedCourseRun = R.compose(
 
 // returns Maybe(run), where run is a future enrollable course run
 export const futureEnrollableRun = R.compose(
-  S.filter(R.propEq("status", STATUS_OFFERED)),
   S.toMaybe,
-  R.nth(1),
+  R.nth(0),
+  R.filter(R.propSatisfies(R.contains(R.__, [STATUS_OFFERED, STATUS_PAID_BUT_NOT_ENROLLED]), "status")),
   R.propOr([], "runs")
 )
 

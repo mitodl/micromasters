@@ -111,18 +111,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   const paymentDueDate = moment(
     R.defaultTo("", firstRun.course_upgrade_deadline)
   )
-  if (firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
-    if (hasFinancialAid) {
-      if (isEnrollableRun(firstRun)) {
-        return S.Just([
-          {
-            message: "You paid for this course. Click the button to enroll.",
-            action:  courseAction(firstRun, COURSE_ACTION_ENROLL)
-          }
-        ])
-      }
-      // if no enrollable runs then falls through
-    } else {
+  if (firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED && !hasFinancialAid) {
       const contactHref = `mailto:${SETTINGS.support_email}`
       return S.Just([
         {
@@ -136,7 +125,6 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
           )
         }
       ])
-    }
   }
 
   // Course run isn't enrollable, user never enrolled
@@ -188,7 +176,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     })
   }
   // Course is running, user has already paid,
-  if (courseUpcomingOrCurrent(firstRun) && paid) {
+  if (courseUpcomingOrCurrent(firstRun) && paid && userIsEnrolled(firstRun)) {
     if (exams) {
       messages.push({
         message: messageForNotAttemptedExam(course)
@@ -207,8 +195,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
 
   // handle other 'in-progress' cases
   if (
-    (courseUpcomingOrCurrent(firstRun) &&
-      firstRun.status !== STATUS_MISSED_DEADLINE) ||
+    courseUpcomingOrCurrent(firstRun) &&
     firstRun.status === STATUS_CAN_UPGRADE
   ) {
     let message =
