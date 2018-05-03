@@ -28,9 +28,10 @@ import {
   makeRunFuture,
   makeRunOverdue,
   makeRunDueSoon,
-  makeRunFailed
+  makeRunFailed,
+  makeRunCanUpgrade
 } from "./test_util"
-import { assertIsJust } from "../../../lib/test_utils"
+import { assertIsJust, assertIsNothing } from "../../../lib/test_utils"
 import {
   COURSE_ACTION_PAY,
   COURSE_ACTION_CALCULATE_PRICE,
@@ -110,6 +111,7 @@ describe("Course Status Messages", () => {
 
     it("should have a message for STATUS_PAID_BUT_NOT_ENROLLED", () => {
       course.runs[0].status = STATUS_PAID_BUT_NOT_ENROLLED
+      course.runs[0].has_paid = true
       const [{ message }] = calculateMessages(calculateMessagesProps).value
       const mounted = shallow(message)
       assert.equal(
@@ -121,19 +123,10 @@ describe("Course Status Messages", () => {
         `mailto:${SETTINGS.support_email}`
       )
       calculateMessagesProps["hasFinancialAid"] = true
+      course.runs[1].has_paid = true
       makeRunCurrent(course.runs[0])
-      assertIsJust(calculateMessages(calculateMessagesProps), [
-        {
-          action:  "course action was called",
-          message: "You paid for this course. Click the button to enroll."
-        }
-      ])
-      assert(
-        calculateMessagesProps.courseAction.calledWith(
-          course.runs[0],
-          COURSE_ACTION_ENROLL
-        )
-      )
+      makeRunFuture(course.runs[1])
+      assertIsNothing(calculateMessages(calculateMessagesProps))
     })
 
     it("should show next promised course", () => {
@@ -173,7 +166,7 @@ describe("Course Status Messages", () => {
 
     it("should nag unpaid auditors to pay", () => {
       makeRunCurrent(course.runs[0])
-      makeRunEnrolled(course.runs[0])
+      makeRunCanUpgrade(course.runs[0])
       course.runs[0].course_upgrade_deadline = moment().format()
       const dueDate = moment(course.runs[0].course_upgrade_deadline)
         .tz(moment.tz.guess())
@@ -194,7 +187,7 @@ describe("Course Status Messages", () => {
 
     it("should ask to pay for a new grade, if already has a certificate ", () => {
       makeRunCurrent(course.runs[0])
-      makeRunEnrolled(course.runs[0])
+      makeRunCanUpgrade(course.runs[0])
       course.certificate_url = "certificate"
       const messages = calculateMessages(calculateMessagesProps).value
       assert.equal(messages.length, 2)
@@ -221,7 +214,7 @@ describe("Course Status Messages", () => {
 
     it("should tell auditors to calculate price and pay for course", () => {
       makeRunCurrent(course.runs[0])
-      makeRunEnrolled(course.runs[0])
+      makeRunCanUpgrade(course.runs[0])
       course.runs[0].course_upgrade_deadline = moment().format()
       const dueDate = moment(course.runs[0].course_upgrade_deadline)
         .tz(moment.tz.guess())
@@ -244,7 +237,7 @@ describe("Course Status Messages", () => {
 
     it("should tell auditors to wait while FA application is pending", () => {
       makeRunCurrent(course.runs[0])
-      makeRunEnrolled(course.runs[0])
+      makeRunCanUpgrade(course.runs[0])
       course.runs[0].course_upgrade_deadline = moment().format()
       const dueDate = moment(course.runs[0].course_upgrade_deadline)
         .tz(moment.tz.guess())
@@ -272,7 +265,7 @@ describe("Course Status Messages", () => {
 
     it("should tell auditors to wait while FA is pending without due date", () => {
       makeRunCurrent(course.runs[0])
-      makeRunEnrolled(course.runs[0])
+      makeRunCanUpgrade(course.runs[0])
       calculateMessagesProps["financialAid"]["application_status"] =
         "pending-docs"
       calculateMessagesProps["hasFinancialAid"] = true
@@ -295,7 +288,7 @@ describe("Course Status Messages", () => {
 
     it("should not show payment due date if missing", () => {
       makeRunCurrent(course.runs[0])
-      makeRunEnrolled(course.runs[0])
+      makeRunCanUpgrade(course.runs[0])
 
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {

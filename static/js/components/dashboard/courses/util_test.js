@@ -31,6 +31,7 @@ import {
   DASHBOARD_FORMAT
 } from "../../../constants"
 import { assertIsNothing, assertIsJust } from "../../../lib/test_utils"
+import { makeRunCurrent, makeRunFuture } from "./test_util"
 
 describe("dashboard course utilities", () => {
   describe("courseStartDateMessage", () => {
@@ -299,7 +300,6 @@ describe("dashboard course utilities", () => {
     })
 
     it("returns Just(run) if the future run is paid but not enrolled", () => {
-      // course.runs = [course.runs[1]]
       course.runs[0].status = STATUS_PAID_BUT_NOT_ENROLLED
       course.runs[1].status = STATUS_NOT_PASSED
       assertIsJust(futureEnrollableRun(course), course.runs[0])

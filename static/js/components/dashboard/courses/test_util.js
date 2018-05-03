@@ -4,6 +4,7 @@ import moment from "moment"
 import type { CourseRun } from "../../../flow/programTypes"
 import {
   STATUS_CURRENTLY_ENROLLED,
+  STATUS_CAN_UPGRADE,
   STATUS_PASSED,
   STATUS_NOT_PASSED
 } from "../../../constants"
@@ -52,6 +53,10 @@ export const makeRunDueSoon = (run: CourseRun) => {
 
 export const makeRunEnrolled = (run: CourseRun) => {
   run.status = STATUS_CURRENTLY_ENROLLED
+}
+
+export const makeRunCanUpgrade = (run: CourseRun) => {
+  run.status = STATUS_CAN_UPGRADE
 }
 
 export const makeRunPaid = (run: CourseRun) => {

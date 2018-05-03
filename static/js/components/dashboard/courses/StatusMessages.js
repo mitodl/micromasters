@@ -112,19 +112,19 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     R.defaultTo("", firstRun.course_upgrade_deadline)
   )
   if (firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED && !hasFinancialAid) {
-      const contactHref = `mailto:${SETTINGS.support_email}`
-      return S.Just([
-        {
-          message: (
-            <div>
-              {
-                "Something went wrong. You paid for this course but are not enrolled. "
-              }
-              <a href={contactHref}>Contact us for help.</a>
-            </div>
-          )
-        }
-      ])
+    const contactHref = `mailto:${SETTINGS.support_email}`
+    return S.Just([
+      {
+        message: (
+          <div>
+            {
+              "Something went wrong. You paid for this course but are not enrolled. "
+            }
+            <a href={contactHref}>Contact us for help.</a>
+          </div>
+        )
+      }
+    ])
   }
 
   // Course run isn't enrollable, user never enrolled
@@ -194,9 +194,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   }
 
   // handle other 'in-progress' cases
-  if (
-    firstRun.status === STATUS_CAN_UPGRADE
-  ) {
+  if (firstRun.status === STATUS_CAN_UPGRADE) {
     let message =
       "You are auditing. To get credit, you need to pay for the course."
     if (course.certificate_url) {
