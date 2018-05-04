@@ -14,7 +14,6 @@ import { makeCouponMessage } from "../../../lib/coupon"
 import {
   COUPON_CONTENT_TYPE_COURSE,
   COURSE_ACTION_PAY,
-  COURSE_ACTION_ENROLL,
   COURSE_ACTION_REENROLL,
   FA_PENDING_STATUSES,
   FA_TERMINAL_STATUSES,

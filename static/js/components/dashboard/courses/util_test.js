@@ -31,7 +31,6 @@ import {
   DASHBOARD_FORMAT
 } from "../../../constants"
 import { assertIsNothing, assertIsJust } from "../../../lib/test_utils"
-import { makeRunCurrent, makeRunFuture } from "./test_util"
 
 describe("dashboard course utilities", () => {
   describe("courseStartDateMessage", () => {

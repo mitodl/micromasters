@@ -41,8 +41,7 @@ import {
   COURSE_DEADLINE_FORMAT,
   STATUS_PAID_BUT_NOT_ENROLLED,
   FA_STATUS_PENDING_DOCS,
-  STATUS_MISSED_DEADLINE,
-  COURSE_ACTION_ENROLL
+  STATUS_MISSED_DEADLINE
 } from "../../../constants"
 import * as libCoupon from "../../../lib/coupon"
 import { FINANCIAL_AID_PARTIAL_RESPONSE } from "../../../test_constants"
