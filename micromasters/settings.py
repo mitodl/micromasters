@@ -436,6 +436,7 @@ MICROMASTERS_USE_S3 = get_bool('MICROMASTERS_USE_S3', False)
 AWS_ACCESS_KEY_ID = get_string('AWS_ACCESS_KEY_ID', False)
 AWS_SECRET_ACCESS_KEY = get_string('AWS_SECRET_ACCESS_KEY', False)
 AWS_STORAGE_BUCKET_NAME = get_string('AWS_STORAGE_BUCKET_NAME', False)
+AWS_S3_FILE_OVERWRITE = get_bool('AWS_S3_FILE_OVERWRITE', False)
 AWS_QUERYSTRING_AUTH = get_string('AWS_QUERYSTRING_AUTH', False)
 # Provide nice validation of the configuration
 if (

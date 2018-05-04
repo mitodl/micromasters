@@ -31,6 +31,10 @@
     "AWS_ACCESS_KEY_ID": {
       "description": "AWS Access Key for S3 storage."
     },
+    "AWS_S3_FILE_OVERWRITE": {
+      "description": "Allow S3 storage to overwrite files.",
+      "value": "False"
+    },
     "AWS_SECRET_ACCESS_KEY": {
       "description": "AWS Secret Key for S3 storage."
     },
