@@ -7,7 +7,7 @@ from django.core.management import BaseCommand, CommandError
 from django_redis import get_redis_connection
 
 from courses.models import CourseRun
-from dashboard.models import CachedEnrollment
+from dashboard.models import CachedEnrollment, CachedCurrentGrade
 from grades.api import CACHE_KEY_FAILED_USERS_BASE_STR
 from grades.models import CourseRunGradingStatus, FinalGrade
 from grades.tasks import CACHE_ID_BASE_STR
@@ -74,11 +74,14 @@ class Command(BaseCommand):
                 )
             )
         message_detail = ', where {0} failed authentication'.format(failed_users_count) if failed_users_count else ''
+        users_in_cache = set(CachedEnrollment.get_cached_users(run)).intersection(
+            set(CachedCurrentGrade.get_cached_users(run))
+        )
         self.stdout.write(
             self.style.SUCCESS(
                 'The students with a final grade are {0}/{1}{2}'.format(
                     FinalGrade.objects.filter(course_run=run).count(),
-                    CachedEnrollment.objects.filter(course_run=run).count(),
+                    users_in_cache,
                     message_detail
                 )
             )
