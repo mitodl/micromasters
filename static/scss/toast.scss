@@ -4,7 +4,7 @@
   flex-direction: column;
   position: fixed;
   background-color: $black-transparent;
-  color: #c5c5c5;
+  color: #d6d6d6;
   margin: 0 auto;
   width: 90%;
   max-width: 500px;
@@ -21,16 +21,16 @@
 
     .toast-body {
       padding: 0 10px;
-      display: flex;
       align-items: center;
 
       h1 {
-        font-size: 18px;
-        margin: 0;
+        font-size: 16px;
+        margin: 0 0 5px;
       }
 
       p {
-        font-size: 16px;
+        font-size: 15px;
+        line-height: 1.2;
       }
 
       p:last-child {

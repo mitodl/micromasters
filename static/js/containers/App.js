@@ -128,7 +128,6 @@ class App extends React.Component {
     const { dispatch } = this.props
     dispatch(
       setToastMessage({
-        title:   "Profile",
         message:
           "We need to know a little bit more about you. Please complete your profile.",
         icon: TOAST_FAILURE
