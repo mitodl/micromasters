@@ -145,7 +145,6 @@ body.app-media {
   background-repeat: no-repeat;
   background-color: #222;
   background-size: cover;
-  background-attachment: fixed;
   margin: 0 auto;
   width: 100%;
   min-height: 620px;
@@ -156,7 +155,6 @@ body.app-media {
   @include breakpoint(phone) {
     height: calc(100vh - 200px);
     min-height: 0;
-    background-attachment: scroll;
   }
 
   .banner-wrapper-content {
