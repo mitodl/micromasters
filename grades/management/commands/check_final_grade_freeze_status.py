@@ -81,7 +81,7 @@ class Command(BaseCommand):
             self.style.SUCCESS(
                 'The students with a final grade are {0}/{1}{2}'.format(
                     FinalGrade.objects.filter(course_run=run).count(),
-                    users_in_cache,
+                    len(users_in_cache),
                     message_detail
                 )
             )
