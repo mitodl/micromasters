@@ -25,13 +25,20 @@ class LineAdmin(admin.ModelAdmin):
     """Admin for Line"""
     model = Line
 
-    readonly_fields = get_field_names(Line)
+    readonly_fields = [name for name in get_field_names(Line) if name != 'course_key']
 
     def has_add_permission(self, request):
         return False
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+    def save_model(self, request, obj, form, change):
+        """
+        Saves object and logs change to object
+        """
+        super(LineAdmin, self).save_model(request, obj, form, change)
+        obj.order.save_and_log(request.user)
 
 
 class OrderAdmin(admin.ModelAdmin):
