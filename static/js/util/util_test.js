@@ -910,7 +910,8 @@ describe("utility functions", () => {
       bool: {
         must: [
           {
-            foo1: "baz"
+            foo1: "baz",
+            foo2: "gaz1"
           },
           {
             foo2: "gaz"
@@ -919,9 +920,14 @@ describe("utility functions", () => {
       }
     }
 
+    it("it search top level object", () => {
+      const object = findObjByName(obj, "foo")
+      assert.deepEqual(object, ["bar"])
+    })
+
     it("it deep search", () => {
       const object = findObjByName(obj, "foo2")
-      assert.deepEqual(object, [{ foo2: "gaz" }])
+      assert.deepEqual(object, ["gaz1", "gaz"])
     })
 
     it("it returns empty array when no match found", () => {

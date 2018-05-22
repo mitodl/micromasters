@@ -244,7 +244,7 @@ export default class LearnerSearch extends SearchkitComponent {
     )
 
     for (const obj of nestedList) {
-      const term = R.pathOr(null, ["nested", "query", "term"], obj)
+      const term = R.pathOr(null, ["query", "term"], obj)
       if (_.has(term, filterName)) {
         return true
       }

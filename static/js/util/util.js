@@ -604,14 +604,13 @@ export const wait = (millis: number): Promise<void> =>
 /**
  * extract object from json
  */
-export const findObjByName = (list: Object, key: string) => {
-  if (_.has(list, key)) {
-    return [list]
+export const findObjByName = (data: any, key: string) => {
+  if (typeof data === "object" && _.has((data: Object), key)) {
+    return [_.get(data, key)]
   }
-  return _.flatten(
-    _.map(list, function(value) {
-      return typeof value === "object" ? findObjByName(value, key) : []
-    }),
-    true
+  return _.flatMap(
+    (data: Array<*>),
+    (value: Object | Array<*>): Array<*> =>
+      typeof value === "object" ? findObjByName(value, key) : []
   )
 }
