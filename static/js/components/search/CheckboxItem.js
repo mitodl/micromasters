@@ -1,6 +1,7 @@
 // @flow
 import React from "react"
-import R from "ramda"
+
+const optionClassName = "sk-item-list-option"
 
 export default class CheckboxItem extends React.Component {
   props: {
@@ -13,10 +14,9 @@ export default class CheckboxItem extends React.Component {
   render() {
     const { active, onClick, count, label } = this.props
     const activeClass = active ? "is-active" : ""
-    const option = "sk-item-list-option"
     return (
       <div
-        className={`${option} sk-item-list__item ${activeClass}`}
+        className={`${optionClassName} sk-item-list__item ${activeClass}`}
         onClick={onClick}
       >
         <input
@@ -24,12 +24,10 @@ export default class CheckboxItem extends React.Component {
           data-qa="checkbox"
           checked={active}
           readOnly
-          className={`${option} checkbox`}
+          className={`${optionClassName} checkbox`}
         />
-        <div className={`${option}__text`}>
-          {R.when(R.equals(""), () => "N/A", label)}
-        </div>
-        <div className={`${option}__count`}>{count}</div>
+        <div className={`${optionClassName}__text`}>{label || "N/A"}</div>
+        <div className={`${optionClassName}__count`}>{count}</div>
       </div>
     )
   }

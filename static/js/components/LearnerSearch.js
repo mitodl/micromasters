@@ -242,6 +242,7 @@ export default class LearnerSearch extends SearchkitComponent {
       R.pathOr([], ["bool", "must"], this.getQuery().query.post_filter),
       "nested"
     )
+
     for (const obj of nestedList) {
       const term = R.pathOr(null, ["nested", "query", "term"], obj)
       if (_.has(term, filterName)) {

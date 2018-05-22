@@ -3,6 +3,7 @@
 import _ from "lodash"
 import * as React from "react"
 import { AbstractItemList, block } from "searchkit"
+import R from "ramda"
 
 import CheckboxItem from "./CheckboxItem"
 
@@ -23,65 +24,33 @@ export default class MultiSelectCheckboxItemList extends AbstractItemList {
 
   allDocCount = () => {
     const { items = [] } = this.props
-    const countList = []
-    for (const item of items) {
-      countList.push(item.doc_count)
-    }
-    return _.max(countList) || 0
+    return _.max(R.map(R.prop("doc_count"), items))
   }
 
   selectAllHandler = (event: Event) => {
     const { items = [], setItems } = this.props
-    const keys = []
+
     if (event.target.checked) {
       this.setState({ allOptionClass: "is-active" })
-      for (const item of items) {
-        keys.push(item.key)
-      }
+      setItems(items.map(item => item.key))
     } else {
       this.setState(selectAllInitialState)
+      setItems([])
     }
-    setItems(keys)
   }
 
-  render() {
+  itemComponentList = () => {
     const {
-      mod,
-      items = [],
-      translate,
-      toggleItem,
-      setItems,
-      multiselect,
       countFormatter,
-      disabled,
-      className
+      items = [],
+      multiselect,
+      setItems,
+      toggleItem,
+      translate
     } = this.props
-
-    const bemBlocks = {
-      container: block(mod).el,
-      option:    block(`${mod}-option`).el
-    }
-
     const toggleFunc = multiselect ? toggleItem : key => setItems([key])
-    const allAction = (
-      <div
-        className={`sk-item-list-option sk-item-list__item ${this.state
-          .allOptionClass}`}
-        key="select-all-items"
-      >
-        <input
-          type="checkbox"
-          data-qa="checkbox"
-          onChange={this.selectAllHandler}
-          className="sk-item-list-option checkbox"
-        />
-        <div className="sk-item-list-option__text">Select All</div>
-        <div className="sk-item-list-option__count">
-          {countFormatter(this.allDocCount())}
-        </div>
-      </div>
-    )
-    const itemComponentList = _.map(items, option => {
+
+    return _.map(items, option => {
       const label = option.title || option.label || option.key
       const props = {
         label:   translate(label),
@@ -92,8 +61,35 @@ export default class MultiSelectCheckboxItemList extends AbstractItemList {
       }
       return <CheckboxItem {...props} />
     })
+  }
 
-    const actions = [allAction, ...itemComponentList]
+  allAction = (countFormatter: Function) => (
+    <div
+      className={`sk-item-list-option sk-item-list__item ${this.state
+        .allOptionClass}`}
+      key="select-all-items"
+    >
+      <input
+        type="checkbox"
+        data-qa="checkbox"
+        onChange={this.selectAllHandler}
+        className="sk-item-list-option checkbox"
+      />
+      <div className="sk-item-list-option__text">Select All</div>
+      <div className="sk-item-list-option__count">
+        {countFormatter(this.allDocCount())}
+      </div>
+    </div>
+  )
+
+  render() {
+    const { mod, countFormatter, disabled, className } = this.props
+
+    const bemBlocks = {
+      container: block(mod).el,
+      option:    block(`${mod}-option`).el
+    }
+
     return (
       <div
         data-qa="options"
@@ -102,7 +98,7 @@ export default class MultiSelectCheckboxItemList extends AbstractItemList {
           .mix(className)
           .state({ disabled })}
       >
-        {actions}
+        {[this.allAction(countFormatter), ...this.itemComponentList()]}
       </div>
     )
   }
