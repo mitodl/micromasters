@@ -91,6 +91,11 @@ INSTALLED_APPS = (
     'modelcluster',
     'taggit',
 
+    # Hijack
+    'hijack',
+    'compat',
+    'hijack_admin',
+
     # other third party APPS
     'rolepermissions',
     'raven.contrib.django.raven_compat',
@@ -426,6 +431,10 @@ GA_TRACKING_ID = get_string("GA_TRACKING_ID", "")
 GOOGLE_API_KEY = get_string("GOOGLE_API_KEY", "")
 SL_TRACKING_ID = get_string("SL_TRACKING_ID", "")
 REACT_GA_DEBUG = get_bool("REACT_GA_DEBUG", False)
+
+# Hijack
+HIJACK_ALLOW_GET_REQUESTS = True
+HIJACK_LOGOUT_REDIRECT_URL = '/admin/auth/user'
 
 # Wagtail
 WAGTAIL_SITE_NAME = "MIT MicroMasters"
