@@ -19,7 +19,7 @@ const INNER_TERMS_AGG_KEY = "nested_terms"
  * Example return value: {
  *   "nested_terms": {
  *     "terms":{
- *       "field":"program.enrollments.course_title", ...
+ *       "field":"program.courses.course_title", ...
  *     },
  *     "aggs":{
  *       "top_level_doc_count":{"reverse_nested":{}}
@@ -92,7 +92,7 @@ class NestedAggregatingFacetAccessor extends NestedAccessorMixin(
   getFilterMapKey = () => this.uuid
 
   /**
-   * Creates the appropriate query element for this filter type (e.g.: {'term': 'program.enrollments.course_title'})
+   * Creates the appropriate query element for this filter type (e.g.: {'term': 'program.courses.course_title'})
    */
   createQueryFilter(appliedFilterValue) {
     return TermQuery(this.key, appliedFilterValue)

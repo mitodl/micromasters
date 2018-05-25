@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.101.1
+---------------
+
+- Serialize all semesters enrolled (#3963)
+- Added multiple semester select (#3936)
+
 Version 0.101.0
 ---------------
 

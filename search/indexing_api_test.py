@@ -581,10 +581,13 @@ class SerializerTests(ESTestCase):
             },
             'program': {
                 'id': program_enrollment.program.id,
-                'enrollments': [{
-                    'course_title': enrollment['course_title'],
-                    'semester': enrollment['semester'],
-                } for enrollment in serialized['program']['enrollments']],
+                'courses': [{
+                    'course_title': enrollment['course_title']
+                } for enrollment in serialized['program']['courses']],
+                'course_runs': [{
+                    'semester': semester_enrolled['semester']
+
+                } for semester_enrolled in serialized['program']['course_runs']],
                 'is_learner': True,
                 'total_courses': 1,
             }
@@ -844,10 +847,10 @@ class PercolateQueryTests(ESTestCase):
                                 "must": [
                                     {
                                         "nested": {
-                                            "path": "program.enrollments",
+                                            "path": "program.course_runs",
                                             "filter": {
                                                 "term": {
-                                                    "program.enrollments.semester": "2015 - Summer"
+                                                    "program.course_runs.semester": "2015 - Summer"
                                                 }
                                             }
                                         }
@@ -917,27 +920,32 @@ class PercolateQueryTests(ESTestCase):
                                 "must": [
                                     {
                                         "nested": {
-                                            "path": "program.enrollments",
+                                            "path": "program.courses",
                                             "query": {
                                                 "bool": {
                                                     "must": [
                                                         {
                                                             "term": {
-                                                                "program.enrollments.course_title":
+                                                                "program.courses.course_title":
                                                                     "Supply Chain Fundamentals  (SC1x)"
                                                             }
                                                         },
                                                         {
                                                             "term": {
-                                                                "program.enrollments.payment_status": "Auditing"
-                                                            }
-                                                        },
-                                                        {
-                                                            "term": {
-                                                                "program.enrollments.semester": "2017 - Spring"
+                                                                "program.courses.payment_status": "Auditing"
                                                             }
                                                         }
                                                     ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    {
+                                        'nested': {
+                                            'path': "program.course_runs",
+                                            'query': {
+                                                'term': {
+                                                    'program.course_runs.semester': "2016 - Summer"
                                                 }
                                             }
                                         }
