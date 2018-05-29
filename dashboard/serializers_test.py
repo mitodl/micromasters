@@ -157,6 +157,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         program = self.program_enrollment.program
         expected_values = {
             'id': program.id,
+            'enrollments': self.serialized_enrollments,
             'courses': self.serialized_enrollments,
             'course_runs': self.semester_enrollments,
             'grade_average': 75,
@@ -177,6 +178,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         self.profile.refresh_from_db()
         expected_result = {
             'id': self.fa_program.id,
+            'enrollments': self.fa_serialized_enrollments,
             'courses': self.fa_serialized_enrollments,
             'course_runs': self.semester_enrollments,
             'grade_average': 95,
@@ -200,6 +202,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         )
         expected_result = {
             'id': program.id,
+            'enrollments': self.serialized_enrollments,
             'courses': self.serialized_enrollments,
             'course_runs': self.semester_enrollments,
             'grade_average': 75,
@@ -220,6 +223,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
             program = self.program_enrollment.program
             expected_result = {
                 'id': program.id,
+                'enrollments': self.serialized_enrollments,
                 'courses': self.serialized_enrollments,
                 'course_runs': self.semester_enrollments,
                 'grade_average': 75,

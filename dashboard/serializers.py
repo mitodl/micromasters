@@ -95,6 +95,7 @@ class UserProgramSearchSerializer:
 
         return {
             'id': program.id,
+            'enrollments': cls.serialize_enrollments(mmtrack),
             'courses': cls.serialize_enrollments(mmtrack),
             'course_runs': cls.serialize_course_runs_enrolled(mmtrack),
             'grade_average': mmtrack.calculate_final_grade_average(),

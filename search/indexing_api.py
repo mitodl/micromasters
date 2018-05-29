@@ -92,6 +92,12 @@ PUBLIC_ENROLLMENT_MAPPING = {
                     'id': LONG_TYPE,
                     'total_courses': LONG_TYPE,
                     'is_learner': BOOL_TYPE,
+                    'enrollments': {
+                        'type': 'nested',
+                        'properties': {
+                            'course_title': KEYWORD_TYPE,
+                        }
+                    },
                     'course_runs': {
                         'type': 'nested',
                         'properties': {
@@ -180,6 +186,15 @@ PRIVATE_ENROLLMENT_MAPPING = {
                     'num_courses_passed': LONG_TYPE,
                     'total_courses': LONG_TYPE,
                     'is_learner': BOOL_TYPE,
+                    'enrollments': {
+                        'type': 'nested',
+                        'properties': {
+                            'final_grade': LONG_TYPE,
+                            'course_title': KEYWORD_TYPE,
+                            'status': KEYWORD_TYPE,
+                            'payment_status': KEYWORD_TYPE,
+                        }
+                    },
                     'course_runs': {
                         'type': 'nested',
                         'properties': {
@@ -300,8 +315,12 @@ def serialize_public_enrolled_user(serialized_enrolled_user):
     # filter out grades, courses passed, etc
     program = dict_with_keys(
         serialized_enrolled_user['program'],
-        ['id', 'courses', 'is_learner', 'total_courses', 'course_runs']
+        ['id', 'enrollments', 'courses', 'is_learner', 'total_courses', 'course_runs']
     )
+    program['enrollments'] = [
+        dict_with_keys(enrollment, ['course_title', ])
+        for enrollment in program['courses']
+    ]
     program['courses'] = [
         dict_with_keys(enrollment, ['course_title', ])
         for enrollment in program['courses']
