@@ -180,7 +180,11 @@ def freeze_user_final_grade(user, course_run, raise_on_exception=False):
             return None
         else:
             raise FreezeGradeFailedException(
-                'Impossible to refresh the edX cache for user "{0}"'.format(user.username)) from ex
+                'Impossible to refresh the edX cache for user "{0}" in course {1}'.format(
+                    user.username,
+                    course_run.edx_course_key
+                )
+            ) from ex
     # get the final grade for the user in the program
     try:
         final_grade = get_final_grade(user, course_run)
