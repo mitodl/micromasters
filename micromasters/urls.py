@@ -31,6 +31,8 @@ urlpatterns += [
     url('', include('discussions.urls')),
     url(r'^status/', include('server_status.urls')),
     url('', include('ui.urls')),
+    # Hijack
+    url(r'^hijack/', include('hijack.urls', namespace='hijack')),
     # Wagtail
     url(r'^cms/', include(wagtailadmin_urls)),
     url(r'^documents/', include(wagtaildocs_urls)),

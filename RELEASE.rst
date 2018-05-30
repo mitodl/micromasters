@@ -1,6 +1,16 @@
 Release Notes
 =============
 
+Version 0.102.0
+---------------
+
+- Fix profile image upload layout on mobile (#3993)
+- First step to update percolate queries that use enrollments nested field (#3995)
+- Add users missing grades to the cached list (#3980)
+- Added django-hijack for user masquerading (#3989)
+- Serialize all semesters enrolled (#3963)
+- Added multiple semester select (#3936)
+
 Version 0.101.0
 ---------------
 

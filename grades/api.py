@@ -172,15 +172,26 @@ def freeze_user_final_grade(user, course_run, raise_on_exception=False):
         con = get_redis_connection("redis")
         con.lpush(CACHE_KEY_FAILED_USERS_BASE_STR.format(course_run.edx_course_key), user.id)
         if not raise_on_exception:
-            log.exception('Impossible to refresh the edX cache for user "%s"', user.username)
+            log.exception(
+                'Impossible to refresh the edX cache for user "%s" in course %s',
+                user.username,
+                course_run.edx_course_key
+            )
             return None
         else:
             raise FreezeGradeFailedException(
-                'Impossible to refresh the edX cache for user "{0}"'.format(user.username)) from ex
+                'Impossible to refresh the edX cache for user "{0}" in course {1}'.format(
+                    user.username,
+                    course_run.edx_course_key
+                )
+            ) from ex
     # get the final grade for the user in the program
     try:
         final_grade = get_final_grade(user, course_run)
     except Exception as ex:  # pylint: disable=broad-except
+        # If user doesn't have a grade no need to freeze
+        con = get_redis_connection("redis")
+        con.lpush(CACHE_KEY_FAILED_USERS_BASE_STR.format(course_run.edx_course_key), user.id)
         if not raise_on_exception:
             log.exception(
                 'Impossible to get final grade for user "%s" in course %s', user.username, course_run.edx_course_key)

@@ -19,6 +19,9 @@ defusedxml==0.5.0         # via python3-openid, social-auth-core
 dj-database-url==0.3.0
 dj-static==0.0.6
 django-cors-headers==2.1.0
+django-compat==1.0.15
+django-hijack==2.1.7
+django-hijack-admin==2.1.7
 django-discover-runner==1.0  # via django-role-permissions
 django-modelcluster==4.1  # via wagtail
 django-redis==4.7.0

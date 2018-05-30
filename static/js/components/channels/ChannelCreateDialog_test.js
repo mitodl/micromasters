@@ -127,7 +127,7 @@ describe("ChannelCreateDialog", () => {
       filters: [
         {
           id:    "course",
-          name:  "program.enrollments.course_title",
+          name:  "program.courses.course_title",
           value: "Test Course 100"
         }
       ]

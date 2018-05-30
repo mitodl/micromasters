@@ -469,7 +469,7 @@ describe("LearnerSearchPage", function() {
 
   describe("course enrollment filters", () => {
     it("have the expected aggregations", () => {
-      const innerKey = "program.enrollments.course_title"
+      const innerKey = "program.courses.course_title"
       const topLevelKey = `${innerKey}2`
 
       return renderSearch().then(() => {
@@ -478,7 +478,7 @@ describe("LearnerSearchPage", function() {
         assert.isDefined(body.aggs[topLevelKey])
 
         const innerAggs = body.aggs[topLevelKey].aggs.inner
-        assert.deepEqual(innerAggs.nested, { path: "program.enrollments" })
+        assert.deepEqual(innerAggs.nested, { path: "program.courses" })
         assert.equal(innerAggs.aggs[innerKey].terms.field, innerKey)
         assert.deepEqual(innerAggs.aggs[innerKey].aggs, {
           top_level_doc_count: { reverse_nested: {} }
@@ -634,19 +634,18 @@ describe("LearnerSearchPage", function() {
         must: [
           {
             nested: {
-              path:  "program.enrollments",
+              path:  "program.courses",
               query: {
                 bool: {
                   must: [
                     {
                       term: {
-                        "program.enrollments.course_title":
-                          "Digital Learning 200"
+                        "program.courses.course_title": "Digital Learning 200"
                       }
                     },
                     {
                       range: {
-                        "program.enrollments.final_grade": {
+                        "program.courses.final_grade": {
                           gte: "40",
                           lte: "100"
                         }

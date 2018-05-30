@@ -1,5 +1,10 @@
 @import "../../node_modules/searchkit/theming/components";
 
+div.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
 .learners-search {
   width: 97%;
   margin: 0 auto;

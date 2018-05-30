@@ -53,10 +53,10 @@ export const NestedAccessorMixin = BaseSearchkitAccessorClass =>
       return query
     }
 
-    /** Returns the ES path for this nested document type (eg: 'program.enrollments') */
+    /** Returns the ES path for this nested document type (eg: 'program.courses') */
     getNestedPath = () => this.fieldContext.fieldOptions.options.path
 
-    /** Returns the full ES path for this nested document (eg: 'program.enrollments.course_title') */
+    /** Returns the full ES path for this nested document (eg: 'program.courses.course_title') */
     getFieldKey = () => this.fieldContext.fieldOptions.field
 
     /**
@@ -119,7 +119,7 @@ export const NestedAccessorMixin = BaseSearchkitAccessorClass =>
      *
      * Example return value: {
      *   "nested": {
-     *     "path": "program.enrollments",
+     *     "path": "program.courses",
      *     "filter": {
      *       "bool": {
      *         "must":[{"term": ... }, {"range": ... }]
@@ -173,8 +173,8 @@ export const NestedAccessorMixin = BaseSearchkitAccessorClass =>
      * filters are applied on this element's nested path.
      *
      * Example return value: [
-     *   {'term': {'program.enrollments.course_title': 'Some Course Title'},
-     *   {'term': {'program.enrollments.payment_status': 'Paid'}
+     *   {'term': {'program.courses.course_title': 'Some Course Title'},
+     *   {'term': {'program.courses.payment_status': 'Paid'}
      * ]
      */
     getAllFiltersOnPath(query) {
@@ -202,7 +202,7 @@ export const NestedAccessorMixin = BaseSearchkitAccessorClass =>
      * Example return value: {
      *   'bool': {
      *     'must': [
-     *       {'term': {'program.enrollments.course_title': 'Some Course Title'}}
+     *       {'term': {'program.courses.course_title': 'Some Course Title'}}
      *     ]
      *   }
      * }

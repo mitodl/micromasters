@@ -71,7 +71,7 @@ class FinalGradeRangeAccessor extends NestedAccessorMixin(
 
   /**
    * Creates the appropriate query element for this filter type
-   * (e.g.: {"range": {"program.enrollments.final_grade": {"gte": 64, "lte": 100}}})
+   * (e.g.: {"range": {"program.courses.final_grade": {"gte": 64, "lte": 100}}})
    */
   createQueryFilter(appliedFilterValue) {
     return RangeQuery(this.options.field, {

@@ -36,7 +36,8 @@ import {
   highlight,
   sortedCourseRuns,
   mapObj,
-  wait
+  wait,
+  findObjByName
 } from "../util/util"
 import {
   EDUCATION_LEVELS,
@@ -901,5 +902,37 @@ describe("utility functions", () => {
         done()
       }, 20)
     }, 20)
+  })
+
+  describe("findObjByName", () => {
+    const obj = {
+      foo:  "bar",
+      bool: {
+        must: [
+          {
+            foo1: "baz",
+            foo2: "gaz1"
+          },
+          {
+            foo2: "gaz"
+          }
+        ]
+      }
+    }
+
+    it("it search top level object", () => {
+      const object = findObjByName(obj, "foo")
+      assert.deepEqual(object, ["bar"])
+    })
+
+    it("it deep search", () => {
+      const object = findObjByName(obj, "foo2")
+      assert.deepEqual(object, ["gaz1", "gaz"])
+    })
+
+    it("it returns empty array when no match found", () => {
+      const object = findObjByName(obj, "foo3")
+      assert.equal(object.length, 0)
+    })
   })
 })

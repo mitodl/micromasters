@@ -262,14 +262,14 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
     ]
   },
   aggregations: {
-    "program.enrollments.course_title2": {
+    "program.courses.course_title2": {
       doc_count: 66,
       inner:     {
-        doc_count:                                100,
-        "program.enrollments.course_title_count": {
+        doc_count:                            100,
+        "program.courses.course_title_count": {
           value: 3
         },
-        "program.enrollments.course_title": {
+        "program.courses.course_title": {
           doc_count_error_upper_bound: 0,
           sum_other_doc_count:         0,
           buckets:                     [
@@ -642,14 +642,14 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
         }
       }
     },
-    "program.enrollments.semester5": {
+    "program.courses.semester5": {
       doc_count: 66,
       inner:     {
-        doc_count:                            100,
-        "program.enrollments.semester_count": {
+        doc_count:                        100,
+        "program.courses.semester_count": {
           value: 3
         },
-        "program.enrollments.semester": {
+        "program.courses.semester": {
           doc_count_error_upper_bound: 0,
           sum_other_doc_count:         0,
           buckets:                     [
@@ -769,11 +769,11 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
         ]
       }
     },
-    "program.enrollments.payment_status4": {
+    "program.courses.payment_status4": {
       doc_count: 66,
       inner:     {
-        doc_count:                            100,
-        "program.enrollments.payment_status": {
+        doc_count:                        100,
+        "program.courses.payment_status": {
           doc_count_error_upper_bound: 0,
           sum_other_doc_count:         0,
           buckets:                     [
@@ -793,7 +793,7 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
             }
           ]
         },
-        "program.enrollments.payment_status_count": {
+        "program.courses.payment_status_count": {
           value: 2
         }
       }
@@ -1433,10 +1433,10 @@ const queryFilters = `{
     "must":[
       { 
         "nested": {
-          "path": "program.enrollments",
+          "path": "program.courses",
           "filter": {
             "term": {
-              "program.enrollments.payment_status": "Paid"
+              "program.courses.payment_status": "Paid"
             }
           }
         }

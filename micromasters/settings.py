@@ -18,7 +18,7 @@ from micromasters.envs import (
 )
 
 
-VERSION = "0.101.0"
+VERSION = "0.102.0"
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -90,6 +90,11 @@ INSTALLED_APPS = (
     'wagtail.core',
     'modelcluster',
     'taggit',
+
+    # Hijack
+    'hijack',
+    'compat',
+    'hijack_admin',
 
     # other third party APPS
     'rolepermissions',
@@ -426,6 +431,10 @@ GA_TRACKING_ID = get_string("GA_TRACKING_ID", "")
 GOOGLE_API_KEY = get_string("GOOGLE_API_KEY", "")
 SL_TRACKING_ID = get_string("SL_TRACKING_ID", "")
 REACT_GA_DEBUG = get_bool("REACT_GA_DEBUG", False)
+
+# Hijack
+HIJACK_ALLOW_GET_REQUESTS = True
+HIJACK_LOGOUT_REDIRECT_URL = '/admin/auth/user'
 
 # Wagtail
 WAGTAIL_SITE_NAME = "MIT MicroMasters"

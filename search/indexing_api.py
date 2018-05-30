@@ -95,7 +95,18 @@ PUBLIC_ENROLLMENT_MAPPING = {
                     'enrollments': {
                         'type': 'nested',
                         'properties': {
+                            'course_title': KEYWORD_TYPE,
+                        }
+                    },
+                    'course_runs': {
+                        'type': 'nested',
+                        'properties': {
                             'semester': KEYWORD_TYPE,
+                        }
+                    },
+                    'courses': {
+                        'type': 'nested',
+                        'properties': {
                             'course_title': KEYWORD_TYPE,
                         }
                     },
@@ -179,7 +190,21 @@ PRIVATE_ENROLLMENT_MAPPING = {
                         'type': 'nested',
                         'properties': {
                             'final_grade': LONG_TYPE,
+                            'course_title': KEYWORD_TYPE,
+                            'status': KEYWORD_TYPE,
+                            'payment_status': KEYWORD_TYPE,
+                        }
+                    },
+                    'course_runs': {
+                        'type': 'nested',
+                        'properties': {
                             'semester': KEYWORD_TYPE,
+                        }
+                    },
+                    'courses': {
+                        'type': 'nested',
+                        'properties': {
+                            'final_grade': LONG_TYPE,
                             'course_title': KEYWORD_TYPE,
                             'status': KEYWORD_TYPE,
                             'payment_status': KEYWORD_TYPE,
@@ -290,11 +315,19 @@ def serialize_public_enrolled_user(serialized_enrolled_user):
     # filter out grades, courses passed, etc
     program = dict_with_keys(
         serialized_enrolled_user['program'],
-        ['id', 'enrollments', 'is_learner', 'total_courses', ]
+        ['id', 'enrollments', 'courses', 'is_learner', 'total_courses', 'course_runs']
     )
     program['enrollments'] = [
-        dict_with_keys(enrollment, ['course_title', 'semester', ])
-        for enrollment in program['enrollments']
+        dict_with_keys(enrollment, ['course_title', ])
+        for enrollment in program['courses']
+    ]
+    program['courses'] = [
+        dict_with_keys(enrollment, ['course_title', ])
+        for enrollment in program['courses']
+    ]
+    program['course_runs'] = [
+        dict_with_keys(enrollment, ['semester'])
+        for enrollment in program['course_runs']
     ]
     # filter out private profile information
     profile = dict_with_keys(

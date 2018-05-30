@@ -3,11 +3,13 @@
   <head>
     {% spaceless %}
     {% load static %}
+    {% load hijack_tags %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,400i,500,700" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
     <link rel="stylesheet" type="text/css" href="{% url 'background-images-css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'hijack/hijack-styles.css' %}" />
     {% load raven %}
     <link rel="icon" href="{% static 'images/favicon.ico' %}" />
     <script type="text/javascript">
@@ -37,6 +39,7 @@
     {% endspaceless %}
   </head>
   <body class="{% block bodyclass %}{% endblock %}">
+    {% hijack_notification %}
     {% block content %}
     {% endblock %}
     <script type="text/javascript">

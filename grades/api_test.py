@@ -383,6 +383,12 @@ class GradeAPITests(MockedESTestCase):
         mock_get_fg.assert_called_once_with(self.user, self.run_fa)
         assert FinalGrade.objects.filter(user=self.user, course_run=self.run_fa).exists() is False
 
+        con = get_redis_connection("redis")
+        failed_users_cache_key = api.CACHE_KEY_FAILED_USERS_BASE_STR.format(self.run_fa.edx_course_key)
+        failed_users_count = con.llen(failed_users_cache_key)
+        failed_users_list = list(map(int, con.lrange(failed_users_cache_key, 0, failed_users_count)))
+        assert self.user.id in failed_users_list
+
     @patch('dashboard.api_edx_cache.CachedEdxDataApi.update_all_cached_grade_data', new_callable=MagicMock)
     def test_freeze_user_final_grade(self, mock_refr):
         """

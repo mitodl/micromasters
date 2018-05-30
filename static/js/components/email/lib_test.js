@@ -78,10 +78,10 @@ describe("Specific email config", () => {
       "must":[
         { 
           "nested": {
-            "path": "program.enrollments",
+            "path": "program.courses",
             "filter": {
               "term": {
-                "program.enrollments.payment_status": "Paid"
+                "program.courses.payment_status": "Paid"
               }
             }
           }
@@ -265,8 +265,8 @@ describe("Specific email config", () => {
         const filters = getFilters(JSON.parse(queryFilters))
         assert.deepEqual(filters, [
           {
-            id:    "program.enrollments.payment_status",
-            name:  "program.enrollments.payment_status",
+            id:    "program.courses.payment_status",
+            name:  "program.courses.payment_status",
             value: "Paid"
           }
         ])
@@ -277,8 +277,8 @@ describe("Specific email config", () => {
           const filters = getFilters(JSON.parse(queryFilters))
           assert.deepEqual(filters, [
             {
-              id:    "program.enrollments.payment_status",
-              name:  "program.enrollments.payment_status",
+              id:    "program.courses.payment_status",
+              name:  "program.courses.payment_status",
               value: "Paid"
             }
           ])
@@ -344,18 +344,18 @@ describe("Specific email config", () => {
               "must": [
                 {
                   "nested": {
-                    "path": "program.enrollments",
+                    "path": "program.courses",
                     "filter": {
                       "bool": {
                         "must": [
                           {
                             "term": {
-                              "program.enrollments.course_title": "Digital Learning 100"
+                              "program.courses.course_title": "Digital Learning 100"
                             }
                           },
                           {
                             "range": {
-                              "program.enrollments.final_grade": {
+                              "program.courses.final_grade": {
                                 "gte": 0,
                                 "lte": 89
                               }
@@ -363,12 +363,12 @@ describe("Specific email config", () => {
                           },
                           {
                             "term": {
-                              "program.enrollments.payment_status": "Paid"
+                              "program.courses.payment_status": "Paid"
                             }
                           },
                           {
                             "term": {
-                              "program.enrollments.semester": "2016 - Summer"
+                              "program.courses.semester": "2016 - Summer"
                             }
                           }
                         ]
@@ -381,10 +381,10 @@ describe("Specific email config", () => {
           }`
           const filters = findFilters(JSON.parse(query))
           assert.deepEqual(filters, [
-            { "program.enrollments.course_title": "Digital Learning 100" },
-            { "program.enrollments.final_grade": { gte: 0, lte: 89 } },
-            { "program.enrollments.payment_status": "Paid" },
-            { "program.enrollments.semester": "2016 - Summer" }
+            { "program.courses.course_title": "Digital Learning 100" },
+            { "program.courses.final_grade": { gte: 0, lte: 89 } },
+            { "program.courses.payment_status": "Paid" },
+            { "program.courses.semester": "2016 - Summer" }
           ])
         })
 
@@ -394,13 +394,13 @@ describe("Specific email config", () => {
               "must": [
                 {
                   "nested": {
-                    "path": "program.enrollments",
+                    "path": "program.courses",
                     "filter": {
                       "bool": {
                         "must": [
                           {
                             "term": {
-                              "program.enrollments.course_title": "Digital Learning 100"
+                              "program.courses.course_title": "Digital Learning 100"
                             }
                           }
                         ]
@@ -438,7 +438,7 @@ describe("Specific email config", () => {
           }`
           const filters = findFilters(JSON.parse(query))
           assert.deepEqual(filters, [
-            { "program.enrollments.course_title": "Digital Learning 100" },
+            { "program.courses.course_title": "Digital Learning 100" },
             { "profile.education.degree_name": "b" },
             { "profile.work_history.company_name": "Volvo" }
           ])
