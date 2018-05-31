@@ -11,7 +11,29 @@
 
   .photo-dropzone {
     font-size: 20px;
-    font-weight: 300;
+    font-weight: 400;
+
+    .desktop-upload-message, .mobile-upload-message {
+      font-size: 17px;
+      width: 85%;
+      margin: 0 auto;
+      text-align: center;
+      color: $font-black;
+    }
+
+    .mobile-upload-message  {
+      display: none;
+    }
+
+    @include breakpoint(mobile) {
+      .desktop-upload-message {
+        display: none;
+      }
+
+      .mobile-upload-message  {
+        display: block;
+      }
+    }
   }
 
   .photo-active-item {
@@ -25,6 +47,11 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
+
+    @include breakpoint(mobile) {
+      border: none;
+      border-radius: 0;
+    }
   }
 
   .spinner {

@@ -600,3 +600,17 @@ export const mapObj = R.curry((fn, obj) =>
  */
 export const wait = (millis: number): Promise<void> =>
   new Promise(resolve => setTimeout(resolve, millis))
+
+/**
+ * extract object from json
+ */
+export const findObjByName = (data: any, key: string) => {
+  if (typeof data === "object" && _.has((data: Object), key)) {
+    return [_.get(data, key)]
+  }
+  return _.flatMap(
+    (data: Array<*>),
+    (value: Object | Array<*>): Array<*> =>
+      typeof value === "object" ? findObjByName(value, key) : []
+  )
+}

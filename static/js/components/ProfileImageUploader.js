@@ -21,11 +21,14 @@ const dropZone = (startPhotoEdit, setPhotoError) => (
     accept="image/*"
     onDropRejected={() => setPhotoError("Please select a valid photo")}
   >
-    <div>Drag a photo here or click to select a photo.</div>
+    <div className="desktop-upload-message">
+      Drag a photo here or click to select a photo.
+    </div>
+    <div className="mobile-upload-message">Click to select a photo.</div>
   </Dropzone>
 )
 
-const uploaderBodyHeight = (): number => R.min(500, window.innerHeight / 2)
+const uploaderBodyHeight = (): number => R.min(500, window.innerHeight * 0.44)
 
 const imageError = err => <div className="img-error">{err}</div>
 

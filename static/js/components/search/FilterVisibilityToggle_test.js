@@ -25,7 +25,8 @@ describe("FilterVisibilityToggle", () => {
     props = {
       checkFilterVisibility: checkFilterVisibility,
       setFilterVisibility:   setFilterVisibility,
-      filterName:            filterName
+      filterName:            filterName,
+      disabled:              false
     }
   })
 
@@ -64,6 +65,23 @@ describe("FilterVisibilityToggle", () => {
     const wrapper = renderWrappedToggle(props, <div id="test">Test Text</div>)
     const icon = wrapper.find("i.material-icons")
     assert.lengthOf(icon, 0)
+  })
+
+  it("disables facet", () => {
+    sandbox.stub(FilterVisibilityToggle.prototype, "getResults").returns({
+      aggregations: {
+        test: {
+          doc_count: 10,
+          inner:     {
+            doc_count: 0
+          }
+        }
+      }
+    })
+    props.disabled = true
+    const wrapper = renderWrappedToggle(props, <div id="test">Test Text</div>)
+    const div = wrapper.find(".filter-visibility-toggle")
+    assert.isTrue(div.hasClass("disabled"))
   })
 
   it("hides toggle icon when doc_count is 0", () => {
