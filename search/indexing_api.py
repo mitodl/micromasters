@@ -321,7 +321,7 @@ def serialize_public_enrolled_user(serialized_enrolled_user):
     )
     program['enrollments'] = [
         dict_with_keys(enrollment, ['course_title', 'semester'])
-        for enrollment in program['courses']
+        for enrollment in program['enrollments']
     ]
     program['courses'] = [
         dict_with_keys(enrollment, ['course_title', ])
