@@ -95,6 +95,7 @@ PUBLIC_ENROLLMENT_MAPPING = {
                     'enrollments': {
                         'type': 'nested',
                         'properties': {
+                            'semester': KEYWORD_TYPE,
                             'course_title': KEYWORD_TYPE,
                         }
                     },
@@ -190,6 +191,7 @@ PRIVATE_ENROLLMENT_MAPPING = {
                         'type': 'nested',
                         'properties': {
                             'final_grade': LONG_TYPE,
+                            'semester': KEYWORD_TYPE,
                             'course_title': KEYWORD_TYPE,
                             'status': KEYWORD_TYPE,
                             'payment_status': KEYWORD_TYPE,
@@ -318,7 +320,7 @@ def serialize_public_enrolled_user(serialized_enrolled_user):
         ['id', 'enrollments', 'courses', 'is_learner', 'total_courses', 'course_runs']
     )
     program['enrollments'] = [
-        dict_with_keys(enrollment, ['course_title', ])
+        dict_with_keys(enrollment, ['course_title', 'semester'])
         for enrollment in program['courses']
     ]
     program['courses'] = [

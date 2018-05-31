@@ -582,7 +582,8 @@ class SerializerTests(ESTestCase):
             'program': {
                 'id': program_enrollment.program.id,
                 'enrollments': [{
-                    'course_title': enrollment['course_title']
+                    'course_title': enrollment['course_title'],
+                    'semester': enrollment['semester']
                 } for enrollment in serialized['program']['courses']],
                 'courses': [{
                     'course_title': enrollment['course_title']
