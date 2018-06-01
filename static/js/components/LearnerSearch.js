@@ -271,7 +271,7 @@ export default class LearnerSearch extends SearchkitComponent {
           title="Course"
           filterName="courses"
           stayVisibleIfFilterApplied="final-grade"
-          disabled={this.isFilterSelected("program.enrollments.semester")}
+          disabled={this.isFilterSelected("program.course_runs.semester")}
         >
           <NestedAggregatingMenuFilter
             field="program.courses.course_title"
@@ -321,7 +321,7 @@ export default class LearnerSearch extends SearchkitComponent {
           {...this.props}
           filterName="semester"
           title="Enrolled Semester"
-          disabled={this.isFilterSelected("program.enrollments.course_title")}
+          disabled={this.isFilterSelected("program.courses.course_title")}
         >
           <RefinementListFilter
             id="semester"
