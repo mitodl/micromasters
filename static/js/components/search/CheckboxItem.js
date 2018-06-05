@@ -26,7 +26,9 @@ export default class CheckboxItem extends React.Component {
           readOnly
           className={`${optionClassName} checkbox`}
         />
-        <div className={`${optionClassName}__text`}>{label || "N/A"}</div>
+        <div className={`${optionClassName}__text facet-text`}>
+          {label || "N/A"}
+        </div>
         <div className={`${optionClassName}__count`}>{count}</div>
       </div>
     )
