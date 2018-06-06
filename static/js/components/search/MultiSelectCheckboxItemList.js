@@ -49,7 +49,7 @@ export default class MultiSelectCheckboxItemList extends SearchkitComponent {
   }
 
   allItemsSelected = () => {
-    const { selectedItems, items } = this.props
+    const { selectedItems = [], items = [] } = this.props
     return selectedItems.length === items.length
   }
 
