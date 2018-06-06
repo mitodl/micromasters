@@ -48,12 +48,17 @@ export default class MultiSelectCheckboxItemList extends SearchkitComponent {
     }
   }
 
+  allItemsSelected = () => {
+    const { selectedItems, items } = this.props
+    return selectedItems.length === items.length
+  }
+
   allDocCount = () => {
     return this.getHitsCount()
   }
 
   rowClickHandler = () => {
-    if (this.state.allOptionClass) {
+    if (this.state.allOptionClass && this.allItemsSelected()) {
       this.checkBoxStateChangeHandler(false)
     } else {
       this.checkBoxStateChangeHandler(true)
@@ -95,10 +100,11 @@ export default class MultiSelectCheckboxItemList extends SearchkitComponent {
     })
   }
 
-  allAction = () => (
+  allAction = (itemsSelected: boolean) => (
     <div
-      className={`sk-item-list-option sk-item-list__item ${this.state
-        .allOptionClass}`}
+      className={`sk-item-list-option sk-item-list__item ${itemsSelected
+        ? this.state.allOptionClass
+        : ""}`}
       key="select-all-items"
       onClick={this.rowClickHandler}
     >
@@ -106,7 +112,7 @@ export default class MultiSelectCheckboxItemList extends SearchkitComponent {
         type="checkbox"
         data-qa="checkbox"
         className="sk-item-list-option checkbox"
-        checked={this.state.allOptionClass}
+        checked={this.state.allOptionClass && itemsSelected}
       />
       <div className="sk-item-list-option__text facet-text">Select All</div>
       <div className="sk-item-list-option__count">{this.allDocCount()}</div>
@@ -129,7 +135,7 @@ export default class MultiSelectCheckboxItemList extends SearchkitComponent {
           .mix(className)
           .state({ disabled })}
       >
-        {[this.allAction(), ...this.itemComponentList()]}
+        {[this.allAction(this.allItemsSelected()), ...this.itemComponentList()]}
       </div>
     )
   }
