@@ -1,14 +1,14 @@
 /* global SETTINGS: false */
 import React from "react"
-import { shallow } from "enzyme"
+import { mount } from "enzyme"
 import { assert } from "chai"
 import sinon from "sinon"
+import { SearchkitManager, SearchkitProvider } from "searchkit"
 
 import MultiSelectCheckboxItemList from "./MultiSelectCheckboxItemList"
 
 describe("MultiSelectCheckboxItemList", () => {
-  const setItemsStub = sinon.stub()
-  const countFormatterStub = sinon.stub()
+  let searchKit
   const items = [
     {
       label:     "Item 1",
@@ -22,40 +22,63 @@ describe("MultiSelectCheckboxItemList", () => {
     }
   ]
   const props = {
-    mod:            "sk-item-list",
-    disabled:       false,
-    className:      "test",
-    countFormatter: countFormatterStub,
-    setItems:       setItemsStub,
-    items:          items
+    mod:         "sk-item-list",
+    disabled:    false,
+    className:   "test",
+    setItems:    sinon.stub(),
+    items:       items,
+    toggleItem:  sinon.stub(),
+    translate:   sinon.stub(),
+    multiselect: true
   }
 
+  beforeEach(() => {
+    searchKit = new SearchkitManager()
+  })
+
   afterEach(() => {
-    setItemsStub.reset()
-    countFormatterStub.reset()
+    props.setItems.reset()
+    props.toggleItem.reset()
+    props.translate.reset()
   })
 
   const renderList = (props = {}) =>
-    shallow(<MultiSelectCheckboxItemList {...props} />)
+    mount(
+      <SearchkitProvider searchkit={searchKit}>
+        <MultiSelectCheckboxItemList {...props} />
+      </SearchkitProvider>
+    )
 
   it("renders select all", () => {
     const wrapper = renderList(props)
-    const selectAllBox = wrapper.find(".sk-item-list-option__text").childAt(0)
+    const selectAllBox = wrapper.find(".facet-text").first()
     assert.equal(selectAllBox.text(), "Select All")
-    assert(countFormatterStub.called, "count wasn't rendered")
+    assert(props.translate.called, "translate not called")
   })
 
   it("should call setItems", () => {
     const wrapper = renderList(props)
-    const selectAllBox = wrapper.find(".checkbox")
-    const event = { target: { name: "click", checked: true } }
-    selectAllBox.simulate("change", event)
-    assert(setItemsStub.called, "items are selected")
+    const selectAllBox = wrapper.find(".sk-item-list__item").first()
+    selectAllBox.simulate("click")
+    assert(props.setItems.called, "items are selected")
+  })
+
+  it("should call toggleItem", () => {
+    const wrapper = renderList(props)
+    const selectAllBox = wrapper.find(".sk-item-list__item").last()
+    selectAllBox.simulate("click")
+    assert(props.toggleItem.called, "toggleItem not called")
   })
 
   it("render items", () => {
     const wrapper = renderList(props)
     const options = wrapper.find(".sk-item-list").children()
     assert.equal(options.length, items.length + 1) // 2 items and select all box
+  })
+
+  it("render count", () => {
+    const wrapper = renderList(props)
+    const count = wrapper.find(".sk-item-list-option__count").last()
+    assert.equal(count.text(), "4")
   })
 })

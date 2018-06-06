@@ -24,10 +24,11 @@ export default class MultiSelectCheckboxItemList extends SearchkitComponent {
   }
 
   static defaultProps: any = {
-    mod:         "sk-item-list",
-    showCount:   true,
-    multiselect: true,
-    selectItems: []
+    itemComponent: CheckboxItem,
+    mod:           "sk-item-list",
+    showCount:     true,
+    multiselect:   true,
+    selectItems:   []
   }
 
   constructor() {
@@ -82,7 +83,7 @@ export default class MultiSelectCheckboxItemList extends SearchkitComponent {
     const toggleFunc = multiselect ? toggleItem : key => setItems([key])
 
     return _.map(items, option => {
-      const label: string = option.title || option.label || option.key || "N/A"
+      const label: string = option.title || option.label || option.key
       const props = {
         label:   translate(label),
         onClick: () => toggleFunc(option.key),
