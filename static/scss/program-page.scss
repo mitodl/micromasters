@@ -99,7 +99,7 @@
         }
 
         a.tab-link::selection {
-          background: transparent;
+          background: transparent !important;
         }
 
         a.active-tab {
