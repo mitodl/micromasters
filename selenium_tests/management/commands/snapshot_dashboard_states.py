@@ -190,6 +190,15 @@ class DashboardStates:  # pylint: disable=too-many-locals
         course = Course.objects.get(title='Analog Learning 200')
         CourseRunFactory.create(course=course)
 
+    def failed_missed_payment_can_reenroll(self):
+        """Failed User has missed payment but they can re-enroll"""
+        call_command(
+            "alter_data", 'set_to_failed', '--username', 'staff',
+            '--course-title', 'Analog Learning 200', '--grade', '0', '--audit'
+        )
+        course = Course.objects.get(title='Analog Learning 200')
+        CourseRunFactory.create(course=course)
+
     def with_coupon(self, amount_type, is_program, is_free):
         """Add a course-level coupon"""
         # Set up financial aid and use Digital Learning since coupons are only allowed for financial aid programs
@@ -444,6 +453,7 @@ class DashboardStates:  # pylint: disable=too-many-locals
         yield (self.pending_enrollment, 'pending_enrollment')
         yield (self.contact_course, 'contact_course')
         yield (self.missed_payment_can_reenroll, 'missed_payment_can_reenroll')
+        yield (self.failed_missed_payment_can_reenroll, 'failed_missed_payment_can_reenroll')
 
         # Financial aid statuses
         for status in FinancialAidStatus.ALL_STATUSES:

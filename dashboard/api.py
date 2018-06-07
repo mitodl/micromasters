@@ -326,7 +326,34 @@ def get_info_for_course(course, mmtrack):
     return course_data
 
 
-def get_status_for_courserun(course_run, mmtrack):
+def get_final_grade(mmtrack, course_run):
+    """
+    returns final grade if available otherwise freezes the grade.
+
+    Args:
+        course_run (CourseRun): a course run
+        mmtrack (dashboard.utils.MMTrack): a instance of all user information about a program
+
+    Returns:
+        final_grade: an object representing the FinalGrade
+    """
+    try:
+        final_grade = mmtrack.get_required_final_grade(course_run.edx_course_key)
+    except FinalGrade.DoesNotExist:
+        # this is a very special case that happens if the user has logged in
+        # for the first time after we have already frozen the final grades
+        log.warning(
+            'The user "%s" doesn\'t have a final grade for the course run "%s" '
+            'but the course run has already been frozen. Trying to freeze the user now.',
+            mmtrack.user.username,
+            course_run.edx_course_key,
+        )
+        final_grade = api.freeze_user_final_grade(mmtrack.user, course_run, raise_on_exception=True)
+
+    return final_grade
+
+
+def get_status_for_courserun(course_run, mmtrack):  # pylint: disable=too-many-return-statements 
     """
     Checks the status of a course run for a user given her enrollments
 
@@ -342,7 +369,11 @@ def get_status_for_courserun(course_run, mmtrack):
         return CourseRunUserStatus(CourseRunStatus.CHECK_IF_PASSED, course_run)
     elif mmtrack.has_final_grade(course_run.edx_course_key):
         if course_run.is_upgradable:
-            return CourseRunUserStatus(CourseRunStatus.CAN_UPGRADE, course_run)
+            final_grade = get_final_grade(mmtrack, course_run)
+            if final_grade.passed:
+                return CourseRunUserStatus(CourseRunStatus.CAN_UPGRADE, course_run)
+            else:
+                return CourseRunUserStatus(CourseRunStatus.NOT_PASSED, course_run)
         else:
             return CourseRunUserStatus(CourseRunStatus.MISSED_DEADLINE, course_run)
     elif not mmtrack.is_enrolled(course_run.edx_course_key):
@@ -384,18 +415,7 @@ def get_status_for_courserun(course_run, mmtrack):
                 if not course_run.has_frozen_grades:
                     status = CourseRunStatus.CAN_UPGRADE
                 else:
-                    try:
-                        final_grade = mmtrack.get_required_final_grade(course_run.edx_course_key)
-                    except FinalGrade.DoesNotExist:
-                        # this is a very special case that happens if the user has logged in
-                        # for the first time after we have already frozen the final grades
-                        log.warning(
-                            'The user "%s" doesn\'t have a final grade for the course run "%s" '
-                            'but the course run has already been frozen. Trying to freeze the user now.',
-                            mmtrack.user.username,
-                            course_run.edx_course_key,
-                        )
-                        final_grade = api.freeze_user_final_grade(mmtrack.user, course_run, raise_on_exception=True)
+                    final_grade = get_final_grade(mmtrack, course_run)
                     if final_grade.passed:
                         status = CourseRunStatus.CAN_UPGRADE
                     else:

@@ -432,22 +432,18 @@ class CourseRunTest(CourseTests):
 
     @patch('courses.models.CourseRun.is_upgradable', new_callable=PropertyMock)
     @ddt.data(
-        (True, False, None, api.CourseRunStatus.CHECK_IF_PASSED),
-        (False, True, True, api.CourseRunStatus.CAN_UPGRADE),
-        (False, True, False, api.CourseRunStatus.MISSED_DEADLINE),
+        (True, False, None, False, 0.1, api.CourseRunStatus.CHECK_IF_PASSED),
+        (False, True, True, True, 1.0, api.CourseRunStatus.CAN_UPGRADE),
+        (False, True, False, False, 0.0, api.CourseRunStatus.MISSED_DEADLINE),
+        (False, True, True, False, 0.0, api.CourseRunStatus.NOT_PASSED),
     )
     @ddt.unpack
     def test_has_final_grade_taken_before_anything_else(
-            self, has_paid_froz, has_frozen, is_upgradable, status, mock_is_upgradable):
+            self, has_paid_froz, has_frozen, is_upgradable, is_passed, grade, status, mock_is_upgradable):
         """
         Tests that if an user has a final grade for the course,
         that is taken in account before checking anything else
         """
-        self.mmtrack.configure_mock(**{
-            'is_enrolled.return_value': True,
-            'has_paid_final_grade.return_value': has_paid_froz,
-            'has_final_grade.return_value': has_frozen,
-        })
         mock_is_upgradable.return_value = is_upgradable
         # create a run that is past
         crun = self.create_run(
@@ -457,6 +453,20 @@ class CourseRunTest(CourseTests):
             enr_end=self.now-timedelta(weeks=53),
             edx_key="course-v1:edX+DemoX+Demo_Course"
         )
+        final_grade = FinalGrade.objects.create(
+            user=self.user,
+            course_run=crun,
+            grade=grade,
+            passed=is_passed,
+            status=FinalGradeStatus.COMPLETE,
+            course_run_paid_on_edx=has_paid_froz
+        )
+        self.mmtrack.configure_mock(**{
+            'is_enrolled.return_value': True,
+            'has_paid_final_grade.return_value': has_paid_froz,
+            'has_final_grade.return_value': has_frozen,
+            'get_required_final_grade.return_value': final_grade,
+        })
         run_status = api.get_status_for_courserun(crun, self.mmtrack)
         assert run_status.status == status
         assert run_status.course_run == crun
