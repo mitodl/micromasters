@@ -236,9 +236,38 @@
       }
     }
 
+    h2, h3, h4 {
+      line-height: 1.3;
+
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+
+    h2 {
+      color: $font-black;
+      font-size: 23px;
+      font-weight: 500;
+      margin: 35px 0 26px;
+    }
+
+    h3 {
+      color: $font-black;
+      font-size: 20px;
+      font-weight: 500;
+      margin: 35px 0 23px;
+    }
+
+    h4 {
+      color: $font-black;
+      font-weight: 500;
+      font-size: 17px;
+      margin: 33px 0 15px 0;;
+    }
+
     p {
       font-size: 16px;
-      color: rgba(0,0,0,.87);
+      color: $font-black;
       margin-bottom: 24px;
       line-height: 1.4em;
     }
@@ -246,20 +275,14 @@
     li {
       font-size: 16px;
       line-height: 1.4em;
-      margin-bottom: 20px;
-      color: rgba(0,0,0,.7);
-    }
-
-    h4 {
-      margin-top: 44px;
-      margin-bottom: 36px;
-    }
-
-    h3 {
+      margin-bottom: 11px;
       color: $font-black;
-      font-size: 20px;
-      font-weight: 500;
     }
+
+    ul {
+      margin-bottom: 33px;
+    }
+
   }
 
   .faqs {

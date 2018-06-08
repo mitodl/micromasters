@@ -46,6 +46,7 @@ p {
 
 a {
   color: $link-text;
+  font-weight: inherit;
 }
 
 a:focus, a:hover {
