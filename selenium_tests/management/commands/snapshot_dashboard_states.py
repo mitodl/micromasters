@@ -190,7 +190,7 @@ class DashboardStates:  # pylint: disable=too-many-locals
         course = Course.objects.get(title='Analog Learning 200')
         CourseRunFactory.create(course=course)
 
-    def failed_missed_payment_can_reenroll(self):
+    def failed_run_missed_payment_can_reenroll(self):
         """Failed User has missed payment but they can re-enroll"""
         call_command(
             "alter_data", 'set_to_failed', '--username', 'staff',
@@ -453,7 +453,7 @@ class DashboardStates:  # pylint: disable=too-many-locals
         yield (self.pending_enrollment, 'pending_enrollment')
         yield (self.contact_course, 'contact_course')
         yield (self.missed_payment_can_reenroll, 'missed_payment_can_reenroll')
-        yield (self.failed_missed_payment_can_reenroll, 'failed_missed_payment_can_reenroll')
+        yield (self.failed_run_missed_payment_can_reenroll, 'failed_run_missed_payment_can_reenroll')
 
         # Financial aid statuses
         for status in FinancialAidStatus.ALL_STATUSES:
