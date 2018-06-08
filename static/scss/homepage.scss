@@ -18,6 +18,10 @@ body.app-media {
   min-height: 0;
   padding: 9px 27px 8px 33px;
 
+  @include breakpoint(phone) {
+    padding: 9px 25px 8px 25px;
+  }
+
   .navbar-header {
     padding: 0;
 
@@ -97,13 +101,15 @@ body.app-media {
         margin: 20px auto 4px;
         width: 100%;
 
-        a.button-signup {
-          width: 45%;
+        .button-signup {
+          box-sizing: border-box;
+          width: 48%;
         }
 
-        a.button-login {
-          width: 47%;
-          margin-right: 5%;
+        .button-login {
+          box-sizing: border-box;
+          width: 48%;
+          margin-right: 2%;
           border-width: 1px;
         }
       }
