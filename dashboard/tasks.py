@@ -90,3 +90,8 @@ def batch_update_user_data_subtasks(students, expiration_timestamp):
         # if we are past the expiration time we should stop any extra work
         if expiration > now_in_utc():
             refresh_user_data(user_id)
+
+
+@app.task
+def log_thing():
+    log.error("Testing: log from celery task")
