@@ -1,6 +1,7 @@
 """
 Page models for the CMS
 """
+import logging
 import json
 
 from django.conf import settings
@@ -24,6 +25,9 @@ from micromasters.utils import webpack_dev_server_host
 from profiles.api import get_social_username
 from roles.models import Instructor, Staff
 from cms.util import get_coupon_code
+
+
+log = logging.getLogger(__name__)
 
 
 class HomePage(Page):
@@ -66,6 +70,10 @@ class HomePage(Page):
         context["ga_tracking_id"] = ""
         context["coupon_code"] = get_coupon_code(request)
 
+        log.error("Testing: Visiting home page")
+        from dashboard.tasks import log_thing
+
+        log_thing.delay()
         return context
 
 
