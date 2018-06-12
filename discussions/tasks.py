@@ -1,8 +1,8 @@
 """Tasks for profiles"""
 from datetime import timedelta
 from itertools import takewhile
+import logging
 
-from celery.utils.log import get_task_logger
 from django.conf import settings
 
 from discussions import api
@@ -19,7 +19,7 @@ SYNC_MEMBERSHIPS_LOCK_NAME = 'discussions.tasks.sync_memberships_lock'
 # this is a trade off of letting it run longer vs. having a stale view
 SYNC_MEMBERSHIPS_LOCK_TTL_SECONDS = 60 * 2 - 5
 
-log = get_task_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 @app.task()

@@ -1,7 +1,7 @@
 Django==2.0.2
 Pillow==3.4.2
 boto==2.39.0
-celery==4.0.2
+celery==4.2.0
 certifi==2018.1.18
 dj-database-url==0.3.0
 dj-static==0.0.6
@@ -33,7 +33,7 @@ psycopg2==2.7.3.2
 pycountry==16.11.27.1
 pysftp==0.2.9
 python-dateutil
-raven==6.6.0
+raven==6.9.0
 redis==2.10.5
 requests
 social-auth-app-django==2.1.0
