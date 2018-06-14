@@ -106,6 +106,47 @@ class ExamAuthorizationApiTests(TestCase):
                 course_run_paid_on_edx=False,
             )
 
+    def test_exam_authorization_for_inactive_user(self):
+        """
+        test exam_authorization when inactive user passed and paid for course.
+        """
+        with mute_signals(post_save):
+            profile = ProfileFactory.create()
+
+        user = profile.user
+        user.is_active = False
+        user.save()
+        with mute_signals(post_save):
+            CachedEnrollmentFactory.create(user=user, course_run=self.course_run)
+
+        with mute_signals(post_save):
+            FinalGradeFactory.create(
+                user=user,
+                course_run=self.course_run,
+                passed=True,
+                course_run_paid_on_edx=False,
+            )
+        create_order(user, self.course_run)
+        mmtrack = get_mmtrack(user, self.program)
+        self.assertTrue(mmtrack.has_paid(self.course_run.edx_course_key))
+        self.assertTrue(mmtrack.has_passed_course(self.course_run.edx_course_key))
+
+        # Neither user has exam profile nor authorization.
+        assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False
+        assert ExamAuthorization.objects.filter(
+            user=mmtrack.user,
+            course=self.course_run.course
+        ).exists() is False
+
+        authorize_for_exam_run(mmtrack, self.course_run, self.exam_run)
+
+        # Assert user has exam profile and authorization.
+        assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False
+        assert ExamAuthorization.objects.filter(
+            user=mmtrack.user,
+            course=self.course_run.course
+        ).exists() is False
+
     def test_exam_authorization(self):
         """
         test exam_authorization when user passed and paid for course.
