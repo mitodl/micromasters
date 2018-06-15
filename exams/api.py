@@ -76,13 +76,12 @@ def authorize_for_exam_run(mmtrack, course_run, exam_run):
         exam_run (exams.models.ExamRun): the ExamRun we're authorizing for
     """
     if not mmtrack.user.is_active:
-        log.info(
-            '[Exam authorization] Inactive user "%s" cannot be authorized for the exam for course id "%s"',
-            mmtrack.user.username,
-            course_run.edx_course_key
+        raise ExamAuthorizationException(
+            "Inactive user '{}' cannot be authorized for the exam for course id '{}'".format(
+                mmtrack.user.username,
+                course_run.course
+            )
         )
-        return
-
     if course_run.course != exam_run.course:
         raise ExamAuthorizationException(
             "Course '{}' on CourseRun doesn't match Course '{}' on ExamRun".format(course_run.course, exam_run.course)
