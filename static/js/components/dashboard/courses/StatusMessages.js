@@ -275,24 +275,20 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
           messageBox["message"] =
             "The edX course is complete, but you need to pass the final exam."
         }
-        messages.push(
-          S.maybe(
-            messageBox,
-            () => ({
-              message: (
-                <span>
-                  The edX course is complete, but you need to pass the final
-                  exam.
-                  {" If you want to re-take the course you can "}
-                  <a onClick={() => setShowExpandedCourseStatus(course.id)}>
-                    re-enroll.
-                  </a>
-                </span>
-              )
-            }),
-            futureEnrollableRun(course)
-          )
-        )
+        messages.push(messageBox)
+
+        if(S.isJust(futureEnrollableRun(course))){
+          messages.push({
+            message: (
+              <span>
+                {" If you want to re-take the course you can "}
+                <a onClick={() => setShowExpandedCourseStatus(course.id)}>
+                  re-enroll.
+                </a>
+              </span>
+            )
+          })
+        }
       } else if (!course.certificate_url) {
         messages.push({
           message: "You passed this course."

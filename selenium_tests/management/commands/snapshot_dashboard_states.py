@@ -114,6 +114,7 @@ class DashboardStates:  # pylint: disable=too-many-locals
             course=course,
             exam_run=exam_run,
             passed=exam_passed,
+            percentage_grade=0.8 if exam_passed else 0.3
         )
         if new_offering:
             CourseRunFactory.create(course=course)
@@ -146,6 +147,7 @@ class DashboardStates:  # pylint: disable=too-many-locals
                 course=course,
                 exam_run=exam_run,
                 passed=False,
+                percentage_grade=0.3
             )
 
     def with_prev_passed_run(self):
