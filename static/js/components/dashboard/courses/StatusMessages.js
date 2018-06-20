@@ -281,7 +281,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
           messages.push({
             message: (
               <span>
-                {" If you want to re-take the course you can "}
+                {"If you want to re-take the course you can "}
                 <a onClick={() => setShowExpandedCourseStatus(course.id)}>
                   re-enroll.
                 </a>

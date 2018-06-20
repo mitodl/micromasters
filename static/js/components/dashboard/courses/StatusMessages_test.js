@@ -387,6 +387,26 @@ describe("Course Status Messages", () => {
         ])
       })
 
+      it("should ask to pay and schedule another exam even when there is another run", () => {
+        course.proctorate_exams_grades = [makeProctoredExamResult()]
+        course.proctorate_exams_grades[0].passed = false
+        course.can_schedule_exam = true
+        course.has_to_pay = true
+        const messages = calculateMessages(calculateMessagesProps).value
+        assert.deepEqual(messages[0],
+          {
+            message:
+              "You did not pass the exam. If you want to re-take the exam, you need to pay again.",
+            action: "course action was called"
+          }
+        )
+        const mounted = shallow(messages[1]['message'])
+        assert.equal(
+          mounted.text().trim(),
+          "If you want to re-take the course you can re-enroll."
+        )
+      })
+      
       it("should ask to pay and schedule another exam", () => {
         course.runs = [course.runs[0]]
         course.proctorate_exams_grades = [makeProctoredExamResult()]
@@ -461,12 +481,13 @@ describe("Course Status Messages", () => {
 
       it("should show un-expanded message", () => {
         // this component returns a react component as its message
-        const [{ message }] = calculateMessages(calculateMessagesProps).value
-        const mounted = shallow(message)
+        const messages = calculateMessages(calculateMessagesProps).value
+        assert.equal(messages.length, 2)
+        assert.equal(messages[0]['message'], 'The edX course is complete, but you need to pass the final exam.')
+        const mounted = shallow(messages[1]['message'])
         assert.equal(
           mounted.text().trim(),
-          "The edX course is complete, but you need to pass the final exam. " +
-            "If you want to re-take the course you can re-enroll."
+          "If you want to re-take the course you can re-enroll."
         )
         mounted.find("a").simulate("click")
         assert(
@@ -479,8 +500,8 @@ describe("Course Status Messages", () => {
       it("should include an expanded message, if the expanded status set includes the course id", () => {
         calculateMessagesProps.expandedStatuses.add(course.id)
         const messages = calculateMessages(calculateMessagesProps).value
-        assert.equal(messages.length, 2)
-        assert.deepEqual(messages[1], {
+        assert.equal(messages.length, 3)
+        assert.deepEqual(messages[2], {
           message: `Next course starts ${formatDate(
             course.runs[1].course_start_date
           )}.`,
