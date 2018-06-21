@@ -277,7 +277,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
         }
         messages.push(messageBox)
 
-        if(S.isJust(futureEnrollableRun(course))){
+        if (S.isJust(futureEnrollableRun(course))) {
           messages.push({
             message: (
               <span>

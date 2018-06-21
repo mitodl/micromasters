@@ -393,20 +393,18 @@ describe("Course Status Messages", () => {
         course.can_schedule_exam = true
         course.has_to_pay = true
         const messages = calculateMessages(calculateMessagesProps).value
-        assert.deepEqual(messages[0],
-          {
-            message:
-              "You did not pass the exam. If you want to re-take the exam, you need to pay again.",
-            action: "course action was called"
-          }
-        )
-        const mounted = shallow(messages[1]['message'])
+        assert.deepEqual(messages[0], {
+          message:
+            "You did not pass the exam. If you want to re-take the exam, you need to pay again.",
+          action: "course action was called"
+        })
+        const mounted = shallow(messages[1]["message"])
         assert.equal(
           mounted.text().trim(),
           "If you want to re-take the course you can re-enroll."
         )
       })
-      
+
       it("should ask to pay and schedule another exam", () => {
         course.runs = [course.runs[0]]
         course.proctorate_exams_grades = [makeProctoredExamResult()]
@@ -483,8 +481,11 @@ describe("Course Status Messages", () => {
         // this component returns a react component as its message
         const messages = calculateMessages(calculateMessagesProps).value
         assert.equal(messages.length, 2)
-        assert.equal(messages[0]['message'], 'The edX course is complete, but you need to pass the final exam.')
-        const mounted = shallow(messages[1]['message'])
+        assert.equal(
+          messages[0]["message"],
+          "The edX course is complete, but you need to pass the final exam."
+        )
+        const mounted = shallow(messages[1]["message"])
         assert.equal(
           mounted.text().trim(),
           "If you want to re-take the course you can re-enroll."
