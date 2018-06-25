@@ -22,18 +22,19 @@ import {
   STATUS_CAN_UPGRADE,
   COURSE_ACTION_CALCULATE_PRICE,
   DASHBOARD_FORMAT,
-  COURSE_DEADLINE_FORMAT, STATUS_CURRENTLY_ENROLLED
+  COURSE_DEADLINE_FORMAT,
+  STATUS_CURRENTLY_ENROLLED
 } from "../../../constants"
 import { S } from "../../../lib/sanctuary"
 import {
-  hasPaidForAnyCourseRun,
   courseUpcomingOrCurrent,
   isPassedOrMissedDeadline,
   hasFailedCourseRun,
   futureEnrollableRun,
   isEnrollableRun,
   userIsEnrolled,
-  isOfferedInUncertainFuture, isPassedOrCurrentlyErolled, isPassedOrCurrentlyEnrolled
+  isOfferedInUncertainFuture,
+  isPassedOrCurrentlyEnrolled
 } from "./util"
 import {
   hasPassingExamGrade,
@@ -85,8 +86,6 @@ const messageForNotAttemptedExam = (course: Course) => {
   return message
 }
 
-
-
 // this calculates any status messages we'll need to show the user
 // we wrap the array of messages in a Maybe, so that we can indicate
 // the case where there are no messages cleanly
@@ -114,7 +113,6 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   )
 
   const messageForNoPassedExams = (course: Course) => {
-
     if (course.can_schedule_exam) {
       // if can schedule exam now
       if (course.has_to_pay) {
@@ -124,15 +122,19 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
           action: courseAction(firstRun, COURSE_ACTION_PAY)
         }
       } else {
-        return {"message":
-          "You did not pass the exam, but you can try again. " +
-          "Click above to reschedule an exam with Pearson."}
+        return {
+          message:
+            "You did not pass the exam, but you can try again. " +
+            "Click above to reschedule an exam with Pearson."
+        }
       }
     } else if (R.isEmpty(course.exams_schedulable_in_future)) {
       // no info about future exam runs
-      return {"message":
-        "You did not pass the exam. There are currently no exams " +
-        "available for scheduling. Please check back later."}
+      return {
+        message:
+          "You did not pass the exam. There are currently no exams " +
+          "available for scheduling. Please check back later."
+      }
     } else {
       // can not schedule now, but some time in the future
       if (course.has_to_pay) {
@@ -144,10 +146,12 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
           action: courseAction(firstRun, COURSE_ACTION_PAY)
         }
       } else {
-        return {"message":
-          "You did not pass the exam, but you can try again. " +
-          "You can sign up to re-take the exam starting on " +
-          `on ${formatDate(course.exams_schedulable_in_future[0])}.`}
+        return {
+          message:
+            "You did not pass the exam, but you can try again. " +
+            "You can sign up to re-take the exam starting on " +
+            `on ${formatDate(course.exams_schedulable_in_future[0])}.`
+        }
       }
     }
   }
@@ -217,7 +221,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     })
   }
   // course is passed and paid but no certificate yet
-  if (firstRun['status'] === 'passed' && paid && !course.certificate_url) {
+  if (firstRun["status"] === "passed" && paid && !course.certificate_url) {
     if (!exams || (exams && passedExam)) {
       messages.push({
         message: "You passed this course."
@@ -225,7 +229,12 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     }
   }
   // Course is running, user has already paid,
-  if (courseUpcomingOrCurrent(firstRun) && paid && userIsEnrolled(firstRun) && !exams) {
+  if (
+    courseUpcomingOrCurrent(firstRun) &&
+    paid &&
+    userIsEnrolled(firstRun) &&
+    !exams
+  ) {
     return S.Just(messages)
   }
 
@@ -283,16 +292,19 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
       }
       messages.push(messageBox)
 
-      if (firstRun['status'] !== STATUS_CURRENTLY_ENROLLED && S.isJust(futureEnrollableRun(course))) {
-      messages.push({
-        message: (
-          <span>
-            {"If you want to re-take the course you can "}
-            <a onClick={() => setShowExpandedCourseStatus(course.id)}>
-              re-enroll.
-            </a>
-          </span>
-        )
+      if (
+        firstRun["status"] !== STATUS_CURRENTLY_ENROLLED &&
+        S.isJust(futureEnrollableRun(course))
+      ) {
+        messages.push({
+          message: (
+            <span>
+              {"If you want to re-take the course you can "}
+              <a onClick={() => setShowExpandedCourseStatus(course.id)}>
+                re-enroll.
+              </a>
+            </span>
+          )
         })
       }
     } // If passed exam don't show message about exams
