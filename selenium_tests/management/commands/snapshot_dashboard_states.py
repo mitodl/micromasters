@@ -34,7 +34,7 @@ from ecommerce.models import (
 from exams.factories import ExamRunFactory, ExamProfileFactory, ExamAuthorizationFactory
 from financialaid.factories import FinancialAidFactory
 from financialaid.models import FinancialAidStatus
-from grades.factories import ProctoredExamGradeFactory, MicromastersCourseCertificateFactory
+from grades.factories import ProctoredExamGradeFactory, MicromastersCourseCertificateFactory, FinalGradeFactory
 from grades.models import FinalGrade, CourseRunGradingStatus, MicromastersCourseCertificate
 from profiles.api import get_social_username
 from roles.models import Role, Staff
@@ -83,22 +83,31 @@ class DashboardStates:  # pylint: disable=too-many-locals
         """
         self.user = user
 
-    def create_exams(self, edx_passed, exam_passed, new_offering, can_schedule, future_exam, need_to_pay):
+    def create_exams(self, current, edx_passed, exam_passed, new_offering, can_schedule, future_exam, need_to_pay):
         """Create an exam and mark it and the related course as passed or not passed"""
         # pylint: disable-msg=too-many-arguments
         self.make_fa_program_enrollment(FinancialAidStatus.AUTO_APPROVED)
-        if edx_passed:
-            call_command(
-                "alter_data", 'set_to_passed', '--username', 'staff',
-                '--course-title', 'Digital Learning 200', '--grade', '75',
-            )
-        else:
-            call_command(
-                "alter_data", 'set_to_failed', '--username', 'staff',
-                '--course-title', 'Digital Learning 200', '--grade', '45',
-            )
         course = Course.objects.get(title='Digital Learning 200')
-        course_run = course.courserun_set.first()
+        if current:
+            course_run = CourseRunFactory(course=course)
+            call_command(
+                "alter_data", 'set_to_enrolled', '--username', 'staff',
+                '--course-run-key', course_run.edx_course_key
+            )
+            FinalGradeFactory.create(user=self.user, course_run=course_run, grade=0.8 if edx_passed else 0.2, passed=True)
+        else:
+            if edx_passed:
+                call_command(
+                    "alter_data", 'set_to_passed', '--username', 'staff',
+                    '--course-title', 'Digital Learning 200', '--grade', '75',
+                )
+            else:
+                call_command(
+                    "alter_data", 'set_to_failed', '--username', 'staff',
+                    '--course-title', 'Digital Learning 200', '--grade', '45',
+                )
+            course_run = course.courserun_set.first()
+
         ExamProfileFactory.create(status='success', profile=self.user.profile)
         exam_run = ExamRunFactory.create(course=course, eligibility_past=True, scheduling_past=True)
         ExamAuthorizationFactory.create(
@@ -386,14 +395,15 @@ class DashboardStates:  # pylint: disable=too-many-locals
         )
 
         # Add scenarios for every combination of passed/failed course and exam
-        for tup in itertools.product([True, False], repeat=6):
-            edx_passed, exam_passed, is_offered, can_schedule, future_exam, has_to_pay = tup
+        for tup in itertools.product([True, False], repeat=7):
+            current, edx_passed, exam_passed, is_offered, can_schedule, future_exam, has_to_pay = tup
 
             yield (
                 bind_args(
-                    self.create_exams, edx_passed, exam_passed, is_offered, can_schedule, future_exam, has_to_pay
+                    self.create_exams, current, edx_passed, exam_passed, is_offered, can_schedule, future_exam, has_to_pay
                 ),
-                'create_exams_{edx_passed}_{exam_passed}{new_offering}{can_schedule}{future_exam}{has_to_pay}'.format(
+                'create_exams{current}_{edx_passed}_{exam_passed}{new_offering}{can_schedule}{future_exam}{has_to_pay}'.format(
+                    current='_current' if current else '',
                     edx_passed='edx_✔' if edx_passed else 'edx_✖',
                     exam_passed='exam_✔' if exam_passed else 'exam_✖',
                     new_offering='_with_new_offering' if is_offered else '',
