@@ -311,17 +311,6 @@ describe("Course Status Messages", () => {
         makeRunEnrolled(course.runs[0])
       })
 
-      it("should prompt to schedule exam", () => {
-        course.has_exam = true
-        course.can_schedule_exam = true
-
-        assertIsJust(calculateMessages(calculateMessagesProps), [
-          {
-            message: "Click above to schedule an exam with Pearson."
-          }
-        ])
-      })
-
       it("should prompt to sign up for future", () => {
         course.has_exam = true
         course.can_schedule_exam = false
@@ -349,6 +338,56 @@ describe("Course Status Messages", () => {
           {
             message:
               "There are currently no exams available for scheduling. Please check back later."
+          }
+        ])
+      })
+    })
+    describe("should prompt users who are paid and passed but course is in progress, if applicable", () => {
+      beforeEach(() => {
+        makeRunCurrent(course.runs[0])
+        makeRunPaid(course.runs[0])
+        makeRunPassed(course.runs[0])
+      })
+
+      it("should prompt to schedule exam", () => {
+        course.has_exam = true
+        course.can_schedule_exam = true
+
+        const messages = calculateMessages(calculateMessagesProps).value
+        assert.equal(messages.length, 2)
+        assert.equal(
+          messages[0]["message"],
+          "Click above to schedule an exam with Pearson."
+        )
+        const mounted = shallow(messages[1]["message"])
+        assert.equal(
+          mounted.text().trim(),
+          "If you want to re-take the course you can re-enroll."
+        )
+      })
+
+      it("should not prompt to schedule exam if already passed exam", () => {
+        course.has_exam = true
+        course.can_schedule_exam = true
+        course.proctorate_exams_grades = [makeProctoredExamResult()]
+        course.proctorate_exams_grades[0].passed = true
+
+        assertIsJust(calculateMessages(calculateMessagesProps), [
+          {
+            message: "You passed this course."
+          }
+        ])
+      })
+
+      it("should prompt when passed the course and exam", () => {
+        course.has_exam = true
+        course.can_schedule_exam = true
+        course.proctorate_exams_grades = [makeProctoredExamResult()]
+        course.proctorate_exams_grades[0].passed = true
+
+        assertIsJust(calculateMessages(calculateMessagesProps), [
+          {
+            message: "You passed this course."
           }
         ])
       })
