@@ -94,7 +94,9 @@ class DashboardStates:  # pylint: disable=too-many-locals
                 "alter_data", 'set_to_enrolled', '--username', 'staff',
                 '--course-run-key', course_run.edx_course_key
             )
-            FinalGradeFactory.create(user=self.user, course_run=course_run, grade=0.8 if edx_passed else 0.2, passed=True)
+            FinalGradeFactory.create(
+                user=self.user, course_run=course_run, grade=0.8 if edx_passed else 0.2, passed=True
+            )
         else:
             if edx_passed:
                 call_command(
@@ -400,9 +402,11 @@ class DashboardStates:  # pylint: disable=too-many-locals
 
             yield (
                 bind_args(
-                    self.create_exams, current, edx_passed, exam_passed, is_offered, can_schedule, future_exam, has_to_pay
+                    self.create_exams, current, edx_passed, exam_passed, is_offered,
+                    can_schedule, future_exam, has_to_pay
                 ),
-                'create_exams{current}_{edx_passed}_{exam_passed}{new_offering}{can_schedule}{future_exam}{has_to_pay}'.format(
+                'create_exams{current}_{edx_passed}_{exam_passed}{new_offering}'
+                '{can_schedule}{future_exam}{has_to_pay}'.format(
                     current='_current' if current else '',
                     edx_passed='edx_✔' if edx_passed else 'edx_✖',
                     exam_passed='exam_✔' if exam_passed else 'exam_✖',
