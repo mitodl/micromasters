@@ -77,6 +77,12 @@ export const isPassedOrMissedDeadline = R.compose(
   R.prop("status")
 )
 
+export const isPassedOrCurrentlyEnrolled = R.compose(
+  R.contains(R.__, [STATUS_PASSED, STATUS_CURRENTLY_ENROLLED]),
+  R.prop("status")
+)
+
+
 export const hasFailedCourseRun = R.compose(
   R.any(R.propEq("status", STATUS_NOT_PASSED)),
   R.prop("runs")

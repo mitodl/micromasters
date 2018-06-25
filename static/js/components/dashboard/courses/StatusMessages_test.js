@@ -368,7 +368,7 @@ describe("Course Status Messages", () => {
         assertIsJust(calculateMessages(calculateMessagesProps), [
           {
             message:
-              "The edX course is complete, but you need to pass the final exam."
+              "There are currently no exams available for scheduling. Please check back later."
           }
         ])
       })
@@ -483,7 +483,7 @@ describe("Course Status Messages", () => {
         assert.equal(messages.length, 2)
         assert.equal(
           messages[0]["message"],
-          "The edX course is complete, but you need to pass the final exam."
+          "There are currently no exams available for scheduling. Please check back later."
         )
         const mounted = shallow(messages[1]["message"])
         assert.equal(
