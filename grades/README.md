@@ -164,6 +164,10 @@ micromasters web application. This can be done with the management command: `adj
   4. Run the management command 
   
     python manage.py adjust_exam_grades_from_csv <temporary file location>
+    
+  Note: you will likely get a number of warnings about "User [x] does not have a passing exam grade for course [y]".
+  This is most likely because the exam results have not been released yet, and therefore aren't yet used for
+  calculating grades.  
 
 ### release exam grades to learners 
 
