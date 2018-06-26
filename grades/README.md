@@ -153,17 +153,17 @@ micromasters web application. This can be done with the management command: `adj
 
   1. Open a bash shell on a one-off Heroku dyno:
 
-    `heroku run bash --app <micromasters-production-app-name>`
+    heroku run bash --app <micromasters-production-app-name>
     
   2. Create a temporary file containing the csv data to import 
   
-    `cat >> <temporary file location>`
+    cat >> <temporary file location>`
     
   3. Paste in the csv data and close the file with `ctrl+d` 
   
   4. Run the management command 
   
-    `python manage.py adjust_exam_grades_from_csv <temporary file location>`
+    python manage.py adjust_exam_grades_from_csv <temporary file location>
 
 ### release exam grades to learners 
 
