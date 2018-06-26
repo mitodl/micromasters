@@ -78,7 +78,7 @@ export default class FinancialAidCard extends React.Component {
       return (
         <div className="documents-sent">
           <Icon name="done" key="icon" />
-            Documents mailed/faxed on{" "}
+            Documents mailed/faxed on {``}
           {moment(dateDocumentsSent).format(DASHBOARD_FORMAT)}. We will review
             your documents as soon as possible.
         </div>
