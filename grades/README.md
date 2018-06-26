@@ -149,7 +149,21 @@ we do this analysis _before_ importing the grades into the micromasters applicat
 ### load adjusted grades
 
 Once the we have verified the outcomes of the adjusted grades with the course team, we can import them into the 
-micromasters web application. This can be done with the following management command: `adjust_exam_grades_from_csv.py`
+micromasters web application. This can be done with the management command: `adjust_exam_grades_from_csv.py`
+
+  1. Open a bash shell on a one-off Heroku dyno:
+
+    `heroku run bash --app <micromasters-production-app-name>`
+    
+  2. Create a temporary file containing the csv data to import 
+  
+    `cat >> <temporary file location>`
+    
+  3. Paste in the csv data and close the file with `ctrl+d` 
+  
+  4. Run the management command 
+  
+    `python manage.py adjust_exam_grades_from_csv <temporary file location>`
 
 ### release exam grades to learners 
 
