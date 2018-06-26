@@ -167,7 +167,7 @@ micromasters web application. This can be done with the management command: `adj
     
   Note: you will likely get a number of warnings about "User [x] does not have a passing exam grade for course [y]".
   This is most likely because the exam results have not been released yet, and therefore aren't yet used for
-  calculating grades.  
+  calculating grades. Proceed to the next step: 
 
 ### release exam grades to learners 
 
