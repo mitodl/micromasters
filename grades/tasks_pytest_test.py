@@ -43,6 +43,15 @@ def test_generate_course_certificates():
         course_run__freeze_grade_date=week_ago,
         passed=True
     )
+    # 2nd course for user
+    course_2 = CourseFactory.create(program=program)
+    FinalGradeFactory.create(
+        course_run__course=course_2,
+        course_run__freeze_grade_date=week_ago,
+        passed=True,
+        user=passed_final_grades[1].user
+    )
+
     # Another non-fa course
     non_fa_course = CourseFactory.create(program__financial_aid_availability=False)
 
@@ -85,17 +94,19 @@ def test_generate_course_certificates():
         passed=False,
     )
     # course runs need to have CourseRunGradingStatus to get certificates
-    all_grades = FinalGrade.objects.filter(course_run__course__in=[course, course_with_exams, non_fa_course])
+    all_grades = FinalGrade.objects.filter(course_run__course__in=[course, course_2, course_with_exams, non_fa_course])
     for final_grade in all_grades:
         CourseRunGradingStatus.objects.create(course_run=final_grade.course_run, status='complete')
     tasks.generate_course_certificates_for_fa_students.delay()
 
     # Make sure that certificates were created only for passed and 'complete' status FinalGrades that either
     # had no course exam, or had a passed ProctoredExamGrade.
-    certificate_user_ids = set(MicromastersCourseCertificate.objects.values_list('user', flat=True))
-    assert len(certificate_user_ids) == 6
+    certificates = MicromastersCourseCertificate.objects.filter(course__in=[course, course_2, course_with_exams])
+    assert certificates.count() == 7
     expected_certificate_final_grades = passed_final_grades + final_grades_with_passed_exam
-    assert certificate_user_ids == set([final_grade.user.id for final_grade in expected_certificate_final_grades])
+    assert set(certificates.values_list('user', flat=True)) == set(
+        [final_grade.user.id for final_grade in expected_certificate_final_grades]
+    )
 
 
 def test_create_combined_final_grade(mocker):
