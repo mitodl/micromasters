@@ -48,6 +48,7 @@ import {
   canMessageLearnersProgram,
   hasStaffForProgram
 } from "../lib/roles"
+import CustomRefinementListFilter from "./search/CustomRefinementListFilter"
 
 export const makeTranslations: () => Object = () => {
   const translations = {}
@@ -323,7 +324,7 @@ export default class LearnerSearch extends SearchkitComponent {
           title="Enrolled Semester"
           disabled={this.isFilterSelected("program.courses.course_title")}
         >
-          <RefinementListFilter
+          <CustomRefinementListFilter
             id="semester"
             title=""
             fieldOptions={{

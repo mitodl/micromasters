@@ -10,7 +10,7 @@ import {
 import _ from "lodash"
 import { NestedAccessorMixin } from "./util"
 
-const REVERSE_NESTED_AGG_KEY = "top_level_doc_count"
+export const REVERSE_NESTED_AGG_KEY = "top_level_doc_count"
 const INNER_TERMS_AGG_KEY = "nested_terms"
 
 /**
@@ -34,7 +34,7 @@ function ReverseNestedTermsBucket(key, field, options) {
   return TermsBucket(key, field, options, reverseNestedAgg)
 }
 
-class NestedAggregatingFacetAccessor extends NestedAccessorMixin(
+export class NestedAggregatingFacetAccessor extends NestedAccessorMixin(
   FacetAccessor
 ) {
   /**
