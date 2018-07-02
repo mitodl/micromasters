@@ -241,6 +241,10 @@
     "SENTRY_DSN": {
       "description": "The connection settings for Sentry"
     },
+    "SESSION_ENGINE": {
+      "description": "Django session engine",
+      "required": true
+    },
     "STATUS_TOKEN": {
       "description": "Token to access the status API.",
       "required": true
