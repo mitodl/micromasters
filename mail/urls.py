@@ -9,6 +9,7 @@ from mail.views import (
     CourseTeamMailView,
     AutomaticEmailView,
     MailWebhookView,
+    UnSubWebhookView,
 )
 
 router = routers.DefaultRouter()
@@ -21,5 +22,6 @@ urlpatterns = [
     url(r'^api/v0/mail/course/(?P<course_id>[\d]+)/$', CourseTeamMailView.as_view(), name='course_team_mail_api'),
     url(r'^api/v0/mail/learner/(?P<student_id>[\d]+)/$', LearnerMailView.as_view(), name='learner_mail_api'),
     url(r'^api/v0/mail/webhook/$', MailWebhookView.as_view(), name='mailgun_webhook'),
+    url(r'^api/v0/mail/unsub_webhook/$', UnSubWebhookView.as_view(), name='mailgun_unsub_webhook'),
     url(r'^api/v0/mail/', include(router.urls)),
 ]

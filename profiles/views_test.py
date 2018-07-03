@@ -17,8 +17,9 @@ from rest_framework.fields import (
 )
 from rest_framework.serializers import ListSerializer
 from rest_framework.status import (
+    HTTP_200_OK,
     HTTP_405_METHOD_NOT_ALLOWED,
-    HTTP_404_NOT_FOUND
+    HTTP_404_NOT_FOUND,
 )
 from rest_framework.test import (
     APIClient,
@@ -307,7 +308,8 @@ class ProfilePATCHTests(ProfileBaseTests):
     """
     client_class = APIClient
 
-    def test_patch_own_profile(self):
+    @patch('mail.api.MailgunClient.toggle_mailing_list_subscription')
+    def test_patch_own_profile(self, mailgun_action):
         """
         A user PATCHes their own profile
         """
@@ -325,7 +327,8 @@ class ProfilePATCHTests(ProfileBaseTests):
         del patch_data['image']
 
         resp = self.client.patch(self.url1, content_type="application/json", data=json.dumps(patch_data))
-        assert resp.status_code == 200
+        assert resp.status_code == HTTP_200_OK
+        assert mailgun_action.called
 
         old_profile = Profile.objects.get(user__username=self.user1.username)
         for key, value in patch_data.items():
@@ -339,7 +342,36 @@ class ProfilePATCHTests(ProfileBaseTests):
             else:
                 assert getattr(old_profile, key) == value
 
-    def test_serializer(self):
+    @patch('mail.api.MailgunClient.toggle_mailing_list_subscription')
+    def test_when_mailgun_fail(self, mailgun_action):
+        """
+        When user updates email optin but mailgun fail to response.
+        """
+        with mute_signals(post_save):
+            ProfileFactory.create(
+                user=self.user1,
+                filled_out=False,
+                agreed_to_terms_of_service=False,
+                email_optin=False
+
+            )
+        self.client.force_login(self.user1)
+
+        with mute_signals(post_save):
+            new_profile = ProfileFactory.create(filled_out=False, email_optin=True)
+        new_profile.user.social_auth.create(
+            provider=EdxOrgOAuth2.name,
+            uid="{}_edx".format(new_profile.user.username)
+        )
+        patch_data = ProfileSerializer(new_profile).data
+        del patch_data['image']
+
+        resp = self.client.patch(self.url1, content_type="application/json", data=json.dumps(patch_data))
+        assert resp.status_code == HTTP_200_OK
+        assert mailgun_action.called
+
+    @patch('mail.api.MailgunClient.toggle_mailing_list_subscription')
+    def test_serializer(self, mailgun_action):
         """
         Get a user's own profile, ensure that we used ProfileSerializer and not ProfileFilledOutSerializer
         """
@@ -361,8 +393,10 @@ class ProfilePATCHTests(ProfileBaseTests):
             self.client.patch(self.url1, content_type="application/json", data=json.dumps(patch_data))
         assert mocked.called
         assert not mocked_filled_out.called
+        assert mailgun_action.called is False
 
-    def test_filled_out_serializer(self):
+    @patch('mail.api.MailgunClient.toggle_mailing_list_subscription')
+    def test_filled_out_serializer(self, mailgun_action):
         """
         Get a user's own profile, ensure that we used ProfileFilledOutSerializer
         """
@@ -379,6 +413,7 @@ class ProfilePATCHTests(ProfileBaseTests):
         ) as mocked:
             self.client.patch(self.url1, content_type="application/json", data=json.dumps(patch_data))
         assert mocked.called
+        assert mailgun_action.called is False
 
     def test_forbidden_methods(self):
         """
@@ -410,11 +445,12 @@ class ProfilePATCHTests(ProfileBaseTests):
         assert profile.education.count() == 1
         assert profile.work_history.count() == 1
 
+    @patch('mail.api.MailgunClient.toggle_mailing_list_subscription')
     @ddt.data(
         *itertools.product([True, False], [True, False])
     )
     @ddt.unpack
-    def test_no_thumbnail_change_if_image_upload(self, image_already_exists, thumb_already_exists):
+    def test_no_thumbnail_change_if_image_upload(self, image_already_exists, thumb_already_exists, mailgun_action):
         """
         A patch without an image upload should not touch the image or the thumbnail
         """
@@ -435,6 +471,7 @@ class ProfilePATCHTests(ProfileBaseTests):
 
         resp = self.client.patch(self.url1, content_type="application/json", data=json.dumps(patch_data))
         assert resp.status_code == 200
+        assert mailgun_action.called
 
         profile.refresh_from_db()
         assert bool(profile.image) == image_already_exists

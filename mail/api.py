@@ -285,6 +285,76 @@ class MailgunClient:
         )
         return response
 
+    @staticmethod
+    def add_email_to_unsub_list(url, email):
+        """
+        It adds user email to mailgun unsub list.
+
+        Args:
+            url (str): mailgun api url:
+            email (str): user email
+        """
+        try:
+            response = requests.post(
+                url,
+                auth=('api', settings.MAILGUN_KEY),
+                data={
+                    'address': email,
+                    'tag': '*'
+                }
+            )
+        except requests.exceptions.RequestException:
+            log.exception(
+                "Unable to add email: %s to mailgun unsubscribes list.", email
+            )
+            return
+        if response.status_code == status.HTTP_200_OK:
+            log.debug(
+                "Added user's email: %s to mailgun unsubscribes list. Message received: %s",
+                email,
+                response.json()
+            )
+
+    @staticmethod
+    def remove_email_from_unsub_list(url, email):
+        """
+        It removes user email from mailgun unsub list.
+
+        Args:
+            url (str): mailgun api url:
+            email (str): user email
+        """
+        try:
+            response = requests.delete(url, auth=('api', settings.MAILGUN_KEY))
+        except requests.exceptions.RequestException:
+            log.exception(
+                "Unable to remove email: %s from mailgun unsubscribes list.", email
+            )
+            return
+        if response.status_code == status.HTTP_200_OK:
+            log.debug(
+                "Removed user's email: %s from mailgun unsubscribes list. Message received: %s",
+                email,
+                response.json()
+            )
+
+    @staticmethod
+    def toggle_mailing_list_subscription(email_optin, email):
+        """
+        it removes user from mailgun unsubscribes list.
+        https://documentation.mailgun.com/en/latest/api-suppressions.html#delete-a-single-unsubscribe
+
+        Args:
+            email_optin (bool): email optin flag
+            email (str): user email
+        """
+        url = "{base}/unsubscribes".format(base=settings.MAILGUN_URL)
+        if email_optin:
+            url = '{base}/{email}'.format(base=url, email=email)
+            MailgunClient.remove_email_from_unsub_list(url, email)
+        else:
+            MailgunClient.add_email_to_unsub_list(url, email)
+
 
 def send_automatic_emails(program_enrollment):
     """

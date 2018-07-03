@@ -1,10 +1,13 @@
 """Views for courses"""
+import logging
+
 from rest_framework.mixins import (
     RetrieveModelMixin,
     UpdateModelMixin,
 )
 from rest_framework.viewsets import GenericViewSet
 
+from mail.api import MailgunClient
 from roles.roles import (
     Instructor,
     Staff,
@@ -19,6 +22,9 @@ from profiles.permissions import (
     CanEditIfOwner,
     CanSeeIfNotPrivate,
 )
+
+
+log = logging.getLogger(__name__)
 
 
 class ProfileViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
@@ -36,6 +42,17 @@ class ProfileViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
     serializer_class_owner = ProfileSerializer
     serializer_class_filled_out = ProfileFilledOutSerializer
     serializer_class_limited = ProfileLimitedSerializer
+
+    def perform_update(self, serializer):
+        """Updates object"""
+        profile = serializer.save()
+        if 'email_optin' in serializer.validated_data:
+            # perform mailgun action if email optin is set then remove user from mailgun unsubscription
+            # list otherwise add user to mailgun unsubscription.
+            MailgunClient.toggle_mailing_list_subscription(
+                serializer.validated_data['email_optin'],
+                profile.email
+            )
 
     def get_serializer_class(self):
         """
