@@ -74,14 +74,11 @@ describe("CourseRow", () => {
       },
       true
     )
-    const courseRowProps = wrapper.props()
-    const keys = Object.keys(courseRowProps).filter(
-      key => key !== "children" && key !== "className"
-    )
-    const actionProps = wrapper.find(CourseAction).props()
-    for (const key of keys) {
-      assert.deepEqual(actionProps[key], courseRowProps[key])
-    }
+    const statusProps = wrapper.find(StatusMessages).props()
+    assert.deepEqual(statusProps.course, course)
+    assert.deepEqual(statusProps.hasFinancialAid, true)
+    assert.deepEqual(statusProps.firstRun, course.runs[0])
+
     assert.deepEqual(wrapper.find(".course-title").text(), course.title)
   })
 
