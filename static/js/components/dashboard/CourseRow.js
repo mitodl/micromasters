@@ -19,7 +19,7 @@ import type { GradeType } from "../../containers/DashboardPage"
 import type { CouponPrices, Coupon } from "../../flow/couponTypes"
 import {
   STATUS_PENDING_ENROLLMENT,
-  COURSE_ACTION_ENROLL
+  COURSE_ACTION_ENROLL, STATUS_PAID_BUT_NOT_ENROLLED
 } from "../../constants"
 import {
   courseStartDateMessage,
@@ -175,7 +175,7 @@ export default class CourseRow extends React.Component {
   }
 
   renderEnrollableCourseInfo = (run: CourseRun) => {
-    const { course, showStaffView } = this.props
+    const { course, hasFinancialAid, showStaffView } = this.props
 
     return (
       <div className="enrollable-course-info">
@@ -186,14 +186,16 @@ export default class CourseRow extends React.Component {
           <div className="second-col">
             {run.status === STATUS_PENDING_ENROLLMENT ? (
               <Spinner singleColor />
-            ) : (
-              this.courseAction(run, COURSE_ACTION_ENROLL)
-            )}
+            ) : null}
             {run.status === STATUS_PENDING_ENROLLMENT ? "Processing..." : null}
           </div>
         </div>
-        {!isEnrollableRun(run) && !showStaffView ? (
-          <StatusMessages course={course} firstRun={run} />
+        {!showStaffView ? (
+          <StatusMessages
+            course={course}
+            courseAction={this.courseAction}
+            hasFinancialAid={hasFinancialAid}
+            firstRun={run} />
         ) : null}
       </div>
     )

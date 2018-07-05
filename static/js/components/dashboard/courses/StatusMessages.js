@@ -23,7 +23,7 @@ import {
   COURSE_ACTION_CALCULATE_PRICE,
   DASHBOARD_FORMAT,
   COURSE_DEADLINE_FORMAT,
-  STATUS_CURRENTLY_ENROLLED
+  STATUS_CURRENTLY_ENROLLED, COURSE_ACTION_ENROLL
 } from "../../../constants"
 import { S } from "../../../lib/sanctuary"
 import {
@@ -86,6 +86,31 @@ const messageForNotAttemptedExam = (course: Course) => {
   return message
 }
 
+const courseStartMessage = run => {
+  if (run.course_start_date) {
+    return `Next course starts ${formatDate(
+      run.course_start_date
+    )}.`
+  } else if (run.fuzzy_start_date) {
+    return `Next course starts ${run.fuzzy_start_date}.`
+  }
+}
+
+const enrollmentDateMessage = run => {
+  if (
+    !R.isNil(run.enrollment_start_date) &&
+    !R.isEmpty(run.enrollment_start_date)
+  ) {
+    const startText = isEnrollableRun(run) ? "started" : "starts"
+    return ` Enrollment ${startText} ${formatDate(
+      run.enrollment_start_date
+    )}`
+  } else if (run.fuzzy_enrollment_start_date) {
+    return ` Enrollment starts ${run.fuzzy_enrollment_start_date}`
+  }
+  return ""
+}
+
 // this calculates any status messages we'll need to show the user
 // we wrap the array of messages in a Maybe, so that we can indicate
 // the case where there are no messages cleanly
@@ -108,6 +133,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   const paid = firstRun.has_paid
   const passedExam = hasPassingExamGrade(course)
   const failedExam = hasFailingExamGrade(course)
+  const hasAid=`${hasFinancialAid}`
   const paymentDueDate = moment(
     R.defaultTo("", firstRun.course_upgrade_deadline)
   )
@@ -156,28 +182,52 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     }
   }
 
-  if (firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED && !hasFinancialAid) {
+  if (firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
     const contactHref = `mailto:${SETTINGS.support_email}`
-    return S.Just([
+    if(!hasFinancialAid) {
+      return S.Just([
       {
         message: (
           <div>
             {
-              "Something went wrong. You paid for this course but are not enrolled. "
+              `Something went wrong. You paid for this course but are not enrolled.`
             }
             <a href={contactHref}>Contact us for help.</a>
           </div>
         )
       }
     ])
+    }else {
+      return S.Just([
+      {
+        message: (
+          <div>
+            {
+              `You paid for this course but are not enrolled. You can enroll now, or if
+              you think there is a problem, `
+            }
+            <a href={contactHref}>contact us for help.</a>
+          </div>
+        ),
+        action: courseAction(firstRun, COURSE_ACTION_ENROLL)
+      }
+    ])
+    }
   }
 
-  // Course run isn't enrollable, user never enrolled
-  if (!isEnrollableRun(firstRun) && !R.any(userIsEnrolled, course.runs)) {
-    if (firstRun.fuzzy_start_date && isOfferedInUncertainFuture(firstRun)) {
+  // User never enrolled
+  if (!R.any(userIsEnrolled, course.runs)) {
+    if( isEnrollableRun(firstRun)){
       return S.Just([
         {
-          message: `Course starts ${firstRun.fuzzy_start_date}.`
+          message: `${courseStartMessage(firstRun)}`,
+          action: courseAction(firstRun, COURSE_ACTION_ENROLL)
+        }
+      ])
+    } else if (firstRun.fuzzy_start_date && isOfferedInUncertainFuture(firstRun)) {
+      return S.Just([
+        {
+          message: `${courseStartMessage(firstRun)}`
         }
       ])
     } else {
@@ -340,19 +390,9 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
       ) {
         const date = run => formatDate(run.course_start_date)
         const msg = run => {
-          let enrollmentDateMessage = ""
-          if (
-            !R.isNil(run.enrollment_start_date) &&
-            !R.isEmpty(run.enrollment_start_date) &&
-            !isEnrollableRun(run)
-          ) {
-            enrollmentDateMessage = ` Enrollment starts ${formatDate(
-              run.enrollment_start_date
-            )}`
-          }
           return `You missed the payment deadline, but you can re-enroll. Next course starts ${date(
             run
-          )}.${enrollmentDateMessage}`
+          )}.${enrollmentDateMessage(run)}`
         }
         messages.push(
           S.maybe(
@@ -388,35 +428,15 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     }
   } else {
     if (hasFailedCourseRun(course) && !hasPassedCourseRun(course)) {
-      const msg = run => {
-        let enrollmentDateMessage = ""
-        let courseStartMessage = ""
-        if (
-          !R.isNil(run.enrollment_start_date) &&
-          !R.isEmpty(run.enrollment_start_date)
-        ) {
-          const startText = isEnrollableRun(run) ? "started" : "starts"
-          enrollmentDateMessage = ` Enrollment ${startText} ${formatDate(
-            run.enrollment_start_date
-          )}.`
-        } else if (run.fuzzy_enrollment_start_date) {
-          enrollmentDateMessage = `Enrollment starts ${run.fuzzy_enrollment_start_date}.`
-        }
-        if (run.course_start_date) {
-          courseStartMessage = `Next course starts ${formatDate(
-            run.course_start_date
-          )}.`
-        } else if (run.fuzzy_start_date) {
-          courseStartMessage = `Next course starts ${run.fuzzy_start_date}.`
-        }
-        return `You did not pass the edX course, but you can re-enroll. ${courseStartMessage}${enrollmentDateMessage}`
-      }
+
       return S.Just(
         S.maybe(
           messages.concat({ message: "You did not pass the edX course." }),
           run =>
             messages.concat({
-              message: msg(run),
+              message: `You did not pass the edX course, but you can re-enroll. ${courseStartMessage(
+                run
+              )}${enrollmentDateMessage(run)}`,
               action:  courseAction(run, COURSE_ACTION_REENROLL)
             }),
           futureEnrollableRun(course)

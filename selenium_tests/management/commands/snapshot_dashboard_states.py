@@ -38,7 +38,7 @@ from grades.factories import ProctoredExamGradeFactory, MicromastersCourseCertif
 from grades.models import FinalGrade, CourseRunGradingStatus, MicromastersCourseCertificate
 from profiles.api import get_social_username
 from roles.models import Role, Staff
-from seed_data.lib import set_course_run_current, CachedEnrollmentHandler
+from seed_data.lib import set_course_run_current, CachedEnrollmentHandler, add_paid_order_for_course
 from seed_data.management.commands.alter_data import EXAMPLE_COMMANDS
 from selenium_tests.data_util import create_user_for_login
 from selenium_tests.util import (
@@ -315,23 +315,32 @@ class DashboardStates:  # pylint: disable=too-many-locals
                 MicromastersCourseCertificate.objects.create(user=self.user, course=course)
                 CourseCertificateSignatoriesFactory.create(course=course)
 
-    def create_paid_but_no_enrollable_run(self, in_future, fuzzy):
+    def create_paid_but_no_enrollable_run(self, enrollable, in_future, fuzzy):
         """Make paid but not enrolled, with offered currently, in future, and fuzzy """
         self.make_fa_program_enrollment(FinancialAidStatus.AUTO_APPROVED)
         course = Course.objects.get(title='Digital Learning 200')
         course_run = course.courserun_set.order_by('start_date').first()
-        LineFactory.create(
-            order__status=Order.FULFILLED,
-            course_key=course_run
-        )
-        alter_arg_list = [
-            "alter_data", 'set_to_offered', '--username', 'staff', '--course-title', 'Digital Learning 200'
-        ]
+        # course_run = CourseRunFactory.create(course=course, edx_course_key='course-paid')
+
+        add_paid_order_for_course(user=self.user, course_run=course_run)
+        if enrollable:
+            course_run = CourseRunFactory.create(course=course, edx_course_key='course-enrollable')
+            call_command(
+                "alter_data", 'set_to_offered', '--username', 'staff',
+                '--course-run-key', course_run.edx_course_key
+            )
         if in_future:
-            alter_arg_list.append('--in-future')
+            course_run = CourseRunFactory.create(course=course, edx_course_key='course-in-future')
+            call_command(
+                "alter_data", 'set_to_offered', '--username', 'staff',
+                '--course-run-key', course_run.edx_course_key, '--in-future'
+            )
         if fuzzy:
-            alter_arg_list.append('--fuzzy')
-        call_command(*alter_arg_list)
+            course_run = CourseRunFactory.create(course=course, edx_course_key='course-fuzzy')
+            call_command(
+                "alter_data", 'set_to_offered', '--username', 'staff',
+                '--course-run-key', course_run.edx_course_key, '--fuzzy'
+            )
 
     def create_passed_enrolled_again(self):
         """Make course passed and user retaking/auditing the course again"""
@@ -440,13 +449,14 @@ class DashboardStates:  # pylint: disable=too-many-locals
         yield (self.create_failed_course_price_pending, 'failed_and_pending_price')
 
         # Add scenarios for paid and course run offered [now, in future, fuzzy future]
-        for tup in itertools.product([True, False], repeat=2):
-            in_future, fuzzy = tup
+        for tup in itertools.product([True, False], repeat=3):
+            enrollable, in_future, fuzzy = tup
 
-            yield (bind_args(self.create_paid_but_no_enrollable_run, in_future, fuzzy),
-                   'paid_but_not_enrolled{in_future}{fuzzy}'.format(
-                       in_future='_offered_in_future' if in_future else '',
-                       fuzzy='_offered_fuzzy' if fuzzy else ''
+            yield (bind_args(self.create_paid_but_no_enrollable_run, enrollable, in_future, fuzzy),
+                   'paid_but_not_enrolled{enrollable}{in_future}{fuzzy}'.format(
+                       enrollable='_has_enrollable' if enrollable else '',
+                       in_future='_in_future' if in_future else '',
+                       fuzzy='_fuzzy' if fuzzy else ''
                    ))
 
         # Also test for two different passing and failed runs on the same course

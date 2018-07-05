@@ -606,7 +606,8 @@ describe("Course Status Messages", () => {
       const date = formatDate(course.runs[1].course_start_date)
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
-          message: `You missed the payment deadline, but you can re-enroll. Next course starts ${date}.`,
+          message: `You missed the payment deadline, but you can re-enroll. Next course starts ${date}.`+
+            ` Enrollment started ${formatDate(course.runs[1].enrollment_start_date)}`,
           action:  "course action was called"
         }
       ])
