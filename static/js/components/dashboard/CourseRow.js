@@ -19,7 +19,7 @@ import type { GradeType } from "../../containers/DashboardPage"
 import type { CouponPrices, Coupon } from "../../flow/couponTypes"
 import {
   STATUS_PENDING_ENROLLMENT,
-  COURSE_ACTION_ENROLL, STATUS_PAID_BUT_NOT_ENROLLED
+  COURSE_ACTION_ENROLL
 } from "../../constants"
 import {
   courseStartDateMessage,
@@ -195,7 +195,8 @@ export default class CourseRow extends React.Component {
             course={course}
             courseAction={this.courseAction}
             hasFinancialAid={hasFinancialAid}
-            firstRun={run} />
+            firstRun={run}
+          />
         ) : null}
       </div>
     )
