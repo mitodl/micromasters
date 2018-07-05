@@ -128,7 +128,7 @@ if not DISABLE_WEBPACK_LOADER_STATS:
 MIDDLEWARE = (
     'django.middleware.security.SecurityMiddleware',
     'raven.contrib.django.raven_compat.middleware.SentryResponseErrorIdMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    'micromasters.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
