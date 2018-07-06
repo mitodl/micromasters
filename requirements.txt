@@ -33,6 +33,7 @@ django-treebeard==4.2.0   # via wagtail
 django-webpack-loader==0.5.0
 django==2.0.2
 djangorestframework==3.7.7
+djangorestframework-jwt==1.11.0
 draftjs-exporter==2.0.0   # via wagtail
 edx-api-client==0.5.0
 edx-opaque-keys==0.4

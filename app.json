@@ -248,6 +248,10 @@
     "STATUS_TOKEN": {
       "description": "Token to access the status API.",
       "required": true
+    },
+    "UNSUBSCRIBE_TOKEN_MAX_AGE_SECONDS": {
+      "description": "Maximum age of unsubscribe tokens in seconds",
+      "required": false
     }
   },
   "keywords": [

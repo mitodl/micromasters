@@ -107,18 +107,19 @@ def filter_recipient_variables(text):
     return text
 
 
-def get_email_footer(url):
+def get_email_footer(url, unsub_url):
     """
     Construct a footer for email
     Args:
         url: To change the settings
+        unsub_url: url to unsub email alerts
     Returns:
         string: with the html styled footer
     """
     text = ("You are receiving this e-mail because you signed up for MITx"
             " MicroMasters.<br/> If you don't want to receive these emails in the"
             " future, you can<br/> <a href='{0}'>edit your settings</a>"
-            " or <a href='{0}'>unsubscribe</a>.").format(url)
+            " or <a href='{1}'>unsubscribe</a>.").format(url, unsub_url)
     return ("<div style='margin-top:80px; text-align: center; color: #757575;'>"
             "<div style='margin:auto; max-width:50%;'><p>{0}</p>"
             "<p>MIT Office of Digital Learning<br/>"

@@ -519,6 +519,11 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TIMEZONE = 'UTC'
 
+# expiry time of unsub link in email
+UNSUBSCRIBE_TOKEN_MAX_AGE_SECONDS = get_int(
+    'UNSUBSCRIBE_TOKEN_MAX_AGE_SECONDS',
+    60 * 60 * 24 * 7  # 7 days
+)
 
 # Celery parallel rate limit for batch_update_user_data
 # This is the number of tasks per minute, each task updates data for 20 users

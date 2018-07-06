@@ -214,7 +214,10 @@ class AutomaticEmailTests(SearchResultMailViewsBase):
         assert mock_mailgun_client.send_batch.called
         _, called_kwargs = mock_mailgun_client.send_batch.call_args
         assert called_kwargs['subject'] == self.request_data['email_subject']
-        body_result = self.request_data['email_body'] + get_email_footer('http://testserver/settings')
+        body_result = self.request_data['email_body'] + get_email_footer(
+            'http://testserver/settings',
+            'http://testserver/unsub'
+        )
         assert called_kwargs['body'] == body_result
         assert list(called_kwargs['recipients']) == self.recipient_tuples
 
@@ -260,7 +263,10 @@ class AutomaticEmailTests(SearchResultMailViewsBase):
         assert mock_mailgun_client.send_batch.called
         _, called_kwargs = mock_mailgun_client.send_batch.call_args
         assert called_kwargs['subject'] == self.request_data['email_subject']
-        body_result = self.request_data['email_body'] + get_email_footer('http://testserver/settings')
+        body_result = self.request_data['email_body'] + get_email_footer(
+            'http://testserver/settings',
+            'http://testserver/unsub'
+        )
         assert called_kwargs['body'] == body_result
         assert list(called_kwargs['recipients']) == self.recipient_tuples
 
