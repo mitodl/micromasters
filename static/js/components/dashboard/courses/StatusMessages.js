@@ -35,7 +35,8 @@ import {
   isEnrollableRun,
   userIsEnrolled,
   isOfferedInUncertainFuture,
-  isPassedOrCurrentlyEnrolled
+  isPassedOrCurrentlyEnrolled,
+  notNilorEmpty
 } from "./util"
 import {
   hasPassingExamGrade,
@@ -87,24 +88,21 @@ const messageForNotAttemptedExam = (course: Course) => {
   return message
 }
 
+
 const courseStartMessage = (run: CourseRun) => {
-  if (run.course_start_date) {
-    return `Next course starts ${formatDate(run.course_start_date)}.`
-  } else if (run.fuzzy_start_date) {
-    return `Next course starts ${run.fuzzy_start_date}.`
+  const startDate = notNilorEmpty(run.course_start_date) ? formatDate(run.course_start_date) : run.fuzzy_start_date
+  if (startDate) {
+    return `Next course starts ${startDate}.`
   }
   return ""
 }
 
 const enrollmentDateMessage = (run: CourseRun) => {
-  if (
-    !R.isNil(run.enrollment_start_date) &&
-    !R.isEmpty(run.enrollment_start_date)
-  ) {
+  const enrollmentDate = notNilorEmpty(run.enrollment_start_date) ?
+    formatDate(run.enrollment_start_date) : run.fuzzy_enrollment_start_date
+  if (enrollmentDate) {
     const startText = isEnrollableRun(run) ? "started" : "starts"
-    return ` Enrollment ${startText} ${formatDate(run.enrollment_start_date)}.`
-  } else if (run.fuzzy_enrollment_start_date) {
-    return ` Enrollment starts ${run.fuzzy_enrollment_start_date}.`
+    return ` Enrollment ${startText} ${enrollmentDate}.`
   }
   return ""
 }
@@ -181,33 +179,18 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
 
   if (firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
     const contactHref = `mailto:${SETTINGS.support_email}`
-    if (!hasFinancialAid) {
-      return S.Just([
-        {
-          message: (
-            <div>
-              {
-                "Something went wrong. You paid for this course but are not enrolled. "
-              }
-              <a href={contactHref}>Contact us for help.</a>
-            </div>
-          )
-        }
-      ])
-    } else {
-      return S.Just([
-        {
-          message: (
-            <div>
-              {"You paid for this course but are not enrolled. You can enroll now, or if" +
-                " you think there is a problem, "}
-              <a href={contactHref}>contact us for help.</a>
-            </div>
-          ),
-          action: courseAction(firstRun, COURSE_ACTION_ENROLL)
-        }
-      ])
-    }
+    return S.Just([
+      {
+        message: (
+          <div>
+            {"You paid for this course but are not enrolled. You can enroll now, or if" +
+              " you think there is a problem, "}
+            <a href={contactHref}>contact us for help.</a>
+          </div>
+        ),
+        action: courseAction(firstRun, COURSE_ACTION_ENROLL)
+      }
+    ])
   }
 
   // User never enrolled

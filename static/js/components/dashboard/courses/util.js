@@ -34,6 +34,8 @@ export const courseStartDateMessage = (courseRun: CourseRun) => {
   }
 }
 
+export const notNilorEmpty = (date : string) => R.not(R.isNil(date) || R.isEmpty(date))
+
 export const hasPearsonExam = R.propEq("has_exam", true)
 
 export const userIsEnrolled = R.compose(
@@ -108,13 +110,11 @@ export const futureEnrollableRun = R.compose(
 // checks if a run is enrollable
 export const isEnrollableRun = (run: CourseRun): boolean =>
   !R.isEmpty(run.course_id) &&
-  !R.isNil(run.enrollment_start_date) &&
-  !R.isEmpty(run.enrollment_start_date) &&
+  notNilorEmpty(run.enrollment_start_date) &&
   moment(run.enrollment_start_date).isSameOrBefore(moment(), "day") &&
   (run.status === STATUS_OFFERED || run.status === STATUS_PAID_BUT_NOT_ENROLLED)
 
 export const isOfferedInUncertainFuture = (run: CourseRun): boolean =>
   R.isNil(run.course_start_date) &&
-  !R.isNil(run.fuzzy_start_date) &&
-  !R.isEmpty(run.fuzzy_start_date) &&
+  notNilorEmpty(run.fuzzy_start_date) &&
   run.status === STATUS_OFFERED
