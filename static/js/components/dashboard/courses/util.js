@@ -34,7 +34,8 @@ export const courseStartDateMessage = (courseRun: CourseRun) => {
   }
 }
 
-export const notNilorEmpty = (date : string) => R.not(R.isNil(date) || R.isEmpty(date))
+export const notNilorEmpty = (date: ?string) =>
+  R.not(R.isNil(date) || R.isEmpty(date))
 
 export const hasPearsonExam = R.propEq("has_exam", true)
 

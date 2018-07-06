@@ -88,9 +88,10 @@ const messageForNotAttemptedExam = (course: Course) => {
   return message
 }
 
-
 const courseStartMessage = (run: CourseRun) => {
-  const startDate = notNilorEmpty(run.course_start_date) ? formatDate(run.course_start_date) : run.fuzzy_start_date
+  const startDate = notNilorEmpty(run.course_start_date)
+    ? formatDate(run.course_start_date)
+    : run.fuzzy_start_date
   if (startDate) {
     return `Next course starts ${startDate}.`
   }
@@ -98,8 +99,9 @@ const courseStartMessage = (run: CourseRun) => {
 }
 
 const enrollmentDateMessage = (run: CourseRun) => {
-  const enrollmentDate = notNilorEmpty(run.enrollment_start_date) ?
-    formatDate(run.enrollment_start_date) : run.fuzzy_enrollment_start_date
+  const enrollmentDate = notNilorEmpty(run.enrollment_start_date)
+    ? formatDate(run.enrollment_start_date)
+    : run.fuzzy_enrollment_start_date
   if (enrollmentDate) {
     const startText = isEnrollableRun(run) ? "started" : "starts"
     return ` Enrollment ${startText} ${enrollmentDate}.`
