@@ -574,8 +574,8 @@ describe("LearnerPage", function() {
               ReactTestUtils.Simulate.click(editButton)
 
               assert.equal(
-                document.querySelector(".profile-form-title").innerHTML,
-                "Edit Education"
+                document.querySelector(".dialog-title").innerHTML,
+                "Edit Doctorate"
               )
             }
           )
@@ -637,8 +637,8 @@ describe("LearnerPage", function() {
             ReactTestUtils.Simulate.click(addButton)
 
             assert.equal(
-              document.querySelector(".profile-form-title").innerHTML,
-              "Add Education"
+              document.querySelector(".dialog-title").innerHTML,
+              "Add a High school"
             )
 
             const dialog = document.querySelector(".education-dialog")
@@ -867,7 +867,7 @@ describe("LearnerPage", function() {
               ReactTestUtils.Simulate.click(editButton)
 
               assert.equal(
-                document.querySelector(".profile-form-title").innerHTML,
+                document.querySelector(".dialog-title").innerHTML,
                 "Edit Employment"
               )
             }
@@ -936,7 +936,7 @@ describe("LearnerPage", function() {
             ReactTestUtils.Simulate.click(addButton)
 
             assert.equal(
-              document.querySelector(".profile-form-title").innerHTML,
+              document.querySelector(".dialog-title").innerHTML,
               "Add Employment"
             )
             const dialog = document.querySelector(".employment-dialog")

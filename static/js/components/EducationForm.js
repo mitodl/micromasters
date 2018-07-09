@@ -209,7 +209,7 @@ class EducationForm extends ProfileFormFields {
               className="mm-minor-action add-education-button"
               onClick={() => this.openNewEducationForm(levelValue)}
             >
-              Add degree
+              Add a degree
             </button>
           </Cell>
         ),
@@ -319,8 +319,6 @@ class EducationForm extends ProfileFormFields {
 
     const keySet = (key): any => ["education", educationDialogIndex, key]
     const educationDegreeLevel = _.get(profile, keySet("degree_name"))
-    const id = _.get(profile, keySet("id"))
-    const title = id !== undefined ? "Edit Education" : "Add Education"
 
     const fieldOfStudy = () => {
       if (educationDegreeLevel !== HIGH_SCHOOL) {
@@ -354,9 +352,6 @@ class EducationForm extends ProfileFormFields {
 
     return (
       <Grid className="profile-tab-grid">
-        <Cell col={12} className="profile-form-title">
-          {title}
-        </Cell>
         {levelForm()}
         {fieldOfStudy()}
         <Cell col={12}>
@@ -440,11 +435,26 @@ class EducationForm extends ProfileFormFields {
 
   render() {
     const {
-      ui: { showEducationDeleteDialog, educationDialogVisibility },
-      profilePatchStatus
+      ui: {
+        educationDialogIndex,
+        showEducationDeleteDialog,
+        educationDialogVisibility
+      },
+      profilePatchStatus,
+      profile
     } = this.props
 
     const inFlight = profilePatchStatus === FETCH_PROCESSING
+    const keySet = (key): any => ["education", educationDialogIndex, key]
+    const id = _.get(profile, keySet("id"))
+    const degreeName = _.get(
+      R.find(R.propEq("value", _.get(profile, keySet("degree_name"))))(
+        EDUCATION_LEVELS
+      ),
+      "label"
+    )
+    const title =
+      id !== undefined ? `Edit ${degreeName}` : `Add a ${degreeName}`
 
     return (
       <div>
@@ -456,7 +466,7 @@ class EducationForm extends ProfileFormFields {
           inFlight={inFlight}
         />
         <Dialog
-          title="Education"
+          title={title}
           titleClassName="dialog-title"
           contentClassName="dialog education-dialog"
           className="education-dialog-wrapper"

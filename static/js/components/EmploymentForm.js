@@ -119,16 +119,11 @@ class EmploymentForm extends ProfileFormFields {
   }
 
   editWorkHistoryForm(): React$Element<*> {
-    const { ui, profile } = this.props
+    const { ui } = this.props
     const keySet = (key): any => ["work_history", ui.workDialogIndex, key]
-    const id = _.get(profile, keySet("id"))
-    const title = id !== undefined ? "Edit Employment" : "Add Employment"
 
     return (
       <Grid className="profile-tab-grid">
-        <Cell col={12} className="profile-form-title">
-          {title}
-        </Cell>
         <Cell col={12}>
           {this.boundTextField(keySet("company_name"), "Name of Employer")}
         </Cell>
@@ -351,11 +346,16 @@ class EmploymentForm extends ProfileFormFields {
 
   render() {
     const {
-      ui: { workDialogVisibility, showWorkDeleteDialog },
-      profilePatchStatus
+      ui: { workDialogVisibility, showWorkDeleteDialog, workDialogIndex },
+      profilePatchStatus,
+      profile
     } = this.props
 
     const inFlight = profilePatchStatus === FETCH_PROCESSING
+    const keySet = (key): any => ["work_history", workDialogIndex, key]
+    const id = _.get(profile, keySet("id"))
+    const title = id !== undefined ? "Edit Employment" : "Add Employment"
+
     return (
       <div>
         <ConfirmDeletion
@@ -366,7 +366,7 @@ class EmploymentForm extends ProfileFormFields {
           inFlight={inFlight}
         />
         <Dialog
-          title="Employment"
+          title={title}
           titleClassName="dialog-title"
           contentClassName="dialog employment-dialog"
           className="employment-dialog-wrapper"
