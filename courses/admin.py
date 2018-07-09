@@ -30,8 +30,8 @@ class ProgramAdmin(admin.ModelAdmin):
 
 class CourseAdmin(admin.ModelAdmin):
     """ModelAdmin for Courses"""
-    list_display = ('title', 'program_title', 'position_in_program',)
-    list_filter = ('program__live',)
+    list_display = ('title', 'course_number', 'program_title', 'position_in_program',)
+    list_filter = ('program__live', 'program',)
     inlines = [CourseRunInline]
     ordering = ('program__title', 'position_in_program',)
 
