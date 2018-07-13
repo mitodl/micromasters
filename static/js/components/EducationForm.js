@@ -447,12 +447,8 @@ class EducationForm extends ProfileFormFields {
     const inFlight = profilePatchStatus === FETCH_PROCESSING
     const keySet = (key): any => ["education", educationDialogIndex, key]
     const id = _.get(profile, keySet("id"))
-    const degreeName = _.get(
-      R.find(R.propEq("value", _.get(profile, keySet("degree_name"))))(
-        EDUCATION_LEVELS
-      ),
-      "label"
-    )
+    const degreeName =
+      EDUCATION_LEVEL_LABELS[_.get(profile, keySet("degree_name"))]
     const title =
       id !== undefined ? `Edit ${degreeName}` : `Add a ${degreeName}`
 
