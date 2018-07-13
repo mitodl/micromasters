@@ -109,47 +109,35 @@ describe("Course Status Messages", () => {
       sandbox.restore()
     })
 
-    it("should have a message for STATUS_PAID_BUT_NOT_ENROLLED", () => {
-      course.runs[0].status = STATUS_PAID_BUT_NOT_ENROLLED
-      course.runs[0].has_paid = true
-      const [{ message }] = calculateMessages(calculateMessagesProps).value
-      const mounted = shallow(message)
-      assert.equal(
-        mounted.text(),
-        "Something went wrong. You paid for this course but are not enrolled. Contact us for help."
-      )
-      assert.equal(
-        mounted.find("a").props().href,
-        `mailto:${SETTINGS.support_email}`
-      )
-    })
     it("should have a message for STATUS_PAID_BUT_NOT_ENROLLED for FA", () => {
-      course.runs[0].status = STATUS_PAID_BUT_NOT_ENROLLED
-      course.runs[0].has_paid = true
-      calculateMessagesProps["hasFinancialAid"] = true
-      course.runs[1].has_paid = true
-      makeRunCurrent(course.runs[0])
-      makeRunFuture(course.runs[1])
-      const [{ message, action }] = calculateMessages(
-        calculateMessagesProps
-      ).value
-      const mounted = shallow(message)
-      assert.equal(
-        mounted.text(),
-        "You paid for this course but are not enrolled. You can enroll now, or if you" +
-          " think there is a problem, contact us for help."
-      )
-      assert.equal(
-        mounted.find("a").props().href,
-        `mailto:${SETTINGS.support_email}`
-      )
-      assert.equal(action, "course action was called")
-      assert(
-        calculateMessagesProps.courseAction.calledWith(
-          course.runs[0],
-          COURSE_ACTION_ENROLL
+      [true, false].forEach(finAid => {
+        course.runs[0].status = STATUS_PAID_BUT_NOT_ENROLLED
+        course.runs[0].has_paid = true
+        calculateMessagesProps["hasFinancialAid"] = finAid
+        course.runs[1].has_paid = true
+        makeRunCurrent(course.runs[0])
+        makeRunFuture(course.runs[1])
+        const [{ message, action }] = calculateMessages(
+          calculateMessagesProps
+        ).value
+        const mounted = shallow(message)
+        assert.equal(
+          mounted.text(),
+          "You paid for this course but are not enrolled. You can enroll now, or if you" +
+            " think there is a problem, contact us for help."
         )
-      )
+        assert.equal(
+          mounted.find("a").props().href,
+          `mailto:${SETTINGS.support_email}`
+        )
+        assert.equal(action, "course action was called")
+        assert(
+          calculateMessagesProps.courseAction.calledWith(
+            course.runs[0],
+            COURSE_ACTION_ENROLL
+          )
+        )
+      })
     })
 
     it("should show next promised course", () => {
