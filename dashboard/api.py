@@ -266,7 +266,7 @@ def get_info_for_course(course, mmtrack):
                       datetime.datetime(datetime.MAXYEAR, 1, 1, tzinfo=pytz.utc), reverse=True)
     # pick the first `not enrolled` or the first
     for run_status in run_statuses:
-        if run_status.status not in [CourseRunStatus.NOT_ENROLLED]:
+        if run_status.status not in [CourseRunStatus.NOT_ENROLLED, CourseRunStatus.PAID_BUT_NOT_ENROLLED]:
             break
     else:
         run_status = run_statuses[0]
