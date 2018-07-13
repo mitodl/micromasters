@@ -387,7 +387,8 @@ describe("dashboard course utilities", () => {
         [STATUS_OFFERED, "Fuzzy date", null, true],
         [STATUS_WILL_ATTEND, "Fuzzy date", null, false],
         [STATUS_OFFERED, "Fuzzy date", moment(), false],
-        [STATUS_OFFERED, "", null, false]
+        [STATUS_OFFERED, "", null, false],
+        [STATUS_PAID_BUT_NOT_ENROLLED, "Fuzzy date", null, true]
       ].forEach(([status, fuzzyDate, startDate, result]) => {
         course.runs[0].status = status
         course.runs[0].fuzzy_start_date = fuzzyDate

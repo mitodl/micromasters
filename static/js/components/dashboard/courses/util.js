@@ -118,4 +118,4 @@ export const isEnrollableRun = (run: CourseRun): boolean =>
 export const isOfferedInUncertainFuture = (run: CourseRun): boolean =>
   R.isNil(run.course_start_date) &&
   notNilorEmpty(run.fuzzy_start_date) &&
-  run.status === STATUS_OFFERED
+  (run.status === STATUS_OFFERED || run.status === STATUS_PAID_BUT_NOT_ENROLLED)

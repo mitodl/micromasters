@@ -179,13 +179,26 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     }
   }
 
+  //If first run is paid but user never enrolled, most likely there was
+  //problem enrolling, and first_unexpired_run is returned, so no need to check for past enrollment
   if (firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
     const contactHref = `mailto:${SETTINGS.support_email}`
+    let date = ""
+    if (isEnrollableRun(firstRun)) {
+      date = `now`
+    } else if (notNilorEmpty(firstRun.enrollment_start_date)) {
+      date = formatDate(firstRun.enrollment_start_date)
+    } else if (
+      firstRun.fuzzy_start_date &&
+      isOfferedInUncertainFuture(firstRun)
+    ) {
+      date = `in ${firstRun.fuzzy_start_date}`
+    }
     return S.Just([
       {
         message: (
           <div>
-            {"You paid for this course but are not enrolled. You can enroll now, or if" +
+            {`You paid for this course but are not enrolled. You can enroll ${date}, or if` +
               " you think there is a problem, "}
             <a href={contactHref}>contact us for help.</a>
           </div>
