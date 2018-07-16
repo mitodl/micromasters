@@ -246,14 +246,19 @@ def get_info_for_course(course, mmtrack):
 
     def _add_run(run, mmtrack_, status):
         """Helper function to add a course run to the status dictionary"""
-        course_data['runs'].append(
-            format_courserun_for_dashboard(
-                run,
-                status,
-                mmtrack=mmtrack_,
-                position=len(course_data['runs']) + 1
-            )
+        formatted_run = format_courserun_for_dashboard(
+            run,
+            status,
+            mmtrack=mmtrack_,
+            position=len(course_data['runs']) + 1
         )
+        if run.is_current and formatted_run['has_paid']:
+            # Prepend current run on the top because user can pay and enroll for current run as well as
+            # future run and the dashboard UI picks first run to display. User should be able to
+            # see current run progress on dashboard UI.
+            course_data['runs'] = [formatted_run] + course_data['runs']
+        else:
+            course_data['runs'].append(formatted_run)
 
     with transaction.atomic():
         if not course.courserun_set.count():
@@ -327,6 +332,8 @@ def get_info_for_course(course, mmtrack):
             _add_run(run_status.course_run, mmtrack, CourseStatus.MISSED_DEADLINE)
         elif run_status.status == CourseRunStatus.CAN_UPGRADE:
             _add_run(run_status.course_run, mmtrack, CourseStatus.CAN_UPGRADE)
+        elif run_status.status == CourseRunStatus.CURRENTLY_ENROLLED:
+            _add_run(run_status.course_run, mmtrack, CourseStatus.CURRENTLY_ENROLLED)
 
     return course_data
 

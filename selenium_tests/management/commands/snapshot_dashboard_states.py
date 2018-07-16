@@ -388,6 +388,23 @@ class DashboardStates:  # pylint: disable=too-many-locals
             '--missed-deadline'
         )
 
+    def create_paid_enrolled_currently_with_future_run(self):
+        """Make paid and enrolled with offered currently and a future run """
+        self.make_fa_program_enrollment(FinancialAidStatus.AUTO_APPROVED)
+        course = Course.objects.get(title='Digital Learning 200')
+        course_run_current = CourseRunFactory(course=course)
+        call_command(
+            "alter_data", 'set_to_enrolled', '--username', 'staff',
+            '--course-run-key', course_run_current.edx_course_key
+        )
+
+        course_run_future = CourseRunFactory(course=course)
+        call_command(
+            "alter_data", 'set_to_enrolled', '--username', 'staff',
+            '--course-run-key', course_run_future.edx_course_key,
+            '--in-future'
+        )
+
     def __iter__(self):
         """
         Iterator over all dashboard states supported by this command.
@@ -489,6 +506,7 @@ class DashboardStates:  # pylint: disable=too-many-locals
         yield (self.contact_course, 'contact_course')
         yield (self.missed_payment_can_reenroll, 'missed_payment_can_reenroll')
         yield (self.failed_run_missed_payment_can_reenroll, 'failed_run_missed_payment_can_reenroll')
+        yield (self.create_paid_enrolled_currently_with_future_run, 'create_paid_enrolled_currently_with_future_run')
 
         # Financial aid statuses
         for status in FinancialAidStatus.ALL_STATUSES:

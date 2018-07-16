@@ -35,6 +35,8 @@ from dashboard.models import CachedCertificate
 from dashboard.utils import MMTrack
 from exams.models import ExamProfile
 from exams.factories import ExamRunFactory, ExamAuthorizationFactory
+from ecommerce.factories import LineFactory, OrderFactory
+from ecommerce.models import Order
 from grades.constants import FinalGradeStatus
 from grades.exceptions import FreezeGradeFailedException
 from grades.factories import ProctoredExamGradeFactory, FinalGradeFactory, MicromastersCourseCertificateFactory
@@ -1551,6 +1553,111 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
         assert all(
             [run['status'] == api.CourseStatus.NOT_PASSED for run in result['programs'][0]['courses'][0]['runs']]
         )
+
+    def test_current_run_first(self):
+        """Test that current course runs is on top of returned in the API results"""
+        now = now_in_utc()
+        program = self.program_non_fin_aid
+        course = program.course_set.first()
+
+        # user paid and enrolled current run
+        current_run = course.courserun_set.first()
+        current_run.end_date = now + timedelta(weeks=1)
+        current_run.upgrade_deadline = now + timedelta(days=1)
+        current_run.save()
+        CachedEnrollmentFactory.create(user=self.user, course_run=current_run)
+        CachedCurrentGradeFactory.create(user=self.user, course_run=current_run)
+        order = OrderFactory.create(
+            user=self.user,
+            status=Order.FULFILLED
+        )
+        LineFactory.create(
+            order=order,
+            course_key=current_run.edx_course_key
+        )
+
+        # User paid and enrolled for future course run.
+        future_course_run = CourseRunFactory.create(
+            course=course,
+            start_date=now+timedelta(weeks=2),
+            end_date=now+timedelta(weeks=20),
+            upgrade_deadline=current_run.upgrade_deadline + timedelta(weeks=6)
+        )
+        CachedEnrollmentFactory.create(user=self.user, course_run=future_course_run)
+        CachedCurrentGradeFactory.create(user=self.user, course_run=future_course_run)
+        order = OrderFactory.create(
+            user=self.user,
+            status=Order.FULFILLED
+        )
+        LineFactory.create(
+            order=order,
+            course_key=future_course_run.edx_course_key
+        )
+
+        # set the last access for the cache
+        UserCacheRefreshTimeFactory.create(user=self.user, unexpired=True)
+
+        result = api.get_user_program_info(self.user, self.edx_client)
+        # extract the right program from the result
+        program_result = None
+        for res in result['programs']:
+            if res['id'] == program.pk:
+                program_result = res
+                break
+        assert program_result is not None
+        assert len(result['programs']) > 0
+        assert len(result['programs'][0]['courses']) > 0
+        assert len(result['programs'][0]['courses'][0]['runs']) == 2
+        # assert that current run is first on run list
+        assert result['programs'][0]['courses'][0]['runs'][0]['status'] == api.CourseRunStatus.CURRENTLY_ENROLLED
+
+    def test_when_enroll_in_only_future_run(self):
+        """Test that user in enrolled in future run but not enrolled in current course runs"""
+        now = now_in_utc()
+        program = self.program_non_fin_aid
+        course = program.course_set.first()
+
+        # a current run where user is not enroll
+        current_run = course.courserun_set.first()
+        current_run.end_date = now + timedelta(weeks=1)
+        current_run.upgrade_deadline = now + timedelta(days=1)
+        current_run.save()
+
+        # User paid and enrolled for future course run.
+        future_course_run = CourseRunFactory.create(
+            course=course,
+            start_date=now+timedelta(weeks=2),
+            end_date=now+timedelta(weeks=20),
+            upgrade_deadline=current_run.upgrade_deadline + timedelta(weeks=6)
+        )
+        CachedEnrollmentFactory.create(user=self.user, course_run=future_course_run)
+        CachedCurrentGradeFactory.create(user=self.user, course_run=future_course_run)
+        order = OrderFactory.create(
+            user=self.user,
+            status=Order.FULFILLED
+        )
+        LineFactory.create(
+            order=order,
+            course_key=future_course_run.edx_course_key
+        )
+
+        # set the last access for the cache
+        UserCacheRefreshTimeFactory.create(user=self.user, unexpired=True)
+
+        result = api.get_user_program_info(self.user, self.edx_client)
+        # extract the right program from the result
+        program_result = None
+        for res in result['programs']:
+            if res['id'] == program.pk:
+                program_result = res
+                break
+        assert program_result is not None
+        assert len(result['programs']) > 0
+        assert len(result['programs'][0]['courses']) > 0
+        # user will see only one run
+        assert len(result['programs'][0]['courses'][0]['runs']) == 1
+        # assert that future run is first on run list
+        assert result['programs'][0]['courses'][0]['runs'][0]['status'] == api.CourseRunStatus.WILL_ATTEND
 
     @patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cache_if_expired', new_callable=MagicMock)
     def test_exception_in_refresh_cache_1(self, mock_cache_refresh):
