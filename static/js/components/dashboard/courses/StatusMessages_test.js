@@ -378,17 +378,22 @@ describe("Course Status Messages", () => {
         )
       })
 
-      it("should not prompt to schedule exam if already passed exam", () => {
+      it("should prompt about future exams if already passed exam", () => {
         course.has_exam = true
         course.can_schedule_exam = true
         course.proctorate_exams_grades = [makeProctoredExamResult()]
         course.proctorate_exams_grades[0].passed = true
-
-        assertIsJust(calculateMessages(calculateMessagesProps), [
-          {
-            message: "You passed this course."
-          }
-        ])
+        const messages = calculateMessages(calculateMessagesProps).value
+        assert.equal(messages[0]["message"], "You passed this course.")
+        assert.equal(
+          messages[1]["message"],
+          "Click above to reschedule an exam with Pearson."
+        )
+        const mounted = shallow(messages[2]["message"])
+        assert.equal(
+          mounted.text().trim(),
+          "If you want to re-take the course you can re-enroll."
+        )
       })
 
       it("should prompt when passed the course and exam", () => {
@@ -397,11 +402,17 @@ describe("Course Status Messages", () => {
         course.proctorate_exams_grades = [makeProctoredExamResult()]
         course.proctorate_exams_grades[0].passed = true
 
-        assertIsJust(calculateMessages(calculateMessagesProps), [
-          {
-            message: "You passed this course."
-          }
-        ])
+        const messages = calculateMessages(calculateMessagesProps).value
+        assert.equal(messages[0]["message"], "You passed this course.")
+        assert.equal(
+          messages[1]["message"],
+          "Click above to reschedule an exam with Pearson."
+        )
+        const mounted = shallow(messages[2]["message"])
+        assert.equal(
+          mounted.text().trim(),
+          "If you want to re-take the course you can re-enroll."
+        )
       })
     })
 
@@ -432,8 +443,7 @@ describe("Course Status Messages", () => {
         assertIsJust(calculateMessages(calculateMessagesProps), [
           {
             message:
-              "You did not pass the exam, but you can try again." +
-              " Click above to reschedule an exam with Pearson."
+              "You did not pass the exam. Click above to reschedule an exam with Pearson."
           }
         ])
       })
@@ -446,7 +456,7 @@ describe("Course Status Messages", () => {
         const messages = calculateMessages(calculateMessagesProps).value
         assert.deepEqual(messages[0], {
           message:
-            "You did not pass the exam. If you want to re-take the exam, you need to pay again.",
+            "You did not pass the exam. If you want to re-take the exam, you need to pay again. ",
           action: "course action was called"
         })
         const mounted = shallow(messages[1]["message"])
@@ -465,7 +475,7 @@ describe("Course Status Messages", () => {
         assertIsJust(calculateMessages(calculateMessagesProps), [
           {
             message:
-              "You did not pass the exam. If you want to re-take the exam, you need to pay again.",
+              "You did not pass the exam. If you want to re-take the exam, you need to pay again. ",
             action: "course action was called"
           }
         ])
@@ -485,8 +495,7 @@ describe("Course Status Messages", () => {
         assertIsJust(calculateMessages(calculateMessagesProps), [
           {
             message:
-              "You did not pass the exam, but you can try again. " +
-              "You can sign up to re-take the exam starting on " +
+              "You did not pass the exam. You can sign up to re-take the exam starting " +
               `on ${formatDate(course.exams_schedulable_in_future[0])}.`
           }
         ])
@@ -508,8 +517,7 @@ describe("Course Status Messages", () => {
             message:
               "You did not pass the exam. If you want to re-take the exam, you need to pay again. " +
               "You can sign up to re-take the exam starting on " +
-              `${formatDate(course.exams_schedulable_in_future[0])}`,
-            action: "course action was called"
+              `${formatDate(course.exams_schedulable_in_future[0])}.`
           }
         ])
       })
@@ -580,14 +588,22 @@ describe("Course Status Messages", () => {
       course.has_exam = true
       course.proctorate_exams_grades = [makeProctoredExamResult()]
       course.proctorate_exams_grades[0].passed = true
-      assertIsJust(calculateMessages(calculateMessagesProps), [
-        {
-          message: "You passed this course."
-        }
-      ])
+      const messages = calculateMessages(calculateMessagesProps).value
+      assert.equal(messages.length, 3)
+      assert.equal(messages[0]["message"], "You passed this course.")
+      assert.equal(
+        messages[1]["message"],
+        "There are currently no exams available for scheduling. Please check back later."
+      )
+      let mounted = shallow(messages[2]["message"])
+      assert.equal(
+        mounted.text().trim(),
+        "If you want to re-take the course you can re-enroll."
+      )
+
       course.certificate_url = "certificate_url"
       const [{ message }] = calculateMessages(calculateMessagesProps).value
-      const mounted = shallow(message)
+      mounted = shallow(message)
       assert.equal(
         mounted.text(),
         "You passed this course! View Certificate | Re-enroll"

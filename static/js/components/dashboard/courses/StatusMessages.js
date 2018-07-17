@@ -89,25 +89,29 @@ const messageForNotAttemptedExam = (course: Course) => {
 }
 
 const messageForAttemptedExams = (course: Course, passedExam: boolean) => {
-    const whenFailed = passedExam ? "" : "You did not pass the exam. "
-    const payAgain = course.has_to_pay ? "If you want to re-take the exam, you need to pay again." : ""
-    let whenToSchedule = ""
-    if (course.can_schedule_exam) {
-      // if can schedule exam now
-      if (!course.has_to_pay){
-        whenToSchedule = "Click above to reschedule an exam with Pearson."
-      }
-    } else if (R.isEmpty(course.exams_schedulable_in_future)) {
-      // no info about future exam runs
-       whenToSchedule = `There are currently no exams ` +
-       "available for scheduling. Please check back later."
-    } else {
-      // can not schedule now, but some time in the future
-      whenToSchedule = "You can sign up to re-take the exam starting " +
-        `on ${formatDate(course.exams_schedulable_in_future[0])}`
+  const whenFailed = passedExam ? "" : "You did not pass the exam. "
+  const payAgain = course.has_to_pay
+    ? "If you want to re-take the exam, you need to pay again. "
+    : ""
+  let whenToSchedule = ""
+  if (course.can_schedule_exam) {
+    // if can schedule exam now
+    if (!course.has_to_pay) {
+      whenToSchedule = "Click above to reschedule an exam with Pearson."
     }
-    return { message : `${whenFailed}${payAgain}${whenToSchedule}`}
+  } else if (R.isEmpty(course.exams_schedulable_in_future)) {
+    // no info about future exam runs
+    whenToSchedule =
+      `There are currently no exams ` +
+      "available for scheduling. Please check back later."
+  } else {
+    // can not schedule now, but some time in the future
+    whenToSchedule =
+      "You can sign up to re-take the exam starting " +
+      `on ${formatDate(course.exams_schedulable_in_future[0])}.`
   }
+  return { message: `${whenFailed}${payAgain}${whenToSchedule}` }
+}
 
 const courseStartMessage = (run: CourseRun) => {
   const startDate = notNilorEmpty(run.course_start_date)
@@ -316,26 +320,26 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     } else {
       messageBox = messageForAttemptedExams(course, passedExam)
     }
-    if (course.can_schedule_exam && course.has_to_pay){
-      messageBox['action'] = courseAction(firstRun, COURSE_ACTION_PAY)
+    if (course.can_schedule_exam && course.has_to_pay) {
+      messageBox["action"] = courseAction(firstRun, COURSE_ACTION_PAY)
     }
     messages.push(messageBox)
 
     if (
-        firstRun["status"] !== STATUS_CURRENTLY_ENROLLED &&
-        S.isJust(futureEnrollableRun(course))
-      ) {
-        messages.push({
-          message: (
-            <span>
-              {"If you want to re-take the course you can "}
-              <a onClick={() => setShowExpandedCourseStatus(course.id)}>
-                re-enroll.
-              </a>
-            </span>
-          )
-        })
-      }
+      firstRun["status"] !== STATUS_CURRENTLY_ENROLLED &&
+      S.isJust(futureEnrollableRun(course))
+    ) {
+      messages.push({
+        message: (
+          <span>
+            {"If you want to re-take the course you can "}
+            <a onClick={() => setShowExpandedCourseStatus(course.id)}>
+              re-enroll.
+            </a>
+          </span>
+        )
+      })
+    }
   }
 
   // all cases where courseRun is not currently in progress
