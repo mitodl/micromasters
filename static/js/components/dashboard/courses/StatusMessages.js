@@ -110,7 +110,7 @@ const messageForAttemptedExams = (course: Course, passedExam: boolean) => {
       "You can sign up to re-take the exam starting " +
       `on ${formatDate(course.exams_schedulable_in_future[0])}.`
   }
-  return { message: `${whenFailed}${payAgain}${whenToSchedule}` }
+  return `${whenFailed}${payAgain}${whenToSchedule}`
 }
 
 const courseStartMessage = (run: CourseRun) => {
@@ -309,21 +309,22 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
 
   //Exam messages only
   if (isPassedOrCurrentlyEnrolled(firstRun) && exams && paid) {
-    let messageBox = {}
+    let message
     if (!passedExam) {
-      if (failedExam) {
-        messageBox = messageForAttemptedExams(course, passedExam)
-      } else {
-        // no past exam attempts
-        messageBox["message"] = messageForNotAttemptedExam(course)
-      }
+      message = failedExam
+        ? messageForAttemptedExams(course, passedExam)
+        : messageForNotAttemptedExam(course)
     } else {
-      messageBox = messageForAttemptedExams(course, passedExam)
+      message = messageForAttemptedExams(course, passedExam)
     }
     if (course.can_schedule_exam && course.has_to_pay) {
-      messageBox["action"] = courseAction(firstRun, COURSE_ACTION_PAY)
+      messages.push({
+        message: message,
+        action:  courseAction(firstRun, COURSE_ACTION_PAY)
+      })
+    } else {
+      messages.push({ message: message })
     }
-    messages.push(messageBox)
 
     if (
       firstRun["status"] !== STATUS_CURRENTLY_ENROLLED &&
