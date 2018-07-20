@@ -531,10 +531,16 @@ class EnrollUserTests(MockedESTestCase):
 
         def get_student_enrollments():
             """List of existing enrollments"""
-            return Enrollments([create_audit(self.line1.course_key).json])
+            return Enrollments([
+                {"course_details": {"course_id": self.line1.course_key}},
+                {"course_details": {"course_id": self.line2.course_key}}
+            ])
 
         create_audit_mock = MagicMock(side_effect=create_audit)
-        get_enrollments_mock = MagicMock(side_effect=get_student_enrollments)
+        get_enrollments_mock = MagicMock(
+            side_effect=get_student_enrollments,
+            is_enrolled_in=True
+        )
         enrollments_mock = MagicMock(
             create_audit_student_enrollment=create_audit_mock,
             get_student_enrollments=get_enrollments_mock
@@ -556,8 +562,16 @@ class EnrollUserTests(MockedESTestCase):
                 raise Exception("fatal error {}".format(course_key))
             return Enrollment({"course_details": {"course_id": course_key}})
 
+        def get_student_enrollments():
+            """List of existing enrollments"""
+            return Enrollments([])
+
         create_audit_mock = MagicMock(side_effect=create_audit)
-        enrollments_mock = MagicMock(create_audit_student_enrollment=create_audit_mock)
+        get_enrollments_mock = MagicMock(side_effect=get_student_enrollments)
+        enrollments_mock = MagicMock(
+            create_audit_student_enrollment=create_audit_mock,
+            get_student_enrollments=get_enrollments_mock
+        )
         edx_api_mock = MagicMock(enrollments=enrollments_mock)
         with patch('ecommerce.api.EdxApi', return_value=edx_api_mock):
             with self.assertRaises(EcommerceEdxApiException) as ex:
