@@ -113,7 +113,8 @@ class ExamSignalsTest(MockedESTestCase):
             course=self.course_run.course
         ).exists() is True
 
-    def test_update_exam_authorization_order(self):
+    @ddt.data(Order.FULFILLED, Order.PARTIALLY_REFUNDED)
+    def test_update_exam_authorization_order(self, order_status):
         """
         Verify that update_exam_authorization_final_grade is called when a fulfilled Order saves
         """
@@ -138,7 +139,7 @@ class ExamSignalsTest(MockedESTestCase):
             course=self.course_run.course
         ).exists() is False
 
-        order.status = Order.FULFILLED
+        order.status = order_status
         order.save()
 
         # assert Exam Authorization and profile created.

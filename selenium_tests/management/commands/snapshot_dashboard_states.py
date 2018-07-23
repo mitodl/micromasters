@@ -116,7 +116,7 @@ class DashboardStates:  # pylint: disable=too-many-locals
             user=self.user, course=course, exam_run=exam_run, status='success', exam_taken=True
         )
         LineFactory.create(
-            order__status=Order.FULFILLED,
+            order__status__in=Order.FULFILLED_STATUSES,
             course_key=course_run
         )
 

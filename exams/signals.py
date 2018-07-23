@@ -54,7 +54,7 @@ def update_exam_authorization_order(sender, instance, **kwargs):  # pylint: disa
     """
     Signal handler to trigger an exam profile and authorization for Order fulfillment.
     """
-    if instance.status != Order.FULFILLED:
+    if not Order.is_fulfilled(instance.status):
         return
 
     paid_edx_course_keys = instance.line_set.values_list('course_key', flat=True)

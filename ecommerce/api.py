@@ -93,7 +93,7 @@ def get_purchasable_course_run(course_key, user):
 
     # Make sure it's not already purchased
     if Line.objects.filter(
-            order__status=Order.FULFILLED,
+            order__status__in=Order.FULFILLED_STATUSES,
             order__user=user,
             course_key=course_run.edx_course_key,
     ).exists():

@@ -101,13 +101,13 @@ class MMTrackTest(MockedESTestCase):
             edx_course_key=None
         )
 
-    def pay_for_fa_course(self, course_id):
+    def pay_for_fa_course(self, course_id, status=Order.FULFILLED):
         """
         Helper function to pay for a financial aid course
         """
         order = OrderFactory.create(
             user=self.user,
-            status=Order.FULFILLED
+            status=status
         )
         return LineFactory.create(
             order=order,
@@ -156,12 +156,13 @@ class MMTrackTest(MockedESTestCase):
         assert mmtrack.edx_course_keys == {self.crun_fa.edx_course_key, self.crun_fa2.edx_course_key}
         assert mmtrack.paid_course_fa == {self.crun_fa.course.id: False}
 
-    def test_fa_paid(self):
+    @ddt.data(Order.FULFILLED, Order.PARTIALLY_REFUNDED)
+    def test_fa_paid(self, order_status):
         """
         Test that for financial aid, mmtrack.paid_course_ids only apply to the user with a matching Order
         """
         key = "course-v1:odl+FOO101+CR-FALL15"
-        self.pay_for_fa_course(key)
+        self.pay_for_fa_course(key, status=order_status)
 
         mmtrack_paid = MMTrack(
             user=self.user,

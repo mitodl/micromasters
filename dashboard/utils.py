@@ -228,7 +228,7 @@ class MMTrack:
             int: count of paid course runs
         """
         return Line.objects.filter(
-            order__status=Order.FULFILLED,
+            order__status__in=Order.FULFILLED_STATUSES,
             order__user=self.user,
             course_key__in=course.courserun_set.values('edx_course_key'),
         ).values('order_id').distinct().count()

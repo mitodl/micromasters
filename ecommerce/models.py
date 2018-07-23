@@ -51,8 +51,10 @@ class Order(AuditableModel):
     FAILED = 'failed'
     CREATED = 'created'
     REFUNDED = 'refunded'
+    PARTIALLY_REFUNDED = 'partially_refunded'
 
-    STATUSES = [CREATED, FULFILLED, FAILED, REFUNDED]
+    STATUSES = [CREATED, FULFILLED, FAILED, REFUNDED, PARTIALLY_REFUNDED]
+    FULFILLED_STATUSES = [FULFILLED, PARTIALLY_REFUNDED]
 
     user = ForeignKey(User, on_delete=CASCADE)
     status = CharField(
@@ -73,6 +75,16 @@ class Order(AuditableModel):
     @classmethod
     def get_audit_class(cls):
         return OrderAudit
+
+    @staticmethod
+    def is_fulfilled(status):
+        """
+        check if order is fulfilled.
+
+        Args:
+            status (str): one of STATUSES
+        """
+        return status in Order.FULFILLED_STATUSES
 
     def to_dict(self):
         """
