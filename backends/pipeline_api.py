@@ -4,6 +4,7 @@ APIs for extending the python social auth pipeline
 import logging
 from urllib.parse import urljoin
 
+from django.shortcuts import redirect
 from rolepermissions.checkers import has_role
 
 from backends.edxorg import EdxOrgOAuth2
@@ -100,6 +101,26 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):  
         user.username,
         user_profile_edx
     )
+
+
+def check_verified_email(backend, response, details, *args, **kwargs):
+    """Get account information to check if email was verified for account on edX"""
+    username = details.get('username')
+    access_token = response.get('access_token')
+    if not access_token:
+        # this should never happen for the edx oauth provider, but just in case...
+        log.error('Missing access token for the user %s', user.username)
+        return
+
+    user_profile_edx = backend.get_json(
+        urljoin(backend.EDXORG_BASE_URL, '/api/user/v1/accounts/{0}'.format(username)),
+        headers={
+            "Authorization": "Bearer {}".format(access_token),
+        }
+    )
+
+    if not user_profile_edx.get('is_active'):
+        return redirect('verify-email')
 
 
 def set_last_update(details, *args, **kwargs):  # pylint: disable=unused-argument

@@ -181,6 +181,13 @@ def page_500(request, *args, **kwargs):  # pylint: disable=unused-argument
     return standard_error_page(request, 500, "500.html")
 
 
+def need_verified_email(request, *args, **kwargs):  # pylint: disable=unused-argument
+    """
+    Returns error page for unverified email on edX
+    """
+    return render(request, "verify_email.html", context={"support_email": settings.EMAIL_SUPPORT})
+
+
 class BackgroundImagesCSSView(TemplateView):
     """
     Pass a CSS file through Django's template system, so that we can make

@@ -15,6 +15,7 @@ from ui.views import (
     page_404,
     page_500,
     BackgroundImagesCSSView,
+    need_verified_email,
 )
 from certificates.views import CourseCertificateView, ProgramCertificateView
 
@@ -27,6 +28,7 @@ urlpatterns = [
     url(r'^logout/$', auth_views.logout, {'next_page': '/'}),
     url(r'^404/$', page_404, name='ui-404'),
     url(r'^500/$', page_500, name='ui-500'),
+    url(r'^verify-email/$', need_verified_email, name='verify-email'),
     url(r'^learner/(?P<user>[-\w.]+)?/?', UsersView.as_view(), name='ui-users'),
     url(r'^certificate/course/(?P<certificate_hash>[-\w.]+)?/?', CourseCertificateView.as_view(), name='certificate'),
     url(r'^certificate/program/(?P<certificate_hash>[-\w.]+)?/?', ProgramCertificateView.as_view(),
