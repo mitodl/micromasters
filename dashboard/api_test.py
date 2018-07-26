@@ -1013,6 +1013,7 @@ class InfoCourseTest(CourseTests):
     def test_info_not_enrolled_offered(
             self, mock_schedulable, mock_format, mock_get_cert, mock_future_exams, mock_has_to_pay):
         """test for get_info_for_course for course with with an offered run"""
+        self.mmtrack.configure_mock(**{'is_enrolled_mmtrack.return_value': True})
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
@@ -1036,6 +1037,7 @@ class InfoCourseTest(CourseTests):
     def test_info_not_enrolled_but_paid(
             self, mock_schedulable, mock_format, mock_get_cert, mock_future_exams, mock_has_to_pay):
         """test for get_info_for_course for course with with a paid but not enrolled run"""
+        self.mmtrack.configure_mock(**{'is_enrolled_mmtrack.return_value': True})
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
@@ -1064,6 +1066,7 @@ class InfoCourseTest(CourseTests):
     def test_info_not_passed_offered(
             self, mock_schedulable, mock_format, mock_get_cert, mock_future_exams, mock_has_to_pay):
         """test for get_info_for_course for course with a run not passed and another offered"""
+        self.mmtrack.configure_mock(**{'is_enrolled_mmtrack.return_value': True})
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
@@ -1089,7 +1092,10 @@ class InfoCourseTest(CourseTests):
     def test_info_not_enrolled_not_passed_not_offered(
             self, mock_schedulable, mock_format, mock_get_cert, mock_future_exams, mock_has_to_pay):
         """test for get_info_for_course for course with run not passed and nothing offered"""
-        self.mmtrack.configure_mock(**{'has_passed_course.return_value': False})
+        self.mmtrack.configure_mock(**{
+            'has_passed_course.return_value': False,
+            'is_enrolled_mmtrack.return_value': True
+        })
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
@@ -1112,7 +1118,10 @@ class InfoCourseTest(CourseTests):
     def test_info_grade(
             self, mock_schedulable, mock_format, mock_get_cert, mock_future_exams, mock_has_to_pay):
         """test for get_info_for_course for course with a course current and another not passed"""
-        self.mmtrack.configure_mock(**{'has_passed_course.return_value': False})
+        self.mmtrack.configure_mock(**{
+            'has_passed_course.return_value': False,
+            'is_enrolled_mmtrack.return_value': True
+        })
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
@@ -1137,7 +1146,10 @@ class InfoCourseTest(CourseTests):
         """
         test for get_info_for_course in case a check if the course has been passed is required
         """
-        self.mmtrack.configure_mock(**{'has_passed_course.return_value': False})
+        self.mmtrack.configure_mock(**{
+            'has_passed_course.return_value': False,
+            'is_enrolled_mmtrack.return_value': True
+        })
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
@@ -1162,6 +1174,9 @@ class InfoCourseTest(CourseTests):
         """
         test for get_info_for_course with a missed upgrade deadline
         """
+        self.mmtrack.configure_mock(**{
+            'is_enrolled_mmtrack.return_value': True
+        })
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
@@ -1213,7 +1228,10 @@ class InfoCourseTest(CourseTests):
         test for get_info_for_course in case a check if the course has been passed
         is required for the course and the course has been passed
         """
-        self.mmtrack.configure_mock(**{'has_passed_course.return_value': True})
+        self.mmtrack.configure_mock(**{
+            'has_passed_course.return_value': True,
+            'is_enrolled_mmtrack.return_value': True
+        })
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
@@ -1235,6 +1253,9 @@ class InfoCourseTest(CourseTests):
     def test_info_will_attend(
             self, mock_schedulable, mock_format, mock_get_cert, mock_future_exams, mock_has_to_pay):
         """test for get_info_for_course for course with enrolled run that will happen in the future"""
+        self.mmtrack.configure_mock(**{
+            'is_enrolled_mmtrack.return_value': True
+        })
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
@@ -1256,6 +1277,7 @@ class InfoCourseTest(CourseTests):
     def test_info_upgrade(
             self, mock_schedulable, mock_format, mock_get_cert, mock_future_exams, mock_has_to_pay):
         """test for get_info_for_course for course with a run that needs to be upgraded"""
+        self.mmtrack.configure_mock(**{'is_enrolled_mmtrack.return_value': True})
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
@@ -1280,6 +1302,7 @@ class InfoCourseTest(CourseTests):
         test for get_info_for_course for course with a run
         that needs to be upgraded but before a current enrolled one
         """
+        self.mmtrack.configure_mock(**{'is_enrolled_mmtrack.return_value': True})
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
@@ -1349,7 +1372,10 @@ class InfoCourseTest(CourseTests):
         """
         test for get_info_for_course in case the less recent course is flagged to be checked if passed
         """
-        self.mmtrack.configure_mock(**{'has_passed_course.return_value': True})
+        self.mmtrack.configure_mock(**{
+            'has_passed_course.return_value': True,
+            'is_enrolled_mmtrack.return_value': True
+        })
         with patch(
             'dashboard.api.get_status_for_courserun',
             autospec=True,
@@ -1386,7 +1412,10 @@ class InfoCourseTest(CourseTests):
                 course_run=run
             )
 
-        self.mmtrack.configure_mock(**{'user': self.user})
+        self.mmtrack.configure_mock(**{
+            'user': self.user,
+            'is_enrolled_mmtrack.return_value': True
+        })
 
         run1 = CourseRunFactory.create(
             start_date=now_in_utc(),
