@@ -17,8 +17,8 @@ from django_redis import get_redis_connection
 from backends.exceptions import InvalidCredentialStored
 from backends import utils
 from courses.models import Program
-from dashboard.api_edx_cache import CachedEdxDataApi, CachedEdxUserData
-from dashboard.utils import MMTrack
+from dashboard.api_edx_cache import CachedEdxDataApi
+from dashboard.utils import get_mmtrack
 from financialaid.serializers import FinancialAidDashboardSerializer
 from grades import api
 from grades.models import FinalGrade
@@ -162,8 +162,6 @@ def get_user_program_info(user, edx_client):
         except:  # pylint: disable=bare-except
             log.exception('Impossible to refresh edX cache')
 
-    edx_user_data = CachedEdxUserData(user)
-
     response_data = {
         "programs": [],
         "is_edx_data_fresh": CachedEdxDataApi.are_all_caches_fresh(user)
@@ -172,11 +170,7 @@ def get_user_program_info(user, edx_client):
         Program.objects.filter(live=True, programenrollment__user=user).prefetch_related('course_set__courserun_set')
     )
     for program in all_programs:
-        mmtrack_info = MMTrack(
-            user,
-            program,
-            edx_user_data
-        )
+        mmtrack_info = get_mmtrack(user, program)
         response_data['programs'].append(get_info_for_program(mmtrack_info))
     return response_data
 
@@ -252,7 +246,7 @@ def get_info_for_course(course, mmtrack):
             mmtrack=mmtrack_,
             position=len(course_data['runs']) + 1
         )
-        if run.is_current and formatted_run['has_paid']:
+        if run.is_current and mmtrack_.is_enrolled_mmtrack(formatted_run['course_id']):
             # Prepend current run on the top because user can pay and enroll for current run as well as
             # future run and the dashboard UI picks first run to display. User should be able to
             # see current run progress on dashboard UI.
