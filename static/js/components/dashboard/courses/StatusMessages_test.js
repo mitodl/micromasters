@@ -514,6 +514,7 @@ describe("Course Status Messages", () => {
         course.has_to_pay = true
         assertIsJust(calculateMessages(calculateMessagesProps), [
           {
+            action:  "course action was called",
             message:
               "You did not pass the exam. If you want to re-take the exam, you need to pay again. " +
               "You can sign up to re-take the exam starting on " +

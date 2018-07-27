@@ -317,7 +317,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     } else {
       message = messageForAttemptedExams(course, passedExam)
     }
-    if (course.can_schedule_exam && course.has_to_pay) {
+    if (course.has_to_pay) {
       messages.push({
         message: message,
         action:  courseAction(firstRun, COURSE_ACTION_PAY)
