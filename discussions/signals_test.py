@@ -6,6 +6,7 @@ from factory.django import mute_signals
 
 from profiles.factories import ProfileFactory
 from micromasters.factories import UserFactory
+from roles.factories import RoleFactory
 
 pytestmark = [
     pytest.mark.usefixtures('mocked_elasticsearch'),
@@ -39,3 +40,23 @@ def test_sync_user_profile_save_enabled(mocker, patched_users_api):
         profile = ProfileFactory.create()
     profile.save()
     mock_task.delay.assert_called_once_with(profile.user_id)
+
+
+def test_add_staff_as_moderator_enabled(mocker, patched_users_api):
+    """Test that add_staff_as_moderator calls the task if enabled on save"""
+    mock_task = mocker.patch('discussions.tasks.add_user_as_moderator_to_channel')
+    with mute_signals(post_save):
+        profile = ProfileFactory.create()
+        role = RoleFactory.create(user=profile.user)
+    role.save()
+    mock_task.delay.assert_called_once_with(role.user_id, role.program_id)
+
+
+def test_delete_staff_as_moderator_enabled(mocker, patched_users_api):
+    """Test that remove_user_as_moderator_to_channel calls the task if enabled on save"""
+    mock_task = mocker.patch('discussions.tasks.remove_user_as_moderator_from_channel')
+    with mute_signals(post_save):
+        profile = ProfileFactory.create()
+        role = RoleFactory.create(user=profile.user)
+    role.delete()
+    mock_task.delay.assert_called_once_with(role.user_id, role.program_id)

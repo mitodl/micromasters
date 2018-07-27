@@ -203,6 +203,24 @@ def add_moderator_to_channel(channel_name, discussion_username):
         )) from ex
 
 
+def remove_moderator_from_channel(channel_name, discussion_username):
+    """
+    Remove user to channel as a moderator
+
+    Args:
+        channel_name (str): An open-discussions channel
+        discussion_username (str): The username used by open-discussions
+    """
+    admin_client = get_staff_client()
+    try:
+        admin_client.channels.remove_moderator(channel_name, discussion_username).raise_for_status()
+    except HTTPError as ex:
+        raise ModeratorSyncException("Error removing moderator {user} to channel {channel}".format(
+            user=discussion_username,
+            channel=channel_name,
+        )) from ex
+
+
 def add_subscriber_to_channel(channel_name, discussion_username):
     """
     Add a subscriber to channel
@@ -437,3 +455,28 @@ def add_moderators_to_channel(channel_name):
         discussion_user = create_or_update_discussion_user(mod_id)
         add_moderator_to_channel(channel_name, discussion_user.username)
         add_subscriber_to_channel(channel_name, discussion_user.username)
+
+
+def add_and_sub_moderator_to_channel(user_id, channel_name):
+    """
+    Add moderator to a channels
+
+    Args:
+        user_id (int): user id of the user to sync
+        channel_name (str): The name of the channel
+    """
+    discussion_user = create_or_update_discussion_user(user_id)
+    add_moderator_to_channel(channel_name, discussion_user.username)
+    add_subscriber_to_channel(channel_name, discussion_user.username)
+
+
+def remove_discussion_user_as_moderator_from_channel(user_id, channel_name):
+    """
+    Remove moderator to a channels
+
+    Args:
+        user_id (int): user id of the user to sync
+        channel_name (str): The name of the channel
+    """
+    discussion_user = create_or_update_discussion_user(user_id)
+    remove_moderator_from_channel(channel_name, discussion_user.username)

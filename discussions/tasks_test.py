@@ -4,6 +4,7 @@ from datetime import timedelta
 import pytest
 
 from discussions import tasks
+from discussions.factories import ChannelProgramFactory
 from discussions.exceptions import DiscussionUserSyncException
 from profiles.factories import UserFactory
 from micromasters.utils import (
@@ -273,3 +274,37 @@ def test_sync_channel_memberships_no_feature_flag(settings, mocker):
     api_stub = mocker.patch('discussions.api.sync_channel_memberships', autospec=True)
     tasks.sync_channel_memberships.delay()
     assert api_stub.call_count == 0
+
+
+def test_add_moderator_to_channel(mocker):
+    """add_moderator_to_channels should forward all arguments to the api function"""
+    stub = mocker.patch('discussions.api.add_and_sub_moderator_to_channel', autospec=True)
+    program = ChannelProgramFactory.create().program
+    tasks.add_user_as_moderator_to_channel.delay(1, program.id)
+    assert stub.called is True
+
+
+def test_add_moderator_to_channel_no_feature_flag(settings, mocker):
+    """add_moderator_to_channels should not call the api function if the feature flag is disabled"""
+    settings.FEATURES['OPEN_DISCUSSIONS_USER_SYNC'] = False
+    stub = mocker.patch('discussions.api.add_and_sub_moderator_to_channel', autospec=True)
+    program = ChannelProgramFactory.create().program
+    tasks.add_user_as_moderator_to_channel.delay(1, program.id)
+    assert stub.called is False
+
+
+def test_remove_moderator_to_channel(mocker):
+    """add_moderator_to_channels should forward all arguments to the api function"""
+    stub = mocker.patch('discussions.api.remove_discussion_user_as_moderator_from_channel', autospec=True)
+    program = ChannelProgramFactory.create().program
+    tasks.remove_user_as_moderator_from_channel.delay(1, program.id)
+    assert stub.called is True
+
+
+def test_remove_moderator_to_channel_no_feature_flag(settings, mocker):
+    """add_moderator_to_channels should not call the api function if the feature flag is disabled"""
+    settings.FEATURES['OPEN_DISCUSSIONS_USER_SYNC'] = False
+    stub = mocker.patch('discussions.api.remove_discussion_user_as_moderator_from_channel', autospec=True)
+    program = ChannelProgramFactory.create().program
+    tasks.remove_user_as_moderator_from_channel.delay(1, program.id)
+    assert stub.called is False
