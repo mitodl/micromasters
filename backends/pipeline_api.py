@@ -20,7 +20,7 @@ from roles.models import (
 log = logging.getLogger(__name__)
 
 
-def update_profile_from_edx(backend, user, response, is_new, details, *args, **kwargs):
+def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):
     # pylint: disable=unused-argument
     """
     Gets profile information from EDX and saves them in the user profile
@@ -31,12 +31,10 @@ def update_profile_from_edx(backend, user, response, is_new, details, *args, **k
         response (dict): dictionary of the user information coming
             from previous functions in the pipeline
         is_new (bool): whether the authenticated user created a new local instance
-        details (dict): passed details
 
     Returns:
         None
     """
-
     # this function is completely skipped if the backend is not edx or
     # the user has not created now
     if backend.name != EdxOrgOAuth2.name:
@@ -52,8 +50,7 @@ def update_profile_from_edx(backend, user, response, is_new, details, *args, **k
         next_url = next_relative_url
     backend.strategy.session_set('next', next_url)
 
-    user_profile_edx = details
-
+    user_profile_edx = kwargs.get('edx_profile')
     update_email(user_profile_edx, user)
     if not is_new:
         return
@@ -112,7 +109,7 @@ def check_verified_email(backend, response, details, *args, **kwargs):  # pylint
     if not user_profile_edx.get('is_active'):
         return redirect('verify-email')
 
-    return user_profile_edx
+    return {'edx_profile': user_profile_edx}
 
 
 def set_last_update(details, *args, **kwargs):  # pylint: disable=unused-argument

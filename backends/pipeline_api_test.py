@@ -138,7 +138,7 @@ class EdxPipelineApiTest(MockedESTestCase):
         self.check_empty_profile(self.user_profile)
         pipeline_api.update_profile_from_edx(
             edxorg.EdxOrgOAuth2(strategy=mock.Mock()),
-            self.user, {'access_token': 'foo'}, False, self.mocked_edx_profile
+            self.user, {'access_token': 'foo'}, False, **{'edx_profile': self.mocked_edx_profile}
         )
 
         self.user_profile.refresh_from_db()
@@ -156,7 +156,7 @@ class EdxPipelineApiTest(MockedESTestCase):
         # just checking that nothing raises an exception
         pipeline_api.update_profile_from_edx(
             edxorg.EdxOrgOAuth2(strategy=mock.Mock()),
-            self.user, {'access_token': 'foo_token'}, True, self.mocked_edx_profile
+            self.user, {'access_token': 'foo_token'}, True, **{'edx_profile': self.mocked_edx_profile}
         )
 
         # verify that a profile has not been created
@@ -169,7 +169,9 @@ class EdxPipelineApiTest(MockedESTestCase):
         """
         mocked_content = self.mocked_edx_profile
         pipeline_api.update_profile_from_edx(
-            edxorg.EdxOrgOAuth2(strategy=mock.Mock()), self.user, {'access_token': 'foo_token'}, True, mocked_content)
+            edxorg.EdxOrgOAuth2(strategy=mock.Mock()),
+            self.user, {'access_token': 'foo_token'}, True, **{'edx_profile': mocked_content}
+        )
 
         first_name, last_name = split_name(mocked_content['name'])
 
@@ -204,7 +206,9 @@ class EdxPipelineApiTest(MockedESTestCase):
             'email': 'foo@example.com'
         }
         pipeline_api.update_profile_from_edx(
-            edxorg.EdxOrgOAuth2(strategy=mock.Mock()), self.user, {'access_token': 'foo_token'}, is_new, mocked_content)
+            edxorg.EdxOrgOAuth2(strategy=mock.Mock()),
+            self.user, {'access_token': 'foo_token'}, is_new, **{'edx_profile': mocked_content}
+        )
 
         assert self.user.email == mocked_content['email']
 
@@ -218,7 +222,7 @@ class EdxPipelineApiTest(MockedESTestCase):
             mocked_content['language_proficiencies'] = proficiencies
             pipeline_api.update_profile_from_edx(
                 edxorg.EdxOrgOAuth2(strategy=mock.Mock()),
-                self.user, {'access_token': 'foo_token'}, True, mocked_content
+                self.user, {'access_token': 'foo_token'}, True, **{'edx_profile': mocked_content}
             )
 
             self.user_profile.refresh_from_db()
@@ -256,7 +260,7 @@ class EdxPipelineApiTest(MockedESTestCase):
         mock_strategy = mock.Mock()
         mock_strategy.session.load.return_value = {}
         backend = edxorg.EdxOrgOAuth2(strategy=mock_strategy)
-        pipeline_api.update_profile_from_edx(backend, student, {}, False)
+        pipeline_api.update_profile_from_edx(backend, student, {}, False, **{'edx_profile': self.mocked_edx_profile})
         mock_strategy.session_set.assert_called_with('next', '/dashboard')
 
     def test_login_redirect_learners(self):
@@ -269,7 +273,7 @@ class EdxPipelineApiTest(MockedESTestCase):
             mock_strategy = mock.Mock()
             mock_strategy.session.load.return_value = {}
             backend = edxorg.EdxOrgOAuth2(strategy=mock_strategy)
-            pipeline_api.update_profile_from_edx(backend, user, {}, False)
+            pipeline_api.update_profile_from_edx(backend, user, {}, False, **{'edx_profile': self.mocked_edx_profile})
             mock_strategy.session_set.assert_called_with('next', '/learners')
 
     def test_login_redirect_next(self):
@@ -281,5 +285,5 @@ class EdxPipelineApiTest(MockedESTestCase):
         mock_strategy = mock.Mock()
         mock_strategy.session.load.return_value = {"next": next_url}
         backend = edxorg.EdxOrgOAuth2(strategy=mock_strategy)
-        pipeline_api.update_profile_from_edx(backend, student, {}, False)
+        pipeline_api.update_profile_from_edx(backend, student, {}, False, **{'edx_profile': self.mocked_edx_profile})
         mock_strategy.session_set.assert_called_with('next', next_url)
