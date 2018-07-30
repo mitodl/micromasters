@@ -70,7 +70,7 @@ class EdxPipelineApiTest(MockedESTestCase):
         Set up class
         """
         super(EdxPipelineApiTest, self).setUp()
-        self.user = UserFactory()
+        self.user = UserFactory(username="user_1")
         self.user.social_auth.create(
             provider='not_edx',
         )
@@ -126,71 +126,50 @@ class EdxPipelineApiTest(MockedESTestCase):
 
         backend = mock.MagicMock(name='other_backend')
         pipeline_api.update_profile_from_edx(
-            backend, self.user, {'access_token': 'foo'}, True)
+            backend, self.user, {'access_token': 'foo'}, True, {})
 
         self.user_profile.refresh_from_db()
         self.check_empty_profile(self.user_profile)
 
-    @mock.patch('backends.edxorg.EdxOrgOAuth2.get_json')
-    def test_update_profile_old_user(self, mocked_get_json):
+    def test_update_profile_old_user(self):
         """
         Only new users are updated
         """
-        mocked_get_json.return_value = self.mocked_edx_profile
         self.check_empty_profile(self.user_profile)
         pipeline_api.update_profile_from_edx(
-            edxorg.EdxOrgOAuth2(strategy=mock.Mock()), self.user, {'access_token': 'foo'}, False)
+            edxorg.EdxOrgOAuth2(strategy=mock.Mock()),
+            self.user, {'access_token': 'foo'}, False, self.mocked_edx_profile
+        )
 
         self.user_profile.refresh_from_db()
         self.check_empty_profile(self.user_profile)
 
-    def test_update_profile_no_access_token(self):
-        """
-        The response dict has no access token
-        """
-        self.check_empty_profile(self.user_profile)
-
-        pipeline_api.update_profile_from_edx(
-            edxorg.EdxOrgOAuth2(strategy=mock.Mock()), self.user, {'access_token': ''}, True)
-
-        self.user_profile.refresh_from_db()
-        self.check_empty_profile(self.user_profile)
-
-    @mock.patch('backends.edxorg.EdxOrgOAuth2.get_json')
-    def test_update_profile_no_existing_profile(self, mocked_get_json):
+    def test_update_profile_no_existing_profile(self):
         """
         The profile did not exist for the user
         """
         self.user_profile.delete()
-        mocked_get_json.return_value = self.mocked_edx_profile
 
         with self.assertRaises(Profile.DoesNotExist):
             Profile.objects.get(user=self.user)
 
         # just checking that nothing raises an exception
         pipeline_api.update_profile_from_edx(
-            edxorg.EdxOrgOAuth2(strategy=mock.Mock()), self.user, {'access_token': 'foo_token'}, True)
+            edxorg.EdxOrgOAuth2(strategy=mock.Mock()),
+            self.user, {'access_token': 'foo_token'}, True, self.mocked_edx_profile
+        )
 
         # verify that a profile has not been created
         with self.assertRaises(Profile.DoesNotExist):
             Profile.objects.get(user=self.user)
 
-    @mock.patch('backends.edxorg.EdxOrgOAuth2.get_json')
-    def test_update_profile(self, mocked_get_json):
+    def test_update_profile(self):
         """
         Happy path
         """
         mocked_content = self.mocked_edx_profile
-        mocked_get_json.return_value = mocked_content
         pipeline_api.update_profile_from_edx(
-            edxorg.EdxOrgOAuth2(strategy=mock.Mock()), self.user, {'access_token': 'foo_token'}, True)
-        mocked_get_json.assert_called_once_with(
-            urljoin(
-                edxorg.EdxOrgOAuth2.EDXORG_BASE_URL,
-                '/api/user/v1/accounts/{0}'.format(get_social_username(self.user))
-            ),
-            headers={'Authorization': 'Bearer foo_token'}
-        )
+            edxorg.EdxOrgOAuth2(strategy=mock.Mock()), self.user, {'access_token': 'foo_token'}, True, mocked_content)
 
         first_name, last_name = split_name(mocked_content['name'])
 
@@ -217,29 +196,19 @@ class EdxPipelineApiTest(MockedESTestCase):
         assert self.user_profile.date_of_birth is None
 
     @ddt.data(True, False)
-    @mock.patch('backends.edxorg.EdxOrgOAuth2.get_json')
-    def test_update_email(self, is_new, mocked_get_json):
+    def test_update_email(self, is_new):
         """
         Test email changed for new user.
         """
         mocked_content = {
             'email': 'foo@example.com'
         }
-        mocked_get_json.return_value = mocked_content
         pipeline_api.update_profile_from_edx(
-            edxorg.EdxOrgOAuth2(strategy=mock.Mock()), self.user, {'access_token': 'foo_token'}, is_new)
-        mocked_get_json.assert_called_once_with(
-            urljoin(
-                edxorg.EdxOrgOAuth2.EDXORG_BASE_URL,
-                '/api/user/v1/accounts/{0}'.format(get_social_username(self.user))
-            ),
-            headers={'Authorization': 'Bearer foo_token'}
-        )
+            edxorg.EdxOrgOAuth2(strategy=mock.Mock()), self.user, {'access_token': 'foo_token'}, is_new, mocked_content)
 
         assert self.user.email == mocked_content['email']
 
-    @mock.patch('backends.edxorg.EdxOrgOAuth2.get_json')
-    def test_preferred_language(self, mocked_get_json):
+    def test_preferred_language(self):
         """
         If language_proficiencies is missing or invalid, we should not set
         preferred_language. We already test the success case in test_update_profile
@@ -247,13 +216,37 @@ class EdxPipelineApiTest(MockedESTestCase):
         for proficiencies in ([], {}, [{}], None):
             mocked_content = dict(self.mocked_edx_profile)
             mocked_content['language_proficiencies'] = proficiencies
-            mocked_get_json.return_value = mocked_content
             pipeline_api.update_profile_from_edx(
-                edxorg.EdxOrgOAuth2(strategy=mock.Mock()), self.user, {'access_token': 'foo_token'}, True)
+                edxorg.EdxOrgOAuth2(strategy=mock.Mock()),
+                self.user, {'access_token': 'foo_token'}, True, mocked_content
+            )
 
             self.user_profile.refresh_from_db()
             assert self.user_profile.preferred_language is None
             assert self.user_profile.edx_language_proficiencies == proficiencies
+
+    @ddt.data(True, False)
+    @mock.patch('backends.edxorg.EdxOrgOAuth2.get_json')
+    def test_check_verified_email(self, is_active, mocked_get_json):
+        """
+        If language_proficiencies is missing or invalid, we should not set
+        preferred_language. We already test the success case in test_update_profile
+        """
+        mock_strategy = mock.Mock()
+        backend = edxorg.EdxOrgOAuth2(strategy=mock_strategy)
+        mocked_content = dict(self.mocked_edx_profile)
+        mocked_content['is_active'] = is_active
+        mocked_get_json.return_value = mocked_content
+        pipeline_api.check_verified_email(backend, {'access_token': 'foo_token'},
+                                          {'username': get_social_username(self.user)})
+
+        mocked_get_json.assert_called_once_with(
+            urljoin(
+                edxorg.EdxOrgOAuth2.EDXORG_BASE_URL,
+                '/api/user/v1/accounts/{0}'.format(get_social_username(self.user))
+            ),
+            headers={'Authorization': 'Bearer foo_token'}
+        )
 
     def test_login_redirect_dashboard(self):
         """

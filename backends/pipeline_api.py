@@ -31,6 +31,7 @@ def update_profile_from_edx(backend, user, response, is_new, details, *args, **k
         response (dict): dictionary of the user information coming
             from previous functions in the pipeline
         is_new (bool): whether the authenticated user created a new local instance
+        details (dict): passed details
 
     Returns:
         None
