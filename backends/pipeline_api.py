@@ -6,10 +6,10 @@ from urllib.parse import urljoin
 
 from django.shortcuts import redirect
 from rolepermissions.checkers import has_role
+from social_core.exceptions import AuthException
 
 from backends.edxorg import EdxOrgOAuth2
 from micromasters.utils import now_in_utc
-from profiles.api import get_social_username
 from profiles.models import Profile
 from profiles.util import split_name
 from roles.models import (
@@ -20,7 +20,8 @@ from roles.models import (
 log = logging.getLogger(__name__)
 
 
-def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):   # pylint: disable=unused-argument
+def update_profile_from_edx(backend, user, response, is_new, details, *args, **kwargs):
+    # pylint: disable=unused-argument
     """
     Gets profile information from EDX and saves them in the user profile
 
@@ -50,19 +51,7 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):  
         next_url = next_relative_url
     backend.strategy.session_set('next', next_url)
 
-    access_token = response.get('access_token')
-    if not access_token:
-        # this should never happen for the edx oauth provider, but just in case...
-        log.error('Missing access token for the user %s', user.username)
-        return
-
-    username = get_social_username(user)
-    user_profile_edx = backend.get_json(
-        urljoin(backend.EDXORG_BASE_URL, '/api/user/v1/accounts/{0}'.format(username)),
-        headers={
-            "Authorization": "Bearer {}".format(access_token),
-        }
-    )
+    user_profile_edx = details
 
     update_email(user_profile_edx, user)
     if not is_new:
@@ -110,7 +99,7 @@ def check_verified_email(backend, response, details, *args, **kwargs):  # pylint
     if not access_token:
         # this should never happen for the edx oauth provider, but just in case...
         log.error('Missing access token for the user %s', username)
-        return
+        raise AuthException
 
     user_profile_edx = backend.get_json(
         urljoin(backend.EDXORG_BASE_URL, '/api/user/v1/accounts/{0}'.format(username)),
@@ -121,6 +110,8 @@ def check_verified_email(backend, response, details, *args, **kwargs):  # pylint
 
     if not user_profile_edx.get('is_active'):
         return redirect('verify-email')
+
+    return user_profile_edx
 
 
 def set_last_update(details, *args, **kwargs):  # pylint: disable=unused-argument
