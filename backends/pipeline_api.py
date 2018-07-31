@@ -93,7 +93,7 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):
 def check_verified_email(backend, response, details, *args, **kwargs):  # pylint: disable=unused-argument
     """Get account information to check if email was verified for account on edX"""
     if backend.name != EdxOrgOAuth2.name:
-        return
+        return {}
 
     username = details.get('username')
     access_token = response.get('access_token')
