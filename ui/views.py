@@ -185,7 +185,7 @@ def need_verified_email(request, *args, **kwargs):  # pylint: disable=unused-arg
     """
     Returns error page for unverified email on edX
     """
-    return render(request, "verify_email.html", context={"support_email": settings.EMAIL_SUPPORT})
+    return standard_error_page(request, 401, "verify_email.html")
 
 
 class BackgroundImagesCSSView(TemplateView):
