@@ -433,8 +433,7 @@ def add_channel(
     # The creator is added in add_moderators_to_channel but do it here also to prevent a race condition
     # where the user is redirected to the channel page before they have permission to access it.
     discussion_user = create_or_update_discussion_user(creator_id)
-    add_moderator_to_channel(channel.name, discussion_user.username)
-    add_subscriber_to_channel(channel.name, discussion_user.username)
+    add_and_subscribe_moderator(discussion_user.username, channel.name)
 
     return channel
 
@@ -453,30 +452,16 @@ def add_moderators_to_channel(channel_name):
 
     for mod_id in mod_ids:
         discussion_user = create_or_update_discussion_user(mod_id)
-        add_moderator_to_channel(channel_name, discussion_user.username)
-        add_subscriber_to_channel(channel_name, discussion_user.username)
+        add_and_subscribe_moderator(discussion_user.username, channel_name)
 
 
-def add_and_sub_moderator_to_channel(user_id, channel_name):
+def add_and_subscribe_moderator(discussion_username, channel_name):
     """
-    Add moderator to a channels
+    Add and subscribe a moderator to a channels
 
     Args:
-        user_id (int): user id of the user to sync
+        discussion_username (str): discussion username
         channel_name (str): The name of the channel
     """
-    discussion_user = create_or_update_discussion_user(user_id)
-    add_moderator_to_channel(channel_name, discussion_user.username)
-    add_subscriber_to_channel(channel_name, discussion_user.username)
-
-
-def remove_discussion_user_as_moderator_from_channel(user_id, channel_name):
-    """
-    Remove moderator to a channels
-
-    Args:
-        user_id (int): user id of the user to sync
-        channel_name (str): The name of the channel
-    """
-    discussion_user = create_or_update_discussion_user(user_id)
-    remove_moderator_from_channel(channel_name, discussion_user.username)
+    add_moderator_to_channel(channel_name, discussion_username)
+    add_subscriber_to_channel(channel_name, discussion_username)

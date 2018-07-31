@@ -44,7 +44,7 @@ def add_staff_as_moderator(sender, instance, created, **kwargs):  # pylint: disa
 @receiver(post_delete, sender=Role, dispatch_uid="delete_staff_as_moderator")
 def delete_staff_as_moderator(sender, instance, **kwargs):  # pylint: disable=unused-argument
     """
-    Signal handler removes user as moderator when his staff role on program is delete
+    Signal handler removes user as moderator when his staff role on program is deleted
     """
     if not settings.FEATURES.get('OPEN_DISCUSSIONS_USER_SYNC', False):
         return

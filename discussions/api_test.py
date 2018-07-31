@@ -24,6 +24,7 @@ from discussions.exceptions import (
 from discussions.factories import (
     ChannelFactory,
     ChannelProgramFactory,
+    DiscussionUserFactory,
 )
 from discussions.models import (
     Channel,
@@ -696,48 +697,12 @@ def test_remove_moderator_from_channel(mock_staff_client):
 def test_add_and_sub_moderator_to_channel(mocker):
     """add_moderators_to_channel should add user as moderators and subscribers"""
     channel = ChannelFactory.create()
-    create_mock = mocker.patch('discussions.api.create_discussion_user')
-    mocker.patch('discussions.api.update_discussion_user')
     add_subscriber_stub = mocker.patch('discussions.api.add_subscriber_to_channel', autospec=True)
     add_moderator_stub = mocker.patch('discussions.api.add_moderator_to_channel', autospec=True)
-
-    with mute_signals(post_save):
-        profile = ProfileFactory.create()
-    assert DiscussionUser.objects.count() == 0
+    discussion_user = DiscussionUserFactory.create()
 
     # call api
-    api.add_and_sub_moderator_to_channel(profile.user_id, channel.name)
+    api.add_and_subscribe_moderator(discussion_user.username, channel.name)
 
-    assert create_mock.call_count == 1
-    assert DiscussionUser.objects.count() == 1
-    add_subscriber_stub.assert_any_call(channel.name, profile.user.discussion_user.username)
-    add_moderator_stub.assert_any_call(channel.name, profile.user.discussion_user.username)
-    assert add_subscriber_stub.called is True
-    assert add_moderator_stub.called is True
-
-
-def test_remove_discussion_user_as_moderator_from_channel(mocker):
-    """remove_moderator_from_channel should remove user as moderators"""
-    channel = ChannelFactory.create()
-    create_mock = mocker.patch('discussions.api.create_discussion_user')
-    mocker.patch('discussions.api.update_discussion_user')
-    mocker.patch('discussions.api.add_subscriber_to_channel', autospec=True)
-    mocker.patch('discussions.api.add_moderator_to_channel', autospec=True)
-    remove_moderator_mock = mocker.patch(
-        'discussions.api.remove_discussion_user_as_moderator_from_channel',
-        autospec=True
-    )
-
-    with mute_signals(post_save):
-        profile = ProfileFactory.create()
-    assert DiscussionUser.objects.count() == 0
-
-    # call api
-    api.add_and_sub_moderator_to_channel(profile.user_id, channel.name)
-
-    assert create_mock.call_count == 1
-    assert DiscussionUser.objects.count() == 1
-
-    # call remove api
-    api.remove_discussion_user_as_moderator_from_channel(profile.user_id, channel.name)
-    assert remove_moderator_mock.called is True
+    add_subscriber_stub.assert_any_call(channel.name, discussion_user.username)
+    add_moderator_stub.assert_any_call(channel.name, discussion_user.username)
