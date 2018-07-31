@@ -126,7 +126,7 @@ class EdxPipelineApiTest(MockedESTestCase):
 
         backend = mock.MagicMock(name='other_backend')
         pipeline_api.update_profile_from_edx(
-            backend, self.user, {'access_token': 'foo'}, True, {})
+            backend, self.user, {'access_token': 'foo'}, True)
 
         self.user_profile.refresh_from_db()
         self.check_empty_profile(self.user_profile)
@@ -231,18 +231,20 @@ class EdxPipelineApiTest(MockedESTestCase):
 
     @ddt.data(True, False)
     @mock.patch('backends.edxorg.EdxOrgOAuth2.get_json')
-    def test_check_verified_email(self, is_active, mocked_get_json):
+    def test_check_edx_verified_email(self, is_active, mocked_get_json):
         """
-        If language_proficiencies is missing or invalid, we should not set
-        preferred_language. We already test the success case in test_update_profile
+        User should be directed to error page if user is unverified on edX
         """
         mock_strategy = mock.Mock()
         backend = edxorg.EdxOrgOAuth2(strategy=mock_strategy)
         mocked_content = dict(self.mocked_edx_profile)
         mocked_content['is_active'] = is_active
         mocked_get_json.return_value = mocked_content
-        pipeline_api.check_verified_email(backend, {'access_token': 'foo_token'},
-                                          {'username': get_social_username(self.user)})
+        result = pipeline_api.check_edx_verified_email(
+            backend,
+            {'access_token': 'foo_token'},
+            {'username': get_social_username(self.user)}
+        )
 
         mocked_get_json.assert_called_once_with(
             urljoin(
@@ -251,6 +253,10 @@ class EdxPipelineApiTest(MockedESTestCase):
             ),
             headers={'Authorization': 'Bearer foo_token'}
         )
+        if is_active:
+            assert 'edx_profile' in result
+        else:
+            self.assertEqual(result.status_code, 302)
 
     def test_login_redirect_dashboard(self):
         """

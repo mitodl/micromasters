@@ -166,7 +166,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.auth_allowed',
     'social_core.pipeline.social_auth.social_user',
     'social_core.pipeline.user.get_username',
-    'backends.pipeline_api.check_verified_email',
+    'backends.pipeline_api.check_edx_verified_email',
     'social_core.pipeline.user.create_user',
     'social_core.pipeline.social_auth.associate_user',
     # the following custom pipeline func goes before load_extra_data

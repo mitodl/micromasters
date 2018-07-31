@@ -90,7 +90,7 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):
     )
 
 
-def check_verified_email(backend, response, details, *args, **kwargs):  # pylint: disable=unused-argument
+def check_edx_verified_email(backend, response, details, *args, **kwargs):  # pylint: disable=unused-argument
     """Get account information to check if email was verified for account on edX"""
     if backend.name != EdxOrgOAuth2.name:
         return {}
@@ -99,7 +99,7 @@ def check_verified_email(backend, response, details, *args, **kwargs):  # pylint
     access_token = response.get('access_token')
     if not access_token:
         # this should never happen for the edx oauth provider, but just in case...
-        raise AuthException('Missing access token for the user {0}'.format(username))
+        raise AuthException('Missing access token for the edX user {0}'.format(username))
 
     user_profile_edx = backend.get_json(
         urljoin(backend.EDXORG_BASE_URL, '/api/user/v1/accounts/{0}'.format(username)),
