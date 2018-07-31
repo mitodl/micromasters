@@ -39,6 +39,7 @@ from exams.models import (
     ExamProfile,
 )
 from financialaid.api_test import create_program
+from grades.constants import FinalGradeStatus
 from grades.factories import FinalGradeFactory
 from profiles.factories import ProfileFactory
 
@@ -441,11 +442,26 @@ class ExamLatestCourseAuthorizationApiTests(TestCase):
         cls.program_enrollment = ProgramEnrollmentFactory.create(program=cls.program)
         cls.user = cls.program_enrollment.user
         with mute_signals(post_save):
-            cls.enrollments = sorted([
-                CachedEnrollmentFactory.create(user=cls.user, course_run=cls.course_run),
-                CachedEnrollmentFactory.create(user=cls.user, course_run__course=cls.course),
-                CachedEnrollmentFactory.create(user=cls.user, course_run__course=cls.course),
-            ], key=lambda enrollment: enrollment.course_run.end_date, reverse=True)
+            cls.final_grades = sorted([
+                FinalGradeFactory.create(
+                    user=cls.user,
+                    course_run=cls.course_run,
+                    passed=False,
+                    status=FinalGradeStatus.PENDING
+                ),
+                FinalGradeFactory.create(
+                    user=cls.user,
+                    course_run__course=cls.course,
+                    passed=True,
+                    status=FinalGradeStatus.COMPLETE
+                ),
+                FinalGradeFactory.create(
+                    user=cls.user,
+                    course_run__course=cls.course,
+                    passed=True,
+                    status=FinalGradeStatus.COMPLETE
+                ),
+            ], key=lambda final_grade: final_grade.course_run.end_date, reverse=True)
 
     def test_exam_authorization_multiple_runs(self):
         """Test that if the first enrollment is invalid it checks the second, but not the third"""
@@ -457,5 +473,5 @@ class ExamLatestCourseAuthorizationApiTests(TestCase):
             authorize_for_latest_passed_course(mmtrack, exam_run)
 
         assert mock.call_count == 2
-        for enrollment in self.enrollments[:2]:  # two most recent runs
+        for enrollment in self.final_grades[:2]:  # two most recent runs
             mock.assert_any_call(mmtrack, enrollment.course_run, exam_run)
