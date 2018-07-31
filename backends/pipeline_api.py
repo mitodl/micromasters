@@ -99,7 +99,7 @@ def check_verified_email(backend, response, details, *args, **kwargs):  # pylint
     access_token = response.get('access_token')
     if not access_token:
         # this should never happen for the edx oauth provider, but just in case...
-        raise AuthException('Missing access token for the user %s'.format(username))
+        raise AuthException('Missing access token for the user {0}'.format(username))
 
     user_profile_edx = backend.get_json(
         urljoin(backend.EDXORG_BASE_URL, '/api/user/v1/accounts/{0}'.format(username)),
