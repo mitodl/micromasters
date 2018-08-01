@@ -153,7 +153,7 @@ micromasters web application. This can be done with the management command: `adj
 
   1. On your local machine, calculate an md5 checksum of the grade data (use `md5` on MacOS)
   
-    md5 <csv file name> 
+    md5sum <csv file name> 
   
   1. Open a bash shell on a one-off Heroku dyno:
 
