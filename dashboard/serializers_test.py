@@ -21,7 +21,10 @@ from dashboard.factories import (
     CachedEnrollmentFactory,
 )
 from dashboard.models import ProgramEnrollment
-from dashboard.serializers import UserProgramSearchSerializer
+from dashboard.serializers import (
+    UserProgramSearchSerializer,
+    UnEnrollProgramsSerializer
+)
 from dashboard.utils import MMTrack
 from ecommerce.factories import (
     OrderFactory,
@@ -460,3 +463,31 @@ class UserProgramSerializerSemesterTests(MockedESTestCase):
         no_semester_serialized = UserProgramSearchSerializer.serialize_semester(no_semester_course_run)
         assert valid_semester_serialized == '2017 - Spring'
         assert no_semester_serialized is None
+
+
+class UserProgramSerializerTests(MockedESTestCase):
+    """
+    Test cases for the serialization of program list to be unenrolled
+    """
+    def test_serializer_payload(self):
+        """Test for list of programs ids serialization"""
+        array = [1, 2, 3]
+        payload = {
+            "program_ids": array
+        }
+        data = UnEnrollProgramsSerializer(payload).data
+        assert data == payload
+
+    def test_serializer_empty_list(self):
+        """Test for list of programs ids serialization"""
+        payload = {
+            "program_ids": []
+        }
+        data = UnEnrollProgramsSerializer(payload).data
+        assert data == payload
+
+    def test_serializer_invalid_payload(self):
+        """Test for invalid list of programs ids serialization"""
+        payload = {}
+        with self.assertRaises(KeyError):
+            __ = UnEnrollProgramsSerializer(payload).data

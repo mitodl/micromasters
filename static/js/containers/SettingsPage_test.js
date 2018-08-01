@@ -10,7 +10,8 @@ import {
 } from "../actions/profile"
 import {
   REQUEST_GET_PROGRAM_ENROLLMENTS,
-  RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS
+  RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
+  UNENROLL_PROGRAM_DIALOG
 } from "../actions/programs"
 import {
   START_PROFILE_EDIT,
@@ -21,6 +22,7 @@ import {
   UPDATE_VALIDATION_VISIBILITY,
   receiveGetUserProfileSuccess
 } from "../actions/profile"
+import { SHOW_DIALOG } from "../actions/ui"
 import IntegrationTestHelper from "../util/integration_test_helper"
 import * as api from "../lib/api"
 import { USER_PROFILE_RESPONSE } from "../test_constants"
@@ -95,6 +97,9 @@ describe("SettingsPage", function() {
         "privacy-form-heading"
       )[2]
       assert.equal(emailPrefHeading.textContent, "Email Preferences")
+
+      const otherSettingsHeading = div.getElementsByClassName("heading")[0]
+      assert.equal(otherSettingsHeading.textContent, "Other Settings")
     })
   })
 
@@ -137,5 +142,20 @@ describe("SettingsPage", function() {
         })
       })
     }
+
+    it("when unenroll program button click", () => {
+      return renderComponent("/settings", userActions).then(([, div]) => {
+        const unEnrollBtn = div.getElementsByClassName(
+          "unenroll-wizard-button"
+        )[0]
+        assert.equal(unEnrollBtn.textContent, "Leave a MicroMasters Program")
+
+        return listenForActions([SHOW_DIALOG], () => {
+          unEnrollBtn.click()
+        }).then(state => {
+          assert.isTrue(state.ui.dialogVisibility[UNENROLL_PROGRAM_DIALOG])
+        })
+      })
+    })
   })
 })

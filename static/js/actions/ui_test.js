@@ -27,6 +27,8 @@ import {
   SET_NAV_DRAWER_OPEN,
   SHOW_ENROLL_PAY_LATER_SUCCESS,
   SET_SHOW_EXPANDED_COURSE_STATUS,
+  SET_PROGRAMS_TO_UNENROLL,
+  SET_UNENROLL_API_INFLIGHT_STATE,
   clearUI,
   setWorkDialogVisibility,
   setWorkDialogIndex,
@@ -54,7 +56,9 @@ import {
   setCouponNotificationVisibility,
   setNavDrawerOpen,
   showEnrollPayLaterSuccess,
-  setShowExpandedCourseStatus
+  setShowExpandedCourseStatus,
+  setProgramsToUnEnroll,
+  setUnEnrollApiInFlightState
 } from "../actions/ui"
 import { assertCreatedActionHelper } from "./test_util"
 
@@ -88,7 +92,9 @@ describe("generated UI action helpers", () => {
       [setWorkHistoryAnswer, SET_WORK_HISTORY_ANSWER],
       [setNavDrawerOpen, SET_NAV_DRAWER_OPEN],
       [showEnrollPayLaterSuccess, SHOW_ENROLL_PAY_LATER_SUCCESS],
-      [setShowExpandedCourseStatus, SET_SHOW_EXPANDED_COURSE_STATUS]
+      [setShowExpandedCourseStatus, SET_SHOW_EXPANDED_COURSE_STATUS],
+      [setProgramsToUnEnroll, SET_PROGRAMS_TO_UNENROLL],
+      [setUnEnrollApiInFlightState, SET_UNENROLL_API_INFLIGHT_STATE]
     ].forEach(assertCreatedActionHelper)
   })
 })

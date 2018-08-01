@@ -16,7 +16,7 @@ from edx_api.enrollments.models import Enrollments, Enrollment
 
 from backends.utils import InvalidCredentialStored
 from courses.factories import ProgramFactory, CourseRunFactory
-from dashboard.factories import UserCacheRefreshTimeFactory
+from dashboard.factories import UserCacheRefreshTimeFactory, ProgramEnrollmentFactory
 from dashboard.models import ProgramEnrollment, CachedEnrollment
 from micromasters.exceptions import PossiblyImproperlyConfigured
 from micromasters.factories import UserFactory, SocialUserFactory
@@ -322,3 +322,130 @@ class UserCourseEnrollmentTest(MockedESTestCase, APITestCase):
         cache_enr = CachedEnrollment.objects.filter(
             user=self.user, course_run__edx_course_key=self.course_id).first()
         assert cache_enr is not None
+
+
+class UnEnrollProgramsTest(MockedESTestCase, APITestCase):
+    """
+    Tests for UnEnrollPrograms Rest API
+    """
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = SocialUserFactory.create(social_auth__extra_data=social_extra_data)
+        cls.invalid_user = UserFactory.create()
+        cls.url = reverse('unenroll_programs')
+
+    def setUp(self):
+        super().setUp()
+        self.client.force_login(self.user)
+        self.program_enrollments = [ProgramEnrollmentFactory.create(user=self.user) for _ in range(2)]
+
+    def test_unenroll_all_programs(self):
+        """test for api multiple program unenroll"""
+        program_ids = [self.program_enrollments[0].program_id, self.program_enrollments[1].program_id]
+        assert ProgramEnrollment.objects.filter(
+            user=self.user
+        ).count() == len(self.program_enrollments)
+
+        resp = self.client.post(
+            self.url, {
+                "program_ids": program_ids
+            },
+            format='json'
+        )
+
+        # test no enrollment left
+        assert resp.status_code == status.HTTP_200_OK
+        assert ProgramEnrollment.objects.filter(
+            program_id__in=program_ids,
+            user=self.user
+        ).count() == 0
+
+    def test_unenroll_single_programs(self):
+        """test for api single program unenroll"""
+        program_ids = [self.program_enrollments[0].program_id]
+        assert ProgramEnrollment.objects.filter(
+            user=self.user
+        ).count() == len(self.program_enrollments)
+
+        resp = self.client.post(
+            self.url, {
+                "program_ids": program_ids
+            },
+            format='json'
+        )
+
+        assert resp.status_code == status.HTTP_200_OK
+        # test correct enrollments left
+        program_enrollment_list = ProgramEnrollment.objects.filter(
+            user=self.user
+        )
+        assert program_enrollment_list.count() == 1
+        assert program_enrollment_list[0].program_id != program_ids[0]
+        assert program_enrollment_list[0].program_id == self.program_enrollments[1].program_id
+
+    def test_unenroll_single_invalid_programs(self):
+        """test for api single invalid program unenroll"""
+        program_ids = [self.program_enrollments[0].program_id + self.program_enrollments[1].program_id]
+        assert ProgramEnrollment.objects.filter(
+            user=self.user
+        ).count() == len(self.program_enrollments)
+
+        resp = self.client.post(
+            self.url, {
+                "program_ids": program_ids
+            },
+            format='json'
+        )
+
+        assert resp.status_code == status.HTTP_200_OK
+        # test no change in enrollments
+        program_enrollment_list = ProgramEnrollment.objects.filter(
+            user=self.user
+        )
+        assert program_enrollment_list.count() == len(self.program_enrollments)
+
+    def test_unenroll_mix_valid_invalid_programs(self):
+        """test api for mix valid and invalid program list"""
+        program_ids = [
+            self.program_enrollments[0].program_id + self.program_enrollments[1].program_id,
+            self.program_enrollments[0].program_id
+        ]
+        assert ProgramEnrollment.objects.filter(
+            user=self.user
+        ).count() == len(self.program_enrollments)
+
+        resp = self.client.post(
+            self.url, {
+                "program_ids": program_ids
+            },
+            format='json'
+        )
+
+        assert resp.status_code == status.HTTP_200_OK
+        # test only one valid program is unenroll
+        program_enrollment_list = ProgramEnrollment.objects.filter(
+            user=self.user
+        )
+        assert program_enrollment_list.count() == 1
+
+    def test_unenroll_when_other_user_access_api(self):
+        """test for api single program unenroll"""
+        self.client.force_login(self.invalid_user)
+        program_ids = [self.program_enrollments[0].program_id]
+        assert ProgramEnrollment.objects.filter(
+            user=self.invalid_user
+        ).count() == 0
+
+        resp = self.client.post(
+            self.url, {
+                "program_ids": program_ids
+            },
+            format='json'
+        )
+
+        assert resp.status_code == status.HTTP_200_OK
+
+        # test no effect on irrelevant user
+        assert ProgramEnrollment.objects.filter(
+            user=self.invalid_user
+        ).count() == 0

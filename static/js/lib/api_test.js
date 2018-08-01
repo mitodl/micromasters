@@ -22,7 +22,8 @@ import {
   addCourseEnrollment,
   getCoupons,
   attachCoupon,
-  getPearsonSSO
+  getPearsonSSO,
+  unEnrollProgramEnrollments
 } from "./api"
 import * as fetchFuncs from "redux-hammock/django_csrf_fetch"
 import {
@@ -644,6 +645,44 @@ describe("api", function() {
 
           return assert.isRejected(getPearsonSSO()).then(() => {
             assert(fetchJSONStub.calledWith("/api/v0/pearson/sso/"))
+          })
+        })
+      })
+    })
+
+    describe("UnEnroll API functions", () => {
+      describe("unEnrollProgramEnrollments", () => {
+        it("post list of programs to unenroll", () => {
+          const programIds = [1, 2]
+          const response = [
+            {
+              program_id: 1,
+              title:      "foo"
+            },
+            {
+              program_id: 2,
+              title:      "bar"
+            }
+          ]
+          fetchJSONStub.returns(Promise.resolve(response))
+          return unEnrollProgramEnrollments([1, 2]).then(data => {
+            assert.ok(
+              fetchJSONStub.calledWith("/api/v0/unenroll_programs/", {
+                method: "POST",
+                body:   JSON.stringify({
+                  program_ids: programIds
+                })
+              })
+            )
+            assert.deepEqual(data, response)
+          })
+        })
+
+        it("fails to post list of programs to unenroll", () => {
+          fetchJSONStub.returns(Promise.reject())
+
+          return assert.isRejected(unEnrollProgramEnrollments()).then(() => {
+            assert(fetchJSONStub.calledWith("/api/v0/unenroll_programs/"))
           })
         })
       })

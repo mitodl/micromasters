@@ -29,6 +29,8 @@ import {
   setNavDrawerOpen,
   showEnrollPayLaterSuccess,
   setShowExpandedCourseStatus,
+  setProgramsToUnEnroll,
+  setUnEnrollApiInFlightState,
   SHOW_ENROLL_PAY_LATER_SUCCESS
 } from "../actions/ui"
 import { INITIAL_UI_STATE } from "../reducers/ui"
@@ -303,6 +305,32 @@ describe("ui reducers", () => {
       assert.isTrue(store.getState().ui.expandedCourseStatuses.has(1))
       store.dispatch(setShowExpandedCourseStatus(1))
       assert.isTrue(store.getState().ui.expandedCourseStatuses.has(1))
+    })
+  })
+
+  describe("list of programs to unenroll", () => {
+    it("is empty on start", () => {
+      assert.lengthOf(store.getState().ui.programsToUnEnroll, 0)
+    })
+
+    it("is populated", () => {
+      store.dispatch(setProgramsToUnEnroll([1]))
+      assert.deepEqual(store.getState().ui.programsToUnEnroll, [1])
+      store.dispatch(setProgramsToUnEnroll([1, 2]))
+      assert.deepEqual(store.getState().ui.programsToUnEnroll, [1, 2])
+    })
+  })
+
+  describe("unenroll dialog flight state", () => {
+    it("false on start", () => {
+      assert.isFalse(store.getState().ui.programsToUnEnrollInFlight)
+    })
+
+    it("set and unset", () => {
+      store.dispatch(setUnEnrollApiInFlightState(true))
+      assert.isTrue(store.getState().ui.programsToUnEnrollInFlight)
+      store.dispatch(setUnEnrollApiInFlightState(false))
+      assert.isFalse(store.getState().ui.programsToUnEnrollInFlight)
     })
   })
 })

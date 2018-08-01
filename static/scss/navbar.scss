@@ -313,3 +313,20 @@
 .mdl-layout-title > a:hover, .mdl-layout-title > a:focus {
   color: white;
 }
+
+.no-program-card {
+  width: 500px !important;
+  top: 30px;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  text-align: center;
+  min-height: 100px !important;
+
+  > div {
+    font-weight: bold;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0;
+    margin-top: 10px;
+  }
+}

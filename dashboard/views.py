@@ -20,6 +20,8 @@ from rest_framework.generics import get_object_or_404
 from backends import utils
 from backends.edxorg import EdxOrgOAuth2
 from dashboard.permissions import CanReadIfStaffOrSelf
+from dashboard.serializers import UnEnrollProgramsSerializer
+from dashboard.models import ProgramEnrollment
 from dashboard.api import get_user_program_info
 from dashboard.api_edx_cache import CachedEdxDataApi
 from micromasters.exceptions import PossiblyImproperlyConfigured
@@ -149,4 +151,39 @@ class UserCourseEnrollment(APIView):
         CachedEdxDataApi.update_cached_enrollment(request.user, enrollment, enrollment.course_id, index_user=True)
         return Response(
             data=enrollment.json
+        )
+
+
+class UnEnrollPrograms(APIView):
+    """
+    api that unenroll user from one or more programs
+    """
+    authentication_classes = (
+        authentication.SessionAuthentication,
+        authentication.TokenAuthentication,
+    )
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request):
+        """
+        unenroll from MM program(s)
+        """
+        response = []
+        program_ids = UnEnrollProgramsSerializer(data=request.data).get_program_ids()
+
+        program_enrollments = ProgramEnrollment.objects.filter(
+            program_id__in=program_ids,
+            user=request.user
+        )
+
+        for program_enrollment in program_enrollments:
+            response.append({
+                'program_id': program_enrollment.program_id,
+                'title': program_enrollment.program.title
+            })
+            program_enrollment.delete()
+
+        return Response(
+            status=status.HTTP_200_OK,
+            data=response
         )

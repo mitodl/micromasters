@@ -11,6 +11,7 @@ import {
   profileFormContainer,
   mapStateToProfileProps
 } from "./ProfileFormContainer"
+import LeaveProgramWizard from "../components/LeaveProgramWizard"
 import PrivacyForm from "../components/PrivacyForm"
 import ProfileProgressControls from "../components/ProfileProgressControls"
 import { privacyValidation } from "../lib/validation/profile"
@@ -42,6 +43,7 @@ class SettingsPage extends React.Component<*, ProfileContainerProps, *> {
         <div className="single-column privacy-form">
           <h4 className="privacy-form-heading">Settings</h4>
           <PrivacyForm {...props} validator={privacyValidation} />
+          <LeaveProgramWizard {...props} />
           <ProfileProgressControls
             {...props}
             nextBtnLabel="Save"

@@ -22,3 +22,9 @@ export type AvailableProgramsState = {
 export type CourseEnrollmentsState = {
   courseEnrollAddStatus?: string,
 }
+
+
+export type UnEnrollPrograms = {
+  program_id: number,
+  title: string,
+}

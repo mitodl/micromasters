@@ -158,7 +158,7 @@ describe("ErrorMessage", () => {
         })
       })
 
-      it("shows nothing if there are no programs", () => {
+      it("shows enrollment card if there are no programs", () => {
         helper.dashboardStub.returns(Promise.resolve([]))
         const expectedActions = DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS.filter(
           actionType =>
@@ -170,11 +170,14 @@ describe("ErrorMessage", () => {
           expectedActions
         ).then(([wrapper]) => {
           const message = wrapper.find(".page-content").text()
-          assert.equal(message, "")
+          assert.equal(
+            message,
+            "You are not currently enrolled in any programsEnroll in a MicroMasters Program"
+          )
         })
       })
 
-      it("shows nothing if there is no matching current program enrollment", () => {
+      it("shows enrollment card if there is no matching current program enrollment", () => {
         helper.programsGetStub.returns(Promise.resolve([]))
         const expectedActions = DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS.filter(
           actionType =>
@@ -186,7 +189,10 @@ describe("ErrorMessage", () => {
           expectedActions
         ).then(([wrapper]) => {
           const message = wrapper.find(".page-content").text()
-          assert.equal(message, "")
+          assert.equal(
+            message,
+            "You are not currently enrolled in any programsEnroll in a MicroMasters Program"
+          )
         })
       })
     })

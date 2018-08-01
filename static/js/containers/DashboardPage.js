@@ -2,6 +2,7 @@
 /* global SETTINGS: false */
 import DocumentTitle from "react-document-title"
 import React from "react"
+import { Card } from "react-mdl/lib/Card"
 import PropTypes from "prop-types"
 import type { Dispatch } from "redux"
 import { connect } from "react-redux"
@@ -11,6 +12,7 @@ import R from "ramda"
 import Dialog from "material-ui/Dialog"
 import Alert from "react-bootstrap/lib/Alert"
 
+import ProgramEnrollmentDialog from "../components/ProgramEnrollmentDialog"
 import Loader from "../components/Loader"
 import { calculatePrices, isFreeCoupon } from "../lib/coupon"
 import {
@@ -25,6 +27,7 @@ import {
   clearDashboard
 } from "../actions/dashboard"
 import { clearProfile } from "../actions/profile"
+import { addProgramEnrollment } from "../actions/programs"
 import {
   COUPON_CONTENT_TYPE_COURSE,
   COUPON_CONTENT_TYPE_PROGRAM,
@@ -51,7 +54,10 @@ import {
   setEnrollSelectedCourseRun,
   showDialog,
   hideDialog,
-  setShowExpandedCourseStatus
+  setShowExpandedCourseStatus,
+  setEnrollProgramDialogError,
+  setEnrollProgramDialogVisibility,
+  setEnrollSelectedProgram
 } from "../actions/ui"
 import { showEnrollPayLaterSuccessMessage } from "../actions/course_enrollments"
 import { clearCalculatorEdit } from "../actions/financial_aid"
@@ -788,7 +794,65 @@ class DashboardPage extends React.Component {
     return learnersInProgramCard
   }
 
-  renderPageContent = (): React$Element<*> | null => {
+  addProgramEnrollmentInProgram = (programId: number): Promise<*> => {
+    const { dispatch } = this.props
+    return dispatch(addProgramEnrollment(programId))
+  }
+
+  setEnrollDialogError = (error: ?string): void => {
+    const { dispatch } = this.props
+    dispatch(setEnrollProgramDialogError(error))
+  }
+
+  setEnrollDialogVisibility = (visibility: boolean): void => {
+    const { dispatch } = this.props
+    dispatch(setEnrollProgramDialogVisibility(visibility))
+  }
+
+  setEnrollSelectedProgramById = (programId: ?number): void => {
+    const { dispatch } = this.props
+    if (programId) {
+      dispatch(setEnrollSelectedProgram(programId))
+    }
+  }
+
+  noProgramSelectedCard = () => {
+    const {
+      programs,
+      ui: {
+        enrollProgramDialogError,
+        enrollProgramDialogVisibility,
+        enrollSelectedProgram
+      }
+    } = this.props
+
+    return (
+      <div>
+        <Card shadow={1} className="no-program-card">
+          <div>You are not currently enrolled in any programs</div>
+          <button
+            className="mm-minor-action enroll-wizard-button"
+            onClick={() => this.setEnrollDialogVisibility(true)}
+          >
+            Enroll in a MicroMasters Program
+          </button>
+          <ProgramEnrollmentDialog
+            enrollInProgram={this.addProgramEnrollmentInProgram}
+            programs={programs.availablePrograms}
+            selectedProgram={enrollSelectedProgram}
+            error={enrollProgramDialogError}
+            visibility={enrollProgramDialogVisibility}
+            setError={this.setEnrollDialogError}
+            setVisibility={this.setEnrollDialogVisibility}
+            setSelectedProgram={this.setEnrollSelectedProgramById}
+            fetchAddStatus={programs.postStatus}
+          />
+        </Card>
+      </div>
+    )
+  }
+
+  renderPageContent = (): React$Element<*> => {
     const {
       dashboard,
       prices,
@@ -801,7 +865,12 @@ class DashboardPage extends React.Component {
       discussionsFrontpage
     } = this.props
     const program = this.getCurrentlyEnrolledProgram()
-    if (!program || !prices.data) {
+
+    if (!program) {
+      return this.noProgramSelectedCard()
+    }
+
+    if (!prices.data) {
       throw new Error("no program; should never get here")
     }
 
@@ -899,20 +968,13 @@ class DashboardPage extends React.Component {
     ])
     const fetchStarted =
       !_.isNil(prices.getStatus) && !_.isNil(dashboard.fetchStatus)
-    const hasData = dashboard.programs.length > 0 && Boolean(prices.data)
     // TODO: we should handle prices.noSpinner too. This currently works because we always dispatch both actions with
     // noSpinner: true at the same time
     const noSpinner = dashboard.noSpinner
 
     const errorMessage = this.renderErrorMessage()
     let pageContent
-    if (
-      (_.isNil(errorMessage) &&
-        this.getCurrentlyEnrolledProgram() &&
-        loaded &&
-        fetchStarted) ||
-      (hasData && noSpinner)
-    ) {
+    if ((_.isNil(errorMessage) && loaded && fetchStarted) || noSpinner) {
       pageContent = this.renderPageContent()
     }
 

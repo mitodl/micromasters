@@ -36,8 +36,12 @@ import {
   SET_ENROLL_COURSE_DIALOG_VISIBILITY,
   SET_ENROLL_SELECTED_COURSE_RUN,
   SET_CONFIRM_SKIP_DIALOG_VISIBILITY,
+  SET_ENROLL_PROGRAM_DIALOG_VISIBILITY,
+  SET_ENROLL_SELECTED_PROGRAM,
+  SET_ENROLL_PROGRAM_DIALOG_ERROR,
   setToastMessage,
-  showDialog
+  showDialog,
+  setEnrollSelectedProgram
 } from "../actions/ui"
 import {
   INITIATE_SEND_EMAIL,
@@ -48,7 +52,11 @@ import {
 } from "../actions/email"
 import { SET_TIMEOUT_ACTIVE, setInitialTime } from "../actions/order_receipt"
 import { CLEAR_PROFILE } from "../actions/profile"
-import { CLEAR_ENROLLMENTS } from "../actions/programs"
+import {
+  CLEAR_ENROLLMENTS,
+  REQUEST_ADD_PROGRAM_ENROLLMENT,
+  RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS
+} from "../actions/programs"
 import { EMAIL_COMPOSITION_DIALOG } from "../components/email/constants"
 import {
   REQUEST_SKIP_FINANCIAL_AID,
@@ -87,7 +95,8 @@ import { findCourse, modifyTextField } from "../util/test_utils"
 import {
   DASHBOARD_SUCCESS_ACTIONS,
   DASHBOARD_SUCCESS_NO_FRONTPAGE_ACTIONS,
-  DASHBOARD_ERROR_ACTIONS
+  DASHBOARD_ERROR_ACTIONS,
+  DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS
 } from "./test_util"
 import { actions } from "../lib/redux_rest"
 import EmailCompositionDialog from "../components/email/EmailCompositionDialog"
@@ -98,16 +107,19 @@ import Grades, {
 import { EDX_GRADE } from "./DashboardPage"
 import DiscussionCard from "../components/DiscussionCard"
 import { makeFrontPageList } from "../factories/posts"
+import * as api from "../lib/api"
 import { postURL } from "../lib/discussions"
 import FinancialAidCard from "../components/dashboard/FinancialAidCard"
 
 describe("DashboardPage", () => {
-  let renderComponent, helper, listenForActions
+  let renderComponent, helper, listenForActions, addProgramEnrollmentStub
 
   beforeEach(() => {
     helper = new IntegrationTestHelper()
     renderComponent = helper.renderComponent.bind(helper)
     listenForActions = helper.listenForActions.bind(helper)
+    addProgramEnrollmentStub = helper.sandbox.stub(api, "addProgramEnrollment")
+    addProgramEnrollmentStub.returns(Promise.resolve())
   })
 
   afterEach(() => {
@@ -206,6 +218,83 @@ describe("DashboardPage", () => {
       DASHBOARD_SUCCESS_ACTIONS
     ).then(([wrapper]) => {
       assert.lengthOf(wrapper.find(".learners-card"), 0)
+    })
+  })
+
+  it("should show no program enrolled view", () => {
+    helper.dashboardStub.returns(Promise.resolve({ programs: [] }))
+
+    const actionsNoFrontpage = R.filter(
+      R.compose(
+        R.not,
+        R.contains(R.__, [actions.discussionsFrontpage.get.successType])
+      ),
+      DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS
+    )
+
+    return renderComponent(
+      "/dashboard",
+      actionsNoFrontpage
+    ).then(([wrapper]) => {
+      const text = wrapper.find(".no-program-card").text()
+      assert.equal(
+        text,
+        "You are not currently enrolled in any programsEnroll in a MicroMasters Program"
+      )
+    })
+  })
+
+  it("should enroll user in program", () => {
+    const dashboard = makeDashboard()
+    helper.dashboardStub.returns(Promise.resolve({ programs: [] }))
+    const availablePrograms = makeAvailablePrograms(dashboard, false)
+    helper.programsGetStub.returns(Promise.resolve(availablePrograms))
+    addProgramEnrollmentStub.returns(Promise.resolve(availablePrograms[0]))
+    const actionsNoFrontpage = R.filter(
+      R.compose(
+        R.not,
+        R.contains(R.__, [actions.discussionsFrontpage.get.successType])
+      ),
+      DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS
+    )
+
+    return renderComponent(
+      "/dashboard",
+      actionsNoFrontpage
+    ).then(([wrapper]) => {
+      const link = wrapper.find(".enroll-wizard-button")
+      assert.equal(link.text(), "Enroll in a MicroMasters Program")
+      return helper
+        .listenForActions([SET_ENROLL_PROGRAM_DIALOG_VISIBILITY], () => {
+          link.simulate("click")
+        })
+        .then(() => {
+          assert.isFalse(addProgramEnrollmentStub.called)
+          const enrollBtn = document.querySelector(".enroll-button")
+          return helper
+            .listenForActions([SET_ENROLL_PROGRAM_DIALOG_ERROR], () => {
+              enrollBtn.click()
+            })
+            .then(() => {
+              return helper
+                .listenForActions(
+                  [
+                    REQUEST_ADD_PROGRAM_ENROLLMENT,
+                    RECEIVE_ADD_PROGRAM_ENROLLMENT_SUCCESS,
+                    SET_ENROLL_SELECTED_PROGRAM
+                  ],
+                  () => {
+                    helper.store.dispatch(
+                      setEnrollSelectedProgram(availablePrograms[0].id)
+                    )
+                    enrollBtn.click()
+                  }
+                )
+                .then(() => {
+                  assert.isTrue(addProgramEnrollmentStub.called)
+                })
+            })
+        })
     })
   })
 

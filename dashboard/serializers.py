@@ -1,6 +1,7 @@
 """
 Provides functionality for serializing a ProgramEnrollment for the ES index
 """
+from rest_framework import serializers
 from courses.utils import get_year_season_from_course_run
 from dashboard.utils import get_mmtrack
 from roles.api import is_learner
@@ -147,3 +148,13 @@ class UserProgramSearchSerializer:
             'num_courses_passed': mmtrack.count_courses_passed(),
             'total_courses': program.course_set.count()
         }
+
+
+class UnEnrollProgramsSerializer(serializers.Serializer):
+    """Serialize list of numbers"""
+    program_ids = serializers.ListField(child=serializers.IntegerField())
+
+    def get_program_ids(self):
+        """return list of program ids extracted from payload"""
+        self.is_valid(raise_exception=True)
+        return self.data['program_ids']

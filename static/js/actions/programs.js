@@ -6,8 +6,11 @@ import { createAction } from "redux-actions"
 import { TOAST_SUCCESS, TOAST_FAILURE } from "../constants"
 import { fetchDashboard } from "./dashboard"
 import {
+  hideDialog,
   setToastMessage,
-  setEnrollProgramDialogVisibility
+  setEnrollProgramDialogVisibility,
+  setUnEnrollApiInFlightState,
+  setProgramsToUnEnroll
 } from "../actions/ui"
 import type { Dispatcher } from "../flow/reduxTypes"
 import type { AvailableProgram } from "../flow/enrollmentTypes"
@@ -100,5 +103,42 @@ export const addProgramEnrollment = (
   }
 }
 
+export const UNENROLL_PROGRAM_DIALOG = "unenrollProgramDialog"
 export const CLEAR_ENROLLMENTS = "CLEAR_ENROLLMENTS"
 export const clearEnrollments = createAction(CLEAR_ENROLLMENTS)
+
+export const unEnrollProgramEnrollments = (
+  programIds: []
+): Dispatcher<?AvailableProgram> => {
+  return async (dispatch: Dispatch) => {
+    await dispatch(setUnEnrollApiInFlightState(true))
+    return api
+      .unEnrollProgramEnrollments(programIds)
+      .then(
+        programs => {
+          dispatch(setProgramsToUnEnroll([]))
+          dispatch(fetchProgramEnrollments())
+          const programTitles = programs.map(program => program["title"])
+          dispatch(
+            setToastMessage({
+              message: `You left the ${programTitles.join(", ")} program(s).`,
+              icon:    TOAST_SUCCESS
+            })
+          )
+        },
+        () => {
+          dispatch(
+            setToastMessage({
+              message: "There was an error during unenrollment",
+              icon:    TOAST_FAILURE
+            })
+          )
+          return Promise.reject()
+        }
+      )
+      .finally(() => {
+        dispatch(hideDialog(UNENROLL_PROGRAM_DIALOG))
+        dispatch(setUnEnrollApiInFlightState(false))
+      })
+  }
+}

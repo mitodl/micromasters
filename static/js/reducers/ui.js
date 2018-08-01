@@ -34,7 +34,9 @@ import {
   SET_NAV_DRAWER_OPEN,
   SET_PROGRAM,
   SHOW_ENROLL_PAY_LATER_SUCCESS,
-  SET_SHOW_EXPANDED_COURSE_STATUS
+  SET_SHOW_EXPANDED_COURSE_STATUS,
+  SET_PROGRAMS_TO_UNENROLL,
+  SET_UNENROLL_API_INFLIGHT_STATE
 } from "../actions/ui"
 import { EMAIL_COMPOSITION_DIALOG } from "../components/email/constants"
 import { CHANNEL_CREATE_DIALOG } from "../constants"
@@ -92,7 +94,9 @@ export type UIState = {
   navDrawerOpen: boolean,
   dialogVisibility: DialogVisibilityState,
   showEnrollPayLaterSuccess: ?string,
-  expandedCourseStatuses: Set<number>
+  expandedCourseStatuses: Set<number>,
+  programsToUnEnroll: [],
+  programsToUnEnrollInFlight: boolean
 }
 
 export const INITIAL_UI_STATE: UIState = {
@@ -131,7 +135,9 @@ export const INITIAL_UI_STATE: UIState = {
   navDrawerOpen:                      false,
   dialogVisibility:                   INITIAL_DIALOG_VISIBILITY_STATE,
   showEnrollPayLaterSuccess:          null,
-  expandedCourseStatuses:             new Set()
+  expandedCourseStatuses:             new Set(),
+  programsToUnEnroll:                 [],
+  programsToUnEnrollInFlight:         false
 }
 
 export const ui = (
@@ -318,6 +324,16 @@ export const ui = (
       expandedCourseStatuses: new Set(state.expandedCourseStatuses).add(
         action.payload
       )
+    }
+  case SET_PROGRAMS_TO_UNENROLL:
+    return {
+      ...state,
+      programsToUnEnroll: action.payload
+    }
+  case SET_UNENROLL_API_INFLIGHT_STATE:
+    return {
+      ...state,
+      programsToUnEnrollInFlight: action.payload
     }
   default:
     return state

@@ -163,3 +163,11 @@ export const SET_SHOW_EXPANDED_COURSE_STATUS = "SET_SHOW_EXPANDED_COURSE_STATUS"
 export const setShowExpandedCourseStatus = createAction(
   SET_SHOW_EXPANDED_COURSE_STATUS
 )
+
+export const SET_PROGRAMS_TO_UNENROLL = "SET_PROGRAMS_TO_UNENROLL"
+export const setProgramsToUnEnroll = createAction(SET_PROGRAMS_TO_UNENROLL)
+
+export const SET_UNENROLL_API_INFLIGHT_STATE = "SET_UNENROLL_API_INFLIGHT_STATE"
+export const setUnEnrollApiInFlightState = createAction(
+  SET_UNENROLL_API_INFLIGHT_STATE
+)

@@ -2,6 +2,43 @@
   text-align: center;
 }
 
+.other-settings {
+  min-height: 0 !important;
+  font-weight: 400 !important;
+
+  .heading {
+    font-size: 20px;
+    font-weight: 500;
+    margin-top: 0;
+  }
+
+  .other-settings-row {
+    margin: 10px 0;
+
+    > button {
+      font-size: 15px;
+    }
+  }
+}
+
+.unenroll-settings {
+  padding: 10px 0 0 0;
+
+  .unenroll-settings-card {
+    background-color: $lightest-blue;
+  }
+
+  .remind {
+    font-weight: bold;
+    font-size: 14px;
+    padding: 2px 0;
+  }
+}
+
+.unenroll-dialog {
+  max-width: 570px !important;
+}
+
 .profile-form {
   min-height: 0 !important;
   font-weight: 400 !important;

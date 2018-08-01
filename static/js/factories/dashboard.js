@@ -54,10 +54,11 @@ export const makeDashboard = (): Dashboard => {
 }
 
 export const makeAvailablePrograms = (
-  dashboard: Dashboard
+  dashboard: Dashboard,
+  enrolled: boolean = true
 ): AvailablePrograms => {
   return dashboard.programs.map(program => ({
-    enrolled:        true,
+    enrolled:        enrolled,
     id:              program.id,
     programpage_url: `/page/${program.id}`,
     title:           `AvailableProgram for ${program.id}`,
