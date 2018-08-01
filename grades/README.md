@@ -151,6 +151,10 @@ we do this analysis _before_ importing the grades into the micromasters applicat
 Once the we have verified the outcomes of the adjusted grades with the course team, we can import them into the 
 micromasters web application. This can be done with the management command: `adjust_exam_grades_from_csv.py`
 
+  1. On your local machine, calculate an md5 checksum of the grade data (use `md5` on MacOS)
+  
+    md5 <csv file name> 
+  
   1. Open a bash shell on a one-off Heroku dyno:
 
     heroku run bash --app <micromasters-production-app-name>
@@ -160,6 +164,10 @@ micromasters web application. This can be done with the management command: `adj
     cat >> <temporary file location>`
     
   3. Paste in the csv data and close the file with `ctrl+d` 
+  
+  3. Compare the md5 checksum on the heroku dyno with the one from your local copy
+  
+    md5sum <temporary file location>`
   
   4. Run the management command 
   
@@ -173,6 +181,15 @@ micromasters web application. This can be done with the management command: `adj
 
 Now that the adjusted grades are loaded, we can release them to learners by updating the date/time that grades are 
 available in the exam run admin. 
+
+### update combined final grades
+
+While there is a signal that creates combined final grades whenever a proctored exam grade is updated, it depends on 
+the proctored exam being released. If you got a large number of warnings early, you will need to run the management 
+command:
+  
+    python manage.py populate_combined_final_grades
+
 
 ### update certificates
 
