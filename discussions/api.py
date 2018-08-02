@@ -97,6 +97,7 @@ def create_discussion_user(discussion_user):
 
     api = get_staff_client()
     result = api.users.create(
+        profile.user.username,
         email=profile.user.email,
         profile=dict(
             name=profile.full_name,
@@ -152,6 +153,7 @@ def update_discussion_user(discussion_user, allow_email_optin=False):
 
     result = api.users.update(
         discussion_user.username,
+        uid=profile.user.username,
         email=profile.user.email,
         profile=profile_dict
     )

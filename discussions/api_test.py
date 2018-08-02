@@ -120,6 +120,7 @@ def test_create_discussion_user(mock_staff_client):
     api.create_discussion_user(discussion_user)
     assert discussion_user.username == 'username'
     mock_staff_client.users.create.assert_called_once_with(
+        profile.user.username,
         email=profile.user.email,
         profile=dict(
             name=profile.full_name,
@@ -156,6 +157,7 @@ def test_update_discussion_user(mock_staff_client):
     api.update_discussion_user(discussion_user)
     mock_staff_client.users.update.assert_called_once_with(
         discussion_user.username,
+        uid=discussion_user.user.username,
         email=profile.user.email,
         profile=dict(
             name=profile.full_name,
@@ -179,6 +181,7 @@ def test_update_discussion_user_with_email_optin(mock_staff_client):
     api.update_discussion_user(discussion_user, allow_email_optin=True)
     mock_staff_client.users.update.assert_called_once_with(
         discussion_user.username,
+        uid=discussion_user.user.username,
         email=profile.user.email,
         profile=dict(
             name=profile.full_name,
