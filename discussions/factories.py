@@ -1,9 +1,8 @@
 """Factories for discussions models"""
-from datetime import timedelta
+from pytz import UTC
 from django.db.models.signals import post_save
 from factory import (
     Faker,
-    fuzzy,
     SubFactory,
 )
 from factory.django import (
@@ -17,7 +16,6 @@ from discussions.models import (
     ChannelProgram,
     DiscussionUser,
 )
-from micromasters.utils import now_in_utc
 from profiles.factories import UserFactory
 from search.factories import PercolateQueryFactory
 from search.models import PercolateQuery
@@ -45,7 +43,7 @@ class DiscussionUserFactory(DjangoModelFactory):
     """Factory for DiscussionUser"""
     user = SubFactory(UserFactory)
     username = Faker('user_name')
-    last_sync = fuzzy.FuzzyDateTime(now_in_utc() - timedelta(hours=12))
+    last_sync = Faker('date_time_this_month', before_now=True, after_now=False, tzinfo=UTC)
 
     @classmethod
     def create(cls, *args, **kwargs):

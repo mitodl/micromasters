@@ -117,15 +117,16 @@ def add_user_as_moderator_to_channel(user_id, program_id):
 
     try:
         discussion_user = DiscussionUser.objects.get(user_id=user_id)
-        channel_programs = ChannelProgram.objects.filter(program_id=program_id)
-
-        for channel_program in channel_programs:
-            api.add_and_subscribe_moderator(
-                discussion_user.username,
-                channel_program.channel.name
-            )
     except DiscussionUser.DoesNotExist:
         log.exception('unable to add user with id: %d as moderator', user_id)
+        return
+
+    channel_programs = ChannelProgram.objects.filter(program_id=program_id)
+    for channel_program in channel_programs:
+        api.add_and_subscribe_moderator(
+            discussion_user.username,
+            channel_program.channel.name
+        )
 
 
 @app.task()
@@ -143,12 +144,13 @@ def remove_user_as_moderator_from_channel(user_id, program_id):
 
     try:
         discussion_user = DiscussionUser.objects.get(user_id=user_id)
-        channel_programs = ChannelProgram.objects.filter(program_id=program_id)
-
-        for channel_program in channel_programs:
-            api.remove_moderator_from_channel(
-                channel_program.channel.name,
-                discussion_user.username
-            )
     except DiscussionUser.DoesNotExist:
         log.exception('unable to remove user with id: %d as moderator', user_id)
+        return
+
+    channel_programs = ChannelProgram.objects.filter(program_id=program_id)
+    for channel_program in channel_programs:
+        api.remove_moderator_from_channel(
+            channel_program.channel.name,
+            discussion_user.username
+        )
