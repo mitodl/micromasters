@@ -156,6 +156,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 SESSION_ENGINE = get_string('SESSION_ENGINE', 'django.contrib.sessions.backends.signed_cookies')
+SESSION_COOKIE_NAME = get_string('SESSION_COOKIE_NAME', 'sessionid')
 
 EDXORG_BASE_URL = get_string('EDXORG_BASE_URL', 'https://courses.edx.org/')
 SOCIAL_AUTH_EDXORG_KEY = get_string('EDXORG_CLIENT_ID', '')
