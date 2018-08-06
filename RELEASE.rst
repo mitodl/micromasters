@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.110.1
+---------------
+
+- Added provider and switch to User.username for JWT tokens
+
 Version 0.110.0 (Released August 06, 2018)
 ---------------
 

@@ -36,10 +36,13 @@ def get_token_for_user(user, force_create=False):
     if discussion_user is not None and discussion_user.username is not None:
         return utils.get_token(
             settings.OPEN_DISCUSSIONS_JWT_SECRET,
-            discussion_user.username,
+            user.username,
             [],  # no roles for learners,
             expires_delta=settings.OPEN_DISCUSSIONS_JWT_EXPIRES_DELTA,
-            extra_payload=dict(site_key=settings.OPEN_DISCUSSIONS_SITE_KEY)
+            extra_payload={
+                'site_key': settings.OPEN_DISCUSSIONS_SITE_KEY,
+                'provider': 'micromasters',
+            }
         )
 
     return None

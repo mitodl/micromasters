@@ -60,11 +60,12 @@ def test_get_token_for_user(settings, mocker):
     assert get_token_for_user(user) is not None
     mock_get_token.assert_called_once_with(
         'secret',
-        'username',
+        user.username,
         [],
         expires_delta=3600,
         extra_payload={
-            'site_key': 'mm_test'
+            'site_key': 'mm_test',
+            'provider': 'micromasters',
         }
     )
     assert mock_create_user.call_count == 0
@@ -87,11 +88,12 @@ def test_get_token_for_user_force_discussion_user(settings, mocker):
     assert get_token_for_user(user, force_create=True) is not None
     mock_get_token.assert_called_once_with(
         'secret',
-        'username',
+        user.username,
         [],
         expires_delta=3600,
         extra_payload={
-            'site_key': 'mm_test'
+            'site_key': 'mm_test',
+            'provider': 'micromasters',
         }
     )
     assert mock_create_user.called_once_with(user.id)
