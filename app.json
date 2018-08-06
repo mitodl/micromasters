@@ -56,6 +56,9 @@
     "CYBERSOURCE_SECURITY_KEY": {
       "description": "CyberSource API key"
     },
+    "CYBERSOURCE_TRANSACTION_KEY": {
+      "description": "CyberSource transaction key"
+    },
     "EDXORG_BASE_URL": {
       "description": "The base URL of the edX instance to use for logging in.",
       "required": true
@@ -240,6 +243,7 @@
     },
     "SESSION_ENGINE": {
       "description": "Django session engine",
+      "required": false
     },
     "STATUS_TOKEN": {
       "description": "Token to access the status API.",
