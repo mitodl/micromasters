@@ -73,7 +73,7 @@ const renderRunRow = (
   idx: number
 ) => (
   <div className="course-run-row" key={idx}>
-    <div className="title">{courseRun.title}</div>
+    <div className="title">{courseRun.year_season}</div>
     <div className="grade-status">
       <div>{runStatus(courseRun)}</div>
       <div className="grade">

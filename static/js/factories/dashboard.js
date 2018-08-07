@@ -76,7 +76,8 @@ export const makeRun = (position: number): CourseRun => {
       .subtract(1, "day")
       .format(),
     status:   STATUS_OFFERED,
-    has_paid: false
+    has_paid: false,
+    year_season: `Spring ${moment().year()}`
   }
 }
 

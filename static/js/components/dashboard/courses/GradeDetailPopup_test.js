@@ -49,7 +49,7 @@ describe("GradeDetailPopup", () => {
     renderDetailPopup()
       .find(".course-run-row")
       .forEach((node, idx) =>
-        assert.equal(node.text(), `${course.runs[idx].title}Audited`)
+        assert.equal(node.text(), `${course.runs[idx].year_season}Audited`)
       )
   })
 
@@ -61,7 +61,7 @@ describe("GradeDetailPopup", () => {
         .find(".course-run-row")
         .first()
         .text(),
-      `${course.runs[0].title}Paid`
+      `${course.runs[0].year_season}Paid`
     )
   })
 
@@ -73,7 +73,7 @@ describe("GradeDetailPopup", () => {
         .find(".course-run-row")
         .first()
         .text(),
-      `${course.runs[0].title}Auditing`
+      `${course.runs[0].year_season}Auditing`
     )
   })
 
@@ -86,7 +86,7 @@ describe("GradeDetailPopup", () => {
         .find(".course-run-row")
         .first()
         .text(),
-      `${course.runs[0].title}In Progress (paid)`
+      `${course.runs[0].year_season}In Progress (paid)`
     )
   })
 
@@ -98,7 +98,7 @@ describe("GradeDetailPopup", () => {
         .find(".course-run-row")
         .first()
         .text(),
-      `${course.runs[0].title}Passed`
+      `${course.runs[0].year_season}Passed`
     )
   })
 
@@ -120,7 +120,7 @@ describe("GradeDetailPopup", () => {
         .find(".course-run-row")
         .at(1)
         .text(),
-      `${course.runs[1].title}Not passed`
+      `${course.runs[1].year_season}Not passed`
     )
   })
 
