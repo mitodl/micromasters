@@ -47,12 +47,10 @@ class ProfileViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
         """Updates object"""
         profile = serializer.save()
         if 'email_optin' in serializer.validated_data:
-            # perform mailgun action if email optin is set then remove user from mailgun unsubscription
-            # list otherwise add user to mailgun unsubscription.
-            MailgunClient.toggle_mailing_list_subscription(
-                serializer.validated_data['email_optin'],
-                profile.email
-            )
+            if serializer.validated_data['email_optin']:
+                MailgunClient.remove_email_from_unsub_list(profile.email)
+            else:
+                MailgunClient.add_email_to_unsub_list(profile.email)
 
     def get_serializer_class(self):
         """

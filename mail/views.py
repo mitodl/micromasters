@@ -293,7 +293,6 @@ class UnSubWebhookView(APIView):
                 )
             else:
                 log.error(
-                    "Webhook event: Unable to update profile of user: "
-                    "%s for event: '%s', received from Mailgun", recipient, event
+                    "Webhook event: '%s' failed. No profile exists for a user with email '%s'", event, recipient
                 )
         return Response(status=status.HTTP_200_OK)

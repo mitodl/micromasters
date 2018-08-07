@@ -753,6 +753,6 @@ class UnSubWebhookViewTests(APITestCase):
         request = factory.post(self.url, data=data)
         UnSubWebhookView().post(request)
         mock_logger.error.assert_called_with(
-            "Webhook event: Unable to update profile of user: "
-            "%s for event: '%s', received from Mailgun", "foo@example.com", "unsubscribed"
+            "Webhook event: '%s' failed. No profile exists for "
+            "a user with email '%s'", "unsubscribed", "foo@example.com"
         )

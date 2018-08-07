@@ -713,8 +713,7 @@ class ToggleMailingListSubscriptionTests(MockedESTestCase):
         """
         Test add user to Mailgun unsubscribe list
         """
-        MailgunClient.toggle_mailing_list_subscription(
-            False,
+        MailgunClient.add_email_to_unsub_list(
             "foo@example.com"
         )
         mock_logger.debug.assert_called_with(
@@ -733,8 +732,7 @@ class ToggleMailingListSubscriptionTests(MockedESTestCase):
         """
         Test remove user from Mailgun unsubscribe list
         """
-        MailgunClient.toggle_mailing_list_subscription(
-            True,
+        MailgunClient.remove_email_from_unsub_list(
             "foo@example.com"
         )
         mock_logger.debug.assert_called_with(
