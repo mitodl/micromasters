@@ -91,6 +91,18 @@ def get_year_season_from_course_run(course_run):
         return season_year_tuple
 
 
+def format_season_year_for_course_run(course_run):
+    """
+    Args:
+        course_run (CourseRun): A CourseRun object
+
+    Returns:
+        string: containing season and year, eg: 'Spring 2018'
+    """
+    year_season_tuple = get_year_season_from_course_run(course_run)
+    return '{} {}'.format(year_season_tuple[1], year_season_tuple[0]) if year_season_tuple else ''
+
+
 def is_blank(text):
     """
     Returns true of string is blank i.e None or empty.

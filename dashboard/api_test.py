@@ -24,6 +24,7 @@ from courses.factories import (
     ProgramFactory,
     FullProgramFactory,
 )
+from courses.utils import format_season_year_for_course_run
 from dashboard import (
     api,
     models,
@@ -190,6 +191,7 @@ class FormatRunTest(CourseTests):
             'final_grade': 99.99,
             'enrollment_url': self.crun.enrollment_url,
             'has_paid': False,
+            'year_season': format_season_year_for_course_run(self.crun)
         }
 
     def test_format_run_no_run(self):
@@ -355,6 +357,7 @@ class FormatRunTest(CourseTests):
                 'fuzzy_start_date': crun.fuzzy_start_date,
                 'enrollment_url': crun.enrollment_url,
                 'has_paid': False,
+                'year_season': format_season_year_for_course_run(crun)
             }
         )
 
