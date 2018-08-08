@@ -17,9 +17,8 @@ from django_redis import get_redis_connection
 from backends.exceptions import InvalidCredentialStored
 from backends import utils
 from courses.models import Program
-from courses.utils import get_year_season_from_course_run, format_season_year_for_course_run
+from courses.utils import format_season_year_for_course_run
 from dashboard.api_edx_cache import CachedEdxDataApi
-from dashboard.serializers import UserProgramSearchSerializer
 from dashboard.utils import get_mmtrack
 from financialaid.serializers import FinancialAidDashboardSerializer
 from grades import api

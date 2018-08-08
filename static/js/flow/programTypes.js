@@ -88,7 +88,7 @@ export type CourseRun = {
   course_upgrade_deadline?:     string,
   enrollment_url?:              ?string,
   has_paid:                     boolean,
-  year_season:                  ?string,
+  year_season:                  string,
 }
 
 export type UserProgram = {
