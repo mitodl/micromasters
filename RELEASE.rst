@@ -1,6 +1,17 @@
 Release Notes
 =============
 
+Version 0.110.1
+---------------
+
+- Add complete url to OPEN_DISCUSSIONS_REDIRECT_URL (#4106)
+- Added exam authorizations on the base of final grade (#4083)
+- Expose SESSION_COOKIE_NAME as env variable (#4095)
+- Added mailgun unsub user support  (#4094)
+- Only try to enroll learner if learner isn't already enrolled (#4069)
+- protected final grade audit (#4068)
+- Added provider and switch to User.username for JWT tokens
+
 Version 0.110.0 (Released August 06, 2018)
 ---------------
 
