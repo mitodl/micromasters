@@ -285,6 +285,59 @@ class MailgunClient:
         )
         return response
 
+    @staticmethod
+    def add_email_to_unsub_list(email):
+        """
+        It adds user email to mailgun unsub list.
+
+        Args:
+            email (str): user email
+        """
+        url = "{base}/unsubscribes".format(base=settings.MAILGUN_URL)
+        try:
+            response = requests.post(
+                url,
+                auth=('api', settings.MAILGUN_KEY),
+                data={
+                    'address': email,
+                    'tag': '*'
+                }
+            )
+        except requests.exceptions.RequestException:
+            log.exception(
+                "Unable to add email: %s to mailgun unsubscribes list.", email
+            )
+            return
+        if response.status_code == status.HTTP_200_OK:
+            log.debug(
+                "Added user's email: %s to mailgun unsubscribes list. Message received: %s",
+                email,
+                response.json()
+            )
+
+    @staticmethod
+    def remove_email_from_unsub_list(email):
+        """
+        It removes user email from mailgun unsub list.
+
+        Args:
+            email (str): user email
+        """
+        url = "{base}/unsubscribes/{email}".format(base=settings.MAILGUN_URL, email=email)
+        try:
+            response = requests.delete(url, auth=('api', settings.MAILGUN_KEY))
+        except requests.exceptions.RequestException:
+            log.exception(
+                "Unable to remove email: %s from mailgun unsubscribes list.", email
+            )
+            return
+        if response.status_code == status.HTTP_200_OK:
+            log.debug(
+                "Removed user's email: %s from mailgun unsubscribes list. Message received: %s",
+                email,
+                response.json()
+            )
+
 
 def send_automatic_emails(program_enrollment):
     """

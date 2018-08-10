@@ -270,3 +270,29 @@ class MailWebhookView(APIView):
             log.debug(error_msg)
 
         return Response(status=status.HTTP_200_OK)
+
+
+class UnSubWebhookView(APIView):
+    """
+    View class that handles Mailgun unsubscribed webhooks
+    """
+    permission_classes = (MailGunWebHookPermission, )
+
+    def post(self, request, *args, **kargs):  # pylint: disable=unused-argument
+        """
+        POST method handler
+        """
+        event = request.POST.get("event", None)
+        recipient = request.POST.get("recipient", None)
+
+        if recipient and event == "unsubscribed":
+            profiles_updated = Profile.objects.filter(user__email=recipient).update(email_optin=False)
+            if profiles_updated > 0:
+                log.debug(
+                    "Webhook event: '%s' received by Mailgun for recipient: %s:", event, recipient
+                )
+            else:
+                log.error(
+                    "Webhook event: '%s' failed. No profile exists for a user with email '%s'", event, recipient
+                )
+        return Response(status=status.HTTP_200_OK)

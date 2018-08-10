@@ -18,7 +18,7 @@ from micromasters.envs import (
 )
 
 
-VERSION = "0.110.0"
+VERSION = "0.110.1"
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -156,6 +156,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 SESSION_ENGINE = get_string('SESSION_ENGINE', 'django.contrib.sessions.backends.signed_cookies')
+SESSION_COOKIE_NAME = get_string('SESSION_COOKIE_NAME', 'sessionid')
 
 EDXORG_BASE_URL = get_string('EDXORG_BASE_URL', 'https://courses.edx.org/')
 SOCIAL_AUTH_EDXORG_KEY = get_string('EDXORG_CLIENT_ID', '')
@@ -598,6 +599,7 @@ OPEN_DISCUSSIONS_JWT_EXPIRES_DELTA = get_int('OPEN_DISCUSSIONS_JWT_EXPIRES_DELTA
 OPEN_DISCUSSIONS_COOKIE_NAME = get_string('OPEN_DISCUSSIONS_COOKIE_NAME', None)
 OPEN_DISCUSSIONS_JWT_SECRET = get_string('OPEN_DISCUSSIONS_JWT_SECRET', None)
 OPEN_DISCUSSIONS_REDIRECT_URL = get_string('OPEN_DISCUSSIONS_REDIRECT_URL', None)
+OPEN_DISCUSSIONS_REDIRECT_COMPLETE_URL = get_string('OPEN_DISCUSSIONS_REDIRECT_COMPLETE_URL', '/')
 OPEN_DISCUSSIONS_SITE_KEY = get_string('OPEN_DISCUSSIONS_SITE_KEY', None)
 
 if not OPEN_DISCUSSIONS_SITE_KEY:

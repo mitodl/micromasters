@@ -1,4 +1,6 @@
 """APIs for discussions"""
+from urllib.parse import urljoin
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ImproperlyConfigured
@@ -63,7 +65,9 @@ def discussions_redirect(request):
     token = get_token_for_request(request, force_create=True)
 
     if token is not None:
-        response = redirect(settings.OPEN_DISCUSSIONS_REDIRECT_URL)
+        response = redirect(urljoin(
+            settings.OPEN_DISCUSSIONS_REDIRECT_URL, settings.OPEN_DISCUSSIONS_REDIRECT_COMPLETE_URL
+        ))
         _set_jwt_cookie(response, token)
     else:
         raise UnableToAuthenticateDiscussionUserException("Unable to generate a JWT token for user")

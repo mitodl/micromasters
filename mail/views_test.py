@@ -32,7 +32,7 @@ from mail.factories import AutomaticEmailFactory
 from mail.models import SentAutomaticEmail, AutomaticEmail
 from mail.serializers import AutomaticEmailSerializer
 from mail.utils import get_email_footer
-from mail.views import MailWebhookView
+from mail.views import MailWebhookView, UnSubWebhookView
 from profiles.factories import (
     ProfileFactory,
     UserFactory,
@@ -718,3 +718,41 @@ class EmailBouncedViewTests(APITestCase, MockedESTestCase):
 
         # assert that error message is logged
         getattr(mock_logger, logger).assert_called_with(error_msg)
+
+
+class UnSubWebhookViewTests(APITestCase):
+    """Test email unsub webhook view web hook"""
+    url = reverse('mailgun_unsub_webhook')
+
+    def test_unsub(self):
+        """Tests that api unsub user"""
+        with mute_signals(post_save):
+            recipient = ProfileFactory.create(
+                email_optin=True,
+                user__username="foo"
+            )
+
+        data = {
+            "event": "unsubscribed",
+            "recipient": recipient.user.email
+        }
+        factory = RequestFactory()
+        request = factory.post(self.url, data=data)
+        UnSubWebhookView().post(request)
+        recipient.refresh_from_db()
+        assert recipient.email_optin is False
+
+    @patch('mail.views.log')
+    def test_unsub_invalid_email(self, mock_logger):
+        """Tests when invalid email comes from webhook"""
+        data = {
+            "event": "unsubscribed",
+            "recipient": "foo@example.com"
+        }
+        factory = RequestFactory()
+        request = factory.post(self.url, data=data)
+        UnSubWebhookView().post(request)
+        mock_logger.error.assert_called_with(
+            "Webhook event: '%s' failed. No profile exists for "
+            "a user with email '%s'", "unsubscribed", "foo@example.com"
+        )

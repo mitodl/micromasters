@@ -8,10 +8,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q
 
-from dashboard.models import (
-    CachedEnrollment,
-    ProgramEnrollment,
-)
+from dashboard.models import ProgramEnrollment
 from dashboard.utils import get_mmtrack
 from dashboard.api import has_to_pay_for_exam
 from exams.exceptions import ExamAuthorizationException
@@ -20,6 +17,8 @@ from exams.models import (
     ExamProfile,
     ExamRun,
 )
+from grades.models import FinalGrade
+from grades.constants import FinalGradeStatus
 from micromasters.utils import now_in_utc
 
 MESSAGE_NOT_PASSED_OR_EXIST_TEMPLATE = (
@@ -130,28 +129,30 @@ def authorize_for_exam_run(mmtrack, course_run, exam_run):
 
 def authorize_for_latest_passed_course(mmtrack, exam_run):
     """
-    This walks the CachedEnrollments backwards chronologically and authorizes the first eligible one.
+    This walks the FinalGrade backwards chronologically and authorizes the first eligible one.
 
     Args:
         mmtrack (dashboard.utils.MMTrack): An instance of all user information about a program
         exam_run (exams.models.ExamRun): the ExamRun to authorize the learner for
     """
-    enrollments_qset = CachedEnrollment.objects.filter(
+    final_grades = FinalGrade.objects.filter(
         user=mmtrack.user,
+        passed=True,
+        status=FinalGradeStatus.COMPLETE,
         course_run__course__id=exam_run.course_id,
     ).order_by('-course_run__end_date')
 
-    if not enrollments_qset.exists():
+    if not final_grades.exists():
         return
 
-    for enrollment in enrollments_qset:
+    for final_grade in final_grades:
         try:
-            authorize_for_exam_run(mmtrack, enrollment.course_run, exam_run)
+            authorize_for_exam_run(mmtrack, final_grade.course_run, exam_run)
         except ExamAuthorizationException:
             log.debug(
                 'Unable to authorize user: %s for exam on course_id: %s',
                 mmtrack.user.username,
-                enrollment.course_run.course.id
+                final_grade.course_run.course.id
             )
         else:
             break

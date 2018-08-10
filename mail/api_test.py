@@ -698,3 +698,45 @@ class RecipientVariablesTests(MockedESTestCase):
         profile.delete()
 
         assert list(get_mail_vars([user.email])) == []
+
+
+class ToggleMailingListSubscriptionTests(MockedESTestCase):
+    """Tests regarding toggle_mailing_list_subscription emails"""
+
+    @patch('requests.post', autospec=True, return_value=Mock(
+        spec=Response,
+        status_code=HTTP_200_OK,
+        json=mocked_json()
+    ))
+    @patch('mail.api.log')
+    def test_add_to_unsubscribe_list(self, mock_logger, mock_post):
+        """
+        Test add user to Mailgun unsubscribe list
+        """
+        MailgunClient.add_email_to_unsub_list(
+            "foo@example.com"
+        )
+        mock_logger.debug.assert_called_with(
+            "Added user's email: %s to mailgun unsubscribes list. Message received: %s",
+            "foo@example.com",
+            mock_post.return_value.json()
+        )
+
+    @patch('requests.delete', autospec=True, return_value=Mock(
+        spec=Response,
+        status_code=HTTP_200_OK,
+        json=mocked_json()
+    ))
+    @patch('mail.api.log')
+    def test_remove_from_unsubscribe_list(self, mock_logger, mock_delete):
+        """
+        Test remove user from Mailgun unsubscribe list
+        """
+        MailgunClient.remove_email_from_unsub_list(
+            "foo@example.com"
+        )
+        mock_logger.debug.assert_called_with(
+            "Removed user's email: %s from mailgun unsubscribes list. Message received: %s",
+            "foo@example.com",
+            mock_delete.return_value.json()
+        )

@@ -17,7 +17,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.http.response import Http404
 from django.test import override_settings
 from rest_framework.exceptions import ValidationError
-from edx_api.enrollments import Enrollment
+from edx_api.enrollments import Enrollment, Enrollments
 
 from backends.pipeline_api import EdxOrgOAuth2
 from courses.factories import (
@@ -496,12 +496,21 @@ class EnrollUserTests(MockedESTestCase):
             """Helper function to create a fake enrollment"""
             return Enrollment({"course_details": {"course_id": course_key}})
 
+        def get_student_enrollments():
+            """List of existing enrollments"""
+            return Enrollments([])
+
         create_audit_mock = MagicMock(side_effect=create_audit)
-        enrollments_mock = MagicMock(create_audit_student_enrollment=create_audit_mock)
+        get_enrollments_mock = MagicMock(side_effect=get_student_enrollments)
+        enrollments_mock = MagicMock(
+            create_audit_student_enrollment=create_audit_mock,
+            get_student_enrollments=get_enrollments_mock
+        )
         edx_api_mock = MagicMock(enrollments=enrollments_mock)
         with patch('ecommerce.api.EdxApi', return_value=edx_api_mock):
             enroll_user_on_success(self.order)
 
+        assert get_enrollments_mock.called is True
         assert len(create_audit_mock.call_args_list) == self.order.line_set.count()
         for i, line in enumerate(self.order.line_set.all()):
             assert create_audit_mock.call_args_list[i][0] == (line.course_key, )
@@ -514,6 +523,37 @@ class EnrollUserTests(MockedESTestCase):
             )
             assert enrollment.data == create_audit(line.course_key).json
 
+    def test_if_already_enroll(self):
+        """
+        Test that enrollment api is skipped of user is already enroll is course.
+        """
+        def create_audit(course_key):
+            """Helper function to create a fake enrollment"""
+            return Enrollment({"course_details": {"course_id": course_key}})
+
+        def get_student_enrollments():
+            """List of existing enrollments"""
+            return Enrollments([
+                {"course_details": {"course_id": self.line1.course_key}},
+                {"course_details": {"course_id": self.line2.course_key}}
+            ])
+
+        create_audit_mock = MagicMock(side_effect=create_audit)
+        get_enrollments_mock = MagicMock(
+            side_effect=get_student_enrollments,
+            is_enrolled_in=True
+        )
+        enrollments_mock = MagicMock(
+            create_audit_student_enrollment=create_audit_mock,
+            get_student_enrollments=get_enrollments_mock
+        )
+        edx_api_mock = MagicMock(enrollments=enrollments_mock)
+        with patch('ecommerce.api.EdxApi', return_value=edx_api_mock):
+            enroll_user_on_success(self.order)
+
+        assert get_enrollments_mock.called is True
+        assert not create_audit_mock.called
+
     def test_failed(self):
         """
         Test that an exception is raised containing a list of exceptions of the failed enrollments
@@ -524,8 +564,16 @@ class EnrollUserTests(MockedESTestCase):
                 raise Exception("fatal error {}".format(course_key))
             return Enrollment({"course_details": {"course_id": course_key}})
 
+        def get_student_enrollments():
+            """List of existing enrollments"""
+            return Enrollments([])
+
         create_audit_mock = MagicMock(side_effect=create_audit)
-        enrollments_mock = MagicMock(create_audit_student_enrollment=create_audit_mock)
+        get_enrollments_mock = MagicMock(side_effect=get_student_enrollments)
+        enrollments_mock = MagicMock(
+            create_audit_student_enrollment=create_audit_mock,
+            get_student_enrollments=get_enrollments_mock
+        )
         edx_api_mock = MagicMock(enrollments=enrollments_mock)
         with patch('ecommerce.api.EdxApi', return_value=edx_api_mock):
             with self.assertRaises(EcommerceEdxApiException) as ex:

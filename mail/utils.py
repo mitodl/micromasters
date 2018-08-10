@@ -118,7 +118,7 @@ def get_email_footer(url):
     text = ("You are receiving this e-mail because you signed up for MITx"
             " MicroMasters.<br/> If you don't want to receive these emails in the"
             " future, you can<br/> <a href='{0}'>edit your settings</a>"
-            " or <a href='{0}'>unsubscribe</a>.").format(url)
+            " or <a href='%unsubscribe_url%'>unsubscribe</a>.").format(url)
     return ("<div style='margin-top:80px; text-align: center; color: #757575;'>"
             "<div style='margin:auto; max-width:50%;'><p>{0}</p>"
             "<p>MIT Office of Digital Learning<br/>"
