@@ -18,7 +18,7 @@ export const discussionsFrontpageEndpoint: Endpoint = {
   verbs:        [GET],
   initialState: FRONTPAGE_INITIAL_STATE,
   getFunc:      async () => {
-    if (SETTINGS.open_discussions_redirect_url) {
+    if (SETTINGS.open_discussions_base_url) {
       return await fetchJSONWithAuthToken(frontpageAPI())
     } else {
       return Promise.resolve([])

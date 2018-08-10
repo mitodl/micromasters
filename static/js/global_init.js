@@ -22,6 +22,7 @@ const _createSettings = () => ({
     DISCUSSIONS_CREATE_CHANNEL_UI: true
   },
   open_discussions_redirect_url: "http://open.discussions",
+  open_discussions_base_url:     "http://open.discussions",
   get username() {
     throw new Error("username was removed")
   }

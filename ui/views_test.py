@@ -288,6 +288,7 @@ class DashboardTests(ViewsTests):
         host = FuzzyText().fuzz()
         email_support = FuzzyText().fuzz()
         open_discussions_redirect_url = FuzzyText().fuzz()
+        open_discussions_base_url = FuzzyText().fuzz()
         with self.settings(
             GA_TRACKING_ID=ga_tracking_id,
             REACT_GA_DEBUG=react_ga_debug,
@@ -300,6 +301,8 @@ class DashboardTests(ViewsTests):
             EXAMS_SSO_CLIENT_CODE='itsacode',
             EXAMS_SSO_URL='url',
             OPEN_DISCUSSIONS_REDIRECT_URL=open_discussions_redirect_url,
+            OPEN_DISCUSSIONS_BASE_URL=open_discussions_base_url,
+
         ), patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
             resp = self.client.get(DASHBOARD_URL)
 
@@ -340,7 +343,8 @@ class DashboardTests(ViewsTests):
                     'DISCUSSIONS_POST_UI': False,
                     'DISCUSSIONS_CREATE_CHANNEL_UI': False,
                 },
-                'open_discussions_redirect_url': open_discussions_redirect_url
+                'open_discussions_redirect_url': open_discussions_redirect_url,
+                'open_discussions_base_url': open_discussions_base_url
             }
             assert resp.context['is_public'] is False
             assert resp.context['has_zendesk_widget'] is True
@@ -742,6 +746,7 @@ class TestUsersPage(ViewsTests):
         host = FuzzyText().fuzz()
         email_support = FuzzyText().fuzz()
         open_discussions_redirect_url = FuzzyText().fuzz()
+        open_discussions_base_url = FuzzyText().fuzz()
         with self.settings(
             GA_TRACKING_ID=ga_tracking_id,
             REACT_GA_DEBUG=react_ga_debug,
@@ -753,7 +758,9 @@ class TestUsersPage(ViewsTests):
             ELASTICSEARCH_DEFAULT_PAGE_SIZE=10,
             EXAMS_SSO_CLIENT_CODE='itsacode',
             EXAMS_SSO_URL='url',
-            OPEN_DISCUSSIONS_REDIRECT_URL=open_discussions_redirect_url
+            OPEN_DISCUSSIONS_REDIRECT_URL=open_discussions_redirect_url,
+            OPEN_DISCUSSIONS_BASE_URL=open_discussions_base_url
+
         ):
             # Mock has_permission so we don't worry about testing permissions here
             has_permission = Mock(return_value=True)
@@ -794,7 +801,8 @@ class TestUsersPage(ViewsTests):
                         'DISCUSSIONS_POST_UI': False,
                         'DISCUSSIONS_CREATE_CHANNEL_UI': False,
                     },
-                    'open_discussions_redirect_url': open_discussions_redirect_url
+                    'open_discussions_redirect_url': open_discussions_redirect_url,
+                    'open_discussions_base_url': open_discussions_base_url,
                 }
                 assert has_permission.called
 
@@ -822,6 +830,7 @@ class TestUsersPage(ViewsTests):
         host = FuzzyText().fuzz()
         email_support = FuzzyText().fuzz()
         open_discussions_redirect_url = FuzzyText().fuzz()
+        open_discussions_base_url = FuzzyText().fuzz()
         with self.settings(
             GA_TRACKING_ID=ga_tracking_id,
             REACT_GA_DEBUG=react_ga_debug,
@@ -833,7 +842,8 @@ class TestUsersPage(ViewsTests):
             ELASTICSEARCH_DEFAULT_PAGE_SIZE=10,
             EXAMS_SSO_CLIENT_CODE='itsacode',
             EXAMS_SSO_URL='url',
-            OPEN_DISCUSSIONS_REDIRECT_URL=open_discussions_redirect_url
+            OPEN_DISCUSSIONS_REDIRECT_URL=open_discussions_redirect_url,
+            OPEN_DISCUSSIONS_BASE_URL=open_discussions_base_url
         ):
             # Mock has_permission so we don't worry about testing permissions here
             has_permission = Mock(return_value=True)
@@ -868,7 +878,8 @@ class TestUsersPage(ViewsTests):
                         'DISCUSSIONS_POST_UI': False,
                         'DISCUSSIONS_CREATE_CHANNEL_UI': False,
                     },
-                    'open_discussions_redirect_url': open_discussions_redirect_url
+                    'open_discussions_redirect_url': open_discussions_redirect_url,
+                    'open_discussions_base_url': open_discussions_base_url
                 }
                 assert has_permission.called
 

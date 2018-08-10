@@ -21,6 +21,7 @@ declare var SETTINGS: {
   search_url: string,
   roles: Array<{ role: string }>,
   open_discussions_redirect_url: string,
+  open_discussions_base_url: string,
 };
 
 // mocha

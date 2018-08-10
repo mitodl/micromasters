@@ -385,7 +385,7 @@ class DashboardPage extends React.Component {
     const { dispatch, discussionsFrontpage } = this.props
     if (
       SETTINGS.FEATURES.DISCUSSIONS_POST_UI &&
-      SETTINGS.open_discussions_redirect_url &&
+      SETTINGS.open_discussions_base_url &&
       !discussionsFrontpage.loaded &&
       !discussionsFrontpage.processing
     ) {
@@ -877,7 +877,7 @@ class DashboardPage extends React.Component {
           <div className="second-column">
             <ProgressWidget program={program} />
             {SETTINGS.FEATURES.DISCUSSIONS_POST_UI &&
-            SETTINGS.open_discussions_redirect_url ? (
+            SETTINGS.open_discussions_base_url ? (
                 <DiscussionCard
                   program={program}
                   frontpage={discussionsFrontpage.data || []}

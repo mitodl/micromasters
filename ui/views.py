@@ -67,6 +67,7 @@ class ReactView(View):  # pylint: disable=unused-argument
                 "DISCUSSIONS_CREATE_CHANNEL_UI": settings.FEATURES.get('OPEN_DISCUSSIONS_CREATE_CHANNEL_UI', False)
             },
             "open_discussions_redirect_url": settings.OPEN_DISCUSSIONS_REDIRECT_URL,
+            "open_discussions_base_url": settings.OPEN_DISCUSSIONS_BASE_URL,
         }
 
         return render(

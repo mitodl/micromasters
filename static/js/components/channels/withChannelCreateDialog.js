@@ -21,6 +21,7 @@ import type { AvailableProgram } from "../../flow/enrollmentTypes"
 import type { ChannelInputs, ChannelState } from "../../flow/discussionTypes"
 import type { UIState } from "../../reducers/ui"
 import type { RestState } from "../../flow/restTypes"
+import { channelURL } from "../../lib/discussions"
 
 const isVisible = R.propOr(false, CHANNEL_CREATE_DIALOG)
 
@@ -102,9 +103,8 @@ export const withChannelCreateDialog = (WrappedComponent: ReactClass<*>) => {
 
         this.closeAndClearDialog()
 
-        if (SETTINGS.open_discussions_redirect_url) {
-          const channelUrl = `${SETTINGS.open_discussions_redirect_url}channel/${channel.name}`
-          window.open(channelUrl, "_self")
+        if (SETTINGS.open_discussions_base_url) {
+          window.open(channelURL(channel.name), "_self")
         }
       } catch (remoteErrors) {
         dispatch(updateChannelErrors(remoteErrors))
