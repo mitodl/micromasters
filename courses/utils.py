@@ -93,11 +93,13 @@ def get_year_season_from_course_run(course_run):
 
 def format_season_year_for_course_run(course_run):
     """
+    Formats season/year info for a CourseRun
+
     Args:
         course_run (CourseRun): A CourseRun object
 
     Returns:
-        string: containing season and year, eg: 'Spring 2018'
+        str: containing season and year, eg: 'Spring 2018'
     """
     year_season_tuple = get_year_season_from_course_run(course_run)
     return '{} {}'.format(year_season_tuple[1], year_season_tuple[0]) if year_season_tuple else ''
