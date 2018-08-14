@@ -147,9 +147,7 @@ def freeze_course_run_final_grades(course_run_id):
         # extract the results from the id
         results = GroupResult.restore(group_results_id, app=app)
         # if the subtasks are not done, revoke them
-        if not results.ready():
-            log.error('freezing of users for course %s took more than one iteration', course_run.edx_course_key)
-            results.revoke()
+        results.revoke()
         # delete the results anyway
         results.delete()
 
