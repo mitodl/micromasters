@@ -32,7 +32,7 @@ class Command(BaseCommand):
             raise CommandError('Course Run for course_id "{}" cannot be frozen yet'.format(edx_course_key))
         if CourseRunGradingStatus.is_complete(run):
             self.stdout.write(
-                self.style.SUCCESS(
+                self.style.SUCCESS(  # pylint: disable=no-member
                     'Final grades for course "{0}" are already complete'.format(edx_course_key)
                 )
             )
@@ -40,7 +40,7 @@ class Command(BaseCommand):
 
         freeze_course_run_final_grades.delay(run.id)
         self.stdout.write(
-            self.style.SUCCESS(
+            self.style.SUCCESS(  # pylint: disable=no-member
                 'Successfully submitted async task to freeze final grades for course "{0}"'.format(edx_course_key)
             )
         )

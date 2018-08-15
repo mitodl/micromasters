@@ -311,7 +311,7 @@ def should_load_from_existing_db(database_loader, cursor):
     # We should load a db backup to start the test suite if that backup exists,
     # and if the config options don't indicate that the database should be freshly
     # created to start the the test suite execution
-    return (
+    return (  # pylint: disable=no-member
         pytest.config.option.reuse_db and
         not pytest.config.option.create_db and
         database_loader.has_backup(db_cursor=cursor)

@@ -269,7 +269,7 @@ class OrderFulfillmentViewTests(MockedESTestCase):
 
         data = {}
         for _ in range(5):
-            data[FAKE.text()] = FAKE.text()
+            data[FAKE.text()] = FAKE.text()  # pylint: disable=no-member
 
         data['req_reference_number'] = make_reference_id(order)
         data['decision'] = 'ACCEPT'
@@ -305,7 +305,7 @@ class OrderFulfillmentViewTests(MockedESTestCase):
         """
         data = {}
         for _ in range(5):
-            data[FAKE.text()] = FAKE.text()
+            data[FAKE.text()] = FAKE.text()  # pylint: disable=no-member
         with patch('ecommerce.views.IsSignedByCyberSource.has_permission', return_value=True):
             try:
                 # Missing fields from Cybersource POST will cause the KeyError.
@@ -328,7 +328,7 @@ class OrderFulfillmentViewTests(MockedESTestCase):
 
         data = {}
         for _ in range(5):
-            data[FAKE.text()] = FAKE.text()
+            data[FAKE.text()] = FAKE.text()  # pylint: disable=no-member
 
         data['req_reference_number'] = make_reference_id(order)
         data['decision'] = 'ACCEPT'

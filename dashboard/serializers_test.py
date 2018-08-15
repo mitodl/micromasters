@@ -48,7 +48,7 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
     """
 
     @staticmethod
-    def _generate_cached_enrollments(user, program, num_course_runs=1, data=None):
+    def _generate_cached_enrollments(user, program, num_course_runs=1, data=None):   # pylint: disable=no-member
         """
         Helper method to generate CachedEnrollments for test cases
         """
@@ -58,10 +58,10 @@ class UserProgramSearchSerializerTests(MockedESTestCase):
         course_runs = [
             CourseRunFactory.create(
                 course=course,
-                enrollment_start=fake.date_time_this_month(**course_run_params),
-                start_date=fake.date_time_this_month(**course_run_params),
-                enrollment_end=fake.date_time_this_month(**course_run_params),
-                end_date=fake.date_time_this_year(**course_run_params),
+                enrollment_start=fake.date_time_this_month(**course_run_params),  # pylint: disable=no-member
+                start_date=fake.date_time_this_month(**course_run_params),  # pylint: disable=no-member
+                enrollment_end=fake.date_time_this_month(**course_run_params),  # pylint: disable=no-member
+                end_date=fake.date_time_this_year(**course_run_params),  # pylint: disable=no-member
             ) for _ in range(num_course_runs)
         ]
         factory_kwargs = dict(user=user)

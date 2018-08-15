@@ -57,7 +57,7 @@ class CachedCurrentGradeFactory(DjangoModelFactory):
     user = SubFactory(UserFactory)
     course_run = SubFactory(CourseRunFactory)
     data = LazyAttribute(lambda x: {
-        "passed": FAKE.boolean(),
+        "passed": FAKE.boolean(),  # pylint: disable=no-member
         "percent": randint(60, 100)/100.0,
         "course_key": x.course_run.edx_course_key,
         "username": x.user.username,

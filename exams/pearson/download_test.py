@@ -105,13 +105,13 @@ class PearsonDownloadTest(SimpleTestCase):
         processor = download.ArchivedResponseProcessor(self.sftp)
 
         assert processor.process_extracted_file(extracted_file, 'eac-07-04-2016.dat') == (True, ['EAC'])
-        processor.process_eac_file.assert_called_once_with(extracted_file)
+        processor.process_eac_file.assert_called_once_with(extracted_file)  # pylint: disable=no-member
 
         assert processor.process_extracted_file(extracted_file, 'vcdc-07-04-2016.dat') == (True, ['VCDC'])
-        processor.process_vcdc_file.assert_called_once_with(extracted_file)
+        processor.process_vcdc_file.assert_called_once_with(extracted_file)  # pylint: disable=no-member
 
         assert processor.process_extracted_file(extracted_file, 'exam-07-04-2016.dat') == (True, ['EXAM'])
-        processor.process_exam_file.assert_called_once_with(extracted_file)
+        processor.process_exam_file.assert_called_once_with(extracted_file)  # pylint: disable=no-member
 
         assert processor.process_extracted_file(extracted_file, 'notatype-07-04-2016.dat') == (False, [])
 
@@ -138,7 +138,7 @@ class PearsonDownloadTest(SimpleTestCase):
             processor = download.ArchivedResponseProcessor(self.sftp)
             assert processor.process_zip('local.zip') == expected_result
 
-        self.auditor.return_value.audit_response_file.assert_called_once_with('local.zip')
+        self.auditor.return_value.audit_response_file.assert_called_once_with('local.zip')  # pylint: disable=no-member
         email_processing_failures_mock.assert_not_called()
 
     @patch('zipfile.ZipFile', spec=True)
@@ -154,7 +154,7 @@ class PearsonDownloadTest(SimpleTestCase):
             processor = download.ArchivedResponseProcessor(self.sftp)
             processor.process_zip('local.zip')
 
-        self.auditor.return_value.audit_response_file.assert_called_once_with('local.zip')
+        self.auditor.return_value.audit_response_file.assert_called_once_with('local.zip')  # pylint: disable=no-member
         email_processing_failures_mock.assert_called_once_with('a.dat', 'local.zip', ['ERROR'])
 
     @ddt.data(

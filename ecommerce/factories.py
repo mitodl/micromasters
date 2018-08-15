@@ -70,7 +70,7 @@ def gen_fake_receipt_data(order=None):
     """
     data = {}
     for _ in range(10):
-        data[FAKE.text()] = FAKE.text()
+        data[FAKE.text()] = FAKE.text()  # pylint: disable=no-member
     keys = sorted(data.keys())
     data['signed_field_names'] = ",".join(keys)
     data['unsigned_field_names'] = ''

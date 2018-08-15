@@ -19,4 +19,4 @@ class Command(BaseCommand):
             raise CommandError('OPEN_DISCUSSIONS_USER_SYNC is set to False (so disabled).')
 
         sync_discussion_users.delay()
-        self.stdout.write(self.style.SUCCESS('Async job to backfill users submitted'))
+        self.stdout.write(self.style.SUCCESS('Async job to backfill users submitted'))  # pylint: disable=no-member

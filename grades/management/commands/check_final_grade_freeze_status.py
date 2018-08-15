@@ -38,7 +38,7 @@ class Command(BaseCommand):
 
         if CourseRunGradingStatus.is_complete(run):
             self.stdout.write(
-                self.style.SUCCESS(
+                self.style.SUCCESS(  # pylint: disable=no-member
                     'Final grades for course "{0}" are complete'.format(edx_course_key)
                 )
             )
@@ -49,27 +49,27 @@ class Command(BaseCommand):
                 results = GroupResult.restore(group_results_id, app=app)
                 if not results.ready():
                     self.stdout.write(
-                        self.style.WARNING(
+                        self.style.WARNING(  # pylint: disable=no-member
                             'Final grades for course "{0}" are being processed'.format(edx_course_key)
                         )
                     )
                 else:
                     self.stdout.write(
-                        self.style.WARNING(
+                        self.style.WARNING(  # pylint: disable=no-member
                             'Async task to freeze grade for course "{0}" '
                             'are done, but course is not marked as complete.'.format(edx_course_key)
                         )
                     )
             else:
                 self.stdout.write(
-                    self.style.ERROR(
+                    self.style.ERROR(  # pylint: disable=no-member
                         'Final grades for course "{0}" are marked as they are being processed'
                         ', but no task found.'.format(edx_course_key)
                     )
                 )
         else:
             self.stdout.write(
-                self.style.WARNING(
+                self.style.WARNING(  # pylint: disable=no-member
                     'Final grades for course "{0}" are not being processed yet'.format(edx_course_key)
                 )
             )
@@ -78,7 +78,7 @@ class Command(BaseCommand):
             set(CachedCurrentGrade.get_cached_users(run))
         )
         self.stdout.write(
-            self.style.SUCCESS(
+            self.style.SUCCESS(  # pylint: disable=no-member
                 'The students with a final grade are {0}/{1}{2}'.format(
                     FinalGrade.objects.filter(course_run=run).count(),
                     len(users_in_cache),

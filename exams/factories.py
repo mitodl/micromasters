@@ -43,13 +43,19 @@ class ExamRunFactory(DjangoModelFactory):
     course = SubFactory(CourseFactory)
     exam_series_code = factory.Faker('lexify', text="????_MicroMasters")
     date_first_schedulable = factory.LazyFunction(
-        lambda: FAKE.date_time_this_year(before_now=True, after_now=False, tzinfo=pytz.utc)
+        lambda: FAKE.date_time_this_year(  # pylint: disable=no-member
+            before_now=True, after_now=False, tzinfo=pytz.utc
+        )
     )
     date_last_schedulable = factory.LazyFunction(
-        lambda: FAKE.date_time_this_year(before_now=False, after_now=True, tzinfo=pytz.utc)
+        lambda: FAKE.date_time_this_year(  # pylint: disable=no-member
+            before_now=False, after_now=True, tzinfo=pytz.utc
+        )
     )
     date_first_eligible = factory.LazyFunction(
-        lambda: FAKE.date_time_this_year(before_now=False, after_now=True, tzinfo=pytz.utc).date()
+        lambda: FAKE.date_time_this_year(  # pylint: disable=no-member
+            before_now=False, after_now=True, tzinfo=pytz.utc
+        ).date()
     )
     date_last_eligible = factory.LazyAttribute(
         lambda exam_run: exam_run.date_first_eligible + timedelta(days=20)
@@ -69,12 +75,16 @@ class ExamRunFactory(DjangoModelFactory):
                 lambda exam_run: exam_run.date_last_eligible - timedelta(days=20)
             ),
             date_last_eligible=factory.LazyFunction(
-                lambda: FAKE.date_time_this_year(before_now=True, after_now=False, tzinfo=pytz.utc).date()
+                lambda: FAKE.date_time_this_year(  # pylint: disable=no-member
+                    before_now=True, after_now=False, tzinfo=pytz.utc
+                ).date()
             )
         )
         eligibility_future = factory.Trait(
             date_first_eligible=factory.LazyFunction(
-                lambda: FAKE.date_time_this_year(before_now=False, after_now=True, tzinfo=pytz.utc).date()
+                lambda: FAKE.date_time_this_year(  # pylint: disable=no-member
+                    before_now=False, after_now=True, tzinfo=pytz.utc
+                ).date()
             ),
             date_last_eligible=factory.LazyAttribute(
                 lambda exam_run: exam_run.date_first_eligible + timedelta(days=20)
@@ -85,12 +95,16 @@ class ExamRunFactory(DjangoModelFactory):
                 lambda exam_run: exam_run.date_last_schedulable - timedelta(days=10)
             ),
             date_last_schedulable=factory.LazyFunction(
-                lambda: FAKE.date_time_this_year(before_now=True, after_now=False, tzinfo=pytz.utc)
+                lambda: FAKE.date_time_this_year(  # pylint: disable=no-member
+                    before_now=True, after_now=False, tzinfo=pytz.utc
+                )
             )
         )
         scheduling_future = factory.Trait(
             date_first_schedulable=factory.LazyFunction(
-                lambda: FAKE.date_time_this_year(before_now=False, after_now=True, tzinfo=pytz.utc)
+                lambda: FAKE.date_time_this_year(  # pylint: disable=no-member
+                    before_now=False, after_now=True, tzinfo=pytz.utc
+                )
             ),
             date_last_schedulable=factory.LazyAttribute(
                 lambda exam_run: exam_run.date_first_schedulable + timedelta(days=10)

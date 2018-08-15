@@ -18,7 +18,9 @@ class EXAMResultFactory(factory.Factory):
     exam_series_code = factory.Faker('numerify', text="##.##x")
     exam_name = factory.Faker('lexify', text="MicroMasters in ????")
     exam_revision = ''  # always an empty string
-    form = factory.LazyFunction(lambda: '{}{}'.format(FAKE.year(), FAKE.random_letter().upper()))
+    form = factory.LazyFunction(
+        lambda: '{}{}'.format(FAKE.year(), FAKE.random_letter().upper())  # pylint: disable=no-member
+    )
     exam_language = factory.Faker('language_code')
     attempt = factory.Faker('random_digit')
     exam_date = factory.Faker('date_time_this_year', tzinfo=pytz.utc)
@@ -39,9 +41,9 @@ class EXAMResultFactory(factory.Factory):
         """Number of correct answers based on pass/fail"""
         passing_score = int(self.passing_score)
         if self.grade == 'pass':
-            return FAKE.random_int(min=passing_score, max=100)
+            return FAKE.random_int(min=passing_score, max=100)  # pylint: disable=no-member
         else:
-            return FAKE.random_int(min=0, max=passing_score - 1)
+            return FAKE.random_int(min=0, max=passing_score - 1)  # pylint: disable=no-member
 
     class Meta:  # pylint: disable=missing-docstring
         model = EXAMResult

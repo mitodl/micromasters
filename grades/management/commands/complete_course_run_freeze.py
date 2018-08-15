@@ -33,7 +33,7 @@ class Command(BaseCommand):
 
         if not run.can_freeze_grades:
             self.stdout.write(
-                self.style.ERROR(
+                self.style.ERROR(  # pylint: disable=no-member
                     'Course Run "{0}" cannot be marked as frozen yet'.format(edx_course_key)
                 )
             )
@@ -41,7 +41,7 @@ class Command(BaseCommand):
 
         if CourseRunGradingStatus.is_complete(run):
             self.stdout.write(
-                self.style.SUCCESS(
+                self.style.SUCCESS(  # pylint: disable=no-member
                     'Course Run "{0}" is already marked as complete'.format(edx_course_key)
                 )
             )
@@ -54,7 +54,7 @@ class Command(BaseCommand):
             results = GroupResult.restore(group_results_id, app=app)
             if results and not results.ready():
                 self.stdout.write(
-                    self.style.WARNING(
+                    self.style.WARNING(  # pylint: disable=no-member
                         'Tasks for Course Run "{0}" are still running. '
                         'Impossible to set the global "complete" status'.format(edx_course_key)
                     )
@@ -65,7 +65,7 @@ class Command(BaseCommand):
 
         CourseRunGradingStatus.set_to_complete(run)
         self.stdout.write(
-            self.style.SUCCESS(
+            self.style.SUCCESS(  # pylint: disable=no-member
                 'Course Run "{0}" has been marked as complete'.format(edx_course_key)
             )
         )

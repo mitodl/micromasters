@@ -116,4 +116,4 @@ class Command(BaseCommand):
             result_messages.append('Grades changed: {}'.format(grades_changed))
         if grades_unchanged:
             result_messages.append('Grades found with no change in score: {}'.format(grades_unchanged))
-        self.stdout.write(self.style.SUCCESS('\n'.join(result_messages)))
+        self.stdout.write(self.style.SUCCESS('\n'.join(result_messages)))  # pylint: disable=no-member

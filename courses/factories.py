@@ -51,12 +51,12 @@ class CourseFactory(DjangoModelFactory):
 class CourseRunFactory(DjangoModelFactory):
     """Factory for CourseRuns"""
     title = factory.LazyAttribute(
-        lambda x: "CourseRun " + FAKE.sentence()
+        lambda x: "CourseRun " + FAKE.sentence()  # pylint: disable=no-member
     )
     course = factory.SubFactory(CourseFactory)
     # Try to make sure we escape this correctly
     edx_course_key = factory.Sequence(
-        lambda number: "course:/v{}/{}".format(number, FAKE.slug())
+        lambda number: "course:/v{}/{}".format(number, FAKE.slug())  # pylint: disable=no-member
     )
     enrollment_start = factory.Faker(
         'date_time_this_month', before_now=True, after_now=False, tzinfo=pytz.utc
@@ -74,10 +74,10 @@ class CourseRunFactory(DjangoModelFactory):
         'date_time_this_year', before_now=False, after_now=True, tzinfo=pytz.utc
     )
     fuzzy_start_date = factory.LazyAttribute(
-        lambda x: "Starting {}".format(FAKE.sentence())
+        lambda x: "Starting {}".format(FAKE.sentence())  # pylint: disable=no-member
     )
     fuzzy_enrollment_start_date = factory.LazyAttribute(
-        lambda x: "Enrollment starting {}".format(FAKE.sentence())
+        lambda x: "Enrollment starting {}".format(FAKE.sentence())  # pylint: disable=no-member
     )
     upgrade_deadline = factory.Faker(
         'date_time_this_year', before_now=False, after_now=True, tzinfo=pytz.utc

@@ -53,7 +53,7 @@ class ExamTasksTest(TestCase):
             task.delay()
 
         retry.assert_called_once_with(countdown=1, exc=error)
-        assert self.auditor.return_value.audit_request_file.call_count == 1
+        assert self.auditor.return_value.audit_request_file.call_count == 1   # pylint: disable=no-member
 
     @data(
         (
@@ -75,7 +75,7 @@ class ExamTasksTest(TestCase):
             task.delay()
 
         log.exception.assert_called_with(expected_warning_message)
-        assert self.auditor.return_value.audit_request_file.call_count == 1
+        assert self.auditor.return_value.audit_request_file.call_count == 1   # pylint: disable=no-member
 
     @data(
         export_exam_authorizations,
@@ -90,7 +90,7 @@ class ExamTasksTest(TestCase):
             task.delay()
 
         assert log.exception.call_count == 1
-        assert self.auditor.return_value.audit_request_file.call_count == 1
+        assert self.auditor.return_value.audit_request_file.call_count == 1  # pylint: disable=no-member
 
     @data(
         export_exam_authorizations,
@@ -100,13 +100,13 @@ class ExamTasksTest(TestCase):
         """
         Verify that when the auditor raises an ImproperlyConfigured error that the task logs exception
         """
-        self.auditor.return_value.audit_request_file.side_effect = ImproperlyConfigured()
+        self.auditor.return_value.audit_request_file.side_effect = ImproperlyConfigured()   # pylint: disable=no-member
         with patch("exams.tasks.log") as log, patch('exams.pearson.upload.upload_tsv') as upload_tsv_mock:
             task.delay()
 
         assert log.exception.call_count == 1
         assert upload_tsv_mock.call_count == 0
-        assert self.auditor.return_value.audit_request_file.call_count == 1
+        assert self.auditor.return_value.audit_request_file.call_count == 1  # pylint: disable=no-member
 
     @data(
         export_exam_authorizations,
@@ -116,13 +116,13 @@ class ExamTasksTest(TestCase):
         """
         Verify that when the auditor raises any other error that the task logs exception
         """
-        self.auditor.return_value.audit_request_file.side_effect = Exception('error')
+        self.auditor.return_value.audit_request_file.side_effect = Exception('error')  # pylint: disable=no-member
         with patch("exams.tasks.log") as log, patch('exams.pearson.upload.upload_tsv') as upload_tsv_mock:
             task.delay()
 
         assert log.exception.call_count == 1
         assert upload_tsv_mock.call_count == 0
-        assert self.auditor.return_value.audit_request_file.call_count == 1
+        assert self.auditor.return_value.audit_request_file.call_count == 1   # pylint: disable=no-member
 
     @override_settings(FEATURES={"PEARSON_EXAMS_SYNC": False})
     @data(export_exam_authorizations, export_exam_profiles)
@@ -132,7 +132,7 @@ class ExamTasksTest(TestCase):
             task.delay()
 
         assert upload_tsv_mock.called is False
-        assert self.auditor.return_value.audit_request_file.call_count == 0
+        assert self.auditor.return_value.audit_request_file.call_count == 0   # pylint: disable=no-member
 
 
 @override_settings(FEATURES={"PEARSON_EXAMS_SYNC": True})
@@ -185,7 +185,7 @@ class ExamProfileTasksTest(MockedESTestCase):
 
         assert cdd_writer_mock_cls.call_count == 1
         assert cdd_writer_instance.write.call_count == 1
-        assert self.auditor.return_value.audit_request_file.call_count == 1
+        assert self.auditor.return_value.audit_request_file.call_count == 1  # pylint: disable=no-member
 
         invalid_profiles = ExamProfile.objects.filter(status=ExamProfile.PROFILE_INVALID)
         in_progress_profiles = ExamProfile.objects.filter(status=ExamProfile.PROFILE_IN_PROGRESS)
@@ -223,7 +223,7 @@ class ExamProfileTasksTest(MockedESTestCase):
 
         assert upload_tsv_mock.call_count == 1
         assert validate_profile_mock.call_count == 10
-        assert self.auditor.return_value.audit_request_file.call_count == 1
+        assert self.auditor.return_value.audit_request_file.call_count == 1  # pylint: disable=no-member
 
         invalid_profiles = ExamProfile.objects.filter(status=ExamProfile.PROFILE_INVALID)
         in_progress_profiles = ExamProfile.objects.filter(status=ExamProfile.PROFILE_IN_PROGRESS)
@@ -280,7 +280,7 @@ class ExamAuthorizationTasksTest(MockedESTestCase):
 
         assert ead_writer_mock_cls.call_count == 1
         assert ead_writer_instance.write.call_count == 1
-        assert self.auditor.return_value.audit_request_file.call_count == 1
+        assert self.auditor.return_value.audit_request_file.call_count == 1  # pylint: disable=no-member
 
         in_progress_auths = ExamAuthorization.objects.filter(status=ExamAuthorization.STATUS_IN_PROGRESS)
 

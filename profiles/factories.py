@@ -55,7 +55,9 @@ class ProfileFactory(DjangoModelFactory):
     romanized_first_name = Faker('first_name')
     romanized_last_name = Faker('last_name')
 
-    address = LazyFunction(lambda: '{} {}'.format(FAKE.building_number(), FAKE.street_name()))
+    address = LazyFunction(
+        lambda: '{} {}'.format(FAKE.building_number(), FAKE.street_name())  # pylint: disable=no-member
+    )
 
     city = Faker('city')
     country = Faker('country_code')
@@ -65,7 +67,7 @@ class ProfileFactory(DjangoModelFactory):
     def postal_code(self):
         """Postal codes are only required for US and Canada"""
         if self.country in ("US", "CA"):
-            return FAKE.postcode()
+            return FAKE.postcode()  # pylint: disable=no-member
         return None
 
     phone_number = Faker('numerify', text='+# (###) ###-####')
@@ -80,7 +82,7 @@ class ProfileFactory(DjangoModelFactory):
     )
     edx_goals = FuzzyText()
     preferred_language = Faker('language_code')
-    edx_language_proficiencies = LazyFunction(lambda: [FAKE.text() for _ in range(3)])
+    edx_language_proficiencies = LazyFunction(lambda: [FAKE.text() for _ in range(3)])  # pylint: disable=no-member
     gender = FuzzyChoice(
         [choice[0] for choice in Profile.GENDER_CHOICES]
     )

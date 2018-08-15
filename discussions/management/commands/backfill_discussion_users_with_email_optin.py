@@ -20,5 +20,7 @@ class Command(BaseCommand):
 
         force_sync_discussion_users.delay()
         self.stdout.write(
-            self.style.SUCCESS('Async job to backfill users submitted with there email optin')
+            self.style.SUCCESS(  # pylint: disable=no-member
+                'Async job to backfill users submitted with there email optin'
+            )
         )
