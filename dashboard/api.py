@@ -229,6 +229,7 @@ def get_info_for_course(course, mmtrack):
         "has_contact_email": bool(course.contact_email),
         "can_schedule_exam": is_exam_schedulable(mmtrack.user, course),
         "exams_schedulable_in_future": get_future_exam_runs(course),
+        "past_exam_date": get_past_recent_exam_run(course),
         "has_to_pay": has_to_pay_for_exam(mmtrack, course),
         "runs": [],
         "proctorate_exams_grades": ProctoredExamGradeSerializer(
@@ -508,6 +509,23 @@ def get_future_exam_runs(course):
 
     return (ExamRun.get_schedulable_in_future(course).
             order_by('date_first_schedulable').values_list('date_first_schedulable', flat=True))
+
+
+def get_past_recent_exam_run(course):
+    """
+    Return scheduling dates for a recent exam, example: 'Mar 7 - Mar 17, 2018'
+
+    Args:
+        course (courses.models.Course): A course
+
+    Returns:
+        str: a string representation of scheduling window for recent exam run
+    """
+    exam = ExamRun.get_schedulable_in_past(course).order_by('-date_last_schedulable').first()
+
+    return '{} - {}'.format(
+        exam.date_first_schedulable.strftime('%b %-d'), exam.date_last_schedulable.strftime('%b %-d, %Y')
+    ) if exam else ''
 
 
 def has_to_pay_for_exam(mmtrack, course):

@@ -725,6 +725,56 @@ describe("Course Status Messages", () => {
       ])
     })
 
+    it("should have a message for missing the payment deadline to take an exam", () => {
+      course.runs = [course.runs[0]]
+      makeRunPast(course.runs[0])
+      makeRunPassed(course.runs[0])
+      makeRunOverdue(course.runs[0])
+
+      course.has_exam = true
+      course.past_exam_date = "Mar 12 - Mar 22, 2018"
+
+      assertIsJust(calculateMessages(calculateMessagesProps), [
+        {
+          message:
+            "You passed the edX course but missed the payment deadline to take the proctored " +
+            `scheduled for ${course.past_exam_date}. There are no future exams scheduled at this ` +
+            "time. Please check back later.",
+          action: "course action was called"
+        }
+      ])
+      assert(
+        calculateMessagesProps.courseAction.calledWith(
+          course.runs[0],
+          COURSE_ACTION_PAY
+        )
+      )
+    })
+
+    it("should have a message for missing the payment deadline has future exam", () => {
+      course.runs = [course.runs[0]]
+      makeRunPast(course.runs[0])
+      makeRunPassed(course.runs[0])
+      makeRunOverdue(course.runs[0])
+
+      course.has_exam = true
+      course.past_exam_date = "Mar 12 - Mar 22, 2018"
+      course.exams_schedulable_in_future = [
+        moment()
+          .add(2, "day")
+          .format()
+      ]
+      assertIsJust(calculateMessages(calculateMessagesProps), [
+        {
+          message:
+            "You passed the edX course but missed the payment deadline to take the proctored " +
+            `scheduled for ${course.past_exam_date}. You can pay now to take the next exam, scheduled for ` +
+            `${formatDate(course.exams_schedulable_in_future[0])}.`,
+          action: "course action was called"
+        }
+      ])
+    })
+
     it("should nag about paying after the edx course is complete", () => {
       makeRunPast(course.runs[0])
       makeRunCanUpgrade(course.runs[0])

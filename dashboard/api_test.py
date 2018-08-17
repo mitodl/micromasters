@@ -905,6 +905,7 @@ class InfoCourseTest(CourseTests):
             "has_contact_email": bool(course.contact_email),
             "can_schedule_exam": can_schedule_exam,
             "exams_schedulable_in_future": exams_schedulable_in_future,
+            "past_exam_date": '',
             "has_to_pay": has_to_pay,
             "proctorate_exams_grades": proct_exams,
             "has_exam": has_exam,
@@ -1855,6 +1856,23 @@ class FutureExamRunsTests(MockedESTestCase):
         exam_run = ExamRunFactory.create(scheduling_past=is_past, scheduling_future=is_future)
 
         assert len(api.get_future_exam_runs(exam_run.course)) == result
+
+
+@ddt.ddt
+class PastExamRunTests(MockedESTestCase):
+    """Test for past schedulable exam run"""
+
+    @ddt.data(
+        (False, False, False),
+        (True, False, True),
+        (False, True, False),
+    )
+    @ddt.unpack
+    def test_get_past_exam_run(self, is_past, is_future, result):
+        """test get_past_recent_exam_run"""
+        exam_run = ExamRunFactory.create(scheduling_past=is_past, scheduling_future=is_future)
+
+        self.assertEqual(len(api.get_past_recent_exam_run(exam_run.course)) > 0, result)
 
 
 @ddt.ddt

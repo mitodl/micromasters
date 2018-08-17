@@ -382,27 +382,43 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     return S.Just(messages)
   } else if (hasMissedDeadlineCourseRun(course)) {
     //the course finished can't pay
-    const date = run => formatDate(run.course_start_date)
-    const msg = run => {
-      return `You missed the payment deadline, but you can re-enroll. Next course starts ${date(
-        run
-      )}.${enrollmentDateMessage(run)}`
-    }
-    messages.push(
-      S.maybe(
-        {
-          message:
-            "You missed the payment deadline and will not receive MicroMasters credit for this course. " +
-            "There are no future runs of this course scheduled at this time."
-        },
-        run => ({
-          message: msg(run),
-          action:  courseAction(run, COURSE_ACTION_REENROLL)
-        }),
-        futureEnrollableRun(course)
+    if (exams && course.past_exam_date) {
+      const futureExamMessage = R.isEmpty(
+        course.exams_schedulable_in_future
       )
-    )
-    return S.Just(messages)
+        ? " There are no future exams scheduled at this time. Please check back later."
+        : ` You can pay now to take the next exam, scheduled for ${formatDate(
+          course.exams_schedulable_in_future[0]
+        )}.`
+
+      messages.push({
+        message:
+          "You passed the edX course but missed the payment deadline to take the proctored scheduled for " +
+          `${course.past_exam_date}.${futureExamMessage}`,
+        action: courseAction(firstRun, COURSE_ACTION_PAY)
+      })
+    } else {
+      const date = run => formatDate(run.course_start_date)
+      const msg = run => {
+        return `You missed the payment deadline, but you can re-enroll. Next course starts ${date(
+          run
+        )}.${enrollmentDateMessage(run)}`
+      }
+      messages.push(
+        S.maybe(
+          {
+            message:
+              "You missed the payment deadline and will not receive MicroMasters credit for this course. " +
+              "There are no future runs of this course scheduled at this time."
+          },
+          run => ({
+            message: msg(run),
+            action:  courseAction(run, COURSE_ACTION_REENROLL)
+          }),
+          futureEnrollableRun(course)
+        )
+      )
+    }
   }
   if (hasFailedCourseRun(course) && !hasPassedCourseRun(course)) {
     return S.Just(

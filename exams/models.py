@@ -64,6 +64,23 @@ class ExamRun(TimestampedModel):
             self.exam_series_code
         )
 
+    @classmethod
+    def get_schedulable_in_past(cls, course):
+        """
+        Get a QuerySet with recently expired scheduling time
+
+        Args:
+            course (courses.models.Course): the course to find exam runs for
+
+        Returns:
+            django.db.models.query.QuerySet: A Queryset filtered to past exam runs
+        """
+        now = now_in_utc()
+        return cls.objects.filter(
+            course=course,
+            date_last_schedulable__lt=now
+        )
+
     @property
     def is_schedulable(self):
         """
