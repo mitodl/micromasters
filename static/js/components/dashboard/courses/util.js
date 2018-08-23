@@ -85,6 +85,16 @@ export const isPassedOrCurrentlyEnrolled = R.compose(
   R.prop("status")
 )
 
+export const hasCanUpgradeCourseRun = R.compose(
+  R.any(R.propEq("status", STATUS_CAN_UPGRADE)),
+  R.prop("runs")
+)
+
+export const hasMissedDeadlineCourseRun = R.compose(
+  R.any(R.propEq("status", STATUS_MISSED_DEADLINE)),
+  R.prop("runs")
+)
+
 export const hasFailedCourseRun = R.compose(
   R.any(R.propEq("status", STATUS_NOT_PASSED)),
   R.prop("runs")

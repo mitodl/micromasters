@@ -38,7 +38,8 @@ from grades.factories import ProctoredExamGradeFactory, MicromastersCourseCertif
 from grades.models import FinalGrade, CourseRunGradingStatus, MicromastersCourseCertificate
 from profiles.api import get_social_username
 from roles.models import Role, Staff
-from seed_data.lib import set_course_run_current, CachedEnrollmentHandler, add_paid_order_for_course
+from seed_data.lib import set_course_run_current, CachedEnrollmentHandler, add_paid_order_for_course, \
+    set_course_run_past, set_course_run_future
 from seed_data.management.commands.alter_data import EXAMPLE_COMMANDS
 from selenium_tests.data_util import create_user_for_login
 from selenium_tests.util import (
@@ -362,6 +363,37 @@ class DashboardStates:  # pylint: disable=too-many-locals
         set_course_run_current(course_run, upgradeable=True, save=True)
         CachedEnrollmentHandler(self.user).set_or_create(course_run, verified=False)
 
+    def create_audited_passed_enrolled_again_failed(self):
+        """Make course passed and user retaking/auditing the course again"""
+        self.make_fa_program_enrollment(FinancialAidStatus.AUTO_APPROVED)
+        course = Course.objects.get(title='Digital Learning 200')
+        CourseCertificateSignatoriesFactory.create(course=course)
+
+        course_run = CourseRunFactory(course=course, edx_course_key='course-passed')
+        set_course_run_past(course_run)
+        call_command(
+            "alter_data", 'set_to_passed', '--username', 'staff',
+            '--course-run-key', course_run.edx_course_key, '--grade', '80', '--audit'
+        )
+        final_grade = FinalGrade.objects.filter(
+            course_run__course__title='Digital Learning 200', user=self.user
+        ).first()
+        CourseRunGradingStatus.objects.create(course_run=final_grade.course_run, status='complete')
+
+        course_run = CourseRunFactory(course=course, edx_course_key='course-failed')
+        set_course_run_past(course_run)
+        call_command(
+            "alter_data", 'set_to_failed', '--username', 'staff',
+            '--course-run-key', course_run.edx_course_key, '--grade', '10', '--audit'
+        )
+
+        course_run = CourseRunFactory(course=course, edx_course_key='course-offered')
+        set_course_run_future(course_run)
+        call_command(
+            'alter_data', 'set_to_offered', '--username', 'staff',
+            '--course-run-key', course_run.edx_course_key,
+        )
+
     def create_failed_course_price_pending(self):
         """Make failed course and still pending personal course price"""
         self.make_fa_program_enrollment(FinancialAidStatus.PENDING_MANUAL_APPROVAL)
@@ -464,6 +496,7 @@ class DashboardStates:  # pylint: disable=too-many-locals
         yield (self.create_passed_enrolled_again, 'passed_and_taking_again')
         yield (self.create_passed_and_upgrade_deadline_past, 'passed_and_missed_deadline_and_fail_in_next')
         yield (self.create_failed_course_price_pending, 'failed_and_pending_price')
+        yield (self.create_audited_passed_enrolled_again_failed, 'create_audited_passed_enrolled_again_failed')
 
         # Add scenarios for paid and course run offered [now, in future, fuzzy future]
         for tup in itertools.product([True, False], repeat=3):
