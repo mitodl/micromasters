@@ -274,7 +274,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   }
 
   // handle other 'in-progress' cases
-  if (firstRun.status === STATUS_CAN_UPGRADE) {
+  if (firstRun.status === STATUS_CAN_UPGRADE && courseUpcomingOrCurrent(firstRun)) {
     let message =
       "You are auditing. To get credit, you need to pay for the course."
     if (course.certificate_url) {
