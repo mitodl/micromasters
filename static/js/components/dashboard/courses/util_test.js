@@ -16,7 +16,9 @@ import {
   hasEnrolledInAnyRun,
   hasPassedCourseRun,
   isEnrollableRun,
-  isOfferedInUncertainFuture
+  isOfferedInUncertainFuture,
+  hasMissedDeadlineCourseRun,
+  hasCanUpgradeCourseRun
 } from "./util"
 import {
   STATUS_PASSED,
@@ -257,6 +259,52 @@ describe("dashboard course utilities", () => {
 
     it("should return false otherwise", () => {
       assert.isFalse(hasFailedCourseRun(course))
+    })
+  })
+
+  describe("hasMissedDeadlineCourseRun", () => {
+    let course
+
+    beforeEach(() => {
+      course = makeCourse(0)
+    })
+
+    it("should return true if there is a missed course run", () => {
+      course.runs[0].status = STATUS_MISSED_DEADLINE
+      assert.isTrue(hasMissedDeadlineCourseRun(course))
+    })
+
+    it("should return true if there is a missed and failed course runs", () => {
+      course.runs[0].status = STATUS_NOT_PASSED
+      course.runs[1].status = STATUS_MISSED_DEADLINE
+      assert.isTrue(hasMissedDeadlineCourseRun(course))
+    })
+
+    it("should return false otherwise", () => {
+      assert.isFalse(hasMissedDeadlineCourseRun(course))
+    })
+  })
+
+  describe("hasCanUpgradeCourseRun", () => {
+    let course
+
+    beforeEach(() => {
+      course = makeCourse(0)
+    })
+
+    it("should return true if there is a missed course run", () => {
+      course.runs[0].status = STATUS_CAN_UPGRADE
+      assert.isTrue(hasCanUpgradeCourseRun(course))
+    })
+
+    it("should return true if there is a missed and failed course runs", () => {
+      course.runs[0].status = STATUS_NOT_PASSED
+      course.runs[1].status = STATUS_CAN_UPGRADE
+      assert.isTrue(hasCanUpgradeCourseRun(course))
+    })
+
+    it("should return false otherwise", () => {
+      assert.isFalse(hasCanUpgradeCourseRun(course))
     })
   })
 

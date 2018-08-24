@@ -17,7 +17,6 @@ import {
   COURSE_ACTION_REENROLL,
   FA_PENDING_STATUSES,
   FA_TERMINAL_STATUSES,
-  STATUS_MISSED_DEADLINE,
   STATUS_PAID_BUT_NOT_ENROLLED,
   STATUS_CAN_UPGRADE,
   COURSE_ACTION_CALCULATE_PRICE,
@@ -29,7 +28,6 @@ import {
 import { S } from "../../../lib/sanctuary"
 import {
   courseUpcomingOrCurrent,
-  isPassedOrMissedDeadline,
   hasFailedCourseRun,
   futureEnrollableRun,
   isEnrollableRun,
