@@ -29,7 +29,8 @@ import {
   makeRunOverdue,
   makeRunDueSoon,
   makeRunFailed,
-  makeRunCanUpgrade, makeRunMissedDeadline
+  makeRunCanUpgrade,
+  makeRunMissedDeadline
 } from "./test_util"
 import { assertIsJust } from "../../../lib/test_utils"
 import {
@@ -42,7 +43,8 @@ import {
   STATUS_PAID_BUT_NOT_ENROLLED,
   FA_STATUS_PENDING_DOCS,
   STATUS_MISSED_DEADLINE,
-  COURSE_ACTION_ENROLL, STATUS_CAN_UPGRADE
+  COURSE_ACTION_ENROLL,
+  STATUS_CAN_UPGRADE
 } from "../../../constants"
 import * as libCoupon from "../../../lib/coupon"
 import { FINANCIAL_AID_PARTIAL_RESPONSE } from "../../../test_constants"

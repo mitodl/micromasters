@@ -36,7 +36,9 @@ import {
   userIsEnrolled,
   isOfferedInUncertainFuture,
   isPassedOrCurrentlyEnrolled,
-  notNilorEmpty, hasCanUpgradeCourseRun, hasMissedDeadlineCourseRun
+  notNilorEmpty,
+  hasCanUpgradeCourseRun,
+  hasMissedDeadlineCourseRun
 } from "./util"
 import {
   hasPassingExamGrade,
@@ -274,7 +276,10 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   }
 
   // handle other 'in-progress' cases
-  if (firstRun.status === STATUS_CAN_UPGRADE && courseUpcomingOrCurrent(firstRun)) {
+  if (
+    firstRun.status === STATUS_CAN_UPGRADE &&
+    courseUpcomingOrCurrent(firstRun)
+  ) {
     let message =
       "You are auditing. To get credit, you need to pay for the course."
     if (course.certificate_url) {
@@ -352,33 +357,33 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
         S.maybe(
           null,
           run => ({
-            message: `Next course starts ${formatDate(
-              run.course_start_date
-            )}.`,
-            action: courseAction(run, COURSE_ACTION_REENROLL)
+            message: `Next course starts ${formatDate(run.course_start_date)}.`,
+            action:  courseAction(run, COURSE_ACTION_REENROLL)
           }),
           futureEnrollableRun(course)
         )
       )
     }
     return S.Just(messages)
-  } else if (hasCanUpgradeCourseRun(course)) { //the course finished but can still pay
+  } else if (hasCanUpgradeCourseRun(course)) {
+    //the course finished but can still pay
     const dueDate = paymentDueDate.isValid()
       ? ` (Payment due on ${paymentDueDate.format(DASHBOARD_FORMAT)})`
       : ""
     if (exams) {
       messages.push({
         message: `The edX course is complete, but you need to pass the exam.${dueDate}`,
-        action: courseAction(firstRun, COURSE_ACTION_PAY)
+        action:  courseAction(firstRun, COURSE_ACTION_PAY)
       })
     } else {
       messages.push({
         message: `The edX course is complete, but you need to pay to get credit.${dueDate}`,
-        action: courseAction(firstRun, COURSE_ACTION_PAY)
+        action:  courseAction(firstRun, COURSE_ACTION_PAY)
       })
     }
     return S.Just(messages)
-  } else if (hasMissedDeadlineCourseRun(course)) { //the course finished can't pay
+  } else if (hasMissedDeadlineCourseRun(course)) {
+    //the course finished can't pay
     const date = run => formatDate(run.course_start_date)
     const msg = run => {
       return `You missed the payment deadline, but you can re-enroll. Next course starts ${date(
@@ -389,12 +394,12 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
       S.maybe(
         {
           message:
-          "You missed the payment deadline and will not receive MicroMasters credit for this course. " +
-          "There are no future runs of this course scheduled at this time."
+            "You missed the payment deadline and will not receive MicroMasters credit for this course. " +
+            "There are no future runs of this course scheduled at this time."
         },
         run => ({
           message: msg(run),
-          action: courseAction(run, COURSE_ACTION_REENROLL)
+          action:  courseAction(run, COURSE_ACTION_REENROLL)
         }),
         futureEnrollableRun(course)
       )
@@ -404,7 +409,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   if (hasFailedCourseRun(course) && !hasPassedCourseRun(course)) {
     return S.Just(
       S.maybe(
-        messages.concat({message: "You did not pass the edX course."}),
+        messages.concat({ message: "You did not pass the edX course." }),
         run =>
           messages.concat({
             message: `You did not pass the edX course, but you can re-enroll. ${courseStartMessage(
