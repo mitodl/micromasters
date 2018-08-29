@@ -26,7 +26,9 @@ import {
   hasEnrolledInAnyRun,
   courseUpcomingOrCurrent,
   hasPaidForAnyCourseRun,
-  hasPassedCourseRun
+  hasPassedCourseRun,
+  hasCanUpgradeCourseRun,
+  hasMissedDeadlineCourseRun
 } from "./util"
 import { hasPassingExamGrade } from "../../../lib/grades"
 
@@ -81,6 +83,10 @@ export const staffCourseInfo = (courseRun: CourseRun, course: Course) => {
         return "Passed edX course, did not pass exam"
       }
       return "Passed"
+    } else if (hasCanUpgradeCourseRun(course)) {
+      return "Audited, passed, did not pay"
+    } else if (hasMissedDeadlineCourseRun(course)) {
+      return "Audited, passed, missed payment deadline"
     }
     if (courseRun.status === STATUS_NOT_PASSED) {
       if (hasPaidForAnyCourseRun(course)) {

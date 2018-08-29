@@ -216,5 +216,26 @@ describe("Course ProgressMessage", () => {
         "Audited, did not pass"
       )
     })
+
+    it("should return Audited, passed, did not pay", () => {
+      makeRunPast(course.runs[0])
+      makeRunPast(course.runs[1])
+      course.runs[0].status = STATUS_NOT_PASSED
+      course.runs[1].status = STATUS_CAN_UPGRADE
+      assert.equal(
+        staffCourseInfo(course.runs[0], course),
+        "Audited, passed, did not pay"
+      )
+    })
+    it("should return Audited, passed, missed payment deadline", () => {
+      makeRunPast(course.runs[0])
+      makeRunPast(course.runs[1])
+      course.runs[0].status = STATUS_NOT_PASSED
+      course.runs[1].status = STATUS_MISSED_DEADLINE
+      assert.equal(
+        staffCourseInfo(course.runs[0], course),
+        "Audited, passed, missed payment deadline"
+      )
+    })
   })
 })
