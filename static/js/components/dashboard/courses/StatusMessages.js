@@ -383,9 +383,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
   } else if (hasMissedDeadlineCourseRun(course)) {
     //the course finished can't pay
     if (exams && course.past_exam_date) {
-      const futureExamMessage = R.isEmpty(
-        course.exams_schedulable_in_future
-      )
+      const futureExamMessage = R.isEmpty(course.exams_schedulable_in_future)
         ? " There are no future exams scheduled at this time. Please check back later."
         : ` You can pay now to take the next exam, scheduled for ${formatDate(
           course.exams_schedulable_in_future[0]

@@ -728,7 +728,7 @@ describe("Course Status Messages", () => {
     it("should have a message for missing the payment deadline to take an exam", () => {
       course.runs = [course.runs[0]]
       makeRunPast(course.runs[0])
-      makeRunPassed(course.runs[0])
+      makeRunMissedDeadline(course.runs[0])
       makeRunOverdue(course.runs[0])
 
       course.has_exam = true
@@ -754,7 +754,7 @@ describe("Course Status Messages", () => {
     it("should have a message for missing the payment deadline has future exam", () => {
       course.runs = [course.runs[0]]
       makeRunPast(course.runs[0])
-      makeRunPassed(course.runs[0])
+      makeRunMissedDeadline(course.runs[0])
       makeRunOverdue(course.runs[0])
 
       course.has_exam = true
