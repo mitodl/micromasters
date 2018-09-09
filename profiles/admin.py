@@ -28,4 +28,4 @@ class ProfileAdmin(admin.ModelAdmin):
     ]
     raw_id_fields = ('user',)
 
-admin.site.register(Profile,ProfileAdmin)
+admin.site.register(Profile, ProfileAdmin)
