@@ -188,6 +188,13 @@ def need_verified_email(request, *args, **kwargs):  # pylint: disable=unused-arg
     return standard_error_page(request, 401, "verify_email.html")
 
 
+def aouth_maintenance(request, *args, **kwargs):
+    """
+    Returns maintenance page during oauth downtime
+    """
+    return standard_error_page(request, 503, "oauth_maintenance.html")
+
+
 class BackgroundImagesCSSView(TemplateView):
     """
     Pass a CSS file through Django's template system, so that we can make

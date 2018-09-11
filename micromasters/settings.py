@@ -186,6 +186,8 @@ LOGIN_REDIRECT_URL = '/dashboard'
 LOGIN_URL = '/'
 LOGIN_ERROR_URL = '/'
 
+OAUTH_MAINTENANCE_MODE = get_bool('OAUTH_MAINTENANCE_MODE', False)
+
 ROOT_URLCONF = 'micromasters.urls'
 
 TEMPLATES = [
