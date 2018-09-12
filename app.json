@@ -185,6 +185,10 @@
       "description": "If false, disables the node_modules cache to fix yarn install",
       "value": "false"
     },
+    "OAUTH_MAINTENANCE_MODE": {
+      "description": "If true, on login redirects to a static page with message",
+      "value": "false"
+    },
     "OPEN_DISCUSSIONS_API_USERNAME": {
       "description": "The username to use for authentication Open Discussions",
       "required": false
