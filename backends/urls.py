@@ -23,7 +23,7 @@ urlpatterns = [
     # authentication / association
 
     url(r'^login/(?P<backend>[^/]+){0}$'.format(extra),
-        RedirectView.as_view(url='/oauth_maintenance') if settings.OAUTH_MAINTENANCE_MODE else views.auth,
+        RedirectView.as_view(pattern_name='oauth_maintenance') if settings.OAUTH_MAINTENANCE_MODE else views.auth,
         name='begin'),
     # disconnection
     url(r'^disconnect/(?P<backend>[^/]+){0}$'.format(extra), views.disconnect,

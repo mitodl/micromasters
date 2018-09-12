@@ -187,7 +187,8 @@
     },
     "OAUTH_MAINTENANCE_MODE": {
       "description": "If true, on login redirects to a static page with message",
-      "value": "false"
+      "value": "False",
+      "required": false
     },
     "OPEN_DISCUSSIONS_API_USERNAME": {
       "description": "The username to use for authentication Open Discussions",
