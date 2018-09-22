@@ -79,8 +79,13 @@ class ProctoredExamGradeAuditAdmin(admin.ModelAdmin):
 class MicromastersCourseCertificateAdmin(admin.ModelAdmin):
     """Admin for MicromastersCourseCertificate"""
     model = models.MicromastersCourseCertificate
-    list_display = ('id', 'user_username', 'course', 'hash')
+    list_display = ('id', 'user_username', 'course', 'hash', 'created_on')
     list_filter = ('course', )
+    raw_id_fields = ('user',)
+    search_fields = (
+        'user__username',
+        'user__email',
+    )
 
     def user_username(self, obj):  # pylint: disable=missing-docstring
         return obj.user.username
