@@ -42,13 +42,13 @@ class MailUtilsTests(MockedESTestCase):
         cls.tier_program = cls.financial_aid.tier_program
         cls.tier_program.program = course_run.course.program
         cls.tier_program.save()
-        cls.program_enrollment = ProgramEnrollment.objects.create(
-            user=cls.financial_aid.user,
-            program=cls.tier_program.program
-        )
 
     def setUp(self):
         self.financial_aid.refresh_from_db()
+        self.program_enrollment = ProgramEnrollment.objects.create(
+            user=self.financial_aid.user,
+            program=self.tier_program.program
+        )
 
     def test_generate_financial_aid_email_approved(self):
         """
@@ -68,6 +68,16 @@ class MailUtilsTests(MockedESTestCase):
             ),
             program_name=self.financial_aid.tier_program.program.title
         )
+
+    def test_generate_financial_aid_email_approved_after_unenroll(self):
+        """
+        Tests generate_financial_aid_email() with status APPROVED and user unenroll from
+        program.
+        """
+        self.financial_aid.status = FinancialAidStatus.APPROVED
+        self.financial_aid.save()
+        self.program_enrollment.delete()
+        self.assertRaises(ProgramEnrollment.DoesNotExist, generate_financial_aid_email, self.financial_aid)
 
     def test_generate_financial_aid_email_reset(self):
         """

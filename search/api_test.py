@@ -12,6 +12,7 @@ from django.test import (
 from django.db.models.signals import post_save
 
 from courses.factories import ProgramFactory
+from dashboard.models import ProgramEnrollment
 from dashboard.factories import ProgramEnrollmentFactory
 from profiles.factories import ProfileFactory
 from roles.models import Role
@@ -400,6 +401,19 @@ class PercolateTests(ESTestCase):
         ):
             search_percolate_queries(program_enrollment.id, "doesnt_matter")
         assert ex.exception.args[0] == "Failed to percolate: {}".format(failures)
+
+    def test_percolate_failure_user_unenroll_program(self, mock_on_commit):
+        """
+        If search_percolate fails we should raise an Exception with some useful information for Sentry
+        Case when there is not program enrollment.
+        """
+        with mute_signals(post_save):
+            profile = ProfileFactory.create(filled_out=True)
+        program_enrollment = ProgramEnrollmentFactory.create(user=profile.user)
+        program_enrollment_id = program_enrollment.id
+        program_enrollment.delete()
+        with self.assertRaises(ProgramEnrollment.DoesNotExist):
+            search_percolate_queries(program_enrollment_id, "doesnt_matter")
 
     @ddt.data(*product(
         [PercolateQuery.AUTOMATIC_EMAIL_TYPE, PercolateQuery.DISCUSSION_CHANNEL_TYPE],

@@ -108,7 +108,7 @@ export const CLEAR_ENROLLMENTS = "CLEAR_ENROLLMENTS"
 export const clearEnrollments = createAction(CLEAR_ENROLLMENTS)
 
 export const unEnrollProgramEnrollments = (
-  programIds: []
+  programIds: Array<number>
 ): Dispatcher<?AvailableProgram> => {
   return async (dispatch: Dispatch) => {
     await dispatch(setUnEnrollApiInFlightState(true))

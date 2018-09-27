@@ -7,6 +7,7 @@ import Decimal from "decimal.js-light"
 import R from "ramda"
 import Dialog from "material-ui/Dialog"
 
+import ProgramEnrollmentDialog from "../components/ProgramEnrollmentDialog"
 import {
   makeAvailablePrograms,
   makeCoupon,
@@ -40,8 +41,7 @@ import {
   SET_ENROLL_SELECTED_PROGRAM,
   SET_ENROLL_PROGRAM_DIALOG_ERROR,
   setToastMessage,
-  showDialog,
-  setEnrollSelectedProgram
+  showDialog
 } from "../actions/ui"
 import {
   INITIATE_SEND_EMAIL,
@@ -284,9 +284,11 @@ describe("DashboardPage", () => {
                     SET_ENROLL_SELECTED_PROGRAM
                   ],
                   () => {
-                    helper.store.dispatch(
-                      setEnrollSelectedProgram(availablePrograms[0].id)
-                    )
+                    const props = wrapper
+                      .find(ProgramEnrollmentDialog)
+                      .at(2)
+                      .props()
+                    props.setSelectedProgram(availablePrograms[0].id)
                     enrollBtn.click()
                   }
                 )

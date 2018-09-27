@@ -236,7 +236,7 @@ export function attachCoupon(
   }).then(response => R.evolve({ coupon: { amount: Decimal } }, response))
 }
 
-export function unEnrollProgramEnrollments(programIds: []) {
+export function unEnrollProgramEnrollments(programIds: Array<number>) {
   return fetchJSONWithCSRF("/api/v0/unenroll_programs/", {
     method: "POST",
     body:   JSON.stringify({

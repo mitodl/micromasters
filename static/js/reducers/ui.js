@@ -95,7 +95,7 @@ export type UIState = {
   dialogVisibility: DialogVisibilityState,
   showEnrollPayLaterSuccess: ?string,
   expandedCourseStatuses: Set<number>,
-  programsToUnEnroll: [],
+  programsToUnEnroll: Array<number>,
   programsToUnEnrollInFlight: boolean
 }
 
