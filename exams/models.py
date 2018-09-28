@@ -12,6 +12,8 @@ class ExamRun(TimestampedModel):
     """Represents an individual run of an exam"""
     course = models.ForeignKey('courses.Course', related_name='exam_runs', on_delete=models.CASCADE)
     exam_series_code = models.CharField(max_length=20)
+    description = models.TextField(null=True, blank=True)
+    semester = models.CharField(max_length=50, null=True, blank=True)
 
     date_first_schedulable = models.DateTimeField()
     date_last_schedulable = models.DateTimeField()

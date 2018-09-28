@@ -13,6 +13,7 @@ class ExamRunAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'course',
+        'semester',
         'exam_series_code',
         'date_first_schedulable',
         'date_last_schedulable',
@@ -20,7 +21,7 @@ class ExamRunAdmin(admin.ModelAdmin):
         'date_last_eligible',
         'authorized',
     )
-    list_filter = ('course__title', 'course__program__title', )
+    list_filter = ('course__title', 'course__program__title', 'semester', )
     ordering = ('-date_first_eligible',)
     readonly_fields = ('authorized',)
 
