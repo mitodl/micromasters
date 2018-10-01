@@ -47,6 +47,9 @@ class OrderAdmin(admin.ModelAdmin):
     readonly_fields = [name for name in get_field_names(Order) if name != 'status']
 
     def course_key(self, obj):
+        """
+        returns first course key associated with order
+        """
         line = obj.line_set.first()
         return line.course_key
 
