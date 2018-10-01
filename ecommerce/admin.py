@@ -37,8 +37,18 @@ class LineAdmin(admin.ModelAdmin):
 class OrderAdmin(admin.ModelAdmin):
     """Admin for Order"""
     model = Order
+    list_filter = ('status',) # 'get_course_key')
+    list_display =('id','user','status','created_at','course_key',)
+    search_fields = (
+        'user__username',
+        'user__email',
+    )
 
     readonly_fields = [name for name in get_field_names(Order) if name != 'status']
+
+    def course_key(self, obj):
+        line = obj.line_set.first()
+        return line.course_key
 
     def has_add_permission(self, request):
         return False
