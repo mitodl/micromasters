@@ -37,8 +37,8 @@ class LineAdmin(admin.ModelAdmin):
 class OrderAdmin(admin.ModelAdmin):
     """Admin for Order"""
     model = Order
-    list_filter = ('status',) # 'get_course_key')
-    list_display =('id','user','status','created_at','course_key',)
+    list_filter = ('status',)
+    list_display = ('id', 'user', 'status', 'created_at', 'course_key',)
     search_fields = (
         'user__username',
         'user__email',
