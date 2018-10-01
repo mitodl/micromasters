@@ -7,6 +7,7 @@ from celery import group
 from celery.result import GroupResult
 from django.contrib.auth.models import User
 from django.core.cache import caches
+from django.db import IntegrityError
 from django.db.models import OuterRef, Exists
 from django_redis import get_redis_connection
 
@@ -66,10 +67,17 @@ def generate_course_certificates_for_fa_students():
             ).values_list('user', flat=True)
 
         for user in users_need_cert:
-            MicromastersCourseCertificate.objects.get_or_create(
-                user_id=user,
-                course=course
-            )
+            try:
+                MicromastersCourseCertificate.objects.get_or_create(
+                    user_id=user,
+                    course=course
+                )
+            except (IntegrityError, MicromastersCourseCertificate.DoesNotExist):
+                log.exception(
+                    "Unable to fetch or create certificate for user id: %d and course: %s",
+                    user,
+                    course.title
+                )
 
 
 @app.task
