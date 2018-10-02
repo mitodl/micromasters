@@ -39,7 +39,7 @@ edx-api-client==0.5.0
 edx-opaque-keys==0.4
 elasticsearch-dsl==5.4.0
 elasticsearch==5.5.1
-factory-boy==2.11.1
+factory-boy==2.8.1
 faker==0.9.1
 gnupg==2.2.0
 html5lib==0.999999999
