@@ -22,6 +22,12 @@ const showLegalNameIfStaff = profile => {
   ) : null
 }
 
+const showIdIfStaff = profile => {
+  return hasAnyStaffRole(SETTINGS.roles) ? (
+    <div className="student-id">{`(Student Id: ${profile.student_id})`}</div>
+  ) : null
+}
+
 export default class LearnerInfoCard extends React.Component {
   props: {
     profile: Profile,
@@ -129,6 +135,7 @@ export default class LearnerInfoCard extends React.Component {
           <div className="col user-info">
             <div className="profile-title">{getPreferredName(profile)}</div>
             {showLegalNameIfStaff(profile)}
+            {showIdIfStaff(profile)}
             <div className="profile-company-name">
               {mstr(getEmployer(profile))}
             </div>

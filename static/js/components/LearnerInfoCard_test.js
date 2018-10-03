@@ -122,6 +122,28 @@ describe("LearnerInfoCard", () => {
     assert.equal(wrapper.find(".legal-name").text(), "(Legal name: FIRST LAST)")
   })
 
+  it("should not show student id if the user is not staff", () => {
+    const wrapper = renderInfoCard()
+    assert.equal(wrapper.find(".student-id").length, 0)
+  })
+
+  it("should show student id if the user is staff", () => {
+    SETTINGS.user.username = "My user"
+    SETTINGS.roles = [
+      {
+        role:    "staff",
+        program: 1
+      }
+    ]
+    const wrapper = renderInfoCard({
+      profile: {
+        ...USER_PROFILE_RESPONSE,
+        student_id: 123
+      }
+    })
+    assert.equal(wrapper.find(".student-id").text(), "(Student Id: 123)")
+  })
+
   describe("email link", () => {
     const originalUsername = SETTINGS.user.username
 
