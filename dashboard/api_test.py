@@ -34,7 +34,7 @@ from dashboard.api_edx_cache import CachedEdxDataApi
 from dashboard.factories import CachedEnrollmentFactory, CachedCurrentGradeFactory, UserCacheRefreshTimeFactory
 from dashboard.models import CachedCertificate
 from dashboard.utils import MMTrack
-from exams.models import ExamProfile
+from exams.models import ExamAuthorization, ExamProfile
 from exams.factories import ExamRunFactory, ExamAuthorizationFactory
 from ecommerce.factories import LineFactory, OrderFactory
 from ecommerce.models import Order
@@ -1828,17 +1828,31 @@ class InfoProgramTest(MockedESTestCase):
 class ExamSchedulableTests(MockedESTestCase):
     """Tests exam schedulable"""
     @ddt.data(
-        (False, False),
-        (False, True),
-        (True, False),
+        (False, False, False, False),
+        (False, True, False, False),
+        (True, False, False, False),
+        (True, True, False, False),
+        (False, False, True, True),
+        (False, True, True, True),
+        (True, False, True, True),
+        (True, True, True, True),
     )
     @ddt.unpack
-    def test_is_exam_schedulable(self, is_past, is_future):
-        """Test that is_exam_schedule is correct"""
-        exam_run = ExamRunFactory.create(scheduling_past=is_past, scheduling_future=is_future)
-        exam_auth = ExamAuthorizationFactory.create(exam_run=exam_run, course=exam_run.course)
+    def test_is_exam_schedulable(self, is_past, is_future, has_eligibility_future, can_schedule_exam):
+        """Test that is_exam_schedulable is correct"""
+        exam_run = ExamRunFactory.create(
+            scheduling_past=is_past,
+            scheduling_future=is_future,
+            eligibility_past=not has_eligibility_future,
+            eligibility_future=has_eligibility_future
+        )
+        exam_auth = ExamAuthorizationFactory.create(
+            exam_run=exam_run,
+            course=exam_run.course,
+            status=ExamAuthorization.STATUS_SUCCESS
+        )
 
-        assert api.is_exam_schedulable(exam_auth.user, exam_auth.course) is (not is_past and not is_future)
+        assert api.is_exam_schedulable(exam_auth.user, exam_auth.course) is can_schedule_exam
 
 
 @ddt.ddt

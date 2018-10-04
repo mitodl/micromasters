@@ -492,7 +492,10 @@ def is_exam_schedulable(user, course):
     """
     Check if a course is ready to schedule an exam or not
     """
-    schedulable_exam_runs = ExamRun.get_currently_schedulable(course)
+    now = now_in_utc()
+    schedulable_exam_runs = ExamRun.objects.filter(
+        course=course, date_last_eligible__gte=now.date()
+    )
     return ExamAuthorization.objects.filter(user=user, exam_run__in=schedulable_exam_runs).exists()
 
 
