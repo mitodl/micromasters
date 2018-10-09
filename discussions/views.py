@@ -34,6 +34,7 @@ def _set_jwt_cookie(response, token):
     response.set_cookie(
         settings.OPEN_DISCUSSIONS_COOKIE_NAME,
         token,
+        max_age=settings.OPEN_DISCUSSIONS_JWT_EXPIRES_DELTA,
         domain=settings.OPEN_DISCUSSIONS_COOKIE_DOMAIN,
         httponly=True
     )
