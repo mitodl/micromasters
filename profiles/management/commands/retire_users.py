@@ -115,4 +115,4 @@ For multiple users, add arg `--user` for each user i.e:\n
 
             # finish
             self.display_messages(f"User '{user_name}' is retired", log_messages)
-            log.info(", ".join(log_messages))
+            log.info("\n".join(log_messages[1:]))
