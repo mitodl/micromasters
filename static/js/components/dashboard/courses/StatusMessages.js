@@ -391,7 +391,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
 
       messages.push({
         message:
-          "You passed the edX course but missed the payment deadline to take the proctored scheduled for " +
+          "You missed the payment deadline to take the proctored exam scheduled for " +
           `${course.past_exam_date}.${futureExamMessage}`,
         action: courseAction(firstRun, COURSE_ACTION_PAY)
       })
