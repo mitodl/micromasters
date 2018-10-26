@@ -25,7 +25,7 @@ dashboard_urlpatterns = [
 ]
 
 urlpatterns = [
-    url(r'^logout/$', auth_views.logout, {'next_page': '/'}),
+    url(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
     url(r'^404/$', page_404, name='ui-404'),
     url(r'^500/$', page_500, name='ui-500'),
     url(r'^verify-email/$', need_verified_email, name='verify-email'),

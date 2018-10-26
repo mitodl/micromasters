@@ -5,7 +5,6 @@ import logging
 
 from django.contrib.auth.models import User
 from django.conf import settings
-from edx_api.client import EdxApi
 from requests.exceptions import HTTPError
 from rest_framework import (
     authentication,
@@ -16,6 +15,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
+from edx_api.client import EdxApi
 
 from backends import utils
 from backends.edxorg import EdxOrgOAuth2

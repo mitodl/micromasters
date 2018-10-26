@@ -7,8 +7,8 @@ from collections import namedtuple
 
 from django.db import transaction
 from django.conf import settings
-from edx_api.client import EdxApi
 from requests.exceptions import HTTPError
+from edx_api.client import EdxApi
 
 from backends import utils
 from backends.exceptions import InvalidCredentialStored

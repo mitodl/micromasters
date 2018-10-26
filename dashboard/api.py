@@ -11,8 +11,8 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 from django.urls import reverse
-from edx_api.client import EdxApi
 from django_redis import get_redis_connection
+from edx_api.client import EdxApi
 
 from backends.exceptions import InvalidCredentialStored
 from backends import utils

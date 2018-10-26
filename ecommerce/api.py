@@ -14,8 +14,8 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 from django.http.response import Http404
 from django.shortcuts import get_object_or_404
-from edx_api.client import EdxApi
 from rest_framework.exceptions import ValidationError
+from edx_api.client import EdxApi
 
 from courses.models import (
     CourseRun,

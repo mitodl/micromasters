@@ -6,10 +6,10 @@ from datetime import timedelta
 from unittest.mock import patch, MagicMock, ANY
 
 import ddt
+from requests.exceptions import HTTPError
 from edx_api.certificates.models import Certificate, Certificates
 from edx_api.enrollments.models import Enrollment, Enrollments
 from edx_api.grades.models import CurrentGrade, CurrentGrades
-from requests.exceptions import HTTPError
 
 from backends.edxorg import EdxOrgOAuth2
 from backends.exceptions import InvalidCredentialStored

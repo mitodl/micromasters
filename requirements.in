@@ -1,5 +1,5 @@
-Django==2.0.8
-Pillow==3.4.2
+Django==2.1.2
+Pillow==4.0.0
 boto==2.39.0
 celery==4.2.0
 certifi==2018.1.18
@@ -36,8 +36,9 @@ python-dateutil
 raven==6.9.0
 redis==2.10.5
 requests>=2.20.0
+six>=1.11.0
 social-auth-app-django==2.1.0
 robohash
 static3==0.5.1
 uwsgi
-wagtail==2.0
+wagtail==2.3
