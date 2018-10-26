@@ -420,14 +420,21 @@ class DashboardStates:  # pylint: disable=too-many-locals
             '--missed-deadline'
         )
 
-    def create_passed_missed_payment_for_exam(self, enrollable, future_exam):
+    def create_missed_payment_for_exam(self, enrollable, future_exam, current):
         """Passed course but missed deadline to pay to take exam"""
         self.make_fa_program_enrollment(FinancialAidStatus.AUTO_APPROVED)
-        call_command(
-            "alter_data", 'set_past_run_to_passed', '--username', 'staff',
-            '--course-title', 'Digital Learning 200', '--grade', '87', '--audit',
-            '--missed-deadline'
-        )
+        if current:
+            call_command(
+                "alter_data", 'set_to_enrolled', '--username', 'staff',
+                '--course-title', 'Digital Learning 200',
+                '--missed-deadline'
+            )
+        else:
+            call_command(
+                "alter_data", 'set_past_run_to_passed', '--username', 'staff',
+                '--course-title', 'Digital Learning 200', '--grade', '87', '--audit',
+                '--missed-deadline'
+            )
         course = Course.objects.get(title='Digital Learning 200')
         ExamProfileFactory.create(status='success', profile=self.user.profile)
         ExamRunFactory.create(course=course, eligibility_past=True, scheduling_past=True)
@@ -524,17 +531,19 @@ class DashboardStates:  # pylint: disable=too-many-locals
         yield (self.create_failed_course_price_pending, 'failed_and_pending_price')
         yield (self.create_audited_passed_enrolled_again_failed, 'create_audited_passed_enrolled_again_failed')
 
-        for tup in itertools.product([True, False], repeat=2):
-            enrollable, future_exam = tup
+        for tup in itertools.product([True, False], repeat=3):
+            enrollable, future_exam, current = tup
 
             yield (bind_args(
-                self.create_passed_missed_payment_for_exam,
+                self.create_missed_payment_for_exam,
                 enrollable=enrollable,
-                future_exam=future_exam
+                future_exam=future_exam,
+                current=current
             ),
-                   'create_passed_missed_payment_for_exam{enrollable}{future_exam}'.format(
+                   'create{current}_missed_payment_for_exam{enrollable}{future_exam}'.format(
                        enrollable='_enrollable_run' if enrollable else '',
-                       future_exam='_future_exam' if future_exam else ''
+                       future_exam='_future_exam' if future_exam else '',
+                       current='_current_course' if current else '_passed'
                    ))
 
         # Add scenarios for paid and course run offered [now, in future, fuzzy future]
