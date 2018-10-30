@@ -34,7 +34,7 @@ django-webpack-loader==0.5.0
 django==2.0.8
 djangorestframework==3.7.7
 draftjs-exporter==2.0.0   # via wagtail
-edx-api-client==0.5.0
+edx-api-client==0.6.0
 edx-opaque-keys==0.4
 elasticsearch-dsl==5.4.0
 elasticsearch==5.5.1
@@ -80,7 +80,7 @@ requests-oauthlib==0.8.0  # via social-auth-core
 requests==2.11.1
 robohash==1.0
 simplegeneric==0.8.1      # via ipython
-six==1.10.0               # via bcrypt, cryptography, django-compat, django-role-permissions, django-server-status, edx-api-client, edx-opaque-keys, elasticsearch-dsl, faker, html5lib, prompt-toolkit, pynacl, python-dateutil, social-auth-app-django, social-auth-core, stevedore, traitlets
+six==1.11.0               # via bcrypt, cryptography, django-compat, django-role-permissions, django-server-status, edx-api-client, edx-opaque-keys, elasticsearch-dsl, faker, html5lib, prompt-toolkit, pynacl, python-dateutil, social-auth-app-django, social-auth-core, stevedore, traitlets
 social-auth-app-django==2.1.0
 social-auth-core==1.4.0   # via social-auth-app-django
 static3==0.5.1
