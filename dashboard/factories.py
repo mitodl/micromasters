@@ -59,7 +59,7 @@ class CachedCurrentGradeFactory(DjangoModelFactory):
     data = LazyAttribute(lambda x: {
         "passed": FAKE.boolean(),
         "percent": randint(60, 100)/100.0,
-        "course_key": x.course_run.edx_course_key,
+        "course_id": x.course_run.edx_course_key,
         "username": x.user.username,
     })
 
