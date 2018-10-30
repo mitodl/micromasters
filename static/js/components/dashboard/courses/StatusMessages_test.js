@@ -737,7 +737,7 @@ describe("Course Status Messages", () => {
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
           message:
-            "You missed the payment deadline to take the proctored exam scheduled for " +
+            "You missed the payment deadline to take the proctored exam " +
             `scheduled for ${course.past_exam_date}. There are no future exams scheduled at this ` +
             "time. Please check back later.",
           action: "course action was called"
@@ -767,7 +767,7 @@ describe("Course Status Messages", () => {
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
           message:
-            "You missed the payment deadline to take the proctored exam scheduled for " +
+            "You missed the payment deadline to take the proctored exam " +
             `scheduled for ${course.past_exam_date}. You can pay now to take the next exam, scheduled for ` +
             `${formatDate(course.exams_schedulable_in_future[0])}.`,
           action: "course action was called"
