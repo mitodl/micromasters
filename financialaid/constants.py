@@ -64,9 +64,13 @@ FINANCIAL_AID_EMAIL_BODY = (
 )
 
 FINANCIAL_AID_DOCUMENTS_RECEIVED_MESSAGE = (
-    "We have received your documents verifying your income. We will review them as soon as possible, "
-    "after which we will send an e-mail confirming your personalized course price. We encourage you "
-    "to enroll now and pay later, when a decision has been reached."
+    "We have received your documents verifying your income. We will review and process them within "
+    "5 working days. If you have not received a confirmation email within one week, please feel free "
+    "to reach out to us at micromasters-support@mit.edu. Otherwise you should receive a confirmation "
+    "email with your course price. "
+    "\n\n"
+    "While you are waiting, we encourage you to enroll now and pay later, when a decision has been "
+    "reached."
 )
 FINANCIAL_AID_APPROVAL_MESSAGE = (
     "After reviewing your income documentation, the {program_name} MicroMasters team has determined "
