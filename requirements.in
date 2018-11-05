@@ -15,7 +15,7 @@ django-server-status==0.5.0
 django-storages-redux==1.3.2
 django-webpack-loader==0.5.0
 djangorestframework==3.7.7
-edx-api-client==0.6.0
+edx-api-client==0.6.1
 edx-opaque-keys==0.4
 elasticsearch-dsl==5.4.0
 elasticsearch==5.5.1
@@ -35,7 +35,7 @@ pysftp==0.2.9
 python-dateutil
 raven==6.9.0
 redis==2.10.5
-requests
+requests>=2.20.0
 social-auth-app-django==2.1.0
 robohash
 static3==0.5.1

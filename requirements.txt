@@ -14,6 +14,7 @@ boto==2.39.0
 celery==4.2.0
 certifi==2018.1.18
 cffi==1.11.5              # via bcrypt, cryptography, pynacl
+chardet==3.0.4            # via requests
 cryptography==2.3.1       # via paramiko
 decorator==4.3.0          # via ipython, traitlets
 defusedxml==0.5.0         # via python3-openid, social-auth-core
@@ -35,7 +36,7 @@ django-webpack-loader==0.5.0
 django==2.0.8
 djangorestframework==3.7.7
 draftjs-exporter==2.0.0   # via wagtail
-edx-api-client==0.6.0
+edx-api-client==0.6.1
 edx-opaque-keys==0.4
 elasticsearch-dsl==5.4.0
 elasticsearch==5.5.1
@@ -43,7 +44,7 @@ factory-boy==2.8.1
 faker==0.9.1
 gnupg==2.2.0
 html5lib==0.999999999
-idna==2.7                 # via cryptography
+idna==2.7                 # via cryptography, requests
 ipython-genutils==0.2.0   # via traitlets
 ipython==7.0.1
 jedi==0.13.0              # via ipython
@@ -79,7 +80,7 @@ pytz==2018.5              # via celery, django, django-modelcluster
 raven==6.9.0
 redis==2.10.5
 requests-oauthlib==1.0.0  # via social-auth-core
-requests==2.11.1
+requests==2.20.0
 robohash==1.0
 simplegeneric==0.8.1      # via ipython
 six==1.11.0               # via bcrypt, cryptography, django-compat, django-role-permissions, django-server-status, edx-api-client, edx-opaque-keys, elasticsearch-dsl, faker, html5lib, prompt-toolkit, pynacl, python-dateutil, social-auth-app-django, social-auth-core, stevedore, traitlets
@@ -91,7 +92,7 @@ text-unidecode==1.2       # via faker
 tornado==5.1.1            # via robohash
 traitlets==4.3.2          # via ipython
 unidecode==0.4.21         # via wagtail
-urllib3==1.21.1           # via elasticsearch
+urllib3==1.21.1           # via elasticsearch, requests
 uwsgi==2.0.17.1
 vine==1.1.4               # via amqp
 wagtail==2.0
