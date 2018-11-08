@@ -23,8 +23,8 @@ dj-static==0.0.6
 django-compat==1.0.15
 django-cors-headers==2.1.0
 django-discover-runner==1.0  # via django-role-permissions
-django-hijack-admin==2.1.7
-django-hijack==2.1.7
+django-hijack-admin==2.1.10
+django-hijack==2.1.10
 django-modelcluster==4.2  # via wagtail
 django-redis==4.7.0
 django-role-permissions==2.2.0
