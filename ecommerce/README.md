@@ -49,4 +49,3 @@ will get an error.
 1. Delete the corresponding `UserCoupon` object
 2. Delete the corresponding `RedeemedCoupon` object 
 
-_
