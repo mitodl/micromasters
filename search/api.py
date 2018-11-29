@@ -278,14 +278,16 @@ def _search_percolate_queries(program_enrollment):
     conn = get_conn()
     percolate_index = get_default_alias(PERCOLATE_INDEX_TYPE)
     doc = serialize_program_enrolled_user(program_enrollment)
-    # We don't need this to search for percolator queries and
-    # it causes a dynamic mapping failure so we need to remove it
-    del doc['_id']
-    result = conn.percolate(percolate_index, GLOBAL_DOC_TYPE, body={"doc": doc})
-    failures = result.get('_shards', {}).get('failures', [])
-    if len(failures) > 0:
-        raise PercolateException("Failed to percolate: {}".format(failures))
-    return [int(row['_id']) for row in result['matches']]
+    if doc:
+        # We don't need this to search for percolator queries and
+        # it causes a dynamic mapping failure so we need to remove it
+        del doc['_id']
+        result = conn.percolate(percolate_index, GLOBAL_DOC_TYPE, body={"doc": doc})
+        failures = result.get('_shards', {}).get('failures', [])
+        if len(failures) > 0:
+            raise PercolateException("Failed to percolate: {}".format(failures))
+        return [int(row['_id']) for row in result['matches']]
+    return []
 
 
 def adjust_search_for_percolator(search):
@@ -423,7 +425,7 @@ def populate_query_memberships(percolate_query_id):
     """
     # practically this is a list of 1 query, but _ensure_memberships_for_queries requires a list
     query = PercolateQuery.objects.get(id=percolate_query_id)
-    users = User.objects.all().iterator()
+    users = User.objects.filter(is_active=True).iterator()
 
     for user in users:
         membership_ids = _ensure_memberships_for_queries([query], user)

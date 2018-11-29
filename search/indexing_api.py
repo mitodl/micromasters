@@ -473,6 +473,7 @@ def serialize_program_enrolled_user(program_enrollment):
     try:
         serialized['profile'] = filter_current_work(ProfileSerializer(user.profile).data)
     except Profile.DoesNotExist:
+        log.exception('User %s has no profile', user.username)
         return None
 
     serialized['program'] = UserProgramSearchSerializer.serialize(program_enrollment)

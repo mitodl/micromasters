@@ -14,6 +14,7 @@ from django.db.models.signals import post_save
 from courses.factories import ProgramFactory
 from dashboard.models import ProgramEnrollment
 from dashboard.factories import ProgramEnrollmentFactory
+from micromasters.factories import UserFactory
 from profiles.factories import ProfileFactory
 from roles.models import Role
 from roles.roles import Staff
@@ -476,3 +477,27 @@ class PercolateTests(ESTestCase):
             membership = PercolateQueryMembership.objects.get(user=profile.user, query=query)
             assert membership.is_member is query_matches
             assert membership.needs_update is True
+
+    @ddt.data(*product(
+        [True, False],
+        [True, False]
+    ))
+    @ddt.unpack
+    def test_populate_query_inactive_memberships(self, is_active, has_profile, mock_on_commit):
+        """
+        Tests that memberships are handled correctly for users who are inactive or have no profiles
+        """
+        with mute_signals(post_save):
+            query = PercolateQueryFactory.create(source_type=PercolateQuery.DISCUSSION_CHANNEL_TYPE)
+            user = UserFactory.create(is_active=is_active)
+            if has_profile:
+                ProfileFactory.create(user=user, filled_out=True)
+            ProgramEnrollmentFactory.create(user=user)
+
+        with patch('search.api.get_conn') as es_mock:
+            populate_query_memberships(query.id)
+            assert es_mock.return_value.percolate.call_count == (1 if has_profile and is_active else 0)
+
+        assert PercolateQueryMembership.objects.filter(user=user, query=query).count() == (
+            1 if is_active else 0
+        )
