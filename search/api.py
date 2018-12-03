@@ -290,7 +290,6 @@ def _search_percolate_queries(program_enrollment):
     return [int(row['_id']) for row in result['matches']]
 
 
-
 def adjust_search_for_percolator(search):
     """
     Returns an updated Search which can be used with percolator.
