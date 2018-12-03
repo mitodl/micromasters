@@ -278,16 +278,17 @@ def _search_percolate_queries(program_enrollment):
     conn = get_conn()
     percolate_index = get_default_alias(PERCOLATE_INDEX_TYPE)
     doc = serialize_program_enrolled_user(program_enrollment)
-    if doc:
-        # We don't need this to search for percolator queries and
-        # it causes a dynamic mapping failure so we need to remove it
-        del doc['_id']
-        result = conn.percolate(percolate_index, GLOBAL_DOC_TYPE, body={"doc": doc})
-        failures = result.get('_shards', {}).get('failures', [])
-        if len(failures) > 0:
-            raise PercolateException("Failed to percolate: {}".format(failures))
-        return [int(row['_id']) for row in result['matches']]
-    return []
+    if not doc:
+        return []
+    # We don't need this to search for percolator queries and
+    # it causes a dynamic mapping failure so we need to remove it
+    del doc['_id']
+    result = conn.percolate(percolate_index, GLOBAL_DOC_TYPE, body={"doc": doc})
+    failures = result.get('_shards', {}).get('failures', [])
+    if len(failures) > 0:
+        raise PercolateException("Failed to percolate: {}".format(failures))
+    return [int(row['_id']) for row in result['matches']]
+
 
 
 def adjust_search_for_percolator(search):

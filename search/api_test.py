@@ -478,10 +478,12 @@ class PercolateTests(ESTestCase):
             assert membership.is_member is query_matches
             assert membership.needs_update is True
 
-    @ddt.data(*product(
+    @ddt.data(
         [True, False],
-        [True, False]
-    ))
+        [True, True],
+        [False, True],
+        [False, False]
+    )
     @ddt.unpack
     def test_populate_query_inactive_memberships(self, is_active, has_profile, mock_on_commit):
         """
