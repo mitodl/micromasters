@@ -17,7 +17,7 @@ from ui.views import (
     BackgroundImagesCSSView,
     need_verified_email,
     oauth_maintenance)
-from certificates.views import CourseCertificateView, ProgramCertificateView
+from certificates.views import CourseCertificateView, ProgramCertificateView, GradeRecordView
 
 dashboard_urlpatterns = [
     url(r'^{}$'.format(dashboard_url.lstrip("/")), DashboardView.as_view(), name='ui-dashboard')
@@ -34,6 +34,8 @@ urlpatterns = [
     url(r'^certificate/course/(?P<certificate_hash>[-\w.]+)?/?', CourseCertificateView.as_view(), name='certificate'),
     url(r'^certificate/program/(?P<certificate_hash>[-\w.]+)?/?', ProgramCertificateView.as_view(),
         name='program-certificate'),
+    url(r'^grade_records/(?P<record_hash>[-\w.]+)?/?', GradeRecordView.as_view(),
+        name='grade_records'),
     url(r'^{}$'.format(TERMS_OF_SERVICE_URL.lstrip("/")), terms_of_service, name='terms_of_service'),
     url(r'^background-images\.css$', BackgroundImagesCSSView.as_view(), name='background-images-css'),
 ] + dashboard_urlpatterns

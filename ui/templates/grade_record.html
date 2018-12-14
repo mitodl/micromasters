@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load i18n static wagtailimages_tags %}
+
+{% block extrahead %}
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600;" />
+{% endblock %}
+
+{% block title %}{% trans "MITx MicroMasters" %}{% endblock %}
+
+{% block content %}
+<div class="certificate">
+  <main class="certificate-body verified row">
+
+    <div class="col-md-8">
+
+      <div class="certificate-text">
+
+      </div>
+
+      <div class="certificate-stamps row">
+
+      </div>
+    </div>
+
+    <div class="col-md-4 right-col">
+      <div class="organization-logo">
+        <img src="{% static 'images/mitx_logo.png' %}" alt="MITx Logo" />
+      </div>
+    </div>
+
+  </main>
+</div>
+{% include "footer.html" %}
+{% endblock %}

@@ -100,3 +100,22 @@ class ProgramCertificateView(CertificateView):
         context['certificate'] = certificate
 
         return context
+
+
+class GradeRecordView(TemplateView):
+    """
+    View for grade records
+    """
+
+    template_name = 'grade_record.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        js_settings = {
+            "gaTrackingID": settings.GA_TRACKING_ID,
+            "reactGaDebug": settings.REACT_GA_DEBUG,
+            "edx_base_url": settings.EDXORG_BASE_URL,
+        }
+        context["js_settings_json"] = json.dumps(js_settings)
+
+        return context

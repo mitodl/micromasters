@@ -10,6 +10,7 @@ from django.db.models import (
     ForeignKey,
     Model,
     OneToOneField,
+    CharField,
 )
 from edx_api.certificates import (
     Certificate,
@@ -22,6 +23,7 @@ from edx_api.grades import (
 )
 
 from courses.models import CourseRun, Program
+from micromasters.utils import generate_md5
 
 
 class CachedEdxInfoModel(Model):
@@ -217,9 +219,18 @@ class ProgramEnrollment(Model):
     """
     user = ForeignKey(User, on_delete=CASCADE)
     program = ForeignKey(Program, on_delete=CASCADE)
+    hash = CharField(max_length=32, null=False, unique=True)
 
     class Meta:
         unique_together = (('user', 'program'), )
+
+    def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
+        """Overridden save method"""
+        if not self.hash:
+            self.hash = generate_md5(
+                '{}|{}'.format(self.user_id, self.program_id).encode('utf-8')
+            )
+        super().save(*args, **kwargs)
 
     @classmethod
     def prefetched_qset(cls):
