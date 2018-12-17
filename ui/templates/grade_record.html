@@ -9,16 +9,14 @@
 
 {% block content %}
 <div class="certificate">
-  <main class="certificate-body verified row">
-
+  <main class="certificate-body verified grade-record">
+    <div class="row">
     <div class="col-md-8">
-
-      <div class="certificate-text">
-
-      </div>
-
-      <div class="certificate-stamps row">
-
+      MicroMasters Program Record
+      <div class="program-title">{{ program_title }}</div>
+      <div class="name">
+        <div class="full-name">{{ profile.full_name }}</div>
+        {{ profile.username }} | {{ profile.email }}
       </div>
     </div>
 
@@ -27,6 +25,22 @@
         <img src="{% static 'images/mitx_logo.png' %}" alt="MITx Logo" />
       </div>
     </div>
+    </div>
+    <div class="row row-header">
+        <div class="col-md-3">Class Name</div>
+        <div class="col-md-4">Course ID</div>
+        <div class="col-md-3">Highest Grade Earned</div>
+        <div class="col-md-2">Status</div>
+    </div>
+    {% for record in courses %}
+      <div class="row">
+        <div class="col-md-3">{{ record.title }}</div>
+        <div class="col-md-4">{{ record.edx_course_key }}</div>
+        <div class="col-md-3">{{ record.overall_grade }}</div>
+        <div class="col-md-2">{{ record.status }}</div>
+    </div>
+    {% endfor %}
+
 
   </main>
 </div>

@@ -1,0 +1,22 @@
+.grade-record {
+  .row-header {
+    border-bottom: 1px grey solid;
+  }
+
+  .program-title {
+    color: #4d4b4b;
+    padding-bottom: 75px;
+    //font-weight: 600;
+    font-size: 30px;
+  }
+
+  .name {
+    .full-name {
+      font-size: 30px;
+    }
+    color: #000;
+    line-height: 32px;
+    padding-bottom: 75px;
+  }
+}
+
