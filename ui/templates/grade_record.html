@@ -11,33 +11,55 @@
 <div class="certificate">
   <main class="certificate-body verified grade-record">
     <div class="row">
-    <div class="col-md-8">
-      MicroMasters Program Record
-      <div class="program-title">{{ program_title }}</div>
-      <div class="name">
-        <div class="full-name">{{ profile.full_name }}</div>
-        {{ profile.username }} | {{ profile.email }}
-      </div>
-    </div>
+      <div class="col-md-8">
+        <div class="micromasters-logo">
+          <img src="{% static 'images/micromasters_logo.png' %}" alt="MicroMaster's Grade Records" />
+        </div>
 
-    <div class="col-md-4 right-col">
-      <div class="organization-logo">
-        <img src="{% static 'images/mitx_logo.png' %}" alt="MITx Logo" />
+        <p>Program Record</p>
+        <div class="program-title">{{ program_title }}</div>
+      <div class="row">
+        <div class="col-md-4 mdl-button program-status {{ program_status }}">
+          {{ program_status }} {% if program_status == 'partially' %}Completed{% endif %}
+        </div>
+        {% if last_updated %}
+          <div class="col-md-4">Last Updated: {{ last_updated|date:"n/j/y"  }}</div>
+        {% endif %}
       </div>
-    </div>
+        <div class="name">
+          <div class="full-name">{{ profile.full_name }}</div>
+          {{ profile.username }} | {{ profile.email }}
+        </div>
+      </div>
+
+      <div class="col-md-4 right-col">
+        <div class="organization-logo">
+          <img src="{% static 'images/mitx_logo.png' %}" alt="MITx Logo" />
+        </div>
+      </div>
     </div>
     <div class="row row-header">
-        <div class="col-md-3">Class Name</div>
-        <div class="col-md-4">Course ID</div>
-        <div class="col-md-3">Highest Grade Earned</div>
-        <div class="col-md-2">Status</div>
+      <div class="col-md-2">Class Name</div>
+      <div class="col-md-5">Course ID</div>
+      <div class="col-md-2">Highest Grade Earned</div>
+      <div class="col-md-1">Letter Grade</div>
+      <div class="col-md-2">Status</div>
     </div>
     {% for record in courses %}
-      <div class="row">
-        <div class="col-md-3">{{ record.title }}</div>
-        <div class="col-md-4">{{ record.edx_course_key }}</div>
-        <div class="col-md-3">{{ record.overall_grade }}</div>
-        <div class="col-md-2">{{ record.status }}</div>
+      <div class="row row-grade">
+        <div class="col-md-2">{{ record.title }}</div>
+        <div class="col-md-5">{{ record.edx_course_key }}</div>
+        <div class="col-md-2">{% if record.overall_grade %}{{ record.overall_grade}}%{% endif %}</div>
+        <div class="col-md-1">
+          {% if record.overall_grade %}
+            {% if record.status == 'Earned' %}Passed{% else %}Failed{% endif %}
+          {% endif %}
+        </div>
+        <div class="col-md-2">
+          <div class="mdl-button course-status {% if record.status == 'Earned' %}earned{% endif %}">
+            {{ record.status }}
+          </div>
+        </div>
     </div>
     {% endfor %}
 

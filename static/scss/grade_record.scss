@@ -1,22 +1,41 @@
 .grade-record {
+  line-height: 30px;
+
   .row-header {
     border-bottom: 1px grey solid;
   }
 
   .program-title {
     color: #4d4b4b;
-    padding-bottom: 75px;
-    //font-weight: 600;
+    padding-bottom: 10px;
+    font-weight: 600;
     font-size: 30px;
   }
 
   .name {
+    line-height: 32px;
+    padding: 25px 0;
+
     .full-name {
       font-size: 30px;
+      font-weight: 400;
     }
-    color: #000;
-    line-height: 32px;
-    padding-bottom: 75px;
+  }
+
+  .row-header {
+    font-weight: 600;
+    line-height: 18px;
+    padding-bottom: 5px;
+  }
+
+  .row-grade {
+    line-height: 40px;
+    font-weight: 400;
+  }
+
+  .row-grade , .row-header {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
   }
 }
-

@@ -12,7 +12,7 @@ from cms.models import CourseCertificateSignatories, ProgramCertificateSignatori
 from dashboard.api import get_certificate_url
 from dashboard.models import ProgramEnrollment
 from dashboard.utils import get_mmtrack
-from grades.models import MicromastersCourseCertificate, MicromastersProgramCertificate
+from grades.models import MicromastersCourseCertificate, MicromastersProgramCertificate, CombinedFinalGrade
 
 log = logging.getLogger(__name__)
 
@@ -122,20 +122,28 @@ class GradeRecordView(TemplateView):
         context["js_settings_json"] = json.dumps(js_settings)
 
         enrollment = ProgramEnrollment.objects.get(hash=kwargs.get('record_hash'))
-        mmtrack = get_mmtrack(enrollment.user, enrollment.program)
+        user = enrollment.user
+        courses = enrollment.program.course_set.all()
+        mmtrack = get_mmtrack(user, enrollment.program)
         context["program_title"] = enrollment.program.title
+        context["program_status"] = "completed" if MicromastersProgramCertificate.objects.filter(
+            user=user, program=enrollment.program) else "partially"
+        context["last_updated"] = CombinedFinalGrade.objects.filter(
+            user=user,
+            course__in=courses.values_list("id", flat=True)
+        ).order_by("updated_on").last().updated_on
         context["profile"] = {
-            "username": enrollment.user.username,
-            "email": enrollment.user.email,
-            "full_name": enrollment.user.profile.full_name
+            "username": user.username,
+            "email": user.email,
+            "full_name": user.profile.full_name
         }
         context['courses'] = []
-        for course in mmtrack.program.course_set.all():
+        for course in courses:
             best_grade = mmtrack.get_best_final_grade_for_course(course)
             context['courses'].append({
                 "title": course.title,
                 "edx_course_key": best_grade.course_run.edx_course_key if best_grade else "",
-                "status": "Earned" if get_certificate_url(mmtrack, course) else "In progress",
+                "status": "Earned" if get_certificate_url(mmtrack, course) else "Not Earned",
                 "overall_grade": mmtrack.get_overall_final_grade_for_course(course)
             })
 

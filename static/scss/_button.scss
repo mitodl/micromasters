@@ -99,6 +99,26 @@
     background: #1d67a7 !important;
   }
 
+  &.program-status, &.course-status{
+    display: block;
+    width: fit-content;
+    font-size: 14px;
+    height: 30px;
+    line-height: 32px;
+    text-transform: capitalize;
+    border-radius: 3px;
+    font-weight: 600;
+    color: white;
+    background: $medgray !important;
+
+    &.completed, &.earned {
+      background: darkolivegreen !important;
+    }
+    &.partially {
+      background: #FFAD33 !important;
+    }
+  }
+
   &.minor-action {
     font-size: 13px;
     color: #4a4a4a;
