@@ -1,10 +1,6 @@
 .grade-record {
   line-height: 30px;
 
-  .row-header {
-    border-bottom: 1px grey solid;
-  }
-
   .program-title {
     color: #4d4b4b;
     padding-bottom: 10px;
@@ -23,6 +19,7 @@
   }
 
   .row-header {
+    border-bottom: 1px grey solid;
     font-weight: 600;
     line-height: 18px;
     padding-bottom: 5px;

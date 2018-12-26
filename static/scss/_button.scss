@@ -99,7 +99,7 @@
     background: #1d67a7 !important;
   }
 
-  &.program-status, &.course-status{
+  &.program-status, &.course-status {
     display: block;
     width: fit-content;
     font-size: 14px;
@@ -114,8 +114,9 @@
     &.completed, &.earned {
       background: darkolivegreen !important;
     }
+
     &.partially {
-      background: #FFAD33 !important;
+      background: #ffad33 !important;
     }
   }
 
