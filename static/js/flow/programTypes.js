@@ -37,6 +37,7 @@ export type Program = {
   pearson_exam_status:        string,
   grade_average:              ?number,
   certificate:                string,
+  grade_records_url:          string,
 }
 
 export type ProctoredExamResult = {

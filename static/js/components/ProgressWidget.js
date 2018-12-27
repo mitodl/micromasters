@@ -61,6 +61,19 @@ export const circularProgressWidget = (
   )
 }
 
+export const gradeRecordsLink = (url: string): React$Element<*> => {
+  return (
+    <a
+      className="mm-minor-action"
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      View Grade Records
+    </a>
+  )
+}
+
 export default class ProgressWidget extends React.Component {
   props: {
     program: Program
@@ -88,6 +101,7 @@ export default class ProgressWidget extends React.Component {
         >
           View Certificate
         </Button>
+        {gradeRecordsLink(program.grade_records_url)}
       </Card>
     )
   }
@@ -100,6 +114,7 @@ export default class ProgressWidget extends React.Component {
       <Card className="progress-widget" shadow={0}>
         <CardTitle className="progress-title">Progress</CardTitle>
         {circularProgressWidget(60, 6, totalPassedCourses, totalCourses)}
+        {gradeRecordsLink(program.grade_records_url)}
       </Card>
     )
   }

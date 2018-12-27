@@ -11,6 +11,7 @@ from django.urls import reverse
 
 from courses.models import CourseRun, Course
 from dashboard.api_edx_cache import CachedEdxUserData
+from dashboard.models import ProgramEnrollment
 from ecommerce.models import Order, Line
 from grades.constants import FinalGradeStatus
 from grades.constants import COURSE_GRADE_WEIGHT, EXAM_GRADE_WEIGHT
@@ -94,6 +95,12 @@ class MMTrack:
         Returns whether the edx_course_key id belongs to the program
         """
         return edx_course_key in self.edx_course_keys
+
+    def get_program_enrollment(self):
+        """
+        Returns ProgramEnrollment for this mmtrack
+        """
+        return ProgramEnrollment.objects.filter(user=self.user, program=self.program).first()
 
     def get_course_ids(self):
         """
