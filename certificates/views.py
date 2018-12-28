@@ -5,6 +5,7 @@ Views for MicroMasters-generated certificates
 import json
 import logging
 from django.conf import settings
+from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
 from rest_framework.generics import Http404
 
@@ -121,17 +122,18 @@ class GradeRecordView(TemplateView):
         }
         context["js_settings_json"] = json.dumps(js_settings)
 
-        enrollment = ProgramEnrollment.objects.get(hash=kwargs.get('record_hash'))
+        enrollment = get_object_or_404(ProgramEnrollment, hash=kwargs.get('record_hash'))
         user = enrollment.user
         courses = enrollment.program.course_set.all()
         mmtrack = get_mmtrack(user, enrollment.program)
-        context["program_title"] = enrollment.program.title
-        context["program_status"] = "completed" if MicromastersProgramCertificate.objects.filter(
-            user=user, program=enrollment.program) else "partially"
-        context["last_updated"] = CombinedFinalGrade.objects.filter(
+        combined_grade = CombinedFinalGrade.objects.filter(
             user=user,
             course__in=courses.values_list("id", flat=True)
-        ).order_by("updated_on").last().updated_on
+        ).order_by("updated_on").last()
+        context["program_title"] = enrollment.program.title
+        context["program_status"] = "completed" if MicromastersProgramCertificate.objects.filter(
+            user=user, program=enrollment.program).exists() else "partially"
+        context["last_updated"] = combined_grade.updated_on if combined_grade else ""
         context["profile"] = {
             "username": user.username,
             "email": user.email,
