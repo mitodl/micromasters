@@ -130,7 +130,8 @@ export const makeProgram = (): Program => {
     pearson_exam_status:
       PEARSON_STATUSES[Math.floor(Math.random() * PEARSON_STATUSES.length)],
     grade_average: Math.floor(Math.random() * 100),
-    certificate:   ""
+    certificate:   "",
+    grade_records_url: ""
   }
 }
 

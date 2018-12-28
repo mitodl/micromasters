@@ -12,6 +12,7 @@ from unittest.mock import (
 import ddt
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
+from django.urls import reverse
 from django_redis import get_redis_connection
 import pytest
 from rest_framework import status as http_status
@@ -31,7 +32,8 @@ from dashboard import (
 )
 from dashboard.api import save_cache_update_failure, FIELD_USER_ID_BASE_STR
 from dashboard.api_edx_cache import CachedEdxDataApi
-from dashboard.factories import CachedEnrollmentFactory, CachedCurrentGradeFactory, UserCacheRefreshTimeFactory
+from dashboard.factories import CachedEnrollmentFactory, CachedCurrentGradeFactory, UserCacheRefreshTimeFactory, \
+    ProgramEnrollmentFactory
 from dashboard.models import CachedCertificate
 from dashboard.utils import MMTrack
 from exams.models import ExamAuthorization, ExamProfile
@@ -1720,7 +1722,7 @@ class InfoProgramTest(MockedESTestCase):
         # create the programs
         cls.program = ProgramFactory.create()
         cls.program_no_courses = ProgramFactory.create()
-
+        cls.program_enrollment = ProgramEnrollmentFactory.create(program=cls.program, user=cls.user)
         # create some courses for the program
         cls.courses = []
         for num in range(2):
@@ -1753,7 +1755,7 @@ class InfoProgramTest(MockedESTestCase):
             "id": self.program.pk,
             "description": self.program.description,
             "title": self.program.title,
-            "courses": [{'position_in_program': 1}, {'position_in_program': 1}],
+            "courses": [{'position_in_program': 1}, {'position_in_program': 1}, {'position_in_program': 1}],
             "financial_aid_availability": False,
             "pearson_exam_status": ExamProfile.PROFILE_SUCCESS,
             "grade_average": 91,
@@ -1795,6 +1797,7 @@ class InfoProgramTest(MockedESTestCase):
             'calculate_final_grade_average.return_value': 91,
             'financial_aid_available': True,
             'get_program_certificate_url.return_value': "",
+            'get_program_enrollment.return_value': self.program_enrollment,
         })
         serialized_fin_aid = {
             "id": 123,
@@ -1809,17 +1812,17 @@ class InfoProgramTest(MockedESTestCase):
         res = api.get_info_for_program(self.mmtrack)
         for course in self.courses:
             mock_info_course.assert_any_call(course, self.mmtrack)
-
         expected_data = {
             "id": self.program.pk,
             "description": self.program.description,
             "title": self.program.title,
-            "courses": [{'position_in_program': 1}, {'position_in_program': 1}],
+            "courses": [{'position_in_program': 1}, {'position_in_program': 1}, {'position_in_program': 1}],
             "financial_aid_availability": True,
             "financial_aid_user_info": serialized_fin_aid,
             "pearson_exam_status": ExamProfile.PROFILE_IN_PROGRESS,
             "grade_average": 91,
             "certificate": "",
+            "grade_records_url": reverse('grade_records', args=[self.program_enrollment.hash])
         }
         self.assertEqual(res, expected_data)
 
