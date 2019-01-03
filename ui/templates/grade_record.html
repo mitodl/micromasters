@@ -8,35 +8,40 @@
 {% block title %}{% trans "MITx MicroMasters" %}{% endblock %}
 
 {% block content %}
-<div class="certificate">
-  <main class="certificate-body verified grade-record">
-    <div class="row">
-      <div class="col-md-8">
-        <div class="micromasters-logo">
-          <img src="{% static 'images/micromasters_logo.png' %}" alt="MicroMaster's Grade Records" />
-        </div>
+<div class="">
+  <main class="program-record-wrapping grade-record">
+    <div class="program-record">
+      <header class="program-record-header">
+        <div class="program-overview">
+          <div class="program-headings">
+            <h1 class="program-title h2">{{ program_title }}</h1>
+            <div class="program-type">
+              <span class="micromasters-logo">
+                <img src="{% static 'images/micromasters_logo.png' %}" alt="MicroMaster's Grade Records" />
+              </span>
+              Program Record
+            </div>
+          </div>
+          <div class="program-status">
+            <span class="badges {{ program_status }}">
+              {{ program_status }} {% if program_status == 'partially' %}Completed{% endif %}
+            </span>
+            {% if last_updated %}
+              <div class="updated">Last Updated: {{ last_updated|date:"n/j/y"  }}</div>
+            {% endif %}
+          </div>
+            <div class="name">
+              <div class="full-name">{{ profile.full_name }}</div>
+              {{ profile.username }} | {{ profile.email }}
+            </div>
+          </div>
 
-        <p>Program Record</p>
-        <div class="program-title">{{ program_title }}</div>
-      <div class="row">
-        <div class="col-md-4 mdl-button program-status {{ program_status }}">
-          {{ program_status }} {% if program_status == 'partially' %}Completed{% endif %}
-        </div>
-        {% if last_updated %}
-          <div class="col-md-4">Last Updated: {{ last_updated|date:"n/j/y"  }}</div>
-        {% endif %}
-      </div>
-        <div class="name">
-          <div class="full-name">{{ profile.full_name }}</div>
-          {{ profile.username }} | {{ profile.email }}
-        </div>
-      </div>
+          <div class="school-name">
+              <img src="{% static 'images/mitx_logo.png' %}" alt="MITx Logo" />
+          </div>
+      </header>
 
-      <div class="col-md-4 right-col">
-        <div class="organization-logo">
-          <img src="{% static 'images/mitx_logo.png' %}" alt="MITx Logo" />
-        </div>
-      </div>
+
     </div>
     <div class="row row-header">
       <div class="col-md-2">Class Name</div>

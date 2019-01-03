@@ -1,11 +1,87 @@
-.grade-record {
+.program-record-wrapping {
+  -webkit-font-smoothing: antialiased;
   line-height: 30px;
+  margin: 2em auto;
+  background-color: #fff;
 
-  .program-title {
-    color: #4d4b4b;
-    padding-bottom: 10px;
-    font-weight: 600;
-    font-size: 30px;
+  @media (min-width: 1400px) {
+    width: 1300px;
+  }
+  .program-record {
+    border: 1px solid #c2c2c2;
+    border-radius: 8px;
+    padding: 30px;
+    margin-bottom: 20px;
+  }
+  .program-record-header {
+    flex-direction: row;
+    display: flex!important;
+    justify-content: space-between!important;
+  }
+  .program-overview {
+    position: relative;
+  }
+  .program-headings {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .program-status {
+    flex-direction: row;
+    display: flex!important;
+
+    .updated {
+      margin: auto 0;
+    }
+    .badges {
+      text-transform: capitalize;
+      padding: 7px 10px;
+      margin-right: 10px;
+
+      display: inline-block;
+      font-weight: 700;
+      line-height: 1;
+      color: #fff;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: baseline;
+      border-radius: .25rem;
+
+    &.partially {
+      background-color: #f0ad4e;
+    }
+  }
+  .program-title .h2 {
+    font-family: inherit;
+    font-weight: 500;
+    line-height: 1.1;
+    font-size: 2rem;
+    margin: 0 0 .5rem;
+
+  }
+  .program-type {
+    display: flex;
+    align-items: center;
+  }
+
+  }
+  .micromasters-logo {
+    img {
+      width: 100px;
+
+      @media print {
+        width: 320px;
+      }
+    }
+  }
+  .school-name {
+    align-self: start;
+    margin-bottom: .625rem;
+    font-size: 1.5rem;
+    line-height: 1.5;
+
+    img {
+      width: 200px;
+    }
   }
 
   .name {
