@@ -14,62 +14,72 @@
       <header class="program-record-header">
         <div class="program-overview">
           <div class="program-headings">
-            <h1 class="program-title h2">{{ program_title }}</h1>
-            <div class="program-type">
-              <span class="micromasters-logo">
-                <img src="{% static 'images/micromasters_logo.png' %}" alt="MicroMaster's Grade Records" />
+            <div class="program-title">{{ program_title }}</div>
+            <div class="program-type text-muted">
+              <span class="program-icon">
+                {% include 'micromasters.svg' %}
               </span>
-              Program Record
+              MicroMasters Program Record
             </div>
           </div>
           <div class="program-status">
-            <span class="badges {{ program_status }}">
+            <span class="badge {{ program_status }}">
               {{ program_status }} {% if program_status == 'partially' %}Completed{% endif %}
             </span>
             {% if last_updated %}
               <div class="updated">Last Updated: {{ last_updated|date:"n/j/y"  }}</div>
             {% endif %}
           </div>
-            <div class="name">
-              <div class="full-name">{{ profile.full_name }}</div>
-              {{ profile.username }} | {{ profile.email }}
-            </div>
-          </div>
 
-          <div class="school-name">
-              <img src="{% static 'images/mitx_logo.png' %}" alt="MITx Logo" />
-          </div>
+        </div>
+
+        <div class="school-name">
+          <img src="{% static 'images/mitx_logo.png' %}" alt="MITx Logo" />
+        </div>
       </header>
+      <div class="name">
+        <div class="full-name">{{ profile.full_name }}</div>
+        {{ profile.username }}<span class="pipe">|</span>{{ profile.email }}
+      </div>
 
 
+
+      <div class="program-record-grades">
+        <table class="table">
+          <thead>
+          <tr>
+            <th>Class Name</th>
+            <th>Course ID</th>
+            <th class="narrow-col">Highest Grade Earned</th>
+            <th>Letter Grade</th>
+            <th class="narrow-col">Verified Attempts</th>
+            <th>Date Earned</th>
+            <th>Status</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for record in courses %}
+            <tr>
+              <td>{{ record.title }}</td>
+              <td>{{ record.edx_course_key }}</td>
+              <td>{% if record.overall_grade %}{{ record.overall_grade}}%{% endif %}</td>
+              <td>{% if record.overall_grade %}
+                    {% if record.status == 'Earned' %}Pass{% else %}Fail{% endif %}
+                  {% endif %}
+              </td>
+              <td>{% if record.overall_grade %}{{ record.attempts }}{% endif %}</td>
+              <td>{{ record.date_earned|date:"n/j/y" }}</td>
+              <td><span class="badge {% if record.status == 'Earned' %}earned{% endif %}">{{ record.status }}</span></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
-    <div class="row row-header">
-      <div class="col-md-2">Class Name</div>
-      <div class="col-md-5">Course ID</div>
-      <div class="col-md-2">Highest Grade Earned</div>
-      <div class="col-md-1">Letter Grade</div>
-      <div class="col-md-2">Status</div>
-    </div>
-    {% for record in courses %}
-      <div class="row row-grade">
-        <div class="col-md-2">{{ record.title }}</div>
-        <div class="col-md-5">{{ record.edx_course_key }}</div>
-        <div class="col-md-2">{% if record.overall_grade %}{{ record.overall_grade}}%{% endif %}</div>
-        <div class="col-md-1">
-          {% if record.overall_grade %}
-            {% if record.status == 'Earned' %}Passed{% else %}Failed{% endif %}
-          {% endif %}
-        </div>
-        <div class="col-md-2">
-          <div class="mdl-button course-status {% if record.status == 'Earned' %}earned{% endif %}">
-            {{ record.status }}
-          </div>
-        </div>
-    </div>
-    {% endfor %}
 
 
   </main>
 </div>
 {% include "footer.html" %}
 {% endblock %}
+{% block bodyclass %}program-record-body{% endblock %}

@@ -1,11 +1,26 @@
+.program-record-body {
+  background-color: #fff;
+}
 .program-record-wrapping {
   -webkit-font-smoothing: antialiased;
-  line-height: 30px;
-  margin: 2em auto;
+  margin: 2em auto 4em;
   background-color: #fff;
+  color: #4d4b4b;
+  font-weight: 400;
+  line-height: 1.5;
+  font-size: 16px;
+  font-family: -apple-system,system-ui,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif;
+
+  @media (min-width: 992px) {
+    width: 960px;
+  }
 
   @media (min-width: 1400px) {
     width: 1300px;
+  }
+
+  .text-muted {
+    color: #636c72!important;
   }
   .program-record {
     border: 1px solid #c2c2c2;
@@ -17,6 +32,7 @@
     flex-direction: row;
     display: flex!important;
     justify-content: space-between!important;
+    margin-bottom: 20px;
   }
   .program-overview {
     position: relative;
@@ -24,6 +40,19 @@
   .program-headings {
     display: flex;
     flex-direction: column-reverse;
+
+    .program-title {
+      font-family: inherit;
+      font-weight: 500;
+      line-height: 1.1;
+      font-size: 32px;
+      margin: 0 0 .5rem;
+
+    }
+    .program-type {
+      display: flex;
+      align-items: center;
+    }
   }
   .program-status {
     flex-direction: row;
@@ -32,45 +61,41 @@
     .updated {
       margin: auto 0;
     }
-    .badges {
-      text-transform: capitalize;
-      padding: 7px 10px;
-      margin-right: 10px;
-
-      display: inline-block;
-      font-weight: 700;
-      line-height: 1;
-      color: #fff;
-      text-align: center;
-      white-space: nowrap;
-      vertical-align: baseline;
-      border-radius: .25rem;
-
-    &.partially {
-      background-color: #f0ad4e;
-    }
-  }
-  .program-title .h2 {
-    font-family: inherit;
-    font-weight: 500;
-    line-height: 1.1;
-    font-size: 2rem;
-    margin: 0 0 .5rem;
 
   }
-  .program-type {
-    display: flex;
-    align-items: center;
-  }
+  .badge {
+    text-transform: capitalize;
+    padding: 7px 10px;
+    margin-right: 10px;
+    font-size: 14px;
+    display: inline-block;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25rem;
+    background-color: #636c72;
+    width: 100%;
 
-  }
-  .micromasters-logo {
-    img {
-      width: 100px;
-
-      @media print {
-        width: 320px;
+      &.partially {
+        background-color: #f0ad4e;
+        width: fit-content;
       }
+      &.earned {
+        background-color: #008100;
+      }
+
+  }
+  .program-icon {
+    width: 20px;
+    height: 28px;
+    margin-right: 10px;
+    color: #065784;
+
+    .icon-fill.micromasters {
+      fill: #065784;
     }
   }
   .school-name {
@@ -80,17 +105,46 @@
     line-height: 1.5;
 
     img {
-      width: 200px;
+      width: 180px;
     }
   }
 
   .name {
-    line-height: 32px;
-    padding: 25px 0;
+    //padding: 25px 0;
+    margin-bottom: 1em;
 
     .full-name {
-      font-size: 30px;
+      font-size: 24px;
       font-weight: 400;
+    }
+    .pipe {
+      margin: 0 10px;
+    }
+  }
+  .program-record-grades {
+    box-sizing: border-box;
+
+    .table {
+      width: 100%;
+      overflow-x: auto;
+      margin-bottom: 1rem;
+
+      th {
+        border-top: none;
+        border-right: none;
+        border-bottom: 2px solid #d3d2d2;
+        border-left: none;
+        padding: .75rem;
+        font-weight: 600;
+      }
+      td {
+        border: none;
+        padding: .75rem;
+        vertical-align: top;
+      }
+      .narrow-col {
+        max-width: 118px;
+      }
     }
   }
 
