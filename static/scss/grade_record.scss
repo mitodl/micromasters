@@ -1,8 +1,9 @@
 .program-record-body {
   background-color: #fff;
 }
+
 .program-record-wrapping {
-  -webkit-font-smoothing: antialiased;
+  -webkit-font-smoothing: antialiased; // sass-lint:disable-line no-vendor-prefixes
   margin: 2em auto 4em;
   background-color: #fff;
   color: #4d4b4b;
@@ -20,23 +21,27 @@
   }
 
   .text-muted {
-    color: #636c72!important;
+    color: #636c72 !important;
   }
+
   .program-record {
     border: 1px solid #c2c2c2;
     border-radius: 8px;
     padding: 30px;
     margin-bottom: 20px;
   }
+
   .program-record-header {
     flex-direction: row;
-    display: flex!important;
-    justify-content: space-between!important;
+    display: flex !important;
+    justify-content: space-between !important;
     margin-bottom: 20px;
   }
+
   .program-overview {
     position: relative;
   }
+
   .program-headings {
     display: flex;
     flex-direction: column-reverse;
@@ -47,22 +52,23 @@
       line-height: 1.1;
       font-size: 32px;
       margin: 0 0 .5rem;
-
     }
+
     .program-type {
       display: flex;
       align-items: center;
     }
   }
+
   .program-status {
     flex-direction: row;
-    display: flex!important;
+    display: flex !important;
 
     .updated {
       margin: auto 0;
     }
-
   }
+
   .badge {
     text-transform: capitalize;
     padding: 7px 10px;
@@ -79,15 +85,16 @@
     background-color: #636c72;
     width: 100%;
 
-      &.partially {
-        background-color: #f0ad4e;
-        width: fit-content;
-      }
-      &.earned {
-        background-color: #008100;
-      }
+    &.partially {
+      background-color: #f0ad4e;
+      width: fit-content;
+    }
 
+    &.earned {
+      background-color: #008100;
+    }
   }
+
   .program-icon {
     width: 20px;
     height: 28px;
@@ -98,6 +105,7 @@
       fill: #065784;
     }
   }
+
   .school-name {
     align-self: start;
     margin-bottom: .625rem;
@@ -110,17 +118,18 @@
   }
 
   .name {
-    //padding: 25px 0;
     margin-bottom: 1em;
 
     .full-name {
       font-size: 24px;
       font-weight: 400;
     }
+
     .pipe {
       margin: 0 10px;
     }
   }
+
   .program-record-grades {
     box-sizing: border-box;
 
@@ -137,11 +146,13 @@
         padding: .75rem;
         font-weight: 600;
       }
+
       td {
         border: none;
         padding: .75rem;
         vertical-align: top;
       }
+
       .narrow-col {
         max-width: 118px;
       }
