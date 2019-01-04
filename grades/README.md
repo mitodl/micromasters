@@ -132,21 +132,28 @@ and type (being ABSOLUTELY sure of what you are doing):
 Overview: After the last day of proctored exams, we deliver the grades to the course team. It typically takes them a few 
 weeks to adjust the grades and return them to us for upload. 
 
-### Delivering a preliminary grade report to the course team
+### Deliver a preliminary grade report to the course team
 
 Grades arrive daily from the proctored exam vendor. Our Business Intelligence Server (BI) has a report that is updated 
 daily with grades. When the exam period is complete, we notify the course team so they can download a copy of the 
 proctored exam grades for analysis when the exam period is complete. 
 
-### Testing adjusted grades
+### Test adjusted grades
 
 The course team will deliver updated grades to us via a csv file in keybase (in order to ensure the file is 
 encrypted at rest). Since adjusting grades is a complex process,
 they like us to validate their changes by calculating the number of learners who, after uploading the adjusted grades,
-will have earned 1, 2, 3, 4 and 5 course certificates and how many will have earned a program certificate. Currently
-we do this analysis _before_ importing the grades into the micromasters application. 
+will have earned 1, 2, 3, 4 and 5 course certificates and how many will have earned a program certificate. 
 
-### load adjusted grades
+Once we and the course team have determined that there is a match the course team will validate the grade adjustment 
+with the faculty. After the course team has validated the adjustment they will email us to confirm that we can 
+import the adjusted grades into the micromasters application and release them to learners. 
+
+Both steps (1. validating the number of learners who have earned different numbers of course certificates and 2. 
+receiving the email confirmation from the course team to release the grades) need to occur before importing the grades 
+into the micromasters application.
+
+### Load adjusted grades
 
 Once the we have verified the outcomes of the adjusted grades with the course team, we can import them into the 
 micromasters web application. This can be done with the management command: `adjust_exam_grades_from_csv.py`
@@ -177,7 +184,7 @@ micromasters web application. This can be done with the management command: `adj
   This is most likely because the exam results have not been released yet, and therefore aren't yet used for
   calculating grades. Proceed to the next step: 
 
-### release exam grades to learners 
+### Release exam grades to learners 
 
 Now that the adjusted grades are loaded, we can release them to learners by updating the date/time that grades are 
 available in the exam run admin. 
