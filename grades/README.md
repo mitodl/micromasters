@@ -142,16 +142,16 @@ proctored exam grades for analysis when the exam period is complete.
 
 The course team will deliver updated grades to us via a csv file in keybase (in order to ensure the file is 
 encrypted at rest). Since adjusting grades is a complex process,
-they like us to validate their changes by calculating the number of learners who, after uploading the adjusted grades,
-will have earned 1, 2, 3, 4 and 5 course certificates and how many will have earned a program certificate. 
+they like us to validate their changes by calculating the number of learners who, after uploading the adjusted
+grades, will have earned 1, 2, 3, 4 and 5 course certificates and how many will have earned a program certificate. 
 
 Once we and the course team have determined that there is a match the course team will validate the grade adjustment 
 with the faculty. After the course team has validated the adjustment they will email us to confirm that we can 
 import the adjusted grades into the micromasters application and release them to learners. 
 
 Both steps (1. validating the number of learners who have earned different numbers of course certificates and 2. 
-receiving the email confirmation from the course team to release the grades) need to occur before importing the grades 
-into the micromasters application.
+receiving the email confirmation from the course team to release the grades) need to occur before importing the 
+grades into the micromasters application.
 
 ### Load adjusted grades
 
