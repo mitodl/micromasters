@@ -7,6 +7,7 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 
+from dashboard.factories import ProgramEnrollmentFactory
 from micromasters.utils import is_subset_dict
 from grades.factories import MicromastersCourseCertificateFactory, MicromastersProgramCertificateFactory
 from cms.factories import CourseCertificateSignatoriesFactory, ProgramCertificateSignatoriesFactory
@@ -80,3 +81,22 @@ def test_valid_program_certificate_200(client):
         resp.context_data
     )
     assert reverse('program-certificate', args=[certificate.hash]) in resp.content.decode('utf-8')
+
+
+def test_program_record(client):
+    """Test"""
+    enrollment = ProgramEnrollmentFactory.create()
+    resp = client.get(reverse("grade_records", kwargs=dict(record_hash=enrollment.hash)))
+    assert resp.status_code == status.HTTP_200_OK
+    assert is_subset_dict(
+        {
+            'record_hash': enrollment.hash,
+            'program_title': enrollment.program.title,
+            'program_status': 'partially',
+            'profile': {
+                'username': enrollment.user.username
+            },
+            'last_updated': ''
+        },
+        resp.context_data
+    )

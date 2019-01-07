@@ -34,7 +34,7 @@ urlpatterns = [
     url(r'^certificate/course/(?P<certificate_hash>[-\w.]+)?/?', CourseCertificateView.as_view(), name='certificate'),
     url(r'^certificate/program/(?P<certificate_hash>[-\w.]+)?/?', ProgramCertificateView.as_view(),
         name='program-certificate'),
-    url(r'^grade_records/(?P<record_hash>[-\w.]+)?/?', GradeRecordView.as_view(),
+    url(r'^records/programs/shared/(?P<record_hash>[-\w.]+)?/?', GradeRecordView.as_view(),
         name='grade_records'),
     url(r'^{}$'.format(TERMS_OF_SERVICE_URL.lstrip("/")), terms_of_service, name='terms_of_service'),
     url(r'^background-images\.css$', BackgroundImagesCSSView.as_view(), name='background-images-css'),
