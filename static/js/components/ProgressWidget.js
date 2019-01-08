@@ -1,4 +1,5 @@
 // @flow
+/* global SETTINGS: false */
 import React from "react"
 import { Card, CardTitle } from "react-mdl/lib/Card"
 import Button from "react-mdl/lib/Button"
