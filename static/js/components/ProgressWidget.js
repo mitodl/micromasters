@@ -101,7 +101,9 @@ export default class ProgressWidget extends React.Component {
         >
           View Certificate
         </Button>
-        {gradeRecordsLink(program.grade_records_url)}
+        {SETTINGS.FEATURES.PROGRAM_RECORD_LINK &&
+          program.financial_aid_availability &&
+          gradeRecordsLink(program.grade_records_url)}
       </Card>
     )
   }
@@ -114,7 +116,8 @@ export default class ProgressWidget extends React.Component {
       <Card className="progress-widget" shadow={0}>
         <CardTitle className="progress-title">Progress</CardTitle>
         {circularProgressWidget(60, 6, totalPassedCourses, totalCourses)}
-        {gradeRecordsLink(program.grade_records_url)}
+        {program.financial_aid_availability &&
+          gradeRecordsLink(program.grade_records_url)}
       </Card>
     )
   }

@@ -64,7 +64,8 @@ class ReactView(View):  # pylint: disable=unused-argument
             "FEATURES": {
                 "PROGRAM_LEARNERS": settings.FEATURES.get('PROGRAM_LEARNERS_ENABLED', False),
                 "DISCUSSIONS_POST_UI": settings.FEATURES.get('OPEN_DISCUSSIONS_POST_UI', False),
-                "DISCUSSIONS_CREATE_CHANNEL_UI": settings.FEATURES.get('OPEN_DISCUSSIONS_CREATE_CHANNEL_UI', False)
+                "DISCUSSIONS_CREATE_CHANNEL_UI": settings.FEATURES.get('OPEN_DISCUSSIONS_CREATE_CHANNEL_UI', False),
+                "PROGRAM_RECORD_LINK": settings.FEATURES.get('PROGRAM_RECORD_LINK', False)
             },
             "open_discussions_redirect_url": settings.OPEN_DISCUSSIONS_REDIRECT_URL,
         }
