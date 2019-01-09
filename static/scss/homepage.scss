@@ -52,8 +52,8 @@ body.app-media {
 
       .micromasters-logo {
         height: 23px;
-        width: 152px;
-        top: 10px;
+        width: 250px;
+        top: 8px;
       }
 
       .divider-large {
@@ -272,6 +272,11 @@ body.app-media {
             height: 100%;
           }
         }
+      }
+
+      span {
+        vertical-align: super;
+        font-size: 14px;
       }
 
       @include breakpoint(phone) {
