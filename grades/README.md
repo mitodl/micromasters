@@ -190,11 +190,10 @@ micromasters web application. This can be done with the management command: `adj
 Now that the adjusted grades are loaded, we can release them to learners by updating the date/time that grades are 
 available in the exam run admin. 
 
-### update combined final grades
+### Update combined final grades
 
 While there is a signal that creates combined final grades whenever a proctored exam grade is updated, it depends on 
-the proctored exam being released. If you got a large number of warnings early, you will need to run the management 
-command:
+the proctored exam being released. So you will need to run the management command to force an update:
   
     python manage.py populate_combined_final_grades
 
