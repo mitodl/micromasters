@@ -129,14 +129,15 @@ and type (being ABSOLUTELY sure of what you are doing):
 
 ## How to adjust (curve) proctored exam grades
 
-Overview: After the last day of proctored exams, we deliver the grades to the course team. It typically takes them a few 
-weeks to adjust the grades and return them to us for upload. 
+Overview: After Pearson has delivered to all the proctored exam grades, we share them with the course team. 
+It typically takes them a few weeks to adjust the grades and return them to us for upload. 
 
 ### Deliver a preliminary grade report to the course team
 
 Grades arrive daily from the proctored exam vendor. Our Business Intelligence Server (BI) has a report that is updated 
-daily with grades. When the exam period is complete, we notify the course team so they can download a copy of the 
-proctored exam grades for analysis when the exam period is complete. 
+daily with grades. When the exam period is complete, and all the grades have been delivered, we notify the course 
+team so they can download a copy of the proctored exam grades for analysis. We will also ask them to confirm with 
+Pearson that all the grades have been delivered.  
 
 ### Test adjusted grades
 
