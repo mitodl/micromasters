@@ -342,18 +342,10 @@ class MMTrack:
         if not course.has_exam:
             return str(round(best_grade.grade_percent))
 
-        if settings.FEATURES.get('USE_COMBINED_FINAL_GRADE', False):
-            combined_grade = CombinedFinalGrade.objects.filter(user=self.user, course=course)
-            if combined_grade.exists():
-                return str(round(combined_grade.first().grade))
-            return ""
-        else:
-
-            best_exam = self.get_best_proctored_exam_grade(course)
-            if best_exam is None:
-                return ""
-            return str(
-                round(best_grade.grade_percent * COURSE_GRADE_WEIGHT + best_exam.score * EXAM_GRADE_WEIGHT))
+        combined_grade = CombinedFinalGrade.objects.filter(user=self.user, course=course)
+        if combined_grade.exists():
+            return str(round(combined_grade.first().grade))
+        return ""
 
     def get_all_enrolled_course_runs(self):
         """

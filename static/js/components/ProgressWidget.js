@@ -70,7 +70,7 @@ export const gradeRecordsLink = (url: string): React$Element<*> => {
       target="_blank"
       rel="noopener noreferrer"
     >
-      View Grade Records
+      View Program Record
     </a>
   )
 }
@@ -117,7 +117,8 @@ export default class ProgressWidget extends React.Component {
       <Card className="progress-widget" shadow={0}>
         <CardTitle className="progress-title">Progress</CardTitle>
         {circularProgressWidget(60, 6, totalPassedCourses, totalCourses)}
-        {program.financial_aid_availability &&
+        {SETTINGS.FEATURES.PROGRAM_RECORD_LINK &&
+          program.financial_aid_availability &&
           gradeRecordsLink(program.grade_records_url)}
       </Card>
     )

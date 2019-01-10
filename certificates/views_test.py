@@ -84,7 +84,7 @@ def test_valid_program_certificate_200(client):
 
 
 def test_program_record(client):
-    """Test"""
+    """Test that a request for program record results in 200"""
     enrollment = ProgramEnrollmentFactory.create()
     resp = client.get(reverse("grade_records", kwargs=dict(record_hash=enrollment.hash)))
     assert resp.status_code == status.HTTP_200_OK

@@ -752,7 +752,6 @@ class MMTrackTest(MockedESTestCase):
             FinalGradeFactory.create(user=self.user, course_run=course_run, grade=grade, passed=True)
         assert mmtrack.get_best_final_grade_for_course(finaid_course).grade == 0.8
 
-    @override_settings(FEATURES={"USE_COMBINED_FINAL_GRADE": True})
     def test_get_overall_final_grade_for_course(self):
         """
         Test for get_overall_final_grade_for_course to return CombinedFinalGrade for course
