@@ -8,7 +8,6 @@ from unittest.mock import (
     PropertyMock
 )
 
-from django.test import override_settings
 from django.urls import reverse
 
 import pytz

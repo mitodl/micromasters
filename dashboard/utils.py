@@ -4,7 +4,6 @@ Utility functions and classes for the dashboard
 import logging
 from decimal import Decimal
 
-from django.conf import settings
 from django.db import transaction
 from django.db.models import Q, Count
 from django.urls import reverse
@@ -14,7 +13,6 @@ from dashboard.api_edx_cache import CachedEdxUserData
 from dashboard.models import ProgramEnrollment
 from ecommerce.models import Order, Line
 from grades.constants import FinalGradeStatus
-from grades.constants import COURSE_GRADE_WEIGHT, EXAM_GRADE_WEIGHT
 from grades.models import (
     FinalGrade,
     ProctoredExamGrade,
