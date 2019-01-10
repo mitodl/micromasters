@@ -132,6 +132,21 @@ and type (being ABSOLUTELY sure of what you are doing):
 Overview: After Pearson has delivered to all the proctored exam grades, we share them with the course team. 
 It typically takes them a few weeks to adjust the grades and return them to us for upload. 
 
+### Checklist 
+
+This can be used for creating an issue task at the end of each exam session. Just copy and paste the source markdown:
+
+- [ ] Deliver preliminary grade report to the course team
+- [ ] Wait for course team to deliver adjust grades
+- [ ] Test adjusted grades and confirm counts of new course certificates and program certificates 
+- [ ] Wait for course team to confirm counts with faculty
+- [ ] load adjusted grades
+- [ ] release exam grades to learners
+- [ ] update combined final grades
+- [ ] confirm creation of course certificates and program certificates
+
+Detailed explanations below:
+
 ### Deliver a preliminary grade report to the course team
 
 Grades arrive daily from the proctored exam vendor. Our Business Intelligence Server (BI) has a report that is updated 
