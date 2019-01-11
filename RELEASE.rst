@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.122.0
+---------------
+
+- Trademark updates (#4222)
+
 Version 0.121.0 (Released December 17, 2018)
 ---------------
 
