@@ -6,4 +6,9 @@
 
 {% block panel %}
   {{ child_page.content|richtext }}
+
+  <div class="tabs-table">
+    {{ child_page.table }}
+  </div>
+
 {% endblock %}
