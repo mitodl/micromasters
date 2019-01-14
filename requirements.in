@@ -1,4 +1,4 @@
-Django==2.1.2
+Django==2.1.5
 Pillow==4.0.0
 boto==2.39.0
 celery==4.2.0
@@ -18,7 +18,7 @@ djangorestframework==3.7.7
 edx-api-client==0.6.1
 edx-opaque-keys==0.4
 elasticsearch-dsl==5.4.0
-elasticsearch==5.5.1
+elasticsearch==5.5.3
 factory_boy
 faker
 gnupg==2.2.0
@@ -40,5 +40,6 @@ six>=1.11.0
 social-auth-app-django==2.1.0
 robohash
 static3==0.5.1
+urllib3>=1.24.1
 uwsgi
 wagtail==2.3
