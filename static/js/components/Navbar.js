@@ -92,7 +92,7 @@ export default class Navbar extends React.Component {
       key="header-logo"
     />,
     <span className="mdl-layout-title profile-header" key="header-text">
-      MITx MicroMasters
+      MITx MicroMasters Programs
     </span>
   ]
 
@@ -101,7 +101,7 @@ export default class Navbar extends React.Component {
       <img src="/static/images/mit-logo-transparent.svg" alt="MIT" />
     </Link>,
     <span className="mdl-layout-title" key="header-text-link">
-      <Link to={link}>MITx MicroMasters</Link>
+      <Link to={link}>MITx MicroMasters Programs</Link>
     </span>
   ]
 
@@ -110,7 +110,7 @@ export default class Navbar extends React.Component {
       <img src="/static/images/mit-logo-transparent.svg" alt="MIT" />
     </a>,
     <span className="mdl-layout-title" key="header-text-link">
-      <a href={link}>MITx MicroMasters</a>
+      <a href={link}>MITx MicroMasters Programs</a>
     </span>
   ]
 
