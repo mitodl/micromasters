@@ -93,6 +93,11 @@
     &.earned {
       background-color: #008100;
     }
+
+    &.completed {
+      background-color: #008100;
+      width: fit-content;
+    }
   }
 
   .program-icon {
