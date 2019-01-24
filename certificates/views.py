@@ -121,6 +121,7 @@ class GradeRecordView(TemplateView):
             "edx_base_url": settings.EDXORG_BASE_URL,
         }
         context["js_settings_json"] = json.dumps(js_settings)
+        context["is_public"] = True
 
         enrollment = get_object_or_404(ProgramEnrollment, hash=kwargs.get('record_hash'))
         user = enrollment.user

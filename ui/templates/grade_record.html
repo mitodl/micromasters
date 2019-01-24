@@ -1,5 +1,8 @@
 {% extends "base.html" %}
-{% load i18n static wagtailimages_tags %}
+{% load i18n static %}
+{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
+{% load wagtailuserbar %}
 
 {% block extrahead %}
 <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600;" />
@@ -8,7 +11,11 @@
 {% block title %}{% trans "MITx MicroMasters" %}{% endblock %}
 
 {% block content %}
+
 <div class="">
+  <div class="share-options">
+    <button class="mdl-button share-btn open-share-dialog">Share</button>
+ </div>
   <main class="program-record-wrapping grade-record">
     <div class="program-record">
       <header class="program-record-header">
@@ -79,9 +86,12 @@
       </div>
     </div>
 
-
+<div id="share-dialog"></div>
   </main>
+{% load render_bundle %}
+{% render_bundle "public" %}
 </div>
+
 {% include "footer.html" %}
 {% endblock %}
 {% block bodyclass %}program-record-body{% endblock %}

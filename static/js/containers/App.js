@@ -52,7 +52,8 @@ class App extends React.Component {
     programs: AvailableProgramsState,
     history: Object,
     ui: UIState,
-    signupDialog: Object
+    signupDialog: Object,
+    shareDialog: Object
   }
 
   static contextTypes = {
@@ -282,7 +283,8 @@ const mapStateToProps = state => {
     currentProgramEnrollment: state.currentProgramEnrollment,
     programs:                 state.programs,
     courseEnrollments:        state.courseEnrollments,
-    signupDialog:             state.signupDialog
+    signupDialog:             state.signupDialog,
+    shareDialog:              state.shareDialog
   }
 }
 

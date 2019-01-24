@@ -2,6 +2,38 @@
   background-color: #fff;
 }
 
+.share-options {
+  margin: 30px auto 15px;
+  text-align: right;
+
+  @media (min-width: 992px) {
+    width: 960px;
+  }
+
+  @media (min-width: 1400px) {
+    width: 1300px;
+  }
+}
+.share-btn {
+  font-size: 15px;
+  background: $button-color;
+  color: #fff;
+  text-transform: capitalize;
+  border-radius: .25rem;
+}
+
+.share-dialog {
+
+  form.share-url {
+    margin: 10px 0;
+
+    textarea {
+      width: 100%;
+    }
+  }
+}
+
+
 .program-record-wrapping {
   -webkit-font-smoothing: antialiased; // sass-lint:disable-line no-vendor-prefixes
   margin: 2em auto 4em;

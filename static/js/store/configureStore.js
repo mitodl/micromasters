@@ -11,6 +11,7 @@ import type { Reducer } from "redux"
 
 import rootReducer from "../reducers"
 import { INITIAL_SIGNUP_STATE } from "../reducers/signup_dialog"
+import { INITIAL_SHARE_STATE } from "../reducers/share_grades_dialog";
 
 const notProd = () => process.env.NODE_ENV !== "production"
 
@@ -66,4 +67,8 @@ export const configureMainTestStore = (reducer: Reducer<*, *>) => {
 
 export const signupDialogStore = () => {
   return configureStore({ signupDialog: INITIAL_SIGNUP_STATE })
+}
+
+export const shareGradesDialogStore = () => {
+  return configureStore({ shareDialog: INITIAL_SHARE_STATE })
 }

@@ -15,8 +15,10 @@ injectTapEventPlugin()
 import CourseListWithPopover from "../components/CourseListWithPopover"
 import FacultyCarousel from "../components/FacultyCarousel"
 import { setDialogVisibility } from "../actions/signup_dialog"
-import { signupDialogStore } from "../store/configureStore"
+import { setShareDialogVisibility } from "../actions/share_grades_dialog"
+import {shareGradesDialogStore, signupDialogStore} from "../store/configureStore"
 import SignupDialog from "../containers/SignupDialog"
+import CopyLinkDialog from "../containers/CopyLinkDialog"
 
 // Program Page course list
 const courseListEl = document.querySelector("#courses-component")
@@ -50,6 +52,26 @@ const toastClose = document.querySelector(".toast .close")
 if (toastClose) {
   toastClose.onclick = () => document.querySelector(".toast").remove()
 }
+
+// Share Program Records Link Dialog
+const share_store = shareGradesDialogStore()
+const shareDialog = document.querySelector("#share-dialog")
+const openShareDialog = () => share_store.dispatch(setShareDialogVisibility(true))
+const share_open = document.querySelector(".open-share-dialog")
+if (shareDialog) {
+  share_open.onclick = openShareDialog
+  ReactDOM.render(
+    <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <Provider store={share_store}>
+        <CopyLinkDialog />
+      </Provider>
+    </MuiThemeProvider>,
+    shareDialog
+  )
+}
+
+
+
 
 // Signup dialog
 const store = signupDialogStore()
