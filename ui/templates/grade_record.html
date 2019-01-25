@@ -65,10 +65,7 @@
               <td>{{ record.title }}</td>
               <td>{{ record.edx_course_key }}</td>
               <td>{% if record.overall_grade %}{{ record.overall_grade}}%{% endif %}</td>
-              <td>{% if record.overall_grade %}
-                    {% if record.status == 'Earned' %}Pass{% else %}Fail{% endif %}
-                  {% endif %}
-              </td>
+              <td>{{ record.letter_grade }}</td>
               <td>{% if record.overall_grade %}{{ record.attempts }}{% endif %}</td>
               <td>{{ record.date_earned|date:"n/j/y" }}</td>
               <td><span class="badge {% if record.status == 'Earned' %}earned{% endif %}">{{ record.status }}</span></td>

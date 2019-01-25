@@ -12,7 +12,7 @@ from rest_framework.generics import Http404
 from cms.models import CourseCertificateSignatories, ProgramCertificateSignatories
 from dashboard.api import get_certificate_url
 from dashboard.models import ProgramEnrollment
-from dashboard.utils import get_mmtrack
+from dashboard.utils import get_mmtrack, convert_to_letter
 from grades.models import MicromastersCourseCertificate, MicromastersProgramCertificate, CombinedFinalGrade
 
 log = logging.getLogger(__name__)
@@ -147,6 +147,7 @@ class GradeRecordView(TemplateView):
                 "title": course.title,
                 "edx_course_key": best_grade.course_run.edx_course_key if best_grade else "",
                 "attempts": mmtrack.get_course_proctorate_exam_results(course).count(),
+                "letter_grade": convert_to_letter(combined_grade.grade) if combined_grade else "",
                 "status": "Earned" if get_certificate_url(mmtrack, course) else "Not Earned",
                 "date_earned": combined_grade.updated_on if combined_grade else "",
                 "overall_grade": mmtrack.get_overall_final_grade_for_course(course)

@@ -552,3 +552,18 @@ def get_mmtrack(user, program):
         program,
         edx_user_data
     )
+
+
+def convert_to_letter(grade):
+    """Convert a decimal number to letter grade"""
+    grade = int(round(grade))
+    if grade > 82.5:
+        return 'A'
+    elif grade >= 65:
+        return 'B'
+    elif grade >= 55:
+        return 'C'
+    elif grade >= 50:
+        return 'D'
+    else:
+        return 'F'
