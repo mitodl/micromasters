@@ -3,7 +3,6 @@ import { createSimpleActionHelpers } from "../lib/redux"
 import { setDialogVisibility } from "../actions/signup_dialog"
 import { connect } from "react-redux"
 import Dialog from "material-ui/Dialog"
-import { dialogActions } from "../components/inputs/util"
 
 const dialogStyle = {
   maxWidth: "500px"

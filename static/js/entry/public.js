@@ -57,16 +57,16 @@ if (toastClose) {
 }
 
 // Share Program Records Link Dialog
-const share_store = shareGradesDialogStore()
+const shareStore = shareGradesDialogStore()
 const shareDialog = document.querySelector("#share-dialog")
 const openShareDialog = () =>
-  share_store.dispatch(setShareDialogVisibility(true))
-const share_open = document.querySelector(".open-share-dialog")
+  shareStore.dispatch(setShareDialogVisibility(true))
+const shareButton = document.querySelector(".open-share-dialog")
 if (shareDialog) {
-  share_open.onclick = openShareDialog
+  shareButton.onclick = openShareDialog
   ReactDOM.render(
     <MuiThemeProvider muiTheme={getMuiTheme()}>
-      <Provider store={share_store}>
+      <Provider store={shareStore}>
         <CopyLinkDialog />
       </Provider>
     </MuiThemeProvider>,
