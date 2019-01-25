@@ -11,7 +11,7 @@ import type { Reducer } from "redux"
 
 import rootReducer from "../reducers"
 import { INITIAL_SIGNUP_STATE } from "../reducers/signup_dialog"
-import { INITIAL_SHARE_STATE } from "../reducers/share_grades_dialog";
+import { INITIAL_SHARE_STATE } from "../reducers/share_grades_dialog"
 
 const notProd = () => process.env.NODE_ENV !== "production"
 

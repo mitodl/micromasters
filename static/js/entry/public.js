@@ -16,7 +16,10 @@ import CourseListWithPopover from "../components/CourseListWithPopover"
 import FacultyCarousel from "../components/FacultyCarousel"
 import { setDialogVisibility } from "../actions/signup_dialog"
 import { setShareDialogVisibility } from "../actions/share_grades_dialog"
-import {shareGradesDialogStore, signupDialogStore} from "../store/configureStore"
+import {
+  shareGradesDialogStore,
+  signupDialogStore
+} from "../store/configureStore"
 import SignupDialog from "../containers/SignupDialog"
 import CopyLinkDialog from "../containers/CopyLinkDialog"
 
@@ -56,7 +59,8 @@ if (toastClose) {
 // Share Program Records Link Dialog
 const share_store = shareGradesDialogStore()
 const shareDialog = document.querySelector("#share-dialog")
-const openShareDialog = () => share_store.dispatch(setShareDialogVisibility(true))
+const openShareDialog = () =>
+  share_store.dispatch(setShareDialogVisibility(true))
 const share_open = document.querySelector(".open-share-dialog")
 if (shareDialog) {
   share_open.onclick = openShareDialog
@@ -69,9 +73,6 @@ if (shareDialog) {
     shareDialog
   )
 }
-
-
-
 
 // Signup dialog
 const store = signupDialogStore()

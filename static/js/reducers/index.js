@@ -42,7 +42,7 @@ import { channelDialog } from "./channel_dialog"
 import { dashboard } from "./dashboard"
 import { ALL_ERRORS_VISIBLE } from "../constants"
 import { reducers } from "../lib/redux_rest"
-import { shareDialog } from "./share_grades_dialog";
+import { shareDialog } from "./share_grades_dialog"
 
 export const INITIAL_PROFILES_STATE = {}
 export const profiles = (
