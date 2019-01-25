@@ -3,7 +3,7 @@
 }
 
 .share-options {
-  margin: 30px auto 15px;
+  margin: 30px auto 0;
   text-align: right;
 
   @media (min-width: 992px) {
@@ -28,7 +28,7 @@
   form.share-url {
     margin: 10px 0;
 
-    textarea {
+    input {
       width: 100%;
     }
   }
@@ -37,7 +37,7 @@
 
 .program-record-wrapping {
   -webkit-font-smoothing: antialiased; // sass-lint:disable-line no-vendor-prefixes
-  margin: 2em auto 4em;
+  margin: 1em auto 4em;
   background-color: #fff;
   color: #4d4b4b;
   font-weight: 400;

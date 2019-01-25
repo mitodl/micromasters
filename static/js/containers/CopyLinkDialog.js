@@ -14,7 +14,7 @@ class CopyLinkDialog extends React.Component {
   }
 
   copyToClipboard = e => {
-    this.textArea.select()
+    this.input.select()
     document.execCommand("copy")
     e.target.focus()
   }
@@ -26,7 +26,6 @@ class CopyLinkDialog extends React.Component {
         title="Share Link to Record"
         titleClassName="dialog-title"
         contentClassName="dialog share-dialog"
-        className="signup-dialog-wrapper"
         open={open}
         onRequestClose={() => setDialogVisibility(false)}
         contentStyle={dialogStyle}
@@ -39,8 +38,8 @@ class CopyLinkDialog extends React.Component {
         </p>
         <div className="share-form-wrapper">
           <form className="share-url">
-            <textarea
-              ref={textarea => (this.textArea = textarea)}
+            <input
+              ref={input => (this.input = input)}
               value={window.location.href}
             />
           </form>
