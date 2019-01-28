@@ -1,11 +1,13 @@
-import { SET_DIALOG_VISIBILITY } from "../actions/share_grades_dialog"
+import {SET_COPY_SUCCESS, SET_DIALOG_VISIBILITY} from "../actions/share_grades_dialog"
 
 export type ShareDialogState = {
-  dialogVisibility: boolean
+  shareDialogVisibility: boolean,
+  copySuccess: boolean
 }
 
 export const INITIAL_SHARE_STATE = {
-  dialogVisibility: false
+  shareDialogVisibility: false,
+  copySuccess: false
 }
 
 export const shareDialog = (
@@ -14,7 +16,9 @@ export const shareDialog = (
 ) => {
   switch (action.type) {
   case SET_DIALOG_VISIBILITY:
-    return { ...state, dialogVisibility: action.payload }
+    return { ...state, shareDialogVisibility: action.payload }
+  case SET_COPY_SUCCESS:
+    return { ...state, copySuccess: action.payload }
   default:
     return state
   }

@@ -1,6 +1,6 @@
 import React from "react"
 import { createSimpleActionHelpers } from "../lib/redux"
-import { setDialogVisibility } from "../actions/signup_dialog"
+import { setShareDialogVisibility, setCopySuccess } from "../actions/share_grades_dialog"
 import { connect } from "react-redux"
 import Dialog from "material-ui/Dialog"
 
@@ -10,24 +10,31 @@ const dialogStyle = {
 class CopyLinkDialog extends React.Component {
   props: {
     open: boolean,
-    setDialogVisibility: (b: boolean) => void
+    setShareDialogVisibility: (b: boolean) => void,
+    setCopySuccess: (b: boolean) => void,
+    copy: boolean
   }
 
   copyToClipboard = e => {
+    const { setCopySuccess } = this.props
     this.input.select()
     document.execCommand("copy")
     e.target.focus()
+    setCopySuccess(true)
   }
 
   render() {
-    const { open, setDialogVisibility } = this.props
+    const { open, setShareDialogVisibility, setCopySuccess, copy } = this.props
     return (
       <Dialog
         title="Share Link to Record"
         titleClassName="dialog-title"
         contentClassName="dialog share-dialog"
         open={open}
-        onRequestClose={() => setDialogVisibility(false)}
+        onRequestClose={() => {
+          setShareDialogVisibility(false)
+          setCopySuccess(false)
+        }}
         contentStyle={dialogStyle}
         autoScrollBodyContent={true}
       >
@@ -40,6 +47,7 @@ class CopyLinkDialog extends React.Component {
           <form className="share-url">
             <input
               ref={input => (this.input = input)}
+              readOnly={true}
               value={window.location.href}
             />
           </form>
@@ -49,8 +57,11 @@ class CopyLinkDialog extends React.Component {
                 className="mdl-button share-btn"
                 onClick={this.copyToClipboard}
               >
-                Copy
+                Copy Link
               </button>
+              <div className="copied-text">
+              { copy && "Copied!"}
+              </div>
             </div>
           )}
         </div>
@@ -60,12 +71,14 @@ class CopyLinkDialog extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  open: state.shareDialog.dialogVisibility
+  open: state.shareDialog.shareDialogVisibility,
+  copy: state.shareDialog.copySuccess
 })
 
 const mapDispatchToProps = dispatch =>
   createSimpleActionHelpers(dispatch, [
-    ["setDialogVisibility", setDialogVisibility]
+    ["setShareDialogVisibility", setShareDialogVisibility],
+    ["setCopySuccess", setCopySuccess]
   ])
 
 export default connect(mapStateToProps, mapDispatchToProps)(CopyLinkDialog)
