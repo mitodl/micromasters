@@ -70,5 +70,5 @@ export const signupDialogStore = () => {
 }
 
 export const shareGradesDialogStore = () => {
-  return configureStore({ shareDialog: INITIAL_SHARE_STATE})
+  return configureStore({ shareDialog: INITIAL_SHARE_STATE })
 }

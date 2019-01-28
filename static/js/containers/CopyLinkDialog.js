@@ -1,6 +1,9 @@
 import React from "react"
 import { createSimpleActionHelpers } from "../lib/redux"
-import { setShareDialogVisibility, setCopySuccess } from "../actions/share_grades_dialog"
+import {
+  setShareDialogVisibility,
+  setCopySuccess
+} from "../actions/share_grades_dialog"
 import { connect } from "react-redux"
 import Dialog from "material-ui/Dialog"
 
@@ -59,9 +62,7 @@ class CopyLinkDialog extends React.Component {
               >
                 Copy Link
               </button>
-              <div className="copied-text">
-              { copy && "Copied!"}
-              </div>
+              <div className="copied-text">{copy && "Copied!"}</div>
             </div>
           )}
         </div>

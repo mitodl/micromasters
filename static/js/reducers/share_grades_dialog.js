@@ -1,4 +1,7 @@
-import {SET_COPY_SUCCESS, SET_DIALOG_VISIBILITY} from "../actions/share_grades_dialog"
+import {
+  SET_COPY_SUCCESS,
+  SET_DIALOG_VISIBILITY
+} from "../actions/share_grades_dialog"
 
 export type ShareDialogState = {
   shareDialogVisibility: boolean,
@@ -7,7 +10,7 @@ export type ShareDialogState = {
 
 export const INITIAL_SHARE_STATE = {
   shareDialogVisibility: false,
-  copySuccess: false
+  copySuccess:           false
 }
 
 export const shareDialog = (
