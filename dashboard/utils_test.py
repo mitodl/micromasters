@@ -909,7 +909,7 @@ class ConvertLetterGradeTests(MockedESTestCase):
         (82.0, 'B'),
         (64.9, 'C'),
         (55, 'C'),
-        (45.5, 'D'),
+        (54.5, 'D'),
         (49.5, 'F'),
     )
     @ddt.unpack
