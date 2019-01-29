@@ -17,7 +17,7 @@ from cms.factories import ProgramCertificateSignatoriesFactory
 from courses.factories import ProgramFactory, CourseFactory, CourseRunFactory
 from dashboard.api_edx_cache import CachedEdxUserData
 from dashboard.models import CachedEnrollment, CachedCertificate, CachedCurrentGrade
-from dashboard.utils import get_mmtrack, MMTrack
+from dashboard.utils import get_mmtrack, MMTrack, convert_to_letter
 from ecommerce.factories import LineFactory, OrderFactory
 from ecommerce.models import Order
 from exams.factories import ExamProfileFactory, ExamAuthorizationFactory, ExamRunFactory
@@ -899,3 +899,20 @@ class MMTrackTest(MockedESTestCase):
         for now_value in invalid_dates:
             mmtrack.now = now_value
             assert mmtrack.get_pearson_exam_status() == ExamProfile.PROFILE_SUCCESS
+
+
+@ddt.ddt
+class ConvertLetterGradeTests(MockedESTestCase):
+    """Tests grade to letter conversion"""
+    @ddt.data(
+        (82.5, 'A'),
+        (82.0, 'B'),
+        (64.9, 'C'),
+        (55, 'C'),
+        (45.5, 'D'),
+        (49.5, 'F'),
+    )
+    @ddt.unpack
+    def test_convert_to_letter(self, grade, letter):
+        """Test that convert_to_letter is correct"""
+        assert convert_to_letter(grade) == letter
