@@ -7,9 +7,6 @@ import {
 import { connect } from "react-redux"
 import Dialog from "material-ui/Dialog"
 
-const dialogStyle = {
-  maxWidth: "500px"
-}
 class CopyLinkDialog extends React.Component {
   props: {
     open: boolean,
@@ -38,7 +35,6 @@ class CopyLinkDialog extends React.Component {
           setShareDialogVisibility(false)
           setCopySuccess(false)
         }}
-        contentStyle={dialogStyle}
         autoScrollBodyContent={true}
       >
         <p>

@@ -53,7 +53,7 @@ class App extends React.Component {
     history: Object,
     ui: UIState,
     signupDialog: Object,
-    shareDialog: Object
+    shareDialog: Object,
   }
 
   static contextTypes = {
@@ -284,7 +284,7 @@ const mapStateToProps = state => {
     programs:                 state.programs,
     courseEnrollments:        state.courseEnrollments,
     signupDialog:             state.signupDialog,
-    shareDialog:              state.shareDialog
+    shareDialog:              state.shareDialog,
   }
 }
 
