@@ -45,7 +45,7 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):
     else:
         next_relative_url = "/dashboard"
 
-    next_url = backend.strategy.session.load().get('next')
+    next_url = backend.strategy.session.get('next')
     if not next_url:
         next_url = next_relative_url
     backend.strategy.session_set('next', next_url)
