@@ -58,7 +58,7 @@ def discussions_token(request):
     return response
 
 
-@login_required(login_url="/login/edxorg/")
+@login_required
 def discussions_redirect(request):
     """
     View for setting discussions JWT token and redirecting to discussions

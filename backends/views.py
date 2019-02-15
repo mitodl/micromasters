@@ -18,12 +18,14 @@ def complete(request, *args, **kwargs):
     # social_core can get confused on which User should get the SocialAuth object.
     if request.user.is_authenticated:
         key = "{}_state".format(request.backend.name)
+        redirect_url = request.session.get("next")
         backend_state = request.session.get(key)
         logout(request)
         # logout will clear the session, this preserves the backend session state. We need to do
         # this so that this workflow will validate correctly (EdxOrgOAuth2.validate_state).
         # key is the same one used in EdxOrgAuth2.get_session_state().
         request.session[key] = backend_state
+        request.session["next"] = redirect_url
 
     # Continue with social_core pipeline
     social_complete_rtn = social_complete(request, *args, **kwargs)
