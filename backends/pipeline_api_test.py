@@ -265,6 +265,7 @@ class EdxPipelineApiTest(MockedESTestCase):
         student = UserFactory.create()
         mock_strategy = mock.Mock()
         mock_strategy.session.load.return_value = {}
+        mock_strategy.session.get.return_value = {}
         backend = edxorg.EdxOrgOAuth2(strategy=mock_strategy)
         pipeline_api.update_profile_from_edx(backend, student, {}, False, **{'edx_profile': self.mocked_edx_profile})
         mock_strategy.session_set.assert_called_with('next', '/dashboard')
@@ -278,6 +279,7 @@ class EdxPipelineApiTest(MockedESTestCase):
             Role.objects.create(user=user, role=role, program=ProgramFactory.create())
             mock_strategy = mock.Mock()
             mock_strategy.session.load.return_value = {}
+            mock_strategy.session.get.return_value = {}
             backend = edxorg.EdxOrgOAuth2(strategy=mock_strategy)
             pipeline_api.update_profile_from_edx(backend, user, {}, False, **{'edx_profile': self.mocked_edx_profile})
             mock_strategy.session_set.assert_called_with('next', '/learners')
@@ -290,6 +292,20 @@ class EdxPipelineApiTest(MockedESTestCase):
         next_url = "/x/y?a=bc"
         mock_strategy = mock.Mock()
         mock_strategy.session.load.return_value = {"next": next_url}
+        mock_strategy.session.get.return_value = {}
+        backend = edxorg.EdxOrgOAuth2(strategy=mock_strategy)
+        pipeline_api.update_profile_from_edx(backend, student, {}, False, **{'edx_profile': self.mocked_edx_profile})
+        mock_strategy.session_set.assert_called_with('next', next_url)
+
+    def test_login_redirect_next_for_user_already_logged_in(self):
+        """
+        A student should be directed to what's in the next query parameter if user is already logged in to MM.
+        """
+        student = UserFactory.create()
+        next_url = "/discussion"
+        mock_strategy = mock.Mock()
+        mock_strategy.session.load.return_value = {}
+        mock_strategy.session.get.return_value = next_url
         backend = edxorg.EdxOrgOAuth2(strategy=mock_strategy)
         pipeline_api.update_profile_from_edx(backend, student, {}, False, **{'edx_profile': self.mocked_edx_profile})
         mock_strategy.session_set.assert_called_with('next', next_url)
