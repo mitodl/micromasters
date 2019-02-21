@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.127.1
+---------------
+
+- fix `next` parameter issue for /discussions (#4253)
+
 Version 0.127.0 (Released February 20, 2019)
 ---------------
 
