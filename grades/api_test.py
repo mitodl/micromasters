@@ -10,7 +10,7 @@ from django.db.models.signals import post_save
 from django_redis import get_redis_connection
 from factory.django import mute_signals
 
-from courses.factories import CourseRunFactory
+from courses.factories import CourseRunFactory, ProgramFactory
 from dashboard.api_edx_cache import CachedEdxUserData, UserCachedRunData
 from dashboard.factories import (
     CachedCertificateFactory,
@@ -31,8 +31,8 @@ from grades.models import (
     MicromastersCourseCertificate,
     MicromastersProgramCertificate,
     CourseRunGradingStatus,
-    CombinedFinalGrade
-)
+    CombinedFinalGrade,
+    MicromastersProgramCommendation)
 from grades.factories import FinalGradeFactory, ProctoredExamGradeFactory
 from micromasters.factories import SocialUserFactory, UserFactory
 from micromasters.utils import now_in_utc
@@ -495,6 +495,39 @@ class GenerateCertificatesAPITests(MockedESTestCase):
         MicromastersProgramCertificate.objects.create(user=self.user, program=self.program)
         # should not raise an exception
         api.generate_program_certificate(self.user, self.program)
+
+
+class GenerateProgramLetterApiTests(MockedESTestCase):
+    """ Tests for letter generation """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = SocialUserFactory.create()
+        cls.program = ProgramFactory()
+
+    def test_successful_program_letter_generation(self):
+        """
+        Test happy scenario
+        """
+        with mute_signals(post_save):
+            MicromastersProgramCertificate.objects.create(user=self.user, program=self.program)
+
+        cert_qset = MicromastersProgramCommendation.objects.filter(user=self.user, program=self.program)
+        assert cert_qset.exists() is False
+        api.generate_program_letter(self.user, self.program)
+        assert cert_qset.exists() is True
+
+    def test_without_program_certificate(self):
+        """
+        Test that letter won't be created if no program certificate is not available.
+        """
+        import pdb; pdb.set_trace()
+
+        cert_qset = MicromastersProgramCommendation.objects.filter(user=self.user, program=self.program)
+        assert cert_qset.exists() is False
+
+        api.generate_program_letter(self.user, self.program)
+        assert cert_qset.exists() is True
 
 
 class UpdateCombinedFinalGradesTests(MockedESTestCase):

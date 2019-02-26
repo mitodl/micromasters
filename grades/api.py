@@ -17,7 +17,7 @@ from grades.models import (
     FinalGrade,
     FinalGradeStatus,
     MicromastersProgramCertificate,
-    CombinedFinalGrade, MicromastersCourseCertificate)
+    CombinedFinalGrade, MicromastersCourseCertificate, MicromastersProgramCommendation)
 
 CACHE_KEY_FAILED_USERS_BASE_STR = "failed_users_{0}"
 
@@ -243,6 +243,40 @@ def generate_program_certificate(user, program):
     MicromastersProgramCertificate.objects.create(user=user, program=program)
     log.info(
         'Created MM program certificate for [%s] in program [%s]',
+        user.username,
+        program.title
+    )
+
+
+def generate_program_letter(user, program):
+    """
+    Create a program letter if the user has a MM course certificate
+    for each course in the program and program is non-fa.
+
+    Args:
+        user (User): a Django user.
+        program (programs.models.Program): program where the user is enrolled.
+    """
+
+    if program.financial_aid_availability:
+        log.info(
+            'Congratulation letter can not be created for [%s], as given program [%s] if not non-fa',
+            user.username,
+            program.title
+        )
+        return
+
+    if MicromastersProgramCommendation.objects.filter(user=user, program=program).exists():
+        log.error('User [%s] already has a letter for program [%s]', user, program)
+        return
+
+    if not MicromastersProgramCertificate.objects.filter(user=user, program=program).exists():
+        log.error('User [%s] has not earned certificate for program [%s]', user, program)
+        return
+
+    MicromastersProgramCommendation.objects.create(user=user, program=program)
+    log.info(
+        'Created MM program letter for [%s] in program [%s]',
         user.username,
         program.title
     )

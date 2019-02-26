@@ -6,8 +6,12 @@ from unittest.mock import patch
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 
-from courses.factories import CourseFactory
-from grades.factories import MicromastersCourseCertificateFactory, ProctoredExamGradeFactory
+from courses.factories import CourseFactory, ProgramFactory
+from grades.factories import (
+    MicromastersCourseCertificateFactory,
+    ProctoredExamGradeFactory,
+    MicromastersProgramCertificateFactory
+)
 from profiles.factories import ProfileFactory
 from search.base import MockedESTestCase
 
@@ -38,6 +42,17 @@ class CourseCertificateTests(MockedESTestCase):
         cert.save()
         generate_program_cert_mock.assert_called_once_with(self.user, course.program)
 
+    @patch('grades.signals.generate_program_letter', autospec=True)
+    def test_create_program_certificate(self, generate_program_letter_mock, mock_on_commit):
+        """
+        Test that generate_program_certificate is called when a program
+        certificate is created
+        """
+        program = ProgramFactory.create()
+        cert = MicromastersProgramCertificateFactory.create(user=self.user, program=program)
+        generate_program_letter_mock.assert_called_once_with(self.user, program)
+        cert.save()
+        generate_program_letter_mock.assert_called_once_with(self.user, program)
 
 # pylint: disable=unused-argument
 @patch('search.signals.transaction.on_commit', side_effect=lambda callback: callback())

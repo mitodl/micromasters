@@ -1,6 +1,7 @@
 """
 Models for the grades app
 """
+import uuid
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -191,6 +192,26 @@ class MicromastersProgramCertificate(TimestampedModel):
             user=self.user,
             program=self.program,
             hash=self.hash,
+        )
+
+
+class MicromastersProgramCommendation(TimestampedModel):
+    """
+    Model for storing MicroMasters program congratulation letters
+    """
+    program = models.ForeignKey(Program, null=False, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+
+    class Meta:
+        unique_together = ('user', 'program')
+
+
+    def __str__(self):
+        return 'Program letter for user={user}, program={program}, uuid="{uuid}"'.format(
+            user=self.user,
+            program=self.program,
+            uuid=self.uuid,
         )
 
 

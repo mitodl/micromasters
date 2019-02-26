@@ -106,6 +106,41 @@ class ProgramCertificateView(CertificateView):
         return context
 
 
+class ProgramLetterView(TemplateView):
+    """
+    View for program letters
+    """
+
+    template_name = "program_letter.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        letter = (
+            MicromastersProgramCertificate.objects.filter(uuid=kwargs.get('letter_uuid')).
+            select_related('program', 'user__profile').
+            first()
+        )
+        if not letter:
+            raise Http404
+
+        program = letter.program
+
+        signatories = ProgramCertificateSignatories.objects.filter(program_page__program=program)
+        if not signatories.exists():
+            log.error(
+                'Program "%s" (id: %s) does not have any signatories set in the CMS.',
+                program.title,
+                program.id
+            )
+            raise Http404
+
+        context['program_title'] = program.title
+        context['name'] = letter.user.profile.full_name
+        context['signatories'] = list(signatories)
+        context['letter'] = letter
+        return context
+
+
 class GradeRecordView(TemplateView):
     """
     View for grade records
