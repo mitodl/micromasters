@@ -150,7 +150,7 @@ class GradeRecordView(TemplateView):
                 "attempts": mmtrack.get_course_proctorate_exam_results(course).count(),
                 "letter_grade": convert_to_letter(combined_grade.grade) if combined_grade else "",
                 "status": "Earned" if get_certificate_url(mmtrack, course) else "Not Earned",
-                "date_earned": combined_grade.updated_on if combined_grade else "",
+                "date_earned": combined_grade.created_on if combined_grade else "",
                 "overall_grade": mmtrack.get_overall_final_grade_for_course(course)
             })
 
