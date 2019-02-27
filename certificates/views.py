@@ -9,12 +9,16 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
 from rest_framework.generics import Http404
 
-from cms.models import CourseCertificateSignatories, ProgramCertificateSignatories
+from cms.models import CourseCertificateSignatories, ProgramCertificateSignatories, ProgramLetterSignatories
 from dashboard.api import get_certificate_url
 from dashboard.models import ProgramEnrollment
 from dashboard.utils import get_mmtrack, convert_to_letter
-from grades.models import MicromastersCourseCertificate, MicromastersProgramCertificate, CombinedFinalGrade
-
+from grades.models import (
+    MicromastersCourseCertificate,
+    MicromastersProgramCertificate,
+    MicromastersProgramCommendation,
+    CombinedFinalGrade,
+)
 log = logging.getLogger(__name__)
 
 
@@ -116,16 +120,17 @@ class ProgramLetterView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         letter = (
-            MicromastersProgramCertificate.objects.filter(uuid=kwargs.get('letter_uuid')).
+            MicromastersProgramCommendation.objects.filter(uuid=kwargs.get('letter_uuid')).
             select_related('program', 'user__profile').
             first()
         )
+
         if not letter:
             raise Http404
 
         program = letter.program
 
-        signatories = ProgramCertificateSignatories.objects.filter(program_page__program=program)
+        signatories = ProgramLetterSignatories.objects.filter(program_page__program=program)
         if not signatories.exists():
             log.error(
                 'Program "%s" (id: %s) does not have any signatories set in the CMS.',
