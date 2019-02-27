@@ -54,6 +54,7 @@ class CourseCertificateTests(MockedESTestCase):
         cert.save()
         generate_program_letter_mock.assert_called_once_with(self.user, program)
 
+
 # pylint: disable=unused-argument
 @patch('search.signals.transaction.on_commit', side_effect=lambda callback: callback())
 class ProctoredExamGradesTests(MockedESTestCase):

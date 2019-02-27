@@ -206,7 +206,6 @@ class MicromastersProgramCommendation(TimestampedModel):
     class Meta:
         unique_together = ('user', 'program')
 
-
     def __str__(self):
         return 'Program letter for user={user}, program={program}, uuid="{uuid}"'.format(
             user=self.user,

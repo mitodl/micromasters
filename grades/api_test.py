@@ -521,7 +521,8 @@ class GenerateProgramLetterApiTests(MockedESTestCase):
         """
         Test that letter won't be created if no program certificate is not available.
         """
-        import pdb; pdb.set_trace()
+        with mute_signals(post_save):
+            MicromastersProgramCertificate.objects.create(user=self.user, program=self.program)
 
         cert_qset = MicromastersProgramCommendation.objects.filter(user=self.user, program=self.program)
         assert cert_qset.exists() is False
