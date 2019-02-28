@@ -1,20 +1,99 @@
 {% extends "base.html" %}
 {% load i18n static wagtailimages_tags %}
 
-{% block extrahead %}
-<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600;" />
-{% endblock %}
-
 {% block title %}{% trans "MITx MicroMasters" %}{% endblock %}
 
 {% block content %}
 
-<div>
+<div class="letter">
 
+    <div class="letter-logo">
+        <!--TODO replace mit-logo with original-->
+        <img class="mit-logo" src="{% static 'images/mitx_logo.png' %}" alt="">
+        <img class="logistics-logo" src="{% static 'images/mit_center_for_trans_and_logistics_logo.png' %}" alt="">
+    </div>
 
-    <!--TODO Template will go here-->
+    <div class="letter-content">
 
+        <p>
+            <strong>Dear {{ name }},</strong>
+        </p>
 
+        <p>
+            Congratulations on your success in achieving the MITx MicroMasters in Supply Chain Management credential. We
+            are
+            writing today to acknowledge the work, determination, and commitment that you have demonstrated in earning
+            this
+            credential.
+        </p>
+
+        <p>
+            As a credential-holder, you are considered to have completed the equivalent of a full semester of graduate
+            coursework in Supply Chain Management at the Massachusetts Institute of Technology. The credential you now
+            hold
+            represents a graduate-level study in Engineering or Business and Management. All course material, videos,
+            and
+            transcripts you completed were conducted in English. Excellent work.
+        </p>
+
+        <p>
+            We understand that it takes determination to accomplish the credential. Each of the five courses spans 13
+            weeks
+            with eight content weeks, two assessment weeks, and three preparation weeks. The average time spent by
+            learners
+            like you is 8-12 hours per week or 104 to 156 hours per course. The total expected time investment for the
+            MITx
+            MicroMasters Credential in SCM ranges from 520 to 780 hours including the sixth course, the Comprehensive
+            Final
+            (CFx) preparation and exam.
+        </p>
+
+        <p>
+            We would also like to acknowledge your commitment to completing the course work, interacting with the course
+            community, and achieving your learning goals in a completely online environment. You may have had
+            professional
+            and personal obligations competing for your attention and were still able to meet the goal you made when
+            signing
+            up for the course. Learning online requires a special commitment, planning, and vision to achieve. That is
+            different from an on-campus course, where you have a more immediate access to peers and instructors for
+            support.
+            Nice Job.
+        </p>
+
+        <p>
+            Thank you for being a part of the MITx MicroMasters Credential in Supply Chain Management program. We wish
+            you
+            the best in all or your endeavors and welcome you to participate in credential-holder and on-campus
+            activities
+            as they become available.
+        </p>
+
+        <p>
+            Cordially Yours,
+        </p>
+
+        <div class="signatories">
+            {% for signatory in signatories %}
+            <div class="signatory">
+                <div class="sig-image">
+                    {% image signatory.signature_image max-200x100 %}
+                </div>
+
+                <div class="name">{{ signatory.name }}</div>
+                <div>{{ signatory.title_line_1 }}</div>
+                {% if signatory.title_line_2 %}
+                <div>{{ signatory.title_line_2 }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+    <div class="program-title">
+        MITx MicroMasters in {{ program_title }}
+    </div>
 </div>
 
 {% include "footer.html" %}
