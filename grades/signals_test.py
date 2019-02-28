@@ -6,11 +6,10 @@ from unittest.mock import patch
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 
-from courses.factories import CourseFactory, ProgramFactory
+from courses.factories import CourseFactory
 from grades.factories import (
     MicromastersCourseCertificateFactory,
     ProctoredExamGradeFactory,
-    MicromastersProgramCertificateFactory
 )
 from profiles.factories import ProfileFactory
 from search.base import MockedESTestCase
@@ -43,16 +42,16 @@ class CourseCertificateTests(MockedESTestCase):
         generate_program_cert_mock.assert_called_once_with(self.user, course.program)
 
     @patch('grades.signals.generate_program_letter', autospec=True)
-    def test_create_program_certificate(self, generate_program_letter_mock, mock_on_commit):
+    def test_create_program_letter(self, generate_program_letter_mock, mock_on_commit):
         """
-        Test that generate_program_certificate is called when a program
+        Test that generate_program_letter is called when a course
         certificate is created
         """
-        program = ProgramFactory.create()
-        cert = MicromastersProgramCertificateFactory.create(user=self.user, program=program)
-        generate_program_letter_mock.assert_called_once_with(self.user, program)
+        course = CourseFactory.create()
+        cert = MicromastersCourseCertificateFactory.create(user=self.user, course=course)
+        generate_program_letter_mock.assert_called_once_with(self.user, course.program)
         cert.save()
-        generate_program_letter_mock.assert_called_once_with(self.user, program)
+        generate_program_letter_mock.assert_called_once_with(self.user, course.program)
 
 
 # pylint: disable=unused-argument

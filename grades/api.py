@@ -270,8 +270,14 @@ def generate_program_letter(user, program):
         log.error('User [%s] already has a letter for program [%s]', user, program)
         return
 
-    if not MicromastersProgramCertificate.objects.filter(user=user, program=program).exists():
-        log.error('User [%s] has not earned certificate for program [%s]', user, program)
+    courses_in_program_ids = set(program.course_set.all().values_list('id', flat=True))
+
+    num_courses_with_cert = MicromastersCourseCertificate.objects.filter(
+        user=user,
+        course_id__in=courses_in_program_ids
+    ).values_list('course__id', flat=True).distinct().count()
+
+    if len(courses_in_program_ids) > num_courses_with_cert:
         return
 
     MicromastersProgramCommendation.objects.create(user=user, program=program)
