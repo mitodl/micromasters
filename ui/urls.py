@@ -41,7 +41,7 @@ urlpatterns = [
     url(r'^certificate/program/(?P<certificate_hash>[-\w.]+)?/?', ProgramCertificateView.as_view(),
         name='program-certificate'),
     url(r'^letter/program/(?P<letter_uuid>[-\w.]+)?/?', ProgramLetterView.as_view(),
-        name='program-letter'),
+        name='program_letter'),
     url(r'^records/programs/shared/(?P<record_hash>[-\w.]+)?/?', GradeRecordView.as_view(),
         name='grade_records'),
     url(r'^{}$'.format(TERMS_OF_SERVICE_URL.lstrip("/")), terms_of_service, name='terms_of_service'),

@@ -1822,7 +1822,8 @@ class InfoProgramTest(MockedESTestCase):
             "pearson_exam_status": ExamProfile.PROFILE_IN_PROGRESS,
             "grade_average": 91,
             "certificate": "",
-            "grade_records_url": reverse('grade_records', args=[self.program_enrollment.hash])
+            "grade_records_url": reverse('grade_records', args=[self.program_enrollment.hash]),
+            "program_letter_url": reverse('program_letter', args=[self.program_enrollment.uuid])
         }
         self.assertEqual(res, expected_data)
 

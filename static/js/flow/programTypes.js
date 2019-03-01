@@ -38,6 +38,7 @@ export type Program = {
   grade_average:              ?number,
   certificate:                string,
   grade_records_url:          string,
+  program_letter_url:         string,
 }
 
 export type ProctoredExamResult = {

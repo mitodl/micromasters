@@ -75,6 +75,19 @@ export const gradeRecordsLink = (url: string): React$Element<*> => {
   )
 }
 
+export const programLetterLink = (url: string): React$Element<*> => {
+  return (
+    <a
+      className="mm-minor-action"
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      View Program Letter
+    </a>
+  )
+}
+
 export default class ProgressWidget extends React.Component {
   props: {
     program: Program
@@ -105,6 +118,10 @@ export default class ProgressWidget extends React.Component {
         {SETTINGS.FEATURES.PROGRAM_RECORD_LINK &&
           program.financial_aid_availability &&
           gradeRecordsLink(program.grade_records_url)}
+
+        {SETTINGS.FEATURES.ENABLE_PROGRAM_LETTER &&
+           !program.financial_aid_availability &&
+          programLetterLink(program.program_letter_url)}
       </Card>
     )
   }
@@ -120,6 +137,9 @@ export default class ProgressWidget extends React.Component {
         {SETTINGS.FEATURES.PROGRAM_RECORD_LINK &&
           program.financial_aid_availability &&
           gradeRecordsLink(program.grade_records_url)}
+        {SETTINGS.FEATURES.ENABLE_PROGRAM_LETTER &&
+          !program.financial_aid_availability &&
+          programLetterLink(program.program_letter_url)}
       </Card>
     )
   }

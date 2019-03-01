@@ -200,6 +200,8 @@ def get_info_for_program(mmtrack):
     if mmtrack.financial_aid_available:
         data["financial_aid_user_info"] = FinancialAidDashboardSerializer.serialize(mmtrack.user, mmtrack.program)
         data["grade_records_url"] = reverse('grade_records', args=[mmtrack.get_program_enrollment().hash])
+    else:
+        data["program_letter_url"] = reverse('program_letter', args=[mmtrack.get_program_enrollment().uuid])
     for course in mmtrack.program.course_set.all():
         data['courses'].append(
             get_info_for_course(course, mmtrack)
