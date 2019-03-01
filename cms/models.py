@@ -184,6 +184,16 @@ class ProgramPage(Page):
             'Thumbnails are cropped down to this size, preserving aspect ratio.'
         ),
     )
+    program_letter_logo = models.ForeignKey(
+        Image,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        help_text=(
+            'Logo will be appeared on program letter. '
+        ),
+    )
     subpage_types = ['FaqsPage', 'ProgramTabPage']
     content_panels = Page.content_panels + [
         FieldPanel('description', classname="full"),
@@ -194,6 +204,7 @@ class ProgramPage(Page):
         FieldPanel('program_contact_email'),
         FieldPanel('background_image'),
         FieldPanel('title_over_image'),
+        FieldPanel('program_letter_logo'),
         FieldPanel('faculty_description'),
         InlinePanel('courses', label='Program Courses'),
         InlinePanel('info_links', label='More Info Links'),
