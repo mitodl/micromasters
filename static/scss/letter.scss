@@ -24,10 +24,10 @@
   }
 
   .signatories {
-    display: -webkit-inline-box;
-
+  
     .signatory {
       margin-right: 15px;
+      display: inline-block;
     }
 
     .sig-image {
