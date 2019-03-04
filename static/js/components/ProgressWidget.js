@@ -76,16 +76,18 @@ export const gradeRecordsLink = (url: string): React$Element<*> => {
 }
 
 export const programLetterLink = (url: string): React$Element<*> => {
-  return (
-    <a
-      className="mm-minor-action"
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      View Program Letter
-    </a>
-  )
+  if (url) {
+    return (
+      <a
+        className="mm-minor-action"
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        View Program Letter
+      </a>
+    )
+  }
 }
 
 export default class ProgressWidget extends React.Component {
