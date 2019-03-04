@@ -18,8 +18,8 @@ from grades.models import (
     ProctoredExamGrade,
     MicromastersProgramCertificate,
     CombinedFinalGrade,
-    MicromastersCourseCertificate
-)
+    MicromastersCourseCertificate,
+    MicromastersProgramCommendation)
 from exams.models import (
     ExamProfile,
     ExamAuthorization,
@@ -533,6 +533,31 @@ class MMTrack:
         if certificate is None:
             return ""
         return reverse('program-certificate', args=[certificate.hash])
+
+    def program_letter_qset(self):
+        """
+        Returns the queryset of micromasters program letter
+
+        Returns:
+            qset: a queryset of grades.models.MicromastersProgramCommendation
+        """
+        return MicromastersProgramCommendation.objects.filter(user=self.user, program=self.program)
+
+    def get_program_letter_url(self):
+        """
+        Returns a string with program letter url
+
+        Returns:
+            str: a string with url or empty string
+        """
+        letter = self.program_letter_qset().annotate(
+            signatories=Count('program__programpage__program_letter_signatories')
+        ).filter(signatories__gt=0).first()
+
+        if not letter:
+            return ""
+        else:
+            return reverse('program_letter', args=[letter.uuid])
 
 
 def get_mmtrack(user, program):

@@ -1746,6 +1746,7 @@ class InfoProgramTest(MockedESTestCase):
             'get_pearson_exam_status.return_value': ExamProfile.PROFILE_SUCCESS,
             'calculate_final_grade_average.return_value': 91,
             'get_program_certificate_url.return_value': "",
+            'get_program_letter_url.return_value': "",
         })
         mock_info_course.return_value = {'position_in_program': 1}
         res = api.get_info_for_program(self.mmtrack)
@@ -1760,6 +1761,8 @@ class InfoProgramTest(MockedESTestCase):
             "pearson_exam_status": ExamProfile.PROFILE_SUCCESS,
             "grade_average": 91,
             "certificate": "",
+            "program_letter_url": "",
+
         }
         self.assertEqual(res, expected_data)
 
@@ -1772,6 +1775,7 @@ class InfoProgramTest(MockedESTestCase):
             'get_pearson_exam_status.return_value': ExamProfile.PROFILE_INVALID,
             'calculate_final_grade_average.return_value': 91,
             'get_program_certificate_url.return_value': "",
+            'get_program_letter_url.return_value': "",
         })
         res = api.get_info_for_program(self.mmtrack)
         assert mock_info_course.called is False
@@ -1784,6 +1788,7 @@ class InfoProgramTest(MockedESTestCase):
             "pearson_exam_status": ExamProfile.PROFILE_INVALID,
             "grade_average": 91,
             "certificate": "",
+            "program_letter_url": "",
         }
         self.assertEqual(res, expected_data)
 
@@ -1823,7 +1828,6 @@ class InfoProgramTest(MockedESTestCase):
             "grade_average": 91,
             "certificate": "",
             "grade_records_url": reverse('grade_records', args=[self.program_enrollment.hash]),
-            "program_letter_url": reverse('program_letter', args=[self.program_enrollment.uuid])
         }
         self.assertEqual(res, expected_data)
 
