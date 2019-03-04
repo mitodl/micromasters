@@ -120,7 +120,7 @@ export default class ProgressWidget extends React.Component {
           gradeRecordsLink(program.grade_records_url)}
 
         {SETTINGS.FEATURES.ENABLE_PROGRAM_LETTER &&
-           !program.financial_aid_availability &&
+          !program.financial_aid_availability &&
           programLetterLink(program.program_letter_url)}
       </Card>
     )

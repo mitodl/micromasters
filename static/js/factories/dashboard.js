@@ -131,7 +131,7 @@ export const makeProgram = (): Program => {
       PEARSON_STATUSES[Math.floor(Math.random() * PEARSON_STATUSES.length)],
     grade_average:      Math.floor(Math.random() * 100),
     certificate:        "",
-    grade_records_url:  ""
+    grade_records_url:  "",
     program_letter_url: ""
   }
 }
