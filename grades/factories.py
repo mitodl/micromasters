@@ -26,6 +26,7 @@ from grades.models import (
     ProctoredExamGrade,
     MicromastersCourseCertificate,
     MicromastersProgramCertificate,
+    MicromastersProgramCommendation,
 )
 from micromasters.factories import UserFactory
 from micromasters.utils import now_in_utc, generate_md5
@@ -81,3 +82,13 @@ class MicromastersProgramCertificateFactory(DjangoModelFactory):
 
     class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods,old-style-class
         model = MicromastersProgramCertificate
+
+
+class MicromastersProgramCommendationFactory(DjangoModelFactory):
+    """Factory for MicromastersProgramCommendation"""
+
+    user = SubFactory(UserFactory)
+    program = SubFactory(ProgramFactory)
+
+    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods,old-style-class
+        model = MicromastersProgramCommendation

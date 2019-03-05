@@ -9,9 +9,17 @@ from rest_framework import status
 
 from dashboard.factories import ProgramEnrollmentFactory
 from micromasters.utils import is_subset_dict
-from grades.factories import MicromastersCourseCertificateFactory, MicromastersProgramCertificateFactory
-from cms.factories import CourseCertificateSignatoriesFactory, ProgramCertificateSignatoriesFactory
-
+from grades.factories import (
+    MicromastersCourseCertificateFactory,
+    MicromastersProgramCertificateFactory,
+    MicromastersProgramCommendationFactory,
+)
+from cms.factories import (
+    CourseCertificateSignatoriesFactory,
+    ProgramCertificateSignatoriesFactory,
+    ProgramLetterSignatoryFactory,
+    ImageFactory,
+)
 
 pytestmark = [
     pytest.mark.usefixtures('mocked_elasticsearch'),
@@ -27,6 +35,11 @@ def certificate_url(certificate_hash):
 def program_certificate_url(certificate_hash):
     """Helper method to generate a certificate URL"""
     return reverse("program-certificate", kwargs=dict(certificate_hash=certificate_hash))
+
+
+def program_letter_url(letter_uuid):
+    """Helper method to generate a letter URL"""
+    return reverse('program_letter', args=[letter_uuid])
 
 
 def test_bad_cert_hash_404(client):
@@ -100,3 +113,44 @@ def test_program_record(client):
         },
         resp.context_data
     )
+
+
+def test_program_letter_without_signatories(client):
+    """Verify that view returns 404 if no signatory available."""
+    letter = MicromastersProgramCommendationFactory.create()
+    resp = client.get(program_letter_url(letter.uuid))
+    assert resp.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_program_letter_without_logo(client):
+    """Verify that view returns 404 if no letter logo available."""
+    letter = MicromastersProgramCommendationFactory.create()
+    ProgramLetterSignatoryFactory.create(program_page__program=letter.program)
+    resp = client.get(program_letter_url(letter.uuid))
+    assert resp.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_valid_program_letter(client):
+    """Test that a request for a valid program letter with signatories results in a 200"""
+    letter = MicromastersProgramCommendationFactory.create()
+    program = letter.program
+    signatory = ProgramLetterSignatoryFactory.create(program_page__program=program)
+    program_letter_logo = ImageFactory()
+    signatory.program_page.program_letter_logo = program_letter_logo
+    signatory.program_page.save()
+
+    resp = client.get(program_letter_url(letter.uuid))
+    assert resp.status_code == status.HTTP_200_OK
+    assert is_subset_dict(
+        {
+            'program_title': program.title,
+            'letter_logo': program_letter_logo,
+            'name': letter.user.profile.full_name,
+            'signatories': [signatory],
+            'letter': letter,
+
+        },
+
+        resp.context_data
+    )
+    assert reverse('program_letter', args=[letter.uuid]) in resp.content.decode('utf-8')

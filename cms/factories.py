@@ -17,6 +17,7 @@ from cms.models import (
     SemesterDate,
     CourseCertificateSignatories,
     ProgramCertificateSignatories,
+    ProgramLetterSignatory,
 )
 from courses.factories import ProgramFactory, CourseFactory
 
@@ -132,6 +133,20 @@ class ProgramCertificateSignatoriesFactory(DjangoModelFactory):
 
     class Meta:
         model = ProgramCertificateSignatories
+
+    program_page = factory.SubFactory(ProgramPageFactory)
+    name = factory.Faker('name')
+    title_line_1 = factory.Faker('text')
+    title_line_2 = factory.Faker('text')
+    organization = factory.Faker('text')
+    signature_image = factory.SubFactory(ImageFactory)
+
+
+class ProgramLetterSignatoryFactory(DjangoModelFactory):
+    """Factory for ProgramLetterSignatory"""
+
+    class Meta:
+        model = ProgramLetterSignatory
 
     program_page = factory.SubFactory(ProgramPageFactory)
     name = factory.Faker('name')
