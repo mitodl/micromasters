@@ -1761,8 +1761,6 @@ class InfoProgramTest(MockedESTestCase):
             "pearson_exam_status": ExamProfile.PROFILE_SUCCESS,
             "grade_average": 91,
             "certificate": "",
-            "program_letter_url": "",
-
         }
         self.assertEqual(res, expected_data)
 
@@ -1788,7 +1786,6 @@ class InfoProgramTest(MockedESTestCase):
             "pearson_exam_status": ExamProfile.PROFILE_INVALID,
             "grade_average": 91,
             "certificate": "",
-            "program_letter_url": "",
         }
         self.assertEqual(res, expected_data)
 

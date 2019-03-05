@@ -9,8 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
 from rest_framework.generics import Http404
 
-from cms.models import CourseCertificateSignatories, ProgramCertificateSignatories, ProgramLetterSignatory, \
-    ProgramPage
+from cms.models import CourseCertificateSignatories, ProgramCertificateSignatories, ProgramLetterSignatory
 from dashboard.api import get_certificate_url
 from dashboard.models import ProgramEnrollment
 from dashboard.utils import get_mmtrack, convert_to_letter

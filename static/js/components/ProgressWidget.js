@@ -76,18 +76,16 @@ export const gradeRecordsLink = (url: string): React$Element<*> => {
 }
 
 export const programLetterLink = (url: string): React$Element<*> => {
-  if (url) {
-    return (
-      <a
-        className="mm-minor-action"
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        View Program Letter
-      </a>
-    )
-  }
+  return (
+    <a
+      className="mm-minor-action"
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      View Program Letter
+    </a>
+  )
 }
 
 export default class ProgressWidget extends React.Component {
@@ -123,6 +121,7 @@ export default class ProgressWidget extends React.Component {
 
         {SETTINGS.FEATURES.ENABLE_PROGRAM_LETTER &&
           !program.financial_aid_availability &&
+          program.program_letter_url &&
           programLetterLink(program.program_letter_url)}
       </Card>
     )
@@ -141,6 +140,7 @@ export default class ProgressWidget extends React.Component {
           gradeRecordsLink(program.grade_records_url)}
         {SETTINGS.FEATURES.ENABLE_PROGRAM_LETTER &&
           !program.financial_aid_availability &&
+          program.program_letter_url &&
           programLetterLink(program.program_letter_url)}
       </Card>
     )
