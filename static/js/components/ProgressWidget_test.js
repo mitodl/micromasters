@@ -159,4 +159,16 @@ describe("ProgressWidget", () => {
       "Congratulations!"
     )
   })
+  it("should display program letter link when a letter link exists", () => {
+    program["program_letter_url"] = "program_letter_url"
+    const wrapper = shallow(<ProgressWidget program={program} />)
+
+    assert.equal(
+      wrapper
+        .find(".mm-minor-action")
+        .children()
+        .text(),
+      "View Program Letter"
+    )
+  })
 })
