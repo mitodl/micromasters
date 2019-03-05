@@ -28,7 +28,8 @@ def handle_for_createprogram_letters(sender, instance, created, **kwargs):  # py
     if created:
         user = instance.user
         program = instance.course.program
-        transaction.on_commit(lambda: generate_program_letter(user, program))
+        if not program.financial_aid_availability:
+            transaction.on_commit(lambda: generate_program_letter(user, program))
 
 
 @receiver(post_save, sender=ProctoredExamGrade, dispatch_uid="examgrade_post_save")

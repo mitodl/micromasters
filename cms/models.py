@@ -191,7 +191,7 @@ class ProgramPage(Page):
         on_delete=models.SET_NULL,
         related_name='+',
         help_text=(
-            'Logo will be appeared on program letter. '
+            'The logo that will appear at the top of the program congratulation letter.'
         ),
     )
     subpage_types = ['FaqsPage', 'ProgramTabPage']
@@ -459,7 +459,7 @@ class ProgramCertificateSignatories(Orderable):
     ]
 
 
-class ProgramLetterSignatories(Orderable):
+class ProgramLetterSignatory(Orderable):
     """
     Signatories to appear on MicroMasters congratulation letter
     """

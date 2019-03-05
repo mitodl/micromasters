@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
 from rest_framework.generics import Http404
 
-from cms.models import CourseCertificateSignatories, ProgramCertificateSignatories, ProgramLetterSignatories, \
+from cms.models import CourseCertificateSignatories, ProgramCertificateSignatories, ProgramLetterSignatory, \
     ProgramPage
 from dashboard.api import get_certificate_url
 from dashboard.models import ProgramEnrollment
@@ -131,7 +131,8 @@ class ProgramLetterView(TemplateView):
 
         program = letter.program
 
-        signatories = ProgramLetterSignatories.objects.filter(program_page__program=program)
+        signatories = ProgramLetterSignatory.objects.filter(program_page__program=program).select_related(
+            'program_page__program')
         if not signatories.exists():
             log.error(
                 'Program "%s" (id: %s) does not have any signatories set in the CMS.',
@@ -140,9 +141,9 @@ class ProgramLetterView(TemplateView):
             )
             raise Http404
 
-        program_page = ProgramPage.objects.filter(program=program).first()
+        program_letter_logo = signatories[0].program_page.program_letter_logo
 
-        if not program_page:
+        if not program_letter_logo:
             log.error(
                 'Program "%s" (id: %s) does not have letter logo set in the CMS.',
                 program.title,
@@ -150,11 +151,13 @@ class ProgramLetterView(TemplateView):
             )
             raise Http404
 
-        context['program_title'] = program.title
-        context['letter_logo'] = program_page.program_letter_logo
-        context['name'] = letter.user.profile.full_name
-        context['signatories'] = list(signatories)
-        context['letter'] = letter
+        context.update({
+            'program_title': program.title,
+            'letter_logo': program_letter_logo,
+            'name': letter.user.profile.full_name,
+            'signatories': list(signatories),
+            'letter': letter,
+        })
         return context
 
 

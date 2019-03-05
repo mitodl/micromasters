@@ -259,25 +259,21 @@ def generate_program_letter(user, program):
     """
 
     if program.financial_aid_availability:
-        log.info(
-            'Congratulation letter can not be created for [%s], as given program [%s] if not non-fa',
-            user.username,
-            program.title
-        )
+        log.error('Congratulation letter is only available for non-financial aid programs.')
         return
 
     if MicromastersProgramCommendation.objects.filter(user=user, program=program).exists():
         log.error('User [%s] already has a letter for program [%s]', user, program)
         return
 
-    courses_in_program_ids = set(program.course_set.all().values_list('id', flat=True))
+    program_course_ids = set(program.course_set.all().values_list('id', flat=True))
 
     num_courses_with_cert = MicromastersCourseCertificate.objects.filter(
         user=user,
-        course_id__in=courses_in_program_ids
+        course_id__in=program_course_ids
     ).values_list('course__id', flat=True).distinct().count()
 
-    if len(courses_in_program_ids) > num_courses_with_cert:
+    if len(program_course_ids) > num_courses_with_cert:
         return
 
     MicromastersProgramCommendation.objects.create(user=user, program=program)
