@@ -13,7 +13,7 @@ from django.urls import reverse
 import pytz
 import ddt
 
-from cms.factories import ProgramCertificateSignatoriesFactory, ProgramLetterSignatoryFactory
+from cms.factories import ProgramCertificateSignatoriesFactory, ProgramLetterSignatoryFactory, ImageFactory
 from courses.factories import ProgramFactory, CourseFactory, CourseRunFactory
 from dashboard.api_edx_cache import CachedEdxUserData
 from dashboard.models import CachedEnrollment, CachedCertificate, CachedCurrentGrade
@@ -747,7 +747,18 @@ class MMTrackTest(MockedESTestCase):
         )
         assert mmtrack.get_program_letter_url() == ""
 
-        ProgramLetterSignatoryFactory.create(program_page__program=letter.program)
+        signatory = ProgramLetterSignatoryFactory.create(program_page__program=letter.program)
+        assert mmtrack.get_program_letter_url() == ""
+
+        program_page = signatory.program_page
+
+        program_page.program_letter_text = "<p> Some example test </p>"
+        program_page.save()
+        assert mmtrack.get_program_letter_url() == ""
+
+        program_page.program_letter_logo = ImageFactory()
+        program_page.save()
+
         assert mmtrack.get_program_letter_url() == reverse('program_letter', args=[letter.uuid])
 
     def test_get_best_final_grade_for_course(self):

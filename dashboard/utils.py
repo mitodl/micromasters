@@ -550,9 +550,10 @@ class MMTrack:
         Returns:
             str: a string with url or empty string
         """
-        letter = self.program_letter_qset().annotate(
-            signatories=Count('program__programpage__program_letter_signatories')
-        ).filter(signatories__gt=0).first()
+
+        letter = self.program_letter_qset().filter(program__programpage__program_letter_text__isnull=False,
+                                                   program__programpage__program_letter_logo__isnull=False).annotate(
+            signatories=Count('program__programpage__program_letter_signatories')).filter(signatories__gt=0).first()
 
         if not letter:
             return ""
