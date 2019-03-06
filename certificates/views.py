@@ -150,10 +150,21 @@ class ProgramLetterView(TemplateView):
             )
             raise Http404
 
+        program_letter_text = signatories[0].program_page.program_letter_text
+
+        if not program_letter_logo:
+            log.error(
+                'Program "%s" (id: %s) does not have letter text set in the CMS.',
+                program.title,
+                program.id
+            )
+            raise Http404
+
         context.update({
             'program_title': program.title,
             'letter_logo': program_letter_logo,
             'name': letter.user.profile.full_name,
+            'letter_text': program_letter_text,
             'signatories': list(signatories),
             'letter': letter,
         })

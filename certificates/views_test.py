@@ -4,6 +4,7 @@ Tests for certificate views
 # pylint: disable=redefined-outer-name
 
 import pytest
+import factory
 from django.urls import reverse
 from rest_framework import status
 
@@ -130,6 +131,17 @@ def test_program_letter_without_logo(client):
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
 
+def test_program_letter_without_text(client):
+    """Verify that view returns 404 if no letter text available."""
+    letter = MicromastersProgramCommendationFactory.create()
+    signatory = ProgramLetterSignatoryFactory.create(program_page__program=letter.program)
+    program_letter_logo = ImageFactory()
+    signatory.program_page.program_letter_logo = program_letter_logo
+    signatory.program_page.save()
+    resp = client.get(program_letter_url(letter.uuid))
+    assert resp.status_code == status.HTTP_404_NOT_FOUND
+
+
 def test_valid_program_letter(client):
     """Test that a request for a valid program letter with signatories results in a 200"""
     letter = MicromastersProgramCommendationFactory.create()
@@ -137,6 +149,8 @@ def test_valid_program_letter(client):
     signatory = ProgramLetterSignatoryFactory.create(program_page__program=program)
     program_letter_logo = ImageFactory()
     signatory.program_page.program_letter_logo = program_letter_logo
+    letter_text = factory.Faker('text')
+    signatory.program_page.program_letter_text = letter_text
     signatory.program_page.save()
 
     resp = client.get(program_letter_url(letter.uuid))
@@ -146,6 +160,7 @@ def test_valid_program_letter(client):
             'program_title': program.title,
             'letter_logo': program_letter_logo,
             'name': letter.user.profile.full_name,
+            'letter_text': letter_text,
             'signatories': [signatory],
             'letter': letter,
 

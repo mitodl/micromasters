@@ -194,6 +194,13 @@ class ProgramPage(Page):
             'The logo that will appear at the top of the program congratulation letter.'
         ),
     )
+
+    program_letter_text = RichTextField(
+        blank=True,
+        null=True,
+        help_text="Text that will appear on the program congratulation letter."
+    )
+
     subpage_types = ['FaqsPage', 'ProgramTabPage']
     content_panels = Page.content_panels + [
         FieldPanel('description', classname="full"),
@@ -204,8 +211,9 @@ class ProgramPage(Page):
         FieldPanel('program_contact_email'),
         FieldPanel('background_image'),
         FieldPanel('title_over_image'),
-        FieldPanel('program_letter_logo'),
         FieldPanel('faculty_description'),
+        FieldPanel('program_letter_logo'),
+        FieldPanel('program_letter_text'),
         InlinePanel('courses', label='Program Courses'),
         InlinePanel('info_links', label='More Info Links'),
         InlinePanel('faculty_members', label='Faculty'),
