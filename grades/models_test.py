@@ -43,16 +43,20 @@ class FinalGradeModelTests(MockedESTestCase):
 
     def test_grade_validation_save(self):
         """
-        Tests that the save method performs a full validation of the rade input
+        Tests that the save method performs a full validation of the grade input
         """
-        # it fails to modify it to a value >1 or <0
-        for val in (-0.5, 1.3, ):
-            with self.assertRaises(ValidationError):
-                self.grade1.grade = val
-                self.grade1.save()
+        # it fails to modify it to a value <0
+        with self.assertRaises(ValidationError):
+            self.grade1.grade = -0.5
+            self.grade1.save()
+
+        # it allows to modify it to a value >1
+        self.grade1.grade = 1.5
+        self.grade1.save()
+        assert self.grade1.grade == 1.5
 
         # it fails also to create the grades from scratch
-        for val in (-0.5, 1.3, ):
+        for val in (-0.5, -1.3, ):
             with self.assertRaises(ValidationError):
                 FinalGrade.objects.create(
                     user=self.user2,

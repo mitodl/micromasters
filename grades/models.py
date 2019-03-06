@@ -76,7 +76,7 @@ class FinalGrade(TimestampedModel, AuditableModel):
     course_run = models.ForeignKey(CourseRun, null=False, on_delete=models.CASCADE)
     grade = models.FloatField(
         null=True,
-        validators=[MinValueValidator(0.0), MaxValueValidator(1.0)]
+        validators=[MinValueValidator(0.0)]
     )
     passed = models.BooleanField(default=False)
     status = models.CharField(
