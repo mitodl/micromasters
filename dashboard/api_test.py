@@ -42,7 +42,8 @@ from ecommerce.factories import LineFactory, OrderFactory
 from ecommerce.models import Order
 from grades.constants import FinalGradeStatus
 from grades.exceptions import FreezeGradeFailedException
-from grades.factories import ProctoredExamGradeFactory, FinalGradeFactory, MicromastersCourseCertificateFactory
+from grades.factories import ProctoredExamGradeFactory, FinalGradeFactory, MicromastersCourseCertificateFactory, \
+    MicromastersProgramCommendationFactory
 from grades.models import FinalGrade, CourseRunGradingStatus, ProctoredExamGrade
 from grades.serializers import ProctoredExamGradeSerializer
 from micromasters.factories import UserFactory
@@ -1723,6 +1724,7 @@ class InfoProgramTest(MockedESTestCase):
         cls.program = ProgramFactory.create()
         cls.program_no_courses = ProgramFactory.create()
         cls.program_enrollment = ProgramEnrollmentFactory.create(program=cls.program, user=cls.user)
+        cls.program_letter = MicromastersProgramCommendationFactory.create(program=cls.program, user=cls.user)
         # create some courses for the program
         cls.courses = []
         for num in range(2):
@@ -1825,6 +1827,34 @@ class InfoProgramTest(MockedESTestCase):
             "grade_average": 91,
             "certificate": "",
             "grade_records_url": reverse('grade_records', args=[self.program_enrollment.hash]),
+        }
+        self.assertEqual(res, expected_data)
+
+    @patch('dashboard.api.get_info_for_course', autospec=True)
+    def test_program_for_program_letter(self, mock_info_course):
+        """ Verify that api returns program_letter_url if exists."""
+        self.mmtrack.configure_mock(**{
+            'program': self.program,
+            'financial_aid_available': False,
+            'get_pearson_exam_status.return_value': ExamProfile.PROFILE_SUCCESS,
+            'calculate_final_grade_average.return_value': 91,
+            'get_program_certificate_url.return_value': "",
+            'get_program_letter_url.return_value': reverse('program_letter', args=[self.program_letter.uuid]),
+        })
+        mock_info_course.return_value = {'position_in_program': 1}
+        res = api.get_info_for_program(self.mmtrack)
+        for course in self.courses:
+            mock_info_course.assert_any_call(course, self.mmtrack)
+        expected_data = {
+            "id": self.program.pk,
+            "description": self.program.description,
+            "title": self.program.title,
+            "courses": [{'position_in_program': 1}, {'position_in_program': 1}, {'position_in_program': 1}],
+            "financial_aid_availability": False,
+            "pearson_exam_status": ExamProfile.PROFILE_SUCCESS,
+            "grade_average": 91,
+            "certificate": "",
+            "program_letter_url": reverse('program_letter', args=[self.program_letter.uuid])
         }
         self.assertEqual(res, expected_data)
 
