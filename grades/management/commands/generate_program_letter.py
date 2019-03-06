@@ -17,7 +17,12 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):  # pylint: disable=unused-argument
         programs = Program.objects.filter(live=True, financial_aid_availability=False)
         for program in programs:
-            if program.has_frozen_grades_for_all_courses():
-                enrollments = ProgramEnrollment.objects.filter(program=program).select_related('user')
-                for enrollment in enrollments:
-                    generate_program_letter(enrollment.user, program)
+            if not program.has_frozen_grades_for_all_courses():
+                self.stdout.write(
+                    "Program '{}' has courses without frozen grades. Skipping program letter generation...".format(
+                        program.title)
+                )
+                continue
+            enrollments = ProgramEnrollment.objects.filter(program=program).select_related('user')
+            for enrollment in enrollments:
+                generate_program_letter(enrollment.user, program)
