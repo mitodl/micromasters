@@ -152,7 +152,7 @@ class ProgramLetterView(TemplateView):
 
         program_letter_text = signatories[0].program_page.program_letter_text
 
-        if not program_letter_logo:
+        if not program_letter_text:
             log.error(
                 'Program "%s" (id: %s) does not have letter text set in the CMS.',
                 program.title,

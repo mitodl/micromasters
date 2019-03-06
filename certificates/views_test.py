@@ -4,7 +4,6 @@ Tests for certificate views
 # pylint: disable=redefined-outer-name
 
 import pytest
-import factory
 from django.urls import reverse
 from rest_framework import status
 
@@ -149,8 +148,8 @@ def test_valid_program_letter(client):
     signatory = ProgramLetterSignatoryFactory.create(program_page__program=program)
     program_letter_logo = ImageFactory()
     signatory.program_page.program_letter_logo = program_letter_logo
-    letter_text = factory.Faker('text')
-    signatory.program_page.program_letter_text = letter_text
+    program_letter_text = "<p>some example text</p>"
+    signatory.program_page.program_letter_text = program_letter_text
     signatory.program_page.save()
 
     resp = client.get(program_letter_url(letter.uuid))
@@ -160,7 +159,7 @@ def test_valid_program_letter(client):
             'program_title': program.title,
             'letter_logo': program_letter_logo,
             'name': letter.user.profile.full_name,
-            'letter_text': letter_text,
+            'letter_text': program_letter_text,
             'signatories': [signatory],
             'letter': letter,
 
