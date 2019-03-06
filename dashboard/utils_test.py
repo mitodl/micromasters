@@ -13,7 +13,7 @@ from django.urls import reverse
 import pytz
 import ddt
 
-from cms.factories import ProgramCertificateSignatoriesFactory
+from cms.factories import ProgramCertificateSignatoriesFactory, ProgramLetterSignatoryFactory
 from courses.factories import ProgramFactory, CourseFactory, CourseRunFactory
 from dashboard.api_edx_cache import CachedEdxUserData
 from dashboard.models import CachedEnrollment, CachedCertificate, CachedCurrentGrade
@@ -23,7 +23,8 @@ from ecommerce.models import Order
 from exams.factories import ExamProfileFactory, ExamAuthorizationFactory, ExamRunFactory
 from exams.models import ExamProfile, ExamAuthorization
 from grades.factories import FinalGradeFactory, ProctoredExamGradeFactory
-from grades.models import FinalGrade, MicromastersProgramCertificate, CombinedFinalGrade
+from grades.models import FinalGrade, MicromastersProgramCertificate, CombinedFinalGrade, \
+    MicromastersProgramCommendation
 from micromasters.factories import UserFactory
 from micromasters.utils import (
     load_json_from_file,
@@ -729,6 +730,25 @@ class MMTrackTest(MockedESTestCase):
 
         ProgramCertificateSignatoriesFactory.create(program_page__program=certificate.program)
         assert mmtrack.get_program_certificate_url() == reverse('program-certificate', args=[certificate.hash])
+
+    def test_get_program_letter_url(self):
+        """
+        Test get_program_letter_url
+        """
+        mmtrack = MMTrack(
+            user=self.user,
+            program=self.program_financial_aid,
+            edx_user_data=self.cached_edx_user_data
+        )
+        assert mmtrack.get_program_letter_url() == ""
+
+        letter = MicromastersProgramCommendation.objects.create(
+            user=self.user, program=self.program_financial_aid
+        )
+        assert mmtrack.get_program_letter_url() == ""
+
+        ProgramLetterSignatoryFactory.create(program_page__program=letter.program)
+        assert mmtrack.get_program_letter_url() == reverse('program_letter', args=[letter.uuid])
 
     def test_get_best_final_grade_for_course(self):
         """
