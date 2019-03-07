@@ -313,11 +313,12 @@ def get_membership_ids_needing_sync():
     Returns:
         QuerySet: query for the list of database ids for memberships that need to be synced
     """
+    # Order by is_member (True before False) and updated_on (most recent first)
     return PercolateQueryMembership.objects.filter(
         query__source_type=PercolateQuery.DISCUSSION_CHANNEL_TYPE,
         user__profile__isnull=False,
         needs_update=True
-    ).values_list("id", flat=True)
+    ).order_by('-is_member', '-updated_on').values_list("id", flat=True)
 
 
 def sync_channel_memberships(membership_ids):

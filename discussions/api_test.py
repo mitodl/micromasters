@@ -369,6 +369,33 @@ def test_get_membership_ids_needing_sync(patched_users_api):
         assert membership.id not in results
 
 
+def test_ordering_get_membership_ids_needing_sync(patched_users_api):
+    """Test that get_membership_ids_needing_sync returns ordered list based on is_member (True before False)
+    and updated_on (most recent first)."""
+    users = [UserFactory.create() for _ in range(4)]
+    channel = ChannelFactory.create()
+
+    memberships_is_member_true = [
+        PercolateQueryMembership.objects.create(user=user, query=channel.query, needs_update=True, is_member=True)
+        for user in users[:2]
+    ]
+
+    memberships_is_member_false = [
+        PercolateQueryMembership.objects.create(user=user, query=channel.query, needs_update=True, is_member=False)
+        for user in users[2:]
+    ]
+    memberships_is_member_true.reverse()
+    memberships_is_member_false.reverse()
+
+    expected_order = []
+    for membership in memberships_is_member_true + memberships_is_member_false:
+        expected_order.append(membership.id)
+
+    results = api.get_membership_ids_needing_sync()
+
+    assert expected_order == list(results)
+
+
 def test_sync_channel_memberships(mocker, patched_users_api):
     """
     sync_user_to_channels should add or remove the user's membership from channels, not touching channels where
