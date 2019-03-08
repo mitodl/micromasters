@@ -24,6 +24,7 @@ from discussions.exceptions import (
     ModeratorSyncException,
     SubscriberSyncException,
 )
+from discussions.utils import email_mm_admin_about_stale_memberships
 from roles.models import Role
 from roles.roles import Permissions
 from search.api import adjust_search_for_percolator
@@ -345,7 +346,6 @@ def sync_channel_memberships(membership_ids):
             )
 
             # if membership is created/modified older then 24 hours, mark it as stale
-            import pdb; pdb.set_trace()
             if membership.updated_on < (datetime.now(tz=timezone.utc) - timedelta(hours=24)):
                 stale_memberships.append(membership_id)
 
@@ -381,6 +381,8 @@ def sync_channel_memberships(membership_ids):
                 except DiscussionSyncException:
                     log.exception("Error updating channel membership")
 
+    if stale_memberships:
+        email_mm_admin_about_stale_memberships(stale_memberships)
 
 def add_channel(
         original_search, title, name, description, channel_type, program_id, creator_id,
