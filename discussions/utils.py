@@ -1,9 +1,12 @@
 """Discussions utils"""
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from open_discussions_api import utils
 
 from discussions import api
 from discussions.models import DiscussionUser
+
+from mail import api as mail_api
 
 
 def get_token_for_user(user, force_create=False):
@@ -60,3 +63,29 @@ def get_token_for_request(request, force_create=False):
         str: the token or None
     """
     return get_token_for_user(request.user, force_create=force_create)
+
+
+def email_mm_admin_about_stale_memberships(membership_ids):
+    """
+    Email list of stale memberships to mm admin
+
+    Args:
+        membership_ids(List): List of ids
+    """
+    if getattr(settings, 'ADMIN_EMAIL', None) is None:
+        raise ImproperlyConfigured('Setting ADMIN_EMAIL is not set')
+
+    subject = "List of stale memberships"
+    body = (
+        "Hi,\n"
+        "The following memberships were stale in the PercolateQueryMembership:\n\n"
+        "{membership_ids}"
+    ).format(
+        membership_ids=membership_ids,
+    )
+
+    mail_api.MailgunClient().send_individual_email(
+        subject,
+        body,
+        settings.ADMIN_EMAIL
+    )
