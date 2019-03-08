@@ -1,6 +1,6 @@
 """API for open discussions integration"""
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -345,7 +345,8 @@ def sync_channel_memberships(membership_ids):
             )
 
             # if membership is created/modified older then 24 hours, mark it as stale
-            if membership.updated_on < (datetime.now() - timedelta(hours=24)):
+            import pdb; pdb.set_trace()
+            if membership.updated_on < (datetime.now(tz=timezone.utc) - timedelta(hours=24)):
                 stale_memberships.append(membership_id)
 
             channel = membership.query.channels.first()
