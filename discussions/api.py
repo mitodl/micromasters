@@ -316,11 +316,19 @@ def get_membership_ids_needing_sync():
         QuerySet: query for the list of database ids for memberships that need to be synced
     """
     # Order by is_member (True before False) and updated_on (most recent first)
-    return PercolateQueryMembership.objects.filter(
+    memberships_quest = PercolateQueryMembership.objects.filter(
         query__source_type=PercolateQuery.DISCUSSION_CHANNEL_TYPE,
         user__profile__isnull=False,
         needs_update=True
     ).order_by('-is_member', '-updated_on').values_list("id", flat=True)
+
+    # if membership is created/modified older then 24 hours, mark it as stale
+    stale_memberships = memberships_quest.filter(updated_on__lt=(datetime.now(tz=timezone.utc) - timedelta(hours=24)))
+
+    if stale_memberships:
+        email_mm_admin_about_stale_memberships(stale_memberships.values_list("id", flat=True))
+
+    return memberships_quest.values_list("id", flat=True)
 
 
 def sync_channel_memberships(membership_ids):
@@ -334,7 +342,7 @@ def sync_channel_memberships(membership_ids):
         channel_program.channel_id: channel_program.program_id
         for channel_program in ChannelProgram.objects.all()
     }
-    stale_memberships = []
+
     for membership_id in membership_ids:
         with transaction.atomic():
             membership = (
@@ -344,10 +352,6 @@ def sync_channel_memberships(membership_ids):
                 .select_for_update()
                 .first()
             )
-
-            # if membership is created/modified older then 24 hours, mark it as stale
-            if membership.updated_on < (datetime.now(tz=timezone.utc) - timedelta(hours=24)):
-                stale_memberships.append(membership_id)
 
             channel = membership.query.channels.first()
 
@@ -381,8 +385,6 @@ def sync_channel_memberships(membership_ids):
                 except DiscussionSyncException:
                     log.exception("Error updating channel membership")
 
-    if stale_memberships:
-        email_mm_admin_about_stale_memberships(stale_memberships)
 
 def add_channel(
         original_search, title, name, description, channel_type, program_id, creator_id,
