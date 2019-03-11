@@ -263,7 +263,7 @@ def generate_program_letter(user, program):
         return
 
     if MicromastersProgramCommendation.objects.filter(user=user, program=program).exists():
-        log.error('User [%s] already has a letter for program [%s]', user, program)
+        log.info('User [%s] already has a letter for program [%s]', user, program)
         return
 
     program_course_ids = set(program.course_set.all().values_list('id', flat=True))
