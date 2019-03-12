@@ -75,7 +75,9 @@ def email_mm_admin_about_stale_memberships(membership_ids):
     if getattr(settings, 'ADMIN_EMAIL', None) is None:
         raise ImproperlyConfigured('Setting ADMIN_EMAIL is not set')
 
-    subject = "List of stale memberships"
+    subject = "Alert: {num_not_synced} MicroMasters channel memberships not synced".format(
+        num_not_synced=len(membership_ids))
+
     body = (
         "Hi,\n"
         "The following memberships were stale in the PercolateQueryMembership:\n\n"

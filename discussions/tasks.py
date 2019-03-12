@@ -1,5 +1,5 @@
 """Tasks for profiles"""
-from datetime import timedelta
+from datetime import timedelta, datetime, timezone
 from itertools import takewhile
 import logging
 
@@ -8,10 +8,12 @@ from django.conf import settings
 from discussions import api
 from discussions.models import ChannelProgram, DiscussionUser
 from discussions.exceptions import DiscussionUserSyncException
+from discussions.utils import email_mm_admin_about_stale_memberships
 from micromasters.celery import app
 from micromasters.locks import Lock
 from micromasters.utils import now_in_utc
 from profiles.models import Profile
+from search.models import PercolateQueryMembership, PercolateQuery
 
 SYNC_MEMBERSHIPS_LOCK_NAME = 'discussions.tasks.sync_memberships_lock'
 
@@ -100,6 +102,25 @@ def sync_channel_memberships():
     with Lock(SYNC_MEMBERSHIPS_LOCK_NAME, expiration) as lock:
         membership_ids = takewhile(lock.is_still_locked, api.get_membership_ids_needing_sync())
         api.sync_channel_memberships(membership_ids)
+
+
+@app.task()
+def alert_mm_about_stale_memberships():
+    """
+    Alert mm admin about stale memberships.
+    """
+    # if membership is created/modified older then 24 hours, mark it as stale
+
+    stale_memberships = PercolateQueryMembership.objects.filter(
+        query__source_type=PercolateQuery.DISCUSSION_CHANNEL_TYPE,
+        user__profile__isnull=False,
+        needs_update=True,
+        updated_on__lt=(datetime.now(tz=timezone.utc) - timedelta(hours=24))
+    ).values_list("id", flat=True)
+
+    if stale_memberships:
+        email_mm_admin_about_stale_memberships(stale_memberships)
+
 
 
 @app.task()
