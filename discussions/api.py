@@ -1,6 +1,5 @@
 """API for open discussions integration"""
 import logging
-from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -24,7 +23,6 @@ from discussions.exceptions import (
     ModeratorSyncException,
     SubscriberSyncException,
 )
-from discussions.utils import email_mm_admin_about_stale_memberships
 from roles.models import Role
 from roles.roles import Permissions
 from search.api import adjust_search_for_percolator
@@ -316,19 +314,11 @@ def get_membership_ids_needing_sync():
         QuerySet: query for the list of database ids for memberships that need to be synced
     """
     # Order by is_member (True before False) and updated_on (most recent first)
-    memberships_quest = PercolateQueryMembership.objects.filter(
+    return PercolateQueryMembership.objects.filter(
         query__source_type=PercolateQuery.DISCUSSION_CHANNEL_TYPE,
         user__profile__isnull=False,
         needs_update=True
     ).order_by('-is_member', '-updated_on').values_list("id", flat=True)
-
-    # if membership is created/modified older then 24 hours, mark it as stale
-    stale_memberships = memberships_quest.filter(updated_on__lt=(datetime.now(tz=timezone.utc) - timedelta(hours=24)))
-
-    if stale_memberships:
-        email_mm_admin_about_stale_memberships(stale_memberships.values_list("id", flat=True))
-
-    return memberships_quest.values_list("id", flat=True)
 
 
 def sync_channel_memberships(membership_ids):
