@@ -122,7 +122,6 @@ def alert_mm_about_stale_memberships():
         email_mm_admin_about_stale_memberships(stale_memberships)
 
 
-
 @app.task()
 def add_user_as_moderator_to_channel(user_id, program_id):
     """
