@@ -64,3 +64,12 @@ class SentAutomaticEmail(TimestampedModel):
             user=self.user,
             automatic_email=self.automatic_email,
         )
+
+
+class PartnerSchool(models.Model):
+    """
+    Models for partner school to send records to
+    """
+
+    name = models.CharField(max_length=255)
+    email = models.TextField(null=False)

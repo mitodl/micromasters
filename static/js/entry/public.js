@@ -1,4 +1,6 @@
 /* global SETTINGS: false $:false jQuery: false CURRENT_PAGE_URL: false */
+import SendGradesDialog from "../containers/SendGradesDialog";
+
 __webpack_public_path__ = `${SETTINGS.public_path}` // eslint-disable-line no-undef, camelcase
 import "rrssb/js/rrssb.js"
 import "bootstrap"
@@ -16,8 +18,10 @@ import CourseListWithPopover from "../components/CourseListWithPopover"
 import FacultyCarousel from "../components/FacultyCarousel"
 import { setDialogVisibility } from "../actions/signup_dialog"
 import { setShareDialogVisibility } from "../actions/share_grades_dialog"
+import { setSendDialogVisibility } from "../actions/send_grades_dialog"
 import {
   shareGradesDialogStore,
+  sendGradesDialogStore,
   signupDialogStore
 } from "../store/configureStore"
 import SignupDialog from "../containers/SignupDialog"
@@ -71,6 +75,24 @@ if (shareDialog) {
       </Provider>
     </MuiThemeProvider>,
     shareDialog
+  )
+}
+
+// Send Program
+const sendStore = sendGradesDialogStore()
+const sendDialog = document.querySelector("#send-dialog")
+const openSendDialog = () =>
+  sendStore.dispatch(setSendDialogVisibility(true))
+const sendButton = document.querySelector(".open-send-dialog")
+if (sendDialog) {
+  sendButton.onclick = openSendDialog
+  ReactDOM.render(
+    <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <Provider store={sendStore}>
+        <SendGradesDialog />
+      </Provider>
+    </MuiThemeProvider>,
+    sendDialog
   )
 }
 
