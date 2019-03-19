@@ -119,6 +119,21 @@ export function sendLearnerMail(
   })
 }
 
+export function sendGradesRecordMail(
+  subject: string,
+  body: string,
+  studentId: number
+): Promise<EmailSendResponse> {
+  return fetchJSONWithCSRF(`/api/v0/mail/grades/${studentId}/`, {
+    method: "POST",
+    body:   JSON.stringify({
+      email_subject: subject,
+      email_body:    body
+    })
+  })
+}
+
+
 export async function getPrograms(): Promise<AvailablePrograms> {
   try {
     const response = await fetchJSONWithCSRF("/api/v0/programs/")

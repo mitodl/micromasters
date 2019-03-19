@@ -33,7 +33,7 @@ from mail.permissions import (
 )
 from mail.serializers import GenericMailSerializer, AutomaticEmailSerializer
 from mail.utils import generate_mailgun_response_json, get_email_footer
-from mail.models import AutomaticEmail
+from mail.models import AutomaticEmail, PartnerSchool
 from profiles.models import Profile
 from profiles.util import full_name
 from search.api import (
@@ -233,6 +233,41 @@ class FinancialAidMailView(GenericAPIView):
             acting_user=request.user,
             subject=serializer.data['email_subject'],
             financial_aid=financial_aid
+        )
+        return Response(
+            status=mailgun_response.status_code,
+            data=generate_mailgun_response_json(mailgun_response)
+        )
+
+
+class GradesRecordMailView(GenericAPIView):
+    """
+    View for sending financial aid emails to individual learners
+    """
+    serializer_class = GenericMailSerializer
+    authentication_classes = (
+        authentication.SessionAuthentication,
+        authentication.TokenAuthentication,
+    )
+    permission_classes = (permissions.IsAuthenticated, )
+    lookup_field = "partner_id"
+    lookup_url_kwarg = "partner_id"
+    queryset = PartnerSchool.objects.all()
+
+    def post(self, request, *args, **kargs):  # pylint: disable=unused-argument
+        """
+        POST method handler
+        """
+        sender_user = request.user
+        school = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        mailgun_response = MailgunClient.send_individual_email(
+            subject=request.data['email_subject'],
+            body=request.data['email_body'],
+            recipient=school.email,
+            sender_address=sender_user.email,
+            sender_name=sender_user.profile.display_name,
         )
         return Response(
             status=mailgun_response.status_code,
