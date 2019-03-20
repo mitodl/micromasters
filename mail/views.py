@@ -4,6 +4,7 @@ Views for email REST APIs
 import logging
 
 from django.contrib.auth.models import User
+from django.template.loader import render_to_string
 from rest_framework import (
     authentication,
     permissions,
@@ -250,7 +251,7 @@ class GradesRecordMailView(GenericAPIView):
         authentication.TokenAuthentication,
     )
     permission_classes = (permissions.IsAuthenticated, )
-    lookup_field = "partner_id"
+    lookup_field = "id"
     lookup_url_kwarg = "partner_id"
     queryset = PartnerSchool.objects.all()
 
@@ -264,7 +265,15 @@ class GradesRecordMailView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         mailgun_response = MailgunClient.send_individual_email(
             subject=request.data['email_subject'],
-            body=request.data['email_body'],
+            body=render_to_string(
+                'grades_record_email.html',
+                {
+                    'user_full_name': sender_user.profile.full_name,
+                    'pathway_name': school.name,
+                    'program_name': "program name",
+                    'record_link': "link",
+                    'platform_name': "platform",
+                }),
             recipient=school.email,
             sender_address=sender_user.email,
             sender_name=sender_user.profile.display_name,

@@ -1,41 +1,40 @@
 /* global SETTINGS:false */
 import React from "react"
-import MenuItem from "material-ui/MenuItem"
 import { createSimpleActionHelpers } from "../lib/redux"
 import {
   setSendDialogVisibility,
-  sendGradeEmail,
+  sendGradeEmail, setSelectedSchool,
 } from "../actions/send_grades_dialog"
 import { connect } from "react-redux"
 import Dialog from "material-ui/Dialog"
 import type { Dispatch } from "redux"
 import R from "ramda";
-import SelectField from "../components/inputs/SelectField";
-import type {Option} from "../flow/generalTypes";
+import SelectField from "material-ui/SelectField"
+import MenuItem from "material-ui/MenuItem"
 
 class SendGradesDialog extends React.Component {
-   partnerOptions: Array<Option> = SETTINGS.partner_schools.map(partner => ({
-    value: partner[0],
-    label: partner[1]
-  }))
   props: {
     open: boolean,
     selectedSchool: ?number,
+    setSelectedSchool: (schoolId: number) => void,
     setSendDialogVisibility: (b: boolean) => void,
     sendGradeEmailClick: (f: Array<*>) => void,
+    sentSuccess: boolean,
+  }
+  handleSelectedSchoolChange = (event, index, value) => {
+    const { setSelectedSchool } = this.props
+    setSelectedSchool(value)
   }
 
-
   render() {
-    const { open, setSendDialogVisibility, sendGradeEmailClick, selectedSchool } = this.props
-
-    // const options = SETTINGS.partner_schools.map(school => (
-    //   <MenuItem
-    //     value={11}
-    //     primaryText={"Harvard"}
-    //     key={11}
-    //   />
-    // ))
+    const { open, setSendDialogVisibility, sendGradeEmailClick, selectedSchool, sentSuccess } = this.props
+      const options = SETTINGS.partner_schools.map(program => (
+        <MenuItem
+          value={program[0]}
+          primaryText={program[1]}
+          key={program[0]}
+        />
+      ))
 
     return (
       <Dialog
@@ -53,13 +52,11 @@ class SendGradesDialog extends React.Component {
           for this MicroMasters Program. Once you send the record you cannot unsend it.
         </p>
         <p>Select organization(s) you wish to send this record to:</p>
-
          <SelectField
-          value=""
-          floatingLabelText="Select Program"
+          value={selectedSchool}
+          onChange={this.handleSelectedSchoolChange}
+          floatingLabelText="Select School"
           fullWidth={true}
-          label="Industry"
-          options={this.partnerOptions}
           style={{
             width: "500px"
           }}
@@ -68,45 +65,50 @@ class SendGradesDialog extends React.Component {
             overflow: "hidden"
           }}
         >
-
+          {options}
         </SelectField>
 
-        <div className="share-form-wrapper">
-          <div>
-            <button
-              className="mdl-button share-btn"
-              onClick={() => {setSendDialogVisibility(false)}}
-            >
-              Send
-            </button>
-            <button
-              className="btn btn-primary pull-right"
-              onClick={()=>{
-                sendGradeEmailClick(["subject", "body", SETTINGS.username])}}>
-              Send Email
-            </button>
-
-
-            </div>
+        <div>
+          <div className="sent-email">
+            { sentSuccess ? "Email Sent!": ""}
+          </div>
+          <button
+            className="btn pull-right"
+            onClick={() => {setSendDialogVisibility(false)}}
+          >
+            Close
+          </button>
+          <button
+            className="btn btn-primary pull-right"
+            onClick={()=>{
+              sendGradeEmailClick(["subject", "body", selectedSchool])}}>
+            Send Email
+          </button>
         </div>
       </Dialog>
     )
   }
 
 }
-const sendGradeEmailClick = R.curry((dispatch, current) => {
-  dispatch(sendGradeEmail(current)).then(() => {
-  })
+const sendGradeEmailClick = R.curry((dispatch, schoolId) => {
+  if (schoolId)
+    dispatch(sendGradeEmail(schoolId))
+})
+
+const setSelectedSchoolDispatch = R.curry((dispatch, schoolId) => {
+  dispatch(setSelectedSchool(schoolId))
 })
 
 const mapStateToProps = state => ({
   open: state.sendDialog.sendDialogVisibility,
   sentSuccess: state.sendDialog.sentSuccess,
+  selectedSchool: state.sendDialog.selectedSchool,
 })
 
 const mapDispatchToProps = dispatch => {
   return {
     sendGradeEmailClick: sendGradeEmailClick(dispatch),
+    setSelectedSchool: setSelectedSchoolDispatch(dispatch),
     ...createSimpleActionHelpers(dispatch, [
       ["setSendDialogVisibility", setSendDialogVisibility],
     ])
