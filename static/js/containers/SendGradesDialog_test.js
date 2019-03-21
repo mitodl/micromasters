@@ -10,15 +10,20 @@ import getMuiTheme from "material-ui/styles/getMuiTheme"
 import SendGradesDialog from "./SendGradesDialog";
 import configureTestStore from "redux-asserts";
 import rootReducer from "../reducers";
+import {setSendDialogVisibility} from "../actions/send_grades_dialog";
+import {getEl} from "../util/test_utils";
+import ReactTestUtils from "react-dom/test-utils";
 
 describe("SendGradesDialog", () => {
   let sandbox, store
-  let cancelStub, sendStub
+  let sendStub
 
+  const getDialog = () => document.querySelector(".send-dialog")
   beforeEach(() => {
+    SETTINGS.partner_schools= [[1,"345"]]
     sandbox = sinon.sandbox.create()
     store = configureTestStore(rootReducer)
-    cancelStub = sandbox.stub()
+    // cancelStub = sandbox.stub()
     sendStub = sandbox.stub()
   })
 
@@ -26,21 +31,39 @@ describe("SendGradesDialog", () => {
     sandbox.restore()
   })
 
-  const renderDialog = (props = {}) => {
-    return mount(
+  const renderDialog = (open = true): HTMLElement => {
+    mount(
       <MuiThemeProvider muiTheme={getMuiTheme()}>
         <Provider store={store}>
-          <SendGradesDialog {...props} />
+          <SendGradesDialog
+          open={open}
+          sendGradeEmailClick={sendStub}
+          />
         </Provider>
       </MuiThemeProvider>
     )
+    return (document.querySelector(".send-dialog"): any)
   }
 
 
   it("should have some text and a title", () => {
+
+    store.dispatch(setSendDialogVisibility(true))
     const dialogText = renderDialog().textContent
+
     assert.include(dialogText, "Send Record to Partner")
     assert.include(dialogText, "You can directly share your program")
+  })
+
+  it("should have a cancel button", () => {
+    store.dispatch(setSendDialogVisibility(true))
+    const dialogText = renderDialog()
+    console.log(dialogText)
+    console.log(dialogText.querySelector(".send-grades"))
+    ReactTestUtils.Simulate.click(
+      dialogText.querySelector(".send-grades")
+    )
+    assert.ok(sendStub.called, "cancel function should have been called")
   })
 
 })
