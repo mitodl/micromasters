@@ -4,12 +4,14 @@ Views for email REST APIs
 import logging
 
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from rest_framework import (
     authentication,
     permissions,
     status,
 )
+from django.urls import reverse
 from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.views import APIView
@@ -17,6 +19,7 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.response import Response
 
 from courses.models import Course
+from dashboard.models import ProgramEnrollment
 from financialaid.models import FinancialAid
 from financialaid.permissions import UserCanEditFinancialAid
 from mail.api import (
@@ -41,6 +44,7 @@ from search.api import (
     create_search_obj,
     get_all_query_matching_emails,
 )
+from dashboard.utils import get_mmtrack
 
 log = logging.getLogger(__name__)
 
@@ -245,7 +249,6 @@ class GradesRecordMailView(GenericAPIView):
     """
     View for sending financial aid emails to individual learners
     """
-    serializer_class = GenericMailSerializer
     authentication_classes = (
         authentication.SessionAuthentication,
         authentication.TokenAuthentication,
@@ -261,18 +264,18 @@ class GradesRecordMailView(GenericAPIView):
         """
         sender_user = request.user
         school = self.get_object()
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        enrollment = get_object_or_404(ProgramEnrollment, hash=request.data['enrollment_hash'])
         mailgun_response = MailgunClient.send_individual_email(
-            subject=request.data['email_subject'],
+            subject="MicroMasters Program Record",
             body=render_to_string(
                 'grades_record_email.html',
                 {
                     'user_full_name': sender_user.profile.full_name,
                     'pathway_name': school.name,
-                    'program_name': "program name",
-                    'record_link': "link",
-                    'platform_name': "platform",
+                    'program_name': enrollment.program.title,
+                    'record_link': request.build_absolute_uri(
+                        reverse('grade_records', args=[request.data['enrollment_hash']])
+                    ),
                 }),
             recipient=school.email,
             sender_address=sender_user.email,

@@ -120,15 +120,13 @@ export function sendLearnerMail(
 }
 
 export function sendGradesRecordMail(
-  subject: string,
-  body: string,
-  studentId: number
+  partnerId: number,
+  enrollmentHash: string
 ): Promise<EmailSendResponse> {
-  return fetchJSONWithCSRF(`/api/v0/mail/grades/${studentId}/`, {
+  return fetchJSONWithCSRF(`/api/v0/mail/grades/${partnerId}/`, {
     method: "POST",
     body:   JSON.stringify({
-      email_subject: subject,
-      email_body:    body
+      enrollment_hash: enrollmentHash
     })
   })
 }

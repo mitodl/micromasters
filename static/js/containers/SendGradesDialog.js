@@ -35,7 +35,6 @@ class SendGradesDialog extends React.Component {
           key={program[0]}
         />
       ))
-
     return (
       <Dialog
         title="Send Record to Partner"
@@ -81,7 +80,7 @@ class SendGradesDialog extends React.Component {
           <button
             className="btn btn-primary pull-right"
             onClick={()=>{
-              sendGradeEmailClick(["subject", "body", selectedSchool])}}>
+              selectedSchool? sendGradeEmailClick([selectedSchool, SETTINGS.hash]): null}}>
             Send Email
           </button>
         </div>
@@ -90,9 +89,8 @@ class SendGradesDialog extends React.Component {
   }
 
 }
-const sendGradeEmailClick = R.curry((dispatch, schoolId) => {
-  if (schoolId)
-    dispatch(sendGradeEmail(schoolId))
+const sendGradeEmailClick = R.curry((dispatch, data) => {
+    dispatch(sendGradeEmail(data))
 })
 
 const setSelectedSchoolDispatch = R.curry((dispatch, schoolId) => {

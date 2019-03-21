@@ -187,13 +187,13 @@ class GradeRecordView(TemplateView):
         enrollment = get_object_or_404(ProgramEnrollment, hash=kwargs.get('record_hash'))
         user = enrollment.user
         authenticated = not user.is_anonymous
-        username = get_social_username(user)
         js_settings = {
             "gaTrackingID": settings.GA_TRACKING_ID,
             "reactGaDebug": settings.REACT_GA_DEBUG,
             "edx_base_url": settings.EDXORG_BASE_URL,
             "authenticated": authenticated,
             "partner_schools": list(PartnerSchool.objects.values_list("id", "name")),
+            "hash": enrollment.hash
         }
         context["js_settings_json"] = json.dumps(js_settings)
         context["is_public"] = True
