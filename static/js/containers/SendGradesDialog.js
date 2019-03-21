@@ -78,10 +78,10 @@ class SendGradesDialog extends React.Component {
             Close
           </button>
           <button
-            className="btn btn-primary pull-right"
+            className="btn btn-primary pull-right send-grades"
             onClick={()=>{
               selectedSchool? sendGradeEmailClick([selectedSchool, SETTINGS.hash]): null}}>
-            Send Email
+            Send
           </button>
         </div>
       </Dialog>

@@ -78,7 +78,7 @@ if (shareDialog) {
   )
 }
 
-// Send Program
+// Send Program Grades
 const sendStore = sendGradesDialogStore()
 const sendDialog = document.querySelector("#send-dialog")
 const openSendDialog = () =>
