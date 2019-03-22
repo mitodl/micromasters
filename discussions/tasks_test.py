@@ -318,3 +318,13 @@ def test_remove_moderator_to_channel_no_feature_flag(settings, mocker):
         discussion_user = DiscussionUserFactory.create()
     tasks.remove_user_as_moderator_from_channel.delay(discussion_user.user_id, program.id)
     assert stub.called is False
+
+
+def test_remove_moderators_from_channel(mocker):
+    """remove_moderators_from_channel should forward all arguments to the api function"""
+    stub = mocker.patch('discussions.api.remove_moderator_from_channel', autospec=True)
+    program = ChannelProgramFactory.create().program
+    with mute_signals(post_save):
+        discussion_user = DiscussionUserFactory.create()
+    tasks.remove_user_as_moderator_from_channel.delay(discussion_user.user_id, program.id)
+    assert stub.called is True

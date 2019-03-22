@@ -113,7 +113,7 @@ def index_percolate_queries(percolate_query_ids):
         percolate_query_ids (iterable of int):
             Database ids for PercolateQuery instances to index
     """
-    _index_percolate_queries(PercolateQuery.objects.filter(id__in=percolate_query_ids))
+    _index_percolate_queries(PercolateQuery.objects.filter(id__in=percolate_query_ids).exclude(is_deleted=True))
 
 
 @app.task

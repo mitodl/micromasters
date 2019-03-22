@@ -27,6 +27,7 @@ class Channel(TimestampedModel):
     """
     name = models.TextField(unique=True)
     query = models.ForeignKey(PercolateQuery, null=True, on_delete=models.SET_NULL, related_name='channels')
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return "Channel: {}".format(self.name)

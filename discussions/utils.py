@@ -4,6 +4,8 @@ from open_discussions_api import utils
 
 from discussions import api
 from discussions.models import DiscussionUser
+from roles.models import Role
+from roles.roles import Permissions
 
 
 def get_token_for_user(user, force_create=False):
@@ -60,3 +62,11 @@ def get_token_for_request(request, force_create=False):
         str: the token or None
     """
     return get_token_for_user(request.user, force_create=force_create)
+
+
+def get_moderators_for_channel(channel_name):
+    """ Return moderator ids against a given channel name."""
+    return Role.objects.filter(
+        role__in=Role.permission_to_roles[Permissions.CAN_CREATE_FORUMS],
+        program__channelprogram__channel__name=channel_name,
+    ).values_list('user', flat=True)

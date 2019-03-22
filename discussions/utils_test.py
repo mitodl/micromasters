@@ -7,9 +7,11 @@ from django.db.models.signals import post_save
 import pytest
 from factory.django import mute_signals
 
+from discussions.factories import ChannelProgramFactory
 from discussions.models import DiscussionUser
-from discussions.utils import get_token_for_user
+from discussions.utils import get_token_for_user, get_moderators_for_channel
 from micromasters.factories import UserFactory
+from roles.factories import RoleFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -97,3 +99,12 @@ def test_get_token_for_user_force_discussion_user(settings, mocker):
         }
     )
     assert mock_create_user.called_once_with(user.id)
+
+
+def test_get_moderators_for_channel():
+    """Test that method return list of moderator ids against given channel name."""
+    channel_program = ChannelProgramFactory.create()
+    expected_moderators = {RoleFactory.create(program=channel_program.program).user.id for _ in range(5)}
+
+    moderators = get_moderators_for_channel(channel_program.channel.name)
+    assert expected_moderators == set(moderators)

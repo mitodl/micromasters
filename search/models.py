@@ -19,6 +19,7 @@ class PercolateQuery(TimestampedModel):
     original_query = JSONField()
     query = JSONField()
     source_type = models.CharField(max_length=255, choices=[(choice, choice) for choice in SOURCE_TYPES])
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return "Percolate query {}: {}".format(self.id, self.query)

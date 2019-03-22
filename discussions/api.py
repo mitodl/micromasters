@@ -23,6 +23,7 @@ from discussions.exceptions import (
     ModeratorSyncException,
     SubscriberSyncException,
 )
+from discussions.utils import get_moderators_for_channel
 from roles.models import Role
 from roles.roles import Permissions
 from search.api import adjust_search_for_percolator
@@ -448,10 +449,7 @@ def add_moderators_to_channel(channel_name):
     Args:
         channel_name (str): The name of the channel
     """
-    mod_ids = Role.objects.filter(
-        role__in=Role.permission_to_roles[Permissions.CAN_CREATE_FORUMS],
-        program__channelprogram__channel__name=channel_name,
-    ).values_list('user', flat=True)
+    mod_ids = get_moderators_for_channel(channel_name)
 
     for mod_id in mod_ids:
         discussion_user = create_or_update_discussion_user(mod_id)

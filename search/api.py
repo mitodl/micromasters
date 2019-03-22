@@ -262,7 +262,7 @@ def search_percolate_queries(program_enrollment_id, source_type):
     """
     enrollment = ProgramEnrollment.objects.get(id=program_enrollment_id)
     result_ids = _search_percolate_queries(enrollment)
-    return PercolateQuery.objects.filter(id__in=result_ids, source_type=source_type)
+    return PercolateQuery.objects.filter(id__in=result_ids, source_type=source_type).exclude(is_deleted=True)
 
 
 def _search_percolate_queries(program_enrollment):
@@ -360,7 +360,7 @@ def update_percolate_memberships(user, source_type):
         source_type (str): The type of the percolate query to filter on
     """
     # ensure we have a membership for each of the queries so we can acquire a lock on them
-    percolate_queries = list(PercolateQuery.objects.filter(source_type=source_type))
+    percolate_queries = list(PercolateQuery.objects.filter(source_type=source_type).exclude(is_deleted=True))
     membership_ids = _ensure_memberships_for_queries(
         percolate_queries,
         user

@@ -603,9 +603,9 @@ def recreate_index():
             private_indices=[new_backing_private_index],
         )
 
-        log.info("Indexing %d percolator queries...", PercolateQuery.objects.count())
+        log.info("Indexing %d percolator queries...", PercolateQuery.objects.exclude(is_deleted=True).count())
         _index_chunks(
-            _get_percolate_documents(PercolateQuery.objects.iterator()),
+            _get_percolate_documents(PercolateQuery.objects.exclude(is_deleted=True).iterator()),
             index=new_backing_percolate_index,
         )
 

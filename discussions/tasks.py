@@ -8,10 +8,12 @@ from django.conf import settings
 from discussions import api
 from discussions.models import ChannelProgram, DiscussionUser
 from discussions.exceptions import DiscussionUserSyncException
+from discussions.utils import get_moderators_for_channel
 from micromasters.celery import app
 from micromasters.locks import Lock
 from micromasters.utils import now_in_utc
 from profiles.models import Profile
+
 
 SYNC_MEMBERSHIPS_LOCK_NAME = 'discussions.tasks.sync_memberships_lock'
 
@@ -126,6 +128,29 @@ def add_user_as_moderator_to_channel(user_id, program_id):
         api.add_and_subscribe_moderator(
             discussion_user.username,
             channel_program.channel.name
+        )
+
+
+@app.task()
+def remove_moderators_from_channel(channel_name):
+    """
+    Remove moderators of a given channel_name.
+    Args:
+        channel_name(str): channel name
+    """
+
+    mod_ids = get_moderators_for_channel(channel_name)
+
+    for mod_id in mod_ids:
+        try:
+            discussion_user = DiscussionUser.objects.get(user_id=mod_id)
+        except DiscussionUser.DoesNotExist:
+            log.info('User: %d does not exist in discussion.', mod_id)
+            continue
+
+        api.remove_moderator_from_channel(
+            channel_name,
+            discussion_user.username
         )
 
 
