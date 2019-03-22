@@ -7,7 +7,7 @@ import {
   setSelectedSchool,
   sendEmailFailure,
   sendEmailSuccess,
-  setSendDialogVisibility,
+  setSendDialogVisibility
 } from "./send_grades_dialog"
 import { assertCreatedActionHelper } from "./test_util"
 

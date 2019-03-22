@@ -6,12 +6,12 @@ import logging
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
+from django.urls import reverse
 from rest_framework import (
     authentication,
     permissions,
     status,
 )
-from django.urls import reverse
 from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.views import APIView
@@ -44,7 +44,6 @@ from search.api import (
     create_search_obj,
     get_all_query_matching_emails,
 )
-from dashboard.utils import get_mmtrack
 
 log = logging.getLogger(__name__)
 

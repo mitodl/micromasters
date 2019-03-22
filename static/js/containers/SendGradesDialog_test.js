@@ -7,20 +7,23 @@ import sinon from "sinon"
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider"
 import getMuiTheme from "material-ui/styles/getMuiTheme"
 
-import SendGradesDialog from "./SendGradesDialog";
-import configureTestStore from "redux-asserts";
-import rootReducer from "../reducers";
-import {setSelectedSchool, setSendDialogVisibility} from "../actions/send_grades_dialog";
-import ReactTestUtils from "react-dom/test-utils";
-import * as api from "../lib/api";
-import {sendGradesRecordMail} from "../lib/api";
+import SendGradesDialog from "./SendGradesDialog"
+import configureTestStore from "redux-asserts"
+import rootReducer from "../reducers"
+import {
+  setSelectedSchool,
+  setSendDialogVisibility
+} from "../actions/send_grades_dialog"
+import ReactTestUtils from "react-dom/test-utils"
+import * as api from "../lib/api"
+import { sendGradesRecordMail } from "../lib/api"
 
 describe("SendGradesDialog", () => {
   let sandbox, store
   let sendGradesRecordMailStub
 
   beforeEach(() => {
-    SETTINGS.partner_schools= [[1,"345"]]
+    SETTINGS.partner_schools = [[1, "345"]]
     SETTINGS.hash = "enrollment_hash"
     sandbox = sinon.sandbox.create()
     store = configureTestStore(rootReducer)
@@ -37,17 +40,14 @@ describe("SendGradesDialog", () => {
     mount(
       <MuiThemeProvider muiTheme={getMuiTheme()}>
         <Provider store={store}>
-          <SendGradesDialog
-          />
+          <SendGradesDialog />
         </Provider>
       </MuiThemeProvider>
     )
     return (document.querySelector(".send-dialog"): any)
   }
 
-
   it("should have some text and a title", () => {
-
     store.dispatch(setSendDialogVisibility(true))
     const dialogText = renderDialog().textContent
 
@@ -72,6 +72,4 @@ describe("SendGradesDialog", () => {
     )
     assert.isFalse(store.getState().sendDialog.sendDialogVisibility)
   })
-
 })
-
