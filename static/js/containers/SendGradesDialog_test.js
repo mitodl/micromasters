@@ -10,34 +10,34 @@ import getMuiTheme from "material-ui/styles/getMuiTheme"
 import SendGradesDialog from "./SendGradesDialog";
 import configureTestStore from "redux-asserts";
 import rootReducer from "../reducers";
-import {setSendDialogVisibility} from "../actions/send_grades_dialog";
-import {getEl} from "../util/test_utils";
+import {setSelectedSchool, setSendDialogVisibility} from "../actions/send_grades_dialog";
 import ReactTestUtils from "react-dom/test-utils";
+import * as api from "../lib/api";
+import {sendGradesRecordMail} from "../lib/api";
 
 describe("SendGradesDialog", () => {
   let sandbox, store
-  let sendStub
+  let sendGradesRecordMailStub
 
-  const getDialog = () => document.querySelector(".send-dialog")
   beforeEach(() => {
     SETTINGS.partner_schools= [[1,"345"]]
+    SETTINGS.hash = "enrollment_hash"
     sandbox = sinon.sandbox.create()
     store = configureTestStore(rootReducer)
-    // cancelStub = sandbox.stub()
-    sendStub = sandbox.stub()
+
+    sendGradesRecordMailStub = sandbox.stub(api, "sendGradesRecordMail")
+    sendGradesRecordMailStub.returns(Promise.resolve())
   })
 
   afterEach(() => {
     sandbox.restore()
   })
 
-  const renderDialog = (open = true): HTMLElement => {
+  const renderDialog = (): HTMLElement => {
     mount(
       <MuiThemeProvider muiTheme={getMuiTheme()}>
         <Provider store={store}>
           <SendGradesDialog
-          open={open}
-          sendGradeEmailClick={sendStub}
           />
         </Provider>
       </MuiThemeProvider>
@@ -55,15 +55,22 @@ describe("SendGradesDialog", () => {
     assert.include(dialogText, "You can directly share your program")
   })
 
-  it("should have a cancel button", () => {
+  it("should call sendGradeEmail", () => {
+    store.dispatch(setSendDialogVisibility(true))
+    store.dispatch(setSelectedSchool(1))
+    const dialog = renderDialog()
+    const sendButton = dialog.querySelector(".send-grades")
+    ReactTestUtils.Simulate.click(sendButton)
+    assert.isTrue(sendGradesRecordMailStub.called)
+  })
+
+  it("should close the dialog on cancel button", () => {
     store.dispatch(setSendDialogVisibility(true))
     const dialogText = renderDialog()
-    console.log(dialogText)
-    console.log(dialogText.querySelector(".send-grades"))
     ReactTestUtils.Simulate.click(
-      dialogText.querySelector(".send-grades")
+      dialogText.querySelector(".close-send-dialog")
     )
-    assert.ok(sendStub.called, "cancel function should have been called")
+    assert.isFalse(store.getState().sendDialog.sendDialogVisibility)
   })
 
 })

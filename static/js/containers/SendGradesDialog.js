@@ -72,7 +72,7 @@ class SendGradesDialog extends React.Component {
             { sentSuccess ? "Email Sent!": ""}
           </div>
           <button
-            className="btn pull-right"
+            className="btn pull-right close-send-dialog"
             onClick={() => {setSendDialogVisibility(false)}}
           >
             Close
