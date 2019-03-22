@@ -1,3 +1,4 @@
+/* global SETTINGS: false */
 // @flow
 import React from "react"
 import { mount } from "enzyme"
@@ -16,7 +17,6 @@ import {
 } from "../actions/send_grades_dialog"
 import ReactTestUtils from "react-dom/test-utils"
 import * as api from "../lib/api"
-import { sendGradesRecordMail } from "../lib/api"
 
 describe("SendGradesDialog", () => {
   let sandbox, store

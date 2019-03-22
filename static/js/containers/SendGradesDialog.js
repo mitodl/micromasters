@@ -8,7 +8,6 @@ import {
 } from "../actions/send_grades_dialog"
 import { connect } from "react-redux"
 import Dialog from "material-ui/Dialog"
-import type { Dispatch } from "redux"
 import R from "ramda"
 import SelectField from "material-ui/SelectField"
 import MenuItem from "material-ui/MenuItem"

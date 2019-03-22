@@ -1,6 +1,5 @@
 /* global SETTINGS: false $:false jQuery: false CURRENT_PAGE_URL: false */
-import SendGradesDialog from "../containers/SendGradesDialog";
-
+import SendGradesDialog from "../containers/SendGradesDialog"
 __webpack_public_path__ = `${SETTINGS.public_path}` // eslint-disable-line no-undef, camelcase
 import "rrssb/js/rrssb.js"
 import "bootstrap"

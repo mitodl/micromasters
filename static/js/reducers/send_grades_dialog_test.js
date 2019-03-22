@@ -8,7 +8,6 @@ import {
 import rootReducer from "./index"
 import configureTestStore from "redux-asserts"
 import * as api from "../lib/api"
-import { sendGradesRecordMail } from "../lib/api"
 
 describe("email reducers for the sendGradeEmail action", () => {
   let dispatchThen, sandbox, store

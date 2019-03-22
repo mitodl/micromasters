@@ -20,7 +20,6 @@ from grades.models import (
     CombinedFinalGrade,
 )
 from mail.models import PartnerSchool
-from profiles.api import get_social_username
 
 log = logging.getLogger(__name__)
 
