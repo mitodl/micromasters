@@ -1,7 +1,7 @@
 import {
   SET_DIALOG_VISIBILITY, SET_SELECTED_SCHOOL
 } from "../actions/send_grades_dialog"
-import { SEND_GRADES_EMAIL_SUCCESS } from "../actions/send_grades_dialog"
+import { SEND_GRADES_EMAIL_SUCCESS, SEND_GRADES_EMAIL_FAILURE } from "../actions/send_grades_dialog"
 
 export type SendDialogState = {
   sendDialogVisibility: boolean,
@@ -25,6 +25,8 @@ export const sendDialog = (
   case SET_SELECTED_SCHOOL:
     return { ...state, selectedSchool: action.payload }
   case SEND_GRADES_EMAIL_SUCCESS:
+    return { ...state, sentSuccess: action.payload }
+  case SEND_GRADES_EMAIL_FAILURE:
     return { ...state, sentSuccess: action.payload }
   default:
     return state

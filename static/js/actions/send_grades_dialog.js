@@ -25,7 +25,7 @@ export function sendGradeEmail(
         return Promise.resolve(response)
       },
       () => {
-        dispatch(sendEmailSuccess(false))
+        dispatch(sendEmailFailure(false))
         return Promise.reject()
       }
     )

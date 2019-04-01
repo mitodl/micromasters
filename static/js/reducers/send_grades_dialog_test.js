@@ -9,7 +9,7 @@ import rootReducer from "./index"
 import configureTestStore from "redux-asserts"
 import * as api from "../lib/api"
 
-describe("email reducers for the sendGradeEmail action", () => {
+describe("email reducers for the sendGradeEmail action", function() {
   let dispatchThen, sandbox, store
   let sendGradeEmailStub
   const sendEmailArguments = [2, "45"]
@@ -39,7 +39,6 @@ describe("email reducers for the sendGradeEmail action", () => {
 
   it("should go through expected state changes when the send function fails", () => {
     sendGradeEmailStub.returns(Promise.reject())
-
     return dispatchThen(sendGradeEmail(sendEmailArguments), [
       SEND_GRADES_EMAIL_FAILURE
     ]).then(state => {
