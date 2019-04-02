@@ -131,7 +131,6 @@ export function sendGradesRecordMail(
   })
 }
 
-
 export async function getPrograms(): Promise<AvailablePrograms> {
   try {
     const response = await fetchJSONWithCSRF("/api/v0/programs/")
