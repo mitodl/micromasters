@@ -80,8 +80,7 @@ if (shareDialog) {
 // Send Program Grades
 const sendStore = sendGradesDialogStore()
 const sendDialog = document.querySelector("#send-dialog")
-const openSendDialog = () =>
-  sendStore.dispatch(setSendDialogVisibility(true))
+const openSendDialog = () => sendStore.dispatch(setSendDialogVisibility(true))
 const sendButton = document.querySelector(".open-send-dialog")
 if (sendDialog) {
   sendButton.onclick = openSendDialog
