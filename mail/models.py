@@ -68,7 +68,7 @@ class SentAutomaticEmail(TimestampedModel):
 
 class PartnerSchool(models.Model):
     """
-    Models for partner school to send records to
+    Model for partner school to send records to
     """
 
     name = models.CharField(max_length=255)

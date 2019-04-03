@@ -246,7 +246,7 @@ class FinancialAidMailView(GenericAPIView):
 
 class GradesRecordMailView(GenericAPIView):
     """
-    View for sending financial aid emails to individual learners
+    View for sending program grades emails to partner schools
     """
     authentication_classes = (
         authentication.SessionAuthentication,
