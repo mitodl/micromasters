@@ -152,13 +152,17 @@
                       {{ programpage.title }}
                     {% endif %}
                   </h4>
-                  <div class="program-num-courses">
-                    {% blocktrans count counter=program.course_set.count %}
-                      {{ counter }} course
-                    {% plural %}
-                      {{ counter }} courses
-                    {% endblocktrans %}
-                  </div>
+                  {% with program.course_set.count as course_count %}
+                    {% if course_count %}
+                      <div class="program-num-courses">
+                        {% blocktrans count counter=course_count %}
+                          {{ counter }} course
+                        {% plural %}
+                          {{ counter }} courses
+                        {% endblocktrans %}
+                      </div>
+                    {% endif %}
+                  {% endwith %}
                 </div>
                 {% if programpage and programpage.thumbnail_image %}
                   {% image programpage.thumbnail_image fill-690x530 as thumbnail_image %}
