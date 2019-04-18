@@ -716,12 +716,17 @@ class TestProgramPage(ViewsTests):
         """
         Verify that no courses result in a different button
         """
+        program_subscribe_link = "https://fakeurl.com"
+        self.program_page.program_subscribe_link = program_subscribe_link
+        self.program_page.save()
+
         response = self.client.get(self.program_page.url)
         js_settings = json.loads(response.context['js_settings_json'])
         self.assertIn("program", js_settings)
         self.assertIn("courses", js_settings["program"])
         self.assertEqual(len(js_settings["program"]["courses"]), 0)
         self.assertContains(response, "I'm interested")
+        self.assertContains(response, program_subscribe_link)
 
 
 # pylint: disable=too-many-locals

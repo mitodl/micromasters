@@ -201,6 +201,12 @@ class ProgramPage(Page):
         help_text="Text that will appear on the program congratulation letter."
     )
 
+    program_subscribe_link = models.URLField(
+        blank=True,
+        null=True,
+        help_text="A url for I'm interested button, if there is no course(s) available."
+    )
+
     subpage_types = ['FaqsPage', 'ProgramTabPage']
     content_panels = Page.content_panels + [
         FieldPanel('description', classname="full"),
@@ -214,6 +220,7 @@ class ProgramPage(Page):
         FieldPanel('faculty_description'),
         FieldPanel('program_letter_logo'),
         FieldPanel('program_letter_text'),
+        FieldPanel('program_subscribe_link'),
         InlinePanel('courses', label='Program Courses'),
         InlinePanel('info_links', label='More Info Links'),
         InlinePanel('faculty_members', label='Faculty'),
