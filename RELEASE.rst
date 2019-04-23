@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.133.0
+---------------
+
+- adding a management command to authorize users for expired exam runs (#4295)
+- Adding Send dialog (#4284)
+
 Version 0.132.1 (Released April 19, 2019)
 ---------------
 
