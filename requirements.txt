@@ -91,7 +91,7 @@ text-unidecode==1.2       # via faker
 tornado==5.1.1            # via robohash
 traitlets==4.3.2          # via ipython
 unidecode==0.4.21         # via wagtail
-urllib3==1.24.1
+urllib3==1.24.2
 uwsgi==2.0.17.1
 vine==1.1.4               # via amqp
 wagtail==2.3
