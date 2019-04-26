@@ -86,7 +86,7 @@ export const staffCourseInfo = (courseRun: CourseRun, course: Course) => {
     } else if (hasCanUpgradeCourseRun(course)) {
       return "Audited, passed, did not pay"
     } else if (hasMissedDeadlineCourseRun(course)) {
-      return "Audited, passed, missed payment deadline"
+      return "Audited, missed payment deadline"
     }
     if (courseRun.status === STATUS_NOT_PASSED) {
       if (hasPaidForAnyCourseRun(course)) {
