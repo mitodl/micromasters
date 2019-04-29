@@ -227,14 +227,14 @@ describe("Course ProgressMessage", () => {
         "Audited, passed, did not pay"
       )
     })
-    it("should return Audited, passed, missed payment deadline", () => {
+    it("should return Audited, missed payment deadline", () => {
       makeRunPast(course.runs[0])
       makeRunPast(course.runs[1])
       course.runs[0].status = STATUS_NOT_PASSED
       course.runs[1].status = STATUS_MISSED_DEADLINE
       assert.equal(
         staffCourseInfo(course.runs[0], course),
-        "Audited, passed, missed payment deadline"
+        "Audited, missed payment deadline"
       )
     })
   })
