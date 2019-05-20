@@ -33,7 +33,7 @@ import {
   makeRunCanUpgrade,
   makeRunMissedDeadline
 } from "./test_util"
-import {assertIsJust, assertIsNothing} from "../../../lib/test_utils"
+import { assertIsJust } from "../../../lib/test_utils"
 import {
   COURSE_ACTION_PAY,
   COURSE_ACTION_CALCULATE_PRICE,
@@ -49,7 +49,6 @@ import {
 } from "../../../constants"
 import * as libCoupon from "../../../lib/coupon"
 import { FINANCIAL_AID_PARTIAL_RESPONSE } from "../../../test_constants"
-import {courseUpcomingOrCurrent} from "./util";
 
 describe("Course Status Messages", () => {
   let message

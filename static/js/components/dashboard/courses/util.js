@@ -67,7 +67,8 @@ export const courseCurrentlyInProgress = (courseRun: CourseRun) => {
 
 export const courseUpcomingOrCurrent = (courseRun: CourseRun) =>
   courseRun.course_end_date
-    ? moment().isBefore(moment(courseRun.course_end_date)) || courseRun.status === STATUS_CURRENTLY_ENROLLED
+    ? moment().isBefore(moment(courseRun.course_end_date)) ||
+      courseRun.status === STATUS_CURRENTLY_ENROLLED
     : true
 
 export const hasPaidForAnyCourseRun = R.compose(

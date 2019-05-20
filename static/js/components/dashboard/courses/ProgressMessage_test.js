@@ -12,7 +12,9 @@ import { makeCourse } from "../../../factories/dashboard"
 import {
   makeRunCurrent,
   makeRunEnrolled,
-  makeRunFuture, makeRunMissedDeadline, makeRunPaid,
+  makeRunFuture,
+  makeRunMissedDeadline,
+  makeRunPaid,
   makeRunPast
 } from "./test_util"
 import {
@@ -244,10 +246,7 @@ describe("Course ProgressMessage", () => {
       makeRunPaid(course.runs[0])
       makeRunMissedDeadline(course.runs[1])
       makeRunPast(course.runs[1])
-      assert.equal(
-        staffCourseInfo(course.runs[0], course),
-        "Paid"
-      )
+      assert.equal(staffCourseInfo(course.runs[0], course), "Paid")
     })
   })
 })
