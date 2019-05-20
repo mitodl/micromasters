@@ -33,7 +33,7 @@ import {
   makeRunCanUpgrade,
   makeRunMissedDeadline
 } from "./test_util"
-import { assertIsJust } from "../../../lib/test_utils"
+import {assertIsJust, assertIsNothing} from "../../../lib/test_utils"
 import {
   COURSE_ACTION_PAY,
   COURSE_ACTION_CALCULATE_PRICE,
@@ -49,6 +49,7 @@ import {
 } from "../../../constants"
 import * as libCoupon from "../../../lib/coupon"
 import { FINANCIAL_AID_PARTIAL_RESPONSE } from "../../../test_constants"
+import {courseUpcomingOrCurrent} from "./util";
 
 describe("Course Status Messages", () => {
   let message
@@ -956,6 +957,15 @@ describe("Course Status Messages", () => {
           message: "You did not pass the edX course."
         }
       ])
+    })
+
+    it("should not have a message if course is past but still not frozen", () => {
+      makeRunPast(course.runs[0])
+      makeRunEnrolled(course.runs[0])
+      makeRunPaid(course.runs[0])
+      makeRunMissedDeadline(course.runs[1])
+      makeRunPast(course.runs[1])
+      assertIsJust(calculateMessages(calculateMessagesProps), [])
     })
   })
 })

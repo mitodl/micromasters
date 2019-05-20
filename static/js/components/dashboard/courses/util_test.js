@@ -195,6 +195,14 @@ describe("dashboard course utilities", () => {
       run.course_end_date = ""
       assert.isTrue(courseUpcomingOrCurrent(run))
     })
+
+    it("should return true if course ended but status currently-enrolled", () => {
+      run.course_end_date = moment()
+        .subtract(5, "days")
+        .format()
+      run.status = STATUS_CURRENTLY_ENROLLED
+      assert.isTrue(courseUpcomingOrCurrent(run))
+    })
   })
 
   describe("hasPaidForAnyCourseRun", () => {
