@@ -19,7 +19,6 @@
     <link rel="stylesheet" type="text/css" href="{% static 'hijack/hijack-styles.css' %}" />
     {% load raven %}
     <link rel="icon" href="{% static 'images/favicon.ico' %}" />
-
     <script type="text/javascript">
     var SETTINGS = {{ js_settings_json|safe }};
     var CURRENT_PAGE_URL = '{{ request.build_absolute_uri }}';
