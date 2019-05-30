@@ -47,7 +47,6 @@ class ReactView(View):  # pylint: disable=unused-argument
 
         js_settings = {
             "gaTrackingID": settings.GA_TRACKING_ID,
-            "gtmID": settings.GTM_CONTAINER_ID,
             "reactGaDebug": settings.REACT_GA_DEBUG,
             "host": webpack_dev_server_host(request),
             "edx_base_url": settings.EDXORG_BASE_URL,

@@ -12,18 +12,18 @@
     <link rel="stylesheet" type="text/css" href="{% static 'hijack/hijack-styles.css' %}" />
     {% load raven %}
     <link rel="icon" href="{% static 'images/favicon.ico' %}" />
-    <script type="text/javascript">
-    var SETTINGS = {{ js_settings_json|safe }};
-    var CURRENT_PAGE_URL = '{{ request.build_absolute_uri }}';
-    {% if SETTINGS.gtmID %}
+    {% if APIKEYS.GOOGLE_TAG_MANAGER %}
       <!-- Google Tag Manager -->
       <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
       new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
       j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-      })(window,document,'script','dataLayer','GTM-NB27R8L');</script>
+      })(window,document,'script','dataLayer', '{{ APIKEYS.GOOGLE_TAG_MANAGER }}');</script>
       <!-- End Google Tag Manager -->
     {% endif %}
+    <script type="text/javascript">
+    var SETTINGS = {{ js_settings_json|safe }};
+    var CURRENT_PAGE_URL = '{{ request.build_absolute_uri }}';
     </script>
     {% load render_bundle %}
     {% render_bundle "common" %}
@@ -48,9 +48,9 @@
     {% endspaceless %}
   </head>
   <body class="{% block bodyclass %}{% endblock %}">
-    {% if SETTINGS.gtmID %}
+    {% if APIKEYS.GOOGLE_TAG_MANAGER %}
       <!-- Google Tag Manager (noscript) -->
-      <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NB27R8L"
+      <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ APIKEYS.GOOGLE_TAG_MANAGER }}"
       height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- End Google Tag Manager (noscript) -->
     {% endif %}

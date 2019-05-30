@@ -40,7 +40,6 @@ class HomePage(Page):
         programs = Program.objects.filter(live=True).select_related('programpage').order_by("id")
         js_settings = {
             "gaTrackingID": settings.GA_TRACKING_ID,
-            "gtmID": settings.GTM_CONTAINER_ID,
             "host": webpack_dev_server_host(request),
             "environment": settings.ENVIRONMENT,
             "sentry_dsn": sentry.get_public_dsn(),

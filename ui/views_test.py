@@ -283,7 +283,6 @@ class DashboardTests(ViewsTests):
         user = profile.user
 
         ga_tracking_id = FuzzyText().fuzz()
-        gtm_id = FuzzyText().fuzz()
         react_ga_debug = FuzzyText().fuzz()
         edx_base_url = FuzzyText().fuzz()
         host = FuzzyText().fuzz()
@@ -291,7 +290,6 @@ class DashboardTests(ViewsTests):
         open_discussions_redirect_url = FuzzyText().fuzz()
         with self.settings(
             GA_TRACKING_ID=ga_tracking_id,
-            GTM_CONTAINER_ID=gtm_id,
             REACT_GA_DEBUG=react_ga_debug,
             EDXORG_BASE_URL=edx_base_url,
             WEBPACK_DEV_SERVER_HOST=host,
@@ -317,7 +315,6 @@ class DashboardTests(ViewsTests):
             js_settings = json.loads(resp.context['js_settings_json'])
             assert js_settings == {
                 'gaTrackingID': ga_tracking_id,
-                'gtmID': gtm_id,
                 'reactGaDebug': react_ga_debug,
                 'user': {
                     'email': user.email,
@@ -747,7 +744,6 @@ class TestUsersPage(ViewsTests):
         username = get_social_username(user)
 
         ga_tracking_id = FuzzyText().fuzz()
-        gtm_id = FuzzyText().fuzz()
         react_ga_debug = FuzzyText().fuzz()
         edx_base_url = FuzzyText().fuzz()
         host = FuzzyText().fuzz()
@@ -755,7 +751,6 @@ class TestUsersPage(ViewsTests):
         open_discussions_redirect_url = FuzzyText().fuzz()
         with self.settings(
             GA_TRACKING_ID=ga_tracking_id,
-            GTM_CONTAINER_ID=gtm_id,
             REACT_GA_DEBUG=react_ga_debug,
             EDXORG_BASE_URL=edx_base_url,
             WEBPACK_DEV_SERVER_HOST=host,
@@ -781,7 +776,6 @@ class TestUsersPage(ViewsTests):
                 js_settings = json.loads(resp.context['js_settings_json'])
                 assert js_settings == {
                     'gaTrackingID': ga_tracking_id,
-                    'gtmID': gtm_id,
                     'reactGaDebug': react_ga_debug,
                     'user': {
                         'email': user.email,
@@ -832,7 +826,6 @@ class TestUsersPage(ViewsTests):
         username = get_social_username(user)
 
         ga_tracking_id = FuzzyText().fuzz()
-        gtm_id = FuzzyText().fuzz()
         react_ga_debug = FuzzyText().fuzz()
         edx_base_url = FuzzyText().fuzz()
         host = FuzzyText().fuzz()
@@ -840,7 +833,6 @@ class TestUsersPage(ViewsTests):
         open_discussions_redirect_url = FuzzyText().fuzz()
         with self.settings(
             GA_TRACKING_ID=ga_tracking_id,
-            GTM_CONTAINER_ID=gtm_id,
             REACT_GA_DEBUG=react_ga_debug,
             EDXORG_BASE_URL=edx_base_url,
             WEBPACK_DEV_SERVER_HOST=host,
@@ -866,7 +858,6 @@ class TestUsersPage(ViewsTests):
                 js_settings = json.loads(resp.context['js_settings_json'])
                 assert js_settings == {
                     'gaTrackingID': ga_tracking_id,
-                    'gtmID': gtm_id,
                     'reactGaDebug': react_ga_debug,
                     'user': None,
                     'host': host,
