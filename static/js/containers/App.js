@@ -107,14 +107,11 @@ class App extends React.Component {
     if (userProfile.getStatus === undefined) {
       dispatch(fetchUserProfile(username)).then(() => {
         if (PROFILE_REGEX.test(pathname)) {
-          dispatch(startProfileEdit(SETTINGS.user.username)).then(() => {
-            this.requireCompleteProfile()
-          })
+          dispatch(startProfileEdit(SETTINGS.user.username))
         }
       })
-    } else {
-      this.requireCompleteProfile()
     }
+    this.requireCompleteProfile()
   }
 
   requireCompleteProfile() {
@@ -126,7 +123,6 @@ class App extends React.Component {
     } = this.props
     const [complete, step] = validateProfileComplete(profile)
     const idealStep = currentOrFirstIncompleteStep(profileStep, step)
-
     if (
       userProfile.getStatus === FETCH_SUCCESS &&
       !PROFILE_REGEX.test(pathname) &&
