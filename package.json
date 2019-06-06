@@ -35,7 +35,7 @@
     "chai-as-promised": "^7.0.0",
     "codecov": "^2.2.0",
     "countries-list": "^2.4.2",
-    "css-loader": "^0.28.3",
+    "css-loader": "2.1.1",
     "currency-codes": "^1.1.2",
     "decimal.js-light": "^2.2.3",
     "deep-freeze": "0.0.1",
