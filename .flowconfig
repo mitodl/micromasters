@@ -14,6 +14,7 @@
 .*/node_modules/postcss-modules-local-by-default/node_modules/chalk/index.js.flow
 .*/node_modules/postcss-modules-scope/node_modules/chalk/index.js.flow
 .*/node_modules/postcss-modules-values/node_modules/chalk/index.js.flow
+.*/node_modules/postcss/node_modules/chalk/index.js.flow
 .*/node_modules/react-draft-wysiwyg/.*
 .*/node_modules/react-virtualized/.*
 .*/node_modules/table/node_modules/chalk/index.js.flow
