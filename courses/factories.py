@@ -16,6 +16,7 @@ class ProgramFactory(DjangoModelFactory):
     live = factory.Faker('boolean')
     description = fuzzy.FuzzyText()
     price = fuzzy.FuzzyDecimal(low=500, high=2000)
+    num_required_courses = 1
 
     class Meta:
         model = Program

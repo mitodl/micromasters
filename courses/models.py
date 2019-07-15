@@ -28,7 +28,7 @@ class Program(TimestampedModel):
     description = models.TextField(blank=True, null=True)
     financial_aid_availability = models.BooleanField(default=False, null=False)
     ga_tracking_id = models.CharField(max_length=255, blank=True, default="")
-
+    num_required_courses = models.PositiveSmallIntegerField(null=False)
     price = models.DecimalField(decimal_places=2, max_digits=20)
 
     def __str__(self):
