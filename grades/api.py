@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 
 from django_redis import get_redis_connection
 
+from courses.models import ElectivesSet
 from dashboard.api_edx_cache import CachedEdxUserData, CachedEdxDataApi
 from dashboard.models import CachedEnrollment, CachedCurrentGrade
 from dashboard.utils import get_mmtrack
@@ -236,6 +237,16 @@ def generate_program_certificate(user, program):
         user=user,
         course_id__in=courses_in_program_ids
     ).values_list('course__id', flat=True).distinct().count()
+
+    if ElectivesSet.objects.filter(program=program).exists():
+        for electives_set in ElectivesSet.objects.filter(program=program):
+            elective_courses_id = set(electives_set.electivecourse_set.all().values_list('course__id', flat=True))
+            num_electives_with_cert = MicromastersCourseCertificate.objects.filter(
+                user=user,
+                course_id__in=elective_courses_id
+            ).values_list('course__id', flat=True).distinct().count()
+            if electives_set.required_number > num_electives_with_cert:
+                return
 
     if len(courses_in_program_ids) > num_courses_with_cert:
         return

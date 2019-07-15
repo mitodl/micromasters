@@ -312,3 +312,21 @@ class CourseRun(models.Model):
         ).filter(freeze_grade_date__lt=now_in_utc())
 
         return course_runs
+
+
+class ElectivesSet(models.Model):
+    """
+    This represents an electives requirement for a program, with choice of courses and
+    required number of courses to be passed.
+    """
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    required_number = models.PositiveSmallIntegerField()
+    title = models.CharField(max_length=255)
+
+
+class ElectiveCourse(models.Model):
+    """
+    Links to a course to an ElectivesSet
+    """
+    course = models.OneToOneField(Course, on_delete=models.CASCADE)
+    electives_set = models.ForeignKey(ElectivesSet, on_delete=models.CASCADE)
