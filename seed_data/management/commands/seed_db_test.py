@@ -110,6 +110,7 @@ class SeedDBDeserializationTests(MockedESTestCase):
         "price": 1000,
         "description": "Learn stuff about digital learning.",
         "financial_aid_availability": True,
+        "num_required_courses": 1,
         "courses": [
             {
                 "title": "Digital Learning 100",

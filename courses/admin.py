@@ -73,7 +73,6 @@ class ElectiveCourseAdmin(admin.ModelAdmin):
     list_display = ('course', 'electives_set',)
 
 
-
 admin.site.register(CourseRun, CourseRunAdmin)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Program, ProgramAdmin)
