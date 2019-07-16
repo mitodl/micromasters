@@ -11,6 +11,7 @@ from django_redis import get_redis_connection
 from factory.django import mute_signals
 
 from courses.factories import CourseRunFactory
+from courses.models import ElectivesSet, ElectiveCourse
 from dashboard.api_edx_cache import CachedEdxUserData, UserCachedRunData
 from dashboard.factories import (
     CachedCertificateFactory,
@@ -456,6 +457,34 @@ class GenerateCertificatesAPITests(MockedESTestCase):
         CourseRunGradingStatus.objects.create(course_run=self.run_1, status='complete')
         with mute_signals(post_save):
             MicromastersCourseCertificate.objects.create(course=final_grade.course_run.course, user=self.user)
+
+        cert_qset = MicromastersProgramCertificate.objects.filter(user=self.user, program=self.program)
+        assert cert_qset.exists() is False
+        api.generate_program_certificate(self.user, self.program)
+        assert cert_qset.exists() is True
+
+    def test_successful_program_certificate_generation_with_electives(self):
+        """
+        Test has final grade and a certificate with elective courses
+        """
+        run_2 = CourseRunFactory.create(
+            freeze_grade_date=now_in_utc() - timedelta(days=1),
+            course__program=self.program,
+        )
+        electives_set = ElectivesSet.objects.create(program=self.program, required_number=1)
+
+        for run in [self.run_1, run_2]:
+            final_grade = FinalGradeFactory.create(
+                user=self.user,
+                course_run=run,
+                passed=True,
+                status='complete',
+                grade=0.7
+            )
+            CourseRunGradingStatus.objects.create(course_run=run, status='complete')
+            ElectiveCourse.objects.create(course=run.course, electives_set=electives_set)
+            with mute_signals(post_save):
+                MicromastersCourseCertificate.objects.create(course=final_grade.course_run.course, user=self.user)
 
         cert_qset = MicromastersProgramCertificate.objects.filter(user=self.user, program=self.program)
         assert cert_qset.exists() is False
