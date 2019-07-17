@@ -37,6 +37,16 @@ if (!Object.entries) {
   entries.shim()
 }
 
+import Storage from "dom-storage"
+const _localStorage = new Storage(null)
+const _sessionStorage = new Storage(null)
+Object.defineProperty(window, "localStorage", {
+  get: () => _localStorage
+})
+Object.defineProperty(window, "sessionStorage", {
+  get: () => _sessionStorage
+})
+
 import fetchMock from "fetch-mock"
 // eslint-disable-next-line mocha/no-top-level-hooks
 beforeEach(() => {
@@ -49,6 +59,9 @@ beforeEach(() => {
     process.exit(1);
   });
   */
+
+  // the default is about:blank which doesn't work with localStorage or sessionStorage
+  window.location = "/"
 })
 
 // cleanup after each test run
