@@ -18,7 +18,7 @@ export const setSelectedSchool = createAction(SET_SELECTED_SCHOOL)
 export function sendGradeEmail(sendFunctionParams: Array<*>): Dispatcher<*> {
   return (dispatch: Dispatch) => {
     return sendGradesRecordMail(...sendFunctionParams).then(
-      response => {
+      (response) => {
         dispatch(sendEmailSuccess(true))
         return Promise.resolve(response)
       },

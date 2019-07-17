@@ -19,7 +19,8 @@ import ReactTestUtils from "react-dom/test-utils"
 import * as api from "../lib/api"
 
 describe("SendGradesDialog", () => {
-  let sandbox, store
+  let sandbox
+  let store
   let sendGradesRecordMailStub
 
   beforeEach(() => {

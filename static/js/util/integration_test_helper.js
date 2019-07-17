@@ -118,7 +118,7 @@ export default class IntegrationTestHelper {
    * @param url {String} The react-router URL
    * @param typesToAssert {Array<String>|null} A list of redux actions to listen for.
    * If null, actions types for the success case is assumed.
-   * @returns {Promise<*>} A promise which provides [wrapper, div] on success
+   * @return {Promise<*>} A promise which provides [wrapper, div] on success
    */
   renderComponent(
     url: string = "/",
@@ -136,7 +136,8 @@ export default class IntegrationTestHelper {
       expectedTypes = typesToAssert
     }
 
-    let wrapper, div
+    let wrapper
+    let div
 
     return this.listenForActions(expectedTypes, () => {
       browserHistory.push(url)

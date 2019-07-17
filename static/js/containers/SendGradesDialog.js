@@ -34,7 +34,7 @@ class SendGradesDialog extends React.Component {
       selectedSchool,
       sentSuccess
     } = this.props
-    const options = SETTINGS.partner_schools.map(program => (
+    const options = SETTINGS.partner_schools.map((program) => (
       <MenuItem value={program[0]} primaryText={program[1]} key={program[0]} />
     ))
     return (
@@ -103,13 +103,13 @@ const setSelectedSchoolDispatch = R.curry((dispatch, schoolId) => {
   dispatch(setSelectedSchool(schoolId))
 })
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   open:           state.sendDialog.sendDialogVisibility,
   sentSuccess:    state.sendDialog.sentSuccess,
   selectedSchool: state.sendDialog.selectedSchool
 })
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     sendGradeEmailClick: sendGradeEmailClick(dispatch),
     setSelectedSchool:   setSelectedSchoolDispatch(dispatch),

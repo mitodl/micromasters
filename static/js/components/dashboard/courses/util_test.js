@@ -43,7 +43,7 @@ describe("dashboard course utilities", () => {
     })
 
     it("should show start date, if >10 days away", () => {
-      [10, 11, 15].forEach(days => {
+      [10, 11, 15].forEach((days) => {
         const inTheFuture = moment()
           .add(days, "days")
           .add(10, "minutes")
@@ -74,7 +74,7 @@ describe("dashboard course utilities", () => {
     })
 
     it("should return an empty string if there is no course start date", () => {
-      [null, undefined].forEach(nilVal => {
+      [null, undefined].forEach((nilVal) => {
         run.course_start_date = nilVal
         assert.equal(courseStartDateMessage(run), "")
       })
@@ -84,7 +84,7 @@ describe("dashboard course utilities", () => {
   describe("hasPearsonExam", () => {
     it("should check the has_exam property", () => {
       const course = makeCourse(0)
-      ;[true, false].forEach(bool => {
+      ;[true, false].forEach((bool) => {
         course.has_exam = bool
         assert.equal(bool, hasPearsonExam(course))
       })
@@ -98,7 +98,7 @@ describe("dashboard course utilities", () => {
         STATUS_OFFERED,
         STATUS_PENDING_ENROLLMENT,
         STATUS_PAID_BUT_NOT_ENROLLED
-      ].forEach(unenrolledStatus => {
+      ].forEach((unenrolledStatus) => {
         run.status = unenrolledStatus
         assert.isFalse(userIsEnrolled(run))
       })
@@ -109,7 +109,7 @@ describe("dashboard course utilities", () => {
         STATUS_CAN_UPGRADE,
         STATUS_CURRENTLY_ENROLLED,
         STATUS_MISSED_DEADLINE
-      ].forEach(enrolledStatus => {
+      ].forEach((enrolledStatus) => {
         run.status = enrolledStatus
         assert.isTrue(userIsEnrolled(run))
       })
@@ -213,7 +213,7 @@ describe("dashboard course utilities", () => {
     })
 
     it("should return false if the user has not paid for any runs", () => {
-      course.runs.forEach(run => (run.has_paid = false))
+      course.runs.forEach((run) => (run.has_paid = false))
       assert.isFalse(hasPaidForAnyCourseRun(course))
     })
 
@@ -231,7 +231,7 @@ describe("dashboard course utilities", () => {
     })
 
     it("should return true if status is PASSED or MISSED_DEADLINE", () => {
-      [STATUS_PASSED, STATUS_MISSED_DEADLINE].forEach(status => {
+      [STATUS_PASSED, STATUS_MISSED_DEADLINE].forEach((status) => {
         run.status = status
         assert.isTrue(isPassedOrMissedDeadline(run))
       })
@@ -246,7 +246,7 @@ describe("dashboard course utilities", () => {
         STATUS_WILL_ATTEND,
         STATUS_PENDING_ENROLLMENT,
         STATUS_PAID_BUT_NOT_ENROLLED
-      ].forEach(status => {
+      ].forEach((status) => {
         run.status = status
         assert.isFalse(isPassedOrMissedDeadline(run))
       })
@@ -376,7 +376,7 @@ describe("dashboard course utilities", () => {
         STATUS_CURRENTLY_ENROLLED,
         STATUS_WILL_ATTEND,
         STATUS_MISSED_DEADLINE
-      ].forEach(status => {
+      ].forEach((status) => {
         course.runs[1].status = status
         assert.isTrue(hasEnrolledInAnyRun(course))
       })

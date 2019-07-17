@@ -80,7 +80,9 @@ class LeaveProgramWizard extends ProfileFormFields {
         insetChildren={true}
         checked={R.and(
           R.not(R.isEmpty(programsToUnEnroll)),
-          R.not(_.isUndefined(programsToUnEnroll.find(id => id === program.id)))
+          R.not(
+            _.isUndefined(programsToUnEnroll.find((id) => id === program.id))
+          )
         )}
         value={program.id}
         primaryText={program.title}

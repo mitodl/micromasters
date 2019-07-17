@@ -16,12 +16,16 @@ import {
 import { INITIAL_CHANNEL_STATE } from "./channel_dialog"
 
 describe("channel_dialog reducers", () => {
-  let helper, store, dispatchThen
+  let helper
+  let store
+  let dispatchThen
 
   beforeEach(() => {
     helper = new IntegrationTestHelper()
     store = helper.store
-    dispatchThen = helper.store.createDispatchThen(state => state.channelDialog)
+    dispatchThen = helper.store.createDispatchThen(
+      (state) => state.channelDialog
+    )
   })
 
   afterEach(() => {

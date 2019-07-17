@@ -25,7 +25,7 @@ describe("ProgramSelector", () => {
     sandbox.restore()
   })
 
-  const renderProgramSelector = props => {
+  const renderProgramSelector = (props) => {
     return shallow(
       <ProgramSelector
         programs={programs}
@@ -51,7 +51,7 @@ describe("ProgramSelector", () => {
     const wrapper = renderProgramSelector()
     const selectProps = wrapper.find(Select).props()
 
-    const enrollments = programs.filter(program => program.enrolled)
+    const enrollments = programs.filter((program) => program.enrolled)
     const sortedEnrollments = _.sortBy(enrollments, "title")
     // make sure we are testing sorting meaningfully
     assert.notDeepEqual(sortedEnrollments, enrollments)
@@ -59,8 +59,8 @@ describe("ProgramSelector", () => {
     const options = selectProps["options"]
     // include 'Enroll in a new program' which comes at the end if user can enroll in a new program
     const expectedEnrollments = sortedEnrollments
-      .filter(program => program.id !== selectedEnrollment.id)
-      .map(program => ({
+      .filter((program) => program.id !== selectedEnrollment.id)
+      .map((program) => ({
         label: program.title,
         value: program.id
       }))
@@ -72,7 +72,7 @@ describe("ProgramSelector", () => {
   })
 
   it("does not render the 'Enroll in a new program' option if there is not at least one available program", () => {
-    const allEnrollments = programs.map(program => ({
+    const allEnrollments = programs.map((program) => ({
       ...program,
       enrolled: true
     }))
@@ -87,8 +87,8 @@ describe("ProgramSelector", () => {
     const options = selectProps["options"]
     // include 'Enroll in a new program' which comes at the end if user can enroll in a new program
     const expectedEnrollments = sortedEnrollments
-      .filter(program => program.id !== selectedEnrollment.id)
-      .map(program => ({
+      .filter((program) => program.id !== selectedEnrollment.id)
+      .map((program) => ({
         label: program.title,
         value: program.id
       }))

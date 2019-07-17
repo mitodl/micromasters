@@ -8,7 +8,7 @@ import type { Course } from "../flow/programTypes"
 // this modules has some helper functions for calculating
 // and processing grades, mainly for displaying them in the dashboard
 
-const findLargestGrade = key =>
+const findLargestGrade = (key) =>
   R.compose(
     R.prop(key),
     R.reduce(R.maxBy(R.prop(key)), { [key]: 0 })
@@ -23,7 +23,7 @@ const filterEmpty = S.filter(
 
 // getLargestExamGrade :: Course -> Maybe Number
 export const getLargestExamGrade = R.compose(
-  S.map(percentage => percentage * 100),
+  S.map((percentage) => percentage * 100),
   S.map(findLargestGrade("percentage_grade")),
   filterEmpty,
   getm("proctorate_exams_grades")

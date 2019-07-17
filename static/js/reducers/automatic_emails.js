@@ -14,9 +14,9 @@ export const automaticEmailsEndpoint: Endpoint = {
   checkNoSpinner:      false,
   verbs:               [GET, PATCH],
   getUrl:              "/api/v0/mail/automatic_email/",
-  patchUrl:            email => `/api/v0/mail/automatic_email/${email.id}/`,
+  patchUrl:            (email) => `/api/v0/mail/automatic_email/${email.id}/`,
   fetchFunc:           fetchJSONWithCSRF,
-  patchOptions:        emailRecord => ({
+  patchOptions:        (emailRecord) => ({
     method: PATCH,
     body:   JSON.stringify(emailRecord)
   }),

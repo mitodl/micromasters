@@ -77,11 +77,11 @@ const SignupDialog = ({ open, setDialogVisibility }: signupProps) => {
   )
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   open: state.signupDialog.dialogVisibility
 })
 
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   createSimpleActionHelpers(dispatch, [
     ["setDialogVisibility", setDialogVisibility]
   ])

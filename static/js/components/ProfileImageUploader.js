@@ -30,7 +30,7 @@ const dropZone = (startPhotoEdit, setPhotoError) => (
 
 const uploaderBodyHeight = (): number => R.min(500, window.innerHeight * 0.44)
 
-const imageError = err => <div className="img-error">{err}</div>
+const imageError = (err) => <div className="img-error">{err}</div>
 
 const dialogContents = (
   updatePhotoEdit,
@@ -81,7 +81,7 @@ const ProfileImageUploader = ({
   imageUpload: { photo, error, patchStatus },
   updateUserPhoto,
   setPhotoError
-  }: ImageUploadProps) => {
+}: ImageUploadProps) => {
   const inFlight = patchStatus === FETCH_PROCESSING
   const disabled = patchStatus === FETCH_PROCESSING || !photo
 

@@ -22,7 +22,7 @@ describe("Navbar", () => {
 
   it("has a link to the dashboard if the user has no roles", () => {
     const wrapper = renderNavbar()
-    const hrefs = wrapper.find(Link).map(link => link.props()["to"])
+    const hrefs = wrapper.find(Link).map((link) => link.props()["to"])
     assert.deepEqual(hrefs, [
       "/learner/jane",
       "/learner/jane",
@@ -38,7 +38,7 @@ describe("Navbar", () => {
     for (const role of ["staff", "instructor"]) {
       SETTINGS.roles = [{ role, permissions: [] }]
       const wrapper = renderNavbar()
-      const hrefs = wrapper.find(Link).map(link => link.props()["to"])
+      const hrefs = wrapper.find(Link).map((link) => link.props()["to"])
       assert.deepEqual(hrefs, [
         "/learner/jane",
         "/learner/jane",

@@ -15,7 +15,7 @@ class CopyLinkDialog extends React.Component {
     copy: boolean
   }
 
-  copyToClipboard = e => {
+  copyToClipboard = (e) => {
     const { setCopySuccess } = this.props
     this.input.select()
     document.execCommand("copy")
@@ -45,7 +45,7 @@ class CopyLinkDialog extends React.Component {
         <div className="share-form-wrapper">
           <form className="share-url">
             <input
-              ref={input => (this.input = input)}
+              ref={(input) => (this.input = input)}
               readOnly={true}
               value={window.location.href}
             />
@@ -67,12 +67,12 @@ class CopyLinkDialog extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   open: state.shareDialog.shareDialogVisibility,
   copy: state.shareDialog.copySuccess
 })
 
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   createSimpleActionHelpers(dispatch, [
     ["setShareDialogVisibility", setShareDialogVisibility],
     ["setCopySuccess", setCopySuccess]

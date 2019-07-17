@@ -11,7 +11,8 @@ import { STATUS_OFFERED, STATUS_CAN_UPGRADE } from "../constants"
 import { findCourse } from "../util/test_utils"
 
 describe("OrderSummary", () => {
-  let sandbox, checkoutStub
+  let sandbox
+  let checkoutStub
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()
@@ -22,7 +23,7 @@ describe("OrderSummary", () => {
     sandbox.restore()
   })
 
-  const getElements = renderedComponent => {
+  const getElements = (renderedComponent) => {
     const button = renderedComponent.find(".continue-payment")
     let buttonText
     if (button.length > 0 && button.children().length > 0) {
@@ -62,7 +63,7 @@ describe("OrderSummary", () => {
   ].forEach(([code, codeDescription]) => {
     it(`shows discount calculation if user has a coupon with ${codeDescription}`, () => {
       const course = findCourse(
-        course =>
+        (course) =>
           course.runs.length > 0 && course.runs[0].status === STATUS_OFFERED
       )
       const firstRun = course.runs[0]
@@ -91,7 +92,7 @@ describe("OrderSummary", () => {
 
   it("does not show discount calculation if no discount applies", () => {
     const course = findCourse(
-      course =>
+      (course) =>
         course.runs.length > 0 && course.runs[0].status === STATUS_OFFERED
     )
     const firstRun = course.runs[0]
@@ -107,7 +108,7 @@ describe("OrderSummary", () => {
 
   it("shows a message if a user is redirected for checkout when price is above 0", () => {
     const course = findCourse(
-      course =>
+      (course) =>
         course.runs.length > 0 && course.runs[0].status === STATUS_OFFERED
     )
     const firstRun = course.runs[0]
@@ -125,7 +126,7 @@ describe("OrderSummary", () => {
 
   it("shows a message if a user skips checkout when price is 0", () => {
     const course = findCourse(
-      course =>
+      (course) =>
         course.runs.length > 0 && course.runs[0].status === STATUS_OFFERED
     )
     const firstRun = course.runs[0]
@@ -145,7 +146,7 @@ describe("OrderSummary", () => {
 
   it("shows a spinner in place of the continue while API call is in progress", () => {
     const course = findCourse(
-      course =>
+      (course) =>
         course.runs.length > 0 && course.runs[0].status === STATUS_CAN_UPGRADE
     )
     const firstRun = course.runs[0]

@@ -32,14 +32,18 @@ import * as api from "../lib/api"
 import { actions } from "../lib/redux_rest"
 
 describe("financial aid reducers", () => {
-  let sandbox, store, dispatchThen
-  let addFinancialAidStub, skipFinancialAidStub
-  let fetchDashboardStub, fetchCoursePricesStub
+  let sandbox
+  let store
+  let dispatchThen
+  let addFinancialAidStub
+  let skipFinancialAidStub
+  let fetchDashboardStub
+  let fetchCoursePricesStub
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()
     store = configureTestStore(rootReducer)
-    dispatchThen = store.createDispatchThen(state => state.financialAid)
+    dispatchThen = store.createDispatchThen((state) => state.financialAid)
     store.dispatch(setCurrentProgramEnrollment(1))
     addFinancialAidStub = sandbox.stub(api, "addFinancialAid")
     skipFinancialAidStub = sandbox.stub(api, "skipFinancialAid")
@@ -55,7 +59,7 @@ describe("financial aid reducers", () => {
 
   it("should let you start editing", () => {
     return dispatchThen(startCalculatorEdit(1), [START_CALCULATOR_EDIT]).then(
-      state => {
+      (state) => {
         const expectation = {
           ...FINANCIAL_AID_EDIT,
           programId:       1,
@@ -70,7 +74,7 @@ describe("financial aid reducers", () => {
   it("should let you clear edits", () => {
     store.dispatch(startCalculatorEdit(1))
     return dispatchThen(clearCalculatorEdit(), [CLEAR_CALCULATOR_EDIT]).then(
-      state => {
+      (state) => {
         assert.deepEqual(state, {
           ...FINANCIAL_AID_EDIT,
           fetchAddStatus:  undefined,
@@ -86,7 +90,7 @@ describe("financial aid reducers", () => {
     update.income = "1000000"
     return dispatchThen(updateCalculatorEdit(update), [
       UPDATE_CALCULATOR_EDIT
-    ]).then(state => {
+    ]).then((state) => {
       assert.deepEqual(state, update)
     })
   })
@@ -96,7 +100,7 @@ describe("financial aid reducers", () => {
     const validation = { some: "error" }
     return dispatchThen(updateCalculatorValidation(validation), [
       UPDATE_CALCULATOR_VALIDATION
-    ]).then(state => {
+    ]).then((state) => {
       assert.deepEqual(state.validation, validation)
     })
   })
@@ -105,7 +109,7 @@ describe("financial aid reducers", () => {
     store.dispatch(startCalculatorEdit(1))
     return dispatchThen(requestAddFinancialAid(100000, "USD", 1), [
       REQUEST_ADD_FINANCIAL_AID
-    ]).then(state => {
+    ]).then((state) => {
       assert.equal(state.fetchAddStatus, FETCH_PROCESSING)
     })
   })
@@ -119,7 +123,7 @@ describe("financial aid reducers", () => {
     return dispatchThen(addFinancialAid(income, currency, programId), [
       REQUEST_ADD_FINANCIAL_AID,
       RECEIVE_ADD_FINANCIAL_AID_SUCCESS
-    ]).then(state => {
+    ]).then((state) => {
       const expectation = {
         ...FINANCIAL_AID_EDIT,
         programId:       programId,
@@ -133,7 +137,7 @@ describe("financial aid reducers", () => {
   })
 
   it("should fail to add a financial aid", () => {
-    const err = { "0": "an error message", errorStatusCode: 500 }
+    const err = { "0": "an error message", "errorStatusCode": 500 }
     addFinancialAidStub.returns(Promise.reject(err))
     const income = 100000
     const currency = "USD"
@@ -142,7 +146,7 @@ describe("financial aid reducers", () => {
     return dispatchThen(addFinancialAid(income, currency, programId), [
       REQUEST_ADD_FINANCIAL_AID,
       RECEIVE_ADD_FINANCIAL_AID_FAILURE
-    ]).then(state => {
+    ]).then((state) => {
       const expectation = {
         ...FINANCIAL_AID_EDIT,
         programId:       programId,
@@ -165,7 +169,7 @@ describe("financial aid reducers", () => {
     return dispatchThen(skipFinancialAid(2), [
       REQUEST_SKIP_FINANCIAL_AID,
       RECEIVE_SKIP_FINANCIAL_AID_SUCCESS
-    ]).then(state => {
+    ]).then((state) => {
       assert.deepEqual(state, {
         fetchSkipStatus: FETCH_SUCCESS
       })
@@ -180,7 +184,7 @@ describe("financial aid reducers", () => {
     return dispatchThen(skipFinancialAid(2), [
       REQUEST_SKIP_FINANCIAL_AID,
       RECEIVE_SKIP_FINANCIAL_AID_FAILURE
-    ]).then(state => {
+    ]).then((state) => {
       assert.deepEqual(state, {
         fetchSkipStatus: FETCH_FAILURE
       })

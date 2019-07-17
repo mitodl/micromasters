@@ -50,7 +50,7 @@ export const profiles = (
   state: Profiles = INITIAL_PROFILES_STATE,
   action: Action<any, null>
 ) => {
-  const patchProfile = newProfile => {
+  const patchProfile = (newProfile) => {
     const username = action.payload.username
     return {
       ...state,
@@ -143,7 +143,7 @@ export const profiles = (
       if (R.contains(ALL_ERRORS_VISIBLE, visibility)) {
         errors = action.payload.errors
       } else {
-        visibility.forEach(keySet => {
+        visibility.forEach((keySet) => {
           _.set(errors, keySet, _.get(action.payload.errors, keySet))
         })
       }

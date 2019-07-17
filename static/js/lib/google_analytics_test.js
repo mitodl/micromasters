@@ -6,7 +6,8 @@ import { assert } from "chai"
 import { sendGAEvent, sendFormFieldEvent } from "./google_analytics"
 
 describe("Google Analytics", () => {
-  let event, sandbox
+  let event
+  let sandbox
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()

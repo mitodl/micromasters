@@ -47,7 +47,7 @@ export const programs = (
       availablePrograms: state.availablePrograms
         .filter(
           // filter out old copy of program first
-          program => program.id !== action.payload.id
+          (program) => program.id !== action.payload.id
         )
         .concat(action.payload)
     }
@@ -74,11 +74,11 @@ export const currentProgramEnrollment = (
     return action.payload
   case RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS: {
     const enrollments = action.payload.filter(
-      enrollment => enrollment.enrolled
+      (enrollment) => enrollment.enrolled
     )
     if (!_.isNil(state)) {
       const enrollment = enrollments.find(
-        enrollment => enrollment.id === state.id
+        (enrollment) => enrollment.id === state.id
       )
 
       state = _.isNil(enrollment) ? null : enrollment

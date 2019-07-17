@@ -23,18 +23,18 @@ import { createAssertReducerResultState } from "../util/test_utils"
 import { actions } from "../lib/redux_rest"
 
 describe("documents reducers", () => {
-  let sandbox,
-    store,
-    dispatchThen,
-    assertReducerResultState: AssertReducerResultState<DocumentsState>
+  let sandbox
+  let store
+  let dispatchThen
+  let assertReducerResultState: AssertReducerResultState<DocumentsState>
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()
     store = configureTestStore(rootReducer)
-    dispatchThen = store.createDispatchThen(state => state.documents)
+    dispatchThen = store.createDispatchThen((state) => state.documents)
     assertReducerResultState = createAssertReducerResultState(
       store,
-      state => state.documents
+      (state) => state.documents
     )
   })
 
@@ -47,14 +47,16 @@ describe("documents reducers", () => {
       const todayFormat = moment().format(ISO_8601_FORMAT)
       assertReducerResultState(
         setDocumentSentDate,
-        documents => documents.documentSentDate,
+        (documents) => documents.documentSentDate,
         todayFormat
       )
     })
   })
 
   describe("API functions", () => {
-    let updateDocumentSentDateStub, fetchCoursePricesStub, fetchDashboardStub
+    let updateDocumentSentDateStub
+    let fetchCoursePricesStub
+    let fetchDashboardStub
 
     beforeEach(() => {
       updateDocumentSentDateStub = sandbox.stub(api, "updateDocumentSentDate")
@@ -71,7 +73,7 @@ describe("documents reducers", () => {
       return dispatchThen(updateDocumentSentDate(programId, sentDate), [
         REQUEST_UPDATE_DOCUMENT_SENT_DATE,
         RECEIVE_UPDATE_DOCUMENT_SENT_DATE_SUCCESS
-      ]).then(state => {
+      ]).then((state) => {
         assert.ok(updateDocumentSentDateStub.calledWith(programId, sentDate))
         assert.deepEqual(state.fetchStatus, FETCH_SUCCESS)
         assert.ok(fetchCoursePricesStub.calledWith())
@@ -86,7 +88,7 @@ describe("documents reducers", () => {
       return dispatchThen(updateDocumentSentDate(programId, sentDate), [
         REQUEST_UPDATE_DOCUMENT_SENT_DATE,
         RECEIVE_UPDATE_DOCUMENT_SENT_DATE_FAILURE
-      ]).then(state => {
+      ]).then((state) => {
         assert.ok(updateDocumentSentDateStub.calledWith(programId, sentDate))
         assert.deepEqual(state.fetchStatus, FETCH_FAILURE)
         assert.notOk(fetchCoursePricesStub.calledWith())

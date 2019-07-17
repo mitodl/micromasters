@@ -56,7 +56,8 @@ export default class ProfileProgressControls extends React.Component {
     const { nextUrl, prevUrl, nextBtnLabel, profilePatchStatus } = this.props
 
     const inFlight = profilePatchStatus === FETCH_PROCESSING
-    let prevButton, nextButton
+    let prevButton
+    let nextButton
     if (prevUrl) {
       prevButton = (
         <button

@@ -29,7 +29,9 @@ import {
 import { courseStartDateMessage } from "./util"
 
 describe("Course ProgressMessage", () => {
-  let sandbox, openCourseContactDialogStub, course
+  let sandbox
+  let openCourseContactDialogStub
+  let course
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()

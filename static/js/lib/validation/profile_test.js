@@ -56,7 +56,11 @@ describe("Profile validation functions", () => {
   })
 
   describe("checkProp", () => {
-    const check = checkProp("name", "invalid name", name => name !== "invalid")
+    const check = checkProp(
+      "name",
+      "invalid name",
+      (name) => name !== "invalid"
+    )
 
     it("should validate a valid property", () => {
       assert.deepEqual(
@@ -352,7 +356,7 @@ describe("Profile validation functions", () => {
       })
 
       it(`should reject invalid postal codes for ${country}`, () => {
-        inValidPostalCodes[country].forEach(badCode => {
+        inValidPostalCodes[country].forEach((badCode) => {
           const profile = {
             ...USER_PROFILE_RESPONSE,
             country:     country,
@@ -365,7 +369,7 @@ describe("Profile validation functions", () => {
       })
 
       it(`should accept valid postal codes for ${country}`, () => {
-        validPostalCodes[country].forEach(goodCode => {
+        validPostalCodes[country].forEach((goodCode) => {
           const profile = {
             ...USER_PROFILE_RESPONSE,
             country:     country,
@@ -704,7 +708,7 @@ describe("Email validation", () => {
     }
   })
 
-  const blank = field => ({
+  const blank = (field) => ({
     ...email,
     [field]: null
   })

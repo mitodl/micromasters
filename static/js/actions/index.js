@@ -23,12 +23,12 @@ export function checkout(courseId: string): Dispatcher<?CheckoutResponse> {
   return (dispatch: Dispatch) => {
     dispatch(requestCheckout(courseId))
     return api.checkout(courseId).then(
-      response => {
+      (response) => {
         const { url, payload } = response
         dispatch(receiveCheckoutSuccess(url, payload))
         return Promise.resolve(response)
       },
-      error => {
+      (error) => {
         dispatch(receiveCheckoutFailure(error))
       }
     )

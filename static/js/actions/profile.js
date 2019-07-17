@@ -10,7 +10,7 @@ import type { Dispatcher } from "../flow/reduxTypes"
 export const REQUEST_GET_USER_PROFILE = "REQUEST_GET_USER_PROFILE"
 export const requestGetUserProfile = createAction(
   REQUEST_GET_USER_PROFILE,
-  username => ({ username })
+  (username) => ({ username })
 )
 
 export const RECEIVE_GET_USER_PROFILE_SUCCESS =
@@ -28,7 +28,7 @@ const receiveGetUserProfileFailure = createAction(
 )
 
 export const CLEAR_PROFILE = "CLEAR_PROFILE"
-export const clearProfile = createAction(CLEAR_PROFILE, username => ({
+export const clearProfile = createAction(CLEAR_PROFILE, (username) => ({
   username
 }))
 
@@ -39,19 +39,25 @@ export const updateProfile = createAction(
 )
 
 export const START_PROFILE_EDIT = "START_PROFILE_EDIT"
-export const startProfileEdit = createAction(START_PROFILE_EDIT, username => ({
-  username
-}))
+export const startProfileEdit = createAction(
+  START_PROFILE_EDIT,
+  (username) => ({
+    username
+  })
+)
 
 export const CLEAR_PROFILE_EDIT = "CLEAR_PROFILE_EDIT"
-export const clearProfileEdit = createAction(CLEAR_PROFILE_EDIT, username => ({
-  username
-}))
+export const clearProfileEdit = createAction(
+  CLEAR_PROFILE_EDIT,
+  (username) => ({
+    username
+  })
+)
 
 export const REQUEST_PATCH_USER_PROFILE = "REQUEST_PATCH_USER_PROFILE"
 export const requestPatchUserProfile = createAction(
   REQUEST_PATCH_USER_PROFILE,
-  username => ({ username })
+  (username) => ({ username })
 )
 
 export const RECEIVE_PATCH_USER_PROFILE_SUCCESS =
@@ -75,10 +81,10 @@ export const saveProfile = (
   return (dispatch: Dispatch) => {
     dispatch(requestPatchUserProfile(username))
     return api.patchUserProfile(username, profile).then(
-      newProfile => {
+      (newProfile) => {
         dispatch(receivePatchUserProfileSuccess(username, newProfile))
       },
-      error => {
+      (error) => {
         dispatch(receivePatchUserProfileFailure(username, error))
         // the exception is assumed handled and will not be propagated
       }
@@ -102,10 +108,10 @@ export function fetchUserProfile(username: string): Dispatcher<void> {
   return (dispatch: Dispatch) => {
     dispatch(requestGetUserProfile(username))
     return api.getUserProfile(username).then(
-      json => {
+      (json) => {
         dispatch(receiveGetUserProfileSuccess(username, json))
       },
-      error => {
+      (error) => {
         dispatch(receiveGetUserProfileFailure(username, error))
         // the exception is assumed handled and will not be propagated
       }

@@ -45,7 +45,7 @@ describe("ErrorMessage", () => {
   contactExpectation = contactExpectation.replace(/\s\s+/g, " ")
 
   describe("unit tests", () => {
-    const renderErrorMessage = props => {
+    const renderErrorMessage = (props) => {
       return makeStrippedHtml(<ErrorMessage {...props} />)
     }
     const codeAttributes = [["error_code", "500"], ["errorStatusCode", 404]]
@@ -74,7 +74,10 @@ describe("ErrorMessage", () => {
   })
 
   describe("showing errors on pages", () => {
-    let renderComponent, helper, patchUserProfileStub, listenForActions
+    let renderComponent
+    let helper
+    let patchUserProfileStub
+    let listenForActions
 
     const confirmErrorMessage = (div, codeMessage, extraInfo = "") => {
       const alert = div.querySelector(".alert-message")
@@ -157,7 +160,7 @@ describe("ErrorMessage", () => {
       it("shows enrollment card if there are no programs", () => {
         helper.dashboardStub.returns(Promise.resolve([]))
         const expectedActions = DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS.filter(
-          actionType =>
+          (actionType) =>
             actionType !== actions.discussionsFrontpage.get.successType
         )
 
@@ -175,7 +178,7 @@ describe("ErrorMessage", () => {
       it("shows enrollment card if there is no matching current program enrollment", () => {
         helper.programsGetStub.returns(Promise.resolve([]))
         const expectedActions = DASHBOARD_SUCCESS_NO_LEARNERS_ACTIONS.filter(
-          actionType =>
+          (actionType) =>
             actionType !== actions.discussionsFrontpage.get.successType
         )
 

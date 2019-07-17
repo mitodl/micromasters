@@ -33,7 +33,7 @@ export const getAppliedFilterValue = (
  *
  * @param {class} BaseSearchkitAccessorClass - A Searchkit accessor class (eg: FacetAccessor, RangeAccessor)
  */
-export const NestedAccessorMixin = BaseSearchkitAccessorClass =>
+export const NestedAccessorMixin = (BaseSearchkitAccessorClass) =>
   class extends BaseSearchkitAccessorClass {
     /**
      * Overrides buildSharedQuery from the Searchkit accessor class
@@ -90,7 +90,7 @@ export const NestedAccessorMixin = BaseSearchkitAccessorClass =>
         // Find the element that Searchkit added to query.index.filters for this nested document and remove it
         _.remove(
           filters,
-          filter => _.get(filter, ["nested", "path"]) === nestedPath
+          (filter) => _.get(filter, ["nested", "path"]) === nestedPath
         )
         // Add the 'AND' filter that we constructed
         filters.push(groupedNestedFilter)

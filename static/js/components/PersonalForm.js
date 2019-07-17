@@ -27,7 +27,7 @@ export default class PersonalForm extends ProfileFormFields {
     { value: "o", label: "Other/Prefer not to say" }
   ]
   languageOptions: Array<Option> = _.sortBy(
-    LANGUAGE_CODES.map(language => ({
+    LANGUAGE_CODES.map((language) => ({
       value: language.alpha2,
       label: language.English
     })),

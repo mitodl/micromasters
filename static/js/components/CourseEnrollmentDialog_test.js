@@ -13,12 +13,12 @@ import { makeCourse, makeRun } from "../factories/dashboard"
 import { getEl } from "../util/test_utils"
 
 describe("CourseEnrollmentDialog", () => {
-  let sandbox,
-    setVisibilityStub,
-    addCourseEnrollmentStub,
-    openFinancialAidCalculatorStub,
-    routerPushStub,
-    checkoutStub
+  let sandbox
+  let setVisibilityStub
+  let addCourseEnrollmentStub
+  let openFinancialAidCalculatorStub
+  let routerPushStub
+  let checkoutStub
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()

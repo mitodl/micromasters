@@ -171,7 +171,7 @@ class LearnerPage extends React.Component<*, LearnerPageProps, *> {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     dashboard: state.dashboard,
     prices:    state.prices,

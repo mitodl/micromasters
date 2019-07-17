@@ -7,7 +7,7 @@ import HitsCount from "./HitsCount"
 import { makeStrippedHtml } from "../../util/util"
 
 describe("HitsCount", () => {
-  const renderHitsCount = n => makeStrippedHtml(<HitsCount hitsCount={n} />)
+  const renderHitsCount = (n) => makeStrippedHtml(<HitsCount hitsCount={n} />)
 
   it("should take a number and render it", () => {
     const results = renderHitsCount(42)

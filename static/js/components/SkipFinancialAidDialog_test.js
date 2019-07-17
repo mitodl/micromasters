@@ -11,7 +11,8 @@ import SkipFinancialAidDialog from "./SkipFinancialAidDialog"
 
 describe("SkipFinancialAidDialog", () => {
   let sandbox
-  let cancelStub, skipStub
+  let cancelStub
+  let skipStub
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()

@@ -162,8 +162,8 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
 
   const messages = []
 
-  //If first run is paid but user never enrolled, most likely there was
-  //problem enrolling, and first_unexpired_run is returned, so no need to check for past enrollment
+  // If first run is paid but user never enrolled, most likely there was
+  // problem enrolling, and first_unexpired_run is returned, so no need to check for past enrollment
   if (firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
     const contactHref = `mailto:${SETTINGS.support_email}`
     let date = ""
@@ -304,7 +304,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     return S.Just(messages)
   }
 
-  //Exam messages only
+  // Exam messages only
   if (
     (hasPassedCourseRun(course) || hasCurrentlyEnrolledCourseRun(course)) &&
     exams &&
@@ -344,7 +344,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     }
   }
   // all cases where courseRun is not currently in progress
-  //passed means user also paid
+  // passed means user also paid
   if (hasPassedCourseRun(course)) {
     // this is the expanded message, which we should show if the user
     // has clicked one of the 're-enroll' links
@@ -352,7 +352,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
       messages.push(
         S.maybe(
           null,
-          run => ({
+          (run) => ({
             message: `Next course starts ${formatDate(run.course_start_date)}.`,
             action:  courseAction(run, COURSE_ACTION_REENROLL)
           }),
@@ -362,7 +362,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     }
     return S.Just(messages)
   } else if (hasCanUpgradeCourseRun(course)) {
-    //the course finished but can still pay
+    // the course finished but can still pay
     const dueDate = paymentDueDate.isValid()
       ? ` (Payment due on ${paymentDueDate.format(DASHBOARD_FORMAT)})`
       : ""
@@ -379,7 +379,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     }
     return S.Just(messages)
   } else if (hasMissedDeadlineCourseRun(course)) {
-    //the course finished can't pay
+    // the course finished can't pay
     if (exams && course.past_exam_date) {
       const futureExamMessage = R.isEmpty(course.exams_schedulable_in_future)
         ? " There are no future exams scheduled at this time. Please check back later."
@@ -394,8 +394,8 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
         action: courseAction(firstRun, COURSE_ACTION_PAY)
       })
     } else {
-      const date = run => formatDate(run.course_start_date)
-      const msg = run => {
+      const date = (run) => formatDate(run.course_start_date)
+      const msg = (run) => {
         return `You missed the payment deadline, but you can re-enroll. Next course starts ${date(
           run
         )}.${enrollmentDateMessage(run)}`
@@ -407,7 +407,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
               "You missed the payment deadline and will not receive MicroMasters credit for this course. " +
               "There are no future runs of this course scheduled at this time."
           },
-          run => ({
+          (run) => ({
             message: msg(run),
             action:  courseAction(run, COURSE_ACTION_REENROLL)
           }),
@@ -420,7 +420,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     return S.Just(
       S.maybe(
         messages.concat({ message: "You did not pass the edX course." }),
-        run =>
+        (run) =>
           messages.concat({
             message: `You did not pass the edX course, but you can re-enroll. ${courseStartMessage(
               run
@@ -437,7 +437,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
 
 const formatMessages = R.addIndex(R.map)(formatMessage)
 
-const wrapMessages = messages => (
+const wrapMessages = (messages) => (
   <div className="course-status-messages">{messages}</div>
 )
 

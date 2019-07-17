@@ -5,7 +5,7 @@ import React from "react"
 import FacultyTile from "./FacultyTile"
 
 describe("FacultyTile", () => {
-  const renderFacultyTile = props => {
+  const renderFacultyTile = (props) => {
     return shallow(
       <FacultyTile
         name="Frank Professor"

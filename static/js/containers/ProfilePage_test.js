@@ -37,8 +37,11 @@ import { activeDialog } from "../util/test_utils"
 describe("ProfilePage", function() {
   this.timeout(5000) // eslint-disable-line no-invalid-this
 
-  let listenForActions, renderComponent, helper
-  let addProgramEnrollmentStub, patchUserProfileStub
+  let listenForActions
+  let renderComponent
+  let helper
+  let addProgramEnrollmentStub
+  let patchUserProfileStub
 
   const profileSteps = [PERSONAL_STEP, EDUCATION_STEP, EMPLOYMENT_STEP]
   const prevButtonSelector = ".prev"

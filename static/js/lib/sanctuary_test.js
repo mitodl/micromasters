@@ -58,21 +58,21 @@ describe("sanctuary util functions", () => {
 
   describe("ifNil", () => {
     it("returns Nothing if the input is undefined", () => {
-      assertIsNothing(ifNil(x => x)(undefined))
+      assertIsNothing(ifNil((x) => x)(undefined))
     })
 
     it("returns Nothing if the input is null", () => {
-      assertIsNothing(ifNil(x => x)(null))
+      assertIsNothing(ifNil((x) => x)(null))
     })
 
     it("return func(input) if the input is not nil", () => {
-      const result = ifNil(x => x)("test input")
+      const result = ifNil((x) => x)("test input")
       assert.equal("test input", result)
     })
   })
 
   describe("guard", () => {
-    const wrappedFunc = guard(x => x + 2)
+    const wrappedFunc = guard((x) => x + 2)
     const wrappedRestFunc = guard((x, y, z) => [x, y, z])
 
     it("takes a function and returns a function", () => {
@@ -95,7 +95,7 @@ describe("sanctuary util functions", () => {
 
     it("returns Nothing if any rest parameter arg is undefined", () => {
       const args = [1, 2, 3]
-      ;[null, undefined].forEach(nilVal => {
+      ;[null, undefined].forEach((nilVal) => {
         for (let i = 0; i < 3; i++) {
           assertIsNothing(wrappedRestFunc(...R.update(i, nilVal, args)))
         }
@@ -107,7 +107,7 @@ describe("sanctuary util functions", () => {
     it("returns Nothing if a prop is not present", () => {
       assertIsNothing(getm("prop", {}))
     })
-    ;[null, undefined].forEach(nil => {
+    ;[null, undefined].forEach((nil) => {
       // $FlowFixMe
       it(`returns Nothing if a prop is ${nil}`, () => {
         assertIsNothing(getm("prop", { prop: nil }))
@@ -138,32 +138,32 @@ describe("sanctuary util functions", () => {
     const left = S.Left(2)
     const right = S.Right(4)
     it("returns a Left if passed one, regardless of predicate", () => {
-      assertIsLeft(filterE(x => x === 2, left), 2)
-      assertIsLeft(filterE(x => x !== 2, left), 2)
+      assertIsLeft(filterE((x) => x === 2, left), 2)
+      assertIsLeft(filterE((x) => x !== 2, left), 2)
     })
 
     it("returns a Left if predicate(right.value) === false", () => {
-      assertIsLeft(filterE(x => x === 2, right), 4)
+      assertIsLeft(filterE((x) => x === 2, right), 4)
       assertIsLeft(filterE(R.isNil, right), 4)
     })
 
     it("returns a Right if predicate(right.value) === true", () => {
-      assertIsRight(filterE(x => x === 4, right), 4)
-      assertIsRight(filterE(x => x % 2 === 0, right), 4)
+      assertIsRight(filterE((x) => x === 4, right), 4)
+      assertIsRight(filterE((x) => x % 2 === 0, right), 4)
     })
   })
 
   describe("reduceM", () => {
     it("returns fn(val) where maybe is Just(val)", () => {
       assert.equal(
-        reduceM("default", str => `${str} value`, S.Just("maybe")),
+        reduceM("default", (str) => `${str} value`, S.Just("maybe")),
         "maybe value"
       )
     })
 
     it("returns fn(default) where maybe is Nothing", () => {
       assert.equal(
-        reduceM("default", str => `${str} value`, S.Nothing),
+        reduceM("default", (str) => `${str} value`, S.Nothing),
         "default value"
       )
     })

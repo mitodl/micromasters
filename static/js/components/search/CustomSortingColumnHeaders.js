@@ -65,7 +65,7 @@ class CustomSortingColumnHeaders extends React.Component {
       return ""
     }
     return items.find(
-      item => selectedItems[0] === item.key && keys.includes(item.key)
+      (item) => selectedItems[0] === item.key && keys.includes(item.key)
     )
   }
 

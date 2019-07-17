@@ -9,13 +9,13 @@ import { channelURL, postURL } from "../lib/discussions"
 import type { Post } from "../flow/discussionTypes"
 
 const formatTime = R.compose(
-  date => date.fromNow(),
+  (date) => date.fromNow(),
   moment,
   R.prop("created")
 )
 
 const renderPosts = R.compose(
-  R.map(post => (
+  R.map((post) => (
     <div className="post" key={post.id}>
       <img src={post.profile_image} />
       <div className="title-and-author">

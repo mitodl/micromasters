@@ -70,7 +70,7 @@ export default class MultiSelectCheckboxItemList extends SearchkitComponent {
 
     if (newState) {
       this.setState({ allOptionClass: "is-active" })
-      setItems(items.map(item => item.key))
+      setItems(items.map((item) => item.key))
     } else {
       this.setState(selectAllInitialState)
       setItems([])
@@ -85,9 +85,9 @@ export default class MultiSelectCheckboxItemList extends SearchkitComponent {
       toggleItem,
       translate
     } = this.props
-    const toggleFunc = multiselect ? toggleItem : key => setItems([key])
+    const toggleFunc = multiselect ? toggleItem : (key) => setItems([key])
 
-    return _.map(items, option => {
+    return _.map(items, (option) => {
       const label: string = option.title || option.label || option.key
       const props = {
         label:   translate(label),

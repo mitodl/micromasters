@@ -46,7 +46,7 @@ const fieldOfStudyOptions = labelSort(
 
 const EDUCATION_LEVEL_OPTIONS: Array<Option> = EDUCATION_LEVELS
 const EDUCATION_LEVEL_LABELS: Object = {}
-EDUCATION_LEVEL_OPTIONS.forEach(level => {
+EDUCATION_LEVEL_OPTIONS.forEach((level) => {
   EDUCATION_LEVEL_LABELS[level.value] = level.label
 })
 
@@ -291,7 +291,7 @@ class EducationForm extends ProfileFormFields {
       profile: { education }
     } = this.props
     return !_.isUndefined(
-      education.find(entry => entry.degree_name === levelValue)
+      education.find((entry) => entry.degree_name === levelValue)
     )
   }
 
@@ -403,11 +403,11 @@ class EducationForm extends ProfileFormFields {
   renderCard() {
     const { showSwitch, profile } = this.props
 
-    const cardClass = levelValue =>
+    const cardClass = (levelValue) =>
       this.hasEducationAtLevel(levelValue) ? "" : "collapsed"
 
     if (showSwitch) {
-      return EDUCATION_LEVEL_OPTIONS.map(level => {
+      return EDUCATION_LEVEL_OPTIONS.map((level) => {
         return (
           <Card
             shadow={1}

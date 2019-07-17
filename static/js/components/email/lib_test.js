@@ -32,7 +32,8 @@ import { INITIAL_EMAIL_STATE } from "../../reducers/email"
 import { actions } from "../../lib/redux_rest"
 
 describe("Specific email config", () => {
-  let helper, listenForActions
+  let helper
+  let listenForActions
   const EMAIL_DIALOG_ACTIONS = [START_EMAIL_EDIT, SHOW_DIALOG]
 
   beforeEach(() => {
@@ -145,7 +146,7 @@ describe("Specific email config", () => {
 
       return listenForActions(EMAIL_DIALOG_ACTIONS, () => {
         emailButton.simulate("click")
-      }).then(state => {
+      }).then((state) => {
         const emailParams = state.email[LEARNER_EMAIL_TYPE].params
         assert.equal(emailParams.studentId, profile.student_id)
         assert.isDefined(emailParams.profileImage)
@@ -256,7 +257,7 @@ describe("Specific email config", () => {
           { email_subject: "a", no: "way" },
           { email_body: "a", what: "even" },
           { other_field: "yea..." }
-        ].forEach(obj => {
+        ].forEach((obj) => {
           assert.deepEqual(convertEmailEdit(convertEmailEdit(obj)), obj)
         })
       })

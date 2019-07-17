@@ -176,18 +176,19 @@ const FinancialAidCalculator = ({
   currentProgramEnrollment,
   openConfirmSkipDialog,
   programs
-  }: CalculatorProps) => {
+}: CalculatorProps) => {
   if (!currentProgramEnrollment) {
     return null
   }
   const { title, id } = currentProgramEnrollment
 
-  const program = programs.find(prog => prog.id === id)
+  const program = programs.find((prog) => prog.id === id)
   if (!program) {
     return null
   }
 
-  let minPossibleCost, maxPossibleCost
+  let minPossibleCost
+  let maxPossibleCost
   if (program.financial_aid_availability) {
     minPossibleCost = formatPrice(
       program.financial_aid_user_info.min_possible_cost
@@ -279,12 +280,12 @@ const FinancialAidCalculator = ({
   )
 }
 
-const closeDialogAndCancel = dispatch => () => {
+const closeDialogAndCancel = (dispatch) => () => {
   dispatch(hideDialog(CALCULATOR_DIALOG))
   dispatch(clearCalculatorEdit())
 }
 
-const closeConfirmDialogAndCancel = dispatch => () => {
+const closeConfirmDialogAndCancel = (dispatch) => () => {
   dispatch(hideDialog(INCOME_DIALOG))
   dispatch(clearCalculatorEdit())
 }
@@ -322,12 +323,12 @@ const updateFinancialAidEdit = R.curry((dispatch, current) => {
   dispatch(updateCalculatorEdit(clone))
 })
 
-const openConfirmSkipDialogHelper = dispatch => () => {
+const openConfirmSkipDialogHelper = (dispatch) => () => {
   closeDialogAndCancel(dispatch)()
   dispatch(setConfirmSkipDialogVisibility(true))
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const { ui, financialAid, currentProgramEnrollment } = state
   const { programs } = getOwnDashboard(state)
 
@@ -340,7 +341,7 @@ const mapStateToProps = state => {
   }
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     closeDialogAndCancel:        closeDialogAndCancel(dispatch),
     closeConfirmDialogAndCancel: closeConfirmDialogAndCancel(dispatch),

@@ -23,13 +23,15 @@ import rootReducer from "../reducers"
 import * as api from "../lib/api"
 
 describe("image upload reducer", () => {
-  let sandbox, store, dispatchThen
+  let sandbox
+  let store
+  let dispatchThen
   let updateProfileImageStub
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()
     store = configureTestStore(rootReducer)
-    dispatchThen = store.createDispatchThen(state => state.imageUpload)
+    dispatchThen = store.createDispatchThen((state) => state.imageUpload)
     updateProfileImageStub = sandbox.stub(api, "updateProfileImage")
   })
 
@@ -40,14 +42,14 @@ describe("image upload reducer", () => {
   })
 
   it("should have some initial state", () => {
-    return dispatchThen({ type: "unknown" }, ["unknown"]).then(state => {
+    return dispatchThen({ type: "unknown" }, ["unknown"]).then((state) => {
       assert.deepEqual(state, INITIAL_IMAGE_UPLOAD_STATE)
     })
   })
 
   it("should let you set an error", () => {
     return dispatchThen(setPhotoError("an error"), [SET_PHOTO_ERROR]).then(
-      state => {
+      (state) => {
         assert.deepEqual(state, {
           edit:        null,
           error:       "an error",
@@ -60,7 +62,7 @@ describe("image upload reducer", () => {
 
   it("should start editing a photo", () => {
     return dispatchThen(startPhotoEdit("a photo"), [START_PHOTO_EDIT]).then(
-      state => {
+      (state) => {
         assert.deepEqual(state, {
           edit:        null,
           error:       null,
@@ -74,7 +76,7 @@ describe("image upload reducer", () => {
   it("should clear any errors when beginning to edit", () => {
     store.dispatch(setPhotoError("an error"))
     return dispatchThen(startPhotoEdit("a photo"), [START_PHOTO_EDIT]).then(
-      state => {
+      (state) => {
         assert.deepEqual(state, {
           edit:        null,
           error:       null,
@@ -91,7 +93,7 @@ describe("image upload reducer", () => {
     store.dispatch(startPhotoEdit(first))
 
     return dispatchThen(updatePhotoEdit(second), [UPDATE_PHOTO_EDIT]).then(
-      state => {
+      (state) => {
         assert.deepEqual(state, {
           edit:        second,
           error:       null,
@@ -104,7 +106,7 @@ describe("image upload reducer", () => {
 
   it("should clear an edit in progress", () => {
     store.dispatch(startPhotoEdit("a photo"))
-    return dispatchThen(clearPhotoEdit(), [CLEAR_PHOTO_EDIT]).then(state => {
+    return dispatchThen(clearPhotoEdit(), [CLEAR_PHOTO_EDIT]).then((state) => {
       assert.deepEqual(state, {
         edit:        null,
         error:       null,
@@ -126,7 +128,7 @@ describe("image upload reducer", () => {
       return dispatchThen(updateUserPhoto(user, photo, filename), [
         REQUEST_PATCH_USER_PHOTO,
         RECEIVE_PATCH_USER_PHOTO_SUCCESS
-      ]).then(state => {
+      ]).then((state) => {
         assert.deepEqual(state, {
           edit:        null,
           error:       null,
@@ -142,7 +144,7 @@ describe("image upload reducer", () => {
       return dispatchThen(updateUserPhoto(user, photo, filename), [
         REQUEST_PATCH_USER_PHOTO,
         RECEIVE_PATCH_USER_PHOTO_FAILURE
-      ]).then(state => {
+      ]).then((state) => {
         assert.deepEqual(state, {
           edit:        null,
           error:       null,
@@ -157,7 +159,7 @@ describe("image upload reducer", () => {
       store.dispatch(startPhotoEdit(photo))
       return dispatchThen(requestPatchUserPhoto(), [
         REQUEST_PATCH_USER_PHOTO
-      ]).then(state => {
+      ]).then((state) => {
         assert.deepEqual(state, {
           edit:        null,
           error:       null,

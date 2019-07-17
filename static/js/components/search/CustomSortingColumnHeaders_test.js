@@ -11,7 +11,8 @@ import { sortOptions } from "../../components/LearnerSearch"
 import IntegrationTestHelper from "../../util/integration_test_helper"
 
 describe("CustomSortingSelect", () => {
-  let setItemsStub, helper
+  let setItemsStub
+  let helper
 
   beforeEach(() => {
     helper = new IntegrationTestHelper()
@@ -58,8 +59,8 @@ describe("CustomSortingSelect", () => {
           selectedItems: [key]
         })
         const lookup = {
-          Name:            wrapper.find(".name"),
-          Residence:       wrapper.find(".residence"),
+          "Name":            wrapper.find(".name"),
+          "Residence":       wrapper.find(".residence"),
           "Program grade": wrapper.find(".grade")
         }
         assert.equal(lookup[description].text(), `${description} ${arrow}`)

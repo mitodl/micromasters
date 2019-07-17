@@ -8,7 +8,7 @@ import { formatGrade } from "../util"
 import type { CourseRun } from "../../../flow/programTypes"
 import { EDX_LINK_BASE } from "../../../constants"
 
-const progressHref = courseId => urljoin(EDX_LINK_BASE, courseId, "progress")
+const progressHref = (courseId) => urljoin(EDX_LINK_BASE, courseId, "progress")
 
 type ProgressType = {
   courseRun: CourseRun,

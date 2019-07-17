@@ -27,7 +27,7 @@ import {
 import SkipFinancialAidDialog from "../SkipFinancialAidDialog"
 import type { UIState } from "../../reducers/ui"
 
-const price = price => <span className="bold">{formatPrice(price)}</span>
+const price = (price) => <span className="bold">{formatPrice(price)}</span>
 
 export default class FinancialAidCard extends React.Component {
   props: {
@@ -110,7 +110,7 @@ export default class FinancialAidCard extends React.Component {
         </div>
       )
     default:
-        // should not get here
+      // should not get here
       return null
     }
   }

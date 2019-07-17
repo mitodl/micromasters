@@ -30,7 +30,10 @@ import { USER_PROFILE_RESPONSE } from "../test_constants"
 describe("SettingsPage", function() {
   this.timeout(5000)
   const nextButtonSelector = ".next"
-  let listenForActions, renderComponent, helper, patchUserProfileStub
+  let listenForActions
+  let renderComponent
+  let helper
+  let patchUserProfileStub
   const userActions = [
     REQUEST_GET_PROGRAM_ENROLLMENTS,
     RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
@@ -152,7 +155,7 @@ describe("SettingsPage", function() {
 
         return listenForActions([SHOW_DIALOG], () => {
           unEnrollBtn.click()
-        }).then(state => {
+        }).then((state) => {
           assert.isTrue(state.ui.dialogVisibility[UNENROLL_PROGRAM_DIALOG])
         })
       })

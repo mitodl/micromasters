@@ -9,7 +9,8 @@ import getMuiTheme from "material-ui/styles/getMuiTheme"
 import AutomaticEmailOptions from "./AutomaticEmailOptions"
 
 describe("AutomaticEmailOptions", () => {
-  let sandbox, setSendAutomaticEmailsStub
+  let sandbox
+  let setSendAutomaticEmailsStub
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()

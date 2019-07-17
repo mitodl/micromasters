@@ -21,7 +21,8 @@ import { makeRunCurrent, makeRunPast } from "./courses/test_util"
 import { calculatePrices } from "../../lib/coupon"
 
 describe("CourseRow", () => {
-  let sandbox, openCourseContactDialogStub
+  let sandbox
+  let openCourseContactDialogStub
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()

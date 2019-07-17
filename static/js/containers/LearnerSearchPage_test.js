@@ -33,7 +33,11 @@ import EmailCompositionDialog from "../components/email/EmailCompositionDialog"
 
 describe("LearnerSearchPage", function() {
   const EMAIL_LINK_SELECTOR = "#email-selected"
-  let renderComponent, listenForActions, helper, mockAxios, replySpy
+  let renderComponent
+  let listenForActions
+  let helper
+  let mockAxios
+  let replySpy
 
   beforeEach(() => {
     // reset Searchkit's guid counter so that it matches our expected data for each test
@@ -124,11 +128,11 @@ describe("LearnerSearchPage", function() {
 
       return listenForActions(EMAIL_DIALOG_ACTIONS, () => {
         emailLink.simulate("click")
-      }).then(state => {
+      }).then((state) => {
         assert.isTrue(state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG])
         return listenForActions([UPDATE_EMAIL_EDIT], () => {
           document.querySelector(".create-campaign input").click()
-        }).then(state => {
+        }).then((state) => {
           assert.isTrue(
             state.email[state.email.currentlyActive].inputs.sendAutomaticEmails
           )
@@ -145,7 +149,7 @@ describe("LearnerSearchPage", function() {
 
       return listenForActions(EMAIL_DIALOG_ACTIONS, () => {
         emailLink.simulate("click")
-      }).then(state => {
+      }).then((state) => {
         assert.isTrue(state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG])
 
         modifyTextField(document.querySelector(".email-subject"), "subject")
@@ -169,7 +173,7 @@ describe("LearnerSearchPage", function() {
               .querySelector(".email-composition-dialog .save-button")
               .click()
           }
-        ).then(state => {
+        ).then((state) => {
           assert.isFalse(state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG])
           assert.isTrue(
             helper.sendSearchResultMail.calledWith(
@@ -221,7 +225,7 @@ describe("LearnerSearchPage", function() {
 
       return listenForActions(CHANNEL_DIALOG_ACTIONS, () => {
         channelLink.simulate("click")
-      }).then(state => {
+      }).then((state) => {
         assert.isTrue(state.ui.dialogVisibility[CHANNEL_CREATE_DIALOG])
       })
     })
@@ -528,16 +532,16 @@ describe("LearnerSearchPage", function() {
   describe("filter titles", () => {
     it("has proper filter titles", () => {
       const query = {
-        courses:              ["Digital Learning 200"],
+        "courses":              ["Digital Learning 200"],
         "final-grade":        { min: 50, max: 100 },
-        payment_status:       ["Paid"],
-        semester:             ["2016 - Spring"],
+        "payment_status":       ["Paid"],
+        "semester":             ["2016 - Spring"],
         "num-courses-passed": {},
         "grade-average":      { min: 47, max: 100 },
-        birth_location:       ["US"],
-        country:              [["US"], ["US-ME"]],
-        education_level:      ["hs"],
-        company_name:         ["Microsoft"]
+        "birth_location":       ["US"],
+        "country":              [["US"], ["US-ME"]],
+        "education_level":      ["hs"],
+        "company_name":         ["Microsoft"]
       }
       return renderSearch().then(([wrapper]) => {
         const searchkit = wrapper.find("SearchkitProvider").props().searchkit
@@ -545,7 +549,7 @@ describe("LearnerSearchPage", function() {
 
         const titles = wrapper
           .find(".mm-filters .sk-selected-filters-option__name")
-          .map(filter => filter.text())
+          .map((filter) => filter.text())
         assert.deepEqual(titles, [
           "Course: Digital Learning 200",
           "Final Grade in Selected Course: 50 - 100",
@@ -574,7 +578,7 @@ describe("LearnerSearchPage", function() {
 
         const titles = wrapper
           .find(".mm-filters .sk-selected-filters-option__name")
-          .map(filter => filter.text())
+          .map((filter) => filter.text())
         assert.deepEqual(titles, [
           "Course: Digital Learning 200",
           "Country of Birth: United States",
@@ -588,16 +592,16 @@ describe("LearnerSearchPage", function() {
 
   it("shows filters and the textbox even if there are no results", () => {
     const query = {
-      courses:              ["Digital Learning 200"],
+      "courses":              ["Digital Learning 200"],
       "final-grade":        { min: 50, max: 100 },
-      payment_status:       ["Paid"],
-      semester:             ["2016 - Spring"],
+      "payment_status":       ["Paid"],
+      "semester":             ["2016 - Spring"],
       "num-courses-passed": {},
       "grade-average":      { min: 47, max: 100 },
-      birth_location:       ["US"],
-      country:              [["US"], ["US-ME"]],
-      education_level:      ["hs"],
-      company_name:         ["Microsoft"]
+      "birth_location":       ["US"],
+      "country":              [["US"], ["US-ME"]],
+      "education_level":      ["hs"],
+      "company_name":         ["Microsoft"]
     }
 
     const noHitsResponse = {
@@ -619,7 +623,7 @@ describe("LearnerSearchPage", function() {
 
   it("has correctly adjusted filters for the final grade", async () => {
     const query = {
-      courses:       ["Digital Learning 200"],
+      "courses":       ["Digital Learning 200"],
       "final-grade": { min: 40, max: 100 }
     }
 

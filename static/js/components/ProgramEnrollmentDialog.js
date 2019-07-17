@@ -51,10 +51,10 @@ export default class ProgramEnrollmentDialog extends React.Component {
     } = this.props
 
     const unenrolledPrograms = _.sortBy(
-      programs.filter(program => !program.enrolled),
+      programs.filter((program) => !program.enrolled),
       "title"
     )
-    const options = unenrolledPrograms.map(program => (
+    const options = unenrolledPrograms.map((program) => (
       <MenuItem
         value={program.id}
         primaryText={program.title}

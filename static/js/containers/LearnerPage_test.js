@@ -73,7 +73,10 @@ import { EDX_GRADE } from "./DashboardPage"
 describe("LearnerPage", function() {
   this.timeout(10000)
 
-  let listenForActions, renderComponent, helper, patchUserProfileStub
+  let listenForActions
+  let renderComponent
+  let helper
+  let patchUserProfileStub
   const userActions = [
     REQUEST_GET_PROGRAM_ENROLLMENTS,
     RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS,
@@ -157,7 +160,7 @@ describe("LearnerPage", function() {
       return renderComponent(`/learner/${username}`, userActions).then(
         ([, div]) => {
           const logout = [...div.getElementsByTagName("a")].find(
-            link => link.textContent === "Logout"
+            (link) => link.textContent === "Logout"
           )
           assert.ok(logout)
         }
@@ -165,8 +168,8 @@ describe("LearnerPage", function() {
     })
 
     describe("validation", () => {
-      const inputs = dialog => [...dialog.getElementsByTagName("input")]
-      const getEditPersonalButton = div =>
+      const inputs = (dialog) => [...dialog.getElementsByTagName("input")]
+      const getEditPersonalButton = (div) =>
         div.querySelector(".edit-profile-holder .mdl-button")
       const getDialog = () => document.querySelector(".personal-dialog")
       const getSave = () => getDialog().querySelector(".save-button")
@@ -250,8 +253,8 @@ describe("LearnerPage", function() {
       }
 
       describe("text field", () => {
-        const preferredName = dialog =>
-          inputs(dialog).find(i => i.name === "Nickname / Preferred name")
+        const preferredName = (dialog) =>
+          inputs(dialog).find((i) => i.name === "Nickname / Preferred name")
 
         it("should clearValidation when filling out a required text field", () => {
           return clearValidation(
@@ -279,8 +282,8 @@ describe("LearnerPage", function() {
       })
 
       describe("date field", () => {
-        const dobMonth = dialog =>
-          inputs(dialog).find(i => i.id.includes("MM-Month"))
+        const dobMonth = (dialog) =>
+          inputs(dialog).find((i) => i.id.includes("MM-Month"))
         it("should clearValidation when filling out a required date field", () => {
           return clearValidation(
             userProfileActions.concat([
@@ -305,14 +308,14 @@ describe("LearnerPage", function() {
       })
 
       describe("select field", () => {
-        const languageField = dialog => {
+        const languageField = (dialog) => {
           const select = dialog.querySelector(
             ".select-field.preferred-language"
           )
           clearSelectField(select)
         }
 
-        const removeError = dialog => {
+        const removeError = (dialog) => {
           const select = dialog.querySelector(
             ".select-field.preferred-language"
           )
@@ -344,8 +347,8 @@ describe("LearnerPage", function() {
       })
 
       describe("radio field", () => {
-        const genderField = dialog =>
-          inputs(dialog).find(i => i.name === "Gender")
+        const genderField = (dialog) =>
+          inputs(dialog).find((i) => i.name === "Gender")
 
         it("should clearValidationErrors when filling out a required radio field", () => {
           const createValidationError = () => {
@@ -357,7 +360,7 @@ describe("LearnerPage", function() {
             )
           }
 
-          const removeErrorValue = dialog => {
+          const removeErrorValue = (dialog) => {
             genderField(dialog).click()
           }
 
@@ -388,7 +391,7 @@ describe("LearnerPage", function() {
 
     describe("Education History", () => {
       let userProfile
-      const deleteButton = div => {
+      const deleteButton = (div) => {
         return div
           .getElementsByClassName("profile-form")[1]
           .getElementsByClassName("delete-button")[0]
@@ -686,7 +689,7 @@ describe("LearnerPage", function() {
     })
 
     describe("Employment History", () => {
-      const deleteButton = div => {
+      const deleteButton = (div) => {
         return div
           .getElementsByClassName("profile-form")[2]
           .getElementsByClassName("profile-row-icons")[0]
@@ -771,7 +774,7 @@ describe("LearnerPage", function() {
               .textContent.split(",")[0]
 
             const indexToDelete = USER_PROFILE_RESPONSE.work_history.findIndex(
-              entry => entry.company_name === employerName
+              (entry) => entry.company_name === employerName
             )
 
             updatedProfile.work_history.splice(indexToDelete, 1)
@@ -1066,7 +1069,7 @@ describe("LearnerPage", function() {
                       dialog.querySelector(".save-button")
                     )
                   }
-                ).then(state => {
+                ).then((state) => {
                   assert.deepEqual(
                     state.profiles[username].profile,
                     expectedProfile
@@ -1124,7 +1127,7 @@ describe("LearnerPage", function() {
                       dialog.querySelector(".save-button")
                     )
                   }
-                ).then(state => {
+                ).then((state) => {
                   assert.deepEqual(
                     state.profiles[username].profile,
                     expectedProfile

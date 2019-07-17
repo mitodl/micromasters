@@ -11,7 +11,9 @@ import { mstr } from "../lib/sanctuary"
 import { getEmployer, getPreferredName } from "../util/util"
 
 describe("LearnerInfoCard", () => {
-  let sandbox, editProfileBtnStub, editAboutMeBtnStub
+  let sandbox
+  let editProfileBtnStub
+  let editAboutMeBtnStub
 
   const renderInfoCard = (props = {}) =>
     shallow(

@@ -21,7 +21,9 @@ import { EXAM_GRADE, EDX_GRADE } from "../../../containers/DashboardPage"
 import { formatGrade } from "../util"
 
 describe("GradeDetailPopup", () => {
-  let sandbox, course, setShowGradeDetailDialogStub
+  let sandbox
+  let course
+  let setShowGradeDetailDialogStub
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()

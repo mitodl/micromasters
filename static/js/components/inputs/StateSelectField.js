@@ -18,7 +18,7 @@ const stateOption = (stateInfo, code) => ({
   label: stateInfo.name
 })
 
-const statesForCountry = code =>
+const statesForCountry = (code) =>
   R.propOr({}, "sub", R.defaultTo({}, iso3166.data[code]))
 
 const stateOptions = R.compose(

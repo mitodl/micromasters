@@ -204,7 +204,8 @@ class App extends React.Component {
       icon = <Icon name={iconName} key="icon" />
     }
 
-    let title, message
+    let title
+    let message
     if (titleText) {
       title = <h1>{titleText}</h1>
     }
@@ -278,7 +279,7 @@ class App extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const user = SETTINGS.user
   let profile = {
     profile: {}

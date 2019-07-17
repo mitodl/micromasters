@@ -112,7 +112,10 @@ import { postURL } from "../lib/discussions"
 import FinancialAidCard from "../components/dashboard/FinancialAidCard"
 
 describe("DashboardPage", () => {
-  let renderComponent, helper, listenForActions, addProgramEnrollmentStub
+  let renderComponent
+  let helper
+  let listenForActions
+  let addProgramEnrollmentStub
 
   beforeEach(() => {
     helper = new IntegrationTestHelper()
@@ -164,7 +167,7 @@ describe("DashboardPage", () => {
     SETTINGS.open_discussions_redirect_url = undefined
     await renderComponent("/dashboard", DASHBOARD_SUCCESS_NO_FRONTPAGE_ACTIONS)
   })
-  ;[true, false].forEach(showCard => {
+  ;[true, false].forEach((showCard) => {
     it(`should ${
       showCard ? "show" : "not show"
     } discussions card when feature flag is ${showCard}`, () => {
@@ -342,10 +345,12 @@ describe("DashboardPage", () => {
       SET_TIMEOUT_ACTIVE,
       UPDATE_COURSE_STATUS
     ])
-    let waitResolve, waitPromise, waitStub
+    let waitResolve
+    let waitPromise
+    let waitStub
 
     beforeEach(() => {
-      waitPromise = new Promise(resolve => {
+      waitPromise = new Promise((resolve) => {
         // Note that most tests here won't call waitResolve at all so the promise won't resolve. The only tests
         // that should are tests testing the order receipt 3 second timeout functionality.
         waitResolve = resolve
@@ -367,7 +372,7 @@ describe("DashboardPage", () => {
 
     it("shows the order status toast when the query param is set for a success", () => {
       const course = findCourse(
-        course =>
+        (course) =>
           course.runs.length > 0 &&
           course.runs[0].status === STATUS_CURRENTLY_ENROLLED
       )
@@ -388,7 +393,7 @@ describe("DashboardPage", () => {
     describe("toast loop", () => {
       it("doesn't have a toast message loop on success", () => {
         const course = findCourse(
-          course =>
+          (course) =>
             course.runs.length > 0 &&
             course.runs[0].status === STATUS_CURRENTLY_ENROLLED
         )
@@ -428,7 +433,7 @@ describe("DashboardPage", () => {
 
     it("shows the toast when the query param is set for a success but user is not enrolled", () => {
       const course = findCourse(
-        course =>
+        (course) =>
           course.runs.length > 0 &&
           course.runs[0].status === STATUS_PAID_BUT_NOT_ENROLLED
       )
@@ -440,17 +445,15 @@ describe("DashboardPage", () => {
       ).then(() => {
         assert.deepEqual(helper.store.getState().ui.toastMessage, {
           title:   "Course Enrollment",
-          message: `Something went wrong. You paid for this course '${
-            course.title
-          }' but are not enrolled.`,
-          icon: TOAST_FAILURE
+          message: `Something went wrong. You paid for this course '${course.title}' but are not enrolled.`,
+          icon:    TOAST_FAILURE
         })
       })
     })
 
     it("sets the course run to have a pending status", () => {
       const course = findCourse(
-        course =>
+        (course) =>
           course.runs.length > 0 && course.runs[0].status === STATUS_OFFERED
       )
       const run = course.runs[0]
@@ -461,7 +464,7 @@ describe("DashboardPage", () => {
       ).then(() => {
         const [courseRun] = findCourseRun(
           helper.store.getState().dashboard[SETTINGS.user.username].programs,
-          _run => _run.course_id === run.course_id
+          (_run) => _run.course_id === run.course_id
         )
         assert.equal(run.course_id, courseRun.course_id)
         assert.equal(courseRun.status, STATUS_PENDING_ENROLLMENT)
@@ -476,8 +479,14 @@ describe("DashboardPage", () => {
     })
 
     describe("course pricing", () => {
-      let dashboard, availablePrograms, coursePrices, programLearners, coupon
-      let run, program: Program, course
+      let dashboard
+      let availablePrograms
+      let coursePrices
+      let programLearners
+      let coupon
+      let run
+      let program: Program
+      let course
 
       beforeEach(() => {
         dashboard = makeDashboard()
@@ -595,7 +604,7 @@ describe("DashboardPage", () => {
     describe("fake timer tests", function() {
       it("refetches the dashboard after 3 seconds if 2 minutes has not passed", () => {
         const course = findCourse(
-          course =>
+          (course) =>
             course.runs.length > 0 && course.runs[0].status === STATUS_OFFERED
         )
         const run = course.runs[0]
@@ -625,7 +634,7 @@ describe("DashboardPage", () => {
 
       it("shows an error message if more than 30 seconds have passed", () => {
         const course = findCourse(
-          course =>
+          (course) =>
             course.runs.length > 0 && course.runs[0].status === STATUS_OFFERED
         )
         const run = course.runs[0]
@@ -783,7 +792,7 @@ describe("DashboardPage", () => {
 
           return listenForActions(EMAIL_DIALOG_ACTIONS, () => {
             contactLink.simulate("click")
-          }).then(state => {
+          }).then((state) => {
             assert.isFalse(state.ui.paymentTeaserDialogVisibility)
             assert.isTrue(state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG])
 
@@ -807,7 +816,7 @@ describe("DashboardPage", () => {
                   .querySelector(".email-composition-dialog .save-button")
                   .click()
               }
-            ).then(state => {
+            ).then((state) => {
               assert.isFalse(
                 state.ui.dialogVisibility[EMAIL_COMPOSITION_DIALOG]
               )
@@ -826,9 +835,7 @@ describe("DashboardPage", () => {
 
     for (const faExpectedObj of faExpectedStateList) {
       it(`shows the payment teaser dialog when a user lacks permission
-        to contact a course team with financial aid status: ${
-  faExpectedObj.hasFA
-}`, () => {
+        to contact a course team with financial aid status: ${faExpectedObj.hasFA}`, () => {
         const course = makeCourse()
         course.has_contact_email = true
         // Set all course runs to unpaid
@@ -852,7 +859,7 @@ describe("DashboardPage", () => {
 
             return listenForActions(PAYMENT_DIALOG_ACTIONS, () => {
               contactLink.simulate("click")
-            }).then(state => {
+            }).then((state) => {
               assert.equal(
                 document.querySelector(".inner-content > p").textContent,
                 faExpectedObj.expectedMessage
@@ -895,14 +902,14 @@ describe("DashboardPage", () => {
 
           return listenForActions(COURSE_ENROLL_DIALOG_ACTIONS, () => {
             enrollButton.simulate("click")
-          }).then(state => {
+          }).then((state) => {
             assert.isTrue(state.ui.enrollCourseDialogVisibility)
             assert.deepEqual(state.ui.enrollSelectedCourseRun, course.runs[0])
           })
         }
       )
     })
-    R.forEach(faStatus => {
+    R.forEach((faStatus) => {
       const expectedDisabled = FA_PENDING_STATUSES.includes(faStatus)
       it(`${faStatus} status ${
         expectedDisabled ? "disables" : "does not disable"
@@ -924,7 +931,7 @@ describe("DashboardPage", () => {
 
             return listenForActions(COURSE_ENROLL_DIALOG_ACTIONS, () => {
               enrollButton.simulate("click")
-            }).then(state => {
+            }).then((state) => {
               assert.isTrue(state.ui.enrollCourseDialogVisibility)
               assert.equal(
                 document.querySelector(".pay-button").disabled,

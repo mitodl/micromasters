@@ -9,7 +9,8 @@ import { courseEnrollmentsEndpoint } from "../reducers/course_enrollments"
 import rootReducer from "../reducers"
 
 describe("redux REST", () => {
-  let sandbox, store
+  let sandbox
+  let store
 
   describe("exported reducers", () => {
     beforeEach(() => {
@@ -25,7 +26,7 @@ describe("redux REST", () => {
 
     it("should include all reducers that we expect it to", () => {
       const state = store.getState()
-      endpoints.forEach(endpoint => {
+      endpoints.forEach((endpoint) => {
         const expected = R.propOr(INITIAL_STATE, "initialState", endpoint)
         assert.deepEqual(expected, state[endpoint.name])
       })

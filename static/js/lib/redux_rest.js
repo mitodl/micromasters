@@ -21,7 +21,7 @@ export const endpoints: Array<Endpoint> = [
 
 const reducers: Object = {}
 const actions: Object = {}
-endpoints.forEach(endpoint => {
+endpoints.forEach((endpoint) => {
   actions[endpoint.name] = deriveActions(endpoint)
   reducers[endpoint.name] = deriveReducers(endpoint, actions[endpoint.name])
 })

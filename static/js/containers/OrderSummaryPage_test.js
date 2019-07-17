@@ -14,13 +14,16 @@ import { DASHBOARD_SUCCESS_NO_FRONTPAGE_NO_LEARNER_ACTIONS } from "./test_util"
 import { findCourse } from "../util/test_utils"
 
 describe("OrderSummaryPage", () => {
-  let renderComponent, helper, run, url
+  let renderComponent
+  let helper
+  let run
+  let url
 
   beforeEach(() => {
     helper = new IntegrationTestHelper()
     renderComponent = helper.renderComponent.bind(helper)
     const course = findCourse(
-      course =>
+      (course) =>
         course.runs.length > 0 && course.runs[0].status === STATUS_OFFERED
     )
     run = course.runs[0]

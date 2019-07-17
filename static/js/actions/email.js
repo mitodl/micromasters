@@ -34,11 +34,11 @@ export function sendEmail(
   return (dispatch: Dispatch) => {
     dispatch(initiateSendEmail(emailType))
     return sendFunction(...sendFunctionParams).then(
-      response => {
+      (response) => {
         dispatch(sendEmailSuccess(emailType))
         return Promise.resolve(response)
       },
-      error => {
+      (error) => {
         dispatch(sendEmailFailure({ type: emailType, error: error }))
       }
     )

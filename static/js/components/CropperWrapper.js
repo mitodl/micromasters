@@ -23,7 +23,7 @@ export default class CropperWrapper extends React.Component {
           height: 512
         })
       }
-      canvas.toBlob(blob => updatePhotoEdit(blob), "image/jpeg")
+      canvas.toBlob((blob) => updatePhotoEdit(blob), "image/jpeg")
     }
   }
 
@@ -32,7 +32,7 @@ export default class CropperWrapper extends React.Component {
 
     return (
       <Cropper
-        ref={cropper => (this.cropper = cropper)}
+        ref={(cropper) => (this.cropper = cropper)}
         style={{ height: uploaderBodyHeight() }}
         className="photo-active-item cropper"
         src={photo.preview}

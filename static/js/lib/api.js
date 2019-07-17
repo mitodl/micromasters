@@ -1,5 +1,5 @@
 // @flow
-/* global SETTINGS:false, fetch: false */
+/* global SETTINGS:false */
 // For mocking purposes we need to use 'fetch' defined as a global instead of importing as a local.
 import R from "ramda"
 import Decimal from "decimal.js-light"
@@ -196,7 +196,7 @@ export function addFinancialAid(
 
 export function getCoursePrices(username: string): Promise<CoursePrices> {
   return fetchJSONWithCSRF(`/api/v0/course_prices/${username}/`).then(
-    coursePrices => {
+    (coursePrices) => {
       // turn `price` from string into decimal
       return R.map(R.evolve({ price: Decimal }), coursePrices)
     }
@@ -230,7 +230,7 @@ export function addCourseEnrollment(courseId: string) {
 }
 
 export function getCoupons(): Promise<Coupons> {
-  return fetchJSONWithCSRF("/api/v0/coupons/").then(coupons => {
+  return fetchJSONWithCSRF("/api/v0/coupons/").then((coupons) => {
     // turn `amount` from string into decimal
     return R.map(R.evolve({ amount: Decimal }), coupons)
   })
@@ -245,7 +245,7 @@ export function attachCoupon(
     body:   JSON.stringify({
       username: SETTINGS.user.username
     })
-  }).then(response => R.evolve({ coupon: { amount: Decimal } }, response))
+  }).then((response) => R.evolve({ coupon: { amount: Decimal } }, response))
 }
 
 export function unEnrollProgramEnrollments(programIds: Array<number>) {

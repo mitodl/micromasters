@@ -3,7 +3,7 @@ import React from "react"
 import Dialog from "material-ui/Dialog"
 import IconButton from "react-mdl/lib/IconButton"
 
-const dialogTitle = setDialogVisibility => (
+const dialogTitle = (setDialogVisibility) => (
   <div className="title">
     <div className="text" key={1}>
       Income Verification Instructions
@@ -25,7 +25,7 @@ type DocsInstructions = {
 const DocsInstructionsDialog = ({
   open,
   setDialogVisibility
-  }: DocsInstructions) => (
+}: DocsInstructions) => (
   <Dialog
     title={dialogTitle(setDialogVisibility)}
     titleClassName="dialog-title"

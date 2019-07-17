@@ -90,7 +90,7 @@ require("react-mdl/extra/material.js")
 
 // rethrow all unhandled promise errors
 // eslint-disable-next-line no-unused-vars
-process.on("unhandledRejection", reason => {
+process.on("unhandledRejection", (reason) => {
   // throw reason; // uncomment to show promise-related errors
 })
 

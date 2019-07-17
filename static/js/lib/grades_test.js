@@ -70,7 +70,7 @@ describe("Grades library", () => {
     })
 
     it("should return false otherwise", () => {
-      course.proctorate_exams_grades.forEach(grade => {
+      course.proctorate_exams_grades.forEach((grade) => {
         grade.passed = false
       })
       assert.isFalse(hasPassingExamGrade(course))
@@ -91,7 +91,7 @@ describe("Grades library", () => {
     })
 
     it("should return false otherwise", () => {
-      course.proctorate_exams_grades.forEach(grade => {
+      course.proctorate_exams_grades.forEach((grade) => {
         grade.passed = true
       })
       assert.isFalse(hasFailingExamGrade(course))
@@ -124,8 +124,8 @@ describe("Grades library", () => {
         STATUS_PENDING_ENROLLMENT,
         STATUS_MISSED_DEADLINE,
         STATUS_PAID_BUT_NOT_ENROLLED
-      ].forEach(status => {
-        course.runs.forEach(run => {
+      ].forEach((status) => {
+        course.runs.forEach((run) => {
           run.status = status
         })
         assert.isFalse(hasPassedCourseRun(course))

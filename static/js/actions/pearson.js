@@ -23,11 +23,11 @@ export function getPearsonSSODigest() {
   return (dispatch: Dispatch) => {
     dispatch(requestGetPearsonSSODigest())
     return getPearsonSSO().then(
-      ok => {
+      (ok) => {
         dispatch(receiveGetPearsonSSOSuccess())
         return Promise.resolve(ok)
       },
-      err => {
+      (err) => {
         dispatch(receiveGetPearsonSSOFailure())
         return Promise.reject(err)
       }

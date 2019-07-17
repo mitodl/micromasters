@@ -31,7 +31,7 @@ import type {
 } from "../flow/programTypes"
 
 const makeCounter = (): (() => number) => {
-  const gen = (function*() {
+  const gen = (function* () {
     let i = 1
     // eslint-disable-next-line no-constant-condition
     while (true) {
@@ -57,7 +57,7 @@ export const makeAvailablePrograms = (
   dashboard: Dashboard,
   enrolled: boolean = true
 ): AvailablePrograms => {
-  return dashboard.programs.map(program => ({
+  return dashboard.programs.map((program) => ({
     enrolled:        enrolled,
     id:              program.id,
     programpage_url: `/page/${program.id}`,

@@ -54,7 +54,7 @@ describe("auth library", () => {
     })
 
     it("should reject if the response is not a good one", () => {
-      [199, 300, 301, 499, 500].forEach(status => {
+      [199, 300, 301, 499, 500].forEach((status) => {
         fetchMock.restore()
         fetchMock.mock(endpointUrl, status)
         assert.isRejected(fetchJSONWithAuthToken(endpointUrl))

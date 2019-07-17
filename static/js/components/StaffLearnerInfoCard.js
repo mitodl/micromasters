@@ -30,7 +30,7 @@ const getProgramProp = R.curry((prop, program) =>
 // formatCourseGrade :: Program -> String
 const formatCourseGrade = R.compose(
   R.prop("value"),
-  S.map(grade => `${grade}%`),
+  S.map((grade) => `${grade}%`),
   getProgramProp("grade_average")
 )
 

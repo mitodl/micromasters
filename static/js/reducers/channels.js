@@ -13,7 +13,7 @@ export const channelsEndpoint: Endpoint = {
   verbs:               [POST],
   postUrl:             "/api/v0/channels/",
   fetchFunc:           fetchJSONWithCSRF,
-  postOptions:         channel => ({
+  postOptions:         (channel) => ({
     method: POST,
     body:   JSON.stringify(channel)
   }),

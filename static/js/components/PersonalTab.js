@@ -65,7 +65,7 @@ export default class PersonalTab extends React.Component {
   )
 
   programOptions = R.compose(
-    R.map(program => ({ value: program.id, label: program.title })),
+    R.map((program) => ({ value: program.id, label: program.title })),
     this.sortPrograms
   )
 
@@ -86,7 +86,7 @@ export default class PersonalTab extends React.Component {
     const { programs, setProgram } = this.props
     if (selection && selection.value) {
       const selected = programs.find(
-        program => program.id === parseInt(selection.value)
+        (program) => program.id === parseInt(selection.value)
       )
       setProgram(selected)
     } else {

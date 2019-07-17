@@ -21,7 +21,8 @@ import { UPDATE_EMAIL_VALIDATION, CLEAR_EMAIL_EDIT } from "../actions/email"
 import { HIDE_DIALOG } from "../actions/ui"
 
 describe("AutomaticEmailPage", () => {
-  let renderComponent, helper
+  let renderComponent
+  let helper
 
   beforeEach(() => {
     helper = new IntegrationTestHelper()
@@ -85,7 +86,7 @@ describe("AutomaticEmailPage", () => {
     return renderComponent("/automaticemails", successActions).then(
       ([wrapper]) => {
         const cardText = wrapper.find(".email-campaigns-card").text()
-        GET_AUTOMATIC_EMAILS_RESPONSE.forEach(email => {
+        GET_AUTOMATIC_EMAILS_RESPONSE.forEach((email) => {
           assert.include(cardText, email.email_subject)
         })
       }

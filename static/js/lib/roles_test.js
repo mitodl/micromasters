@@ -80,7 +80,7 @@ describe("roles library", () => {
 
   describe("hasEditAbility", () => {
     it("should return false if user does not have the permission", () => {
-      roles.forEach(role => {
+      roles.forEach((role) => {
         assert.isFalse(hasEditAbility(role))
       })
     })

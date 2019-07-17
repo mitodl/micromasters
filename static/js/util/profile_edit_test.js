@@ -19,8 +19,10 @@ import { YEAR_VALIDATION_CUTOFF } from "../constants"
 import { USER_PROFILE_RESPONSE } from "../test_constants"
 
 describe("Profile Editing utility functions", () => {
-  let that, sandbox, gaEvent
-  const change = clone => (that.props.profile = clone)
+  let that
+  let sandbox
+  let gaEvent
+  const change = (clone) => (that.props.profile = clone)
   beforeEach(() => {
     sandbox = sinon.sandbox.create()
     gaEvent = sandbox.stub(ga, "event")
@@ -55,7 +57,9 @@ describe("Profile Editing utility functions", () => {
   })
 
   describe("Bound radio group", () => {
-    let radioGroup, labelSpan, errorSpan
+    let radioGroup
+    let labelSpan
+    let errorSpan
     const privacyOptions = [
       {
         value:  "public",
@@ -158,8 +162,10 @@ describe("Profile Editing utility functions", () => {
   })
 
   describe("Bound date field", () => {
-    let validateYearSpy, validateMonthSpy, validateDaySpy
-    const renderDateField = allowFutureYear => {
+    let validateYearSpy
+    let validateMonthSpy
+    let validateDaySpy
+    const renderDateField = (allowFutureYear) => {
       return shallow(
         boundDateField.call(
           that,
@@ -179,7 +185,7 @@ describe("Profile Editing utility functions", () => {
     const _getInputProps = R.curry((idText, wrapper) => {
       return wrapper
         .find("TextField")
-        .filterWhere(node => node.props().floatingLabelText === idText)
+        .filterWhere((node) => node.props().floatingLabelText === idText)
         .props()
     })
 
@@ -582,7 +588,9 @@ describe("Profile Editing utility functions", () => {
   })
 
   describe("boundTelephoneInput", () => {
-    let input, telephoneInput, telephoneSpan
+    let input
+    let telephoneInput
+    let telephoneSpan
 
     const rerender = () => {
       input = boundTelephoneInput.call(that, ["phone_number"])

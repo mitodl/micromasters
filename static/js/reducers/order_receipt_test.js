@@ -13,9 +13,9 @@ import { createAssertReducerResultState } from "../util/test_utils"
 import type { OrderReceiptState } from "./order_receipt"
 
 describe("order receipt reducer", () => {
-  let sandbox,
-    store: Store,
-    assertReducerResultState: AssertReducerResultState<OrderReceiptState>
+  let sandbox
+  let store: Store
+  let assertReducerResultState: AssertReducerResultState<OrderReceiptState>
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()
@@ -23,7 +23,7 @@ describe("order receipt reducer", () => {
     store = configureTestStore(rootReducer)
     assertReducerResultState = createAssertReducerResultState(
       store,
-      state => state.orderReceipt
+      (state) => state.orderReceipt
     )
   })
 
@@ -34,7 +34,7 @@ describe("order receipt reducer", () => {
   it("should let you set timeoutActive", () => {
     assertReducerResultState(
       setTimeoutActive,
-      receipt => receipt.timeoutActive,
+      (receipt) => receipt.timeoutActive,
       false
     )
   })
@@ -45,7 +45,7 @@ describe("order receipt reducer", () => {
 
     assertReducerResultState(
       setInitialTime,
-      receipt => receipt.initialTime,
+      (receipt) => receipt.initialTime,
       initialTime
     )
   })

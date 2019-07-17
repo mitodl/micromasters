@@ -5,7 +5,7 @@ import { Card, CardTitle } from "react-mdl/lib/Card"
 
 import type { ProgramLearners } from "../flow/dashboardTypes"
 
-const renderLearners = R.map(learner => (
+const renderLearners = R.map((learner) => (
   <img
     key={learner.username}
     src={learner.image_small}

@@ -36,7 +36,10 @@ describe("coupon utility functions", () => {
   })
 
   describe("calculatePrices", () => {
-    let dashboard, programs, coursePrices, pricesLookup
+    let dashboard
+    let programs
+    let coursePrices
+    let pricesLookup
     beforeEach(() => {
       dashboard = makeDashboard()
       programs = dashboard.programs

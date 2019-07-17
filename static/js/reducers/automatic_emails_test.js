@@ -9,17 +9,18 @@ import {
 } from "../actions/automatic_emails"
 
 describe("automatic email reducer", () => {
-  let store, dispatchThen
+  let store
+  let dispatchThen
 
   beforeEach(() => {
     store = configureTestStore(rootReducer)
-    dispatchThen = store.createDispatchThen(state => state.automaticEmails)
+    dispatchThen = store.createDispatchThen((state) => state.automaticEmails)
   })
 
   it("should let you add email IDs to the in-flight list", () => {
     return dispatchThen(toggleEmailPatchInFlight(2), [
       TOGGLE_EMAIL_PATCH_IN_FLIGHT
-    ]).then(state => {
+    ]).then((state) => {
       assert(state.emailsInFlight.has(2))
     })
   })
@@ -28,7 +29,7 @@ describe("automatic email reducer", () => {
     store.dispatch(toggleEmailPatchInFlight(2))
     return dispatchThen(toggleEmailPatchInFlight(2), [
       TOGGLE_EMAIL_PATCH_IN_FLIGHT
-    ]).then(state => {
+    ]).then((state) => {
       assert(!state.emailsInFlight.has(2))
     })
   })

@@ -17,7 +17,7 @@ type LearnerResultProps = {
 export default class LearnerResult extends SearchkitComponent {
   props: LearnerResultProps
 
-  static hasGrade = program =>
+  static hasGrade = (program) =>
     _.has(program, "grade_average") && _.isNumber(program.grade_average)
 
   render() {

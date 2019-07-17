@@ -47,7 +47,7 @@ describe("reducer utilities", () => {
       })
 
       it("should return Nothing if either argument is nil", () => {
-        [null, undefined].forEach(nilval => {
+        [null, undefined].forEach((nilval) => {
           assertIsNothing(getDashboard("potato", nilval))
           assertIsNothing(getDashboard(nilval, state.dashboard))
         })

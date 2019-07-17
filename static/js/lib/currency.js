@@ -25,7 +25,7 @@ export const excludedCurrencyCodes = [
   "XXX"
 ]
 
-const codeToOption = code => ({ value: code, label: cc.code(code).currency })
+const codeToOption = (code) => ({ value: code, label: cc.code(code).currency })
 
 const invalidCurrency = R.contains(R.__, excludedCurrencyCodes)
 

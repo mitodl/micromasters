@@ -68,11 +68,9 @@ export const withEmailDialog = R.curry(
         }
       }
 
-      updateEmailFieldEdit = R.curry(
-        (fieldName, e): void => {
-          this.saveEmailChanges(fieldName, e.target.value)
-        }
-      )
+      updateEmailFieldEdit = R.curry((fieldName, e): void => {
+        this.saveEmailChanges(fieldName, e.target.value)
+      })
 
       updateEmailBody = (editorState: EditorState): void => {
         this.saveEmailChanges(

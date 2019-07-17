@@ -5,7 +5,7 @@ import { DASHBOARD_RESPONSE } from "./test_constants"
 import { makeDashboard } from "./factories/dashboard"
 
 describe("constants", () => {
-  const assertResponse = programs => {
+  const assertResponse = (programs) => {
     const programIds: Set<number> = new Set()
     const courseIds: Set<number> = new Set()
     const runIds: Set<number> = new Set()

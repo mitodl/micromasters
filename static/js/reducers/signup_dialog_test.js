@@ -9,7 +9,9 @@ import {
 } from "../actions/signup_dialog"
 
 describe("signup dialog reducer", () => {
-  let sandbox, store, dispatchThen
+  let sandbox
+  let store
+  let dispatchThen
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()
@@ -25,11 +27,11 @@ describe("signup dialog reducer", () => {
   })
 
   describe("dialog visibility", () => {
-    [true, false].forEach(bool => {
+    [true, false].forEach((bool) => {
       it(`should let you set dialog visibility to ${bool}`, () => {
         return dispatchThen(setDialogVisibility(bool), [
           SET_DIALOG_VISIBILITY
-        ]).then(state => {
+        ]).then((state) => {
           assert.equal(state.dialogVisibility, bool)
         })
       })

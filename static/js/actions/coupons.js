@@ -27,7 +27,7 @@ export const attachCoupon = (code: string): Dispatcher<*> => {
         dispatch(receiveAttachCouponSuccess(response))
         return Promise.resolve(response)
       },
-      response => {
+      (response) => {
         dispatch(receiveAttachCouponFailure(response))
         return Promise.reject(response)
       }

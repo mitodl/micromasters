@@ -271,15 +271,15 @@ describe("utility functions", () => {
     it("renders the right active display", () => {
       const keys = [...PROFILE_STEP_LABELS.keys()]
       PROFILE_STEP_LABELS.forEach((label, step) => {
-        const i = keys.findIndex(k => k === step)
+        const i = keys.findIndex((k) => k === step)
 
         const svg = makeProfileProgressDisplay(step)
         const desc = svg.props.children[0]
         assert.equal(desc.props.children.join(""), `Profile progress: ${label}`)
 
-        let foundCircle = false,
-          foundCircleText = false,
-          foundText = false
+        let foundCircle = false
+        let foundCircleText = false
+        let foundText = false
         for (const child of svg.props.children[1]) {
           if (child.key === `circle_${i}`) {
             // the green circle should be the currently selected one
@@ -454,9 +454,9 @@ describe("utility functions", () => {
 
   describe("callFunctionArray", () => {
     it("should take an array of functions, call them in series with given args, and return list of results", () => {
-      const testFunctionA = arg => `testFunctionA ${arg}`,
-        testFunctionB = arg => `testFunctionB ${arg}`,
-        arg = "arg"
+      const testFunctionA = (arg) => `testFunctionA ${arg}`
+      const testFunctionB = (arg) => `testFunctionB ${arg}`
+      const arg = "arg"
       const testFunctionArray = [testFunctionA, testFunctionA, testFunctionB]
       const results = callFunctionArray(testFunctionArray, arg)
       assert.deepEqual(results, [
@@ -570,7 +570,7 @@ describe("utility functions", () => {
       }
 
       assert.deepEqual(
-        findCourseRun([program], _run => run.course_id === _run.course_id),
+        findCourseRun([program], (_run) => run.course_id === _run.course_id),
         [run, course, program]
       )
     })
@@ -784,7 +784,7 @@ describe("utility functions", () => {
 
   describe("isNilOrBlank", () => {
     it("returns true for undefined, null, and a blank string", () => {
-      [undefined, null, ""].forEach(value => {
+      [undefined, null, ""].forEach((value) => {
         assert.isTrue(isNilOrBlank(value))
       })
     })
@@ -887,7 +887,7 @@ describe("utility functions", () => {
     })
   })
 
-  it("waits some milliseconds", done => {
+  it("waits some milliseconds", (done) => {
     let executed = false
     wait(30).then(() => {
       executed = true

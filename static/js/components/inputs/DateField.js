@@ -119,7 +119,7 @@ export default class DateField extends React.Component {
       // keep text up to date
       _.set(clone, editKeySet, newEdit)
 
-      const padYear = s => _.padStart(s, 4, "0")
+      const padYear = (s) => _.padStart(s, 4, "0")
 
       const dateList = [validatedYear, validatedMonth, validatedDay]
 
@@ -134,8 +134,8 @@ export default class DateField extends React.Component {
       const rawDate = Just(moment(dateString, ISO_8601_FORMAT))
 
       const validatedDate = R.compose(
-        S.filter(date => date.isValid),
-        S.filter(date => date.isAfter(moment("1800", "YYYY")))
+        S.filter((date) => date.isValid),
+        S.filter((date) => date.isAfter(moment("1800", "YYYY")))
       )(rawDate)
 
       if (validatedDate.isNothing) {
@@ -148,7 +148,8 @@ export default class DateField extends React.Component {
 
     const edit = getEditObject()
 
-    let dayField, daySlash
+    let dayField
+    let daySlash
     if (!omitDay) {
       daySlash = <span className="slash"> / </span>
       dayField = (
@@ -161,7 +162,7 @@ export default class DateField extends React.Component {
           }}
           fullWidth={true}
           value={edit.day !== undefined ? edit.day : ""}
-          onChange={e => setNewDate(e.target.value, undefined, undefined)}
+          onChange={(e) => setNewDate(e.target.value, undefined, undefined)}
         />
       )
     }
@@ -184,7 +185,7 @@ export default class DateField extends React.Component {
           }}
           fullWidth={true}
           value={edit.month !== undefined ? edit.month : ""}
-          onChange={e => setNewDate(undefined, e.target.value, undefined)}
+          onChange={(e) => setNewDate(undefined, e.target.value, undefined)}
           errorText={_.get(errors, keySet)}
         />
         <span className="slash"> / </span>
@@ -199,7 +200,7 @@ export default class DateField extends React.Component {
           }}
           fullWidth={true}
           value={edit.year !== undefined ? edit.year : ""}
-          onChange={e => setNewDate(undefined, undefined, e.target.value)}
+          onChange={(e) => setNewDate(undefined, undefined, e.target.value)}
           onBlur={onBlur}
         />
       </fieldset>

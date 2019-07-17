@@ -81,7 +81,7 @@ class LearnerSearchPage extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     ui:                       state.ui,
     email:                    state.email,

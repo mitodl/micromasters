@@ -15,7 +15,7 @@ export const hideDialog = createAction(HIDE_DIALOG)
 // work history actions
 export const SET_WORK_HISTORY_EDIT = "SET_WORK_HISTORY_EDIT"
 export const setWorkHistoryEdit = (bool: boolean): Dispatcher<void> => {
-  return dispatch => {
+  return (dispatch) => {
     dispatch({ type: SET_WORK_HISTORY_EDIT, payload: bool })
     return Promise.resolve()
   }

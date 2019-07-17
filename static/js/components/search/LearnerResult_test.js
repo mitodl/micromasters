@@ -195,7 +195,7 @@ describe("LearnerResult", () => {
       }
     })
     assert.deepEqual(
-      result.find(".display-name .highlight").map(node => node.text()),
+      result.find(".display-name .highlight").map((node) => node.text()),
       ["Query"]
     )
     assert.equal(result.find(".user-name .highlight").text(), "query")

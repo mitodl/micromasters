@@ -78,7 +78,8 @@ export default class CourseEnrollmentDialog extends React.Component {
       hasUserApplied,
       pendingFinancialAid
     } = this.props
-    let message, payButton
+    let message
+    let payButton
     if (pendingFinancialAid) {
       message = [
         <p key="1">

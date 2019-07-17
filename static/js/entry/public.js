@@ -108,7 +108,7 @@ if (url.searchParams.get("next")) {
   openDialog()
 }
 
-nodes.forEach(signUpButton => {
+nodes.forEach((signUpButton) => {
   signUpButton.onclick = openDialog
 })
 
@@ -126,7 +126,7 @@ ReactDOM.render(
 =================================== */
 $(".mailchimp").ajaxChimp({
   callback: mailchimpCallback,
-  //Replace this with your own mailchimp post URL. Don't remove the "". Just paste the url inside "".
+  // Replace this with your own mailchimp post URL. Don't remove the "". Just paste the url inside "".
   url:
     "//facebook.us6.list-manage.com/subscribe/post?u=ad81d725159c1f322a0c54837&amp;id=008aee5e78"
 })
@@ -201,16 +201,16 @@ $(document).ready(function($) {
   $(".accordion")
     .find(".accordion-toggle")
     .click(function() {
-      //Expand or collapse this panel
+      // Expand or collapse this panel
       $(this)
         .next()
         .slideToggle("fast")
-      //Rotate the icon
+      // Rotate the icon
       $(this)
         .find(".material-icons")
         .toggleClass("rotate")
         .toggleClass("rotate-reset")
-      //Hide the other panels and rotate the icons to default
+      // Hide the other panels and rotate the icons to default
       $(".accordion-content")
         .not($(this).next())
         .slideUp("fast")

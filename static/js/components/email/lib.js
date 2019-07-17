@@ -27,8 +27,9 @@ export const isLocation = (labelKey: string) =>
   R.or(_.includes(labelKey, "Country"), _.includes(labelKey, "Residence"))
 
 const translations: Object = makeTranslations()
-export const renderFilterOptions = R.map(filter => {
-  let labelKey, labelValue
+export const renderFilterOptions = R.map((filter) => {
+  let labelKey
+  let labelValue
   let isTranslated = false
   if (R.isEmpty(filter.name)) {
     labelKey = SEARCH_FACET_FIELD_LABEL_MAP[filter.id]
@@ -84,7 +85,7 @@ export const COURSE_TEAM_EMAIL_CONFIG: EmailConfig = {
 
   getEmailSendFunction: () => sendCourseTeamMail,
 
-  emailSendParams: emailState => [
+  emailSendParams: (emailState) => [
     emailState.inputs.subject || "",
     emailState.inputs.body || "",
     emailState.params.courseId
@@ -159,7 +160,7 @@ export const LEARNER_EMAIL_CONFIG: EmailConfig = {
 
   getEmailSendFunction: () => sendLearnerMail,
 
-  emailSendParams: emailState => [
+  emailSendParams: (emailState) => [
     emailState.inputs.subject || "",
     emailState.inputs.body || "",
     emailState.params.studentId
@@ -171,7 +172,7 @@ export const convertEmailEdit = mapObj(([k, v]) => [
   v
 ])
 
-export const findFilters = tree => {
+export const findFilters = (tree) => {
   if (tree.hasOwnProperty("term") && !tree.term.hasOwnProperty("program.id")) {
     return [tree.term]
   }
@@ -184,7 +185,7 @@ export const findFilters = tree => {
     return R.flatten(
       Object.values(tree)
         .filter(_.isObject)
-        .map(obj => findFilters(obj))
+        .map((obj) => findFilters(obj))
     )
   }
   return []

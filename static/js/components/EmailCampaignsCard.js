@@ -9,9 +9,9 @@ import type { AutomaticEmail } from "../flow/emailTypes"
 import type { Either } from "../flow/sanctuaryTypes"
 import { S } from "../lib/sanctuary"
 
-const renderEmptyMessage = msg => <div className="empty-message">{msg}</div>
+const renderEmptyMessage = (msg) => <div className="empty-message">{msg}</div>
 
-const wrapEmailRows = rows => (
+const wrapEmailRows = (rows) => (
   <div className="automatic-email-rows">
     <div className="header">
       <div>Email name / subject</div>

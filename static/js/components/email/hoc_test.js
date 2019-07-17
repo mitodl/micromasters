@@ -17,7 +17,9 @@ import {
 } from "./test_constants"
 
 describe("Email higher-order component", () => {
-  let helper, listenForActions, openEmailSpy
+  let helper
+  let listenForActions
+  let openEmailSpy
 
   class TestContainerPage extends React.Component {
     render() {

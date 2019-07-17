@@ -88,7 +88,10 @@ describe("Course Status Messages", () => {
   })
 
   describe("calculateMessages", () => {
-    let course, sandbox, financialAid, calculateMessagesProps
+    let course
+    let sandbox
+    let financialAid
+    let calculateMessagesProps
 
     beforeEach(() => {
       course = makeCourse(0)
@@ -113,7 +116,7 @@ describe("Course Status Messages", () => {
     })
 
     it("should have a message for STATUS_PAID_BUT_NOT_ENROLLED for FA", () => {
-      [true, false].forEach(finAid => {
+      [true, false].forEach((finAid) => {
         course.runs[0].status = STATUS_PAID_BUT_NOT_ENROLLED
         course.runs[0].has_paid = true
         calculateMessagesProps["hasFinancialAid"] = finAid
@@ -761,9 +764,7 @@ describe("Course Status Messages", () => {
         {
           message:
             "You missed the payment deadline to take the proctored exam " +
-            `scheduled for ${
-              course.past_exam_date
-            }. There are no future exams scheduled at this ` +
+            `scheduled for ${course.past_exam_date}. There are no future exams scheduled at this ` +
             "time. Please check back later.",
           action: "course action was called"
         }
@@ -793,9 +794,7 @@ describe("Course Status Messages", () => {
         {
           message:
             "You missed the payment deadline to take the proctored exam " +
-            `scheduled for ${
-              course.past_exam_date
-            }. You can pay now to take the next exam, scheduled for ` +
+            `scheduled for ${course.past_exam_date}. You can pay now to take the next exam, scheduled for ` +
             `${formatDate(course.exams_schedulable_in_future[0])}.`,
           action: "course action was called"
         }

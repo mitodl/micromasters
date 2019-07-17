@@ -31,7 +31,7 @@ const withSearchkitManager = (WrappedComponent: ReactClass<*>) => {
       })
 
       // delay execution of search until we have a program enrollment
-      const delayPromise = new Promise(resolve => {
+      const delayPromise = new Promise((resolve) => {
         this.searchkitCanSearch = resolve
       })
 

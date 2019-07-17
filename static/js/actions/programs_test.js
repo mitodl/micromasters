@@ -60,7 +60,11 @@ describe("program enrollment actions", () => {
 })
 
 describe("unEnrollProgramEnrollments", () => {
-  let store, sandbox, dispatchThen, helper, unEnrollProgramEnrollmentsStub
+  let store
+  let sandbox
+  let dispatchThen
+  let helper
+  let unEnrollProgramEnrollmentsStub
 
   beforeEach(() => {
     helper = new IntegrationTestHelper()

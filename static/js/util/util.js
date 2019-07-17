@@ -43,11 +43,11 @@ export function userPrivilegeCheck(
 }
 
 export function makeProfileProgressDisplay(active: ?string) {
-  const width = 750,
-    height = 100,
-    radius = 20,
-    paddingX = 40,
-    paddingY = 5
+  const width = 750
+  const height = 100
+  const radius = 20
+  const paddingX = 40
+  const paddingY = 5
   const numCircles = PROFILE_STEP_LABELS.size
 
   // width from first circle edge left to the last circle edge right
@@ -81,7 +81,9 @@ export function makeProfileProgressDisplay(active: ?string) {
 
   const elements = []
 
-  const activeTab = [...PROFILE_STEP_LABELS.keys()].findIndex(k => k === active)
+  const activeTab = [...PROFILE_STEP_LABELS.keys()].findIndex(
+    (k) => k === active
+  )
   ;[...PROFILE_STEP_LABELS.entries()].forEach(([, label], i) => {
     let colorScheme
     if (i < activeTab) {
@@ -296,7 +298,8 @@ export function getLocation(
 ): string {
   const { country, state_or_territory } = profile
   let { city } = profile
-  let subCountryLocation, countryLocation
+  let subCountryLocation
+  let countryLocation
   city = city ? `${city}, ` : ""
 
   if (country === "US") {
@@ -339,8 +342,8 @@ export function calculateDegreeInclusions(profile: Profile) {
   // turn on all switches where the user has data
   for (const { value } of EDUCATION_LEVELS) {
     if (
-      profile.education.filter(education => education.degree_name === value)
-      .length > 0
+      profile.education.filter((education) => education.degree_name === value)
+        .length > 0
     ) {
       inclusions[value] = true
     }
@@ -351,11 +354,11 @@ export function calculateDegreeInclusions(profile: Profile) {
 /**
  * Calls an array of functions in series with a given argument and returns an array of the results
  */
-export function callFunctionArray<R: any, F: (a: any) => R>(
+export function callFunctionArray<R: any, F:(a: any) => R>(
   functionArray: Array<F>,
   arg: any
 ): R[] {
-  return functionArray.map(func => func(arg))
+  return functionArray.map((func) => func(arg))
 }
 
 /**
@@ -436,7 +439,7 @@ export function programCourseInfo(program: Program): Object {
     const passedCourses = program.courses.filter(
       // returns true if any course run has a `status` property set to STATUS_PASSED.
       // $FlowFixMe: Flow thinks second arg is not a valid predicate
-      course => _.some(course.runs, ["status", STATUS_PASSED])
+      (course) => _.some(course.runs, ["status", STATUS_PASSED])
     )
     totalPassedCourses = passedCourses.length
   }
@@ -506,8 +509,8 @@ export function highlight(text: string, highlightPhrase: ?string) {
   const filteredPhrase = removeDiacritics(highlightPhrase.toLowerCase())
   const filteredText = removeDiacritics(text.toLowerCase())
 
-  let startPosition = 0,
-    endPosition
+  let startPosition = 0
+  let endPosition
   const pieces = []
   while (
     (endPosition = filteredText.indexOf(filteredPhrase, startPosition)) !== -1
@@ -546,7 +549,7 @@ export function getUserDisplayName(profile: Profile): string {
  */
 const intersperse = R.curry((elementFunc: Function, arr: Array<any>) => {
   let i = 0
-  const addGeneratedElement = el => [el, elementFunc(i++)]
+  const addGeneratedElement = (el) => [el, elementFunc(i++)]
   return R.dropLast(1, R.chain(addGeneratedElement, arr))
 })
 
@@ -558,7 +561,7 @@ export function renderSeparatedComponents(
   separator: string
 ): Array<React$Element<*> | null> {
   return intersperse(
-    i => <span key={`separator-${i}`}>{separator}</span>,
+    (i) => <span key={`separator-${i}`}>{separator}</span>,
     components
   )
 }
@@ -611,7 +614,7 @@ export const mapObj = R.curry((fn, obj) =>
  * Returns a promise which resolves after a number of milliseconds have elapsed
  */
 export const wait = (millis: number): Promise<void> =>
-  new Promise(resolve => setTimeout(resolve, millis))
+  new Promise((resolve) => setTimeout(resolve, millis))
 
 /**
  * extract object from json
@@ -620,9 +623,7 @@ export const findObjByName = (data: any, key: string) => {
   if (typeof data === "object" && _.has((data: Object), key)) {
     return [_.get(data, key)]
   }
-  return _.flatMap(
-    (data: Array<*>),
-    (value: Object | Array<*>): Array<*> =>
-      typeof value === "object" ? findObjByName(value, key) : []
+  return _.flatMap((data: Array<*>), (value: Object | Array<*>): Array<*> =>
+    typeof value === "object" ? findObjByName(value, key) : []
   )
 }

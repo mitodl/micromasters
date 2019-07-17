@@ -52,7 +52,7 @@ describe("CourseAction", () => {
     sandbox.restore()
   })
 
-  const assertCourseRunSelected = courseRun => {
+  const assertCourseRunSelected = (courseRun) => {
     sinon.assert.calledWith(setEnrollSelectedCourseRunStub, courseRun)
   }
 
@@ -152,7 +152,7 @@ describe("CourseAction", () => {
 
   it("shows a pending disabled button if the user has status pending-enrollment", () => {
     const course = findCourse(
-      course =>
+      (course) =>
         course.runs.length > 0 &&
         course.runs[0].status === STATUS_PENDING_ENROLLMENT
     )
@@ -170,7 +170,7 @@ describe("CourseAction", () => {
 
     beforeEach(() => {
       course = findAndCloneCourse(
-        course =>
+        (course) =>
           course.runs.length > 0 && course.runs[0].status === STATUS_OFFERED
       )
     })
@@ -197,7 +197,7 @@ describe("CourseAction", () => {
 
     it("indicates that a user must calculate the course price to upgrade to paid", () => {
       const course = findAndCloneCourse(
-        course =>
+        (course) =>
           course.runs.length > 0 && course.runs[0].status === STATUS_CAN_UPGRADE
       )
       const firstRun = alterFirstRun(course, {
@@ -220,7 +220,7 @@ describe("CourseAction", () => {
 
     it("indicates that a user can't pay for course while FA is pending", () => {
       const course = findAndCloneCourse(
-        course =>
+        (course) =>
           course.runs.length > 0 && course.runs[0].status === STATUS_CAN_UPGRADE
       )
       const firstRun = alterFirstRun(course, {

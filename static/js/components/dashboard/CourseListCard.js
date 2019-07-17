@@ -172,7 +172,7 @@ export default class CourseListCard extends React.Component {
       R.prop("position_in_program"),
       program.courses
     )
-    const courseRows = sortedCourses.map(course => (
+    const courseRows = sortedCourses.map((course) => (
       <CourseRow
         hasFinancialAid={program.financial_aid_availability}
         financialAid={program.financial_aid_user_info}

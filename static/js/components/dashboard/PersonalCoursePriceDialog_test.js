@@ -12,7 +12,10 @@ import PersonalCoursePriceDialog from "./PersonalCoursePriceDialog"
 import { getEl } from "../../util/test_utils"
 
 describe("CourseEnrollmentDialog", () => {
-  let sandbox, setVisibilityStub, openFinancialAidCalculatorStub, routerPushStub
+  let sandbox
+  let setVisibilityStub
+  let openFinancialAidCalculatorStub
+  let routerPushStub
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()

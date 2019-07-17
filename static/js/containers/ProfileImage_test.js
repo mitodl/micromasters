@@ -14,7 +14,10 @@ import * as api from "../lib/api"
 import { startPhotoEdit, requestPatchUserPhoto } from "../actions/image_upload"
 
 describe("ProfileImage", () => {
-  let helper, sandbox, updateProfileImageStub, div
+  let helper
+  let sandbox
+  let updateProfileImageStub
+  let div
 
   const thatProfile = {
     username:       "rfeather",

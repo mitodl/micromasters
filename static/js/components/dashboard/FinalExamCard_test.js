@@ -25,7 +25,9 @@ import type { Program } from "../../flow/programTypes"
 
 describe("FinalExamCard", () => {
   let sandbox
-  let navigateToProfileStub, submitPearsonSSOStub, showPearsonTOSDialogStub
+  let navigateToProfileStub
+  let submitPearsonSSOStub
+  let showPearsonTOSDialogStub
   let props
 
   const profile = { ...USER_PROFILE_RESPONSE, preferred_name: "Preferred Name" }
@@ -37,7 +39,7 @@ describe("FinalExamCard", () => {
     showPearsonTOSDialogStub = sandbox.stub()
     const program: Program = (_.cloneDeep(
       DASHBOARD_RESPONSE.programs.find(
-        program => program.pearson_exam_status !== undefined
+        (program) => program.pearson_exam_status !== undefined
       )
     ): any)
     props = {
@@ -56,7 +58,7 @@ be taken at any authorized Pearson test center. Before you can take an exam, you
 pay for the course and pass the online work.`
 
   const getDialog = () => document.querySelector(".dialog-to-pearson-site")
-  const renderCard = props =>
+  const renderCard = (props) =>
     mount(
       <MuiThemeProvider muiTheme={getMuiTheme()}>
         <FinalExamCard {...props} />
@@ -77,7 +79,7 @@ pay for the course and pass the online work.`
       "Your Pearson Testing account has been created"
     )
   })
-  ;[PEARSON_PROFILE_SUCCESS, PEARSON_PROFILE_SCHEDULABLE].forEach(status => {
+  ;[PEARSON_PROFILE_SUCCESS, PEARSON_PROFILE_SCHEDULABLE].forEach((status) => {
     it(`should let the user know when the profile is ready when the status is ${status}`, () => {
       props.program.pearson_exam_status = status
       const cardText = stringStrip(renderCard(props).text())

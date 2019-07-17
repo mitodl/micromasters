@@ -19,7 +19,8 @@ describe("pearson library", () => {
     const timestamp = Math.round(new Date().getTime() / 1000)
     const hex =
       "c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2"
-    let form, inputs
+    let form
+    let inputs
 
     beforeEach(() => {
       form = generateSSOForm(
@@ -29,13 +30,13 @@ describe("pearson library", () => {
         hex,
         "http://foo.bar/"
       )
-      inputs = [...form.querySelectorAll("input")].map(el => [
+      inputs = [...form.querySelectorAll("input")].map((el) => [
         el.name,
         el.value
       ])
     })
 
-    const checkInputs = entriesToFind => {
+    const checkInputs = (entriesToFind) => {
       entriesToFind.forEach(([k1, v1]) => {
         assert.notEqual(-1, inputs.find(([k2, v2]) => k1 === k2 && v1 === v2))
       })

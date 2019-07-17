@@ -66,7 +66,7 @@ describe("api", function() {
 
     it("gets user profile", () => {
       fetchJSONStub.returns(Promise.resolve(USER_PROFILE_RESPONSE))
-      return getUserProfile("jane").then(receivedUserProfile => {
+      return getUserProfile("jane").then((receivedUserProfile) => {
         assert.ok(fetchJSONStub.calledWith("/api/v0/profiles/jane/"))
         assert.deepEqual(receivedUserProfile, USER_PROFILE_RESPONSE)
       })
@@ -82,15 +82,17 @@ describe("api", function() {
 
     it("patches a user profile", () => {
       fetchJSONStub.returns(Promise.resolve(USER_PROFILE_RESPONSE))
-      patchUserProfile("jane", USER_PROFILE_RESPONSE).then(returnedProfile => {
-        assert.ok(
-          fetchJSONStub.calledWith("/api/v0/profiles/jane/", {
-            method: "PATCH",
-            body:   JSON.stringify(USER_PROFILE_RESPONSE)
-          })
-        )
-        assert.deepEqual(returnedProfile, USER_PROFILE_RESPONSE)
-      })
+      patchUserProfile("jane", USER_PROFILE_RESPONSE).then(
+        (returnedProfile) => {
+          assert.ok(
+            fetchJSONStub.calledWith("/api/v0/profiles/jane/", {
+              method: "PATCH",
+              body:   JSON.stringify(USER_PROFILE_RESPONSE)
+            })
+          )
+          assert.deepEqual(returnedProfile, USER_PROFILE_RESPONSE)
+        }
+      )
     })
 
     it("fails to patch a user profile", () => {
@@ -124,7 +126,7 @@ describe("api", function() {
         const formData = new FormData()
         formData.append("image", blob, "a file name")
         fetchStub.returns(Promise.resolve("good response"))
-        return updateProfileImage("jane", blob, "a file name").then(res => {
+        return updateProfileImage("jane", blob, "a file name").then((res) => {
           assert.equal(res, "good response")
           checkArgs()
         })
@@ -144,7 +146,7 @@ describe("api", function() {
     describe("dashboard API", () => {
       it("gets the dashboard", () => {
         fetchJSONStub.returns(Promise.resolve(DASHBOARD_RESPONSE))
-        return getDashboard("beep").then(dashboard => {
+        return getDashboard("beep").then((dashboard) => {
           assert.ok(fetchJSONStub.calledWith("/api/v0/dashboard/beep/"))
           assert.deepEqual(dashboard, DASHBOARD_RESPONSE)
         })
@@ -189,7 +191,7 @@ describe("api", function() {
 
     it("gets course prices", () => {
       fetchJSONStub.returns(Promise.resolve(COURSE_PRICES_RESPONSE))
-      return getCoursePrices("username").then(coursePrices => {
+      return getCoursePrices("username").then((coursePrices) => {
         assert.ok(fetchJSONStub.calledWith("/api/v0/course_prices/username/"))
         assert.deepEqual(coursePrices, COURSE_PRICES_RESPONSE)
       })
@@ -197,7 +199,7 @@ describe("api", function() {
 
     it("posts to checkout", () => {
       fetchJSONStub.returns(Promise.resolve(CYBERSOURCE_CHECKOUT_RESPONSE))
-      return checkout("course_id").then(checkoutInfo => {
+      return checkout("course_id").then((checkoutInfo) => {
         assert.ok(
           fetchJSONStub.calledWith("/api/v0/checkout/", {
             method: "POST",
@@ -230,7 +232,7 @@ describe("api", function() {
       it("returns expected values when a POST to send a search result email succeeds", () => {
         fetchJSONStub.returns(Promise.resolve(MAIL_RESPONSE))
         return sendSearchResultMail("subject", "body", searchRequest).then(
-          mailResp => {
+          (mailResp) => {
             assert.ok(
               fetchJSONStub.calledWith("/api/v0/mail/search/", {
                 method: "POST",
@@ -249,7 +251,7 @@ describe("api", function() {
       it("returns expected values when a POST to send a course team email succeeds", () => {
         fetchJSONStub.returns(Promise.resolve(MAIL_RESPONSE))
         return sendCourseTeamMail("subject", "body", courseId).then(
-          mailResp => {
+          (mailResp) => {
             assert.ok(
               fetchJSONStub.calledWith(`/api/v0/mail/course/${courseId}/`, {
                 method: "POST",
@@ -267,7 +269,7 @@ describe("api", function() {
       it("returns expected values when a POST to send a learner email succeeds", () => {
         fetchJSONStub.returns(Promise.resolve(MAIL_RESPONSE))
         return sendLearnerMail("subject", "body", learnerStudentId).then(
-          mailResp => {
+          (mailResp) => {
             sinon.assert.calledWith(
               fetchJSONStub,
               `/api/v0/mail/learner/${learnerStudentId}/`,
@@ -295,7 +297,7 @@ describe("api", function() {
     describe("for program enrollments", () => {
       it("fetches program enrollments successfully", () => {
         fetchJSONStub.returns(Promise.resolve(PROGRAMS))
-        return getPrograms().then(enrollments => {
+        return getPrograms().then((enrollments) => {
           assert.ok(fetchJSONStub.calledWith("/api/v0/programs/"))
           assert.deepEqual(enrollments, PROGRAMS)
         })
@@ -340,15 +342,17 @@ describe("api", function() {
       it("adds a program enrollment successfully", () => {
         const enrollment = PROGRAMS[0]
         fetchJSONStub.returns(Promise.resolve(enrollment))
-        return addProgramEnrollment(enrollment.id).then(enrollmentResponse => {
-          assert.ok(
-            fetchJSONStub.calledWith("/api/v0/enrolledprograms/", {
-              method: "POST",
-              body:   JSON.stringify({ program_id: enrollment.id })
-            })
-          )
-          assert.deepEqual(enrollmentResponse, enrollment)
-        })
+        return addProgramEnrollment(enrollment.id).then(
+          (enrollmentResponse) => {
+            assert.ok(
+              fetchJSONStub.calledWith("/api/v0/enrolledprograms/", {
+                method: "POST",
+                body:   JSON.stringify({ program_id: enrollment.id })
+              })
+            )
+            assert.deepEqual(enrollmentResponse, enrollment)
+          }
+        )
       })
 
       it("fails to add a program enrollment", () => {
@@ -519,7 +523,7 @@ describe("api", function() {
       it("fetches coupons", () => {
         fetchJSONStub.returns(Promise.resolve([COUPON]))
 
-        return getCoupons().then(coupons => {
+        return getCoupons().then((coupons) => {
           assert.ok(fetchJSONStub.calledWith("/api/v0/coupons/"))
           assert.deepEqual(coupons, [COUPON])
         })
@@ -536,7 +540,7 @@ describe("api", function() {
         }
         fetchJSONStub.returns(Promise.resolve([apiCoupon]))
 
-        return getCoupons().then(coupons => {
+        return getCoupons().then((coupons) => {
           const coupon = coupons[0]
           assert.instanceOf(coupon.amount, Decimal)
           assert.equal(coupon.amount.toString(), apiCoupon.amount)
@@ -590,10 +594,10 @@ describe("api", function() {
         }
         fetchJSONStub.returns(Promise.resolve(apiResponse))
 
-        return attachCoupon("success-coupon").then(resp => {
+        return attachCoupon("success-coupon").then((resp) => {
           assert.equal(apiResponse.message, resp.message)
-          const coupon = resp.coupon,
-            apiCoupon = apiResponse.coupon
+          const coupon = resp.coupon
+          const apiCoupon = apiResponse.coupon
           assert.instanceOf(coupon.amount, Decimal)
           assert.equal(coupon.amount.toString(), apiCoupon.amount)
           // everything else aside from `amount` should be identical
@@ -659,7 +663,7 @@ describe("api", function() {
             }
           ]
           fetchJSONStub.returns(Promise.resolve(response))
-          return unEnrollProgramEnrollments([1, 2]).then(data => {
+          return unEnrollProgramEnrollments([1, 2]).then((data) => {
             assert.ok(
               fetchJSONStub.calledWith("/api/v0/unenroll_programs/", {
                 method: "POST",

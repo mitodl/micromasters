@@ -21,7 +21,7 @@ const SkipFinancialAidDialog = ({
   fullPrice,
   fetchAddStatus,
   fetchSkipStatus
-  }: SkipProps) => (
+}: SkipProps) => (
   <Dialog
     title="Are you sure?"
     titleClassName="dialog-title"

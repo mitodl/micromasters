@@ -9,11 +9,13 @@ import rootReducer from "../reducers"
 import * as util from "../util/util"
 
 describe("show and hide enroll pay later success alert", () => {
-  let store, sandbox, dispatchThen
+  let store
+  let sandbox
+  let dispatchThen
 
   beforeEach(() => {
     store = configureTestStore(rootReducer)
-    dispatchThen = store.createDispatchThen(state => state.ui)
+    dispatchThen = store.createDispatchThen((state) => state.ui)
     sandbox = sinon.sandbox.create()
   })
 
@@ -27,7 +29,7 @@ describe("show and hide enroll pay later success alert", () => {
 
     return dispatchThen(showEnrollPayLaterSuccessMessage("foo/bar/baz"), [
       SHOW_ENROLL_PAY_LATER_SUCCESS
-    ]).then(state => {
+    ]).then((state) => {
       assert.equal(state.showEnrollPayLaterSuccess, "foo/bar/baz")
 
       sinon.assert.calledWith(waitStub, 9000)

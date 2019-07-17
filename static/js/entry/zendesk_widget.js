@@ -6,17 +6,17 @@ import _ from "lodash"
 import { wait } from "../util/util"
 
 // Start of odl Zendesk Widget script
-/* eslint-disable no-sequences, prefer-const */
-/*<![CDATA[*/
+/* eslint-disable no-sequences, prefer-const, prefer-rest-params */
+/* <![CDATA[*/
 window.zEmbed ||
   (function(e, t) {
-    let n,
-      o,
-      d,
-      i,
-      s,
-      a = [],
-      r = document.createElement("iframe")
+    let n
+    let o
+    let d
+    let i
+    let s
+    let a = []
+    let r = document.createElement("iframe")
     ;(window.zEmbed = function() {
       a.push(arguments)
     }),
@@ -53,7 +53,7 @@ window.zEmbed ||
     "https://assets.zendesk.com/embeddable_framework/main.js",
     "odl.zendesk.com"
   )
-/*]]>*/
+/* ]]>*/
 /* eslint-enable no-sequences */
 
 // This will execute when Zendesk's Javascript is finished executing, and the
@@ -165,9 +165,9 @@ const zendeskCallbacks = {
       "iframe.zEWidget-ticketSubmissionForm"
     )
 
-    const fieldSelector = name =>
+    const fieldSelector = (name) =>
       `input[name="${name}"], select[name="${name}"]`
-    const fieldElement = name =>
+    const fieldElement = (name) =>
       iframe.contentDocument.querySelector(fieldSelector(name))
 
     // Zendesk uses the ID 24690866 to refer to the MicroMasters program selector
@@ -182,7 +182,7 @@ const zendeskCallbacks = {
       [programFieldName]: !(SETTINGS.program && SETTINGS.program.slug)
     }
 
-    const adjustFieldsVisibility = R.map(name => {
+    const adjustFieldsVisibility = R.map((name) => {
       if (!fieldVisibility[name]) {
         const element = fieldElement(name)
         if (element) {
@@ -210,7 +210,7 @@ const setupZendeskCallbacks = () => {
   }
 }
 
-const zendeskPollForExistence = name => {
+const zendeskPollForExistence = (name) => {
   let tries = 0
   const intervalID = setInterval(() => {
     tries += 1
@@ -230,7 +230,7 @@ const zendeskPollForExistence = name => {
   }, 100) // check every 100 milliseconds
 }
 
-const zendeskPollForLoaded = name => {
+const zendeskPollForLoaded = (name) => {
   let tries = 0
   let iframeDocument = null
   const intervalID = setInterval(() => {

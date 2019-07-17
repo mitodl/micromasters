@@ -32,15 +32,15 @@ const radioStyles = {
   }
 }
 
-const radioButtonLabelSelector = label => `radio-label-${classify(label)}`
+const radioButtonLabelSelector = (label) => `radio-label-${classify(label)}`
 
-const radioButtonLabel = label => (
+const radioButtonLabel = (label) => (
   <label id={radioButtonLabelSelector(label)} className="radio-label">
     {label}
   </label>
 )
 
-const radioButtons = R.map(option => (
+const radioButtons = R.map((option) => (
   <RadioButton
     className="profile-radio-button"
     labelStyle={radioStyles.labelStyle}
@@ -63,7 +63,7 @@ export function boundRadioGroupField(
     validator,
     updateValidationVisibility
   } = this.props
-  const onChange = e => {
+  const onChange = (e) => {
     const clone = _.cloneDeep(profile)
     let value = e.target.value
     if (value === "true") {
@@ -107,7 +107,7 @@ export function boundTextField(
   {
     multiLine = false,
     maxLength = 0
-    }: { multiLine: boolean, maxLength: number } = {}
+  }: { multiLine: boolean, maxLength: number } = {}
 ): React$Element<*> {
   const {
     profile,
@@ -118,7 +118,7 @@ export function boundTextField(
     updateProfileValidation
   } = this.props
 
-  const onChange = e => {
+  const onChange = (e) => {
     const clone = _.cloneDeep(profile)
     _.set(clone, keySet, e.target.value)
     updateValidationVisibility(keySet)
@@ -212,7 +212,7 @@ export function boundCheckbox(
     updateValidationVisibility
   } = this.props
 
-  const onChange = e => {
+  const onChange = (e) => {
     const clone = _.cloneDeep(profile)
     _.set(clone, keySet, e.target.checked)
     updateValidationVisibility(keySet)

@@ -106,15 +106,16 @@ class OrderSummaryPage extends React.Component {
       coupons,
       location: { query }
     } = this.props
-    let orderSummaryContent, coursePrice
+    let orderSummaryContent
+    let coursePrice
     const courseKey = query.course_key
     const [courseRun, course, program] = findCourseRun(
       dashboard.programs,
-      run => run !== null && run.course_id === courseKey
+      (run) => run !== null && run.course_id === courseKey
     )
     if (prices.data) {
       coursePrice = prices.data.find(
-        coursePrice => coursePrice.program_id === currentProgramEnrollment.id
+        (coursePrice) => coursePrice.program_id === currentProgramEnrollment.id
       )
     }
 
@@ -163,7 +164,7 @@ class OrderSummaryPage extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   let profile = {
     profile: {}
   }

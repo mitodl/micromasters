@@ -50,7 +50,7 @@ const cardWrapper = (...children) => (
   </Card>
 )
 
-const getPostalCode = profile =>
+const getPostalCode = (profile) =>
   profile.postal_code !== null ? <span>{profile.postal_code}</span> : null
 
 const accountCreated = (profile, navigateToProfile) => (
@@ -74,7 +74,7 @@ const accountCreated = (profile, navigateToProfile) => (
   </div>
 )
 
-const editProfileButton = fn => <IconButton name="edit" onClick={fn} />
+const editProfileButton = (fn) => <IconButton name="edit" onClick={fn} />
 
 const absentCard = () =>
   cardWrapper(
@@ -99,7 +99,7 @@ const pendingCard = () =>
     </div>
   )
 
-const invalidCard = navigateToProfile =>
+const invalidCard = (navigateToProfile) =>
   cardWrapper(
     <div className="info-box" key="invalid">
       {editProfileButton(navigateToProfile)}
@@ -116,7 +116,7 @@ const isProcessing = R.compose(
   R.defaultTo({})
 )
 
-const errorDisplay = pearson =>
+const errorDisplay = (pearson) =>
   R.isNil(pearson.error) ? null : (
     <div className="error" key="error">
       {pearson.error}

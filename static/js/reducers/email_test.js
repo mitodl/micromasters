@@ -27,12 +27,14 @@ import R from "ramda"
 
 describe("email reducers", () => {
   const emailType = SEARCH_EMAIL_TYPE
-  let sandbox, store, dispatchThen
+  let sandbox
+  let store
+  let dispatchThen
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()
     store = configureTestStore(rootReducer)
-    dispatchThen = store.createDispatchThen(state => state.email)
+    dispatchThen = store.createDispatchThen((state) => state.email)
   })
 
   afterEach(() => {
@@ -43,7 +45,7 @@ describe("email reducers", () => {
 
   it("should let you start editing an email", () => {
     return dispatchThen(startEmailEdit(emailType), [START_EMAIL_EDIT]).then(
-      state => {
+      (state) => {
         assert.deepEqual(state[emailType], {
           ...initialExpectedEmailState,
           supportsAutomaticEmails: undefined
@@ -59,7 +61,7 @@ describe("email reducers", () => {
     return dispatchThen(
       updateEmailEdit({ type: emailType, inputs: updatedInputs }),
       [UPDATE_EMAIL_EDIT]
-    ).then(state => {
+    ).then((state) => {
       assert.deepEqual(state[emailType], {
         ...initialExpectedEmailState,
         supportsAutomaticEmails: undefined,
@@ -84,16 +86,17 @@ describe("email reducers", () => {
     return dispatchThen(
       updateEmailValidation({ type: emailType, errors: errors }),
       [UPDATE_EMAIL_VALIDATION]
-    ).then(state => {
+    ).then((state) => {
       assert.deepEqual(state[emailType].validationErrors, errors)
     })
   })
 })
 
 describe("email reducers for the sendMail action", () => {
-  let helper, emailType
-  const MAIL_SUCCESS_RESPONSE: EmailSendResponse = { errorStatusCode: 200 },
-    searchRequest = { size: 50 }
+  let helper
+  let emailType
+  const MAIL_SUCCESS_RESPONSE: EmailSendResponse = { errorStatusCode: 200 }
+  const searchRequest = { size: 50 }
   const sendEmailArguments = ["subject", "body", searchRequest]
 
   beforeEach(() => {
@@ -114,7 +117,7 @@ describe("email reducers for the sendMail action", () => {
         sendEmail(emailType, helper.sendSearchResultMail, sendEmailArguments),
         [INITIATE_SEND_EMAIL, SEND_EMAIL_SUCCESS]
       )
-      .then(state => {
+      .then((state) => {
         assert.equal(state.email[emailType].fetchStatus, FETCH_SUCCESS)
         assert.equal(helper.sendSearchResultMail.callCount, 1)
         assert.deepEqual(helper.sendSearchResultMail.args[0], [
@@ -133,7 +136,7 @@ describe("email reducers for the sendMail action", () => {
         sendEmail(emailType, helper.sendSearchResultMail, sendEmailArguments),
         [INITIATE_SEND_EMAIL, SEND_EMAIL_FAILURE]
       )
-      .then(state => {
+      .then((state) => {
         assert.equal(state.email[emailType].fetchStatus, FETCH_FAILURE)
       })
   })

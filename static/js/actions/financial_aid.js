@@ -51,7 +51,7 @@ export const addFinancialAid = (
         dispatch(fetchDashboard(SETTINGS.user.username))
         return Promise.resolve()
       },
-      err => {
+      (err) => {
         dispatch(
           receiveAddFinancialAidFailure({
             message: err[0] || err["non_field_errors"][0],

@@ -20,9 +20,9 @@ describe("SpinnerButton", () => {
   it("passes through all props when spinning is false", () => {
     const onClick = sandbox.stub()
     const props = {
-      "data-x":  "y",
-      onClick:   onClick,
-      className: "class1 class2"
+      "data-x":    "y",
+      "onClick":   onClick,
+      "className": "class1 class2"
     }
     const wrapper = shallow(
       <SpinnerButton component="button" spinning={false} {...props}>

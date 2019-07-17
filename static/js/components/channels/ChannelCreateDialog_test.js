@@ -12,7 +12,10 @@ import ChannelCreateDialog from "./ChannelCreateDialog"
 import { INITIAL_CHANNEL_STATE } from "../../reducers/channel_dialog"
 
 describe("ChannelCreateDialog", () => {
-  let sandbox, closeAndClearStub, closeAndCreateStub, updateFieldEditStub
+  let sandbox
+  let closeAndClearStub
+  let closeAndCreateStub
+  let updateFieldEditStub
 
   const getDialog = () => document.querySelector(".create-channel-dialog")
 

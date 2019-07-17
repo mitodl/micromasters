@@ -5,7 +5,7 @@ import Popover from "material-ui/Popover"
 import PopoverNullAnimation from "../util/popover_animation"
 import type { ProgramPageCourse } from "../flow/programTypes"
 
-const popoverLink = url =>
+const popoverLink = (url) =>
   url ? (
     <a className="edx-link" href={url}>
       View on edX

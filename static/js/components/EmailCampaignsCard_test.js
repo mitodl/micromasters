@@ -11,7 +11,8 @@ import { GET_AUTOMATIC_EMAILS_RESPONSE } from "../test_constants"
 import { S } from "../lib/sanctuary"
 
 describe("EmailCampaignsCard", () => {
-  let emailCardProps, sandbox
+  let emailCardProps
+  let sandbox
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()
@@ -36,10 +37,10 @@ describe("EmailCampaignsCard", () => {
 
   it("should render all emails and header text, if Right", () => {
     const cardText = renderCard().text()
-    GET_AUTOMATIC_EMAILS_RESPONSE.forEach(email => {
+    GET_AUTOMATIC_EMAILS_RESPONSE.forEach((email) => {
       assert.include(cardText, email.email_subject)
     })
-    headers.forEach(header => {
+    headers.forEach((header) => {
       assert.include(cardText, header)
     })
   })
@@ -48,7 +49,7 @@ describe("EmailCampaignsCard", () => {
     emailCardProps.getEmails.returns(S.Left(<div>I'm a message</div>))
     const cardText = renderCard().text()
     assert.include(cardText, "I'm a message")
-    headers.forEach(header => {
+    headers.forEach((header) => {
       assert.notInclude(cardText, header)
     })
   })

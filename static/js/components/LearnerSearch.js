@@ -73,7 +73,7 @@ const sortSemesterBuckets = R.compose(
   R.sortBy(
     // '2016 - Fall' -> '20163', '2016 - Spring' -> '20161'
     R.compose(
-      yearSeasonArr =>
+      (yearSeasonArr) =>
         `${yearSeasonArr[0]}${SEMESTER_SEASON_NUMBER_VALUE[yearSeasonArr[1]]}`,
       R.split(/[^\w]+/),
       R.prop("key")

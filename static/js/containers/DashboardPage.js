@@ -178,7 +178,7 @@ class DashboardPage extends React.Component {
     dispatch(clearDashboard(SETTINGS.user.username))
     dispatch(actions.prices.clear(SETTINGS.user.username))
 
-    _.forEach(R.keys(programLearners), id =>
+    _.forEach(R.keys(programLearners), (id) =>
       dispatch(actions.programLearners.clear(id))
     )
     dispatch(clearCoupons())
@@ -191,8 +191,9 @@ class DashboardPage extends React.Component {
     } = this.props
 
     dispatch(getPearsonSSODigest())
-      .then(res => {
+      .then((res) => {
         dispatch(pearsonSSOInProgress())
+        // eslint-disable-next-line camelcase
         const { session_timeout, sso_digest, timestamp, sso_redirect_url } = res
 
         const form = generateSSOForm(
@@ -240,10 +241,8 @@ class DashboardPage extends React.Component {
         dispatch(
           setToastMessage({
             title:   "Course Enrollment",
-            message: `Something went wrong. You paid for this course '${
-              course.title
-            }' but are not enrolled.`,
-            icon: TOAST_FAILURE
+            message: `Something went wrong. You paid for this course '${course.title}' but are not enrolled.`,
+            icon:    TOAST_FAILURE
           })
         )
       } else {
@@ -377,7 +376,7 @@ class DashboardPage extends React.Component {
     if (query.status === "receipt") {
       const [courseRun, course] = findCourseRun(
         dashboard.programs,
-        run => run !== null && run.course_id === courseKey
+        (run) => run !== null && run.course_id === courseKey
       )
       if (courseRun === null || course === null) {
         // could not find course to handle order status for
@@ -396,7 +395,7 @@ class DashboardPage extends React.Component {
         this.handleOrderSuccess(course)
         break
       default:
-          // do nothing, a timeout was set to check back later
+        // do nothing, a timeout was set to check back later
         break
       }
     } else if (query.status === "cancel") {
@@ -457,7 +456,7 @@ class DashboardPage extends React.Component {
     }
 
     dispatch(attachCoupon(query.coupon)).then(
-      result => {
+      (result) => {
         this.setRecentlyAttachedCoupon(result.coupon)
         this.setCouponNotificationVisibility(true)
         this.context.router.push("/dashboard/")
@@ -504,7 +503,7 @@ class DashboardPage extends React.Component {
       return undefined
     }
     return dashboard.programs.find(
-      program => program.id === currentProgramEnrollment.id
+      (program) => program.id === currentProgramEnrollment.id
     )
   }
 
@@ -537,7 +536,7 @@ class DashboardPage extends React.Component {
     }
   }
 
-  setConfirmSkipDialogVisibility = bool => {
+  setConfirmSkipDialogVisibility = (bool) => {
     const { dispatch } = this.props
     dispatch(setConfirmSkipDialogVisibility(bool))
   }
@@ -569,12 +568,12 @@ class DashboardPage extends React.Component {
     )
   }
 
-  setDocsInstructionsVisibility = bool => {
+  setDocsInstructionsVisibility = (bool) => {
     const { dispatch } = this.props
     dispatch(setDocsInstructionsVisibility(bool))
   }
 
-  setCouponNotificationVisibility = bool => {
+  setCouponNotificationVisibility = (bool) => {
     const { dispatch } = this.props
     dispatch(setCouponNotificationVisibility(bool))
   }
@@ -584,7 +583,7 @@ class DashboardPage extends React.Component {
     dispatch(setRecentlyAttachedCoupon(coupon))
   }
 
-  setEnrollCourseDialogVisibility = bool => {
+  setEnrollCourseDialogVisibility = (bool) => {
     const { dispatch } = this.props
     dispatch(setEnrollCourseDialogVisibility(bool))
   }
@@ -594,7 +593,7 @@ class DashboardPage extends React.Component {
     dispatch(setEnrollSelectedCourseRun(run))
   }
 
-  setCalculatePriceDialogVisibility = bool => {
+  setCalculatePriceDialogVisibility = (bool) => {
     const { dispatch } = this.props
     dispatch(setCalculatePriceDialogVisibility(bool))
   }
@@ -609,7 +608,7 @@ class DashboardPage extends React.Component {
 
     return R.compose(
       R.any(
-        coupon =>
+        (coupon) =>
           program !== undefined &&
           isFreeCoupon(coupon) &&
           coupon.content_type === COUPON_CONTENT_TYPE_PROGRAM &&
@@ -653,15 +652,15 @@ class DashboardPage extends React.Component {
       return null
     }
     const couponProgram = programs.availablePrograms.find(
-      program => program.id === coupon.program_id
+      (program) => program.id === coupon.program_id
     )
     let couponCourse = null
     if (coupon.content_type === COUPON_CONTENT_TYPE_COURSE) {
       const dashboardCouponProgram: Program = (dashboard.programs.find(
-        program => program.id === coupon.program_id
+        (program) => program.id === coupon.program_id
       ): any)
       couponCourse = dashboardCouponProgram.courses.find(
-        course => course.id === coupon.object_id
+        (course) => course.id === coupon.object_id
       )
     }
     return (
@@ -730,7 +729,7 @@ class DashboardPage extends React.Component {
     if (!courseRun) {
       return null
     }
-    const course = program.courses.find(course =>
+    const course = program.courses.find((course) =>
       R.contains(courseRun.id, R.pluck("id", course.runs))
     )
     if (!course) {
@@ -805,7 +804,7 @@ class DashboardPage extends React.Component {
     let learnersInProgramCard
     if (
       R.pathSatisfies(
-        count => count > 0,
+        (count) => count > 0,
         [programID, "data", "learners_count"],
         programLearners
       )
@@ -1017,7 +1016,7 @@ class DashboardPage extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   let profile = {
     profile: {}
   }

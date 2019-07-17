@@ -5,7 +5,7 @@ import moment from "moment"
 import { ifValidDate, formatMonthDate } from "./date"
 
 describe("date utility functions", () => {
-  const formatFunc = date => date.format("YYYY-MM-DD")
+  const formatFunc = (date) => date.format("YYYY-MM-DD")
   const testFunc = ifValidDate("not valid", formatFunc)
 
   describe("ifValidDate", () => {

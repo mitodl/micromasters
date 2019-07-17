@@ -16,15 +16,13 @@ import {
 import { mstr } from "../lib/sanctuary"
 import type { Profile } from "../flow/profileTypes"
 
-const showLegalNameIfStaff = profile => {
+const showLegalNameIfStaff = (profile) => {
   return hasAnyStaffRole(SETTINGS.roles) ? (
-    <div className="legal-name">{`(Legal name: ${profile.first_name} ${
-      profile.last_name
-    })`}</div>
+    <div className="legal-name">{`(Legal name: ${profile.first_name} ${profile.last_name})`}</div>
   ) : null
 }
 
-const showIdIfStaff = profile => {
+const showIdIfStaff = (profile) => {
   return hasAnyStaffRole(SETTINGS.roles) ? (
     <div className="student-id">{`(Student Id: ${profile.student_id})`}</div>
   ) : null
@@ -55,7 +53,8 @@ export default class LearnerInfoCard extends React.Component {
     profile: Profile,
     toggleShowAboutMeDialog: Function
   ): React$Element<*> => {
-    let aboutMeContent, aboutMeEditContent
+    let aboutMeContent
+    let aboutMeEditContent
 
     if (profile.about_me) {
       aboutMeContent = (

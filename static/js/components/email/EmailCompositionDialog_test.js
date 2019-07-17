@@ -25,7 +25,10 @@ import {
 } from "./constants"
 
 describe("EmailCompositionDialog", () => {
-  let sandbox, sendStub, closeStub, updateStub
+  let sandbox
+  let sendStub
+  let closeStub
+  let updateStub
 
   const updateObject = (objectToUpdate = {}, updatedProps = {}) => {
     const cloned = _.cloneDeep(objectToUpdate)

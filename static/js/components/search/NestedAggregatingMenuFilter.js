@@ -156,7 +156,7 @@ export default class NestedAggregatingMenuFilter extends MenuFilter {
    */
   getItems() {
     const items = super.getItems()
-    return items.map(item => ({
+    return items.map((item) => ({
       ...item,
       doc_count: item[REVERSE_NESTED_AGG_KEY]
         ? item[REVERSE_NESTED_AGG_KEY].doc_count

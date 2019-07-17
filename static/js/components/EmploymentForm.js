@@ -33,7 +33,7 @@ import type { AsyncActionHelper } from "../flow/reduxTypes"
 import { generateNewWorkHistory } from "../util/util"
 
 class EmploymentForm extends ProfileFormFields {
-  industryOptions: Array<Option> = INDUSTRIES.map(industry => ({
+  industryOptions: Array<Option> = INDUSTRIES.map((industry) => ({
     value: industry,
     label: industry
   }))
@@ -177,6 +177,7 @@ class EmploymentForm extends ProfileFormFields {
     const {
       ui,
       profile,
+      // eslint-disable-next-line camelcase
       profile: { work_history }
     } = this.props
     if (ui.workHistoryEdit === true) {
@@ -324,6 +325,7 @@ class EmploymentForm extends ProfileFormFields {
   renderCardBody() {
     const {
       showSwitch,
+      // eslint-disable-next-line camelcase
       profile: { work_history }
     } = this.props
     if (showSwitch && work_history.length === 0) {

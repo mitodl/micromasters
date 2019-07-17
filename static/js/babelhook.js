@@ -28,7 +28,7 @@ global.cancelAnimationFrame = function(id) {
 copyProps(window, global)
 
 Object.defineProperty(window, "location", {
-  set: value => {
+  set: (value) => {
     if (!value.startsWith("http")) {
       value = `http://fake${value}`
     }

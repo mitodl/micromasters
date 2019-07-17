@@ -265,7 +265,7 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
     "program.courses.course_title2": {
       doc_count: 66,
       inner:     {
-        doc_count:                            100,
+        "doc_count":                            100,
         "program.courses.course_title_count": {
           value: 3
         },
@@ -298,10 +298,10 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
         }
       }
     },
-    country: {
-      doc_count:         66,
+    "country": {
+      "doc_count":         66,
       "profile.country": {
-        doc_count:         66,
+        "doc_count":         66,
         "profile.country": {
           doc_count_error_upper_bound: 0,
           sum_other_doc_count:         0,
@@ -322,10 +322,10 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
         }
       }
     },
-    company_name11: {
+    "company_name11": {
       doc_count: 66,
       inner:     {
-        doc_count:                                 66,
+        "doc_count":                                 66,
         "profile.work_history.company_name_count": {
           value: 16
         },
@@ -500,7 +500,7 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
     "final-grade": {
       doc_count: 66,
       inner:     {
-        doc_count:     100,
+        "doc_count":     100,
         "final-grade": {
           buckets: [
             {
@@ -592,15 +592,15 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
       }
     },
     "num-courses-passed6": {
-      doc_count:            66,
+      "doc_count":            66,
       "num-courses-passed": {
         value: 4
       }
     },
-    education_level10: {
+    "education_level10": {
       doc_count: 66,
       inner:     {
-        doc_count:                       186,
+        "doc_count":                       186,
         "profile.education.degree_name": {
           doc_count_error_upper_bound: 0,
           sum_other_doc_count:         0,
@@ -645,7 +645,7 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
     "program.courses.semester5": {
       doc_count: 66,
       inner:     {
-        doc_count:                        100,
+        "doc_count":                        100,
         "program.courses.semester_count": {
           value: 3
         },
@@ -679,7 +679,7 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
       }
     },
     "grade-average7": {
-      doc_count:       65,
+      "doc_count":       65,
       "grade-average": {
         buckets: [
           {
@@ -772,7 +772,7 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
     "program.courses.payment_status4": {
       doc_count: 66,
       inner:     {
-        doc_count:                        100,
+        "doc_count":                        100,
         "program.courses.payment_status": {
           doc_count_error_upper_bound: 0,
           sum_other_doc_count:         0,
@@ -798,8 +798,8 @@ export const ELASTICSEARCH_RESPONSE = deepFreeze({
         }
       }
     },
-    birth_location8: {
-      doc_count:                     66,
+    "birth_location8": {
+      "doc_count":                     66,
       "profile.birth_country_count": {
         value: 4
       },
@@ -1342,7 +1342,7 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
 })
 
 export const PROGRAMS: AvailablePrograms = deepFreeze(
-  DASHBOARD_RESPONSE.programs.map(program => ({
+  DASHBOARD_RESPONSE.programs.map((program) => ({
     id:              program.id,
     title:           program.title,
     programpage_url: `/program${program.id}/`,
@@ -1359,7 +1359,7 @@ export const FINANCIAL_AID_PARTIAL_RESPONSE: FinancialAidUserInfo = deepFreeze({
 })
 
 export const COURSE_PRICES_RESPONSE: CoursePrices = deepFreeze(
-  DASHBOARD_RESPONSE.programs.map(program => ({
+  DASHBOARD_RESPONSE.programs.map((program) => ({
     program_id:                 program.id,
     price:                      Decimal(program.id * 1000),
     financial_aid_availability: false,

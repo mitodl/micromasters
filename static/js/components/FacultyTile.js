@@ -10,7 +10,8 @@ export default class FacultyTile extends React.Component {
   }
   render() {
     const { name, title, short_bio: shortBio, image } = this.props
-    let nameStr, imgEl
+    let nameStr
+    let imgEl
     if (title) {
       nameStr = `${name}, ${title}`
     } else {

@@ -14,7 +14,8 @@ import { STATUS_PASSED, STATUS_OFFERED } from "../../../constants"
 import { EXAM_GRADE, EDX_GRADE } from "../../../containers/DashboardPage"
 
 describe("Course Grades", () => {
-  let course, setShowGradeDetailDialogStub
+  let course
+  let setShowGradeDetailDialogStub
 
   beforeEach(() => {
     course = makeCourse(1)
@@ -33,7 +34,7 @@ describe("Course Grades", () => {
 
   it("should display placeholders if no grades are present", () => {
     const grades = renderGrades()
-    grades.find(".number").forEach(wrapper => {
+    grades.find(".number").forEach((wrapper) => {
       assert.equal(wrapper.text(), "--")
     })
   })
@@ -48,7 +49,7 @@ describe("Course Grades", () => {
   it("should display the highest exam grade", () => {
     course.proctorate_exams_grades = [1, 2, 3].map(makeProctoredExamResult)
     let highest = 0
-    course.proctorate_exams_grades.forEach(grade => {
+    course.proctorate_exams_grades.forEach((grade) => {
       highest =
         grade.percentage_grade > highest ? grade.percentage_grade : highest
     })
@@ -102,7 +103,7 @@ describe("Course Grades", () => {
       [STATUS_OFFERED, false],
       [STATUS_OFFERED, true]
     ].forEach(([courseStatus, examPassed]) => {
-      course.runs.forEach(run => {
+      course.runs.forEach((run) => {
         run.status = courseStatus
       })
       course.proctorate_exams_grades = [makeProctoredExamResult()]

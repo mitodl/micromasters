@@ -20,7 +20,7 @@ import {
 import type { GradeType } from "../../../containers/DashboardPage"
 import { EDX_GRADE } from "../../../containers/DashboardPage"
 
-const scaleExamGrade = percentageGrade => percentageGrade * 100
+const scaleExamGrade = (percentageGrade) => percentageGrade * 100
 
 const rowGrade = (
   grade: number,
@@ -109,7 +109,7 @@ const labelBestEdxGrade = (
     0
   )
 
-  return runs.map(run => [
+  return runs.map((run) => [
     run,
     !R.isNil(run.final_grade) &&
       run.final_grade !== 0 &&
@@ -125,7 +125,7 @@ const labelBestExamGrade = (
     0
   )
 
-  return exams.map(exam => [
+  return exams.map((exam) => [
     exam,
     exam.passed && exam.percentage_grade === bestGrade
   ])

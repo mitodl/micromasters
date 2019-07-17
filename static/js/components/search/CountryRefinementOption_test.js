@@ -10,7 +10,7 @@ import CountryRefinementOption from "./CountryRefinementOption"
 import { makeStrippedHtml } from "../../util/util"
 
 describe("CountryRefinementOption", () => {
-  const renderCountryOption = props =>
+  const renderCountryOption = (props) =>
     makeStrippedHtml(<CountryRefinementOption {...props} />)
 
   const onClick = sinon.stub()
@@ -21,7 +21,7 @@ describe("CountryRefinementOption", () => {
     count:   42
   }
 
-  const renderFullCountryOption = props =>
+  const renderFullCountryOption = (props) =>
     ReactTestUtils.renderIntoDocument(<CountryRefinementOption {...props} />)
 
   it("should render a country name, given a country code", () => {

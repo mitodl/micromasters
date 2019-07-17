@@ -22,7 +22,7 @@ export const sanitizeNumberString = R.curry((length, input) =>
 /**
  * validate a day input
  */
-export const checkDayRange = ifNil(day => (day > 31 ? Just(31) : Just(day)))
+export const checkDayRange = ifNil((day) => (day > 31 ? Just(31) : Just(day)))
 
 export const validateDay = R.compose(
   checkDayRange,
@@ -33,7 +33,7 @@ export const validateDay = R.compose(
 /**
  * Validate a month input
  */
-export const checkMonthRange = ifNil(month =>
+export const checkMonthRange = ifNil((month) =>
   month > 12 ? Just(12) : Just(month)
 )
 

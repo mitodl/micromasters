@@ -18,7 +18,8 @@ export default class CustomPaginationDisplay extends React.Component {
 
   render() {
     const { toggleItem, disabled } = this.props
-    let optionsNext, optionsPrev
+    let optionsNext
+    let optionsPrev
 
     if (!disabled) {
       optionsPrev = (

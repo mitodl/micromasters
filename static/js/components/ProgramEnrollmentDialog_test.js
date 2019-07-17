@@ -118,7 +118,7 @@ describe("ProgramEnrollmentDialog", () => {
     const button = wrapper
       .find(Dialog)
       .props()
-      .actions.find(button => button.props.className.includes("enroll"))
+      .actions.find((button) => button.props.className.includes("enroll"))
     button.props.onClick()
     assert(enrollStub.calledWith(selectedEnrollment))
   })
@@ -131,7 +131,7 @@ describe("ProgramEnrollmentDialog", () => {
       const button = wrapper
         .find(Dialog)
         .props()
-        .actions.find(button => button.props.className.includes("enroll"))
+        .actions.find((button) => button.props.className.includes("enroll"))
       assert.equal(button.type.name, "SpinnerButton")
       assert.equal(button.props.spinning, activity)
     })
@@ -145,7 +145,7 @@ describe("ProgramEnrollmentDialog", () => {
     const button = wrapper
       .find(Dialog)
       .props()
-      .actions.find(button => button.props.className.includes("enroll"))
+      .actions.find((button) => button.props.className.includes("enroll"))
     button.props.onClick()
     assert(stub.calledWith("No program selected"))
   })
@@ -158,20 +158,20 @@ describe("ProgramEnrollmentDialog", () => {
     const button = wrapper
       .find(Dialog)
       .props()
-      .actions.find(button => button.props.className.includes("cancel"))
+      .actions.find((button) => button.props.className.includes("cancel"))
     button.props.onClick()
     assert(stub.calledWith(false))
   })
 
   it("only shows programs which the user is not already enrolled in", () => {
     const enrollmentLookup = new Map(
-      PROGRAMS.map(enrollment => [enrollment.id, null])
+      PROGRAMS.map((enrollment) => [enrollment.id, null])
     )
     let unenrolledPrograms = DASHBOARD_RESPONSE.programs.filter(
-      program => !enrollmentLookup.has(program.id)
+      (program) => !enrollmentLookup.has(program.id)
     )
     unenrolledPrograms = _.sortBy(unenrolledPrograms, "title")
-    unenrolledPrograms = unenrolledPrograms.map(program => ({
+    unenrolledPrograms = unenrolledPrograms.map((program) => ({
       title: program.title,
       id:    program.id
     }))
@@ -183,7 +183,7 @@ describe("ProgramEnrollmentDialog", () => {
       selectedProgram: selectedEnrollment
     })
 
-    const list = wrapper.find(MenuItem).map(menuItem => {
+    const list = wrapper.find(MenuItem).map((menuItem) => {
       const props = menuItem.props()
       return {
         title: props.primaryText,

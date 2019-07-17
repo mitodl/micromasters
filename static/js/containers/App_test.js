@@ -47,7 +47,9 @@ const REDIRECT_ACTIONS = SUCCESS_ACTIONS.concat([
 ])
 
 describe("App", function() {
-  let listenForActions, renderComponent, helper
+  let listenForActions
+  let renderComponent
+  let helper
 
   beforeEach(() => {
     helper = new IntegrationTestHelper()
@@ -204,12 +206,12 @@ describe("App", function() {
           const node = wrapper
             .find(".nav-drawer")
             .find("Link")
-            .filterWhere(x => x.text() === title)
+            .filterWhere((x) => x.text() === title)
           assert.equal(node.props().to, url)
 
           return listenForActions([SET_NAV_DRAWER_OPEN], () => {
             node.simulate("click")
-          }).then(state => {
+          }).then((state) => {
             assert.isFalse(state.ui.navDrawerOpen)
           })
         })

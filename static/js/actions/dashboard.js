@@ -34,10 +34,10 @@ export function fetchDashboard(
   return (dispatch: Dispatch) => {
     dispatch(requestDashboard(username, noSpinner))
     return api.getDashboard(username).then(
-      dashboard => {
+      (dashboard) => {
         dispatch(receiveDashboardSuccess(username, dashboard))
       },
-      error => {
+      (error) => {
         dispatch(receiveDashboardFailure(username, error))
         // the exception is assumed handled and will not be propagated
       }

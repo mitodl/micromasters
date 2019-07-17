@@ -78,7 +78,9 @@ export type ProfileContainerProps = ProfileContainerParentProps & {
 }
 
 export const childrenWithProps = (children: any, props: Object) => {
-  return React.Children.map(children, child => React.cloneElement(child, props))
+  return React.Children.map(children, (child) =>
+    React.cloneElement(child, props)
+  )
 }
 
 export const profileFormContainer = (WrappedComponent: ReactClass<*>) => {
@@ -220,7 +222,11 @@ export const profileFormContainer = (WrappedComponent: ReactClass<*>) => {
 
     profileProps: Function = (profileFromStore: ProfileGetResult) => {
       const { ui, programs, dispatch, currentProgramEnrollment } = this.props
-      let errors, isEdit, profile, uneditedProfile, patchStatus
+      let errors
+      let isEdit
+      let profile
+      let uneditedProfile
+      let patchStatus
 
       if (profileFromStore === undefined) {
         profile = {}

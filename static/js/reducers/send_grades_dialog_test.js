@@ -10,7 +10,9 @@ import configureTestStore from "redux-asserts"
 import * as api from "../lib/api"
 
 describe("email reducers for the sendGradeEmail action", function() {
-  let dispatchThen, sandbox, store
+  let dispatchThen
+  let sandbox
+  let store
   let sendGradeEmailStub
   const sendEmailArguments = [2, "45"]
 
@@ -18,7 +20,7 @@ describe("email reducers for the sendGradeEmail action", function() {
     sandbox = sinon.sandbox.create()
     sendGradeEmailStub = sandbox.stub(api, "sendGradesRecordMail")
     store = configureTestStore(rootReducer)
-    dispatchThen = store.createDispatchThen(state => state.sendDialog)
+    dispatchThen = store.createDispatchThen((state) => state.sendDialog)
   })
 
   afterEach(() => {
@@ -30,7 +32,7 @@ describe("email reducers for the sendGradeEmail action", function() {
 
     return dispatchThen(sendGradeEmail(sendEmailArguments), [
       SEND_GRADES_EMAIL_SUCCESS
-    ]).then(state => {
+    ]).then((state) => {
       assert.equal(state.sentSuccess, true)
       assert.equal(sendGradeEmailStub.callCount, 1)
       assert.deepEqual(sendGradeEmailStub.args[0], [...sendEmailArguments])
@@ -41,7 +43,7 @@ describe("email reducers for the sendGradeEmail action", function() {
     sendGradeEmailStub.returns(Promise.reject())
     return dispatchThen(sendGradeEmail(sendEmailArguments), [
       SEND_GRADES_EMAIL_FAILURE
-    ]).then(state => {
+    ]).then((state) => {
       assert.equal(state.sentSuccess, false)
     })
   })

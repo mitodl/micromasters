@@ -98,27 +98,23 @@ export const withChannelCreateDialog = (WrappedComponent: ReactClass<*>) => {
           program_id: programEnrollment.id
         })
       ).then(
-        channel => {
+        (channel) => {
           this.closeAndClearDialog()
 
           if (SETTINGS.open_discussions_redirect_url) {
-            const channelUrl = `${
-              SETTINGS.open_discussions_redirect_url
-            }channel/${channel.name}`
+            const channelUrl = `${SETTINGS.open_discussions_redirect_url}channel/${channel.name}`
             window.open(channelUrl, "_self")
           }
         },
-        remoteErrors => {
+        (remoteErrors) => {
           dispatch(updateChannelErrors(remoteErrors))
         }
       )
     }
 
-    updateFieldEdit = R.curry(
-      (fieldName, e): void => {
-        this.updateChannelChanges(fieldName, e.target.value)
-      }
-    )
+    updateFieldEdit = R.curry((fieldName, e): void => {
+      this.updateChannelChanges(fieldName, e.target.value)
+    })
 
     render() {
       const {

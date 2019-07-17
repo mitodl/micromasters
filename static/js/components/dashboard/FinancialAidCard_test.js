@@ -30,9 +30,9 @@ import { INITIAL_UI_STATE } from "../../reducers/ui"
 
 describe("FinancialAidCard", () => {
   let sandbox
-  let openFinancialAidCalculatorStub,
-    setSkipDialogStub,
-    setDocsInstructionsVisibility
+  let openFinancialAidCalculatorStub
+  let setSkipDialogStub
+  let setDocsInstructionsVisibility
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()
@@ -128,7 +128,7 @@ describe("FinancialAidCard", () => {
         wrapper
           .find(".explanation")
           .find(".bold")
-          .map(node => node.text())
+          .map((node) => node.text())
       )
     })
 

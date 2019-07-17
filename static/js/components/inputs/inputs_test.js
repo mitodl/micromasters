@@ -15,9 +15,11 @@ import CountrySelectField from "./CountrySelectField"
 import StateSelectField from "./StateSelectField"
 
 describe("Profile inputs", () => {
-  let inputProps, sandbox, updateProfileStub
+  let inputProps
+  let sandbox
+  let updateProfileStub
 
-  const change = newProfile => (inputProps.profile = newProfile)
+  const change = (newProfile) => (inputProps.profile = newProfile)
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()
@@ -28,10 +30,11 @@ describe("Profile inputs", () => {
     sandbox.restore()
   })
 
-  const renderTestSelectField = props => mount(<SelectField {...props} />)
+  const renderTestSelectField = (props) => mount(<SelectField {...props} />)
 
   describe("Select field", () => {
-    let selectField, gaEvent
+    let selectField
+    let gaEvent
 
     const genderOptions = [
       { value: "m", label: "Male" },
@@ -134,7 +137,7 @@ describe("Profile inputs", () => {
       modifyWrapperSelectField(selectField, "genderqueer")
       const newOption = selectField
         .props()
-        .options.find(option => option.value === "genderqueer")
+        .options.find((option) => option.value === "genderqueer")
       assert.deepEqual(newOption, {
         value:     "genderqueer",
         label:     "genderqueer",
@@ -228,10 +231,10 @@ describe("Profile inputs", () => {
       // Get a list of US state values (eg: 'US-MA') ordered by the state name
       const orderedUSStateValues = _(iso3166.data[country].sub)
         .toPairs()
-        .sortBy(keyValueList => {
+        .sortBy((keyValueList) => {
           return keyValueList[1]["name"]
         })
-        .map(keyValueList => {
+        .map((keyValueList) => {
           return keyValueList[0]
         })
         .value()
@@ -240,7 +243,7 @@ describe("Profile inputs", () => {
       const optionValueList = stateField
         .find(SelectField)
         .props()
-        .options.map(option => {
+        .options.map((option) => {
           return option.value
         })
       assert.deepEqual(optionValueList, orderedUSStateValues)
@@ -262,7 +265,7 @@ describe("Profile inputs", () => {
     const renderCountrySelect = () =>
       mount(<CountrySelectField {...inputProps} />)
 
-    const checkFieldText = text => {
+    const checkFieldText = (text) => {
       const countryField = renderCountrySelect()
       assert.include(countryField.text(), text)
     }

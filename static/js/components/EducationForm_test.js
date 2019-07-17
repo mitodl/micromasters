@@ -29,7 +29,7 @@ describe("EducationForm", () => {
     const wrapper = renderEducationForm()
     const field = wrapper
       .find("SelectField")
-      .filterWhere(field => field.props().label === "Field of Study")
+      .filterWhere((field) => field.props().label === "Field of Study")
     const options = field.props().options
     assert.deepEqual(options, labelSort(options))
   })

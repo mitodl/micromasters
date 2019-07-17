@@ -11,7 +11,9 @@ import CustomResetFiltersDisplay from "./CustomResetFiltersDisplay"
 import { ELASTICSEARCH_RESPONSE } from "../../test_constants"
 
 describe("CustomResetFiltersDisplay", () => {
-  let sandbox, searchKit, mockAxios
+  let sandbox
+  let searchKit
+  let mockAxios
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()

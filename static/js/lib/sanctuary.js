@@ -57,7 +57,7 @@ export const parseJSON = S.encaseEither(() => ({}), JSON.parse)
 export const filterE = R.curry((predicate, either) =>
   S.either(
     S.Left,
-    right => (predicate(right) ? S.Right(right) : S.Left(right)),
+    (right) => (predicate(right) ? S.Right(right) : S.Left(right)),
     either
   )
 )

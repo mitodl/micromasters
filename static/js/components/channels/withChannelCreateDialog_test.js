@@ -16,12 +16,12 @@ import { SHOW_DIALOG, HIDE_DIALOG } from "../../actions/ui"
 import { INITIAL_CHANNEL_STATE } from "../../reducers/channel_dialog"
 
 describe("withChannelCreateDialog higher-order component", () => {
-  let helper,
-    listenForActions,
-    searchkit,
-    getSelectedFiltersSpy,
-    buildQuerySpy,
-    openSpy
+  let helper
+  let listenForActions
+  let searchkit
+  let getSelectedFiltersSpy
+  let buildQuerySpy
+  let openSpy
 
   const getDialog = () => document.querySelector(".create-channel-dialog")
 

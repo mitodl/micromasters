@@ -146,7 +146,7 @@ export const checkDateOfBirth: Validator = checkProp(
   personalMessages.date_of_birth,
   [
     R.complement(isNilOrEmptyString),
-    dob => moment(dob).isBefore(moment(), "day")
+    (dob) => moment(dob).isBefore(moment(), "day")
   ]
 )
 
@@ -168,7 +168,7 @@ export const checkRomanizedNames: Validator = R.ifElse(
   R.always({})
 )
 
-export const checkPostalCode: Validator = profile => {
+export const checkPostalCode: Validator = (profile) => {
   if (["US", "CA"].includes(profile.country)) {
     if (isNilOrEmptyString(profile.postal_code)) {
       return { postal_code: "Postal code is required" }
@@ -197,7 +197,7 @@ export const checkPhoneNumber: Validator = checkProp(
   "Please enter a valid phone number",
   [
     R.complement(isNilOrEmptyString),
-    phoneNumber => new PhoneNumber(phoneNumber).isValid()
+    (phoneNumber) => new PhoneNumber(phoneNumber).isValid()
   ]
 )
 
@@ -295,7 +295,7 @@ const educationKeys: (e: EducationEntry) => string[] = R.ifElse(
 const schoolLocationIsValid = extraErrorCheck(
   "location",
   "City, state/territory, and country are required.",
-  entry =>
+  (entry) =>
     isNilOrEmptyString(entry.school_city) ||
     isNilOrEmptyString(entry.school_state_or_territory) ||
     isNilOrEmptyString(entry.school_country)
@@ -306,7 +306,7 @@ const additionalSchoolValidation = R.converge(mergeListOfArgs, [
 ])
 
 const educationErrors: (xs: EducationEntry[]) => ValidationErrors[] = R.map(
-  entry =>
+  (entry) =>
     additionalSchoolValidation(
       entry,
       findErrors(entry, educationKeys(entry), educationMessages)
@@ -337,7 +337,7 @@ const workMessages: ErrorMessages = {
 const endDateNotBeforeStart = extraErrorCheck(
   "end_date",
   "End date cannot be before start date",
-  entry =>
+  (entry) =>
     !isNilOrEmptyString(entry.end_date) &&
     moment(entry.end_date).isBefore(entry.start_date, "month")
 )
@@ -345,13 +345,13 @@ const endDateNotBeforeStart = extraErrorCheck(
 const endDateNotInFuture = extraErrorCheck(
   "end_date",
   "End date cannot be in the future",
-  entry => moment(entry.end_date).isAfter(moment(), "month")
+  (entry) => moment(entry.end_date).isAfter(moment(), "month")
 )
 
 const workLocationIsValid = extraErrorCheck(
   "location",
   "City, state/territory, and country are required.",
-  entry =>
+  (entry) =>
     isNilOrEmptyString(entry.city) ||
     isNilOrEmptyString(entry.state_or_territory) ||
     isNilOrEmptyString(entry.country)
@@ -360,7 +360,7 @@ const workLocationIsValid = extraErrorCheck(
 const dateIsValid = extraErrorCheck(
   "end_date",
   "Please enter a valid end date or leave it blank",
-  entry => {
+  (entry) => {
     const editIsEmpty =
       _.isEmpty(entry.end_date_edit) ||
       (entry.end_date_edit !== undefined &&
@@ -378,7 +378,7 @@ const additionalWorkValidation = R.converge(mergeListOfArgs, [
 ])
 
 const workHistoryErrors: (xs: WorkHistoryEntry[]) => ValidationErrors[] = R.map(
-  entry =>
+  (entry) =>
     additionalWorkValidation(
       entry,
       findErrors(entry, R.keys(workMessages), workMessages)
@@ -488,7 +488,7 @@ export function validateProfileComplete(profile: Profile): ProfileComplete {
  */
 export function combineValidators(...validators: Array<Function>): Function {
   return (...args) =>
-    _.merge({}, ...validators.map(validator => validator(...args)))
+    _.merge({}, ...validators.map((validator) => validator(...args)))
 }
 
 const financialAidMessages: ErrorMessages = {

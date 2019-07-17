@@ -53,10 +53,12 @@ import { DASHBOARD_SUCCESS_ACTIONS } from "./test_util"
 import { actions } from "../lib/redux_rest"
 
 describe("FinancialAidCalculator", () => {
-  let listenForActions, renderComponent, helper
+  let listenForActions
+  let renderComponent
+  let helper
   const financialAidDashboard = _.cloneDeep(DASHBOARD_RESPONSE)
   const program = financialAidDashboard.programs.find(
-    program => program.title === "Not passed program"
+    (program) => program.title === "Not passed program"
   )
   program.financial_aid_availability = true
   program.financial_aid_user_info = {
@@ -478,8 +480,8 @@ describe("FinancialAidCalculator", () => {
   it("should show an error if the financial aid request fails", () => {
     helper.addFinancialAidStub.returns(
       Promise.reject({
-        "0":             "an error message",
-        errorStatusCode: 500
+        "0":               "an error message",
+        "errorStatusCode": 500
       })
     )
     return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(
@@ -528,9 +530,7 @@ describe("FinancialAidCalculator", () => {
           )
           assert.equal(
             document.querySelector(".api-error").textContent,
-            `There was an error (Error 500: an error message). Please contact ${
-              SETTINGS.support_email
-            } \
+            `There was an error (Error 500: an error message). Please contact ${SETTINGS.support_email} \
 if you continue to have problems.`
           )
           const state = helper.store.getState()
