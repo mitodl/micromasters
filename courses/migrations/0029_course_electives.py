@@ -32,8 +32,4 @@ class Migration(migrations.Migration):
             name='electives_set',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='courses.ElectivesSet'),
         ),
-        migrations.AlterUniqueTogether(
-            name='electivecourse',
-            unique_together={('course', 'electives_set')},
-        ),
     ]
