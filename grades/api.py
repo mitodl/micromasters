@@ -231,22 +231,22 @@ def generate_program_certificate(user, program):
         log.error('User [%s] already has a certificate for program [%s]', user, program)
         return
 
-    courses_in_program_ids = set(program.course_set.all().values_list('id', flat=True))
+    for electives_set in ElectivesSet.objects.filter(program=program):
+        elective_courses_id = set(electives_set.electivecourse_set.all().values_list('course__id', flat=True))
+        num_electives_with_cert = MicromastersCourseCertificate.objects.filter(
+            user=user,
+            course_id__in=elective_courses_id
+        ).values_list('course__id', flat=True).distinct().count()
+        if electives_set.required_number > num_electives_with_cert:
+            return
+
+    # filtering out the courses that are not elective
+    courses_in_program_ids = set(program.course_set.filter(electivecourse=None).values_list('id', flat=True))
 
     num_courses_with_cert = MicromastersCourseCertificate.objects.filter(
         user=user,
         course_id__in=courses_in_program_ids
     ).values_list('course__id', flat=True).distinct().count()
-
-    if ElectivesSet.objects.filter(program=program).exists():
-        for electives_set in ElectivesSet.objects.filter(program=program):
-            elective_courses_id = set(electives_set.electivecourse_set.all().values_list('course__id', flat=True))
-            num_electives_with_cert = MicromastersCourseCertificate.objects.filter(
-                user=user,
-                course_id__in=elective_courses_id
-            ).values_list('course__id', flat=True).distinct().count()
-            if electives_set.required_number > num_electives_with_cert:
-                return
 
     if len(courses_in_program_ids) > num_courses_with_cert:
         return

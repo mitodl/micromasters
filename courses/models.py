@@ -323,6 +323,12 @@ class ElectivesSet(models.Model):
     required_number = models.PositiveSmallIntegerField()
     title = models.CharField(max_length=255)
 
+    def __str__(self):
+        return 'An electives set "{title}" for program "{program_title}"'.format(
+            title=self.title,
+            program_title=self.program.title
+        )
+
 
 class ElectiveCourse(models.Model):
     """
@@ -330,3 +336,11 @@ class ElectiveCourse(models.Model):
     """
     course = models.OneToOneField(Course, on_delete=models.CASCADE)
     electives_set = models.ForeignKey(ElectivesSet, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('course', 'electives_set',)
+
+    def __str__(self):
+        return 'Course elective for course "{course_title}"'.format(
+            course_title=self.course.title
+        )

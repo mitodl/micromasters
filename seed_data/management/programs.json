@@ -4,6 +4,7 @@
         "price": 1000,
         "description": "Learn stuff about digital learning.",
         "financial_aid_availability": true,
+        "num_required_courses": 3,
         "courses": [
             {
                 "title": "Digital Learning 100",
@@ -113,6 +114,7 @@
         "title": "Analog Learning",
         "price": 1000,
         "description": "Learn stuff about analog learning.",
+        "num_required_courses": 3,
         "courses": [
             {
                 "title": "Analog Learning 100",
