@@ -26,8 +26,6 @@
 
 [libs]
 ./static/js/flow/declarations.js
-node_modules/iflow-lodash/index.js.flow
-node_modules/iflow-react-router/index.js.flow
 ./flow-typed/npm/
 
 [options]

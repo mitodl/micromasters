@@ -1,3 +1,15 @@
 {
-  "extends": "eslint-config-mitodl"
+  "extends": "eslint-config-mitodl",
+  "rules": {
+    "require-jsdoc": "off",
+    "valid-jsdoc": "off",
+    "no-multi-spaces": "off",
+    "no-invalid-this": "off",
+    "prefer-promise-reject-errors": "off"
+  },
+  "settings": {
+    "react": {
+      "version": "15"
+    }
+  }
 }

@@ -1,32 +1,96 @@
-// flow-typed signature: 3b60d0484a561f2e7c43ac2a5eb28d87
-// flow-typed version: f622abbe3e/redux_v3.x.x/flow_>=v0.23.x
+// flow-typed signature: ed3e20936dd7b07b5487912b2d22f352
+// flow-typed version: 537401fe1b/redux_v3.x.x/flow_>=v0.89.x
 
 declare module 'redux' {
-  declare type State = any;
-  declare type Action = Object;
-  declare type AsyncAction = any;
-  declare type Reducer<S, A> = (state: S, action: A) => S;
-  declare type BaseDispatch = (a: Action) => Action;
-  declare type Dispatch = (a: Action | AsyncAction) => any;
-  declare type ActionCreator = (...args: any) => Action | AsyncAction;
-  declare type MiddlewareAPI = { dispatch: Dispatch, getState: () => State };
-  declare type Middleware = (api: MiddlewareAPI) => (next: Dispatch) => Dispatch;
-  declare type Store = {
-    dispatch: Dispatch,
-    getState: () => State,
-    subscribe: (listener: () => void) => () => void,
-    replaceReducer: (reducer: Reducer<any, any>) => void
+  /*
+
+    S = State
+    A = Action
+    D = Dispatch
+
+  */
+
+  declare export type DispatchAPI<A> = (action: A) => A;
+
+  declare export type Dispatch<A: { type: * }> = DispatchAPI<A>;
+
+  declare export type MiddlewareAPI<S, A, D = Dispatch<A>> = {
+    dispatch: D,
+    getState(): S,
   };
-  declare type StoreCreator = (reducer: Reducer<any, any>, initialState: ?State) => Store;
-  declare type StoreEnhancer = (next: StoreCreator) => StoreCreator;
-  declare type ActionCreatorOrObjectOfACs = ActionCreator | { [key: string]: ActionCreator };
-  declare type Reducers = { [key: string]: Reducer<any, any> };
-  declare class Redux {
-    bindActionCreators<actionCreators: ActionCreatorOrObjectOfACs>(actionCreators: actionCreators, dispatch: Dispatch): actionCreators;
-    combineReducers(reducers: Reducers): Reducer<any, any>;
-    createStore(reducer: Reducer<any, any>, initialState?: State, enhancer?: StoreEnhancer): Store;
-    applyMiddleware(...middlewares: Array<Middleware>): StoreEnhancer;
-    compose(...functions: Array<Function | StoreEnhancer>): Function;
-  }
-  declare var exports: Redux;
+
+  declare export type Store<S, A, D = Dispatch<A>> = {
+    // rewrite MiddlewareAPI members in order to get nicer error messages (intersections produce long messages)
+    dispatch: D,
+    getState(): S,
+    subscribe(listener: () => void): () => void,
+    replaceReducer(nextReducer: Reducer<S, A>): void,
+  };
+
+  declare export type Reducer<S, A> = (state: S | void, action: A) => S;
+
+  declare export type CombinedReducer<S, A> = (
+    state: ($Shape<S> & {}) | void,
+    action: A
+  ) => S;
+
+  declare export type Middleware<S, A, D = Dispatch<A>> = (
+    api: MiddlewareAPI<S, A, D>
+  ) => (next: D) => D;
+
+  declare export type StoreCreator<S, A, D = Dispatch<A>> = {
+    (reducer: Reducer<S, A>, enhancer?: StoreEnhancer<S, A, D>): Store<S, A, D>,
+    (
+      reducer: Reducer<S, A>,
+      preloadedState: S,
+      enhancer?: StoreEnhancer<S, A, D>
+    ): Store<S, A, D>,
+  };
+
+  declare export type StoreEnhancer<S, A, D = Dispatch<A>> = (
+    next: StoreCreator<S, A, D>
+  ) => StoreCreator<S, A, D>;
+
+  declare export function createStore<S, A, D>(
+    reducer: Reducer<S, A>,
+    enhancer?: StoreEnhancer<S, A, D>
+  ): Store<S, A, D>;
+  declare export function createStore<S, A, D>(
+    reducer: Reducer<S, A>,
+    preloadedState?: S,
+    enhancer?: StoreEnhancer<S, A, D>
+  ): Store<S, A, D>;
+
+  declare export function applyMiddleware<S, A, D>(
+    ...middlewares: Array<Middleware<S, A, D>>
+  ): StoreEnhancer<S, A, D>;
+
+  declare export type ActionCreator<A, B> = (...args: Array<B>) => A;
+  declare export type ActionCreators<K, A> = {
+    [key: K]: ActionCreator<A, any>,
+  };
+
+  declare export function bindActionCreators<
+    A,
+    C: ActionCreator<A, any>,
+    D: DispatchAPI<A>
+  >(
+    actionCreator: C,
+    dispatch: D
+  ): C;
+  declare export function bindActionCreators<
+    A,
+    K,
+    C: ActionCreators<K, A>,
+    D: DispatchAPI<A>
+  >(
+    actionCreators: C,
+    dispatch: D
+  ): C;
+
+  declare export function combineReducers<O: {}, A>(
+    reducers: O
+  ): CombinedReducer<$ObjMap<O, <S>(r: Reducer<S, any>) => S>, A>;
+
+  declare export var compose: $Compose;
 }
