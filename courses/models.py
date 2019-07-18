@@ -341,6 +341,7 @@ class ElectiveCourse(models.Model):
         unique_together = ('course', 'electives_set',)
 
     def __str__(self):
-        return 'Course elective for course "{course_title}"'.format(
-            course_title=self.course.title
+        return 'Elective course "{course_title}" in electives set "{electives_set}"'.format(
+            course_title=self.course.title,
+            electives_set=self.electives_set.title
         )
