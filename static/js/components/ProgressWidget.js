@@ -129,12 +129,12 @@ export default class ProgressWidget extends React.Component {
 
   renderProgressIndicator() {
     const { program } = this.props
-    const { totalPassedCourses, totalCourses } = programCourseInfo(program)
+    const totalPassedCourses = programCourseInfo(program)
 
     return (
       <Card className="progress-widget" shadow={0}>
         <CardTitle className="progress-title">Progress</CardTitle>
-        {circularProgressWidget(60, 6, totalPassedCourses, totalCourses)}
+        {circularProgressWidget(60, 6, totalPassedCourses, program.number_courses_required)}
         {SETTINGS.FEATURES.PROGRAM_RECORD_LINK &&
           program.financial_aid_availability &&
           gradeRecordsLink(program.grade_records_url)}

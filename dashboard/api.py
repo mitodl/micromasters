@@ -16,7 +16,7 @@ from edx_api.client import EdxApi
 
 from backends.exceptions import InvalidCredentialStored
 from backends import utils
-from courses.models import Program
+from courses.models import Program, ElectiveCourse, ElectivesSet
 from courses.utils import format_season_year_for_course_run
 from dashboard.api_edx_cache import CachedEdxDataApi
 from dashboard.utils import get_mmtrack
@@ -196,6 +196,8 @@ def get_info_for_program(mmtrack):
         "pearson_exam_status": mmtrack.get_pearson_exam_status(),
         "grade_average": mmtrack.calculate_final_grade_average(),
         "certificate": mmtrack.get_program_certificate_url(),
+        "number_courses_required": mmtrack.program.num_required_courses
+        if mmtrack.program.electivesset_set.exists() else mmtrack.program.course_set.count()
     }
     if mmtrack.financial_aid_available:
         data["financial_aid_user_info"] = FinancialAidDashboardSerializer.serialize(mmtrack.user, mmtrack.program)
@@ -240,6 +242,7 @@ def get_info_for_course(course, mmtrack):
         "proctorate_exams_grades": ProctoredExamGradeSerializer(
             mmtrack.get_course_proctorate_exam_results(course), many=True
         ).data,
+        "is_elective": ElectiveCourse.objects.filter(course=course).exists(),
         "has_exam": course.has_exam,
         "certificate_url": get_certificate_url(mmtrack, course),
         "overall_grade": mmtrack.get_overall_final_grade_for_course(course)

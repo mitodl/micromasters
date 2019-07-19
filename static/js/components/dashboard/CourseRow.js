@@ -209,7 +209,11 @@ export default class CourseRow extends React.Component {
 
     return (
       <div className="course-info">
-        <div className="course-title">{course.title}</div>
+        <div className="course-title">{course.title}
+          {course.is_elective ? (
+            <div className="elective-tag">Elective</div>
+          ): null}
+          </div>
         {R.any(userIsEnrolled, course.runs)
           ? this.renderInProgressCourseInfo(run)
           : this.renderEnrollableCourseInfo(run)}

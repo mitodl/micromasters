@@ -39,6 +39,7 @@ export type Program = {
   certificate:                string,
   grade_records_url:          string,
   program_letter_url:         string,
+  number_courses_required:    number,
 }
 
 export type ProctoredExamResult = {
@@ -62,6 +63,7 @@ export type Course = {
   past_exam_date:               string,
   has_to_pay:                   boolean,
   proctorate_exams_grades:      Array<ProctoredExamResult>,
+  is_elective:                  boolean,
   has_exam:                     boolean,
   certificate_url:              string,
   overall_grade:                string,
