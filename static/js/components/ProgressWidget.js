@@ -20,7 +20,8 @@ export const circularProgressWidget = (
   const viewBox = `0 0 ${width} ${height}`
   const dashArray = radiusForMeasures * Math.PI * 2
   const dashOffset =
-    dashArray - (dashArray * R.min(totalPassedCourses, totalCourses)) / (totalCourses || 1)
+    dashArray -
+    (dashArray * R.min(totalPassedCourses, totalCourses)) / (totalCourses || 1)
 
   return (
     <div className="circular-progress-widget">
@@ -135,7 +136,12 @@ export default class ProgressWidget extends React.Component {
     return (
       <Card className="progress-widget" shadow={0}>
         <CardTitle className="progress-title">Progress</CardTitle>
-        {circularProgressWidget(60, 6, totalPassedCourses, program.number_courses_required)}
+        {circularProgressWidget(
+          60,
+          6,
+          totalPassedCourses,
+          program.number_courses_required
+        )}
         {SETTINGS.FEATURES.PROGRAM_RECORD_LINK &&
           program.financial_aid_availability &&
           gradeRecordsLink(program.grade_records_url)}
