@@ -25,6 +25,7 @@ from courses.factories import (
     ProgramFactory,
     FullProgramFactory,
 )
+from courses.models import ElectivesSet, ElectiveCourse
 from courses.utils import format_season_year_for_course_run
 from dashboard import (
     api,
@@ -894,6 +895,7 @@ class InfoCourseTest(CourseTests):
             exams_schedulable_in_future=None,
             has_to_pay=False,
             has_exam=False,
+            is_elective=False,
             proct_exams=None
     ):
         """Helper to format the course info"""
@@ -911,6 +913,7 @@ class InfoCourseTest(CourseTests):
             "past_exam_date": '',
             "has_to_pay": has_to_pay,
             "proctorate_exams_grades": proct_exams,
+            "is_elective": is_elective,
             "has_exam": has_exam,
             "certificate_url": "",
             "overall_grade": "",
@@ -1761,6 +1764,47 @@ class InfoProgramTest(MockedESTestCase):
             "courses": [{'position_in_program': 1}, {'position_in_program': 1}, {'position_in_program': 1}],
             "financial_aid_availability": False,
             "pearson_exam_status": ExamProfile.PROFILE_SUCCESS,
+            'number_courses_required': 3,
+            "grade_average": 91,
+            "certificate": "",
+        }
+        self.assertEqual(res, expected_data)
+
+    @patch('dashboard.api.get_info_for_course', autospec=True)
+    def test_program_with_electives(self, mock_info_course):
+        """Test happy path"""
+        self.program.num_required_courses = 5
+        self.mmtrack.configure_mock(**{
+            'program': self.program,
+            'financial_aid_available': False,
+            'get_pearson_exam_status.return_value': ExamProfile.PROFILE_SUCCESS,
+            'calculate_final_grade_average.return_value': 91,
+            'get_program_certificate_url.return_value': "",
+            'get_program_letter_url.return_value': "",
+        })
+        mock_info_course.return_value = {'position_in_program': 1}
+
+        electives_set = ElectivesSet.objects.create(program=self.program, required_number=2)
+        for num in range(3):
+            course = CourseFactory.create(
+                title="title course prog1 {}".format(num),
+                program=self.program
+            )
+            ElectiveCourse.objects.create(course=course, electives_set=electives_set)
+
+        res = api.get_info_for_program(self.mmtrack)
+        for course in self.courses:
+            mock_info_course.assert_any_call(course, self.mmtrack)
+
+        expected_data = {
+            "id": self.program.pk,
+            "description": self.program.description,
+            "title": self.program.title,
+            "courses": [{'position_in_program': 1}, {'position_in_program': 1}, {'position_in_program': 1},
+                        {'position_in_program': 1}, {'position_in_program': 1}, {'position_in_program': 1}],
+            "financial_aid_availability": False,
+            "pearson_exam_status": ExamProfile.PROFILE_SUCCESS,
+            'number_courses_required': 5,
             "grade_average": 91,
             "certificate": "",
         }
@@ -1786,6 +1830,7 @@ class InfoProgramTest(MockedESTestCase):
             "courses": [],
             "financial_aid_availability": False,
             "pearson_exam_status": ExamProfile.PROFILE_INVALID,
+            "number_courses_required": 0,
             "grade_average": 91,
             "certificate": "",
         }
@@ -1824,6 +1869,7 @@ class InfoProgramTest(MockedESTestCase):
             "financial_aid_availability": True,
             "financial_aid_user_info": serialized_fin_aid,
             "pearson_exam_status": ExamProfile.PROFILE_IN_PROGRESS,
+            "number_courses_required": self.program.course_set.count(),
             "grade_average": 91,
             "certificate": "",
             "grade_records_url": reverse('grade_records', args=[self.program_enrollment.hash]),
@@ -1852,6 +1898,7 @@ class InfoProgramTest(MockedESTestCase):
             "courses": [{'position_in_program': 1}, {'position_in_program': 1}, {'position_in_program': 1}],
             "financial_aid_availability": False,
             "pearson_exam_status": ExamProfile.PROFILE_SUCCESS,
+            "number_courses_required": self.program.course_set.count(),
             "grade_average": 91,
             "certificate": "",
             "program_letter_url": reverse('program_letter', args=[self.program_letter.uuid])
