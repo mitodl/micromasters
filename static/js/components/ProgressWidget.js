@@ -3,6 +3,7 @@
 import React from "react"
 import { Card, CardTitle } from "react-mdl/lib/Card"
 import Button from "react-mdl/lib/Button"
+import R from "ramda"
 
 import type { Program } from "../flow/programTypes"
 import { programCourseInfo } from "../util/util"
@@ -19,7 +20,7 @@ export const circularProgressWidget = (
   const viewBox = `0 0 ${width} ${height}`
   const dashArray = radiusForMeasures * Math.PI * 2
   const dashOffset =
-    dashArray - (dashArray * totalPassedCourses) / (totalCourses || 1)
+    dashArray - (dashArray * R.min(totalPassedCourses, totalCourses)) / (totalCourses || 1)
 
   return (
     <div className="circular-progress-widget">
