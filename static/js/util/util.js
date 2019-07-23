@@ -427,7 +427,7 @@ export function formatPrice(price: ?string | number | Decimal): string {
 /**
  * Returns number of passed courses in program.
  */
-export function programCourseInfo(program: Program): Object {
+export function programCourseInfo(program: Program): number {
   let totalPassedCourses = 0
 
   if (program.courses) {

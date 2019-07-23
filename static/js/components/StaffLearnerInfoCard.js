@@ -36,7 +36,7 @@ const formatCourseGrade = R.compose(
 
 const StaffLearnerInfoCard = (props: StaffLearnerCardProps) => {
   const { program } = props
-  const { totalPassedCourses, totalCourses } = programCourseInfo(program)
+  const totalPassedCourses = programCourseInfo(program)
 
   return (
     <Card shadow={1} className="staff-learner-info-card course-list">
@@ -44,7 +44,7 @@ const StaffLearnerInfoCard = (props: StaffLearnerCardProps) => {
       <div className="program-info">
         <div className="row">
           <div className="progress-widget">
-            {circularProgressWidget(63, 7, totalPassedCourses, totalCourses)}
+            {circularProgressWidget(63, 7, totalPassedCourses, program.num_required_courses)}
           </div>
           {programInfoBadge(
             "Average program grade",

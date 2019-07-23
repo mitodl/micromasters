@@ -917,6 +917,7 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
     {
       description: "Not passed program",
       title:       "Not passed program",
+      num_required_courses: 4,
       courses:     [
         {
           prerequisites: "",

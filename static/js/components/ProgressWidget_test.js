@@ -11,6 +11,7 @@ export const program = {
   financial_aid_user_info:    null,
   description:                "Not passed program",
   title:                      "Not passed program",
+  num_required_courses:       5,
   courses:                    [
     {
       prerequisites: "",

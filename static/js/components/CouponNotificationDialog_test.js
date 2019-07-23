@@ -74,6 +74,7 @@ const COURSE: Course = {
   has_to_pay:                  false,
   has_exam:                    false,
   proctorate_exams_grades:     [],
+  is_elective:                 false,
   certificate_url:             "",
   overall_grade:               ""
 }
