@@ -44,7 +44,12 @@ const StaffLearnerInfoCard = (props: StaffLearnerCardProps) => {
       <div className="program-info">
         <div className="row">
           <div className="progress-widget">
-            {circularProgressWidget(63, 7, totalPassedCourses, program.num_required_courses)}
+            {circularProgressWidget(
+              63,
+              7,
+              totalPassedCourses,
+              program.number_courses_required
+            )}
           </div>
           {programInfoBadge(
             "Average program grade",

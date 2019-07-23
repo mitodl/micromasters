@@ -547,11 +547,7 @@ describe("utility functions", () => {
     it("assert program info", () => {
       const programInfoActual = programCourseInfo(program)
 
-      assert.deepEqual(programInfoActual, {
-        totalPassedCourses: 3,
-        totalCourses:       5
-      })
-    })
+      assert.deepEqual(programInfoActual, 3)
   })
 
   describe("findCourseRun", () => {

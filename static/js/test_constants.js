@@ -915,10 +915,10 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
   is_edx_data_fresh: true,
   programs:          [
     {
-      description: "Not passed program",
-      title:       "Not passed program",
-      num_required_courses: 4,
-      courses:     [
+      description:             "Not passed program",
+      title:                   "Not passed program",
+      number_courses_required: 4,
+      courses:                 [
         {
           prerequisites: "",
           runs:          [
