@@ -548,6 +548,7 @@ describe("utility functions", () => {
       const programInfoActual = programCourseInfo(program)
 
       assert.deepEqual(programInfoActual, 3)
+    })
   })
 
   describe("findCourseRun", () => {
