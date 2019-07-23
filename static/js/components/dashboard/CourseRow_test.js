@@ -80,6 +80,22 @@ describe("CourseRow", () => {
     assert.deepEqual(statusProps.firstRun, course.runs[0])
 
     assert.deepEqual(wrapper.find(".course-title").text(), course.title)
+    assert.equal(wrapper.find(".elective-tag").exists(), false)
+  })
+
+  it("displays relevant things for elective course", () => {
+    const { programs } = makeDashboard()
+    let course = programs[0].courses[0]
+    makeRunCurrent(course.runs[0])
+    course.is_elective = true
+    const wrapper = renderRow(
+      {
+        course: course,
+        program_has_electives: true
+      },
+      true
+    )
+    assert.deepEqual(wrapper.find(".elective-tag").text(), "Elective")
   })
 
   it("displays a CourseAction if the showStaffView prop is not set", () => {

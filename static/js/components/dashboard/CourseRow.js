@@ -35,6 +35,7 @@ export default class CourseRow extends React.Component {
     couponPrices: CouponPrices,
     financialAid: FinancialAidUserInfo,
     hasFinancialAid: boolean,
+    program_has_electives: boolean,
     openFinancialAidCalculator: () => void,
     addCourseEnrollment: (courseId: string) => Promise<*>,
     openCourseContactDialog: (
@@ -203,17 +204,19 @@ export default class CourseRow extends React.Component {
       </div>
     )
   }
+  getCourseTag = (): React$Element<*> => {
+    const { course } = this.props
+    return <div className="elective-tag">{course.is_elective? "Elective": "Core"}</div>
+  }
 
   renderCourseInfo = (run: CourseRun) => {
-    const { course } = this.props
+    const { course, program_has_electives } = this.props
 
     return (
       <div className="course-info">
         <div className="course-title">
           {course.title}
-          {course.is_elective ? (
-            <div className="elective-tag">Elective</div>
-          ) : null}
+          { program_has_electives? this.getCourseTag() : null}
         </div>
         {R.any(userIsEnrolled, course.runs)
           ? this.renderInProgressCourseInfo(run)
