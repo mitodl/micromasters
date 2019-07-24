@@ -144,7 +144,12 @@ describe("ProgressWidget", () => {
     assert.equal(wrapper.find(".circular-progress-widget-txt").text(), "3/5")
 
     program.number_courses_required = 3
-    assert.equal(shallow(<ProgressWidget program={program} />).find(".circular-progress-widget-txt").text(), "3/3")
+    assert.equal(
+      shallow(<ProgressWidget program={program} />)
+        .find(".circular-progress-widget-txt")
+        .text(),
+      "3/3"
+    )
   })
   it("should display program certificate when a certificate link exists", () => {
     program["certificate"] = "certificate_url"

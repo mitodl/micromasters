@@ -167,7 +167,8 @@ export default class CourseListCard extends React.Component {
       showStaffView
     } = this.props
     const now = this.props.now || moment()
-    const has_electives = program.number_courses_required < program.courses.length
+    const hasElectives =
+      program.number_courses_required < program.courses.length
     const sortedCourses = R.sortBy(
       R.prop("position_in_program"),
       program.courses
@@ -181,7 +182,7 @@ export default class CourseListCard extends React.Component {
         openFinancialAidCalculator={openFinancialAidCalculator}
         couponPrices={couponPrices}
         now={now}
-        program_has_electives={has_electives}
+        programHasElectives={hasElectives}
         addCourseEnrollment={addCourseEnrollment}
         openCourseContactDialog={openCourseContactDialog}
         setEnrollSelectedCourseRun={setEnrollSelectedCourseRun}

@@ -85,12 +85,12 @@ describe("CourseRow", () => {
 
   it("displays relevant things for elective course", () => {
     const { programs } = makeDashboard()
-    let course = programs[0].courses[0]
+    const course = programs[0].courses[0]
     makeRunCurrent(course.runs[0])
     course.is_elective = true
     const wrapper = renderRow(
       {
-        course: course,
+        course:                course,
         program_has_electives: true
       },
       true
