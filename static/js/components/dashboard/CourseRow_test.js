@@ -90,7 +90,7 @@ describe("CourseRow", () => {
     course.is_elective = true
     const wrapper = renderRow(
       {
-        course:                course,
+        course:              course,
         programHasElectives: true
       },
       true
