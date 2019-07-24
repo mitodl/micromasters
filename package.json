@@ -72,7 +72,7 @@
     "lodash": "^4.17.4",
     "material-ui": "^0.18.1",
     "minimist": "^1.2.0",
-    "mocha": "^3.4.2",
+    "mocha": "6.2.0",
     "moment": "^2.18.1",
     "moment-timezone": "^0.5.13",
     "node-sass": "^4.5.3",
