@@ -18,6 +18,7 @@
 .*/node_modules/react-draft-wysiwyg/.*
 .*/node_modules/react-virtualized/.*
 .*/node_modules/table/node_modules/chalk/index.js.flow
+.*/node_modules/log-symbols/node_modules/chalk/index.js.flow
 .*.git/.*
 .*/staticfiles/.*
 
