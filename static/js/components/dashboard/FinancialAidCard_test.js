@@ -5,7 +5,7 @@ import { mount } from "enzyme"
 import { assert } from "chai"
 import sinon from "sinon"
 import moment from "moment"
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider"
+import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
 import getMuiTheme from "material-ui/styles/getMuiTheme"
 import DatePicker from "react-datepicker"
 

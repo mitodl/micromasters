@@ -9,7 +9,7 @@ import { connect } from "react-redux"
 import _ from "lodash"
 import moment from "moment"
 import R from "ramda"
-import Dialog from "material-ui/Dialog"
+import Dialog from "@material-ui/core/Dialog"
 import Alert from "react-bootstrap/lib/Alert"
 
 import ProgramEnrollmentDialog from "../components/ProgramEnrollmentDialog"

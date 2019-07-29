@@ -1,6 +1,6 @@
 // @flow
 import React from "react"
-import Dialog from "material-ui/Dialog"
+import Dialog from "@material-ui/core/Dialog"
 import R from "ramda"
 import Dropzone from "react-dropzone"
 import Spinner from "react-mdl/lib/Spinner"

@@ -7,8 +7,7 @@ import "ajaxchimp"
 import _ from "lodash"
 import React from "react"
 import ReactDOM from "react-dom"
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider"
-import getMuiTheme from "material-ui/styles/getMuiTheme"
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { Provider } from "react-redux"
 import injectTapEventPlugin from "react-tap-event-plugin"
 injectTapEventPlugin()
@@ -35,7 +34,7 @@ if (SETTINGS.program) {
 
 if (courseListEl && !_.isEmpty(courseList)) {
   ReactDOM.render(
-    <MuiThemeProvider muiTheme={getMuiTheme()}>
+    <MuiThemeProvider theme={createMuiTheme()}>
       <CourseListWithPopover courses={courseList} />
     </MuiThemeProvider>,
     courseListEl

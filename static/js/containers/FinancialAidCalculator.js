@@ -1,9 +1,9 @@
 /* global SETTINGS:false */
 import React from "react"
-import Dialog from "material-ui/Dialog"
+import Dialog from "@material-ui/core/Dialog"
 import { connect } from "react-redux"
 import R from "ramda"
-import TextField from "material-ui/TextField"
+import TextField from "@material-ui/core/TextField"
 import Checkbox from "react-mdl/lib/Checkbox"
 import Select from "react-select"
 import _ from "lodash"

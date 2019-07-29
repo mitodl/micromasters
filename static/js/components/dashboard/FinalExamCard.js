@@ -6,7 +6,7 @@ import Button from "react-mdl/lib/Button"
 import IconButton from "react-mdl/lib/IconButton"
 import _ from "lodash"
 import R from "ramda"
-import Dialog from "material-ui/Dialog"
+import Dialog from "@material-ui/core/Dialog"
 
 import { dialogActions } from "../inputs/util"
 import type { Profile } from "../../flow/profileTypes"

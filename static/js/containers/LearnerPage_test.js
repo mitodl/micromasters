@@ -4,7 +4,7 @@ import { assert } from "chai"
 import _ from "lodash"
 import moment from "moment"
 import sinon from "sinon"
-import Dialog from "material-ui/Dialog"
+import Dialog from "@material-ui/core/Dialog"
 
 import * as inputUtil from "../components/inputs/util"
 import {

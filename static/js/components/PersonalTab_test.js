@@ -4,7 +4,7 @@ import { Provider } from "react-redux"
 import { mount } from "enzyme"
 import { assert } from "chai"
 import R from "ramda"
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider"
+import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
 import getMuiTheme from "material-ui/styles/getMuiTheme"
 
 import PersonalTab from "./PersonalTab"

@@ -1,6 +1,6 @@
 // @flow
 import React from "react"
-import Popover from "material-ui/Popover"
+import Popover from "@material-ui/core/Popover"
 
 import PopoverNullAnimation from "../util/popover_animation"
 import type { ProgramPageCourse } from "../flow/programTypes"

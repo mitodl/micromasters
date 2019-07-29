@@ -3,7 +3,7 @@ import React from "react"
 import sinon from "sinon"
 import { mount } from "enzyme"
 import { assert } from "chai"
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider"
+import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
 import getMuiTheme from "material-ui/styles/getMuiTheme"
 
 import AutomaticEmailOptions from "./AutomaticEmailOptions"

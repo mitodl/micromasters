@@ -1,5 +1,5 @@
 // @flow
-import Dialog from "material-ui/Dialog"
+import Dialog from "@material-ui/core/Dialog"
 import React from "react"
 import R from "ramda"
 import Icon from "react-mdl/lib/Icon"

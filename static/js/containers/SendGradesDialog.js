@@ -7,10 +7,10 @@ import {
   setSelectedSchool
 } from "../actions/send_grades_dialog"
 import { connect } from "react-redux"
-import Dialog from "material-ui/Dialog"
+import Dialog from "@material-ui/core/Dialog"
 import R from "ramda"
-import SelectField from "material-ui/SelectField"
-import MenuItem from "material-ui/MenuItem"
+import Select from "@material-ui/core/Select"
+import MenuItem from "@material-ui/core/MenuItem"
 
 class SendGradesDialog extends React.Component {
   props: {
@@ -54,7 +54,7 @@ class SendGradesDialog extends React.Component {
           cannot unsend it.
         </p>
         <p>Select organization(s) you wish to send this record to:</p>
-        <SelectField
+        <Select
           value={selectedSchool}
           onChange={this.handleSelectedSchoolChange}
           floatingLabelText="Select School"
@@ -68,7 +68,7 @@ class SendGradesDialog extends React.Component {
           }}
         >
           {options}
-        </SelectField>
+        </Select>
 
         <div>
           <div className="sent-email">{sentSuccess ? "Email Sent!" : ""}</div>

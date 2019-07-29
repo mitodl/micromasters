@@ -2,7 +2,7 @@ import React from "react"
 import R from "ramda"
 import { mount } from "enzyme"
 import { assert } from "chai"
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider"
+import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
 import getMuiTheme from "material-ui/styles/getMuiTheme"
 
 import IntegrationTestHelper from "../../util/integration_test_helper"

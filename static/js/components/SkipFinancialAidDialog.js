@@ -1,6 +1,6 @@
 // @flow
 import React from "react"
-import Dialog from "material-ui/Dialog"
+import Dialog from "@material-ui/core/Dialog"
 
 import { FETCH_PROCESSING } from "../actions"
 import { dialogActions } from "./inputs/util"

@@ -3,9 +3,9 @@
 import React from "react"
 import type { Dispatch } from "redux"
 import { Card } from "react-mdl/lib/Card"
-import Dialog from "material-ui/Dialog"
-import SelectField from "material-ui/SelectField"
-import MenuItem from "material-ui/MenuItem"
+import Dialog from "@material-ui/core/Dialog"
+import Select from "@material-ui/core/Select"
+import MenuItem from "@material-ui/core/MenuItem"
 import R from "ramda"
 import { dialogActions } from "./inputs/util"
 import _ from "lodash"
@@ -95,7 +95,7 @@ class LeaveProgramWizard extends ProfileFormFields {
     } = this.props
     const enrolledPrograms = enrolledInPrograms(programs)
     return (
-      <SelectField
+      <Select
         multiple={true}
         hintText="Select"
         value={programsToUnEnroll}
@@ -105,7 +105,7 @@ class LeaveProgramWizard extends ProfileFormFields {
         hintStyle={hintStyle}
       >
         {this.menuItems(enrolledPrograms)}
-      </SelectField>
+      </Select>
     )
   }
 

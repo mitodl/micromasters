@@ -6,7 +6,7 @@ import R from "ramda"
 import { Provider } from "react-redux"
 import { assert } from "chai"
 import { mount } from "enzyme"
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider"
+import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
 import getMuiTheme from "material-ui/styles/getMuiTheme"
 import { SearchkitManager, SearchkitProvider } from "searchkit"
 

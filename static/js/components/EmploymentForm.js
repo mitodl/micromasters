@@ -1,11 +1,12 @@
 // @flow
 import React from "react"
 import Grid, { Cell } from "react-mdl/lib/Grid"
-import Dialog from "material-ui/Dialog"
+import Dialog from "@material-ui/core/Dialog"
 import Card from "react-mdl/lib/Card/Card"
 import IconButton from "react-mdl/lib/IconButton"
 import _ from "lodash"
-import { RadioButton, RadioButtonGroup } from "material-ui/RadioButton"
+import Radio from "@material-ui/core/Radio"
+import RadioGroup from '@material-ui/core/RadioGroup';
 
 import { FETCH_PROCESSING } from "../actions"
 import { userPrivilegeCheck, isProfileOfLoggedinUser } from "../util/util"
@@ -284,25 +285,25 @@ class EmploymentForm extends ProfileFormFields {
     const valueSelected = _.isNil(workHistoryAnswer) ? null : "false"
     const radioIconStyle = { marginRight: "8px" }
     return (
-      <RadioButtonGroup
+      <RadioGroup
         className="profile-radio-group"
         name="work-history-switch"
         onChange={(event, value) => this.handleRadioClick(value)}
         valueSelected={valueSelected}
       >
-        <RadioButton
+        <Radio
           value="true"
           label="Yes"
           iconStyle={radioIconStyle}
           style={{ marginRight: "30px" }}
         />
-        <RadioButton
+        <Radio
           value="false"
           label="No"
           iconStyle={radioIconStyle}
           style={{ marginRight: "15px" }}
         />
-      </RadioButtonGroup>
+      </RadioGroup>
     )
   }
 

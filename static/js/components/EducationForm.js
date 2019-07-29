@@ -5,8 +5,9 @@ import Grid, { Cell } from "react-mdl/lib/Grid"
 import { Card } from "react-mdl/lib/Card"
 import _ from "lodash"
 import R from "ramda"
-import Dialog from "material-ui/Dialog"
-import { RadioButton, RadioButtonGroup } from "material-ui/RadioButton"
+import Dialog from "@material-ui/core/Dialog"
+import Radio from "@material-ui/core/Radio"
+import RadioGroup from '@material-ui/core/RadioGroup'
 
 import { FETCH_PROCESSING } from "../actions"
 import { educationValidation } from "../lib/validation/profile"
@@ -119,26 +120,26 @@ class EducationForm extends ProfileFormFields {
     const radioIconStyle = { marginRight: "8px" }
     const valueSelected = level.value in educationLevelAnswers ? "false" : null
     return (
-      <RadioButtonGroup
+      <RadioGroup
         className={`profile-radio-group ${level.value}`}
         id={`profile-tab-education-switch-${level.value}`}
         name={`profile-tab-education-switch-${level.value}`}
         onChange={(event, value) => this.handleRadioClick(value, level.value)}
         valueSelected={valueSelected}
       >
-        <RadioButton
+        <Radio
           value="true"
           label="Yes"
           iconStyle={radioIconStyle}
           style={{ marginRight: "30px" }}
         />
-        <RadioButton
+        <Radio
           value="false"
           label="No"
           iconStyle={radioIconStyle}
           style={{ marginRight: "15px" }}
         />
-      </RadioButtonGroup>
+      </RadioGroup>
     )
   }
 

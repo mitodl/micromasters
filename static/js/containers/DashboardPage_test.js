@@ -5,7 +5,7 @@ import moment from "moment"
 import ReactDOM from "react-dom"
 import Decimal from "decimal.js-light"
 import R from "ramda"
-import Dialog from "material-ui/Dialog"
+import Dialog from "@material-ui/core/Dialog"
 
 import ProgramEnrollmentDialog from "../components/ProgramEnrollmentDialog"
 import {

@@ -18,7 +18,7 @@ import {
 } from "../../test_constants"
 import { INITIAL_EMAIL_STATE } from "../../reducers/email"
 import { INITIAL_UI_STATE } from "../../reducers/ui"
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider"
+import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
 import getMuiTheme from "material-ui/styles/getMuiTheme"
 import IntegrationTestHelper from "../../util/integration_test_helper"
 import { Provider } from "react-redux"

@@ -6,7 +6,7 @@ import { assert } from "chai"
 import sinon from "sinon"
 import ReactTestUtils from "react-dom/test-utils"
 
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider"
+import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
 import getMuiTheme from "material-ui/styles/getMuiTheme"
 import PersonalCoursePriceDialog from "./PersonalCoursePriceDialog"
 import { getEl } from "../../util/test_utils"

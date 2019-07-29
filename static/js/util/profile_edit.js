@@ -1,9 +1,10 @@
 // @flow
 import React from "react"
 import _ from "lodash"
-import TextField from "material-ui/TextField"
-import { RadioButton, RadioButtonGroup } from "material-ui/RadioButton"
-import Checkbox from "material-ui/Checkbox"
+import TextField from "@material-ui/core/TextField"
+import  Radio from "@material-ui/core/Radio"
+import  RadioGroup from "@material-ui/core/Radio"
+import Checkbox from "@material-ui/core/Checkbox"
 import R from "ramda"
 import ReactTelInput from "react-telephone-input"
 
@@ -41,7 +42,7 @@ const radioButtonLabel = label => (
 )
 
 const radioButtons = R.map(option => (
-  <RadioButton
+  <Radio
     className="profile-radio-button"
     labelStyle={radioStyles.labelStyle}
     value={option.value}
@@ -81,14 +82,14 @@ export function boundRadioGroupField(
   return (
     <fieldset className={validationErrorSelector(errors, keySet)}>
       <legend className="profile-radio-group-label">{label}</legend>
-      <RadioButtonGroup
+      <RadioGroup
         className="profile-radio-group"
         name={label}
         onChange={onChange}
         valueSelected={value}
       >
         {radioButtons(options)}
-      </RadioButtonGroup>
+      </RadioGroup>
       <span className="validation-error-text">{_.get(errors, keySet)}</span>
     </fieldset>
   )

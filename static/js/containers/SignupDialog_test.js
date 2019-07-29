@@ -4,7 +4,7 @@ import { assert } from "chai"
 import React from "react"
 import URI from "urijs"
 import { Provider } from "react-redux"
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider"
+import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
 import getMuiTheme from "material-ui/styles/getMuiTheme"
 
 import { setDialogVisibility } from "../actions/signup_dialog"

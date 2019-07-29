@@ -3,8 +3,7 @@
 import React from "react"
 import { Router } from "react-router"
 import { Provider } from "react-redux"
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider"
-import getMuiTheme from "material-ui/styles/getMuiTheme"
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import type { Store } from "redux"
 
 export default class DashboardRouter extends React.Component {
@@ -20,7 +19,7 @@ export default class DashboardRouter extends React.Component {
 
     return (
       <div>
-        <MuiThemeProvider muiTheme={getMuiTheme()}>
+        <MuiThemeProvider theme={createMuiTheme()}>
           <Provider store={store}>
             <Router
               history={browserHistory}

@@ -3,8 +3,7 @@ import { mount } from "enzyme"
 import { assert } from "chai"
 import React from "react"
 import { Provider } from "react-redux"
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider"
-import getMuiTheme from "material-ui/styles/getMuiTheme"
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 import { setShareDialogVisibility } from "../actions/share_grades_dialog"
 import CopyLinkDialog from "./CopyLinkDialog"
@@ -24,7 +23,7 @@ describe("CopyLinkDialog", () => {
 
   const renderDialog = (props = {}) => {
     return mount(
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <MuiThemeProvider theme={createMuiTheme()}>
         <Provider store={helper.store}>
           <CopyLinkDialog {...props} />
         </Provider>

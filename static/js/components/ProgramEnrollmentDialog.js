@@ -1,8 +1,8 @@
 import React from "react"
-import Dialog from "material-ui/Dialog"
+import Dialog from "@material-ui/core/Dialog"
 import _ from "lodash"
-import SelectField from "material-ui/SelectField"
-import MenuItem from "material-ui/MenuItem"
+import Select from "@material-ui/core/Select"
+import MenuItem from "@material-ui/core/MenuItem"
 
 import { FETCH_PROCESSING } from "../actions"
 import { dialogActions } from "./inputs/util"
@@ -80,7 +80,7 @@ export default class ProgramEnrollmentDialog extends React.Component {
         open={visibility}
         actions={actions}
       >
-        <SelectField
+        <Select
           value={selectedProgram}
           onChange={this.handleSelectedProgramChange}
           floatingLabelText="Select Program"
@@ -95,7 +95,7 @@ export default class ProgramEnrollmentDialog extends React.Component {
           }}
         >
           {options}
-        </SelectField>
+        </Select>
       </Dialog>
     )
   }

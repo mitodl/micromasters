@@ -3,7 +3,7 @@ import React from "react"
 import moment from "moment"
 import _ from "lodash"
 import R from "ramda"
-import TextField from "material-ui/TextField"
+import TextField from "@material-ui/core/TextField"
 import { S, mstr, allJust } from "../../lib/sanctuary"
 const { Just } = S
 

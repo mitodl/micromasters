@@ -5,7 +5,7 @@ import { mount } from "enzyme"
 import { assert } from "chai"
 import { Provider } from "react-redux"
 import sinon from "sinon"
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider"
+import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
 import getMuiTheme from "material-ui/styles/getMuiTheme"
 
 import SendGradesDialog from "./SendGradesDialog"

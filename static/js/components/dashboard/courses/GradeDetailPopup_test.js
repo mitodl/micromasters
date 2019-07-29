@@ -4,7 +4,7 @@ import { shallow } from "enzyme"
 import { assert } from "chai"
 import sinon from "sinon"
 import Icon from "react-mdl/lib/Icon"
-import Dialog from "material-ui/Dialog"
+import Dialog from "@material-ui/core/Dialog"
 
 import GradeDetailPopup from "./GradeDetailPopup"
 import {

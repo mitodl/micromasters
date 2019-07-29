@@ -1,6 +1,7 @@
 // @flow
 import React from "react"
-import { RadioButton, RadioButtonGroup } from "material-ui/RadioButton"
+import Radio from "@material-ui/core/Radio"
+import RadioGroup from '@material-ui/core/RadioGroup';
 
 export default class AutomaticEmailOptions extends React.Component {
   props: {
@@ -25,23 +26,23 @@ export default class AutomaticEmailOptions extends React.Component {
 
     return (
       <div className="email-type">
-        <RadioButtonGroup
+        <RadioGroup
           className="type-radio-group"
           name="email-options"
           valueSelected={sendAutomaticEmails}
           onChange={this.handleRadioClick}
         >
-          <RadioButton
+          <Radio
             value={false}
             label="Send a one-time email"
             className="send-one-time-email"
           />
-          <RadioButton
+          <Radio
             value={true}
             label="Create an Email Campaign"
             className="create-campaign"
           />
-        </RadioButtonGroup>
+        </RadioGroup>
         {sendAutomaticEmails ? this.renderEmailCampaign() : null}
       </div>
     )

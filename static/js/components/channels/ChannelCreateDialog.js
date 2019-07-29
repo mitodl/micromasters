@@ -1,8 +1,8 @@
 // @flow
 /* global SETTINGS: false */
-import Dialog from "material-ui/Dialog"
+import Dialog from "@material-ui/core/Dialog"
 import React from "react"
-import TextField from "material-ui/TextField"
+import TextField from "@material-ui/core/TextField"
 import Grid, { Cell } from "react-mdl/lib/Grid"
 import R from "ramda"
 

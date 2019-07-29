@@ -1,8 +1,8 @@
 // @flow
 import React, { Component } from "react"
 import PropTypes from "prop-types"
-import Paper from "material-ui/Paper"
-import propTypes from "material-ui/utils/propTypes"
+import Paper from "@material-ui/core/Paper"
+import propTypes from "prop-types"
 
 function getStyles(props, context, state) {
   const { open } = state

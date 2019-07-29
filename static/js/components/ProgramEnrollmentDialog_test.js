@@ -1,11 +1,11 @@
 // @flow
 import React from "react"
 import { assert } from "chai"
-import MenuItem from "material-ui/MenuItem"
 import _ from "lodash"
 import { shallow } from "enzyme"
-import Dialog from "material-ui/Dialog"
-import SelectField from "material-ui/SelectField"
+import MenuItem from "@material-ui/core/MenuItem"
+import Dialog from "@material-ui/core/Dialog"
+import Select from "@material-ui/core/Select"
 
 import { FETCH_PROCESSING } from "../actions"
 import { DASHBOARD_SUCCESS_ACTIONS } from "../containers/test_util"
@@ -194,14 +194,14 @@ describe("ProgramEnrollmentDialog", () => {
     assert.deepEqual(list, unenrolledPrograms)
   })
 
-  it("shows the current enrollment in the SelectField", () => {
+  it("shows the current enrollment in the Select", () => {
     const selectedEnrollment = PROGRAMS[0]
 
     const wrapper = renderEnrollmentDialog({
       selectedProgram: selectedEnrollment,
       visibility:      false
     })
-    const select = wrapper.find(SelectField)
+    const select = wrapper.find(Select)
     assert.equal(select.props().value, selectedEnrollment)
   })
 })

@@ -5,7 +5,7 @@ import {
   setCopySuccess
 } from "../actions/share_grades_dialog"
 import { connect } from "react-redux"
-import Dialog from "material-ui/Dialog"
+import Dialog from "@material-ui/core/Dialog"
 
 class CopyLinkDialog extends React.Component {
   props: {
