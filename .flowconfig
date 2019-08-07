@@ -20,6 +20,7 @@
 .*/node_modules/table/node_modules/chalk/index.js.flow
 .*/node_modules/log-symbols/node_modules/chalk/index.js.flow
 .*/node_modules/@babel/highlight/node_modules/chalk/index.js.flow
+.*/node_modules/chalk/index.js.flow
 .*.git/.*
 .*/staticfiles/.*
 
