@@ -59,6 +59,7 @@ class ProgramPageFactory(DjangoModelFactory):
     faculty_description = factory.Faker('paragraph')
     program_contact_email = factory.Faker('email')
     title_over_image = factory.Faker('sentence')
+    thumbnail_image = None
 
     @classmethod
     def _create(cls, model_class, *args, **kwargs):
@@ -67,6 +68,9 @@ class ProgramPageFactory(DjangoModelFactory):
         home_page.add_child(instance=page)
         page.save_revision().publish()
         return page
+
+    class Params:
+        has_thumbnail = factory.Trait(thumbnail_image=factory.SubFactory(ImageFactory))
 
 
 class ProgramCourseFactory(DjangoModelFactory):

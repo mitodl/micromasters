@@ -42,6 +42,8 @@ class CourseFactory(DjangoModelFactory):
     program = factory.SubFactory(ProgramFactory)
     position_in_program = factory.Sequence(lambda n: n)
 
+    edx_key = factory.Sequence(lambda number: "v{}".format(number))  # pylint: disable=unnecessary-lambda
+
     description = fuzzy.FuzzyText()
     prerequisites = fuzzy.FuzzyText(prefix="Course requires ")
 

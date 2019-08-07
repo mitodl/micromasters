@@ -6,7 +6,8 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from courses.factories import ProgramFactory, CourseRunFactory
+from courses.catalog_serializers import CatalogProgramSerializer
+from courses.factories import ProgramFactory, CourseFactory, CourseRunFactory
 from courses.serializers import ProgramSerializer, CourseRunSerializer
 from dashboard.factories import ProgramEnrollmentFactory
 from dashboard.models import ProgramEnrollment
@@ -228,4 +229,20 @@ class CourseRunTests(MockedESTestCase, APITestCase):
         assert len(resp.json()) == 1
         context = {"request": Mock(user=self.user)}
         data = CourseRunSerializer(course_run, context=context).data
+        assert [data] == resp.json()
+
+
+class CatalogTests(MockedESTestCase, APITestCase):
+    """Tests for catalog API"""
+
+    def test_lists_catalog(self):
+        """Course Runs should show up"""
+        program = ProgramFactory.create(live=True)
+        for course in CourseFactory.create_batch(3, program=program):
+            CourseRunFactory.create_batch(2, course=course)
+
+        resp = self.client.get(reverse('catalog-list'))
+
+        assert len(resp.json()) == 1
+        data = CatalogProgramSerializer(program).data
         assert [data] == resp.json()

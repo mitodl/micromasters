@@ -2,6 +2,7 @@
 from django.db import transaction
 from rest_framework import (
     viewsets,
+    mixins,
     status,
 )
 from rest_framework.views import APIView
@@ -15,6 +16,7 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from courses.catalog_serializers import CatalogProgramSerializer
 from courses.models import Program, CourseRun
 from courses.serializers import ProgramSerializer, CourseRunSerializer
 from dashboard.models import ProgramEnrollment
@@ -124,3 +126,11 @@ class CourseRunViewSet(viewsets.ReadOnlyModelViewSet):
     """API for the CourseRun model"""
     serializer_class = CourseRunSerializer
     queryset = CourseRun.objects.all()
+
+
+class CatalogViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """API for program/course catalog list"""
+    serializer_class = CatalogProgramSerializer
+    queryset = Program.objects.filter(live=True).prefetch_related(
+        "course_set__courserun_set", "programpage__thumbnail_image"
+    )

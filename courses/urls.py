@@ -7,11 +7,14 @@ from courses.views import (
     ProgramEnrollmentListView,
     ProgramViewSet,
     ProgramLearnersView,
-    CourseRunViewSet)
+    CourseRunViewSet,
+    CatalogViewSet,
+)
 
 router = routers.DefaultRouter()
 router.register(r'programs', ProgramViewSet)
 router.register(r'courseruns', CourseRunViewSet)
+router.register(r'catalog', CatalogViewSet, basename="catalog")
 
 urlpatterns = [
     url(r'^api/v0/', include(router.urls)),
