@@ -1,3 +1,13 @@
+.elective-tag {
+  display: inline-flex;
+  border: 1px solid $lightgray;
+  color: $font-gray;
+  margin-left: 14px;
+  padding: 5px;
+  font-size: 12px;
+  background: $lightest-blue;
+  font-weight: 300;
+}
 .course-row {
   .course-info {
     margin: 29px 22px 35px 28px;
@@ -6,17 +16,6 @@
       font-weight: 500;
       font-size: 16px;
       margin-bottom: 4px;
-
-      .elective-tag {
-        display: inline-flex;
-        border: 1px solid $lightgray;
-        color: $font-gray;
-        margin-left: 14px;
-        padding: 5px;
-        font-size: 12px;
-        background: $lightest-blue;
-        font-weight: 300;
-      }
     }
   }
 

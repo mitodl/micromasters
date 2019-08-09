@@ -70,7 +70,8 @@
           <tbody>
           {% for record in courses %}
             <tr>
-              <td>{{ record.title }}</td>
+              <td>{{ record.title }}
+                {% if has_electives %}<div class="elective-tag">{{ record.elective_tag }}</div>{% endif %}</td>
               <td>{{ record.edx_course_key }}</td>
               <td>{% if record.overall_grade %}{{ record.overall_grade}}%{% endif %}</td>
               <td>{{ record.letter_grade }}</td>

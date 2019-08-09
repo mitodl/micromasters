@@ -10,6 +10,7 @@ from django.views.generic import TemplateView
 from rest_framework.generics import Http404
 
 from cms.models import CourseCertificateSignatories, ProgramCertificateSignatories, ProgramLetterSignatory
+from courses.models import ElectiveCourse
 from dashboard.api import get_certificate_url
 from dashboard.models import ProgramEnrollment
 from dashboard.utils import get_mmtrack, convert_to_letter
@@ -206,6 +207,7 @@ class GradeRecordView(TemplateView):
         context["program_status"] = "completed" if MicromastersProgramCertificate.objects.filter(
             user=user, program=enrollment.program).exists() else "partially"
         context["last_updated"] = combined_grade.updated_on if combined_grade else ""
+        context["has_electives"] = mmtrack.program.electivesset_set.exists()
         context["profile"] = {
             "username": user.username,
             "email": user.email,
@@ -222,7 +224,8 @@ class GradeRecordView(TemplateView):
                 "letter_grade": convert_to_letter(combined_grade.grade) if combined_grade else "",
                 "status": "Earned" if get_certificate_url(mmtrack, course) else "Not Earned",
                 "date_earned": combined_grade.created_on if combined_grade else "",
-                "overall_grade": mmtrack.get_overall_final_grade_for_course(course)
+                "overall_grade": mmtrack.get_overall_final_grade_for_course(course),
+                "elective_tag": "Elective" if ElectiveCourse.objects.filter(course=course).exists() else "Core"
             })
 
         return context
