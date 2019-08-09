@@ -3,7 +3,7 @@ Serializers for courses
 """
 from rest_framework import serializers
 
-from courses.models import Course, Program, CourseRun
+from courses.models import Course, Program, CourseRun, ElectiveCourse
 from dashboard.models import ProgramEnrollment
 
 
@@ -56,12 +56,17 @@ class ProgramSerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
     """Serializer for Course objects"""
     description = serializers.SerializerMethodField()
+    elective_tag = serializers.SerializerMethodField()
 
     def get_description(self, course):
         """Choose the right description for course"""
         if hasattr(course, 'programcourse') and course.programcourse.description:
             return course.programcourse.description
         return course.description
+
+    def get_elective_tag(self, course):
+        """If the course is an elective"""
+        return 'Elective' if ElectiveCourse.objects.filter(course=course).exists() else 'Core'
 
     class Meta:
         model = Course
@@ -71,6 +76,7 @@ class CourseSerializer(serializers.ModelSerializer):
             'description',
             'url',
             'enrollment_text',
+            'elective_tag',
         )
 
 

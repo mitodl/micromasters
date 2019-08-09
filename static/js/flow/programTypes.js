@@ -75,6 +75,7 @@ export type ProgramPageCourse = {
   description:      string,
   url:              string,
   enrollment_text:  string,
+  elective_tag:     string,
 }
 
 export type CourseRun = {

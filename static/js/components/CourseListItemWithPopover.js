@@ -40,7 +40,7 @@ export default class CourseListItemWithPopover extends React.Component {
 
   render() {
     const {
-      course: { title, description, url, enrollment_text: enrollmentText }
+      course: { title, description, url, enrollment_text: enrollmentText, elective_tag: electiveTag }
     } = this.props
     const { isOpen, anchorEl } = this.state
 
@@ -66,6 +66,7 @@ export default class CourseListItemWithPopover extends React.Component {
         <h4 className="title" onClick={this.handleClick}>
           {title}
         </h4>
+        <div className='elective-tag'>{electiveTag}</div>
         <Popover
           className="program-course-popover mdl-cell mdl-cell--4-col"
           open={isOpen}
