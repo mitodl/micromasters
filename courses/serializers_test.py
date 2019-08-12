@@ -37,6 +37,7 @@ class CourseSerializerTests(MockedESTestCase):
             "description": course.description,
             "url": "",
             "enrollment_text": "Not available",
+            "elective_tag": "Core",
         }
         assert data == expected
 
