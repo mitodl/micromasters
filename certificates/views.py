@@ -197,7 +197,7 @@ class GradeRecordView(TemplateView):
         }
         context["js_settings_json"] = json.dumps(js_settings)
         context["is_public"] = True
-        courses = enrollment.program.course_set.all()
+        courses = enrollment.program.course_set.prefetch_related('electivecourse')
         mmtrack = get_mmtrack(user, enrollment.program)
         combined_grade = CombinedFinalGrade.objects.filter(
             user=user,
@@ -207,7 +207,7 @@ class GradeRecordView(TemplateView):
         context["program_status"] = "completed" if MicromastersProgramCertificate.objects.filter(
             user=user, program=enrollment.program).exists() else "partially"
         context["last_updated"] = combined_grade.updated_on if combined_grade else ""
-        context["has_electives"] = mmtrack.program.electivesset_set.exists()
+        context["has_electives"] = mmtrack.program.electives_set.exists()
         context["profile"] = {
             "username": user.username,
             "email": user.email,
@@ -225,7 +225,7 @@ class GradeRecordView(TemplateView):
                 "status": "Earned" if get_certificate_url(mmtrack, course) else "Not Earned",
                 "date_earned": combined_grade.created_on if combined_grade else "",
                 "overall_grade": mmtrack.get_overall_final_grade_for_course(course),
-                "elective_tag": "Elective" if ElectiveCourse.objects.filter(course=course).exists() else "Core"
+                "elective_tag": "Elective" if (getattr(course, "electivecourse", None) is not None) else "Core"
             })
 
         return context

@@ -319,7 +319,7 @@ class ElectivesSet(models.Model):
     This represents an electives requirement for a program, with choice of courses and
     required number of courses to be passed.
     """
-    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    program = models.ForeignKey(Program, related_name="electives_set", on_delete=models.CASCADE)
     required_number = models.PositiveSmallIntegerField()
     title = models.CharField(max_length=255)
 
