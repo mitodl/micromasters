@@ -198,7 +198,7 @@ def get_info_for_program(mmtrack):
         "certificate": mmtrack.get_program_certificate_url(),
         "number_courses_required": (
             mmtrack.program.num_required_courses
-            if mmtrack.program.electivesset_set.exists()
+            if mmtrack.program.electives_set.exists()
             else mmtrack.program.course_set.count()
         )
     }
