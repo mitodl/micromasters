@@ -11,6 +11,7 @@ from courses.factories import (
     CourseRunFactory,
     ProgramFactory,
 )
+from courses.models import ElectiveCourse, ElectivesSet
 from courses.serializers import (
     CourseSerializer,
     ProgramSerializer,
@@ -37,7 +38,7 @@ class CourseSerializerTests(MockedESTestCase):
             "description": course.description,
             "url": "",
             "enrollment_text": "Not available",
-            "elective_tag": "Core",
+            "elective_tag": "",
         }
         assert data == expected
 
@@ -50,6 +51,16 @@ class CourseSerializerTests(MockedESTestCase):
         data = CourseSerializer(course).data
         assert data['url'] == course_run.enrollment_url
         assert data['enrollment_text'] == course.enrollment_text
+
+    def test_elective_course(self):
+        """
+        Make sure elective course serializes properly
+        """
+        course = CourseFactory.create()
+        elective_set = ElectivesSet.objects.create(program=course.program, required_number=1)
+        ElectiveCourse.objects.create(course=course, electives_set=elective_set)
+        data = CourseSerializer(course).data
+        assert data['elective_tag'] == 'Elective'
 
 
 class CourseRunSerializerTests(MockedESTestCase):
