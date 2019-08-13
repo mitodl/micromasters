@@ -64,9 +64,9 @@ export default class CourseListItemWithPopover extends React.Component {
     return (
       <li className="program-course">
         <h4 className="title" onClick={this.handleClick}>
-          {title}
+          {title}{electiveTag? <div className='elective-tag'>{electiveTag}</div>: null}
         </h4>
-        <div className='elective-tag'>{electiveTag}</div>
+
         <Popover
           className="program-course-popover mdl-cell mdl-cell--4-col"
           open={isOpen}

@@ -66,6 +66,8 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def get_elective_tag(self, course):
         """If the course is an elective"""
+        if not course.program.electives_set.exists():
+            return ""
         return 'Elective' if ElectiveCourse.objects.filter(course=course).exists() else 'Core'
 
     class Meta:
