@@ -512,9 +512,9 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'discussions.tasks.sync_channel_memberships',
         'schedule': crontab(minute='*', hour='*')
     },
-    'freeze-final-grades-every-24-hrs-x4': {
+    'freeze-final-grades-every-24-hrs-few-times': {
         'task': 'grades.tasks.find_course_runs_and_freeze_grades',
-        'schedule': crontab(minute=0, hour='2,3,4,5')
+        'schedule': crontab(minute='*/15', hour='16')
     },
     'create-combined-final-grade-every-1-hrs': {
         'task': 'grades.tasks.create_combined_final_grades',
