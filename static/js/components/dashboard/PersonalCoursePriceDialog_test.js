@@ -6,8 +6,7 @@ import { assert } from "chai"
 import sinon from "sinon"
 import ReactTestUtils from "react-dom/test-utils"
 
-import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
-import getMuiTheme from "material-ui/styles/getMuiTheme"
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import PersonalCoursePriceDialog from "./PersonalCoursePriceDialog"
 import { getEl } from "../../util/test_utils"
 
@@ -27,7 +26,7 @@ describe("CourseEnrollmentDialog", () => {
 
   const renderDialog = (open = true) => {
     mount(
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <MuiThemeProvider theme={createMuiTheme()}>
         <PersonalCoursePriceDialog
           open={open}
           setVisibility={setVisibilityStub}

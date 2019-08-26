@@ -3,8 +3,7 @@ import React from "react"
 import { mount } from "enzyme"
 import { assert } from "chai"
 import sinon from "sinon"
-import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
-import getMuiTheme from "@material-ui/core/styles/getMuiTheme"
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import ReactTestUtils from "react-dom/test-utils"
 
 import SkipFinancialAidDialog from "./SkipFinancialAidDialog"
@@ -25,7 +24,7 @@ describe("SkipFinancialAidDialog", () => {
 
   const renderDialog = (open = true): HTMLElement => {
     mount(
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <MuiThemeProvider theme={createMuiTheme()}>
         <SkipFinancialAidDialog
           open={open}
           cancel={cancelStub}

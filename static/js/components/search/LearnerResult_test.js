@@ -6,8 +6,7 @@ import R from "ramda"
 import { Provider } from "react-redux"
 import { assert } from "chai"
 import { mount } from "enzyme"
-import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
-import getMuiTheme from "material-ui/styles/getMuiTheme"
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import { SearchkitManager, SearchkitProvider } from "searchkit"
 
 import ProfileImage from "../../containers/ProfileImage"
@@ -43,7 +42,7 @@ describe("LearnerResult", () => {
       q: "query"
     }
     return mount(
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <MuiThemeProvider theme={createMuiTheme()}>
         <Provider store={helper.store}>
           <SearchkitProvider searchkit={manager}>
             <LearnerResult

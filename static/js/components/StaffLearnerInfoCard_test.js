@@ -4,8 +4,7 @@ import React from "react"
 import { mount } from "enzyme"
 import { assert } from "chai"
 import sinon from "sinon"
-import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
-import getMuiTheme from "material-ui/styles/getMuiTheme"
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 
 import StaffLearnerInfoCard from "./StaffLearnerInfoCard"
 import { DASHBOARD_RESPONSE } from "../test_constants"
@@ -26,7 +25,7 @@ describe("StaffLearnerInfoCard", () => {
 
   const renderCard = (program = DASHBOARD_RESPONSE.programs[0], price = 1000) =>
     mount(
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <MuiThemeProvider theme={createMuiTheme()}>
         <StaffLearnerInfoCard
           program={program}
           prices={calculatePrices(

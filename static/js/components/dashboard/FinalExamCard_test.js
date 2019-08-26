@@ -5,8 +5,7 @@ import { mount } from "enzyme"
 import { assert } from "chai"
 import sinon from "sinon"
 import IconButton from "react-mdl/lib/IconButton"
-import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
-import getMuiTheme from "material-ui/styles/getMuiTheme"
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import ReactTestUtils from "react-dom/test-utils"
 
 import FinalExamCard from "./FinalExamCard"
@@ -58,7 +57,7 @@ pay for the course and pass the online work.`
   const getDialog = () => document.querySelector(".dialog-to-pearson-site")
   const renderCard = props =>
     mount(
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <MuiThemeProvider theme={createMuiTheme()}>
         <FinalExamCard {...props} />
       </MuiThemeProvider>
     )

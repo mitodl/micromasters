@@ -18,8 +18,7 @@ import {
 } from "../../test_constants"
 import { INITIAL_EMAIL_STATE } from "../../reducers/email"
 import { INITIAL_UI_STATE } from "../../reducers/ui"
-import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
-import getMuiTheme from "material-ui/styles/getMuiTheme"
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import IntegrationTestHelper from "../../util/integration_test_helper"
 import { Provider } from "react-redux"
 import {
@@ -85,7 +84,7 @@ describe("CourseListCard", () => {
 
     const couponPrices = calculatePrices([program], [coursePrice], [])
     return mount(
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <MuiThemeProvider theme={createMuiTheme()}>
         <Provider store={helper.store}>
           <CourseListCard
             program={program}

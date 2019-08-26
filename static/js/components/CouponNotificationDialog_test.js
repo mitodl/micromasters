@@ -14,8 +14,7 @@ import {
   COUPON_AMOUNT_TYPE_FIXED_PRICE,
   COUPON_TYPE_STANDARD
 } from "../constants"
-import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
-import getMuiTheme from "material-ui/styles/getMuiTheme"
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import CouponNotificationDialog from "./CouponNotificationDialog"
 import type { Coupon } from "../flow/couponTypes"
 import type { AvailableProgram } from "../flow/enrollmentTypes"
@@ -105,7 +104,7 @@ describe("CouponNotificationDialog", () => {
     setDialogVisibility = () => {}
   ): HTMLElement => {
     mount(
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <MuiThemeProvider theme={createMuiTheme()}>
         <CouponNotificationDialog
           coupon={coupon}
           couponProgram={couponProgram}

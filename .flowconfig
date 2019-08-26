@@ -21,6 +21,8 @@
 .*/node_modules/log-symbols/node_modules/chalk/index.js.flow
 .*/node_modules/@babel/highlight/node_modules/chalk/index.js.flow
 .*/node_modules/chalk/index.js.flow
+.*/node_modules/jss-plugin-nested/src/index.js
+.*/node_modules/jss/src/index.js
 .*.git/.*
 .*/staticfiles/.*
 

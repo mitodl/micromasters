@@ -4,8 +4,8 @@ import { assert } from "chai"
 import React from "react"
 import URI from "urijs"
 import { Provider } from "react-redux"
-import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
-import getMuiTheme from "material-ui/styles/getMuiTheme"
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
+
 
 import { setDialogVisibility } from "../actions/signup_dialog"
 import SignupDialog from "./SignupDialog"
@@ -25,7 +25,7 @@ describe("SignupDialog", () => {
 
   const renderDialog = (props = {}) => {
     return mount(
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <MuiThemeProvider theme={createMuiTheme()}>
         <Provider store={helper.store}>
           <SignupDialog {...props} />
         </Provider>

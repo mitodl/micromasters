@@ -5,8 +5,7 @@ import { mount } from "enzyme"
 import { assert } from "chai"
 import sinon from "sinon"
 import moment from "moment"
-import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
-import getMuiTheme from "material-ui/styles/getMuiTheme"
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import DatePicker from "react-datepicker"
 
 import { makeCoursePrices } from "../../factories/dashboard"
@@ -57,7 +56,7 @@ describe("FinancialAidCard", () => {
       []
     )
     return mount(
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <MuiThemeProvider theme={createMuiTheme()}>
         <FinancialAidCard
           program={program}
           coursePrice={COURSE_PRICES_RESPONSE[0]}

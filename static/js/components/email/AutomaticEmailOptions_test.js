@@ -3,8 +3,7 @@ import React from "react"
 import sinon from "sinon"
 import { mount } from "enzyme"
 import { assert } from "chai"
-import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
-import getMuiTheme from "material-ui/styles/getMuiTheme"
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 
 import AutomaticEmailOptions from "./AutomaticEmailOptions"
 
@@ -22,7 +21,7 @@ describe("AutomaticEmailOptions", () => {
 
   const renderComponent = (sendAutomaticEmails: boolean = false) =>
     mount(
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <MuiThemeProvider theme={createMuiTheme()}>
         <AutomaticEmailOptions
           setSendAutomaticEmails={setSendAutomaticEmailsStub}
           sendAutomaticEmails={sendAutomaticEmails}
