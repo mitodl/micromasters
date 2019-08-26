@@ -7,7 +7,7 @@ import "ajaxchimp"
 import _ from "lodash"
 import React from "react"
 import ReactDOM from "react-dom"
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import { Provider } from "react-redux"
 import injectTapEventPlugin from "react-tap-event-plugin"
 injectTapEventPlugin()
@@ -67,7 +67,7 @@ const shareButton = document.querySelector(".open-share-dialog")
 if (shareDialog) {
   shareButton.onclick = openShareDialog
   ReactDOM.render(
-    <MuiThemeProvider muiTheme={getMuiTheme()}>
+    <MuiThemeProvider theme={createMuiTheme()}>
       <Provider store={shareStore}>
         <CopyLinkDialog />
       </Provider>
@@ -84,7 +84,7 @@ const sendButton = document.querySelector(".open-send-dialog")
 if (sendDialog) {
   sendButton.onclick = openSendDialog
   ReactDOM.render(
-    <MuiThemeProvider muiTheme={getMuiTheme()}>
+    <MuiThemeProvider theme={createMuiTheme()}>
       <Provider store={sendStore}>
         <SendGradesDialog />
       </Provider>
@@ -112,7 +112,7 @@ nodes.forEach(signUpButton => {
 })
 
 ReactDOM.render(
-  <MuiThemeProvider muiTheme={getMuiTheme()}>
+  <MuiThemeProvider theme={createMuiTheme()}>
     <Provider store={store}>
       <SignupDialog />
     </Provider>

@@ -3,7 +3,7 @@ import PropTypes from "prop-types"
 import { mount } from "enzyme"
 import { assert } from "chai"
 import sinon from "sinon"
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import ReactTestUtils from "react-dom/test-utils"
 
 import * as inputUtil from "../components/inputs/util"

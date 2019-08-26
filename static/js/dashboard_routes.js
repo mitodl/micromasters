@@ -1,4 +1,4 @@
-import App from './containers/App';
+import App from './containers/App'
 
 // these components are intentionally imported here (unused)
 // in order to control webpack's module splitting

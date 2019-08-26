@@ -1,7 +1,7 @@
 // @flow
 import React from "react"
 import Radio from "@material-ui/core/Radio"
-import RadioGroup from '@material-ui/core/RadioGroup';
+import RadioGroup from '@material-ui/core/RadioGroup'
 
 export default class AutomaticEmailOptions extends React.Component {
   props: {

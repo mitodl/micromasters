@@ -6,7 +6,7 @@ import Card from "react-mdl/lib/Card/Card"
 import IconButton from "react-mdl/lib/IconButton"
 import _ from "lodash"
 import Radio from "@material-ui/core/Radio"
-import RadioGroup from '@material-ui/core/RadioGroup';
+import RadioGroup from '@material-ui/core/RadioGroup'
 
 import { FETCH_PROCESSING } from "../actions"
 import { userPrivilegeCheck, isProfileOfLoggedinUser } from "../util/util"

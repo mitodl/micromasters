@@ -3,7 +3,7 @@ import { mount } from "enzyme"
 import { assert } from "chai"
 import React from "react"
 import { Provider } from "react-redux"
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 
 import { setShareDialogVisibility } from "../actions/share_grades_dialog"
 import CopyLinkDialog from "./CopyLinkDialog"
