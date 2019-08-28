@@ -21,8 +21,15 @@
 .*/node_modules/log-symbols/node_modules/chalk/index.js.flow
 .*/node_modules/@babel/highlight/node_modules/chalk/index.js.flow
 .*/node_modules/chalk/index.js.flow
-.*/node_modules/jss-plugin-nested/src/index.js
+.*/node_modules/jss-plugin-nested/.*
 .*/node_modules/jss/src/index.js
+.*/node_modules/jss-plugin-rule-value-function/.*
+.*/node_modules/jss-plugin-camel-case/.*
+.*/node_modules/jss-plugin-default-unit/.*
+.*/node_modules/jss-plugin-global/.*
+.*/node_modules/jss-plugin-props-sort/.*
+.*/node_modules/jss-plugin-vendor-prefixer/.*
+.*/node_modules/jss/.*
 .*.git/.*
 .*/staticfiles/.*
 

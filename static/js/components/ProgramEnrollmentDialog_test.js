@@ -102,7 +102,7 @@ describe("ProgramEnrollmentDialog", () => {
       setSelectedProgram: stub
     })
     wrapper
-      .find(SelectField)
+      .find(Select)
       .props()
       .onChange(null, null, enrollment)
     assert(stub.calledWith(enrollment))
