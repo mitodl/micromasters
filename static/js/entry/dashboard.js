@@ -23,10 +23,6 @@ if (!Object.entries) {
   entries.shim()
 }
 
-// material-ui requirement
-import injectTapEventPlugin from "react-tap-event-plugin"
-injectTapEventPlugin()
-
 const store = configureStore()
 
 const debug = SETTINGS.reactGaDebug === "true"

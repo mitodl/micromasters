@@ -2,7 +2,6 @@
 import React, { Component } from "react"
 import PropTypes from "prop-types"
 import Paper from "@material-ui/core/Paper"
-import propTypes from "prop-types"
 
 function getStyles(props, context, state) {
   const { open } = state
@@ -28,8 +27,8 @@ export default class PopoverNullAnimation extends Component {
      * Override the inline-styles of the root element.
      */
     style:        PropTypes.object,
-    targetOrigin: propTypes.origin.isRequired,
-    zDepth:       propTypes.zDepth
+    targetOrigin: PropTypes.string.isRequired,
+    zDepth:       PropTypes.number
   }
 
   static defaultProps = {

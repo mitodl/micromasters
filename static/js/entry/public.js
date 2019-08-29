@@ -9,8 +9,6 @@ import React from "react"
 import ReactDOM from "react-dom"
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import { Provider } from "react-redux"
-import injectTapEventPlugin from "react-tap-event-plugin"
-injectTapEventPlugin()
 
 import CourseListWithPopover from "../components/CourseListWithPopover"
 import FacultyCarousel from "../components/FacultyCarousel"

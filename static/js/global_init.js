@@ -81,17 +81,6 @@ process.on("unhandledRejection", reason => {
   // throw reason; // uncomment to show promise-related errors
 })
 
-// fix 'unknown prop' error
-import injectTapEventPlugin from "react-tap-event-plugin"
-
-// injectTapEventPlugin should only be called once, and it throws an
-// error if it is called twice. we wrap our call to it in a try / catch
-// so that it doesn't throw an error when running tests in watch mode
-// (which would otherwise cause it to be called twice)
-try {
-  injectTapEventPlugin()
-  // eslint-disable-next-line no-empty
-} catch (_) {}
 
 // enable chai-as-promised
 import chai from "chai"
