@@ -2163,7 +2163,7 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-create-react-class@^15.5.1, create-react-class@^15.5.2, create-react-class@^15.5.x, create-react-class@^15.6.3:
+create-react-class@^15.5.1, create-react-class@^15.5.2, create-react-class@^15.5.x:
   version "15.6.3"
   resolved "https://registry.yarnpkg.com/create-react-class/-/create-react-class-15.6.3.tgz#2d73237fb3f970ae6ebe011a9e66f46dbca80036"
   integrity sha512-M+/3Q6E6DLO6Yx3OwrWjwHBnvfXXYA7W+dFjt/ZDBemHO1DDZhsalX/NUtnTYclN6GfnBDRh4qRHjcDHmlJBJg==
@@ -7108,7 +7108,7 @@ react-swipeable@^4.0.0:
     detect-passive-events "^1.0.4"
     prop-types "^15.5.8"
 
-react-telephone-input@^4.1.1:
+react-telephone-input@^4.73.4:
   version "4.73.4"
   resolved "https://registry.yarnpkg.com/react-telephone-input/-/react-telephone-input-4.73.4.tgz#16a809282fe6f06bb0effbb679220580cc610455"
   integrity sha512-4d0OjU/8htlgFoFMdCLZiAiV0f0jHpUdGAlbSj6xAwU4pSkV7HFkjIO0DS3JJwvKGHsiJhp2I9UXNzwAAyTF6Q==

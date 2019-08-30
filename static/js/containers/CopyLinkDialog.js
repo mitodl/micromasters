@@ -6,6 +6,7 @@ import {
 } from "../actions/share_grades_dialog"
 import { connect } from "react-redux"
 import Dialog from "@material-ui/core/Dialog"
+import DialogTitle from "@material-ui/core/es/DialogTitle/DialogTitle";
 
 class CopyLinkDialog extends React.Component {
   props: {
@@ -29,7 +30,7 @@ class CopyLinkDialog extends React.Component {
       <Dialog
         title="Share Link to Record"
         titleClassName="dialog-title"
-        contentClassName="dialog share-dialog"
+        classes="dialog share-dialog"
         open={open}
         onRequestClose={() => {
           setShareDialogVisibility(false)
@@ -37,6 +38,7 @@ class CopyLinkDialog extends React.Component {
         }}
         autoScrollBodyContent={true}
       >
+        <DialogTitle classes="dialog-title">"Share Link to Record"</DialogTitle>
         <p>
           Copy this link to share with a university, employer or anyone else of
           you choosing. Anyone you share this link with will have access to your

@@ -7,14 +7,11 @@ import URI from "urijs"
 
 import { createSimpleActionHelpers } from "../lib/redux"
 import { setDialogVisibility } from "../actions/signup_dialog"
+import DialogTitle from "@material-ui/core/es/DialogTitle/DialogTitle";
 
 type signupProps = {
   open: boolean,
   setDialogVisibility: (b: boolean) => void
-}
-
-const dialogStyle = {
-  maxWidth: "500px"
 }
 
 const SignupDialog = ({ open, setDialogVisibility }: signupProps) => {
@@ -29,15 +26,10 @@ const SignupDialog = ({ open, setDialogVisibility }: signupProps) => {
   }
   return (
     <Dialog
-      titleClassName="dialog-title"
-      contentClassName="dialog signup-dialog"
-      className="signup-dialog-wrapper"
+      classes={{paper: "signup-dialog"}}
       open={open}
-      onRequestClose={() => setDialogVisibility(false)}
-      contentStyle={dialogStyle}
-      autoScrollBodyContent={true}
+      onExit={() => setDialogVisibility(false)}
     >
-      <div className="signup-dialog">
         <div className="logos">
           <img
             className="edx_logo"
@@ -72,7 +64,6 @@ const SignupDialog = ({ open, setDialogVisibility }: signupProps) => {
             Nondiscrimination Policy.
           </a>
         </div>
-      </div>
     </Dialog>
   )
 }

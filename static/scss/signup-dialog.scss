@@ -1,8 +1,7 @@
 .signup-dialog {
-  display: flex;
-  flex-direction: column;
-  margin: 20px 30px;
   color: $font-black;
+  padding: 50px;
+  max-width: 500px !important;
 
   @include breakpoint(phone) {
     margin: 10px 16px;

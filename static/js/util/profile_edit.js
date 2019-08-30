@@ -43,11 +43,9 @@ const radioButtonLabel = label => (
 
 const radioButtons = R.map(option => (
   <Radio
-    className="profile-radio-button"
-    labelStyle={radioStyles.labelStyle}
+    classes={{root: "profile-radio-button"}}
     value={option.value}
-    aria-labelledby={radioButtonLabelSelector(option.label)}
-    label={radioButtonLabel(option.label)}
+    name={radioButtonLabel(option.label)}
     key={radioButtonLabel(option.label)}
   />
 ))
@@ -86,7 +84,7 @@ export function boundRadioGroupField(
         className="profile-radio-group"
         name={label}
         onChange={onChange}
-        valueSelected={value}
+        value={value}
       >
         {radioButtons(options)}
       </RadioGroup>
@@ -147,12 +145,12 @@ export function boundTextField(
     <TextField
       onBlur={onBlur}
       name={label}
-      multiLine={multiLine}
-      className={validationErrorSelector(errors, keySet)}
-      floatingLabelText={label}
+      multiline={true}
+      classes={{root: validationErrorSelector(errors, keySet)}}
+      helperText={label}
       value={getValue()}
       fullWidth={true}
-      errorText={_.get(errors, keySet)}
+      error={_.has(errors, keySet)}
       onChange={onChange}
       {...options}
     />

@@ -153,51 +153,40 @@ export default class DateField extends React.Component {
       daySlash = <span className="slash"> / </span>
       dayField = (
         <TextField
-          hintText="DD"
-          floatingLabelText="Day"
-          floatingLabelFixed={true}
+          placeholder="DD"
+          helperText="Day"
           style={{
             maxWidth: "3em"
           }}
-          fullWidth={true}
+          error={_.has(errors, 'date_of_birth')}
           value={edit.day !== undefined ? edit.day : ""}
           onChange={e => setNewDate(e.target.value, undefined, undefined)}
         />
       )
     }
-
     return (
       <fieldset className={validationErrorSelector(errors, keySet)}>
         <legend>{label}</legend>{" "}
         <TextField
-          hintText="MM"
-          floatingLabelText="Month"
-          floatingLabelFixed={true}
-          floatingLabelStyle={{ whiteSpace: "nowrap" }}
+          placeholder="MM"
+          helperText="Month"
           style={{
             maxWidth: "3em"
           }}
-          errorStyle={{
-            position:   "absolute",
-            top:        "100%",
-            whiteSpace: "nowrap"
-          }}
-          fullWidth={true}
+          error={_.has(errors, 'date_of_birth')}
           value={edit.month !== undefined ? edit.month : ""}
           onChange={e => setNewDate(undefined, e.target.value, undefined)}
-          errorText={_.get(errors, keySet)}
         />
         <span className="slash"> / </span>
         {dayField}
         {daySlash}
         <TextField
-          hintText="YYYY"
-          floatingLabelText="Year"
-          floatingLabelFixed={true}
+          placeholder="YYYY"
+          helperText="Year"
           style={{
             maxWidth: "4em"
           }}
-          fullWidth={true}
+          error={_.has(errors, 'date_of_birth')}
           value={edit.year !== undefined ? edit.year : ""}
           onChange={e => setNewDate(undefined, undefined, e.target.value)}
           onBlur={onBlur}
