@@ -147,6 +147,7 @@ export default class DateField extends React.Component {
     }
 
     const edit = getEditObject()
+    const error = _.get(errors, 'date_of_birth', undefined) !== undefined
 
     let dayField, daySlash
     if (!omitDay) {
@@ -158,7 +159,7 @@ export default class DateField extends React.Component {
           style={{
             maxWidth: "3em"
           }}
-          error={_.has(errors, 'date_of_birth')}
+          error={error}
           value={edit.day !== undefined ? edit.day : ""}
           onChange={e => setNewDate(e.target.value, undefined, undefined)}
         />
@@ -173,7 +174,7 @@ export default class DateField extends React.Component {
           style={{
             maxWidth: "3em"
           }}
-          error={_.has(errors, 'date_of_birth')}
+          error={error}
           value={edit.month !== undefined ? edit.month : ""}
           onChange={e => setNewDate(undefined, e.target.value, undefined)}
         />
@@ -186,7 +187,7 @@ export default class DateField extends React.Component {
           style={{
             maxWidth: "4em"
           }}
-          error={_.has(errors, 'date_of_birth')}
+          error={error}
           value={edit.year !== undefined ? edit.year : ""}
           onChange={e => setNewDate(undefined, undefined, e.target.value)}
           onBlur={onBlur}

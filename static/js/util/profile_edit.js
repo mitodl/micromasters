@@ -15,6 +15,9 @@ import type { Validator, UIValidator } from "../lib/validation/profile"
 import type { Profile } from "../flow/profileTypes"
 import type { Option } from "../flow/generalTypes"
 import { CP1252_REGEX } from "../constants"
+import FormControl from "@material-ui/core/FormControl";
+import FormLabel from "@material-ui/core/FormLabel";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 // utility functions for pushing changes to profile forms back to the
 // redux store.
@@ -42,13 +45,13 @@ const radioButtonLabel = label => (
 )
 
 const radioButtons = R.map(option => (
-  <Radio
+  <FormControlLabel
     classes={{root: "profile-radio-button"}}
     value={option.value}
-    name={radioButtonLabel(option.label)}
-    key={radioButtonLabel(option.label)}
-  />
-))
+    control={<Radio/>}
+    label={option.label}
+    key={option.label}
+  />))
 
 export function boundRadioGroupField(
   keySet: string[],
@@ -78,18 +81,16 @@ export function boundRadioGroupField(
 
   const value = String(_.get(profile, keySet))
   return (
-    <fieldset className={validationErrorSelector(errors, keySet)}>
-      <legend className="profile-radio-group-label">{label}</legend>
+    <FormControl>
+      <FormLabel component="legend">{label}</FormLabel>
       <RadioGroup
-        className="profile-radio-group"
         name={label}
         onChange={onChange}
         value={value}
       >
         {radioButtons(options)}
       </RadioGroup>
-      <span className="validation-error-text">{_.get(errors, keySet)}</span>
-    </fieldset>
+    </FormControl>
   )
 }
 
