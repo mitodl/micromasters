@@ -78,6 +78,7 @@
     font-size: 14px;
     display: flex;
     margin-top: 8px;
+    flex-direction: row;
 
     > div {
       width: auto !important;
@@ -118,6 +119,14 @@
       .title, span {
         font-weight: 500;
         font-size: 18px;
+      }
+
+      .radio-style {
+        margin-right: 30px;
+        font-weight: 400;
+       span {
+        font-size: 14px;
+        }
       }
 
       span.question {
@@ -247,7 +256,7 @@
   .profile-radio-button {
     width: unset !important;
     display: inline-block !important;
-    margin-right: 8px;
+    margin-right: 30px;
 
     label {
       width: unset !important;

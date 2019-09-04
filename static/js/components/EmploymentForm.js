@@ -32,6 +32,8 @@ import type {
 import type { UIState } from "../reducers/ui"
 import type { AsyncActionHelper } from "../flow/reduxTypes"
 import { generateNewWorkHistory } from "../util/util"
+import FormControl from "@material-ui/core/FormControl"
+import FormControlLabel from "@material-ui/core/FormControlLabel"
 
 class EmploymentForm extends ProfileFormFields {
   industryOptions: Array<Option> = INDUSTRIES.map(industry => ({
@@ -283,27 +285,28 @@ class EmploymentForm extends ProfileFormFields {
       ui: { workHistoryAnswer }
     } = this.props
     const valueSelected = _.isNil(workHistoryAnswer) ? null : "false"
-    const radioIconStyle = { marginRight: "8px" }
     return (
-      <RadioGroup
-        className="profile-radio-group"
-        name="work-history-switch"
-        onChange={(event, value) => this.handleRadioClick(value)}
-        valueSelected={valueSelected}
-      >
-        <Radio
-          value="true"
-          label="Yes"
-          iconStyle={radioIconStyle}
-          style={{ marginRight: "30px" }}
-        />
-        <Radio
-          value="false"
-          label="No"
-          iconStyle={radioIconStyle}
-          style={{ marginRight: "15px" }}
-        />
-      </RadioGroup>
+      <FormControl>
+        <RadioGroup
+          className="profile-radio-group"
+          name="work-history-switch"
+          onChange={(event, value) => this.handleRadioClick(value)}
+          value={valueSelected}
+        >
+          <FormControlLabel
+            value="true"
+            label="Yes"
+            classes={{root: "radio-style"}}
+            control={<Radio />}
+          />
+          <FormControlLabel
+            value="false"
+            label="No"
+            classes={{root: "radio-style"}}
+            control={<Radio />}
+          />
+        </RadioGroup>
+      </FormControl>
     )
   }
 

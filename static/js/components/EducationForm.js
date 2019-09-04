@@ -39,6 +39,8 @@ import FIELDS_OF_STUDY from "../data/fields_of_study"
 import { generateNewEducation } from "../util/util"
 import DialogTitle from "@material-ui/core/DialogTitle"
 import DialogActions from "@material-ui/core/DialogActions"
+import FormControlLabel from "@material-ui/core/FormControlLabel"
+import FormControl from "@material-ui/core/FormControl"
 
 const fieldOfStudyOptions = labelSort(
   _.map(FIELDS_OF_STUDY, (name, code) => ({
@@ -119,29 +121,30 @@ class EducationForm extends ProfileFormFields {
     const {
       ui: { educationLevelAnswers }
     } = this.props
-    const radioIconStyle = { marginRight: "8px" }
     const valueSelected = level.value in educationLevelAnswers ? "false" : null
     return (
-      <RadioGroup
-        className={`profile-radio-group ${level.value}`}
-        id={`profile-tab-education-switch-${level.value}`}
-        name={`profile-tab-education-switch-${level.value}`}
-        onChange={(event, value) => this.handleRadioClick(value, level.value)}
-        valueSelected={valueSelected}
-      >
-        <Radio
-          value="true"
-          label="Yes"
-          iconStyle={radioIconStyle}
-          style={{ marginRight: "30px" }}
-        />
-        <Radio
-          value="false"
-          label="No"
-          iconStyle={radioIconStyle}
-          style={{ marginRight: "15px" }}
-        />
-      </RadioGroup>
+      <FormControl>
+        <RadioGroup
+          className={`profile-radio-group ${level.value}`}
+          id={`profile-tab-education-switch-${level.value}`}
+          name={`profile-tab-education-switch-${level.value}`}
+          onChange={(event, value) => this.handleRadioClick(value, level.value)}
+          value={valueSelected}
+        >
+         <FormControlLabel
+            value="true"
+            label="Yes"
+            classes={{root: "radio-style"}}
+            control={<Radio />}
+          />
+          <FormControlLabel
+            value="false"
+            label="No"
+            classes={{root: "radio-style"}}
+            control={<Radio />}
+          />
+        </RadioGroup>
+      </FormControl>
     )
   }
 

@@ -16,7 +16,6 @@ import type { Profile } from "../flow/profileTypes"
 import type { Option } from "../flow/generalTypes"
 import { CP1252_REGEX } from "../constants"
 import FormControl from "@material-ui/core/FormControl";
-import FormLabel from "@material-ui/core/FormLabel";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 // utility functions for pushing changes to profile forms back to the
@@ -29,12 +28,6 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
  * to update radio buttons.
  * pass in the name (used as placeholder), key for profile, and the options.
  */
-const radioStyles = {
-  labelStyle: {
-    left:  -10,
-    width: "100%"
-  }
-}
 
 const radioButtonLabelSelector = label => `radio-label-${classify(label)}`
 
@@ -44,13 +37,12 @@ const radioButtonLabel = label => (
   </label>
 )
 
-const radioButtons = R.map(option => (
+export const radioButtons = R.map(option => (
   <FormControlLabel
     classes={{root: "profile-radio-button"}}
     value={option.value}
     control={<Radio/>}
     label={radioButtonLabel(option.label)}
-    key={radioButtonLabel(option.label)}
   />))
 
 export function boundRadioGroupField(
@@ -81,8 +73,7 @@ export function boundRadioGroupField(
 
   const value = String(_.get(profile, keySet))
   return (
-    <FormControl>
-      <FormLabel component="legend">{label}</FormLabel>
+   <FormControl>
       <RadioGroup
         name={label}
         onChange={onChange}

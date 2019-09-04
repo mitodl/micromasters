@@ -9,7 +9,7 @@ import SelectField from "./inputs/SelectField"
 import CountrySelectField from "./inputs/CountrySelectField"
 import StateSelectField from "./inputs/StateSelectField"
 import ProfileFormFields from "../util/ProfileFormFields"
-import { shouldRenderRomanizedFields } from "../util/profile_edit"
+import {radioButtons, shouldRenderRomanizedFields} from "../util/profile_edit"
 import type {
   Profile,
   SaveProfileFunc,
@@ -19,6 +19,10 @@ import type {
 import type { Validator, UIValidator } from "../lib/validation/profile"
 import type { UIState } from "../reducers/ui"
 import type { Option } from "../flow/generalTypes"
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControl from "@material-ui/core/FormControl";
+import FormLabel from '@material-ui/core/FormLabel';
+import {sendFormFieldEvent} from "../lib/google_analytics";
 
 export default class PersonalForm extends ProfileFormFields {
   genderOptions: Array<Option> = [
@@ -64,6 +68,43 @@ export default class PersonalForm extends ProfileFormFields {
       ? this.renderRomanizedFields()
       : null
 
+  radioGroupField(keySet: string[], label: string, options: Option[]): React$Element<*> {
+  const {
+    profile,
+    updateProfile,
+    errors,
+    validator,
+    updateValidationVisibility
+  } = this.props
+  const onChange = e => {
+    const clone = _.cloneDeep(profile)
+    let value = e.target.value
+    if (value === "true") {
+      value = true
+    } else if (value === "false") {
+      value = false
+    }
+    _.set(clone, keySet, value)
+    updateValidationVisibility(keySet)
+    updateProfile(clone, validator)
+    sendFormFieldEvent(keySet)
+  }
+
+  const value = String(_.get(profile, keySet))
+  return (
+   <FormControl>
+     <FormLabel>{label}</FormLabel>
+      <RadioGroup
+        className="profile-radio-group"
+        name="gender"
+        onChange={onChange}
+        value={value}
+      >
+        {radioButtons(options)}
+      </RadioGroup>
+    </FormControl>
+  )
+}
   render() {
     const { profile } = this.props
 
@@ -109,7 +150,7 @@ export default class PersonalForm extends ProfileFormFields {
             {this.boundDateField(["date_of_birth"], "Date of birth")}
           </Cell>
           <Cell col={12} className="profile-gender-group">
-            {this.boundRadioGroupField(
+            {this.radioGroupField(
               ["gender"],
               "Gender",
               this.genderOptions
