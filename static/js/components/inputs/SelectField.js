@@ -91,8 +91,8 @@ class SelectField extends React.Component {
 
   label = (label: string, element: React$Element<*>) => (
     <label className="react-select-label">
-      {label}
       {element}
+      {label}
     </label>
   )
 

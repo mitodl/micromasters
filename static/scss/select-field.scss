@@ -5,7 +5,6 @@
 }
 
 .select-field {
-  padding-top: 9px;
 
   .select-label {
     font-size: 12px;
@@ -34,11 +33,11 @@
 
   .Select-value {
     padding-left: 2px;
-    top: 4px;
   }
 
   .Select-input {
     padding-left: 3px;
+    height: 29px;
   }
 
   .Select-arrow-zone {
@@ -47,6 +46,5 @@
 }
 
 .Select-placeholder {
-  top: 4px;
   padding-left: 2px;
 }

@@ -147,7 +147,7 @@ export function boundTextField(
       onBlur={onBlur}
       name={label}
       multiline={true}
-      classes={{root: validationErrorSelector(errors, keySet)}}
+      classes={{root: "input-text " + validationErrorSelector(errors, keySet)}}
       helperText={label}
       value={getValue()}
       fullWidth={true}

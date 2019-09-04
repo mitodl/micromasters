@@ -25,7 +25,7 @@ class EmploymentTab extends React.Component {
     dispatch: Function
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { dispatch } = this.props
     dispatch(setProfileStep(EMPLOYMENT_STEP))
   }

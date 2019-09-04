@@ -20,7 +20,7 @@ class EducationTab extends React.Component {
     dispatch: Function
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { dispatch } = this.props
     dispatch(setProfileStep(EDUCATION_STEP))
   }

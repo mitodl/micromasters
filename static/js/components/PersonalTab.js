@@ -69,7 +69,7 @@ export default class PersonalTab extends React.Component {
     this.sortPrograms
   )
 
-  componentWillMount() {
+  componentDidMount() {
     const { dispatch } = this.props
     dispatch(setProfileStep(PERSONAL_STEP))
   }

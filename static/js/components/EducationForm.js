@@ -37,6 +37,8 @@ import type { Validator, UIValidator } from "../lib/validation/profile"
 import { formatMonthDate } from "../util/date"
 import FIELDS_OF_STUDY from "../data/fields_of_study"
 import { generateNewEducation } from "../util/util"
+import DialogTitle from "@material-ui/core/DialogTitle"
+import DialogActions from "@material-ui/core/DialogActions"
 
 const fieldOfStudyOptions = labelSort(
   _.map(FIELDS_OF_STUDY, (name, code) => ({
@@ -473,20 +475,19 @@ class EducationForm extends ProfileFormFields {
           inFlight={inFlight}
         />
         <Dialog
-          title={title}
-          titleClassName="dialog-title"
-          contentClassName="dialog education-dialog"
-          className="education-dialog-wrapper"
+          classes={{paper: "dialog education-dialog", root:"education-dialog-wrapper"}}
           open={educationDialogVisibility}
-          onRequestClose={this.clearEducationEdit}
-          actions={dialogActions(
+          onClose={this.clearEducationEdit}
+        >
+          <DialogTitle className="dialog-title">{title}</DialogTitle>
+          {this.editEducationForm()}
+          <DialogActions>
+            {dialogActions(
             this.clearEducationEdit,
             this.saveEducationForm,
             inFlight
           )}
-          autoScrollBodyContent={true}
-        >
-          {this.editEducationForm()}
+          </DialogActions>
         </Dialog>
         {this.renderCard()}
       </div>

@@ -49,15 +49,11 @@ class AutomaticEmailPage extends React.Component {
     router: PropTypes.object.isRequired
   }
 
-  componentWillMount() {
+  componentDidMount() {
+    const { dispatch, automaticEmails } = this.props
     if (!hasAnyStaffRole(SETTINGS.roles)) {
       this.context.router.push("/dashboard")
     }
-  }
-
-  componentDidMount() {
-    const { dispatch, automaticEmails } = this.props
-
     if (!automaticEmails.processing) {
       dispatch(actions.automaticEmails.get())
     }

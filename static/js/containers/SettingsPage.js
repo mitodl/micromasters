@@ -18,7 +18,7 @@ import { privacyValidation } from "../lib/validation/profile"
 import type { ProfileContainerProps } from "./ProfileFormContainer"
 
 class SettingsPage extends React.Component<*, ProfileContainerProps, *> {
-  componentWillMount() {
+  componentDidMount() {
     this.startSettingsEdit()
   }
 

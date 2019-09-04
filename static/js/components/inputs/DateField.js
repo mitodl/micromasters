@@ -147,7 +147,7 @@ export default class DateField extends React.Component {
     }
 
     const edit = getEditObject()
-    const error = _.get(errors, 'date_of_birth', undefined) !== undefined
+    const error = _.get(errors, keySet, undefined) !== undefined
 
     let dayField, daySlash
     if (!omitDay) {
