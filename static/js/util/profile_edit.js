@@ -49,8 +49,8 @@ const radioButtons = R.map(option => (
     classes={{root: "profile-radio-button"}}
     value={option.value}
     control={<Radio/>}
-    label={option.label}
-    key={option.label}
+    label={radioButtonLabel(option.label)}
+    key={radioButtonLabel(option.label)}
   />))
 
 export function boundRadioGroupField(
