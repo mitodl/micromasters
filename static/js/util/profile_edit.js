@@ -3,7 +3,6 @@ import React from "react"
 import _ from "lodash"
 import TextField from "@material-ui/core/TextField"
 import  Radio from "@material-ui/core/Radio"
-import  RadioGroup from "@material-ui/core/Radio"
 import Checkbox from "@material-ui/core/Checkbox"
 import R from "ramda"
 import ReactTelInput from "react-telephone-input"
@@ -13,10 +12,8 @@ import { validationErrorSelector, classify } from "./util"
 import { sendFormFieldEvent } from "../lib/google_analytics"
 import type { Validator, UIValidator } from "../lib/validation/profile"
 import type { Profile } from "../flow/profileTypes"
-import type { Option } from "../flow/generalTypes"
 import { CP1252_REGEX } from "../constants"
-import FormControl from "@material-ui/core/FormControl";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormControlLabel from "@material-ui/core/FormControlLabel"
 
 // utility functions for pushing changes to profile forms back to the
 // redux store.
@@ -44,46 +41,6 @@ export const radioButtons = R.map(option => (
     control={<Radio/>}
     label={radioButtonLabel(option.label)}
   />))
-
-export function boundRadioGroupField(
-  keySet: string[],
-  label: string,
-  options: Option[]
-): React$Element<*> {
-  const {
-    profile,
-    updateProfile,
-    errors,
-    validator,
-    updateValidationVisibility
-  } = this.props
-  const onChange = e => {
-    const clone = _.cloneDeep(profile)
-    let value = e.target.value
-    if (value === "true") {
-      value = true
-    } else if (value === "false") {
-      value = false
-    }
-    _.set(clone, keySet, value)
-    updateValidationVisibility(keySet)
-    updateProfile(clone, validator)
-    sendFormFieldEvent(keySet)
-  }
-
-  const value = String(_.get(profile, keySet))
-  return (
-   <FormControl>
-      <RadioGroup
-        name={label}
-        onChange={onChange}
-        value={value}
-      >
-        {radioButtons(options)}
-      </RadioGroup>
-    </FormControl>
-  )
-}
 
 /**
  * bind to this.boundTextField in the constructor of a form component

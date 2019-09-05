@@ -86,6 +86,10 @@
 
     .profile-radio-button {
       margin-bottom: 8px;
+
+      .radio-label {
+        margin-bottom: 0;
+      }
     }
 
     svg:last-child {

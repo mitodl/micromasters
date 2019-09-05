@@ -5,7 +5,6 @@ import PropTypes from "prop-types"
 import {
   boundDateField,
   boundTextField,
-  boundRadioGroupField,
   boundCheckbox,
   boundTelephoneInput
 } from "./profile_edit"
@@ -17,7 +16,6 @@ export default class ProfileFormFields extends React.Component {
     // bind our field methods to this
     this.boundTextField = boundTextField.bind(this)
     this.boundDateField = boundDateField.bind(this)
-    this.boundRadioGroupField = boundRadioGroupField.bind(this)
     this.boundCheckbox = boundCheckbox.bind(this)
     this.boundTelephoneInput = boundTelephoneInput.bind(this)
   }
