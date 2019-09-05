@@ -133,6 +133,7 @@ export function boundTextField(
   if (maxLength) {
     options.maxLength = maxLength
   }
+  const error = _.get(errors, keySet, undefined) !== undefined
   return (
     <TextField
       onBlur={onBlur}
@@ -142,7 +143,7 @@ export function boundTextField(
       helperText={label}
       value={getValue()}
       fullWidth={true}
-      error={_.has(errors, keySet)}
+      error={error}
       onChange={onChange}
       {...options}
     />

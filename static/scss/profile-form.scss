@@ -64,5 +64,21 @@
 
   .input-text {
     margin-top: 6px;
+
+    p {
+      font-size: 12px;
+    }
+  }
+  .dialog-title {
+
+    h2 {
+      font-size: 22px;
+      line-height: 32px;
+      font-weight: 400;
+    }
+  }
+
+  .employment-dialog {
+    width: 75%;
   }
 }

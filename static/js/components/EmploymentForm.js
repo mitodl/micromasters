@@ -34,6 +34,8 @@ import type { AsyncActionHelper } from "../flow/reduxTypes"
 import { generateNewWorkHistory } from "../util/util"
 import FormControl from "@material-ui/core/FormControl"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
+import DialogTitle from "@material-ui/core/DialogTitle"
+import DialogActions from "@material-ui/core/DialogActions"
 
 class EmploymentForm extends ProfileFormFields {
   industryOptions: Array<Option> = INDUSTRIES.map(industry => ({
@@ -384,20 +386,20 @@ class EmploymentForm extends ProfileFormFields {
           inFlight={inFlight}
         />
         <Dialog
-          title={title}
-          titleClassName="dialog-title"
-          contentClassName="dialog employment-dialog"
+          classes={{paper: "dialog employment-dialog"}}
           className="employment-dialog-wrapper"
           open={workDialogVisibility}
-          onRequestClose={this.closeWorkDialog}
-          actions={dialogActions(
+          onClose={this.closeWorkDialog}
+        >
+          <DialogTitle className="dialog-title">{title}</DialogTitle>
+          {this.editWorkHistoryForm()}
+          <DialogActions>
+            {dialogActions(
             this.closeWorkDialog,
             this.saveWorkHistoryEntry,
             inFlight
           )}
-          autoScrollBodyContent={true}
-        >
-          {this.editWorkHistoryForm()}
+          </DialogActions>
         </Dialog>
         {this.renderCard()}
       </div>
