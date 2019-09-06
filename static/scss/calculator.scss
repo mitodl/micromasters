@@ -1,6 +1,34 @@
-.financial-aid-calculator, .confirm-dialog {
+.dialog.financial-aid-calculator, .confirm-dialog {
   >div >div {
     border-top: none !important;
+  }
+
+  @include breakpoint(desktop) {
+    padding: 40px 25px 10px;
+    overflow-y: visible;
+  }
+
+  @include breakpoint(mobile) {
+    overflow: scroll;
+
+    .checkbox {
+      .mdl-checkbox__label {
+        font-size: 13px;
+        line-height: 1.2em;
+      }
+    }
+  }
+
+  @include breakpoint(phone) {
+    overflow: scroll;
+    padding: 20px 10px;
+
+    .checkbox {
+      .mdl-checkbox__label {
+        font-size: 13px;
+        line-height: 1.2em;
+      }
+    }
   }
 
   .mm-button {
@@ -21,25 +49,6 @@
 
     @include breakpoint(desktop) {
       padding: 40px 40px 20px;
-    }
-  }
-
-  .financial-aid-calculator-body {
-    @include breakpoint(desktop) {
-      padding: 0 40px 20px;
-      overflow-y: visible;
-    }
-
-    @include breakpoint(phone) {
-      overflow: scroll;
-      padding: 0 20px 10px;
-
-      .checkbox {
-        .mdl-checkbox__label {
-          font-size: 13px;
-          line-height: 1.2em;
-        }
-      }
     }
   }
 
@@ -116,7 +125,7 @@
     width: 100%;
 
     @include breakpoint(desktop) {
-      padding: 0 20px 20px 40px;
+      padding: 0 20px 0 40px;
       display: flex;
       flex-direction: row;
       justify-content: space-between;

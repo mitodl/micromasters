@@ -33,6 +33,8 @@ import type { Program } from "../flow/programTypes"
 import { formatPrice } from "../util/util"
 import { dialogActions } from "../components/inputs/util"
 import { getOwnDashboard } from "../reducers/util"
+import DialogActions from "@material-ui/core/es/DialogActions/DialogActions";
+import DialogTitle from "@material-ui/core/es/DialogTitle/DialogTitle";
 
 export const CALCULATOR_DIALOG = "CALCULATOR_DIALOG"
 
@@ -70,7 +72,6 @@ const salaryField = (update, current) => (
     name="salary"
     aria-required="true"
     aria-invalid={_.has(current, ["validation", "income"])}
-    label="income (yearly)"
     id="user-salary-input"
     className="salary-field"
     value={current.income}
@@ -232,22 +233,15 @@ const FinancialAidCalculator = ({
   return (
     <div>
       <Dialog
-        title="Personal Course Pricing"
-        titleClassName="dialog-title"
-        contentClassName="dialog financial-aid-calculator"
-        className="financial-aid-calculator-wrapper"
         open={calculatorDialogVisibility}
-        bodyClassName="financial-aid-calculator-body"
-        autoScrollBodyContent={true}
-        onRequestClose={closeDialogAndCancel}
-        actions={calculatorActions(
-          openConfirmSkipDialog,
-          closeDialogAndCancel,
-          () => saveFinancialAid(financialAid),
-          fetchAddStatus,
-          fetchSkipStatus
-        )}
+        classes={{
+          container: "financial-aid-calculator-body",
+          paper: "dialog financial-aid-calculator",
+          root: "financial-aid-calculator-wrapper"
+        }}
+        onClose={closeDialogAndCancel}
       >
+        <DialogTitle className="dialog-title">Personal Course Pricing</DialogTitle>
         <div className="copy">
           {`The cost of courses in the ${title} MicroMasters varies between ${minPossibleCost} and ${maxPossibleCost},
         depending on your income and ability to pay.`}
@@ -273,6 +267,16 @@ const FinancialAidCalculator = ({
           {validationMessage("checkBox", validation)}
         </div>
         {fetchError ? apiError(fetchError) : null}
+
+        <DialogActions>
+          {calculatorActions(
+          openConfirmSkipDialog,
+          closeDialogAndCancel,
+          () => saveFinancialAid(financialAid),
+          fetchAddStatus,
+          fetchSkipStatus
+        )}
+        </DialogActions>
       </Dialog>
       {confirmDialog}
     </div>
