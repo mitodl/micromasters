@@ -92,7 +92,7 @@ const checkboxUpdate = (update, current, bool) => {
 const checkBox = (update, current) => (
   <Checkbox
     checked={current.checkBox}
-    required="true"
+    required={true}
     aria-invalid={_.has(current, ["validation", "checkBox"])}
     label={checkboxText}
     onChange={() => checkboxUpdate(update, current, !current.checkBox)}
@@ -200,22 +200,11 @@ const FinancialAidCalculator = ({
   const confirmDialog = (
     <Dialog
       key="confirm"
-      title="Confirm Your Income"
-      titleClassName="dialog-title"
-      contentClassName="dialog confirm-dialog"
-      className="financial-aid-calculator-wrapper"
+      classes={{paper: "dialog confirm-dialog", root: "financial-aid-calculator-wrapper"}}
       open={confirmIncomeDialogVisibility}
-      bodyClassName="financial-aid-calculator-body"
-      onRequestClose={closeConfirmDialogAndCancel}
-      actions={dialogActions(
-        closeConfirmDialogAndCancel,
-        () => submitFinancialAid(financialAid),
-        fetchSkipStatus === FETCH_PROCESSING,
-        "Submit",
-        "confirm-income-button",
-        fetchAddStatus === FETCH_PROCESSING
-      )}
+      onClose={closeConfirmDialogAndCancel}
     >
+      <DialogTitle className="dialog-title">Confirm Your Income</DialogTitle>
       <div>
         Household Income:{" "}
         <b>
@@ -227,6 +216,16 @@ const FinancialAidCalculator = ({
       provide documentation (if necessary). If you can't provide an accurate
       income at this time, click cancel.
       {fetchError ? apiError(fetchError) : null}
+      <DialogActions>
+        {dialogActions(
+          closeConfirmDialogAndCancel,
+          () => submitFinancialAid(financialAid),
+          fetchSkipStatus === FETCH_PROCESSING,
+          "Submit",
+          "confirm-income-button",
+          fetchAddStatus === FETCH_PROCESSING
+        )}
+      </DialogActions>
     </Dialog>
   )
 
@@ -235,7 +234,6 @@ const FinancialAidCalculator = ({
       <Dialog
         open={calculatorDialogVisibility}
         classes={{
-          container: "financial-aid-calculator-body",
           paper: "dialog financial-aid-calculator",
           root: "financial-aid-calculator-wrapper"
         }}

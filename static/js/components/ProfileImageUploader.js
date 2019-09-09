@@ -9,6 +9,8 @@ import CropperWrapper from "./CropperWrapper"
 import { FETCH_PROCESSING } from "../actions"
 import type { ImageUploadState } from "../reducers/image_upload"
 import { dialogActions } from "./inputs/util"
+import DialogTitle from "@material-ui/core/DialogTitle"
+import DialogActions from "@material-ui/core/DialogActions"
 
 const onDrop = R.curry((startPhotoEdit, files) => startPhotoEdit(...files))
 
@@ -87,15 +89,23 @@ const ProfileImageUploader = ({
 
   return (
     <Dialog
-      title="Upload a Profile Photo"
-      titleClassName="dialog-title"
-      contentClassName="dialog photo-upload-dialog"
-      className="photo-upload-dialog-wrapper"
-      onRequestClose={() => setDialogVisibility(false)}
-      autoScrollBodyContent={true}
+      classes={{paper: "dialog photo-upload-dialog", root: "photo-upload-dialog-wrapper"}}
+      onClose={() => setDialogVisibility(false)}
       contentStyle={{ maxWidth: "620px" }}
       open={photoDialogOpen}
-      actions={dialogActions(
+    >
+      <DialogTitle className="dialog-title">Upload a Profile Photo</DialogTitle>
+      {imageError(error)}
+      {dialogContents(
+        updatePhotoEdit,
+        photo,
+        startPhotoEdit,
+        setPhotoError,
+        inFlight
+      )}
+
+      <DialogActions>
+        {dialogActions(
         () => {
           setDialogVisibility(false)
           clearPhotoEdit()
@@ -106,15 +116,7 @@ const ProfileImageUploader = ({
         "",
         disabled
       )}
-    >
-      {imageError(error)}
-      {dialogContents(
-        updatePhotoEdit,
-        photo,
-        startPhotoEdit,
-        setPhotoError,
-        inFlight
-      )}
+      </DialogActions>
     </Dialog>
   )
 }

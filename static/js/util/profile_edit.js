@@ -40,6 +40,7 @@ export const radioButtons = R.map(option => (
     value={option.value}
     control={<Radio/>}
     label={radioButtonLabel(option.label)}
+    key={option.label}
   />))
 
 /**

@@ -4,6 +4,8 @@ import Dialog from "@material-ui/core/Dialog"
 
 import { FETCH_PROCESSING } from "../actions"
 import { dialogActions } from "./inputs/util"
+import DialogTitle from "@material-ui/core/DialogTitle"
+import DialogActions from "@material-ui/core/DialogActions"
 
 type SkipProps = {
   cancel: () => void,
@@ -23,13 +25,16 @@ const SkipFinancialAidDialog = ({
   fetchSkipStatus
   }: SkipProps) => (
   <Dialog
-    title="Are you sure?"
-    titleClassName="dialog-title"
-    contentClassName="dialog skip-financial-aid-dialog"
-    className="skip-financial-aid-dialog-wrapper"
+    classes={{paper: "dialog skip-financial-aid-dialog", root: "skip-financial-aid-dialog-wrapper"}}
     open={open}
-    onRequestClose={cancel}
-    actions={dialogActions(
+    onClose={cancel}
+  >
+    <DialogTitle className="dialog-title">Are you sure?</DialogTitle>
+    You may qualify for a reduced cost. Clicking "Pay Full Price" means that you
+    are declining this option and you will pay the full price of {fullPrice} for
+    each course in the program.
+    <DialogActions>
+      {dialogActions(
       cancel,
       skip,
       fetchSkipStatus === FETCH_PROCESSING,
@@ -37,10 +42,7 @@ const SkipFinancialAidDialog = ({
       "skip-button",
       fetchAddStatus === FETCH_PROCESSING
     )}
-  >
-    You may qualify for a reduced cost. Clicking "Pay Full Price" means that you
-    are declining this option and you will pay the full price of {fullPrice} for
-    each course in the program.
+    </DialogActions>
   </Dialog>
 )
 
