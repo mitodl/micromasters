@@ -81,7 +81,6 @@ process.on("unhandledRejection", reason => {
   // throw reason; // uncomment to show promise-related errors
 })
 
-
 // enable chai-as-promised
 import chai from "chai"
 import chaiAsPromised from "chai-as-promised"

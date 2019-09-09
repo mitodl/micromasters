@@ -30,7 +30,7 @@ class CopyLinkDialog extends React.Component {
     const { open, setShareDialogVisibility, setCopySuccess, copy } = this.props
     return (
       <Dialog
-        classes={{paper: "dialog share-dialog"}}
+        classes={{ paper: "dialog share-dialog" }}
         open={open}
         onClose={() => {
           setShareDialogVisibility(false)
@@ -40,31 +40,31 @@ class CopyLinkDialog extends React.Component {
         <DialogTitle className="dialog-title">Share Link to Record</DialogTitle>
         <DialogContent>
           <DialogContentText>
-          Copy this link to share with a university, employer or anyone else of
-          you choosing. Anyone you share this link with will have access to your
-          record forever.
+            Copy this link to share with a university, employer or anyone else
+            of you choosing. Anyone you share this link with will have access to
+            your record forever.
           </DialogContentText>
 
-        <div className="share-form-wrapper">
-          <form className="share-url">
-            <input
-              ref={input => (this.input = input)}
-              readOnly={true}
-              value={window.location.href}
-            />
-          </form>
-          {document.queryCommandSupported("copy") && (
-            <div>
-              <button
-                className="mdl-button share-btn"
-                onClick={this.copyToClipboard}
-              >
-                Copy Link
-              </button>
-              <div className="copied-text">{copy && "Copied!"}</div>
-            </div>
-          )}
-        </div>
+          <div className="share-form-wrapper">
+            <form className="share-url">
+              <input
+                ref={input => (this.input = input)}
+                readOnly={true}
+                value={window.location.href}
+              />
+            </form>
+            {document.queryCommandSupported("copy") && (
+              <div>
+                <button
+                  className="mdl-button share-btn"
+                  onClick={this.copyToClipboard}
+                >
+                  Copy Link
+                </button>
+                <div className="copied-text">{copy && "Copied!"}</div>
+              </div>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     )

@@ -89,7 +89,10 @@ const ProfileImageUploader = ({
 
   return (
     <Dialog
-      classes={{paper: "dialog photo-upload-dialog", root: "photo-upload-dialog-wrapper"}}
+      classes={{
+        paper: "dialog photo-upload-dialog",
+        root:  "photo-upload-dialog-wrapper"
+      }}
       onClose={() => setDialogVisibility(false)}
       contentStyle={{ maxWidth: "620px" }}
       open={photoDialogOpen}
@@ -106,16 +109,16 @@ const ProfileImageUploader = ({
 
       <DialogActions>
         {dialogActions(
-        () => {
-          setDialogVisibility(false)
-          clearPhotoEdit()
-        },
-        updateUserPhoto,
-        false,
-        "Save",
-        "",
-        disabled
-      )}
+          () => {
+            setDialogVisibility(false)
+            clearPhotoEdit()
+          },
+          updateUserPhoto,
+          false,
+          "Save",
+          "",
+          disabled
+        )}
       </DialogActions>
     </Dialog>
   )

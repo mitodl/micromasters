@@ -6,7 +6,6 @@ import URI from "urijs"
 import { Provider } from "react-redux"
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 
-
 import { setDialogVisibility } from "../actions/signup_dialog"
 import SignupDialog from "./SignupDialog"
 import IntegratedTestHelper from "../util/integration_test_helper"

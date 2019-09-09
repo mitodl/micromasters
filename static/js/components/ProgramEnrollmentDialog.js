@@ -59,7 +59,9 @@ export default class ProgramEnrollmentDialog extends React.Component {
       "title"
     )
     const options = unenrolledPrograms.map(program => (
-      <MenuItem value={program.id} key={program.id}>{program.title}</MenuItem>
+      <MenuItem value={program.id} key={program.id}>
+        {program.title}
+      </MenuItem>
     ))
 
     const actions = dialogActions(
@@ -73,12 +75,14 @@ export default class ProgramEnrollmentDialog extends React.Component {
     // to close the dialog right after opening it. See https://github.com/JedWatson/react-select/issues/532
     return (
       <Dialog
-        classes={{paper: "dialog enroll-program-dialog"}}
+        classes={{ paper: "dialog enroll-program-dialog" }}
         className="enroll-program-dialog-wrapper"
         open={visibility}
         maxWidth="md"
       >
-        <DialogTitle className="dialog-title">Enroll in a new MicroMasters Program</DialogTitle>
+        <DialogTitle className="dialog-title">
+          Enroll in a new MicroMasters Program
+        </DialogTitle>
         <FormControl className="select-program">
           <InputLabel>Select Program</InputLabel>
           <Select

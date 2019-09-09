@@ -25,7 +25,10 @@ const SkipFinancialAidDialog = ({
   fetchSkipStatus
   }: SkipProps) => (
   <Dialog
-    classes={{paper: "dialog skip-financial-aid-dialog", root: "skip-financial-aid-dialog-wrapper"}}
+    classes={{
+      paper: "dialog skip-financial-aid-dialog",
+      root:  "skip-financial-aid-dialog-wrapper"
+    }}
     open={open}
     onClose={cancel}
   >
@@ -35,13 +38,13 @@ const SkipFinancialAidDialog = ({
     each course in the program.
     <DialogActions>
       {dialogActions(
-      cancel,
-      skip,
-      fetchSkipStatus === FETCH_PROCESSING,
-      "Pay Full Price",
-      "skip-button",
-      fetchAddStatus === FETCH_PROCESSING
-    )}
+        cancel,
+        skip,
+        fetchSkipStatus === FETCH_PROCESSING,
+        "Pay Full Price",
+        "skip-button",
+        fetchAddStatus === FETCH_PROCESSING
+      )}
     </DialogActions>
   </Dialog>
 )

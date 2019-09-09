@@ -7,7 +7,7 @@ import _ from "lodash"
 import R from "ramda"
 import Dialog from "@material-ui/core/Dialog"
 import Radio from "@material-ui/core/Radio"
-import RadioGroup from '@material-ui/core/RadioGroup'
+import RadioGroup from "@material-ui/core/RadioGroup"
 
 import { FETCH_PROCESSING } from "../actions"
 import { educationValidation } from "../lib/validation/profile"
@@ -131,16 +131,16 @@ class EducationForm extends ProfileFormFields {
           onChange={(event, value) => this.handleRadioClick(value, level.value)}
           value={valueSelected}
         >
-         <FormControlLabel
+          <FormControlLabel
             value="true"
             label="Yes"
-            classes={{root: "radio-style"}}
+            classes={{ root: "radio-style" }}
             control={<Radio />}
           />
           <FormControlLabel
             value="false"
             label="No"
-            classes={{root: "radio-style"}}
+            classes={{ root: "radio-style" }}
             control={<Radio />}
           />
         </RadioGroup>
@@ -478,7 +478,10 @@ class EducationForm extends ProfileFormFields {
           inFlight={inFlight}
         />
         <Dialog
-          classes={{paper: "dialog education-dialog", root:"education-dialog-wrapper"}}
+          classes={{
+            paper: "dialog education-dialog",
+            root:  "education-dialog-wrapper"
+          }}
           open={educationDialogVisibility}
           onClose={this.clearEducationEdit}
         >
@@ -486,10 +489,10 @@ class EducationForm extends ProfileFormFields {
           {this.editEducationForm()}
           <DialogActions>
             {dialogActions(
-            this.clearEducationEdit,
-            this.saveEducationForm,
-            inFlight
-          )}
+              this.clearEducationEdit,
+              this.saveEducationForm,
+              inFlight
+            )}
           </DialogActions>
         </Dialog>
         {this.renderCard()}

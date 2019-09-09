@@ -9,7 +9,7 @@ import SelectField from "./inputs/SelectField"
 import CountrySelectField from "./inputs/CountrySelectField"
 import StateSelectField from "./inputs/StateSelectField"
 import ProfileFormFields from "../util/ProfileFormFields"
-import {radioButtons, shouldRenderRomanizedFields} from "../util/profile_edit"
+import { radioButtons, shouldRenderRomanizedFields } from "../util/profile_edit"
 import type {
   Profile,
   SaveProfileFunc,
@@ -21,8 +21,8 @@ import type { UIState } from "../reducers/ui"
 import type { Option } from "../flow/generalTypes"
 import RadioGroup from "@material-ui/core/RadioGroup"
 import FormControl from "@material-ui/core/FormControl"
-import FormLabel from '@material-ui/core/FormLabel'
-import {sendFormFieldEvent} from "../lib/google_analytics"
+import FormLabel from "@material-ui/core/FormLabel"
+import { sendFormFieldEvent } from "../lib/google_analytics"
 
 export default class PersonalForm extends ProfileFormFields {
   genderOptions: Array<Option> = [
@@ -69,7 +69,11 @@ export default class PersonalForm extends ProfileFormFields {
       ? this.renderRomanizedFields()
       : null
 
-  radioGroupField(keySet: string[], label: string, options: Option[]): React$Element<*> {
+  radioGroupField(
+    keySet: string[],
+    label: string,
+    options: Option[]
+  ): React$Element<*> {
     const {
       profile,
       updateProfile,
@@ -94,8 +98,8 @@ export default class PersonalForm extends ProfileFormFields {
     const value = String(_.get(profile, keySet))
     const error = _.get(errors, keySet) !== undefined
     return (
-     <FormControl error={error}>
-       <FormLabel>{label}</FormLabel>
+      <FormControl error={error}>
+        <FormLabel>{label}</FormLabel>
         <RadioGroup
           className="profile-radio-group"
           name="gender"
@@ -106,7 +110,7 @@ export default class PersonalForm extends ProfileFormFields {
         </RadioGroup>
       </FormControl>
     )
-}
+  }
 
   render() {
     const { profile } = this.props
@@ -153,11 +157,7 @@ export default class PersonalForm extends ProfileFormFields {
             {this.boundDateField(["date_of_birth"], "Date of birth")}
           </Cell>
           <Cell col={12} className="profile-gender-group">
-            {this.radioGroupField(
-              ["gender"],
-              "Gender",
-              this.genderOptions
-            )}
+            {this.radioGroupField(["gender"], "Gender", this.genderOptions)}
           </Cell>
           <Cell col={12}>
             <SelectField

@@ -7,7 +7,7 @@ import "ajaxchimp"
 import _ from "lodash"
 import React from "react"
 import ReactDOM from "react-dom"
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import { Provider } from "react-redux"
 
 import CourseListWithPopover from "../components/CourseListWithPopover"

@@ -2,7 +2,7 @@
 import React from "react"
 import _ from "lodash"
 import TextField from "@material-ui/core/TextField"
-import  Radio from "@material-ui/core/Radio"
+import Radio from "@material-ui/core/Radio"
 import Checkbox from "@material-ui/core/Checkbox"
 import R from "ramda"
 import ReactTelInput from "react-telephone-input"
@@ -36,12 +36,13 @@ const radioButtonLabel = label => (
 
 export const radioButtons = R.map(option => (
   <FormControlLabel
-    classes={{root: "profile-radio-button"}}
+    classes={{ root: "profile-radio-button" }}
     value={option.value}
-    control={<Radio/>}
+    control={<Radio />}
     label={radioButtonLabel(option.label)}
     key={option.label}
-  />))
+  />
+))
 
 /**
  * bind to this.boundTextField in the constructor of a form component
@@ -97,7 +98,9 @@ export function boundTextField(
       onBlur={onBlur}
       name={label}
       multiline={true}
-      classes={{root: "input-text " + validationErrorSelector(errors, keySet)}}
+      classes={{
+        root: `input-text ${  validationErrorSelector(errors, keySet)}`
+      }}
       helperText={label}
       value={getValue()}
       fullWidth={true}

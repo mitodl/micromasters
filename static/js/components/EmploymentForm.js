@@ -6,7 +6,7 @@ import Card from "react-mdl/lib/Card/Card"
 import IconButton from "react-mdl/lib/IconButton"
 import _ from "lodash"
 import Radio from "@material-ui/core/Radio"
-import RadioGroup from '@material-ui/core/RadioGroup'
+import RadioGroup from "@material-ui/core/RadioGroup"
 
 import { FETCH_PROCESSING } from "../actions"
 import { userPrivilegeCheck, isProfileOfLoggedinUser } from "../util/util"
@@ -298,13 +298,13 @@ class EmploymentForm extends ProfileFormFields {
           <FormControlLabel
             value="true"
             label="Yes"
-            classes={{root: "radio-style"}}
+            classes={{ root: "radio-style" }}
             control={<Radio />}
           />
           <FormControlLabel
             value="false"
             label="No"
-            classes={{root: "radio-style"}}
+            classes={{ root: "radio-style" }}
             control={<Radio />}
           />
         </RadioGroup>
@@ -386,7 +386,7 @@ class EmploymentForm extends ProfileFormFields {
           inFlight={inFlight}
         />
         <Dialog
-          classes={{paper: "dialog employment-dialog"}}
+          classes={{ paper: "dialog employment-dialog" }}
           className="employment-dialog-wrapper"
           open={workDialogVisibility}
           onClose={this.closeWorkDialog}
@@ -395,10 +395,10 @@ class EmploymentForm extends ProfileFormFields {
           {this.editWorkHistoryForm()}
           <DialogActions>
             {dialogActions(
-            this.closeWorkDialog,
-            this.saveWorkHistoryEntry,
-            inFlight
-          )}
+              this.closeWorkDialog,
+              this.saveWorkHistoryEntry,
+              inFlight
+            )}
           </DialogActions>
         </Dialog>
         {this.renderCard()}

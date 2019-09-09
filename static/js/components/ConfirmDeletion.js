@@ -26,19 +26,24 @@ export default class ConfirmDeletion extends React.Component {
     const { close, open, inFlight, itemText } = this.props
     return (
       <Dialog
-        classes={{root: "deletion-confirmation-dialog-wrapper", paper: "deletion-confirmation-dialog"}}
+        classes={{
+          root:  "deletion-confirmation-dialog-wrapper",
+          paper: "deletion-confirmation-dialog"
+        }}
         open={open}
         onClose={close}
       >
-        <DialogTitle className="dialog-title">{dialogTitle(itemText)}</DialogTitle>
+        <DialogTitle className="dialog-title">
+          {dialogTitle(itemText)}
+        </DialogTitle>
         <DialogActions>
           {dialogActions(
-          close,
-          this.deleteAndClose,
-          inFlight,
-          "Delete",
-          "delete-button"
-        )}
+            close,
+            this.deleteAndClose,
+            inFlight,
+            "Delete",
+            "delete-button"
+          )}
         </DialogActions>
       </Dialog>
     )

@@ -3,7 +3,7 @@
 import React from "react"
 import { Router } from "react-router"
 import { Provider } from "react-redux"
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import type { Store } from "redux"
 
 export default class DashboardRouter extends React.Component {

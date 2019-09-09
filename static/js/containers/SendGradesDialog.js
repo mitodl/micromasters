@@ -41,62 +41,66 @@ class SendGradesDialog extends React.Component {
       sentSuccess
     } = this.props
     const options = SETTINGS.partner_schools.map(program => (
-      <MenuItem value={program[0]} key={program[0]}>{program[1]}</MenuItem>
+      <MenuItem value={program[0]} key={program[0]}>
+        {program[1]}
+      </MenuItem>
     ))
     return (
       <Dialog
-        classes={{paper: "dialog send-dialog"}}
+        classes={{ paper: "dialog send-dialog" }}
         open={open}
         onClose={() => {
           setSendDialogVisibility(false)
         }}
       >
-        <DialogTitle className="dialog-title">Send Record to Partner</DialogTitle>
+        <DialogTitle className="dialog-title">
+          Send Record to Partner
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
-          You can directly share your program record with partners that accept
-          credit for this MicroMasters Program. Once you send the record you
-          cannot unsend it.
+            You can directly share your program record with partners that accept
+            credit for this MicroMasters Program. Once you send the record you
+            cannot unsend it.
           </DialogContentText>
           <DialogContentText>
-          Select organization(s) you wish to send this record to:
+            Select organization(s) you wish to send this record to:
           </DialogContentText>
 
-        <FormControl className="select-control">
-          <InputLabel>Select School</InputLabel>
-          <Select
-            value={selectedSchool || ""}
-            onChange={this.handleSelectedSchoolChange}
-            style={{
-              width: "500px"
-            }}
-          >
-          {options}
-        </Select>
-        </FormControl>
+          <FormControl className="select-control">
+            <InputLabel>Select School</InputLabel>
+            <Select
+              value={selectedSchool || ""}
+              onChange={this.handleSelectedSchoolChange}
+              style={{
+                width: "500px"
+              }}
+            >
+              {options}
+            </Select>
+          </FormControl>
 
-        <DialogActions>
-          <div className="sent-email">{sentSuccess ? "Email Sent!" : ""}</div>
-          <button
-            className="btn pull-right close-send-dialog"
-            onClick={() => {
-              setSendDialogVisibility(false)
-            }}
-          >
-            Close
-          </button>
-          <button
-            className="btn btn-primary pull-right send-grades"
-            onClick={() => {
-              selectedSchool
-                ? sendGradeEmailClick([selectedSchool, SETTINGS.hash])
-                : null
-            }}
-          >
-            Send
-          </button>
-        </DialogActions>
-          </DialogContent>
+          <DialogActions>
+            <div className="sent-email">{sentSuccess ? "Email Sent!" : ""}</div>
+            <button
+              className="btn pull-right close-send-dialog"
+              onClick={() => {
+                setSendDialogVisibility(false)
+              }}
+            >
+              Close
+            </button>
+            <button
+              className="btn btn-primary pull-right send-grades"
+              onClick={() => {
+                selectedSchool
+                  ? sendGradeEmailClick([selectedSchool, SETTINGS.hash])
+                  : null
+              }}
+            >
+              Send
+            </button>
+          </DialogActions>
+        </DialogContent>
       </Dialog>
     )
   }
