@@ -2,6 +2,7 @@
 /* global SETTINGS: false */
 import DocumentTitle from "react-document-title"
 import React from "react"
+import _ from "lodash"
 import { Card } from "react-mdl/lib/Card"
 
 import ProfileFormFields from "../util/ProfileFormFields"
@@ -25,10 +26,11 @@ class PrivacyForm extends ProfileFormFields {
     ui: UIState,
     updateProfile: UpdateProfileFunc,
     errors: ValidationErrors,
+    updateValidationVisibility: (xs: Array<string>) => void,
     validator: Validator
   }
 
-  privacyOptions: Array<{ value: string, label: string, helper: string }> = [
+  privacyOptions: Array<Option> = [
     {
       value:  "public",
       label:  "Public to the world",
@@ -49,7 +51,7 @@ class PrivacyForm extends ProfileFormFields {
     }
   ]
 
-  emailOptions: Array<{ value: string, label: string }> = [
+  emailOptions: Array<Option> = [
     {
       value: "true",
       label: "Faculty, staff, and other learners can send me emails"

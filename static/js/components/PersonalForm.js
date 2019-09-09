@@ -44,6 +44,7 @@ export default class PersonalForm extends ProfileFormFields {
     saveProfile: SaveProfileFunc,
     updateProfile: UpdateProfileFunc,
     validator: Validator | UIValidator,
+    updateValidationVisibility: (xs: Array<string>) => void,
     ui: UIState
   }
 
