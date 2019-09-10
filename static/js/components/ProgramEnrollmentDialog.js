@@ -40,7 +40,7 @@ export default class ProgramEnrollmentDialog extends React.Component {
     }
   }
 
-  handleSelectedProgramChange = (event) => {
+  handleSelectedProgramChange = event => {
     const { setSelectedProgram } = this.props
     setSelectedProgram(event.target.value)
   }

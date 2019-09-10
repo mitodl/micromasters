@@ -99,7 +99,7 @@ export function boundTextField(
       name={label}
       multiline={multiLine}
       classes={{
-        root: `input-text ${  validationErrorSelector(errors, keySet)}`
+        root: `input-text ${validationErrorSelector(errors, keySet)}`
       }}
       helperText={label}
       value={getValue()}
