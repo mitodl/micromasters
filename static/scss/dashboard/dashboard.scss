@@ -364,6 +364,10 @@
   .select-control {
     padding-bottom: 20px;
   }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .dashboard-page .dialog {
@@ -445,12 +449,6 @@
       opacity: 0.3;
       cursor: not-allowed;
     }
-  }
-}
-
-.dialog {
-  p:last-child {
-    margin-bottom: 0;
   }
 }
 
