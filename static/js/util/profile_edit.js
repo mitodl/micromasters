@@ -97,7 +97,7 @@ export function boundTextField(
     <TextField
       onBlur={onBlur}
       name={label}
-      multiline={true}
+      multiline={multiLine}
       classes={{
         root: `input-text ${  validationErrorSelector(errors, keySet)}`
       }}

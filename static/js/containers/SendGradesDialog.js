@@ -27,7 +27,7 @@ class SendGradesDialog extends React.Component {
     sendGradeEmailClick: (f: Array<*>) => void,
     sentSuccess: boolean
   }
-  handleSelectedSchoolChange = (event, child) => {
+  handleSelectedSchoolChange = (event) => {
     const { setSelectedSchool } = this.props
     setSelectedSchool(event.target.value)
   }

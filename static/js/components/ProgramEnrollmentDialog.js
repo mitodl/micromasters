@@ -40,7 +40,7 @@ export default class ProgramEnrollmentDialog extends React.Component {
     }
   }
 
-  handleSelectedProgramChange = (event, child) => {
+  handleSelectedProgramChange = (event) => {
     const { setSelectedProgram } = this.props
     setSelectedProgram(event.target.value)
   }
@@ -86,7 +86,7 @@ export default class ProgramEnrollmentDialog extends React.Component {
         <FormControl className="select-program">
           <InputLabel>Select Program</InputLabel>
           <Select
-            value={selectedProgram}
+            value={selectedProgram || ""}
             onChange={this.handleSelectedProgramChange}
             error={error}
             style={{

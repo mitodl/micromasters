@@ -7,7 +7,6 @@ import URI from "urijs"
 
 import { createSimpleActionHelpers } from "../lib/redux"
 import { setDialogVisibility } from "../actions/signup_dialog"
-import DialogTitle from "@material-ui/core/es/DialogTitle/DialogTitle"
 
 type signupProps = {
   open: boolean,
