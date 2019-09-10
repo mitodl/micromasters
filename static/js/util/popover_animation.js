@@ -48,7 +48,7 @@ export default class PopoverNullAnimation extends Component {
     this.setState({ open: true }) // eslint-disable-line react/no-did-mount-set-state
   }
 
-  componentWillReceiveProps(nextProps: any) {
+  getDerivedStateFromProps(nextProps: any) {
     this.setState({
       open: nextProps.open
     })

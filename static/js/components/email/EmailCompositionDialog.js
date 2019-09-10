@@ -84,7 +84,7 @@ export default class EmailCompositionDialog extends React.Component {
     this.state = editorStateFromProps(props)
   }
 
-  componentWillReceiveProps(nextProps: EmailDialogProps) {
+  getDerivedStateFromProps(nextProps: EmailDialogProps) {
     const newState = editorStateFromProps(nextProps)
     const newStateHasText = newState.editorState.getCurrentContent().hasText()
 

@@ -24,7 +24,7 @@ export default class SpinnerButton extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps: SpinnerButtonProps) {
+  getDerivedStateFromProps(nextProps: SpinnerButtonProps) {
     if (!nextProps.spinning && this.props.spinning) {
       // spinning has finished, so reset the state
       this.setState({
