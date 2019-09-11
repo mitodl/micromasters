@@ -11,15 +11,15 @@ body {
 }
 
 
-.mdl-card {
-  padding: 20px 24px 30px;
+.card {
+  padding: 15px 0 10px 15px;
   margin: 0 0 18px 0;
   min-height: 150px;
   width: 100%;
   border-radius: 2px;
   font-size: 14px;
 
-  .mdl-card__title {
+  span.title {
     padding: 0;
     margin: 0 0 20px;
   }

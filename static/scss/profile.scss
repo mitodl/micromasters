@@ -49,8 +49,9 @@
     margin-left: 15px;
   }
 
-  .mdl-button i.material-icons {
+  button span.material-icons {
     color: $mm-brand-bg;
+    font-size: 24px;
   }
 
   .section-header {
@@ -110,7 +111,7 @@
 
   .profile-form-grid {
     width: 100%;
-    padding: 0;
+    padding: 10px;
 
     .title {
       font-weight: 500;
@@ -201,7 +202,6 @@
       .profile-row-name {
         font-size: 16px;
         color: $font-black;
-        padding: 12px 9px;
       }
 
       .school-type {

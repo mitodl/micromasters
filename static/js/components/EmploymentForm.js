@@ -1,9 +1,9 @@
 // @flow
 import React from "react"
-import Grid, { Cell } from "react-mdl/lib/Grid"
+import Grid from '@material-ui/core/Grid'
 import Dialog from "@material-ui/core/Dialog"
-import Card from "react-mdl/lib/Card/Card"
-import IconButton from "react-mdl/lib/IconButton"
+import Card from "@material-ui/core/Card"
+import IconButton from "@material-ui/core/IconButton"
 import _ from "lodash"
 import Radio from "@material-ui/core/Radio"
 import RadioGroup from "@material-ui/core/RadioGroup"
@@ -36,6 +36,8 @@ import FormControl from "@material-ui/core/FormControl"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
 import DialogTitle from "@material-ui/core/DialogTitle"
 import DialogActions from "@material-ui/core/DialogActions"
+import Icon from "@material-ui/core/es/Icon/Icon";
+import CardContent from "@material-ui/core/es/CardContent/CardContent";
 
 class EmploymentForm extends ProfileFormFields {
   industryOptions: Array<Option> = INDUSTRIES.map(industry => ({
@@ -128,28 +130,28 @@ class EmploymentForm extends ProfileFormFields {
     const keySet = (key): any => ["work_history", ui.workDialogIndex, key]
 
     return (
-      <Grid className="profile-tab-grid">
-        <Cell col={12}>
+      <Grid container justify="center" className="profile-tab-grid">
+        <Grid item xs={12}>
           {this.boundTextField(keySet("company_name"), "Name of Employer")}
-        </Cell>
-        <Cell col={4}>
+        </Grid>
+        <Grid item xs={4}>
           <CountrySelectField
             stateKeySet={keySet("state_or_territory")}
             countryKeySet={keySet("country")}
             label="Country"
             {...this.defaultInputComponentProps()}
           />
-        </Cell>
-        <Cell col={4}>
+        </Grid>
+        <Grid item xs={4}>
           <StateSelectField
             stateKeySet={keySet("state_or_territory")}
             countryKeySet={keySet("country")}
             label="State or Territory"
             {...this.defaultInputComponentProps()}
           />
-        </Cell>
-        <Cell col={4}>{this.boundTextField(keySet("city"), "City")}</Cell>
-        <Cell col={12}>
+        </Grid>
+        <Grid item xs={4}>{this.boundTextField(keySet("city"), "City")}</Grid>
+        <Grid item xs={12}>
           <SelectField
             keySet={keySet("industry")}
             label="Industry"
@@ -157,14 +159,14 @@ class EmploymentForm extends ProfileFormFields {
             allowCreate={true}
             {...this.defaultInputComponentProps()}
           />
-        </Cell>
-        <Cell col={12}>
+        </Grid>
+        <Grid item xs={12}>
           {this.boundTextField(keySet("position"), "Position")}
-        </Cell>
-        <Cell col={6}>
+        </Grid>
+        <Grid item xs={6}>
           {this.boundDateField(keySet("start_date"), "Start Date", true)}
-        </Cell>
-        <Cell col={6}>
+        </Grid>
+        <Grid item xs={6}>
           {this.boundDateField(keySet("end_date"), "End Date", true)}
           <span
             className={`end-date-hint ${this.addSpaceForError(
@@ -173,7 +175,7 @@ class EmploymentForm extends ProfileFormFields {
           >
             Leave blank if this is a current position
           </span>
-        </Cell>
+        </Grid>
       </Grid>
     )
   }
@@ -194,24 +196,24 @@ class EmploymentForm extends ProfileFormFields {
       }
       userPrivilegeCheck(profile, () => {
         workHistoryRows.push(
-          <Cell col={12} className="profile-form-row add" key="I'm unique!">
+          <Grid item xs={12} className="profile-form-row add" key="I'm unique!">
             <button
               className="mm-minor-action add-employment-button"
               onClick={this.openNewWorkHistoryForm}
             >
               Add employment
             </button>
-          </Cell>
+          </Grid>
         )
       })
       workHistoryRows.unshift(
-        <Cell
-          col={12}
+        <Grid item
+          xs={12}
           className="profile-form-row profile-card-header"
           key="header-row"
         >
           <span className="title">Employment</span>
-        </Cell>
+        </Grid>
       )
       return workHistoryRows
     }
@@ -228,7 +230,7 @@ class EmploymentForm extends ProfileFormFields {
     const editEntry = () => this.openEditWorkHistoryForm(index)
     const validationAlert = () => {
       if (_.get(errors, ["work_history", String(index)])) {
-        return <IconButton name="error" onClick={editEntry} />
+        return <IconButton onClick={editEntry}><Icon>error</Icon></IconButton>
       }
     }
     const icons = () => {
@@ -239,22 +241,20 @@ class EmploymentForm extends ProfileFormFields {
             {validationAlert()}
             <IconButton
               className="edit-button"
-              name="edit"
               onClick={editEntry}
-            />
+            ><Icon>edit</Icon></IconButton>
             <IconButton
               className="delete-button"
-              name="delete"
               onClick={deleteEntry}
-            />
+            ><Icon>delete</Icon></IconButton>
           </div>
         ),
         () => <div />
       )
     }
     return (
-      <Cell
-        col={12}
+      <Grid
+        xs={12}
         className="profile-form-row row-padding row-with-border"
         key={index}
       >
@@ -269,16 +269,16 @@ class EmploymentForm extends ProfileFormFields {
           </div>
           {icons()}
         </div>
-      </Cell>
+      </Grid>
     )
   }
 
   renderWorkQuestionForm() {
     return (
-      <Cell col={12} className="profile-form-row profile-card-header">
+      <Grid xs={12} className="profile-form-row profile-card-header">
         <span className="question">Do you want to add an employer?</span>
         {this.renderWorkRadioSwitch()}
-      </Cell>
+      </Grid>
     )
   }
 
@@ -356,10 +356,12 @@ class EmploymentForm extends ProfileFormFields {
     return (
       <Card
         shadow={1}
-        className={`profile-form ${cardClass}`}
+        className={`card profile-form ${cardClass}`}
         id={`work-history-card`}
       >
+        <CardContent>
         <Grid className="profile-form-grid">{this.renderCardBody()}</Grid>
+        </CardContent>
       </Card>
     )
   }

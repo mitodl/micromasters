@@ -1,8 +1,9 @@
 // @flow
 import React from "react"
-import IconButton from "react-mdl/lib/IconButton"
-import Grid, { Cell } from "react-mdl/lib/Grid"
-import { Card } from "react-mdl/lib/Card"
+import IconButton from "@material-ui/core/IconButton"
+import Icon from "@material-ui/core/Icon"
+import Grid from "@material-ui/core/Grid"
+import Card from "@material-ui/core/Card"
 import _ from "lodash"
 import R from "ramda"
 import Dialog from "@material-ui/core/Dialog"
@@ -173,12 +174,12 @@ class EducationForm extends ProfileFormFields {
       ? `${label.toLowerCase()} degree`
       : label.toLowerCase()
     return (
-      <Cell col={12} className="profile-card-header profile-form-row">
+      <Grid item xs={12} className="profile-card-header profile-form-row">
         <span className="question">
           {`Do you have ${prefix} ${levelName}?`}
         </span>
         {this.educationLevelRadioSwitch(level)}
-      </Cell>
+      </Grid>
     )
   }
 
@@ -194,9 +195,9 @@ class EducationForm extends ProfileFormFields {
       const label = EDUCATION_LEVEL_LABELS[levelValue]
       filterDegreeName = ([, entry]) => entry.degree_name === level.value
       title = (
-        <Cell col={12} className="profile-form-row" key="header-row">
+        <Grid item xs={12} className="profile-form-row" key="header-row">
           <strong>{label}</strong>
-        </Cell>
+        </Grid>
       )
     }
 
@@ -212,14 +213,14 @@ class EducationForm extends ProfileFormFields {
       userPrivilegeCheck(
         profile,
         () => (
-          <Cell col={12} className="profile-form-row add" key="add-row">
+          <Grid item xs={12} className="profile-form-row add" key="add-row">
             <button
               className="mm-minor-action add-education-button"
               onClick={() => this.openNewEducationForm(levelValue)}
             >
               Add a degree
             </button>
-          </Cell>
+          </Grid>
         ),
         null
       )
@@ -259,17 +260,16 @@ class EducationForm extends ProfileFormFields {
       const icons = () => (
         <div className="profile-row-icons">
           {validationAlert()}
-          <IconButton className="edit-button" name="edit" onClick={editEntry} />
+          <IconButton className="edit-button" onClick={editEntry}><Icon>edit</Icon></IconButton>
           <IconButton
             className="delete-button"
-            name="delete"
             onClick={deleteEntry}
-          />
+          ><Icon>delete</Icon></IconButton>
         </div>
       )
       return (
-        <Cell
-          col={12}
+        <Grid item
+          xs={12}
           className="profile-form-row row-padding row-with-border"
           key={index}
         >
@@ -287,7 +287,7 @@ class EducationForm extends ProfileFormFields {
               <div />
             ))}
           </div>
-        </Cell>
+        </Grid>
       )
     }
   )
@@ -339,7 +339,7 @@ class EducationForm extends ProfileFormFields {
     const fieldOfStudy = () => {
       if (educationDegreeLevel !== HIGH_SCHOOL) {
         return (
-          <Cell col={12}>
+          <Grid item xs={12}>
             <SelectField
               options={fieldOfStudyOptions}
               keySet={keySet("field_of_study")}
@@ -347,41 +347,41 @@ class EducationForm extends ProfileFormFields {
               allowCreate={true}
               {...this.defaultInputComponentProps()}
             />
-          </Cell>
+          </Grid>
         )
       }
     }
     const levelForm = () => {
       if (!showSwitch) {
         return (
-          <Cell col={12}>
+          <Grid item xs={12}>
             <SelectField
               keySet={keySet("degree_name")}
               label="Degree Type"
               options={EDUCATION_LEVELS}
               {...this.defaultInputComponentProps()}
             />
-          </Cell>
+          </Grid>
         )
       }
     }
 
     return (
-      <Grid className="profile-tab-grid">
+      <Grid container className="profile-tab-grid">
         {levelForm()}
         {fieldOfStudy()}
-        <Cell col={12}>
+        <Grid item xs={12}>
           {this.boundTextField(keySet("school_name"), "School Name")}
-        </Cell>
-        <Cell col={12}>
+        </Grid>
+        <Grid item xs={12}>
           {this.boundDateField(
             keySet("graduation_date"),
             "Graduation Date",
             true,
             true
           )}
-        </Cell>
-        <Cell col={4}>
+        </Grid>
+        <Grid item xs={4}>
           <CountrySelectField
             stateKeySet={keySet("school_state_or_territory")}
             countryKeySet={keySet("school_country")}
@@ -389,8 +389,8 @@ class EducationForm extends ProfileFormFields {
             topMenu={true}
             {...this.defaultInputComponentProps()}
           />
-        </Cell>
-        <Cell col={4}>
+        </Grid>
+        <Grid item xs={4}>
           <StateSelectField
             stateKeySet={keySet("school_state_or_territory")}
             countryKeySet={keySet("school_country")}
@@ -398,10 +398,10 @@ class EducationForm extends ProfileFormFields {
             topMenu={true}
             {...this.defaultInputComponentProps()}
           />
-        </Cell>
-        <Cell col={4} key="school_city">
+        </Grid>
+        <Grid item xs={4} key="school_city">
           {this.boundTextField(keySet("school_city"), "City")}
-        </Cell>
+        </Grid>
       </Grid>
     )
   }
@@ -417,10 +417,10 @@ class EducationForm extends ProfileFormFields {
         return (
           <Card
             shadow={1}
-            className={`profile-form ${cardClass(level.value)}`}
+            className={`card profile-form ${cardClass(level.value)}`}
             key={level.label}
           >
-            <Grid className="profile-form-grid">
+            <Grid container className="profile-form-grid">
               {this.renderEducationLevel(level)}
             </Grid>
           </Card>
@@ -435,11 +435,11 @@ class EducationForm extends ProfileFormFields {
       }
 
       return (
-        <Card shadow={1} className="profile-form" id="education-card">
-          <Grid className="profile-form-grid">
-            <Cell col={12} className="profile-form-row profile-card-header">
+        <Card shadow={1} className="card profile-form" id="education-card">
+          <Grid container className="profile-form-grid">
+            <Grid item xs={12} className="profile-form-row profile-card-header">
               <span className="title">Education</span>
-            </Cell>
+            </Grid>
             {this.renderEducationLevelEntries(null)}
           </Grid>
         </Card>
