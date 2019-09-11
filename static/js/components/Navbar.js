@@ -2,9 +2,8 @@
 /* global SETTINGS: false */
 import React from "react"
 import { Link } from "react-router"
-import { Header, HeaderRow } from "react-mdl"
-import Icon from "react-mdl/lib/Icon"
-import IconButton from "react-mdl/lib/IconButton"
+import Icon from "@material-ui/core/Icon"
+import IconButton from "@material-ui/core/IconButton"
 import { ReactPageClick } from "react-page-click"
 import Swipeable from "react-swipeable"
 import R from "ramda"
@@ -159,11 +158,9 @@ export default class Navbar extends React.Component {
                 >
                   <ProfileImage profile={profile} />
                 </Link>
-                <IconButton
-                  name="chevron_left"
-                  onClick={closeDrawer}
-                  className="no-hover-styling"
-                />
+                <IconButton onClick={closeDrawer} className="icon-button">
+                  <Icon>chevron_left</Icon>
+                </IconButton>
               </div>
               <div className="name">
                 {reactLink(
@@ -217,10 +214,11 @@ export default class Navbar extends React.Component {
     SETTINGS.user ? (
       <div className="mobile-visible">
         <Icon
-          name="menu"
-          className="menu-icon"
+          classes={{ root: "menu-icon" }}
           onClick={() => setNavDrawerOpen(true)}
-        />
+        >
+          menu
+        </Icon>
       </div>
     ) : null
 
@@ -248,15 +246,15 @@ export default class Navbar extends React.Component {
     return (
       <div className="micromasters-navbar">
         <div className="mobile-visible">{this.navDrawer(drawerClass)}</div>
-        <Header className="micromasters-nav">
-          <HeaderRow className="micromasters-header">
+        <header className="micromasters-nav">
+          <div className="micromasters-header">
             <div className="micromasters-title">
               {this.renderMenu(setNavDrawerOpen)}
               {header}
             </div>
             <div className="desktop-visible">{this.programSelector()}</div>
-          </HeaderRow>
-        </Header>
+          </div>
+        </header>
       </div>
     )
   }

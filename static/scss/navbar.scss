@@ -34,11 +34,12 @@
         align-items: center;
 
 
-        .mdl-button--icon {
+        .icon-button {
           width: 50px;
           top: -10px;
 
           .material-icons {
+            color: white;
             font-size: 40px;
             opacity: .7;
           }
@@ -145,6 +146,7 @@
 
   .micromasters-nav {
     box-shadow: none !important;
+    color: white;
 
     @include breakpoint(desktop) {
       min-height: 50px;
@@ -190,13 +192,16 @@
       }
     }
 
-    i.menu-icon {
+    span.menu-icon {
       font-size: 30px;
       padding-right: 15px;
       cursor: pointer;
+      width: auto;
     }
 
     .micromasters-header {
+      display: flex;
+      align-items: center;
       justify-content: space-between;
       height: 57px;
 
