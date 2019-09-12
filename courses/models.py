@@ -51,7 +51,7 @@ class Course(models.Model):
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
     position_in_program = models.PositiveSmallIntegerField()
 
-    edx_key = models.CharField(max_length=50, null=True)
+    edx_key = models.CharField(max_length=50, null=True, blank=True)
 
     # These fields will likely make their way into the CMS at some point.
     title = models.CharField(max_length=255)
