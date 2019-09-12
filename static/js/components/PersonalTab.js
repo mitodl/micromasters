@@ -3,8 +3,7 @@
 import DocumentTitle from "react-document-title"
 import React from "react"
 import _ from "lodash"
-import Card from "react-mdl/lib/Card/Card"
-import CardTitle from "react-mdl/lib/Card/CardTitle"
+import Card from "@material-ui/core/Card"
 import R from "ramda"
 import Select from "react-select"
 
@@ -32,6 +31,8 @@ import type { Option } from "../flow/generalTypes"
 import { setProfileStep } from "../actions/ui"
 import { PERSONAL_STEP } from "../constants"
 import ProfileImage from "../containers/ProfileImage"
+import Typography from "@material-ui/core/Typography"
+import CardContent from "@material-ui/core/CardContent"
 
 const personalTabValidator = combineValidators(
   personalValidation,
@@ -124,48 +125,52 @@ export default class PersonalTab extends React.Component {
       uneditedProfile
     } = this.props
 
-    return (
-      <DocumentTitle title="Personal Profile | MITx MicroMasters">
-        <div>
-          <Card shadow={1} className="program-select">
-            <CardTitle>
-              Which MicroMasters program are you signing up for?
-            </CardTitle>
-            {this.selectProgram()}
-            <span className="validation-error-text">
+    return <DocumentTitle title="Personal Profile | MITx MicroMasters">
+      <div>
+        <Card shadow={1} className="card program-select">
+          <CardContent>
+          <Typography component="h2">
+            Which MicroMasters program are you signing up for?
+          </Typography>
+          {this.selectProgram()}
+          <span className="validation-error-text">
               {_.get(errors, ["program"])}
             </span>
-          </Card>
-          <Card
-            shadow={1}
-            className={`profile-image ${validationErrorSelector(errors, [
-              "image"
-            ])}`}
-          >
-            <CardTitle>Upload a Profile Photo</CardTitle>
-            <ProfileImage
-              profile={uneditedProfile}
-              editable={true}
-              showLink={true}
-              linkText="Click here to add a profile photo"
-            />
-            <span className="validation-error-text">
+          </CardContent>
+        </Card>
+        <Card
+          shadow={1}
+          className={`card profile-image ${validationErrorSelector(errors, [
+            "image"
+          ])}`}
+        >
+          <CardContent>
+          <Typography component="h2">Upload Profile Photo</Typography>
+          <ProfileImage
+            profile={uneditedProfile}
+            editable={true}
+            showLink={true}
+            linkText="Click here to add a profile photo"
+          />
+          <span className="validation-error-text">
               {_.get(errors, ["image"])}
             </span>
-          </Card>
-          <Card shadow={1} className="profile-form">
-            <PersonalForm {...this.props} validator={personalValidation} />
-          </Card>
-          <ProfileProgressControls
-            {...this.props}
-            nextUrl="/profile/education"
-            nextBtnLabel="Next"
-            programIdForEnrollment={selectedProgram ? selectedProgram.id : null}
-            isLastTab={false}
-            validator={personalTabValidator}
-          />
-        </div>
-      </DocumentTitle>
-    )
+          </CardContent>
+        </Card>
+        <Card shadow={1} className="card profile-form">
+          <CardContent>
+          <PersonalForm {...this.props} validator={personalValidation}/>
+          </CardContent>
+        </Card>
+        <ProfileProgressControls
+          {...this.props}
+          nextUrl="/profile/education"
+          nextBtnLabel="Next"
+          programIdForEnrollment={selectedProgram ? selectedProgram.id : null}
+          isLastTab={false}
+          validator={personalTabValidator}
+        />
+      </div>
+    </DocumentTitle>
   }
 }

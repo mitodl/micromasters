@@ -11,6 +11,7 @@ import type { ImageUploadState } from "../reducers/image_upload"
 import { dialogActions } from "./inputs/util"
 import DialogTitle from "@material-ui/core/DialogTitle"
 import DialogActions from "@material-ui/core/DialogActions"
+import DialogContent from "@material-ui/core/DialogContent"
 
 const onDrop = R.curry((startPhotoEdit, files) => startPhotoEdit(...files))
 
@@ -98,6 +99,7 @@ const ProfileImageUploader = ({
       open={photoDialogOpen}
     >
       <DialogTitle className="dialog-title">Upload a Profile Photo</DialogTitle>
+      <DialogContent dividers>
       {imageError(error)}
       {dialogContents(
         updatePhotoEdit,
@@ -106,7 +108,7 @@ const ProfileImageUploader = ({
         setPhotoError,
         inFlight
       )}
-
+      </DialogContent>
       <DialogActions>
         {dialogActions(
           () => {

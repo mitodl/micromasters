@@ -42,6 +42,8 @@ import DialogTitle from "@material-ui/core/DialogTitle"
 import DialogActions from "@material-ui/core/DialogActions"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
 import FormControl from "@material-ui/core/FormControl"
+import CardContent from "@material-ui/core/CardContent"
+import DialogContent from "@material-ui/core/DialogContent"
 
 const fieldOfStudyOptions = labelSort(
   _.map(FIELDS_OF_STUDY, (name, code) => ({
@@ -367,7 +369,7 @@ class EducationForm extends ProfileFormFields {
     }
 
     return (
-      <Grid container className="profile-tab-grid">
+      <Grid container spacing={3} className="profile-tab-grid">
         {levelForm()}
         {fieldOfStudy()}
         <Grid item xs={12}>
@@ -436,12 +438,14 @@ class EducationForm extends ProfileFormFields {
 
       return (
         <Card shadow={1} className="card profile-form" id="education-card">
+          <CardContent>
           <Grid container className="profile-form-grid">
             <Grid item xs={12} className="profile-form-row profile-card-header">
               <span className="title">Education</span>
             </Grid>
             {this.renderEducationLevelEntries(null)}
           </Grid>
+          </CardContent>
         </Card>
       )
     } else {
@@ -486,7 +490,9 @@ class EducationForm extends ProfileFormFields {
           onClose={this.clearEducationEdit}
         >
           <DialogTitle className="dialog-title">{title}</DialogTitle>
+          <DialogContent dividers>
           {this.editEducationForm()}
+          </DialogContent>
           <DialogActions>
             {dialogActions(
               this.clearEducationEdit,

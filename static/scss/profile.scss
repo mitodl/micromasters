@@ -45,6 +45,20 @@
   font-size: 16px !important;
   overflow: visible;
 
+  h2 {
+    font-weight: 500;
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+
+   h3 {
+    font-size: 16px;
+    font-weight: 500;
+    padding-top: 30px;
+    margin: 0;
+    display: inline-block;
+  }
+
   .rounded-profile-image {
     margin-left: 15px;
   }
@@ -78,7 +92,6 @@
   .profile-radio-switch, .profile-radio-group {
     font-size: 14px;
     display: flex;
-    margin-top: 8px;
     flex-direction: row;
 
     > div {
@@ -202,6 +215,7 @@
       .profile-row-name {
         font-size: 16px;
         color: $font-black;
+        padding: 10px 0;
       }
 
       .school-type {
@@ -219,7 +233,7 @@
         color: $font-gray;
         float: left;
         position: relative;
-        margin-top: 7px;
+        margin-top: 15px;
       }
 
       .profile-row-new-line {
@@ -251,7 +265,6 @@
   overflow: visible;
   font-weight: 400;
   font-size: 15px;
-  padding-top: 30px;
 }
 
 // CSS magic to make the radio buttons show up next to each other
@@ -284,11 +297,6 @@
 
   .mdl-textfield {
     width: 100%;
-  }
-
-  .profile-form-title {
-    font-size: 22px;
-    font-weight: 600;
   }
 
   .end-date-hint {

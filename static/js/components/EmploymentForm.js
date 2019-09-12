@@ -36,8 +36,9 @@ import FormControl from "@material-ui/core/FormControl"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
 import DialogTitle from "@material-ui/core/DialogTitle"
 import DialogActions from "@material-ui/core/DialogActions"
-import Icon from "@material-ui/core/es/Icon/Icon";
-import CardContent from "@material-ui/core/es/CardContent/CardContent";
+import Icon from "@material-ui/core/Icon"
+import CardContent from "@material-ui/core/CardContent"
+import DialogContent from "@material-ui/core/DialogContent"
 
 class EmploymentForm extends ProfileFormFields {
   industryOptions: Array<Option> = INDUSTRIES.map(industry => ({
@@ -253,7 +254,7 @@ class EmploymentForm extends ProfileFormFields {
       )
     }
     return (
-      <Grid
+      <Grid item
         xs={12}
         className="profile-form-row row-padding row-with-border"
         key={index}
@@ -275,7 +276,7 @@ class EmploymentForm extends ProfileFormFields {
 
   renderWorkQuestionForm() {
     return (
-      <Grid xs={12} className="profile-form-row profile-card-header">
+      <Grid item xs={12} className="profile-form-row profile-card-header">
         <span className="question">Do you want to add an employer?</span>
         {this.renderWorkRadioSwitch()}
       </Grid>
@@ -360,7 +361,7 @@ class EmploymentForm extends ProfileFormFields {
         id={`work-history-card`}
       >
         <CardContent>
-        <Grid className="profile-form-grid">{this.renderCardBody()}</Grid>
+        <Grid container className="profile-form-grid">{this.renderCardBody()}</Grid>
         </CardContent>
       </Card>
     )
@@ -394,7 +395,9 @@ class EmploymentForm extends ProfileFormFields {
           onClose={this.closeWorkDialog}
         >
           <DialogTitle className="dialog-title">{title}</DialogTitle>
+          <DialogContent dividers>
           {this.editWorkHistoryForm()}
+          </DialogContent>
           <DialogActions>
             {dialogActions(
               this.closeWorkDialog,

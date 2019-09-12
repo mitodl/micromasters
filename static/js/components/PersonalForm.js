@@ -1,6 +1,6 @@
 // @flow
 import React from "react"
-import Grid, { Cell } from "react-mdl/lib/Grid"
+import Grid from "@material-ui/core/Grid"
 import ReactTooltip from "react-tooltip"
 import _ from "lodash"
 
@@ -49,19 +49,19 @@ export default class PersonalForm extends ProfileFormFields {
   }
 
   renderRomanizedFields = (): React$Element<*> => (
-    <Cell col={12}>
+    <Grid item xs={12}>
       <section className="romanized-name">
         <h3>Please enter your name in Latin characters</h3>
-        <Grid className="profile-form-grid">
-          <Cell col={6}>
+        <Grid container className="profile-form-grid">
+          <Grid item xs={6}>
             {this.boundTextField(["romanized_first_name"], "Given name")}
-          </Cell>
-          <Cell col={6}>
+          </Grid>
+          <Grid item xs={6}>
             {this.boundTextField(["romanized_last_name"], "Family name")}
-          </Cell>
+          </Grid>
         </Grid>
       </section>
-    </Cell>
+    </Grid>
   )
 
   showRomanizedFields = (): React$Element<*> | null =>
@@ -123,9 +123,9 @@ export default class PersonalForm extends ProfileFormFields {
     let postalCodeField = null
     if (profile && ["US", "CA"].includes(profile.country)) {
       postalCodeField = (
-        <Cell col={4} key="postal_code">
+        <Grid item xs={4} key="postal_code">
           {this.boundTextField(["postal_code"], "Postal code")}
-        </Cell>
+        </Grid>
       )
     }
 
@@ -135,43 +135,43 @@ export default class PersonalForm extends ProfileFormFields {
         <p className="alert-info" role="alert">
           Please provide your legal name, and truthful information.
         </p>
-        <Grid className="profile-form-grid">
-          <Cell col={6}>
+        <Grid container spacing={3} className="profile-form-grid">
+          <Grid item xs={6}>
             {this.boundTextField(["first_name"], "Given name")}
-          </Cell>
-          <Cell col={6}>
+          </Grid>
+          <Grid item xs={6}>
             {this.boundTextField(["last_name"], "Family name")}
-          </Cell>
+          </Grid>
           {this.showRomanizedFields()}
           <p className="alert-info" role="alert">
             Do you prefer to use a name different that your legal name entered
             above? If so enter it below.
           </p>
-          <Cell col={12}>
+          <Grid item xs={12}>
             {this.boundTextField(
               ["preferred_name"],
               "Nickname / Preferred name"
             )}
-          </Cell>
-          <Cell col={12}>
+          </Grid>
+          <Grid item xs={12}>
             {this.boundDateField(["date_of_birth"], "Date of birth")}
-          </Cell>
-          <Cell col={12} className="profile-gender-group">
+          </Grid>
+          <Grid item xs={12} className="profile-gender-group">
             {this.radioGroupField(["gender"], "Gender", this.genderOptions)}
-          </Cell>
-          <Cell col={12}>
+          </Grid>
+          <Grid item xs={12}>
             <SelectField
               keySet={["preferred_language"]}
               label="Preferred language"
               options={this.languageOptions}
               {...this.defaultInputComponentProps()}
             />
-          </Cell>
+          </Grid>
         </Grid>
         <section>
           <h3>Where are you currently living?</h3>
-          <Grid className="profile-form-grid">
-            <Cell col={12}>
+          <Grid container className="profile-form-grid">
+            <Grid item xs={12}>
               <CountrySelectField
                 stateKeySet={["state_or_territory"]}
                 countryKeySet={["country"]}
@@ -179,16 +179,16 @@ export default class PersonalForm extends ProfileFormFields {
                 label="Country"
                 {...this.defaultInputComponentProps()}
               />
-            </Cell>
-            <Cell col={12} key="address">
+            </Grid>
+            <Grid item xs={12} key="address">
               {this.boundTextField(["address"], "Street address", {
                 maxLength: 100
               })}
-            </Cell>
-            <Cell col={4} key="city">
+            </Grid>
+            <Grid item xs={4} key="city">
               {this.boundTextField(["city"], "City")}
-            </Cell>
-            <Cell col={4} key="state_or_territory">
+            </Grid>
+            <Grid item xs={4} key="state_or_territory">
               <StateSelectField
                 stateKeySet={["state_or_territory"]}
                 countryKeySet={["country"]}
@@ -196,7 +196,7 @@ export default class PersonalForm extends ProfileFormFields {
                 label="State or Territory"
                 {...this.defaultInputComponentProps()}
               />
-            </Cell>
+            </Grid>
             {postalCodeField}
           </Grid>
         </section>
@@ -218,23 +218,23 @@ export default class PersonalForm extends ProfileFormFields {
           >
             {whyWeAskThis}
           </ReactTooltip>
-          <Grid className="profile-form-grid">
-            <Cell col={4}>
+          <Grid container className="profile-form-grid">
+            <Grid item xs={4}>
               <CountrySelectField
                 countryKeySet={["birth_country"]}
                 label="Country of birth"
                 topMenu={true}
                 {...this.defaultInputComponentProps()}
               />
-            </Cell>
-            <Cell col={4}>
+            </Grid>
+            <Grid item xs={4}>
               <CountrySelectField
                 countryKeySet={["nationality"]}
                 label="Nationality"
                 topMenu={true}
                 {...this.defaultInputComponentProps()}
               />
-            </Cell>
+            </Grid>
           </Grid>
         </section>
         <section>

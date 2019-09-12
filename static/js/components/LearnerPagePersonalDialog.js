@@ -8,6 +8,9 @@ import { personalValidation } from "../lib/validation/profile"
 import PersonalForm from "./PersonalForm"
 import type { Profile, SaveProfileFunc } from "../flow/profileTypes"
 import type { UIState } from "../reducers/ui"
+import DialogTitle from "@material-ui/core/DialogTitle"
+import DialogActions from "@material-ui/core/DialogActions"
+import DialogContent from "@material-ui/core/DialogContent"
 
 export default class LearnerPagePersonalDialog extends React.Component {
   props: {
@@ -45,20 +48,21 @@ export default class LearnerPagePersonalDialog extends React.Component {
 
     return (
       <Dialog
-        title="Edit Personal Info"
-        titleClassName="dialog-title"
-        contentClassName="dialog personal-dialog"
-        className="personal-dialog-wrapper"
+        classes={{paper: "dialog personal-dialog", root:"personal-dialog-wrapper"}}
         open={learnerPageDialogVisibility}
-        onRequestClose={this.closePersonalDialog}
-        actions={dialogActions(
+        onClose={this.closePersonalDialog}
+      >
+        <DialogTitle className="dialog-title">Edit Personal Info</DialogTitle>
+         <DialogContent dividers>
+        <PersonalForm {...this.props} validator={personalValidation} />
+         </DialogContent>
+        <DialogActions>
+          {dialogActions(
           this.closePersonalDialog,
           this.savePersonalInfo,
           inFlight
         )}
-        autoScrollBodyContent={true}
-      >
-        <PersonalForm {...this.props} validator={personalValidation} />
+        </DialogActions>
       </Dialog>
     )
   }

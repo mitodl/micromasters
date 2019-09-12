@@ -1,6 +1,9 @@
 // @flow
 import React from "react"
 import Dialog from "@material-ui/core/Dialog"
+import DialogTitle from "@material-ui/core/DialogTitle"
+import DialogContent from "@material-ui/core/DialogContent"
+import DialogActions from "@material-ui/core/DialogActions"
 
 import { FETCH_PROCESSING } from "../actions"
 import ProfileFormFields from "../util/ProfileFormFields"
@@ -46,22 +49,23 @@ export default class LearnerPageAboutMeDialog extends ProfileFormFields {
 
     return (
       <Dialog
-        title="About Me"
-        titleClassName="dialog-title"
-        contentClassName="dialog about-me-dialog"
-        className="about-me-dialog-wrapper"
+        classes={{paper: "dialog about-me-dialog", root:"about-me-dialog-wrapper"}}
         open={learnerPageAboutMeDialogVisibility}
-        onRequestClose={this.closeAboutMeDialog}
-        actions={dialogActions(
+        onClose={this.closeAboutMeDialog}
+      >
+        <DialogTitle className="dialog-title">About Me</DialogTitle>
+        <DialogContent>
+        {this.boundTextField(["about_me"], "Introduce yourself", {
+          multiLine: true
+        })}
+        </DialogContent>
+        <DialogActions>
+          {dialogActions(
           this.closeAboutMeDialog,
           this.saveAboutMeInfo,
           inFlight
         )}
-        autoScrollBodyContent={true}
-      >
-        {this.boundTextField(["about_me"], "Introduce yourself", {
-          multiLine: true
-        })}
+        </DialogActions>
       </Dialog>
     )
   }

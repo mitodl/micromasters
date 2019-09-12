@@ -7,19 +7,6 @@
     align-items: center;
   }
 
-  h2 {
-    font-size: 20px;
-    margin: 0;
-  }
-
-  h3 {
-    font-size: 16px;
-    font-weight: 500;
-    padding-top: 30px;
-    margin: 0;
-    display: inline-block;
-  }
-
   .alert-info {
     background-color: $text-highlight;
     font-style: italic;
@@ -37,6 +24,7 @@
     display: block;
     font-size: 13px;
     color: rgba(0, 0, 0, 0.5);
+    margin-top: 5px;
 
     .Select-value, .Select-multi-value-wrapper {
       font-size: 16px;
@@ -63,8 +51,12 @@
   }
 
   .input-text {
-    margin-top: 6px;
+    margin: 10px 0;
+    padding-right: 10px;
 
+    input {
+      font-size: 16px;
+    }
     p {
       font-size: 12px;
     }
@@ -77,6 +69,10 @@
       line-height: 32px;
       font-weight: 400;
     }
+  }
+
+  fieldset {
+    margin: 20px 0;
   }
 
   .employment-dialog {
