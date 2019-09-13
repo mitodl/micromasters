@@ -1,9 +1,9 @@
 // @flow
 /* global SETTINGS: false */
 import React from "react"
-import { Card, CardTitle } from "react-mdl/lib/Card"
-import Button from "react-mdl/lib/Button"
-import IconButton from "react-mdl/lib/IconButton"
+import Card from "@material-ui/core/Card"
+import Button from "@material-ui/core/Button"
+import IconButton from "@material-ui/core/IconButton"
 import _ from "lodash"
 import R from "ramda"
 import Dialog from "@material-ui/core/Dialog"
@@ -24,13 +24,13 @@ import { getRomanizedName, getLocation } from "../../util/util"
 import type { PearsonAPIState } from "../../reducers/pearson"
 
 const cardWrapper = (...children) => (
-  <Card shadow={0} className="final-exam-card">
+  <Card shadow={0} className="card final-exam-card">
     <div className="card-header">
       <div>
         <img className="exam-icon" src="/static/images/exam_icon.png" />
       </div>
       <div>
-        <CardTitle>Final Proctored Exam</CardTitle>
+        <h2 >Final Proctored Exam</h2>
         <p>
           {`You must take a proctored exam for each course. Exams may be taken
             at any `}

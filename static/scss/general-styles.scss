@@ -12,7 +12,7 @@ body {
 
 
 .card {
-  padding: 15px 0 10px 15px;
+  padding: 8px 0 10px 10px;
   margin: 0 0 18px 0;
   min-height: 150px;
   width: 100%;
@@ -28,6 +28,7 @@ body {
     font-weight: 500;
     font-size: 16px;
     color: $font-black;
+    margin: 0 0 15px;
 
   }
 }

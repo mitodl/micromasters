@@ -2,7 +2,7 @@
 import React from "react"
 import moment from "moment"
 import R from "ramda"
-import { Card, CardTitle } from "react-mdl/lib/Card"
+import Card from "@material-ui/core/Card"
 
 import type { Program, Course } from "../../flow/programTypes"
 import type { CouponPrice, CouponPrices } from "../../flow/couponTypes"
@@ -18,6 +18,7 @@ import {
 import { isFreeCoupon } from "../../lib/coupon"
 import { formatPrice } from "../../util/util"
 import type { GradeType } from "../../containers/DashboardPage"
+import CardContent from "@material-ui/core/CardContent"
 
 const priceMessageClassName = "price-message"
 
@@ -197,13 +198,15 @@ export default class CourseListCard extends React.Component {
     ))
 
     return (
-      <Card shadow={0} className="course-list">
+      <Card shadow={0} className="card course-list">
+      <CardContent className="course-list-content">
         <FinancialAidCalculator />
-        <CardTitle>
+        <h2>
           {showStaffView ? `Courses - ${program.title}` : "Required Courses"}
-        </CardTitle>
+        </h2>
         {showStaffView ? null : this.renderPriceMessage()}
         {courseRows}
+        </CardContent>
       </Card>
     )
   }

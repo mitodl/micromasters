@@ -35,6 +35,7 @@ import { dialogActions } from "../components/inputs/util"
 import { getOwnDashboard } from "../reducers/util"
 import DialogActions from "@material-ui/core/es/DialogActions/DialogActions"
 import DialogTitle from "@material-ui/core/es/DialogTitle/DialogTitle"
+import DialogContent from "@material-ui/core/DialogContent"
 
 export const CALCULATOR_DIALOG = "CALCULATOR_DIALOG"
 
@@ -208,6 +209,7 @@ const FinancialAidCalculator = ({
       onClose={closeConfirmDialogAndCancel}
     >
       <DialogTitle className="dialog-title">Confirm Your Income</DialogTitle>
+      <DialogContent>
       <div>
         Household Income:{" "}
         <b>
@@ -219,6 +221,7 @@ const FinancialAidCalculator = ({
       provide documentation (if necessary). If you can't provide an accurate
       income at this time, click cancel.
       {fetchError ? apiError(fetchError) : null}
+      </DialogContent>
       <DialogActions>
         {dialogActions(
           closeConfirmDialogAndCancel,
@@ -245,6 +248,7 @@ const FinancialAidCalculator = ({
         <DialogTitle className="dialog-title">
           Personal Course Pricing
         </DialogTitle>
+        <DialogContent dividers>
         <div className="copy">
           {`The cost of courses in the ${title} MicroMasters varies between ${minPossibleCost} and ${maxPossibleCost},
         depending on your income and ability to pay.`}
@@ -270,6 +274,7 @@ const FinancialAidCalculator = ({
           {validationMessage("checkBox", validation)}
         </div>
         {fetchError ? apiError(fetchError) : null}
+        </DialogContent>
 
         <DialogActions>
           {calculatorActions(

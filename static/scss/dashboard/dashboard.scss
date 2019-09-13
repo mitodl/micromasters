@@ -22,6 +22,7 @@
 
 .dashboard {
   .dashboard-user-card {
+    display: flex;
     flex-direction: row;
 
     .dashboard-user-card-text {
@@ -33,22 +34,16 @@
         padding-bottom: 13px;
       }
 
-      .mdl-card__supporting-text {
+      p {
         padding: 0;
         color: $font-gray;
         font-size: 15px;
         font-weight: 400;
       }
 
-      .mdl-card__title {
-        padding-bottom: 0 !important;
-        padding: 0;
-        margin: 0 0 12px;
-
-        .mdl-card__title-text {
-          font-size: 22px;
-          font-weight: 400;
-        }
+      h2 {
+        font-size: 22px;
+        font-weight: 400;
       }
     }
   }
@@ -159,15 +154,18 @@
   }
 
   .course-list {
-    padding: 20px 0 0 0;
+    padding: 0;
 
     @include breakpoint(phone) {
       padding: 17px 0 19px !important;
     }
 
-    .mdl-card__title {
-      // align with course-row below which includes an extra 8px of grid cell padding
-      padding-left: 28px;
+    .course-list-content {
+      padding: 0;
+
+      h2 {
+        margin: 22px 27px;
+      }
     }
 
     .course-container {

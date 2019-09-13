@@ -25,20 +25,17 @@
 }
 
 .progress-widget {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  align-content: space-between;
-  font-size: 16pt;
+
+  .progress-widget-content {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
 
   .progress-title {
     padding: 0;
     align-self: flex-start;
-
-    .mdl-card__title-text {
-      font-size: 13pt;
-      font-weight: 400;
-    }
   }
 
   .certificate-thumbnail {

@@ -2,7 +2,7 @@
 /* global SETTINGS: false */
 import DocumentTitle from "react-document-title"
 import React from "react"
-import { Card } from "react-mdl/lib/Card"
+import Card from "@material-ui/core/Card"
 import PropTypes from "prop-types"
 import type { Dispatch } from "redux"
 import { connect } from "react-redux"

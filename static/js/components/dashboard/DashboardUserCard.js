@@ -1,12 +1,14 @@
 // @flow
 import React from "react"
-import { Card, CardTitle, CardText } from "react-mdl/lib/Card"
+import Card from "@material-ui/core/Card"
 import Link from "react-router/lib/Link"
 
 import ProfileImage from "../../containers/ProfileImage"
 import { getPreferredName } from "../../util/util"
 import type { Profile } from "../../flow/profileTypes"
 import type { Program } from "../../flow/programTypes"
+import Typography from "@material-ui/core/Typography"
+import CardContent from "@material-ui/core/CardContent"
 
 export default class DashboardUserCard extends React.Component {
   props: {
@@ -19,13 +21,14 @@ export default class DashboardUserCard extends React.Component {
     const programTitle = program ? program.title : ""
 
     return (
-      <Card className="dashboard-user-card" shadow={0}>
+      <Card className="card" shadow={0}>
+        <CardContent className="dashboard-user-card">
         <div className="dashboard-user-card-image">
           <ProfileImage profile={profile} editable={true} />
         </div>
         <div className="dashboard-user-card-text">
-          <CardTitle>{getPreferredName(profile)}</CardTitle>
-          <CardText>
+          <Typography component="h2">{getPreferredName(profile)}</Typography>
+          <Typography component="p">
             <span className="dashboard-user-card-text-program">
               {programTitle}
             </span>
@@ -36,8 +39,9 @@ export default class DashboardUserCard extends React.Component {
             >
               View Profile
             </Link>
-          </CardText>
+          </Typography>
         </div>
+        </CardContent>
       </Card>
     )
   }

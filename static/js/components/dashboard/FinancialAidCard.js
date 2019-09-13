@@ -1,9 +1,9 @@
 // @flow
 import React from "react"
-import Button from "react-mdl/lib/Button"
-import Grid, { Cell } from "react-mdl/lib/Grid"
-import { Card, CardTitle } from "react-mdl/lib/Card"
-import Icon from "react-mdl/lib/Icon"
+import Button from "@material-ui/core/Button"
+import Grid from "@material-ui/core/Grid"
+import Card from "@material-ui/core/Card"
+import Icon from "@material-ui/core/Icon"
 import DatePicker from "react-datepicker"
 import moment from "moment"
 
@@ -26,6 +26,7 @@ import {
 } from "../../constants"
 import SkipFinancialAidDialog from "../SkipFinancialAidDialog"
 import type { UIState } from "../../reducers/ui"
+import CardContent from "@material-ui/core/CardContent"
 
 const price = price => <span className="bold">{formatPrice(price)}</span>
 
@@ -77,22 +78,22 @@ export default class FinancialAidCard extends React.Component {
     case FA_STATUS_DOCS_SENT:
       return (
         <div className="documents-sent">
-          <Icon name="done" key="icon" />
-            Documents mailed/uploaded on {``}
+          <Icon key="icon">done</Icon>
+          Documents mailed/uploaded on {``}
           {moment(dateDocumentsSent).format(DASHBOARD_FORMAT)}. We will review
-            your documents as soon as possible.
+          your documents as soon as possible.
         </div>
       )
     case FA_STATUS_PENDING_DOCS:
       return (
         <div>
-          <Grid>
-            <Cell col={12}>
+          <Grid container>
+            <Grid item xs={12}>
                 Please tell us the date you sent the documents
-            </Cell>
+            </Grid>
           </Grid>
-          <Grid className="document-row">
-            <Cell col={12} className="document-sent-button-container">
+          <Grid container className="document-row">
+            <Grid item xs={12} className="document-sent-button-container">
               <DatePicker
                 selected={moment(documentSentDate)}
                 onChange={this.setDocumentSentDate}
@@ -105,7 +106,7 @@ export default class FinancialAidCard extends React.Component {
               >
                   Submit
               </SpinnerButton>
-            </Cell>
+            </Grid>
           </Grid>
         </div>
       )
@@ -185,8 +186,8 @@ export default class FinancialAidCard extends React.Component {
     case FA_STATUS_PENDING_DOCS:
       return (
         <div>
-          <Grid>
-            <Cell col={12} className="price-explanation">
+          <Grid container>
+            <Grid item xs={12} className="price-explanation">
               <div>Your cost is {price(calculatedPrice)} per course.</div>
               <button
                 className="mm-minor-action full-price"
@@ -194,11 +195,11 @@ export default class FinancialAidCard extends React.Component {
               >
                   Skip this and Pay Full Price
               </button>
-            </Cell>
+            </Grid>
           </Grid>
 
-          <Grid className="financial-aid-box">
-            <Cell col={12}>
+          <Grid container className="financial-aid-box">
+            <Grid item xs={12}>
                 Before you can pay, you need to verify your income. Please visit
                 the{" "}
               <a href="https://na2.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=4a74536d-1629-4709-b8e9-f173a51cf501&env=na2&v=2">
@@ -207,30 +208,30 @@ export default class FinancialAidCard extends React.Component {
                 to upload an English-translated and notarized income tax or
                 income statement document. You can also send documents by mail.
                 DO NOT SEND BY EMAIL.
-            </Cell>
-            <Cell col={12}>
+            </Grid>
+            <Grid item xs={12}>
               <a
                 className="btn-instructions"
                 onClick={() => setDocsInstructionsVisibility(true)}
               >
                   Read Complete Instructions
               </a>
-            </Cell>
+            </Grid>
           </Grid>
 
           <Grid>
-            <Cell col={6}>Upload to DocuSign</Cell>
-            <Cell col={6}>Mail to</Cell>
+            <Grid item xs={6}>Upload to DocuSign</Grid>
+            <Grid item xs={6}>Mail to</Grid>
           </Grid>
 
           <Grid>
-            <Cell col={6}>
+            <Grid item xs={6}>
               <a href="https://na2.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=4a74536d-1629-4709-b8e9-f173a51cf501&env=na2&v=2">
                   https://na2.docusign.net/Member/
                   PowerFormSigning.aspx?PowerFormId=4a74536d-1629-4709-b8e9-f173a51cf501&env=na2&v=2
               </a>
-            </Cell>
-            <Cell col={6}>
+            </Grid>
+            <Grid item xs={6}>
                 J-PAL
               <br />
                 DEDP MicroMasters
@@ -241,7 +242,7 @@ export default class FinancialAidCard extends React.Component {
               <br />
                 Cambridge, MA 02139 United States of America
               <br />
-            </Cell>
+            </Grid>
           </Grid>
 
           <hr />
@@ -278,7 +279,7 @@ export default class FinancialAidCard extends React.Component {
     }
 
     return (
-      <Card shadow={0} className="financial-aid-card">
+      <Card shadow={0} className="card financial-aid-card">
         <SkipFinancialAidDialog
           open={skipDialogVisibility}
           cancel={() => setConfirmSkipDialogVisibility(false)}
@@ -287,7 +288,8 @@ export default class FinancialAidCard extends React.Component {
           fetchAddStatus={financialAid.fetchAddStatus}
           fetchSkipStatus={financialAid.fetchSkipStatus}
         />
-        <CardTitle>Personal Course Pricing</CardTitle>
+        <CardContent>
+        <h2>Personal Course Pricing</h2>
         <div>{contents}</div>
         <div className="no-calls-message">
           If you have questions, contact us using the Help button at the bottom
@@ -298,6 +300,7 @@ export default class FinancialAidCard extends React.Component {
           . Due to high volume of inquiries we do not have a support phone
           number at this time.
         </div>
+        </CardContent>
       </Card>
     )
   }

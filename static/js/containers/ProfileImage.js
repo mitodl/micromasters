@@ -2,7 +2,7 @@
 /* global SETTINGS: false */
 import React from "react"
 import { connect } from "react-redux"
-import Icon from "react-mdl/lib/Icon"
+import Icon from "@material-ui/core/Icon"
 import type { Dispatch } from "redux"
 
 import {
@@ -86,7 +86,7 @@ class ProfileImage extends React.Component {
           className="open-photo-dialog"
           onClick={() => this.setDialogVisibility(true)}
         >
-          <Icon name="camera_alt" aria-hidden="true" />
+          <Icon aria-hidden="true">camera_alt</Icon>
           <span className="sr-only">Update user photo</span>
         </button>
       )

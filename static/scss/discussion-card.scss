@@ -5,6 +5,11 @@
     display: flex;
     justify-content: space-between;
 
+    h2 {
+      line-height: normal;
+      margin: 0;
+    }
+
     div {
       font-weight: 500;
     }

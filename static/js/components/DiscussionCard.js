@@ -1,12 +1,13 @@
 // @flow
 import React from "react"
-import { Card } from "react-mdl/lib/Card"
+import Card from "@material-ui/core/Card"
 import R from "ramda"
 import moment from "moment"
 
 import { channelURL, postURL } from "../lib/discussions"
 
 import type { Post } from "../flow/discussionTypes"
+import CardContent from "@material-ui/core/CardContent"
 
 const formatTime = R.compose(
   date => date.fromNow(),
@@ -51,14 +52,16 @@ const DiscussionCard = (props: DiscussionCardProps) => {
   const { frontpage } = props
 
   return (
-    <Card className="discussion-card" shadow={0}>
-      <div className="mdl-card__title header">
-        <h2 className="mdl-card__title-text">Discussion</h2>
+    <Card className="card discussion-card" shadow={0}>
+      <CardContent>
+        <div className="header">
+        <h2>Discussion</h2>
         <a href="/discussions" target="_blank" rel="noopener noreferrer">
           View All
         </a>
-      </div>
+        </div>
       <div className="posts">{renderPosts(frontpage)}</div>
+      </CardContent>
     </Card>
   )
 }
