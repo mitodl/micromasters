@@ -102,30 +102,30 @@ export default class ProgressWidget extends React.Component {
     return (
       <Card className="card progress-widget" shadow={0}>
         <CardContent className="progress-widget-content">
-        <img
-          className="certificate-thumbnail"
-          src="/static/images/diploma_sm.png"
-          alt="Certificate"
-        />
-        <div className="text-course-complete">Congratulations!</div>
-        <p className="certificate-text">
-          You completed the MicroMasters Certificate in {program.title}
-        </p>
-        <Button
-          className="dashboard-button"
-          onClick={() => {
-            window.open(program.certificate)
-          }}
-        >
-          View Certificate
-        </Button>
-        {SETTINGS.FEATURES.PROGRAM_RECORD_LINK &&
-          program.financial_aid_availability &&
-          gradeRecordsLink(program.grade_records_url)}
+          <img
+            className="certificate-thumbnail"
+            src="/static/images/diploma_sm.png"
+            alt="Certificate"
+          />
+          <div className="text-course-complete">Congratulations!</div>
+          <p className="certificate-text">
+            You completed the MicroMasters Certificate in {program.title}
+          </p>
+          <Button
+            className="dashboard-button"
+            onClick={() => {
+              window.open(program.certificate)
+            }}
+          >
+            View Certificate
+          </Button>
+          {SETTINGS.FEATURES.PROGRAM_RECORD_LINK &&
+            program.financial_aid_availability &&
+            gradeRecordsLink(program.grade_records_url)}
 
-        {SETTINGS.FEATURES.ENABLE_PROGRAM_LETTER &&
-          program.program_letter_url &&
-          programLetterLink(program.program_letter_url)}
+          {SETTINGS.FEATURES.ENABLE_PROGRAM_LETTER &&
+            program.program_letter_url &&
+            programLetterLink(program.program_letter_url)}
         </CardContent>
       </Card>
     )
@@ -138,20 +138,20 @@ export default class ProgressWidget extends React.Component {
     return (
       <Card className="card progress-widget" shadow={0}>
         <CardContent className="progress-widget-content">
-        <h2 className="progress-title">Progress</h2>
-        {circularProgressWidget(
-          60,
-          6,
-          totalPassedCourses,
-          program.number_courses_required
-        )}
-        {SETTINGS.FEATURES.PROGRAM_RECORD_LINK &&
-          program.financial_aid_availability &&
-          gradeRecordsLink(program.grade_records_url)}
-        {SETTINGS.FEATURES.ENABLE_PROGRAM_LETTER &&
-          !program.financial_aid_availability &&
-          program.program_letter_url &&
-          programLetterLink(program.program_letter_url)}
+          <h2 className="progress-title">Progress</h2>
+          {circularProgressWidget(
+            60,
+            6,
+            totalPassedCourses,
+            program.number_courses_required
+          )}
+          {SETTINGS.FEATURES.PROGRAM_RECORD_LINK &&
+            program.financial_aid_availability &&
+            gradeRecordsLink(program.grade_records_url)}
+          {SETTINGS.FEATURES.ENABLE_PROGRAM_LETTER &&
+            !program.financial_aid_availability &&
+            program.program_letter_url &&
+            programLetterLink(program.program_letter_url)}
         </CardContent>
       </Card>
     )

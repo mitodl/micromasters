@@ -262,15 +262,17 @@ class EducationForm extends ProfileFormFields {
       const icons = () => (
         <div className="profile-row-icons">
           {validationAlert()}
-          <IconButton className="edit-button" onClick={editEntry}><Icon>edit</Icon></IconButton>
-          <IconButton
-            className="delete-button"
-            onClick={deleteEntry}
-          ><Icon>delete</Icon></IconButton>
+          <IconButton className="edit-button" onClick={editEntry}>
+            <Icon>edit</Icon>
+          </IconButton>
+          <IconButton className="delete-button" onClick={deleteEntry}>
+            <Icon>delete</Icon>
+          </IconButton>
         </div>
       )
       return (
-        <Grid item
+        <Grid
+          item
           xs={12}
           className="profile-form-row row-padding row-with-border"
           key={index}
@@ -439,12 +441,16 @@ class EducationForm extends ProfileFormFields {
       return (
         <Card shadow={1} className="card profile-form" id="education-card">
           <CardContent>
-          <Grid container className="profile-form-grid">
-            <Grid item xs={12} className="profile-form-row profile-card-header">
-              <span className="title">Education</span>
+            <Grid container className="profile-form-grid">
+              <Grid
+                item
+                xs={12}
+                className="profile-form-row profile-card-header"
+              >
+                <span className="title">Education</span>
+              </Grid>
+              {this.renderEducationLevelEntries(null)}
             </Grid>
-            {this.renderEducationLevelEntries(null)}
-          </Grid>
           </CardContent>
         </Card>
       )
@@ -490,9 +496,7 @@ class EducationForm extends ProfileFormFields {
           onClose={this.clearEducationEdit}
         >
           <DialogTitle className="dialog-title">{title}</DialogTitle>
-          <DialogContent dividers>
-          {this.editEducationForm()}
-          </DialogContent>
+          <DialogContent dividers>{this.editEducationForm()}</DialogContent>
           <DialogActions>
             {dialogActions(
               this.clearEducationEdit,

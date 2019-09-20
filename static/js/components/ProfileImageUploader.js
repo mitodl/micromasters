@@ -100,14 +100,14 @@ const ProfileImageUploader = ({
     >
       <DialogTitle className="dialog-title">Upload a Profile Photo</DialogTitle>
       <DialogContent dividers>
-      {imageError(error)}
-      {dialogContents(
-        updatePhotoEdit,
-        photo,
-        startPhotoEdit,
-        setPhotoError,
-        inFlight
-      )}
+        {imageError(error)}
+        {dialogContents(
+          updatePhotoEdit,
+          photo,
+          startPhotoEdit,
+          setPhotoError,
+          inFlight
+        )}
       </DialogContent>
       <DialogActions>
         {dialogActions(

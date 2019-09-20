@@ -210,17 +210,17 @@ const FinancialAidCalculator = ({
     >
       <DialogTitle className="dialog-title">Confirm Your Income</DialogTitle>
       <DialogContent>
-      <div>
-        Household Income:{" "}
-        <b>
-          {currency} {income}
-        </b>
-      </div>
-      <br />
-      Please make sure that your household income is accurate and that you can
-      provide documentation (if necessary). If you can't provide an accurate
-      income at this time, click cancel.
-      {fetchError ? apiError(fetchError) : null}
+        <div>
+          Household Income:{" "}
+          <b>
+            {currency} {income}
+          </b>
+        </div>
+        <br />
+        Please make sure that your household income is accurate and that you can
+        provide documentation (if necessary). If you can't provide an accurate
+        income at this time, click cancel.
+        {fetchError ? apiError(fetchError) : null}
       </DialogContent>
       <DialogActions>
         {dialogActions(
@@ -249,31 +249,31 @@ const FinancialAidCalculator = ({
           Personal Course Pricing
         </DialogTitle>
         <DialogContent dividers>
-        <div className="copy">
-          {`The cost of courses in the ${title} MicroMasters varies between ${minPossibleCost} and ${maxPossibleCost},
+          <div className="copy">
+            {`The cost of courses in the ${title} MicroMasters varies between ${minPossibleCost} and ${maxPossibleCost},
         depending on your income and ability to pay.`}
-        </div>
-        <div className="salary-input">
-          <div className="income">
-            <label>
-              Income (yearly)
-              {salaryField(updateCalculatorEdit, financialAid)}
-            </label>
-            {validationMessage("income", validation)}
           </div>
-          <div className="currency">
-            <div>Currency</div>
-            {currencySelect(updateCalculatorEdit, financialAid)}
-            {validationMessage("currency", validation)}
+          <div className="salary-input">
+            <div className="income">
+              <label>
+                Income (yearly)
+                {salaryField(updateCalculatorEdit, financialAid)}
+              </label>
+              {validationMessage("income", validation)}
+            </div>
+            <div className="currency">
+              <div>Currency</div>
+              {currencySelect(updateCalculatorEdit, financialAid)}
+              {validationMessage("currency", validation)}
+            </div>
           </div>
-        </div>
-        <div className="checkbox">
-          {checkBox(updateCalculatorEdit, financialAid)}
-        </div>
-        <div className="checkbox-alert">
-          {validationMessage("checkBox", validation)}
-        </div>
-        {fetchError ? apiError(fetchError) : null}
+          <div className="checkbox">
+            {checkBox(updateCalculatorEdit, financialAid)}
+          </div>
+          <div className="checkbox-alert">
+            {validationMessage("checkBox", validation)}
+          </div>
+          {fetchError ? apiError(fetchError) : null}
         </DialogContent>
 
         <DialogActions>

@@ -23,24 +23,24 @@ export default class DashboardUserCard extends React.Component {
     return (
       <Card className="card" shadow={0}>
         <CardContent className="dashboard-user-card">
-        <div className="dashboard-user-card-image">
-          <ProfileImage profile={profile} editable={true} />
-        </div>
-        <div className="dashboard-user-card-text">
-          <Typography component="h2">{getPreferredName(profile)}</Typography>
-          <Typography component="p">
-            <span className="dashboard-user-card-text-program">
-              {programTitle}
-            </span>
+          <div className="dashboard-user-card-image">
+            <ProfileImage profile={profile} editable={true} />
+          </div>
+          <div className="dashboard-user-card-text">
+            <Typography component="h2">{getPreferredName(profile)}</Typography>
+            <Typography component="p">
+              <span className="dashboard-user-card-text-program">
+                {programTitle}
+              </span>
 
-            <Link
-              to={`/learner/${profile.username}`}
-              className="mm-minor-action"
-            >
-              View Profile
-            </Link>
-          </Typography>
-        </div>
+              <Link
+                to={`/learner/${profile.username}`}
+                className="mm-minor-action"
+              >
+                View Profile
+              </Link>
+            </Typography>
+          </div>
         </CardContent>
       </Card>
     )

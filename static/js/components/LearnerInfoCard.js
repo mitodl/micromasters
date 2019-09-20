@@ -82,7 +82,9 @@ export default class LearnerInfoCard extends React.Component {
           <IconButton
             className="edit-about-me-button"
             onClick={toggleShowAboutMeDialog}
-          ><Icon>edit</Icon></IconButton>
+          >
+            <Icon>edit</Icon>
+          </IconButton>
         </div>
       )
     }
@@ -124,7 +126,9 @@ export default class LearnerInfoCard extends React.Component {
           <IconButton
             onClick={toggleShowPersonalDialog}
             className="edit-personal-info-button"
-          ><Icon>edit</Icon></IconButton>
+          >
+            <Icon>edit</Icon>
+          </IconButton>
         </div>
       )
     }
@@ -132,20 +136,20 @@ export default class LearnerInfoCard extends React.Component {
     return (
       <Card shadow={1} className="card profile-form user-page">
         <CardContent>
-        <div className="profile-form-row">
-          <ProfileImage profile={profile} editable={true} />
-          <div className="col user-info">
-            <div className="profile-title">{getPreferredName(profile)}</div>
-            {showLegalNameIfStaff(profile)}
-            {showIdIfStaff(profile)}
-            <div className="profile-company-name">
-              {mstr(getEmployer(profile))}
+          <div className="profile-form-row">
+            <ProfileImage profile={profile} editable={true} />
+            <div className="col user-info">
+              <div className="profile-title">{getPreferredName(profile)}</div>
+              {showLegalNameIfStaff(profile)}
+              {showIdIfStaff(profile)}
+              <div className="profile-company-name">
+                {mstr(getEmployer(profile))}
+              </div>
+              {this.renderEmailLink()}
             </div>
-            {this.renderEmailLink()}
+            {personalInfoEditContent}
           </div>
-          {personalInfoEditContent}
-        </div>
-        {this.renderAboutMeSection(profile, toggleShowAboutMeDialog)}
+          {this.renderAboutMeSection(profile, toggleShowAboutMeDialog)}
         </CardContent>
       </Card>
     )

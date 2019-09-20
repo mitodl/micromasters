@@ -48,20 +48,23 @@ export default class LearnerPagePersonalDialog extends React.Component {
 
     return (
       <Dialog
-        classes={{paper: "dialog personal-dialog", root:"personal-dialog-wrapper"}}
+        classes={{
+          paper: "dialog personal-dialog",
+          root:  "personal-dialog-wrapper"
+        }}
         open={learnerPageDialogVisibility}
         onClose={this.closePersonalDialog}
       >
         <DialogTitle className="dialog-title">Edit Personal Info</DialogTitle>
-         <DialogContent dividers>
-        <PersonalForm {...this.props} validator={personalValidation} />
-         </DialogContent>
+        <DialogContent dividers>
+          <PersonalForm {...this.props} validator={personalValidation} />
+        </DialogContent>
         <DialogActions>
           {dialogActions(
-          this.closePersonalDialog,
-          this.savePersonalInfo,
-          inFlight
-        )}
+            this.closePersonalDialog,
+            this.savePersonalInfo,
+            inFlight
+          )}
         </DialogActions>
       </Dialog>
     )

@@ -125,52 +125,54 @@ export default class PersonalTab extends React.Component {
       uneditedProfile
     } = this.props
 
-    return <DocumentTitle title="Personal Profile | MITx MicroMasters">
-      <div>
-        <Card shadow={1} className="card program-select">
-          <CardContent>
-          <Typography component="h2">
-            Which MicroMasters program are you signing up for?
-          </Typography>
-          {this.selectProgram()}
-          <span className="validation-error-text">
-              {_.get(errors, ["program"])}
-            </span>
-          </CardContent>
-        </Card>
-        <Card
-          shadow={1}
-          className={`card profile-image ${validationErrorSelector(errors, [
-            "image"
-          ])}`}
-        >
-          <CardContent>
-          <Typography component="h2">Upload Profile Photo</Typography>
-          <ProfileImage
-            profile={uneditedProfile}
-            editable={true}
-            showLink={true}
-            linkText="Click here to add a profile photo"
+    return (
+      <DocumentTitle title="Personal Profile | MITx MicroMasters">
+        <div>
+          <Card shadow={1} className="card program-select">
+            <CardContent>
+              <Typography component="h2">
+                Which MicroMasters program are you signing up for?
+              </Typography>
+              {this.selectProgram()}
+              <span className="validation-error-text">
+                {_.get(errors, ["program"])}
+              </span>
+            </CardContent>
+          </Card>
+          <Card
+            shadow={1}
+            className={`card profile-image ${validationErrorSelector(errors, [
+              "image"
+            ])}`}
+          >
+            <CardContent>
+              <Typography component="h2">Upload Profile Photo</Typography>
+              <ProfileImage
+                profile={uneditedProfile}
+                editable={true}
+                showLink={true}
+                linkText="Click here to add a profile photo"
+              />
+              <span className="validation-error-text">
+                {_.get(errors, ["image"])}
+              </span>
+            </CardContent>
+          </Card>
+          <Card shadow={1} className="card profile-form">
+            <CardContent>
+              <PersonalForm {...this.props} validator={personalValidation} />
+            </CardContent>
+          </Card>
+          <ProfileProgressControls
+            {...this.props}
+            nextUrl="/profile/education"
+            nextBtnLabel="Next"
+            programIdForEnrollment={selectedProgram ? selectedProgram.id : null}
+            isLastTab={false}
+            validator={personalTabValidator}
           />
-          <span className="validation-error-text">
-              {_.get(errors, ["image"])}
-            </span>
-          </CardContent>
-        </Card>
-        <Card shadow={1} className="card profile-form">
-          <CardContent>
-          <PersonalForm {...this.props} validator={personalValidation}/>
-          </CardContent>
-        </Card>
-        <ProfileProgressControls
-          {...this.props}
-          nextUrl="/profile/education"
-          nextBtnLabel="Next"
-          programIdForEnrollment={selectedProgram ? selectedProgram.id : null}
-          isLastTab={false}
-          validator={personalTabValidator}
-        />
-      </div>
-    </DocumentTitle>
+        </div>
+      </DocumentTitle>
+    )
   }
 }

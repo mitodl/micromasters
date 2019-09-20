@@ -55,12 +55,12 @@ const DiscussionCard = (props: DiscussionCardProps) => {
     <Card className="card discussion-card" shadow={0}>
       <CardContent>
         <div className="header">
-        <h2>Discussion</h2>
-        <a href="/discussions" target="_blank" rel="noopener noreferrer">
-          View All
-        </a>
+          <h2>Discussion</h2>
+          <a href="/discussions" target="_blank" rel="noopener noreferrer">
+            View All
+          </a>
         </div>
-      <div className="posts">{renderPosts(frontpage)}</div>
+        <div className="posts">{renderPosts(frontpage)}</div>
       </CardContent>
     </Card>
   )

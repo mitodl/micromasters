@@ -49,22 +49,25 @@ export default class LearnerPageAboutMeDialog extends ProfileFormFields {
 
     return (
       <Dialog
-        classes={{paper: "dialog about-me-dialog", root:"about-me-dialog-wrapper"}}
+        classes={{
+          paper: "dialog about-me-dialog",
+          root:  "about-me-dialog-wrapper"
+        }}
         open={learnerPageAboutMeDialogVisibility}
         onClose={this.closeAboutMeDialog}
       >
         <DialogTitle className="dialog-title">About Me</DialogTitle>
         <DialogContent>
-        {this.boundTextField(["about_me"], "Introduce yourself", {
-          multiLine: true
-        })}
+          {this.boundTextField(["about_me"], "Introduce yourself", {
+            multiLine: true
+          })}
         </DialogContent>
         <DialogActions>
           {dialogActions(
-          this.closeAboutMeDialog,
-          this.saveAboutMeInfo,
-          inFlight
-        )}
+            this.closeAboutMeDialog,
+            this.saveAboutMeInfo,
+            inFlight
+          )}
         </DialogActions>
       </Dialog>
     )

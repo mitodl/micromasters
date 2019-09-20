@@ -35,9 +35,9 @@ const SkipFinancialAidDialog = ({
   >
     <DialogTitle className="dialog-title">Are you sure?</DialogTitle>
     <DialogContent>
-    You may qualify for a reduced cost. Clicking "Pay Full Price" means that you
-    are declining this option and you will pay the full price of {fullPrice} for
-    each course in the program.
+      You may qualify for a reduced cost. Clicking "Pay Full Price" means that
+      you are declining this option and you will pay the full price of{" "}
+      {fullPrice} for each course in the program.
     </DialogContent>
     <DialogActions>
       {dialogActions(

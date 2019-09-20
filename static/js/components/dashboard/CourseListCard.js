@@ -199,13 +199,13 @@ export default class CourseListCard extends React.Component {
 
     return (
       <Card shadow={0} className="card course-list">
-      <CardContent className="course-list-content">
-        <FinancialAidCalculator />
-        <h2>
-          {showStaffView ? `Courses - ${program.title}` : "Required Courses"}
-        </h2>
-        {showStaffView ? null : this.renderPriceMessage()}
-        {courseRows}
+        <CardContent className="course-list-content">
+          <FinancialAidCalculator />
+          <h2>
+            {showStaffView ? `Courses - ${program.title}` : "Required Courses"}
+          </h2>
+          {showStaffView ? null : this.renderPriceMessage()}
+          {courseRows}
         </CardContent>
       </Card>
     )

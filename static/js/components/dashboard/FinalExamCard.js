@@ -30,7 +30,7 @@ const cardWrapper = (...children) => (
         <img className="exam-icon" src="/static/images/exam_icon.png" />
       </div>
       <div>
-        <h2 >Final Proctored Exam</h2>
+        <h2>Final Proctored Exam</h2>
         <p>
           {`You must take a proctored exam for each course. Exams may be taken
             at any `}

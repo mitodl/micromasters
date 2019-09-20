@@ -1,6 +1,6 @@
 // @flow
 import React from "react"
-import Grid from '@material-ui/core/Grid'
+import Grid from "@material-ui/core/Grid"
 import Dialog from "@material-ui/core/Dialog"
 import Card from "@material-ui/core/Card"
 import IconButton from "@material-ui/core/IconButton"
@@ -151,7 +151,9 @@ class EmploymentForm extends ProfileFormFields {
             {...this.defaultInputComponentProps()}
           />
         </Grid>
-        <Grid item xs={4}>{this.boundTextField(keySet("city"), "City")}</Grid>
+        <Grid item xs={4}>
+          {this.boundTextField(keySet("city"), "City")}
+        </Grid>
         <Grid item xs={12}>
           <SelectField
             keySet={keySet("industry")}
@@ -208,7 +210,8 @@ class EmploymentForm extends ProfileFormFields {
         )
       })
       workHistoryRows.unshift(
-        <Grid item
+        <Grid
+          item
           xs={12}
           className="profile-form-row profile-card-header"
           key="header-row"
@@ -231,7 +234,11 @@ class EmploymentForm extends ProfileFormFields {
     const editEntry = () => this.openEditWorkHistoryForm(index)
     const validationAlert = () => {
       if (_.get(errors, ["work_history", String(index)])) {
-        return <IconButton onClick={editEntry}><Icon>error</Icon></IconButton>
+        return (
+          <IconButton onClick={editEntry}>
+            <Icon>error</Icon>
+          </IconButton>
+        )
       }
     }
     const icons = () => {
@@ -240,21 +247,20 @@ class EmploymentForm extends ProfileFormFields {
         () => (
           <div className="profile-row-icons">
             {validationAlert()}
-            <IconButton
-              className="edit-button"
-              onClick={editEntry}
-            ><Icon>edit</Icon></IconButton>
-            <IconButton
-              className="delete-button"
-              onClick={deleteEntry}
-            ><Icon>delete</Icon></IconButton>
+            <IconButton className="edit-button" onClick={editEntry}>
+              <Icon>edit</Icon>
+            </IconButton>
+            <IconButton className="delete-button" onClick={deleteEntry}>
+              <Icon>delete</Icon>
+            </IconButton>
           </div>
         ),
         () => <div />
       )
     }
     return (
-      <Grid item
+      <Grid
+        item
         xs={12}
         className="profile-form-row row-padding row-with-border"
         key={index}
@@ -361,7 +367,9 @@ class EmploymentForm extends ProfileFormFields {
         id={`work-history-card`}
       >
         <CardContent>
-        <Grid container className="profile-form-grid">{this.renderCardBody()}</Grid>
+          <Grid container className="profile-form-grid">
+            {this.renderCardBody()}
+          </Grid>
         </CardContent>
       </Card>
     )
@@ -395,9 +403,7 @@ class EmploymentForm extends ProfileFormFields {
           onClose={this.closeWorkDialog}
         >
           <DialogTitle className="dialog-title">{title}</DialogTitle>
-          <DialogContent dividers>
-          {this.editWorkHistoryForm()}
-          </DialogContent>
+          <DialogContent dividers>{this.editWorkHistoryForm()}</DialogContent>
           <DialogActions>
             {dialogActions(
               this.closeWorkDialog,

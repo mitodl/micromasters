@@ -19,6 +19,7 @@ import { radioButtons } from "../util/profile_edit"
 import FormControl from "@material-ui/core/FormControl"
 import FormLabel from "@material-ui/core/FormLabel"
 import RadioGroup from "@material-ui/core/RadioGroup"
+import CardContent from "@material-ui/core/es/CardContent/CardContent"
 
 class PrivacyForm extends ProfileFormFields {
   props: {
@@ -104,21 +105,27 @@ class PrivacyForm extends ProfileFormFields {
     return (
       <DocumentTitle title="Settings | MITx MicroMasters">
         <div>
-          <Card shadow={1} className="profile-form">
-            <h4 className="privacy-form-heading">Who can see your profile?</h4>
-            <div className="profile-form-row">
-              {this.radioGroupField(
-                ["account_privacy"],
-                "",
-                this.privacyOptions
-              )}
-            </div>
+          <Card shadow={1} className="card profile-form">
+            <CardContent>
+              <h4 className="privacy-form-heading">
+                Who can see your profile?
+              </h4>
+              <div className="profile-form-row">
+                {this.radioGroupField(
+                  ["account_privacy"],
+                  "",
+                  this.privacyOptions
+                )}
+              </div>
+            </CardContent>
           </Card>
-          <Card shadow={1} className="profile-form">
-            <h4 className="privacy-form-heading">Email Preferences</h4>
-            <div className="profile-form-row">
-              {this.radioGroupField(["email_optin"], "", this.emailOptions)}
-            </div>
+          <Card shadow={1} className="card profile-form">
+            <CardContent>
+              <h4 className="privacy-form-heading">Email Preferences</h4>
+              <div className="profile-form-row">
+                {this.radioGroupField(["email_optin"], "", this.emailOptions)}
+              </div>
+            </CardContent>
           </Card>
         </div>
       </DocumentTitle>
