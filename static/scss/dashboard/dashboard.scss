@@ -21,6 +21,11 @@
 }
 
 .dashboard {
+
+  h2 {
+    line-height: normal;
+  }
+
   .dashboard-user-card {
     display: flex;
     flex-direction: row;

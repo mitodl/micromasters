@@ -2,11 +2,12 @@
 /* global SETTINGS: false */
 import React from "react"
 import Card from "@material-ui/core/Card"
-import Button from "@material-ui/core/Button"
+import CardContent from "@material-ui/core/CardContent"
 import IconButton from "@material-ui/core/IconButton"
 import _ from "lodash"
 import R from "ramda"
 import Dialog from "@material-ui/core/Dialog"
+import DialogContent from "@material-ui/core/DialogContent"
 
 import { dialogActions } from "../inputs/util"
 import type { Profile } from "../../flow/profileTypes"
@@ -22,9 +23,12 @@ import {
 import { FETCH_PROCESSING } from "../../actions"
 import { getRomanizedName, getLocation } from "../../util/util"
 import type { PearsonAPIState } from "../../reducers/pearson"
+import DialogActions from "@material-ui/core/DialogActions"
+import Icon from "@material-ui/core/Icon"
 
 const cardWrapper = (...children) => (
-  <Card shadow={0} className="card final-exam-card">
+  <Card className="card final-exam-card">
+    <CardContent>
     <div className="card-header">
       <div>
         <img className="exam-icon" src="/static/images/exam_icon.png" />
@@ -46,7 +50,9 @@ const cardWrapper = (...children) => (
         </p>
       </div>
     </div>
-    {children}
+
+      {children}
+    </CardContent>
   </Card>
 )
 
@@ -74,7 +80,7 @@ const accountCreated = (profile, navigateToProfile) => (
   </div>
 )
 
-const editProfileButton = fn => <IconButton name="edit" onClick={fn} />
+const editProfileButton = fn => <IconButton onClick={fn}><Icon>edit</Icon></IconButton>
 
 const absentCard = () =>
   cardWrapper(
@@ -136,20 +142,12 @@ const schedulableCourseList = R.compose(
 const renderPearsonTOSDialog = (open, show, submitPearsonSSO, pearson) => (
   <Dialog
     key="pearson-tos-dialog"
-    contentClassName="dialog content"
+    classes={{paper: "dialog content"}}
     className="dialog-to-pearson-site"
-    actionsContainerClassName="actions"
     open={open}
-    onRequestClose={() => show(false)}
-    actions={dialogActions(
-      () => show(false),
-      submitPearsonSSO,
-      isProcessing(pearson),
-      "CONTINUE"
-    )}
-    autoScrollBodyContent={true}
+    onClose={() => show(false)}
   >
-    <div className="dialog-container">
+    <DialogContent className="dialog-container">
       <img src="/static/images/pearson_vue.png" width="180" />
       <h3 className="dialog-title">
         You are being redirected to Pearson VUE’s website.
@@ -198,7 +196,15 @@ const renderPearsonTOSDialog = (open, show, submitPearsonSSO, pearson) => (
       <p className="attention">
         By clicking Continue, I agree to above Terms and Conditions.
       </p>
-    </div>
+    </DialogContent>
+    <DialogActions>
+      {dialogActions(
+      () => show(false),
+      submitPearsonSSO,
+      isProcessing(pearson),
+      "CONTINUE"
+    )}
+    </DialogActions>
   </Dialog>
 )
 
@@ -220,13 +226,12 @@ const schedulableCard = (
     ),
     accountCreated(profile, navigateToProfile),
     <div key="schedulable" className="exam-scheduling">
-      <Button
-        type="ok"
-        className="mdl-button exam-button"
+      <button
+        className="mdl-button dashboard-button exam-button"
         onClick={() => showPearsonTOSDialog(true)}
       >
         Schedule an exam
-      </Button>
+      </button>
       <div className="program-info">
         You are ready to schedule an exam for:
         <ul>{schedulableCourseList(program)}</ul>
