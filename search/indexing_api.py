@@ -3,7 +3,6 @@ Functions for ES indexing
 """
 import logging
 
-from django.conf import settings
 from elasticsearch.helpers import bulk
 from elasticsearch.exceptions import NotFoundError
 
@@ -230,8 +229,6 @@ PERCOLATE_MAPPING = {
         }
     }
 }
-
-INDEX_WILDCARD = '{index_name}_*'.format(index_name=settings.ELASTICSEARCH_INDEX)
 
 
 def _index_chunk(chunk, *, index):
@@ -565,7 +562,7 @@ def delete_indices():
         aliases = get_aliases(index_type)
         for alias in aliases:
             if conn.indices.exists(alias):
-                conn.indices.delete_alias(index=INDEX_WILDCARD, name=alias)
+                conn.indices.delete(alias)
 
 
 # pylint: disable=too-many-locals
@@ -590,7 +587,7 @@ def recreate_index():
         temp_alias = make_alias_name(index_type, is_reindexing=True)
         if conn.indices.exists_alias(name=temp_alias):
             # Deletes both alias and backing indexes
-            conn.indices.delete_alias(index=INDEX_WILDCARD, name=temp_alias)
+            conn.indices.delete(temp_alias)
 
         # Point temp_alias toward new backing index
         conn.indices.put_alias(index=backing_index, name=temp_alias)

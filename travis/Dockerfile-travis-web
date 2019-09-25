@@ -1,4 +1,4 @@
-FROM mitodl/micromasters_web_travis_960cf1
+FROM mitodl/micromasters_web_travis_ba4c35
 
 WORKDIR /tmp
 

@@ -398,7 +398,7 @@ class PercolateTests(ESTestCase):
             profile = ProfileFactory.create(filled_out=True)
         program_enrollment = ProgramEnrollmentFactory.create(user=profile.user)
         with self.assertRaises(PercolateException) as ex, patch(
-            'search.api.get_conn', return_value=Mock(search=Mock(return_value=failure_payload))
+            'search.api.get_conn', return_value=Mock(percolate=Mock(return_value=failure_payload))
         ):
             search_percolate_queries(program_enrollment.id, "doesnt_matter")
         assert ex.exception.args[0] == "Failed to percolate: {}".format(failures)
@@ -498,7 +498,7 @@ class PercolateTests(ESTestCase):
 
         with patch('search.api.get_conn') as es_mock:
             populate_query_memberships(query.id)
-            assert es_mock.return_value.search.call_count == (1 if has_profile and is_active else 0)
+            assert es_mock.return_value.percolate.call_count == (1 if has_profile and is_active else 0)
 
         assert PercolateQueryMembership.objects.filter(user=user, query=query).count() == (
             1 if is_active else 0

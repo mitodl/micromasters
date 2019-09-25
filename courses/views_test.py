@@ -221,10 +221,6 @@ class CourseRunTests(MockedESTestCase, APITestCase):
         super().setUpTestData()
         cls.user = UserFactory.create()
 
-    def setUp(self):
-        super().setUp()
-        self.client.force_login(self.user)
-
     def test_lists_course_runs(self):
         """Course Runs should show up"""
         course_run = CourseRunFactory.create()
