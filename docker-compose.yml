@@ -11,8 +11,9 @@ services:
       - "6379"
 
   elastic:
-    build: elastic
+    image: elasticsearch:6.7.1
     command: elasticsearch -E network.host=0.0.0.0 -E http.cors.enabled=true -E http.cors.allow-origin=* -E rest.action.multi.allow_explicit_index=false
+    user: elasticsearch
     ports:
       - "9100:9200"
 

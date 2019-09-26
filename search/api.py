@@ -283,11 +283,22 @@ def _search_percolate_queries(program_enrollment):
     # We don't need this to search for percolator queries and
     # it causes a dynamic mapping failure so we need to remove it
     del doc['_id']
-    result = conn.percolate(percolate_index, GLOBAL_DOC_TYPE, body={"doc": doc})
+
+    body = {
+        "query": {
+            "percolate": {
+                "field": "query",
+                "document": doc
+            }
+        }
+    }
+
+    result = conn.search(percolate_index, GLOBAL_DOC_TYPE, body=body)
     failures = result.get('_shards', {}).get('failures', [])
     if len(failures) > 0:
         raise PercolateException("Failed to percolate: {}".format(failures))
-    return [int(row['_id']) for row in result['matches']]
+
+    return [int(row['_id']) for row in result['hits']['hits']]
 
 
 def adjust_search_for_percolator(search):
@@ -333,7 +344,7 @@ def document_needs_updating(enrollment):
 
     conn = get_conn()
     try:
-        document = conn.get(index=index, id=enrollment.id)
+        document = conn.get(index=index, doc_type=GLOBAL_DOC_TYPE, id=enrollment.id)
     except NotFoundError:
         return True
     serialized_enrollment = serialize_program_enrolled_user(enrollment)

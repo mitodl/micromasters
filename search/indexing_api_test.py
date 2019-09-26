@@ -91,7 +91,7 @@ class ESTestActions:
     def get_percolate_query(self, _id):
         """Get percolate query"""
         index = get_default_alias(PERCOLATE_INDEX_TYPE)
-        return self.conn.get(id=_id, index=index)
+        return self.conn.get(id=_id, doc_type=GLOBAL_DOC_TYPE, index=index)
 
     def get_mappings(self, index_type):
         """Gets mapping data"""
@@ -788,6 +788,8 @@ class PercolateQueryTests(ESTestCase):
             '_id': str(percolate_query_id),
             '_index': es.get_default_backing_index(PERCOLATE_INDEX_TYPE),
             '_source': query,
+            '_seq_no': 0,
+            '_primary_term': 1,
             '_type': GLOBAL_DOC_TYPE,
             '_version': 1,
             'found': True,
@@ -802,6 +804,8 @@ class PercolateQueryTests(ESTestCase):
                 '_id': str(percolate_query.id),
                 '_index': es.get_default_backing_index(PERCOLATE_INDEX_TYPE),
                 '_source': query,
+                '_seq_no': 0,
+                '_primary_term': 1,
                 '_type': GLOBAL_DOC_TYPE,
                 '_version': 1,
                 'found': True,
