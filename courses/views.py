@@ -124,13 +124,6 @@ class ProgramEnrollmentListView(CreateAPIView):
 
 class CourseRunViewSet(viewsets.ReadOnlyModelViewSet):
     """API for the CourseRun model"""
-    authentication_classes = (
-        SessionAuthentication,
-        TokenAuthentication,
-    )
-    permission_classes = (
-        IsAuthenticated,
-    )
     serializer_class = CourseRunSerializer
     queryset = CourseRun.objects.all()
 
