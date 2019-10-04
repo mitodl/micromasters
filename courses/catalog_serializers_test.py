@@ -35,7 +35,7 @@ def test_catalog_program_serializer(has_page, has_thumbnail):
     assert serialized == {
         "id": program.id,
         "title": program.title,
-        "programpage_url": page.url if has_page else None,
+        "programpage_url": page.get_full_url() if has_page else None,
         "thumbnail_url": (
             page.thumbnail_image.get_rendition('fill-300x186').url
             if has_page and has_thumbnail else None

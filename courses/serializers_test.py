@@ -121,7 +121,7 @@ class ProgramSerializerTests(MockedESTestCase):
         assert data == {
             'id': self.program.id,
             'title': self.program.title,
-            'programpage_url': programpage.url,
+            'programpage_url': programpage.get_full_url(),
             'enrolled': False,
             'total_courses': 0,
         }
