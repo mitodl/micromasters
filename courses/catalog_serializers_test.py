@@ -1,6 +1,7 @@
 """Tests for the catalog serializers"""
 import pytest
 
+from cms.models import ProgramFaculty
 from cms.factories import ProgramPageFactory
 from courses.catalog_serializers import CatalogProgramSerializer
 from courses.factories import (
@@ -21,6 +22,12 @@ def test_catalog_program_serializer(has_page, has_thumbnail):
     courses = CourseFactory.create_batch(3, program=program)
     for course in courses:
         CourseRunFactory.create_batch(2, course=course)
+    faculty_name = "faculty"
+    if has_page:
+        ProgramFaculty.objects.create(
+            program_page=page,
+            name=faculty_name,
+        )
     serialized = CatalogProgramSerializer(program).data
     # coerce OrderedDict objects to dict
     serialized = {
@@ -49,5 +56,6 @@ def test_catalog_program_serializer(has_page, has_thumbnail):
                 "edx_course_key": course_run.edx_course_key,
             } for course_run in course.courserun_set.all()]
         } for course in courses],
-        'topics': [{'name': topic.name} for topic in program.topics.iterator()]
+        'topics': [{'name': topic.name} for topic in program.topics.iterator()],
+        "instructors": [{"name": faculty_name}] if has_page else [],
     }
