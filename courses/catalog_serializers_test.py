@@ -58,4 +58,8 @@ def test_catalog_program_serializer(has_page, has_thumbnail):
         } for course in courses],
         'topics': [{'name': topic.name} for topic in program.topics.iterator()],
         "instructors": [{"name": faculty_name}] if has_page else [],
+        "start_date": courses[0].first_unexpired_run().start_date.isoformat(),
+        "enrollment_start": courses[0].first_unexpired_run().enrollment_start.isoformat(),
+        "end_date": courses[-1].courserun_set.last().end_date.isoformat(),
+        "total_price": str(program.price * program.num_required_courses),
     }
