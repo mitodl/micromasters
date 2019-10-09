@@ -3,8 +3,16 @@ Serializers for courses
 """
 from rest_framework import serializers
 
-from courses.models import Course, Program, CourseRun, ElectiveCourse
+from courses.models import Course, Program, CourseRun, ElectiveCourse, Topic
 from dashboard.models import ProgramEnrollment
+
+
+class TopicSerializer(serializers.ModelSerializer):
+    """ Serializer for Topic objects"""
+
+    class Meta:
+        model = Topic
+        fields = ("name",)
 
 
 class ProgramSerializer(serializers.ModelSerializer):
@@ -12,6 +20,7 @@ class ProgramSerializer(serializers.ModelSerializer):
     programpage_url = serializers.SerializerMethodField()
     enrolled = serializers.SerializerMethodField()
     total_courses = serializers.SerializerMethodField()
+    topics = TopicSerializer(many=True)
 
     def get_programpage_url(self, program):
         """
@@ -50,6 +59,7 @@ class ProgramSerializer(serializers.ModelSerializer):
             'programpage_url',
             'enrolled',
             'total_courses',
+            'topics',
         )
 
 

@@ -108,6 +108,7 @@ class ProgramSerializerTests(MockedESTestCase):
             'programpage_url': None,
             'enrolled': False,
             'total_courses': 0,
+            'topics': [{'name': topic.name} for topic in self.program.topics.iterator()]
         }
 
     def test_program_with_programpage(self):
@@ -124,6 +125,7 @@ class ProgramSerializerTests(MockedESTestCase):
             'programpage_url': programpage.get_full_url(),
             'enrolled': False,
             'total_courses': 0,
+            'topics': [{'name': topic.name} for topic in self.program.topics.iterator()]
         }
         assert len(programpage.url) > 0
 
@@ -139,6 +141,7 @@ class ProgramSerializerTests(MockedESTestCase):
             'programpage_url': None,
             'enrolled': True,
             'total_courses': 0,
+            'topics': [{'name': topic.name} for topic in self.program.topics.iterator()]
         }
 
     def test_program_courses(self):
@@ -153,4 +156,5 @@ class ProgramSerializerTests(MockedESTestCase):
             'programpage_url': None,
             'enrolled': False,
             'total_courses': 5,
+            'topics': [{'name': topic.name} for topic in self.program.topics.iterator()]
         }

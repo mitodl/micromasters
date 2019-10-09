@@ -48,5 +48,6 @@ def test_catalog_program_serializer(has_page, has_thumbnail):
                 "id": course_run.id,
                 "edx_course_key": course_run.edx_course_key,
             } for course_run in course.courserun_set.all()]
-        } for course in courses]
+        } for course in courses],
+        'topics': [{'name': topic.name} for topic in program.topics.iterator()]
     }

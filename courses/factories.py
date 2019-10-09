@@ -1,13 +1,34 @@
 """Factories for making test data"""
+import random
+
 import faker
 import pytz
 import factory
 from factory import fuzzy
 from factory.django import DjangoModelFactory
 
-from .models import Program, Course, CourseRun
+from .models import Program, Course, CourseRun, Topic
 
 FAKE = faker.Factory.create()
+
+
+class TopicFactory(DjangoModelFactory):
+    """Factory for Topics"""
+    name = fuzzy.FuzzyText()
+
+    class Meta:
+        model = Topic
+
+
+def _post_gen_topics(obj, create, extracted):
+    """PostGeneration function for topics"""
+    if not create:
+        return
+
+    if extracted is None:
+        extracted = TopicFactory.create_batch(random.randint(0, 5))
+
+    obj.topics.set(extracted)
 
 
 class ProgramFactory(DjangoModelFactory):
@@ -17,6 +38,7 @@ class ProgramFactory(DjangoModelFactory):
     description = fuzzy.FuzzyText()
     price = fuzzy.FuzzyDecimal(low=500, high=2000)
     num_required_courses = 1
+    topics = factory.PostGeneration(_post_gen_topics)
 
     class Meta:
         model = Program

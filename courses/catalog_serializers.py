@@ -4,6 +4,7 @@ Serializers for courses
 from rest_framework import serializers
 
 from courses.models import Course, Program, CourseRun
+from courses.serializers import TopicSerializer
 
 
 class CatalogCourseRunSerializer(serializers.ModelSerializer):
@@ -35,6 +36,7 @@ class CatalogProgramSerializer(serializers.ModelSerializer):
     thumbnail_url = serializers.SerializerMethodField()
 
     courses = CatalogCourseSerializer(source="course_set", many=True)
+    topics = TopicSerializer(many=True)
 
     def get_programpage_url(self, program):
         """
@@ -79,4 +81,5 @@ class CatalogProgramSerializer(serializers.ModelSerializer):
             'programpage_url',
             'thumbnail_url',
             'courses',
+            'topics',
         )

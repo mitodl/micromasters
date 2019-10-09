@@ -19,6 +19,16 @@ from micromasters.utils import (
 log = logging.getLogger(__name__)
 
 
+class Topic(models.Model):
+    """
+    Topic for a program
+    """
+    name = models.CharField(max_length=128, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Program(TimestampedModel):
     """
     A degree someone can pursue, e.g. "Supply Chain Management"
@@ -30,6 +40,7 @@ class Program(TimestampedModel):
     ga_tracking_id = models.CharField(max_length=255, blank=True, default="")
     num_required_courses = models.PositiveSmallIntegerField(null=False)
     price = models.DecimalField(decimal_places=2, max_digits=20)
+    topics = models.ManyToManyField(Topic, blank=True, related_name="topics")
 
     def __str__(self):
         return self.title
