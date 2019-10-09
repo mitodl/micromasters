@@ -8,6 +8,10 @@
       height: auto !important;
       max-height: inherit !important;
     }
+
+    .create-channel-content {
+      color: $font-gray-form;
+    }
   }
 
   .validation-error {

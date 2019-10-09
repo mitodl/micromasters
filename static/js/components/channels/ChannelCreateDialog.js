@@ -3,7 +3,7 @@
 import Dialog from "@material-ui/core/Dialog"
 import React from "react"
 import TextField from "@material-ui/core/TextField"
-import Grid, { Cell } from "react-mdl/lib/Grid"
+import Grid from "@material-ui/core/Grid"
 import R from "ramda"
 
 import { dialogActions } from "../inputs/util"
@@ -11,6 +11,9 @@ import { renderFilterOptions } from "../email/lib"
 
 import type { ChannelState, Filter } from "../../flow/discussionTypes"
 import type { AvailableProgram } from "../../flow/enrollmentTypes"
+import DialogTitle from "@material-ui/core/DialogTitle"
+import DialogActions from "@material-ui/core/DialogActions"
+import DialogContent from "@material-ui/core/DialogContent"
 
 type ChannelCreateDialogProps = {
   channelDialog: ChannelState,
@@ -86,67 +89,66 @@ export default class ChannelCreateDialog extends React.Component {
 
     return (
       <Dialog
-        title="Create New Channel"
-        titleClassName="dialog-title"
-        contentClassName="dialog create-channel-dialog"
-        className="create-channel-dialog-wrapper"
+        classes={{paper: "dialog create-channel-dialog", root: "create-channel-dialog-wrapper"}}
         open={dialogVisibility}
-        onRequestClose={this.closeAndClear}
-        actions={dialogActions(
+        onClose={this.closeAndClear}
+      >
+        <DialogTitle className="dialog-title">Create New Channel</DialogTitle>
+        <DialogContent className="create-channel-content">
+        <Grid container spacing={3} style={{ padding: 20 }}>
+          <Grid item xs={12}>
+            <p>This channel is for:</p>
+            {this.renderChannelFilters(currentProgramEnrollment, filters)}
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Title"
+              name="title"
+              value={inputs.title || ""}
+              onChange={updateFieldEdit("title")}
+              fullWidth
+            />
+            {this.showValidationError("title")}
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Name"
+              name="name"
+              value={inputs.name || ""}
+              onChange={updateFieldEdit("name")}
+              helperText='No spaces, e.g., "lectures" or "lectureDiscussion". Once chosen, this cannot be changed.
+              This only shows up in the channel URL.'
+              fullWidth
+            />
+            {this.showValidationError("name")}
+            <p>
+
+            </p>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Description"
+              name="description"
+              value={inputs.description || ""}
+              onChange={updateFieldEdit("description")}
+              multiline={true}
+              fullWidth
+            />
+            {this.showValidationError("description")}
+            {/* 'detail' is the key for a backend permission error */}
+            {this.showValidationError("detail", true)}
+          </Grid>
+        </Grid>
+        </DialogContent>
+        <DialogActions>
+        {dialogActions(
           this.closeAndClear,
           this.closeAndCreate,
           isSavingChannel,
           "Create",
           "",
           !R.isEmpty(validationErrors)
-        )}
-      >
-        <Grid>
-          <Cell col={12}>
-            <p>This channel is for:</p>
-            {this.renderChannelFilters(currentProgramEnrollment, filters)}
-          </Cell>
-          <Cell col={12}>
-            <TextField
-              floatingLabelText="Title"
-              name="title"
-              value={inputs.title || ""}
-              fullWidth={true}
-              onChange={updateFieldEdit("title")}
-              maxLength={100}
-            />
-            {this.showValidationError("title")}
-          </Cell>
-          <Cell col={12}>
-            <TextField
-              floatingLabelText="Name"
-              name="name"
-              value={inputs.name || ""}
-              onChange={updateFieldEdit("name")}
-              fullWidth={true}
-              maxLength={21}
-            />
-            {this.showValidationError("name")}
-            <p>
-              No spaces, e.g., "lectures" or "lectureDiscussion". Once chosen,
-              this cannot be changed. This only shows up in the channel URL.
-            </p>
-          </Cell>
-          <Cell col={12}>
-            <TextField
-              floatingLabelText="Description"
-              name="description"
-              value={inputs.description || ""}
-              onChange={updateFieldEdit("description")}
-              fullWidth={true}
-              multiLine={true}
-              maxLength={500}
-            />
-            {this.showValidationError("description")}
-            {/* 'detail' is the key for a backend permission error */}
-            {this.showValidationError("detail", true)}
-          </Cell>
-        </Grid>
+        )}</DialogActions>
       </Dialog>
     )
   }

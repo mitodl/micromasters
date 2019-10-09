@@ -11,6 +11,7 @@ import DialogTitle from "@material-ui/core/DialogTitle"
 import DialogActions from "@material-ui/core/DialogActions"
 import InputLabel from "@material-ui/core/InputLabel"
 import FormControl from "@material-ui/core/FormControl"
+import DialogContent from "@material-ui/core/DialogContent"
 
 export default class ProgramEnrollmentDialog extends React.Component {
   props: {
@@ -83,6 +84,7 @@ export default class ProgramEnrollmentDialog extends React.Component {
         <DialogTitle className="dialog-title">
           Enroll in a new MicroMasters Program
         </DialogTitle>
+        <DialogContent>
         <FormControl className="select-program">
           <InputLabel>Select Program</InputLabel>
           <Select
@@ -96,6 +98,7 @@ export default class ProgramEnrollmentDialog extends React.Component {
             {options}
           </Select>
         </FormControl>
+        </DialogContent>
         <DialogActions>{actions}</DialogActions>
       </Dialog>
     )
