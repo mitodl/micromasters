@@ -11,6 +11,7 @@
     justify-content: space-between;
     align-items: center;
     padding-bottom: 15px;
+    color: rgba(0, 0, 0, 0.6);
 
     @include breakpoint(desktop) {
       width: 80%;

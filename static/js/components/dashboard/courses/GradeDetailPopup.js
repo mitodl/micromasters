@@ -19,6 +19,8 @@ import {
 } from "../../../constants"
 import type { GradeType } from "../../../containers/DashboardPage"
 import { EDX_GRADE } from "../../../containers/DashboardPage"
+import DialogTitle from "@material-ui/core/DialogTitle"
+import DialogContent from "@material-ui/core/DialogContent"
 
 const scaleExamGrade = percentageGrade => percentageGrade * 100
 
@@ -163,20 +165,21 @@ const GradeDetailPopup = (props: GradeDetailPopupProps) => {
 
   return (
     <Dialog
-      className="grade-detail-popup"
-      title={dialogTitle(course, gradeType)}
-      titleClassName="grade-dialog-title"
+      classes={{paper:"dialog grade-detail-popup"}}
       open={dialogVisibility}
-      onRequestClose={() =>
+      onClose={() =>
         setShowGradeDetailDialog(false, gradeType, course.title)
       }
     >
+      <DialogTitle className="grade-dialog-title">{dialogTitle(course, gradeType)}</DialogTitle>
+      <DialogContent>
       {gradeType === EDX_GRADE
         ? renderRunRows(course.runs)
         : renderExamRows(course.proctorate_exams_grades)}
       <div className="explanation">
         Only your best passing grade counts toward your final grade
       </div>
+      </DialogContent>
     </Dialog>
   )
 }
