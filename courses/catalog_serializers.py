@@ -99,9 +99,7 @@ class CatalogProgramSerializer(serializers.ModelSerializer):
         first_unexpired = first_matching_item(
             course.courserun_set.all().order_by("start_date"), lambda run: run.is_unexpired
         )
-        if not first_unexpired:
-            return None
-        return first_unexpired.start_date.isoformat() if first_unexpired.start_date else None
+        return first_unexpired.start_date if first_unexpired else None
 
     def get_end_date(self, program):
         """Get the ending date of the last course of the program"""
@@ -111,9 +109,7 @@ class CatalogProgramSerializer(serializers.ModelSerializer):
         last_unexpired = first_matching_item(
             course.courserun_set.all().order_by("-start_date"), lambda run: run.is_unexpired
         )
-        if not last_unexpired:
-            return None
-        return last_unexpired.end_date.isoformat() if last_unexpired.end_date else None
+        return last_unexpired.end_date if last_unexpired else None
 
     def get_enrollment_start(self, program):
         """Get the start date for enrollment of the first course in the program"""
@@ -123,9 +119,7 @@ class CatalogProgramSerializer(serializers.ModelSerializer):
         first_unexpired = first_matching_item(
             course.courserun_set.all().order_by("start_date"), lambda run: run.is_unexpired
         )
-        if not first_unexpired:
-            return None
-        return first_unexpired.enrollment_start.isoformat() if first_unexpired.enrollment_start else None
+        return first_unexpired.enrollment_start if first_unexpired else None
 
     class Meta:
         model = Program
