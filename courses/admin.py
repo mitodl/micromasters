@@ -24,7 +24,7 @@ class CourseRunInline(admin.StackedInline):
 class ProgramAdmin(admin.ModelAdmin):
     """ModelAdmin for Programs"""
     list_display = ('title', 'live',)
-    list_filter = ('live',)
+    list_filter = ('live', 'topics')
     inlines = [CourseInline]
 
 
