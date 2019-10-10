@@ -16,6 +16,9 @@ import { dialogActions } from "../inputs/util"
 import { isNilOrBlank } from "../../util/util"
 import type { EmailState, Filter } from "../../flow/emailTypes"
 import { S, getm } from "../../lib/sanctuary"
+import DialogTitle from "@material-ui/core/DialogTitle"
+import DialogContent from "@material-ui/core/DialogContent"
+import DialogActions from "@material-ui/core/es/DialogActions"
 
 // this takes an HTML string and returns a draft-js EditorState object
 // unfortunately draft-js has a lot of state and wants to manage it all itself,
@@ -84,16 +87,17 @@ export default class EmailCompositionDialog extends React.Component {
     this.state = editorStateFromProps(props)
   }
 
-  getDerivedStateFromProps(nextProps: EmailDialogProps) {
+  static getDerivedStateFromProps(nextProps: EmailDialogProps, prevState) {
     const newState = editorStateFromProps(nextProps)
     const newStateHasText = newState.editorState.getCurrentContent().hasText()
 
     if (
-      !this.state.editorState.getCurrentContent().hasText() &&
+      !prevState.editorState.getCurrentContent().hasText() &&
       newStateHasText
     ) {
-      this.setState(newState)
+      return newState
     }
+    return null
   }
 
   insertRecipientVariable = (variableName: string) => {
@@ -236,19 +240,12 @@ export default class EmailCompositionDialog extends React.Component {
 
     return (
       <Dialog
-        title={title || "New Email"}
-        titleClassName="dialog-title"
-        contentClassName="dialog email-composition-dialog"
-        className="email-composition-dialog-wrapper"
+        classes={{paper: "dialog email-composition-dialog", root: "email-composition-dialog-wrapper"}}
         open={dialogVisibility}
-        actions={dialogActions(
-          this.closeEmailComposeAndClear,
-          this.closeEmailComposerAndSend,
-          fetchStatus === FETCH_PROCESSING,
-          this.okButtonLabel(dialogType)
-        )}
-        onRequestClose={this.closeEmailComposeAndClear}
+        onClose={this.closeEmailComposeAndClear}
       >
+        <DialogTitle className="dialog-title">{title || "New Email"}</DialogTitle>
+        <DialogContent>
         <div className="email-composition-contents">
           {supportsAutomaticEmails
             ? this.renderAutomaticEmailSettings(
@@ -274,6 +271,14 @@ export default class EmailCompositionDialog extends React.Component {
           {supportBulkEmails ? this.renderRecipientVariable() : null}
           {this.showValidationError("body")}
         </div>
+        </DialogContent>
+        <DialogActions>
+        {dialogActions(
+          this.closeEmailComposeAndClear,
+          this.closeEmailComposerAndSend,
+          fetchStatus === FETCH_PROCESSING,
+          this.okButtonLabel(dialogType)
+        )}</DialogActions>
       </Dialog>
     )
   }

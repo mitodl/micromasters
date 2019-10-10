@@ -2,6 +2,8 @@
 import React from "react"
 import Radio from "@material-ui/core/Radio"
 import RadioGroup from "@material-ui/core/RadioGroup"
+import FormControlLabel from "@material-ui/core/FormControlLabel"
+import FormControl from "@material-ui/core/es/FormControl/FormControl";
 
 export default class AutomaticEmailOptions extends React.Component {
   props: {
@@ -9,9 +11,10 @@ export default class AutomaticEmailOptions extends React.Component {
     setSendAutomaticEmails: (b: boolean) => void
   }
 
-  handleRadioClick = (event: Event, value: boolean): void => {
+  handleRadioClick = (event: Event): void => {
     const { setSendAutomaticEmails } = this.props
-    setSendAutomaticEmails(value)
+    console.log(typeof event.target.value)
+    setSendAutomaticEmails(event.target.value === 'true')
   }
 
   renderEmailCampaign = (): React$Element<*> => (
@@ -26,23 +29,27 @@ export default class AutomaticEmailOptions extends React.Component {
 
     return (
       <div className="email-type">
+        <FormControl>
         <RadioGroup
           className="type-radio-group"
           name="email-options"
-          valueSelected={sendAutomaticEmails}
+          value={sendAutomaticEmails}
           onChange={this.handleRadioClick}
         >
-          <Radio
+          <FormControlLabel
             value={false}
+            control={<Radio />}
             label="Send a one-time email"
-            className="send-one-time-email"
-          />
-          <Radio
+            className="send-one-time-email" />
+
+          <FormControlLabel
             value={true}
+            control={<Radio />}
             label="Create an Email Campaign"
             className="create-campaign"
           />
         </RadioGroup>
+        </FormControl>
         {sendAutomaticEmails ? this.renderEmailCampaign() : null}
       </div>
     )
