@@ -12,6 +12,7 @@ from courses.serializers import ProgramSerializer, CourseRunSerializer
 from dashboard.factories import ProgramEnrollmentFactory
 from dashboard.models import ProgramEnrollment
 from micromasters.factories import UserFactory
+from micromasters.test_utils import assert_drf_json_equal
 from profiles.models import Profile
 from search.base import MockedESTestCase
 
@@ -249,4 +250,5 @@ class CatalogTests(MockedESTestCase, APITestCase):
 
         assert len(resp.json()) == 1
         data = CatalogProgramSerializer(program).data
-        assert [data] == resp.json()
+
+        assert_drf_json_equal([data], resp.json())
