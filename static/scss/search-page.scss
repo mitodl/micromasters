@@ -27,7 +27,7 @@ div.disabled {
 
   // remove padding and margin from MDL layout components
   .no-padding {
-    .mdl-grid, .mdl-cell {
+    .search-grid, .MuiGrid-item {
       padding: 0;
       margin: 0;
     }
@@ -48,7 +48,7 @@ div.disabled {
       font-size: 15px;
     }
 
-    .mdl-card {
+    .card {
       padding: 10px 7px;
       background-color: #ffffff;
     }
@@ -360,7 +360,7 @@ div.disabled {
       padding: 4px;
     }
 
-    .mdl-cell {
+    .MuiGrid-item {
       margin-top: 0;
       margin-bottom: 0;
       padding: 0;
@@ -413,7 +413,7 @@ div.disabled {
           font-weight: 400;
         }
 
-        .mdl-cell {
+        .MuiGrid-item {
           cursor: pointer;
           user-select: none;
         }
@@ -432,7 +432,7 @@ div.disabled {
       border-bottom: none;
     }
 
-    .learner-result .mdl-cell {
+    .learner-result .MuiGrid-item {
       display: flex;
     }
 
@@ -502,7 +502,7 @@ div.disabled {
   text-align: center;
   align-items: center;
   background-color: #efefef;
-  margin: 30px 0 4px 0;
+  margin: 30px;
   height: 300px;
   color: #848484;
   font-style: italic;

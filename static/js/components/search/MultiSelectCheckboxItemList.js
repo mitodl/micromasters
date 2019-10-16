@@ -113,6 +113,7 @@ export default class MultiSelectCheckboxItemList extends SearchkitComponent {
         data-qa="checkbox"
         className="sk-item-list-option checkbox"
         checked={this.state.allOptionClass && itemsSelected}
+        readOnly
       />
       <div className="sk-item-list-option__text facet-text">Select All</div>
       <div className="sk-item-list-option__count">{this.allDocCount()}</div>

@@ -24,12 +24,12 @@ export default class SpinnerButton extends React.Component {
     }
   }
 
-  getDerivedStateFromProps(nextProps: SpinnerButtonProps) {
-    if (!nextProps.spinning && this.props.spinning) {
+  static getDerivedStateFromProps(nextProps: SpinnerButtonProps, prevState) {
+    if (!nextProps.spinning && prevState.spinning) {
       // spinning has finished, so reset the state
-      this.setState({
+      return {
         recentlyClicked: false
-      })
+      }
     }
   }
 

@@ -6,6 +6,12 @@ import _ from "lodash"
 import { Card } from "react-mdl/lib/Card"
 
 import ProfileFormFields from "../util/ProfileFormFields"
+import { sendFormFieldEvent } from "../lib/google_analytics"
+import { radioButtons } from "../util/profile_edit"
+import FormControl from "@material-ui/core/FormControl"
+import FormLabel from "@material-ui/core/FormLabel"
+import RadioGroup from "@material-ui/core/RadioGroup"
+import CardContent from "@material-ui/core/es/CardContent/CardContent"
 import type {
   Profile,
   ValidationErrors,
@@ -13,13 +19,7 @@ import type {
 } from "../flow/profileTypes"
 import type { UIState } from "../reducers/ui"
 import type { Validator } from "../lib/validation/profile"
-import { sendFormFieldEvent } from "../lib/google_analytics"
 import type { Option } from "../flow/generalTypes"
-import { radioButtons } from "../util/profile_edit"
-import FormControl from "@material-ui/core/FormControl"
-import FormLabel from "@material-ui/core/FormLabel"
-import RadioGroup from "@material-ui/core/RadioGroup"
-import CardContent from "@material-ui/core/es/CardContent/CardContent"
 
 class PrivacyForm extends ProfileFormFields {
   props: {

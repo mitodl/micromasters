@@ -14,8 +14,9 @@ import {
   SortingSelector,
   MultiMatchQuery
 } from "searchkit"
-import Grid, { Cell } from "react-mdl/lib/Grid"
-import Card from "react-mdl/lib/Card/Card"
+import Grid from "@material-ui/core/Grid"
+import Card from "@material-ui/core/Card"
+import CardContent from "@material-ui/core/CardContent"
 import iso3166 from "iso-3166-2"
 import R from "ramda"
 import _ from "lodash"
@@ -178,8 +179,8 @@ export default class LearnerSearch extends SearchkitComponent {
     }
 
     return (
-      <Grid noSpacing={true} className="search-header">
-        <Cell col={7} className="result-info">
+      <Grid container className="search-header">
+        <Grid item xs={7} className="result-info">
           {canEmailLearners ? (
             <button
               id="email-selected"
@@ -201,8 +202,8 @@ export default class LearnerSearch extends SearchkitComponent {
             </button>
           ) : null}
           <HitsStats component={HitsCount} />
-        </Cell>
-        <Cell col={5} className="pagination-search">
+        </Grid>
+        <Grid item xs={5} className="pagination-search">
           <SearchBox
             queryBuilder={MultiMatchQuery}
             searchOnChange={true}
@@ -223,17 +224,17 @@ export default class LearnerSearch extends SearchkitComponent {
             showText={false}
             listComponent={CustomPaginationDisplay}
           />
-        </Cell>
-        <Cell col={12} className="mm-filters">
+        </Grid>
+        <Grid item xs={12} className="mm-filters">
           <SelectedFilters itemComponent={ModifiedSelectedFilter} />
           <ResetFilters component={CustomResetFiltersDisplay} />
-        </Cell>
-        <Cell col={12} className="sorting-header">
+        </Grid>
+        <Grid item xs={12} className="sorting-header">
           <SortingSelector
             options={sortOptions}
             listComponent={CustomSortingColumnHeaders}
           />
-        </Cell>
+        </Grid>
       </Grid>
     )
   }
@@ -256,17 +257,19 @@ export default class LearnerSearch extends SearchkitComponent {
   renderFacets = (currentProgram: AvailableProgram): React$Element<*> => {
     if (_.isNull(this.getResults())) {
       return (
-        <Card className="fullwidth" shadow={1}>
-          <div className="no-hits left-nav">
-            {`There are no users in the ${currentProgram.title} program.`}
-          </div>
+        <Card className="card fullwidth" shadow={1}>
+          <CardContent>
+            <div className="no-hits left-nav">
+              {`There are no users in the ${currentProgram.title} program.`}
+            </div>
+          </CardContent>
         </Card>
       )
     }
     const isStaff = hasStaffForProgram(currentProgram, SETTINGS.roles)
 
     return (
-      <Card className="fullwidth" shadow={1}>
+      <Card className="card fullwidth" shadow={1}>
         <FilterVisibilityToggle
           {...this.props}
           title="Course"
@@ -425,21 +428,23 @@ export default class LearnerSearch extends SearchkitComponent {
       <Loader loaded={!this.isInitialLoading()} shouldRenderAll={true}>
         <div className="learners-search">
           <ProgramFilter currentProgramEnrollment={currentProgramEnrollment} />
-          <Grid className="search-grid">
-            <Cell col={3} className="search-sidebar">
+          <Grid container spacing={2} className="search-grid">
+            <Grid item xs={3} className="search-sidebar">
               {this.renderFacets(currentProgramEnrollment)}
-            </Cell>
-            <Cell col={9}>
-              <Card className="fullwidth results-padding" shadow={1}>
-                {this.renderSearchHeader()}
-                <Hits
-                  className="learner-results"
-                  hitsPerPage={SETTINGS.es_page_size}
-                  itemComponent={this.WrappedLearnerResult}
-                />
-                <CustomNoHits />
+            </Grid>
+            <Grid item xs={9}>
+              <Card className="card fullwidth results-padding" shadow={1}>
+                <CardContent>
+                  {this.renderSearchHeader()}
+                  <Hits
+                    className="learner-results"
+                    hitsPerPage={SETTINGS.es_page_size}
+                    itemComponent={this.WrappedLearnerResult}
+                  />
+                  <CustomNoHits />
+                </CardContent>
               </Card>
-            </Cell>
+            </Grid>
           </Grid>
         </div>
       </Loader>
