@@ -163,7 +163,7 @@ export const profileFormContainer = (WrappedComponent: ReactClass<*>) => {
         })
       } else {
         this.scrollToError()
-        return Promise.reject(errors)
+        return Promise.reject("Invalid profile value(s)")
       }
     }
 

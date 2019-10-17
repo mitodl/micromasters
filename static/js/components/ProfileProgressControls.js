@@ -40,16 +40,21 @@ export default class ProfileProgressControls extends React.Component {
       addProgramEnrollment
     } = this.props
 
-    saveProfileStep.call(this, validator, isLastTab).then(() => {
-      if (programIdForEnrollment && addProgramEnrollment) {
-        addProgramEnrollment(programIdForEnrollment)
-      }
+    saveProfileStep
+      .call(this, validator, isLastTab)
+      .then(() => {
+        if (programIdForEnrollment && addProgramEnrollment) {
+          addProgramEnrollment(programIdForEnrollment)
+        }
 
-      if (isLastTab) {
-        sendGAEvent("profile-form", "completed", SETTINGS.user.username)
-      }
-      this.context.router.push(nextUrl)
-    })
+        if (isLastTab) {
+          sendGAEvent("profile-form", "completed", SETTINGS.user.username)
+        }
+        this.context.router.push(nextUrl)
+      })
+      .catch(() => {
+        /* Promise rejected due to validation error or API error */
+      })
   }
 
   render() {
