@@ -218,7 +218,7 @@ export default class PersonalForm extends ProfileFormFields {
           >
             {whyWeAskThis}
           </ReactTooltip>
-          <Grid container className="profile-form-grid">
+          <Grid container spacing={3} className="profile-form-grid">
             <Grid item xs={4}>
               <CountrySelectField
                 countryKeySet={["birth_country"]}
