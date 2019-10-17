@@ -101,7 +101,7 @@ export function boundTextField(
       classes={{
         root: `input-text ${validationErrorSelector(errors, keySet)}`
       }}
-      helperText={label}
+      label={label}
       value={getValue()}
       fullWidth={true}
       error={error}

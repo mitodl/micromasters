@@ -3,7 +3,7 @@ import React from "react"
 import Radio from "@material-ui/core/Radio"
 import RadioGroup from "@material-ui/core/RadioGroup"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
-import FormControl from "@material-ui/core/es/FormControl/FormControl";
+import FormControl from "@material-ui/core/FormControl"
 
 export default class AutomaticEmailOptions extends React.Component {
   props: {
@@ -13,7 +13,6 @@ export default class AutomaticEmailOptions extends React.Component {
 
   handleRadioClick = (event: Event): void => {
     const { setSendAutomaticEmails } = this.props
-    console.log(typeof event.target.value)
     setSendAutomaticEmails(event.target.value === 'true')
   }
 
