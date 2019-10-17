@@ -26,11 +26,15 @@ import DialogActions from "@material-ui/core/es/DialogActions"
 // with it, which we can then keep in the state for our EmailCompositionDialog component.
 const convertHTMLToEditorState = (html: string): Object => {
   const blocksFromHTML = convertFromHTML(html)
-  const contentState = ContentState.createFromBlockArray(
-    blocksFromHTML.contentBlocks,
-    blocksFromHTML.entityMap
-  )
-  return EditorState.createWithContent(contentState)
+  if (blocksFromHTML.contentBlocks) {
+    const contentState = ContentState.createFromBlockArray(
+      blocksFromHTML.contentBlocks,
+      blocksFromHTML.entityMap
+    )
+    return EditorState.createWithContent(contentState)
+  } else {
+    return EditorState.createEmpty()
+  }
 }
 
 // this attempts to pull the email body out of `props`, and, if it's
