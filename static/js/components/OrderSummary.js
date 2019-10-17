@@ -1,8 +1,9 @@
 // @flow
 import React from "react"
-import { Card } from "react-mdl/lib/Card"
+import Card from "@material-ui/core/Card"
+import CardContent from "@material-ui/core/CardContent"
 import Button from "react-mdl/lib/Button"
-import Grid, { Cell } from "react-mdl/lib/Grid"
+import Grid from "@material-ui/core/Grid"
 
 import SpinnerButton from "./SpinnerButton"
 import { FETCH_PROCESSING } from "../actions"
@@ -59,18 +60,16 @@ class OrderSummary extends React.Component {
   showAmount(description: string, amount: string): Array<React$Element<*>> {
     return [
       // $FlowFixMe: flow hates this for some reason
-      <Cell
-        col={8}
-        tablet={4}
-        phone={2}
+      <Grid item
+        xs={8}
         className="description"
         key={description}
       >
         {description}
-      </Cell>,
-      <Cell col={2} key={`${description}-amount`} className="align-right">
+      </Grid>,
+      <Grid item xs={2} key={`${description}-amount`} className="align-right">
         <b className="amount">{amount}</b>
-      </Cell>
+      </Grid>
     ]
   }
 
@@ -91,10 +90,8 @@ class OrderSummary extends React.Component {
         : "Discount from coupon"
       discountInfo = [
         this.showAmount(message, this.getDiscountAmount()),
-        <Cell
-          col={10}
-          tablet={6}
-          phone={4}
+        <Grid item
+          xs={10}
           className="division-line"
           key="division"
         />,
@@ -104,17 +101,19 @@ class OrderSummary extends React.Component {
 
     return (
       <div>
-        <Card shadow={1}>
-          <p className="intro-text">
-            You are about to pay for <b>{course.title}</b>
-          </p>
-          <div className="wrapper-box">
-            <Grid className="summary-box">
-              {this.showAmount("Cost of course", this.getCoursePrice())}
-              {discountInfo}
-            </Grid>
-          </div>
-          {this.getExplanationText()}
+        <Card shadow={1} className="card">
+          <CardContent>
+            <p className="intro-text">
+              You are about to pay for <b>{course.title}</b>
+            </p>
+            <div className="wrapper-box">
+              <Grid container className="summary-box">
+                {this.showAmount("Cost of course", this.getCoursePrice())}
+                {discountInfo}
+              </Grid>
+            </div>
+            {this.getExplanationText()}
+          </CardContent>
         </Card>
         <p className="terms-of-service-text">
           By clicking below, you agree to the{" "}

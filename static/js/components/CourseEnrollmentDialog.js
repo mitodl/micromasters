@@ -2,9 +2,13 @@
 import React from "react"
 import PropTypes from "prop-types"
 import Dialog from "@material-ui/core/Dialog"
-import IconButton from "react-mdl/lib/IconButton"
+import IconButton from "@material-ui/core/IconButton"
+import Icon from "@material-ui/core/Icon"
 import Button from "react-mdl/lib/Button"
 import type { Course, CourseRun } from "../flow/programTypes"
+import DialogTitle from "@material-ui/core/DialogTitle"
+import DialogContent from "@material-ui/core/DialogContent"
+import DialogActions from "@material-ui/core/DialogActions"
 
 const dialogTitle = (course, setDialogVisibility) => (
   <div className="title">
@@ -12,11 +16,10 @@ const dialogTitle = (course, setDialogVisibility) => (
       Enroll in {course.title}
     </div>
     <IconButton
-      name="close"
       className="close"
       onClick={() => setDialogVisibility(false)}
-      key={2}
-    />
+    ><Icon>close</Icon>
+    </IconButton>
   </div>
 )
 
@@ -182,17 +185,18 @@ export default class CourseEnrollmentDialog extends React.Component {
 
     return (
       <Dialog
-        title={dialogTitle(course, setVisibility)}
-        titleClassName="dialog-title"
-        contentClassName="dialog course-enrollment-dialog"
+        classes={{paper: "dialog course-enrollment-dialog"}}
         className="course-enrollment-dialog-wrapper"
         open={open}
-        onRequestClose={() => setVisibility(false)}
-        actions={[payButton, auditButton]}
-        contentStyle={{ maxWidth: "600px" }}
-        actionsContainerStyle={{ paddingBottom: "20px", textAlign: "center" }}
+        onClose={() => setVisibility(false)}
       >
+        <DialogTitle className="dialog-title">{dialogTitle(course, setVisibility)}</DialogTitle>
+        <DialogContent>
         {message}
+        </DialogContent>
+        <DialogActions>
+          {[payButton, auditButton]}
+        </DialogActions>
       </Dialog>
     )
   }
