@@ -131,7 +131,7 @@ class EmploymentForm extends ProfileFormFields {
     const keySet = (key): any => ["work_history", ui.workDialogIndex, key]
 
     return (
-      <Grid container justify="center" className="profile-tab-grid">
+      <Grid container justify="center" spacing={2} className="profile-tab-grid">
         <Grid item xs={12}>
           {this.boundTextField(keySet("company_name"), "Name of Employer")}
         </Grid>
