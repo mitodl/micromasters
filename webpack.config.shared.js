@@ -33,16 +33,16 @@ module.exports = {
   },
   babelSharedLoader: {
     test: /\.jsx?$/,
-    exclude: /node_modules/,
+    include: [
+      path.resolve(__dirname, "static/js"),
+      path.resolve(__dirname, "node_modules/@material-ui"),
+    ],
     loader: 'babel-loader',
     query: {
       "presets": [
         ["env", { "modules": false }],
         "latest",
         "react",
-      ],
-      "ignore": [
-        "node_modules/**"
       ],
       "plugins": [
         "transform-flow-strip-types",
