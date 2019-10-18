@@ -59,7 +59,6 @@ class OrderSummary extends React.Component {
 
   showAmount(description: string, amount: string): Array<React$Element<*>> {
     return [
-      // $FlowFixMe: flow hates this for some reason
       <Grid item xs={8} className="description" key={description}>
         {description}
       </Grid>,

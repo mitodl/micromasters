@@ -8,4 +8,5 @@ export type Event = {
 
 export type EventTarget = {
   getAttribute: Function,
+  value: Array<number>,
 };
