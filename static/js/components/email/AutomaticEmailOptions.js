@@ -11,7 +11,7 @@ export default class AutomaticEmailOptions extends React.Component {
     setSendAutomaticEmails: (b: boolean) => void
   }
 
-  handleRadioClick = (event: Event): void => {
+  handleRadioClick = (event: any): void => {
     const { setSendAutomaticEmails } = this.props
     setSendAutomaticEmails(event.target.value === "true")
   }

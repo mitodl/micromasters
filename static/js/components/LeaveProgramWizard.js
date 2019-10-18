@@ -53,7 +53,7 @@ class LeaveProgramWizard extends ProfileFormFields {
     ui: UIState
   }
 
-  onProgramUnEnrollChange = (event: Event) => {
+  onProgramUnEnrollChange = (event: any) => {
     const { dispatch } = this.props
     dispatch(setProgramsToUnEnroll(_.uniq(event.target.value)))
   }
