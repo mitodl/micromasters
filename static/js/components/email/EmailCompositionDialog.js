@@ -244,45 +244,51 @@ export default class EmailCompositionDialog extends React.Component {
 
     return (
       <Dialog
-        classes={{paper: "dialog email-composition-dialog", root: "email-composition-dialog-wrapper"}}
+        classes={{
+          paper: "dialog email-composition-dialog",
+          root:  "email-composition-dialog-wrapper"
+        }}
         open={dialogVisibility}
         onClose={this.closeEmailComposeAndClear}
       >
-        <DialogTitle className="dialog-title">{title || "New Email"}</DialogTitle>
+        <DialogTitle className="dialog-title">
+          {title || "New Email"}
+        </DialogTitle>
         <DialogContent>
-        <div className="email-composition-contents">
-          {supportsAutomaticEmails
-            ? this.renderAutomaticEmailSettings(
-              inputs.sendAutomaticEmails || false
-            )
-            : null}
-          {this.renderSubheading()}
-          {renderRecipients ? renderRecipients(filters) : null}
-          <textarea
-            rows="1"
-            className="email-subject"
-            placeholder="Subject"
-            value={inputs.subject || ""}
-            onChange={updateEmailFieldEdit("subject")}
-          />
-          {this.showValidationError("subject")}
-          <Editor
-            wrapperClassName="email-body"
-            editorState={editorState}
-            onEditorStateChange={this.onEditorStateChange}
-            toolbar={draftWysiwygToolbar}
-          />
-          {supportBulkEmails ? this.renderRecipientVariable() : null}
-          {this.showValidationError("body")}
-        </div>
+          <div className="email-composition-contents">
+            {supportsAutomaticEmails
+              ? this.renderAutomaticEmailSettings(
+                inputs.sendAutomaticEmails || false
+              )
+              : null}
+            {this.renderSubheading()}
+            {renderRecipients ? renderRecipients(filters) : null}
+            <textarea
+              rows="1"
+              className="email-subject"
+              placeholder="Subject"
+              value={inputs.subject || ""}
+              onChange={updateEmailFieldEdit("subject")}
+            />
+            {this.showValidationError("subject")}
+            <Editor
+              wrapperClassName="email-body"
+              editorState={editorState}
+              onEditorStateChange={this.onEditorStateChange}
+              toolbar={draftWysiwygToolbar}
+            />
+            {supportBulkEmails ? this.renderRecipientVariable() : null}
+            {this.showValidationError("body")}
+          </div>
         </DialogContent>
         <DialogActions>
-        {dialogActions(
-          this.closeEmailComposeAndClear,
-          this.closeEmailComposerAndSend,
-          fetchStatus === FETCH_PROCESSING,
-          this.okButtonLabel(dialogType)
-        )}</DialogActions>
+          {dialogActions(
+            this.closeEmailComposeAndClear,
+            this.closeEmailComposerAndSend,
+            fetchStatus === FETCH_PROCESSING,
+            this.okButtonLabel(dialogType)
+          )}
+        </DialogActions>
       </Dialog>
     )
   }

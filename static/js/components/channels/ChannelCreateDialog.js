@@ -89,66 +89,68 @@ export default class ChannelCreateDialog extends React.Component {
 
     return (
       <Dialog
-        classes={{paper: "dialog create-channel-dialog", root: "create-channel-dialog-wrapper"}}
+        classes={{
+          paper: "dialog create-channel-dialog",
+          root:  "create-channel-dialog-wrapper"
+        }}
         open={dialogVisibility}
         onClose={this.closeAndClear}
       >
         <DialogTitle className="dialog-title">Create New Channel</DialogTitle>
         <DialogContent className="create-channel-content">
-        <Grid container spacing={3} style={{ padding: 20 }}>
-          <Grid item xs={12}>
-            <p>This channel is for:</p>
-            {this.renderChannelFilters(currentProgramEnrollment, filters)}
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              label="Title"
-              name="title"
-              value={inputs.title || ""}
-              onChange={updateFieldEdit("title")}
-              fullWidth
-            />
-            {this.showValidationError("title")}
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              label="Name"
-              name="name"
-              value={inputs.name || ""}
-              onChange={updateFieldEdit("name")}
-              helperText='No spaces, e.g., "lectures" or "lectureDiscussion". Once chosen, this cannot be changed.
+          <Grid container spacing={3} style={{ padding: 20 }}>
+            <Grid item xs={12}>
+              <p>This channel is for:</p>
+              {this.renderChannelFilters(currentProgramEnrollment, filters)}
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Title"
+                name="title"
+                value={inputs.title || ""}
+                onChange={updateFieldEdit("title")}
+                fullWidth
+              />
+              {this.showValidationError("title")}
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Name"
+                name="name"
+                value={inputs.name || ""}
+                onChange={updateFieldEdit("name")}
+                helperText='No spaces, e.g., "lectures" or "lectureDiscussion". Once chosen, this cannot be changed.
               This only shows up in the channel URL.'
-              fullWidth
-            />
-            {this.showValidationError("name")}
-            <p>
-
-            </p>
+                fullWidth
+              />
+              {this.showValidationError("name")}
+              <p />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Description"
+                name="description"
+                value={inputs.description || ""}
+                onChange={updateFieldEdit("description")}
+                multiline={true}
+                fullWidth
+              />
+              {this.showValidationError("description")}
+              {/* 'detail' is the key for a backend permission error */}
+              {this.showValidationError("detail", true)}
+            </Grid>
           </Grid>
-          <Grid item xs={12}>
-            <TextField
-              label="Description"
-              name="description"
-              value={inputs.description || ""}
-              onChange={updateFieldEdit("description")}
-              multiline={true}
-              fullWidth
-            />
-            {this.showValidationError("description")}
-            {/* 'detail' is the key for a backend permission error */}
-            {this.showValidationError("detail", true)}
-          </Grid>
-        </Grid>
         </DialogContent>
         <DialogActions>
-        {dialogActions(
-          this.closeAndClear,
-          this.closeAndCreate,
-          isSavingChannel,
-          "Create",
-          "",
-          !R.isEmpty(validationErrors)
-        )}</DialogActions>
+          {dialogActions(
+            this.closeAndClear,
+            this.closeAndCreate,
+            isSavingChannel,
+            "Create",
+            "",
+            !R.isEmpty(validationErrors)
+          )}
+        </DialogActions>
       </Dialog>
     )
   }

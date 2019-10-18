@@ -165,20 +165,20 @@ const GradeDetailPopup = (props: GradeDetailPopupProps) => {
 
   return (
     <Dialog
-      classes={{paper:"dialog grade-detail-popup"}}
+      classes={{ paper: "dialog grade-detail-popup" }}
       open={dialogVisibility}
-      onClose={() =>
-        setShowGradeDetailDialog(false, gradeType, course.title)
-      }
+      onClose={() => setShowGradeDetailDialog(false, gradeType, course.title)}
     >
-      <DialogTitle className="grade-dialog-title">{dialogTitle(course, gradeType)}</DialogTitle>
+      <DialogTitle className="grade-dialog-title">
+        {dialogTitle(course, gradeType)}
+      </DialogTitle>
       <DialogContent>
-      {gradeType === EDX_GRADE
-        ? renderRunRows(course.runs)
-        : renderExamRows(course.proctorate_exams_grades)}
-      <div className="explanation">
-        Only your best passing grade counts toward your final grade
-      </div>
+        {gradeType === EDX_GRADE
+          ? renderRunRows(course.runs)
+          : renderExamRows(course.proctorate_exams_grades)}
+        <div className="explanation">
+          Only your best passing grade counts toward your final grade
+        </div>
       </DialogContent>
     </Dialog>
   )

@@ -15,10 +15,8 @@ const dialogTitle = (course, setDialogVisibility) => (
     <div className="text" key={1}>
       Enroll in {course.title}
     </div>
-    <IconButton
-      className="close"
-      onClick={() => setDialogVisibility(false)}
-    ><Icon>close</Icon>
+    <IconButton className="close" onClick={() => setDialogVisibility(false)}>
+      <Icon>close</Icon>
     </IconButton>
   </div>
 )
@@ -185,18 +183,16 @@ export default class CourseEnrollmentDialog extends React.Component {
 
     return (
       <Dialog
-        classes={{paper: "dialog course-enrollment-dialog"}}
+        classes={{ paper: "dialog course-enrollment-dialog" }}
         className="course-enrollment-dialog-wrapper"
         open={open}
         onClose={() => setVisibility(false)}
       >
-        <DialogTitle className="dialog-title">{dialogTitle(course, setVisibility)}</DialogTitle>
-        <DialogContent>
-        {message}
-        </DialogContent>
-        <DialogActions>
-          {[payButton, auditButton]}
-        </DialogActions>
+        <DialogTitle className="dialog-title">
+          {dialogTitle(course, setVisibility)}
+        </DialogTitle>
+        <DialogContent>{message}</DialogContent>
+        <DialogActions>{[payButton, auditButton]}</DialogActions>
       </Dialog>
     )
   }

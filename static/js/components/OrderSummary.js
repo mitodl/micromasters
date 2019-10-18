@@ -60,11 +60,7 @@ class OrderSummary extends React.Component {
   showAmount(description: string, amount: string): Array<React$Element<*>> {
     return [
       // $FlowFixMe: flow hates this for some reason
-      <Grid item
-        xs={8}
-        className="description"
-        key={description}
-      >
+      <Grid item xs={8} className="description" key={description}>
         {description}
       </Grid>,
       <Grid item xs={2} key={`${description}-amount`} className="align-right">
@@ -90,11 +86,7 @@ class OrderSummary extends React.Component {
         : "Discount from coupon"
       discountInfo = [
         this.showAmount(message, this.getDiscountAmount()),
-        <Grid item
-          xs={10}
-          className="division-line"
-          key="division"
-        />,
+        <Grid item xs={10} className="division-line" key="division" />,
         this.showAmount("Total", this.getFinalPrice())
       ]
     }

@@ -29,27 +29,27 @@ import Icon from "@material-ui/core/Icon"
 const cardWrapper = (...children) => (
   <Card className="card final-exam-card">
     <CardContent>
-    <div className="card-header">
-      <div>
-        <img className="exam-icon" src="/static/images/exam_icon.png" />
-      </div>
-      <div>
-        <h2>Final Proctored Exam</h2>
-        <p>
-          {`You must take a proctored exam for each course. Exams may be taken
+      <div className="card-header">
+        <div>
+          <img className="exam-icon" src="/static/images/exam_icon.png" />
+        </div>
+        <div>
+          <h2>Final Proctored Exam</h2>
+          <p>
+            {`You must take a proctored exam for each course. Exams may be taken
             at any `}
-          <a
-            href="http://www.pearsonvue.com/mitx/locate/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            authorized Pearson test center
-          </a>
-          {`. Before you can take an exam, you have to pay for the course and
+            <a
+              href="http://www.pearsonvue.com/mitx/locate/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              authorized Pearson test center
+            </a>
+            {`. Before you can take an exam, you have to pay for the course and
           pass the online work.`}
-        </p>
+          </p>
+        </div>
       </div>
-    </div>
 
       {children}
     </CardContent>
@@ -80,7 +80,11 @@ const accountCreated = (profile, navigateToProfile) => (
   </div>
 )
 
-const editProfileButton = fn => <IconButton onClick={fn}><Icon>edit</Icon></IconButton>
+const editProfileButton = fn => (
+  <IconButton onClick={fn}>
+    <Icon>edit</Icon>
+  </IconButton>
+)
 
 const absentCard = () =>
   cardWrapper(
@@ -142,7 +146,7 @@ const schedulableCourseList = R.compose(
 const renderPearsonTOSDialog = (open, show, submitPearsonSSO, pearson) => (
   <Dialog
     key="pearson-tos-dialog"
-    classes={{paper: "dialog content"}}
+    classes={{ paper: "dialog content" }}
     className="dialog-to-pearson-site"
     open={open}
     onClose={() => show(false)}
@@ -199,11 +203,11 @@ const renderPearsonTOSDialog = (open, show, submitPearsonSSO, pearson) => (
     </DialogContent>
     <DialogActions>
       {dialogActions(
-      () => show(false),
-      submitPearsonSSO,
-      isProcessing(pearson),
-      "CONTINUE"
-    )}
+        () => show(false),
+        submitPearsonSSO,
+        isProcessing(pearson),
+        "CONTINUE"
+      )}
     </DialogActions>
   </Dialog>
 )
