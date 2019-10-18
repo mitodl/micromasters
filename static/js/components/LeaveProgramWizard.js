@@ -75,7 +75,7 @@ class LeaveProgramWizard extends ProfileFormFields {
     return programs.map((program: AvailableProgram) => (
       <MenuItem
         key={program.id}
-        checked={R.and(
+        selected={R.and(
           R.not(R.isEmpty(programsToUnEnroll)),
           R.not(_.isUndefined(programsToUnEnroll.find(id => id === program.id)))
         )}

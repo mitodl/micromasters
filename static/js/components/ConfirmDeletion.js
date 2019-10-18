@@ -28,7 +28,7 @@ export default class ConfirmDeletion extends React.Component {
       <Dialog
         classes={{
           root:  "deletion-confirmation-dialog-wrapper",
-          paper: "deletion-confirmation-dialog"
+          paper: "dialog deletion-confirmation-dialog"
         }}
         open={open}
         onClose={close}
