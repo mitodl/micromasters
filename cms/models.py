@@ -34,7 +34,7 @@ class HomePage(Page):
     CMS page representing the homepage.
     """
     content_panels = []
-    subpage_types = ['ProgramPage']
+    subpage_types = ['ProgramPage', 'BenefitsPage']
 
     def get_context(self, request, *args, **kwargs):
         programs = Program.objects.filter(live=True).select_related('programpage').order_by("id")
@@ -68,6 +68,61 @@ class HomePage(Page):
         context["title"] = self.title
         context["ga_tracking_id"] = ""
         context["coupon_code"] = get_coupon_code(request)
+
+        return context
+
+
+class BenefitsPage(Page):
+    """
+    CMS page for benefits
+    """
+    parent_page_types = ['HomePage']
+
+    description = RichTextField(
+        blank=True,
+        help_text='The description shown on the benefits page'
+    )
+    background_image = models.ForeignKey(
+        Image,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        help_text='The hero image on the benefits page'
+    )
+    title_over_image = RichTextField(blank=True)
+    content = StreamField([
+        ('rich_text', RichTextBlock())
+    ], blank=True, help_text='The content of the benefits page')
+
+    content_panels = Page.content_panels + [
+        FieldPanel('description', classname="full"),
+        FieldPanel('background_image'),
+        FieldPanel('title_over_image'),
+        StreamFieldPanel('content'),
+    ]
+
+    def get_context(self, request, *args, **kwargs):
+        js_settings = {
+            "gaTrackingID": settings.GA_TRACKING_ID,
+            "host": webpack_dev_server_host(request),
+            "environment": settings.ENVIRONMENT,
+            "sentry_dsn": sentry.get_public_dsn(),
+            "release_version": settings.VERSION
+        }
+
+        username = get_social_username(request.user)
+        context = super().get_context(request)
+
+        context["is_public"] = True
+        context["has_zendesk_widget"] = True
+        context["google_maps_api"] = False
+        context["authenticated"] = not request.user.is_anonymous
+        context["is_staff"] = has_role(request.user, [Staff.ROLE_ID, Instructor.ROLE_ID])
+        context["username"] = username
+        context["js_settings_json"] = json.dumps(js_settings)
+        context["title"] = self.title
+        context["ga_tracking_id"] = ""
 
         return context
 
