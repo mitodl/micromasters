@@ -55,7 +55,6 @@ class HomePage(Page):
                 return program.programpage
             except ProgramPage.DoesNotExist:
                 return None
-
         program_pairs = [(program, get_program_page(program)) for program in programs]
         context["programs"] = program_pairs
         context["is_public"] = True
@@ -90,7 +89,6 @@ class BenefitsPage(Page):
         related_name='+',
         help_text='The hero image on the benefits page'
     )
-    title_over_image = RichTextField(blank=True)
     content = StreamField([
         ('rich_text', RichTextBlock())
     ], blank=True, help_text='The content of the benefits page')
@@ -98,7 +96,6 @@ class BenefitsPage(Page):
     content_panels = Page.content_panels + [
         FieldPanel('description', classname="full"),
         FieldPanel('background_image'),
-        FieldPanel('title_over_image'),
         StreamFieldPanel('content'),
     ]
 
