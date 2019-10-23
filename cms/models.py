@@ -38,6 +38,7 @@ class HomePage(Page):
 
     def get_context(self, request, *args, **kwargs):
         programs = Program.objects.filter(live=True).select_related('programpage').order_by("id")
+        benefits_page = BenefitsPage.objects.filter(live=True).first()
         js_settings = {
             "gaTrackingID": settings.GA_TRACKING_ID,
             "host": webpack_dev_server_host(request),
@@ -67,6 +68,7 @@ class HomePage(Page):
         context["title"] = self.title
         context["ga_tracking_id"] = ""
         context["coupon_code"] = get_coupon_code(request)
+        context["benefits_url"] = benefits_page.get_url() if benefits_page else ""
 
         return context
 
