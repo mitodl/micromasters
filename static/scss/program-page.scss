@@ -1,4 +1,4 @@
-.program-page {
+.program-page, .benefits-page {
   padding: 0 !important;
   background: #fff;
 
@@ -527,6 +527,11 @@
     left: -10px;
     top: -6px;
   }
+}
+
+.benefits-page .hero-image{
+  height: 250px;
+  padding: 80px 5% 0;
 }
 
 .program-course-popover {
