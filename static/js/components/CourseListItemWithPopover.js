@@ -69,11 +69,13 @@ export default class CourseListItemWithPopover extends React.Component {
     // sure that the popover gets off our lawn.
     return (
       <li className="program-course">
-        <h4 className="title" onClick={this.handleClick}>
-          {title}
+        <h4 className="course-row" onClick={this.handleClick}>
           {electiveTag ? (
-            <div className="elective-tag">{electiveTag}</div>
+            <div className="elective-tag-wrapper">
+              <div className={`elective-tag ${electiveTag}`}>{electiveTag}</div>
+            </div>
           ) : null}
+          {title}
         </h4>
 
         <Popover
@@ -93,7 +95,9 @@ export default class CourseListItemWithPopover extends React.Component {
           />
           {popoverLink(url)}
         </Popover>
-        <div className="description enrollment-dates">{enrollmentText}</div>
+        <div className="description enrollment-dates label-padding">
+          {enrollmentText}
+          </div>
       </li>
     )
   }

@@ -1,12 +1,40 @@
+.elective-tag-wrapper {
+  min-width: 60px;
+  margin-left: -25px;
+  height: min-content;
+}
+
+.label-padding {
+  margin-left: 36px;
+}
+
+.course-row {
+  color: #0070da;
+  font-weight: 500;
+  font-size: 15px;
+  margin: 0 0 6px 0;
+  cursor: pointer;
+  line-height: 1.4em;
+  display: flex;
+}
+
 .elective-tag {
   display: inline-flex;
-  border: 1px solid $lightgray;
-  color: $font-gray;
-  margin-left: 14px;
-  padding: 5px;
+  color: $lightgray;
+  padding: 1px 4px;
   font-size: 12px;
-  background: $lightest-blue;
   font-weight: 300;
+  float: right;
+  border-radius: 4px;
+  margin: 1px 5px;
+}
+
+.elective-tag.Core {
+  background: $mm-brand-bg-dark;
+}
+
+.elective-tag.Elective {
+  background: $darkgray;
 }
 
 .course-row {
