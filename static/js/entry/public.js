@@ -223,6 +223,6 @@ $(document).ready(function($) {
   $('a[href^="https://"], a[href^="http://"] ').attr("target", "_blank")
 
   if (window.location.hash !== "") {
-    $('a[href="'+window.location.hash+'"]').parent().trigger("click")
+    $(`a[href="${window.location.hash}"]`).parent().trigger("click")
   }
 })
