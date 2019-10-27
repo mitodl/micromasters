@@ -97,7 +97,7 @@ export default class CourseListItemWithPopover extends React.Component {
         </Popover>
         <div className="description enrollment-dates label-padding">
           {enrollmentText}
-          </div>
+        </div>
       </li>
     )
   }

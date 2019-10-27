@@ -8,16 +8,6 @@
   margin-left: 36px;
 }
 
-.course-row {
-  color: #0070da;
-  font-weight: 500;
-  font-size: 15px;
-  margin: 0 0 6px 0;
-  cursor: pointer;
-  line-height: 1.4em;
-  display: flex;
-}
-
 .elective-tag {
   display: inline-flex;
   color: $lightgray;
@@ -38,6 +28,14 @@
 }
 
 .course-row {
+  color: #0070da;
+  font-weight: 500;
+  font-size: 15px;
+  margin: 0 0 6px 0;
+  cursor: pointer;
+  line-height: 1.4em;
+  display: flex;
+
   .course-info {
     margin: 29px 22px 35px 28px;
 
