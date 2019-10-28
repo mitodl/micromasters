@@ -133,7 +133,7 @@ def test_program_page(browser, base_test_data, logged_in_student):
     assert len(info_links) == len(info_elements)
     semester_elements = browser.driver.find_elements_by_css_selector(".semester-date")
     assert len(semester_dates) == len(semester_elements)
-    program_course_elements = browser.driver.find_elements_by_css_selector(".program-course .title")
+    program_course_elements = browser.driver.find_elements_by_css_selector(".program-course .course-row")
     assert len(program_courses) == len(program_course_elements)
 
 
