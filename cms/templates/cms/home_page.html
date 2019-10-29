@@ -90,8 +90,11 @@
                 anywhere in the world. Learners who pass an integrated set of MIT graduate-level courses on edX.org,
                 and one or more proctored exams. This credential is valuable in and of itself.  Additionally,
                 credential-holders can then apply for an accelerated, on campus, master’s degree program at MIT
-                or other universities. All MicroMasters program credential holders are also considered
-                <a href="{{benefits_url}}">affiliates of the MIT Alumni Association</a>.
+                or other universities.
+                {% if benefits_url %}
+                  All MicroMasters program credential holders are also considered
+                  <a href="{{benefits_url}}">affiliates of the MIT Alumni Association</a>.
+                {% endif %}
               </p>
               <p>MicroMasters program courses offer the same learning and challenge as MIT courses.</p>
               <div class="sub-banner-logos">
@@ -131,7 +134,9 @@
             <h4>Earn a Valuable Credential and Boost Your Network</h4>
             <p>A MicroMasters program credential from MITx proves that you’ve gained the knowledge
               and skills and knowledge to stand out in your field and qualifies you as an affiliate of
-              the MIT Alumni Association.<br><a href="{{benefits_url}}">Learn More</a></p>
+              the MIT Alumni Association.
+              {% if benefits_url %} <a href="{{benefits_url}}">Learn More</a> {% endif %}
+            </p>
           </div>
           <div class="hiw col-md-3">
             <div class="reasons-images-wrap">
