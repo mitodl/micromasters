@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.149.0
+---------------
+
+- Add CMS BenefitsPage (#4432)
+- Fix bug in anchor tag opening collapsed question (#4436)
+
 Version 0.148.2 (Released October 21, 2019)
 ---------------
 
