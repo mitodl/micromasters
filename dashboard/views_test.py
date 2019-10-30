@@ -82,7 +82,8 @@ class DashboardTest(MockedESTestCase, APITestCase):
         assert 'is_edx_data_fresh' in result.data
         assert result.data['is_edx_data_fresh'] is True
         assert len(result.data['programs']) == 2
-        assert [self.program_1.id, self.program_2.id] == [res_item['id'] for res_item in result.data['programs']]
+        assert set([self.program_1.id, self.program_2.id]) == set(
+            [res_item['id'] for res_item in result.data['programs']])
 
     @ddt.data(Instructor, Staff)
     @patch('dashboard.api.CachedEdxDataApi.update_cache_if_expired')
