@@ -649,6 +649,10 @@ body.app-media {
 .how-it-works-section {
   background: #1a1a1a;
 
+  h4:not(.longer-heading) {
+    margin-bottom: 30px;
+  }
+
   .reasons-images-wrap::after {
     /* content from background-images.css */
     position: absolute;
