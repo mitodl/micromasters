@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.150.0
+---------------
+
+- Added mmfin redirect
+- HomePage: include information about the alumni benefits (#4434)
+
 Version 0.149.1 (Released November 05, 2019)
 ---------------
 
