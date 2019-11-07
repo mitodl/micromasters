@@ -217,7 +217,7 @@ class CourseTeamTabPage(ProgramChildPage):
     contributors = StreamField(
         [("contributor", CourseTeamBlock())], blank=True,
     )
-    teaching_assistant = StreamField(
+    teaching_assistants = StreamField(
         [("TAs", CourseTeamBlock())], blank=True,
     )
 
@@ -229,7 +229,7 @@ class CourseTeamTabPage(ProgramChildPage):
         FieldPanel('contributors_heading'),
         StreamFieldPanel('contributors'),
         FieldPanel('teaching_assistants_heading'),
-        StreamFieldPanel('teaching_assistant'),
+        StreamFieldPanel('teaching_assistants'),
     ]
 
 

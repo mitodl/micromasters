@@ -12,6 +12,20 @@
     {% include_block child_page.instructors %}
   </div>
 
+  <div class="administrators">
+    <h3>{{ child_page.administrators_heading }}</h3>
+    {% include_block child_page.administrators %}
+  </div>
+
+  <div class="contributors">
+    <h3>{{ child_page.contributors_heading }}</h3>
+    {% include_block child_page.contributors %}
+  </div>
+
+  <div class="course">
+    <h3>{{ child_page.teaching_assistants_heading }}</h3>
+    {% include_block child_page.teaching_assistants %}
+  </div>
 
 {% endblock %}
 
