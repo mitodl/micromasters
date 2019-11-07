@@ -27,6 +27,7 @@ from micromasters.utils import webpack_dev_server_host
 from profiles.api import get_social_username
 from roles.models import Instructor, Staff
 from cms.util import get_coupon_code
+from cms.blocks import CourseTeamBlock
 
 
 class HomePage(Page):
@@ -56,6 +57,7 @@ class HomePage(Page):
                 return program.programpage
             except ProgramPage.DoesNotExist:
                 return None
+
         program_pairs = [(program, get_program_page(program)) for program in programs]
         context["programs"] = program_pairs
         context["is_public"] = True
@@ -130,6 +132,7 @@ class ProgramChildPage(Page):
     """
     Abstract page representing a child of ProgramPage
     """
+
     class Meta:
         abstract = True
 
@@ -180,6 +183,53 @@ class ProgramTabPage(ProgramChildPage):
 
     content_panels = Page.content_panels + [
         StreamFieldPanel('content'),
+    ]
+
+
+class CourseTeamTabPage(ProgramChildPage):
+    """
+    CMS page for course team tab on the program page
+    """
+    instructors_heading = models.CharField(
+        max_length=255, default='Instructors',
+        help_text='Heading to be shown for instructors on course team tab.'
+    )
+    administrators_heading = models.CharField(
+        max_length=255, default='Course Administrator',
+        help_text='Heading to be shown for course administrator on course team tab.'
+    )
+    contributors_heading = models.CharField(
+        max_length=255, default='Course Contributors',
+        help_text='Heading to be shown for course contributors on course team tab.'
+    )
+    teaching_assistants_heading = models.CharField(
+        max_length=255, default='Course TAs',
+        help_text='Heading to be shown for course TAs on course team tab.'
+    )
+
+    instructors = StreamField(
+        [("instructors", CourseTeamBlock())], blank=True,
+    )
+
+    administrators = StreamField(
+        [("administrator", CourseTeamBlock())], blank=True,
+    )
+    contributors = StreamField(
+        [("contributor", CourseTeamBlock())], blank=True,
+    )
+    teaching_assistant = StreamField(
+        [("TAs", CourseTeamBlock())], blank=True,
+    )
+
+    content_panels = Page.content_panels + [
+        FieldPanel('instructors_heading'),
+        StreamFieldPanel('instructors'),
+        FieldPanel('administrators_heading'),
+        StreamFieldPanel('administrators'),
+        FieldPanel('contributors_heading'),
+        StreamFieldPanel('contributors'),
+        FieldPanel('teaching_assistants_heading'),
+        StreamFieldPanel('teaching_assistant'),
     ]
 
 
@@ -261,7 +311,7 @@ class ProgramPage(Page):
         help_text="A url for I'm interested button, if there is no course(s) available."
     )
 
-    subpage_types = ['FaqsPage', 'ProgramTabPage']
+    subpage_types = ['FaqsPage', 'CourseTeamTabPage', 'ProgramTabPage']
     content_panels = Page.content_panels + [
         FieldPanel('description', classname="full"),
         FieldPanel('program'),

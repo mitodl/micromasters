@@ -1,0 +1,17 @@
+{% extends "cms/program_page.html" %}
+{% load wagtailcore_tags %}
+
+{% block social %}
+{% endblock %}
+
+{% block tab-content %}
+
+
+  <div class="instructors">
+    <h3>{{ child_page.instructors_heading }}</h3>
+    {% include_block child_page.instructors %}
+  </div>
+
+
+{% endblock %}
+

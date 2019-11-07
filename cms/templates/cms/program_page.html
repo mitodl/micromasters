@@ -79,7 +79,8 @@
     {% endif %}
 
     <div class="mdl-grid tabs-content">
-      <div class="mdl-cell mdl-cell--8-col">
+      {% block tab-content %}
+        <div class="mdl-cell mdl-cell--8-col">
       {% if active_tab == 'about' %}
         <div class="panel-content">
           {{ page.description|richtext }}
@@ -92,8 +93,7 @@
         </div>
       {% endif %}
       </div>
-
-      <div class="mdl-cell mdl-cell--4-col">
+        <div class="mdl-cell mdl-cell--4-col">
         <div id="courses-component">
           <!-- CourseListWithPopover component injected here -->
         </div>
@@ -152,6 +152,8 @@
           <img src="{% static 'images/edx_logo.png' %}" alt="edX" />
         </div>
       </div>
+      {% endblock %}
+
     </div>
   </div>
 
