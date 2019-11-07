@@ -29,7 +29,7 @@
 {% block content %}
 {% include "header.html" %}
 <main class="page-content benefits-page">
-  {% image page.background_image fill-1310x613 as background_image %}
+  {% image page.background_image original as background_image %}
   <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
     <div class="hero-image" style="background-image: url({{ background_image.url }})">
       <!-- big image, and sign-up links, etc -->
