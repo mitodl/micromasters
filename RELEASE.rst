@@ -1,6 +1,14 @@
 Release Notes
 =============
 
+Version 0.150.0
+---------------
+
+- fix bg img on benefits page (#4452)
+- add github templates copied from mitxpro (#4428)
+- Added mmfin redirect
+- HomePage: include information about the alumni benefits (#4434)
+
 Version 0.149.1 (Released November 05, 2019)
 ---------------
 
