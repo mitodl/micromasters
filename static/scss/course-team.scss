@@ -1,0 +1,172 @@
+.team-section {
+
+  &:not(:last-child) {
+    border-bottom: 2px solid $brand-font;
+  }
+
+  padding: 20px 0;
+
+  .section-title {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 40px;
+  }
+
+  .team-list {
+    position: relative;
+    overflow: hidden;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-flow: row wrap;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    .team-list-item {
+      width: 25%;
+      position: relative;
+      z-index: 3;
+      margin-bottom: 30px;
+      padding: 10px;
+      .profile-image {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+      }
+
+      .profile-image-wrapper {
+        position: relative;
+
+        .profile-image {
+          width: 100%;
+          height: 300px;
+          object-fit: cover;
+        }
+
+        &:before {
+          display: none;
+          content: '';
+          background: rgba(0, 0, 0, .6);
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          z-index: 1;
+          left: 0;
+          top: 0;
+          -webkit-transition: all 0.5s ease;
+          -o-transition: all 0.5s ease;
+          transition: all 0.5s ease;
+        }
+      }
+
+      .profile-content {
+        position: absolute;
+        z-index: 1;
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
+        padding-left: 10px;
+        margin-bottom: -15px;
+
+        .name,
+        .bio {
+          color: white;
+        }
+
+        .name {
+          font-size: 26px;
+          margin: 0;
+        }
+
+        .bio {
+          max-height: 0;
+          overflow: hidden;
+          -webkit-transition: all 0.5s ease;
+          -o-transition: all 0.5s ease;
+          transition: all 0.5s ease;
+          letter-spacing: 0.21px;
+          line-height: 25px;
+        }
+      }
+
+      &:hover {
+        z-index: 4;
+
+        .profile-image-wrapper {
+
+          &:before {
+            display: block;
+          }
+        }
+
+        .profile-content {
+
+          .name {
+            font-size: 20px;
+          }
+
+          .bio {
+            max-height: 400px;
+          }
+        }
+      }
+    }
+  }
+
+  &.column-count-3 {
+
+    .team-list {
+
+      .team-list-item {
+        width: 33%;
+      }
+    }
+  }
+
+  &.course-contributors {
+
+    .team-list {
+
+      .team-list-item {
+        width: 25%;
+
+        .profile-image,
+
+        .name {
+          display: inline-block;
+          vertical-align: middle;
+        }
+
+        .profile-image {
+          width: 100px;
+          height: 100px;
+          margin-right: 15px;
+        }
+
+        .name {
+          font-size: 18px;
+        }
+
+        .bio {
+          display: none;
+          color: white;
+          position: absolute;
+          z-index: 1;
+          padding: 10px;
+          background: rgba(0, 0, 0, .6);
+        }
+
+        &:hover {
+          .bio {
+            display: block;
+          }
+        }
+      }
+    }
+  }
+}
