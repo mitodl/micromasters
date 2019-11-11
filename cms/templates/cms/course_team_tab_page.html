@@ -5,6 +5,8 @@
 {% block social %}
 {% endblock %}
 
+{% block bodyclass %}course-team-page{% endblock %}
+
 {% block tab-content %}
 
 <div class="container">
@@ -14,7 +16,7 @@
       {% for instructor in child_page.instructors %}
       <li class="team-list-item">
         <div class="profile-image-wrapper">
-          <img class="profile-image" src="{{ instructor.value.image.file.url }}" alt="">
+          <img class="member-image" src="{{ instructor.value.image.file.url }}" alt="">
         </div>
         <div class="profile-content">
           <span class="name">{{ instructor.value.name }}</span>
@@ -26,15 +28,17 @@
   </section>
   <section class="team-section">
     <h1 class="section-title">{{ child_page.administrators_heading }}</h1>
-    <ul class="team-list">
+    <ul class="team-list-administrator">
       {% for administrator in child_page.administrators %}
       <li class="team-list-item">
-        <div class="profile-image-wrapper">
-          <img class="profile-image" src="{{ administrator.value.image.file.url }}" alt="">
-        </div>
-        <div class="profile-content">
-          <h4 class="name">{{ administrator.value.name }}</h4>
-          <p class="bio">{{ administrator.value.bio }}</p>
+        <div class="admin-team-list-item">
+            <div class="profile-image-wrapper">
+              <img class="member-image" src="{{ administrator.value.image.file.url }}" alt="">
+            </div>
+            <div class="profile-content">
+              <h4 class="name">{{ administrator.value.name }}</h4>
+              <p class="bio">{{ administrator.value.bio }}</p>
+            </div>
         </div>
       </li>
       {% endfor %}
@@ -45,7 +49,7 @@
     <ul class="team-list">
       {% for contributor in child_page.contributors %}
       <li class="team-list-item">
-        <img class="profile-image" src="{{ contributor.value.image.file.url }}" alt="" />
+        <img class="member-image" src="{{ contributor.value.image.file.url }}" alt="" />
         <h4 class="name">{{ contributor.value.name }}</h4>
         <p class="bio">{{ contributor.value.bio }}</p>
       </li>
@@ -57,7 +61,7 @@
     <ul class="team-list">
       {% for ta in child_page.teaching_assistants %}
       <li class="team-list-item">
-        <img class="profile-image" src="{{ ta.value.image.file.url }}" alt="" />
+        <img class="member-image" src="{{ ta.value.image.file.url }}" alt="" />
         <h4 class="name">{{ ta.value.name }}</h4>
         <p class="bio">{{ ta.value.bio }}</p>
       </li>
