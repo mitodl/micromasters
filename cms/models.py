@@ -337,6 +337,13 @@ class ProgramPage(Page):
     def get_context(self, request, *args, **kwargs):
         context = get_program_page_context(self, request)
         context['active_tab'] = 'about'
+        child_pages = self.get_children()
+        course_team_page = child_pages.type(CourseTeamTabPage).live().first()
+
+        # the course team tab should always be second, first one is about tab
+        context['child_pages'] = [course_team_page] + [page for page in child_pages.not_type(CourseTeamTabPage)]
+        context['course_team_page'] = course_team_page
+
         return context
 
 

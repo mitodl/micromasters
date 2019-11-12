@@ -39,7 +39,7 @@
              class="tab-link {% if active_tab == 'about' %}active-tab{% endif %}">
             About the Program
           </a>
-          {% for child in page.get_children.live %}
+          {% for child in child_pages %}
             <a href="{{ child.url }}"
                class="tab-link {% if child.title == active_tab %}active-tab{% endif %}">
               {{ child.title }}
@@ -169,6 +169,9 @@
         <!-- React-Slick carousel component injected here -->
       </div>
     </section>
+    {% if course_team_page %}
+    <a href="{{ course_team_page.url }}">Course Team Details</a>
+    {% endif %}
   {% endif %}
 
 </main>
