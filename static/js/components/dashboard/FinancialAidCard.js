@@ -78,7 +78,7 @@ export default class FinancialAidCard extends React.Component {
       return (
         <div className="documents-sent">
           <Icon name="done" key="icon" />
-            Documents mailed/faxed on {``}
+            Documents mailed/uploaded on {``}
           {moment(dateDocumentsSent).format(DASHBOARD_FORMAT)}. We will review
             your documents as soon as possible.
         </div>
@@ -199,9 +199,10 @@ export default class FinancialAidCard extends React.Component {
 
           <Grid className="financial-aid-box">
             <Cell col={12}>
-                Before you can pay, you need to verify your income. Please mail
-                or fax an English-translated and notarized income tax or income
-                statement document. DO NOT SEND BY EMAIL.
+                Before you can pay, you need to verify your income. Please visit
+                the secure website to upload an English-translated and notarized
+                income tax or income statement document. You can also send
+                documents by mail. DO NOT SEND BY EMAIL.
             </Cell>
             <Cell col={12}>
               <a onClick={() => setDocsInstructionsVisibility(true)}>
@@ -213,7 +214,7 @@ export default class FinancialAidCard extends React.Component {
           <Grid>
             <Cell col={1} />
             <Cell col={5}>Mail to</Cell>
-            <Cell col={6}>or fax</Cell>
+            <Cell col={6}>Upload to DocuSign</Cell>
           </Grid>
 
           <Grid>
@@ -230,7 +231,9 @@ export default class FinancialAidCard extends React.Component {
                 Cambridge, MA 02139 United States of America
               <br />
             </Cell>
-            <Cell col={6}>1 (617) 715-5799</Cell>
+            <Cell col={6}>
+                https://na2.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=4a74536d-1629-4709-b8e9-f173a51cf501&env=na2&v=2
+            </Cell>
           </Grid>
 
           <hr />
