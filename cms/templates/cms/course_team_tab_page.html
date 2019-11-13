@@ -10,64 +10,75 @@
 {% block tab-content %}
 
 <div class="container">
-  <section class="team-section">
-    <h1 class="section-title">{{ child_page.instructors_heading }}</h1>
-    <ul class="team-list">
-      {% for instructor in child_page.instructors %}
-      <li class="team-list-item">
-        <div class="profile-image-wrapper">
-          <img class="member-image" src="{{ instructor.value.image.file.url }}" alt="">
-        </div>
-        <div class="profile-content">
-          <span class="name">{{ instructor.value.name }}</span>
-          <p class="bio">{{ instructor.value.bio }}</p>
-        </div>
-      </li>
-      {% endfor %}
-    </ul>
-  </section>
-  <section class="team-section">
-    <h1 class="section-title">{{ child_page.administrators_heading }}</h1>
-    <ul class="team-list-administrator">
-      {% for administrator in child_page.administrators %}
-      <li class="team-list-item">
-        <div class="admin-team-list-item">
-            <div class="profile-image-wrapper">
-              <img class="member-image" src="{{ administrator.value.image.file.url }}" alt="">
-            </div>
-            <div class="profile-content">
-              <h4 class="name">{{ administrator.value.name }}</h4>
-              <p class="bio">{{ administrator.value.bio }}</p>
-            </div>
-        </div>
-      </li>
-      {% endfor %}
-    </ul>
-  </section>
-  <section class="team-section course-contributors">
-    <h1 class="section-title">{{ child_page.contributors_heading }}</h1>
-    <ul class="team-list">
-      {% for contributor in child_page.contributors %}
-      <li class="team-list-item">
-        <img class="member-image" src="{{ contributor.value.image.file.url }}" alt="" />
-        <h4 class="name">{{ contributor.value.name }}</h4>
-        <p class="bio">{{ contributor.value.bio }}</p>
-      </li>
-      {% endfor %}
-    </ul>
-  </section>
-  <section class="team-section course-contributors">
-    <h1 class="section-title">{{ child_page.teaching_assistants_heading }}</h1>
-    <ul class="team-list">
-      {% for ta in child_page.teaching_assistants %}
-      <li class="team-list-item">
-        <img class="member-image" src="{{ ta.value.image.file.url }}" alt="" />
-        <h4 class="name">{{ ta.value.name }}</h4>
-        <p class="bio">{{ ta.value.bio }}</p>
-      </li>
-      {% endfor %}
-    </ul>
-  </section>
+  {% if child_page.instructors|length > 0 %}
+    <section class="team-section">
+      <h1 class="section-title">{{ child_page.instructors_heading }}</h1>
+      <ul class="team-list">
+        {% for instructor in child_page.instructors %}
+        <li class="team-list-item">
+          <div class="profile-image-wrapper">
+            <img class="member-image" src="{{ instructor.value.image.file.url }}" alt="">
+          </div>
+          <div class="profile-content">
+            <span class="name">{{ instructor.value.name }}</span>
+            <p class="bio">{{ instructor.value.bio }}</p>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+
+  {% if child_page.administrators|length > 0 %}
+    <section class="team-section">
+      <h1 class="section-title">{{ child_page.administrators_heading }}</h1>
+      <ul class="team-list-administrator">
+        {% for administrator in child_page.administrators %}
+        <li class="team-list-item">
+          <div class="admin-team-list-item">
+              <div class="profile-image-wrapper">
+                <img class="member-image" src="{{ administrator.value.image.file.url }}" alt="">
+              </div>
+              <div class="profile-content">
+                <h4 class="name">{{ administrator.value.name }}</h4>
+                <p class="bio">{{ administrator.value.bio }}</p>
+              </div>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+
+  {% if child_page.contributors|length > 0 %}
+    <section class="team-section course-contributors">
+      <h1 class="section-title">{{ child_page.contributors_heading }}</h1>
+      <ul class="team-list">
+        {% for contributor in child_page.contributors %}
+        <li class="team-list-item">
+          <img class="member-image" src="{{ contributor.value.image.file.url }}" alt="" />
+          <h4 class="name">{{ contributor.value.name }}</h4>
+          <p class="bio">{{ contributor.value.bio }}</p>
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+
+  {% if child_page.teaching_assistants|length > 0 %}
+    <section class="team-section course-contributors">
+      <h1 class="section-title">{{ child_page.teaching_assistants_heading }}</h1>
+      <ul class="team-list">
+        {% for ta in child_page.teaching_assistants %}
+        <li class="team-list-item">
+          <img class="member-image" src="{{ ta.value.image.file.url }}" alt="" />
+          <h4 class="name">{{ ta.value.name }}</h4>
+          <p class="bio">{{ ta.value.bio }}</p>
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
 </div>
 
 {% endblock %}
