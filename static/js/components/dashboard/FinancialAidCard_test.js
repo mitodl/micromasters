@@ -212,7 +212,9 @@ describe("FinancialAidCard", () => {
       it(`provides a link to open a dialog with complete instruction for status ${FA_STATUS_PENDING_DOCS}`, () => {
         const program = programWithStatus(FA_STATUS_PENDING_DOCS)
         const wrapper = renderCard({ program, setDocsInstructionsVisibility })
-        const link = wrapper.find(".financial-aid-box").find("a")
+        const link = wrapper
+          .find(".financial-aid-box")
+          .find(".btn-instructions")
         link.simulate("click")
         assert.ok(
           setDocsInstructionsVisibility.called,
@@ -274,7 +276,7 @@ describe("FinancialAidCard", () => {
           const wrapper = renderCard({ program })
           assert.include(
             wrapper.text(),
-            "Documents mailed/faxed on March 3, 2003"
+            "Documents mailed/uploaded on March 3, 2003"
           )
         })
       }

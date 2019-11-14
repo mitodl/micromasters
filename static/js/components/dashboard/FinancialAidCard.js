@@ -200,12 +200,19 @@ export default class FinancialAidCard extends React.Component {
           <Grid className="financial-aid-box">
             <Cell col={12}>
                 Before you can pay, you need to verify your income. Please visit
-                the <a href="https://na2.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=4a74536d-1629-4709-b8e9-f173a51cf501&env=na2&v=2">secure website</a> to upload an English-translated and notarized
-                income tax or income statement document. You can also send
-                documents by mail. DO NOT SEND BY EMAIL.
+                the{" "}
+              <a href="https://na2.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=4a74536d-1629-4709-b8e9-f173a51cf501&env=na2&v=2">
+                  secure website
+              </a>{" "}
+                to upload an English-translated and notarized income tax or
+                income statement document. You can also send documents by mail.
+                DO NOT SEND BY EMAIL.
             </Cell>
             <Cell col={12}>
-              <a onClick={() => setDocsInstructionsVisibility(true)}>
+              <a
+                className="btn-instructions"
+                onClick={() => setDocsInstructionsVisibility(true)}
+              >
                   Read Complete Instructions
               </a>
             </Cell>
@@ -218,7 +225,9 @@ export default class FinancialAidCard extends React.Component {
 
           <Grid>
             <Cell col={8}>
-                <a href="https://na2.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=4a74536d-1629-4709-b8e9-f173a51cf501&env=na2&v=2">https://na2.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=4a74536d-1629-4709-b8e9-f173a51cf501&env=na2&v=2</a>
+              <a href="https://na2.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=4a74536d-1629-4709-b8e9-f173a51cf501&env=na2&v=2">
+                  https://na2.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=4a74536d-1629-4709-b8e9-f173a51cf501&env=na2&v=2
+              </a>
             </Cell>
             <Cell col={4}>
                 J-PAL
