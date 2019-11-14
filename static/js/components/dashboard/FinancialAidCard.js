@@ -200,7 +200,7 @@ export default class FinancialAidCard extends React.Component {
           <Grid className="financial-aid-box">
             <Cell col={12}>
                 Before you can pay, you need to verify your income. Please visit
-                the secure website to upload an English-translated and notarized
+                the <a href="https://na2.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=4a74536d-1629-4709-b8e9-f173a51cf501&env=na2&v=2">secure website</a> to upload an English-translated and notarized
                 income tax or income statement document. You can also send
                 documents by mail. DO NOT SEND BY EMAIL.
             </Cell>
@@ -212,14 +212,15 @@ export default class FinancialAidCard extends React.Component {
           </Grid>
 
           <Grid>
-            <Cell col={1} />
-            <Cell col={5}>Mail to</Cell>
-            <Cell col={6}>Upload to DocuSign</Cell>
+            <Cell col={8}>Upload to DocuSign</Cell>
+            <Cell col={4}>Mail to</Cell>
           </Grid>
 
           <Grid>
-            <Cell col={1} />
-            <Cell col={5}>
+            <Cell col={8}>
+                <a href="https://na2.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=4a74536d-1629-4709-b8e9-f173a51cf501&env=na2&v=2">https://na2.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=4a74536d-1629-4709-b8e9-f173a51cf501&env=na2&v=2</a>
+            </Cell>
+            <Cell col={4}>
                 J-PAL
               <br />
                 DEDP MicroMasters
@@ -230,9 +231,6 @@ export default class FinancialAidCard extends React.Component {
               <br />
                 Cambridge, MA 02139 United States of America
               <br />
-            </Cell>
-            <Cell col={6}>
-                https://na2.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=4a74536d-1629-4709-b8e9-f173a51cf501&env=na2&v=2
             </Cell>
           </Grid>
 
