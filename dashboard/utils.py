@@ -550,7 +550,6 @@ class MMTrack:
         Returns:
             str: a string with url or empty string
         """
-
         letter = self.program_letter_qset().filter(
             program__programpage__program_letter_text__isnull=False,
             program__programpage__program_letter_logo__isnull=False).annotate(
@@ -568,7 +567,7 @@ def get_mmtrack(user, program):
     Creates mmtrack object for given user.
 
     Args:
-        user (User): a Django user.
+        user (User): a Django user.test_with_fa_program
         program (programs.models.Program): program where the user is enrolled.
 
     Returns:

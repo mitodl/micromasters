@@ -566,18 +566,15 @@ class GenerateProgramLetterApiTests(MockedESTestCase):
         self.program.financial_aid_availability = True
         self.program.save()
         with mute_signals(post_save):
-            FinalGradeFactory.create(
+            MicromastersProgramCertificate.objects.create(
                 user=self.user,
-                course_run=self.run_1,
-                passed=True,
-                status='complete',
-                grade=0.8
+                program=self.program
             )
 
         cert_qset = MicromastersProgramCommendation.objects.filter(user=self.user, program=self.program)
         assert cert_qset.exists() is False
         api.generate_program_letter(self.user, self.program)
-        assert cert_qset.exists() is False
+        assert cert_qset.exists() is True
 
     def test_already_has_program_letter(self):
         """

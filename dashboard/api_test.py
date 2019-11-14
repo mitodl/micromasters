@@ -1847,6 +1847,7 @@ class InfoProgramTest(MockedESTestCase):
             'financial_aid_available': True,
             'get_program_certificate_url.return_value': "",
             'get_program_enrollment.return_value': self.program_enrollment,
+            'get_program_letter_url.return_value': "",
         })
         serialized_fin_aid = {
             "id": 123,

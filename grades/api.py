@@ -268,17 +268,20 @@ def generate_program_letter(user, program):
         user (User): a Django user.
         program (programs.models.Program): program where the user is enrolled.
     """
-    if program.financial_aid_availability:
-        log.error('Congratulation letter is only available for non-financial aid programs.')
-        return
-
     if MicromastersProgramCommendation.objects.filter(user=user, program=program).exists():
         log.info('User [%s] already has a letter for program [%s]', user, program)
         return
 
+    if (program.financial_aid_availability
+            and MicromastersProgramCertificate.objects.filter(user=user, program=program).exists()):
+        MicromastersProgramCommendation.objects.create(user=user, program=program)
+        return
+
     mmtrack = get_mmtrack(user, program)
     courses_passed = mmtrack.count_courses_passed()
-    program_course_count = program.course_set.count()
+    program_course_count = (program.num_required_courses
+                            if program.electives_set.exists()
+                            else program.course_set.count())
 
     if courses_passed < program_course_count:
         return
