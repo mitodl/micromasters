@@ -232,7 +232,7 @@ describe("FinancialAidCard", () => {
         assert.equal(
           instruction.text(),
           "Before you can pay, you need to verify your income. " +
-            "Please visit the secure website to upload an English-translated and notarized income tax or income statement document. " +
+            "Please visit the secure DocuSign website to upload an English-translated and notarized income tax or income statement document. " +
             "You can also send documents by mail. DO NOT SEND BY EMAIL." +
             "Read Complete Instructions"
         )
