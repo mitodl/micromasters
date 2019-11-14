@@ -32,9 +32,10 @@
   {% if child_page.administrators|length > 0 %}
     <section class="team-section">
       <h1 class="section-title">{{ child_page.administrators_heading }}</h1>
-      <ul class="team-list">
+      <ul class="team-list-administrator">
         {% for administrator in child_page.administrators %}
         <li class="team-list-item">
+          <div class="admin-team-list-item">
               <div class="profile-image-wrapper">
                 <img class="member-image" src="{{ administrator.value.image.file.url }}" alt="">
               </div>
@@ -42,6 +43,7 @@
                 <h4 class="name">{{ administrator.value.name }}</h4>
                 <p class="bio">{{ administrator.value.bio }}</p>
               </div>
+          </div>
         </li>
         {% endfor %}
       </ul>
