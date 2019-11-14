@@ -36,12 +36,12 @@
       <div class="tab-container">
         <div class="tab-wrapper">
           <a href="{{ page.url }}"
-             class="tab-link {% if active_tab == 'about' %}active-tab{% endif %}">
-            About the Program
+            class="tab-link {% if active_tab == 'about' %}active-tab{% endif %}">
+           About the Program
           </a>
-          {% for child in child_pages %}
+          {% for child in page.get_children.live %}
             <a href="{{ child.url }}"
-               class="tab-link {% if child.title == active_tab %}active-tab{% endif %}">
+              class="tab-link {% if child.title == active_tab %}active-tab{% endif %}">
               {{ child.title }}
             </a>
           {% endfor %}
@@ -169,9 +169,6 @@
         <!-- React-Slick carousel component injected here -->
       </div>
     </section>
-    {% if course_team_page %}
-    <a href="{{ course_team_page.url }}">Course Team Details</a>
-    {% endif %}
   {% endif %}
 
 </main>

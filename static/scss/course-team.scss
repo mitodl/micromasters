@@ -33,11 +33,18 @@
     flex-wrap: wrap;
 
     .team-list-item {
-      width: 25%;
+      width: 100%;
       position: relative;
       z-index: 3;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       padding: 10px;
+      @media only screen and (min-width: 768px) {
+        width: 50%;
+        margin-bottom: 30px;
+      }
+      @media only screen and (min-width: 992px) {
+        width: 25%;
+      }
 
       .member-image {
         width: 100%;
@@ -61,7 +68,7 @@
         }
 
         &:before {
-          display: none;
+          opacity: 0;
           content: '';
           background: rgba(0, 0, 0, .6);
           width: 100%;
@@ -105,7 +112,7 @@
         .profile-image-wrapper {
 
           &:before {
-            display: block;
+            opacity: 1;
           }
         }
 
@@ -115,7 +122,8 @@
           }
 
           .bio {
-            max-height: 400px;
+            max-height: 345px;
+            overflow: auto;
           }
         }
       }
@@ -133,10 +141,16 @@
     flex-wrap: wrap;
 
     .team-list-item {
-      width: 33.33%;
+      width: 100%;
       margin-bottom: 30px;
       padding: 10px;
       text-align: center;
+      @media only screen and (min-width: 768px) {
+        width: 33.33%;
+      }
+      @media only screen and (min-width: 992px) {
+        width: 50%;
+      }
 
       .admin-team-list-item {
         position: relative;
@@ -236,7 +250,13 @@
     .team-list {
 
       .team-list-item {
-        width: 33%;
+        width: 100%;
+        @media only screen and (min-width: 768px) {
+          width: 50%;
+        }
+        @media only screen and (min-width: 992px) {
+          width: 33.33%;
+        }
       }
     }
   }
@@ -247,7 +267,13 @@
       overflow: visible;
 
       .team-list-item {
-        width: 25%;
+        width: 100%;
+        @media only screen and (min-width: 768px) {
+          width: 50%;
+        }
+        @media only screen and (min-width: 768px) {
+          width: 25%;
+        }
 
         .name {
           display: inline-block;
