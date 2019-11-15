@@ -202,7 +202,7 @@ export default class FinancialAidCard extends React.Component {
                 Before you can pay, you need to verify your income. Please visit
                 the{" "}
               <a href="https://na2.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=4a74536d-1629-4709-b8e9-f173a51cf501&env=na2&v=2">
-                secure DocuSign website
+                  secure DocuSign website
               </a>{" "}
                 to upload an English-translated and notarized income tax or
                 income statement document. You can also send documents by mail.
