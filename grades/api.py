@@ -272,8 +272,8 @@ def generate_program_letter(user, program):
         log.info('User [%s] already has a letter for program [%s]', user, program)
         return
 
-    if (program.financial_aid_availability
-            and MicromastersProgramCertificate.objects.filter(user=user, program=program).exists()):
+    if (program.financial_aid_availability and
+            MicromastersProgramCertificate.objects.filter(user=user, program=program).exists()):
         MicromastersProgramCommendation.objects.create(user=user, program=program)
         return
 
