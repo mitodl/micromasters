@@ -95,7 +95,11 @@ export default class CourseListItemWithPopover extends React.Component {
           />
           {popoverLink(url)}
         </Popover>
-        <div className={`description enrollment-dates ${electiveTag? 'label-padding': ''}`}>
+        <div
+          className={`description enrollment-dates ${
+            electiveTag ? "label-padding" : ""
+          }`}
+        >
           {enrollmentText}
         </div>
       </li>
