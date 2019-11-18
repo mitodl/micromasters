@@ -27,7 +27,7 @@ def handle_create_programcertificate(sender, instance, created, **kwargs):  # py
     """
     if created:
         user = instance.user
-        transaction.on_commit(lambda: generate_program_letter(user, instance.course.program))
+        transaction.on_commit(lambda: generate_program_letter(user, instance.program))
 
 
 @receiver(post_save, sender=ProctoredExamGrade, dispatch_uid="examgrade_post_save")

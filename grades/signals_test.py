@@ -6,12 +6,13 @@ from unittest.mock import patch
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 
-from courses.factories import CourseFactory, CourseRunFactory
+from courses.factories import CourseFactory, CourseRunFactory, ProgramFactory
 from grades.factories import (
     MicromastersCourseCertificateFactory,
     ProctoredExamGradeFactory,
     FinalGradeFactory,
 )
+from grades.models import MicromastersProgramCertificate
 from profiles.factories import ProfileFactory
 from search.base import MockedESTestCase
 
@@ -41,6 +42,33 @@ class CourseCertificateTests(MockedESTestCase):
         generate_program_cert_mock.assert_called_once_with(self.user, course.program)
         cert.save()
         generate_program_cert_mock.assert_called_once_with(self.user, course.program)
+
+
+# pylint: disable=unused-argument
+@patch('search.signals.transaction.on_commit', side_effect=lambda callback: callback())
+class ProgramCertificateTests(MockedESTestCase):
+    """
+    Test certificate generation
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+
+        with mute_signals(post_save):
+            cls.user = ProfileFactory.create().user
+
+    @patch('grades.signals.generate_program_letter', autospec=True)
+    def test_create_course_certificate(self, generate_program_letter_mock, mock_on_commit):
+        """
+        Test that generate_program_letter is called when a program
+        certificate is created
+        """
+        program = ProgramFactory.create()
+        cert = MicromastersProgramCertificate.objects.create(user=self.user, program=program)
+        generate_program_letter_mock.assert_called_once_with(self.user, program)
+        cert.save()
+        generate_program_letter_mock.assert_called_once_with(self.user, program)
 
 
 # pylint: disable=unused-argument

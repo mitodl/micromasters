@@ -567,7 +567,7 @@ def get_mmtrack(user, program):
     Creates mmtrack object for given user.
 
     Args:
-        user (User): a Django user.test_with_fa_program
+        user (User): a Django user.
         program (programs.models.Program): program where the user is enrolled.
 
     Returns:
