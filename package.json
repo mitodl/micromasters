@@ -44,7 +44,6 @@
     "diacritics": "^1.3.0",
     "draft-js": "^0.10.1",
     "draft-js-export-html": "^1.4.1",
-    "enzyme": "^2.8.2",
     "eslint": "4.2.0",
     "eslint-config-defaults": "9.0.0",
     "eslint-config-google": "^0.9.1",
@@ -148,5 +147,9 @@
     "fmt": "LOG_LEVEL= prettier-eslint --write --no-semi --ignore 'static/js/flow/**/*.js' 'static/js/**/*.js'",
     "fmt:check": "prettier-eslint --list-different --no-semi --ignore 'static/js/flow/**/*.js' 'static/js/**/*.js'",
     "repl": "node --require ./scripts/repl.js"
+  },
+  "devDependencies": {
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.15.1"
   }
 }

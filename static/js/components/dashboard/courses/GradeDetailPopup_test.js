@@ -30,7 +30,7 @@ describe("GradeDetailPopup", () => {
     setShowGradeDetailDialogStub = sandbox.stub()
   })
 
-  afterEach(() => {
+  afterEach(() => {O
     sandbox.restore()
   })
 
