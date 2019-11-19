@@ -11,7 +11,7 @@ import { radioButtons } from "../util/profile_edit"
 import FormControl from "@material-ui/core/FormControl"
 import FormLabel from "@material-ui/core/FormLabel"
 import RadioGroup from "@material-ui/core/RadioGroup"
-import CardContent from "@material-ui/core/es/CardContent/CardContent"
+import CardContent from "@material-ui/core/CardContent"
 import type {
   Profile,
   ValidationErrors,

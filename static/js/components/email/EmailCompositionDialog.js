@@ -18,7 +18,7 @@ import type { EmailState, Filter } from "../../flow/emailTypes"
 import { S, getm } from "../../lib/sanctuary"
 import DialogTitle from "@material-ui/core/DialogTitle"
 import DialogContent from "@material-ui/core/DialogContent"
-import DialogActions from "@material-ui/core/es/DialogActions"
+import DialogActions from "@material-ui/core/DialogActions"
 
 // this takes an HTML string and returns a draft-js EditorState object
 // unfortunately draft-js has a lot of state and wants to manage it all itself,
