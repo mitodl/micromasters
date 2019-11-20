@@ -3,8 +3,7 @@ import _ from "lodash"
 import { mount } from "enzyme"
 import { assert } from "chai"
 import sinon from "sinon"
-import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
-import getMuiTheme from "material-ui/styles/getMuiTheme"
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import ReactTestUtils from "react-dom/test-utils"
 
 import { SEARCH_RESULT_EMAIL_CONFIG } from "./lib"
@@ -55,7 +54,7 @@ describe("EmailCompositionDialog", () => {
       updatedEmailState
     )
     return mount(
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <MuiThemeProvider theme={createMuiTheme()}>
         <EmailCompositionDialog
           updateEmailFieldEdit={() => updateStub}
           updateEmailBody={updateStub}

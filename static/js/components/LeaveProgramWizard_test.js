@@ -4,8 +4,7 @@ import { assert } from "chai"
 import { mount } from "enzyme"
 import sinon from "sinon"
 import React from "react"
-import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
-import getMuiTheme from "material-ui/styles/getMuiTheme"
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 
 import LeaveProgramWizard from "./LeaveProgramWizard"
 import { USER_PROFILE_RESPONSE, PROGRAMS } from "../test_constants"
@@ -31,7 +30,7 @@ describe("LeaveProgramWizard", () => {
 
   const renderLeaveProgramWizard = () =>
     mount(
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <MuiThemeProvider theme={createMuiTheme()}>
         <LeaveProgramWizard {...props} />
       </MuiThemeProvider>,
       {

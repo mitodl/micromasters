@@ -4,8 +4,7 @@ import { Provider } from "react-redux"
 import { mount } from "enzyme"
 import { assert } from "chai"
 import R from "ramda"
-import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
-import getMuiTheme from "material-ui/styles/getMuiTheme"
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 
 import PersonalTab from "./PersonalTab"
 import { PROGRAMS, USER_PROFILE_RESPONSE } from "../test_constants"
@@ -16,7 +15,7 @@ describe("PersonalTab", () => {
   const renderPersonalTab = (selectedProgram = null, props = {}) => {
     const { store } = helper
     return mount(
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <MuiThemeProvider theme={createMuiTheme()}>
         <Provider store={store}>
           <PersonalTab
             programs={PROGRAMS}

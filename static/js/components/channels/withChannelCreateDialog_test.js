@@ -2,8 +2,7 @@ import React from "react"
 import R from "ramda"
 import { mount } from "enzyme"
 import { assert } from "chai"
-import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
-import getMuiTheme from "material-ui/styles/getMuiTheme"
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import ReactTestUtils from "react-dom/test-utils"
 import fetchMock from "fetch-mock"
 
@@ -49,7 +48,7 @@ describe("withChannelCreateDialog higher-order component", () => {
     dialogVisible = false
   } = {}) =>
     mount(
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <MuiThemeProvider theme={createMuiTheme()}>
         <WrappedTestContainerPage
           dispatch={helper.store.dispatch}
           ui={{ dialogVisibility: { [CHANNEL_CREATE_DIALOG]: dialogVisible } }}

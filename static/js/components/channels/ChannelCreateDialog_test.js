@@ -3,8 +3,7 @@ import R from "ramda"
 import { mount } from "enzyme"
 import { assert } from "chai"
 import sinon from "sinon"
-import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
-import getMuiTheme from "material-ui/styles/getMuiTheme"
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import ReactTestUtils from "react-dom/test-utils"
 
 import * as inputUtil from "../inputs/util"
@@ -30,7 +29,7 @@ describe("ChannelCreateDialog", () => {
   const renderDialog = (extraState = {}, props = {}) => {
     const dialogState = R.mergeDeepRight(INITIAL_CHANNEL_STATE, extraState)
     return mount(
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <MuiThemeProvider theme={createMuiTheme()}>
         <ChannelCreateDialog
           closeAndClearDialog={closeAndClearStub}
           closeAndCreateDialog={closeAndCreateStub}

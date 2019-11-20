@@ -2,8 +2,7 @@ import React from "react"
 import R from "ramda"
 import { mount } from "enzyme"
 import { assert } from "chai"
-import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
-import getMuiTheme from "material-ui/styles/getMuiTheme"
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 
 import IntegrationTestHelper from "../../util/integration_test_helper"
 import { withEmailDialog } from "./hoc"
@@ -51,7 +50,7 @@ describe("Email higher-order component", () => {
 
   const renderTestComponentWithDialog = () =>
     mount(
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <MuiThemeProvider theme={createMuiTheme()}>
         <WrappedTestContainerPage
           dispatch={helper.store.dispatch}
           ui={{ dialogVisibility: { [EMAIL_COMPOSITION_DIALOG]: false } }}
@@ -81,7 +80,7 @@ describe("Email higher-order component", () => {
 
   it("should gracefully handle a currentlyActive email config that isn't present", () => {
     const wrapper = mount(
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <MuiThemeProvider theme={createMuiTheme()}>
         <WrappedTestContainerPage
           dispatch={helper.store.dispatch}
           ui={{ dialogVisibility: { [EMAIL_COMPOSITION_DIALOG]: false } }}

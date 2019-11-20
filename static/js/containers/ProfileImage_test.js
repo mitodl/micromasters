@@ -3,8 +3,7 @@ import React from "react"
 import ReactTestUtils from "react-dom/test-utils"
 import { mount } from "enzyme"
 import { assert } from "chai"
-import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider"
-import getMuiTheme from "material-ui/styles/getMuiTheme"
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import { Provider } from "react-redux"
 
 import ProfileImage, { PROFILE_IMAGE_DIALOG } from "./ProfileImage"
@@ -27,7 +26,7 @@ describe("ProfileImage", () => {
   const renderProfileImage = (props = {}) => {
     div = document.createElement("div")
     return mount(
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <MuiThemeProvider theme={createMuiTheme()}>
         <Provider store={helper.store}>
           <ProfileImage profile={thatProfile} {...props} />
         </Provider>
