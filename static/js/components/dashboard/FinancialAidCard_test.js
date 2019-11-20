@@ -159,7 +159,7 @@ describe("FinancialAidCard", () => {
       it(`don't show card if status is ${status}`, () => {
         const program = programWithStatus(status)
         const wrapper = renderCard({ program })
-        assert.isNull(wrapper.html())
+        assert.equal(wrapper.html(), '')
       })
 
       it(`don't show no-calls message if status is ${status}`, () => {
@@ -243,8 +243,7 @@ describe("FinancialAidCard", () => {
         const updateDocumentSentDate = sandbox.stub()
         updateDocumentSentDate.returns(Promise.resolve())
         const wrapper = renderCard({ program, updateDocumentSentDate })
-
-        wrapper.find(".document-sent-button").simulate("click")
+        wrapper.find(".document-sent-button").hostNodes().simulate("click")
         sinon.assert.calledWith(updateDocumentSentDate, 123, "2011-11-11")
       })
 
