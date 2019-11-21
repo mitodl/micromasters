@@ -59,7 +59,7 @@ paramiko==2.4.2           # via pysftp
 parso==0.3.1              # via jedi
 pbr==4.2.0                # via stevedore
 pexpect==4.6.0            # via ipython
-phonenumbers==8.3.2
+phonenumbers==8.10.23
 pickleshare==0.7.5        # via ipython
 pillow==4.0.0
 prompt-toolkit==2.0.5     # via ipython
@@ -100,4 +100,4 @@ webencodings==0.5.1       # via html5lib
 willow==1.1               # via wagtail
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.1.0        # via html5lib, ipython
+# setuptools==41.6.0        # via html5lib, ipython
