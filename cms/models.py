@@ -232,6 +232,13 @@ class CourseTeamTabPage(ProgramChildPage):
         StreamFieldPanel('teaching_assistants'),
     ]
 
+    def get_context(self, request, *args, **kwargs):
+        context = super(CourseTeamTabPage, self).get_context(request)
+
+        # this will help us to disable instructors carousel on course team page
+        context['course_team_tab_title'] = self.title
+        return context
+
 
 class ProgramPage(Page):
     """

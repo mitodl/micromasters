@@ -157,18 +157,20 @@
     </div>
   </div>
 
-  {% if page.faculty_members.count > 0 %}
-    <section class="faculty-section mdl-grid mdl-grid--no-spacing">
-      <div class="mdl-cell mdl-cell--12-col">
-        <h3 class="title">Instructors</h3>
-        {% if page.faculty_description|length > 0 %}
-          <p class="description">{{ page.faculty_description }}</p>
-        {% endif %}
-      </div>
-      <div id="faculty-carousel" class="mdl-cell--12-col">
-        <!-- React-Slick carousel component injected here -->
-      </div>
-    </section>
+  {% if active_tab != course_team_tab_title %}
+    {% if page.faculty_members.count > 0 %}
+      <section class="faculty-section mdl-grid mdl-grid--no-spacing">
+        <div class="mdl-cell mdl-cell--12-col">
+          <h3 class="title">Instructors</h3>
+          {% if page.faculty_description|length > 0 %}
+            <p class="description">{{ page.faculty_description }}</p>
+          {% endif %}
+        </div>
+        <div id="faculty-carousel" class="mdl-cell--12-col">
+          <!-- React-Slick carousel component injected here -->
+        </div>
+      </section>
+    {% endif %}
   {% endif %}
 
 </main>
