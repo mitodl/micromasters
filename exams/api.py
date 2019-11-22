@@ -158,24 +158,6 @@ def authorize_for_latest_passed_course(mmtrack, exam_run):
             break
 
 
-def bulk_authorize_for_exam_run(exam_run):
-    """
-    Authorize all eligible users for the given exam run
-
-    Args:
-        exam_run(exams.models.ExamRun): the exam run to authorize for
-    """
-    for program_enrollment in ProgramEnrollment.objects.filter(
-            program=exam_run.course.program
-    ).iterator():
-        mmtrack = get_mmtrack(
-            program_enrollment.user,
-            program_enrollment.program
-        )
-
-        authorize_for_latest_passed_course(mmtrack, exam_run)
-
-
 def authorize_user_for_schedulable_exam_runs(user, course_run):
     """
     Authorizes a user for all schedulable ExamRuns for a CourseRun
