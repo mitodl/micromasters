@@ -11,6 +11,7 @@ from django.test import TestCase, override_settings
 from factory.django import mute_signals
 import pytest
 
+from dashboard.factories import ProgramEnrollmentFactory
 from exams.pearson.exceptions import RetryableSFTPException
 from exams.factories import (
     ExamAuthorizationFactory,
@@ -28,6 +29,7 @@ from exams.tasks import (
     authorize_exam_runs,
     update_exam_run,
 )
+from financialaid.api_test import create_program
 from search.base import MockedESTestCase
 
 
@@ -338,22 +340,21 @@ class ExamRunTasksTest(MockedESTestCase):
         update_mock.assert_called_once_with(exam_run)
 
     @data(True, False)
-    @patch('exams.api.bulk_authorize_for_exam_run')
-    def test_authorize_exam_runs(self, authorized, bulk_authorize_for_exam_run_mock):
+    @patch('exams.tasks.authorize_for_latest_passed_course')
+    def test_authorize_exam_runs(self, authorized, authorize_for_latest_passed_course_mock):
         """Test authorize_exam_runs()"""
-        current_run = ExamRunFactory.create(authorized=authorized)
-        past_run = ExamRunFactory.create(scheduling_future=True, authorized=authorized)
-        future_run = ExamRunFactory.create(scheduling_past=True, authorized=authorized)
-
+        program, _ = create_program()
+        course = program.course_set.first()
+        ProgramEnrollmentFactory.create(program=program)
+        current_run = ExamRunFactory.create(course=course, authorized=authorized)
+        past_run = ExamRunFactory.create(course=course, scheduling_future=True, authorized=authorized)
+        future_run = ExamRunFactory.create(course=course, scheduling_past=True, authorized=authorized)
         authorize_exam_runs()
 
         if authorized:
-            assert bulk_authorize_for_exam_run_mock.call_count == 0
+            assert authorize_for_latest_passed_course_mock.call_count == 0
         else:
-            assert bulk_authorize_for_exam_run_mock.call_count == 2
-            # past run shouldn't be called
-            bulk_authorize_for_exam_run_mock.assert_any_call(current_run)
-            bulk_authorize_for_exam_run_mock.assert_any_call(future_run)
+            assert authorize_for_latest_passed_course_mock.call_count == 2
 
             for exam_run in (current_run, future_run):
                 exam_run.refresh_from_db()

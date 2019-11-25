@@ -225,30 +225,29 @@ def authorize_exam_runs():
     ):
         enrollment_ids_qset = ProgramEnrollment.objects.filter(
             program=exam_run.course.program).values_list('id', flat=True)
-
         # create a group of subtasks
-        results = group(
-            authorize_enrollment_for_exam_run.s(enrollment_ids, exam_run)
+        job = group(
+            authorize_enrollment_for_exam_run.s(enrollment_ids, exam_run.id)
             for enrollment_ids in chunks(enrollment_ids_qset)
         )
-
+        job.apply_async()
         exam_run.authorized = True
         exam_run.save()
 
 
-@app.task
-def authorize_enrollment_for_exam_run(enrollment_ids, exam_run):
+@app.task(acks_late=True)
+def authorize_enrollment_for_exam_run(enrollment_ids, exam_run_id):
     """
     Task to authorize all eligible enrollments in the list for the given exam run
 
     Args:
         enrollment_ids (list): a list of program enrollment ids
-        exam_run (ExamRun): an exam run to authorize for
+        exam_run_id (int): an exam run id to authorize for
 
     Returns:
         None
     """
-
+    exam_run = ExamRun.objects.get(id=exam_run_id)
     for enrollment in ProgramEnrollment.objects.filter(id__in=enrollment_ids):
         try:
             mmtrack = get_mmtrack(
