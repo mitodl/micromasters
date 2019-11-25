@@ -8,7 +8,6 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q
 
-from dashboard.models import ProgramEnrollment
 from dashboard.utils import get_mmtrack
 from dashboard.api import has_to_pay_for_exam
 from exams.exceptions import ExamAuthorizationException

@@ -247,6 +247,7 @@ def authorize_enrollment_for_exam_run(enrollment_ids, exam_run_id):
     Returns:
         None
     """
+    # pylint: disable=bare-except
     exam_run = ExamRun.objects.get(id=exam_run_id)
     for enrollment in ProgramEnrollment.objects.filter(id__in=enrollment_ids):
         try:
