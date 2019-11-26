@@ -10,12 +10,12 @@ from grades.api import generate_program_letter
 
 class Command(BaseCommand):
     """
-    Finds users that have passed all courses in non-FA programs and generates commendation letters for them.
+    For each program enrollment checks if the user passed the program and generates commendation letters for them.
     """
-    help = "Finds users that have passed all courses in non-FA programs and generates commendation letters for them."
+    help = "Finds users that have passed all courses in programs and generates commendation letters for them."
 
     def handle(self, *args, **kwargs):  # pylint: disable=unused-argument
-        programs = Program.objects.filter(live=True, financial_aid_availability=False)
+        programs = Program.objects.filter(live=True)
         for program in programs:
             if not program.has_frozen_grades_for_all_courses():
                 self.stdout.write(
