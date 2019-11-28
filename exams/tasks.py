@@ -8,7 +8,6 @@ from django.db import transaction
 from celery import group
 
 from dashboard.models import ProgramEnrollment
-from dashboard.utils import get_mmtrack
 from exams import api
 from exams.api import authorize_for_latest_passed_course
 from exams.pearson.exceptions import RetryableSFTPException
@@ -247,16 +246,11 @@ def authorize_enrollment_for_exam_run(enrollment_ids, exam_run_id):
     Returns:
         None
     """
-    # pylint: disable=bare-except
     exam_run = ExamRun.objects.get(id=exam_run_id)
     for enrollment in ProgramEnrollment.objects.filter(id__in=enrollment_ids):
         try:
-            mmtrack = get_mmtrack(
-                enrollment.user,
-                enrollment.program
-            )
-            authorize_for_latest_passed_course(mmtrack, exam_run)
-
+            authorize_for_latest_passed_course(enrollment.user, exam_run)
+        # pylint: disable=bare-except
         except:
             log.exception(
                 'Impossible to authorize user "%s" for exam_run %s',

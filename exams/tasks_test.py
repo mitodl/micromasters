@@ -345,7 +345,7 @@ class ExamRunTasksTest(MockedESTestCase):
         """Test authorize_exam_runs()"""
         program, _ = create_program()
         course = program.course_set.first()
-        ProgramEnrollmentFactory.create(program=program)
+        enrollment = ProgramEnrollmentFactory.create(program=program)
         current_run = ExamRunFactory.create(course=course, authorized=authorized)
         past_run = ExamRunFactory.create(course=course, scheduling_future=True, authorized=authorized)
         future_run = ExamRunFactory.create(course=course, scheduling_past=True, authorized=authorized)
@@ -355,6 +355,9 @@ class ExamRunTasksTest(MockedESTestCase):
             assert authorize_for_latest_passed_course_mock.call_count == 0
         else:
             assert authorize_for_latest_passed_course_mock.call_count == 2
+
+            authorize_for_latest_passed_course_mock.assert_any_call(enrollment.user, current_run)
+            authorize_for_latest_passed_course_mock.assert_any_call(enrollment.user, future_run)
 
             for exam_run in (current_run, future_run):
                 exam_run.refresh_from_db()

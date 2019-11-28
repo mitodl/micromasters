@@ -139,7 +139,7 @@ class ExamAuthorizationApiTests(TestCase):
         ).exists() is False
 
         with self.assertRaises(ExamAuthorizationException):
-            authorize_for_exam_run(mmtrack, self.course_run, self.exam_run)
+            authorize_for_exam_run(self.user, self.course_run, self.exam_run)
 
         # Assert user doesn't have exam profile and authorization
         assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False
@@ -164,7 +164,7 @@ class ExamAuthorizationApiTests(TestCase):
             course=self.course_run.course
         ).exists() is False
 
-        authorize_for_exam_run(mmtrack, self.course_run, self.exam_run)
+        authorize_for_exam_run(self.user, self.course_run, self.exam_run)
 
         # Assert user has exam profile and authorization.
         assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is True
@@ -196,7 +196,7 @@ class ExamAuthorizationApiTests(TestCase):
         ).count() == 2
 
         with self.assertRaises(ExamAuthorizationException):
-            authorize_for_exam_run(mmtrack, self.course_run, self.exam_run)
+            authorize_for_exam_run(self.user, self.course_run, self.exam_run)
 
         # assert no new authorizations got created
         assert ExamAuthorization.objects.filter(
@@ -208,24 +208,22 @@ class ExamAuthorizationApiTests(TestCase):
         """
         test exam_authorization fails if course_run and exam_run courses mismatch
         """
-        mmtrack = get_mmtrack(self.user, self.program)
-
         # Neither user has exam profile nor authorization.
-        assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False
+        assert ExamProfile.objects.filter(profile=self.user.profile).exists() is False
         assert ExamAuthorization.objects.filter(
-            user=mmtrack.user,
+            user=self.user,
             course=self.course_run.course
         ).exists() is False
 
         exam_run = ExamRunFactory.create()
 
         with self.assertRaises(ExamAuthorizationException):
-            authorize_for_exam_run(mmtrack, self.course_run, exam_run)
+            authorize_for_exam_run(self.user, self.course_run, exam_run)
 
         # Assert user has exam profile and authorization.
-        assert ExamProfile.objects.filter(profile=mmtrack.user.profile).exists() is False
+        assert ExamProfile.objects.filter(profile=self.user.profile).exists() is False
         assert ExamAuthorization.objects.filter(
-            user=mmtrack.user,
+            user=self.user,
             course=self.course_run.course
         ).exists() is False
 
@@ -252,7 +250,7 @@ class ExamAuthorizationApiTests(TestCase):
         ).exists() is False
 
         with self.assertRaises(ExamAuthorizationException) as eae:
-            authorize_for_exam_run(mmtrack, self.course_run, self.exam_run)
+            authorize_for_exam_run(self.user, self.course_run, self.exam_run)
 
         assert eae.exception.args[0] == expected_errors_message
 
@@ -285,7 +283,7 @@ class ExamAuthorizationApiTests(TestCase):
             ).exists() is False
 
             with self.assertRaises(ExamAuthorizationException) as eae:
-                authorize_for_exam_run(mmtrack, self.course_run, self.exam_run)
+                authorize_for_exam_run(self.user, self.course_run, self.exam_run)
 
             assert eae.exception.args[0] == expected_errors_message
 
@@ -382,12 +380,11 @@ class ExamLatestCourseAuthorizationApiTests(TestCase):
     def test_exam_authorization_multiple_runs(self):
         """Test that if the first enrollment is invalid it checks the second, but not the third"""
         exam_run = ExamRunFactory.create(course=self.course)
-        mmtrack = get_mmtrack(self.user, self.program)
 
         with patch('exams.api.authorize_for_exam_run') as mock:
             mock.side_effect = [ExamAuthorizationException('invalid'), None, None]
-            authorize_for_latest_passed_course(mmtrack, exam_run)
+            authorize_for_latest_passed_course(self.user, exam_run)
 
         assert mock.call_count == 2
         for enrollment in self.final_grades[:2]:  # two most recent runs
-            mock.assert_any_call(mmtrack, enrollment.course_run, exam_run)
+            mock.assert_any_call(self.user, enrollment.course_run, exam_run)
