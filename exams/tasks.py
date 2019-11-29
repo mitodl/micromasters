@@ -247,7 +247,7 @@ def authorize_enrollment_for_exam_run(enrollment_ids, exam_run_id):
         None
     """
     exam_run = ExamRun.objects.get(id=exam_run_id)
-    for enrollment in ProgramEnrollment.objects.filter(id__in=enrollment_ids):
+    for enrollment in ProgramEnrollment.objects.filter(id__in=enrollment_ids).prefetch_related('user'):
         try:
             authorize_for_latest_passed_course(enrollment.user, exam_run)
         # pylint: disable=bare-except
