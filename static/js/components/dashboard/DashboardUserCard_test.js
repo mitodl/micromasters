@@ -2,8 +2,9 @@
 import React from "react"
 import { shallow } from "enzyme"
 import { assert } from "chai"
-import { CardTitle } from "react-mdl/lib/Card"
 import Link from "react-router/lib/Link"
+import Typography from "@material-ui/core/Typography"
+
 
 import ProfileImage from "../../containers/ProfileImage"
 import { DASHBOARD_RESPONSE, USER_PROFILE_RESPONSE } from "../../test_constants"
@@ -26,8 +27,8 @@ describe("DashboardUserCard", () => {
     const textContainer = wrapper.find(".dashboard-user-card-text")
     assert.equal(
       textContainer
-        .find(CardTitle)
-        .children()
+        .find(Typography)
+        .first()
         .text(),
       "Jane"
     )

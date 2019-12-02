@@ -7,7 +7,6 @@ import moment from "moment"
 import { assert } from "chai"
 import _ from "lodash"
 import sinon from "sinon"
-import { CardTitle } from "react-mdl/lib/Card"
 
 import { calculatePrices } from "../../lib/coupon"
 import CourseListCard from "./CourseListCard"
@@ -291,7 +290,7 @@ describe("CourseListCard", () => {
   describe("staff view mode", () => {
     it("should have the program title in the card title", () => {
       const wrapper = renderCourseListCard({ showStaffView: true })
-      assert.equal(wrapper.find(CardTitle).text(), `Courses - ${program.title}`)
+      assert.equal(wrapper.find("h2").text(), `Courses - ${program.title}`)
     })
 
     it("should pass the showStaffView to relevant child components", () => {
