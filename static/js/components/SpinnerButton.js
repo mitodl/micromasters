@@ -31,6 +31,7 @@ export default class SpinnerButton extends React.Component {
         recentlyClicked: false
       }
     }
+    return null
   }
 
   isDisabled = () => this.props.disabled || this.props.spinning || undefined
