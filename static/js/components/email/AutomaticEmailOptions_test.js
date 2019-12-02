@@ -31,7 +31,8 @@ describe("AutomaticEmailOptions", () => {
 
   it("should render a div", () => {
     const wrapper = renderComponent()
-    assert.equal(wrapper.find(".type-radio-group").children().length, 2)
+    assert.equal(wrapper.find(".send-one-time-email").hostNodes().length, 1)
+    assert.equal(wrapper.find(".create-campaign").hostNodes().length, 1)
     const radioOneTime = wrapper.find("input").at(0)
     assert.isFalse(radioOneTime.prop("value"))
   })

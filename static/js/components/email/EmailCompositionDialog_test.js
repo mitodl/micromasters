@@ -73,7 +73,7 @@ describe("EmailCompositionDialog", () => {
 
   it("should have a title", () => {
     renderDialog()
-    assert.equal(document.querySelector("h3").textContent, "Test Email Dialog")
+    assert.equal(document.querySelector(".dialog-title").textContent, "Test Email Dialog")
   })
 
   it("renders a radio button for setting whether an email is automatic or not", () => {
@@ -160,7 +160,7 @@ describe("EmailCompositionDialog", () => {
 
   it("should show a default title when one is not passed in", () => {
     renderDialog({}, { title: undefined })
-    assert.equal(document.querySelector("h3").textContent, "New Email")
+    assert.equal(document.querySelector(".dialog-title").textContent, "New Email")
   })
 
   describe("editing subject", () => {
