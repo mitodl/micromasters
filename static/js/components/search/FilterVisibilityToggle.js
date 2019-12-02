@@ -2,7 +2,8 @@
 import React from "react"
 import R from "ramda"
 import { SearchkitComponent } from "searchkit"
-import Icon from "react-mdl/lib/Icon"
+import Icon from "@material-ui/core/Icon"
+import IconButton from "@material-ui/core/IconButton"
 
 import { getAppliedFilterValue, matchFieldName } from "./util"
 
@@ -87,11 +88,10 @@ export default class FilterVisibilityToggle extends SearchkitComponent {
     const { title } = this.props
     return (
       <div className="title-row" onClick={this.toggleFilterVisibility}>
-        <Icon
-          name="arrow_drop_down"
+        <IconButton
           onClick={this.toggleFilterVisibility}
           className={this.openClass()}
-        />
+        ><Icon>arrow_drop_down</Icon></IconButton>
         <div className="sk-hierarchical-refinement-list__header">{title}</div>
       </div>
     )
