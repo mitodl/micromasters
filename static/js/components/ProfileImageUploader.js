@@ -3,7 +3,7 @@ import React from "react"
 import Dialog from "@material-ui/core/Dialog"
 import R from "ramda"
 import Dropzone from "react-dropzone"
-import Spinner from "react-mdl/lib/Spinner"
+import CircularProgress from "@material-ui/core/CircularProgress"
 
 import CropperWrapper from "./CropperWrapper"
 import { FETCH_PROCESSING } from "../actions"
@@ -48,7 +48,7 @@ const dialogContents = (
         className="photo-active-item dashed-border spinner"
         style={{ height: uploaderBodyHeight() }}
       >
-        <Spinner singleColor />
+        <CircularProgress />
       </div>
     )
   } else if (photo) {

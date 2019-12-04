@@ -421,6 +421,7 @@
 
   .primary-button, .secondary-button {
     box-shadow: none;
+    font-size: 17px;
 
     &:hover, &:focus, &:active, &:focus:not(:active) {
       box-shadow: none;

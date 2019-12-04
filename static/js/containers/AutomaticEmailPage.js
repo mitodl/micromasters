@@ -6,6 +6,7 @@ import PropTypes from "prop-types"
 import { connect } from "react-redux"
 import R from "ramda"
 import type { Dispatch } from "redux"
+import CircularProgress from "@material-ui/core/CircularProgress"
 
 import { FETCH_PROCESSING } from "../actions"
 import { actions } from "../lib/redux_rest.js"
@@ -14,7 +15,6 @@ import EmailCampaignsCard from "../components/EmailCampaignsCard"
 import type { AutomaticEmail } from "../flow/emailTypes"
 import type { RestState } from "../flow/restTypes"
 import { hasAnyStaffRole } from "../lib/roles"
-import Spinner from "react-mdl/lib/Spinner"
 import { toggleEmailPatchInFlight } from "../actions/automatic_emails"
 import { withEmailDialog } from "../components/email/hoc"
 import { AUTOMATIC_EMAIL_ADMIN_TYPE } from "../components/email/constants"
@@ -27,7 +27,7 @@ const noEmailsMessage = () => (
 )
 
 const emptyMessage = automaticEmails =>
-  fetchingEmail(automaticEmails) ? <Spinner singleColor /> : noEmailsMessage()
+  fetchingEmail(automaticEmails) ? <CircularProgress /> : noEmailsMessage()
 
 const notEmpty = R.compose(
   R.not,

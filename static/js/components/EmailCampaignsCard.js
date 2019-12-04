@@ -1,9 +1,12 @@
 // @flow
 import React from "react"
-import { Card, CardTitle } from "react-mdl/lib/Card"
-import Switch from "react-mdl/lib/Switch"
+import Card from "@material-ui/core/Card"
+import Typography from "@material-ui/core/Typography"
+import CardContent from "@material-ui/core/CardContent"
+import Switch from "@material-ui/core/Switch"
 import R from "ramda"
-import Spinner from "react-mdl/lib/Spinner"
+import CircularProgress from "@material-ui/core/CircularProgress"
+
 
 import type { AutomaticEmail } from "../flow/emailTypes"
 import type { Either } from "../flow/sanctuaryTypes"
@@ -38,10 +41,10 @@ const renderEmailRow = R.curry(
       <div>
         <Switch
           checked={automaticEmail.enabled}
-          ripple={false}
+          disableRipple={true}
           onChange={() => toggleEmailActive(automaticEmail)}
         />
-        {emailsInFlight.has(automaticEmail.id) ? <Spinner singleColor /> : null}
+        {emailsInFlight.has(automaticEmail.id) ? <CircularProgress /> : null}
         <a onClick={() => openEmailComposer(automaticEmail)}>Edit</a>
       </div>
     </div>
@@ -76,13 +79,15 @@ const EmailCampaignsCard = (props: CampaignCardProps) => {
   } = props
 
   return (
-    <Card shadow={1} className="email-campaigns-card">
-      <CardTitle>Manage Email Campaigns</CardTitle>
-      {S.either(
-        renderEmptyMessage,
-        renderEmailRows(toggleEmailActive, emailsInFlight, openEmailComposer),
-        getEmails()
-      )}
+    <Card shadow={1} className="card email-campaigns-card">
+      <CardContent>
+        <Typography component="h2">Manage Email Campaigns</Typography>
+        {S.either(
+          renderEmptyMessage,
+          renderEmailRows(toggleEmailActive, emailsInFlight, openEmailComposer),
+          getEmails()
+        )}
+      </CardContent>
     </Card>
   )
 }

@@ -1,5 +1,5 @@
 import React from "react"
-import Spinner from "react-mdl/lib/Spinner"
+import CircularProgress from "@material-ui/core/CircularProgress"
 
 type SpinnerButtonProps = {
   spinning: boolean,
@@ -64,7 +64,7 @@ export default class SpinnerButton extends React.Component {
         className = ""
       }
       className = `${className} disabled-with-spinner`
-      children = <Spinner singleColor />
+      children = <CircularProgress />
     }
 
     return (

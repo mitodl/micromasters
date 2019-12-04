@@ -1,6 +1,6 @@
 // @flow
 import React from "react"
-import Button from "react-mdl/lib/Button"
+import Button from "@material-ui/core/Button"
 
 import SpinnerButton from "../SpinnerButton"
 
@@ -16,7 +16,6 @@ export const dialogActions = (
   disabled: boolean = false
 ) => [
   <Button
-    type="cancel"
     key="cancel"
     className="secondary-button cancel-button"
     onClick={onCancel}

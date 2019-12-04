@@ -3,7 +3,7 @@ import React from "react"
 import Grid, { Cell } from "react-mdl/lib/Grid"
 import R from "ramda"
 import Icon from "react-mdl/lib/Icon"
-import Spinner from "react-mdl/lib/Spinner"
+import CircularProgress from "@material-ui/core/CircularProgress"
 
 import CourseAction from "./CourseAction"
 import Grades from "./courses/Grades"
@@ -187,7 +187,7 @@ export default class CourseRow extends React.Component {
           </div>
           <div className="second-col">
             {run.status === STATUS_PENDING_ENROLLMENT ? (
-              <Spinner singleColor />
+              <CircularProgress />
             ) : null}
             {run.status === STATUS_PENDING_ENROLLMENT ? "Processing..." : null}
           </div>
