@@ -1,6 +1,6 @@
 // @flow
 import React from "react"
-import Spinner from "react-mdl/lib/Spinner"
+import CircularProgress from "@material-ui/core/CircularProgress"
 
 export default class Loader extends React.Component {
   props: {
@@ -15,7 +15,7 @@ export default class Loader extends React.Component {
       style={{ display: !loaded ? "block" : "none" }}
       key="loader"
     >
-      <Spinner singleColor />
+      <CircularProgress />
     </div>,
     <div style={{ display: loaded ? "block" : "none" }} key="content">
       {children}
@@ -28,7 +28,7 @@ export default class Loader extends React.Component {
     ) : (
       <div className="loader">
         {" "}
-        <Spinner singleColor />{" "}
+        <CircularProgress/>{" "}
       </div>
     )
 
