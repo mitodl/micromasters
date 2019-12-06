@@ -1,7 +1,7 @@
 // @flow
 import React from "react"
 import Dialog from "@material-ui/core/Dialog"
-import Button from "react-mdl/lib/Button"
+import Button from "@material-ui/core/Button"
 
 import {
   COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,

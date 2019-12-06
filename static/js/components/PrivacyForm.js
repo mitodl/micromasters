@@ -3,15 +3,15 @@
 import DocumentTitle from "react-document-title"
 import React from "react"
 import _ from "lodash"
-import { Card } from "react-mdl/lib/Card"
-
-import ProfileFormFields from "../util/ProfileFormFields"
-import { sendFormFieldEvent } from "../lib/google_analytics"
-import { radioButtons } from "../util/profile_edit"
+import Card from "@material-ui/core/Card"
 import FormControl from "@material-ui/core/FormControl"
 import FormLabel from "@material-ui/core/FormLabel"
 import RadioGroup from "@material-ui/core/RadioGroup"
 import CardContent from "@material-ui/core/CardContent"
+
+import ProfileFormFields from "../util/ProfileFormFields"
+import { sendFormFieldEvent } from "../lib/google_analytics"
+import { radioButtons } from "../util/profile_edit"
 import type {
   Profile,
   ValidationErrors,

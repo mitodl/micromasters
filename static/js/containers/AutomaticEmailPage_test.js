@@ -16,7 +16,7 @@ import {
   REQUEST_GET_PROGRAM_ENROLLMENTS,
   RECEIVE_GET_PROGRAM_ENROLLMENTS_SUCCESS
 } from "../actions/programs"
-import Spinner from "react-mdl/lib/Spinner"
+import CircularProgress from "@material-ui/core/CircularProgress"
 import { UPDATE_EMAIL_VALIDATION, CLEAR_EMAIL_EDIT } from "../actions/email"
 import { HIDE_DIALOG } from "../actions/ui"
 
@@ -76,7 +76,7 @@ describe("AutomaticEmailPage", () => {
 
     return renderComponent("/automaticemails", baseActions).then(
       ([wrapper]) => {
-        assert.lengthOf(wrapper.find(Spinner), 1)
+        assert.lengthOf(wrapper.find(CircularProgress), 1)
       }
     )
   })

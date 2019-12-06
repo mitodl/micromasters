@@ -76,9 +76,6 @@ afterEach(function() {
   // return require('./util/util').wait(200);
 })
 
-// required for interacting with react-mdl components
-require("react-mdl/extra/material.js")
-
 // rethrow all unhandled promise errors
 // eslint-disable-next-line no-unused-vars
 process.on("unhandledRejection", reason => {

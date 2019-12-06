@@ -1,5 +1,5 @@
 import React from "react"
-import Grid, { Cell } from "react-mdl/lib/Grid"
+import Grid from "@material-ui/core/Grid"
 import R from "ramda"
 import _ from "lodash"
 
@@ -66,13 +66,13 @@ export const COURSE_TEAM_EMAIL_CONFIG: EmailConfig = {
 
   renderSubheading: (activeEmail: EmailState) => (
     <div className="subheading-section">
-      <Grid noSpacing={true}>
-        <Cell col={1} align={"middle"} className="subheading-to">
+      <Grid container>
+        <Grid item xs={1} align={"middle"} className="subheading-to">
           TO:
-        </Cell>
-        <Cell col={11}>
+        </Grid>
+        <Grid xs={11}>
           <h5 className="subheading rounded">{activeEmail.subheading}</h5>
-        </Cell>
+        </Grid>
       </Grid>
     </div>
   ),
@@ -131,11 +131,11 @@ export const LEARNER_EMAIL_CONFIG: EmailConfig = {
 
   renderSubheading: (activeEmail: EmailState) => (
     <div className="subheading-section">
-      <Grid noSpacing={true}>
-        <Cell col={1} align={"middle"} className="subheading-to">
+      <Grid container>
+        <Grid item xs={1} align={"middle"} className="subheading-to">
           TO:
-        </Cell>
-        <Cell col={11}>
+        </Grid>
+        <Grid item xs={11}>
           <div className="subheading profile-image-bubble">
             <img
               src={activeEmail.params.profileImage}
@@ -144,7 +144,7 @@ export const LEARNER_EMAIL_CONFIG: EmailConfig = {
             />
             <span>{activeEmail.subheading}</span>
           </div>
-        </Cell>
+        </Grid>
       </Grid>
     </div>
   ),

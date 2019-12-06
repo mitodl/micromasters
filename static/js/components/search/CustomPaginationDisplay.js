@@ -1,6 +1,6 @@
 // @flow
 import React from "react"
-import Icon from "react-mdl/lib/Icon"
+import Icon from "@material-ui/core/Icon"
 import type { Event, EventTarget } from "../../flow/eventType"
 
 export default class CustomPaginationDisplay extends React.Component {

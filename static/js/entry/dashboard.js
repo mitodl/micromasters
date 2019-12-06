@@ -11,9 +11,6 @@ import { browserHistory } from "react-router"
 import DashboardRouter from "../DashboardRouter"
 import { routes } from "../dashboard_routes"
 
-// requirements for react-mdl which uses a modified version of material-design-lite
-import "react-mdl/extra/material.js"
-
 // requirement for creating blob from crop canvas.
 import "blueimp-canvas-to-blob/js/canvas-to-blob.js"
 

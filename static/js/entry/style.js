@@ -2,8 +2,6 @@ __webpack_public_path__ = `${SETTINGS.public_path}` // eslint-disable-line no-un
 // bootstrap
 import "bootstrap/dist/css/bootstrap.min.css"
 
-// react-mdl material-design-lite file
-import "react-mdl/extra/material.css"
 // react-virtualized requirement
 import "react-virtualized/styles.css"
 import "react-virtualized-select/styles.css"

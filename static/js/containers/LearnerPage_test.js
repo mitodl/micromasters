@@ -626,7 +626,7 @@ describe("LearnerPage", function() {
               ReactTestUtils.Simulate.click(addButton)
 
               assert.equal(
-                document.querySelector(".dialog-title").innerHTML,
+                document.querySelector("h2").innerHTML,
                 "Add a High school"
               )
 
@@ -841,7 +841,7 @@ describe("LearnerPage", function() {
             const editButton = div
               .getElementsByClassName("profile-form")[2]
               .getElementsByClassName("profile-row-icons")[0]
-              .getElementsByClassName("mdl-button")[0]
+              .getElementsByClassName("edit-button")[0]
 
             return listenForActions(
               [SET_WORK_DIALOG_INDEX, SET_WORK_DIALOG_VISIBILITY],
@@ -849,7 +849,7 @@ describe("LearnerPage", function() {
                 ReactTestUtils.Simulate.click(editButton)
 
                 assert.equal(
-                  document.querySelector(".dialog-title").innerHTML,
+                  document.querySelector("h2").innerHTML,
                   "Edit Employment"
                 )
               }
@@ -917,7 +917,7 @@ describe("LearnerPage", function() {
               ReactTestUtils.Simulate.click(addButton)
 
               assert.equal(
-                document.querySelector(".dialog-title").innerHTML,
+                document.querySelector("h2").innerHTML,
                 "Add Employment"
               )
               const dialog = document.querySelector(".employment-dialog")
@@ -1032,13 +1032,13 @@ describe("LearnerPage", function() {
           .returns(Promise.resolve(expectedProfile))
 
         return renderComponent(`/learner/${username}`, userActions).then(
-          ([wrapper]) => {
-            const personalButton = wrapper.find(".edit-personal-info-button")
+          ([,]) => {
+            const personalButton = document.querySelector(".edit-personal-info-button")
 
             return listenForActions(
               [SET_LEARNER_PAGE_DIALOG_VISIBILITY, START_PROFILE_EDIT],
               () => {
-                personalButton.simulate("click")
+                ReactTestUtils.Simulate.click(personalButton)
               }
             ).then(() => {
               const dialog = document.querySelector(".personal-dialog")

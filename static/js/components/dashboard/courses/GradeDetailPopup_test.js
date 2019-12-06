@@ -3,7 +3,7 @@ import React from "react"
 import { shallow } from "enzyme"
 import { assert } from "chai"
 import sinon from "sinon"
-import Icon from "react-mdl/lib/Icon"
+import Icon from "@material-ui/core/Icon"
 import Dialog from "@material-ui/core/Dialog"
 
 import GradeDetailPopup from "./GradeDetailPopup"

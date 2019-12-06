@@ -2,7 +2,7 @@
 /* global SETTINGS: false */
 import React from "react"
 import { connect } from "react-redux"
-import Grid, { Cell } from "react-mdl/lib/Grid"
+import Grid from "@material-ui/core/Grid"
 import R from "ramda"
 
 import { canAdvanceSearchProgram } from "../../lib/roles"
@@ -80,30 +80,30 @@ class CustomSortingColumnHeaders extends React.Component {
       SETTINGS.roles
     )
     return (
-      <Grid className="sorting-row">
-        <Cell col={1} />
-        <Cell
-          col={4}
+      <Grid container className="sorting-row">
+        <Grid item xs={1} />
+        <Grid item
+          xs={4}
           onClick={this.toggleNameSort}
           className={`name ${this.selectedClass(nameKeys)}`}
         >
           Name {this.sortDirection(nameKeys)}
-        </Cell>
-        <Cell
-          col={showGrade ? 4 : 7}
+        </Grid>
+        <Grid item
+          xs={showGrade ? 4 : 7}
           onClick={this.toggleLocationSort}
           className={`residence ${this.selectedClass(locationKeys)}`}
         >
           Residence {this.sortDirection(locationKeys)}
-        </Cell>
+        </Grid>
         {showGrade ? (
-          <Cell
-            col={3}
+          <Grid item
+            xs={3}
             onClick={this.toggleGradeSort}
             className={`grade ${this.selectedClass(gradeKeys)}`}
           >
             Program grade {this.sortDirection(gradeKeys)}
-          </Cell>
+          </Grid>
         ) : null}
       </Grid>
     )

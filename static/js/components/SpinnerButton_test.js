@@ -3,7 +3,7 @@ import React from "react"
 import { shallow } from "enzyme"
 import { assert } from "chai"
 import sinon from "sinon"
-import Button from "react-mdl/lib/Button"
+import Button from "@material-ui/core/Button"
 
 import SpinnerButton from "./SpinnerButton"
 

@@ -1,6 +1,6 @@
 // @flow
 import React from "react"
-import { Card, CardTitle } from "react-mdl/lib/Card"
+import Card from "@material-ui/core/Card"
 import R from "ramda"
 
 import { circularProgressWidget } from "./ProgressWidget"
@@ -8,6 +8,7 @@ import { programCourseInfo, classify } from "../util/util"
 import type { Program } from "../flow/programTypes"
 import { S, getm } from "../lib/sanctuary"
 import type { DialogVisibilityState } from "../reducers/ui"
+import CardContent from "@material-ui/core/CardContent"
 
 type StaffLearnerCardProps = {
   program: Program,
@@ -40,23 +41,25 @@ const StaffLearnerInfoCard = (props: StaffLearnerCardProps) => {
 
   return (
     <Card shadow={1} className="staff-learner-info-card course-list">
-      <CardTitle>{`Progress - ${program.title}`}</CardTitle>
-      <div className="program-info">
-        <div className="row">
-          <div className="progress-widget">
-            {circularProgressWidget(
-              63,
-              7,
-              totalPassedCourses,
-              program.number_courses_required
+      <CardContent>
+        <h2>{`Progress - ${program.title}`}</h2>
+        <div className="program-info">
+          <div className="row">
+            <div className="progress-widget">
+              {circularProgressWidget(
+                63,
+                7,
+                totalPassedCourses,
+                program.number_courses_required
+              )}
+            </div>
+            {programInfoBadge(
+              "Average program grade",
+              formatCourseGrade(program)
             )}
           </div>
-          {programInfoBadge(
-            "Average program grade",
-            formatCourseGrade(program)
-          )}
         </div>
-      </div>
+      </CardContent>
     </Card>
   )
 }

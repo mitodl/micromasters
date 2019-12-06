@@ -3,8 +3,8 @@ import React from "react"
 import { mount } from "enzyme"
 import { assert } from "chai"
 import sinon from "sinon"
-import Switch from "react-mdl/lib/Switch"
-import Spinner from "react-mdl/lib/Spinner"
+import Switch from "@material-ui/core/Switch"
+import CircularProgress from "@material-ui/core/CircularProgress"
 
 import EmailCampaignsCard from "./EmailCampaignsCard"
 import { GET_AUTOMATIC_EMAILS_RESPONSE } from "../test_constants"
@@ -83,6 +83,6 @@ describe("EmailCampaignsCard", () => {
   it("should show a spinner when a request is in-flight", () => {
     emailCardProps.emailsInFlight.add(GET_AUTOMATIC_EMAILS_RESPONSE[0].id)
     const card = renderCard()
-    assert.lengthOf(card.find(Spinner), 1)
+    assert.lengthOf(card.find(CircularProgress), 1)
   })
 })

@@ -1,7 +1,7 @@
 // @flow
 import React from "react"
 import Dialog from "@material-ui/core/Dialog"
-import IconButton from "react-mdl/lib/IconButton"
+import IconButton from "@material-ui/core/IconButton"
 
 const dialogTitle = setDialogVisibility => (
   <div className="title">

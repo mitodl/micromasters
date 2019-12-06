@@ -2,7 +2,7 @@
 import Dialog from "@material-ui/core/Dialog"
 import React from "react"
 import R from "ramda"
-import Icon from "react-mdl/lib/Icon"
+import Icon from "@material-ui/core/Icon"
 import moment from "moment"
 
 import type {

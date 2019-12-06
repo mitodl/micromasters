@@ -1,7 +1,7 @@
 // @flow
 import React from "react"
 import R from "ramda"
-import Icon from "react-mdl/lib/Icon"
+import Icon from "@material-ui/core/Icon"
 
 import type { Course } from "../../../flow/programTypes"
 import { formatGrade } from "../util"

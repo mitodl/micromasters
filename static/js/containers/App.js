@@ -2,7 +2,7 @@
 /* global SETTINGS: false */
 import React from "react"
 import PropTypes from "prop-types"
-import Icon from "react-mdl/lib/Icon"
+import Icon from "@material-ui/core/Icon"
 import { connect } from "react-redux"
 import type { Dispatch } from "redux"
 
