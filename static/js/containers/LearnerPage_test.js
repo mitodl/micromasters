@@ -283,7 +283,7 @@ describe("LearnerPage", function() {
 
       describe("date field", () => {
         const dobMonth = dialog =>
-          inputs(dialog).find(i => i.id.includes("MM-Month"))
+          inputs(dialog).find(i => i.placeholder === "MM")
         it("should clearValidation when filling out a required date field", () => {
           return clearValidation(
             userProfileActions.concat([
@@ -1171,11 +1171,11 @@ describe("LearnerPage", function() {
         ([, div]) => {
           const count = div
             .querySelector(".page-content")
-            .getElementsByClassName("mdl-button--icon").length
-          // edit profile and edit about me represents hard coded 2 here.
+            .getElementsByClassName("MuiIcon-root").length
+          // edit profile and edit about me, navbar represents hard coded 3
           assert.equal(
             count,
-            2 +
+            3 +
               USER_PROFILE_RESPONSE.work_history.length * 2 +
               USER_PROFILE_RESPONSE.education.length * 2
           )
@@ -1230,6 +1230,7 @@ describe("LearnerPage", function() {
       ])
       return renderComponent(`/learner/${username}`, actions).then(
         ([wrapper]) => {
+          wrapper.update()
           assert.equal(wrapper.find(StaffLearnerInfoCard).length, 1)
         }
       )
@@ -1244,6 +1245,7 @@ describe("LearnerPage", function() {
       ])
       return renderComponent(`/learner/${username}`, actions).then(
         ([wrapper]) => {
+          wrapper.update()
           wrapper
             .find(".open-popup")
             .at(0)
@@ -1272,13 +1274,14 @@ describe("LearnerPage", function() {
       ])
       return renderComponent(`/learner/${username}`, actions).then(
         ([wrapper]) => {
+          wrapper.update()
           wrapper
             .find(Grades)
             .at(0)
             .find(Dialog)
             .at(0)
             .props()
-            .onRequestClose()
+            .onClose()
           const state = helper.store.getState().ui
           assert.isFalse(state.dialogVisibility[key])
         }
