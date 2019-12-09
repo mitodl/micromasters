@@ -1,4 +1,5 @@
 /* global SETTINGS: false */
+import React from "react"
 import ReactTestUtils from "react-dom/test-utils"
 import { assert } from "chai"
 import _ from "lodash"
@@ -69,6 +70,7 @@ import Grades, {
   gradeDetailPopupKey
 } from "../components/dashboard/courses/Grades"
 import { EDX_GRADE } from "./DashboardPage"
+import Card from "@material-ui/core/Card"
 
 describe("LearnerPage", function() {
   this.timeout(10000)
@@ -167,7 +169,7 @@ describe("LearnerPage", function() {
     describe("validation", () => {
       const inputs = dialog => [...dialog.getElementsByTagName("input")]
       const getEditPersonalButton = div =>
-        div.querySelector(".edit-profile-holder .mdl-button")
+        div.querySelector(".edit-profile-holder .edit-personal-info-button")
       const getDialog = () => document.querySelector(".personal-dialog")
       const getSave = () => getDialog().querySelector(".save-button")
 
@@ -200,6 +202,7 @@ describe("LearnerPage", function() {
               if (_.isFunction(removeErrorValue)) {
                 getInput(getDialog())
               } else {
+
                 input = getInput(getDialog())
                 modifyTextField(input, "")
               }
@@ -345,7 +348,7 @@ describe("LearnerPage", function() {
 
       describe("radio field", () => {
         const genderField = dialog =>
-          inputs(dialog).find(i => i.name === "Gender")
+          inputs(dialog).find(i => i.name === "gender")
 
         it("should clearValidationErrors when filling out a required radio field", () => {
           const createValidationError = () => {
@@ -552,7 +555,7 @@ describe("LearnerPage", function() {
             const editButton = div
               .getElementsByClassName("profile-form")[1]
               .getElementsByClassName("profile-row-icons")[0]
-              .getElementsByClassName("mdl-button")[0]
+              .getElementsByClassName("edit-button")[0]
 
             return listenForActions(
               [
@@ -564,7 +567,7 @@ describe("LearnerPage", function() {
                 ReactTestUtils.Simulate.click(editButton)
 
                 assert.equal(
-                  document.querySelector(".dialog-title").innerHTML,
+                  document.querySelector(".dialog-title h2").innerHTML,
                   "Edit Doctorate"
                 )
               }
@@ -689,17 +692,18 @@ describe("LearnerPage", function() {
       const deleteButton = div => {
         return div
           .getElementsByClassName("profile-form")[2]
-          .getElementsByClassName("profile-row-icons")[0]
-          .getElementsByClassName("mdl-button")[1]
+          .getElementsByClassName("delete-button")[0]
       }
 
       it("shows the employment history component", () => {
         const username = SETTINGS.user.username
         return renderComponent(`/learner/${username}`, userActions).then(
           ([wrapper]) => {
+            wrapper.update()
             const headerText = wrapper
               .find("#work-history-card")
               .find(".profile-card-header")
+              .hostNodes()
               .text()
             assert.equal(headerText, "Employment")
           }
@@ -713,7 +717,7 @@ describe("LearnerPage", function() {
             const editButton = div
               .getElementsByClassName("profile-form")[2]
               .getElementsByClassName("profile-row-icons")[0]
-              .getElementsByClassName("mdl-button")[0]
+              .getElementsByClassName("edit-button")[0]
 
             return confirmResumeOrder(
               editButton,
