@@ -213,8 +213,10 @@ describe("ProfilePage", function() {
       "/profile/personal",
       SUCCESS_SET_PROGRAM_ACTIONS
     ).then(([wrapper]) => {
+      wrapper.update()
       assert.equal(wrapper.find(".loader").length, 0)
       helper.store.dispatch(requestGetUserProfile(SETTINGS.user.username))
+      wrapper.update()
 
       assert.equal(wrapper.find(".loader").length, 1)
     })
@@ -228,8 +230,10 @@ describe("ProfilePage", function() {
         "/profile/personal",
         SUCCESS_SET_PROGRAM_ACTIONS
       ).then(([wrapper]) => {
+        wrapper.update()
         if (activity) {
           helper.store.dispatch(requestPatchUserProfile(SETTINGS.user.username))
+          wrapper.update()
         }
         const next = wrapper.find("SpinnerButton")
         assert.equal(activity, next.props().spinning)
@@ -247,6 +251,7 @@ describe("ProfilePage", function() {
     return renderComponent("/profile/personal", SUCCESS_ACTIONS).then(
       ([wrapper]) => {
         assert.isFalse(addProgramEnrollmentStub.called)
+        wrapper.update()
 
         return helper
           .listenForActions(
@@ -262,7 +267,7 @@ describe("ProfilePage", function() {
               SET_TOAST_MESSAGE
             ],
             () => {
-              wrapper.find(".next").simulate("click")
+              wrapper.find(".next").hostNodes().simulate("click")
             }
           )
           .then(() => {
@@ -281,6 +286,7 @@ describe("ProfilePage", function() {
       const actions =
         step === PERSONAL_STEP ? SUCCESS_SET_PROGRAM_ACTIONS : SUCCESS_ACTIONS
       return renderComponent(`/profile/${step}`, actions).then(([wrapper]) => {
+        wrapper.update()
         const props = wrapper.find(component).props()
         assert.deepEqual(props["ui"], helper.store.getState().ui)
         assert.deepEqual(
