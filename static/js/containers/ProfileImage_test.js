@@ -130,7 +130,7 @@ describe("ProfileImage", () => {
         const dialog = document.querySelector(".photo-upload-dialog")
         const saveButton = dialog.querySelector(".save-button")
         assert.isFalse(saveButton.className.includes("disabled"))
-        assert.isNull(dialog.querySelector(".mdl-spinner"))
+        assert.isNull(dialog.querySelector(".MuiCircularProgress-root"))
         ReactTestUtils.Simulate.click(saveButton)
         assert.isTrue(updateProfileImageStub.called)
       })
@@ -146,7 +146,7 @@ describe("ProfileImage", () => {
         assert.isFalse(saveButton.innerHTML.includes("mdl-spinner"))
         ReactTestUtils.Simulate.click(saveButton)
         assert.isFalse(updateProfileImageStub.called)
-        assert.isNull(dialog.querySelector(".mdl-spinner"))
+        assert.isNull(dialog.querySelector(".MuiCircularProgress-root"))
       })
 
       it("should show a spinner while uploading the image", () => {
@@ -157,7 +157,8 @@ describe("ProfileImage", () => {
         helper.store.dispatch(showDialog(PROFILE_IMAGE_DIALOG))
         helper.store.dispatch(requestPatchUserPhoto(SETTINGS.user.username))
         const dialog = document.querySelector(".photo-upload-dialog")
-        assert.isNotNull(dialog.querySelector(".mdl-spinner"))
+        console.log(dialog.innerHTML)
+        assert.isNotNull(dialog.querySelector(".MuiCircularProgress-root"))
       })
 
       it("should disable the save button when uploading an image", () => {
@@ -170,7 +171,7 @@ describe("ProfileImage", () => {
         const dialog = document.querySelector(".photo-upload-dialog")
         const saveButton = dialog.querySelector(".save-button")
         assert.isTrue(saveButton.disabled)
-        assert.isFalse(saveButton.innerHTML.includes("mdl-spinner"))
+        assert.isFalse(saveButton.innerHTML.includes("MuiCircularProgress-root"))
         ReactTestUtils.Simulate.click(saveButton)
         assert.isFalse(updateProfileImageStub.called)
       })

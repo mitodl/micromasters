@@ -61,6 +61,7 @@ describe("OrderSummaryPage", () => {
         url,
         DASHBOARD_SUCCESS_NO_FRONTPAGE_NO_LEARNER_ACTIONS
       ).then(([wrapper]) => {
+        wrapper.update()
         wrapper
           .find("SpinnerButton")
           .props()
@@ -92,6 +93,7 @@ describe("OrderSummaryPage", () => {
         url,
         DASHBOARD_SUCCESS_NO_FRONTPAGE_NO_LEARNER_ACTIONS
       ).then(([wrapper]) => {
+        wrapper.update()
         wrapper
           .find("SpinnerButton")
           .props()
