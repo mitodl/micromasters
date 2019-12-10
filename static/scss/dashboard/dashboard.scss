@@ -56,7 +56,6 @@
   .financial-aid-box {
     background-color: $bg-light-gray;
     padding: 13px;
-    margin: 0;
 
     @include breakpoint(phone) {
       padding: 22px;

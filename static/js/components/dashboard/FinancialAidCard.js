@@ -86,19 +86,19 @@ export default class FinancialAidCard extends React.Component {
     case FA_STATUS_PENDING_DOCS:
       return (
         <div>
-          <Grid container>
+          <Grid container spacing={3}>
             <Grid item xs={12}>
                 Please tell us the date you sent the documents
             </Grid>
           </Grid>
-          <Grid container className="document-row">
+          <Grid container spacing={3} className="document-row">
             <Grid item xs={12} className="document-sent-button-container">
               <DatePicker
                 selected={moment(documentSentDate).toDate()}
                 onChange={this.setDocumentSentDate}
               />
               <SpinnerButton
-                className="dashboard-button document-sent-button"
+                className="mdl-button dashboard-button document-sent-button"
                 component={Button}
                 onClick={this.submitDocuments}
                 spinning={fetchStatus === FETCH_PROCESSING}
@@ -185,7 +185,7 @@ export default class FinancialAidCard extends React.Component {
     case FA_STATUS_PENDING_DOCS:
       return (
         <div>
-          <Grid container>
+          <Grid container className="grid-padding">
             <Grid item xs={12} className="price-explanation">
               <div>Your cost is {price(calculatedPrice)} per course.</div>
               <button
@@ -197,7 +197,7 @@ export default class FinancialAidCard extends React.Component {
             </Grid>
           </Grid>
 
-          <Grid container className="financial-aid-box">
+          <Grid container spacing={1} className="financial-aid-box">
             <Grid item xs={12}>
                 Before you can pay, you need to verify your income. Please visit
                 the{" "}
@@ -218,12 +218,12 @@ export default class FinancialAidCard extends React.Component {
             </Grid>
           </Grid>
 
-          <Grid container>
+          <Grid container spacing={2} className="grid-padding">
             <Grid item xs={6}>Upload to DocuSign</Grid>
             <Grid item xs={6}>Mail to</Grid>
           </Grid>
 
-          <Grid container>
+          <Grid container spacing={2}>
             <Grid item xs={6}>
               <a href="https://na2.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=4a74536d-1629-4709-b8e9-f173a51cf501&env=na2&v=2">
                   https://na2.docusign.net/Member/
