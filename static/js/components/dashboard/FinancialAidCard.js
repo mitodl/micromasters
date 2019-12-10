@@ -22,7 +22,6 @@ import {
   FA_STATUS_DOCS_SENT,
   FA_STATUS_SKIPPED,
   DASHBOARD_FORMAT,
-  ISO_8601_FORMAT
 } from "../../constants"
 import SkipFinancialAidDialog from "../SkipFinancialAidDialog"
 import type { UIState } from "../../reducers/ui"
@@ -55,10 +54,10 @@ export default class FinancialAidCard extends React.Component {
     updateDocumentSentDate(financialAidId, documents.documentSentDate)
   }
 
-  setDocumentSentDate = (dateObj: moment): void => {
+  setDocumentSentDate = (dateObj: Date): void => {
     const { setDocumentSentDate } = this.props
     if (dateObj) {
-      setDocumentSentDate(dateObj.format(ISO_8601_FORMAT))
+      setDocumentSentDate(dateObj.toISOString())
     }
   }
 
@@ -95,7 +94,7 @@ export default class FinancialAidCard extends React.Component {
           <Grid container className="document-row">
             <Grid item xs={12} className="document-sent-button-container">
               <DatePicker
-                selected={moment(documentSentDate)}
+                selected={moment(documentSentDate).toDate()}
                 onChange={this.setDocumentSentDate}
               />
               <SpinnerButton
@@ -219,12 +218,12 @@ export default class FinancialAidCard extends React.Component {
             </Grid>
           </Grid>
 
-          <Grid>
+          <Grid container>
             <Grid item xs={6}>Upload to DocuSign</Grid>
             <Grid item xs={6}>Mail to</Grid>
           </Grid>
 
-          <Grid>
+          <Grid container>
             <Grid item xs={6}>
               <a href="https://na2.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=4a74536d-1629-4709-b8e9-f173a51cf501&env=na2&v=2">
                   https://na2.docusign.net/Member/
