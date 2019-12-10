@@ -127,9 +127,9 @@ export default class CourseAction extends React.Component {
     }
     return (
       <div className="course-action">
-        <Button className="dashboard-button pay-button" key="1" {...props}>
+        <button className="mdl-button dashboard-button pay-button" key="1" {...props}>
           {payText}
-        </Button>
+        </button>
       </div>
     )
   }

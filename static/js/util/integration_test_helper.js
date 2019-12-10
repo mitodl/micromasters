@@ -157,6 +157,7 @@ export default class IntegrationTestHelper {
         }
       )
     }).then(() => {
+      wrapper.update()
       return Promise.resolve([wrapper, div])
     })
   }

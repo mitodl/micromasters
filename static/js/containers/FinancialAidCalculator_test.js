@@ -507,7 +507,7 @@ describe("FinancialAidCalculator", () => {
               ".financial-aid-calculator"
             )
             ReactTestUtils.Simulate.change(
-              calculator.querySelector(".mdl-checkbox__input")
+              calculator.querySelector(".MuiButtonBase-root")
             )
             modifyTextField(
               document.querySelector("#user-salary-input"),

@@ -36,6 +36,7 @@ import { getOwnDashboard } from "../reducers/util"
 import DialogActions from "@material-ui/core/DialogActions"
 import DialogTitle from "@material-ui/core/DialogTitle"
 import DialogContent from "@material-ui/core/DialogContent"
+import FormControlLabel from "@material-ui/core/FormControlLabel"
 
 export const CALCULATOR_DIALOG = "CALCULATOR_DIALOG"
 
@@ -91,12 +92,16 @@ const checkboxUpdate = (update, current, bool) => {
 }
 
 const checkBox = (update, current) => (
-  <Checkbox
-    checked={current.checkBox}
-    required={true}
-    aria-invalid={_.has(current, ["validation", "checkBox"])}
+  <FormControlLabel
+    classes={{label: "testify-income-text"}}
+    control={
+      <Checkbox
+        classes={{root: "checkbox-income"}}
+        checked={current.checkBox}
+        required={true}
+        onChange={() => checkboxUpdate(update, current, !current.checkBox)}
+      />}
     label={checkboxText}
-    onChange={() => checkboxUpdate(update, current, !current.checkBox)}
   />
 )
 
@@ -248,7 +253,7 @@ const FinancialAidCalculator = ({
         <DialogTitle className="dialog-title">
           Personal Course Pricing
         </DialogTitle>
-        <DialogContent dividers>
+        <DialogContent className="dialog-content" dividers>
           <div className="copy">
             {`The cost of courses in the ${title} MicroMasters varies between ${minPossibleCost} and ${maxPossibleCost},
         depending on your income and ability to pay.`}

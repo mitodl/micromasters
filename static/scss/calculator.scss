@@ -11,7 +11,7 @@
     overflow: scroll;
 
     .checkbox {
-      .mdl-checkbox__label {
+      .testify-income-text, .checkbox-income {
         font-size: 13px;
         line-height: 1.2em;
       }
@@ -23,7 +23,7 @@
     padding: 20px 10px;
 
     .checkbox {
-      .mdl-checkbox__label {
+      .testify-income-text, .checkbox-income {
         font-size: 13px;
         line-height: 1.2em;
       }
@@ -106,6 +106,16 @@
     font-size: 14px;
     line-height: 10px;
     font-weight: 300;
+
+    label {
+      padding-left: 0;
+    }
+
+    .testify-income-text, .checkbox-income {
+      font-size: 16px;
+      line-height: 24px;
+
+    }
   }
 
   .checkbox-alert {
