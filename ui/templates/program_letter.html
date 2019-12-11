@@ -8,7 +8,7 @@
 <div class="letter">
 
     <div class="letter-logo">
-        {% image letter_logo max-200x100 %}
+        {% image letter_logo max-300x150 %}
     </div>
 
     <div class="letter-content">
@@ -21,22 +21,17 @@
             {{ letter_text | safe}}
         </div>
 
-        <p>
-            Cordially Yours,
-        </p>
-
         <div class="signatories">
             {% for signatory in signatories %}
             <div class="signatory">
                 <div class="sig-image">
-                    {% image signatory.signature_image max-200x100 %}
+                    {% image signatory.signature_image max-200x80 %}
                 </div>
 
-                <div class="name">{{ signatory.name }}</div>
-                <div>{{ signatory.title_line_1 }}</div>
-                {% if signatory.title_line_2 %}
-                <div>{{ signatory.title_line_2 }}</div>
-                {% endif %}
+                <div class="name">
+                  {{ signatory.name }},
+                  {{ signatory.title_line_1 }}{% if signatory.title_line_2 %},{{ signatory.title_line_2 }}{% endif %}
+                </div>
             </div>
             {% endfor %}
 

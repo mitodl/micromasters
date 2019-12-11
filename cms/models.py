@@ -600,11 +600,7 @@ class ProgramLetterSignatory(Orderable):
     name = models.CharField(max_length=255, help_text='Full name of the signatory')
     title_line_1 = models.TextField(help_text='Signatory title (e.g.: Associate Professor)')
     title_line_2 = models.TextField(blank=True, help_text='Signatory title (optional second line)')
-    organization = models.CharField(
-        max_length=255,
-        default="Massachusetts Institute of Technology",
-        help_text='Name of the organization where the signatory holds the given title.'
-    )
+
     signature_image = models.ForeignKey(
         Image,
         related_name='+',
@@ -618,7 +614,6 @@ class ProgramLetterSignatory(Orderable):
                 FieldPanel('name'),
                 FieldPanel('title_line_1'),
                 FieldPanel('title_line_2'),
-                FieldPanel('organization'),
                 FieldPanel('signature_image'),
             ]
         )

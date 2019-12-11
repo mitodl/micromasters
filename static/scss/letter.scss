@@ -14,17 +14,17 @@
   }
 
   .letter-content {
-    margin-top: 50px;
+    margin-top: 100px;
   }
 
   .signatories {
     .signatory {
-      margin-right: 15px;
-      display: inline-block;
+      margin: 15px 0 5px;
     }
 
     .sig-image {
-      height: 100px;
+      max-height: 80px;
+      margin-bottom: 3px;
     }
   }
 }
