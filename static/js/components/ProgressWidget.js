@@ -2,7 +2,6 @@
 /* global SETTINGS: false */
 import React from "react"
 import Card from "@material-ui/core/Card"
-import Button from "@material-ui/core/Button"
 import R from "ramda"
 
 import type { Program } from "../flow/programTypes"
@@ -111,14 +110,14 @@ export default class ProgressWidget extends React.Component {
           <p className="certificate-text">
             You completed the MicroMasters Certificate in {program.title}
           </p>
-          <Button
-            className="dashboard-button"
+          <button
+            className="mdl-button dashboard-button"
             onClick={() => {
               window.open(program.certificate)
             }}
           >
             View Certificate
-          </Button>
+          </button>
           {SETTINGS.FEATURES.PROGRAM_RECORD_LINK &&
             program.financial_aid_availability &&
             gradeRecordsLink(program.grade_records_url)}
