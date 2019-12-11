@@ -25,7 +25,7 @@
             {% for signatory in signatories %}
             <div class="signatory">
                 <div class="sig-image">
-                    {% image signatory.signature_image max-200x80 %}
+                    {% image signatory.signature_image max-150x80 %}
                 </div>
 
                 <div class="name">
@@ -39,8 +39,12 @@
 
     </div>
 
-    <div class="program-title">
+    <div class="program-footer">
+      {% if letter_footer %}
+        {% image letter_footer max-300x150 %}
+      {% else %}
         MITx MicroMasters program in {{ program_title }}
+      {% endif %}
     </div>
 </div>
 

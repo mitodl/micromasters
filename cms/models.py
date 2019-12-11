@@ -305,6 +305,16 @@ class ProgramPage(Page):
             'The logo that will appear at the top of the program congratulation letter.'
         ),
     )
+    program_letter_footer = models.ForeignKey(
+        Image,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        help_text=(
+            'The logo that will appear at the bottom of the program congratulation letter.'
+        ),
+    )
 
     program_letter_text = RichTextField(
         blank=True,
@@ -330,6 +340,7 @@ class ProgramPage(Page):
         FieldPanel('title_over_image'),
         FieldPanel('faculty_description'),
         FieldPanel('program_letter_logo'),
+        FieldPanel('program_letter_footer'),
         FieldPanel('program_letter_text'),
         FieldPanel('program_subscribe_link'),
         InlinePanel('courses', label='Program Courses'),

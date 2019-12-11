@@ -143,6 +143,7 @@ class ProgramLetterView(TemplateView):
             raise Http404
 
         program_letter_logo = signatories[0].program_page.program_letter_logo
+        program_letter_footer = signatories[0].program_page.program_letter_footer
 
         if not program_letter_logo:
             log.error(
@@ -165,6 +166,7 @@ class ProgramLetterView(TemplateView):
         context.update({
             'program_title': program.title,
             'letter_logo': program_letter_logo,
+            'letter_footer': program_letter_footer,
             'name': letter.user.profile.full_name,
             'letter_text': program_letter_text,
             'signatories': list(signatories),
