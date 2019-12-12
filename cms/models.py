@@ -305,6 +305,12 @@ class ProgramPage(Page):
             'The logo that will appear at the top of the program congratulation letter.'
         ),
     )
+    program_letter_header_text = RichTextField(
+        blank=True,
+        null=True,
+        help_text="Header text that will appear next to the logo."
+    )
+
     program_letter_footer = models.ForeignKey(
         Image,
         null=True,
@@ -320,6 +326,12 @@ class ProgramPage(Page):
         blank=True,
         null=True,
         help_text="Text that will appear on the program congratulation letter."
+    )
+
+    program_letter_footer_text = RichTextField(
+        blank=True,
+        null=True,
+        help_text="Footer text that will appear on the program congratulation letter."
     )
 
     program_subscribe_link = models.URLField(
@@ -340,8 +352,10 @@ class ProgramPage(Page):
         FieldPanel('title_over_image'),
         FieldPanel('faculty_description'),
         FieldPanel('program_letter_logo'),
+        FieldPanel('program_letter_header_text'),
         FieldPanel('program_letter_footer'),
         FieldPanel('program_letter_text'),
+        FieldPanel('program_letter_footer_text'),
         FieldPanel('program_subscribe_link'),
         InlinePanel('courses', label='Program Courses'),
         InlinePanel('info_links', label='More Info Links'),

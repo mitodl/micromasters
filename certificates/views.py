@@ -141,9 +141,9 @@ class ProgramLetterView(TemplateView):
                 program.id
             )
             raise Http404
-
-        program_letter_logo = signatories[0].program_page.program_letter_logo
-        program_letter_footer = signatories[0].program_page.program_letter_footer
+        program_page = signatories[0].program_page
+        program_letter_logo = program_page.program_letter_logo
+        program_letter_footer = program_page.program_letter_footer
 
         if not program_letter_logo:
             log.error(
@@ -153,7 +153,7 @@ class ProgramLetterView(TemplateView):
             )
             raise Http404
 
-        program_letter_text = signatories[0].program_page.program_letter_text
+        program_letter_text = program_page.program_letter_text
 
         if not program_letter_text:
             log.error(
@@ -166,7 +166,9 @@ class ProgramLetterView(TemplateView):
         context.update({
             'program_title': program.title,
             'letter_logo': program_letter_logo,
+            'header_text': program_page.program_letter_header_text,
             'letter_footer': program_letter_footer,
+            'footer_text': program_page.program_letter_footer_text,
             'name': letter.user.profile.full_name,
             'letter_text': program_letter_text,
             'signatories': list(signatories),
