@@ -156,5 +156,4 @@ class ProgramLetterSignatoryFactory(DjangoModelFactory):
     name = factory.Faker('name')
     title_line_1 = factory.Faker('text')
     title_line_2 = factory.Faker('text')
-    organization = factory.Faker('text')
     signature_image = factory.SubFactory(ImageFactory)
