@@ -70,7 +70,7 @@ export const COURSE_TEAM_EMAIL_CONFIG: EmailConfig = {
         <Grid item xs={1} align={"middle"} className="subheading-to">
           TO:
         </Grid>
-        <Grid xs={11}>
+        <Grid item xs={11}>
           <h5 className="subheading rounded">{activeEmail.subheading}</h5>
         </Grid>
       </Grid>

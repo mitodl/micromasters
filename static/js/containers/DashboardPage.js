@@ -10,6 +10,9 @@ import _ from "lodash"
 import moment from "moment"
 import R from "ramda"
 import Dialog from "@material-ui/core/Dialog"
+import DialogTitle from "@material-ui/core/DialogTitle"
+import DialogContent from "@material-ui/core/DialogContent"
+import DialogActions from "@material-ui/core/DialogActions"
 import Alert from "react-bootstrap/lib/Alert"
 
 import ProgramEnrollmentDialog from "../components/ProgramEnrollmentDialog"
@@ -684,15 +687,12 @@ class DashboardPage extends React.Component {
         : "verified learners"
     return (
       <Dialog
-        title="Contact the Course Team"
-        titleClassName="dialog-title"
-        contentClassName="dialog"
-        className="course-payment-dialog-wrapper"
-        bodyStyle={{ padding: "0 24px" }}
+        classes={{ paper: "dialog", root: "course-payment-dialog-wrapper"}}
         open={ui.paymentTeaserDialogVisibility}
-        actions={singleBtnDialogActions(this.closePaymentTeaserDialog)}
-        onRequestClose={this.closePaymentTeaserDialog}
+        onClose={this.closePaymentTeaserDialog}
       >
+        <DialogTitle className="dialog-title">Contact the Course Team</DialogTitle>
+        <DialogContent>
         <div className="inner-content">
           <img
             src="/static/images/contact_course_team_icon.png"
@@ -700,6 +700,10 @@ class DashboardPage extends React.Component {
           />
           <p>{`This is a premium feature for ${messageTail}.`}</p>
         </div>
+        </DialogContent>
+        <DialogActions>
+          {singleBtnDialogActions(this.closePaymentTeaserDialog)}
+        </DialogActions>
       </Dialog>
     )
   }

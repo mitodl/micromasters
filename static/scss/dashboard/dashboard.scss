@@ -397,26 +397,6 @@
   }
 
   .mdl-button {
-    font-size: 17px;
-    font-weight: 500;
-    margin: 6px 10px;
-    padding: 0 2px;
-
-    &.mdl-button--colored {
-      background: $button-color;
-      color: white;
-      font-size: 13px;
-      font-weight: normal;
-      text-align: center;
-      min-width: 120px;
-      padding: 0 10px;
-
-      &[disabled] {
-        background-color: $medgray;
-        color: white;
-      }
-    }
-
     &.close {
       margin: 0;
     }

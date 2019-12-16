@@ -42,7 +42,6 @@ export const singleBtnDialogActions = (
   text: string = "OK"
 ) => [
   <Button
-    type="cancel"
     key="cancel"
     className="secondary-button cancel-button"
     onClick={onCancel}

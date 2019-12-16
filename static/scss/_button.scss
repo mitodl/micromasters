@@ -216,6 +216,10 @@
     color: $link-hover;
   }
 
+  &:focus {
+    outline: none;
+  }
+
   &[disabled] {
     color: $font-gray-disabled;
     text-decoration: none;
