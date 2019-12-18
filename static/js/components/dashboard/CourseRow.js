@@ -206,11 +206,8 @@ export default class CourseRow extends React.Component {
   }
   getCourseTag = (): React$Element<*> => {
     const { course } = this.props
-    return (
-      <div className="elective-tag">
-        {course.is_elective ? "Elective" : "Core"}
-      </div>
-    )
+    const tag = course.is_elective ? "Elective" : "Core"
+    return <div className={`elective-tag ${tag}`}>{tag}</div>
   }
 
   renderCourseInfo = (run: CourseRun) => {
