@@ -66,7 +66,7 @@ describe("AutomaticEmailPage", () => {
   it("has all the cards it should", () => {
     return renderComponent("/automaticemails", successActions).then(
       ([wrapper]) => {
-        assert.lengthOf(wrapper.find(".email-campaigns-card"), 1)
+        assert.lengthOf(wrapper.find(".email-campaigns-card").hostNodes(), 1)
       }
     )
   })
@@ -84,7 +84,7 @@ describe("AutomaticEmailPage", () => {
   it("shows the automatic emails for the logged-in user", () => {
     return renderComponent("/automaticemails", successActions).then(
       ([wrapper]) => {
-        const cardText = wrapper.find(".email-campaigns-card").text()
+        const cardText = wrapper.find(".email-campaigns-card").hostNodes().text()
         GET_AUTOMATIC_EMAILS_RESPONSE.forEach(email => {
           assert.include(cardText, email.email_subject)
         })
