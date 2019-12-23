@@ -196,7 +196,7 @@ describe("FinancialAidCalculator", () => {
 
       assert.isFalse(skipButton.className.includes("disabled-with-spinner"))
       assert.isTrue(skipButton.disabled)
-      assert.equal(skipButton.innerHTML, "Pay Full Price")
+      assert.equal(skipButton.textContent, "Pay Full Price")
       ReactTestUtils.Simulate.click(skipButton)
       assert.isFalse(helper.skipFinancialAidStub.calledWith(program.id))
     })
@@ -279,9 +279,9 @@ describe("FinancialAidCalculator", () => {
             income:   "Income is required",
             currency: "Please select a currency"
           })
-          checkInvalidInput(".salary-field input", "aria-required")
-          checkInvalidInput(".checkbox input", "required")
+          checkInvalidInput(".salary-field", "aria-required")
           checkInvalidInput(".currency .Select-input input", "aria-required")
+          assert.isNotNull(document.querySelector(".checkbox input").required)
         })
       }
     )
@@ -394,7 +394,7 @@ describe("FinancialAidCalculator", () => {
               ".financial-aid-calculator"
             )
             ReactTestUtils.Simulate.change(
-              calculator.querySelector(".mdl-checkbox__input")
+              calculator.querySelector(".checkbox-income input")
             )
             modifyTextField(
               document.querySelector("#user-salary-input"),
@@ -457,13 +457,13 @@ describe("FinancialAidCalculator", () => {
           .simulate("click")
         const calculator = document.querySelector(".financial-aid-calculator")
         ReactTestUtils.Simulate.change(
-          calculator.querySelector(".mdl-checkbox__input")
+          calculator.querySelector(".checkbox-income input")
         )
         modifyTextField(document.querySelector("#user-salary-input"), "1000")
 
-        const saveButton = calculator.querySelector(".save-button")
+        const saveButton = calculator.querySelector(".calculate-cost-button")
         assert.isFalse(saveButton.className.includes("disabled-with-spinner"))
-        assert.equal(saveButton.innerHTML, "Submit")
+        assert.equal(saveButton.textContent, "Submit")
         assert.isTrue(saveButton.disabled)
 
         ReactTestUtils.Simulate.click(saveButton)
@@ -507,14 +507,14 @@ describe("FinancialAidCalculator", () => {
               ".financial-aid-calculator"
             )
             ReactTestUtils.Simulate.change(
-              calculator.querySelector(".MuiButtonBase-root")
+              calculator.querySelector(".checkbox-income input")
             )
             modifyTextField(
               document.querySelector("#user-salary-input"),
               "1000"
             )
             ReactTestUtils.Simulate.click(
-              calculator.querySelector(".save-button")
+              calculator.querySelector(".calculate-cost-button")
             )
             const confirmDialog = document.querySelector(".confirm-dialog")
             ReactTestUtils.Simulate.click(
