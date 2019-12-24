@@ -46,7 +46,7 @@ const navLink = (
   newTab = false
 ) => (
   <div className="link">
-    <Icon name={iconName} aria-hidden="true" />
+    <Icon aria-hidden="true">{iconName}</Icon>
     {external
       ? externalLink(path, label, newTab)
       : reactLink(onClick, path, label)}

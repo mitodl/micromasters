@@ -67,7 +67,7 @@ const renderPassed = (course: Course) => {
     return (
       <div className="passed-course">
         <div className="check-mark-surround">
-          <Icon name="check" />
+          <Icon>done</Icon>
         </div>
         Passed
       </div>
