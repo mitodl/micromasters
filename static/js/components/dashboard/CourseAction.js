@@ -98,7 +98,7 @@ export default class CourseAction extends React.Component {
     return (
       <div className="course-action">
         <SpinnerButton
-          className="mdl-button dashboard-button enroll-button"
+          className="dashboard-button enroll-button"
           disabled={R.not(isEnrollableRun(run))}
           component={Button}
           spinning={run.status === STATUS_PENDING_ENROLLMENT}

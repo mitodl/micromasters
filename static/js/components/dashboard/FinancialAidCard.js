@@ -98,7 +98,7 @@ export default class FinancialAidCard extends React.Component {
                 onChange={this.setDocumentSentDate}
               />
               <SpinnerButton
-                className="mdl-button dashboard-button document-sent-button"
+                className="dashboard-button document-sent-button"
                 component={Button}
                 onClick={this.submitDocuments}
                 spinning={fetchStatus === FETCH_PROCESSING}
