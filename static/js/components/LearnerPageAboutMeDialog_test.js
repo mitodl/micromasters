@@ -56,7 +56,7 @@ describe("LearnerPageAboutMeDialog", () => {
       }
     })
     assert.equal(
-      document.querySelector("h3.dialog-title").textContent,
+      document.querySelector(".dialog-title").textContent,
       "About Me"
     )
     assert.equal(document.querySelector("textarea").textContent, "Hello world")
@@ -65,7 +65,7 @@ describe("LearnerPageAboutMeDialog", () => {
   it("render dialog without data", () => {
     renderDialog()
     assert.equal(
-      document.querySelector("h3.dialog-title").textContent,
+      document.querySelector(".dialog-title").textContent,
       "About Me"
     )
     assert.equal(document.querySelector("textarea").textContent, "")

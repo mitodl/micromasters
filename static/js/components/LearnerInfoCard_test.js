@@ -46,7 +46,7 @@ describe("LearnerInfoCard", () => {
     )
     assert.equal(wrapper.find("h3").text(), "About Me")
     assert.equal(
-      wrapper.find(".bio .placeholder").text(),
+      wrapper.find(".bio.placeholder").text(),
       "Write something about yourself, so others can learn a bit about you."
     )
   })

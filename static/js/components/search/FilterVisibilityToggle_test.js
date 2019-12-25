@@ -137,7 +137,7 @@ describe("FilterVisibilityToggle", () => {
       }
     })
     const wrapper = renderWrappedToggle(props, <div id="test">Test Text</div>)
-    const icon = wrapper.find("i.material-icons")
+    const icon = wrapper.find(".material-icons")
     assert.lengthOf(icon, 1)
     icon.simulate("click")
     assert(setFilterVisibility.called)
