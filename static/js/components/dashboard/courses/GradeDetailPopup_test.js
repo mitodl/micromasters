@@ -4,7 +4,7 @@ import { shallow } from "enzyme"
 import { assert } from "chai"
 import sinon from "sinon"
 import Icon from "@material-ui/core/Icon"
-import Dialog from "@material-ui/core/Dialog"
+import DialogTitle from "@material-ui/core/DialogTitle"
 
 import GradeDetailPopup from "./GradeDetailPopup"
 import {
@@ -30,7 +30,7 @@ describe("GradeDetailPopup", () => {
     setShowGradeDetailDialogStub = sandbox.stub()
   })
 
-  afterEach(() => {O
+  afterEach(() => {
     sandbox.restore()
   })
 
@@ -154,14 +154,12 @@ describe("GradeDetailPopup", () => {
 
   it("should show an appropriate title for the edx grades", () => {
     const wrapper = renderDetailPopup({ gradeType: EDX_GRADE })
-    const title = wrapper.find(Dialog).props().title
-    assert.include(title, "Completed edX Course Runs")
+    assert.include(wrapper.find(DialogTitle).text(), "Completed edX Course Runs")
   })
 
   it("should show an appropriate title for the exam grades", () => {
     const wrapper = renderDetailPopup({ gradeType: EXAM_GRADE })
-    const title = wrapper.find(Dialog).props().title
-    assert.include(title, "Completed Exams")
+    assert.include(wrapper.find(DialogTitle).text(), "Completed Exams")
   })
 
   it("should display exam grades, if passed the right grade type", () => {
