@@ -78,7 +78,7 @@ class CourseSerializer(serializers.ModelSerializer):
         """If the course is an elective"""
         if not course.program.electives_set.exists():
             return ""
-        return 'Elective' if ElectiveCourse.objects.filter(course=course).exists() else 'Core'
+        return 'elective' if ElectiveCourse.objects.filter(course=course).exists() else 'core'
 
     class Meta:
         model = Course

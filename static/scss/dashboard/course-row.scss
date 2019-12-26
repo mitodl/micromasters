@@ -12,19 +12,26 @@
   display: inline-flex;
   color: $lightgray;
   padding: 1px 4px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 300;
   float: right;
   border-radius: 4px;
   margin: 1px 5px;
+  text-transform: uppercase;
 }
 
-.elective-tag.Core {
+.elective-tag.core {
   background: $mm-brand-bg-dark;
 }
 
-.elective-tag.Elective {
+.elective-tag.elective {
   background: $elective-bg-color;
+}
+
+.course-row.course-container {
+  .course-info {
+    width: 100%;
+  }
 }
 
 .course-row {
@@ -33,7 +40,6 @@
 
   .course-info {
     margin: 29px 22px 35px 28px;
-    width: 100%;
 
     .course-title {
       font-weight: 500;
