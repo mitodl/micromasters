@@ -95,7 +95,7 @@ describe("CourseRow", () => {
       },
       true
     )
-    assert.deepEqual(wrapper.find(".elective-tag").text(), "Elective")
+    assert.deepEqual(wrapper.find(".elective-tag").text(), "elective")
   })
 
   it("displays a CourseAction if the showStaffView prop is not set", () => {

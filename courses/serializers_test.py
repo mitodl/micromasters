@@ -60,7 +60,7 @@ class CourseSerializerTests(MockedESTestCase):
         elective_set = ElectivesSet.objects.create(program=course.program, required_number=1)
         ElectiveCourse.objects.create(course=course, electives_set=elective_set)
         data = CourseSerializer(course).data
-        assert data['elective_tag'] == 'Elective'
+        assert data['elective_tag'] == 'elective'
 
 
 class CourseRunSerializerTests(MockedESTestCase):
