@@ -60,7 +60,7 @@ export default class ProgramEnrollmentDialog extends React.Component {
       "title"
     )
     const options = unenrolledPrograms.map(program => (
-      <MenuItem value={program.id} key={program.id}>
+      <MenuItem className="menu-item" value={program.id} key={program.id}>
         {program.title}
       </MenuItem>
     ))
