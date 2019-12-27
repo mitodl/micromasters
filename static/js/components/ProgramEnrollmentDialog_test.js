@@ -14,6 +14,7 @@ import * as uiActions from "../actions/ui"
 import { DASHBOARD_RESPONSE, PROGRAMS } from "../test_constants"
 import ProgramEnrollmentDialog from "./ProgramEnrollmentDialog"
 import IntegrationTestHelper from "../util/integration_test_helper"
+import DialogActions from "@material-ui/core/DialogActions"
 
 describe("ProgramEnrollmentDialog", () => {
   let helper
@@ -104,7 +105,7 @@ describe("ProgramEnrollmentDialog", () => {
     wrapper
       .find(Select)
       .props()
-      .onChange(null, null, enrollment)
+      .onChange({target: {value: enrollment}})
     assert(stub.calledWith(enrollment))
   })
 
@@ -115,11 +116,8 @@ describe("ProgramEnrollmentDialog", () => {
       enrollInProgram: enrollStub,
       selectedProgram: selectedEnrollment
     })
-    const button = wrapper
-      .find(Dialog)
-      .props()
-      .actions.find(button => button.props.className.includes("enroll"))
-    button.props.onClick()
+    const button = wrapper.find(".enroll-button")
+    button.props().onClick()
     assert(enrollStub.calledWith(selectedEnrollment))
   })
 
@@ -128,12 +126,9 @@ describe("ProgramEnrollmentDialog", () => {
       const wrapper = renderEnrollmentDialog({
         fetchAddStatus: activity ? FETCH_PROCESSING : undefined
       })
-      const button = wrapper
-        .find(Dialog)
-        .props()
-        .actions.find(button => button.props.className.includes("enroll"))
-      assert.equal(button.type.name, "SpinnerButton")
-      assert.equal(button.props.spinning, activity)
+      const button = wrapper.find(".enroll-button")
+      assert.equal(button.name(), "SpinnerButton")
+      assert.equal(button.props().spinning, activity)
     })
   }
 
@@ -142,11 +137,8 @@ describe("ProgramEnrollmentDialog", () => {
     const wrapper = renderEnrollmentDialog({
       setError: stub
     })
-    const button = wrapper
-      .find(Dialog)
-      .props()
-      .actions.find(button => button.props.className.includes("enroll"))
-    button.props.onClick()
+    const button = wrapper.find(".enroll-button")
+    button.props().onClick()
     assert(stub.calledWith("No program selected"))
   })
 
@@ -155,11 +147,8 @@ describe("ProgramEnrollmentDialog", () => {
     const wrapper = renderEnrollmentDialog({
       setVisibility: stub
     })
-    const button = wrapper
-      .find(Dialog)
-      .props()
-      .actions.find(button => button.props.className.includes("cancel"))
-    button.props.onClick()
+    const button = wrapper.find(".cancel-button")
+    button.props().onClick()
     assert(stub.calledWith(false))
   })
 

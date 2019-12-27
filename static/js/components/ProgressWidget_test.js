@@ -154,11 +154,9 @@ describe("ProgressWidget", () => {
   it("should display program certificate when a certificate link exists", () => {
     program["certificate"] = "certificate_url"
     const wrapper = shallow(<ProgressWidget program={program} />)
-
     assert.equal(
       wrapper
-        .find(Button)
-        .children()
+        .find(".dashboard-button")
         .text(),
       "View Certificate"
     )
