@@ -22,6 +22,7 @@ import {
   FA_STATUS_DOCS_SENT,
   FA_STATUS_SKIPPED,
   DASHBOARD_FORMAT,
+  ISO_8601_FORMAT,
 } from "../../constants"
 import SkipFinancialAidDialog from "../SkipFinancialAidDialog"
 import type { UIState } from "../../reducers/ui"
@@ -57,7 +58,7 @@ export default class FinancialAidCard extends React.Component {
   setDocumentSentDate = (dateObj: Date): void => {
     const { setDocumentSentDate } = this.props
     if (dateObj) {
-      setDocumentSentDate(dateObj.toISOString())
+      setDocumentSentDate(moment(dateObj).format(ISO_8601_FORMAT))
     }
   }
 

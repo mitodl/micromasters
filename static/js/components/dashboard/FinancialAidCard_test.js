@@ -202,8 +202,7 @@ describe("FinancialAidCard", () => {
         const setDocumentSentDate = sandbox.stub()
         const wrapper = renderCard({ program, setDocumentSentDate })
         const props = wrapper.find(DatePicker).props()
-
-        assert.equal(props.selected.format(ISO_8601_FORMAT), "2011-11-11")
+        assert.equal(moment(props.selected).format(ISO_8601_FORMAT), "2011-11-11")
         props.onChange(moment("1999-01-01"))
         sinon.assert.calledWith(setDocumentSentDate, "1999-01-01")
       })
