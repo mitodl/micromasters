@@ -5,7 +5,7 @@ from django.db import transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from grades.models import MicromastersCourseCertificate, ProctoredExamGrade, FinalGrade, MicromastersProgramCertificate
+from grades.models import MicromastersCourseCertificate, FinalGrade, MicromastersProgramCertificate
 from grades.api import generate_program_certificate, update_or_create_combined_final_grade, generate_program_letter
 
 
@@ -28,14 +28,6 @@ def handle_create_programcertificate(sender, instance, created, **kwargs):  # py
     if created:
         user = instance.user
         transaction.on_commit(lambda: generate_program_letter(user, instance.program))
-
-
-@receiver(post_save, sender=ProctoredExamGrade, dispatch_uid="examgrade_post_save")
-def handle_create_exam_grade(sender, instance, created, **kwargs):  # pylint: disable=unused-argument
-    """
-    When a ProctoredExamGrade model is created or updated
-    """
-    transaction.on_commit(lambda: update_or_create_combined_final_grade(instance.user, instance.course))
 
 
 @receiver(post_save, sender=FinalGrade, dispatch_uid="final_grade_post_save")

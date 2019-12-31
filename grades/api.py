@@ -18,7 +18,8 @@ from grades.models import (
     FinalGrade,
     FinalGradeStatus,
     MicromastersProgramCertificate,
-    CombinedFinalGrade, MicromastersCourseCertificate, MicromastersProgramCommendation)
+    CombinedFinalGrade, MicromastersCourseCertificate,
+    ProctoredExamGrade, MicromastersProgramCommendation)
 
 CACHE_KEY_FAILED_USERS_BASE_STR = "failed_users_{0}"
 
@@ -322,3 +323,19 @@ def update_or_create_combined_final_grade(user, course):
         defaults={'grade': calculated_grade}
     )
     combined_grade.save_and_log(None)
+
+
+def update_existing_combined_final_grade_for_exam_run(exam_run):
+    """
+    Given an exam run, find all users with combined grades and update them
+
+    Args:
+        exam_run (ExamRun): an exam run that was updated
+    """
+    users_with_grade = set(CombinedFinalGrade.objects.filter(course=exam_run.course).values_list('user', flat=True))
+    exam_grades = ProctoredExamGrade.objects.filter(
+        exam_run=exam_run, user_id__in=users_with_grade
+    ).select_related('user')
+
+    for exam_grade in exam_grades:
+        update_or_create_combined_final_grade(exam_grade.user, exam_run.course)

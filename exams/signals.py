@@ -3,6 +3,7 @@ Signals for exams
 """
 import logging
 
+from django.db import transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -19,6 +20,7 @@ from exams.models import (
 from exams.utils import is_eligible_for_exam
 
 from exams import tasks
+from grades.api import update_existing_combined_final_grade_for_exam_run
 from grades.models import FinalGrade
 from profiles.models import Profile
 
@@ -39,6 +41,7 @@ def update_exam_run(sender, instance, created, **kwargs):  # pylint: disable=unu
     """If we update an ExamRun, update ExamAuthorizations accordingly"""
     if not created:
         tasks.update_exam_run.delay(instance.id)
+        transaction.on_commit(lambda: update_existing_combined_final_grade_for_exam_run(instance))
 
 
 @receiver(post_save, sender=FinalGrade, dispatch_uid="update_exam_authorization_final_grade")

@@ -86,19 +86,21 @@ class ProctoredExamGradesTests(MockedESTestCase):
             cls.user = ProfileFactory.create().user
             cls.course = CourseFactory.create()
 
-    @patch('grades.signals.update_or_create_combined_final_grade', autospec=True)
+    @patch('exams.signals.update_existing_combined_final_grade_for_exam_run', autospec=True)
     def test_create_exam_grade(self, update_grade_mock, mock_on_commit):
         """
-        Test that update_or_create_combined_final_grade is called when a proctored exam
-        grade is created or updated
+        Test that update_existing_combined_final_grade_for_exam_run is called when a proctored exam
+        grade is created and ExamRun updated
         """
         exam_grade = ProctoredExamGradeFactory.create(user=self.user, course=self.course)
-        update_grade_mock.assert_called_once_with(self.user, self.course)
-        exam_grade.save()
-        assert update_grade_mock.call_count == 2
+        assert update_grade_mock.call_count == 0
+        exam_grade.exam_run.save()
+        assert update_grade_mock.call_count == 1
         # create another exam grade for a different exam run
-        ProctoredExamGradeFactory.create(user=self.user, course=self.course)
-        assert update_grade_mock.call_count == 3
+        exam_grade = ProctoredExamGradeFactory.create(user=self.user, course=self.course)
+        assert update_grade_mock.call_count == 1
+        exam_grade.exam_run.save()
+        assert update_grade_mock.call_count == 2
 
 
 # pylint: disable=unused-argument
