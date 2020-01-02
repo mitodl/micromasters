@@ -648,3 +648,41 @@ class UpdateCombinedFinalGradesTests(MockedESTestCase):
         FinalGradeFactory.create(user=self.user, course_run__course=self.course_run.course, grade=0.8, passed=True)
         api.update_or_create_combined_final_grade(self.user, self.course_run.course)
         assert combined_grade_qset.first().grade == 80.0
+
+    @patch('grades.api.update_or_create_combined_final_grade', autospec=True)
+    def test_update_existing_combined_final_grade_for_exam_run(self, update_or_create_mock):
+        """
+        Test update_existing_combined_final_grade_for_exam_run
+        """
+
+        ProctoredExamGradeFactory.create(
+            user=self.user,
+            course=self.course_run.course,
+            percentage_grade=0.6,
+            passed=True,
+            exam_run=self.exam_run
+        )
+        FinalGradeFactory.create(user=self.user, course_run__course=self.course_run.course, grade=0.8, passed=True)
+
+        # should only update if combined grade already exists for user
+        api.update_existing_combined_final_grade_for_exam_run(self.exam_run)
+        assert update_or_create_mock.called is False
+
+        CombinedFinalGrade.objects.create(user=self.user, course=self.course_run.course, grade=0.7)
+        # should call it once since there is an existing combined grade
+        api.update_existing_combined_final_grade_for_exam_run(self.exam_run)
+        update_or_create_mock.assert_called_once_with(self.user, self.course_run.course)
+        exam_run = ExamRunFactory.create(
+            course=self.course_run.course,
+            date_grades_available=now_in_utc() - timedelta(weeks=1)
+        )
+        ProctoredExamGradeFactory.create(
+            user=self.user,
+            course=self.course_run.course,
+            percentage_grade=0.8,
+            passed=True,
+            exam_run=exam_run
+        )
+        # should call it again for a different exam grade
+        api.update_existing_combined_final_grade_for_exam_run(exam_run)
+        assert update_or_create_mock.call_count == 2

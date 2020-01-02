@@ -327,7 +327,8 @@ def update_or_create_combined_final_grade(user, course):
 
 def update_existing_combined_final_grade_for_exam_run(exam_run):
     """
-    Given an exam run, find all users with combined grades and update them
+    Given an exam run, find all users with combined grades and
+     exam grades for this exam run and update them
 
     Args:
         exam_run (ExamRun): an exam run that was updated
