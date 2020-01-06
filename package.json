@@ -101,7 +101,6 @@
     "react-slick": "^0.25.2",
     "react-swipeable": "^4.0.0",
     "react-telephone-input": "^4.73.4",
-    "react-test-renderer": "^15.5.4",
     "react-tooltip": "^3.1.6",
     "react-virtualized-select": "^3.0.1",
     "redux": "^4.0.4",
@@ -149,6 +148,6 @@
   },
   "devDependencies": {
     "enzyme": "^3.10.0",
-    "enzyme-adapter-react-16": "^1.15.1"
+    "enzyme-adapter-react-16": "^1.15.2"
   }
 }
