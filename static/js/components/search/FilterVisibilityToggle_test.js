@@ -10,6 +10,7 @@ import FilterVisibilityToggle, {
   FILTER_ID_ADJUST
 } from "./FilterVisibilityToggle"
 import { makeStrippedHtml } from "../../util/util"
+import Icon from "@material-ui/core/Icon"
 
 describe("FilterVisibilityToggle", () => {
   let searchKit
@@ -154,7 +155,7 @@ describe("FilterVisibilityToggle", () => {
       })
       props.filterName = key
       const wrapper = renderWrappedToggle(props, <div id={key}>Test Text</div>)
-      assert.equal(wrapper.find("Icon").props().className, "")
+      assert.equal(wrapper.find(Icon).text(), "arrow_drop_down")
       sandbox.restore()
     }
   })
@@ -170,7 +171,7 @@ describe("FilterVisibilityToggle", () => {
     const key = "a.b.c.d.e.f"
     props.filterName = key
     const wrapper = renderWrappedToggle(props, <div id={key}>Test Text</div>)
-    assert.equal(wrapper.find("Icon").length, 1)
+    assert.equal(wrapper.find(Icon).length, 1)
   })
 
   it("hides toggle icon when the filter name doesn't match anything in ES results", () => {

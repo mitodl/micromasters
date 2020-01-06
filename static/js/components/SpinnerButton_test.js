@@ -6,6 +6,7 @@ import sinon from "sinon"
 import Button from "@material-ui/core/Button"
 
 import SpinnerButton from "./SpinnerButton"
+import CircularProgress from "@material-ui/core/CircularProgress"
 
 describe("SpinnerButton", () => {
   let sandbox
@@ -59,7 +60,7 @@ describe("SpinnerButton", () => {
     wrapper.setState({
       recentlyClicked: true
     })
-    const button = wrapper.find("Button")
+    const button = wrapper.find(Button)
     const buttonProps = button.props()
     for (const key of Object.keys(props)) {
       assert.deepEqual(buttonProps[key], props[key])
@@ -69,7 +70,7 @@ describe("SpinnerButton", () => {
     assert.equal(buttonProps.className, "class1 class2 disabled-with-spinner")
     assert.equal(buttonProps["data-x"], "y")
     assert.isTrue(buttonProps.disabled)
-    assert.equal(button.children().text(), "<Spinner />")
+    assert.equal(button.children().find(CircularProgress).length, 1)
   })
 
   it("shows the spinner is spinning is true, recentlyClicked is false, but ignoreRecentlyClicked is true", () => {
@@ -85,8 +86,8 @@ describe("SpinnerButton", () => {
     wrapper.setState({
       recentlyClicked: false
     })
-    const button = wrapper.find("Button")
-    assert.equal(button.children().text(), "<Spinner />")
+    const button = wrapper.find(Button)
+    assert.equal(button.children().find(CircularProgress).length, 1)
   })
 
   it("does not show the spinner when it's disabled", () => {
