@@ -28,7 +28,7 @@ export default class CustomPaginationDisplay extends React.Component {
           data-key="previous"
           onClick={this.onClick.bind(null, toggleItem)}
         >
-          <Icon name="navigate_before" data-key="previous" />
+          <Icon data-key="previous">navigate_before</Icon>
         </div>
       )
       optionsNext = (
@@ -38,7 +38,7 @@ export default class CustomPaginationDisplay extends React.Component {
           data-key="next"
           onClick={this.onClick.bind(null, toggleItem)}
         >
-          <Icon name="navigate_next" data-key="next" />
+          <Icon data-key="next">navigate_next</Icon>
         </div>
       )
     }

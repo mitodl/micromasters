@@ -24,8 +24,8 @@ describe("CustomPaginationDisplay", () => {
 
     assert.isAbove(previousOption.length, 0)
     assert.isAbove(nextOption.length, 0)
-    assert.equal(previousOption.first().text(), "<Icon />")
-    assert.equal(nextOption.first().text(), "<Icon />")
+    assert.equal(previousOption.first().text(), "navigate_before")
+    assert.equal(nextOption.first().text(), "navigate_next")
   })
 
   it("toggleItem called on previous option click", () => {
