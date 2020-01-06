@@ -258,7 +258,7 @@ describe("ErrorMessage", () => {
           learnerPageActions
         ).then(([, div]) => {
           const editButton = div
-            .querySelector(".mdl-card")
+            .querySelector(".card")
             .querySelector(".mdl-button--icon")
           listenForActions(
             [

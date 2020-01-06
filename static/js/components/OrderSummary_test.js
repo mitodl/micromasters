@@ -77,13 +77,13 @@ describe("OrderSummary", () => {
       const descriptions = wrapper.find(".description")
       assert.equal(descriptions.length, 3)
       assert.equal(
-        descriptions.children().nodes[1],
+        descriptions.children().at(1).text(),
         code ? `Discount from coupon ${code}` : "Discount from coupon"
       )
       const amounts = wrapper.find(".amount")
       assert.equal(amounts.length, 3)
       assert.equal(
-        amounts.children().nodes[1],
+        amounts.children().at(1).text(),
         `-$${COURSE_PRICES_RESPONSE[1].price}`
       )
     })
