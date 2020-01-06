@@ -146,7 +146,7 @@ describe("CourseAction", () => {
   describe("course payment", () => {
     it("says Pay for COURSE_ACTION_PAY", () => {
       const wrapper = renderCourseAction({ actionType: COURSE_ACTION_PAY })
-      assert.equal(wrapper.find(Button).props().children, "Pay Now")
+      assert.equal(wrapper.find(".pay-button").props().children, "Pay Now")
     })
   })
 
@@ -214,7 +214,7 @@ describe("CourseAction", () => {
         actionType:      COURSE_ACTION_CALCULATE_PRICE
       })
 
-      const button = wrapper.find(Button)
+      const button = wrapper.find(".pay-button")
       assert.equal(button.props().children, "Pay Now *")
     })
 
@@ -237,7 +237,7 @@ describe("CourseAction", () => {
         actionType:      COURSE_ACTION_PAY
       })
 
-      const button = wrapper.find(Button)
+      const button = wrapper.find(".pay-button")
       assert.isTrue(button.props().disabled)
       assert.equal(button.props().children, "Pay Now *")
     })
