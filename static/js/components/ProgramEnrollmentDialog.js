@@ -85,12 +85,11 @@ export default class ProgramEnrollmentDialog extends React.Component {
           Enroll in a new MicroMasters Program
         </DialogTitle>
         <DialogContent>
-          <FormControl className="select-program">
+          <FormControl error={error} className="select-program">
             <InputLabel>Select Program</InputLabel>
             <Select
               value={selectedProgram || ""}
               onChange={this.handleSelectedProgramChange}
-              error={error}
               style={{
                 width: "500px"
               }}
