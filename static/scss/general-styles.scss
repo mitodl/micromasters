@@ -75,3 +75,7 @@ blockquote {
 blockquote:before, blockquote:after {
   content: none;
 }
+
+p.error-helper-text {
+  font-size: 12px;
+}
