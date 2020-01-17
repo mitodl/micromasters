@@ -68,7 +68,7 @@ describe("CustomResetFiltersDisplay", () => {
       hasFilters: false
     })
 
-    assert.lengthOf(wrapper.children(), 0)
+    assert.lengthOf(wrapper.children().children(), 0)
   })
 
   it("do not render when there is only program filter selected", () => {
@@ -78,6 +78,6 @@ describe("CustomResetFiltersDisplay", () => {
       }
     })
     const wrapper = renderFilters()
-    assert.lengthOf(wrapper.children(), 0)
+    assert.lengthOf(wrapper.children().children(), 0)
   })
 })
