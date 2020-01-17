@@ -58,9 +58,9 @@ describe("CustomSortingSelect", () => {
           selectedItems: [key]
         })
         const lookup = {
-          Name:            wrapper.find(".name"),
-          Residence:       wrapper.find(".residence"),
-          "Program grade": wrapper.find(".grade")
+          Name:            wrapper.find("ForwardRef(Grid).name"),
+          Residence:       wrapper.find("ForwardRef(Grid).residence"),
+          "Program grade": wrapper.find("ForwardRef(Grid).grade")
         }
         assert.equal(lookup[description].text(), `${description} ${arrow}`)
 
@@ -81,7 +81,7 @@ describe("CustomSortingSelect", () => {
 
   it("chooses the first sorting key when the column is clicked", () => {
     const wrapper = renderSelect()
-    wrapper.find(".name").simulate("click")
+    wrapper.find("ForwardRef(Grid).name").simulate("click")
     assert.isTrue(setItemsStub.calledWith(["name_a_z"]))
   })
 
@@ -89,7 +89,7 @@ describe("CustomSortingSelect", () => {
     const wrapper = renderSelect({
       selectedItems: ["name_a_z"]
     })
-    wrapper.find(".name").simulate("click")
+    wrapper.find("ForwardRef(Grid).name").simulate("click")
     assert.isTrue(setItemsStub.calledWith(["name_z_a"]))
   })
 })
