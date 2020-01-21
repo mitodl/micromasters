@@ -23,6 +23,7 @@ import type { UIState } from "../reducers/ui"
 import type { Option } from "../flow/generalTypes"
 import RadioGroup from "@material-ui/core/RadioGroup"
 import FormControl from "@material-ui/core/FormControl"
+import FormHelperText from "@material-ui/core/FormHelperText"
 import FormLabel from "@material-ui/core/FormLabel"
 import { sendFormFieldEvent } from "../lib/google_analytics"
 
@@ -102,7 +103,7 @@ export default class PersonalForm extends ProfileFormFields {
 
     return (
       <FormControl error={error}>
-        <FormLabel>{label}</FormLabel>
+        <FormLabel classes={{root: "form-label"}}>{label}</FormLabel>
         <RadioGroup
           className={`profile-radio-group ${validationErrorSelector(errors, keySet)}`}
           name="gender"
@@ -111,6 +112,7 @@ export default class PersonalForm extends ProfileFormFields {
         >
           {radioButtons(options)}
         </RadioGroup>
+        <FormHelperText error>{_.get(errors, keySet)}</FormHelperText>
       </FormControl>
     )
   }

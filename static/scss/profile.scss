@@ -99,12 +99,9 @@
       width: auto !important;
     }
 
-    .profile-radio-button {
-      margin-bottom: 8px;
-
-      .radio-label {
-        margin-bottom: 0;
-      }
+    .radio-label {
+      margin-bottom: 0;
+      font-size: 14px;
     }
 
     svg:last-child {
@@ -280,6 +277,10 @@
     label {
       width: unset !important;
     }
+  }
+
+  p {
+    font-size: 12px;
   }
 }
 

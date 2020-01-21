@@ -27,11 +27,11 @@ export default class LearnersInProgramCard extends React.Component {
     }
 
     return (
-      <Card className="learners-card" shadow={0}>
+      <Card className="learners-card card" shadow={0}>
         <CardContent>
-          <h4 className="learners-title">
+          <h2 className="learners-title">
             Learners in this Program
-          </h4>
+          </h2>
           <div className="learners-wrapper">
           {renderLearners(programLearners.learners)}
           </div>

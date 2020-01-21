@@ -156,6 +156,7 @@ export default class DateField extends React.Component {
         <TextField
           placeholder="DD"
           helperText="Day"
+          classes={{root: "date-field"}}
           style={{
             maxWidth: "3em"
           }}
@@ -167,10 +168,11 @@ export default class DateField extends React.Component {
     }
     return (
       <fieldset className={validationErrorSelector(errors, keySet)}>
-        <legend>{label}</legend>{" "}
+        <legend className="date-field-legend">{label}</legend>{" "}
         <TextField
           placeholder="MM"
           helperText="Month"
+          classes={{root: "date-field"}}
           style={{
             maxWidth: "3em"
           }}
@@ -184,6 +186,7 @@ export default class DateField extends React.Component {
         <TextField
           placeholder="YYYY"
           helperText="Year"
+          classes={{root: "date-field"}}
           style={{
             maxWidth: "4em"
           }}
