@@ -108,7 +108,6 @@ const CouponNotificationDialog = ({
 
   const okButton = (
     <Button
-      type="ok"
       key="ok"
       className="primary-button ok-button"
       onClick={() => setDialogVisibility(false)}
