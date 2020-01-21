@@ -24,14 +24,13 @@ export default class SpinnerButton extends React.Component {
     }
   }
 
-  static getDerivedStateFromProps(nextProps: SpinnerButtonProps, prevState) {
-    if (!nextProps.spinning && prevState.spinning) {
+  UNSAFE_componentWillReceiveProps(nextProps: SpinnerButtonProps) {  // eslint-disable-line
+    if (!nextProps.spinning && this.props.spinning) {
       // spinning has finished, so reset the state
-      return {
+      this.setState({
         recentlyClicked: false
-      }
+      })
     }
-    return null
   }
 
   isDisabled = () => this.props.disabled || this.props.spinning || undefined
