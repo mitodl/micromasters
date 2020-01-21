@@ -58,6 +58,7 @@ if [[ $(
     grep -v "process.on(SIGPROF) is reserved while debugging" |
     grep -v "ReactGA.initialize" |
     grep -v "Warning: CreatableSelect" |
+    grep -v 'CreatableSelect: `ref` is not a prop.' |
     wc -l |
     awk '{print $1}'
     ) -ne 0 ]]  # is file empty?
