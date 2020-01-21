@@ -95,7 +95,6 @@ const ProfileImageUploader = ({
         root:  "photo-upload-dialog-wrapper"
       }}
       onClose={() => setDialogVisibility(false)}
-      contentStyle={{ maxWidth: "620px" }}
       open={photoDialogOpen}
     >
       <DialogTitle className="dialog-title">Upload a Profile Photo</DialogTitle>
