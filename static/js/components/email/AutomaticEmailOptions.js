@@ -4,6 +4,12 @@ import Radio from "@material-ui/core/Radio"
 import RadioGroup from "@material-ui/core/RadioGroup"
 import FormControlLabel from "@material-ui/core/FormControlLabel"
 import FormControl from "@material-ui/core/FormControl"
+import PropTypes from "prop-types"
+
+// Fix value prop type. This is a string but the docs say any type can be passed in
+// and the value will be cast to a string at the DOM layer.
+// https://material-ui.com/api/radio-group/
+RadioGroup.propTypes.value = PropTypes.any
 
 export default class AutomaticEmailOptions extends React.Component {
   props: {
