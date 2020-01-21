@@ -157,7 +157,6 @@ describe("ProfileImage", () => {
         helper.store.dispatch(showDialog(PROFILE_IMAGE_DIALOG))
         helper.store.dispatch(requestPatchUserPhoto(SETTINGS.user.username))
         const dialog = document.querySelector(".photo-upload-dialog")
-        console.log(dialog.innerHTML)
         assert.isNotNull(dialog.querySelector(".MuiCircularProgress-root"))
       })
 
