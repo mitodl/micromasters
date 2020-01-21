@@ -10,6 +10,8 @@ import CountrySelectField from "./inputs/CountrySelectField"
 import StateSelectField from "./inputs/StateSelectField"
 import ProfileFormFields from "../util/ProfileFormFields"
 import { radioButtons, shouldRenderRomanizedFields } from "../util/profile_edit"
+import { validationErrorSelector } from "../util/util"
+
 import type {
   Profile,
   SaveProfileFunc,
@@ -97,11 +99,12 @@ export default class PersonalForm extends ProfileFormFields {
 
     const value = String(_.get(profile, keySet))
     const error = _.get(errors, keySet) !== undefined
+
     return (
       <FormControl error={error}>
         <FormLabel>{label}</FormLabel>
         <RadioGroup
-          className="profile-radio-group"
+          className={`profile-radio-group ${validationErrorSelector(errors, keySet)}`}
           name="gender"
           onChange={onChange}
           value={value}
