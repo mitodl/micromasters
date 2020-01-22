@@ -4,7 +4,6 @@ import { shallow } from "enzyme"
 import moment from "moment-timezone"
 import { assert } from "chai"
 import sinon from "sinon"
-import Button from "@material-ui/core/Button"
 
 import SpinnerButton from "../SpinnerButton"
 import CourseAction from "./CourseAction"

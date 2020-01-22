@@ -1,5 +1,4 @@
 /* global SETTINGS: false */
-import React from "react"
 import ReactTestUtils from "react-dom/test-utils"
 import { assert } from "chai"
 import _ from "lodash"
@@ -70,7 +69,6 @@ import Grades, {
   gradeDetailPopupKey
 } from "../components/dashboard/courses/Grades"
 import { EDX_GRADE } from "./DashboardPage"
-import Card from "@material-ui/core/Card"
 
 describe("LearnerPage", function() {
   this.timeout(10000)

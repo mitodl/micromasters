@@ -21,6 +21,7 @@ export default class CustomSearchBox extends SearchBox {
             value={this.getValue()}
             onFocus={this.setFocusState.bind(this, true)}
             onBlur={this.setFocusState.bind(this, false)}
+            // eslint-disable-next-line
             ref="queryField"
             autoFocus={this.props.autofocus}
             // This line changed to specify onChange instead of onInput to fix console warning.

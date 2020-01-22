@@ -4,7 +4,6 @@ import { assert } from "chai"
 import _ from "lodash"
 import { shallow } from "enzyme"
 import MenuItem from "@material-ui/core/MenuItem"
-import Dialog from "@material-ui/core/Dialog"
 import Select from "@material-ui/core/Select"
 
 import { FETCH_PROCESSING } from "../actions"
@@ -14,7 +13,6 @@ import * as uiActions from "../actions/ui"
 import { DASHBOARD_RESPONSE, PROGRAMS } from "../test_constants"
 import ProgramEnrollmentDialog from "./ProgramEnrollmentDialog"
 import IntegrationTestHelper from "../util/integration_test_helper"
-import DialogActions from "@material-ui/core/DialogActions"
 
 describe("ProgramEnrollmentDialog", () => {
   let helper

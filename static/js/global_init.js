@@ -3,7 +3,6 @@ import React from "react"
 import ReactDOM from "react-dom"
 import { configure } from "enzyme"
 import Adapter from "enzyme-adapter-react-16"
-import sinon from "sinon"
 import * as ReactTransitionGroup from "react-transition-group"
 
 configure({ adapter: new Adapter() })

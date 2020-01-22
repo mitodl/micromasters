@@ -1,7 +1,6 @@
 import React from "react"
 import { shallow } from "enzyme"
 import { assert } from "chai"
-import Button from "@material-ui/core/Button"
 
 import ProgressWidget from "./ProgressWidget"
 import { STATUS_NOT_PASSED, STATUS_PASSED } from "../constants"
