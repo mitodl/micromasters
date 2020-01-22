@@ -20,12 +20,6 @@ import FormControlLabel from "@material-ui/core/FormControlLabel"
 // this expects that the `updateProfile` and `profile` props are passed
 // in to whatever component it is used in.
 
-/**
- * bind this to this.boundRadioGroupField in the constructor of a form component
- * to update radio buttons.
- * pass in the name (used as placeholder), key for profile, and the options.
- */
-
 const radioButtonLabelSelector = label => `radio-label-${classify(label)}`
 
 const radioButtonLabel = label => (

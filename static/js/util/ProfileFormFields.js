@@ -23,7 +23,6 @@ export default class ProfileFormFields extends React.Component {
   // type declarations
   boundTextField: Function
   boundDateField: Function
-  boundRadioGroupField: Function
   boundCheckbox: Function
   boundTelephoneInput: Function
 

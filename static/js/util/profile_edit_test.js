@@ -5,11 +5,11 @@ import { shallow } from "enzyme"
 import moment from "moment"
 import R from "ramda"
 import ga from "react-ga"
+import { TextField } from "@material-ui/core"
 
 import {
   boundTextField,
   boundDateField,
-  boundRadioGroupField,
   boundTelephoneInput,
   saveProfileStep,
   shouldRenderRomanizedFields
@@ -54,75 +54,6 @@ describe("Profile Editing utility functions", () => {
     sandbox.restore()
   })
 
-  describe("Bound radio group", () => {
-    let radioGroup, labelSpan, errorSpan
-    const privacyOptions = [
-      {
-        value:  "public",
-        label:  "Public to the world",
-        helper: `We will publish your Micromasters
-        profile on our website.`
-      },
-      {
-        value:  "public_to_mm",
-        label:  "Public to other micromasters students",
-        helper: `Your Micromasters profile
-        will only be viewable by other learners in your program, and by MIT faculity and staff.`
-      },
-      {
-        value:  "private",
-        label:  "Private",
-        helper: `Your Micromasters profile will be viewable only by
-        MIT faculty and staff.`
-      }
-    ]
-
-    const rerender = () => {
-      const component = boundRadioGroupField.call(
-        that,
-        ["account_privacy"],
-        "Privacy level",
-        privacyOptions
-      )
-      ;[labelSpan, radioGroup, errorSpan] = component.props.children
-    }
-
-    beforeEach(() => {
-      rerender()
-    })
-
-    it("should correctly set props on itself", () => {
-      assert.equal("Privacy level", radioGroup.props.name)
-      assert.equal("Privacy level", labelSpan.props.children)
-      assert.equal("private", radioGroup.props.valueSelected)
-      assert.equal("Account privacy is required", errorSpan.props.children)
-    })
-
-    it("should render when there is no set value", () => {
-      that.props.account_privacy = undefined
-      rerender()
-      assert.deepEqual("private", radioGroup.props.valueSelected)
-    })
-
-    it("should call the updateProfile callback when onChange fires", () => {
-      radioGroup.props.onChange({ target: { value: "public_to_mm" } })
-      rerender()
-      assert.deepEqual("public_to_mm", that.props.profile.account_privacy)
-      assert.deepEqual("public_to_mm", radioGroup.props.valueSelected)
-    })
-
-    it("should send a form field event to Google Analytics when onChange fires", () => {
-      radioGroup.props.onChange({ target: { value: "public_to_mm" } })
-      assert(
-        gaEvent.calledWith({
-          category: "profile-form-field",
-          action:   "completed-account_privacy",
-          label:    "jane"
-        })
-      )
-    })
-  })
-
   describe("Bound Text field", () => {
     let textField
     beforeEach(() => {
@@ -130,8 +61,7 @@ describe("Profile Editing utility functions", () => {
     })
 
     it("should correctly set props on itself", () => {
-      assert.deepEqual("First Name", textField.props.floatingLabelText)
-      assert.deepEqual("First name is required", textField.props.errorText)
+      assert.deepEqual("First Name", textField.props.name)
       assert.deepEqual("", textField.props.value)
     })
 
@@ -178,8 +108,8 @@ describe("Profile Editing utility functions", () => {
 
     const _getInputProps = R.curry((idText, wrapper) => {
       return wrapper
-        .find("TextField")
-        .filterWhere(node => node.props().floatingLabelText === idText)
+        .find(TextField)
+        .filterWhere(node => node.prop("helperText") === idText)
         .props()
     })
 
@@ -200,15 +130,14 @@ describe("Profile Editing utility functions", () => {
         const dayProps = getDayProps(wrapper)
         const yearProps = getYearProps(wrapper)
 
-        assert.equal(monthProps.floatingLabelText, "Month")
-        assert.equal(monthProps.hintText, "MM")
+        assert.equal(monthProps.helperText, "Month")
+        assert.equal(monthProps.placeholder, "MM")
         assert.equal(monthProps.value, "")
-        assert.equal(monthProps.errorText, "Date of birth is required")
-        assert.equal(dayProps.floatingLabelText, "Day")
-        assert.equal(dayProps.hintText, "DD")
+        assert.equal(dayProps.helperText, "Day")
+        assert.equal(dayProps.placeholder, "DD")
         assert.equal(dayProps.value, "")
-        assert.equal(yearProps.floatingLabelText, "Year")
-        assert.equal(yearProps.hintText, "YYYY")
+        assert.equal(yearProps.helperText, "Year")
+        assert.equal(yearProps.placeholder, "YYYY")
         assert.equal(yearProps.value, "")
       }
     })
@@ -220,15 +149,14 @@ describe("Profile Editing utility functions", () => {
       const dayProps = getDayProps(wrapper)
       const yearProps = getYearProps(wrapper)
 
-      assert.equal(monthProps.floatingLabelText, "Month")
-      assert.equal(monthProps.hintText, "MM")
+      assert.equal(monthProps.helperText, "Month")
+      assert.equal(monthProps.placeholder, "MM")
       assert.equal(monthProps.value, 12)
-      assert.equal(monthProps.errorText, "Date of birth is required")
-      assert.equal(dayProps.floatingLabelText, "Day")
-      assert.equal(dayProps.hintText, "DD")
+      assert.equal(dayProps.helperText, "Day")
+      assert.equal(dayProps.placeholder, "DD")
       assert.equal(dayProps.value, 31)
-      assert.equal(yearProps.floatingLabelText, "Year")
-      assert.equal(yearProps.hintText, "YYYY")
+      assert.equal(yearProps.helperText, "Year")
+      assert.equal(yearProps.placeholder, "YYYY")
       assert.equal(yearProps.value, 1985)
     })
 
@@ -238,12 +166,11 @@ describe("Profile Editing utility functions", () => {
       const monthProps = getMonthProps(wrapper)
       const yearProps = getYearProps(wrapper)
 
-      assert.equal(monthProps.floatingLabelText, "Month")
-      assert.equal(monthProps.hintText, "MM")
+      assert.equal(monthProps.helperText, "Month")
+      assert.equal(monthProps.placeholder, "MM")
       assert.equal(monthProps.value, 12)
-      assert.equal(monthProps.errorText, "Date of birth is required")
-      assert.equal(yearProps.floatingLabelText, "Year")
-      assert.equal(yearProps.hintText, "YYYY")
+      assert.equal(yearProps.helperText, "Year")
+      assert.equal(yearProps.placeholder, "YYYY")
       assert.equal(yearProps.value, 1985)
     })
 
