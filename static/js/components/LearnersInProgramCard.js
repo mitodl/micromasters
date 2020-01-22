@@ -29,11 +29,9 @@ export default class LearnersInProgramCard extends React.Component {
     return (
       <Card className="learners-card card" shadow={0}>
         <CardContent>
-          <h2 className="learners-title">
-            Learners in this Program
-          </h2>
+          <h2 className="learners-title">Learners in this Program</h2>
           <div className="learners-wrapper">
-          {renderLearners(programLearners.learners)}
+            {renderLearners(programLearners.learners)}
           </div>
           <a href="/learners/">
             <span>View All ({programLearners.learners_count})</span>

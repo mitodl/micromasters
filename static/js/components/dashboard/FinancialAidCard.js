@@ -22,7 +22,7 @@ import {
   FA_STATUS_DOCS_SENT,
   FA_STATUS_SKIPPED,
   DASHBOARD_FORMAT,
-  ISO_8601_FORMAT,
+  ISO_8601_FORMAT
 } from "../../constants"
 import SkipFinancialAidDialog from "../SkipFinancialAidDialog"
 import type { UIState } from "../../reducers/ui"
@@ -79,9 +79,9 @@ export default class FinancialAidCard extends React.Component {
       return (
         <div className="documents-sent">
           <Icon key="icon">done</Icon>
-          Documents mailed/uploaded on {``}
+            Documents mailed/uploaded on {``}
           {moment(dateDocumentsSent).format(DASHBOARD_FORMAT)}. We will review
-          your documents as soon as possible.
+            your documents as soon as possible.
         </div>
       )
     case FA_STATUS_PENDING_DOCS:
@@ -220,8 +220,12 @@ export default class FinancialAidCard extends React.Component {
           </Grid>
 
           <Grid container spacing={2} className="grid-padding">
-            <Grid item xs={6}>Upload to DocuSign</Grid>
-            <Grid item xs={6}>Mail to</Grid>
+            <Grid item xs={6}>
+                Upload to DocuSign
+            </Grid>
+            <Grid item xs={6}>
+                Mail to
+            </Grid>
           </Grid>
 
           <Grid container spacing={2}>

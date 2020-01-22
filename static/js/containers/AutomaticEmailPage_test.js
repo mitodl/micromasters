@@ -84,7 +84,10 @@ describe("AutomaticEmailPage", () => {
   it("shows the automatic emails for the logged-in user", () => {
     return renderComponent("/automaticemails", successActions).then(
       ([wrapper]) => {
-        const cardText = wrapper.find(".email-campaigns-card").hostNodes().text()
+        const cardText = wrapper
+          .find(".email-campaigns-card")
+          .hostNodes()
+          .text()
         GET_AUTOMATIC_EMAILS_RESPONSE.forEach(email => {
           assert.include(cardText, email.email_subject)
         })

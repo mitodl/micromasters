@@ -103,9 +103,12 @@ export default class PersonalForm extends ProfileFormFields {
 
     return (
       <FormControl error={error}>
-        <FormLabel classes={{root: "form-label"}}>{label}</FormLabel>
+        <FormLabel classes={{ root: "form-label" }}>{label}</FormLabel>
         <RadioGroup
-          className={`profile-radio-group ${validationErrorSelector(errors, keySet)}`}
+          className={`profile-radio-group ${validationErrorSelector(
+            errors,
+            keySet
+          )}`}
           name="gender"
           onChange={onChange}
           value={value}

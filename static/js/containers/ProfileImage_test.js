@@ -170,7 +170,9 @@ describe("ProfileImage", () => {
         const dialog = document.querySelector(".photo-upload-dialog")
         const saveButton = dialog.querySelector(".save-button")
         assert.isTrue(saveButton.disabled)
-        assert.isFalse(saveButton.innerHTML.includes("MuiCircularProgress-root"))
+        assert.isFalse(
+          saveButton.innerHTML.includes("MuiCircularProgress-root")
+        )
         ReactTestUtils.Simulate.click(saveButton)
         assert.isFalse(updateProfileImageStub.called)
       })

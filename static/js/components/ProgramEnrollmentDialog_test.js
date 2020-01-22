@@ -105,7 +105,7 @@ describe("ProgramEnrollmentDialog", () => {
     wrapper
       .find(Select)
       .props()
-      .onChange({target: {value: enrollment}})
+      .onChange({ target: { value: enrollment } })
     assert(stub.calledWith(enrollment))
   })
 

@@ -91,7 +91,9 @@ export default class FilterVisibilityToggle extends SearchkitComponent {
         <IconButton
           onClick={this.toggleFilterVisibility}
           className={this.openClass()}
-        ><Icon>arrow_drop_down</Icon></IconButton>
+        >
+          <Icon>arrow_drop_down</Icon>
+        </IconButton>
         <div className="sk-hierarchical-refinement-list__header">{title}</div>
       </div>
     )

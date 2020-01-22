@@ -159,7 +159,7 @@ describe("FinancialAidCard", () => {
       it(`don't show card if status is ${status}`, () => {
         const program = programWithStatus(status)
         const wrapper = renderCard({ program })
-        assert.equal(wrapper.html(), '')
+        assert.equal(wrapper.html(), "")
       })
 
       it(`don't show no-calls message if status is ${status}`, () => {
@@ -202,7 +202,10 @@ describe("FinancialAidCard", () => {
         const setDocumentSentDate = sandbox.stub()
         const wrapper = renderCard({ program, setDocumentSentDate })
         const props = wrapper.find(DatePicker).props()
-        assert.equal(moment(props.selected).format(ISO_8601_FORMAT), "2011-11-11")
+        assert.equal(
+          moment(props.selected).format(ISO_8601_FORMAT),
+          "2011-11-11"
+        )
         props.onChange(moment("1999-01-01"))
         sinon.assert.calledWith(setDocumentSentDate, "1999-01-01")
       })
@@ -242,7 +245,10 @@ describe("FinancialAidCard", () => {
         const updateDocumentSentDate = sandbox.stub()
         updateDocumentSentDate.returns(Promise.resolve())
         const wrapper = renderCard({ program, updateDocumentSentDate })
-        wrapper.find(".document-sent-button").hostNodes().simulate("click")
+        wrapper
+          .find(".document-sent-button")
+          .hostNodes()
+          .simulate("click")
         sinon.assert.calledWith(updateDocumentSentDate, 123, "2011-11-11")
       })
 

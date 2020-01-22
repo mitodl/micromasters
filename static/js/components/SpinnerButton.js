@@ -24,7 +24,8 @@ export default class SpinnerButton extends React.Component {
     }
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps: SpinnerButtonProps) {  // eslint-disable-line
+  UNSAFE_componentWillReceiveProps(nextProps: SpinnerButtonProps) {
+    // eslint-disable-line
     if (!nextProps.spinning && this.props.spinning) {
       // spinning has finished, so reset the state
       this.setState({

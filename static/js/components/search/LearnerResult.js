@@ -49,7 +49,7 @@ export default class LearnerResult extends SearchkitComponent {
           <span>{getLocation(profile)}</span>
         </Grid>
         {showGrade ? (
-          <Grid itemxs ={3} className="learner-grade">
+          <Grid itemxs={3} className="learner-grade">
             <span className="percent">
               {LearnerResult.hasGrade(program)
                 ? `${program.grade_average}%`

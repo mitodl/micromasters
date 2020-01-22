@@ -687,19 +687,21 @@ class DashboardPage extends React.Component {
         : "verified learners"
     return (
       <Dialog
-        classes={{ paper: "dialog", root: "course-payment-dialog-wrapper"}}
+        classes={{ paper: "dialog", root: "course-payment-dialog-wrapper" }}
         open={ui.paymentTeaserDialogVisibility}
         onClose={this.closePaymentTeaserDialog}
       >
-        <DialogTitle className="dialog-title">Contact the Course Team</DialogTitle>
+        <DialogTitle className="dialog-title">
+          Contact the Course Team
+        </DialogTitle>
         <DialogContent>
-        <div className="inner-content">
-          <img
-            src="/static/images/contact_course_team_icon.png"
-            alt="Instructor icon"
-          />
-          <p>{`This is a premium feature for ${messageTail}.`}</p>
-        </div>
+          <div className="inner-content">
+            <img
+              src="/static/images/contact_course_team_icon.png"
+              alt="Instructor icon"
+            />
+            <p>{`This is a premium feature for ${messageTail}.`}</p>
+          </div>
         </DialogContent>
         <DialogActions>
           {singleBtnDialogActions(this.closePaymentTeaserDialog)}

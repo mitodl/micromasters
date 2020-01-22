@@ -64,7 +64,7 @@ pay for the course and pass the online work.`
 
   it("should not render when pearson_exam_status is empty", () => {
     const card = renderCard(props)
-    assert.equal(card.html(), '')
+    assert.equal(card.html(), "")
   })
 
   it("should just show a basic message if the profile is absent", () => {

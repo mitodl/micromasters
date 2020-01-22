@@ -98,7 +98,9 @@ export default class ProgramEnrollmentDialog extends React.Component {
             >
               {options}
             </Select>
-            <FormHelperText error className="error-helper-text">{error}</FormHelperText>
+            <FormHelperText error className="error-helper-text">
+              {error}
+            </FormHelperText>
           </FormControl>
         </DialogContent>
         <DialogActions>{actions}</DialogActions>

@@ -82,14 +82,16 @@ class CustomSortingColumnHeaders extends React.Component {
     return (
       <Grid container className="sorting-row">
         <Grid item xs={1} />
-        <Grid item
+        <Grid
+          item
           xs={4}
           onClick={this.toggleNameSort}
           className={`name ${this.selectedClass(nameKeys)}`}
         >
           Name {this.sortDirection(nameKeys)}
         </Grid>
-        <Grid item
+        <Grid
+          item
           xs={showGrade ? 4 : 7}
           onClick={this.toggleLocationSort}
           className={`residence ${this.selectedClass(locationKeys)}`}
@@ -97,7 +99,8 @@ class CustomSortingColumnHeaders extends React.Component {
           Residence {this.sortDirection(locationKeys)}
         </Grid>
         {showGrade ? (
-          <Grid item
+          <Grid
+            item
             xs={3}
             onClick={this.toggleGradeSort}
             className={`grade ${this.selectedClass(gradeKeys)}`}

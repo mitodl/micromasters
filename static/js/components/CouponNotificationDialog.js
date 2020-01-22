@@ -118,18 +118,19 @@ const CouponNotificationDialog = ({
 
   return (
     <Dialog
-      classes={{paper: "dialog coupon-notification-dialog", root: "coupon-notification-dialog-wrapper"}}
+      classes={{
+        paper: "dialog coupon-notification-dialog",
+        root:  "coupon-notification-dialog-wrapper"
+      }}
       open={open}
       onClose={() => setDialogVisibility(false)}
     >
       <DialogTitle className="dialog-title">{title}</DialogTitle>
       <DialogContent>
-      {message}
-      {discountAppliedMessage}
+        {message}
+        {discountAppliedMessage}
       </DialogContent>
-      <DialogActions>
-        {okButton}
-      </DialogActions>
+      <DialogActions>{okButton}</DialogActions>
     </Dialog>
   )
 }

@@ -267,7 +267,10 @@ describe("ProfilePage", function() {
               SET_TOAST_MESSAGE
             ],
             () => {
-              wrapper.find(".next").hostNodes().simulate("click")
+              wrapper
+                .find(".next")
+                .hostNodes()
+                .simulate("click")
             }
           )
           .then(() => {

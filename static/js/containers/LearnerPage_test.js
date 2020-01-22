@@ -202,7 +202,6 @@ describe("LearnerPage", function() {
               if (_.isFunction(removeErrorValue)) {
                 getInput(getDialog())
               } else {
-
                 input = getInput(getDialog())
                 modifyTextField(input, "")
               }
@@ -1037,7 +1036,9 @@ describe("LearnerPage", function() {
 
         return renderComponent(`/learner/${username}`, userActions).then(
           ([,]) => {
-            const personalButton = document.querySelector(".edit-personal-info-button")
+            const personalButton = document.querySelector(
+              ".edit-personal-info-button"
+            )
 
             return listenForActions(
               [SET_LEARNER_PAGE_DIALOG_VISIBILITY, START_PROFILE_EDIT],

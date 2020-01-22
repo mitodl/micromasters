@@ -7,7 +7,6 @@ import Switch from "@material-ui/core/Switch"
 import R from "ramda"
 import CircularProgress from "@material-ui/core/CircularProgress"
 
-
 import type { AutomaticEmail } from "../flow/emailTypes"
 import type { Either } from "../flow/sanctuaryTypes"
 import { S } from "../lib/sanctuary"

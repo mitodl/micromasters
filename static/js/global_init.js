@@ -1,8 +1,8 @@
 // Define globals we would usually get from Django
 import React from "react"
 import ReactDOM from "react-dom"
-import { configure } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
+import { configure } from "enzyme"
+import Adapter from "enzyme-adapter-react-16"
 import sinon from "sinon"
 import * as ReactTransitionGroup from "react-transition-group"
 
@@ -48,11 +48,8 @@ import fetchMock from "fetch-mock"
 // Mock react-transition-group which is used by material-ui. It causes test failures due to a callback timed to
 // occur after the test has already cleaned up the DOM elements.
 const FakeTransition = ({ children }) => children()
-const FakeCSSTransition = props => (
-  props.in ? (
-    <FakeTransition>{props.children}</FakeTransition>
-  ) : null
-)
+const FakeCSSTransition = props =>
+  props.in ? <FakeTransition>{props.children}</FakeTransition> : null
 // adapted from https://testing-library.com/docs/example-react-transition-group
 ReactTransitionGroup.Transition = FakeTransition
 ReactTransitionGroup.CSSTransition = FakeCSSTransition

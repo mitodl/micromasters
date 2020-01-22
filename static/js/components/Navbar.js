@@ -213,10 +213,7 @@ export default class Navbar extends React.Component {
   ): React$Element<*> | null =>
     SETTINGS.user ? (
       <div className="mobile-visible">
-        <Icon
-          className="menu-icon"
-          onClick={() => setNavDrawerOpen(true)}
-        >
+        <Icon className="menu-icon" onClick={() => setNavDrawerOpen(true)}>
           menu
         </Icon>
       </div>

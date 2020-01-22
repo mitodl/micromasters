@@ -231,7 +231,10 @@ describe("DashboardPage", () => {
 
     return renderComponent("/dashboard", actionsNoFrontpage).then(
       ([wrapper]) => {
-        const text = wrapper.find(".no-program-card").hostNodes().text()
+        const text = wrapper
+          .find(".no-program-card")
+          .hostNodes()
+          .text()
         assert.equal(
           text,
           "You are not currently enrolled in any programsEnroll in a MicroMasters Program"
@@ -585,7 +588,10 @@ describe("DashboardPage", () => {
           return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(
             ([wrapper]) => {
               sinon.assert.notCalled(helper.skipFinancialAidStub)
-              assert.equal(wrapper.find(".financial-aid-card").hostNodes().length, 1)
+              assert.equal(
+                wrapper.find(".financial-aid-card").hostNodes().length,
+                1
+              )
             }
           )
         })

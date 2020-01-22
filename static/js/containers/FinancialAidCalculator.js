@@ -93,14 +93,15 @@ const checkboxUpdate = (update, current, bool) => {
 
 const checkBox = (update, current) => (
   <FormControlLabel
-    classes={{label: "testify-income-text"}}
+    classes={{ label: "testify-income-text" }}
     control={
       <Checkbox
-        classes={{root: "checkbox-income"}}
+        classes={{ root: "checkbox-income" }}
         checked={current.checkBox}
         required={true}
         onChange={() => checkboxUpdate(update, current, !current.checkBox)}
-      />}
+      />
+    }
     label={checkboxText}
   />
 )

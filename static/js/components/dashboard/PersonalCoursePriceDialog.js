@@ -40,20 +40,27 @@ export default class PersonalCoursePriceDialog extends React.Component {
     )
     return (
       <Dialog
-        classes={{paper: "dialog calculate-price-dialog", root:"calculate-dialog-wrapper"}}
+        classes={{
+          paper: "dialog calculate-price-dialog",
+          root:  "calculate-dialog-wrapper"
+        }}
         open={open}
         onClose={() => setVisibility(false)}
       >
-        <DialogTitle className="dialog-title">Calculate Personal Course Price?</DialogTitle>
+        <DialogTitle className="dialog-title">
+          Calculate Personal Course Price?
+        </DialogTitle>
         <DialogContent>
           You need to calculate your course price before you can pay for this
           course. (Payment is required to get credit for the MicroMasters
           certificate.)
         </DialogContent>
-        <DialogActions>{[
-          singleBtnDialogActions(() => setVisibility(false), "cancel"),
-          calculateButton
-        ]}</DialogActions>
+        <DialogActions>
+          {[
+            singleBtnDialogActions(() => setVisibility(false), "cancel"),
+            calculateButton
+          ]}
+        </DialogActions>
       </Dialog>
     )
   }

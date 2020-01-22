@@ -154,7 +154,10 @@ describe("GradeDetailPopup", () => {
 
   it("should show an appropriate title for the edx grades", () => {
     const wrapper = renderDetailPopup({ gradeType: EDX_GRADE })
-    assert.include(wrapper.find(DialogTitle).text(), "Completed edX Course Runs")
+    assert.include(
+      wrapper.find(DialogTitle).text(),
+      "Completed edX Course Runs"
+    )
   })
 
   it("should show an appropriate title for the exam grades", () => {
