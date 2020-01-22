@@ -137,6 +137,7 @@ describe("SettingsPage", function() {
             )
           }
 
+          wrapper.update()
           const next = wrapper.find("SpinnerButton")
           assert.equal(next.props().spinning, activity)
         })
