@@ -273,10 +273,10 @@ describe("LearnerSearchPage", function() {
     return renderSearch()
       .then(([wrapper]) => {
         wrapper
-          .find("SearchBox")
+          .find("CustomSearchBox")
           .find('input[type="text"]')
           .props()
-          .onInput({
+          .onChange({
             target: {
               value: "xyz"
             }

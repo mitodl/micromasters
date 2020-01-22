@@ -10,7 +10,6 @@ import {
   HitsStats,
   Pagination,
   ResetFilters,
-  SearchBox,
   SortingSelector,
   MultiMatchQuery
 } from "searchkit"
@@ -39,6 +38,7 @@ import CustomNoHits from "./search/CustomNoHits"
 import ModifiedSelectedFilter from "./search/ModifiedSelectedFilter"
 import FinalGradeRangeFilter from "./search/FinalGradeRangeFilter"
 import EnabledSelectionRangeFilter from "./search/EnabledSelectionRangeFilter"
+import CustomSearchBox from "./search/CustomSearchBox"
 import { findObjByName, wrapWithProps } from "../util/util"
 import type { Option } from "../flow/generalTypes"
 import type { AvailableProgram } from "../flow/enrollmentTypes"
@@ -204,7 +204,7 @@ export default class LearnerSearch extends SearchkitComponent {
           <HitsStats component={HitsCount} />
         </Grid>
         <Grid item xs={5} className="pagination-search">
-          <SearchBox
+          <CustomSearchBox
             queryBuilder={MultiMatchQuery}
             searchOnChange={true}
             queryFields={[
