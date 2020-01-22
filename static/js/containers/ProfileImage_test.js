@@ -9,7 +9,6 @@ import { Provider } from "react-redux"
 import ProfileImage, { PROFILE_IMAGE_DIALOG } from "./ProfileImage"
 import IntegrationTestHelper from "../util/integration_test_helper"
 import { showDialog } from "../actions/ui"
-import { wait } from "../util/util"
 import * as api from "../lib/api"
 import { startPhotoEdit, requestPatchUserPhoto } from "../actions/image_upload"
 
@@ -122,7 +121,7 @@ describe("ProfileImage", () => {
     })
 
     describe("save button", () => {
-      it("should show the save button when there's an image", async () => {
+      it("should show the save button when there's an image", () => {
         renderProfileImage({
           editable: true
         })
@@ -134,10 +133,6 @@ describe("ProfileImage", () => {
         assert.isNull(dialog.querySelector(".MuiCircularProgress-root"))
         ReactTestUtils.Simulate.click(saveButton)
         assert.isTrue(updateProfileImageStub.called)
-
-        // stupid hacky workaround to workaround a bug where the DOM is destroyed but a
-        // material-ui element is still using a element for a transition
-        await wait(300)
       })
 
       it("should disable the save button if no image is picked", () => {
