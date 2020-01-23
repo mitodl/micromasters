@@ -9,7 +9,10 @@ import PropTypes from "prop-types"
 // Fix value prop type. This is a string but the docs say any type can be passed in
 // and the value will be cast to a string at the DOM layer.
 // https://material-ui.com/api/radio-group/
-RadioGroup.propTypes.value = PropTypes.any
+if (RadioGroup.propTypes) {
+  // check that RadioGroup.propTypes exists. It won't exist in production
+  RadioGroup.propTypes.value = PropTypes.any
+}
 
 export default class AutomaticEmailOptions extends React.Component {
   props: {
