@@ -41,7 +41,7 @@ class SendGradesDialog extends React.Component {
       sentSuccess
     } = this.props
     const options = SETTINGS.partner_schools.map(program => (
-      <MenuItem value={program[0]} key={program[0]}>
+      <MenuItem value={program[0]} classes={{root: "menu-item"}} key={program[0]}>
         {program[1]}
       </MenuItem>
     ))
