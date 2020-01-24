@@ -10,13 +10,13 @@ import { connect } from "react-redux"
 import Dialog from "@material-ui/core/Dialog"
 import R from "ramda"
 import Select from "@material-ui/core/Select"
-import MenuItem from "@material-ui/core/MenuItem"
 import DialogTitle from "@material-ui/core/DialogTitle"
 import DialogContent from "@material-ui/core/DialogContent"
 import FormControl from "@material-ui/core/FormControl"
 import InputLabel from "@material-ui/core/InputLabel"
 import DialogContentText from "@material-ui/core/DialogContentText"
 import DialogActions from "@material-ui/core/DialogActions"
+import { getMenuItem } from "../util/util"
 
 class SendGradesDialog extends React.Component {
   props: {
@@ -40,15 +40,16 @@ class SendGradesDialog extends React.Component {
       selectedSchool,
       sentSuccess
     } = this.props
-    const options = SETTINGS.partner_schools.map(program => (
-      <MenuItem
-        value={program[0]}
-        classes={{ root: "menu-item" }}
-        key={program[0]}
-      >
-        {program[1]}
-      </MenuItem>
-    ))
+
+    const options = []
+    R.forEach(
+      school =>
+        school[1] === "MIT"
+          ? options.unshift(getMenuItem(school[0], school[1]))
+          : options.push(getMenuItem(school[0], school[1])),
+      SETTINGS.partner_schools
+    )
+
     return (
       <Dialog
         classes={{ paper: "dialog send-dialog" }}

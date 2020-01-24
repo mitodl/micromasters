@@ -26,6 +26,7 @@ import type {
 import type { Program, Course, CourseRun } from "../flow/programTypes"
 import { workEntriesByDate } from "./sorting"
 import type { CheckoutPayload } from "../flow/checkoutTypes"
+import MenuItem from "@material-ui/core/MenuItem"
 
 export const isProfileOfLoggedinUser = (profile: Profile): boolean =>
   SETTINGS.user && profile.username === SETTINGS.user.username
@@ -620,3 +621,9 @@ export const findObjByName = (data: any, key: string) => {
       typeof value === "object" ? findObjByName(value, key) : []
   )
 }
+
+export const getMenuItem = (key: number, value: string): React$Element<*> => (
+  <MenuItem value={key} classes={{ root: "menu-item" }} key={key}>
+    {value}
+  </MenuItem>
+)
