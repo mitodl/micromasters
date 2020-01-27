@@ -5,6 +5,36 @@
 
     .container {
       width: 100%;
+
+      .course-team-header {
+
+        &:after {
+          content: '';
+          display: block;
+          clear: both;
+        }
+      }
+
+      .navigation {
+        text-transform: uppercase;
+        float: left;
+        a {
+          color: black;
+        }
+      }
+
+      .address {
+        float: right;
+
+        > span {
+          display: block;
+          font-size: 16px;
+          font-weight: 500;
+          letter-spacing: 0.49px;
+          line-height: 19px;
+          text-align: right;
+        }
+      }
     }
   }
 }
