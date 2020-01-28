@@ -19,13 +19,8 @@
         <a class="page-link" href="#tas">Current TAs</a>
       </ul>
 
-    <address class="address">
-      <span>Department Name</span>
-      <span>Department Address</span>
-      <span>Cambridge, MA 02142</span>
-      <span>Dept. Contact Number</span>
-      <span>Contact email</span>
-    </address>
+    {{ child_page.address|richtext }}
+
 
   </div>
 
@@ -39,9 +34,12 @@
             <div class="profile-image-wrapper">
               <img class="member-image" src="{{ instructor.value.image.file.url }}" alt="">
             </div>
+            <div class="bio-content">
+              <p class="bio">{{ instructor.value.bio }}</p>
+            </div>
             <div class="profile-content">
               <span class="name">{{ instructor.value.name }}</span>
-              <p class="bio">{{ instructor.value.bio }}</p>
+              <span class="title">{{ instructor.value.title }}</span>
             </div>
           </div>
         </li>
@@ -60,9 +58,12 @@
               <div class="profile-image-wrapper">
                 <img class="member-image" src="{{ administrator.value.image.file.url }}" alt="">
               </div>
-              <div class="profile-content">
-                <h4 class="name">{{ administrator.value.name }}</h4>
+              <div class="bio-content">
                 <p class="bio">{{ administrator.value.bio }}</p>
+              </div>
+              <div class="profile-content">
+                <span class="name">{{ administrator.value.name }}</span>
+                <span class="title">{{ administrator.value.title }}</span>
               </div>
           </div>
         </li>
@@ -81,9 +82,12 @@
             <div class="profile-image-wrapper">
               <img class="member-image" src="{{ contributor.value.image.file.url }}" alt="" />
             </div>
-            <div class="profile-content">
-              <h4 class="name">{{ contributor.value.name }}</h4>
+            <div class="bio-content">
               <p class="bio">{{ contributor.value.bio }}</p>
+            </div>
+            <div class="profile-content">
+              <span class="name">{{ contributor.value.name }}</span>
+              <span class="title">{{ contributor.value.title }}</span>
             </div>
           </div>
         </li>
@@ -102,9 +106,12 @@
             <div class="profile-image-wrapper">
               <img class="member-image" src="{{ ta.value.image.file.url }}" alt="" />
             </div>
-            <div class="profile-content">
-              <h4 class="name">{{ ta.value.name }}</h4>
+            <div class="bio-content">
               <p class="bio">{{ ta.value.bio }}</p>
+            </div>
+            <div class="profile-content">
+              <span class="name">{{ ta.value.name }}</span>
+              <span class="title">{{ ta.value.title }}</span>
             </div>
           </div>
         </li>

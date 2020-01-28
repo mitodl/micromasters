@@ -23,16 +23,15 @@
         }
       }
 
-      .address {
+      .rich-text {
         float: right;
 
-        > span {
-          display: block;
-          font-size: 16px;
-          font-weight: 500;
-          letter-spacing: 0.49px;
-          line-height: 19px;
-          text-align: right;
+        p {
+            margin-bottom: auto;
+            font-weight: 500;
+            letter-spacing: 0.49px;
+            line-height: 19px;
+            text-align: right;
         }
       }
     }
@@ -50,114 +49,6 @@
     text-align: center;
     margin-bottom: 30px;
     font-size: 40px;
-  }
-
-  .team-list {
-    position: relative;
-    overflow: hidden;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-
-    .team-list-item {
-      width: 100%;
-      position: relative;
-      z-index: 3;
-      margin-bottom: 20px;
-      padding: 10px;
-      @media only screen and (min-width: 768px) {
-        width: 50%;
-        margin-bottom: 30px;
-      }
-      @media only screen and (min-width: 992px) {
-        width: 25%;
-      }
-
-      .member-image {
-        width: 100%;
-        height: 385px;
-        object-fit: cover;
-      }
-
-      .profile-image-wrapper {
-        position: relative;
-
-        &:after {
-          content: '';
-          width: 100%;
-          height: 150px;
-          position: absolute;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.65) 100%);
-          filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#a6000000', GradientType=0);
-        }
-
-        &:before {
-          opacity: 0;
-          content: '';
-          background: rgba(0, 0, 0, .6);
-          width: 100%;
-          height: 100%;
-          position: absolute;
-          z-index: 1;
-          left: 0;
-          top: 0;
-          transition: all 0.5s ease;
-        }
-      }
-
-      .profile-content {
-        position: absolute;
-        z-index: 1;
-        left: 15px;
-        right: 15px;
-        bottom: 15px;
-        padding-left: 10px;
-        margin-bottom: -15px;
-
-        .name {
-          font-size: 26px;
-          color: white;
-          margin: 0;
-        }
-
-        .bio {
-          color: white;
-          max-height: 0;
-          overflow: hidden;
-          transition: all 0.5s ease;
-          letter-spacing: 0.21px;
-          line-height: 25px;
-        }
-      }
-
-      &:hover {
-        z-index: 4;
-
-        .profile-image-wrapper {
-
-          &:before {
-            opacity: 1;
-          }
-        }
-
-        .profile-content {
-          .name {
-            font-size: 20px;
-          }
-
-          .bio {
-            max-height: 345px;
-            overflow: auto;
-          }
-        }
-      }
-    }
   }
 
   .team-list-administrator {
@@ -224,7 +115,7 @@
           }
         }
 
-        .profile-content {
+        .bio-content {
           position: absolute;
           z-index: 1;
           left: 15px;
@@ -232,12 +123,6 @@
           bottom: 15px;
           padding-left: 10px;
           margin-bottom: -15px;
-
-          .name {
-            color: white;
-            font-size: 24px;
-            margin-left: -15px;
-          }
 
           .bio {
             color: white;
@@ -247,7 +132,7 @@
             letter-spacing: 0.21px;
             line-height: 25px;
             margin-left: -15px;
-            margin-bottom: 10px;
+            margin-bottom: 100px
           }
         }
 
@@ -261,15 +146,31 @@
             }
           }
 
-          .profile-content {
-            .name {
-              font-size: 20px;
-            }
+          .bio-content {
 
             .bio {
               max-height: 400px;
             }
           }
+        }
+
+        .profile-content {
+          display: grid;
+
+          .name {
+            padding-top: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            line-height: 28px;
+          }
+
+          .title {
+            width: 266px;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 0.43px;
+          }
+
         }
       }
     }
@@ -286,55 +187,6 @@
         }
         @media only screen and (min-width: 992px) {
           width: 33.33%;
-        }
-      }
-    }
-  }
-
-  &.course-contributors {
-
-    @media only screen and (max-width: 600px) {
-      text-align: center;
-    }
-
-    .team-list {
-      overflow: visible;
-
-      .team-list-item {
-        width: 100%;
-        @media only screen and (min-width: 768px) {
-          width: 50%;
-        }
-        @media only screen and (min-width: 992px) {
-          width: 25%;
-        }
-
-        .name {
-          display: inline-block;
-          vertical-align: middle;
-          font-size: 20px;
-        }
-
-        .member-image {
-          width: 110px;
-          height: 110px;
-          margin-right: 15px;
-        }
-
-        .bio {
-          display: none;
-          color: white;
-          position: absolute;
-          z-index: 1;
-          padding: 10px;
-          background: rgba(0, 0, 0, .6);
-        }
-
-        &:hover {
-
-          .bio {
-            display: block;
-          }
         }
       }
     }

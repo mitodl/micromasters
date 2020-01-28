@@ -190,6 +190,10 @@ class CourseTeamTabPage(ProgramChildPage):
     """
     CMS page for course team tab on the program page
     """
+    address = RichTextField(
+        blank=True,
+        help_text='The address shown on the course team page')
+
     instructors_heading = models.CharField(
         max_length=255, default='Instructors',
         help_text='Heading to be shown for instructors on course team tab.'
@@ -222,6 +226,7 @@ class CourseTeamTabPage(ProgramChildPage):
     )
 
     content_panels = Page.content_panels + [
+        FieldPanel('address'),
         FieldPanel('instructors_heading'),
         StreamFieldPanel('instructors'),
         FieldPanel('administrators_heading'),
