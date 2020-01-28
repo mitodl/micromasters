@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.158.0
+---------------
+
+- Update nyc to 15.0.0 (#4497)
+- Upgrading material-ui to @material-ui/core (#4366)
+
 Version 0.157.1 (Released January 22, 2020)
 ---------------
 
