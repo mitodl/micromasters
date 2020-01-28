@@ -18,6 +18,7 @@
       .navigation {
         text-transform: uppercase;
         float: left;
+
         a {
           color: black;
         }
@@ -27,11 +28,11 @@
         float: right;
 
         p {
-            margin-bottom: auto;
-            font-weight: 500;
-            letter-spacing: 0.49px;
-            line-height: 19px;
-            text-align: right;
+          margin-bottom: auto;
+          font-weight: 500;
+          letter-spacing: 0.49px;
+          line-height: 19px;
+          text-align: right;
         }
       }
     }
@@ -132,7 +133,7 @@
             letter-spacing: 0.21px;
             line-height: 25px;
             margin-left: -15px;
-            margin-bottom: 100px
+            margin-bottom: 100px;
           }
         }
 
