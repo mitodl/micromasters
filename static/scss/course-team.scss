@@ -13,26 +13,27 @@
           display: block;
           clear: both;
         }
-      }
 
-      .navigation {
-        text-transform: uppercase;
-        float: left;
+        .navigation {
+          text-transform: uppercase;
+          float: left;
+          padding-left: 0;
 
-        a {
-          color: black;
+          a {
+            color: black;
+          }
         }
-      }
 
-      .rich-text {
-        float: right;
+        .rich-text {
+          float: right;
 
-        p {
-          margin-bottom: auto;
-          font-weight: 500;
-          letter-spacing: 0.49px;
-          line-height: 19px;
-          text-align: right;
+          p {
+            margin-bottom: auto;
+            font-weight: 500;
+            letter-spacing: 0.49px;
+            line-height: 19px;
+            text-align: right;
+          }
         }
       }
     }
@@ -133,7 +134,7 @@
             letter-spacing: 0.21px;
             line-height: 25px;
             margin-left: -15px;
-            margin-bottom: 100px;
+            margin-bottom: 40px;
           }
         }
 
@@ -166,11 +167,15 @@
             line-height: 28px;
           }
 
-          .title {
-            width: 266px;
-            font-size: 14px;
-            font-weight: bold;
-            letter-spacing: 0.43px;
+          .rich-text {
+
+            p {
+              float: left;
+              width: 266px;
+              font-size: 14px;
+              font-weight: bold;
+              letter-spacing: 0.43px;
+            }
           }
 
         }
