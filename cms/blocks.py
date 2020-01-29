@@ -10,7 +10,12 @@ class CourseTeamBlock(blocks.StructBlock):
     """
 
     name = blocks.CharBlock(max_length=100, help_text="Name of the course team member.")
-    title = blocks.RichTextBlock(blank=True, null=True, help_text="Title of the course team member.")
+    title = blocks.RichTextBlock(
+        blank=True,
+        null=True,
+        features=["bold", "italic"],
+        help_text="Title of the course team member."
+    )
     bio = blocks.TextBlock(help_text="Short bio of course team member.")
     image = ImageChooserBlock(
         help_text='Image for the faculty member. Should be 385px by 385px.'
