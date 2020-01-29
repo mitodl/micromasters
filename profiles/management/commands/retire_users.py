@@ -26,7 +26,7 @@ For multiple users, add arg `--user` for each user i.e:\n
 `./manage.py retire_users -u foo -u bar -u baz`
 """
 
-    def create_parser(self, prog_name, subcommand):
+    def create_parser(self, prog_name, subcommand, **kwargs):
         """
         create parser to add new line in help text.
         """
