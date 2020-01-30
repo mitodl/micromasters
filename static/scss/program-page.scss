@@ -230,6 +230,15 @@
     width: 94%;
     margin: 20px auto 0;
     max-width: 1150px;
+    display: flex;
+
+    .mdl-cell--4-col {
+      width: 33%;
+    }
+
+    .mdl-cell--8-col {
+      width: 66%;
+    }
 
     @include breakpoint(phone) {
       padding: 0 23px;
@@ -545,6 +554,7 @@
   padding: 31px 32px 25px;
   box-shadow: 0px 1px 15px 6px rgba(0, 0, 0, 0.14) !important;
   /* important is used here to overwrite the inline style in the popover */
+  width: 33%;
 
   .title {
     font-weight: 400;

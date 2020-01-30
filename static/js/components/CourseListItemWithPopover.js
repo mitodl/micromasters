@@ -79,14 +79,14 @@ export default class CourseListItemWithPopover extends React.Component {
         </h4>
 
         <Popover
-          className="program-course-popover mdl-cell mdl-cell--4-col"
+          classes={{paper: "program-course-popover"}}
           open={isOpen}
           anchorEl={anchorEl}
           animated={false}
           animation={PopoverNullAnimation}
           anchorOrigin={{ horizontal: "left", vertical: "top" }}
-          targetOrigin={{ horizontal: "middle", vertical: "bottom" }}
-          onRequestClose={this.handleRequestClose}
+          transformOrigin={{ horizontal: "middle", vertical: "bottom" }}
+          onClose={this.handleRequestClose}
         >
           <h4 className="title">{title}</h4>
           <div
