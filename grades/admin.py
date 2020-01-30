@@ -12,6 +12,10 @@ class FinalGradeAdmin(admin.ModelAdmin):
     model = models.FinalGrade
     list_display = ('id', 'grade', 'user', 'course_run', )
     ordering = ('course_run',)
+    raw_id_fields = ('user',)
+    search_fields = (
+        'user__username',
+    )
 
     def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
         return False
@@ -50,6 +54,10 @@ class ProctoredExamGradeAdmin(admin.ModelAdmin):
     model = models.ProctoredExamGrade
     list_display = ('id', 'user', 'course', )
     ordering = ('course', 'user')
+    raw_id_fields = ('user',)
+    search_fields = (
+        'user__username',
+    )
 
     def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
         return False
