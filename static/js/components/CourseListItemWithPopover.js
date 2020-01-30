@@ -79,7 +79,7 @@ export default class CourseListItemWithPopover extends React.Component {
         </h4>
 
         <Popover
-          classes={{paper: "program-course-popover"}}
+          classes={{ paper: "program-course-popover" }}
           open={isOpen}
           anchorEl={anchorEl}
           animated={false}
