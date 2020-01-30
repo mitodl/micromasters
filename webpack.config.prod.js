@@ -32,23 +32,8 @@ module.exports = Object.assign(prodConfig, {
     chunkFilename: "[id]-[chunkhash].js",
     crossOriginLoading: "anonymous",
   },
-
+  mode: 'production',
   plugins: [
-    new webpack.DefinePlugin({
-      'process.env': {
-        'NODE_ENV': '"production"'
-      }
-    }),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      },
-      sourceMap: true,
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'common',
-      minChunks: 2,
-    }),
     new BundleTracker({
       filename: './webpack-stats.json'
     }),
@@ -62,5 +47,12 @@ module.exports = Object.assign(prodConfig, {
       ignoreOrder: false,
     }),
   ],
+  optimization: {
+    splitChunks: {
+      name:      "common",
+      minChunks: 2
+    },
+    minimize: true
+  },
   devtool: 'source-map'
 });

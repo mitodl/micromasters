@@ -18,21 +18,25 @@ const devConfig = Object.assign({}, config, {
     path: path.resolve('./static/bundles/'),
     filename: "[name].js"
   },
+  mode: 'development',
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
         'NODE_ENV': '"development"'
       }
     }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'common',
-      minChunks: 2,
-    }),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NamedModulesPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
     new BundleTracker({filename: './webpack-stats.json'})
   ],
+  optimization: {
+    namedModules: true,
+    splitChunks:  {
+      name:      "common",
+      minChunks: 2
+    },
+    noEmitOnErrors: true
+  },
   devtool: 'source-map'
 });
 
