@@ -1,4 +1,4 @@
-var webpack = require('webpack');
+const webpack = require('webpack')
 var path = require("path");
 var BundleTracker = require('webpack-bundle-tracker');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
@@ -26,14 +26,19 @@ prodConfig.module.rules = [
 
 module.exports = Object.assign(prodConfig, {
   context: __dirname,
+  mode: 'production',
   output: {
     path: path.resolve('./static/bundles/'),
     filename: "[name]-[chunkhash].js",
     chunkFilename: "[id]-[chunkhash].js",
     crossOriginLoading: "anonymous",
   },
-  mode: 'production',
   plugins: [
+    new webpack.DefinePlugin({
+      "process.env": {
+        NODE_ENV: '"production"'
+      }
+    }),
     new BundleTracker({
       filename: './webpack-stats.json'
     }),
