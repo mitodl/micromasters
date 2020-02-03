@@ -11,8 +11,7 @@ class CourseTeamBlock(blocks.StructBlock):
 
     name = blocks.CharBlock(max_length=100, help_text="Name of the course team member.")
     title = blocks.RichTextBlock(
-        blank=True,
-        null=True,
+        required=False,
         features=["bold", "italic"],
         help_text="Title of the course team member."
     )
