@@ -53,10 +53,6 @@ module.exports = Object.assign(prodConfig, {
     }),
   ],
   optimization: {
-    splitChunks: {
-      name:      "common",
-      minChunks: 2
-    },
     minimize: true
   },
   devtool: 'source-map'

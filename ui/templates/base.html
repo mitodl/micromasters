@@ -26,7 +26,6 @@
     var CURRENT_PAGE_URL = '{{ request.build_absolute_uri }}';
     </script>
     {% load render_bundle %}
-    {% render_bundle "common" %}
     {% render_bundle "sentry_client" %}
     {% if is_public %}
       {% render_bundle "style_public" %}

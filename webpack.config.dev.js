@@ -30,10 +30,6 @@ const devConfig = Object.assign({}, config, {
   ],
   optimization: {
     namedModules: true,
-    splitChunks:  {
-      name:      "common",
-      minChunks: 2
-    },
     noEmitOnErrors: true
   },
   devtool: 'source-map'
