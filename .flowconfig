@@ -33,6 +33,7 @@
 .*/node_modules/jss/.*
 .*/node_modules/react-popper/.*
 .*/node_modules/gensync/index.js.flow
+.*/node_modules/@webassemblyjs/ieee754/src/index.js
 .*.git/.*
 .*/staticfiles/.*
 
