@@ -127,7 +127,6 @@ class TestHomePage(ViewsTests):
 
             bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
             assert set(bundles) == {
-                'common',
                 'public',
                 'sentry_client',
                 'style',
@@ -160,7 +159,6 @@ class TestHomePage(ViewsTests):
 
             bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
             assert set(bundles) == {
-                'common',
                 'public',
                 'sentry_client',
                 'style',
@@ -195,7 +193,6 @@ class TestHomePage(ViewsTests):
 
             bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
             assert set(bundles) == {
-                'common',
                 'public',
                 'sentry_client',
                 'style',
@@ -305,7 +302,6 @@ class DashboardTests(ViewsTests):
 
             bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
             assert set(bundles) == {
-                'common',
                 'dashboard',
                 'sentry_client',
                 'style',
@@ -413,7 +409,6 @@ class HandlerTests(ViewsTests):
                 self.assertContains(response, 'Share this page', status_code=status.HTTP_404_NOT_FOUND)
                 bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
                 assert set(bundles) == {
-                    'common',
                     'public',
                     'sentry_client',
                     'style',
@@ -432,7 +427,6 @@ class HandlerTests(ViewsTests):
                 self.assertContains(response, 'Share this page', status_code=status.HTTP_404_NOT_FOUND)
                 bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
                 assert set(bundles) == {
-                    'common',
                     'public',
                     'sentry_client',
                     'style',
@@ -454,7 +448,6 @@ class HandlerTests(ViewsTests):
             self.assertContains(response, 'Share this page', status_code=status.HTTP_404_NOT_FOUND)
             bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
             assert set(bundles) == {
-                'common',
                 'public',
                 'sentry_client',
                 'style',
@@ -472,7 +465,6 @@ class HandlerTests(ViewsTests):
             self.assertContains(response, 'Share this page', status_code=status.HTTP_404_NOT_FOUND)
             bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
             assert set(bundles) == {
-                'common',
                 'public',
                 'sentry_client',
                 'style',
@@ -500,7 +492,6 @@ class HandlerTests(ViewsTests):
             self.assertContains(response, 'Share this page', status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
             bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
             assert set(bundles) == {
-                'common',
                 'public',
                 'sentry_client',
                 'style',
@@ -522,7 +513,6 @@ class HandlerTests(ViewsTests):
             self.assertContains(response, 'Share this page', status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
             bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
             assert set(bundles) == {
-                'common',
                 'public',
                 'sentry_client',
                 'style',
@@ -553,7 +543,6 @@ class TestProgramPage(ViewsTests):
 
         bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
         assert set(bundles) == {
-            'common',
             'public',
             'sentry_client',
             'style',
@@ -809,7 +798,6 @@ class TestUsersPage(ViewsTests):
 
                 bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
                 assert set(bundles) == {
-                    'common',
                     'dashboard',
                     'sentry_client',
                     'style',
@@ -885,7 +873,6 @@ class TestUsersPage(ViewsTests):
 
                 bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
                 assert set(bundles) == {
-                    'common',
                     'dashboard',
                     'sentry_client',
                     'style',
@@ -937,7 +924,6 @@ class TestTermsOfService(ViewsTests):
 
         bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
         assert set(bundles) == {
-            'common',
             'public',
             'sentry_client',
             'style',
