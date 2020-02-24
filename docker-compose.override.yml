@@ -1,14 +1,5 @@
-version: '2.1'
+version: '3.7'
 services:
-  python:
-    volumes:
-      - .:/src
-      - django_media:/var/media
-    environment:
-      DEBUG: 'True'
-      NODE_ENV: 'development'
-      MICROMASTERS_USE_WEBPACK_DEV_SERVER: 'True'
-
   web:
     volumes:
       - .:/src

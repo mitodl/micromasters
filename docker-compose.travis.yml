@@ -1,27 +1,9 @@
-version: '2.1'
+version: '3.7'
 services:
-  python:
-    build:
-      context: .
-      dockerfile: ./travis/Dockerfile-travis-web
-
   celery:
-    build:
-      context: .
-      dockerfile: ./travis/Dockerfile-travis-web
     environment:
       # for celery, to avoid ImproperlyConfigured
       MAILGUN_URL: 'http://fake.example.com'
       MAILGUN_KEY: 'fake'
       ELASTICSEARCH_INDEX: 'testindex'
       OPEN_DISCUSSIONS_SITE_KEY: 'fake'
-
-  web:
-    build:
-      context: .
-      dockerfile: ./travis/Dockerfile-travis-web
-
-  selenium:
-    build:
-      context: .
-      dockerfile: ./travis/Dockerfile-travis-web

@@ -1,4 +1,24 @@
-version: '2.1'
+version: '3.7'
+
+x-environment:
+  &py-environment
+  DEBUG: 'False'
+  NODE_ENV: 'production'
+  DEV_ENV: 'True'  # necessary to have nginx connect to web container
+  COVERAGE_DIR: htmlcov
+  DATABASE_URL: postgres://postgres@db:5432/postgres
+  MICROMASTERS_SECURE_SSL_REDIRECT: 'False'
+  MICROMASTERS_DB_DISABLE_SSL: 'True'
+  ELASTICSEARCH_URL: elastic:9200
+  CELERY_ALWAYS_EAGER: 'False'
+  BROKER_URL: redis://redis:6379/4
+  CELERY_RESULT_BACKEND: redis://redis:6379/4
+  EXAMS_SFTP_HOST: sftp
+  EXAMS_SFTP_USERNAME: odl
+  EXAMS_SFTP_PASSWORD: 123
+  DOCKER_HOST: ${DOCKER_HOST:-missing}
+  WEBPACK_DEV_SERVER_HOST: ${WEBPACK_DEV_SERVER_HOST:-localhost}
+
 services:
   db:
     image: postgres:11.6
@@ -24,35 +44,14 @@ services:
     links:
       - web
 
-  python:
+  web:
     build:
       context: .
       dockerfile: Dockerfile
-    command: /bin/true
     environment:
-      DEBUG: 'False'
-      NODE_ENV: 'production'
-      DEV_ENV: 'True'  # necessary to have nginx connect to web container
+      << : *py-environment
       PORT: 8077
-      COVERAGE_DIR: htmlcov
-      DATABASE_URL: postgres://postgres@db:5432/postgres
-      MICROMASTERS_SECURE_SSL_REDIRECT: 'False'
-      MICROMASTERS_DB_DISABLE_SSL: 'True'
-      ELASTICSEARCH_URL: elastic:9200
-      CELERY_ALWAYS_EAGER: 'False'
-      BROKER_URL: redis://redis:6379/4
-      CELERY_RESULT_BACKEND: redis://redis:6379/4
-      EXAMS_SFTP_HOST: sftp
-      EXAMS_SFTP_USERNAME: odl
-      EXAMS_SFTP_PASSWORD: 123
-      DOCKER_HOST: ${DOCKER_HOST:-missing}
-      WEBPACK_DEV_SERVER_HOST: ${WEBPACK_DEV_SERVER_HOST:-localhost}
     env_file: .env
-
-  web:
-    image: micromasters_python
-    extends:
-      service: python
     command: >
       /bin/bash -c '
       sleep 3 &&
@@ -85,9 +84,11 @@ services:
     env_file: .env
 
   celery:
-    image: micromasters_python
-    extends:
-      service: python
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment: *py-environment
+    env_file: .env
     command: >
       /bin/bash -c '
       sleep 3;

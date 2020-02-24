@@ -1,9 +1,9 @@
-version: '2.1'
+version: '3.7'
 services:
   selenium:
-    image: micromasters_python
-    extends:
-      service: python
+    build:
+      context: .
+      dockerfile: Dockerfile
     environment:
       ELASTICSEARCH_INDEX: 'testindex'
       DEBUG: 'False'

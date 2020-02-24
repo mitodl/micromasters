@@ -1,13 +1,14 @@
 sudo: false
-# Set Ruby as the language so it doesn't download the pip things. Instead, let docker do that.
-language: ruby
+
+# xenial for newer docker-compose https://blog.travis-ci.com/2018-11-08-xenial-release
+dist: xenial
 
 matrix:
   include:
-    - install:
+    - language: ruby
+      install:
       - env | grep TRAVIS > .env
       - env | grep CI >> .env
-      - docker-compose -f docker-compose.yml -f docker-compose.travis.yml run celery echo
       script: docker-compose -f docker-compose.yml -f docker-compose.travis.yml run web tox
       services:
         - docker
@@ -25,12 +26,13 @@ matrix:
         - docker
       env:
         name: Python-Selenium
-    - install:
-      - env | grep TRAVIS > .env
-      - env | grep CI >> .env
-      - docker build -t travis-watch -f ./travis/Dockerfile-travis-watch .
+    - language: node_js
+      before_install:
+        - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.13.0
+        - export PATH="$HOME/.yarn/bin:$PATH"
+      node_js:
+        - "10.15.1"
       script: bash ./travis/js_tests.sh
-      services:
-        - docker
+      cache: yarn
       env:
         name: JavaScript
