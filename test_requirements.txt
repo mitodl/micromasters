@@ -1,3 +1,4 @@
+astroid==2.0.4
 bpython
 codecov
 ddt
