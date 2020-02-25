@@ -8,7 +8,7 @@ nplusone>=0.8.1
 pdbpp
 pip-tools
 pylint==2.1.1
-pylint-django==2.0.14
+pylint-django==2.0.10
 pytest==4.4.1
 pytest-cov
 pytest-django==3.4.8
