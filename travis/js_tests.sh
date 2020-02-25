@@ -11,11 +11,11 @@ function run_test {
     return $status
 }
 
-run_test docker run --env-file .env -t travis-watch npm run codecov
-run_test docker run --env-file .env -t travis-watch npm run lint
-run_test docker run --env-file .env -t travis-watch npm run fmt:check
-run_test docker run --env-file .env -t travis-watch npm run scss_lint
-run_test docker run --env-file .env -t travis-watch npm run flow
-run_test docker run --env-file .env -e "NODE_ENV=production" -t travis-watch ./webpack_if_prod.sh
+run_test npm run codecov
+run_test npm run lint
+run_test npm run fmt:check
+run_test npm run scss_lint
+run_test npm run flow
+run_test node node_modules/webpack/bin/webpack.js --config webpack.config.prod.js --bail
 
 exit $status
