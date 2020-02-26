@@ -17,8 +17,8 @@ matrix:
     - install:
       - env | grep TRAVIS > .env
       - env | grep CI >> .env
-      - docker build -t travis-watch -f ./Dockerfile-node .
-      - docker run --name travis-watch-container --env-file .env -e NODE_ENV=production -t travis-watch node node_modules/webpack/bin/webpack.js --config webpack.config.prod.js --bail
+      - docker build -t travis-watch -f ./travis/Dockerfile-travis-watch .
+      - docker run --name travis-watch-container --env-file .env -e NODE_ENV=production -t travis-watch ./webpack_if_prod.sh
       - docker cp travis-watch-container:/src/webpack-stats.json .
       - docker cp travis-watch-container:/src/static/bundles ./static/bundles
       script: ./scripts/test/run_selenium_tests_travis.sh

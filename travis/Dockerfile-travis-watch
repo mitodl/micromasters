@@ -1,0 +1,19 @@
+FROM micromasters_watch
+
+WORKDIR /src
+
+COPY package.json /src
+
+COPY yarn.lock /src
+
+ADD ./webpack_if_prod.sh /src
+
+USER root
+
+RUN yarn install --frozen-lockfile
+
+COPY . /src
+
+RUN chown -R node:node /src
+
+USER node
