@@ -12,7 +12,7 @@ pylint-django==2.0.2
 pylint-plugin-utils==0.6
 pytest==5.3.5
 pytest-cov
-pytest-django==3.4.8
+pytest-django==3.8.0
 pytest-pep8==1.0.6
 pytest-mock
 pytest-pylint==0.15.0
