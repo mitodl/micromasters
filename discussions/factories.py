@@ -46,7 +46,7 @@ class DiscussionUserFactory(DjangoModelFactory):
     last_sync = Faker('date_time_this_month', before_now=True, after_now=False, tzinfo=UTC)
 
     @classmethod
-    def create(cls, *args, **kwargs):
+    def create(cls, *args, **kwargs):  # pylint: disable=arguments-differ
         """
         Overrides the default .create() method to turn off save signals
         """
