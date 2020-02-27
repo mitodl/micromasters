@@ -23,7 +23,7 @@ from exams.pearson.exceptions import (
 log = logging.getLogger(__name__)
 
 
-class BaseTSVWriter(object):
+class BaseTSVWriter:
     """
     Base class for TSV file writers.
 

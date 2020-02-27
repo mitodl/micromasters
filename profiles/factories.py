@@ -109,7 +109,7 @@ class ProfileFactory(DjangoModelFactory):
         )
 
     @classmethod
-    def create_batch(cls, *args, **kwargs):
+    def create_batch(cls, *args, **kwargs):  # pylint: disable=arguments-differ
         """
         Ensure that signals are muted before running the base create_batch method
         """
@@ -122,7 +122,7 @@ class SocialProfileFactory(ProfileFactory):
     user = SubFactory(SocialUserFactory)
 
     @classmethod
-    def create(cls, *args, **kwargs):
+    def create(cls, *args, **kwargs):  # pylint: disable=arguments-differ
         """
         Overrides the default .create() method to turn off save signals
         """

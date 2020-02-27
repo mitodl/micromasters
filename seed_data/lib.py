@@ -37,7 +37,7 @@ def fake_programs_query():
     return Program.objects.filter(description__startswith=FAKE_PROGRAM_DESC_PREFIX)
 
 
-class ModelFinder(object):
+class ModelFinder:
     """Finds a single model object that matches some given parameters or throws and error"""
     model_cls = None
     param_keys = {}
@@ -140,7 +140,7 @@ class CourseRunFinder(ModelFinder):
         return params
 
 
-class CachedHandler(object):
+class CachedHandler:
     """Provides common functionality to retrieve/manipulate cached edX model objects"""
     model_cls = None
     cache_type = None

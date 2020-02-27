@@ -11,7 +11,7 @@ class FakeSiteMiddleware(MiddlewareMixin):
     A mock implementation of `wagtail.core.middleware.SiteMiddleware`
     that doesn't make any database calls.
     """
-    def process_request(self, request):  # pylint: disable=missing-docstring,no-self-use
+    def process_request(self, request):  # pylint: disable=missing-docstring,no-self-use,useless-return
         request.site = None
         return None
 

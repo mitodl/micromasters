@@ -19,7 +19,7 @@ from exams.pearson.utils import (
 )
 
 
-class BaseTSVReader(object):
+class BaseTSVReader:
     """
     Base class for TSV file readers
 

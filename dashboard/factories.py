@@ -36,6 +36,7 @@ from ecommerce.models import Order
 FAKE = faker.Factory.create()
 
 
+# pylint: disable=arguments-differ
 class CachedCertificateFactory(DjangoModelFactory):
     """Factory for Certificate"""
     user = SubFactory(UserFactory)

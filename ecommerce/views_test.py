@@ -10,7 +10,7 @@ from django.db.models.signals import post_save
 from django.test import override_settings
 from factory.django import mute_signals
 import faker
-import rest_framework.status as status
+from rest_framework import status
 
 from courses.factories import CourseRunFactory
 from ecommerce.api import (

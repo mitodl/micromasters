@@ -61,7 +61,7 @@ class UserSocialAuthFactory(DjangoModelFactory):
 class SocialUserFactory(UserFactory):
     """Factory for Users which should also have a social_auth object created for them"""
     @classmethod
-    def create(cls, *args, **kwargs):
+    def create(cls, *args, **kwargs):  # pylint: disable=arguments-differ
         """
         Overrides the default .create() method so that a UserSocialAuth records can be created
         """

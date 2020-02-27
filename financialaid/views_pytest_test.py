@@ -193,7 +193,7 @@ class TestReviewViews():
         # Two users should match the search term - one for first_name, one for last_name
         assert len(financial_aid_objects) == 2
         assert all(
-            fin_aid.user.profile.first_name == name_query or fin_aid.user.profile.last_name == name_query
+            name_query in (fin_aid.user.profile.first_name, fin_aid.user.profile.last_name)
             for fin_aid in financial_aid_objects
         )
 

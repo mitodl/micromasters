@@ -168,7 +168,7 @@ class ProfileSerializer(ProfileBaseSerializer):
     def update(self, instance, validated_data):
         with transaction.atomic():
             for attr, value in validated_data.items():
-                if attr == 'work_history' or attr == 'education':
+                if attr in ('work_history', 'education'):
                     continue
                 else:
                     setattr(instance, attr, value)

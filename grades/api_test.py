@@ -244,8 +244,8 @@ class GradeAPITests(MockedESTestCase):
         """
         tests for _get_compute_func function
         """
-        assert api._get_compute_func(self.run_fa) == api._compute_grade_for_fa
-        assert api._get_compute_func(self.run_no_fa) == api._compute_grade_for_non_fa
+        assert api._get_compute_func(self.run_fa) is api._compute_grade_for_fa
+        assert api._get_compute_func(self.run_no_fa) is api._compute_grade_for_non_fa
 
     @patch('grades.api._compute_grade_for_non_fa', autospec=True)
     @patch('grades.api._compute_grade_for_fa', autospec=True)

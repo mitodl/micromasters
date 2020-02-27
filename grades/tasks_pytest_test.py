@@ -104,9 +104,9 @@ def test_generate_course_certificates():
     certificates = MicromastersCourseCertificate.objects.filter(course__in=[course, course_2, course_with_exams])
     assert certificates.count() == 7
     expected_certificate_final_grades = passed_final_grades + final_grades_with_passed_exam
-    assert set(certificates.values_list('user', flat=True)) == set(
-        [final_grade.user.id for final_grade in expected_certificate_final_grades]
-    )
+    assert set(certificates.values_list('user', flat=True)) == {
+        final_grade.user.id for final_grade in expected_certificate_final_grades
+    }
 
 
 def test_create_combined_final_grade(mocker):

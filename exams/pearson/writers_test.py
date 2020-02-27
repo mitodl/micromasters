@@ -81,7 +81,7 @@ class BaseTSVWriterTest(TSVWriterTestCase):
 
         addr1_field_mapper = BaseTSVWriter.get_field_mapper(get_addr1)
 
-        assert addr1_field_mapper == get_addr1
+        assert addr1_field_mapper is get_addr1
         assert addr1_field_mapper(profile) == profile.address1
 
         with self.assertRaises(TypeError):

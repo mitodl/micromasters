@@ -109,7 +109,7 @@ class CookieFeatureFlagMiddleware(MiddlewareMixin):
         else:
             return set()
 
-    def process_request(self, request):
+    def process_request(self, request):  # pylint: disable=useless-return
         """
         Processes an individual request for the feature flag cookie
 
