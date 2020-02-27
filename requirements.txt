@@ -8,7 +8,7 @@ amqp==2.5.2               # via kombu
 asn1crypto==0.24.0        # via cryptography
 backcall==0.1.0           # via ipython
 bcrypt==3.1.4             # via paramiko
-beautifulsoup4==4.8.2     # via wagtail
+beautifulsoup4==4.6.0     # via wagtail
 billiard==3.6.2.0         # via celery
 boto==2.39.0              # via -r requirements.in (line 3)
 celery==4.3.0             # via -r requirements.in (line 4), django-server-status
@@ -74,11 +74,11 @@ pyjwt==1.5.2              # via open-discussions-client, social-auth-core
 pymongo==3.7.1            # via edx-opaque-keys
 pynacl==1.3.0             # via -r requirements.in (line 34), paramiko
 pysftp==0.2.9             # via -r requirements.in (line 33)
-python-dateutil==2.8.1    # via -r requirements.in (line 35), edx-api-client, elasticsearch-dsl, faker
+python-dateutil==2.5.3    # via -r requirements.in (line 35), edx-api-client, elasticsearch-dsl, faker
 python3-openid==3.1.0     # via social-auth-core
 pytz==2018.5              # via celery, django, django-modelcluster, wagtail
 raven==6.9.0              # via -r requirements.in (line 36)
-redis==2.10.5             # via -r requirements.in (line 37), django-redis, django-server-status
+redis==3.4.1              # via -r requirements.in (line 37), django-redis, django-server-status
 requests-oauthlib==1.0.0  # via social-auth-core
 requests==2.21.0          # via -r requirements.in (line 38), edx-api-client, open-discussions-client, requests-oauthlib, social-auth-core, wagtail
 robohash==1.0             # via -r requirements.in (line 41)
