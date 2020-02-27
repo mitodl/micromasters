@@ -28,7 +28,7 @@ class ProfileViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
     permission_classes = (CanEditIfOwner, CanSeeIfNotPrivate, )
     lookup_field = 'user__social_auth__uid'
     lookup_url_kwarg = 'user'
-    lookup_value_regex = '[-\w.]+'  # pylint: disable=anomalous-backslash-in-string
+    lookup_value_regex = r'[-\w.]+'
     queryset = Profile.objects.all()
 
     # possible serializers

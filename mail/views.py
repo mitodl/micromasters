@@ -95,7 +95,7 @@ class AutomaticEmailView(ListAPIView, UpdateModelMixin, GenericViewSet):
     serializer_class = AutomaticEmailSerializer
     lookup_field = "id"
     lookup_url_kwarg = "email_id"
-    lookup_value_regex = '[-\w.]+'  # pylint: disable=anomalous-backslash-in-string
+    lookup_value_regex = r'[-\w.]+'
 
     def get_queryset(self):
         """Get the queryset which should be serialized"""
