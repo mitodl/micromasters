@@ -294,7 +294,7 @@ class DatabaseLoader:
         db_cursor.execute('DROP DATABASE IF EXISTS {to_db};'.format(to_db=self.db_backup_name))
 
 
-def should_load_from_existing_db(database_loader, cursor):
+def should_load_from_existing_db(database_loader, cursor, *, config):
     """
     Helper method to determine whether or not a backup database should be loaded to begin
     test execution. A backup db should be used if that backup exists, and if the pytest config
@@ -304,6 +304,7 @@ def should_load_from_existing_db(database_loader, cursor):
     Args:
         database_loader (DatabaseLoader): A DatabaseLoader instance
         cursor (django.db.connection.cursor): A database cursor
+        config (Config): The pytest configuration
 
     Returns:
         bool: Whether or not a backup database should be loaded to begin test execution
@@ -312,7 +313,7 @@ def should_load_from_existing_db(database_loader, cursor):
     # and if the config options don't indicate that the database should be freshly
     # created to start the the test suite execution
     return (
-        pytest.config.option.reuse_db and
-        not pytest.config.option.create_db and
+        config.option.reuse_db and
+        not config.option.create_db and
         database_loader.has_backup(db_cursor=cursor)
     )

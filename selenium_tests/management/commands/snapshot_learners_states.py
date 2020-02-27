@@ -66,7 +66,7 @@ def seeded_database_loader():
 
 
 @pytest.fixture(scope="session")
-def test_data(django_db_blocker, seeded_database_loader):
+def test_data(django_db_blocker, seeded_database_loader, pytestconfig):
     """
     Fixture that creates a login-enabled test user and backs up a seeded database to be
     loaded in between dashboard states and cleaned up at the end of the test run.
@@ -74,7 +74,7 @@ def test_data(django_db_blocker, seeded_database_loader):
     user = None
     with django_db_blocker.unblock():
         with connection.cursor() as cur:
-            load_from_existing_db = should_load_from_existing_db(seeded_database_loader, cur)
+            load_from_existing_db = should_load_from_existing_db(seeded_database_loader, cur, config=pytestconfig)
             if not load_from_existing_db:
                 user = create_user_for_login(is_staff=True, username='staff')
                 call_command("seed_db")
