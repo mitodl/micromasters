@@ -10,7 +10,6 @@ from urllib.parse import (
     urlparse,
 )
 from subprocess import check_call, check_output, DEVNULL
-import pytest
 import requests
 from django.conf import settings
 from django.db import connection
