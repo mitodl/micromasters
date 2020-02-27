@@ -3,28 +3,28 @@ from contextlib import AbstractContextManager
 
 from django.core.cache import caches
 from redis.exceptions import LockError
-from redis.lock import LuaLock
+from redis.lock import Lock
 
 from micromasters.utils import now_in_utc
 
 
 def _get_lock(lock_name, expiration):
     """
-    Creates a new redis LuaLock
+    Creates a new redis Lock
 
     Args:
         lock_name (str): The name of the lock
         expiration (datetime.datetime): The expiration datetime
 
     Returns:
-        redis.lock.LuaLock: a redis lua-based lock
+        redis.lock.Lock: a redis lua-based lock
     """
     timeout = int((expiration - now_in_utc()).total_seconds())
 
     # this is a StrictRedis instance, we need this for the script installation that LuaLock uses
     redis = caches['redis'].client.get_client()
     # don't block acquiring the lock, the task will need to try again later
-    return LuaLock(redis, lock_name, timeout=timeout, blocking=False, thread_local=False)
+    return Lock(redis, lock_name, timeout=timeout, blocking=False, thread_local=False)
 
 
 def release_lock(lock_name, token):
