@@ -224,7 +224,7 @@ class DashboardStates:  # pylint: disable=too-many-locals, too-many-public-metho
         else:
             content_object = course
 
-        if amount_type == Coupon.FIXED_DISCOUNT or amount_type == Coupon.FIXED_PRICE:
+        if amount_type in (Coupon.FIXED_DISCOUNT, Coupon.FIXED_PRICE):
             amount = 50
         else:
             if is_free:
