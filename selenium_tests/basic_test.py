@@ -96,7 +96,7 @@ def test_approve_docs(browser, base_test_data, logged_in_staff):
 
     browser.get("/financial_aid/review/{}/{}".format(program.id, FinancialAidStatus.DOCS_SENT))
     browser.click_when_loaded(By.CLASS_NAME, "mark-docs-as-received")
-    alert = browser.driver.switch_to_alert()
+    alert = browser.driver.switch_to.alert()
     alert.accept()
     browser.wait_until_loaded(By.CLASS_NAME, "alert-success")
     browser.assert_no_console_errors()
