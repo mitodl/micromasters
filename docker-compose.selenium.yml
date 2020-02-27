@@ -1,14 +1,31 @@
 version: '3.7'
+
+x-environment:
+  &py-environment
+  DEBUG: 'False'
+  NODE_ENV: 'production'
+  DEV_ENV: 'True'  # necessary to have nginx connect to web container
+  COVERAGE_DIR: htmlcov
+  DATABASE_URL: postgres://postgres@db:5432/postgres
+  MICROMASTERS_SECURE_SSL_REDIRECT: 'False'
+  MICROMASTERS_DB_DISABLE_SSL: 'True'
+  ELASTICSEARCH_URL: elastic:9200
+  CELERY_ALWAYS_EAGER: 'False'
+  BROKER_URL: redis://redis:6379/4
+  CELERY_RESULT_BACKEND: redis://redis:6379/4
+  DOCKER_HOST: ${DOCKER_HOST:-missing}
+  WEBPACK_DEV_SERVER_HOST: ${WEBPACK_DEV_SERVER_HOST:-localhost}
+
 services:
   selenium:
     build:
       context: .
       dockerfile: Dockerfile
     environment:
+      << : *py-environment
       ELASTICSEARCH_INDEX: 'testindex'
       DEBUG: 'False'
       ELASTICSEARCH_DEFAULT_PAGE_SIZE: '5'
-      MICROMASTERS_DB_DISABLE_SSL: 'True'
 
       # To silence ImproperlyConfigured when running tests
       MAILGUN_URL: http://fake.mailgun.url
