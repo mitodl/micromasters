@@ -55,7 +55,7 @@ def database_loader():
 
 
 @pytest.fixture(scope='session', autouse=True)
-def django_db_setup_override(django_db_setup, django_db_blocker, database_loader):
+def django_db_setup_override(django_db_setup, django_db_blocker, database_loader, pytestconfig):
     """
     Fixture provided by pytest-django to allow for custom Django database config.
     'django_db_setup' exists in the arguments because we want to perform the normal pytest-django
@@ -63,7 +63,7 @@ def django_db_setup_override(django_db_setup, django_db_blocker, database_loader
     """
     with django_db_blocker.unblock():
         with connection.cursor() as cur:
-            load_from_existing_db = should_load_from_existing_db(database_loader, cur)
+            load_from_existing_db = should_load_from_existing_db(database_loader, cur, config=pytestconfig)
             if not load_from_existing_db:
                 # Drop a wagtail table due to a bug: https://github.com/wagtail/wagtail/issues/1824
                 cur.execute('DROP TABLE IF EXISTS wagtailsearch_editorspick CASCADE;')
