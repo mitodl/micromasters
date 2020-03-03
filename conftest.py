@@ -30,7 +30,10 @@ def warnings_as_errors():
         )
         warnings.filterwarnings(
             "ignore",
-            message="Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated, and in 3.8 it will stop working",
+            message=(
+                "Using or importing the ABCs from 'collections' instead of "
+                "from 'collections.abc' is deprecated, and in 3.8 it will stop working"
+            ),
             category=DeprecationWarning
         )
         # For compatibility modules in various libraries
