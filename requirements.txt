@@ -78,7 +78,7 @@ python-dateutil==2.5.3    # via -r requirements.in, edx-api-client, elasticsearc
 python3-openid==3.1.0     # via social-auth-core
 pytz==2018.5              # via celery, django, django-modelcluster, wagtail
 raven==6.9.0              # via -r requirements.in
-redis==3.4.1              # via -r requirements.in, django-redis, django-server-status
+redis==3.3.0              # via -r requirements.in, django-redis, django-server-status
 requests-oauthlib==1.0.0  # via social-auth-core
 requests==2.21.0          # via -r requirements.in, edx-api-client, open-discussions-client, requests-oauthlib, social-auth-core, wagtail
 robohash==1.0             # via -r requirements.in
