@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.161.0
+---------------
+
+- Update docker configuration (#4533)
+
 Version 0.160.0 (Released February 28, 2020)
 ---------------
 
