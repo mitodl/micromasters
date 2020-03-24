@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.161.1
+---------------
+
+- retire users by email
+- Bump wagtail and Pillow
+
 Version 0.161.0 (Released March 23, 2020)
 ---------------
 
