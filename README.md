@@ -14,7 +14,7 @@ Run through those steps in order with the following changes:
    docker-compose run web ./manage.py recreate_index
    ```
 
-1. **Do not run the `createsuperuser` command.** When you log into this app via edX, a MicroMasters 
+1. **Do not run the `createsuperuser` command.** When you log into this app via edX, a MicroMasters
 Django user is created for you automatically. See the section below for instructions on how to run edX locally.
 
 
@@ -25,118 +25,25 @@ you get it running locally. It's obviously more configurable that way, and you'l
 likely need to run it locally for other projects in the future.
 
 #### 1) Install edX
+Install edX following this guide https://github.com/mitodl/micromasters/blob/master/docs/configure_open_edx.md
 
-Download the edX Vagrant box according to
-[these instructions provided by edX](https://edx-installing-configuring-and-running.readthedocs.io/en/latest/installation/devstack/install_devstack.html#installing-devstack-with-a-direct-vagrant-box-download)
 
-*NOTE: edX now maintains a [Docker-based solution](https://github.com/edx/devstack) for running Open edX, and they have stopped supporting the Vagrant solution. We have not yet done the work necessary to properly
-integrate MicroMasters with Open edX running on Docker in a development context, so Vagrant is still recommended here*
-
-#### 2) Connect to the VM and run the LMS server
-
-edX has [instructions for this as well](https://edx-installing-configuring-and-running.readthedocs.io/en/latest/installation/devstack/start_devstack.html#connect-to-devstack-vm).
-More concisely, these are the commands you should run to connect to the VM and run the LMS server:
-
-    # In your local edx_devstack/ directory, start the VM
-    vagrant up
-    # Once that's done, ssh into the running VM
-    vagrant ssh
-    # Switch to the edxapp account within SSH session
-    sudo su edxapp
-    # Run the LMS server
-    paver devstack lms
-    # To run the server without updating requirements and compiling assets, add the '--fast' parameter
-    # eg: paver devstack --fast lms
-
-A few notes:
-
-- Switching to the edxapp account sources the edxapp environment and sets the
- current working directory to the edx-platform repository.
-- "LMS" stands for "Learning Management System". The Open edX platform has
- [several different components](http://edx.readthedocs.io/projects/edx-developer-guide/en/latest/architecture.html#overview);
- MicroMaster's only depends on LMS.
-
-#### 3) Configure a user with superuser permissions
-
-edX devstack ships with [several test users](https://openedx.atlassian.net/wiki/spaces/OXA/pages/157751033/What+are+the+default+accounts+and+passwords) (there
-is also an `edx` user not listed in this wiki, already configured as a superuser). To keep things
-simple, it is **highly** recommended that for your main MicroMasters login you use (a) the `edx` superuser, or (b) 
-one of the other test users and manually set superuser permissions. Setting superuser permissions can be done
-in Django admin or in a shell. It's preferable to do it in Django admin as you'll
-need to use Django admin for the next step anyway.
-
-- **In Django admin**
-
-    Run the server (discussed in step 2) and navigate to Django admin
-    (eg: http://192.168.33.10:8000/admin). In the **Authentication and Authorization**
-    section, select a **User**, or add one then select it. In the **Permissions**
-    section, check the **Superuser status** box and save.
-
-- **In a Python shell**
-
-        # Kick off an interactive shell
-        python manage.py lms --settings=devstack shell
-
-        ### RUN THESE WITHIN THE SHELL ###
-        from django.contrib.auth.models import User
-        # Using 'staff' here, but this will work with any test user's username
-        user = User.objects.get(username='staff')
-        user.is_superuser=True
-        user.save()
-
-#### 4) Add an OAuth client
-
-Open Django admin (see "In Django admin" in the previous step),
-login as the user you chose in the previous step,
-navigate to the Django OAuth Toolkit section (/admin/oauth2_provider/),
-and add a new Application. Fill in the values as follows:
-
-- **User**: Use the lookup (magnifying glass) to find your superuser from the previous step.
-- **Redirect uris**: The URL where MicroMaster’s will be running, followed by "/complete/edxorg/".
- **Linux users:** the MicroMaster’s URL will be `http://localhost:8079`. **OSX users:** The MicroMaster's
- IP can be found by running ``docker-machine ip <machine_name>`` from the host machine. MicroMaster’s runs on port
- ``8079`` by default, so the full URL should be something like
- ``http://192.168.99.100:8079/complete/edxorg/``
-- **Client type**: Set to '_Confidential_'.
-- **Authorization grant type**: Set to '_Authorization Code_'.
-- **Name**: Anything you want. Something like 'mm-local' would do fine here.
-
-#### 5) Copy relevant values to use in the MicroMasters .env file
+#### 2) Copy relevant values to use in the MicroMasters .env file
 
 The MicroMasters codebase contains a ``.env.example`` file which will be used as
 a template to create your ``.env`` file. For MicroMasters to work, it needs 4 values:
 
 - ``EDXORG_BASE_URL``
 
-    The base URL where the LMS server is running on your machine. When running in Vagrant, this 
-    _should_ be ``http://192.168.33.10:8000``. The Vagrant VM IP is hard-coded in the Vagrantfile, and 
-    it's unlikely that edX will change that. The LMS server runs on port ``8000`` by default.
-    
+    The base URL where the LMS server is running on your machine. This
+    _should_ typically be ``http://edx.odl.local:18000``.
+
 - ``EDXORG_CLIENT_ID`` and ``EDXORG_CLIENT_SECRET``
 
-    These values can be found in the Django OAuth Toolkit Application you created above.
+    These values can be found in the Django OAuth Toolkit Application you created [above](https://github.com/mitodl/micromasters/blob/master/docs/configure_open_edx.md).
     **Client id:** and **Client secret:** values should be auto-generated for
     that new Application. Use those values for the corresponding ``EDXORG_``
     variables in the ``.env`` file.
-
-#### General edX devstack debugging notes
-
-- To update your devstack with important changes from edX, run `vagrant provision` in
-your edx_devstack directory. This will pull down the latest release and run migrations, among
-other things.
-- If you get an error related to Mongo locking while ssh'ed into the Vagrant VM, run the following
- **as the default 'vagrant' user, NOT as the 'edxapp' user**:
-
-       function mongo_unlock {
-           sudo rm /edx/var/mongo/mongodb/mongod.lock
-           sudo mongod -repair --config /etc/mongod.conf
-           sudo chown -R mongodb:mongodb /edx/var/mongo/.
-           sudo /etc/init.d/mongod start
-       }
-       mongo_unlock
-- If you get the error  _"Unknown task: devstack, the working directory has not been updated
-properly"_, simply run ``cd /edx/app/edxapp/edx-platform`` and re-run the command.
-
 
 # Additional setup
 
@@ -165,15 +72,22 @@ After completing those steps, you should be able to do the following:
 1. Visit MicroMasters in your browser on port `8079`.
 2. Click "Sign in with edX.org" and sign in by authorizing an edX client. If you're
  running edX locally and you're not already logged in, use the same user that you configured above.
- 
+
 ### Configuration after first login
 
-**It's highly recommended that you do the following immediately after your first login with an edX user.** 
+**It's highly recommended that you do the following immediately after your first login with an edX user.**
 After logging into MicroMasters via edX with a given user for the first time, a new MicroMasters user is created to mirror that edX user.
 These commands will help you to fully explore the MicroMasters UI:
 
 1. **Set your user as a superuser.**
 
+    Open django shell
+    ```
+    docker-compose run web bash
+    pyton manage.py shell
+    ```
+
+    Run below script in shell
     ```python
     from django.contrib.auth.models import User
     # Replace 'staff' with the username of the edX user you logged in with
@@ -187,7 +101,7 @@ These commands will help you to fully explore the MicroMasters UI:
 
    This will create programs and courses, and a set of users with enrollments and grades in those courses. This helps to flesh out
    both the learner and instructor UX for the app.
-   
+
    ```bash
    # Run from a shell in your host machine
    # Replace 'staff' with the username of the edX user you logged in with
@@ -198,7 +112,7 @@ After completing those two steps, reload MicroMasters in the browser and complet
 
 ### Wagtail CMS (Content Management System)
 
-The CMS can be found at `/cms/`. Use the CMS to manage the content of the program pages and home page.  
+The CMS can be found at `/cms/`. Use the CMS to manage the content of the program pages and home page.
 
 #### Adding a new MicroMasters program
 
@@ -212,18 +126,18 @@ The CMS can be found at `/cms/`. Use the CMS to manage the content of the progra
 
 #### Adding CMS users
 
-1. Don't create new users from the CMS. Ask users to log in and fill out a MicroMasters profile first.  
+1. Don't create new users from the CMS. Ask users to log in and fill out a MicroMasters profile first.
 
 2. Login to the CMS with an existing account. If you don't have one, you can use the superuser account created earlier.
 
 3. From the Settings menu in the left nav, choose users.
 
-4. You can use the search box to locate users who already exist. If the user already exists, click on the username and 
+4. You can use the search box to locate users who already exist. If the user already exists, click on the username and
 skip to step 5.
 
-5. Click on the Roles tab. 
+5. Click on the Roles tab.
 
-6. Check the box for the editors group. This will allow the user to view and edit all pages in the CMS. 
+6. Check the box for the editors group. This will allow the user to view and edit all pages in the CMS.
 
 # Testing
 
@@ -242,7 +156,7 @@ host machine isn't running Linux. If you are using a Mac, you'll need to run
 
     yarn install --frozen-lockfile
     npm run-script flow
-    
+
 ### Selenium
 
 To run selenium tests make sure you have the application running, including the web
@@ -273,7 +187,7 @@ view the test server with your browser, go to `http://<your_mm_ip_address>:7000`
 #### Setting user state
 
 You'll often need a user to be in a certain state with respect to some course/course run (e.g.: your user needs to have
-a passing grade in some course). There is a management command that can be used to easily accomplish this kind of change 
+a passing grade in some course). There is a management command that can be used to easily accomplish this kind of change
 of state.
 
 	# See usage details
@@ -313,7 +227,7 @@ If you want to connect to an ES cluster aside from the one created by Docker, yo
  will override the values you have in `.env`. Delete them.
 3. Restart the `db` and `elastic` docker-compose services if they're running:
  `docker-compose restart db elastic`
- 
+
 You should now be able to connect to the external ES cluster. You
 can run `docker-compose run web ./manage.py recreate_index` to test
 that it's working.
@@ -322,8 +236,13 @@ that it's working.
 # Electives
 #### Set up elective courses for a program
 In django admin:
-1. Create an `ElectivesSet`, specify `Required number` which is a number of courses that a learner has to pick 
+1. Create an `ElectivesSet`, specify `Required number` which is a number of courses that a learner has to pick
 out of the courses in this set. (Multiple elective sets could be created for the same program)
 2. Create an `ElectiveCourse` object for each course that is going to be an elective.
-3. Update the `Program` object by setting the total number of courses required to 
+3. Update the `Program` object by setting the total number of courses required to
 pass the program: `Num required courses`.
+
+
+## Session persistence issue
+If you experience intermittent logouts while browsing the application and a general ephemeral behaviour from user sessions, switch the Django session backend by adding the following in your environment file:
+`SESSION_ENGINE=django.contrib.sessions.backends.file`
