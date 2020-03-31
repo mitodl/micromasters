@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.161.3
+---------------
+
+- Bump codecov from 3.5.0 to 3.6.5
+- Bump minimist from 1.2.0 to 1.2.2
+
 Version 0.161.2 (Released March 31, 2020)
 ---------------
 
