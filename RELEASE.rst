@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.162.2
+---------------
+
+- Add uWSGI settings (#4569)
+
 Version 0.162.1 (Released April 10, 2020)
 ---------------
 
