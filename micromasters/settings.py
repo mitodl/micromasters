@@ -19,7 +19,7 @@ from micromasters.envs import (
 
 from micromasters.sentry import init_sentry
 
-VERSION = "0.162.1"
+VERSION = "0.163.0"
 
 # initialize Sentry before doing anything else so we capture any config errors
 ENVIRONMENT = get_string('MICROMASTERS_ENVIRONMENT', 'dev')
