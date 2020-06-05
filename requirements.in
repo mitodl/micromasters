@@ -1,4 +1,4 @@
-Django==2.2.10
+Django==2.2.13
 Pillow==6.2.2
 boto==2.39.0
 celery==4.3.0
