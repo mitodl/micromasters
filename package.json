@@ -35,7 +35,7 @@
     "casual": "^1.5.17",
     "chai": "^4.0.2",
     "chai-as-promised": "^7.0.0",
-    "codecov": "^3.6.5",
+    "codecov": "^3.7.1",
     "countries-list": "^2.4.2",
     "css-loader": "2.1.1",
     "currency-codes": "^1.1.2",
