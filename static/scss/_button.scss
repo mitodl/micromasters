@@ -263,6 +263,7 @@
   font-weight: 400;
   line-height: 36px;
   border-radius: 2px;
+  height: fit-content;
 
   &[disabled] {
     background-color: adjust-color($button-color, $alpha: -0.5);
