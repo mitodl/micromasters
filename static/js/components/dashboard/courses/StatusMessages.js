@@ -311,36 +311,50 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     paid
   ) {
     let message
-    if (!passedExam) {
-      message = failedExam
-        ? messageForAttemptedExams(course, passedExam)
-        : messageForNotAttemptedExam(course)
-    } else {
-      message = messageForAttemptedExams(course, passedExam)
-    }
-    if (course.has_to_pay) {
-      messages.push({
-        message: message,
-        action:  courseAction(firstRun, COURSE_ACTION_PAY)
-      })
-    } else {
-      messages.push({ message: message })
-    }
 
-    if (
-      firstRun["status"] !== STATUS_CURRENTLY_ENROLLED &&
-      S.isJust(futureEnrollableRun(course))
-    ) {
+    if (SETTINGS.FEATURES.ENABLE_EDX_EXAMS) {
       messages.push({
-        message: (
-          <span>
+          message: (
+            <span>
+            {"You are authorized to take the exam. Please follow the link "}
+              <a onClick={() => setShowExpandedCourseStatus(course.id)}>
+              to take the exam now.
+            </a>
+          </span>
+          )
+        })
+    } else {
+      if (!passedExam) {
+        message = failedExam
+          ? messageForAttemptedExams(course, passedExam)
+          : messageForNotAttemptedExam(course)
+      } else {
+        message = messageForAttemptedExams(course, passedExam)
+      }
+      if (course.has_to_pay) {
+        messages.push({
+          message: message,
+          action: courseAction(firstRun, COURSE_ACTION_PAY)
+        })
+      } else {
+        messages.push({message: message})
+      }
+
+      if (
+        firstRun["status"] !== STATUS_CURRENTLY_ENROLLED &&
+        S.isJust(futureEnrollableRun(course))
+      ) {
+        messages.push({
+          message: (
+            <span>
             {"If you want to re-take the course you can "}
-            <a onClick={() => setShowExpandedCourseStatus(course.id)}>
+              <a onClick={() => setShowExpandedCourseStatus(course.id)}>
               re-enroll.
             </a>
           </span>
-        )
-      })
+          )
+        })
+      }
     }
   }
   // all cases where courseRun is not currently in progress
