@@ -4,6 +4,7 @@ Utility functions and classes for the dashboard
 import logging
 from decimal import Decimal
 
+from django.conf import settings
 from django.db import transaction
 from django.db.models import Q, Count
 from django.urls import reverse
@@ -445,6 +446,16 @@ class MMTrack:
             exam_profile = ExamProfile.objects.only('status').get(profile=user.profile)
         except ExamProfile.DoesNotExist:
             return ExamProfile.PROFILE_ABSENT
+
+        if settings.FEATURES.get('ENABLE_EDX_EXAMS', False):
+            auths = ExamAuthorization.objects.filter(
+                user=user,
+                status=ExamAuthorization.STATUS_SUCCESS
+            )
+            if auths.exists():
+                return ExamProfile.PROFILE_SCHEDULABLE
+            else:
+                return ExamProfile.PROFILE_SUCCESS
 
         if exam_profile.status in (ExamProfile.PROFILE_PENDING, ExamProfile.PROFILE_IN_PROGRESS,):
             return ExamProfile.PROFILE_IN_PROGRESS
