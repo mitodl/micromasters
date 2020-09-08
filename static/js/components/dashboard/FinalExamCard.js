@@ -269,29 +269,29 @@ export default class FinalExamCard extends React.Component<void, Props, void> {
     } = this.props
     if (!SETTINGS.FEATURES.ENABLE_EDX_EXAMS) {
       switch (program.pearson_exam_status) {
-        case PEARSON_PROFILE_ABSENT:
-          return absentCard()
-        case PEARSON_PROFILE_SUCCESS:
-          return successCard(profile, navigateToProfile)
-        case PEARSON_PROFILE_IN_PROGRESS:
-          return pendingCard()
-        case PEARSON_PROFILE_INVALID:
-          return invalidCard(navigateToProfile)
-        case PEARSON_PROFILE_SCHEDULABLE:
-          return schedulableCard(
-            profile,
-            program,
-            navigateToProfile,
-            pearson,
-            showPearsonTOSDialog,
-            pearsonTOSDialogVisible,
-            submitPearsonSSO
-          )
-        default:
-          return null
+      case PEARSON_PROFILE_ABSENT:
+        return absentCard()
+      case PEARSON_PROFILE_SUCCESS:
+        return successCard(profile, navigateToProfile)
+      case PEARSON_PROFILE_IN_PROGRESS:
+        return pendingCard()
+      case PEARSON_PROFILE_INVALID:
+        return invalidCard(navigateToProfile)
+      case PEARSON_PROFILE_SCHEDULABLE:
+        return schedulableCard(
+          profile,
+          program,
+          navigateToProfile,
+          pearson,
+          showPearsonTOSDialog,
+          pearsonTOSDialogVisible,
+          submitPearsonSSO
+        )
+      default:
+        return null
       }
     } else {
-      return  (
+      return (
         <Card className="card final-exam-card">
           <CardContent>
             <div className="card-header">
@@ -301,12 +301,15 @@ export default class FinalExamCard extends React.Component<void, Props, void> {
               <div className="exam-text">
                 <h2>Final Proctored Exam</h2>
                 <p>
-                  You must take an online proctored exam for each course. Before you can take an exam, you
-                  have to pay for the course and pass the online work.
+                  You must take an online proctored exam for each course. Before
+                  you can take an exam, you have to pay for the course and pass
+                  the online work.
                 </p>
-                <p>Exams will be available online on edX.org. You may take the exam at any time
-                  during the exam period. No advance scheduling is required, but you should verify
-                  your account and take the complete the exam onboarding as soon as possible.
+                <p>
+                  Exams will be available online on edX.org. You may take the
+                  exam at any time during the exam period. No advance scheduling
+                  is required, but you should verify your account and take the
+                  complete the exam onboarding as soon as possible.
                 </p>
               </div>
             </div>

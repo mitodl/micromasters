@@ -314,15 +314,17 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
 
     if (SETTINGS.FEATURES.ENABLE_EDX_EXAMS) {
       messages.push({
-          message: (
-            <span>
-            {"You are authorized to take the virtual proctored exam for this course. Please "}
+        message: (
+          <span>
+            {
+              "You are authorized to take the virtual proctored exam for this course. Please "
+            }
             <a href="http://edx.org">
               enroll now and complete the exam onboarding.
             </a>
           </span>
-          )
-        })
+        )
+      })
     } else {
       if (!passedExam) {
         message = failedExam
@@ -334,10 +336,10 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
       if (course.has_to_pay) {
         messages.push({
           message: message,
-          action: courseAction(firstRun, COURSE_ACTION_PAY)
+          action:  courseAction(firstRun, COURSE_ACTION_PAY)
         })
       } else {
-        messages.push({message: message})
+        messages.push({ message: message })
       }
 
       if (
@@ -347,11 +349,11 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
         messages.push({
           message: (
             <span>
-            {"If you want to re-take the course you can "}
+              {"If you want to re-take the course you can "}
               <a onClick={() => setShowExpandedCourseStatus(course.id)}>
-              re-enroll.
-            </a>
-          </span>
+                re-enroll.
+              </a>
+            </span>
           )
         })
       }
