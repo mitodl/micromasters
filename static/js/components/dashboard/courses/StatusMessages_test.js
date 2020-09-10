@@ -94,6 +94,7 @@ describe("Course Status Messages", () => {
       course = makeCourse(0)
       sandbox = sinon.sandbox.create()
       financialAid = _.cloneDeep(FINANCIAL_AID_PARTIAL_RESPONSE)
+      SETTINGS.FEATURES.ENABLE_EDX_EXAMS = false
 
       calculateMessagesProps = {
         courseAction:                sandbox.stub(),
@@ -594,6 +595,40 @@ describe("Course Status Messages", () => {
             COURSE_ACTION_REENROLL
           )
         )
+      })
+    })
+
+    describe("should prompt users who pass the class to take the exam, if applicable", () => {
+      beforeEach(() => {
+        makeRunPast(course.runs[0])
+        makeRunPassed(course.runs[0])
+        makeRunPaid(course.runs[0])
+        makeRunFuture(course.runs[1])
+        course.has_exam = true
+        SETTINGS.FEATURES.ENABLE_EDX_EXAMS = true
+      })
+
+      it("should not prompt to take an exam if there are no current exam runs", () => {
+        course.runs = [course.runs[0]]
+        assertIsJust(calculateMessages(calculateMessagesProps), [
+          {
+            message:
+              "There are currently no exams available for scheduling. Please check back later."
+          }
+        ])
+      })
+      // Cases with failed exam attempts
+      it("should prompt the user to schedule another exam", () => {
+        course.runs = [course.runs[0]]
+        course.proctorate_exams_grades = [makeProctoredExamResult()]
+        course.proctorate_exams_grades[0].passed = false
+        course.can_schedule_exam = true
+        assertIsJust(calculateMessages(calculateMessagesProps), [
+          {
+            message:
+              "You did not pass the exam. Click here to take an exam again."
+          }
+        ])
       })
     })
 
