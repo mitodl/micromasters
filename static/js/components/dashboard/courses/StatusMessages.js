@@ -313,18 +313,20 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     let message
 
     if (SETTINGS.FEATURES.ENABLE_EDX_EXAMS) {
-      messages.push({
-        message: (
-          <span>
+      if (course.can_schedule_exam) {
+        messages.push({
+          message: (
+            <span>
             {
               "You are authorized to take the virtual proctored exam for this course. Please "
             }
-            <a href="http://edx.org">
+              <a href="http://edx.org">
               enroll now and complete the exam onboarding.
             </a>
           </span>
-        )
-      })
+          )
+        })
+      }
     } else {
       if (!passedExam) {
         message = failedExam
