@@ -616,13 +616,13 @@ describe("Course Status Messages", () => {
         course.runs = [course.runs[0]]
         course.can_schedule_exam = true
         const messages = calculateMessages(calculateMessagesProps).value
-        let mounted = shallow(messages[0]["message"])
+        const mounted = shallow(messages[0]["message"])
         assert.equal(
           mounted.text(),
           "You are authorized to take the virtual proctored exam for this " +
-          "course. Please enroll now and complete the exam onboarding."
+            "course. Please enroll now and complete the exam onboarding."
         )
-        })
+      })
       // Cases with failed exam attempts
       it("should prompt the user to take another exam", () => {
         course.runs = [course.runs[0]]
@@ -630,13 +630,13 @@ describe("Course Status Messages", () => {
         course.proctorate_exams_grades[0].passed = false
         course.can_schedule_exam = true
         const messages = calculateMessages(calculateMessagesProps).value
-        let mounted = shallow(messages[0]["message"])
+        const mounted = shallow(messages[0]["message"])
         assert.equal(
           mounted.text(),
           "You are authorized to take the virtual proctored exam for this " +
-          "course. Please enroll now and complete the exam onboarding."
+            "course. Please enroll now and complete the exam onboarding."
         )
-        })
+      })
     })
 
     it("should congratulate the user on passing, exam or no", () => {

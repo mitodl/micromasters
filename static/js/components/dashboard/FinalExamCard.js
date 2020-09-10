@@ -301,15 +301,15 @@ export default class FinalExamCard extends React.Component<void, Props, void> {
               <div className="exam-text">
                 <h2>Final Proctored Exam</h2>
                 <p>
-                  To earn a certificate, you must take an online proctored exam for each course. Before
-                  you can take a proctored exam, you have to pay for the course and pass
-                  the online work.
+                  To earn a certificate, you must take an online proctored exam
+                  for each course. Before you can take a proctored exam, you
+                  have to pay for the course and pass the online work.
                 </p>
                 <p>
                   Exams will be available online on edX.org. You may take the
                   exam at any time during the exam period. No advance scheduling
-                  is required, but you should verify your account and
-                  complete the exam onboarding during the one week onboarding period.
+                  is required, but you should verify your account and complete
+                  the exam onboarding during the one week onboarding period.
                 </p>
               </div>
             </div>

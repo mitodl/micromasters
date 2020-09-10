@@ -317,13 +317,13 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
         messages.push({
           message: (
             <span>
-            {
-              "You are authorized to take the virtual proctored exam for this course. Please "
-            }
+              {
+                "You are authorized to take the virtual proctored exam for this course. Please "
+              }
               <a href="http://edx.org">
-              enroll now and complete the exam onboarding.
-            </a>
-          </span>
+                enroll now and complete the exam onboarding.
+              </a>
+            </span>
           )
         })
       }
