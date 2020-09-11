@@ -1,4 +1,5 @@
 // @flow
+/* global SETTINGS: false */
 import _ from "lodash"
 import React from "react"
 import { mount } from "enzyme"

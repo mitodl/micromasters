@@ -598,7 +598,7 @@ describe("Course Status Messages", () => {
       })
     })
 
-    describe("should prompt users who pass the class to take the exam, if applicable", () => {
+    describe("should prompt users who pass the class and paid to take the exam, if applicable", () => {
       beforeEach(() => {
         makeRunPast(course.runs[0])
         makeRunPassed(course.runs[0])
