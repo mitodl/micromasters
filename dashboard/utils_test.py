@@ -848,10 +848,10 @@ class MMTrackTest(MockedESTestCase):
     )
     @ddt.unpack  # pylint: disable=too-many-arguments
     @patch('dashboard.utils.log')
-    def test_get_pearson_exam_status(self, profile_status, expected_status, make_exam_run,
-                                     make_profile, make_auth, log_error_called, log_mock):
+    def test_get_exam_card_status(self, profile_status, expected_status, make_exam_run,
+                                  make_profile, make_auth, log_error_called, log_mock):
         """
-        test get_pearson_exam_status
+        test get_exam_card_status
         """
         now = now_in_utc()
         exam_run = None
@@ -881,12 +881,12 @@ class MMTrackTest(MockedESTestCase):
             edx_user_data=self.cached_edx_user_data
         )
 
-        assert mmtrack.get_pearson_exam_status() == expected_status
+        assert mmtrack.get_exam_card_status() == expected_status
         assert log_mock.error.called is log_error_called
 
-    def test_get_pearson_exam_status_eligible(self):
+    def test_get_exam_card_status_eligible(self):
         """
-        test get_pearson_exam_status against valid eligibility dates
+        test get_exam_card_status against valid eligibility dates
         """
 
         ExamProfileFactory.create(
@@ -924,12 +924,12 @@ class MMTrackTest(MockedESTestCase):
         # should be considered schedulable if past <= datetime.now() <= future
         for now_value in valid_dates:
             mmtrack.now = now_value
-            assert mmtrack.get_pearson_exam_status() == ExamProfile.PROFILE_SCHEDULABLE
+            assert mmtrack.get_exam_card_status() == ExamProfile.PROFILE_SCHEDULABLE
 
         # not eligible
         for now_value in invalid_dates:
             mmtrack.now = now_value
-            assert mmtrack.get_pearson_exam_status() == ExamProfile.PROFILE_SUCCESS
+            assert mmtrack.get_exam_card_status() == ExamProfile.PROFILE_SUCCESS
 
 
 @ddt.ddt

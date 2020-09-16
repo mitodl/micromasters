@@ -193,7 +193,7 @@ def get_info_for_program(mmtrack):
         "title": mmtrack.program.title,
         "financial_aid_availability": mmtrack.financial_aid_available,
         "courses": [],
-        "pearson_exam_status": mmtrack.get_pearson_exam_status(),
+        "exam_card_status": mmtrack.get_exam_card_status(),
         "grade_average": mmtrack.calculate_final_grade_average(),
         "certificate": mmtrack.get_program_certificate_url(),
         "number_courses_required": (
