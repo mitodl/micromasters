@@ -608,9 +608,14 @@ describe("Course Status Messages", () => {
         SETTINGS.FEATURES.ENABLE_EDX_EXAMS = true
       })
 
-      it("should not prompt to take an exam if there are no current exam runs", () => {
+      it("should not prompt to take an exam if course has no exams", () => {
         course.runs = [course.runs[0]]
-        assertIsJust(calculateMessages(calculateMessagesProps), [])
+        assertIsJust(calculateMessages(calculateMessagesProps), [
+          {
+            message:
+              "There are currently no exams available. Please check back later."
+          }
+        ])
       })
       it("should prompt the user to take exam", () => {
         course.runs = [course.runs[0]]
@@ -633,8 +638,8 @@ describe("Course Status Messages", () => {
         const mounted = shallow(messages[0]["message"])
         assert.equal(
           mounted.text(),
-          "You are authorized to take the virtual proctored exam for this " +
-            "course. Please enroll now and complete the exam onboarding."
+          "You did not pass the exam. You are authorized to take the virtual proctored " +
+            "exam for this course. Please enroll now and complete the exam onboarding."
         )
       })
     })

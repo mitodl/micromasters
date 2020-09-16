@@ -113,6 +113,47 @@ const messageForAttemptedExams = (course: Course, passedExam: boolean) => {
   return `${whenFailed}${payAgain}${whenToSchedule}`
 }
 
+const messageForNotAttemptedEdxExam = (course: Course) => {
+  let message =
+    "There are currently no exams available. Please check back later."
+
+  if (course.can_schedule_exam) {
+    message = (
+      <span>
+        {
+          "You are authorized to take the virtual proctored exam for this course. Please "
+        }
+        <a href="http://edx.org">
+          enroll now and complete the exam onboarding.
+        </a>
+      </span>
+    )
+  } else if (!R.isEmpty(course.exams_schedulable_in_future)) {
+    message =
+      "You can take the exam starting on " +
+      `on ${formatDate(course.exams_schedulable_in_future[0])}.`
+  }
+  return message
+}
+
+const messageForAttemptedEdxExams = (course: Course, passedExam: boolean) => {
+  const whenFailed = passedExam ? "" : "You did not pass the exam. "
+  if (course.has_to_pay) {
+    return `${whenFailed}If you want to re-take the exam, you need to pay again.`
+  }
+  if (course.can_schedule_exam) {
+    return (
+      <span>
+        {`${whenFailed}You are authorized to take the virtual proctored exam for this course. Please `}
+        <a href="http://edx.org">
+          enroll now and complete the exam onboarding.
+        </a>
+      </span>
+    )
+  }
+  return `${whenFailed}`
+}
+
 const courseStartMessage = (run: CourseRun) => {
   const startDate = notNilorEmpty(run.course_start_date)
     ? formatDate(run.course_start_date)
@@ -313,19 +354,12 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     let message
 
     if (SETTINGS.FEATURES.ENABLE_EDX_EXAMS) {
-      if (course.can_schedule_exam) {
-        messages.push({
-          message: (
-            <span>
-              {
-                "You are authorized to take the virtual proctored exam for this course. Please "
-              }
-              <a href="http://edx.org">
-                enroll now and complete the exam onboarding.
-              </a>
-            </span>
-          )
-        })
+      if (!passedExam) {
+        message = failedExam
+          ? messageForAttemptedEdxExams(course, passedExam)
+          : messageForNotAttemptedEdxExam(course)
+      } else {
+        message = messageForAttemptedEdxExams(course, passedExam)
       }
     } else {
       if (!passedExam) {
@@ -335,30 +369,30 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
       } else {
         message = messageForAttemptedExams(course, passedExam)
       }
-      if (course.has_to_pay) {
-        messages.push({
-          message: message,
-          action:  courseAction(firstRun, COURSE_ACTION_PAY)
-        })
-      } else {
-        messages.push({ message: message })
-      }
+    }
+    if (course.has_to_pay) {
+      messages.push({
+        message: message,
+        action:  courseAction(firstRun, COURSE_ACTION_PAY)
+      })
+    } else {
+      messages.push({ message: message })
+    }
 
-      if (
-        firstRun["status"] !== STATUS_CURRENTLY_ENROLLED &&
-        S.isJust(futureEnrollableRun(course))
-      ) {
-        messages.push({
-          message: (
-            <span>
-              {"If you want to re-take the course you can "}
-              <a onClick={() => setShowExpandedCourseStatus(course.id)}>
-                re-enroll.
-              </a>
-            </span>
-          )
-        })
-      }
+    if (
+      firstRun["status"] !== STATUS_CURRENTLY_ENROLLED &&
+      S.isJust(futureEnrollableRun(course))
+    ) {
+      messages.push({
+        message: (
+          <span>
+            {"If you want to re-take the course you can "}
+            <a onClick={() => setShowExpandedCourseStatus(course.id)}>
+              re-enroll.
+            </a>
+          </span>
+        )
+      })
     }
   }
   // all cases where courseRun is not currently in progress
