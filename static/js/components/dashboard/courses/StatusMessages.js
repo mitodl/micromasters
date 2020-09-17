@@ -123,7 +123,7 @@ const messageForNotAttemptedEdxExam = (course: Course) => {
         {
           "You are authorized to take the virtual proctored exam for this course. Please "
         }
-        <a href="http://edx.org">
+        <a href="https://edx.org">
           enroll now and complete the exam onboarding.
         </a>
       </span>
@@ -145,7 +145,7 @@ const messageForAttemptedEdxExams = (course: Course, passedExam: boolean) => {
     return (
       <span>
         {`${whenFailed}You are authorized to take the virtual proctored exam for this course. Please `}
-        <a href="http://edx.org">
+        <a href="https://edx.org">
           enroll now and complete the exam onboarding.
         </a>
       </span>
