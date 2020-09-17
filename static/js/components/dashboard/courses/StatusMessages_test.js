@@ -628,6 +628,35 @@ describe("Course Status Messages", () => {
             "course. Please enroll now and complete the exam onboarding."
         )
       })
+      it("should let the user know when can take exam in the future", () => {
+        course.runs = [course.runs[0]]
+        course.can_schedule_exam = false
+        course.exams_schedulable_in_future = [
+          moment()
+            .add(2, "day")
+            .format()
+        ]
+        assertIsJust(calculateMessages(calculateMessagesProps), [
+          {
+            message:
+              "You can take the exam starting " +
+              `on ${formatDate(course.exams_schedulable_in_future[0])}.`
+          }
+        ])
+      })
+      it("message for passed exam", () => {
+        course.runs = [course.runs[0]]
+        course.can_schedule_exam = true
+        course.proctorate_exams_grades = [makeProctoredExamResult()]
+        course.proctorate_exams_grades[0].passed = true
+        const messages = calculateMessages(calculateMessagesProps).value
+        const mounted = shallow(messages[1]["message"])
+        assert.equal(
+          mounted.text(),
+          "You are authorized to take the virtual proctored " +
+            "exam for this course. Please enroll now and complete the exam onboarding."
+        )
+      })
       // Cases with failed exam attempts
       it("should prompt the user to take another exam", () => {
         course.runs = [course.runs[0]]
@@ -641,6 +670,29 @@ describe("Course Status Messages", () => {
           "You did not pass the exam. You are authorized to take the virtual proctored " +
             "exam for this course. Please enroll now and complete the exam onboarding."
         )
+      })
+      it("should prompt the user when failed exam", () => {
+        course.runs = [course.runs[0]]
+        course.proctorate_exams_grades = [makeProctoredExamResult()]
+        course.proctorate_exams_grades[0].passed = false
+        course.can_schedule_exam = false
+        assertIsJust(calculateMessages(calculateMessagesProps), [
+          { message: "You did not pass the exam. " }
+        ])
+      })
+      it("should prompt the user when failed exam and has to pay", () => {
+        course.runs = [course.runs[0]]
+        course.proctorate_exams_grades = [makeProctoredExamResult()]
+        course.proctorate_exams_grades[0].passed = false
+        course.can_schedule_exam = false
+        course.has_to_pay = true
+        assertIsJust(calculateMessages(calculateMessagesProps), [
+          {
+            message:
+              "You did not pass the exam. If you want to re-take the exam, you need to pay again.",
+            action: "course action was called"
+          }
+        ])
       })
     })
 
