@@ -446,11 +446,11 @@ class MMTrack:
             exam_profile = ExamProfile.objects.only('status').get(profile=user.profile)
         except ExamProfile.DoesNotExist:
             return ExamProfile.PROFILE_ABSENT
-
         if settings.FEATURES.get('ENABLE_EDX_EXAMS', False):
             auths = ExamAuthorization.objects.filter(
                 user=user,
-                status=ExamAuthorization.STATUS_SUCCESS
+                status=ExamAuthorization.STATUS_SUCCESS,
+                exam_run__in=future_runs,
             )
             if auths.exists():
                 return ExamProfile.PROFILE_SCHEDULABLE
