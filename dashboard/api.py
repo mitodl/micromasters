@@ -238,6 +238,7 @@ def get_info_for_course(course, mmtrack):
         "prerequisites": course.prerequisites,
         "has_contact_email": bool(course.contact_email),
         "can_schedule_exam": is_exam_schedulable(mmtrack.user, course),
+        "exam_url": get_edx_exam_coupon_url(mmtrack.user, course),
         "exams_schedulable_in_future": get_future_exam_runs(course),
         "past_exam_date": get_past_recent_exam_run(course),
         "has_to_pay": has_to_pay_for_exam(mmtrack, course),
@@ -509,6 +510,16 @@ def is_exam_schedulable(user, course):
     )
     return ExamAuthorization.objects.filter(user=user, exam_run__in=schedulable_exam_runs).exclude(
         operation=ExamAuthorization.OPERATION_DELETE).exists()
+
+
+def get_edx_exam_coupon_url(user, course):
+    """
+    Find a successful exam authorization and return the coupon url for the exam
+    """
+    exam_auth = ExamAuthorization.objects.filter(
+        user=user, course=course, status=ExamAuthorization.STATUS_SUCCESS
+    ).first()
+    return exam_auth.exam_coupon_url if exam_auth else ""
 
 
 def get_future_exam_runs(course):

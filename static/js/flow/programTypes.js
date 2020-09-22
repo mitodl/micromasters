@@ -59,6 +59,7 @@ export type Course = {
   id:                           number,
   position_in_program:          number,
   can_schedule_exam:            boolean,
+  exam_url:                     string,
   exams_schedulable_in_future:  Array<string>,
   past_exam_date:               string,
   has_to_pay:                   boolean,

@@ -123,7 +123,7 @@ const messageForNotAttemptedEdxExam = (course: Course) => {
         {
           "You are authorized to take the virtual proctored exam for this course. Please "
         }
-        <a href="https://edx.org">
+        <a href={course.exam_url}>
           enroll now and complete the exam onboarding.
         </a>
       </span>
@@ -141,11 +141,11 @@ const messageForAttemptedEdxExams = (course: Course, passedExam: boolean) => {
   if (course.has_to_pay) {
     return `${whenFailed}If you want to re-take the exam, you need to pay again.`
   }
-  if (course.can_schedule_exam) {
+  if (course.can_schedule_exam && course.exam_url) {
     return (
       <span>
         {`${whenFailed}You are authorized to take the virtual proctored exam for this course. Please `}
-        <a href="https://edx.org">
+        <a href={course.exam_url}>
           enroll now and complete the exam onboarding.
         </a>
       </span>

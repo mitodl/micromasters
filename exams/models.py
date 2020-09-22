@@ -216,6 +216,7 @@ class ExamAuthorization(TimestampedModel):
     )
     exam_taken = models.BooleanField(default=False)
     exam_no_show = models.BooleanField(default=False)
+    exam_coupon_url = models.URLField(blank=True, null=True)
 
     @classmethod
     def taken_exams(cls):

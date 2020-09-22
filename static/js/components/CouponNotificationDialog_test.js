@@ -68,6 +68,7 @@ const COURSE: Course = {
   position_in_program:         1,
   runs:                        [],
   can_schedule_exam:           false,
+  exam_url:                    "",
   exams_schedulable_in_future: [],
   past_exam_date:              "",
   has_to_pay:                  false,
