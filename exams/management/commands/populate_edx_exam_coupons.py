@@ -17,11 +17,8 @@ def validate_urls(reader):
     validator = URLValidator()
     parsed_rows = []
     for row in reader:
-        try:
-            validator(row['URL'])
-            parsed_rows.append(row['URL'])
-        except ValidationError as e:
-            raise ValidationError('[{}]'.format(e))
+        validator(row['URL'])
+        parsed_rows.append(row['URL'])
     return parsed_rows
 
 

@@ -617,10 +617,13 @@ describe("Course Status Messages", () => {
           }
         ])
       })
-      it("should prompt the user to take exam", () => {
+      it("should prompt the user to take exam if exam coupon available", () => {
         course.runs = [course.runs[0]]
         course.can_schedule_exam = true
-        const messages = calculateMessages(calculateMessagesProps).value
+        let messages = calculateMessages(calculateMessagesProps).value
+        assert.equal(messages[0]["message"], "There are currently no exams available. Please check back later.")
+        course.exam_url = "http://example-url.com"
+        messages = calculateMessages(calculateMessagesProps).value
         const mounted = shallow(messages[0]["message"])
         assert.equal(
           mounted.text(),

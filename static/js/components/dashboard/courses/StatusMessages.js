@@ -117,7 +117,7 @@ const messageForNotAttemptedEdxExam = (course: Course) => {
   let message =
     "There are currently no exams available. Please check back later."
 
-  if (course.can_schedule_exam) {
+  if (course.can_schedule_exam && course.exam_url) {
     message = (
       <span>
         {

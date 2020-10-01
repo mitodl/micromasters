@@ -515,6 +515,13 @@ def is_exam_schedulable(user, course):
 def get_edx_exam_coupon_url(user, course):
     """
     Find a successful exam authorization and return the coupon url for the exam
+
+    Args:
+        user (User): a user
+        course (courses.models.Course): A course
+
+    Returns:
+        str: a url to the exam or empty string
     """
     exam_auth = ExamAuthorization.objects.filter(
         user=user, course=course, status=ExamAuthorization.STATUS_SUCCESS
