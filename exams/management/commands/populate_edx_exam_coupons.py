@@ -5,7 +5,6 @@ import csv
 import argparse
 from django.core.management import BaseCommand, CommandError
 from django.core.validators import URLValidator
-from django.core.exceptions import ValidationError
 
 from courses.models import Course
 from exams.models import ExamAuthorization, ExamRun

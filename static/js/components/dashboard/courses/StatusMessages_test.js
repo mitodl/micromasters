@@ -621,7 +621,10 @@ describe("Course Status Messages", () => {
         course.runs = [course.runs[0]]
         course.can_schedule_exam = true
         let messages = calculateMessages(calculateMessagesProps).value
-        assert.equal(messages[0]["message"], "There are currently no exams available. Please check back later.")
+        assert.equal(
+          messages[0]["message"],
+          "There are currently no exams available. Please check back later."
+        )
         course.exam_url = "http://example-url.com"
         messages = calculateMessages(calculateMessagesProps).value
         const mounted = shallow(messages[0]["message"])
