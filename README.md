@@ -321,7 +321,7 @@ that it's working.
 
 # Electives
 #### Set up elective courses for a program
-In djngo admin:
+In django admin:
 1. Create an `ElectivesSet`, specify `Required number` which is a number of courses that a learner has to pick 
 out of the courses in this set. (Multiple elective sets could be created for the same program)
 2. Create an `ElectiveCourse` object for each course that is going to be an elective.
