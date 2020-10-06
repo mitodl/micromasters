@@ -64,8 +64,9 @@ class Command(BaseCommand):
             exam_auth.save()
             auths_changed += 1
 
-        result_messages = ['Total coupons: {}'.format(len(validated_urls))]
-        if auths_changed:
-            result_messages.append('Authorizations changed: {}'.format(auths_changed))
+        result_messages = [
+            'Total coupons: {}'.format(len(validated_urls)),
+            'Authorizations changed: {}'.format(auths_changed)
+        ]
 
         self.stdout.write(self.style.SUCCESS('\n'.join(result_messages)))
