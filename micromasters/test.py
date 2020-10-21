@@ -32,16 +32,10 @@ class SimpleTestCase(django.test.SimpleTestCase):
     database calls.
     """
     def setUp(self):
-        site_patcher = patch(
-            'wagtail.core.middleware.SiteMiddleware',
-            new=FakeSiteMiddleware
-        )
         redirect_patcher = patch(
             'wagtail.contrib.redirects.middleware.RedirectMiddleware',
             new=FakeRedirectMiddleware
         )
-        site_patcher.start()
-        self.addCleanup(site_patcher.stop)
         redirect_patcher.start()
         self.addCleanup(redirect_patcher.stop)
         super().setUp()

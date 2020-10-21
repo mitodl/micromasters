@@ -8,7 +8,7 @@ amqp==2.5.2               # via kombu
 asn1crypto==0.24.0        # via cryptography
 backcall==0.1.0           # via ipython
 bcrypt==3.1.4             # via paramiko
-beautifulsoup4==4.6.0     # via wagtail
+beautifulsoup4==4.8.2     # via wagtail
 billiard==3.6.2.0         # via celery
 boto==2.39.0              # via -r requirements.in
 celery==4.3.0             # via -r requirements.in, django-server-status
@@ -87,6 +87,7 @@ simplegeneric==0.8.1      # via ipython
 six==1.14.0               # via -r requirements.in, bcrypt, cryptography, django-compat, django-role-permissions, django-server-status, edx-api-client, edx-opaque-keys, elasticsearch-dsl, faker, html5lib, l18n, prompt-toolkit, pynacl, python-dateutil, social-auth-app-django, social-auth-core, stevedore, traitlets
 social-auth-app-django==3.1.0  # via -r requirements.in
 social-auth-core==1.7.0   # via social-auth-app-django
+soupsieve==2.0.1          # via beautifulsoup4
 sqlparse==0.3.0           # via django
 static3==0.5.1            # via -r requirements.in, dj-static
 stevedore==1.29.0         # via edx-opaque-keys
@@ -97,10 +98,11 @@ unidecode==0.4.21         # via wagtail
 urllib3==1.24.2           # via -r requirements.in, elasticsearch, requests, sentry-sdk
 uwsgi==2.0.17.1           # via -r requirements.in
 vine==1.3.0               # via amqp, celery
-wagtail==2.8              # via -r requirements.in
+wagtail==2.9.3            # via -r requirements.in
 wcwidth==0.1.7            # via prompt-toolkit
 webencodings==0.5.1       # via html5lib
 willow==1.3               # via wagtail
+xlsxwriter==1.3.7         # via wagtail
 zipp==3.0.0               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:

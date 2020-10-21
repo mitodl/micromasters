@@ -20,6 +20,8 @@ class PearsonSSOCallbackTests(SimpleTestCase):
     """
     Tests for Pearson callback URLs
     """
+    databases = '__all__'
+
     def test_success(self):
         """
         Test /pearson/success URL
