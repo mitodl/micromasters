@@ -4,6 +4,7 @@ Serializers for Wagtail-related models
 from rest_framework import serializers
 from wagtail.images.models import Image, Rendition
 from django.utils.text import slugify
+from django.db.models import Sum
 
 from cms.models import ProgramPage, ProgramFaculty
 from courses.serializers import CourseSerializer
@@ -48,6 +49,13 @@ class ProgramPageSerializer(serializers.ModelSerializer):
     slug = serializers.SerializerMethodField()
     faculty = FacultySerializer(source='faculty_members', many=True)
     courses = CourseSerializer(source='program.course_set', many=True)
+    electives_required_number = serializers.SerializerMethodField()
+
+    def get_electives_required_number(self, programpage):
+        """Get number of required elective courses for a program"""
+        if programpage.program and programpage.program.electives_set.exists():
+            return programpage.program.electives_set.all().aggregate(Sum('required_number'))['required_number__sum']
+        return 0
 
     def get_id(self, programpage):
         """Get the ID of the program"""
@@ -63,4 +71,4 @@ class ProgramPageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProgramPage
-        fields = ('id', 'title', 'slug', 'faculty', 'courses')
+        fields = ('id', 'title', 'slug', 'faculty', 'courses', 'electives_required_number')

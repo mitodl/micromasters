@@ -40,13 +40,7 @@ export default class CourseListItemWithPopover extends React.Component {
 
   render() {
     const {
-      course: {
-        title,
-        description,
-        url,
-        enrollment_text: enrollmentText,
-        elective_tag: electiveTag
-      }
+      course: { title, description, url, enrollment_text: enrollmentText }
     } = this.props
     const { isOpen, anchorEl } = this.state
 
@@ -70,11 +64,6 @@ export default class CourseListItemWithPopover extends React.Component {
     return (
       <li className="program-course">
         <h4 className="course-row" onClick={this.handleClick}>
-          {electiveTag ? (
-            <div className="elective-tag-wrapper">
-              <div className={`elective-tag ${electiveTag}`}>{electiveTag}</div>
-            </div>
-          ) : null}
           {title}
         </h4>
 
@@ -95,13 +84,7 @@ export default class CourseListItemWithPopover extends React.Component {
           />
           {popoverLink(url)}
         </Popover>
-        <div
-          className={`description enrollment-dates ${
-            electiveTag ? "label-padding" : ""
-          }`}
-        >
-          {enrollmentText}
-        </div>
+        <div className="description enrollment-dates">{enrollmentText}</div>
       </li>
     )
   }
