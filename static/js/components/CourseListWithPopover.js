@@ -33,9 +33,13 @@ export default class CourseListWithPopover extends React.Component {
       <div className="info-box course-info">
         <h3 className="title">Courses</h3>
         <div>
-          <h3 className="core">CORE</h3>
-          <h2 className="required-completion">(Complete all)</h2>
-          <hr className="solid-core" />
+          {this.electiveCourses.length > 0 && (
+            <div>
+              <h3 className="core">CORE</h3>
+              <h2 className="required-completion">(Complete all)</h2>
+              <hr className="solid-core" />
+            </div>
+          )}
         </div>
 
         <div id="course-list-core">
