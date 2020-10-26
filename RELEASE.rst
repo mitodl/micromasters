@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.173.0
+Version 0.173.0 (Released October 26, 2020)
 ---------------
 
 - Fix an incomplete sentence on the home page (#4665)
