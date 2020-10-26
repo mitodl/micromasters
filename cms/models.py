@@ -28,6 +28,12 @@ from roles.models import Instructor, Staff
 from cms.util import get_coupon_code
 from cms.blocks import CourseTeamBlock, ImageWithLinkBlock
 
+common_table_options = {
+    'startRows': 3,
+    'startCols': 2,
+    'renderer': 'html',
+}
+
 
 class HomePage(Page):
     """
@@ -99,8 +105,9 @@ class BenefitsPage(Page):
 
     content = StreamField([
         ('rich_text', RichTextBlock()),
-        ('image_with_link', ImageWithLinkBlock(help_text='Upload an image with a clickable link', blank=True))
-        ], blank=True, help_text='The content of the benefits page')
+        ('image_with_link', ImageWithLinkBlock(help_text='Upload an image with a clickable link', blank=True)),
+        ('benefits_table', TableBlock(table_options=common_table_options)),
+    ], blank=True, help_text='The content of the benefits page')
 
     content_panels = Page.content_panels + [
         StreamFieldPanel('description', classname="full"),
@@ -175,15 +182,9 @@ class ProgramTabPage(ProgramChildPage):
     """
     CMS page for custom tabs on the program page
     """
-    course_table_options = {
-        'startRows': 3,
-        'startCols': 2,
-        'renderer': 'html',
-    }
-
     content = StreamField([
         ('rich_text', RichTextBlock()),
-        ('course_table', TableBlock(table_options=course_table_options)),
+        ('course_table', TableBlock(table_options=common_table_options)),
     ], blank=True, help_text='The content of this tab on the program page')
 
     content_panels = Page.content_panels + [
