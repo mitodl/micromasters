@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.173.1
+---------------
+
+- Added table block in benefits page content (#4666)
+
 Version 0.173.0 (Released October 26, 2020)
 ---------------
 
