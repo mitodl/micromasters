@@ -76,7 +76,12 @@ export type ProgramPageCourse = {
   description:      string,
   url:              string,
   enrollment_text:  string,
-  elective_tag:     string,
+}
+
+export type ProgramPageElectiveSet = {
+  required_number:              number,
+  title:                        string,
+  courses:                      Array<ProgramPageCourse>,
 }
 
 export type CourseRun = {

@@ -13,6 +13,7 @@ from cms.factories import (
     ProgramPageFactory,
 )
 from courses.factories import CourseFactory
+from courses.serializers import ElectivesSetSerializer
 from courses.models import ElectivesSet, ElectiveCourse
 
 
@@ -59,7 +60,7 @@ class WagtailSerializerTests(MockedESTestCase):
         page = ProgramPageFactory.create()
         courses = CourseFactory.create_batch(6, program=page.program)
         faculty = FacultyFactory.create_batch(3, program_page=page)
-        elective_set = ElectivesSet.objects.create(program=page.program, required_number=2)
+        elective_set = ElectivesSet.objects.create(program=page.program, required_number=2, title="Elective")
         # Add 3 courses to elective set - For required 2 of 3 scenario
         for elective_course in courses[:3]:
             ElectiveCourse.objects.create(electives_set=elective_set, course=elective_course)
@@ -71,6 +72,7 @@ class WagtailSerializerTests(MockedESTestCase):
             "title": page.title,
             "slug": ProgramPageSerializer().get_slug(page),
             "faculty": FacultySerializer(sorted(faculty, key=lambda member: member.name), many=True).data,
-            "courses": CourseSerializer(courses, many=True).data,
-            "electives_required_number": 2,
+            # Only core courses (Not associated with electives)
+            "courses": CourseSerializer(courses[3:], many=True).data,
+            "electives_sets": ElectivesSetSerializer([elective_set], many=True).data,
         }

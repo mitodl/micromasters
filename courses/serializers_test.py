@@ -15,7 +15,7 @@ from courses.models import ElectiveCourse, ElectivesSet
 from courses.serializers import (
     CourseSerializer,
     ProgramSerializer,
-    CourseRunSerializer)
+    CourseRunSerializer, ElectivesSetSerializer)
 from dashboard.models import ProgramEnrollment
 from profiles.factories import UserFactory
 from search.base import MockedESTestCase
@@ -37,8 +37,7 @@ class CourseSerializerTests(MockedESTestCase):
             "title": course.title,
             "description": course.description,
             "url": "",
-            "enrollment_text": "Not available",
-            "elective_tag": "",
+            "enrollment_text": "Not available"
         }
         assert data == expected
 
@@ -51,16 +50,6 @@ class CourseSerializerTests(MockedESTestCase):
         data = CourseSerializer(course).data
         assert data['url'] == course_run.enrollment_url
         assert data['enrollment_text'] == course.enrollment_text
-
-    def test_elective_course(self):
-        """
-        Make sure elective course serializes properly
-        """
-        course = CourseFactory.create()
-        elective_set = ElectivesSet.objects.create(program=course.program, required_number=1)
-        ElectiveCourse.objects.create(course=course, electives_set=elective_set)
-        data = CourseSerializer(course).data
-        assert data['elective_tag'] == 'elective'
 
 
 class CourseRunSerializerTests(MockedESTestCase):
@@ -157,4 +146,25 @@ class ProgramSerializerTests(MockedESTestCase):
             'enrolled': False,
             'total_courses': 5,
             'topics': [{'name': topic.name} for topic in self.program.topics.iterator()]
+        }
+
+
+class ElectivesSetSerializerTests(MockedESTestCase):
+    """
+    Tests for ElectivesSetSerializer
+    """
+
+    def test_elective_set(self):
+        """
+        Make sure course that elective set serializer works correctly
+        """
+        courses = CourseFactory.create_batch(3)
+        elective_set = ElectivesSet.objects.create(program=courses[0].program, title="Elective", required_number=2)
+        for course in courses:
+            ElectiveCourse.objects.create(course=course, electives_set=elective_set)
+        data = ElectivesSetSerializer(elective_set).data
+        assert data == {
+            "required_number": elective_set.required_number,
+            "title": elective_set.title,
+            "courses": CourseSerializer(courses, many=True).data,
         }

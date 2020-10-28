@@ -26,10 +26,10 @@ import CopyLinkDialog from "../containers/CopyLinkDialog"
 // Program Page course list
 const courseListEl = document.querySelector("#courses-component")
 let courseList = null
-let electivesRequired = null
+let electivesSetList = null
 if (SETTINGS.program) {
   courseList = SETTINGS.program.courses
-  electivesRequired = SETTINGS.program.electives_required_number
+  electivesSetList = SETTINGS.program.electives_sets
 }
 
 if (courseListEl && !_.isEmpty(courseList)) {
@@ -37,7 +37,7 @@ if (courseListEl && !_.isEmpty(courseList)) {
     <MuiThemeProvider theme={createMuiTheme()}>
       <CourseListWithPopover
         courses={courseList}
-        electivesRequiredNumber={electivesRequired}
+        electiveSets={electivesSetList}
       />
     </MuiThemeProvider>,
     courseListEl
