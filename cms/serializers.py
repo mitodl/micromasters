@@ -6,7 +6,7 @@ from wagtail.images.models import Image, Rendition
 from django.utils.text import slugify
 
 from cms.models import ProgramPage, ProgramFaculty
-from courses.serializers import CourseSerializer
+from courses.serializers import CourseSerializer, ElectivesSetSerializer
 
 
 class RenditionSerializer(serializers.ModelSerializer):
@@ -47,7 +47,17 @@ class ProgramPageSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField()
     slug = serializers.SerializerMethodField()
     faculty = FacultySerializer(source='faculty_members', many=True)
-    courses = CourseSerializer(source='program.course_set', many=True)
+    courses = serializers.SerializerMethodField()  # Core courses
+    electives_sets = ElectivesSetSerializer(source='program.electives_set', many=True)  # Contains elective courses
+
+    def get_courses(self, programpage):
+        """Get only core courses for a program."""
+        elective_course_ids = programpage.program.electives_set.filter(electivecourse__isnull=False).values_list(
+            'electivecourse__course__id')
+        # Return only core courses in program serializer. All elective courses would be part of electives_sets
+        # If there is no elective set associated with program, All the associated courses with program will be treated
+        # as core courses
+        return CourseSerializer(programpage.program.course_set.exclude(id__in=elective_course_ids), many=True).data
 
     def get_id(self, programpage):
         """Get the ID of the program"""
@@ -63,4 +73,4 @@ class ProgramPageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProgramPage
-        fields = ('id', 'title', 'slug', 'faculty', 'courses')
+        fields = ('id', 'title', 'slug', 'faculty', 'courses', 'electives_sets')

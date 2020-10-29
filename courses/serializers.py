@@ -3,7 +3,7 @@ Serializers for courses
 """
 from rest_framework import serializers
 
-from courses.models import Course, Program, CourseRun, ElectiveCourse, Topic
+from courses.models import Course, Program, CourseRun, ElectiveCourse, Topic, ElectivesSet
 from dashboard.models import ProgramEnrollment
 
 
@@ -66,19 +66,12 @@ class ProgramSerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
     """Serializer for Course objects"""
     description = serializers.SerializerMethodField()
-    elective_tag = serializers.SerializerMethodField()
 
     def get_description(self, course):
         """Choose the right description for course"""
         if hasattr(course, 'programcourse') and course.programcourse.description:
             return course.programcourse.description
         return course.description
-
-    def get_elective_tag(self, course):
-        """If the course is an elective"""
-        if not course.program.electives_set.exists():
-            return ""
-        return 'elective' if ElectiveCourse.objects.filter(course=course).exists() else 'core'
 
     class Meta:
         model = Course
@@ -88,7 +81,25 @@ class CourseSerializer(serializers.ModelSerializer):
             'description',
             'url',
             'enrollment_text',
-            'elective_tag',
+        )
+
+
+class ElectivesSetSerializer(serializers.ModelSerializer):
+    """Serializer for Elective Sets """
+    courses = serializers.SerializerMethodField()
+
+    def get_courses(self, elective_set):
+        """Get all the elective courses associated with an ElectivesSet through ElectiveCourse"""
+        elective_courses = Course.objects.filter(
+            id__in=ElectiveCourse.objects.filter(electives_set=elective_set).values('course'))
+        return CourseSerializer(elective_courses, many=True).data
+
+    class Meta:
+        model = ElectivesSet
+        fields = (
+            'required_number',
+            'title',
+            'courses',
         )
 
 

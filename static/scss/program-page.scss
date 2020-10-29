@@ -138,6 +138,41 @@
 
   }
 
+  .info-box h3.core {
+    color: $mm-brand-bg-dark;
+    font-size: 15px;
+    line-height: 1.4em;
+    margin: 0 6px 1px 0;
+    display: inline-block;
+  }
+
+  .info-box h3.elective {
+    color: $elective-bg-color;
+    font-size: 15px;
+    line-height: 1.4em;
+    margin: 0 6px 1px 0;
+    display: inline-block;
+  }
+
+  .info-box h2.required-completion {
+    font-size: 13px;
+    line-height: 1.4em;
+    margin: 0 0 1px 0;
+    display: inline-block;
+  }
+
+  .info-box hr.solid-core {
+    background: $mm-brand-bg-dark;
+    height: 2px;
+    margin-top: 3px;
+  }
+
+  .info-box hr.solid-elective {
+    background: $elective-bg-color;
+    height: 2px;
+    margin-top: 3px;
+  }
+
   .info-box {
     padding: 30px;
     background-color: $bg-med-gray;
@@ -159,7 +194,7 @@
   }
 
   .course-info {
-    #course-list {
+    #course-list-core, #course-list-elective {
       ol {
         list-style: none;
         padding: 0;

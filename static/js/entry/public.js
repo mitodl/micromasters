@@ -26,14 +26,19 @@ import CopyLinkDialog from "../containers/CopyLinkDialog"
 // Program Page course list
 const courseListEl = document.querySelector("#courses-component")
 let courseList = null
+let electivesSetList = null
 if (SETTINGS.program) {
   courseList = SETTINGS.program.courses
+  electivesSetList = SETTINGS.program.electives_sets
 }
 
 if (courseListEl && !_.isEmpty(courseList)) {
   ReactDOM.render(
     <MuiThemeProvider theme={createMuiTheme()}>
-      <CourseListWithPopover courses={courseList} />
+      <CourseListWithPopover
+        courses={courseList}
+        electiveSets={electivesSetList}
+      />
     </MuiThemeProvider>,
     courseListEl
   )
