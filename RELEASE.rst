@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.173.3
+Version 0.173.3 (Released October 29, 2020)
 ---------------
 
 - Added design changes for elective labels (#4663)
