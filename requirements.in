@@ -43,4 +43,4 @@ robohash
 static3==0.5.1
 urllib3>=1.24.2
 uwsgi
-wagtail==2.8
+wagtail==2.9.3
