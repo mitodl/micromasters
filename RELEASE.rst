@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.173.2
+---------------
+
+- Bump wagtail from 2.8 to 2.9.3
+
 Version 0.173.1 (Released October 27, 2020)
 ---------------
 
