@@ -3,6 +3,7 @@ Populates ExamAuthorizations with edx coupon urls for taking exam-course
 """
 import csv
 import argparse
+import re
 from django.core.management import BaseCommand, CommandError
 from django.core.validators import URLValidator
 
@@ -32,16 +33,27 @@ class Command(BaseCommand):
 
         csvfile = kwargs.get('csvfile')
         reader = csv.DictReader(csvfile.read().splitlines())
-        edx_course_key = next(reader)['Course ID']
+        catalog_query = next(reader)['Catalog Query']
+        course_number = re.search(r"key:\(([A-Za-z0-9.]+)", catalog_query).group(1)
 
         validated_urls = validate_urls(reader)
-        course = Course.objects.get(courserun__edx_course_key=edx_course_key)
+
+        try:
+            course = Course.objects.get(course_number__startswith=course_number)
+        except Course.DoesNotExist:
+            raise CommandError(
+                'Could not find a course with number "{}"'.format(course_number)
+            )
+        except Course.MultipleObjectsReturned:
+            raise CommandError(
+                'There are multiple courses with given number "{}"'.format(course_number)
+            )
 
         exam_runs = ExamRun.get_currently_schedulable(course)
 
         if not exam_runs.exists():
             raise CommandError(
-                'There are no eligible exam runs for course_id "{}"'.format(edx_course_key)
+                'There are no eligible exam runs for course "{}"'.format(course.title)
             )
 
         exam_auths = ExamAuthorization.objects.filter(
@@ -51,9 +63,9 @@ class Command(BaseCommand):
         )
         if exam_auths.count() > len(validated_urls):
             raise CommandError(
-                'Not enough coupon codes for course_id "{}", '
+                'Not enough coupon codes for course_number "{}", '
                 'number of coupons:{}, authorizations: {}'.format(
-                    edx_course_key,
+                    course_number,
                     len(validated_urls),
                     exam_auths.count()
                 )
