@@ -37,11 +37,16 @@ class Command(BaseCommand):
         course_number = re.search(r"key:\(([A-Za-z0-9.]+)", catalog_query).group(1)
 
         validated_urls = validate_urls(reader)
-        course = Course.objects.filter(course_number__startswith=course_number).first()
 
-        if course is None:
+        try:
+            course = Course.objects.get(course_number__startswith=course_number)
+        except Course.DoesNotExist:
             raise CommandError(
                 'Could not find a course with number "{}"'.format(course_number)
+            )
+        except Course.MultipleObjectsReturned:
+            raise CommandError(
+                'There are multiple courses with given number "{}"'.format(course_number)
             )
 
         exam_runs = ExamRun.get_currently_schedulable(course)
