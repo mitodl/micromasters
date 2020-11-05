@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.174.0
+Version 0.174.0 (Released November 05, 2020)
 ---------------
 
 - Update populate_exam_coupons command to parse course number (#4671)
