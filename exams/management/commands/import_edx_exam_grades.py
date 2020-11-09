@@ -8,7 +8,8 @@ from django.contrib.auth.models import User
 from django.core.management import BaseCommand, CommandError
 
 from courses.models import Course
-from exams.models import ExamRun
+from exams.models import ExamRun, ExamAuthorization
+from exams.pearson.constants import EXAM_GRADE_PASS, EXAM_GRADE_FAIL
 from grades.models import ProctoredExamGrade
 
 
@@ -37,9 +38,10 @@ class Command(BaseCommand):
             raise CommandError(
                 'There are multiple courses with given number "{}"'.format(course_number)
             )
-        exam_runs = ExamRun.get_currently_schedulable(course)
+        # should be only one current exam run
+        exam_run = ExamRun.get_currently_schedulable(course).first()
 
-        if not exam_runs.exists():
+        if exam_run is None:
             raise CommandError(
                 'There are no eligible exam runs for course "{}"'.format(course.title)
             )
@@ -48,17 +50,28 @@ class Command(BaseCommand):
         existing_grades = 0
         for row in reader:
             user = User.objects.get(username=row['Username'])
-            exam_grade, created = ProctoredExamGrade.objects.get_or_create(
+            exam_authorization = ExamAuthorization.objects.get(user=user, exam_run=exam_run)
+            passed = row['Grade'] >= exam_run.passing_score
+            defaults = {
+                'passing_score': exam_run.passing_score,
+                'score': row['Grade']*100,
+                'grade': EXAM_GRADE_PASS if passed else EXAM_GRADE_FAIL,
+                'percentage_grade': float(row['Grade']),
+                'passed': passed,
+                'row_data': row,
+            }
+            exam_grade, updated = ProctoredExamGrade.objects.update_or_create(
                 user=user,
                 course=course,
-                exam_run=exam_runs.first(),
+                exam_run=exam_run,
+                defaults=defaults
             )
-            if created:
-                grade_count += 1
-            else:
+            if updated:
                 existing_grades += 1
-            exam_grade.set_score(row['Grade'])
-            exam_grade.save_and_log(None)
+            else:
+                grade_count += 1
+                exam_authorization.exam_taken = True
+                exam_authorization.save()
 
         result_messages = [
             'Total exam grades created: {}'.format(grade_count),
