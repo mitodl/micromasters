@@ -34,7 +34,7 @@ class Command(BaseCommand):
         csvfile = kwargs.get('csvfile')
         reader = csv.DictReader(csvfile.read().splitlines())
         catalog_query = next(reader)['Catalog Query']
-        course_number = re.search(r"key:\(([A-Za-z0-9.]+)", catalog_query).group(1)
+        course_number = re.search(r"\+([A-Za-z0-9.]+)PEx", catalog_query).group(1)
 
         validated_urls = validate_urls(reader)
 
