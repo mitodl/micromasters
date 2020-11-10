@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.175.0 (Released November 10, 2020)
+---------------
+
+- Update Readme.md file and include edX configuration - #4567
+
 Version 0.174.0 (Released November 05, 2020)
 ---------------
 
