@@ -18,4 +18,4 @@ show_missing = True
 precision = 2
 
 [html]
-directory = ${COVERAGE_DIR}
+directory = htmlcov

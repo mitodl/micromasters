@@ -1,9 +1,0 @@
-version: '3.7'
-services:
-  celery:
-    environment:
-      # for celery, to avoid ImproperlyConfigured
-      MAILGUN_URL: 'http://fake.example.com'
-      MAILGUN_KEY: 'fake'
-      ELASTICSEARCH_INDEX: 'testindex'
-      OPEN_DISCUSSIONS_SITE_KEY: 'fake'

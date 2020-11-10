@@ -13,9 +13,7 @@ pylint-plugin-utils==0.6
 pytest==5.3.5
 pytest-cov
 pytest-django==3.8.0
-pytest-pep8==1.0.6
 pytest-mock
-pytest-pylint==0.15.0
 semantic-version
 selenium==3.141.0
 testfixtures
