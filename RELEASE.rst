@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.175.1
+Version 0.175.1 (Released November 10, 2020)
 ---------------
 
 - Updating the regex for parsing course codes from coupon report (#4678)
