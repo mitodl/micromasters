@@ -136,7 +136,7 @@ class ImageTests(TestCase):
 
         with patch(
             'profiles.util.shrink_dimensions',
-            return_value=(thumb_width, thumb_height, thumbnail_size)
+            return_value=(thumb_width, thumb_height)
         ) as mocked:
             thumb_file = util.make_thumbnail(full_image_file, 64)
             thumb_image = Image.open(thumb_file)
