@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+Version 0.175.2
+---------------
+
+- Bump cryptography from 2.3.1 to 3.2
+- Remove google plus share button from footer
+- Django Admin: Added course run filter on final grades
+
 Version 0.175.1 (Released November 10, 2020)
 ---------------
 
