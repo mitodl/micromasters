@@ -60,7 +60,7 @@ class Command(BaseCommand):
                 'passed': passed,
                 'row_data': row,
             }
-            exam_grade, updated = ProctoredExamGrade.objects.update_or_create(
+            _, updated = ProctoredExamGrade.objects.update_or_create(
                 user=user,
                 course=course,
                 exam_run=exam_run,
