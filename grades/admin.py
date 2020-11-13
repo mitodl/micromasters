@@ -11,6 +11,7 @@ class FinalGradeAdmin(admin.ModelAdmin):
     """Admin for FinalGrade"""
     model = models.FinalGrade
     list_display = ('id', 'grade', 'user', 'course_run', )
+    list_filter = ('course_run',)
     ordering = ('course_run',)
     raw_id_fields = ('user',)
     search_fields = (
