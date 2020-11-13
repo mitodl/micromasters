@@ -63,7 +63,7 @@ pbr==4.2.0                # via stevedore
 pexpect==4.6.0            # via ipython
 phonenumbers==8.10.23     # via -r requirements.in
 pickleshare==0.7.5        # via ipython
-pillow==6.2.2             # via -r requirements.in, robohash, wagtail
+pillow==7.2.0             # via -r requirements.in, robohash, wagtail
 prompt-toolkit==2.0.5     # via ipython
 psycopg2==2.7.3.2         # via -r requirements.in, django-server-status
 ptyprocess==0.6.0         # via pexpect

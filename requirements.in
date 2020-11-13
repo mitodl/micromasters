@@ -1,5 +1,5 @@
 Django==2.2.13
-Pillow==6.2.2
+Pillow==7.1.0
 boto==2.39.0
 celery==4.3.0
 certifi==2018.1.18
