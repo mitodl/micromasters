@@ -5,7 +5,6 @@ x-environment:
   DEBUG: 'False'
   NODE_ENV: 'production'
   DEV_ENV: 'True'  # necessary to have nginx connect to web container
-  COVERAGE_DIR: htmlcov
   DATABASE_URL: postgres://postgres@db:5432/postgres
   MICROMASTERS_SECURE_SSL_REDIRECT: 'False'
   MICROMASTERS_DB_DISABLE_SSL: 'True'
