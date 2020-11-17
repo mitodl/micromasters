@@ -29,7 +29,7 @@ export const attachCoupon = (code: string): Dispatcher<*> => {
       },
       response => {
         dispatch(receiveAttachCouponFailure(response))
-        return Promise.reject(response)
+        return Promise.reject(new Error("Unable to attach coupon"))
       }
     )
   }
