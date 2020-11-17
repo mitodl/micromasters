@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.175.2
+Version 0.175.2 (Released November 17, 2020)
 ---------------
 
 - Bump cryptography from 2.3.1 to 3.2
