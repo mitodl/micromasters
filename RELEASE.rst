@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.176.0
+---------------
+
+- Update the pillow version (#4625)
+- switch from travis to github actions
+
 Version 0.175.2 (Released November 17, 2020)
 ---------------
 
