@@ -11,6 +11,7 @@ from courses.models import Course
 from exams.models import ExamRun, ExamAuthorization
 from exams.pearson.constants import EXAM_GRADE_PASS, EXAM_GRADE_FAIL
 from grades.models import ProctoredExamGrade
+from micromasters.utils import now_in_utc
 
 
 class Command(BaseCommand):
@@ -20,7 +21,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('csvfile', type=argparse.FileType('r'), help='')
 
-        parser.add_argument('course_code', type=argparse.FileType('r'), help='Example: 14.100')
+        parser.add_argument('course_code', help='Example: 14.100')
 
     def handle(self, *args, **kwargs):  # pylint: disable=unused-argument,too-many-locals
 
@@ -51,14 +52,15 @@ class Command(BaseCommand):
         for row in reader:
             user = User.objects.get(username=row['Username'])
             exam_authorization = ExamAuthorization.objects.get(user=user, exam_run=exam_run)
-            passed = row['Grade'] >= exam_run.passing_score
+            passed = float(row['Grade']) >= exam_run.passing_score
             defaults = {
                 'passing_score': exam_run.passing_score,
-                'score': row['Grade']*100,
+                'score': float(row['Grade'])*100,
                 'grade': EXAM_GRADE_PASS if passed else EXAM_GRADE_FAIL,
                 'percentage_grade': float(row['Grade']),
                 'passed': passed,
                 'row_data': row,
+                'exam_date': now_in_utc()
             }
             _, updated = ProctoredExamGrade.objects.update_or_create(
                 user=user,
