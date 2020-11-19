@@ -11,17 +11,17 @@ jobs:
         with:
           ref: refs/heads/master
       - name: OWASP ZAP Baseline Scan of CI
-        uses: zaproxy/action-baseline
+        uses: zaproxy/action-baseline@master
         with:
           target: ${{ secrets.ZAP_CI_TARGET }}
           rules_file_name: '.zap/rules.tsv'
       - name: OWASP ZAP Full Scan of RC
-        uses: zaproxy/action-full-scan
+        uses: zaproxy/action-full-scan@master
         with:
           target: ${{ secrets.ZAP_RC_TARGET }}
           rules_file_name: '.zap/rules.tsv'
       - name: OWASP ZAP Full Scan of Production
-        uses: zaproxy/action-full-scan
+        uses: zaproxy/action-full-scan@master
         with:
           target: ${{ secrets.ZAP_PROD_TARGET }}
           rules_file_name: '.zap/rules.tsv'
