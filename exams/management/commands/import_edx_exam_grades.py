@@ -27,7 +27,7 @@ class Command(BaseCommand):
 
         csvfile = kwargs.get('csvfile')
         course_number = kwargs.get('course_code')
-        reader = csv.DictReader(csvfile.read().splitlines())
+        reader = csv.DictReader(csvfile)
 
         try:
             course = Course.objects.get(course_number__startswith=course_number)
@@ -40,11 +40,20 @@ class Command(BaseCommand):
                 'There are multiple courses with given number "{}"'.format(course_number)
             )
         # should be only one current exam run
-        exam_run = ExamRun.get_currently_schedulable(course).first()
-
-        if exam_run is None:
+        now = now_in_utc()
+        try:
+            exam_run = ExamRun.objects.get(
+                course=course,
+                date_first_schedulable__lte=now,
+                date_last_schedulable__gte=now,
+            )
+        except Course.DoesNotExist:
             raise CommandError(
-                'There are no eligible exam runs for course "{}"'.format(course.title)
+                'There are no eligible exam runs for course "{}"'.format(course_number)
+            )
+        except Course.MultipleObjectsReturned:
+            raise CommandError(
+                'There are multiple eligible exam runs for course "{}"'.format(course_number)
             )
 
         grade_count = 0
@@ -62,18 +71,18 @@ class Command(BaseCommand):
                 'row_data': row,
                 'exam_date': now_in_utc()
             }
-            _, updated = ProctoredExamGrade.objects.update_or_create(
+            _, created = ProctoredExamGrade.objects.update_or_create(
                 user=user,
                 course=course,
                 exam_run=exam_run,
                 defaults=defaults
             )
-            if updated:
-                existing_grades += 1
-            else:
+            if created:
                 grade_count += 1
                 exam_authorization.exam_taken = True
                 exam_authorization.save()
+            else:
+                existing_grades += 1
 
         result_messages = [
             'Total exam grades created: {}'.format(grade_count),
