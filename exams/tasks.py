@@ -1,31 +1,13 @@
 """Tasks for exams"""
 import logging
-import tempfile
 
-from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
-from django.db import transaction
 from celery import group
 
 from dashboard.models import ProgramEnrollment
 from exams import api
 from exams.api import authorize_for_latest_passed_course
-from exams.pearson.exceptions import RetryableSFTPException
 from exams.models import (
-    ExamAuthorization,
-    ExamProfile,
     ExamRun,
-)
-from exams.pearson import (
-    audit,
-    download,
-    sftp,
-    upload,
-    writers,
-)
-from exams.utils import (
-    exponential_backoff,
-    validate_profile,
 )
 from micromasters.celery import app
 from micromasters.utils import now_in_utc, chunks
