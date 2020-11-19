@@ -3,7 +3,7 @@ Tests for exam tasks
 """
 from unittest.mock import patch
 
-from ddt import ddt, data, unpack
+from ddt import ddt, data
 
 from dashboard.factories import ProgramEnrollmentFactory
 from exams.factories import (
