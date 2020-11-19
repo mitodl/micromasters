@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.176.0
+Version 0.176.0 (Released November 19, 2020)
 ---------------
 
 - Update the pillow version (#4625)
