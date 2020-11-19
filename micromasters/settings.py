@@ -482,18 +482,6 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'exams.tasks.authorize_exam_runs',
         'schedule': crontab(minute=0, hour='*')
     },
-    'export_exam_profiles-every-1-hrs': {
-        'task': 'exams.tasks.export_exam_profiles',
-        'schedule': crontab(minute=10, hour='*')
-    },
-    'export_exam_authorizations-every-1-hrs': {
-        'task': 'exams.tasks.export_exam_authorizations',
-        'schedule': crontab(minute=20, hour='*')
-    },
-    'pearson-zip-files-processing-every-1-hrs': {
-        'task': 'exams.tasks.batch_process_pearson_zip_files',
-        'schedule': crontab(minute=30, hour='*')
-    },
     'generate-mm-course-certificates-every-1-hrs': {
         'task': 'grades.tasks.generate_course_certificates_for_fa_students',
         'schedule': crontab(minute=0, hour='*')
