@@ -32,7 +32,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):  # pylint: disable=unused-argument,too-many-locals
 
         csvfile = kwargs.get('csvfile')
-        reader = csv.DictReader(csvfile.read().splitlines())
+        reader = csv.DictReader(csvfile)
         catalog_query = next(reader)['Catalog Query']
         course_number = re.search(r"\+([A-Za-z0-9.]+)PEx", catalog_query).group(1)
 
@@ -78,7 +78,10 @@ class Command(BaseCommand):
 
         result_messages = [
             'Total coupons: {}'.format(len(validated_urls)),
-            'Authorizations changed: {}'.format(auths_changed)
+            'Authorizations changed: {}'.format(auths_changed),
+            'Let the course team know that the last {} authorizations were unused'.format(
+                len(validated_urls)-auths_changed
+            )
         ]
 
         self.stdout.write(self.style.SUCCESS('\n'.join(result_messages)))
