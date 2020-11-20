@@ -14,4 +14,9 @@ app = Celery('micromasters')
 # Using a string here means the worker will not have to
 # pickle the object when using Windows.
 app.config_from_object('django.conf:settings', namespace='CELERY')
+app.conf.task_default_queue = "default"
 app.autodiscover_tasks()
+
+app.conf.task_routes = {
+	"dashboard.tasks.*": {"queue": "dashboard"}
+}
