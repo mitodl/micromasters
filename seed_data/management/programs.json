@@ -5,6 +5,46 @@
         "description": "Learn stuff about digital learning.",
         "financial_aid_availability": true,
         "num_required_courses": 3,
+        "elective_sets": [
+            {
+                "title": "ELECTIVE",
+                "required_number": 1,
+                "courses": [
+                    {
+                        "title": "Digital Learning 400 (ELECTIVE)",
+                        "position_in_program": 4,
+                        "description": "An elective course for Digital Learning",
+                        "course_runs": [
+                            {
+                                "title": "Digital Learning 400 - August 2016",
+                                "upgrade_deadline": "2016-08-22T00:00:00+00:00",
+                                "edx_course_key": "course-v1:MITx+Digital+Learning+400+Aug_2016",
+                                "enrollment_start": "2016-08-15T00:00:00+00:00",
+                                "end_date": "2016-12-15T00:00:00+00:00",
+                                "start_date": "2016-08-15T00:00:00+00:00",
+                                "enrollment_end": "2016-08-29T00:00:00+00:00"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Digital Learning 500 (ELECTIVE)",
+                        "position_in_program": 5,
+                        "description": "An elective advanced course for Digital Learning",
+                        "course_runs": [
+                            {
+                                "title": "Digital Learning 500 - August 2016",
+                                "upgrade_deadline": "2016-08-22T00:00:00+00:00",
+                                "edx_course_key": "course-v1:MITx+Digital+Learning+500+Aug_2016",
+                                "enrollment_start": "2016-08-15T00:00:00+00:00",
+                                "end_date": "2016-12-15T00:00:00+00:00",
+                                "start_date": "2016-08-15T00:00:00+00:00",
+                                "enrollment_end": "2016-08-29T00:00:00+00:00"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
         "courses": [
             {
                 "title": "Digital Learning 100",

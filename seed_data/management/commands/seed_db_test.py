@@ -7,7 +7,7 @@ from factory.django import mute_signals
 
 from dashboard.models import CachedEnrollment
 from courses.factories import ProgramFactory, CourseRunFactory
-from courses.models import Program
+from courses.models import Program, ElectiveCourse
 from seed_data.management.commands.seed_db import (
     MODEL_DEFAULTS,
     FAKE_USER_USERNAME_PREFIX,
@@ -16,7 +16,7 @@ from seed_data.management.commands.seed_db import (
     deserialize_program_data_list,
     deserialize_user_data,
     deserialize_course_data,
-)
+    deserialize_elective_data)
 from search.base import MockedESTestCase
 
 
@@ -140,6 +140,46 @@ class SeedDBDeserializationTests(MockedESTestCase):
         ]
     }
 
+    ELECTIVE_DATA = {
+        "title": "ELECTIVE",
+        "required_number": 1,
+        "courses": [
+            {
+                "title": "Digital Learning 100 (ELECTIVE)",
+                "position_in_program": 1,
+                "description": "An introductory course to Digital Learning",
+                "course_runs": [
+                    {
+                        "title": "Digital Learning 100 - January 2016",
+                        "upgrade_deadline": "2016-01-22T00:00:00+00:00",
+                        "edx_course_key": "course-v1:MITx+Digital+Learning+100+Jan_2016_elective",
+                        "enrollment_start": "2016-01-15T00:00:00+00:00",
+                        "end_date": "2016-05-15T00:00:00+00:00",
+                        "start_date": "2016-01-15T00:00:00+00:00",
+                        "enrollment_end": "2016-01-29T00:00:00+00:00"
+                    }
+                ]
+            },
+            {
+                "title": "Digital Learning 200 (ELECTIVE)",
+                "position_in_program": 2,
+                "description": "An introductory course to Digital Learning",
+                "course_runs": [
+                    {
+                        "title": "Digital Learning 200 - January 2016",
+                        "upgrade_deadline": "2016-01-22T00:00:00+00:00",
+                        "edx_course_key": "course-v1:MITx+Digital+Learning+200+Jan_2016_elective",
+                        "enrollment_start": "2016-01-15T00:00:00+00:00",
+                        "end_date": "2016-05-15T00:00:00+00:00",
+                        "start_date": "2016-01-15T00:00:00+00:00",
+                        "enrollment_end": "2016-01-29T00:00:00+00:00"
+                    }
+                ]
+            }
+
+        ]
+    }
+
     def test_deserialize_user_data(self):
         """Test that user data is correctly deserialized"""
         new_course_run = CourseRunFactory.create(edx_course_key='course-v1:MITx+Analog+Learning+100+Aug_2015')
@@ -179,3 +219,13 @@ class SeedDBDeserializationTests(MockedESTestCase):
         for i, run in enumerate(course.courserun_set.all()):
             for key in ('title', 'edx_course_key'):
                 assert getattr(run, key) == self.PROGRAM_DATA['courses'][0]['course_runs'][i][key]
+
+    def test_deserialize_elective_set(self):
+        new_program = ProgramFactory.create()
+        elective_set = deserialize_elective_data(new_program, self.ELECTIVE_DATA)
+        assert elective_set.title == 'ELECTIVE'
+        assert elective_set.required_number == self.ELECTIVE_DATA['required_number']
+        assert elective_set.program == new_program
+        elective_courses = self.ELECTIVE_DATA.get('courses')
+        assert not elective_courses or len(self.ELECTIVE_DATA.get('courses')) == ElectiveCourse.objects.filter(
+            electives_set=elective_set).count()
