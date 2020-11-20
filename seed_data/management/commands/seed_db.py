@@ -8,7 +8,7 @@ from django.db.models.signals import post_save
 from factory.django import mute_signals
 
 from backends.edxorg import EdxOrgOAuth2
-from courses.models import Program, Course, CourseRun
+from courses.models import Program, Course, CourseRun, ElectivesSet, ElectiveCourse
 from dashboard.models import ProgramEnrollment
 from grades.models import FinalGrade, FinalGradeStatus
 from micromasters.utils import (
@@ -197,11 +197,31 @@ def deserialize_course_data(program, course_data):
     return course
 
 
+def deserialize_elective_data(program, elective_data):
+    """Deserializes an Elective set object"""
+    elective_set = deserialize_model_data(ElectivesSet, elective_data, program=program)
+    elective_courses_data = elective_data.get('courses')
+    if elective_courses_data:
+        for elective_course_data in elective_courses_data:
+            course = deserialize_course_data(program, elective_course_data)
+            deserialize_elective_course_data(elective_set, course)
+    return elective_set
+
+
+def deserialize_elective_course_data(elective_set, course):
+    """Deserializes an elective course object"""
+    elective_course = deserialize_model_data(ElectiveCourse, electives_set=elective_set, course=course, data={})
+    return elective_course
+
+
 def deserialize_program_data(program_data):
     """Deserializes a Program object"""
     program = deserialize_model_data(Program, program_data)
     for course_data in program_data['courses']:
         deserialize_course_data(program, course_data)
+    elective_data_list = program_data.get('elective_sets')
+    if elective_data_list:
+        [deserialize_elective_data(program, elective_data) for elective_data in elective_data_list]
     return program
 
 
