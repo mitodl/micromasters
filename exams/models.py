@@ -155,6 +155,23 @@ class ExamProfile(TimestampedModel):
         return 'Exam Profile "{0}" with status "{1}"'.format(self.id, self.status)
 
 
+class ExamRunCoupon(TimestampedModel):
+    """Represents a coupon code url for an edx proctored exam"""
+    exam_run = models.ForeignKey('ExamRun', related_name='exam_run_coupons', on_delete=models.CASCADE)
+    coupon_url = models.URLField()
+    used = models.BooleanField(default=False)
+
+    @classmethod
+    def get_unused_coupon(cls, exam_run):
+        """Returns unused coupon url for edx proctored exam"""
+        coupon = cls.objects.filter(exam_run=exam_run, used=False).first()
+        if coupon is None:
+            return ""
+        coupon.used = True
+        coupon.save()
+        return coupon.coupon_url
+
+
 class ExamAuthorization(TimestampedModel):
     """
     Tracks state of an exam authorization

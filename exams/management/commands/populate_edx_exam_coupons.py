@@ -8,7 +8,8 @@ from django.core.management import BaseCommand, CommandError
 from django.core.validators import URLValidator
 
 from courses.models import Course
-from exams.models import ExamAuthorization, ExamRun
+from exams.models import ExamRun, ExamRunCoupon
+from micromasters.utils import now_in_utc
 
 
 def validate_urls(reader):
@@ -32,7 +33,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):  # pylint: disable=unused-argument,too-many-locals
 
         csvfile = kwargs.get('csvfile')
-        reader = csv.DictReader(csvfile.read().splitlines())
+        reader = csv.DictReader(csvfile)
         catalog_query = next(reader)['Catalog Query']
         course_number = re.search(r"\+([A-Za-z0-9.]+)PEx", catalog_query).group(1)
 
@@ -49,36 +50,35 @@ class Command(BaseCommand):
                 'There are multiple courses with given number "{}"'.format(course_number)
             )
 
-        exam_runs = ExamRun.get_currently_schedulable(course)
-
-        if not exam_runs.exists():
-            raise CommandError(
-                'There are no eligible exam runs for course "{}"'.format(course.title)
+        # should be only one current exam run
+        now = now_in_utc()
+        try:
+            exam_run = ExamRun.objects.get(
+                course=course,
+                date_first_schedulable__lte=now,
+                date_last_schedulable__gte=now,
             )
-
-        exam_auths = ExamAuthorization.objects.filter(
-            exam_run__in=exam_runs,
-            status=ExamAuthorization.STATUS_SUCCESS,
-            exam_coupon_url__isnull=True
-        )
-        if exam_auths.count() > len(validated_urls):
+        except Course.DoesNotExist:
             raise CommandError(
-                'Not enough coupon codes for course_number "{}", '
-                'number of coupons:{}, authorizations: {}'.format(
-                    course_number,
-                    len(validated_urls),
-                    exam_auths.count()
-                )
+                'There is no eligible exam run for course "{}"'.format(course_number)
             )
-        auths_changed = 0
-        for exam_auth, url in zip(exam_auths, validated_urls):
-            exam_auth.exam_coupon_url = url
-            exam_auth.save()
-            auths_changed += 1
+        except Course.MultipleObjectsReturned:
+            raise CommandError(
+                'There are multiple eligible exam runs for course "{}"'.format(course_number)
+            )
+        coupons_created = 0
+        for url in validated_urls:
+            _, created = ExamRunCoupon.objects.get_or_create(
+                exam_run=exam_run,
+                exam_coupon_url=url
+            )
+            if created:
+                coupons_created += 1
 
         result_messages = [
-            'Total coupons: {}'.format(len(validated_urls)),
-            'Authorizations changed: {}'.format(auths_changed)
+            'Total coupons in the file: {}'.format(len(validated_urls)),
+            'ExamRunCoupons created: {}'.format(coupons_created),
+            'Total coupons: {}'.format(ExamRunCoupon.objects.filter(exam_run=exam_run).count()),
         ]
 
         self.stdout.write(self.style.SUCCESS('\n'.join(result_messages)))

@@ -15,7 +15,7 @@ from exams.models import (
     ExamAuthorization,
     ExamProfile,
     ExamRun,
-)
+    ExamRunCoupon)
 from grades.models import FinalGrade
 from grades.constants import FinalGradeStatus
 from micromasters.utils import now_in_utc
@@ -115,11 +115,12 @@ def authorize_for_exam_run(user, course_run, exam_run):
             course_id=course_run.edx_course_key
         )
         raise ExamAuthorizationException(errors_message)
-
+    edx_exam_coupon = ExamRunCoupon.get_unused_coupon(exam_run)
     ExamAuthorization.objects.get_or_create(
         user=mmtrack.user,
         course=course_run.course,
         exam_run=exam_run,
+        exam_coupon_url=edx_exam_coupon
     )
     log.info(
         '[Exam authorization] user "%s" is authorized for the exam for course id "%s"',
