@@ -6,7 +6,6 @@ import hashlib
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from django.db.models import Q
 
 from dashboard.utils import get_mmtrack
 from dashboard.api import has_to_pay_for_exam
@@ -18,7 +17,6 @@ from exams.models import (
 )
 from grades.models import FinalGrade
 from grades.constants import FinalGradeStatus
-from micromasters.utils import now_in_utc
 
 MESSAGE_NOT_PASSED_OR_EXIST_TEMPLATE = (
     '[Exam authorization] Unable to authorize user "{user}" for exam, '

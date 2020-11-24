@@ -4,7 +4,6 @@ import logging
 from celery import group
 
 from dashboard.models import ProgramEnrollment
-from exams import api
 from exams.api import authorize_for_latest_passed_course
 from exams.models import (
     ExamRun,

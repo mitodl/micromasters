@@ -19,7 +19,6 @@ from exams.models import (
 )
 from exams.utils import is_eligible_for_exam
 
-from exams import tasks
 from grades.api import update_existing_combined_final_grade_for_exam_run
 from grades.models import FinalGrade
 from profiles.models import Profile
