@@ -1,6 +1,18 @@
 Release Notes
 =============
 
+Version 0.177.0
+---------------
+
+- Remove update_exam_run task (#4713)
+- Let the exam coupon command run many times (#4712)
+- Revert ZAP scanning (#4704)
+- Remove tasks for uploading authorizations and profile to pearson (#4697)
+- Added elective sets and courses in seed_db command
+- Add git ref to Github action 'uses' specifier (#4696)
+- add error message to coupon assignment failure
+- Add OWASP ZAP scanning with Github action (#4693)
+
 Version 0.176.0 (Released November 19, 2020)
 ---------------
 
