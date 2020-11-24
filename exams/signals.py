@@ -19,7 +19,6 @@ from exams.models import (
 )
 from exams.utils import is_eligible_for_exam
 
-from exams import tasks
 from grades.api import update_existing_combined_final_grade_for_exam_run
 from grades.models import FinalGrade
 from profiles.models import Profile
@@ -40,7 +39,6 @@ def update_exam_profile(sender, instance, **kwargs):  # pylint: disable=unused-a
 def update_exam_run(sender, instance, created, **kwargs):  # pylint: disable=unused-argument
     """If we update an ExamRun, update ExamAuthorizations accordingly"""
     if not created:
-        tasks.update_exam_run.delay(instance.id)
         transaction.on_commit(lambda: update_existing_combined_final_grade_for_exam_run(instance))
 
 

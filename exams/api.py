@@ -6,7 +6,6 @@ import hashlib
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from django.db.models import Q
 
 from dashboard.utils import get_mmtrack
 from dashboard.api import has_to_pay_for_exam
@@ -18,7 +17,6 @@ from exams.models import (
 )
 from grades.models import FinalGrade
 from grades.constants import FinalGradeStatus
-from micromasters.utils import now_in_utc
 
 MESSAGE_NOT_PASSED_OR_EXIST_TEMPLATE = (
     '[Exam authorization] Unable to authorize user "{user}" for exam, '
@@ -179,23 +177,3 @@ def authorize_user_for_schedulable_exam_runs(user, course_run):
                 user.username,
                 course_run.course.id
             )
-
-
-def update_authorizations_for_exam_run(exam_run):
-    """
-    Updates outstanding exam authorizations so we send them to Pearson with new data
-
-    Args:
-        exam_run(exams.models.ExamRun): the ExamRun that updated
-    """
-    if not exam_run.is_schedulable:
-        return
-
-    # Update all existing auths to pending
-    ExamAuthorization.objects.filter(exam_run=exam_run).exclude(
-        Q(status=ExamAuthorization.STATUS_PENDING) | Q(exam_taken=True)
-    ).update(
-        status=ExamAuthorization.STATUS_PENDING,
-        operation=ExamAuthorization.OPERATION_UPDATE,
-        updated_on=now_in_utc()
-    )

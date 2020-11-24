@@ -4,7 +4,6 @@ import logging
 from celery import group
 
 from dashboard.models import ProgramEnrollment
-from exams import api
 from exams.api import authorize_for_latest_passed_course
 from exams.models import (
     ExamRun,
@@ -20,22 +19,6 @@ PEARSON_FILE_EXTENSION = ".dat"
 PEARSON_FILE_ENCODING = "utf-8"
 
 log = logging.getLogger(__name__)
-
-
-@app.task
-def update_exam_run(exam_run_id):
-    """
-    An updated ExamRun means all authorizations should be updated
-
-    Args:
-        exam_run_id(int): id for the ExamRun to update
-    """
-    try:
-        exam_run = ExamRun.objects.get(id=exam_run_id)
-    except ExamRun.DoesNotExist:
-        return
-
-    api.update_authorizations_for_exam_run(exam_run)
 
 
 @app.task
