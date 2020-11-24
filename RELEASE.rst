@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.176.1
+Version 0.176.1 (Released November 24, 2020)
 ---------------
 
 - Add git ref to Github action 'uses' specifier (#4696)
