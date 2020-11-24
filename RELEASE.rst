@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.177.0
+Version 0.177.0 (Released November 24, 2020)
 ---------------
 
 - Remove update_exam_run task (#4713)
