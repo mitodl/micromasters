@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+Version 0.176.1 (Released November 24, 2020)
+---------------
+
+- Add git ref to Github action 'uses' specifier (#4696)
+- add error message to coupon assignment failure
+- Add OWASP ZAP scanning with Github action (#4693)
+
 Version 0.176.0 (Released November 19, 2020)
 ---------------
 
