@@ -61,15 +61,7 @@ class Command(BaseCommand):
             status=ExamAuthorization.STATUS_SUCCESS,
             exam_coupon_url__isnull=True
         )
-        if exam_auths.count() > len(validated_urls):
-            raise CommandError(
-                'Not enough coupon codes for course_number "{}", '
-                'number of coupons:{}, authorizations: {}'.format(
-                    course_number,
-                    len(validated_urls),
-                    exam_auths.count()
-                )
-            )
+
         auths_changed = 0
         for exam_auth, url in zip(exam_auths, validated_urls):
             exam_auth.exam_coupon_url = url
@@ -78,6 +70,7 @@ class Command(BaseCommand):
 
         result_messages = [
             'Total coupons: {}'.format(len(validated_urls)),
+            'Total exam authorizations that need coupon: {}'.format(exam_auths.count()),
             'Authorizations changed: {}'.format(auths_changed)
         ]
 

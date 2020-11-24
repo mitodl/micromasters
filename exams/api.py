@@ -120,6 +120,7 @@ def authorize_for_exam_run(user, course_run, exam_run):
         user=mmtrack.user,
         course=course_run.course,
         exam_run=exam_run,
+        status=ExamAuthorization.STATUS_SUCCESS,
     )
     log.info(
         '[Exam authorization] user "%s" is authorized for the exam for course id "%s"',
