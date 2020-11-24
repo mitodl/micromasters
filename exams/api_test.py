@@ -23,7 +23,6 @@ from ecommerce.factories import LineFactory
 from exams.api import (
     authorize_for_exam_run,
     authorize_for_latest_passed_course,
-    update_authorizations_for_exam_run,
     sso_digest,
     MESSAGE_NOT_ELIGIBLE_TEMPLATE,
     MESSAGE_NOT_PASSED_OR_EXIST_TEMPLATE,
@@ -293,57 +292,6 @@ class ExamAuthorizationApiTests(TestCase):
                 user=mmtrack.user,
                 course=self.course_run.course
             ).exists() is False
-
-    @ddt.data(
-        (False, False),
-        (True, False),
-        (False, True),
-    )
-    @ddt.unpack
-    def test_update_authorizations_for_exam_run(self, is_future, is_past):
-        """Tests update_authorizations_for_exam_run()"""
-        exam_run = ExamRunFactory.create(scheduling_future=is_future, scheduling_past=is_past)
-        taken_auth = ExamAuthorizationFactory.create(
-            exam_run=exam_run,
-            exam_taken=True,
-            status=ExamAuthorization.STATUS_SUCCESS,
-            operation=ExamAuthorization.OPERATION_ADD,
-        )
-        pending_auth = ExamAuthorizationFactory.create(
-            exam_run=exam_run,
-            status=ExamAuthorization.STATUS_PENDING,
-            operation=ExamAuthorization.OPERATION_ADD,
-        )
-        nonpending_auths = []
-        for status in [
-                ExamAuthorization.STATUS_IN_PROGRESS,
-                ExamAuthorization.STATUS_FAILED,
-                ExamAuthorization.STATUS_SUCCESS,
-        ]:
-            nonpending_auths.append(ExamAuthorizationFactory.create(
-                exam_run=exam_run,
-                status=status,
-                operation=ExamAuthorization.OPERATION_ADD,
-            ))
-
-        update_authorizations_for_exam_run(exam_run)
-
-        taken_auth.refresh_from_db()
-        assert taken_auth.status == ExamAuthorization.STATUS_SUCCESS
-        assert taken_auth.operation == ExamAuthorization.OPERATION_ADD
-
-        pending_auth.refresh_from_db()
-        assert pending_auth.status == ExamAuthorization.STATUS_PENDING
-        assert pending_auth.operation == ExamAuthorization.OPERATION_ADD
-
-        for auth in nonpending_auths:
-            auth.refresh_from_db()
-            if is_past or is_future:
-                assert auth.status != ExamAuthorization.STATUS_PENDING
-                assert auth.operation == ExamAuthorization.OPERATION_ADD
-            else:
-                assert auth.status == ExamAuthorization.STATUS_PENDING
-                assert auth.operation == ExamAuthorization.OPERATION_UPDATE
 
 
 class ExamLatestCourseAuthorizationApiTests(TestCase):

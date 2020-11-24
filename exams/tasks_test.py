@@ -11,7 +11,6 @@ from exams.factories import (
 )
 from exams.tasks import (
     authorize_exam_runs,
-    update_exam_run,
     authorize_enrollment_for_exam_run)
 from financialaid.api_test import create_program
 from search.base import MockedESTestCase
@@ -20,16 +19,6 @@ from search.base import MockedESTestCase
 @ddt
 class ExamRunTasksTest(MockedESTestCase):
     """Tests for ExamRun tasks"""
-
-    @patch('exams.api.update_authorizations_for_exam_run')
-    def test_update_exam_run(self, update_mock):
-        """Test update_exam_run()"""
-        exam_run = ExamRunFactory.create()
-
-        update_exam_run(exam_run.id)
-        update_exam_run(-exam_run.id)
-
-        update_mock.assert_called_once_with(exam_run)
 
     @data(True, False)
     @patch('exams.tasks.authorize_for_latest_passed_course')
