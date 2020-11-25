@@ -508,7 +508,11 @@ def is_exam_schedulable(user, course):
     schedulable_exam_runs = ExamRun.objects.filter(
         course=course, date_last_eligible__gte=now.date()
     )
-    return ExamAuthorization.objects.filter(user=user, exam_run__in=schedulable_exam_runs).exclude(
+    return ExamAuthorization.objects.filter(
+        user=user,
+        exam_run__in=schedulable_exam_runs,
+        exam_coupon_url__isnull=False
+    ).exclude(
         operation=ExamAuthorization.OPERATION_DELETE).exists()
 
 
@@ -523,10 +527,15 @@ def get_edx_exam_coupon_url(user, course):
     Returns:
         str: a url to the exam or empty string
     """
+    now = now_in_utc()
+    schedulable_exam_runs = ExamRun.objects.filter(
+        course=course, date_last_eligible__gte=now.date()
+    )
     exam_auth = ExamAuthorization.objects.filter(
         user=user,
         course=course,
         status=ExamAuthorization.STATUS_SUCCESS,
+        exam_run__in=schedulable_exam_runs,
         exam_coupon_url__isnull=False
     ).first()
     return exam_auth.exam_coupon_url if exam_auth else ""
