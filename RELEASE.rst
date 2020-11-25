@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.177.1
+---------------
+
+- Dashboard program info: filter exam authorizations with coupons (#4717)
+
 Version 0.177.0 (Released November 24, 2020)
 ---------------
 
