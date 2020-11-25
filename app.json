@@ -56,6 +56,10 @@
     "CYBERSOURCE_SECURITY_KEY": {
       "description": "CyberSource API key"
     },
+    "EDX_BATCH_UPDATES_ENABLED": {
+      "description": "Enables or disables edx batch updates (default: true)",
+      "required": false
+    },
     "EDXORG_BASE_URL": {
       "description": "The base URL of the edX instance to use for logging in.",
       "required": true
