@@ -53,6 +53,10 @@ def batch_update_user_data():
     Create sub tasks to update user data like enrollments,
     certificates and grades from edX platform.
     """
+    if not settings.EDX_BATCH_UPDATES_ENABLED:
+        log.debug("Edx batch updates disabled via EDX_BATCH_UPDATES_ENABLED")
+        return
+
     expiration = now_in_utc() + timedelta(hours=5)
     lock = Lock(LOCK_ID, expiration)
     if not lock.acquire():
@@ -85,6 +89,10 @@ def batch_update_user_data_subtasks(students, expiration_timestamp):
         students (list of int): List of user ids for students.
         expiration_timestamp (float): A timestamp indicating when the tasks should stop processing
     """
+    if not settings.EDX_BATCH_UPDATES_ENABLED:
+        log.debug("Edx batch updates disabled via EDX_BATCH_UPDATES_ENABLED")
+        return
+
     expiration = datetime.fromtimestamp(expiration_timestamp, tz=pytz.utc)
     for user_id in students:
         # if we are past the expiration time we should stop any extra work

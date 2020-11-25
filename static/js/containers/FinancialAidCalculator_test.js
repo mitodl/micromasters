@@ -321,7 +321,8 @@ describe("FinancialAidCalculator", () => {
     })
   }
 
-  it("should let you enter your preferred currency", () => {
+  it("should let you enter your preferred currency", function() {
+    this.timeout(45000)
     return renderComponent("/dashboard", DASHBOARD_SUCCESS_ACTIONS).then(
       ([wrapper]) => {
         return listenForActions(
