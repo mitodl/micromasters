@@ -524,7 +524,10 @@ def get_edx_exam_coupon_url(user, course):
         str: a url to the exam or empty string
     """
     exam_auth = ExamAuthorization.objects.filter(
-        user=user, course=course, status=ExamAuthorization.STATUS_SUCCESS
+        user=user,
+        course=course,
+        status=ExamAuthorization.STATUS_SUCCESS,
+        exam_coupon_url__isnull=False
     ).first()
     return exam_auth.exam_coupon_url if exam_auth else ""
 
