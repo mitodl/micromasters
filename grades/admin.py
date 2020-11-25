@@ -105,9 +105,30 @@ class MicromastersCourseCertificateAdmin(admin.ModelAdmin):
     user_username.short_description = 'User'
 
 
+class MicromastersProgramCertificateAdmin(admin.ModelAdmin):
+    """Admin for MicromastersProgramCertificate"""
+    model = models.MicromastersProgramCertificate
+    list_display = ('id', 'user_username', 'program', 'hash', 'created_on')
+    list_filter = ('program',)
+    raw_id_fields = ('user',)
+    search_fields = (
+        'user__username',
+        'user__email',
+    )
+
+    def user_username(self, obj):  # pylint: disable=missing-docstring
+        return obj.user.username
+
+    def has_add_permission(self, *agrs, **kwargs):  # pylint: disable=unused-argument, arguments-differ
+        return False
+
+    user_username.short_description = 'User'
+
+
 admin.site.register(models.FinalGrade, FinalGradeAdmin)
 admin.site.register(models.FinalGradeAudit, FinalGradeAuditAdmin)
 admin.site.register(models.CourseRunGradingStatus, CourseRunGradingStatusAdmin)
 admin.site.register(models.ProctoredExamGrade, ProctoredExamGradeAdmin)
 admin.site.register(models.ProctoredExamGradeAudit, ProctoredExamGradeAuditAdmin)
 admin.site.register(models.MicromastersCourseCertificate, MicromastersCourseCertificateAdmin)
+admin.site.register(models.MicromastersProgramCertificate, MicromastersProgramCertificateAdmin)
