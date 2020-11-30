@@ -47,6 +47,7 @@ class CourseRunAdmin(admin.ModelAdmin):
     list_filter = ('course__program__live', 'course__program', 'course', 'course__course_number', )
     list_editable = ('enrollment_start', 'start_date', 'enrollment_end', 'end_date', 'upgrade_deadline',
                      'freeze_grade_date', )
+    search_fields = ('edx_course_key',)
     ordering = ('course__title', 'course__program__title', 'course__position_in_program', )
 
     def program(self, run):
