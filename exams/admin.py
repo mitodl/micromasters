@@ -46,4 +46,40 @@ class ExamRunAdmin(admin.ModelAdmin):
         return exam_run is None or exam_run.id is None or not exam_run.has_authorizations
 
 
+class ExamAuthorizationAdmin(admin.ModelAdmin):
+    """Admin for ExamAuthorization"""
+
+    model = models.ExamAuthorization
+    list_display = (
+        'id',
+        'user_email',
+        'course_number',
+        'exam_run_id',
+        'exam_coupon_url',
+    )
+    list_filter = (
+        'exam_run__id',
+        'course__course_number',
+        'course__title',
+    )
+    search_fields = (
+        'exam_run__id',
+        'course__course_number',
+    )
+    raw_id_fields = ('user',)
+
+    def user_email(self, obj):
+        """Getter for the User foreign-key element email"""
+        return obj.user.email
+
+    def course_number(self, obj):
+        """Getter for the Course foreign-key element course_number"""
+        return obj.course.course_number
+
+    def exam_run_id(self, obj):
+        """Getter for the ExamRun foreign-key element id"""
+        return obj.exam_run.id
+
+
 admin.site.register(models.ExamRun, ExamRunAdmin)
+admin.site.register(models.ExamAuthorization, ExamAuthorizationAdmin)
