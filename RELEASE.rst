@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+Version 0.177.2 (Released December 01, 2020)
+---------------
+
+- Added flag to enable/disable edx batch updates
+- admin for program certificates
+- make separate celery queue for edx dashboard update tasks
+
 Version 0.177.1 (Released November 25, 2020)
 ---------------
 
