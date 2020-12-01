@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.177.2
+Version 0.177.2 (Released December 01, 2020)
 ---------------
 
 - Added flag to enable/disable edx batch updates
