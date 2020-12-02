@@ -23,6 +23,8 @@ class ExamRun(TimestampedModel):
 
     date_grades_available = models.DateTimeField()
 
+    passing_score = models.FloatField(default=0.5)
+
     authorized = models.BooleanField(default=False)
 
     @classmethod
