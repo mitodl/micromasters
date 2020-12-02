@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.178.0
+Version 0.178.0 (Released December 02, 2020)
 ---------------
 
 - adding admin panel entry for ExamAuthorization (#4724)
