@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.178.0 (Released December 02, 2020)
+---------------
+
+- adding admin panel entry for ExamAuthorization (#4724)
+- Added courserun search in admin based on course key
+
 Version 0.177.2 (Released December 01, 2020)
 ---------------
 
