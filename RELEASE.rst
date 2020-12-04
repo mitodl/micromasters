@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.178.1
+Version 0.178.1 (Released December 04, 2020)
 ---------------
 
 - Process proctored exam grade report from edX (#4679)
