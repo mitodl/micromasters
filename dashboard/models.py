@@ -23,6 +23,8 @@ from edx_api.grades import (
 )
 
 from courses.models import CourseRun, Program
+from mail.models import PartnerSchool
+from micromasters.models import TimestampedModel
 from micromasters.utils import generate_md5
 
 
@@ -247,3 +249,15 @@ class ProgramEnrollment(Model):
             self.user.username,
             self.program.title
         )
+
+
+class MicromastersLearnerRecordShare(TimestampedModel):
+    """
+    Model for learner record sharing
+    """
+    user = ForeignKey(User, on_delete=CASCADE)
+    program = ForeignKey(Program, on_delete=CASCADE)
+    partner_school = ForeignKey(PartnerSchool, on_delete=CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'program', 'partner_school')
