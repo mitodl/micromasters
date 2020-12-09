@@ -19,7 +19,7 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.response import Response
 
 from courses.models import Course
-from dashboard.models import ProgramEnrollment
+from dashboard.models import ProgramEnrollment, MicromastersLearnerRecordShare
 from financialaid.models import FinancialAid
 from financialaid.permissions import UserCanEditFinancialAid
 from mail.api import (
@@ -280,6 +280,13 @@ class GradesRecordMailView(GenericAPIView):
             sender_address=sender_user.email,
             sender_name=sender_user.profile.display_name,
         )
+        if mailgun_response.status_code == 200:
+            _ = MicromastersLearnerRecordShare.objects.get_or_create(
+                user=sender_user,
+                program=enrollment.program,
+                partner_school=school
+            )
+
         return Response(
             status=mailgun_response.status_code,
             data=generate_mailgun_response_json(mailgun_response)

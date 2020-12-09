@@ -73,3 +73,6 @@ class PartnerSchool(models.Model):
 
     name = models.CharField(max_length=255)
     email = models.TextField(null=False)
+
+    def __str__(self):
+        return self.name
