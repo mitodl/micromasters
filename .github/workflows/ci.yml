@@ -162,8 +162,6 @@ jobs:
 
       - name: Selenium
         run: |
-          env | grep TRAVIS > .env
-          env | grep CI >> .env
           docker build -t micromasters_watch -f ./Dockerfile-node .
           docker build -t travis-watch -f ./travis/Dockerfile-travis-watch .
           docker run --name travis-watch-container --env-file .env -e NODE_ENV=production -t travis-watch ./webpack_if_prod.sh
