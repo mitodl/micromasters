@@ -40,6 +40,7 @@ class Browser:
         "Warning: ReactTelephoneInput: React.createClass is deprecated",
         ".jpg - Failed to load resource",
         "smartlook",
+        "Warning: Failed prop type: Invalid prop `transformOrigin.horizontal` supplied to `ForwardRef(Popover)`",
     }
 
     def __init__(self, driver, live_server_url):
