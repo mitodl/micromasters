@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.179.0
+Version 0.179.0 (Released January 05, 2021)
 ---------------
 
 - Fix selenium tests running locally
