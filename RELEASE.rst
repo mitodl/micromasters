@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+Version 0.179.0 (Released January 05, 2021)
+---------------
+
+- Fix selenium tests running locally
+- Bump ini from 1.3.5 to 1.3.7
+- #4628 Learner Record: Log sharing of learner records
+
 Version 0.178.1 (Released December 04, 2020)
 ---------------
 
