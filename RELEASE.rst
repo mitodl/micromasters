@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.179.1
+---------------
+
+- Bump urijs from 1.19.1 to 1.19.4
+
 Version 0.179.0 (Released January 05, 2021)
 ---------------
 
