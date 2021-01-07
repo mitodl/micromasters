@@ -30,7 +30,7 @@ const SignupDialog = ({ open, setDialogVisibility }: signupProps) => {
       onExit={() => setDialogVisibility(false)}
     >
       <div className="logos">
-        <img className="edx_logo" src="/static/images/edx_logo.png" alt="edX" />
+        <img className="edx_logo" src="/static/images/edx_logo.svg" alt="edX" />
         <img
           className="mitx_logo"
           src="/static/images/mitx_logo.png"
