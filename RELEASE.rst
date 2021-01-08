@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.179.2
+---------------
+
+- Pin Dockerfile to 3.7-buster
+- Update edX logos to match new edX branding
+
 Version 0.179.1 (Released January 07, 2021)
 ---------------
 
