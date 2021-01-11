@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.180.0
+Version 0.180.0 (Released January 11, 2021)
 ---------------
 
 - Update command import_edx_exam_grades (#4740)
