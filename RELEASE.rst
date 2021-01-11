@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+Version 0.180.0
+---------------
+
+- Update command import_edx_exam_grades (#4740)
+- Pin Dockerfile to 3.7-buster
+- Update edX logos to match new edX branding
+
 Version 0.179.1 (Released January 07, 2021)
 ---------------
 
