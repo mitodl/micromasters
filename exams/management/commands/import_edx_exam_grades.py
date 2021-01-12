@@ -9,7 +9,7 @@ from django.core.management import BaseCommand, CommandError
 
 from courses.models import Course
 from exams.models import ExamRun, ExamAuthorization
-from exams.pearson.constants import EXAM_GRADE_PASS, EXAM_GRADE_FAIL
+from exams.pearson.constants import EXAM_GRADE_PASS
 from grades.models import ProctoredExamGrade
 from micromasters.utils import now_in_utc
 
@@ -29,8 +29,13 @@ class Command(BaseCommand):
         grade_count = 0
         existing_grades = 0
         for row in reader:
-
-            user = User.objects.get(username=row['username'])
+            try:
+                user = User.objects.get(username=row['username'])
+            except User.DoesNotExist:
+                self.stdout.write(
+                    self.style.ERROR('Could not find user for username {}'.format(row['username']))
+                )
+                continue
             course_id = row['course_id']
 
             try:
