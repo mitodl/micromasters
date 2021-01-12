@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.180.1
+---------------
+
+- Import grades task: handeling missing authorization (#4745)
+
 Version 0.180.0 (Released January 11, 2021)
 ---------------
 
