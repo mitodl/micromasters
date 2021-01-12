@@ -29,6 +29,7 @@ class Command(BaseCommand):
         grade_count = 0
         existing_grades = 0
         for row in reader:
+
             user = User.objects.get(username=row['username'])
             course_id = row['course_id']
 
@@ -48,7 +49,16 @@ class Command(BaseCommand):
                 raise CommandError(
                     'There are no eligible exam runs for course "{}"'.format(course.title)
                 )
-            exam_authorization = ExamAuthorization.objects.get(user=user, exam_run=exam_run)
+            try:
+                exam_authorization = ExamAuthorization.objects.get(user=user, exam_run=exam_run)
+            except ExamAuthorization.DoesNotExist:
+                self.stdout.write(
+                    self.style.ERROR('Could not find authorization for user {} and exam run {}'.format(
+                        user.username,
+                        exam_run.id
+                    ))
+                )
+                continue
 
             if int(row['no_show']):
                 exam_authorization.exam_taken = True
