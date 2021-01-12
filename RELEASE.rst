@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.180.2
+---------------
+
+- Import edx grades: handle username does not exist (#4747)
+
 Version 0.180.1 (Released January 12, 2021)
 ---------------
 
