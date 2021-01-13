@@ -7,6 +7,7 @@
     "url": "https://github.com/mitodl/micromasters.git"
   },
   "dependencies": {
+    "@fancyapps/fancybox": "^3.5.7",
     "@material-ui/core": "^4.2.1",
     "@sentry/browser": "^5.15.4",
     "ajaxchimp": "^1.3.0",

@@ -229,4 +229,13 @@ $(document).ready(function($) {
       .parent()
       .trigger("click")
   }
+
+  $(".action-button").fancybox({
+    caption: function() {
+      return $(this)
+        .parent()
+        .find(".video-container")
+        .html()
+    }
+  })
 })
