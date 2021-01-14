@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.181.0
+Version 0.181.0 (Released January 14, 2021)
 ---------------
 
 - Upgrade heroku stack to heroku-18
