@@ -1948,6 +1948,7 @@ class ExamSchedulableTests(MockedESTestCase):
         (True, True, True, True, True, False),
     )
     @ddt.unpack
+    @pytest.mark.flaky(max_runs=3, min_passes=1)
     def test_is_exam_schedulable(self, is_past, is_future, has_eligibility_future, is_operation_delete, has_coupon,
                                  can_schedule_exam):
         """Test that is_exam_schedulable is correct"""
