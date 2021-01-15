@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.181.1
+---------------
+
+- upgrade redux-hammock
+- Flaky test module integration (#4755)
+
 Version 0.181.0 (Released January 14, 2021)
 ---------------
 
