@@ -29,6 +29,7 @@ from micromasters.utils import now_in_utc
 from profiles.api import get_social_auth
 
 # maximum number of exam attempts per payment
+ATTEMPTS_PER_PAID_RUN_OLD = 2
 ATTEMPTS_PER_PAID_RUN = 1
 
 # key that stores user_key and number of failures in a hash
@@ -583,7 +584,17 @@ def has_to_pay_for_exam(mmtrack, course):
     Returns:
         bool: if the user has to pay for another exam attempt
     """
-    attempt_limit = mmtrack.get_payments_count_for_course(course) * ATTEMPTS_PER_PAID_RUN
+    now = now_in_utc()
+    num_attempts = ATTEMPTS_PER_PAID_RUN
+    if mmtrack.program.exam_attempts_first_date > now:
+        num_attempts = ATTEMPTS_PER_PAID_RUN_OLD
+    elif mmtrack.program.exam_attempts_second_date > now:
+        # check when the user paid
+        line = mmtrack.get_first_payment_for_course(course)
+        if line.modified_at < mmtrack.program.exam_attempts_first_date:
+            num_attempts = ATTEMPTS_PER_PAID_RUN_OLD
+
+    attempt_limit = mmtrack.get_payments_count_for_course(course) * num_attempts
     return ExamAuthorization.objects.filter(user=mmtrack.user, course=course, exam_taken=True).count() >= attempt_limit
 
 

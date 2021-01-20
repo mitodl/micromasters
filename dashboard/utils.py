@@ -239,6 +239,20 @@ class MMTrack:
             course_key__in=course.courserun_set.values('edx_course_key'),
         ).values('order_id').distinct().count()
 
+    def get_first_payment_for_course(self, course):
+        """
+        Get the date of first payment for given course
+        Args:
+            course (courses.models.Course): a course
+        Returns:
+            Line: the first payment for the course
+        """
+        return Line.objects.filter(
+            order__status__in=Order.FULFILLED_STATUSES,
+            order__user=self.user,
+            course_key__in=course.courserun_set.values('edx_course_key'),
+        ).order_by('created_at').first()
+
     def has_paid_for_any_in_program(self):
         """
         Returns true if a user has paid for any course run in the program
