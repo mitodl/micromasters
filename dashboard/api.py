@@ -29,7 +29,7 @@ from micromasters.utils import now_in_utc
 from profiles.api import get_social_auth
 
 # maximum number of exam attempts per payment
-ATTEMPTS_PER_PAID_RUN = 2
+ATTEMPTS_PER_PAID_RUN = 1
 
 # key that stores user_key and number of failures in a hash
 CACHE_KEY_FAILURE_NUMS_BY_USER = "update_cache_401_failure_numbers"
