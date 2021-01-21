@@ -2038,17 +2038,49 @@ class ExamAttemptsTests(CourseTests):
     def setUp(self):
         super().setUp()
         self.mmtrack.user = self.user
+        self.mmtrack.program = self.course.program
 
     @ddt.data(
-        (1, 1, False),
-        (2, 1, True),
-        (3, 1, True),
-        (3, 2, False),
+        (1, 1, False, False),
+        (2, 1, False, True),
+        (3, 1, False, True),
+        (3, 2, False, False),
+        (1, 1, True, False),
+        (2, 1, True, True),
+        (3, 1, True, True),
+        (3, 2, True, False),
     )
     @ddt.unpack
-    def test_has_to_pay(self, num_of_taken_exams, num_of_payments, result):
+    def test_has_to_pay(self, num_of_taken_exams, num_of_payments, first_date, result):
         """Test has_to_pay_for_exam"""
+        if first_date:
+            self.mmtrack.program.exam_attempts_first_date = self.now + timedelta(weeks=2)
         self.mmtrack.get_payments_count_for_course.return_value = num_of_payments
+        for _ in range(num_of_taken_exams):
+            ExamAuthorizationFactory.create(user=self.user, course=self.course, exam_taken=True)
+        assert api.has_to_pay_for_exam(self.mmtrack, self.course) is result
+
+    @ddt.data(
+        (0, 1, False),
+        (1, 1, True),
+        (2, 2, True),
+    )
+    @ddt.unpack
+    def test_has_to_pay_after_first_date(self, num_of_taken_exams, num_of_payments, result):
+        """Test has_to_pay_for_exam after attempt dates have been set"""
+        self.mmtrack.program.exam_attempts_first_date = self.now - timedelta(weeks=2)
+        self.mmtrack.program.exam_attempts_second_date = self.now + timedelta(weeks=2)
+        self.mmtrack.get_payments_count_for_course.return_value = num_of_payments
+        run = CourseRunFactory.create(course=self.course)
+        order = OrderFactory.create(
+            user=self.user,
+            status=Order.FULFILLED
+        )
+        line = LineFactory.create(
+            order=order,
+            course_key=run.edx_course_key
+        )
+        self.mmtrack.get_first_payment_for_course.return_value = line
         for _ in range(num_of_taken_exams):
             ExamAuthorizationFactory.create(user=self.user, course=self.course, exam_taken=True)
         assert api.has_to_pay_for_exam(self.mmtrack, self.course) is result

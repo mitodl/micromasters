@@ -586,10 +586,13 @@ def has_to_pay_for_exam(mmtrack, course):
     """
     now = now_in_utc()
     num_attempts = ATTEMPTS_PER_PAID_RUN
-    if mmtrack.program.exam_attempts_first_date > now:
+    if not mmtrack.program.exam_attempts_first_date:
+        num_attempts = ATTEMPTS_PER_PAID_RUN_OLD
+    elif mmtrack.program.exam_attempts_first_date > now:
+        # still before the date
         num_attempts = ATTEMPTS_PER_PAID_RUN_OLD
     elif mmtrack.program.exam_attempts_second_date > now:
-        # check when the user paid
+        # in between the dates: check when the user paid
         line = mmtrack.get_first_payment_for_course(course)
         if line.modified_at < mmtrack.program.exam_attempts_first_date:
             num_attempts = ATTEMPTS_PER_PAID_RUN_OLD

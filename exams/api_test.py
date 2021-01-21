@@ -18,7 +18,7 @@ from dashboard.factories import (
     ProgramEnrollmentFactory,
 )
 from dashboard.utils import get_mmtrack
-from dashboard.api import ATTEMPTS_PER_PAID_RUN
+from dashboard.api import ATTEMPTS_PER_PAID_RUN_OLD
 from ecommerce.factories import LineFactory
 from exams.api import (
     authorize_for_exam_run,
@@ -182,7 +182,7 @@ class ExamAuthorizationApiTests(TestCase):
         self.assertTrue(mmtrack.has_passed_course(self.course_run.edx_course_key))
         old_run = ExamRunFactory.create(course=self.course_run.course)
         ExamAuthorizationFactory.create_batch(
-            ATTEMPTS_PER_PAID_RUN,
+            ATTEMPTS_PER_PAID_RUN_OLD,
             exam_run=old_run,
             user=mmtrack.user,
             course=self.course_run.course,
