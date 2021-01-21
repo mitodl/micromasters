@@ -31,6 +31,6 @@ def test_redirect(browser, logged_in_staff, mocker, settings):
         status=401,
         content=json.dumps({"error": "message"}).encode()
     ))
-    browser.get("/dashboarzd")
+    browser.get("/dashboard", ignore_errors=True)
     assert FAKE_RESPONSE in browser.driver.find_element_by_css_selector("body").text
     assert dashboard_patch.called
