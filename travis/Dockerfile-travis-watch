@@ -2,7 +2,7 @@ FROM micromasters_watch
 
 WORKDIR /src
 
-COPY ./webpack_if_prod.sh yarn.lock package.json /src
+COPY ./webpack_if_prod.sh yarn.lock package.json /src/
 
 USER root
 
