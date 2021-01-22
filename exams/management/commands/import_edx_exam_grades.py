@@ -85,7 +85,7 @@ class Command(BaseCommand):
                     'passing_score': exam_run.passing_score,
                     'score': score,
                     'grade': row['grade'],
-                    'percentage_grade': score / 100.0 if row['score'] else 0,
+                    'percentage_grade': score / 100.0 if score else 0,
                     'passed': row['grade'].lower() == EXAM_GRADE_PASS,
                     'row_data': row,
                     'exam_date': now_in_utc()
