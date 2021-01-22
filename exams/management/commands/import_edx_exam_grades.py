@@ -70,11 +70,22 @@ class Command(BaseCommand):
                 exam_authorization.exam_no_show = True
                 exam_authorization.save()
             else:
+                try:
+                    score = float(row['score'])
+                except ValueError:
+                    self.stdout.write(
+                        self.style.ERROR('Failed to create grade: empty score for user {} and exam run {}'.format(
+                            user.username,
+                            exam_run.id
+                        ))
+                    )
+                    continue
+
                 defaults = {
                     'passing_score': exam_run.passing_score,
-                    'score': float(row['score']),
+                    'score': score,
                     'grade': row['grade'],
-                    'percentage_grade': float(row['score']) / 100.0 if row['score'] else 0,
+                    'percentage_grade': score / 100.0 if score else 0,
                     'passed': row['grade'].lower() == EXAM_GRADE_PASS,
                     'row_data': row,
                     'exam_date': now_in_utc()
