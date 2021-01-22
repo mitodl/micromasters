@@ -2061,15 +2061,18 @@ class ExamAttemptsTests(CourseTests):
         assert api.has_to_pay_for_exam(self.mmtrack, self.course) is result
 
     @ddt.data(
-        (0, 1, False),
-        (1, 1, True),
-        (2, 2, True),
+        (0, 1, False, False),
+        (1, 1, False, True),
+        (0, 1, True, False),
+        (1, 1, True, True),
     )
     @ddt.unpack
-    def test_has_to_pay_after_first_date(self, num_of_taken_exams, num_of_payments, result):
+    def test_has_to_pay_after_first_date(self, num_of_taken_exams, num_of_payments, before_second_date, result):
         """Test has_to_pay_for_exam after attempt dates have been set"""
+
+        second_date = (self.now + timedelta(weeks=1)) if before_second_date else (self.now - timedelta(weeks=1))
         self.mmtrack.program.exam_attempts_first_date = self.now - timedelta(weeks=2)
-        self.mmtrack.program.exam_attempts_second_date = self.now + timedelta(weeks=2)
+        self.mmtrack.program.exam_attempts_second_date = second_date
         self.mmtrack.get_payments_count_for_course.return_value = num_of_payments
         run = CourseRunFactory.create(course=self.course)
         order = OrderFactory.create(
@@ -2085,6 +2088,49 @@ class ExamAttemptsTests(CourseTests):
             ExamAuthorizationFactory.create(user=self.user, course=self.course, exam_taken=True)
         assert api.has_to_pay_for_exam(self.mmtrack, self.course) is result
 
+    @ddt.data(
+        (0, 1, False, False),
+        (1, 1, False, True),
+        (1, 2, False, False),
+        (2, 2, False, True),
+        (0, 1, True, False),
+        (1, 1, True, False),
+        (1, 2, True, False),
+        (2, 2, True, False),
+        (3, 2, True, True),
+    )
+    @ddt.unpack
+    def test_has_to_pay_after_first_date_old_payment(self, num_of_taken_exams, num_of_payments, older_purchase, result):
+        """Test has_to_pay_for_exam after attempt dates have been set"""
+
+        second_date = self.now + timedelta(weeks=1)
+        self.mmtrack.program.exam_attempts_first_date = self.now - timedelta(weeks=2)
+        self.mmtrack.program.exam_attempts_second_date = second_date
+        self.mmtrack.get_payments_count_for_course.return_value = num_of_payments
+        run = CourseRunFactory.create(course=self.course)
+        order = OrderFactory.create(
+            user=self.user,
+            status=Order.FULFILLED
+        )
+        line = LineFactory.create(
+            order=order,
+            course_key=run.edx_course_key
+        )
+        if older_purchase:
+            run = CourseRunFactory.create(course=self.course)
+            order = OrderFactory.create(
+                user=self.user,
+                status=Order.FULFILLED
+            )
+            line = LineFactory.create(
+                order=order,
+                course_key=run.edx_course_key,
+            )
+            line.update(modified_at=self.now - timedelta(weeks=4))
+        self.mmtrack.get_first_payment_for_course.return_value = line
+        for _ in range(num_of_taken_exams):
+            ExamAuthorizationFactory.create(user=self.user, course=self.course, exam_taken=True)
+        assert api.has_to_pay_for_exam(self.mmtrack, self.course) is result
 
 @ddt.ddt
 class GetCertificateForCourseTests(CourseTests):
