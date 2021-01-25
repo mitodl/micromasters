@@ -10,7 +10,6 @@ from django.db.models import Q, Count
 from django.urls import reverse
 
 from courses.models import CourseRun, Course
-from dashboard.api import ATTEMPTS_PER_PAID_RUN_OLD, ATTEMPTS_PER_PAID_RUN
 from dashboard.api_edx_cache import CachedEdxUserData
 from dashboard.models import ProgramEnrollment
 from ecommerce.models import Order, Line
@@ -29,6 +28,9 @@ from exams.models import (
 )
 from micromasters.utils import now_in_utc
 
+# maximum number of exam attempts per payment
+ATTEMPTS_PER_PAID_RUN_OLD = 2  # the number of attempts the user gets for payment before the first date
+ATTEMPTS_PER_PAID_RUN = 1
 
 log = logging.getLogger(__name__)
 

@@ -19,7 +19,7 @@ from backends import utils
 from courses.models import Program, ElectiveCourse
 from courses.utils import format_season_year_for_course_run
 from dashboard.api_edx_cache import CachedEdxDataApi
-from dashboard.utils import get_mmtrack
+from dashboard.utils import get_mmtrack, ATTEMPTS_PER_PAID_RUN, ATTEMPTS_PER_PAID_RUN_OLD
 from financialaid.serializers import FinancialAidDashboardSerializer
 from grades import api
 from grades.models import FinalGrade
@@ -27,10 +27,6 @@ from grades.serializers import ProctoredExamGradeSerializer
 from exams.models import ExamAuthorization, ExamRun
 from micromasters.utils import now_in_utc
 from profiles.api import get_social_auth
-
-# maximum number of exam attempts per payment
-ATTEMPTS_PER_PAID_RUN_OLD = 2  # the number of attempts the user gets for payment before the first date
-ATTEMPTS_PER_PAID_RUN = 1
 
 # key that stores user_key and number of failures in a hash
 CACHE_KEY_FAILURE_NUMS_BY_USER = "update_cache_401_failure_numbers"
