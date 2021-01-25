@@ -253,6 +253,25 @@ class MMTrack:
             course_key__in=course.courserun_set.values('edx_course_key'),
         ).order_by('created_at').first()
 
+    def get_custom_number_of_attempts_for_course(self, course):
+        """
+        Get a custon number of exam attempts for given course
+        Args:
+            course (courses.models.Course): a course
+        Returns:
+            int: a number of attempts
+        """
+        lines = Line.objects.filter(
+            order__status__in=Order.FULFILLED_STATUSES,
+            order__user=self.user,
+            course_key__in=course.courserun_set.values('edx_course_key'),
+        ).order_by('created_at')
+        first_date = course.program.exam_attempts_first_date
+        num_attempts = sum([2
+                            if line.modified_at < first_date else 1 for line in lines])
+
+        return num_attempts
+
     def has_paid_for_any_in_program(self):
         """
         Returns true if a user has paid for any course run in the program
