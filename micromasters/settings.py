@@ -640,3 +640,13 @@ if DEBUG:
 
 # Travis
 IS_CI_ENV = get_bool('CI', False)
+
+HUBSPOT_CONFIG = {
+    "HUBSPOT_ORGANIZATIONS_FORM_GUID": get_string(
+        name="HUBSPOT_ORGANIZATIONS_FORM_GUID",
+        default="1b63db1a-eb3a-45d6-82f1-c4b8f01835dc",
+    ),
+    "HUBSPOT_PORTAL_ID": get_string(
+        name="HUBSPOT_PORTAL_ID", default="8677455"
+    ),
+}
