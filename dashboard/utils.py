@@ -10,6 +10,7 @@ from django.db.models import Q, Count
 from django.urls import reverse
 
 from courses.models import CourseRun, Course
+from dashboard.api import ATTEMPTS_PER_PAID_RUN_OLD, ATTEMPTS_PER_PAID_RUN
 from dashboard.api_edx_cache import CachedEdxUserData
 from dashboard.models import ProgramEnrollment
 from ecommerce.models import Order, Line
@@ -254,8 +255,8 @@ class MMTrack:
             course_key__in=course.courserun_set.values('edx_course_key'),
         ).order_by('created_at')
         first_date = course.program.exam_attempts_first_date
-        num_attempts = sum([2
-                            if line.modified_at < first_date else 1 for line in lines])
+        num_attempts = sum([ATTEMPTS_PER_PAID_RUN_OLD
+                            if line.modified_at < first_date else ATTEMPTS_PER_PAID_RUN for line in lines])
 
         return num_attempts
 
