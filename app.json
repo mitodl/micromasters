@@ -124,6 +124,14 @@
       "description": "Value provided by Heroku containing the parent app name (eg micromasters-ci for a PR build)",
       "required": true
     },
+    "HUBSPOT_PORTAL_ID": {
+      "description": "Hub spot portal id.",
+      "required": false
+    },
+    "HUBSPOT_ORGANIZATIONS_FORM_GUID": {
+      "description": "Hubspot guid for Organizations contact form on /organizations/ page.",
+      "required": false
+    },
     "MAILGUN_KEY": {
       "description": "The token for authenticating against the Mailgun API"
     },
