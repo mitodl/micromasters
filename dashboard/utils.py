@@ -239,23 +239,10 @@ class MMTrack:
             course_key__in=course.courserun_set.values('edx_course_key'),
         ).values('order_id').distinct().count()
 
-    def get_first_payment_for_course(self, course):
-        """
-        Get the date of first payment for given course
-        Args:
-            course (courses.models.Course): a course
-        Returns:
-            Line: the first payment for the course
-        """
-        return Line.objects.filter(
-            order__status__in=Order.FULFILLED_STATUSES,
-            order__user=self.user,
-            course_key__in=course.courserun_set.values('edx_course_key'),
-        ).order_by('created_at').first()
-
     def get_custom_number_of_attempts_for_course(self, course):
         """
-        Get a custon number of exam attempts for given course
+        Get a custom number of exam attempts for given course. If payment was made before
+        the first date, learner get 2 attempts. Otherwise, 1.
         Args:
             course (courses.models.Course): a course
         Returns:
