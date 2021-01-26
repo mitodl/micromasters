@@ -153,3 +153,19 @@ jobs:
         with:
           file: coverage/lcov.info
           fail_ci_if_error: true
+
+  selenium-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Selenium
+        run: |
+          cp .env.example .env
+          docker build -t micromasters_watch -f ./Dockerfile-node .
+          docker build -t travis-watch -f ./travis/Dockerfile-travis-watch .
+          docker run --name travis-watch-container --env-file .env -e NODE_ENV=production -t travis-watch ./webpack_if_prod.sh
+          docker cp travis-watch-container:/src/webpack-stats.json .
+          docker cp travis-watch-container:/src/static/bundles ./static/bundles
+          ./scripts/test/run_selenium_tests_travis.sh
