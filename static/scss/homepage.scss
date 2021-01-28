@@ -7,7 +7,7 @@ h3 {
 }
 
 a {
-  color: #32c5ff;
+  color: #115878;
   text-decoration: underline;
 }
 
@@ -285,7 +285,6 @@ a {
   margin-bottom: 20px;
 
   a {
-    color: white;
     font-weight: bold;
     text-decoration: underline;
   }
@@ -365,7 +364,7 @@ a {
 }
 
 .current-programs-section {
-  margin: 0 0 15px;
+  margin: 0 0 40px;
   background-color: #ffffff;
   border-top: 1px solid #e5e5e5;
 
@@ -383,7 +382,7 @@ a {
       list-style: none;
       text-align: left;
       padding: 0;
-      margin: 0 -15px;
+      margin: 45px -15px;
 
       a {
         text-decoration: none;
@@ -404,7 +403,8 @@ a {
 
             .program-description-link {
               a {
-                color: #32c5ff;
+                color: #ffffff;
+                text-decoration: underline;
               }
             }
           }
@@ -495,6 +495,10 @@ a {
   margin: 0;
   text-align: center;
   background-color: $mm-brand-bg;
+
+  a {
+    color: #ffffff;
+  }
 
   .centered-content {
     max-width: 1360px;
@@ -780,33 +784,27 @@ a {
 }
 
 .b2b {
-  background-color: black;
+  background-size: cover;
   text-align: center;
   color: white;
+  background-color: black;
 
   .container {
     padding: 100px 15px;
-    max-width: 900px;
+    max-width: 800px;
     overflow: hidden;
     margin: 0 auto;
-
-    img {
-      width: 271px;
-      float: left;
-      margin-right: 40px;
-
-      @media (max-width: 767px) {
-        display: block;
-        float: none;
-        margin: 0 auto 20px;
-      }
-    }
 
     .content-holder {
       text-align: left;
       overflow: hidden;
 
+      h3 {
+        margin-bottom: 20px;
+      }
+
       a {
+        margin-top: 20px;
         background-color: $mm-brand-bg;
         border-color: $mm-brand-bg;
       }

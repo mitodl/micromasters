@@ -24,3 +24,7 @@
 .certificate .certificate-body.verified {
   background-image: url({% static "images/mm_watermark2.png" %});
 }
+
+.b2b {
+  background-image: url({% static "images/b2b_section.png" %});
+}

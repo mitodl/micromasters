@@ -88,7 +88,7 @@
               <h2>MITx MicroMasters<span class="trademark">&reg;</span> Programs</h2>
             
               <p>Advance your career or accelerate your Master’s degree with a graduate-level digital credential from MIT.</p>
-              <p>The MicroMasters program credential from MIT Open Learning is a <b>professional</b> and <b>academic credential</b> for online learners
+              <p>The MicroMasters program credential from MIT Open Learning is a <b>professional and academic credential</b> for online learners
                  from anywhere in the world who seek focused, accelerated advancement.</p> 
               <p><b>Enroll</b> in a program—no admission required—and take 
                  a series of graduate-level online courses, taught by MIT instructors, through edX.</p> 
@@ -159,13 +159,13 @@
 
       <section class="row reasons-section">
         <div class="centered-content">
-          <h3>Why should I enroll?</h3>
+          <h3>Why Should I Enroll?</h3>
           <div class="enroll-reason col-md-3">
             <div class="reasons-images-wrap">
                <img src="{% static 'images/online.png' %}" alt="">
             </div>
 
-            <h4>Advance your career</h4>
+            <h4>Advance Your Career</h4>
             <p>Learn online, pass digital proctored exams, and earn a program credential. 
               Boost your professional profile with an affordable and valuable credential from MIT.</p>
           </div>
@@ -182,7 +182,7 @@
             <div class="reasons-images-wrap">
               <img src="{% static 'images/dome_icon.webp' %}" alt="">
             </div>
-             <h4>Be part of the MIT community</h4>
+             <h4>Be Part of the MIT Community</h4>
             <p>Become an affiliate member of the MIT Alumni Association and receive special access to professional journals and publications.</p>
           </div>
           <div class="enroll-reason col-md-3">
@@ -190,19 +190,16 @@
               <img src="{% static 'images/globe-icon.png' %}" alt="">
             </div>
              <h4>Grow Your Network</h4>
-            <p>After you earn your MicroMasters® program credential, Build connections through a private group of like-minded professionals.</p>
+            <p>After you earn your MicroMasters® program credential, build connections through a private group of like-minded professionals.</p>
           </div>
         </div>
-        {% if benefits_url %}
-          <div class="benefits">
-            <a href="{{ benefits_url }}">Learn more about these benefits</a>
-          </div>
-        {% endif %}
+        <div class="benefits">
+          <a href="{{ benefits_url }}">Learn More About These Benefits</a>
+        </div>
       </section>
 
       <section class="b2b">
         <div class="container">
-          <img src="{% static 'images/b2b.png' %}" alt="B2B">
           <div class="content-holder">
             <h3>For Organizations and Academic Institutions</h3>
             <p>
@@ -212,18 +209,18 @@
               We work closely with organizations globally that wish to integrate our programs into their own education 
               and training portfolios. Flexible pricing options available. 
              </p>
-             <a class="btn btn-primary text-uppercase px-5 py-2" href="/organizations/">Inquire Today</a>
+             <a class="btn btn-primary text-uppercase px-5 py-2" href="/organizations/">Learn More</a>
           </div>
         </div>
       </section>
 
       <section class="events">
         <div class="container">
-          <h3>Join us at our free online events</h3>
+          <h3>Join Us at Our Free Online Events</h3>
           <div class="content-holder">
             <a class="img-link" href="events/"><img src="{% static 'images/events.png' %}" alt="Events"></a>
             <div class="info">
-              <p>Register to one of our upcoming webinars to learn more about the different MicroMasters programs. 
+              <p>Register for one of our upcoming webinars to learn more about the different MicroMasters programs at MIT. 
                 Our events are hosted by the course teams, including MIT faculty, and they provide a great opportunity 
                 to ask questions about our courses.</p>
               <a class="btn btn-primary text-uppercase px-5 py-2" href="events/">View Events</a>
@@ -238,7 +235,7 @@
           <div class="info">
             <span class="title">frequently asked questions</span>
             <span class="description">
-              <a href="https://mitx-micromasters.zendesk.com/hc/en-us">Find Answers</a> to your questions
+              <a href="https://mitx-micromasters.zendesk.com/hc/en-us">Find Answers</a> to Your Questions
             </span>
           </div>
         </div>
@@ -251,7 +248,7 @@
           <p class="quote-author">Rafael Reif, MIT President  </p>
         </div>
         <div class="row quote">
-          <img class="person" src="{% static 'images/sanjay1.png' %}" alt="">
+          <img class="person" src="{% static 'images/sanjay.png' %}" alt="">
           <blockquote class="quote-text">“Inverted admissions has the potential to disrupt traditional modes of access to higher education… We’re democratizing access to a master’s program for learners worldwide.”</blockquote>
           <p class="quote-author">Sanjay Sarma, Vice President of Open Learning, MIT  </p>
         </div>
@@ -267,104 +264,10 @@
   {% endif %}
   {% include "footer.html" %}
 
-  <div class="modal fade modal-fade-in-scale-up" id="modal-about"
-       aria-hidden="true" aria-labelledby="modal-about"
-       role="dialog" tabindex="-1">
-    <div class="modal-dialog modal-center">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">×</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <h2>MicroMasters is a new credential</h2>
-          <p>
-          MIT has created a new credential for online learners: the “MicroMasters,” which will be granted by MITx (MIT’s online learning initiative) to students who do exceptionally well in a given set of graduate-level online courses, and in subsequent exam(s).
-          </p>
-          <h3>Join the MITx MicroMasters community</h3>
-          <p>
-          MicroMasters isn't just about courseware. Part of the the MIT experience is interacting with other exceptional students like yourself. Fill out your profile and build professional relationships with like-minded learners.
-          </p>
-          <h3>MicroMasters courses are delivered through edX.org</h3>
-          <p>
-          Use your edX.org account to enroll in a MicroMasters program and share your grades and progress with MIT. When you complete all the requirements and earn a MicroMasters credential, you can use it to apply for a master’s degree at MIT.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-
 <div id="signup-dialog">
   <!-- signup dialog React component injected here -->
 </div>
 
-<!-- Modal subscribe alerts -->
-<div id="subscribeAlert" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <h6 class="modal-title text-center">Get notified when new programs are announced</h6>
-      </div>
-      <div class="modal-body">
-        <div class="container">
-            <form class="form-horizontal subscription-form mailchimp">
-                <!-- SUBSCRIPTION SUCCESSFUL OR ERROR MESSAGES -->
-                <h4 class="subscription-result success"></h4>
-                <h4 class="subscription-result error"></h4>
-
-                <div class="form-group col-sm-12">
-                  <input type="text" class="form-control flat-field" id="inputname" name="FNAME" placeholder="Name" />
-                </div>
-                <div class="form-group col-sm-12">
-                  <input type="email" class="form-control flat-field" id="inputEmail3" placeholder="Email">
-                </div>
-                <fieldset class="form-group col-sm-12">
-                  <div class="radio">
-                    <label><input type="radio" name="MMERGE2" value="I am an interested learner" id="learner">
-                        I am an interested learner
-                    </label>
-                  </div>
-                  <div class="radio">
-                    <label><input type="radio" name="MMERGE2" value="I represent an interested corporation" id="corporation">
-                        I represent an interested corporation
-                    </label>
-                  </div>
-                  <div class="radio">
-                    <label>
-                        <input type="radio" name="MMERGE2" value="I represent an interested university or educational institution" id="university">
-                        I represent an interested university or educational institution
-                    </label>
-                  </div>
-                  <div class="radio">
-                    <label>
-                        <input type="radio" name="MMERGE2" value="Other" id="other">
-                        Other
-                    </label>
-                  </div>
-                </fieldset>
-                <div class="form-group" id="mce-MMERGE4">
-                    <div class="col-sm-12">
-                        <textarea id="textarea-comments"  class="form-control flat-field" name="MMERGE4" placeholder="Comments"></textarea>
-                    </div>
-                </div>
-                <div class="form-group col-sm-8" id="mce-MMERGE3">
-                  <input type="text" id="input-institution-name" class="form-control flat-field" name="MMERGE3"  placeholder="Institution name">
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-offset-5 col-sm-12 text-left">
-                       <button type="button" data-dismiss="modal" class="mm-button mailchimp-btn">CANCEL</button>
-                       <button type="submit" class="mm-button main-action mailchimp-btn">SUBMIT</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
 {% load render_bundle %}
 {% render_bundle "public" %}
 </div>
