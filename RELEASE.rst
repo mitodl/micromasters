@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+Version 0.182.0
+---------------
+
+- Add selenium to github actions (#4730)
+- Import exam grades: ignore no score rows (#4759)
+- update zendesk widget code and remove unnecessary code
+
 Version 0.181.1 (Released January 21, 2021)
 ---------------
 
