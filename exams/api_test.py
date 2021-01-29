@@ -4,12 +4,9 @@ Tests for exams API
 from unittest.mock import patch
 
 import ddt
-from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import post_save
 from django.test import (
-    SimpleTestCase,
     TestCase,
-    override_settings,
 )
 from factory.django import mute_signals
 
@@ -23,7 +20,6 @@ from ecommerce.factories import LineFactory
 from exams.api import (
     authorize_for_exam_run,
     authorize_for_latest_passed_course,
-    sso_digest,
     MESSAGE_NOT_ELIGIBLE_TEMPLATE,
     MESSAGE_NOT_PASSED_OR_EXIST_TEMPLATE,
 )
@@ -51,36 +47,6 @@ def create_order(user, course_run):
         order__fulfilled=True,
         order__user=user,
     ).order
-
-
-class SSODigestTests(SimpleTestCase):
-    """
-    Tests for the sso_digest helper function
-    """
-
-    @override_settings(
-        EXAMS_SSO_PASSPHRASE="C is for cookie",
-        EXAMS_SSO_CLIENT_CODE="and that's good enough for me",
-    )
-    def test_that_sso_digest_computes_correctly(self):
-        """Verifies sso_digest computes correctly"""
-
-        # computed "by hand"
-        assert sso_digest(123, 1486069731, 1800) == (
-            'a64ea7218e4a67d863e03ec43ac40240af39f5924af46e02b2199e3f7974b8d3'
-        )
-
-    @override_settings(EXAMS_SSO_PASSPHRASE=None)
-    def test_that_no_passphrase_raises(self):
-        """Verifies that if we don't set the passphrase we raise an exception"""
-        with self.assertRaises(ImproperlyConfigured):
-            sso_digest(123, 1486069731, 1800)
-
-    @override_settings(EXAMS_SSO_CLIENT_CODE=None)
-    def test_that_no_client_code_raises(self):
-        """Verifies that if we don't set the passphrase we raise an exception"""
-        with self.assertRaises(ImproperlyConfigured):
-            sso_digest(123, 1486069731, 1800)
 
 
 @ddt.ddt

@@ -1,28 +1,6 @@
 """Exam related helpers"""
 import re
 
-from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
-
-
-def exponential_backoff(retries):
-    """
-    Exponential backoff for retried tasks
-
-    Args:
-        retries (int): cumulative number of retries
-
-    Raises:
-        ImproperlyConfigured: if settings.EXAMS_SFTP_BACKOFF_BASE is not a parsable int
-
-    Returns:
-        int: seconds to wait until next attempt
-    """
-    try:
-        return int(settings.EXAMS_SFTP_BACKOFF_BASE) ** retries
-    except ValueError as ex:
-        raise ImproperlyConfigured('EXAMS_SFTP_BACKOFF_BASE must be an integer') from ex
-
 
 def is_eligible_for_exam(mmtrack, course_run):
     """
