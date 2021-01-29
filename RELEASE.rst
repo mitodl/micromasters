@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.182.0
+Version 0.182.0 (Released January 29, 2021)
 ---------------
 
 - Add selenium to github actions (#4730)
