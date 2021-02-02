@@ -19,7 +19,7 @@ from backends import utils
 from courses.models import Program, ElectiveCourse
 from courses.utils import format_season_year_for_course_run
 from dashboard.api_edx_cache import CachedEdxDataApi
-from dashboard.utils import get_mmtrack
+from dashboard.utils import get_mmtrack, ATTEMPTS_PER_PAID_RUN, ATTEMPTS_PER_PAID_RUN_OLD
 from financialaid.serializers import FinancialAidDashboardSerializer
 from grades import api
 from grades.models import FinalGrade
@@ -27,9 +27,6 @@ from grades.serializers import ProctoredExamGradeSerializer
 from exams.models import ExamAuthorization, ExamRun
 from micromasters.utils import now_in_utc
 from profiles.api import get_social_auth
-
-# maximum number of exam attempts per payment
-ATTEMPTS_PER_PAID_RUN = 2
 
 # key that stores user_key and number of failures in a hash
 CACHE_KEY_FAILURE_NUMS_BY_USER = "update_cache_401_failure_numbers"
@@ -583,7 +580,20 @@ def has_to_pay_for_exam(mmtrack, course):
     Returns:
         bool: if the user has to pay for another exam attempt
     """
-    attempt_limit = mmtrack.get_payments_count_for_course(course) * ATTEMPTS_PER_PAID_RUN
+    now = now_in_utc()
+    attempt_limit = None
+    num_attempts = ATTEMPTS_PER_PAID_RUN
+    if not mmtrack.program.exam_attempts_first_date:
+        num_attempts = ATTEMPTS_PER_PAID_RUN_OLD
+    elif mmtrack.program.exam_attempts_first_date > now:
+        # still before the date
+        num_attempts = ATTEMPTS_PER_PAID_RUN_OLD
+    elif mmtrack.program.exam_attempts_second_date > now:
+        # in between the dates: check when the user paid for each course run
+        attempt_limit = mmtrack.get_custom_number_of_attempts_for_course(course)
+
+    if attempt_limit is None:
+        attempt_limit = mmtrack.get_payments_count_for_course(course) * num_attempts
     return ExamAuthorization.objects.filter(user=mmtrack.user, course=course, exam_taken=True).count() >= attempt_limit
 
 

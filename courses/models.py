@@ -41,6 +41,8 @@ class Program(TimestampedModel):
     num_required_courses = models.PositiveSmallIntegerField(null=False)
     price = models.DecimalField(decimal_places=2, max_digits=20)
     topics = models.ManyToManyField(Topic, blank=True, related_name="topics")
+    exam_attempts_first_date = models.DateTimeField(blank=True, null=True)
+    exam_attempts_second_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return self.title

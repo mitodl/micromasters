@@ -28,6 +28,9 @@ from exams.models import (
 )
 from micromasters.utils import now_in_utc
 
+# maximum number of exam attempts per payment
+ATTEMPTS_PER_PAID_RUN_OLD = 2  # the number of attempts the user gets for payment before the first date
+ATTEMPTS_PER_PAID_RUN = 1
 
 log = logging.getLogger(__name__)
 
@@ -238,6 +241,26 @@ class MMTrack:
             order__user=self.user,
             course_key__in=course.courserun_set.values('edx_course_key'),
         ).values('order_id').distinct().count()
+
+    def get_custom_number_of_attempts_for_course(self, course):
+        """
+        Get a custom number of exam attempts for given course. If payment was made before
+        the first date, learner get 2 attempts. Otherwise, 1.
+        Args:
+            course (courses.models.Course): a course
+        Returns:
+            int: a number of attempts
+        """
+        lines = Line.objects.filter(
+            order__status__in=Order.FULFILLED_STATUSES,
+            order__user=self.user,
+            course_key__in=course.courserun_set.values('edx_course_key'),
+        ).order_by('created_at')
+        first_date = course.program.exam_attempts_first_date
+        num_attempts = sum([ATTEMPTS_PER_PAID_RUN_OLD
+                            if line.modified_at < first_date else ATTEMPTS_PER_PAID_RUN for line in lines])
+
+        return num_attempts
 
     def has_paid_for_any_in_program(self):
         """
