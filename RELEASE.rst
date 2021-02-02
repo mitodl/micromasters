@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.183.0
+---------------
+
+- Exams: set number of attempts to 1 (#4761)
+
 Version 0.182.0 (Released January 29, 2021)
 ---------------
 
