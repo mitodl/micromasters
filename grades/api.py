@@ -229,7 +229,7 @@ def generate_program_certificate(user, program):
     """
 
     if MicromastersProgramCertificate.objects.filter(user=user, program=program).exists():
-        log.error('User [%s] already has a certificate for program [%s]', user, program)
+        log.warning('User [%s] already has a certificate for program [%s]', user, program)
         return
 
     for electives_set in ElectivesSet.objects.filter(program=program):
