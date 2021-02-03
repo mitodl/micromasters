@@ -14,7 +14,7 @@ from courses.models import (
     Program,
 )
 from exams.models import ExamRun
-from exams.pearson.constants import EXAM_GRADE_PASS, EXAM_GRADE_FAIL
+from exams.constants import EXAM_GRADE_PASS, EXAM_GRADE_FAIL
 from grades.constants import FinalGradeStatus
 from micromasters.models import (
     AuditableModel,

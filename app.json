@@ -84,30 +84,6 @@
     "ELASTICSEARCH_URL": {
       "description": "URL for connecting to Elasticsearch cluster"
     },
-    "EXAMS_AUDIT_NACL_PUBLIC_KEY": {
-      "description": "NaCl public key for encrypting audit files",
-      "required": false
-    },
-    "EXAMS_SFTP_HOST": {
-      "description": "Hostname for Pearson SFTP server",
-      "required": false
-    },
-    "EXAMS_SFTP_PORT": {
-      "description": "Port for Pearson SFTP server",
-      "required": false
-    },
-    "EXAMS_SFTP_USERNAME": {
-      "description": "Username for Pearson SFTP server authentication",
-      "required": false
-    },
-    "EXAMS_SFTP_PASSWORD": {
-      "description": "Password for Pearson SFTP server authentication",
-      "required": false
-    },
-    "EXAMS_SFTP_UPLOAD_DIR": {
-      "description": "Upload directory for files we send to Pearson",
-      "required": false
-    },
     "FEATURE_OPEN_DISCUSSIONS_USER_SYNC": {
       "description": "Enables creation and syncing of open-discussions user data",
       "required": false

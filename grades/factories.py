@@ -19,7 +19,7 @@ from courses.factories import (
     ProgramFactory,
 )
 from exams.factories import ExamRunFactory
-from exams.pearson.constants import EXAM_GRADE_PASS, EXAM_GRADE_FAIL
+from exams.constants import EXAM_GRADE_PASS, EXAM_GRADE_FAIL
 from grades.constants import FinalGradeStatus
 from grades.models import (
     FinalGrade,

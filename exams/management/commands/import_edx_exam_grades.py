@@ -9,7 +9,7 @@ from django.core.management import BaseCommand, CommandError
 
 from courses.models import Course
 from exams.models import ExamRun, ExamAuthorization
-from exams.pearson.constants import EXAM_GRADE_PASS
+from exams.constants import EXAM_GRADE_PASS
 from grades.models import ProctoredExamGrade
 from micromasters.utils import now_in_utc
 
