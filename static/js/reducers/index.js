@@ -37,7 +37,6 @@ import { financialAid } from "./financial_aid"
 import { documents } from "./documents"
 import { orderReceipt } from "./order_receipt"
 import { coupons } from "./coupons"
-import { pearson } from "./pearson"
 import { channelDialog } from "./channel_dialog"
 import { dashboard } from "./dashboard"
 import { ALL_ERRORS_VISIBLE } from "../constants"
@@ -217,7 +216,6 @@ export default combineReducers({
   documents,
   orderReceipt,
   coupons,
-  pearson,
   channelDialog,
   ...reducers
 })
