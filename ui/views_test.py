@@ -294,8 +294,6 @@ class DashboardTests(ViewsTests):
             VERSION='0.0.1',
             RAVEN_CONFIG={'dsn': ''},
             ELASTICSEARCH_DEFAULT_PAGE_SIZE=10,
-            EXAMS_SSO_CLIENT_CODE='itsacode',
-            EXAMS_SSO_URL='url',
             OPEN_DISCUSSIONS_REDIRECT_URL=open_discussions_redirect_url,
         ), patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
             resp = self.client.get(DASHBOARD_URL)
@@ -329,8 +327,6 @@ class DashboardTests(ViewsTests):
                 'sentry_dsn': "",
                 'es_page_size': 10,
                 'public_path': '/static/bundles/',
-                'EXAMS_SSO_CLIENT_CODE': 'itsacode',
-                'EXAMS_SSO_URL': 'url',
                 'FEATURES': {
                     'PROGRAM_LEARNERS': False,
                     'DISCUSSIONS_POST_UI': False,
@@ -748,8 +744,6 @@ class TestUsersPage(ViewsTests):
             VERSION='0.0.1',
             RAVEN_CONFIG={'dsn': ''},
             ELASTICSEARCH_DEFAULT_PAGE_SIZE=10,
-            EXAMS_SSO_CLIENT_CODE='itsacode',
-            EXAMS_SSO_URL='url',
             OPEN_DISCUSSIONS_REDIRECT_URL=open_discussions_redirect_url
         ):
             # Mock has_permission so we don't worry about testing permissions here
@@ -784,8 +778,6 @@ class TestUsersPage(ViewsTests):
                     'sentry_dsn': "",
                     'es_page_size': 10,
                     'public_path': '/static/bundles/',
-                    'EXAMS_SSO_CLIENT_CODE': 'itsacode',
-                    'EXAMS_SSO_URL': 'url',
                     'FEATURES': {
                         'PROGRAM_LEARNERS': False,
                         'DISCUSSIONS_POST_UI': False,
@@ -830,8 +822,6 @@ class TestUsersPage(ViewsTests):
             VERSION='0.0.1',
             RAVEN_CONFIG={'dsn': ''},
             ELASTICSEARCH_DEFAULT_PAGE_SIZE=10,
-            EXAMS_SSO_CLIENT_CODE='itsacode',
-            EXAMS_SSO_URL='url',
             OPEN_DISCUSSIONS_REDIRECT_URL=open_discussions_redirect_url
         ):
             # Mock has_permission so we don't worry about testing permissions here
@@ -860,8 +850,6 @@ class TestUsersPage(ViewsTests):
                     'sentry_dsn': "",
                     'es_page_size': 10,
                     'public_path': '/static/bundles/',
-                    'EXAMS_SSO_CLIENT_CODE': 'itsacode',
-                    'EXAMS_SSO_URL': 'url',
                     'FEATURES': {
                         'PROGRAM_LEARNERS': False,
                         'DISCUSSIONS_POST_UI': False,

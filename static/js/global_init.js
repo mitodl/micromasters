@@ -20,8 +20,6 @@ const _createSettings = () => ({
   roles:                 [],
   support_email:         "a_real_email@example.com",
   es_page_size:          40,
-  EXAMS_SSO_CLIENT_CODE: "foobarcode",
-  EXAMS_SSO_URL:         "http://foo.bar/baz",
   FEATURES:              {
     PROGRAM_LEARNERS:              true,
     DISCUSSIONS_POST_UI:           true,
