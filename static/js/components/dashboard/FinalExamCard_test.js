@@ -11,17 +11,15 @@ import FinalExamCard from "./FinalExamCard"
 import { DASHBOARD_RESPONSE, USER_PROFILE_RESPONSE } from "../../test_constants"
 import { PEARSON_PROFILE_ABSENT } from "../../constants"
 import { INITIAL_UI_STATE } from "../../reducers/ui"
-import { stringStrip, getEl } from "../../util/test_utils"
+import { stringStrip } from "../../util/test_utils"
 import type { Program } from "../../flow/programTypes"
 
 describe("FinalExamCard", () => {
-  let sandbox
   let props
 
   const profile = { ...USER_PROFILE_RESPONSE, preferred_name: "Preferred Name" }
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create()
     const program: Program = (_.cloneDeep(
       DASHBOARD_RESPONSE.programs.find(
         program => program.exam_card_status !== undefined

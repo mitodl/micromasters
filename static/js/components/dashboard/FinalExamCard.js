@@ -4,9 +4,7 @@ import React from "react"
 import Card from "@material-ui/core/Card"
 import CardContent from "@material-ui/core/CardContent"
 
-import type { Profile } from "../../flow/profileTypes"
 import type { Program } from "../../flow/programTypes"
-import type { UIState } from "../../reducers/ui"
 
 type Props = {
   program: Program
