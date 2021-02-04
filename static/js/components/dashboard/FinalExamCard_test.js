@@ -4,7 +4,6 @@ import _ from "lodash"
 import React from "react"
 import { mount } from "enzyme"
 import { assert } from "chai"
-import sinon from "sinon"
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 
 import FinalExamCard from "./FinalExamCard"
