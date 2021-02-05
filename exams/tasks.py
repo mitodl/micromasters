@@ -11,13 +11,6 @@ from exams.models import (
 from micromasters.celery import app
 from micromasters.utils import now_in_utc, chunks
 
-PEARSON_CDD_FILE_PREFIX = "cdd-%Y%m%d%H_"
-PEARSON_EAD_FILE_PREFIX = "ead-%Y%m%d%H_"
-
-PEARSON_FILE_EXTENSION = ".dat"
-
-PEARSON_FILE_ENCODING = "utf-8"
-
 log = logging.getLogger(__name__)
 
 

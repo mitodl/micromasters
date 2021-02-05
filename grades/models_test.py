@@ -9,7 +9,7 @@ from courses.factories import (
     CourseRunFactory,
     ProgramFactory,
 )
-from exams.pearson.constants import EXAM_GRADE_PASS, EXAM_GRADE_FAIL
+from exams.constants import EXAM_GRADE_PASS, EXAM_GRADE_FAIL
 from grades.models import (
     CourseRunGradingAlreadyCompleteError,
     CourseRunGradingStatus,

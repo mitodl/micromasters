@@ -3,7 +3,6 @@ Tests for exam signals
 """
 from datetime import timedelta
 
-from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from factory.django import mute_signals
 import ddt
@@ -65,23 +64,6 @@ class ExamSignalsTest(MockedESTestCase):
             course=cls.course_run.course,
             date_first_schedulable=now_in_utc() - timedelta(days=1),
         )
-
-    def test_update_exam_profile_called(self):
-        """
-        Verify that update_exam_profile is called when a profile saves
-        """
-        user = User.objects.create(username='test')
-        profile = user.profile
-        profile_exam = ExamProfile.objects.create(
-            profile=profile,
-            status=ExamProfile.PROFILE_SUCCESS,
-        )
-        profile.first_name = 'NewName'
-        profile.save()
-
-        profile_exam.refresh_from_db()
-
-        assert profile_exam.status == ExamProfile.PROFILE_PENDING
 
     def test_update_exam_authorization_final_grade(self):
         """

@@ -21,18 +21,9 @@ from exams.utils import is_eligible_for_exam
 
 from grades.api import update_existing_combined_final_grade_for_exam_run
 from grades.models import FinalGrade
-from profiles.models import Profile
 
 
 log = logging.getLogger(__name__)
-
-
-@receiver(post_save, sender=Profile, dispatch_uid="update_exam_profile")
-def update_exam_profile(sender, instance, **kwargs):  # pylint: disable=unused-argument
-    """
-    Signal handler to trigger a sync of the profile if an ExamProfile record exists for it.
-    """
-    ExamProfile.objects.filter(profile_id=instance.id).update(status=ExamProfile.PROFILE_PENDING)
 
 
 @receiver(post_save, sender=ExamRun, dispatch_uid="update_exam_run")

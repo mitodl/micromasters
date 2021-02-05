@@ -1280,10 +1280,10 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
       id:                         2
     },
     {
-      title:               "Last program",
-      description:         "The last program",
-      pearson_exam_status: "",
-      courses:             [
+      title:            "Last program",
+      description:      "The last program",
+      exam_card_status: "",
+      courses:          [
         {
           id:                  13,
           position_in_program: 0,

@@ -93,15 +93,8 @@ import { currencyForCountry } from "../lib/currency"
 import DocsInstructionsDialog from "../components/DocsInstructionsDialog"
 import CouponNotificationDialog from "../components/CouponNotificationDialog"
 import CourseEnrollmentDialog from "../components/CourseEnrollmentDialog"
-import {
-  getPearsonSSODigest,
-  pearsonSSOInProgress,
-  pearsonSSOFailure,
-  setPearsonError
-} from "../actions/pearson"
 import { INCOME_DIALOG } from "./FinancialAidCalculator"
 import { processCheckout } from "./OrderSummaryPage"
-import { generateSSOForm } from "../lib/pearson"
 import { getOwnDashboard, getOwnCoursePrices } from "../reducers/util"
 import { actions } from "../lib/redux_rest"
 import { wait } from "../util/util"
@@ -126,13 +119,11 @@ import type { CouponsState } from "../reducers/coupons"
 import type { ProfileGetResult } from "../flow/profileTypes"
 import type { Course, CourseRun, Program } from "../flow/programTypes"
 import type { Coupon } from "../flow/couponTypes"
-import type { PearsonAPIState } from "../reducers/pearson"
 import type { RestState } from "../flow/restTypes"
 import type { Post } from "../flow/discussionTypes"
 import PersonalCoursePriceDialog from "../components/dashboard/PersonalCoursePriceDialog"
 
 const isFinishedProcessing = R.contains(R.__, [FETCH_SUCCESS, FETCH_FAILURE])
-const PEARSON_TOS_DIALOG = "pearsonTOSDialogVisible"
 
 export type GradeType = "EDX_GRADE" | "EXAM_GRADE"
 export const EDX_GRADE: GradeType = "EDX_GRADE"
@@ -158,7 +149,6 @@ class DashboardPage extends React.Component {
     orderReceipt: OrderReceiptState,
     financialAid: FinancialAidState,
     location: Object,
-    pearson: PearsonAPIState,
     openEmailComposer: (emailType: string, emailOpenParams: any) => void,
     discussionsFrontpage: RestState<Array<Post>>
   }
@@ -185,36 +175,6 @@ class DashboardPage extends React.Component {
       dispatch(actions.programLearners.clear(id))
     )
     dispatch(clearCoupons())
-  }
-
-  submitPearsonSSO = () => {
-    const {
-      dispatch,
-      profile: { profile }
-    } = this.props
-
-    dispatch(getPearsonSSODigest())
-      .then(res => {
-        dispatch(pearsonSSOInProgress())
-        const { session_timeout, sso_digest, timestamp, sso_redirect_url } = res
-
-        const form = generateSSOForm(
-          profile.student_id,
-          timestamp,
-          session_timeout,
-          sso_digest,
-          sso_redirect_url
-        )
-        form.submit()
-      })
-      .catch(() => {
-        dispatch(pearsonSSOFailure())
-        dispatch(
-          setPearsonError(
-            "It looks like we're experiencing an issue with scheduling, try again later."
-          )
-        )
-      })
   }
 
   openCourseContactDialog = (course: Course, canContactCourseTeam: boolean) => {
@@ -622,15 +582,6 @@ class DashboardPage extends React.Component {
     )(this.props)
   }
 
-  showPearsonTOSDialog = (open: boolean) => {
-    const { dispatch } = this.props
-    if (open) {
-      dispatch(showDialog(PEARSON_TOS_DIALOG))
-    } else {
-      dispatch(hideDialog(PEARSON_TOS_DIALOG))
-    }
-  }
-
   setShowGradeDetailDialog = (
     open: boolean,
     gradeType: GradeType,
@@ -892,7 +843,6 @@ class DashboardPage extends React.Component {
       ui,
       financialAid,
       coupons,
-      pearson,
       discussionsFrontpage
     } = this.props
     const program = this.getCurrentlyEnrolledProgram()
@@ -946,11 +896,8 @@ class DashboardPage extends React.Component {
             <FinalExamCard
               profile={profile}
               program={program}
-              pearson={pearson}
               ui={ui}
               navigateToProfile={this.navigateToProfile}
-              submitPearsonSSO={this.submitPearsonSSO}
-              showPearsonTOSDialog={this.showPearsonTOSDialog}
             />
             {financialAidCard}
             <CourseListCard
@@ -1043,7 +990,6 @@ const mapStateToProps = state => {
     orderReceipt:             state.orderReceipt,
     financialAid:             state.financialAid,
     coupons:                  state.coupons,
-    pearson:                  state.pearson,
     discussionsFrontpage:     state.discussionsFrontpage
   }
 }

@@ -34,7 +34,7 @@ export type Program = {
   title:                      string,
   financial_aid_availability: boolean,
   financial_aid_user_info:    FinancialAidUserInfo,
-  pearson_exam_status:        string,
+  exam_card_status:        string,
   grade_average:              ?number,
   certificate:                string,
   grade_records_url:          string,

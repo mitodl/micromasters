@@ -58,8 +58,6 @@ class ReactView(View):  # pylint: disable=unused-argument
             "user": serialize_maybe_user(request.user),
             "es_page_size": settings.ELASTICSEARCH_DEFAULT_PAGE_SIZE,
             "public_path": public_path(request),
-            "EXAMS_SSO_CLIENT_CODE": settings.EXAMS_SSO_CLIENT_CODE,
-            "EXAMS_SSO_URL": settings.EXAMS_SSO_URL,
             "FEATURES": {
                 "PROGRAM_LEARNERS": settings.FEATURES.get('PROGRAM_LEARNERS_ENABLED', False),
                 "DISCUSSIONS_POST_UI": settings.FEATURES.get('OPEN_DISCUSSIONS_POST_UI', False),
