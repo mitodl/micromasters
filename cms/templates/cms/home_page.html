@@ -272,3 +272,14 @@
 {% render_bundle "public" %}
 </div>
 {% endblock %}
+
+$(document).ready(function($) {
+  $(".action-button").fancybox({
+    caption: function() {
+      return $(this)
+        .parent()
+        .find(".video-container")
+        .html()
+    }
+  })
+})
