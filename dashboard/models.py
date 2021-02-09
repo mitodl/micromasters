@@ -226,7 +226,7 @@ class ProgramEnrollment(Model):
     class Meta:
         unique_together = (('user', 'program'), )
 
-    def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
+    def save(self, *args, **kwargs):  # pylint: disable=signature-differs
         """Overridden save method"""
         if not self.hash:
             self.hash = generate_md5(

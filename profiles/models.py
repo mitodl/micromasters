@@ -202,11 +202,11 @@ class Profile(models.Model):
                 self.image_small = None
                 self.image_medium = None
 
-        super(Profile, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         # if there is no student id, assign the same number of the primary key
         if self.student_id is None:
             self.student_id = self.id
-            super(Profile, self).save()
+            super().save()
 
     def __str__(self):
         return 'Profile for "{0}"'.format(self.user.username)

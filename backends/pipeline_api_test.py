@@ -69,7 +69,7 @@ class EdxPipelineApiTest(MockedESTestCase):
         """
         Set up class
         """
-        super(EdxPipelineApiTest, self).setUp()
+        super().setUp()
         self.user = UserFactory(username="user_1")
         self.user.social_auth.create(
             provider='not_edx',

@@ -24,7 +24,7 @@ class SocialTests(MockedESTestCase):
         """
         Create a user with a default social auth
         """
-        super(SocialTests, self).setUp()
+        super().setUp()
 
         profile = SocialProfileFactory.create(
             agreed_to_terms_of_service=True,

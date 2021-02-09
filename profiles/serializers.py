@@ -170,8 +170,7 @@ class ProfileSerializer(ProfileBaseSerializer):
             for attr, value in validated_data.items():
                 if attr in ('work_history', 'education'):
                     continue
-                else:
-                    setattr(instance, attr, value)
+                setattr(instance, attr, value)
 
             update_image = 'image' in validated_data
             instance.save(update_image=update_image)

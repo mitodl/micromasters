@@ -41,7 +41,7 @@ class ElasticProxyView(APIView):
 
         return Response(results.to_dict())
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         """
         Handler for POST requests
         """

@@ -21,7 +21,7 @@ class SignalsTest(MockedESTestCase):
     """
 
     def setUp(self):
-        super(SignalsTest, self).setUp()
+        super().setUp()
         self.user = UserFactory.create()
         self.program = ProgramFactory.create()
 

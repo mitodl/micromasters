@@ -84,7 +84,7 @@ class CourseModelTests(MockedESTestCase):
         cls.course = CourseFactory.create(title="Title")
 
     def setUp(self):
-        super(CourseModelTests, self).setUp()
+        super().setUp()
         self.now = now_in_utc()
 
     def create_run(self, course=None, start=None, end=None,

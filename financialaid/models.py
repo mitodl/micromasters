@@ -46,14 +46,14 @@ class TierProgram(TimestampedModel):
         return 'tier "{0}" for program "{1}"'.format(self.tier.name, self.program.title)
 
     @transaction.atomic
-    def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
+    def save(self, *args, **kwargs):  # pylint: disable=signature-differs
         """
         Override the save to enforce the existence of only one `current` = True
         per program and tier
         """
         if self.current:
             TierProgram.objects.filter(program=self.program, tier=self.tier, current=True).update(current=False)
-        return super(TierProgram, self).save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
 
 class FinancialAid(TimestampedModel, AuditableModel):
@@ -77,7 +77,7 @@ class FinancialAid(TimestampedModel, AuditableModel):
     justification = models.TextField(null=True)
     country_of_residence = models.TextField()
 
-    def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
+    def save(self, *args, **kwargs):  # pylint: disable=signature-differs
         """
         Override save to make sure only one FinancialAid object exists for a User and the associated Program
         """

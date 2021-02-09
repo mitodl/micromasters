@@ -14,4 +14,4 @@ class ProfilesConfig(AppConfig):
         """
         Ready handler. Import signals.
         """
-        import profiles.signals  # pylint: disable=unused-variable
+        import profiles.signals  # pylint: disable=unused-import

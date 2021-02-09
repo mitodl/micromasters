@@ -57,7 +57,7 @@ class CanSeeIfNotPrivate(BasePermission):
         # private profiles
         if profile.account_privacy == Profile.PRIVATE:
             raise Http404
-        elif profile.account_privacy == Profile.PUBLIC_TO_MM:
+        if profile.account_privacy == Profile.PUBLIC_TO_MM:
             # anonymous user accessing profiles.
             if request.user.is_anonymous:
                 raise Http404

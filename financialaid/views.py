@@ -334,7 +334,7 @@ class CoursePriceListView(APIView):
     )
     permission_classes = (IsAuthenticated, CanReadIfStaffOrSelf)
 
-    def get(self, request, username, *args, **kwargs):
+    def get(self, request, username, *args, **kwargs):  # pylint: disable=unused-argument
         """
         GET handler
         """
@@ -370,7 +370,7 @@ class CoursePriceDetailView(APIView):
     )
     permission_classes = (IsAuthenticated, )
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         """
         GET handler
         """

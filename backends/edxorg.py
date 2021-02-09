@@ -103,6 +103,6 @@ class EdxOrgOAuth2(BaseOAuth2):
         Returns:
             dict of information about the user
         """
-        response = super(EdxOrgOAuth2, self).refresh_token(token, *args, **kwargs)
+        response = super().refresh_token(token, *args, **kwargs)
         response['updated_at'] = now_in_utc().timestamp()
         return response

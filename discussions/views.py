@@ -89,7 +89,7 @@ class ChannelsView(APIView):
         CanCreateChannel,
     )
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         """Create a new channel"""
         serializer = ChannelSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)

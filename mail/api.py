@@ -143,7 +143,7 @@ class MailgunClient:
         exception_pairs = []
 
         for chunk in chunks(recipients, chunk_size=chunk_size):
-            chunk_dict = {email: context for email, context in chunk}
+            chunk_dict = {email: context for email, context in chunk}  # pylint: disable=unnecessary-comprehension
             emails = list(chunk_dict.keys())
 
             params = {

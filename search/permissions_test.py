@@ -24,7 +24,7 @@ class PermissionsTests(ESTestCase):
         cls.program = ProgramFactory.create(live=True)
 
     def setUp(self):
-        super(PermissionsTests, self).setUp()
+        super().setUp()
         self.request = RequestFactory().get('/')
         self.request.user = AnonymousUser()
 

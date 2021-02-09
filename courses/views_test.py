@@ -129,7 +129,7 @@ class ProgramEnrollmentTests(MockedESTestCase, APITestCase):
         cls.url = reverse('user_program_enrollments')
 
     def setUp(self):
-        super(ProgramEnrollmentTests, self).setUp()
+        super().setUp()
         self.default_enrollments = [
             ProgramEnrollmentFactory(
                 user=self.user1,
@@ -139,7 +139,7 @@ class ProgramEnrollmentTests(MockedESTestCase, APITestCase):
         self.client.force_login(self.user1)
 
     def tearDown(self):
-        super(ProgramEnrollmentTests, self).tearDown()
+        super().tearDown()
         ProgramEnrollment.objects.all().delete()
 
     def assert_program_enrollments_count(self, expected_count=None):

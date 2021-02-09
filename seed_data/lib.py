@@ -55,14 +55,14 @@ class ModelFinder:
                     cls.param_keys
                 )
             )
-        elif len(objects) == 0:
+        if len(objects) == 0:
             raise Exception(
                 "No {} found with the given params ({})".format(
                     cls.model_cls.__name__,
                     params
                 )
             )
-        elif len(objects) > 1:
+        if len(objects) > 1:
             exc_text = (
                 "Multiple {} records found with the given params ({}). These parameters need to "
                 "be specific enough to match a single record.\n{}"
@@ -74,8 +74,7 @@ class ModelFinder:
                     '\n'.join(str(obj) for obj in objects)
                 )
             )
-        else:
-            return objects[0]
+        return objects[0]
 
     @classmethod
     def calculate_params(cls, **kwargs):

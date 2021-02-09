@@ -16,7 +16,7 @@ class FinancialAidEmailAuditAdmin(admin.ModelAdmin):
     def has_add_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
         return False
 
-    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
+    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, signature-differs
         return False
 
 

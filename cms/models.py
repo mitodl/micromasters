@@ -54,7 +54,7 @@ class HomePage(Page):
         }
 
         username = get_social_username(request.user)
-        context = super(HomePage, self).get_context(request)
+        context = super().get_context(request)
 
         def get_program_page(program):
             """Return a None if ProgramPage does not exist, to avoid template errors"""
@@ -248,7 +248,7 @@ class CourseTeamTabPage(ProgramChildPage):
     ]
 
     def get_context(self, request, *args, **kwargs):
-        context = super(CourseTeamTabPage, self).get_context(request)
+        context = super().get_context(request)
 
         # this will help us to disable instructors carousel on course team page
         context['course_team_tab_title'] = self.title
@@ -392,6 +392,7 @@ class ProgramPage(Page):
         course_team_page = child_pages.type(CourseTeamTabPage).live().first()
 
         # the course team tab should always be second, first one is about tab
+        # pylint: disable=unnecessary-comprehension
         context['child_pages'] = [course_team_page] + [page for page in child_pages.not_type(CourseTeamTabPage)]
         context['course_team_page'] = course_team_page
 
@@ -415,6 +416,7 @@ def get_program_page_context(programpage, request):
         "program": ProgramPageSerializer(programpage).data,
     }
     username = get_social_username(request.user)
+    # pylint: disable=bad-super-call
     context = super(ProgramPage, programpage).get_context(request)
 
     context["is_staff"] = has_role(request.user, [Staff.ROLE_ID, Instructor.ROLE_ID])
@@ -538,7 +540,7 @@ class FrequentlyAskedQuestion(Orderable):
     answer = RichTextField()
     slug = models.SlugField(unique=True, default=None, blank=True)
 
-    def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
+    def save(self, *args, **kwargs):  # pylint: disable=signature-differs
         if not self.slug:
             max_length = FrequentlyAskedQuestion._meta.get_field('slug').max_length
             slug = orig_slug = slugify(self.question)[:max_length]
@@ -551,7 +553,7 @@ class FrequentlyAskedQuestion(Orderable):
                 slug_is_unique = not FrequentlyAskedQuestion.objects.filter(slug=slug).exists()
                 count += 1
             self.slug = slug
-        super(FrequentlyAskedQuestion, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     panels = [
         MultiFieldPanel(

@@ -64,14 +64,14 @@ class Role(models.Model):
         unique_together = ('user', 'program', 'role',)
 
     @transaction.atomic
-    def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
+    def save(self, *args, **kwargs):  # pylint: disable=signature-differs
         """
         Overridden method to run a preventive validation before saving the object.
         """
         self.full_clean()
-        super(Role, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
-    def full_clean(self, *args, **kwargs):  # pylint: disable=arguments-differ
+    def full_clean(self, *args, **kwargs):  # pylint: disable=signature-differs
         """
         Overridden method to run a preventive validation.
         """
@@ -87,7 +87,7 @@ class Role(models.Model):
                     existing_role_queryset.first().role
                 )
             )
-        super(Role, self).full_clean(*args, **kwargs)
+        super().full_clean(*args, **kwargs)
 
     def __str__(self):
         return "{user}: {role} in {program}".format(

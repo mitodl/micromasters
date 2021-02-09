@@ -14,4 +14,4 @@ class SearchConfig(AppConfig):
         """
         Ready handler. Import signals.
         """
-        import search.signals  # pylint: disable=unused-variable
+        import search.signals  # pylint: disable=unused-import

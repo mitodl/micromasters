@@ -18,7 +18,7 @@ class FinalGradeAdmin(admin.ModelAdmin):
         'user__username',
     )
 
-    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
+    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, signature-differs
         return False
 
     def save_model(self, request, obj, form, change):
@@ -39,7 +39,7 @@ class FinalGradeAuditAdmin(admin.ModelAdmin):
     def has_add_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
         return False
 
-    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
+    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, signature-differs
         return False
 
 
@@ -60,7 +60,7 @@ class ProctoredExamGradeAdmin(admin.ModelAdmin):
         'user__username',
     )
 
-    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
+    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, signature-differs
         return False
 
     def save_model(self, request, obj, form, change):
@@ -81,7 +81,7 @@ class ProctoredExamGradeAuditAdmin(admin.ModelAdmin):
     def has_add_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
         return False
 
-    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, arguments-differ
+    def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, signature-differs
         return False
 
 

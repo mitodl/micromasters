@@ -24,7 +24,7 @@ def _match_field(profile, field):
     pattern = r'^[\u0020-\u00FF]*$'
     reg = re.compile(pattern)
     value = getattr(profile, field)
-    return (True if reg.match(value) else False) if value else False
+    return bool(reg.match(value)) if value else False
 
 
 def validate_profile(profile):

@@ -51,7 +51,7 @@ class TasksTest(TestCase):
         )
 
     def setUp(self):
-        super(TasksTest, self).setUp()
+        super().setUp()
         self.data = {
             "extraneous information": "blah blah blah",
             "rates": {

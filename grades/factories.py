@@ -41,7 +41,7 @@ class FinalGradeFactory(DjangoModelFactory):
     status = FinalGradeStatus.COMPLETE
     course_run_paid_on_edx = Faker('boolean')
 
-    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods,old-style-class
+    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods
         model = FinalGrade
 
 
@@ -60,7 +60,7 @@ class ProctoredExamGradeFactory(DjangoModelFactory):
     passed = Faker('boolean')
     percentage_grade = FuzzyFloat(low=0, high=1)
 
-    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods,old-style-class
+    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods
         model = ProctoredExamGrade
 
 
@@ -70,7 +70,7 @@ class MicromastersCourseCertificateFactory(DjangoModelFactory):
     course = SubFactory(CourseFactory)
     hash = LazyAttribute(lambda cert: generate_md5('{}|{}'.format(cert.user.id, cert.course.id).encode('utf-8')))
 
-    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods,old-style-class
+    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods
         model = MicromastersCourseCertificate
 
 
@@ -80,7 +80,7 @@ class MicromastersProgramCertificateFactory(DjangoModelFactory):
     user = SubFactory(UserFactory)
     program = SubFactory(ProgramFactory)
 
-    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods,old-style-class
+    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods
         model = MicromastersProgramCertificate
 
 
@@ -90,5 +90,5 @@ class MicromastersProgramCommendationFactory(DjangoModelFactory):
     user = SubFactory(UserFactory)
     program = SubFactory(ProgramFactory)
 
-    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods,old-style-class
+    class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods
         model = MicromastersProgramCommendation

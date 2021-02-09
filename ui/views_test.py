@@ -524,7 +524,7 @@ class TestProgramPage(ViewsTests):
     Test that the ProgramPage view work as expected.
     """
     def setUp(self):
-        super(TestProgramPage, self).setUp()
+        super().setUp()
         homepage = HomePage.objects.first()
         program = ProgramFactory.create(title="Test Program Title", live=True)
         self.program_page = ProgramPage(program=program, title="Test Program")

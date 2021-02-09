@@ -14,4 +14,4 @@ class GradesConfig(AppConfig):
         """
         Ready handler. Import signals.
         """
-        import grades.signals  # pylint: disable=unused-variable
+        import grades.signals  # pylint: disable=unused-import

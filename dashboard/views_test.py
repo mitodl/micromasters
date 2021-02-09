@@ -65,7 +65,7 @@ class DashboardTest(MockedESTestCase, APITestCase):
         cls.url = reverse('dashboard_api', args=[cls.user.social_auth.first().uid])
 
     def setUp(self):
-        super(DashboardTest, self).setUp()
+        super().setUp()
         self.client.force_login(self.user)
 
     def test_anonym_access(self):
@@ -144,7 +144,7 @@ class DashboardTokensTest(MockedESTestCase, APITestCase):
         cls.url = reverse('dashboard_api', args=[cls.social_auth.uid])
 
     def setUp(self):
-        super(DashboardTokensTest, self).setUp()
+        super().setUp()
         self.client.force_login(self.user)
         self.now = now_in_utc()
 

@@ -28,7 +28,7 @@ def sync_currency_exchange_rates():
     # check specifically if maximum number of api calls per month has been exceeded
     if resp.status_code == 429:
         raise ExceededAPICallsException(resp_json["description"])
-    elif resp.status_code != 200:  # check for other API errors
+    if resp.status_code != 200:  # check for other API errors
         raise UnexpectedAPIErrorException(resp_json["description"])
     latest_rates = resp_json["rates"]
     update_currency_exchange_rate(latest_rates)

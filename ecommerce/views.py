@@ -59,7 +59,7 @@ class CheckoutView(APIView):
     )
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         """
         If the course run is part of a financial aid program, create a new unfulfilled Order
         and return information used to submit to CyberSource.
@@ -142,7 +142,7 @@ class OrderFulfillmentView(APIView):
     authentication_classes = ()
     permission_classes = (IsSignedByCyberSource, )
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         """
         Confirmation from CyberSource which fulfills an existing Order.
         """
@@ -246,7 +246,7 @@ class UserCouponsView(APIView):
         TokenAuthentication,
     )
 
-    def post(self, request, code, *args, **kwargs):
+    def post(self, request, code, *args, **kwargs):  # pylint: disable=unused-argument
         """Attach a coupon to a user"""
         with transaction.atomic():
             coupon = get_object_or_404(Coupon, coupon_code=code)

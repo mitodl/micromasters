@@ -14,4 +14,4 @@ class DashboardConfig(AppConfig):
         """
         Ready handler. Import signals.
         """
-        import dashboard.signals  # pylint: disable=unused-variable
+        import dashboard.signals  # pylint: disable=unused-import

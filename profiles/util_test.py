@@ -189,7 +189,7 @@ class IsProfileFilledOutTests(DjangoTestCase):
     Tests for is_profile_filled_out function.
     """
     def setUp(self):
-        super(IsProfileFilledOutTests, self).setUp()
+        super().setUp()
         with mute_signals(post_save):
             self.profile = ProfileFactory.create()
 
