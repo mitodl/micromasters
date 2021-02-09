@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.183.1
+Version 0.183.1 (Released February 09, 2021)
 ---------------
 
 - Removing pearson communication code (#4765)
