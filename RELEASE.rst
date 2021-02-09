@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.184.0
+---------------
+
+- home page redesign (#4749)
+
 Version 0.183.1 (Released February 09, 2021)
 ---------------
 
