@@ -278,6 +278,7 @@
     @include breakpoint(phone) {
       padding: 0 23px;
       width: 100%;
+      display: block;
 
       .mdl-cell--8-col, .mdl-cell--4-col {
         width: 100%;

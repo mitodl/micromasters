@@ -136,6 +136,10 @@ class BenefitsPage(Page):
         context["js_settings_json"] = json.dumps(js_settings)
         context["title"] = self.title
         context["ga_tracking_id"] = ""
+        context["hubspot_portal_id"] = settings.HUBSPOT_CONFIG.get("HUBSPOT_PORTAL_ID")
+        context["hubspot_ogranizations_form_guid"] = settings.HUBSPOT_CONFIG.get(
+            "HUBSPOT_ORGANIZATIONS_FORM_GUID"
+        )
 
         return context
 

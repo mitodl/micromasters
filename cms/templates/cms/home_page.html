@@ -23,7 +23,7 @@
     integrated set of MITx graduate-level online courses. With the MicroMasters
     credentials, learners can apply for an accelerated master's degree
     program on campus, at MIT or other top universities.">
-  <meta property="og:image" content="{{ request.build_absolute_uri }}static/images/lp_hero.jpg">
+  <meta property="og:image" content="{{ request.build_absolute_uri }}static/images/homepage.png">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="948">
   <meta property="og:image:height" content="630">
@@ -36,9 +36,15 @@
     integrated set of MITx graduate-level online courses. With the MicroMasters
     credentials, learners can apply for an accelerated master's degree
     program on campus, at MIT or other top universities.">
-  <meta itemprop="image" content="{{ request.build_absolute_uri }}static/images/lp_hero.jpg">
+  <meta itemprop="image" content="{{ request.build_absolute_uri }}static/images/homepage.png">
   <meta name="twitter:description" content="MITx MicroMasters Programs: a new academic credential
     and a new path to a master’s degree from MIT. Learn more ">
+{% endblock %}
+
+{% block extrahead %}
+  {{ block.super }}
+  {# This is included separately because FancyBox isn't used anywhere else so putting into the styles bundle isn't optimal. #}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/vendor/jquery.fancybox.min.css'%}">
 {% endblock %}
 
 {% block content %}
@@ -68,157 +74,100 @@
         {% endif %}
         <div class="banner-wrapper-content">
           <h1>
-            MITx MicroMasters Programs: Bringing MIT to you
+            MITx MicroMasters Programs: Master Your Future
           </h1>
-          <h2>
-            Advance your career. Accelerate your master’s degree.
-          </h2>
+          <a id="actionButton" class="btn btn-primary text-uppercase px-5 py-2 action-button" data-fancybox href="https://www.youtube.com/embed/7lVvOSJpFGY?autoplay=true">Watch Now</a>
+          <p class="video-container"></p>
         </div>
       </div>
 
-      <div class="row sub-banner">
-        <div class="col-md-12 ">
+      <div class="row sub-banner current-programs-section">
+        <div class="col-md-12">
           <section class="sub-banner-section">
             <div class="sub-banner-text">
-              <h3>What is the MicroMasters<span class="trademark">&reg;</span> Program Credential?</h3>
-            <div class="youtubevideowrap">
-              <div class="video-container">
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/7lVvOSJpFGY" frameborder="0" allowfullscreen></iframe>
-              </div>
-            </div>
-              <p>A MicroMasters program credential is a professional and academic credential for online learners from
-                anywhere in the world. To earn the credential, learners must pass an integrated set of MIT graduate-level courses on edX.org,
-                and one or more proctored exams. This credential is valuable in and of itself.  Additionally,
-                credential-holders can then apply for an accelerated, on campus, master’s degree program at MIT
-                or other universities.
-                {% if benefits_url %}
-                  All MicroMasters program credential holders are also considered
-                  <a href="{{benefits_url}}">affiliates of the MIT Alumni Association</a>.
-                {% endif %}
+              <h2>MITx MicroMasters<span class="trademark">&reg;</span> Programs</h2>
+            
+              <p>Advance your career or accelerate your Master’s degree with a graduate-level digital credential from MIT.</p>
+              <p>The MicroMasters program credential from MIT Open Learning is a <b>professional and academic credential</b> for online learners
+                 from anywhere in the world who seek focused, accelerated advancement.</p> 
+              <p><b>Enroll</b> in a program—no admission required—and take 
+                 a series of graduate-level online courses, taught by MIT instructors, through edX.</p> 
+              <p><b>Earn</b> a program credential by 
+                 completing the course and passing one or more proctored exams.</p>
+              <p>   
+                 <b>Enjoy</b> the credential benefits: Credential earners can also apply for 
+                 an accelerated master’s degree program at MIT and other <a href="/pathways-graduate-programs/">pathway schools</a>; and include your credential on professional 
+                 profiles. MicroMasters program credential earners also become <a href="{{benefits_url}}">affiliates of the MIT Alumni Association</a>.
               </p>
-              <p>MicroMasters program courses offer the same learning and challenge as MIT courses.</p>
-              <div class="sub-banner-logos">
-                <div class="sub-banner-logos-text">All MITx MicroMasters program courses are delivered on</div>
-                <img src="{% static 'images/edx_logo.svg' %}" alt="edX" class="edx-logo">
-                <img src="{% static 'images/micromasters_logo.png' %}" alt="MITx" class="micromasters-logo">
+              <ul class="current-programs-list">
+                {% for program, programpage in programs %}
+                  <li class="col-sm-6">
+                    <div class="program-thumbnail">
+                      {% if programpage %}
+                          <a href="{{ programpage.url }}" class="program-link">
+                      {% endif %}
+                        <div class="program-info">
+                          <h4 class="program-title" aria-describedby="program-{{ program.id }}-description">
+                            {% if programpage %}
+                              {{ programpage.title }}
+                            {% endif %}
+                          </h4>
+                          {% with program.course_set.count as course_count %}
+                            {% if course_count %}
+                              <div class="program-num-courses">
+                                {% blocktrans count counter=course_count %}
+                                  {{ counter }} course
+                                {% plural %}
+                                  {{ counter }} courses
+                                {% endblocktrans %}
+                              </div>
+                            {% endif %}
+                          {% endwith %}
+                          <div class="program-description">
+                            <p class="program-description-text" id="program-{{ program.id }}-description">{{ program.description|default:"No description available for this program." }}</p>
+              
+                            {% if programpage %}
+                              <p class="program-description-link">
+                                <a href="{{ programpage.url }}" class="program-link">
+                                  More about {{ program }}
+                                </a>
+                              </p>
+                            {% endif %}
+                          </div>      
+                        </div>
+                        {% if programpage and programpage.thumbnail_image %}
+                          {% image programpage.thumbnail_image fill-690x530 as thumbnail_image %}
+                          <img src="{{ thumbnail_image.url }}" alt=""
+                               >
+                        {% else %}
+                          <img src="{% static 'images/course-thumbnail.png' %}"
+                               alt="" class="program-default-image">
+                        {% endif %}
+                      {% if programpage %}
+                        </a>
+                      {% endif %}
+                    </div>
+                  </li>
+                {% endfor %}
+        
+              </ul>
               </div>
             </div>
           </section>
         </div>
       </div>
 
-      <section class="row how-it-works-section">
-        <div class="centered-content">
-          <h3>How It Works</h3>
-          <div class="hiw col-md-3">
-            <h4>Online Learning</h4>
-            <div class="reasons-images-wrap">
-               <img src="{% static 'images/hiw1.png' %}" alt="">
-            </div>
-            <p>Take a series of online courses on edX, and pass all the course requirements.</p>
-          </div>
-          <div class="hiw col-md-3">
-            <h4>Proctored Tests</h4>
-            <div class="reasons-images-wrap">
-              <img src="{% static 'images/hiw2.png' %}" alt="">
-            </div>
-            <p>Pass one (or more) proctored exams—either a single final exam, or one exam for each course, depending on the program.</p>
-          </div>
-          <div class="hiw col-md-3">
-            <h4 class="longer-heading">Earn a Valuable Credential and Boost Your Network</h4>
-            <div class="reasons-images-wrap">
-              <img src="{% static 'images/hiw3.png' %}" alt="">
-            </div>
-            <p>A MicroMasters program credential from MITx proves that you’ve gained the knowledge
-              and skills to stand out in your field and qualifies you as an affiliate of
-              the MIT Alumni Association.
-              {% if benefits_url %} <a href="{{benefits_url}}">Learn More</a> {% endif %}
-            </p>
-          </div>
-          <div class="hiw col-md-3">
-            <h4>Pursue a Master’s</h4>
-            <div class="reasons-images-wrap">
-              <img src="{% static 'images/hiw4.png' %}" alt="">
-            </div>
-            <p>Learners who complete the MicroMasters program can apply for the Master’s degree program at MIT or other universities.</p>
-          </div>
-        </div>
-      </section>
-      <section class="row current-programs-section">
-        <h3>MITx MicroMasters Programs</h3>
-        <ul class="current-programs-list">
-        {% for program, programpage in programs %}
-          <li class="col-md-4">
-            <div class="program-thumbnail">
-              {% if programpage %}
-                  <a href="{{ programpage.url }}" class="program-link">
-              {% endif %}
-                <div class="program-info">
-                  <h4 class="program-title" aria-describedby="program-{{ program.id }}-description">
-                    {% if programpage %}
-                      {{ programpage.title }}
-                    {% endif %}
-                  </h4>
-                  {% with program.course_set.count as course_count %}
-                    {% if course_count %}
-                      <div class="program-num-courses">
-                        {% blocktrans count counter=course_count %}
-                          {{ counter }} course
-                        {% plural %}
-                          {{ counter }} courses
-                        {% endblocktrans %}
-                      </div>
-                    {% endif %}
-                  {% endwith %}
-                </div>
-                {% if programpage and programpage.thumbnail_image %}
-                  {% image programpage.thumbnail_image fill-690x530 as thumbnail_image %}
-                  <img src="{{ thumbnail_image.url }}" alt=""
-                       >
-                {% else %}
-                  <img src="{% static 'images/course-thumbnail.png' %}"
-                       alt="" class="program-default-image">
-                {% endif %}
-              {% if programpage %}
-                </a>
-              {% endif %}
-            </div>
-            <div class="program-description">
-              <p class="program-description-text" id="program-{{ program.id }}-description">{{ program.description|default:"No description available for this program." }}</p>
-
-              {% if programpage %}
-                <p class="program-description-link">
-                  <a href="{{ programpage.url }}" class="program-link">
-                    More about {{ program }}
-                  </a>
-                </p>
-              {% endif %}
-            </div>
-          </li>
-        {% endfor %}
-
-        </ul>
-        <br clear="all">
-
-        <div class="more-coming-soon">
-          <p>MIT plans to bring more MicroMasters programs to motivated learners like you. Sign up for our mailing list to hear about new MicroMasters programs.</p>
-          <p>
-            <a data-toggle="modal" data-target="#subscribeAlert" class="sign-up-link">Sign Up for Mailing List</a>
-          </p>
-        </div>
-
-      </section>
-
       <section class="row reasons-section">
         <div class="centered-content">
-          <h3>Why should I enroll?</h3>
+          <h3>Why Should I Enroll?</h3>
           <div class="enroll-reason col-md-3">
             <div class="reasons-images-wrap">
                <img src="{% static 'images/online.png' %}" alt="">
             </div>
 
-            <h4>Convenient &amp; Flexible</h4>
-            <p>Take online courses on a schedule that fits your needs, and meet motivated learners who share your interests.</p>
+            <h4>Advance Your Career</h4>
+            <p>Learn online, pass digital proctored exams, and earn a program credential. 
+              Boost your professional profile with an affordable and valuable credential from MIT.</p>
           </div>
           <div class="enroll-reason col-md-3">
             <div class="reasons-images-wrap">
@@ -226,22 +175,68 @@
             </div>
 
             <h4>Accelerate Your Master’s</h4>
-            <p>A MicroMasters program is a faster path to a master’s degree from MIT and other universities, and is recognized by employers for providing deep learning in specific career fields.</p>
+            <p>Fast-track your master’s degree at MIT and  many other <a href="/pathways-graduate-programs/">pathway schools</a> around the world.</p>
 
           </div>
           <div class="enroll-reason col-md-3">
             <div class="reasons-images-wrap">
-              <img src="{% static 'images/cost.png' %}" alt="">
+              <img src="{% static 'images/dome_icon.webp' %}" alt="">
             </div>
-             <h4>Save Money &amp; Time</h4>
-            <p>A MicroMasters program is an affordable option for professionals who can’t take off time to earn a traditional master’s degree.</p>
+             <h4>Be Part of the MIT Community</h4>
+            <p>Become an affiliate member of the MIT Alumni Association and receive special access to professional journals and publications.</p>
           </div>
           <div class="enroll-reason col-md-3">
             <div class="reasons-images-wrap">
               <img src="{% static 'images/globe-icon.png' %}" alt="">
             </div>
              <h4>Grow Your Network</h4>
-            <p>After you earn your MicroMasters® program credential, you will become an affiliate of the MIT Alumni Association.{% if benefits_url %} <a href="{{ benefits_url }}">Learn More</a>{% endif %}</p>
+            <p>After you earn your MicroMasters® program credential, build connections through a private group of like-minded professionals.</p>
+          </div>
+        </div>
+        <div class="benefits">
+          <a href="{{ benefits_url }}">Learn More About These Benefits</a>
+        </div>
+      </section>
+
+      <section class="b2b">
+        <div class="container">
+          <div class="content-holder">
+            <h3>For Organizations and Academic Institutions</h3>
+            <p>
+              Equip your workforce and organization with new applicable skills through the MITx MicroMasters program!
+             </p> 
+             <p>
+              We work closely with organizations globally that wish to integrate our programs into their own education 
+              and training portfolios. Flexible pricing options available. 
+             </p>
+             <a class="btn btn-primary text-uppercase px-5 py-2" href="/organizations/">Learn More</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="events">
+        <div class="container">
+          <h3>Join Us at Our Free Online Events</h3>
+          <div class="content-holder">
+            <a class="img-link" href="events/"><img src="{% static 'images/events.png' %}" alt="Events"></a>
+            <div class="info">
+              <p>Register for one of our upcoming webinars to learn more about the different MicroMasters programs at MIT. 
+                Our events are hosted by the course teams, including MIT faculty, and they provide a great opportunity 
+                to ask questions about our courses.</p>
+              <a class="btn btn-primary text-uppercase px-5 py-2" href="events/">View Events</a>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="faqs">
+        <div class="faq-holder">
+          <img src="{% static 'images/faq.png' %}" alt="FAQs">
+          <div class="info">
+            <span class="title">frequently asked questions</span>
+            <span class="description">
+              <a href="https://mitx-micromasters.zendesk.com/hc/en-us">Find Answers</a> to Your Questions
+            </span>
           </div>
         </div>
       </section>
@@ -253,7 +248,7 @@
           <p class="quote-author">Rafael Reif, MIT President  </p>
         </div>
         <div class="row quote">
-          <img class="person" src="{% static 'images/sanjay1.png' %}" alt="">
+          <img class="person" src="{% static 'images/sanjay.png' %}" alt="">
           <blockquote class="quote-text">“Inverted admissions has the potential to disrupt traditional modes of access to higher education… We’re democratizing access to a master’s program for learners worldwide.”</blockquote>
           <p class="quote-author">Sanjay Sarma, Vice President of Open Learning, MIT  </p>
         </div>
@@ -262,111 +257,17 @@
     </main>
   </div>
 
+  <script src="{% static 'js/vendor/jquery.fancybox.min.js' %}"></script>
+
   {% if not DO_NOT_TRACK %}
     {% include "adwords.html" %}
   {% endif %}
   {% include "footer.html" %}
 
-  <div class="modal fade modal-fade-in-scale-up" id="modal-about"
-       aria-hidden="true" aria-labelledby="modal-about"
-       role="dialog" tabindex="-1">
-    <div class="modal-dialog modal-center">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">×</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <h2>MicroMasters is a new credential</h2>
-          <p>
-          MIT has created a new credential for online learners: the “MicroMasters,” which will be granted by MITx (MIT’s online learning initiative) to students who do exceptionally well in a given set of graduate-level online courses, and in subsequent exam(s).
-          </p>
-          <h3>Join the MITx MicroMasters community</h3>
-          <p>
-          MicroMasters isn't just about courseware. Part of the the MIT experience is interacting with other exceptional students like yourself. Fill out your profile and build professional relationships with like-minded learners.
-          </p>
-          <h3>MicroMasters courses are delivered through edX.org</h3>
-          <p>
-          Use your edX.org account to enroll in a MicroMasters program and share your grades and progress with MIT. When you complete all the requirements and earn a MicroMasters credential, you can use it to apply for a master’s degree at MIT.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-
 <div id="signup-dialog">
   <!-- signup dialog React component injected here -->
 </div>
 
-<!-- Modal subscribe alerts -->
-<div id="subscribeAlert" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <h6 class="modal-title text-center">Get notified when new programs are announced</h6>
-      </div>
-      <div class="modal-body">
-        <div class="container">
-            <form class="form-horizontal subscription-form mailchimp">
-                <!-- SUBSCRIPTION SUCCESSFUL OR ERROR MESSAGES -->
-                <h4 class="subscription-result success"></h4>
-                <h4 class="subscription-result error"></h4>
-
-                <div class="form-group col-sm-12">
-                  <input type="text" class="form-control flat-field" id="inputname" name="FNAME" placeholder="Name" />
-                </div>
-                <div class="form-group col-sm-12">
-                  <input type="email" class="form-control flat-field" id="inputEmail3" placeholder="Email">
-                </div>
-                <fieldset class="form-group col-sm-12">
-                  <div class="radio">
-                    <label><input type="radio" name="MMERGE2" value="I am an interested learner" id="learner">
-                        I am an interested learner
-                    </label>
-                  </div>
-                  <div class="radio">
-                    <label><input type="radio" name="MMERGE2" value="I represent an interested corporation" id="corporation">
-                        I represent an interested corporation
-                    </label>
-                  </div>
-                  <div class="radio">
-                    <label>
-                        <input type="radio" name="MMERGE2" value="I represent an interested university or educational institution" id="university">
-                        I represent an interested university or educational institution
-                    </label>
-                  </div>
-                  <div class="radio">
-                    <label>
-                        <input type="radio" name="MMERGE2" value="Other" id="other">
-                        Other
-                    </label>
-                  </div>
-                </fieldset>
-                <div class="form-group" id="mce-MMERGE4">
-                    <div class="col-sm-12">
-                        <textarea id="textarea-comments"  class="form-control flat-field" name="MMERGE4" placeholder="Comments"></textarea>
-                    </div>
-                </div>
-                <div class="form-group col-sm-8" id="mce-MMERGE3">
-                  <input type="text" id="input-institution-name" class="form-control flat-field" name="MMERGE3"  placeholder="Institution name">
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-offset-5 col-sm-12 text-left">
-                       <button type="button" data-dismiss="modal" class="mm-button mailchimp-btn">CANCEL</button>
-                       <button type="submit" class="mm-button main-action mailchimp-btn">SUBMIT</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
 {% load render_bundle %}
 {% render_bundle "public" %}
 </div>

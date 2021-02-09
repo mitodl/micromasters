@@ -1,6 +1,6 @@
 {% load static %}
 .banner-wrapper {
-  background-image: url({% static "images/lp_hero.jpg" %});
+  background-image: url({% static "images/homepage.png" %});
 }
 .navbar .navbar-header .brand-logo {
   background-image: url({% static "images/mit_logo.svg" %});
@@ -23,4 +23,8 @@
 
 .certificate .certificate-body.verified {
   background-image: url({% static "images/mm_watermark2.png" %});
+}
+
+.b2b {
+  background-image: url({% static "images/b2b_section.png" %});
 }
