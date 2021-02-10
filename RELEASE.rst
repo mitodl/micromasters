@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.184.1
+---------------
+
+- Bump cryptography from 3.2 to 3.3.2
+
 Version 0.184.0 (Released February 10, 2021)
 ---------------
 
