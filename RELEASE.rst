@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.184.0
+Version 0.184.0 (Released February 10, 2021)
 ---------------
 
 - fix the build (#4775)
