@@ -5,7 +5,7 @@
 {% load wagtailuserbar %}
 
 {% block extrahead %}
-<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600;" />
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600;&display=swap" />
 {% endblock %}
 
 {% block title %}{% trans "MITx MicroMasters" %}{% endblock %}
@@ -89,7 +89,7 @@
   <div id="send-dialog"></div>
   </main>
 {% load render_bundle %}
-{% render_bundle "public" %}
+{% render_bundle "public" "defer" %}
 </div>
 
 {% include "footer.html" %}

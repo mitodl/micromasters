@@ -181,19 +181,21 @@
   <!-- signup dialog React component injected here -->
 </div>
 {% load render_bundle %}
-{% render_bundle "public" %}
+{% render_bundle "public" "defer" %}
 <script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
 <script type="text/javascript">
-  let iframes = document.querySelectorAll(".rich-text>div>iframe");
-  iframes.forEach(function(frame) {
-    frame.style.position = "absolute";
-    frame.style.top = 0;
-    frame.style.left = 0;
-    frame.style.width = "100%";
-    frame.style.height = "100%";
-    frame.parentElement.style.position = "relative";
-    frame.parentElement.style['padding-bottom'] = "56.25%";
-    frame.parentElement.style.height = 0;
+  document.addEventListener("DOMContentLoaded", function() {
+    let iframes = document.querySelectorAll(".rich-text>div>iframe");
+    iframes.forEach(function(frame) {
+      frame.style.position = "absolute";
+      frame.style.top = 0;
+      frame.style.left = 0;
+      frame.style.width = "100%";
+      frame.style.height = "100%";
+      frame.parentElement.style.position = "relative";
+      frame.parentElement.style['padding-bottom'] = "56.25%";
+      frame.parentElement.style.height = 0;
+    });
   });
 </script>
 {% endblock %}

@@ -44,7 +44,7 @@
 {% block extrahead %}
   {{ block.super }}
   {# This is included separately because FancyBox isn't used anywhere else so putting into the styles bundle isn't optimal. #}
-  <link rel="stylesheet" type="text/css" href="{% static 'css/vendor/jquery.fancybox.min.css'%}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/vendor/jquery.fancybox.min.css'%}"  media="none" onload="if(media!='all')media='all'">
 {% endblock %}
 
 {% block content %}
@@ -76,7 +76,7 @@
           <h1>
             MITx MicroMasters Programs: Master Your Future
           </h1>
-          <a id="actionButton" class="btn btn-primary text-uppercase px-5 py-2 action-button" data-fancybox href="https://www.youtube.com/embed/7lVvOSJpFGY?autoplay=true">Watch Now</a>
+          <a id="actionButton" class="btn btn-primary text-uppercase px-5 py-2 action-button" data-fancybox href="https://www.youtube.com/embed/7lVvOSJpFGY?autoplay=true" rel="noopener noreferrer">Watch Now</a>
           <p class="video-container"></p>
         </div>
       </div>
@@ -235,7 +235,7 @@
           <div class="info">
             <span class="title">frequently asked questions</span>
             <span class="description">
-              <a href="https://mitx-micromasters.zendesk.com/hc/en-us">Find Answers</a> to Your Questions
+              <a target="_blank" href="https://mitx-micromasters.zendesk.com/hc/en-us" rel="noopener noreferrer">Find Answers</a> to Your Questions
             </span>
           </div>
         </div>
@@ -257,7 +257,7 @@
     </main>
   </div>
 
-  <script src="{% static 'js/vendor/jquery.fancybox.min.js' %}"></script>
+  <script defer src="{% static 'js/vendor/jquery.fancybox.min.js' %}"></script>
 
   {% if not DO_NOT_TRACK %}
     {% include "adwords.html" %}
@@ -269,11 +269,11 @@
 </div>
 
 {% load render_bundle %}
-{% render_bundle "public" %}
+{% render_bundle "public" "defer" %}
 </div>
 {% endblock %}
 
-$(document).ready(function($) {
+document.addEventListener("DOMContentLoaded", function() {
   $(".action-button").fancybox({
     caption: function() {
       return $(this)

@@ -51,13 +51,15 @@
       </div>
       {% if '/organizations/' in request.path %}
         <div class="mdl-cell mdl-cell--4-col sticky-top">
-          <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/shell.js"></script>
+          <script defer charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/shell.js"></script>
           <script>
-            hbspt.forms.create({
-              portalId: "{{ hubspot_portal_id | safe }}",
-              formId: "{{ hubspot_ogranizations_form_guid | safe }}"
+            document.addEventListener("DOMContentLoaded", function() {
+              hbspt.forms.create({
+                portalId: "{{ hubspot_portal_id | safe }}",
+                formId: "{{ hubspot_ogranizations_form_guid | safe }}"
+              });
             });
-          </script>
+        </script>
         </div>
       {% endif %}
     </div>
@@ -72,6 +74,6 @@
   <!-- signup dialog React component injected here -->
 </div>
 {% load render_bundle %}
-{% render_bundle "public" %}
+{% render_bundle "public" "defer" %}
 <script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
 {% endblock %}
