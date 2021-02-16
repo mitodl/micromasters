@@ -126,13 +126,6 @@ ReactDOM.render(
 /* =================================
 ===  MAILCHIMP                 ====
 =================================== */
-$(".mailchimp").ajaxChimp({
-  callback: mailchimpCallback,
-  //Replace this with your own mailchimp post URL. Don't remove the "". Just paste the url inside "".
-  url:
-    "//facebook.us6.list-manage.com/subscribe/post?u=ad81d725159c1f322a0c54837&amp;id=008aee5e78"
-})
-
 function mailchimpCallback(resp) {
   if (resp.result === "success") {
     $(".subscription-result.success")
@@ -146,32 +139,41 @@ function mailchimpCallback(resp) {
   }
 }
 
-$("#mce-MMERGE4").hide()
-$("#mce-MMERGE3").hide()
+document.addEventListener("DOMContentLoaded", function() {
+  $(".mailchimp").ajaxChimp({
+    callback: mailchimpCallback,
+    //Replace this with your own mailchimp post URL. Don't remove the "". Just paste the url inside "".
+    url:
+      "//facebook.us6.list-manage.com/subscribe/post?u=ad81d725159c1f322a0c54837&amp;id=008aee5e78"
+  })
 
-$("input[name=MMERGE2]").click(function() {
-  if ($("#university").prop("checked")) {
-    $("#mce-MMERGE3").show()
-    $("#mce-MMERGE4").hide()
-  }
-  if ($("#corporation").prop("checked")) {
-    $("#mce-MMERGE3").show()
-    $("#mce-MMERGE4").hide()
-  }
-  if ($("#learner").prop("checked")) {
-    $("#mce-MMERGE3").hide()
-    $("#mce-MMERGE4").hide()
-  }
-  if ($("#other").prop("checked")) {
-    $("#mce-MMERGE3").hide()
-    $("#mce-MMERGE4").show()
-  }
+  $("#mce-MMERGE4").hide()
+  $("#mce-MMERGE3").hide()
+
+  $("input[name=MMERGE2]").click(function() {
+    if ($("#university").prop("checked")) {
+      $("#mce-MMERGE3").show()
+      $("#mce-MMERGE4").hide()
+    }
+    if ($("#corporation").prop("checked")) {
+      $("#mce-MMERGE3").show()
+      $("#mce-MMERGE4").hide()
+    }
+    if ($("#learner").prop("checked")) {
+      $("#mce-MMERGE3").hide()
+      $("#mce-MMERGE4").hide()
+    }
+    if ($("#other").prop("checked")) {
+      $("#mce-MMERGE3").hide()
+      $("#mce-MMERGE4").show()
+    }
+  })
 })
 
 /**
  * Set social media sharing links
  */
-jQuery(document).ready(function($) {
+document.addEventListener("DOMContentLoaded", function() {
   const description =
     "MicroMasters is a " +
     "new digital credential for online learners. The MicroMasters " +
@@ -199,7 +201,7 @@ jQuery(document).ready(function($) {
 /**
  * FAQs accordion on the program page
  */
-$(document).ready(function($) {
+document.addEventListener("DOMContentLoaded", function() {
   $(".accordion")
     .find(".accordion-toggle")
     .click(function() {

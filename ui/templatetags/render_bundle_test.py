@@ -51,8 +51,8 @@ class TestRenderBundle(TestCase):
         bundle_name = 'bundle_name'
         with patch('ui.templatetags.render_bundle.get_loader', return_value=loader) as get_loader:
             assert render_bundle(context, bundle_name) == (
-                '<script type="text/javascript" src="{base}/{js}" ></script>\n'
-                '<link type="text/css" href="{base}/{css}" rel="stylesheet" />'.format(
+                '<script type="text/javascript" src="{base}/{js}"  ></script>\n'
+                '<link type="text/css" href="{base}/{css}" rel="stylesheet"  />'.format(
                     base=webpack_dev_server_url(request),
                     js=FAKE_COMMON_BUNDLE[0]['name'],
                     css=FAKE_COMMON_BUNDLE[1]['name'],
@@ -79,8 +79,8 @@ class TestRenderBundle(TestCase):
         bundle_name = 'bundle_name'
         with patch('ui.templatetags.render_bundle.get_loader', return_value=loader) as get_loader:
             assert render_bundle(context, bundle_name) == (
-                '<script type="text/javascript" src="{base}/{js}" ></script>\n'
-                '<link type="text/css" href="{base}/{css}" rel="stylesheet" />'.format(
+                '<script type="text/javascript" src="{base}/{js}"  ></script>\n'
+                '<link type="text/css" href="{base}/{css}" rel="stylesheet"  />'.format(
                     base="/static/bundles",
                     js=FAKE_COMMON_BUNDLE[0]['name'],
                     css=FAKE_COMMON_BUNDLE[1]['name'],

@@ -55,17 +55,19 @@ window.zEmbed ||
 // This will execute when Zendesk's Javascript is finished executing, and the
 // Web Widget API is available to be used. Zendesk's various iframes may *not*
 // have been inserted into the DOM yet.
-zE(function() {
-  // pre-populate feedback form
-  if (SETTINGS.user) {
-    const user = SETTINGS.user
-    const identity = {}
-    if (user.first_name && user.last_name) {
-      identity.name = `${user.first_name} ${user.last_name}`
+document.addEventListener("DOMContentLoaded", function() {
+  zE(function() {
+    // pre-populate feedback form
+    if (SETTINGS.user) {
+      const user = SETTINGS.user
+      const identity = {}
+      if (user.first_name && user.last_name) {
+        identity.name = `${user.first_name} ${user.last_name}`
+      }
+      if (user.email) {
+        identity.email = user.email
+      }
+      zE.identify(identity)
     }
-    if (user.email) {
-      identity.email = user.email
-    }
-    zE.identify(identity)
-  }
+  })
 })
