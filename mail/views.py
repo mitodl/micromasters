@@ -225,7 +225,7 @@ class FinancialAidMailView(GenericAPIView):
     lookup_url_kwarg = "financial_aid_id"
     queryset = FinancialAid.objects.all()
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         """
         Post request to send emails to an individual learner
         """

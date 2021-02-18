@@ -1,4 +1,4 @@
-astroid==2.0.4
+astroid==2.4.2
 bpython
 codecov
 ddt
@@ -7,8 +7,8 @@ ipdb
 nplusone>=0.8.1
 pdbpp
 pip-tools
-pylint==2.1.0
-pylint-django==2.0.2
+pylint==2.6.0
+pylint-django==2.1.0
 pylint-plugin-utils==0.6
 pytest==5.3.5
 pytest-cov

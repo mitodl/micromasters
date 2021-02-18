@@ -10,4 +10,4 @@ class DiscussionsConfig(AppConfig):
         """
         Ready handler. Import signals.
         """
-        import discussions.signals  # pylint: disable=unused-variable
+        import discussions.signals  # pylint: disable=unused-import

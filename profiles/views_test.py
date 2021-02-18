@@ -5,7 +5,7 @@ import json
 import itertools
 from unittest.mock import patch
 
-from dateutil.parser import parse
+import datetime
 import ddt
 from django.urls import resolve, reverse
 from django.db.models.signals import post_save
@@ -334,8 +334,8 @@ class ProfilePATCHTests(ProfileBaseTests):
             if isinstance(field, (ListSerializer, SerializerMethodField, ReadOnlyField)) or field.read_only is True:
                 # these fields are readonly
                 continue
-            elif isinstance(field, DateField):
-                assert getattr(old_profile, key) == parse(value).date()
+            if isinstance(field, DateField):
+                assert getattr(old_profile, key) == datetime.datetime.strptime(value, "%Y-%m-%d").date()
             else:
                 assert getattr(old_profile, key) == value
 

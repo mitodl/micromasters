@@ -73,7 +73,7 @@ class CanSeeIfNotPrivateTests(MockedESTestCase):
     """
 
     def setUp(self):
-        super(CanSeeIfNotPrivateTests, self).setUp()
+        super().setUp()
         self.user = SocialProfileFactory.create(verified_micromaster_user=False).user
         self.perm = CanSeeIfNotPrivate()
 

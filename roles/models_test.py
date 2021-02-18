@@ -23,7 +23,7 @@ class MicroMastersRoleTest(MockedESTestCase):
         cls.program2 = ProgramFactory.create()
 
     def tearDown(self):
-        super(MicroMastersRoleTest, self).tearDown()
+        super().tearDown()
         Role.objects.all().delete()
 
     def test_role_available(self):

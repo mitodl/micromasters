@@ -55,7 +55,7 @@ class ProgramLearnersView(APIView):
     )
     serializer_class = ProfileImageSerializer
 
-    def get(self, request, *args, **kargs):
+    def get(self, request, *args, **kargs):  # pylint: disable=unused-argument
         """
         Get eight random learners with images and
         the total count of visible learners in the program

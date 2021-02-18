@@ -121,7 +121,7 @@ class FinalGrade(TimestampedModel, AuditableModel):
             course_id=self.course_run.edx_course_key
         )
 
-    def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
+    def save(self, *args, **kwargs):  # pylint: disable=signature-differs
         """Overridden method to run validation"""
         self.full_clean()
         return super().save(*args, **kwargs)
@@ -152,7 +152,7 @@ class MicromastersCourseCertificate(TimestampedModel):
     course = models.ForeignKey(Course, models.SET_NULL, null=True)
     hash = models.CharField(max_length=32, null=False, unique=True)
 
-    def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
+    def save(self, *args, **kwargs):  # pylint: disable=signature-differs
         """Overridden save method"""
         if not self.hash:
             self.hash = generate_md5(
@@ -179,7 +179,7 @@ class MicromastersProgramCertificate(TimestampedModel):
     class Meta:
         unique_together = ('user', 'program')
 
-    def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
+    def save(self, *args, **kwargs):  # pylint: disable=signature-differs
         """Overridden save method"""
         if not self.hash:
             self.hash = generate_md5(

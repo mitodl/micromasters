@@ -139,7 +139,7 @@ class CourseTests(MockedESTestCase):
         cls.user = UserFactory.create()
 
     def setUp(self):
-        super(CourseTests, self).setUp()
+        super().setUp()
         self.now = now_in_utc()
         self.mmtrack = MagicMock(wraps=MMTrack)
 

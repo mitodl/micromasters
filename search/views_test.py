@@ -64,7 +64,7 @@ class SearchTests(ESTestCase, APITestCase):
         cls.search_url = reverse('search_api', kwargs={'elastic_url': ''})
 
     def setUp(self):
-        super(SearchTests, self).setUp()
+        super().setUp()
         self.client.force_login(self.staff)
 
     @override_settings(ELASTICSEARCH_DEFAULT_PAGE_SIZE=1000)

@@ -378,7 +378,7 @@ class Coupon(TimestampedModel, AuditableModel):
         """
         return serialize_model_object(self)
 
-    def save(self, *args, **kwargs):  # pylint: disable=arguments-differ
+    def save(self, *args, **kwargs):  # pylint: disable=signature-differs
         """Override save to do certain validations"""
         self.full_clean()
         super().save(*args, **kwargs)

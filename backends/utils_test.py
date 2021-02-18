@@ -39,7 +39,7 @@ class RefreshTest(MockedESTestCase):
         )
 
     def setUp(self):
-        super(RefreshTest, self).setUp()
+        super().setUp()
         self.now = now_in_utc()
 
     def update_social_extra_data(self, data):

@@ -14,4 +14,4 @@ class ExamsConfig(AppConfig):
         """
         Ready handler. Import signals.
         """
-        import exams.signals  # pylint: disable=unused-variable
+        import exams.signals  # pylint: disable=unused-import

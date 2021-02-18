@@ -29,7 +29,7 @@ class ReactView(View):  # pylint: disable=unused-argument
     """
     Abstract view for templates using React
     """
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         """
         Handle GET requests to templates using React
         """
@@ -81,7 +81,7 @@ class ReactView(View):  # pylint: disable=unused-argument
             }
         )
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         """Redirect to GET. This assumes there's never any good reason to POST to these views."""
         return redirect(request.build_absolute_uri())
 
@@ -112,7 +112,7 @@ class UsersView(ReactView):
             # /learner/ redirects to logged in user's page, but user is not logged in here
             raise Http404
 
-        return super(UsersView, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
 
 def standard_error_page(request, status_code, template_filename):
