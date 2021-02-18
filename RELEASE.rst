@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.185.0
+Version 0.185.0 (Released February 18, 2021)
 ---------------
 
 - Defer JS to enhance performance (#4783)
