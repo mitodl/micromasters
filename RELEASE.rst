@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.185.1
+Version 0.185.1 (Released February 22, 2021)
 ---------------
 
 - Upgrade Python to 3.9 (#4769)
