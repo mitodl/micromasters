@@ -4,6 +4,7 @@ Models for exams
 from django.contrib.auth.models import User
 from django.db import models
 
+from courses.models import Course
 from micromasters.models import TimestampedModel
 from micromasters.utils import now_in_utc
 
@@ -231,3 +232,23 @@ class ExamAuthorization(TimestampedModel):
             self.status,
             self.user_id
         )
+
+
+class ExamRunCoupon(TimestampedModel):
+    """Represents a coupon code url for an edx proctored exam"""
+    course = models.ForeignKey(Course, related_name='course_exam_coupons', on_delete=models.CASCADE)
+    edx_exam_course_key = models.CharField(max_length=30, null=False)
+    coupon_url = models.URLField(null=False)
+    coupon_code = models.CharField(max_length=30, null=False)
+    expiration_date = models.DateTimeField()
+    is_taken = models.BooleanField(default=False)
+
+    @classmethod
+    def get_unused_coupon(cls, course_id):
+        """Returns unused coupon url for edx proctored exam"""
+        coupon = cls.objects.filter(course_id=course_id, is_taken=False).first()
+        if coupon is None:
+            return ""
+        coupon.is_taken = True
+        coupon.save()
+        return coupon.coupon_url

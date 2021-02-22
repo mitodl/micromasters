@@ -8,23 +8,22 @@ from django.core.management import BaseCommand, CommandError
 from django.core.validators import URLValidator
 
 from courses.models import Course
-from exams.models import ExamAuthorization, ExamRun
+from exams.models import ExamRunCoupon
 
 
 def validate_urls(reader):
     """Goes through all rows of coupons info and makes sure it is valid"""
-
     validator = URLValidator()
     parsed_rows = []
     for row in reader:
         validator(row['URL'])
-        parsed_rows.append(row['URL'])
+        parsed_rows.append((row['Code'], row['URL']))
     return parsed_rows
 
 
 class Command(BaseCommand):
-    """Parses a csv with exam coupon url information and saves the url in ExamAuthorization"""
-    help = "Parses a csv with exam coupon url information and saves the url in ExamAuthorization"
+    """Parses a csv with exam coupon url information and saves the url in ExamRunCoupon"""
+    help = "Parses a csv with exam coupon url information and saves the url in ExamRunCoupon"
 
     def add_arguments(self, parser):
         parser.add_argument('csvfile', type=argparse.FileType('r'), help='')
@@ -35,6 +34,7 @@ class Command(BaseCommand):
         reader = csv.DictReader(csvfile.read().splitlines())
         catalog_query = next(reader)['Catalog Query']
         course_number = re.search(r"\+([A-Za-z0-9.]+)PEx", catalog_query).group(1)
+        edx_exam_course_key = re.search(r"key:\(([A-Za-z0-9+.]+)", catalog_query).group(1)
 
         validated_urls = validate_urls(reader)
 
@@ -49,29 +49,20 @@ class Command(BaseCommand):
                 'There are multiple courses with given number "{}"'.format(course_number)
             )
 
-        exam_runs = ExamRun.get_currently_schedulable(course)
-
-        if not exam_runs.exists():
-            raise CommandError(
-                'There are no eligible exam runs for course "{}"'.format(course.title)
+        coupons_created = 0
+        for code, url in validated_urls:
+            _, created = ExamRunCoupon.objects.get_or_create(
+                edx_exam_course_key=edx_exam_course_key,
+                course=course,
+                coupon_code=code,
+                coupon_url=url
             )
-
-        exam_auths = ExamAuthorization.objects.filter(
-            exam_run__in=exam_runs,
-            status=ExamAuthorization.STATUS_SUCCESS,
-            exam_coupon_url__isnull=True
-        )
-
-        auths_changed = 0
-        for exam_auth, url in zip(exam_auths, validated_urls):
-            exam_auth.exam_coupon_url = url
-            exam_auth.save()
-            auths_changed += 1
+            if created:
+                coupons_created += 1
 
         result_messages = [
-            'Total coupons: {}'.format(len(validated_urls)),
-            'Total exam authorizations that need coupon: {}'.format(exam_auths.count()),
-            'Authorizations changed: {}'.format(auths_changed)
+            'Total coupons in the file: {}'.format(len(validated_urls)),
+            'ExamRunCoupons created: {}'.format(coupons_created),
         ]
 
         self.stdout.write(self.style.SUCCESS('\n'.join(result_messages)))
