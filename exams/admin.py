@@ -81,5 +81,26 @@ class ExamAuthorizationAdmin(admin.ModelAdmin):
         return obj.exam_run.id
 
 
+class ExamRunCouponAdmin(admin.ModelAdmin):
+    """Admin for ExamRunCoupon"""
+    model = models.ExamRunCoupon
+    list_display = (
+        'id',
+        'is_taken',
+        'course_title',
+        'coupon_url',
+        'expiration_date',
+    )
+    list_filter = (
+        'is_taken',
+        'course__title',
+    )
+
+    def course_title(self, obj):
+        """Getter for the Course foreign-key element course_number"""
+        return obj.course.title
+
+
 admin.site.register(models.ExamRun, ExamRunAdmin)
 admin.site.register(models.ExamAuthorization, ExamAuthorizationAdmin)
+admin.site.register(models.ExamRunCoupon, ExamRunCouponAdmin)

@@ -32,7 +32,8 @@ class Command(BaseCommand):
 
         csvfile = kwargs.get('csvfile')
         reader = csv.DictReader(csvfile.read().splitlines())
-        catalog_query = next(reader)['Catalog Query']
+        first_row = next(reader)
+        catalog_query = first_row['Catalog Query']
         course_number = re.search(r"\+([A-Za-z0-9.]+)PEx", catalog_query).group(1)
         edx_exam_course_key = re.search(r"key:\(([A-Za-z0-9+.]+)", catalog_query).group(1)
 
@@ -48,12 +49,14 @@ class Command(BaseCommand):
             raise CommandError(
                 'There are multiple courses with given number "{}"'.format(course_number)
             )
-
+        from datetime import datetime
+        datetime_object = datetime.strptime(first_row['Coupon Expiry Date'], '%b %d, %y')
         coupons_created = 0
         for code, url in validated_urls:
             _, created = ExamRunCoupon.objects.get_or_create(
                 edx_exam_course_key=edx_exam_course_key,
                 course=course,
+                expiration_date=datetime_object,
                 coupon_code=code,
                 coupon_url=url
             )
