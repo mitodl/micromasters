@@ -20,21 +20,19 @@
 .sk-search-box form .sk-search-box__icon:before {
   background-image: url({% static "images/search-icon.svg" %});
 }
-
-.certificate .certificate-body.verified {
-  background-image: url({% static "images/mm_watermark2.png" %});
-
-}
-
-@media print {
-  .certificate .certificate-body.verified {
-    -webkit-print-color-adjust: exact !important;   /* Chrome, Safari */
-    color-adjust: exact !important;  /* Firefox */
-    background-image: url({% static "images/mm_watermark2.png" %}) !important;
-    background-size: cover !important;
-  }
-}
-
 .b2b {
   background-image: url({% static "images/b2b_section.png" %});
+}
+@media (min-width: 1200px) {
+  .certificate .accomplishment-rendering {
+    background-image: url({% static "images/certificates/micromasters_certificate_watermark.svg" %}) !important;
+  }
+}
+@media print {
+  @page {
+    size: landscape;
+  }
+  .certificate .accomplishment-rendering {
+    background-image: url({% static "images/certificates/micromasters_certificate_watermark.svg" %}) !important;
+  }
 }
