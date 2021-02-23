@@ -450,7 +450,7 @@ if (
         'AWS_STORAGE_BUCKET_NAME'
     )
 if MICROMASTERS_USE_S3:
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 else:
     # by default use django.core.files.storage.FileSystemStorage with
     # overwrite feature
