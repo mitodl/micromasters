@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.186.0
+---------------
+
+- Upgrading boto to boto3 (#4772)
+
 Version 0.185.1 (Released February 22, 2021)
 ---------------
 
