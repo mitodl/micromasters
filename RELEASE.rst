@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.185.2
+Version 0.185.2 (Released February 23, 2021)
 ---------------
 
 - Upgrade ipython (#4793)
