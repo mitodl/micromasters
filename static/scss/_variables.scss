@@ -1,11 +1,11 @@
 // colors
 
 //font colors
-$font-black: rgba(0,0,0,.87);
+$font-black: rgba(0, 0, 0, 0.87);
 $font-gray: #6f6f6f;
 $font-gray-light: #a0a0a0;
 $font-gray-dark: #444;
-$font-gray-disabled: rgba(0,0,0,.2);
+$font-gray-disabled: rgba(0, 0, 0, 0.2);
 $font-gray-form: rgba(0, 0, 0, 0.6);
 $link-text: #0070da;
 $link-hover: #0070da;
@@ -33,10 +33,10 @@ $button-color-hover: #008acb;
 $gray-button-color: #dadada;
 $gray-button-hover: #ccc;
 $sidenav-bg: #1e1e1e;
-$sidenav-separator: rgba(255,255,255,.2);
-$sidenav-icon-color: rgba(255,255,255,.4);
-$select-menu-outer-bg: rgba(0,0,0,.8);
-$select-menu-bg: rgba(0,0,0,.1);
+$sidenav-separator: rgba(255, 255, 255, 0.2);
+$sidenav-icon-color: rgba(255, 255, 255, 0.4);
+$select-menu-outer-bg: rgba(0, 0, 0, 0.8);
+$select-menu-bg: rgba(0, 0, 0, 0.1);
 
 // general colors
 $darkergray: #3d3f41;
@@ -58,20 +58,20 @@ $border-color: #e4e4e4;
 $search-filter: #d2e4f9;
 $dashboard-button-green: $mm-brand-bg;
 $validation-red: #f44336;
-$program_selector_border: rgba(255,255,255,.2);
+$program_selector_border: rgba(255, 255, 255, 0.2);
 $header_font_color: white;
 $text-highlight: #fbf9db;
 $email-composition-type: #e3eef8;
 $lightest-blue: #e9f2f9;
 $elective-bg-color: #386082;
+$navy-blue: #355b6b;
 
 // other
 $block-padding: 20px;
 $page-padding: 40px;
-$progress-widget-bg-stroke: rgba(0,0,0,0.06);
+$progress-widget-bg-stroke: rgba(0, 0, 0, 0.06);
 $progress-button-background: #000000;
 $recipient_bg: #f5f5f5;
-
 @font-face {
-  font-family: 'Roboto';
+  font-family: "Roboto";
 }

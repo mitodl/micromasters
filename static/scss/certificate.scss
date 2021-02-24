@@ -16,7 +16,7 @@
   padding: 20px 0;
   color: #4d4b4b;
   font-size: 1rem;
-  font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 300;
   -webkit-font-smoothing: antialiased; // sass-lint:disable-line no-vendor-prefixes
 
@@ -28,7 +28,7 @@
   .certificate-body {
     border: 1px solid #cdd7db;
     background: #fcfcfc;
-    box-shadow: 0 1px 2px 1px rgba(167,164,164,.25);
+    box-shadow: 0 1px 2px 1px rgba(167, 164, 164, 0.25);
     padding: 35px 50px;
     position: relative;
 
@@ -46,7 +46,7 @@
       .col-md-8 {
         width: 50%;
         float: left;
-      };
+      }
 
       .col-md-4 {
         width: 45%;
@@ -79,7 +79,6 @@
       @media print {
         width: 100px;
       }
-
     }
 
     .certificate-text {
@@ -128,7 +127,8 @@
           float: left;
         }
 
-        .col-md-4, .col-md-5 {
+        .col-md-4,
+        .col-md-5 {
           width: 33%;
           float: left;
         }
@@ -222,9 +222,77 @@
   }
 }
 
+.cer-user-info {
+  border: 1px solid #979797;
+  background-color: $navy-blue;
+  padding: 20px 0;
+  font: 14px/17px Helvetica;
+  color: white;
+
+  h2 {
+    margin: 0 0 10px;
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: bold;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  .user-info-holder {
+    margin: 0 auto;
+    max-width: 1000px;
+    padding: 0 15px;
+  }
+}
+
+.social-links {
+  margin: 10px 0 20px 30px;
+  list-style: none;
+  padding: 0;
+  float: right;
+
+  // @include media-breakpoint-down(xs) {
+  //   float: none;
+  //   margin: 0;
+  //   text-align: center;
+  // }
+
+  li {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 0 0 15px;
+
+    // @include media-breakpoint-down(xs) {
+    //   margin: 0 10px 15px;
+    // }
+  }
+
+  img {
+    width: 25px;
+  }
+}
+
 @media print {
+  @page {
+    size: auto;
+  }
+
+  .no-print {
+    display: none;
+  }
+
   #footer {
     display: none;
+  }
+}
+
+@media print and (orientation: landscape) {
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 

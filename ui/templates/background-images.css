@@ -23,6 +23,16 @@
 
 .certificate .certificate-body.verified {
   background-image: url({% static "images/mm_watermark2.png" %});
+
+}
+
+@media print {
+  .certificate .certificate-body.verified {
+    -webkit-print-color-adjust: exact !important;   /* Chrome, Safari */
+    color-adjust: exact !important;  /* Firefox */
+    background-image: url({% static "images/mm_watermark2.png" %}) !important;
+    background-size: cover !important;
+  }
 }
 
 .b2b {
