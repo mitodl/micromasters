@@ -18,8 +18,7 @@ import ReactTestUtils from "react-dom/test-utils"
 import * as api from "../lib/api"
 
 describe("SendGradesDialog", () => {
-  let sandbox, store
-  let sendGradesRecordMailStub
+  let sandbox, store, sendGradesRecordMailStub
 
   beforeEach(() => {
     SETTINGS.partner_schools = [[1, "345"]]

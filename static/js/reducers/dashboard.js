@@ -21,7 +21,7 @@ export const INITIAL_DASHBOARD_STATE: DashboardState = {
 }
 
 const INITIAL_DASHBOARDS_STATE: DashboardsState = {}
-
+/* eslint-disable no-unused-vars */
 export const dashboard = (
   state: DashboardsState = INITIAL_DASHBOARDS_STATE,
   action: Action<any, string>

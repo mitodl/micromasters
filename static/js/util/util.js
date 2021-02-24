@@ -1,5 +1,6 @@
 // @flow
 /* global SETTINGS:false */
+/* eslint-disable no-unused-vars */
 import React from "react"
 import ReactDOM from "react-dom"
 import striptags from "striptags"
@@ -43,11 +44,11 @@ export function userPrivilegeCheck(
 }
 
 export function makeProfileProgressDisplay(active: ?string) {
-  const width = 750,
-    height = 100,
-    radius = 20,
-    paddingX = 40,
-    paddingY = 5
+  const width = 750
+  const height = 100
+  const radius = 20
+  const paddingX = 40
+  const paddingY = 5
   const numCircles = PROFILE_STEP_LABELS.size
 
   // width from first circle edge left to the last circle edge right
@@ -340,7 +341,7 @@ export function calculateDegreeInclusions(profile: Profile) {
   for (const { value } of EDUCATION_LEVELS) {
     if (
       profile.education.filter(education => education.degree_name === value)
-      .length > 0
+        .length > 0
     ) {
       inclusions[value] = true
     }
@@ -351,7 +352,7 @@ export function calculateDegreeInclusions(profile: Profile) {
 /**
  * Calls an array of functions in series with a given argument and returns an array of the results
  */
-export function callFunctionArray<R: any, F: (a: any) => R>(
+export function callFunctionArray<R: any, F:(a: any) => R>(
   functionArray: Array<F>,
   arg: any
 ): R[] {
@@ -500,8 +501,8 @@ export function highlight(text: string, highlightPhrase: ?string) {
   const filteredPhrase = removeDiacritics(highlightPhrase.toLowerCase())
   const filteredText = removeDiacritics(text.toLowerCase())
 
-  let startPosition = 0,
-    endPosition
+  let startPosition = 0
+  let endPosition
   const pieces = []
   while (
     (endPosition = filteredText.indexOf(filteredPhrase, startPosition)) !== -1

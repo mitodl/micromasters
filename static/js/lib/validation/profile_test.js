@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { assert } from "chai"
 import _ from "lodash"
 import sinon from "sinon"

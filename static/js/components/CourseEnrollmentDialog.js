@@ -20,6 +20,7 @@ const dialogTitle = (course, setDialogVisibility) => (
   </div>
 )
 
+// eslint-disable-next-line require-jsdoc
 export default class CourseEnrollmentDialog extends React.Component {
   static contextTypes = {
     router: PropTypes.object.isRequired
@@ -44,12 +45,14 @@ export default class CourseEnrollmentDialog extends React.Component {
       setVisibility,
       checkout,
       financialAidAvailability
+      // eslint-disable-next-line no-invalid-this
     } = this.props
     if (financialAidAvailability) {
       setVisibility(false)
       const url = `/order_summary/?course_key=${encodeURIComponent(
         courseRun.course_id
       )}`
+      // eslint-disable-next-line no-invalid-this
       this.context.router.push(url)
     } else {
       return checkout(courseRun.course_id)
@@ -57,18 +60,21 @@ export default class CourseEnrollmentDialog extends React.Component {
   }
 
   handleAuditClick = () => {
+    // eslint-disable-next-line no-invalid-this
     const { courseRun, addCourseEnrollment, setVisibility } = this.props
     setVisibility(false)
     addCourseEnrollment(courseRun.course_id)
   }
 
   handleCalculatePriceClick = (e: Event) => {
+    // eslint-disable-next-line no-invalid-this
     const { openFinancialAidCalculator, setVisibility } = this.props
     setVisibility(false)
     openFinancialAidCalculator()
     e.preventDefault()
   }
 
+  // eslint-disable-next-line require-jsdoc
   render() {
     const {
       open,

@@ -111,7 +111,7 @@ export default class FinancialAidCard extends React.Component {
         </div>
       )
     default:
-        // should not get here
+      // should not get here
       return null
     }
   }

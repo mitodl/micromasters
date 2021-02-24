@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from "react"
 import _ from "lodash"
 import { mount } from "enzyme"
@@ -246,7 +247,7 @@ describe("EmailCompositionDialog", () => {
       [SEARCH_EMAIL_TYPE, true],
       [AUTOMATIC_EMAIL_ADMIN_TYPE, true]
     ]) {
-      it(`should ${!dialogType[1] ? "display" : "not display"} 
+      it(`should ${!dialogType[1] ? "display" : "not display"}
         recipient variables for ${dialogType[0]}`, () => {
         renderDialog({}, { supportBulkEmails: dialogType[1] })
         assert.equal(

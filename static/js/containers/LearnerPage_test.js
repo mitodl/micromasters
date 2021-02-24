@@ -1,4 +1,5 @@
 /* global SETTINGS: false */
+/* eslint-disable no-unused-vars */
 import ReactTestUtils from "react-dom/test-utils"
 import { assert } from "chai"
 import _ from "lodash"
@@ -1033,6 +1034,7 @@ describe("LearnerPage", function() {
           .returns(Promise.resolve(expectedProfile))
 
         return renderComponent(`/learner/${username}`, userActions).then(
+          // eslint-disable-next-line comma-spacing
           ([,]) => {
             const personalButton = document.querySelector(
               ".edit-personal-info-button"

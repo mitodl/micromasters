@@ -12,8 +12,7 @@ import LearnerPageAboutMeDialog from "./LearnerPageAboutMeDialog"
 import { USER_PROFILE_RESPONSE } from "../test_constants"
 
 describe("LearnerPageAboutMeDialog", () => {
-  let sandbox
-  let setLearnerPageDialogVisibility, clearProfileEdit, saveProfile
+  let sandbox, setLearnerPageDialogVisibility, clearProfileEdit, saveProfile
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()

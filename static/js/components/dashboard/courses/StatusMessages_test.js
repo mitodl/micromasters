@@ -1,5 +1,6 @@
 // @flow
 /* global SETTINGS: false */
+/* eslint-disable no-unused-vars */
 import _ from "lodash"
 import Decimal from "decimal.js-light"
 import React from "react"

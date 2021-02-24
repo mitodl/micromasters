@@ -1,4 +1,5 @@
 /* global SETTINGS: false */
+/* eslint-disable no-unused-vars */
 import { assert } from "chai"
 import sinon from "sinon"
 import Decimal from "decimal.js-light"
@@ -55,8 +56,7 @@ describe("api", function() {
   })
 
   describe("REST functions", () => {
-    let fetchJSONStub
-    let fetchStub
+    let fetchJSONStub, fetchStub
     beforeEach(() => {
       fetchJSONStub = sandbox.stub(fetchFuncs, "fetchJSONWithCSRF")
       fetchStub = sandbox.stub(fetchFuncs, "fetchWithCSRF")
@@ -590,8 +590,8 @@ describe("api", function() {
 
         return attachCoupon("success-coupon").then(resp => {
           assert.equal(apiResponse.message, resp.message)
-          const coupon = resp.coupon,
-            apiCoupon = apiResponse.coupon
+          const coupon = resp.coupon
+          const apiCoupon = apiResponse.coupon
           assert.instanceOf(coupon.amount, Decimal)
           assert.equal(coupon.amount.toString(), apiCoupon.amount)
           // everything else aside from `amount` should be identical

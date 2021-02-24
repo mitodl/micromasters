@@ -1,4 +1,5 @@
 // @flow
+/* eslint-disable no-unused-vars */
 import React from "react"
 import { SearchkitComponent, MenuFilter, FacetAccessor } from "searchkit"
 import R from "ramda"

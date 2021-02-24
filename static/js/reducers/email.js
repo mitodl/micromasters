@@ -64,8 +64,8 @@ export const email = (
   const emailType = getEmailType(action.payload)
 
   switch (action.type) {
-  case START_EMAIL_EDIT: // eslint-disable-line no-case-declarations
-    const newState = { ...state }
+  case START_EMAIL_EDIT:
+    const newState = { ...state } // eslint-disable-line no-case-declarations
     newState[emailType] = {
       ...INITIAL_EMAIL_STATE,
       params:                  action.payload.params || {},

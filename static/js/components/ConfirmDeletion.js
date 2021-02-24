@@ -8,6 +8,7 @@ import DialogActions from "@material-ui/core/DialogActions"
 
 const dialogTitle = (item = "entry") => `Delete this ${item}?`
 
+// eslint-disable-next-line require-jsdoc
 export default class ConfirmDeletion extends React.Component {
   props: {
     close: () => void,
@@ -18,10 +19,12 @@ export default class ConfirmDeletion extends React.Component {
   }
 
   deleteAndClose = (): void => {
+    // eslint-disable-next-line no-invalid-this
     const { close, deleteFunc } = this.props
     deleteFunc().then(close)
   }
 
+  // eslint-disable-next-line require-jsdoc
   render() {
     const { close, open, inFlight, itemText } = this.props
     return (

@@ -1,4 +1,5 @@
 /* global SETTINGS: false */
+/* eslint-disable no-unused-vars */
 import React from "react"
 import ReactTestUtils from "react-dom/test-utils"
 import { mount } from "enzyme"

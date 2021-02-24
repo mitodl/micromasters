@@ -1,4 +1,5 @@
 /* global SETTINGS: false */
+/* eslint-disable no-unused-vars */
 import { assert } from "chai"
 import React from "react"
 import R from "ramda"
@@ -277,9 +278,9 @@ describe("utility functions", () => {
         const desc = svg.props.children[0]
         assert.equal(desc.props.children.join(""), `Profile progress: ${label}`)
 
-        let foundCircle = false,
-          foundCircleText = false,
-          foundText = false
+        let foundCircle = false
+        let foundCircleText = false
+        let foundText = false
         for (const child of svg.props.children[1]) {
           if (child.key === `circle_${i}`) {
             // the green circle should be the currently selected one
@@ -454,9 +455,9 @@ describe("utility functions", () => {
 
   describe("callFunctionArray", () => {
     it("should take an array of functions, call them in series with given args, and return list of results", () => {
-      const testFunctionA = arg => `testFunctionA ${arg}`,
-        testFunctionB = arg => `testFunctionB ${arg}`,
-        arg = "arg"
+      const testFunctionA = arg => `testFunctionA ${arg}`
+      const testFunctionB = arg => `testFunctionB ${arg}`
+      const arg = "arg"
       const testFunctionArray = [testFunctionA, testFunctionA, testFunctionB]
       const results = callFunctionArray(testFunctionArray, arg)
       assert.deepEqual(results, [

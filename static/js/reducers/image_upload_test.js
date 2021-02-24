@@ -23,8 +23,7 @@ import rootReducer from "../reducers"
 import * as api from "../lib/api"
 
 describe("image upload reducer", () => {
-  let sandbox, store, dispatchThen
-  let updateProfileImageStub
+  let sandbox, store, dispatchThen, updateProfileImageStub
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()

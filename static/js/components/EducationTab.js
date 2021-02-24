@@ -10,6 +10,7 @@ import type { UIState } from "../reducers/ui"
 import { setProfileStep } from "../actions/ui"
 import { EDUCATION_STEP } from "../constants"
 
+// eslint-disable-next-line require-jsdoc
 class EducationTab extends React.Component {
   props: {
     profile: Profile,
@@ -20,11 +21,13 @@ class EducationTab extends React.Component {
     dispatch: Function
   }
 
+  // eslint-disable-next-line require-jsdoc
   componentDidMount() {
     const { dispatch } = this.props
     dispatch(setProfileStep(EDUCATION_STEP))
   }
 
+  // eslint-disable-next-line require-jsdoc
   render() {
     return (
       <DocumentTitle title="Education Profile | MITx MicroMasters">

@@ -216,6 +216,7 @@ export function createAssertReducerResultState<State>(
     const getState = () => stateLookup(getReducerState(store.getState()))
 
     assert.deepEqual(defaultValue, getState())
+    // eslint-disable-next-line no-unused-vars
     for (const value of [
       true,
       null,

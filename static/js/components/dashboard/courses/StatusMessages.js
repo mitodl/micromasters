@@ -203,8 +203,8 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
 
   const messages = []
 
-  //If first run is paid but user never enrolled, most likely there was
-  //problem enrolling, and first_unexpired_run is returned, so no need to check for past enrollment
+  // If first run is paid but user never enrolled, most likely there was
+  // problem enrolling, and first_unexpired_run is returned, so no need to check for past enrollment
   if (firstRun.status === STATUS_PAID_BUT_NOT_ENROLLED) {
     const contactHref = `mailto:${SETTINGS.support_email}`
     let date = ""
@@ -345,7 +345,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     return S.Just(messages)
   }
 
-  //Exam messages only
+  // Exam messages only
   if (
     (hasPassedCourseRun(course) || hasCurrentlyEnrolledCourseRun(course)) &&
     exams &&
@@ -396,7 +396,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     }
   }
   // all cases where courseRun is not currently in progress
-  //passed means user also paid
+  // passed means user also paid
   if (hasPassedCourseRun(course)) {
     // this is the expanded message, which we should show if the user
     // has clicked one of the 're-enroll' links
@@ -414,7 +414,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     }
     return S.Just(messages)
   } else if (hasCanUpgradeCourseRun(course)) {
-    //the course finished but can still pay
+    // the course finished but can still pay
     const dueDate = paymentDueDate.isValid()
       ? ` (Payment due on ${paymentDueDate.format(DASHBOARD_FORMAT)})`
       : ""
@@ -431,7 +431,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     }
     return S.Just(messages)
   } else if (hasMissedDeadlineCourseRun(course)) {
-    //the course finished can't pay
+    // the course finished can't pay
     if (exams && course.past_exam_date) {
       const futureExamMessage = R.isEmpty(course.exams_schedulable_in_future)
         ? " There are no future exams scheduled at this time. Please check back later."

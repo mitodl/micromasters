@@ -12,4 +12,4 @@ export type Right<R> = {
   isRight: true,
 };
 
-export type Either<L,R> = Left<L> | Right<R>
+export type Either<L, R> = Left<L> | Right<R>

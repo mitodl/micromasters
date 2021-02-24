@@ -28,8 +28,9 @@ describe("coupon reducers", () => {
   let sandbox,
     store,
     dispatchThen,
-    assertReducerResultState: AssertReducerResultState<CouponsState>
-  let attachCouponStub, getCouponsStub
+    assertReducerResultState: AssertReducerResultState<CouponsState>,
+    attachCouponStub,
+    getCouponsStub
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()

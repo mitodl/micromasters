@@ -1,4 +1,6 @@
+// eslint-disable-next-line no-redeclare
 /* global document: false, window: false, SETTINGS: false */
+/* eslint-disable no-unused-vars */
 import { assert } from "chai"
 import sinon from "sinon"
 import moment from "moment"
@@ -479,8 +481,14 @@ describe("DashboardPage", () => {
     })
 
     describe("course pricing", () => {
-      let dashboard, availablePrograms, coursePrices, programLearners, coupon
-      let run, program: Program, course
+      let dashboard,
+        availablePrograms,
+        coursePrices,
+        programLearners,
+        coupon,
+        run,
+        program: Program,
+        course
 
       beforeEach(() => {
         dashboard = makeDashboard()

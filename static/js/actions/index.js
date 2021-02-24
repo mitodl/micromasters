@@ -19,6 +19,7 @@ export const requestCheckout = (courseId: string) => ({
   payload: { courseId }
 })
 
+// eslint-disable-next-line require-jsdoc
 export function checkout(courseId: string): Dispatcher<?CheckoutResponse> {
   return (dispatch: Dispatch) => {
     dispatch(requestCheckout(courseId))

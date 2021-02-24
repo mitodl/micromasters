@@ -126,6 +126,7 @@ describe("SettingsPage", function() {
       })
     })
 
+    // eslint-disable-next-line no-unused-vars
     for (const activity of [true, false]) {
       it(`has proper button state when when profile patch activity is ${String(
         activity

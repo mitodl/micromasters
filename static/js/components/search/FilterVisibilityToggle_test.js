@@ -1,4 +1,5 @@
 /* global SETTINGS: false */
+/* eslint-disable no-unused-vars */
 import React from "react"
 import { assert } from "chai"
 import { mount } from "enzyme"
@@ -17,8 +18,8 @@ describe("FilterVisibilityToggle", () => {
   const checkFilterVisibility = sinon.stub().returns(true)
   const setFilterVisibility = sinon.stub()
   const filterName = "a filter"
-  let sandbox
-  let props
+  // eslint-disable-next-line one-var
+  let sandbox, props
 
   beforeEach(() => {
     searchKit = new SearchkitManager()

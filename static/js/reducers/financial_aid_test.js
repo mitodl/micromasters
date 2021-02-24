@@ -32,9 +32,13 @@ import * as api from "../lib/api"
 import { actions } from "../lib/redux_rest"
 
 describe("financial aid reducers", () => {
-  let sandbox, store, dispatchThen
-  let addFinancialAidStub, skipFinancialAidStub
-  let fetchDashboardStub, fetchCoursePricesStub
+  let sandbox,
+    store,
+    dispatchThen,
+    addFinancialAidStub,
+    skipFinancialAidStub,
+    fetchDashboardStub,
+    fetchCoursePricesStub
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()
@@ -133,7 +137,7 @@ describe("financial aid reducers", () => {
   })
 
   it("should fail to add a financial aid", () => {
-    const err = { "0": "an error message", errorStatusCode: 500 }
+    const err = { "0": "an error message", errorStatusCode: 500 } // eslint-disable-line quote-props
     addFinancialAidStub.returns(Promise.reject(err))
     const income = 100000
     const currency = "USD"

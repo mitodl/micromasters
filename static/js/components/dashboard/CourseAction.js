@@ -114,8 +114,8 @@ export default class CourseAction extends React.Component {
 
   renderPayButton(run: CourseRun): React$Element<*> {
     const { setCalculatePriceDialogVisibility } = this.props
-    let props,
-      payText = "Pay Now"
+    let props
+    let payText = "Pay Now"
     if (this.hasPendingFinancialAid()) {
       props = { disabled: true }
       payText = `${payText} *`

@@ -26,6 +26,7 @@ export const sendEmailSuccess = createAction(SEND_EMAIL_SUCCESS)
 export const SEND_EMAIL_FAILURE = "SEND_EMAIL_FAILURE"
 export const sendEmailFailure = createAction(SEND_EMAIL_FAILURE)
 
+// eslint-disable-next-line require-jsdoc
 export function sendEmail(
   emailType: string,
   sendFunction: () => Promise<EmailSendResponse>,

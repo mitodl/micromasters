@@ -13,6 +13,7 @@ const listItems = courses => {
   ))
 }
 
+// eslint-disable-next-line require-jsdoc
 function populateElectivesList(electiveSet) {
   return (
     electiveSet.courses.length > 0 && (
@@ -33,12 +34,14 @@ function populateElectivesList(electiveSet) {
   )
 }
 
+// eslint-disable-next-line require-jsdoc
 export default class CourseListWithPopover extends React.Component {
   props: {
     courses: Array<ProgramPageCourse>,
     electiveSets: Array<ProgramPageElectiveSet>
   }
 
+  // eslint-disable-next-line require-jsdoc
   render() {
     return (
       <div className="info-box course-info">

@@ -31,7 +31,7 @@ import type {
 } from "../flow/programTypes"
 
 const makeCounter = (): (() => number) => {
-  const gen = (function*() {
+  const gen = (function* () {
     let i = 1
     // eslint-disable-next-line no-constant-condition
     while (true) {
