@@ -91,7 +91,7 @@ const renderExamRow = (
 ) => (
   <div className="course-run-row" key={idx}>
     <div className="title">
-      {`Pearson test - ${moment(grade.exam_date).format(DASHBOARD_FORMAT)}`}
+      {`Proctored exam - ${moment(grade.exam_date).format(DASHBOARD_FORMAT)}`}
     </div>
     <div className="grade-status">
       <div>{examStatus(grade)}</div>
