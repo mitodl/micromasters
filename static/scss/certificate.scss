@@ -230,7 +230,7 @@
   color: white;
 
   h2 {
-    margin: 0 0 10px;
+    margin: 10px 0 10px;
     font-size: 16px;
     line-height: 22px;
     font-weight: bold;
@@ -253,20 +253,20 @@
   padding: 0;
   float: right;
 
-  // @include media-breakpoint-down(xs) {
-  //   float: none;
-  //   margin: 0;
-  //   text-align: center;
-  // }
+  @include breakpoint(phone) {
+    float: none;
+    margin: 0;
+    text-align: center;
+  }
 
   li {
     display: inline-block;
     vertical-align: middle;
     margin: 0 0 0 15px;
 
-    // @include media-breakpoint-down(xs) {
-    //   margin: 0 10px 15px;
-    // }
+    @include breakpoint(phone) {
+      margin: 0 10px 15px;
+    }
   }
 
   img {
