@@ -9,7 +9,7 @@
 
 {% block content %}
 <div class="certificate">
-  {% if user %}
+  {% if certificate.user == user %}
     <div class="row no-print">	
       <div class="col px-0">	
         <div class="cer-user-info">	
