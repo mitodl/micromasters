@@ -9,6 +9,41 @@
 
 {% block content %}
 <div class="certificate">
+  {% if certificate.user == user %}
+    <div class="row no-print">	
+      <div class="col px-0">	
+        <div class="cer-user-info">	
+          <div class="user-info-holder">	
+            <ul class="social-links">	
+              <li>	
+                  <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}&text={{ share_text|urlencode }}" target="_blank">	
+                      <img src="{% static 'images/certificates/icon-twitter.svg' %}" alt="Share to Twitter">	
+                  </a>	
+              </li>	
+              <li>	
+                  <a href="http://www.facebook.com/share.php?u={{ request.build_absolute_uri|urlencode }}" target="_blank">	
+                      <img src="{% static 'images/certificates/icon-facebook.svg' %}" alt="Share to Facebook">	
+                  </a>	
+              </li>	
+              <li>	
+                  <a href="https://www.linkedin.com/profile/add?startTask={{ page.product_name|urlencode }}" target="_blank">	
+                      <img src="{% static 'images/certificates/icon-linkedin.svg' %}" alt="Share to LinkedIn">	
+                  </a>	
+              </li>	
+              <li>	
+                  <a href="javascript:window.print();">	
+                      <img src="{% static 'images/certificates/icon-print.svg' %}" alt="Print">	
+                  </a>	
+              </li>	
+            </ul>	
+            <h2>Congratulations, {{ name }}!</h2>	
+            <p>You have successfully completed {% if course_title %}{{ course_title }}{% else %}{{ program_title }}{% endif %}. Share your accomplishment with your friends, family and colleagues. </p>	
+          </div>	
+        </div>	
+      </div>	
+    </div>	
+  {% endif %}
+
   <main class="certificate-body verified row">
 
     <div class="col-md-8">
