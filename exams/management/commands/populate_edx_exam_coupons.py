@@ -3,6 +3,7 @@ Populates ExamAuthorizations with edx coupon urls for taking exam-course
 """
 import csv
 import argparse
+import pytz
 import re
 from django.core.management import BaseCommand, CommandError
 from django.core.validators import URLValidator
@@ -50,7 +51,9 @@ class Command(BaseCommand):
                 'There are multiple courses with given number "{}"'.format(course_number)
             )
         from datetime import datetime
-        datetime_object = datetime.strptime(first_row['Coupon Expiry Date'], '%b %d, %y')
+        without_timezone = datetime.strptime(first_row['Coupon Expiry Date'], '%b %d, %y')
+        timezone = pytz.timezone("UTC")
+        datetime_object = timezone.localize(without_timezone)
         coupons_created = 0
         for code, url in validated_urls:
             _, created = ExamRunCoupon.objects.get_or_create(

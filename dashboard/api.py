@@ -547,7 +547,7 @@ def get_edx_exam_coupon_url(user, course):
 
     exam_auth.exam_coupon = exam_coupon
     exam_auth.save()
-    return exam_coupon.coupon_url
+    return exam_coupon.use_coupon()
 
 
 def get_future_exam_runs(course):

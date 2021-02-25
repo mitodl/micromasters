@@ -38,7 +38,7 @@ from dashboard.factories import CachedEnrollmentFactory, CachedCurrentGradeFacto
 from dashboard.models import CachedCertificate
 from dashboard.utils import MMTrack
 from exams.models import ExamAuthorization, ExamProfile
-from exams.factories import ExamRunFactory, ExamAuthorizationFactory
+from exams.factories import ExamRunFactory, ExamAuthorizationFactory, ExamRunCouponFactory
 from ecommerce.factories import LineFactory, OrderFactory
 from ecommerce.models import Order, Line
 from grades.constants import FinalGradeStatus
@@ -1987,11 +1987,13 @@ class ExamURLTests(MockedESTestCase):
             scheduling_future=False,
             eligibility_past=False,
         )
+        exam_coupon = ExamRunCouponFactory.create(course=exam_run.course, coupon_url=exam_url)
         exam_auth = ExamAuthorizationFactory.create(
             exam_run=exam_run,
             course=exam_run.course,
             status=auth_status,
-            exam_coupon_url=exam_url
+            exam_coupon_url=exam_url,
+            exam_coupon=exam_coupon
         )
         expected = exam_url if auth_status == 'success' else ""
         assert api.get_edx_exam_coupon_url(exam_auth.user, exam_auth.course) == expected

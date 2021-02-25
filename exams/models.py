@@ -167,15 +167,11 @@ class ExamRunCoupon(TimestampedModel):
     expiration_date = models.DateTimeField()
     is_taken = models.BooleanField(default=False)
 
-    @classmethod
-    def get_unused_coupon(cls, course_id):
+    def use_coupon(self):
         """Returns unused coupon url for edx proctored exam"""
-        coupon = cls.objects.filter(course_id=course_id, is_taken=False).first()
-        if coupon is None:
-            return ""
-        coupon.is_taken = True
-        coupon.save()
-        return coupon.coupon_url
+        self.is_taken = True
+        self.save()
+        return self.coupon_url
 
 
 class ExamAuthorization(TimestampedModel):
