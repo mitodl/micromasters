@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.185.3
+---------------
+
+- add share and print bar for certificates (#4797)
+
 Version 0.185.2 (Released February 23, 2021)
 ---------------
 
