@@ -3,6 +3,8 @@
 
 {% block extrahead %}
 <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600;&display=swap" />
+{% load render_bundle %}
+{% render_bundle "style_certificate" %}
 {% endblock %}
 
 {% block title %}{% trans "MITx MicroMasters" %}{% endblock %}
