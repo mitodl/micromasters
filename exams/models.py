@@ -158,6 +158,26 @@ class ExamProfile(TimestampedModel):
         return 'Exam Profile "{0}" with status "{1}"'.format(self.id, self.status)
 
 
+class ExamRunCoupon(TimestampedModel):
+    """Represents a coupon code url for an edx proctored exam"""
+    course = models.ForeignKey(Course, related_name='course_exam_coupons', on_delete=models.CASCADE)
+    edx_exam_course_key = models.CharField(max_length=30, null=False)
+    coupon_url = models.URLField(null=False)
+    coupon_code = models.CharField(max_length=30, null=False)
+    expiration_date = models.DateTimeField()
+    is_taken = models.BooleanField(default=False)
+
+    @classmethod
+    def get_unused_coupon(cls, course_id):
+        """Returns unused coupon url for edx proctored exam"""
+        coupon = cls.objects.filter(course_id=course_id, is_taken=False).first()
+        if coupon is None:
+            return ""
+        coupon.is_taken = True
+        coupon.save()
+        return coupon.coupon_url
+
+
 class ExamAuthorization(TimestampedModel):
     """
     Tracks state of an exam authorization
@@ -220,6 +240,7 @@ class ExamAuthorization(TimestampedModel):
     exam_taken = models.BooleanField(default=False)
     exam_no_show = models.BooleanField(default=False)
     exam_coupon_url = models.URLField(blank=True, null=True)
+    exam_coupon = models.OneToOneField(ExamRunCoupon, null=True, blank=True, on_delete=models.SET_NULL)
 
     @classmethod
     def taken_exams(cls):
@@ -232,23 +253,3 @@ class ExamAuthorization(TimestampedModel):
             self.status,
             self.user_id
         )
-
-
-class ExamRunCoupon(TimestampedModel):
-    """Represents a coupon code url for an edx proctored exam"""
-    course = models.ForeignKey(Course, related_name='course_exam_coupons', on_delete=models.CASCADE)
-    edx_exam_course_key = models.CharField(max_length=30, null=False)
-    coupon_url = models.URLField(null=False)
-    coupon_code = models.CharField(max_length=30, null=False)
-    expiration_date = models.DateTimeField()
-    is_taken = models.BooleanField(default=False)
-
-    @classmethod
-    def get_unused_coupon(cls, course_id):
-        """Returns unused coupon url for edx proctored exam"""
-        coupon = cls.objects.filter(course_id=course_id, is_taken=False).first()
-        if coupon is None:
-            return ""
-        coupon.is_taken = True
-        coupon.save()
-        return coupon.coupon_url
