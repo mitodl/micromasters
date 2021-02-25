@@ -372,6 +372,7 @@
 
   .faqs {
     margin-top: 20px;
+    background-color: transparent;
 
     @include breakpoint(phone) {
       margin: 18px auto;
