@@ -164,7 +164,7 @@ class ExamRunCoupon(TimestampedModel):
     edx_exam_course_key = models.CharField(max_length=30, null=False)
     coupon_url = models.URLField(null=False)
     coupon_code = models.CharField(max_length=30, null=False)
-    expiration_date = models.DateTimeField()
+    expiration_date = models.DateField(blank=True, null=True)
     is_taken = models.BooleanField(default=False)
 
     def use_coupon(self):

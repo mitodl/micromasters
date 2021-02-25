@@ -120,7 +120,7 @@ class ExamAuthorizationFactory(DjangoModelFactory):
 
 class ExamRunCouponFactory(DjangoModelFactory):
     """
-    Facroty for ExamRunCoupon
+    Factory for ExamRunCoupon
     """
     course = SubFactory(CourseFactory)
     edx_exam_course_key = fuzzy.FuzzyText()

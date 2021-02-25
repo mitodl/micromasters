@@ -1987,7 +1987,7 @@ class ExamURLTests(MockedESTestCase):
             scheduling_future=False,
             eligibility_past=False,
         )
-        exam_coupon = ExamRunCouponFactory.create(course=exam_run.course, coupon_url=exam_url)
+        exam_coupon = ExamRunCouponFactory.create(course=exam_run.course, coupon_url=exam_url, is_taken=False)
         exam_auth = ExamAuthorizationFactory.create(
             exam_run=exam_run,
             course=exam_run.course,
