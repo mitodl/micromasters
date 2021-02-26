@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+Version 0.185.3
+---------------
+
+- Removing some pearson text (#4800)
+- Fixed the FAQ background regression (#4803)
+- add share and print bar for certificates (#4797)
+
 Version 0.185.2 (Released February 23, 2021)
 ---------------
 
