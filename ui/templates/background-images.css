@@ -1,6 +1,6 @@
 {% load static %}
 .banner-wrapper {
-  background-image: url({% static "images/homepage.png" %});
+  background-image: url({% static "images/homepage.jpg" %});
 }
 .navbar .navbar-header .brand-logo {
   background-image: url({% static "images/mit_logo.svg" %});

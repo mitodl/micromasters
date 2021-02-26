@@ -23,7 +23,7 @@
     integrated set of MITx graduate-level online courses. With the MicroMasters
     credentials, learners can apply for an accelerated master's degree
     program on campus, at MIT or other top universities.">
-  <meta property="og:image" content="{{ request.build_absolute_uri }}static/images/homepage.png">
+  <meta property="og:image" content="{{ request.build_absolute_uri }}static/images/homepage.jpg">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="948">
   <meta property="og:image:height" content="630">
@@ -36,7 +36,7 @@
     integrated set of MITx graduate-level online courses. With the MicroMasters
     credentials, learners can apply for an accelerated master's degree
     program on campus, at MIT or other top universities.">
-  <meta itemprop="image" content="{{ request.build_absolute_uri }}static/images/homepage.png">
+  <meta itemprop="image" content="{{ request.build_absolute_uri }}static/images/homepage.jpg">
   <meta name="twitter:description" content="MITx MicroMasters Programs: a new academic credential
     and a new path to a master’s degree from MIT. Learn more ">
 {% endblock %}
@@ -86,17 +86,17 @@
           <section class="sub-banner-section">
             <div class="sub-banner-text">
               <h2>MITx MicroMasters<span class="trademark">&reg;</span> Programs</h2>
-            
+
               <p>Advance your career or accelerate your Master’s degree with a graduate-level digital credential from MIT.</p>
               <p>The MicroMasters program credential from MIT Open Learning is a <b>professional and academic credential</b> for online learners
-                 from anywhere in the world who seek focused, accelerated advancement.</p> 
-              <p><b>Enroll</b> in a program—no admission required—and take 
-                 a series of graduate-level online courses, taught by MIT instructors, through edX.</p> 
-              <p><b>Earn</b> a program credential by 
+                 from anywhere in the world who seek focused, accelerated advancement.</p>
+              <p><b>Enroll</b> in a program—no admission required—and take
+                 a series of graduate-level online courses, taught by MIT instructors, through edX.</p>
+              <p><b>Earn</b> a program credential by
                  completing the course and passing one or more proctored exams.</p>
-              <p>   
-                 <b>Enjoy</b> the credential benefits: Credential earners can also apply for 
-                 an accelerated master’s degree program at MIT and other <a href="/pathways-graduate-programs/">pathway schools</a>; and include your credential on professional 
+              <p>
+                 <b>Enjoy</b> the credential benefits: Credential earners can also apply for
+                 an accelerated master’s degree program at MIT and other <a href="/pathways-graduate-programs/">pathway schools</a>; and include your credential on professional
                  profiles. MicroMasters program credential earners also become <a href="{{benefits_url}}">affiliates of the MIT Alumni Association</a>.
               </p>
               <ul class="current-programs-list">
@@ -125,7 +125,7 @@
                           {% endwith %}
                           <div class="program-description">
                             <p class="program-description-text" id="program-{{ program.id }}-description">{{ program.description|default:"No description available for this program." }}</p>
-              
+
                             {% if programpage %}
                               <p class="program-description-link">
                                 <a href="{{ programpage.url }}" class="program-link">
@@ -133,7 +133,7 @@
                                 </a>
                               </p>
                             {% endif %}
-                          </div>      
+                          </div>
                         </div>
                         {% if programpage and programpage.thumbnail_image %}
                           {% image programpage.thumbnail_image fill-690x530 as thumbnail_image %}
@@ -149,7 +149,7 @@
                     </div>
                   </li>
                 {% endfor %}
-        
+
               </ul>
               </div>
             </div>
@@ -166,7 +166,7 @@
             </div>
 
             <h4>Advance Your Career</h4>
-            <p>Learn online, pass digital proctored exams, and earn a program credential. 
+            <p>Learn online, pass digital proctored exams, and earn a program credential.
               Boost your professional profile with an affordable and valuable credential from MIT.</p>
           </div>
           <div class="enroll-reason col-md-3">
@@ -204,10 +204,10 @@
             <h3>For Organizations and Academic Institutions</h3>
             <p>
               Equip your workforce and organization with new applicable skills through the MITx MicroMasters program!
-             </p> 
+             </p>
              <p>
-              We work closely with organizations globally that wish to integrate our programs into their own education 
-              and training portfolios. Flexible pricing options available. 
+              We work closely with organizations globally that wish to integrate our programs into their own education
+              and training portfolios. Flexible pricing options available.
              </p>
              <a class="btn btn-primary text-uppercase px-5 py-2" href="/organizations/">Learn More</a>
           </div>
@@ -220,15 +220,15 @@
           <div class="content-holder">
             <a class="img-link" href="events/"><img src="{% static 'images/events.png' %}" alt="Events"></a>
             <div class="info">
-              <p>Register for one of our upcoming webinars to learn more about the different MicroMasters programs at MIT. 
-                Our events are hosted by the course teams, including MIT faculty, and they provide a great opportunity 
+              <p>Register for one of our upcoming webinars to learn more about the different MicroMasters programs at MIT.
+                Our events are hosted by the course teams, including MIT faculty, and they provide a great opportunity
                 to ask questions about our courses.</p>
               <a class="btn btn-primary text-uppercase px-5 py-2" href="events/">View Events</a>
             </div>
           </div>
         </div>
       </section>
-      
+
       <section class="faqs">
         <div class="faq-holder">
           <img src="{% static 'images/faq.png' %}" alt="FAQs">
