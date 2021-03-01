@@ -16,6 +16,7 @@ from django.urls import reverse
 from django_redis import get_redis_connection
 import pytest
 from rest_framework import status as http_status
+from urllib.parse import urljoin
 
 from backends.exceptions import InvalidCredentialStored
 from cms.factories import CourseCertificateSignatoriesFactory
@@ -1965,7 +1966,12 @@ class ExamSchedulableTests(MockedESTestCase):
             operation=ExamAuthorization.OPERATION_DELETE if is_operation_delete else ExamAuthorization.OPERATION_ADD
         )
         if has_coupon:
-            exam_auth.exam_coupon_url = "http://example.com"
+            coupon = ExamRunCouponFactory.create(
+                course=exam_run.course,
+                coupon_url="http://example.com",
+                is_taken=False
+            )
+            exam_auth.exam_coupon = coupon
             exam_auth.save()
 
         assert api.is_exam_schedulable(exam_auth.user, exam_auth.course) is can_schedule_exam
@@ -2205,7 +2211,7 @@ class GetCertificateForCourseTests(CourseTests):
             "grade": "0.98"
         }
         self.mmtrack.certificates = CachedCertificate.deserialize_edx_data([cert_json])
-        certificate_url = (settings.EDXORG_BASE_URL + "certificates/user/course_key") if has_url else ""
+        certificate_url = urljoin(settings.EDXORG_BASE_URL, "certificates/user/course_key") if has_url else ""
         assert api.get_certificate_url(self.mmtrack, self.course) == certificate_url
 
 

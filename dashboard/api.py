@@ -507,8 +507,9 @@ def is_exam_schedulable(user, course):
     )
     return ExamAuthorization.objects.filter(
         user=user,
+        status=ExamAuthorization.STATUS_SUCCESS,
         exam_run__in=schedulable_exam_runs,
-        exam_coupon_url__isnull=False
+        exam_coupon__isnull=False
     ).exclude(
         operation=ExamAuthorization.OPERATION_DELETE).exists()
 
@@ -536,6 +537,8 @@ def get_edx_exam_coupon_url(user, course):
     ).first()
     if exam_auth is None:
         return ""
+    if exam_auth.exam_coupon is not None:
+        return exam_auth.exam_coupon.coupon_url
 
     exam_coupon = ExamRunCoupon.objects.filter(
         expiration_date__gte=now.date(),
