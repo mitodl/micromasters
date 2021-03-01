@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.185.3
+Version 0.185.3 (Released March 01, 2021)
 ---------------
 
 - Removing some pearson text (#4800)
