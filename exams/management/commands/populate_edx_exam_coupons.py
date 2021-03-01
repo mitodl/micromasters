@@ -5,6 +5,7 @@ import csv
 import argparse
 import pytz
 import re
+from datetime import datetime
 from django.core.management import BaseCommand, CommandError
 from django.core.validators import URLValidator
 
@@ -50,7 +51,6 @@ class Command(BaseCommand):
             raise CommandError(
                 'There are multiple courses with given number "{}"'.format(course_number)
             )
-        from datetime import datetime
         without_timezone = datetime.strptime(first_row['Coupon Expiry Date'], '%b %d, %y')
         timezone = pytz.timezone("UTC")
         datetime_object = timezone.localize(without_timezone)

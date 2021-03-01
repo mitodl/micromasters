@@ -9,6 +9,7 @@ from unittest.mock import (
     patch,
 )
 
+from urllib.parse import urljoin
 import ddt
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
@@ -16,7 +17,6 @@ from django.urls import reverse
 from django_redis import get_redis_connection
 import pytest
 from rest_framework import status as http_status
-from urllib.parse import urljoin
 
 from backends.exceptions import InvalidCredentialStored
 from cms.factories import CourseCertificateSignatoriesFactory
