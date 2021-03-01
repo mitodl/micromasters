@@ -112,17 +112,6 @@
                               {{ programpage.title }}
                             {% endif %}
                           </h4>
-                          {% with program.course_set.count as course_count %}
-                            {% if course_count %}
-                              <div class="program-num-courses">
-                                {% blocktrans count counter=course_count %}
-                                  {{ counter }} course
-                                {% plural %}
-                                  {{ counter }} courses
-                                {% endblocktrans %}
-                              </div>
-                            {% endif %}
-                          {% endwith %}
                           <div class="program-description">
                             <p class="program-description-text" id="program-{{ program.id }}-description">{{ program.description|default:"No description available for this program." }}</p>
 
