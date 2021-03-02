@@ -1,4 +1,5 @@
 // @flow
+/* eslint-disable no-unused-vars */
 import _ from "lodash"
 import React from "react"
 import { mount } from "enzyme"
@@ -28,8 +29,8 @@ import {
 import { INITIAL_UI_STATE } from "../../reducers/ui"
 
 describe("FinancialAidCard", () => {
-  let sandbox
-  let openFinancialAidCalculatorStub,
+  let sandbox,
+    openFinancialAidCalculatorStub,
     setSkipDialogStub,
     setDocsInstructionsVisibility
 

@@ -1,4 +1,5 @@
 /* global SETTINGS: false */
+/* eslint-disable no-unused-vars */
 import { assert } from "chai"
 import { shallow } from "enzyme"
 import React from "react"

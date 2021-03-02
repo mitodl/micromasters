@@ -32,6 +32,7 @@ export const receivePatchUserPhotoSuccess = createAction(
   RECEIVE_PATCH_USER_PHOTO_SUCCESS
 )
 
+// eslint-disable-next-line require-jsdoc
 export function updateUserPhoto(
   username: string,
   image: Blob,

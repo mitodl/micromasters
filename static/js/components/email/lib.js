@@ -172,10 +172,12 @@ export const convertEmailEdit = mapObj(([k, v]) => [
 ])
 
 export const findFilters = tree => {
+  // eslint-disable-next-line no-prototype-builtins
   if (tree.hasOwnProperty("term") && !tree.term.hasOwnProperty("program.id")) {
     return [tree.term]
   }
 
+  // eslint-disable-next-line no-prototype-builtins
   if (tree.hasOwnProperty("range")) {
     return [tree.range]
   }

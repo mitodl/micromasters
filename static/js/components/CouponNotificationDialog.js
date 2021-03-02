@@ -31,7 +31,7 @@ const CouponNotificationDialog = ({
   couponCourse,
   open,
   setDialogVisibility
-  }: CouponNotification) => {
+}: CouponNotification) => {
   const {
     amount_type: amountType,
     content_type: contentType,
@@ -44,6 +44,7 @@ const CouponNotificationDialog = ({
   } else {
     programName = `program ID ${programId}`
   }
+  // eslint-disable-next-line one-var
   let courseName
   if (couponCourse) {
     courseName = `${couponCourse.title}`
@@ -55,6 +56,7 @@ const CouponNotificationDialog = ({
     amountType === COUPON_AMOUNT_TYPE_FIXED_DISCOUNT ||
     amountType === COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT
 
+  // eslint-disable-next-line one-var
   let title, message
   if (isDiscount) {
     if (contentType === COUPON_CONTENT_TYPE_PROGRAM) {
@@ -95,6 +97,7 @@ const CouponNotificationDialog = ({
     }
   }
 
+  // eslint-disable-next-line one-var
   let discountAppliedMessage
   if (contentType === COUPON_CONTENT_TYPE_PROGRAM) {
     discountAppliedMessage = (

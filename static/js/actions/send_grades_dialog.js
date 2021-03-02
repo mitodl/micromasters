@@ -15,6 +15,7 @@ export const sendEmailFailure = createAction(SEND_GRADES_EMAIL_FAILURE)
 export const SET_SELECTED_SCHOOL = "SET_SELECTED_SCHOOL"
 export const setSelectedSchool = createAction(SET_SELECTED_SCHOOL)
 
+// eslint-disable-next-line require-jsdoc
 export function sendGradeEmail(sendFunctionParams: Array<*>): Dispatcher<*> {
   return (dispatch: Dispatch) => {
     return sendGradesRecordMail(...sendFunctionParams).then(

@@ -10,6 +10,7 @@ describe("Discussion validation functions", () => {
     })
   })
 
+  // eslint-disable-next-line no-unused-vars
   for (const invalidName of ["_b", "b", "1", "11", "a".repeat(22)]) {
     it(`should return an error for invalid channel name: ${invalidName}`, () => {
       assert.deepEqual(
@@ -25,6 +26,7 @@ describe("Discussion validation functions", () => {
     })
   }
 
+  // eslint-disable-next-line no-unused-vars
   for (const validName of [
     "12_",
     "15_45",

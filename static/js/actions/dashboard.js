@@ -27,6 +27,7 @@ export const receiveDashboardFailure = withUsername(RECEIVE_DASHBOARD_FAILURE)
 export const CLEAR_DASHBOARD = "CLEAR_DASHBOARD"
 export const clearDashboard = withUsername(CLEAR_DASHBOARD)
 
+// eslint-disable-next-line require-jsdoc
 export function fetchDashboard(
   username: string,
   noSpinner: boolean = false

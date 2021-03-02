@@ -25,7 +25,7 @@ type DocsInstructions = {
 const DocsInstructionsDialog = ({
   open,
   setDialogVisibility
-  }: DocsInstructions) => (
+}: DocsInstructions) => (
   <Dialog
     title={dialogTitle(setDialogVisibility)}
     titleClassName="dialog-title"

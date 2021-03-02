@@ -359,7 +359,7 @@ class DashboardPage extends React.Component {
         this.handleOrderSuccess(course)
         break
       default:
-          // do nothing, a timeout was set to check back later
+        // do nothing, a timeout was set to check back later
         break
       }
     } else if (query.status === "cancel") {

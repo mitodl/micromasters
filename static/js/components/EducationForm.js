@@ -58,6 +58,7 @@ EDUCATION_LEVEL_OPTIONS.forEach(level => {
   EDUCATION_LEVEL_LABELS[level.value] = level.label
 })
 
+// eslint-disable-next-line require-jsdoc
 class EducationForm extends ProfileFormFields {
   props: {
     profile: Profile,
@@ -84,6 +85,7 @@ class EducationForm extends ProfileFormFields {
       setEducationDialogIndex,
       setEducationDegreeLevel,
       setEducationDialogVisibility
+      // eslint-disable-next-line no-invalid-this
     } = this.props
 
     const education = profile["education"][index]
@@ -100,6 +102,7 @@ class EducationForm extends ProfileFormFields {
       setEducationDegreeLevel,
       setEducationDialogVisibility,
       validator
+      // eslint-disable-next-line no-invalid-this
     } = this.props
     const clone = {
       ...profile,
@@ -112,6 +115,7 @@ class EducationForm extends ProfileFormFields {
   }
 
   deleteEducationEntry = (): Promise<*> => {
+    // eslint-disable-next-line no-invalid-this
     const { saveProfile, profile, ui } = this.props
     const clone = _.cloneDeep(profile)
     if (ui.deletionIndex !== undefined && ui.deletionIndex !== null) {
@@ -123,6 +127,7 @@ class EducationForm extends ProfileFormFields {
   educationLevelRadioSwitch = (level: Option): React$Element<*> => {
     const {
       ui: { educationLevelAnswers }
+      // eslint-disable-next-line no-invalid-this
     } = this.props
     const valueSelected = level.value in educationLevelAnswers ? "false" : null
     return (
@@ -131,6 +136,7 @@ class EducationForm extends ProfileFormFields {
           className={`profile-radio-group ${level.value}`}
           id={`profile-tab-education-switch-${level.value}`}
           name={`profile-tab-education-switch-${level.value}`}
+          /* eslint-disable-next-line no-invalid-this */
           onChange={(event, value) => this.handleRadioClick(value, level.value)}
           value={valueSelected}
         >
@@ -151,6 +157,7 @@ class EducationForm extends ProfileFormFields {
     )
   }
 
+  // eslint-disable-next-line require-jsdoc
   handleRadioClick(value: string, level: string): void {
     const {
       setEducationLevelAnswers,
@@ -169,6 +176,7 @@ class EducationForm extends ProfileFormFields {
     }
   }
 
+  // eslint-disable-next-line require-jsdoc
   renderEducationQuestionForm(level: Option): React$Element<*> {
     const label = level.label
     const prefix = label.toLowerCase().startsWith("a") ? "an" : "a"
@@ -185,6 +193,7 @@ class EducationForm extends ProfileFormFields {
     )
   }
 
+  // eslint-disable-next-line require-jsdoc
   renderEducationLevelEntries(
     level: any
   ): Array<React$Element<*> | void> | void {
@@ -229,6 +238,7 @@ class EducationForm extends ProfileFormFields {
     ]
   }
 
+  // eslint-disable-next-line require-jsdoc
   renderEducationLevel(
     level: Option
   ): Array<React$Element<*> | void> | React$Element<*> | void {
@@ -241,12 +251,15 @@ class EducationForm extends ProfileFormFields {
 
   educationRow = R.curry(
     (showLevel: boolean, [index, education]: [number, EducationEntry]) => {
+      // eslint-disable-next-line no-invalid-this
       const { errors, profile } = this.props
       if (!("id" in education)) {
         // don't show new educations, wait until we saved on the server before showing them
         return
       }
+      // eslint-disable-next-line no-invalid-this
       const deleteEntry = () => this.openEducationDeleteDialog(index)
+      // eslint-disable-next-line no-invalid-this
       const editEntry = () => this.openEditEducationForm(index)
       const validationAlert = () => {
         if (_.get(errors, ["education", String(index)])) {
@@ -296,6 +309,7 @@ class EducationForm extends ProfileFormFields {
     }
   )
 
+  // eslint-disable-next-line require-jsdoc
   hasEducationAtLevel(levelValue: string): boolean {
     const {
       profile: { education }
@@ -312,6 +326,7 @@ class EducationForm extends ProfileFormFields {
       setEducationDialogIndex,
       clearProfileEdit,
       profile: { username }
+      // eslint-disable-next-line no-invalid-this
     } = this.props
     setEducationDialogVisibility(false)
     setEducationDegreeLevel("")
@@ -320,11 +335,14 @@ class EducationForm extends ProfileFormFields {
   }
 
   saveEducationForm = (): void => {
+    // eslint-disable-next-line no-invalid-this
     const { saveProfile, profile, ui } = this.props
+    // eslint-disable-next-line no-invalid-this
     saveProfile(educationValidation, profile, ui).then(this.clearEducationEdit)
   }
 
   openEducationDeleteDialog = (index: number): void => {
+    // eslint-disable-next-line no-invalid-this
     const { setDeletionIndex, setShowEducationDeleteDialog } = this.props
     setDeletionIndex(index)
     setShowEducationDeleteDialog(true)
@@ -335,6 +353,7 @@ class EducationForm extends ProfileFormFields {
       ui: { educationDialogIndex },
       showSwitch,
       profile
+      // eslint-disable-next-line no-invalid-this
     } = this.props
 
     const keySet = (key): any => ["education", educationDialogIndex, key]
@@ -349,6 +368,7 @@ class EducationForm extends ProfileFormFields {
               keySet={keySet("field_of_study")}
               label="Field of Study"
               allowCreate={true}
+              /* eslint-disable-next-line no-invalid-this */
               {...this.defaultInputComponentProps()}
             />
           </Grid>
@@ -363,6 +383,7 @@ class EducationForm extends ProfileFormFields {
               keySet={keySet("degree_name")}
               label="Degree Type"
               options={EDUCATION_LEVELS}
+              /* eslint-disable-next-line no-invalid-this */
               {...this.defaultInputComponentProps()}
             />
           </Grid>
@@ -375,9 +396,11 @@ class EducationForm extends ProfileFormFields {
         {levelForm()}
         {fieldOfStudy()}
         <Grid item xs={12}>
+          {/* eslint-disable-next-line no-invalid-this */}
           {this.boundTextField(keySet("school_name"), "School Name")}
         </Grid>
         <Grid item xs={12}>
+          {/* eslint-disable-next-line no-invalid-this */}
           {this.boundDateField(
             keySet("graduation_date"),
             "Graduation Date",
@@ -391,6 +414,7 @@ class EducationForm extends ProfileFormFields {
             countryKeySet={keySet("school_country")}
             label="Country"
             topMenu={true}
+            /* eslint-disable-next-line no-invalid-this */
             {...this.defaultInputComponentProps()}
           />
         </Grid>
@@ -400,16 +424,19 @@ class EducationForm extends ProfileFormFields {
             countryKeySet={keySet("school_country")}
             label="State"
             topMenu={true}
+            /* eslint-disable-next-line no-invalid-this */
             {...this.defaultInputComponentProps()}
           />
         </Grid>
         <Grid item xs={4} key="school_city">
+          {/* eslint-disable-next-line no-invalid-this */}
           {this.boundTextField(keySet("school_city"), "City")}
         </Grid>
       </Grid>
     )
   }
 
+  // eslint-disable-next-line require-jsdoc
   renderCard() {
     const { showSwitch, profile } = this.props
 
@@ -459,6 +486,7 @@ class EducationForm extends ProfileFormFields {
     }
   }
 
+  // eslint-disable-next-line require-jsdoc
   render() {
     const {
       ui: {

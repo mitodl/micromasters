@@ -24,7 +24,7 @@ const SkipFinancialAidDialog = ({
   fullPrice,
   fetchAddStatus,
   fetchSkipStatus
-  }: SkipProps) => (
+}: SkipProps) => (
   <Dialog
     classes={{
       paper: "dialog skip-financial-aid-dialog",

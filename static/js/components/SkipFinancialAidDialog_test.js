@@ -9,8 +9,7 @@ import ReactTestUtils from "react-dom/test-utils"
 import SkipFinancialAidDialog from "./SkipFinancialAidDialog"
 
 describe("SkipFinancialAidDialog", () => {
-  let sandbox
-  let cancelStub, skipStub
+  let sandbox, cancelStub, skipStub
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()

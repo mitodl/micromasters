@@ -12,6 +12,7 @@ const popoverLink = url =>
     </a>
   ) : null
 
+// eslint-disable-next-line require-jsdoc
 export default class CourseListItemWithPopover extends React.Component {
   props: {
     course: ProgramPageCourse
@@ -26,6 +27,7 @@ export default class CourseListItemWithPopover extends React.Component {
     // This prevents ghost click.
     event.preventDefault()
 
+    // eslint-disable-next-line no-invalid-this
     this.setState({
       isOpen:   true,
       anchorEl: event.currentTarget
@@ -33,11 +35,13 @@ export default class CourseListItemWithPopover extends React.Component {
   }
 
   handleRequestClose = () => {
+    // eslint-disable-next-line no-invalid-this
     this.setState({
       isOpen: false
     })
   }
 
+  // eslint-disable-next-line require-jsdoc
   render() {
     const {
       course: { title, description, url, enrollment_text: enrollmentText }

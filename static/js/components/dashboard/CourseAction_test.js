@@ -1,4 +1,5 @@
 /* global SETTINGS: false */
+/* eslint-disable no-unused-vars */
 import React from "react"
 import { shallow } from "enzyme"
 import moment from "moment-timezone"
@@ -27,14 +28,14 @@ import { makeCourse } from "../../factories/dashboard"
 
 describe("CourseAction", () => {
   const now = moment()
-  let sandbox
-  let addCourseEnrollmentStub
-  let setEnrollSelectedCourseRunStub
-  let setEnrollCourseDialogVisibilityStub
-  let openFinancialAidCalculatorStub
-  let routerPushStub
-  let checkoutStub
-  let course
+  let sandbox,
+    addCourseEnrollmentStub,
+    setEnrollSelectedCourseRunStub,
+    setEnrollCourseDialogVisibilityStub,
+    openFinancialAidCalculatorStub,
+    routerPushStub,
+    checkoutStub,
+    course
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create()

@@ -1,4 +1,5 @@
 /* global SETTINGS:false */
+/* eslint-disable no-unused-vars */
 import React from "react"
 import { assert } from "chai"
 import _ from "lodash"
@@ -479,7 +480,7 @@ describe("FinancialAidCalculator", () => {
   it("should show an error if the financial aid request fails", () => {
     helper.addFinancialAidStub.returns(
       Promise.reject({
-        "0":             "an error message",
+        0:               "an error message",
         errorStatusCode: 500
       })
     )

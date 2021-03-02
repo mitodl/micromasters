@@ -1,5 +1,6 @@
 // @flow
 /* global SETTINGS: false */
+/* eslint-disable no-unused-vars */
 import _ from "lodash"
 import React from "react"
 import R from "ramda"

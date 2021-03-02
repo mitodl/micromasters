@@ -1,5 +1,6 @@
 // @flow
 /* global SETTINGS: false */
+/* eslint-disable quote-props */
 import deepFreeze from "deep-freeze"
 import Decimal from "decimal.js-light"
 
@@ -1432,7 +1433,7 @@ export const EDX_CHECKOUT_RESPONSE = deepFreeze({
 const queryFilters = `{
   "bool": {
     "must":[
-      { 
+      {
         "nested": {
           "path": "program.courses",
           "filter": {

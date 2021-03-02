@@ -84,7 +84,7 @@ const ProfileImageUploader = ({
   imageUpload: { photo, error, patchStatus },
   updateUserPhoto,
   setPhotoError
-  }: ImageUploadProps) => {
+}: ImageUploadProps) => {
   const inFlight = patchStatus === FETCH_PROCESSING
   const disabled = patchStatus === FETCH_PROCESSING || !photo
 

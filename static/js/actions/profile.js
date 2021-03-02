@@ -98,6 +98,7 @@ export const updateValidationVisibility = createAction(
   (username, keySet) => ({ username, keySet })
 )
 
+// eslint-disable-next-line require-jsdoc
 export function fetchUserProfile(username: string): Dispatcher<void> {
   return (dispatch: Dispatch) => {
     dispatch(requestGetUserProfile(username))

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { assert } from "chai"
 import sinon from "sinon"
 import Decimal from "decimal.js-light"

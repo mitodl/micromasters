@@ -10,8 +10,7 @@ import configureTestStore from "redux-asserts"
 import * as api from "../lib/api"
 
 describe("email reducers for the sendGradeEmail action", function() {
-  let dispatchThen, sandbox, store
-  let sendGradeEmailStub
+  let dispatchThen, sandbox, store, sendGradeEmailStub
   const sendEmailArguments = [2, "45"]
 
   beforeEach(() => {

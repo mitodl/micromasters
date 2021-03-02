@@ -1,5 +1,7 @@
 // @flow
+// eslint-disable-next-line no-redeclare
 /* global document: false, window: false, SETTINGS: false */
+/* eslint-disable no-unused-vars */
 
 import ReactDOM from "react-dom"
 import { assert } from "chai"

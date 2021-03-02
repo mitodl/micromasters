@@ -1,4 +1,5 @@
 /* global SETTINGS: false */
+/* eslint-disable no-unused-vars */
 import React from "react"
 import { Provider } from "react-redux"
 import { mount } from "enzyme"

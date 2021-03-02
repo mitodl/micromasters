@@ -1,4 +1,5 @@
 /* global SETTINGS:false */
+/* eslint-disable no-unused-vars */
 import React from "react"
 import Dialog from "@material-ui/core/Dialog"
 import { connect } from "react-redux"
@@ -184,7 +185,7 @@ const FinancialAidCalculator = ({
   currentProgramEnrollment,
   openConfirmSkipDialog,
   programs
-  }: CalculatorProps) => {
+}: CalculatorProps) => {
   if (!currentProgramEnrollment) {
     return null
   }

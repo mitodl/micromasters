@@ -1,4 +1,4 @@
-//@flow
+// @flow
 
 export function* incrementer(): Generator<number, *, *> {
   let int = 1

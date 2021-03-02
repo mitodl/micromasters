@@ -1,4 +1,5 @@
 // @flow
+// eslint-disable-next-line no-redeclare
 /* global SETTINGS:false, fetch: false */
 // For mocking purposes we need to use 'fetch' defined as a global instead of importing as a local.
 import R from "ramda"

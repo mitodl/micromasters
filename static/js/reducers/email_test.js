@@ -92,8 +92,8 @@ describe("email reducers", () => {
 
 describe("email reducers for the sendMail action", () => {
   let helper, emailType
-  const MAIL_SUCCESS_RESPONSE: EmailSendResponse = { errorStatusCode: 200 },
-    searchRequest = { size: 50 }
+  const MAIL_SUCCESS_RESPONSE: EmailSendResponse = { errorStatusCode: 200 }
+  const searchRequest = { size: 50 }
   const sendEmailArguments = ["subject", "body", searchRequest]
 
   beforeEach(() => {

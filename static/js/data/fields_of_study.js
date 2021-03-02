@@ -1,3 +1,4 @@
+/* eslint-disable quote-props */
 export default {
   "01.0000": "Agriculture, General",
   "01.0101": "Agricultural Business and Management, General",

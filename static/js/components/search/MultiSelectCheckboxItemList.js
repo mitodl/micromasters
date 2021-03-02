@@ -1,4 +1,5 @@
 // @flow
+// eslint-disable-next-line no-redeclare
 /* global event: false */
 import _ from "lodash"
 import * as React from "react"

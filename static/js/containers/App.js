@@ -204,6 +204,7 @@ class App extends React.Component {
       icon = <Icon name={iconName} key="icon" />
     }
 
+    // eslint-disable-next-line one-var
     let title, message
     if (titleText) {
       title = <h1>{titleText}</h1>

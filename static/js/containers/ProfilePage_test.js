@@ -1,5 +1,5 @@
 /* global SETTINGS: false */
-
+/* eslint-disable no-unused-vars */
 import ReactTestUtils from "react-dom/test-utils"
 import { assert } from "chai"
 import _ from "lodash"
@@ -37,8 +37,11 @@ import { activeDialog } from "../util/test_utils"
 describe("ProfilePage", function() {
   this.timeout(5000) // eslint-disable-line no-invalid-this
 
-  let listenForActions, renderComponent, helper
-  let addProgramEnrollmentStub, patchUserProfileStub
+  let listenForActions,
+    renderComponent,
+    helper,
+    addProgramEnrollmentStub,
+    patchUserProfileStub
 
   const profileSteps = [PERSONAL_STEP, EDUCATION_STEP, EMPLOYMENT_STEP]
   const prevButtonSelector = ".prev"

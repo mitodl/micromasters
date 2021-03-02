@@ -13,7 +13,7 @@ type ActionHelperManifest = [Function, string]
 export const assertCreatedActionHelper = ([
   actionHelper,
   actionType
-  ]: ActionHelperManifest) => {
+]: ActionHelperManifest) => {
   assert.deepEqual(actionHelper(), { type: actionType })
   payloads.forEach(payload => {
     assert.deepEqual(actionHelper(payload), {
@@ -26,7 +26,7 @@ export const assertCreatedActionHelper = ([
 export const assertWithUsernameActionHelper = ([
   actionHelper,
   actionType
-  ]: ActionHelperManifest) => {
+]: ActionHelperManifest) => {
   payloads.forEach(payload => {
     assert.deepEqual(actionHelper("username", payload), {
       type:    actionType,

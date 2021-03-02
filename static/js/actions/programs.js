@@ -39,6 +39,7 @@ export const receiveGetProgramEnrollmentsFailure = createAction(
   RECEIVE_GET_PROGRAM_ENROLLMENTS_FAILURE
 )
 
+// eslint-disable-next-line require-jsdoc
 export function fetchProgramEnrollments(): Dispatcher<void> {
   return (dispatch: Dispatch) => {
     dispatch(requestGetProgramEnrollments())

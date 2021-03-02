@@ -123,6 +123,7 @@ describe("Profile Editing utility functions", () => {
     const tooYoung = currentYear + 5
 
     it("has proper props for an invalid or missing value", () => {
+      // eslint-disable-next-line no-unused-vars
       for (const dateOfBirth of ["", {}, null, undefined]) {
         that.props.profile.date_of_birth = dateOfBirth
         const wrapper = renderDateField(false)

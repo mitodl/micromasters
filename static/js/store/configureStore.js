@@ -1,4 +1,5 @@
 // @flow
+// eslint-disable-next-line no-redeclare
 /* global require:false, module:false */
 import { compose, createStore, applyMiddleware } from "redux"
 import thunkMiddleware from "redux-thunk"

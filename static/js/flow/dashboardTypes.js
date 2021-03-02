@@ -5,16 +5,16 @@ import type { APIErrorInfo } from '../flow/generalTypes'
 
 // likely to change in very near future
 export type Dashboard = {
-  programs:   Array<Program>,
+  programs: Array<Program>,
   is_edx_data_fresh: boolean
 }
 
 export type DashboardState = {
-  programs:       Array<Program>,
+  programs: Array<Program>,
   isEdxDataFresh: boolean,
-  fetchStatus?:   string,
-  noSpinner:      boolean,
-  errorInfo?:     APIErrorInfo,
+  fetchStatus?: string,
+  noSpinner: boolean,
+  errorInfo?: APIErrorInfo,
 }
 
 export type DashboardsState = {
@@ -33,8 +33,8 @@ export type CoursePrices = Array<CoursePrice>;
 export type CoursePricesState = {
   coursePrices: CoursePrices,
   fetchStatus?: string,
-  noSpinner?:   boolean,
-  errorInfo?:   APIErrorInfo,
+  noSpinner?: boolean,
+  errorInfo?: APIErrorInfo,
 }
 
 export type CoursePriceReducerState = {

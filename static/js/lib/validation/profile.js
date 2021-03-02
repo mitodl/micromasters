@@ -429,6 +429,7 @@ export const emailValidation = (emailInputs: EmailInputs): ValidationErrors => {
 
   if (body) {
     const strippedBody = striptags(body)
+    // eslint-disable-next-line no-unused-vars
     for (const name of RECIPIENT_VARIABLE_NAMES) {
       const regexp = new RegExp(`\\[${name}\\]`, "g")
       const matches = body.match(regexp) || []

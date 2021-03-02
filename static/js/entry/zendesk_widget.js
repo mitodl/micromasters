@@ -3,17 +3,14 @@ __webpack_public_path__ = `${SETTINGS.public_path}` // eslint-disable-line no-un
 
 // Start of odl Zendesk Widget script
 /* eslint-disable no-sequences, prefer-const */
-/*<![CDATA[*/
+/* <![CDATA[*/
 window.zEmbed ||
   (function(e, t) {
-    let n,
-      o,
-      d,
-      i,
-      s,
-      a = [],
-      r = document.createElement("iframe")
+    let n, o, d, i, s
+    let a = []
+    let r = document.createElement("iframe")
     ;(window.zEmbed = function() {
+      // eslint-disable-next-line prefer-rest-params
       a.push(arguments)
     }),
     (window.zE = window.zE || window.zEmbed),
@@ -49,7 +46,7 @@ window.zEmbed ||
     "https://static.zdassets.com/ekr/snippet.js?key=0c7cfbbc-76c9-4083-869f-b76d03922056",
     "mitx-micromasters.zendesk.com"
   )
-/*]]>*/
+/* ]]>*/
 /* eslint-enable no-sequences */
 
 // This will execute when Zendesk's Javascript is finished executing, and the

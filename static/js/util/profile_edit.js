@@ -51,7 +51,7 @@ export function boundTextField(
   {
     multiLine = false,
     maxLength = 0
-    }: { multiLine: boolean, maxLength: number } = {}
+  }: { multiLine: boolean, maxLength: number } = {}
 ): React$Element<*> {
   const {
     profile,
