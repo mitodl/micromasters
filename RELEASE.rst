@@ -1,6 +1,14 @@
 Release Notes
 =============
 
+Version 0.186.0
+---------------
+
+- Upgraded yargs-parser(min 13.1.2) and related changes (#4789)
+- Removed course count block (#4796)
+- Updated new relic in order to support python 3.9 (#4799)
+- change homepage image (#4807)
+
 Version 0.185.3 (Released March 01, 2021)
 ---------------
 
