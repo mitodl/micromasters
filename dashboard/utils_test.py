@@ -896,7 +896,6 @@ class MMTrackTest(MockedESTestCase):
         [ExamProfile.PROFILE_SUCCESS, ExamProfile.PROFILE_SCHEDULABLE, True, True, True],
     )
     @ddt.unpack  # pylint: disable=too-many-arguments
-    @override_settings(FEATURES={"ENABLE_EDX_EXAMS": True})
     def test_get_exam_card_status_for_edx_exams(self, profile_status, expected_status, make_exam_run,
                                                 make_profile, make_auth):
         """
