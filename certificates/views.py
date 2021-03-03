@@ -41,6 +41,7 @@ class CertificateView(TemplateView):
             "edx_base_url": settings.EDXORG_BASE_URL,
         }
         context["js_settings_json"] = json.dumps(js_settings)
+        context["twitter_share_text"] = "I just earned a Certificate on @Micromasters! Check it out: "
 
         return context
 
@@ -74,6 +75,15 @@ class CourseCertificateView(CertificateView):  # pylint: disable=unused-argument
         context['name'] = certificate.user.profile.full_name
         context['signatories'] = list(signatories)
         context['certificate'] = certificate
+        context[
+            'linkedin_share_context'
+        ] = 'certId={certId}&issueMonth={issueMonth}&issueYear={issueYear}&name={certName}&organizationId={organizationId}&isFromA2p=true'.format(
+            certId=certificate.hash,
+            issueMonth=certificate.created_on.month,
+            issueYear=certificate.created_on.year,
+            certName=course.title,
+            organizationId="2746406",
+        )
 
         return context
 
@@ -108,6 +118,15 @@ class ProgramCertificateView(CertificateView):
         context['name'] = certificate.user.profile.full_name
         context['signatories'] = list(signatories)
         context['certificate'] = certificate
+        context[
+            'linkedin_share_context'
+        ] = 'certId={certId}&issueMonth={issueMonth}&issueYear={issueYear}&name={certName}&organizationId={organizationId}&isFromA2p=true'.format(
+            certId=certificate.hash,
+            issueMonth=certificate.created_on.month,
+            issueYear=certificate.created_on.year,
+            certName=program.title,
+            organizationId="2746406",
+        )
 
         return context
 

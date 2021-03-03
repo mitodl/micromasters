@@ -18,7 +18,7 @@
           <div class="user-info-holder">
             <ul class="social-links">
               <li>
-                <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}&text={{ share_text|urlencode }}" target="_blank">
+                <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}&text={{ twitter_share_text|urlencode }}" target="_blank">
                     <img src="{% static 'images/certificates/icon-twitter.svg' %}" alt="Share to Twitter">
                 </a>
               </li>
@@ -28,7 +28,7 @@
                 </a>
               </li>
               <li>
-                <a href="https://www.linkedin.com/profile/add?startTask={{ page.product_name|urlencode }}" target="_blank">
+                <a href="https://www.linkedin.com/profile/add?certUrl={{ request.build_absolute_uri|urlencode }}&{{ linkedin_share_context }}" target="_blank">
                     <img src="{% static 'images/certificates/icon-linkedin.svg' %}" alt="Share to LinkedIn">
                 </a>
               </li>
