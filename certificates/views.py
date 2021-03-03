@@ -45,6 +45,19 @@ class CertificateView(TemplateView):
 
         return context
 
+    def _create_linkedin_share_context(self, cert, cert_name, org_id="2746406"):
+        """
+        This method takes certificate details and returns a string of LinkedIn specific queryparams to be
+        added directly to certificate share button
+        """
+        return 'certId={certId}&issueMonth={issueMonth}&issueYear={issueYear}&name={certName}&organizationId={organizationId}&isFromA2p=true'.format(
+            certId=cert.hash,
+            issueMonth=cert.created_on.month,
+            issueYear=cert.created_on.year,
+            certName=cert_name,
+            organizationId=org_id,
+        )
+
 
 class CourseCertificateView(CertificateView):  # pylint: disable=unused-argument
     """
@@ -75,15 +88,7 @@ class CourseCertificateView(CertificateView):  # pylint: disable=unused-argument
         context['name'] = certificate.user.profile.full_name
         context['signatories'] = list(signatories)
         context['certificate'] = certificate
-        context[
-            'linkedin_share_context'
-        ] = 'certId={certId}&issueMonth={issueMonth}&issueYear={issueYear}&name={certName}&organizationId={organizationId}&isFromA2p=true'.format(
-            certId=certificate.hash,
-            issueMonth=certificate.created_on.month,
-            issueYear=certificate.created_on.year,
-            certName=course.title,
-            organizationId="2746406",
-        )
+        context['linkedin_share_context'] = self._create_linkedin_share_context(certificate, course.title)
 
         return context
 
@@ -118,15 +123,7 @@ class ProgramCertificateView(CertificateView):
         context['name'] = certificate.user.profile.full_name
         context['signatories'] = list(signatories)
         context['certificate'] = certificate
-        context[
-            'linkedin_share_context'
-        ] = 'certId={certId}&issueMonth={issueMonth}&issueYear={issueYear}&name={certName}&organizationId={organizationId}&isFromA2p=true'.format(
-            certId=certificate.hash,
-            issueMonth=certificate.created_on.month,
-            issueYear=certificate.created_on.year,
-            certName=program.title,
-            organizationId="2746406",
-        )
+        context['linkedin_share_context'] = self._create_linkedin_share_context(certificate, program.title)
 
         return context
 
