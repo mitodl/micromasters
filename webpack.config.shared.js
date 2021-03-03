@@ -10,6 +10,7 @@ module.exports = {
       'sentry_client': './static/js/entry/sentry_client.js',
       'style': './static/js/entry/style',
       'style_public': './static/js/entry/style_public',
+      'style_certificate': './static/js/entry/style_certificate',
       'zendesk_widget': './static/js/entry/zendesk_widget.js',
     },
     module: {
