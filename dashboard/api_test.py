@@ -2018,8 +2018,8 @@ class ExamCouponURLTests(MockedESTestCase):
             scheduling_future=False,
             eligibility_past=False,
         )
-        exam_coupon_1 = ExamRunCouponFactory.create(course=exam_run.course, coupon_url=coupon_url, is_taken=False)
-        exam_coupon_2 = ExamRunCouponFactory.create(course=exam_run.course, coupon_url='coupon_2', is_taken=False)
+        ExamRunCouponFactory.create(course=exam_run.course, coupon_url=coupon_url, is_taken=False)
+        ExamRunCouponFactory.create(course=exam_run.course, coupon_url='coupon_2', is_taken=False)
         exam_auth = ExamAuthorizationFactory.create(
             exam_run=exam_run,
             course=exam_run.course,
