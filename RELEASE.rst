@@ -1,6 +1,14 @@
 Release Notes
 =============
 
+Version 0.186.1
+---------------
+
+- Exam Coupons: use edX coupons when user loads the dashboard (#4790)
+- Optimization: serve certificate related css separately (#4804)
+- Bump urijs from 1.19.4 to 1.19.6 (#4810)
+- restyling certificate template (#4802)
+
 Version 0.186.0 (Released March 03, 2021)
 ---------------
 
