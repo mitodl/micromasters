@@ -9,6 +9,7 @@ from unittest.mock import (
     patch,
 )
 
+from urllib.parse import urljoin
 import ddt
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
@@ -38,7 +39,7 @@ from dashboard.factories import CachedEnrollmentFactory, CachedCurrentGradeFacto
 from dashboard.models import CachedCertificate
 from dashboard.utils import MMTrack
 from exams.models import ExamAuthorization, ExamProfile
-from exams.factories import ExamRunFactory, ExamAuthorizationFactory
+from exams.factories import ExamRunFactory, ExamAuthorizationFactory, ExamRunCouponFactory
 from ecommerce.factories import LineFactory, OrderFactory
 from ecommerce.models import Order, Line
 from grades.constants import FinalGradeStatus
@@ -1965,23 +1966,32 @@ class ExamSchedulableTests(MockedESTestCase):
             operation=ExamAuthorization.OPERATION_DELETE if is_operation_delete else ExamAuthorization.OPERATION_ADD
         )
         if has_coupon:
-            exam_auth.exam_coupon_url = "http://example.com"
+            coupon = ExamRunCouponFactory.create(
+                course=exam_run.course,
+                coupon_url="http://example.com",
+                is_taken=False
+            )
+            exam_auth.exam_coupon = coupon
             exam_auth.save()
 
         assert api.is_exam_schedulable(exam_auth.user, exam_auth.course) is can_schedule_exam
 
 
 @ddt.ddt
-class ExamURLTests(MockedESTestCase):
-    """Tests exam schedulable"""
+class ExamCouponURLTests(MockedESTestCase):
+    """Tests edx exam coupons"""
     @ddt.data(
-        (ExamAuthorization.STATUS_SUCCESS, "http://example.com"),
-        (ExamAuthorization.STATUS_FAILED, "http://example.com"),
-        (ExamAuthorization.STATUS_SUCCESS, ""),
+        (ExamAuthorization.STATUS_SUCCESS, True, True),
+        (ExamAuthorization.STATUS_FAILED, True, False),
+        (ExamAuthorization.STATUS_SUCCESS, False, False),
     )
     @ddt.unpack
-    def test_get_edx_exam_coupon_url(self, auth_status, exam_url):
-        """Test that is_exam_schedulable is correct"""
+    def test_get_edx_exam_coupon_url(self, auth_status, has_coupon, returned_coupon):
+        """
+        Test that get_edx_exam_coupon_url returns a url only if student is authorized for an current exam run
+        and their is an available coupon
+        """
+        coupon_url = "http://example.com"
         exam_run = ExamRunFactory.create(
             scheduling_past=False,
             scheduling_future=False,
@@ -1991,10 +2001,33 @@ class ExamURLTests(MockedESTestCase):
             exam_run=exam_run,
             course=exam_run.course,
             status=auth_status,
-            exam_coupon_url=exam_url
         )
-        expected = exam_url if auth_status == 'success' else ""
+        if has_coupon:
+            ExamRunCouponFactory.create(course=exam_run.course, coupon_url=coupon_url, is_taken=False)
+        expected = coupon_url if returned_coupon else ""
         assert api.get_edx_exam_coupon_url(exam_auth.user, exam_auth.course) == expected
+
+    def test_get_edx_exam_coupon_url_returns_taken_coupon(self):
+        """
+        Test that get_edx_exam_coupon_url returns a url only if student is authorized for an current exam run
+        and their is an available coupon
+        """
+        coupon_url = "http://example.com"
+        exam_run = ExamRunFactory.create(
+            scheduling_past=False,
+            scheduling_future=False,
+            eligibility_past=False,
+        )
+        ExamRunCouponFactory.create(course=exam_run.course, coupon_url=coupon_url, is_taken=False)
+        ExamRunCouponFactory.create(course=exam_run.course, coupon_url='coupon_2', is_taken=False)
+        exam_auth = ExamAuthorizationFactory.create(
+            exam_run=exam_run,
+            course=exam_run.course,
+            status=ExamAuthorization.STATUS_SUCCESS,
+        )
+        assert api.get_edx_exam_coupon_url(exam_auth.user, exam_auth.course) == coupon_url
+        # call it second time should return same coupon
+        assert api.get_edx_exam_coupon_url(exam_auth.user, exam_auth.course) == coupon_url
 
 
 @ddt.ddt
@@ -2203,7 +2236,7 @@ class GetCertificateForCourseTests(CourseTests):
             "grade": "0.98"
         }
         self.mmtrack.certificates = CachedCertificate.deserialize_edx_data([cert_json])
-        certificate_url = (settings.EDXORG_BASE_URL + "certificates/user/course_key") if has_url else ""
+        certificate_url = urljoin(settings.EDXORG_BASE_URL, "certificates/user/course_key") if has_url else ""
         assert api.get_certificate_url(self.mmtrack, self.course) == certificate_url
 
 

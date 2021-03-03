@@ -6,7 +6,7 @@ from datetime import timedelta
 import faker
 import pytz
 import factory
-from factory import SubFactory
+from factory import SubFactory, fuzzy
 from factory.django import DjangoModelFactory
 from factory.fuzzy import FuzzyChoice
 
@@ -15,7 +15,7 @@ from exams.models import (
     ExamAuthorization,
     ExamProfile,
     ExamRun,
-)
+    ExamRunCoupon)
 from micromasters.factories import UserFactory
 from micromasters.utils import as_datetime
 from profiles.factories import ProfileFactory
@@ -116,3 +116,20 @@ class ExamAuthorizationFactory(DjangoModelFactory):
 
     class Meta:
         model = ExamAuthorization
+
+
+class ExamRunCouponFactory(DjangoModelFactory):
+    """
+    Factory for ExamRunCoupon
+    """
+    course = SubFactory(CourseFactory)
+    edx_exam_course_key = fuzzy.FuzzyText()
+    expiration_date = factory.Faker(
+        'date_time_this_month', before_now=False, after_now=True, tzinfo=pytz.utc
+    )
+    coupon_url = factory.Faker('url')
+    coupon_code = fuzzy.FuzzyText()
+    is_taken = factory.Faker('boolean')
+
+    class Meta:
+        model = ExamRunCoupon

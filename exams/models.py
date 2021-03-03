@@ -4,6 +4,7 @@ Models for exams
 from django.contrib.auth.models import User
 from django.db import models
 
+from courses.models import Course
 from micromasters.models import TimestampedModel
 from micromasters.utils import now_in_utc
 
@@ -157,6 +158,22 @@ class ExamProfile(TimestampedModel):
         return 'Exam Profile "{0}" with status "{1}"'.format(self.id, self.status)
 
 
+class ExamRunCoupon(TimestampedModel):
+    """Represents a coupon code url for an edx proctored exam"""
+    course = models.ForeignKey(Course, related_name='course_exam_coupons', on_delete=models.CASCADE)
+    edx_exam_course_key = models.CharField(max_length=30, null=False)
+    coupon_url = models.URLField(null=False)
+    coupon_code = models.CharField(max_length=30, null=False)
+    expiration_date = models.DateField(blank=True, null=True)
+    is_taken = models.BooleanField(default=False)
+
+    def use_coupon(self):
+        """Marks unused coupon as used for edx proctored exam"""
+        self.is_taken = True
+        self.save()
+        return self.coupon_url
+
+
 class ExamAuthorization(TimestampedModel):
     """
     Tracks state of an exam authorization
@@ -219,6 +236,7 @@ class ExamAuthorization(TimestampedModel):
     exam_taken = models.BooleanField(default=False)
     exam_no_show = models.BooleanField(default=False)
     exam_coupon_url = models.URLField(blank=True, null=True)
+    exam_coupon = models.OneToOneField(ExamRunCoupon, null=True, blank=True, on_delete=models.SET_NULL)
 
     @classmethod
     def taken_exams(cls):
