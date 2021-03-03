@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.186.0
+Version 0.186.0 (Released March 03, 2021)
 ---------------
 
 - Upgraded yargs-parser(min 13.1.2) and related changes (#4789)
