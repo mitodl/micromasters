@@ -10,120 +10,131 @@
 {% block content %}
 <div class="certificate">
   {% if certificate.user == user %}
-    <div class="row no-print">	
-      <div class="col px-0">	
-        <div class="cer-user-info">	
-          <div class="user-info-holder">	
-            <ul class="social-links">	
-              <li>	
-                  <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}&text={{ share_text|urlencode }}" target="_blank">	
-                      <img src="{% static 'images/certificates/icon-twitter.svg' %}" alt="Share to Twitter">	
-                  </a>	
-              </li>	
-              <li>	
-                  <a href="http://www.facebook.com/share.php?u={{ request.build_absolute_uri|urlencode }}" target="_blank">	
-                      <img src="{% static 'images/certificates/icon-facebook.svg' %}" alt="Share to Facebook">	
-                  </a>	
-              </li>	
-              <li>	
-                  <a href="https://www.linkedin.com/profile/add?startTask={{ page.product_name|urlencode }}" target="_blank">	
-                      <img src="{% static 'images/certificates/icon-linkedin.svg' %}" alt="Share to LinkedIn">	
-                  </a>	
-              </li>	
-              <li>	
-                  <a href="javascript:window.print();">	
-                      <img src="{% static 'images/certificates/icon-print.svg' %}" alt="Print">	
-                  </a>	
-              </li>	
-            </ul>	
-            <h2>Congratulations, {{ name }}!</h2>	
-            <p>You have successfully completed {% if course_title %}{{ course_title }}{% else %}{{ program_title }}{% endif %}. Share your accomplishment with your friends, family and colleagues. </p>	
-          </div>	
-        </div>	
-      </div>	
-    </div>	
+    <div class="row no-print">
+      <div class="col px-0">
+        <div class="cer-user-info">
+          <div class="user-info-holder">
+            <ul class="social-links">
+              <li>
+                <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}&text={{ share_text|urlencode }}" target="_blank">
+                    <img src="{% static 'images/certificates/icon-twitter.svg' %}" alt="Share to Twitter">
+                </a>
+              </li>
+              <li>
+                <a href="http://www.facebook.com/share.php?u={{ request.build_absolute_uri|urlencode }}" target="_blank">
+                    <img src="{% static 'images/certificates/icon-facebook.svg' %}" alt="Share to Facebook">
+                </a>
+              </li>
+              <li>
+                <a href="https://www.linkedin.com/profile/add?startTask={{ page.product_name|urlencode }}" target="_blank">
+                    <img src="{% static 'images/certificates/icon-linkedin.svg' %}" alt="Share to LinkedIn">
+                </a>
+              </li>
+              <li>
+                <a href="javascript:window.print();">
+                    <img src="{% static 'images/certificates/icon-print.svg' %}" alt="Print">
+                </a>
+              </li>
+            </ul>
+            <h2>Congratulations, {{ name }}!</h2>
+            <p>You worked hard to earn your certificate from MITx — share it with colleagues, friends, and family to get the word out about what you mastered in {% if course_title %}{{ course_title }}{% else %}{{ program_title }}{% endif %}.</p>
+          </div>
+        </div>
+      </div>
+    </div>
   {% endif %}
-
-  <main class="certificate-body verified row">
-
-    <div class="col-md-8">
-      <div class="micromasters-logo">
-        <img src="{% static 'images/micromasters_certificate_logo.png' %}" alt="MicroMaster's Certificate of Completion" />
-      </div>
-
-      <div class="certificate-text">
-        <p>This is to certify that</p>
-        <p class="name">{{ name }}</p>
-        {% if course_title %}
-          <p>has successfully completed and received a passing grade in</p>
-          <p class="course-name">{{ course_title }}</p>
-          <p>
-            a course offered by the {{ program_title }} MicroMasters program, an online learning initiative offered by
-            the Massachusetts Institute of Technology in collaboration with edX.
-          </p>
-        {% else %}
-          <p>
-            has successfully completed all the courses and received passing grades for a MicroMasters credential in
-          </p>
-          <p class="course-name">{{ program_title }}</p>
-          <p>
-            a program offered by MITx, in collaboration with edX.
-          </p>
-        {% endif %}
-      </div>
-
-      <div class="certificate-stamps row">
-        <div class="col-md-3 logo">
-          <a class="edx-logo" href="http://edx.org">
-            <img src="{% static 'images/edx_logo.svg' %}" alt="edX Logo" />
-          </a>
+  <main class="accomplishment accomplishment-main">
+    <div class="wrapper-accomplishment-rendering">
+      <div class="accomplishment-rendering">
+        <div class="wrapper-accomplishment-title verified">
+          <div class="accomplishment-title">
+              <img src="{% static 'images/certificates/micromasters_certificate_verified_logo.svg' %}" alt="MicroMaster's Certificate of Completion" />
+              <span class="sr-only">Verified Certificate</span>
+          </div>
+          <div class="wrapper-accomplishment-orgs">
+            <h3 class="accomplishment-orgs-title sr-only">Supported by the following organizations</h3>
+            <ul class="wrapper-orgs list-orgs">
+              <li class="wrapper-organization">
+                <div class="organization">
+                    <img src="{% static 'images/certificates/mitx_certificate_logo.png' %}" alt="MITx Logo" />
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div class="col-md-4 certificate-date">
-          <label>Verified Certificate</label>
-          <span>Issued {{ certificate.created_on|date:"F j, Y" }}</span>
+        <div class="wrapper-accomplishment-statement">
+          <div class="accomplishment-statement">
+            <p class="accomplishment-statement-lead">
+              <span class="accomplishment-statement-detail">This is to certify that</span>
+              <strong class="accomplishment-recipient">{{ name }}</strong>
+              {% if course_title %}
+                <span class="accomplishment-summary">successfully completed and received a passing grade in</span>
+                <span class="accomplishment-course">
+                  <span class="accomplishment-course-name">{{ course_title }}</span>
+                </span>
+                <span class="accomplishment-statement-detail">a course of study offered by MITx,
+                  an online learning initiative of the Massachusetts Institute of Technology.</span>
+              {% else %}
+                <span class="accomplishment-summary">successfully completed and received a passing grade in</span>
+                <span class="accomplishment-course">
+                  <span class="accomplishment-course-name">{{ program_title }}</span>
+                </span>
+                <span class="accomplishment-statement-detail">a program of study offered by MITx,
+                  an online learning initiative of the Massachusetts Institute of Technology.</span>
+              {% endif %}
+            </p>
+          </div>
+            <div class="accomplishment-signatories">
+              <h3 class="accomplishment-signatories-title sr-only">Noted by</h3>
+              <div class="wrapper-signatories">
+                <div class="list-signatories">
+                  {% for signatory in signatories %}
+                    <div class="signatory">
+                      {% image signatory.signature_image max-200x100 class="signatory-signature" %}
+                        <h4 class="signatory-name">{{ signatory.name }}</h4>
+                        <p class="signatory-credentials">
+                          <span class="role">{{ signatory.title_line_1 }}</span>
+                          {% if signatory.title_line_2 %}
+                            <br>
+                            <span class="role">{{ signatory.title_line_2 }}</span>
+                          {% endif %}
+                          <span class="organization">{{ signatory.organization }}</span>
+                        </p>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
         </div>
-        <div class="col-md-5 certificate-id">
-          <label>Valid Certificate ID</label>
-          <span>
-            {% if course_title %}
-              <a href="{% url 'certificate' certificate.hash %}">
-                {{ certificate.hash }}
+        <div class="wrapper-accomplishment-stamps">
+          <ul class="accomplishment-stamps copy-list">
+            <li class="accomplishment-stamp-platform">
+              <a class="img-link" href="http://edx.org">
+                <img class="logo-img" src="{% static 'images/edx_logo.svg' %}" alt="edX" />
               </a>
-            {% else %}
-              <a href="{% url 'program-certificate' certificate.hash %}">
-                {{ certificate.hash }}
-              </a>
-            {% endif %}
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4 right-col">
-      <div class="organization-logo">
-        <img src="{% static 'images/mitx_logo.png' %}" alt="MITx Logo" />
-      </div>
-
-      <div class="signatories">
-        <h3 class="sr-only">Noted by</h3>
-
-        {% for signatory in signatories %}
-        <div class="signatory">
-          {% image signatory.signature_image max-200x100 %}
-          <h4 class="name">{{ signatory.name }}</h4>
-          <ul class="credentials">
-            <li>{{ signatory.title_line_1 }}</li>
-            {% if signatory.title_line_2 %}
-              <li>{{ signatory.title_line_2 }}</li>
-            {% endif %}
+            </li>
+            <li class="accomplishment-stamp-date">
+              <span class="title">Verified Certificate</span>
+              <span class="copy-micro emphasized">Issued {{ certificate.created_on|date:"F j, Y" }}</span>
+            </li>
+            <li class="accomplishment-stamp-validity">
+              <span class="title">Valid Certificate ID</span>
+              <span class="emphasized">
+                {% if course_title %}
+                  <a href="{% url 'certificate' certificate.hash %}">
+                    {{ certificate.hash }}
+                  </a>
+                {% else %}
+                  <a href="{% url 'program-certificate' certificate.hash %}">
+                    {{ certificate.hash }}
+                  </a>
+                {% endif %}
+              </span>
+            </li>
           </ul>
-          <span class="organization">{{ signatory.organization }}</span>
         </div>
-        {% endfor %}
-
       </div>
     </div>
-
   </main>
 </div>
 {% include "footer.html" %}

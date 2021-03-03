@@ -1,303 +1,771 @@
-@media print {
-  @page {
-    size: auto;
-    margin: 0mm;
-  }
-
-  body {
-    margin: 0;
-  }
-}
-
 .certificate {
-  max-width: 1120px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 20px 0;
-  color: #4d4b4b;
-  font-size: 1rem;
-  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-weight: 300;
-  -webkit-font-smoothing: antialiased; // sass-lint:disable-line no-vendor-prefixes
+  max-width: 100%;
 
-  @media print {
-    width: 95%;
-    margin: 0;
-  }
+  .cer-user-info {
+    border: 1px solid #979797;
+    background-color: $navy-blue;
+    padding: 20px 0;
+    font: 14px/17px Helvetica;
+    color: white;
 
-  .certificate-body {
-    border: 1px solid #cdd7db;
-    background: #fcfcfc;
-    box-shadow: 0 1px 2px 1px rgba(167, 164, 164, 0.25);
-    padding: 35px 50px;
-    position: relative;
-
-    @media print {
-      border: none;
-      padding: 0;
-      margin: 1.4cm;
+    h2 {
+      margin: 10px 0 10px;
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: bold;
     }
 
-    .col-md-8 {
-      position: static;
+    p {
+      margin: 0;
     }
 
-    @media print {
-      .col-md-8 {
-        width: 50%;
-        float: left;
-      }
-
-      .col-md-4 {
-        width: 45%;
-        float: right;
-      }
-    }
-
-    &.verified {
-      background-position: 0 -60px;
-      background-size: 100% auto;
-      background-color: #fff;
-      background-repeat: no-repeat;
-    }
-
-    .micromasters-logo {
-      padding-bottom: 40px;
-
-      img {
-        width: 405px;
-
-        @media print {
-          width: 320px;
-        }
-      }
-    }
-
-    .organization-logo img {
-      width: 150px;
-
-      @media print {
-        width: 100px;
-      }
-    }
-
-    .certificate-text {
-      color: #4d4b4b;
-      padding-bottom: 75px;
-      font-weight: 400;
-
-      p {
-        margin: 0;
-        padding-bottom: 15px;
-        font-size: 18px;
-
-        @media print {
-          font-size: 12pt;
-        }
-      }
-
-      .name {
-        color: #000;
-        font-size: 40px;
-        font-weight: 600;
-        line-height: 44px;
-      }
-
-      .course-name {
-        color: #000;
-        font-size: 28px;
-        font-weight: 600;
-        line-height: 32px;
-      }
-    }
-
-    .certificate-stamps {
-      text-align: left;
-      font-size: 12px;
-      position: absolute;
-      bottom: 45px;
-      left: 68px;
-
-      @media print {
-        left: 12px;
-        bottom: 15px;
-
-        .col-md-3 {
-          width: 19%;
-          float: left;
-        }
-
-        .col-md-4,
-        .col-md-5 {
-          width: 33%;
-          float: left;
-        }
-      }
-
-      div {
-        padding: 0 20px 0 0;
-
-        @media print {
-          padding-right: 10px;
-        }
-      }
-
-      .edx-logo {
-        padding-right: 30px;
-
-        img {
-          width: 82px;
-        }
-      }
-
-      label {
-        display: block;
-        margin: 0;
-        color: #a7a4a4;
-        letter-spacing: 0.7px;
-        text-transform: uppercase;
-        font-weight: normal;
-      }
-
-      span {
-        color: #6b6969;
-        font-weight: 600;
-
-        a {
-          font-weight: 600;
-        }
-      }
-    }
-
-    .right-col {
-      text-align: right;
-    }
-
-    .organization-logo {
-      padding-bottom: 32px;
-
-      @media print {
-        padding-bottom: 20px;
-      }
-    }
-
-    .signatory {
-      padding-bottom: 10px;
-
-      .name {
-        margin: 0;
-        padding: 0 0 5px;
-        font-size: 14px;
-        font-weight: 600;
-        line-height: 1.6;
-      }
-
-      ul {
-        margin: 0;
-        padding: 0 0 5px;
-        list-style: none;
-        text-indent: 0;
-        color: #6b6969;
-        font-size: 12px;
-
-        @media print {
-          padding-bottom: 0;
-        }
-
-        li {
-          line-height: 18px;
-
-          @media print {
-            line-height: 15px;
-          }
-        }
-      }
-
-      .organization {
-        color: #6b6969;
-        font-size: 12px;
-        font-style: italic;
-      }
+    .user-info-holder {
+      margin: 0 auto;
+      max-width: 90%;
+      padding: 0 15px;
     }
   }
-}
 
-.cer-user-info {
-  border: 1px solid #979797;
-  background-color: $navy-blue;
-  padding: 20px 0;
-  font: 14px/17px Helvetica;
-  color: white;
+  .social-links {
+    margin: 10px 0 20px 30px;
+    list-style: none;
+    padding: 0;
+    float: right;
 
-  h2 {
-    margin: 10px 0 10px;
-    font-size: 16px;
-    line-height: 22px;
-    font-weight: bold;
+    @include breakpoint(phone) {
+      float: none;
+      margin: 0;
+      text-align: center;
+    }
+
+    li {
+      display: inline-block;
+      vertical-align: middle;
+      margin: 0 0 0 15px;
+
+      @include breakpoint(phone) {
+        margin: 0 10px 15px;
+      }
+    }
+
+    img {
+      width: 25px;
+    }
   }
 
-  p {
-    margin: 0;
-  }
-
-  .user-info-holder {
-    margin: 0 auto;
-    max-width: 1000px;
-    padding: 0 15px;
-  }
-}
-
-.social-links {
-  margin: 10px 0 20px 30px;
-  list-style: none;
-  padding: 0;
-  float: right;
-
-  @include breakpoint(phone) {
-    float: none;
-    margin: 0;
-    text-align: center;
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   li {
-    display: inline-block;
-    vertical-align: middle;
-    margin: 0 0 0 15px;
+    list-style: none;
+  }
 
-    @include breakpoint(phone) {
-      margin: 0 10px 15px;
+  h3,
+  h4,
+  .wrapper-accomplishment-title .accomplishment-title,
+  .wrapper-accomplishment-statement .accomplishment-recipient,
+  .wrapper-accomplishment-statement .accomplishment-course,
+  .wrapper-accomplishment-statement .wrapper-accomplishment-orgs .organization-name,
+  .accomplishment-stamps .title,
+  .signatory .signatory-name,
+  .banner-user .message-title {
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: #00262b;
+  }
+
+  .wrapper-accomplishment-title .accomplishment-title {
+    display: block;
+    font-weight: 300;
+    font-size: 2.5rem;
+    line-height: 1.1;
+    text-transform: uppercase;
+    color: #00262b;
+  }
+
+  .wrapper-accomplishment-statement .accomplishment-recipient {
+    font-size: 2rem;
+    line-height: 1.2;
+    font-weight: 500;
+    color: #454545;
+  }
+
+  h3,
+  .wrapper-accomplishment-statement .accomplishment-course,
+  .wrapper-accomplishment-statement {
+    font-size: 1.375rem;
+  }
+
+  .wrapper-accomplishment-orgs .organization-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    word-wrap: break-word;
+    text-align: center;
+  }
+
+  .accomplishment-stamps .title,
+  .signatory .signatory-name {
+    font-size: 0.75rem;
+  }
+
+  .wrapper-accomplishment-title,
+  .wrapper-accomplishment-statement {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+
+  .wrapper-accomplishment-title .accomplishment-title,
+  .wrapper-accomplishment-orgs,
+  .accomplishment-signatories,
+  .accomplishment-statement {
+    position: relative;
+    width: 100%;
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  @media (min-width: 768px) {
+    .wrapper-accomplishment-title .accomplishment-title,
+    .wrapper-accomplishment-orgs {
+      flex: 0 0 50%;
+      max-width: 50%;
     }
   }
 
-  img {
-    width: 25px;
+  .wrapper-accomplishment-statement .accomplishment-recipient,
+  .wrapper-accomplishment-statement .accomplishment-course,
+  .wrapper-accomplishment-statement .wrapper-accomplishment-statement .wrapper-accomplishment-statement {
+    margin: 0 !important;
+  }
+
+  .accomplishment-statement {
+    border-bottom: 1px solid #707070;
+    margin-bottom: 3rem !important;
+  }
+
+  .signatory .signatory-credentials .organization {
+    margin-top: 0.25rem !important;
+    display: block;
+    font-style: italic;
+  }
+
+  .signatory,
+  .wrapper-accomplishment-orgs {
+    margin-top: 1.5rem !important;
+  }
+
+  .wrapper-accomplishment-statement .accomplishment-recipient,
+  .wrapper-accomplishment-statement .accomplishment-course,
+  .wrapper-accomplishment-statement .wrapper-accomplishment-statement .wrapper-accomplishment-statement,
+  .wrapper-accomplishment-title .accomplishment-title,
+  .wrapper-accomplishment-orgs,
+  .accomplishment-statement .accomplishment-recipient,
+  .accomplishment-statement .accomplishment-course,
+  .accomplishment-statement .accomplishment-statement .accomplishment-statement {
+    margin-bottom: 1.5rem !important;
+  }
+
+  .wrapper-accomplishment-stamps {
+    margin-top: 3rem !important;
+  }
+
+  .wrapper-accomplishment-title .accomplishment-title,
+  .wrapper-accomplishment-orgs {
+    padding: 0 !important;
+  }
+
+  .accomplishment-statement,
+  .accomplishment-signatories {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    padding-bottom: 1.5rem !important;
+  }
+
+  @media (max-width: 576px) {
+
+    h3,
+    .wrapper-accomplishment-statement .accomplishment-course,
+    .wrapper-accomplishment-statement {
+      font-size: 1.375rem;
+    }
+  }
+
+  .img-link {
+    border-bottom: none;
+    padding: 0;
+  }
+
+  .img-link:hover,
+  .img-link:focus,
+  .img-link:active {
+    border-bottom: 0;
+  }
+
+  .accomplishment-stamps .title,
+  .signatory .signatory-credentials,
+  .accomplishment-stamps .emphasized {
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .accomplishment-stamps .title {
+    font-weight: 500;
+    letter-spacing: 0.03125rem;
+    color: #6c757d;
+    display: block;
+    margin-bottom: 0;
+  }
+
+  .wrapper-accomplishment-title .accomplishment-title-label {
+    margin-left: 13px;
+    display: block;
+    font-size: 3.25rem;
+    letter-spacing: 0.26em;
+  }
+
+  @media (min-width: 768px) {
+    .wrapper-accomplishment-title .accomplishment-title-label {
+      margin-left: 0;
+      font-size: 3.75rem;
+    }
+  }
+
+  .wrapper-accomplishment-title.verified .accomplishment-title-label {
+    margin-left: 13px;
+    display: block;
+    font-size: 3.25rem;
+    letter-spacing: 0.16em;
+  }
+
+  @media (min-width: 768px) {
+    .wrapper-accomplishment-title.verified .accomplishment-title-label {
+      font-size: 3.75rem;
+      margin-left: 0;
+    }
+  }
+
+  .wrapper-accomplishment-orgs img {
+    max-width: 275px;
+    max-height: 100px;
+  }
+
+  .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(3),
+  .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(3)~.wrapper-organization {
+    display: block;
+    margin: 2.5rem auto;
+  }
+
+  @media (min-width: 768px) {
+    .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(3),
+    .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(3)~.wrapper-organization {
+      display: inline-block;
+      max-width: 32%;
+      margin: 0;
+      vertical-align: middle;
+    }
+
+    .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(3) .organization,
+    .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(3)~.wrapper-organization .organization {
+      margin-left: 2.5rem;
+    }
+  }
+
+  .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(2),
+  .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(2)~.wrapper-organization {
+    display: block;
+    margin: 2.5rem auto;
+  }
+
+  @media (min-width: 768px) {
+    .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(2),
+    .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(2)~.wrapper-organization {
+      display: inline-block;
+      max-width: 48%;
+      margin: 0;
+      vertical-align: middle;
+    }
+
+    .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(2) .organization,
+    .wrapper-accomplishment-orgs .wrapper-organization:first-child:nth-last-child(2)~.wrapper-organization .organization {
+      margin-left: 2.5rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .wrapper-accomplishment-statement .accomplishment-recipient {
+      font-size: 2.5rem;
+    }
+  }
+
+  .wrapper-accomplishment-statement .accomplishment-course,
+  .wrapper-accomplishment-statement {
+    line-height: 1.2;
+    font-weight: 500;
+    color: #454545;
+  }
+
+  @media (min-width: 768px) {
+    .wrapper-accomplishment-statement .accomplishment-course,
+    .wrapper-accomplishment-statement {
+      font-size: 1.75rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .wrapper-accomplishment-statement {
+      font-size: 1.125rem;
+    }
+  }
+
+  .wrapper-signatories img {
+    max-width: 100%;
+    max-height: 150px;
+  }
+
+  .signatory .signatory-signature {
+    max-width: 60%;
+    max-height: 60px;
+  }
+
+  .signatory .signatory-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.6;
+    color: #454545;
+  }
+
+  .signatory .signatory-credentials {
+    color: #707070;
+  }
+
+  .signatory .signatory-credentials .role {
+    white-space: pre-line;
+  }
+
+  .accomplishment-stamps .emphasized {
+    display: block;
+    font-weight: 700;
+    color: #6c757d;
+  }
+
+  .accomplishment-rendering {
+    margin: 2%;
+    border: 1px solid #707070;
+    padding: 7% 5% 5% 5% !important;
+    box-shadow: 0 1px 2px 1px rgba(167, 164, 164, 0.25);
+    text-align: center;
+    background-color: white;
+    background-image: none;
+    background-repeat: no-repeat;
+  }
+
+  ul.wrapper-orgs.list-orgs {
+    padding-left: 0px;
+  }
+
+  @media (min-width: 768px) {
+    .accomplishment-rendering {
+      text-align: left;
+      padding: 5% 5% 3% !important;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .accomplishment-rendering {
+      background-position: -375px -50px;
+      background-size: 100% auto;
+    }
+  }
+
+  .wrapper-accomplishment-title .accomplishment-title img {
+    width: 250px;
+  }
+
+  @media (min-width: 768px) {
+    .wrapper-accomplishment-title .accomplishment-title {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .wrapper-accomplishment-title .accomplishment-title img {
+      width: 275px;
+    }
+  }
+
+  .wrapper-accomplishment-orgs {
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .wrapper-accomplishment-orgs {
+      text-align: right;
+      display: inline-block;
+      vertical-align: middle;
+      margin-bottom: 3rem !important;
+    }
+  }
+
+  .accomplishment-statement .accomplishment-recipient,
+  .accomplishment-statement .accomplishment-course,
+  .accomplishment-statement .accomplishment-statement .accomplishment-statement {
+    display: block;
+  }
+
+  .accomplishment-statement .accomplishment-statement {
+    color: #707070;
+    font-size: 1.125rem !important;
+  }
+
+  .accomplishment-signatories {
+    border-bottom: 1px solid #707070;
+  }
+
+  @media (min-width: 992px) {
+    .wrapper-accomplishment-title .accomplishment-title img {
+      width: 300px;
+    }
+
+    .accomplishment-statement {
+      display: inline-block;
+      vertical-align: middle;
+      border: 0;
+      flex: 0 0 66.66667%;
+      max-width: 66.66667%;
+    }
+
+    .accomplishment-signatories {
+      flex: 0 0 33.33333%;
+      max-width: 33.33333%;
+      padding-bottom: 0 !important;
+      text-align: right;
+      display: inline-block;
+      vertical-align: top;
+      border-bottom: 0;
+    }
+  }
+
+  .list-signatories {
+    display: flex;
+    flex-flow: row wrap;
+  }
+
+  .signatory {
+    width: 100%;
+  }
+
+  @media (min-width: 768px) and (max-width: 991.98px) {
+    .signatory {
+      width: 50%;
+    }
+  }
+
+  .accomplishment-stamps .accomplishment-stamp-platform {
+    margin-bottom: 15px;
+  }
+
+  .accomplishment-stamps .accomplishment-stamp-platform .logo-img {
+    width: 100px;
+  }
+
+  @media (min-width: 992px) {
+    .accomplishment-stamps .accomplishment-stamp-platform {
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 25px;
+      margin-bottom: 10px;
+    }
+  }
+
+  .accomplishment-stamps .accomplishment-stamp-date {
+    margin-bottom: 10px;
+  }
+
+  @media (min-width: 992px) {
+    .accomplishment-stamps .accomplishment-stamp-date {
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 25px;
+    }
+  }
+
+  .accomplishment-stamps .accomplishment-stamp-validity {
+    margin-bottom: 10px;
+  }
+
+  @media (min-width: 992px) {
+    .accomplishment-stamps .accomplishment-stamp-validity {
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 25px;
+    }
+  }
+
+  .emphasized a {
+    color: #00262b;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+      color: black;
+    }
+  }
+
+  .wrapper-accomplishment-stamps ul {
+    padding: 0px;
+  }
+
+  .accomplishment-statement-detail,
+  .accomplishment-summary {
+    margin: 0 !important;
+    margin-bottom: 1.5rem !important;
+    display: block;
+    color: #707070;
+    font-size: 1.125rem !important;
+    font-weight: 350;
+    line-height: 1.5;
+  }
+
+  .role {
+    font-weight: 400;
   }
 }
 
 @media print {
-  @page {
-    size: auto;
-  }
-
-  .no-print {
-    display: none;
-  }
-
-  #footer {
-    display: none;
-  }
-}
-
-@media print and (orientation: landscape) {
   body {
+    margin: 0;
+    max-height: 95%;
     display: flex;
     justify-content: center;
     align-items: center;
   }
-}
 
-@media print {
-  a[href]:after {
-    content: "";
+  #footer {
+    display: none !important;
+    height: 0 !important;
+  }
+
+  .no-print {
+    display: none !important;
+    height: 0 !important;
+  }
+
+  .certificate {
+    background-color: #e8e8e8 !important;
+    max-width: 100%;
+    padding: 5px;
+    color-adjust: exact !important;
+    // sass-lint:disable no-vendor-prefixes
+    -webkit-print-color-adjust: exact !important;
+
+    @page {
+      margin: 0mm;
+    }
+
+    a[href]:after {
+      content: none !important;
+    }
+
+    .accomplishment .accomplishment-rendering {
+      text-align: left;
+      top: 0 !important;
+      box-shadow: none;
+      padding: 0.625rem 2.5rem !important;
+      background-color: #fff !important;
+      background-repeat: no-repeat !important;
+      background-position: -275px -50px !important;
+      background-size: 100% auto !important;
+    }
+
+    .accomplishment .accomplishment-rendering .wrapper-accomplishment-title {
+      display: flex;
+      flex-wrap: wrap;
+      margin-right: -16px;
+      margin-left: -16px;
+    }
+
+    .accomplishment .accomplishment-rendering .wrapper-accomplishment-title.verified .accomplishment-title {
+      position: relative;
+      width: 100%;
+      padding-right: 16px;
+      padding-left: 16px;
+      flex: 0 0 66.66667%;
+      max-width: 66.66667%;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .accomplishment .accomplishment-rendering .wrapper-accomplishment-title.verified .accomplishment-title img {
+      max-width: 25% !important;
+    }
+
+    .accomplishment .accomplishment-rendering .wrapper-accomplishment-title .accomplishment-title {
+      position: relative;
+      width: 100%;
+      padding-right: 16px;
+      padding-left: 16px;
+      flex: 0 0 66.66667%;
+      max-width: 66.66667%;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .accomplishment .accomplishment-rendering .wrapper-accomplishment-orgs {
+      position: relative;
+      width: 100%;
+      padding-right: 16px;
+      padding-left: 16px;
+      flex: 0 0 33.33333%;
+      max-width: 33.33333%;
+      display: inline-block;
+      vertical-align: middle;
+      margin-bottom: 30px !important;
+    }
+
+    .accomplishment .accomplishment-rendering .wrapper-accomplishment-orgs .organization img {
+      max-width: 220px !important;
+    }
+
+    .accomplishment .accomplishment-rendering .wrapper-accomplishment-statement {
+      display: flex;
+      flex-wrap: wrap;
+      margin-right: -16px;
+      margin-left: -16px;
+    }
+
+    .accomplishment .accomplishment-rendering .accomplishment-statement {
+      position: relative;
+      width: 100%;
+      padding-right: 16px;
+      padding-left: 16px;
+      flex: 0 0 58.33333%;
+      max-width: 58.33333%;
+      text-align: left;
+      display: inline-block;
+      vertical-align: top;
+      border-bottom: 0;
+      padding-bottom: 1rem !important;
+    }
+
+    .accomplishment .accomplishment-rendering .accomplishment-signatories {
+      position: relative;
+      width: 100%;
+      padding-right: 16px;
+      padding-left: 16px;
+      flex: 0 0 41.66667%;
+      max-width: 41.66667%;
+      text-align: right;
+      display: inline-block;
+      vertical-align: top;
+      border-bottom: 0;
+      padding-bottom: 0 !important;
+    }
+
+    .accomplishment .accomplishment-rendering .list-signatories {
+      display: flex;
+      flex-flow: row wrap;
+    }
+
+    .accomplishment .accomplishment-rendering .signatory {
+      width: 100%;
+    }
+
+    .wrapper-accomplishment-stamps {
+      margin-top: 0 !important;
+    }
+
+    .accomplishment-stamps .accomplishment-stamp-platform {
+      display: inline-block;
+      vertical-align: top;
+      margin-bottom: 0 !important;
+      padding-top: 0 !important;
+      margin-right: 25px;
+    }
+
+    .accomplishment-stamps .accomplishment-stamp-platform .logo-img {
+      max-width: 75px !important;
+    }
+
+    .accomplishment-stamps .accomplishment-stamp-date {
+      display: inline-block;
+      vertical-align: top;
+      margin-right: 25px;
+    }
+
+    .accomplishment-stamps .accomplishment-stamp-validity {
+      display: inline-block;
+      vertical-align: top;
+      margin-right: 25px;
+    }
+
+    .accomplishment-stamps {
+      font-size: 0.75rem !important;
+      display: inline-block;
+      vertical-align: top;
+    }
+
+    .wrapper-accomplishment-rendering {
+      padding: 0 !important;
+    }
+
+    .print:last-child {
+      page-break-after: auto;
+    }
+
+    .wrapper-accomplishment-statement {
+      font-size: 1.125rem;
+      line-height: 1.6;
+      color: #6c757d;
+    }
+
+    .wrapper-accomplishment-statement .accomplishment-statement,
+    .wrapper-accomplishment-statement .wrapper-accomplishment-statement {
+      font-size: 1.125rem !important;
+    }
+
+    .wrapper-accomplishment-statement .accomplishment-recipient,
+    .wrapper-accomplishment-statement .accomplishment-course {
+      font-size: 1.313rem !important;
+    }
+
+    .signatory .signatory-signature {
+      max-width: 50%;
+      height: 40px;
+    }
+
+    .signatory .signatory-name,
+    .signatory .signatory-credentials {
+      margin-bottom: 2px;
+      font-size: 0.625rem;
+      line-height: 1.5;
+    }
+
+    .accomplishment-stamps .title {
+      font-size: 0.625rem;
+      line-height: 1.5;
+    }
+
+    .accomplishment-stamps .emphasized {
+      font-weight: normal;
+      font-size: 0.625rem;
+      line-height: 1.5;
+    }
+
+    .wrapper-organization {
+      margin-top: 20px;
+      margin-right: 50px;
+      margin-left: 40px;
+    }
   }
 }
