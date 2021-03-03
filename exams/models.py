@@ -168,7 +168,7 @@ class ExamRunCoupon(TimestampedModel):
     is_taken = models.BooleanField(default=False)
 
     def use_coupon(self):
-        """Returns unused coupon url for edx proctored exam"""
+        """Marks unused coupon as used for edx proctored exam"""
         self.is_taken = True
         self.save()
         return self.coupon_url
