@@ -313,9 +313,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     exams &&
     paid
   ) {
-    let message
-
-    message = (passedExam || failedExam)
+    const message = (passedExam || failedExam)
       ? messageForAttemptedEdxExams(course, passedExam)
       : messageForNotAttemptedEdxExam(course)
     if (course.has_to_pay) {

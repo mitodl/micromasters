@@ -836,55 +836,6 @@ class MMTrackTest(MockedESTestCase):
         assert mmtrack.has_paid(key) is True
 
     @ddt.data(
-        ["", "", False, False, False, False],
-        ["", ExamProfile.PROFILE_ABSENT, True, False, False, False],
-        [ExamProfile.PROFILE_INVALID, ExamProfile.PROFILE_INVALID, True, True, False, False],
-        [ExamProfile.PROFILE_FAILED, ExamProfile.PROFILE_INVALID, True, True, False, False],
-        ["", ExamProfile.PROFILE_INVALID, True, True, False, True],
-        [ExamProfile.PROFILE_PENDING, ExamProfile.PROFILE_IN_PROGRESS, True, True, False, False],
-        [ExamProfile.PROFILE_IN_PROGRESS, ExamProfile.PROFILE_IN_PROGRESS, True, True, False, False],
-        [ExamProfile.PROFILE_SUCCESS, ExamProfile.PROFILE_SUCCESS, True, True, False, False],
-        [ExamProfile.PROFILE_SUCCESS, ExamProfile.PROFILE_SCHEDULABLE, True, True, True, False],
-    )
-    @ddt.unpack  # pylint: disable=too-many-arguments
-    @patch('dashboard.utils.log')
-    def test_get_exam_card_status(self, profile_status, expected_status, make_exam_run,
-                                  make_profile, make_auth, log_error_called, log_mock):
-        """
-        test get_exam_card_status
-        """
-        now = now_in_utc()
-        exam_run = None
-        if make_exam_run:
-            exam_run = ExamRunFactory.create(
-                course=self.course,
-                date_first_eligible=now - timedelta(weeks=1),
-                date_last_eligible=now + timedelta(weeks=1),
-            )
-
-        if make_profile:
-            ExamProfileFactory.create(
-                profile=self.user.profile,
-                status=profile_status,
-            )
-
-        if make_auth:
-            ExamAuthorizationFactory.create(
-                user=self.user,
-                status=ExamAuthorization.STATUS_SUCCESS,
-                exam_run=exam_run,
-            )
-
-        mmtrack = MMTrack(
-            user=self.user,
-            program=self.program,
-            edx_user_data=self.cached_edx_user_data
-        )
-
-        assert mmtrack.get_exam_card_status() == expected_status
-        assert log_mock.error.called is log_error_called
-
-    @ddt.data(
         ["", "", False, False, False],
         ["", ExamProfile.PROFILE_ABSENT, True, False, False],
         [ExamProfile.PROFILE_INVALID, ExamProfile.PROFILE_SUCCESS, True, True, False],
