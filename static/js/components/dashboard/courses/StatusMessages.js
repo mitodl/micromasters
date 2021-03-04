@@ -74,7 +74,6 @@ type CalculateMessagesProps = {
   coupon?: Coupon
 }
 
-
 const messageForNotAttemptedEdxExam = (course: Course) => {
   let message =
     "There are currently no exams available. Please check back later."
@@ -99,7 +98,9 @@ const messageForNotAttemptedEdxExam = (course: Course) => {
 }
 
 const messageForAttemptedEdxExams = (course: Course, passedExam: boolean) => {
-  const passedMsg = passedExam ? "You passed the exam." : "You did not pass the exam."
+  const passedMsg = passedExam
+    ? "You passed the exam."
+    : "You did not pass the exam."
   if (course.has_to_pay && course.can_schedule_exam) {
     return `${passedMsg} If you want to re-take the exam, you need to pay again.`
   }
@@ -313,9 +314,10 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     exams &&
     paid
   ) {
-    const message = (passedExam || failedExam)
-      ? messageForAttemptedEdxExams(course, passedExam)
-      : messageForNotAttemptedEdxExam(course)
+    const message =
+      passedExam || failedExam
+        ? messageForAttemptedEdxExams(course, passedExam)
+        : messageForNotAttemptedEdxExam(course)
     if (course.has_to_pay) {
       messages.push({
         message: message,

@@ -376,7 +376,7 @@ describe("Course Status Messages", () => {
         assert.equal(
           mountedOne.text().trim(),
           "You passed the exam. You are authorized to take the virtual proctored exam for this course. " +
-          "Please enroll now and complete the exam onboarding."
+            "Please enroll now and complete the exam onboarding."
         )
         const mountedTwo = shallow(messages[2]["message"])
         assert.equal(
@@ -393,10 +393,7 @@ describe("Course Status Messages", () => {
 
         const messages = calculateMessages(calculateMessagesProps).value
         assert.equal(messages[0]["message"], "You passed this course.")
-        assert.equal(
-          messages[1]["message"],
-          "You passed the exam."
-        )
+        assert.equal(messages[1]["message"], "You passed the exam.")
         const mounted = shallow(messages[2]["message"])
         assert.equal(
           mounted.text().trim(),
@@ -453,7 +450,7 @@ describe("Course Status Messages", () => {
         assert.equal(
           mounted.text(),
           "You are authorized to take the virtual proctored exam for this " +
-          "course. Please enroll now and complete the exam onboarding."
+            "course. Please enroll now and complete the exam onboarding."
         )
       })
       it("should let the user know when can take exam in the future", () => {
@@ -467,8 +464,8 @@ describe("Course Status Messages", () => {
         assertIsJust(calculateMessages(calculateMessagesProps), [
           {
             message:
-            "You can take the exam starting " +
-            `on ${formatDate(course.exams_schedulable_in_future[0])}.`
+              "You can take the exam starting " +
+              `on ${formatDate(course.exams_schedulable_in_future[0])}.`
           }
         ])
       })
@@ -488,7 +485,7 @@ describe("Course Status Messages", () => {
         assert.equal(
           mounted.text(),
           "You passed the exam. You are authorized to take the virtual proctored " +
-          "exam for this course. Please enroll now and complete the exam onboarding."
+            "exam for this course. Please enroll now and complete the exam onboarding."
         )
       })
       // Cases with failed exam attempts
@@ -507,7 +504,7 @@ describe("Course Status Messages", () => {
         assert.equal(
           mounted.text(),
           "You did not pass the exam. You are authorized to take the virtual proctored " +
-          "exam for this course. Please enroll now and complete the exam onboarding."
+            "exam for this course. Please enroll now and complete the exam onboarding."
         )
       })
       it("should prompt the user when failed exam", () => {
@@ -516,7 +513,7 @@ describe("Course Status Messages", () => {
         course.proctorate_exams_grades[0].passed = false
         course.can_schedule_exam = false
         assertIsJust(calculateMessages(calculateMessagesProps), [
-          {message: "You did not pass the exam."}
+          { message: "You did not pass the exam." }
         ])
       })
     })
@@ -536,10 +533,7 @@ describe("Course Status Messages", () => {
       const messages = calculateMessages(calculateMessagesProps).value
       assert.equal(messages.length, 3)
       assert.equal(messages[0]["message"], "You passed this course.")
-      assert.equal(
-        messages[1]["message"],
-        "You passed the exam."
-      )
+      assert.equal(messages[1]["message"], "You passed the exam.")
       let mounted = shallow(messages[2]["message"])
       assert.equal(
         mounted.text().trim(),
