@@ -372,15 +372,15 @@ describe("Course Status Messages", () => {
         course.exam_url = "http://example.com"
         const messages = calculateMessages(calculateMessagesProps).value
         assert.equal(messages[0]["message"], "You passed this course.")
-        const mounted_1 = shallow(messages[1]["message"])
+        const mountedOne = shallow(messages[1]["message"])
         assert.equal(
-          mounted_1.text().trim(),
+          mountedOne.text().trim(),
           "You passed the exam. You are authorized to take the virtual proctored exam for this course. " +
           "Please enroll now and complete the exam onboarding."
         )
-        const mounted_2 = shallow(messages[2]["message"])
+        const mountedTwo = shallow(messages[2]["message"])
         assert.equal(
-          mounted_2.text().trim(),
+          mountedTwo.text().trim(),
           "If you want to re-take the course you can re-enroll."
         )
       })

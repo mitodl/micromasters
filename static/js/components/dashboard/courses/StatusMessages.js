@@ -99,21 +99,21 @@ const messageForNotAttemptedEdxExam = (course: Course) => {
 }
 
 const messageForAttemptedEdxExams = (course: Course, passedExam: boolean) => {
-  const passed_msg = passedExam ? "You passed the exam." : "You did not pass the exam."
+  const passedMsg = passedExam ? "You passed the exam." : "You did not pass the exam."
   if (course.has_to_pay && course.can_schedule_exam) {
-    return `${passed_msg} If you want to re-take the exam, you need to pay again.`
+    return `${passedMsg} If you want to re-take the exam, you need to pay again.`
   }
   if (course.can_schedule_exam && course.exam_url) {
     return (
       <span>
-        {`${passed_msg} You are authorized to take the virtual proctored exam for this course. Please `}
+        {`${passedMsg} You are authorized to take the virtual proctored exam for this course. Please `}
         <a href={course.exam_url}>
           enroll now and complete the exam onboarding.
         </a>
       </span>
     )
   }
-  return `${passed_msg}`
+  return `${passedMsg}`
 }
 
 const courseStartMessage = (run: CourseRun) => {
