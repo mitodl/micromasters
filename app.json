@@ -258,7 +258,7 @@
     "Office of Digital Learning"
   ],
   "name": "micromasters",
-  "stack": "heroku-16",
+  "stack": "heroku-20",
   "repository": "https://github.com/mitodl/micromasters",
   "scripts": {
     "postdeploy": "./manage.py migrate --noinput && ./manage.py recreate_index"
