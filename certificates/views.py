@@ -41,8 +41,22 @@ class CertificateView(TemplateView):
             "edx_base_url": settings.EDXORG_BASE_URL,
         }
         context["js_settings_json"] = json.dumps(js_settings)
+        context["twitter_share_text"] = "I just earned a Certificate on @Micromasters! Check it out: "
 
         return context
+
+    def _create_linkedin_share_context(self, cert, cert_name, org_id="2746406"):
+        """
+        This method takes certificate details and returns a string of LinkedIn specific queryparams to be
+        added directly to certificate share button
+        """
+        return 'certId={certId}&issueMonth={issueMonth}&issueYear={issueYear}&name={certName}&organizationId={organizationId}&isFromA2p=true'.format(
+            certId=cert.hash,
+            issueMonth=cert.created_on.month,
+            issueYear=cert.created_on.year,
+            certName=cert_name,
+            organizationId=org_id,
+        )
 
 
 class CourseCertificateView(CertificateView):  # pylint: disable=unused-argument
@@ -74,6 +88,7 @@ class CourseCertificateView(CertificateView):  # pylint: disable=unused-argument
         context['name'] = certificate.user.profile.full_name
         context['signatories'] = list(signatories)
         context['certificate'] = certificate
+        context['linkedin_share_context'] = self._create_linkedin_share_context(certificate, course.title)
 
         return context
 
@@ -108,6 +123,7 @@ class ProgramCertificateView(CertificateView):
         context['name'] = certificate.user.profile.full_name
         context['signatories'] = list(signatories)
         context['certificate'] = certificate
+        context['linkedin_share_context'] = self._create_linkedin_share_context(certificate, program.title)
 
         return context
 
