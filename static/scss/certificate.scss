@@ -164,7 +164,9 @@
     font-style: italic;
   }
 
-  .signatory,
+  .signatory {
+    margin-top: 0rem !important;
+  }
   .wrapper-accomplishment-orgs {
     margin-top: 1.5rem !important;
   }
@@ -337,6 +339,11 @@
     max-height: 150px;
   }
 
+  .signatory .signatory-name {
+    margin-top: 0px;
+    margin-bottom: 2px;
+  }
+
   .signatory .signatory-signature {
     max-width: 60%;
     max-height: 60px;
@@ -416,7 +423,7 @@
       text-align: right;
       display: inline-block;
       vertical-align: middle;
-      margin-bottom: 3rem !important;
+      margin-bottom: 0rem !important;
     }
   }
 
@@ -540,6 +547,15 @@
     line-height: 1.5;
   }
 
+  .accomplishment-statement-detail {
+    margin-top: 4rem !important;
+  }
+
+  .accomplishment-statement-detail.institute-detail {
+    margin-top: 1.5rem !important;
+    margin-bottom: 4rem !important;
+  }
+
   .role {
     font-weight: 400;
   }
@@ -548,7 +564,7 @@
 @media print {
   body {
     margin: 0;
-    max-height: 95%;
+    max-height: 98%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -567,7 +583,6 @@
   .certificate {
     background-color: #e8e8e8 !important;
     max-width: 100%;
-    padding: 5px;
     color-adjust: exact !important;
     // sass-lint:disable no-vendor-prefixes
     -webkit-print-color-adjust: exact !important;
@@ -633,7 +648,8 @@
       max-width: 33.33333%;
       display: inline-block;
       vertical-align: middle;
-      margin-bottom: 30px !important;
+      margin-top: 0px;
+      margin-bottom: 25px !important;
     }
 
     .accomplishment .accomplishment-rendering .wrapper-accomplishment-orgs .organization img {
@@ -685,7 +701,7 @@
     }
 
     .wrapper-accomplishment-stamps {
-      margin-top: 0 !important;
+      margin-top: -40px !important;
     }
 
     .accomplishment-stamps .accomplishment-stamp-platform {
@@ -768,7 +784,11 @@
     .wrapper-organization {
       margin-top: 20px;
       margin-right: 50px;
-      margin-left: 40px;
+      margin-left: 60px;
+    }
+
+    .accomplishment-rendering {
+      margin: 0px !important;
     }
   }
 }
