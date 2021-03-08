@@ -165,9 +165,12 @@
   }
 
   .signatory {
+    width: 100%;
     margin-top: 0rem !important;
   }
+
   .wrapper-accomplishment-orgs {
+    text-align: center;
     margin-top: 1.5rem !important;
   }
 
@@ -340,6 +343,10 @@
   }
 
   .signatory .signatory-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.6;
+    color: #454545;
     margin-top: 0px;
     margin-bottom: 2px;
   }
@@ -347,13 +354,6 @@
   .signatory .signatory-signature {
     max-width: 60%;
     max-height: 60px;
-  }
-
-  .signatory .signatory-name {
-    font-size: 0.875rem;
-    font-weight: 500;
-    line-height: 1.6;
-    color: #454545;
   }
 
   .signatory .signatory-credentials {
@@ -414,10 +414,6 @@
     }
   }
 
-  .wrapper-accomplishment-orgs {
-    text-align: center;
-  }
-
   @media (min-width: 768px) {
     .wrapper-accomplishment-orgs {
       text-align: right;
@@ -469,10 +465,6 @@
   .list-signatories {
     display: flex;
     flex-flow: row wrap;
-  }
-
-  .signatory {
-    width: 100%;
   }
 
   @media (min-width: 768px) and (max-width: 991.98px) {
