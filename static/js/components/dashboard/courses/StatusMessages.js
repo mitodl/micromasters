@@ -74,45 +74,6 @@ type CalculateMessagesProps = {
   coupon?: Coupon
 }
 
-const messageForNotAttemptedExam = (course: Course) => {
-  let message =
-    "There are currently no exams available for scheduling. Please check back later."
-
-  if (course.can_schedule_exam) {
-    message = "Click above to schedule an exam with Pearson."
-  } else if (!R.isEmpty(course.exams_schedulable_in_future)) {
-    message =
-      "You can sign up to take the exam starting on " +
-      `on ${formatDate(course.exams_schedulable_in_future[0])}.`
-  }
-  return message
-}
-
-const messageForAttemptedExams = (course: Course, passedExam: boolean) => {
-  const whenFailed = passedExam ? "" : "You did not pass the exam. "
-  const payAgain = course.has_to_pay
-    ? "If you want to re-take the exam, you need to pay again. "
-    : ""
-  let whenToSchedule = ""
-  if (course.can_schedule_exam) {
-    // if can schedule exam now
-    if (!course.has_to_pay) {
-      whenToSchedule = "Click above to reschedule an exam with Pearson."
-    }
-  } else if (R.isEmpty(course.exams_schedulable_in_future)) {
-    // no info about future exam runs
-    whenToSchedule =
-      `There are currently no exams ` +
-      "available for scheduling. Please check back later."
-  } else {
-    // can not schedule now, but some time in the future
-    whenToSchedule =
-      "You can sign up to re-take the exam starting " +
-      `on ${formatDate(course.exams_schedulable_in_future[0])}.`
-  }
-  return `${whenFailed}${payAgain}${whenToSchedule}`
-}
-
 const messageForNotAttemptedEdxExam = (course: Course) => {
   let message =
     "There are currently no exams available. Please check back later."
@@ -137,21 +98,23 @@ const messageForNotAttemptedEdxExam = (course: Course) => {
 }
 
 const messageForAttemptedEdxExams = (course: Course, passedExam: boolean) => {
-  const whenFailed = passedExam ? "" : "You did not pass the exam. "
-  if (course.has_to_pay) {
-    return `${whenFailed}If you want to re-take the exam, you need to pay again.`
+  const passedMsg = passedExam
+    ? "You passed the exam."
+    : "You did not pass the exam."
+  if (course.has_to_pay && course.can_schedule_exam) {
+    return `${passedMsg} If you want to re-take the exam, you need to pay again.`
   }
   if (course.can_schedule_exam && course.exam_url) {
     return (
       <span>
-        {`${whenFailed}You are authorized to take the virtual proctored exam for this course. Please `}
+        {`${passedMsg} You are authorized to take the virtual proctored exam for this course. Please `}
         <a href={course.exam_url}>
           enroll now and complete the exam onboarding.
         </a>
       </span>
     )
   }
-  return `${whenFailed}`
+  return `${passedMsg}`
 }
 
 const courseStartMessage = (run: CourseRun) => {
@@ -351,25 +314,10 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     exams &&
     paid
   ) {
-    let message
-
-    if (SETTINGS.FEATURES.ENABLE_EDX_EXAMS) {
-      if (!passedExam) {
-        message = failedExam
-          ? messageForAttemptedEdxExams(course, passedExam)
-          : messageForNotAttemptedEdxExam(course)
-      } else {
-        message = messageForAttemptedEdxExams(course, passedExam)
-      }
-    } else {
-      if (!passedExam) {
-        message = failedExam
-          ? messageForAttemptedExams(course, passedExam)
-          : messageForNotAttemptedExam(course)
-      } else {
-        message = messageForAttemptedExams(course, passedExam)
-      }
-    }
+    const message =
+      passedExam || failedExam
+        ? messageForAttemptedEdxExams(course, passedExam)
+        : messageForNotAttemptedEdxExam(course)
     if (course.has_to_pay) {
       messages.push({
         message: message,

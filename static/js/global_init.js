@@ -25,8 +25,7 @@ const _createSettings = () => ({
     DISCUSSIONS_POST_UI:           true,
     DISCUSSIONS_CREATE_CHANNEL_UI: true,
     PROGRAM_RECORD_LINK:           true,
-    ENABLE_PROGRAM_LETTER:         true,
-    ENABLE_EDX_EXAMS:              true
+    ENABLE_PROGRAM_LETTER:         true
   },
   open_discussions_redirect_url: "http://open.discussions",
   get username() {

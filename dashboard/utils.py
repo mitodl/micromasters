@@ -4,7 +4,6 @@ Utility functions and classes for the dashboard
 import logging
 from decimal import Decimal
 
-from django.conf import settings
 from django.db import transaction
 from django.db.models import Q, Count
 from django.urls import reverse
@@ -466,44 +465,19 @@ class MMTrack:
 
         user = self.user
         try:
-            exam_profile = ExamProfile.objects.only('status').get(profile=user.profile)
+            ExamProfile.objects.only('status').get(profile=user.profile)
         except ExamProfile.DoesNotExist:
             return ExamProfile.PROFILE_ABSENT
-        if settings.FEATURES.get('ENABLE_EDX_EXAMS', False):
-            auths = ExamAuthorization.objects.filter(
-                user=user,
-                status=ExamAuthorization.STATUS_SUCCESS,
-                exam_run__in=future_runs,
-            )
-            if auths.exists():
-                return ExamProfile.PROFILE_SCHEDULABLE
-            else:
-                return ExamProfile.PROFILE_SUCCESS
 
-        if exam_profile.status in (ExamProfile.PROFILE_PENDING, ExamProfile.PROFILE_IN_PROGRESS,):
-            return ExamProfile.PROFILE_IN_PROGRESS
-
-        elif exam_profile.status in (ExamProfile.PROFILE_INVALID, ExamProfile.PROFILE_FAILED,):
-            return ExamProfile.PROFILE_INVALID
-
-        elif exam_profile.status == ExamProfile.PROFILE_SUCCESS:
-            auths = ExamAuthorization.objects.filter(
-                user=user,
-                status=ExamAuthorization.STATUS_SUCCESS,
-                exam_run__in=future_runs,
-            )
-
-            if auths.exists():
-                return ExamProfile.PROFILE_SCHEDULABLE
-            else:
-                return ExamProfile.PROFILE_SUCCESS
-
+        auths = ExamAuthorization.objects.filter(
+            user=user,
+            status=ExamAuthorization.STATUS_SUCCESS,
+            exam_run__in=future_runs,
+        )
+        if auths.exists():
+            return ExamProfile.PROFILE_SCHEDULABLE
         else:
-            log.error(
-                'Unexpected ExamProfile status for ExamProfile %s',
-                exam_profile.id
-            )
-            return ExamProfile.PROFILE_INVALID
+            return ExamProfile.PROFILE_SUCCESS
 
     def get_best_proctored_exam_grade(self, course):
 
