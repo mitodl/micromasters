@@ -557,9 +557,6 @@
   body {
     margin: 0;
     max-height: 98%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
 
   #footer {
@@ -575,6 +572,7 @@
   .certificate {
     background-color: #e8e8e8 !important;
     max-width: 100%;
+    height: 100%;
     color-adjust: exact !important;
     // sass-lint:disable no-vendor-prefixes
     -webkit-print-color-adjust: exact !important;
@@ -693,7 +691,7 @@
     }
 
     .wrapper-accomplishment-stamps {
-      margin-top: -40px !important;
+      margin-bottom: 0px !important;
     }
 
     .accomplishment-stamps .accomplishment-stamp-platform {
@@ -727,6 +725,8 @@
     }
 
     .wrapper-accomplishment-rendering {
+      height: 100% !important;
+      max-height: 100% !important;
       padding: 0 !important;
     }
 
@@ -774,13 +774,27 @@
     }
 
     .wrapper-organization {
-      margin-top: 20px;
+      margin-top: 5px;
       margin-right: 50px;
       margin-left: 60px;
     }
 
     .accomplishment-rendering {
       margin: 0px !important;
+      height: 100% !important;
+    }
+
+    .accomplishment.accomplishment-main {
+      height: 100% !important;
+    }
+
+    .signatory {
+      margin: 8px !important;
+    }
+
+    #cert_detail {
+      position: absolute;
+      bottom: 30px;
     }
   }
 }
