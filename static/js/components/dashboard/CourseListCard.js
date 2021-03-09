@@ -36,6 +36,8 @@ export default class CourseListCard extends React.Component {
     setEnrollSelectedCourseRun?: (r: CourseRun) => void,
     setEnrollCourseDialogVisibility?: (bool: boolean) => void,
     setCalculatePriceDialogVisibility?: (bool: boolean) => void,
+    setExamEnrollmentDialogVisibility?: (bool: boolean) => void,
+    setSelectedExamCouponCourse?: (n: number) => void,
     setShowExpandedCourseStatus?: (n: number) => void,
     setShowGradeDetailDialog: (b: boolean, t: GradeType, title: string) => void,
     ui: UIState,
@@ -161,6 +163,8 @@ export default class CourseListCard extends React.Component {
       setEnrollSelectedCourseRun,
       setEnrollCourseDialogVisibility,
       setCalculatePriceDialogVisibility,
+      setExamEnrollmentDialogVisibility,
+      setSelectedExamCouponCourse,
       setShowExpandedCourseStatus,
       setShowGradeDetailDialog,
       ui,
@@ -189,6 +193,8 @@ export default class CourseListCard extends React.Component {
         setEnrollSelectedCourseRun={setEnrollSelectedCourseRun}
         setEnrollCourseDialogVisibility={setEnrollCourseDialogVisibility}
         setCalculatePriceDialogVisibility={setCalculatePriceDialogVisibility}
+        setExamEnrollmentDialogVisibility={setExamEnrollmentDialogVisibility}
+        setSelectedExamCouponCourse={setSelectedExamCouponCourse}
         ui={ui}
         checkout={checkout}
         setShowExpandedCourseStatus={setShowExpandedCourseStatus}

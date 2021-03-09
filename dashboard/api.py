@@ -235,6 +235,7 @@ def get_info_for_course(course, mmtrack):
         "prerequisites": course.prerequisites,
         "has_contact_email": bool(course.contact_email),
         "can_schedule_exam": is_exam_schedulable(mmtrack.user, course),
+        "exam_register_end_date": get_exam_register_end_date(course),
         "exam_url": get_edx_exam_coupon_url(mmtrack.user, course),
         "exams_schedulable_in_future": get_future_exam_runs(course),
         "current_exam_date": get_current_exam_run_dates(course),
@@ -509,9 +510,21 @@ def is_exam_schedulable(user, course):
         user=user,
         status=ExamAuthorization.STATUS_SUCCESS,
         exam_run__in=schedulable_exam_runs,
-        exam_coupon__isnull=False
     ).exclude(
         operation=ExamAuthorization.OPERATION_DELETE).exists()
+
+
+def get_exam_register_end_date(course):
+    """
+    Get a formatted string of dates during which the exam is schedulable
+    """
+    now = now_in_utc()
+    schedulable_exam_run = ExamRun.objects.filter(
+        course=course, date_last_eligible__gte=now.date()
+    ).first()
+    if schedulable_exam_run is not None:
+        return schedulable_exam_run.date_last_schedulable.strftime("%B %-d")
+    return ""
 
 
 def get_edx_exam_coupon_url(user, course):

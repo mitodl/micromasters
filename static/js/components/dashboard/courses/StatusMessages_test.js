@@ -97,14 +97,16 @@ describe("Course Status Messages", () => {
       financialAid = _.cloneDeep(FINANCIAL_AID_PARTIAL_RESPONSE)
 
       calculateMessagesProps = {
-        courseAction:                sandbox.stub(),
-        financialAid:                financialAid,
-        hasFinancialAid:             false,
-        firstRun:                    course.runs[0],
-        course:                      course,
-        expandedStatuses:            new Set(),
-        setShowExpandedCourseStatus: sandbox.stub(),
-        coupon:                      undefined
+        courseAction:                      sandbox.stub(),
+        financialAid:                      financialAid,
+        hasFinancialAid:                   false,
+        firstRun:                          course.runs[0],
+        course:                            course,
+        expandedStatuses:                  new Set(),
+        setShowExpandedCourseStatus:       sandbox.stub(),
+        setExamEnrollmentDialogVisibility: sandbox.stub(),
+        setSelectedExamCouponCourse:       sandbox.stub(),
+        coupon:                            undefined
       }
       calculateMessagesProps.courseAction.returns("course action was called")
     })
@@ -370,13 +372,16 @@ describe("Course Status Messages", () => {
         course.proctorate_exams_grades = [makeProctoredExamResult()]
         course.proctorate_exams_grades[0].passed = true
         course.exam_url = "http://example.com"
+        course.exam_register_end_date = "Jan 17"
         const messages = calculateMessages(calculateMessagesProps).value
         assert.equal(messages[0]["message"], "You passed this course.")
         const mountedOne = shallow(messages[1]["message"])
         assert.equal(
           mountedOne.text().trim(),
           "You passed the exam. You are authorized to take the virtual proctored exam for this course. " +
-            "Please enroll now and complete the exam onboarding."
+            "Please register now and complete the exam onboarding. " +
+            "You must register by Jan 17 to be eligible to take the exam this semester. If " +
+            "you have already registered for the exam, you can access the exam through your edX dashboard."
         )
         const mountedTwo = shallow(messages[2]["message"])
         assert.equal(
@@ -439,6 +444,7 @@ describe("Course Status Messages", () => {
       it("should prompt the user to take exam if exam coupon available", () => {
         course.runs = [course.runs[0]]
         course.can_schedule_exam = true
+        course.exam_register_end_date = "Jan 17"
         let messages = calculateMessages(calculateMessagesProps).value
         assert.equal(
           messages[0]["message"],
@@ -449,8 +455,10 @@ describe("Course Status Messages", () => {
         const mounted = shallow(messages[0]["message"])
         assert.equal(
           mounted.text(),
-          "You are authorized to take the virtual proctored exam for this " +
-            "course. Please enroll now and complete the exam onboarding."
+          " You are authorized to take the virtual proctored exam for this " +
+            "course. Please register now and complete the exam onboarding. " +
+            "You must register by Jan 17 to be eligible to take the exam this semester. If " +
+            "you have already registered for the exam, you can access the exam through your edX dashboard."
         )
       })
       it("should let the user know when can take exam in the future", () => {
@@ -474,6 +482,7 @@ describe("Course Status Messages", () => {
         course.can_schedule_exam = true
         course.proctorate_exams_grades = [makeProctoredExamResult()]
         course.proctorate_exams_grades[0].passed = true
+        course.exam_register_end_date = "Jan 17"
 
         let messages = calculateMessages(calculateMessagesProps).value
         assert.equal(messages[0]["message"], "You passed this course.")
@@ -485,7 +494,9 @@ describe("Course Status Messages", () => {
         assert.equal(
           mounted.text(),
           "You passed the exam. You are authorized to take the virtual proctored " +
-            "exam for this course. Please enroll now and complete the exam onboarding."
+            "exam for this course. Please register now and complete the exam onboarding. " +
+            "You must register by Jan 17 to be eligible to take the exam this semester. If " +
+            "you have already registered for the exam, you can access the exam through your edX dashboard."
         )
       })
       // Cases with failed exam attempts
@@ -503,6 +514,7 @@ describe("Course Status Messages", () => {
         course.proctorate_exams_grades = [makeProctoredExamResult()]
         course.proctorate_exams_grades[0].passed = false
         course.can_schedule_exam = true
+        course.exam_register_end_date = "Jan 17"
 
         let messages = calculateMessages(calculateMessagesProps).value
         assert.equal(messages[0]["message"], "You did not pass the exam.")
@@ -513,7 +525,9 @@ describe("Course Status Messages", () => {
         assert.equal(
           mounted.text(),
           "You did not pass the exam. You are authorized to take the virtual proctored " +
-            "exam for this course. Please enroll now and complete the exam onboarding."
+            "exam for this course. Please register now and complete the exam onboarding. " +
+            "You must register by Jan 17 to be eligible to take the exam this semester. If " +
+            "you have already registered for the exam, you can access the exam through your edX dashboard."
         )
       })
       it("should prompt about upcoming exam, is failed and has attempt", () => {

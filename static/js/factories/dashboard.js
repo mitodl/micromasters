@@ -92,6 +92,7 @@ export const makeCourse = (positionInProgram: number): Course => {
     position_in_program:         positionInProgram,
     title:                       `Title for course ${courseId}`,
     can_schedule_exam:           false,
+    exam_register_end_date:      "",
     exam_url:                    "",
     exams_schedulable_in_future: [],
     current_exam_date:           "",

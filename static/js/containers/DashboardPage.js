@@ -54,6 +54,8 @@ import {
   setPaymentTeaserDialogVisibility,
   setEnrollCourseDialogVisibility,
   setCalculatePriceDialogVisibility,
+  setExamEnrollmentDialogVisibility,
+  setSelectedExamCouponCourse,
   setEnrollSelectedCourseRun,
   showDialog,
   hideDialog,
@@ -122,6 +124,7 @@ import type { Coupon } from "../flow/couponTypes"
 import type { RestState } from "../flow/restTypes"
 import type { Post } from "../flow/discussionTypes"
 import PersonalCoursePriceDialog from "../components/dashboard/PersonalCoursePriceDialog"
+import ExamEnrollmentDialog from "../components/dashboard/ExamEnrollmentDialog"
 
 const isFinishedProcessing = R.contains(R.__, [FETCH_SUCCESS, FETCH_FAILURE])
 
@@ -505,6 +508,11 @@ class DashboardPage extends React.Component {
     dispatch(setConfirmSkipDialogVisibility(bool))
   }
 
+  setExamEnrollmentDialogVisibility = bool => {
+    const { dispatch } = this.props
+    dispatch(setExamEnrollmentDialogVisibility(bool))
+  }
+
   updateDocumentSentDate = (
     financialAidId: number,
     sentDate: string
@@ -555,6 +563,11 @@ class DashboardPage extends React.Component {
   setEnrollSelectedCourseRun = (run: CourseRun) => {
     const { dispatch } = this.props
     dispatch(setEnrollSelectedCourseRun(run))
+  }
+
+  setSelectedExamCouponCourse = (courseId: number) => {
+    const { dispatch } = this.props
+    dispatch(setSelectedExamCouponCourse(courseId))
   }
 
   setCalculatePriceDialogVisibility = bool => {
@@ -673,6 +686,30 @@ class DashboardPage extends React.Component {
         open={ui.calculatePriceDialogVisibility}
         openFinancialAidCalculator={this.openFinancialAidCalculator}
         setVisibility={this.setCalculatePriceDialogVisibility}
+      />
+    )
+  }
+  renderExamEnrollmentDialog() {
+    const { ui } = this.props
+    const program = this.getCurrentlyEnrolledProgram()
+
+    if (!program) {
+      return null
+    }
+    let course = null
+    if (ui.selectedExamCouponCourse) {
+      course = program.courses.find(
+        course => course.id === ui.selectedExamCouponCourse
+      )
+    }
+    if (!course) {
+      return null
+    }
+    return (
+      <ExamEnrollmentDialog
+        open={ui.examEnrollmentDialogVisibility}
+        setVisibility={this.setExamEnrollmentDialogVisibility}
+        course={course}
       />
     )
   }
@@ -891,6 +928,7 @@ class DashboardPage extends React.Component {
           {this.renderCouponDialog()}
           {this.renderCourseEnrollmentDialog()}
           {this.renderPersonalCoursePriceDialog()}
+          {this.renderExamEnrollmentDialog()}
           <div className="first-column">
             <DashboardUserCard profile={profile} program={program} />
             <FinalExamCard
@@ -910,6 +948,10 @@ class DashboardPage extends React.Component {
               addCourseEnrollment={this.addCourseEnrollment}
               openCourseContactDialog={this.openCourseContactDialog}
               setEnrollSelectedCourseRun={this.setEnrollSelectedCourseRun}
+              setSelectedExamCouponCourse={this.setSelectedExamCouponCourse}
+              setExamEnrollmentDialogVisibility={
+                this.setExamEnrollmentDialogVisibility
+              }
               setEnrollCourseDialogVisibility={
                 this.setEnrollCourseDialogVisibility
               }

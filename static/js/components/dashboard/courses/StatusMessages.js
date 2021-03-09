@@ -23,7 +23,8 @@ import {
   DASHBOARD_FORMAT,
   COURSE_DEADLINE_FORMAT,
   STATUS_CURRENTLY_ENROLLED,
-  COURSE_ACTION_ENROLL
+  COURSE_ACTION_ENROLL,
+  EDX_LINK_BASE
 } from "../../../constants"
 import { S } from "../../../lib/sanctuary"
 import {
@@ -71,55 +72,9 @@ type CalculateMessagesProps = {
   course: Course,
   expandedStatuses: Set<number>,
   setShowExpandedCourseStatus: (n: number) => void,
+  setExamEnrollmentDialogVisibility: (b: boolean) => void,
+  setSelectedExamCouponCourse: (n: number) => void,
   coupon?: Coupon
-}
-
-const messageForNotAttemptedEdxExam = (course: Course) => {
-  let message =
-    "There are currently no exams available. Please check back later."
-
-  if (course.can_schedule_exam && course.exam_url) {
-    message = (
-      <span>
-        {
-          "You are authorized to take the virtual proctored exam for this course. Please "
-        }
-        <a href={course.exam_url}>
-          enroll now and complete the exam onboarding.
-        </a>
-      </span>
-    )
-  } else if (!R.isEmpty(course.exams_schedulable_in_future)) {
-    message =
-      "You can register to take the exam starting " +
-      `on ${formatDate(course.exams_schedulable_in_future[0])}.`
-  }
-  return message
-}
-
-const messageForAttemptedEdxExams = (course: Course, passedExam: boolean) => {
-  const passedMsg = passedExam
-    ? "You passed the exam."
-    : "You did not pass the exam."
-  if (course.has_to_pay && course.can_schedule_exam) {
-    return `${passedMsg} If you want to re-take the exam, you need to pay again.`
-  }
-  if (course.can_schedule_exam && course.exam_url) {
-    return (
-      <span>
-        {`${passedMsg} You are authorized to take the virtual proctored exam for this course. Please `}
-        <a href={course.exam_url}>
-          enroll now and complete the exam onboarding.
-        </a>
-      </span>
-    )
-  } else if (!R.isEmpty(course.exams_schedulable_in_future)) {
-    return (
-      `${passedMsg} You can register to take the exam starting ` +
-      `on ${formatDate(course.exams_schedulable_in_future[0])}.`
-    )
-  }
-  return `${passedMsg}`
 }
 
 const courseStartMessage = (run: CourseRun) => {
@@ -158,7 +113,9 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     firstRun,
     course,
     expandedStatuses,
-    setShowExpandedCourseStatus
+    setShowExpandedCourseStatus,
+    setSelectedExamCouponCourse,
+    setExamEnrollmentDialogVisibility
   } = props
 
   const exams = course.has_exam
@@ -319,10 +276,45 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     exams &&
     paid
   ) {
-    const message =
-      passedExam || failedExam
-        ? messageForAttemptedEdxExams(course, passedExam)
-        : messageForNotAttemptedEdxExam(course)
+    let message =
+      "There are currently no exams available. Please check back later."
+    let passedMsg = ""
+    if (passedExam || failedExam) {
+      passedMsg = passedExam
+        ? "You passed the exam."
+        : "You did not pass the exam."
+      if (course.has_to_pay && course.can_schedule_exam) {
+        passedMsg = `${passedMsg} If you want to re-take the exam, you need to pay again.`
+      }
+      message = passedMsg
+    }
+    if (course.can_schedule_exam && course.exam_url) {
+      message = (
+        <span>
+          {`${passedMsg} You are authorized to take the virtual proctored exam for this course. Please `}
+          <a
+            onClick={() => {
+              setSelectedExamCouponCourse(course.id)
+              setExamEnrollmentDialogVisibility(true)
+            }}
+          >
+            register now and complete the exam onboarding.
+          </a>
+          {` You must register by ${
+            course.exam_register_end_date
+          } to be eligible to take the exam `}
+          this semester. <br />
+          <br />
+          If you have already registered for the exam, you can access the exam
+          through your <a href={EDX_LINK_BASE}>edX dashboard</a>.
+        </span>
+      )
+    } else if (!R.isEmpty(course.exams_schedulable_in_future)) {
+      message =
+        "You can take the exam starting " +
+        `on ${formatDate(course.exams_schedulable_in_future[0])}.`
+    }
+
     if (course.has_to_pay) {
       messages.push({
         message: message,

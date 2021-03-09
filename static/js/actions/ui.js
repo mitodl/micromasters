@@ -139,6 +139,17 @@ export const setConfirmSkipDialogVisibility = createAction(
   SET_CONFIRM_SKIP_DIALOG_VISIBILITY
 )
 
+export const SET_EXAM_ENROLLMENT_DIALOG_VISIBILITY =
+  "SET_EXAM_ENROLLMENT_DIALOG_VISIBILITY"
+export const setExamEnrollmentDialogVisibility = createAction(
+  SET_EXAM_ENROLLMENT_DIALOG_VISIBILITY
+)
+
+export const SET_SELECTED_EXAM_COUPON_COURSE = "SET_SELECTED_EXAM_COUPON_COURSE"
+export const setSelectedExamCouponCourse = createAction(
+  SET_SELECTED_EXAM_COUPON_COURSE
+)
+
 export const SET_DOCS_INSTRUCTIONS_VISIBILITY =
   "SET_DOCS_INSTRUCTIONS_VISIBILITY"
 export const setDocsInstructionsVisibility = createAction(
