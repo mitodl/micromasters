@@ -75,14 +75,14 @@
                 <span class="accomplishment-course">
                   <span class="accomplishment-course-name">{{ course_title }}</span>
                 </span>
-                <span class="accomplishment-statement-detail">a course of study offered by MITx,
+                <span class="accomplishment-statement-detail institute-detail">a course of study offered by MITx,
                   an online learning initiative of the Massachusetts Institute of Technology.</span>
               {% else %}
                 <span class="accomplishment-summary">successfully completed and received a passing grade in</span>
                 <span class="accomplishment-course">
                   <span class="accomplishment-course-name">{{ program_title }}</span>
                 </span>
-                <span class="accomplishment-statement-detail">a program of study offered by MITx,
+                <span class="accomplishment-statement-detail institute-detail">a program of study offered by MITx,
                   an online learning initiative of the Massachusetts Institute of Technology.</span>
               {% endif %}
             </p>
@@ -109,7 +109,7 @@
               </div>
             </div>
         </div>
-        <div class="wrapper-accomplishment-stamps">
+        <div id="cert_detail" class="wrapper-accomplishment-stamps">
           <ul class="accomplishment-stamps copy-list">
             <li class="accomplishment-stamp-platform">
               <a class="img-link" href="http://edx.org">
