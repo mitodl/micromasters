@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.187.0
+Version 0.187.0 (Released March 10, 2021)
 ---------------
 
 - add support for multiple signatories in certificate design (#4818)
