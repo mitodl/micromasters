@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.187.1
+---------------
+
+- Bump elliptic from 6.5.3 to 6.5.4 (#4817)
+
 Version 0.187.0 (Released March 10, 2021)
 ---------------
 
