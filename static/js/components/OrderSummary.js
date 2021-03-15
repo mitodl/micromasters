@@ -69,7 +69,7 @@ class OrderSummary extends React.Component {
     ]
   }
 
-  checkAndShowCheckoutError(status: string): React$Element<*> {
+  checkAndShowCheckoutError(status?: string) {
     if (status === FETCH_FAILURE) {
       return (
         <div className="alert-message" style={{ marginTop: 30 }}>
