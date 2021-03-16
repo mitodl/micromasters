@@ -75,15 +75,14 @@ class OrderSummary extends React.Component {
         <div className="alert-message" style={{ marginTop: 30 }}>
           <Alert bsStyle="danger">
             <p>
-              Something went wrong. Please contact{" "}
+              Something went wrong. Please{" "}
               <a
                 href="https://mitx-micromasters.zendesk.com/hc/en-us/requests/new"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                customer support
+                contact customer support.
               </a>
-              .
             </p>
           </Alert>
         </div>
