@@ -28,11 +28,14 @@ class Command(BaseCommand):
 
             except TierProgram.DoesNotExist:
                 raise CommandError(
-                    'Could not find a current tier program with threshold "{}"'.format(threshold)
+                    'Could not find a current tier program with threshold "{}" for financial aid {}'.format(
+                        threshold,
+                        financial_aid.id
+                    )
                 )
             except TierProgram.MultipleObjectsReturned:
                 raise CommandError(
-                    'There are multiple courses with given number "{}"'.format(threshold)
+                    'There are multiple tier programs with threshold "{}"'.format(threshold)
                 )
 
             financial_aid.tier_program = tier_program
