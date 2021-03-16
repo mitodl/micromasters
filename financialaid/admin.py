@@ -24,6 +24,7 @@ class CountryIncomeThresholdAdmin(admin.ModelAdmin):
 class FinancialAidAdmin(admin.ModelAdmin):
     """Admin for FinancialAid"""
     model = FinancialAid
+    raw_id_fields = ('user',)
 
     def has_delete_permission(self, *args, **kwargs):  # pylint: disable=unused-argument, signature-differs
         return False
