@@ -23,6 +23,9 @@ import type { RestState } from "../flow/restTypes"
 import type { CheckoutResponse } from "../flow/checkoutTypes"
 
 export const processCheckout = (result: CheckoutResponse) => {
+  if (!result) {
+    return
+  }
   const { payload, url, method } = result
   if (method === "POST") {
     const form = createForm(url, payload)
