@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.188.0
+Version 0.188.0 (Released March 17, 2021)
 ---------------
 
 - Show an error message on checkout request failure (#4827)
