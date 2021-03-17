@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+Version 0.188.0
+---------------
+
+- Show an error message on checkout request failure (#4827)
+- Update existing FAs with current tier programs (#4829)
+- Adding user to raw fields for financial aid's admin (#4828)
+
 Version 0.187.1 (Released March 15, 2021)
 ---------------
 
