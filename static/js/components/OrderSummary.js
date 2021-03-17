@@ -6,10 +6,11 @@ import Button from "@material-ui/core/Button"
 import Grid from "@material-ui/core/Grid"
 
 import SpinnerButton from "./SpinnerButton"
-import { FETCH_PROCESSING } from "../actions"
+import { FETCH_PROCESSING, FETCH_FAILURE } from "../actions"
 import type { Course, CourseRun } from "../flow/programTypes"
 import type { CoursePrice } from "../flow/dashboardTypes"
 import { formatPrice } from "../util/util"
+import Alert from "react-bootstrap/lib/Alert"
 
 class OrderSummary extends React.Component {
   props: {
@@ -68,6 +69,28 @@ class OrderSummary extends React.Component {
     ]
   }
 
+  checkAndShowCheckoutError(status?: string) {
+    if (status === FETCH_FAILURE) {
+      return (
+        <div className="alert-message" style={{ marginTop: 30 }}>
+          <Alert bsStyle="danger">
+            <p>
+              Something went wrong. Please{" "}
+              <a
+                href="https://mitx-micromasters.zendesk.com/hc/en-us/requests/new"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                contact customer support.
+              </a>
+            </p>
+          </Alert>
+        </div>
+      )
+    }
+    return null
+  }
+
   render() {
     const {
       course,
@@ -120,6 +143,7 @@ class OrderSummary extends React.Component {
         >
           Continue
         </SpinnerButton>
+        {this.checkAndShowCheckoutError(checkoutStatus)}
       </div>
     )
   }
