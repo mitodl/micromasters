@@ -53,7 +53,7 @@ import {
 import { DASHBOARD_SUCCESS_ACTIONS } from "./test_util"
 import { actions } from "../lib/redux_rest"
 
-describe("FinancialAidCalculator", function () {
+describe("FinancialAidCalculator", function() {
   this.timeout(5000)
 
   let listenForActions, renderComponent, helper
