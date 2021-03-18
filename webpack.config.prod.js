@@ -7,9 +7,9 @@ const { config, babelSharedLoader } = require(path.resolve("./webpack.config.sha
 const prodBabelConfig = Object.assign({}, babelSharedLoader);
 
 prodBabelConfig.query.plugins.push(
-  "transform-react-constant-elements",
-  "transform-react-inline-elements"
-);
+  "@babel/plugin-transform-react-constant-elements",
+  "@babel/plugin-transform-react-inline-elements"
+)
 
 const prodConfig = Object.assign({}, config);
 prodConfig.module.rules = [
@@ -30,11 +30,11 @@ prodConfig.module.rules = [
 
 module.exports = Object.assign(prodConfig, {
   context: __dirname,
-  mode: 'production',
+  mode:    'production',
   output: {
-    path: path.resolve('./static/bundles/'),
-    filename: "[name]-[chunkhash].js",
-    chunkFilename: "[id]-[chunkhash].js",
+    path:               path.resolve('./static/bundles/'),
+    filename:           "[name]-[chunkhash].js",
+    chunkFilename:      "[id]-[chunkhash].js",
     crossOriginLoading: "anonymous",
   },
   plugins: [
@@ -58,4 +58,4 @@ module.exports = Object.assign(prodConfig, {
     minimize: true
   },
   devtool: 'source-map'
-});
+})
