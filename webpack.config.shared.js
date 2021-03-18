@@ -33,25 +33,25 @@ module.exports = {
     }
   },
   babelSharedLoader: {
-    test: /\.jsx?$/,
+    test:    /\.jsx?$/,
     include: [
       path.resolve(__dirname, "static/js"),
       path.resolve(__dirname, "node_modules/@material-ui"),
     ],
     loader: 'babel-loader',
-    query: {
-      "presets": [
-        ["env", { "modules": false }],
-        "latest",
-        "react",
+    query:  {
+      presets: [
+        ["@babel/preset-env", { modules: false }],
+        "@babel/preset-react",
+        "@babel/preset-flow"
       ],
-      "plugins": [
-        "transform-flow-strip-types",
+      plugins: [
+        "@babel/plugin-transform-flow-strip-types",
         "react-hot-loader/babel",
-        "transform-object-rest-spread",
-        "transform-class-properties",
-        "syntax-dynamic-import",
+        "@babel/plugin-proposal-object-rest-spread",
+        "@babel/plugin-proposal-class-properties",
+        "@babel/plugin-syntax-dynamic-import",
       ]
     }
   },
-};
+}
