@@ -4,9 +4,9 @@ const webpack = require("webpack");
 module.exports = {
   config: {
     entry: {
-      'dashboard': ['babel-polyfill', './static/js/entry/dashboard'],
+      'dashboard': ['@babel/polyfill', './static/js/entry/dashboard'],
       'financial_aid': './static/js/financial_aid/functions',
-      'public': ['babel-polyfill', './static/js/entry/public'],
+      'public': ['@babel/polyfill', './static/js/entry/public'],
       'sentry_client': './static/js/entry/sentry_client.js',
       'style': './static/js/entry/style',
       'style_public': './static/js/entry/style_public',
