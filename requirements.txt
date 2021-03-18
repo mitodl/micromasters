@@ -85,7 +85,7 @@ django-treebeard==4.3
     # via wagtail
 django-webpack-loader==0.5.0
     # via -r requirements.in
-django==2.2.13
+django==2.2.18
     # via
     #   -r requirements.in
     #   django-role-permissions
