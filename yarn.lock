@@ -2031,7 +2031,7 @@ babel-generator@^6.18.0:
     source-map "^0.5.7"
     trim-right "^1.0.1"
 
-babel-loader@^8.0.5:
+babel-loader@^8.2.2:
   version "8.2.2"
   resolved "https://registry.yarnpkg.com/babel-loader/-/babel-loader-8.2.2.tgz#9363ce84c10c9a40e6c753748e1441b60c8a0b81"
   integrity sha512-JvTd0/D889PQBtUXJ2PXaKU/pjZDMtHA9V2ecm+eNRmmBCMR09a+fmpGTNwnJtFmFl5Ei7Vy47LjBb+L0wQ99g==
@@ -3050,10 +3050,10 @@ create-react-context@^0.3.0:
     gud "^1.0.0"
     warning "^4.0.3"
 
-cropperjs@^0.8.0:
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/cropperjs/-/cropperjs-0.8.1.tgz#3dc01813e2f6d1df2c8909e1ce092146c692548e"
-  integrity sha1-PcAYE+L20d8siQnhzgkhRsaSVI4=
+cropperjs@^1.5.11:
+  version "1.5.11"
+  resolved "https://registry.yarnpkg.com/cropperjs/-/cropperjs-1.5.11.tgz#502ae6d8ca098b124de6813601cca70015879fc0"
+  integrity sha512-SJUeBBhtNBnnn+UrLKluhFRIXLJn7XFPv8QN1j49X5t+BIMwkgvDev541f96bmu8Xe0TgCx3gON22KmY/VddaA==
 
 cross-spawn@^6.0.5:
   version "6.0.5"
@@ -8375,13 +8375,12 @@ react-click-outside@^3.0.1:
   dependencies:
     hoist-non-react-statics "^2.1.1"
 
-react-cropper@^0.12.0:
-  version "0.12.0"
-  resolved "https://registry.yarnpkg.com/react-cropper/-/react-cropper-0.12.0.tgz#4b1e7f947e476d72d60ef9b228d9a308fe5be8b5"
-  integrity sha1-Sx5/lH5HbXLWDvmyKNmjCP5b6LU=
+react-cropper@^2.0.0:
+  version "2.1.7"
+  resolved "https://registry.yarnpkg.com/react-cropper/-/react-cropper-2.1.7.tgz#f9f8127b9516fecc44f918dd331107bfc32adfaf"
+  integrity sha512-dGp2l2wSh4KubWx3PQZIP27fV4shPYjIvm972IqJZdzi/fpDsB6s3GKEH54mk0gy18+80d3WnlgAP2xJ/o8+yw==
   dependencies:
-    cropperjs "^0.8.0"
-    prop-types "^15.5.8"
+    cropperjs "^1.5.11"
 
 react-datepicker@^2.10.1:
   version "2.10.1"
