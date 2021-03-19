@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.188.1
+---------------
+
+- Bump django from 2.2.13 to 2.2.18 (#4836)
+- Increase timeout for FinancialAidCalculator tests (#4833)
+
 Version 0.188.0 (Released March 17, 2021)
 ---------------
 
