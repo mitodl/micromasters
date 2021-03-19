@@ -92,9 +92,10 @@ django==2.2.18
     #   django-storages
     #   django-taggit
     #   django-treebeard
+    #   djangorestframework
     #   jsonfield
     #   wagtail
-djangorestframework==3.9.1
+djangorestframework==3.11.2
     # via
     #   -r requirements.in
     #   wagtail
