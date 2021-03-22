@@ -914,7 +914,7 @@ class InfoCourseTest(CourseTests):
             "can_schedule_exam": can_schedule_exam,
             "exam_url": exam_url,
             "exams_schedulable_in_future": exams_schedulable_in_future,
-            "past_exam_date": '',
+            "current_exam_date": '',
             "has_to_pay": has_to_pay,
             "proctorate_exams_grades": proct_exams,
             "is_elective": is_elective,

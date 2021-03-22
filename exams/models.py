@@ -1,6 +1,7 @@
 """
 Models for exams
 """
+import datetime
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -85,6 +86,23 @@ class ExamRun(TimestampedModel):
             course=course,
             date_last_schedulable__lt=now
         )
+
+    @classmethod
+    def get_current_term_exam(cls, course, run_end_date):
+        """
+        Get an exam run that is schedulable this current term
+
+        Args:
+            course (courses.models.Course): the course to find exam runs for
+
+        Returns:
+            (exams.models.ExamRun): Exam run that runs this term
+        """
+        two_weeks = datetime.timedelta(weeks=2)
+        return cls.objects.filter(
+            course=course,
+            date_first_schedulable__lt=run_end_date+two_weeks
+        ).order_by('-date_last_schedulable').first()
 
     @property
     def is_schedulable(self):

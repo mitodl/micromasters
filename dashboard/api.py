@@ -16,7 +16,7 @@ from edx_api.client import EdxApi
 
 from backends.exceptions import InvalidCredentialStored
 from backends import utils
-from courses.models import Program, ElectiveCourse
+from courses.models import Program, ElectiveCourse, CourseRun
 from courses.utils import format_season_year_for_course_run
 from dashboard.api_edx_cache import CachedEdxDataApi
 from dashboard.utils import get_mmtrack, ATTEMPTS_PER_PAID_RUN, ATTEMPTS_PER_PAID_RUN_OLD
@@ -237,7 +237,7 @@ def get_info_for_course(course, mmtrack):
         "can_schedule_exam": is_exam_schedulable(mmtrack.user, course),
         "exam_url": get_edx_exam_coupon_url(mmtrack.user, course),
         "exams_schedulable_in_future": get_future_exam_runs(course),
-        "past_exam_date": get_past_recent_exam_run(course),
+        "current_exam_date": get_current_exam_run(course),
         "has_to_pay": has_to_pay_for_exam(mmtrack, course),
         "runs": [],
         "proctorate_exams_grades": ProctoredExamGradeSerializer(
@@ -568,17 +568,21 @@ def get_future_exam_runs(course):
             order_by('date_first_schedulable').values_list('date_first_schedulable', flat=True))
 
 
-def get_past_recent_exam_run(course):
+def get_current_exam_run(course):
     """
-    Return scheduling dates for a recent exam, example: 'Mar 7 - Mar 17, 2018'
+    Return scheduling dates for an exam this term, example: 'Mar 7 - Mar 17, 2018'
 
     Args:
         course (courses.models.Course): A course
 
     Returns:
-        str: a string representation of scheduling window for recent exam run
+        str: a string representation of scheduling window for current exam run
     """
-    exam = ExamRun.get_schedulable_in_past(course).order_by('-date_last_schedulable').first()
+    now = now_in_utc()
+    current_course_run = CourseRun.objects.filter(course=course, end_date__gt=now, start_date__lt=now).first()
+    if current_course_run is None:
+        return ""
+    exam = ExamRun.get_current_term_exam(course, current_course_run.end_date)
 
     return '{} - {}'.format(
         exam.date_first_schedulable.strftime('%b %-d'), exam.date_last_schedulable.strftime('%b %-d, %Y')
