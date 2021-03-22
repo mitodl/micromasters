@@ -237,7 +237,7 @@ def get_info_for_course(course, mmtrack):
         "can_schedule_exam": is_exam_schedulable(mmtrack.user, course),
         "exam_url": get_edx_exam_coupon_url(mmtrack.user, course),
         "exams_schedulable_in_future": get_future_exam_runs(course),
-        "current_exam_date": get_current_exam_run(course),
+        "current_exam_date": get_current_exam_run_dates(course),
         "has_to_pay": has_to_pay_for_exam(mmtrack, course),
         "runs": [],
         "proctorate_exams_grades": ProctoredExamGradeSerializer(
@@ -568,7 +568,7 @@ def get_future_exam_runs(course):
             order_by('date_first_schedulable').values_list('date_first_schedulable', flat=True))
 
 
-def get_current_exam_run(course):
+def get_current_exam_run_dates(course):
     """
     Return scheduling dates for an exam this term, example: 'Mar 7 - Mar 17, 2018'
 

@@ -98,10 +98,10 @@ class ExamRun(TimestampedModel):
         Returns:
             (exams.models.ExamRun): Exam run that runs this term
         """
-        two_weeks = datetime.timedelta(weeks=2)
+        three_weeks = datetime.timedelta(weeks=3)
         return cls.objects.filter(
             course=course,
-            date_first_schedulable__lt=run_end_date+two_weeks
+            date_first_schedulable__lt=run_end_date+three_weeks
         ).order_by('-date_last_schedulable').first()
 
     @property

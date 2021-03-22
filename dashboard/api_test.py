@@ -2052,16 +2052,28 @@ class PastExamRunTests(MockedESTestCase):
     """Test for past schedulable exam run"""
 
     @ddt.data(
-        (False, False, False),
-        (True, False, True),
-        (False, True, False),
+        (1, True),
+        (2, True),
+        (3, False),
     )
     @ddt.unpack
-    def test_get_past_exam_run(self, is_past, is_future, result):
+    def test_get_current_exam_run_dates(self, weeks, has_exam):
         """test get_past_recent_exam_run"""
-        exam_run = ExamRunFactory.create(scheduling_past=is_past, scheduling_future=is_future)
-
-        self.assertEqual(len(api.get_past_recent_exam_run(exam_run.course)) > 0, result)
+        now = now_in_utc()
+        end_date = now + timedelta(weeks=8)
+        exam_run = ExamRunFactory.create(date_first_schedulable=end_date+timedelta(weeks=weeks))
+        CourseRunFactory.create(
+            course=exam_run.course,
+            start_date=now-timedelta(weeks=5),
+            end_date=end_date
+        )
+        expected = ''
+        if has_exam:
+            expected = '{} - {}'.format(
+                exam_run.date_first_schedulable.strftime('%b %-d'),
+                exam_run.date_last_schedulable.strftime('%b %-d, %Y')
+            )
+        self.assertEqual(api.get_current_exam_run_dates(exam_run.course), expected)
 
 
 @ddt.ddt
