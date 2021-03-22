@@ -23,6 +23,11 @@ import {
 import SignupDialog from "../containers/SignupDialog"
 import CopyLinkDialog from "../containers/CopyLinkDialog"
 
+// Adding forEach polyfill for IE
+if (window.NodeList && !NodeList.prototype.forEach) {
+  NodeList.prototype.forEach = Array.prototype.forEach
+}
+
 // Program Page course list
 const courseListEl = document.querySelector("#courses-component")
 let courseList = null
