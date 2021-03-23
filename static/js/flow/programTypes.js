@@ -61,7 +61,7 @@ export type Course = {
   can_schedule_exam:            boolean,
   exam_url:                     string,
   exams_schedulable_in_future:  Array<string>,
-  past_exam_date:               string,
+  current_exam_date:               string,
   has_to_pay:                   boolean,
   proctorate_exams_grades:      Array<ProctoredExamResult>,
   is_elective:                  boolean,

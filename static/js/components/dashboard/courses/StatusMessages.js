@@ -380,7 +380,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     return S.Just(messages)
   } else if (hasMissedDeadlineCourseRun(course)) {
     // the course finished can't pay
-    if (exams && course.past_exam_date) {
+    if (exams && course.current_exam_date) {
       const futureExamMessage = R.isEmpty(course.exams_schedulable_in_future)
         ? " There are no future exams scheduled at this time. Please check back later."
         : ` You can pay now to take the next exam, scheduled for ${formatDate(
@@ -389,8 +389,8 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
 
       messages.push({
         message:
-          "You missed the payment deadline to take the proctored exam scheduled for " +
-          `${course.past_exam_date}.${futureExamMessage}`,
+          "You missed the payment deadline to take the proctored exam this term." +
+          `${futureExamMessage}`,
         action: courseAction(firstRun, COURSE_ACTION_PAY)
       })
     } else {
