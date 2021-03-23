@@ -11,6 +11,7 @@ from exams.models import (
     ExamProfile,
     ExamRun,
 )
+from exams.utils import get_corresponding_course_run
 from grades.models import FinalGrade
 from grades.constants import FinalGradeStatus
 
@@ -25,6 +26,10 @@ MESSAGE_NOT_ELIGIBLE_TEMPLATE = (
 MESSAGE_NO_ATTEMPTS_TEMPLATE = (
     '[Exam authorization] Unable to authorize user "{user}" for exam, '
     'course id is "{course_id}". No attempts remaining.'
+)
+MESSAGE_MISSED_DEADLINE_TEMPLATE = (
+    '[Exam authorization] Unable to authorize user "{user}" for exam, '
+    'course id is "{course_id}". Missed payment deadline for current course run.'
 )
 
 
@@ -78,6 +83,14 @@ def authorize_for_exam_run(user, course_run, exam_run):
     # if they have run out of attempts, they don't get authorized
     if has_to_pay_for_exam(mmtrack, course_run.course):
         errors_message = MESSAGE_NO_ATTEMPTS_TEMPLATE.format(
+            user=mmtrack.user.username,
+            course_id=course_run.edx_course_key
+        )
+        raise ExamAuthorizationException(errors_message)
+    # if they paid after deadline they don't get authorized for same term exam
+    current_course_run = get_corresponding_course_run(exam_run)
+    if current_course_run and mmtrack.paid_but_missed_deadline(current_course_run):
+        errors_message = MESSAGE_MISSED_DEADLINE_TEMPLATE.format(
             user=mmtrack.user.username,
             course_id=course_run.edx_course_key
         )
