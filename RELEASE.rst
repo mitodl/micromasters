@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.189.0 (Released March 24, 2021)
+---------------
+
+- Fix sentry Errors -- typeError on Checkout & IE 11.0 forEach error (#4830)
+
 Version 0.188.1 (Released March 19, 2021)
 ---------------
 
