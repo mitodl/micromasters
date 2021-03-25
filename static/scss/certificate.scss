@@ -87,6 +87,22 @@
     color: #00262b;
   }
 
+  .wrapper-accomplishment-title .accomplishment-title-program {
+    margin-top: 2rem;
+    line-height: 1.25;
+    color: #00262b;
+    display: block;
+    font-weight: 300;
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    position: relative;
+    width: 100%;
+    padding-right: 16px;
+    padding-left: 16px;
+    margin-bottom: 1.5rem !important;
+    padding: 0 !important;
+  }
+
   .wrapper-accomplishment-title .accomplishment-title {
     display: block;
     font-weight: 300;
@@ -142,6 +158,13 @@
   @media (min-width: 768px) {
     .wrapper-accomplishment-title .accomplishment-title,
     .wrapper-accomplishment-orgs {
+      flex: 0 0 50%;
+      max-width: 50%;
+    }
+
+    .wrapper-accomplishment-title .accomplishment-title-program {
+      display: inline-block;
+      vertical-align: middle;
       flex: 0 0 50%;
       max-width: 50%;
     }
@@ -412,6 +435,10 @@
     .wrapper-accomplishment-title .accomplishment-title img {
       width: 275px;
     }
+
+    .wrapper-accomplishment-title .accomplishment-title-program img {
+      width: 275px;
+    }
   }
 
   @media (min-width: 768px) {
@@ -420,6 +447,11 @@
       display: inline-block;
       vertical-align: middle;
       margin-bottom: 0rem !important;
+    }
+  }
+  @media (max-width: 767px) {
+    .wrapper-accomplishment-title .accomplishment-title-program img {
+      width: 275px;
     }
   }
 
@@ -441,6 +473,10 @@
   @media (min-width: 992px) {
     .wrapper-accomplishment-title .accomplishment-title img {
       width: 300px;
+    }
+
+    .wrapper-accomplishment-title .accomplishment-title-program img {
+      width: 350px;
     }
 
     .accomplishment-statement {
@@ -614,11 +650,38 @@
       vertical-align: middle;
     }
 
+    .accomplishment .accomplishment-rendering .wrapper-accomplishment-title.verified .accomplishment-title-program {
+      position: relative;
+      width: 100%;
+      padding-right: 16px;
+      padding-left: 16px;
+      flex: 0 0 66.66667%;
+      max-width: 66.66667%;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
     .accomplishment .accomplishment-rendering .wrapper-accomplishment-title.verified .accomplishment-title img {
       max-width: 25% !important;
     }
 
+    .accomplishment .accomplishment-rendering .wrapper-accomplishment-title.verified .accomplishment-title-program img {
+      max-width: 300px !important;
+      max-height: 150px !important;
+    }
+
     .accomplishment .accomplishment-rendering .wrapper-accomplishment-title .accomplishment-title {
+      position: relative;
+      width: 100%;
+      padding-right: 16px;
+      padding-left: 16px;
+      flex: 0 0 66.66667%;
+      max-width: 66.66667%;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .accomplishment .accomplishment-rendering .wrapper-accomplishment-title .accomplishment-title-program {
       position: relative;
       width: 100%;
       padding-right: 16px;

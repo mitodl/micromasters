@@ -50,10 +50,17 @@
     <div class="wrapper-accomplishment-rendering">
       <div class="accomplishment-rendering">
         <div class="wrapper-accomplishment-title verified">
+          {% if course_title %}
           <div class="accomplishment-title">
               <img src="{% static 'images/certificates/micromasters_certificate_verified_logo.svg' %}" alt="MicroMaster's Certificate of Completion" />
               <span class="sr-only">Verified Certificate</span>
           </div>
+          {% else %}
+          <div class="accomplishment-title-program">
+              <img src="{% static 'images/certificates/micromasters_certificate_logo.svg' %}" alt="MicroMaster's Certificate of Completion" />
+              <span class="sr-only">Verified Certificate</span>
+          </div>
+          {% endif %}
           <div class="wrapper-accomplishment-orgs">
             <h3 class="accomplishment-orgs-title sr-only">Supported by the following organizations</h3>
             <ul class="wrapper-orgs list-orgs">
