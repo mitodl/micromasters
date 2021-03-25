@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.189.1
+---------------
+
+- changing micromasters certificate logo in program certificate (#4848)
+- Missed deadline message for exams (#4841)
+
 Version 0.189.0 (Released March 24, 2021)
 ---------------
 
