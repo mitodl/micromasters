@@ -3,8 +3,8 @@ Tests for exams API
 """
 from unittest.mock import patch
 
-import ddt
 import datetime
+import ddt
 from django.db.models.signals import post_save
 from django.test import (
     TestCase,
