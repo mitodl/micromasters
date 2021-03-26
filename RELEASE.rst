@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.189.1
+Version 0.189.1 (Released March 26, 2021)
 ---------------
 
 - changing micromasters certificate logo in program certificate (#4848)
