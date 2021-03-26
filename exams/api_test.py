@@ -4,6 +4,7 @@ Tests for exams API
 from unittest.mock import patch
 
 import ddt
+import datetime
 from django.db.models.signals import post_save
 from django.test import (
     TestCase,
@@ -17,6 +18,7 @@ from dashboard.factories import (
 from dashboard.utils import get_mmtrack
 from dashboard.api import ATTEMPTS_PER_PAID_RUN_OLD
 from ecommerce.factories import LineFactory
+from ecommerce.models import Order
 from exams.api import (
     authorize_for_exam_run,
     authorize_for_latest_passed_course,
@@ -35,6 +37,7 @@ from exams.models import (
 from financialaid.api_test import create_program
 from grades.constants import FinalGradeStatus
 from grades.factories import FinalGradeFactory
+from micromasters.utils import now_in_utc
 from profiles.factories import ProfileFactory
 
 
@@ -168,6 +171,45 @@ class ExamAuthorizationApiTests(TestCase):
             user=mmtrack.user,
             course=self.course_run.course
         ).count() == 2
+
+    def test_exam_authorization_for_missed_payment_deadline(self):
+        """
+        test exam_authorization when user paid, but only after deadline
+        """
+        create_order(self.user, self.course_run)
+        mmtrack = get_mmtrack(self.user, self.program)
+        course = self.course_run.course
+        now = now_in_utc()
+        exam_run = ExamRunFactory.create(
+            course=course,
+            authorized=True,
+            date_first_schedulable=now,
+            date_last_schedulable=now+datetime.timedelta(weeks=2)
+        )
+
+        self.course_run.upgrade_deadline = exam_run.date_first_schedulable - datetime.timedelta(weeks=8)
+        self.course_run.save()
+        # paid after deadline
+        order_qset = Order.objects.filter(user=self.user, line__course_key=self.course_run.edx_course_key)
+        order_qset.update(modified_at=now - datetime.timedelta(weeks=5))
+
+        with patch('exams.api.get_corresponding_course_run') as mock:
+            mock.side_effect = [self.course_run]
+            with self.assertRaises(ExamAuthorizationException):
+                authorize_for_exam_run(self.user, self.course_run, self.exam_run)
+
+        assert ExamAuthorization.objects.filter(
+            user=mmtrack.user,
+            course=course
+        ).exists() is False
+        # paid before deadline
+        order_qset.update(modified_at=exam_run.date_first_schedulable - datetime.timedelta(weeks=9))
+        authorize_for_exam_run(self.user, self.course_run, self.exam_run)
+
+        assert ExamAuthorization.objects.filter(
+            user=mmtrack.user,
+            course=course
+        ).exists() is True
 
     def test_exam_authorization_course_mismatch(self):
         """
