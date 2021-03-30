@@ -1,5 +1,8 @@
 """Exam related helpers"""
 import re
+import datetime
+
+from courses.models import CourseRun
 
 
 def is_eligible_for_exam(mmtrack, course_run):
@@ -49,3 +52,20 @@ def validate_profile(profile):
         fields.append('postal_code')
 
     return all([_match_field(profile, field) for field in fields])
+
+
+def get_corresponding_course_run(exam_run):
+    """
+    Finds a corresponding course run for this exam.
+    It looks for CourseRun with an end_date field within 4 weeks preceding the exam.
+
+    Args:
+        exam_run (ExamRun): the exam run object
+
+    Returns:
+        (CourseRun): the corresponding course run
+    """
+    four_weeks_earlier = exam_run.date_first_schedulable - datetime.timedelta(weeks=4)
+    return CourseRun.objects.filter(
+        end_date__range=(four_weeks_earlier, exam_run.date_first_schedulable)
+    ).first()

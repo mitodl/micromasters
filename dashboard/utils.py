@@ -289,6 +289,21 @@ class MMTrack:
         """
         return self.has_final_grade(edx_course_key) and self.has_paid(edx_course_key)
 
+    def paid_but_missed_deadline(self, course_run):
+        """
+        Checks if user paid for this run only after the deadline
+        """
+        if self.has_paid(course_run.edx_course_key):
+            orders = Order.objects.filter(
+                status__in=Order.FULFILLED_STATUSES,
+                user=self.user,
+                line__course_key=course_run.edx_course_key,
+                modified_at__gt=course_run.upgrade_deadline,
+            )
+            if orders.exists():
+                return True
+        return False
+
     def has_passed_course(self, edx_course_key):
         """
         Returns whether the user has passed a course run.
