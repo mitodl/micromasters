@@ -1,6 +1,14 @@
 Release Notes
 =============
 
+Version 0.190.0
+---------------
+
+- Bump djangorestframework from 3.9.1 to 3.11.2 (#4840)
+- Bump pygments from 2.2.0 to 2.7.4 (#4850)
+- Restrict exam authorization if user missed payment deadline (#4844)
+- adding documentation for edX exam management commands (#4822)
+
 Version 0.189.1 (Released March 26, 2021)
 ---------------
 
