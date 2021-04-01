@@ -148,7 +148,7 @@
     </div>
   </main>
 </div>
-<div class="wrapper-accomplishment-metadata">
+<div class="wrapper-accomplishment-metadata no-print">
     <div class="accomplishment-metadata">
       <div class="accomplishment-metadata-bit accomplishment-metadata-aboutplatform">
         <h3 class="accomplishment-metadata-title">
@@ -162,14 +162,24 @@
       </div>
       <div class="accomplishment-metadata-bit accomplishment-metadata-aboutcert">
         <h3 class="accomplishment-metadata-title">
-          About the edX MicroMasters credential
+          {% if course_title %}
+            About edX Verified Certificates
+          {% else %}
+            About the edX MicroMasters credential
+          {% endif %}
         </h3>
         <p class="accomplishment-metadata-copy">
-          An edX MicroMasters credential signifies that the learner has completed a group of courses that add up
-          to a rich understanding of an area of study. Completion of MicroMasters Programs requires that learners earn
-          <a href="https://www.edx.org/verified-certificate">Verified Certificates</a>
-          from each of the courses included in the Program.
-      </p>
+          {% if course_title %}
+            An edX Verified Certificate signifies that the learner has agreed to abide by the edX honor code and
+            completed all of the required tasks of this course under its guidelines, as well as having their photo
+            ID checked to verify their identity.
+          {% else %}
+            An edX MicroMasters credential signifies that the learner has completed a group of courses that add up
+            to a rich understanding of an area of study. Completion of MicroMasters Programs requires that learners earn
+            <a href="https://www.edx.org/verified-certificate">Verified Certificates</a>
+            from each of the courses included in the Program.
+          {% endif %}
+        </p>
     </div>
   </div>
 </div>
