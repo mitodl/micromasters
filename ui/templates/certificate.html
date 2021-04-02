@@ -85,7 +85,8 @@
                 <span class="accomplishment-statement-detail institute-detail">a course of study offered by MITx,
                   an online learning initiative of the Massachusetts Institute of Technology.</span>
               {% else %}
-                <span class="accomplishment-summary">successfully completed and received a passing grade in</span>
+                <span class="accomplishment-summary">has successfully completed all courses and received passing grades
+                  to earn a MicroMasters program certificate in</span>
                 <span class="accomplishment-course">
                   <span class="accomplishment-course-name">{{ program_title }}</span>
                 </span>
@@ -146,6 +147,41 @@
       </div>
     </div>
   </main>
+</div>
+<div class="wrapper-accomplishment-metadata no-print">
+    <div class="accomplishment-metadata">
+      <div class="accomplishment-metadata-bit accomplishment-metadata-aboutplatform">
+        <h3 class="accomplishment-metadata-title">
+          About edX
+        </h3>
+        <p class="accomplishment-metadata-copy">
+          <a href="https://www.edx.org"> edX</a> offers interactive online classes and
+          MOOCs from the world’s best universities, including MIT, Harvard, Berkeley, University of Texas,
+          and many others. edX is a non-profit online initiative created by founding partners Harvard and MIT.
+        </p>
+      </div>
+      <div class="accomplishment-metadata-bit accomplishment-metadata-aboutcert">
+        <h3 class="accomplishment-metadata-title">
+          {% if course_title %}
+            About edX Verified Certificates
+          {% else %}
+            About the edX MicroMasters credential
+          {% endif %}
+        </h3>
+        <p class="accomplishment-metadata-copy">
+          {% if course_title %}
+            An edX Verified Certificate signifies that the learner has agreed to abide by the edX honor code and
+            completed all of the required tasks of this course under its guidelines, as well as having their photo
+            ID checked to verify their identity.
+          {% else %}
+            An edX MicroMasters credential signifies that the learner has completed a group of courses that add up
+            to a rich understanding of an area of study. Completion of MicroMasters Programs requires that learners earn
+            <a href="https://www.edx.org/verified-certificate">Verified Certificates</a>
+            from each of the courses included in the Program.
+          {% endif %}
+        </p>
+    </div>
+  </div>
 </div>
 {% include "footer.html" %}
 {% endblock %}
