@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.190.1
+Version 0.190.1 (Released April 02, 2021)
 ---------------
 
 - Fix scss linting errors (#4856)
