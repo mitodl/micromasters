@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.190.1
+---------------
+
+- Modifications to program certificate (#4854)
+
 Version 0.190.0 (Released April 02, 2021)
 ---------------
 
