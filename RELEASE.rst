@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.190.0
+Version 0.190.0 (Released April 02, 2021)
 ---------------
 
 - Bump djangorestframework from 3.9.1 to 3.11.2 (#4840)
