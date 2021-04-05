@@ -597,6 +597,7 @@ class CourseCertificateSignatories(Orderable):
     panels = [
         MultiFieldPanel(
             [
+                FieldPanel('course'),
                 FieldPanel('name'),
                 FieldPanel('title_line_1'),
                 FieldPanel('title_line_2'),
