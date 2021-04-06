@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.191.0
+Version 0.191.0 (Released April 06, 2021)
 ---------------
 
 - Adding course option to CourseCertificateSignatories (#4858)
