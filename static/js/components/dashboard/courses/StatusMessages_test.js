@@ -489,6 +489,15 @@ describe("Course Status Messages", () => {
         )
       })
       // Cases with failed exam attempts
+      it("should prompt the user when failed exam", () => {
+        course.runs = [course.runs[0]]
+        course.proctorate_exams_grades = [makeProctoredExamResult()]
+        course.proctorate_exams_grades[0].passed = false
+        course.can_schedule_exam = false
+        assertIsJust(calculateMessages(calculateMessagesProps), [
+          { message: "You did not pass the exam." }
+        ])
+      })
       it("should prompt the user to take another exam if there is exam coupon url", () => {
         course.runs = [course.runs[0]]
         course.proctorate_exams_grades = [makeProctoredExamResult()]
@@ -507,14 +516,23 @@ describe("Course Status Messages", () => {
             "exam for this course. Please enroll now and complete the exam onboarding."
         )
       })
-      it("should prompt the user when failed exam", () => {
+      it("should prompt about upcoming exam, is failed and has attempt", () => {
         course.runs = [course.runs[0]]
         course.proctorate_exams_grades = [makeProctoredExamResult()]
         course.proctorate_exams_grades[0].passed = false
         course.can_schedule_exam = false
-        assertIsJust(calculateMessages(calculateMessagesProps), [
-          { message: "You did not pass the exam." }
-        ])
+        course.exams_schedulable_in_future = [
+          moment()
+            .add(2, "day")
+            .format()
+        ]
+
+        const messages = calculateMessages(calculateMessagesProps).value
+        assert.equal(
+          messages[0]["message"],
+          "You did not pass the exam. You can take the exam starting on " +
+            `${formatDate(course.exams_schedulable_in_future[0])}.`
+        )
       })
     })
 

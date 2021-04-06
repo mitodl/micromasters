@@ -113,6 +113,11 @@ const messageForAttemptedEdxExams = (course: Course, passedExam: boolean) => {
         </a>
       </span>
     )
+  } else if (!R.isEmpty(course.exams_schedulable_in_future)) {
+    return (
+      `${passedMsg} You can take the exam starting ` +
+      `on ${formatDate(course.exams_schedulable_in_future[0])}.`
+    )
   }
   return `${passedMsg}`
 }
