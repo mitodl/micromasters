@@ -464,7 +464,7 @@ describe("Course Status Messages", () => {
         assertIsJust(calculateMessages(calculateMessagesProps), [
           {
             message:
-              "You can take the exam starting " +
+              "You can register to take the exam starting " +
               `on ${formatDate(course.exams_schedulable_in_future[0])}.`
           }
         ])
@@ -530,7 +530,7 @@ describe("Course Status Messages", () => {
         const messages = calculateMessages(calculateMessagesProps).value
         assert.equal(
           messages[0]["message"],
-          "You did not pass the exam. You can take the exam starting on " +
+          "You did not pass the exam. You can register to take the exam starting on " +
             `${formatDate(course.exams_schedulable_in_future[0])}.`
         )
       })
