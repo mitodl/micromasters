@@ -311,7 +311,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
       )
     } else if (!R.isEmpty(course.exams_schedulable_in_future)) {
       message =
-        "You can take the exam starting " +
+        `${passedMsg} You can register to take the exam starting ` +
         `on ${formatDate(course.exams_schedulable_in_future[0])}.`
     }
 
