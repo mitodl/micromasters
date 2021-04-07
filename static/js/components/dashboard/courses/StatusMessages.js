@@ -91,7 +91,7 @@ const messageForNotAttemptedEdxExam = (course: Course) => {
     )
   } else if (!R.isEmpty(course.exams_schedulable_in_future)) {
     message =
-      "You can take the exam starting " +
+      "You can register to take the exam starting " +
       `on ${formatDate(course.exams_schedulable_in_future[0])}.`
   }
   return message
@@ -112,6 +112,11 @@ const messageForAttemptedEdxExams = (course: Course, passedExam: boolean) => {
           enroll now and complete the exam onboarding.
         </a>
       </span>
+    )
+  } else if (!R.isEmpty(course.exams_schedulable_in_future)) {
+    return (
+      `${passedMsg} You can register to take the exam starting ` +
+      `on ${formatDate(course.exams_schedulable_in_future[0])}.`
     )
   }
   return `${passedMsg}`
