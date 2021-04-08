@@ -29,6 +29,7 @@ import {
   SET_ENROLL_SELECTED_PROGRAM,
   SET_ENROLL_SELECTED_COURSE_RUN,
   SET_CONFIRM_SKIP_DIALOG_VISIBILITY,
+  SET_EXAM_ENROLLMENT_DIALOG_VISIBILITY,
   SET_DOCS_INSTRUCTIONS_VISIBILITY,
   SET_COUPON_NOTIFICATION_VISIBILITY,
   SET_NAV_DRAWER_OPEN,
@@ -36,7 +37,8 @@ import {
   SHOW_ENROLL_PAY_LATER_SUCCESS,
   SET_SHOW_EXPANDED_COURSE_STATUS,
   SET_PROGRAMS_TO_UNENROLL,
-  SET_UNENROLL_API_INFLIGHT_STATE
+  SET_UNENROLL_API_INFLIGHT_STATE,
+  SET_SELECTED_EXAM_COUPON_COURSE
 } from "../actions/ui"
 import { EMAIL_COMPOSITION_DIALOG } from "../components/email/constants"
 import { CHANNEL_CREATE_DIALOG } from "../constants"
@@ -89,6 +91,8 @@ export type UIState = {
   documentSentDate: Object,
   selectedProgram: ?AvailableProgram,
   skipDialogVisibility: boolean,
+  examEnrollmentDialogVisibility: boolean,
+  selectedExamCouponCourse: ?number,
   docsInstructionsVisibility: boolean,
   couponNotificationVisibility: boolean,
   navDrawerOpen: boolean,
@@ -130,6 +134,8 @@ export const INITIAL_UI_STATE: UIState = {
   documentSentDate:                   {},
   selectedProgram:                    null,
   skipDialogVisibility:               false,
+  examEnrollmentDialogVisibility:     false,
+  selectedExamCouponCourse:           null,
   docsInstructionsVisibility:         false,
   couponNotificationVisibility:       false,
   navDrawerOpen:                      false,
@@ -312,6 +318,10 @@ export const ui = (
   }
   case SET_CONFIRM_SKIP_DIALOG_VISIBILITY:
     return { ...state, skipDialogVisibility: action.payload }
+  case SET_EXAM_ENROLLMENT_DIALOG_VISIBILITY:
+    return { ...state, examEnrollmentDialogVisibility: action.payload }
+  case SET_SELECTED_EXAM_COUPON_COURSE:
+    return { ...state, selectedExamCouponCourse: action.payload }
   case SET_DOCS_INSTRUCTIONS_VISIBILITY:
     return { ...state, docsInstructionsVisibility: action.payload }
   case SET_COUPON_NOTIFICATION_VISIBILITY:

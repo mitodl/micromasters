@@ -68,6 +68,7 @@ const COURSE: Course = {
   position_in_program:         1,
   runs:                        [],
   can_schedule_exam:           false,
+  exam_register_end_date:      "",
   exam_url:                    "",
   exams_schedulable_in_future: [],
   current_exam_date:           "",

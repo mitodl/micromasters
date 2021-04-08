@@ -45,6 +45,8 @@ export default class CourseRow extends React.Component {
     setEnrollSelectedCourseRun: (r: CourseRun) => void,
     setEnrollCourseDialogVisibility: (b: boolean) => void,
     setCalculatePriceDialogVisibility: (b: boolean) => void,
+    setExamEnrollmentDialogVisibility: (b: boolean) => void,
+    setSelectedExamCouponCourse: (n: number) => void,
     ui: UIState,
     checkout: (s: string) => void,
     setShowExpandedCourseStatus: (n: number) => void,
@@ -141,6 +143,8 @@ export default class CourseRow extends React.Component {
       ui,
       setShowExpandedCourseStatus,
       setShowGradeDetailDialog,
+      setExamEnrollmentDialogVisibility,
+      setSelectedExamCouponCourse,
       showStaffView
     } = this.props
 
@@ -169,6 +173,10 @@ export default class CourseRow extends React.Component {
             courseAction={this.courseAction}
             expandedStatuses={ui.expandedCourseStatuses}
             setShowExpandedCourseStatus={setShowExpandedCourseStatus}
+            setExamEnrollmentDialogVisibility={
+              setExamEnrollmentDialogVisibility
+            }
+            setSelectedExamCouponCourse={setSelectedExamCouponCourse}
             coupon={this.getCourseCoupon()}
           />
         )}

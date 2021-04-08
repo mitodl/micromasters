@@ -894,6 +894,7 @@ class InfoCourseTest(CourseTests):
             course,
             course_data_from_call,
             can_schedule_exam=False,
+            exam_register_end_date="",
             exam_url="",
             exams_schedulable_in_future=None,
             has_to_pay=False,
@@ -912,6 +913,7 @@ class InfoCourseTest(CourseTests):
             "prerequisites": course.prerequisites,
             "has_contact_email": bool(course.contact_email),
             "can_schedule_exam": can_schedule_exam,
+            "exam_register_end_date": exam_register_end_date,
             "exam_url": exam_url,
             "exams_schedulable_in_future": exams_schedulable_in_future,
             "current_exam_date": '',
@@ -999,11 +1001,15 @@ class InfoCourseTest(CourseTests):
             course,
             api.get_info_for_course(course, self.mmtrack)
         )
-        ExamRunFactory.create(course=course)
+        exam_run = ExamRunFactory.create(course=course)
+        exam_window= '{}'.format(
+            exam_run.date_last_schedulable.strftime("%B %d")
+        )
         self.assert_course_equal(
             course,
             api.get_info_for_course(course, self.mmtrack),
-            has_exam=True
+            has_exam=True,
+            exam_register_end_date=exam_window
         )
         assert mock_schedulable.call_count == 2
         assert mock_has_to_pay.call_count == 2
@@ -1942,7 +1948,7 @@ class ExamSchedulableTests(MockedESTestCase):
         (True, False, False, False, True, False),
         (True, True, False, False, True, False),
         (False, False, True, False, True, True),
-        (False, False, True, False, False, False),
+        (False, False, True, False, False, True),
         (False, True, True, False, True, True),
         (True, False, True, False, True, True),
         (True, True, True, False, True, True),
