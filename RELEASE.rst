@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.191.2
+---------------
+
+- Fix exam date schedulable test (#4865)
+
 Version 0.191.1 (Released April 08, 2021)
 ---------------
 
