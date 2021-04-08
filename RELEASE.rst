@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.191.1
+---------------
+
+- Adding a dialog for exam enrollment confirmation (#4819)
+- Add a case when user failed exam but has another attempt (#4861)
+
 Version 0.191.0 (Released April 06, 2021)
 ---------------
 
