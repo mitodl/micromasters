@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.191.1
+Version 0.191.1 (Released April 08, 2021)
 ---------------
 
 - Adding a dialog for exam enrollment confirmation (#4819)
