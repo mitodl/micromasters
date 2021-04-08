@@ -1002,8 +1002,8 @@ class InfoCourseTest(CourseTests):
             api.get_info_for_course(course, self.mmtrack)
         )
         exam_run = ExamRunFactory.create(course=course)
-        exam_window= '{}'.format(
-            exam_run.date_last_schedulable.strftime("%B %d")
+        exam_window = '{}'.format(
+            exam_run.date_last_schedulable.strftime("%B %-d")
         )
         self.assert_course_equal(
             course,
