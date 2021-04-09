@@ -16,7 +16,7 @@ from edx_api.client import EdxApi
 
 from backends.exceptions import InvalidCredentialStored
 from backends import utils
-from courses.models import Program, ElectiveCourse, CourseRun
+from courses.models import Program, ElectiveCourse
 from courses.utils import format_season_year_for_course_run
 from dashboard.api_edx_cache import CachedEdxDataApi
 from dashboard.utils import get_mmtrack, ATTEMPTS_PER_PAID_RUN, ATTEMPTS_PER_PAID_RUN_OLD
