@@ -238,7 +238,7 @@ def get_info_for_course(course, mmtrack):
         "exam_register_end_date": get_exam_register_end_date(course),
         "exam_url": get_edx_exam_coupon_url(mmtrack.user, course),
         "exams_schedulable_in_future": get_future_exam_runs(course),
-        "current_exam_date": get_current_exam_run_dates(course),
+        "current_exam_dates": get_current_exam_run_dates(course),
         "has_to_pay": has_to_pay_for_exam(mmtrack, course),
         "runs": [],
         "proctorate_exams_grades": ProctoredExamGradeSerializer(
@@ -518,12 +518,9 @@ def get_exam_register_end_date(course):
     """
     Get a formatted string of dates during which the exam is schedulable
     """
-    now = now_in_utc()
-    schedulable_exam_run = ExamRun.objects.filter(
-        course=course, date_last_eligible__gte=now.date()
-    ).first()
+    schedulable_exam_run = ExamRun.get_currently_schedulable(course).first()
     if schedulable_exam_run is not None:
-        return schedulable_exam_run.date_last_schedulable.strftime("%B %-d")
+        return schedulable_exam_run.date_last_schedulable.strftime("%B %-d, %I:%M%p %Z")
     return ""
 
 
@@ -539,9 +536,7 @@ def get_edx_exam_coupon_url(user, course):
         str: a url to the exam or empty string
     """
     now = now_in_utc()
-    schedulable_exam_runs = ExamRun.objects.filter(
-        course=course, date_last_eligible__gte=now.date()
-    )
+    schedulable_exam_runs = ExamRun.get_currently_schedulable(course)
     exam_auth = ExamAuthorization.objects.filter(
         user=user,
         course=course,
@@ -583,7 +578,8 @@ def get_future_exam_runs(course):
 
 def get_current_exam_run_dates(course):
     """
-    Return scheduling dates for an exam this term, example: 'Mar 7 - Mar 17, 2018'
+    Return eligibility dates for an exam this term, example: 'Mar 7 - Mar 17, 2018',
+    i.e. the dates during which a learner can take the exam
 
     Args:
         course (courses.models.Course): A course
@@ -591,15 +587,12 @@ def get_current_exam_run_dates(course):
     Returns:
         str: a string representation of scheduling window for current exam run
     """
-    now = now_in_utc()
-    current_course_run = CourseRun.objects.filter(course=course, end_date__gt=now, start_date__lt=now).first()
-    if current_course_run is None:
-        return ""
-    exam = ExamRun.get_current_term_exam(course, current_course_run.end_date)
+    schedulable_exam_run = ExamRun.get_currently_schedulable(course).first()
 
-    return '{} - {}'.format(
-        exam.date_first_schedulable.strftime('%b %-d'), exam.date_last_schedulable.strftime('%b %-d, %Y')
-    ) if exam else ''
+    return '{} and {}'.format(
+        schedulable_exam_run.date_first_eligible.strftime('%b %-d'),
+        schedulable_exam_run.date_last_eligible.strftime('%b %-d, %Y')
+    ) if schedulable_exam_run else ''
 
 
 def has_to_pay_for_exam(mmtrack, course):

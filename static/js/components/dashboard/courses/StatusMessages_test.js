@@ -373,6 +373,7 @@ describe("Course Status Messages", () => {
         course.proctorate_exams_grades[0].passed = true
         course.exam_url = "http://example.com"
         course.exam_register_end_date = "Jan 17"
+        course.current_exam_dates = "Jan 30 - Feb 5"
         const messages = calculateMessages(calculateMessagesProps).value
         assert.equal(messages[0]["message"], "You passed this course.")
         const mountedOne = shallow(messages[1]["message"])
@@ -380,7 +381,9 @@ describe("Course Status Messages", () => {
           mountedOne.text().trim(),
           "You passed the exam. You are authorized to take the virtual proctored exam for this course. " +
             "Please register now and complete the exam onboarding. " +
-            "You must register by Jan 17 to be eligible to take the exam this semester. If " +
+            `You must register by Jan 17 to be eligible to take the exam between ${
+              course.current_exam_dates
+            }.If ` +
             "you have already registered for the exam, you can access the exam through your edX dashboard."
         )
         const mountedTwo = shallow(messages[2]["message"])
@@ -445,6 +448,8 @@ describe("Course Status Messages", () => {
         course.runs = [course.runs[0]]
         course.can_schedule_exam = true
         course.exam_register_end_date = "Jan 17"
+        course.current_exam_dates = "Jan 30 - Feb 5"
+
         let messages = calculateMessages(calculateMessagesProps).value
         assert.equal(
           messages[0]["message"],
@@ -457,7 +462,9 @@ describe("Course Status Messages", () => {
           mounted.text(),
           " You are authorized to take the virtual proctored exam for this " +
             "course. Please register now and complete the exam onboarding. " +
-            "You must register by Jan 17 to be eligible to take the exam this semester. If " +
+            `You must register by Jan 17 to be eligible to take the exam between ${
+              course.current_exam_dates
+            }.If ` +
             "you have already registered for the exam, you can access the exam through your edX dashboard."
         )
       })
@@ -483,6 +490,7 @@ describe("Course Status Messages", () => {
         course.proctorate_exams_grades = [makeProctoredExamResult()]
         course.proctorate_exams_grades[0].passed = true
         course.exam_register_end_date = "Jan 17"
+        course.current_exam_dates = "Jan 30 - Feb 5"
 
         let messages = calculateMessages(calculateMessagesProps).value
         assert.equal(messages[0]["message"], "You passed this course.")
@@ -495,7 +503,9 @@ describe("Course Status Messages", () => {
           mounted.text(),
           "You passed the exam. You are authorized to take the virtual proctored " +
             "exam for this course. Please register now and complete the exam onboarding. " +
-            "You must register by Jan 17 to be eligible to take the exam this semester. If " +
+            `You must register by Jan 17 to be eligible to take the exam between ${
+              course.current_exam_dates
+            }.If ` +
             "you have already registered for the exam, you can access the exam through your edX dashboard."
         )
       })
@@ -515,6 +525,7 @@ describe("Course Status Messages", () => {
         course.proctorate_exams_grades[0].passed = false
         course.can_schedule_exam = true
         course.exam_register_end_date = "Jan 17"
+        course.current_exam_dates = "Jun 30 and July 5"
 
         let messages = calculateMessages(calculateMessagesProps).value
         assert.equal(messages[0]["message"], "You did not pass the exam.")
@@ -526,7 +537,7 @@ describe("Course Status Messages", () => {
           mounted.text(),
           "You did not pass the exam. You are authorized to take the virtual proctored " +
             "exam for this course. Please register now and complete the exam onboarding. " +
-            "You must register by Jan 17 to be eligible to take the exam this semester. If " +
+            "You must register by Jan 17 to be eligible to take the exam between Jun 30 and July 5.If " +
             "you have already registered for the exam, you can access the exam through your edX dashboard."
         )
       })
@@ -705,7 +716,7 @@ describe("Course Status Messages", () => {
       makeRunOverdue(course.runs[0])
 
       course.has_exam = true
-      course.current_exam_date = "Mar 12 - Mar 22, 2018"
+      course.current_exam_dates = "Mar 12 - Mar 22, 2018"
 
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
@@ -730,7 +741,7 @@ describe("Course Status Messages", () => {
       makeRunOverdue(course.runs[0])
 
       course.has_exam = true
-      course.current_exam_date = "Mar 12 - Mar 22, 2018"
+      course.current_exam_dates = "Mar 12 - Mar 22, 2018"
       course.exams_schedulable_in_future = [
         moment()
           .add(2, "day")
