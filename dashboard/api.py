@@ -520,7 +520,7 @@ def get_exam_register_end_date(course):
     """
     schedulable_exam_run = ExamRun.get_currently_schedulable(course).first()
     if schedulable_exam_run is not None:
-        return schedulable_exam_run.date_last_schedulable.strftime("%B %-d, %I:%M%p %Z")
+        return schedulable_exam_run.date_last_schedulable.strftime("%B %-d, %I:%M %p %Z")
     return ""
 
 

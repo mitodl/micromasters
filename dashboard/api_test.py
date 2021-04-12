@@ -1004,7 +1004,7 @@ class InfoCourseTest(CourseTests):
         )
         exam_run = ExamRunFactory.create(course=course)
         exam_register_end_date = '{}'.format(
-            exam_run.date_last_schedulable.strftime("%B %-d, %I:%M%p %Z")
+            exam_run.date_last_schedulable.strftime("%B %-d, %I:%M %p %Z")
         )
         current_exam_dates = '{} and {}'.format(
             exam_run.date_first_eligible.strftime('%b %-d'),
