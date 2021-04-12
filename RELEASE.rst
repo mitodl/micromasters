@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.192.0
+Version 0.192.0 (Released April 12, 2021)
 ---------------
 
 - Exam message for current exam run (#4867)
