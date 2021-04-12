@@ -302,8 +302,10 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
           </a>
           {` You must register by ${
             course.exam_register_end_date
-          } to be eligible to take the exam `}
-          this semester. <br />
+          } to be eligible to take the exam between ${
+            course.current_exam_dates
+          }.`}
+          <br />
           <br />
           If you have already registered for the exam, you can access the exam
           through your <a href={EDX_LINK_BASE}>edX dashboard</a>.
@@ -377,7 +379,7 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     return S.Just(messages)
   } else if (hasMissedDeadlineCourseRun(course)) {
     // the course finished can't pay
-    if (exams && course.current_exam_date) {
+    if (exams) {
       const futureExamMessage = R.isEmpty(course.exams_schedulable_in_future)
         ? " There are no future exams scheduled at this time. Please check back later."
         : ` You can pay now to take the next exam, scheduled for ${formatDate(

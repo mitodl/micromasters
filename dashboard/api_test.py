@@ -897,6 +897,7 @@ class InfoCourseTest(CourseTests):
             exam_register_end_date="",
             exam_url="",
             exams_schedulable_in_future=None,
+            current_exam_dates="",
             has_to_pay=False,
             has_exam=False,
             is_elective=False,
@@ -916,7 +917,7 @@ class InfoCourseTest(CourseTests):
             "exam_register_end_date": exam_register_end_date,
             "exam_url": exam_url,
             "exams_schedulable_in_future": exams_schedulable_in_future,
-            "current_exam_date": '',
+            "current_exam_dates": current_exam_dates,
             "has_to_pay": has_to_pay,
             "proctorate_exams_grades": proct_exams,
             "is_elective": is_elective,
@@ -1002,14 +1003,19 @@ class InfoCourseTest(CourseTests):
             api.get_info_for_course(course, self.mmtrack)
         )
         exam_run = ExamRunFactory.create(course=course)
-        exam_window = '{}'.format(
-            exam_run.date_last_schedulable.strftime("%B %-d")
+        exam_register_end_date = '{}'.format(
+            exam_run.date_last_schedulable.strftime("%B %-d, %I:%M %p %Z")
+        )
+        current_exam_dates = '{} and {}'.format(
+            exam_run.date_first_eligible.strftime('%b %-d'),
+            exam_run.date_last_eligible.strftime('%b %-d, %Y')
         )
         self.assert_course_equal(
             course,
             api.get_info_for_course(course, self.mmtrack),
             has_exam=True,
-            exam_register_end_date=exam_window
+            exam_register_end_date=exam_register_end_date,
+            current_exam_dates=current_exam_dates,
         )
         assert mock_schedulable.call_count == 2
         assert mock_has_to_pay.call_count == 2
@@ -2058,26 +2064,24 @@ class PastExamRunTests(MockedESTestCase):
     """Test for past schedulable exam run"""
 
     @ddt.data(
-        (1, True),
-        (2, True),
-        (3, False),
+        (False, True),
+        (True, True),
+        (False, False),
     )
     @ddt.unpack
-    def test_get_current_exam_run_dates(self, weeks, has_exam):
+    def test_get_current_exam_run_dates(self, eligibility, has_current_exam):
         """test get_past_recent_exam_run"""
-        now = now_in_utc()
-        end_date = now + timedelta(weeks=8)
-        exam_run = ExamRunFactory.create(date_first_schedulable=end_date+timedelta(weeks=weeks))
-        CourseRunFactory.create(
-            course=exam_run.course,
-            start_date=now-timedelta(weeks=5),
-            end_date=end_date
+        exam_run = ExamRunFactory.create(
+            scheduling_past=not has_current_exam,
+            scheduling_future=False,
+            eligibility_past=False,
+            eligibility_future=eligibility
         )
         expected = ''
-        if has_exam:
-            expected = '{} - {}'.format(
-                exam_run.date_first_schedulable.strftime('%b %-d'),
-                exam_run.date_last_schedulable.strftime('%b %-d, %Y')
+        if has_current_exam:
+            expected = '{} and {}'.format(
+                exam_run.date_first_eligible.strftime('%b %-d'),
+                exam_run.date_last_eligible.strftime('%b %-d, %Y')
             )
         self.assertEqual(api.get_current_exam_run_dates(exam_run.course), expected)
 
