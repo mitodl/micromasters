@@ -107,7 +107,7 @@ class TestHomePage(ViewsTests):
     def test_login_button(self):
         """Verify that we see a login button if not logged in"""
         response = self.client.get('/')
-        self.assertContains(response, "Sign Up")
+        self.assertContains(response, "Create Account")
 
     def test_sign_out_button(self):
         """Verify that we see a sign out button if logged in"""
@@ -639,7 +639,7 @@ class TestProgramPage(ViewsTests):
         """Verify that we see a login button"""
         CourseFactory.create(program=self.program_page.program)
         response = self.client.get(self.program_page.url)
-        self.assertContains(response, "Sign Up Now")
+        self.assertContains(response, "Create Account")
 
     def test_program_thumbnail_default(self):
         """Verify that a default thumbnail shows up for a live program"""

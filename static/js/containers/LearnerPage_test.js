@@ -1349,12 +1349,12 @@ describe("LearnerPage", function() {
       const username = USER_PROFILE_RESPONSE.username
       return renderComponent(`/learner/${username}`, anonymousUserActions).then(
         ([wrapper]) => {
-          assert.equal(wrapper.find(".button-login").text(), "Log In")
+          assert.equal(wrapper.find(".button-login").text(), "Sign In")
           assert.equal(
             wrapper.find(".button-login").prop("href"),
             "/login/edxorg/"
           )
-          assert.equal(wrapper.find(".button-signup").text(), "Sign Up")
+          assert.equal(wrapper.find(".button-signup").text(), "Create Account")
           assert.equal(
             wrapper.find(".button-signup").prop("href"),
             "/login/edxorg/"
