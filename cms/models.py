@@ -356,7 +356,7 @@ class ProgramPage(Page):
     program_subscribe_link = models.URLField(
         blank=True,
         null=True,
-        help_text="A url for I'm interested button, if there is no course(s) available."
+        help_text="A url for Learn More button, if there is no course(s) available."
     )
 
     subpage_types = ['FaqsPage', 'CourseTeamTabPage', 'ProgramTabPage']
