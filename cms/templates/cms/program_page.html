@@ -58,7 +58,7 @@
         <div class="description">
           {{ page.title_over_image|richtext }}
         </div>
-        {% if courses %}
+        {% if not page.program_subscribe_link %}
           {% if not authenticated %}
             <button class="mdl-button hero-button open-signup-dialog mdl-cell--hide-phone">
               Create Account
@@ -73,7 +73,7 @@
         {% else %}
           <a class="mdl-button hero-button"
                   href="{{ page.program_subscribe_link }}"
-                  target="blank">I'm interested</a>
+                  target="blank">Learn More</a>
         {% endif %}
       </div>
     {% endif %}
