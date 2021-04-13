@@ -41,7 +41,7 @@ def create_enrolled_user_batch(num_to_create, program, **kwargs):
 
 
 def create_user_for_login(is_staff=True, username=None):
-    """Create a test user that can log into the app"""
+    """Create a test user that can sign into the app"""
     later = now_in_utc() + timedelta(weeks=5000)
     with mute_signals(post_save):
         user = SocialProfileFactory.create(

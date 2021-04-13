@@ -105,13 +105,13 @@ export default class ProgramSelector extends React.Component {
             href="/login/edxorg/"
             className="mdl-button button-login open-signup-dialog"
           >
-            Log In
+            Sign In
           </a>
           <a
             href="/login/edxorg/"
             className="mdl-button button-signup open-signup-dialog"
           >
-            Sign Up
+            Create Account
           </a>
         </div>
       )
