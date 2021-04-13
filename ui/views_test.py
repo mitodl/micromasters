@@ -710,7 +710,7 @@ class TestProgramPage(ViewsTests):
         self.assertIn("program", js_settings)
         self.assertIn("courses", js_settings["program"])
         self.assertEqual(len(js_settings["program"]["courses"]), 0)
-        self.assertContains(response, "I'm interested")
+        self.assertContains(response, "Learn More")
         self.assertContains(response, program_subscribe_link)
 
 
