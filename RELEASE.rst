@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.192.1
+---------------
+
+- Program Page: Learn more button (#4870)
+- Standardize Log In / Sign Up buttons (#4868)
+
 Version 0.192.0 (Released April 12, 2021)
 ---------------
 
