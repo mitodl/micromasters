@@ -50,7 +50,7 @@ class ExamRun(TimestampedModel):
     @classmethod
     def get_schedulable_in_future(cls, course):
         """
-        Get a QuerySet with currently schedulable exam runs
+        Get a QuerySet with exam run with future schedulable window
 
         Args:
             course (courses.models.Course): the course to find exam runs for

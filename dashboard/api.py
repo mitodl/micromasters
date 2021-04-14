@@ -16,7 +16,7 @@ from edx_api.client import EdxApi
 
 from backends.exceptions import InvalidCredentialStored
 from backends import utils
-from courses.models import Program, ElectiveCourse
+from courses.models import Program, ElectiveCourse, CourseRun
 from courses.utils import format_season_year_for_course_run
 from dashboard.api_edx_cache import CachedEdxDataApi
 from dashboard.utils import get_mmtrack, ATTEMPTS_PER_PAID_RUN, ATTEMPTS_PER_PAID_RUN_OLD
@@ -238,6 +238,7 @@ def get_info_for_course(course, mmtrack):
         "exam_register_end_date": get_exam_register_end_date(course),
         "exam_url": get_edx_exam_coupon_url(mmtrack.user, course),
         "exams_schedulable_in_future": get_future_exam_runs(course),
+        "exam_date_next_semester": get_exam_date_next_semester(course),
         "current_exam_dates": get_current_exam_run_dates(course),
         "has_to_pay": has_to_pay_for_exam(mmtrack, course),
         "runs": [],
@@ -574,6 +575,29 @@ def get_future_exam_runs(course):
 
     return (ExamRun.get_schedulable_in_future(course).
             order_by('date_first_schedulable').values_list('date_first_schedulable', flat=True))
+
+
+def get_exam_date_next_semester(course):
+    """
+    Return a start date of an exam next semester.
+    Looking for the latest course run that has just finished or is currently running,
+    and uses its upgrade deadline as an even in time relative to which we can find an
+    exam run this semester or next semester.
+
+    Args:
+        course (courses.models.Course): A course
+
+    Returns:
+        str: a string representation exam start date, example: Apr 5, 2021
+    """
+    current_course_run = (CourseRun.objects.filter(start_date__lte=now_in_utc(), course=course)
+                          .order_by('-start_date').first())
+
+    exam_run = ExamRun.get_schedulable_in_future(course).filter(
+        date_first_schedulable__gte=current_course_run.upgrade_deadline + datetime.timedelta(weeks=12)
+    ).order_by('date_first_schedulable').first()
+
+    return exam_run.date_last_eligible.strftime('%b %-d, %Y') if exam_run else ""
 
 
 def get_current_exam_run_dates(course):
