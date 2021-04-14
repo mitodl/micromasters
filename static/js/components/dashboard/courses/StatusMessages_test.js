@@ -741,18 +741,13 @@ describe("Course Status Messages", () => {
       makeRunOverdue(course.runs[0])
 
       course.has_exam = true
-      course.current_exam_dates = "Mar 12 - Mar 22, 2018"
-      course.exams_schedulable_in_future = [
-        moment()
-          .add(2, "day")
-          .format()
-      ]
+      course.exam_date_next_semester = "Apr 10, 2021"
       assertIsJust(calculateMessages(calculateMessagesProps), [
         {
           message:
             "You missed the payment deadline to take the proctored exam " +
             "this term. You can pay now to take the next exam, scheduled for " +
-            `${formatDate(course.exams_schedulable_in_future[0])}.`,
+            `${course.exam_date_next_semester}.`,
           action: "course action was called"
         }
       ])

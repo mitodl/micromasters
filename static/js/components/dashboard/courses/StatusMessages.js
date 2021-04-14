@@ -382,7 +382,9 @@ export const calculateMessages = (props: CalculateMessagesProps) => {
     if (exams) {
       const futureExamMessage = R.isEmpty(course.exam_date_next_semester)
         ? " There are no future exams scheduled at this time. Please check back later."
-        : ` You can pay now to take the next exam, scheduled for ${course.exam_date_next_semester}.`
+        : ` You can pay now to take the next exam, scheduled for ${
+          course.exam_date_next_semester
+        }.`
 
       messages.push({
         message:
