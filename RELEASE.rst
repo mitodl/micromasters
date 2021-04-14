@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.192.1
+Version 0.192.1 (Released April 14, 2021)
 ---------------
 
 - Program Page: Learn more button (#4870)
