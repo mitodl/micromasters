@@ -592,9 +592,13 @@ def get_exam_date_next_semester(course):
     """
     current_course_run = (CourseRun.objects.filter(start_date__lte=now_in_utc(), course=course)
                           .order_by('-start_date').first())
-
+    three_months = datetime.timedelta(weeks=12)
+    if current_course_run is None or current_course_run.upgrade_deadline is None:
+        next_date = now_in_utc() + three_months
+    else:
+        next_date = current_course_run.upgrade_deadline + three_months
     exam_run = ExamRun.get_schedulable_in_future(course).filter(
-        date_first_schedulable__gte=current_course_run.upgrade_deadline + datetime.timedelta(weeks=12)
+        date_first_schedulable__gte=next_date
     ).order_by('date_first_schedulable').first()
 
     return exam_run.date_last_eligible.strftime('%b %-d, %Y') if exam_run else ""
