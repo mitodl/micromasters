@@ -42,7 +42,7 @@ class Command(BaseCommand):
         validated_urls = validate_urls(reader)
 
         try:
-            course = Course.objects.get(course_number__startswith=course_number)
+            course = Course.objects.get(course_number__startswith=f'{course_number}x')
         except Course.DoesNotExist:
             raise CommandError(
                 'Could not find a course with number "{}"'.format(course_number)
