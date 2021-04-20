@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.193.0
+---------------
+
+- When user missed deadline, show future semester exam dates (#4872)
+
 Version 0.192.1 (Released April 14, 2021)
 ---------------
 
