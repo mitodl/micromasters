@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.193.2
+---------------
+
+- Populate exam coupons:look for more specific course number (#4876)
+
 Version 0.193.1 (Released April 22, 2021)
 ---------------
 
