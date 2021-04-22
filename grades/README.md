@@ -154,15 +154,15 @@ daily with grades. When the exam period is complete, and all the grades have bee
 team so they can download a copy of the proctored exam grades for analysis. We will also ask them to confirm with 
 Pearson that all the grades have been delivered.  
 
-### Test adjusted grades
+### Test edx exam grades
 
-The course team will deliver updated grades to us via a csv file in dropbox (in order to ensure the file is 
+The course team will deliver edx exam grades to us via a csv file in dropbox (in order to ensure the file is 
 encrypted at rest with access control). Since adjusting grades is a complex process,
-they like us to validate their changes by calculating the number of learners who, after uploading the adjusted
+they like us to validate their changes by calculating the number of learners who, after uploading the
 grades, will have earned 1, 2, 3, 4 and 5 course certificates and how many will have earned a program certificate. 
 
 Once we and the course team have determined that there is a match the course team will validate the grade adjustment 
-with the faculty. After the course team has validated the adjustment they will email us to confirm that we can 
+with the faculty. After the course team has validated the grades they will email us to confirm that we can
 import the adjusted grades into the micromasters application and release them to learners. 
 
 Both steps (1. validating the number of learners who have earned different numbers of course certificates and 2. 
@@ -171,38 +171,13 @@ grades into the micromasters application.
 
 ### Load adjusted grades
 
-Once the we have verified the outcomes of the adjusted grades with the course team, we can import them into the 
-micromasters web application. This can be done with the management command: `adjust_exam_grades_from_csv.py`
-
-  1. On your local machine, calculate an md5 checksum of the grade data (use `md5` on MacOS, `md5sum` on Linux)
-  
-    md5sum <csv file name> 
-  
-  2. Open a bash shell on a one-off Heroku dyno:
-
-    heroku run bash --app <micromasters-production-app-name>
-    
-  3. Create a temporary file containing the csv data to import 
-  
-    cat >> <temporary file location>`
-    
-  4. Paste in the csv data and close the file with `ctrl+d` 
-  
-  5. Compare the md5 checksum on the heroku dyno with the one from your local copy
-  
-    md5sum <temporary file location>
-  
-  6. Run the management command 
-  
-    python manage.py adjust_exam_grades_from_csv <temporary file location>
-    
-  Note: you will likely get a number of warnings about "User [x] does not have a passing exam grade for course [y]".
-  This is most likely because the exam results have not been released yet, and therefore aren't yet used for
-  calculating grades. Proceed to the next step: 
+Once that we have verified the numbers of learners that passed each course with the new exam results
+with the course team, we can import them into the micromasters web application. This can be done
+with the management command: `import_edx_exam_grades.py`
 
 ### Release exam grades to learners 
 
-Now that the adjusted grades are loaded, we can release them to learners by updating the date/time that grades are 
+Now that grades are loaded, we can release them to learners by updating the date/time that grades are
 available in the exam run admin. 
 
 ### Update combined final grades
