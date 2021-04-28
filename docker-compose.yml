@@ -93,7 +93,7 @@ services:
     command: >
       /bin/bash -c '
       sleep 3;
-      celery -A micromasters.celery:app worker -Q dashboard,default -B -l ${MICROMASTERS_LOG_LEVEL:-INFO}'
+      celery -A micromasters.celery:app worker -Q exams,dashboard,default -B -l ${MICROMASTERS_LOG_LEVEL:-INFO}'
     links:
       - db
       - elastic

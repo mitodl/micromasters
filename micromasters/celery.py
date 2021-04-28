@@ -18,5 +18,6 @@ app.conf.task_default_queue = "default"
 app.autodiscover_tasks()
 
 app.conf.task_routes = {
-	"dashboard.tasks.*": {"queue": "dashboard"}
+	"dashboard.tasks.*": {"queue": "dashboard"},
+    "exams.tasks.*": {"queue": "exams"}
 }
