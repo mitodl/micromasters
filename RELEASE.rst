@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.194.0
+Version 0.194.0 (Released April 28, 2021)
 ---------------
 
 - Enable newrelic on workers
