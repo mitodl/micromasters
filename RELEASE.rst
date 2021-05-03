@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.194.1
+Version 0.194.1 (Released May 03, 2021)
 ---------------
 
 - Adding celery queue for exams (#4883)
