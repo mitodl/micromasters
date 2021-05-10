@@ -3,7 +3,6 @@
 - [ ] Screenshots and design review for any changes that affect layout or styling
   - [ ] Desktop screenshots
   - [ ] Mobile width screenshots
-  - [ ] Tag @ferdi or @pdpinch for review
 - [ ] Migrations
   - [ ] Migration is backwards-compatible with current production code
 - [ ] Testing
