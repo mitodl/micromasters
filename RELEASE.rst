@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.195.0
+---------------
+
+- Bump react-draft-wysiwyg from 1.13.2 to 1.14.6 (#4886)
+- Bump ua-parser-js from 0.7.19 to 0.7.28 (#4889)
+
 Version 0.194.1 (Released May 03, 2021)
 ---------------
 
