@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.195.0
+Version 0.195.0 (Released May 12, 2021)
 ---------------
 
 - Bump react-draft-wysiwyg from 1.13.2 to 1.14.6 (#4886)
