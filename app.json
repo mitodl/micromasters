@@ -240,7 +240,8 @@
       "generator": "secret"
     },
     "SENTRY_DSN": {
-      "description": "The connection settings for Sentry"
+      "description": "The connection settings for Sentry",
+      "required": false
     },
     "SESSION_ENGINE": {
       "description": "Django session engine",
