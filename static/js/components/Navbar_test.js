@@ -43,6 +43,7 @@ describe("Navbar", () => {
       assert.deepEqual(hrefs, [
         "/learner/jane",
         "/learner/jane",
+        "/dashboard",
         "/learners",
         "/automaticemails",
         "/learner/jane",
