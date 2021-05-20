@@ -172,6 +172,7 @@ export default class Navbar extends React.Component {
               {this.programSelector()}
             </div>
             <div className="links">
+              {adminLink(closeDrawer, "/dashboard", "Dashboard", "dashboard")}
               {adminLink(closeDrawer, "/learners", "Learners", "people")}
               {adminLink(closeDrawer, "/cms", "CMS", "description", true, true)}
               {financialAidLink(
