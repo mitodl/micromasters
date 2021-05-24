@@ -9,11 +9,7 @@
           </div>
         <div class="pull-right">
           {% if authenticated %}
-            {% if is_staff %}
-              <a class="header-dashboard-link" href="/learners">My Dashboard</a>
-            {% else %}
-              <a class="header-dashboard-link" href="/dashboard">My Dashboard</a>
-            {% endif %}
+          <a class="header-dashboard-link" href="/dashboard">My Dashboard</a>
           <a class="header-dashboard-link" href="/logout">
             Sign Out
           </a>
