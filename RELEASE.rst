@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.195.3
+---------------
+
+- Link to Learner Dashboard for staff (#4898)
+- Add Zendesk FAQ section on pages (#4895)
+
 Version 0.195.2 (Released May 20, 2021)
 ---------------
 
