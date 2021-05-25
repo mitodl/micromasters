@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.195.3
+Version 0.195.3 (Released May 25, 2021)
 ---------------
 
 - Link to Learner Dashboard for staff (#4898)
