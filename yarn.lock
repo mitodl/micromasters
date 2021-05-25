@@ -8459,10 +8459,10 @@ redux-asserts@^0.0.11:
     redux "^4.0.4"
     redux-thunk "^2.0.1"
 
-redux-hammock@^0.3.2:
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/redux-hammock/-/redux-hammock-0.3.2.tgz#2de5c2de52bccf6531a972a5abec97f50eb8790c"
-  integrity sha512-lgFEXDI/ue76mUZSKmQkaORfeBk+q8HeRSJGK7Y4Ckp/ecefhg7EG+KpAvjVRX19D/aQzdOv1aUIdDgl/yo7Bw==
+redux-hammock@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/redux-hammock/-/redux-hammock-0.3.3.tgz#c84904fe85a74f8d4702b5518f809342fb2c7004"
+  integrity sha512-JMykN5RhgQIutiuGms2NzY0lLi1ZLCQ0uEkXdFPKv7UnI/UzalGzSpCxv9DOMzFHNkLGDq8qrr6L1KDPVNQUjg==
   dependencies:
     babel-polyfill "^6.23.0"
     babel-runtime "^6.26.0"
