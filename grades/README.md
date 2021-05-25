@@ -146,13 +146,6 @@ This can be used for creating an issue task at the end of each exam session. Jus
 
 Detailed explanations below:
 
-### Deliver a preliminary grade report to the course team
-
-Grades arrive daily from the proctored exam vendor. Our Business Intelligence Server (BI) has a report that is updated 
-daily with grades. When the exam period is complete, and all the grades have been delivered, we notify the course 
-team so they can download a copy of the proctored exam grades for analysis. We will also ask them to confirm with 
-Pearson that all the grades have been delivered.  
-
 ### Test edx exam grades
 
 The course team will deliver edx exam grades to us via a csv file in dropbox (in order to ensure the file is 
