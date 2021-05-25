@@ -136,8 +136,7 @@ It typically takes them a few weeks to adjust the grades and return them to us f
 
 This can be used for creating an issue task at the end of each exam session. Just copy and paste the source markdown:
 
-- [ ] Deliver preliminary grade report to the course team
-- [ ] Wait for course team to deliver adjust grades
+- [ ] Wait for course team to deliver adjusted grades
 - [ ] Test adjusted grades and confirm counts of new course certificates and program certificates 
 - [ ] Wait for course team to confirm counts with faculty
 - [ ] load adjusted grades
