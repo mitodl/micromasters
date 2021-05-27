@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.196.1
+---------------
+
+- Bump hosted-git-info from 2.7.1 to 2.8.9 (#4891)
+
 Version 0.196.0 (Released May 27, 2021)
 ---------------
 
