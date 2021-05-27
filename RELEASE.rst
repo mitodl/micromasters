@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.196.0
+Version 0.196.0 (Released May 27, 2021)
 ---------------
 
 - Update redux-hammock to 0.3.3 (#4901)
