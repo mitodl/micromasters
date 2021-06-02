@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.196.2
+---------------
+
+- Exam grades readme updates (#4879)
+
 Version 0.196.1 (Released June 02, 2021)
 ---------------
 
