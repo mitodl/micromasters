@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.196.3
+---------------
+
+- build: upgrade wagtail(2.12.4), Pillow(8.2.0), uwsgi(2.0.18) (#4838)
+
 Version 0.196.2 (Released June 03, 2021)
 ---------------
 
