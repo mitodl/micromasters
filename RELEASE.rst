@@ -1,6 +1,14 @@
 Release Notes
 =============
 
+Version 0.197.0 (Released June 11, 2021)
+---------------
+
+- don't fail CI if codecov upload fails
+- Bump django from 2.2.20 to 2.2.21 (#4914)
+- Added faq on error pages (#4916)
+- Upgrade to Postgres 12 (#4906)
+
 Version 0.196.3 (Released June 07, 2021)
 ---------------
 
