@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.197.1
+---------------
+
+- Prevent googlebot from indexing the two new routes (#4925)
+- Bump django from 2.2.21 to 2.2.24 (#4923)
+
 Version 0.197.0 (Released June 11, 2021)
 ---------------
 
