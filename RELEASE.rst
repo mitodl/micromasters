@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.197.0
+Version 0.197.0 (Released June 11, 2021)
 ---------------
 
 - don't fail CI if codecov upload fails
