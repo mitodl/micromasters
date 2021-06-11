@@ -9,3 +9,5 @@ Disallow: /admin/
 Disallow: /logout/
 Disallow: /pearson/
 Disallow: /api/
+Disallow: /certificate/
+Disallow: /records/
