@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.197.1
+Version 0.197.1 (Released June 11, 2021)
 ---------------
 
 - verify micromasters.mit.edu on Yandex (#4930)
