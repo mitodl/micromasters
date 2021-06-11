@@ -8,6 +8,7 @@ from django.urls import reverse
 from rest_framework import status
 
 from dashboard.factories import ProgramEnrollmentFactory
+from micromasters.factories import UserFactory
 from micromasters.utils import is_subset_dict
 from grades.factories import (
     MicromastersCourseCertificateFactory,
@@ -96,9 +97,18 @@ def test_valid_program_certificate_200(client):
     assert reverse('program-certificate', args=[certificate.hash]) in resp.content.decode('utf-8')
 
 
+def test_program_record_anonymously(client):
+    """Test that a request for program record with anonymous user results in 404"""
+    enrollment = ProgramEnrollmentFactory.create()
+    resp = client.get(reverse("grade_records", kwargs=dict(record_hash=enrollment.hash)))
+    assert resp.status_code == status.HTTP_404_NOT_FOUND
+
+
 def test_program_record(client):
     """Test that a request for program record results in 200"""
-    enrollment = ProgramEnrollmentFactory.create()
+    user = UserFactory.create()
+    enrollment = ProgramEnrollmentFactory.create(user=user)
+    client.force_login(user)
     resp = client.get(reverse("grade_records", kwargs=dict(record_hash=enrollment.hash)))
     assert resp.status_code == status.HTTP_200_OK
     assert is_subset_dict(

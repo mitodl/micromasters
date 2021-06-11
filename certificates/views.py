@@ -205,6 +205,10 @@ class GradeRecordView(TemplateView):
 
         enrollment = get_object_or_404(ProgramEnrollment, hash=kwargs.get('record_hash'))
         user = enrollment.user
+
+        if user.is_anonymous or self.request.user != user:
+            raise Http404
+
         authenticated = not user.is_anonymous
         js_settings = {
             "gaTrackingID": settings.GA_TRACKING_ID,
