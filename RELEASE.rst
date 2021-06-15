@@ -1,6 +1,15 @@
 Release Notes
 =============
 
+Version 0.198.0
+---------------
+
+- Bump lodash from 4.17.19 to 4.17.21 (#4926)
+- Increase timeout for FinancialAidCalcultor tests (#4935)
+- upgrade urllib3==1.26.5 through boto3 and requests (#4933)
+- Bump y18n from 4.0.0 to 4.0.3 (#4927)
+- Bump ws from 5.2.2 to 5.2.3 (#4928)
+
 Version 0.197.1 (Released June 11, 2021)
 ---------------
 
