@@ -16,9 +16,9 @@ beautifulsoup4==4.8.2
     # via wagtail
 billiard==3.6.2.0
     # via celery
-boto3==1.9.188
+boto3==1.16.63
     # via -r requirements.in
-botocore==1.12.253
+botocore==1.19.63
     # via
     #   boto3
     #   s3transfer
@@ -104,8 +104,6 @@ djangorestframework==3.11.2
     # via
     #   -r requirements.in
     #   wagtail
-docutils==0.15.2
-    # via botocore
 draftjs-exporter==2.1.7
     # via wagtail
 edx-api-client==0.6.1
@@ -232,7 +230,7 @@ redis==3.3.0
     #   django-server-status
 requests-oauthlib==1.0.0
     # via social-auth-core
-requests==2.21.0
+requests==2.25.1
     # via
     #   -r requirements.in
     #   edx-api-client
@@ -242,7 +240,7 @@ requests==2.21.0
     #   wagtail
 robohash==1.0
     # via -r requirements.in
-s3transfer==0.2.1
+s3transfer==0.3.7
     # via boto3
 sentry-sdk==0.14.3
     # via -r requirements.in
@@ -289,7 +287,7 @@ tornado==5.1.1
     # via robohash
 traitlets==4.3.2
     # via ipython
-urllib3==1.24.2
+urllib3==1.26.5
     # via
     #   -r requirements.in
     #   botocore
