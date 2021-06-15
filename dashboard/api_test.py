@@ -1913,7 +1913,7 @@ class InfoProgramTest(MockedESTestCase):
             "number_courses_required": self.program.course_set.count(),
             "grade_average": 91,
             "certificate": "",
-            "grade_records_url": reverse('grade_records', args=[self.program_enrollment.hash]),
+            "grade_records_url": reverse('grade_records', args=[self.program_enrollment.id]),
         }
         self.assertEqual(res, expected_data)
 

@@ -10,18 +10,29 @@ import ReactDOM from "react-dom"
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles"
 import { Provider } from "react-redux"
 
+import {
+  getEnrollmentShareHash,
+  revokeEnrollmentShareHash
+} from "../actions/programs"
+
 import CourseListWithPopover from "../components/CourseListWithPopover"
 import FacultyCarousel from "../components/FacultyCarousel"
 import { setDialogVisibility } from "../actions/signup_dialog"
-import { setShareDialogVisibility } from "../actions/share_grades_dialog"
+import {
+  setShareDialogVisibility,
+  setRecordShareLink
+} from "../actions/share_grades_dialog"
+import { setRevokeShareDialogVisibility } from "../actions/revoke_shared_records_dialog"
 import { setSendDialogVisibility } from "../actions/send_grades_dialog"
 import {
   shareGradesDialogStore,
   sendGradesDialogStore,
-  signupDialogStore
+  signupDialogStore,
+  revokeShareGradesDialogStore
 } from "../store/configureStore"
 import SignupDialog from "../containers/SignupDialog"
 import CopyLinkDialog from "../containers/CopyLinkDialog"
+import RevokeShareDialog from "../containers/RevokeShareDialog"
 
 // Adding forEach polyfill for IE
 if (window.NodeList && !NodeList.prototype.forEach) {
@@ -66,41 +77,114 @@ if (toastClose) {
   toastClose.onclick = () => document.querySelector(".toast").remove()
 }
 
-// Share Program Records Link Dialog
-const shareStore = shareGradesDialogStore()
-const shareDialog = document.querySelector("#share-dialog")
-const openShareDialog = () =>
-  shareStore.dispatch(setShareDialogVisibility(true))
-const shareButton = document.querySelector(".open-share-dialog")
-if (shareDialog) {
-  shareButton.onclick = openShareDialog
-  ReactDOM.render(
-    <MuiThemeProvider theme={createMuiTheme()}>
-      <Provider store={shareStore}>
-        <CopyLinkDialog />
-      </Provider>
-    </MuiThemeProvider>,
-    shareDialog
-  )
-}
+const shareOptionsDiv = document.querySelector(".share-options")
+if (shareOptionsDiv) {
+  // Share Program Records Link Dialog
+  const shareStore = shareGradesDialogStore()
+  const shareDialog = document.querySelector("#share-dialog")
+  const openShareDialog = () =>
+    shareStore.dispatch(setShareDialogVisibility(true))
+  const openRevokeShareDialog = () =>
+    revokeStore.dispatch(setRevokeShareDialogVisibility(true))
+  const shareButtonOnClick = async () => {
+    updateEnrollmentShareHash()
+    openShareDialog()
+  }
+  const shareButton = document.querySelector(".open-share-dialog")
+  if (shareDialog) {
+    shareButton.onclick = shareButtonOnClick
+    ReactDOM.render(
+      <MuiThemeProvider theme={createMuiTheme()}>
+        <Provider store={shareStore}>
+          <CopyLinkDialog />
+        </Provider>
+      </MuiThemeProvider>,
+      shareDialog
+    )
+  }
 
-// Send Program Grades
-const sendStore = sendGradesDialogStore()
-const sendDialog = document.querySelector("#send-dialog")
-const openSendDialog = () => sendStore.dispatch(setSendDialogVisibility(true))
-const sendButton = document.querySelector(".open-send-dialog")
-if (sendDialog) {
-  sendButton.onclick = openSendDialog
-  ReactDOM.render(
-    <MuiThemeProvider theme={createMuiTheme()}>
-      <Provider store={sendStore}>
-        <SendGradesDialog />
-      </Provider>
-    </MuiThemeProvider>,
-    sendDialog
-  )
-}
+  const revokeButton = document.querySelector(".revoke-shared-records")
+  const revokeButtonOnClick = async () => {
+    if (SETTINGS.hash || SETTINGS.absolute_record_share_hash) {
+      const data = await revokeEnrollmentShareHash(SETTINGS.enrollment_id)
+      if (data && data.success) {
+        // eslint-disable-next-line require-atomic-updates
+        SETTINGS.absolute_record_share_hash = ""
+        // eslint-disable-next-line require-atomic-updates
+        SETTINGS.hash = ""
 
+        shareStore.dispatch(setRecordShareLink(""))
+        updateButtonDisplays()
+      }
+    }
+  }
+  const revokeDialog = document.querySelector("#revoke-dialog")
+  const revokeStore = revokeShareGradesDialogStore()
+  if (revokeDialog) {
+    revokeButton.onclick = openRevokeShareDialog
+    ReactDOM.render(
+      <MuiThemeProvider theme={createMuiTheme()}>
+        <Provider store={revokeStore}>
+          <RevokeShareDialog onAllowRevoke={revokeButtonOnClick} />
+        </Provider>
+      </MuiThemeProvider>,
+      revokeDialog
+    )
+  }
+
+  const allowShareButton = document.querySelector(".allow-record-sharing")
+  const updateEnrollmentShareHash = async () => {
+    if (!SETTINGS.absolute_record_share_hash && SETTINGS.enrollment_id) {
+      const data = await getEnrollmentShareHash(SETTINGS.enrollment_id)
+      if (data && data.absolute_path) {
+        // eslint-disable-next-line require-atomic-updates
+        SETTINGS.absolute_record_share_hash = data.absolute_path
+        // eslint-disable-next-line require-atomic-updates
+        SETTINGS.hash = data.share_hash
+
+        shareStore.dispatch(setRecordShareLink(data.absolute_path))
+        updateButtonDisplays()
+      }
+    }
+  }
+  allowShareButton.onclick = updateEnrollmentShareHash
+
+  // Send Program Grades
+  const sendStore = sendGradesDialogStore()
+  const sendDialog = document.querySelector("#send-dialog")
+  const openSendDialog = () => sendStore.dispatch(setSendDialogVisibility(true))
+  const sendButton = document.querySelector(".open-send-dialog")
+  if (sendDialog) {
+    sendButton.onclick = openSendDialog
+    ReactDOM.render(
+      <MuiThemeProvider theme={createMuiTheme()}>
+        <Provider store={sendStore}>
+          <SendGradesDialog />
+        </Provider>
+      </MuiThemeProvider>,
+      sendDialog
+    )
+  }
+
+  // Update button display
+  const updateButtonDisplays = () => {
+    if (SETTINGS.hash && SETTINGS.absolute_record_share_hash) {
+      revokeButton.style.display = "inline-block"
+      shareButton.style.display = "inline-block"
+      sendButton.style.display = "inline-block"
+      allowShareButton.style.display = "none"
+    } else {
+      revokeButton.style.display = "none"
+      shareButton.style.display = "none"
+      sendButton.style.display = "none"
+      allowShareButton.style.display = "inline-block"
+    }
+  }
+  if (SETTINGS.absolute_record_share_hash) {
+    shareStore.dispatch(setRecordShareLink(SETTINGS.absolute_record_share_hash))
+  }
+  updateButtonDisplays()
+}
 // Signup dialog
 const store = signupDialogStore()
 

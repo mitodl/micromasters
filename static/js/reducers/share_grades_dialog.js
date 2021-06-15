@@ -1,16 +1,19 @@
 import {
   SET_COPY_SUCCESS,
-  SET_DIALOG_VISIBILITY
+  SET_DIALOG_VISIBILITY,
+  SET_RECORD_SHARE_LINK
 } from "../actions/share_grades_dialog"
 
 export type ShareDialogState = {
   shareDialogVisibility: boolean,
-  copySuccess: boolean
+  copySuccess: boolean,
+  recordShareLink: string
 }
 
 export const INITIAL_SHARE_STATE = {
   shareDialogVisibility: false,
-  copySuccess:           false
+  copySuccess:           false,
+  recordShareLink:       ""
 }
 
 export const shareDialog = (
@@ -22,6 +25,8 @@ export const shareDialog = (
     return { ...state, shareDialogVisibility: action.payload }
   case SET_COPY_SUCCESS:
     return { ...state, copySuccess: action.payload }
+  case SET_RECORD_SHARE_LINK:
+    return { ...state, recordShareLink: action.payload }
   default:
     return state
   }

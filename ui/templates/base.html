@@ -29,6 +29,9 @@
     {% if is_public %}
       {% render_bundle "style_public" %}
     {% endif %}
+    {% if public_jquery %}
+      {% render_bundle "public_jquery" %}
+    {% endif %}
     {% render_bundle "style" %}
     <title>{% block title %}{% endblock %}</title>
     <meta name="description" content="{% block description %}{% endblock %}">

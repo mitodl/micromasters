@@ -7,3 +7,6 @@ export const setShareDialogVisibility = createAction(SET_DIALOG_VISIBILITY)
 
 export const SET_COPY_SUCCESS = "SET_COPY_SUCCESS"
 export const setCopySuccess = createAction(SET_COPY_SUCCESS)
+
+export const SET_RECORD_SHARE_LINK = "SET_RECORD_SHARE_LINK"
+export const setRecordShareLink = createAction(SET_RECORD_SHARE_LINK)

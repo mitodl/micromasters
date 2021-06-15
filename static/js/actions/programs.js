@@ -145,3 +145,23 @@ export const unEnrollProgramEnrollments = (
       })
   }
 }
+
+export const getEnrollmentShareHash = (enrollmentId: number): Promise<void> => {
+  return api
+    .getEnrollmentShareHash(enrollmentId)
+    .then(data => data)
+    .catch(error => {
+      console.error(error)
+    })
+}
+
+export const revokeEnrollmentShareHash = (
+  enrollmentId: number
+): Promise<void> => {
+  return api
+    .revokeEnrollmentShareHash(enrollmentId)
+    .then(data => data)
+    .catch(error => {
+      console.error(error)
+    })
+}

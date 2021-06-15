@@ -43,6 +43,7 @@ import { ALL_ERRORS_VISIBLE } from "../constants"
 import { reducers } from "../lib/redux_rest"
 import { shareDialog } from "./share_grades_dialog"
 import { sendDialog } from "./send_grades_dialog"
+import { revokeShareDialog } from "./revoke_shared_records_dialog"
 
 export const INITIAL_PROFILES_STATE = {}
 export const profiles = (
@@ -211,6 +212,7 @@ export default combineReducers({
   signupDialog,
   shareDialog,
   sendDialog,
+  revokeShareDialog,
   imageUpload,
   financialAid,
   documents,

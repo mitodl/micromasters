@@ -13,10 +13,14 @@
 {% block content %}
 
 <div class="">
-  <div class="share-options">
-    <button class="mdl-button share-btn open-send-dialog">Send Learner Record</button>
-    <button style="display:none" class="mdl-button share-btn open-share-dialog">Share</button>
- </div>
+  {% if is_owner %}
+    <div class="share-options">
+      <button style="display: none;" class="mdl-button share-btn open-send-dialog">Send Learner Record</button>
+      <button style="display: none;" class="mdl-button share-btn open-share-dialog">Share</button>
+      <button style="display: none;" class="mdl-button share-btn allow-record-sharing">Allow Record Sharing</button>
+      <button style="display: none;" class="mdl-button share-btn revoke-shared-records">Revoke Shared Records</button>
+    </div>
+ {% endif %}
   <main class="program-record-wrapping grade-record">
     <div class="program-record">
       <header class="program-record-header">
@@ -87,6 +91,7 @@
 
   <div id="share-dialog"></div>
   <div id="send-dialog"></div>
+  <div id="revoke-dialog"></div>
   </main>
 {% load render_bundle %}
 {% render_bundle "public" "defer" %}

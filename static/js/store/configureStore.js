@@ -14,6 +14,7 @@ import rootReducer from "../reducers"
 import { INITIAL_SIGNUP_STATE } from "../reducers/signup_dialog"
 import { INITIAL_SHARE_STATE } from "../reducers/share_grades_dialog"
 import { INITIAL_SEND_STATE } from "../reducers/send_grades_dialog"
+import { INITIAL_REVOKE_SHARE_STATE } from "../reducers/revoke_shared_records_dialog"
 
 const notProd = () => process.env.NODE_ENV !== "production"
 
@@ -81,4 +82,8 @@ export const shareGradesDialogStore = () => {
 
 export const sendGradesDialogStore = () => {
   return configureStore({ sendDialog: INITIAL_SEND_STATE })
+}
+
+export const revokeShareGradesDialogStore = () => {
+  return configureStore({ revokeShareDialog: INITIAL_REVOKE_SHARE_STATE })
 }

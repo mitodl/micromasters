@@ -22,7 +22,8 @@ from certificates.views import (
     CourseCertificateView,
     GradeRecordView,
     ProgramCertificateView,
-    ProgramLetterView
+    ProgramLetterView,
+    SharedGradeRecordView,
 )
 
 dashboard_urlpatterns = [
@@ -42,7 +43,9 @@ urlpatterns = [
         name='program-certificate'),
     url(r'^letter/program/(?P<letter_uuid>[-\w.]+)?/?', ProgramLetterView.as_view(),
         name='program_letter'),
-    url(r'^records/programs/shared/(?P<record_hash>[-\w.]+)?/?', GradeRecordView.as_view(),
+    url(r'^records/programs/(?P<enrollment_id>[\d]+)/shared/(?P<record_share_hash>[-\w.]+)?/?', SharedGradeRecordView.as_view(),
+        name='shared_grade_records'),
+    url(r'^records/programs/(?P<enrollment_id>[\d]+)', GradeRecordView.as_view(),
         name='grade_records'),
     url(r'^{}$'.format(TERMS_OF_SERVICE_URL.lstrip("/")), terms_of_service, name='terms_of_service'),
     url(r'^background-images\.css$', BackgroundImagesCSSView.as_view(), name='background-images-css'),

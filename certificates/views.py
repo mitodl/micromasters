@@ -2,10 +2,14 @@
 Views for MicroMasters-generated certificates
 """
 
+
+from abc import ABC, abstractmethod
 import json
 import logging
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from django.views.generic import TemplateView
 from rest_framework.generics import Http404
 
@@ -193,21 +197,24 @@ class ProgramLetterView(TemplateView):
         return context
 
 
-class GradeRecordView(TemplateView):
+class BaseGradeRecordView(ABC, TemplateView):
     """
-    View for grade records
+    Base view for grade records
     """
 
     template_name = 'grade_record.html'
 
+    @abstractmethod
+    def get_program_enrollment(self, **kwargs):
+        """
+        Returns specific ProgramEnrollment object or raises HTTP404 depending upon kwargs
+        """
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        enrollment = get_object_or_404(ProgramEnrollment, hash=kwargs.get('record_hash'))
+        enrollment = self.get_program_enrollment(**kwargs)
         user = enrollment.user
-
-        if user.is_anonymous or self.request.user != user:
-            raise Http404
 
         authenticated = not user.is_anonymous
         js_settings = {
@@ -216,10 +223,18 @@ class GradeRecordView(TemplateView):
             "edx_base_url": settings.EDXORG_BASE_URL,
             "authenticated": authenticated,
             "partner_schools": list(PartnerSchool.objects.values_list("id", "name")),
-            "hash": enrollment.hash
+            "hash": enrollment.share_hash,
+            "enrollment_id": enrollment.id,
+            "absolute_record_share_hash": "" if not enrollment.share_hash else "{schema}://{host}{uri}".format(
+                schema=self.request.META.get("REQUEST_SCHEME"),
+                host=self.request.META.get("HTTP_HOST"),
+                uri=reverse("shared_grade_records", kwargs=dict(
+                    enrollment_id=enrollment.id,
+                    record_share_hash=enrollment.share_hash
+                ))
+            )
         }
         context["js_settings_json"] = json.dumps(js_settings)
-        context["is_public"] = True
         courses = enrollment.program.course_set.prefetch_related('electivecourse')
         mmtrack = get_mmtrack(user, enrollment.program)
         combined_grade = CombinedFinalGrade.objects.filter(
@@ -231,6 +246,8 @@ class GradeRecordView(TemplateView):
             user=user, program=enrollment.program).exists() else "partially"
         context["last_updated"] = combined_grade.updated_on if combined_grade else ""
         context["has_electives"] = mmtrack.program.electives_set.exists()
+        context["is_owner"] = self.request.user == user
+        context["public_jquery"] = True
         context["profile"] = {
             "username": user.username,
             "email": user.email,
@@ -252,3 +269,40 @@ class GradeRecordView(TemplateView):
             })
 
         return context
+
+
+class GradeRecordView(LoginRequiredMixin, BaseGradeRecordView):
+    """
+    View for grade records
+    """
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["is_public"] = False
+        return context
+
+    def get_program_enrollment(self, **kwargs):
+        """
+        Returns specific ProgramEnrollment if record is sharable else raises HTTP404
+        """
+        return get_object_or_404(ProgramEnrollment, id=kwargs.get('enrollment_id'), user=self.request.user)
+
+
+class SharedGradeRecordView(BaseGradeRecordView):
+    """
+    View for shared grade records
+    """
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if context.get("is_owner"):
+            context["is_public"] = True
+
+        return context
+
+    def get_program_enrollment(self, **kwargs):
+        """
+        Returns specific ProgramEnrollment if record is sharable else raises HTTP404
+        """
+        if not kwargs.get('record_share_hash'):
+            raise Http404
+        return get_object_or_404(ProgramEnrollment, id=kwargs.get('enrollment_id'), share_hash=kwargs.get('record_share_hash'))

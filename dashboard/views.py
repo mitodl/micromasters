@@ -5,6 +5,7 @@ import logging
 
 from django.contrib.auth.models import User
 from django.conf import settings
+from django.urls import reverse
 from requests.exceptions import HTTPError
 from rest_framework import (
     authentication,
@@ -186,4 +187,73 @@ class UnEnrollPrograms(APIView):
         return Response(
             status=status.HTTP_200_OK,
             data=response
+        )
+
+
+class ToggelProgramEnrollmentShareHash(APIView):
+    """
+    API that generates or revokes share_hash for program record access
+    """
+    authentication_classes = (
+        authentication.SessionAuthentication,
+        authentication.TokenAuthentication,
+    )
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request):
+        """
+        Generates share_hash for program record
+        """
+        data = request.data
+        if data.get("enrollment_id"):
+            program_enrollment = ProgramEnrollment.objects.filter(
+                id=data.get("enrollment_id"),
+                user=request.user
+            ).first()
+            if program_enrollment:
+                share_hash = program_enrollment.get_share_hash()
+                return Response(
+                    status=status.HTTP_201_CREATED,
+                    data={
+                        "share_hash": share_hash,
+                        "absolute_path": "{schema}://{host}{uri}".format(
+                            schema=request.META.get("REQUEST_SCHEME"),
+                            host=request.META.get("HTTP_HOST"),
+                            uri=reverse("shared_grade_records", kwargs=dict(
+                                enrollment_id=data.get("enrollment_id"),
+                                record_share_hash=share_hash
+                            ))
+                        )
+                    }
+                )
+        return Response(
+            status=status.HTTP_400_BAD_REQUEST,
+            data={
+                "error": "Provided data is not appropriate"
+            }
+        )
+
+    def delete(self, request):
+        """
+        Revokes share_hash for program record
+        """
+        data = request.data
+        if data.get("enrollment_id"):
+            program_enrollment = ProgramEnrollment.objects.filter(
+                id=data.get("enrollment_id"),
+                user=request.user
+            ).first()
+            if program_enrollment:
+                program_enrollment.revoke_share_hash()
+                return Response(
+                    status=status.HTTP_200_OK,
+                    data={
+                        "success": "share_hash has been successfully revoked"
+                    }
+                )
+        return Response(
+            status=status.HTTP_400_BAD_REQUEST,
+            data={
+                "error": "Provided data is not appropriate"
+            }
         )
