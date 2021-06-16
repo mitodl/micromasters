@@ -113,7 +113,9 @@ import * as api from "../lib/api"
 import { postURL } from "../lib/discussions"
 import FinancialAidCard from "../components/dashboard/FinancialAidCard"
 
-describe("DashboardPage", () => {
+describe("DashboardPage", function() {
+  this.timeout(10000)
+
   let renderComponent, helper, listenForActions, addProgramEnrollmentStub
 
   beforeEach(() => {
