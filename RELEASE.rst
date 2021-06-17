@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+Version 0.198.1
+---------------
+
+- fix: change sharable record url (#4948)
+- hotfix: change absolute url creation mechanism (#4946)
+- feat: implementing program record sharing feature (#4937)
+
 Version 0.198.0 (Released June 17, 2021)
 ---------------
 
