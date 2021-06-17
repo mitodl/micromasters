@@ -98,9 +98,18 @@ def test_valid_program_certificate_200(client):
 
 
 def test_program_record_anonymously(client):
-    """Test that a request for program record with anonymous user results in 404"""
+    """Test that a request for program record with anonymous user results in 302 for login"""
     enrollment = ProgramEnrollmentFactory.create()
-    resp = client.get(reverse("grade_records", kwargs=dict(record_hash=enrollment.hash)))
+    resp = client.get(reverse("grade_records", kwargs=dict(enrollment_id=enrollment.id)))
+    assert resp.status_code == status.HTTP_302_FOUND
+
+
+def test_program_record_with_random_user(client):
+    """Test that a request for program record with random (non-owner) user results in 404"""
+    user = UserFactory.create()
+    client.force_login(user)
+    enrollment = ProgramEnrollmentFactory.create()
+    resp = client.get(reverse("grade_records", kwargs=dict(enrollment_id=enrollment.id)))
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -109,17 +118,17 @@ def test_program_record(client):
     user = UserFactory.create()
     enrollment = ProgramEnrollmentFactory.create(user=user)
     client.force_login(user)
-    resp = client.get(reverse("grade_records", kwargs=dict(record_hash=enrollment.hash)))
+    resp = client.get(reverse("grade_records", kwargs=dict(enrollment_id=enrollment.id)))
     assert resp.status_code == status.HTTP_200_OK
     assert is_subset_dict(
         {
-            'record_hash': enrollment.hash,
+            'is_public': False,
+            'is_owner': True,
             'program_title': enrollment.program.title,
             'program_status': 'partially',
             'profile': {
                 'username': enrollment.user.username
-            },
-            'last_updated': ''
+            }
         },
         resp.context_data
     )

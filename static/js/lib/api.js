@@ -257,3 +257,21 @@ export function unEnrollProgramEnrollments(programIds: Array<number>) {
     })
   })
 }
+
+export function getEnrollmentShareHash(enrollmentId: number) {
+  return fetchJSONWithCSRF("/api/v0/enrollment_share_hash/", {
+    method: "POST",
+    body:   JSON.stringify({
+      enrollment_id: enrollmentId
+    })
+  })
+}
+
+export function revokeEnrollmentShareHash(enrollmentId: number) {
+  return fetchJSONWithCSRF("/api/v0/enrollment_share_hash/", {
+    method: "DELETE",
+    body:   JSON.stringify({
+      enrollment_id: enrollmentId
+    })
+  })
+}

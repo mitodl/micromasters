@@ -1,6 +1,7 @@
 """
 Models for dashboard
 """
+import uuid
 
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField
@@ -25,7 +26,6 @@ from edx_api.grades import (
 from courses.models import CourseRun, Program
 from mail.models import PartnerSchool
 from micromasters.models import TimestampedModel
-from micromasters.utils import generate_md5
 
 
 class CachedEdxInfoModel(Model):
@@ -221,18 +221,26 @@ class ProgramEnrollment(Model):
     """
     user = ForeignKey(User, on_delete=CASCADE)
     program = ForeignKey(Program, on_delete=CASCADE)
-    hash = CharField(max_length=32, null=False, unique=True)
+    share_hash = CharField(max_length=36, null=True, unique=True)
 
     class Meta:
         unique_together = (('user', 'program'), )
 
-    def save(self, *args, **kwargs):  # pylint: disable=signature-differs
-        """Overridden save method"""
-        if not self.hash:
-            self.hash = generate_md5(
-                '{}|{}'.format(self.user_id, self.program_id).encode('utf-8')
-            )
-        super().save(*args, **kwargs)
+    def get_share_hash(self):
+        """
+        Generates (if not already generated) and returns the share_hash
+        """
+        if not self.share_hash:
+            self.share_hash = str(uuid.uuid4())
+            self.save()
+        return self.share_hash
+
+    def revoke_share_hash(self):
+        """
+        Removes share_hash of current object
+        """
+        self.share_hash = None
+        self.save()
 
     @classmethod
     def prefetched_qset(cls):

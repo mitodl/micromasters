@@ -2,7 +2,8 @@ import React from "react"
 import { createSimpleActionHelpers } from "../lib/redux"
 import {
   setShareDialogVisibility,
-  setCopySuccess
+  setCopySuccess,
+  setRecordShareLink
 } from "../actions/share_grades_dialog"
 import { connect } from "react-redux"
 import Dialog from "@material-ui/core/Dialog"
@@ -15,6 +16,8 @@ class CopyLinkDialog extends React.Component {
     open: boolean,
     setShareDialogVisibility: (b: boolean) => void,
     setCopySuccess: (b: boolean) => void,
+    setRecordShareLink: (b: string) => void,
+    recordShareLink: string,
     copy: boolean
   }
 
@@ -27,7 +30,13 @@ class CopyLinkDialog extends React.Component {
   }
 
   render() {
-    const { open, setShareDialogVisibility, setCopySuccess, copy } = this.props
+    const {
+      open,
+      setShareDialogVisibility,
+      setCopySuccess,
+      recordShareLink,
+      copy
+    } = this.props
     return (
       <Dialog
         classes={{ paper: "dialog share-dialog" }}
@@ -50,7 +59,7 @@ class CopyLinkDialog extends React.Component {
               <input
                 ref={input => (this.input = input)}
                 readOnly={true}
-                value={window.location.href}
+                value={recordShareLink}
               />
             </form>
             {document.queryCommandSupported("copy") && (
@@ -72,14 +81,16 @@ class CopyLinkDialog extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  open: state.shareDialog.shareDialogVisibility,
-  copy: state.shareDialog.copySuccess
+  open:            state.shareDialog.shareDialogVisibility,
+  copy:            state.shareDialog.copySuccess,
+  recordShareLink: state.shareDialog.recordShareLink
 })
 
 const mapDispatchToProps = dispatch =>
   createSimpleActionHelpers(dispatch, [
     ["setShareDialogVisibility", setShareDialogVisibility],
-    ["setCopySuccess", setCopySuccess]
+    ["setCopySuccess", setCopySuccess],
+    ["setRecordShareLink", setRecordShareLink]
   ])
 
 export default connect(
