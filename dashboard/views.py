@@ -216,13 +216,12 @@ class ToggelProgramEnrollmentShareHash(APIView):
                     status=status.HTTP_201_CREATED,
                     data={
                         "share_hash": share_hash,
-                        "absolute_path": "{schema}://{host}{uri}".format(
-                            schema=request.META.get("REQUEST_SCHEME"),
-                            host=request.META.get("HTTP_HOST"),
-                            uri=reverse("shared_grade_records", kwargs=dict(
-                                enrollment_id=data.get("enrollment_id"),
-                                record_share_hash=share_hash
-                            ))
+                        "absolute_path": request.build_absolute_uri(
+                            reverse("shared_grade_records", kwargs=dict(
+                                    enrollment_id=data.get("enrollment_id"),
+                                    record_share_hash=share_hash
+                                )
+                            )
                         )
                     }
                 )
