@@ -217,6 +217,13 @@ class BaseGradeRecordView(ABC, TemplateView):
         user = enrollment.user
 
         authenticated = not user.is_anonymous
+        share_hash_absolute_url = self.request.build_absolute_uri(
+            reverse("shared_grade_records", kwargs=dict(
+                    enrollment_id=enrollment.id,
+                    record_share_hash=enrollment.share_hash
+                )
+            )
+        )
         js_settings = {
             "gaTrackingID": settings.GA_TRACKING_ID,
             "reactGaDebug": settings.REACT_GA_DEBUG,
@@ -225,14 +232,7 @@ class BaseGradeRecordView(ABC, TemplateView):
             "partner_schools": list(PartnerSchool.objects.values_list("id", "name")),
             "hash": enrollment.share_hash,
             "enrollment_id": enrollment.id,
-            "absolute_record_share_hash": "" if not enrollment.share_hash else "{schema}://{host}{uri}".format(
-                schema=self.request.META.get("REQUEST_SCHEME"),
-                host=self.request.META.get("HTTP_HOST"),
-                uri=reverse("shared_grade_records", kwargs=dict(
-                    enrollment_id=enrollment.id,
-                    record_share_hash=enrollment.share_hash
-                ))
-            )
+            "absolute_record_share_hash": "" if not enrollment.share_hash else share_hash_absolute_url
         }
         context["js_settings_json"] = json.dumps(js_settings)
         courses = enrollment.program.course_set.prefetch_related('electivecourse')
