@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.198.1
+Version 0.198.1 (Released June 17, 2021)
 ---------------
 
 - fix: change sharable record url (#4948)
