@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.198.0
+Version 0.198.0 (Released June 17, 2021)
 ---------------
 
 - Address flaky tests on DashboardPage (#4942)
