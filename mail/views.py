@@ -263,7 +263,7 @@ class GradesRecordMailView(GenericAPIView):
         """
         sender_user = request.user
         school = self.get_object()
-        enrollment = get_object_or_404(ProgramEnrollment, hash=request.data['enrollment_hash'])
+        enrollment = get_object_or_404(ProgramEnrollment, share_hash=request.data['enrollment_hash'])
         mailgun_response = MailgunClient.send_individual_email(
             subject="MicroMasters Program Record",
             body=render_to_string(
@@ -273,7 +273,11 @@ class GradesRecordMailView(GenericAPIView):
                     'pathway_name': school.name,
                     'program_name': enrollment.program.title,
                     'record_link': request.build_absolute_uri(
-                        reverse('grade_records', args=[request.data['enrollment_hash']])
+                        reverse("shared_grade_records", kwargs=dict(
+                                enrollment_id=enrollment.id,
+                                record_share_hash=enrollment.share_hash
+                            )
+                        )
                     ),
                 }),
             recipient=school.email,
