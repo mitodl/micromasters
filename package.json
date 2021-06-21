@@ -120,7 +120,7 @@
     "serialize-javascript": "^3.1.0",
     "sinon": "^2.3.1",
     "slick-carousel": "^1.6.0",
-    "striptags": "2.2.1",
+    "striptags": "3.2.0",
     "style-loader": "^0.18.1",
     "urijs": "^1.19.6",
     "url-join": "^2.0.2",
