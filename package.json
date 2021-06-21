@@ -152,5 +152,8 @@
   "devDependencies": {
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.15.2"
+  },
+  "resolutions": {
+    "node-sass/**/trim-newlines": "^3.0.1"
   }
 }
