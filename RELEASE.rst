@@ -1,6 +1,13 @@
 Release Notes
 =============
 
+Version 0.199.0
+---------------
+
+- Bump striptags from 2.2.1 to 3.2.0 (#4955)
+- upgrade trim-newlines to 3.0.1 (#4953)
+- update sentry sdk, add redis integrations. (#4940)
+
 Version 0.198.1 (Released June 17, 2021)
 ---------------
 
