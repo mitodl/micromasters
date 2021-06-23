@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.199.1
+---------------
+
+- build: bump mini-css-extract-plugin from 0.9.0 to 1.1.2 to fix normalize-url alert (#4941)
+
 Version 0.199.0 (Released June 23, 2021)
 ---------------
 
