@@ -21,7 +21,6 @@ from grades.constants import FinalGradeStatus
 from grades.factories import ProctoredExamGradeFactory
 from grades.models import ProctoredExamGrade
 from micromasters.factories import UserFactory
-from micromasters.utils import generate_md5
 from search.base import MockedESTestCase
 
 
@@ -188,7 +187,6 @@ class MicromastersCourseCertificateTests(MockedESTestCase):
         course = CourseFactory.create()
         mm_certificate = MicromastersCourseCertificate.objects.create(user=user, course=course)
         assert len(mm_certificate.hash) == 32
-        assert mm_certificate.hash == generate_md5('{}|{}'.format(user.id, course.id).encode('utf-8'))
 
 
 class MicromastersProgramCertificateTests(MockedESTestCase):
@@ -201,7 +199,6 @@ class MicromastersProgramCertificateTests(MockedESTestCase):
 
         mm_certificate = MicromastersProgramCertificate.objects.create(user=user, program=program)
         assert len(mm_certificate.hash) == 32
-        assert mm_certificate.hash == generate_md5('{}|{}'.format(user.id, program.id).encode('utf-8'))
 
 
 class MicromastersProgramCommendationTests(MockedESTestCase):

@@ -24,7 +24,6 @@ from micromasters.models import (
 from micromasters.utils import (
     now_in_utc,
     serialize_model_object,
-    generate_md5,
 )
 
 
@@ -155,9 +154,7 @@ class MicromastersCourseCertificate(TimestampedModel):
     def save(self, *args, **kwargs):  # pylint: disable=signature-differs
         """Overridden save method"""
         if not self.hash:
-            self.hash = generate_md5(
-                '{}|{}'.format(self.user_id, self.course_id).encode('utf-8')
-            )
+            self.hash = uuid.uuid4().hex
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -182,9 +179,7 @@ class MicromastersProgramCertificate(TimestampedModel):
     def save(self, *args, **kwargs):  # pylint: disable=signature-differs
         """Overridden save method"""
         if not self.hash:
-            self.hash = generate_md5(
-                '{}|{}'.format(self.user_id, self.program_id).encode('utf-8')
-            )
+            self.hash = uuid.uuid4().hex
         super().save(*args, **kwargs)
 
     def __str__(self):
