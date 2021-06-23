@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.199.0
+Version 0.199.0 (Released June 23, 2021)
 ---------------
 
 - Bump striptags from 2.2.1 to 3.2.0 (#4955)
