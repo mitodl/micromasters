@@ -19,11 +19,15 @@ export default class FacultyCarousel extends React.Component {
       responsive:     [
         {
           breakpoint: 600,
-          settings:   "unslick"
+          settings:   {
+            slidesToShow: 1
+          }
         },
         {
-          breakpoint: 800,
-          settings:   "unslick"
+          breakpoint: 840,
+          settings:   {
+            slidesToShow: 1
+          }
         },
         {
           breakpoint: 1000,
