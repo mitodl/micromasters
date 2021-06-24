@@ -144,5 +144,5 @@ def recreate_index_async(self):
     """
     Recreate the index
     """
-    log.info(f"Running reindexing task with Id: {self.request.id.__str__()}")
+    log.info('Running reindexing task with Id: %s', self.request.id.__str__())
     _recreate_index()
