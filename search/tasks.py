@@ -139,9 +139,10 @@ def populate_query_memberships(percolate_query_id):
     api.populate_query_memberships(percolate_query_id)
 
 
-@app.task(acks_late=True)
-def recreate_index_async():
+@app.task(acks_late=True, bind=True)
+def recreate_index_async(self):
     """
     Recreate the index
     """
+    log.info(f"Running reindexing task with Id: {self.request.id.__str__()}")
     _recreate_index()
