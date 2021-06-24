@@ -26,7 +26,7 @@ export default class FacultyCarousel extends React.Component {
         {
           breakpoint: 840,
           settings:   {
-            slidesToShow: 1
+            slidesToShow: 2
           }
         },
         {
