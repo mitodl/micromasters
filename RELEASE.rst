@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.199.2 (Released June 28, 2021)
+---------------
+
+- upgrade glob-parent to 5.1.2 through webpack and babel-plugin-istanbul (#4957)
+
 Version 0.199.1 (Released June 24, 2021)
 ---------------
 
