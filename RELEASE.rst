@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.199.3
+---------------
+
+- remove istanbul plugin and node-sass
+- fix: display instructors on mobile as well (#4962)
+
 Version 0.199.2 (Released June 28, 2021)
 ---------------
 
