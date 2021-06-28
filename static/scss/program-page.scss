@@ -508,10 +508,19 @@
 
     .slick-prev {
       left: -50px;
+
+      @media (max-width: 840px) {
+        margin-left: 25px;
+        z-index: 1;
+      }
     }
 
     .slick-next {
       right: -50px;
+
+      @media (max-width: 840px) {
+        margin-right: 25px;
+      }
     }
 
     .slick-dots li button:before {
