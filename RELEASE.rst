@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.199.3
+Version 0.199.3 (Released June 29, 2021)
 ---------------
 
 - remove istanbul plugin and node-sass
