@@ -80,6 +80,7 @@ class MicromastersProgramCertificateFactory(DjangoModelFactory):
 
     user = SubFactory(UserFactory)
     program = SubFactory(ProgramFactory)
+    hash = uuid.uuid4().hex
 
     class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods
         model = MicromastersProgramCertificate
