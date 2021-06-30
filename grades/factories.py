@@ -1,5 +1,6 @@
 """Factories for the grades app"""
 import datetime
+import uuid
 
 from factory import (
     SubFactory,
@@ -29,7 +30,7 @@ from grades.models import (
     MicromastersProgramCommendation,
 )
 from micromasters.factories import UserFactory
-from micromasters.utils import now_in_utc, generate_md5
+from micromasters.utils import now_in_utc
 
 
 class FinalGradeFactory(DjangoModelFactory):
@@ -68,7 +69,7 @@ class MicromastersCourseCertificateFactory(DjangoModelFactory):
     """Factory for MicromastersCourseCertificate"""
     user = SubFactory(UserFactory)
     course = SubFactory(CourseFactory)
-    hash = LazyAttribute(lambda cert: generate_md5('{}|{}'.format(cert.user.id, cert.course.id).encode('utf-8')))
+    hash = uuid.uuid4().hex
 
     class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods
         model = MicromastersCourseCertificate
@@ -79,6 +80,7 @@ class MicromastersProgramCertificateFactory(DjangoModelFactory):
 
     user = SubFactory(UserFactory)
     program = SubFactory(ProgramFactory)
+    hash = uuid.uuid4().hex
 
     class Meta:  # pylint: disable=missing-docstring,no-init,too-few-public-methods
         model = MicromastersProgramCertificate
