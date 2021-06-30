@@ -279,7 +279,7 @@ class ProctoredExamGrade(TimestampedModel, AuditableModel):
     passing_score = models.FloatField()
     score = models.FloatField()
     grade = models.TextField()
-    client_authorization_id = models.TextField()
+    client_authorization_id = models.TextField(null=True, blank=True)
 
     # dump of all the remaining fields coming from the proctorate exam results
     row_data = JSONField(null=False)
