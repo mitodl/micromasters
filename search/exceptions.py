@@ -20,3 +20,9 @@ class PercolateException(Exception):
     """
     Exception for percolate failures
     """
+
+
+class RetryException(Exception):
+    """
+    A special exception used to signal that celery can retry this task
+    """

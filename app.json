@@ -78,6 +78,10 @@
     "ELASTICSEARCH_SHARD_COUNT": {
       "description": "Configurable shard cound for Elasticsearch"
     },
+    "ELASTICSEARCH_INDEXING_CHUNK_SIZE": {
+      "description": "Chunk size to use for Elasticsearch indexing tasks",
+      "required": false
+    },
     "ELASTICSEARCH_INDEX": {
       "description": "Index to use on Elasticsearch"
     },

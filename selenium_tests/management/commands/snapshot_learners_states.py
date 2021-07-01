@@ -18,7 +18,7 @@ from selenium.webdriver.common.by import By
 from courses.models import Program
 from dashboard.models import ProgramEnrollment
 from roles.models import Role, Staff
-from search.indexing_api import recreate_index
+from search.base import reindex_test_es_data
 from selenium_tests.data_util import create_user_for_login
 from selenium_tests.util import (
     DEFAULT_PASSWORD,
@@ -216,7 +216,7 @@ def test_learners_states(browser, override_allowed_hosts, seeded_database_loader
         )
 
     LoginPage(browser).log_in_via_admin(learners_states.user, DEFAULT_PASSWORD)
-    recreate_index()
+    reindex_test_es_data()
 
     # warm the cache
     browser.get("/learners")

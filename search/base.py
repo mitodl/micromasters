@@ -7,8 +7,10 @@ from django.test import (
     TestCase,
 )
 
+from dashboard.models import ProgramEnrollment
 from search import tasks
-from search.indexing_api import recreate_index, delete_indices
+from search.indexing_api import delete_indices, create_backing_indices
+from search.models import PercolateQuery
 
 
 class ESTestCase(TestCase):
@@ -19,7 +21,7 @@ class ESTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
         # Make sure index exists when signals are run.
-        recreate_index()
+        reindex_test_es_data()
         super().setUpClass()
 
     def setUp(self):
@@ -28,7 +30,7 @@ class ESTestCase(TestCase):
         # because the test data is contained in a transaction
         # which is reverted after each test runs, so signals don't get run
         # that keep ES up to date.
-        recreate_index()
+        reindex_test_es_data()
         super().setUp()
 
     @classmethod
@@ -73,3 +75,15 @@ class MockedESTestCase(TestCase):
             patcher.stop()
 
         super().tearDownClass()
+
+
+def reindex_test_es_data():
+    """
+    Recreates the ElasticSearch indices for the live data used in tests
+    """
+    backing_indices = create_backing_indices()
+    tasks.bulk_index_program_enrollments(ProgramEnrollment.objects.order_by("id").values_list("id", flat=True),
+                                         backing_indices[0][0], backing_indices[1][0])
+    tasks.bulk_index_percolate_queries(PercolateQuery.objects.order_by("id").values_list("id", flat=True),
+                                       backing_indices[2][0])
+    tasks.finish_recreate_index(results=[], backing_indices=backing_indices)

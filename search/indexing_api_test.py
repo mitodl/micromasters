@@ -40,7 +40,7 @@ from roles.roles import (
     Instructor,
     Staff
 )
-from search.base import ESTestCase
+from search.base import ESTestCase, reindex_test_es_data
 from search.connection import (
     ALL_INDEX_TYPES,
     get_aliases,
@@ -58,7 +58,6 @@ from search.indexing_api import (
     clear_and_create_index,
     delete_indices,
     get_conn,
-    recreate_index,
     refresh_index,
     index_program_enrolled_users,
     remove_program_enrolled_user,
@@ -66,8 +65,9 @@ from search.indexing_api import (
     serialize_public_enrolled_user,
     filter_current_work,
     index_percolate_queries,
-    delete_percolate_query,
+    delete_percolate_query, create_backing_indices,
 )
+
 from search.models import PercolateQuery
 from search.util import traverse_mapping
 
@@ -632,7 +632,7 @@ class GetConnTests(ESTestCase):
         Test that an error is raised if we don't have an index
         """
         # Reset default index so it does not cause an error
-        recreate_index()
+        reindex_test_es_data()
         other_index = "other"
         delete_indices()
 
@@ -717,7 +717,7 @@ class RecreateIndexTests(ESTestCase):
 
         old_backing_indexes = list(conn.indices.get_alias(name=default_alias).keys())
         assert len(old_backing_indexes) == 1
-        recreate_index()
+        reindex_test_es_data()
         new_backing_indexes = list(conn.indices.get_alias(name=default_alias).keys())
         assert len(new_backing_indexes) == 1
         # Backing index should have changed
@@ -736,15 +736,16 @@ class RecreateIndexTests(ESTestCase):
         remove_program_enrolled_user(program_enrollment.id)
         assert_search(es.search(index_type), [], index_type=index_type)
         # recreate_index should index the program-enrolled user
-        recreate_index()
+        reindex_test_es_data()
         assert_search(es.search(index_type), [program_enrollment], index_type=index_type)
+
 
     def test_update_during_recreate_index(self):
         """
         If an indexing action happens during a recreate_index it should update all active indices
         """
         conn = get_conn(verify=False)
-        recreate_index()
+        reindex_test_es_data()
 
         temp_aliases = {}
         index_types = [PRIVATE_ENROLLMENT_INDEX_TYPE, PUBLIC_ENROLLMENT_INDEX_TYPE]
@@ -982,4 +983,13 @@ class PercolateQueryTests(ESTestCase):
         }
 
         PercolateQuery.objects.create(query=query, original_query=query)
-        recreate_index()
+        reindex_test_es_data()
+
+    def test_create_backing_indices(self):
+        """
+        Test that create_backing_indices creates the right backing indices for reindexing
+        """
+        indices = create_backing_indices()
+        conn = get_conn(verify=False)
+        for index_name, _ in indices:
+            assert conn.indices.exists_alias(index_name) is True

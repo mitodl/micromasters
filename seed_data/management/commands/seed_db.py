@@ -20,7 +20,7 @@ from profiles.api import get_social_username
 from profiles.models import Employment, Education, Profile
 from roles.models import Role
 from roles.roles import Staff
-from search.indexing_api import recreate_index
+from search.tasks import start_recreate_index
 from seed_data.utils import filter_dict_by_key_set
 from seed_data.lib import (
     CachedEnrollmentHandler,
@@ -280,7 +280,7 @@ class Command(BaseCommand):
             fake_programs = fake_programs_query().all()
             self.stdout.write("Seed data appears to already exist.")
         else:
-            recreate_index()
+            start_recreate_index.delay().get()
             # Mute post_save to prevent updates to Elasticsearch on a per program or user basis.
             # recreate_index() is run afterwards to do this indexing in bulk.
             with mute_signals(post_save):
@@ -293,7 +293,7 @@ class Command(BaseCommand):
                 create_tiers(fake_financial_aid_programs, int(options["tiers"]))
             )
 
-            recreate_index()
+            start_recreate_index.delay().get()
             program_msg = (
                 "Created {num} new programs from '{path}'."
             ).format(

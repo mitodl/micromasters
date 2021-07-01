@@ -1,21 +1,51 @@
+# pylint: disable=redefined-outer-name
+
 """Tests for search tasks"""
+from types import SimpleNamespace
+
 from ddt import (
     data,
     ddt,
     unpack,
 )
+from django.conf import settings
 from django.test import override_settings
+import pytest
 
 from dashboard.factories import ProgramEnrollmentFactory
 from search.base import MockedESTestCase
+from search.exceptions import ReindexException
+from search.factories import PercolateQueryFactory
+from search.indexing_api import create_backing_indices
 from search.models import PercolateQuery
 from search.tasks import (
     index_users,
-    index_program_enrolled_users,
+    index_program_enrolled_users, start_recreate_index, bulk_index_percolate_queries, bulk_index_program_enrollments,
+    finish_recreate_index,
 )
 
 
 FAKE_INDEX = 'fake'
+
+pytestmark = pytest.mark.django_db
+
+
+@pytest.fixture
+def mocked_celery(mocker):
+    """Mock object that patches certain celery functions"""
+    exception_class = TabError
+    replace_mock = mocker.patch(
+        "celery.app.task.Task.replace", autospec=True, side_effect=exception_class
+    )
+    group_mock = mocker.patch("celery.group", autospec=True)
+    chain_mock = mocker.patch("celery.chain", autospec=True)
+
+    yield SimpleNamespace(
+        replace=replace_mock,
+        group=group_mock,
+        chain=chain_mock,
+        replace_exception_class=exception_class,
+    )
 
 
 def fail_first():
@@ -185,3 +215,96 @@ class SearchTasksTests(MockedESTestCase):
         assert self.send_automatic_emails_mock.call_count == len(enrollments)
         assert self.update_percolate_memberships_mock.call_count == len(enrollments)
         self.refresh_index_mock.assert_called_with()
+
+
+def test_start_recreate_index(mocker, mocked_celery):
+    """
+    recreate_index should recreate the elasticsearch index and reindex all data with it
+    """
+    settings.ELASTICSEARCH_INDEXING_CHUNK_SIZE = 2
+    enrollments = sorted(ProgramEnrollmentFactory.create_batch(4), key=lambda enrollment: enrollment.id)
+    percolates = sorted(PercolateQueryFactory.create_batch(4), key=lambda percolate: percolate.id)
+    index_enrollments_mock = mocker.patch("search.tasks.bulk_index_program_enrollments", autospec=True)
+    index_percolates_mock = mocker.patch("search.tasks.bulk_index_percolate_queries", autospec=True)
+
+    test_backing_indices = create_backing_indices()
+    enrollment_public_index = test_backing_indices[0][0]
+    enrollment_private_index = test_backing_indices[1][0]
+    percolate_index = test_backing_indices[2][0]
+
+    finish_recreate_index_mock = mocker.patch(
+        "search.tasks.finish_recreate_index", autospec=True
+    )
+
+    with pytest.raises(mocked_celery.replace_exception_class):
+        start_recreate_index(test_backing_indices)
+
+    # Celery's 'group' function takes a generator as an argument. In order to make assertions about the items
+    # in that generator, 'list' is being called to force iteration through all of those items.
+    list(mocked_celery.group.call_args[0][0])
+    assert mocked_celery.group.call_count == 1
+
+    finish_recreate_index_mock.s.assert_called_once_with(test_backing_indices)
+
+    assert index_enrollments_mock.si.call_count == 2
+    index_enrollments_mock.si.assert_any_call([enrollments[0].id, enrollments[1].id], enrollment_public_index,
+                                              enrollment_private_index)
+    index_enrollments_mock.si.assert_any_call([enrollments[2].id, enrollments[3].id], enrollment_public_index,
+                                              enrollment_private_index)
+
+    assert index_percolates_mock.si.call_count == 2
+    index_percolates_mock.si.assert_any_call([percolates[0].id, percolates[1].id], percolate_index)
+    index_percolates_mock.si.assert_any_call([percolates[2].id, percolates[3].id], percolate_index)
+
+    assert mocked_celery.replace.call_count == 1
+    assert mocked_celery.replace.call_args[0][1] == mocked_celery.chain.return_value
+
+
+def test_bulk_index_program_enrollments(mocker):
+    """
+    bulk_index_program_enrollments should index the user program enrollments correctly
+    """
+    enrollments = ProgramEnrollmentFactory.create_batch(2)
+    enrollment_ids = [enrollment.id for enrollment in enrollments]
+    index_enrollments_mock = mocker.patch("search.tasks._index_program_enrolled_users", autospec=True)
+
+    test_backing_indices = create_backing_indices()
+    enrollment_public_index = test_backing_indices[0][0]
+    enrollment_private_index = test_backing_indices[1][0]
+    bulk_index_program_enrollments(enrollment_ids, enrollment_public_index, enrollment_private_index)
+    assert index_enrollments_mock.call_count == 1
+
+
+def test_bulk_index_percolate_queries(mocker):
+    """
+    bulk_index_percolate_queries should index the percolate queries correctly
+    """
+    percolates = PercolateQueryFactory.create_batch(2)
+    percolate_ids = [percolate.id for percolate in percolates]
+
+    percolate_index_chunk_mock = mocker.patch("search.tasks._index_chunks", autospec=True)
+
+    test_backing_indices = create_backing_indices()
+    percolate_index = test_backing_indices[2][0]
+    bulk_index_percolate_queries(percolate_ids, percolate_index)
+    assert percolate_index_chunk_mock.call_count == 1
+
+
+@pytest.mark.parametrize("with_error", [True, False])
+def test_finish_recreate_index(mocker, with_error):
+    """
+    finish_recreate_index should clear and delete all the backing indices
+    """
+    refresh_index_mock = mocker.patch("search.tasks.refresh_index", autospec=True)
+    delete_backing_indices_mock = mocker.patch("search.tasks.delete_backing_indices", autospec=True)
+    results = ["error"] if with_error else []
+    test_backing_indices = create_backing_indices()
+
+    if with_error:
+        with pytest.raises(ReindexException):
+            finish_recreate_index(results, test_backing_indices)
+        assert delete_backing_indices_mock.call_count == 1
+    else:
+        finish_recreate_index(results, test_backing_indices)
+        assert refresh_index_mock.call_count == len(test_backing_indices)
+        assert delete_backing_indices_mock.call_count == 1
