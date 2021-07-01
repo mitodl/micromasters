@@ -16,4 +16,5 @@ class Command(BaseCommand):
         """
         Recreates the index
         """
-        recreate_index_async.delay()
+        recreate_index_task = recreate_index_async.delay()
+        self.stdout.write('Running reindexing task with Id: {}'.format(recreate_index_task.id))
