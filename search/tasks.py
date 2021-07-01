@@ -20,6 +20,7 @@ from search.indexing_api import (
     remove_program_enrolled_user as _remove_program_enrolled_user,
     index_percolate_queries as _index_percolate_queries,
     delete_percolate_query as _delete_percolate_query,
+    recreate_index as _recreate_index,
 )
 from search.models import PercolateQuery
 
@@ -136,3 +137,11 @@ def populate_query_memberships(percolate_query_id):
         percolate_query_id (int): Database id for the PercolateQuery to populate
     """
     api.populate_query_memberships(percolate_query_id)
+
+
+@app.task(acks_late=True)
+def recreate_index_async():
+    """
+    Recreate the index
+    """
+    _recreate_index()
