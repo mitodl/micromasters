@@ -4,6 +4,12 @@ import { NoHits } from "searchkit"
 
 export default class CustomNoHits extends NoHits {
   render() {
+    if (
+      (this.hasHits() || this.isInitialLoading() || this.isLoading()) &&
+      !this.getError()
+    ) {
+      return null
+    }
     let message =
       "There were no results found for this search. Please remove some filters or start over."
 

@@ -115,7 +115,7 @@
     "sass": "^1.35.1",
     "sass-lint": "^1.10.2",
     "sass-loader": "10",
-    "searchkit": "2.3.0",
+    "searchkit": "2.4.4",
     "serialize-javascript": "^3.1.0",
     "sinon": "^2.3.1",
     "slick-carousel": "^1.6.0",

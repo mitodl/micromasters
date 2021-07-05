@@ -61,6 +61,7 @@ export default class ProgramFilter extends SearchkitComponent {
   }
 
   componentDidMount() {
+    this._initAccessor()
     const { currentProgramEnrollment } = this.props
     // currentProgramEnrollment may be null if localStorage hasn't been populated with the enrollment,
     // which will happen on first load of the search page. In that case will get updated and we will

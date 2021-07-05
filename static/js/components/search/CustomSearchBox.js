@@ -5,6 +5,9 @@ import * as React from "react"
 export default class CustomSearchBox extends SearchBox {
   render() {
     // override SearchBox.render to fix console warning
+    if (!this.accessor) {
+      return null
+    }
     const block = this.bemBlocks.container
 
     return (
