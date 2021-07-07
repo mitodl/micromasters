@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.199.4
+Version 0.199.4 (Released July 07, 2021)
 ---------------
 
 - Make client_authorization_id field optional (#4970)
