@@ -26,14 +26,17 @@ const DocsInstructionsDialog = ({
   open,
   setDialogVisibility
 }: DocsInstructions) => (
+  // onRequestClose is not used below because an extra click or touch event causes material-ui
+  // to close the dialog right after opening it. See https://github.com/JedWatson/react-select/issues/532
   <Dialog
+    classes={{ paper: "docs-instructions-dialog-paper" }}
     title={dialogTitle(setDialogVisibility)}
     titleClassName="dialog-title"
     contentClassName="dialog docs-instructions-dialog"
     className="docs-instructions-dialog-wrapper"
     open={open}
-    onRequestClose={() => setDialogVisibility(false)}
     autoScrollBodyContent={true}
+    onClose={() => setDialogVisibility(false)}
   >
     <div className="heading">Whose income should I report?</div>
     <p>
