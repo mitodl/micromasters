@@ -1,6 +1,15 @@
 Release Notes
 =============
 
+Version 0.199.5
+---------------
+
+- upgrade merge (#4974)
+- fix: instruction dialog frame design enhancement and closing operation (#4973)
+- update searchkit to fix axios security alert (#4954)
+- Bump wagtail from 2.12.4 to 2.12.5 (#4951)
+- Run recreate index through a celery task (#4960)
+
 Version 0.199.4 (Released July 07, 2021)
 ---------------
 
