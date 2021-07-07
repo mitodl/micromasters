@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.199.4 (Released July 07, 2021)
+---------------
+
+- Make client_authorization_id field optional (#4970)
+- use uuid based hashes for certificates (#4963)
+
 Version 0.199.3 (Released June 29, 2021)
 ---------------
 
