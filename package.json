@@ -154,6 +154,7 @@
   },
   "resolutions": {
     "node-sass/**/trim-newlines": "^3.0.1",
-    "webpack/watchpack/watchpack-chokidar2/**/chokidar": "^3.4.3"
+    "webpack/watchpack/watchpack-chokidar2/**/chokidar": "^3.4.3",
+    "merge": "^2.1.1"
   }
 }
