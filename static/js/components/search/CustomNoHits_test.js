@@ -21,7 +21,7 @@ describe("CustomNoHits", () => {
   const renderCustomNoHits = () => makeStrippedHtml(<CustomNoHits />)
 
   const stubCommon = (): void => {
-    sandbox.stub(CustomNoHits.prototype, "componentWillMount")
+    sandbox.stub(CustomNoHits.prototype, "componentDidMount")
     sandbox
       .stub(CustomNoHits.prototype, "getSuggestion")
       .returns("NoHits.NoResultsFound")
