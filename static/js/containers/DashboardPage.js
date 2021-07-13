@@ -299,14 +299,18 @@ class DashboardPage extends React.Component {
   fetchDashboard() {
     const { dashboard, dispatch } = this.props
     if (dashboard.fetchStatus === undefined) {
-      dispatch(fetchDashboard(SETTINGS.user.username))
+      dispatch(fetchDashboard(SETTINGS.user.username)).catch(() => {
+        /* Promise rejected */
+      })
     }
   }
 
   fetchCoursePrices() {
     const { prices, dispatch } = this.props
     if (prices.getStatus === undefined) {
-      dispatch(actions.prices.get(SETTINGS.user.username))
+      dispatch(actions.prices.get(SETTINGS.user.username)).catch(() => {
+        /* Promise rejected */
+      })
     }
   }
 
@@ -317,14 +321,18 @@ class DashboardPage extends React.Component {
       program !== undefined &&
       R.pathEq([program.id, "getStatus"], undefined, programLearners)
     ) {
-      dispatch(actions.programLearners.get(program.id))
+      dispatch(actions.programLearners.get(program.id)).catch(() => {
+        /* Promise rejected */
+      })
     }
   }
 
   fetchCoupons() {
     const { coupons, dispatch } = this.props
     if (coupons.fetchGetStatus === undefined) {
-      dispatch(fetchCoupons())
+      dispatch(fetchCoupons()).catch(() => {
+        /* Promise rejected */
+      })
     }
   }
 
@@ -378,7 +386,9 @@ class DashboardPage extends React.Component {
       !discussionsFrontpage.loaded &&
       !discussionsFrontpage.processing
     ) {
-      dispatch(actions.discussionsFrontpage.get())
+      dispatch(actions.discussionsFrontpage.get()).catch(() => {
+        /* Promise rejected */
+      })
     }
   }
 
