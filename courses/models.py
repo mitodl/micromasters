@@ -286,7 +286,7 @@ class CourseRun(models.Model):
         """
         Checks if the course is not expired
         """
-        return not self.is_past and self.is_upgradable and self.is_not_beyond_enrollment
+        return not self.is_past and self.is_not_beyond_enrollment
 
     @property
     def can_freeze_grades(self):
