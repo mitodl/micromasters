@@ -12,7 +12,8 @@ export const circularProgressWidget = (
   radius: number,
   strokeWidth: number,
   totalPassedCourses: number,
-  totalCourses: number
+  totalCourses: number,
+  programLetterUrl: string
 ): React$Element<*> => {
   const radiusForMeasures = radius - strokeWidth / 2
   const width = radius * 2
@@ -60,6 +61,9 @@ export const circularProgressWidget = (
         </text>
       </svg>
       <p className="text-course-complete">Courses complete</p>
+      {SETTINGS.FEATURES.ENABLE_PROGRAM_LETTER &&
+        programLetterUrl &&
+        programLetterLink(programLetterUrl)}
     </div>
   )
 }
@@ -142,15 +146,12 @@ export default class ProgressWidget extends React.Component {
             60,
             6,
             totalPassedCourses,
-            program.number_courses_required
+            program.number_courses_required,
+            program.program_letter_url
           )}
           {SETTINGS.FEATURES.PROGRAM_RECORD_LINK &&
             program.financial_aid_availability &&
             gradeRecordsLink(program.grade_records_url)}
-          {SETTINGS.FEATURES.ENABLE_PROGRAM_LETTER &&
-            !program.financial_aid_availability &&
-            program.program_letter_url &&
-            programLetterLink(program.program_letter_url)}
         </CardContent>
       </Card>
     )
