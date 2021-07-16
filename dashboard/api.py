@@ -95,12 +95,6 @@ class CourseFormatConditionalFields:
                 'format_field': 'fuzzy_enrollment_start_date'
             },
         ],
-        CourseStatus.CAN_UPGRADE: [
-            {
-                'course_run_field': 'upgrade_deadline',
-                'format_field': 'course_upgrade_deadline'
-            },
-        ],
         CourseStatus.PAID_BUT_NOT_ENROLLED: [
             {
                 'course_run_field': 'enrollment_start',
@@ -470,6 +464,7 @@ def format_courserun_for_dashboard(course_run, status_for_user, mmtrack, positio
         'position': position,
         'course_start_date': course_run.start_date,
         'course_end_date': course_run.end_date,
+        'course_upgrade_deadline': course_run.upgrade_deadline,
         'fuzzy_start_date': course_run.fuzzy_start_date,
         'enrollment_url': course_run.enrollment_url,
         'year_season': format_season_year_for_course_run(course_run),
