@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.199.5
+Version 0.199.5 (Released July 19, 2021)
 ---------------
 
 - Revert "Bump wagtail from 2.12.4 to 2.12.5 (#4951)" (#4978)
