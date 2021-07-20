@@ -9,12 +9,10 @@ from elasticsearch.exceptions import NotFoundError
 
 from profiles.models import Profile
 from profiles.serializers import ProfileSerializer
-from dashboard.models import ProgramEnrollment
 from dashboard.serializers import UserProgramSearchSerializer
 from micromasters.utils import (
     chunks,
     dict_with_keys,
-    now_in_utc,
 )
 from search.connection import (
     ALL_INDEX_TYPES,
@@ -22,14 +20,12 @@ from search.connection import (
     get_default_alias,
     get_conn,
     make_alias_name,
-    make_backing_index_name,
     GLOBAL_DOC_TYPE,
     PERCOLATE_INDEX_TYPE,
     PRIVATE_ENROLLMENT_INDEX_TYPE,
-    PUBLIC_ENROLLMENT_INDEX_TYPE,
+    PUBLIC_ENROLLMENT_INDEX_TYPE, make_backing_index_name,
 )
 from search.exceptions import ReindexException
-from search.models import PercolateQuery
 from search.util import (
     fix_nested_filter,
     open_json_stream,
@@ -571,88 +567,6 @@ def delete_indices():
                 conn.indices.delete_alias(index=INDEX_WILDCARD, name=alias)
 
 
-# pylint: disable=too-many-locals
-def recreate_index():
-    """
-    Wipe and recreate index and mapping, and index all items.
-    """
-    conn = get_conn(verify=False)
-
-    # Create new backing index for reindex
-    new_backing_public_index = make_backing_index_name()
-    new_backing_private_index = make_backing_index_name()
-    new_backing_percolate_index = make_backing_index_name()
-    backing_index_tuples = [
-        (new_backing_public_index, PUBLIC_ENROLLMENT_INDEX_TYPE),
-        (new_backing_private_index, PRIVATE_ENROLLMENT_INDEX_TYPE),
-        (new_backing_percolate_index, PERCOLATE_INDEX_TYPE),
-    ]
-    for backing_index, index_type in backing_index_tuples:
-        # Clear away temp alias so we can reuse it, and create mappings
-        clear_and_create_index(backing_index, index_type=index_type)
-        temp_alias = make_alias_name(index_type, is_reindexing=True)
-        if conn.indices.exists_alias(name=temp_alias):
-            # Deletes both alias and backing indexes
-            conn.indices.delete_alias(index=INDEX_WILDCARD, name=temp_alias)
-
-        # Point temp_alias toward new backing index
-        conn.indices.put_alias(index=backing_index, name=temp_alias)
-
-    # Do the indexing on the temp index
-    start = now_in_utc()
-    try:
-        enrollment_count = ProgramEnrollment.objects.count()
-        log.info("Indexing %d program enrollments...", enrollment_count)
-        index_program_enrolled_users(
-            ProgramEnrollment.objects.iterator(),
-            public_indices=[new_backing_public_index],
-            private_indices=[new_backing_private_index],
-        )
-
-        log.info("Indexing %d percolator queries...", PercolateQuery.objects.exclude(is_deleted=True).count())
-        _index_chunks(
-            _get_percolate_documents(PercolateQuery.objects.exclude(is_deleted=True).iterator()),
-            index=new_backing_percolate_index,
-        )
-
-        # Point default alias to new index and delete the old backing index, if any
-        log.info("Done with temporary index. Pointing default aliases to newly created backing indexes...")
-
-        for new_backing_index, index_type in backing_index_tuples:
-            actions = []
-            old_backing_indexes = []
-            default_alias = make_alias_name(index_type, is_reindexing=False)
-            if conn.indices.exists_alias(name=default_alias):
-                # Should only be one backing index in normal circumstances
-                old_backing_indexes = list(conn.indices.get_alias(name=default_alias).keys())
-                for index in old_backing_indexes:
-                    actions.append({
-                        "remove": {
-                            "index": index,
-                            "alias": default_alias,
-                        }
-                    })
-            actions.append({
-                "add": {
-                    "index": new_backing_index,
-                    "alias": default_alias,
-                },
-            })
-            conn.indices.update_aliases({
-                "actions": actions
-            })
-
-            refresh_index(new_backing_index)
-            for index in old_backing_indexes:
-                conn.indices.delete(index)
-    finally:
-        for new_backing_index, index_type in backing_index_tuples:
-            temp_alias = make_alias_name(index_type, is_reindexing=True)
-            conn.indices.delete_alias(name=temp_alias, index=new_backing_index)
-    end = now_in_utc()
-    log.info("recreate_index took %d seconds", (end - start).total_seconds())
-
-
 def _serialize_percolate_query(query):
     """
     Serialize PercolateQuery for Elasticsearch indexing
@@ -707,3 +621,45 @@ def delete_percolate_query(percolate_query_id):
 
     for index in aliases:
         _delete_item(percolate_query_id, index=index)
+
+
+def delete_backing_indices(backing_indices):
+    """
+    Remove the temporary backing indices
+
+    Args:
+        backing_indices (list of tuples):
+            A list of tuples containing the created backing indices for reindexing
+    """
+
+    conn = get_conn(verify=False)
+    for new_backing_index, index_type in backing_indices:
+        temp_alias = make_alias_name(index_type, is_reindexing=True)
+        conn.indices.delete_alias(name=temp_alias, index=new_backing_index)
+
+
+def create_backing_indices():
+    """
+    Creates the list of tuples that contains the backing indices names and type which is used in reindexing
+    """
+    conn = get_conn(verify=False)
+    new_backing_public_index = make_backing_index_name()
+    new_backing_private_index = make_backing_index_name()
+    new_backing_percolate_index = make_backing_index_name()
+    backing_index_tuples = [
+        (new_backing_public_index, PUBLIC_ENROLLMENT_INDEX_TYPE),
+        (new_backing_private_index, PRIVATE_ENROLLMENT_INDEX_TYPE),
+        (new_backing_percolate_index, PERCOLATE_INDEX_TYPE),
+    ]
+    for backing_index, index_type in backing_index_tuples:
+        # Clear away temp alias so we can reuse it, and create mappings
+        clear_and_create_index(backing_index, index_type=index_type)
+        temp_alias = make_alias_name(index_type, is_reindexing=True)
+        if conn.indices.exists_alias(name=temp_alias):
+            # Deletes both alias and backing indexes
+            conn.indices.delete_alias(index=INDEX_WILDCARD, name=temp_alias)
+
+        # Point temp_alias toward new backing index
+        conn.indices.put_alias(index=backing_index, name=temp_alias)
+
+    return backing_index_tuples

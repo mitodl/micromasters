@@ -10,6 +10,7 @@ import pytest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
+from search.base import reindex_test_es_data
 from selenium_tests.data_util import create_enrolled_user_batch
 from roles.models import (
     Staff,
@@ -38,7 +39,6 @@ from financialaid.models import (
 )
 from financialaid.factories import FinancialAidFactory
 from profiles.models import Profile
-from search.indexing_api import recreate_index
 
 
 pytestmark = [
@@ -233,7 +233,7 @@ class TestLearnerSearchPage:
                 profile.country = code
                 profile.save()
 
-        recreate_index()
+        reindex_test_es_data()
 
         browser.get("/learners")
         browser.wait_until_loaded(By.CLASS_NAME, 'menu-icon')

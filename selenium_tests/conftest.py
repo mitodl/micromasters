@@ -31,8 +31,8 @@ from dashboard.models import ProgramEnrollment
 from financialaid.factories import TierProgramFactory
 from search.indexing_api import (
     delete_indices,
-    recreate_index,
 )
+from search.base import reindex_test_es_data
 from roles.roles import Staff
 from roles.models import Role
 
@@ -165,7 +165,7 @@ def es_index():
     """
     Fixture for a properly initialized ES index
     """
-    recreate_index()
+    reindex_test_es_data()
     yield
     delete_indices()
 

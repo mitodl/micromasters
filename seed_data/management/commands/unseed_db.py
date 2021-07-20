@@ -14,7 +14,7 @@ from dashboard.models import CachedEnrollment, CachedCertificate, CachedCurrentG
 from financialaid.models import FinancialAid, FinancialAidAudit, Tier, TierProgram
 from grades.models import FinalGrade
 from mail.models import FinancialAidEmailAudit
-from search.indexing_api import recreate_index
+from search.tasks import start_recreate_index
 from seed_data.management.commands import (  # pylint: disable=import-error
     FAKE_USER_USERNAME_PREFIX,
     FAKE_PROGRAM_DESC_PREFIX,
@@ -90,4 +90,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         unseed_db()
-        recreate_index()
+        start_recreate_index.delay().get()

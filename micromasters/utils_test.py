@@ -16,6 +16,7 @@ from django.test import (
     RequestFactory,
 )
 import pytz
+import pytest
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 
@@ -43,7 +44,7 @@ from micromasters.utils import (
     serialize_model_object,
     pop_keys_from_dict,
     pop_matching_keys_from_dict,
-    generate_md5,
+    generate_md5, merge_strings,
 )
 from search.base import MockedESTestCase
 
@@ -347,3 +348,18 @@ def test_generate_md5():
     assert len(md5_hash) == 32
     repeat_md5_hash = generate_md5(bytes_to_hash)
     assert md5_hash == repeat_md5_hash
+
+
+@pytest.mark.parametrize(
+    "list_or_string,output",
+    [
+        ["str", ["str"]],
+        [["str", None, [None]], ["str"]],
+        [[["a"], "b", ["c", "d"], "e"], ["a", "b", "c", "d", "e"]],
+    ],
+)
+def test_merge_strings(list_or_string, output):
+    """
+    merge_strings should flatten a nested list of strings
+    """
+    assert merge_strings(list_or_string) == output
