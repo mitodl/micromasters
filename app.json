@@ -265,7 +265,7 @@
   "stack": "heroku-20",
   "repository": "https://github.com/mitodl/micromasters",
   "scripts": {
-    "postdeploy": "./manage.py migrate --noinput && ./manage.py recreate_index"
+    "postdeploy": "./manage.py migrate --noinput"
   },
   "success_url": "/",
   "website": "https://github.com/mitodl/micromasters"
