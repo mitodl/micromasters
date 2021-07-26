@@ -7,6 +7,7 @@ from unittest.mock import (
     patch,
 )
 
+import pytest
 from requests.exceptions import HTTPError
 
 from backends import utils
@@ -124,3 +125,12 @@ class RefreshTest(MockedESTestCase):
         social_user = self.user.social_auth.get(provider=EdxOrgOAuth2.name)
         with self.assertRaises(HTTPError):
             utils._send_refresh_request(social_user)
+
+@pytest.mark.django_db
+def test_update_email():
+    """Verify that update_email updates the user's email"""
+    new_email = "test1@localhost"
+    user = UserFactory.create(email="test2@localhost")
+    utils.update_email({'email': new_email}, user)
+    user.refresh_from_db()
+    assert user.email == new_email

@@ -19,7 +19,7 @@ from django.test import override_settings
 from rest_framework.exceptions import ValidationError
 from edx_api.enrollments import Enrollment, Enrollments
 
-from backends.pipeline_api import EdxOrgOAuth2
+from backends.edxorg import EdxOrgOAuth2
 from courses.factories import (
     CourseRunFactory,
     FullProgramFactory,

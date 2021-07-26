@@ -1,16 +1,16 @@
 """
-EdX.org backend for Python Social Auth
+mitX Online backend for Python Social Auth
 """
 from django.conf import settings
 from backends.base import BaseEdxOAuth2, edx_authorize_url, edx_access_token_url
 
 
-class EdxOrgOAuth2(BaseEdxOAuth2):
+class MitxOnlineOAuth2(BaseEdxOAuth2):
     """
-    EDX.org OAuth2 authentication backend
+    mitX Online OAuth2 authentication backend
     """
-    name = 'edxorg'
-    EDX_BASE_URL = settings.EDXORG_BASE_URL
+    name = 'mitxonline'
+    EDX_BASE_URL = settings.MITXONLINE_BASE_URL
 
     # Settings for Django OAUTH toolkit
     AUTHORIZATION_URL = edx_authorize_url(EDX_BASE_URL)
