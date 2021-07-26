@@ -2,13 +2,15 @@
 APIs for extending the python social auth pipeline
 """
 import logging
-from urllib.parse import urljoin
 
 from django.shortcuts import redirect
+from django_redis import get_redis_connection
 from rolepermissions.checkers import has_role
 from social_core.exceptions import AuthException
 
-from backends.edxorg import EdxOrgOAuth2
+from backends.base import BaseEdxOAuth2
+from backends.utils import update_email
+from dashboard.api import CACHE_KEY_FAILURE_NUMS_BY_USER, FIELD_USER_ID_BASE_STR, CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE
 from micromasters.utils import now_in_utc
 from profiles.models import Profile
 from profiles.util import split_name
@@ -16,6 +18,7 @@ from roles.models import (
     Instructor,
     Staff,
 )
+
 
 log = logging.getLogger(__name__)
 
@@ -37,7 +40,7 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):
     """
     # this function is completely skipped if the backend is not edx or
     # the user has not created now
-    if backend.name != EdxOrgOAuth2.name:
+    if not isinstance(backend, BaseEdxOAuth2):
         return
 
     if has_role(user, [Staff.ROLE_ID, Instructor.ROLE_ID]):
@@ -93,7 +96,7 @@ def update_profile_from_edx(backend, user, response, is_new, *args, **kwargs):
 
 def check_edx_verified_email(backend, response, details, *args, **kwargs):  # pylint: disable=unused-argument
     """Get account information to check if email was verified for account on edX"""
-    if backend.name != EdxOrgOAuth2.name:
+    if not isinstance(backend, BaseEdxOAuth2):
         return {}
 
     username = details.get('username')
@@ -103,7 +106,7 @@ def check_edx_verified_email(backend, response, details, *args, **kwargs):  # py
         raise AuthException('Missing access token for the edX user {0}'.format(username))
 
     user_profile_edx = backend.get_json(
-        urljoin(backend.EDXORG_BASE_URL, '/api/user/v1/accounts/{0}'.format(username)),
+        backend.get_url('/api/user/v1/accounts/{0}'.format(username)),
         headers={
             "Authorization": "Bearer {}".format(access_token),
         }
@@ -130,12 +133,17 @@ def set_last_update(details, *args, **kwargs):  # pylint: disable=unused-argumen
     return details
 
 
-def update_email(user_profile_edx, user):
+def flush_redis_cache(*, user, **kwargs):  # pylint: disable=unused-argument
     """
-    updates email address of user
+    flush the redis cache on a new login
     Args:
-        user_profile_edx (dict): user details from edX
         user (User): user object
     """
-    user.email = user_profile_edx.get('email')
-    user.save()
+    if not user:
+        return
+
+    # Update redis cache if user had invalid credentials
+    con = get_redis_connection("redis")
+    user_key = FIELD_USER_ID_BASE_STR.format(user.id)
+    con.hdel(CACHE_KEY_FAILURE_NUMS_BY_USER, user_key)
+    con.srem(CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE, user.id)

@@ -117,10 +117,15 @@ $ make cms-shell
 $ make requiements
 ```
 
+#### Setup hostnames
+
+  - Add a new hostname (if not already exists) in your `/etc/hosts` file (e.g: `127.0.0.1    edx.odl.local`)
+  - If you are also configuring mitX Online auth, add a secondary hostname (e.g: `127.0.0.1    edx.odl.local edx2.odl.local`)
+  - If Micromasters isn't able to access the Open edX hostname directly (primarily due to the way networking is handled in compose projects) you will need to set `OPENEDX_HOST_ENTRY` in `.env` file such that Mircomasters is able to resolve the Open edX hostname from within the container. Typically this would mean setting the value similar to `edx.odl.local:172.22.0.1` where the IP is the gateway IP on the Micromasters docker network. If you're enabled mitX Online auth, use a value like `edx.odl.local edx2.odl.local:172.22.0.1`
+
 #### Configure Micromasters to support OAuth2 authentication from Open edX
 
   - In Open edX:
-    - Add a new domain (if not already exists) in your `/etc/hosts` file (e.g: `127.0.0.1    edx.odl.local`)
     - Create and configure site through admin panel `/admin` (_OPTIONAL_)
       - Go to `/admin/sites/site/` and create a site with `domain-name = edx.odl.local:18000`.
       - Add theme through `/admin/theming/sitetheme/`.
@@ -132,6 +137,19 @@ $ make requiements
       - Other values are arbitrary but be sure to fill them all out. Save the client id and secret for later
   - In Micromasters:
     - Set `EDXORG_BASE_URL` to the correct URL that is accessible from Micromasters container and host, e.g. `http://edx.odl.local:18000/`
-      - If Micromasters isn't able to access the Open edX hostname directly (primarily due to the way networking is handled in compose projects) you will need to set `OPENEDX_HOST_ENTRY` in `.env` file such that Mircomasters is able to resolve the Open edX hostname from within the container. Typically this would mean setting the value similar to `edx.odl.local:172.22.0.1` where the IP is the gateway IP on the Micromasters docker network.
     - Set `OPENEDX_API_CLIENT_ID` to the client id
     - Set `OPENEDX_API_CLIENT_SECRET` to the client secret
+
+#### Configure Micromasters to support OAuth2 authentication from mitX Online
+
+  - In Open edX:
+    - Go to `/admin/oauth2_provider/application/` and verify that an application named `micromasters-mitxonline` (name does not really matter here, but must be different from the one in the section above) exists with these settings:
+      - `Redirect uris`: `http://mm.odl.local:8079/complete/mitxonline/`
+      - `Client type`: "Confidential"
+      - `Authorization grant type`: "Authorization code"
+      - `Skip authorization`: checked
+      - Other values are arbitrary but be sure to fill them all out. Save the client id and secret for later
+  - In Micromasters:
+    - Set `MITXONLINE_BASE_URL` to the correct URL that is accessible from Micromasters container and host, e.g. `http://edx2.odl.local:18000/`
+    - Set `MITXONLINE_CLIENT_ID` to the client id
+    - Set `MITXONLINE_CLIENT_SECRET` to the client secret

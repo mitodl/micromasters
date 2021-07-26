@@ -45,3 +45,14 @@ def refresh_user_token(user_social):
     error_margin = timedelta(minutes=5)
     if now_in_utc() - last_update >= expires_in - error_margin:
         _send_refresh_request(user_social)
+
+
+def update_email(user_profile_edx, user):
+    """
+    updates email address of user
+    Args:
+        user_profile_edx (dict): user details from edX
+        user (User): user object
+    """
+    user.email = user_profile_edx.get('email')
+    user.save()

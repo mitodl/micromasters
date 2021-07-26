@@ -158,6 +158,7 @@ if DEBUG:
 
 AUTHENTICATION_BACKENDS = (
     'backends.edxorg.EdxOrgOAuth2',
+    'backends.mitxonline.MitxOnlineOAuth2',
     # the following needs to stay here to allow login of local users
     'django.contrib.auth.backends.ModelBackend',
 )
@@ -166,14 +167,18 @@ SESSION_ENGINE = get_string('SESSION_ENGINE', 'django.contrib.sessions.backends.
 SESSION_COOKIE_NAME = get_string('SESSION_COOKIE_NAME', 'sessionid')
 
 EDXORG_BASE_URL = get_string('EDXORG_BASE_URL', 'https://courses.edx.org/')
+MITXONLINE_BASE_URL = get_string('MITXONLINE_BASE_URL', None)
 SOCIAL_AUTH_EDXORG_KEY = get_string('EDXORG_CLIENT_ID', '')
 SOCIAL_AUTH_EDXORG_SECRET = get_string('EDXORG_CLIENT_SECRET', '')
+SOCIAL_AUTH_MITXONLINE_KEY = get_string('MITXONLINE_CLIENT_ID', '')
+SOCIAL_AUTH_MITXONLINE_SECRET = get_string('MITXONLINE_CLIENT_SECRET', '')
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
     'social_core.pipeline.social_auth.auth_allowed',
     'social_core.pipeline.social_auth.social_user',
     'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',
     'backends.pipeline_api.check_edx_verified_email',
     'social_core.pipeline.user.create_user',
     'social_core.pipeline.social_auth.associate_user',
@@ -182,6 +187,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
     'backends.pipeline_api.update_profile_from_edx',
+    'backends.pipeline_api.flush_redis_cache',
 )
 SOCIAL_AUTH_EDXORG_AUTH_EXTRA_ARGUMENTS = {
     'access_type': 'offline',
