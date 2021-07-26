@@ -128,7 +128,7 @@ export default class CourseEnrollmentDialog extends React.Component {
     ) {
       message = (
         <p key="1">
-          You can't pay for this course, The deadline to upgrade the course has
+          You cannot pay for this course at this time. The payment deadline has
           passed.
         </p>
       )
