@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.200.0 (Released July 26, 2021)
+---------------
+
+- recreate_index breakdown in celery tasks (#4968)
+
 Version 0.199.5 (Released July 19, 2021)
 ---------------
 
