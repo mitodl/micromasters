@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.201.0
+---------------
+
+- handle promise rejections (#4983)
+
 Version 0.200.0 (Released July 26, 2021)
 ---------------
 
