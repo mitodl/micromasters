@@ -16,7 +16,6 @@ from rolepermissions.checkers import has_role
 
 from micromasters.utils import webpack_dev_server_host
 from micromasters.serializers import serialize_maybe_user
-from profiles.api import get_social_username
 from profiles.permissions import CanSeeIfNotPrivate
 from roles.models import Instructor, Staff
 from ui.decorators import require_mandatory_urls
@@ -120,7 +119,6 @@ def standard_error_page(request, status_code, template_filename):
     """
     name = request.user.profile.preferred_name if not request.user.is_anonymous else ""
     authenticated = not request.user.is_anonymous
-    username = get_social_username(request.user)
     response = render(
         request,
         template_filename,
@@ -135,7 +133,7 @@ def standard_error_page(request, status_code, template_filename):
             }),
             "authenticated": authenticated,
             "name": name,
-            "username": username,
+            "username": request.user.username,
             "is_staff": has_role(request.user, [Staff.ROLE_ID, Instructor.ROLE_ID]),
             "support_email": settings.EMAIL_SUPPORT,
             "sentry_dsn": settings.SENTRY_DSN,

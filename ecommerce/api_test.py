@@ -359,16 +359,14 @@ class CybersourceTests(MockedESTestCase):
         """
         course_run, user = create_purchasable_course_run()
         order = create_unfulfilled_order(course_run.edx_course_key, user)
-        username = 'username'
         transaction_uuid = 'hex'
         fake_user_ip = "194.100.0.1"
 
         now = now_in_utc()
 
-        with patch('ecommerce.api.get_social_username', autospec=True, return_value=username):
-            with patch('ecommerce.api.now_in_utc', autospec=True, return_value=now) as now_mock:
-                with patch('ecommerce.api.uuid.uuid4', autospec=True, return_value=MagicMock(hex=transaction_uuid)):
-                    payload = generate_cybersource_sa_payload(order, 'dashboard_url', fake_user_ip)
+        with patch('ecommerce.api.now_in_utc', autospec=True, return_value=now) as now_mock:
+            with patch('ecommerce.api.uuid.uuid4', autospec=True, return_value=MagicMock(hex=transaction_uuid)):
+                payload = generate_cybersource_sa_payload(order, 'dashboard_url', fake_user_ip)
         signature = payload.pop('signature')
         assert generate_cybersource_sa_signature(payload) == signature
         signed_field_names = payload['signed_field_names'].split(',')
@@ -378,7 +376,7 @@ class CybersourceTests(MockedESTestCase):
         assert payload == {
             'access_key': CYBERSOURCE_ACCESS_KEY,
             'amount': str(order.total_price_paid),
-            'consumer_id': username,
+            'consumer_id': user.username,
             'currency': 'USD',
             'item_0_code': 'course',
             'item_0_name': '{}'.format(course_run.title),

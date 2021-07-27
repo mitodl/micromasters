@@ -26,7 +26,7 @@ from grades.models import FinalGrade
 from grades.serializers import ProctoredExamGradeSerializer
 from exams.models import ExamAuthorization, ExamRun, ExamRunCoupon
 from micromasters.utils import now_in_utc
-from profiles.api import get_social_auth
+from profiles.api import get_edxorg_social_auth
 
 # key that stores user_key and number of failures in a hash
 CACHE_KEY_FAILURE_NUMS_BY_USER = "update_cache_401_failure_numbers"
@@ -723,7 +723,7 @@ def refresh_user_data(user_id):
 
     # get the credentials for the current user for edX
     try:
-        user_social = get_social_auth(user)
+        user_social = get_edxorg_social_auth(user)
     except:
         log.exception('user "%s" does not have edX credentials', user.username)
         return

@@ -62,7 +62,7 @@ class DashboardTest(MockedESTestCase, APITestCase):
             )
 
         # url for the dashboard
-        cls.url = reverse('dashboard_api', args=[cls.user.social_auth.first().uid])
+        cls.url = reverse('dashboard_api', args=[cls.user.username])
 
     def setUp(self):
         super().setUp()
@@ -141,7 +141,7 @@ class DashboardTokensTest(MockedESTestCase, APITestCase):
         cls.enrollments = Enrollments([])
 
         # url for the dashboard
-        cls.url = reverse('dashboard_api', args=[cls.social_auth.uid])
+        cls.url = reverse('dashboard_api', args=[cls.user.username])
 
     def setUp(self):
         super().setUp()

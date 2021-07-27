@@ -27,7 +27,7 @@ from rest_framework.test import (
 from backends.edxorg import EdxOrgOAuth2
 from courses.factories import ProgramFactory
 from dashboard.models import ProgramEnrollment
-from micromasters.factories import UserFactory
+from micromasters.factories import SocialUserFactory
 from profiles.factories import (
     EducationFactory,
     EmploymentFactory,
@@ -73,22 +73,11 @@ class ProfileBaseTests(MockedESTestCase):
         Create a user
         """
         with mute_signals(post_save):
-            cls.user1 = UserFactory.create()
-            username = "{}_edx".format(cls.user1.username)
-            cls.user1.social_auth.create(
-                provider=EdxOrgOAuth2.name,
-                uid=username
-            )
-        cls.url1 = reverse('profile-detail', kwargs={'user': username})
-
+            cls.user1 = SocialUserFactory.create()
+        cls.url1 = reverse('profile-detail', kwargs={'user': cls.user1.username})
         with mute_signals(post_save):
-            cls.user2 = UserFactory.create(username="test.dev.example")
-            username = "{}_edx".format(cls.user2.username)
-            cls.user2.social_auth.create(
-                provider=EdxOrgOAuth2.name,
-                uid=username
-            )
-        cls.url2 = reverse('profile-detail', kwargs={'user': username})
+            cls.user2 = SocialUserFactory.create()
+        cls.url2 = reverse('profile-detail', kwargs={'user': cls.user2.username})
 
 
 class ProfileGETTests(ProfileBaseTests):
@@ -458,11 +447,6 @@ class ProfilePATCHTests(ProfileBaseTests):
                 profile.image_medium = None
             profile.save()
         self.client.force_login(self.user1)
-
-        patch_data = ProfileSerializer(profile).data
-        del patch_data['image']
-        del patch_data['image_small']
-        del patch_data['image_medium']
 
         # create a dummy image file in memory for upload
         with make_temp_image_file() as image_file:

@@ -36,7 +36,6 @@ from financialaid.factories import FinancialAidFactory
 from financialaid.models import FinancialAidStatus
 from grades.factories import ProctoredExamGradeFactory, MicromastersCourseCertificateFactory, FinalGradeFactory
 from grades.models import FinalGrade, CourseRunGradingStatus, MicromastersCourseCertificate
-from profiles.api import get_social_username
 from roles.models import Role, Staff
 from seed_data.lib import set_course_run_current, CachedEnrollmentHandler, add_paid_order_for_course, \
     set_course_run_past, set_course_run_future
@@ -733,7 +732,7 @@ def test_dashboard_states(browser, override_allowed_hosts, seeded_database_loade
             if not skip_screenshot:
                 browser.get(new_url)
                 browser.store_api_results(
-                    get_social_username(dashboard_states.user),
+                    dashboard_states.user.username,
                     filename=filename
                 )
                 if use_learner_page:

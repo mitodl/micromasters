@@ -33,7 +33,6 @@ from ecommerce.models import (
 from ecommerce.serializers import CouponSerializer
 from micromasters.factories import UserFactory, UserSocialAuthFactory
 from micromasters.utils import serialize_model_object
-from profiles.api import get_social_username
 from profiles.factories import ProfileFactory, SocialProfileFactory
 from search.base import MockedESTestCase
 
@@ -515,7 +514,7 @@ class CouponTests(MockedESTestCase):
             # Won't change anything if it already exists
             UserCoupon.objects.all().delete()
         data = {
-            'username': get_social_username(self.user),
+            'username': self.user.username,
         }
         with patch(
             'ecommerce.views.is_coupon_redeemable', autospec=True
@@ -561,7 +560,7 @@ class CouponTests(MockedESTestCase):
         A 404 should be returned if no coupon exists
         """
         resp = self.client.post(reverse('coupon-user-create', kwargs={'code': "missing"}), data={
-            "username": get_social_username(self.user)
+            "username": self.user.username
         }, format='json')
         assert resp.status_code == status.HTTP_404_NOT_FOUND
 
@@ -576,7 +575,7 @@ class CouponTests(MockedESTestCase):
             resp = self.client.post(
                 reverse('coupon-user-create', kwargs={'code': self.coupon.coupon_code}),
                 data={
-                    "username": get_social_username(self.user)
+                    "username": self.user.username
                 },
                 format='json',
             )

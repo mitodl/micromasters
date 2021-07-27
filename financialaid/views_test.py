@@ -610,9 +610,9 @@ class CoursePriceListViewTests(FinancialAidBaseTestCase, APIClient):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        cls.username = "{}_edx".format(cls.profile.user.username)
-        cls.staff_username = "{}_edx".format(cls.staff_user_profile.user.username)
-        cls.instructor_username = "{}_edx".format(cls.instructor_user_profile.user.username)
+        cls.username = cls.profile.user.username
+        cls.staff_username = cls.staff_user_profile.user.username
+        cls.instructor_username = cls.instructor_user_profile.user.username
         cls.profile.user.social_auth.create(
             provider=EdxOrgOAuth2.name,
             uid=cls.username,

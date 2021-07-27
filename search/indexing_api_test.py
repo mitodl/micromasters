@@ -570,7 +570,7 @@ class SerializerTests(ESTestCase):
                 'image': '/media/{}'.format(profile.image),
                 'image_small': '/media/{}'.format(profile.image_small),
                 'image_medium': '/media/{}'.format(profile.image_medium),
-                'username': None,  # bug in ProfileSerializer, issue #3166
+                'username': profile.user.username,
                 'filled_out': profile.filled_out,
                 'account_privacy': profile.account_privacy,
                 'country': profile.country,

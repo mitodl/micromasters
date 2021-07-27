@@ -9,7 +9,6 @@ from rest_framework.serializers import (
     SerializerMethodField,
 )
 
-from profiles.api import get_social_username
 from profiles.models import (
     Education,
     Employment,
@@ -160,7 +159,7 @@ class ProfileBaseSerializer(ModelSerializer):
 
     def get_username(self, obj):
         """Getter for the username field"""
-        return get_social_username(obj.user)
+        return obj.user.username
 
 
 class ProfileSerializer(ProfileBaseSerializer):
@@ -306,7 +305,7 @@ class ProfileImageSerializer(ModelSerializer):
 
     def get_username(self, obj):
         """Getter for the username field"""
-        return get_social_username(obj.user)
+        return obj.user.username
 
     class Meta:
         model = Profile
