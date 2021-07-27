@@ -50,7 +50,8 @@ const StaffLearnerInfoCard = (props: StaffLearnerCardProps) => {
                 63,
                 7,
                 totalPassedCourses,
-                program.number_courses_required
+                program.number_courses_required,
+                program.program_letter_url
               )}
             </div>
             {programInfoBadge(
