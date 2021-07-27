@@ -28,7 +28,6 @@ from cms.serializers import ProgramPageSerializer
 from courses.factories import ProgramFactory, CourseFactory
 from micromasters.serializers import serialize_maybe_user
 from micromasters.factories import UserSocialAuthFactory
-from profiles.api import get_social_username
 from profiles.factories import ProfileFactory, SocialProfileFactory
 from roles.models import Role
 from search.base import MockedESTestCase
@@ -135,7 +134,7 @@ class TestHomePage(ViewsTests):
             }
 
             assert response.context['authenticated'] is False
-            assert response.context['username'] is None
+            assert response.context['username'] == ''
             assert response.context['title'] == HomePage.objects.first().title
             assert response.context['is_public'] is True
             assert response.context['has_zendesk_widget'] is True
@@ -167,7 +166,7 @@ class TestHomePage(ViewsTests):
             }
 
             assert response.context['authenticated'] is True
-            assert response.context['username'] == get_social_username(user)
+            assert response.context['username'] == user.username
             assert response.context['title'] == HomePage.objects.first().title
             assert response.context['is_public'] is True
             assert response.context['has_zendesk_widget'] is True
@@ -177,39 +176,6 @@ class TestHomePage(ViewsTests):
             js_settings = json.loads(response.context['js_settings_json'])
             assert js_settings['gaTrackingID'] == ga_tracking_id
 
-    def test_index_context_logged_in_no_social_auth(self):
-        """
-        Assert context values when logged in without a social_auth account
-        """
-        with mute_signals(post_save):
-            profile = ProfileFactory.create()
-            self.client.force_login(profile.user)
-
-        ga_tracking_id = FuzzyText().fuzz()
-        with self.settings(
-            GA_TRACKING_ID=ga_tracking_id,
-        ), patch('ui.templatetags.render_bundle._get_bundle') as get_bundle:
-            response = self.client.get('/')
-
-            bundles = [bundle[0][1] for bundle in get_bundle.call_args_list]
-            assert set(bundles) == {
-                'public',
-                'sentry_client',
-                'style',
-                'style_public',
-                'zendesk_widget',
-            }
-
-            assert response.context['authenticated'] is True
-            assert response.context['username'] is None
-            assert response.context['title'] == HomePage.objects.first().title
-            assert response.context['is_public'] is True
-            assert response.context['has_zendesk_widget'] is True
-            assert response.context['is_staff'] is False
-            assert response.context['programs'] == []
-            self.assertContains(response, 'Share this page')
-            js_settings = json.loads(response.context['js_settings_json'])
-            assert js_settings['gaTrackingID'] == ga_tracking_id
 
     @ddt.data(
         *Role.ASSIGNABLE_ROLES
@@ -234,7 +200,7 @@ class TestHomePage(ViewsTests):
         ):
             response = self.client.get('/')
             assert response.context['authenticated'] is True
-            assert response.context['username'] is None
+            assert response.context['username'] == profile.user.username
             assert response.context['title'] == HomePage.objects.first().title
             assert response.context['is_public'] is True
             assert response.context['has_zendesk_widget'] is True
@@ -312,7 +278,7 @@ class DashboardTests(ViewsTests):
                 'reactGaDebug': react_ga_debug,
                 'user': {
                     'email': user.email,
-                    'username': get_social_username(user),
+                    'username': user.username,
                     'first_name': profile.first_name,
                     'last_name': profile.last_name,
                     'preferred_name': profile.preferred_name,
@@ -552,7 +518,7 @@ class TestProgramPage(ViewsTests):
         """
         response = self.client.get(self.program_page.url)
         assert response.context['authenticated'] is False
-        assert response.context['username'] is None
+        assert response.context['username'] == ''
         assert response.context['is_staff'] is False
         js_settings = json.loads(response.context['js_settings_json'])
         assert js_settings['user'] is None
@@ -574,7 +540,7 @@ class TestProgramPage(ViewsTests):
         self.client.force_login(profile.user)
         response = self.client.get(self.program_page.url)
         assert response.context['authenticated'] is True
-        assert response.context['username'] is None
+        assert response.context['username'] == profile.user.username
         assert response.context['is_staff'] is True
 
     def test_context(self):
@@ -600,7 +566,7 @@ class TestProgramPage(ViewsTests):
         ):
             response = self.client.get(self.program_page.url)
             assert response.context['authenticated'] is True
-            assert response.context['username'] is None
+            assert response.context['username'] == profile.user.username
             assert response.context['title'] == self.program_page.title
             assert response.context['is_public'] is True
             assert response.context['has_zendesk_widget'] is True
@@ -726,7 +692,7 @@ class TestUsersPage(ViewsTests):
         """
         profile = self.create_and_login_user()
         user = profile.user
-        username = get_social_username(user)
+        username = user.username
 
         ga_tracking_id = FuzzyText().fuzz()
         react_ga_debug = FuzzyText().fuzz()
@@ -803,7 +769,7 @@ class TestUsersPage(ViewsTests):
         profile = self.create_and_login_user()
         user = profile.user
         self.client.logout()
-        username = get_social_username(user)
+        username = user.username
 
         ga_tracking_id = FuzzyText().fuzz()
         react_ga_debug = FuzzyText().fuzz()

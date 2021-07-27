@@ -7,9 +7,8 @@ from django.db.models.signals import post_save
 from factory.django import mute_signals
 import ddt
 
-from backends.edxorg import EdxOrgOAuth2
 from courses.factories import ProgramFactory
-from micromasters.factories import UserFactory
+from micromasters.factories import SocialUserFactory
 from dashboard.models import ProgramEnrollment
 from dashboard.permissions import CanReadIfStaffOrSelf
 from search.base import MockedESTestCase
@@ -29,21 +28,10 @@ class CanReadIfStaffOrSelfTests(MockedESTestCase):
     @classmethod
     def setUpTestData(cls):
         with mute_signals(post_save):
-            cls.learner1 = UserFactory.create()
-            cls.learner1_username = 'learner1_username'
-            cls.learner1.social_auth.create(
-                provider=EdxOrgOAuth2.name,
-                uid=cls.learner1_username
-            )
-            cls.learner2 = UserFactory.create()
-            cls.learner2_username = 'learner2_username'
-            cls.learner2.social_auth.create(
-                provider=EdxOrgOAuth2.name,
-                uid=cls.learner2_username
-            )
+            cls.learner1 = SocialUserFactory.create()
+            cls.learner2 = SocialUserFactory.create()
             cls.program = ProgramFactory.create()
-            cls.staff = UserFactory.create()
-            cls.staff_username = 'staff_username'
+            cls.staff = SocialUserFactory.create()
             for learner in (cls.learner1, cls.learner2):
                 ProgramEnrollment.objects.create(
                     program=cls.program,
@@ -77,7 +65,7 @@ class CanReadIfStaffOrSelfTests(MockedESTestCase):
         """
         perm = CanReadIfStaffOrSelf()
         request = Mock(user=self.learner1)
-        view = Mock(kwargs={'username': self.learner1_username})
+        view = Mock(kwargs={'username': self.learner1.username})
         assert perm.has_permission(request, view) is True
 
     def test_learners_cannot_get_other_learners(self):
@@ -87,7 +75,7 @@ class CanReadIfStaffOrSelfTests(MockedESTestCase):
         perm = CanReadIfStaffOrSelf()
         with mute_signals(post_save):
             request = Mock(user=self.learner1)
-            view = Mock(kwargs={'username': self.learner2_username})
+            view = Mock(kwargs={'username': self.learner2.username})
             with self.assertRaises(Http404):
                 perm.has_permission(request, view)
 
@@ -105,5 +93,5 @@ class CanReadIfStaffOrSelfTests(MockedESTestCase):
                 role=role.ROLE_ID,
             )
             request = Mock(user=self.staff)
-            view = Mock(kwargs={'username': self.learner1_username})
+            view = Mock(kwargs={'username': self.learner1.username})
             assert perm.has_permission(request, view) is True

@@ -42,7 +42,7 @@ class CanSeeIfNotPrivate(BasePermission):
         """
         Implementation of the permission class.
         """
-        profile = get_object_or_404(Profile, user__social_auth__uid=view.kwargs['user'])
+        profile = get_object_or_404(Profile, user__username=view.kwargs['user'])
 
         if request.user == profile.user:
             return True

@@ -16,7 +16,6 @@ from rest_framework.exceptions import ValidationError
 
 from backends.edxorg import EdxOrgOAuth2
 from micromasters.factories import UserFactory
-from profiles.api import get_social_username
 from profiles.factories import (
     EmploymentFactory,
     EducationFactory,
@@ -61,7 +60,7 @@ class ProfileTests(MockedESTestCase):
         profile = self.create_profile(date_of_birth=birthdate)
         data = ProfileSerializer(profile).data
         assert data == {
-            'username': get_social_username(profile.user),
+            'username': profile.user.username,
             'first_name': profile.first_name,
             'full_name': profile.full_name,
             'filled_out': profile.filled_out,
@@ -104,7 +103,7 @@ class ProfileTests(MockedESTestCase):
         profile = self.create_profile()
         data = ProfileLimitedSerializer(profile).data
         assert data == {
-            'username': get_social_username(profile.user),
+            'username': profile.user.username,
             'first_name': profile.first_name,
             'last_name': profile.last_name,
             'full_name': profile.full_name,

@@ -15,7 +15,7 @@ from backends.exceptions import InvalidCredentialStored
 from courses.models import CourseRun
 from dashboard import models
 from micromasters.utils import now_in_utc
-from profiles.api import get_social_username, get_social_auth
+from profiles.api import get_edxorg_social_username, get_edxorg_social_auth
 from search import tasks
 
 log = logging.getLogger(__name__)
@@ -233,7 +233,7 @@ class CachedEdxDataApi:
 
         # Certificates are out of date, so fetch new data from edX.
         certificates = edx_client.certificates.get_student_certificates(
-            get_social_username(user), course_ids)
+            get_edxorg_social_username(user), course_ids)
 
         # This must be done atomically
         with transaction.atomic():
@@ -273,7 +273,7 @@ class CachedEdxDataApi:
 
         # Current Grades are out of date, so fetch new data from edX.
         current_grades = edx_client.current_grades.get_student_current_grades(
-            get_social_username(user), course_ids)
+            get_edxorg_social_username(user), course_ids)
 
         # the update must be done atomically
         with transaction.atomic():
@@ -341,7 +341,7 @@ class CachedEdxDataApi:
             None
         """
         # get the credentials for the current user for edX
-        user_social = get_social_auth(user)
+        user_social = get_edxorg_social_auth(user)
         utils.refresh_user_token(user_social)
         # create an instance of the client to query edX
         edx_client = EdxApi(user_social.extra_data, settings.EDXORG_BASE_URL)

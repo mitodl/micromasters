@@ -23,7 +23,6 @@ from wagtail.images.models import Image
 from courses.models import Program
 from micromasters.serializers import serialize_maybe_user
 from micromasters.utils import webpack_dev_server_host
-from profiles.api import get_social_username
 from roles.models import Instructor, Staff
 from cms.util import get_coupon_code
 from cms.blocks import CourseTeamBlock, ImageWithLinkBlock
@@ -53,7 +52,6 @@ class HomePage(Page):
             "release_version": settings.VERSION
         }
 
-        username = get_social_username(request.user)
         context = super().get_context(request)
 
         def get_program_page(program):
@@ -70,7 +68,7 @@ class HomePage(Page):
         context["google_maps_api"] = False
         context["authenticated"] = not request.user.is_anonymous
         context["is_staff"] = has_role(request.user, [Staff.ROLE_ID, Instructor.ROLE_ID])
-        context["username"] = username
+        context["username"] = request.user.username
         context["js_settings_json"] = json.dumps(js_settings)
         context["title"] = self.title
         context["ga_tracking_id"] = ""
@@ -124,7 +122,6 @@ class BenefitsPage(Page):
             "release_version": settings.VERSION
         }
 
-        username = get_social_username(request.user)
         context = super().get_context(request)
 
         context["is_public"] = True
@@ -132,7 +129,7 @@ class BenefitsPage(Page):
         context["google_maps_api"] = False
         context["authenticated"] = not request.user.is_anonymous
         context["is_staff"] = has_role(request.user, [Staff.ROLE_ID, Instructor.ROLE_ID])
-        context["username"] = username
+        context["username"] = request.user.username
         context["js_settings_json"] = json.dumps(js_settings)
         context["title"] = self.title
         context["ga_tracking_id"] = ""
@@ -415,7 +412,6 @@ def get_program_page_context(programpage, request):
         "user": serialize_maybe_user(request.user),
         "program": ProgramPageSerializer(programpage).data,
     }
-    username = get_social_username(request.user)
     # pylint: disable=bad-super-call
     context = super(ProgramPage, programpage).get_context(request)
 
@@ -424,7 +420,7 @@ def get_program_page_context(programpage, request):
     context["has_zendesk_widget"] = True
     context["google_maps_api"] = False
     context["authenticated"] = not request.user.is_anonymous
-    context["username"] = username
+    context["username"] = request.user.username
     context["js_settings_json"] = json.dumps(js_settings)
     context["title"] = programpage.title
     context["courses"] = courses_query

@@ -19,14 +19,13 @@ from rest_framework.generics import get_object_or_404
 from edx_api.client import EdxApi
 
 from backends import utils
-from backends.edxorg import EdxOrgOAuth2
 from dashboard.permissions import CanReadIfStaffOrSelf
 from dashboard.serializers import UnEnrollProgramsSerializer
 from dashboard.models import ProgramEnrollment
 from dashboard.api import get_user_program_info
 from dashboard.api_edx_cache import CachedEdxDataApi
 from micromasters.exceptions import PossiblyImproperlyConfigured
-from profiles.api import get_social_username, get_social_auth
+from profiles.api import get_edxorg_social_auth
 
 
 log = logging.getLogger(__name__)
@@ -49,14 +48,13 @@ class UserDashboard(APIView):
         """
         user = get_object_or_404(
             User,
-            social_auth__uid=username,
-            social_auth__provider=EdxOrgOAuth2.name
+            username=username,
         )
 
         # get the credentials for the current user for edX
         edx_client = None
         if user == request.user:
-            user_social = get_social_auth(request.user)
+            user_social = get_edxorg_social_auth(request.user)
             try:
                 utils.refresh_user_token(user_social)
             except utils.InvalidCredentialStored as exc:
@@ -101,13 +99,13 @@ class UserCourseEnrollment(APIView):
         if course_id is None:
             raise ValidationError('course id missing in the request')
         # get the credentials for the current user for edX
-        user_social = get_social_auth(request.user)
+        user_social = get_edxorg_social_auth(request.user)
         try:
             utils.refresh_user_token(user_social)
         except utils.InvalidCredentialStored as exc:
             log.error(
                 "Error while refreshing credentials for user %s",
-                get_social_username(request.user),
+                request.user.username,
             )
             return Response(
                 status=exc.http_status_code,
@@ -125,15 +123,15 @@ class UserCourseEnrollment(APIView):
                     'Got a 400 status code from edX server while trying to create '
                     'audit enrollment. This might happen if the course is improperly '
                     'configured on MicroMasters. Course key '
-                    '{course_key}, edX user "{edX_user}"'.format(
-                        edX_user=get_social_username(request.user),
+                    '{course_key}, user "{username}"'.format(
+                        username=request.user.username,
                         course_key=course_id,
                     )
                 )
             log.error(
                 "Http error from edX while creating audit enrollment for course key %s for edX user %s",
                 course_id,
-                get_social_username(request.user),
+                request.user,
             )
             return Response(
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -141,9 +139,9 @@ class UserCourseEnrollment(APIView):
             )
         except Exception as exc:  # pylint: disable=broad-except
             log.exception(
-                "Error creating audit enrollment for course key %s for edX user %s",
+                "Error creating audit enrollment for course key %s for user %s",
                 course_id,
-                get_social_username(request.user),
+                request.user.username,
             )
             return Response(
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

@@ -6,7 +6,6 @@ import logging
 from rest_framework.permissions import BasePermission
 
 from ecommerce.api import generate_cybersource_sa_signature
-from profiles.api import get_social_username
 
 
 log = logging.getLogger(__name__)
@@ -44,6 +43,6 @@ class IsLoggedInUser(BasePermission):
         Returns true if the username in the request body matches the logged in user.
         """
         try:
-            return request.data['username'] == get_social_username(request.user)
+            return request.data['username'] == request.user.username
         except KeyError:
             return False

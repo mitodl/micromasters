@@ -1,7 +1,6 @@
 """
 Tests for serializing Django User objects
 """
-from unittest import mock
 from django.test import TestCase
 from django.contrib.auth.models import AnonymousUser
 from django.db.models.signals import post_save
@@ -25,7 +24,7 @@ class UserTests(MockedESTestCase):
 
         data = UserSerializer(user).data
         assert data == {
-            "username": None,
+            "username": user.username,
             "email": "fake@example.com",
             "first_name": None,
             "last_name": None,
@@ -41,7 +40,7 @@ class UserTests(MockedESTestCase):
 
         data = serialize_maybe_user(user)
         assert data == {
-            "username": None,
+            "username": user.username,
             "email": "fake@example.com",
             "first_name": None,
             "last_name": None,
@@ -63,32 +62,11 @@ class UserTests(MockedESTestCase):
 
         data = UserSerializer(user).data
         assert data == {
-            "username": None,
+            "username": user.username,
             "email": "fake@example.com",
             "first_name": "Rando",
             "last_name": "Cardrizzian",
             "preferred_name": "Hobo",
-        }
-
-    @mock.patch('micromasters.serializers.get_social_username')
-    def test_social_username(self, mock_get_username):
-        """
-        Make sure serializer gets social username
-        """
-        mock_get_username.return_value = "remote"
-        with mute_signals(post_save):
-            user = UserFactory.create(
-                username="local", email="fake@example.com",
-            )
-
-        data = UserSerializer(user).data
-        mock_get_username.assert_called_with(user)
-        assert data == {
-            "username": "remote",
-            "email": "fake@example.com",
-            "first_name": None,
-            "last_name": None,
-            "preferred_name": None,
         }
 
 

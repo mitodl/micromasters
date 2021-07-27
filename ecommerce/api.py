@@ -46,7 +46,7 @@ from financialaid.models import (
     TierProgram
 )
 from micromasters.utils import now_in_utc
-from profiles.api import get_social_username, get_social_auth
+from profiles.api import get_edxorg_social_auth
 
 
 ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
@@ -86,7 +86,7 @@ def get_purchasable_course_run(course_key, user):
             user=user,
             status__in=FinancialAidStatus.TERMINAL_STATUSES,
     ).exists():
-        log.warning("Course run %s has no attached financial aid for user %s", course_key, get_social_username(user))
+        log.warning("Course run %s has no attached financial aid for user %s", course_key, user.username)
         raise ValidationError(
             "Course run {} does not have a current attached financial aid application".format(course_key)
         )
@@ -125,7 +125,7 @@ def create_unfulfilled_order(course_key, user):
         log.error(
             "Price to be charged for course run %s for user %s is less than zero: %s",
             course_key,
-            get_social_username(user),
+            user.username,
             price,
         )
         raise ImproperlyConfigured("Price to be charged is less than zero")
@@ -218,7 +218,7 @@ def generate_cybersource_sa_payload(order, dashboard_url, ip_address=None):
     payload = {
         'access_key': settings.CYBERSOURCE_ACCESS_KEY,
         'amount': str(order.total_price_paid),
-        'consumer_id': get_social_username(order.user),
+        'consumer_id': order.user.username,
         'currency': 'USD',
         'locale': 'en-us',
         'item_0_code': 'course',
@@ -309,7 +309,7 @@ def enroll_user_on_success(order):
     Returns:
          None
     """
-    user_social = get_social_auth(order.user)
+    user_social = get_edxorg_social_auth(order.user)
     enrollments_client = EdxApi(user_social.extra_data, settings.EDXORG_BASE_URL).enrollments
     existing_enrollments = enrollments_client.get_student_enrollments()
 
@@ -324,7 +324,7 @@ def enroll_user_on_success(order):
             log.exception(
                 "Error creating audit enrollment for course key %s for user %s",
                 course_key,
-                get_social_username(order.user),
+                order.user.username,
             )
             exceptions.append(ex)
 

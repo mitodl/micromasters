@@ -57,7 +57,6 @@ from roles.models import (
     Staff,
 )
 from roles.roles import Permissions
-from backends.edxorg import EdxOrgOAuth2
 
 
 class FinancialAidRequestView(CreateAPIView):
@@ -340,8 +339,7 @@ class CoursePriceListView(APIView):
         """
         user = get_object_or_404(
             User,
-            social_auth__uid=username,
-            social_auth__provider=EdxOrgOAuth2.name
+            username=username,
         )
 
         program_enrollments = (

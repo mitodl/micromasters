@@ -9,7 +9,7 @@ from testfixtures import LogCapture
 
 from backends.edxorg import EdxOrgOAuth2
 
-from profiles.api import get_social_username, get_social_auth
+from profiles.api import get_edxorg_social_username, get_edxorg_social_auth
 from profiles.factories import SocialProfileFactory
 from micromasters.factories import UserSocialAuthFactory
 from search.base import MockedESTestCase
@@ -35,32 +35,32 @@ class SocialTests(MockedESTestCase):
 
     def test_anonymous_user(self):
         """
-        get_social_username should return None for anonymous users
+        get_edxorg_social_username should return None for anonymous users
         """
         user = Mock(is_anonymous=True)
-        assert get_social_username(user) is None
+        assert get_edxorg_social_username(user) is None
 
     def test_zero_social(self):
         """
-        get_social_username should return None if there is no edX account associated yet
+        get_edxorg_social_username should return None if there is no edX account associated yet
         """
         self.user.social_auth.all().delete()
-        assert get_social_username(self.user) is None
+        assert get_edxorg_social_username(self.user) is None
 
     def test_one_social(self):
         """
-        get_social_username should return the social username, not the Django username
+        get_edxorg_social_username should return the social username, not the Django username
         """
-        assert get_social_username(self.user) == self.user.social_auth.first().uid
+        assert get_edxorg_social_username(self.user) == self.user.social_auth.first().uid
 
     def test_two_social(self):
         """
-        get_social_username should return None if there are two social edX accounts for a user
+        get_edxorg_social_username should return None if there are two social edX accounts for a user
         """
         UserSocialAuthFactory.create(user=self.user, uid='other name')
 
         with LogCapture() as log_capture:
-            assert get_social_username(self.user) is None
+            assert get_edxorg_social_username(self.user) is None
             log_capture.check(
                 (
                     'profiles.api',
@@ -70,12 +70,12 @@ class SocialTests(MockedESTestCase):
                 )
             )
 
-    def test_get_social_auth(self):
+    def test_get_edxorg_social_auth(self):
         """
-        Tests that get_social_auth returns a user's edX social auth object, and if multiple edX social auth objects
+        Tests that get_edxorg_social_auth returns a user's edX social auth object, and if multiple edX social auth objects
         exists, it raises an exception
         """
-        assert get_social_auth(self.user) == self.user.social_auth.get(provider=EdxOrgOAuth2.name)
+        assert get_edxorg_social_auth(self.user) == self.user.social_auth.get(provider=EdxOrgOAuth2.name)
         UserSocialAuthFactory.create(user=self.user, uid='other name')
         with self.assertRaises(MultipleObjectsReturned):
-            get_social_auth(self.user)
+            get_edxorg_social_auth(self.user)

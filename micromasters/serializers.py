@@ -5,7 +5,6 @@ import logging
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-from profiles.api import get_social_username
 
 log = logging.getLogger(__name__)
 
@@ -29,11 +28,9 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_username(self, obj):
         """
-        Look up the user's username on edX.
-        We do *not* use the `user.username` field, because the Javascript
-        doesn't need to know anything about that.
+        Look up the user's username.
         """
-        return get_social_username(obj)
+        return obj.username
 
     def get_first_name(self, obj):
         """

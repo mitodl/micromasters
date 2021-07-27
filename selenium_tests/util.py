@@ -158,13 +158,13 @@ class Browser:
             with open(full_filename, 'rb') as f:
                 print("Screenshot as base64: {}".format(b64encode(f.read())))
 
-    def store_api_results(self, edx_username, filename=None):
+    def store_api_results(self, username, filename=None):
         """Helper method to save certain GET REST API responses"""
         sessionid = self.driver.get_cookie('sessionid')['value']
         for endpoint_url, endpoint_name in [
-                ("/api/v0/dashboard/{}/".format(edx_username), 'dashboard'),
+                ("/api/v0/dashboard/{}/".format(username), 'dashboard'),
                 ("/api/v0/coupons/", 'coupons'),
-                ("/api/v0/course_prices/{}/".format(edx_username), 'course_prices'),
+                ("/api/v0/course_prices/{}/".format(username), 'course_prices'),
         ]:
             absolute_url = make_absolute_url(endpoint_url, self.live_server_url)
             api_json = requests.get(absolute_url, cookies={'sessionid': sessionid}).json()

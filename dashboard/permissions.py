@@ -6,7 +6,6 @@ from django.http import Http404
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import BasePermission
 
-from backends.edxorg import EdxOrgOAuth2
 from roles.roles import (
     Instructor,
     Staff,
@@ -25,8 +24,7 @@ class CanReadIfStaffOrSelf(BasePermission):
 
         user = get_object_or_404(
             User,
-            social_auth__uid=view.kwargs['username'],
-            social_auth__provider=EdxOrgOAuth2.name
+            username=view.kwargs['username'],
         )
 
         # if the user is looking for their own profile, they're good

@@ -7,7 +7,7 @@ import ddt
 
 from backends import pipeline_api, edxorg
 from courses.factories import ProgramFactory
-from profiles.api import get_social_username
+from profiles.api import get_edxorg_social_username
 from profiles.models import Profile
 from profiles.factories import UserFactory
 from profiles.util import split_name
@@ -101,7 +101,7 @@ class EdxPipelineApiTest(MockedESTestCase):
                 'image_url_small': 'https://edx.org/small.jpg'
             },
             'requires_parental_consent': False,
-            'username': get_social_username(self.user),
+            'username': get_edxorg_social_username(self.user),
             'year_of_birth': 1986,
             "work_history": [
                 {
@@ -243,13 +243,13 @@ class EdxPipelineApiTest(MockedESTestCase):
         result = pipeline_api.check_edx_verified_email(
             backend,
             {'access_token': 'foo_token'},
-            {'username': get_social_username(self.user)}
+            {'username': get_edxorg_social_username(self.user)}
         )
 
         mocked_get_json.assert_called_once_with(
             urljoin(
                 edxorg.EdxOrgOAuth2.EDXORG_BASE_URL,
-                '/api/user/v1/accounts/{0}'.format(get_social_username(self.user))
+                '/api/user/v1/accounts/{0}'.format(get_edxorg_social_username(self.user))
             ),
             headers={'Authorization': 'Bearer foo_token'}
         )

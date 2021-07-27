@@ -10,7 +10,7 @@ from backends.edxorg import EdxOrgOAuth2
 log = logging.getLogger(__name__)
 
 
-def get_social_auth(user):
+def get_edxorg_social_auth(user):
     """
     Returns social auth object for user
 
@@ -20,7 +20,7 @@ def get_social_auth(user):
     return user.social_auth.get(provider=EdxOrgOAuth2.name)
 
 
-def get_social_username(user):
+def get_edxorg_social_username(user):
     """
     Get social auth edX username for a user, or else return None.
 
@@ -32,7 +32,7 @@ def get_social_username(user):
         return None
 
     try:
-        return get_social_auth(user).uid
+        return get_edxorg_social_auth(user).uid
     except ObjectDoesNotExist:
         return None
     except Exception as ex:  # pylint: disable=broad-except
