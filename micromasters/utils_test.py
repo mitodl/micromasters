@@ -169,6 +169,7 @@ class SerializerTests(MockedESTestCase):
             'start_date': format_as_iso8601(course_run.start_date),
             'title': course_run.title,
             'upgrade_deadline': format_as_iso8601(course_run.upgrade_deadline),
+            'courseware_backend': 'edxorg',
         }
 
 

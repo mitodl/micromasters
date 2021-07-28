@@ -15,6 +15,7 @@ from micromasters.utils import (
     now_in_utc,
 )
 
+from backends.constants import BACKEND_EDX_ORG, COURSEWARE_BACKENDS
 
 log = logging.getLogger(__name__)
 
@@ -197,6 +198,11 @@ class CourseRun(models.Model):
     enrollment_url = models.URLField(blank=True, null=True)
     prerequisites = models.TextField(blank=True, null=True)
     course = models.ForeignKey(Course, null=True, on_delete=models.CASCADE)
+    courseware_backend = models.CharField(
+        max_length=32,
+        choices=[(backend, backend) for backend in COURSEWARE_BACKENDS],
+        default=BACKEND_EDX_ORG
+    )
 
     class Meta:
         ordering = ('start_date', )
