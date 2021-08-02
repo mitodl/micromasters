@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.201.1 (Released August 02, 2021)
+---------------
+
+- Add link to accomplishment letter in the staff view of the learner profile page (#4985)
+
 Version 0.201.0 (Released July 27, 2021)
 ---------------
 
