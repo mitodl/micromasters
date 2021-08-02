@@ -8,6 +8,7 @@ import type { Course, CourseRun } from "../flow/programTypes"
 import DialogTitle from "@material-ui/core/DialogTitle"
 import DialogContent from "@material-ui/core/DialogContent"
 import DialogActions from "@material-ui/core/DialogActions"
+import moment from "moment-timezone"
 
 const dialogTitle = (course, setDialogVisibility) => (
   <div className="title">
@@ -110,6 +111,25 @@ export default class CourseEnrollmentDialog extends React.Component {
         <p>
           Would you like to enroll in this course? You already paid for this
           course.
+        </p>
+      )
+      payButton = (
+        <button
+          key="pay"
+          disabled
+          className="mdl-button dashboard-button pay-button"
+        >
+          Pay Now
+        </button>
+      )
+    } else if (
+      courseRun.course_upgrade_deadline &&
+      moment(courseRun.course_upgrade_deadline).isBefore(moment(), "day")
+    ) {
+      message = (
+        <p key="1">
+          You cannot pay for this course at this time. The payment deadline has
+          passed.
         </p>
       )
       payButton = (

@@ -82,6 +82,9 @@ const courseStartMessage = (run: CourseRun) => {
     ? formatDate(run.course_start_date)
     : run.fuzzy_start_date
   if (startDate) {
+    if (moment(run.course_start_date).isBefore(moment(), "day")) {
+      return `Course started on ${startDate}.`
+    }
     return `Next course starts ${startDate}.`
   }
   return ""
