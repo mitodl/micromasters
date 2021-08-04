@@ -1,6 +1,14 @@
 Release Notes
 =============
 
+Version 0.202.0
+---------------
+
+- Pin selenium container versions further
+- fix: enable enrollment for courses with past upgrade deadline (#4984)
+- Add courseware_backend to CourseRun (#4998)
+- Remove usages of get_social_username
+
 Version 0.201.1 (Released August 02, 2021)
 ---------------
 
