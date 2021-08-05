@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.202.0
+Version 0.202.0 (Released August 05, 2021)
 ---------------
 
 - Pin selenium container versions further
