@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.202.1
+Version 0.202.1 (Released August 06, 2021)
 ---------------
 
 - Program Letter: added css to hide footer on print
