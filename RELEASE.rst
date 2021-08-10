@@ -1,6 +1,11 @@
 Release Notes
 =============
 
+Version 0.203.0
+---------------
+
+- Added mitxonline social backend
+
 Version 0.202.1 (Released August 06, 2021)
 ---------------
 
