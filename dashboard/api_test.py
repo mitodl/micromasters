@@ -16,9 +16,8 @@ from django.conf import settings
 from django.urls import reverse
 from django_redis import get_redis_connection
 import pytest
-from rest_framework import status as http_status
 
-from backends.exceptions import InvalidCredentialStored
+from backends.constants import BACKEND_EDX_ORG, COURSEWARE_BACKENDS, COURSEWARE_BACKEND_URL, BACKEND_MITX_ONLINE
 from cms.factories import CourseCertificateSignatoriesFactory
 from courses.factories import (
     CourseFactory,
@@ -48,16 +47,22 @@ from grades.factories import ProctoredExamGradeFactory, FinalGradeFactory, Micro
     MicromastersProgramCommendationFactory
 from grades.models import FinalGrade, CourseRunGradingStatus, ProctoredExamGrade
 from grades.serializers import ProctoredExamGradeSerializer
-from micromasters.factories import UserFactory
+from micromasters.factories import UserFactory, SocialUserFactory, UserSocialAuthFactory
 from micromasters.utils import (
     is_subset_dict,
     now_in_utc,
 )
 from profiles.factories import SocialProfileFactory
 from search.base import MockedESTestCase
+from seed_data.lib import set_course_run_current, add_paid_order_for_course
 
 TEST_CACHE_KEY_USER_IDS_NOT_TO_UPDATE = "test_users_not_to_update"
 TEST_CACHE_KEY_FAILURES_BY_USER = "test_failure_nums_by_user"
+
+social_extra_data = {
+    "access_token": "fooooootoken",
+    "refresh_token": "baaaarrefresh",
+}
 
 
 # pylint: disable=too-many-lines, too-many-arguments
@@ -1527,7 +1532,8 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
     @classmethod
     def setUpTestData(cls):
         super(UserProgramInfoIntegrationTest, cls).setUpTestData()
-        cls.user = UserFactory()
+        cls.user = SocialUserFactory.create(social_auth__extra_data=social_extra_data)
+        cls.social_auth = cls.user.social_auth.get(provider=BACKEND_EDX_ORG)
         # create the programs
         cls.program_non_fin_aid = FullProgramFactory.create(live=True)
         cls.program_fin_aid = FullProgramFactory.create(live=True, financial_aid_availability=True)
@@ -1541,14 +1547,13 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
         self.expected_programs = [self.program_non_fin_aid, self.program_fin_aid]
         self.edx_client = MagicMock()
 
+    @patch('backends.edxorg.EdxOrgOAuth2.refresh_token', return_value=social_extra_data, autospec=True)
     @patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cache_if_expired', new_callable=MagicMock)
-    def test_format(self, mock_cache_refresh):
+    def test_format(self, mock_cache_refresh, mock_refresh_token):
         """Test that get_user_program_info fetches edx data and returns a list of Program data"""
-        result = api.get_user_program_info(self.user, self.edx_client)
-
+        result = api.get_user_program_info(self.user)
+        assert mock_refresh_token.call_count == 1
         assert mock_cache_refresh.call_count == len(CachedEdxDataApi.SUPPORTED_CACHES)
-        for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
-            mock_cache_refresh.assert_any_call(self.user, self.edx_client, cache_type)
 
         assert isinstance(result, dict)
         assert 'is_edx_data_fresh' in result
@@ -1564,13 +1569,8 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
             }
             assert is_subset_dict(expected, result['programs'][i])
 
-    @patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cache_if_expired', new_callable=MagicMock)
-    def test_when_edx_client_is_none(self, mock_cache_refresh):
-        """Test that the edx data is not refreshed"""
-        api.get_user_program_info(self.user, None)
-        assert mock_cache_refresh.call_count == 0
-
-    def test_past_course_runs(self):
+    @patch('backends.utils.refresh_user_token', autospec=True)
+    def test_past_course_runs(self, mock_refresh):  # pylint: disable=unused-argument
         """Test that past course runs are returned in the API results"""
         # Set a course run to be failed
         now = now_in_utc()
@@ -1620,7 +1620,7 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
         # set the last access for the cache
         UserCacheRefreshTimeFactory.create(user=self.user, unexpired=True)
 
-        result = api.get_user_program_info(self.user, self.edx_client)
+        result = api.get_user_program_info(self.user)
         # extract the right program from the result
         program_result = None
         for res in result['programs']:
@@ -1635,7 +1635,8 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
             [run['status'] == api.CourseStatus.NOT_PASSED for run in result['programs'][0]['courses'][0]['runs']]
         )
 
-    def test_current_run_first(self):
+    @patch('backends.utils.refresh_user_token', autospec=True)
+    def test_current_run_first(self, mock_refresh):  # pylint: disable=unused-argument
         """Test that current course runs is on top of returned in the API results"""
         now = now_in_utc()
         program = self.program_non_fin_aid
@@ -1678,7 +1679,7 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
         # set the last access for the cache
         UserCacheRefreshTimeFactory.create(user=self.user, unexpired=True)
 
-        result = api.get_user_program_info(self.user, self.edx_client)
+        result = api.get_user_program_info(self.user)
         # extract the right program from the result
         program_result = None
         for res in result['programs']:
@@ -1692,7 +1693,8 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
         # assert that current run is first on run list
         assert result['programs'][0]['courses'][0]['runs'][0]['status'] == api.CourseRunStatus.CURRENTLY_ENROLLED
 
-    def test_when_enroll_in_only_future_run(self):
+    @patch('backends.utils.refresh_user_token', autospec=True)
+    def test_when_enroll_in_only_future_run(self, mock_refresh):  # pylint: disable=unused-argument
         """Test that user in enrolled in future run but not enrolled in current course runs"""
         now = now_in_utc()
         program = self.program_non_fin_aid
@@ -1725,7 +1727,7 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
         # set the last access for the cache
         UserCacheRefreshTimeFactory.create(user=self.user, unexpired=True)
 
-        result = api.get_user_program_info(self.user, self.edx_client)
+        result = api.get_user_program_info(self.user)
         # extract the right program from the result
         program_result = None
         for res in result['programs']:
@@ -1740,23 +1742,49 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
         # assert that future run is first on run list
         assert result['programs'][0]['courses'][0]['runs'][0]['status'] == api.CourseRunStatus.WILL_ATTEND
 
+    @patch('backends.utils.refresh_user_token', autospec=True)
     @patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cache_if_expired', new_callable=MagicMock)
-    def test_exception_in_refresh_cache_1(self, mock_cache_refresh):
-        """Test in case the backend refresh cache raises a InvalidCredentialStored exception"""
-        mock_cache_refresh.side_effect = InvalidCredentialStored('error', http_status.HTTP_400_BAD_REQUEST)
-        with self.assertRaises(InvalidCredentialStored):
-            api.get_user_program_info(self.user, self.edx_client)
-
-    @patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cache_if_expired', new_callable=MagicMock)
-    def test_exception_in_refresh_cache_2(self, mock_cache_refresh):
+    def test_exception_in_refresh_cache_2(self, mock_cache_refresh, mock_token_refresh):
         """Test in case the backend refresh cache raises any other exception"""
         mock_cache_refresh.side_effect = ZeroDivisionError
-        result = api.get_user_program_info(self.user, self.edx_client)
+        result = api.get_user_program_info(self.user)
+        assert mock_token_refresh.call_count == 1
         assert isinstance(result, dict)
         assert 'is_edx_data_fresh' in result
         assert result['is_edx_data_fresh'] is False
         assert 'programs' in result
         assert len(result['programs']) == 2
+
+    @patch('backends.utils.refresh_user_token', autospec=True)
+    @patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cache_if_expired', new_callable=MagicMock)
+    def test_returns_courseruns_for_different_backends(self, mock_cache_refresh, mock_token_refresh):  # pylint: disable=unused-argument
+        """Test that user in enrolled in future run but not enrolled in current course runs"""
+        # create course runs for mitxonline backend
+        UserSocialAuthFactory.create(user=self.user, provider=BACKEND_MITX_ONLINE)
+        course_run_mitxonline = CourseRunFactory.create(course__program=self.program_fin_aid)
+        set_course_run_current(course_run_mitxonline)
+
+        program = self.program_non_fin_aid
+
+        course = program.course_set.first()
+
+        # a current run
+        current_run = course.courserun_set.first()
+        set_course_run_current(current_run)
+
+        # User paid and enrolled for future course run.
+        CachedEnrollmentFactory.create(user=self.user, course_run=current_run)
+        CachedCurrentGradeFactory.create(user=self.user, course_run=current_run)
+        add_paid_order_for_course(self.user, current_run)
+
+        result = api.get_user_program_info(self.user)
+        assert mock_token_refresh.call_count == 2
+        assert mock_cache_refresh.call_count == 6
+
+        assert len(result['programs']) == 2
+        for program_result in result['programs']:
+            assert program_result is not None
+            assert len(program_result['courses'][0]['runs']) == 1
 
 
 class InfoProgramTest(MockedESTestCase):
@@ -2270,6 +2298,7 @@ class GetCertificateForCourseTests(CourseTests):
 def _make_fake_real_user():
     """Make a User whose profile.fake_user is False"""
     user = SocialProfileFactory.create().user
+    UserSocialAuthFactory.create(user=user, provider=BACKEND_MITX_ONLINE)
     user.profile.fake_user = False
     user.profile.save()
     now = now_in_utc()
@@ -2394,12 +2423,12 @@ def test_refresh_user_data(db, mocker):
     edx_api_init = mocker.patch('dashboard.api.EdxApi', autospec=True, return_value=edx_api)
     update_cache_mock = mocker.patch('dashboard.api.CachedEdxDataApi.update_cache_if_expired')
 
-    api.refresh_user_data(user.id)
+    api.refresh_user_data(user.id, BACKEND_EDX_ORG)
 
     refresh_user_token_mock.assert_called_once_with(user_social)
     edx_api_init.assert_called_once_with(user_social.extra_data, settings.EDXORG_BASE_URL)
     for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
-        update_cache_mock.assert_any_call(user, edx_api, cache_type)
+        update_cache_mock.assert_any_call(user, edx_api, cache_type, BACKEND_EDX_ORG)
 
 
 def test_refresh_missing_user(db, mocker):
@@ -2409,7 +2438,7 @@ def test_refresh_missing_user(db, mocker):
     edx_api_init = mocker.patch('dashboard.api.EdxApi', autospec=True, return_value=edx_api)
     update_cache_mock = mocker.patch('dashboard.api.CachedEdxDataApi.update_cache_if_expired')
 
-    api.refresh_user_data(999)
+    api.refresh_user_data(999, BACKEND_EDX_ORG)
 
     assert refresh_user_token_mock.called is False
     assert edx_api_init.called is False
@@ -2425,7 +2454,7 @@ def test_refresh_missing_social_auth(db, mocker):
     edx_api_init = mocker.patch('dashboard.api.EdxApi', autospec=True, return_value=edx_api)
     update_cache_mock = mocker.patch('dashboard.api.CachedEdxDataApi.update_cache_if_expired')
 
-    api.refresh_user_data(user.id)
+    api.refresh_user_data(user.id, BACKEND_EDX_ORG)
 
     assert refresh_user_token_mock.called is False
     assert edx_api_init.called is False
@@ -2444,7 +2473,7 @@ def test_refresh_failed_oauth_update(db, mocker):
     update_cache_mock = mocker.patch('dashboard.api.CachedEdxDataApi.update_cache_if_expired')
     save_failure_mock = mocker.patch('dashboard.api.save_cache_update_failure')
 
-    api.refresh_user_data(user.id)
+    api.refresh_user_data(user.id, BACKEND_EDX_ORG)
 
     refresh_user_token_mock.assert_called_once_with(user_social)
     assert edx_api_init.called is False
@@ -2462,7 +2491,7 @@ def test_refresh_failed_edx_client(db, mocker):
     edx_api_init = mocker.patch('dashboard.api.EdxApi', autospec=True, side_effect=KeyError)
     update_cache_mock = mocker.patch('dashboard.api.CachedEdxDataApi.update_cache_if_expired')
 
-    api.refresh_user_data(user.id)
+    api.refresh_user_data(user.id, BACKEND_EDX_ORG)
 
     refresh_user_token_mock.assert_called_once_with(user_social)
     edx_api_init.assert_called_once_with(user_social.extra_data, settings.EDXORG_BASE_URL)
@@ -2470,17 +2499,18 @@ def test_refresh_failed_edx_client(db, mocker):
 
 
 @pytest.mark.parametrize("failed_cache_type", CachedEdxDataApi.SUPPORTED_CACHES)
-def test_refresh_update_cache(db, mocker, failed_cache_type):
+@pytest.mark.parametrize("provider", COURSEWARE_BACKENDS)
+def test_refresh_update_cache(db, mocker, failed_cache_type, provider):
     """If we fail to create the edx client, we should skip the edx refresh"""
     user = _make_fake_real_user()
-    user_social = user.social_auth.first()
+    user_social = user.social_auth.get(provider=provider)
     refresh_user_token_mock = mocker.patch(
         'dashboard.api.utils.refresh_user_token', autospec=True,
     )
     edx_api = mocker.Mock()
     edx_api_init = mocker.patch('dashboard.api.EdxApi', autospec=True, return_value=edx_api)
 
-    def _update_cache(user, edx_client, cache_type):
+    def _update_cache(user, edx_client, cache_type, provider):
         """Fail updating the cache for only the given cache type"""
         if cache_type == failed_cache_type:
             raise KeyError()
@@ -2490,13 +2520,13 @@ def test_refresh_update_cache(db, mocker, failed_cache_type):
     )
     save_failure_mock = mocker.patch('dashboard.api.save_cache_update_failure', autospec=True)
 
-    api.refresh_user_data(user.id)
+    api.refresh_user_data(user.id, provider)
 
     refresh_user_token_mock.assert_called_once_with(user_social)
-    edx_api_init.assert_called_once_with(user_social.extra_data, settings.EDXORG_BASE_URL)
+    edx_api_init.assert_called_once_with(user_social.extra_data, COURSEWARE_BACKEND_URL[provider])
     assert save_failure_mock.call_count == 1
     for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
-        update_cache_mock.assert_any_call(user, edx_api, cache_type)
+        update_cache_mock.assert_any_call(user, edx_api, cache_type, provider)
 
 
 def test_save_cache_update_failures(db, patched_redis_keys):

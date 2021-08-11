@@ -17,6 +17,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 from edx_api.client import EdxApi
 
+from backends.constants import COURSEWARE_BACKEND_URL
 from courses.models import (
     CourseRun,
     Program,
@@ -46,8 +47,7 @@ from financialaid.models import (
     TierProgram
 )
 from micromasters.utils import now_in_utc
-from profiles.api import get_edxorg_social_auth
-
+from profiles.api import get_social_auth
 
 ISO_8601_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 log = logging.getLogger(__name__)
@@ -309,13 +309,15 @@ def enroll_user_on_success(order):
     Returns:
          None
     """
-    user_social = get_edxorg_social_auth(order.user)
-    enrollments_client = EdxApi(user_social.extra_data, settings.EDXORG_BASE_URL).enrollments
-    existing_enrollments = enrollments_client.get_student_enrollments()
 
+    line_qset = order.line_set.all()
+    courseware_backend = CourseRun.objects.get(edx_course_key=line_qset.first().course_key).courseware_backend
+    user_social = get_social_auth(order.user, courseware_backend)
+    enrollments_client = EdxApi(user_social.extra_data, COURSEWARE_BACKEND_URL[courseware_backend]).enrollments
+    existing_enrollments = enrollments_client.get_student_enrollments()
     exceptions = []
     enrollments = []
-    for line in order.line_set.all():
+    for line in line_qset:
         course_key = line.course_key
         try:
             if not existing_enrollments.is_enrolled_in(course_key):

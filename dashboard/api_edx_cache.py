@@ -6,16 +6,16 @@ import logging
 from collections import namedtuple
 
 from django.db import transaction
-from django.conf import settings
 from requests.exceptions import HTTPError
 from edx_api.client import EdxApi
 
 from backends import utils
+from backends.constants import COURSEWARE_BACKEND_URL
 from backends.exceptions import InvalidCredentialStored
 from courses.models import CourseRun
 from dashboard import models
 from micromasters.utils import now_in_utc
-from profiles.api import get_edxorg_social_username, get_edxorg_social_auth
+from profiles.api import get_social_username, get_social_auth
 from search import tasks
 
 log = logging.getLogger(__name__)
@@ -71,6 +71,7 @@ class CachedEdxDataApi:
 
     # the sorting of the supported caches matters for refresh
     SUPPORTED_CACHES = (ENROLLMENT, CERTIFICATE, CURRENT_GRADE,)
+    MITXONLINE_SUPPORTED_CACHES = (ENROLLMENT, CURRENT_GRADE,)
 
     CACHED_EDX_MODELS = {
         ENROLLMENT: models.CachedEnrollment,
@@ -190,11 +191,12 @@ class CachedEdxDataApi:
             tasks.index_users.delay([user.id], check_if_changed=True)
 
     @classmethod
-    def update_cached_enrollments(cls, user, edx_client):
+    def update_cached_enrollments(cls, user, edx_client, provider):
         """
-        Updates cached enrollment data for an user.
+        Updates cached enrollment data for an user for the given courseware backend.
 
         Args:
+            provider (str): name of the courseware backend
             user (django.contrib.auth.models.User): A user
             edx_client (EdxApi): EdX client to retrieve enrollments
         Returns:
@@ -210,30 +212,33 @@ class CachedEdxDataApi:
             for course_run in CourseRun.objects.filter(edx_course_key__in=all_enrolled_course_ids):
                 enrollment = enrollments.get_enrollment_for_course(course_run.edx_course_key)
                 cls.update_cached_enrollment(user, enrollment, course_run.edx_course_key)
-            # delete anything is not in the current enrollments
-            models.CachedEnrollment.delete_all_but(user, all_enrolled_course_ids)
+            # delete anything is not in the current enrollments for given courseware backend
+            models.CachedEnrollment.delete_all_but(user, list(all_enrolled_course_ids), provider)
             # update the last refresh timestamp
             cls.update_cache_last_access(user, cls.ENROLLMENT)
         # submit a celery task to reindex the user
         tasks.index_users.delay([user.id], check_if_changed=True)
 
     @classmethod
-    def update_cached_certificates(cls, user, edx_client):
+    def update_cached_certificates(cls, user, edx_client, provider):
         """
         Updates cached certificate data.
 
         Args:
+            provider (str): name of the courseware backend
             user (django.contrib.auth.models.User): A user
             edx_client (EdxApi): EdX client to retrieve enrollments
         Returns:
             None
         """
+        if provider == 'mitxonline':
+            return
         # the possible certificates can be only for courses where the user is enrolled
-        course_ids = models.CachedEnrollment.active_course_ids(user)
+        course_ids = models.CachedEnrollment.active_course_ids(user, provider=provider)
 
         # Certificates are out of date, so fetch new data from edX.
         certificates = edx_client.certificates.get_student_certificates(
-            get_edxorg_social_username(user), course_ids)
+            get_social_username(user, provider), course_ids)
 
         # This must be done atomically
         with transaction.atomic():
@@ -251,29 +256,30 @@ class CachedEdxDataApi:
                     defaults=updated_values
                 )
             # delete anything is not in the current certificates
-            models.CachedCertificate.delete_all_but(user, all_cert_course_ids)
+            models.CachedCertificate.delete_all_but(user, all_cert_course_ids, provider)
             # update the last refresh timestamp
             cls.update_cache_last_access(user, cls.CERTIFICATE)
         # submit a celery task to reindex the user
         tasks.index_users.delay([user.id], check_if_changed=True)
 
     @classmethod
-    def update_cached_current_grades(cls, user, edx_client):
+    def update_cached_current_grades(cls, user, edx_client, provider):
         """
-        Updates cached current grade data.
+        Updates cached current grade data for given courseware provider
 
         Args:
+            provider (str): name of the courseware backend
             user (django.contrib.auth.models.User): A user
             edx_client (EdxApi): EdX client to retrieve enrollments
         Returns:
             None
         """
 
-        course_ids = models.CachedEnrollment.active_course_ids(user)
+        course_ids = models.CachedEnrollment.active_course_ids(user, provider=provider)
 
         # Current Grades are out of date, so fetch new data from edX.
         current_grades = edx_client.current_grades.get_student_current_grades(
-            get_edxorg_social_username(user), course_ids)
+            get_social_username(user, provider), course_ids)
 
         # the update must be done atomically
         with transaction.atomic():
@@ -291,18 +297,19 @@ class CachedEdxDataApi:
                     defaults=updated_values
                 )
             # delete anything is not in the current grades
-            models.CachedCurrentGrade.delete_all_but(user, all_grade_course_ids)
+            models.CachedCurrentGrade.delete_all_but(user, all_grade_course_ids, provider)
             # update the last refresh timestamp
             cls.update_cache_last_access(user, cls.CURRENT_GRADE)
         # submit a celery task to reindex the user
         tasks.index_users.delay([user.id], check_if_changed=True)
 
     @classmethod
-    def update_cache_if_expired(cls, user, edx_client, cache_type):
+    def update_cache_if_expired(cls, user, edx_client, cache_type, provider):
         """
         Checks if the specified cache type is expired and in case takes care to update it.
 
         Args:
+            provider (str): name of the courseware backend
             user (django.contrib.auth.models.User): A user
             edx_client (EdxApi): EdX client to retrieve enrollments
             cache_type (str): a string representing one of the cached data types
@@ -319,7 +326,7 @@ class CachedEdxDataApi:
         if not cls.is_cache_fresh(user, cache_type):
             update_func = cache_update_methods[cache_type]
             try:
-                update_func(user, edx_client)
+                update_func(user, edx_client, provider)
             except HTTPError as exc:
                 if exc.response.status_code in (400, 401,):
                     raise InvalidCredentialStored(
@@ -330,20 +337,21 @@ class CachedEdxDataApi:
                 raise
 
     @classmethod
-    def update_all_cached_grade_data(cls, user):
+    def update_all_cached_grade_data(cls, user, provider):
         """
         Updates only certificates and Current grade.
         Used before a final grade freeze.
 
         Args:
+            provider (str): name of the courseware backend
             user (django.contrib.auth.models.User): A user
         Returns:
             None
         """
         # get the credentials for the current user for edX
-        user_social = get_edxorg_social_auth(user)
+        user_social = get_social_auth(user, provider)
         utils.refresh_user_token(user_social)
         # create an instance of the client to query edX
-        edx_client = EdxApi(user_social.extra_data, settings.EDXORG_BASE_URL)
-        cls.update_cached_certificates(user, edx_client)
-        cls.update_cached_current_grades(user, edx_client)
+        edx_client = EdxApi(user_social.extra_data, COURSEWARE_BACKEND_URL[provider])
+        cls.update_cached_certificates(user, edx_client, provider)
+        cls.update_cached_current_grades(user, edx_client, provider)

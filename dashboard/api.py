@@ -8,12 +8,13 @@ import pytz
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.db import transaction
 from django.urls import reverse
 from django_redis import get_redis_connection
 from edx_api.client import EdxApi
 
+from backends.constants import COURSEWARE_BACKEND_URL, BACKEND_EDX_ORG, BACKEND_MITX_ONLINE
 from backends.exceptions import InvalidCredentialStored
 from backends import utils
 from courses.models import Program, ElectiveCourse, CourseRun
@@ -26,9 +27,10 @@ from grades.models import FinalGrade
 from grades.serializers import ProctoredExamGradeSerializer
 from exams.models import ExamAuthorization, ExamRun, ExamRunCoupon
 from micromasters.utils import now_in_utc
-from profiles.api import get_edxorg_social_auth
 
 # key that stores user_key and number of failures in a hash
+from profiles.api import get_social_auth
+
 CACHE_KEY_FAILURE_NUMS_BY_USER = "update_cache_401_failure_numbers"
 # key that stores user ids to exclude from cache update
 CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE = "failed_cache_update_users_not_to_update"
@@ -131,29 +133,18 @@ class CourseRunUserStatus:
         )
 
 
-def get_user_program_info(user, edx_client):
+def get_user_program_info(user):
     """
     Provides a detailed serialization all of a User's enrolled Programs with enrollment/grade info
 
     Args:
         user (User): A User
-        edx_client (EdxApi): An EdxApi instance
 
     Returns:
         list: Enrolled Program information
     """
-    # update cache
-    # NOTE: this part can be moved to an asynchronous task
-    if edx_client is not None:
-        try:
-            for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
-                CachedEdxDataApi.update_cache_if_expired(user, edx_client, cache_type)
-        except InvalidCredentialStored:
-            # this needs to raise in order to force the user re-login
-            raise
-        except:  # pylint: disable=bare-except
-            log.exception('Impossible to refresh edX cache')
-
+    update_cache_for_backend(user, BACKEND_EDX_ORG)
+    update_cache_for_backend(user, BACKEND_MITX_ONLINE)
     response_data = {
         "programs": [],
         "is_edx_data_fresh": CachedEdxDataApi.are_all_caches_fresh(user)
@@ -700,13 +691,14 @@ def calculate_users_to_refresh_in_bulk():
     )
 
 
-def refresh_user_data(user_id):
+def refresh_user_data(user_id, provider=BACKEND_EDX_ORG):
     """
     Refresh the edx cache data for a user.
 
     Note that this function will not raise an exception on error, instead the errors are logged.
 
     Args:
+        provider (str): name of the courseware backend
         user_id (int): The user id
     """
     # pylint: disable=bare-except
@@ -718,7 +710,7 @@ def refresh_user_data(user_id):
 
     # get the credentials for the current user for edX
     try:
-        user_social = get_edxorg_social_auth(user)
+        user_social = get_social_auth(user, provider)
     except:
         log.exception('user "%s" does not have edX credentials', user.username)
         return
@@ -731,14 +723,14 @@ def refresh_user_data(user_id):
         return
 
     try:
-        edx_client = EdxApi(user_social.extra_data, settings.EDXORG_BASE_URL)
+        edx_client = EdxApi(user_social.extra_data, COURSEWARE_BACKEND_URL[provider])
     except:
         log.exception("Unable to create an edX client object for student %s", user.username)
         return
 
     for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
         try:
-            CachedEdxDataApi.update_cache_if_expired(user, edx_client, cache_type)
+            CachedEdxDataApi.update_cache_if_expired(user, edx_client, cache_type, provider)
         except:
             save_cache_update_failure(user_id)
             log.exception("Unable to refresh cache %s for student %s", cache_type, user.username)
@@ -757,3 +749,35 @@ def save_cache_update_failure(user_id):
     new_value = con.hincrby(CACHE_KEY_FAILURE_NUMS_BY_USER, user_key, 1)
     if int(new_value) >= 3:
         con.sadd(CACHE_KEY_FAILED_USERS_NOT_TO_UPDATE, user_id)
+
+
+def update_cache_for_backend(user, provider):
+    """
+    Update learners cache based on courseware backend
+
+    Args:
+        provider (str): name of the courseware backend
+        user (django.contrib.auth.models.User): A user
+    """
+    try:
+        user_social = get_social_auth(user, provider)
+    except ObjectDoesNotExist:
+        log.info('No social auth for %s for user %s', provider, user.username)
+        return
+    if user_social is not None:
+        try:
+            utils.refresh_user_token(user_social)
+        except utils.InvalidCredentialStored:
+            raise
+        except:  # pylint: disable=bare-except
+            log.exception('Impossible to refresh user credentials in dashboard view')
+        # create an instance of the client to query edX
+        edx_client = EdxApi(user_social.extra_data, COURSEWARE_BACKEND_URL[provider])
+        try:
+            for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
+                CachedEdxDataApi.update_cache_if_expired(user, edx_client, cache_type, provider)
+        except InvalidCredentialStored:
+            # this needs to raise in order to force the user re-login
+            raise
+        except:  # pylint: disable=bare-except
+            log.exception('Impossible to refresh edX cache')

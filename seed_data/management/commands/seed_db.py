@@ -16,7 +16,7 @@ from micromasters.utils import (
     load_json_from_file,
     first_matching_item,
 )
-from profiles.api import get_edxorg_social_username
+from profiles.api import get_social_username
 from profiles.models import Employment, Education, Profile
 from roles.models import Role
 from roles.roles import Staff
@@ -109,7 +109,7 @@ def deserialize_dashboard_data(user, user_data, programs):
     fake_course_runs = CourseRun.objects.filter(
         course__program__in=programs
     ).select_related('course__program').all()
-    social_username = get_edxorg_social_username(user)
+    social_username = get_social_username(user)
     enrollment_list = user_data.get('_enrollments', [])
     grade_list = user_data.get('_grades', [])
     deserialize_enrollment_data(user, social_username, fake_course_runs, enrollment_list)

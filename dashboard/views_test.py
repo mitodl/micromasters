@@ -6,7 +6,6 @@ from unittest.mock import (
     MagicMock,
     patch,
 )
-
 import ddt
 from django.urls import reverse
 from requests.exceptions import HTTPError
@@ -14,12 +13,14 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from edx_api.enrollments.models import Enrollments, Enrollment
 
+from backends.constants import BACKEND_EDX_ORG, BACKEND_MITX_ONLINE
 from backends.utils import InvalidCredentialStored
 from courses.factories import ProgramFactory, CourseRunFactory
+from dashboard.api_edx_cache import CachedEdxDataApi
 from dashboard.factories import UserCacheRefreshTimeFactory, ProgramEnrollmentFactory
 from dashboard.models import ProgramEnrollment, CachedEnrollment
 from micromasters.exceptions import PossiblyImproperlyConfigured
-from micromasters.factories import UserFactory, SocialUserFactory
+from micromasters.factories import UserFactory, SocialUserFactory, UserSocialAuthFactory
 from micromasters.utils import now_in_utc
 from search.base import MockedESTestCase
 from roles.models import Role
@@ -74,10 +75,12 @@ class DashboardTest(MockedESTestCase, APITestCase):
         res = self.client.get(self.url)
         assert res.status_code == status.HTTP_403_FORBIDDEN
 
-    def test_get_dashboard(self):
+    @patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cache_if_expired', new_callable=MagicMock)
+    def test_get_dashboard(self, mock_cache_refresh):
         """Test for GET"""
         with patch('backends.utils.refresh_user_token', autospec=True):
             result = self.client.get(self.url)
+        assert mock_cache_refresh.call_count == len(CachedEdxDataApi.SUPPORTED_CACHES)
         assert 'programs' in result.data
         assert 'is_edx_data_fresh' in result.data
         assert result.data['is_edx_data_fresh'] is True
@@ -137,7 +140,7 @@ class DashboardTokensTest(MockedESTestCase, APITestCase):
         super(DashboardTokensTest, cls).setUpTestData()
         # create a user
         cls.user = SocialUserFactory.create(social_auth__extra_data=social_extra_data)
-        cls.social_auth = cls.user.social_auth.first()
+        cls.social_auth = cls.user.social_auth.get(provider=BACKEND_EDX_ORG)
         cls.enrollments = Enrollments([])
 
         # url for the dashboard
@@ -162,8 +165,9 @@ class DashboardTokensTest(MockedESTestCase, APITestCase):
         ):
             return self.client.get(self.url)
 
+    @patch('backends.mitxonline.MitxOnlineOAuth2.refresh_token', return_value=social_extra_data, autospec=True)
     @patch('backends.edxorg.EdxOrgOAuth2.refresh_token', return_value=social_extra_data, autospec=True)
-    def test_refresh_token(self, mock_refresh):
+    def test_refresh_token(self, mock_refresh, mock_refresh_mitxonline):
         """Test to verify that the access token is refreshed if it has expired"""
         extra_data = {
             "updated_at": (self.now - timedelta(weeks=1)).timestamp(),
@@ -172,6 +176,11 @@ class DashboardTokensTest(MockedESTestCase, APITestCase):
         self.update_social_extra_data(extra_data)
         res = self.get_with_mocked_enrollments()
         assert mock_refresh.called
+        assert res.status_code == status.HTTP_200_OK
+        social_auth_2 = UserSocialAuthFactory.create(user=self.user, provider=BACKEND_MITX_ONLINE)
+        social_auth_2.extra_data.update(extra_data)
+        res = self.get_with_mocked_enrollments()
+        assert mock_refresh_mitxonline.called
         assert res.status_code == status.HTTP_200_OK
 
     @patch('backends.edxorg.EdxOrgOAuth2.refresh_token', return_value=social_extra_data, autospec=True)

@@ -41,35 +41,24 @@ class CachedEdxInfoModel(Model):
         abstract = True
 
     @classmethod
-    def user_qset(cls, user, program=None):
+    def user_qset(cls, user, program=None, provider=None):
         """
         Returns a queryset for the records associated with a User
 
         Args:
+            provider (str): name of the courseware backend
             user (User): an User object
             program (Program): optional Program to filter on
 
         Returns:
             QuerySet: a queryset of all records for the provided user
         """
-        query_params = dict(user=user)
+        query_set = cls.objects.filter(user=user)
         if program is not None:
-            query_params.update(dict(course_run__course__program=program))
-        return cls.objects.filter(**query_params)
-
-    @classmethod
-    def user_course_qset(cls, user, program=None):
-        """
-        Returns a queryset for the records associated with a User and prefetched Course data
-
-        Args:
-            user (User): an User object
-            program (Program): optional Program to filter on
-
-        Returns:
-            QuerySet: a queryset of all records for the provided user with prefetched Course data
-        """
-        return cls.user_qset(user, program=program).select_related('course_run__course')
+            query_set = query_set.filter(course_run__course__program=program)
+        if provider is not None:
+            query_set = query_set.filter(course_run__courseware_backend=provider)
+        return query_set
 
     @classmethod
     def data_qset(cls, user, program=None):
@@ -86,31 +75,35 @@ class CachedEdxInfoModel(Model):
         return cls.user_qset(user, program=program).values_list('data', flat=True)
 
     @classmethod
-    def active_course_ids(cls, user):
+    def active_course_ids(cls, user, provider):
         """
         Returns a list of all the Course IDs for the cached data
+        for a given provider only
 
         Args:
+            provider (str): name of the courseware backend
             user (User): an User object
 
         Returns:
             list: a list of all the course key fields for the provided user
         """
-        return list(cls.user_qset(user).values_list('course_run__edx_course_key', flat=True).all())
+        return list(cls.user_qset(user, provider=provider).values_list('course_run__edx_course_key', flat=True).all())
 
     @classmethod
-    def delete_all_but(cls, user, course_ids_list):
+    def delete_all_but(cls, user, course_ids_list, provider):
         """
-        Given an user, deletes all her object in the cache but the provided course ids
+        Given an user, deletes all her object in the cache but the provided course ids for a given
+        provider
 
         Args:
+            provider (str): name of the courseware backend
             user (User): an User object
             course_ids_list (list): a list of course IDs to NOT be deleted
 
         Returns:
             None
         """
-        cls.user_qset(user).exclude(course_run__edx_course_key__in=course_ids_list).delete()
+        cls.user_qset(user, provider=provider).exclude(course_run__edx_course_key__in=course_ids_list).delete()
 
     @staticmethod
     def deserialize_edx_data(data_iter):
