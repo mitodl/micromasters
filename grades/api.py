@@ -169,7 +169,7 @@ def freeze_user_final_grade(user, course_run, raise_on_exception=False):
             )
     # update one last time the user's certificates and current grades
     try:
-        CachedEdxDataApi.update_all_cached_grade_data(user)
+        CachedEdxDataApi.update_all_cached_grade_data(user, course_run.courseware_backend)
     except Exception as ex:  # pylint: disable=broad-except
         con = get_redis_connection("redis")
         con.lpush(CACHE_KEY_FAILED_USERS_BASE_STR.format(course_run.edx_course_key), user.id)

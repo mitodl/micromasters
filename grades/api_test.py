@@ -357,7 +357,7 @@ class GradeAPITests(MockedESTestCase):
             with self.assertRaises(FreezeGradeFailedException):
                 api.freeze_user_final_grade(self.user, self.run_fa, raise_on_exception=raise_on_exception)
         assert mock_get_fg.called is False
-        mock_refr.assert_called_once_with(self.user)
+        mock_refr.assert_called_once_with(self.user, self.run_fa.courseware_backend)
         assert FinalGrade.objects.filter(user=self.user, course_run=self.run_fa).exists() is False
 
         con = get_redis_connection("redis")
@@ -380,7 +380,7 @@ class GradeAPITests(MockedESTestCase):
         else:
             with self.assertRaises(FreezeGradeFailedException):
                 api.freeze_user_final_grade(self.user, self.run_fa, raise_on_exception=raise_on_exception)
-        mock_refr.assert_called_once_with(self.user)
+        mock_refr.assert_called_once_with(self.user, self.run_fa.courseware_backend)
         mock_get_fg.assert_called_once_with(self.user, self.run_fa)
         assert FinalGrade.objects.filter(user=self.user, course_run=self.run_fa).exists() is False
 
@@ -397,7 +397,7 @@ class GradeAPITests(MockedESTestCase):
         """
         final_grade = api.freeze_user_final_grade(self.user, self.run_fa)
         assert final_grade is not None
-        mock_refr.assert_called_once_with(self.user)
+        mock_refr.assert_called_once_with(self.user, self.run_fa.courseware_backend)
         fg_qset = FinalGrade.objects.filter(user=self.user, course_run=self.run_fa)
         assert fg_qset.exists() is True
         fg_status = fg_qset.first()
@@ -418,7 +418,7 @@ class GradeAPITests(MockedESTestCase):
         # first call
         final_grade = api.freeze_user_final_grade(self.user, self.run_fa)
         assert final_grade is not None
-        mock_refr.assert_called_once_with(self.user)
+        mock_refr.assert_called_once_with(self.user, self.run_fa.courseware_backend)
         assert fg_qset.count() == 1
 
         # second call

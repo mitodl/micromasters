@@ -11,6 +11,7 @@ from edx_api.certificates.models import Certificate, Certificates
 from edx_api.enrollments.models import Enrollment, Enrollments
 from edx_api.grades.models import CurrentGrade, CurrentGrades
 
+from backends.constants import BACKEND_EDX_ORG
 from backends.edxorg import EdxOrgOAuth2
 from backends.exceptions import InvalidCredentialStored
 from courses.factories import (
@@ -301,7 +302,7 @@ class CachedEdxDataApiTests(MockedESTestCase):
         """Test for update_cached_enrollments."""
         self.assert_cache_in_db()
         assert UserCacheRefreshTime.objects.filter(user=self.user).exists() is False
-        CachedEdxDataApi.update_cached_enrollments(self.user, self.edx_client)
+        CachedEdxDataApi.update_cached_enrollments(self.user, self.edx_client, BACKEND_EDX_ORG)
         self.assert_cache_in_db(enrollment_keys=self.enrollment_ids)
         cache_time = UserCacheRefreshTime.objects.get(user=self.user)
         now = now_in_utc()
@@ -312,7 +313,7 @@ class CachedEdxDataApiTests(MockedESTestCase):
         # add another cached element for another course that will be removed by the refresh
         cached_enr = CachedEnrollmentFactory.create(user=self.user)
         self.assert_cache_in_db(enrollment_keys=list(self.enrollment_ids) + [cached_enr.course_run.edx_course_key])
-        CachedEdxDataApi.update_cached_enrollments(self.user, self.edx_client)
+        CachedEdxDataApi.update_cached_enrollments(self.user, self.edx_client, BACKEND_EDX_ORG)
         self.assert_cache_in_db(enrollment_keys=self.enrollment_ids)
         cache_time.refresh_from_db()
         assert cache_time.enrollment >= now
@@ -324,7 +325,7 @@ class CachedEdxDataApiTests(MockedESTestCase):
         assert self.verified_certificates_ids.issubset(self.certificates_ids)
         self.assert_cache_in_db()
         assert UserCacheRefreshTime.objects.filter(user=self.user).exists() is False
-        CachedEdxDataApi.update_cached_certificates(self.user, self.edx_client)
+        CachedEdxDataApi.update_cached_certificates(self.user, self.edx_client, BACKEND_EDX_ORG)
         self.assert_cache_in_db(certificate_keys=self.verified_certificates_ids)
         cache_time = UserCacheRefreshTime.objects.get(user=self.user)
         now = now_in_utc()
@@ -336,7 +337,7 @@ class CachedEdxDataApiTests(MockedESTestCase):
         cached_cert = CachedCertificateFactory.create(user=self.user)
         self.assert_cache_in_db(
             certificate_keys=list(self.verified_certificates_ids) + [cached_cert.course_run.edx_course_key])
-        CachedEdxDataApi.update_cached_certificates(self.user, self.edx_client)
+        CachedEdxDataApi.update_cached_certificates(self.user, self.edx_client, BACKEND_EDX_ORG)
         self.assert_cache_in_db(certificate_keys=self.verified_certificates_ids)
         cache_time.refresh_from_db()
         assert cache_time.certificate >= now
@@ -347,7 +348,7 @@ class CachedEdxDataApiTests(MockedESTestCase):
         """Test for update_cached_current_grades."""
         self.assert_cache_in_db()
         assert UserCacheRefreshTime.objects.filter(user=self.user).exists() is False
-        CachedEdxDataApi.update_cached_current_grades(self.user, self.edx_client)
+        CachedEdxDataApi.update_cached_current_grades(self.user, self.edx_client, BACKEND_EDX_ORG)
         self.assert_cache_in_db(grades_keys=self.grades_ids)
         cache_time = UserCacheRefreshTime.objects.get(user=self.user)
         now = now_in_utc()
@@ -358,7 +359,7 @@ class CachedEdxDataApiTests(MockedESTestCase):
         # add another cached element for another course that will be removed by the refresh
         cached_grade = CachedCurrentGradeFactory.create(user=self.user)
         self.assert_cache_in_db(grades_keys=list(self.grades_ids) + [cached_grade.course_run.edx_course_key])
-        CachedEdxDataApi.update_cached_current_grades(self.user, self.edx_client)
+        CachedEdxDataApi.update_cached_current_grades(self.user, self.edx_client, BACKEND_EDX_ORG)
         self.assert_cache_in_db(grades_keys=self.grades_ids)
         cache_time.refresh_from_db()
         assert cache_time.current_grade >= now
@@ -372,13 +373,13 @@ class CachedEdxDataApiTests(MockedESTestCase):
         all_mocks = (mock_enr, mock_cert, mock_grade, )
 
         with self.assertRaises(ValueError):
-            CachedEdxDataApi.update_cache_if_expired(self.user, self.edx_client, 'footype')
+            CachedEdxDataApi.update_cache_if_expired(self.user, self.edx_client, 'footype', BACKEND_EDX_ORG)
 
         # if there is no entry in the UserCacheRefreshTime the cache is not fresh and needs to be refreshed
         for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
             # the following is possible only because a mocked function is called
             assert UserCacheRefreshTime.objects.filter(user=self.user).exists() is False
-            CachedEdxDataApi.update_cache_if_expired(self.user, self.edx_client, cache_type)
+            CachedEdxDataApi.update_cache_if_expired(self.user, self.edx_client, cache_type, BACKEND_EDX_ORG)
         for mock_func in all_mocks:
             assert mock_func.called is True
             mock_func.reset_mock()
@@ -392,7 +393,7 @@ class CachedEdxDataApiTests(MockedESTestCase):
             current_grade=now,
         )
         for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
-            CachedEdxDataApi.update_cache_if_expired(self.user, self.edx_client, cache_type)
+            CachedEdxDataApi.update_cache_if_expired(self.user, self.edx_client, cache_type, BACKEND_EDX_ORG)
         for mock_func in all_mocks:
             assert mock_func.called is False
             mock_func.reset_mock()
@@ -404,7 +405,7 @@ class CachedEdxDataApiTests(MockedESTestCase):
         user_cache.current_grade = yesterday
         user_cache.save()
         for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
-            CachedEdxDataApi.update_cache_if_expired(self.user, self.edx_client, cache_type)
+            CachedEdxDataApi.update_cache_if_expired(self.user, self.edx_client, cache_type, BACKEND_EDX_ORG)
         for mock_func in all_mocks:
             assert mock_func.called is True
 
@@ -423,10 +424,10 @@ class CachedEdxDataApiTests(MockedESTestCase):
         mock_enr.side_effect = raise_http_error
         if status_code in (400, 401):
             with self.assertRaises(InvalidCredentialStored):
-                CachedEdxDataApi.update_cache_if_expired(self.user, self.edx_client, CachedEdxDataApi.ENROLLMENT)
+                CachedEdxDataApi.update_cache_if_expired(self.user, self.edx_client, CachedEdxDataApi.ENROLLMENT, BACKEND_EDX_ORG)
         else:
             with self.assertRaises(HTTPError):
-                CachedEdxDataApi.update_cache_if_expired(self.user, self.edx_client, CachedEdxDataApi.ENROLLMENT)
+                CachedEdxDataApi.update_cache_if_expired(self.user, self.edx_client, CachedEdxDataApi.ENROLLMENT, BACKEND_EDX_ORG)
 
     @patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cached_current_grades')
     @patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cached_certificates')
@@ -436,8 +437,8 @@ class CachedEdxDataApiTests(MockedESTestCase):
         """Test for update_all_cached_grade_data"""
         for mock_func in (mock_refr, mock_enr, mock_cert, mock_grade, ):
             assert mock_func.called is False
-        CachedEdxDataApi.update_all_cached_grade_data(self.user)
+        CachedEdxDataApi.update_all_cached_grade_data(self.user, BACKEND_EDX_ORG)
         assert mock_enr.called is False
         mock_refr.assert_called_once_with(self.user.social_auth.get(provider=EdxOrgOAuth2.name))
         for mock_func in (mock_cert, mock_grade, ):
-            mock_func.assert_called_once_with(self.user, ANY)
+            mock_func.assert_called_once_with(self.user, ANY, BACKEND_EDX_ORG)

@@ -19,14 +19,14 @@ from rest_framework.generics import get_object_or_404
 from edx_api.client import EdxApi
 
 from backends import utils
+from courses.models import CourseRun
 from dashboard.permissions import CanReadIfStaffOrSelf
 from dashboard.serializers import UnEnrollProgramsSerializer
 from dashboard.models import ProgramEnrollment
 from dashboard.api import get_user_program_info
 from dashboard.api_edx_cache import CachedEdxDataApi
 from micromasters.exceptions import PossiblyImproperlyConfigured
-from profiles.api import get_edxorg_social_auth
-
+from profiles.api import get_social_auth
 
 log = logging.getLogger(__name__)
 
@@ -52,23 +52,8 @@ class UserDashboard(APIView):
         )
 
         # get the credentials for the current user for edX
-        edx_client = None
-        if user == request.user:
-            user_social = get_edxorg_social_auth(request.user)
-            try:
-                utils.refresh_user_token(user_social)
-            except utils.InvalidCredentialStored as exc:
-                return Response(
-                    status=exc.http_status_code,
-                    data={'error': str(exc)}
-                )
-            except:  # pylint: disable=bare-except
-                log.exception('Impossible to refresh user credentials in dashboard view')
-            # create an instance of the client to query edX
-            edx_client = EdxApi(user_social.extra_data, settings.EDXORG_BASE_URL)
-
         try:
-            program_dashboard = get_user_program_info(user, edx_client)
+            program_dashboard = get_user_program_info(user)
         except utils.InvalidCredentialStored as exc:
             log.exception('Access token for user %s is fresh but invalid; forcing login.', user.username)
             return Response(
@@ -99,7 +84,8 @@ class UserCourseEnrollment(APIView):
         if course_id is None:
             raise ValidationError('course id missing in the request')
         # get the credentials for the current user for edX
-        user_social = get_edxorg_social_auth(request.user)
+        course_run = CourseRun.objects.get(edx_course_key=course_id)
+        user_social = get_social_auth(request.user, course_run.courseware_backend)
         try:
             utils.refresh_user_token(user_social)
         except utils.InvalidCredentialStored as exc:

@@ -5,26 +5,28 @@ import logging
 
 from django.core.exceptions import ObjectDoesNotExist
 
-from backends.edxorg import EdxOrgOAuth2
+from backends.constants import BACKEND_EDX_ORG
 
 log = logging.getLogger(__name__)
 
 
-def get_edxorg_social_auth(user):
+def get_social_auth(user, provider=BACKEND_EDX_ORG):
     """
     Returns social auth object for user
 
     Args:
          user (django.contrib.auth.models.User):  A Django user
+         provider (str): 'mitxonline' or 'edxorg'
     """
-    return user.social_auth.get(provider=EdxOrgOAuth2.name)
+    return user.social_auth.get(provider=provider)
 
 
-def get_edxorg_social_username(user):
+def get_social_username(user, provider=BACKEND_EDX_ORG):
     """
     Get social auth edX username for a user, or else return None.
 
     Args:
+        provider:
         user (django.contrib.auth.models.User):
             A Django user
     """
@@ -32,7 +34,7 @@ def get_edxorg_social_username(user):
         return None
 
     try:
-        return get_edxorg_social_auth(user).uid
+        return get_social_auth(user, provider).uid
     except ObjectDoesNotExist:
         return None
     except Exception as ex:  # pylint: disable=broad-except
