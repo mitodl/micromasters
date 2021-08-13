@@ -3,7 +3,7 @@ import React from "react"
 import { shallow } from "enzyme"
 import { assert } from "chai"
 
-import { EDX_LINK_BASE } from "../../../constants"
+import { courseRunUrl } from "../../../util/courseware"
 import Progress from "./Progress"
 import { findAndCloneCourse } from "../../../util/test_utils"
 
@@ -19,7 +19,7 @@ describe("Course Progress", () => {
   it("should the current progress for a course", () => {
     const progress = renderCourseProgress()
     assert.equal(progress.find(".number").text(), "92%")
-    const progressUrl = `${EDX_LINK_BASE}${course.runs[0].course_id}/progress`
+    const progressUrl = `${courseRunUrl(course.runs[0])}/progress`
     assert.equal(progress.find("a").props().href, progressUrl)
     assert.equal(progress.find("a").props().target, "_blank")
   })

@@ -248,6 +248,7 @@ class DashboardTests(ViewsTests):
         ga_tracking_id = FuzzyText().fuzz()
         react_ga_debug = FuzzyText().fuzz()
         edx_base_url = FuzzyText().fuzz()
+        mitxonline_base_url = FuzzyText().fuzz()
         host = FuzzyText().fuzz()
         email_support = FuzzyText().fuzz()
         open_discussions_redirect_url = FuzzyText().fuzz()
@@ -255,6 +256,7 @@ class DashboardTests(ViewsTests):
             GA_TRACKING_ID=ga_tracking_id,
             REACT_GA_DEBUG=react_ga_debug,
             EDXORG_BASE_URL=edx_base_url,
+            MITXONLINE_BASE_URL=mitxonline_base_url,
             WEBPACK_DEV_SERVER_HOST=host,
             EMAIL_SUPPORT=email_support,
             VERSION='0.0.1',
@@ -285,6 +287,7 @@ class DashboardTests(ViewsTests):
                 },
                 'host': host,
                 'edx_base_url': edx_base_url,
+                "mitxonline_base_url": mitxonline_base_url,
                 'roles': [],
                 'search_url': reverse('search_api', kwargs={"elastic_url": ""}),
                 'support_email': email_support,
@@ -697,6 +700,7 @@ class TestUsersPage(ViewsTests):
         ga_tracking_id = FuzzyText().fuzz()
         react_ga_debug = FuzzyText().fuzz()
         edx_base_url = FuzzyText().fuzz()
+        mitxonline_base_url = FuzzyText().fuzz()
         host = FuzzyText().fuzz()
         email_support = FuzzyText().fuzz()
         open_discussions_redirect_url = FuzzyText().fuzz()
@@ -704,6 +708,7 @@ class TestUsersPage(ViewsTests):
             GA_TRACKING_ID=ga_tracking_id,
             REACT_GA_DEBUG=react_ga_debug,
             EDXORG_BASE_URL=edx_base_url,
+            MITXONLINE_BASE_URL=mitxonline_base_url,
             WEBPACK_DEV_SERVER_HOST=host,
             EMAIL_SUPPORT=email_support,
             VERSION='0.0.1',
@@ -735,6 +740,7 @@ class TestUsersPage(ViewsTests):
                     },
                     'host': host,
                     'edx_base_url': edx_base_url,
+                    "mitxonline_base_url": mitxonline_base_url,
                     'roles': [],
                     'search_url': reverse('search_api', kwargs={"elastic_url": ""}),
                     'support_email': email_support,
@@ -774,6 +780,7 @@ class TestUsersPage(ViewsTests):
         ga_tracking_id = FuzzyText().fuzz()
         react_ga_debug = FuzzyText().fuzz()
         edx_base_url = FuzzyText().fuzz()
+        mitxonline_base_url = FuzzyText().fuzz()
         host = FuzzyText().fuzz()
         email_support = FuzzyText().fuzz()
         open_discussions_redirect_url = FuzzyText().fuzz()
@@ -781,6 +788,7 @@ class TestUsersPage(ViewsTests):
             GA_TRACKING_ID=ga_tracking_id,
             REACT_GA_DEBUG=react_ga_debug,
             EDXORG_BASE_URL=edx_base_url,
+            MITXONLINE_BASE_URL=mitxonline_base_url,
             WEBPACK_DEV_SERVER_HOST=host,
             EMAIL_SUPPORT=email_support,
             VERSION='0.0.1',
@@ -806,6 +814,7 @@ class TestUsersPage(ViewsTests):
                     'user': None,
                     'host': host,
                     'edx_base_url': edx_base_url,
+                    "mitxonline_base_url": mitxonline_base_url,
                     'roles': [],
                     'search_url': reverse('search_api', kwargs={"elastic_url": ""}),
                     'support_email': email_support,

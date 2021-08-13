@@ -4,7 +4,6 @@ import React from "react"
 import R from "ramda"
 import _ from "lodash"
 import moment from "moment"
-import urljoin from "url-join"
 
 import type { CourseRun, Course } from "../../../flow/programTypes"
 import {
@@ -14,10 +13,10 @@ import {
   STATUS_MISSED_DEADLINE,
   STATUS_CURRENTLY_ENROLLED,
   STATUS_PAID_BUT_NOT_ENROLLED,
-  EDX_LINK_BASE,
   DASHBOARD_FORMAT
 } from "../../../constants"
 import { renderSeparatedComponents } from "../../../util/util"
+import { courseRunUrl } from "../../../util/courseware"
 import { hasAnyStaffRole } from "../../../lib/roles"
 import Progress from "./Progress"
 import {
@@ -135,7 +134,7 @@ export default class ProgressMessage extends React.Component {
     }
 
     const url = this.isCurrentOrPastEnrolled(courseRun)
-      ? urljoin(EDX_LINK_BASE, courseRun.course_id)
+      ? courseRunUrl(courseRun)
       : courseRun.enrollment_url
 
     return url && !hasAnyStaffRole(SETTINGS.roles) ? (

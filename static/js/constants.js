@@ -123,6 +123,21 @@ export const TOAST_SUCCESS = "done"
 export const TOAST_FAILURE = "error"
 
 export const EDX_LINK_BASE = urljoin(SETTINGS.edx_base_url, "courses/")
+export const MITXONLINE_LINK_BASE = urljoin(
+  SETTINGS.mitxonline_base_url,
+  "courses/"
+)
+
+export const COURSEWARE_BACKEND_EDXORG = "edxorg"
+export const COURSEWARE_BACKEND_MITXONLINE = "mitxonline"
+export const COURSEWARE_BACKEND_NAMES = {
+  [COURSEWARE_BACKEND_EDXORG]:     "edX",
+  [COURSEWARE_BACKEND_MITXONLINE]: "MITx Online"
+}
+export const COURSEWARE_BACKEND_BASE_URLS = {
+  [COURSEWARE_BACKEND_EDXORG]:     EDX_LINK_BASE,
+  [COURSEWARE_BACKEND_MITXONLINE]: MITXONLINE_LINK_BASE
+}
 
 export const COUPON_CONTENT_TYPE_COURSE = "course"
 export const COUPON_CONTENT_TYPE_PROGRAM = "program"

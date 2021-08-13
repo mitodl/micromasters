@@ -103,6 +103,7 @@ export type CourseRun = {
   enrollment_url?:              ?string,
   has_paid:                     boolean,
   year_season:                  string,
+  courseware_backend:           string,
 }
 
 export type UserProgram = {

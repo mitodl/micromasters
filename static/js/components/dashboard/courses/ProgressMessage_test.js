@@ -3,7 +3,6 @@ import React from "react"
 import { shallow } from "enzyme"
 import { assert } from "chai"
 import sinon from "sinon"
-import urljoin from "url-join"
 import moment from "moment"
 
 import ProgressMessage, { staffCourseInfo } from "./ProgressMessage"
@@ -18,7 +17,6 @@ import {
   makeRunPast
 } from "./test_util"
 import {
-  EDX_LINK_BASE,
   STATUS_CAN_UPGRADE,
   DASHBOARD_FORMAT,
   STATUS_MISSED_DEADLINE,
@@ -26,6 +24,7 @@ import {
   STATUS_PASSED,
   STATUS_NOT_PASSED
 } from "../../../constants"
+import { courseRunUrl } from "../../../util/courseware"
 import { courseStartDateMessage } from "./util"
 
 describe("Course ProgressMessage", () => {
@@ -70,10 +69,7 @@ describe("Course ProgressMessage", () => {
     course.has_contact_email = true
     const wrapper = renderCourseDescription()
     const [edxLink, contactLink] = wrapper.find("a")
-    assert.equal(
-      edxLink.props.href,
-      urljoin(EDX_LINK_BASE, course.runs[0].course_id)
-    )
+    assert.equal(edxLink.props.href, courseRunUrl(course.runs[0]))
     assert.equal(edxLink.props.target, "_blank")
     assert.equal(edxLink.props.children, "View on edX")
     assert.equal(contactLink.props.onClick, openCourseContactDialogStub)

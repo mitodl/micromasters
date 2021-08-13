@@ -6,9 +6,10 @@ import R from "ramda"
 
 import { formatGrade } from "../util"
 import type { CourseRun } from "../../../flow/programTypes"
-import { EDX_LINK_BASE } from "../../../constants"
+import { courseRunUrl } from "../../../util/courseware"
 
-const progressHref = courseId => urljoin(EDX_LINK_BASE, courseId, "progress")
+const progressHref = (courseRun: CourseRun) =>
+  urljoin(courseRunUrl(courseRun), "progress")
 
 type ProgressType = {
   courseRun: CourseRun,
@@ -23,7 +24,7 @@ const Progress = ({ courseRun, className }: ProgressType) =>
     <div className={`course-progress-display ${className}`}>
       <div className="number">
         <a
-          href={progressHref(courseRun.course_id)}
+          href={progressHref(courseRun)}
           target="_blank"
           rel="noopener noreferrer"
         >

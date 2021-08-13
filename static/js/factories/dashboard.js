@@ -13,7 +13,8 @@ import {
   PEARSON_PROFILE_SUCCESS,
   PEARSON_PROFILE_IN_PROGRESS,
   PEARSON_PROFILE_INVALID,
-  PEARSON_PROFILE_SCHEDULABLE
+  PEARSON_PROFILE_SCHEDULABLE,
+  COURSEWARE_BACKEND_EDXORG
 } from "../constants"
 import type { Coupon } from "../flow/couponTypes"
 import type {
@@ -76,9 +77,10 @@ export const makeRun = (position: number): CourseRun => {
     course_end_date: moment()
       .subtract(1, "day")
       .format(),
-    status:      STATUS_OFFERED,
-    has_paid:    false,
-    year_season: `Spring ${moment().year()}`
+    status:             STATUS_OFFERED,
+    has_paid:           false,
+    year_season:        `Spring ${moment().year()}`,
+    courseware_backend: COURSEWARE_BACKEND_EDXORG
   }
 }
 

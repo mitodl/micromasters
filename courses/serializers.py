@@ -109,4 +109,4 @@ class CourseRunSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CourseRun
-        fields = ('edx_course_key', 'program_title')
+        fields = ('edx_course_key', 'program_title', 'courseware_backend')

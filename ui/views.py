@@ -48,6 +48,7 @@ class ReactView(View):  # pylint: disable=unused-argument
             "reactGaDebug": settings.REACT_GA_DEBUG,
             "host": webpack_dev_server_host(request),
             "edx_base_url": settings.EDXORG_BASE_URL,
+            "mitxonline_base_url": settings.MITXONLINE_BASE_URL,
             "roles": roles,
             "release_version": settings.VERSION,
             "environment": settings.ENVIRONMENT,
