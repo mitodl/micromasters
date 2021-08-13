@@ -37,7 +37,7 @@ class Command(BaseCommand):
         first_row = next(reader)
         catalog_query = first_row['Catalog Query']
         course_number = re.search(r"\+([A-Za-z0-9.]+)PEx", catalog_query).group(1)
-        edx_exam_course_key = re.search(r"key:\(([A-Za-z0-9+.]+)", catalog_query).group(1)
+        edx_exam_course_key = re.search(r"key:[(\"]([A-Za-z0-9+.]+)", catalog_query).group(1)
 
         validated_urls = validate_urls(reader)
 
