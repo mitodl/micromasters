@@ -66,6 +66,7 @@ class CourseRunSerializerTests(MockedESTestCase):
         expected = {
             'edx_course_key': course_run.edx_course_key,
             'program_title': course_run.course.program.title,
+            'courseware_backend': course_run.courseware_backend,
         }
         assert data == expected
 

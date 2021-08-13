@@ -8,7 +8,7 @@ import type { ProgramPageCourse } from "../flow/programTypes"
 const popoverLink = url =>
   url ? (
     <a className="edx-link" href={url}>
-      View on edX
+      View on {url.includes("edx.org") ? "edX" : "MITx Online"}
     </a>
   ) : null
 

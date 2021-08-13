@@ -20,6 +20,7 @@ services:
       ELASTICSEARCH_INDEX: 'testindex'
       DEBUG: 'False'
       ELASTICSEARCH_DEFAULT_PAGE_SIZE: '5'
+      MITXONLINE_BASE_URL: "https://fake-mitxonline.example.com/"
 
       # To silence ImproperlyConfigured when running tests
       MAILGUN_URL: http://fake.mailgun.url

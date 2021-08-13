@@ -458,6 +458,7 @@ def format_courserun_for_dashboard(course_run, status_for_user, mmtrack, positio
         'course_upgrade_deadline': course_run.upgrade_deadline,
         'fuzzy_start_date': course_run.fuzzy_start_date,
         'enrollment_url': course_run.enrollment_url,
+        'courseware_backend': course_run.courseware_backend,
         'year_season': format_season_year_for_course_run(course_run),
     }
 

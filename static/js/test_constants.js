@@ -24,7 +24,8 @@ import {
   STATUS_PAID_BUT_NOT_ENROLLED,
   STATUS_PENDING_ENROLLMENT,
   COUPON_AMOUNT_TYPE_PERCENT_DISCOUNT,
-  COUPON_CONTENT_TYPE_PROGRAM
+  COUPON_CONTENT_TYPE_PROGRAM,
+  COURSEWARE_BACKEND_EDXORG
 } from "./constants"
 
 export const ELASTICSEARCH_RESPONSE = deepFreeze({
@@ -924,37 +925,40 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
           prerequisites: "",
           runs:          [
             {
-              position:          1,
-              title:             "Gio Test Course #15",
-              course_id:         "course-v1:odl+GIO101+CR-FALL15",
-              status:            STATUS_NOT_PASSED,
-              id:                1,
-              course_start_date: "2016-09-22T11:48:27Z",
-              fuzzy_start_date:  "Fall 2016",
-              course_end_date:   "2016-09-09T10:20:10Z"
+              position:           1,
+              title:              "Gio Test Course #15",
+              course_id:          "course-v1:odl+GIO101+CR-FALL15",
+              status:             STATUS_NOT_PASSED,
+              id:                 1,
+              course_start_date:  "2016-09-22T11:48:27Z",
+              fuzzy_start_date:   "Fall 2016",
+              course_end_date:    "2016-09-09T10:20:10Z",
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
             },
             {
-              position:          2,
-              title:             "Gio Test Course #14",
-              course_id:         "course-v1:odl+GIO101+FALL14",
-              status:            STATUS_NOT_PASSED,
-              final_grade:       "33",
-              id:                2,
-              course_start_date: "2016-08-22T11:48:27Z",
-              fuzzy_start_date:  "Fall 2017",
-              course_end_date:   "2016-09-09T10:20:10Z"
+              position:           2,
+              title:              "Gio Test Course #14",
+              course_id:          "course-v1:odl+GIO101+FALL14",
+              status:             STATUS_NOT_PASSED,
+              final_grade:        "33",
+              id:                 2,
+              course_start_date:  "2016-08-22T11:48:27Z",
+              fuzzy_start_date:   "Fall 2017",
+              course_end_date:    "2016-09-09T10:20:10Z",
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
             },
             {
-              certificate_url:   "www.google.com",
-              title:             "Gio Test Course #13",
-              status:            STATUS_PASSED,
-              position:          3,
-              final_grade:       "66",
-              course_id:         "course-v1:odl+GIO101+FALL13",
-              id:                3,
-              course_start_date: "2016-08-22T11:48:27Z",
-              fuzzy_start_date:  "Fall 2017",
-              course_end_date:   "2016-09-09T10:20:10Z"
+              certificate_url:    "www.google.com",
+              title:              "Gio Test Course #13",
+              status:             STATUS_PASSED,
+              position:           3,
+              final_grade:        "66",
+              course_id:          "course-v1:odl+GIO101+FALL13",
+              id:                 3,
+              course_start_date:  "2016-08-22T11:48:27Z",
+              fuzzy_start_date:   "Fall 2017",
+              course_end_date:    "2016-09-09T10:20:10Z",
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
             }
           ],
           position_in_program:     0,
@@ -1012,7 +1016,8 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               price:                       50.0,
               course_start_date:           "2016-08-22T11:48:27Z",
               fuzzy_start_date:            "Fall 2017",
-              course_end_date:             "2016-09-09T10:20:10Z"
+              course_end_date:             "2016-09-09T10:20:10Z",
+              courseware_backend:          COURSEWARE_BACKEND_EDXORG
             }
           ],
           description:             null,
@@ -1025,16 +1030,17 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
           title:               "Passed course - check mark, grade is 88%",
           runs:                [
             {
-              certificate_url:   "www.google.com",
-              course_id:         "course-v1:edX+DemoX+Demo_Course",
-              id:                5,
-              status:            STATUS_PASSED,
-              title:             "Demo course",
-              final_grade:       "88",
-              position:          0,
-              course_start_date: "2016-08-22T11:48:27Z",
-              fuzzy_start_date:  "Fall 2017",
-              course_end_date:   "2016-09-09T10:20:10Z"
+              certificate_url:    "www.google.com",
+              course_id:          "course-v1:edX+DemoX+Demo_Course",
+              id:                 5,
+              status:             STATUS_PASSED,
+              title:              "Demo course",
+              final_grade:        "88",
+              position:           0,
+              course_start_date:  "2016-08-22T11:48:27Z",
+              fuzzy_start_date:   "Fall 2017",
+              course_end_date:    "2016-09-09T10:20:10Z",
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
             }
           ],
           description:             "The demo course",
@@ -1056,16 +1062,17 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
           title:               "Current verified course - grade is 88%",
           runs:                [
             {
-              certificate_url:   "www.google.com",
-              course_id:         "course-v1:current",
-              id:                5678,
-              status:            STATUS_CURRENTLY_ENROLLED,
-              title:             "Current course run",
-              current_grade:     "23",
-              position:          0,
-              course_start_date: "2016-08-22T11:48:27Z",
-              fuzzy_start_date:  "Fall 2017",
-              course_end_date:   "2016-09-09T10:20:10Z"
+              certificate_url:    "www.google.com",
+              course_id:          "course-v1:current",
+              id:                 5678,
+              status:             STATUS_CURRENTLY_ENROLLED,
+              title:              "Current course run",
+              current_grade:      "23",
+              position:           0,
+              course_start_date:  "2016-08-22T11:48:27Z",
+              fuzzy_start_date:   "Fall 2017",
+              course_end_date:    "2016-09-09T10:20:10Z",
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
             }
           ],
           description:             "The demo course",
@@ -1087,7 +1094,8 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               course_start_date:       "2016-08-22T11:48:27Z",
               fuzzy_start_date:        "Fall 2017",
               course_end_date:         "2016-09-09T10:20:10Z",
-              course_upgrade_deadline: "2016-08-20T11:48:27Z"
+              course_upgrade_deadline: "2016-08-20T11:48:27Z",
+              courseware_backend:      COURSEWARE_BACKEND_EDXORG
             }
           ],
           description:             null,
@@ -1111,7 +1119,8 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               price:                       30.0,
               course_start_date:           "2016-08-22T11:48:27Z",
               fuzzy_start_date:            "Fall 2017",
-              course_end_date:             "2016-09-09T10:20:10Z"
+              course_end_date:             "2016-09-09T10:20:10Z",
+              courseware_backend:          COURSEWARE_BACKEND_EDXORG
             }
           ],
           description:             null,
@@ -1124,39 +1133,42 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
           position_in_program: 7,
           runs:                [
             {
-              certificate_url:   "www.google.com",
-              title:             "Passed run missing grade",
-              status:            STATUS_PASSED,
-              position:          2,
-              course_id:         "course_id_one",
-              id:                100,
-              course_start_date: "2015-08-22T11:48:27Z",
-              fuzzy_start_date:  "Fall 2015",
-              course_end_date:   "2015-09-09T10:20:10Z"
+              certificate_url:    "www.google.com",
+              title:              "Passed run missing grade",
+              status:             STATUS_PASSED,
+              position:           2,
+              course_id:          "course_id_one",
+              id:                 100,
+              course_start_date:  "2015-08-22T11:48:27Z",
+              fuzzy_start_date:   "Fall 2015",
+              course_end_date:    "2015-09-09T10:20:10Z",
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
             },
             {
-              certificate_url:   "www.google.com",
-              title:             "Passed run missing grade",
-              status:            STATUS_PASSED,
-              position:          1,
-              course_id:         "course_id_two",
-              final_grade:       "88",
-              id:                102,
-              course_start_date: "2015-08-22T11:48:27Z",
-              fuzzy_start_date:  "Fall 2015",
-              course_end_date:   "2015-09-09T10:20:10Z"
+              certificate_url:    "www.google.com",
+              title:              "Passed run missing grade",
+              status:             STATUS_PASSED,
+              position:           1,
+              course_id:          "course_id_two",
+              final_grade:        "88",
+              id:                 102,
+              course_start_date:  "2015-08-22T11:48:27Z",
+              fuzzy_start_date:   "Fall 2015",
+              course_end_date:    "2015-09-09T10:20:10Z",
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
             },
             {
-              certificate_url:   "www.google.com",
-              title:             "Passed run missing grade",
-              status:            STATUS_NOT_PASSED,
-              position:          0,
-              course_id:         "course_id_three",
-              final_grade:       "43",
-              id:                101,
-              course_start_date: "2016-08-22T11:48:27Z",
-              fuzzy_start_date:  "Fall 2017",
-              course_end_date:   "2016-09-09T10:20:10Z"
+              certificate_url:    "www.google.com",
+              title:              "Passed run missing grade",
+              status:             STATUS_NOT_PASSED,
+              position:           0,
+              course_id:          "course_id_three",
+              final_grade:        "43",
+              id:                 101,
+              course_start_date:  "2016-08-22T11:48:27Z",
+              fuzzy_start_date:   "Fall 2017",
+              course_end_date:    "2016-09-09T10:20:10Z",
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
             }
           ],
           proctorate_exams_grades: []
@@ -1167,15 +1179,16 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
           position_in_program: 6,
           runs:                [
             {
-              certificate_url:   "www.google.com",
-              title:             "Passed run missing grade",
-              status:            STATUS_PASSED,
-              position:          0,
-              course_id:         "course_id",
-              id:                10,
-              course_start_date: "2016-08-22T11:48:27Z",
-              fuzzy_start_date:  "Fall 2017",
-              course_end_date:   "2016-09-09T10:20:10Z"
+              certificate_url:    "www.google.com",
+              title:              "Passed run missing grade",
+              status:             STATUS_PASSED,
+              position:           0,
+              course_id:          "course_id",
+              id:                 10,
+              course_start_date:  "2016-08-22T11:48:27Z",
+              fuzzy_start_date:   "Fall 2017",
+              course_end_date:    "2016-09-09T10:20:10Z",
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
             }
           ],
           proctorate_exams_grades: []
@@ -1187,14 +1200,15 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
             "verified not completed, course starts in future - action text is Course starting",
           runs: [
             {
-              id:                13,
-              status:            STATUS_WILL_ATTEND,
-              course_start_date: "8765-03-21",
-              title:             "First run",
-              position:          0,
-              fuzzy_start_date:  "Fall 2017",
-              course_end_date:   "2016-09-09T10:20:10Z",
-              course_id:         "verified"
+              id:                 13,
+              status:             STATUS_WILL_ATTEND,
+              course_start_date:  "8765-03-21",
+              title:              "First run",
+              position:           0,
+              fuzzy_start_date:   "Fall 2017",
+              course_end_date:    "2016-09-09T10:20:10Z",
+              course_id:          "verified",
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
             }
           ],
           proctorate_exams_grades: []
@@ -1215,7 +1229,8 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               price:                       40.0,
               course_start_date:           "2016-08-22T11:48:27Z",
               fuzzy_start_date:            "Fall 2017",
-              course_end_date:             "2016-09-09T10:20:10Z"
+              course_end_date:             "2016-09-09T10:20:10Z",
+              courseware_backend:          COURSEWARE_BACKEND_EDXORG
             }
           ],
           description:             null,
@@ -1235,7 +1250,8 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
               status:                STATUS_PENDING_ENROLLMENT,
               course_start_date:     "2018-08-22T11:48:27Z",
               course_end_date:       "2018-09-09T10:20:10Z",
-              enrollment_start_date: "2016-03-04T01:00:00Z"
+              enrollment_start_date: "2016-03-04T01:00:00Z",
+              courseware_backend:    COURSEWARE_BACKEND_EDXORG
             }
           ],
           proctorate_exams_grades: []
@@ -1259,13 +1275,14 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
           prerequisites:       "",
           runs:                [
             {
-              course_id:         "course-v1:edX+missed+deadline",
-              id:                12,
-              status:            STATUS_MISSED_DEADLINE,
-              title:             "Course run for the missed deadline program",
-              position:          0,
-              course_start_date: "2016-01-01",
-              course_end_date:   "2016-09-09T10:20:10Z"
+              course_id:          "course-v1:edX+missed+deadline",
+              id:                 12,
+              status:             STATUS_MISSED_DEADLINE,
+              title:              "Course run for the missed deadline program",
+              position:           0,
+              course_start_date:  "2016-01-01",
+              course_end_date:    "2016-09-09T10:20:10Z",
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
             }
           ],
           proctorate_exams_grades: []
@@ -1292,14 +1309,15 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
             "Course for last program in progress - no grade, action or description",
           runs: [
             {
-              course_id:         "course-v1:edX+DemoX+Demo_Course2",
-              id:                11,
-              status:            STATUS_CURRENTLY_ENROLLED,
-              title:             "Course run for last program",
-              position:          0,
-              course_start_date: "2016-01-01",
-              fuzzy_start_date:  "Fall 2017",
-              course_end_date:   "2016-09-09T10:20:10Z"
+              course_id:          "course-v1:edX+DemoX+Demo_Course2",
+              id:                 11,
+              status:             STATUS_CURRENTLY_ENROLLED,
+              title:              "Course run for last program",
+              position:           0,
+              course_start_date:  "2016-01-01",
+              fuzzy_start_date:   "Fall 2017",
+              course_end_date:    "2016-09-09T10:20:10Z",
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
             }
           ],
           description:             "Course for Last program",
@@ -1322,16 +1340,17 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
           prerequisites:       "",
           runs:                [
             {
-              position:          1,
-              course_id:         "course-v1:MITx+paid+not+enrolled+100+Jan_2015",
-              id:                66,
-              course_start_date: "2016-12-20T00:00:00Z",
-              course_end_date:   "2018-05-15T00:00:00Z",
-              enrollment_url:    "",
-              fuzzy_start_date:  "",
-              current_grade:     null,
-              title:             "Digital Learning 100 - January 2015",
-              status:            STATUS_PAID_BUT_NOT_ENROLLED
+              position:           1,
+              course_id:          "course-v1:MITx+paid+not+enrolled+100+Jan_2015",
+              id:                 66,
+              course_start_date:  "2016-12-20T00:00:00Z",
+              course_end_date:    "2018-05-15T00:00:00Z",
+              enrollment_url:     "",
+              fuzzy_start_date:   "",
+              current_grade:      null,
+              title:              "Digital Learning 100 - January 2015",
+              status:             STATUS_PAID_BUT_NOT_ENROLLED,
+              courseware_backend: COURSEWARE_BACKEND_EDXORG
             }
           ],
           proctorate_exams_grades: []
