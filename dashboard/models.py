@@ -200,6 +200,8 @@ class UserCacheRefreshTime(Model):
     enrollment = DateTimeField(null=True)
     certificate = DateTimeField(null=True)
     current_grade = DateTimeField(null=True)
+    enrollment_mitxonline = DateTimeField(null=True)
+    current_grade_mitxonline = DateTimeField(null=True)
 
     def __str__(self):
         """

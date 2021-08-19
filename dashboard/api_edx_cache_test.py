@@ -188,6 +188,8 @@ class CachedEdxDataApiTests(MockedESTestCase):
             CachedEdxDataApi.ENROLLMENT:  timedelta(minutes=5),
             CachedEdxDataApi.CERTIFICATE: timedelta(hours=6),
             CachedEdxDataApi.CURRENT_GRADE: timedelta(hours=1),
+            CachedEdxDataApi.ENROLLMENT_MITXONLINE: timedelta(minutes=5),
+            CachedEdxDataApi.CURRENT_GRADE_MITXONLINE: timedelta(hours=1),
         }
 
     def test_get_cached_edx_data(self):
