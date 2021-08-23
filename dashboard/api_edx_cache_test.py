@@ -11,7 +11,7 @@ from edx_api.certificates.models import Certificate, Certificates
 from edx_api.enrollments.models import Enrollment, Enrollments
 from edx_api.grades.models import CurrentGrade, CurrentGrades
 
-from backends.constants import BACKEND_EDX_ORG
+from backends.constants import BACKEND_EDX_ORG, BACKEND_MITX_ONLINE
 from backends.edxorg import EdxOrgOAuth2
 from backends.exceptions import InvalidCredentialStored
 from courses.factories import (
@@ -158,6 +158,16 @@ class CachedEdxDataApiTests(MockedESTestCase):
         cls.edx_client.certificates.get_student_certificates.return_value = cls.certificates
         cls.edx_client.current_grades.get_student_current_grades.return_value = cls.current_grades
 
+    def create_mitxonline_data(self):
+        """
+        Create another social auth for mitxonline as a courseware backend
+        """
+        self.user.social_auth.create(
+            provider=BACKEND_MITX_ONLINE,
+            uid="{}_mitxonline".format(self.user.username),
+            extra_data={"access_token": "fooooootoken"}
+        )
+
     def assert_cache_in_db(self, enrollment_keys=None, certificate_keys=None, grades_keys=None):
         """
         Helper function to assert the course keys in the database cache
@@ -217,6 +227,8 @@ class CachedEdxDataApiTests(MockedESTestCase):
         assert cache_time.enrollment <= now_in_utc()
         assert cache_time.certificate is None
         assert cache_time.current_grade is None
+        assert cache_time.current_grade_mitxonline is None
+        assert cache_time.enrollment_mitxonline is None
 
         old_timestamp = now_in_utc() - timedelta(days=1)
         CachedEdxDataApi.update_cache_last_access(self.user, CachedEdxDataApi.ENROLLMENT, old_timestamp)
@@ -229,7 +241,7 @@ class CachedEdxDataApiTests(MockedESTestCase):
             CachedEdxDataApi.is_cache_fresh(self.user, 'footype')
         # if there is no entry in the table, the cache is not fresh
         assert UserCacheRefreshTime.objects.filter(user=self.user).exists() is False
-        for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
+        for cache_type in CachedEdxDataApi.SUPPORTED_CACHES + CachedEdxDataApi.MITXONLINE_SUPPORTED_CACHES:
             assert CachedEdxDataApi.is_cache_fresh(self.user, cache_type) is False
         now = now_in_utc()
         user_cache = UserCacheRefreshTimeFactory.create(
@@ -240,6 +252,8 @@ class CachedEdxDataApiTests(MockedESTestCase):
         )
         for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
             assert CachedEdxDataApi.is_cache_fresh(self.user, cache_type) is True
+        for cache_type in CachedEdxDataApi.MITXONLINE_SUPPORTED_CACHES:
+            assert CachedEdxDataApi.is_cache_fresh(self.user, cache_type) is False
         # moving back the timestamp of one day, makes the cache not fresh again
         yesterday = now - timedelta(days=1)
         user_cache.enrollment = yesterday
@@ -248,6 +262,15 @@ class CachedEdxDataApiTests(MockedESTestCase):
         user_cache.save()
         for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
             assert CachedEdxDataApi.is_cache_fresh(self.user, cache_type) is False
+        timestamp = now_in_utc()
+        updated_values = {
+            'user': self.user,
+            'current_grade_mitxonline': timestamp,
+            'enrollment_mitxonline': timestamp
+        }
+        models.UserCacheRefreshTime.objects.update_or_create(user=self.user, defaults=updated_values)
+        for cache_type in CachedEdxDataApi.MITXONLINE_SUPPORTED_CACHES:
+            assert CachedEdxDataApi.is_cache_fresh(self.user, cache_type) is True
 
     @ddt.data('certificate', 'enrollment', 'current_grade')
     def test_are_all_caches_fresh(self, cache_type):
@@ -269,6 +292,39 @@ class CachedEdxDataApiTests(MockedESTestCase):
         setattr(user_cache, cache_type, now)
         user_cache.save()
         assert CachedEdxDataApi.are_all_caches_fresh(self.user) is True
+
+    def test_are_all_caches_fresh_if_social_auth_exists(self):
+        """
+        Test are_all_caches_fresh returns false for backends that have social
+        auth and are out of date
+        """
+        assert UserCacheRefreshTime.objects.filter(user=self.user).exists() is False
+        assert CachedEdxDataApi.are_all_caches_fresh(self.user) is False
+        now = now_in_utc()
+        yesterday = now - timedelta(days=1)
+        UserCacheRefreshTimeFactory.create(
+            user=self.user,
+            enrollment=now,
+            certificate=now,
+            current_grade=now,
+        )
+        assert CachedEdxDataApi.are_all_caches_fresh(self.user) is True
+        self.create_mitxonline_data()
+        assert CachedEdxDataApi.are_all_caches_fresh(self.user) is False
+        updated_values = {
+            'user': self.user,
+            'current_grade_mitxonline': yesterday,
+            'enrollment_mitxonline': now
+        }
+        user_cache, _ = models.UserCacheRefreshTime.objects.update_or_create(user=self.user, defaults=updated_values)
+        assert CachedEdxDataApi.are_all_caches_fresh(self.user) is False
+        user_cache.current_grade_mitxonline = now
+        user_cache.save()
+        assert CachedEdxDataApi.are_all_caches_fresh(self.user) is True
+
+        setattr(user_cache, CachedEdxDataApi.ENROLLMENT, yesterday)
+        user_cache.save()
+        assert CachedEdxDataApi.are_all_caches_fresh(self.user) is False
 
     @patch('search.tasks.index_users', autospec=True)
     def test_update_cached_enrollment(self, mocked_index):

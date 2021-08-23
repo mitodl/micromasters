@@ -11,6 +11,7 @@ import pytest
 from requests.exceptions import HTTPError
 
 from backends import utils
+from backends.constants import BACKEND_EDX_ORG
 from backends.edxorg import EdxOrgOAuth2
 from micromasters.utils import now_in_utc
 from profiles.factories import UserFactory
@@ -134,3 +135,16 @@ def test_update_email():
     utils.update_email({'email': new_email}, user)
     user.refresh_from_db()
     assert user.email == new_email
+
+@pytest.mark.django_db
+def test_has_social_auth():
+    """Test has_social auth returns False if social auth does not exist"""
+    user = UserFactory.create(email="test2@localhost")
+
+    assert utils.has_social_auth(user, BACKEND_EDX_ORG) is False
+    user.social_auth.create(
+        provider=BACKEND_EDX_ORG,
+        uid="{}_edx".format(user.username),
+        extra_data=social_extra_data
+    )
+    assert utils.has_social_auth(user, BACKEND_EDX_ORG) is True
