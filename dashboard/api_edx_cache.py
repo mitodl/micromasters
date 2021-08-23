@@ -10,8 +10,9 @@ from requests.exceptions import HTTPError
 from edx_api.client import EdxApi
 
 from backends import utils
-from backends.constants import COURSEWARE_BACKEND_URL
+from backends.constants import COURSEWARE_BACKEND_URL, BACKEND_EDX_ORG, BACKEND_MITX_ONLINE
 from backends.exceptions import InvalidCredentialStored
+from backends.utils import has_social_auth
 from courses.models import CourseRun
 from dashboard import models
 from micromasters.utils import now_in_utc
@@ -68,10 +69,11 @@ class CachedEdxDataApi:
     ENROLLMENT = 'enrollment'
     CERTIFICATE = 'certificate'
     CURRENT_GRADE = 'current_grade'
-
+    ENROLLMENT_MITXONLINE = 'enrollment_mitxonline'
+    CURRENT_GRADE_MITXONLINE = 'current_grade_mitxonline'
     # the sorting of the supported caches matters for refresh
     SUPPORTED_CACHES = (ENROLLMENT, CERTIFICATE, CURRENT_GRADE,)
-    MITXONLINE_SUPPORTED_CACHES = (ENROLLMENT, CURRENT_GRADE,)
+    MITXONLINE_SUPPORTED_CACHES = (ENROLLMENT_MITXONLINE, CURRENT_GRADE_MITXONLINE,)
 
     CACHED_EDX_MODELS = {
         ENROLLMENT: models.CachedEnrollment,
@@ -83,6 +85,8 @@ class CachedEdxDataApi:
         ENROLLMENT:  datetime.timedelta(minutes=5),
         CERTIFICATE: datetime.timedelta(hours=6),
         CURRENT_GRADE: datetime.timedelta(hours=1),
+        ENROLLMENT_MITXONLINE: datetime.timedelta(minutes=5),
+        CURRENT_GRADE_MITXONLINE: datetime.timedelta(hours=1),
     }
 
     @classmethod
@@ -112,7 +116,7 @@ class CachedEdxDataApi:
         Returns:
             None
         """
-        if cache_type not in cls.SUPPORTED_CACHES:
+        if cache_type not in cls.SUPPORTED_CACHES + cls.MITXONLINE_SUPPORTED_CACHES:
             raise ValueError("{} is an unsupported cache type".format(cache_type))
         if timestamp is None:
             timestamp = now_in_utc()
@@ -133,7 +137,7 @@ class CachedEdxDataApi:
         Returns:
             bool
         """
-        if cache_type not in cls.SUPPORTED_CACHES:
+        if cache_type not in cls.SUPPORTED_CACHES + cls.MITXONLINE_SUPPORTED_CACHES:
             raise ValueError("{} is an unsupported cache type".format(cache_type))
         try:
             cache_timestamps = models.UserCacheRefreshTime.objects.get(user=user)
@@ -154,7 +158,16 @@ class CachedEdxDataApi:
         Returns:
             bool
         """
-        return all(cls.is_cache_fresh(user, cache_type) for cache_type in cls.SUPPORTED_CACHES)
+        edx_cache_fresh = True
+        mitxonline_cache_fresh = True
+
+        if has_social_auth(user, BACKEND_EDX_ORG):
+            edx_cache_fresh = all(cls.is_cache_fresh(user, cache_type) for cache_type in cls.SUPPORTED_CACHES)
+        if has_social_auth(user, BACKEND_MITX_ONLINE):
+            mitxonline_cache_fresh = all(
+                cls.is_cache_fresh(user, cache_type) for cache_type in cls.MITXONLINE_SUPPORTED_CACHES)
+        return edx_cache_fresh and mitxonline_cache_fresh
+
 
     @classmethod
     def update_cached_enrollment(cls, user, enrollment, course_id, index_user=False):
@@ -215,7 +228,8 @@ class CachedEdxDataApi:
             # delete anything is not in the current enrollments for given courseware backend
             models.CachedEnrollment.delete_all_but(user, list(all_enrolled_course_ids), provider)
             # update the last refresh timestamp
-            cls.update_cache_last_access(user, cls.ENROLLMENT)
+            cache_type = cls.ENROLLMENT if provider == BACKEND_EDX_ORG else cls.ENROLLMENT_MITXONLINE
+            cls.update_cache_last_access(user, cache_type)
         # submit a celery task to reindex the user
         tasks.index_users.delay([user.id], check_if_changed=True)
 
@@ -299,7 +313,8 @@ class CachedEdxDataApi:
             # delete anything is not in the current grades
             models.CachedCurrentGrade.delete_all_but(user, all_grade_course_ids, provider)
             # update the last refresh timestamp
-            cls.update_cache_last_access(user, cls.CURRENT_GRADE)
+            cache_type = cls.CURRENT_GRADE if provider == BACKEND_EDX_ORG else cls.CURRENT_GRADE_MITXONLINE
+            cls.update_cache_last_access(user, cache_type)
         # submit a celery task to reindex the user
         tasks.index_users.delay([user.id], check_if_changed=True)
 

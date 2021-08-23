@@ -2,13 +2,18 @@
 Utility functions for the backends
 """
 from datetime import datetime, timedelta
+import logging
 import pytz
+from django.core.exceptions import ObjectDoesNotExist
 
 from requests.exceptions import HTTPError
 from social_django.utils import load_strategy
 
 from backends.exceptions import InvalidCredentialStored
 from micromasters.utils import now_in_utc
+from profiles.api import get_social_auth
+
+log = logging.getLogger(__name__)
 
 
 def _send_refresh_request(user_social):
@@ -56,3 +61,20 @@ def update_email(user_profile_edx, user):
     """
     user.email = user_profile_edx.get('email')
     user.save()
+
+
+def has_social_auth(user, provider):
+    """
+    Checks if user has user social auth for provided backend
+    Args:
+        provider (str): name of the courseware backend
+        user (django.contrib.auth.models.User): A user
+    Returns:
+        bool
+    """
+    try:
+        get_social_auth(user, provider)
+    except ObjectDoesNotExist:
+        log.info('No social auth for %s for user %s', provider, user.username)
+        return False
+    return True
