@@ -780,8 +780,8 @@ class DashboardPage extends React.Component {
       <div className="alert-message alert-message-inline">
         <Alert bsStyle="danger">
           <p>
-            Sorry, we're unable to update your dashboard at this time, so
-            some of the information on this page may not be up to date. <br />
+            Sorry, we're unable to update your dashboard at this time, so some
+            of the information on this page may not be up to date. <br />
             Please refresh the browser, or check back later.
           </p>
           <p>
