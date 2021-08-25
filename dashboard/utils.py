@@ -460,6 +460,39 @@ class MMTrack:
             .distinct().count()
         )
 
+    def count_passed_final_grades_for_course_ids(self, course_ids):
+        """
+        Determine the number of passed courses for a non-FA program by
+
+        Args:
+            course_ids (set): a set of course ids
+
+        Returns:
+            int: the number of passed unique courses
+        """
+        return (
+            self.final_grade_qset.filter(
+                course_run__course_id__in=course_ids
+            ).passed().values_list('course_run__course__id', flat=True).distinct().count()
+        )
+
+    def get_number_of_passed_courses(self, course_ids):
+        """
+        Count the number of passed courses for the given set of course ids
+        Args:
+            course_ids (set): a set of course ids
+
+        Returns:
+            int: the number of passed unique courses
+        """
+        if self.program.financial_aid_availability:
+            return MicromastersCourseCertificate.objects.filter(
+                user=self.user,
+                course_id__in=course_ids
+            ).values_list('course__id', flat=True).distinct().count()
+        else:
+            return self.count_passed_final_grades_for_course_ids(course_ids)
+
     def get_exam_card_status(self):  # pylint: disable=too-many-return-statements
         """
         Get the pearson exam status for the user / program combo

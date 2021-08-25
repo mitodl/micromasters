@@ -559,6 +559,45 @@ class GenerateProgramLetterApiTests(MockedESTestCase):
         api.generate_program_letter(self.user, self.program)
         assert cert_qset.exists() is True
 
+    def test_successful_program_letter_generation_with_electives(self):
+        """
+        Test a program with elective courses
+        """
+        self.program.financial_aid_availability = False
+        self.program.save()
+
+        electives_set = ElectivesSet.objects.create(program=self.program, required_number=1)
+
+        for i in range(2):
+            run_elective = CourseRunFactory.create(
+                freeze_grade_date=now_in_utc() - timedelta(days=1),
+                course__program=self.program,
+            )
+            FinalGradeFactory.create(
+                user=self.user,
+                course_run=run_elective,
+                passed=True,
+                status='complete',
+                grade=0.7
+            )
+            CourseRunGradingStatus.objects.create(course_run=run_elective, status='complete')
+            ElectiveCourse.objects.create(course=run_elective.course, electives_set=electives_set)
+
+        letter_qset = MicromastersProgramCommendation.objects.filter(user=self.user, program=self.program)
+        assert letter_qset.exists() is False
+        api.generate_program_letter(self.user, self.program)
+        assert letter_qset.exists() is False
+        with mute_signals(post_save):
+            FinalGradeFactory.create(
+                user=self.user,
+                course_run=self.run_1,
+                passed=True,
+                status='complete',
+                grade=0.8
+            )
+        api.generate_program_letter(self.user, self.program)
+        assert letter_qset.exists() is True
+
     def test_with_fa_program(self):
         """
         Test that letter won't be created if program is FA-enabled
