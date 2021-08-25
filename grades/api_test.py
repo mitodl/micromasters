@@ -568,7 +568,7 @@ class GenerateProgramLetterApiTests(MockedESTestCase):
 
         electives_set = ElectivesSet.objects.create(program=self.program, required_number=1)
 
-        for i in range(2):
+        for _ in range(2):
             run_elective = CourseRunFactory.create(
                 freeze_grade_date=now_in_utc() - timedelta(days=1),
                 course__program=self.program,

@@ -18,7 +18,7 @@ from grades.models import (
     FinalGrade,
     FinalGradeStatus,
     MicromastersProgramCertificate,
-    CombinedFinalGrade, MicromastersCourseCertificate,
+    CombinedFinalGrade,
     ProctoredExamGrade, MicromastersProgramCommendation)
 
 CACHE_KEY_FAILED_USERS_BASE_STR = "failed_users_{0}"
