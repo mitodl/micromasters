@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.203.0
+Version 0.203.0 (Released August 26, 2021)
 ---------------
 
 - Adding support for cached enrollments and grades for mitxonline backend
