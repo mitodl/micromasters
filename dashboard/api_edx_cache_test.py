@@ -9,7 +9,7 @@ import ddt
 from requests.exceptions import HTTPError
 from edx_api.certificates.models import Certificate, Certificates
 from edx_api.enrollments.models import Enrollment, Enrollments
-from edx_api.grades.models import CurrentGrade, CurrentGrades
+from edx_api.grades.models import CurrentGrade, CurrentGradesByUser
 
 from backends.constants import BACKEND_EDX_ORG, BACKEND_MITX_ONLINE
 from backends.edxorg import EdxOrgOAuth2
@@ -83,7 +83,7 @@ class CachedEdxUserDataTests(MockedESTestCase):
         edx_user_data = CachedEdxUserData(self.user)
         assert isinstance(edx_user_data.enrollments, Enrollments)
         assert isinstance(edx_user_data.certificates, Certificates)
-        assert isinstance(edx_user_data.current_grades, CurrentGrades)
+        assert isinstance(edx_user_data.current_grades, CurrentGradesByUser)
         self.assert_edx_data_has_given_ids(edx_user_data, self.p1_course_run_keys + self.p2_course_run_keys)
 
     def test_edx_data_with_program(self):
@@ -137,7 +137,7 @@ class CachedEdxDataApiTests(MockedESTestCase):
         for grade in load_json_from_file('dashboard/fixtures/current_grades.json'):
             grade.update({'username': cls.user.username})
             current_grades_json.append(grade)
-        cls.current_grades = CurrentGrades([CurrentGrade(grade_json) for grade_json in current_grades_json])
+        cls.current_grades = CurrentGradesByUser([CurrentGrade(grade_json) for grade_json in current_grades_json])
 
         cls.certificates_ids = set(cls.certificates.all_courses_certs)
         cls.verified_certificates_ids = set(cls.certificates.all_courses_verified_certs)

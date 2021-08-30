@@ -20,7 +20,7 @@ from edx_api.certificates import (
 from edx_api.enrollments import Enrollments
 from edx_api.grades import (
     CurrentGrade,
-    CurrentGrades
+    CurrentGradesByUser
 )
 
 from courses.models import CourseRun, Program
@@ -187,7 +187,7 @@ class CachedCurrentGrade(CachedEdxInfoModel):
 
         Returns: CachedCurrentGrade: an edX CachedCurrentGrade object
         """
-        return CurrentGrades([
+        return CurrentGradesByUser([
             CurrentGrade(data) for data in data_iter
         ])
 
