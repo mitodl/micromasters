@@ -61,6 +61,8 @@
     color: #fff;
     height: 50px;
     line-height: 50px;
+    display: inline-block;
+    padding: 0 3px;
   }
 
   &.button-signup, &.button-login {
@@ -68,6 +70,8 @@
     text-decoration: none;
     height: 38px;
     box-shadow: none;
+    display: inline-block;
+    padding: 0 3px;
   }
 
   &.button-signup {

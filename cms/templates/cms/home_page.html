@@ -67,8 +67,8 @@
               </button>
             </div>
             <ul class="toast-actions">
-              <li><button class="mm-minor-action open-signup-dialog">Sign In</button></li>
-              <li><button class="mm-minor-action open-signup-dialog">Create Account</button></li>
+              <li><a class="mm-minor-action" href="{% url 'signin' %}">Sign In</a></li>
+              <li><a class="mm-minor-action" href="{% url 'signin' %}">Create Account</a></li>
             </ul>
           </div>
         {% endif %}
@@ -240,10 +240,6 @@
     {% include "adwords.html" %}
   {% endif %}
   {% include "footer.html" %}
-
-<div id="signup-dialog">
-  <!-- signup dialog React component injected here -->
-</div>
 
 {% load render_bundle %}
 {% render_bundle "public" "defer" %}

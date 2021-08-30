@@ -1344,23 +1344,5 @@ describe("LearnerPage", function() {
         }
       )
     })
-
-    it("should show sign in button with valid link", () => {
-      const username = USER_PROFILE_RESPONSE.username
-      return renderComponent(`/learner/${username}`, anonymousUserActions).then(
-        ([wrapper]) => {
-          assert.equal(wrapper.find(".button-login").text(), "Sign In")
-          assert.equal(
-            wrapper.find(".button-login").prop("href"),
-            "/login/edxorg/"
-          )
-          assert.equal(wrapper.find(".button-signup").text(), "Create Account")
-          assert.equal(
-            wrapper.find(".button-signup").prop("href"),
-            "/login/edxorg/"
-          )
-        }
-      )
-    })
   })
 })

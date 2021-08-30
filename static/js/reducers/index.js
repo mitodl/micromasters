@@ -31,7 +31,6 @@ import { email } from "./email"
 import { currentProgramEnrollment, programs } from "./programs"
 import type { Action } from "../flow/reduxTypes"
 import type { ProfileGetResult, Profiles } from "../flow/profileTypes"
-import { signupDialog } from "./signup_dialog"
 import { imageUpload } from "./image_upload"
 import { financialAid } from "./financial_aid"
 import { documents } from "./documents"
@@ -209,7 +208,6 @@ export default combineReducers({
   checkout,
   programs,
   currentProgramEnrollment,
-  signupDialog,
   shareDialog,
   sendDialog,
   revokeShareDialog,

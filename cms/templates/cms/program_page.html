@@ -64,12 +64,12 @@
                   target="blank">Learn More</a>
         {% else %}
           {% if not authenticated %}
-            <button class="mdl-button hero-button open-signup-dialog mdl-cell--hide-phone">
+            <a href="{% url 'signin' %}?program={{page.program.id}}" class="mdl-button hero-button mdl-cell--hide-phone">
               Create Account
-            </button>
+            </a>
             <div class="log-in mdl-cell--hide-phone">
               Already a Member?
-              <a href="/login/edxorg">
+              <a href="{% url 'signin' %}?program={{page.program.id}}">
                 Sign In
               </a>
             </div>
@@ -177,10 +177,6 @@
 {% endif %}
 {% include "faqs.html" %}
 {% include "footer.html" %}
-
-<div id="signup-dialog">
-  <!-- signup dialog React component injected here -->
-</div>
 {% load render_bundle %}
 {% render_bundle "public" "defer" %}
 <script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>

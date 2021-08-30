@@ -99,18 +99,15 @@ export default class ProgramSelector extends React.Component {
     const options = this.makeOptions()
 
     if (!SETTINGS.user) {
+      if (!SETTINGS.program) {
+        return null
+      }
       return (
         <div className="user-menu no-auth">
-          <a
-            href="/login/edxorg/"
-            className="mdl-button button-login open-signup-dialog"
-          >
+          <a href="/signin/" className="mdl-button button-login">
             Sign In
           </a>
-          <a
-            href="/login/edxorg/"
-            className="mdl-button button-signup open-signup-dialog"
-          >
+          <a href="/signin/" className="mdl-button button-signup">
             Create Account
           </a>
         </div>

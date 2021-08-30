@@ -53,7 +53,7 @@ def test_anonymous_user_403(client):
     """
     response = client.get(reverse('discussions'))
     assert response.status_code == 302
-    assert response.url == '/?next={}'.format(reverse('discussions'))
+    assert response.url == '/signin/?next={}'.format(reverse('discussions'))
     assert 'jwt_cookie' not in response.client.cookies
 
 

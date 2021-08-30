@@ -11,6 +11,8 @@ from ui.url_utils import (
 from ui.views import (
     DashboardView,
     UsersView,
+    SignInView,
+    MitxOnlineRequiredView,
     terms_of_service,
     page_404,
     page_500,
@@ -33,6 +35,8 @@ dashboard_urlpatterns = [
 
 urlpatterns = [
     url(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
+    url(r'^signin/$', SignInView.as_view(), name='signin'),
+    url(r'^signin/mitxonline$', MitxOnlineRequiredView.as_view(), name='mitx-online-required'),
     url(r'^404/$', page_404, name='ui-404'),
     url(r'^500/$', page_500, name='ui-500'),
     url(r'^verify-email/$', need_verified_email, name='verify-email'),

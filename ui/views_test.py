@@ -3,7 +3,7 @@ Test end to end django views.
 """
 import json
 from unittest.mock import patch, Mock
-from urllib.parse import quote_plus
+from urllib.parse import urlencode
 
 import ddt
 from django.db.models.signals import post_save
@@ -26,6 +26,7 @@ from cms.factories import (
 from cms.models import HomePage, ProgramPage
 from cms.serializers import ProgramPageSerializer
 from courses.factories import ProgramFactory, CourseFactory
+from ecommerce.factories import CouponFactory
 from micromasters.serializers import serialize_maybe_user
 from micromasters.factories import UserSocialAuthFactory
 from profiles.factories import ProfileFactory, SocialProfileFactory
@@ -223,16 +224,6 @@ class TestHomePage(ViewsTests):
         indexes = [content.find("Program {}".format(i + 1)) for i in range(10)]
         assert indexes == sorted(indexes)
 
-    def test_anonymous_coupon(self):
-        """
-        Assert that a coupon in the query parameter will show up in the context and in the page
-        """
-        code = "co de"
-        next_url = "/dashboard?coupon={}".format(quote_plus(code))
-        resp = self.client.get("/?next={}".format(quote_plus(next_url)))
-        assert resp.context['coupon_code'] == code
-        self.assertContains(resp, "You need to Sign up or Login before you can apply this coupon")
-
 
 class DashboardTests(ViewsTests):
     """
@@ -336,7 +327,7 @@ class DashboardTests(ViewsTests):
         response = self.client.get(DASHBOARD_URL)
         self.assertRedirects(
             response,
-            "/?next={}".format(DASHBOARD_URL)
+            "/signin/?next={}".format(DASHBOARD_URL)
         )
 
     def test_authenticated_user_doesnt_redirect(self):
@@ -893,3 +884,36 @@ class TestTermsOfService(ViewsTests):
             'style_public',
             'zendesk_widget',
         }
+
+class TestSignIn(ViewsTests):
+    """ Tests for the sign in page """
+
+    def test_login_program_coupon_redirect(self):
+        """ Test that the login page redirects if the next url has a coupon for a program """
+        with self.settings(FEATURES={
+            "MITXONLINE_LOGIN": True
+        }):
+            coupon = CouponFactory.create(program=True)
+            next_url = f"/dashboard/?coupon={coupon.coupon_code}"
+            response = self.client.get(f"{reverse('signin')}?{urlencode({'next': next_url})}")
+            redirect_params = urlencode({
+                'next': next_url,
+                'program': coupon.content_object.id
+            })
+            assert response.status_code == 302
+            assert response.url == f"{reverse('signin')}?{redirect_params}"
+
+    def test_login_course_coupon_redirect(self):
+        """ Test that the login page redirects if the next url has a coupon for a course """
+        with self.settings(FEATURES={
+            "MITXONLINE_LOGIN": True
+        }):
+            coupon = CouponFactory.create(course=True)
+            next_url = f"/dashboard/?coupon={coupon.coupon_code}"
+            response = self.client.get(f"{reverse('signin')}?{urlencode({'next': next_url})}")
+            redirect_params = urlencode({
+                'next': next_url,
+                'program': coupon.content_object.program.id
+            })
+            assert response.status_code == 302
+            assert response.url == f"{reverse('signin')}?{redirect_params}"

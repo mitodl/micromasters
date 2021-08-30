@@ -28,13 +28,10 @@ import {
   fetchJSONWithCSRF
 } from "redux-hammock/django_csrf_fetch"
 
-const loginOnEdXError = (response: Response) => {
+const logoutOnError = (response: Response) => {
   if (response.errorStatusCode === 400 || response.errorStatusCode === 401) {
-    const relativePath = window.location.pathname + window.location.search
-    const loginRedirect = `/login/edxorg/?next=${encodeURIComponent(
-      relativePath
-    )}`
-    window.location = `/logout?next=${encodeURIComponent(loginRedirect)}`
+    const nextUrl = window.location.pathname + window.location.search
+    window.location = `/logout?next=${encodeURIComponent(nextUrl)}`
   }
 }
 
@@ -61,7 +58,7 @@ export async function getDashboard(username: string): Promise<Dashboard> {
     const response = await fetchJSONWithCSRF(`/api/v0/dashboard/${username}/`)
     return response
   } catch (response) {
-    loginOnEdXError(response)
+    logoutOnError(response)
     return Promise.reject(response)
   }
 }
@@ -137,7 +134,7 @@ export async function getPrograms(): Promise<AvailablePrograms> {
     const response = await fetchJSONWithCSRF("/api/v0/programs/")
     return response
   } catch (response) {
-    loginOnEdXError(response)
+    logoutOnError(response)
     return Promise.reject(response)
   }
 }

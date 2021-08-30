@@ -3,9 +3,11 @@ ui views
 """
 import json
 import logging
+from urllib.parse import urlencode
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.db.models import Exists, OuterRef
 from django.urls import reverse
 from django.shortcuts import Http404, redirect, render
 from django.utils.decorators import method_decorator
@@ -14,23 +16,35 @@ from django.views.generic import View, TemplateView
 from rolepermissions.permissions import available_perm_status
 from rolepermissions.checkers import has_role
 
+from backends.constants import BACKEND_MITX_ONLINE
+from cms.util import get_coupon_code
+from courses.models import Program, Course, CourseRun
+from ecommerce.models import Coupon
 from micromasters.utils import webpack_dev_server_host
 from micromasters.serializers import serialize_maybe_user
 from profiles.permissions import CanSeeIfNotPrivate
 from roles.models import Instructor, Staff
-from ui.decorators import require_mandatory_urls
+from ui.decorators import require_mandatory_urls, require_mitxonline_auth
 from ui.templatetags.render_bundle import public_path
 
 log = logging.getLogger(__name__)
 
 
-class ReactView(View):  # pylint: disable=unused-argument
+class ReactView(View):
     """
     Abstract view for templates using React
     """
-    def get(self, request, *args, **kwargs):  # pylint: disable=unused-argument
+    template_name = "dashboard.html"
+
+    def get_context(self, request):
         """
-        Handle GET requests to templates using React
+        Get the context for the view
+
+        Args:
+            request (Request): the incoming request
+
+        Returns:
+            dict: the context object as a dictionary
         """
         user = request.user
         roles = []
@@ -68,16 +82,22 @@ class ReactView(View):  # pylint: disable=unused-argument
             "open_discussions_redirect_url": settings.OPEN_DISCUSSIONS_REDIRECT_URL,
         }
 
+        return {
+            "has_zendesk_widget": True,
+            "is_public": False,
+            "google_maps_api": False,
+            "js_settings_json": json.dumps(js_settings),
+            "ga_tracking_id": "",
+        }
+
+    def get(self, request, *args, **kwargs):  # pylint: disable=unused-argument
+        """
+        Handle GET requests to templates using React
+        """
         return render(
             request,
-            "dashboard.html",
-            context={
-                "has_zendesk_widget": True,
-                "is_public": False,
-                "google_maps_api": False,
-                "js_settings_json": json.dumps(js_settings),
-                "ga_tracking_id": "",
-            }
+            self.template_name,
+            context=self.get_context(request),
         )
 
     def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
@@ -85,6 +105,7 @@ class ReactView(View):  # pylint: disable=unused-argument
         return redirect(request.build_absolute_uri())
 
 
+@method_decorator(require_mitxonline_auth, name='dispatch')
 @method_decorator(require_mandatory_urls, name='dispatch')
 @method_decorator(login_required, name='dispatch')
 @method_decorator(csrf_exempt, name='dispatch')
@@ -112,6 +133,102 @@ class UsersView(ReactView):
             raise Http404
 
         return super().get(request, *args, **kwargs)
+
+
+class SignInView(ReactView):
+    """Sign In view"""
+    template_name = "signin.html"
+
+    def get_context(self, request):
+        """
+        Get the context for the view
+
+        Args:
+            request (Request): the incoming request
+
+        Returns:
+            dict: the context object as a dictionary
+        """
+        context = super().get_context(request)
+
+        program_id = request.GET.get('program', None)
+        next_url = request.GET.get('next', None)
+        mitxonline_enabled = settings.FEATURES.get("MITXONLINE_LOGIN", False)
+
+        program = Program.objects.filter(id=program_id[0]).first() if mitxonline_enabled and program_id else None
+        params = {"next": next_url}
+        return {
+            **context,
+            "program": program,
+            "login_qs": f"?{urlencode(params)}" if next_url else '',
+        }
+
+    def get(self, request, *args, **kwargs):  # pylint: disable=unused-argument
+        """
+        Handle GET requests to templates using React
+        """
+        context = self.get_context(request)
+        coupon_code = get_coupon_code(request)
+
+        # if we didn't get a program in the context, look it up via the coupon code
+        if (
+            settings.FEATURES.get("MITXONLINE_LOGIN", False)
+            and coupon_code
+            and context["program"] is None
+        ):
+            program = None
+
+            coupon = Coupon.objects.filter(coupon_code=coupon_code).first()
+
+            if coupon is not None:
+                if isinstance(coupon.content_object, Program):
+                    program = coupon.content_object
+                elif isinstance(coupon.content_object, Course):
+                    program = coupon.content_object.program
+
+
+            if program:
+                params = request.GET.copy()
+                params["program"] = program.id
+
+                return redirect(
+                    f"{reverse('signin')}?{params.urlencode()}",
+                )
+
+        return render(
+            request,
+            self.template_name,
+            context=context,
+        )
+
+
+# @method_decorator(login_required, name='dispatch')
+class MitxOnlineRequiredView(ReactView):
+    """View to notify the learner that it's required to signin via mitx online"""
+    template_name = "mitx-online-required.html"
+
+    def get_context(self, request):
+        """
+        Get the context for the view
+
+        Args:
+            request (Request): the incoming request
+
+        Returns:
+            dict: the context object as a dictionary
+        """
+        return {
+            **super().get_context(request),
+            "mitxonline_programs": Program.objects.annotate(
+                has_mitxonline_courserun=Exists(CourseRun.objects.filter(
+                    course__program=OuterRef('pk'),
+                    courseware_backend=BACKEND_MITX_ONLINE
+                ))
+            ).filter(
+                has_mitxonline_courserun=True,
+                programenrollment__user=request.user
+            )
+        }
 
 
 def standard_error_page(request, status_code, template_filename):

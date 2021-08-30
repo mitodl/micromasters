@@ -14,10 +14,10 @@
             Sign Out
           </a>
           {% else %}
-          <button class="mdl-button button-login open-signup-dialog">Sign In</button>
-          <button class="mdl-button button-signup open-signup-dialog">
+          <a class="mdl-button button-login" href="{% url 'signin' %}">Sign In</a>
+          <a class="mdl-button button-signup" href="{% url 'signin' %}">
             Create Account
-          </button>
+          </a>
           {% endif %}
         </div>
       </div>

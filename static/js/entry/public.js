@@ -17,7 +17,6 @@ import {
 
 import CourseListWithPopover from "../components/CourseListWithPopover"
 import FacultyCarousel from "../components/FacultyCarousel"
-import { setDialogVisibility } from "../actions/signup_dialog"
 import {
   setShareDialogVisibility,
   setRecordShareLink
@@ -27,10 +26,8 @@ import { setSendDialogVisibility } from "../actions/send_grades_dialog"
 import {
   shareGradesDialogStore,
   sendGradesDialogStore,
-  signupDialogStore,
   revokeShareGradesDialogStore
 } from "../store/configureStore"
-import SignupDialog from "../containers/SignupDialog"
 import CopyLinkDialog from "../containers/CopyLinkDialog"
 import RevokeShareDialog from "../containers/RevokeShareDialog"
 
@@ -185,32 +182,6 @@ if (shareOptionsDiv) {
   }
   updateButtonDisplays()
 }
-// Signup dialog
-const store = signupDialogStore()
-
-const dialogDiv = document.querySelector("#signup-dialog")
-
-const openDialog = () => store.dispatch(setDialogVisibility(true))
-
-const nodes = [...document.querySelectorAll(".open-signup-dialog")]
-
-const url = new URL(window.location.href)
-if (url.searchParams.get("next")) {
-  openDialog()
-}
-
-nodes.forEach(signUpButton => {
-  signUpButton.onclick = openDialog
-})
-
-ReactDOM.render(
-  <MuiThemeProvider theme={createMuiTheme()}>
-    <Provider store={store}>
-      <SignupDialog />
-    </Provider>
-  </MuiThemeProvider>,
-  dialogDiv
-)
 
 /* =================================
 ===  MAILCHIMP                 ====
