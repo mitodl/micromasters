@@ -1,14 +1,14 @@
-.signup-dialog {
-  color: $font-black;
-  padding: 50px;
+#signin-page .main-content-wrapper {
   max-width: 500px !important;
+  margin: 0 auto;
 
   @include breakpoint(phone) {
     margin: 10px 16px;
   }
 
   .logos {
-    margin: 10px auto;
+    margin: 10px 0;
+    text-align: center;
 
     img {
       height: 38px;
@@ -39,4 +39,13 @@
     line-height: 1.4em;
     color: #616161;
   }
+}
+
+.auth-card {
+  color: $font-black;
+  padding: 50px;
+  background-color: #fff;
+  border-radius: 4px;
+  margin: 15px 0;
+  box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 2px 1px -1px rgba(0,0,0,0.12);
 }

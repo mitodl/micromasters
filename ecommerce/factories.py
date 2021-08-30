@@ -16,7 +16,6 @@ from factory.fuzzy import (
 import faker
 
 from courses.factories import (
-    CourseRunFactory,
     CourseFactory,
     ProgramFactory,
 )
@@ -110,11 +109,8 @@ class CouponFactory(DjangoModelFactory):
             amount=FuzzyDecimal(50, 1000),
         )
         program = Trait(
-            content_object=SubFactory(ProgramFactory)
+            content_object=SubFactory(ProgramFactory, financial_aid_availability=True)
         )
         course = Trait(
-            content_object=SubFactory(CourseFactory)
-        )
-        course_run = Trait(
-            content_object=SubFactory(CourseRunFactory)
+            content_object=SubFactory(CourseFactory, program__financial_aid_availability=True)
         )

@@ -41,10 +41,12 @@ import {
 
 describe("api", function() {
   this.timeout(5000) // eslint-disable-line no-invalid-this
+  const startingUrl = "/dashboard/"
 
   let sandbox
   beforeEach(() => {
     sandbox = sinon.sandbox.create()
+    window.location = startingUrl
   })
   afterEach(function() {
     sandbox.restore()
@@ -163,10 +165,10 @@ describe("api", function() {
           return getDashboard().then(
             () => {},
             () => {
-              const redirectUrl = `/logout?next=${encodeURIComponent(
-                "/login/edxorg/"
+              const redirectUrl = `http://fake/logout?next=${encodeURIComponent(
+                startingUrl
               )}`
-              assert.include(window.location.toString(), redirectUrl)
+              assert.equal(window.location.toString(), redirectUrl)
             }
           )
         })
@@ -314,10 +316,10 @@ describe("api", function() {
           return getPrograms().then(
             () => {},
             () => {
-              const redirectUrl = `/logout?next=${encodeURIComponent(
-                "/login/edxorg/"
+              const redirectUrl = `http://fake/logout?next=${encodeURIComponent(
+                startingUrl
               )}`
-              assert.include(window.location.toString(), redirectUrl)
+              assert.equal(window.location.toString(), redirectUrl)
             }
           )
         })

@@ -45,7 +45,6 @@ describe("auth library", () => {
 
       const resp = await fetchJSONWithAuthToken(endpointUrl)
       assert.deepEqual(resp, { some: "data", so: "great" })
-
       assert.deepEqual(fetchMock.calls().matched, [
         [endpointUrl, { credentials: "include" }],
         [discussionTokenUrl, { credentials: "include" }],

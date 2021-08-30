@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "MITx MicroMasters" %}{% endblock %}
+{% block bodyclass %}signin-page{% endblock %}
+
+{% block content %}
+
+<div id="signin-page">
+{% include "header.html" %}
+
+<div class="main-content-wrapper">
+  <div class="auth-card">
+  <div class="logos">
+    <img
+      class="mitx_logo"
+      src="/static/images/logo-mitxonline.png"
+      alt="MITx"
+    />
+  </div>
+  <p>Courses for {% for program in mitxonline_programs %}
+    {% if forloop.first %}{% else %}
+        {% if forloop.last %} and {% else %}, {% endif %}
+    {% endif %}<strong>{{program.title}}</strong>
+{% endfor %} are now offered on MITx Online.</p>
+  <p>Please create a new account on MITx Online which will be linked to your existing MicroMasters account.</p>
+
+  <a href="{% url 'social:begin' 'mitxonline' %}" class="mdl-button signup-modal-button centered-content">
+    Create MITx Online Account
+  </a>
+</div>
+</div>
+</div>
+{% include "faqs.html" %}
+{% include "footer.html" %}
+
+{% load render_bundle %}
+{% render_bundle 'dashboard' %}
+{% endblock %}

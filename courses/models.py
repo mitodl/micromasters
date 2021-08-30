@@ -15,7 +15,7 @@ from micromasters.utils import (
     now_in_utc,
 )
 
-from backends.constants import BACKEND_EDX_ORG, COURSEWARE_BACKENDS
+from backends.constants import BACKEND_EDX_ORG, BACKEND_MITX_ONLINE, COURSEWARE_BACKENDS
 
 log = logging.getLogger(__name__)
 
@@ -53,6 +53,12 @@ class Program(TimestampedModel):
         Return true if has frozen grades for all courses in the program
         """
         return all([course.has_frozen_runs() for course in self.course_set.all()])
+
+    def has_mitxonline_courses(self):
+        """
+        Return true if as least one course has at least one run that is on mitxonline
+        """
+        return CourseRun.objects.filter(course__program=self, courseware_backend=BACKEND_MITX_ONLINE).exists()
 
 
 class Course(models.Model):

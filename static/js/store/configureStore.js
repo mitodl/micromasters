@@ -11,7 +11,6 @@ import configureTestStore from "redux-asserts"
 import type { Reducer } from "redux"
 
 import rootReducer from "../reducers"
-import { INITIAL_SIGNUP_STATE } from "../reducers/signup_dialog"
 import { INITIAL_SHARE_STATE } from "../reducers/share_grades_dialog"
 import { INITIAL_SEND_STATE } from "../reducers/send_grades_dialog"
 import { INITIAL_REVOKE_SHARE_STATE } from "../reducers/revoke_shared_records_dialog"
@@ -70,10 +69,6 @@ export const configureMainTestStore = (reducer: Reducer<*, *>) => {
   )
 
   return createPersistentTestStore(persistence)(reducer)
-}
-
-export const signupDialogStore = () => {
-  return configureStore({ signupDialog: INITIAL_SIGNUP_STATE })
 }
 
 export const shareGradesDialogStore = () => {
