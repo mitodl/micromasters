@@ -420,7 +420,7 @@ class MMTrackTest(MockedESTestCase):
         assert mmtrack.get_current_grade("course-v1:odl+FOO101+CR-FALL15") is None
 
         # case when the grade is not available from edx
-        with patch('edx_api.grades.models.CurrentGrades.get_current_grade', return_value=None):
+        with patch('edx_api.grades.models.CurrentGradesByUser.get_current_grade', return_value=None):
             assert mmtrack.get_current_grade("course-v1:MITx+8.MechCX+2014_T1") is None
 
     def test_count_courses_passed_normal(self):

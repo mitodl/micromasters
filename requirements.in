@@ -17,7 +17,7 @@ django-storages-redux==1.3.2
 django-storages==1.9.1
 django-webpack-loader==0.5.0
 djangorestframework==3.11.2
-edx-api-client==0.6.1
+edx-api-client==1.0.1
 edx-opaque-keys==0.4
 elasticsearch-dsl==6.3.1
 elasticsearch==6.3.1
