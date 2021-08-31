@@ -18,7 +18,7 @@ from grades.models import (
     FinalGrade,
     FinalGradeStatus,
     MicromastersProgramCertificate,
-    CombinedFinalGrade, MicromastersCourseCertificate,
+    CombinedFinalGrade,
     ProctoredExamGrade, MicromastersProgramCommendation)
 
 CACHE_KEY_FAILED_USERS_BASE_STR = "failed_users_{0}"
@@ -231,33 +231,43 @@ def generate_program_certificate(user, program):
     if MicromastersProgramCertificate.objects.filter(user=user, program=program).exists():
         log.warning('User [%s] already has a certificate for program [%s]', user, program)
         return
+    if completed_program(user, program):
+        MicromastersProgramCertificate.objects.create(user=user, program=program)
+        log.info(
+            'Created MM program certificate for [%s] in program [%s]',
+            user.username,
+            program.title
+        )
 
+
+def completed_program(user, program):
+    """
+    Check if the user passed all required courses and satisfied all elective
+    requirements.
+
+    Args:
+        user (User): a Django user.
+        program (programs.models.Program): program where the user is enrolled.
+
+    Returns:
+        bool: if user passed all requirements to complete the program
+    """
+    mmtrack = get_mmtrack(user, program)
     for electives_set in ElectivesSet.objects.filter(program=program):
         elective_courses_id = set(electives_set.electivecourse_set.all().values_list('course__id', flat=True))
-        num_electives_with_cert = MicromastersCourseCertificate.objects.filter(
-            user=user,
-            course_id__in=elective_courses_id
-        ).values_list('course__id', flat=True).distinct().count()
-        if electives_set.required_number > num_electives_with_cert:
-            return
+
+        # each elective set should be fulfilled
+        if electives_set.required_number > mmtrack.get_number_of_passed_courses(elective_courses_id):
+            return False
 
     # filtering out the courses that are not elective
-    courses_in_program_ids = set(program.course_set.filter(electivecourse=None).values_list('id', flat=True))
+    core_courses_ids = set(program.course_set.filter(electivecourse=None).values_list('id', flat=True))
 
-    num_courses_with_cert = MicromastersCourseCertificate.objects.filter(
-        user=user,
-        course_id__in=courses_in_program_ids
-    ).values_list('course__id', flat=True).distinct().count()
+    # checking all core courses are passed
+    if len(core_courses_ids) > mmtrack.get_number_of_passed_courses(core_courses_ids):
+        return False
 
-    if len(courses_in_program_ids) > num_courses_with_cert:
-        return
-
-    MicromastersProgramCertificate.objects.create(user=user, program=program)
-    log.info(
-        'Created MM program certificate for [%s] in program [%s]',
-        user.username,
-        program.title
-    )
+    return True
 
 
 def generate_program_letter(user, program):
@@ -277,22 +287,13 @@ def generate_program_letter(user, program):
             MicromastersProgramCertificate.objects.filter(user=user, program=program).exists()):
         MicromastersProgramCommendation.objects.create(user=user, program=program)
         return
-
-    mmtrack = get_mmtrack(user, program)
-    courses_passed = mmtrack.count_courses_passed()
-    program_course_count = (program.num_required_courses
-                            if program.electives_set.exists()
-                            else program.course_set.count())
-
-    if courses_passed < program_course_count:
-        return
-
-    MicromastersProgramCommendation.objects.create(user=user, program=program)
-    log.info(
-        'Created MM program letter for [%s] in program [%s]',
-        user.username,
-        program.title
-    )
+    if completed_program(user, program):
+        MicromastersProgramCommendation.objects.create(user=user, program=program)
+        log.info(
+            'Created MM program letter for [%s] in program [%s]',
+            user.username,
+            program.title
+        )
 
 
 def update_or_create_combined_final_grade(user, course):
