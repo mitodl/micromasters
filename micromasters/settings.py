@@ -458,10 +458,6 @@ if (
     )
 if MICROMASTERS_USE_S3:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-else:
-    # by default use django.core.files.storage.FileSystemStorage with
-    # overwrite feature
-    DEFAULT_FILE_STORAGE = 'storages.backends.overwrite.OverwriteStorage'
 
 # Celery
 USE_CELERY = True
