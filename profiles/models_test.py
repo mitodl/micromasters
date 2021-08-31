@@ -77,14 +77,9 @@ class ImageTests(MockedESTestCase):
             mocked_now_in_utc.return_value = now_in_utc()
             with mute_signals(post_save):
                 profile = ProfileFactory.create()
-
-            assert profile.image.url.endswith(profile_image_upload_uri(None, "example.jpg").replace("+", ""))
-            assert profile.image_small.url.endswith(
-                profile_image_upload_uri_small(None, "example.jpg").replace("+", "")
-            )
-            assert profile.image_medium.url.endswith(
-                profile_image_upload_uri_medium(None, "example.jpg").replace("+", "")
-            )
+            assert profile_image_upload_uri(None, "example").replace("+", "") in profile.image.url
+            assert profile_image_upload_uri_small(None, "example").replace("+", "") in profile.image_small.url
+            assert profile_image_upload_uri_medium(None, "example").replace("+", "") in profile.image_medium.url
 
 
 class ProfileAddressTests(MockedESTestCase):
