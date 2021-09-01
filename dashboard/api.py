@@ -775,7 +775,7 @@ def update_cache_for_backend(user, provider):
         # create an instance of the client to query edX
         edx_client = EdxApi(user_social.extra_data, COURSEWARE_BACKEND_URL[provider])
         try:
-            for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
+            for cache_type in CachedEdxDataApi.CACHE_TYPES_BACKEND[provider]:
                 CachedEdxDataApi.update_cache_if_expired(user, edx_client, cache_type, provider)
         except InvalidCredentialStored:
             # this needs to raise in order to force the user re-login

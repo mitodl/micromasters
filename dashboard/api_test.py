@@ -52,6 +52,7 @@ from micromasters.utils import (
     is_subset_dict,
     now_in_utc,
 )
+from profiles.api import get_social_auth
 from profiles.factories import SocialProfileFactory
 from search.base import MockedESTestCase
 from seed_data.lib import set_course_run_current, add_paid_order_for_course
@@ -1781,7 +1782,9 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
 
         result = api.get_user_program_info(self.user)
         assert mock_token_refresh.call_count == 2
-        assert mock_cache_refresh.call_count == 6
+        assert mock_cache_refresh.call_count == len(
+            CachedEdxDataApi.MITXONLINE_SUPPORTED_CACHES+CachedEdxDataApi.SUPPORTED_CACHES
+        )
 
         assert len(result['programs']) == 2
         for program_result in result['programs']:
@@ -2431,6 +2434,24 @@ def test_refresh_user_data(db, mocker):
     edx_api_init.assert_called_once_with(user_social.extra_data, settings.EDXORG_BASE_URL)
     for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
         update_cache_mock.assert_any_call(user, edx_api, cache_type, BACKEND_EDX_ORG)
+
+
+@pytest.mark.parametrize("provider", COURSEWARE_BACKENDS)
+def test_update_cache_for_backend(db, mocker, provider):
+    """update_cache_for_backend should refresh both courseware backends"""
+    user = _make_fake_real_user()
+    refresh_user_token_mock = mocker.patch('dashboard.api.utils.refresh_user_token', autospec=True)
+    edx_api = mocker.Mock()
+    edx_api_init = mocker.patch('dashboard.api.EdxApi', autospec=True, return_value=edx_api)
+    update_cache_mock = mocker.patch('dashboard.api.CachedEdxDataApi.update_cache_if_expired')
+
+    api.update_cache_for_backend(user, provider)
+
+    user_social = get_social_auth(user, provider)
+    refresh_user_token_mock.assert_called_once_with(user_social)
+    edx_api_init.assert_called_once_with(user_social.extra_data, COURSEWARE_BACKEND_URL[provider])
+    for cache_type in CachedEdxDataApi.CACHE_TYPES_BACKEND[provider]:
+        update_cache_mock.assert_any_call(user, edx_api, cache_type, provider)
 
 
 def test_refresh_missing_user(db, mocker):
