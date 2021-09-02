@@ -140,7 +140,7 @@ export const makeProgram = (): Program => {
     grade_records_url:       "",
     program_letter_url:      "",
     number_courses_required: courses.length,
-    number_courses_passed:   0,
+    number_courses_passed:   0
   }
 }
 
