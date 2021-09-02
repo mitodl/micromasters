@@ -432,7 +432,7 @@ class MMTrack:
 
     def count_courses_passed(self):
         """
-        Calculates number of passed courses in program.
+        Calculates the total number of passed courses in program.
 
         Returns:
             int: A number of passed courses.
@@ -492,6 +492,33 @@ class MMTrack:
             ).values_list('course__id', flat=True).distinct().count()
         else:
             return self.count_passed_final_grades_for_course_ids(course_ids)
+
+    def get_number_of_passed_courses_for_completion(self):
+        """
+        Count the number of courses the user passed for completion of the program
+        Takes into account elective courses, and counts only the number that is required to
+        complete the program.
+
+        Returns:
+            int: the number of passed unique courses
+        """
+
+        if self.program.electives_set.exists():
+            passed_courses = 0
+            for electives_set in self.program.electives_set.all():
+                elective_courses_id = set(electives_set.electivecourse_set.all().values_list('course__id', flat=True))
+
+                # each elective set should be fulfilled
+                passed_courses += min(
+                    electives_set.required_number, self.get_number_of_passed_courses(elective_courses_id)
+                )
+            core_courses_ids = set(self.program.course_set.filter(electivecourse=None).values_list('id', flat=True))
+
+            # checking the number of core courses passed
+            passed_courses += self.get_number_of_passed_courses(core_courses_ids)
+            return passed_courses
+        else:
+            return self.count_courses_passed()
 
     def get_exam_card_status(self):  # pylint: disable=too-many-return-statements
         """

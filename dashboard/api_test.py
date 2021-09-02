@@ -1824,6 +1824,7 @@ class InfoProgramTest(MockedESTestCase):
             'calculate_final_grade_average.return_value': 91,
             'get_program_certificate_url.return_value': "",
             'get_program_letter_url.return_value': "",
+            'get_number_of_passed_courses_for_completion.return_value': 0,
         })
         mock_info_course.return_value = {'position_in_program': 1}
         res = api.get_info_for_program(self.mmtrack)
@@ -1837,6 +1838,7 @@ class InfoProgramTest(MockedESTestCase):
             "financial_aid_availability": False,
             "exam_card_status": ExamProfile.PROFILE_SUCCESS,
             'number_courses_required': 3,
+            'number_courses_passed': 0,
             "grade_average": 91,
             "certificate": "",
         }
@@ -1853,6 +1855,7 @@ class InfoProgramTest(MockedESTestCase):
             'calculate_final_grade_average.return_value': 91,
             'get_program_certificate_url.return_value': "",
             'get_program_letter_url.return_value': "",
+            'get_number_of_passed_courses_for_completion.return_value': 0,
         })
         mock_info_course.return_value = {'position_in_program': 1}
 
@@ -1877,6 +1880,7 @@ class InfoProgramTest(MockedESTestCase):
             "financial_aid_availability": False,
             "exam_card_status": ExamProfile.PROFILE_SUCCESS,
             'number_courses_required': 5,
+            'number_courses_passed': 0,
             "grade_average": 91,
             "certificate": "",
         }
@@ -1892,6 +1896,7 @@ class InfoProgramTest(MockedESTestCase):
             'calculate_final_grade_average.return_value': 91,
             'get_program_certificate_url.return_value': "",
             'get_program_letter_url.return_value': "",
+            'get_number_of_passed_courses_for_completion.return_value': 0,
         })
         res = api.get_info_for_program(self.mmtrack)
         assert mock_info_course.called is False
@@ -1903,6 +1908,7 @@ class InfoProgramTest(MockedESTestCase):
             "financial_aid_availability": False,
             "exam_card_status": ExamProfile.PROFILE_INVALID,
             "number_courses_required": 0,
+            "number_courses_passed": 0,
             "grade_average": 91,
             "certificate": "",
         }
@@ -1920,6 +1926,7 @@ class InfoProgramTest(MockedESTestCase):
             'get_program_certificate_url.return_value': "",
             'get_program_enrollment.return_value': self.program_enrollment,
             'get_program_letter_url.return_value': "",
+            'get_number_of_passed_courses_for_completion.return_value': 0
         })
         serialized_fin_aid = {
             "id": 123,
@@ -1943,6 +1950,7 @@ class InfoProgramTest(MockedESTestCase):
             "financial_aid_user_info": serialized_fin_aid,
             "exam_card_status": ExamProfile.PROFILE_IN_PROGRESS,
             "number_courses_required": self.program.course_set.count(),
+            "number_courses_passed": 0,
             "grade_average": 91,
             "certificate": "",
             "grade_records_url": reverse('grade_records', args=[self.program_enrollment.id]),
@@ -1959,6 +1967,7 @@ class InfoProgramTest(MockedESTestCase):
             'calculate_final_grade_average.return_value': 91,
             'get_program_certificate_url.return_value': "",
             'get_program_letter_url.return_value': reverse('program_letter', args=[self.program_letter.uuid]),
+            'get_number_of_passed_courses_for_completion.return_value': 3,
         })
         mock_info_course.return_value = {'position_in_program': 1}
         res = api.get_info_for_program(self.mmtrack)
@@ -1972,6 +1981,7 @@ class InfoProgramTest(MockedESTestCase):
             "financial_aid_availability": False,
             "exam_card_status": ExamProfile.PROFILE_SUCCESS,
             "number_courses_required": self.program.course_set.count(),
+            "number_courses_passed": 3,
             "grade_average": 91,
             "certificate": "",
             "program_letter_url": reverse('program_letter', args=[self.program_letter.uuid])

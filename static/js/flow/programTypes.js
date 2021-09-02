@@ -40,6 +40,7 @@ export type Program = {
   grade_records_url:          string,
   program_letter_url:         string,
   number_courses_required:    number,
+  number_courses_passed:      number,
 }
 
 export type ProctoredExamResult = {

@@ -425,23 +425,6 @@ export function formatPrice(price: ?string | number | Decimal): string {
   }
 }
 
-/**
- * Returns number of passed courses in program.
- */
-export function programCourseInfo(program: Program): number {
-  let totalPassedCourses = 0
-
-  if (program.courses) {
-    const passedCourses = program.courses.filter(
-      // returns true if any course run has a `status` property set to STATUS_PASSED.
-      // $FlowFixMe: Flow thinks second arg is not a valid predicate
-      course => _.some(course.runs, ["status", STATUS_PASSED])
-    )
-    totalPassedCourses = passedCourses.length
-  }
-  return totalPassedCourses
-}
-
 export function findCourseRun(
   programs: Array<Program>,
   selector: (
