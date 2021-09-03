@@ -1261,12 +1261,14 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
       title:                      "Master Program",
       description:                null,
       financial_aid_availability: false,
-      id:                         4
+      id:                         4,
+      number_courses_passed:      1
     },
     {
       financial_aid_availability: false,
       title:                      "Missed deadline program",
       description:                "Missed deadline program",
+      number_courses_passed:      1,
       courses:                    [
         {
           id:                  9,
@@ -1295,14 +1297,16 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
       financial_aid_availability: false,
       title:                      "Empty program",
       description:                "The empty program",
+      number_courses_passed:      0,
       courses:                    [],
       id:                         2
     },
     {
-      title:            "Last program",
-      description:      "The last program",
-      exam_card_status: "",
-      courses:          [
+      title:                 "Last program",
+      description:           "The last program",
+      exam_card_status:      "",
+      number_courses_passed: 0,
+      courses:               [
         {
           id:                  13,
           position_in_program: 0,
@@ -1330,9 +1334,10 @@ export const DASHBOARD_RESPONSE: Dashboard = deepFreeze({
       id:                         6
     },
     {
-      title:       "Paid but not enrolled",
-      description: "Paid but not enrolled",
-      courses:     [
+      title:                 "Paid but not enrolled",
+      description:           "Paid but not enrolled",
+      number_courses_passed: 0,
+      courses:               [
         {
           id:                  24,
           position_in_program: 1,
