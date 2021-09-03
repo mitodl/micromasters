@@ -121,6 +121,8 @@ class UserCacheRefreshTimeFactory(DjangoModelFactory):
     certificate = FuzzyDateTime(now_in_utc() - timedelta(hours=6, minutes=15))
     # current grades expire after 1 hour, this generates a last request between 1:15 hours ago and now
     current_grade = FuzzyDateTime(now_in_utc() - timedelta(hours=1, minutes=15))
+    current_grade_mitxonline = FuzzyDateTime(now_in_utc() - timedelta(hours=1, minutes=15))
+    enrollment_mitxonline = FuzzyDateTime(now_in_utc() - timedelta(minutes=10))
 
     class Meta:
         model = UserCacheRefreshTime
@@ -130,11 +132,15 @@ class UserCacheRefreshTimeFactory(DjangoModelFactory):
             enrollment=now_in_utc() + timedelta(days=1),
             certificate=now_in_utc() + timedelta(days=1),
             current_grade=now_in_utc() + timedelta(days=1),
+            enrollment_mitxonline=now_in_utc() + timedelta(days=1),
+            current_grade_mitxonline=now_in_utc() + timedelta(days=1),
         )
         expired = Trait(
             enrollment=now_in_utc() - timedelta(days=1),
             certificate=now_in_utc() - timedelta(days=1),
             current_grade=now_in_utc() - timedelta(days=1),
+            enrollment_mitxonline=now_in_utc() - timedelta(days=1),
+            current_grade_mitxonline=now_in_utc() + timedelta(days=1),
         )
 
 

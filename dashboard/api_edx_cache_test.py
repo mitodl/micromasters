@@ -184,10 +184,17 @@ class CachedEdxDataApiTests(MockedESTestCase):
 
     def test_constants(self):
         """Tests class constants"""
-        assert CachedEdxDataApi.SUPPORTED_CACHES == (
+        assert CachedEdxDataApi.EDX_SUPPORTED_CACHES == (
             CachedEdxDataApi.ENROLLMENT,
             CachedEdxDataApi.CERTIFICATE,
             CachedEdxDataApi.CURRENT_GRADE,
+        )
+        assert CachedEdxDataApi.ALL_CACHE_TYPES == (
+            CachedEdxDataApi.ENROLLMENT,
+            CachedEdxDataApi.CERTIFICATE,
+            CachedEdxDataApi.CURRENT_GRADE,
+            CachedEdxDataApi.ENROLLMENT_MITXONLINE,
+            CachedEdxDataApi.CURRENT_GRADE_MITXONLINE,
         )
         assert CachedEdxDataApi.CACHED_EDX_MODELS == {
             CachedEdxDataApi.ENROLLMENT: models.CachedEnrollment,
@@ -241,26 +248,22 @@ class CachedEdxDataApiTests(MockedESTestCase):
             CachedEdxDataApi.is_cache_fresh(self.user, 'footype')
         # if there is no entry in the table, the cache is not fresh
         assert UserCacheRefreshTime.objects.filter(user=self.user).exists() is False
-        for cache_type in CachedEdxDataApi.SUPPORTED_CACHES + CachedEdxDataApi.MITXONLINE_SUPPORTED_CACHES:
+        for cache_type in CachedEdxDataApi.ALL_CACHE_TYPES:
             assert CachedEdxDataApi.is_cache_fresh(self.user, cache_type) is False
         now = now_in_utc()
         user_cache = UserCacheRefreshTimeFactory.create(
             user=self.user,
-            enrollment=now,
-            certificate=now,
-            current_grade=now,
+            unexpired=True,
         )
-        for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
+        for cache_type in CachedEdxDataApi.ALL_CACHE_TYPES:
             assert CachedEdxDataApi.is_cache_fresh(self.user, cache_type) is True
-        for cache_type in CachedEdxDataApi.MITXONLINE_SUPPORTED_CACHES:
-            assert CachedEdxDataApi.is_cache_fresh(self.user, cache_type) is False
         # moving back the timestamp of one day, makes the cache not fresh again
         yesterday = now - timedelta(days=1)
         user_cache.enrollment = yesterday
         user_cache.certificate = yesterday
         user_cache.current_grade = yesterday
         user_cache.save()
-        for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
+        for cache_type in CachedEdxDataApi.EDX_SUPPORTED_CACHES:
             assert CachedEdxDataApi.is_cache_fresh(self.user, cache_type) is False
         timestamp = now_in_utc()
         updated_values = {
@@ -302,11 +305,12 @@ class CachedEdxDataApiTests(MockedESTestCase):
         assert CachedEdxDataApi.are_all_caches_fresh(self.user) is False
         now = now_in_utc()
         yesterday = now - timedelta(days=1)
-        UserCacheRefreshTimeFactory.create(
+        UserCacheRefreshTime.objects.create(
             user=self.user,
             enrollment=now,
             certificate=now,
             current_grade=now,
+
         )
         assert CachedEdxDataApi.are_all_caches_fresh(self.user) is True
         self.create_mitxonline_data()
@@ -426,20 +430,26 @@ class CachedEdxDataApiTests(MockedESTestCase):
     @patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cached_current_grades')
     @patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cached_certificates')
     @patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cached_enrollments')
-    def test_update_cache_if_expired(self, mock_enr, mock_cert, mock_grade):
+    @ddt.data(BACKEND_EDX_ORG, BACKEND_MITX_ONLINE)
+    def test_update_cache_if_expired(self, provider, mock_enr, mock_cert, mock_grade):
         """Test for update_cache_if_expired"""
         all_mocks = (mock_enr, mock_cert, mock_grade, )
 
         with self.assertRaises(ValueError):
-            CachedEdxDataApi.update_cache_if_expired(self.user, self.edx_client, 'footype', BACKEND_EDX_ORG)
+            CachedEdxDataApi.update_cache_if_expired(self.user, self.edx_client, 'footype', provider)
 
         # if there is no entry in the UserCacheRefreshTime the cache is not fresh and needs to be refreshed
-        for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
+        for cache_type in CachedEdxDataApi.CACHE_TYPES_BACKEND[provider]:
             # the following is possible only because a mocked function is called
             assert UserCacheRefreshTime.objects.filter(user=self.user).exists() is False
             CachedEdxDataApi.update_cache_if_expired(self.user, self.edx_client, cache_type, BACKEND_EDX_ORG)
+        if provider == BACKEND_MITX_ONLINE:
+            assert mock_enr.called is True
+            assert mock_grade.called is True
+        else:
+            for mock_func in all_mocks:
+                assert mock_func.called is True
         for mock_func in all_mocks:
-            assert mock_func.called is True
             mock_func.reset_mock()
 
         # if we create a fresh entry in the UserCacheRefreshTime, no update is called
@@ -449,23 +459,31 @@ class CachedEdxDataApiTests(MockedESTestCase):
             enrollment=now,
             certificate=now,
             current_grade=now,
+            current_grade_mitxonline=now,
+            enrollment_mitxonline=now,
         )
-        for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
-            CachedEdxDataApi.update_cache_if_expired(self.user, self.edx_client, cache_type, BACKEND_EDX_ORG)
+
+        for cache_type in CachedEdxDataApi.CACHE_TYPES_BACKEND[provider]:
+            CachedEdxDataApi.update_cache_if_expired(self.user, self.edx_client, cache_type, provider)
         for mock_func in all_mocks:
             assert mock_func.called is False
-            mock_func.reset_mock()
 
         # moving back the last access time, the functions are called again
         yesterday = now - timedelta(days=1)
         user_cache.enrollment = yesterday
         user_cache.certificate = yesterday
         user_cache.current_grade = yesterday
+        user_cache.current_grade_mitxonline = yesterday
+        user_cache.enrollment_mitxonline = yesterday
         user_cache.save()
-        for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
-            CachedEdxDataApi.update_cache_if_expired(self.user, self.edx_client, cache_type, BACKEND_EDX_ORG)
-        for mock_func in all_mocks:
-            assert mock_func.called is True
+        for cache_type in CachedEdxDataApi.CACHE_TYPES_BACKEND[provider]:
+            CachedEdxDataApi.update_cache_if_expired(self.user, self.edx_client, cache_type, provider)
+        if provider == BACKEND_MITX_ONLINE:
+            assert mock_enr.called is True
+            assert mock_grade.called is True
+        else:
+            for mock_func in all_mocks:
+                assert mock_func.called is True
 
     @patch('dashboard.api_edx_cache.CachedEdxDataApi.update_cached_enrollments')
     @ddt.data(400, 401, 405,)
