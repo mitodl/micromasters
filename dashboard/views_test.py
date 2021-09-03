@@ -80,7 +80,7 @@ class DashboardTest(MockedESTestCase, APITestCase):
         """Test for GET"""
         with patch('backends.utils.refresh_user_token', autospec=True):
             result = self.client.get(self.url)
-        assert mock_cache_refresh.call_count == len(CachedEdxDataApi.ALL_CACHE_TYPES)
+        assert mock_cache_refresh.call_count == len(CachedEdxDataApi.EDX_SUPPORTED_CACHES)
         assert 'programs' in result.data
         assert 'is_edx_data_fresh' in result.data
         assert result.data['is_edx_data_fresh'] is True

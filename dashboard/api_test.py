@@ -1556,7 +1556,7 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
         """Test that get_user_program_info fetches edx data and returns a list of Program data"""
         result = api.get_user_program_info(self.user)
         assert mock_refresh_token.call_count == 1
-        assert mock_cache_refresh.call_count == len(CachedEdxDataApi.SUPPORTED_CACHES)
+        assert mock_cache_refresh.call_count == len(CachedEdxDataApi.EDX_SUPPORTED_CACHES)
 
         assert isinstance(result, dict)
         assert 'is_edx_data_fresh' in result
@@ -1782,9 +1782,7 @@ class UserProgramInfoIntegrationTest(MockedESTestCase):
 
         result = api.get_user_program_info(self.user)
         assert mock_token_refresh.call_count == 2
-        assert mock_cache_refresh.call_count == len(
-            CachedEdxDataApi.MITXONLINE_SUPPORTED_CACHES+CachedEdxDataApi.SUPPORTED_CACHES
-        )
+        assert mock_cache_refresh.call_count == len(CachedEdxDataApi.ALL_CACHE_TYPES)
 
         assert len(result['programs']) == 2
         for program_result in result['programs']:
@@ -2521,7 +2519,7 @@ def test_refresh_failed_edx_client(db, mocker):
     assert update_cache_mock.called is False
 
 
-@pytest.mark.parametrize("failed_cache_type", CachedEdxDataApi.SUPPORTED_CACHES)
+@pytest.mark.parametrize("failed_cache_type", CachedEdxDataApi.EDX_SUPPORTED_CACHES)
 @pytest.mark.parametrize("provider", COURSEWARE_BACKENDS)
 def test_refresh_update_cache(db, mocker, failed_cache_type, provider):
     """If we fail to create the edx client, we should skip the edx refresh"""
@@ -2548,7 +2546,7 @@ def test_refresh_update_cache(db, mocker, failed_cache_type, provider):
     refresh_user_token_mock.assert_called_once_with(user_social)
     edx_api_init.assert_called_once_with(user_social.extra_data, COURSEWARE_BACKEND_URL[provider])
     assert save_failure_mock.call_count == 1
-    for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
+    for cache_type in CachedEdxDataApi.EDX_SUPPORTED_CACHES:
         update_cache_mock.assert_any_call(user, edx_api, cache_type, provider)
 
 
