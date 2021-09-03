@@ -2432,7 +2432,7 @@ def test_refresh_user_data(db, mocker):
 
     refresh_user_token_mock.assert_called_once_with(user_social)
     edx_api_init.assert_called_once_with(user_social.extra_data, settings.EDXORG_BASE_URL)
-    for cache_type in CachedEdxDataApi.SUPPORTED_CACHES:
+    for cache_type in CachedEdxDataApi.EDX_SUPPORTED_CACHES:
         update_cache_mock.assert_any_call(user, edx_api, cache_type, BACKEND_EDX_ORG)
 
 
