@@ -729,7 +729,7 @@ def refresh_user_data(user_id, provider=BACKEND_EDX_ORG):
         log.exception("Unable to create an edX client object for student %s", user.username)
         return
 
-    for cache_type in CachedEdxDataApi.EDX_SUPPORTED_CACHES:
+    for cache_type in CachedEdxDataApi.CACHE_TYPES_BACKEND[provider]:
         try:
             CachedEdxDataApi.update_cache_if_expired(user, edx_client, cache_type, provider)
         except:
