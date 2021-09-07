@@ -72,8 +72,13 @@ class CachedEdxDataApi:
     ENROLLMENT_MITXONLINE = 'enrollment_mitxonline'
     CURRENT_GRADE_MITXONLINE = 'current_grade_mitxonline'
     # the sorting of the supported caches matters for refresh
-    SUPPORTED_CACHES = (ENROLLMENT, CERTIFICATE, CURRENT_GRADE,)
+    EDX_SUPPORTED_CACHES = (ENROLLMENT, CERTIFICATE, CURRENT_GRADE,)
     MITXONLINE_SUPPORTED_CACHES = (ENROLLMENT_MITXONLINE, CURRENT_GRADE_MITXONLINE,)
+    ALL_CACHE_TYPES = EDX_SUPPORTED_CACHES + MITXONLINE_SUPPORTED_CACHES
+    CACHE_TYPES_BACKEND = {
+        BACKEND_EDX_ORG: EDX_SUPPORTED_CACHES,
+        BACKEND_MITX_ONLINE: MITXONLINE_SUPPORTED_CACHES
+    }
 
     CACHED_EDX_MODELS = {
         ENROLLMENT: models.CachedEnrollment,
@@ -100,7 +105,7 @@ class CachedEdxDataApi:
         Returns:
             Enrollments or Certificates or CurrentGrades
         """
-        if cache_type not in cls.SUPPORTED_CACHES:
+        if cache_type not in cls.ALL_CACHE_TYPES:
             raise ValueError("{} is an unsupported cache type".format(cache_type))
         return cls.CACHED_EDX_MODELS[cache_type].get_edx_data(user)
 
@@ -116,7 +121,7 @@ class CachedEdxDataApi:
         Returns:
             None
         """
-        if cache_type not in cls.SUPPORTED_CACHES + cls.MITXONLINE_SUPPORTED_CACHES:
+        if cache_type not in cls.ALL_CACHE_TYPES:
             raise ValueError("{} is an unsupported cache type".format(cache_type))
         if timestamp is None:
             timestamp = now_in_utc()
@@ -137,7 +142,7 @@ class CachedEdxDataApi:
         Returns:
             bool
         """
-        if cache_type not in cls.SUPPORTED_CACHES + cls.MITXONLINE_SUPPORTED_CACHES:
+        if cache_type not in cls.ALL_CACHE_TYPES:
             raise ValueError("{} is an unsupported cache type".format(cache_type))
         try:
             cache_timestamps = models.UserCacheRefreshTime.objects.get(user=user)
@@ -162,7 +167,7 @@ class CachedEdxDataApi:
         mitxonline_cache_fresh = True
 
         if has_social_auth(user, BACKEND_EDX_ORG):
-            edx_cache_fresh = all(cls.is_cache_fresh(user, cache_type) for cache_type in cls.SUPPORTED_CACHES)
+            edx_cache_fresh = all(cls.is_cache_fresh(user, cache_type) for cache_type in cls.EDX_SUPPORTED_CACHES)
         if has_social_auth(user, BACKEND_MITX_ONLINE):
             mitxonline_cache_fresh = all(
                 cls.is_cache_fresh(user, cache_type) for cache_type in cls.MITXONLINE_SUPPORTED_CACHES)
@@ -335,8 +340,10 @@ class CachedEdxDataApi:
             cls.ENROLLMENT: cls.update_cached_enrollments,
             cls.CERTIFICATE: cls.update_cached_certificates,
             cls.CURRENT_GRADE: cls.update_cached_current_grades,
+            cls.CURRENT_GRADE_MITXONLINE: cls.update_cached_current_grades,
+            cls.ENROLLMENT_MITXONLINE: cls.update_cached_enrollments,
         }
-        if cache_type not in cls.SUPPORTED_CACHES:
+        if cache_type not in cls.ALL_CACHE_TYPES:
             raise ValueError("{} is an unsupported cache type".format(cache_type))
         if not cls.is_cache_fresh(user, cache_type):
             update_func = cache_update_methods[cache_type]

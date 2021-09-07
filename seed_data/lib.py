@@ -270,7 +270,7 @@ def ensure_cached_data_freshness(user):
     Ensure that all cached edX data will be considered 'fresh' for a User
     """
     future = future_date()
-    updated_values = {cache: future for cache in CachedEdxDataApi.SUPPORTED_CACHES}
+    updated_values = {cache: future for cache in CachedEdxDataApi.ALL_CACHE_TYPES}
     updated_values['user'] = user
     UserCacheRefreshTime.objects.update_or_create(user=user, defaults=updated_values)
 
