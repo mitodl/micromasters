@@ -2519,10 +2519,9 @@ def test_refresh_failed_edx_client(db, mocker):
     assert update_cache_mock.called is False
 
 
-@pytest.mark.parametrize("failed_cache_type", CachedEdxDataApi.EDX_SUPPORTED_CACHES)
 @pytest.mark.parametrize("provider", COURSEWARE_BACKENDS)
-def test_refresh_update_cache(db, mocker, failed_cache_type, provider):
-    """If we fail to create the edx client, we should skip the edx refresh"""
+def test_refresh_update_cache(db, mocker, provider):
+    """If user data cennot be refreshed, save this learner id"""
     user = _make_fake_real_user()
     user_social = user.social_auth.get(provider=provider)
     refresh_user_token_mock = mocker.patch(
@@ -2530,6 +2529,7 @@ def test_refresh_update_cache(db, mocker, failed_cache_type, provider):
     )
     edx_api = mocker.Mock()
     edx_api_init = mocker.patch('dashboard.api.EdxApi', autospec=True, return_value=edx_api)
+    failed_cache_type = CachedEdxDataApi.CACHE_TYPES_BACKEND[provider][0]
 
     def _update_cache(user, edx_client, cache_type, provider):
         """Fail updating the cache for only the given cache type"""
@@ -2546,7 +2546,7 @@ def test_refresh_update_cache(db, mocker, failed_cache_type, provider):
     refresh_user_token_mock.assert_called_once_with(user_social)
     edx_api_init.assert_called_once_with(user_social.extra_data, COURSEWARE_BACKEND_URL[provider])
     assert save_failure_mock.call_count == 1
-    for cache_type in CachedEdxDataApi.EDX_SUPPORTED_CACHES:
+    for cache_type in CachedEdxDataApi.CACHE_TYPES_BACKEND[provider]:
         update_cache_mock.assert_any_call(user, edx_api, cache_type, provider)
 
 
