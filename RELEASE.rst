@@ -1,7 +1,7 @@
 Release Notes
 =============
 
-Version 0.204.0
+Version 0.204.0 (Released September 08, 2021)
 ---------------
 
 - Update all cache types in update_cache_for_backend (#5033)
