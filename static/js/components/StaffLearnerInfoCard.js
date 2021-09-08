@@ -4,7 +4,7 @@ import Card from "@material-ui/core/Card"
 import R from "ramda"
 
 import { circularProgressWidget } from "./ProgressWidget"
-import { programCourseInfo, classify } from "../util/util"
+import { classify } from "../util/util"
 import type { Program } from "../flow/programTypes"
 import { S, getm } from "../lib/sanctuary"
 import type { DialogVisibilityState } from "../reducers/ui"
@@ -37,7 +37,6 @@ const formatCourseGrade = R.compose(
 
 const StaffLearnerInfoCard = (props: StaffLearnerCardProps) => {
   const { program } = props
-  const totalPassedCourses = programCourseInfo(program)
 
   return (
     <Card shadow={1} className="staff-learner-info-card course-list">
@@ -49,7 +48,7 @@ const StaffLearnerInfoCard = (props: StaffLearnerCardProps) => {
               {circularProgressWidget(
                 63,
                 7,
-                totalPassedCourses,
+                program.number_courses_passed,
                 program.number_courses_required,
                 program.program_letter_url
               )}

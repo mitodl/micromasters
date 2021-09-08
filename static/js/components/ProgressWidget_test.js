@@ -11,6 +11,7 @@ export const program = {
   description:                "Not passed program",
   title:                      "Not passed program",
   number_courses_required:    5,
+  number_courses_passed:      3,
   courses:                    [
     {
       prerequisites: "",

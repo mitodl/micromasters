@@ -15,6 +15,7 @@ import ddt
 
 from cms.factories import ProgramCertificateSignatoriesFactory, ProgramLetterSignatoryFactory, ImageFactory
 from courses.factories import ProgramFactory, CourseFactory, CourseRunFactory
+from courses.models import ElectivesSet, ElectiveCourse
 from dashboard.api_edx_cache import CachedEdxUserData
 from dashboard.models import CachedEnrollment, CachedCertificate, CachedCurrentGrade
 from dashboard.utils import get_mmtrack, MMTrack, convert_to_letter
@@ -24,7 +25,7 @@ from exams.factories import ExamProfileFactory, ExamAuthorizationFactory, ExamRu
 from exams.models import ExamProfile, ExamAuthorization
 from grades.factories import FinalGradeFactory, ProctoredExamGradeFactory
 from grades.models import FinalGrade, MicromastersProgramCertificate, CombinedFinalGrade, \
-    MicromastersProgramCommendation
+    MicromastersProgramCommendation, CourseRunGradingStatus
 from micromasters.factories import UserFactory
 from micromasters.utils import (
     load_json_from_file,
@@ -494,6 +495,60 @@ class MMTrackTest(MockedESTestCase):
         )
 
         assert mmtrack.count_courses_passed() == 2
+
+    def test_get_number_of_passed_courses_for_completion(self):
+        """
+        Assert that get_number_of_passed_courses_for_completion computes a number of courses passed for
+        programs with elective sets
+        """
+        course_run = self.cruns[0]
+        FinalGradeFactory.create(
+            user=self.user,
+            course_run=course_run,
+            passed=True
+        )
+        electives_set = ElectivesSet.objects.create(program=self.program, required_number=1)
+        elective_cruns = []
+
+        for _ in range(2):
+            run = CourseRunFactory.create(
+                course__program=self.program
+            )
+            FinalGradeFactory.create(
+                user=self.user,
+                course_run=run,
+                passed=True,
+                status='complete',
+                grade=0.7
+            )
+            elective_cruns.append(run)
+            CourseRunGradingStatus.objects.create(course_run=run, status='complete')
+            ElectiveCourse.objects.create(course=run.course, electives_set=electives_set)
+        mmtrack = MMTrack(
+            user=self.user,
+            program=self.program,
+            edx_user_data=self.cached_edx_user_data
+        )
+        # passed 2 electives here, but only one is required for completion of the program
+        assert mmtrack.count_courses_passed() == 3
+        assert mmtrack.get_number_of_passed_courses_for_completion() == 2
+
+    def test_get_number_of_passed_courses_for_completion_no_electives(self):
+        """
+        test get_number_of_passed_courses_for_completion returns number of passed courses if no electives
+        """
+        mmtrack = MMTrack(
+            user=self.user,
+            program=self.program,
+            edx_user_data=self.cached_edx_user_data
+        )
+        for course_run in self.cruns:
+            FinalGradeFactory.create(
+                user=self.user,
+                course_run=course_run,
+                passed=True
+            )
+        assert mmtrack.get_number_of_passed_courses_for_completion() == 1
 
     def test_count_passing_courses_for_keys(self):
         """

@@ -25,7 +25,6 @@ import {
   getEmployer,
   createForm,
   formatPrice,
-  programCourseInfo,
   findCourseRun,
   isProfileOfLoggedinUser,
   labelSort,
@@ -541,14 +540,6 @@ describe("utility functions", () => {
     it("returns an empty string if null or undefined", () => {
       assert.equal(formatPrice(null), "")
       assert.equal(formatPrice(undefined), "")
-    })
-  })
-
-  describe("programCourseInfo", () => {
-    it("assert program info", () => {
-      const programInfoActual = programCourseInfo(program)
-
-      assert.deepEqual(programInfoActual, 3)
     })
   })
 

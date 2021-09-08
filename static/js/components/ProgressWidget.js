@@ -5,7 +5,6 @@ import Card from "@material-ui/core/Card"
 import R from "ramda"
 
 import type { Program } from "../flow/programTypes"
-import { programCourseInfo } from "../util/util"
 import CardContent from "@material-ui/core/CardContent"
 
 export const circularProgressWidget = (
@@ -136,7 +135,6 @@ export default class ProgressWidget extends React.Component {
 
   renderProgressIndicator() {
     const { program } = this.props
-    const totalPassedCourses = programCourseInfo(program)
 
     return (
       <Card className="card progress-widget" shadow={0}>
@@ -145,7 +143,7 @@ export default class ProgressWidget extends React.Component {
           {circularProgressWidget(
             60,
             6,
-            totalPassedCourses,
+            program.number_courses_passed,
             program.number_courses_required,
             program.program_letter_url
           )}
