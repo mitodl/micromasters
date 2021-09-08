@@ -1,6 +1,16 @@
 Release Notes
 =============
 
+Version 0.204.0
+---------------
+
+- Update all cache types in update_cache_for_backend (#5033)
+- Remove django-storages-redux (#5028)
+- Fix generation of program letters for non FA programs (#5023)
+- Update edx-api-client version (#5026)
+- reshesh cache update error (#5017)
+- Update dashboard links
+
 Version 0.203.0 (Released August 26, 2021)
 ---------------
 
