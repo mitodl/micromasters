@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+Version 0.205.0
+---------------
+
+- Login prompts
+- Update the circular progress to show passed courses (#5035)
+
 Version 0.204.0 (Released September 08, 2021)
 ---------------
 
