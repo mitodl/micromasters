@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load render_bundle wagtailcore_tags %}
+{% block body_class %}template-programpage{% endblock %}
+{% block title %}{{ page.title }} | {{ site_name }}{% endblock %}
+{% block description %}
+  MicroMasters is a professional and academic credential for online learners from anywhere in the world. Learners who pass an integrated set of MITx graduate-level courses on edX.org, and one or more proctored exams, will earn a MicroMasters credential from MITx, and can then apply for an accelerated, on campus, master’s degree program at MIT or other top universities.
+{% endblock %}
+{% block keywords %}micromasters, MIT, {{ page.program.title }}, online master's, online courses, MOOC{% endblock %}
+{% block social %}
+  <meta property="og:site:name" content="{{ page.title }} MicroMasters">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  <meta property="og:title" content="{{ page.title }} MicroMasters">
+  <meta itemprop="name" content="{{ page.title }} MicroMasters">
+{% endblock social %}
+
+
+
+{% block content %}
+{% include "header.html" %}
+  <div class="resource-banner">
+    <div class="container">
+      <h1 class="text-uppercase">{{ page.title }}</h1>
+      {% if page.sub_heading %}
+        <h2>{{ page.sub_heading }}</h2>
+      {% endif %}
+    </div>
+  </div>
+
+<div class="container resource-container">
+  <div class="row">
+    <div class="col-md-3">
+      <ul class="resource-list">
+        {% for block in page.content %}
+          <li class="item">
+            <a class="text-capitalize" href="#{{ block.value.heading|slugify }}">{{ block.value.heading }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="col-md-9">
+      {% for block in page.content %}
+        <h2 class="text-uppercase" id="{{ block.value.heading|slugify }}">{{ block.value.heading }}:</h2>
+        <p>{{ block.value.detail }}</p>
+        <a href="#" class="back-to-top">Back to top</a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+  {% load render_bundle %}
+  {% render_bundle "public" "defer" %}
+  {% include "footer.html" %}
+  <div id="signup-dialog">
+    <!-- signup dialog React component injected here -->
+  </div>
+{% endblock %}

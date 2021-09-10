@@ -19,13 +19,14 @@ from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core.models import Orderable, Page
 from wagtail.contrib.table_block.blocks import TableBlock
 from wagtail.images.models import Image
+from wagtail.images.edit_handlers import ImageChooserPanel
 
 from courses.models import Program
 from micromasters.serializers import serialize_maybe_user
 from micromasters.utils import webpack_dev_server_host
 from roles.models import Instructor, Staff
 from cms.util import get_coupon_code
-from cms.blocks import CourseTeamBlock, ImageWithLinkBlock
+from cms.blocks import CourseTeamBlock, ImageWithLinkBlock, ResourceBlock
 
 common_table_options = {
     'startRows': 3,
@@ -39,7 +40,7 @@ class HomePage(Page):
     CMS page representing the homepage.
     """
     content_panels = []
-    subpage_types = ['ProgramPage', 'BenefitsPage']
+    subpage_types = ['ProgramPage', 'BenefitsPage', 'ResourcePage']
 
     def get_context(self, request, *args, **kwargs):
         programs = Program.objects.filter(live=True).select_related('programpage').order_by("id")
@@ -77,6 +78,60 @@ class HomePage(Page):
 
         return context
 
+class ResourcePage(Page):
+    """
+    Basic resource page class for pages containing basic information (FAQ, etc.)
+    """
+
+    template = "cms/resource_page.html"
+    parent_page_types = ['HomePage']
+
+    header_image = models.ForeignKey(
+        Image,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+        help_text="Upload a header image that will render in the resource page. (The recommended dimensions for the image are 1920x300)",
+    )
+
+    content = StreamField(
+        [("content", ResourceBlock())],
+        blank=False,
+        help_text="Enter details of content.",
+    )
+
+    content_panels = Page.content_panels + [
+        ImageChooserPanel("header_image"),
+        StreamFieldPanel("content"),
+    ]
+
+    def get_context(self, request, *args, **kwargs):
+        js_settings = {
+            "gaTrackingID": settings.GA_TRACKING_ID,
+            "host": webpack_dev_server_host(request),
+            "environment": settings.ENVIRONMENT,
+            "sentry_dsn": settings.SENTRY_DSN,
+            "release_version": settings.VERSION
+        }
+
+        context = super().get_context(request)
+
+        context["is_public"] = True
+        context["has_zendesk_widget"] = True
+        context["google_maps_api"] = False
+        context["authenticated"] = not request.user.is_anonymous
+        context["is_staff"] = has_role(request.user, [Staff.ROLE_ID, Instructor.ROLE_ID])
+        context["username"] = request.user.username
+        context["js_settings_json"] = json.dumps(js_settings)
+        context["title"] = self.title
+        context["ga_tracking_id"] = ""
+        context["hubspot_portal_id"] = settings.HUBSPOT_CONFIG.get("HUBSPOT_PORTAL_ID")
+        context["hubspot_ogranizations_form_guid"] = settings.HUBSPOT_CONFIG.get(
+            "HUBSPOT_ORGANIZATIONS_FORM_GUID"
+        )
+        context["site_name"] = settings.WAGTAIL_SITE_NAME
+        return context
 
 class BenefitsPage(Page):
     """

@@ -1,0 +1,89 @@
+// sass-lint:disable mixins-before-declarations
+
+html {
+  scroll-behavior: smooth;
+  }
+
+.resource-banner {
+  width: 100%;
+  padding: 75px 0;
+  background: rgba(53, 53, 53, .97) url("/static/images/resource-page-banner-bg.png") repeat-x 0 0;
+  min-height: 200px;
+
+  .container {
+    max-width: 880px;
+    text-align: center;
+  }
+
+  h1 {
+    background: $mm-brand-bg;
+    color: white;
+    padding: 15px;
+    line-height: 50px;
+    font-weight: 500;
+    margin: 0 0 15px;
+
+    @include breakpoint(desktop) {
+      padding: 15px 30px;
+      font-size: 48px;
+      line-height: 54px;
+      display: inline-block;
+    }
+  }
+
+  h2 {
+    color: white;
+    line-height: 32px;
+    font-weight: 600;
+    margin: 0 0 15px;
+  }
+}
+
+.resource-container {
+  padding-bottom: 65px;
+
+  h2 {
+    color: $navy-blue;
+    margin-top: 50px;
+    font-weight: 600;
+  }
+
+  .resource-list {
+    list-style: none;
+    margin-top: 50px;
+    padding-left: 0;
+
+    a {
+      color: black;
+      font-weight: 600;
+      text-decoration: none;
+
+      &:hover {
+        color: $navy-blue;
+      }
+    }
+
+    .item {
+      border-top: 1px solid;
+      padding-bottom: 10px;
+      padding-top: 10px;
+
+      &:first-child {
+        border-top: none;
+      }
+    }
+  }
+
+  .back-to-top {
+    text-decoration: none;
+
+    &:after {
+      font-size: 24px;
+      font-family: Material Icons;
+      content: "arrow_circle_up";
+      margin-left: 5px;
+      vertical-align: middle;
+    }
+  }
+}
+
