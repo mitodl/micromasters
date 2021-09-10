@@ -13,9 +13,10 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from edx_api.enrollments.models import Enrollments, Enrollment
 
-from backends.constants import BACKEND_EDX_ORG, BACKEND_MITX_ONLINE
+from backends.constants import BACKEND_EDX_ORG, BACKEND_MITX_ONLINE, COURSEWARE_BACKEND_URL
 from backends.utils import InvalidCredentialStored
 from courses.factories import ProgramFactory, CourseRunFactory
+from courses.models import CourseRun
 from dashboard.api_edx_cache import CachedEdxDataApi
 from dashboard.factories import UserCacheRefreshTimeFactory, ProgramEnrollmentFactory
 from dashboard.models import ProgramEnrollment, CachedEnrollment
@@ -216,6 +217,7 @@ class DashboardTokensTest(MockedESTestCase, APITestCase):
         assert res.status_code == status.HTTP_400_BAD_REQUEST
 
 
+@ddt.ddt
 class UserCourseEnrollmentTest(MockedESTestCase, APITestCase):
     """
     Tests for the UserCourseEnrollment REST API
@@ -309,25 +311,31 @@ class UserCourseEnrollmentTest(MockedESTestCase, APITestCase):
         assert isinstance(resp.data, dict)
         assert 'error' in resp.data
 
+    @ddt.data(BACKEND_EDX_ORG, BACKEND_MITX_ONLINE)
     @patch('search.tasks.index_users', autospec=True)
-    @patch('edx_api.enrollments.CourseEnrollments.create_audit_student_enrollment', autospec=True)
+    @patch('dashboard.views.EdxApi', autospec=True)
     @patch('backends.utils.refresh_user_token', autospec=True)
-    def test_enrollment(self, mock_refresh, mock_edx_enr, mock_index):  # pylint: disable=unused-argument
+    def test_enrollment(
+        self, backend, mock_refresh, mock_edx_api, mock_index
+    ):  # pylint: disable=unused-argument
         """
         Test for happy path
         """
         cache_enr = CachedEnrollment.objects.filter(
             user=self.user, course_run__edx_course_key=self.course_id).first()
         assert cache_enr is None
+        user_social = UserSocialAuthFactory.create(user=self.user, provider=backend)
+        CourseRun.objects.filter(edx_course_key=self.course_id).update(courseware_backend=backend)
 
         enr_json = {'course_details': {'course_id': self.course_id}}
         enrollment = Enrollment(enr_json)
+        mock_edx_enr = mock_edx_api.return_value.enrollments.create_audit_student_enrollment
         mock_edx_enr.return_value = enrollment
         resp = self.client.post(self.url, {'course_id': self.course_id}, format='json')
         assert resp.status_code == status.HTTP_200_OK
-        assert mock_edx_enr.call_count == 1
-        assert mock_edx_enr.call_args[0][1] == self.course_id
         assert resp.data == enr_json
+        mock_edx_api.assert_called_once_with(user_social.extra_data, COURSEWARE_BACKEND_URL[backend])
+        mock_edx_enr.assert_called_once_with(self.course_id)
         mock_index.delay.assert_called_once_with([self.user.id], check_if_changed=True)
 
         cache_enr = CachedEnrollment.objects.filter(

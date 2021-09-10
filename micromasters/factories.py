@@ -56,6 +56,7 @@ class UserSocialAuthFactory(DjangoModelFactory):
 
     class Meta:
         model = UserSocialAuth
+        django_get_or_create = ("provider", "uid")
 
 
 class SocialUserFactory(UserFactory):

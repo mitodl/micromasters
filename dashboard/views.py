@@ -4,7 +4,6 @@ Views for dashboard REST APIs
 import logging
 
 from django.contrib.auth.models import User
-from django.conf import settings
 from django.urls import reverse
 from requests.exceptions import HTTPError
 from rest_framework import (
@@ -19,6 +18,7 @@ from rest_framework.generics import get_object_or_404
 from edx_api.client import EdxApi
 
 from backends import utils
+from backends.constants import COURSEWARE_BACKEND_URL
 from courses.models import CourseRun
 from dashboard.permissions import CanReadIfStaffOrSelf
 from dashboard.serializers import UnEnrollProgramsSerializer
@@ -85,7 +85,8 @@ class UserCourseEnrollment(APIView):
             raise ValidationError('course id missing in the request')
         # get the credentials for the current user for edX
         course_run = CourseRun.objects.get(edx_course_key=course_id)
-        user_social = get_social_auth(request.user, course_run.courseware_backend)
+        provider = course_run.courseware_backend
+        user_social = get_social_auth(request.user, provider)
         try:
             utils.refresh_user_token(user_social)
         except utils.InvalidCredentialStored as exc:
@@ -99,7 +100,7 @@ class UserCourseEnrollment(APIView):
             )
 
         # create an instance of the client to query edX
-        edx_client = EdxApi(user_social.extra_data, settings.EDXORG_BASE_URL)
+        edx_client = EdxApi(user_social.extra_data, COURSEWARE_BACKEND_URL[provider])
 
         try:
             enrollment = edx_client.enrollments.create_audit_student_enrollment(course_id)
