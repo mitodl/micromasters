@@ -1,6 +1,14 @@
 Release Notes
 =============
 
+Version 0.205.0
+---------------
+
+- Fix enrollment API backend (#5041)
+- added resource page and privacy policy page pre-population migration
+- Login prompts
+- Update the circular progress to show passed courses (#5035)
+
 Version 0.204.0 (Released September 08, 2021)
 ---------------
 
