@@ -7,7 +7,6 @@ from urllib.parse import urlencode
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.db.models import Exists, OuterRef
 from django.urls import reverse
 from django.shortcuts import Http404, redirect, render
 from django.utils.decorators import method_decorator
@@ -16,15 +15,14 @@ from django.views.generic import View, TemplateView
 from rolepermissions.permissions import available_perm_status
 from rolepermissions.checkers import has_role
 
-from backends.constants import BACKEND_MITX_ONLINE
 from cms.util import get_coupon_code
-from courses.models import Program, Course, CourseRun
+from courses.models import Program, Course
 from ecommerce.models import Coupon
 from micromasters.utils import webpack_dev_server_host
 from micromasters.serializers import serialize_maybe_user
 from profiles.permissions import CanSeeIfNotPrivate
 from roles.models import Instructor, Staff
-from ui.decorators import require_mandatory_urls, require_mitxonline_auth
+from ui.decorators import require_mandatory_urls
 from ui.templatetags.render_bundle import public_path
 
 log = logging.getLogger(__name__)
@@ -105,7 +103,6 @@ class ReactView(View):
         return redirect(request.build_absolute_uri())
 
 
-@method_decorator(require_mitxonline_auth, name='dispatch')
 @method_decorator(require_mandatory_urls, name='dispatch')
 @method_decorator(login_required, name='dispatch')
 @method_decorator(csrf_exempt, name='dispatch')
@@ -200,35 +197,6 @@ class SignInView(ReactView):
             self.template_name,
             context=context,
         )
-
-
-# @method_decorator(login_required, name='dispatch')
-class MitxOnlineRequiredView(ReactView):
-    """View to notify the learner that it's required to signin via mitx online"""
-    template_name = "mitx-online-required.html"
-
-    def get_context(self, request):
-        """
-        Get the context for the view
-
-        Args:
-            request (Request): the incoming request
-
-        Returns:
-            dict: the context object as a dictionary
-        """
-        return {
-            **super().get_context(request),
-            "mitxonline_programs": Program.objects.annotate(
-                has_mitxonline_courserun=Exists(CourseRun.objects.filter(
-                    course__program=OuterRef('pk'),
-                    courseware_backend=BACKEND_MITX_ONLINE
-                ))
-            ).filter(
-                has_mitxonline_courserun=True,
-                programenrollment__user=request.user
-            )
-        }
 
 
 def standard_error_page(request, status_code, template_filename):

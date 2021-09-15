@@ -39,7 +39,7 @@ class ProgramViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (
         IsAuthenticated,
     )
-    queryset = Program.objects.filter(live=True)
+    queryset = Program.objects.filter(live=True).prefetch_course_runs()
     serializer_class = ProgramSerializer
 
 

@@ -29,6 +29,7 @@ class UserTests(MockedESTestCase):
             "first_name": None,
             "last_name": None,
             "preferred_name": None,
+            "social_auth_providers": [],
         }
 
     def test_logged_in_user_through_maybe_wrapper(self):
@@ -45,6 +46,7 @@ class UserTests(MockedESTestCase):
             "first_name": None,
             "last_name": None,
             "preferred_name": None,
+            "social_auth_providers": [],
         }
 
     def test_user_with_profile(self):
@@ -67,6 +69,7 @@ class UserTests(MockedESTestCase):
             "first_name": "Rando",
             "last_name": "Cardrizzian",
             "preferred_name": "Hobo",
+            "social_auth_providers": [],
         }
 
 

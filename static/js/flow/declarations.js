@@ -8,6 +8,7 @@ declare var SETTINGS: {
   username: string,
   user: {
     username: string,
+    social_auth_providers: Array<string>,
   },
   host: string,
   edx_base_url: string,

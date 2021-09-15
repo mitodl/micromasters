@@ -54,16 +54,32 @@ export const makeDashboard = (): Dashboard => {
   return { programs: programs, is_edx_data_fresh: true }
 }
 
+export const makeAvailableProgram = (
+  enrolled: boolean = true,
+  backends: Array<string> = ["edxorg"]
+) => {
+  const programId = newProgramId()
+  return {
+    enrolled:            enrolled,
+    id:                  programId,
+    programpage_url:     `/page/${programId}`,
+    title:               `AvailableProgram for ${programId}`,
+    total_courses:       1,
+    courseware_backends: backends
+  }
+}
+
 export const makeAvailablePrograms = (
   dashboard: Dashboard,
   enrolled: boolean = true
 ): AvailablePrograms => {
   return dashboard.programs.map(program => ({
-    enrolled:        enrolled,
-    id:              program.id,
-    programpage_url: `/page/${program.id}`,
-    title:           `AvailableProgram for ${program.id}`,
-    total_courses:   1
+    enrolled:            enrolled,
+    id:                  program.id,
+    programpage_url:     `/page/${program.id}`,
+    title:               `AvailableProgram for ${program.id}`,
+    total_courses:       1,
+    courseware_backends: ["edxorg"]
   }))
 }
 

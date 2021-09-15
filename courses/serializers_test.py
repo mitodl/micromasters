@@ -82,6 +82,7 @@ class ProgramSerializerTests(MockedESTestCase):
         super().setUpTestData()
 
         cls.program = ProgramFactory.create()
+        cls.course_run = CourseRunFactory.create(course__program=cls.program)
         cls.user = UserFactory.create()
         cls.context = {
             "request": Mock(user=cls.user)
@@ -97,8 +98,9 @@ class ProgramSerializerTests(MockedESTestCase):
             'title': self.program.title,
             'programpage_url': None,
             'enrolled': False,
-            'total_courses': 0,
-            'topics': [{'name': topic.name} for topic in self.program.topics.iterator()]
+            'total_courses': 1,
+            'topics': [{'name': topic.name} for topic in self.program.topics.iterator()],
+            "courseware_backends": ["edxorg"],
         }
 
     def test_program_with_programpage(self):
@@ -114,8 +116,9 @@ class ProgramSerializerTests(MockedESTestCase):
             'title': self.program.title,
             'programpage_url': programpage.get_full_url(),
             'enrolled': False,
-            'total_courses': 0,
-            'topics': [{'name': topic.name} for topic in self.program.topics.iterator()]
+            'total_courses': 1,
+            'topics': [{'name': topic.name} for topic in self.program.topics.iterator()],
+            "courseware_backends": ["edxorg"],
         }
         assert len(programpage.url) > 0
 
@@ -130,8 +133,9 @@ class ProgramSerializerTests(MockedESTestCase):
             'title': self.program.title,
             'programpage_url': None,
             'enrolled': True,
-            'total_courses': 0,
-            'topics': [{'name': topic.name} for topic in self.program.topics.iterator()]
+            'total_courses': 1,
+            'topics': [{'name': topic.name} for topic in self.program.topics.iterator()],
+            "courseware_backends": ["edxorg"],
         }
 
     def test_program_courses(self):
@@ -145,8 +149,9 @@ class ProgramSerializerTests(MockedESTestCase):
             'title': self.program.title,
             'programpage_url': None,
             'enrolled': False,
-            'total_courses': 5,
-            'topics': [{'name': topic.name} for topic in self.program.topics.iterator()]
+            'total_courses': 6,
+            'topics': [{'name': topic.name} for topic in self.program.topics.iterator()],
+            "courseware_backends": ["edxorg"],
         }
 
 
